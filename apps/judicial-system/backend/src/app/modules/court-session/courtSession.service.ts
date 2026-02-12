@@ -18,13 +18,11 @@ import {
 } from '../repository'
 import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
-import { CourtDocumentService } from './courtDocument.service'
 
 @Injectable()
 export class CourtSessionService {
   constructor(
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
-    private readonly courtDocumentService: CourtDocumentService,
     // TODO: Move to a repository service - models should only be used in repository services
     // It would be best to hide the details of the court session model from all but the backend
     @InjectModel(CourtSessionString)
