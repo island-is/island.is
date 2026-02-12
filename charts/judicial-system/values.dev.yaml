@@ -124,7 +124,7 @@ judicial-system-backend:
     EMAIL_REGION: 'eu-west-1'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
-    NOVA_SENDER_NAME: 'Island.is | Dev'
+    NOVA_SENDER_NAME: 'Island Dev'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     S3_BUCKET: 'island-is-dev-upload-judicial-system'
     S3_REGION: 'eu-west-1'

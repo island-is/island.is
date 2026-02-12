@@ -36,7 +36,7 @@ env:
   NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
   NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
-  NOVA_SENDER_NAME: 'Island.is | Staging'
+  NOVA_SENDER_NAME: 'Island Staging'
   PASSKEY_CORE_ALLOWED_ORIGINS: '["https://island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
   PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
   PASSKEY_CORE_MAX_AGE_DAYS: '365'

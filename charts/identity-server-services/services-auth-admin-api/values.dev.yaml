@@ -35,7 +35,7 @@ env:
   NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
   NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
-  NOVA_SENDER_NAME: 'Island.is | Dev'
+  NOVA_SENDER_NAME: 'Island Dev'
   SERVERSIDE_FEATURES_ON: ''
   SYSLUMENN_HOST: 'https://api.syslumenn.is/staging'
   SYSLUMENN_TIMEOUT: '3000'
