@@ -41,7 +41,11 @@ export const startPostgres = async () => {
 }
 
 export const stopPostgres = async (): Promise<void> => {
-  await postgresContainer.stop()
+  try {
+    await postgresContainer.stop()
+  } catch (err) {
+    console.log(`Error tearing down postgres ${err.message}`, err)
+  }
 }
 
 export const startRedisCluster = async () => {
