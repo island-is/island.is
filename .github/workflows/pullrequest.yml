@@ -262,7 +262,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: 
+      - name:
         run: yarn nx affected --target=lint
 
   build:
