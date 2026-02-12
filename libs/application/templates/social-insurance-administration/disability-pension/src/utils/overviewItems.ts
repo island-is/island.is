@@ -108,7 +108,9 @@ export const paymentInfoItems = (answers: FormValue): Array<KeyValueItem> => {
       width: 'half',
       keyText: m.paymentInfo.personalAllowanceRatio,
       valueText: () => {
-        return personalAllowanceUsage ? `${personalAllowanceUsage} %` : '0%'
+        return personalAllowance === YES && personalAllowanceUsage
+          ? `${personalAllowanceUsage} %`
+          : '0%'
       },
     },
     {
