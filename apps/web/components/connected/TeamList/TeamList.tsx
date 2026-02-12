@@ -50,7 +50,7 @@ const ConnectedTeamList = ({ slice }: Props) => {
   const organizationId: string =
     parseOrganizationId(slice.configJson?.['organizationNumber']) ?? ''
 
-  const { data, loading, error } = useQuery<Query>(
+  const { data, error } = useQuery<Query>(
     GET_ORGANIZATION_TEAM_MEMBERS,
     {
       variables: {
