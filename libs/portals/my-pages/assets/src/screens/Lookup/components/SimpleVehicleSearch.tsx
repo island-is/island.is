@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
-import isEqual from 'lodash/isEqual'
-import { useRouter } from 'next/router'
-import { useLazyQuery } from '@apollo/client'
-
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
+import { VehiclesPublicVehicleSearch } from '@island.is/api/schema'
 import {
   AlertMessage,
   AsyncSearchInput,
@@ -11,60 +9,62 @@ import {
   Table,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  PublicVehicleSearchQuery,
-  PublicVehicleSearchQueryVariables,
-} from '@island.is/web/graphql/schema'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { PUBLIC_VEHICLE_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicVehicleSearch'
+import { useLocale } from '@island.is/localization'
+import { formatDate } from '@island.is/portals/my-pages/core'
 
-import { translation as translationStrings } from './translation.strings'
+import { vehicleMessage as messages } from '../../../lib/messages'
+import { theme } from '@island.is/island-ui/theme'
+import { usePublicVehicleSearchWithAuthLazyQuery } from '../Lookup.generated'
 
 const numberFormatter = new Intl.NumberFormat('de-DE')
 
-const getValueOrEmptyString = (value?: string) => {
+const getValueOrEmptyString = (value?: string | null) => {
   return value ? value : ''
 }
 
-const formatVehicleType = (vehicleInformation?: {
-  vehicleCommercialName?: string
-  color?: string
-  make?: string
-}) => {
-  const bothCommercialNameAndMakeArePresent =
-    !!vehicleInformation?.make && !!vehicleInformation?.vehicleCommercialName
-  if (!bothCommercialNameAndMakeArePresent) return ''
+const formatVehicleType = (
+  vehicleInformation?: VehiclesPublicVehicleSearch | null,
+) => {
+  const make = getValueOrEmptyString(vehicleInformation?.make)
+  const commercialName = getValueOrEmptyString(
+    vehicleInformation?.vehicleCommercialName,
+  )
+  const hasName = Boolean(make || commercialName)
+  if (!hasName) return ''
+  const base = [make, commercialName].filter(Boolean).join(' - ')
 
-  return `${getValueOrEmptyString(vehicleInformation.make)}${
-    bothCommercialNameAndMakeArePresent ? ' - ' : ''
-  }${getValueOrEmptyString(vehicleInformation.vehicleCommercialName)}${
-    vehicleInformation.color ? ' (' + vehicleInformation.color + ')' : ''
+  return `${base}${
+    vehicleInformation?.color ? ' (' + vehicleInformation.color + ')' : ''
   }`
+}
+
+const useQueryParams = () => {
+  const location = useLocation()
+  return new URLSearchParams(location.search)
 }
 
 const PublicVehicleSearch = () => {
   const [hasFocus, setHasFocus] = useState(false)
   const [searchValue, setSearchValue] = useState('')
-  const { format } = useDateUtils()
-  const router = useRouter()
+  const navigate = useNavigate()
   const queryParamInitialized = useRef(false)
+  const query = useQueryParams()
+  const { formatMessage } = useLocale()
+  const { width } = useWindowSize()
+  const searchMaxWidth = width && width < theme.breakpoints.lg ? '100%' : '50%'
 
-  const { formatMessage } = useIntl()
+  const [search, { loading, data, error, called }] =
+    usePublicVehicleSearchWithAuthLazyQuery()
 
-  const [search, { loading, data, error, called }] = useLazyQuery<
-    PublicVehicleSearchQuery,
-    PublicVehicleSearchQueryVariables
-  >(PUBLIC_VEHICLE_SEARCH_QUERY)
-
-  const vehicleInformation = data?.publicVehicleSearch
+  const vehicleInformation = data?.publicVehicleSearchWithAuth
 
   const vehicleWasNotFound =
     vehicleInformation === null || typeof vehicleInformation === 'undefined'
 
   const handleSearch = (value: string) => {
-    const updatedQuery = { ...router.query }
+    const updatedQuery = new URLSearchParams(query.toString())
     if (value) {
-      updatedQuery['vq'] = value
+      updatedQuery.set('vq', value)
 
       search({
         variables: {
@@ -75,47 +75,40 @@ const PublicVehicleSearch = () => {
       })
     }
 
-    if (!isEqual(router.query, updatedQuery)) {
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: updatedQuery,
-        },
-        undefined,
-        {
-          shallow: true,
-        },
-      )
+    if (query.toString() !== updatedQuery.toString()) {
+      navigate({
+        search: `?${updatedQuery.toString()}`,
+      })
     }
   }
 
   useEffect(() => {
-    if (!router?.isReady || queryParamInitialized?.current) return
+    if (queryParamInitialized?.current) return
     queryParamInitialized.current = true
-    if (router.query.vq) {
-      setSearchValue(router.query.vq as string)
-      handleSearch(router.query.vq as string)
+    const queryValue = query.get('vq')
+    if (queryValue) {
+      setSearchValue(queryValue)
+      handleSearch(queryValue)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router?.isReady, router?.query?.vq])
+  }, [])
 
   const formattedRegistrationDate = vehicleInformation?.firstRegDate
-    ? format(new Date(vehicleInformation.firstRegDate), 'do MMMM yyyy')
+    ? formatDate(vehicleInformation.firstRegDate)
     : ''
   const formattedNextVehicleMainInspectionDate =
     vehicleInformation?.nextVehicleMainInspection
-      ? format(
-          new Date(vehicleInformation.nextVehicleMainInspection),
-          'do MMMM yyyy',
-        )
+      ? formatDate(vehicleInformation.nextVehicleMainInspection)
       : ''
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+
   const formattedVehicleType = formatVehicleType(vehicleInformation)
 
   return (
     <Box>
-      <Box marginTop={2} marginBottom={3}>
+      <Box marginTop={2} marginBottom={3} style={{ maxWidth: searchMaxWidth }}>
+        <Text variant="eyebrow" color="blue400">
+          {formatMessage(messages.searchLabel)}
+        </Text>
         <AsyncSearchInput
           buttonProps={{
             onClick: () => {
@@ -126,8 +119,8 @@ const PublicVehicleSearch = () => {
           }}
           inputProps={{
             name: 'public-vehicle-search',
-            inputSize: 'large',
-            placeholder: formatMessage(translationStrings.inputPlaceholder),
+            inputSize: 'semi-large',
+            placeholder: formatMessage(messages.publicSearchInputPlaceholder),
             colored: true,
             onChange: (ev) => setSearchValue(ev.target.value.toUpperCase()),
             value: searchValue,
@@ -145,26 +138,29 @@ const PublicVehicleSearch = () => {
       {called && !loading && !error && vehicleWasNotFound && (
         <Box>
           <Text fontWeight="semiBold">
-            {formatMessage(translationStrings.noVehicleFound)}
+            {formatMessage(messages.publicSearchNoVehicleFound)}
           </Text>
         </Box>
       )}
       {called && !loading && error && (
         <AlertMessage
           type="error"
-          title={formatMessage(translationStrings.errorOccurredTitle)}
-          message={formatMessage(translationStrings.errorOccurredMessage)}
+          title={formatMessage(messages.publicSearchErrorTitle)}
+          message={formatMessage(messages.publicSearchErrorMessage)}
         />
       )}
       {vehicleInformation && (
         <Box marginBottom={3} marginTop={4}>
+          <Text variant="h5" paddingBottom={3}>
+            {formatMessage(messages.publicSearchTitle)}
+          </Text>
           <Table.Table>
             <Table.Head>
               <Table.HeadData>
                 <Text fontWeight="semiBold">
-                  {formatMessage(
-                    translationStrings.vehicleInformationTableHeaderText,
-                  )}
+                  {[vehicleInformation.make, vehicleInformation.permno]
+                    .filter(Boolean)
+                    .join(' - ')}
                 </Text>
               </Table.HeadData>
               <Table.HeadData />
@@ -174,7 +170,7 @@ const PublicVehicleSearch = () => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(translationStrings.vehicleCommercialName)}
+                      {formatMessage(messages.publicSearchVehicleType)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -186,7 +182,7 @@ const PublicVehicleSearch = () => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(translationStrings.regno)}
+                      {formatMessage(messages.publicSearchRegno)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -198,7 +194,7 @@ const PublicVehicleSearch = () => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(translationStrings.permno)}
+                      {formatMessage(messages.publicSearchPermno)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -210,7 +206,7 @@ const PublicVehicleSearch = () => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(translationStrings.vin)}
+                      {formatMessage(messages.publicSearchVin)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -222,7 +218,7 @@ const PublicVehicleSearch = () => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(translationStrings.firstRegDate)}
+                      {formatMessage(messages.publicSearchFirstRegDate)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -230,11 +226,11 @@ const PublicVehicleSearch = () => {
                   </Table.Data>
                 </Table.Row>
               )}
-              {vehicleInformation.co2 && (
+              {vehicleInformation.co2 != null && (
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(translationStrings.co2NEDC)}
+                      {formatMessage(messages.publicSearchCo2Nedc)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -242,11 +238,11 @@ const PublicVehicleSearch = () => {
                   </Table.Data>
                 </Table.Row>
               )}
-              {vehicleInformation.weightedCo2 && (
+              {vehicleInformation.weightedCo2 != null && (
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(translationStrings.weightedCo2NEDC)}
+                      {formatMessage(messages.publicSearchWeightedCo2Nedc)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -254,11 +250,11 @@ const PublicVehicleSearch = () => {
                   </Table.Data>
                 </Table.Row>
               )}
-              {vehicleInformation.co2WLTP && (
+              {vehicleInformation.co2WLTP != null && (
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(translationStrings.Co2WLTP)}
+                      {formatMessage(messages.publicSearchCo2Wltp)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -266,11 +262,11 @@ const PublicVehicleSearch = () => {
                   </Table.Data>
                 </Table.Row>
               )}
-              {vehicleInformation.weightedCo2WLTP && (
+              {vehicleInformation.weightedCo2WLTP != null && (
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(translationStrings.weightedCo2WLTP)}
+                      {formatMessage(messages.publicSearchWeightedCo2Wltp)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -282,7 +278,7 @@ const PublicVehicleSearch = () => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(translationStrings.mass)}
+                      {formatMessage(messages.publicSearchMass)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -296,7 +292,7 @@ const PublicVehicleSearch = () => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(translationStrings.massLaden)}
+                      {formatMessage(messages.publicSearchMassLaden)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -310,7 +306,7 @@ const PublicVehicleSearch = () => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(translationStrings.vehicleStatus)}
+                      {formatMessage(messages.publicSearchVehicleStatus)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
@@ -322,9 +318,7 @@ const PublicVehicleSearch = () => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {formatMessage(
-                        translationStrings.nextVehicleMainInspection,
-                      )}
+                      {formatMessage(messages.publicSearchNextInspection)}
                     </Text>
                   </Table.Data>
                   <Table.Data>
