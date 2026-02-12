@@ -247,14 +247,10 @@ jobs:
       - prepare
     runs-on: arc-shared
     timeout-minutes: 35
-    if: needs.prepare.outputs.LINT_CHUNKS
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
