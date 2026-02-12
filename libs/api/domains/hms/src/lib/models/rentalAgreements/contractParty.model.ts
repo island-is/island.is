@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { Address } from './address.model'
-import { PartyType } from './rentalAgreement.model'
+import { PartyType } from '../../enums'
 
 @ObjectType('HmsContractParty')
 export class ContractParty {
