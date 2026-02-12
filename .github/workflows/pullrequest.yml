@@ -262,19 +262,8 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Create output directory for lint output
-        run: |
-          mkdir -p dist/
-          echo "HEAD_LINT_FILE_PATH=dist/lints-processed-head.txt" >> "$GITHUB_ENV"
-          echo "BASE_LINT_FILE_PATH=dist/lints-processed-base.txt" >> "$GITHUB_ENV"
-
-      - name: Lint head
-        id: lint-head
-        run: |
-          ./scripts/ci/lint-and-parse.sh \
-            "$AFFECTED_PROJECTS" \
-            "$HEAD_LINT_FILE_PATH"
-          echo "lints-file=$HEAD_LINT_FILE_PATH" | tee -a "$GITHUB_OUTPUT"
+      - name: 
+        run: yarn nx affected --target=lint
 
   build:
     needs:
