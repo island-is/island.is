@@ -20,7 +20,6 @@ export class IcelandicGovernmentEmployeesService {
     locale: Locale,
     activeOnly: boolean,
   ): Promise<EmployeeCollection> {
-
     this.logger.info('FETCHING EMPLOYEES', {
       category,
     })
@@ -37,22 +36,24 @@ export class IcelandicGovernmentEmployeesService {
     })
 
     this.logger.info('EMPLOYEES MAPPED', {
-       category,
+      category,
     })
     const mappedEmployees = employees.map((e) => mapEmployee(e))
 
     this.logger.info('EMPLOYEES FILTERED', {
-       category,
+      category,
     })
     const filteredEmployees = mappedEmployees.filter(isDefined)
 
     this.logger.info('EMPLOYEES SORTED', {
-       category,
+      category,
     })
-    const sortedEmployees = filteredEmployees.sort((a, b) => a.name.localeCompare(b.name, locale))
+    const sortedEmployees = filteredEmployees.sort((a, b) =>
+      a.name.localeCompare(b.name, locale),
+    )
 
     this.logger.info('EMPLOYEES COUNTED', {
-       category,
+      category,
     })
     const totalCount = sortedEmployees.length
 
@@ -73,7 +74,7 @@ export class IcelandicGovernmentEmployeesService {
       filteredEmployeesCount: filteredEmployees.length,
       sortedEmployeesCount: sortedEmployees.length,
       totalCount,
-      pageInfo
+      pageInfo,
     })
     return {
       data: sortedEmployees,
