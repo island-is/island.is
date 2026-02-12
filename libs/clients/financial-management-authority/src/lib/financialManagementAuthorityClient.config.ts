@@ -21,7 +21,7 @@ export const FinancialManagementAuthorityClientConfig = defineConfig<
     ),
     basePath: env.required(
       'FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
-      'https://fjs-cdn-endpoint-elfur-dev-c6epg2fhcyc2a5bh.a03.azurefd.net',
+      'https://fjs-cdn-endpoint-elfur-dev-hhesbzhxabbwbqen.a03.azurefd.net',
     ),
     clientId: env.required(
       'FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID',
