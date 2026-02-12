@@ -155,7 +155,7 @@ const appSystemForm = appSystemFormSetup()
 const web = webSetup({ api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
-const contentfulApps = contentfulAppsSetup()
+const contentfulApps = contentfulAppsSetup({ api })
 const consultationPortal = consultationPortalSetup({ api })
 
 const xroadCollector = xroadCollectorSetup()
@@ -327,7 +327,7 @@ export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 
 // Services that are included in some environment above but should be excluded from feature deployments
 export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
-  userNotificationService,
+  // userNotificationService,
   userNotificationWorkerService,
   userNotificationCleanupWorkerService,
   userNotificationBirthdayWorkerService,
