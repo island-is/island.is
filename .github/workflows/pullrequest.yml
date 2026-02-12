@@ -254,6 +254,9 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
+      - name: Fetch NX_BASE commit
+        run: git fetch --depth=1 origin ${{ needs.prepare.outputs.NX_BASE }}
+
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
