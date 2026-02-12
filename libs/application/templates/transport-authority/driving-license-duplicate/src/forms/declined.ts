@@ -11,13 +11,13 @@ import { Application, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { requirementsMet } from '../lib/utils'
 import { format as formatNationalId } from 'kennitala'
-import { DistrictCommissionersServiceProviderLogo } from '@island.is/application/assets/institution-logos'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 
 export const declined: Form = buildForm({
   id: 'declined',
   mode: FormModes.REJECTED,
   renderLastScreenButton: true,
-  logo: DistrictCommissionersServiceProviderLogo,
+  logo: DistrictCommissionersLogo,
   children: [
     buildMultiField({
       id: 'listRejected',
