@@ -140,12 +140,23 @@ export const createCardPaymentSaga = (
           ctx.trackingData.correlationId,
         )
 
-      if (deletedPaymentConfirmation) {
+      if (!deletedPaymentConfirmation) {
+        throw new Error('Failed to delete payment confirmation during rollback')
+      }
+
+      const deletedPaymentFulfillment =
         await paymentFlowService.deletePaymentFulfillment({
           paymentFlowId: ctx.paymentFlowId,
           confirmationRefId: deletedPaymentConfirmation.id,
           correlationId: ctx.trackingData.correlationId,
         })
+
+      if (!deletedPaymentFulfillment) {
+        await paymentFlowService.restoreCardPaymentConfirmation(
+          ctx.paymentFlowId,
+          ctx.trackingData.correlationId,
+        )
+        throw new Error('Failed to delete payment fulfillment during rollback')
       }
     },
   },

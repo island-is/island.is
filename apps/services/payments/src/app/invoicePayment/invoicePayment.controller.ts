@@ -84,7 +84,6 @@ export class InvoicePaymentController {
         generateChargeFJSPayload({
           paymentFlow,
           charges: catalogItems,
-          totalPrice,
           systemId: environment.chargeFjs.systemId,
           returnUrl: callbackUrl,
         }),

@@ -237,7 +237,6 @@ export const generateCardChargeFJSPayload = ({
         ? PayInfoPaymentMeansEnum.Debetkort
         : PayInfoPaymentMeansEnum.Kreditkort,
     },
-    totalPrice,
   })
 }
 

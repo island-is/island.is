@@ -78,7 +78,72 @@ export const createRefundSaga = (
         hasFjsCharge,
       }
     },
-    // if there is a fjs charge, delete it (fjs will handle refund), otherwise refund via payment gateway
+    nextStep: 'DELETE_CARD_PAYMENT_CONFIRMATION',
+  },
+  DELETE_CARD_PAYMENT_CONFIRMATION: {
+    name: 'DELETE_CARD_PAYMENT_CONFIRMATION',
+    description:
+      'Mark the card payment confirmation and payment fulfillment records as deleted to prevent double refunds',
+    execute: async (ctx) => {
+      const { cardPaymentConfirmation } = requireStepResult(
+        ctx,
+        'VALIDATE_REFUND',
+      )
+
+      const deletedPaymentConfirmation =
+        await paymentFlowService.deleteCardPaymentConfirmation(
+          ctx.paymentFlowId,
+          cardPaymentConfirmation.id,
+        )
+
+      if (!deletedPaymentConfirmation) {
+        throw new BadRequestException(
+          PaymentServiceCode.CouldNotDeletePaymentConfirmation,
+        )
+      }
+
+      const deletedPaymentFulfillment =
+        await paymentFlowService.deletePaymentFulfillment({
+          paymentFlowId: ctx.paymentFlowId,
+          confirmationRefId: deletedPaymentConfirmation.id,
+          correlationId: cardPaymentConfirmation.id,
+        })
+
+      if (!deletedPaymentFulfillment) {
+        throw new BadRequestException(
+          PaymentServiceCode.CouldNotDeletePaymentFulfillment,
+        )
+      }
+
+      return {
+        deletedPaymentConfirmation,
+        deletedPaymentFulfillment,
+      }
+    },
+    compensate: async (ctx) => {
+      const { deletedPaymentConfirmation, deletedPaymentFulfillment } =
+        requireStepResult(ctx, 'DELETE_CARD_PAYMENT_CONFIRMATION')
+
+      if (deletedPaymentConfirmation) {
+        logger.info(
+          `[${ctx.paymentFlowId}][REFUND] Restoring payment confirmation after refund step failed`,
+        )
+        await paymentFlowService.restoreCardPaymentConfirmation(
+          ctx.paymentFlowId,
+          deletedPaymentConfirmation.id,
+        )
+      }
+
+      if (deletedPaymentFulfillment && deletedPaymentConfirmation) {
+        logger.info(
+          `[${ctx.paymentFlowId}][REFUND] Restoring payment fulfillment after refund step failed`,
+        )
+        await paymentFlowService.restorePaymentFulfillment({
+          paymentFlowId: ctx.paymentFlowId,
+          confirmationRefId: deletedPaymentConfirmation.id,
+        })
+      }
+    },
     nextStep: (ctx) =>
       ctx.stepResults.VALIDATE_REFUND?.hasFjsCharge
         ? 'DELETE_FJS_CHARGE'
@@ -95,16 +160,12 @@ export const createRefundSaga = (
       return { action: 'deleted_fjs' as const }
     },
     compensate: async (ctx) => {
-      logger.error(
-        `[${ctx.paymentFlowId}][REFUND][CRITICAL] FJS charge deleted but later step failed. ` +
-          `Database may be inconsistent`,
-      )
       ctx.metadata = {
         ...ctx.metadata,
         refundSucceededButRollbackFailed: true,
       }
     },
-    nextStep: 'DELETE_CARD_PAYMENT_CONFIRMATION',
+    nextStep: 'LOG_REFUND_SUCCESS',
   },
   REFUND_PAYMENT: {
     name: 'REFUND_PAYMENT',
@@ -135,39 +196,9 @@ export const createRefundSaga = (
       return { action: 'refunded' as const, refundResult }
     },
     compensate: async (ctx) => {
-      logger.error(
-        `[${ctx.paymentFlowId}][REFUND][CRITICAL] Refund succeeded but later step failed. ` +
-          `Money refunded to customer but database may be inconsistent`,
-      )
       ctx.metadata = {
         ...ctx.metadata,
         refundSucceededButRollbackFailed: true,
-      }
-    },
-    nextStep: 'DELETE_CARD_PAYMENT_CONFIRMATION',
-  },
-  DELETE_CARD_PAYMENT_CONFIRMATION: {
-    name: 'DELETE_CARD_PAYMENT_CONFIRMATION',
-    description:
-      'Mark the card payment confirmation and payment fulfillment records as deleted to prevent double refunds',
-    execute: async (ctx) => {
-      const { cardPaymentConfirmation } = requireStepResult(
-        ctx,
-        'VALIDATE_REFUND',
-      )
-
-      const deletedPaymentConfirmation =
-        await paymentFlowService.deleteCardPaymentConfirmation(
-          ctx.paymentFlowId,
-          cardPaymentConfirmation.id,
-        )
-
-      if (deletedPaymentConfirmation) {
-        await paymentFlowService.deletePaymentFulfillment({
-          paymentFlowId: ctx.paymentFlowId,
-          confirmationRefId: deletedPaymentConfirmation.id,
-          correlationId: cardPaymentConfirmation.id,
-        })
       }
     },
     nextStep: 'LOG_REFUND_SUCCESS',

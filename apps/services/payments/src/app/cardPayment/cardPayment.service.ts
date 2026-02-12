@@ -278,6 +278,9 @@ export class CardPaymentService {
       throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
     }
 
+    // validate the payment flow against FJS
+    await this.paymentFlowService.validateCharge(paymentFlow, catalogItems)
+
     return {
       paymentFlow,
       catalogItems,

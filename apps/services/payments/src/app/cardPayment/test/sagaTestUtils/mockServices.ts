@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid'
+import { jest } from '@jest/globals'
 
 import type { CardPaymentService } from '../../cardPayment.service'
 import type { PaymentFlowService } from '../../../paymentFlow/paymentFlow.service'
@@ -11,33 +12,46 @@ import {
   PAYMENT_FLOW_ID,
 } from './mocks'
 
+/** Cast for mockResolvedValue to satisfy strict jest.Mock from @jest/globals */
+const resolved = <T>(v: T): never => v as never
+
 /**
  * Creates a mock CardPaymentService with default resolutions for saga tests.
  * Override individual methods in tests as needed.
  */
 export const createMockCardPaymentService = (
   overrides: Partial<Record<keyof CardPaymentService, jest.Mock>> = {},
-): jest.Mocked<CardPaymentService> =>
-  ({
-    validatePaymentFlow: jest.fn().mockResolvedValue({
-      paymentFlow: mockPaymentFlow,
-      catalogItems: mockCatalogItems,
-      totalPrice: 1000,
-      paymentStatus: 'unpaid',
-    }),
-    charge: jest.fn().mockResolvedValue(mockPaymentResult),
-    chargeApplePay: jest.fn().mockResolvedValue(mockPaymentResult),
-    persistPaymentConfirmation: jest.fn().mockResolvedValue(undefined),
-    refund: jest.fn().mockResolvedValue({
-      isSuccess: true,
-      acquirerReferenceNumber: 'refund-arn',
-    }),
-    refundWithCorrelationId: jest.fn().mockResolvedValue({
-      isSuccess: true,
-      acquirerReferenceNumber: 'refund-arn',
-    }),
+): jest.Mocked<CardPaymentService> => {
+  const mock: Record<string, jest.Mock> = {
+    validatePaymentFlow: jest.fn().mockResolvedValue(
+      resolved({
+        paymentFlow: mockPaymentFlow,
+        catalogItems: mockCatalogItems,
+        totalPrice: 1000,
+        paymentStatus: 'unpaid',
+      }),
+    ),
+    charge: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
+    chargeApplePay: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
+    persistPaymentConfirmation: jest
+      .fn()
+      .mockResolvedValue(resolved(undefined)),
+    refund: jest.fn().mockResolvedValue(
+      resolved({
+        isSuccess: true,
+        acquirerReferenceNumber: 'refund-arn',
+      }),
+    ),
+    refundWithCorrelationId: jest.fn().mockResolvedValue(
+      resolved({
+        isSuccess: true,
+        acquirerReferenceNumber: 'refund-arn',
+      }),
+    ),
     ...overrides,
-  } as unknown as jest.Mocked<CardPaymentService>)
+  }
+  return mock as unknown as jest.Mocked<CardPaymentService>
+}
 
 /**
  * Creates a mock PaymentFlowService with default resolutions for saga tests.
@@ -45,21 +59,27 @@ export const createMockCardPaymentService = (
  */
 export const createMockPaymentFlowService = (
   overrides: Partial<Record<keyof PaymentFlowService, jest.Mock>> = {},
-): jest.Mocked<PaymentFlowService> =>
-  ({
-    logPaymentFlowUpdate: jest.fn().mockResolvedValue(undefined),
-    deleteCardPaymentConfirmation: jest.fn().mockResolvedValue({
-      id: uuid(),
-      paymentFlowId: PAYMENT_FLOW_ID,
-    }),
-    deletePaymentFulfillment: jest.fn().mockResolvedValue({}),
+): jest.Mocked<PaymentFlowService> => {
+  const mock: Record<string, jest.Mock> = {
+    logPaymentFlowUpdate: jest.fn().mockResolvedValue(resolved(undefined)),
+    validateCharge: jest.fn().mockResolvedValue(resolved(undefined)),
+    deleteCardPaymentConfirmation: jest.fn().mockResolvedValue(
+      resolved({
+        id: uuid(),
+        paymentFlowId: PAYMENT_FLOW_ID,
+      }),
+    ),
+    deletePaymentFulfillment: jest.fn().mockResolvedValue(resolved({})),
+    restoreCardPaymentConfirmation: jest.fn().mockResolvedValue(resolved({})),
+    restorePaymentFulfillment: jest.fn().mockResolvedValue(resolved({})),
     findPaymentFulfillmentForPaymentFlow: jest
       .fn()
-      .mockResolvedValue(mockPaymentFulfillmentWithoutFjs),
+      .mockResolvedValue(resolved(mockPaymentFulfillmentWithoutFjs)),
     getCardPaymentConfirmationForPaymentFlow: jest
       .fn()
-      .mockResolvedValue(mockCardPaymentConfirmation),
-    deleteFjsCharge: jest.fn().mockResolvedValue(undefined),
-    deletePaymentFulfillment: jest.fn().mockResolvedValue({}),
+      .mockResolvedValue(resolved(mockCardPaymentConfirmation)),
+    deleteFjsCharge: jest.fn().mockResolvedValue(resolved(undefined)),
     ...overrides,
-  } as unknown as jest.Mocked<PaymentFlowService>)
+  }
+  return mock as unknown as jest.Mocked<PaymentFlowService>
+}

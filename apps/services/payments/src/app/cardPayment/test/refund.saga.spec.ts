@@ -213,7 +213,7 @@ describe('Refund Saga', () => {
   })
 
   describe('executes all steps in sequence', () => {
-    it('REFUND_PAYMENT path completes all steps', async () => {
+    it('REFUND_PAYMENT path completes all steps in order', async () => {
       const { context, saga, orchestrator } = setupSaga()
       const result = await orchestrator.execute(
         saga,
@@ -222,15 +222,15 @@ describe('Refund Saga', () => {
       )
 
       expect(result.success).toBe(true)
-      expect(context.completedSteps).toContain('VALIDATE_REFUND')
-      expect(context.completedSteps).toContain('REFUND_PAYMENT')
-      expect(context.completedSteps).toContain(
+      expect(context.completedSteps).toEqual([
+        'VALIDATE_REFUND',
         'DELETE_CARD_PAYMENT_CONFIRMATION',
-      )
-      expect(context.completedSteps).toContain('LOG_REFUND_SUCCESS')
+        'REFUND_PAYMENT',
+        'LOG_REFUND_SUCCESS',
+      ])
     })
 
-    it('DELETE_FJS_CHARGE path completes all steps', async () => {
+    it('DELETE_FJS_CHARGE path completes all steps in order', async () => {
       mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
         mockPaymentFulfillmentWithFjs,
       )
@@ -243,26 +243,108 @@ describe('Refund Saga', () => {
       )
 
       expect(result.success).toBe(true)
-      expect(context.completedSteps).toContain('VALIDATE_REFUND')
-      expect(context.completedSteps).toContain('DELETE_FJS_CHARGE')
-      expect(context.completedSteps).toContain(
+      expect(context.completedSteps).toEqual([
+        'VALIDATE_REFUND',
         'DELETE_CARD_PAYMENT_CONFIRMATION',
-      )
-      expect(context.completedSteps).toContain('LOG_REFUND_SUCCESS')
+        'DELETE_FJS_CHARGE',
+        'LOG_REFUND_SUCCESS',
+      ])
     })
   })
 
-  describe('REFUND_PAYMENT compensate', () => {
-    it('should set refundSucceededButRollbackFailed when DELETE_CARD_PAYMENT_CONFIRMATION fails', async () => {
-      mockPaymentFlowService.deleteCardPaymentConfirmation.mockRejectedValue(
-        new Error('Database error'),
+  describe('DELETE_CARD_PAYMENT_CONFIRMATION failure', () => {
+    it('should throw and not call refund when deleteCardPaymentConfirmation returns null', async () => {
+      mockPaymentFlowService.deleteCardPaymentConfirmation.mockResolvedValue(
+        null,
       )
 
       const { context, saga, orchestrator } = setupSaga()
 
       await expect(
         orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
-      ).rejects.toThrow('Database error')
+      ).rejects.toThrow(PaymentServiceCode.CouldNotDeletePaymentConfirmation)
+
+      expect(
+        mockCardPaymentService.refundWithCorrelationId,
+      ).not.toHaveBeenCalled()
+      expect(
+        mockPaymentFlowService.restoreCardPaymentConfirmation,
+      ).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('REFUND_PAYMENT failure triggers restore', () => {
+    it('should call restore when REFUND_PAYMENT fails', async () => {
+      mockCardPaymentService.refundWithCorrelationId.mockRejectedValue(
+        new Error('Refund failed'),
+      )
+
+      const { input, context, saga, orchestrator } = setupSaga()
+
+      await expect(
+        orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
+      ).rejects.toThrow('Refund failed')
+
+      expect(
+        mockPaymentFlowService.restoreCardPaymentConfirmation,
+      ).toHaveBeenCalledWith(input.paymentFlowId, expect.any(String))
+      expect(
+        mockPaymentFlowService.restorePaymentFulfillment,
+      ).toHaveBeenCalledWith({
+        paymentFlowId: input.paymentFlowId,
+        confirmationRefId: expect.any(String),
+      })
+      expect(context.metadata?.refundSucceededButRollbackFailed).toBeUndefined()
+    })
+  })
+
+  describe('DELETE_FJS_CHARGE failure triggers restore', () => {
+    beforeEach(() => {
+      mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
+        mockPaymentFulfillmentWithFjs,
+      )
+    })
+
+    it('should call restore when DELETE_FJS_CHARGE fails', async () => {
+      mockPaymentFlowService.deleteFjsCharge.mockRejectedValue(
+        new Error('FJS delete failed'),
+      )
+
+      const { input, context, saga, orchestrator } = setupSaga()
+
+      await expect(
+        orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
+      ).rejects.toThrow('FJS delete failed')
+
+      expect(
+        mockPaymentFlowService.restoreCardPaymentConfirmation,
+      ).toHaveBeenCalledWith(input.paymentFlowId, expect.any(String))
+      expect(
+        mockPaymentFlowService.restorePaymentFulfillment,
+      ).toHaveBeenCalledWith({
+        paymentFlowId: input.paymentFlowId,
+        confirmationRefId: expect.any(String),
+      })
+      expect(context.metadata?.refundSucceededButRollbackFailed).toBeUndefined()
+    })
+  })
+
+  describe('REFUND_PAYMENT compensate', () => {
+    it('should set refundSucceededButRollbackFailed when LOG_REFUND_SUCCESS fails after refund', async () => {
+      mockPaymentFlowService.logPaymentFlowUpdate.mockImplementation(
+        async (update: { reason?: string }) => {
+          if (update.reason === 'refund_completed') {
+            throw new Error('Log failed')
+          }
+          return undefined as never
+        },
+      )
+
+      const { context, saga, orchestrator } = setupSaga()
+
+      await expect(
+        orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
+      ).rejects.toThrow('Log failed')
 
       expect(context.metadata?.refundSucceededButRollbackFailed).toBe(true)
     })
@@ -275,16 +357,21 @@ describe('Refund Saga', () => {
       )
     })
 
-    it('should set refundSucceededButRollbackFailed when DELETE_CARD_PAYMENT_CONFIRMATION fails after FJS delete', async () => {
-      mockPaymentFlowService.deleteCardPaymentConfirmation.mockRejectedValue(
-        new Error('Database error'),
+    it('should set refundSucceededButRollbackFailed when LOG_REFUND_SUCCESS fails after FJS delete', async () => {
+      mockPaymentFlowService.logPaymentFlowUpdate.mockImplementation(
+        async (update: { reason?: string }) => {
+          if (update.reason === 'refund_completed') {
+            throw new Error('Log failed')
+          }
+          return undefined as never
+        },
       )
 
       const { context, saga, orchestrator } = setupSaga()
 
       await expect(
         orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
-      ).rejects.toThrow('Database error')
+      ).rejects.toThrow('Log failed')
 
       expect(context.metadata?.refundSucceededButRollbackFailed).toBe(true)
     })

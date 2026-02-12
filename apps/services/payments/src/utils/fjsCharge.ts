@@ -18,7 +18,6 @@ export interface GenerateChargeFJSPayloadInput {
     CatalogItemWithQuantity,
     'chargeType' | 'priceAmount' | 'chargeItemCode' | 'quantity'
   >[]
-  totalPrice: number
   systemId: string
   payInfo?: PayInfo // If this is skipped, then the charge will create an invoice
   returnUrl?: string

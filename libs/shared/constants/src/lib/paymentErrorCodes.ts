@@ -18,10 +18,9 @@ export enum PaymentServiceCode {
   ChargeItemCodesNotFound = 'ChargeItemCodesNotFound',
   UpstreamNotificationFailure = 'UpstreamNotificationFailure',
   UnknownPaymentServiceError = 'UnknownPaymentServiceError',
-  PaymentFlowNotEligibleToBeFinalized = 'PaymentFlowNotEligibleToBeFinalized',
-  PaymentFlowAlreadyFinalized = 'PaymentFlowAlreadyFinalized',
-  PaymentFinalizationFailed = 'PaymentFinalizationFailed',
   PaymentFlowNotEligibleToBeRefunded = 'PaymentFlowNotEligibleToBeRefunded',
+  CouldNotDeletePaymentConfirmation = 'CouldNotDeletePaymentConfirmation',
+  CouldNotDeletePaymentFulfillment = 'CouldNotDeletePaymentFulfillment',
 }
 
 export enum CardErrorCode {

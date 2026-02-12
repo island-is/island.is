@@ -15,6 +15,7 @@ import {
   SagaDefinition,
 } from '../../utils/orchestrator'
 import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
+import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
@@ -145,7 +146,10 @@ export interface RefundStepResults {
   }
   DELETE_FJS_CHARGE: { action: 'deleted_fjs' }
   REFUND_PAYMENT: { action: 'refunded'; refundResult: RefundSuccessResponse }
-  DELETE_CARD_PAYMENT_CONFIRMATION: void
+  DELETE_CARD_PAYMENT_CONFIRMATION: {
+    deletedPaymentConfirmation: InferAttributes<CardPaymentDetails> | null
+    deletedPaymentFulfillment: InferAttributes<PaymentFulfillment> | null
+  }
   LOG_REFUND_SUCCESS: void
 }
 

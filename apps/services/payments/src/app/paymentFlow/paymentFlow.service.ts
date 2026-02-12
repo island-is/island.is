@@ -93,8 +93,6 @@ export class PaymentFlowService {
     private readonly cardPaymentDetailsModel: typeof CardPaymentDetails,
     @InjectModel(PaymentFulfillment)
     private readonly paymentFulfillmentModel: typeof PaymentFulfillment,
-    @InjectModel(PaymentWorkerEvent)
-    private readonly paymentWorkerEventModel: typeof PaymentWorkerEvent,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
@@ -119,56 +117,55 @@ export class PaymentFlowService {
         processedCharges,
       )
 
-      await this.chargeFjsV2ClientService.validateCharge(
-        generateChargeFJSPayload({
-          paymentFlow: {
-            id: paymentFlowId,
-            organisationId: paymentInfo.organisationId,
-            payerNationalId: paymentInfo.payerNationalId,
-            extraData: paymentInfo.extraData,
-            chargeItemSubjectId: paymentInfo.chargeItemSubjectId,
-          },
-          charges: chargeDetails.catalogItems,
-          totalPrice: chargeDetails.totalPrice,
-          systemId: environment.chargeFjs.systemId,
-          returnUrl: paymentInfo.returnUrl,
-        }),
-      )
-
-      const paymentFlow = await this.paymentFlowModel.create({
-        ...paymentInfo,
-        id: paymentFlowId,
-        charges: [],
-      })
-
-      await this.paymentFlowChargeModel.bulkCreate(
-        processedCharges.map((charge) => ({
-          ...charge,
-          paymentFlowId,
-        })),
-      )
-
-      this.logger.info(
-        `[${paymentFlow.id}] Payment flow created [${paymentFlow.organisationId}]`,
+      await this.validateCharge(
         {
-          charges: processedCharges.map((c) => c.chargeItemCode),
+          id: paymentFlowId,
+          organisationId: paymentInfo.organisationId,
+          payerNationalId: paymentInfo.payerNationalId,
+          extraData: paymentInfo.extraData,
+          chargeItemSubjectId: paymentInfo.chargeItemSubjectId,
         },
+        chargeDetails.catalogItems,
       )
 
-      return {
-        id: paymentFlow.id,
-        urls: {
-          is: `${this.paymentFlowConfig.webOrigin}/is/${paymentFlow.id}`,
-          en: `${this.paymentFlowConfig.webOrigin}/en/${paymentFlow.id}`,
-        },
-      }
+      return await this.sequelize.transaction(async (transaction) => {
+        const paymentFlow = await this.paymentFlowModel.create(
+          {
+            ...paymentInfo,
+            id: paymentFlowId,
+            charges: [],
+          },
+          { transaction },
+        )
+
+        await this.paymentFlowChargeModel.bulkCreate(
+          processedCharges.map((charge) => ({
+            ...charge,
+            paymentFlowId,
+          })),
+          { transaction },
+        )
+
+        this.logger.info(
+          `[${paymentFlow.id}] Payment flow created [${paymentFlow.organisationId}]`,
+          {
+            charges: processedCharges.map((c) => c.chargeItemCode),
+          },
+        )
+
+        return {
+          id: paymentFlow.id,
+          urls: {
+            is: `${this.paymentFlowConfig.webOrigin}/is/${paymentFlow.id}`,
+            en: `${this.paymentFlowConfig.webOrigin}/en/${paymentFlow.id}`,
+          },
+        }
+      })
     } catch (e) {
       this.logger.error('Failed to create payment url', e)
 
-      const fjsCode = mapFjsErrorToCode(e, true)
-
-      if (fjsCode !== null) {
-        throw new BadRequestException(fjsCode)
+      if (e instanceof BadRequestException) {
+        throw e
       }
 
       // TODO: Map error codes to PaymentServiceCode
@@ -188,8 +185,8 @@ export class PaymentFlowService {
     const { item } =
       await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
         performingOrgID: organisationId,
-        // chargeType: charges[0].chargeType,
-        // chargeItemCode: charges.map((c) => c.chargeItemCode),
+        chargeType: charges[0].chargeType,
+        chargeItemCode: charges.map((c) => c.chargeItemCode),
       })
 
     const filteredChargeInformation: CatalogItemWithQuantity[] = []
@@ -239,6 +236,40 @@ export class PaymentFlowService {
         0,
       ),
       catalogItems: filteredChargeInformation,
+    }
+  }
+
+  /**
+   * Validates a charge payload against FJS.
+   * @param chargePayload - The charge payload to validate
+   */
+  async validateCharge(
+    paymentFlow: Pick<
+      PaymentFlowAttributes,
+      | 'id'
+      | 'organisationId'
+      | 'payerNationalId'
+      | 'extraData'
+      | 'chargeItemSubjectId'
+      | 'returnUrl'
+    >,
+    charges: CatalogItemWithQuantity[],
+  ): Promise<void> {
+    try {
+      await this.chargeFjsV2ClientService.validateCharge(
+        generateChargeFJSPayload({
+          paymentFlow,
+          charges,
+          systemId: environment.chargeFjs.systemId,
+          returnUrl: paymentFlow.returnUrl,
+        }),
+      )
+    } catch (e) {
+      const fjsCode = mapFjsErrorToCode(e, true)
+
+      throw new BadRequestException(
+        fjsCode ?? PaymentServiceCode.UnknownPaymentServiceError,
+      )
     }
   }
 
@@ -858,6 +889,7 @@ export class PaymentFlowService {
       if (isNetworkError(e)) {
         throw new BadRequestException(FJS_NETWORK_ERROR)
       }
+
       const code = mapFjsErrorToCode(e, true)
       if (code === FjsErrorCode.AlreadyCreatedCharge) {
         this.logger.error(
@@ -880,17 +912,19 @@ export class PaymentFlowService {
     fjsChargeId: string,
     hasPayInfo: boolean,
   ): Promise<void> {
-    await this.paymentFlowModel.update(
-      { existingInvoiceId: receptionId },
-      { where: { id: paymentFlowId } },
-    )
-
-    if (hasPayInfo) {
-      await this.paymentFulfillmentModel.update(
-        { fjsChargeId },
-        { where: { paymentFlowId, isDeleted: false } },
+    await this.sequelize.transaction(async (transaction) => {
+      await this.paymentFlowModel.update(
+        { existingInvoiceId: receptionId },
+        { where: { id: paymentFlowId }, transaction },
       )
-    }
+
+      if (hasPayInfo) {
+        await this.paymentFulfillmentModel.update(
+          { fjsChargeId },
+          { where: { paymentFlowId, isDeleted: false }, transaction },
+        )
+      }
+    })
   }
 
   /**
@@ -1124,6 +1158,76 @@ export class PaymentFlowService {
       return null
     }
   }
+
+  async restoreCardPaymentConfirmation(
+    paymentFlowId: string,
+    correlationId: string,
+  ): Promise<InferAttributes<CardPaymentDetails> | null> {
+    this.logger.info(
+      `Attempting to restore payment confirmation for flow ${paymentFlowId} with correlation ID ${correlationId}`,
+    )
+    const [updatedCount, [restoredCardPaymentDetails]] =
+      await this.cardPaymentDetailsModel.update(
+        { isDeleted: false },
+        {
+          where: {
+            id: correlationId,
+            paymentFlowId,
+            isDeleted: true,
+          },
+          returning: true,
+        },
+      )
+
+    if (updatedCount > 0) {
+      this.logger.info(
+        `Successfully restored payment confirmation for flow ${paymentFlowId}, correlation ID ${correlationId}`,
+      )
+    } else {
+      this.logger.warn(
+        `Payment confirmation not found or not restored for flow ${paymentFlowId}, correlation ID ${correlationId}`,
+      )
+    }
+
+    return restoredCardPaymentDetails?.toJSON() ?? null
+  }
+
+  async restorePaymentFulfillment({
+    paymentFlowId,
+    confirmationRefId,
+  }: {
+    paymentFlowId: string
+    confirmationRefId: string
+  }): Promise<InferAttributes<PaymentFulfillment> | null> {
+    this.logger.info(
+      `Attempting to restore payment fulfillment for flow ${paymentFlowId} with confirmationRefId ${confirmationRefId}`,
+    )
+    const [updatedCount, [restoredPaymentFulfillment]] =
+      await this.paymentFulfillmentModel.update(
+        { isDeleted: false },
+        {
+          where: {
+            confirmationRefId,
+            paymentFlowId,
+            isDeleted: true,
+          },
+          returning: true,
+        },
+      )
+
+    if (updatedCount > 0) {
+      this.logger.info(
+        `Successfully restored payment fulfillment for flow ${paymentFlowId}, confirmationRefId ${confirmationRefId}`,
+      )
+    } else {
+      this.logger.warn(
+        `Payment fulfillment not found or not restored for flow ${paymentFlowId}, confirmationRefId ${confirmationRefId}`,
+      )
+    }
+
+    return restoredPaymentFulfillment?.toJSON() ?? null
+  }
+
   async searchPaymentFlows(
     payerNationalId?: string,
     search?: string,
