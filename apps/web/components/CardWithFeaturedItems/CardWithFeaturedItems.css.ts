@@ -7,6 +7,7 @@ export const container = style({
   minWidth: 0,
   minHeight: 0,
   overflow: 'hidden',
+  scrollSnapAlign: 'start',
 })
 
 export const image = style({
