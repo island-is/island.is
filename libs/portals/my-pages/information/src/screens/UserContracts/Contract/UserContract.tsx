@@ -1,4 +1,4 @@
-import { Box, Button, Tag } from '@island.is/island-ui/core'
+import { Box, DropdownMenu, Tag } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroWrapper,
@@ -21,10 +21,12 @@ import {
 } from '@island.is/api/schema'
 import { generateRentalAgreementAddress } from '../../../utils/mapAddress'
 import { getApplicationsBaseUrl } from '@island.is/portals/core'
+import { TERMINATED_STATUSES } from './constants'
+import { isDefined } from '@island.is/shared/utils'
 
 const UserContract = () => {
   useNamespaces('sp.contracts')
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatDate } = useLocale()
 
   const { id } = useParams<'id'>()
 
@@ -38,12 +40,12 @@ const UserContract = () => {
     data?.hmsRentalAgreement ?? undefined
 
   const address = useMemo(() => {
-    if (data?.hmsRentalAgreement?.contractProperty) {
+    if (data?.hmsRentalAgreement?.property) {
       return generateRentalAgreementAddress(
-        data.hmsRentalAgreement.contractProperty ?? undefined,
+        data.hmsRentalAgreement.property ?? undefined,
       )
     }
-  }, [data?.hmsRentalAgreement?.contractProperty])
+  }, [data?.hmsRentalAgreement?.property])
 
   const status = useMemo(() => {
     if (
@@ -54,28 +56,40 @@ const UserContract = () => {
     }
   }, [data?.hmsRentalAgreement?.status])
 
+  const documentItems = useMemo(
+    () =>
+      data?.hmsRentalAgreement?.documents
+        ?.map(({ name, downloadUrl }) => {
+          if (!name || !downloadUrl) {
+            return null
+          }
+          return {
+            title: name,
+            onClick: () => formSubmit(downloadUrl),
+          }
+        })
+        .filter(isDefined) ?? [],
+    [data?.hmsRentalAgreement?.documents],
+  )
+
   return (
     <IntroWrapper
       title={address ?? cm.contractsOverviewTitle}
       intro={cm.contractDetailSubtitle}
       serviceProviderSlug={HMS_SLUG}
       serviceProviderTooltip={formatMessage(m.rentalAgreementsTooltip)}
+      loading={loading}
       buttonGroup={[
-        <Button
-          key="download-button"
-          title={formatMessage(cm.downloadAsPdf)}
+        <DropdownMenu
           icon="download"
           iconType="outline"
-          disabled={
-            !!error || loading || !data?.hmsRentalAgreement?.downloadUrl
-          }
-          onClick={() =>
-            formSubmit(data?.hmsRentalAgreement?.downloadUrl ?? '')
-          }
-          variant="utility"
-        >
-          {formatMessage(cm.downloadAsPdf)}
-        </Button>,
+          key="download-template"
+          title={formatMessage(cm.downloadFiles)}
+          menuLabel={formatMessage(cm.downloadFiles)}
+          loading={loading}
+          disabled={!!error || documentItems.length === 0}
+          items={documentItems}
+        />,
         <LinkButton
           key="terminate-button"
           to={`${getApplicationsBaseUrl()}/uppsogn-eda-riftun-leigusamnings`}
@@ -144,6 +158,19 @@ const UserContract = () => {
                 ) : undefined
               }
             />
+            {contract?.status && TERMINATED_STATUSES.includes(contract.status) && (
+              <InfoLine
+                loading={loading}
+                label={cm.terminationDate}
+                content={
+                  contract?.terminationDate
+                    ? formatDate(new Date(contract.terminationDate), {
+                        dateStyle: 'long',
+                      })
+                    : undefined
+                }
+              />
+            )}
           </InfoLineStack>
         </Box>
       )}
