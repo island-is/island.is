@@ -78,7 +78,7 @@ export class SmsService {
   ): Promise<SmsSendResult> {
     const recipientArray = Array.isArray(recipients) ? recipients : [recipients]
     const wait = options?.wait || 'queue'
-    const from = options?.from || 'Island.is'
+    const from = options?.from ?? this.config.senderName ?? 'Island.is'
 
     // Validate recipient count
     if (recipientArray.length === 0) {

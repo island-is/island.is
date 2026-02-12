@@ -31,11 +31,6 @@ const envVariables: EnvironmentVariables = {
     staging: 'https://identity-server.staging01.devland.is',
     prod: 'https://innskra.island.is',
   },
-  NOVA_ACCEPT_UNAUTHORIZED: {
-    dev: 'true',
-    staging: 'false',
-    prod: 'false',
-  },
   AUTH_DELEGATION_API_URL: {
     dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
     staging:
@@ -45,12 +40,17 @@ const envVariables: EnvironmentVariables = {
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
     '@island.is/auth/delegations/index:system',
   ]),
+  NOVA_SENDER_NAME: {
+    dev: 'Island.is | Dev',
+    prod: 'Island.is',
+    staging: 'Island.is | Staging',
+  },
 }
 
 const secrets: Secrets = {
-  NOVA_URL: '/k8s/service-portal-api/NOVA_URL',
-  NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD',
-  NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME',
+  NOVA_URL: '/k8s/NOVA_URL_V1',
+  NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+  NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
   EMAIL_FROM: '/k8s/service-portal/api/EMAIL_FROM',
   EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME',
   EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO',

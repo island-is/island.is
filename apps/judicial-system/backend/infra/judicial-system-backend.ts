@@ -48,11 +48,6 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'COURT,POLICE_CASE',
         prod: '',
       },
-      NOVA_ACCEPT_UNAUTHORIZED: {
-        dev: 'true',
-        staging: 'false',
-        prod: 'false',
-      },
       USE_MICROSOFT_GRAPH_API_FOR_COURT_ROBOT: {
         dev: 'false',
         staging: 'true',
@@ -72,12 +67,17 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      NOVA_SENDER_NAME: {
+        dev: 'Island.is | Dev',
+        prod: 'Island.is',
+        staging: 'Island.is | Staging',
+      },
     })
     .xroad(Base, JudicialSystem)
     .secrets({
-      NOVA_URL: '/k8s/judicial-system/NOVA_URL',
-      NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME',
-      NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD',
+      NOVA_URL: '/k8s/NOVA_URL_V1',
+      NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+      NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
       COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS',
       COURTS_ASSISTANT_MOBILE_NUMBERS:
         '/k8s/judicial-system/COURTS_ASSISTANT_MOBILE_NUMBERS',

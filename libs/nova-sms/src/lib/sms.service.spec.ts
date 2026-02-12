@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 
 import { LoggingModule } from '@island.is/logging'
-import { ConfigModule } from '@island.is/nest/config'
 
 import { smsModuleConfig } from './sms.config'
 import { NovaError, SmsService } from './sms.service'
@@ -13,6 +12,14 @@ const mockFetch = jest.fn()
 jest.mock('@island.is/clients/middlewares', () => ({
   createEnhancedFetch: jest.fn(() => mockFetch),
 }))
+
+// Mock config for testing
+const mockConfig = {
+  url: 'https://smsapi.devnova.is/v1/',
+  username: 'test-user',
+  password: 'test-password-123',
+  senderName: 'Island.is',
+}
 
 const testNumber = '3547801512'
 const testNumber2 = '3548325548'
@@ -58,13 +65,14 @@ describe('SmsService', () => {
     mockFetch.mockClear()
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          load: [smsModuleConfig],
-        }),
-        LoggingModule,
+      imports: [LoggingModule],
+      providers: [
+        SmsService,
+        {
+          provide: smsModuleConfig.KEY,
+          useValue: mockConfig,
+        },
       ],
-      providers: [SmsService],
     }).compile()
 
     smsService = module.get<SmsService>(SmsService)
@@ -91,10 +99,10 @@ describe('SmsService', () => {
         error: false,
       })
 
-      // Verify fetch was called correctly
+      // Verify fetch was called correctly with mock config URL
       expect(mockFetch).toHaveBeenCalledTimes(1)
       expect(mockFetch).toHaveBeenCalledWith(
-        'https://smsapi.devnova.is/v1/',
+        mockConfig.url,
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
@@ -336,8 +344,74 @@ describe('SmsService', () => {
     })
   })
 
+  describe('Configuration', () => {
+    it('should use URL from config', async () => {
+      const mockResponse = createV1Response([{ to: testNumber }])
+      mockFetch.mockResolvedValueOnce({
+        status: 200,
+        json: async () => mockResponse,
+      })
+
+      await smsService.sendSms(testNumber, testMessage)
+
+      // Verify the URL from config is used
+      expect(mockFetch).toHaveBeenCalledWith(mockConfig.url, expect.any(Object))
+    })
+
+    it('should use username from config in Basic Auth', async () => {
+      const mockResponse = createV1Response([{ to: testNumber }])
+      mockFetch.mockResolvedValueOnce({
+        status: 200,
+        json: async () => mockResponse,
+      })
+
+      await smsService.sendSms(testNumber, testMessage)
+
+      const callArgs = mockFetch.mock.calls[0]
+      const authHeader = callArgs[1].headers.Authorization
+      const base64Creds = authHeader.replace('Basic ', '')
+      const decoded = Buffer.from(base64Creds, 'base64').toString()
+
+      // Verify username from config is used
+      expect(decoded).toContain(mockConfig.username)
+    })
+
+    it('should use default sender name Island.is', async () => {
+      const mockResponse = createV1Response([{ to: testNumber }])
+      mockFetch.mockResolvedValueOnce({
+        status: 200,
+        json: async () => mockResponse,
+      })
+
+      await smsService.sendSms(testNumber, testMessage)
+
+      // Verify the default sender name is used
+      const callArgs = mockFetch.mock.calls[0]
+      const body = JSON.parse(callArgs[1].body)
+      expect(body.from).toBe('Island.is')
+    })
+
+    it('should use custom sender name when provided in options', async () => {
+      const mockResponse = createV1Response([{ to: testNumber }])
+      mockFetch.mockResolvedValueOnce({
+        status: 200,
+        json: async () => mockResponse,
+      })
+
+      const customSenderName = 'CustomSender'
+      await smsService.sendSms(testNumber, testMessage, {
+        from: customSenderName,
+      })
+
+      // Verify the custom sender name is used
+      const callArgs = mockFetch.mock.calls[0]
+      const body = JSON.parse(callArgs[1].body)
+      expect(body.from).toBe(customSenderName)
+    })
+  })
+
   describe('HTTP Basic Authentication', () => {
-    it('should include Basic Auth header', async () => {
+    it('should include Basic Auth header with config credentials', async () => {
       const mockResponse = createV1Response([{ to: testNumber }])
       mockFetch.mockResolvedValueOnce({
         status: 200,
@@ -350,10 +424,10 @@ describe('SmsService', () => {
       const authHeader = callArgs[1].headers.Authorization
       expect(authHeader).toMatch(/^Basic /)
 
-      // Decode and verify credentials
+      // Decode and verify credentials match our mock config
       const base64Creds = authHeader.replace('Basic ', '')
       const decoded = Buffer.from(base64Creds, 'base64').toString()
-      expect(decoded).toContain('IslandIs_User_Development')
+      expect(decoded).toBe(`${mockConfig.username}:${mockConfig.password}`)
     })
   })
 })
