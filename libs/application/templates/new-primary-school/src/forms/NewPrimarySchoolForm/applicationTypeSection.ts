@@ -25,12 +25,13 @@ export const applicationTypeSection = buildSection({
               subLabel: applicationTypeMessages.schoolTransferSubLabel,
               dataTestId: 'new-primary-school',
             },
-            {
-              value: ApplicationType.CONTINUING_ENROLLMENT,
-              label: sharedMessages.continuingEnrollmentApplicationName,
-              subLabel: applicationTypeMessages.continuingEnrollmentSubLabel,
-              dataTestId: 'continuing-enrollment',
-            },
+            // {
+            //   value: ApplicationType.CONTINUING_ENROLLMENT,
+            //   label: sharedMessages.continuingEnrollmentApplicationName,
+            //   subLabel: applicationTypeMessages.continuingEnrollmentSubLabel,
+            //   dataTestId: 'continuing-enrollment',
+            // },
+            // take out for now, asked by MMS
           ],
         }),
       ],

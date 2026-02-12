@@ -2,6 +2,12 @@ import { theme } from '@island.is/island-ui/theme'
 import { globalStyle, style } from '@vanilla-extract/css'
 import { recipe } from '@vanilla-extract/recipes'
 
+export const linkText = style({})
+
+globalStyle(`${linkText} *`, {
+  fontWeight: 400,
+})
+
 export const tableRowStyle = style({})
 
 export const subTable = style({})
@@ -11,7 +17,7 @@ export const tableFootCell = style({
 })
 
 globalStyle(`${tableRowStyle} > th, ${tableRowStyle} > td`, {
-  fontSize: '14px',
+  fontSize: '16px',
   whiteSpace: 'nowrap',
 })
 

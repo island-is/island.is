@@ -29,6 +29,12 @@ export const m = {
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
       description: 'Consent checkbox label',
     },
+    linkToRateCategoryApplication: {
+      id: 'rsk.crdr.application:prerequisites.link.to.rate.category.application',
+      defaultMessage:
+        'Skráning ökutækja af og á daggjald: [Bílaleigu gjalflokkar](/umsoknir/bilaleigu-gjaldflokkur)',
+      description: 'Link to rate category application',
+    },
     skatturTitle: {
       id: 'rsk.crdr.application:prerequisites.skattur.title',
       defaultMessage: 'Upplýsingar frá Skattinum',
@@ -169,6 +175,12 @@ export const m = {
       id: 'rsk.crdr.application:multi.upload.error.no.cars',
       defaultMessage: 'Engar breytingar fundust í skjalinu',
       description: 'No cars to change found error',
+    },
+    allCarsMustBePresent: {
+      id: 'rsk.crdr.application:multi.upload.error.all.cars.must.be.present',
+      defaultMessage:
+        'Skila þarf upplýsingum um útleigudag fyrir öll ökutæki á daggjaldsskrá',
+      description: 'Entries for all cars must be present in the upload file',
     },
     invalidFileType: {
       id: 'rsk.crdr.application:multi.upload.error.invalid.file.type',

@@ -166,6 +166,15 @@
             "collectionFormat": "multi"
           },
           {
+            "name": "caseType",
+            "in": "query",
+            "description": "Published bookings per case type/s. If no values provided bookings for all case types will be returned.",
+            "required": false,
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi"
+          },
+          {
             "name": "lawyer",
             "in": "query",
             "description": "Optional parameter lawyer. If empty: Return all bookings (no filtering). \r\n            If lawyer is provided: Return only bookings where at least one lawyer matches provided name string.",
@@ -248,6 +257,15 @@
             "name": "scheduleType",
             "in": "query",
             "description": "Published bookings per schedule type/s. If no values provided bookings for all schedule types will be returned.",
+            "required": false,
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "caseType",
+            "in": "query",
+            "description": "Published bookings per case type/s. If no values provided bookings for all case types will be returned.",
             "required": false,
             "type": "array",
             "items": { "type": "string" },
