@@ -15,10 +15,10 @@ jest.mock('@island.is/clients/middlewares', () => ({
 
 // Mock config for testing
 const mockConfig = {
-  url: 'https://smsapi.devnova.is/v1/',
+  url: 'https://test123.island.is/v1/',
   username: 'test-user',
   password: 'test-password-123',
-  senderName: 'Island.is',
+  senderName: 'Island Test',
 }
 
 const testNumber = '3547801512'
@@ -43,7 +43,7 @@ const createV1Response = (
     delivery_status_details: 'message queued and awaiting delivery',
     error: msg.error || false,
     error_details: msg.errorDetails,
-    from: 'Island.is',
+    from: mockConfig.senderName,
     to: msg.to,
     uuid: msg.uuid || testUuid,
     segments_queued: 1,
@@ -116,7 +116,7 @@ describe('SmsService', () => {
       const callArgs = mockFetch.mock.calls[0]
       const body = JSON.parse(callArgs[1].body)
       expect(body).toEqual({
-        from: 'Island.is',
+        from: mockConfig.senderName,
         to: [testNumber],
         body: testMessage,
         wait: 'queue',
@@ -376,7 +376,7 @@ describe('SmsService', () => {
       expect(decoded).toContain(mockConfig.username)
     })
 
-    it('should use default sender name Island.is', async () => {
+    it('should use default sender name Island Test', async () => {
       const mockResponse = createV1Response([{ to: testNumber }])
       mockFetch.mockResolvedValueOnce({
         status: 200,
@@ -388,7 +388,7 @@ describe('SmsService', () => {
       // Verify the default sender name is used
       const callArgs = mockFetch.mock.calls[0]
       const body = JSON.parse(callArgs[1].body)
-      expect(body.from).toBe('Island.is')
+      expect(body.from).toBe(mockConfig.senderName)
     })
 
     it('should use custom sender name when provided in options', async () => {

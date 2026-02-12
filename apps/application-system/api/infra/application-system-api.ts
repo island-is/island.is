@@ -373,8 +373,8 @@ export const serviceSetup = (services: {
         ]),
       },
       NOVA_SENDER_NAME: {
-        dev: 'Island.is | Dev',
-        staging: 'Island.is | Staging',
+        dev: 'Island Dev',
+        staging: 'Island Staging',
         prod: 'Island.is',
       },
     })

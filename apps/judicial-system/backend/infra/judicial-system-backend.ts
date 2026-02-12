@@ -68,9 +68,9 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         ]),
       },
       NOVA_SENDER_NAME: {
-        dev: 'Island.is | Dev',
+        dev: 'Island Dev',
+        staging: 'Island Staging',
         prod: 'Island.is',
-        staging: 'Island.is | Staging',
       },
     })
     .xroad(Base, JudicialSystem)

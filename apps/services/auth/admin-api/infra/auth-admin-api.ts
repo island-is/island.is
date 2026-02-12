@@ -79,9 +79,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
         dev: 'digitaliceland',
       },
       NOVA_SENDER_NAME: {
-        dev: 'Island.is | Dev',
+        dev: 'Island Dev',
+        staging: 'Island Staging',
         prod: 'Island.is',
-        staging: 'Island.is | Staging',
       },
     })
     .secrets({

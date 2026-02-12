@@ -41,9 +41,9 @@ const envVariables: EnvironmentVariables = {
     '@island.is/auth/delegations/index:system',
   ]),
   NOVA_SENDER_NAME: {
-    dev: 'Island.is | Dev',
+    dev: 'Island Dev',
+    staging: 'Island Staging',
     prod: 'Island.is',
-    staging: 'Island.is | Staging',
   },
 }
 
