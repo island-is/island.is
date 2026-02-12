@@ -11,7 +11,7 @@ import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useBulkCompareMutation } from './compareLists.generated'
-import { format as formatNationalId } from 'kennitala'
+import { format as formatNationalId, isValid } from 'kennitala'
 import {
   SignatureCollectionCollectionType,
   SignatureCollectionSignature,
@@ -87,10 +87,16 @@ const CompareLists = ({
   const onChange = async (newFile: File[]) => {
     setFileList(createFileList(newFile, fileList))
     const data = await getFileData(newFile)
-    const nationalIds = data.map((d: Record<string, unknown>) => {
-      const kennitala = d.Kennitala
-      return String(kennitala).replace('-', '')
-    })
+    const nationalIds = data.reduce((acc: string[], d: Record<string, unknown>) => {
+      let kt = String(d.Kennitala).replace('-', '')
+      if (kt.length === 9) {
+        kt = '0' + kt
+      }
+      if (isValid(kt)) {
+        acc.push(kt)
+      }
+      return acc
+    }, [])
 
     compareLists(nationalIds)
   }
