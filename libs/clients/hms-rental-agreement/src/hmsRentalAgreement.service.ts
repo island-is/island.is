@@ -1,5 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { HomeApi } from '../gen/fetch'
+import {
+  ContractCancelPostRequest,
+  ContractDraftRequest,
+  ContractPostRequest,
+  ContractTerminatePostRequest,
+  HomeApi,
+} from '../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { isDefined } from '@island.is/shared/utils'
 import {
@@ -11,25 +17,39 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   ContractDocumentItemDto,
   mapContractDocumentItemDto,
-} from './dtos/contractDocument'
+} from './dtos/contractDocument.dto'
+import { HmsRentalAgreementClientConfig } from './hmsRentalAgreement.config'
+import { type ConfigType } from '@nestjs/config'
+import { EntraTokenMiddleware } from './middleware/entraTokenMiddleware'
 
 @Injectable()
 export class HmsRentalAgreementService {
   constructor(
+    @Inject(HmsRentalAgreementClientConfig.KEY)
+    private config: ConfigType<typeof HmsRentalAgreementClientConfig>,
     private readonly api: HomeApi,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private apiWithAuth = (user: User) =>
-    this.api.withMiddleware(new AuthMiddleware(user as Auth))
+  private apiWithAuth = (user: User) => {
+    return this.api.withMiddleware(
+      new AuthMiddleware(user as Auth),
+      new EntraTokenMiddleware(this.config),
+    )
+  }
+
+  /**
+   * @deprecated Use getRentalAgreements instead.
+   */
+  async getRentalAgreementsDeprecated(user: User) {
+    return this.apiWithAuth(user).contractKtKtGet({ kt: user.nationalId })
+  }
 
   async getRentalAgreements(
     user: User,
     hideInactiveAgreements = false,
   ): Promise<RentalAgreementDto[]> {
-    const res = await this.apiWithAuth(user).contractKtKtGet({
-      kt: user.nationalId,
-    })
+    const res = await this.apiWithAuth(user).contractGet()
 
     const data = res.map(mapRentalAgreementDto).filter(isDefined)
     if (hideInactiveAgreements) {
@@ -40,51 +60,63 @@ export class HmsRentalAgreementService {
 
   async getRentalAgreement(
     user: User,
-    id: number,
+    id: string,
   ): Promise<RentalAgreementDto | undefined> {
-    const agreements = await this.getRentalAgreements(user)
-    const agreementToReturn: RentalAgreementDto | undefined = agreements.find(
-      (agreement) => agreement.id === id,
-    )
+    const data = await this.apiWithAuth(user).contractContractIdGet({
+      contractId: id,
+    })
 
-    if (!agreementToReturn) {
-      this.logger.warn('Rental agreement not found', {
+    if (data.contractId === null || data.contractId === undefined) {
+      this.logger.warn('Malformed contract, returning null', {
         id,
       })
       return
     }
 
-    return agreementToReturn
+    return mapRentalAgreementDto(data) ?? undefined
   }
 
   async getRentalAgreementPdf(
     user: User,
-    id: number,
-  ): Promise<Array<ContractDocumentItemDto> | undefined> {
-    const res = await this.apiWithAuth(user).contractKtKtWithDocumentsGet({
-      kt: user.nationalId,
+    contractId: number,
+    documentId: number,
+  ): Promise<ContractDocumentItemDto | undefined> {
+    const res = await this.apiWithAuth(
+      user,
+    ).contractContractIdDocumentDocumentIdGet({
+      contractId,
+      documentId,
     })
 
-    if (!res || res.length === 0) {
-      this.logger.warn('No rental agreements found', {
-        id,
+    if (!res) {
+      this.logger.warn('No rental agreement document found', {
+        contractId,
+        documentId,
       })
       return undefined
     }
 
-    const data = res?.find((res) => res.contract?.contractId === id)
+    return mapContractDocumentItemDto(res) ?? undefined
+  }
 
-    if (!data) {
-      this.logger.warn('Rental agreement pdf not found', {
-        id,
-      })
-      return undefined
-    }
+  async postDraftContract(user: User, request: ContractDraftRequest) {
+    return this.apiWithAuth(user).contractSendDraftPost({
+      contractDraftRequest: request,
+    })
+  }
 
-    const pdfs = data.documents
-      ?.map(mapContractDocumentItemDto)
-      .filter(isDefined)
+  async postContract(user: User, request: ContractPostRequest) {
+    return this.apiWithAuth(user).contractPost(request)
+  }
 
-    return pdfs
+  async postCancelContract(user: User, request: ContractCancelPostRequest) {
+    return this.apiWithAuth(user).contractCancelPost(request)
+  }
+
+  async postTerminateContract(
+    user: User,
+    request: ContractTerminatePostRequest,
+  ) {
+    return this.apiWithAuth(user).contractTerminatePost(request)
   }
 }

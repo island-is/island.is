@@ -2390,7 +2390,7 @@ export class CaseNotificationService extends BaseNotificationService {
     const courtOfAppealsAssistantEmails =
       this.config.email.courtOfAppealsAssistantEmails
         .split(',')
-        .map((email) => email.trim())
+        .map((email: string) => email.trim())
 
     const allCourtOfAppealsEmails = [
       ...courtOfAppealsAssistantEmails,

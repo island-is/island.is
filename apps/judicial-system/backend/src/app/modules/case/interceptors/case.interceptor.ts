@@ -186,9 +186,9 @@ const transformCase = (theCase: Case, user: User | undefined) => {
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
     ),
-    indictmentReviewedDate: EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_REVIEWED,
-      theCase.eventLogs,
+    indictmentReviewedDate: DefendantEventLog.getEventLogDateByEventType(
+      DefendantEventType.INDICTMENT_REVIEWED,
+      theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
     ),
     indictmentSentToPublicProsecutorDate: EventLog.getEventLogDateByEventType(
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,

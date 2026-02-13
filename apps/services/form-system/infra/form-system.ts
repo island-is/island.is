@@ -61,6 +61,9 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX',
       FORM_SYSTEM_ZENDESK_API_KEY_PROD:
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_PROD',
+      SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST',
+      SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD',
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
