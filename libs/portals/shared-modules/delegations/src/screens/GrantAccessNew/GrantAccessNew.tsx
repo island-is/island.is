@@ -156,9 +156,7 @@ export const GrantAccessNew = () => {
             <Text variant="h3" marginBottom={2}>
               {formatMessage(m.stepTwoTitle)}
             </Text>
-            <Text marginBottom={4}>
-              {formatMessage(m.grantAccessScopesIntro)}
-            </Text>
+            <Text marginBottom={4}>{formatMessage(m.stepTwoIntro)}</Text>
 
             {/* Search Bar */}
             <Box marginBottom={3}>

@@ -120,7 +120,13 @@ export const ServiceCategories = () => {
             </>
           )}
         </Box>
-
+        {!loading && !error && categories.length > 0 && (
+          <Box marginTop={6} marginBottom={2}>
+            <Text variant="h3" color="blue400">
+              {formatMessage(m.serviceCategories)}
+            </Text>
+          </Box>
+        )}
         <ServiceCategoriesList
           loading={loading}
           error={!!error}

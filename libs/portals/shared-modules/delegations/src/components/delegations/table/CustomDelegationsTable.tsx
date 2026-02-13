@@ -153,33 +153,39 @@ const CustomDelegationsTable = ({
                     },
                     {
                       value: (
-                        <Button
-                          variant="text"
-                          icon="pencil"
-                          iconType="outline"
-                          size="small"
-                          colorScheme="default"
-                          onClick={() => console.log('edit', person.nationalId)}
-                        >
-                          {formatMessage(coreMessages.buttonEdit)}
-                        </Button>
+                        <Box flexShrink={0}>
+                          <Button
+                            variant="text"
+                            icon="pencil"
+                            iconType="outline"
+                            size="small"
+                            colorScheme="default"
+                            onClick={() =>
+                              console.log('edit', person.nationalId)
+                            }
+                          >
+                            {formatMessage(coreMessages.buttonEdit)}
+                          </Button>
+                        </Box>
                       ),
                       align: 'right',
                     },
                     {
                       value: (
-                        <Button
-                          variant="text"
-                          icon="trash"
-                          iconType="outline"
-                          size="small"
-                          colorScheme="destructive"
-                          onClick={() =>
-                            console.log('delete', person.nationalId)
-                          }
-                        >
-                          {formatMessage(coreMessages.buttonDestroy)}
-                        </Button>
+                        <Box flexShrink={0}>
+                          <Button
+                            variant="text"
+                            icon="trash"
+                            iconType="outline"
+                            size="small"
+                            colorScheme="destructive"
+                            onClick={() =>
+                              console.log('delete', person.nationalId)
+                            }
+                          >
+                            {formatMessage(coreMessages.buttonDestroy)}
+                          </Button>
+                        </Box>
                       ),
                       align: 'right',
                     },

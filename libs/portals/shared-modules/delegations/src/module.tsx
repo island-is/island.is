@@ -9,6 +9,7 @@ import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { accessControlLoader } from './screens/AccessControl.loader'
 import { GrantAccessScopes } from './screens/GrantAccessScopes/GrantAccessScopes'
+import { GrantAccessPeriod } from './screens/GrantAccessPeriod/GrantAccessPeriod'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const AccessControlNew = lazy(() => import('./screens/AccessControlNew'))
@@ -19,6 +20,9 @@ const GrantAccessNew = lazy(() =>
 // const GrantAccessNew = lazy(() =>
 //   import('./screens/GrantAccessNew/GrantAccessNew'),
 // )
+const GrantAccessLayout = lazy(() =>
+  import('./screens/GrantAccessLayout/GrantAccessLayout'),
+)
 const AccessOutgoing = lazy(() =>
   import('./screens/AccessOutgoing/AccessOutgoing'),
 )
@@ -70,10 +74,29 @@ export const delegationsModule: PortalModule = {
         loader: accessControlLoader('umbod/veita')(props),
       },
       {
-        name: m.accessScopes,
-        path: DelegationPaths.DelegationsGrantScopes,
-        element: <GrantAccessScopes />,
+        name: m.grantAccessNewTitle,
+        path: DelegationPaths.DelegationsGrantNew,
+        navHide: !hasAccess,
+        enabled: hasAccess,
+        element: <GrantAccessLayout />,
         loader: accessControlLoader('umbod/veita-nytt')(props),
+        children: [
+          {
+            path: '',
+            name: m.grantAccessNewTitle,
+            element: <GrantAccessNew />,
+          },
+          {
+            path: 'rettindi',
+            name: m.accessScopes,
+            element: <GrantAccessScopes />,
+          },
+          {
+            path: 'gildistimi',
+            name: m.accessPeriod,
+            element: <GrantAccessPeriod />,
+          },
+        ] as PortalRoute[],
       },
       {
         name: coreMessages.accessControlAccess,
@@ -88,14 +111,6 @@ export const delegationsModule: PortalModule = {
         enabled: hasAccess,
         element: <ServiceCategories />,
         loader: accessControlLoader('umbod/thjonustuflokkar')(props),
-      },
-      {
-        name: m.grantAccessNewTitle,
-        path: DelegationPaths.DelegationsGrantNew,
-        navHide: !hasAccess,
-        enabled: hasAccess,
-        element: <GrantAccessNew />,
-        loader: accessControlLoader('umbod/veita-nytt')(props),
       },
     ]
 

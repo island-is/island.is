@@ -1,39 +1,32 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import { defineMessage } from 'react-intl'
 import { useNavigate, useLoaderData } from 'react-router-dom'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroHeader, formatNationalId } from '@island.is/portals/core'
-import { useUserInfo } from '@island.is/react-spa/bff'
+import { IntroHeader } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
 
-import { IdentityCard } from '../../components/IdentityCard/IdentityCard'
 import { DelegationsFormFooter } from '../../components/delegations/DelegationsFormFooter'
-import { useDomains } from '../../hooks/useDomains/useDomains'
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
-import { useCreateAuthDelegationMutation } from './GrantAccess.generated'
 
-import * as styles from './GrantAccess.css'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import { AccessControlLoaderResponse } from '../AccessControl.loader'
 import { NationalIdentityInput } from './NationalIdentityInput'
+import { useDelegationForm } from '../../context'
 
 const GrantAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
-  const userInfo = useUserInfo()
+
   const { formatMessage } = useLocale()
   const [formError, setFormError] = useState<Error | undefined>()
+  const { setIdentities } = useDelegationForm()
 
   const navigate = useNavigate()
 
   const contentfulData = useLoaderData() as AccessControlLoaderResponse
-  const { queryString } = useDomains(false)
-
-  const [createAuthDelegation, { loading: mutationLoading }] =
-    useCreateAuthDelegationMutation()
 
   const methods = useForm({
     mode: 'onChange',
@@ -50,31 +43,11 @@ const GrantAccess = () => {
 
   const onSubmit = handleSubmit(async ({ people }) => {
     try {
-      // Create delegations for all people
-      // const promises = people.map((person: { toNationalId: string }) =>
-      //   createAuthDelegation({
-      //     variables: {
-      //       input: {
-      //         toNationalId: person.toNationalId,
-      //       },
-      //     },
-      //   }),
-      // )
-
-      // const results = await Promise.all(promises)
-
-      // // Navigate to the first created delegation
-      // if (results[0]?.data) {
-      //   navigate(
-      //     `${DelegationPaths.Delegations}/${results[0].data.createAuthDelegation.id}${queryString}`,
-      //   )
-      // }
+      setIdentities(
+        people.map((person: { toNationalId: string }) => person.toNationalId),
+      )
       if (people.length > 0) {
-        navigate(
-          `${DelegationPaths.DelegationsGrantScopes}?people=${people
-            .map((person: { toNationalId: string }) => person.toNationalId)
-            .join(',')}`,
-        )
+        navigate(`${DelegationPaths.DelegationsGrantScopes}`)
       }
     } catch (error) {
       setFormError(error)
@@ -84,20 +57,17 @@ const GrantAccess = () => {
   return (
     <>
       <IntroHeader
-        title={formatMessage(m.grantTitle)}
-        intro={defineMessage(m.grantIntro)}
+        title={formatMessage(m.grantAccessStepsTitle)}
+        intro={defineMessage(m.grantAccessStepsIntro)}
         marginBottom={4}
       />
-      <div className={styles.container}>
+      <div>
+        <Text variant="h4" marginBottom={4}>
+          {formatMessage(m.addPeopleTitle)}
+        </Text>
         <FormProvider {...methods}>
           <form onSubmit={onSubmit}>
             <Box display="flex" flexDirection="column" rowGap={4}>
-              <IdentityCard
-                label={formatMessage(m.accessOwner)}
-                title={userInfo.profile.name}
-                description={formatNationalId(userInfo.profile.nationalId)}
-                color="blue"
-              />
               {fields.map((field, index) => (
                 <Box key={field.id} display="flex" columnGap={4}>
                   <NationalIdentityInput
@@ -105,13 +75,14 @@ const GrantAccess = () => {
                     methods={methods}
                     index={index}
                   />
-                  {fields.length > 1 && (
-                    <Box
-                      display="flex"
-                      flexShrink={0}
-                      alignItems="center"
-                      justifyContent="flexEnd"
-                    >
+                  <Box
+                    display="flex"
+                    flexShrink={0}
+                    alignItems="center"
+                    justifyContent="flexEnd"
+                    style={{ width: 85 }}
+                  >
+                    {index > 0 && (
                       <Button
                         variant="text"
                         size="small"
@@ -122,8 +93,8 @@ const GrantAccess = () => {
                       >
                         {formatMessage(m.grantRemovePerson)}
                       </Button>
-                    </Box>
-                  )}
+                    )}
+                  </Box>
                 </Box>
               ))}
               <Box>
@@ -144,8 +115,8 @@ const GrantAccess = () => {
               </Text>
               <Box marginBottom={7}>
                 <DelegationsFormFooter
-                  disabled={!formState.isValid || mutationLoading}
-                  loading={mutationLoading}
+                  disabled={!formState.isValid}
+                  loading={false}
                   onCancel={() => navigate(DelegationPaths.Delegations)}
                   showShadow={false}
                   confirmLabel={formatMessage(m.grantChoosePermissions)}

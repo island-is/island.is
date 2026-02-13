@@ -188,6 +188,10 @@ export const m = defineMessages({
     defaultMessage:
       'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
   },
+  accessPeriod: {
+    id: 'sp.access-control-delegations:access-period',
+    defaultMessage: 'Gildistími',
+  },
   accessConfirmModalTitle: {
     id: 'sp.access-control-delegations:access-confirm-modal-title',
     defaultMessage: 'Þú ert að veita aðgang',
@@ -288,6 +292,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:choose-access-rights',
     defaultMessage: 'Velja réttindi',
   },
+  grantChoosePeriod: {
+    id: 'sp.access-control-delegations:choose-period',
+    defaultMessage: 'Velja gildistíma umboðs',
+  },
   grantAddMorePeople: {
     id: 'sp.access-control-delegations:grant-add-more-people',
     defaultMessage: 'Bæta við fleiri einstaklingum',
@@ -343,7 +351,7 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:step-three-title',
     defaultMessage: '3. Hversu lengi á afangareint umboð að gilda?',
   },
-  grantAccessScopesIntro: {
+  stepTwoIntro: {
     id: 'sp.access-control-delegations:grant-access-scopes-intro',
     defaultMessage:
       'Leita að umboði, nota síur til að þrengja leitina eða velja úr flokkum hér að neðan.',
@@ -395,6 +403,47 @@ export const m = defineMessages({
   grantSelectDate: {
     id: 'sp.access-control-delegations:grant-select-date',
     defaultMessage: 'Veldu dagsetningu',
+  },
+  filterClearAll: {
+    id: 'sp.access-control-delegations:filter-clear-all',
+    defaultMessage: 'Hreinsa allar síur',
+  },
+  filterClear: {
+    id: 'sp.access-control-delegations:filter-clear',
+    defaultMessage: 'Hreinsa síu',
+  },
+  filterOpen: {
+    id: 'sp.access-control-delegations:filter-open',
+    defaultMessage: 'Opna síu',
+  },
+  addPeopleTitle: {
+    id: 'sp.access-control-delegations:add-people-title',
+    defaultMessage: 'Hver á að fá umboðið?',
+  },
+  grantAccessStepsTitle: {
+    id: 'sp.access-control-delegations:grant-access-scopes-title',
+    defaultMessage: 'Veita nýtt umboð',
+  },
+  grantAccessStepsIntro: {
+    id: 'sp.access-control-delegations:grant-access-scopes-intro',
+    defaultMessage:
+      'Hérna getur þú, í þremur skrefum, veitt einstaklingum umboð til að sinna þínum erindum á vefsvæðum opinberra stofnana',
+  },
+  scopesTableTitle: {
+    id: 'sp.access-control-delegations:scopes-table-title',
+    defaultMessage: 'Hvaða réttindi viltu veita viðkomandi?',
+  },
+  accessPeriodTitle: {
+    id: 'sp.access-control-delegations:access-period-title',
+    defaultMessage: 'Hversu lengi á ofangareint umboð að gilda?',
+  },
+  accessPeriodSame: {
+    id: 'sp.access-control-delegations:access-period-same',
+    defaultMessage: 'Ég vil hafa sama gildistíma á völlum umboðum',
+  },
+  accessPeriodDifferent: {
+    id: 'sp.access-control-delegations:access-period-different',
+    defaultMessage: 'Ég vil hafa mismunandi gildistíma fyrir mismunandi umboð',
   },
 
   // Table messages

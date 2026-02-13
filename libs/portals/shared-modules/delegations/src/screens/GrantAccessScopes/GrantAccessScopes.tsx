@@ -7,7 +7,7 @@ import {
 } from '../ServiceCategories/ServiceCategories.generated'
 import { useLocale } from '@island.is/localization'
 import ServiceCategoriesList from '../../components/delegations/ServiceCategoriesList'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { AuthApiScope } from '@island.is/api/schema'
 import {
@@ -15,12 +15,18 @@ import {
   Filter,
   FilterMultiChoice,
   Input,
+  Text,
 } from '@island.is/island-ui/core'
 import { DelegationPaths } from '../../lib/paths'
 import { DelegationsFormFooter } from '../../components/delegations/DelegationsFormFooter'
 import { useNavigate } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
+import { IntroHeader } from '@island.is/portals/core'
+import * as styles from './GrantAccessScopes.css'
+import { useDelegationForm } from '../../context'
+import add from 'date-fns/add'
+import { useDomains } from '../../hooks/useDomains/useDomains'
 
 export const GrantAccessScopes = () => {
   const { lang } = useLocale()
@@ -48,7 +54,9 @@ export const GrantAccessScopes = () => {
   } = useQuery<AuthScopeTagsQuery>(AuthScopeTagsDocument, {
     variables: { lang },
   })
-  const [selectedScopes, setSelectedScopes] = useState<AuthApiScope[]>([])
+  const { identities, selectedScopes, setSelectedScopes } = useDelegationForm()
+  const defaultDate = add(new Date(), { years: 1 })
+  const { options: domainOptions } = useDomains(false)
 
   const filters = useMemo(() => {
     return [
@@ -66,13 +74,10 @@ export const GrantAccessScopes = () => {
         id: 'domains',
         label: 'Stofnun',
         selected: filter.domains,
-        filters: [
-          { value: 'Vinnueftirlitið', label: 'Vinnueftirlitið' },
-          { value: 'Mínar síður Ísland.is', label: 'Mínar síður Ísland.is' },
-        ],
+        filters: domainOptions,
       },
     ]
-  }, [tagsData, filter])
+  }, [tagsData, filter, domainOptions])
 
   const onSelectScope = (scope: AuthApiScope) => {
     if (selectedScopes.some((s) => s.name === scope.name)) {
@@ -99,60 +104,87 @@ export const GrantAccessScopes = () => {
 
     return (
       categoriesData?.authScopeCategories
-        ?.filter((category) =>
-          category.scopes.some((scope) => {
-            // Search query filter
-            const displayName = scope.displayName.toLowerCase()
-            const description = scope.description?.toLowerCase()
-            const name = scope.name.toLowerCase()
-            const domain = scope.domain?.displayName?.toLowerCase()
-            const matchesSearch =
-              displayName.includes(searchQueryLower) ||
-              description?.includes(searchQueryLower) ||
-              name.includes(searchQueryLower) ||
-              domain?.includes(searchQueryLower)
+        ?.flatMap((category) => category.scopes)
+        .filter((scope) => {
+          // Search query filter
+          const displayName = scope.displayName.toLowerCase()
+          const description = scope.description?.toLowerCase()
+          const name = scope.name.toLowerCase()
+          const domain = scope.domain?.displayName?.toLowerCase()
+          const matchesSearch =
+            displayName.includes(searchQueryLower) ||
+            description?.includes(searchQueryLower) ||
+            name.includes(searchQueryLower) ||
+            domain?.includes(searchQueryLower)
 
-            // Tags filter - check if scope name is in selected tags
-            const matchesTags =
-              filter.tags.length === 0 ||
-              scopeNamesInSelectedTags.has(scope.name)
+          // Tags filter - check if scope name is in selected tags
+          const matchesTags =
+            filter.tags.length === 0 || scopeNamesInSelectedTags.has(scope.name)
 
-            // Domains filter
-            const matchesDomains =
-              filter.domains.length === 0 ||
-              (scope.domain?.displayName &&
-                filter.domains.includes(scope.domain.displayName))
+          // Domains filter
+          const matchesDomains =
+            filter.domains.length === 0 ||
+            (scope.domain?.name && filter.domains.includes(scope.domain.name))
 
-            return matchesSearch && matchesTags && matchesDomains
-          }),
-        )
-        .flatMap((category) => category.scopes) || []
+          return matchesSearch && matchesTags && matchesDomains
+        }) || []
     )
   }, [categoriesData, searchQuery, filter, tagsData])
 
+  const onConfirm = () => {
+    setSelectedScopes(
+      selectedScopes.map((scope) => ({
+        ...scope,
+        validTo: defaultDate,
+      })),
+    )
+    navigate(DelegationPaths.DelegationsGrantPeriod)
+  }
+
+  // on mount, check if there are identities selected, if not, navigate to first step
+  useEffect(() => {
+    if (identities.length === 0) {
+      navigate(DelegationPaths.DelegationsGrantNew)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <div>
+      <IntroHeader
+        title={formatMessage(m.grantAccessStepsTitle)}
+        intro={formatMessage(m.grantAccessStepsIntro)}
+      />
+      <Text variant="h4" marginBottom={4}>
+        {formatMessage(m.scopesTableTitle)}
+      </Text>
       <Box display="flex" columnGap={2} marginBottom={4}>
-        <Input
-          name="search"
-          placeholder={formatMessage(m.searchScopesPlaceholder)}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          backgroundColor="blue"
-        />
+        <div className={styles.inputWrapper}>
+          <Input
+            name="search"
+            placeholder={formatMessage(m.searchScopesPlaceholder)}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            backgroundColor="blue"
+            icon={{ name: 'search' }}
+            size="sm"
+          />
+        </div>
         <Filter
           variant="popover"
-          labelClearAll="Hreinsa allar síur"
-          labelClear="Hreinsa síu"
-          labelOpen="Opna síu"
-          labelClose="Loka síu"
-          labelTitle="Sía API Vörulista"
-          labelResult="Sýna niðurstöður"
-          onFilterClear={() => setSearchQuery('')}
-          //  labelClearAll={formatMessage(m.clearAllFilters)} labelClear={formatMessage(m.clearFilter)} labelOpen={formatMessage(m.openFilter)} onFilterClear={() => setSearchQuery('')}
+          labelClearAll={formatMessage(m.filterClearAll)}
+          labelClear={formatMessage(m.filterClear)}
+          labelOpen={formatMessage(m.filterOpen)}
+          onFilterClear={() => {
+            setFilter({
+              tags: [],
+              domains: [],
+            })
+          }}
+          filterCount={filter.tags.length + filter.domains.length}
         >
           <FilterMultiChoice
-            labelClear="Hreinsa val"
+            labelClear={formatMessage(m.filterClear)}
             categories={filters}
             onChange={(event) =>
               setFilter({
@@ -191,10 +223,12 @@ export const GrantAccessScopes = () => {
         <DelegationsFormFooter
           // disabled={!formState.isValid || mutationLoading}
           // loading={mutationLoading}
+          disabled={selectedScopes.length === 0}
           onCancel={() => navigate(DelegationPaths.Delegations)}
           showShadow={false}
-          confirmLabel={formatMessage(m.grantChoosePermissions)}
+          confirmLabel={formatMessage(m.grantChoosePeriod)}
           confirmIcon="arrowForward"
+          onConfirm={onConfirm}
         />
       </Box>
     </div>
