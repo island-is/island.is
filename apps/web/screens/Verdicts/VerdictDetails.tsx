@@ -193,6 +193,18 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
               <Inline alignY="center" justifyContent="spaceBetween" space={3}>
                 <Webreader readClass="rs_read" marginBottom={0} marginTop={2} />
                 <Inline alignY="center" space={2}>
+                  {item.resolutionLink && (
+                    <LinkV2 href={item.resolutionLink} newTab>
+                      <Button
+                        icon="open"
+                        iconType="outline"
+                        size="small"
+                        unfocusable
+                      >
+                        {formatMessage(m.verdictPage.resolutionLink)}
+                      </Button>
+                    </LinkV2>
+                  )}
                   <Hidden print={true}>
                     <Button
                       icon="print"
