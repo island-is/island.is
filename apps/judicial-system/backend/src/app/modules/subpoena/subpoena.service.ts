@@ -2,7 +2,6 @@ import { Base64 } from 'js-base64'
 import { Includeable, Transaction } from 'sequelize'
 
 import {
-  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -26,7 +25,6 @@ import {
   CourtDocumentType,
   HashAlgorithm,
   isFailedServiceStatus,
-  isIndictmentCase,
   isSubpoenaInfoChanged,
   isSuccessfulServiceStatus,
   ServiceStatus,
@@ -132,20 +130,7 @@ export class SubpoenaService {
     theCase: Case,
     user: TUser,
   ): Promise<Subpoena[]> {
-    const {
-      type: caseType,
-      id: caseId,
-      defendants,
-      withCourtSessions,
-      courtSessions,
-    } = theCase
-
-    // Subpoenas are only for indictment cases (also enforced by CaseTypeGuard at controller level)
-    if (!isIndictmentCase(caseType)) {
-      throw new BadRequestException(
-        `Subpoenas can only be created for indictment cases, but case ${caseId} is of type ${caseType}`,
-      )
-    }
+    const { id: caseId, defendants, withCourtSessions, courtSessions } = theCase
 
     // Filter defendants by the provided IDs
     const requestedDefendants =

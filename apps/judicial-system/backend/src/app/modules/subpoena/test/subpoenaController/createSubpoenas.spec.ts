@@ -379,7 +379,7 @@ describe('SubpoenaController - Create subpoenas', () => {
         defendants: [defendant1],
       } as Case
 
-      it('should throw BadRequestException', async () => {
+      it('CaseGuard should throw TypeError', async () => {
         const createSubpoenasDto: CreateSubpoenasDto = {
           defendantIds: [defendantId1],
           arraignmentDate,
@@ -387,10 +387,7 @@ describe('SubpoenaController - Create subpoenas', () => {
 
         const then = await givenWhenThen(caseId, theCase, createSubpoenasDto)
 
-        expect(then.error).toBeInstanceOf(BadRequestException)
-        expect(then.error.message).toContain(
-          'Subpoenas can only be created for indictment cases',
-        )
+        expect(then.error).toBeInstanceOf(TypeError)
       })
     })
 

@@ -15,7 +15,8 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
-import { CreateSubpoenasInput, SubpoenaQueryInput } from './dto/subpoena.input'
+import { CreateSubpoenasInput } from './dto/createSubpoena.input'
+import { SubpoenaQueryInput } from './dto/subpoena.input'
 import { Subpoena } from './models/subpoena.model'
 
 @UseGuards(JwtGraphQlAuthUserGuard)

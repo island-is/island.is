@@ -77,8 +77,6 @@ export class SubpoenaController {
   ) {}
 
   @RolesRules(
-    prosecutorRule,
-    prosecutorRepresentativeRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
