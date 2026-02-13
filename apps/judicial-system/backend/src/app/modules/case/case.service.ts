@@ -5,6 +5,7 @@ import pick from 'lodash/pick'
 import { Includeable, literal, Op, Transaction } from 'sequelize'
 
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -2407,6 +2408,12 @@ export class CaseService {
       const parentCaseId = theCase.mergeCaseId
       const parentCase = await this.findById(parentCaseId, false, transaction)
 
+      if (parentCase.state !== CaseState.RECEIVED) {
+        throw new BadRequestException(
+          `Failed to merge indictment case ${theCase.id} with parent case ${parentCaseId} in state ${parentCase.state}`,
+        )
+      }
+
       const parentCaseCourtSessions = parentCase.courtSessions
       const latestCourtSession =
         parentCaseCourtSessions && parentCaseCourtSessions.length > 0
@@ -2456,7 +2463,7 @@ export class CaseService {
 
     await this.handleEventLogUpdates(theCase, updatedCase, user, transaction)
 
-    await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
+    this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
     if (isReceivingCase) {
       this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)
