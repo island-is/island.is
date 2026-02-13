@@ -263,18 +263,20 @@ export class CaseTableService {
         CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
         CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
         CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_SENT_TO_PRISON_ADMIN,
       ]
 
       if (!reviewedTypes.includes(type)) {
         return () => true
       }
 
-      const targetDecision =
-        type === CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED ||
-        type ===
-          CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED
-          ? IndictmentCaseReviewDecision.ACCEPT
-          : IndictmentCaseReviewDecision.APPEAL
+      const targetDecision = [
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_SENT_TO_PRISON_ADMIN,
+      ].includes(type)
+        ? IndictmentCaseReviewDecision.ACCEPT
+        : IndictmentCaseReviewDecision.APPEAL
 
       return (defendant: Defendant) =>
         defendant.indictmentReviewDecision === targetDecision
