@@ -116,7 +116,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     data: superData,
     loading: loadingSuper,
     refetch: refetchSuper,
-  } = useGetApplicationsSuperAdminQuery({
+  } = useGetApplicationV2ApplicationsSuperAdminQuery({
     ssr: false,
     variables: {
       input: {
@@ -126,7 +126,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     },
     skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
     onCompleted: (q) => {
-      const names = q.applicationApplicationsAdmin?.rows
+      const names = q.applicationV2ApplicationsSuperAdmin?.rows
         ?.filter((x) => !!x.name)
         ?.map((x) => x.name ?? '')
 
@@ -143,7 +143,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     loadinOrganizationDataWithNationalId
 
   const applicationApplicationsAdmin = isSuperAdmin
-    ? superData?.applicationApplicationsAdmin?.rows
+    ? superData?.applicationV2ApplicationsSuperAdmin?.rows
     : institutionData?.applicationApplicationsInstitutionAdmin?.rows
 
   const applicationAdminList =
@@ -296,7 +296,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
         organizations={availableOrganizations ?? []}
         numberOfDocuments={
           isSuperAdmin
-            ? superData?.applicationApplicationsAdmin?.count
+            ? superData?.applicationV2ApplicationsSuperAdmin?.count
             : institutionData?.applicationApplicationsInstitutionAdmin?.count
         }
         isSuperAdmin={isSuperAdmin}
@@ -321,7 +321,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
           shouldShowCardButtons={false}
           numberOfItems={
             isSuperAdmin
-              ? superData?.applicationApplicationsAdmin?.count
+              ? superData?.applicationV2ApplicationsSuperAdmin?.count
               : institutionData?.applicationApplicationsInstitutionAdmin?.count
           }
         />

@@ -164,3 +164,55 @@ query getApplicationInstitutions {
     contentfulId
   }
 }
+
+query getApplicationV2ApplicationsSuperAdmin(
+  $input: ApplicationsSuperAdminFilters!
+) {
+  applicationV2ApplicationsSuperAdmin(input: $input) {
+    rows {
+      id
+      typeId
+      applicant
+      state
+      created
+      modified
+      assignees
+      applicantActors
+      name
+      pruned
+      pruneAt
+      institution
+      progress
+      status
+      adminData {
+        key
+        values
+        label
+      }
+      applicantName
+      paymentStatus
+      actionCard {
+        title
+        description
+        tag {
+          label
+          variant
+        }
+        pendingAction {
+          displayStatus
+          content
+          title
+        }
+        history {
+          log
+          subLog
+          date
+        }
+        deleteButton
+        draftTotalSteps
+        draftFinishedSteps
+      }
+    }
+    count
+  }
+}

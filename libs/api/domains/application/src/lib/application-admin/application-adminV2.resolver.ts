@@ -23,7 +23,7 @@ export class ApplicationAdminV2Resolver {
 
   @Query(() => ApplicationAdminPaginatedResponse, { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async applicationApplicationsAdmin(
+  async applicationV2ApplicationsSuperAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',

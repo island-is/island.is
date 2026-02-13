@@ -1,13 +1,15 @@
 import { Module, DynamicModule } from '@nestjs/common'
 import { ApplicationResolver } from './application.resolver'
+import { ApplicationV2Resolver } from './applicationV2.resolver'
 import { ApplicationService } from './application.service'
 import { ApplicationV2Service } from './applicationV2.service'
 import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { ApplicationAdminResolver } from './application-admin/application-admin.resolvers'
-import { ApplicationV2Resolver } from './applicationV2.resolver'
+import { ApplicationAdminResolver } from './application-admin/application-admin.resolver'
+import { ApplicationAdminV2Resolver } from './application-admin/application-adminV2.resolver'
 import {
   ApplicationsApi as FormSystemApplicationsApi,
+  AdminApi as FormSystemAdminApi,
   Configuration as FormSystemConfiguration,
 } from '@island.is/clients/form-system'
 
@@ -23,10 +25,11 @@ export class ApplicationModule {
       module: ApplicationModule,
       providers: [
         ApplicationResolver,
+        ApplicationV2Resolver,
         ApplicationAdminResolver,
+        ApplicationAdminV2Resolver,
         ApplicationService,
         ApplicationV2Service,
-        ApplicationV2Resolver,
         {
           provide: ApplicationsApi,
           useValue: new ApplicationsApi(
@@ -56,6 +59,18 @@ export class ApplicationModule {
             new FormSystemConfiguration({
               fetchApi: createEnhancedFetch({
                 name: 'MyPagesApplicationModule.formSystemApplicationsApi',
+                timeout: 60000,
+              }),
+              basePath: config.formSystemBaseApiUrl,
+            }),
+          ),
+        },
+        {
+          provide: FormSystemAdminApi,
+          useValue: new FormSystemAdminApi(
+            new FormSystemConfiguration({
+              fetchApi: createEnhancedFetch({
+                name: 'MyPagesApplicationModule.formSystemAdminApi',
                 timeout: 60000,
               }),
               basePath: config.formSystemBaseApiUrl,

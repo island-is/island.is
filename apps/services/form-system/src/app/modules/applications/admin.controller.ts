@@ -6,6 +6,7 @@ import {
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import { Documentation } from '@island.is/nest/swagger'
 import { ApplicationsService } from './applications.service'
 import { CurrentUser, IdsUserGuard, Scopes } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
@@ -24,6 +25,27 @@ export class AdminController {
   //TODOxy add audit
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @Get('super-admin/overview/:page/:count')
+  @Documentation({
+    description: 'Get applications for super admin overview',
+    response: {
+      status: 200,
+      type: ApplicationResponseDto,
+    },
+    request: {
+      params: {
+        page: {
+          type: 'number',
+          required: true,
+          description: 'The page to fetch',
+        },
+        count: {
+          type: 'number',
+          required: true,
+          description: 'Number of items to fetch',
+        },
+      },
+    },
+  })
   async getOverviewForSuperAdmin(
     @Param('page') page: number,
     @Param('count') count: number,
@@ -37,6 +59,27 @@ export class AdminController {
 
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @Get('institution-admin/overview/:page/:count')
+  @Documentation({
+    description: 'Get applications for institution admin overview',
+    response: {
+      status: 200,
+      type: ApplicationResponseDto,
+    },
+    request: {
+      params: {
+        page: {
+          type: 'number',
+          required: true,
+          description: 'The page to fetch',
+        },
+        count: {
+          type: 'number',
+          required: true,
+          description: 'Number of items to fetch',
+        },
+      },
+    },
+  })
   async getOverviewForInstitutionAdmin(
     @CurrentUser() user: User,
     @Param('page') page: number,
