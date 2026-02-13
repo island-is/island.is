@@ -11,8 +11,12 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomEnum } from '../../../../test'
-import { Case, CaseRepositoryService, Defendant } from '../../../repository'
-import { include } from '../../case.service'
+import {
+  Case,
+  caseInclude,
+  CaseRepositoryService,
+  Defendant,
+} from '../../../repository'
 
 interface Then {
   result: Case
@@ -132,7 +136,7 @@ describe('CaseController - Split defendant from case', () => {
         { transaction },
       )
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include,
+        include: caseInclude,
         where: {
           id: splitCaseId,
           state: { [Op.not]: CaseState.DELETED },
