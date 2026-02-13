@@ -37,7 +37,7 @@ import {
   Case,
   DateLog,
   Defendant,
-  InstitutionContact,
+  InstitutionContactRepositoryService,
   Notification,
   Recipient,
 } from '../../../repository'
@@ -57,8 +57,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   constructor(
     @InjectModel(Notification)
     notificationModel: typeof Notification,
-    @InjectModel(InstitutionContact)
-    institutionContactModel: typeof InstitutionContact,
     @Inject(notificationModuleConfig.KEY)
     config: ConfigType<typeof notificationModuleConfig>,
     @Inject(LOGGER_PROVIDER) logger: Logger,
@@ -66,6 +64,7 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
     emailService: EmailService,
     eventService: EventService,
     private readonly courtService: CourtService,
+    private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
       notificationModel,
@@ -74,7 +73,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
       config,
       eventService,
       logger,
-      institutionContactModel,
     )
   }
 
@@ -232,6 +230,10 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
   private async sendDrivingLicenseSuspensionNotifications(
     theCase: Case,
   ): Promise<DeliverResponse> {
+    if (!theCase.prosecutorsOfficeId) {
+      return { delivered: false }
+    }
+
     const subject = `Svipting í máli ${theCase.courtCaseNumber}`
     const html = `Skrá skal sviptingu ökuréttinda í ökuskírteinaskrá vegna máls ${
       theCase.courtCaseNumber
@@ -241,7 +243,11 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
 
     const contactInfo = {
       name: theCase.prosecutorsOffice?.name,
-      email: await this.getInstitutionContact(theCase.prosecutorsOfficeId),
+      email:
+        await this.institutionContactRepositoryService.getInstitutionContact(
+          theCase.prosecutorsOfficeId,
+          IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+        ),
     }
 
     if (!contactInfo.name || !contactInfo.email) {
@@ -616,32 +622,6 @@ export class IndictmentCaseNotificationService extends BaseNotificationService {
         throw new InternalServerErrorException(
           `Invalid indictment notification type: ${notificationType}`,
         )
-    }
-  }
-
-  private async getInstitutionContact(
-    institutionId?: string,
-  ): Promise<string | null> {
-    try {
-      if (!institutionId || !this.institutionContactModel) {
-        return null
-      }
-
-      const institutionContact = await this.institutionContactModel.findOne({
-        where: {
-          institutionId,
-          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-        },
-      })
-
-      return institutionContact?.value ?? null
-    } catch (error) {
-      this.logger.error(
-        `Failed to get institution contact for institutionId: ${institutionId} and type: ${IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION}`,
-        error,
-      )
-
-      return null
     }
   }
 
