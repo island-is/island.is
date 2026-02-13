@@ -1,6 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { ApplicationEventDto } from './applications.model'
 import { Month } from './month.model'
+import { LanguageType } from './languageType.model'
+import { ValidationError } from './applications.model'
 
 @ObjectType('FormSystemValue')
 export class Value {
@@ -108,6 +110,9 @@ export class ValueDto {
 
   @Field(() => Value, { nullable: true })
   json?: Value
+
+  @Field(() => ValidationError, { nullable: true })
+  valueError?: ValidationError
 
   @Field(() => [ApplicationEventDto], { nullable: 'itemsAndList' })
   events?: ApplicationEventDto[]

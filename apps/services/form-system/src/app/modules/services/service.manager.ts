@@ -5,6 +5,7 @@ import { ApplicationDto } from '../applications/models/dto/application.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { ValidationService } from './validation.service'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { NotificationActions } from '@island.is/form-system/enums'
 
 @Injectable()
 export class ServiceManager {
@@ -24,10 +25,17 @@ export class ServiceManager {
     if (submitUrl === 'zendesk') {
       return await this.zendeskService.sendToZendesk(applicationDto)
     } else if (submitUrl !== 'zendesk') {
-      return await this.notifyService.sendNotification(
-        applicationDto,
+      const notificationDto = {
+        applicationId: applicationDto.id ?? '',
+        slug: applicationDto.slug ?? '',
+        isTest: applicationDto.isTest ?? false,
+        command: NotificationActions.SUBMIT,
+      }
+      const response = await this.notifyService.sendNotification(
+        notificationDto,
         submitUrl,
       )
+      return response.validationFailed ?? false
     }
 
     return false

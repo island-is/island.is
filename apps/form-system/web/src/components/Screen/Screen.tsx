@@ -39,21 +39,19 @@ export const Screen = () => {
         span={['12/12', '12/12', '10/12', '7/9']}
         offset={['0', '0', '1/12', '1/9']}
       >
-        {state.screenErrors &&
-          state.screenErrors?.length > 0 &&
-          state.screenErrors.map((error, idx) => (
-            <Box marginBottom={[4, 4, 5]} key={`screen-error-${idx}`}>
-              <AlertMessage
-                type="error"
-                title={error.title?.[lang]}
-                message={
-                  <Text variant="small" whiteSpace="breakSpaces">
-                    {error.message?.[lang]}
-                  </Text>
-                }
-              />
-            </Box>
-          ))}
+        {state.screenError && state.screenError.hasError && (
+          <Box marginBottom={[4, 4, 5]}>
+            <AlertMessage
+              type="error"
+              title={state.screenError.title?.[lang]}
+              message={
+                <Text variant="small" whiteSpace="breakSpaces">
+                  {state.screenError.message?.[lang]}
+                </Text>
+              }
+            />
+          </Box>
+        )}
 
         <Text variant="h2" as="h2" marginBottom={1}>
           {currentSectionType !== SectionTypes.PREMISES &&

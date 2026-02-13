@@ -18,6 +18,8 @@ import { Section } from '../sections/models/section.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
 import { ListItem } from '../listItems/models/listItem.model'
+import { ApplicationsXRoadController } from './applications.xroad.controller'
+import { ApplicationsXRoadService } from './applications.xroad.service'
 
 @Module({
   imports: [
@@ -35,9 +37,10 @@ import { ListItem } from '../listItems/models/listItem.model'
       ListItem,
     ]),
   ],
-  controllers: [ApplicationsController],
+  controllers: [ApplicationsController, ApplicationsXRoadController],
   providers: [
     ApplicationsService,
+    ApplicationsXRoadService,
     ApplicationMapper,
     ServiceManager,
     ZendeskService,

@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client'
+import { LanguageFields } from './languageFields'
 
 export const ValueFragment = gql`
   fragment Value on FormSystemValue {
@@ -42,6 +43,16 @@ export const ValueDtoFragment = gql`
     json {
       ...Value
     }
+    valueError {
+      hasError
+      title {
+        ...LanguageFields
+      }
+      message {
+        ...LanguageFields
+      }
+    }
   }
   ${ValueFragment}
+  ${LanguageFields}
 `

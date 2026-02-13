@@ -1,7 +1,12 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
 import {
+  IsArray,
   IsBoolean,
   IsNumber,
   IsOptional,
@@ -9,6 +14,7 @@ import {
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
+import { ValidationErrorDto } from './validationError.dto'
 
 export class ScreenDto {
   @ApiProperty()
@@ -43,11 +49,21 @@ export class ScreenDto {
 
   @ApiProperty()
   @IsBoolean()
-  callRuleset!: boolean
+  shouldValidate!: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  shouldPopulate!: boolean
+
+  @ApiPropertyOptional({ type: ValidationErrorDto })
+  @Type(() => ValidationErrorDto)
+  @IsOptional()
+  @ValidateNested()
+  screenError?: ValidationErrorDto
 
   @IsOptional()
   @ApiPropertyOptional({ type: [FieldDto] })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => FieldDto)
   fields?: FieldDto[]
 }

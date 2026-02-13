@@ -29,6 +29,11 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.response.dto'
 import type { Locale } from '@island.is/shared/types'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
+import { ValidationResponseDto } from './models/dto/validation.response.dto'
+import {
+  NotificationDto,
+  NotificationRequestDto,
+} from '@island.is/form-system/shared'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')
@@ -89,6 +94,24 @@ export class ApplicationsController {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
     return await this.applicationsService.getApplication(id, slug, user)
+  }
+
+  @ApiOperation({ summary: 'Send notification to external system' })
+  @ApiOkResponse({
+    description: 'Send notification to external system',
+    type: ValidationResponseDto,
+  })
+  @ApiBody({ type: NotificationRequestDto })
+  @Post('notify')
+  async notify(
+    @Body() notificationRequestDto: NotificationRequestDto,
+    @CurrentUser() user: User,
+  ): Promise<ValidationResponseDto> {
+    return await this.applicationsService.notifyExternalService(
+      notificationRequestDto.notificationDto,
+      notificationRequestDto.url,
+      user,
+    )
   }
 
   @ApiOperation({ summary: 'Create new application' })

@@ -1,6 +1,7 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql'
 import { LanguageType } from './languageType.model'
 import { Field as FieldModel } from './field.model'
+import { ValidationError } from './applications.model'
 
 @ObjectType('FormSystemScreen')
 export class Screen {
@@ -26,8 +27,23 @@ export class Screen {
   multiset?: number
 
   @Field(() => Boolean, { nullable: true })
-  callRuleset?: boolean
+  shouldValidate?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  shouldPopulate?: boolean
+
+  @Field(() => ValidationError, { nullable: true })
+  screenError?: ValidationError
 
   @Field(() => [FieldModel], { nullable: 'itemsAndList' })
   fields?: FieldModel[]
+}
+
+@ObjectType('FormSystemValidationResponse')
+export class ValidationResponse {
+  @Field(() => Screen, { nullable: true })
+  screen?: Screen
+
+  @Field(() => Boolean, { nullable: true })
+  validationFailed?: boolean
 }

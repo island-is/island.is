@@ -12,6 +12,8 @@ import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { Field } from '../../fields/models/field.model'
 import type { Locale } from '@island.is/shared/types'
+import { ValidationErrorDto } from '../../screens/models/dto/validationError.dto'
+import { LanguageType } from '../../../dataTypes/languageType.model'
 
 @Injectable()
 export class ApplicationMapper {
@@ -73,7 +75,13 @@ export class ApplicationMapper {
               name: screen.name,
               displayOrder: screen.displayOrder,
               multiset: screen.multiset,
-              callRuleset: screen.callRuleset,
+              shouldValidate: screen.shouldValidate,
+              shouldPopulate: screen.shouldPopulate,
+              screenError: {
+                hasError: false,
+                title: { is: '', en: '' },
+                message: { is: '', en: '' },
+              },
               isHidden: this.isHidden(
                 screen.id,
                 application.dependencies,
@@ -108,6 +116,11 @@ export class ApplicationMapper {
                       id: value.id,
                       order: value.order,
                       json: value.json,
+                      valueError: {
+                        hasError: false,
+                        title: { is: '', en: '' },
+                        message: { is: '', en: '' },
+                      },
                     } as ValueDto
                   }),
                 } as FieldDto

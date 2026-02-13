@@ -24,6 +24,7 @@ import {
   ApplicationEvents,
   FieldTypesEnum,
   ApplicantTypesEnum,
+  NotificationDto,
 } from '@island.is/form-system/shared'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
@@ -44,6 +45,9 @@ import type { Locale } from '@island.is/shared/types'
 import { calculatePruneAt } from '../../../utils/calculatePruneAt'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
+import { ValidationResponseDto } from './models/dto/validation.response.dto'
+import { NotifyService } from '../services/notify.service'
+// import { ScreenFromNotifyDto } from '../screens/models/dto/screenFromNotify.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -60,6 +64,7 @@ export class ApplicationsService {
     private readonly applicationEventModel: typeof ApplicationEvent,
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
+    private readonly notifyService: NotifyService,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -278,18 +283,21 @@ export class ApplicationsService {
     }
 
     const submitResponseDto = new SubmitApplicationResponseDto()
-    submitResponseDto.success = success
+    submitResponseDto.submissionFailed = !success
     if (!success) {
-      submitResponseDto.screenErrorMessages = [
-        {
-          title: { is: 'Villa við innsendingu', en: 'Error submitting' },
-          message: {
-            is: 'Ekki tókst að senda inn umsóknina, reyndu aftur síðar eða sendu póst á island@island.is',
-            en: 'The application could not be submitted. Please try again later or send an email to island@island.is',
-          },
+      submitResponseDto.validationError = {
+        hasError: true,
+        title: { is: 'Villa við innsendingu', en: 'Error submitting' },
+        message: {
+          is: 'Ekki tókst að senda inn umsóknina, reyndu aftur síðar eða sendu póst á island@island.is',
+          en: 'The application could not be submitted. Please try again later or send an email to island@island.is',
         },
-      ]
+      }
     }
+
+    console.log(
+      `submitResponseDto from API: ${JSON.stringify(submitResponseDto)}`,
+    )
     return submitResponseDto
   }
 
@@ -786,6 +794,7 @@ export class ApplicationsService {
     submitScreenDto: SubmitScreenDto,
     user: User,
   ): Promise<void> {
+    console.log('inside save screen')
     const {
       applicationId,
       screenId: currentScreenId = '',
@@ -982,6 +991,85 @@ export class ApplicationsService {
 
       await application.destroy({ transaction })
     })
+  }
+
+  async notifyExternalService(
+    notificationDto: NotificationDto,
+    url: string,
+    user: User,
+  ): Promise<ValidationResponseDto> {
+    const applicationResponse = await this.getApplication(
+      notificationDto.applicationId,
+      notificationDto.slug,
+      user,
+    )
+    const applicationDto = applicationResponse.application
+
+    if (!applicationDto) {
+      throw new NotFoundException(
+        `Application DTO with id '${notificationDto.applicationId}' not found`,
+      )
+    }
+
+    let targetScreen: ScreenDto | null = null
+
+    // Iterate every section and screen until found
+    for (const section of applicationDto.sections ?? []) {
+      for (const screen of section.screens ?? []) {
+        if (screen.id === notificationDto.screenId) {
+          targetScreen = screen
+          break
+        }
+      }
+      if (targetScreen) {
+        break
+      }
+    }
+
+    if (!targetScreen) {
+      throw new NotFoundException(
+        `Screen with id '${notificationDto.screenId}' not found in application '${notificationDto.applicationId}'`,
+      )
+    }
+
+    const result = new ValidationResponseDto()
+    result.screen = targetScreen
+    ;(result.screen.screenError = {
+      hasError: true,
+      title: { is: 'Villa kom upp', en: 'Error occured' },
+      message: {
+        is: 'Ekki tókst að senda tilkynninguna',
+        en: 'Failed to send the notification',
+      },
+    }),
+      (result.validationFailed = true)
+
+    if (
+      result.screen.fields &&
+      result.screen.fields[0] &&
+      result.screen.fields[0].values &&
+      result.screen.fields[0].values[0]
+    ) {
+      result.screen.fields[0].values[0].valueError = {
+        hasError: true,
+        title: { is: '', en: '' },
+        message: {
+          is: 'Þessi innsláttur er ekki gildur',
+          en: 'This input is not valid',
+        },
+      }
+    }
+
+    console.log('returning result from notifyExternalService', {
+      targetScreen,
+    })
+    return result
+
+    // const response = await this.notifyService.sendNotification(
+    //   notificationDto,
+    //   url,
+    // )
+    // return response
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {

@@ -166,7 +166,8 @@ export class FormApplicantTypesService {
       'name',
       'displayOrder',
       'isCompleted',
-      'callRuleset',
+      'shouldValidate',
+      'shouldPopulate',
       'isHidden',
       'multiset',
     ]

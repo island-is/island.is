@@ -77,6 +77,8 @@ export class ApplicationDto {
   @ApiPropertyOptional()
   zendeskInternal?: boolean
 
+  @ApiPropertyOptional()
   submissionServiceUrl?: string
+
   validationServiceUrl?: string
 }

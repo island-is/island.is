@@ -753,7 +753,8 @@ export class FormsService {
       'displayOrder',
       'isHidden',
       'multiset',
-      'callRuleset',
+      'shouldValidate',
+      'shouldPopulate',
     ]
     const fieldKeys = [
       'id',

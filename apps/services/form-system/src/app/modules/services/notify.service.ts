@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApplicationDto } from '../applications/models/dto/application.dto'
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
@@ -7,6 +6,8 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
+import { NotificationDto } from '@island.is/form-system/shared'
+import { ValidationResponseDto } from '../applications/models/dto/validation.response.dto'
 
 @Injectable()
 export class NotifyService {
@@ -30,9 +31,9 @@ export class NotifyService {
   private readonly xroadClient = this.xRoadConfig.xRoadClient
 
   async sendNotification(
-    applicationDto: ApplicationDto,
+    notificationDto: NotificationDto,
     url: string,
-  ): Promise<boolean> {
+  ): Promise<ValidationResponseDto> {
     if (!this.xroadBase || !this.xroadClient) {
       throw new Error(
         `X-Road configuration is missing for NotifyService. Please check environment variables.`,
@@ -43,9 +44,9 @@ export class NotifyService {
       accessToken = await this.getAccessToken(url)
     } catch (error) {
       this.logger.error(
-        `Error acquiring access token for application ${applicationDto.id}: ${error}`,
+        `Error acquiring access token for application ${notificationDto.applicationId}: ${error}`,
       )
-      return false
+      return { validationFailed: false }
     }
 
     const xRoadPath = `${this.xroadBase}/r1/${url}`
@@ -60,26 +61,27 @@ export class NotifyService {
           'X-Road-Client': this.xroadClient,
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
-        body: JSON.stringify({
-          applicationId: applicationDto.id,
-          applicationType: applicationDto.slug,
-        }),
+        body: JSON.stringify(notificationDto),
       })
 
       if (!response.ok) {
         this.logger.error(
-          `Non-OK response for application ${applicationDto.id}`,
+          `Non-OK response for application ${notificationDto.applicationId}`,
         )
-        return false
+        return { validationFailed: false }
       }
+      const responseData = await response.json()
+      const externalSystemResponse: ValidationResponseDto = {
+        validationFailed: responseData.success,
+        screen: responseData.screen,
+      }
+      return externalSystemResponse
     } catch (error) {
       this.logger.error(
-        `Error sending notification for application ${applicationDto.id}: ${error}`,
+        `Error sending notification for application ${notificationDto.applicationId}: ${error}`,
       )
-      return false
+      return { validationFailed: false }
     }
-
-    return true
   }
 
   private async getAccessToken(url: string): Promise<string | null> {

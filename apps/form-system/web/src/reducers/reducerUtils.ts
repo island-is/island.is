@@ -339,7 +339,11 @@ export const decrement = (
     currentScreen: resultCurrentScreen,
     sections: resultSections,
     errors: [],
-    screenErrors: [],
+    screenError: {
+      hasError: false,
+      title: { is: '', en: '' },
+      message: { is: '', en: '' },
+    },
   }
 }
 
@@ -418,6 +422,46 @@ export const jumpToScreen = (
     application: {
       ...state.application,
     },
+  }
+}
+
+export const setExternalValidationErrors = (
+  state: ApplicationState,
+  screen: FormSystemScreen,
+): ApplicationState => {
+  const normalizedScreenError = screen.screenError || {
+    hasError: false,
+    title: { is: '', en: '' },
+    message: { is: '', en: '' },
+  }
+
+  console.log(`Current screen before: ${JSON.stringify(state.currentScreen)}`)
+  // console.log(`update screen: ${JSON.stringify(screen)}`)
+
+  const sections = state.sections.map((section) => {
+    const hasMatch = section.screens?.some(
+      (s) => s != null && s.id === screen.id,
+    )
+    if (!hasMatch) return section
+
+    return {
+      ...section,
+      screens: section.screens?.map((s) =>
+        s != null && s.id === screen.id ? screen : s,
+      ),
+    }
+  })
+
+  state.sections = sections
+  state = setCurrentScreen(
+    state,
+    state.currentSection.index,
+    state.currentScreen?.index ?? -1,
+  )
+  console.log(`Current screen after: ${JSON.stringify(state.currentScreen)}`)
+  return {
+    ...state,
+    screenError: normalizedScreenError,
   }
 }
 

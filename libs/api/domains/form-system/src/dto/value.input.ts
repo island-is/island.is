@@ -1,5 +1,7 @@
 import { InputType, Field, Int } from '@nestjs/graphql'
 import { ApplicationEventDtoInput } from './application.input'
+import { LanguageTypeInput } from './languageType.input'
+import { ValidationErrorInput } from './validationError.input'
 
 @InputType('FormSystemMonthInput')
 export class MonthInput {
@@ -110,6 +112,9 @@ export class ValueDtoInput {
 
   @Field(() => ValueInput, { nullable: true })
   json?: ValueInput
+
+  @Field(() => ValidationErrorInput, { nullable: true })
+  valueError?: ValidationErrorInput
 
   @Field(() => [ApplicationEventDtoInput], { nullable: 'itemsAndList' })
   events?: ApplicationEventDtoInput[]

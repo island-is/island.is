@@ -1,6 +1,8 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { LanguageTypeInput } from './languageType.input'
 import { FieldInput } from './field.input'
+import { ValidationError } from '../models/applications.model'
+import { ValidationErrorInput } from './validationError.input'
 
 @InputType('FormSystemCreateScreenDtoInput')
 export class CreateScreenDtoInput {
@@ -26,7 +28,10 @@ export class UpdateSectionDtoInput {
   multiset?: number
 
   @Field(() => Boolean, { nullable: true })
-  callRuleset?: boolean
+  shouldValidate?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  shouldPopulate?: boolean
 }
 
 @InputType('FormSystemUpdateScreenInput')
@@ -89,7 +94,13 @@ export class ScreenInput {
   multiset?: number
 
   @Field(() => Boolean, { nullable: true })
-  callRuleset?: boolean
+  shouldValidate?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  shouldPopulate?: boolean
+
+  @Field(() => ValidationErrorInput, { nullable: false })
+  screenError?: ValidationErrorInput
 
   @Field(() => [FieldInput], { nullable: 'itemsAndList' })
   fields?: FieldInput[]

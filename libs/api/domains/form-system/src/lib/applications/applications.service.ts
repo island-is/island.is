@@ -10,6 +10,7 @@ import {
   ApplicationsControllerFindAllByOrganizationRequest,
   ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerNotifyRequest,
   ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
   ApplicationsControllerUpdateRequest,
@@ -26,6 +27,8 @@ import {
   ApplicationResponse,
   SubmitApplicationResponse,
 } from '../../models/applications.model'
+import { NotificationRequestDto } from 'libs/form-system/src/dto/notification.request.dto'
+import { ValidationResponse } from '../../models/screen.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -121,6 +124,11 @@ export class ApplicationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to submit application'),
       )
+    console.log(
+      `submit response from resolver: ${
+        response ? JSON.stringify(response) : 'no response'
+      }`,
+    )
     return response as SubmitApplicationResponse
   }
 
@@ -134,9 +142,25 @@ export class ApplicationsService {
   }
 
   async saveScreen(auth: User, input: SubmitScreenInput): Promise<void> {
+    console.log('calling save screen from resolver service')
     await this.applicationsApiWithAuth(auth).applicationsControllerSaveScreen(
       input as ApplicationsControllerSaveScreenRequest,
     )
+  }
+
+  async notifyExternalSystem(
+    auth: User,
+    input: NotificationRequestDto,
+  ): Promise<ValidationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerNotify({
+        notificationRequestDto: input,
+      } as ApplicationsControllerNotifyRequest)
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to notify external system'),
+      )
+    console.log(`Notification response: ${JSON.stringify(response)}`)
+    return response as ValidationResponse
   }
 
   async deleteApplication(auth: User, input: string): Promise<void> {

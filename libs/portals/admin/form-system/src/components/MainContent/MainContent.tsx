@@ -30,7 +30,7 @@ export const MainContent = () => {
     focus,
     getTranslation,
   } = useContext(ControlContext)
-  const { activeItem } = control
+  const { activeItem, form } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
 
@@ -121,7 +121,7 @@ export const MainContent = () => {
           {activeItem.type === 'Screen' && (
             <Row>
               <Column>
-                <Checkbox
+                {/* <Checkbox
                   name="multi"
                   label={formatMessage(m.allowMultiple)}
                   checked={
@@ -137,7 +137,49 @@ export const MainContent = () => {
                       },
                     })
                   }
-                />
+                /> */}
+                {form.submissionServiceUrl !== 'zendesk' && (
+                  <>
+                    <Box marginTop={1}>
+                      <Checkbox
+                        name="validate"
+                        label="Senda umsókn til yfirferðar og fá staðfestingu áður en hægt er að klára skrefið"
+                        checked={
+                          (activeItem.data as FormSystemScreen)
+                            .shouldValidate ?? false
+                        }
+                        onChange={(e) =>
+                          controlDispatch({
+                            type: 'TOGGLE_SHOULD_VALIDATE',
+                            payload: {
+                              checked: e.target.checked,
+                              update: updateActiveItem,
+                            },
+                          })
+                        }
+                      />
+                    </Box>
+                    <Box marginTop={2}>
+                      <Checkbox
+                        name="populate"
+                        label="Senda skjá í sjálfvirka útfyllingu gagna"
+                        checked={
+                          (activeItem.data as FormSystemScreen)
+                            .shouldPopulate ?? false
+                        }
+                        onChange={(e) =>
+                          controlDispatch({
+                            type: 'TOGGLE_SHOULD_POPULATE',
+                            payload: {
+                              checked: e.target.checked,
+                              update: updateActiveItem,
+                            },
+                          })
+                        }
+                      />
+                    </Box>
+                  </>
+                )}
               </Column>
             </Row>
           )}
