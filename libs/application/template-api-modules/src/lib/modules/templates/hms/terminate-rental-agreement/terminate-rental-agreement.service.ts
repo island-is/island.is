@@ -2,8 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../..'
-import {
-  HmsRentalAgreementService} from '@island.is/clients/hms-rental-agreement'
+import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreement'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -30,7 +29,8 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
 
   async getRentalAgreements({ auth }: TemplateApiModuleActionProps) {
     try {
-      const contracts = await this.hmsService.getRentalAgreementsDeprecated(auth)
+      const contracts = await this.hmsService
+        .getRentalAgreementsDeprecated(auth)
         .then((res) => {
           return res
             .map((contract) => {
@@ -90,7 +90,9 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
           throw e
         }
         try {
-          return await this.hmsService.postCancelContract(auth, {cancelContract: parsedApplication})
+          return await this.hmsService.postCancelContract(auth, {
+            cancelContract: parsedApplication,
+          })
         } catch (e) {
           this.logger.error('Failed to post cancel contract:', e.message)
           throw e
@@ -103,7 +105,9 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
           throw e
         }
         try {
-          return await this.hmsService.postTerminateContract(auth, {terminateContract: parsedApplication})
+          return await this.hmsService.postTerminateContract(auth, {
+            terminateContract: parsedApplication,
+          })
         } catch (e) {
           this.logger.error('Failed to post terminate contract:', e.message)
           throw e

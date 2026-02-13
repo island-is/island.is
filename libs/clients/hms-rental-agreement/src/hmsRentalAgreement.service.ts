@@ -1,5 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ContractCancelPostRequest, ContractDraftRequest, ContractPostRequest, ContractTerminatePostRequest, HomeApi } from '../gen/fetch'
+import {
+  ContractCancelPostRequest,
+  ContractDraftRequest,
+  ContractPostRequest,
+  ContractTerminatePostRequest,
+  HomeApi,
+} from '../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { isDefined } from '@island.is/shared/utils'
 import {
@@ -36,7 +42,7 @@ export class HmsRentalAgreementService {
    * @deprecated Use getRentalAgreements instead.
    */
   async getRentalAgreementsDeprecated(user: User) {
-    return this.apiWithAuth(user).contractKtKtGet({   kt: user.nationalId,})
+    return this.apiWithAuth(user).contractKtKtGet({ kt: user.nationalId })
   }
 
   async getRentalAgreements(
@@ -95,7 +101,7 @@ export class HmsRentalAgreementService {
 
   async postDraftContract(user: User, request: ContractDraftRequest) {
     return this.apiWithAuth(user).contractSendDraftPost({
-      contractDraftRequest: request
+      contractDraftRequest: request,
     })
   }
 
@@ -107,7 +113,10 @@ export class HmsRentalAgreementService {
     return this.apiWithAuth(user).contractCancelPost(request)
   }
 
-  async postTerminateContract(user: User, request: ContractTerminatePostRequest) {
+  async postTerminateContract(
+    user: User,
+    request: ContractTerminatePostRequest,
+  ) {
     return this.apiWithAuth(user).contractTerminatePost(request)
   }
 }

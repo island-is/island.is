@@ -52,7 +52,8 @@ export class RentalAgreementService extends BaseTemplateApiService {
       mappedAnswers,
     )
 
-    return await this.hmsService.postContract(auth, { leaseApplication })
+    return await this.hmsService
+      .postContract(auth, { leaseApplication })
       .catch((error) => {
         const errorMessage = `Error sending application ${id} to HMS Rental Service`
         console.error(errorMessage, error)
