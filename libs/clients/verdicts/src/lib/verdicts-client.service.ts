@@ -267,7 +267,8 @@ export class VerdictsClientService {
             presentings: response.item.presentings ?? '',
             resolutionLink:
               response.item.resolutionLink &&
-              isUrl(response.item.resolutionLink)
+              isUrl(response.item.resolutionLink) &&
+              response.item.resolutionLink.toLowerCase().startsWith('http')
                 ? response.item.resolutionLink
                 : '',
           },
