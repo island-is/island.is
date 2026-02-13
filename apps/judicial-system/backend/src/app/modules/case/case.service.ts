@@ -1920,18 +1920,6 @@ export class CaseService {
     user: TUser,
     transaction: Transaction,
   ) {
-    if (
-      updatedCase.indictmentReviewDecision &&
-      !theCase.indictmentReviewDecision
-    ) {
-      await this.eventLogService.createWithUser(
-        EventType.INDICTMENT_REVIEWED,
-        theCase.id,
-        user,
-        transaction,
-      )
-    }
-
     const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
     const updatedArraignmentDate = DateLog.arraignmentDate(updatedCase.dateLogs)
     const hasUpdatedArraignmentDate =
