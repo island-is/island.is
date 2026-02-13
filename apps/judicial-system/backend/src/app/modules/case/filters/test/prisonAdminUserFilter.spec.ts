@@ -120,7 +120,7 @@ describe.each(prisonSystemRoles)('prison admin user %s', (role) => {
                   type,
                   state,
                   indictmentRulingDecision,
-                  indictmentReviewDecision,
+                  defendants: [{ indictmentReviewDecision }],
                 } as Case
 
                 verifyNoAccess(theCase, user)
@@ -155,7 +155,7 @@ describe.each(prisonSystemRoles)('prison admin user %s', (role) => {
                     type,
                     state,
                     indictmentRulingDecision,
-                    indictmentReviewDecision,
+                    defendants: [{ indictmentReviewDecision }],
                   } as Case
 
                   verifyNoAccess(theCase, user)
@@ -185,7 +185,7 @@ describe.each(prisonSystemRoles)('prison admin user %s', (role) => {
                     type,
                     state,
                     indictmentRulingDecision,
-                    indictmentReviewDecision,
+                    defendants: [{ indictmentReviewDecision }],
                   } as Case
 
                   verifyNoAccess(theCase, user)
@@ -200,8 +200,7 @@ describe.each(prisonSystemRoles)('prison admin user %s', (role) => {
                       type,
                       state,
                       indictmentRulingDecision,
-                      indictmentReviewDecision,
-                      defendants: [{}],
+                      defendants: [{ indictmentReviewDecision }],
                     } as Case
 
                     verifyNoAccess(theCase, user)
@@ -212,8 +211,9 @@ describe.each(prisonSystemRoles)('prison admin user %s', (role) => {
                       type,
                       state,
                       indictmentRulingDecision,
-                      indictmentReviewDecision,
-                      defendants: [{ isSentToPrisonAdmin: true }],
+                      defendants: [
+                        { indictmentReviewDecision, isSentToPrisonAdmin: true },
+                      ],
                     } as Case
 
                     if (type === CaseType.INDICTMENT) {
