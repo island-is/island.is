@@ -152,7 +152,6 @@ export class ApplicationsService {
     auth: User,
     input: NotificationRequestInput,
   ): Promise<ValidationResponse> {
-    console.log('notifying external system with input:', JSON.stringify(input))
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerNotify({
         notificationRequestDto: input,
@@ -160,7 +159,6 @@ export class ApplicationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to notify external system'),
       )
-    console.log(`Notification response: ${JSON.stringify(response)}`)
     return response as ValidationResponse
   }
 

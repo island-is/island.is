@@ -1031,16 +1031,16 @@ export class ApplicationsService {
     //   }
     // }
 
-    if (!notificationDto.screenDto) {
+    if (!notificationDto.screen) {
       console.log('notificationDto.screenDto is missing')
       throw new NotFoundException(
         `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
     }
 
-    console.log('notificationDto.screenDto: ', notificationDto.screenDto)
+    console.log('notificationDto.screenDto: ', notificationDto.screen)
     const result = new ValidationResponseDto()
-    result.screen = notificationDto.screenDto // This is just for testing, in a real scenario the screen would be fetched and returned with the error
+    result.screen = notificationDto.screen // This is just for testing, in a real scenario the screen would be fetched and returned with the error
     ;(result.screen.screenError = {
       hasError: true,
       title: { is: 'Villa kom upp', en: 'Error occured' },

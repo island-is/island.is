@@ -38,7 +38,7 @@ export class NotificationDto {
   @Expose()
   @ValidateNested()
   @ApiPropertyOptional({ type: ScreenDto })
-  screenDto?: ScreenDto
+  screen?: ScreenDto
 }
 
 export class NotificationRequestDto {

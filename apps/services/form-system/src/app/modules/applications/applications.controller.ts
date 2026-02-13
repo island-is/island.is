@@ -104,6 +104,10 @@ export class ApplicationsController {
     @Body() notificationRequestDto: NotificationRequestDto,
     @CurrentUser() user: User,
   ): Promise<ValidationResponseDto> {
+    console.log(
+      'Received notification request with data:',
+      JSON.stringify(notificationRequestDto),
+    )
     return await this.applicationsService.notifyExternalService(
       notificationRequestDto.notificationDto,
       notificationRequestDto.url,
