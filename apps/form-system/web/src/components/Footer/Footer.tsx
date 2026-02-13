@@ -111,12 +111,13 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 slug: state.application.slug,
                 isTest: state.application.isTest,
                 command: NotificationActions.VALIDATE,
-                screenId: state.currentScreen?.data?.id,
+                screen: state.currentScreen.data,
               },
             },
           },
         })
 
+        console.log(`data from notifyExternal: ${JSON.stringify(data)}`)
         const updatedScreen = removeTypename(
           data?.notifyFormSystemExternalSystem?.screen,
         )

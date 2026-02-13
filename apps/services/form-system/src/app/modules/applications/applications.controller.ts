@@ -30,10 +30,7 @@ import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.r
 import type { Locale } from '@island.is/shared/types'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
 import { ValidationResponseDto } from './models/dto/validation.response.dto'
-import {
-  NotificationDto,
-  NotificationRequestDto,
-} from '@island.is/form-system/shared'
+import { NotificationRequestDto } from './models/dto/notification.dto'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')

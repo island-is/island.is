@@ -21,7 +21,7 @@ import {
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import { ValidationResponse } from '../../models/screen.model'
-import { NotificationRequestDto } from '@island.is/form-system/shared'
+import { NotificationRequestInput } from '@island.is/form-system/shared'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -125,8 +125,8 @@ export class ApplicationsResolver {
     nullable: true,
   })
   async notifyExternalSystem(
-    @Args('input', { type: () => NotificationRequestDto })
-    input: NotificationRequestDto,
+    @Args('input', { type: () => NotificationRequestInput })
+    input: NotificationRequestInput,
     @CurrentUser() user: User,
   ): Promise<ValidationResponse> {
     return this.applicationsService.notifyExternalSystem(user, input)

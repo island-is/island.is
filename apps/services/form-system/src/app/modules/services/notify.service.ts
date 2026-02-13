@@ -6,7 +6,7 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import { NotificationDto } from '@island.is/form-system/shared'
+import { NotificationInput } from '@island.is/form-system/shared'
 import { ValidationResponseDto } from '../applications/models/dto/validation.response.dto'
 
 @Injectable()
@@ -31,7 +31,7 @@ export class NotifyService {
   private readonly xroadClient = this.xRoadConfig.xRoadClient
 
   async sendNotification(
-    notificationDto: NotificationDto,
+    notificationDto: NotificationInput,
     url: string,
   ): Promise<ValidationResponseDto> {
     if (!this.xroadBase || !this.xroadClient) {

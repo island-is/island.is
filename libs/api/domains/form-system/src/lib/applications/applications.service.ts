@@ -27,8 +27,8 @@ import {
   ApplicationResponse,
   SubmitApplicationResponse,
 } from '../../models/applications.model'
-import { NotificationRequestDto } from 'libs/form-system/src/dto/notification.request.dto'
 import { ValidationResponse } from '../../models/screen.model'
+import { NotificationRequestInput } from '@island.is/form-system/shared'
 
 @Injectable()
 export class ApplicationsService {
@@ -150,8 +150,9 @@ export class ApplicationsService {
 
   async notifyExternalSystem(
     auth: User,
-    input: NotificationRequestDto,
+    input: NotificationRequestInput,
   ): Promise<ValidationResponse> {
+    console.log('notifying external system with input:', JSON.stringify(input))
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerNotify({
         notificationRequestDto: input,

@@ -24,7 +24,6 @@ import {
   ApplicationEvents,
   FieldTypesEnum,
   ApplicantTypesEnum,
-  NotificationDto,
 } from '@island.is/form-system/shared'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
@@ -47,6 +46,7 @@ import { SectionDto } from '../sections/models/dto/section.dto'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
 import { ValidationResponseDto } from './models/dto/validation.response.dto'
 import { NotifyService } from '../services/notify.service'
+import { NotificationDto } from './models/dto/notification.dto'
 // import { ScreenFromNotifyDto } from '../screens/models/dto/screenFromNotify.dto'
 
 @Injectable()
@@ -998,42 +998,49 @@ export class ApplicationsService {
     url: string,
     user: User,
   ): Promise<ValidationResponseDto> {
-    const applicationResponse = await this.getApplication(
-      notificationDto.applicationId,
-      notificationDto.slug,
-      user,
+    console.log(
+      `notifyExternalService called with notificationDto: ${JSON.stringify(
+        notificationDto,
+      )}`,
     )
-    const applicationDto = applicationResponse.application
+    // const applicationResponse = await this.getApplication(
+    //   notificationDto.applicationId,
+    //   notificationDto.slug,
+    //   user,
+    // )
+    // const applicationDto = applicationResponse.application
 
-    if (!applicationDto) {
+    // if (!applicationDto) {
+    //   throw new NotFoundException(
+    //     `Application DTO with id '${notificationDto.applicationId}' not found`,
+    //   )
+    // }
+
+    // let targetScreen: ScreenDto | null = null
+
+    // // Iterate every section and screen until found
+    // for (const section of applicationDto.sections ?? []) {
+    //   for (const screen of section.screens ?? []) {
+    //     if (screen.id === notificationDto.screenId) {
+    //       targetScreen = screen
+    //       break
+    //     }
+    //   }
+    //   if (targetScreen) {
+    //     break
+    //   }
+    // }
+
+    if (!notificationDto.screenDto) {
+      console.log('notificationDto.screenDto is missing')
       throw new NotFoundException(
-        `Application DTO with id '${notificationDto.applicationId}' not found`,
+        `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
     }
 
-    let targetScreen: ScreenDto | null = null
-
-    // Iterate every section and screen until found
-    for (const section of applicationDto.sections ?? []) {
-      for (const screen of section.screens ?? []) {
-        if (screen.id === notificationDto.screenId) {
-          targetScreen = screen
-          break
-        }
-      }
-      if (targetScreen) {
-        break
-      }
-    }
-
-    if (!targetScreen) {
-      throw new NotFoundException(
-        `Screen with id '${notificationDto.screenId}' not found in application '${notificationDto.applicationId}'`,
-      )
-    }
-
+    console.log('notificationDto.screenDto: ', notificationDto.screenDto)
     const result = new ValidationResponseDto()
-    result.screen = targetScreen
+    result.screen = notificationDto.screenDto // This is just for testing, in a real scenario the screen would be fetched and returned with the error
     ;(result.screen.screenError = {
       hasError: true,
       title: { is: 'Villa kom upp', en: 'Error occured' },
@@ -1060,9 +1067,7 @@ export class ApplicationsService {
       }
     }
 
-    console.log('returning result from notifyExternalService', {
-      targetScreen,
-    })
+    console.log(`result from API: ${JSON.stringify(result)}`)
     return result
 
     // const response = await this.notifyService.sendNotification(
