@@ -1,1 +1,5 @@
 export { PaymentGroupTable } from './PaymentGroupTable/PaymentGroupTable'
+export { BankAccountInput } from './BankAccountInput/BankAccountInput'
+export { ForeignBankAccountInput } from './ForeignBankAccountInput/ForeignBankAccountInput'
+export type { DomesticBankAccountData } from './BankAccountInput/BankAccountInput'
+export type { ForeignBankAccountData } from './ForeignBankAccountInput/ForeignBankAccountInput'
