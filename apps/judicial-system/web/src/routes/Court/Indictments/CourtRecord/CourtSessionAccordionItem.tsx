@@ -33,7 +33,9 @@ import {
   applyDativeCaseToCourtName,
   formatDOB,
   getRoleTitleFromCaseFileCategory,
+  getWordByGender,
   lowercase,
+  Word,
 } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
@@ -276,9 +278,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         }
         const dob = formatDOB(defendant.nationalId, defendant.noNationalId, '')
         attendees.push(
-          `\n${defendant.name} ákærði${dob ? ', ' : ''}${dob}, ${
-            defendant.address
-          }`,
+          `\n${defendant.name} ${getWordByGender(
+            Word.AKAERDI,
+            defendant.gender,
+          )}${dob ? ', ' : ''}${dob}, ${defendant.address}`,
         )
       })
     }

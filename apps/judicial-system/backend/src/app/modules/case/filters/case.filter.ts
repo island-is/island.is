@@ -284,16 +284,15 @@ const canPrisonAdminUserAccessCase = (
       return false
     }
 
-    // Check indictment case review decision access
+    // Check indictment case review decision access or if a defendant
+    // has been sent to the prison admin
     if (
-      theCase.indictmentReviewDecision !== IndictmentCaseReviewDecision.ACCEPT
-    ) {
-      return false
-    }
-
-    // Check if a defendant has been sent to the prison admin
-    if (
-      !theCase.defendants?.some((defendant) => defendant.isSentToPrisonAdmin)
+      !theCase.defendants?.some(
+        (defendant) =>
+          defendant.isSentToPrisonAdmin &&
+          defendant.indictmentReviewDecision ===
+            IndictmentCaseReviewDecision.ACCEPT,
+      )
     ) {
       return false
     }
