@@ -166,7 +166,7 @@ describe('Subpoena Exists Guard', () => {
       then = await givenWhenThen()
     })
 
-    it('should throw BadRequestException', () => {
+    it('should throw InternalServerErrorException', () => {
       expect(then.error).toBeInstanceOf(InternalServerErrorException)
       expect(then.error.message).toBe(
         `Defendant ${defendantId} is linked to case ${splitCaseId} which is not a split case of case ${caseId}`,
@@ -208,7 +208,7 @@ describe('Subpoena Exists Guard', () => {
       then = await givenWhenThen()
     })
 
-    it('should not activate', () => {
+    it('should activate', () => {
       expect(then.result).toBe(true)
       expect(request.subpoena).toBe(subpoena)
     })
