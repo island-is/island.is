@@ -129,9 +129,7 @@ export const createTestingNotificationModule = async () => {
       { provide: getModelToken(Notification), useValue: { create: jest.fn() } },
       {
         provide: getModelToken(InstitutionContact),
-        useValue: {
-          create: jest.fn(),
-        },
+        useValue: { create: jest.fn() },
       },
       {
         provide: DefendantService,
