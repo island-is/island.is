@@ -433,8 +433,8 @@ const Conclusion: FC = () => {
 
   const missingValidGeneratedCourtRecordForCompletionWithMerge = Boolean(
     workingCase.withCourtSessions &&
-      (!isValidGeneratedIndictmentCourtRecord ||
-        isEmptyGeneratedIndictmentCourtRecord) &&
+      !isEmptyGeneratedIndictmentCourtRecord &&
+      !isValidGeneratedIndictmentCourtRecord &&
       selectedAction === IndictmentDecision.COMPLETING &&
       selectedDecision === CaseIndictmentRulingDecision.MERGE,
   )
