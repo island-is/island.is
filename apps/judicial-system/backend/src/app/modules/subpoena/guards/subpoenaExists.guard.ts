@@ -54,7 +54,7 @@ export class SubpoenaExistsGuard implements CanActivate {
       }
 
       if (subpoena.created > splitCase.created) {
-        // Subpoena was created after the split case was created, so it cannot be access from the parent case
+        // Subpoena was created after the split case was created, so it cannot be accessed from the parent case
         return false
       }
     }
@@ -89,9 +89,10 @@ export class SubpoenaExistsOptionalGuard extends SubpoenaExistsGuard {
     }
 
     if (defendant.caseId !== theCase.id) {
-      throw new BadRequestException(
-        `Subpoena id cannot be optional for split case defendants`,
-      )
+      // The defendant comes from a split case
+      // In such cases, we require a subpoena id as we should only access
+      // existing subpoenas which were created before the split case was created
+      return false
     }
 
     return true

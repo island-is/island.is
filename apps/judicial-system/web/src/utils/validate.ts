@@ -584,33 +584,25 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
   )
 }
 
-export const isIndictmentCourtRecordValid = (workingCase: Case) => {
-  if (!workingCase.withCourtSessions) {
-    return true
-  }
-
-  if (
-    !Array.isArray(workingCase.courtSessions) ||
-    workingCase.courtSessions.length === 0
-  ) {
-    return false
-  }
-
-  return workingCase.courtSessions.every(
-    (courtSession) =>
-      isCourtSessionValid(courtSession) && courtSession.isConfirmed,
+export const isGeneratedIndictmentCourtRecordValid = (workingCase: Case) => {
+  return Boolean(
+    workingCase.courtSessions &&
+      workingCase.courtSessions.length > 0 &&
+      workingCase.courtSessions.every((session) => session.isConfirmed),
   )
 }
+
+export const isNoGeneratedIndictmentCourtRecord = (workingCase: Case) =>
+  Boolean(!workingCase.courtSessions || workingCase.courtSessions.length === 0)
 
 const isIndictmentRulingDecisionValid = (workingCase: Case) => {
   const isCourtRecordValid = () =>
     Boolean(
-      (workingCase.courtSessions &&
-        workingCase.courtSessions.length > 0 &&
-        workingCase.courtSessions.every((session) => session.endDate)) ||
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.COURT_RECORD,
-        ),
+      workingCase.withCourtSessions
+        ? isGeneratedIndictmentCourtRecordValid(workingCase)
+        : workingCase.caseFiles?.some(
+            (file) => file.category === CaseFileCategory.COURT_RECORD,
+          ),
     )
 
   switch (workingCase.indictmentRulingDecision) {
@@ -629,9 +621,12 @@ const isIndictmentRulingDecisionValid = (workingCase: Case) => {
       return isCourtRecordValid()
     case CaseIndictmentRulingDecision.MERGE:
       return Boolean(
-        workingCase.mergeCase?.id ||
-          validate([[workingCase.mergeCaseNumber, ['empty', 'S-case-number']]])
-            .isValid,
+        (isNoGeneratedIndictmentCourtRecord(workingCase) ||
+          isCourtRecordValid()) &&
+          (workingCase.mergeCase?.id ||
+            validate([
+              [workingCase.mergeCaseNumber, ['empty', 'S-case-number']],
+            ]).isValid),
       )
     default:
       return false
