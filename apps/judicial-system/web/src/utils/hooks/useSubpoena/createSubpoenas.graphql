@@ -1,0 +1,14 @@
+mutation CreateSubpoenas($caseId: String!, $input: CreateSubpoenasInput!) {
+  createSubpoenas(caseId: $caseId, input: $input) {
+    id
+    created
+    serviceStatus
+    serviceDate
+    servedBy
+    comment
+    defenderNationalId
+    caseId
+    defendantId
+    policeSubpoenaId
+  }
+}
