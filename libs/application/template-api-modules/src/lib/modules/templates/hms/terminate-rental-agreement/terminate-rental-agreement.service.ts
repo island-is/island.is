@@ -4,7 +4,7 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../..'
 import {
   HmsRentalAgreementService,
-  HomeApi
+  HomeApi,
 } from '@island.is/clients/hms-rental-agreement'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -94,7 +94,9 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
           throw e
         }
         try {
-          return await this.homeApi.contractCancelPost({ cancelContract: parsedApplication })
+          return await this.homeApi.contractCancelPost({
+            cancelContract: parsedApplication,
+          })
         } catch (e) {
           this.logger.error('Failed to post cancel contract:', e.message)
           throw e
@@ -107,7 +109,9 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
           throw e
         }
         try {
-          return await this.homeApi.contractTerminatePost({ terminateContract: parsedApplication })
+          return await this.homeApi.contractTerminatePost({
+            terminateContract: parsedApplication,
+          })
         } catch (e) {
           this.logger.error('Failed to post terminate contract:', e.message)
           throw e
