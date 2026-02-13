@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { HomeApi } from '../gen/fetch'
+import { ContractCancelPostRequest, ContractDraftRequest, ContractPostRequest, ContractTerminatePostRequest, HomeApi } from '../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { isDefined } from '@island.is/shared/utils'
 import {
@@ -30,6 +30,13 @@ export class HmsRentalAgreementService {
       new AuthMiddleware(user as Auth),
       new EntraTokenMiddleware(this.config),
     )
+  }
+
+  /**
+   * @deprecated Use getRentalAgreements instead.
+   */
+  async getRentalAgreementsDeprecated(user: User) {
+    return this.apiWithAuth(user).contractKtKtGet({   kt: user.nationalId,})
   }
 
   async getRentalAgreements(
@@ -84,5 +91,23 @@ export class HmsRentalAgreementService {
     }
 
     return mapContractDocumentItemDto(res) ?? undefined
+  }
+
+  async postDraftContract(user: User, request: ContractDraftRequest) {
+    return this.apiWithAuth(user).contractSendDraftPost({
+      contractDraftRequest: request
+    })
+  }
+
+  async postContract(user: User, request: ContractPostRequest) {
+    return this.apiWithAuth(user).contractPost(request)
+  }
+
+  async postCancelContract(user: User, request: ContractCancelPostRequest) {
+    return this.apiWithAuth(user).contractCancelPost(request)
+  }
+
+  async postTerminateContract(user: User, request: ContractTerminatePostRequest) {
+    return this.apiWithAuth(user).contractTerminatePost(request)
   }
 }
