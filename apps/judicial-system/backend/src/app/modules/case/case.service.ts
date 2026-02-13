@@ -45,6 +45,7 @@ import {
   CaseTransition,
   CaseType,
   completedIndictmentCaseStates,
+  CourtDocumentType,
   CourtSessionStringType,
   DateType,
   dateTypes,
@@ -85,6 +86,7 @@ import {
   CaseString,
   CivilClaimant,
   CourtDocument,
+  CourtDocumentRepositoryService,
   CourtSession,
   CourtSessionString,
   DateLog,
@@ -586,6 +588,7 @@ export class CaseService {
     private readonly intlService: IntlService,
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
+    private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -2081,17 +2084,145 @@ export class CaseService {
     }
   }
 
-  private handleCreateFirstCourtSession(
+  private async handleInitialCourtDocumentCreation(
     theCase: Case,
     transaction: Transaction,
   ) {
-    // Guard against unexpected existing court sessions
-    if (theCase.courtSessions && theCase.courtSessions.length > 0) {
-      return
+    const indictmentConfirmedDate = EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_CONFIRMED,
+      theCase.eventLogs,
+    )
+
+    // Start with the generated indictment PDF
+    await this.courtDocumentRepositoryService.create(
+      theCase.id,
+      {
+        documentType: CourtDocumentType.GENERATED_DOCUMENT,
+        name: `Ákæra${
+          indictmentConfirmedDate
+            ? ` ${formatDate(indictmentConfirmedDate)}`
+            : ''
+        }`,
+        generatedPdfUri: `/api/case/${theCase.id}/indictment/Ákæra`,
+      },
+      { transaction },
+    )
+
+    const caseFiles = theCase.caseFiles ?? []
+
+    // Add all criminal records
+    for (const caseFile of caseFiles.filter(
+      (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
+    ) ?? []) {
+      await this.courtDocumentRepositoryService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        { transaction },
+      )
     }
 
-    // Create the first court session and then add court documents to it
-    return this.courtSessionService.create(theCase, transaction)
+    // Add all cost breakdowns
+    for (const caseFile of caseFiles.filter(
+      (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
+    ) ?? []) {
+      await this.courtDocumentRepositoryService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        { transaction },
+      )
+    }
+
+    // Add all case files records
+    for (const policeCaseNumber of theCase.policeCaseNumbers) {
+      const name = `Skjalaskrá ${policeCaseNumber}`
+
+      await this.courtDocumentRepositoryService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.GENERATED_DOCUMENT,
+          name,
+          generatedPdfUri: `/api/case/${theCase.id}/caseFilesRecord/${policeCaseNumber}/${name}`,
+        },
+        { transaction },
+      )
+    }
+
+    // Add all remaining case files
+    for (const caseFile of caseFiles?.filter(
+      (file) =>
+        file.category &&
+        [
+          CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
+          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIM,
+        ].includes(file.category),
+    ) ?? []) {
+      await this.courtDocumentRepositoryService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        { transaction },
+      )
+    }
+
+    for (const defendant of (theCase.defendants ?? []).filter(
+      (defendant) => !defendant.isAlternativeService,
+    )) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        const subpoenaName = `Fyrirkall ${defendant.name} ${formatDate(
+          subpoena.created,
+        )}`
+
+        await this.courtDocumentRepositoryService.create(
+          theCase.id,
+          {
+            documentType: CourtDocumentType.GENERATED_DOCUMENT,
+            name: subpoenaName,
+            generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${subpoenaName}`,
+          },
+          { transaction },
+        )
+
+        const wasSubpoenaSuccessfullyServed =
+          subpoena.serviceStatus &&
+          [
+            ServiceStatus.DEFENDER,
+            ServiceStatus.ELECTRONICALLY,
+            ServiceStatus.IN_PERSON,
+          ].includes(subpoena.serviceStatus)
+
+        if (!wasSubpoenaSuccessfullyServed) {
+          continue
+        }
+
+        const certificateName = `Birtingarvottorð ${defendant.name}`
+
+        await this.courtDocumentRepositoryService.create(
+          theCase.id,
+          {
+            documentType: CourtDocumentType.GENERATED_DOCUMENT,
+            name: certificateName,
+            generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}/${certificateName}`,
+          },
+          { transaction },
+        )
+      }
+    }
   }
 
   private async handleEventLogUpdatesForIndictments(
@@ -2156,8 +2287,18 @@ export class CaseService {
     const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
 
-    const isReceivingIndictmentCase =
-      isReceivingCase && isIndictmentCase(theCase.type)
+    const shouldCreateCourtDocuments =
+      isIndictmentCase(theCase.type) &&
+      theCase.withCourtSessions &&
+      ((update.state === CaseState.SUBMITTED &&
+        theCase.state === CaseState.WAITING_FOR_CONFIRMATION) ||
+        // The following is a temporary measure
+        // Currently, court documents are created when receiving a case,
+        // so when this change is deployed, there may be some already submitted cases
+        // which have not been given the chance to have court documents created
+        (isReceivingCase &&
+          !theCase.courtSessions?.length &&
+          !theCase.unfiledCourtDocuments?.length))
 
     const completingIndictmentCase =
       isIndictmentCase(theCase.type) &&
@@ -2214,10 +2355,9 @@ export class CaseService {
       await this.fileService.resetCaseFileStates(theCase.id, transaction)
     }
 
-    // Handle first court session creation if receiving an indictment case
-    // which should have court sessions
-    if (isReceivingIndictmentCase && theCase.withCourtSessions) {
-      await this.handleCreateFirstCourtSession(theCase, transaction)
+    // Handle court document creation on submitting an indictment case to court
+    if (shouldCreateCourtDocuments && theCase.withCourtSessions) {
+      await this.handleInitialCourtDocumentCreation(theCase, transaction)
     }
 
     // Ensure that verdicts exist at this stage, if they don't exist we create them
@@ -2303,14 +2443,14 @@ export class CaseService {
         )
       }
 
-      const parentCaseCourtSessions = parentCase.courtSessions
-      const latestCourtSession =
-        parentCaseCourtSessions && parentCaseCourtSessions.length > 0
-          ? parentCaseCourtSessions[parentCaseCourtSessions.length - 1]
-          : undefined
-
       // ensure there exists at least one court session in the parent case
-      if (parentCase.withCourtSessions && latestCourtSession) {
+      if (parentCase.withCourtSessions) {
+        const parentCaseCourtSessions = parentCase.courtSessions
+        const latestCourtSession =
+          parentCaseCourtSessions && parentCaseCourtSessions.length > 0
+            ? parentCaseCourtSessions[parentCaseCourtSessions.length - 1]
+            : undefined
+
         const isCourtSessionActive =
           latestCourtSession && !latestCourtSession.isConfirmed
         const courtSessionId = isCourtSessionActive
@@ -2708,7 +2848,7 @@ export class CaseService {
 
     const fullSplitCase = await this.findById(splitCase.id, false, transaction)
 
-    await this.handleCreateFirstCourtSession(fullSplitCase, transaction)
+    await this.handleInitialCourtDocumentCreation(fullSplitCase, transaction)
 
     return splitCase
   }

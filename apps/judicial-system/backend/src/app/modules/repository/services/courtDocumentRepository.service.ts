@@ -38,6 +38,10 @@ interface UpdateCourtDocument {
   submittedBy?: string
 }
 
+interface FileAllAvailableCourtDocumentsInCourtSessionOptions {
+  transaction: Transaction
+}
+
 interface FileCourtDocumentInCourtSessionOptions {
   transaction: Transaction
 }
@@ -440,6 +444,48 @@ export class CourtDocumentRepositoryService {
     } catch (error) {
       this.logger.error(
         `Error updating merged court document from ${caseId} to court session ${parentCaseCourtSessionId} of case ${parentCaseId}: `,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async fileAllAvailableCourtDocumentsInCourtSession(
+    caseId: string,
+    courtSessionId: string,
+    options: FileAllAvailableCourtDocumentsInCourtSessionOptions,
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Filing all available court documents in court session ${courtSessionId} of case ${caseId}`,
+      )
+
+      // Get all court documents that are not yet filed in a court session
+      const courtDocumentsToFile = await this.courtDocumentModel.findAll({
+        attributes: ['id'],
+        where: { caseId, courtSessionId: null, documentOrder: 0 },
+        transaction: options.transaction,
+      })
+
+      // File each document in the court session
+      for (const courtDocument of courtDocumentsToFile) {
+        await this.fileInCourtSession(
+          caseId,
+          courtSessionId,
+          courtDocument.id,
+          { transaction: options.transaction },
+        )
+      }
+
+      this.logger.debug(
+        `Filed all available court documents in court session ${courtSessionId} of case ${caseId}`,
+      )
+
+      return
+    } catch (error) {
+      this.logger.error(
+        `Error filing all available court documents in court session ${courtSessionId} of case ${caseId}:`,
         { error },
       )
 

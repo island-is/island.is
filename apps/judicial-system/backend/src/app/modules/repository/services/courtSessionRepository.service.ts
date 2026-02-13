@@ -64,13 +64,22 @@ export class CourtSessionRepositoryService {
         options,
       )
 
+      await this.courtDocumentRepositoryService.fileAllAvailableCourtDocumentsInCourtSession(
+        caseId,
+        courtSession.id,
+        { transaction: options.transaction },
+      )
+
       this.logger.debug(
         `Created a new court session ${courtSession.id} for case ${caseId}`,
       )
 
       return courtSession
     } catch (error) {
-      this.logger.error(`Error creating a new court session for case ${caseId}`)
+      this.logger.error(
+        `Error creating a new court session for case ${caseId}`,
+        { error },
+      )
 
       throw error
     }
