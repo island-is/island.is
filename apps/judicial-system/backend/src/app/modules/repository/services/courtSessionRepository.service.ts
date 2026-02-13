@@ -279,12 +279,36 @@ export class CourtSessionRepositoryService {
 
       const transaction = options.transaction
 
+      const courtSession = await this.courtSessionModel.findOne({
+        where: { caseId },
+        order: [['created', 'DESC']],
+        transaction,
+      })
+
+      if (!courtSession) {
+        throw new InternalServerErrorException(
+          `Could not find court session ${courtSessionId} of case ${caseId}`,
+        )
+      }
+
+      if (courtSession.id !== courtSessionId) {
+        throw new InternalServerErrorException(
+          `Only the latest court session of case ${caseId} can be deleted`,
+        )
+      }
+
       // First delete all documents in the session
-      await this.courtDocumentRepositoryService.deleteDocumentsInSession(
+      await this.courtDocumentRepositoryService.removeAllCourtDocmentsFromCourtSession(
         caseId,
         courtSessionId,
         transaction,
       )
+
+      // Then delete all strings in the session
+      await this.courtSessionStringModel.destroy({
+        where: { caseId, courtSessionId },
+        transaction,
+      })
 
       // Then delete the session itself
       await this.deleteFromDatabase(caseId, courtSessionId, transaction)
