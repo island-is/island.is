@@ -152,6 +152,9 @@ export class ApplicationsService {
     auth: User,
     input: NotificationRequestInput,
   ): Promise<ValidationResponse> {
+    console.log(
+      `calling notify external system with input: ${JSON.stringify(input)}`,
+    )
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerNotify({
         notificationRequestDto: input,
