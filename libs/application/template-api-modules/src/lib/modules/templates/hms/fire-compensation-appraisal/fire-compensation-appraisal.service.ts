@@ -27,7 +27,7 @@ import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
 import uniqBy from 'lodash/uniqBy'
-
+import { prereqMessages } from '@island.is/application/templates/hms/fire-compensation-appraisal'
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
   constructor(
@@ -78,7 +78,13 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         )
       } catch (e) {
         this.logger.error('Failed to fetch properties:', e.message)
-        throw new TemplateApiError(e, 500)
+        throw new TemplateApiError(
+          {
+            title: prereqMessages.getPropertiesErrorTitle,
+            summary: prereqMessages.getPropertiesErrorSummary,
+          },
+          500,
+        )
       }
     }
 

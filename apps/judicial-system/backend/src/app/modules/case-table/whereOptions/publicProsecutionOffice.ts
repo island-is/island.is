@@ -7,7 +7,10 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { publicProsecutionOfficeIndictmentsAccessWhereOptions } from './access'
-import { buildIsSentToPrisonExistsCondition } from './conditions'
+import {
+  buildHasDefendantWithNullReviewDecisionCondition,
+  buildIsSentToPrisonExistsCondition,
+} from './conditions'
 
 // Public prosecution office indictments
 
@@ -23,8 +26,8 @@ export const publicProsecutionOfficeIndictmentsInReviewWhereOptions = () => ({
     publicProsecutionOfficeIndictmentsAccessWhereOptions,
     {
       indictment_reviewer_id: { [Op.not]: null },
-      indictment_review_decision: null,
     },
+    buildHasDefendantWithNullReviewDecisionCondition(true),
   ],
 })
 
@@ -33,7 +36,6 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
     publicProsecutionOfficeIndictmentsAccessWhereOptions,
     {
       indictment_reviewer_id: { [Op.not]: null },
-      indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
       [Op.or]: [
         {
           indictment_ruling_decision: CaseIndictmentRulingDecision.FINE,
@@ -41,6 +43,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
             literal(`EXISTS (
               SELECT 1 FROM defendant
               WHERE defendant.case_id = "Case".id
+                AND defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
                 AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
             )`),
           ],
@@ -54,6 +57,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
               WHERE defendant.case_id = "Case".id
                 AND verdict.appeal_date IS NULL
                 AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
+                AND defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
                 AND verdict.service_requirement = '${ServiceRequirement.NOT_REQUIRED}'
                 AND verdict.created = (
                     SELECT MAX(v2.created)
@@ -77,6 +81,7 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
               WHERE defendant.case_id = "Case".id
                 AND verdict.appeal_date IS NULL
                 AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
+                AND defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
                 AND verdict.service_requirement in ('${ServiceRequirement.REQUIRED}', '${ServiceRequirement.NOT_APPLICABLE}')
                 AND (
                   verdict.service_date IS NULL
@@ -101,7 +106,6 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
       publicProsecutionOfficeIndictmentsAccessWhereOptions,
       {
         indictment_reviewer_id: { [Op.not]: null },
-        indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
         [Op.and]: [
           { indictment_ruling_decision: CaseIndictmentRulingDecision.RULING },
           {
@@ -113,6 +117,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                   WHERE defendant.case_id = "Case".id
                     AND verdict.appeal_date IS NULL
                     AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
+                    AND defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
                     AND verdict.service_requirement = '${ServiceRequirement.NOT_REQUIRED}'
                     AND verdict.created = (
                         SELECT MAX(v2.created)
@@ -137,6 +142,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                   WHERE defendant.case_id = "Case".id
                     AND verdict.appeal_date IS NULL
                     AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
+                    AND defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
                     AND verdict.service_requirement in ('${ServiceRequirement.REQUIRED}', '${ServiceRequirement.NOT_APPLICABLE}')
                     AND (
                       verdict.service_date IS NULL
@@ -159,6 +165,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                 WHERE defendant.case_id = "Case".id
                   AND verdict.appeal_date IS NULL
                   AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
+                  AND defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
                   AND verdict.created = (
                       SELECT MAX(v2.created)
                       FROM verdict v2
@@ -178,7 +185,6 @@ export const publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions =
       publicProsecutionOfficeIndictmentsAccessWhereOptions,
       {
         indictment_reviewer_id: { [Op.not]: null },
-        indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
         [Op.and]: [buildIsSentToPrisonExistsCondition(true)],
       },
     ],
@@ -189,24 +195,20 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions = () => ({
     publicProsecutionOfficeIndictmentsAccessWhereOptions,
     {
       indictment_reviewer_id: { [Op.not]: null },
-      [Op.or]: [
-        { indictment_review_decision: IndictmentCaseReviewDecision.APPEAL },
-        {
-          [Op.and]: [
-            literal(`EXISTS (
+      [Op.and]: [
+        literal(`EXISTS (
               SELECT 1 
               FROM defendant
               JOIN verdict ON defendant.id = verdict.defendant_id
               WHERE verdict.case_id = "Case".id
-                AND verdict.appeal_date IS NOT NULL
+                AND (verdict.appeal_date IS NOT NULL 
+                OR defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.APPEAL}')
                 AND verdict.created = (
                     SELECT MAX(v2.created)
                     FROM verdict v2
                     WHERE v2.defendant_id = defendant.id
                 )
           )`),
-          ],
-        },
       ],
     },
   ],

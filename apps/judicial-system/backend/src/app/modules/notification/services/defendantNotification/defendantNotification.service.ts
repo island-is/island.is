@@ -364,8 +364,8 @@ export class DefendantNotificationService extends BaseNotificationService {
     // We want to send separate emails to each recipient
     const to = this.config.email.prisonAdminIndictmentEmails
       .split(',')
-      .map((email) => email.trim())
-      .map((email) => {
+      .map((email: string) => email.trim())
+      .map((email: string) => {
         return {
           name: 'Fangelsismálastofnun',
           email,
@@ -401,8 +401,8 @@ export class DefendantNotificationService extends BaseNotificationService {
     // We want to send separate emails to each recipient
     const to = this.config.email.prisonAdminIndictmentEmails
       .split(',')
-      .map((email) => email.trim())
-      .map((email) => {
+      .map((email: string) => email.trim())
+      .map((email: string) => {
         return {
           name: 'Fangelsismálastofnun',
           email,
