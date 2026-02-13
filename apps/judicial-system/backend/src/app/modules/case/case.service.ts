@@ -45,7 +45,6 @@ import {
   CaseTransition,
   CaseType,
   completedIndictmentCaseStates,
-  CourtDocumentType,
   CourtSessionStringType,
   DateType,
   dateTypes,
@@ -1496,55 +1495,6 @@ export class CaseService {
     )
   }
 
-  private addMessagesForNewSubpoenasToQueue(
-    theCase: Case,
-    updatedCase: Case,
-    user: TUser,
-  ): void {
-    for (const updatedDefendant of updatedCase.defendants ?? []) {
-      if (
-        !(
-          theCase.defendants?.find(
-            (defendant) => defendant.id === updatedDefendant.id,
-          )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id
-        ) // Only deliver new subpoenas
-      ) {
-        continue
-      }
-
-      if (updatedCase.origin === CaseOrigin.LOKE) {
-        addMessagesToQueue({
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: [
-            updatedDefendant.id,
-            updatedDefendant.subpoenas?.[0].id ?? '',
-          ],
-        })
-      }
-
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
-        user,
-        caseId: theCase.id,
-        elementId: [
-          updatedDefendant.id,
-          updatedDefendant.subpoenas?.[0].id ?? '',
-        ],
-      })
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
-        user,
-        caseId: theCase.id,
-        elementId: [
-          updatedDefendant.id,
-          updatedDefendant.subpoenas?.[0].id ?? '',
-        ],
-      })
-    }
-  }
-
   private addMessagesForIndictmentArraignmentCompletionToQueue(
     theCase: Case,
     user: TUser,
@@ -1761,8 +1711,6 @@ export class CaseService {
       if (hasUpdatedArraignmentDate) {
         this.addMessagesForIndictmentArraignmentDate(updatedCase, user)
       }
-
-      this.addMessagesForNewSubpoenasToQueue(theCase, updatedCase, user)
     }
 
     // This only applies to indictments and only when an arraignment has been completed
@@ -2377,10 +2325,6 @@ export class CaseService {
       theCase.courtId !== update.courtId &&
       theCase.state === CaseState.RECEIVED
 
-    const updatedArraignmentDate = update.arraignmentDate
-    const schedulingNewArraignmentDateForIndictmentCase =
-      isIndictmentCase(theCase.type) && Boolean(updatedArraignmentDate)
-
     if (isReceivingCase) {
       update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
     }
@@ -2413,49 +2357,6 @@ export class CaseService {
     // Handle court document creation on submitting an indictment case to court
     if (shouldCreateCourtDocuments && theCase.withCourtSessions) {
       await this.handleInitialCourtDocumentCreation(theCase, transaction)
-    }
-
-    // Create new subpoenas if scheduling a new arraignment date for an indictment case
-    if (schedulingNewArraignmentDateForIndictmentCase && theCase.defendants) {
-      const dsPairs = await Promise.all(
-        theCase.defendants
-          .filter((defendant) => !defendant.isAlternativeService)
-          .map(async (defendant) => {
-            const subpoena = await this.subpoenaService.createSubpoena(
-              defendant.id,
-              theCase.id,
-              transaction,
-              updatedArraignmentDate?.date,
-              updatedArraignmentDate?.location,
-              defendant.subpoenaType,
-            )
-
-            return { defendant, subpoena }
-          }),
-      )
-
-      // Add court documents if a court session exists
-      if (
-        theCase.withCourtSessions &&
-        theCase.courtSessions &&
-        theCase.courtSessions.length > 0
-      ) {
-        for (const { defendant, subpoena } of dsPairs) {
-          const name = `Fyrirkall ${defendant.name} ${formatDate(
-            subpoena.created,
-          )}`
-
-          await this.courtDocumentRepositoryService.create(
-            theCase.id,
-            {
-              documentType: CourtDocumentType.GENERATED_DOCUMENT,
-              name,
-              generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
-            },
-            { transaction },
-          )
-        }
-      }
     }
 
     // Ensure that verdicts exist at this stage, if they don't exist we create them
