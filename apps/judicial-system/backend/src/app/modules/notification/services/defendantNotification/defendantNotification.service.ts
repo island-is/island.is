@@ -370,11 +370,6 @@ export class DefendantNotificationService extends BaseNotificationService {
         DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
       )
 
-    console.log({
-      institutionContact,
-      prisonAdminId: this.config.prisonAdminId,
-    })
-
     // We want to send separate emails to each recipient
     const to = `${this.config.email.prisonAdminIndictmentEmails}${
       institutionContact ? `,${institutionContact}` : ''
