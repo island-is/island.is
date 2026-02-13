@@ -45,6 +45,7 @@ import {
   CaseTransition,
   CaseType,
   completedIndictmentCaseStates,
+  CourtDocumentType,
   CourtSessionStringType,
   DateType,
   dateTypes,
