@@ -3103,8 +3103,9 @@ services-form-system-api:
     FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX'
     FORM_SYSTEM_ZENDESK_TENANT_ID_PROD: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_PROD'
     FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX'
-    SYSLUMENN_PASSWORD: '/k8s/services-auth/SYSLUMENN_PASSWORD'
-    SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME'
+    SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST'
+    SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD'
+    SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
