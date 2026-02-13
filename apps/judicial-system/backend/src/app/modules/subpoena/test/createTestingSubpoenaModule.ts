@@ -14,7 +14,11 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { addMessagesToQueue, Message, MessageService } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  Message,
+  MessageService,
+} from '@island.is/judicial-system/message'
 
 import { CaseService, InternalCaseService, PdfService } from '../../case'
 import { CourtService } from '../../court'
