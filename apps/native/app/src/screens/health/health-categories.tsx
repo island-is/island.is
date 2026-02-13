@@ -75,21 +75,21 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
     const medicineSubLinks = [
       ...(isPrescriptionsEnabled
         ? [
-          {
-            id: 'prescriptions',
-            titleId: 'health.prescriptions.title',
-            route: '/prescriptions',
-          },
-        ]
+            {
+              id: 'prescriptions',
+              titleId: 'health.prescriptions.title',
+              route: '/prescriptions',
+            },
+          ]
         : []),
       ...(isMedicineDelegationEnabled
         ? [
-          {
-            id: 'medicineDelegation',
-            titleId: 'health.medicineDelegation.screenTitle',
-            route: '/prescriptions',
-          },
-        ]
+            {
+              id: 'medicineDelegation',
+              titleId: 'health.medicineDelegation.screenTitle',
+              route: '/prescriptions',
+            },
+          ]
         : []),
       {
         id: 'drugCertificates',
@@ -98,12 +98,12 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
       },
       ...(isPrescriptionsEnabled
         ? [
-          {
-            id: 'medicineHistory',
-            titleId: 'health.medicineHistory.title',
-            route: '/prescriptions',
-          },
-        ]
+            {
+              id: 'medicineHistory',
+              titleId: 'health.medicineHistory.title',
+              route: '/prescriptions',
+            },
+          ]
         : []),
     ]
 

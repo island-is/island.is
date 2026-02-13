@@ -54,13 +54,13 @@ const Container = styled(Pressable)<{ hasIcon: boolean; isSubLink: boolean }>(
     gap: theme.spacing[2],
     ...(isSubLink
       ? {
-        paddingRight: theme.spacing[2],
-        paddingVertical: theme.spacing.smallGutter,
-      }
+          paddingRight: theme.spacing[2],
+          paddingVertical: theme.spacing.smallGutter,
+        }
       : {
-        paddingVertical: hasIcon ? theme.spacing.p2 : theme.spacing[2],
-        paddingHorizontal: theme.spacing[2],
-      }),
+          paddingVertical: hasIcon ? theme.spacing.p2 : theme.spacing[2],
+          paddingHorizontal: theme.spacing[2],
+        }),
   }),
 )
 
