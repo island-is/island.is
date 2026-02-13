@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationDto } from '../applications/models/dto/application.dto'
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
@@ -11,12 +10,12 @@ import {
 @Injectable()
 export class NotifyService {
   enhancedFetch: EnhancedFetchAPI
+  private readonly SYSLUMENN_USERNAME = process.env.SYSLUMENN_USERNAME
+  private readonly SYSLUMENN_PASSWORD = process.env.SYSLUMENN_PASSWORD
 
   constructor(
     @Inject(XRoadConfig.KEY)
     private readonly xRoadConfig: ConfigType<typeof XRoadConfig>,
-    @Inject(SyslumennClientConfig.KEY)
-    private syslumennConfig: ConfigType<typeof SyslumennClientConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.enhancedFetch = createEnhancedFetch({
@@ -49,8 +48,6 @@ export class NotifyService {
     }
 
     const xRoadPath = `${this.xroadBase}/r1/${url}`
-
-    this.logger.info(`Sending notification to URL: ${xRoadPath}`)
 
     try {
       const response = await this.enhancedFetch(xRoadPath, {
@@ -109,8 +106,8 @@ export class NotifyService {
           'X-Road-Client': this.xroadClient,
         },
         body: JSON.stringify({
-          notandi: this.syslumennConfig.username,
-          lykilord: this.syslumennConfig.password,
+          notandi: this.SYSLUMENN_USERNAME,
+          lykilord: this.SYSLUMENN_PASSWORD,
         }),
       })
 
