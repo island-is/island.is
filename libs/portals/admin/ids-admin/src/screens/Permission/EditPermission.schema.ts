@@ -165,7 +165,8 @@ const categoriesAndTagsSchema = z
 
 export const schema = {
   [PermissionFormTypes.CONTENT]: contentSchema,
-  [PermissionFormTypes.SECURITY_AND_CAPABILITIES]: securityAndCapabilitiesSchema,
+  [PermissionFormTypes.SECURITY_AND_CAPABILITIES]:
+    securityAndCapabilitiesSchema,
   [PermissionFormTypes.ACCESS_CONTROL]: accessControlSchema,
   [PermissionFormTypes.DELEGATIONS]: delegationsSchema,
   // CATEGORIES_AND_TAGS is now merged into CONTENT

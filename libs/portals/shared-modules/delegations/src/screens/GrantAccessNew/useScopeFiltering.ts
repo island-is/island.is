@@ -43,14 +43,14 @@ interface FilteredCategory extends Category {
 
 /**
  * Custom hook for filtering scopes based on search query and selected tags
- * 
+ *
  * Search logic:
  * - Category name
  * - Scope name (displayName)
  * - Scope description
  * - Domain name (e.g., "Skatturinn", "island.is")
  * - Tag name
- * 
+ *
  * Tag filter logic:
  * - Only show scopes that belong to ALL selected tags (AND logic)
  */
@@ -114,7 +114,7 @@ export const useScopeFiltering = ({
       })
 
       const searchResults: FilteredCategory[] = []
-      
+
       for (const category of filtered) {
         // Check if category title matches
         const categoryMatches = category.title.toLowerCase().includes(query)
@@ -176,7 +176,7 @@ export const useScopeFiltering = ({
           })
         }
       }
-      
+
       filtered = searchResults
     }
 
@@ -194,10 +194,7 @@ export const getTotalScopeCount = (categories: Category[]): number => {
 /**
  * Helper to check if a scope is in specific tags
  */
-export const getScopeTagIds = (
-  scopeName: string,
-  tags: Tag[],
-): string[] => {
+export const getScopeTagIds = (scopeName: string, tags: Tag[]): string[] => {
   return tags
     .filter((tag) => tag.scopes.some((s) => s.name === scopeName))
     .map((tag) => tag.id)

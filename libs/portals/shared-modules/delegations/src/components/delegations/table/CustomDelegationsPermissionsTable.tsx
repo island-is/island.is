@@ -48,10 +48,11 @@ const CustomDelegationsPermissionsTable = ({
         </T.Head>
         <T.Body>
           {scopes?.map((scope) => {
-            const domainName = scope.domain?.displayName || 
-              ('domain' in data && data.domain?.displayName) || 
+            const domainName =
+              scope.domain?.displayName ||
+              ('domain' in data && data.domain?.displayName) ||
               ''
-            
+
             return (
               <T.Row key={scope.id}>
                 <RowItems

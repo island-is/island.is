@@ -23,18 +23,20 @@ interface UseScopeSelectionReturn {
   selectAllInCategory: (
     categoryId: string,
     categoryTitle: string,
-    scopes: Array<{ name: string; displayName: string; description?: string | null }>,
+    scopes: Array<{
+      name: string
+      displayName: string
+      description?: string | null
+    }>,
   ) => void
-  deselectAllInCategory: (
-    scopes: Array<{ name: string }>,
-  ) => void
+  deselectAllInCategory: (scopes: Array<{ name: string }>) => void
   setValidityForScope: (scopeName: string, validTo: Date | undefined) => void
   getSelectionArray: () => ScopeSelection[]
 }
 
 /**
  * Custom hook for managing scope selection state
- * 
+ *
  * Features:
  * - Toggle individual scopes
  * - Select/deselect all in category
@@ -92,7 +94,11 @@ export const useScopeSelection = (): UseScopeSelectionReturn => {
     (
       categoryId: string,
       categoryTitle: string,
-      scopes: Array<{ name: string; displayName: string; description?: string | null }>,
+      scopes: Array<{
+        name: string
+        displayName: string
+        description?: string | null
+      }>,
     ) => {
       setSelectedScopes((prev) => {
         const next = new Map(prev)

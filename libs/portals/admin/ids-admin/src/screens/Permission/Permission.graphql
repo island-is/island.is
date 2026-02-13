@@ -24,11 +24,11 @@ fragment AuthAdminScopeEnvironmentFragment on AuthAdminScopeEnvironment {
 
   supportedDelegationTypes
   automaticDelegationGrant
-  
+
   # Access control
   allowsWrite
   requiresConfirmation
-  
+
   # Categories and Tags
   categoryIds
   tagIds

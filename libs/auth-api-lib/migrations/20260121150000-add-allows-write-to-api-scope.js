@@ -8,7 +8,8 @@ module.exports = {
           type: Sequelize.BOOLEAN,
           allowNull: false,
           defaultValue: false,
-          comment: 'Whether this scope allows write access (read is always implicit)',
+          comment:
+            'Whether this scope allows write access (read is always implicit)',
         },
         { transaction },
       )
