@@ -38,7 +38,6 @@ import {
   CaseNotificationType,
   CaseState,
   CaseType,
-  DefendantNotificationType,
   DefenderSubRole,
   getIndictmentAppealDeadline,
   getStatementDeadline,
@@ -85,7 +84,6 @@ import {
   type CivilClaimant,
   DateLog,
   type Defendant,
-  InstitutionContactRepositoryService,
   Notification,
   Recipient,
 } from '../../../repository'
@@ -112,7 +110,6 @@ export class CaseNotificationService extends BaseNotificationService {
     private readonly courtService: CourtService,
     private readonly smsService: SmsService,
     private readonly defendantService: DefendantService,
-    private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
       notificationModel,
@@ -1166,19 +1163,12 @@ export class CaseNotificationService extends BaseNotificationService {
       theCase.courtCaseNumber,
       theCase.court?.name,
     )
-    const institutionContact =
-      this.institutionContactRepositoryService.getInstitutionContact(
-        this.config.prisonAdminId,
-        DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
-      )
 
     return this.sendEmail({
       subject,
       html: body,
       recipientName: this.formatMessage(notifications.emailNames.prisonAdmin),
-      recipientEmail: `${this.config.email.prisonAdminEmail}${
-        institutionContact ? `,${institutionContact}` : ''
-      }`,
+      recipientEmail: this.config.email.prisonAdminEmail,
     })
   }
 
