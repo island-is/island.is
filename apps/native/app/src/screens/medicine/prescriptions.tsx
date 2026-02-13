@@ -96,8 +96,10 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
     null,
   )
 
+  const featureFlagsLoaded = isPrescriptionsEnabled !== null && isMedicineDelegationEnabled !== null
+
   useEffect(() => {
-    if (isPrescriptionsEnabled === null) {
+    if (!featureFlagsLoaded) {
       return
     }
 
@@ -113,7 +115,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
         },
       },
     })
-  }, [intl, isMedicineDelegationEnabled, isPrescriptionsEnabled, mergeOptions])
+  }, [featureFlagsLoaded, intl, isMedicineDelegationEnabled, isPrescriptionsEnabled, mergeOptions])
   const [loadPrescriptions, prescriptionsRes] =
     useGetDrugPrescriptionsLazyQuery({
       variables: { locale },
@@ -177,11 +179,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
             {prescriptionsRes.loading && !prescriptionsRes.data
               ? renderSkeletons()
               : data?.map((prescription, index) => (
-                  <PrescriptionCard
-                    key={`${prescription?.id}-${index}`}
-                    prescription={prescription}
-                  />
-                ))}
+                <PrescriptionCard
+                  key={`${prescription?.id}-${index}`}
+                  prescription={prescription}
+                />
+              ))}
           </Wrapper>
         ),
       },
@@ -203,11 +205,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
             id: ButtonRegistry.MedicineDelegationShowInactiveButton,
             text: rightButtonsValue
               ? intl.formatMessage({
-                  id: 'health.medicineDelegation.hideExpiredPermits',
-                })
+                id: 'health.medicineDelegation.hideExpiredPermits',
+              })
               : intl.formatMessage({
-                  id: 'health.medicineDelegation.showExpiredPermits',
-                }),
+                id: 'health.medicineDelegation.showExpiredPermits',
+              }),
           },
         ],
         extraData: [rightButtonsValue],
@@ -247,11 +249,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
             {certificatesRes.loading && !certificatesRes.data
               ? renderSkeletons()
               : data?.map((certificate, index) => (
-                  <CertificateCard
-                    key={`${certificate?.id}-${index}`}
-                    certificate={certificate}
-                  />
-                ))}
+                <CertificateCard
+                  key={`${certificate?.id}-${index}`}
+                  certificate={certificate}
+                />
+              ))}
           </Wrapper>
         ),
       },
@@ -273,11 +275,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
             {medicineHistoryRes.loading && !medicineHistoryRes.data
               ? renderSkeletons()
               : data?.map((medicine, index) => (
-                  <MedicineHistoryCard
-                    key={`${medicine?.id}-${index}`}
-                    medicine={medicine}
-                  />
-                ))}
+                <MedicineHistoryCard
+                  key={`${medicine?.id}-${index}`}
+                  medicine={medicine}
+                />
+              ))}
           </Wrapper>
         ),
       },
@@ -313,18 +315,11 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
   const activeTab = tabs[validSelectedTab]
   const activeTabData = activeTab?.getData() as ActiveTabData
 
-  // Reset flag and selected tab when component mounts or activeTabId changes
-  useEffect(() => {
-    hasSetInitialTab.current = false
-    setSelectedTabId(null)
-  }, [activeTabId])
-
   // Set initial tab based on activeTabId or default to first tab (only once, after flags load)
   useEffect(() => {
     // Wait for feature flags to load before setting initial tab
     if (
-      isPrescriptionsEnabled === null ||
-      isMedicineDelegationEnabled === null
+      !featureFlagsLoaded
     ) {
       return
     }
@@ -344,11 +339,13 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
         hasSetInitialTab.current = true
       }
     }
-  }, [activeTabId, tabs, isPrescriptionsEnabled, isMedicineDelegationEnabled])
+  }, [activeTabId, tabs, featureFlagsLoaded])
 
   useEffect(() => {
-    tabs[validSelectedTab]?.ensureLoaded()
-  }, [tabs, validSelectedTab])
+    if (featureFlagsLoaded) {
+      tabs[validSelectedTab]?.ensureLoaded()
+    }
+  }, [tabs, validSelectedTab, featureFlagsLoaded])
 
   useEffect(() => {
     mergeOptions({
@@ -393,18 +390,18 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
           ? certificatesRes.refetch()
           : null,
         isPrescriptionsEnabled &&
-        prescriptionsRes.called &&
-        prescriptionsRes.refetch
+          prescriptionsRes.called &&
+          prescriptionsRes.refetch
           ? prescriptionsRes.refetch()
           : null,
         isPrescriptionsEnabled &&
-        medicineHistoryRes.called &&
-        medicineHistoryRes.refetch
+          medicineHistoryRes.called &&
+          medicineHistoryRes.refetch
           ? medicineHistoryRes.refetch()
           : null,
         isMedicineDelegationEnabled &&
-        medicineDelegationsRes.called &&
-        medicineDelegationsRes.refetch
+          medicineDelegationsRes.called &&
+          medicineDelegationsRes.refetch
           ? medicineDelegationsRes.refetch()
           : null,
       ].filter(Boolean)
@@ -425,7 +422,7 @@ export const PrescriptionsScreen: NavigationFunctionComponent<{
   ])
 
   // Wait for feature flags to load before rendering
-  if (isPrescriptionsEnabled === null || isMedicineDelegationEnabled === null) {
+  if (!featureFlagsLoaded) {
     return null
   }
 

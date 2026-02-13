@@ -9,7 +9,7 @@ import { useMyPagesLinks } from '../../lib/my-pages-links'
 
 import { useNavigationButtonPress } from 'react-native-navigation-hooks'
 import { setDropdownContent } from '../../components/dropdown/dropdown-content-registry'
-import { LinkContainer } from '../../components/external-links/external-links'
+import { LinkRowButton } from '../../components/link-row-button/link-row-button'
 import { useGetVehicleQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -94,10 +94,10 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
         contentId,
         <View>
           {items.map((item, index) => (
-            <LinkContainer
+            <LinkRowButton
               componentId={componentId}
               key={item.title}
-              links={{ link: item.link, title: item.title, isExternal: true }}
+              link={{ link: item.link, title: item.title, isExternal: true }}
               borderBottom={index !== items.length - 1}
               fontWeight={'bold'}
               fontSize={14}
@@ -218,8 +218,8 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               value={
                 registrationInfo?.firstRegistrationDate
                   ? intl.formatDate(
-                      new Date(registrationInfo?.firstRegistrationDate),
-                    )
+                    new Date(registrationInfo?.firstRegistrationDate),
+                  )
                   : '-'
               }
             />
@@ -239,8 +239,8 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               value={
                 inspectionInfo?.nextInspectionDate
                   ? intl.formatDate(
-                      new Date(inspectionInfo?.nextInspectionDate),
-                    )
+                    new Date(inspectionInfo?.nextInspectionDate),
+                  )
                   : '-'
               }
             />
@@ -252,11 +252,11 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
                 value={
                   data?.vehiclesDetail?.lastMileage?.mileage
                     ? `${intl.formatNumber(
-                        parseInt(
-                          data?.vehiclesDetail?.lastMileage?.mileage,
-                          10,
-                        ),
-                      )} km`
+                      parseInt(
+                        data?.vehiclesDetail?.lastMileage?.mileage,
+                        10,
+                      ),
+                    )} km`
                     : '-'
                 }
               />
@@ -296,7 +296,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               })}
               value={
                 typeof inspectionInfo?.carTax === 'undefined' ||
-                inspectionInfo?.carTax === null
+                  inspectionInfo?.carTax === null
                   ? '-'
                   : `${inspectionInfo?.carTax} kr.`
               }

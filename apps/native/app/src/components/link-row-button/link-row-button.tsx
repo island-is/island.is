@@ -15,8 +15,8 @@ export interface LinkItem {
   tabId?: string
 }
 
-export interface LinkContainerProps {
-  links: LinkItem
+export interface LinkRowButtonProps {
+  link: LinkItem
   fontWeight?: TextStyle['fontWeight']
   borderBottom?: boolean
   fontSize?: number
@@ -54,13 +54,13 @@ const Container = styled(Pressable)<{ hasIcon: boolean; isSubLink: boolean }>(
     gap: theme.spacing[2],
     ...(isSubLink
       ? {
-          paddingRight: theme.spacing[2],
-          paddingVertical: theme.spacing.smallGutter,
-        }
+        paddingRight: theme.spacing[2],
+        paddingVertical: theme.spacing.smallGutter,
+      }
       : {
-          paddingVertical: hasIcon ? theme.spacing.p2 : theme.spacing[2],
-          paddingHorizontal: theme.spacing[2],
-        }),
+        paddingVertical: hasIcon ? theme.spacing.p2 : theme.spacing[2],
+        paddingHorizontal: theme.spacing[2],
+      }),
   }),
 )
 
@@ -79,15 +79,15 @@ const IconWrapper = styled(View)(({ theme }) => ({
   justifyContent: 'center',
 }))
 
-export const LinkContainer = ({
-  links,
+export const LinkRowButton = ({
+  link,
   fontWeight = '300',
   borderBottom = true,
   fontSize = 16,
   componentId,
   subLinks,
   isSubLink = false,
-}: LinkContainerProps) => {
+}: LinkRowButtonProps) => {
   const { openBrowser } = useBrowser()
   const overlay = useDropdownOverlay()
 
@@ -96,16 +96,16 @@ export const LinkContainer = ({
       overlay.close()
     }
 
-    if (links.isExternal) {
-      openBrowser(links.link, componentId)
+    if (link.isExternal) {
+      openBrowser(link.link, componentId)
     } else {
       const extraProps: { parentComponentId: string; activeTabId?: string } = {
         parentComponentId: componentId,
       }
-      if (links.tabId) {
-        extraProps.activeTabId = links.tabId
+      if (link.tabId) {
+        extraProps.activeTabId = link.tabId
       }
-      navigateTo(links.link, extraProps)
+      navigateTo(link.link, extraProps)
     }
   }
 
@@ -113,13 +113,13 @@ export const LinkContainer = ({
     <Host $hasBorder={borderBottom}>
       <Container
         onPress={handlePress}
-        hasIcon={!!links.icon}
+        hasIcon={!!link.icon}
         isSubLink={isSubLink}
       >
         <Content>
-          {links.icon && (
+          {link.icon && (
             <IconWrapper>
-              <Icon source={links.icon} width={ICON_SIZE} height={ICON_SIZE} />
+              <Icon source={link.icon} width={ICON_SIZE} height={ICON_SIZE} />
             </IconWrapper>
           )}
           <Typography
@@ -128,11 +128,11 @@ export const LinkContainer = ({
             color={theme.color.dark400}
             size={fontSize}
           >
-            {links.title}
+            {link.title}
           </Typography>
         </Content>
         <Icon
-          source={links.isExternal ? externalLinkIcon : cheveronForwardIcon}
+          source={link.isExternal ? externalLinkIcon : cheveronForwardIcon}
           tintColor="dark300"
           width={20}
           height={20}
@@ -141,8 +141,8 @@ export const LinkContainer = ({
       {subLinks && (
         <SubLinksContainer>
           {subLinks.map((subLink) => (
-            <LinkContainer
-              links={{
+            <LinkRowButton
+              link={{
                 link: subLink.link,
                 title: subLink.title,
                 icon: subLink.icon,

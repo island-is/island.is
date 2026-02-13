@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { ImageSourcePropType, View } from 'react-native'
 import { useTheme } from 'styled-components'
 import { Typography } from '../../ui'
-import { LinkContainer } from '../external-links/external-links'
+import { LinkRowButton } from '../link-row-button/link-row-button'
 
 export interface MoreInfoConteinerProps {
   externalLinks: {
@@ -30,8 +30,8 @@ export const MoreInfoContiner = ({
       </Typography>
       <View style={{ marginHorizontal: -16 }}>
         {externalLinks.map((link) => (
-          <LinkContainer
-            links={{
+          <LinkRowButton
+            link={{
               ...link,
               isExternal: true,
             }}

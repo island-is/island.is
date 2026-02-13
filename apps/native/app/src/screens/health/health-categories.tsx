@@ -8,13 +8,11 @@ import calendarIcon from '../../assets/icons/calendar.png'
 import medicineIcon from '../../assets/icons/medicine.png'
 import readerIcon from '../../assets/icons/reader.png'
 import vaccinationsIcon from '../../assets/icons/vaccinations.png'
-import { LinkContainer } from '../../components/external-links/external-links'
+import { LinkRowButton } from '../../components/link-row-button/link-row-button'
 import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
 import { getConfig } from '../../config'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-
-const NUMBER_OF_CARDS_PER_ROW = 3
 
 const Container = styled.View`
   flex: 1;
@@ -77,21 +75,21 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
     const medicineSubLinks = [
       ...(isPrescriptionsEnabled
         ? [
-            {
-              id: 'prescriptions',
-              titleId: 'health.prescriptions.title',
-              route: '/prescriptions',
-            },
-          ]
+          {
+            id: 'prescriptions',
+            titleId: 'health.prescriptions.title',
+            route: '/prescriptions',
+          },
+        ]
         : []),
       ...(isMedicineDelegationEnabled
         ? [
-            {
-              id: 'medicineDelegation',
-              titleId: 'health.medicineDelegation.screenTitle',
-              route: '/prescriptions',
-            },
-          ]
+          {
+            id: 'medicineDelegation',
+            titleId: 'health.medicineDelegation.screenTitle',
+            route: '/prescriptions',
+          },
+        ]
         : []),
       {
         id: 'drugCertificates',
@@ -100,12 +98,12 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
       },
       ...(isPrescriptionsEnabled
         ? [
-            {
-              id: 'medicineHistory',
-              titleId: 'health.medicineHistory.title',
-              route: '/prescriptions',
-            },
-          ]
+          {
+            id: 'medicineHistory',
+            titleId: 'health.medicineHistory.title',
+            route: '/prescriptions',
+          },
+        ]
         : []),
     ]
 
@@ -113,7 +111,7 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
     const isMedicineEnabled =
       isPrescriptionsEnabled || isMedicineDelegationEnabled
 
-    const healthCards = [
+    return [
       {
         id: 'medicine',
         titleId: !isMedicineEnabled
@@ -146,14 +144,6 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
         enabled: isVaccinationsEnabled,
       },
     ].filter((card) => card.enabled)
-
-    const rows = []
-    // Create rows of cards, each row contains NUMBER_OF_CARDS_PER_ROW cards
-    for (let i = 0; i < healthCards.length; i += NUMBER_OF_CARDS_PER_ROW) {
-      rows.push(healthCards.slice(i, i + NUMBER_OF_CARDS_PER_ROW))
-    }
-
-    return rows
   }, [
     isPrescriptionsEnabled,
     isMedicineDelegationEnabled,
@@ -195,11 +185,11 @@ export const HealthCategoriesScreen: NavigationFunctionComponent = ({
       <ScrollView>
         <ContentContainer>
           <CategoriesContainer>
-            {healthCardRows.flat().map((hc) => (
-              <LinkContainer
+            {healthCardRows.map((hc) => (
+              <LinkRowButton
                 componentId={componentId}
                 key={hc.id}
-                links={{
+                link={{
                   link: hc.route,
                   title: intl.formatMessage({ id: hc.titleId }),
                   icon: hc.icon,
