@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -14,6 +14,8 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { SocialInsuranceAdministrationBankInformationService } from '@island.is/clients/social-insurance-administration'
 import { SocialInsuranceBankInformation } from '../models/bankInformation/bankInformation.model'
 import { BankInformationInput } from '../dtos/bankInformation.input'
@@ -27,6 +29,7 @@ import { mapBankInformation } from '../mappers/mapBankInformation'
 export class BankInformationResolver {
   constructor(
     private readonly bankInformationService: SocialInsuranceAdministrationBankInformationService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Query(() => SocialInsuranceBankInformation, {
@@ -50,7 +53,24 @@ export class BankInformationResolver {
     @Args('input') input: BankInformationInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    await this.bankInformationService.postBankInformation(user, input)
-    return true
+    this.logger.info('[BankInformation] Update mutation called', {
+      nationalId: user.nationalId,
+      inputType: input.iban ? 'foreign' : 'domestic',
+      scopes: user.scope,
+    })
+
+    try {
+      await this.bankInformationService.postBankInformation(user, input)
+      this.logger.info('[BankInformation] Update successful')
+      return true
+    } catch (error) {
+      this.logger.error('[BankInformation] Update failed', {
+        error: error.message,
+        status: error.status,
+        type: error.type,
+        stack: error.stack,
+      })
+      throw error
+    }
   }
 }
