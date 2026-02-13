@@ -403,7 +403,7 @@ export class CourtDocumentRepositoryService {
         `Updating court documents of case ${caseId} to be linked to court session ${parentCaseCourtSessionId} of case ${parentCaseId}`,
       )
 
-      // Check if the case has court sessions, to determin which court documents to include
+      // Check if the case has court sessions, to determine which court documents to include
       const numCourtSessions = await this.courtSessionModel.count({
         where: { caseId },
         transaction,
@@ -583,7 +583,7 @@ export class CourtDocumentRepositoryService {
       }
 
       this.logger.debug(
-        `Updated court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+        `Filed court document ${courtDocumentId} in court session ${courtSessionId} of case ${caseId}`,
       )
 
       return courtDocuments[0]
