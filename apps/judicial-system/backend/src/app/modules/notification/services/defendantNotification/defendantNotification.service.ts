@@ -342,7 +342,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     return { delivered: true }
   }
 
-  private sendIndictmentSentToPrisonAdminNotification(theCase: Case) {
+  private async sendIndictmentSentToPrisonAdminNotification(theCase: Case) {
     const dashboardRoute = getStandardUserDashboardRoute({
       role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON_ADMIN },
@@ -365,10 +365,15 @@ export class DefendantNotificationService extends BaseNotificationService {
     )
 
     const institutionContact =
-      this.institutionContactRepositoryService.getInstitutionContact(
+      await this.institutionContactRepositoryService.getInstitutionContact(
         this.config.prisonAdminId,
         DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
       )
+
+    console.log({
+      institutionContact,
+      prisonAdminId: this.config.prisonAdminId,
+    })
 
     // We want to send separate emails to each recipient
     const to = `${this.config.email.prisonAdminIndictmentEmails}${

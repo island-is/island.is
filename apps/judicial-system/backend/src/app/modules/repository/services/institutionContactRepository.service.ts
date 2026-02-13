@@ -25,6 +25,7 @@ export class InstitutionContactRepositoryService {
       | DefendantNotificationType,
   ): Promise<string | null> {
     try {
+      console.log({ institutionId, notificationType })
       this.logger.debug('Getting institution contact', {
         institutionId,
         notificationType,

@@ -27,7 +27,11 @@ import { CourtService } from '../../court'
 import { DefendantService } from '../../defendant'
 import { eventModuleConfig, EventService } from '../../event'
 import { InstitutionService } from '../../institution'
-import { InstitutionContact, Notification } from '../../repository'
+import {
+  InstitutionContact,
+  InstitutionContactRepositoryService,
+  Notification,
+} from '../../repository'
 import { UserService } from '../../user'
 import { InternalNotificationController } from '../internalNotification.controller'
 import { notificationModuleConfig } from '../notification.config'
@@ -125,7 +129,9 @@ export const createTestingNotificationModule = async () => {
       { provide: getModelToken(Notification), useValue: { create: jest.fn() } },
       {
         provide: getModelToken(InstitutionContact),
-        useValue: { create: jest.fn() },
+        useValue: {
+          create: jest.fn(),
+        },
       },
       {
         provide: DefendantService,
@@ -140,6 +146,10 @@ export const createTestingNotificationModule = async () => {
       DefendantNotificationService,
       CivilClaimantNotificationService,
       IndictmentCaseNotificationService,
+      {
+        provide: InstitutionContactRepositoryService,
+        useValue: { getInstitutionContact: jest.fn() },
+      },
     ],
   })
     .useMocker((token) => {
@@ -180,6 +190,9 @@ export const createTestingNotificationModule = async () => {
     ),
     indictmentCaseNotificationService: notificationModule.get(
       IndictmentCaseNotificationService,
+    ),
+    institutionContactRepositoryService: notificationModule.get(
+      InstitutionContactRepositoryService,
     ),
   }
 
