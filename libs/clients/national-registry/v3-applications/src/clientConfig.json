@@ -1058,13 +1058,15 @@
             "nullable": true
           },
           "logheimili": {
-            "$ref": "#/components/schemas/HeimilisfangBaseDTO"
+            "$ref": "#/components/schemas/HeimilisfangBaseDTO",
+            "nullable": true
           },
           "adsetur": {
-            "$ref": "#/components/schemas/HeimilisfangBaseDTO"
+            "$ref": "#/components/schemas/HeimilisfangBaseDTO",
+            "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "EinstaklingurLiteDTO": {
         "required": ["kennitala"],
@@ -1079,13 +1081,15 @@
             "nullable": true
           },
           "logheimili": {
-            "$ref": "#/components/schemas/HeimilisfangBaseDTO"
+            "$ref": "#/components/schemas/HeimilisfangBaseDTO",
+            "nullable": true
           },
           "adsetur": {
-            "$ref": "#/components/schemas/HeimilisfangBaseDTO"
+            "$ref": "#/components/schemas/HeimilisfangBaseDTO",
+            "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": true
       },
       "EinstaklingurUtlBaseDTO": {
         "type": "object",

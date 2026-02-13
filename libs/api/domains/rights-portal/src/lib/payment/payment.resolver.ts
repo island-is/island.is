@@ -27,6 +27,8 @@ import { CopaymentPeriodInput } from './dto/copaymentPeriod.input'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
 import { CopaymentStatus } from './models/copaymentStatus.model'
+import { PaymentOverviewTotalsServiceTypeResponse } from './models/paymentOverviewTotalsServiceType.response'
+import { PaymentOverviewTotalsResponse } from './models/paymentOverviewTotals.response'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -121,5 +123,53 @@ export class PaymentResolver {
     @Args('input') input: PaymentOverviewDocumentInput,
   ): Promise<PaymentOverviewDocumentResponse> {
     return await this.service.getPaymentOverviewBillDocument(user, input)
+  }
+
+  @Query(() => PaymentOverviewTotalsServiceTypeResponse, {
+    name: 'rightsPortalPaymentOverviewTotalsServiceTypes',
+  })
+  @Scopes(ApiScope.healthPayments)
+  @FeatureFlag(Features.isServicePortalHealthPaymentOverviewTotalPageEnabled)
+  @Audit()
+  async getPaymentOverviewTotalsServiceTypes(
+    @CurrentUser() user: User,
+  ): Promise<PaymentOverviewTotalsServiceTypeResponse> {
+    return await this.service.getPaymentOverviewTotalsServiceTypes(user)
+  }
+
+  @Query(() => PaymentOverviewTotalsResponse, {
+    name: 'rightsPortalPaymentOverviewTotals',
+  })
+  @Scopes(ApiScope.healthPayments)
+  @FeatureFlag(Features.isServicePortalHealthPaymentOverviewTotalPageEnabled)
+  @Audit()
+  async getPaymentOverviewTotals(
+    @CurrentUser() user: User,
+    @Args('input') input: PaymentOverviewInput,
+  ): Promise<PaymentOverviewTotalsResponse> {
+    const data = await this.service.getPaymentOverviewTotals(user, input)
+    return {
+      ...data,
+      totalsPdfDownloadUrl: this.buildTotalsPdfDownloadUrl(input),
+    }
+  }
+
+  private buildTotalsPdfDownloadUrl(input: PaymentOverviewInput): string {
+    const dateFrom =
+      input.dateFrom instanceof Date
+        ? input.dateFrom.toISOString().split('T')[0]
+        : String(input.dateFrom).split('T')[0]
+    const dateTo =
+      input.dateTo instanceof Date
+        ? input.dateTo.toISOString().split('T')[0]
+        : String(input.dateTo).split('T')[0]
+    const params = new URLSearchParams({
+      dateFrom,
+      dateTo,
+      serviceTypeCode: input.serviceTypeCode ?? '',
+    })
+    return `${
+      this.downloadServiceConfig.baseUrl
+    }/download/v1/health/payments/totals?${params.toString()}`
   }
 }

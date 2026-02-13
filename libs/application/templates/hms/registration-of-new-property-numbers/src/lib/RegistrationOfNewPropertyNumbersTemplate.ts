@@ -37,23 +37,31 @@ import { Features } from '@island.is/feature-flags'
 import { Fasteign } from '@island.is/clients/assets'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
-  const properties = getValueViaPath<Array<Fasteign>>(
-    application.externalData,
-    'getProperties.data',
-  )
-  const selectedRealEstateId = getValueViaPath<string>(
-    application.answers,
-    'realEstate.realEstateName',
-  )
-  const chosenProperty = properties?.find(
-    (property) => property.fasteignanumer === selectedRealEstateId,
-  )
+  try {
+    const properties = getValueViaPath<Array<Fasteign>>(
+      application.externalData,
+      'getProperties.data',
+    )
+    const selectedRealEstateId = getValueViaPath<string>(
+      application.answers,
+      'realEstate.realEstateName',
+    )
+    const chosenProperty = properties?.find(
+      (property) => property.fasteignanumer === selectedRealEstateId,
+    )
 
-  return {
-    name: m.application.applicationName,
-    value: chosenProperty
-      ? `- ${chosenProperty?.sjalfgefidStadfang?.birting} (${chosenProperty?.fasteignanumer})`
-      : '',
+    return {
+      name: m.application.applicationName,
+      value: chosenProperty
+        ? `- ${chosenProperty?.sjalfgefidStadfang?.birting} (${chosenProperty?.fasteignanumer})`
+        : '',
+    }
+  } catch (e) {
+    // If fetching properties throws an error, we return an empty value
+    return {
+      name: m.application.applicationName,
+      value: '',
+    }
   }
 }
 

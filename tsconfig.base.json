@@ -56,6 +56,9 @@
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
+      "@island.is/api/domains/course-charges": [
+        "libs/api/domains/course-charges/src/index.ts"
+      ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
@@ -356,11 +359,11 @@
       "@island.is/application/templates/car-recycling": [
         "libs/application/templates/car-recycling/src/index.ts"
       ],
-      "@island.is/application/templates/car-rental-fee-category": [
-        "libs/application/templates/car-rental-fee-category/src/index.ts"
-      ],
       "@island.is/application/templates/car-rental-dayrate-returns": [
         "libs/application/templates/car-rental-dayrate-returns/src/index.ts"
+      ],
+      "@island.is/application/templates/car-rental-fee-category": [
+        "libs/application/templates/car-rental-fee-category/src/index.ts"
       ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
@@ -771,9 +774,6 @@
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
       ],
-      "@island.is/clients/icelandic-government-institution-vacancies": [
-        "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
-      ],
       "@island.is/clients/firearm-license": [
         "libs/clients/firearm-license/src/index.ts"
       ],
@@ -804,6 +804,9 @@
       ],
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
+      ],
+      "@island.is/clients/icelandic-government-institution-vacancies": [
+        "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
       ],
       "@island.is/clients/icelandic-health-insurance/health-insurance": [
         "libs/clients/icelandic-health-insurance/health-insurance/src/index.ts"

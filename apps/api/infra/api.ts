@@ -314,22 +314,6 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
-      HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: {
-        dev: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
-        staging:
-          'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
-        prod: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
-      },
-      HMS_CONTRACTS_AUTH_TENANT_ID: {
-        dev: 'c7256472-2622-417e-8955-a54eeb0a110e',
-        staging: 'c7256472-2622-417e-8955-a54eeb0a110e',
-        prod: 'c7256472-2622-417e-8955-a54eeb0a110e',
-      },
-      HMS_CONTRACTS_AUTH_CLIENT_ID: {
-        dev: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
-        staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
-        prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
-      },
       LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
         (h) => `http://${h.svc(services.paymentFlowUpdateHandlerService)}`,
       ),
