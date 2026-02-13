@@ -37,6 +37,7 @@ import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/co
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
+  useCreateSubpoenas,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
@@ -77,6 +78,7 @@ const Subpoena: FC = () => {
 
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { setAndSendCaseToServer } = useCase()
+  const { createSubpoenas } = useCreateSubpoenas()
   const { formatMessage } = useIntl()
 
   const isIssuingSubpoenaForDefendant = (defendant: Defendant) =>
@@ -118,9 +120,18 @@ const Subpoena: FC = () => {
   const scheduleArraignmentDate = useCallback(async () => {
     setIsCreatingSubpoena(true)
 
+    // When rescheduling, only update defendants we're issuing new subpoenas or alternative services for
+    const defendantsToUpdate = isArraignmentScheduled
+      ? updates?.defendants?.filter(
+          (defendant) =>
+            newSubpoenas.includes(defendant.id) ||
+            newAlternativeServices.includes(defendant.id),
+        )
+      : updates?.defendants
+
     const promises: Promise<boolean>[] = []
 
-    updates?.defendants?.forEach((defendant) => {
+    defendantsToUpdate?.forEach((defendant) => {
       promises.push(
         updateDefendant({
           caseId: workingCase.id,
@@ -184,14 +195,43 @@ const Subpoena: FC = () => {
 
     if (!courtDateUpdated) {
       setIsCreatingSubpoena(false)
-
       return
+    }
+
+    // Create subpoenas for selected defendants (or all if first-time scheduling)
+    const defendantIdsToCreateSubpoenasFor = isArraignmentScheduled
+      ? newSubpoenas
+      : updates?.defendants
+          ?.filter((defendant) => !defendant.isAlternativeService)
+          .map((defendant) => defendant.id) ?? []
+
+    if (defendantIdsToCreateSubpoenasFor.length > 0) {
+      const arraignmentDate = updates?.theCase.arraignmentDate?.date
+      if (!arraignmentDate) {
+        setIsCreatingSubpoena(false)
+        return
+      }
+
+      const location = updates?.theCase.arraignmentDate?.location
+      const subpoenasCreated = await createSubpoenas(workingCase.id, {
+        defendantIds: defendantIdsToCreateSubpoenasFor,
+        arraignmentDate,
+        location: location ?? undefined,
+      })
+
+      if (!subpoenasCreated) {
+        setIsCreatingSubpoena(false)
+        return
+      }
     }
 
     router.push(`${navigateTo}/${workingCase.id}`)
   }, [
+    createSubpoenas,
     isArraignmentScheduled,
     navigateTo,
+    newAlternativeServices,
+    newSubpoenas,
     setAndSendCaseToServer,
     setWorkingCase,
     updateDefendant,
