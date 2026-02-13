@@ -4,6 +4,6 @@ import { exportedApis } from './apis'
 
 @Module({
   providers: [...exportedApis, HmsRentalAgreementService],
-  exports: [HmsRentalAgreementService],
+  exports: [...exportedApis, HmsRentalAgreementService],
 })
 export class HmsRentalAgreementClientModule {}
