@@ -86,7 +86,6 @@ export interface UpdateCase
     | 'appealIsolationToDate'
     | 'indictmentRulingDecision'
     | 'indictmentReviewerId'
-    | 'indictmentReviewDecision'
     | 'indictmentDecision'
     | 'courtSessionType'
     | 'mergeCaseId'

@@ -4,6 +4,9 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 
 const withVanillaExtract = createVanillaExtractPlugin()
 
+const graphqlPath = '/api/graphql'
+const { API_URL = 'http://localhost:4444' } = process.env
+
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
@@ -18,6 +21,14 @@ const nextConfig = {
       config.devtool = 'source-map'
     }
     return config
+  },
+  serverRuntimeConfig: {
+    // Will only be available on the server side
+    graphqlEndpoint: `${API_URL}${graphqlPath}`,
+  },
+  publicRuntimeConfig: {
+    // Will be available on both server and client
+    graphqlEndpoint: graphqlPath,
   },
 }
 

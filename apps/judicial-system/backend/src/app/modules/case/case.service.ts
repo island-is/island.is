@@ -5,6 +5,7 @@ import pick from 'lodash/pick'
 import { Includeable, literal, Op, Transaction } from 'sequelize'
 
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -44,7 +45,6 @@ import {
   CaseTransition,
   CaseType,
   completedIndictmentCaseStates,
-  CourtDocumentType,
   CourtSessionStringType,
   DateType,
   dateTypes,
@@ -1493,55 +1493,6 @@ export class CaseService {
     )
   }
 
-  private addMessagesForNewSubpoenasToQueue(
-    theCase: Case,
-    updatedCase: Case,
-    user: TUser,
-  ): void {
-    for (const updatedDefendant of updatedCase.defendants ?? []) {
-      if (
-        !(
-          theCase.defendants?.find(
-            (defendant) => defendant.id === updatedDefendant.id,
-          )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id
-        ) // Only deliver new subpoenas
-      ) {
-        continue
-      }
-
-      if (updatedCase.origin === CaseOrigin.LOKE) {
-        addMessagesToQueue({
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: [
-            updatedDefendant.id,
-            updatedDefendant.subpoenas?.[0].id ?? '',
-          ],
-        })
-      }
-
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
-        user,
-        caseId: theCase.id,
-        elementId: [
-          updatedDefendant.id,
-          updatedDefendant.subpoenas?.[0].id ?? '',
-        ],
-      })
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
-        user,
-        caseId: theCase.id,
-        elementId: [
-          updatedDefendant.id,
-          updatedDefendant.subpoenas?.[0].id ?? '',
-        ],
-      })
-    }
-  }
-
   private addMessagesForIndictmentArraignmentCompletionToQueue(
     theCase: Case,
     user: TUser,
@@ -1758,8 +1709,6 @@ export class CaseService {
       if (hasUpdatedArraignmentDate) {
         this.addMessagesForIndictmentArraignmentDate(updatedCase, user)
       }
-
-      this.addMessagesForNewSubpoenasToQueue(theCase, updatedCase, user)
     }
 
     // This only applies to indictments and only when an arraignment has been completed
@@ -2151,18 +2100,6 @@ export class CaseService {
     user: TUser,
     transaction: Transaction,
   ) {
-    if (
-      updatedCase.indictmentReviewDecision &&
-      !theCase.indictmentReviewDecision
-    ) {
-      await this.eventLogService.createWithUser(
-        EventType.INDICTMENT_REVIEWED,
-        theCase.id,
-        user,
-        transaction,
-      )
-    }
-
     const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
     const updatedArraignmentDate = DateLog.arraignmentDate(updatedCase.dateLogs)
     const hasUpdatedArraignmentDate =
@@ -2248,10 +2185,6 @@ export class CaseService {
       theCase.courtId !== update.courtId &&
       theCase.state === CaseState.RECEIVED
 
-    const updatedArraignmentDate = update.arraignmentDate
-    const schedulingNewArraignmentDateForIndictmentCase =
-      isIndictmentCase(theCase.type) && Boolean(updatedArraignmentDate)
-
     if (isReceivingCase) {
       update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
     }
@@ -2285,49 +2218,6 @@ export class CaseService {
     // which should have court sessions
     if (isReceivingIndictmentCase && theCase.withCourtSessions) {
       await this.handleCreateFirstCourtSession(theCase, transaction)
-    }
-
-    // Create new subpoenas if scheduling a new arraignment date for an indictment case
-    if (schedulingNewArraignmentDateForIndictmentCase && theCase.defendants) {
-      const dsPairs = await Promise.all(
-        theCase.defendants
-          .filter((defendant) => !defendant.isAlternativeService)
-          .map(async (defendant) => {
-            const subpoena = await this.subpoenaService.createSubpoena(
-              defendant.id,
-              theCase.id,
-              transaction,
-              updatedArraignmentDate?.date,
-              updatedArraignmentDate?.location,
-              defendant.subpoenaType,
-            )
-
-            return { defendant, subpoena }
-          }),
-      )
-
-      // Add court documents if a court session exists
-      if (
-        theCase.withCourtSessions &&
-        theCase.courtSessions &&
-        theCase.courtSessions.length > 0
-      ) {
-        for (const { defendant, subpoena } of dsPairs) {
-          const name = `Fyrirkall ${defendant.name} ${formatDate(
-            subpoena.created,
-          )}`
-
-          await this.courtDocumentService.create(
-            theCase.id,
-            {
-              documentType: CourtDocumentType.GENERATED_DOCUMENT,
-              name,
-              generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
-            },
-            transaction,
-          )
-        }
-      }
     }
 
     // Ensure that verdicts exist at this stage, if they don't exist we create them
@@ -2407,6 +2297,12 @@ export class CaseService {
       const parentCaseId = theCase.mergeCaseId
       const parentCase = await this.findById(parentCaseId, false, transaction)
 
+      if (parentCase.state !== CaseState.RECEIVED) {
+        throw new BadRequestException(
+          `Failed to merge indictment case ${theCase.id} with parent case ${parentCaseId} in state ${parentCase.state}`,
+        )
+      }
+
       const parentCaseCourtSessions = parentCase.courtSessions
       const latestCourtSession =
         parentCaseCourtSessions && parentCaseCourtSessions.length > 0
@@ -2456,7 +2352,7 @@ export class CaseService {
 
     await this.handleEventLogUpdates(theCase, updatedCase, user, transaction)
 
-    await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
+    this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
     if (isReceivingCase) {
       this.eventService.postEvent(CaseTransition.RECEIVE, updatedCase)

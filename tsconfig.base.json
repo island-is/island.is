@@ -56,6 +56,9 @@
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
+      "@island.is/api/domains/course-charges": [
+        "libs/api/domains/course-charges/src/index.ts"
+      ],
       "@island.is/api/domains/directorate-of-labour": [
         "libs/api/domains/directorate-of-labour/src/index.ts"
       ],
@@ -204,6 +207,9 @@
       "@island.is/api/domains/practical-exams": [
         "libs/api/domains/practical-exams/src/index.ts"
       ],
+      "@island.is/api/domains/questionnaires": [
+        "libs/api/domains/questionnaires/src/index.ts"
+      ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
@@ -270,21 +276,10 @@
       "@island.is/api/domains/work-machines": [
         "libs/api/domains/work-machines/src/index.ts"
       ],
-      "@island.is/api/domains/questionnaires": [
-        "libs/api/domains/questionnaires/src/index.ts"
-      ],
-      "@island.is/api/mocks": [
-        "libs/api/mocks/src/index.ts"
-      ],
-      "@island.is/api/mocks-react": [
-        "libs/api/mocks/src/react.ts"
-      ],
-      "@island.is/api/mocks/native": [
-        "libs/api/mocks/src/native.ts"
-      ],
-      "@island.is/api/schema": [
-        "libs/api/schema/src/index.ts"
-      ],
+      "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
+      "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
+      "@island.is/api/mocks/native": ["libs/api/mocks/src/native.ts"],
+      "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
       ],
@@ -364,11 +359,11 @@
       "@island.is/application/templates/car-recycling": [
         "libs/application/templates/car-recycling/src/index.ts"
       ],
-      "@island.is/application/templates/car-rental-fee-category": [
-        "libs/application/templates/car-rental-fee-category/src/index.ts"
-      ],
       "@island.is/application/templates/car-rental-dayrate-returns": [
         "libs/application/templates/car-rental-dayrate-returns/src/index.ts"
+      ],
+      "@island.is/application/templates/car-rental-fee-category": [
+        "libs/application/templates/car-rental-fee-category/src/index.ts"
       ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
@@ -780,9 +775,6 @@
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
       ],
-      "@island.is/clients/icelandic-government-institution-vacancies": [
-        "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
-      ],
       "@island.is/clients/firearm-license": [
         "libs/clients/firearm-license/src/index.ts"
       ],
@@ -813,6 +805,9 @@
       ],
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
+      ],
+      "@island.is/clients/icelandic-government-institution-vacancies": [
+        "libs/clients/icelandic-government-institution-vacancies/src/index.ts"
       ],
       "@island.is/clients/icelandic-health-insurance/health-insurance": [
         "libs/clients/icelandic-health-insurance/health-insurance/src/index.ts"
@@ -1315,9 +1310,7 @@
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
       ],
-      "delegation-admin": [
-        "libs/portals/admin/delegation-admin/src/index.ts"
-      ],
+      "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],

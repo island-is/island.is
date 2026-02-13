@@ -322,6 +322,7 @@ export const VehicleBulkMileageRow = ({
                 type="number"
                 suffix=" km"
                 thousandSeparator
+                decimalScale={0}
                 size="xs"
                 maxLength={12}
                 defaultValue={''}

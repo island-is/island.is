@@ -134,7 +134,7 @@ export class PaymentFlowService {
       })
 
       await this.paymentFlowChargeModel.bulkCreate(
-        processedCharges.map((charge) => ({
+        processedCharges.map((charge: ChargeItem) => ({
           ...charge,
           paymentFlowId,
         })),
@@ -200,6 +200,7 @@ export class PaymentFlowService {
         priceAmount: price,
         quantity: charge.quantity,
         chargeItemCode: catalogProduct.chargeItemCode,
+        reference: charge.reference,
       })
     }
 
