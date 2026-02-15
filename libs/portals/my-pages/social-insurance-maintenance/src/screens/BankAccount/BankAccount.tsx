@@ -202,8 +202,8 @@ const BankAccount = () => {
     <Box>
       <IntroWrapper {...introProps}>
         <Stack space={4}>
-          <Box>
-            <Text variant="h5" marginBottom={2}>
+          <Box role="radiogroup" aria-labelledby="account-type-title">
+            <Text variant="h5" marginBottom={2} id="account-type-title">
               {formatMessage(m.accountTypeTitle)}
             </Text>
             <Stack space={2}>

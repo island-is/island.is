@@ -191,11 +191,15 @@ export const ForeignBankAccountInput = ({
     [bankAddress],
   )
 
+  const titleId = `${id}-title`
+
   return (
-    <Box>
+    <Box role="group" aria-labelledby={title ? titleId : undefined}>
       {title && (
         <Box marginBottom={1}>
-          <Text variant="h5">{title}</Text>
+          <Text variant="h5" id={titleId}>
+            {title}
+          </Text>
         </Box>
       )}
       <Stack space={2}>
