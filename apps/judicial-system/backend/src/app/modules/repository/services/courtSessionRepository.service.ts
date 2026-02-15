@@ -298,7 +298,7 @@ export class CourtSessionRepositoryService {
       }
 
       // First delete all documents in the session
-      await this.courtDocumentRepositoryService.removeAllCourtDocmentsFromCourtSession(
+      await this.courtDocumentRepositoryService.removeAllCourtDocumentsFromCourtSession(
         caseId,
         courtSessionId,
         transaction,

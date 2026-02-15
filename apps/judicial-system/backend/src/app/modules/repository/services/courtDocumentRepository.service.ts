@@ -788,7 +788,7 @@ export class CourtDocumentRepositoryService {
     }
   }
 
-  async removeAllCourtDocmentsFromCourtSession(
+  async removeAllCourtDocumentsFromCourtSession(
     caseId: string,
     courtSessionId: string,
     transaction: Transaction,
