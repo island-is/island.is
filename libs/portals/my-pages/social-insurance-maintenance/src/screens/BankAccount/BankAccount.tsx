@@ -14,15 +14,12 @@ import {
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
-import {
-  BankAccountInput,
-  ForeignBankAccountInput,
-} from '../../components'
+import { BankAccountInput, ForeignBankAccountInput } from '../../components'
 import type {
   DomesticBankAccountData,
   ForeignBankAccountData,
 } from '../../components'
-import { useState, useMemo, useEffect, useRef } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import type { UpdateBankInformationMutationVariables } from './BankAccount.generated'
 import {
   useGetBankInformationQuery,
@@ -60,11 +57,13 @@ const BankAccount = () => {
       currency: '',
     })
 
-  const foreignDataRef = useRef(foreignAccountData)
-  const handleForeignChange = (data: ForeignBankAccountData) => {
-    setForeignAccountData(data)
-    foreignDataRef.current = data
-  }
+  const [foreignInitial, setForeignInitial] = useState({
+    iban: '',
+    swift: '',
+    bankName: '',
+    bankAddress: '',
+    currency: '',
+  })
 
   const {
     data: bankInfoData,
@@ -77,19 +76,11 @@ const BankAccount = () => {
 
   const currencyOptions = useMemo(
     () =>
-      (
-        bankInfoData?.socialInsuranceBankInformation?.currencies ?? []
-      ).map((currency) => ({ label: currency, value: currency })),
+      (bankInfoData?.socialInsuranceBankInformation?.currencies ?? []).map(
+        (currency) => ({ label: currency, value: currency }),
+      ),
     [bankInfoData],
   )
-
-  const [foreignInitial, setForeignInitial] = useState({
-    iban: '',
-    swift: '',
-    bankName: '',
-    bankAddress: '',
-    currency: '',
-  })
 
   useEffect(() => {
     if (!bankInfoData?.socialInsuranceBankInformation) return
@@ -107,14 +98,13 @@ const BankAccount = () => {
       bankInfo.__typename === 'SocialInsuranceForeignBankInformation'
     ) {
       setAccountType('foreign')
-      const initial = {
+      setForeignInitial({
         iban: friendlyFormatIBAN(bankInfo.iban) || '',
         swift: friendlyFormatSWIFT(bankInfo.swift) || '',
         bankName: bankInfo.foreignBankName || '',
         bankAddress: bankInfo.foreignBankAddress || '',
         currency: bankInfo.foreignCurrency || '',
-      }
-      setForeignInitial(initial)
+      })
       setForeignAccountData({
         iban: bankInfo.iban || '',
         swift: bankInfo.swift || '',
@@ -122,13 +112,6 @@ const BankAccount = () => {
         bankAddress: bankInfo.foreignBankAddress || '',
         currency: bankInfo.foreignCurrency || '',
       })
-      foreignDataRef.current = {
-        iban: bankInfo.iban || '',
-        swift: bankInfo.swift || '',
-        bankName: bankInfo.foreignBankName || '',
-        bankAddress: bankInfo.foreignBankAddress || '',
-        currency: bankInfo.foreignCurrency || '',
-      }
     }
   }, [bankInfoData])
 
@@ -139,42 +122,42 @@ const BankAccount = () => {
         bankAccountData.ledger.length === 2 &&
         bankAccountData.accountNumber.length === 6
       )
-    } else {
-      const fd = foreignAccountData
-      return (
-        !!fd.iban &&
-        validIBAN(fd.iban) &&
-        !!fd.swift &&
-        validSWIFT(fd.swift) &&
-        !!fd.currency &&
-        !!fd.bankName.trim() &&
-        !!fd.bankAddress.trim()
-      )
     }
+
+    return (
+      !!foreignAccountData.iban &&
+      validIBAN(foreignAccountData.iban) &&
+      !!foreignAccountData.swift &&
+      validSWIFT(foreignAccountData.swift) &&
+      !!foreignAccountData.currency &&
+      !!foreignAccountData.bankName.trim() &&
+      !!foreignAccountData.bankAddress.trim()
+    )
   }, [accountType, bankAccountData, foreignAccountData])
+
+  const buildSaveInput =
+    (): UpdateBankInformationMutationVariables['input'] => {
+      if (accountType === 'icelandic') {
+        return {
+          bank: bankAccountData.bankNumber,
+          ledger: bankAccountData.ledger,
+          accountNumber: bankAccountData.accountNumber,
+        }
+      }
+
+      return {
+        iban: foreignAccountData.iban,
+        swift: foreignAccountData.swift,
+        foreignBankName: foreignAccountData.bankName,
+        foreignBankAddress: foreignAccountData.bankAddress,
+        foreignCurrency: foreignAccountData.currency,
+      }
+    }
 
   const handleSave = async () => {
     try {
-      const input: UpdateBankInformationMutationVariables['input'] =
-        accountType === 'icelandic'
-          ? {
-              bank: bankAccountData.bankNumber,
-              ledger: bankAccountData.ledger,
-              accountNumber: bankAccountData.accountNumber,
-            }
-          : (() => {
-              const fd = foreignDataRef.current
-              return {
-                iban: fd.iban,
-                swift: fd.swift,
-                foreignBankName: fd.bankName,
-                foreignBankAddress: fd.bankAddress,
-                foreignCurrency: fd.currency,
-              }
-            })()
-
       const result = await updateBankInfo({
-        variables: { input },
+        variables: { input: buildSaveInput() },
       })
 
       if (result.data?.updateSocialInsuranceBankInformation) {
@@ -287,7 +270,7 @@ const BankAccount = () => {
                 currency={foreignInitial.currency}
                 currencyOptions={currencyOptions}
                 currencyLoading={false}
-                onChange={handleForeignChange}
+                onChange={setForeignAccountData}
               />
             </Box>
           )}

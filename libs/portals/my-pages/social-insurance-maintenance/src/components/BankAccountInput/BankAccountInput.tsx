@@ -6,7 +6,7 @@ import {
   Text,
   Input,
 } from '@island.is/island-ui/core'
-import { useRef, useState, useEffect, useMemo } from 'react'
+import { useRef, useState, useEffect, useMemo, useCallback } from 'react'
 
 export interface DomesticBankAccountData {
   bankNumber: string
@@ -55,14 +55,24 @@ export const BankAccountInput = ({
 
   const digits = (s: string) => s.replace(/\D/g, '')
 
-  const [localBank, setLocalBank] = useState(initialBankNumber)
-  const [localLedger, setLocalLedger] = useState(initialLedger)
-  const [localAccount, setLocalAccount] = useState(initialAccountNumber)
+  const [localBank, setLocalBank] = useState(digits(initialBankNumber))
+  const [localLedger, setLocalLedger] = useState(digits(initialLedger))
+  const [localAccount, setLocalAccount] = useState(digits(initialAccountNumber))
+
+  const dataRef = useRef({
+    bankNumber: localBank,
+    ledger: localLedger,
+    accountNumber: localAccount,
+  })
 
   useEffect(() => {
-    setLocalBank(initialBankNumber)
-    setLocalLedger(initialLedger)
-    setLocalAccount(initialAccountNumber)
+    const bank = digits(initialBankNumber)
+    const ledger = digits(initialLedger)
+    const account = digits(initialAccountNumber)
+    setLocalBank(bank)
+    setLocalLedger(ledger)
+    setLocalAccount(account)
+    dataRef.current = { bankNumber: bank, ledger, accountNumber: account }
   }, [initialBankNumber, initialLedger, initialAccountNumber])
 
   const [localBankError, setLocalBankError] = useState<string | undefined>(
@@ -81,40 +91,46 @@ export const BankAccountInput = ({
     }
   }
 
-  const emit = (partial: Partial<DomesticBankAccountData>) => {
-    if (!onChange) return
-    const next: DomesticBankAccountData = {
-      bankNumber: partial.bankNumber ?? localBank,
-      ledger: partial.ledger ?? localLedger,
-      accountNumber: partial.accountNumber ?? localAccount,
-    }
-    onChange(next)
-  }
+  const emit = useCallback(
+    (partial: Partial<DomesticBankAccountData>) => {
+      if (!onChange) return
+      const next: DomesticBankAccountData = {
+        ...dataRef.current,
+        ...partial,
+      }
+      dataRef.current = next
+      onChange(next)
+    },
+    [onChange],
+  )
 
   const handleBankChange = (value: string) => {
-    setLocalBank(value)
+    const cleaned = digits(value)
+    setLocalBank(cleaned)
     setLocalBankError(undefined)
-    if (digits(value).length >= BANK_LEN) {
+    if (cleaned.length >= BANK_LEN) {
       ledgerRef.current?.focus()
       selectIfHasValue(ledgerRef.current)
     }
-    emit({ bankNumber: value })
+    emit({ bankNumber: cleaned })
   }
 
   const handleLedgerChange = (value: string) => {
-    setLocalLedger(value)
+    const cleaned = digits(value)
+    setLocalLedger(cleaned)
     setLocalLedgerError(undefined)
-    if (digits(value).length >= LEDGER_LEN) {
+    if (cleaned.length >= LEDGER_LEN) {
       accountRef.current?.focus()
       selectIfHasValue(accountRef.current)
     }
-    emit({ ledger: value })
+    emit({ ledger: cleaned })
   }
 
   const handleAccountChange = (value: string) => {
-    setLocalAccount(value)
+    const cleaned = digits(value)
+    setLocalAccount(cleaned)
     setLocalAccountError(undefined)
-    emit({ accountNumber: value })
+    emit({ accountNumber: cleaned })
   }
 
   const handleBlur =
@@ -148,77 +164,79 @@ export const BankAccountInput = ({
       )}
       <Stack space={2}>
         <GridRow rowGap={2}>
-        <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
-          <Input
-            id={`${id}.bankNumber`}
-            name={`${id}.bankNumber`}
-            label={bankLabel}
-            placeholder="0000"
-            backgroundColor="blue"
-            size="xs"
-            autoFocus
-            required={required}
-            disabled={disabled}
-            readOnly={readOnly}
-            hasError={!!localBankError}
-            errorMessage={localBankError}
-            value={localBank}
-            onChange={(e) => handleBankChange(e.target.value)}
-            onBlur={(e) =>
-              handleBlur(BANK_LEN, setLocalBankError)(e.target.value)
-            }
-            maxLength={4}
-            icon={isBankValid ? { name: 'checkmark' } : undefined}
-            ref={bankRef}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '3/12', '2/12']}>
-          <Input
-            id={`${id}.ledger`}
-            name={`${id}.ledger`}
-            label={ledgerLabel}
-            placeholder="00"
-            backgroundColor="blue"
-            size="xs"
-            required={required}
-            disabled={disabled}
-            readOnly={readOnly}
-            hasError={!!localLedgerError}
-            errorMessage={localLedgerError}
-            value={localLedger}
-            onChange={(e) => handleLedgerChange(e.target.value)}
-            onBlur={(e) =>
-              handleBlur(LEDGER_LEN, setLocalLedgerError)(e.target.value)
-            }
-            maxLength={2}
-            icon={isLedgerValid ? { name: 'checkmark' } : undefined}
-            ref={ledgerRef}
-          />
-        </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12', '6/12']}>
-          <Input
-            id={`${id}.accountNumber`}
-            name={`${id}.accountNumber`}
-            label={accountNumberLabel}
-            placeholder="000000"
-            backgroundColor="blue"
-            size="xs"
-            required={required}
-            disabled={disabled}
-            readOnly={readOnly}
-            hasError={!!localAccountError}
-            errorMessage={localAccountError}
-            value={localAccount}
-            onChange={(e) => handleAccountChange(e.target.value)}
-            onBlur={(e) =>
-              handleBlur(ACCOUNT_LEN, setLocalAccountError)(e.target.value)
-            }
-            maxLength={6}
-            icon={isAccountValid ? { name: 'checkmark' } : undefined}
-            ref={accountRef}
-          />
-        </GridColumn>
-      </GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '4/12']}>
+            <Input
+              id={`${id}.bankNumber`}
+              name={`${id}.bankNumber`}
+              label={bankLabel}
+              placeholder="0000"
+              backgroundColor="blue"
+              size="xs"
+              inputMode="numeric"
+              required={required}
+              disabled={disabled}
+              readOnly={readOnly}
+              hasError={!!localBankError}
+              errorMessage={localBankError}
+              value={localBank}
+              onChange={(e) => handleBankChange(e.target.value)}
+              onBlur={(e) =>
+                handleBlur(BANK_LEN, setLocalBankError)(e.target.value)
+              }
+              maxLength={4}
+              icon={isBankValid ? { name: 'checkmark' } : undefined}
+              ref={bankRef}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '12/12', '12/12', '3/12', '2/12']}>
+            <Input
+              id={`${id}.ledger`}
+              name={`${id}.ledger`}
+              label={ledgerLabel}
+              placeholder="00"
+              backgroundColor="blue"
+              size="xs"
+              inputMode="numeric"
+              required={required}
+              disabled={disabled}
+              readOnly={readOnly}
+              hasError={!!localLedgerError}
+              errorMessage={localLedgerError}
+              value={localLedger}
+              onChange={(e) => handleLedgerChange(e.target.value)}
+              onBlur={(e) =>
+                handleBlur(LEDGER_LEN, setLocalLedgerError)(e.target.value)
+              }
+              maxLength={2}
+              icon={isLedgerValid ? { name: 'checkmark' } : undefined}
+              ref={ledgerRef}
+            />
+          </GridColumn>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12', '6/12']}>
+            <Input
+              id={`${id}.accountNumber`}
+              name={`${id}.accountNumber`}
+              label={accountNumberLabel}
+              placeholder="000000"
+              backgroundColor="blue"
+              size="xs"
+              inputMode="numeric"
+              required={required}
+              disabled={disabled}
+              readOnly={readOnly}
+              hasError={!!localAccountError}
+              errorMessage={localAccountError}
+              value={localAccount}
+              onChange={(e) => handleAccountChange(e.target.value)}
+              onBlur={(e) =>
+                handleBlur(ACCOUNT_LEN, setLocalAccountError)(e.target.value)
+              }
+              maxLength={6}
+              icon={isAccountValid ? { name: 'checkmark' } : undefined}
+              ref={accountRef}
+            />
+          </GridColumn>
+        </GridRow>
       </Stack>
     </Box>
   )

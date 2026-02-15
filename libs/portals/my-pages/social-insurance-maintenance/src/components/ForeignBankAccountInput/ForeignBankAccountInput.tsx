@@ -8,7 +8,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
@@ -73,12 +73,27 @@ export const ForeignBankAccountInput = ({
     undefined,
   )
 
+  const dataRef = useRef<ForeignBankAccountData>({
+    iban: initialIban,
+    swift: initialSwift,
+    bankName: initialBankName,
+    bankAddress: initialBankAddress,
+    currency: initialCurrency,
+  })
+
   useEffect(() => {
     setIban(initialIban)
     setSwift(initialSwift)
     setBankName(initialBankName)
     setBankAddress(initialBankAddress)
     setCurrency(initialCurrency)
+    dataRef.current = {
+      iban: initialIban,
+      swift: initialSwift,
+      bankName: initialBankName,
+      bankAddress: initialBankAddress,
+      currency: initialCurrency,
+    }
   }, [
     initialIban,
     initialSwift,
@@ -87,21 +102,23 @@ export const ForeignBankAccountInput = ({
     initialCurrency,
   ])
 
-  const emit = (partial: Partial<ForeignBankAccountData>) => {
-    if (!onChange) return
-    const next: ForeignBankAccountData = {
-      iban: partial.iban ?? iban,
-      swift: partial.swift ?? swift,
-      bankName: partial.bankName ?? bankName,
-      bankAddress: partial.bankAddress ?? bankAddress,
-      currency: partial.currency ?? currency,
-    }
-    onChange({
-      ...next,
-      iban: next.iban.replace(/\s/g, ''),
-      swift: next.swift.replace(/\s/g, ''),
-    })
-  }
+  const emit = useCallback(
+    (partial: Partial<ForeignBankAccountData>) => {
+      if (!onChange) return
+      const next: ForeignBankAccountData = {
+        ...dataRef.current,
+        ...partial,
+      }
+      const cleaned: ForeignBankAccountData = {
+        ...next,
+        iban: next.iban.replace(/\s/g, ''),
+        swift: next.swift.replace(/\s/g, ''),
+      }
+      dataRef.current = next
+      onChange(cleaned)
+    },
+    [onChange],
+  )
 
   const handleIbanChange = (value: string) => {
     const formatted = friendlyFormatIBAN(value)
@@ -189,7 +206,6 @@ export const ForeignBankAccountInput = ({
           placeholder={formatMessage(m.ibanPlaceholder)}
           backgroundColor="blue"
           size="xs"
-          autoFocus
           value={iban}
           onChange={(e) => handleIbanChange(e.target.value)}
           onBlur={handleIbanBlur}
