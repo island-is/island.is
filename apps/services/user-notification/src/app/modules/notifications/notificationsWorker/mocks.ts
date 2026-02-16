@@ -148,6 +148,8 @@ export const getMockHnippTemplate = ({
   clickActionUrl = 'https://island.is/minarsidur/postholf',
   args = ['arg1', 'arg2'],
   scope = '@island.is/documents',
+  smsPayer = 'Landlæknir',
+  smsDelivery = 'OPT_IN',
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
   title,
@@ -156,6 +158,8 @@ export const getMockHnippTemplate = ({
   clickActionUrl,
   args,
   scope,
+  smsPayer,
+  smsDelivery,
 })
 
 export const userProfiles = [

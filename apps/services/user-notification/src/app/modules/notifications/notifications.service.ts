@@ -182,6 +182,9 @@ export class NotificationsService {
     )) as unknown as {
       hnippTemplateCollection: { items: HnippTemplate[] }
     }
+
+    console.log('res', res)
+
     const items = res.hnippTemplateCollection.items
     if (items.length > 0) {
       const template = items[0]
@@ -209,6 +212,23 @@ export class NotificationsService {
         }': ${missingArgs.join(', ')}. Required args are: ${template.args.join(
           ', ',
         )}`,
+      )
+    }
+  }
+
+  validateSmsDelivery(template: HnippTemplate): void {
+    const isPayerPresent =
+      template.smsPayer !== null &&
+      template.smsPayer !== undefined &&
+      template.smsPayer !== ''
+
+    if (!isPayerPresent) {
+      throw new BadRequestException('SMS payer is required')
+    }
+
+    if (template.smsDelivery !== 'NEVER' && !isPayerPresent) {
+      throw new BadRequestException(
+        'SMS payer is required when SMS delivery is not set to NEVER',
       )
     }
   }
