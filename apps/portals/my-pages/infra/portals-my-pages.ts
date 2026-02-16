@@ -19,6 +19,12 @@ export const serviceSetup = (): ServiceBuilder<'service-portal'> =>
     .env({
       BASEPATH: '/minarsidur',
       SI_PUBLIC_ENVIRONMENT: ref((h) => h.env.type),
+      NEXT_PUBLIC_MATOMO_DOMAIN: {
+        dev: 'https://matomo-dev.dev01.devland.is',
+        staging: 'https://matomo-dev.dev01.devland.is',
+        prod: 'https://matomo-dev.dev01.devland.is',
+      },
+      NEXT_PUBLIC_MATOMO_SITE_ID: { dev: '2', staging: '2', prod: '2' },
     })
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',

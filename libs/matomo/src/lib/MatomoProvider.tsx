@@ -19,6 +19,58 @@ interface MatomoProviderProps {
 export const MatomoProvider = ({ children }: MatomoProviderProps) => {
   const router = useRouter()
   const attributesRef: MutableRefObject<MatomoPageAttributes> = useRef({})
+  const isInitializedRef = useRef(false)
+
+  useEffect(() => {
+    // Read environment variables
+    const matomoDomain = process.env.NEXT_PUBLIC_MATOMO_DOMAIN
+    const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID
+
+    // Validate configuration
+    if (!matomoDomain || !matomoSiteId) {
+      console.warn(
+        'Matomo tracking is not configured properly. Please check the NEXT_PUBLIC_MATOMO_DOMAIN and NEXT_PUBLIC_MATOMO_SITE_ID environment variables.',
+      )
+      return
+    }
+
+    // Prevent double initialization
+    if (isInitializedRef.current) {
+      return
+    }
+    isInitializedRef.current = true
+
+    // Normalize domain (ensure trailing slash)
+    const normalizedDomain = matomoDomain.endsWith('/')
+      ? matomoDomain
+      : `${matomoDomain}/`
+
+    // Initialize Matomo
+    window._paq = window._paq || []
+    window._paq.push(['setTrackerUrl', normalizedDomain + 'matomo.php'])
+    window._paq.push(['setSiteId', matomoSiteId])
+    window._paq.push(['enableLinkTracking'])
+
+    // Load matomo.js script
+    const script = document.createElement('script')
+    script.async = true
+    script.src = normalizedDomain + 'matomo.js'
+    script.onerror = () => {
+      console.error('Failed to load Matomo tracking script')
+    }
+    const firstScript = document.getElementsByTagName('script')[0]
+    if (firstScript && firstScript.parentNode) {
+      firstScript.parentNode.insertBefore(script, firstScript)
+    }
+
+    // Cleanup function
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script)
+      }
+      isInitializedRef.current = false
+    }
+  }, [])
 
   const setAttribute = useCallback(
     <K extends keyof MatomoPageAttributes>(

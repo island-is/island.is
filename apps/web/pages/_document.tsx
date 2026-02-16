@@ -13,23 +13,19 @@ import { getLocaleFromPath } from '../i18n/withLocale'
 interface Props {
   lang: Locale
   domain: string
-  matomoDomain: string
-  matomoSiteId: string
 }
 
 class MyDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx)
     const domain = process.env.TRACKING_DOMAIN ?? ''
-    const matomoDomain = process.env.MATOMO_DOMAIN ?? ''
-    const matomoSiteId = process.env.MATOMO_SITE_ID ?? ''
     const lang = getLocaleFromPath(ctx?.req?.url)
 
-    return { ...initialProps, lang, domain, matomoDomain, matomoSiteId }
+    return { ...initialProps, lang, domain }
   }
 
   render() {
-    const { lang, domain, matomoDomain, matomoSiteId } = this.props
+    const { lang, domain } = this.props
 
     return (
       <Html lang={String(lang)}>
@@ -40,15 +36,6 @@ class MyDocument extends Document<Props> {
               data-domain={domain}
               src={PLAUSIBLE_SCRIPT_SRC}
             ></script>
-          )}
-          {Boolean(matomoDomain) && Boolean(matomoSiteId) && (
-            <script
-              id="matomo-init"
-              src="/scripts/matomo-init.js"
-              data-matomo-domain={matomoDomain}
-              data-matomo-site-id={matomoSiteId}
-              defer
-            />
           )}
         </Head>
         <body>

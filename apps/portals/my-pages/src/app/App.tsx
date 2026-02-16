@@ -14,6 +14,7 @@ import { defaultLanguage } from '@island.is/shared/constants'
 import { environment } from '../environments'
 import { modules } from '../lib/modules'
 import { createRoutes } from '../lib/routes'
+import { MatomoProvider } from '@island.is/matomo'
 import * as styles from './App.css'
 
 const mockedInitialState = isMockMode
@@ -25,26 +26,28 @@ const mockedInitialState = isMockMode
 export const App = () => (
   <div className={styles.page}>
     <ApolloProvider client={client}>
-      <LocaleProvider locale={defaultLanguage} messages={{}}>
-        <BffProvider
-          applicationBasePath={ServicePortalPaths.Base}
-          mockedInitialState={mockedInitialState}
-        >
-          <ApplicationErrorBoundary>
-            <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-              <PortalRouter
-                modules={modules}
-                createRoutes={createRoutes}
-                portalMeta={{
-                  basePath: ServicePortalPaths.Base,
-                  portalType: 'my-pages',
-                  portalTitle: 'Mínar síður - Ísland.is',
-                }}
-              />
-            </FeatureFlagProvider>
-          </ApplicationErrorBoundary>
-        </BffProvider>
-      </LocaleProvider>
+      <MatomoProvider>
+        <LocaleProvider locale={defaultLanguage} messages={{}}>
+          <BffProvider
+            applicationBasePath={ServicePortalPaths.Base}
+            mockedInitialState={mockedInitialState}
+          >
+            <ApplicationErrorBoundary>
+              <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+                <PortalRouter
+                  modules={modules}
+                  createRoutes={createRoutes}
+                  portalMeta={{
+                    basePath: ServicePortalPaths.Base,
+                    portalType: 'my-pages',
+                    portalTitle: 'Mínar síður - Ísland.is',
+                  }}
+                />
+              </FeatureFlagProvider>
+            </ApplicationErrorBoundary>
+          </BffProvider>
+        </LocaleProvider>
+      </MatomoProvider>
     </ApolloProvider>
   </div>
 )
