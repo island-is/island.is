@@ -39,11 +39,8 @@ export class Screen {
   fields?: FieldModel[]
 }
 
-@ObjectType('FormSystemValidationResponse')
-export class ValidationResponse {
+@ObjectType('FormSystemNotificationResponse')
+export class NotificationResponse {
   @Field(() => Screen, { nullable: true })
   screen?: Screen
-
-  @Field(() => Boolean, { nullable: true })
-  validationFailed?: boolean
 }

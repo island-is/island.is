@@ -6,7 +6,7 @@ import { ScreenValidationResponse } from '../../dataTypes/validationResponse.mod
 import { ValidationService } from './validation.service'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { NotificationActions } from '@island.is/form-system/enums'
-import { ValidationResponseDto } from '../applications/models/dto/validation.response.dto'
+import { NotificationResponseDto } from '../applications/models/dto/validation.response.dto'
 
 @Injectable()
 export class ServiceManager {
@@ -18,7 +18,7 @@ export class ServiceManager {
 
   async send(
     applicationDto: ApplicationDto,
-  ): Promise<boolean | ValidationResponseDto> {
+  ): Promise<boolean | NotificationResponseDto> {
     const submitUrl = applicationDto.submissionServiceUrl
 
     if (!submitUrl) {
@@ -39,7 +39,7 @@ export class ServiceManager {
         notificationDto,
         submitUrl,
       )
-      return response.success ?? false
+      return response.operationSuccessful ?? false
     }
 
     return false

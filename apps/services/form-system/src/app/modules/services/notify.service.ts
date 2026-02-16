@@ -6,7 +6,7 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import { ValidationResponseDto } from '../applications/models/dto/validation.response.dto'
+import { NotificationResponseDto } from '../applications/models/dto/validation.response.dto'
 import { NotificationDto } from '../applications/models/dto/notification.dto'
 
 @Injectable()
@@ -33,20 +33,20 @@ export class NotifyService {
   async sendNotification(
     notificationDto: NotificationDto,
     url: string,
-  ): Promise<ValidationResponseDto> {
+  ): Promise<NotificationResponseDto> {
     if (!this.xroadBase || !this.xroadClient) {
       throw new Error(
         `X-Road configuration is missing for NotifyService. Please check environment variables.`,
       )
     }
-    let accessToken: string | null = null
+    let accessToken = ''
     try {
       accessToken = await this.getAccessToken(url)
     } catch (error) {
       this.logger.error(
         `Error acquiring access token for application ${notificationDto.applicationId}: ${error}`,
       )
-      return { success: false }
+      return { operationSuccessful: false }
     }
 
     const xRoadPath = `${this.xroadBase}/r1/${url}`
@@ -68,11 +68,11 @@ export class NotifyService {
         this.logger.error(
           `Non-OK response for application ${notificationDto.applicationId}`,
         )
-        return { success: false }
+        return { operationSuccessful: false }
       }
       const responseData = await response.json()
-      const externalSystemResponse: ValidationResponseDto = {
-        success: responseData.success,
+      const externalSystemResponse: NotificationResponseDto = {
+        operationSuccessful: responseData.success,
         screen: responseData.screen,
       }
       return externalSystemResponse
@@ -80,16 +80,16 @@ export class NotifyService {
       this.logger.error(
         `Error sending notification for application ${notificationDto.applicationId}: ${error}`,
       )
-      return { success: false }
+      return { operationSuccessful: false }
     }
   }
 
-  private async getAccessToken(url: string): Promise<string | null> {
+  private async getAccessToken(url: string): Promise<string> {
     if (url.toLowerCase().includes('syslumenn-protected')) {
       return await this.getSyslumennAccessToken('syslumenn-protected')
     }
 
-    return null
+    return ''
   }
 
   private async getSyslumennAccessToken(org: string): Promise<string> {

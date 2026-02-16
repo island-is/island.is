@@ -20,7 +20,7 @@ import {
   SubmitScreenInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
-import { ValidationResponse } from '../../models/screen.model'
+import { NotificationResponse } from '../../models/screen.model'
 import { NotificationRequestInput } from '../../dto/notification.input'
 
 @Resolver()
@@ -120,7 +120,7 @@ export class ApplicationsResolver {
     return this.applicationsService.saveScreen(user, input)
   }
 
-  @Mutation(() => ValidationResponse, {
+  @Mutation(() => NotificationResponse, {
     name: 'notifyFormSystemExternalSystem',
     nullable: true,
   })
@@ -128,7 +128,7 @@ export class ApplicationsResolver {
     @Args('input', { type: () => NotificationRequestInput })
     input: NotificationRequestInput,
     @CurrentUser() user: User,
-  ): Promise<ValidationResponse> {
+  ): Promise<NotificationResponse> {
     return this.applicationsService.notifyExternalSystem(user, input)
   }
 

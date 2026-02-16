@@ -1,10 +1,10 @@
-import { ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiHideProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 
-export class ValidationResponseDto {
+export class NotificationResponseDto {
   @ApiPropertyOptional({ type: () => ScreenDto })
   screen?: ScreenDto
 
-  @ApiPropertyOptional()
-  success?: boolean
+  @ApiHideProperty()
+  operationSuccessful?: boolean
 }

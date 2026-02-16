@@ -44,7 +44,7 @@ import type { Locale } from '@island.is/shared/types'
 import { calculatePruneAt } from '../../../utils/calculatePruneAt'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
-import { ValidationResponseDto } from './models/dto/validation.response.dto'
+import { NotificationResponseDto } from './models/dto/validation.response.dto'
 import { NotifyService } from '../services/notify.service'
 import { NotificationDto } from './models/dto/notification.dto'
 // import { ScreenFromNotifyDto } from '../screens/models/dto/screenFromNotify.dto'
@@ -994,45 +994,37 @@ export class ApplicationsService {
     notificationDto: NotificationDto,
     url: string,
     user: User,
-  ): Promise<ValidationResponseDto> {
-    console.log(
-      `notifyExternalService called with notificationDto: ${JSON.stringify(
-        notificationDto,
-      )}`,
-    )
-
+  ): Promise<NotificationResponseDto> {
     const nationalId = user.actor?.nationalId || user.nationalId
 
-    notificationDto.nationalId = nationalId ?? ''
+    notificationDto.nationalId = nationalId
 
     if (!notificationDto.screen) {
-      console.log('notificationDto.screenDto is missing')
       throw new NotFoundException(
         `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
     }
 
-    console.log('notificationDto.screenDto: ', notificationDto.screen)
-    const result = new ValidationResponseDto()
-    result.screen = notificationDto.screen // This is just for testing, in a real scenario the screen would be fetched and returned with the error
-    ;(result.screen.screenError = {
-      hasError: true,
-      title: { is: 'Villa kom upp', en: 'Error occured' },
-      message: {
-        is: 'Ekki tókst að senda tilkynninguna',
-        en: 'Failed to send the notification',
-      },
-    }),
-      (result.success = true)
+    // const result = new NotificationResponseDto()
+    // result.screen = notificationDto.screen // This is just for testing, in a real scenario the screen would be fetched and returned with the error
+    // ;(result.screen.screenError = {
+    //   hasError: true,
+    //   title: { is: 'Villa kom upp', en: 'Error occured' },
+    //   message: {
+    //     is: 'Ekki tókst að senda tilkynninguna',
+    //     en: 'Failed to send the notification',
+    //   },
+    // }),
+    //   (result.operationSuccessful = true)
 
-    console.log(`result from API: ${JSON.stringify(result)}`)
-    return result
+    // console.log(`result from API: ${JSON.stringify(result)}`)
+    // return result
 
-    // const response = await this.notifyService.sendNotification(
-    //   notificationDto,
-    //   url,
-    // )
-    // return response
+    const response = await this.notifyService.sendNotification(
+      notificationDto,
+      url,
+    )
+    return response
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {
