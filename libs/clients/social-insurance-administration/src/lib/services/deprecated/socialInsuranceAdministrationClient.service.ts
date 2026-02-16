@@ -232,7 +232,7 @@ export class SocialInsuranceAdministrationClientService {
     })
   }
 
-  async sendMedicalAndRehabilitationPaymentsApplication(
+  async sendApplicationV2(
     user: User,
     applicationDTO: object,
     applicationType: string,

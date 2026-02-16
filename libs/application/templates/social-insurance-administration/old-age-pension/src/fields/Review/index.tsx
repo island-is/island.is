@@ -20,8 +20,8 @@ import { ResidenceHistory } from './review-groups/ResidenceHistory'
 import { Employers } from './review-groups/Employers'
 import { PaymentInformation } from './review-groups/PaymentInformation'
 import { oldAgePensionFormMessage } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
-import { ApplicationType } from '../../lib/constants'
+import { getApplicationAnswers } from '../../utils/oldAgePensionUtils'
+import { ApplicationType } from '../../utils/constants'
 import {
   RadioValue,
   ReviewGroup,
@@ -32,6 +32,7 @@ import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { States } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { YES } from '@island.is/application/core'
+import { IncomePlan } from './review-groups/IncomePlan'
 
 interface ReviewScreenProps {
   application: Application
@@ -177,6 +178,7 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <BaseInformation {...childProps} />
       <PaymentInformation {...childProps} />
+      <IncomePlan {...childProps} />
       <ResidenceHistory {...childProps} />
       {applicationType === ApplicationType.HALF_OLD_AGE_PENSION && (
         <Employers {...childProps} />
