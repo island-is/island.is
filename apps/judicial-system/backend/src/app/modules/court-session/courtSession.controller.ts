@@ -160,7 +160,7 @@ export class CourtSessionController {
     const courtSessions = theCase.courtSessions
     if (
       !courtSessions ||
-      courtSessions.length < 2 ||
+      courtSessions.length === 0 ||
       courtSessionId !== courtSessions[courtSessions.length - 1].id
     ) {
       throw new BadRequestException(
