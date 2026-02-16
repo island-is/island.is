@@ -221,7 +221,7 @@ export const ForeignBankAccountInput = ({
           disabled={disabled}
           readOnly={readOnly}
         />
-        <GridRow>
+        <GridRow rowGap={2}>
           <GridColumn span={['12/12', '12/12', '6/12']}>
             <Input
               id={`${id}.swift`}
