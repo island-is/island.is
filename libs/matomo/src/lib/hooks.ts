@@ -30,6 +30,7 @@ export const useMatomoPageView = (
   useEffect(() => {
     // Set attributes on initial mount
     const attrs = getAttributes()
+    console.log('[Matomo] useMatomoPageView: initial mount, attrs:', attrs)
     if (attrs) {
       setAttributes(attrs)
     }
@@ -37,6 +38,7 @@ export const useMatomoPageView = (
     // Set attributes on route changes
     const handleRouteChange = () => {
       const attrs = getAttributes()
+      console.log('[Matomo] useMatomoPageView: routeChangeComplete, attrs:', attrs)
       if (attrs) {
         setAttributes(attrs)
       }
