@@ -21,8 +21,6 @@ enabled: true
 env:
   BASEPATH: '/minarsidur'
   LOG_LEVEL: 'info'
-  NEXT_PUBLIC_MATOMO_DOMAIN: 'https://matomo-dev.dev01.devland.is'
-  NEXT_PUBLIC_MATOMO_SITE_ID: '2'
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
   SERVERSIDE_FEATURES_ON: ''
   SI_PUBLIC_ENVIRONMENT: 'dev'
