@@ -162,6 +162,7 @@ export class ApplicationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to notify external system'),
       )
+    console.log(`notify external system response:  ${JSON.stringify(response)}`)
     return response as ValidationResponse
   }
 

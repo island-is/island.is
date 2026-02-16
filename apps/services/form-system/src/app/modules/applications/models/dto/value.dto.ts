@@ -21,12 +21,6 @@ export class ValueDto {
   @IsOptional()
   json?: ValueType
 
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ValidationErrorDto)
-  @ApiPropertyOptional({ type: ValidationErrorDto })
-  valueError?: ValidationErrorDto
-
   @ApiPropertyOptional({ type: [ApplicationEventDto] })
   @ValidateNested()
   @IsOptional()

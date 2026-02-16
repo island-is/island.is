@@ -43,15 +43,6 @@ export const ValueDtoFragment = gql`
     json {
       ...Value
     }
-    valueError {
-      hasError
-      title {
-        ...LanguageFields
-      }
-      message {
-        ...LanguageFields
-      }
-    }
   }
   ${ValueFragment}
   ${LanguageFields}

@@ -1051,22 +1051,6 @@ export class ApplicationsService {
     }),
       (result.validationFailed = true)
 
-    if (
-      result.screen.fields &&
-      result.screen.fields[0] &&
-      result.screen.fields[0].values &&
-      result.screen.fields[0].values[0]
-    ) {
-      result.screen.fields[0].values[0].valueError = {
-        hasError: true,
-        title: { is: '', en: '' },
-        message: {
-          is: 'Þessi innsláttur er ekki gildur',
-          en: 'This input is not valid',
-        },
-      }
-    }
-
     console.log(`result from API: ${JSON.stringify(result)}`)
     return result
 

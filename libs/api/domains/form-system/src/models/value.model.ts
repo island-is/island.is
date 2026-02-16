@@ -111,9 +111,6 @@ export class ValueDto {
   @Field(() => Value, { nullable: true })
   json?: Value
 
-  @Field(() => ValidationError, { nullable: true })
-  valueError?: ValidationError
-
   @Field(() => [ApplicationEventDto], { nullable: 'itemsAndList' })
   events?: ApplicationEventDto[]
 }

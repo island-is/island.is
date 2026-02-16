@@ -116,11 +116,6 @@ export class ApplicationMapper {
                       id: value.id,
                       order: value.order,
                       json: value.json,
-                      valueError: {
-                        hasError: false,
-                        title: { is: '', en: '' },
-                        message: { is: '', en: '' },
-                      },
                     } as ValueDto
                   }),
                 } as FieldDto

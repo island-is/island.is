@@ -113,9 +113,6 @@ export class ValueDtoInput {
   @Field(() => ValueInput, { nullable: true })
   json?: ValueInput
 
-  @Field(() => ValidationErrorInput, { nullable: true })
-  valueError?: ValidationErrorInput
-
   @Field(() => [ApplicationEventDtoInput], { nullable: 'itemsAndList' })
   events?: ApplicationEventDtoInput[]
 }
