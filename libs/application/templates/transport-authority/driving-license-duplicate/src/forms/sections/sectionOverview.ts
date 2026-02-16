@@ -45,10 +45,7 @@ export const sectionOverview = buildSection({
         buildKeyValueField({
           label: m.image,
           value: ({ answers }) => {
-            const selectedPhoto = getValueViaPath(
-              answers,
-              'selectLicensePhoto',
-            )
+            const selectedPhoto = getValueViaPath(answers, 'selectLicensePhoto')
             return selectedPhoto === 'qualityPhoto'
               ? m.overviewPhotoQualityPhoto
               : m.overviewPhotoThjodskra
