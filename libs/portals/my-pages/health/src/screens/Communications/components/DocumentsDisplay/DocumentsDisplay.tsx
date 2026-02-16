@@ -53,7 +53,7 @@ const DocumentsDisplay: FC<{
           <Box borderRadius="full" />
         </Box>
       </LinkResolver>
-      <DocumentsList documents={documents} loading={loading} />
+      <DocumentsList documents={documents} loading={loading} limit={3} />
 
       <Box textAlign="center" marginBottom={1} printHidden marginY={3}>
         <LinkResolver href={link ?? DocumentsPaths.ElectronicDocumentsRoot}>

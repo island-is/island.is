@@ -2513,6 +2513,51 @@ export const messages = defineMessages({
     defaultMessage: 'Mælingar',
     id: 'sp.health:measurements',
   },
+  measurementsPregnancyIntro: {
+    defaultMessage:
+      'Lorem ipsum dolor sit amet consectetur. Ut pulvinar odio egestas ac.',
+    id: 'sp.health:measurements-pregnancy-intro',
+  },
+  measurementWeight: {
+    defaultMessage: 'Þyngd',
+    id: 'sp.health:measurement-weight',
+  },
+  measurementFundalHeight: {
+    defaultMessage: 'Hæð legbotns',
+    id: 'sp.health:measurement-fundal-height',
+  },
+  measurementBloodPressure: {
+    defaultMessage: 'Blóðþrýstingur',
+    id: 'sp.health:measurement-blood-pressure',
+  },
+  measurementPulse: {
+    defaultMessage: 'Púls',
+    id: 'sp.health:measurement-pulse',
+  },
+  measurementProteinInUrine: {
+    defaultMessage: 'Prótein í þvagi',
+    id: 'sp.health:measurement-protein-in-urine',
+  },
+  measurementProteinNegative: {
+    defaultMessage: 'Neikvætt',
+    id: 'sp.health:measurement-protein-negative',
+  },
+  measurementUnitKg: {
+    defaultMessage: 'kg',
+    id: 'sp.health:measurement-unit-kg',
+  },
+  measurementUnitCm: {
+    defaultMessage: 'cm',
+    id: 'sp.health:measurement-unit-cm',
+  },
+  measurementUnitMmHg: {
+    defaultMessage: 'mmHg',
+    id: 'sp.health:measurement-unit-mmhg',
+  },
+  measurementUnitPulse: {
+    defaultMessage: 'sl/mín',
+    id: 'sp.health:measurement-unit-pulse',
+  },
   files: {
     defaultMessage: 'Skjöl',
     id: 'sp.health:files',

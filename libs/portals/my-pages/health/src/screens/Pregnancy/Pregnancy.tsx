@@ -19,7 +19,9 @@ import { useDocumentList } from '@island.is/portals/my-pages/documents'
 const Pregnancy = () => {
   const { formatMessage } = useLocale()
   const [showAppointments, setShowAppointments] = useState(false)
-  const { filteredDocuments, loading } = useDocumentList()
+  const { filteredDocuments, loading } = useDocumentList({
+    categoryIds: ['3'],
+  })
 
   const featureFlagClient = useFeatureFlagClient()
   useEffect(() => {

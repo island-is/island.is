@@ -7,7 +7,9 @@ import { DocumentsList } from '../Communications/components/DocumentsList/Docume
 
 const Communications = () => {
   const { formatMessage } = useLocale()
-  const { filteredDocuments, loading } = useDocumentList()
+  const { filteredDocuments, loading } = useDocumentList({
+    categoryIds: ['3'],
+  })
 
   return (
     <IntroWrapper

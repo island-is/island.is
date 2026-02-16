@@ -4,7 +4,10 @@ import { useDocumentsV3Query } from '../queries/Overview.generated'
 
 export const pageSize = 10
 
-type UseDocumentListProps = { defaultPageSize?: number }
+type UseDocumentListProps = {
+  defaultPageSize?: number
+  categoryIds?: string[]
+}
 
 export const useDocumentList = (props?: UseDocumentListProps) => {
   const {
@@ -24,7 +27,10 @@ export const useDocumentList = (props?: UseDocumentListProps) => {
       senderNationalId: filterValue.activeSenders,
       dateFrom: filterValue.dateFrom?.toISOString(),
       dateTo: filterValue.dateTo?.toISOString(),
-      categoryIds: filterValue.activeCategories,
+      categoryIds:
+        props?.categoryIds !== undefined
+          ? props.categoryIds
+          : filterValue.activeCategories,
       subjectContains: filterValue.searchQuery,
       typeId: null,
       opened: filterValue.showUnread ? false : null,

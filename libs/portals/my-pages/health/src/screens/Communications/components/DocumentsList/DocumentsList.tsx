@@ -12,13 +12,19 @@ interface DocumentsListProps {
   documents?: DocumentV2[]
   onDocumentClick?: (documentId: string) => void
   loading?: boolean
+  // Max number of documents to show. Omit to show all.
+  limit?: number
 }
 
 export const DocumentsList: FC<DocumentsListProps> = ({
   documents,
   onDocumentClick,
   loading,
+  limit,
 }) => {
+  const documentsList =
+    limit !== undefined ? documents?.slice(0, limit) ?? [] : documents ?? []
+
   return (
     <Box>
       {loading ? (
@@ -31,8 +37,8 @@ export const DocumentsList: FC<DocumentsListProps> = ({
             height={65}
           />
         </Box>
-      ) : documents && documents.length > 0 ? (
-        documents.slice(0, 4).map((doc, i) => (
+      ) : documentsList.length > 0 ? (
+        documentsList.map((doc, i) => (
           <Box key={doc.id}>
             <DocumentLine
               img={
