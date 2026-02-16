@@ -295,18 +295,6 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
-    pensionFileTitle: {
-      id: 'oap.application:fileUpload.pensionFile.title',
-      defaultMessage: 'Fylgiskjöl lífeyrissjóða',
-      description: 'Pension fund attachment',
-    },
-    pensionFileDescription: {
-      id: 'oap.application:fileUpload.pensionFile.description#markdown',
-      defaultMessage:
-        'Hér getur þú skilað staðfestingu greiðslna hjá lífeyrissjóði. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you can return confirmation of payments to the pension fund. Note that the document must be in .pdf format.',
-    },
     fishermenFileTitle: {
       id: 'oap.application:fileUpload.sailor.title',
       defaultMessage: 'Fylgiskjöl sjómanna',

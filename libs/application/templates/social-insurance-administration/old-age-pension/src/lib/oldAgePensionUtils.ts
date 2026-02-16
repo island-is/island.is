@@ -7,7 +7,10 @@ import {
 import {
   Attachments,
   BankInfo,
+  CategorizedIncomeTypes,
   FileType,
+  IncomePlanConditions,
+  IncomePlanRow,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
@@ -153,6 +156,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
 
+  const incomePlan =
+    getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
+
   return {
     pensionFundQuestion,
     applicationType,
@@ -184,6 +190,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     bankAddress,
     currency,
     paymentInfo,
+    incomePlan,
   }
 }
 
@@ -258,6 +265,17 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationLatestIncomePlan.data.status',
   ) as string
 
+  const incomePlanConditions = getValueViaPath<IncomePlanConditions>(
+    externalData,
+    'socialInsuranceAdministrationIncomePlanConditions.data',
+  )
+
+  const categorizedIncomeTypes =
+    getValueViaPath<CategorizedIncomeTypes[]>(
+      externalData,
+      'socialInsuranceAdministrationCategorizedIncomeTypes.data',
+    ) ?? []
+
   return {
     residenceHistory,
     applicantName,
@@ -273,6 +291,8 @@ export const getApplicationExternalData = (
     userProfileEmail,
     userProfilePhoneNumber,
     hasIncomePlanStatus,
+    incomePlanConditions,
+    categorizedIncomeTypes,
   }
 }
 

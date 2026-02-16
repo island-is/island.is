@@ -11,7 +11,8 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { getTypesOptions, shouldShowEqualIncomePerMonth } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { ExternalData } from '@island.is/application/types'
-import { getApplicationExternalData } from './medicalAndRehabilitationPaymentsUtils'
+import { getApplicationExternalData as getMARPApplicationExternalData } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
+import { getApplicationExternalData as getOAPApplicationExternalData } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 
 export const equalIncomePerMonthValueModifier = (
   isForeign: boolean,
@@ -27,7 +28,8 @@ export const incomeTypeValueModifier = (
   externalData: ExternalData,
   activeField?: Record<string, string>,
 ) => {
-  const { categorizedIncomeTypes } = getApplicationExternalData(externalData)
+  // how could this work? we need to know which application we are in to get the right external data, should we pass down the application type as well?
+  const { categorizedIncomeTypes } = getOAPApplicationExternalData(externalData)
   const options = getTypesOptions(
     categorizedIncomeTypes,
     activeField?.incomeCategory,

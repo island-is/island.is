@@ -487,6 +487,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
   }),
 
   incomePlan: defineMessages({
+    incomePlanInstructionsSubSectionTitle: {
+      id: 'sia.application:income.plan.instructions.sub.section.title',
+      defaultMessage: 'Tekjuáætlun - Leiðbeiningar',
+      description: 'Income Plan - Instructions',
+    },
     subSectionTitle: {
       id: 'sia.application:income.plan.sub.section.title',
       defaultMessage: 'Tekjuáætlun',

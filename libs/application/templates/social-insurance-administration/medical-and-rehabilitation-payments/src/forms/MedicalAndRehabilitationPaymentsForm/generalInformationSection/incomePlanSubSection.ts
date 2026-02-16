@@ -18,13 +18,11 @@ import {
   getCategoriesOptions,
   getCurrencies,
   getTypesOptions,
+  shouldShowEqualIncomePerMonth,
+  shouldShowIncomePlanMonths,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { Application } from '@island.is/application/types'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
-import {
-  shouldShowEqualIncomePerMonth,
-  shouldShowIncomePlanMonths,
-} from '../../../utils/conditionUtils'
 import {
   currencyValueModifier,
   equalIncomePerMonthValueModifier,

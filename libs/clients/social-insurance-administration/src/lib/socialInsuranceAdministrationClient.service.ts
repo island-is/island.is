@@ -186,11 +186,13 @@ export class SocialInsuranceAdministrationClientService {
     })
   }
 
-  async sendMedicalAndRehabilitationPaymentsApplication(
+  async sendApplicationV2(
     user: User,
     applicationDTO: object,
     applicationType: string,
   ): Promise<void> {
+    console.log('applicationDTO', applicationDTO)
+    console.log('applicationType', applicationType)
     return this.applicationWriteApiV2WithAuth(
       user,
     ).apiProtectedV2ApplicationApplicationTypePost({

@@ -92,8 +92,9 @@ export const transformApplicationToOldAgePensionDTO = (
     paymentInfo,
     employmentStatus,
     employers,
+    incomePlan,
   } = getOAPApplicationAnswers(application.answers)
-  const { bankInfo, userProfileEmail } = getOAPApplicationExternalData(
+  const { bankInfo, userProfileEmail, incomePlanConditions, categorizedIncomeTypes } = getOAPApplicationExternalData(
     application.externalData,
   )
 
@@ -128,6 +129,12 @@ export const transformApplicationToOldAgePensionDTO = (
         },
       }),
     }),
+    incomePlan: {
+      incomeYear:
+        incomePlanConditions?.incomePlanYear ?? new Date().getFullYear(),
+      distributeIncomeByMonth: shouldDistributeIncomeByMonth(incomePlan),
+      incomeTypes: getIncomeTypes(incomePlan, categorizedIncomeTypes),
+    },
     taxInfo: {
       personalAllowance: YES === personalAllowance,
       personalAllowanceUsage:
