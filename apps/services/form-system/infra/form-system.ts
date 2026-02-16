@@ -1,23 +1,9 @@
 import {
   CodeOwners,
-  json,
   service,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
-
 import { Base, Client } from '../../../../infra/src/dsl/xroad'
-
-const REDIS_NODE_CONFIG = {
-  dev: json([
-    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
-  ]),
-  staging: json([
-    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-  ]),
-  prod: json([
-    'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
-  ]),
-}
 
 const serviceName = 'services-form-system-api'
 const workerName = `${serviceName}-worker`
@@ -49,7 +35,6 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         staging: 'island-is-staging-form-system-presign-bucket',
         prod: 'island-is-prod-form-system-presign-bucket',
       },
-      REDIS_URL_NODE_01: REDIS_NODE_CONFIG,
     })
     .secrets({
       FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX:
