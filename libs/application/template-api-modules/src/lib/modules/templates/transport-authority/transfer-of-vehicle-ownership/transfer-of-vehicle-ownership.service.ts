@@ -66,7 +66,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     // Get max 20 vehicles and total count of vehicles
     // Note: Should be enough to only get 20, because if totalRecords
     // is higher than 20, then we won't return any vehicles
-    console.log('----------- HERE ------------')
     const result = await this.vehiclesApiWithAuth(
       auth,
     ).currentvehicleswithmileageandinspGet({
@@ -77,8 +76,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
       pageSize: 20,
     })
     const totalRecords = result.totalRecords || 0
-
-    console.log('result', result)
 
     // Validate that user has at least 1 vehicle
     if (!totalRecords) {
