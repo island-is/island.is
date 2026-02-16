@@ -10,10 +10,12 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { requiresPayment } from '../../utils/requiresPayment'
 
 export const payerSection = buildSection({
   id: 'payerSection',
   title: m.payer.sectionTitle,
+  condition: requiresPayment,
   children: [
     buildMultiField({
       id: 'payerSectionMultiField',

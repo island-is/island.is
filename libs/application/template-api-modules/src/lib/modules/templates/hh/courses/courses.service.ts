@@ -111,21 +111,24 @@ export class CoursesService extends BaseTemplateApiService {
         healthcenter,
       )
 
-      await this.sharedTemplateApiService.sendEmail(
-        (_props) => ({
-          to: this.coursesConfig.applicationRecipientEmail,
-          from: {
-            name: this.coursesConfig.applicationSenderName,
-            address: this.coursesConfig.applicationSenderEmail,
-          },
-          subject: this.coursesConfig.applicationEmailSubject,
-          text: message,
-          replyTo: email,
-        }),
-        application,
-      )
-
+      console.log('message', message)
       return { success: true }
+
+      // await this.sharedTemplateApiService.sendEmail(
+      //   (_props) => ({
+      //     to: this.coursesConfig.applicationRecipientEmail,
+      //     from: {
+      //       name: this.coursesConfig.applicationSenderName,
+      //       address: this.coursesConfig.applicationSenderEmail,
+      //     },
+      //     subject: this.coursesConfig.applicationEmailSubject,
+      //     text: message,
+      //     replyTo: email,
+      //   }),
+      //   application,
+      // )
+
+      // return { success: true }
     } catch (error) {
       this.logger.error('Failed to submit HH courses application to Zendesk', {
         applicationId: application.id,
@@ -260,6 +263,7 @@ export class CoursesService extends BaseTemplateApiService {
         startTime?: string
         endTime?: string
       }
+      chargeItemCode?: string | null
       location?: string | null
     },
     nationalId: string,
@@ -268,18 +272,6 @@ export class CoursesService extends BaseTemplateApiService {
     phone: string,
     healthcenter?: string,
   ): Promise<string> {
-    const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
-      application.answers,
-      'payment.userIsPayingAsIndividual',
-      YesOrNoEnum.YES,
-    )
-    const companyPayment = getValueViaPath<{
-      nationalIdWithName: {
-        name: string
-        nationalId: string
-      }
-    }>(application.answers, 'payment.companyPayment')
-
     let message = ''
     message += `Námskeið: ${courseTitle}\n`
     let startDateTimeDuration = ''
@@ -302,16 +294,30 @@ export class CoursesService extends BaseTemplateApiService {
     message += `Símanúmer umsækjanda: ${phone}\n`
     message += `Heilsugæslustöð umsækjanda: ${healthcenter ?? ''}\n`
 
-    const payer =
-      userIsPayingAsIndividual === YesOrNoEnum.YES
-        ? {
-            name: 'Umsækjandi (einstaklingsgreiðsla)',
-            nationalId: application.applicant,
-          }
-        : companyPayment?.nationalIdWithName
+    if (courseInstance.chargeItemCode) {
+      const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
+        application.answers,
+        'payment.userIsPayingAsIndividual',
+        YesOrNoEnum.YES,
+      )
+      const companyPayment = getValueViaPath<{
+        nationalIdWithName: {
+          name: string
+          nationalId: string
+        }
+      }>(application.answers, 'payment.companyPayment')
 
-    message += `Greiðandi: ${payer?.name ?? ''}\n`
-    message += `Kennitala greiðanda: ${payer?.nationalId ?? ''}\n`
+      const payer =
+        userIsPayingAsIndividual === YesOrNoEnum.YES
+          ? {
+              name: 'Umsækjandi (einstaklingsgreiðsla)',
+              nationalId: application.applicant,
+            }
+          : companyPayment?.nationalIdWithName
+
+      message += `Greiðandi: ${payer?.name ?? ''}\n`
+      message += `Kennitala greiðanda: ${payer?.nationalId ?? ''}\n`
+    }
 
     participantList.forEach((participant, index) => {
       const p = participant.nationalIdWithName

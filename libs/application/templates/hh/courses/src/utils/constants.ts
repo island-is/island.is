@@ -23,3 +23,5 @@ export enum IndividualOrCompany {
   individual = 'individual',
   company = 'company',
 }
+
+export const HAS_CHARGE_ITEM_CODE = 'hasChargeItemCode'

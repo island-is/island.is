@@ -1,6 +1,7 @@
 import type { Application } from '@island.is/application/types'
 import {
   buildAsyncSelectField,
+  buildCustomField,
   buildMultiField,
   buildSection,
   getValueViaPath,
@@ -52,6 +53,11 @@ export const courseSection = buildSection({
             return parseQueryParamValue(value)?.courseInstanceId
           },
           loadOptions: loadDateSelectOptions,
+        }),
+        buildCustomField({
+          id: 'chargeItemCodeWatcher',
+          component: 'ChargeItemCodeWatcher',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

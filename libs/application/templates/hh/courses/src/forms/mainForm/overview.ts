@@ -10,6 +10,7 @@ import {
   getParticipantOverviewTableData,
 } from '../../utils/getOverviewItems'
 import { m } from '../../lib/messages'
+import { requiresPayment } from '../../utils/requiresPayment'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -30,6 +31,7 @@ export const overviewSection = buildSection({
           bottomLine: false,
           title: m.overview.payerHeading,
           items: getPayerOverviewItems,
+          condition: requiresPayment,
         }),
         buildSubmitField({
           id: 'submit',

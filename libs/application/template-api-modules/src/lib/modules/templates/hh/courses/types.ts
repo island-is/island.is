@@ -8,7 +8,7 @@ type NationalIdWithName = {
 }
 
 export type ApplicationAnswers = {
-  payment: {
+  payment?: {
     userIsPayingAsIndividual: YesOrNoEnum
     companyPayment?: {
       nationalIdWithName: NationalIdWithName
