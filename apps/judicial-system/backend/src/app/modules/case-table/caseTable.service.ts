@@ -14,6 +14,7 @@ import {
   CaseTableType,
   CaseType,
   ContextMenuCaseActionType,
+  IndictmentCaseReviewDecision,
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -257,17 +258,55 @@ export class CaseTableService {
       where: caseTableWhereOptions[type](user),
     })
 
+    const getDefendantFilter = (type: CaseTableType) => {
+      const reviewedTypes = [
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_SENT_TO_PRISON_ADMIN,
+      ]
+
+      if (!reviewedTypes.includes(type)) {
+        return () => true
+      }
+
+      const targetDecision = [
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_SENT_TO_PRISON_ADMIN,
+      ].includes(type)
+        ? IndictmentCaseReviewDecision.ACCEPT
+        : IndictmentCaseReviewDecision.APPEAL
+
+      return (defendant: Defendant) =>
+        defendant.indictmentReviewDecision === targetDecision
+    }
+
+    const expandCaseWithDefendants = (
+      caseItem: Case,
+      filter: (defendant: Defendant) => boolean,
+    ) => {
+      const jsonCase = caseItem.toJSON()
+
+      if (!caseItem.defendants?.length) {
+        return [jsonCase]
+      }
+
+      const filteredDefendants = caseItem.defendants.filter(filter)
+
+      return filteredDefendants.length > 0
+        ? filteredDefendants.map((defendant) => ({
+            ...jsonCase,
+            defendants: [defendant],
+          }))
+        : []
+    }
+
     // Display defendants in separate lines for public prosecutors office
     const displayCases: Case[] = isPublicProsecutionOfficeUser(user)
-      ? cases.flatMap((c) => {
-          const jsonCase = c.toJSON()
-
-          if (c.defendants && c.defendants.length > 0) {
-            return c.defendants.map((d) => ({ ...jsonCase, defendants: [d] }))
-          }
-
-          return jsonCase
-        })
+      ? cases.flatMap((caseItem) =>
+          expandCaseWithDefendants(caseItem, getDefendantFilter(type)),
+        )
       : cases
 
     return {
