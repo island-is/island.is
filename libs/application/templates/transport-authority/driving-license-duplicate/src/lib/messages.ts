@@ -286,7 +286,7 @@ export const m = defineMessages({
   },
   overviewPhotoThjodskra: {
     id: 'dld.application:overview.photoThjodskra',
-    defaultMessage: 'Vegabréfa- og skilríkjaskrá',
+    defaultMessage: 'Skilríkjaskrá',
     description: 'Photo from national registry',
   },
 
