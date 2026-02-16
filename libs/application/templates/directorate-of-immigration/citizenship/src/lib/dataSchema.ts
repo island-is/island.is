@@ -218,7 +218,7 @@ const ChildrenPassportSchema = z
   )
 
 const MaritalStatusSchema = z.object({
-  status: z.string().min(1),
+  status: z.string().optional(),
   nationalId: z.string().min(1),
   birthCountry: z.string().optional(),
   name: z.string().min(1),
