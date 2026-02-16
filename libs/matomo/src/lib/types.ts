@@ -5,7 +5,7 @@ declare global {
 }
 
 export interface MatomoPageAttributes {
-  organization?: string
+  organization?: string | null
   category?: string
 }
 

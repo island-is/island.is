@@ -19,6 +19,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { isDefined } from '@island.is/shared/utils'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
 import * as styles from './ContentBreadcrumbs.css'
+import { useMatomoPageView } from '@island.is/matomo'
 interface ContentBreadcrumb {
   name: string | MessageDescriptor
   path?: string
@@ -106,6 +107,11 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
 
   findBreadcrumbsPath(navigation, [])
   const isMobile = width < theme.breakpoints.md
+
+  useMatomoPageView(() => ({
+    category: items.length > 0 ? items[items.length - 1].path : undefined,
+  }))
+
   if (items.length < 2) return null
   return (
     <Box

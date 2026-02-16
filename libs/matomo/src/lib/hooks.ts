@@ -53,6 +53,6 @@ export const useMatomoPageView = (
 /**
  * Hook to set organization attribute for tracking
  */
-export const useSetOrganization = (organization: string) => {
+export const useSetOrganization = (organization?: string | null) => {
   useMatomoPageView(() => ({ organization }))
 }
