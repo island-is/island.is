@@ -79,4 +79,10 @@ export enum HealthPaths {
 
   HealthAppointments = '/heilsa/timabokanir',
   HealthAppointmentDetail = '/heilsa/timabokanir/:id',
+
+  HealthPregnancy = '/heilsa/medganga',
+  HealthPregnancyOverview = '/heilsa/medganga/min-medganga',
+  HealthPregnancyCommunications = '/heilsa/medganga/samskipti',
+  HealthPregnancyMeasurements = '/heilsa/medganga/maelingar',
+  HealthPregnancyFiles = '/heilsa/medganga/skjol',
 }

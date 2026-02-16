@@ -55,10 +55,11 @@ interface InfoCardDetail {
 
 export interface InfoCardProps {
   id?: string
-  title: string
-  description: string
+  title?: string
+  description?: string
   to?: string
   size?: 'small' | 'large'
+  fontSize?: 'medium' | 'large'
   appointment?: {
     weekday?: string
     date: string
@@ -85,6 +86,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   detail,
   tags,
   img,
+  fontSize = 'large',
   appointment,
   variant = 'default',
   loading = false,
@@ -92,9 +94,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-
-  const displayBottomBorder = width < theme.breakpoints.xl
-  const displayRightBorder = width >= theme.breakpoints.xl
+  const isDesktop = width >= theme.breakpoints.lg
 
   const detailLength = detail ? detail.length : 0
 
@@ -108,12 +108,69 @@ export const InfoCard: React.FC<InfoCardProps> = ({
     return <LoaderCard />
   }
 
+  const detailDataLength = detailData ? detailData.length : 0
+
+  const detailItem = (
+    item: InfoCardDetail,
+    index: number,
+    showRightBorder: boolean,
+    isLastItem: boolean,
+  ) => {
+    return (
+      <React.Fragment key={`${item?.label}-${index}`}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent={detailDataLength === 2 ? 'spaceBetween' : undefined}
+          rowGap={1}
+          className={styles.flexItem}
+          style={
+            isDesktop
+              ? {
+                  flex: `0 0 calc(50% - ${theme.spacing[1]}px)`,
+                }
+              : {
+                  flex: '0 0 auto',
+                  width: '100%',
+                }
+          }
+          borderRightWidth={showRightBorder ? 'standard' : undefined}
+          borderBottomWidth={!isDesktop && !isLastItem ? 'standard' : undefined}
+          borderColor={
+            showRightBorder || (!isDesktop && !isLastItem)
+              ? 'blue200'
+              : undefined
+          }
+          paddingRight={showRightBorder ? 2 : undefined}
+          paddingLeft={showRightBorder ? undefined : 2}
+          paddingBottom={!isDesktop && !isLastItem ? 3 : undefined}
+        >
+          <Inline>
+            <Text variant="small">{item?.label}</Text>
+            {item?.tooltip && <Tooltip text={item?.tooltip} />}
+          </Inline>
+          <Inline alignY="bottom">
+            <Text variant={fontSize === 'large' ? 'h3' : 'h4'} as="p">
+              {item?.value}
+            </Text>
+            {item?.subValue && (
+              <Box marginLeft={1}>
+                <Text variant="eyebrow" color="foregroundPrimaryMinimal">
+                  {item?.subValue}
+                </Text>
+              </Box>
+            )}
+          </Inline>
+        </Box>
+      </React.Fragment>
+    )
+  }
   const content =
     variant === 'appointment' ? (
       <TimeCard
-        title={title}
+        title={title ?? ''}
         data={appointment}
-        description={description}
+        description={description ?? ''}
         to={to}
       />
     ) : (
@@ -127,6 +184,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
         background="white"
       >
         <GridRow direction="row" className={styles.gridRow}>
+          {/* Main content */}
           <GridColumn
             span={
               size === 'large'
@@ -143,99 +201,77 @@ export const InfoCard: React.FC<InfoCardProps> = ({
             }
             className={styles.contentContainer}
           >
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              flexGrow={1}
-              marginBottom={detail ? 3 : 0}
-            >
-              <Box>
-                <Text
-                  variant="h4"
-                  marginBottom={variant === 'link' ? 0 : 1}
-                  color="blue400"
-                >
-                  {title}
-                </Text>
-                <Inline>
-                  <Text>{description}</Text>
-                  {tooltip && <Tooltip text={tooltip} />}
-                </Inline>
+            {title && (
+              <Box
+                display="flex"
+                justifyContent="spaceBetween"
+                flexGrow={1}
+                marginBottom={detail ? 3 : 0}
+              >
+                <Box>
+                  <Text
+                    variant="h4"
+                    marginBottom={variant === 'link' ? 0 : 1}
+                    color="blue400"
+                  >
+                    {title}
+                  </Text>
+                  <Inline>
+                    <Text>{description}</Text>
+                    {tooltip && <Tooltip text={tooltip} />}
+                  </Inline>
+                </Box>
               </Box>
-            </Box>
+            )}
+            {/* Show image on mobile before detail items */}
+            {size === 'large' && isMobile && img && (
+              <Box marginBottom={3}>
+                <Box
+                  alt=""
+                  component="img"
+                  src={img}
+                  className={styles.image}
+                  width="full"
+                />
+              </Box>
+            )}
             {detailData && (
               <Box
                 display="flex"
-                flexDirection={['column', 'column', 'column', 'column', 'row']}
-                flexWrap="nowrap"
+                flexDirection={
+                  !title && !description
+                    ? ['column', 'column', 'column', 'row']
+                    : ['column', 'column', 'column', 'column', 'row']
+                }
+                flexWrap={!title && !description ? 'wrap' : 'nowrap'}
                 alignItems="stretch"
                 justifyContent={'spaceBetween'}
                 width="full"
+                rowGap={3}
               >
-                {detailData.map((item, index) => (
-                  <React.Fragment key={`${item?.label}-${index}`}>
-                    <Box
-                      display="flex"
-                      flexDirection="column"
-                      justifyContent="spaceBetween"
-                      className={styles.flexItem}
-                    >
-                      <Inline>
-                        <Text variant="small">{item?.label}</Text>
-                        {item?.tooltip && <Tooltip text={item?.tooltip} />}
-                      </Inline>
-                      <Inline alignY="bottom">
-                        <Text variant="h3" as="p">
-                          {item?.value}
-                        </Text>
-                        {item?.subValue && (
-                          <Box marginLeft={1}>
-                            <Text
-                              variant="eyebrow"
-                              color="foregroundPrimaryMinimal"
-                            >
-                              {item?.subValue}
-                            </Text>
-                          </Box>
-                        )}
-                      </Inline>
-                    </Box>
+                {detailData
+                  .filter((item): item is InfoCardDetail => item !== null)
+                  .map((item, index) => {
+                    const isFirstOrThird = index % 2 === 0
+                    const showRightBorder =
+                      isDesktop &&
+                      isFirstOrThird &&
+                      index < detailData.filter((i) => i !== null).length - 1
+                    const isLastItem =
+                      index === detailData.filter((i) => i !== null).length - 1
 
-                    {/* Only show divider between items */}
-                    {index < detailData.length - 1 && (
-                      <Box
-                        display="flex"
-                        className={styles.flexItemBorder}
-                        justifyContent="center"
-                        marginY={[2, 2, 2, 2, 0]}
-                      >
-                        <Box
-                          borderColor="blue200"
-                          borderRightWidth={
-                            displayRightBorder ? 'standard' : undefined
-                          }
-                          borderBottomWidth={
-                            displayBottomBorder ? 'standard' : undefined
-                          }
-                        />
-                      </Box>
-                    )}
-                  </React.Fragment>
-                ))}
+                    return detailItem(item, index, showRightBorder, isLastItem)
+                  })}
               </Box>
             )}
           </GridColumn>
+          {/* Show image on desktop after detail items */}
           {size === 'large' && !isMobile && img && (
             <GridColumn span={'3/12'} className={styles.imageContainer}>
-              <Box
-                alt=""
-                component="img"
-                src={img}
-                marginRight={isMobile ? 2 : 0}
-                className={styles.image}
-              />
+              <Box alt="" component="img" src={img} className={styles.image} />
             </GridColumn>
           )}
+          {/* Link that navigates to the specified URL */}
           {to && (
             <GridColumn span="1/12" className={styles.icon}>
               <Box
@@ -248,6 +284,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
             </GridColumn>
           )}
         </GridRow>
+        {/* Tags always rendered last */}
         {tags && tags.length > 0 && (
           <GridRow>
             <GridColumn paddingTop={2}>
