@@ -19,12 +19,14 @@ import {
   DefendantNotificationType,
   DefenderChoice,
   isIndictmentCase,
+  isPrisonAdminUser,
 } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../court'
 import {
   Case,
   Defendant,
+  DefendantEventLog,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
 } from '../repository'
@@ -325,7 +327,39 @@ export class DefendantService {
       transaction,
     )
 
+    if (update.punishmentType != null && isPrisonAdminUser(user)) {
+      await this.markAllDefendantsAsOpenedByPrisonAdmin(
+        theCase,
+        transaction,
+      )
+    }
+
     return updatedDefendant
+  }
+
+  private async markAllDefendantsAsOpenedByPrisonAdmin(
+    theCase: Case,
+    transaction: Transaction,
+  ): Promise<void> {
+    const defendantsToMark =
+      theCase.defendants?.filter(
+        ({ isSentToPrisonAdmin, eventLogs = [] }) =>
+          isSentToPrisonAdmin &&
+          !DefendantEventLog.hasValidOpenByPrisonAdminEvent(eventLogs),
+      ) ?? []
+
+    await Promise.all(
+      defendantsToMark.map((defendant) =>
+        this.createDefendantEvent(
+          {
+            caseId: theCase.id,
+            defendantId: defendant.id,
+            eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
+          },
+          transaction,
+        ),
+      ),
+    )
   }
 
   async update(

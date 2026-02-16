@@ -18,24 +18,6 @@ import {
 import { DefendantService } from '../../defendant'
 import { Case, DefendantEventLog } from '../../repository'
 
-const hasValidOpenByPrisonAdminEvent = (
-  defendantEventLogs: DefendantEventLog[],
-) => {
-  const sentToPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
-    DefendantEventType.SENT_TO_PRISON_ADMIN,
-    defendantEventLogs,
-  )
-  const openedByPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
-    DefendantEventType.OPENED_BY_PRISON_ADMIN,
-    defendantEventLogs,
-  )
-  return (
-    sentToPrisonAdminDate &&
-    openedByPrisonAdminDate &&
-    sentToPrisonAdminDate <= openedByPrisonAdminDate
-  )
-}
-
 @Injectable()
 export class DefendantIndictmentAccessedInterceptor implements NestInterceptor {
   constructor(
@@ -53,10 +35,7 @@ export class DefendantIndictmentAccessedInterceptor implements NestInterceptor {
       // For prison admin users, defendantIds must be explicitly provided to mark
       // any defendants. This prevents page-load refetches (which don't include
       // defendantIds) from inadvertently marking all defendants.
-      const rawDefendantIds = request.query?.defendantIds as
-        | string
-        | string[]
-        | undefined
+      const rawDefendantIds = request.query?.defendantIds
       const defendantIds = rawDefendantIds
         ? Array.isArray(rawDefendantIds)
           ? rawDefendantIds
@@ -67,7 +46,7 @@ export class DefendantIndictmentAccessedInterceptor implements NestInterceptor {
         const defendantsIndictmentNotOpened = theCase.defendants?.filter(
           ({ id, isSentToPrisonAdmin, eventLogs = [] }) =>
             isSentToPrisonAdmin &&
-            !hasValidOpenByPrisonAdminEvent(eventLogs) &&
+            !DefendantEventLog.hasValidOpenByPrisonAdminEvent(eventLogs) &&
             defendantIds.includes(id),
         )
 
