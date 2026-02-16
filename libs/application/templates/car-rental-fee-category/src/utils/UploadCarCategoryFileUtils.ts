@@ -2,14 +2,34 @@ import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
 import { RateCategory } from './constants'
 import { CarCategoryError, CarCategoryRecord, CarMap } from './types'
-import { is30DaysOrMoreFromDate } from './dayRateUtils'
+import { is15DaysOrMoreFromDate } from './dayRateUtils'
 import { m } from '../lib/messages'
 import { MessageDescriptor } from 'react-intl'
 
 const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
 
+type FileBytes = ArrayBuffer | ArrayBufferView
+
+const toUint8Array = (file: FileBytes): Uint8Array => {
+  if (file instanceof ArrayBuffer) {
+    return new Uint8Array(file)
+  }
+  return new Uint8Array(file.buffer, file.byteOffset, file.byteLength)
+}
+
+const decodeUtf8 = (file: FileBytes): string => {
+  const bytes = toUint8Array(file)
+  if (typeof TextDecoder !== 'undefined') {
+    return new TextDecoder('utf-8').decode(bytes)
+  }
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.from(bytes).toString('utf-8')
+  }
+  throw new Error('No UTF-8 decoder available')
+}
+
 export const parseFileToCarCategory = async (
-  file: File,
+  file: FileBytes,
   type: 'csv' | 'xlsx',
   rateToChangeTo: RateCategory,
   currentCarData: CarMap,
@@ -41,12 +61,12 @@ export const parseFileToCarCategory = async (
       if (rateToChangeTo === RateCategory.KMRATE) {
         const validFromDate = currentCarData[carNr].activeDayRate?.validFrom
         if (validFromDate) {
-          const is30orMoreDays = is30DaysOrMoreFromDate(validFromDate)
+          const is15orMoreDays = is15DaysOrMoreFromDate(validFromDate)
 
-          if (!is30orMoreDays) {
+          if (!is15orMoreDays) {
             return {
               code: 1,
-              message: m.multiUploadErrors.dayRateMin30Days,
+              message: m.multiUploadErrors.dayRateMin15Days,
               carNr,
             }
           }
@@ -109,42 +129,6 @@ export const parseFileToCarCategory = async (
   )
 }
 
-export const parseCsv = async (file: File) => {
-  const reader = file.stream().getReader()
-  const decoder = new TextDecoder('utf-8')
-
-  let accumulatedChunk = ''
-  let done = false
-
-  while (!done) {
-    const res = await reader.read()
-    done = res.done
-    if (!done) {
-      accumulatedChunk += decoder.decode(res.value)
-    }
-  }
-  return parseCsvString(accumulatedChunk)
-}
-
-const parseXlsx = async (file: File) => {
-  try {
-    //FIRST SHEET ONLY
-    const buffer = await file.arrayBuffer()
-    const parsedFile = XLSX.read(buffer, { type: 'buffer' })
-
-    const jsonData = XLSX.utils.sheet_to_csv(
-      parsedFile.Sheets[parsedFile.SheetNames[0]],
-      {
-        blankrows: false,
-      },
-    )
-
-    return parseCsvString(jsonData)
-  } catch (e) {
-    throw new Error('Failed to parse XLSX file: ' + e.message)
-  }
-}
-
 export const parseCsvString = (chunk: string): Promise<string[][]> => {
   return new Promise((resolve, reject) => {
     const records: string[][] = []
@@ -175,8 +159,27 @@ export const parseCsvString = (chunk: string): Promise<string[][]> => {
   })
 }
 
+export const parseCsv = async (file: FileBytes) => {
+  return parseCsvString(decodeUtf8(file))
+}
+
+const parseXlsx = async (file: FileBytes) => {
+  try {
+    const parsedFile = XLSX.read(toUint8Array(file), { type: 'array' })
+
+    const jsonData = XLSX.utils.sheet_to_csv(
+      parsedFile.Sheets[parsedFile.SheetNames[0]],
+      { blankrows: false },
+    )
+
+    return parseCsvString(jsonData)
+  } catch (e) {
+    throw new Error('Failed to parse XLSX file: ' + e.message)
+  }
+}
+
 export const createErrorExcel = async (
-  file: File,
+  file: FileBytes,
   type: 'csv' | 'xlsx',
   errors: Map<string, string | MessageDescriptor>,
 ) => {

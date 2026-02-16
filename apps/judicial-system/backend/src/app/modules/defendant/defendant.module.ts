@@ -1,8 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { MessageModule } from '@island.is/judicial-system/message'
-
 import { CivilClaimant } from '../repository'
 import { CaseModule, CourtModule, RepositoryModule } from '..'
 import { CivilClaimantController } from './civilClaimant.controller'
@@ -14,7 +12,6 @@ import { LimitedAccessDefendantController } from './limitedAccessDefendant.contr
 
 @Module({
   imports: [
-    MessageModule,
     forwardRef(() => CourtModule),
     forwardRef(() => CaseModule),
     forwardRef(() => RepositoryModule),

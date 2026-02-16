@@ -1,0 +1,5 @@
+mutation RejectFile($input: RejectFileInput!) {
+  rejectFile(input: $input) {
+    id
+  }
+}

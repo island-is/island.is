@@ -197,6 +197,13 @@ export const primarySchoolMessages = {
       defaultMessage: 'Nýr skóli',
       description: 'New school',
     },
+    subSectionMessage: {
+      id: 'nps.application:primarySchool.newSchool.subSectionMessage',
+      defaultMessage:
+        'Ef skóli birtist ekki í listanum er innritunartímabil ekki hafið hjá viðkomandi sveitarfélagi. Nánari upplýsingar um innritunartímabil er að finna á heimasíðu sveitarfélagsins.',
+      description:
+        "If a school does not appear in the list, the enrollment period has not yet begun in the relevant municipality. Further information about the enrollment period can be found on the municipality's website.",
+    },
     alertMessage: {
       id: 'nps.application:primarySchool.newSchool.alertMessage',
       defaultMessage:

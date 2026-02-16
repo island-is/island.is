@@ -860,6 +860,9 @@ export interface ICourseInstanceFields {
 
   /** Max Registrations */
   maxRegistrations?: number | undefined
+
+  /** Charge Item Code */
+  chargeItemCode?: string | undefined
 }
 
 export interface ICourseInstance extends Entry<ICourseInstanceFields> {
@@ -2539,6 +2542,9 @@ export interface ILifeEventPageFields {
 
   /** See More Text */
   seeMoreText?: string | undefined
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {

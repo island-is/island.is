@@ -17,6 +17,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  IndictmentCaseReviewDecision,
   PunishmentType,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
@@ -57,6 +58,25 @@ export class Defendant extends Model {
         normalizeAndFormatNationalId(defenderNationalId).includes(
           defendant.defenderNationalId,
         ),
+    )
+  }
+
+  static isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
+    defenderNationalId: string,
+    defendantId: string,
+    defendants?: Defendant[],
+  ) {
+    const defendant = defendants?.find((d) => d.id === defendantId)
+    if (!defendant) {
+      return false
+    }
+    return (
+      defendant.isDefenderChoiceConfirmed &&
+      defendant.caseFilesSharedWithDefender &&
+      defendant.defenderNationalId &&
+      normalizeAndFormatNationalId(defenderNationalId).includes(
+        defendant.defenderNationalId,
+      )
     )
   }
 
@@ -219,4 +239,16 @@ export class Defendant extends Model {
   @HasMany(() => Verdict, { foreignKey: 'defendantId' })
   @ApiPropertyOptional({ type: () => Verdict, isArray: true })
   verdicts?: Verdict[]
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(IndictmentCaseReviewDecision),
+  })
+  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
+  indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isDrivingLicenseSuspended?: boolean
 }

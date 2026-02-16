@@ -124,6 +124,18 @@
             "in": "query",
             "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": { "example": "sortBy", "type": "string" }
+          },
+          {
+            "name": "direction",
+            "required": false,
+            "in": "query",
+            "schema": { "example": "ASC", "type": "string" }
           }
         ],
         "responses": {
@@ -212,6 +224,18 @@
             "in": "query",
             "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": { "example": "sortBy", "type": "string" }
+          },
+          {
+            "name": "direction",
+            "required": false,
+            "in": "query",
+            "schema": { "example": "ASC", "type": "string" }
           }
         ],
         "responses": {
@@ -1475,6 +1499,10 @@
             "description": "Corrections made to the advert.",
             "type": "array",
             "items": { "$ref": "#/components/schemas/AdvertCorrection" }
+          },
+          "hideSignatureDate": {
+            "type": "boolean",
+            "description": "Hide the display, signature date is not sensitive info."
           }
         },
         "required": [

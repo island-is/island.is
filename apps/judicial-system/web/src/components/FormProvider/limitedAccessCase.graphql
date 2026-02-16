@@ -26,6 +26,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       submittedBy
       fileRepresentative
       isKeyAccessible
+      defendantId
     }
     defendants {
       id
@@ -55,6 +56,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       punishmentType
       isAlternativeService
       alternativeServiceDescription
+      indictmentReviewDecision
       subpoenas {
         id
         created
@@ -198,7 +200,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     postponedIndefinitelyExplanation
     indictmentDecision
     indictmentRulingDecision
-    indictmentReviewDecision
     indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadlineExpired
     indictmentReviewer {
@@ -374,6 +375,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         displayDate
         submittedBy
         isKeyAccessible
+        defendantId
       }
       policeCaseNumbers
       indictmentSubtypes

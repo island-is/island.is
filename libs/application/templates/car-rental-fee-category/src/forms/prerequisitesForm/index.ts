@@ -42,6 +42,7 @@ const standardChildren = [
             },
           ],
         }),
+        subDescription: m.prerequisites.linkToDayrateReturnsApplication,
       }),
     ],
   }),

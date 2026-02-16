@@ -364,6 +364,11 @@ export const m = defineMessages({
     defaultMessage: 'Skiptastjóri',
     description: 'Exchange manager option',
   },
+  spouse: {
+    id: 'es.application:spouse',
+    defaultMessage: 'Maki',
+    description: 'Spouse option',
+  },
 
   // Estate members, assets, vehicles
   estateMembersTitle: {

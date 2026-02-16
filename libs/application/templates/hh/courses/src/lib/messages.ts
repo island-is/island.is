@@ -23,6 +23,16 @@ export const m = {
       defaultMessage: 'Staðfesta',
       description: 'Confirm button label',
     },
+    applicationListTitle: {
+      id: 'hh.courses.application:general.applicationListTitle',
+      defaultMessage: 'Þínar skráningar á námskeið',
+      description: 'Title shown on the applications list page',
+    },
+    newApplicationButtonLabel: {
+      id: 'hh.courses.application:general.newApplicationButtonLabel',
+      defaultMessage: 'Ný skráning á námskeið',
+      description: 'Label for the new application button on the list page',
+    },
   }),
   userInformation: defineMessages({
     sectionTitle: {
@@ -60,6 +70,11 @@ export const m = {
       id: 'hh.courses.application:userInformation.healthcenter',
       defaultMessage: 'Heilsugæslustöð',
       description: 'Title of healthcenter field',
+    },
+    noHealthcenter: {
+      id: 'hh.courses.application:userInformation.noHealthcenter',
+      defaultMessage: 'Engin heilsugæslustöð fannst skráð á þig',
+      description: 'Message shown when no health center is found',
     },
   }),
   prerequisites: defineMessages({
@@ -251,6 +266,16 @@ export const m = {
     },
   }),
   completedForm: defineMessages({
+    sectionTitle: {
+      id: 'hh.courses.application:completedForm.sectionTitle',
+      defaultMessage: 'Staðfesting',
+      description: 'Title of completed form section (sidebar)',
+    },
+    multiFieldTitle: {
+      id: 'hh.courses.application:completedForm.multiFieldTitle',
+      defaultMessage: 'Skráning móttekin',
+      description: 'Main title on the completed form screen',
+    },
     alertTitle: {
       id: 'hh.courses.application:completedForm.alertTitle',
       defaultMessage: 'Takk fyrir skráninguna',
@@ -260,6 +285,32 @@ export const m = {
       id: 'hh.courses.application:completedForm.alertMessage',
       defaultMessage: 'Skráning þín er móttekin',
       description: 'Message of completed form alert',
+    },
+    expandableHeader: {
+      id: 'hh.courses.application:completedForm.expandableHeader',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Header for expandable "what happens next" section',
+    },
+    expandableIntro: {
+      id: 'hh.courses.application:completedForm.expandableIntro#markdown',
+      defaultMessage: 'Skráning þín hefur verið móttekin.',
+      description: 'Intro text for expandable section',
+    },
+    expandableDescription: {
+      id: 'hh.courses.application:completedForm.expandableDescription#markdown',
+      defaultMessage:
+        '* Þú getur nálgast þínar skráningar á mínum síðum á island.is.',
+      description: 'Expandable section content (markdown)',
+    },
+    bottomButtonLabel: {
+      id: 'hh.courses.application:completedForm.bottomButtonLabel',
+      defaultMessage: 'Opna mínar síður',
+      description: 'Label for button at bottom of completed screen',
+    },
+    bottomButtonMessage: {
+      id: 'hh.courses.application:completedForm.bottomButtonMessage',
+      defaultMessage: 'Þú getur nálgast þínar umsóknir á mínum síðum.',
+      description: 'Message next to bottom button',
     },
   }),
 }

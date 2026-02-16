@@ -92,6 +92,7 @@ export enum ApplicationTypes {
   UNEMPLOYMENT_BENEFITS = 'UnemploymentBenefits',
   ACTIVATION_ALLOWANCE = 'ActivationAllowance',
   CAR_RENTAL_FEE_CATEGORY = 'CarRentalFeeCategory',
+  CAR_RENTAL_DAYRATE_RETURNS = 'CarRentalDayrateReturns',
   MEDICAL_AND_REHABILITATION_PAYMENTS = 'MedicalAndRehabilitationPayments',
   FIRE_COMPENSATION_APPRAISAL = 'FireCompensationAppraisal',
   LEGAL_GAZETTE = 'LegalGazette',
@@ -477,6 +478,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
     slug: 'bilaleigu-gjaldflokkur',
     translation: ['crfc.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.CAR_RENTAL_DAYRATE_RETURNS]: {
+    slug: 'skilagrein-daggjalds-utleigudagar',
+    translation: ['crdr.application', 'uiForms.application'],
   },
   [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: {
     slug: 'sjukra-og-endurhaefingargreidslur',

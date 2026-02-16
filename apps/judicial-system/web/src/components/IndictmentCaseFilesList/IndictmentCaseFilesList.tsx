@@ -26,6 +26,7 @@ import {
   CaseFile,
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  CaseState,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -516,6 +517,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
                 <CaseFileTable
                   caseFiles={filteredFiles.uploadedCaseFiles}
                   onOpenFile={onOpen}
+                  canRejectFiles={
+                    isDistrictCourtUser(user) &&
+                    !connectedCaseParentId &&
+                    workingCase.state !== CaseState.CORRECTING
+                  }
                 />
               </Box>
             )}
