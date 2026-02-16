@@ -10,10 +10,14 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
+import { COURSE_HAS_CHARGE_ITEM_CODE } from '../../utils/constants'
 
 export const payerSection = buildSection({
   id: 'payerSection',
   title: m.payer.sectionTitle,
+  condition: (answers) =>
+    getValueViaPath<boolean>(answers, COURSE_HAS_CHARGE_ITEM_CODE, true) ===
+    true,
   children: [
     buildMultiField({
       id: 'payerSectionMultiField',
