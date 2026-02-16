@@ -46,6 +46,7 @@ import {
   RealEstateAgent,
   RegistryPerson,
   SyslumennAuction,
+  SyslumennDelegationType,
   TemporaryEventLicence,
   VehicleRegistration,
 } from './syslumennClient.types'
@@ -758,14 +759,25 @@ export class SyslumennService {
     return mapDataUploadResponse(response)
   }
 
+  /**
+   * Check if a delegation exists between two people.
+   * Supports both LegalRepresentative and PersonalRepresentative.
+   *
+   * @param toNationalId - National ID of the person being represented
+   * @param fromNationalId - National ID of the representative (legal or personal)
+   * @param delegationType - Type of delegation
+   * @returns true if a valid delegation exists
+   */
   async checkIfDelegationExists(
     toNationalId: string,
     fromNationalId: string,
+    delegationType: SyslumennDelegationType,
   ): Promise<boolean> {
     const { id, api } = await this.createApi()
-    const delegations: LogradamadurSvar[] = await api.logradamadurGet({
+    const delegations = await api.virkUmbodGet({
       audkenni: id,
       kennitala: toNationalId,
+      tegundUmbods: delegationType,
     })
 
     return delegations.some(

@@ -7,8 +7,12 @@ import * as kennitala from 'kennitala'
 import { Op, Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
-import { SyslumennService } from '@island.is/clients/syslumenn'
+import {
+  SyslumennService,
+  SyslumennDelegationType,
+} from '@island.is/clients/syslumenn'
 import { logger } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
@@ -49,6 +53,7 @@ export class DelegationScopeService {
     private delegationProviderService: DelegationProviderService,
     private readonly syslumennService: SyslumennService,
     private readonly delegationsIndexService: DelegationsIndexService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async createOrUpdate(
@@ -328,35 +333,107 @@ export class DelegationScopeService {
   private async findDistrictCommissionersRegistryScopesTo(
     user: User,
     fromNationalId: string,
+    delegationTypes: string[],
   ): Promise<string[]> {
-    // if no valid delegation exists, return empty array
-    try {
-      const delegationFound =
-        await this.syslumennService.checkIfDelegationExists(
-          user.nationalId,
-          fromNationalId,
-        )
-
-      if (!delegationFound) {
-        void this.delegationsIndexService.removeDelegationRecord(
-          {
-            fromNationalId,
-            toNationalId: user.nationalId,
-            type: AuthDelegationType.LegalRepresentative,
-            provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-          },
-          user,
-        )
-        return []
-      }
-    } catch (error) {
-      logger.error(
-        `Failed checking if delegation exists at provider '${AuthDelegationProvider.DistrictCommissionersRegistry}'`,
+    const validatePersonalRepsAtSyslumenn =
+      await this.featureFlagService.getValue(
+        Features.usePersonalRepresentativesFromSyslumenn,
+        false,
+        user,
       )
+
+    // Determine which delegation types are present
+    const hasLegalRepresentative = delegationTypes.includes(
+      AuthDelegationType.LegalRepresentative,
+    )
+    const hasPersonalRepresentative = delegationTypes.some((type) =>
+      String(type).includes('PersonalRepresentative'),
+    )
+
+    const validTypes: string[] = []
+
+    if (hasLegalRepresentative) {
+      try {
+        const legalRepIsValid =
+          await this.syslumennService.checkIfDelegationExists(
+            user.nationalId,
+            fromNationalId,
+            SyslumennDelegationType.LegalRepresentative,
+          )
+
+        if (legalRepIsValid) {
+          validTypes.push(AuthDelegationType.LegalRepresentative)
+        } else {
+          // Remove invalid LegalRepresentative from index
+          void this.delegationsIndexService.removeDelegationRecord(
+            {
+              fromNationalId,
+              toNationalId: user.nationalId,
+              type: AuthDelegationType.LegalRepresentative,
+              provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+            },
+            user,
+          )
+        }
+      } catch (error) {
+        logger.error(
+          `Failed checking if LegalRepresentative delegation exists at syslumenn`,
+          error,
+        )
+      }
+    }
+
+    // Handle PersonalRepresentative based on feature flag
+    if (hasPersonalRepresentative) {
+      const prTypes = delegationTypes.filter((dt) =>
+        String(dt).includes('PersonalRepresentative'),
+      )
+
+      if (validatePersonalRepsAtSyslumenn) {
+        // Feature flag is ON: Check at syslumenn
+        try {
+          const personalRepIsValid =
+            await this.syslumennService.checkIfDelegationExists(
+              user.nationalId,
+              fromNationalId,
+              SyslumennDelegationType.PersonalRepresentative,
+            )
+
+          if (personalRepIsValid) {
+            // Add all personal rep types to valid types
+            validTypes.push(...prTypes)
+          } else {
+            // Remove all personal rep types from index
+            for (const prType of prTypes) {
+              void this.delegationsIndexService.removeDelegationRecord(
+                {
+                  fromNationalId,
+                  toNationalId: user.nationalId,
+                  type: prType as AuthDelegationType,
+                  provider:
+                    AuthDelegationProvider.DistrictCommissionersRegistry,
+                },
+                user,
+              )
+            }
+          }
+        } catch (error) {
+          logger.error(
+            `Failed checking if PersonalRepresentative delegation exists at syslumenn`,
+            error,
+          )
+        }
+      } else {
+        // Feature flag is OFF: Assume valid
+        validTypes.push(...prTypes)
+      }
+    }
+
+    if (validTypes.length === 0) {
       return []
     }
 
-    // else return all enabled scopes for this provider and provided delegation types
+    // Return all enabled scopes for valid delegation types
     const apiScopes = await this.apiScopeModel.findAll({
       attributes: ['name'],
       where: {
@@ -367,7 +444,9 @@ export class DelegationScopeService {
           model: DelegationTypeModel,
           required: true,
           where: {
-            id: AuthDelegationType.LegalRepresentative,
+            id: {
+              [Op.in]: validTypes,
+            },
             provider: AuthDelegationProvider.DistrictCommissionersRegistry,
           },
         },
@@ -447,10 +526,15 @@ export class DelegationScopeService {
 
     if (
       providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
-    )
+    ) {
       scopePromises.push(
-        this.findDistrictCommissionersRegistryScopesTo(user, fromNationalId),
+        this.findDistrictCommissionersRegistryScopesTo(
+          user,
+          fromNationalId,
+          delegationTypes,
+        ),
       )
+    }
 
     const scopeSets = await Promise.all(scopePromises)
 

@@ -2,7 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
-import { SyslumennService } from '@island.is/clients/syslumenn'
+import {
+  SyslumennDelegationType,
+  SyslumennService,
+} from '@island.is/clients/syslumenn'
 import { logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
@@ -305,19 +308,41 @@ export class DelegationsIncomingService {
       delegationTypes,
     )
 
+    // Only verify syslumenn delegations
     if (
-      providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
+      !providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
     ) {
-      try {
-        const delegationFound =
-          await this.syslumennService.checkIfDelegationExists(
-            user.nationalId,
-            fromNationalId,
-          )
+      return true
+    }
 
-        if (delegationFound) {
-          return true
-        } else {
+    const validatePersonalRepsAtSyslumenn =
+      await this.featureFlagService.getValue(
+        Features.usePersonalRepresentativesFromSyslumenn,
+        false,
+        user,
+      )
+
+    // Determine which delegation types are present
+    const hasLegalRepresentative = delegationTypes.includes(
+      AuthDelegationType.LegalRepresentative,
+    )
+    const hasPersonalRepresentative = delegationTypes.some((type) =>
+      String(type).includes('PersonalRepresentative'),
+    )
+
+    let legalRepIsValid = false
+    let personalRepIsValid = false
+
+    if (hasLegalRepresentative) {
+      try {
+        legalRepIsValid = await this.syslumennService.checkIfDelegationExists(
+          user.nationalId,
+          fromNationalId,
+          SyslumennDelegationType.LegalRepresentative,
+        )
+
+        if (!legalRepIsValid) {
+          // Remove invalid LegalRepresentative from index
           void this.delegationsIndexService.removeDelegationRecord(
             {
               fromNationalId,
@@ -330,12 +355,52 @@ export class DelegationsIncomingService {
         }
       } catch (error) {
         logger.error(
-          `Failed checking if delegation exists at provider '${AuthDelegationProvider.DistrictCommissionersRegistry}'`,
+          `Failed checking if LegalRepresentative delegation exists at syslumenn`,
+          error,
         )
       }
     }
 
-    return false
+    // Check PersonalRepresentative ONLY if feature flag is ON
+    if (hasPersonalRepresentative && validatePersonalRepsAtSyslumenn) {
+      try {
+        personalRepIsValid =
+          await this.syslumennService.checkIfDelegationExists(
+            user.nationalId,
+            fromNationalId,
+            SyslumennDelegationType.PersonalRepresentative,
+          )
+
+        if (!personalRepIsValid) {
+          // Remove all PersonalRepresentative types from index
+          const prTypes = delegationTypes.filter((dt) =>
+            String(dt).includes('PersonalRepresentative'),
+          )
+
+          for (const prType of prTypes) {
+            void this.delegationsIndexService.removeDelegationRecord(
+              {
+                fromNationalId,
+                toNationalId: user.nationalId,
+                type: prType as AuthDelegationType,
+                provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+              },
+              user,
+            )
+          }
+        }
+      } catch (error) {
+        logger.error(
+          `Failed checking if PersonalRepresentative delegation exists at syslumenn`,
+          error,
+        )
+      }
+    } else if (hasPersonalRepresentative && !validatePersonalRepsAtSyslumenn) {
+      // Feature flag is OFF, assume PersonalRep is valid
+      personalRepIsValid = true
+    }
+
+    return legalRepIsValid || personalRepIsValid
   }
 
   private async getAvailableDistrictCommissionersRegistryDelegations(

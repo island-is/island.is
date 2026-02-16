@@ -151,6 +151,8 @@ export enum Features {
   // Questionnaires
   questionnairesFromEL = 'isQuestionnairesHealthDirectorateClientEnabled',
   questionnairesFromLSH = 'isQuestionnairesLshClientEnabled',
+  // Validate Personal representative delegations at syslumenn
+  usePersonalRepresentativesFromSyslumenn = 'usePersonalRepresentativesFromSyslumenn',
 }
 
 export enum ServerSideFeature {

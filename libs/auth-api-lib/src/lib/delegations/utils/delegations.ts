@@ -25,11 +25,13 @@ export const delegationProviderTypeMap: Record<
   ],
   [AuthDelegationProvider.PersonalRepresentativeRegistry]: [
     AuthDelegationType.PersonalRepresentative,
-    PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
+    PersonalRepresentativeDelegationType.PersonalRepresentativePostholf, // Remove when migration to syslumenn is complete
   ],
   [AuthDelegationProvider.Custom]: [AuthDelegationType.Custom],
   [AuthDelegationProvider.DistrictCommissionersRegistry]: [
     AuthDelegationType.LegalRepresentative,
+    AuthDelegationType.PersonalRepresentative,
+    PersonalRepresentativeDelegationType.PersonalRepresentativePostholf,
   ],
 }
 
