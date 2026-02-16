@@ -42,6 +42,20 @@ export const sectionOverview = buildSection({
           component: 'CurrentLicense',
         }),
         buildDividerField({}),
+        buildKeyValueField({
+          label: m.image,
+          value: ({ answers }) => {
+            const selectedPhoto = getValueViaPath(
+              answers,
+              'selectLicensePhoto',
+            )
+            return selectedPhoto === 'qualityPhoto'
+              ? m.overviewPhotoQualityPhoto
+              : m.overviewPhotoThjodskra
+          },
+          width: 'full',
+        }),
+        buildDividerField({}),
         buildDescriptionField({
           id: 'overview.deliveryTitle',
           title: m.deliveryMethodSectionTitle,
