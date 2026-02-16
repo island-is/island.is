@@ -17,9 +17,8 @@ import {
 
 const instanceChargeItemCodeCache: Record<string, boolean> = {}
 
-export const getInstanceHasChargeItemCode = (instanceId: string): boolean => {
-  return instanceChargeItemCodeCache[instanceId] ?? false
-}
+export const getInstanceHasChargeItemCode = (instanceId: string): boolean =>
+  instanceChargeItemCodeCache[instanceId] ?? false
 
 export const loadCourseSelectOptions = async ({
   apolloClient,
