@@ -28,7 +28,6 @@ type GivenWhenThen = (
 describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', () => {
   const { prosecutorsOffice } = createTestUsers(['prosecutorsOffice'])
   const caseId = uuid()
-  const prosecutorsOfficeId = uuid()
   const courtName = 'Héraðsdómur Reykjavíkur'
   const prosecutorsOfficeName = prosecutorsOffice.name
   const contactEmail = 'contact@prosecutorsoffice.is'
@@ -48,9 +47,9 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
       court: { name: courtName },
       courtCaseNumber,
       policeCaseNumbers,
-      prosecutorsOfficeId,
+      prosecutorsOfficeId: prosecutorsOffice.id,
       prosecutorsOffice: {
-        id: prosecutorsOfficeId,
+        id: prosecutorsOffice.id,
         name: prosecutorsOfficeName,
       },
     } as Case
@@ -97,7 +96,7 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
 
     it('should send notification with institution contact', async () => {
       expect(mockGetInstitutionContact).toHaveBeenCalledWith(
-        prosecutorsOfficeId,
+        prosecutorsOffice.id,
         IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
       )
 
@@ -184,7 +183,7 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
     it('should call getInstitutionContact with correct parameters', async () => {
       expect(mockGetInstitutionContact).toHaveBeenCalledTimes(1)
       expect(mockGetInstitutionContact).toHaveBeenCalledWith(
-        prosecutorsOfficeId,
+        prosecutorsOffice.id,
         IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
       )
     })
