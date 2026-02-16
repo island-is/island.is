@@ -146,7 +146,7 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
     it('should not send notification', async () => {
       ;(
         institutionContactRepositoryService.getInstitutionContact as jest.Mock
-      ).mockResolvedValue(undefined)
+      ).mockResolvedValue(null)
 
       const then = await givenWhenThen(
         theCase,
