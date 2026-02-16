@@ -40,6 +40,7 @@ import { Vaccinations } from '.././models/vaccinations.model'
 import { WaitlistDetail } from '.././models/waitlist.model'
 import { Waitlists } from '.././models/waitlists.model'
 import { Appointments } from '../models/appointments.model'
+import { PregnancyMeasurements } from '../models/pregnancy-measurements.model'
 import { HealthDirectorateAppointmentsInput } from '../dto/appointments.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -176,5 +177,17 @@ export class BasicInformationResolver {
     @CurrentUser() user: User,
   ): Promise<Appointments | null> {
     return this.api.getAppointments(user, input)
+  }
+
+  /* Pregnancy measurements */
+  @Query(() => PregnancyMeasurements, {
+    name: 'healthDirectoratePregnancyMeasurements',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  async getPregnancyMeasurements(
+    @CurrentUser() user: User,
+  ): Promise<PregnancyMeasurements> {
+    return this.api.getPregnancyMeasurements(user)
   }
 }

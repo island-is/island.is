@@ -1,0 +1,12 @@
+query getPregnancyMeasurements {
+  healthDirectoratePregnancyMeasurements {
+    data {
+      date
+      weightKg
+      fundalHeightCm
+      bloodPressure
+      pulsePerMin
+      proteinInUrine
+    }
+  }
+}

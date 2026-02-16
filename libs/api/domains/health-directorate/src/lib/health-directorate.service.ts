@@ -42,6 +42,10 @@ import {
 } from './mappers/medicineMapper'
 import { mapCountryPermitStatus, mapPermit } from './mappers/patientDataMapper'
 import { Appointment, Appointments } from './models/appointments.model'
+import {
+  PregnancyMeasurement,
+  PregnancyMeasurements,
+} from './models/pregnancy-measurements.model'
 import { PermitStatusEnum } from './models/enums'
 import { MedicineDelegations } from './models/medicineDelegation.model'
 import {
@@ -662,5 +666,50 @@ export class HealthDirectorateService {
       )
       return null
     }
+  }
+
+  /**
+   * Pregnancy measurements for the current user.
+   * TODO: Connect to health directorate service endpoint when ready.
+   */
+  public async getPregnancyMeasurements(
+    _auth: Auth,
+  ): Promise<PregnancyMeasurements> {
+    // Mock data until service endpoint is available
+    const data: PregnancyMeasurement[] = [
+      {
+        date: '18.02.2025',
+        weightKg: 77,
+        fundalHeightCm: 20,
+        bloodPressure: '114/73',
+        pulsePerMin: 103,
+        proteinInUrine: 'negative',
+      },
+      {
+        date: '12.02.2025',
+        weightKg: null,
+        fundalHeightCm: null,
+        bloodPressure: null,
+        pulsePerMin: null,
+        proteinInUrine: null,
+      },
+      {
+        date: '11.02.2025',
+        weightKg: 77,
+        fundalHeightCm: null,
+        bloodPressure: null,
+        pulsePerMin: null,
+        proteinInUrine: 'negative',
+      },
+      {
+        date: '07.01.2025',
+        weightKg: 75,
+        fundalHeightCm: null,
+        bloodPressure: '111/77',
+        pulsePerMin: 77,
+        proteinInUrine: 'negative',
+      },
+    ]
+    return { data }
   }
 }

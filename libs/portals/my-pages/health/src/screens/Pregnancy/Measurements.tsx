@@ -1,58 +1,24 @@
-import { Box, Table as T, Tag, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  SkeletonLoader,
+  Table as T,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
-
-type ProteinResult = 'negative' | null
-
-interface MeasurementRow {
-  date: string
-  weightKg: number | null
-  fundalHeightCm: number | null
-  bloodPressure: string | null
-  pulsePerMin: number | null
-  proteinInUrine: ProteinResult
-}
-
-const MOCK_MEASUREMENTS: MeasurementRow[] = [
-  {
-    date: '18.02.2025',
-    weightKg: 77,
-    fundalHeightCm: 20,
-    bloodPressure: '114/73',
-    pulsePerMin: 103,
-    proteinInUrine: 'negative',
-  },
-  {
-    date: '12.02.2025',
-    weightKg: null,
-    fundalHeightCm: null,
-    bloodPressure: null,
-    pulsePerMin: null,
-    proteinInUrine: null,
-  },
-  {
-    date: '11.02.2025',
-    weightKg: 77,
-    fundalHeightCm: null,
-    bloodPressure: null,
-    pulsePerMin: null,
-    proteinInUrine: 'negative',
-  },
-  {
-    date: '07.01.2025',
-    weightKg: 75,
-    fundalHeightCm: null,
-    bloodPressure: '111/77',
-    pulsePerMin: 77,
-    proteinInUrine: 'negative',
-  },
-]
+import { useGetPregnancyMeasurementsQuery } from './Measurements.generated'
+import * as styles from './Measurements.css'
 
 const EMPTY_CELL = '–'
 
 const Measurements = () => {
   const { formatMessage } = useLocale()
+  const { data, loading, error } = useGetPregnancyMeasurementsQuery()
+
+  const measurements =
+    data?.healthDirectoratePregnancyMeasurements?.data ?? []
 
   return (
     <IntroWrapper
@@ -61,44 +27,55 @@ const Measurements = () => {
       childrenWidthFull
     >
       <Box marginTop={4}>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="semiBold">
-                  {formatMessage(messages.date)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="semiBold">
-                  {formatMessage(messages.measurementWeight)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="semiBold">
-                  {formatMessage(messages.measurementFundalHeight)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="semiBold">
-                  {formatMessage(messages.measurementBloodPressure)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="semiBold">
-                  {formatMessage(messages.measurementPulse)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text variant="medium" fontWeight="semiBold">
-                  {formatMessage(messages.measurementProteinInUrine)}
-                </Text>
-              </T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {MOCK_MEASUREMENTS.map((row, i) => (
-              <T.Row key={`${row.date}-${i}`}>
+        {loading ? (
+          <SkeletonLoader
+            space={2}
+            repeat={5}
+            display="block"
+            width="full"
+            height={48}
+          />
+        ) : error ? (
+          <Text as="p">{error.message}</Text>
+        ) : (
+          <T.Table box={{ className: styles.measurementsTable }}>
+            <T.Head>
+              <T.Row>
+                <T.HeadData>
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage(messages.date)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData>
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage(messages.measurementWeight)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData>
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage(messages.measurementFundalHeight)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData>
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage(messages.measurementBloodPressure)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData>
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage(messages.measurementPulse)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData>
+                  <Text variant="medium" fontWeight="semiBold">
+                    {formatMessage(messages.measurementProteinInUrine)}
+                  </Text>
+                </T.HeadData>
+              </T.Row>
+            </T.Head>
+            <T.Body>
+              {measurements.map((row, i) => (
+                <T.Row key={`${row.date}-${i}`}>
                 <T.Data>
                   <Text variant="medium" as="span">
                     {row.date}
@@ -151,10 +128,11 @@ const Measurements = () => {
                     </Text>
                   )}
                 </T.Data>
-              </T.Row>
-            ))}
-          </T.Body>
-        </T.Table>
+                </T.Row>
+              ))}
+            </T.Body>
+          </T.Table>
+        )}
       </Box>
     </IntroWrapper>
   )
