@@ -35,7 +35,7 @@ export interface ApplicationPostPruning {
 @Injectable()
 export class ApplicationLifeCycleService {
   private processingApplications: ApplicationPruning[] = []
-  private pruneNotifications = new Map<string, CreateHnippNotificationDto>()
+  private pruneNotifications: Map<string, CreateHnippNotificationDto>[] = []
   private processingApplicationsPostPruning: ApplicationPostPruning[] = []
 
   constructor(
@@ -94,8 +94,8 @@ export class ApplicationLifeCycleService {
     for (const { application } of this.processingApplications) {
       const notifications = await this.preparePrunedNotification(application)
       if (notifications && notifications.length > 0) {
-        notifications.forEach((notification) => {
-          this.pruneNotifications.set(application.id, notification)
+        notifications.forEach((notification, index) => {
+          this.pruneNotifications[index].set(application.id, notification)
         })
       }
     }
