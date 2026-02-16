@@ -16,7 +16,7 @@ export interface GenerateChargeFJSPayloadInput {
   >
   charges: Pick<
     CatalogItemWithQuantity,
-    'chargeType' | 'priceAmount' | 'chargeItemCode' | 'quantity'
+    'chargeType' | 'priceAmount' | 'chargeItemCode' | 'quantity' | 'reference'
   >[]
   totalPrice: number
   systemId: string
@@ -44,8 +44,7 @@ export const generateChargeFJSPayload = ({
       chargeItemCode: charge.chargeItemCode,
       priceAmount: charge.priceAmount,
       quantity: charge.quantity,
-      // Reference id, empty for now
-      reference: '',
+      reference: charge.reference ?? '',
     })),
     immediateProcess: true,
     payeeNationalID: paymentFlow.payerNationalId,

@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   InstitutionNotificationType,
   NotificationDispatchType,
@@ -22,29 +22,26 @@ type GivenWhenThen = () => Promise<Then>
 describe('InternalNotificationController - Dispatch indictments waiting for confirmation notifications', () => {
   const prosecutorsOfficeId1 = uuid()
   const prosecutorsOfficeId2 = uuid()
+
+  let mockQueuedMessages: Message[]
   let mockInstitutionService: InstitutionService
-  let mockMessageService: MessageService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
+      queuedMessages,
       institutionService,
-      messageService,
       internalNotificationController,
     } = await createTestingNotificationModule()
 
+    mockQueuedMessages = queuedMessages
     mockInstitutionService = institutionService
-    mockMessageService = messageService
 
     const mockGetAll = mockInstitutionService.getAll as jest.Mock
     mockGetAll.mockResolvedValueOnce([
       { id: prosecutorsOfficeId1 },
       { id: prosecutorsOfficeId2 },
     ])
-
-    const mockSendMessagesToQueue =
-      messageService.sendMessagesToQueue as jest.Mock
-    mockSendMessagesToQueue.mockResolvedValueOnce(undefined)
 
     givenWhenThen = async () => {
       const then = {} as Then
@@ -71,7 +68,7 @@ describe('InternalNotificationController - Dispatch indictments waiting for conf
       expect(mockInstitutionService.getAll).toHaveBeenCalledWith(
         prosecutorsOfficeTypes,
       )
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.INSTITUTION_NOTIFICATION,
           body: {

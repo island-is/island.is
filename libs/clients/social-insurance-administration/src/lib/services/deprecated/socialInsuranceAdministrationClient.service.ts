@@ -232,6 +232,19 @@ export class SocialInsuranceAdministrationClientService {
     })
   }
 
+  async sendMedicalAndRehabilitationPaymentsApplication(
+    user: User,
+    applicationDTO: object,
+    applicationType: string,
+  ): Promise<void> {
+    return this.applicationWriteApiV2WithAuth(
+      user,
+    ).apiProtectedV2ApplicationApplicationTypePost({
+      applicationType,
+      body: applicationDTO,
+    })
+  }
+
   sendApplication(
     user: User,
     applicationDTO: object,

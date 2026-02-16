@@ -104,7 +104,18 @@ export const employmentHistorySubSection = buildSubSection({
                 [],
               ) ?? []
 
-            const minRows = currentSituationRepeater.length || 0
+            const status =
+              getValueViaPath<EmploymentStatus>(
+                answers,
+                'currentSituation.status',
+                undefined,
+              ) ?? undefined
+
+            const minRows =
+              currentSituationRepeater.length &&
+              status !== EmploymentStatus.UNEMPLOYED
+                ? currentSituationRepeater.length
+                : 0
             return minRows
           },
           marginTop: 0,
@@ -355,6 +366,7 @@ export const employmentHistorySubSection = buildSubSection({
               type: 'number',
               suffix: '%',
               max: 100,
+              min: 1,
               required: true,
             },
             startDate: {

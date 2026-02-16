@@ -46,6 +46,7 @@ export const GET_VERDICT_BY_ID_QUERY = gql`
         verdictDate
         keywords
         presentings
+        resolutionLink
       }
     }
   }

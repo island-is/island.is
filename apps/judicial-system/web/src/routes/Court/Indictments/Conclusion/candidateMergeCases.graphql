@@ -1,0 +1,6 @@
+query CandidateMergeCases($input: CaseQueryInput!) {
+  candidateMergeCases(input: $input) {
+    id
+    courtCaseNumber
+  }
+}

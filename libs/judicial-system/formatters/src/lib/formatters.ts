@@ -505,14 +505,27 @@ export const sanitize = (str: string) => {
 export enum Word {
   AKAERDI = 'AKAERDI',
 }
-export const getWordByGender = (word: Word, gender?: Gender): string | null => {
+export const getWordByGender = (
+  word: Word,
+  gender?: Gender | null,
+  isPlural?: boolean,
+): string | null => {
   switch (word) {
-    case Word.AKAERDI:
+    case Word.AKAERDI: {
+      if (isPlural) {
+        return gender === Gender.MALE
+          ? 'ákærðir'
+          : gender === Gender.FEMALE
+          ? 'ákærðar'
+          : 'ákærð'
+      }
+
       return gender === Gender.MALE
         ? 'ákærði'
         : gender === Gender.FEMALE
         ? 'ákærða'
         : 'ákært'
+    }
     default:
       return null
   }

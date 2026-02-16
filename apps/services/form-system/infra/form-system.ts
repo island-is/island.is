@@ -6,6 +6,8 @@ import {
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
 
+import { Base, Client } from '../../../../infra/src/dsl/xroad'
+
 const REDIS_NODE_CONFIG = {
   dev: json([
     'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
@@ -59,10 +61,25 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX',
       FORM_SYSTEM_ZENDESK_API_KEY_PROD:
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_PROD',
+      SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST',
+      SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD',
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
+    })
+    .xroad(Base, Client)
+    .ingress({
+      primary: {
+        host: {
+          dev: serviceName,
+          staging: serviceName,
+          prod: serviceName,
+        },
+        paths: ['/api'],
+        public: false,
+      },
     })
     .liveness('/liveness')
     .readiness('/liveness')

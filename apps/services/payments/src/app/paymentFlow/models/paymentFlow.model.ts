@@ -80,6 +80,13 @@ export class PaymentFlowCharge extends Model<
   })
   quantity!: number
 
+  @ApiPropertyOptional()
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  reference?: string
+
   @CreatedAt
   @Column({
     type: DataType.DATE,

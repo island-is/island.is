@@ -9,6 +9,7 @@ import { CaseFile } from './models/caseFile.model'
 import { CaseString } from './models/caseString.model'
 import { CourtDocument } from './models/courtDocument.model'
 import { CourtSession } from './models/courtSession.model'
+import { CourtSessionString } from './models/courtSessionString.model'
 import { DateLog } from './models/dateLog.model'
 import { Defendant } from './models/defendant.model'
 import { DefendantEventLog } from './models/defendantEventLog.model'
@@ -36,6 +37,7 @@ import { repositoryModuleConfig } from './repository.config'
       CaseString,
       CourtDocument,
       CourtSession,
+      CourtSessionString,
       DateLog,
       Defendant,
       DefendantEventLog,
