@@ -29,6 +29,7 @@ interface Then {
 type GivenWhenThen = (
   defendantUpdate: UpdateDefendantDto,
   theCase: Case,
+  defendantOverride?: Defendant,
 ) => Promise<Then>
 
 describe('LimitedAccessDefendantController - Update', () => {
@@ -77,8 +78,10 @@ describe('LimitedAccessDefendantController - Update', () => {
     givenWhenThen = async (
       defendantUpdate: UpdateDefendantDto,
       theCase: Case,
+      defendantOverride?: Defendant,
     ) => {
       const then = {} as Then
+      const defendantToUse = defendantOverride ?? defendant
 
       await limitedAccessDefendantController
         .update(
@@ -86,7 +89,7 @@ describe('LimitedAccessDefendantController - Update', () => {
           defendantId,
           prisonAdminUser,
           theCase,
-          defendant,
+          defendantToUse,
           defendantUpdate,
         )
         .then((result) => (then.result = result))
@@ -123,61 +126,23 @@ describe('LimitedAccessDefendantController - Update', () => {
     })
   })
 
-  describe('marks all defendants as opened by prison admin when punishment is set', () => {
+  describe('marks only the updated defendant as opened when punishmentType is set', () => {
     const defendantUpdate = { punishmentType: PunishmentType.IMPRISONMENT }
     const updatedDefendant = { ...defendant, ...defendantUpdate }
 
-    const otherDefendantId1 = uuid()
-    const otherDefendantId2 = uuid()
-    const alreadyOpenedDefendantId = uuid()
-
-    const now = new Date()
-    const earlier = new Date(now.getTime() - 10000)
+    const earlier = new Date(Date.now() - 10000)
+    const currentDefendantWithLogs = {
+      ...defendant,
+      isSentToPrisonAdmin: true,
+      eventLogs: [
+        { eventType: DefendantEventType.SENT_TO_PRISON_ADMIN, created: earlier },
+      ],
+    } as Defendant
 
     const theCase = {
       id: caseId,
       type: CaseType.INDICTMENT,
-      defendants: [
-        {
-          id: otherDefendantId1,
-          isSentToPrisonAdmin: true,
-          eventLogs: [
-            {
-              eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-              created: earlier,
-            },
-          ],
-        },
-        {
-          id: otherDefendantId2,
-          isSentToPrisonAdmin: true,
-          eventLogs: [
-            {
-              eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-              created: earlier,
-            },
-          ],
-        },
-        {
-          id: alreadyOpenedDefendantId,
-          isSentToPrisonAdmin: true,
-          eventLogs: [
-            {
-              eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-              created: earlier,
-            },
-            {
-              eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-              created: now,
-            },
-          ],
-        },
-        {
-          id: uuid(),
-          isSentToPrisonAdmin: false,
-          eventLogs: [],
-        },
-      ],
+      defendants: [currentDefendantWithLogs],
     } as Case
 
     beforeEach(() => {
@@ -189,46 +154,29 @@ describe('LimitedAccessDefendantController - Update', () => {
       mockCreate.mockResolvedValue({})
     })
 
-    it('should mark all eligible defendants as opened by prison admin when punishmentType is set', async () => {
-      await givenWhenThen(defendantUpdate, theCase)
+    it('should mark only the current defendant as opened when punishmentType is set', async () => {
+      await givenWhenThen(defendantUpdate, theCase, currentDefendantWithLogs)
 
       const mockCreate =
         mockDefendantEventLogRepositoryService.create as jest.Mock
 
+      expect(mockCreate).toHaveBeenCalledTimes(1)
       expect(mockCreate).toHaveBeenCalledWith(
         expect.objectContaining({
           caseId,
-          defendantId: otherDefendantId1,
+          defendantId,
           eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
         }),
         { transaction },
-      )
-
-      expect(mockCreate).toHaveBeenCalledWith(
-        expect.objectContaining({
-          caseId,
-          defendantId: otherDefendantId2,
-          eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-        }),
-        { transaction },
-      )
-
-      // Should NOT create for the already-opened defendant
-      expect(mockCreate).not.toHaveBeenCalledWith(
-        expect.objectContaining({
-          defendantId: alreadyOpenedDefendantId,
-          eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-        }),
-        expect.anything(),
       )
     })
 
-    it('should not create OPENED_BY_PRISON_ADMIN events when punishmentType is not set', async () => {
+    it('should not create OPENED_BY_PRISON_ADMIN when punishmentType is not set', async () => {
       const mockCreate =
         mockDefendantEventLogRepositoryService.create as jest.Mock
       mockCreate.mockClear()
 
-      await givenWhenThen({}, theCase)
+      await givenWhenThen({}, theCase, currentDefendantWithLogs)
 
       const openedByPrisonAdminCalls = mockCreate.mock.calls.filter(
         (call) =>

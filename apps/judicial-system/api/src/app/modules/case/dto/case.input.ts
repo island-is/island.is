@@ -7,8 +7,4 @@ export class CaseQueryInput {
   @Allow()
   @Field(() => ID)
   readonly id!: string
-
-  @Allow()
-  @Field(() => [ID], { nullable: true })
-  readonly defendantIds?: string[]
 }

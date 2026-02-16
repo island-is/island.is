@@ -45,7 +45,7 @@ export class LimitedAccessCaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASE,
-      backendService.limitedAccessGetCase(input.id, input.defendantIds),
+      backendService.limitedAccessGetCase(input.id),
       input.id,
     )
   }

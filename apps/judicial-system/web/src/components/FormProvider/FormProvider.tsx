@@ -52,7 +52,6 @@ interface FormProvider {
     id: string,
     onCompleted: (theCase: Case) => void,
     onError: () => void,
-    defendantIds?: string[],
   ) => void
 }
 
@@ -164,16 +163,9 @@ const FormProvider = ({ children }: Props) => {
   })
 
   const getCase = useCallback(
-    (
-      id: string,
-      onCompleted: (theCase: Case) => void,
-      onError: () => void,
-      defendantIds?: string[],
-    ) => {
+    (id: string, onCompleted: (theCase: Case) => void, onError: () => void) => {
       const promisedCase = limitedAccess
-        ? queryLimitedAccessCase({
-            variables: { input: { id, defendantIds } },
-          })
+        ? queryLimitedAccessCase({ variables: { input: { id } } })
         : queryCase({ variables: { input: { id } } })
 
       promisedCase

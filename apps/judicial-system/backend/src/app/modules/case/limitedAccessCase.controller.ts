@@ -66,7 +66,6 @@ import {
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
-import { DefendantIndictmentAccessedInterceptor } from './interceptors/defendantIndictmentAccessed.interceptor'
 import { LimitedAccessCaseFileInterceptor } from './interceptors/limitedAccessCaseFile.interceptor'
 import { transitionCase } from './state/case.state'
 import {
@@ -94,7 +93,6 @@ export class LimitedAccessCaseController {
   )
   @RolesRules(prisonSystemStaffRule, defenderRule)
   @UseInterceptors(
-    DefendantIndictmentAccessedInterceptor,
     CompletedAppealAccessedInterceptor,
     LimitedAccessCaseFileInterceptor,
     CaseInterceptor,
@@ -106,7 +104,6 @@ export class LimitedAccessCaseController {
   })
   async getById(
     @Param('caseId') caseId: string,
-    @Query('defendantIds') _defendantIds: string | string[] | undefined,
     @CurrentCase() theCase: Case,
     @CurrentHttpUser() user: TUser,
   ): Promise<Case> {

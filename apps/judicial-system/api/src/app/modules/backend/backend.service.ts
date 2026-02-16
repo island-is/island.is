@@ -749,19 +749,8 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
-  limitedAccessGetCase(
-    caseId: string,
-    defendantIds?: string[],
-  ): Promise<Case> {
-    const query =
-      defendantIds && defendantIds.length > 0
-        ? `?${defendantIds.map((id) => `defendantIds=${id}`).join('&')}`
-        : ''
-
-    return this.get<Case>(
-      `case/${caseId}/limitedAccess${query}`,
-      caseTransformer,
-    )
+  limitedAccessGetCase(caseId: string): Promise<Case> {
+    return this.get<Case>(`case/${caseId}/limitedAccess`, caseTransformer)
   }
 
   limitedAccessUpdateCase(caseId: string, updateCase: unknown): Promise<Case> {

@@ -328,38 +328,23 @@ export class DefendantService {
     )
 
     if (update.punishmentType != null && isPrisonAdminUser(user)) {
-      await this.markAllDefendantsAsOpenedByPrisonAdmin(
-        theCase,
-        transaction,
-      )
-    }
-
-    return updatedDefendant
-  }
-
-  private async markAllDefendantsAsOpenedByPrisonAdmin(
-    theCase: Case,
-    transaction: Transaction,
-  ): Promise<void> {
-    const defendantsToMark =
-      theCase.defendants?.filter(
-        ({ isSentToPrisonAdmin, eventLogs = [] }) =>
-          isSentToPrisonAdmin &&
-          !DefendantEventLog.hasValidOpenByPrisonAdminEvent(eventLogs),
-      ) ?? []
-
-    await Promise.all(
-      defendantsToMark.map((defendant) =>
-        this.createDefendantEvent(
+      const eventLogs = defendant.eventLogs ?? []
+      if (
+        defendant.isSentToPrisonAdmin &&
+        !DefendantEventLog.hasValidOpenByPrisonAdminEvent(eventLogs)
+      ) {
+        await this.createDefendantEvent(
           {
             caseId: theCase.id,
             defendantId: defendant.id,
             eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
           },
           transaction,
-        ),
-      ),
-    )
+        )
+      }
+    }
+
+    return updatedDefendant
   }
 
   async update(
