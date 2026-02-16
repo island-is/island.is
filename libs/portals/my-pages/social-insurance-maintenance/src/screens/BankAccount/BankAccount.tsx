@@ -37,8 +37,8 @@ const BankAccount = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
 
-  const [accountType, setAccountType] = useState<'icelandic' | 'foreign'>(
-    'icelandic',
+  const [accountType, setAccountType] = useState<'domestic' | 'foreign'>(
+    'domestic',
   )
 
   const [bankAccountData, setBankAccountData] =
@@ -88,7 +88,7 @@ const BankAccount = () => {
     const bankInfo = bankInfoData.socialInsuranceBankInformation
 
     if (bankInfo.__typename === 'SocialInsuranceDomesticBankInformation') {
-      setAccountType('icelandic')
+      setAccountType('domestic')
       setBankAccountData({
         bankNumber: bankInfo.bank || '',
         ledger: bankInfo.ledger || '',
@@ -116,7 +116,7 @@ const BankAccount = () => {
   }, [bankInfoData])
 
   const isFormValid = useMemo(() => {
-    if (accountType === 'icelandic') {
+    if (accountType === 'domestic') {
       return (
         bankAccountData.bankNumber.length === 4 &&
         bankAccountData.ledger.length === 2 &&
@@ -137,7 +137,7 @@ const BankAccount = () => {
 
   const buildSaveInput =
     (): UpdateBankInformationMutationVariables['input'] => {
-      if (accountType === 'icelandic') {
+      if (accountType === 'domestic') {
         return {
           bank: bankAccountData.bankNumber,
           ledger: bankAccountData.ledger,
@@ -208,14 +208,14 @@ const BankAccount = () => {
             </Text>
             <Stack space={2}>
               <RadioButton
-                id="account-type-icelandic"
+                id="account-type-domestic"
                 label={formatMessage(m.icelandicAccount)}
                 name="accountType"
                 value="icelandic"
-                checked={accountType === 'icelandic'}
+                checked={accountType === 'domestic'}
                 onChange={(e) => {
                   if (e.target.checked) {
-                    setAccountType('icelandic')
+                    setAccountType('domestic')
                   }
                 }}
               />
@@ -234,7 +234,7 @@ const BankAccount = () => {
             </Stack>
           </Box>
 
-          {accountType === 'icelandic' && (
+          {accountType === 'domestic' && (
             <Box>
               <Text marginBottom={2}>
                 {formatMessage(m.icelandicAccountDescription)}
@@ -291,7 +291,7 @@ const BankAccount = () => {
             message={
               <Text as="span" variant="small" whiteSpace="preLine">
                 {formatMessage(
-                  accountType === 'icelandic'
+                  accountType === 'domestic'
                     ? m.accountChangeInfo
                     : m.foreignAccountChangeInfo,
                 )}

@@ -1,5 +1,9 @@
 import isEmpty from 'lodash/isEmpty'
 
+/** Removes all non-digit characters from a string. */
+export const digitsOnly = (value: string): string =>
+  (value ?? '').replace(/\D/g, '')
+
 // ——— Formatting ———
 
 /**

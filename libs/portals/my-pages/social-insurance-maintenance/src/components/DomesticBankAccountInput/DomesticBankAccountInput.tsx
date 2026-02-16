@@ -14,7 +14,7 @@ export interface DomesticBankAccountData {
   accountNumber: string
 }
 
-interface BankAccountInputProps {
+interface DomesticBankAccountInputProps {
   id?: string
   title?: string
   bankNumber?: string
@@ -44,7 +44,7 @@ export const BankAccountInput = ({
   accountNumberLabel,
   errorMessage,
   onChange,
-}: BankAccountInputProps) => {
+}: DomesticBankAccountInputProps) => {
   const bankRef = useRef<HTMLInputElement>(null)
   const ledgerRef = useRef<HTMLInputElement>(null)
   const accountRef = useRef<HTMLInputElement>(null)
