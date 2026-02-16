@@ -9,7 +9,10 @@ import {
   createTestUsers,
 } from '../../createTestingNotificationModule'
 
-import { Case } from '../../../../repository'
+import {
+  Case,
+  InstitutionContactRepositoryService,
+} from '../../../../repository'
 import { DeliverResponse } from '../../../models/deliver.response'
 
 interface Then {
@@ -34,7 +37,7 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
 
   let theCase: Case
   let mockEmailService: EmailService
-  let institutionContactRepositoryService: any
+  let mockInstitutionContactRepositoryService: InstitutionContactRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -55,16 +58,12 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
     const {
       emailService,
       indictmentCaseNotificationService,
-      institutionContactRepositoryService: icrs,
+      institutionContactRepositoryService,
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
-    institutionContactRepositoryService = icrs
-
-    // Mock the getInstitutionContact to return the contact email
-    ;(
-      institutionContactRepositoryService.getInstitutionContact as jest.Mock
-    ).mockResolvedValue(contactEmail)
+    mockInstitutionContactRepositoryService =
+      institutionContactRepositoryService
 
     givenWhenThen = async (
       theCase: Case,
@@ -82,15 +81,22 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
   })
 
   describe('when prosecutors office ID is provided and contact info exists', () => {
-    it('should send notification with institution contact', async () => {
-      const then = await givenWhenThen(
+    let then: Then
+    let mockGetInstitutionContact: jest.Mock<Promise<string | null>>
+
+    beforeEach(async () => {
+      mockGetInstitutionContact =
+        mockInstitutionContactRepositoryService.getInstitutionContact as jest.Mock
+
+      mockGetInstitutionContact.mockResolvedValue(contactEmail)
+      then = await givenWhenThen(
         theCase,
         IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
       )
+    })
 
-      expect(
-        institutionContactRepositoryService.getInstitutionContact,
-      ).toHaveBeenCalledWith(
+    it('should send notification with institution contact', async () => {
+      expect(mockGetInstitutionContact).toHaveBeenCalledWith(
         prosecutorsOfficeId,
         IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
       )
@@ -114,11 +120,6 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
     })
 
     it('should include police case number in email body', async () => {
-      await givenWhenThen(
-        theCase,
-        IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-      )
-
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           html: expect.stringContaining(`LÖKE númer: ${policeCaseNumbers}`),
@@ -145,34 +146,44 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
   })
 
   describe('when institution contact email is not found', () => {
-    it('should not send notification', async () => {
-      ;(
-        institutionContactRepositoryService.getInstitutionContact as jest.Mock
-      ).mockResolvedValue(null)
+    let then: Then
+    let mockGetInstitutionContact: jest.Mock<Promise<string | null>>
 
-      const then = await givenWhenThen(
+    beforeEach(async () => {
+      mockGetInstitutionContact =
+        mockInstitutionContactRepositoryService.getInstitutionContact as jest.Mock
+
+      mockGetInstitutionContact.mockResolvedValue(null)
+      then = await givenWhenThen(
         theCase,
         IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
       )
+    })
 
+    it('should not send notification', async () => {
       expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
       expect(then.result.delivered).toEqual(false)
     })
   })
 
   describe('institution contact repository service call', () => {
-    it('should call getInstitutionContact with correct parameters', async () => {
-      await givenWhenThen(
+    let then: Then
+    let mockGetInstitutionContact: jest.Mock<Promise<string | null>>
+
+    beforeEach(async () => {
+      mockGetInstitutionContact =
+        mockInstitutionContactRepositoryService.getInstitutionContact as jest.Mock
+
+      mockGetInstitutionContact.mockResolvedValue(null)
+      then = await givenWhenThen(
         theCase,
         IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
       )
+    })
 
-      expect(
-        institutionContactRepositoryService.getInstitutionContact,
-      ).toHaveBeenCalledTimes(1)
-      expect(
-        institutionContactRepositoryService.getInstitutionContact,
-      ).toHaveBeenCalledWith(
+    it('should call getInstitutionContact with correct parameters', async () => {
+      expect(mockGetInstitutionContact).toHaveBeenCalledTimes(1)
+      expect(mockGetInstitutionContact).toHaveBeenCalledWith(
         prosecutorsOfficeId,
         IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
       )
