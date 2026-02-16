@@ -14,19 +14,6 @@ export const europeanHealthInsuranceCardApplicationMessages = {
     },
   }),
 
-  form: defineMessages({
-    applicationName: {
-      id: 'ehic.application:form.name',
-      defaultMessage: 'Umsókn um Evrópska sjúkratryggingakortið',
-      description: 'Application for European Health Insurance Card',
-    },
-    institutionName: {
-      id: 'ehic.application:form.institutionName',
-      defaultMessage: 'Sjúkratryggingar',
-      description: 'Application for collaboration institution name',
-    },
-  }),
-
   introScreen: defineMessages({
     formName: {
       id: 'ehic.application:introScreen.form.name',

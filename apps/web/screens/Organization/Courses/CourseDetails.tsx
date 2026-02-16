@@ -9,9 +9,11 @@ import {
 } from '@island.is/island-ui/core'
 import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import type {
+  ChargeItemCodeByCourseIdItem,
   Course,
   OrganizationPage,
   Query,
+  QueryGetChargeItemCodesByCourseIdArgs,
   QueryGetCourseByIdArgs,
   QueryGetCourseListPageByIdArgs,
   QueryGetNamespaceArgs,
@@ -22,10 +24,12 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { formatCurrency } from '@island.is/web/utils/currency'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_NAMESPACE_QUERY } from '../../queries'
 import {
+  GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY,
   GET_COURSE_BY_ID_QUERY,
   GET_COURSE_LIST_PAGE_BY_ID_QUERY,
 } from '../../queries/Courses'
@@ -51,6 +55,7 @@ export interface CourseDetailsProps {
   organizationPage: OrganizationPage
   namespace: Record<string, string>
   courseListPage: Query['getCourseListPageById']
+  chargeItems: ChargeItemCodeByCourseIdItem[]
 }
 
 const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
@@ -58,12 +63,15 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
   organizationPage,
   namespace,
   courseListPage,
+  chargeItems,
 }) => {
   const router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
   const { format } = useDateUtils()
+
+  const chargeItemMap = new Map(chargeItems.map((item) => [item.code, item]))
 
   return (
     <OrganizationWrapper
@@ -108,7 +116,9 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
             <Text variant="h2" as="h2">
               {n(
                 'courseInstancesLabel',
-                activeLocale === 'is' ? 'Næstu námskeið' : 'Upcoming courses',
+                activeLocale === 'is'
+                  ? 'Skráning á næstu námskeið'
+                  : 'Registration for upcoming courses',
               )}
             </Text>
             <InfoCardGrid
@@ -150,6 +160,26 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                     icon: 'location',
                     text: instance.location,
                   })
+                }
+
+                if (instance.chargeItemCode) {
+                  const chargeItem = chargeItemMap.get(instance.chargeItemCode)
+                  if (chargeItem) {
+                    const priceLabel =
+                      chargeItem.priceAmount > 0
+                        ? `${n(
+                            'courseInstancePricePrefix',
+                            activeLocale === 'is' ? 'Verð' : 'Price',
+                          )}: ${formatCurrency(chargeItem.priceAmount)}`
+                        : n(
+                            'courseInstanceFreeLabel',
+                            activeLocale === 'is' ? 'Ókeypis' : 'Free',
+                          )
+                    detailLines.push({
+                      icon: 'wallet',
+                      text: priceLabel,
+                    })
+                  }
                 }
 
                 const tags: { label: string; variant: TagVariant }[] = []
@@ -202,6 +232,7 @@ CourseDetails.getProps = async ({
       data: { getCourseById },
     },
     courseListPage,
+    chargeItemsResponse,
   ] = await Promise.all([
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
@@ -236,6 +267,16 @@ CourseDetails.getProps = async ({
         },
       },
     }),
+    apolloClient
+      .query<Query, QueryGetChargeItemCodesByCourseIdArgs>({
+        query: GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY,
+        variables: {
+          input: {
+            courseId,
+          },
+        },
+      })
+      .catch(() => null),
   ])
 
   if (!getCourseById?.course) {
@@ -257,6 +298,8 @@ CourseDetails.getProps = async ({
     course: getCourseById.course,
     namespace,
     courseListPage: courseListPage.data?.getCourseListPageById,
+    chargeItems:
+      chargeItemsResponse?.data?.getChargeItemCodesByCourseId?.items ?? [],
     languageToggleHrefOverride: {
       is: getCourseById.activeLocales?.is ? languageToggleHrefOverride?.is : '',
       en: getCourseById.activeLocales?.en ? languageToggleHrefOverride?.en : '',

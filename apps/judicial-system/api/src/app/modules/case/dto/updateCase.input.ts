@@ -25,7 +25,6 @@ import {
   CaseLegalProvisions,
   CaseType,
   CourtSessionType,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
@@ -486,11 +485,6 @@ export class UpdateCaseInput {
   @IsOptional()
   @Field(() => ID, { nullable: true })
   readonly indictmentReviewerId?: string
-
-  @Allow()
-  @IsOptional()
-  @Field(() => IndictmentCaseReviewDecision, { nullable: true })
-  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
 
   @Allow()
   @IsOptional()

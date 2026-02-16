@@ -615,6 +615,20 @@ export const emailsMsg = defineMessages({
     id: 'ids:email-already-exists',
     defaultMessage: 'Netfang er nú þegar til',
   },
+  verificationExpired: {
+    id: 'ids:verification-expired',
+    defaultMessage: 'Kóðinn er útrunninn. Vinsamlegast biddu um nýjan kóða.',
+  },
+  tooManyAttempts: {
+    id: 'ids:too-many-attempts',
+    defaultMessage:
+      'Of margar misheppnaðar tilraunir. Vinsamlegast biddu um nýjan kóða.',
+  },
+  verificationNotFound: {
+    id: 'ids:verification-not-found',
+    defaultMessage:
+      'Staðfesting fannst ekki. Vinsamlegast biddu um nýjan kóða.',
+  },
 })
 
 export const contractsMessages = defineMessages({
@@ -667,6 +681,10 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:status',
     defaultMessage: 'Staða',
   },
+  terminationDate: {
+    id: 'sp.contracts:termination-date',
+    defaultMessage: 'Lokadagsetning',
+  },
   active: {
     id: 'sp.contracts:active',
     defaultMessage: 'Í gildi',
@@ -709,9 +727,9 @@ export const contractsMessages = defineMessages({
     id: 'sp.contracts:hide-inactive-contracts',
     defaultMessage: 'Fela óvirka samninga',
   },
-  downloadAsPdf: {
-    id: 'sp.contracts:download-as-pdf',
-    defaultMessage: 'Sækja sem PDF',
+  downloadFiles: {
+    id: 'sp.contracts:download-files',
+    defaultMessage: 'Sækja skrár',
   },
   terminateRentalAgreement: {
     id: 'sp.contracts:terminate-rental-agreement',

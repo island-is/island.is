@@ -1,5 +1,5 @@
 import {
-  buildAsyncSelectField,
+  buildAlertMessageField,
   buildMultiField,
   buildPhoneField,
   buildSection,
@@ -8,7 +8,6 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Application } from '@island.is/application/types'
-import { loadHealthCenterSelectOptions } from '../../utils/loadOptions'
 
 export const userInformation = buildSection({
   id: 'userInformation',
@@ -60,14 +59,29 @@ export const userInformation = buildSection({
               'userProfile.data.mobilePhoneNumber',
             ),
         }),
-        buildAsyncSelectField({
+        buildTextField({
           id: 'userInformation.healthcenter',
           title: m.userInformation.healthcenter,
-          required: true,
-          loadOptions: loadHealthCenterSelectOptions,
+          readOnly: true,
+          condition: (_, externalData) =>
+            !!getValueViaPath(
+              externalData,
+              'currentHealthcenter.data.healthCenter.name',
+            ),
           defaultValue: (application: Application) =>
             getValueViaPath(
               application.externalData,
+              'currentHealthcenter.data.healthCenter.name',
+            ),
+        }),
+        buildAlertMessageField({
+          id: 'userInformation.noHealthcenterAlert',
+          title: m.userInformation.healthcenter,
+          message: m.userInformation.noHealthcenter,
+          alertType: 'info',
+          condition: (_, externalData) =>
+            !getValueViaPath(
+              externalData,
               'currentHealthcenter.data.healthCenter.name',
             ),
         }),
