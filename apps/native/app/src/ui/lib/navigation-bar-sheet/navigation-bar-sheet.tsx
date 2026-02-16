@@ -22,14 +22,21 @@ const Header = styled.View`
   align-items: flex-start;
 `
 
+const HeaderTitleContainer = styled.View`
+  flex: 1;
+  min-width: 0;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
+`
+
 const HeaderTitle = styled.Text`
   margin-top: 32px;
+  flex-shrink: 1;
   ${font({
-    fontWeight: '600',
-    fontSize: 26,
-    lineHeight: 32,
-    color: 'foreground',
-  })}
+  fontWeight: '600',
+  fontSize: 26,
+  lineHeight: 32,
+  color: 'foreground',
+})}
 `
 
 const Handle = styled.View`
@@ -48,6 +55,7 @@ const IconsWrapper = styled.View`
   margin-left: auto;
   flex-direction: row;
   align-items: center;
+  flex-shrink: 0;
   gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
@@ -56,9 +64,9 @@ const CloseButton = styled.TouchableOpacity`
   height: ${({ theme }) => theme.spacing[4]}px;
   border-radius: ${({ theme }) => theme.spacing[2]}px;
   background-color: ${dynamicColor((props) => ({
-    dark: props.theme.color.dark400,
-    light: props.theme.color.blue100,
-  }))};
+  dark: props.theme.color.dark400,
+  light: props.theme.color.blue100,
+}))};
   align-items: center;
   justify-content: center;
 `
@@ -100,7 +108,11 @@ export function NavigationBarSheet({
         {(closable || title) && (
           <Header style={style}>
             {typeof title === 'string' ? (
-              <HeaderTitle>{title}</HeaderTitle>
+              <HeaderTitleContainer>
+                <HeaderTitle numberOfLines={2} ellipsizeMode="tail">
+                  {title}
+                </HeaderTitle>
+              </HeaderTitleContainer>
             ) : (
               title
             )}
