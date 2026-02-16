@@ -11,10 +11,8 @@ import {
   MONTH_NAMES,
   RatioType,
 } from './constants'
-import {
-  getTypesOptions,
-  shouldShowEqualIncomePerMonth,
-} from './socialInsuranceAdministrationUtils'
+import { getTypesOptions, shouldShowEqualIncomePerMonth } from './socialInsuranceAdministrationUtils'
+
 
 export const equalIncomePerMonthValueModifier = (
   isForeign: boolean,
