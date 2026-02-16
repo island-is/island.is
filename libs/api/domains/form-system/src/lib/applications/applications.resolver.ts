@@ -21,7 +21,7 @@ import {
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import { ValidationResponse } from '../../models/screen.model'
-import { NotificationRequestInput } from '@island.is/form-system/shared'
+import { NotificationRequestInput } from '../../dto/notification.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)

@@ -28,7 +28,7 @@ import {
   SubmitApplicationResponse,
 } from '../../models/applications.model'
 import { ValidationResponse } from '../../models/screen.model'
-import { NotificationRequestInput } from '@island.is/form-system/shared'
+import { NotificationRequestInput } from '../../dto/notification.input'
 
 @Injectable()
 export class ApplicationsService {
@@ -124,11 +124,6 @@ export class ApplicationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to submit application'),
       )
-    console.log(
-      `submit response from resolver: ${
-        response ? JSON.stringify(response) : 'no response'
-      }`,
-    )
     return response as SubmitApplicationResponse
   }
 
@@ -142,7 +137,6 @@ export class ApplicationsService {
   }
 
   async saveScreen(auth: User, input: SubmitScreenInput): Promise<void> {
-    console.log('calling save screen from resolver service')
     await this.applicationsApiWithAuth(auth).applicationsControllerSaveScreen(
       input as ApplicationsControllerSaveScreenRequest,
     )
@@ -152,9 +146,6 @@ export class ApplicationsService {
     auth: User,
     input: NotificationRequestInput,
   ): Promise<ValidationResponse> {
-    console.log(
-      `calling notify external system with input: ${JSON.stringify(input)}`,
-    )
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerNotify({
         notificationRequestDto: input,
@@ -162,7 +153,6 @@ export class ApplicationsService {
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to notify external system'),
       )
-    console.log(`notify external system response:  ${JSON.stringify(response)}`)
     return response as ValidationResponse
   }
 

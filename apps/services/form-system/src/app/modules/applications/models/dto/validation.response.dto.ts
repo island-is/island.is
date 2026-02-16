@@ -6,5 +6,5 @@ export class ValidationResponseDto {
   screen?: ScreenDto
 
   @ApiPropertyOptional()
-  validationFailed?: boolean
+  success?: boolean
 }

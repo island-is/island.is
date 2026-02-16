@@ -99,7 +99,7 @@ export class ScreenInput {
   @Field(() => Boolean, { nullable: true })
   shouldPopulate?: boolean
 
-  @Field(() => ValidationErrorInput, { nullable: false })
+  @Field(() => ValidationErrorInput, { nullable: true })
   screenError?: ValidationErrorInput
 
   @Field(() => [FieldInput], { nullable: 'itemsAndList' })

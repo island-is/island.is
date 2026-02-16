@@ -266,7 +266,7 @@ export class ApplicationsService {
     }
     applicationDto.events.push(applicationEvent)
 
-    const success: boolean = await this.serviceManager.send(applicationDto)
+    const success = await this.serviceManager.send(applicationDto)
 
     if (success) {
       try {
@@ -295,9 +295,6 @@ export class ApplicationsService {
       }
     }
 
-    console.log(
-      `submitResponseDto from API: ${JSON.stringify(submitResponseDto)}`,
-    )
     return submitResponseDto
   }
 
@@ -1026,7 +1023,7 @@ export class ApplicationsService {
         en: 'Failed to send the notification',
       },
     }),
-      (result.validationFailed = true)
+      (result.success = true)
 
     console.log(`result from API: ${JSON.stringify(result)}`)
     return result

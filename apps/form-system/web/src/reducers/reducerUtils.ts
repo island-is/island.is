@@ -455,9 +455,6 @@ export const setExternalValidationErrors = (
 
   const cleanedScreen = removeNullsDeep(screen)
 
-  console.log(`Current screen before: ${JSON.stringify(state.currentScreen)}`)
-  // console.log(`update screen: ${JSON.stringify(cleanedScreen)}`)
-
   const sections = state.sections.map((section) => {
     const hasMatch = section.screens?.some(
       (s) => s != null && s.id === screen.id,
@@ -472,17 +469,13 @@ export const setExternalValidationErrors = (
     }
   })
 
-  console.log(`form system screen: ${JSON.stringify(cleanedScreen)}`)
-
-  state.sections = sections
-  state = setCurrentScreen(
-    state,
+  const updatedState = setCurrentScreen(
+    { ...state, sections },
     state.currentSection.index,
     state.currentScreen?.index ?? -1,
   )
-  console.log(`Current screen after: ${JSON.stringify(state.currentScreen)}`)
   return {
-    ...state,
+    ...updatedState,
     screenError: normalizedScreenError,
   }
 }

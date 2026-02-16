@@ -6,8 +6,8 @@ import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
-import { NotificationInput } from '@island.is/form-system/shared'
 import { ValidationResponseDto } from '../applications/models/dto/validation.response.dto'
+import { NotificationDto } from '../applications/models/dto/notification.dto'
 
 @Injectable()
 export class NotifyService {
@@ -31,7 +31,7 @@ export class NotifyService {
   private readonly xroadClient = this.xRoadConfig.xRoadClient
 
   async sendNotification(
-    notificationDto: NotificationInput,
+    notificationDto: NotificationDto,
     url: string,
   ): Promise<ValidationResponseDto> {
     if (!this.xroadBase || !this.xroadClient) {
@@ -46,7 +46,7 @@ export class NotifyService {
       this.logger.error(
         `Error acquiring access token for application ${notificationDto.applicationId}: ${error}`,
       )
-      return { validationFailed: false }
+      return { success: false }
     }
 
     const xRoadPath = `${this.xroadBase}/r1/${url}`
@@ -68,11 +68,11 @@ export class NotifyService {
         this.logger.error(
           `Non-OK response for application ${notificationDto.applicationId}`,
         )
-        return { validationFailed: false }
+        return { success: false }
       }
       const responseData = await response.json()
       const externalSystemResponse: ValidationResponseDto = {
-        validationFailed: responseData.success,
+        success: responseData.success,
         screen: responseData.screen,
       }
       return externalSystemResponse
@@ -80,7 +80,7 @@ export class NotifyService {
       this.logger.error(
         `Error sending notification for application ${notificationDto.applicationId}: ${error}`,
       )
-      return { validationFailed: false }
+      return { success: false }
     }
   }
 

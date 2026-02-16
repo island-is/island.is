@@ -101,11 +101,6 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       state.currentScreen?.data?.shouldValidate &&
       state.application.submissionServiceUrl !== 'zendesk'
     ) {
-      // console.log(
-      //   `current screen data before notifying external service: ${JSON.stringify(
-      //     state.currentScreen?.data,
-      //   )}`,
-      // )
       try {
         const { data } = await notifyExternal({
           variables: {
@@ -123,13 +118,10 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           },
         })
 
-        console.log(`data from notifyExternal: ${JSON.stringify(data)}`)
         const updatedScreen = removeTypename(
           data?.notifyFormSystemExternalSystem?.screen,
         )
-        console.log(
-          `Response from external service: ${JSON.stringify(updatedScreen)}`,
-        )
+
         if (data.notifyFormSystemExternalSystem.validationFailed) {
           dispatch({
             type: 'EXTERNAL_SERVICE_VALIDATION',
@@ -141,9 +133,6 @@ export const Footer = ({ externalDataAgreement }: Props) => {
             },
           })
           return
-          // if (data.notifyFormSystemExternalSystem.validationFailed) {
-          //   return
-          // }
         }
       } catch (error) {
         console.error('Error notifying external service:', error)
