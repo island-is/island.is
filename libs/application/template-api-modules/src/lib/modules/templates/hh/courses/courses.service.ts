@@ -51,6 +51,7 @@ export class CoursesService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{
     chargeItemCode?: string | null
+    courseTitle?: string | null
   }> {
     const courseId = getValueViaPath<ApplicationAnswers['courseSelect']>(
       application.answers,
@@ -61,13 +62,19 @@ export class CoursesService extends BaseTemplateApiService {
       'dateSelect',
     )
 
-    const { courseInstance } = await this.getCourseById(
+    if (!courseId || !courseInstanceId)
+      return { chargeItemCode: null, courseTitle: null }
+
+    const { course, courseInstance } = await this.getCourseById(
       courseId,
       courseInstanceId,
       auth.authorization,
     )
 
-    return { chargeItemCode: courseInstance.chargeItemCode }
+    return {
+      chargeItemCode: courseInstance.chargeItemCode,
+      courseTitle: course.title,
+    }
   }
 
   async submitApplication({
