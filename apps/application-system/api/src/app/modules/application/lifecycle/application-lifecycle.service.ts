@@ -55,7 +55,7 @@ export class ApplicationLifeCycleService {
     this.logger.info(`Starting application pruning...`)
     await this.fetchApplicationsToBePruned()
     await this.pruneAttachments()
-    // await this.pruneApplicationCharge()
+    await this.pruneApplicationCharge()
     await this.pruneApplicationData()
     await this.reportPruningResults()
     this.logger.info(`Application pruning done.`)
@@ -93,7 +93,6 @@ export class ApplicationLifeCycleService {
 
     for (const { application } of this.processingApplications) {
       const notifications = await this.preparePrunedNotification(application)
-      console.log('notifications', notifications)
       if (notifications && notifications.length > 0) {
         notifications.forEach((notification) => {
           this.pruneNotifications.set(application.id, notification)
@@ -292,10 +291,6 @@ export class ApplicationLifeCycleService {
     notification: CreateHnippNotificationDto,
     applicationId: string,
   ) {
-    console.log(
-      'notification in sendPrunedNotification in application lifecycle',
-      notification,
-    )
     try {
       const response =
         await this.notificationApi.notificationsControllerCreateHnippNotification(

@@ -235,8 +235,6 @@ export class NotificationsWorkerService {
   }: HandleNotification): Promise<void> {
     const { nationalId } = profile
 
-    console.log('profile', profile)
-
     const allowEmailNotification = await this.featureFlagService.getValue(
       Features.isNotificationEmailWorkerEnabled,
       false,
@@ -675,10 +673,8 @@ export class NotificationsWorkerService {
         const notification = { messageId, ...message }
 
         if (message.onBehalfOf && message.rootMessageId) {
-          console.log('A')
           return await this.handleActorNotification(notification)
         } else if (message.onBehalfOf && !message.rootMessageId) {
-          console.log('B  ')
           return await this.handleUserNotification(
             {
               recipient: message.onBehalfOf.nationalId,
@@ -691,7 +687,6 @@ export class NotificationsWorkerService {
           )
         }
 
-        console.log('C')
         await this.handleUserNotification(notification)
       },
     )
