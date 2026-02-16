@@ -14,8 +14,8 @@ import { DelegationPaths } from '../../lib/paths'
 
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import { AccessControlLoaderResponse } from '../AccessControl.loader'
-import { NationalIdentityInput } from './NationalIdentityInput'
 import { useDelegationForm } from '../../context'
+import { IdentityLookup } from '../../components/IdentityLookup/IdentityLookup'
 
 const GrantAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
@@ -31,22 +31,22 @@ const GrantAccess = () => {
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
-      people: [{ toNationalId: '' }],
+      identities: [{ nationalId: '', name: '' }],
     },
   })
-  const { handleSubmit, control, formState } = methods
+  const { handleSubmit, control, formState, watch } = methods
+
+  const watchIdentities = watch('identities')
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'people',
+    name: 'identities',
   })
 
-  const onSubmit = handleSubmit(async ({ people }) => {
+  const onSubmit = handleSubmit(async ({ identities }) => {
     try {
-      setIdentities(
-        people.map((person: { toNationalId: string }) => person.toNationalId),
-      )
-      if (people.length > 0) {
+      setIdentities(identities)
+      if (identities.length > 0) {
         navigate(`${DelegationPaths.DelegationsGrantScopes}`)
       }
     } catch (error) {
@@ -70,7 +70,7 @@ const GrantAccess = () => {
             <Box display="flex" flexDirection="column" rowGap={4}>
               {fields.map((field, index) => (
                 <Box key={field.id} display="flex" columnGap={4}>
-                  <NationalIdentityInput
+                  <IdentityLookup
                     setFormError={setFormError}
                     methods={methods}
                     index={index}
@@ -102,7 +102,7 @@ const GrantAccess = () => {
                   variant="text"
                   size="small"
                   icon="add"
-                  onClick={() => append({ toNationalId: '' })}
+                  onClick={() => append({ nationalId: '', name: '' })}
                 >
                   {formatMessage(m.grantAddMorePeople)}
                 </Button>
@@ -115,7 +115,13 @@ const GrantAccess = () => {
               </Text>
               <Box marginBottom={7}>
                 <DelegationsFormFooter
-                  disabled={!formState.isValid}
+                  disabled={
+                    !formState.isValid ||
+                    watchIdentities.some(
+                      (identity) =>
+                        identity.nationalId.length < 10 || !identity.name,
+                    )
+                  }
                   loading={false}
                   onCancel={() => navigate(DelegationPaths.Delegations)}
                   showShadow={false}

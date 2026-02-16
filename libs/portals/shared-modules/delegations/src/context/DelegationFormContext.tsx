@@ -14,8 +14,10 @@ export type ScopeSelection = AuthApiScope & {
 
 export interface DelegationFormState {
   // Step 1: Identity/Identities
-  identities: string[]
-  setIdentities: Dispatch<SetStateAction<string[]>>
+  identities: { nationalId: string; name: string }[]
+  setIdentities: Dispatch<
+    SetStateAction<{ nationalId: string; name: string }[]>
+  >
 
   // Step 2: Scope Selection
   selectedScopes: ScopeSelection[]
@@ -51,7 +53,9 @@ export const DelegationFormContext = createContext<DelegationFormState>(
 export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
-  const [identities, setIdentities] = useState<string[]>([])
+  const [identities, setIdentities] = useState<
+    { nationalId: string; name: string }[]
+  >([])
   const [selectedScopes, setSelectedScopes] = useState<ScopeSelection[]>([])
   const [validityPeriod, setValidityPeriod] = useState<Date | null>(null)
   const [useSameValidityForAll, setUseSameValidityForAll] = useState(true)
