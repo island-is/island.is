@@ -38,6 +38,8 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
+    jest.resetAllMocks()
+
     theCase = {
       id: caseId,
       court: { name: courtName },
