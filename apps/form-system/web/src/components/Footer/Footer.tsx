@@ -101,6 +101,11 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       state.currentScreen?.data?.shouldValidate &&
       state.application.submissionServiceUrl !== 'zendesk'
     ) {
+      // console.log(
+      //   `current screen data before notifying external service: ${JSON.stringify(
+      //     state.currentScreen?.data,
+      //   )}`,
+      // )
       try {
         const { data } = await notifyExternal({
           variables: {
@@ -108,6 +113,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               url: state.application.submissionServiceUrl || '',
               notificationDto: {
                 applicationId: state.application.id,
+                nationalId: '',
                 slug: state.application.slug,
                 isTest: state.application.isTest,
                 command: NotificationActions.VALIDATE,

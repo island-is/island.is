@@ -7,6 +7,9 @@ export class NotificationInput {
   applicationId!: string
 
   @Field(() => String, { nullable: false })
+  nationalId!: string
+
+  @Field(() => String, { nullable: false })
   slug!: string
 
   @Field(() => Boolean, { nullable: false })

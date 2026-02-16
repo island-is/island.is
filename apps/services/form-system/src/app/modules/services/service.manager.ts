@@ -27,6 +27,7 @@ export class ServiceManager {
     } else if (submitUrl !== 'zendesk') {
       const notificationDto = {
         applicationId: applicationDto.id ?? '',
+        nationalId: applicationDto.nationalId ?? '',
         slug: applicationDto.slug ?? '',
         isTest: applicationDto.isTest ?? false,
         command: NotificationActions.SUBMIT,

@@ -425,6 +425,24 @@ export const jumpToScreen = (
   }
 }
 
+const removeNullsDeep = <T>(value: T): T => {
+  if (Array.isArray(value)) {
+    return value
+      .filter((v) => v != null)
+      .map((v) => removeNullsDeep(v)) as unknown as T
+  }
+  if (value !== null && typeof value === 'object') {
+    const result: any = {}
+    for (const [key, val] of Object.entries(value as any)) {
+      if (val != null) {
+        result[key] = removeNullsDeep(val)
+      }
+    }
+    return result
+  }
+  return value
+}
+
 export const setExternalValidationErrors = (
   state: ApplicationState,
   screen: FormSystemScreen,
@@ -435,8 +453,10 @@ export const setExternalValidationErrors = (
     message: { is: '', en: '' },
   }
 
+  const cleanedScreen = removeNullsDeep(screen)
+
   console.log(`Current screen before: ${JSON.stringify(state.currentScreen)}`)
-  // console.log(`update screen: ${JSON.stringify(screen)}`)
+  // console.log(`update screen: ${JSON.stringify(cleanedScreen)}`)
 
   const sections = state.sections.map((section) => {
     const hasMatch = section.screens?.some(
@@ -447,10 +467,12 @@ export const setExternalValidationErrors = (
     return {
       ...section,
       screens: section.screens?.map((s) =>
-        s != null && s.id === screen.id ? screen : s,
+        s != null && s.id === screen.id ? cleanedScreen : s,
       ),
     }
   })
+
+  console.log(`form system screen: ${JSON.stringify(cleanedScreen)}`)
 
   state.sections = sections
   state = setCurrentScreen(

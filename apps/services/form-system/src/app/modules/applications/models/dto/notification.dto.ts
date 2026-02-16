@@ -15,6 +15,12 @@ export class NotificationDto {
   @ApiProperty()
   applicationId!: string
 
+  @IsString()
+  @Type(() => String)
+  @Expose()
+  @ApiProperty()
+  nationalId!: string
+
   @Type(() => String)
   @IsString()
   @Expose()

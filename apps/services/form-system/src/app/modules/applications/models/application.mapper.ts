@@ -23,6 +23,7 @@ export class ApplicationMapper {
   ): ApplicationDto {
     const applicationDto: ApplicationDto = {
       id: application.id,
+      nationalId: application.nationalId,
       isTest: application.isTest,
       dependencies: application.dependencies,
       completed: application.completed,

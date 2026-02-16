@@ -1003,33 +1003,10 @@ export class ApplicationsService {
         notificationDto,
       )}`,
     )
-    // const applicationResponse = await this.getApplication(
-    //   notificationDto.applicationId,
-    //   notificationDto.slug,
-    //   user,
-    // )
-    // const applicationDto = applicationResponse.application
 
-    // if (!applicationDto) {
-    //   throw new NotFoundException(
-    //     `Application DTO with id '${notificationDto.applicationId}' not found`,
-    //   )
-    // }
+    const nationalId = user.actor?.nationalId || user.nationalId
 
-    // let targetScreen: ScreenDto | null = null
-
-    // // Iterate every section and screen until found
-    // for (const section of applicationDto.sections ?? []) {
-    //   for (const screen of section.screens ?? []) {
-    //     if (screen.id === notificationDto.screenId) {
-    //       targetScreen = screen
-    //       break
-    //     }
-    //   }
-    //   if (targetScreen) {
-    //     break
-    //   }
-    // }
+    notificationDto.nationalId = nationalId ?? ''
 
     if (!notificationDto.screen) {
       console.log('notificationDto.screenDto is missing')
