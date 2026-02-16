@@ -1,7 +1,7 @@
 import App from 'next/app'
-import { MatomoProvider } from '@island.is/matomo'
 
 import { globalStyles } from '@island.is/island-ui/core'
+import { MatomoProvider } from '@island.is/matomo'
 
 import '@island.is/api/mocks'
 
