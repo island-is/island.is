@@ -10,7 +10,8 @@ import { logger } from '@island.is/logging'
 
 import { ConfigFactory, ConfigModule, ConfigType, defineConfig } from '../..'
 
-async function testInjection<T extends ConfigFactory>(config: T) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function testInjection<T extends ConfigFactory<any>>(config: T) {
   const moduleRef = await Test.createTestingModule({
     imports: [ConfigModule.forRoot({ load: [config] })],
   }).compile()
@@ -364,7 +365,7 @@ describe('Config definitions', () => {
 
     it('should not swallow errors', () => {
       // Arrange
-      const config = defineConfig({
+      const config = defineConfig<{ test: string }>({
         name: 'test',
         load: (env) => {
           throw new Error('Unexpected error')
@@ -514,7 +515,7 @@ describe('Config definitions', () => {
       it('should swallow thrown error if there are missing environment variables', () => {
         // Arrange
         delete process.env.CONFIG_TEST
-        const config = defineConfig({
+        const config = defineConfig<{ test: string }>({
           name: 'test',
           load: (env) => {
             env.required('CONFIG_TEST')

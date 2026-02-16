@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -19,8 +19,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 import { nowFactory } from '../../../../factories'
 import { randomDate, randomEnum } from '../../../../test'
 import { CourtService } from '../../../court'
-import { Case, CaseRepositoryService } from '../../../repository'
-import { include } from '../../case.service'
+import { Case, caseInclude, CaseRepositoryService } from '../../../repository'
 
 jest.mock('../../../../factories')
 
@@ -40,7 +39,7 @@ describe('CaseController - Create court case', () => {
   const user = { id: userId } as TUser
   const courtCaseNumber = uuid()
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let mockCourtService: CourtService
   let transaction: Transaction
   let mockCaseRepositoryService: CaseRepositoryService
@@ -48,14 +47,14 @@ describe('CaseController - Create court case', () => {
 
   beforeEach(async () => {
     const {
-      messageService,
+      queuedMessages,
       courtService,
       sequelize,
       caseRepositoryService,
       caseController,
     } = await createTestingCaseModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockCourtService = courtService
     mockCaseRepositoryService = caseRepositoryService
 
@@ -136,7 +135,7 @@ describe('CaseController - Create court case', () => {
         { transaction },
       )
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include,
+        include: caseInclude,
         where: {
           id: caseId,
           isArchived: false,
@@ -203,7 +202,7 @@ describe('CaseController - Create court case', () => {
         { transaction },
       )
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include,
+        include: caseInclude,
         where: {
           id: caseId,
           isArchived: false,
@@ -268,7 +267,7 @@ describe('CaseController - Create court case', () => {
     })
 
     it('should post to queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.DELIVERY_TO_COURT_REQUEST,
           user,
@@ -350,7 +349,7 @@ describe('CaseController - Create court case', () => {
     })
 
     it('should post to queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
           user,
@@ -381,11 +380,7 @@ describe('CaseController - Create court case', () => {
           caseId,
           elementId: uncategorisedId,
         },
-        {
-          type: MessageType.DELIVERY_TO_COURT_INDICTMENT,
-          user,
-          caseId,
-        },
+        { type: MessageType.DELIVERY_TO_COURT_INDICTMENT, user, caseId },
       ])
     })
   })

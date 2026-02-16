@@ -32,7 +32,7 @@ describe('MessageService - Send messages to queue', () => {
       const then = {} as Then
 
       try {
-        then.result = await messageService.sendMessagesToQueue(messages, true)
+        then.result = await messageService.addMessagesToQueue(messages, true)
       } catch (error) {
         then.error = error as Error
       }

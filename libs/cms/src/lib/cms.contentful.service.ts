@@ -853,7 +853,7 @@ export class CmsContentfulService {
   async getLifeEventsForOverview(lang: string): Promise<LifeEventPage[]> {
     const params = {
       ['content_type']: 'lifeEventPage',
-      order: 'sys.createdAt',
+      order: '-fields.importance,sys.createdAt',
     }
 
     const result = await this.contentfulRepository
@@ -1703,5 +1703,23 @@ export class CmsContentfulService {
     if (!bestMatch) return null
 
     return mapWebChat(bestMatch, input.lang)
+  }
+
+  async getCourseOrganizationKennitala(
+    courseId: string,
+  ): Promise<string | undefined> {
+    const response =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        courseId,
+        'is',
+        {
+          content_type: 'course',
+          limit: 1,
+          include: 2,
+        },
+      )
+
+    return response?.fields?.courseListPage?.fields?.organization?.fields
+      ?.kennitala
   }
 }

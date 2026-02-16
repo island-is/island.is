@@ -60,6 +60,8 @@ interface FindAllOptions {
   order?: FindOptions['order']
   limit?: FindOptions['limit']
   offset?: FindOptions['offset']
+  group?: FindOptions['group']
+  having?: FindOptions['having']
 }
 
 interface FindAndCountAllOptions {
@@ -216,6 +218,14 @@ export class CaseRepositoryService {
 
       if (options?.offset) {
         findOptions.offset = options.offset
+      }
+
+      if (options?.group) {
+        findOptions.group = options.group
+      }
+
+      if (options?.having) {
+        findOptions.having = options.having
       }
 
       const results = await this.caseModel.findAll(findOptions)
@@ -386,7 +396,6 @@ export class CaseRepositoryService {
         'openedByDefender',
         'crimeScenes',
         'indictmentIntroduction',
-        'withCourtSessions',
         'requestDriversLicenseSuspension',
         'prosecutorsOfficeId',
         'indictmentDeniedExplanation',
@@ -417,6 +426,8 @@ export class CaseRepositoryService {
           ...pick(caseToSplit, fieldsToCopy),
           state: CaseState.SUBMITTED,
           splitCaseId: caseId,
+          // The new case should have court session support
+          withCourtSessions: true,
           // The new case is postponed indefinitely by default
           indictmentDecision: IndictmentDecision.POSTPONING,
         },
@@ -431,10 +442,7 @@ export class CaseRepositoryService {
       // Move the defendant to the new case
       const defendantUpdateOptions: UpdateOptions = {
         where: { id: defendantId, caseId },
-      }
-
-      if (transaction) {
-        defendantUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -447,10 +455,7 @@ export class CaseRepositoryService {
       // Move the defandant's subpoenas to the new case
       const subpoenaUpdateOptions: UpdateOptions = {
         where: { caseId, defendantId },
-      }
-
-      if (transaction) {
-        subpoenaUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -463,10 +468,7 @@ export class CaseRepositoryService {
       // Move the defendant's verdicts to the new case
       const verdictUpdateOptions: UpdateOptions = {
         where: { caseId, defendantId },
-      }
-
-      if (transaction) {
-        verdictUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -476,10 +478,7 @@ export class CaseRepositoryService {
       // Move the defendant's event logs to the new case
       const defendantEventLogUpdateOptions: UpdateOptions = {
         where: { caseId, defendantId },
-      }
-
-      if (transaction) {
-        defendantEventLogUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -490,11 +489,7 @@ export class CaseRepositoryService {
       )
 
       // Set the postponedIndefinitelyExplanation case string
-      const caseStringCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        caseStringCreateOptions.transaction = transaction
-      }
+      const caseStringCreateOptions: CreateOptions = { transaction }
 
       promises.push(
         this.caseStringModel.create(
@@ -529,11 +524,7 @@ export class CaseRepositoryService {
       })
 
       if (arraignmentDate) {
-        const dateLogCreateOptions: CreateOptions = {}
-
-        if (transaction) {
-          dateLogCreateOptions.transaction = transaction
-        }
+        const dateLogCreateOptions: CreateOptions = { transaction }
 
         promises.push(
           this.dateLogModel.create(
@@ -556,11 +547,7 @@ export class CaseRepositoryService {
         transaction,
       })
 
-      const eventLogCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        eventLogCreateOptions.transaction = transaction
-      }
+      const eventLogCreateOptions: CreateOptions = { transaction }
 
       for (const eventLog of eventLogs) {
         promises.push(
@@ -577,11 +564,7 @@ export class CaseRepositoryService {
         transaction,
       })
 
-      const victimCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        victimCreateOptions.transaction = transaction
-      }
+      const victimCreateOptions: CreateOptions = { transaction }
 
       for (const victim of victims) {
         promises.push(
@@ -598,11 +581,7 @@ export class CaseRepositoryService {
         transaction,
       })
 
-      const indictmentCountCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        indictmentCountCreateOptions.transaction = transaction
-      }
+      const indictmentCountCreateOptions: CreateOptions = { transaction }
 
       for (const indictmentCount of indictmentCounts) {
         promises.push(
@@ -632,10 +611,7 @@ export class CaseRepositoryService {
 
       const caseFileUpdateOptions: UpdateOptions = {
         where: { caseId, defendantId, category: caseFilesCategoriesToMove },
-      }
-
-      if (transaction) {
-        caseFileUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -655,11 +631,7 @@ export class CaseRepositoryService {
         transaction,
       })
 
-      const caseFileCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        caseFileCreateOptions.transaction = transaction
-      }
+      const caseFileCreateOptions: CreateOptions = { transaction }
 
       for (const caseFile of caseFiles) {
         promises.push(
