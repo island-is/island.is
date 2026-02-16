@@ -268,6 +268,11 @@ export class CoursesService extends BaseTemplateApiService {
     phone: string,
     healthcenter?: string,
   ): Promise<string> {
+    const courseHasChargeItemCode = getValueViaPath<boolean>(
+      application.answers,
+      'courseHasChargeItemCode',
+      false,
+    )
     const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
       application.answers,
       'payment.userIsPayingAsIndividual',
@@ -302,16 +307,18 @@ export class CoursesService extends BaseTemplateApiService {
     message += `Símanúmer umsækjanda: ${phone}\n`
     message += `Heilsugæslustöð umsækjanda: ${healthcenter ?? ''}\n`
 
-    const payer =
-      userIsPayingAsIndividual === YesOrNoEnum.YES
-        ? {
-            name: 'Umsækjandi (einstaklingsgreiðsla)',
-            nationalId: application.applicant,
-          }
-        : companyPayment?.nationalIdWithName
+    if (courseHasChargeItemCode) {
+      const payer =
+        userIsPayingAsIndividual === YesOrNoEnum.YES
+          ? {
+              name: 'Umsækjandi (einstaklingsgreiðsla)',
+              nationalId: application.applicant,
+            }
+          : companyPayment?.nationalIdWithName
 
-    message += `Greiðandi: ${payer?.name ?? ''}\n`
-    message += `Kennitala greiðanda: ${payer?.nationalId ?? ''}\n`
+      message += `Greiðandi: ${payer?.name ?? ''}\n`
+      message += `Kennitala greiðanda: ${payer?.nationalId ?? ''}\n`
+    }
 
     participantList.forEach((participant, index) => {
       const p = participant.nationalIdWithName
