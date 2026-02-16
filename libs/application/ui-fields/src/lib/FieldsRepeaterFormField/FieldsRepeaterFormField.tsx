@@ -256,7 +256,7 @@ export const FieldsRepeaterFormField = ({
                         {formTitleNumbering === 'suffix' ? ` ${i + 1}` : ''}
                       </Text>
                     </Box>
-                    <GridColumn>{repeaterFields(i)}</GridColumn>
+                    <GridColumn span="1/1">{repeaterFields(i)}</GridColumn>
                   </Fragment>
                 )
               })}
