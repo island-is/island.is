@@ -1,12 +1,7 @@
-import {
-  ApiHideProperty,
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
 import {
-  IsArray,
   IsBoolean,
   IsNumber,
   IsOptional,

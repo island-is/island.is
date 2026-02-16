@@ -1,7 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { LanguageTypeInput } from './languageType.input'
 import { FieldInput } from './field.input'
-import { ValidationError } from '../models/applications.model'
 import { ValidationErrorInput } from './validationError.input'
 
 @InputType('FormSystemCreateScreenDtoInput')

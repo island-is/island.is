@@ -12,8 +12,6 @@ import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { Field } from '../../fields/models/field.model'
 import type { Locale } from '@island.is/shared/types'
-import { ValidationErrorDto } from '../../screens/models/dto/validationError.dto'
-import { LanguageType } from '../../../dataTypes/languageType.model'
 
 @Injectable()
 export class ApplicationMapper {

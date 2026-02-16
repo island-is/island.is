@@ -1,4 +1,4 @@
-import { Field, InputType, Int, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { FormApplicantTypeDto } from './applicant.model'
 import { FormCertificationTypeDto } from './certification.model'
 import { CompletedSectionInfo } from './completedSectionInfo'

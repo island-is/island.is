@@ -791,7 +791,6 @@ export class ApplicationsService {
     submitScreenDto: SubmitScreenDto,
     user: User,
   ): Promise<void> {
-    console.log('inside save screen')
     const {
       applicationId,
       screenId: currentScreenId = '',
@@ -1004,21 +1003,6 @@ export class ApplicationsService {
         `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
     }
-
-    // const result = new NotificationResponseDto()
-    // result.screen = notificationDto.screen // This is just for testing, in a real scenario the screen would be fetched and returned with the error
-    // ;(result.screen.screenError = {
-    //   hasError: true,
-    //   title: { is: 'Villa kom upp', en: 'Error occured' },
-    //   message: {
-    //     is: 'Ekki tókst að senda tilkynninguna',
-    //     en: 'Failed to send the notification',
-    //   },
-    // }),
-    //   (result.operationSuccessful = true)
-
-    // console.log(`result from API: ${JSON.stringify(result)}`)
-    // return result
 
     const response = await this.notifyService.sendNotification(
       notificationDto,

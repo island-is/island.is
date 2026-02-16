@@ -1,8 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { ApplicationEventDto } from './applications.model'
 import { Month } from './month.model'
-import { LanguageType } from './languageType.model'
-import { ValidationError } from './applications.model'
 
 @ObjectType('FormSystemValue')
 export class Value {

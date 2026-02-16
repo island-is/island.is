@@ -3,8 +3,6 @@ import { ValueType } from '../../../../dataTypes/valueTypes/valueType.model'
 import { ApplicationEventDto } from '../../../applications/models/dto/applicationEvent.dto'
 import { IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
-import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { ValidationErrorDto } from '../../../screens/models/dto/validationError.dto'
 
 export class ValueDto {
   @ApiProperty()
