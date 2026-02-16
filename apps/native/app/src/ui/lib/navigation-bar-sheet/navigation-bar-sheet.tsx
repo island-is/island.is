@@ -32,11 +32,11 @@ const HeaderTitle = styled.Text`
   margin-top: 32px;
   flex-shrink: 1;
   ${font({
-  fontWeight: '600',
-  fontSize: 26,
-  lineHeight: 32,
-  color: 'foreground',
-})}
+    fontWeight: '600',
+    fontSize: 26,
+    lineHeight: 32,
+    color: 'foreground',
+  })}
 `
 
 const Handle = styled.View`
@@ -64,9 +64,9 @@ const CloseButton = styled.TouchableOpacity`
   height: ${({ theme }) => theme.spacing[4]}px;
   border-radius: ${({ theme }) => theme.spacing[2]}px;
   background-color: ${dynamicColor((props) => ({
-  dark: props.theme.color.dark400,
-  light: props.theme.color.blue100,
-}))};
+    dark: props.theme.color.dark400,
+    light: props.theme.color.blue100,
+  }))};
   align-items: center;
   justify-content: center;
 `
