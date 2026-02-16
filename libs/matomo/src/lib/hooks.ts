@@ -38,7 +38,10 @@ export const useMatomoPageView = (
     // Set attributes on route changes
     const handleRouteChange = () => {
       const attrs = getAttributes()
-      console.log('[Matomo] useMatomoPageView: routeChangeComplete, attrs:', attrs)
+      console.log(
+        '[Matomo] useMatomoPageView: routeChangeComplete, attrs:',
+        attrs,
+      )
       if (attrs) {
         setAttributes(attrs)
       }

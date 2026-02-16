@@ -56,7 +56,10 @@ export const MatomoProvider = ({ children }: MatomoProviderProps) => {
     window._paq.push(['setSiteId', matomoSiteId])
     window._paq.push(['enableLinkTracking'])
 
-    console.log('[Matomo] Initialized _paq, loading script from:', normalizedDomain + 'matomo.js')
+    console.log(
+      '[Matomo] Initialized _paq, loading script from:',
+      normalizedDomain + 'matomo.js',
+    )
 
     // Load matomo.js script
     const script = document.createElement('script')
@@ -110,7 +113,12 @@ export const MatomoProvider = ({ children }: MatomoProviderProps) => {
     // Delay to allow children's effects to set attributes first
     setTimeout(() => {
       const attributes = attributesRef.current
-      console.log('[Matomo] trackPageView executing (after setTimeout) for:', url, 'attributes:', attributes)
+      console.log(
+        '[Matomo] trackPageView executing (after setTimeout) for:',
+        url,
+        'attributes:',
+        attributes,
+      )
 
       // Set custom URL
       push(['setCustomUrl', url])
@@ -133,13 +141,20 @@ export const MatomoProvider = ({ children }: MatomoProviderProps) => {
 
   // Track initial page load
   useEffect(() => {
-    console.log('[Matomo] Initial page load effect, router.asPath:', router.asPath)
+    console.log(
+      '[Matomo] Initial page load effect, router.asPath:',
+      router.asPath,
+    )
     trackPageView(router.asPath)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Track route changes
   useEffect(() => {
-    console.log('[Matomo] Setting up route change listeners on router.events:', typeof router.events, router.events)
+    console.log(
+      '[Matomo] Setting up route change listeners on router.events:',
+      typeof router.events,
+      router.events,
+    )
 
     const handleRouteChangeStart = () => {
       console.log('[Matomo] routeChangeStart fired, clearing attributes')
