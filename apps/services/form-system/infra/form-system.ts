@@ -1,6 +1,5 @@
 import {
   CodeOwners,
-  Context,
   json,
   service,
   ServiceBuilder,
@@ -85,16 +84,6 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     .readiness('/liveness')
     .grantNamespaces('islandis', 'nginx-ingress-external')
 
-/**
- * Make sure that each feature deployment has its own bull prefix. Since each
- * feature deployment has its own database and applications, we don't want bull
- * jobs to jump between environments.
- */
-const FORM_SYSTEM_BULL_PREFIX = (ctx: Context) =>
-  ctx.featureDeploymentName
-    ? `form_system_api_bull_module.${ctx.featureDeploymentName}`
-    : 'form_system_api_bull_module'
-
 export const workerSetup = (): ServiceBuilder<typeof workerName> =>
   service(workerName)
     .image(serviceName)
@@ -117,7 +106,6 @@ export const workerSetup = (): ServiceBuilder<typeof workerName> =>
         staging: 'island-is-staging-form-system-presign-bucket',
         prod: 'island-is-prod-form-system-presign-bucket',
       },
-      FORM_SYSTEM_BULL_PREFIX,
     })
     .args('main.cjs', '--job', 'worker')
     .command('node')
