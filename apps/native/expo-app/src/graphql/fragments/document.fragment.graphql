@@ -1,0 +1,52 @@
+directive @client on FIELD
+
+fragment DocumentTicket on DocumentV2 {
+  ticket {
+    id
+    authorId
+    createdDate
+    updatedDate
+    subject
+    status
+    comments {
+      id
+      authorId
+      author
+      body
+      createdDate
+    }
+  }
+}
+
+fragment ListDocument on DocumentV2 {
+  id
+  subject
+  publicationDate
+  downloadUrl
+  opened
+  categoryId
+  bookmarked
+  isUrgent
+  replyable
+  closedForMoreReplies
+  actions {
+    type
+    title
+    icon
+    data
+  }
+  alert {
+    title
+    data
+  }
+  confirmation {
+    title
+    data
+    icon
+  }
+  sender {
+    id
+    name
+  }
+  archived @client
+}

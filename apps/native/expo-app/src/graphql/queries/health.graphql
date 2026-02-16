@@ -1,0 +1,249 @@
+query GetHealthInsuranceOverview {
+  rightsPortalInsuranceOverview {
+    isInsured
+    explanation
+    from
+    status {
+      display
+      code
+    }
+    maximumPayment
+  }
+}
+
+query GetMedicineData {
+  rightsPortalDrugPeriods {
+    id
+    dateFrom
+    dateTo
+    active
+    paidAmount
+    paymentStatus
+    numberOfBills
+    levelNumber
+    levelPercentage
+  }
+}
+
+query GetHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
+  rightsPortalHealthCenterRegistrationHistory(input: $input) {
+    current {
+      healthCenterName
+      doctor
+    }
+  }
+}
+
+query GetPaymentOverview($input: RightsPortalPaymentOverviewInput!) {
+  rightsPortalPaymentOverview(input: $input) {
+    items {
+      credit
+      debt
+    }
+  }
+}
+
+query GetPaymentStatus {
+  rightsPortalCopaymentStatus {
+    maximumPayment
+    maximumMonthlyPayment
+  }
+}
+
+query GetVaccinations($locale: String) {
+  healthDirectorateVaccinations(locale: $locale) {
+    vaccinations {
+      id
+      name
+      description
+      isFeatured
+      status
+      statusName
+      statusColor
+      lastVaccinationDate
+      vaccinationsInfo {
+        id
+        name
+        date
+        age {
+          years
+          months
+        }
+        url
+        comment
+        rejected
+      }
+      comments
+    }
+  }
+}
+
+query GetOrganDonorStatus($locale: String) {
+  healthDirectorateOrganDonation(locale: $locale) {
+    donor {
+      isDonor
+      limitations {
+        hasLimitations
+        limitedOrgansList {
+          id
+          name
+        }
+        comment
+      }
+    }
+  }
+}
+
+query GetDrugPrescriptions($locale: String) {
+  healthDirectoratePrescriptions(locale: $locale) {
+    prescriptions {
+      id
+      name
+      strength
+      type
+      form
+      url
+      quantity
+      prescriberName
+      issueDate
+      expiryDate
+      category
+      dosageInstructions
+      indication
+      totalPrescribedAmount
+      isRenewable
+      renewalBlockedReason
+      renewalStatus
+      amountRemaining
+      medCardDrugId
+      dispensations {
+        id
+        pharmacy
+        date
+        name
+        count
+        strength
+        itemId
+        amount
+      }
+    }
+  }
+}
+
+query GetDrugCertificates {
+  rightsPortalDrugCertificates {
+    id
+    atcCode
+    atcName
+    drugName
+    date
+    validFrom
+    validTo
+    doctor
+    processed
+    approved
+    rejected
+    expired
+    valid
+    comment
+    documentId
+    methylDoctors {
+      name
+    }
+  }
+}
+
+query GetMedicineHistory($locale: String) {
+  healthDirectorateMedicineHistory(locale: $locale) {
+    medicineHistory {
+      id
+      name
+      strength
+      atcCode
+      indication
+      lastDispensationDate
+      dispensationCount
+      dispensations {
+        ...Dispensation
+      }
+    }
+  }
+}
+
+query GetMedicineDispensationForATC(
+  $locale: String
+  $input: MedicineDispensationsATCInput!
+) {
+  healthDirectorateMedicineDispensationsATC(locale: $locale, input: $input) {
+    dispensations {
+      ...Dispensation
+    }
+  }
+}
+
+query getBloodTypeOverview {
+  rightsPortalBloodType {
+    registered
+    type
+  }
+}
+
+query getDentistOverview($input: RightsPortalDentistBillsInput!) {
+  rightsPortalUserDentistRegistration(input: $input) {
+    dentist {
+      name
+    }
+  }
+}
+
+query GetMedicineDelegations(
+  $locale: String!
+  $input: HealthDirectorateMedicineDelegationInput!
+) {
+  healthDirectorateMedicineDelegations(locale: $locale, input: $input) {
+    items {
+      __typename
+      cacheId
+      name
+      nationalId
+      isActive
+      status
+      lookup
+      dates {
+        from
+        to
+      }
+    }
+  }
+}
+
+mutation PostMedicineDelegation(
+  $input: HealthDirectorateMedicineDelegationCreateOrDeleteInput!
+) {
+  healthDirectorateMedicineDelegationCreate(input: $input) {
+    __typename
+    success
+    message
+  }
+}
+
+mutation DeleteMedicineDelegation(
+  $input: HealthDirectorateMedicineDelegationCreateOrDeleteInput!
+) {
+  healthDirectorateMedicineDelegationDelete(input: $input) {
+    __typename
+    success
+    message
+  }
+}
+
+query getAppointments(
+  $from: DateTime
+  $status: [HealthDirectorateAppointmentStatus!]
+) {
+  healthDirectorateAppointments(from: $from, status: $status) {
+    data {
+      ...AppointmentFragment
+    }
+  }
+}

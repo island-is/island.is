@@ -1,0 +1,64 @@
+query GetProfile {
+  getUserProfile {
+    nationalId
+    locale
+    documentNotifications
+    mobilePhoneNumber
+    mobileStatus
+    email
+    emailStatus
+    bankInfo
+    modified
+    canNudge
+  }
+}
+
+query GetFrontPageImage($input: GetFrontpageInput!) {
+  getFrontpage(input: $input) {
+    imageMobile {
+      title
+      url
+    }
+  }
+}
+
+mutation UpdateProfile($input: UpdateUserProfileInput!) {
+  updateProfile(input: $input) {
+    nationalId
+    mobilePhoneNumber
+    locale
+    email
+  }
+}
+
+mutation CreateEmailVerification($input: CreateEmailVerificationInput!) {
+  createEmailVerification(input: $input) {
+    created
+  }
+}
+
+mutation CreateSmsVerification($input: CreateSmsVerificationInput!) {
+  createSmsVerification(input: $input) {
+    created
+  }
+}
+
+mutation DeleteIslykillValue($input: DeleteIslykillValueInput!) {
+  deleteIslykillValue(input: $input) {
+    nationalId
+  }
+}
+
+mutation DeleteUserProfileDeviceToken($input: UserDeviceTokenInput!) {
+  deleteUserProfileDeviceToken(input: $input) {
+    success
+  }
+}
+
+mutation AddUserProfileDeviceToken($input: UserDeviceTokenInput!) {
+  addUserProfileDeviceToken(input: $input) {
+    id
+    nationalId
+    deviceToken
+  }
+}

@@ -1,0 +1,2691 @@
+[
+  {
+    "id": "bGWbPo0Exh6wW4xCKagSg",
+    "title": "Borgarskjalasafn Reykjavíkur",
+    "shortTitle": "",
+    "description": "Sími: 411 6060",
+    "slug": "borgarskjalasafn-reykjavikur",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "http://www.borgarskjalasafn.is/",
+    "logo": {
+      "id": "6fINWz26H0XhQ61am7ijYl",
+      "title": "borgarskjalasafn Blue@2x",
+      "url": "//images.ctfassets.net/8k0h54kbe6bj/6fINWz26H0XhQ61am7ijYl/f4a01f7a39ac897930be20966c1b17a5/borgarskjalasafn_Blue_2x.png",
+      "width": 207,
+      "height": 324
+    }
+  },
+  {
+    "id": "kENblMMMvZ3DlyXw1dwxQ",
+    "title": "Sýslumenn",
+    "shortTitle": "",
+    "description": "",
+    "slug": "syslumenn",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.syslumenn.is/",
+    "logo": {
+      "id": "6XhCz5Ss17OVLxpXNVDxAO",
+      "title": "Skjaldarmerki",
+      "url": "//images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg",
+      "width": 952,
+      "height": 952
+    }
+  },
+  {
+    "id": "75k5yLmcFqBQIpeODAN4t7",
+    "title": "Lyfjastofnun",
+    "shortTitle": "",
+    "description": "Sími: 520 2100",
+    "slug": "lyfjastofnun",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://www.lyfjastofnun.is/",
+    "logo": {
+      "id": "63USRKIIuVI11YYqTrjOsB",
+      "title": "Lyfjastofnun logo",
+      "url": "//images.ctfassets.net/8k0h54kbe6bj/63USRKIIuVI11YYqTrjOsB/ab4cf311fa15ee1561455034863d1483/lyfjastofnun-500.png",
+      "width": 600,
+      "height": 600
+    }
+  },
+  {
+    "id": "6puIJvhGxFBzxExVHxi5sr",
+    "title": "Sýslumaðurinn á höfuðborgarsvæðinu",
+    "shortTitle": "",
+    "description": "Sími: 458 2000",
+    "slug": "syslumadurinn-a-hoefudborgarsvaedinu",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.syslumenn.is/embaettin/embaetti-og-umdaemi/syslumadurinn-a-hofudborgarsvaedinu",
+    "logo": null
+  },
+  {
+    "id": "i5go5A4ikV8muPfvr9o2v",
+    "title": "Þjóðskrá Íslands",
+    "shortTitle": "",
+    "description": "Sími: 515 5300",
+    "slug": "thjodskra-islands",
+    "tag": [
+      {
+        "id": "1SRslmy68wzbhWVfH28KJ5",
+        "title": "Samgöngu- og sveitarstjórnarráðuneytið"
+      }
+    ],
+    "link": "https://skra.is/",
+    "logo": {
+      "id": "2ETBroMeCKRQptFKNg83rW",
+      "title": "Þjóðskrá_merki",
+      "url": "//images.ctfassets.net/8k0h54kbe6bj/2ETBroMeCKRQptFKNg83rW/2e1799555b5bf0f98b7ed985ce648b99/logo-square-400.png",
+      "width": 400,
+      "height": 400
+    }
+  },
+  {
+    "id": "1WggSEIUFbJZSvOqSzP5aT",
+    "title": "Utanríkisráðuneytið",
+    "shortTitle": "",
+    "description": "Sími 5459900",
+    "slug": "utanrikisraduneytid",
+    "tag": [
+      {
+        "id": "6Kb5JnpgBAlRVSiSYaPR21",
+        "title": "Utanríkisráðuneytið"
+      }
+    ],
+    "link": "https://www.stjornarradid.is/raduneyti/utanrikisraduneytid/",
+    "logo": {
+      "id": "6XhCz5Ss17OVLxpXNVDxAO",
+      "title": "Skjaldarmerki",
+      "url": "//images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg",
+      "width": 952,
+      "height": 952
+    }
+  },
+  {
+    "id": "77rXck3sISbMsUv7BO1PG2",
+    "title": "Útlendingastofnun",
+    "shortTitle": "",
+    "description": "Sími: 444 0900",
+    "slug": "utlendingastofnun",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://utl.is/",
+    "logo": {
+      "id": "6XhCz5Ss17OVLxpXNVDxAO",
+      "title": "Skjaldarmerki",
+      "url": "//images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg",
+      "width": 952,
+      "height": 952
+    }
+  },
+  {
+    "id": "6NyF3600y9DXgGmHZFHobq",
+    "title": "Hundaeftirlitið í Reykjavík",
+    "shortTitle": "Hundaeftirlitið í Reykjavík",
+    "description": "Sími: 411 1111",
+    "slug": "hundaeftirlitid-i-reykjavik",
+    "tag": [],
+    "link": "https://reykjavik.is/thjonusta/hundahald-og-hundaeftirlit",
+    "logo": null
+  },
+  {
+    "id": "3pZwAagW0UY26giHaxHthe",
+    "title": "Sjúkratryggingar Íslands",
+    "shortTitle": "",
+    "description": "Sími: 515 0000",
+    "slug": "sjukratryggingar-islands",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://www.sjukra.is/",
+    "logo": {
+      "id": "3RROQnYJGRD8JzyX0dxv6A",
+      "title": "Sjúkratryggingar Íslands logo",
+      "url": "//images.ctfassets.net/8k0h54kbe6bj/3RROQnYJGRD8JzyX0dxv6A/1140735cbff4838660ac2626b30bd732/sjukratr-icon_2x.png",
+      "width": 134,
+      "height": 134
+    }
+  },
+  {
+    "id": "2hJexwKZZUfiONZ9NwPSCO",
+    "title": "Þjóðskjalasafn Íslands",
+    "shortTitle": "",
+    "description": "Sími: 590 3300",
+    "slug": "thjodskjalasafn-islands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://skjalasafn.is/",
+    "logo": {
+      "id": "3vquN695TKyfDZivK8WVX1",
+      "title": "Þjóðskjalasafn Íslands",
+      "url": "//images.ctfassets.net/8k0h54kbe6bj/3vquN695TKyfDZivK8WVX1/e1d0d4b827dcfb71e4746d74f1b41bc9/stofnun-thjskjalasafn-logo.png",
+      "width": 224,
+      "height": 199
+    }
+  },
+  {
+    "id": "4kKV4VLFISlJ37geOx0IG3",
+    "title": "Fjölbrautaskóli Vesturlands",
+    "shortTitle": "FVA",
+    "description": "Sími: 433 2500",
+    "slug": "fjoelbrautaskoli-vesturlands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fva.is/",
+    "logo": null
+  },
+  {
+    "id": "3E0F3hyNF73z6mYBxndByO",
+    "title": "Menntasjóður námsmanna",
+    "shortTitle": "",
+    "description": "Sími: 560 4000",
+    "slug": "lanasjodur-islenskra-namsmanna",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://menntasjodur.is/",
+    "logo": null
+  },
+  {
+    "id": "1JHJe1NDwbBjEr7OVdjuFD",
+    "title": "Stafrænt Ísland",
+    "shortTitle": "",
+    "description": "",
+    "slug": "stafraent-island",
+    "tag": [
+      {
+        "id": "2B9ms3zTqkdMPxkvGG2JuW",
+        "title": "Stafrænt Ísland"
+      }
+    ],
+    "link": "https://island.is/stafraent-island",
+    "logo": {
+      "id": "5ijRCutRCFu4Y9aPS0ys4Z",
+      "title": "Stafrænt Ísland lógó rétt",
+      "url": "//images.ctfassets.net/8k0h54kbe6bj/5ijRCutRCFu4Y9aPS0ys4Z/b809c1cb81df9d27ea99a30e00c2d1e8/is-logo-stakt_2x.png",
+      "width": 160,
+      "height": 160
+    }
+  },
+  {
+    "id": "15Gan7LqFNclooXSqH0E1U",
+    "title": "Umboðsmaður skuldara",
+    "shortTitle": "",
+    "description": "Sími: 512 6600",
+    "slug": "umbodsmadur-skuldara",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.ums.is/",
+    "logo": null
+  },
+  {
+    "id": "4KjE8HliC2Qd8BfJ1OQXgb",
+    "title": "Heilbrigðiseftirlit Hafnarfjarðar, Garðabæjar og Kópavogs",
+    "shortTitle": "",
+    "description": "Sími: 550 5400",
+    "slug": "heilbrigdiseftirlit-hafnarfjardar-gardabaejar-og-kopavogs",
+    "tag": [],
+    "link": "",
+    "logo": null
+  },
+  {
+    "id": "CkzMy5E0wA8luTnfOI2F6",
+    "title": "Heilbrigðiseftirlit Suðurlands",
+    "shortTitle": "",
+    "description": "Sími: 480 8250",
+    "slug": "heilbrigdiseftirlit-sudurlands",
+    "tag": [],
+    "link": "https://www.hsl.is/",
+    "logo": null
+  },
+  {
+    "id": "53jrbgxPKpbNtordSfEZUK",
+    "title": "Húsnæðis- og mannvirkjastofnun",
+    "shortTitle": "",
+    "description": "Sími: 440 6400",
+    "slug": "husnaedis-og-mannvirkjastofnun",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.hms.is/",
+    "logo": null
+  },
+  {
+    "id": "2WMXVEIv9Nj5e5pPaZini",
+    "title": "Yfirskattanefnd",
+    "shortTitle": "",
+    "description": "Sími: 575 8700",
+    "slug": "yfirskattanefnd",
+    "tag": [
+      {
+        "id": "6LXf37u6vkcoDhp5IxrD5D",
+        "title": "Fjármála- og efnahagsráðuneytið"
+      }
+    ],
+    "link": "https://yskn.is/",
+    "logo": null
+  },
+  {
+    "id": "1KlNCVZqjwJPzxVx58K4v2",
+    "title": "Þjónustu- og þekkingarmiðstöð fyrir blinda, sjónskerta og daufblinda einstaklinga",
+    "shortTitle": "",
+    "description": "Sími: 545 5800",
+    "slug": "thjonustu-og-thekkingarmidstoed-fyrir-blinda-sjonskerta-og-daufblinda",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.midstod.is/",
+    "logo": null
+  },
+  {
+    "id": "6R68kn4PZpoL4cGGnkeqs6",
+    "title": "Þjóðgarðurinn á Þingvöllum",
+    "shortTitle": "",
+    "description": "Sími: 482 2660",
+    "slug": "thjodgardurinn-a-thingvoellum",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "https://www.thingvellir.is/",
+    "logo": null
+  },
+  {
+    "id": "sAt7rBlG48UhpJ8KVoki3",
+    "title": "Vísindasiðanefnd",
+    "shortTitle": "",
+    "description": "Sími: 551 7100",
+    "slug": "visindasidanefnd",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "http://www.vsn.is/",
+    "logo": null
+  },
+  {
+    "id": "co6SSvHZjUpEICpTlJT1B",
+    "title": "Vinnumálastofnun",
+    "shortTitle": "",
+    "description": "Sími: 515 4800",
+    "slug": "vinnumalastofnun",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "https://vinnumalastofnun.is/",
+    "logo": null
+  },
+  {
+    "id": "39S5VumPfb1hXBJm3SnE02",
+    "title": "Vinnueftirlit ríkisins",
+    "shortTitle": "",
+    "description": "Sími: 550 4600",
+    "slug": "vinnueftirlitid",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.vinnueftirlit.is/",
+    "logo": null
+  },
+  {
+    "id": "1sjqlJoxyF5uJU0Ff44H7n",
+    "title": "Verðlagsstofa skiptaverðs",
+    "shortTitle": "",
+    "description": "Sími: 461 4480",
+    "slug": "verdlagsstofa-skiptaverds",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "http://verdlagsstofa.is/",
+    "logo": null
+  },
+  {
+    "id": "3WQeDottQisBOc47pY9UKE",
+    "title": "Vegagerðin",
+    "shortTitle": "",
+    "description": "Sími: 522 1000",
+    "slug": "vegagerdin",
+    "tag": [
+      {
+        "id": "1SRslmy68wzbhWVfH28KJ5",
+        "title": "Samgöngu- og sveitarstjórnarráðuneytið"
+      }
+    ],
+    "link": "http://www.vegagerdin.is/",
+    "logo": null
+  },
+  {
+    "id": "awEtFr71qWI5BhMgdHIcX",
+    "title": "Veðurstofa Íslands",
+    "shortTitle": "",
+    "description": "Sími: 522 6000",
+    "slug": "vedurstofa-islands",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "https://www.vedur.is/",
+    "logo": null
+  },
+  {
+    "id": "6bNkYyrz7nMlFOPc3qRNJD",
+    "title": "Vatnajökulsþjóðgarður",
+    "shortTitle": "",
+    "description": "Sími: 575 8400",
+    "slug": "vatnajoekulsthjodgardur",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "https://www.vatnajokulsthjodgardur.is/",
+    "logo": null
+  },
+  {
+    "id": "4blvuQq263901IhAyWw4Th",
+    "title": "Úrskurðarnefnd velferðarmála",
+    "shortTitle": "",
+    "description": "Sími 551 8200",
+    "slug": "urskurdarnefnd-velferdarmala",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "http://urvel.is/",
+    "logo": null
+  },
+  {
+    "id": "6cP62GJiazMuEGa1J0lgfs",
+    "title": "Náttúruverndarstofnun",
+    "shortTitle": "",
+    "description": "Sími: 556 6800\n",
+    "slug": "natturuverndarstofnun",
+    "tag": [
+      {
+        "id": "naXhDhbRp78cOLs3kcs26",
+        "title": "Umhverfis-, orku- og loftslagsráðuneytið"
+      }
+    ],
+    "link": "https://nattura.is/",
+    "logo": null
+  },
+  {
+    "id": "2fcqzP3MwErJZmdcJqLq1h",
+    "title": "Umboðsmaður barna",
+    "shortTitle": "",
+    "description": "Sími: 552 8999",
+    "slug": "umbodsmadur-barna",
+    "tag": [
+      {
+        "id": "56aDaCfc8ZkDrc94Z5R5jW",
+        "title": "Forsætisráðuneytið"
+      }
+    ],
+    "link": "https://www.barn.is/",
+    "logo": null
+  },
+  {
+    "id": "3dgsobJuiJXC1oOxhGpcUY",
+    "title": "Tryggingastofnun",
+    "shortTitle": "",
+    "description": "Sími: 560 4400",
+    "slug": "tryggingastofnun",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.tr.is/",
+    "logo": null
+  },
+  {
+    "id": "Xnes7x1ccvBvuZxInRXDm",
+    "title": "Sýslumaðurinn á Austurlandi",
+    "shortTitle": "",
+    "description": "Sími: 458 2700",
+    "slug": "syslumadurinn-a-austurlandi",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.syslumenn.is/embaettin/embaetti-og-umdaemi/syslumadurinn-a-austurlandi",
+    "logo": null
+  },
+  {
+    "id": "1CwOOu2CxT7vXAeO66BxHw",
+    "title": "Stofnun Árna Magnússonar í íslenskum fræðum",
+    "shortTitle": "",
+    "description": "Sími: 525 4010",
+    "slug": "stofnun-arna-magnussonar-i-islenskum-fraedum",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://arnastofnun.is/is",
+    "logo": null
+  },
+  {
+    "id": "6Yq6EHdERli8sJHPbricDU",
+    "title": "Stofnun Vilhjálms Stefánssonar",
+    "shortTitle": "",
+    "description": "Sími: 460 8980",
+    "slug": "stofnun-vilhjalms-stefanssonar",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "http://www.svs.is/",
+    "logo": null
+  },
+  {
+    "id": "1gE9ROaSdkJtKChYjHkhhp",
+    "title": "Skógræktin",
+    "shortTitle": "",
+    "description": "Sími: 470 2000",
+    "slug": "skograektin",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "https://www.skogur.is/",
+    "logo": null
+  },
+  {
+    "id": "1ISZY8stFaLm01jGBvRGl9",
+    "title": "Skipulagsstofnun",
+    "shortTitle": "",
+    "description": "Sími: 595 4100",
+    "slug": "skipulagsstofnun",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "https://www.skipulag.is/",
+    "logo": null
+  },
+  {
+    "id": "4yJlHgCMTqpgRSj4p6LuBQ",
+    "title": "Skatturinn",
+    "shortTitle": "",
+    "description": "Sími: 442 1000",
+    "slug": "skatturinn",
+    "tag": [
+      {
+        "id": "6LXf37u6vkcoDhp5IxrD5D",
+        "title": "Fjármála- og efnahagsráðuneytið"
+      }
+    ],
+    "link": "https://www.rsk.is/",
+    "logo": null
+  },
+  {
+    "id": "7C3hw89orWBExHN8v9e4mZ",
+    "title": "Skattrannsóknarstjóri ríkisins",
+    "shortTitle": "",
+    "description": "Sími: 550 8800",
+    "slug": "skattrannsoknarstjori-rikisins",
+    "tag": [
+      {
+        "id": "6LXf37u6vkcoDhp5IxrD5D",
+        "title": "Fjármála- og efnahagsráðuneytið"
+      }
+    ],
+    "link": "https://www.srs.is/",
+    "logo": null
+  },
+  {
+    "id": "4PzeHQ8GEqrmSkqnqCas7t",
+    "title": "Sjúkrahúsið Akureyri",
+    "shortTitle": "",
+    "description": "Sími: 463 0100",
+    "slug": "sjukrahusid-akureyri",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://www.sak.is/",
+    "logo": null
+  },
+  {
+    "id": "2UHgf5u6ln4B5VeKOO9pf9",
+    "title": "Sinfóníuhljómsveit Íslands",
+    "shortTitle": "",
+    "description": "Sími: 528 5050",
+    "slug": "sinfoniuhljomsveit-islands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.sinfonia.is/",
+    "logo": null
+  },
+  {
+    "id": "P8Nfw5ra04BKJDp1UedCv",
+    "title": "Seðlabanki Íslands",
+    "shortTitle": "",
+    "description": "Sími: 569 9600",
+    "slug": "sedlabanki-islands",
+    "tag": [
+      {
+        "id": "56aDaCfc8ZkDrc94Z5R5jW",
+        "title": "Forsætisráðuneytið"
+      }
+    ],
+    "link": "https://www.sedlabanki.is/",
+    "logo": null
+  },
+  {
+    "id": "2eqSPP7nQ9yMwuf0SulZeR",
+    "title": "Samskiptamiðstöð heyrnarlausra og heyrnarskertra",
+    "shortTitle": "",
+    "description": "Sími: 562 7702 / 562 7738",
+    "slug": "samskiptamidstoed-heyrnarlausra-og-heyrnarskertra",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://shh.is/",
+    "logo": null
+  },
+  {
+    "id": "71aBMEDFVNDGfMpd04teW3",
+    "title": "Samkeppniseftirlitið",
+    "shortTitle": "",
+    "description": "Sími: 585 0700",
+    "slug": "samkeppniseftirlitid",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "https://www.samkeppni.is/",
+    "logo": null
+  },
+  {
+    "id": "6IZT17s7stKJAmtPutjpD7",
+    "title": "Samgöngustofa",
+    "shortTitle": "",
+    "description": "Sími: 480 6000",
+    "slug": "samgongustofa",
+    "tag": [
+      {
+        "id": "1SRslmy68wzbhWVfH28KJ5",
+        "title": "Samgöngu- og sveitarstjórnarráðuneytið"
+      }
+    ],
+    "link": "https://www.samgongustofa.is/",
+    "logo": null
+  },
+  {
+    "id": "7Fg69YBJpmzlwlcRAcWe2Q",
+    "title": "Ríkisútvarpið ohf.",
+    "shortTitle": "",
+    "description": "Sími: 515 3000 ",
+    "slug": "rikisutvarpid-ohf",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.ruv.is/",
+    "logo": null
+  },
+  {
+    "id": "1wcsuAJDq55PbVHVV29kks",
+    "title": "Ríkissáttasemjari",
+    "shortTitle": "",
+    "description": "Sími: 511 4411\n",
+    "slug": "rikissattasemjari",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "https://rikissattasemjari.is/",
+    "logo": null
+  },
+  {
+    "id": "77pEDl2eGineX3X6cXxPo7",
+    "title": "Ríkissaksóknari",
+    "shortTitle": "",
+    "description": "Sími: 444 2900",
+    "slug": "rikissaksoknari",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.rikissaksoknari.is/",
+    "logo": null
+  },
+  {
+    "id": "1QXklS0ez93a5YDe2AnCAC",
+    "title": "Ríkislögreglustjóri",
+    "shortTitle": "",
+    "description": "Sími: 444 2500",
+    "slug": "rikislogreglustjori",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.logreglan.is/logreglan/rikislogreglustjori/",
+    "logo": null
+  },
+  {
+    "id": "N92u1wHVFqhUBkLOVPdU9",
+    "title": "Ríkislögmaður",
+    "shortTitle": "",
+    "description": "Sími: 545 8490",
+    "slug": "rikisloegmadur",
+    "tag": [
+      {
+        "id": "56aDaCfc8ZkDrc94Z5R5jW",
+        "title": "Forsætisráðuneytið"
+      }
+    ],
+    "link": "https://www.rikislogmadur.is/",
+    "logo": null
+  },
+  {
+    "id": "3bWUWrjIMABMxTS5UqEfPv",
+    "title": "Ríkiskaup",
+    "shortTitle": "",
+    "description": "Sími: 530 1400",
+    "slug": "rikiskaup",
+    "tag": [
+      {
+        "id": "6LXf37u6vkcoDhp5IxrD5D",
+        "title": "Fjármála- og efnahagsráðuneytið"
+      }
+    ],
+    "link": "https://www.rikiskaup.is/",
+    "logo": null
+  },
+  {
+    "id": "1t6U3Sb7ZmWdOq57Itejw7",
+    "title": "Ríkiseignir",
+    "shortTitle": "",
+    "description": "Sími: 520 5600",
+    "slug": "rikiseignir",
+    "tag": [
+      {
+        "id": "6LXf37u6vkcoDhp5IxrD5D",
+        "title": "Fjármála- og efnahagsráðuneytið"
+      }
+    ],
+    "link": "https://www.rikiseignir.is/",
+    "logo": null
+  },
+  {
+    "id": "2z2bLaIfadds13ztDY5JFL",
+    "title": "Rannsóknarnefnd samgönguslysa",
+    "shortTitle": "",
+    "description": "Sími: 511 6500",
+    "slug": "rannsoknarnefnd-samgoenguslysa",
+    "tag": [
+      {
+        "id": "1SRslmy68wzbhWVfH28KJ5",
+        "title": "Samgöngu- og sveitarstjórnarráðuneytið"
+      }
+    ],
+    "link": "http://rnsa.is/",
+    "logo": null
+  },
+  {
+    "id": "51ifVbnSL34dmVvYnkUqFh",
+    "title": "Rannsóknamiðstöð Íslands (Rannís)",
+    "shortTitle": "",
+    "description": "Sími: 515 5800",
+    "slug": "rannsoknamidstoed-islands-rannis",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.rannis.is/",
+    "logo": null
+  },
+  {
+    "id": "2wPf6ISCKCqmPHquvsKzBi",
+    "title": "Póst- og fjarskiptastofnun",
+    "shortTitle": "",
+    "description": "Sími: 510 1500",
+    "slug": "post-og-fjarskiptastofnun",
+    "tag": [
+      {
+        "id": "1SRslmy68wzbhWVfH28KJ5",
+        "title": "Samgöngu- og sveitarstjórnarráðuneytið"
+      }
+    ],
+    "link": "https://pfs.is/",
+    "logo": null
+  },
+  {
+    "id": "5UmQomOeRqkkB1PChUYv3f",
+    "title": "Persónuvernd",
+    "shortTitle": "",
+    "description": "Sími: 510 9600",
+    "slug": "personuvernd",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.personuvernd.is/",
+    "logo": null
+  },
+  {
+    "id": "1g7I83SBjDyHp35Wgc86uZ",
+    "title": "Orkustofnun",
+    "shortTitle": "",
+    "description": "Sími: 569 6000",
+    "slug": "orkustofnun",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "https://orkustofnun.is/",
+    "logo": null
+  },
+  {
+    "id": "4GSVkT0WuYNjSdfT5IZKPN",
+    "title": "Nýsköpunarsjóður atvinnulífsins",
+    "shortTitle": "",
+    "description": "Sími: 510 1800",
+    "slug": "nyskoepunarsjodur-atvinnulifsins",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "https://nyskopun.is/",
+    "logo": null
+  },
+  {
+    "id": "2DuTvg9Seuez8Mat33yH6o",
+    "title": "Nýsköpunarmiðstöð Íslands",
+    "shortTitle": "",
+    "description": "Sími: 522 9000",
+    "slug": "nyskoepunarmidstoed-islands",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "https://www.nmi.is/",
+    "logo": null
+  },
+  {
+    "id": "CtDyHiDKQ9U7SlSITSpec",
+    "title": "Neytendastofa",
+    "shortTitle": "",
+    "description": "Sími: 510 1100",
+    "slug": "neytendastofa",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "http://neytendastofa.is/",
+    "logo": null
+  },
+  {
+    "id": "7C3um0QqRVgPQZ4VLLhb6Z",
+    "title": "Náttúrurannsóknastöðin við Mývatn",
+    "shortTitle": "",
+    "description": "Sími: 892 4281",
+    "slug": "nattururannsoknastoedin-vid-myvatn",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "https://ramy.is/",
+    "logo": null
+  },
+  {
+    "id": "7o29Yt7KYZYpaZqCXPsKZP",
+    "title": "Náttúruminjasafn Íslands",
+    "shortTitle": "",
+    "description": "Sími: 577 1800",
+    "slug": "natturuminjasafn-islands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://nmsi.is/",
+    "logo": null
+  },
+  {
+    "id": "1JIcQBYPguRggZ25HxygUI",
+    "title": "Náttúruhamfaratrygging Íslands",
+    "shortTitle": "",
+    "description": "Sími: 575 3300",
+    "slug": "natturuhamfaratrygging-islands",
+    "tag": [
+      {
+        "id": "6LXf37u6vkcoDhp5IxrD5D",
+        "title": "Fjármála- og efnahagsráðuneytið"
+      }
+    ],
+    "link": "https://nti.is/",
+    "logo": null
+  },
+  {
+    "id": "354aVuXdOfu4UVKSIFsOjM",
+    "title": "Náttúrufræðistofnun Íslands",
+    "shortTitle": "",
+    "description": "Sími: 590 0500",
+    "slug": "natturufraedistofnun-islands",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "https://www.ni.is/",
+    "logo": null
+  },
+  {
+    "id": "Kb3a7vITI2P0bCDhUVDm0",
+    "title": "Minjastofnun Íslands",
+    "shortTitle": "",
+    "description": "Sími: 570 1300",
+    "slug": "minjastofnun-islands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "http://www.minjastofnun.is/",
+    "logo": null
+  },
+  {
+    "id": "67blLpIas5MOXcJE9UIsyw",
+    "title": "Miðstöð íslenskra bókmennta",
+    "shortTitle": "",
+    "description": "Sími: 552 8500\n",
+    "slug": "midstoed-islenskra-bokmennta",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.islit.is/",
+    "logo": null
+  },
+  {
+    "id": "2TqTcsg1rJAHaVQmapSa5w",
+    "title": "Menntaskólinn við Sund",
+    "shortTitle": "",
+    "description": "Sími: 580 7300",
+    "slug": "menntaskolinn-vid-sund",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://msund.is/",
+    "logo": null
+  },
+  {
+    "id": "3Xz3bFNy51xaxlVoNQnSHy",
+    "title": "Menntaskólinn við Hamrahlíð",
+    "shortTitle": "",
+    "description": "Sími: 595 5200",
+    "slug": "menntaskolinn-vid-hamrahlid",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.mh.is/",
+    "logo": null
+  },
+  {
+    "id": "7faY67jg8ieelskhQmMgzi",
+    "title": "Menntaskólinn í Reykjavík",
+    "shortTitle": "",
+    "description": "Sími: 545 1900",
+    "slug": "menntaskolinn-i-reykjavik",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://mr.is/",
+    "logo": null
+  },
+  {
+    "id": "6jnC1WIFuiFhbjoGCGeyVE",
+    "title": "Menntaskólinn í Kópavogi",
+    "shortTitle": "",
+    "description": "Sími: 594 4000",
+    "slug": "menntaskolinn-i-kopavogi",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.mk.is/",
+    "logo": null
+  },
+  {
+    "id": "30SH2jTzJMP4uFIBsQ6g0p",
+    "title": "Menntaskólinn á Tröllaskaga",
+    "shortTitle": "",
+    "description": "Sími: 460 4240",
+    "slug": "menntaskolinn-a-troellaskaga",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.mtr.is/",
+    "logo": null
+  },
+  {
+    "id": "3AnEfAKK2z0E7Cbc9f9rD1",
+    "title": "Menntaskólinn á Egilsstöðum",
+    "shortTitle": "",
+    "description": "Sími: 471 2500",
+    "slug": "menntaskolinn-a-egilsstoedum",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.me.is/",
+    "logo": null
+  },
+  {
+    "id": "6HGCGY4vn8cmeT6gUbyBqA",
+    "title": "Menntaskólinn að Laugarvatni",
+    "shortTitle": "",
+    "description": "Sími: 480 8800",
+    "slug": "menntaskolinn-ad-laugarvatni",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.ml.is/",
+    "logo": null
+  },
+  {
+    "id": "1K74rI8v0Zbx0yg1xYOTBY",
+    "title": "Menntaskólinn á Akureyri",
+    "shortTitle": "",
+    "description": "Sími: 455 1555",
+    "slug": "menntaskolinn-a-akureyri",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.ma.is/",
+    "logo": null
+  },
+  {
+    "id": "5x8KvpCpjetw2N3gVPyFY0",
+    "title": "Menntaskólinn á Ísafirði",
+    "shortTitle": "",
+    "description": "Sími: 450 4400",
+    "slug": "menntaskolinn-a-isafirdi",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://misa.is/",
+    "logo": null
+  },
+  {
+    "id": "6JoPZKqmUVnRAVrj0vadTy",
+    "title": "Menntamálastofnun",
+    "shortTitle": "",
+    "description": "Sími: 514 7500",
+    "slug": "menntamalastofnun",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://mms.is/",
+    "logo": null
+  },
+  {
+    "id": "Mbgb7szsjon1nkImwKPkf",
+    "title": "Matvælastofnun",
+    "shortTitle": "",
+    "description": "Sími: 530 4800",
+    "slug": "matvaelastofnun",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "https://www.mast.is/",
+    "logo": null
+  },
+  {
+    "id": "1QL3nvcsHFU0N34I9VjsBB",
+    "title": "Matís ohf.",
+    "shortTitle": "",
+    "description": "Sími: 422 5000",
+    "slug": "matis-ohf",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "https://www.matis.is/",
+    "logo": null
+  },
+  {
+    "id": "38Yo0PJNRKGsJ5l0t5uRDO",
+    "title": "Lyfjagreiðslunefnd",
+    "shortTitle": "",
+    "description": "Sími: 553 9000",
+    "slug": "lyfjagreidslunefnd",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://lgn.is/",
+    "logo": null
+  },
+  {
+    "id": "6SsMJr9c9EBquWBTEfxWgt",
+    "title": "Lögreglustjórinn í Vestmannaeyjum",
+    "shortTitle": "",
+    "description": "Sími: 444 2090",
+    "slug": "loegreglustjorinn-i-vestmannaeyjum",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.logreglan.is/logreglan/umdaemin/vestmannaeyjar/",
+    "logo": null
+  },
+  {
+    "id": "62ql818cdfH73S8ryvEVaI",
+    "title": "Lögreglustjórinn á Vesturlandi",
+    "shortTitle": "",
+    "description": "Sími: 444 0300",
+    "slug": "loegreglustjorinn-a-vesturlandi",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.logreglan.is/logreglan/umdaemin/vesturland/",
+    "logo": null
+  },
+  {
+    "id": "JcxaoasLcNFlAdTKphpW2",
+    "title": "Lögreglustjórinn á Vestfjörðum",
+    "shortTitle": "",
+    "description": "Sími: 444 0400",
+    "slug": "loegreglustjorinn-a-vestfjoerdum",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.logreglan.is/logreglan/umdaemin/vestfirdir/",
+    "logo": null
+  },
+  {
+    "id": "5TJFsuwaVM9HszssrE3OUR",
+    "title": "Lögreglustjórinn á Suðurnesjum",
+    "shortTitle": "",
+    "description": "Sími: 444 2200",
+    "slug": "loegreglustjorinn-a-sudurnesjum",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.logreglan.is/logreglan/umdaemin/sudurnes/",
+    "logo": null
+  },
+  {
+    "id": "5GDuzvZCgnkGuMEklR9coF",
+    "title": "Lögreglustjórinn á Suðurlandi",
+    "shortTitle": "",
+    "description": "Sími: 444 2000",
+    "slug": "loegreglustjorinn-a-sudurlandi",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.logreglan.is/logreglan/umdaemin/sudurland/",
+    "logo": null
+  },
+  {
+    "id": "1R7eiCnK8hVcByNfF3Zhqm",
+    "title": "Lögreglustjórinn á Norðurlandi vestra",
+    "shortTitle": "",
+    "description": "Sími: 444 0700",
+    "slug": "loegreglustjorinn-a-nordurlandi-vestra",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.logreglan.is/logreglan/umdaemin/nordurland-vestra/",
+    "logo": null
+  },
+  {
+    "id": "6yTytYzZZVzf40NUR56CI3",
+    "title": "Lögreglustjórinn á Norðurlandi eystra",
+    "shortTitle": "",
+    "description": "Sími: 444 2800",
+    "slug": "loegreglustjorinn-a-nordurlandi-eystra",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.logreglan.is/logreglan/umdaemin/nordurland-eystra/",
+    "logo": null
+  },
+  {
+    "id": "70JYv0XoESsjKXJ0yuosRz",
+    "title": "Lögreglustjórinn á höfuðborgarsvæðinu",
+    "shortTitle": "",
+    "description": "Sími: 444 1000",
+    "slug": "loegreglustjorinn-a-hoefudborgarsvaedinu",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.logreglan.is/logreglan/umdaemin/hofudborgarsvaedi/",
+    "logo": null
+  },
+  {
+    "id": "4Y1Wq2YwYPcYHD4waJM3V5",
+    "title": "Lögreglustjórinn á Austurlandi",
+    "shortTitle": "",
+    "description": "Sími: 444 0600",
+    "slug": "loegreglustjorinn-a-austurlandi",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.logreglan.is/logreglan/umdaemin/austurland/",
+    "logo": null
+  },
+  {
+    "id": "72wyzSDS6SJAQmoaTTh811",
+    "title": "Lögreglan",
+    "shortTitle": "",
+    "description": "Sími: 444 2500",
+    "slug": "logreglan",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://logreglan.is",
+    "logo": null
+  },
+  {
+    "id": "6Ibk7cGDl3qKnRgBzXoPmY",
+    "title": "Listasafn Íslands",
+    "shortTitle": "",
+    "description": "Sími: 515 9600",
+    "slug": "listasafn-islands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.listasafn.is/",
+    "logo": null
+  },
+  {
+    "id": "01zOsca72I1hSXDLZ6YQZB",
+    "title": "Listasafn Einars Jónssonar",
+    "shortTitle": "",
+    "description": "Sími: 551 3797",
+    "slug": "listasafn-einars-jonssonar",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://lej.is/",
+    "logo": null
+  },
+  {
+    "id": "zyoPRPgEmohQS0Eg8q8oq",
+    "title": "Landsréttur",
+    "shortTitle": "",
+    "description": "Sími: 432 5300",
+    "slug": "landsrettur",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://landsrettur.is/",
+    "logo": null
+  },
+  {
+    "id": "2rIt6lQNXZNORCgEWhNonO",
+    "title": "Landspítali",
+    "shortTitle": "",
+    "description": "Sími: 543 1000",
+    "slug": "landspitali",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://www.landspitali.is/",
+    "logo": null
+  },
+  {
+    "id": "3AkTmdh4pmxP58CwEuumk3",
+    "title": "Landsbókasafn Íslands - Háskólabókasafn",
+    "shortTitle": "",
+    "description": "Sími: 525 5600",
+    "slug": "landsbokasafn-islands-haskolabokasafn",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://landsbokasafn.is/",
+    "logo": null
+  },
+  {
+    "id": "6fwvNzqVEGdzDMUSuBDBvD",
+    "title": "Landmælingar Íslands",
+    "shortTitle": "",
+    "description": "Sími: 430 9000",
+    "slug": "landmaelingar-islands",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "https://www.lmi.is/",
+    "logo": null
+  },
+  {
+    "id": "4SOkudWhGQBz3HFZ2mroBF",
+    "title": "Landhelgisgæsla Íslands",
+    "shortTitle": "",
+    "description": "Sími: 545 2000",
+    "slug": "landhelgisgaesla-islands",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.lhg.is/",
+    "logo": null
+  },
+  {
+    "id": "2oloa0KHQQFasMP1u5g5Uf",
+    "title": "Landgræðsla ríkisins",
+    "shortTitle": "",
+    "description": "Sími: 488 3000",
+    "slug": "landgraedsla-rikisins",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "https://land.is/",
+    "logo": null
+  },
+  {
+    "id": "2vdGUb21prCCkYeVluwQ6v",
+    "title": "Landbúnaðarháskóli Íslands",
+    "shortTitle": "",
+    "description": "Sími: 433 5000",
+    "slug": "landbunadarhaskoli-islands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "http://www.lbhi.is/",
+    "logo": null
+  },
+  {
+    "id": "5M2jl25R37oaKr4xvBq6WD",
+    "title": "Kvikmyndasafn Íslands",
+    "shortTitle": "",
+    "description": "Sími: 565 5993",
+    "slug": "kvikmyndasafn-islands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://kvikmyndasafn.is/",
+    "logo": null
+  },
+  {
+    "id": "6pAjM1IFoq74pkXcl1yjgS",
+    "title": "Kvikmyndamiðstöð Íslands",
+    "shortTitle": "",
+    "description": "Sími: 562 3580",
+    "slug": "kvikmyndamidstoed-islands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "http://www.kvikmyndamidstod.is/",
+    "logo": null
+  },
+  {
+    "id": "1kAqaN8AuTb1AwUwjg4Vzb",
+    "title": "Kvennaskólinn í Reykjavík",
+    "shortTitle": "",
+    "description": "Sími: 580 7600",
+    "slug": "kvennaskolinn-i-reykjavik",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.kvenno.is/",
+    "logo": null
+  },
+  {
+    "id": "26BquaSZ4fhC8UBDJZmrNI",
+    "title": "Jafnréttisstofa",
+    "shortTitle": "",
+    "description": "Sími: 460 6200",
+    "slug": "jafnrettisstofa",
+    "tag": [
+      {
+        "id": "56aDaCfc8ZkDrc94Z5R5jW",
+        "title": "Forsætisráðuneytið"
+      }
+    ],
+    "link": "https://www.jafnretti.is/",
+    "logo": null
+  },
+  {
+    "id": "5ZuulFMZ92O7iaG2pRRqE6",
+    "title": "Íbúðalánasjóður",
+    "shortTitle": "",
+    "description": "Sími: 534 8050",
+    "slug": "ibudalanasjodur",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.ils.is/",
+    "logo": null
+  },
+  {
+    "id": "ypGdecAFqa8h49UcNFuge",
+    "title": "Hugverkastofan",
+    "shortTitle": "",
+    "description": "Sími: 580 9400",
+    "slug": "hugverkastofan",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "https://www.hugverk.is/",
+    "logo": null
+  },
+  {
+    "id": "4xkZJmVgUz4LfC4RQxnTH5",
+    "title": "Hólaskóli - Háskólinn á Hólum",
+    "shortTitle": "",
+    "description": "Sími: 455 6300",
+    "slug": "holaskoli-haskolinn-a-holum",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "http://holar.is/",
+    "logo": null
+  },
+  {
+    "id": "5CYHndJWQ9OlaBjHFQiHa9",
+    "title": "Hljóðbókasafn Íslands",
+    "shortTitle": "",
+    "description": "Sími: 545 4900",
+    "slug": "hljodbokasafn-islands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://hbs.is/",
+    "logo": null
+  },
+  {
+    "id": "lWRIQgwJtMDRXJMhMNbD7",
+    "title": "Heyrnar- og talmeinastöð Íslands",
+    "shortTitle": "",
+    "description": "Sími: 581 3855",
+    "slug": "heyrnar-og-talmeinastoed-islands",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://hti.is/index.php/is/",
+    "logo": null
+  },
+  {
+    "id": "75goVc1cjM3j1yI0sey0rW",
+    "title": "Héraðssaksóknari",
+    "shortTitle": "",
+    "description": "Sími: 444 0150",
+    "slug": "heradssaksoknari",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.hersak.is/",
+    "logo": null
+  },
+  {
+    "id": "3XK7lL7Z5oFFVvFeK5vN3S",
+    "title": "Héraðsdómur Vesturlands",
+    "shortTitle": "",
+    "description": "Sími: 432 5030",
+    "slug": "heradsdomur-vesturlands",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://heradsdomstolar.is/heradsdomstolar/vesturland/yfirlit/",
+    "logo": null
+  },
+  {
+    "id": "HfT0bEC1mUWHybmM8KU8M",
+    "title": "Héraðsdómur Vestfjarða",
+    "shortTitle": "",
+    "description": "Sími: 432 5040",
+    "slug": "heradsdomur-vestfjarda",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://heradsdomstolar.is/heradsdomstolar/vestfirdir/yfirlit/",
+    "logo": null
+  },
+  {
+    "id": "xj9D8hpvGlFG9Qe5l5dhc",
+    "title": "Héraðsdómur Suðurlands",
+    "shortTitle": "",
+    "description": "Sími: 482 1055",
+    "slug": "heradsdomur-sudurlands",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://heradsdomstolar.is/heradsdomstolar/sudurland/yfirlit/",
+    "logo": null
+  },
+  {
+    "id": "6vzqYSLR6ztNmi72qInbFg",
+    "title": "Héraðsdómur Norðurlands vestra",
+    "shortTitle": "",
+    "description": "Sími: 455 6444",
+    "slug": "heradsdomur-nordurlands-vestra",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://heradsdomstolar.is/heradsdomstolar/nordurland-vestra/yfirlit/",
+    "logo": null
+  },
+  {
+    "id": "LrL0T3xwysiAgbdiYRCDP",
+    "title": "Héraðsdómur Reykjavíkur",
+    "shortTitle": "",
+    "description": "Sími: 432 5200",
+    "slug": "heradsdomur-reykjavikur",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://heradsdomstolar.is/heradsdomstolar/reykjavik/yfirlit/",
+    "logo": null
+  },
+  {
+    "id": "2Qo4EEn4mP4cAK5blGG0II",
+    "title": "Héraðsdómur Reykjaness",
+    "shortTitle": "",
+    "description": "Sími: 432 5100",
+    "slug": "heradsdomur-reykjaness",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://heradsdomstolar.is/heradsdomstolar/reykjanes/yfirlit/",
+    "logo": null
+  },
+  {
+    "id": "1R9r2MQtxrFgHt6acNF3sh",
+    "title": "Héraðsdómur Norðurlands eystra",
+    "shortTitle": "",
+    "description": "Sími: 460 2500",
+    "slug": "heradsdomur-nordurlands-eystra",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://heradsdomstolar.is/heradsdomstolar/nordurland-eystra/yfirlit/",
+    "logo": null
+  },
+  {
+    "id": "3YmzEum3AhqjzWFr7uOtom",
+    "title": "Héraðsdómur Austurlands",
+    "shortTitle": "",
+    "description": "Sími: 432 5070",
+    "slug": "heradsdomur-austurlands",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://heradsdomstolar.is/heradsdomstolar/austurland/yfirlit/",
+    "logo": null
+  },
+  {
+    "id": "5H6d3uPjeKCIybpy1ZclmS",
+    "title": "Heilsugæsla á höfuðborgarsvæðinu",
+    "shortTitle": "",
+    "description": "Sími: 513 5000",
+    "slug": "heilsugaesla-a-hoefudborgarsvaedinu",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://www.heilsugaeslan.is/",
+    "logo": null
+  },
+  {
+    "id": "Un4jJk0rPybt9fu8gk94m",
+    "title": "Heilbrigðisstofnun Vesturlands",
+    "shortTitle": "",
+    "description": "Sími: 432 1000",
+    "slug": "heilbrigdisstofnun-vesturlands",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://www.hve.is/",
+    "logo": null
+  },
+  {
+    "id": "3wXyuazOrf3xWlEolhBXZm",
+    "title": "Heilbrigðisstofnun Vestfjarða",
+    "shortTitle": "",
+    "description": "Sími: 450 2000\n",
+    "slug": "heilbrigdisstofnun-vestfjarda",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "http://hvest.is/",
+    "logo": null
+  },
+  {
+    "id": "7KE6jU5bnUJZh1TtuiXXI0",
+    "title": "Heilbrigðisstofnun Suðurnesja",
+    "shortTitle": "",
+    "description": "Sími: 422 0500",
+    "slug": "heilbrigdisstofnun-sudurnesja",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://hss.is/",
+    "logo": null
+  },
+  {
+    "id": "1UDhUhE8pzwnl0UxuzRUMk",
+    "title": "Heilbrigðisstofnun Suðurlands",
+    "shortTitle": "",
+    "description": "Sími: 432 2000",
+    "slug": "heilbrigdisstofnun-sudurlands",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://www.hsu.is/",
+    "logo": null
+  },
+  {
+    "id": "EM4Y0gF4OoGhH9ZY0Dxl6",
+    "title": "Heilbrigðisstofnun Norðurlands",
+    "shortTitle": "",
+    "description": "Sími: 464 0500\n",
+    "slug": "heilbrigdisstofnun-nordurlands",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://www.hsn.is/",
+    "logo": null
+  },
+  {
+    "id": "67ckyv6BjZ2LpUTFBA17Hv",
+    "title": "Heilbrigðisstofnun Austurlands",
+    "shortTitle": "",
+    "description": "",
+    "slug": "heilbrigdisstofnun-austurlands",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://hsa.is/",
+    "logo": null
+  },
+  {
+    "id": "2Y4vEWxOmSJz04GcWhsZho",
+    "title": "Háskólinn á Akureyri",
+    "shortTitle": "",
+    "description": "Sími: 460 8000",
+    "slug": "haskolinn-a-akureyri",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.unak.is/",
+    "logo": null
+  },
+  {
+    "id": "78yMI9ICWCEBI4Wn8y267w",
+    "title": "Háskóli Íslands",
+    "shortTitle": "",
+    "description": "Sími: 525 4000",
+    "slug": "haskoli-islands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.hi.is/",
+    "logo": null
+  },
+  {
+    "id": "hmExtqfbnfF6SGCOy9xkr",
+    "title": "Hagstofa Íslands",
+    "shortTitle": "",
+    "description": "Sími: 528 1000",
+    "slug": "hagstofa-islands",
+    "tag": [
+      {
+        "id": "56aDaCfc8ZkDrc94Z5R5jW",
+        "title": "Forsætisráðuneytið"
+      }
+    ],
+    "link": "https://hagstofa.is/",
+    "logo": null
+  },
+  {
+    "id": "1nGKowUmFI5rEMtc9y7g2p",
+    "title": "Hafrannsóknastofnun Rannsókna- og ráðgjafarstofnun hafs og vatna",
+    "shortTitle": "",
+    "description": "Sími: 575 2000",
+    "slug": "hafrannsoknastofnun-rannsokna-og-radgjafarstofnun-hafs-og-vatna",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "https://www.hafogvatn.is/",
+    "logo": null
+  },
+  {
+    "id": "76OOmn4QSxNhKMhWTAmhhW",
+    "title": "Hæstiréttur Íslands",
+    "shortTitle": "",
+    "description": "Sími: 510 3030",
+    "slug": "haestirettur-islands",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.haestirettur.is/",
+    "logo": null
+  },
+  {
+    "id": "cdYemLj1vCp5grkqhBeHq",
+    "title": "Greiningar- og ráðgjafarstöð ríkisins",
+    "shortTitle": "",
+    "description": "Sími: 510 8400",
+    "slug": "greiningar-og-radgjafarstoed-rikisins",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.greining.is/",
+    "logo": null
+  },
+  {
+    "id": "6RFd6Dcb2bmqTot9193Jj9",
+    "title": "Gljúfrasteinn: hús skáldsins",
+    "shortTitle": "",
+    "description": "Sími: 586 8066",
+    "slug": "gljufrasteinn-hus-skaldsins",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "http://gljufrasteinn.is/",
+    "logo": null
+  },
+  {
+    "id": "2NjLP6I6SHHFxdDlk75WmW",
+    "title": "Geislavarnir ríkisins",
+    "shortTitle": "",
+    "description": "Sími: 440 8200",
+    "slug": "geislavarnir-rikisins",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://gr.is/",
+    "logo": null
+  },
+  {
+    "id": "3RsfchAOjSuidnv5obSLMA",
+    "title": "Gæða- og eftirlitsstofnun félagsþjónustu og barnaverndar",
+    "shortTitle": "",
+    "description": "",
+    "slug": "gaeda-og-eftirlitsstofnun-felagsthjonustu-og-barnaverndar",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.stjornarradid.is/gaeda-og-eftirlitsstofnun/",
+    "logo": null
+  },
+  {
+    "id": "5OtcVDvo5bh0lXjpWim7Gm",
+    "title": "Framhaldsskólinn í Austur-Skaftafellssýslu",
+    "shortTitle": "",
+    "description": "Sími: 470 8070",
+    "slug": "framhaldsskolinn-i-austur-skaftafellssyslu",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fas.is/",
+    "logo": null
+  },
+  {
+    "id": "63dghaBYQAqqB7zeEFlDZz",
+    "title": "Framkvæmdasýsla ríkisins",
+    "shortTitle": "",
+    "description": "Sími: 569 8900",
+    "slug": "framkvaemdasysla-rikisins",
+    "tag": [
+      {
+        "id": "6LXf37u6vkcoDhp5IxrD5D",
+        "title": "Fjármála- og efnahagsráðuneytið"
+      }
+    ],
+    "link": "https://www.fsr.is/",
+    "logo": null
+  },
+  {
+    "id": "3eX6WnmNuDTzOG32CzTZlc",
+    "title": "Framhaldsskólinn í Vestmannaeyjum",
+    "shortTitle": "",
+    "description": "Sími: 488 1070",
+    "slug": "framhaldsskolinn-i-vestmannaeyjum",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fiv.is/",
+    "logo": null
+  },
+  {
+    "id": "397oKps6wFcrI9T4DBujHx",
+    "title": "Framhaldsskólinn í Mosfellsbæ",
+    "shortTitle": "",
+    "description": "Sími: 412 8500",
+    "slug": "framhaldsskolinn-i-mosfellsbae",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fmos.is/",
+    "logo": null
+  },
+  {
+    "id": "54cL5Z9qUaib8bM5xkw7N2",
+    "title": "Framhaldsskólinn á Laugum",
+    "shortTitle": "",
+    "description": "Sími: 464 6300 ",
+    "slug": "framhaldsskolinn-a-laugum",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://laugar.is/",
+    "logo": null
+  },
+  {
+    "id": "6GqqbIj7sVfc7uBrBE9w3Q",
+    "title": "Framhaldsskólinn á Húsavík",
+    "shortTitle": "",
+    "description": "Sími: 464 1344",
+    "slug": "framhaldsskolinn-a-husavik",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fsh.is/",
+    "logo": null
+  },
+  {
+    "id": "720wUJDEGUtHMpq4tACA9j",
+    "title": "Flensborgarskóli",
+    "shortTitle": "",
+    "description": "Sími: 565 0400",
+    "slug": "flensborgarskoli",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "http://flensborg.is/",
+    "logo": null
+  },
+  {
+    "id": "1iUVWEDqj045wVPzIzbjtf",
+    "title": "Fjölmiðlanefnd",
+    "shortTitle": "",
+    "description": "Sími: 415 0415",
+    "slug": "fjolmidlanefnd",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://fjolmidlanefnd.is/",
+    "logo": null
+  },
+  {
+    "id": "35PAVhaEOFTaR1WKDJsvmF",
+    "title": "Fjölmenningarsetur",
+    "shortTitle": "",
+    "description": "Sími: 450 3090",
+    "slug": "fjoelmenningarsetur",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.mcc.is/",
+    "logo": null
+  },
+  {
+    "id": "6yFbXBg7oKIQg5MMo42je8",
+    "title": "Fjölbrautaskóli Suðurnesja",
+    "shortTitle": "",
+    "description": "Sími: 421 3100",
+    "slug": "fjoelbrautaskoli-sudurnesja",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fss.is/",
+    "logo": null
+  },
+  {
+    "id": "4tvIhM0kJUv27VgpTArQ8Y",
+    "title": "Fjölbrautaskóli Suðurlands",
+    "shortTitle": "",
+    "description": "Sími: 480 8100 ",
+    "slug": "fjoelbrautaskoli-sudurlands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fsu.is/",
+    "logo": null
+  },
+  {
+    "id": "4egnjuF4cyq8kwAUUd8xHf",
+    "title": "Fjölbrautaskóli Snæfellinga",
+    "shortTitle": "",
+    "description": "Sími: 456 8400",
+    "slug": "fjoelbrautaskoli-snaefellinga",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fsn.is/",
+    "logo": null
+  },
+  {
+    "id": "3QreM4gg63Ic1BrjmqNcy7",
+    "title": "Fjölbrautaskóli Norðurlands vestra",
+    "shortTitle": "",
+    "description": "Sími: 455 8000",
+    "slug": "fjoelbrautaskoli-nordurlands-vestra",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fnv.is/",
+    "logo": null
+  },
+  {
+    "id": "4bboRx2LkVMRt4YG24rgtW",
+    "title": "Fjölbrautaskólinn í Garðabæ",
+    "shortTitle": "",
+    "description": "Sími: 520 1600",
+    "slug": "fjoelbrautaskolinn-i-gardabae",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fg.is/",
+    "logo": null
+  },
+  {
+    "id": "1tpu4usdEpGYX2I0QrCb12",
+    "title": "Fjölbrautaskólinn í Breiðholti",
+    "shortTitle": "",
+    "description": "Sími: 570 5600",
+    "slug": "fjoelbrautaskolinn-i-breidholti",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fb.is/",
+    "logo": null
+  },
+  {
+    "id": "5TmKikdRCk1O7TihmC8lVI",
+    "title": "Fjölbrautaskólinn Ármúla",
+    "shortTitle": "",
+    "description": "Sími: 525 8800",
+    "slug": "fjoelbrautaskolinn-armula",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fa.is/",
+    "logo": null
+  },
+  {
+    "id": "6rXUdfbMD515Z7guowj08E",
+    "title": "Fiskistofa",
+    "shortTitle": "",
+    "description": "Sími: 569 7900 ",
+    "slug": "fiskistofa",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "http://www.fiskistofa.is/",
+    "logo": null
+  },
+  {
+    "id": "6AoSHJJRDHQFfLiwBZvZi2",
+    "title": "Fjársýsla ríkisins",
+    "shortTitle": "",
+    "description": "Sími: 545 7500",
+    "slug": "fjarsysla-rikisins",
+    "tag": [
+      {
+        "id": "6LXf37u6vkcoDhp5IxrD5D",
+        "title": "Fjármála- og efnahagsráðuneytið"
+      }
+    ],
+    "link": "https://www.fjs.is/",
+    "logo": null
+  },
+  {
+    "id": "5l2wqn4uNBiwijUqZJHWtT",
+    "title": "Ferðamálastofa",
+    "shortTitle": "",
+    "description": "",
+    "slug": "ferdamalastofa",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "https://www.ferdamalastofa.is/",
+    "logo": null
+  },
+  {
+    "id": "utGOoJv8wnTh1KdUVkEK6",
+    "title": "Fangelsismálastofnun",
+    "shortTitle": "",
+    "description": "Sími: 520 5000",
+    "slug": "fangelsismalastofnun",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.fangelsi.is/",
+    "logo": null
+  },
+  {
+    "id": "7qgJZc8vO7ZHWmfSrZp9Kn",
+    "title": "Embætti Landlæknis",
+    "shortTitle": "",
+    "description": "Sími: 510 1900",
+    "slug": "embaetti-landlaeknis",
+    "tag": [
+      {
+        "id": "54P9RnsGH67upVLqoK48sB",
+        "title": "Heilbrigðisráðuneytið"
+      }
+    ],
+    "link": "https://www.landlaeknir.is/",
+    "logo": null
+  },
+  {
+    "id": "O4vJyizpKaozmVbAWlbQB",
+    "title": "Dómstólasýslan",
+    "shortTitle": "",
+    "description": "Sími: 432 5010",
+    "slug": "domstolasyslan",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://domstolasyslan.is/",
+    "logo": null
+  },
+  {
+    "id": "2UQsNJCOnPEJBzko8JWynC",
+    "title": "Byggðastofnun",
+    "shortTitle": "",
+    "description": "Sími: 455 5400",
+    "slug": "byggdastofnun",
+    "tag": [
+      {
+        "id": "0oHGlUFlzqPnUL816xTBq",
+        "title": "Atvinnuvega- og nýsköpunarráðuneytið"
+      }
+    ],
+    "link": "https://www.byggdastofnun.is/",
+    "logo": null
+  },
+  {
+    "id": "4ATBMiZ8b9JYF07k9TlzCj",
+    "title": "Borgarholtsskóli",
+    "shortTitle": "",
+    "description": "Sími: 535 1700",
+    "slug": "borgarholtsskoli",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.bhs.is/",
+    "logo": null
+  },
+  {
+    "id": "1vsUzPuJJ0vftin0aiW3bx",
+    "title": "Barnaverndarstofa",
+    "shortTitle": "",
+    "description": "Sími: 530 2600",
+    "slug": "barnaverndarstofa",
+    "tag": [
+      {
+        "id": "sw5cotNXHkH0hTojEq3V4",
+        "title": "Félagsmálaráðuneytið"
+      }
+    ],
+    "link": "http://www.bvs.is/",
+    "logo": null
+  },
+  {
+    "id": "68UNEK9Yq2HLl6Lv8ChkcU",
+    "title": "Bankasýsla ríkisins",
+    "shortTitle": "",
+    "description": "Sími: 550 1700",
+    "slug": "bankasysla-rikisins",
+    "tag": [
+      {
+        "id": "6LXf37u6vkcoDhp5IxrD5D",
+        "title": "Fjármála- og efnahagsráðuneytið"
+      }
+    ],
+    "link": "http://bankasysla.is/forsida/",
+    "logo": null
+  },
+  {
+    "id": "3djT7bIUqhNQg6Qbj1lVD0",
+    "title": "Almannavarnir",
+    "shortTitle": "",
+    "description": "Sími: 444 2500",
+    "slug": "almannavarnir",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.almannavarnir.is/",
+    "logo": null
+  },
+  {
+    "id": "q0h7MjxNigOxVWk9kMxOj",
+    "title": "Áfengis- og tóbaksverslun ríkisins",
+    "shortTitle": "",
+    "description": "Sími: 560 7700 ",
+    "slug": "afengis-og-tobaksverslun-rikisins",
+    "tag": [
+      {
+        "id": "6LXf37u6vkcoDhp5IxrD5D",
+        "title": "Fjármála- og efnahagsráðuneytið"
+      }
+    ],
+    "link": "https://www.vinbudin.is/heim",
+    "logo": null
+  },
+  {
+    "id": "16V6IKgdTta9vMYjfPrgc5",
+    "title": "Þjóðminjasafn Íslands",
+    "shortTitle": "",
+    "description": "Sími: 530 2200",
+    "slug": "thjodminjasafn-islands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.thjodminjasafn.is/",
+    "logo": null
+  },
+  {
+    "id": "21wLgcJG6YvEZpo9aqy97t",
+    "title": "Þjóðleikhúsið",
+    "shortTitle": "",
+    "description": "Sími: 551 1200",
+    "slug": "thjodleikhusid",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://leikhusid.is/",
+    "logo": null
+  },
+  {
+    "id": "2QCBU7BuomwaU9HM1QmT59",
+    "title": "Þjóðkirkjan / Biskupsstofa",
+    "shortTitle": "",
+    "description": "Sími: 528 4000",
+    "slug": "thjodkirkjan-biskupsstofa",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://kirkjan.is/",
+    "logo": null
+  },
+  {
+    "id": "1jZFdAD0iL0LpR42BbuoEF",
+    "title": "Úrvinnslusjóður",
+    "shortTitle": "",
+    "description": "Sími: 517 4700",
+    "slug": "urvinnslusjodur",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "https://www.urvinnslusjodur.is/",
+    "logo": null
+  },
+  {
+    "id": "6WaIeTXM2q6YuJsB3SjL2j",
+    "title": "Úrskurðarnefnd umhverfis- og auðlindamála",
+    "shortTitle": "",
+    "description": "Sími: 575 8710",
+    "slug": "urskurdarnefnd-umhverfis-og-audlindamala",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "https://uua.is/",
+    "logo": null
+  },
+  {
+    "id": "6MMG3n8q4q2WieM7KL5bVv",
+    "title": "Íslenski dansflokkurinn",
+    "shortTitle": "",
+    "description": "Sími: 588 0900",
+    "slug": "islenski-dansflokkurinn",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "http://id.is/is/",
+    "logo": null
+  },
+  {
+    "id": "5rCkla8NaKGGJlwCQZYNy",
+    "title": "Íslenskar orkurannsóknir",
+    "shortTitle": "",
+    "description": "Sími: 528 1500",
+    "slug": "islenskar-orkurannsoknir",
+    "tag": [
+      {
+        "id": "7L0MmGdlW4vjMJbKcd2P89",
+        "title": "Umhverfis- og auðlindaráðuneytið"
+      }
+    ],
+    "link": "https://www.isor.is/",
+    "logo": null
+  },
+  {
+    "id": "FBuuLigfuiaqWyDphjqVN",
+    "title": "Verkmenntaskólinn á Akureyri",
+    "shortTitle": "",
+    "description": "Sími: 464 0300",
+    "slug": "verkmenntaskolinn-a-akureyri",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.vma.is/",
+    "logo": null
+  },
+  {
+    "id": "CyKTBbRxOjODmz4gsixdd",
+    "title": "Verkmenntaskóli Austurlands",
+    "shortTitle": "",
+    "description": "Sími: 477 1620",
+    "slug": "verkmenntaskoli-austurlands",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.va.is/",
+    "logo": null
+  },
+  {
+    "id": "4YdpMWgKoAKteXTG5LSmt1",
+    "title": "Tilraunastöð Háskóla Íslands í meinafræði að Keldum",
+    "shortTitle": "",
+    "description": "Sími: 525 4000",
+    "slug": "tilraunastoed-haskola-islands-i-meinafraedi-ad-keldum",
+    "tag": [
+      {
+        "id": "6fxYEnPBMAKPOE3hHHQY2S",
+        "title": "Mennta- og menningarmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.hi.is/",
+    "logo": null
+  },
+  {
+    "id": "145ctmpqLPrOM7rHZIpC6F",
+    "title": "Sýslumaðurinn í Vestmannaeyjum",
+    "shortTitle": "",
+    "description": "Sími: 458 2900",
+    "slug": "syslumadurinn-i-vestmannaeyjum",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.syslumenn.is/embaettin/embaetti-og-umdaemi/syslumadurinn-i-vestmannaeyjum",
+    "logo": null
+  },
+  {
+    "id": "43KqapFNoM9m4MNXXc8UPU",
+    "title": "Sýslumaðurinn á Vesturlandi",
+    "shortTitle": "",
+    "description": "Sími: 458 2300",
+    "slug": "syslumadurinn-a-vesturlandi",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.syslumenn.is/embaettin/embaetti-og-umdaemi/syslumadurinn-a-vesturlandi",
+    "logo": null
+  },
+  {
+    "id": "5MDZoq1DGsJospUnQz4y98",
+    "title": "Sýslumaðurinn á Vestfjörðum",
+    "shortTitle": "",
+    "description": "Sími: 458 2400",
+    "slug": "syslumadurinn-a-vestfjoerdum",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.syslumenn.is/embaettin/embaetti-og-umdaemi/syslumadurinn-a-vestfjordum",
+    "logo": null
+  },
+  {
+    "id": "cRCuTTXXSrpBj27nBiLbc",
+    "title": "Sýslumaðurinn á Suðurnesjum",
+    "shortTitle": "",
+    "description": "Sími: 458 2200",
+    "slug": "syslumadurinn-a-sudurnesjum",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.syslumenn.is/embaettin/embaetti-og-umdaemi/syslumadurinn-a-sudurnesjum",
+    "logo": null
+  },
+  {
+    "id": "2uyNnLcRooCNk7u6CMpsIv",
+    "title": "Sýslumaðurinn á Suðurlandi",
+    "shortTitle": "",
+    "description": "Sími: 458 2800",
+    "slug": "syslumadurinn-a-sudurlandi",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.syslumenn.is/embaettin/embaetti-og-umdaemi/syslumadurinn-a-sudurlandi",
+    "logo": null
+  },
+  {
+    "id": "ZefqpCw4y5oy9lREilQY3",
+    "title": "Sýslumaðurinn á Norðurlandi vestra",
+    "shortTitle": "",
+    "description": "Sími: 458 2500",
+    "slug": "syslumadurinn-a-nordurlandi-vestra",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.syslumenn.is/embaettin/embaetti-og-umdaemi/syslumadurinn-a-nordurlandi-vestra",
+    "logo": null
+  },
+  {
+    "id": "12JLsyDmODBfZedYPOQXtX",
+    "title": "Sýslumaðurinn á Norðurlandi eystra",
+    "shortTitle": "",
+    "description": "Sími: 458 2600",
+    "slug": "syslumadurinn-a-nordurlandi-eystra",
+    "tag": [
+      {
+        "id": "lbcjrv5i4arbH2dInB47e",
+        "title": "Dómsmálaráðuneytið"
+      }
+    ],
+    "link": "https://www.syslumenn.is/embaettin/embaetti-og-umdaemi/syslumadurinn-a-nordurlandi-eystra",
+    "logo": null
+  },
+  {
+    "id": "15ISIoODnBVuXMO4a91ew3",
+    "title": "Umboðsmaður Alþingis",
+    "shortTitle": "",
+    "description": "Sími: 510 6700 ",
+    "slug": "umbodsmadur-althingis",
+    "tag": [],
+    "link": "https://www.umbodsmadur.is/",
+    "logo": null
+  }
+]

@@ -1,0 +1,48 @@
+query GetUserNotifications($input: NotificationsInput!, $locale: String) {
+  userNotifications(input: $input, locale: $locale) {
+    data {
+      ...NotificationDataFields
+      recipient {
+        nationalId
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    unreadCount
+    unseenCount
+    totalCount
+  }
+}
+
+query GetUserNotificationsUnseenCount(
+  $input: NotificationsInput!
+  $locale: String
+) {
+  userNotifications(input: $input, locale: $locale) {
+    unseenCount
+  }
+}
+
+mutation MarkUserNotificationAsRead($id: Float!) {
+  markNotificationAsRead(id: $id) {
+    data {
+      ...NotificationDataFields
+    }
+  }
+}
+
+mutation MarkAllNotificationsAsSeen {
+  markAllNotificationsSeen {
+    success
+  }
+}
+
+mutation MarkAllNotificationsAsRead {
+  markAllNotificationsRead {
+    success
+  }
+}

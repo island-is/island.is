@@ -1,0 +1,105 @@
+query NationalRegistryUser {
+  nationalRegistryPerson {
+    nationalId
+    fullName
+    gender
+    legalResidence
+    birthday
+    birthPlace
+    religion
+    maritalStatus
+    age
+    address {
+      code
+    }
+    citizenship {
+      name
+    }
+    spouse {
+      cohabitant
+      name
+      nationalId
+    }
+  }
+}
+
+query NationalRegistryPerson {
+  nationalRegistryPerson {
+    nationalId
+    name {
+      fullName
+    }
+    spouse {
+      nationalId
+      fullName
+    }
+    childCustody {
+      nationalId
+      fullName
+    }
+    biologicalChildren {
+      nationalId
+      fullName
+    }
+  }
+}
+
+query NationalRegistryBioChild($childNationalId: String) {
+  nationalRegistryPerson {
+    nationalId
+    fullName
+    biologicalChildren(childNationalId: $childNationalId) {
+      details {
+        nationalId
+        fullName
+        baseId
+        housing {
+          address {
+            streetAddress
+          }
+        }
+      }
+    }
+  }
+}
+
+query NationalRegistryChildCustody($childNationalId: String) {
+  nationalRegistryPerson {
+    nationalId
+    fullName
+    childCustody(childNationalId: $childNationalId) {
+      details {
+        nationalId
+        fullName
+        baseId
+        gender
+        religion
+        housing {
+          address {
+            streetAddress
+            postalCode
+            city
+          }
+        }
+        birthplace {
+          location
+        }
+        citizenship {
+          code
+          name
+        }
+      }
+    }
+  }
+}
+
+query NationalRegistrySpouse {
+  nationalRegistryPerson {
+    nationalId
+    spouse {
+      maritalStatus
+      nationalId
+      fullName
+    }
+  }
+}

@@ -1,0 +1,10 @@
+fragment VehicleFragment on VehicleListed {
+  permno
+  regno
+  make
+  colorName
+  modelYear
+  requiresMileageRegistration
+  canRegisterMileage
+  nextMainInspection
+}
