@@ -192,6 +192,10 @@ export const m = defineMessages({
     id: 'service.portal:nothing',
     defaultMessage: 'Hér er ekkert...',
   },
+  inputSearchTerm: {
+    id: 'service.portal:input-search-term',
+    defaultMessage: 'Sláðu inn leitarorð',
+  },
   searchForResults: {
     id: 'service.portal:search-for-results',
     defaultMessage: 'Sláðu inn leitarstreng til að fá niðurstöður.',
