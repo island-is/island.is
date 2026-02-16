@@ -11,7 +11,6 @@ import {
   IntroWrapper,
   m,
   HMS_SLUG,
-  LinkButton,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { contractsMessages as cm } from '../../../lib/messages'
@@ -20,7 +19,6 @@ import { mapStatusTypeToTag } from '../../../utils/mapStatusTypeToTag'
 import { InformationPaths } from '../../../lib/paths'
 import { isDefined } from '@island.is/shared/utils'
 import { useState } from 'react'
-import { getApplicationsBaseUrl } from '@island.is/portals/core'
 import { useNavigate } from 'react-router-dom'
 import { HmsRentalAgreementPropertyType } from '@island.is/api/schema'
 
@@ -45,15 +43,6 @@ const UserContractsOverview = () => {
       serviceProviderSlug={HMS_SLUG}
       serviceProviderTooltip={formatMessage(m.rentalAgreementsTooltip)}
       marginBottom={3}
-      buttonGroup={[
-        <LinkButton
-          key={'register-rental-agreement-button'}
-          to={`${getApplicationsBaseUrl()}/leigusamningur`}
-          text={formatMessage(cm.registerRentalAgreement)}
-          icon="document"
-          variant="utility"
-        />,
-      ]}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (
@@ -102,13 +91,13 @@ const UserContractsOverview = () => {
           <Stack space={2}>
             {data.hmsRentalAgreements.data
               .map((contract) => {
-                const { id, status, contractProperty } = contract
+                const { id, status, property } = contract
                 const address =
-                  contractProperty &&
-                  contractProperty.streetAndHouseNumber &&
-                  contractProperty.municipality &&
-                  contractProperty.postalCode
-                    ? `${contractProperty.streetAndHouseNumber}, ${contractProperty.postalCode} ${contractProperty.municipality}`
+                  property &&
+                  property.streetAndHouseNumber &&
+                  property.municipality &&
+                  property.postalCode
+                    ? `${property.streetAndHouseNumber}, ${property.postalCode} ${property.municipality}`
                     : undefined
 
                 const { message, ...restOfTag } = mapStatusTypeToTag(
@@ -118,13 +107,12 @@ const UserContractsOverview = () => {
                 }
 
                 const subText =
-                  contractProperty?.type ===
-                  HmsRentalAgreementPropertyType.RESIDENTIAL
+                  property?.type === HmsRentalAgreementPropertyType.RESIDENTIAL
                     ? formatMessage(cm.typeResidential)
-                    : contractProperty?.type ===
+                    : property?.type ===
                       HmsRentalAgreementPropertyType.INDIVIDUAL_ROOM
                     ? formatMessage(cm.typeIndividualRoom)
-                    : contractProperty?.type ===
+                    : property?.type ===
                       HmsRentalAgreementPropertyType.NONRESIDENTIAL
                     ? formatMessage(cm.typeNonResidential)
                     : undefined

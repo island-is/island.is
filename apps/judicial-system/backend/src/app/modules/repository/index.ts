@@ -13,6 +13,7 @@ export { EventLog } from './models/eventLog.model'
 export { IndictmentCount } from './models/indictmentCount.model'
 export { IndictmentSubtype } from './models/indictmentSubtype.model'
 export { Institution } from './models/institution.model'
+export { InstitutionContact } from './models/institutionContact.model'
 export { LawyerRegistry } from './models/lawyerRegistry.model'
 export { Notification, Recipient } from './models/notification.model'
 export { Offense } from './models/offense.model'
@@ -31,4 +32,4 @@ export { DefendantEventLogRepositoryService } from './services/defendantEventLog
 export { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 export { VerdictRepositoryService } from './services/verdictRepository.service'
 
-export { UpdateCase } from './types/caseRepository.types'
+export { caseInclude, UpdateCase } from './types/caseRepository.types'

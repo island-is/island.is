@@ -2,9 +2,12 @@ import _uniqBy from 'lodash/uniqBy'
 import PDFDocument from 'pdfkit'
 
 import {
+  capitalize,
   formatDate,
   getRoleTitleFromCaseFileCategory,
+  getWordByGender,
   lowercase,
+  Word,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
@@ -118,6 +121,7 @@ export const createIndictmentCourtRecordPdf = (
   addMediumHeading(doc, `Mál nr. ${theCase.courtCaseNumber}`)
 
   const caseFiles = theCase.caseFiles ?? []
+  const isMultipleDefendants = (theCase.defendants?.length ?? 0) > 1
   let nrOfFiledDocuments = 0
 
   for (const courtSession of theCase.courtSessions ?? []) {
@@ -125,22 +129,21 @@ export const createIndictmentCourtRecordPdf = (
       break
     }
 
+    const startDate = courtSession.startDate ?? nowFactory()
+    const courtDate = capitalize(
+      formatDate(startDate, 'eeee d. MMMM yyyy')?.replace('dagur', 'daginn'),
+    )
+
     addEmptyLines(doc, 2)
     addNormalText(
       doc,
-      `Þann ${formatDate(
-        courtSession.startDate ?? nowFactory(),
-        'PPP',
-      )} heldur ${courtSession.judge?.name ?? 'óþekktur'} ${lowercase(
-        courtSession.judge?.title,
-      )} dómþing ${
+      `${courtDate} heldur ${
+        courtSession.judge?.name ?? 'óþekktur'
+      } ${lowercase(courtSession.judge?.title)} dómþing ${
         courtSession.location ?? 'á óþekktum stað'
       }. Fyrir er tekið mál nr. ${
         theCase.courtCaseNumber ?? 'S-xxxx/yyyy'
-      }. Þinghald hefst kl. ${formatDate(
-        courtSession.startDate ?? nowFactory(),
-        'p',
-      )}.`,
+      }. Þinghald hefst kl. ${formatDate(startDate, 'p')}.`,
     )
 
     if (courtSession.isClosed) {
@@ -166,10 +169,45 @@ export const createIndictmentCourtRecordPdf = (
       doc,
       `Sóknaraðili er ${theCase.prosecutorsOffice?.name ?? 'óþekktur'}.`,
     )
-    addNormalText(
-      doc,
-      `Varnaraðili er ${theCase.defendants?.[0].name ?? 'óþekktur'}.`,
-    )
+
+    if (isMultipleDefendants) {
+      // Check if all defendants have the same gender
+      const allDefendantsSameGender =
+        theCase.defendants?.every(
+          (defendant) => defendant.gender === theCase.defendants?.[0].gender,
+        ) ?? false
+
+      addNormalText(
+        doc,
+        `${
+          capitalize(
+            getWordByGender(
+              Word.AKAERDI,
+              allDefendantsSameGender
+                ? theCase.defendants?.[0].gender
+                : undefined,
+              true,
+            ),
+          ) || 'Ákærðir'
+        } eru ${
+          theCase.defendants
+            ?.map((defendant) => defendant.name)
+            .join(', ')
+            // finds the last comma+space and everything after it and
+            // replaces it with " og " + the last item
+            .replace(/, ([^,]*)$/, ' og $1') ?? 'óþekktir'
+        }.`,
+      )
+    } else {
+      addNormalText(
+        doc,
+        `${
+          capitalize(
+            getWordByGender(Word.AKAERDI, theCase.defendants?.[0].gender),
+          ) || 'Ákærði'
+        } er ${theCase.defendants?.[0].name ?? 'óþekktur'}.`,
+      )
+    }
 
     addEmptyLines(doc)
     addNormalText(doc, 'Mættir eru:', 'Times-Bold')

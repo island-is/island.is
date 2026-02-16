@@ -1,6 +1,7 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
@@ -55,19 +56,27 @@ describe('LimitedAccessCaseController - Update', () => {
     caseFiles,
   } as Case
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let mockCaseRepositoryService: CaseRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
-      messageService,
+      queuedMessages,
+      sequelize,
       caseRepositoryService,
       limitedAccessCaseController,
     } = await createTestingCaseModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockCaseRepositoryService = caseRepositoryService
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
@@ -102,13 +111,15 @@ describe('LimitedAccessCaseController - Update', () => {
     })
 
     it('should update the case', () => {
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
-        defendantStatementDate: date,
-      })
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        { defendantStatementDate: date },
+        { transaction },
+      )
     })
 
     it('should queue messages', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.NOTIFICATION,
           user,

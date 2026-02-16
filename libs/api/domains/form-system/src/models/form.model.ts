@@ -48,6 +48,9 @@ export class Form {
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date
 
+  @Field(() => Boolean, { nullable: true })
+  zendeskInternal?: boolean
+
   @Field(() => String, { nullable: true })
   submissionServiceUrl?: string
 

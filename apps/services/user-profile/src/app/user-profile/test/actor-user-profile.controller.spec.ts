@@ -26,6 +26,7 @@ import { formatPhoneNumber } from '../utils/format-phone-number'
 import { ActorProfile } from '../models/actor-profile.model'
 import { Emails } from '../models/emails.model'
 import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
+import { notificationScopes } from '@island.is/auth/scopes'
 
 const testUserProfileEmail = {
   email: faker.internet.email(),
@@ -107,6 +108,7 @@ describe('GET v2/actor/actor-profile', () => {
             fromNationalId: testUserProfile.nationalId,
             subjectId: null,
             type: 'delegation',
+            customDelegationScopes: null,
           },
         ],
         pageInfo: {
@@ -396,6 +398,7 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
             fromNationalId: testUserProfile.nationalId,
             subjectId: null,
             type: 'delegation',
+            customDelegationScopes: null,
           },
         ],
         pageInfo: {
@@ -816,12 +819,14 @@ describe('GET v2/actor/actor-profiles', () => {
             fromNationalId: testNationalId1,
             subjectId: null,
             type: 'delegation',
+            customDelegationScopes: null,
           },
           {
             toNationalId: testUserProfile.nationalId,
             fromNationalId: testNationalId2,
             subjectId: null,
             type: 'delegation',
+            customDelegationScopes: null,
           },
         ],
         pageInfo: {
@@ -877,7 +882,7 @@ describe('GET v2/actor/actor-profiles', () => {
       delegationsApi.delegationsControllerGetDelegationRecords,
     ).toHaveBeenCalledWith({
       xQueryNationalId: testUserProfile.nationalId,
-      scopes: '@island.is/documents',
+      scopes: notificationScopes.join(','),
       direction: 'incoming',
     })
   })
@@ -925,12 +930,14 @@ describe('GET v2/actor/actor-profiles', () => {
             fromNationalId: testNationalId1,
             subjectId: null,
             type: 'delegation',
+            customDelegationScopes: null,
           },
           {
             toNationalId: testUserProfile.nationalId,
             fromNationalId: testNationalId2,
             subjectId: null,
             type: 'delegation',
+            customDelegationScopes: null,
           },
         ],
         pageInfo: {
@@ -1031,12 +1038,14 @@ describe('GET v2/actor/actor-profiles', () => {
             fromNationalId: testNationalId1,
             subjectId: null,
             type: 'delegation',
+            customDelegationScopes: null,
           },
           {
             toNationalId: testUserProfile.nationalId,
             fromNationalId: testNationalId2,
             subjectId: 'document-123',
             type: 'document-delegation',
+            customDelegationScopes: null,
           },
         ],
         pageInfo: {
@@ -1079,7 +1088,7 @@ describe('GET v2/actor/actor-profiles', () => {
       delegationsApi.delegationsControllerGetDelegationRecords,
     ).toHaveBeenCalledWith({
       xQueryNationalId: testUserProfile.nationalId,
-      scopes: '@island.is/documents',
+      scopes: notificationScopes.join(','),
       direction: 'incoming',
     })
   })
@@ -1169,6 +1178,7 @@ describe('PATCH /v2/actor/actor-profile/email', () => {
             fromNationalId: testUserProfile.nationalId,
             subjectId: null,
             type: 'delegation',
+            customDelegationScopes: null,
           },
         ],
         pageInfo: {
@@ -1370,6 +1380,7 @@ describe('PATCH /v2/actor/actor-profile', () => {
             fromNationalId: testNationalId1,
             subjectId: null,
             type: 'delegation',
+            customDelegationScopes: null,
           },
         ],
         pageInfo: {
@@ -1806,6 +1817,7 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
             fromNationalId: testNationalId1,
             subjectId: null,
             type: 'delegation',
+            customDelegationScopes: null,
           },
         ],
         pageInfo: {
@@ -1870,7 +1882,7 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
       delegationsApi.delegationsControllerGetDelegationRecords,
     ).toHaveBeenCalledWith({
       xQueryNationalId: testUserProfile.nationalId,
-      scopes: '@island.is/documents',
+      scopes: notificationScopes.join(','),
       direction: 'incoming',
     })
   })

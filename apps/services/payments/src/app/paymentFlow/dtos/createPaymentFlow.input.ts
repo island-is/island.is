@@ -20,7 +20,32 @@ import {
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
+
 import { PaymentMethod } from '../../../types'
+
+const ReturnUrlRequired = (validationOptions?: ValidationOptions) => {
+  return function (object: object, propertyName: string) {
+    registerDecorator({
+      name: 'returnUrlRequired',
+      target: (object as { constructor: NewableFunction }).constructor,
+      propertyName: propertyName,
+      options: validationOptions,
+      validator: {
+        validate(value: unknown, args: ValidationArguments) {
+          const obj = args.object as { returnUrl?: string }
+          if (value && !obj.returnUrl) {
+            return false
+          }
+          return true
+        },
+        defaultMessage(args: ValidationArguments) {
+          return `${args.property} can only have a value if returnUrl is also provided.`
+        },
+      },
+    })
+  }
+}
 
 export class ExtraDataItem {
   @IsString()
@@ -69,6 +94,14 @@ export class ChargeInput {
     type: Number,
   })
   price?: number
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    description: 'Reference of the charge',
+    type: String,
+  })
+  reference?: string
 }
 
 export class CreatePaymentFlowInput {
@@ -159,14 +192,14 @@ export class CreatePaymentFlowInput {
     description: 'The url to redirect to on successful payment',
   })
   @IsOptional()
-  @IsUrl()
+  @IsUrl({ require_tld: isRunningOnEnvironment('production') })
   returnUrl?: string
 
   @ApiPropertyOptional({
     description: 'The url to redirect to on cancellation',
   })
   @IsOptional()
-  @IsUrl()
+  @IsUrl({ require_tld: isRunningOnEnvironment('production') })
   cancelUrl?: string
 
   @IsBoolean()
@@ -176,7 +209,7 @@ export class CreatePaymentFlowInput {
       'If true the user will be redirected to the returnUrl after the payment flow has been completed successfully',
     type: Boolean,
   })
-  @ReturnUrlRequired() // See validator below
+  @ReturnUrlRequired() // See validator above
   redirectToReturnUrlOnSuccess?: boolean
 
   @ApiPropertyOptional({
@@ -198,27 +231,4 @@ export class CreatePaymentFlowInput {
     type: String,
   })
   chargeItemSubjectId?: string
-}
-
-function ReturnUrlRequired(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
-    registerDecorator({
-      name: 'returnUrlRequired',
-      target: object.constructor,
-      propertyName: propertyName,
-      options: validationOptions,
-      validator: {
-        validate(value: any, args: ValidationArguments) {
-          const object = args.object as any
-          if (value && !object.returnUrl) {
-            return false
-          }
-          return true
-        },
-        defaultMessage(args: ValidationArguments) {
-          return `${args.property} can only have a value if returnUrl is also provided.`
-        },
-      },
-    })
-  }
 }

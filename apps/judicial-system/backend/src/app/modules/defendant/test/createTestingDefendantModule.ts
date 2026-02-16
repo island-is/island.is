@@ -10,10 +10,15 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { MessageService } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  Message,
+  MessageService,
+} from '@island.is/judicial-system/message'
 
 import { CaseService } from '../../case'
 import { CourtService } from '../../court'
+import { EventLogService } from '../../event-log'
 import {
   CivilClaimant,
   DefendantEventLogRepositoryService,
@@ -33,6 +38,7 @@ jest.mock('../../court/court.service')
 jest.mock('../../case/case.service')
 jest.mock('../../repository/services/defendantRepository.service')
 jest.mock('../../repository/services/defendantEventLogRepository.service')
+jest.mock('../../event-log/eventLog.service')
 
 export const createTestingDefendantModule = async () => {
   const defendantModule = await Test.createTestingModule({
@@ -51,6 +57,7 @@ export const createTestingDefendantModule = async () => {
       CaseService,
       DefendantRepositoryService,
       DefendantEventLogRepositoryService,
+      EventLogService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -119,9 +126,16 @@ export const createTestingDefendantModule = async () => {
     CivilClaimantController,
   )
 
+  const queuedMessages: Message[] = []
+  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
+  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
+    queuedMessages.push(...msgs)
+  })
+
   defendantModule.close()
 
   return {
+    queuedMessages,
     messageService,
     userService,
     courtService,

@@ -1,6 +1,7 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import { CaseNotificationType, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
@@ -20,16 +21,27 @@ describe('DefendantController - Delete', () => {
   const caseId = uuid()
   const defendantId = uuid()
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let mockDefendantRepositoryService: DefendantRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, defendantRepositoryService, defendantController } =
-      await createTestingDefendantModule()
+    const {
+      queuedMessages,
+      sequelize,
+      defendantRepositoryService,
+      defendantController,
+    } = await createTestingDefendantModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockDefendantRepositoryService = defendantRepositoryService
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
     mockDelete.mockRejectedValue(new Error('Some error'))
@@ -66,9 +78,10 @@ describe('DefendantController - Delete', () => {
       expect(mockDefendantRepositoryService.delete).toHaveBeenCalledWith(
         caseId,
         defendantId,
+        { transaction },
       )
       expect(then.result).toEqual({ deleted: true })
-      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 
@@ -81,7 +94,7 @@ describe('DefendantController - Delete', () => {
     })
 
     it('should queue messages', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.NOTIFICATION,
           user,

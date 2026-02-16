@@ -99,6 +99,18 @@ export const healthNavigation: PortalNavigationItem = {
         {
           name: messages.paymentOverview,
           path: HealthPaths.HealthPaymentOverview,
+          children: [
+            {
+              name: messages.paymentOverviewInvoices,
+              path: HealthPaths.HealthPaymentOverviewInvoices,
+              navHide: true,
+            },
+            {
+              name: messages.paymentOverviewTotals,
+              path: HealthPaths.HealthPaymentOverviewTotals,
+              navHide: true,
+            },
+          ],
           navHide: true,
           searchTags: [s.healthPaymentOverview],
         },

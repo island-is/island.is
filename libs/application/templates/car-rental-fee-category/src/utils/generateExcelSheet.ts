@@ -1,29 +1,32 @@
 import XLSX from 'xlsx'
 import { RateCategory } from './constants'
 import { CarMap } from './types'
+import { Locale } from '@island.is/shared/types'
 
 export const generateExcelSheet = (
   vehicleRateMap: CarMap,
   rateToChangeTo: RateCategory,
+  locale: Locale,
 ): {
   filename: string
   base64Content: string
   fileType: string
 } => {
+  const icelandicHeaders = ['Bílnúmer', 'Síðasta staða', 'Núverandi staða']
+  const englishHeaders = ['Vehicle number', 'Last mileage', 'Current mileage']
+  const headers = locale === 'is' ? icelandicHeaders : englishHeaders
   const sheetData = [
-    ['Bílnúmer', 'Tegund', 'Síðasta staða', 'Núverandi staða', 'Gjaldflokkur'],
+    headers,
     ...Object.entries(vehicleRateMap)
       .filter(([_, data]) => data.category !== rateToChangeTo)
-      .map(([permno, data]) => [
-        permno,
-        data.make,
-        data.milage,
-        '',
-        data.category,
-      ]),
+      .map(([permno, data]) => [permno, data.milage, '']),
   ]
 
-  const name = 'bilar.xlsx'
+  const icelandicPrefix = 'skra-bila-a-'
+  const englishPrefix = 'register-cars-to-'
+  const name = `${
+    locale === 'is' ? icelandicPrefix : englishPrefix
+  }${rateToChangeTo.toLowerCase()}.xlsx`
   const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(sheetData)
   const workbook: XLSX.WorkBook = {
     Sheets: { Sheet1: worksheet },

@@ -744,8 +744,11 @@ export const en: TranslatedMessages = {
   'health.overview.paymentDebt': 'Debt',
   'health.overview.therapy': 'Therapy',
   'health.overview.vaccinations': 'Vaccinations',
+  'health.overview.appointments': 'Appointments',
+  'health.overview.questionnaires': 'Questionnaires',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
   'health.overview.medicinePurchase': 'Medicine purchase',
+  'health.overview.medicineDelegation': 'Medicine delegation',
   'health.overview.period': 'Period',
   'health.overview.levelStatus': 'Medicine step',
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
@@ -758,6 +761,30 @@ export const en: TranslatedMessages = {
   'health.overview.dentist': 'Dentist',
   'health.overview.noDentistRegistered': 'No dentist registered',
   'health.overview.prescriptions': 'Prescriptions',
+
+  // health - questionnaires
+  'health.questionnaires.screenTitle': 'Questionnaires',
+  'health.questionnaires.title': 'Questionnaires',
+  'health.questionnaires.description':
+    'Here you can view questionnaires that have been sent to you.',
+  'health.questionnaires.status.answered': 'Answered',
+  'health.questionnaires.status.unanswered': 'Unanswered',
+  'health.questionnaires.status.notAnswered': 'Unanswered',
+  'health.questionnaires.status.draft': 'Draft',
+  'health.questionnaires.status.expired': 'Expired',
+  'health.questionnaires.organization.lsh': 'Landspitali',
+  'health.questionnaires.organization.el': 'Directorate of Health',
+  'health.questionnaires.organization.unknown': 'Unknown',
+  'health.questionnaires.action.answer': 'Answer questionnaire',
+  'health.questionnaires.action.continue-draft': 'Continue',
+  'health.questionnaires.action.view-answer': 'View answers',
+  'health.questionnaires.detail.description':
+    'Here you can find your answers to questionnaires. You can compare your answers.',
+  'health.questionnaires.detail.status': 'Status',
+  'health.questionnaires.detail.institution': 'Institution',
+  'health.questionnaires.detail.sentBy': 'Sent by',
+  'health.questionnaires.detail.sentDate': 'Sent date',
+  'health.questionnaires.detail.notFound': 'Questionnaire not found',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',
@@ -775,6 +802,32 @@ export const en: TranslatedMessages = {
     'If you believe you have data that should appear here, please contact service provider.',
   'health.vaccinations.directorateOfHealth': 'The directorate of Health',
 
+  // health - appointments
+  'health.appointments.screenTitle': 'Appointments',
+  'health.appointments.title': 'Appointments',
+  'health.appointments.description':
+    'Here you can see your appointments in the healthcare system.',
+  'health.appointments.detailTitle': 'Healthcare appointment',
+  'health.appointments.dateAndTime': 'Date and time',
+  'health.appointments.duration': 'Duration',
+  'health.appointments.location': 'Location',
+  'health.appointments.address': 'Address',
+  'health.appointments.practitioners': 'Appointment with: {practitioner}',
+  'health.appointments.appointmentWith': 'Appointment with',
+  'health.appointments.atTime': 'at {time}',
+  'health.appointments.timePrefix': 'at',
+  'health.appointments.instructions': 'Instructions',
+  'health.appointments.openMap': 'Open map',
+  'health.appointments.type': 'Type',
+  'health.appointments.noAppointmentsTitle': 'No appointments',
+  'health.appointments.noAppointmentsText':
+    'You do not have any upcoming appointments.',
+  'health.appointments.errorMessage':
+    'Failed to fetch appointments. Please try again later.',
+  'health.appointments.notFoundMessage':
+    'Appointment not found. It may have been cancelled.',
+  'health.appointments.minutesFormat': '{minutes} minutes',
+
   // health - organ donation
   'health.organDonation': 'Organ Donation',
   'health.organDonation.change': 'Change selection',
@@ -788,6 +841,75 @@ export const en: TranslatedMessages = {
     'No organs can be used for transplantation.',
   'health.organDonation.isDonorWithLimitationsDescription':
     'All organs can be used for transplantation except: {limitations}.',
+
+  // health - medicine delegation
+  'health.medicineDelegation.screenTitle': 'Medicine authorizations',
+  'health.medicineDelegation.title': 'Medicine authorizations',
+  'health.medicineDelegation.description':
+    'Only you can collect your medicines at the pharmacy unless you grant someone a special authorization. Here you can register people who are allowed to collect medicines at the pharmacy on your behalf.',
+  'health.medicineDelegation.readMore': 'Read about medicine authorizations',
+  'health.medicineDelegation.addButton': 'Add authorization',
+  'health.medicineDelegation.emptyTitle': 'No authorizations',
+  'health.medicineDelegation.emptyDescription':
+    'There are no registered authorizations.',
+  'health.medicineDelegation.listCaption':
+    'Pick up medicine and view prescription.',
+  'health.medicineDelegation.captionPickup':
+    'Pick up medicine at the pharmacy.',
+  'health.medicineDelegation.captionPickupAndLookup':
+    'Pick up medicine at the pharmacy and view prescriptions.',
+  'health.medicineDelegation.listValidTo': 'Valid until {date}',
+  'health.medicineDelegation.showExpiredPermits': 'Show inactive',
+  'health.medicineDelegation.hideExpiredPermits': 'Hide inactive',
+  'health.medicineDelegation.noActiveTitle': 'No active authorizations',
+  'health.medicineDelegation.noActiveDescription':
+    'You have no active authorizations. You can tap "Show inactive" above to view inactive authorizations.',
+  'health.medicineDelegation.labelExpired': 'Expired',
+  'health.medicineDelegation.detail.delete': 'Delete authorization',
+  'health.medicineDelegation.detail.issuerLabel': 'Issuer',
+  'health.medicineDelegation.detail.issuerValue': 'Icelandic Health Insurance',
+  'health.medicineDelegation.detail.issuedDate': 'Issue date',
+  'health.medicineDelegation.detail.status': 'Status',
+  'health.medicineDelegation.detail.statusActive': 'Active',
+  'health.medicineDelegation.detail.statusExpired': 'Expired',
+  'health.medicineDelegation.detail.validity': 'Validity period',
+  'health.medicineDelegation.detail.validFor': 'Valid for',
+  'health.medicineDelegation.detail.validForValue':
+    'Pick up medicine and view prescription.',
+  'health.medicineDelegation.detail.validForPickup':
+    'Pick up medicine at the pharmacy.',
+  'health.medicineDelegation.detail.validForPickupAndLookup':
+    'Pick up medicine at the pharmacy and view prescriptions.',
+  'health.medicineDelegation.detail.revoke': 'Revoke delegation',
+  'health.medicineDelegation.detail.revokeError':
+    'Failed to revoke medicine authorization. Please try again later.',
+  'health.medicineDelegation.detail.revokePromptTitle':
+    'Do you want to revoke this authorization?',
+  'health.medicineDelegation.detail.revokePromptCancel': 'Cancel',
+  'health.medicineDelegation.detail.revokePromptConfirm': 'Revoke',
+  'health.medicineDelegation.form.title': 'Add medicine authorization',
+  'health.medicineDelegation.form.subtitle':
+    'Choose a person who may collect your medicine at the pharmacy.',
+  'health.medicineDelegation.form.nationalIdLabel': 'National ID',
+  'health.medicineDelegation.form.nameLabel': 'Name',
+  'health.medicineDelegation.form.validityLabel':
+    'How long should the authorization be valid?',
+  'health.medicineDelegation.form.dateFromLabel': 'Date from',
+  'health.medicineDelegation.form.dateToLabel': 'Date to',
+  'health.medicineDelegation.form.dateFromPlaceholder': 'Choose a date from',
+  'health.medicineDelegation.form.dateToPlaceholder': 'Choose a date to',
+  'health.medicineDelegation.form.submit': 'Add authorization',
+  'health.medicineDelegation.form.delegateMedicineDelegationError':
+    'Failed to create medicine authorization. Please try again later.',
+  'health.medicineDelegation.form.nameNotFound':
+    'Could not find a name for this national ID.',
+  'health.medicineDelegation.form.nameError':
+    'An error occurred while fetching the name.',
+  'health.medicineDelegation.form.invalidNationalId': 'Invalid national ID.',
+  'health.medicineDelegation.form.lookupLabel':
+    'The above person may also look up my prescriptions at the pharmacy.',
+  'health.medicineDelegation.form.xYears': '{years} years',
+  'health.medicineDelegation.form.xMonths': '{months} months',
 
   // health - prescriptions & drug certificates
   'health.prescriptionsAndCertificates.screenTitle': 'Medication',

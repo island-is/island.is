@@ -3,18 +3,17 @@ import { useRouter } from 'next/router'
 import {
   Box,
   InfoCardGrid,
-  type NavigationItem,
   Stack,
   TagVariant,
   Text,
 } from '@island.is/island-ui/core'
-import type { Locale } from '@island.is/shared/types'
 import { getThemeConfig, OrganizationWrapper } from '@island.is/web/components'
 import type {
+  ChargeItemCodeByCourseIdItem,
   Course,
   OrganizationPage,
-  Price,
   Query,
+  QueryGetChargeItemCodesByCourseIdArgs,
   QueryGetCourseByIdArgs,
   QueryGetCourseListPageByIdArgs,
   QueryGetNamespaceArgs,
@@ -25,38 +24,16 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { formatCurrency } from '@island.is/web/utils/currency'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import { GET_NAMESPACE_QUERY } from '../../queries'
 import {
+  GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY,
   GET_COURSE_BY_ID_QUERY,
   GET_COURSE_LIST_PAGE_BY_ID_QUERY,
 } from '../../queries/Courses'
-
-const formatPrice = (price: Price, locale: Locale) => {
-  const amount = price?.amount
-  if (typeof amount !== 'number') return ''
-
-  let postfix = 'krónur'
-
-  const amountEndsWithOne = amount % 10 === 1
-  const amountEndsWithEleven = amount % 100 === 11
-
-  if (amountEndsWithOne && !amountEndsWithEleven) {
-    postfix = 'króna'
-  }
-
-  // For other than icelandic locales display 'ISK' as a postfix
-  if (locale !== 'is') {
-    postfix = 'ISK'
-  }
-
-  // Format the amount so it displays dots (Example of a displayed value: 2.700 krónur)
-  const formatter = new Intl.NumberFormat('de-DE')
-
-  const displayedValue = `${formatter.format(amount)} ${postfix}`
-  return displayedValue
-}
+import { getSubpageNavList } from '../SubPage'
 
 type CourseDetailsScreenContext = ScreenContext & {
   organizationPage: OrganizationPage
@@ -78,6 +55,7 @@ export interface CourseDetailsProps {
   organizationPage: OrganizationPage
   namespace: Record<string, string>
   courseListPage: Query['getCourseListPageById']
+  chargeItems: ChargeItemCodeByCourseIdItem[]
 }
 
 const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
@@ -85,28 +63,15 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
   organizationPage,
   namespace,
   courseListPage,
+  chargeItems,
 }) => {
   const router = useRouter()
-  const pathWithoutQueryParams = router.asPath.split('?')[0]
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const { activeLocale } = useI18n()
   const { format } = useDateUtils()
 
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
-    ({ primaryLink, childrenLinks }) => ({
-      title: primaryLink?.text ?? '',
-      href: primaryLink?.url ?? '',
-      active:
-        primaryLink?.url === pathWithoutQueryParams ||
-        childrenLinks.some((link) => link.url === pathWithoutQueryParams),
-      items: childrenLinks.map(({ text, url }) => ({
-        title: text,
-        href: url,
-        active: url === pathWithoutQueryParams,
-      })),
-    }),
-  )
+  const chargeItemMap = new Map(chargeItems.map((item) => [item.code, item]))
 
   return (
     <OrganizationWrapper
@@ -114,7 +79,11 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
       pageTitle={course.title}
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
-        items: navList,
+        items: getSubpageNavList(
+          organizationPage,
+          router,
+          activeLocale === 'is' ? 3 : 4,
+        ),
       }}
       showReadSpeaker={false}
       breadcrumbItems={[
@@ -147,7 +116,9 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
             <Text variant="h2" as="h2">
               {n(
                 'courseInstancesLabel',
-                activeLocale === 'is' ? 'Næstu námskeið' : 'Upcoming courses',
+                activeLocale === 'is'
+                  ? 'Skráning á næstu námskeið'
+                  : 'Registration for upcoming courses',
               )}
             </Text>
             <InfoCardGrid
@@ -191,13 +162,27 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                   })
                 }
 
-                const tags: { label: string; variant: TagVariant }[] = []
-                if (instance.price?.amount && instance.price.amount > 0) {
-                  tags.push({
-                    label: formatPrice(instance.price, activeLocale),
-                    variant: 'dark',
-                  })
+                if (instance.chargeItemCode) {
+                  const chargeItem = chargeItemMap.get(instance.chargeItemCode)
+                  if (chargeItem) {
+                    const priceLabel =
+                      chargeItem.priceAmount > 0
+                        ? `${n(
+                            'courseInstancePricePrefix',
+                            activeLocale === 'is' ? 'Verð' : 'Price',
+                          )}: ${formatCurrency(chargeItem.priceAmount)}`
+                        : n(
+                            'courseInstanceFreeLabel',
+                            activeLocale === 'is' ? 'Ókeypis' : 'Free',
+                          )
+                    detailLines.push({
+                      icon: 'wallet',
+                      text: priceLabel,
+                    })
+                  }
                 }
+
+                const tags: { label: string; variant: TagVariant }[] = []
 
                 const title = instance.displayedTitle?.trim() || course.title
 
@@ -247,6 +232,7 @@ CourseDetails.getProps = async ({
       data: { getCourseById },
     },
     courseListPage,
+    chargeItemsResponse,
   ] = await Promise.all([
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
@@ -281,6 +267,16 @@ CourseDetails.getProps = async ({
         },
       },
     }),
+    apolloClient
+      .query<Query, QueryGetChargeItemCodesByCourseIdArgs>({
+        query: GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY,
+        variables: {
+          input: {
+            courseId,
+          },
+        },
+      })
+      .catch(() => null),
   ])
 
   if (!getCourseById?.course) {
@@ -302,6 +298,8 @@ CourseDetails.getProps = async ({
     course: getCourseById.course,
     namespace,
     courseListPage: courseListPage.data?.getCourseListPageById,
+    chargeItems:
+      chargeItemsResponse?.data?.getChargeItemCodesByCourseId?.items ?? [],
     languageToggleHrefOverride: {
       is: getCourseById.activeLocales?.is ? languageToggleHrefOverride?.is : '',
       en: getCourseById.activeLocales?.en ? languageToggleHrefOverride?.en : '',

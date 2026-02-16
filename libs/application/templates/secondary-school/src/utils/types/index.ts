@@ -1,3 +1,11 @@
+export type ApplicationPeriod = {
+  allowFreshmanApplication: boolean
+  registrationEndDateGeneral: Date
+  registrationEndDateFreshman: Date
+  reviewStartDateGeneral: Date
+  reviewStartDateFreshman: Date
+}
+
 export type Student = {
   isFreshman: boolean
 }

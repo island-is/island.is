@@ -198,7 +198,7 @@ export const getPayloadFromMd = ({
   }
 }
 
-export function mapToCardErrorCode(originalCode: string): CardErrorCode {
+export const mapToCardErrorCode = (originalCode: string): CardErrorCode => {
   // Only the first two characters are used to map the error code
   const firstTwoCharacters = originalCode?.slice(0, 2)
 

@@ -155,7 +155,7 @@ const appSystemForm = appSystemFormSetup()
 const web = webSetup({ api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
-const contentfulApps = contentfulAppsSetup()
+const contentfulApps = contentfulAppsSetup({ api })
 const consultationPortal = consultationPortalSetup({ api })
 
 const xroadCollector = xroadCollectorSetup()
@@ -327,14 +327,13 @@ export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 
 // Services that are included in some environment above but should be excluded from feature deployments
 export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
-  userNotificationService,
-  userNotificationWorkerService,
-  userNotificationCleanupWorkerService,
-  userNotificationBirthdayWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
   githubActionsCache,
   xroadCollector,
   nameRegistryBackend,
+  cmsImporter,
+  cmsImporterEnergyGrantImport,
+  cmsImporterFsreBuildingsImport,
 ]

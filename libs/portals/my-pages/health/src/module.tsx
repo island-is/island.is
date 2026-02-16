@@ -72,6 +72,9 @@ const PaymentParticipation = lazy(() =>
 const PaymentOverview = lazy(() =>
   import('./screens/PaymentsAndRights/PaymentOverview'),
 )
+const PaymentOverviewTotals = lazy(() =>
+  import('./screens/PaymentsAndRights/PaymentOverviewTotals'),
+)
 
 const Rights = lazy(() => import('./screens/PaymentsAndRights/Rights'))
 
@@ -227,6 +230,20 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthPaymentOverview,
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <PaymentOverview />,
+    },
+    {
+      name: hm.paymentOverview,
+      path: HealthPaths.HealthPaymentOverviewInvoices,
+      enabled: userInfo.scopes.includes(ApiScope.healthPayments),
+      element: <PaymentOverview />,
+      key: 'HealthPaymentOverviewTotal',
+    },
+    {
+      name: hm.paymentOverviewTotals,
+      path: HealthPaths.HealthPaymentOverviewTotals,
+      enabled: userInfo.scopes.includes(ApiScope.healthPayments),
+      element: <PaymentOverviewTotals />,
+      key: 'HealthPaymentOverviewTotal',
     },
     {
       name: hm.rights,

@@ -104,9 +104,20 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       return
     }
     try {
-      await submitApplication({
+      const { data } = await submitApplication({
         variables: { input: { id: state.application.id } },
       })
+      if (!data?.submitFormSystemApplication?.success) {
+        dispatch({
+          type: 'SUBMITTED',
+          payload: {
+            submitted: false,
+            screenErrors:
+              data?.submitFormSystemApplication?.screenErrorMessages,
+          },
+        })
+        return
+      }
       dispatch({
         type: 'INCREMENT',
         payload: {
@@ -115,9 +126,26 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           updateDependencies: updateDependencies,
         },
       })
-      dispatch({ type: 'SUBMITTED', payload: true })
+      dispatch({
+        type: 'SUBMITTED',
+        payload: { submitted: true, screenErrors: [] },
+      })
     } catch {
-      dispatch({ type: 'SUBMITTED', payload: false })
+      dispatch({
+        type: 'SUBMITTED',
+        payload: {
+          submitted: false,
+          screenErrors: [
+            {
+              title: { is: 'Villa við innsendingu', en: 'Error submitting' },
+              message: {
+                is: 'Ekki tókst að senda inn umsóknina, reyndu aftur síðar eða sendu póst á island@island.is',
+                en: 'The application could not be submitted. Please try again later or send an email to island@island.is',
+              },
+            },
+          ],
+        },
+      })
     }
   }
 

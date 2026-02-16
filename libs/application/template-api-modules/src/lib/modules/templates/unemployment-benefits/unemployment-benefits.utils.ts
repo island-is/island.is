@@ -257,7 +257,7 @@ export const getJobCareer = (
   const currentJobCareer =
     employmentHistory?.currentJobs?.map((job, index) => {
       let workHours
-      if (currentJob && currentJob.length > 0) {
+      if (currentJob && currentJob.length > index) {
         workHours = getValueViaPath<string>(currentJob[index], 'workHours', '')
       }
       const employerSSN =

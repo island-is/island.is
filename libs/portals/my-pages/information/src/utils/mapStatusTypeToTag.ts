@@ -9,52 +9,47 @@ export const mapStatusTypeToTag = (
   | Omit<ActionCardProps['tag'] & { message: MessageDescriptor }, 'label'>
   | undefined => {
   switch (status) {
-    case HmsRentalAgreementStatusType.CANCELLATION_REQUESTED:
+    case HmsRentalAgreementStatusType.VALID:
       return {
-        message: m.inProgress,
-        variant: 'blue',
+        message: m.active,
+        variant: 'mint',
         outlined: true,
       }
     case HmsRentalAgreementStatusType.CANCELLED:
       return {
         message: m.cancelled,
-        variant: 'purple',
+        variant: 'red',
         outlined: true,
       }
     case HmsRentalAgreementStatusType.EXPIRED:
       return {
         message: m.expired,
-        variant: 'purple',
+        variant: 'red',
         outlined: true,
       }
     case HmsRentalAgreementStatusType.INVALID:
       return {
-        message: m.cancelled,
-        variant: 'purple',
-        outlined: true,
-      }
-    case HmsRentalAgreementStatusType.PENDING_CANCELLATION:
-      return {
-        message: m.pendingCancellation,
-        variant: 'yellow',
-        outlined: true,
-      }
-    case HmsRentalAgreementStatusType.PENDING_TERMINATION:
-      return {
-        message: m.pendingTermination,
-        variant: 'yellow',
+        message: m.invalid,
+        variant: 'red',
         outlined: true,
       }
     case HmsRentalAgreementStatusType.TERMINATED:
       return {
         message: m.terminated,
+        variant: 'red',
+        outlined: true,
+      }
+    case HmsRentalAgreementStatusType.CANCELLATION_REQUESTED:
+    case HmsRentalAgreementStatusType.PENDING_CANCELLATION:
+      return {
+        message: m.pendingCancellation,
         variant: 'purple',
         outlined: true,
       }
-    case HmsRentalAgreementStatusType.VALID:
+    case HmsRentalAgreementStatusType.PENDING_TERMINATION:
       return {
-        message: m.active,
-        variant: 'mint',
+        message: m.pendingTermination,
+        variant: 'purple',
         outlined: true,
       }
   }
