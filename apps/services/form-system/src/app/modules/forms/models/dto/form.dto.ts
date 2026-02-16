@@ -48,9 +48,6 @@ export class FormDto {
   submissionServiceUrl!: string
 
   @ApiProperty()
-  validationServiceUrl!: string
-
-  @ApiProperty()
   hasPayment!: boolean
 
   @ApiProperty()

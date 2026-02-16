@@ -51,11 +51,6 @@ export class UpdateFormDto {
   @ApiPropertyOptional()
   submissionServiceUrl?: string
 
-  @IsString()
-  @IsOptional()
-  @ApiPropertyOptional()
-  validationServiceUrl?: string
-
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()

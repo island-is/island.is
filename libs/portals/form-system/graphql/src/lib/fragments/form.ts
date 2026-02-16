@@ -26,7 +26,6 @@ export const FormFragment = gql`
     modified
     zendeskInternal
     submissionServiceUrl
-    validationServiceUrl
     isTranslated
     hasPayment
     beenPublished

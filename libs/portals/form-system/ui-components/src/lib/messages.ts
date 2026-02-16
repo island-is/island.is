@@ -397,13 +397,8 @@ export const m = defineMessages({
   },
   submitUrls: {
     id: 'form.system:submitUrls',
-    defaultMessage: 'Innsendingarslóðir',
-    description: 'Submission URLs',
-  },
-  validationUrls: {
-    id: 'form.system:validationUrls',
-    defaultMessage: 'Reglukerfi',
-    description: 'Validation URLs',
+    defaultMessage: 'Veldu slóð',
+    description: 'Choose URL',
   },
   permissions: {
     id: 'form.system:permissions',

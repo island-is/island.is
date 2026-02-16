@@ -82,6 +82,4 @@ export class ApplicationDto {
 
   @ApiPropertyOptional()
   submissionServiceUrl?: string
-
-  validationServiceUrl?: string
 }

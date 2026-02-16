@@ -47,7 +47,6 @@ export const updateFormFn = async (
             hasPayment: newForm.hasPayment,
             zendeskInternal: newForm.zendeskInternal,
             submissionServiceUrl: newForm.submissionServiceUrl,
-            validationServiceUrl: newForm.validationServiceUrl,
             hasSummaryScreen: newForm.hasSummaryScreen,
             completedSectionInfo: {
               title: {

@@ -33,7 +33,7 @@ export const SubmissionUrls = () => {
   return (
     <Stack space={2}>
       {!showInput && !submissionUrlInput && (
-        <Box marginTop={4}>
+        <Box marginTop={7}>
           <Button onClick={() => setShowInput(true)} variant="ghost">
             {formatMessage(m.addFormUrl)}
           </Button>
@@ -41,11 +41,7 @@ export const SubmissionUrls = () => {
       )}
 
       {(showInput || submissionUrlInput) && (
-        <Box marginTop={4}>
-          <Text variant="eyebrow">
-            Athugið að á meðan við vinnum að tengingum við ytri kerfi er
-            einungis í boði að nota tengingar við Zendesk
-          </Text>
+        <Box marginTop={7}>
           <Input
             label={formatMessage(m.newFormUrlButton)}
             placeholder="IS/..."

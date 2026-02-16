@@ -89,13 +89,6 @@ export class Form extends Model<Form> {
   submissionServiceUrl!: string
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    defaultValue: '',
-  })
-  validationServiceUrl!: string
-
-  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,

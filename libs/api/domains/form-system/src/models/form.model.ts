@@ -54,9 +54,6 @@ export class Form {
   @Field(() => String, { nullable: true })
   submissionServiceUrl?: string
 
-  @Field(() => String, { nullable: true })
-  validationServiceUrl?: string
-
   @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
 
