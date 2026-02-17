@@ -857,7 +857,7 @@ export class FormsService {
     await this.screenModel.create({
       sectionId: inputSection.id,
       displayOrder: 0,
-      name: { is: 'innsláttarsíða 1', en: 'Input screen 1' },
+      name: { is: 'innsláttarskjár 1', en: 'Input screen 1' },
     } as Screen)
   }
 
