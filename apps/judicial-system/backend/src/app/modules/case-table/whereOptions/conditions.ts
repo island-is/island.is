@@ -84,12 +84,6 @@ export const buildHasDefendantWithNullReviewDecisionCondition = (
     )
   `)
 
-/**
- * Cases that have at least one defendant sent to prison admin who is NOT
- * registered. Uses defendant.is_registered_in_prison_system with fallback to
- * case.is_registered_in_prison_system for backward compatibility.
- * Uses scalar subquery for case-level fallback to avoid outer alias dependency.
- */
 export const buildHasDefendantSentToPrisonAdminNotRegisteredCondition = () =>
   Sequelize.literal(`
     EXISTS (
@@ -98,9 +92,7 @@ export const buildHasDefendantSentToPrisonAdminNotRegisteredCondition = () =>
       INNER JOIN "case" c ON c.id = d.case_id
       WHERE d.case_id = "Case".id
         AND d.is_sent_to_prison_admin = true
-        AND d.indictment_review_decision = '${
-          IndictmentCaseReviewDecision.ACCEPT
-        }'
+        AND d.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
         AND (
           d.is_registered_in_prison_system IS NOT TRUE
           OR (
@@ -111,12 +103,6 @@ export const buildHasDefendantSentToPrisonAdminNotRegisteredCondition = () =>
     )
   `)
 
-/**
- * Cases that have at least one defendant sent to prison admin who IS
- * registered. Uses defendant.is_registered_in_prison_system with fallback to
- * case.is_registered_in_prison_system for backward compatibility.
- * Uses INNER JOIN on case to avoid outer alias dependency.
- */
 export const buildHasDefendantSentToPrisonAdminRegisteredCondition = () =>
   Sequelize.literal(`
     EXISTS (
@@ -125,9 +111,7 @@ export const buildHasDefendantSentToPrisonAdminRegisteredCondition = () =>
       INNER JOIN "case" c ON c.id = d.case_id
       WHERE d.case_id = "Case".id
         AND d.is_sent_to_prison_admin = true
-        AND d.indictment_review_decision = '${
-          IndictmentCaseReviewDecision.ACCEPT
-        }'
+        AND d.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
         AND (
           d.is_registered_in_prison_system = true
           OR (

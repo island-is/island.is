@@ -1,15 +1,7 @@
 import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  Box,
-  Button,
-  Icon,
-  Option,
-  Select,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Option, Text, toast } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -19,12 +11,9 @@ import {
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
-  BlueBox,
   Conclusion,
-  ContextMenu,
   FormContentContainer,
   FormContext,
-  IconButton,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
@@ -51,17 +40,7 @@ import {
   useFileList,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-const PUNISHMENT_TYPE_OPTIONS: Option<PunishmentType>[] = [
-  { label: 'Óskilorðsbundið', value: PunishmentType.IMPRISONMENT },
-  { label: 'Skilorðsbundið', value: PunishmentType.PROBATION },
-  { label: 'Sekt', value: PunishmentType.FINE },
-  {
-    label: 'Viðurlagaákvörðun',
-    value: PunishmentType.INDICTMENT_RULING_DECISION_FINE,
-  },
-  { label: 'Áritað sektarboð', value: PunishmentType.SIGNED_FINE_INVITATION },
-  { label: 'Annað', value: PunishmentType.OTHER },
-]
+import { DefendantPrisonAdminCard } from './DefendantPrisonAdminCard'
 
 const getDefendantExplanation = (defendant: Defendant): string => {
   if (
@@ -118,7 +97,10 @@ const IndictmentOverview = () => {
     ? CaseFileCategory.RULING
     : CaseFileCategory.COURT_RECORD
 
+  // We show a court record pdf button if the case does not have a ruling
+  // and it should have court sessions (not an uploaded court record)
   const showGeneratedCourtRecord = !hasRuling && workingCase.withCourtSessions
+  // We disable the court record pdf button if the court record pdf does not exist (should not happen)
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
     workingCase.indictmentRulingDecision,
@@ -226,104 +208,13 @@ const IndictmentOverview = () => {
             )
           }
 
-          const isRegistered = defendant.isRegisteredInPrisonSystem === true
-          const selectedPunishment = PUNISHMENT_TYPE_OPTIONS.find(
-            (o) => o.value === defendant.punishmentType,
-          )
-
           return (
-            <Box key={defendant.id} marginBottom={3}>
-              <BlueBox>
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                  marginBottom={2}
-                >
-                  <Box display="flex" alignItems="center" columnGap={1}>
-                    <Text variant="h4" as="h4">
-                      {defendant.name}
-                    </Text>
-                    {isRegistered && (
-                      <Icon icon="checkmark" color="blue400" size="medium" />
-                    )}
-                  </Box>
-                  <ContextMenu
-                    items={[
-                      isRegistered
-                        ? {
-                            title: 'Afskrá dóm',
-                            icon: 'close',
-                            onClick: () => handleToggleRegistration(defendant),
-                          }
-                        : {
-                            title: 'Dómur skráður',
-                            icon: 'checkmark',
-                            onClick: () => handleToggleRegistration(defendant),
-                          },
-                    ]}
-                    render={
-                      <IconButton
-                        icon="ellipsisVertical"
-                        colorScheme="transparent"
-                        onClick={(evt) => {
-                          evt.stopPropagation()
-                        }}
-                      />
-                    }
-                  />
-                </Box>
-                <Text variant="eyebrow" marginBottom={1}>
-                  Fullnusta
-                </Text>
-                <Box marginBottom={2}>
-                  {defendant.verdict?.serviceDate && (
-                    <Box display="flex" alignItems="center" marginBottom={1}>
-                      <Text variant="small">
-                        {`\u2022 Dómur birtur ${formatDate(
-                          defendant.verdict.serviceDate,
-                          'PPP',
-                        )}`}
-                      </Text>
-                    </Box>
-                  )}
-                  {defendant.sentToPrisonAdminDate && (
-                    <Box display="flex" alignItems="center" marginBottom={1}>
-                      <Text variant="small">
-                        {`\u2022 Sent til fullnustu ${formatDate(
-                          defendant.sentToPrisonAdminDate,
-                          'PPP',
-                        )}`}
-                      </Text>
-                    </Box>
-                  )}
-                  {defendant.openedByPrisonAdminDate && (
-                    <Box display="flex" alignItems="center" marginBottom={1}>
-                      <Text variant="small">
-                        {`\u2022 Móttekið ${formatDate(
-                          defendant.openedByPrisonAdminDate,
-                          'PPP',
-                        )}`}
-                      </Text>
-                    </Box>
-                  )}
-                </Box>
-                <Select
-                  name={`punishmentType-${defendant.id}`}
-                  label="Refsitegund"
-                  placeholder="Veldu refsitegund"
-                  options={PUNISHMENT_TYPE_OPTIONS}
-                  value={selectedPunishment ?? null}
-                  onChange={(option) =>
-                    handlePunishmentTypeChange(
-                      defendant,
-                      option as Option<PunishmentType> | null,
-                    )
-                  }
-                  size="sm"
-                />
-              </BlueBox>
-            </Box>
+            <DefendantPrisonAdminCard
+              key={defendant.id}
+              defendant={defendant}
+              onToggleRegistration={handleToggleRegistration}
+              onPunishmentTypeChange={handlePunishmentTypeChange}
+            />
           )
         })}
 

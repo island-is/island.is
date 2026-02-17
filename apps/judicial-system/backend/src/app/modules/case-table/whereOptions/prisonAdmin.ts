@@ -1,13 +1,13 @@
 import { fn, Op } from 'sequelize'
 
 import {
-  buildHasDefendantSentToPrisonAdminNotRegisteredCondition,
-  buildHasDefendantSentToPrisonAdminRegisteredCondition,
-} from './conditions'
-import {
   prisonAdminIndictmentsAccessWhereOptions,
   prisonAdminRequestCasesAccessWhereOptions,
 } from './access'
+import {
+  buildHasDefendantSentToPrisonAdminNotRegisteredCondition,
+  buildHasDefendantSentToPrisonAdminRegisteredCondition,
+} from './conditions'
 
 // Prison admin restriction cases
 
@@ -25,7 +25,7 @@ export const prisonAdminRequestCasesDoneWhereOptions = () => ({
   ],
 })
 
-// Prison admin indictments (per-defendant registration with case-level fallback)
+// Prison admin indictments
 
 export const prisonAdminIndictmentsSentToPrisonAdminWhereOptions = () => ({
   [Op.and]: [
