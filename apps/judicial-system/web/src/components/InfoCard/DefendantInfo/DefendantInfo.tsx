@@ -45,6 +45,9 @@ interface DefendantInfoProps {
   displaySentToPrisonAdminDate?: boolean
   defender?: Defender
   displayOpenCaseReference?: boolean
+  isDismissalCase?: boolean
+  isCancellationCase?: boolean
+  isFineCase?: boolean
 }
 
 const ConnectedCasesInfo = ({
@@ -130,6 +133,9 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     displaySentToPrisonAdminDate = true,
     displayOpenCaseReference,
     defender,
+    isDismissalCase,
+    isCancellationCase,
+    isFineCase,
   } = props
   const { formatMessage } = useIntl()
   const hasDefender = defendant.defenderName || defender?.name
@@ -222,7 +228,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           />
         )}
       </div>
-      {defendant.verdict && (
+      {defendant.verdict ? (
         <Tag
           variant={
             defendant.verdict.isDefaultJudgement ? 'purple' : 'darkerBlue'
@@ -232,7 +238,19 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         >
           {defendant.verdict.isDefaultJudgement ? 'Útivistardómur' : 'Dómur'}
         </Tag>
-      )}
+      ) : isDismissalCase ? (
+        <Tag variant="blue" outlined disabled>
+          Frávísun
+        </Tag>
+      ) : isCancellationCase ? (
+        <Tag variant="rose" outlined disabled>
+          Niðurfelling
+        </Tag>
+      ) : isFineCase ? (
+        <Tag variant="mint" outlined disabled>
+          Viðurlagaákvörðun
+        </Tag>
+      ) : null}
     </Box>
   )
 }
