@@ -10,12 +10,7 @@ import {
 
 import { createTestingNotificationModule } from '../../createTestingNotificationModule'
 
-import {
-  Case,
-  Defendant,
-  InstitutionContact,
-  Notification,
-} from '../../../../repository'
+import { Case, Defendant, Notification } from '../../../../repository'
 import { DefendantNotificationDto } from '../../../dto/defendantNotification.dto'
 import { DeliverResponse } from '../../../models/deliver.response'
 

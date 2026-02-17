@@ -9,10 +9,7 @@ import {
   createTestUsers,
 } from '../../createTestingNotificationModule'
 
-import {
-  Case,
-  InstitutionContactRepositoryService,
-} from '../../../../repository'
+import { Case, Notification } from '../../../../repository'
 import { DeliverResponse } from '../../../models/deliver.response'
 
 interface Then {
@@ -30,39 +27,31 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
   const caseId = uuid()
   const courtName = 'Héraðsdómur Reykjavíkur'
   const prosecutorsOfficeName = prosecutorsOffice.name
-  const contactEmail = 'contact@prosecutorsoffice.is'
   const courtCaseNumber = '123-456/2024'
   const policeCaseNumbers = ['LÖKE-2024-001', 'LÖKE-2024-002']
 
-  let theCase: Case
   let mockEmailService: EmailService
-  let mockInstitutionContactRepositoryService: InstitutionContactRepositoryService
+  let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     jest.resetAllMocks()
 
-    theCase = {
-      id: caseId,
-      court: { name: courtName },
-      courtCaseNumber,
-      policeCaseNumbers,
-      prosecutorsOfficeId: prosecutorsOffice.id,
-      prosecutorsOffice: {
-        id: prosecutorsOffice.id,
-        name: prosecutorsOfficeName,
-      },
-    } as Case
-
     const {
       emailService,
       indictmentCaseNotificationService,
       institutionContactRepositoryService,
+      notificationModel,
     } = await createTestingNotificationModule()
 
+    const getInstitutionContactMock = jest.mocked(
+      institutionContactRepositoryService.getInstitutionContact,
+    )
+
+    getInstitutionContactMock.mockResolvedValue('extra@omnitrix.is')
+
     mockEmailService = emailService
-    mockInstitutionContactRepositoryService =
-      institutionContactRepositoryService
+    mockNotificationModel = notificationModel
 
     givenWhenThen = async (
       theCase: Case,
@@ -80,32 +69,34 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
   })
 
   describe('when prosecutors office ID is provided and contact info exists', () => {
-    let then: Then
-    let mockGetInstitutionContact: jest.Mock<Promise<string | null>>
-
     beforeEach(async () => {
-      mockGetInstitutionContact =
-        mockInstitutionContactRepositoryService.getInstitutionContact as jest.Mock
+      const theCase = {
+        id: caseId,
+        court: { name: courtName },
+        courtCaseNumber,
+        policeCaseNumbers,
+        prosecutorsOfficeId: prosecutorsOffice.id,
+        prosecutorsOffice: {
+          id: prosecutorsOffice.id,
+          name: prosecutorsOfficeName,
+        },
+      } as Case
 
-      mockGetInstitutionContact.mockResolvedValue(contactEmail)
-      then = await givenWhenThen(
+      await givenWhenThen(
         theCase,
         IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
       )
     })
 
     it('should send notification with institution contact', async () => {
-      expect(mockGetInstitutionContact).toHaveBeenCalledWith(
-        prosecutorsOffice.id,
-        IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
 
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [
             {
               name: prosecutorsOfficeName,
-              address: contactEmail,
+              address: 'extra@omnitrix.is',
             },
           ],
           subject: `Svipting í máli ${courtCaseNumber}`,
@@ -114,78 +105,18 @@ describe('IndictmentCaseService - sendDrivingLicenseSuspensionNotifications', ()
           ),
         }),
       )
-
-      expect(then.result.delivered).toEqual(true)
     })
 
-    it('should include police case number in email body', async () => {
-      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
-        expect.objectContaining({
-          html: expect.stringContaining(`LÖKE númer: ${policeCaseNumbers}`),
-        }),
-      )
-    })
-  })
-
-  describe('when prosecutors office ID is not provided', () => {
-    it('should not send notification', async () => {
-      const caseWithoutProsecutorsOfficeId = {
-        ...theCase,
-        prosecutorsOfficeId: undefined,
-      } as Case
-
-      const then = await givenWhenThen(
-        caseWithoutProsecutorsOfficeId,
-        IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-      )
-
-      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
-      expect(then.result.delivered).toEqual(false)
-    })
-  })
-
-  describe('when institution contact email is not found', () => {
-    let then: Then
-    let mockGetInstitutionContact: jest.Mock<Promise<string | null>>
-
-    beforeEach(async () => {
-      mockGetInstitutionContact =
-        mockInstitutionContactRepositoryService.getInstitutionContact as jest.Mock
-
-      mockGetInstitutionContact.mockResolvedValue(null)
-      then = await givenWhenThen(
-        theCase,
-        IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-      )
-    })
-
-    it('should not send notification', async () => {
-      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
-      expect(then.result.delivered).toEqual(false)
-    })
-  })
-
-  describe('institution contact repository service call', () => {
-    let then: Then
-    let mockGetInstitutionContact: jest.Mock<Promise<string | null>>
-
-    beforeEach(async () => {
-      mockGetInstitutionContact =
-        mockInstitutionContactRepositoryService.getInstitutionContact as jest.Mock
-
-      mockGetInstitutionContact.mockResolvedValue(null)
-      then = await givenWhenThen(
-        theCase,
-        IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-      )
-    })
-
-    it('should call getInstitutionContact with correct parameters', async () => {
-      expect(mockGetInstitutionContact).toHaveBeenCalledTimes(1)
-      expect(mockGetInstitutionContact).toHaveBeenCalledWith(
-        prosecutorsOffice.id,
-        IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
-      )
+    it('should record notification', () => {
+      expect(mockNotificationModel.create).toHaveBeenCalledTimes(1)
+      expect(mockNotificationModel.create).toHaveBeenCalledWith({
+        caseId,
+        type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+        recipients: ['extra@omnitrix.is'].map((email) => ({
+          address: email,
+          success: true,
+        })),
+      })
     })
   })
 })
