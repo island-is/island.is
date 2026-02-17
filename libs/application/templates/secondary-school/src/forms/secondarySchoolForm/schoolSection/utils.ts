@@ -167,6 +167,10 @@ export const setOnChangeSchool = (
       key: `selection[${index}].secondProgram.require`,
       value: checkIsFreshman(application.answers),
     },
+    {
+      key: `selection[${index}].thirdLanguage.require`,
+      value: selectedSchool?.requireThirdLanguage,
+    },
     { key: `selection[${index}].requestDormitory`, value: [] }, // clear answer
   ]
 }
@@ -268,7 +272,7 @@ export const setOnChangeFirstProgram = (
   ]
 }
 
-export const getRequiredSecondProgram = (
+export const getRequireSecondProgram = (
   activeField?: Record<string, string>,
 ): boolean => {
   const secondProgramRequire =
@@ -334,7 +338,17 @@ export const setOnChangeSecondProgram = (
   ]
 }
 
-export const getThirdLanguageCondition = (
+export const getRequireThirdLanguage = (
+  activeField?: Record<string, string>,
+): boolean => {
+  const thirdLanguageRequire =
+    (activeField &&
+      getValueViaPath<boolean>(activeField, 'thirdLanguage.require', true)) ||
+    false
+  return thirdLanguageRequire
+}
+
+export const getConditionThirdLanguage = (
   application: Application,
   activeField?: Record<string, string>,
 ): boolean => {
@@ -372,7 +386,7 @@ export const setOnChangeThirdLanguage = (
   ]
 }
 
-export const getNordicLanguageCondition = (
+export const getConditionNordicLanguage = (
   application: Application,
   activeField?: Record<string, string>,
 ): boolean => {
@@ -421,7 +435,7 @@ export const getRequestDormitoryOptions = (): RepeaterOption[] => {
   ]
 }
 
-export const getRequestDormitoryCondition = (
+export const getConditionRequestDormitory = (
   application: Application,
   activeField?: Record<string, string>,
 ): boolean => {
@@ -429,7 +443,7 @@ export const getRequestDormitoryCondition = (
   return schoolInfo?.allowRequestDormitory || false
 }
 
-export const getAlertMessageAddThirdSelectionCondition = (
+export const getAlertMessageConditionAddThirdSelection = (
   answers: FormValue,
 ): boolean => {
   const isFreshman = checkIsFreshman(answers)
@@ -440,7 +454,7 @@ export const getAlertMessageAddThirdSelectionCondition = (
   return isFreshman && !includeThirdSelection
 }
 
-export const getAlertSpecialNeedsProgramCondition = (
+export const getAlertMessageConditionSpecialNeedsProgram = (
   answers: FormValue,
 ): boolean => {
   const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
@@ -455,7 +469,7 @@ export const getAlertSpecialNeedsProgramCondition = (
   )
 }
 
-export const getAlertSpecialNeedsProgramMessage = (
+export const getAlertMessageSpecialNeedsProgram = (
   answers: FormValue,
   lang: Locale,
 ) => {
