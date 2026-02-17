@@ -15,7 +15,7 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
+import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
 import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
 import { CandidateApi, MunicipalCollectionApi } from '../dataProviders'
 
@@ -24,7 +24,7 @@ export const Prerequisites: Form = buildForm({
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: NationalRegistryLogo,
+  logo: NationalElectoralCommissionLogo,
   children: [
     buildSection({
       id: 'intro',

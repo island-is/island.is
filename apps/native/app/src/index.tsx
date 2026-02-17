@@ -1,11 +1,12 @@
-import './utils/intl-polyfill'
 import { Navigation } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
 import { initializeApolloClient } from './graphql/client'
+import { navigateTo } from './lib/deep-linking'
 import { readAuthorizeResult } from './stores/auth-store'
 import { showAppLockOverlay } from './utils/app-lock'
 import { isIos } from './utils/devices'
 import { getDefaultOptions } from './utils/get-default-options'
+import './utils/intl-polyfill'
 import { getAppRoot } from './utils/lifecycle/get-app-root'
 import { handleInitialUrl } from './utils/lifecycle/handle-initial-url'
 import { registerAllComponents } from './utils/lifecycle/setup-components'
@@ -15,7 +16,6 @@ import { setupGlobals } from './utils/lifecycle/setup-globals'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { performanceMetricsAppLaunched } from './utils/performance-metrics'
 import { setupQuickActions } from './utils/quick-actions'
-import { navigateTo } from './lib/deep-linking'
 
 async function startApp() {
   // setup global packages and polyfills

@@ -33,7 +33,9 @@ import {
   applyDativeCaseToCourtName,
   formatDOB,
   getRoleTitleFromCaseFileCategory,
+  getWordByGender,
   lowercase,
+  Word,
 } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
@@ -276,9 +278,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         }
         const dob = formatDOB(defendant.nationalId, defendant.noNationalId, '')
         attendees.push(
-          `\n${defendant.name} ákærði${dob ? ', ' : ''}${dob}, ${
-            defendant.address
-          }`,
+          `\n${defendant.name} ${getWordByGender(
+            Word.AKAERDI,
+            defendant.gender,
+          )}${dob ? ', ' : ''}${dob}, ${defendant.address}`,
         )
       })
     }
@@ -702,9 +705,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     )
   }
 
-  const isLastCourtSession =
-    index >= 1 && index + 1 === workingCase.courtSessions?.length
-  const hasMergedCourtDocuments = courtSession.mergedFiledDocuments?.length
+  const isLastCourtSession = index + 1 === workingCase.courtSessions?.length
 
   useEffect(() => {
     if (isExpanded && !courtSession.isConfirmed) {
@@ -742,10 +743,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
           rowGap={5}
           paddingY={3}
         >
-          {/* Note: Disable the option to delete a court session when it contains merged documents. 
-        Currently we don't have the option to assign merged documents to a dedicated court session, they are automatically assigned
-        to a court session on merge */}
-          {isLastCourtSession && !hasMergedCourtDocuments && (
+          {isLastCourtSession && (
             <Button
               variant="text"
               colorScheme="destructive"

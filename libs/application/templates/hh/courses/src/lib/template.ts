@@ -12,6 +12,7 @@ import {
   HealthCenterApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -33,9 +34,22 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID,
-  name: m.general.applicationTitle,
+  name: (application: Application) => {
+    const courseTitle = getValueViaPath<string>(
+      application.externalData,
+      'hhCoursesSelectedChargeItem.data.courseTitle',
+    )
+    return courseTitle
+      ? {
+          name: m.general.applicationTitleWithCourse,
+          value: courseTitle,
+        }
+      : m.general.applicationTitle
+  },
   codeOwner: CodeOwners.Stefna,
   institution: m.general.institutionName,
+  applicationText: m.general.applicationListTitle,
+  newApplicationButtonLabel: m.general.newApplicationButtonLabel,
   translationNamespaces:
     ApplicationConfigurations[
       ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID

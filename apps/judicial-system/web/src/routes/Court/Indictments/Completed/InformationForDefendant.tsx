@@ -1,17 +1,15 @@
 import React, { useContext } from 'react'
 import { AnimatePresence } from 'motion/react'
 
-import { Box, Checkbox, Text } from '@island.is/island-ui/core'
+import { Box, Checkbox } from '@island.is/island-ui/core'
 import { informationForDefendantMap } from '@island.is/judicial-system/types'
 import {
-  BlueBox,
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
-
-import { grid } from './Completed.css'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 export const InformationForDefendant = ({
   defendant,
@@ -38,14 +36,11 @@ export const InformationForDefendant = ({
       <Box>
         <SectionHeading
           title="Upplýsingagjöf til dómfellda"
-          marginBottom={2}
           heading="h4"
+          description="Vinsamlegast hakið við þau atriði sem upplýsa verður dómfellda um við
+          birtingu dómsins."
         />
-        <Text marginBottom={3}>
-          Vinsamlegast hakið við þau atriði sem upplýsa verður dómfellda um við
-          birtingu dómsins.
-        </Text>
-        <BlueBox className={grid}>
+        <div className={grid({ gap: 2 })}>
           {defendantCheckboxes.map((checkbox) => (
             <Checkbox
               key={`${verdict.id}-${checkbox.value}`}
@@ -77,7 +72,7 @@ export const InformationForDefendant = ({
               }}
             />
           ))}
-        </BlueBox>
+        </div>
       </Box>
     </AnimatePresence>
   )

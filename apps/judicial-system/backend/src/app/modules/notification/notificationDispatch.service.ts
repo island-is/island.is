@@ -6,9 +6,13 @@ import {
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseNotificationType,
   EventNotificationType,
   IndictmentCaseNotificationType,
@@ -17,18 +21,18 @@ import {
   isIndictmentCase,
   NotificationDispatchType,
   prosecutorsOfficeTypes,
+  ServiceRequirement,
   UserDescriptor,
 } from '@island.is/judicial-system/types'
 
 import { InstitutionService } from '../institution'
-import { Case, Institution } from '../repository'
+import { Case } from '../repository'
 import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()
 export class NotificationDispatchService {
   constructor(
     private readonly institutionService: InstitutionService,
-    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -37,17 +41,15 @@ export class NotificationDispatchService {
       prosecutorsOfficeTypes,
     )
 
-    const messages = prosecutorsOffices.map(
-      (prosecutorsOffice: Institution) => ({
+    for (const prosecutorsOffice of prosecutorsOffices) {
+      addMessagesToQueue({
         type: MessageType.INSTITUTION_NOTIFICATION,
         body: {
           type: InstitutionNotificationType.INDICTMENTS_WAITING_FOR_CONFIRMATION,
           prosecutorsOfficeId: prosecutorsOffice.id,
         },
-      }),
-    )
-
-    return this.messageService.sendMessagesToQueue(messages)
+      })
+    }
   }
 
   private async dispatchPublicProsecutorVerdictAppealDeadlineReminderNotification(): Promise<void> {
@@ -55,17 +57,15 @@ export class NotificationDispatchService {
       InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
     ])
 
-    const messages = publicProsecutorOffices.map(
-      (prosecutorsOffice: Institution) => ({
+    for (const prosecutorsOffice of publicProsecutorOffices) {
+      addMessagesToQueue({
         type: MessageType.INSTITUTION_NOTIFICATION,
         body: {
           type: InstitutionNotificationType.PUBLIC_PROSECUTOR_VERDICT_APPEAL_DEADLINE_REMINDER,
           prosecutorsOfficeId: prosecutorsOffice.id,
         },
-      }),
-    )
-
-    return this.messageService.sendMessagesToQueue(messages)
+      })
+    }
   }
 
   async dispatchNotification(
@@ -93,35 +93,45 @@ export class NotificationDispatchService {
     return { delivered: true }
   }
 
-  private criminalRecordFileUpdateMessages(theCase: Case) {
+  private addMessagesForCriminalRecordFileUpdateToQueue(theCase: Case): void {
     const hasCriminalRecordFiles = theCase.caseFiles?.some(
       (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
     )
+
     if (hasCriminalRecordFiles) {
-      return [
-        {
-          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-          caseId: theCase.id,
-          body: {
-            type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
-          },
+      addMessagesToQueue({
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
         },
-      ]
+      })
     }
-    return []
   }
 
-  private async dispatchIndictmentCriminalRecordFileUpdate(
-    theCase: Case,
-  ): Promise<void> {
-    const messages = this.criminalRecordFileUpdateMessages(theCase)
-    return this.messageService.sendMessagesToQueue(messages)
+  private dispatchIndictmentCriminalRecordFileUpdate(theCase: Case): void {
+    this.addMessagesForCriminalRecordFileUpdateToQueue(theCase)
   }
 
-  private async dispatchIndictmentSentToPublicProsecutorNotifications(
+  private dispatchIndictmentSentToPublicProsecutorNotifications(
     theCase: Case,
-  ): Promise<void> {
-    const messages = [
+  ): void {
+    const hasDrivingLicenseSuspension = theCase.defendants?.some(
+      (defendant) => defendant.isDrivingLicenseSuspended,
+    )
+
+    const hasServiceRequirementNotApplicable = theCase.defendants?.some(
+      (defendant) =>
+        defendant.verdicts?.some(
+          (verdict) =>
+            verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE,
+        ),
+    )
+
+    const isFine =
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+
+    addMessagesToQueue(
       {
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
@@ -129,21 +139,29 @@ export class NotificationDispatchService {
           type: IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
         },
       },
-    ]
+      ...(hasDrivingLicenseSuspension &&
+      (isFine || hasServiceRequirementNotApplicable)
+        ? [
+            {
+              type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+              caseId: theCase.id,
+              body: {
+                type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+              },
+            },
+          ]
+        : []),
+    )
 
-    return this.messageService.sendMessagesToQueue([
-      ...messages,
-      ...this.criminalRecordFileUpdateMessages(theCase),
-    ])
+    this.addMessagesForCriminalRecordFileUpdateToQueue(theCase)
   }
 
-  private async dispatchCourtDateNotifications(
+  private dispatchCourtDateNotifications(
     theCase: Case,
     userDescriptor?: UserDescriptor,
-  ): Promise<void> {
-    const messages = []
+  ): void {
     if (isIndictmentCase(theCase.type)) {
-      messages.push({
+      addMessagesToQueue({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
         body: {
@@ -152,7 +170,7 @@ export class NotificationDispatchService {
         },
       })
     } else {
-      messages.push({
+      addMessagesToQueue({
         type: MessageType.NOTIFICATION,
         caseId: theCase.id,
         body: {
@@ -161,8 +179,6 @@ export class NotificationDispatchService {
         },
       })
     }
-
-    return this.messageService.sendMessagesToQueue(messages)
   }
 
   async dispatchEventNotification(
@@ -173,15 +189,13 @@ export class NotificationDispatchService {
     try {
       switch (type) {
         case EventNotificationType.COURT_DATE_SCHEDULED:
-          await this.dispatchCourtDateNotifications(theCase, userDescriptor)
+          this.dispatchCourtDateNotifications(theCase, userDescriptor)
           break
         case EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR:
-          await this.dispatchIndictmentSentToPublicProsecutorNotifications(
-            theCase,
-          )
+          this.dispatchIndictmentSentToPublicProsecutorNotifications(theCase)
           break
         case EventNotificationType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT:
-          await this.dispatchIndictmentCriminalRecordFileUpdate(theCase)
+          this.dispatchIndictmentCriminalRecordFileUpdate(theCase)
           break
         default:
           throw new InternalServerErrorException(
