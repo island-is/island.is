@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "IslandExpoApp",
-    "slug": "island-expo-app",
-    "version": "1.0.0",
-    "orientation": "portrait",
+    "name": "Ísland.is",
+    "slug": "island-app",
+    "version": "1.41.2",
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
-    "scheme": "IslandExpoApp",
-    "userInterfaceStyle": "automatic",
+    "scheme": "is.island.app",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
@@ -15,18 +15,81 @@
     "ios": {
       "googleServicesFile": "./assets/firebase/GoogleService-Info.plist",
       "supportsTablet": true,
-      "bundleIdentifier": "is.island.expoapp"
+      "bundleIdentifier": "is.island.app",
+      "buildNumber": "264",
+      "associatedDomains": [
+        "webcredentials:island.is",
+        "applinks:island.is"
+      ],
+      "entitlements": {
+        "com.apple.security.application-groups": [
+          "group.is.island.app"
+        ],
+        "keychain-access-groups": [
+          "$(AppIdentifierPrefix)is.island.app",
+          "$(AppIdentifierPrefix)is.island.app.dev"
+        ]
+      },
+      "infoPlist": {
+        "CFBundleDevelopmentRegion": "en",
+        "NSCameraUsageDescription": "Used for license scanning capabilities",
+        "NSFaceIDUsageDescription": "Used for unlocking the app",
+        "NSMicrophoneUsageDescription": "Used for license scanning capabilities",
+        "NSPhotoLibraryUsageDescription": "$(PRODUCT_NAME) needs access to your Photo Library to save captured photos and videos.",
+        "UIBackgroundModes": [
+          "fetch",
+          "remote-notification"
+        ],
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSApplicationCategoryType": "public.app-category.lifestyle"
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "C617.1",
+              "0A2A.1",
+              "3B52.1"
+            ]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1",
+              "1C8F.1",
+              "C56D.1"
+            ]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "E174.1",
+              "85F4.1"
+            ]
+          },
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "35F9.1"
+            ]
+          }
+        ]
+      },
+      "appleTeamId": "J3WWZR9JLF"
     },
     "android": {
       "googleServicesFile": "./assets/firebase/google-services.json",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false,
-      "package": "is.island.expoapp"
+      "package": "is.island.app",
+      "versionCode": 264,
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -46,7 +109,8 @@
         "expo-build-properties",
         {
           "ios": {
-            "useFrameworks": "static"
+            "useFrameworks": "static",
+            "buildReactNativeFromSource": true
           }
         }
       ]

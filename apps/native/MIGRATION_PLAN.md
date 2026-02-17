@@ -8,8 +8,21 @@ Island.is Native App (apps/native/app)
 # Questions
 
 - Ætlum við ennþá að styðja við Ísland.dev flavor?
+- Ætlum við að halda uppi Storybook?
 - Eigum við að fara í expo-updates og setja upp OTA updates? Hver yrði kostnaðurinn. Með nýja Hermes V1 er komið bytecode diffing þannig updates verða mun minni og hraðari.
--
+- Virkar mock environment? Að sleppa því minnkar typescript dependency tree um 99%.
+
+-- Work list
+
+Pakkar sem á eftir að uppfæra
+{
+  "@apollo/client": "3.7.7",
+  "apollo3-cache-persist@0.15.0",
+  "compare-versions@6.1.1",
+  "configcat-js@9.5.0",
+  "react-native-markdown-display@7.0.2",
+}
+
 
 ---
 
