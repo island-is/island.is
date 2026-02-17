@@ -1,7 +1,7 @@
+import { ApiPropertyOptional } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
 import { IsArray, IsOptional, ValidateNested } from 'class-validator'
 import { Dependency } from '../../../../dataTypes/dependency.model'
-import { Type } from 'class-transformer'
-import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateApplicationDto {
   @ValidateNested()
@@ -16,4 +16,9 @@ export class UpdateApplicationDto {
   @IsOptional()
   @ApiPropertyOptional({ type: [String] })
   completed?: string[]
+
+  @Type(() => Date)
+  @IsOptional()
+  @ApiPropertyOptional({ type: Date })
+  pruneAt?: Date
 }
