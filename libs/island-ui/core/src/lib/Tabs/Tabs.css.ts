@@ -1,4 +1,5 @@
 import { globalStyle, style } from '@vanilla-extract/css'
+import { recipe } from '@vanilla-extract/recipes'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const centerAbsolute = {
@@ -29,42 +30,148 @@ export const bg = style({
   }),
 })
 
-export const tabList = style({
-  display: 'grid',
-  height: 0,
-  overflow: 'hidden',
-  gridAutoColumns: 'minmax(0, 1fr)',
-  gridAutoFlow: 'column',
-  width: '100%',
-  borderRadius: `${theme.border.radius.large} ${theme.border.radius.large} 0 0`,
-  borderColor: theme.border.color.blue100,
-  borderWidth: theme.border.width.large,
-  background: theme.color.blue100,
-  position: 'relative',
-  zIndex: theme.zIndex.base,
+// ============================================================================
+// Tab List Styles
+// ============================================================================
+
+export const tabList = recipe({
+  base: {
+    height: 0,
+    overflow: 'hidden',
+    background: theme.color.blue100,
+    position: 'relative',
+    zIndex: theme.zIndex.base,
+  },
+  variants: {
+    type: {
+      default: {
+        display: 'grid',
+        gridAutoColumns: 'minmax(0, 1fr)',
+        gridAutoFlow: 'column',
+        width: '100%',
+        borderRadius: `${theme.border.radius.large} ${theme.border.radius.large} 0 0`,
+        borderColor: theme.border.color.blue100,
+        borderWidth: theme.border.width.large,
+      },
+      alternative: {
+        display: 'flex',
+        width: 'fit-content',
+        borderRadius: theme.border.radius.standard,
+        borderColor: theme.border.color.blue100,
+        borderWidth: theme.border.width.large,
+      },
+    },
+    visible: {
+      true: {
+        overflow: 'initial',
+      },
+      false: {
+        display: 'none',
+      },
+    },
+  },
+  compoundVariants: [
+    {
+      variants: { type: 'default', visible: true },
+      style: { height: `${theme.spacing[8]}px` },
+    },
+    {
+      variants: { type: 'alternative', visible: true },
+      style: { height: `${theme.spacing[5]}px` },
+    },
+  ],
 })
 
-export const tabListAlternative = style({
-  display: 'flex',
-  height: 0,
-  overflow: 'hidden',
-  width: 'fit-content',
-  background: theme.color.blue100,
-  borderRadius: theme.border.radius.standard,
-  borderColor: theme.border.color.blue100,
-  borderWidth: theme.border.width.large,
+// ============================================================================
+// Tab Styles (Default Variant)
+// ============================================================================
+
+export const tabDefault = recipe({
+  base: {
+    flexBasis: 0,
+    height: '100%',
+    flexGrow: 1,
+    position: 'relative',
+    fontWeight: theme.typography.light,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottom: `1px solid ${theme.color.white}`,
+    ':focus': {
+      zIndex: 5,
+    },
+  },
+  variants: {
+    state: {
+      selected: {
+        fontWeight: theme.typography.semiBold,
+        color: theme.color.blue400,
+        background: `linear-gradient(180deg, ${theme.color.transparent} 50%, ${theme.color.white} 50%)`,
+        ':hover': {
+          borderBottomColor: theme.color.white,
+        },
+        ':after': {
+          backgroundColor: theme.color.white,
+          position: 'absolute',
+          content: '',
+          height: '50%',
+          width: 'calc(100% + 2px)',
+          top: 0,
+          border: `1px solid ${theme.color.blue200}`,
+          borderBottom: 'none',
+          borderTopRightRadius: 10,
+          borderTopLeftRadius: 10,
+          pointerEvents: 'none',
+        },
+      },
+      notSelected: {
+        color: theme.color.dark400,
+        borderBottomColor: theme.color.blue200,
+        ':hover': {
+          borderBottomColor: theme.color.blue400,
+        },
+      },
+      previousToSelected: {
+        ':hover': {
+          borderBottomColor: theme.color.white,
+        },
+        ':after': {
+          position: 'absolute',
+          content: '',
+          height: 'calc(50% + 1px)',
+          width: '100%',
+          bottom: -1,
+          border: `1px solid ${theme.color.blue200}`,
+          borderTop: 'none',
+          pointerEvents: 'none',
+          zIndex: 3,
+          borderBottomRightRadius: 10,
+          borderLeft: 'none',
+        },
+      },
+      nextToSelected: {
+        ':hover': {
+          borderBottomColor: theme.color.white,
+        },
+        ':after': {
+          position: 'absolute',
+          content: '',
+          height: 'calc(50% + 1px)',
+          width: '100%',
+          bottom: -1,
+          border: `1px solid ${theme.color.blue200}`,
+          borderTop: 'none',
+          pointerEvents: 'none',
+          zIndex: 3,
+          borderBottomLeftRadius: 10,
+          borderRight: 'none',
+        },
+      },
+    },
+  },
 })
 
-export const tabListVisible = style({
-  height: `${theme.spacing[8]}px`,
-  overflow: 'initial',
-})
-
-export const tabListAlternativeVisible = style({
-  overflow: 'initial',
-  height: `${theme.spacing[5]}px`,
-})
-
+// Keep individual class exports for globalStyle selectors that target pseudo-elements
+// These cannot use recipe class names because globalStyle needs direct class references
 export const tab = style({
   flexBasis: 0,
   height: '100%',
@@ -76,21 +183,6 @@ export const tab = style({
   borderBottom: `1px solid ${theme.color.white}`,
   ':focus': {
     zIndex: 5,
-  },
-})
-
-export const tabAlternative = style({
-  border: `${theme.border.radius.standard} solid ${theme.color.transparent}`,
-  borderRadius: `${theme.border.radius.large}`,
-  padding: `${theme.spacing[1]}px ${theme.spacing[3]}px`,
-  margin: '-1px 0',
-  selectors: {
-    '&:first-child': {
-      marginLeft: '-3px',
-    },
-    '&:last-child': {
-      marginRight: '-3px',
-    },
   },
 })
 
@@ -116,12 +208,6 @@ export const tabSelected = style({
   },
 })
 
-export const tabSelectedAlternative = style({
-  border: `1px solid ${theme.color.blue200}`,
-  borderRadius: theme.border.radius.standard,
-  backgroundColor: theme.color.white,
-})
-
 export const tabNotSelected = style({
   color: theme.color.dark400,
   borderBottomColor: theme.color.blue200,
@@ -130,47 +216,20 @@ export const tabNotSelected = style({
   },
 })
 
-export const tabNotSelectedAlternative = style({
-  ':hover': {
-    backgroundColor: 'white',
-    borderColor: theme.color.blue100,
-  },
-})
-
-export const tabNotSelectedAlternativeWithDivider = style({
-  selectors: {
-    '&:not(:last-child):after': {
-      content: '""',
-      position: 'absolute',
-      width: 1,
-      margin: `${theme.spacing[1]}px 0`,
-      backgroundColor: theme.color.blue200,
-      top: 0,
-      bottom: 0,
-      right: `-${theme.spacing.smallGutter}px`,
-      zIndex: theme.zIndex.above,
-    },
-  },
-})
-
-const adjacentTabAfterPseudo = {
-  position: 'absolute',
-  content: '',
-  height: 'calc(50% + 1px)',
-  width: '100%',
-  bottom: -1,
-  border: `1px solid ${theme.color.blue200}`,
-  borderTop: 'none',
-  pointerEvents: 'none',
-  zIndex: 3,
-} as const
-
 export const tabPreviousToSelectedTab = style({
   ':hover': {
     borderBottomColor: theme.color.white,
   },
   ':after': {
-    ...adjacentTabAfterPseudo,
+    position: 'absolute',
+    content: '',
+    height: 'calc(50% + 1px)',
+    width: '100%',
+    bottom: -1,
+    border: `1px solid ${theme.color.blue200}`,
+    borderTop: 'none',
+    pointerEvents: 'none',
+    zIndex: 3,
     borderBottomRightRadius: 10,
     borderLeft: 'none',
   },
@@ -181,11 +240,77 @@ export const tabNextToSelectedTab = style({
     borderBottomColor: theme.color.white,
   },
   ':after': {
-    ...adjacentTabAfterPseudo,
+    position: 'absolute',
+    content: '',
+    height: 'calc(50% + 1px)',
+    width: '100%',
+    bottom: -1,
+    border: `1px solid ${theme.color.blue200}`,
+    borderTop: 'none',
+    pointerEvents: 'none',
+    zIndex: 3,
     borderBottomLeftRadius: 10,
     borderRight: 'none',
   },
 })
+
+// ============================================================================
+// Tab Styles (Alternative Variant)
+// ============================================================================
+
+export const tabAlternative = recipe({
+  base: {
+    border: `${theme.border.radius.standard} solid ${theme.color.transparent}`,
+    borderRadius: `${theme.border.radius.large}`,
+    padding: `${theme.spacing[1]}px ${theme.spacing[3]}px`,
+    margin: '-1px 0',
+    selectors: {
+      '&:first-child': {
+        marginLeft: '-3px',
+      },
+      '&:last-child': {
+        marginRight: '-3px',
+      },
+    },
+  },
+  variants: {
+    state: {
+      selected: {
+        border: `1px solid ${theme.color.blue200}`,
+        borderRadius: theme.border.radius.standard,
+        backgroundColor: theme.color.white,
+      },
+      notSelected: {
+        ':hover': {
+          backgroundColor: 'white',
+          borderColor: theme.color.blue100,
+        },
+      },
+    },
+    showDivider: {
+      true: {
+        selectors: {
+          '&:not(:last-child):after': {
+            content: '""',
+            position: 'absolute',
+            width: 1,
+            margin: `${theme.spacing[1]}px 0`,
+            backgroundColor: theme.color.blue200,
+            top: 0,
+            bottom: 0,
+            right: `-${theme.spacing.smallGutter}px`,
+            zIndex: theme.zIndex.above,
+          },
+        },
+      },
+      false: {},
+    },
+  },
+})
+
+// ============================================================================
+// Utility Styles
+// ============================================================================
 
 export const tabText = style({
   padding: '0 8px',

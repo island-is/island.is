@@ -1,7 +1,6 @@
 import React, { FC, ReactNode, useEffect, useState } from 'react'
-import cn from 'classnames'
 import isNumber from 'lodash/isNumber'
-import { useWindowSize } from 'react-use'
+import { useMeasure } from 'react-use'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 
 import { Colors, theme } from '@island.is/island-ui/theme'
@@ -65,17 +64,14 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
     }
   })
 
-  const { width } = useWindowSize()
-  const [isMobile, setIsMobile] = useState(false)
+  const [containerRef, { width: containerWidth }] = useMeasure<HTMLDivElement>()
 
-  useEffect(() => {
-    const breakpoint =
-      tabs.length < 3 ? theme.breakpoints.md : theme.breakpoints.lg
-    if (width < breakpoint) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width, tabs.length])
+  const breakpoint =
+    tabs.length < 3 ? theme.breakpoints.md : theme.breakpoints.lg
+  const isContainerWideEnough =
+    containerWidth >= breakpoint || containerWidth === 0
+  const showDesktopLayout =
+    tabs.length >= 2 && tabs.length < 7 && isContainerWideEnough
 
   useEffect(() => {
     if (onChangeHandler && tab.currentId && prevCurrentId !== tab.currentId) {
@@ -84,6 +80,22 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab.currentId])
+
+  if (tabs.length === 1) {
+    const singleTabContent = tabs[0].content
+    return (
+      <Box position="relative" ref={containerRef} width="full">
+        <Box background={contentBackground} className={styles.bg} />
+        <Box position="relative" paddingY="none">
+          <TabPanel {...tab} className={styles.tabPanel}>
+            <Box>
+              {Array.isArray(singleTabContent) ? null : singleTabContent}
+            </Box>
+          </TabPanel>
+        </Box>
+      </Box>
+    )
+  }
 
   /**
     Tab value can be either an id or an index.
@@ -112,14 +124,11 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
     return index
   }
 
-  const showDesktopLayout =
-    tabs.length === 2 || (!isMobile && tabs.length > 2 && tabs.length < 7)
-
   return (
-    <Box position="relative">
+    <Box position="relative" ref={containerRef} width="full">
       <Box background={contentBackground} className={styles.bg} />
-      <Box position="relative" paddingY="none">
-        <Box hidden={tabs.length < 2 || showDesktopLayout}>
+      <Box position="relative" paddingY="none" width="full">
+        <Box hidden={tabs.length < 2 || showDesktopLayout} width="full">
           <Select
             size={size}
             name={label}
@@ -143,15 +152,10 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
           {...tab}
           wrap={wrap}
           aria-label={label}
-          className={cn(
-            variant === 'default' ? styles.tabList : styles.tabListAlternative,
-            {
-              [styles.tabListVisible]:
-                showDesktopLayout && variant === 'default',
-              [styles.tabListAlternativeVisible]:
-                showDesktopLayout && variant === 'alternative',
-            },
-          )}
+          className={styles.tabList({
+            type: variant,
+            visible: showDesktopLayout,
+          })}
         >
           {tabs.map(({ label, disabled, id }, index) => {
             const isTabSelected = id
@@ -176,11 +180,9 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
                   justifyContent="center"
                   alignItems="center"
                   aria-label={label}
-                  className={cn(styles.tabAlternative, {
-                    [styles.tabSelectedAlternative]: isTabSelected,
-                    [styles.tabNotSelectedAlternative]: !isTabSelected,
-                    [styles.tabNotSelectedAlternativeWithDivider]:
-                      !isTabSelected && !isPreviousToSelectedTab,
+                  className={styles.tabAlternative({
+                    state: isTabSelected ? 'selected' : 'notSelected',
+                    showDivider: !isTabSelected && !isPreviousToSelectedTab,
                   })}
                 >
                   <Text
@@ -205,14 +207,14 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
                 id={id ?? `${index}`}
                 justifyContent="center"
                 aria-label={label}
-                className={cn(styles.tab, {
-                  [styles.tabSelected]: isTabSelected,
-                  [styles.tabNotSelected]:
-                    !isTabSelected &&
-                    !isPreviousToSelectedTab &&
-                    !isNextToSelectedTab,
-                  [styles.tabPreviousToSelectedTab]: isPreviousToSelectedTab,
-                  [styles.tabNextToSelectedTab]: isNextToSelectedTab,
+                className={styles.tabDefault({
+                  state: isTabSelected
+                    ? 'selected'
+                    : isPreviousToSelectedTab
+                    ? 'previousToSelected'
+                    : isNextToSelectedTab
+                    ? 'nextToSelected'
+                    : 'notSelected',
                 })}
               >
                 <div className={styles.borderElement} />
