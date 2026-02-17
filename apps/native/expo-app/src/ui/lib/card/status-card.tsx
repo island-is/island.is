@@ -5,7 +5,7 @@ import styled, { useTheme } from 'styled-components/native'
 import timeOutlineIcon from '../../assets/card/time-outline.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
-import { useOrganizationsStore } from '../../../new-stores/organizations-store'
+import { useOrganizationsStore } from '../../../stores/organizations-store'
 import { ProgressMeter } from '../progress-meter/progress-meter'
 
 const Host = styled.View`

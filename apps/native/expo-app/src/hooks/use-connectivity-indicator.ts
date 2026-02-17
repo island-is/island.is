@@ -5,7 +5,7 @@ import { Navigation, OptionsTopBar } from 'react-native-navigation'
 import { OptionsTopBarButton } from 'react-native-navigation/lib/src/interfaces/Options'
 
 import { theme } from '../ui'
-import { useOfflineStore } from '../new-stores/offline-store'
+import { useOfflineStore } from '../stores/offline-store'
 import { ButtonRegistry as BR } from '../utils/component-registry'
 import { isDefined } from '../utils/is-defined'
 import { testIDs } from '../utils/test-ids'

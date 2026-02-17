@@ -2,7 +2,9 @@
 import {
   DdRum,
   DdSdkReactNative,
-  DdSdkReactNativeConfiguration,
+  DatadogProviderConfiguration,
+  TrackingConsent,
+  // DdSdkReactNativeConfiguration,
 } from '@datadog/mobile-react-native'
 import messaging from '@react-native-firebase/messaging'
 import { initializePerformance } from '@react-native-firebase/perf'
@@ -72,19 +74,24 @@ if (__DEV__) {
   initializePerformance(app)
 } else {
   // datadog rum config
-  const ddconfig = new DdSdkReactNativeConfiguration(
+  // @todo migration
+  const ddconfig = new DatadogProviderConfiguration(
     getConfig().datadog ?? '',
     'production',
-    '2736367a-a841-492d-adef-6f5a509d6ec2',
-    false, // do not track User interactions (e.g.: Tap on buttons.)
-    true, // track XHR Resources
-    true, // track Errors
+    TrackingConsent.NOT_GRANTED,
+    {
+      site: 'EU',
+      service: 'mobile-app',
+      rumConfiguration: {
+        applicationId: '2736367a-a841-492d-adef-6f5a509d6ec2',
+        trackInteractions: false, // do not track User interactions (e.g.: Tap on buttons.)
+        trackResources: true, // track XHR Resources
+        trackErrors: true, // track Errors
+        sessionSampleRate: 10,
+        nativeCrashReportEnabled: true,
+      }
+    },
   )
-
-  ddconfig.nativeCrashReportEnabled = true
-  ddconfig.site = 'EU'
-  ddconfig.serviceName = 'mobile-app'
-  ddconfig.sessionSamplingRate = 10
 
   // initialize datadog rum
   DdSdkReactNative.initialize(ddconfig)

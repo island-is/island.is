@@ -8,19 +8,16 @@ import {
   revoke,
 } from 'react-native-app-auth'
 import Keychain from 'react-native-keychain'
-import createUse from 'zustand'
-import create, { State } from 'zustand/vanilla'
 import { Navigation } from 'react-native-navigation'
 
 import { bundleId, getConfig } from '../config'
-import { getIntl } from '../contexts/i18n-provider'
+import { getIntl } from '../components/providers/locale-provider'
 import { getApolloClientAsync } from '../graphql/client'
 import { isAndroid } from '../utils/devices'
 import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
-import { clearAllStorages } from './mmkv'
 import { notificationsStore } from './notifications-store'
-import { featureFlagClient } from '../contexts/feature-flag-provider'
+import { featureFlagClient } from '../components/providers/feature-flag-provider'
 import {
   DeletePasskeyDocument,
   DeletePasskeyMutation,
@@ -30,6 +27,7 @@ import { getAppRoot } from '../utils/lifecycle/get-app-root'
 import { deduplicatePromise } from '../utils/deduplicatePromise'
 import type { User } from 'configcat-js'
 import { clearWidgetData } from '../lib/widget-sync'
+import { create, useStore } from 'zustand'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
@@ -48,7 +46,7 @@ type KeychainAuthorizeCredentials = Awaited<
   ReturnType<typeof Keychain.getGenericPassword>
 >
 
-interface AuthStore extends State {
+interface AuthStore {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
   lockScreenActivatedAt?: number
@@ -246,7 +244,8 @@ export const authStore = create<AuthStore>((set, get) => ({
   },
   async logout(skipPasskeyDeletion = false) {
     // Clear all MMKV storages
-    clearAllStorages()
+    // @todo migration
+    // clearAllStorages()
 
     // Clear widgets
     clearWidgetData()
@@ -295,7 +294,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   },
 }))
 
-export const useAuthStore = createUse(authStore)
+export const useAuthStore = <U = AuthStore>(selector?: (state: AuthStore) => U) => useStore(authStore, selector!)
 
 export async function readAuthorizeResult(): Promise<void> {
   const { authorizeResult } = authStore.getState()
@@ -337,7 +336,8 @@ async function readStoredAuthorizeCredentials(): Promise<KeychainAuthorizeCreden
   try {
     return await Keychain.getGenericPassword({
       service: KEYCHAIN_AUTH_KEY,
-      accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+      // authenticationPrompt: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY
+      // accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
     })
   } catch (err) {
     console.log('Unable to read from keystore: ', err)

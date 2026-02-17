@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ActionSheetIOS, DevSettings } from 'react-native'
-import DialogAndroid from 'react-native-dialogs'
+// import DialogAndroid from 'react-native-dialogs'
 import { Navigation } from 'react-native-navigation'
 import { authStore } from '../../stores/auth-store'
 import { clearAllStorages } from '../../stores/mmkv'
@@ -126,16 +126,17 @@ export function setupDevMenu() {
         },
       )
     } else if (isAndroid) {
-      DialogAndroid.showPicker('Ísland Dev Menu', null, {
-        items: objectEntries.map((entry) => ({
-          label: entry[1],
-          id: entry[0],
-        })),
-      }).then(({ selectedItem }) => {
-        if (selectedItem?.id) {
-          handleOption(selectedItem.id)
-        }
-      })
+      // @todo migration
+      // DialogAndroid.showPicker('Ísland Dev Menu', null, {
+      //   items: objectEntries.map((entry) => ({
+      //     label: entry[1],
+      //     id: entry[0],
+      //   })),
+      // }).then(({ selectedItem }) => {
+      //   if (selectedItem?.id) {
+      //     handleOption(selectedItem.id)
+      //   }
+      // })
     }
   })
 }

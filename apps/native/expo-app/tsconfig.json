@@ -3,15 +3,28 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@island.is/shared/problem": [
+        "../../../libs/shared/problem/src/index.ts"
+      ],
+      "@island.is/shared/mocking": [
+        "../../../libs/shared/mocking/src/index.ts"
+      ],
+      "@island.is/shared/types": [
+        "../../../libs/shared/types/src/index.ts"
+      ],
+      "@island.is/application/types": [
+        "../../../libs/application/types/src/lib/ApplicationTypes.ts"
+      ],
     }
   },
+  "exclude": ["node_modules", "**/*.stories.tsx"],
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "styled-components.d.ts",
-    "images.d.ts"
-  ]
+    "src/types/styled-components.d.ts",
+    "src/types/images.d.ts"
+  ],
 }

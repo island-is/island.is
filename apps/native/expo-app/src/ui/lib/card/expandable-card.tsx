@@ -165,7 +165,7 @@ export const ExpandableCard = ({
                     style={{
                       width: 16,
                       height: 16,
-                      tintColor: titleColor ?? theme.color.primary,
+                      tintColor: titleColor ?? theme.color.blue400,
                       marginRight: theme.spacing.smallGutter,
                     }}
                   />

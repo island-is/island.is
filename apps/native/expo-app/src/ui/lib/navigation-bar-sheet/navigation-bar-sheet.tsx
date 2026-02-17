@@ -9,7 +9,7 @@ import {
 import styled, { useTheme } from 'styled-components/native'
 import { LoadingIcon } from '../../../components/nav-loading-spinner/loading-icon'
 import { OfflineIcon } from '../../../components/offline/offline-icon'
-import { useOfflineStore } from '../../../new-stores/offline-store'
+import { useOfflineStore } from '../../../stores/offline-store'
 import closeIcon from '../../assets/icons/close.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'

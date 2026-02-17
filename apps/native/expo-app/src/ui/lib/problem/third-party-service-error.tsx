@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { ProblemTemplate } from './problem-template'
-import { useOrganizationsStore } from '../../../new-stores/organizations-store'
+import { useOrganizationsStore } from '../../../stores/organizations-store'
 
 type ThirdPartyServiceErrorProps = {
   organizationSlug: string

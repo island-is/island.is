@@ -14,10 +14,10 @@ import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
 import { openNativeBrowser } from '../lib/rn-island'
 import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
-import { authStore } from '../new-stores/auth-store'
-import { environmentStore } from '../new-stores/environment-store'
-import { createMMKVStorage } from '../new-stores/mmkv'
-import { offlineStore } from '../new-stores/offline-store'
+import { authStore } from '../stores/auth-store'
+import { environmentStore } from '../stores/environment-store'
+import { createMMKVStorage } from '../stores/mmkv'
+import { offlineStore } from '../stores/offline-store'
 import { MainBottomTabs } from '../utils/component-registry'
 import { getCustomUserAgent } from '../utils/user-agent'
 import { GenericUserLicense } from './types/schema'
@@ -222,7 +222,20 @@ export const getApolloClient = () => {
 export const initializeApolloClient = async () => {
   await persistCache({
     cache,
-    storage: new MMKVStorageWrapper(apolloMMKVStorage),
+    storage: new MMKVStorageWrapper({
+      getItem: async (key) => {
+        const value = await apolloMMKVStorage.getStringAsync(key)
+        return value ?? null
+      },
+      setItem: async (key, value) => {
+        await apolloMMKVStorage.setItem(key, value)
+        return true
+      },
+      removeItem: async (key) => {
+        await apolloMMKVStorage.removeItem(key)
+        return true
+      },
+    }),
   })
 
   apolloClient = new ApolloClient({

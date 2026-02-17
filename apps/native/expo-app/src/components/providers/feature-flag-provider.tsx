@@ -9,9 +9,9 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { environments } from '../config'
-import { useAuthStore } from '../stores/auth-store'
-import { useEnvironmentStore } from '../stores/environment-store'
+import { environments } from '@/config'
+import { useAuthStore } from '@/stores/auth-store'
+import { useEnvironmentStore } from '@/stores/environment-store'
 import { Platform } from 'react-native'
 import DeviceInfo from 'react-native-device-info'
 

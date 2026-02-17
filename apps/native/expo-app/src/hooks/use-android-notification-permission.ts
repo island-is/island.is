@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { PermissionsAndroid } from 'react-native'
-import { usePreferencesStore } from '../new-stores/preferences-store'
+import { usePreferencesStore } from '../stores/preferences-store'
 import { requestAndroidNotificationsPermission } from '../utils/permissions'
 import { androidIsVersion33OrAbove } from '../utils/versions-check'
 import { isAndroid } from '../utils/devices'

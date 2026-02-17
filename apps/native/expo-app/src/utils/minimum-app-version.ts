@@ -1,6 +1,6 @@
 import DeviceInfo from 'react-native-device-info'
 import compareVersions from 'compare-versions'
-import { featureFlagClient } from '../contexts/feature-flag-provider'
+import { featureFlagClient } from '@/components/providers/feature-flag-provider'
 
 export const needsToUpdateAppVersion = async (): Promise<boolean> => {
   const minimumVersionSupported = await featureFlagClient?.getValueAsync(

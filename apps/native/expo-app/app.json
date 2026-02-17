@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "island-app-v3",
-    "slug": "island-app-v3",
+    "name": "IslandExpoApp",
+    "slug": "island-expo-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "islandappv3",
+    "scheme": "IslandExpoApp",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash-icon.png",
@@ -13,10 +13,12 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "googleServicesFile": "./assets/firebase/GoogleService-Info.plist",
       "supportsTablet": true,
-      "bundleIdentifier": "is.island.appv2"
+      "bundleIdentifier": "is.island.expoapp"
     },
     "android": {
+      "googleServicesFile": "./assets/firebase/google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -24,7 +26,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "is.island.appv2"
+      "package": "is.island.expoapp"
     },
     "web": {
       "bundler": "metro",
@@ -32,7 +34,22 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-sharing",
+      "react-native-app-auth",
+      "react-native-spotlight-search",
+      "react-native-vision-camera",
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
+      "@react-native-firebase/perf",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 import { useTranslate } from '../../../hooks/use-translate'
-import { useOfflineStore } from '../../../new-stores/offline-store'
+import { useOfflineStore } from '../../../stores/offline-store'
 import {
   ProblemTemplate,
   ProblemTemplateBaseProps,

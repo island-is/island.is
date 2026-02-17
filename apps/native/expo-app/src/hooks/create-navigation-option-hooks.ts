@@ -6,7 +6,7 @@ import { useNavigation } from 'react-native-navigation-hooks/dist'
 import { DefaultTheme, useTheme } from 'styled-components'
 import { en } from '../messages/en'
 import { is } from '../messages/is'
-import { preferencesStore } from '../new-stores/preferences-store'
+import { preferencesStore } from '../stores/preferences-store'
 import { isAndroid } from '../utils/devices'
 import { getThemeWithPreferences } from '../utils/get-theme-with-preferences'
 
