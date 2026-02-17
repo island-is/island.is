@@ -149,38 +149,36 @@ describe('LimitedAccessDefendantController - Update', () => {
       const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValue(updatedDefendant)
 
-      const mockCreate =
-        mockDefendantEventLogRepositoryService.create as jest.Mock
-      mockCreate.mockResolvedValue({})
+      const mockCreateWithUser =
+        mockDefendantEventLogRepositoryService.createWithUser as jest.Mock
+      mockCreateWithUser.mockResolvedValue(undefined)
     })
 
     it('should mark only the current defendant as opened when punishmentType is set', async () => {
       await givenWhenThen(defendantUpdate, theCase, currentDefendantWithLogs)
 
-      const mockCreate =
-        mockDefendantEventLogRepositoryService.create as jest.Mock
+      const mockCreateWithUser =
+        mockDefendantEventLogRepositoryService.createWithUser as jest.Mock
 
-      expect(mockCreate).toHaveBeenCalledTimes(1)
-      expect(mockCreate).toHaveBeenCalledWith(
-        expect.objectContaining({
-          caseId,
-          defendantId,
-          eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-        }),
-        { transaction },
+      expect(mockCreateWithUser).toHaveBeenCalledTimes(1)
+      expect(mockCreateWithUser).toHaveBeenCalledWith(
+        DefendantEventType.OPENED_BY_PRISON_ADMIN,
+        caseId,
+        defendantId,
+        prisonAdminUser,
+        transaction,
       )
     })
 
     it('should not create OPENED_BY_PRISON_ADMIN when punishmentType is not set', async () => {
-      const mockCreate =
-        mockDefendantEventLogRepositoryService.create as jest.Mock
-      mockCreate.mockClear()
+      const mockCreateWithUser =
+        mockDefendantEventLogRepositoryService.createWithUser as jest.Mock
+      mockCreateWithUser.mockClear()
 
       await givenWhenThen({}, theCase, currentDefendantWithLogs)
 
-      const openedByPrisonAdminCalls = mockCreate.mock.calls.filter(
-        (call) =>
-          call[0]?.eventType === DefendantEventType.OPENED_BY_PRISON_ADMIN,
+      const openedByPrisonAdminCalls = mockCreateWithUser.mock.calls.filter(
+        (call) => call[0] === DefendantEventType.OPENED_BY_PRISON_ADMIN,
       )
       expect(openedByPrisonAdminCalls).toHaveLength(0)
     })
