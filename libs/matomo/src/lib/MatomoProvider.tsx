@@ -24,17 +24,19 @@ export const MatomoProvider = ({ children }: MatomoProviderProps) => {
     console.log('[Matomo] Init effect running')
 
     // Read environment variables
-    const matomoDomain = process.env.NEXT_PUBLIC_MATOMO_DOMAIN
-    const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID
+    let matomoDomain = process.env.MATOMO_DOMAIN
+    let matomoSiteId = process.env.MATOMO_SITE_ID
 
     console.log('[Matomo] Config:', { matomoDomain, matomoSiteId })
 
     // Validate configuration
     if (!matomoDomain || !matomoSiteId) {
       console.warn(
-        'Matomo tracking is not configured properly. Please check the NEXT_PUBLIC_MATOMO_DOMAIN and NEXT_PUBLIC_MATOMO_SITE_ID environment variables.',
+        'Matomo tracking is not configured properly. Please check the MATOMO_DOMAIN and MATOMO_SITE_ID environment variables.',
       )
-      return
+      // Fall back to dev for POC purposes
+      matomoDomain = 'https://matomo-dev.dev01.devland.is'
+      matomoSiteId = '2'
     }
 
     // Prevent double initialization

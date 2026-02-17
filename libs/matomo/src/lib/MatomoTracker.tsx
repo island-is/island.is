@@ -23,14 +23,16 @@ export const MatomoTracker = () => {
   const [scriptSrc, setScriptSrc] = useState<string | null>(null)
 
   useEffect(() => {
-    const matomoDomain = process.env.NEXT_PUBLIC_MATOMO_DOMAIN
-    const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID
+    let matomoDomain = process.env.MATOMO_DOMAIN
+    let matomoSiteId = process.env.MATOMO_SITE_ID
 
     if (!matomoDomain || !matomoSiteId) {
       console.warn(
-        '[Matomo] Tracking is not configured. Check NEXT_PUBLIC_MATOMO_DOMAIN and NEXT_PUBLIC_MATOMO_SITE_ID.',
+        '[Matomo] Tracking is not configured. Check MATOMO_DOMAIN and MATOMO_SITE_ID.',
       )
-      return
+      // Fall back to dev for POC purposes
+      matomoDomain = 'https://matomo-dev.dev01.devland.is'
+      matomoSiteId = '2'
     }
 
     const normalizedDomain = matomoDomain.endsWith('/')
