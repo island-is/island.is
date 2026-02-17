@@ -247,17 +247,16 @@ export class SubpoenaService {
   }
 
   setHash(
-    caseId: string,
-    defendantId: string,
-    subpoenaId: string,
+    subpoena: Subpoena,
     hash: string,
     hashAlgorithm: HashAlgorithm,
     transaction: Transaction,
   ): Promise<Subpoena> {
+    // The subpoena may belong to a split case, so we do not pass in the current case id here
     return this.subpoenaRepositoryService.update(
-      caseId,
-      defendantId,
-      subpoenaId,
+      subpoena.caseId,
+      subpoena.defendantId,
+      subpoena.id,
       { hash, hashAlgorithm },
       { transaction },
     )
@@ -378,7 +377,7 @@ export class SubpoenaService {
     }
 
     // No need to wait for this to finish
-    await this.addMessagesForSubpoenaUpdateToQueue(subpoena, serviceStatus)
+    this.addMessagesForSubpoenaUpdateToQueue(subpoena, serviceStatus)
 
     if (
       update.serviceStatus &&
