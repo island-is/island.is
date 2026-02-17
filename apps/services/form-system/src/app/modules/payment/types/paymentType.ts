@@ -1,13 +1,13 @@
 export interface PaymentType {
   id: string
-  application_id: string
+  applicationId: string
   fulfilled: boolean
-  reference_id: string
+  referenceId: string
   user4: string
   definition: object
   amount: number
-  expires_at: Date
-  request_id?: string
+  expiresAt: Date
+  requestId?: string
 }
 
 export interface BasicChargeItem {

@@ -17,7 +17,7 @@ import { Payment } from './payment.model'
 import { CreateChargeResult } from './types/createChargeResult'
 import { CreatePaymentFlowInputAvailablePaymentMethodsEnum } from './types/paymentEnums'
 import { PaymentStatus } from './types/paymentStatus'
-import { BasicChargeItem, PaymentType } from './types/paymentType'
+import { BasicChargeItem } from './types/paymentType'
 
 @Injectable()
 export class PaymentService {
@@ -145,15 +145,7 @@ export class PaymentService {
     applicationId: string,
     performingOrganizationID: string,
   ): Promise<Payment> {
-    const paymentModel: Pick<
-      PaymentType,
-      | 'application_id'
-      | 'fulfilled'
-      | 'amount'
-      | 'definition'
-      | 'expires_at'
-      | 'request_id'
-    > = {
+    const paymentModel = {
       application_id: applicationId,
       fulfilled: false,
       amount: catalogChargeItems.reduce(
@@ -273,12 +265,16 @@ export class PaymentService {
       )
     } else {
       // payment model already exists so we need to check if a flow was created
-      paymentUrl = JSON.parse(paymentModel.dataValues.definition).paymentUrl
-      if (paymentUrl) {
-        // payment url is set, meaning a flow was created so we can use that
-        return {
-          id: paymentModel.id,
-          paymentUrl,
+      const definition = paymentModel.dataValues.definition
+      if (definition) {
+        paymentUrl = (definition as { paymentUrl?: string })
+          .paymentUrl as string
+        if (paymentUrl) {
+          // payment url is set, meaning a flow was created so we can use that
+          return {
+            id: paymentModel.id,
+            paymentUrl,
+          }
         }
       }
     }
@@ -390,7 +386,7 @@ export class PaymentService {
 
     return this.paymentModel.destroy({
       where: {
-        application_id: applicationId,
+        applicationId: applicationId,
       },
     })
   }

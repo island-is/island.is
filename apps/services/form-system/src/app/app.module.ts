@@ -13,11 +13,12 @@ import { FormsModule } from './modules/forms/forms.module'
 import { ListItemsModule } from './modules/listItems/listItems.module'
 import { OrganizationPermissionsModule } from './modules/organizationPermissions/organizationPermissions.module'
 import { OrganizationsModule } from './modules/organizations/organizations.module'
+import { PaymentModule } from './modules/payment/payment.module'
 import { ScreensModule } from './modules/screens/screens.module'
 import { SectionsModule } from './modules/sections/sections.module'
+import { PruneModule } from './modules/services/prune/prune.module'
 import { ServicesModule } from './modules/services/services.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { PruneModule } from './modules/services/prune/prune.module'
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { PruneModule } from './modules/services/prune/prune.module'
     ServicesModule,
     FileModule,
     PruneModule,
+    PaymentModule,
   ],
 })
 export class AppModule {}
