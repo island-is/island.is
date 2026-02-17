@@ -310,11 +310,18 @@ export class CaseTableService {
         expandCaseWithDefendants(caseItem, getDefendantFilter(type)),
       )
     } else if (isPrisonAdminUser(user)) {
+      const isRegisteredRulingTab =
+        type === CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING
       displayCases = cases.flatMap((caseItem) =>
-        expandCaseWithDefendants(
-          caseItem,
-          (d) => Boolean(d.isSentToPrisonAdmin),
-        ),
+        expandCaseWithDefendants(caseItem, (d) => {
+          if (!d.isSentToPrisonAdmin) return false
+          const effectiveRegistered =
+            d.isRegisteredInPrisonSystem ??
+            caseItem.isRegisteredInPrisonSystem
+          return isRegisteredRulingTab
+            ? Boolean(effectiveRegistered)
+            : !effectiveRegistered
+        }),
       )
     } else {
       displayCases = cases

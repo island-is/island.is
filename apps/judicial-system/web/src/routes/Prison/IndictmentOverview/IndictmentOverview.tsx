@@ -24,6 +24,7 @@ import {
   ContextMenu,
   FormContentContainer,
   FormContext,
+  IconButton,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
@@ -244,12 +245,7 @@ const IndictmentOverview = () => {
                       {defendant.name}
                     </Text>
                     {isRegistered && (
-                      <Icon
-                        icon="checkmarkCircle"
-                        color="blue400"
-                        size="medium"
-                        type="filled"
-                      />
+                      <Icon icon="checkmark" color="blue400" size="medium" />
                     )}
                   </Box>
                   <ContextMenu
@@ -267,16 +263,17 @@ const IndictmentOverview = () => {
                           },
                     ]}
                     render={
-                      <Button
-                        variant="ghost"
-                        size="small"
-                        circle
+                      <IconButton
                         icon="ellipsisVertical"
+                        colorScheme="transparent"
+                        onClick={(evt) => {
+                          evt.stopPropagation()
+                        }}
                       />
                     }
                   />
                 </Box>
-                <Text variant="eyebrow" color="blue400" marginBottom={1}>
+                <Text variant="eyebrow" marginBottom={1}>
                   Fullnusta
                 </Text>
                 <Box marginBottom={2}>
