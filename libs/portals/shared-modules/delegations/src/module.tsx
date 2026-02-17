@@ -8,17 +8,15 @@ import {
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { accessControlLoader } from './screens/AccessControl.loader'
+import { DelegationFormProvider } from './context'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const AccessControlNew = lazy(() => import('./screens/AccessControlNew'))
 const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
 const GrantAccessNew = lazy(() =>
-  import('./screens/GrantAccess/GrantAccessNew'),
+  import('./screens/GrantAccessNew/GrantAccessNew'),
 )
 
-const GrantAccessLayout = lazy(() =>
-  import('./screens/GrantAccessLayout/GrantAccessLayout'),
-)
 const AccessOutgoing = lazy(() =>
   import('./screens/AccessOutgoing/AccessOutgoing'),
 )
@@ -69,20 +67,18 @@ export const delegationsModule: PortalModule = {
         element: <GrantAccess />,
         loader: accessControlLoader('umbod/veita')(props),
       },
+
       {
         name: m.grantAccessNewTitle,
         path: DelegationPaths.DelegationsGrantNew,
         navHide: !hasAccess,
         enabled: hasAccess,
-        element: <GrantAccessLayout />,
+        element: (
+          <DelegationFormProvider>
+            <GrantAccessNew />
+          </DelegationFormProvider>
+        ),
         loader: accessControlLoader('umbod/veita-nytt')(props),
-        children: [
-          {
-            path: '',
-            name: m.grantAccessNewTitle,
-            element: <GrantAccessNew />,
-          },
-        ] as PortalRoute[],
       },
       {
         name: coreMessages.accessControlAccess,

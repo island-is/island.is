@@ -30,6 +30,10 @@ export const AccessRecipients = ({
 
   return (
     <FormProvider {...methods}>
+      <Text variant="h4" marginBottom={4}>
+        {formatMessage(m.stepOneTitle)}
+      </Text>
+
       <Box display="flex" flexDirection="column" rowGap={4}>
         {fields.map((field, index) => (
           <Box key={field.id} display="flex" columnGap={4}>
@@ -73,7 +77,6 @@ export const AccessRecipients = ({
       </Box>
       <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
         {formError && <Problem error={formError} size="small" />}
-        <Text variant="small">{formatMessage(m.grantNextStepDescription)}</Text>
       </Box>
     </FormProvider>
   )

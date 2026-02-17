@@ -131,7 +131,7 @@ export const AccessScopes = () => {
   return (
     <div>
       <Text variant="h4" marginBottom={4}>
-        {formatMessage(m.scopesTableTitle)}
+        {formatMessage(m.stepTwoTitle)}
       </Text>
       <Box display="flex" columnGap={2} marginBottom={4}>
         <div className={styles.input}>

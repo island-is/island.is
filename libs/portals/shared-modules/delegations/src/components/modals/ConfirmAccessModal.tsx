@@ -21,15 +21,14 @@ export const ConfirmAccessModal = ({
   const { identities } = useDelegationForm()
 
   return (
-    // todo: translate
     <Modal
       id="confirm-access-modal"
-      label="Confirm Access" // TODO: Translate
-      title="Staðfesta veitingu á nýju umboði" // TODO: Translate
+      label={formatMessage(coreMessages.codeConfirmation)}
+      title={formatMessage(m.confirmAccessModalTitle)}
       onClose={onClose}
       closeButtonLabel={formatMessage(m.closeModal)}
       isVisible={isVisible}
-      eyebrow="Rafræn umboð" // TODO: Translate
+      eyebrow={formatMessage(coreMessages.digitalDelegations)}
     >
       <Box display="flex" flexDirection="column" rowGap={4}>
         <Box

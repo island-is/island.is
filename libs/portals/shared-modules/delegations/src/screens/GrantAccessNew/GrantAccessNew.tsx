@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { defineMessage } from 'react-intl'
 import { useNavigate, useLoaderData } from 'react-router-dom'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 
@@ -45,7 +45,7 @@ const GrantAccess = () => {
   const steps: FlowStep[] = [
     {
       id: 'access-recipients',
-      name: 'Velja umboðshafa', // TODO: Translate
+      name: formatMessage(m.StepOneLabel),
       content: <AccessRecipients methods={methods} />,
       onContinue: () => {
         setIdentities(watchIdentities)
@@ -58,13 +58,13 @@ const GrantAccess = () => {
     },
     {
       id: 'select-permissions',
-      name: 'Velja réttindi', // TODO: Translate
+      name: formatMessage(m.StepTwoLabel),
       content: <AccessScopes />,
       continueButtonDisabled: selectedScopes.length === 0,
     },
     {
       id: 'select-period',
-      name: 'Velja gildistíma', // TODO: Translate
+      name: formatMessage(m.stepThreeLabel),
       content: <AccessPeriod />,
       onContinue: () => {
         setIsConfirmModalVisible(true)
@@ -80,10 +80,6 @@ const GrantAccess = () => {
         marginBottom={4}
       />
       <div>
-        <Text variant="h4" marginBottom={4}>
-          {formatMessage(m.addPeopleTitle)}
-        </Text>
-
         <FlowStepper
           steps={steps}
           cancelButtonLabel={formatMessage(coreMessages.buttonCancel)}

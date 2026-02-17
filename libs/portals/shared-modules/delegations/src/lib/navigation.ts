@@ -30,16 +30,6 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
         path: DelegationPaths.DelegationsGrantNew,
         navHide: true,
       },
-      {
-        name: m.accessScopes,
-        path: DelegationPaths.DelegationsGrantScopes,
-        navHide: true,
-      },
-      {
-        name: m.accessPeriod,
-        path: DelegationPaths.DelegationsGrantPeriod,
-        navHide: true,
-      },
     ],
   },
   {

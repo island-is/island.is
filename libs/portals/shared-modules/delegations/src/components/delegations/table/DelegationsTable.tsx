@@ -72,7 +72,6 @@ export const DelegationsTable = ({
         <T.Table>
           <T.Head>
             <T.Row>
-              {/* Todo: translate */}
               {headerArray.map((item, i) => (
                 <T.HeadData key={item + i} style={{ paddingInline: 16 }}>
                   <Text variant="medium" fontWeight="semiBold">

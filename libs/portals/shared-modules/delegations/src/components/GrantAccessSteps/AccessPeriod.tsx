@@ -19,7 +19,7 @@ export const AccessPeriod = () => {
   return (
     <Box display="flex" flexDirection="column">
       <Text variant="h4" marginBottom={4}>
-        {formatMessage(m.accessPeriodTitle)}
+        {formatMessage(m.stepThreeTitle)}
       </Text>
       <Box display="flex" flexDirection="column" rowGap={2} marginBottom={4}>
         <RadioButton

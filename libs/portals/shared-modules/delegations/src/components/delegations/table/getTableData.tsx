@@ -15,7 +15,12 @@ export const getLegalGuardianTableData = (
   switchUser: (nationalId: string, targetLink?: string) => void,
   formatMessage: FormatMessage,
 ) => {
-  const headerArray = ['Nafn', 'Tegund umboðs', 'Stofnun', '']
+  const headerArray = [
+    formatMessage(m.headerName),
+    formatMessage(m.headerDelegationType),
+    formatMessage(m.headerDomain),
+    '',
+  ]
   const tableData = data.map((row) => {
     return [
       <IdentityInfo
@@ -53,7 +58,13 @@ export const getProcuringHolderTableData = (
   switchUser: (nationalId: string) => void,
   formatMessage: FormatMessage,
 ) => {
-  const headerArray = ['Nafn', 'Tegund umboðs', 'Dags. skráð', 'Stofnun', '']
+  const headerArray = [
+    formatMessage(m.headerName),
+    formatMessage(m.headerDelegationType),
+    formatMessage(m.headerRegisteredDate),
+    formatMessage(m.headerDomain),
+    '',
+  ]
   const tableData = data.map((row) => {
     return [
       <IdentityInfo
@@ -61,7 +72,7 @@ export const getProcuringHolderTableData = (
         isExpanded={false}
         icon="briefcase"
       />,
-      <Text variant="medium">{formatMessage(m.procurationHolder)}</Text>, // Todo: translate
+      <Text variant="medium">{formatMessage(m.procurationHolder)}</Text>,
       <Text variant="medium">TODO</Text>, // Todo: check if starting date is available
       <Text variant="medium">{formatMessage(m.registry)}</Text>, // Todo: get domain from data
       <Box flexShrink={0}>
@@ -87,7 +98,12 @@ export const getGeneralMandateTableData = (
   switchUser: (nationalId: string) => void,
   formatMessage: FormatMessage,
 ) => {
-  const headerArray = ['Nafn', 'Tegund umboðs', 'Dags. skráð', '']
+  const headerArray = [
+    formatMessage(m.headerName),
+    formatMessage(m.headerDelegationType),
+    formatMessage(m.headerRegisteredDate),
+    '',
+  ]
   const tableData = data.map((row) => {
     return [
       <IdentityInfo
@@ -96,7 +112,7 @@ export const getGeneralMandateTableData = (
       />,
       <Text variant="medium">
         {formatMessage(m.delegationTypeGeneralMandate)}
-      </Text>, // Todo: translate
+      </Text>,
       <Text variant="medium">TODO</Text>, // Todo: check if starting date is available
       <Box flexShrink={0}>
         <Button

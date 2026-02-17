@@ -333,76 +333,37 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:grant-access-new-title',
     defaultMessage: 'Beiðni um nýtt umboð',
   },
-  grantAccessNewIntro: {
-    id: 'sp.access-control-delegations:grant-access-new-intro',
-    defaultMessage:
-      'Hér getur þú, í þremur skrefum, beðið einstaklinga eða fyrirtæki um að veita þér ákvæðið umboð til að skoða vefsvæðum opinberum stofnunum á Ísland.is',
-  },
   stepOneTitle: {
     id: 'sp.access-control-delegations:step-one-title',
-    defaultMessage:
-      '1. Hvaða einstaklingur eða fyrirtæki viltu biðja um umboð?',
+    defaultMessage: 'Hver á að fá umboðið?',
+  },
+  StepOneLabel: {
+    id: 'sp.access-control-delegations:step-one-label',
+    defaultMessage: 'Velja umboðsaðila',
   },
   stepTwoTitle: {
     id: 'sp.access-control-delegations:step-two-title',
-    defaultMessage: '2. Hvaða umboð viltu biðja um?',
+    defaultMessage: 'Hvaða réttindi viltu veita viðkomandi?',
+  },
+  StepTwoLabel: {
+    id: 'sp.access-control-delegations:step-two-label',
+    defaultMessage: 'Velja réttindi',
   },
   stepThreeTitle: {
     id: 'sp.access-control-delegations:step-three-title',
-    defaultMessage: '3. Hversu lengi á afangareint umboð að gilda?',
+    defaultMessage: 'Hversu lengi á umboðið að gilda?',
   },
-  stepTwoIntro: {
-    id: 'sp.access-control-delegations:grant-access-scopes-intro',
-    defaultMessage:
-      'Leita að umboði, nota síur til að þrengja leitina eða velja úr flokkum hér að neðan.',
+  stepThreeLabel: {
+    id: 'sp.access-control-delegations:step-three-label',
+    defaultMessage: 'Velja gildistíma',
+  },
+  confirmAccessModalTitle: {
+    id: 'sp.access-control-delegations:confirm-access-modal-title',
+    defaultMessage: 'Staðfesta veitingu á nýju umboði',
   },
   searchScopesPlaceholder: {
     id: 'sp.access-control-delegations:search-scopes-placeholder',
     defaultMessage: 'Leita að umboði',
-  },
-  clearSearchAndFilters: {
-    id: 'sp.access-control-delegations:clear-search-filters',
-    defaultMessage: 'Hreinsa leit/síu',
-  },
-  filterByTag: {
-    id: 'sp.access-control-delegations:filter-by-tag',
-    defaultMessage: 'Sía:',
-  },
-  scopesSelected: {
-    id: 'sp.access-control-delegations:scopes-selected',
-    defaultMessage: 'umboð valin',
-  },
-  clearSelection: {
-    id: 'sp.access-control-delegations:clear-selection',
-    defaultMessage: 'Hreinsa val',
-  },
-  selectAll: {
-    id: 'sp.access-control-delegations:select-all',
-    defaultMessage: 'Velja allt',
-  },
-  deselectAll: {
-    id: 'sp.access-control-delegations:deselect-all',
-    defaultMessage: 'Afvelja allt',
-  },
-  sendDelegationRequest: {
-    id: 'sp.access-control-delegations:send-delegation-request',
-    defaultMessage: 'Senda beiðni um nýtt umboð',
-  },
-  noScopesMatchFilter: {
-    id: 'sp.access-control-delegations:no-scopes-match-filter',
-    defaultMessage: 'Engin umboð fundust með þessari leit eða síu',
-  },
-  showingResults: {
-    id: 'sp.access-control-delegations:showing-results',
-    defaultMessage: 'Sýni {count} af {total} umboðum',
-  },
-  grantValidityPeriod: {
-    id: 'sp.access-control-delegations:grant-validity-period',
-    defaultMessage: 'Gildistími sem óskað er eftir',
-  },
-  grantSelectDate: {
-    id: 'sp.access-control-delegations:grant-select-date',
-    defaultMessage: 'Veldu dagsetningu',
   },
   filterClearAll: {
     id: 'sp.access-control-delegations:filter-clear-all',
@@ -416,10 +377,6 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:filter-open',
     defaultMessage: 'Opna síu',
   },
-  addPeopleTitle: {
-    id: 'sp.access-control-delegations:add-people-title',
-    defaultMessage: 'Hver á að fá umboðið?',
-  },
   grantAccessStepsTitle: {
     id: 'sp.access-control-delegations:grant-access-scopes-title',
     defaultMessage: 'Veita nýtt umboð',
@@ -428,14 +385,6 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:grant-access-scopes-intro',
     defaultMessage:
       'Hérna getur þú, í þremur skrefum, veitt einstaklingum umboð til að sinna þínum erindum á vefsvæðum opinberra stofnana',
-  },
-  scopesTableTitle: {
-    id: 'sp.access-control-delegations:scopes-table-title',
-    defaultMessage: 'Hvaða réttindi viltu veita viðkomandi?',
-  },
-  accessPeriodTitle: {
-    id: 'sp.access-control-delegations:access-period-title',
-    defaultMessage: 'Hversu lengi á ofangareint umboð að gilda?',
   },
   accessPeriodSame: {
     id: 'sp.access-control-delegations:access-period-same',
@@ -502,5 +451,29 @@ export const m = defineMessages({
   registry: {
     id: 'sp.access-control-delegations:registry',
     defaultMessage: 'Þjóðskrá',
+  },
+  headerName: {
+    id: 'sp.access-control-delegations:header-name',
+    defaultMessage: 'Nafn',
+  },
+  headerDomain: {
+    id: 'sp.access-control-delegations:header-domain',
+    defaultMessage: 'Stofnun',
+  },
+  headerDelegationType: {
+    id: 'sp.access-control-delegations:header-delegation-type',
+    defaultMessage: 'Tegund umboðs',
+  },
+  headerValidityPeriod: {
+    id: 'sp.access-control-delegations:header-validity-period',
+    defaultMessage: 'Gildistími',
+  },
+  headerRegisteredDate: {
+    id: 'sp.access-control-delegations:header-registered-date',
+    defaultMessage: 'Skráð dags.',
+  },
+  headerScopeName: {
+    id: 'sp.access-control-delegations:header-scope-name',
+    defaultMessage: 'Heiti umboðs',
   },
 })
