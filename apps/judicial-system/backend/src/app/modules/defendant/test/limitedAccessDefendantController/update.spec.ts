@@ -135,7 +135,10 @@ describe('LimitedAccessDefendantController - Update', () => {
       ...defendant,
       isSentToPrisonAdmin: true,
       eventLogs: [
-        { eventType: DefendantEventType.SENT_TO_PRISON_ADMIN, created: earlier },
+        {
+          eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+          created: earlier,
+        },
       ],
     } as Defendant
 

@@ -311,9 +311,8 @@ export class CaseTableService {
       )
     } else if (isPrisonAdminUser(user)) {
       displayCases = cases.flatMap((caseItem) =>
-        expandCaseWithDefendants(
-          caseItem,
-          (d) => Boolean(d.isSentToPrisonAdmin),
+        expandCaseWithDefendants(caseItem, (d) =>
+          Boolean(d.isSentToPrisonAdmin),
         ),
       )
     } else {
