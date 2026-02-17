@@ -1136,4 +1136,9 @@ export const m = defineMessages({
     defaultMessage: 'Umsóknirnar skulu vera merktar internal/private í Zendesk',
     description: 'Applications should be marked as internal/private in Zendesk',
   },
+  completedMessage: {
+    id: 'form.system:completed-message',
+    defaultMessage: 'Skilaboð á lokasíðu',
+    description: 'Message on completed page',
+  },
 })

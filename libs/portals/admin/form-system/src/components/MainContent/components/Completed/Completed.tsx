@@ -81,7 +81,7 @@ export const Completed = () => {
   return (
     <Stack space={3}>
       <Box marginBottom={4}>
-        <Text variant="h3">Skilaboð á lokasíðu</Text>
+        <Text variant="h3">{formatMessage(m.completedMessage)}</Text>
       </Box>
       <Input
         name="title"
