@@ -10,10 +10,13 @@ import { getValueViaPath } from '@island.is/application/core'
 import { AttachmentS3Service } from '../../shared/services'
 
 import {
+  CarCategoryRecord,
   CurrentVehicleWithMilage,
   RateCategory,
+  UploadSelection,
   buildCurrentCarMap,
   getUploadFileType,
+  is15DaysOrMoreFromDate,
   parseUploadFile,
 } from '@island.is/application/templates/car-rental-fee-category'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -148,15 +151,11 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<boolean> {
-    const [attachment] = await this.attachmentService.getFiles(application, [
-      'carCategoryFile',
-    ])
-    if (!attachment?.fileContent) {
-      throw new TemplateApiError(
-        { title: 'Missing file', summary: 'No uploaded file found' },
-        400,
-      )
-    }
+    const uploadSelection =
+      getValueViaPath<UploadSelection>(
+        application.answers,
+        'singleOrMultiSelectionRadio',
+      ) ?? UploadSelection.MULTI
 
     const rateToChangeTo = getValueViaPath<RateCategory>(
       application.answers,
@@ -183,54 +182,146 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
 
     const currentCarData = buildCurrentCarMap(currentVehicles, currentRates)
 
-    const fileType = getUploadFileType(attachment.fileName ?? '')
-    if (!fileType) {
-      throw new TemplateApiError(
-        {
-          title: 'Invalid file type',
-          summary: 'Only .csv or .xlsx are supported',
-        },
-        400,
-      )
-    }
+    let data: CarCategoryRecord[] = []
 
-    const bytes = Buffer.from(attachment.fileContent, 'base64')
-    const parsed = await parseUploadFile(
-      bytes,
-      fileType,
-      rateToChangeTo,
-      currentCarData,
-    )
+    if (uploadSelection === UploadSelection.SINGLE) {
+      const vehicleLatestMilageRows =
+        getValueViaPath<Array<{ permno: string; latestMilage: number }>>(
+          application.answers,
+          'vehicleLatestMilageRows',
+        ) ?? []
 
-    if (!parsed.ok) {
-      if (parsed.reason === 'no-data') {
+      if (vehicleLatestMilageRows.length === 0) {
+        throw new TemplateApiError(
+          {
+            title: 'Missing manual entries',
+            summary: 'No manual vehicle mileage entries found',
+          },
+          400,
+        )
+      }
+
+      const invalidRows: string[] = []
+      const manualData = vehicleLatestMilageRows
+        .map<CarCategoryRecord | null>((row) => {
+          const permno = row.permno?.trim()
+          const newMilage = Number(row.latestMilage)
+          const currentCar = permno ? currentCarData[permno] : undefined
+
+          if (!permno || !currentCar || Number.isNaN(newMilage) || newMilage < 0) {
+            invalidRows.push(permno || '-')
+            return null
+          }
+
+          if (currentCar.category === rateToChangeTo) {
+            invalidRows.push(permno)
+            return null
+          }
+
+          if (newMilage < currentCar.milage) {
+            invalidRows.push(permno)
+            return null
+          }
+
+          if (rateToChangeTo === RateCategory.KMRATE) {
+            const validFromDate = currentCar.activeDayRate?.validFrom
+            if (validFromDate && !is15DaysOrMoreFromDate(validFromDate)) {
+              invalidRows.push(permno)
+              return null
+            }
+          }
+
+          return {
+            vehicleId: permno,
+            oldMileage: currentCar.milage,
+            newMilage,
+            rateCategory: rateToChangeTo as string,
+          }
+        })
+        .filter((row): row is CarCategoryRecord => row !== null)
+
+      data = manualData
+
+      if (data.length === 0) {
         throw new TemplateApiError(
           { title: 'Invalid data', summary: 'Invalid data found' },
           400,
         )
       }
 
-      const errorSummary = parsed.errors
-        .map((e) => {
-          const msg =
-            typeof e.message === 'string'
-              ? e.message
-              : e.message.defaultMessage ?? e.message.id
-          return `${e.carNr}: ${msg}`
-        })
-        .filter((m) => m.length > 0)
-        .join('\n')
+      if (invalidRows.length > 0) {
+        const errorSummary = invalidRows
+          .map((permno) => `${permno}: Invalid or ineligible row`)
+          .join('\n')
 
-      throw new TemplateApiError(
-        {
-          title: 'Invalid data',
-          summary: errorSummary || 'Invalid data found',
-        },
-        400,
+        throw new TemplateApiError(
+          {
+            title: 'Invalid data',
+            summary: errorSummary || 'Invalid data found',
+          },
+          400,
+        )
+      }
+    } else {
+      const [attachment] = await this.attachmentService.getFiles(application, [
+        'carCategoryFile',
+      ])
+      if (!attachment?.fileContent) {
+        throw new TemplateApiError(
+          { title: 'Missing file', summary: 'No uploaded file found' },
+          400,
+        )
+      }
+
+      const fileType = getUploadFileType(attachment.fileName ?? '')
+      if (!fileType) {
+        throw new TemplateApiError(
+          {
+            title: 'Invalid file type',
+            summary: 'Only .csv or .xlsx are supported',
+          },
+          400,
+        )
+      }
+
+      const bytes = Buffer.from(attachment.fileContent, 'base64')
+      const parsed = await parseUploadFile(
+        bytes,
+        fileType,
+        rateToChangeTo,
+        currentCarData,
       )
-    }
 
-    const data = parsed.records
+      if (!parsed.ok) {
+        if (parsed.reason === 'no-data') {
+          throw new TemplateApiError(
+            { title: 'Invalid data', summary: 'Invalid data found' },
+            400,
+          )
+        }
+
+        const errorSummary = parsed.errors
+          .map((e) => {
+            const msg =
+              typeof e.message === 'string'
+                ? e.message
+                : e.message.defaultMessage ?? e.message.id
+            return `${e.carNr}: ${msg}`
+          })
+          .filter((m) => m.length > 0)
+          .join('\n')
+
+        throw new TemplateApiError(
+          {
+            title: 'Invalid data',
+            summary: errorSummary || 'Invalid data found',
+          },
+          400,
+        )
+      }
+
+      data = parsed.records
+    }
 
     const now = new Date()
     const endOfToday = new Date(now.setHours(23, 59, 59, 999))

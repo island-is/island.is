@@ -33,7 +33,6 @@ export const singleOrMultiSelection = buildSection({
               label: m.singleOrMulti.optionSingleLabel,
               subLabel: m.singleOrMulti.optionSingleSubLabel,
               value: UploadSelection.SINGLE,
-              disabled: true,
             },
           ],
         }),

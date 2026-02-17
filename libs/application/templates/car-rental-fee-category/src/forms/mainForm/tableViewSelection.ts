@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildMultiField,
   buildSection,
   getValueViaPath,
@@ -12,9 +13,7 @@ export const tableViewSelectionSection = buildSection({
       getValueViaPath<string>(answers, 'singleOrMultiSelectionRadio') ??
       UploadSelection.MULTI
 
-    return uploadSelectionValue
-      ? uploadSelectionValue === UploadSelection.SINGLE
-      : false
+    return uploadSelectionValue === UploadSelection.SINGLE
   },
   id: 'tableViewSelectionSection',
   title: m.tableView.sectionTitle,
@@ -22,7 +21,14 @@ export const tableViewSelectionSection = buildSection({
     buildMultiField({
       id: 'tableViewSelectionMultiField',
       title: m.tableView.multiTitle,
-      children: [],
+      children: [
+        buildCustomField({
+          id: 'vehicleMileageSearchTableField',
+          component: 'VehicleMileageSearchTable',
+          doesNotRequireAnswer: true,
+          childInputIds: ['vehicleLatestMilageRows'],
+        }),
+      ],
     }),
   ],
 })

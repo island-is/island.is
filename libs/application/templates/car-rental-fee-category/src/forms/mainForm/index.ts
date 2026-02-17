@@ -4,16 +4,16 @@ import { overviewStatistics } from './overviewStatistics'
 import { categorySelection } from './categorySelection'
 import { multiUploadSection } from './multiUpload'
 import { tableViewSelectionSection } from './tableViewSelection'
-import { verifySection } from './verify'
 import { carsChangesCountSection } from './carsChangesCount'
+import { singleOrMultiSelection } from './singleOrMultiSelection'
 
 const applicationChildren = [
   overviewStatistics,
   categorySelection,
+  singleOrMultiSelection,
+  tableViewSelectionSection,
   multiUploadSection,
   carsChangesCountSection,
-  tableViewSelectionSection,
-  verifySection,
 ]
 
 export const MainForm = buildForm({
