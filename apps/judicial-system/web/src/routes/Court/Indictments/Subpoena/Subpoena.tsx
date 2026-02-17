@@ -40,6 +40,7 @@ import {
   useCreateSubpoenas,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
@@ -353,7 +354,7 @@ const Subpoena: FC = () => {
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {updates?.defendants && (
-          <Box component="section" marginBottom={5}>
+          <div className={grid({ gap: 5, marginBottom: 10 })}>
             <SubpoenaType
               subpoenaItems={updates?.defendants?.map((defendant) => ({
                 defendant,
@@ -420,9 +421,9 @@ const Subpoena: FC = () => {
               }))}
               workingCase={workingCase}
             />
-          </Box>
+          </div>
         )}
-        <Box component="section" marginBottom={5}>
+        <Box component="section">
           <SectionHeading
             title={formatMessage(strings.courtArrangementsHeading)}
           />
@@ -441,7 +442,7 @@ const Subpoena: FC = () => {
             courtRoomRequired
           />
         </Box>
-        <Box component="section" className={pdfButtonGrid} marginBottom={10}>
+        <Box component="section" className={pdfButtonGrid}>
           {updates?.defendants?.map((defendant) => {
             const courtDate = updates.theCase.arraignmentDate?.date
             const location = updates.theCase.arraignmentDate?.location
