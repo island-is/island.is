@@ -675,10 +675,10 @@ export class HealthDirectorateService {
   public async getPregnancyMeasurements(
     _auth: Auth,
   ): Promise<PregnancyMeasurements> {
-    // Mock data until service endpoint is available
+    // Mock data until service endpoint is available (dates as Date for DateTime scalar)
     const data: PregnancyMeasurement[] = [
       {
-        date: '18.02.2025',
+        date: new Date('2025-02-18'),
         weightKg: 77,
         fundalHeightCm: 20,
         bloodPressure: '114/73',
@@ -686,25 +686,16 @@ export class HealthDirectorateService {
         proteinInUrine: 'negative',
       },
       {
-        date: '12.02.2025',
-        weightKg: null,
-        fundalHeightCm: null,
-        bloodPressure: null,
-        pulsePerMin: null,
-        proteinInUrine: null,
+        date: new Date('2025-02-12'),
       },
       {
-        date: '11.02.2025',
+        date: new Date('2025-02-11'),
         weightKg: 77,
-        fundalHeightCm: null,
-        bloodPressure: null,
-        pulsePerMin: null,
         proteinInUrine: 'negative',
       },
       {
-        date: '07.01.2025',
+        date: new Date('2025-01-07'),
         weightKg: 75,
-        fundalHeightCm: null,
         bloodPressure: '111/77',
         pulsePerMin: 77,
         proteinInUrine: 'negative',

@@ -6,10 +6,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { IntroWrapper } from '@island.is/portals/my-pages/core'
+import { formatDate, IntroWrapper } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { useGetPregnancyMeasurementsQuery } from './Measurements.generated'
-import * as styles from './Measurements.css'
 
 const EMPTY_CELL = '–'
 
@@ -17,8 +16,7 @@ const Measurements = () => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useGetPregnancyMeasurementsQuery()
 
-  const measurements =
-    data?.healthDirectoratePregnancyMeasurements?.data ?? []
+  const measurements = data?.healthDirectoratePregnancyMeasurements?.data ?? []
 
   return (
     <IntroWrapper
@@ -38,7 +36,7 @@ const Measurements = () => {
         ) : error ? (
           <Text as="p">{error.message}</Text>
         ) : (
-          <T.Table box={{ className: styles.measurementsTable }}>
+          <T.Table>
             <T.Head>
               <T.Row>
                 <T.HeadData>
@@ -77,57 +75,57 @@ const Measurements = () => {
               {measurements.map((row, i) => (
                 <T.Row key={`${row.date}-${i}`}>
                 <T.Data>
-                  <Text variant="medium" as="span">
-                    {row.date}
-                  </Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="medium" as="span">
-                    {row.weightKg != null
-                      ? `${row.weightKg} ${formatMessage(
-                          messages.measurementUnitKg,
-                        )}`
-                      : EMPTY_CELL}
-                  </Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="medium" as="span">
-                    {row.fundalHeightCm != null
-                      ? `${row.fundalHeightCm} ${formatMessage(
-                          messages.measurementUnitCm,
-                        )}`
-                      : EMPTY_CELL}
-                  </Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="medium" as="span">
-                    {row.bloodPressure != null
-                      ? `${row.bloodPressure} ${formatMessage(
-                          messages.measurementUnitMmHg,
-                        )}`
-                      : EMPTY_CELL}
-                  </Text>
-                </T.Data>
-                <T.Data>
-                  <Text variant="medium" as="span">
-                    {row.pulsePerMin != null
-                      ? `${row.pulsePerMin} ${formatMessage(
-                          messages.measurementUnitPulse,
-                        )}`
-                      : EMPTY_CELL}
-                  </Text>
-                </T.Data>
-                <T.Data>
-                  {row.proteinInUrine === 'negative' ? (
-                    <Tag variant="mint" outlined disabled>
-                      {formatMessage(messages.measurementProteinNegative)}
-                    </Tag>
-                  ) : (
                     <Text variant="medium" as="span">
-                      {EMPTY_CELL}
+                      {formatDate(row.date, 'dd.MM.yyyy')}
                     </Text>
-                  )}
                 </T.Data>
+                  <T.Data>
+                    <Text variant="medium" as="span">
+                      {row.weightKg != null
+                        ? `${row.weightKg} ${formatMessage(
+                            messages.measurementUnitKg,
+                          )}`
+                        : EMPTY_CELL}
+                    </Text>
+                  </T.Data>
+                  <T.Data>
+                    <Text variant="medium" as="span">
+                      {row.fundalHeightCm != null
+                        ? `${row.fundalHeightCm} ${formatMessage(
+                            messages.measurementUnitCm,
+                          )}`
+                        : EMPTY_CELL}
+                    </Text>
+                  </T.Data>
+                  <T.Data>
+                    <Text variant="medium" as="span">
+                      {row.bloodPressure != null
+                        ? `${row.bloodPressure} ${formatMessage(
+                            messages.measurementUnitMmHg,
+                          )}`
+                        : EMPTY_CELL}
+                    </Text>
+                  </T.Data>
+                  <T.Data>
+                    <Text variant="medium" as="span">
+                      {row.pulsePerMin != null
+                        ? `${row.pulsePerMin} ${formatMessage(
+                            messages.measurementUnitPulse,
+                          )}`
+                        : EMPTY_CELL}
+                    </Text>
+                  </T.Data>
+                  <T.Data>
+                    {row.proteinInUrine === 'negative' ? (
+                      <Tag variant="mint" outlined disabled>
+                        {formatMessage(messages.measurementProteinNegative)}
+                      </Tag>
+                    ) : (
+                      <Text variant="medium" as="span">
+                        {EMPTY_CELL}
+                      </Text>
+                    )}
+                  </T.Data>
                 </T.Row>
               ))}
             </T.Body>

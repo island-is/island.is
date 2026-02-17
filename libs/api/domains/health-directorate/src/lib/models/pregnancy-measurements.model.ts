@@ -1,24 +1,24 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql'
+import { Field, Float, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectoratePregnancyMeasurement')
 export class PregnancyMeasurement {
-  @Field()
-  date!: string
+  @Field(() => GraphQLISODateTime)
+  date!: Date
 
   @Field(() => Float, { nullable: true })
-  weightKg?: number | null
+  weightKg?: number
 
   @Field(() => Float, { nullable: true })
-  fundalHeightCm?: number | null
+  fundalHeightCm?: number
 
   @Field({ nullable: true })
-  bloodPressure?: string | null
+  bloodPressure?: string
 
   @Field(() => Float, { nullable: true })
-  pulsePerMin?: number | null
+  pulsePerMin?: number
 
   @Field({ nullable: true })
-  proteinInUrine?: string | null
+  proteinInUrine?: string
 }
 
 @ObjectType('HealthDirectoratePregnancyMeasurements')
