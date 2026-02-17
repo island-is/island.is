@@ -35,7 +35,10 @@ function IslandWebApp({ Component, pageProps }: AppProps) {
     // Track the initial page view
     window._paq.push(['trackPageView'])
 
-    console.log('[Matomo] Initialized, tracking initial page view:', Router.asPath)
+    console.log(
+      '[Matomo] Initialized, tracking initial page view:',
+      Router.asPath,
+    )
 
     // Track client-side route changes
     const handleRouteChange = (url: string) => {
