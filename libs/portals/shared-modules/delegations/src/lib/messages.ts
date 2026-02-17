@@ -337,9 +337,13 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:step-one-title',
     defaultMessage: 'Hver á að fá umboðið?',
   },
-  StepOneLabel: {
+  stepOneLabel: {
     id: 'sp.access-control-delegations:step-one-label',
     defaultMessage: 'Velja umboðsaðila',
+  },
+  stepOneContinueButtonLabel: {
+    id: 'sp.access-control-delegations:step-one-continue-button-label',
+    defaultMessage: 'Velja umboð til að veita',
   },
   stepTwoTitle: {
     id: 'sp.access-control-delegations:step-two-title',
@@ -349,6 +353,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:step-two-label',
     defaultMessage: 'Velja réttindi',
   },
+  stepTwoContinueButtonLabel: {
+    id: 'sp.access-control-delegations:step-two-continue-button-label',
+    defaultMessage: 'Velja gildistíma',
+  },
   stepThreeTitle: {
     id: 'sp.access-control-delegations:step-three-title',
     defaultMessage: 'Hversu lengi á umboðið að gilda?',
@@ -356,6 +364,10 @@ export const m = defineMessages({
   stepThreeLabel: {
     id: 'sp.access-control-delegations:step-three-label',
     defaultMessage: 'Velja gildistíma',
+  },
+  stepThreeContinueButtonLabel: {
+    id: 'sp.access-control-delegations:step-three-continue-button-label',
+    defaultMessage: 'Staðfesta skráningu umboðs',
   },
   confirmAccessModalTitle: {
     id: 'sp.access-control-delegations:confirm-access-modal-title',

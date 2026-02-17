@@ -151,7 +151,12 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
         paddingY={5}
         paddingX={4}
       >
-        <Button variant="ghost" onClick={onCancel} disabled={loading}>
+        <Button
+          variant="ghost"
+          onClick={onCancel}
+          disabled={loading}
+          size="small"
+        >
           {cancelButtonLabel}
         </Button>
         <Button
@@ -160,6 +165,7 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
           disabled={currentStep?.continueButtonDisabled || loading}
           loading={loading}
           icon={currentStep?.continueButtonIcon}
+          size="small"
         >
           {currentStep?.continueButtonLabel || 'Continue'}
         </Button>
