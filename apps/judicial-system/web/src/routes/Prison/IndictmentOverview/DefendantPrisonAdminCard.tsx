@@ -1,10 +1,4 @@
-import {
-  Box,
-  Icon,
-  Option,
-  Select,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Icon, Option, Select, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
@@ -65,6 +59,8 @@ export const DefendantPrisonAdminCard = ({
             )}
           </Box>
           <ContextMenu
+            placement="left-start"
+            shift={-12}
             items={[
               isRegistered
                 ? {
