@@ -43,7 +43,7 @@ import { Notification } from '../notification.model'
 import { NotificationDispatchService } from '../notificationDispatch.service'
 import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
-import { mapToLocale } from '../utils'
+import { mapToLocale, SmsDelivery } from '../utils'
 
 type HandleNotification = {
   profile: {
@@ -230,18 +230,15 @@ export class NotificationsWorkerService {
     }
   }
 
-  private createEmailContent(
-    fullName: string,
-    template: HnippTemplate,
-  ): string {
+  private createSmsContent(fullName: string, template: HnippTemplate): string {
     return `
       ${fullName}: ${template.title}
-
+     
       ${template.externalBody}
-
+     
       Skoda a Island.is:
-
-      ${template.clickActionUrl} 
+     
+      ${template.clickActionUrl}  
     `
   }
 
@@ -270,8 +267,15 @@ export class NotificationsWorkerService {
       return
     }
 
-    if (template.smsDelivery === 'NEVER') {
-      this.logger.info('SMS delivery is set to NEVER for template')
+    if (
+      template.smsDelivery !== SmsDelivery.ALWAYS &&
+      template.smsDelivery !== SmsDelivery.OPT_IN
+    ) {
+      this.logger.info('SMS delivery is not enabled for template', {
+        messageId,
+        templateId: template.templateId,
+        smsDelivery: template.smsDelivery,
+      })
       return
     }
 
@@ -291,7 +295,10 @@ export class NotificationsWorkerService {
       return
     }
 
-    if (template.smsDelivery === 'OPT_IN' && !profile.smsNotifications) {
+    if (
+      template.smsDelivery === SmsDelivery.OPT_IN &&
+      !profile.smsNotifications
+    ) {
       this.logger.info('SMS notification is not enabled for user', {
         messageId,
         templateId: template.templateId,
@@ -302,7 +309,7 @@ export class NotificationsWorkerService {
     const fullName = await this.getName(nationalId)
 
     try {
-      const smsContent = this.createEmailContent(
+      const smsContent = this.createSmsContent(
         fullName,
         await this.notificationsService.formatArguments(
           message.args,
@@ -318,7 +325,6 @@ export class NotificationsWorkerService {
 
       this.logger.info('SMS notification sent', {
         messageId,
-        smsContent,
       })
     } catch (error) {
       this.logger.error('SMS notification error', {
