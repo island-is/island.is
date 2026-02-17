@@ -2,9 +2,8 @@ import { Modal } from '@island.is/react/components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
-import { ActionCard, Box, useBreakpoint } from '@island.is/island-ui/core'
+import { ActionCard, Box } from '@island.is/island-ui/core'
 import { m as coreMessages } from '@island.is/portals/core'
-import { useDynamicShadow } from '../../hooks/useDynamicShadow'
 import { useDelegationForm } from '../../context'
 import { DateScopesTable } from '../ScopesTable/DateScopesTable'
 
@@ -25,12 +24,12 @@ export const ConfirmAccessModal = ({
     // todo: translate
     <Modal
       id="confirm-access-modal"
-      label="Confirm Access"
-      title="Staðfesta veitingu á nýju umboði"
+      label="Confirm Access" // TODO: Translate
+      title="Staðfesta veitingu á nýju umboði" // TODO: Translate
       onClose={onClose}
       closeButtonLabel={formatMessage(m.closeModal)}
       isVisible={isVisible}
-      eyebrow="Rafræn umboð"
+      eyebrow="Rafræn umboð" // TODO: Translate
     >
       <Box display="flex" flexDirection="column" rowGap={4}>
         <Box
@@ -42,11 +41,18 @@ export const ConfirmAccessModal = ({
         >
           {identities.map((identity) => {
             return (
-              <ActionCard
-                key={identity.nationalId}
-                heading={identity.name}
-                text={identity.nationalId}
-              />
+              <div
+                style={{
+                  flexBasis:
+                    identities.length >= 3 ? 'calc(33% - 9px)' : 'auto',
+                }}
+              >
+                <ActionCard
+                  key={identity.nationalId}
+                  heading={identity.name}
+                  text={`kt. ${identity.nationalId}`}
+                />
+              </div>
             )
           })}
         </Box>

@@ -1,28 +1,32 @@
-import { useState } from 'react'
-import { FormProvider, useFieldArray, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { defineMessage } from 'react-intl'
 import { useNavigate, useLoaderData } from 'react-router-dom'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import { Problem } from '@island.is/react-spa/shared'
 
-import { DelegationsFormFooter } from '../../components/delegations/DelegationsFormFooter'
 import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
 
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import { AccessControlLoaderResponse } from '../AccessControl.loader'
 import { useDelegationForm } from '../../context'
-import { IdentityLookup } from '../../components/IdentityLookup/IdentityLookup'
+import { FlowStep, FlowStepper } from '../../components/FlowStepper'
+import { AccessRecipients } from '../../components/GrantAccessSteps/AccessRecipients'
+import { m as coreMessages } from '@island.is/portals/core'
+import { AccessScopes } from '../../components/GrantAccessSteps/AccessScopes'
+import { ConfirmAccessModal } from '../../components/modals/ConfirmAccessModal'
+import { useState } from 'react'
+import { AccessPeriod } from '../../components/GrantAccessSteps/AccessPeriod'
 
 const GrantAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
+  const [isConfirmModalVisible, setIsConfirmModalVisible] =
+    useState<boolean>(false)
 
   const { formatMessage } = useLocale()
-  const [formError, setFormError] = useState<Error | undefined>()
-  const { setIdentities } = useDelegationForm()
+  const { setIdentities, selectedScopes } = useDelegationForm()
 
   const navigate = useNavigate()
 
@@ -34,25 +38,39 @@ const GrantAccess = () => {
       identities: [{ nationalId: '', name: '' }],
     },
   })
-  const { handleSubmit, control, formState, watch } = methods
+  const { formState, watch } = methods
 
   const watchIdentities = watch('identities')
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'identities',
-  })
-
-  const onSubmit = handleSubmit(async ({ identities }) => {
-    try {
-      setIdentities(identities)
-      if (identities.length > 0) {
-        navigate(`${DelegationPaths.DelegationsGrantScopes}`)
-      }
-    } catch (error) {
-      setFormError(error)
-    }
-  })
+  const steps: FlowStep[] = [
+    {
+      id: 'access-recipients',
+      name: 'Velja umboðshafa', // TODO: Translate
+      content: <AccessRecipients methods={methods} />,
+      onContinue: () => {
+        setIdentities(watchIdentities)
+      },
+      continueButtonDisabled:
+        !formState.isValid ||
+        watchIdentities.some(
+          (identity) => identity.nationalId.length < 10 || !identity.name,
+        ),
+    },
+    {
+      id: 'select-permissions',
+      name: 'Velja réttindi', // TODO: Translate
+      content: <AccessScopes />,
+      continueButtonDisabled: selectedScopes.length === 0,
+    },
+    {
+      id: 'select-period',
+      name: 'Velja gildistíma', // TODO: Translate
+      content: <AccessPeriod />,
+      onContinue: () => {
+        setIsConfirmModalVisible(true)
+      },
+    },
+  ]
 
   return (
     <>
@@ -65,73 +83,22 @@ const GrantAccess = () => {
         <Text variant="h4" marginBottom={4}>
           {formatMessage(m.addPeopleTitle)}
         </Text>
-        <FormProvider {...methods}>
-          <form onSubmit={onSubmit}>
-            <Box display="flex" flexDirection="column" rowGap={4}>
-              {fields.map((field, index) => (
-                <Box key={field.id} display="flex" columnGap={4}>
-                  <IdentityLookup
-                    setFormError={setFormError}
-                    methods={methods}
-                    index={index}
-                  />
-                  <Box
-                    display="flex"
-                    flexShrink={0}
-                    alignItems="center"
-                    justifyContent="flexEnd"
-                    style={{ width: 85 }}
-                  >
-                    {index > 0 && (
-                      <Button
-                        variant="text"
-                        size="small"
-                        icon="trash"
-                        iconType="outline"
-                        colorScheme="destructive"
-                        onClick={() => remove(index)}
-                      >
-                        {formatMessage(m.grantRemovePerson)}
-                      </Button>
-                    )}
-                  </Box>
-                </Box>
-              ))}
-              <Box>
-                <Button
-                  variant="text"
-                  size="small"
-                  icon="add"
-                  onClick={() => append({ nationalId: '', name: '' })}
-                >
-                  {formatMessage(m.grantAddMorePeople)}
-                </Button>
-              </Box>
-            </Box>
-            <Box display="flex" flexDirection="column" rowGap={5} marginTop={5}>
-              {formError && <Problem error={formError} size="small" />}
-              <Text variant="small">
-                {formatMessage(m.grantNextStepDescription)}
-              </Text>
-              <Box marginBottom={7}>
-                <DelegationsFormFooter
-                  disabled={
-                    !formState.isValid ||
-                    watchIdentities.some(
-                      (identity) =>
-                        identity.nationalId.length < 10 || !identity.name,
-                    )
-                  }
-                  loading={false}
-                  onCancel={() => navigate(DelegationPaths.Delegations)}
-                  showShadow={false}
-                  confirmLabel={formatMessage(m.grantChoosePermissions)}
-                  confirmIcon="arrowForward"
-                />
-              </Box>
-            </Box>
-          </form>
-        </FormProvider>
+
+        <FlowStepper
+          steps={steps}
+          cancelButtonLabel={formatMessage(coreMessages.buttonCancel)}
+          onCancel={() => {
+            navigate(DelegationPaths.DelegationsNew)
+          }}
+        />
+
+        <ConfirmAccessModal
+          onClose={() => setIsConfirmModalVisible(false)}
+          onConfirm={() => {
+            console.log('confirm')
+          }}
+          isVisible={isConfirmModalVisible}
+        />
 
         {contentfulData?.faqList && (
           <Box paddingTop={8}>

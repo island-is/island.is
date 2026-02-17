@@ -439,7 +439,7 @@ export const m = defineMessages({
   },
   accessPeriodSame: {
     id: 'sp.access-control-delegations:access-period-same',
-    defaultMessage: 'Ég vil hafa sama gildistíma á völlum umboðum',
+    defaultMessage: 'Ég vil hafa sama gildistíma á öllum umboðum',
   },
   accessPeriodDifferent: {
     id: 'sp.access-control-delegations:access-period-different',

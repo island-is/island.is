@@ -8,8 +8,6 @@ import {
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { accessControlLoader } from './screens/AccessControl.loader'
-import { GrantAccessScopes } from './screens/GrantAccessScopes/GrantAccessScopes'
-import { GrantAccessPeriod } from './screens/GrantAccessPeriod/GrantAccessPeriod'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const AccessControlNew = lazy(() => import('./screens/AccessControlNew'))
@@ -17,9 +15,7 @@ const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
 const GrantAccessNew = lazy(() =>
   import('./screens/GrantAccess/GrantAccessNew'),
 )
-// const GrantAccessNew = lazy(() =>
-//   import('./screens/GrantAccessNew/GrantAccessNew'),
-// )
+
 const GrantAccessLayout = lazy(() =>
   import('./screens/GrantAccessLayout/GrantAccessLayout'),
 )
@@ -85,16 +81,6 @@ export const delegationsModule: PortalModule = {
             path: '',
             name: m.grantAccessNewTitle,
             element: <GrantAccessNew />,
-          },
-          {
-            path: 'rettindi',
-            name: m.accessScopes,
-            element: <GrantAccessScopes />,
-          },
-          {
-            path: 'gildistimi',
-            name: m.accessPeriod,
-            element: <GrantAccessPeriod />,
           },
         ] as PortalRoute[],
       },

@@ -88,7 +88,6 @@ export const DateScopesTable = ({
                   <DatePicker
                     id="validityPeriod"
                     size="sm"
-                    label={formatMessage(portalMessages.date)}
                     backgroundColor="blue"
                     minDate={new Date()}
                     selected={scope.validTo}

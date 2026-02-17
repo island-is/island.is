@@ -1,4 +1,4 @@
-import { Control, useFormContext, UseFormReturn } from 'react-hook-form'
+import { Control, UseFormReturn } from 'react-hook-form'
 import { Box, Icon, toast } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
@@ -25,7 +25,6 @@ export const IdentityLookup = ({
   index?: number
 }) => {
   const { formatMessage } = useLocale()
-  // const { id, props } = field
 
   const userInfo = useUserInfo()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -97,8 +96,8 @@ export const IdentityLookup = ({
   }
 
   return (
-    <Box display="flex" columnGap={3} alignItems="flexStart">
-      <div className={styles.inputWrapper}>
+    <Box display="flex" columnGap={3} flexGrow={1} alignItems="flexStart">
+      <div className={styles.nationalIdInput}>
         <InputController
           control={control as unknown as Control}
           id={`identities.${index}.nationalId`}
@@ -112,7 +111,7 @@ export const IdentityLookup = ({
           }}
           ref={inputRef}
           placeholder={'000000-0000'}
-          size="md"
+          size="xs"
           error={
             errors.identities?.[index]?.nationalId?.message as
               | string
@@ -153,7 +152,7 @@ export const IdentityLookup = ({
             className={cn(styles.icon, styles.loadingIcon)}
             aria-label="Loading"
           >
-            <Icon icon="reload" size="large" color="blue400" />
+            <Icon icon="reload" size="medium" color="blue400" />
           </span>
         ) : watchName ? (
           <button
@@ -163,7 +162,7 @@ export const IdentityLookup = ({
             className={styles.icon}
             aria-label={formatMessage(coreMessages.clearSelected)}
           >
-            <Icon icon="close" size="large" color="blue400" />
+            <Icon icon="close" size="medium" color="blue400" />
           </button>
         ) : null}
       </div>
@@ -173,6 +172,7 @@ export const IdentityLookup = ({
           name={`identities.${index}.name`}
           label={formatMessage(m.name)}
           readOnly
+          size="xs"
         />
       </div>
     </Box>

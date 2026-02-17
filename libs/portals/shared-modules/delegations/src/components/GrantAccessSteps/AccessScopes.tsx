@@ -4,10 +4,11 @@ import {
   AuthScopeCategoriesQuery,
   AuthScopeTagsDocument,
   AuthScopeTagsQuery,
-} from '../ServiceCategories/ServiceCategories.generated'
+} from '../../screens/ServiceCategories/ServiceCategories.generated'
 import { useLocale } from '@island.is/localization'
 import ServiceCategoriesList from '../../components/delegations/ServiceCategoriesList'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
+import * as styles from './GrantAccessSteps.css'
 
 import { AuthApiScope } from '@island.is/api/schema'
 import {
@@ -17,18 +18,14 @@ import {
   Input,
   Text,
 } from '@island.is/island-ui/core'
-import { DelegationPaths } from '../../lib/paths'
-import { DelegationsFormFooter } from '../../components/delegations/DelegationsFormFooter'
-import { useNavigate } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
-import { IntroHeader } from '@island.is/portals/core'
-import * as styles from './GrantAccessScopes.css'
+
 import { useDelegationForm } from '../../context'
 import add from 'date-fns/add'
 import { useDomains } from '../../hooks/useDomains/useDomains'
 
-export const GrantAccessScopes = () => {
+export const AccessScopes = () => {
   const { lang } = useLocale()
   const { formatMessage } = useLocale()
   const [searchQuery, setSearchQuery] = useState('')
@@ -39,7 +36,7 @@ export const GrantAccessScopes = () => {
     tags: [],
     domains: [],
   })
-  const navigate = useNavigate()
+
   const {
     data: categoriesData,
     loading: categoriesLoading,
@@ -54,7 +51,7 @@ export const GrantAccessScopes = () => {
   } = useQuery<AuthScopeTagsQuery>(AuthScopeTagsDocument, {
     variables: { lang },
   })
-  const { identities, selectedScopes, setSelectedScopes } = useDelegationForm()
+  const { selectedScopes, setSelectedScopes } = useDelegationForm()
   const defaultDate = add(new Date(), { years: 1 })
   const { options: domainOptions } = useDomains(false)
 
@@ -83,7 +80,7 @@ export const GrantAccessScopes = () => {
     if (selectedScopes.some((s) => s.name === scope.name)) {
       setSelectedScopes(selectedScopes.filter((s) => s.name !== scope.name))
     } else {
-      setSelectedScopes([...selectedScopes, scope])
+      setSelectedScopes([...selectedScopes, { ...scope, validTo: defaultDate }])
     }
   }
 
@@ -131,35 +128,13 @@ export const GrantAccessScopes = () => {
     )
   }, [categoriesData, searchQuery, filter, tagsData])
 
-  const onConfirm = () => {
-    setSelectedScopes(
-      selectedScopes.map((scope) => ({
-        ...scope,
-        validTo: defaultDate,
-      })),
-    )
-    navigate(DelegationPaths.DelegationsGrantPeriod)
-  }
-
-  // on mount, check if there are identities selected, if not, navigate to first step
-  useEffect(() => {
-    if (identities.length === 0) {
-      navigate(DelegationPaths.DelegationsGrantNew)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   return (
     <div>
-      <IntroHeader
-        title={formatMessage(m.grantAccessStepsTitle)}
-        intro={formatMessage(m.grantAccessStepsIntro)}
-      />
       <Text variant="h4" marginBottom={4}>
         {formatMessage(m.scopesTableTitle)}
       </Text>
       <Box display="flex" columnGap={2} marginBottom={4}>
-        <div className={styles.inputWrapper}>
+        <div className={styles.input}>
           <Input
             name="search"
             placeholder={formatMessage(m.searchScopesPlaceholder)}
@@ -201,7 +176,6 @@ export const GrantAccessScopes = () => {
           />
         </Filter>
       </Box>
-
       {filter.tags.length > 0 ||
       filter.domains.length > 0 ||
       searchQuery.length > 0 ? (
@@ -219,20 +193,6 @@ export const GrantAccessScopes = () => {
           selectedScopes={selectedScopes}
         />
       )}
-      <Box marginBottom={7}>
-        <DelegationsFormFooter
-          // disabled={!formState.isValid || mutationLoading}
-          // loading={mutationLoading}
-          disabled={selectedScopes.length === 0}
-          onCancel={() => navigate(DelegationPaths.Delegations)}
-          showShadow={false}
-          confirmLabel={formatMessage(m.grantChoosePeriod)}
-          confirmIcon="arrowForward"
-          onConfirm={onConfirm}
-        />
-      </Box>
     </div>
   )
 }
-
-export default GrantAccessScopes
