@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -47,7 +48,7 @@ import { SubmitApplicationResponseDto } from './models/dto/submitApplication.res
 import { NotificationResponseDto } from './models/dto/validation.response.dto'
 import { NotifyService } from '../services/notify.service'
 import { NotificationDto } from './models/dto/notification.dto'
-// import { ScreenFromNotifyDto } from '../screens/models/dto/screenFromNotify.dto'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 @Injectable()
 export class ApplicationsService {
@@ -62,6 +63,7 @@ export class ApplicationsService {
     private readonly organizationModel: typeof Organization,
     @InjectModel(ApplicationEvent)
     private readonly applicationEventModel: typeof ApplicationEvent,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
     private readonly notifyService: NotifyService,
@@ -991,9 +993,33 @@ export class ApplicationsService {
 
   async notifyExternalService(
     notificationDto: NotificationDto,
-    url: string,
     user: User,
   ): Promise<NotificationResponseDto> {
+    const application = await this.applicationModel.findByPk(
+      notificationDto.applicationId,
+      { include: [{ model: Value, as: 'values' }] },
+    )
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${notificationDto.applicationId}' not found`,
+      )
+    }
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new UnauthorizedException(
+        `User is not authorized to notify for application '${notificationDto.applicationId}'`,
+      )
+    }
+
+    const form = await this.formModel.findByPk(application.formId)
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found for application '${notificationDto.applicationId}'`,
+      )
+    }
+
+    const submissionUrl = form.submissionServiceUrl
+
     const nationalId = user.actor?.nationalId || user.nationalId
 
     notificationDto.nationalId = nationalId
@@ -1006,8 +1032,25 @@ export class ApplicationsService {
 
     const response = await this.notifyService.sendNotification(
       notificationDto,
-      url,
+      submissionUrl,
     )
+
+    if (!response.operationSuccessful) {
+      const errorScreen = notificationDto.screen
+      errorScreen.screenError = {
+        hasError: true,
+        title: { is: 'Villa', en: 'Error' },
+        message: {
+          is: 'Ekki tókst að tengjast ytri þjónustu, reyndu aftur síðar eða sendu póst á island@island.is',
+          en: 'Could not connect to external service. Please try again later or send an email to island@island.is',
+        },
+      }
+      response.screen = notificationDto.screen
+      this.logger.error(
+        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${notificationDto.screen?.id}' with command ${notificationDto.command}`,
+      )
+    }
+
     return response
   }
 

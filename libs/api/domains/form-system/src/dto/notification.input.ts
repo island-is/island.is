@@ -21,12 +21,3 @@ export class NotificationInput {
   @Field(() => ScreenInput, { nullable: true })
   screen?: ScreenInput
 }
-
-@InputType('FormSystemNotificationRequestInput')
-export class NotificationRequestInput {
-  @Field(() => String, { nullable: false })
-  url!: string
-
-  @Field(() => NotificationInput, { nullable: false })
-  notificationDto!: NotificationInput
-}

@@ -28,7 +28,7 @@ import {
   SubmitApplicationResponse,
 } from '../../models/applications.model'
 import { NotificationResponse } from '../../models/screen.model'
-import { NotificationRequestInput } from '../../dto/notification.input'
+import { NotificationInput } from '../../dto/notification.input'
 
 @Injectable()
 export class ApplicationsService {
@@ -144,11 +144,11 @@ export class ApplicationsService {
 
   async notifyExternalSystem(
     auth: User,
-    input: NotificationRequestInput,
+    input: NotificationInput,
   ): Promise<NotificationResponse> {
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerNotify({
-        notificationRequestDto: input,
+        notificationDto: input,
       } as ApplicationsControllerNotifyRequest)
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to notify external system'),

@@ -3,10 +3,9 @@ import { ScreenFragment } from '../fragments/screen'
 
 export const NOTIFY_EXTERNAL_SERVICE = gql`
   mutation NotifyFormSystemExternalSystem(
-    $input: FormSystemNotificationRequestInput!
+    $input: FormSystemNotificationInput!
   ) {
     notifyFormSystemExternalSystem(input: $input) {
-      validationFailed
       screen {
         ...Screen
       }

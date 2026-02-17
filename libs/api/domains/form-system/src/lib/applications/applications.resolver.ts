@@ -21,7 +21,7 @@ import {
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import { NotificationResponse } from '../../models/screen.model'
-import { NotificationRequestInput } from '../../dto/notification.input'
+import { NotificationInput } from '../../dto/notification.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -125,8 +125,8 @@ export class ApplicationsResolver {
     nullable: true,
   })
   async notifyExternalSystem(
-    @Args('input', { type: () => NotificationRequestInput })
-    input: NotificationRequestInput,
+    @Args('input', { type: () => NotificationInput })
+    input: NotificationInput,
     @CurrentUser() user: User,
   ): Promise<NotificationResponse> {
     return this.applicationsService.notifyExternalSystem(user, input)

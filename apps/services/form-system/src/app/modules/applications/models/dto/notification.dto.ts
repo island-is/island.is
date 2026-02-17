@@ -46,17 +46,3 @@ export class NotificationDto {
   @ApiPropertyOptional({ type: ScreenDto })
   screen?: ScreenDto
 }
-
-export class NotificationRequestDto {
-  @Type(() => String)
-  @IsString()
-  @Expose()
-  @ApiProperty()
-  url!: string
-
-  @ValidateNested()
-  @Type(() => NotificationDto)
-  @Expose()
-  @ApiProperty({ type: NotificationDto })
-  notificationDto!: NotificationDto
-}

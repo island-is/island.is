@@ -30,7 +30,7 @@ import { MyPagesApplicationResponseDto } from './models/dto/myPagesApplication.r
 import type { Locale } from '@island.is/shared/types'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
 import { NotificationResponseDto } from './models/dto/validation.response.dto'
-import { NotificationRequestDto } from './models/dto/notification.dto'
+import { NotificationDto } from './models/dto/notification.dto'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')
@@ -98,15 +98,14 @@ export class ApplicationsController {
     description: 'Send notification to external system',
     type: NotificationResponseDto,
   })
-  @ApiBody({ type: NotificationRequestDto })
+  @ApiBody({ type: NotificationDto })
   @Post('notify')
   async notify(
-    @Body() notificationRequestDto: NotificationRequestDto,
+    @Body() notificationDto: NotificationDto,
     @CurrentUser() user: User,
   ): Promise<NotificationResponseDto> {
     return await this.applicationsService.notifyExternalService(
-      notificationRequestDto.notificationDto,
-      notificationRequestDto.url,
+      notificationDto,
       user,
     )
   }

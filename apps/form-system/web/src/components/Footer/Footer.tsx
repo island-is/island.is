@@ -105,15 +105,12 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         const { data } = await notifyExternal({
           variables: {
             input: {
-              url: state.application.submissionServiceUrl || '',
-              notificationDto: {
-                applicationId: state.application.id,
-                nationalId: '',
-                slug: state.application.slug,
-                isTest: state.application.isTest,
-                command: NotificationActions.VALIDATE,
-                screen: state.currentScreen.data,
-              },
+              applicationId: state.application.id,
+              nationalId: '',
+              slug: state.application.slug,
+              isTest: state.application.isTest,
+              command: NotificationActions.VALIDATE,
+              screen: state.currentScreen.data,
             },
           },
         })
