@@ -147,8 +147,7 @@ const useCaseList = () => {
       const isPrisonClosedIndictment =
         routeTo === constants.PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE
       const singleDefendantId =
-        isPrisonClosedIndictment &&
-        defendantIds?.length === 1
+        isPrisonClosedIndictment && defendantIds?.length === 1
           ? defendantIds[0]
           : undefined
       const url =
@@ -156,9 +155,13 @@ const useCaseList = () => {
           ? `${path}?defendantId=${encodeURIComponent(singleDefendantId)}`
           : path
 
+      if (!routeTo) {
+        return
+      }
+
       if (openCaseInNewTab) {
         window.open(url, '_blank')
-      } else if (routeTo) {
+      } else {
         router.push(url)
       }
     },

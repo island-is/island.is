@@ -338,6 +338,7 @@ export class DefendantService {
             caseId: theCase.id,
             defendantId: defendant.id,
             eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
+            user,
           },
           transaction,
         )
