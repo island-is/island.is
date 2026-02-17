@@ -161,7 +161,7 @@ codemagic.yaml                                                                  
 /apps/portals/my-pages*/                                                                                                     @island-is/hugsmidjan
 /apps/services/regulations-admin-backend/                                                                                    @island-is/hugsmidjan
 /apps/services/user-profile/                                                                                                 @island-is/hugsmidjan @island-is/juni @island-is/aranja
-/apps/web/components/Grants/                                                                                                 @island-is/hugsmidjan
+/apps/web/components/CustomPageLayout/                                                                                       @island-is/hugsmidjan
 /apps/web/components/GrantCardsList/                                                                                         @island-is/hugsmidjan
 /apps/web/screens/Grants/                                                                                                    @island-is/hugsmidjan
 /apps/web/screens/Regulations/                                                                                               @island-is/hugsmidjan
@@ -197,6 +197,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/questionnaires/                                                                                            @island-is/hugsmidjan
 /libs/clients/documents/                                                                                                     @island-is/hugsmidjan
 /libs/clients/documents-v2/                                                                                                  @island-is/hugsmidjan
+/libs/clients/elfur                                                                                                          @island-is/hugsmidjan
 /libs/clients/finance/                                                                                                       @island-is/hugsmidjan
 /libs/clients/finance-v2/                                                                                                    @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                                       @island-is/hugsmidjan
