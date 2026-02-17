@@ -72,7 +72,7 @@ export class NotifyService {
       }
       const responseData = await response.json()
       const externalSystemResponse: NotificationResponseDto = {
-        operationSuccessful: responseData.success,
+        operationSuccessful: responseData.success === true,
         screen: responseData.screen,
       }
       return externalSystemResponse
