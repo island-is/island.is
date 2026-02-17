@@ -3,14 +3,18 @@ import {
   PaginatedSearchableTableField,
   PaginatedSearchableTableRow,
 } from '@island.is/application/types'
-import {
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { Box, Input, Pagination, Stack, Table as T, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Input,
+  Pagination,
+  Stack,
+  Table as T,
+  Text,
+} from '@island.is/island-ui/core'
 import { ChangeEvent, FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 
@@ -22,12 +26,19 @@ interface Props extends FieldBaseProps {
 
 type FormValues = Record<string, unknown>
 
-const paginate = <TItem,>(items: TItem[], pageSize: number, page: number): TItem[] => {
+const paginate = <TItem,>(
+  items: TItem[],
+  pageSize: number,
+  page: number,
+): TItem[] => {
   const startIndex = (page - 1) * pageSize
   return items.slice(startIndex, startIndex + pageSize)
 }
 
-const getRowId = (row: PaginatedSearchableTableRow, rowIdKey: string): string => {
+const getRowId = (
+  row: PaginatedSearchableTableRow,
+  rowIdKey: string,
+): string => {
   const rowId = row[rowIdKey]
   if (rowId === null || typeof rowId === 'undefined') {
     return ''
@@ -79,12 +90,15 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
   >({})
 
   const rows = useMemo(
-    () => (typeof field.rows === 'function' ? field.rows(application) : field.rows),
+    () =>
+      typeof field.rows === 'function' ? field.rows(application) : field.rows,
     [application, field],
   )
   const headers = useMemo(
     () =>
-      typeof field.headers === 'function' ? field.headers(application) : field.headers,
+      typeof field.headers === 'function'
+        ? field.headers(application)
+        : field.headers,
     [application, field],
   )
   const answerKey = field.id
@@ -117,8 +131,10 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
 
   useEffect(() => {
     const existingRows =
-      getValueViaPath<PaginatedSearchableTableRow[]>(application.answers, answerKey) ??
-      []
+      getValueViaPath<PaginatedSearchableTableRow[]>(
+        application.answers,
+        answerKey,
+      ) ?? []
 
     if (!existingRows.length) {
       setChangedRowsById({})
@@ -178,7 +194,10 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
     return paginate(filteredRows, pageSize, page)
   }, [filteredRows, page, pageSize])
 
-  const changedRows = useMemo(() => Object.values(changedRowsById), [changedRowsById])
+  const changedRows = useMemo(
+    () => Object.values(changedRowsById),
+    [changedRowsById],
+  )
   const changedRowsRef = useRef<PaginatedSearchableTableRow[]>(changedRows)
 
   useEffect(() => {
@@ -224,7 +243,13 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
           return [true, null]
         } catch {
           const errorMessage = field.submitErrorMessage
-            ? String(formatText(field.submitErrorMessage, application, formatMessage))
+            ? String(
+                formatText(
+                  field.submitErrorMessage,
+                  application,
+                  formatMessage,
+                ),
+              )
             : 'Ekki tókst að vista töfluupplýsingar. Reyndu aftur.'
           return [false, errorMessage]
         }
@@ -263,7 +288,8 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
       const baseRow = baseRowsById[rowId] ?? row
       const existingRow = changedRowsById[rowId] ?? baseRow
       const { value } = event.target
-      const nextValue = inputType === 'number' && value !== '' ? Number(value) : value
+      const nextValue =
+        inputType === 'number' && value !== '' ? Number(value) : value
 
       const nextRow = {
         ...existingRow,
@@ -289,7 +315,11 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
       <Input
         name={`${answerKey}Search`}
         label={formatText(field.searchLabel, application, formatMessage)}
-        placeholder={formatText(field.searchPlaceholder, application, formatMessage)}
+        placeholder={formatText(
+          field.searchPlaceholder,
+          application,
+          formatMessage,
+        )}
         icon={{ name: 'search' }}
         backgroundColor="blue"
         size="sm"
@@ -320,7 +350,8 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
               return (
                 <T.Row key={rowKey}>
                   {headers.map((header) => {
-                    const value = rowWithChanges?.[header.key] ?? row[header.key] ?? ''
+                    const value =
+                      rowWithChanges?.[header.key] ?? row[header.key] ?? ''
                     if (header.editable) {
                       return (
                         <T.Data key={header.key}>
@@ -342,7 +373,9 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
                       )
                     }
 
-                    return <T.Data key={header.key}>{String(value) || '-'}</T.Data>
+                    return (
+                      <T.Data key={header.key}>{String(value) || '-'}</T.Data>
+                    )
                   })}
                 </T.Row>
               )
@@ -350,7 +383,9 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
           ) : (
             <T.Row>
               <T.Data colSpan={headers.length}>
-                <Text>{formatText(field.emptyState, application, formatMessage)}</Text>
+                <Text>
+                  {formatText(field.emptyState, application, formatMessage)}
+                </Text>
               </T.Data>
             </T.Row>
           )}
@@ -362,7 +397,11 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
           page={page}
           totalPages={totalPages}
           renderLink={(nextPage, className, children) => (
-            <Box cursor="pointer" className={className} onClick={() => setPage(nextPage)}>
+            <Box
+              cursor="pointer"
+              className={className}
+              onClick={() => setPage(nextPage)}
+            >
               {children}
             </Box>
           )}
