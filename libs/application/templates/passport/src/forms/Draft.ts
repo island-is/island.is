@@ -130,7 +130,7 @@ export const Draft: Form = buildForm({
                       m.serviceTypeRegular.defaultMessage +
                       ' - ' +
                       regularPrices,
-                    subLabel: m.serviceTypeRegularSublabel.defaultMessage,
+                    subLabel: m.serviceTypeRegularSublabel,
                   },
                   {
                     value: Services.EXPRESS,
@@ -138,7 +138,7 @@ export const Draft: Form = buildForm({
                       m.serviceTypeExpress.defaultMessage +
                       ' - ' +
                       expressPrices,
-                    subLabel: m.serviceTypeExpressSublabel.defaultMessage,
+                    subLabel: m.serviceTypeExpressSublabel,
                   },
                 ]
               },
