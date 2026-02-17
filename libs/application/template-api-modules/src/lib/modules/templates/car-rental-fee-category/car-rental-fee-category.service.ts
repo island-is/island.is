@@ -208,7 +208,12 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
           const newMilage = Number(row.latestMilage)
           const currentCar = permno ? currentCarData[permno] : undefined
 
-          if (!permno || !currentCar || Number.isNaN(newMilage) || newMilage < 0) {
+          if (
+            !permno ||
+            !currentCar ||
+            Number.isNaN(newMilage) ||
+            newMilage < 0
+          ) {
             invalidRows.push(permno || '-')
             return null
           }

@@ -48,18 +48,17 @@ const paginate = <TItem,>(
   return items.slice(startIndex, startIndex + pageSize)
 }
 
-export const VehicleMileageSearchTable: FC<PropsWithChildren<FieldBaseProps>> = ({
-  application,
-  setBeforeSubmitCallback,
-}) => {
+export const VehicleMileageSearchTable: FC<
+  PropsWithChildren<FieldBaseProps>
+> = ({ application, setBeforeSubmitCallback }) => {
   const { register, setValue, unregister } = useFormContext<FormValues>()
   const { lang, formatMessage } = useLocale()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
-  const [mileageByPermno, setMileageByPermno] = useState<Record<string, string>>(
-    {},
-  )
+  const [mileageByPermno, setMileageByPermno] = useState<
+    Record<string, string>
+  >({})
   const hasInitializedFromAnswersRef = useRef(false)
 
   const vehicles = useMemo(
@@ -179,7 +178,11 @@ export const VehicleMileageSearchTable: FC<PropsWithChildren<FieldBaseProps>> = 
       .map(([permno, latestMilage]) => {
         const parsedLatestMilage = Number(latestMilage)
 
-        if (!permno || latestMilage === '' || Number.isNaN(parsedLatestMilage)) {
+        if (
+          !permno ||
+          latestMilage === '' ||
+          Number.isNaN(parsedLatestMilage)
+        ) {
           return null
         }
 
@@ -239,7 +242,13 @@ export const VehicleMileageSearchTable: FC<PropsWithChildren<FieldBaseProps>> = 
         customCallbackId: 'vehicleLatestMilageRowsPersist',
       },
     )
-  }, [application.id, lang, setBeforeSubmitCallback, setValue, updateApplication])
+  }, [
+    application.id,
+    lang,
+    setBeforeSubmitCallback,
+    setValue,
+    updateApplication,
+  ])
 
   const handleLatestMilageChange =
     (permno: string) =>
@@ -279,8 +288,12 @@ export const VehicleMileageSearchTable: FC<PropsWithChildren<FieldBaseProps>> = 
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>{formatMessage(m.tableView.tableHeaderPermno)}</T.HeadData>
-            <T.HeadData>{formatMessage(m.tableView.tableHeaderMileage)}</T.HeadData>
+            <T.HeadData>
+              {formatMessage(m.tableView.tableHeaderPermno)}
+            </T.HeadData>
+            <T.HeadData>
+              {formatMessage(m.tableView.tableHeaderMileage)}
+            </T.HeadData>
           </T.Row>
         </T.Head>
         <T.Body>
