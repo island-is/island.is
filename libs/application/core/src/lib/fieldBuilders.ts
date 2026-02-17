@@ -38,6 +38,7 @@ import {
   ActionCardListField,
   TableRepeaterField,
   StaticTableField,
+  PaginatedSearchableTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
   SliderField,
@@ -389,6 +390,42 @@ export const buildCustomField = (
     type: FieldTypes.CUSTOM,
     component,
     props: props ?? {},
+  }
+}
+
+export const buildPaginatedSearchableTableField = (
+  data: Omit<PaginatedSearchableTableField, 'type' | 'component' | 'children'>,
+): PaginatedSearchableTableField => {
+  const {
+    rowIdKey,
+    rows,
+    headers,
+    searchLabel,
+    searchPlaceholder,
+    emptyState,
+    searchKeys,
+    savePropertyNames,
+    pageSize,
+    submitErrorMessage,
+    callbackId,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.PAGINATED_SEARCHABLE_TABLE,
+    component: FieldComponents.PAGINATED_SEARCHABLE_TABLE,
+    rowIdKey,
+    rows,
+    headers,
+    searchLabel,
+    searchPlaceholder,
+    emptyState,
+    searchKeys,
+    savePropertyNames,
+    pageSize,
+    submitErrorMessage,
+    callbackId,
   }
 }
 

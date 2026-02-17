@@ -287,6 +287,11 @@ export const m = {
       defaultMessage: 'Ekkert fannst fyrir þessa leit.',
       description: 'Vehicle table empty state message',
     },
+    submitErrorMessage: {
+      id: 'rsk.crfc.application:table.view.submit.error',
+      defaultMessage: 'Ekki tókst að vista kílómetrastöðu. Reyndu aftur.',
+      description: 'Vehicle table submit save error',
+    },
   }),
 
   endOfMonth: defineMessages({
