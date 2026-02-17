@@ -1,7 +1,7 @@
 'use client'
 
 import { useContext, useEffect } from 'react'
-import { useRouter } from 'next/router'
+import Router from 'next/router'
 import { MatomoContext } from './MatomoContext'
 import type { MatomoPageAttributes, MatomoContextValue } from './types'
 
@@ -20,12 +20,14 @@ export const useMatomo = (): MatomoContextValue => {
  * Hook that sets attributes on mount and on every route change while component is mounted.
  * Attributes are set before MatomoProvider sends the page view.
  * Return undefined or null to skip setting attributes.
+ *
+ * Uses the Router singleton instead of useRouter() hook to avoid
+ * triggering React state updates during hydration.
  */
 export const useMatomoPageView = (
   getAttributes: () => MatomoPageAttributes | undefined | null,
 ) => {
   const { setAttributes } = useMatomo()
-  const router = useRouter()
 
   useEffect(() => {
     // Set attributes on initial mount
@@ -47,12 +49,12 @@ export const useMatomoPageView = (
       }
     }
 
-    router.events.on('routeChangeComplete', handleRouteChange)
+    Router.events.on('routeChangeComplete', handleRouteChange)
 
     return () => {
-      router.events.off('routeChangeComplete', handleRouteChange)
+      Router.events.off('routeChangeComplete', handleRouteChange)
     }
-  }, [router.events, setAttributes, getAttributes])
+  }, [setAttributes, getAttributes])
 }
 
 /**

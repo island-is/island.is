@@ -7,7 +7,7 @@ import React, {
   type ReactNode,
   type MutableRefObject,
 } from 'react'
-import { useRouter } from 'next/router'
+import Router from 'next/router'
 import { MatomoContext } from './MatomoContext'
 import { push } from './push'
 import type { MatomoPageAttributes, MatomoContextValue } from './types'
@@ -17,7 +17,6 @@ interface MatomoProviderProps {
 }
 
 export const MatomoProvider = ({ children }: MatomoProviderProps) => {
-  const router = useRouter()
   const attributesRef: MutableRefObject<MatomoPageAttributes> = useRef({})
   const isInitializedRef = useRef(false)
 
@@ -139,21 +138,24 @@ export const MatomoProvider = ({ children }: MatomoProviderProps) => {
     }, 0)
   }, [])
 
-  // Track initial page load
+  // Track initial page load and route changes using the Router singleton
+  // instead of useRouter() hook. The hook subscribes to router context,
+  // which triggers state updates during hydration that break React.lazy
+  // Suspense boundaries (Icon component).
   useEffect(() => {
     console.log(
       '[Matomo] Initial page load effect, router.asPath:',
-      router.asPath,
+      Router.asPath,
     )
-    trackPageView(router.asPath)
+    trackPageView(Router.asPath)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Track route changes
   useEffect(() => {
     console.log(
       '[Matomo] Setting up route change listeners on router.events:',
-      typeof router.events,
-      router.events,
+      typeof Router.events,
+      Router.events,
     )
 
     const handleRouteChangeStart = () => {
@@ -166,15 +168,15 @@ export const MatomoProvider = ({ children }: MatomoProviderProps) => {
       trackPageView(url)
     }
 
-    router.events.on('routeChangeStart', handleRouteChangeStart)
-    router.events.on('routeChangeComplete', handleRouteChangeComplete)
+    Router.events.on('routeChangeStart', handleRouteChangeStart)
+    Router.events.on('routeChangeComplete', handleRouteChangeComplete)
 
     return () => {
       console.log('[Matomo] Cleaning up route change listeners')
-      router.events.off('routeChangeStart', handleRouteChangeStart)
-      router.events.off('routeChangeComplete', handleRouteChangeComplete)
+      Router.events.off('routeChangeStart', handleRouteChangeStart)
+      Router.events.off('routeChangeComplete', handleRouteChangeComplete)
     }
-  }, [router.events, clearAttributes, trackPageView])
+  }, [clearAttributes, trackPageView])
 
   const contextValue: MatomoContextValue = {
     setAttribute,
