@@ -17,13 +17,25 @@ import { SocialInsuranceService } from '../socialInsurance.service'
 import type { Locale } from '@island.is/shared/types'
 import { GenericKeyValueNumberObject } from '../models/general/genericKeyValueNumberObject.model'
 import { GenericKeyValueStringObject } from '../models/general/genericKeyValueStringObject.model'
+import {
+  SocialInsuranceAdministrationGeneralService,
+  SocialInsuranceAdministrationEducationService,
+  SocialInsuranceAdministrationEmploymentService,
+  SocialInsuranceAdministrationProfessionService,
+} from '@island.is/clients/social-insurance-administration'
 
 @Resolver(() => General)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/social-insurance' })
 @Scopes(ApiScope.internal)
 export class GeneralResolver {
-  constructor(private readonly service: SocialInsuranceService) {}
+  constructor(
+    private readonly service: SocialInsuranceService,
+    private readonly generalService: SocialInsuranceAdministrationGeneralService,
+    private readonly educationService: SocialInsuranceAdministrationEducationService,
+    private readonly employmentService: SocialInsuranceAdministrationEmploymentService,
+    private readonly professionService: SocialInsuranceAdministrationProfessionService,
+  ) {}
 
   @Query(() => General, { name: 'socialInsuranceGeneral' })
   async getGeneral() {
@@ -32,7 +44,7 @@ export class GeneralResolver {
 
   @ResolveField('unions', () => [Union], { nullable: true })
   resolveUnions(@CurrentUser() user: User) {
-    return this.service.getUnions(user)
+    return this.generalService.getUnions(user)
   }
 
   @ResolveField('countries', () => [Country], { nullable: true })
@@ -48,14 +60,14 @@ export class GeneralResolver {
     nullable: true,
   })
   resolveEducationalInstitution(@CurrentUser() user: User) {
-    return this.service.getEducationalInstitutions(user)
+    return this.educationService.getEducationalInstitutions(user)
   }
 
   @ResolveField('currencies', () => [String], {
     nullable: true,
   })
   resolveCurrencies(@CurrentUser() user: User) {
-    return this.service.getCurrencies(user)
+    return this.generalService.getCurrencies(user)
   }
 
   @ResolveField('languages', () => [GenericKeyValueStringObject], {
@@ -66,21 +78,21 @@ export class GeneralResolver {
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
   ) {
-    return this.service.getLanguages(user, locale)
+    return this.generalService.getLanguages(user, locale)
   }
 
   @ResolveField('maritalStatuses', () => [GenericKeyValueNumberObject], {
     nullable: true,
   })
   resolveMaritalStatuses(@CurrentUser() user: User) {
-    return this.service.getMaritalStatuses(user)
+    return this.generalService.getMaritalStatuses(user)
   }
 
   @ResolveField('residenceTypes', () => [GenericKeyValueNumberObject], {
     nullable: true,
   })
   resolveResidenceTypes(@CurrentUser() user: User) {
-    return this.service.getResidenceTypes(user)
+    return this.generalService.getResidenceTypes(user)
   }
 
   @ResolveField('employmentStatuses', () => [GenericKeyValueStringObject], {
@@ -91,20 +103,20 @@ export class GeneralResolver {
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
   ) {
-    return this.service.getEmploymentStatusesWithLocale(user, locale)
+    return this.employmentService.getEmploymentStatusesWithLocale(user, locale)
   }
 
   @ResolveField('professions', () => [GenericKeyValueStringObject], {
     nullable: true,
   })
   resolveProfessions(@CurrentUser() user: User) {
-    return this.service.getProfessions(user)
+    return this.professionService.getProfessions(user)
   }
 
   @ResolveField('professionActivities', () => [GenericKeyValueStringObject], {
     nullable: true,
   })
   resolveProfessionActivities(@CurrentUser() user: User) {
-    return this.service.getProfessionActivities(user)
+    return this.professionService.getProfessionActivitiesInDto(user)
   }
 }
