@@ -118,7 +118,17 @@ const IndictmentOverview = () => {
         caseId: workingCase.id,
         punishmentType: selectedOption.value,
       }
-      updateDefendantState(defendantUpdate, setWorkingCase)
+
+      const stateUpdate = {
+        ...defendantUpdate,
+        ...(defendant.openedByPrisonAdminDate
+          ? {}
+          : {
+              openedByPrisonAdminDate: new Date().toISOString().split('T')[0],
+            }),
+      }
+
+      updateDefendantState(stateUpdate, setWorkingCase)
       limitedAccessUpdateDefendant(defendantUpdate)
     },
     [
