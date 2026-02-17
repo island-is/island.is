@@ -246,6 +246,7 @@ export class NotificationsWorkerService {
     profile,
     message,
     messageId,
+    notificationId,
     template,
   }: HandleNotification): Promise<void> {
     const { nationalId } = profile
@@ -322,6 +323,13 @@ export class NotificationsWorkerService {
       )
 
       await this.smsService.sendSms(profile.mobilePhoneNumber, smsContent)
+
+      if (notificationId) {
+        await this.notificationModel.update(
+          { smsSent: true, smsPayer: template.smsPayer },
+          { where: { id: notificationId } },
+        )
+      }
 
       this.logger.info('SMS notification sent', {
         messageId,

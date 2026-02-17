@@ -18,6 +18,7 @@ import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { EmailService } from '@island.is/email-service'
+import { SmsService } from '@island.is/nova-sms'
 import { QueueService, getQueueServiceToken } from '@island.is/message-queue'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { testServer, truncate, useDatabase } from '@island.is/testing/nest'
@@ -94,6 +95,7 @@ describe('NotificationsWorkerService', () => {
   let userProfileApi: V2UsersApi
   let nationalRegistryService: NationalRegistryV3ClientService
   let companyRegistryService: CompanyRegistryClientService
+  let smsService: SmsService
 
   beforeAll(async () => {
     app = await testServer({
@@ -129,6 +131,7 @@ describe('NotificationsWorkerService', () => {
     userProfileApi = app.get(V2UsersApi)
     nationalRegistryService = app.get(NationalRegistryV3ClientService)
     companyRegistryService = app.get(CompanyRegistryClientService)
+    smsService = app.get(SmsService)
 
     notificationsWorkerService = await app.resolve(NotificationsWorkerService)
     notificationsWorkerService.run()
@@ -150,6 +153,10 @@ describe('NotificationsWorkerService', () => {
     jest
       .spyOn(notificationDispatch, 'sendPushNotification')
       .mockReturnValue(Promise.resolve())
+
+    jest
+      .spyOn(smsService, 'sendSms')
+      .mockReturnValue(Promise.resolve({ Code: 1, Message: 'OK' }))
 
     jest
       .spyOn(notificationsService, 'getTemplate')
@@ -459,6 +466,54 @@ describe('NotificationsWorkerService', () => {
     expect(companyRegistryService.getCompany).toHaveBeenCalledTimes(1)
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
+  })
+
+  it('should update notification record with smsSent and smsPayer after successful SMS send', async () => {
+    jest.spyOn(notificationsService, 'getTemplate').mockReturnValue(
+      Promise.resolve(
+        getMockHnippTemplate({
+          smsDelivery: 'ALWAYS',
+          smsPayer: 'Landlæknir',
+        }),
+      ),
+    )
+
+    await addToQueue(userWithNoDelegations.nationalId)
+
+    expect(smsService.sendSms).toHaveBeenCalledTimes(1)
+
+    const notifications = await notificationModel.findAll({
+      where: { recipient: userWithNoDelegations.nationalId },
+    })
+    expect(notifications).toHaveLength(1)
+
+    const notification = notifications[0]
+    expect(notification.smsSent).toBe(true)
+    expect(notification.smsPayer).toBe('Landlæknir')
+  })
+
+  it('should not update notification record with smsSent when SMS is not sent', async () => {
+    jest.spyOn(notificationsService, 'getTemplate').mockReturnValue(
+      Promise.resolve(
+        getMockHnippTemplate({
+          smsDelivery: 'NEVER',
+          smsPayer: undefined,
+        }),
+      ),
+    )
+
+    await addToQueue(userWithNoDelegations.nationalId)
+
+    expect(smsService.sendSms).not.toHaveBeenCalled()
+
+    const notifications = await notificationModel.findAll({
+      where: { recipient: userWithNoDelegations.nationalId },
+    })
+    expect(notifications).toHaveLength(1)
+
+    const notification = notifications[0]
+    expect(notification.smsSent).toBe(false)
+    expect(notification.smsPayer).toBeNull()
   })
 
   describe('Actor Notifications', () => {
