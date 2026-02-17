@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import type { AppProps } from 'next/app'
-import Script from 'next/script'
 import Router from 'next/router'
+import Script from 'next/script'
 
 import { globalStyles } from '@island.is/island-ui/core'
 
