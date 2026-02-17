@@ -183,8 +183,6 @@ export class NotificationsService {
       hnippTemplateCollection: { items: HnippTemplate[] }
     }
 
-    console.log('res', res)
-
     const items = res.hnippTemplateCollection.items
     if (items.length > 0) {
       const template = items[0]
@@ -221,10 +219,6 @@ export class NotificationsService {
       template.smsPayer !== null &&
       template.smsPayer !== undefined &&
       template.smsPayer !== ''
-
-    if (!isPayerPresent) {
-      throw new BadRequestException('SMS payer is required')
-    }
 
     if (template.smsDelivery !== 'NEVER' && !isPayerPresent) {
       throw new BadRequestException(

@@ -1,3 +1,4 @@
+import { SmsService } from '@island.is/nova-sms'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isCompany } from 'kennitala'
@@ -51,6 +52,8 @@ type HandleNotification = {
     documentNotifications: boolean
     emailNotifications: boolean
     locale?: string
+    mobilePhoneNumber?: string | null
+    smsNotifications?: boolean | null
   }
   notificationId?: number | null
   messageId: string
@@ -71,7 +74,7 @@ export class NotificationsWorkerService {
     private readonly companyRegistryService: CompanyRegistryClientService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly emailService: EmailService,
-
+    private readonly smsService: SmsService,
     @InjectWorker('notifications')
     private readonly worker: WorkerService,
 
@@ -224,6 +227,104 @@ export class NotificationsWorkerService {
         title: formattedTemplate.title,
         body: generateBody(),
       },
+    }
+  }
+
+  private createEmailContent(
+    fullName: string,
+    template: HnippTemplate,
+  ): string {
+    return `
+      ${fullName}: ${template.title}
+
+      ${template.externalBody}
+
+      Skoda a Island.is:
+
+      ${template.clickActionUrl} 
+    `
+  }
+
+  private async handleSmsNotification({
+    profile,
+    message,
+    messageId,
+    template,
+  }: HandleNotification): Promise<void> {
+    const { nationalId } = profile
+
+    const allowSmsNotification = await this.featureFlagService.getValue(
+      Features.isSmsNotificationEnabled,
+      false,
+      { nationalId } as User,
+    )
+
+    if (!allowSmsNotification) {
+      this.logger.info(
+        'SMS notification feature flag is not enabled for user',
+        {
+          messageId,
+          nationalId,
+        },
+      )
+      return
+    }
+
+    if (template.smsDelivery === 'NEVER') {
+      this.logger.info('SMS delivery is set to NEVER for template')
+      return
+    }
+
+    if (!template.smsPayer) {
+      this.logger.error('SMS payer is required for template', {
+        messageId,
+        templateId: template.templateId,
+      })
+      return
+    }
+
+    if (!profile.mobilePhoneNumber) {
+      this.logger.error('Phone number is required for template', {
+        messageId,
+        templateId: template.templateId,
+      })
+      return
+    }
+
+    if (template.smsDelivery === 'OPT_IN' && !profile.smsNotifications) {
+      this.logger.info('SMS notification is not enabled for user', {
+        messageId,
+        templateId: template.templateId,
+      })
+      return
+    }
+
+    const fullName = await this.getName(nationalId)
+
+    try {
+      const smsContent = this.createEmailContent(
+        fullName,
+        await this.notificationsService.formatArguments(
+          message.args,
+          // We need to shallow copy the template here so that the
+          // in-memory cache is not modified.
+          { ...template },
+          message?.senderId,
+          profile.locale as Locale,
+        ),
+      )
+
+      await this.smsService.sendSms(profile.mobilePhoneNumber, smsContent)
+
+      this.logger.info('SMS notification sent', {
+        messageId,
+        smsContent,
+      })
+    } catch (error) {
+      this.logger.error('SMS notification error', {
+        error,
+        messageId,
+      })
     }
   }
 
@@ -502,6 +603,7 @@ export class NotificationsWorkerService {
       }
       await this.handleEmailNotification(handleNotificationArgs)
       await this.handlePushNotifications(handleNotificationArgs)
+      await this.handleSmsNotification(handleNotificationArgs)
     }
 
     await this.handleSendingNotificationsToDelegations(
