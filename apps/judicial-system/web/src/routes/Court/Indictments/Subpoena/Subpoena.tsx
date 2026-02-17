@@ -406,7 +406,9 @@ const Subpoena: FC = () => {
                     disabled={workingCase.state === CaseState.CORRECTING}
                     onClick={() => {
                       setNewSubpoenas((previous) => [...previous, defendant.id])
-                      toggleNewAlternativeService(defendant)()
+                      if (defendant.isAlternativeService) {
+                        toggleNewAlternativeService(defendant)()
+                      }
                       handleDefendantUpdates({
                         defendantId: defendant.id,
                         caseId: workingCase.id,
