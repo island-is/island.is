@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Inject,
   Injectable,
@@ -1020,12 +1021,18 @@ export class ApplicationsService {
 
     const submissionUrl = form.submissionServiceUrl
 
+    if (!submissionUrl) {
+      throw new BadRequestException(
+        `Form '${application.formId}' does not have a submissionServiceUrl configured`,
+      )
+    }
+
     const nationalId = user.actor?.nationalId || user.nationalId
 
     notificationDto.nationalId = nationalId
 
     if (!notificationDto.screen) {
-      throw new NotFoundException(
+      throw new BadRequestException(
         `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
       )
     }

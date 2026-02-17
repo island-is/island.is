@@ -119,7 +119,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           data?.notifyFormSystemExternalSystem?.screen,
         )
 
-        if (data.notifyFormSystemExternalSystem.screen.screenError.hasError) {
+        if (updatedScreen?.screenError?.hasError) {
           dispatch({
             type: 'EXTERNAL_SERVICE_VALIDATION',
             payload: {
