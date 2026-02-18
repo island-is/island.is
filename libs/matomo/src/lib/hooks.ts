@@ -3,6 +3,7 @@
 import { useContext, useEffect } from 'react'
 import Router from 'next/router'
 import { MatomoContext } from './MatomoContext'
+import { setCustomVariable, trackSiteSearch } from './tracking'
 import type { MatomoPageAttributes, MatomoContextValue } from './types'
 
 /**
@@ -62,4 +63,22 @@ export const useMatomoPageView = (
  */
 export const useSetOrganization = (organization?: string | null) => {
   useMatomoPageView(() => ({ organization }))
+}
+
+export const useMatomoTrackOrganization = (organization?: string | null) => {
+  useEffect(() => {
+    if (!organization) return
+
+    console.log('[Matomo] Tracking organization:', organization)
+    setCustomVariable(1, 'organization', organization, 'visit')
+  }, [organization])
+}
+
+export const useMatomoTrackSearch = (keyword?: string, category?: string | false, resultsCount?: number) => {
+  useEffect(() => {
+    if (!keyword) return
+
+    console.log('[Matomo] Tracking site search:', keyword, category, resultsCount)
+    trackSiteSearch(keyword, category, resultsCount)
+  }, [keyword, category, resultsCount])
 }

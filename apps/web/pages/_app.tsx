@@ -7,7 +7,7 @@ import '@island.is/api/mocks'
 
 globalStyles()
 
-function IslandWebApp({ Component, pageProps }: AppProps) {
+const IslandWebApp = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <MatomoTracker />

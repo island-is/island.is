@@ -30,6 +30,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useMatomoTrackSearch } from '@island.is/matomo'
 import {
   Card,
   CardTagsProps,
@@ -420,6 +421,15 @@ const Search: Screen<CategoryProps> = ({
   const nothingFound = filteredItems.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
+
+  const searchCategory =
+    [query.type, query.category, query.organization]
+      .flat()
+      .filter(Boolean)
+      .join(',') || false
+  useMatomoTrackSearch(q, searchCategory, totalSearchResults)
+
+  console.log('searchCategory', searchCategory)
 
   const searchResultsText =
     totalSearchResults === 1

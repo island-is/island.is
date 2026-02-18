@@ -15,6 +15,9 @@ export const MatomoInitScript = ({
   matomoSiteId,
 }: MatomoInitScriptProps) => {
   if (!matomoDomain || !matomoSiteId) {
+    console.warn(
+      '[MatomoInitScript] Missing matomoDomain or matomoSiteId, skipping Matomo initialization',
+    )
     return null
   }
 
