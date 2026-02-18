@@ -6,14 +6,7 @@ import {
   type ScopeSelection,
 } from '../../context/DelegationFormContext'
 import format from 'date-fns/format'
-
-const headerArray = [
-  'Nafn',
-  'Heiti Umboðs',
-  'Lýsing á umboði',
-  'Tegund',
-  'Gildistími',
-]
+import { m } from '../../lib/messages'
 
 export const DateScopesTable = ({
   editableDates = true,
@@ -31,6 +24,13 @@ export const DateScopesTable = ({
       ),
     )
   }
+  const headerArray = [
+    formatMessage(m.headerName),
+    formatMessage(m.headerScopeName),
+    formatMessage(m.headerDescription),
+    formatMessage(m.headerDelegationType),
+    formatMessage(m.headerValidityPeriod),
+  ]
 
   return (
     <T.Table style={{ overflow: 'visible' }}>

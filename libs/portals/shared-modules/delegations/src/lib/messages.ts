@@ -488,4 +488,8 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:header-scope-name',
     defaultMessage: 'Heiti umboðs',
   },
+  headerDescription: {
+    id: 'sp.access-control-delegations:header-description',
+    defaultMessage: 'Lýsing á umboði',
+  },
 })

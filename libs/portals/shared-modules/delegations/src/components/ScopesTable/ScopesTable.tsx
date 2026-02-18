@@ -1,5 +1,7 @@
 import { AuthApiScope } from '@island.is/api/schema'
 import { Box, Checkbox, Table as T, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 type Scope = {
   __typename?: 'AuthApiScope'
@@ -20,19 +22,19 @@ type ScopesTableProps = {
   selectedScopes?: AuthApiScope[]
 }
 
-const headerArray = [
-  '',
-  'Nafn',
-  'Heiti Umboðs',
-  'Lýsing á umboði',
-  'Tegund Réttinda',
-]
-
 export const ScopesTable = ({
   scopes,
   onSelectScope,
   selectedScopes,
 }: ScopesTableProps) => {
+  const { formatMessage } = useLocale()
+  const headerArray = [
+    '',
+    formatMessage(m.headerName),
+    formatMessage(m.headerScopeName),
+    formatMessage(m.headerDescription),
+    formatMessage(m.headerDelegationType),
+  ]
   return (
     <T.Table>
       <T.Head>
