@@ -486,6 +486,10 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
       model: Institution,
       attributes: ['name'],
     },
+    defendants: {
+      model: Defendant,
+      attributes: ['publicProsecutorIsRegisteredInPoliceSystem'],
+    },
   },
   generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
     const court = !isDistrictCourtUser(user)
@@ -510,9 +514,14 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
       user,
     )
 
-    const hasCheckMark = isPublicProsecutionOfficeUser(user)
-    //TODO: Fix this
-    //&&c.publicProsecutorIsRegisteredInPoliceSystem
+    const hasCheckMark =
+      isPublicProsecutionOfficeUser(user) &&
+      // It's ok to only check the first defendant here since this
+      // checkmark is only used for public prosecutors office users
+      // and each defendant has their own line in their cases table
+      c.defendants?.[0].publicProsecutorIsRegisteredInPoliceSystem
+
+    console.log({ sss: c.defendants })
 
     return generateCell(
       {
