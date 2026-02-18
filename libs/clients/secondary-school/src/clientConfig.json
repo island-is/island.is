@@ -681,157 +681,129 @@
         },
         "additionalProperties": false
       },
-      "ApplicationMMSReturnDto": {
-        "allOf": [
-          { "$ref": "#/components/schemas/ApplicationBaseDto" },
-          {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Application Id",
-                "format": "uuid"
-              },
-              "applicationDate": {
-                "type": "string",
-                "description": "Application date",
-                "format": "date-time"
-              },
-              "createdDate": {
-                "type": "string",
-                "description": "Date created",
-                "format": "date-time"
-              },
-              "updatedDate": {
-                "type": "string",
-                "description": "Date updated",
-                "format": "date-time"
-              },
-              "status": {
-                "enum": ["NewApplication", "Processed", "Dismissed"],
-                "type": "string",
-                "description": "Status of the application"
-              },
-              "speakingLanguage": {
-                "allOf": [{ "$ref": "#/components/schemas/LanguageDto" }],
-                "description": "Language spoken by applicant",
-                "nullable": true
-              },
-              "elementarySchoolName": { "type": "string", "nullable": true },
-              "schoolChoices": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/SchoolChoiceMMSReturnDto"
-                },
-                "description": "List of schools being applied to",
-                "nullable": true
-              },
-              "currentApplicantStatus": {
-                "enum": [
-                  "Neither",
-                  "InSchoolOnHighSchoolLevel",
-                  "RegisteredWithLabourInstitute"
-                ],
-                "type": "string",
-                "description": "Status of the applicant \r\n0 = Neither\r\n1 = InSchoolOnHighSchoolLevel\r\n2 = RegisteredWithLabourInstitute\r\nDefault is 0 which is applicable for most students"
-              }
-            },
-            "additionalProperties": false
-          }
-        ]
-      },
       "ApplicationReturnDto": {
-        "allOf": [
-          { "$ref": "#/components/schemas/ApplicationBaseDto" },
-          {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Application Id",
-                "format": "uuid"
-              },
-              "applicationDate": {
-                "type": "string",
-                "description": "Application date",
-                "format": "date-time"
-              },
-              "createdDate": {
-                "type": "string",
-                "description": "Date created",
-                "format": "date-time"
-              },
-              "updatedDate": {
-                "type": "string",
-                "description": "Date updated",
-                "format": "date-time"
-              },
-              "status": {
-                "enum": ["NewApplication", "Processed", "Dismissed"],
-                "type": "string",
-                "description": "Status of the application"
-              },
-              "speakingLanguage": {
-                "allOf": [{ "$ref": "#/components/schemas/LanguageDto" }],
-                "description": "Language spoken by applicant",
-                "nullable": true
-              },
-              "schoolChoices": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/SchoolChoiceReturnDto"
-                },
-                "description": "List of schools being applied to",
-                "nullable": true
-              },
-              "currentApplicantStatus": {
-                "enum": [
-                  "Neither",
-                  "InSchoolOnHighSchoolLevel",
-                  "RegisteredWithLabourInstitute"
-                ],
-                "type": "string",
-                "description": "Status of the applicant \r\n0 = Neither\r\n1 = InSchoolOnHighSchoolLevel\r\n2 = RegisteredWithLabourInstitute\r\nDefault is 0 which is applicable for most students"
-              },
-              "attachments": {
-                "type": "array",
-                "items": { "$ref": "#/components/schemas/AttachmentReturnDto" },
-                "description": "List of attachments",
-                "nullable": true
-              },
-              "grades": {
-                "type": "array",
-                "items": { "$ref": "#/components/schemas/GradeDto" },
-                "description": "Grades of the applicant",
-                "nullable": true
-              },
-              "elementarySchool": {
-                "allOf": [
-                  { "$ref": "#/components/schemas/ElementarySchoolDto" }
-                ],
-                "description": "Applicants elementary school",
-                "nullable": true
-              }
-            },
-            "additionalProperties": false
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Application Id",
+            "format": "uuid"
+          },
+          "applicationDate": {
+            "type": "string",
+            "description": "Application date",
+            "format": "date-time"
+          },
+          "createdDate": {
+            "type": "string",
+            "description": "Date created",
+            "format": "date-time"
+          },
+          "updatedDate": {
+            "type": "string",
+            "description": "Date updated",
+            "format": "date-time"
+          },
+          "status": { "$ref": "#/components/schemas/ApplicationStatus" },
+          "speakingLanguage": { "$ref": "#/components/schemas/LanguageDto" },
+          "schoolChoices": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SchoolChoiceReturnDto" },
+            "description": "List of schools being applied to",
+            "nullable": true
+          },
+          "currentApplicantStatus": {
+            "$ref": "#/components/schemas/CurrentApplicantStatus"
+          },
+          "attachments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AttachmentReturnDto" },
+            "description": "List of attachments",
+            "nullable": true
+          },
+          "grades": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/GradeDto" },
+            "description": "Grades of the applicant",
+            "nullable": true
+          },
+          "elementarySchool": {
+            "$ref": "#/components/schemas/ElementarySchoolDto"
+          },
+          "islandIsApplicationId": {
+            "type": "string",
+            "description": "Reference Id to the Island.is application",
+            "format": "uuid",
+            "nullable": true
+          },
+          "applicantNationalId": {
+            "type": "string",
+            "description": "The national ID  of the applicant",
+            "nullable": true
+          },
+          "applicantName": {
+            "type": "string",
+            "description": "Applicant name",
+            "nullable": true
+          },
+          "applicantGender": {
+            "type": "string",
+            "description": "Applicant gender",
+            "nullable": true
+          },
+          "applicantAge": {
+            "type": "integer",
+            "description": "Applicant age calculated from national ID",
+            "format": "int32",
+            "nullable": true
+          },
+          "isFreshman": {
+            "type": "boolean",
+            "description": "Is the applicant a freshman"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "description": "Applicant phone number",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Applicant email",
+            "nullable": true
+          },
+          "placeOfResidence": {
+            "type": "string",
+            "description": "Place of residence if other than legal home",
+            "nullable": true
+          },
+          "postCode": {
+            "type": "string",
+            "description": "Postcode of residence if other than legal home",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "description": "Municipality of residence if other than legal home",
+            "nullable": true
+          },
+          "nextOfKin": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/NextOfKinDto" },
+            "description": "The national ID of the next of kin",
+            "nullable": true
+          },
+          "otherInformation": {
+            "type": "string",
+            "description": "Other information",
+            "nullable": true
           }
-        ]
+        },
+        "additionalProperties": false
       },
-      "ApplicationUpdateDto": {
-        "allOf": [
-          { "$ref": "#/components/schemas/ApplicationBaseDto" },
-          {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Application Id",
-                "format": "uuid"
-              }
-            },
-            "additionalProperties": false
-          }
-        ]
+      "ApplicationStatus": {
+        "enum": ["NewApplication", "Processed", "Dismissed"],
+        "type": "string",
+        "description": "Enum for describing Application Status\r\nNewApplication = 0,\r\nProcessed = 1,\r\nDismissed = 2,"
       },
       "AttachmentDto": {
         "type": "object",
@@ -909,6 +881,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "CurrentApplicantStatus": {
+        "enum": [
+          "Neither",
+          "InSchoolOnHighSchoolLevel",
+          "RegisteredWithLabourInstitute"
+        ],
+        "type": "string"
       },
       "ElementarySchoolDto": {
         "type": "object",
@@ -1153,21 +1133,21 @@
             "description": "Calculated weighted average for the programme",
             "format": "double"
           },
-          "status": {
-            "enum": [
-              "New",
-              "Processing",
-              "AcceptedWaiting",
-              "Accepted",
-              "OtherProgrammeAccepted",
-              "Rejected"
-            ],
-            "type": "string",
-            "description": "Status of the programme choice\r\nAvailable values are New, Processing, AcceptedWaiting, Accepted, OtherProgrammeAccepted, Rejected"
-          },
+          "status": { "$ref": "#/components/schemas/ProgrammeChoiceStatus" },
           "failsGradeRequirement": { "type": "boolean" }
         },
         "additionalProperties": false
+      },
+      "ProgrammeChoiceStatus": {
+        "enum": [
+          "New",
+          "Processing",
+          "AcceptedWaiting",
+          "Accepted",
+          "OtherProgrammeAccepted",
+          "Rejected"
+        ],
+        "type": "string"
       },
       "ProgrammeFilterOptionsDto": {
         "type": "object",
@@ -1222,26 +1202,12 @@
             "description": "Title of the programme.",
             "nullable": true
           },
-          "studyTrack": {
-            "allOf": [{ "$ref": "#/components/schemas/StudyTrackReturnDto" }],
-            "description": "Study track of the programme (IS: Námsleið).",
-            "nullable": true
-          },
+          "studyTrack": { "$ref": "#/components/schemas/StudyTrackReturnDto" },
           "qualification": {
-            "allOf": [
-              { "$ref": "#/components/schemas/QualificationReturnDto" }
-            ],
-            "description": "Qualification awarded upon completion of the programme (IS: Námslok).",
-            "nullable": true
+            "$ref": "#/components/schemas/QualificationReturnDto"
           },
           "specialization": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ProgrammeSpecializationReturnDto"
-              }
-            ],
-            "description": "Specialization / Programme type of the programme (IS: Sérhæfing / Námsbrautategund).",
-            "nullable": true
+            "$ref": "#/components/schemas/ProgrammeSpecializationReturnDto"
           },
           "credits": {
             "type": "integer",
@@ -1292,16 +1258,10 @@
             "nullable": true
           },
           "admissionRequirements": {
-            "allOf": [
-              { "$ref": "#/components/schemas/AdmissionRequirementsReturnDto" }
-            ],
-            "description": "Admission requirements for the programme. (IS: Inntökuskilyrði)",
-            "nullable": true
+            "$ref": "#/components/schemas/AdmissionRequirementsReturnDto"
           },
           "programmeStructure": {
-            "allOf": [{ "$ref": "#/components/schemas/ProgrammeStructureDto" }],
-            "description": "Programme structure details. (IS: Skipulag náms)",
-            "nullable": true
+            "$ref": "#/components/schemas/ProgrammeStructureDto"
           },
           "schools": {
             "type": "array",
@@ -1352,26 +1312,12 @@
             "description": "Title of the programme.",
             "nullable": true
           },
-          "studyTrack": {
-            "allOf": [{ "$ref": "#/components/schemas/StudyTrackReturnDto" }],
-            "description": "Study track of the programme (IS: Námsleið).",
-            "nullable": true
-          },
+          "studyTrack": { "$ref": "#/components/schemas/StudyTrackReturnDto" },
           "qualification": {
-            "allOf": [
-              { "$ref": "#/components/schemas/QualificationReturnDto" }
-            ],
-            "description": "Qualification awarded upon completion of the programme (IS: Námslok).",
-            "nullable": true
+            "$ref": "#/components/schemas/QualificationReturnDto"
           },
           "specialization": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/ProgrammeSpecializationReturnDto"
-              }
-            ],
-            "description": "Specialization / Programme type of the programme (IS: Sérhæfing / Námsbrautategund).",
-            "nullable": true
+            "$ref": "#/components/schemas/ProgrammeSpecializationReturnDto"
           },
           "credits": {
             "type": "integer",
@@ -1466,11 +1412,7 @@
             "description": "Description of the qualification.",
             "nullable": true
           },
-          "level": {
-            "allOf": [{ "$ref": "#/components/schemas/LevelDto" }],
-            "description": "Level of qualification (IS: Hæfniþrep).",
-            "nullable": true
-          }
+          "level": { "$ref": "#/components/schemas/LevelDto" }
         },
         "additionalProperties": false
       },
@@ -1542,68 +1484,6 @@
         },
         "additionalProperties": false
       },
-      "SchoolChoiceMMSReturnDto": {
-        "type": "object",
-        "properties": {
-          "priority": {
-            "type": "integer",
-            "description": "Priority of the school being applied to \r\n1 highest priority, 2 second highest priority, etc.",
-            "format": "int32"
-          },
-          "school": {
-            "allOf": [{ "$ref": "#/components/schemas/SchoolSimpleDto" }],
-            "description": "School that was chosen",
-            "nullable": true
-          },
-          "semesterId": {
-            "type": "string",
-            "description": "Id of semester being applied to",
-            "format": "uuid"
-          },
-          "programmeNameFirst": {
-            "type": "string",
-            "description": "First Choice programme name",
-            "nullable": true
-          },
-          "programmeNameSecond": {
-            "type": "string",
-            "description": "Second Choice programme name",
-            "nullable": true
-          },
-          "thirdLanguage": {
-            "allOf": [{ "$ref": "#/components/schemas/LanguageDto" }],
-            "description": "Third language choice",
-            "nullable": true
-          },
-          "northernLanguage": {
-            "allOf": [{ "$ref": "#/components/schemas/LanguageDto" }],
-            "description": "Third language choice",
-            "nullable": true
-          },
-          "requestDormitory": {
-            "type": "boolean",
-            "description": "Is the student requesting dormitory."
-          },
-          "rank": {
-            "type": "integer",
-            "description": "Ranking of the application choice",
-            "format": "int32"
-          },
-          "status": {
-            "enum": [
-              "NewApplication",
-              "Processing",
-              "AcceptedWaiting",
-              "Accepted",
-              "AcceptedInOtherSchool",
-              "Rejected"
-            ],
-            "type": "string",
-            "description": "SchoolChoiceStatus of the application\r\nPossible values are\r\nNewApplication, Processing, AcceptedWaiting, Accepted, AcceptedInOtherSchool, Rejected"
-          }
-        },
-        "additionalProperties": false
-      },
       "SchoolChoiceReturnDto": {
         "type": "object",
         "properties": {
@@ -1613,11 +1493,7 @@
             "description": "Priority of the school being applied to \r\n1 highest priority, 2 second highest priority, etc.",
             "format": "int32"
           },
-          "school": {
-            "allOf": [{ "$ref": "#/components/schemas/SchoolSimpleDto" }],
-            "description": "School that was chosen",
-            "nullable": true
-          },
+          "school": { "$ref": "#/components/schemas/SchoolSimpleDto" },
           "semesterId": {
             "type": "string",
             "description": "Id of semester being applied to",
@@ -1631,16 +1507,8 @@
             "description": "Programme choice",
             "nullable": true
           },
-          "thirdLanguage": {
-            "allOf": [{ "$ref": "#/components/schemas/LanguageDto" }],
-            "description": "Third language choice",
-            "nullable": true
-          },
-          "northernLanguage": {
-            "allOf": [{ "$ref": "#/components/schemas/LanguageDto" }],
-            "description": "Third language choice",
-            "nullable": true
-          },
+          "thirdLanguage": { "$ref": "#/components/schemas/LanguageDto" },
+          "northernLanguage": { "$ref": "#/components/schemas/LanguageDto" },
           "requestDormitory": {
             "type": "boolean",
             "description": "Is the student requesting dormitory."
@@ -1655,29 +1523,29 @@
             "description": "Calculated weighted average for the school",
             "format": "double"
           },
-          "status": {
-            "enum": [
-              "NewApplication",
-              "Processing",
-              "AcceptedWaiting",
-              "Accepted",
-              "AcceptedInOtherSchool",
-              "Rejected"
-            ],
-            "type": "string",
-            "description": "SchoolChoiceStatus of the application\r\nPossible values are\r\nNewApplication, Processing, AcceptedWaiting, Accepted, AcceptedInOtherSchool, Rejected"
-          },
+          "status": { "$ref": "#/components/schemas/SchoolChoiceStatus" },
           "rejectionLetterSent": { "type": "boolean" },
           "processingComment": { "type": "string", "nullable": true },
           "messageToApplicant": { "type": "string", "nullable": true },
           "isManualChoice": { "type": "boolean" },
           "isManuallyAccepted": { "type": "boolean" },
           "allocatedProgramme": {
-            "allOf": [{ "$ref": "#/components/schemas/ProgrammeSimpleDto" }],
-            "nullable": true
+            "$ref": "#/components/schemas/ProgrammeSimpleDto"
           }
         },
         "additionalProperties": false
+      },
+      "SchoolChoiceStatus": {
+        "enum": [
+          "NewApplication",
+          "Processing",
+          "AcceptedWaiting",
+          "Accepted",
+          "AcceptedInOtherSchool",
+          "Rejected"
+        ],
+        "type": "string",
+        "description": "Enum for describing Application Status"
       },
       "SchoolDto": {
         "type": "object",
@@ -1812,11 +1680,7 @@
             "description": "Abbreviation of the school.",
             "nullable": true
           },
-          "countryArea": {
-            "allOf": [{ "$ref": "#/components/schemas/CountryAreaDto" }],
-            "description": "Country area of the school (IS: Landshluti).",
-            "nullable": true
-          }
+          "countryArea": { "$ref": "#/components/schemas/CountryAreaDto" }
         },
         "additionalProperties": false
       },
