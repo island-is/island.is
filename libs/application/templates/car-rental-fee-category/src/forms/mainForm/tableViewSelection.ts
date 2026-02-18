@@ -89,6 +89,7 @@ export const tableViewSelectionSection = buildSection({
               label: m.tableView.tableHeaderMileage,
               editable: true,
               inputType: 'number',
+              min: 0,
             },
           ],
           searchLabel: m.tableView.searchLabel,

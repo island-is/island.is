@@ -20,5 +20,6 @@ export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
   children: applicationChildren,
 })

@@ -35,6 +35,8 @@ export const singleOrMultiSelection = buildSection({
               value: UploadSelection.SINGLE,
             },
           ],
+          clearOnChange: ['vehicleLatestMilageRows'],
+          clearOnChangeDefaultValue: [],
         }),
       ],
     }),

@@ -7,8 +7,6 @@ import {
   formatText,
   getValueViaPath,
 } from '@island.is/application/core'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { useMutation } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { Box, Input, Pagination, Stack, Table as T, Text } from '@island.is/island-ui/core'
 import { ChangeEvent, FC, useEffect, useMemo, useRef, useState } from 'react'
@@ -70,8 +68,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
   setBeforeSubmitCallback,
 }) => {
   const { register, setValue, unregister } = useFormContext<FormValues>()
-  const { lang, formatMessage } = useLocale()
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const { formatMessage } = useLocale()
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
   const [changedRowsById, setChangedRowsById] = useState<
@@ -208,26 +205,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
           shouldTouch: true,
         })
 
-        try {
-          await updateApplication({
-            variables: {
-              input: {
-                id: application.id,
-                answers: {
-                  [answerKey]: rowsToPersist,
-                },
-              },
-              locale: lang,
-            },
-          })
-
-          return [true, null]
-        } catch {
-          const errorMessage = field.submitErrorMessage
-            ? String(formatText(field.submitErrorMessage, application, formatMessage))
-            : 'Ekki tókst að vista töfluupplýsingar. Reyndu aftur.'
-          return [false, errorMessage]
-        }
+        return [true, null]
       },
       {
         allowMultiple: true,
@@ -239,12 +217,9 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
     application,
     field.callbackId,
     field.savePropertyNames,
-    field.submitErrorMessage,
-    lang,
     rowIdKey,
     setBeforeSubmitCallback,
     setValue,
-    updateApplication,
     formatMessage,
   ])
 
