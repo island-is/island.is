@@ -44,7 +44,6 @@ import {
   CaseState,
   CaseTransition,
   CaseType,
-  completedIndictmentCaseStates,
   CourtDocumentType,
   CourtSessionStringType,
   DateType,
@@ -59,7 +58,6 @@ import {
   isInvestigationCase,
   isRequestCase,
   isRestrictionCase,
-  notificationTypes,
   ServiceStatus,
   StringType,
   stringTypes,
@@ -73,7 +71,6 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
-import { CourtDocumentService, CourtSessionService } from '../court-session'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
@@ -81,26 +78,20 @@ import { FileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import {
   Case,
-  CaseFile,
+  caseInclude,
   CaseRepositoryService,
   CaseString,
-  CivilClaimant,
-  CourtDocument,
-  CourtSession,
-  CourtSessionString,
+  CourtDocumentRepositoryService,
+  CourtSessionRepositoryService,
   DateLog,
   Defendant,
   DefendantEventLog,
   EventLog,
-  IndictmentCount,
   Institution,
-  Notification,
-  Offense,
   Subpoena,
   UpdateCase,
   User,
   Verdict,
-  Victim,
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { VerdictService } from '../verdict'
@@ -129,358 +120,6 @@ const caseStringTypes: Record<CaseStringKeys, StringType> = {
   civilDemands: StringType.CIVIL_DEMANDS,
   penalties: StringType.PENALTIES,
 }
-
-export const include: Includeable[] = [
-  { model: Institution, as: 'prosecutorsOffice' },
-  { model: Institution, as: 'court' },
-  { model: Institution, as: 'sharedWithProsecutorsOffice' },
-  {
-    model: User,
-    as: 'creatingProsecutor',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'prosecutor',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'judge',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'registrar',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'courtRecordSignatory',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealAssistant',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge1',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge2',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge3',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'indictmentReviewer',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: Case,
-    as: 'parentCase',
-    include: [
-      {
-        model: CaseFile,
-        as: 'caseFiles',
-        required: false,
-        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
-        separate: true,
-      },
-    ],
-  },
-  { model: Case, as: 'childCase' },
-  {
-    model: Defendant,
-    as: 'defendants',
-    required: false,
-    order: [['created', 'ASC']],
-    include: [
-      {
-        model: Subpoena,
-        as: 'subpoenas',
-        required: false,
-        order: [['created', 'DESC']],
-        separate: true,
-      },
-      {
-        model: DefendantEventLog,
-        as: 'eventLogs',
-        required: false,
-        where: { eventType: defendantEventTypes },
-        separate: true,
-      },
-      {
-        model: Verdict,
-        as: 'verdicts',
-        required: false,
-        order: [['created', 'DESC']],
-        separate: true,
-      },
-    ],
-    separate: true,
-  },
-  {
-    model: CivilClaimant,
-    as: 'civilClaimants',
-    required: false,
-    order: [['created', 'ASC']],
-    separate: true,
-  },
-  { model: Victim, as: 'victims', required: false },
-  {
-    model: IndictmentCount,
-    as: 'indictmentCounts',
-    required: false,
-    order: [['created', 'ASC']],
-    include: [
-      {
-        model: Offense,
-        as: 'offenses',
-        required: false,
-        order: [['created', 'ASC']],
-        separate: true,
-      },
-    ],
-    separate: true,
-  },
-  {
-    model: CourtSession,
-    as: 'courtSessions',
-    required: false,
-    order: [['created', 'ASC']],
-    include: [
-      {
-        model: User,
-        as: 'judge',
-        required: false,
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: User,
-        as: 'attestingWitness',
-        required: false,
-        include: [{ model: Institution, as: 'institution' }],
-      },
-      {
-        model: CourtDocument,
-        as: 'filedDocuments',
-        required: false,
-        order: [['documentOrder', 'ASC']],
-        separate: true,
-      },
-      {
-        model: CourtDocument,
-        as: 'mergedFiledDocuments',
-        required: false,
-        order: [['mergedDocumentOrder', 'ASC']],
-        separate: true,
-      },
-      {
-        model: CourtSessionString,
-        as: 'courtSessionStrings',
-        required: false,
-        order: [['created', 'ASC']],
-        separate: true,
-      },
-    ],
-    separate: true,
-  },
-  {
-    model: CourtDocument,
-    as: 'unfiledCourtDocuments',
-    required: false,
-    order: [
-      ['documentOrder', 'DESC'],
-      ['created', 'ASC'],
-    ],
-    where: { courtSessionId: null },
-    separate: true,
-  },
-  {
-    model: CaseFile,
-    as: 'caseFiles',
-    required: false,
-    order: [['created', 'DESC']],
-    where: { state: { [Op.not]: CaseFileState.DELETED } },
-    separate: true,
-  },
-  {
-    model: EventLog,
-    as: 'eventLogs',
-    required: false,
-    where: { eventType: eventTypes },
-    separate: true,
-  },
-  {
-    model: DateLog,
-    as: 'dateLogs',
-    required: false,
-    where: { dateType: dateTypes },
-    order: [['created', 'DESC']],
-    separate: true,
-  },
-  {
-    model: CaseString,
-    as: 'caseStrings',
-    required: false,
-    where: { stringType: stringTypes },
-    separate: true,
-  },
-  {
-    model: Notification,
-    as: 'notifications',
-    required: false,
-    where: { type: notificationTypes },
-    order: [['created', 'DESC']],
-    separate: true,
-  },
-  {
-    model: Case,
-    as: 'mergeCase',
-    include: [
-      {
-        model: CourtSession,
-        as: 'courtSessions',
-        required: false,
-        order: [['created', 'ASC']],
-        separate: true,
-      },
-    ],
-  },
-  {
-    model: Case,
-    as: 'mergedCases',
-    where: { state: completedIndictmentCaseStates },
-    include: [
-      {
-        model: Defendant,
-        as: 'defendants',
-        required: false,
-        order: [['created', 'ASC']],
-        include: [
-          {
-            model: Subpoena,
-            as: 'subpoenas',
-            required: false,
-            order: [['created', 'DESC']],
-            separate: true,
-          },
-          {
-            model: Verdict,
-            as: 'verdicts',
-            required: false,
-            order: [['created', 'DESC']],
-            separate: true,
-          },
-        ],
-        separate: true,
-      },
-      {
-        model: CourtSession,
-        as: 'courtSessions',
-        required: false,
-        order: [['created', 'ASC']],
-        separate: true,
-        include: [
-          {
-            model: CourtDocument,
-            as: 'filedDocuments',
-            required: false,
-            order: [['documentOrder', 'ASC']],
-            separate: true,
-          },
-          {
-            model: CourtDocument,
-            as: 'mergedFiledDocuments',
-            required: false,
-            order: [['mergedDocumentOrder', 'ASC']],
-            separate: true,
-          },
-          {
-            model: CourtSessionString,
-            as: 'courtSessionStrings',
-            required: false,
-            order: [['created', 'ASC']],
-            separate: true,
-          },
-        ],
-      },
-      {
-        model: CaseFile,
-        as: 'caseFiles',
-        required: false,
-        where: {
-          state: { [Op.not]: CaseFileState.DELETED },
-          category: {
-            [Op.in]: [
-              CaseFileCategory.COURT_RECORD,
-              CaseFileCategory.CRIMINAL_RECORD,
-              CaseFileCategory.COST_BREAKDOWN,
-              CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-              CaseFileCategory.CASE_FILE,
-              CaseFileCategory.PROSECUTOR_CASE_FILE,
-              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
-              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
-              CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
-              CaseFileCategory.DEFENDANT_CASE_FILE,
-              CaseFileCategory.CIVIL_CLAIM,
-            ],
-          },
-        },
-        separate: true,
-      },
-      { model: Institution, as: 'court' },
-      { model: User, as: 'judge' },
-      { model: User, as: 'prosecutor' },
-      { model: Institution, as: 'prosecutorsOffice' },
-    ],
-    separate: true,
-  },
-  {
-    model: Case,
-    as: 'splitCase',
-    include: [{ model: User, as: 'judge' }],
-  },
-  {
-    model: Case,
-    as: 'splitCases',
-    include: [
-      {
-        model: Defendant,
-        as: 'defendants',
-        required: false,
-        order: [['created', 'ASC']],
-        include: [
-          {
-            model: Subpoena,
-            as: 'subpoenas',
-            required: false,
-            order: [['created', 'DESC']],
-            separate: true,
-          },
-        ],
-        separate: true,
-      },
-      {
-        model: CaseFile,
-        as: 'caseFiles',
-        required: false,
-        where: { state: { [Op.not]: CaseFileState.DELETED } },
-        separate: true,
-      },
-    ],
-    separate: true,
-  },
-]
 
 export const caseListInclude: Includeable[] = [
   { model: Institution, as: 'court' },
@@ -575,8 +214,6 @@ export class CaseService {
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     private readonly indictmentCountService: IndictmentCountService,
-    private readonly courtSessionService: CourtSessionService,
-    private readonly courtDocumentService: CourtDocumentService,
     private readonly subpoenaService: SubpoenaService,
     @Inject(forwardRef(() => VerdictService))
     private readonly verdictService: VerdictService,
@@ -587,6 +224,8 @@ export class CaseService {
     private readonly intlService: IntlService,
     private readonly eventService: EventService,
     private readonly eventLogService: EventLogService,
+    private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
+    private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -1285,7 +924,8 @@ export class CaseService {
 
     // TODO: Use subpoenas already included in theCase.defendants
     // - no need to call the subpoena service
-    // - then add to transition tests
+    // - we should also include split case subpoenas, which were created before the split
+    // -    or, the alternatively those subpoenas should be revoked on split
     const subpoenasToRevoke = await this.subpoenaService.findByCaseId(
       theCase.id,
     )
@@ -1492,55 +1132,6 @@ export class CaseService {
       user,
       theCase,
     )
-  }
-
-  private addMessagesForNewSubpoenasToQueue(
-    theCase: Case,
-    updatedCase: Case,
-    user: TUser,
-  ): void {
-    for (const updatedDefendant of updatedCase.defendants ?? []) {
-      if (
-        !(
-          theCase.defendants?.find(
-            (defendant) => defendant.id === updatedDefendant.id,
-          )?.subpoenas?.[0]?.id !== updatedDefendant.subpoenas?.[0]?.id
-        ) // Only deliver new subpoenas
-      ) {
-        continue
-      }
-
-      if (updatedCase.origin === CaseOrigin.LOKE) {
-        addMessagesToQueue({
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: [
-            updatedDefendant.id,
-            updatedDefendant.subpoenas?.[0].id ?? '',
-          ],
-        })
-      }
-
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
-        user,
-        caseId: theCase.id,
-        elementId: [
-          updatedDefendant.id,
-          updatedDefendant.subpoenas?.[0].id ?? '',
-        ],
-      })
-      addMessagesToQueue({
-        type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
-        user,
-        caseId: theCase.id,
-        elementId: [
-          updatedDefendant.id,
-          updatedDefendant.subpoenas?.[0].id ?? '',
-        ],
-      })
-    }
   }
 
   private addMessagesForIndictmentArraignmentCompletionToQueue(
@@ -1759,8 +1350,6 @@ export class CaseService {
       if (hasUpdatedArraignmentDate) {
         this.addMessagesForIndictmentArraignmentDate(updatedCase, user)
       }
-
-      this.addMessagesForNewSubpoenasToQueue(theCase, updatedCase, user)
     }
 
     // This only applies to indictments and only when an arraignment has been completed
@@ -1800,7 +1389,7 @@ export class CaseService {
     transaction?: Transaction,
   ): Promise<Case> {
     const theCase = await this.caseRepositoryService.findOne({
-      include,
+      include: caseInclude,
       where: {
         id: caseId,
         ...(allowDeleted ? {} : { state: { [Op.not]: CaseState.DELETED } }),
@@ -2133,17 +1722,145 @@ export class CaseService {
     }
   }
 
-  private handleCreateFirstCourtSession(
+  private async handleInitialCourtDocumentCreation(
     theCase: Case,
     transaction: Transaction,
   ) {
-    // Guard against unexpected existing court sessions
-    if (theCase.courtSessions && theCase.courtSessions.length > 0) {
-      return
+    const indictmentConfirmedDate = EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_CONFIRMED,
+      theCase.eventLogs,
+    )
+
+    // Start with the generated indictment PDF
+    await this.courtDocumentRepositoryService.create(
+      theCase.id,
+      {
+        documentType: CourtDocumentType.GENERATED_DOCUMENT,
+        name: `Ákæra${
+          indictmentConfirmedDate
+            ? ` ${formatDate(indictmentConfirmedDate)}`
+            : ''
+        }`,
+        generatedPdfUri: `/api/case/${theCase.id}/indictment/Ákæra`,
+      },
+      { transaction },
+    )
+
+    const caseFiles = theCase.caseFiles ?? []
+
+    // Add all criminal records
+    for (const caseFile of caseFiles.filter(
+      (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
+    ) ?? []) {
+      await this.courtDocumentRepositoryService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        { transaction },
+      )
     }
 
-    // Create the first court session and then add court documents to it
-    return this.courtSessionService.create(theCase, transaction)
+    // Add all cost breakdowns
+    for (const caseFile of caseFiles.filter(
+      (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
+    ) ?? []) {
+      await this.courtDocumentRepositoryService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        { transaction },
+      )
+    }
+
+    // Add all case files records
+    for (const policeCaseNumber of theCase.policeCaseNumbers) {
+      const name = `Skjalaskrá ${policeCaseNumber}`
+
+      await this.courtDocumentRepositoryService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.GENERATED_DOCUMENT,
+          name,
+          generatedPdfUri: `/api/case/${theCase.id}/caseFilesRecord/${policeCaseNumber}/${name}`,
+        },
+        { transaction },
+      )
+    }
+
+    // Add all remaining case files
+    for (const caseFile of caseFiles?.filter(
+      (file) =>
+        file.category &&
+        [
+          CaseFileCategory.CASE_FILE,
+          CaseFileCategory.PROSECUTOR_CASE_FILE,
+          CaseFileCategory.DEFENDANT_CASE_FILE,
+          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+          CaseFileCategory.CIVIL_CLAIM,
+        ].includes(file.category),
+    ) ?? []) {
+      await this.courtDocumentRepositoryService.create(
+        theCase.id,
+        {
+          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
+          name: caseFile.userGeneratedFilename ?? caseFile.name,
+          caseFileId: caseFile.id,
+        },
+        { transaction },
+      )
+    }
+
+    for (const defendant of (theCase.defendants ?? []).filter(
+      (defendant) => !defendant.isAlternativeService,
+    )) {
+      for (const subpoena of defendant.subpoenas ?? []) {
+        const subpoenaName = `Fyrirkall ${defendant.name} ${formatDate(
+          subpoena.created,
+        )}`
+
+        await this.courtDocumentRepositoryService.create(
+          theCase.id,
+          {
+            documentType: CourtDocumentType.GENERATED_DOCUMENT,
+            name: subpoenaName,
+            generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${subpoenaName}`,
+          },
+          { transaction },
+        )
+
+        const wasSubpoenaSuccessfullyServed =
+          subpoena.serviceStatus &&
+          [
+            ServiceStatus.DEFENDER,
+            ServiceStatus.ELECTRONICALLY,
+            ServiceStatus.IN_PERSON,
+          ].includes(subpoena.serviceStatus)
+
+        if (!wasSubpoenaSuccessfullyServed) {
+          continue
+        }
+
+        const certificateName = `Birtingarvottorð ${defendant.name}`
+
+        await this.courtDocumentRepositoryService.create(
+          theCase.id,
+          {
+            documentType: CourtDocumentType.GENERATED_DOCUMENT,
+            name: certificateName,
+            generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}/${certificateName}`,
+          },
+          { transaction },
+        )
+      }
+    }
   }
 
   private async handleEventLogUpdatesForIndictments(
@@ -2152,18 +1869,6 @@ export class CaseService {
     user: TUser,
     transaction: Transaction,
   ) {
-    if (
-      updatedCase.indictmentReviewDecision &&
-      !theCase.indictmentReviewDecision
-    ) {
-      await this.eventLogService.createWithUser(
-        EventType.INDICTMENT_REVIEWED,
-        theCase.id,
-        user,
-        transaction,
-      )
-    }
-
     const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
     const updatedArraignmentDate = DateLog.arraignmentDate(updatedCase.dateLogs)
     const hasUpdatedArraignmentDate =
@@ -2220,8 +1925,18 @@ export class CaseService {
     const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
 
-    const isReceivingIndictmentCase =
-      isReceivingCase && isIndictmentCase(theCase.type)
+    const shouldCreateCourtDocuments =
+      isIndictmentCase(theCase.type) &&
+      theCase.withCourtSessions &&
+      ((update.state === CaseState.SUBMITTED &&
+        theCase.state === CaseState.WAITING_FOR_CONFIRMATION) ||
+        // The following is a temporary measure
+        // Currently, court documents are created when receiving a case,
+        // so when this change is deployed, there may be some already submitted cases
+        // which have not been given the chance to have court documents created
+        (isReceivingCase &&
+          !theCase.courtSessions?.length &&
+          !theCase.unfiledCourtDocuments?.length))
 
     const completingIndictmentCase =
       isIndictmentCase(theCase.type) &&
@@ -2248,10 +1963,6 @@ export class CaseService {
       update.courtId &&
       theCase.courtId !== update.courtId &&
       theCase.state === CaseState.RECEIVED
-
-    const updatedArraignmentDate = update.arraignmentDate
-    const schedulingNewArraignmentDateForIndictmentCase =
-      isIndictmentCase(theCase.type) && Boolean(updatedArraignmentDate)
 
     if (isReceivingCase) {
       update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
@@ -2282,53 +1993,9 @@ export class CaseService {
       await this.fileService.resetCaseFileStates(theCase.id, transaction)
     }
 
-    // Handle first court session creation if receiving an indictment case
-    // which should have court sessions
-    if (isReceivingIndictmentCase && theCase.withCourtSessions) {
-      await this.handleCreateFirstCourtSession(theCase, transaction)
-    }
-
-    // Create new subpoenas if scheduling a new arraignment date for an indictment case
-    if (schedulingNewArraignmentDateForIndictmentCase && theCase.defendants) {
-      const dsPairs = await Promise.all(
-        theCase.defendants
-          .filter((defendant) => !defendant.isAlternativeService)
-          .map(async (defendant) => {
-            const subpoena = await this.subpoenaService.createSubpoena(
-              defendant.id,
-              theCase.id,
-              transaction,
-              updatedArraignmentDate?.date,
-              updatedArraignmentDate?.location,
-              defendant.subpoenaType,
-            )
-
-            return { defendant, subpoena }
-          }),
-      )
-
-      // Add court documents if a court session exists
-      if (
-        theCase.withCourtSessions &&
-        theCase.courtSessions &&
-        theCase.courtSessions.length > 0
-      ) {
-        for (const { defendant, subpoena } of dsPairs) {
-          const name = `Fyrirkall ${defendant.name} ${formatDate(
-            subpoena.created,
-          )}`
-
-          await this.courtDocumentService.create(
-            theCase.id,
-            {
-              documentType: CourtDocumentType.GENERATED_DOCUMENT,
-              name,
-              generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
-            },
-            transaction,
-          )
-        }
-      }
+    // Handle court document creation on submitting an indictment case to court
+    if (shouldCreateCourtDocuments && theCase.withCourtSessions) {
+      await this.handleInitialCourtDocumentCreation(theCase, transaction)
     }
 
     // Ensure that verdicts exist at this stage, if they don't exist we create them
@@ -2405,57 +2072,29 @@ export class CaseService {
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.MERGE &&
       theCase.mergeCaseId
     ) {
-      const parentCaseId = theCase.mergeCaseId
-      const parentCase = await this.findById(parentCaseId, false, transaction)
+      const parentCase = theCase.mergeCase
 
-      if (parentCase.state !== CaseState.RECEIVED) {
+      if (parentCase?.state !== CaseState.RECEIVED) {
         throw new BadRequestException(
-          `Failed to merge indictment case ${theCase.id} with parent case ${parentCaseId} in state ${parentCase.state}`,
+          `Cannot merge indictment case ${theCase.id} with parent case ${
+            parentCase?.id ?? 'unknown'
+          } in state ${parentCase?.state ?? 'unknown'}`,
         )
       }
 
-      const parentCaseCourtSessions = parentCase.courtSessions
-      const latestCourtSession =
-        parentCaseCourtSessions && parentCaseCourtSessions.length > 0
-          ? parentCaseCourtSessions[parentCaseCourtSessions.length - 1]
-          : undefined
-
-      // ensure there exists at least one court session in the parent case
-      if (parentCase.withCourtSessions && latestCourtSession) {
-        const isCourtSessionActive =
-          latestCourtSession && !latestCourtSession.isConfirmed
-        const courtSessionId = isCourtSessionActive
-          ? latestCourtSession.id
-          : (await this.courtSessionService.create(parentCase, transaction)).id
-
-        await this.courtDocumentService.updateMergedCourtDocuments({
-          parentCaseId,
-          parentCaseCourtSessionId: courtSessionId,
-          caseId: theCase.id,
-          transaction,
-        })
-
-        const caseSentToCourt = EventLog.getEventLogDateByEventType(
-          [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
-          theCase.eventLogs,
+      // Update the latest court session if it is unconfirmed
+      if (
+        parentCase.withCourtSessions &&
+        parentCase.courtSessions &&
+        parentCase.courtSessions.length > 0 &&
+        !parentCase.courtSessions[parentCase.courtSessions.length - 1]
+          .isConfirmed
+      ) {
+        await this.courtSessionRepositoryService.addMergedCaseToLatestCourtSession(
+          parentCase.id,
+          theCase.id,
+          { transaction },
         )
-
-        await this.courtSessionService.createOrUpdateCourtSessionString({
-          caseId: parentCaseId,
-          courtSessionId,
-          mergedCaseId: theCase.id,
-          update: {
-            stringType: CourtSessionStringType.ENTRIES,
-            value: `Mál nr. ${
-              theCase.courtCaseNumber
-            } sem var höfðað á hendur ákærða${
-              caseSentToCourt
-                ? ` með ákæru útgefinni ${formatDate(caseSentToCourt, 'PPP')}`
-                : ''
-            }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
-          },
-          transaction,
-        })
       }
     }
 
@@ -2819,7 +2458,7 @@ export class CaseService {
 
     const fullSplitCase = await this.findById(splitCase.id, false, transaction)
 
-    await this.handleCreateFirstCourtSession(fullSplitCase, transaction)
+    await this.handleInitialCourtDocumentCreation(fullSplitCase, transaction)
 
     return splitCase
   }

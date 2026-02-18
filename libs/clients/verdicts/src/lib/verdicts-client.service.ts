@@ -3,6 +3,7 @@ import sanitizeHtml from 'sanitize-html'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 import { isValidDate, sortAlpha } from '@island.is/shared/utils'
+import isUrl from 'is-url'
 
 import {
   ExtensionPublishedVerdictApi,
@@ -264,6 +265,12 @@ export class VerdictsClientService {
             caseNumber: response.item.caseNumber ?? '',
             keywords: response.item.keywords ?? [],
             presentings: response.item.presentings ?? '',
+            resolutionLink:
+              response.item.resolutionLink &&
+              isUrl(response.item.resolutionLink) &&
+              response.item.resolutionLink.toLowerCase().startsWith('http')
+                ? response.item.resolutionLink
+                : '',
           },
         }
     }

@@ -79,6 +79,9 @@ class VerdictByIdItem {
 
   @Field(() => String)
   presentings!: string
+
+  @Field(() => String, { nullable: true })
+  resolutionLink?: string | null
 }
 
 @ObjectType('WebVerdictByIdResponse')

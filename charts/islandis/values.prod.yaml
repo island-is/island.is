@@ -2946,7 +2946,6 @@ services-form-system-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
-    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
     S3_TIME_TO_LIVE_POST: '15'
@@ -3036,6 +3035,9 @@ services-form-system-api:
     FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX'
     FORM_SYSTEM_ZENDESK_TENANT_ID_PROD: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_PROD'
     FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX'
+    SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST'
+    SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD'
+    SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

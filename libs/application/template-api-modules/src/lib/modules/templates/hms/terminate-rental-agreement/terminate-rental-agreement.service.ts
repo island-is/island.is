@@ -2,8 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../..'
-import { HomeApi } from '@island.is/clients/hms-rental-agreement'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import {
+  HmsRentalAgreementService,
+  HomeApi,
+} from '@island.is/clients/hms-rental-agreement'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -23,21 +25,16 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly homeApi: HomeApi,
+    private readonly hmsService: HmsRentalAgreementService,
     private readonly attachmentService: AttachmentS3Service,
   ) {
     super(ApplicationTypes.TERMINATE_RENTAL_AGREEMENT)
   }
 
-  private homeApiWithAuth(auth: Auth) {
-    return this.homeApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
   async getRentalAgreements({ auth }: TemplateApiModuleActionProps) {
     try {
-      const contracts = await this.homeApiWithAuth(auth)
-        .contractKtKtGet({
-          kt: auth.nationalId,
-        })
+      const contracts = await this.hmsService
+        .getRentalAgreementsDeprecated(auth)
         .then((res) => {
           return res
             .map((contract) => {

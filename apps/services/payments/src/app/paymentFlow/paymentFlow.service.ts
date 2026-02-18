@@ -138,13 +138,12 @@ export class PaymentFlowService {
           { transaction },
         )
 
-        await this.paymentFlowChargeModel.bulkCreate(
-          processedCharges.map((charge) => ({
-            ...charge,
-            paymentFlowId,
-          })),
-          { transaction },
-        )
+      await this.paymentFlowChargeModel.bulkCreate(
+        processedCharges.map((charge: ChargeItem) => ({
+          ...charge,
+          paymentFlowId,
+        })),
+      )
 
         this.logger.info(
           `[${paymentFlow.id}] Payment flow created [${paymentFlow.organisationId}]`,
@@ -207,6 +206,7 @@ export class PaymentFlowService {
         priceAmount: price,
         quantity: charge.quantity,
         chargeItemCode: catalogProduct.chargeItemCode,
+        reference: charge.reference,
       })
     }
 

@@ -49,6 +49,14 @@ export class ChargeInput {
   @IsOptional()
   @IsPositive({ message: 'price must be greater than 0' })
   price?: number
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Reference of the charge',
+  })
+  @IsString()
+  @IsOptional()
+  reference?: string
 }
 
 @InputType('PaymentsCreateInput')

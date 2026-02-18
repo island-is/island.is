@@ -16,7 +16,7 @@ export interface GenerateChargeFJSPayloadInput {
   >
   charges: Pick<
     CatalogItemWithQuantity,
-    'chargeType' | 'priceAmount' | 'chargeItemCode' | 'quantity'
+    'chargeType' | 'priceAmount' | 'chargeItemCode' | 'quantity' | 'reference'
   >[]
   systemId: string
   payInfo?: PayInfo // If this is skipped, then the charge will create an invoice
@@ -43,8 +43,7 @@ export const generateChargeFJSPayload = ({
       chargeItemCode: charge.chargeItemCode,
       priceAmount: charge.priceAmount,
       quantity: charge.quantity,
-      // Reference id, empty for now
-      reference: '',
+      reference: charge.reference ?? '',
     })),
     immediateProcess: true,
     payeeNationalID: paymentFlow.payerNationalId,
