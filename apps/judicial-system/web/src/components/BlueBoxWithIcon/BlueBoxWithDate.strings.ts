@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
-  keyDates: {
-    id: 'judicial.system.core:blue_box_with_date.key_dates_v1',
-    defaultMessage: 'Birting dóms',
-    description: 'Notaður sem titill í lykildagsetningarsvæði dómfellda.',
-  },
   defendantVerdictServiceDateLabel: {
     id: 'judicial.system.core:blue_box_with_date.defendant_verdict_service_date_label',
     defaultMessage: 'Dagsetning birtingar',
