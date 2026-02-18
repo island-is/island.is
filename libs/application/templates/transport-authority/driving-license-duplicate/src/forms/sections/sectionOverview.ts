@@ -12,6 +12,7 @@ import {
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
+import { Delivery } from '../../lib/constants'
 import { Jurisdiction } from '@island.is/clients/driving-license'
 
 export const sectionOverview = buildSection({
@@ -58,6 +59,13 @@ export const sectionOverview = buildSection({
           title: m.deliveryMethodSectionTitle,
           titleVariant: 'h4',
           description: ({ answers, externalData }) => {
+            const deliveryMethod = getValueViaPath(
+              answers,
+              'delivery.deliveryMethod',
+            )
+            if (deliveryMethod === Delivery.SEND_HOME) {
+              return m.deliverySendHome
+            }
             const district = getValueViaPath(answers, 'delivery.district')
             const districts = getValueViaPath<Jurisdiction[]>(
               externalData,
@@ -66,12 +74,9 @@ export const sectionOverview = buildSection({
             const selectedDistrict = districts?.find(
               (d) => d.id.toString() === district,
             )
-            const districtPlace = `${
-              selectedDistrict?.zip
-                ? selectedDistrict.zip + ' '
-                : 'Sent heim í pósti'
-            }${selectedDistrict?.name ?? ''}`
-            return districtPlace
+            return `${selectedDistrict?.zip ? selectedDistrict.zip + ' ' : ''}${
+              selectedDistrict?.name ?? ''
+            }`
           },
           space: 'gutter',
         }),
