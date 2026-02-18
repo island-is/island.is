@@ -1012,7 +1012,6 @@ export interface PaginatedSearchableTableField extends BaseField {
   searchKeys?: string[]
   savePropertyNames?: string[]
   pageSize?: number
-  submitErrorMessage?: FormText
   callbackId?: string
 }
 

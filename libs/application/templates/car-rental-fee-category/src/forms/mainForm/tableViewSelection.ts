@@ -82,7 +82,6 @@ export const tableViewSelectionSection = buildSection({
           searchPlaceholder: m.tableView.searchPlaceholder,
           emptyState: m.tableView.emptyState,
           searchKeys: ['permno'],
-          submitErrorMessage: m.tableView.submitErrorMessage,
         }),
       ],
     }),

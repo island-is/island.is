@@ -406,7 +406,6 @@ export const buildPaginatedSearchableTableField = (
     searchKeys,
     savePropertyNames,
     pageSize,
-    submitErrorMessage,
     callbackId,
   } = data
 
@@ -424,7 +423,6 @@ export const buildPaginatedSearchableTableField = (
     searchKeys,
     savePropertyNames,
     pageSize,
-    submitErrorMessage,
     callbackId,
   }
 }

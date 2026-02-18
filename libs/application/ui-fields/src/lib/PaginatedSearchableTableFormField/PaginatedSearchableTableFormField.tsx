@@ -3,10 +3,7 @@ import {
   PaginatedSearchableTableField,
   PaginatedSearchableTableRow,
 } from '@island.is/application/types'
-import {
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
@@ -261,7 +258,11 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
       const existingRow = changedRowsById[rowId] ?? baseRow
       const { value } = event.target
       const nextValue =
-        inputType === 'number' && value !== '' ? Number(value) : value
+        inputType === 'number'
+          ? value === ''
+            ? baseRow[columnKey] ?? undefined
+            : Number(value)
+          : value
 
       const nextRow = {
         ...existingRow,
@@ -370,6 +371,8 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
           totalPages={totalPages}
           renderLink={(nextPage, className, children) => (
             <Box
+              component="button"
+              type="button"
               cursor="pointer"
               className={className}
               onClick={() => setPage(nextPage)}
