@@ -17,6 +17,11 @@ export const overview = {
       defaultMessage: 'Farðu vel yfir efnið áður en þú sendir inn umsóknina.',
       description: 'Overview description',
     },
+    attachments: {
+      id: 'gfl.application:overview.general.attachments',
+      defaultMessage: 'Viðhengi',
+      description: 'Overview attachments label',
+    },
   }),
   labels: defineMessages({
     amount: {

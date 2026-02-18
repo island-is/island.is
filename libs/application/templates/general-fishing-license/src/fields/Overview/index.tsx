@@ -164,6 +164,16 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               value={answers.fishingLicenseFurtherInformation.date}
             />
           )}
+          {answers?.fishingLicenseFurtherInformation?.attachments &&
+            answers.fishingLicenseFurtherInformation.attachments.map(
+              (attachment) => (
+                <OverviewItem
+                  label={overview.general.attachments}
+                  value={attachment.name}
+                  color="blue600"
+                />
+              ),
+            )}
           {licenseHasRailNetAndRoeNetField(answers.fishingLicense.license) &&
             answers?.fishingLicenseFurtherInformation?.railAndRoeNet?.railnet &&
             answers?.fishingLicenseFurtherInformation?.railAndRoeNet
