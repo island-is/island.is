@@ -74,7 +74,10 @@ export const mapFormSystemApplicationAdmin = (
   }
 }
 
-export const cardSortByModified = (a: ApplicationCard, b: ApplicationCard): number => {
+export const cardSortByModified = (
+  a: ApplicationCard,
+  b: ApplicationCard,
+): number => {
   return b.modified.getTime() - a.modified.getTime()
 }
 
