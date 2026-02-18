@@ -16,6 +16,8 @@ import { healthNavigation } from '@island.is/portals/my-pages/health'
 import {
   delegationsNavigation,
   delegationsNavigationChildren,
+  delegationsNavigationChildrenNew,
+  delegationsNavigationNew,
 } from '@island.is/portals/shared-modules/delegations'
 import { sessionsNavigation } from '@island.is/portals/my-pages/sessions'
 import { consentNavigation } from '@island.is/portals/my-pages/consent'
@@ -41,6 +43,10 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     documentsNavigation,
     vehicleMileageNavigation,
     applicationsNavigation,
+    {
+      ...delegationsNavigationNew,
+      children: [...delegationsNavigationChildrenNew],
+    },
     {
       ...delegationsNavigation,
       children: [

@@ -9,6 +9,7 @@ import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { accessControlLoader } from './screens/AccessControl.loader'
 import { DelegationFormProvider } from './context'
+import { Features } from '@island.is/react/feature-flags'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const AccessControlNew = lazy(() => import('./screens/AccessControlNew'))
@@ -26,11 +27,21 @@ const ServiceCategories = lazy(() =>
 
 export const delegationsModule: PortalModule = {
   name: coreMessages.accessControl,
+
   enabled({ userInfo }) {
     return delegationScopes.some((scope) => userInfo.scopes.includes(scope))
   },
-  routes(props) {
-    const { userInfo } = props
+  async routes(props) {
+    const { userInfo, featureFlagClient } = props
+
+    const useNewRoutes = await featureFlagClient.getValue(
+      Features.useNewDelegationSystem,
+      false,
+      {
+        id: userInfo.profile.nationalId,
+        attributes: {},
+      },
+    )
 
     const hasAccess = delegationScopes.some((scope) =>
       userInfo.scopes.includes(scope),
@@ -42,32 +53,15 @@ export const delegationsModule: PortalModule = {
       element: <AccessControl />,
     }
 
-    const routes: PortalRoute[] = [
-      {
-        ...commonProps,
-        path: DelegationPaths.Delegations,
-        loader: accessControlLoader('umbod')(props),
-      },
-      {
-        ...commonProps,
-        path: DelegationPaths.DelegationsIncoming,
-        loader: accessControlLoader('umbod')(props),
-      },
+    const newRoutes: PortalRoute[] = [
       {
         name: m.accessControlNew,
-        path: DelegationPaths.DelegationsNew,
         navHide: false,
         enabled: hasAccess,
+        path: DelegationPaths.DelegationsNew,
         element: <AccessControlNew />,
-        loader: accessControlLoader('umbod-nytt')(props),
+        loader: accessControlLoader('umbod')(props),
       },
-      {
-        name: coreMessages.accessControlGrant,
-        path: DelegationPaths.DelegationsGrant,
-        element: <GrantAccess />,
-        loader: accessControlLoader('umbod/veita')(props),
-      },
-
       {
         name: m.grantAccessNewTitle,
         path: DelegationPaths.DelegationsGrantNew,
@@ -78,13 +72,7 @@ export const delegationsModule: PortalModule = {
             <GrantAccessNew />
           </DelegationFormProvider>
         ),
-        loader: accessControlLoader('umbod/veita-nytt')(props),
-      },
-      {
-        name: coreMessages.accessControlAccess,
-        path: DelegationPaths.DelegationAccess,
-        element: <AccessOutgoing />,
-        loader: accessControlLoader('umbod/:delegationId')(props),
+        loader: accessControlLoader('umbod/veita')(props),
       },
       {
         name: m.serviceCategories,
@@ -96,6 +84,27 @@ export const delegationsModule: PortalModule = {
       },
     ]
 
-    return routes
+    const oldRoutes: PortalRoute[] = [
+      {
+        ...commonProps,
+        path: DelegationPaths.Delegations,
+      },
+      {
+        ...commonProps,
+        path: DelegationPaths.DelegationsIncoming,
+      },
+      {
+        name: coreMessages.accessControlGrant,
+        path: DelegationPaths.DelegationsGrant,
+        element: <GrantAccess />,
+      },
+      {
+        name: coreMessages.accessControlAccess,
+        path: DelegationPaths.DelegationAccess,
+        element: <AccessOutgoing />,
+      },
+    ]
+
+    return useNewRoutes ? newRoutes : oldRoutes
   },
 }

@@ -57,7 +57,11 @@ const createLanguagesState = (value: AuthAdminTranslatedValue[]) =>
     languages.map((langKey) => [langKey, getTranslatedValue(value, langKey)]),
   )
 
-export const PermissionContent = () => {
+export const PermissionContent = ({
+  isNewPermissionsOptionsEnabled,
+}: {
+  isNewPermissionsOptionsEnabled: boolean
+}) => {
   const { formatMessage, lang } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
   const { selectedPermission, actionData, permission } = usePermission()
@@ -243,88 +247,92 @@ export const PermissionContent = () => {
           tabs={languages.map(renderTabs)}
         />
 
-        <Divider />
+        {isNewPermissionsOptionsEnabled && <Divider />}
 
         {/* Categories Section */}
-        <Box>
-          <Text variant="h4" marginBottom={2}>
-            {formatMessage(m.categories)}
-          </Text>
-          <Text variant="small" marginBottom={3}>
-            {formatMessage(m.categoriesDescription)}
-          </Text>
+        {isNewPermissionsOptionsEnabled && (
+          <Box>
+            <Text variant="h4" marginBottom={2}>
+              {formatMessage(m.categories)}
+            </Text>
+            <Text variant="small" marginBottom={3}>
+              {formatMessage(m.categoriesDescription)}
+            </Text>
 
-          {loading ? (
-            <Text>{formatMessage(m.loading)}</Text>
-          ) : categories.length === 0 ? (
-            <Text>{formatMessage(m.noCategories)}</Text>
-          ) : (
-            <Stack space={2}>
-              {/* Hidden inputs to pass selected and original category IDs */}
-              <input
-                type="hidden"
-                name="categoryIds"
-                value={JSON.stringify(
-                  selectedCategories.map((cat) => cat.value),
-                )}
-              />
-              <input
-                type="hidden"
-                name="originalCategoryIds"
-                value={JSON.stringify(selectedPermission.categoryIds || [])}
-              />
-              <Select
-                value={selectedCategories}
-                options={categories}
-                onChange={(value) => {
-                  setSelectedCategories(value as MultiValue<Option>)
-                }}
-                placeholder={formatMessage(m.selectCategoriesPlaceholder)}
-                isMulti
-              />
-            </Stack>
-          )}
-        </Box>
+            {loading ? (
+              <Text>{formatMessage(m.loading)}</Text>
+            ) : categories.length === 0 ? (
+              <Text>{formatMessage(m.noCategories)}</Text>
+            ) : (
+              <Stack space={2}>
+                {/* Hidden inputs to pass selected and original category IDs */}
+                <input
+                  type="hidden"
+                  name="categoryIds"
+                  value={JSON.stringify(
+                    selectedCategories.map((cat) => cat.value),
+                  )}
+                />
+                <input
+                  type="hidden"
+                  name="originalCategoryIds"
+                  value={JSON.stringify(selectedPermission.categoryIds || [])}
+                />
+                <Select
+                  value={selectedCategories}
+                  options={categories}
+                  onChange={(value) => {
+                    setSelectedCategories(value as MultiValue<Option>)
+                  }}
+                  placeholder={formatMessage(m.selectCategoriesPlaceholder)}
+                  isMulti
+                />
+              </Stack>
+            )}
+          </Box>
+        )}
 
         {/* Tags Section */}
-        <Box>
-          <Text variant="h4" marginBottom={2}>
-            {formatMessage(m.tags)}
-          </Text>
-          <Text variant="small" marginBottom={3}>
-            {formatMessage(m.tagsDescription)}
-          </Text>
+        {isNewPermissionsOptionsEnabled && (
+          <Box>
+            <Text variant="h4" marginBottom={2}>
+              {formatMessage(m.tags)}
+            </Text>
+            <Text variant="small" marginBottom={3}>
+              {formatMessage(m.tagsDescription)}
+            </Text>
 
-          {loading ? (
-            <Text>{formatMessage(m.loading)}</Text>
-          ) : tags.length === 0 ? (
-            <Text>{formatMessage(m.noTags)}</Text>
-          ) : (
-            <Stack space={2}>
-              {/* Hidden inputs to pass selected and original tag IDs */}
-              <input
-                type="hidden"
-                name="tagIds"
-                value={JSON.stringify(selectedTags.map((tag) => tag.value))}
-              />
-              <input
-                type="hidden"
-                name="originalTagIds"
-                value={JSON.stringify(selectedPermission.tagIds || [])}
-              />
+            {loading ? (
+              <Text>{formatMessage(m.loading)}</Text>
+            ) : tags.length === 0 ? (
+              <Text>{formatMessage(m.noTags)}</Text>
+            ) : (
+              <Stack space={2}>
+                {/* Hidden inputs to pass selected and original tag IDs */}
+                <input
+                  type="hidden"
+                  name="tagIds"
+                  value={JSON.stringify(selectedTags.map((tag) => tag.value))}
+                />
+                <input
+                  type="hidden"
+                  name="originalTagIds"
+                  value={JSON.stringify(selectedPermission.tagIds || [])}
+                />
 
-              <Select
-                value={selectedTags}
-                options={tags}
-                onChange={(value) => {
-                  setSelectedTags(value as MultiValue<Option>)
-                }}
-                placeholder={formatMessage(m.selectTagsPlaceholder)}
-                isMulti
-              />
-            </Stack>
-          )}
-        </Box>
+                <Select
+                  value={selectedTags}
+                  options={tags}
+                  onChange={(value) => {
+                    setSelectedTags(value as MultiValue<Option>)
+                  }}
+                  placeholder={formatMessage(m.selectTagsPlaceholder)}
+                  isMulti
+                />
+              </Stack>
+            )}
+          </Box>
+        )}
       </Stack>
     </FormCard>
   )

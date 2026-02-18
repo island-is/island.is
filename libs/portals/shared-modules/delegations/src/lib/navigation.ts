@@ -20,19 +20,6 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
     ],
   },
   {
-    name: m.accessControlNew,
-    path: DelegationPaths.DelegationsNew,
-    navHide: false,
-    breadcrumbHide: true,
-    children: [
-      {
-        name: m.grantAccessNewTitle,
-        path: DelegationPaths.DelegationsGrantNew,
-        navHide: true,
-      },
-    ],
-  },
-  {
     name: coreMessages.accessControlDelegationsIncoming,
     path: DelegationPaths.DelegationsIncoming,
     navHide: true,
@@ -43,15 +30,33 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
     path: DelegationPaths.DelegationAccess,
     navHide: true,
   },
-  {
-    name: m.whichDelegationsSuit,
-    path: DelegationPaths.ServiceCategories,
-    navHide: false,
-    breadcrumbHide: false,
-  },
+
   {
     name: m.grantAccessNewTitle,
     path: DelegationPaths.DelegationsGrantNew,
+    navHide: false,
+    breadcrumbHide: false,
+  },
+]
+
+export const delegationsNavigationChildrenNew: PortalNavigationItem[] = [
+  {
+    name: m.digitalDelegations,
+    path: DelegationPaths.DelegationsNew,
+    navHide: false,
+    breadcrumbHide: true,
+    children: [
+      {
+        name: m.grantAccessNewTitle,
+        path: DelegationPaths.DelegationsGrantNew,
+        navHide: false,
+        breadcrumbHide: false,
+      },
+    ],
+  },
+  {
+    name: m.whichDelegationsSuit,
+    path: DelegationPaths.ServiceCategories,
     navHide: false,
     breadcrumbHide: false,
   },
@@ -65,4 +70,14 @@ export const delegationsNavigation: PortalNavigationItem = {
   },
   description: coreMessages.accessControlDescription,
   children: delegationsNavigationChildren,
+}
+
+export const delegationsNavigationNew: PortalNavigationItem = {
+  name: coreMessages.digitalDelegations,
+  path: DelegationPaths.DelegationsNew,
+  icon: {
+    icon: 'lockClosed',
+  },
+  description: coreMessages.accessControlDescription,
+  children: delegationsNavigationChildrenNew,
 }

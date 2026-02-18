@@ -66,6 +66,7 @@ export enum Features {
   healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
   isIDSAdminSsoSettingEnabled = 'isIDSAdminSsoSettingEnabled',
   isIDSAdminStepUpAuthEnabled = 'isIDSAdminStepUpAuthEnabled',
+  isNewPermissionsOptionsEnabled = 'isNewPermissionsOptionsEnabled',
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
   isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
 
@@ -152,6 +153,9 @@ export enum Features {
   // Questionnaires
   questionnairesFromEL = 'isQuestionnairesHealthDirectorateClientEnabled',
   questionnairesFromLSH = 'isQuestionnairesLshClientEnabled',
+
+  // Use new delegation system
+  useNewDelegationSystem = 'useNewDelegationSystem',
 }
 
 export enum ServerSideFeature {
