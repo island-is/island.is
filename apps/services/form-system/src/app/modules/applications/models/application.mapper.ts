@@ -75,8 +75,8 @@ export class ApplicationMapper {
               name: screen.name,
               displayOrder: screen.displayOrder,
               multiset: screen.multiset,
-              shouldValidate: screen.shouldValidate,
-              shouldPopulate: screen.shouldPopulate,
+              shouldValidate: form.useValidate && screen.shouldValidate,
+              shouldPopulate: form.usePopulate && screen.shouldPopulate,
               screenError: {
                 hasError: false,
                 title: { is: '', en: '' },
