@@ -331,7 +331,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.2 }}
             >
               <Box className={styles.dataContainer}>
                 <DateTime
