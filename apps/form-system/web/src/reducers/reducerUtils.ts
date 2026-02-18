@@ -443,9 +443,10 @@ const removeNullsDeep = <T>(value: T): T => {
   return value
 }
 
-export const setExternalValidationErrors = (
+export const setExternalServiceErrors = (
   state: ApplicationState,
   screen: FormSystemScreen,
+  isPopulateError = false,
 ): ApplicationState => {
   const normalizedScreenError = screen.screenError || {
     hasError: false,
@@ -474,6 +475,11 @@ export const setExternalValidationErrors = (
     state.currentSection.index,
     state.currentScreen?.index ?? -1,
   )
+
+  if (isPopulateError && updatedState.currentScreen) {
+    updatedState.currentScreen.isPopulateError = isPopulateError
+  }
+
   return {
     ...updatedState,
     screenError: normalizedScreenError,

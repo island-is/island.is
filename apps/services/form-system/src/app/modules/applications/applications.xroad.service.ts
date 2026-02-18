@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Application } from './models/application.model'
 import { Form } from '../forms/models/form.model'
@@ -19,13 +19,13 @@ export class ApplicationsXRoadService {
     const application = await this.applicationModel.findByPk(id)
 
     if (!application) {
-      throw new Error(`Application with id ${id} not found`)
+      throw new NotFoundException(`Application with id ${id} not found`)
     }
 
     const form = await this.formModel.findByPk(application.formId)
 
     if (!form) {
-      throw new Error(`Form for application id ${id} not found`)
+      throw new NotFoundException(`Form for application id ${id} not found`)
     }
 
     return this.applicationMapper.mapFormToApplicationDto(form, application)

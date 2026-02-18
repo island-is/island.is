@@ -18,7 +18,7 @@ import {
   incrementWithScreens,
   jumpToScreen,
   setCurrentScreen,
-  setExternalValidationErrors,
+  setExternalServiceErrors,
 } from './reducerUtils'
 
 export const initialState = {
@@ -183,9 +183,9 @@ export const applicationReducer = (
     default:
       return state
 
-    case 'EXTERNAL_SERVICE_VALIDATION': {
-      const { screen } = action.payload
-      return setExternalValidationErrors(state, screen)
+    case 'EXTERNAL_SERVICE_NOTIFICATION': {
+      const { screen, isPopulateError } = action.payload
+      return setExternalServiceErrors(state, screen, isPopulateError)
     }
 
     case 'SUBMITTED': {

@@ -2,7 +2,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/ui'
 import { AlertMessage, Box, GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { Footer } from '../Footer/Footer'
 import { Applicants } from './components/Applicants/Applicants'
@@ -10,11 +10,20 @@ import { Completed } from './components/Completed/Completed'
 import { ExternalData } from './components/ExternalData/ExternalData'
 import { Field } from './components/Field/Field'
 import { Summary } from './components/Summary/Summary'
+import { NotificationCommands } from '@island.is/form-system/enums'
+import { useMutation } from '@apollo/client'
+import {
+  NOTIFY_EXTERNAL_SERVICE,
+  removeTypename,
+} from '@island.is/form-system/graphql'
+import { LoadingScreen } from '@island.is/react/components'
 
 export const Screen = () => {
-  const { state } = useApplicationContext()
+  const { state, dispatch } = useApplicationContext()
   const { lang } = useLocale()
   const { currentSection, currentScreen } = state
+  const [notifyExternal] = useMutation(NOTIFY_EXTERNAL_SERVICE)
+  const [loading, setLoading] = useState(false)
 
   const screenTitle =
     currentScreen?.data?.name?.[lang] ??
@@ -26,6 +35,56 @@ export const Screen = () => {
   const [externalDataAgreement, setExternalDataAgreement] = useState(
     state.sections?.[0].isCompleted ?? false,
   )
+
+  const shouldPopulateScreen = async () => {
+    if (
+      currentScreen?.data?.shouldPopulate &&
+      state.application.submissionServiceUrl !== 'zendesk'
+    ) {
+      try {
+        setLoading(true)
+        const { data } = await notifyExternal({
+          variables: {
+            input: {
+              applicationId: state.application.id,
+              nationalId: '',
+              slug: state.application.slug,
+              isTest: state.application.isTest,
+              command: NotificationCommands.POPULATE,
+              screen: state.currentScreen?.data,
+            },
+          },
+        })
+
+        const updatedScreen = removeTypename(
+          data?.notifyFormSystemExternalSystem?.screen,
+        )
+
+        dispatch({
+          type: 'EXTERNAL_SERVICE_NOTIFICATION',
+          payload: {
+            screen: updatedScreen,
+            ...(updatedScreen?.screenError?.hasError && {
+              isPopulateError: true,
+            }),
+          },
+        })
+      } catch (error) {
+        console.error('Error populating fields:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+  }
+
+  useEffect(() => {
+    const populateScreen = async () => {
+      await shouldPopulateScreen()
+    }
+    populateScreen()
+  }, [currentScreen?.data?.id])
+
+  if (loading) return <LoadingScreen ariaLabel="loading" />
 
   return (
     <Box

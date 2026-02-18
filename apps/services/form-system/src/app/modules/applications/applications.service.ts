@@ -26,6 +26,7 @@ import {
   ApplicationEvents,
   FieldTypesEnum,
   ApplicantTypesEnum,
+  NotificationCommands,
 } from '@island.is/form-system/shared'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
@@ -1000,11 +1001,13 @@ export class ApplicationsService {
       notificationDto.applicationId,
       { include: [{ model: Value, as: 'values' }] },
     )
+
     if (!application) {
       throw new NotFoundException(
         `Application with id '${notificationDto.applicationId}' not found`,
       )
     }
+
     const loginTypes = await this.getLoginTypes(user)
     if (!this.doesUserMatchApplication(application, user, loginTypes)) {
       throw new UnauthorizedException(
@@ -1043,14 +1046,30 @@ export class ApplicationsService {
     )
 
     if (!response.operationSuccessful) {
-      const errorScreen = notificationDto.screen
-      errorScreen.screenError = {
-        hasError: true,
-        title: { is: 'Villa', en: 'Error' },
-        message: {
-          is: 'Ekki tókst að tengjast ytri þjónustu, reyndu aftur síðar eða sendu póst á island@island.is',
-          en: 'Could not connect to external service. Please try again later or send an email to island@island.is',
-        },
+      if (notificationDto.command === NotificationCommands.VALIDATE) {
+        notificationDto.screen.screenError = {
+          hasError: true,
+          title: {
+            is: 'Ekki tókst að tengjast ytri þjónustu',
+            en: 'Could not connect to external service',
+          },
+          message: {
+            is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
+            en: 'Please try again later or send an email to island@island.is',
+          },
+        }
+      } else if (notificationDto.command === NotificationCommands.POPULATE) {
+        notificationDto.screen.screenError = {
+          hasError: true,
+          title: {
+            is: 'Ekki tókst að tengjast ytri þjónustu',
+            en: 'Could not connect to external service',
+          },
+          message: {
+            is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
+            en: 'Please try to refresh the page or send an email to island@island.is',
+          },
+        }
       }
       response.screen = notificationDto.screen
       this.logger.error(

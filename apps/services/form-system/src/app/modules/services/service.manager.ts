@@ -5,7 +5,7 @@ import { ApplicationDto } from '../applications/models/dto/application.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { ValidationService } from './validation.service'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
-import { NotificationActions } from '@island.is/form-system/enums'
+import { NotificationCommands } from '@island.is/form-system/enums'
 import { NotificationResponseDto } from '../applications/models/dto/validation.response.dto'
 
 @Injectable()
@@ -33,7 +33,7 @@ export class ServiceManager {
         nationalId: applicationDto.nationalId ?? '',
         slug: applicationDto.slug ?? '',
         isTest: applicationDto.isTest ?? false,
-        command: NotificationActions.SUBMIT,
+        command: NotificationCommands.SUBMIT,
       }
       const response = await this.notifyService.sendNotification(
         notificationDto,

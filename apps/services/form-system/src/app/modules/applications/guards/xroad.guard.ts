@@ -20,6 +20,7 @@ export class XRoadGuard implements CanActivate {
     const allowed = (process.env.XROAD_ALLOWED_CLIENTS || '')
       .split(',')
       .map((s) => s.trim())
+      .filter((s) => s.length > 0)
     if (allowed.length > 0 && !allowed.includes(client)) {
       throw new UnauthorizedException('Unauthorized X-Road client')
     }
