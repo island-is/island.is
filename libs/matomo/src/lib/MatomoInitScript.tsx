@@ -4,13 +4,11 @@ interface MatomoInitScriptProps {
 }
 
 /**
- * Server-rendered Matomo initialization and script loader.
- * Use in _document.tsx <Head> to ensure configuration is set
- * before matomo.js loads.
+ * Server-rendered Matomo initialization script tag.
+ * Loads /scripts/matomo-init.js which reads config from data attributes,
+ * initializes _paq, tracks the initial page view, and loads matomo.js.
  *
- * Renders an inline script that configures _paq, followed by
- * the async matomo.js script tag — matching the standard Matomo
- * installation pattern.
+ * Use in _document.tsx <Head>.
  */
 export const MatomoInitScript = ({
   matomoDomain,
@@ -24,18 +22,13 @@ export const MatomoInitScript = ({
     ? matomoDomain
     : `${matomoDomain}/`
 
-  const initCode = `
-    var _paq = window._paq = window._paq || [];
-    _paq.push(['setTrackerUrl', '${normalizedDomain}matomo.php']);
-    _paq.push(['setSiteId', '${matomoSiteId}']);
-    _paq.push(['enableLinkTracking']);
-    _paq.push(['trackPageView']);
-  `
-
   return (
-    <>
-      <script dangerouslySetInnerHTML={{ __html: initCode }} />
-      <script async src={`${normalizedDomain}matomo.js`}></script>
-    </>
+    <script
+      id="matomo-init"
+      src="/scripts/matomo-init.js"
+      data-matomo-domain={normalizedDomain}
+      data-matomo-site-id={matomoSiteId}
+      defer
+    />
   )
 }
