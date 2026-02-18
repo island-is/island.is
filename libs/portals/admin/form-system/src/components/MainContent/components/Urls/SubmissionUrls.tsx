@@ -137,6 +137,33 @@ export const SubmissionUrls = () => {
           }}
         />
       )}
+
+      {form.submissionServiceUrl !== 'zendesk' && (
+        <>
+          <Checkbox
+            label={formatMessage(m.useValidate)}
+            checked={!!form.useValidate}
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_USE_VALIDATE',
+                payload: { value: e.target.checked },
+              })
+              formUpdate({ ...form, useValidate: e.target.checked })
+            }}
+          />
+          <Checkbox
+            label={formatMessage(m.usePopulate)}
+            checked={!!form.usePopulate}
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_USE_POPULATE',
+                payload: { value: e.target.checked },
+              })
+              formUpdate({ ...form, usePopulate: e.target.checked })
+            }}
+          />
+        </>
+      )}
     </Stack>
   )
 }

@@ -25,6 +25,8 @@ export const FormFragment = gql`
     created
     modified
     zendeskInternal
+    useValidate
+    usePopulate
     submissionServiceUrl
     isTranslated
     hasPayment

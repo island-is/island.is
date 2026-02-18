@@ -33,6 +33,8 @@ export class ApplicationMapper {
       draftFinishedSteps: application.draftFinishedSteps,
       draftTotalSteps: application.draftTotalSteps,
       zendeskInternal: form.zendeskInternal,
+      useValidate: form.useValidate,
+      usePopulate: form.usePopulate,
       submissionServiceUrl: form.submissionServiceUrl,
       allowProceedOnValidationFail: form.allowProceedOnValidationFail,
       hasPayment: form.hasPayment,

@@ -46,6 +46,16 @@ export class UpdateFormDto {
   @ApiPropertyOptional()
   zendeskInternal?: boolean
 
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  useValidate?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  usePopulate?: boolean
+
   @IsString()
   @IsOptional()
   @ApiPropertyOptional()

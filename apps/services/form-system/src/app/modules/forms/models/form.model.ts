@@ -82,6 +82,20 @@ export class Form extends Model<Form> {
   zendeskInternal!: boolean
 
   @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  useValidate!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  usePopulate!: boolean
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
     defaultValue: '',

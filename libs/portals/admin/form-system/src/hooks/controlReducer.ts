@@ -200,6 +200,18 @@ type ChangeActions =
       }
     }
   | {
+      type: 'CHANGE_USE_VALIDATE'
+      payload: {
+        value: boolean
+      }
+    }
+  | {
+      type: 'CHANGE_USE_POPULATE'
+      payload: {
+        value: boolean
+      }
+    }
+  | {
       type: 'UPDATE_APPLICANT_TYPES'
       payload: { newValue: FormSystemFormApplicant[] }
     }
@@ -768,6 +780,26 @@ export const controlReducer = (
         form: {
           ...form,
           zendeskInternal: action.payload.value,
+        },
+      }
+      return updatedState
+    }
+    case 'CHANGE_USE_VALIDATE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          useValidate: action.payload.value,
+        },
+      }
+      return updatedState
+    }
+    case 'CHANGE_USE_POPULATE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          usePopulate: action.payload.value,
         },
       }
       return updatedState

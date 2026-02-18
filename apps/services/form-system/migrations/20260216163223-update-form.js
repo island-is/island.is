@@ -9,6 +9,22 @@ module.exports = {
           transaction,
         })
       }
+      if (!table.use_validate) {
+        await queryInterface.addColumn(
+          'form',
+          'use_validate',
+          { type: Sequelize.BOOLEAN, defaultValue: false },
+          { transaction },
+        )
+      }
+      if (!table.use_populate) {
+        await queryInterface.addColumn(
+          'form',
+          'use_populate',
+          { type: Sequelize.BOOLEAN, defaultValue: false },
+          { transaction },
+        )
+      }
     })
   },
 
@@ -22,6 +38,16 @@ module.exports = {
           { type: Sequelize.STRING },
           { transaction },
         )
+      }
+      if (table.use_validate) {
+        await queryInterface.removeColumn('form', 'use_validate', {
+          transaction,
+        })
+      }
+      if (table.use_populate) {
+        await queryInterface.removeColumn('form', 'use_populate', {
+          transaction,
+        })
       }
     })
   },
