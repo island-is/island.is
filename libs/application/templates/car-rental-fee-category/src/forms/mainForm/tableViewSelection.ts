@@ -45,20 +45,6 @@ export const tableViewSelectionSection = buildSection({
               'categorySelectionRadio',
             )
 
-            if (!rateToChangeTo) {
-              return vehicles
-                .filter(
-                  (
-                    vehicle,
-                  ): vehicle is CurrentVehicleWithMilage & { permno: string } =>
-                    Boolean(vehicle.permno),
-                )
-                .map((vehicle) => ({
-                  permno: vehicle.permno,
-                  latestMilage: undefined,
-                }))
-            }
-
             const currentCarMap = buildCurrentCarMap(vehicles, rates)
 
             return vehicles
