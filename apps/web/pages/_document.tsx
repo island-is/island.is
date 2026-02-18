@@ -16,6 +16,7 @@ interface Props {
   lang: Locale
   domain: string
   matomoDomain: string
+  matomoSiteId: string
 }
 
 class MyDocument extends Document<Props> {
@@ -23,13 +24,14 @@ class MyDocument extends Document<Props> {
     const initialProps = await Document.getInitialProps(ctx)
     const domain = process.env.TRACKING_DOMAIN ?? ''
     const matomoDomain = process.env.MATOMO_DOMAIN ?? ''
+    const matomoSiteId = process.env.MATOMO_SITE_ID ?? ''
     const lang = getLocaleFromPath(ctx?.req?.url)
 
-    return { ...initialProps, lang, domain, matomoDomain }
+    return { ...initialProps, lang, domain, matomoDomain, matomoSiteId }
   }
 
   render() {
-    const { lang, domain, matomoDomain } = this.props
+    const { lang, domain, matomoDomain, matomoSiteId } = this.props
 
     return (
       <Html lang={String(lang)}>
@@ -41,7 +43,7 @@ class MyDocument extends Document<Props> {
               src={PLAUSIBLE_SCRIPT_SRC}
             ></script>
           )}
-          <MatomoInitScript matomoDomain={matomoDomain} />
+          <MatomoInitScript matomoDomain={matomoDomain} matomoSiteId={matomoSiteId} />
         </Head>
         <body>
           <Main />
