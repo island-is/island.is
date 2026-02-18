@@ -23,7 +23,10 @@ import {
 import { UserProfileApi, NationalRegistryUserApi } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { dataSchema } from './dataSchema'
-import { HhCoursesSelectedChargeItemApi } from '../dataProviders'
+import {
+  HhCoursesSelectedChargeItemApi,
+  HhCoursesParticipantAvailabilityApi,
+} from '../dataProviders'
 
 import { m } from './messages'
 import { getChargeItems } from '../utils/getChargeItems'
@@ -125,8 +128,11 @@ const template: ApplicationTemplate<
             },
           ],
           onExit: [
-            HhCoursesSelectedChargeItemApi.configure({
+            HhCoursesParticipantAvailabilityApi.configure({
               order: 0,
+            }),
+            HhCoursesSelectedChargeItemApi.configure({
+              order: 1,
             }),
           ],
         },

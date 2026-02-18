@@ -8,6 +8,7 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { ZendeskService } from '@island.is/clients/zendesk'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -28,6 +29,7 @@ const GET_COURSE_BY_ID_QUERY = `
             startTime
             endTime
           }
+          maxRegistrations
           chargeItemCode
           location
         }
@@ -45,6 +47,7 @@ const COURSE_LIST_PAGE_SLUG_MAP: Record<string, string> = {
 export class CoursesService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateApiService: SharedTemplateApiService,
+    private readonly zendeskService: ZendeskService,
     @Inject(HHCoursesConfig.KEY)
     private readonly coursesConfig: ConfigType<typeof HHCoursesConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -134,7 +137,7 @@ export class CoursesService extends BaseTemplateApiService {
             name: this.coursesConfig.applicationSenderName,
             address: this.coursesConfig.applicationSenderEmail,
           },
-          subject: this.coursesConfig.applicationEmailSubject,
+          subject: `${this.coursesConfig.applicationEmailSubject} - ${courseInstance.id}`,
           text: message,
           replyTo: email,
         }),
@@ -160,6 +163,81 @@ export class CoursesService extends BaseTemplateApiService {
         500,
       )
     }
+  }
+
+  async checkParticipantAvailability({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{
+    totalRegisteredParticipants: number
+    hasAvailability: boolean
+  }> {
+    const courseId = getValueViaPath<string>(
+      application.answers,
+      'courseSelect',
+    )
+    const courseInstanceId = getValueViaPath<string>(
+      application.answers,
+      'dateSelect',
+    )
+
+    if (!courseId || !courseInstanceId) {
+      // TODO: Perhaps throw an error instead?
+      return { totalRegisteredParticipants: 0, hasAvailability: true }
+    }
+
+    const { courseInstance } = await this.getCourseById(
+      courseId,
+      courseInstanceId,
+      auth.authorization,
+    )
+
+    if (!courseInstance.maxRegistrations) {
+      return { totalRegisteredParticipants: 0, hasAvailability: true }
+    }
+
+    const totalRegisteredParticipants =
+      await this.countRegisteredParticipantsForCourseInstance(courseInstance.id)
+
+    const maxParticipants = courseInstance.maxRegistrations
+
+    const hasAvailability = maxParticipants
+      ? totalRegisteredParticipants < maxParticipants
+      : true
+
+    return {
+      totalRegisteredParticipants,
+      hasAvailability,
+    }
+  }
+
+  private async countRegisteredParticipantsForCourseInstance(
+    courseInstanceId: string,
+  ): Promise<number> {
+    const subject = `${this.coursesConfig.applicationEmailSubject} - ${courseInstanceId}`
+    const query = `type:ticket subject:"${subject}"`
+    let tickets
+    try {
+      tickets = await this.zendeskService.searchTickets(query)
+    } catch (error) {
+      this.logger.warn(
+        'Failed to search Zendesk tickets for participant availability check',
+        { error: error.message },
+      )
+      // TODO: Perhaps throw an error instead?
+      return 0
+    }
+
+    const nationalIds = new Set<string>()
+    for (const ticket of tickets) {
+      if (!ticket.description) continue
+      const matches = ticket.description.matchAll(
+        /Kennitala þátttakanda \d+: (\d{10})/g,
+      )
+      for (const match of matches) nationalIds.add(match[1])
+    }
+
+    return nationalIds.size
   }
 
   private async getCourseById(
@@ -198,6 +276,7 @@ export class CoursesService extends BaseTemplateApiService {
                 startTime?: string
                 endTime?: string
               }
+              maxRegistrations?: number
               chargeItemCode?: string | null
             }[]
           }
