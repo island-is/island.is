@@ -143,6 +143,7 @@ export class PaymentFlowService {
             ...charge,
             paymentFlowId,
           })),
+          { transaction },
         )
 
         this.logger.info(
