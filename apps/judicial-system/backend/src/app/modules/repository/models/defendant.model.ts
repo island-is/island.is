@@ -251,4 +251,8 @@ export class Defendant extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isDrivingLicenseSuspended?: boolean
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }

@@ -84,12 +84,6 @@ export const transformDefendants = ({
             defendant.eventLogs,
           )
         : undefined,
-      publicProsecutorIsRegisteredInPoliceSystem: Boolean(
-        DefendantEventLog.getEventLogByEventType(
-          DefendantEventType.PUBLIC_PROSECUTOR_REGISTERED_IN_POLICE_SYSTEM,
-          defendant.eventLogs,
-        ),
-      ),
       openedByPrisonAdminDate: DefendantEventLog.getEventLogDateByEventType(
         DefendantEventType.OPENED_BY_PRISON_ADMIN,
         defendant.eventLogs,
