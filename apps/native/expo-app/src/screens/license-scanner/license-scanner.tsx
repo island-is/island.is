@@ -2,7 +2,6 @@ import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native'
-import DeviceInfo from 'react-native-device-info'
 import Reanimated, {
   Extrapolation,
   interpolate,
@@ -33,6 +32,7 @@ import {
 } from 'react-native-vision-camera'
 import { CodeScanner, CodeType } from 'react-native-vision-camera'
 import styled from 'styled-components/native'
+import * as Device from 'expo-device';
 
 import { Bubble, Button, theme } from '../../ui'
 import flashligth from '../../assets/icons/flashlight.png'
@@ -114,7 +114,9 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
-const isSimulator = isIos && DeviceInfo.isEmulatorSync()
+
+
+const isSimulator = isIos && Device.isDevice === false
 
 export const LicenseScannerScreen: NavigationFunctionComponent = ({
   componentId,

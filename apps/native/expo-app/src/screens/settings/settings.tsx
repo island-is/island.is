@@ -12,7 +12,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import DeviceInfo from 'react-native-device-info'
+import * as Application from 'expo-application';
+
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -624,7 +625,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
           </PressableHighlight>
           <TableViewCell
             title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
-            subtitle={`${DeviceInfo.getVersion()} build ${DeviceInfo.getBuildNumber()}`}
+            subtitle={`${Application.nativeApplicationVersion} build ${Application.nativeBuildVersion}`}
           />
           <PressableHighlight
             onPress={onLogoutPress}

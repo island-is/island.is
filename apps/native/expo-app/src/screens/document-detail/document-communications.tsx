@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-clipboard/clipboard'
+import Clipboard from 'expo-clipboard'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -201,7 +201,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
         </Typography>
         <Typography variant="body3">{ticketIdValue}</Typography>
         <TouchableOpacity
-          onPress={() => Clipboard.setString(ticketIdValue)}
+          onPress={() => Clipboard.setStringAsync(ticketIdValue)}
           style={{ marginLeft: 4 }}
         >
           <Image

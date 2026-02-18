@@ -1,17 +1,27 @@
-import DeviceInfo from 'react-native-device-info'
-import {
-  EnvironmentConfig,
-  environmentStore,
-  useEnvironmentStore,
-} from './stores/environment-store'
+import * as Application from 'expo-application'
+// import {
+//   EnvironmentConfig,
+//   environmentStore,
+//   useEnvironmentStore,
+// } from './stores/environment-store'
 
 type EnvironmentId = 'prod' | 'staging' | 'dev' | 'local' | 'mock'
 
-export const environments: Record<EnvironmentId, EnvironmentConfig> = {
+const prod = {
+  id: 'prod',
+  label: 'Production',
+  idsIssuer: 'https://innskra.island.is',
+  apiUrl: 'https://island.is/api',
+  baseUrl: 'https://island.is',
+  configCat: 'YcfYCOwBTUeI04mWOWpPdA/qDKG1RMTMkeqM0ifHFlxmQ',
+  datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
+}
+
+export const environments: Record<EnvironmentId, any> = {
   prod: {
     id: 'prod',
     label: 'Production',
-    idsIssuer: 'https://innskra.island.is/',
+    idsIssuer: 'https://innskra.island.is',
     apiUrl: 'https://island.is/api',
     baseUrl: 'https://island.is',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/qDKG1RMTMkeqM0ifHFlxmQ',
@@ -55,7 +65,7 @@ export const environments: Record<EnvironmentId, EnvironmentConfig> = {
   },
 }
 
-export const bundleId = DeviceInfo.getBundleId()
+export const bundleId = Application.applicationId ?? 'is.island.app'
 
 export const isTestingApp =
   bundleId.endsWith('.staging') || bundleId.endsWith('.dev')
@@ -97,16 +107,18 @@ export const config = {
 }
 
 export function useConfig() {
-  const { environment } = useEnvironmentStore()
+  // const { environment } = useEnvironmentStore()
   return {
     ...config,
-    ...environment,
+    ...prod,
+    // ...environment,
   }
 }
 
 export function getConfig() {
   return {
     ...config,
-    ...environmentStore.getState().environment,
+    ...prod,
+    // ...environmentStore.getState().environment,
   }
 }

@@ -17,7 +17,7 @@ import {
   TextStyle,
   ViewStyle,
 } from 'react-native'
-import DeviceInfo from 'react-native-device-info'
+import * as Application from 'expo-application';
 import KeyboardManager from 'react-native-keyboard-manager'
 import { Navigation } from 'react-native-navigation'
 import { getConfig } from '../../config'
@@ -137,8 +137,8 @@ export function setupGlobals() {
   // set NSUserDefaults
   if (isIos) {
     Settings.set({
-      version_preference: DeviceInfo.getVersion(),
-      build_preference: DeviceInfo.getBuildNumber(),
+      version_preference: Application.nativeApplicationVersion,
+      build_preference: Application.nativeBuildVersion,
     })
   }
 }

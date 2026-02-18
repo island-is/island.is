@@ -12550,10 +12550,13 @@ __metadata:
     configcat-js: "npm:9.5.0"
     dynamic-color: "npm:0.3.6"
     expo: "npm:~55.0.0-preview.10"
+    expo-auth-session: "npm:~55.0.4"
     expo-build-properties: "npm:~55.0.7"
     expo-clipboard: "npm:~55.0.6"
     expo-constants: "npm:~55.0.4"
+    expo-crypto: "npm:~55.0.6"
     expo-dev-client: "npm:~55.0.5"
+    expo-device: "npm:~55.0.7"
     expo-file-system: "npm:~55.0.6"
     expo-font: "npm:~55.0.3"
     expo-haptics: "npm:~55.0.6"
@@ -32873,7 +32876,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-application@npm:~55.0.6":
+"expo-application@npm:~55.0.5, expo-application@npm:~55.0.6":
   version: 55.0.6
   resolution: "expo-application@npm:55.0.6"
   peerDependencies:
@@ -32909,6 +32912,23 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/2516ace48c1f26f7f29d0689e0e89a8db464dbc97a1482440c12c14f99f775774155f189cceabdd120bc33b2dcfed83b951c438a88dde7b2d9b2f2a03707cd0a
+  languageName: node
+  linkType: hard
+
+"expo-auth-session@npm:~55.0.4":
+  version: 55.0.4
+  resolution: "expo-auth-session@npm:55.0.4"
+  dependencies:
+    expo-application: "npm:~55.0.5"
+    expo-constants: "npm:~55.0.4"
+    expo-crypto: "npm:~55.0.5"
+    expo-linking: "npm:~55.0.4"
+    expo-web-browser: "npm:~55.0.5"
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/a234d44842d6cb58c2eb4281847e9dd7bd2261db9bf21fb1bb2feed84af464fe32e730432f63b5b3f4d919fa46c4842de649f55b8726c603941df51fe579686f
   languageName: node
   linkType: hard
 
@@ -32987,6 +33007,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-crypto@npm:~55.0.5, expo-crypto@npm:~55.0.6":
+  version: 55.0.6
+  resolution: "expo-crypto@npm:55.0.6"
+  peerDependencies:
+    expo: "*"
+  checksum: 10/a8c87238ad0c8e87ad98312b199d91d5eea35fcc4d3862fa5de21d648c97b9d981f366d057c0702e168f73f30c5705c3be2a0faacfcef8bced6aecb9b2354aba
+  languageName: node
+  linkType: hard
+
 "expo-dev-client@npm:~55.0.5":
   version: 55.0.5
   resolution: "expo-dev-client@npm:55.0.5"
@@ -33032,6 +33061,17 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: 10/fa853390d09429e8808233764fc5f8018481d0f11ac50dc94c0f55c98c5f1897016b067550d74d8561a5ada121200855220132dfacf2409c4aba538d382d70fe
+  languageName: node
+  linkType: hard
+
+"expo-device@npm:~55.0.7":
+  version: 55.0.7
+  resolution: "expo-device@npm:55.0.7"
+  dependencies:
+    ua-parser-js: "npm:^0.7.33"
+  peerDependencies:
+    expo: "*"
+  checksum: 10/4603006fe94f09a636b2835afd75d5511684f04945b692359f07416018d5480f6b52c1aa81b5b7891b306556a86e04d34350c678cd4b49186240b68788f89426
   languageName: node
   linkType: hard
 
@@ -56301,6 +56341,15 @@ __metadata:
   version: 1.0.33
   resolution: "ua-parser-js@npm:1.0.33"
   checksum: 10/26455b1bbc165eea24b92283034e1e941ca5e272fcbb0a81ce2d064da369353182a1f6eb7472a6d2e738dd89b0cd008de9f1f17946f9b8f5ddfcf4e8a5949c1a
+  languageName: node
+  linkType: hard
+
+"ua-parser-js@npm:^0.7.33":
+  version: 0.7.41
+  resolution: "ua-parser-js@npm:0.7.41"
+  bin:
+    ua-parser-js: script/cli.js
+  checksum: 10/e41306332d8ace098d51a644a3ba95522ddfc04243727a3c0419efcdf486c8f868c3af8e6a56f6aa86bdc26e6b893abb0b2bde0c9e1a1625a183dfdf839cac82
   languageName: node
   linkType: hard
 

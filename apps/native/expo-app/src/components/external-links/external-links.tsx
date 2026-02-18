@@ -17,7 +17,8 @@ export interface ExternalLinksProps {
   fontWeight?: TextStyle['fontWeight']
   borderBottom?: boolean
   fontSize?: number
-  componentId: string
+  /** @deprecated Will be removed after full expo-router migration */
+  componentId?: string
 }
 
 const Container = styled(Pressable)<{ $hasBorder: boolean }>(
@@ -52,7 +53,6 @@ export const ExternalLink = ({
   fontWeight = '300',
   borderBottom = true,
   fontSize = 16,
-  componentId,
 }: ExternalLinksProps) => {
   const { openBrowser } = useBrowser()
   const overlay = useDropdownOverlay()
@@ -61,7 +61,7 @@ export const ExternalLink = ({
     if (overlay?.componentId) {
       overlay.close()
     }
-    openBrowser(links.link, componentId)
+    openBrowser(links.link)
   }
 
   return (

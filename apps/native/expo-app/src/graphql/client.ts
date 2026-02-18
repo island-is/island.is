@@ -6,19 +6,17 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client'
-
+import * as WebBrowser from 'expo-web-browser'
 import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
-import { openNativeBrowser } from '../lib/rn-island'
 import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
 import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
 import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
-import { MainBottomTabs } from '../utils/component-registry'
 import { getCustomUserAgent } from '../utils/user-agent'
 import { GenericUserLicense } from './types/schema'
 
@@ -79,7 +77,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
         authStore.setState({ cognitoAuthUrl: redirectUrl })
 
         if (config.isTestingApp && authStore.getState().authorizeResult) {
-          openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
+          WebBrowser.openBrowserAsync(cognitoAuthUrl())
         }
       }
     }

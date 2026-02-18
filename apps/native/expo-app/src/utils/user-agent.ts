@@ -1,10 +1,10 @@
 import { Platform } from 'react-native'
-import DeviceInfo from 'react-native-device-info'
+import * as Application from 'expo-application';
 
 export const getCustomUserAgent = () => {
   return [
-    `IslandIsApp (${DeviceInfo.getVersion()})`,
-    `Build/${DeviceInfo.getBuildNumber()}`,
+    `IslandIsApp (${Application.nativeApplicationVersion})`,
+    `Build/${Application.nativeBuildVersion}`,
     `(${Platform.OS}/${Platform.Version})`,
   ].join(' ')
 }

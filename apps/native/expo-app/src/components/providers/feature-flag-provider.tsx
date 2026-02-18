@@ -13,7 +13,7 @@ import { environments } from '@/config'
 import { useAuthStore } from '@/stores/auth-store'
 import { useEnvironmentStore } from '@/stores/environment-store'
 import { Platform } from 'react-native'
-import DeviceInfo from 'react-native-device-info'
+import * as Application from 'expo-application';
 
 interface FeatureFlagUser {
   identifier: string
@@ -92,7 +92,7 @@ export const FeatureFlagProvider: FC<
   }, [client])
 
   const context = useMemo<FeatureFlagClient>(() => {
-    const appVersion = DeviceInfo.getVersion() ?? ''
+    const appVersion = Application.nativeApplicationVersion ?? ''
     // Convert OS to lowercase to match the feature flag key
     const os = Platform.OS.toLowerCase()
 
