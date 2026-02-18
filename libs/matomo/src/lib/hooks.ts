@@ -74,11 +74,20 @@ export const useMatomoTrackOrganization = (organization?: string | null) => {
   }, [organization])
 }
 
-export const useMatomoTrackSearch = (keyword?: string, category?: string | false, resultsCount?: number) => {
+export const useMatomoTrackSearch = (
+  keyword?: string,
+  category?: string | false,
+  resultsCount?: number,
+) => {
   useEffect(() => {
     if (!keyword) return
 
-    console.log('[Matomo] Tracking site search:', keyword, category, resultsCount)
+    console.log(
+      '[Matomo] Tracking site search:',
+      keyword,
+      category,
+      resultsCount,
+    )
     trackSiteSearch(keyword, category, resultsCount)
   }, [keyword, category, resultsCount])
 }
