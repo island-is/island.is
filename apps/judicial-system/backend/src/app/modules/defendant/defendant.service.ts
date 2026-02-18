@@ -327,7 +327,7 @@ export class DefendantService {
       transaction,
     )
 
-    if (update.punishmentType != null && isPrisonAdminUser(user)) {
+    if (update.punishmentType !== null && isPrisonAdminUser(user)) {
       const eventLogs = defendant.eventLogs ?? []
       if (
         defendant.isSentToPrisonAdmin &&
