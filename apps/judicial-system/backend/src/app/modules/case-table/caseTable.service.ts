@@ -316,8 +316,7 @@ export class CaseTableService {
         expandCaseWithDefendants(caseItem, (d) => {
           if (!d.isSentToPrisonAdmin) return false
           const effectiveRegistered =
-            d.isRegisteredInPrisonSystem ??
-            caseItem.isRegisteredInPrisonSystem
+            d.isRegisteredInPrisonSystem ?? caseItem.isRegisteredInPrisonSystem
           return isRegisteredRulingTab
             ? Boolean(effectiveRegistered)
             : !effectiveRegistered
