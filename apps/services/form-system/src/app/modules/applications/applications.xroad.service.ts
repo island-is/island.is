@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Application } from './models/application.model'
-import { Form } from '../forms/models/form.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationsService } from './applications.service'
