@@ -230,9 +230,17 @@ export class NotificationsWorkerService {
     }
   }
 
-  private createSmsContent(fullName: string, template: HnippTemplate): string {
+  private createSmsContent({
+    fullName,
+    onBehalfOf,
+    template,
+  }: {
+    fullName: string
+    onBehalfOf?: string
+    template: HnippTemplate
+  }): string {
     return `
-      ${fullName}: ${template.title}
+      ${fullName} ${onBehalfOf ? `(${onBehalfOf})` : ''}: ${template.title}
      
       ${template.externalBody}
      
@@ -246,7 +254,6 @@ export class NotificationsWorkerService {
     profile,
     message,
     messageId,
-    notificationId,
     template,
   }: HandleNotification): Promise<void> {
     const { nationalId } = profile
@@ -308,28 +315,22 @@ export class NotificationsWorkerService {
     }
 
     const fullName = await this.getName(nationalId)
+    const onBehalfOf = message.onBehalfOf?.nationalId
+      ? await this.getName(message.onBehalfOf?.nationalId)
+      : undefined
 
     try {
-      const smsContent = this.createSmsContent(
+      const smsContent = this.createSmsContent({
         fullName,
-        await this.notificationsService.formatArguments(
+        onBehalfOf,
+        template: await this.notificationsService.formatArguments(
           message.args,
-          // We need to shallow copy the template here so that the
-          // in-memory cache is not modified.
           { ...template },
           message?.senderId,
           profile.locale as Locale,
         ),
-      )
-
+      })
       await this.smsService.sendSms(profile.mobilePhoneNumber, smsContent)
-
-      if (notificationId) {
-        await this.notificationModel.update(
-          { smsSent: true, smsPayer: template.smsPayer },
-          { where: { id: notificationId } },
-        )
-      }
 
       this.logger.info('SMS notification sent', {
         messageId,
@@ -486,8 +487,31 @@ export class NotificationsWorkerService {
       template,
     }
 
-    // Currently we only send email notifications to actors, not push notifications
+    // We send email and SMS notifications to actors, not push notifications
     await this.handleEmailNotification(handleNotificationArgs)
+
+    // For SMS we use the delegate's own mobilePhoneNumber from their user profile
+    // (not a per-delegation phone number like emails support)
+    const delegateUserProfile =
+      await this.userProfileApi.userProfileControllerFindUserProfile({
+        xParamNationalId: args.recipient,
+      })
+
+    if (delegateUserProfile) {
+      await this.handleSmsNotification({
+        ...handleNotificationArgs,
+        profile: {
+          ...handleNotificationArgs.profile,
+          mobilePhoneNumber: delegateUserProfile.mobilePhoneNumber,
+          smsNotifications: delegateUserProfile.smsNotifications,
+        },
+      })
+    } else {
+      this.logger.error('No delegate user profile found for user', {
+        messageId: args.messageId,
+        recipient: args.recipient,
+      })
+    }
   }
 
   private async createActorNotificationDbRecord(

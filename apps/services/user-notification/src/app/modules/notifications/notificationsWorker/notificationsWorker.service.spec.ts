@@ -468,54 +468,6 @@ describe('NotificationsWorkerService', () => {
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
   })
 
-  it('should update notification record with smsSent and smsPayer after successful SMS send', async () => {
-    jest.spyOn(notificationsService, 'getTemplate').mockReturnValue(
-      Promise.resolve(
-        getMockHnippTemplate({
-          smsDelivery: 'ALWAYS',
-          smsPayer: 'Landlæknir',
-        }),
-      ),
-    )
-
-    await addToQueue(userWithNoDelegations.nationalId)
-
-    expect(smsService.sendSms).toHaveBeenCalledTimes(1)
-
-    const notifications = await notificationModel.findAll({
-      where: { recipient: userWithNoDelegations.nationalId },
-    })
-    expect(notifications).toHaveLength(1)
-
-    const notification = notifications[0]
-    expect(notification.smsSent).toBe(true)
-    expect(notification.smsPayer).toBe('Landlæknir')
-  })
-
-  it('should not update notification record with smsSent when SMS is not sent', async () => {
-    jest.spyOn(notificationsService, 'getTemplate').mockReturnValue(
-      Promise.resolve(
-        getMockHnippTemplate({
-          smsDelivery: 'NEVER',
-          smsPayer: undefined,
-        }),
-      ),
-    )
-
-    await addToQueue(userWithNoDelegations.nationalId)
-
-    expect(smsService.sendSms).not.toHaveBeenCalled()
-
-    const notifications = await notificationModel.findAll({
-      where: { recipient: userWithNoDelegations.nationalId },
-    })
-    expect(notifications).toHaveLength(1)
-
-    const notification = notifications[0]
-    expect(notification.smsSent).toBe(false)
-    expect(notification.smsPayer).toBeNull()
-  })
-
   describe('Actor Notifications', () => {
     it('should target a specific actor when onBehalfOf is provided without rootMessageId', async () => {
       // Clear mocks to isolate this test

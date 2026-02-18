@@ -110,20 +110,4 @@ export class Notification extends Model<
     field: 'seen',
   })
   seen!: CreationOptional<boolean>
-
-  @Column({
-    type: DataType.BOOLEAN,
-    defaultValue: false,
-    allowNull: false,
-    field: 'sms_sent',
-  })
-  smsSent!: CreationOptional<boolean>
-
-  @Column({
-    type: DataType.STRING,
-    defaultValue: null,
-    allowNull: true,
-    field: 'sms_payer',
-  })
-  smsPayer?: string
 }
