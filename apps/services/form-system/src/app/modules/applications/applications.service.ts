@@ -654,7 +654,7 @@ export class ApplicationsService {
     return filteredApplications
   }
 
-  private async getApplicationForm(
+  public async getApplicationForm(
     formId: string,
     applicationId: string,
     slug: string,
