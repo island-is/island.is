@@ -260,6 +260,49 @@ export class OpenDataClientService {
     }
   }
 
+  // Simple Levenshtein distance for fuzzy matching in dummy data fallback
+  private levenshteinDistance(a: string, b: string): number {
+    const matrix: number[][] = []
+    for (let i = 0; i <= b.length; i++) {
+      matrix[i] = [i]
+    }
+    for (let j = 0; j <= a.length; j++) {
+      matrix[0][j] = j
+    }
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        if (b.charAt(i - 1) === a.charAt(j - 1)) {
+          matrix[i][j] = matrix[i - 1][j - 1]
+        } else {
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1, // substitution
+            matrix[i][j - 1] + 1,     // insertion
+            matrix[i - 1][j] + 1      // deletion
+          )
+        }
+      }
+    }
+    return matrix[b.length][a.length]
+  }
+
+  // Check if a word fuzzy matches any word in a text
+  private fuzzyMatchesText(searchWord: string, text: string, maxDistance: number = 2): boolean {
+    const words = text.toLowerCase().split(/\s+/)
+    const searchLower = searchWord.toLowerCase()
+    
+    return words.some((word) => {
+      // Exact substring match
+      if (word.includes(searchLower) || searchLower.includes(word)) {
+        return true
+      }
+      // Fuzzy match with Levenshtein distance
+      if (word.length >= 3 && searchLower.length >= 3) {
+        return this.levenshteinDistance(searchLower, word) <= maxDistance
+      }
+      return false
+    })
+  }
+
   private filterDatasets(
     datasets: Dataset[],
     input: GetDatasetsInput,
@@ -267,12 +310,18 @@ export class OpenDataClientService {
     let filtered = [...datasets]
 
     if (input.searchQuery) {
-      const searchLower = input.searchQuery.toLowerCase()
-      filtered = filtered.filter(
-        (d) =>
-          d.title.toLowerCase().includes(searchLower) ||
-          d.description.toLowerCase().includes(searchLower) ||
-          d.tags.some((tag) => tag.toLowerCase().includes(searchLower)),
+      const searchTerms = input.searchQuery.toLowerCase().trim().split(/\s+/).filter(Boolean)
+      filtered = filtered.filter((d) =>
+        searchTerms.every((term) =>
+          // Check for exact substring match first
+          d.title.toLowerCase().includes(term) ||
+          d.description.toLowerCase().includes(term) ||
+          d.tags.some((tag) => tag.toLowerCase().includes(term)) ||
+          // Then check for fuzzy matches
+          this.fuzzyMatchesText(term, d.title) ||
+          this.fuzzyMatchesText(term, d.description) ||
+          d.tags.some((tag) => this.fuzzyMatchesText(term, tag))
+        ),
       )
     }
 
@@ -304,10 +353,11 @@ export class OpenDataClientService {
         }
 
         if (input.searchQuery) {
-          // Use trailing wildcard for partial matching (e.g., "stud" matches "students")
-          // Trailing wildcards are supported by Solr, leading wildcards are not
-          const searchTerm = input.searchQuery.trim()
-          queryParams.q = `${searchTerm}*`
+          // Add fuzzy search with Solr syntax (~2 = Levenshtein distance of 2)
+          // This allows matching similar words (e.g., "test" matches "tests", "text", "best")
+          const searchTerms = input.searchQuery.trim().split(/\s+/)
+          const fuzzyTerms = searchTerms.map(term => `${term}~2`).join(' ')
+          queryParams.q = fuzzyTerms
         }
 
         // Build CKAN filter query (fq) for server-side filtering
@@ -340,7 +390,12 @@ export class OpenDataClientService {
         })
 
         // Debug: Log the full URL being requested
+        const fullUrl = new URL(`${this.config.basePath}/package_search`)
+        Object.entries(queryParams).forEach(([key, value]) => {
+          fullUrl.searchParams.append(key, String(value))
+        })
         this.logger.info('=== CKAN QUERY DEBUG ===')
+        this.logger.info(`FULL URL: ${fullUrl.toString()}`)
         this.logger.info(`Search query (q): ${queryParams.q}`)
         this.logger.info(`Input searchQuery: ${input.searchQuery}`)
         this.logger.info(`Input publishers: ${JSON.stringify(input.publishers)}`)
@@ -382,10 +437,8 @@ export class OpenDataClientService {
             this.mapCKANToDataset(pkg),
           )
 
-          // Server-side filtering is now done via fq parameter
-          // Only keep client-side filtering as fallback for edge cases
           return {
-            datasets: datasets,
+            datasets,
             total: response.data.result.count,
             page,
             limit,

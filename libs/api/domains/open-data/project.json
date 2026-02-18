@@ -19,13 +19,6 @@
         "jestConfig": "libs/api/domains/open-data/jest.config.ts",
         "passWithNoTests": true
       }
-    },
-    "codegen/backend-schema": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P libs/api/domains/open-data/tsconfig.lib.json libs/api/domains/open-data/src/lib/graphql/backend",
-        "color": true
-      }
     }
   }
 }
