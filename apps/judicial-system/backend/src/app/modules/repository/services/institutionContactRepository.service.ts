@@ -24,16 +24,16 @@ export class InstitutionContactRepositoryService {
       | IndictmentCaseNotificationType
       | DefendantNotificationType,
   ): Promise<string | null> {
+    if (!institutionId) {
+      this.logger.debug('No institution ID provided')
+      return null
+    }
+
     try {
       this.logger.debug('Getting institution contact', {
         institutionId,
         notificationType,
       })
-
-      if (!institutionId) {
-        this.logger.debug('No institution ID provided')
-        return null
-      }
 
       const institutionContact = await this.institutionContactModel.findOne({
         where: {
