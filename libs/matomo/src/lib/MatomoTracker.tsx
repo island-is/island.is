@@ -1,38 +1,41 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import Router from 'next/router'
-import Script from 'next/script'
+
+interface MatomoTrackerProps {
+  matomoDomain: string
+  matomoSiteId: string
+}
 
 /**
  * Matomo analytics tracker component.
  *
+ * Initializes the Matomo command queue and tracks page views on
+ * client-side route changes. The matomo.js script itself should be
+ * loaded via MatomoInitScript in _document.tsx.
+ *
  * Renders as a sibling (not a wrapper) to avoid hydration issues with
- * Suspense boundaries. Loads matomo.js via next/script and tracks
- * initial page views + client-side route changes.
+ * Suspense boundaries.
  *
  * Usage in _app.tsx:
  * ```tsx
  * <>
- *   <MatomoTracker />
+ *   <MatomoTracker matomoDomain={matomoDomain} matomoSiteId={matomoSiteId} />
  *   <Component {...pageProps} />
  * </>
  * ```
  */
-export const MatomoTracker = () => {
-  const [scriptSrc, setScriptSrc] = useState<string | null>(null)
-
+export const MatomoTracker = ({
+  matomoDomain,
+  matomoSiteId,
+}: MatomoTrackerProps) => {
   useEffect(() => {
-    let matomoDomain = process.env.MATOMO_DOMAIN
-    let matomoSiteId = process.env.MATOMO_SITE_ID
-
     if (!matomoDomain || !matomoSiteId) {
       console.warn(
         '[Matomo] Tracking is not configured. Check MATOMO_DOMAIN and MATOMO_SITE_ID.',
       )
-      // Fall back to dev for POC purposes
-      matomoDomain = 'https://matomo-dev.dev01.devland.is'
-      matomoSiteId = '2'
+      return
     }
 
     const normalizedDomain = matomoDomain.endsWith('/')
@@ -47,9 +50,6 @@ export const MatomoTracker = () => {
 
     // Track the initial page view
     window._paq.push(['trackPageView'])
-
-    // Load matomo.js
-    setScriptSrc(normalizedDomain + 'matomo.js')
 
     console.log(
       '[Matomo] Initialized, tracking initial page view:',
@@ -68,11 +68,7 @@ export const MatomoTracker = () => {
     return () => {
       Router.events.off('routeChangeComplete', handleRouteChange)
     }
-  }, [])
+  }, [matomoDomain, matomoSiteId])
 
-  if (!scriptSrc) {
-    return null
-  }
-
-  return <Script src={scriptSrc} strategy="afterInteractive" />
+  return null
 }

@@ -2,7 +2,6 @@ import { createContext, FC, useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 import { Box } from '@island.is/island-ui/core'
-import { useSetOrganization } from '@island.is/matomo'
 import {
   HeadWithSocialSharing,
   ServiceWebBackground,
@@ -81,7 +80,6 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   usePlausiblePageview(organization?.trackingDomain)
-  useSetOrganization(organization?.trackingDomain)
 
   useEffect(() => {
     if (institutionSlug in config) {
