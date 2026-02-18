@@ -57,10 +57,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'penalties',
 ]
 
-const publicProsecutorFields: (keyof UpdateCaseDto)[] = [
-  'indictmentReviewerId',
-  'publicProsecutorIsRegisteredInPoliceSystem',
-]
+const publicProsecutorFields: (keyof UpdateCaseDto)[] = ['indictmentReviewerId']
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderName',

@@ -230,7 +230,8 @@ export const Overview = () => {
                 marginTop={1}
                 columnGap={2}
               >
-                <Button
+                {/**TODO */}
+                {/* <Button
                   size="small"
                   onClick={() =>
                     setAndSendCaseToServer(
@@ -255,7 +256,7 @@ export const Overview = () => {
                   {workingCase.publicProsecutorIsRegisteredInPoliceSystem
                     ? 'Afskrá í LÖKE'
                     : 'Skráð í LÖKE'}
-                </Button>
+                </Button> */}
                 {verdict?.appealDate ? (
                   <Button
                     variant="text"
