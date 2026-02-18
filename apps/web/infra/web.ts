@@ -14,7 +14,7 @@ export const serviceSetup = (services: {
     .serviceAccount('web')
     .codeOwner(CodeOwners.Stefna)
     .env({
-      API_URL: ref((h) => `http://${h.svc(services.api)}`),
+      // API_URL: ref((h) => `http://${h.svc(services.api)}`),
       TRACKING_DOMAIN: {
         dev: 'beta.dev01.devland.is',
         staging: 'beta.staging01.devland.is',
