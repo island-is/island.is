@@ -42,8 +42,19 @@ interface Props {
 const BlueBoxWithDate: FC<Props> = (props) => {
   const { defendant, canDefendantAppealVerdict, icon } = props
   const { verdict } = defendant
-
   const { formatMessage } = useIntl()
+  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { setAndSendVerdictToServer } = useVerdict()
+
+  const hasMountedRef = useRef<boolean>(false)
+  const previousTextCountRef = useRef<number>(0)
+
+  const [pendingServiceDate, setPendingServiceDate] = useState<Date>()
+  const [pendingAppealDate, setPendingAppealDate] = useState<Date>()
+  const [isServiceDatePickerClosing, setIsServiceDatePickerClosing] =
+    useState<boolean>(false)
+  const [isAppealDatePickerClosing, setIsAppealDatePickerClosing] =
+    useState<boolean>(false)
   const [dates, setDates] = useState<{
     serviceDate?: Date
     appealDate?: Date
@@ -51,19 +62,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     serviceDate: undefined,
     appealDate: undefined,
   })
-  const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
-  const [triggerAnimation2, setTriggerAnimation2] = useState<boolean>(false)
-  const [isServiceDatePickerClosing, setIsServiceDatePickerClosing] =
-    useState<boolean>(false)
-  const [pendingServiceDate, setPendingServiceDate] = useState<Date>()
-  const [isAppealDatePickerClosing, setIsAppealDatePickerClosing] =
-    useState<boolean>(false)
-  const [pendingAppealDate, setPendingAppealDate] = useState<Date>()
-
-  const { setAndSendVerdictToServer } = useVerdict()
-  const { workingCase, setWorkingCase } = useContext(FormContext)
-  const hasMountedRef = useRef<boolean>(false)
-  const previousTextCountRef = useRef<number>(0)
 
   const isFine =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
@@ -72,6 +70,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
   const showDatePickers = !defendant.isSentToPrisonAdmin && !isFine
+
   const showAppealDatePicker =
     canDefendantAppealVerdict &&
     !verdict?.appealDate &&
@@ -83,53 +82,10 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const shouldShowServiceDatePicker =
     showServiceDateDatePicker && !isServiceDatePickerClosing
 
-  const handleDateChange = (
-    date: Date | undefined,
-    valid: boolean,
-    type: keyof typeof dates,
-  ) => {
-    if (!date) {
-      // Do nothing
-      return
-    }
-
-    if (!valid) {
-      toast.error(formatMessage(errors.invalidDate))
-      return
-    }
-
-    setDates((prev) => ({ ...prev, [type]: date }))
-  }
-
-  const handleSetDate = (type: keyof typeof dates) => {
-    const date = dates[type]
-
-    if (!date) {
-      toast.error(formatMessage(errors.invalidDate))
-      return
-    }
-
-    // Service date: hide picker first, then submit on exit complete
-    if (type === 'serviceDate') {
-      setPendingServiceDate(date)
-      setIsServiceDatePickerClosing(true)
-      return
-    }
-
-    // Appeal date: hide picker first, then submit on exit complete
-    if (type === 'appealDate') {
-      setPendingAppealDate(date)
-      setIsAppealDatePickerClosing(true)
-      return
-    }
-
-    const payload = {
-      caseId: workingCase.id,
-      defendantId: defendant.id,
-      [type]: formatDateForServer(date),
-    }
-
-    setAndSendVerdictToServer(payload, setWorkingCase)
+  const collapsibleRowVariants = {
+    hidden: { opacity: 0, y: 3, height: 0 },
+    visible: { opacity: 1, y: 0, height: 'auto' },
+    exit: { opacity: 0, y: 3, height: 0 },
   }
 
   const appealExpirationInfo = useMemo(() => {
@@ -223,28 +179,64 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     verdict,
   ])
 
-  const serviceDateVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0 },
-    exit: {
-      opacity: 0,
-      y: 15,
-    },
+  const handleDateChange = (
+    date: Date | undefined,
+    valid: boolean,
+    type: keyof typeof dates,
+  ) => {
+    if (!date) {
+      // Do nothing
+      return
+    }
+
+    if (!valid) {
+      toast.error(formatMessage(errors.invalidDate))
+      return
+    }
+
+    setDates((prev) => ({ ...prev, [type]: date }))
   }
 
-  const appealDateVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      height: 'auto',
-      transition: { delay: triggerAnimation ? 0 : 0.4 },
-    },
-    exit: {
-      opacity: 0,
-      height: 0,
-      transition: { opacity: { duration: 0.2 } },
-    },
+  const handleSetDate = (type: keyof typeof dates) => {
+    const date = dates[type]
+
+    if (!date) {
+      toast.error(formatMessage(errors.invalidDate))
+      return
+    }
+
+    // Service date: hide picker first, then submit on exit complete
+    if (type === 'serviceDate') {
+      setPendingServiceDate(date)
+      setIsServiceDatePickerClosing(true)
+      return
+    }
+
+    // Appeal date: hide picker first, then submit on exit complete
+    if (type === 'appealDate') {
+      setPendingAppealDate(date)
+      setIsAppealDatePickerClosing(true)
+      return
+    }
+
+    const payload = {
+      caseId: workingCase.id,
+      defendantId: defendant.id,
+      [type]: formatDateForServer(date),
+    }
+
+    setAndSendVerdictToServer(payload, setWorkingCase)
+  }
+
+  const sendVerdictDate = (type: 'serviceDate' | 'appealDate', date: Date) => {
+    setAndSendVerdictToServer(
+      {
+        caseId: workingCase.id,
+        defendantId: defendant.id,
+        [type]: formatDateForServer(date),
+      },
+      setWorkingCase,
+    )
   }
 
   useEffect(() => {
@@ -263,7 +255,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     if (isAppealDatePickerClosing && verdict?.appealDate) {
       setIsAppealDatePickerClosing(false)
       setPendingAppealDate(undefined)
-      setTriggerAnimation2(true)
     }
   }, [isAppealDatePickerClosing, verdict?.appealDate])
 
@@ -298,7 +289,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                   ? {
                       opacity: 0,
                       y: 20,
-                      height: triggerAnimation2 ? 0 : 'auto',
+                      height: 0,
                     }
                   : false
               }
@@ -312,7 +303,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                 delay: isNewItem ? staggerIndex * 0.2 : 0,
                 duration: 0.3,
               }}
-              onAnimationComplete={() => setTriggerAnimation(true)}
             >
               <Text>{`• ${text}`}</Text>
             </motion.div>
@@ -324,24 +314,12 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           mode="wait"
           onExitComplete={() => {
             if (isServiceDatePickerClosing && pendingServiceDate) {
-              const payload = {
-                caseId: workingCase.id,
-                defendantId: defendant.id,
-                serviceDate: formatDateForServer(pendingServiceDate),
-              }
-
-              setAndSendVerdictToServer(payload, setWorkingCase)
+              sendVerdictDate('serviceDate', pendingServiceDate)
               setPendingServiceDate(undefined)
             }
 
             if (isAppealDatePickerClosing && pendingAppealDate) {
-              const payload = {
-                caseId: workingCase.id,
-                defendantId: defendant.id,
-                appealDate: formatDateForServer(pendingAppealDate),
-              }
-
-              setAndSendVerdictToServer(payload, setWorkingCase)
+              sendVerdictDate('appealDate', pendingAppealDate)
               setPendingAppealDate(undefined)
             }
           }}
@@ -349,10 +327,11 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           {shouldShowAppealDatePicker && (
             <motion.div
               key="defendantAppealDate"
-              variants={appealDateVariants}
+              variants={collapsibleRowVariants}
               initial="hidden"
               animate="visible"
               exit="exit"
+              transition={{ delay: 0.4 }}
             >
               <Box className={styles.dataContainer}>
                 <DateTime
@@ -383,7 +362,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           {shouldShowServiceDatePicker && (
             <motion.div
               key="defendantServiceDate"
-              variants={serviceDateVariants}
+              variants={collapsibleRowVariants}
               initial={false}
               animate="visible"
               exit="exit"
@@ -417,25 +396,25 @@ const BlueBoxWithDate: FC<Props> = (props) => {
               </Box>
             </motion.div>
           )}
-          {canDefendantAppealVerdict && verdict && (
-            <motion.div
-              key="defendantVerdictAppealDecisionChoice"
-              variants={serviceDateVariants}
-              initial={false}
-              animate="visible"
-              exit="exit"
-              transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
-              className={grid({ gap: 2, marginTop: 1 })}
-            >
-              <Text variant="eyebrow">Afstaða dómfellda til dóms</Text>
-              <VerdictAppealDecisionChoice
-                defendant={defendant}
-                verdict={verdict}
-                disabled={!!defendant.isSentToPrisonAdmin}
-              />
-            </motion.div>
-          )}
         </AnimatePresence>
+      )}
+      {canDefendantAppealVerdict && verdict && (
+        <motion.div
+          key="defendantVerdictAppealDecisionChoice"
+          variants={collapsibleRowVariants}
+          initial={false}
+          animate="visible"
+          exit="exit"
+          transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
+          className={grid({ gap: 2, marginTop: 1 })}
+        >
+          <Text variant="eyebrow">Afstaða dómfellda til dóms</Text>
+          <VerdictAppealDecisionChoice
+            defendant={defendant}
+            verdict={verdict}
+            disabled={!!defendant.isSentToPrisonAdmin}
+          />
+        </motion.div>
       )}
     </Box>
   )
