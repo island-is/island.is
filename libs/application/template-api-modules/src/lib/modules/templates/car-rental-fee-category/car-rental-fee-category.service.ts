@@ -247,15 +247,9 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
 
       data = manualData
 
-      if (data.length === 0) {
-        throw new TemplateApiError(
-          { title: 'Invalid data', summary: 'Invalid data found' },
-          400,
-        )
-      }
-
       if (invalidRows.length > 0) {
-        const errorSummary = invalidRows
+        const uniqueInvalidRows = [...new Set(invalidRows)]
+        const errorSummary = uniqueInvalidRows
           .map((permno) => `${permno}: Invalid or ineligible row`)
           .join('\n')
 
@@ -264,6 +258,13 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
             title: 'Invalid data',
             summary: errorSummary || 'Invalid data found',
           },
+          400,
+        )
+      }
+
+      if (data.length === 0) {
+        throw new TemplateApiError(
+          { title: 'Invalid data', summary: 'Invalid data found' },
           400,
         )
       }
