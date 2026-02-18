@@ -521,8 +521,6 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
       // and each defendant has their own line in their cases table
       c.defendants?.[0].publicProsecutorIsRegisteredInPoliceSystem
 
-    console.log({ sss: c.defendants })
-
     return generateCell(
       {
         strList: [appealCaseNumber, courtCaseNumber, policeCaseNumber],
