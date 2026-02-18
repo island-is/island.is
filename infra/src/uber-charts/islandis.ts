@@ -227,7 +227,7 @@ export const Services: EnvironmentServices = {
     paymentFlowUpdateHandlerService,
     formSystemApi,
     formSystemWeb,
-    formSystemWorker
+    formSystemWorker,
   ],
   staging: [
     appSystemApi,
@@ -272,7 +272,7 @@ export const Services: EnvironmentServices = {
     paymentFlowUpdateHandlerService,
     formSystemApi,
     formSystemWeb,
-    formSystemWorker
+    formSystemWorker,
   ],
   dev: [
     appSystemApi,
