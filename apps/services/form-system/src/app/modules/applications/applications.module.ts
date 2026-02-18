@@ -3,6 +3,7 @@ import { Application } from './models/application.model'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { ApplicationsService } from './applications.service'
 import { ApplicationsController } from './applications.controller'
+import { AdminController } from './admin.controller'
 import { Form } from '../forms/models/form.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { Value } from './models/value.model'
@@ -35,7 +36,7 @@ import { ListItem } from '../listItems/models/listItem.model'
       ListItem,
     ]),
   ],
-  controllers: [ApplicationsController],
+  controllers: [ApplicationsController, AdminController],
   providers: [
     ApplicationsService,
     ApplicationMapper,

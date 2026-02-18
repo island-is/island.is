@@ -359,6 +359,59 @@ export class ApplicationsService {
     return applicationResponseDto
   }
 
+  async findAllByAdminFilters(
+    page: number,
+    limit: number,
+    institutionNationalId?: string,
+    //TODOxy bæta við fleiri filtera
+  ): Promise<ApplicationResponseDto> {
+    const where: { isTest: boolean; organizationId?: string } = {
+      isTest: false,
+    }
+    if (institutionNationalId) {
+      where.organizationId = institutionNationalId
+    }
+
+    const offset = (page - 1) * limit
+    const { count: total, rows: data } =
+      await this.applicationModel.findAndCountAll({
+        where,
+        limit,
+        offset,
+        include: [
+          {
+            model: ApplicationEvent,
+            as: 'events',
+          },
+          // TODOxy afhverju erum við að sækja files?
+          {
+            model: Value,
+            as: 'files',
+            where: { fieldType: FieldTypesEnum.FILE },
+          },
+        ],
+        order: [
+          [{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC'],
+          [{ model: Value, as: 'files' }, 'created', 'ASC'],
+        ],
+      })
+
+    const applicationMinimalDtos = await Promise.all(
+      data.map(async (application) => {
+        const form = await this.formModel.findByPk(application.formId)
+        return this.applicationMapper.mapApplicationToApplicationMinimalDto(
+          application,
+          form,
+        )
+      }),
+    )
+
+    return {
+      applications: applicationMinimalDtos,
+      total: total,
+    }
+  }
+
   async getApplication(
     applicationId: string,
     slug: string,
