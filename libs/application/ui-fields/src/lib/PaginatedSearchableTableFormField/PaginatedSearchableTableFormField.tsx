@@ -3,10 +3,7 @@ import {
   PaginatedSearchableTableField,
   PaginatedSearchableTableRow,
 } from '@island.is/application/types'
-import {
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
+import { formatText, getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import {
   Box,
