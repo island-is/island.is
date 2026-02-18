@@ -29,7 +29,8 @@ export const carsChangesCountSection = buildSection({
                 application.answers,
                 'vehicleLatestMilageRows',
               ) ?? []
-            const countToDisplay = carsToChangeCount ?? vehicleLatestMilageRows.length
+            const countToDisplay =
+              carsToChangeCount ?? vehicleLatestMilageRows.length
 
             return [[countToDisplay.toString()]]
           },
