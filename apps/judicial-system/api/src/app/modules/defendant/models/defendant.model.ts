@@ -106,6 +106,9 @@ export class Defendant {
   @Field(() => Boolean, { nullable: true })
   readonly isSentToPrisonAdmin?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  readonly isRegisteredInPrisonSystem?: boolean
+
   @Field(() => String, { nullable: true })
   readonly sentToPrisonAdminDate?: string
 

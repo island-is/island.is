@@ -83,3 +83,41 @@ export const buildHasDefendantWithNullReviewDecisionCondition = (
         AND defendant.indictment_review_decision IS NULL
     )
   `)
+
+export const buildHasDefendantSentToPrisonAdminNotRegisteredCondition = () =>
+  Sequelize.literal(`
+    EXISTS (
+      SELECT 1
+      FROM defendant d
+      INNER JOIN "case" c ON c.id = d.case_id
+      WHERE d.case_id = "Case".id
+        AND d.is_sent_to_prison_admin = true
+        AND d.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
+        AND (
+          d.is_registered_in_prison_system IS NOT TRUE
+          OR (
+            d.is_registered_in_prison_system IS NULL
+            AND c.is_registered_in_prison_system IS NOT TRUE
+          )
+        )
+    )
+  `)
+
+export const buildHasDefendantSentToPrisonAdminRegisteredCondition = () =>
+  Sequelize.literal(`
+    EXISTS (
+      SELECT 1
+      FROM defendant d
+      INNER JOIN "case" c ON c.id = d.case_id
+      WHERE d.case_id = "Case".id
+        AND d.is_sent_to_prison_admin = true
+        AND d.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
+        AND (
+          d.is_registered_in_prison_system = true
+          OR (
+            d.is_registered_in_prison_system IS NULL
+            AND c.is_registered_in_prison_system = true
+          )
+        )
+    )
+  `)
