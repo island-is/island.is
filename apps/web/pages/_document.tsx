@@ -43,7 +43,10 @@ class MyDocument extends Document<Props> {
               src={PLAUSIBLE_SCRIPT_SRC}
             ></script>
           )}
-          <MatomoInitScript matomoDomain={matomoDomain} matomoSiteId={matomoSiteId} />
+          <MatomoInitScript
+            matomoDomain={matomoDomain}
+            matomoSiteId={matomoSiteId}
+          />
         </Head>
         <body>
           <Main />
