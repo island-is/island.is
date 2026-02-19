@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type { ConfigType } from '@nestjs/config'
-import { Op } from 'sequelize'
 import format from 'date-fns/format'
 import {
   ApplicationTypes,
@@ -283,12 +282,9 @@ export class CoursesService extends BaseTemplateApiService {
       const findQuery = this.applicationApiService.customTemplateFindQuery(
         ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID,
       )
-      const hour = 60 * 60 * 1000
-      const oneHourAgo = new Date(Date.now() - hour)
       const applications = await findQuery({
         state: 'payment',
         'answers.dateSelect': courseInstanceId,
-        modified: { [Op.gt]: oneHourAgo },
       })
 
       const nationalIds = new Set<string>()
@@ -304,6 +300,7 @@ export class CoursesService extends BaseTemplateApiService {
           }
         }
       }
+
       return nationalIds
     } catch (error) {
       this.logger.warn(
