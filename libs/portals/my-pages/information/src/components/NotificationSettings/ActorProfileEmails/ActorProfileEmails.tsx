@@ -84,16 +84,19 @@ export const ActorProfileEmails = ({
     const emailsFilter = currentEmailId
       ? { email: currentEmailId }
       : actorProfile.emailsId
-      ? { id: actorProfile.emailsId }
-      : null
+        ? { id: actorProfile.emailsId }
+        : actorProfile.email
+          ? { email: actorProfile.email }
+          : null
 
     if (!emails || !emailsFilter) {
       return
     }
 
-    // Set the selected option based on the filter (either email id or email address)
+    // Set the selected option based on the filter (either email id or email address).
+    // When no email is set for this actor profile, fall back to user's primary email from actorProfile.email.
     setSelectedOption(getSelectedOption(emails, emailsFilter))
-  }, [emails, currentEmailId, actorProfile.emailsId])
+  }, [emails, currentEmailId, actorProfile.emailsId, actorProfile.email])
 
   /**
    * Sets the selected option state and updates actor profile email.
