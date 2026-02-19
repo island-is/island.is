@@ -170,7 +170,12 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 <OverviewItem
                   label={
                     overview.general[
-                      `attachment${index + 1}` as keyof typeof overview.general
+                      `attachment${
+                        (answers.fishingLicenseFurtherInformation.attachments
+                          ?.length ?? 0) > 1
+                          ? index + 1
+                          : ''
+                      }` as keyof typeof overview.general
                     ]
                   }
                   value={attachment.name}
