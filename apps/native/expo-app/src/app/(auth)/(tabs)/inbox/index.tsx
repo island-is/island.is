@@ -1,11 +1,8 @@
 import { Stack, useRouter } from 'expo-router'
 import { Button, StyleSheet, Text, View } from 'react-native'
 
-import { useAuthStore } from '@/stores/_mock-auth'
-
 export default function TabOneScreen() {
   const router = useRouter()
-  const logout = useAuthStore((s) => s.logout)
 
   return (
     <>

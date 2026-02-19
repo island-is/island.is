@@ -4,7 +4,7 @@ import { useStore } from 'zustand/react'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
-export type ThemeMode = 'dark' | 'light' | 'efficient'
+export type ThemeMode = 'dark' | 'light'
 export type AppearanceMode = ThemeMode | 'automatic'
 
 export const PREFERENCES_KEY = 'preferences_04'

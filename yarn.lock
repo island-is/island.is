@@ -8538,6 +8538,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@expo-google-fonts/ibm-plex-sans@npm:0.4.1":
+  version: 0.4.1
+  resolution: "@expo-google-fonts/ibm-plex-sans@npm:0.4.1"
+  checksum: 10/12a2e3e148192f13cdc5863cea1ed23366722e4023a2a8c6ec756446a22555be1fee999700ee024673c3ab146ae1d7b8bce2ea57aa0220f4931531f4b0c76799
+  languageName: node
+  linkType: hard
+
 "@expo-google-fonts/material-symbols@npm:^0.4.1":
   version: 0.4.22
   resolution: "@expo-google-fonts/material-symbols@npm:0.4.22"
@@ -12533,6 +12540,7 @@ __metadata:
     "@datadog/mobile-react-native": "npm:3.0.2"
     "@emotion/native": "npm:11.11.0"
     "@emotion/react": "npm:11.14.0"
+    "@expo-google-fonts/ibm-plex-sans": "npm:0.4.1"
     "@expo/ui": "npm:~55.0.0-preview.6"
     "@expo/vector-icons": "npm:^15.0.2"
     "@kishannareshpal/expo-pdf": "npm:0.3.1"
@@ -12558,7 +12566,7 @@ __metadata:
     expo-dev-client: "npm:~55.0.5"
     expo-device: "npm:~55.0.7"
     expo-file-system: "npm:~55.0.6"
-    expo-font: "npm:~55.0.3"
+    expo-font: "npm:~55.0.4"
     expo-haptics: "npm:~55.0.6"
     expo-linking: "npm:~55.0.4"
     expo-local-authentication: "npm:~55.0.6"
@@ -33129,6 +33137,19 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/f582427df3bb305d74167b88c130a7c3ef88f7c017d67262e83719850882e5fcbf6422e1d2a41c2e11040915c987d10b8a4340493e799b4b6af6c02d035602ac
+  languageName: node
+  linkType: hard
+
+"expo-font@npm:~55.0.4":
+  version: 55.0.4
+  resolution: "expo-font@npm:55.0.4"
+  dependencies:
+    fontfaceobserver: "npm:^2.1.0"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10/d590354e45c5a4a7a801ab04e4eec6b2a0bf42a2dde7e618f13cdf799d6ce86ccbfabb124de6b1f9ec0a077e74532429169d737948a1bdb0496b762fbf503c31
   languageName: node
   linkType: hard
 

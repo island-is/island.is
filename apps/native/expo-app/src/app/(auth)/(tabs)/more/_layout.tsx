@@ -5,7 +5,7 @@ export default function MoreLayout() {
     <Stack
       initialRouteName="index"
       screenOptions={{
-        headerShown: false,
+        headerShown: true,
       }}
     >
       <Stack.Screen
@@ -13,6 +13,7 @@ export default function MoreLayout() {
         options={{
           headerTransparent: true,
           title: 'Meira',
+          headerLargeTitleEnabled: false,
         }}
       />
     </Stack>

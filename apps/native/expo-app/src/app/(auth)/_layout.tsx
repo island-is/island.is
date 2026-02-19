@@ -1,48 +1,65 @@
 import { Redirect, Stack, useRouter } from 'expo-router'
-import { useEffect, useRef } from 'react'
-import { AppState } from 'react-native'
+import { useCallback, useEffect, useRef } from 'react'
+import { AppState, Keyboard } from 'react-native'
 
-import { useAuthStore } from '@/stores/_mock-auth'
+import { authStore, useAuthStore } from '@/stores/auth-store'
+import { preferencesStore } from '@/stores/preferences-store'
+import { isOnboarded } from '@/utils/onboarding'
 
-export default function AppLayout() {
+export default function AuthLayout() {
   const router = useRouter()
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  const isOnboarded = useAuthStore((s) => s.hasOnboarded)
-  const isLocked = useAuthStore((s) => s.isLocked)
-  const lock = useAuthStore((s) => s.lock)
+  const authorizeResult = useAuthStore((s) => s.authorizeResult)
   const appStateRef = useRef(AppState.currentState)
+  const lockScreenShownRef = useRef(false)
 
-  // Listen for app state changes to trigger lock
-  // useEffect(() => {
-  //   const subscription = AppState.addEventListener('change', (nextAppState) => {
-  //     if (
-  //       appStateRef.current === 'active' &&
-  //       nextAppState.match(/inactive|background/)
-  //     ) {
-  //       if (isAuthenticated) {
-  //         console.log('locking');
-  //         lock()
-  //       }
-  //     }
-  //     appStateRef.current = nextAppState
-  //   })
+  const showLockScreen = useCallback(() => {
+    if (lockScreenShownRef.current) return
+    lockScreenShownRef.current = true
+    router.push('/app-lock')
+  }, [router])
 
-  //   return () => subscription.remove()
-  // }, [])
-
-  // Navigate to app-lock when locked
+  // Reset ref when the lock screen clears its own state (PIN/biometric unlock)
   useEffect(() => {
-    if (isAuthenticated && isLocked) {
-      console.log('opening app lock');
-      router.push('/app-lock')
-    }
-  }, [isAuthenticated, isLocked, router])
+    return authStore.subscribe((state) => {
+      if (!state.lockScreenActivatedAt && !state.lockScreenComponentId) {
+        lockScreenShownRef.current = false
+      }
+    })
+  }, [])
 
-  if (!isAuthenticated) {
+  // On mount: always show the lock screen if the user is onboarded.
+  // The lock screen itself decides whether to auto-dismiss (within timeout) or require unlock.
+  useEffect(() => {
+    if (isOnboarded()) {
+      showLockScreen()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Listen for app state changes to show/dismiss the lock screen
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      // Going to background: stamp the time and show lock immediately (covers app switcher)
+      if (
+        appStateRef.current === 'active' &&
+        (nextAppState === 'inactive' || nextAppState === 'background')
+      ) {
+        if (isOnboarded()) {
+          Keyboard.dismiss()
+          authStore.setState({ lockScreenActivatedAt: Date.now() })
+          showLockScreen()
+        }
+      }
+
+      appStateRef.current = nextAppState
+    })
+
+    return () => subscription.remove()
+  }, [showLockScreen])
+
+  if (!authorizeResult) {
     return <Redirect href="/login" />
   }
-
-  console.log('rendering auth layout');
 
   return (
     <Stack>
@@ -53,7 +70,8 @@ export default function AppLayout() {
         options={{
           headerShown: false,
           presentation: 'containedTransparentModal',
-          // gestureEnabled: false,
+          gestureEnabled: false,
+          animation: 'fade',
         }}
       />
     </Stack>

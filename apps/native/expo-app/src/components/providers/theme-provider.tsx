@@ -1,52 +1,101 @@
-import { theme } from '@/ui/utils/theme'
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import {
+  Appearance,
+  DynamicColorIOS,
+  Platform,
+  StatusBar,
+  useColorScheme,
+} from 'react-native'
 import { ThemeProvider as StyledThemeProvider } from 'styled-components'
-
-const themes = {
-  light: {
-    isDark: false,
-    shade: {
-      background: '#FFFFFF',
-      foreground: '#00003C',
-      shade700: '#8A8A8A',
-      shade600: '#BFC1C0',
-      shade500: '#CCCCD8',
-      shade400: '#E4E3E2',
-      shade300: '#EBEBEB',
-      shade200: '#F2F2F5',
-      shade100: '#FBFBFB',
-    },
-  },
-  dark: {
-    isDark: true,
-    shade: {
-      background: '#000000',
-      foreground: '#F2F2F5',
-      shade700: '#6E6E6E',
-      shade600: '#4F4F50',
-      shade500: '#434444',
-      shade400: '#373737',
-      shade300: '#2E2E2E',
-      shade200: '#222222',
-      shade100: '#141414',
-    },
-  },
-}
+import { usePreferencesStore } from '@/stores/preferences-store'
+import { uiStore } from '@/stores/ui-store'
+import { getThemeWithPreferences } from '@/utils/get-theme-with-preferences'
+import {
+  DefaultTheme,
+  ThemeProvider as NavigationThemeProvider,
+} from '@react-navigation/native'
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const systemScheme = useColorScheme()
+  const preferences = usePreferencesStore()
+  const selectedTheme = getThemeWithPreferences(preferences, systemScheme)
+  const [prevColorScheme, setPrevColorScheme] = useState(
+    selectedTheme.colorScheme,
+  )
+
+  useEffect(() => {
+    if (prevColorScheme !== selectedTheme.colorScheme) {
+      setPrevColorScheme(selectedTheme.colorScheme)
+    }
+    uiStore.setState({ theme: selectedTheme })
+    if (Platform.OS === 'ios') {
+      StatusBar.setBarStyle(
+        preferences.appearanceMode === 'automatic'
+          ? 'default'
+          : selectedTheme.isDark
+          ? 'light-content'
+          : 'dark-content',
+        true,
+      )
+    }
+  }, [selectedTheme])
+
+  useEffect(() => {
+    Appearance.setColorScheme(
+      preferences.appearanceMode === 'automatic'
+        ? 'unspecified' // default to light, change back to 'automatic' when dark mode is ready
+        : selectedTheme.isDark
+        ? 'dark'
+        : 'light',
+    )
+  }, [preferences.appearanceMode])
+
+  const navigationTheme = useMemo(() => {
+    return {
+      dark: selectedTheme.isDark,
+      colors: {
+        primary: selectedTheme.color.blue400,
+        background: (Platform.OS === 'ios'
+          ? DynamicColorIOS({
+              light: selectedTheme.shade.background,
+              dark: selectedTheme.shade.background,
+            })
+          : selectedTheme.shade.background) as string,
+        card: selectedTheme.shade.shade200,
+        text: selectedTheme.shade.foreground,
+        border: selectedTheme.shade.shade300,
+        notification: selectedTheme.color.red400,
+      },
+      fonts: {
+        regular: {
+          fontFamily: 'IBMPlexSans_400Regular',
+          fontWeight: '400',
+        },
+        medium: {
+          fontFamily: 'IBMPlexSans_500Medium',
+          fontWeight: '500',
+        },
+        bold: {
+          fontFamily: 'IBMPlexSans_600SemiBold',
+          fontWeight: '600',
+        },
+        heavy: {
+          fontFamily: 'IBMPlexSans_700Bold',
+          fontWeight: '700',
+        },
+      }
+    }
+  }, [selectedTheme])
+
+  console.log('Selected theme:', navigationTheme);
+
   return (
-    <StyledThemeProvider
-      theme={{
-        ...theme,
-        ...themes.light,
-        colorScheme: 'automatic',
-        shades: {
-          dark: themes.dark.shade,
-          light: themes.light.shade,
-        }
-      }}
-    >
-      {children}
-    </StyledThemeProvider>
+    <NavigationThemeProvider value={navigationTheme}>
+      <StyledThemeProvider
+        theme={{ ...selectedTheme, appearanceMode: preferences.appearanceMode }}
+      >
+        {children}
+      </StyledThemeProvider>
+    </NavigationThemeProvider>
   )
 }

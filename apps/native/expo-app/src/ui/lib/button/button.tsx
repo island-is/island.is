@@ -44,13 +44,11 @@ const Host = styled.TouchableHighlight<HostProps>`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: center;
-  column-gap: ${({ theme }) => theme.spacing.p1}px;
 
   padding: ${({ theme, isUtilityButton }) =>
     isUtilityButton
       ? `${theme.spacing.p1}px ${theme.spacing.p2}px`
-      : `${theme.spacing.p3}px ${theme.spacing.p4}px`};
+    : `${theme.spacing.p3}px ${theme.spacing.p4}px`};
   background-color: ${dynamicColor<HostProps>(
     ({
       theme,
@@ -187,7 +185,7 @@ export function Button({
           <Loader />
         </View>
       ) : (
-        <>
+        <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: theme.spacing.p1 }}>
           {icon && iconPosition === 'start' && renderIcon()}
           {title && (
             <Text
@@ -205,7 +203,7 @@ export function Button({
             </Text>
           )}
           {icon && iconPosition === 'end' && renderIcon()}
-        </>
+        </View>
       )}
     </Host>
   )

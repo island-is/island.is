@@ -1,16 +1,25 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { NativeTabs } from 'expo-router/unstable-native-tabs'
 import React, { useEffect, useState } from 'react'
 
 import { Redirect, usePathname } from 'expo-router'
-import { useAuthStore } from '../../../stores/_mock-auth'
+import { usePreferencesStore } from '@/stores/preferences-store'
+import { isOnboarded } from '@/utils/onboarding'
+import { blue400 } from '../../../ui'
 
 export default function TabLayout() {
-  const isOnboarded = useAuthStore((s) => s.hasOnboarded)
+  const hasOnboardedPinCode = usePreferencesStore((s) => s.hasOnboardedPinCode)
+  const hasOnboardedBiometrics = usePreferencesStore(
+    (s) => s.hasOnboardedBiometrics,
+  )
+  const hasOnboardedNotifications = usePreferencesStore(
+    (s) => s.hasOnboardedNotifications,
+  )
   const route = usePathname()
   const [vis, setVis] = useState(true)
 
-  if (!isOnboarded) {
+  const onboarded = isOnboarded()
+
+  if (!onboarded) {
     return <Redirect href="/(auth)/onboarding" />
   }
 
@@ -23,28 +32,34 @@ export default function TabLayout() {
   }, [route])
 
   return (
-    <NativeTabs
-      hidden={!vis}
-
-      // backgroundColor={Colors.background}
-      // indicatorColor={colors.backgroundElement}
-      // labelStyle={{ selected: { color: colors.text } }}
-    >
+    <NativeTabs hidden={!vis} labelStyle={{
+      fontFamily: 'IBMPlexSans_400Regular',
+      fontSize: 12,
+      selected: {
+        color: blue400,
+      }
+    }}>
       <NativeTabs.Trigger name="inbox">
         <NativeTabs.Trigger.Label>Pósthólf</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require('@/assets/icons/tabbar-mail.png')}
+          src={{
+            default: require('@/assets/icons/tabbar-mail.png'),
+            selected: require('@/assets/icons/tabbar-mail-selected.png'),
+          }}
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="two">
         <NativeTabs.Trigger.Label>Skírteini</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require('@/assets/icons/tabbar-wallet.png')}
+          src={{
+            default: require('@/assets/icons/tabbar-wallet.png'),
+            selected: require('@/assets/icons/tabbar-wallet-selected.png'),
+          }}
         />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label hidden />
+        <NativeTabs.Trigger.Label hidden>Heim</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           src={{
             default: require('@/assets/icons/home-icon-inactive.png'),

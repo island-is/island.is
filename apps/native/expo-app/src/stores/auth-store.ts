@@ -28,6 +28,7 @@ import { deduplicatePromise } from '../utils/deduplicatePromise'
 import type { User } from 'configcat-js'
 import { clearWidgetData } from '../lib/widget-sync'
 import { create, useStore } from 'zustand'
+import { clearAllStorages } from './mmkv'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
@@ -244,8 +245,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   },
   async logout(skipPasskeyDeletion = false) {
     // Clear all MMKV storages
-    // @todo migration
-    // clearAllStorages()
+    clearAllStorages()
 
     // Clear widgets
     clearWidgetData()
@@ -265,14 +265,19 @@ export const authStore = create<AuthStore>((set, get) => ({
 
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const tokenToRevoke = get().authorizeResult!.accessToken!
+    const tokenToRevoke = get().authorizeResult?.accessToken;
     try {
-      await revoke(appAuthConfig, {
-        tokenToRevoke,
-        includeBasicAuth: true,
-        sendClientId: true,
-      })
+      if (tokenToRevoke) {
+        await revoke(appAuthConfig, {
+          tokenToRevoke,
+          includeBasicAuth: true,
+          sendClientId: true,
+        })
+      } else {
+        throw new Error('No token to revoke')
+      }
     } catch (e) {
+      console.error('Failed to revoke token', e)
       // NOOP
     }
 
@@ -294,7 +299,9 @@ export const authStore = create<AuthStore>((set, get) => ({
   },
 }))
 
-export const useAuthStore = <U = AuthStore>(selector?: (state: AuthStore) => U) => useStore(authStore, selector!)
+export const useAuthStore = <U = AuthStore>(
+  selector?: (state: AuthStore) => U,
+) => useStore(authStore, selector!)
 
 export async function readAuthorizeResult(): Promise<void> {
   const { authorizeResult } = authStore.getState()

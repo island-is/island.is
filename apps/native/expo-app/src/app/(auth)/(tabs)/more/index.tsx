@@ -1,8 +1,7 @@
 import { useRef } from 'react'
 import { useIntl } from 'react-intl'
-import { Animated, TouchableHighlight, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { useRouter } from 'expo-router'
+import { Animated, TouchableHighlight, View, SafeAreaView } from 'react-native'
+import { Stack, useRouter } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
 import airplaneIcon from '@/assets/icons/airplane.png'
@@ -29,7 +28,8 @@ export default function MoreScreen() {
   const router = useRouter()
   const authStore = useAuthStore()
   const myPagesLinks = useMyPagesLinks()
-  const scrollY = useRef(new Animated.Value(0)).current
+
+  console.log(JSON.stringify(authStore.userInfo, null, 2));
 
   const externalLinks = [
     {
@@ -61,18 +61,17 @@ export default function MoreScreen() {
 
   return (
     <>
+      <Stack.Toolbar placement="right">
+        <Stack.Toolbar.Button icon={require('@/assets/icons/settings.png')} onPress={() => {
+          router.push('/settings')
+        }} />
+      </Stack.Toolbar>
       <Animated.ScrollView
         style={{
           flex: 1,
           paddingHorizontal: 16,
           paddingVertical: 16,
         }}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          {
-            useNativeDriver: true,
-          },
-        )}
       >
         <SafeAreaView style={{ marginBottom: theme.spacing[1] }}>
           <TouchableHighlight
@@ -135,7 +134,6 @@ export default function MoreScreen() {
           </View>
         </View>
       </Animated.ScrollView>
-      <TopLine scrollY={scrollY} />
     </>
   )
 }
