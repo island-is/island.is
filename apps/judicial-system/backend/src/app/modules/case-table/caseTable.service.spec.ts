@@ -117,7 +117,7 @@ describe('CaseTableService', () => {
       expect(call.limit).toBe(10)
     })
 
-    it('returns rows with matchedField and matchedValue from getMatch', async () => {
+    it('returns rows with matchedField and matchedValue from query', async () => {
       const user = prosecutionUser('user-1')
       const mockCase = {
         id: 'case-1',
@@ -127,6 +127,10 @@ describe('CaseTableService', () => {
         courtCaseNumber: null,
         appealCaseNumber: null,
         defendants: [{ nationalId: '1', name: 'Defendant' }],
+        get: (key: string) =>
+          ({ matchedValue: '456-2024', matchedField: 'policeCaseNumbers' }[
+            key
+          ]),
       }
       mockFindAll.mockResolvedValue([mockCase])
 
@@ -149,6 +153,10 @@ describe('CaseTableService', () => {
           courtCaseNumber: null,
           appealCaseNumber: null,
           defendants: [],
+          get: (key: string) =>
+            ({ matchedValue: '123-2024', matchedField: 'policeCaseNumbers' }[
+              key
+            ]),
         },
         {
           id: 'case-2',
@@ -158,6 +166,10 @@ describe('CaseTableService', () => {
           courtCaseNumber: null,
           appealCaseNumber: null,
           defendants: [],
+          get: (key: string) =>
+            ({ matchedValue: '123-2024', matchedField: 'policeCaseNumbers' }[
+              key
+            ]),
         },
       ]
       mockFindAll.mockResolvedValue(mockCases)

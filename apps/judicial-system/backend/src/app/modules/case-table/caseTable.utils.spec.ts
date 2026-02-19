@@ -2,7 +2,6 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseActionType,
   CaseAppealState,
-  CaseDecision,
   CaseState,
   CaseType,
   ContextMenuCaseActionType,
@@ -18,9 +17,7 @@ import {
   canDeleteRequestCase,
   getActionOnRowClick,
   getContextMenuActions,
-  getMatch,
   isMyCase,
-  normalizeCaseTypeForDisplay,
 } from './caseTable.utils'
 
 /** Minimal user shape for type guards (role + institution.type). */
@@ -39,115 +36,6 @@ const districtCourtJudge = (id: string): User =>
   } as User)
 
 describe('caseTable.utils', () => {
-  describe('getMatch', () => {
-    it('returns policeCaseNumbers when query matches one number', () => {
-      const theCase = {
-        policeCaseNumbers: ['123-2024', '456-2024'],
-        courtCaseNumber: null,
-        appealCaseNumber: null,
-        defendants: [],
-      } as unknown as Case
-      expect(getMatch(theCase, '456')).toEqual({
-        field: 'policeCaseNumbers',
-        value: '456-2024',
-      })
-    })
-
-    it('returns courtCaseNumber when query matches', () => {
-      const theCase = {
-        policeCaseNumbers: ['123-2024'],
-        courtCaseNumber: 'R-123/2024',
-        appealCaseNumber: null,
-        defendants: [],
-      } as unknown as Case
-      expect(getMatch(theCase, 'R-123')).toEqual({
-        field: 'courtCaseNumber',
-        value: 'R-123/2024',
-      })
-    })
-
-    it('returns appealCaseNumber when query matches', () => {
-      const theCase = {
-        policeCaseNumbers: ['123-2024'],
-        courtCaseNumber: null,
-        appealCaseNumber: 'S-1/2024',
-        defendants: [],
-      } as unknown as Case
-      expect(getMatch(theCase, 'S-1')).toEqual({
-        field: 'appealCaseNumber',
-        value: 'S-1/2024',
-      })
-    })
-
-    it('returns defendantNationalId when query matches', () => {
-      const theCase = {
-        policeCaseNumbers: ['123-2024'],
-        courtCaseNumber: null,
-        appealCaseNumber: null,
-        defendants: [
-          { nationalId: '1234567890', name: 'John' },
-          { nationalId: '0987654321', name: 'Jane' },
-        ],
-      } as unknown as Case
-      expect(getMatch(theCase, '0987654321')).toEqual({
-        field: 'defendantNationalId',
-        value: '0987654321',
-      })
-    })
-
-    it('returns defendantName when query matches', () => {
-      const theCase = {
-        policeCaseNumbers: ['123-2024'],
-        courtCaseNumber: null,
-        appealCaseNumber: null,
-        defendants: [{ nationalId: '1', name: 'Jón Jónsson' }],
-      } as unknown as Case
-      expect(getMatch(theCase, 'Jónsson')).toEqual({
-        field: 'defendantName',
-        value: 'Jón Jónsson',
-      })
-    })
-
-    it('is case-insensitive', () => {
-      const theCase = {
-        policeCaseNumbers: ['ABC-2024'],
-        courtCaseNumber: null,
-        appealCaseNumber: null,
-        defendants: [],
-      } as unknown as Case
-      expect(getMatch(theCase, 'abc')).toEqual({
-        field: 'policeCaseNumbers',
-        value: 'ABC-2024',
-      })
-    })
-
-    it('falls back to first police case number when no field matches', () => {
-      const theCase = {
-        policeCaseNumbers: ['123-2024'],
-        courtCaseNumber: null,
-        appealCaseNumber: null,
-        defendants: [],
-      } as unknown as Case
-      expect(getMatch(theCase, 'xyz')).toEqual({
-        field: 'policeCaseNumbers',
-        value: '123-2024',
-      })
-    })
-
-    it('returns empty string when no police case numbers', () => {
-      const theCase = {
-        policeCaseNumbers: [],
-        courtCaseNumber: null,
-        appealCaseNumber: null,
-        defendants: [],
-      } as unknown as Case
-      expect(getMatch(theCase, 'xyz')).toEqual({
-        field: 'policeCaseNumbers',
-        value: '',
-      })
-    })
-  })
-
   describe('isMyCase', () => {
     it('returns true for prosecution user when they are creating prosecutor', () => {
       const user = prosecutionUser('user-1')
@@ -424,26 +312,6 @@ describe('caseTable.utils', () => {
       } as unknown as Case
       expect(getContextMenuActions(theCase, user)).toContain(
         ContextMenuCaseActionType.WITHDRAW_APPEAL,
-      )
-    })
-  })
-
-  describe('normalizeCaseTypeForDisplay', () => {
-    it('returns TRAVEL_BAN for CUSTODY with ACCEPTING_ALTERNATIVE_TRAVEL_BAN', () => {
-      expect(
-        normalizeCaseTypeForDisplay(
-          CaseType.CUSTODY,
-          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-        ),
-      ).toBe(CaseType.TRAVEL_BAN)
-    })
-
-    it('returns same type for other decisions', () => {
-      expect(
-        normalizeCaseTypeForDisplay(CaseType.CUSTODY, CaseDecision.ACCEPTING),
-      ).toBe(CaseType.CUSTODY)
-      expect(normalizeCaseTypeForDisplay(CaseType.INDICTMENT, undefined)).toBe(
-        CaseType.INDICTMENT,
       )
     })
   })
