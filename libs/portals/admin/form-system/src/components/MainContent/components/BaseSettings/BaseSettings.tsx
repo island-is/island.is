@@ -187,10 +187,18 @@ export const BaseSettings = () => {
               }
             }}
             onChange={(e) => {
-              const nextValue = e.target.value.replaceAll('/', '')
+              const input = e.target as HTMLInputElement
+              const cursor = input.selectionStart ?? 0
+              const removed = (input.value.slice(0, cursor).match(/\//g) || [])
+                .length
+              const nextValue = input.value.replaceAll('/', '')
               controlDispatch({
                 type: 'CHANGE_SLUG',
                 payload: { newValue: nextValue },
+              })
+              // Restore cursor after React reconciles the value
+              requestAnimationFrame(() => {
+                input.setSelectionRange(cursor - removed, cursor - removed)
               })
             }}
           />
