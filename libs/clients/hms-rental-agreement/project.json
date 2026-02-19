@@ -19,7 +19,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1/swagger/v1/swagger.json > src/clientConfig.json",
+          "curl http://localhost:8081/r1/IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1/swagger/v1/swagger.json > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
