@@ -298,9 +298,11 @@ const InheritanceReportTemplate: ApplicationTemplate<
             defineTemplateApi({
               action: ApiActions.submitToSyslumenn,
               throwOnError: true,
+              order: 0,
             }),
             defineTemplateApi({
               action: ApiActions.getSignatories,
+              order: 1,
             }),
           ],
           actionCard: {

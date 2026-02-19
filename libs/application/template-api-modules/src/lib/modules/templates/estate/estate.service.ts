@@ -8,6 +8,7 @@ import {
   EstateInfo,
   Person,
   PersonType,
+  SignatoryEstateTypes,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
@@ -307,7 +308,99 @@ export class EstateTemplateService extends BaseTemplateApiService {
       this.logger.error('[estate]: Failed to upload data - ', result.message)
       throw new Error('Application submission failed on syslumadur upload data')
     }
+    this.logger.info(
+      '[estate]: completeApplication received caseNumber from uploadData',
+      { caseNumber: result.caseNumber },
+    )
     return { sucess: result.success, id: result.caseNumber }
+  }
+
+  async getSignatories({ application }: TemplateApiModuleActionProps) {
+    const answers = application.answers as unknown as EstateSchema
+
+    const completeData = application.externalData
+      ?.completeApplication as unknown as
+      | { data: { sucess: boolean; id?: string }; date: Date }
+      | undefined
+    const caseNumber = completeData?.data?.id
+
+    if (!caseNumber) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary:
+            'Case number not found. Application must be submitted before retrieving signatories.',
+        },
+        400,
+      )
+    }
+
+    const estateData = (
+      application.externalData?.syslumennOnEntry?.data as {
+        estates: Array<EstateInfo>
+      }
+    ).estates
+
+    const selectedEstateData = estateData?.find(
+      (estate) => estate.caseNumber === answers.estateInfoSelection,
+    )
+    const deceasedNationalId = selectedEstateData?.nationalIdOfDeceased || ''
+
+    if (!deceasedNationalId) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Deceased national ID not found in application data.',
+        },
+        400,
+      )
+    }
+
+    const selectedEstate = answers.selectedEstate
+    const estateTypeMap: Record<string, SignatoryEstateTypes> = {
+      [EstateTypes.divisionOfEstateByHeirs]: SignatoryEstateTypes.Einkaskipti,
+      [EstateTypes.permitForUndividedEstate]: SignatoryEstateTypes.OskiptBu,
+      [EstateTypes.officialDivision]: SignatoryEstateTypes.OpinberSkipti,
+      [EstateTypes.estateWithoutAssets]: SignatoryEstateTypes.Eignaleysi,
+    }
+
+    const estateType = estateTypeMap[selectedEstate]
+    if (!estateType) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: `Unknown estate type: ${selectedEstate}`,
+        },
+        400,
+      )
+    }
+
+    try {
+      this.logger.info(
+        '[estate]: Calling getSignatories API with caseNumber from completeApplication',
+        { deceasedNationalId, estateType, caseNumber },
+      )
+      const signatories =
+        await this.syslumennService.getInheritanceReportSignatories(
+          deceasedNationalId,
+          estateType,
+          caseNumber,
+        )
+
+      return {
+        success: true,
+        signatories,
+      }
+    } catch (error) {
+      this.logger.error('[estate]: Failed to get signatories', error)
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Failed to retrieve signatories from Syslumenn service.',
+        },
+        500,
+      )
+    }
   }
 
   private async getFileContentBase64(fileName: string): Promise<string> {

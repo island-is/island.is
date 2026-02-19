@@ -4,6 +4,7 @@ import {
   DataUploadResponse,
   Person,
   PersonType,
+  SignatoryEstateTypes,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
 import { getFakeData, roundMonetaryFieldsDeep, stringifyObject } from './utils'
@@ -273,24 +274,16 @@ export class InheritanceReportService extends BaseTemplateApiService {
       )
     }
 
-    // Determine the estate type based on the application type
-    // Estate types supported by Syslumenn:
-    // - 'danarbu' (Dánarbú) - General estate/inheritance report
-    // - 'fyrirframgreiddur' (Fyrirframgreiddur Arfur) - Prepaid inheritance
-    // - 'opinber' (Opinber skipti) - Official division
-    // - 'eignarleysi' - Estate without assets
-    // - 'OskiptBu' (Umsókn um leyfi til setu í óskiptu búi) - Undivided estate permit
-    // - 'Einkaskipti' (umsókn um leyfi til einkaskipta) - Private division permit
-    //
-    // For ESTATE_INHERITANCE, use 'danarbu' (general estate)
-    // For PREPAID_INHERITANCE, use 'fyrirframgreiddur' (prepaid inheritance)
     const estateType =
       answers?.applicationFor === 'prepaidInheritance'
-        ? 'fyrirframgreiddur'
-        : 'danarbu'
+        ? SignatoryEstateTypes.FyrirFramGreiddur
+        : SignatoryEstateTypes.ErfdafjarSkyrsla
 
     try {
-      // Call the Syslumenn service to get signatories
+      this.logger.info(
+        '[inheritance-report]: Calling getSignatories API',
+        { deceasedNationalId, estateType, caseNumber },
+      )
       const signatories =
         await this.syslumennService.getInheritanceReportSignatories(
           deceasedNationalId,

@@ -360,7 +360,7 @@ const EstateTemplate: ApplicationTemplate<
             target: States.draft,
           },
           [DefaultEvents.SUBMIT]: {
-            target: States.done,
+            target: States.signing,
           },
           [DefaultEvents.PAYMENT]: {
             target: States.payment,
@@ -376,7 +376,7 @@ const EstateTemplate: ApplicationTemplate<
       [States.payment]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItems: getChargeItems,
-        submitTarget: States.done,
+        submitTarget: States.signing,
         abortTarget: States.draft,
         lifecycle: {
           shouldBeListed: true,
@@ -392,16 +392,76 @@ const EstateTemplate: ApplicationTemplate<
           return application.applicant
         },
       }),
+      [States.signing]: {
+        meta: {
+          name: 'Signing',
+          status: 'inprogress',
+          progress: 0.85,
+          lifecycle: pruneAfterDays(30),
+          onEntry: [
+            defineTemplateApi({
+              action: ApiActions.completeApplication,
+              throwOnError: true,
+              order: 0,
+            }),
+            defineTemplateApi({
+              action: ApiActions.getSignatories,
+              shouldPersistToExternalData: true,
+              externalDataId: 'getSignatories',
+              order: 1,
+            }),
+          ],
+          roles: [
+            {
+              id: Roles.APPLICANT_NO_ASSETS,
+              formLoader: () =>
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              read: 'all',
+            },
+            {
+              id: Roles.APPLICANT_OFFICIAL_DIVISION,
+              formLoader: () =>
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              read: 'all',
+            },
+            {
+              id: Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
+              formLoader: () =>
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              read: 'all',
+            },
+            {
+              id: Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
+              formLoader: () =>
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.done),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.done,
+          },
+        },
+      },
       [States.done]: {
         meta: {
           name: 'Approved',
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(60),
-          onEntry: defineTemplateApi({
-            action: ApiActions.completeApplication,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT_NO_ASSETS,
