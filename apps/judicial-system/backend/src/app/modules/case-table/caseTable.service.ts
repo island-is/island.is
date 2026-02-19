@@ -219,6 +219,46 @@ export class CaseTableService {
     private readonly caseRepositoryService: CaseRepositoryService,
   ) {}
 
+  private getMatch(
+    theCase: Case,
+    query: string,
+  ): { field: string; value: string } {
+    const lowerQuery = query.toLowerCase()
+
+    const matchingPoliceCaseNumber = theCase.policeCaseNumbers?.find((pcn) =>
+      pcn.toLowerCase().includes(lowerQuery),
+    )
+
+    if (matchingPoliceCaseNumber) {
+      return { field: 'policeCaseNumbers', value: matchingPoliceCaseNumber }
+    }
+
+    if (theCase.courtCaseNumber?.toLowerCase().includes(lowerQuery)) {
+      return { field: 'courtCaseNumber', value: theCase.courtCaseNumber }
+    }
+
+    if (theCase.appealCaseNumber?.toLowerCase().includes(lowerQuery)) {
+      return { field: 'appealCaseNumber', value: theCase.appealCaseNumber }
+    }
+
+    for (const d of theCase.defendants ?? []) {
+      if (d.nationalId?.toLowerCase().includes(lowerQuery)) {
+        return { field: 'defendantNationalId', value: d.nationalId }
+      }
+    }
+
+    for (const d of theCase.defendants ?? []) {
+      if (d.name?.toLowerCase().includes(lowerQuery)) {
+        return { field: 'defendantName', value: d.name }
+      }
+    }
+
+    return {
+      field: 'policeCaseNumbers',
+      value: theCase.policeCaseNumbers?.[0] ?? '',
+    }
+  }
+
   async getCaseTableRows(
     type: CaseTableType,
     user: TUser,
@@ -397,49 +437,21 @@ export class CaseTableService {
       }))
     })
 
+    const normalizedQuery = query.toLowerCase().trim()
+    const isExactMatch = (value: string | null | undefined) =>
+      value != null && value.toLowerCase().trim() === normalizedQuery
+
+    rows.sort((a, b) => {
+      const aExact = isExactMatch(a.matchedValue)
+      const bExact = isExactMatch(b.matchedValue)
+      if (aExact && !bExact) return -1
+      if (!aExact && bExact) return 1
+      return 0
+    })
+
     return {
       rowCount: rows.length,
       rows,
-    }
-  }
-
-  private getMatch(
-    theCase: Case,
-    query: string,
-  ): { field: string; value: string } {
-    const lowerQuery = query.toLowerCase()
-
-    const matchingPoliceCaseNumber = theCase.policeCaseNumbers?.find((pcn) =>
-      pcn.toLowerCase().includes(lowerQuery),
-    )
-
-    if (matchingPoliceCaseNumber) {
-      return { field: 'policeCaseNumbers', value: matchingPoliceCaseNumber }
-    }
-
-    if (theCase.courtCaseNumber?.toLowerCase().includes(lowerQuery)) {
-      return { field: 'courtCaseNumber', value: theCase.courtCaseNumber }
-    }
-
-    if (theCase.appealCaseNumber?.toLowerCase().includes(lowerQuery)) {
-      return { field: 'appealCaseNumber', value: theCase.appealCaseNumber }
-    }
-
-    for (const d of theCase.defendants ?? []) {
-      if (d.nationalId?.toLowerCase().includes(lowerQuery)) {
-        return { field: 'defendantNationalId', value: d.nationalId }
-      }
-    }
-
-    for (const d of theCase.defendants ?? []) {
-      if (d.name?.toLowerCase().includes(lowerQuery)) {
-        return { field: 'defendantName', value: d.name }
-      }
-    }
-
-    return {
-      field: 'policeCaseNumbers',
-      value: theCase.policeCaseNumbers?.[0] ?? '',
     }
   }
 }
