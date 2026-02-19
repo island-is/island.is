@@ -300,19 +300,24 @@ export class CaseTableService {
     })
 
     const rows = cases.flatMap((c) => {
-      const matchedValue = (c.get('matchedValue') as string) ?? ''
-      const matchedField =
+      const caseMatchedValue = (c.get('matchedValue') as string) ?? ''
+      const caseMatchedField =
         (c.get('matchedField') as string) ?? 'policeCaseNumbers'
       const caseType = (c.get('caseType') ?? c.type) as CaseType
       const defendants = c.defendants ?? []
+      const normalizedCaseMatch = caseMatchedValue.toLowerCase().trim()
+
+      const isDefendantLevelMatch =
+        caseMatchedField === 'defendantName' ||
+        caseMatchedField === 'defendantNationalId'
 
       if (defendants.length === 0) {
         return [
           {
             caseId: c.id,
             caseType,
-            matchedField,
-            matchedValue,
+            matchedField: caseMatchedField,
+            matchedValue: caseMatchedValue,
             policeCaseNumbers: c.policeCaseNumbers,
             courtCaseNumber: c.courtCaseNumber ?? null,
             appealCaseNumber: c.appealCaseNumber ?? null,
@@ -322,17 +327,32 @@ export class CaseTableService {
         ]
       }
 
-      return defendants.map((d) => ({
-        caseId: c.id,
-        caseType,
-        matchedField,
-        matchedValue,
-        policeCaseNumbers: c.policeCaseNumbers,
-        courtCaseNumber: c.courtCaseNumber ?? null,
-        appealCaseNumber: c.appealCaseNumber ?? null,
-        defendantNationalId: d.nationalId ?? null,
-        defendantName: d.name ?? null,
-      }))
+      return defendants.map((d) => {
+        let matchedField = caseMatchedField
+        let matchedValue = caseMatchedValue
+        if (isDefendantLevelMatch) {
+          const defendantMatches =
+            (caseMatchedField === 'defendantName' &&
+              (d.name ?? '').toLowerCase().trim() === normalizedCaseMatch) ||
+            (caseMatchedField === 'defendantNationalId' &&
+              (d.nationalId ?? '').toLowerCase().trim() === normalizedCaseMatch)
+          if (!defendantMatches) {
+            matchedField = 'policeCaseNumbers'
+            matchedValue = ''
+          }
+        }
+        return {
+          caseId: c.id,
+          caseType,
+          matchedField,
+          matchedValue,
+          policeCaseNumbers: c.policeCaseNumbers,
+          courtCaseNumber: c.courtCaseNumber ?? null,
+          appealCaseNumber: c.appealCaseNumber ?? null,
+          defendantNationalId: d.nationalId ?? null,
+          defendantName: d.name ?? null,
+        }
+      })
     })
 
     return {

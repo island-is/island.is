@@ -25,7 +25,7 @@ import { ModalContainer } from '../Modal/Modal'
 import { useSearchCasesLazyQuery } from './searchCases.generated'
 import * as styles from './SearchModal.css'
 
-const SEARCH_DEBOUNCE_MS = 100
+const SEARCH_DEBOUNCE_MS = 300
 
 type SearchResultsState =
   | {
@@ -274,7 +274,8 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                             caseType={row.caseType}
                             caseNumber={caseNumber}
                             descriptor={`${row.matchedValue}${
-                              row.matchedField === 'defendantName'
+                              row.matchedField === 'defendantName' ||
+                              !row.defendantName
                                 ? ''
                                 : ` - ${row.defendantName}`
                             }`}

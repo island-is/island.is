@@ -308,7 +308,7 @@ describe('caseTable.utils', () => {
         type: CaseType.CUSTODY,
         state: CaseState.ACCEPTED,
         appealState: CaseAppealState.APPEALED,
-        prosecutorPostponedAppealDate: '2024-01-01',
+        prosecutorPostponedAppealDate: new Date('2024-01-01'),
       } as unknown as Case
       expect(getContextMenuActions(theCase, user)).toContain(
         ContextMenuCaseActionType.WITHDRAW_APPEAL,
