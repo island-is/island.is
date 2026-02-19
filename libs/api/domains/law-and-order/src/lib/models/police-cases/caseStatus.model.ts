@@ -20,4 +20,7 @@ export class CaseStatus {
 
   @Field({ nullable: true })
   descriptionDisplayString?: string
+
+  @Field({ nullable: true })
+  policeStatusString?: string
 }
