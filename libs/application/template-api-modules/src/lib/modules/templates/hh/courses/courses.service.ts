@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type { ConfigType } from '@nestjs/config'
+import { Op } from 'sequelize'
 import format from 'date-fns/format'
 import {
   ApplicationTypes,
@@ -9,6 +10,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { ZendeskService } from '@island.is/clients/zendesk'
+import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -48,6 +50,7 @@ export class CoursesService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateApiService: SharedTemplateApiService,
     private readonly zendeskService: ZendeskService,
+    private readonly applicationApiService: ApplicationApiService,
     @Inject(HHCoursesConfig.KEY)
     private readonly coursesConfig: ConfigType<typeof HHCoursesConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -169,7 +172,7 @@ export class CoursesService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<{
-    totalRegisteredParticipants: number
+    slotsAvailable?: number
     hasAvailability: boolean
   }> {
     const courseId = getValueViaPath<string>(
@@ -181,9 +184,20 @@ export class CoursesService extends BaseTemplateApiService {
       'dateSelect',
     )
 
-    if (!courseId || !courseInstanceId) {
-      // TODO: Perhaps throw an error instead?
-      return { totalRegisteredParticipants: 0, hasAvailability: true }
+    const participantList =
+      getValueViaPath<ApplicationAnswers['participantList']>(
+        application.answers,
+        'participantList',
+      ) ?? []
+
+    if (!courseId || !courseInstanceId || !participantList.length) {
+      throw new TemplateApiError(
+        {
+          title: 'Course id or course instance id not provided',
+          summary: 'Course id or course instance id not provided',
+        },
+        400,
+      )
     }
 
     const { courseInstance } = await this.getCourseById(
@@ -192,28 +206,43 @@ export class CoursesService extends BaseTemplateApiService {
       auth.authorization,
     )
 
-    if (!courseInstance.maxRegistrations) {
-      return { totalRegisteredParticipants: 0, hasAvailability: true }
+    const maxRegistrations = courseInstance.maxRegistrations ?? 0
+
+    if (maxRegistrations <= 0) {
+      return { hasAvailability: true }
     }
 
-    const totalRegisteredParticipants =
-      await this.countRegisteredParticipantsForCourseInstance(courseInstance.id)
+    const [zendeskNationalIds, paymentNationalIds] = await Promise.all([
+      this.getZendeskParticipantNationalIds(courseInstance.id),
+      this.getPaymentStateParticipantNationalIds(
+        courseInstance.id,
+        application.id,
+      ),
+    ])
 
-    const maxParticipants = courseInstance.maxRegistrations
+    const currentApplicationParticipantNationalIds = new Set(
+      participantList.map((p) => p.nationalIdWithName.nationalId),
+    )
 
-    const hasAvailability = maxParticipants
-      ? totalRegisteredParticipants < maxParticipants
-      : true
+    const nationalIdsTakenByOtherApplications = new Set([
+      ...zendeskNationalIds,
+      ...paymentNationalIds,
+    ])
+    const allNationalIds = new Set([
+      ...currentApplicationParticipantNationalIds,
+      ...nationalIdsTakenByOtherApplications,
+    ])
 
     return {
-      totalRegisteredParticipants,
-      hasAvailability,
+      slotsAvailable:
+        maxRegistrations - nationalIdsTakenByOtherApplications.size,
+      hasAvailability: maxRegistrations >= allNationalIds.size,
     }
   }
 
-  private async countRegisteredParticipantsForCourseInstance(
+  private async getZendeskParticipantNationalIds(
     courseInstanceId: string,
-  ): Promise<number> {
+  ): Promise<Set<string>> {
     const subject = `${this.coursesConfig.applicationEmailSubject} - ${courseInstanceId}`
     const query = `type:ticket subject:"${subject}"`
     let tickets
@@ -224,8 +253,14 @@ export class CoursesService extends BaseTemplateApiService {
         'Failed to search Zendesk tickets for participant availability check',
         { error: error.message },
       )
-      // TODO: Perhaps throw an error instead?
-      return 0
+      throw new TemplateApiError(
+        {
+          title:
+            'Failed to search Zendesk tickets for participant availability check',
+          summary: error.message,
+        },
+        500,
+      )
     }
 
     const nationalIds = new Set<string>()
@@ -237,7 +272,53 @@ export class CoursesService extends BaseTemplateApiService {
       for (const match of matches) nationalIds.add(match[1])
     }
 
-    return nationalIds.size
+    return nationalIds
+  }
+
+  private async getPaymentStateParticipantNationalIds(
+    courseInstanceId: string,
+    excludeApplicationId: string,
+  ): Promise<Set<string>> {
+    try {
+      const findQuery = this.applicationApiService.customTemplateFindQuery(
+        ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID,
+      )
+      const hour = 60 * 60 * 1000
+      const oneHourAgo = new Date(Date.now() - hour)
+      const applications = await findQuery({
+        state: 'payment',
+        'answers.dateSelect': courseInstanceId,
+        modified: { [Op.gt]: oneHourAgo },
+      })
+
+      const nationalIds = new Set<string>()
+      for (const app of applications) {
+        if (app.id === excludeApplicationId) continue
+        const participantList = (app.answers as Record<string, unknown>)
+          ?.participantList
+        if (!Array.isArray(participantList)) continue
+        for (const p of participantList) {
+          const nid = p?.nationalIdWithName?.nationalId
+          if (typeof nid === 'string' && nid) {
+            nationalIds.add(nid)
+          }
+        }
+      }
+      return nationalIds
+    } catch (error) {
+      this.logger.warn(
+        'Failed to query payment-state applications for participant availability check',
+        { error: error.message },
+      )
+      throw new TemplateApiError(
+        {
+          title:
+            'Failed to query payment-state applications for participant availability check',
+          summary: error.message,
+        },
+        500,
+      )
+    }
   }
 
   private async getCourseById(
@@ -286,7 +367,7 @@ export class CoursesService extends BaseTemplateApiService {
           id: courseId,
         },
       })
-      .then((response) => response.json())
+      .then((r) => r.json())
 
     const course = response.data?.getCourseById?.course
     const courseInstance = course?.instances.find(

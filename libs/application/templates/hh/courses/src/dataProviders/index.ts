@@ -1,8 +1,18 @@
+import { defineTemplateApi } from '@island.is/application/types'
+import { ApiActions } from '../utils/constants'
+
 export {
   UserProfileApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi as NationalRegistryUserApi,
   HealthCenterApi,
 } from '@island.is/application/types'
 
-export { HhCoursesSelectedChargeItemApi } from './selectedChargeItem'
-export { HhCoursesParticipantAvailabilityApi } from './participantAvailability'
+export const HhCoursesSelectedChargeItemApi = defineTemplateApi({
+  action: 'getSelectedChargeItem',
+  externalDataId: 'hhCoursesSelectedChargeItem',
+})
+
+export const HhCoursesParticipantAvailabilityApi = defineTemplateApi({
+  action: ApiActions.checkParticipantAvailability,
+  externalDataId: 'hhCoursesParticipantAvailability',
+})

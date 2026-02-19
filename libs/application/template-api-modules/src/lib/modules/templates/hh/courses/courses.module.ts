@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { ZendeskModule } from '@island.is/clients/zendesk'
+import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 
 import { SharedTemplateAPIModule } from '../../../shared'
 
@@ -11,6 +12,7 @@ import { HHCoursesConfig } from './courses.config'
   imports: [
     SharedTemplateAPIModule,
     ZendeskModule,
+    ApplicationApiCoreModule,
     ConfigModule.forRoot({
       load: [HHCoursesConfig],
     }),
