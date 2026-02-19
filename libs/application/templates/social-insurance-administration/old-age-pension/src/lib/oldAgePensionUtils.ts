@@ -11,6 +11,7 @@ import {
   FileType,
   IncomePlanConditions,
   IncomePlanRow,
+  LatestIncomePlan,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
@@ -260,6 +261,11 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationCurrencies.data',
   ) as Array<string>
 
+  const latestIncomePlan = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationLatestIncomePlan.data',
+  ) as LatestIncomePlan
+
   const hasIncomePlanStatus = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationLatestIncomePlan.data.status',
@@ -290,6 +296,7 @@ export const getApplicationExternalData = (
     currencies,
     userProfileEmail,
     userProfilePhoneNumber,
+    latestIncomePlan,
     hasIncomePlanStatus,
     incomePlanConditions,
     categorizedIncomeTypes,
