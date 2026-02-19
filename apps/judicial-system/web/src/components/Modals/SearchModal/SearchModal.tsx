@@ -140,11 +140,15 @@ const SearchModal: FC<Props> = ({ onClose }) => {
   }, [])
 
   useEffect(() => {
+    let cancelled = false
+
     const handleSearch = async () => {
       try {
         const results = await searchCases({
           variables: { input: { query: searchString } },
         })
+
+        if (cancelled) return
 
         const getCaseNumber = (row: SearchCasesRow) => {
           if (!user) {
@@ -162,20 +166,22 @@ const SearchModal: FC<Props> = ({ onClose }) => {
 
         setSearchResults([
           results.data && results.data.searchCases.rowCount > 0
-            ? results.data?.searchCases.rows.map((row: SearchCasesRow) => (
-                <SearchResultButton
-                  key={row.caseId}
-                  caseId={row.caseId}
-                  caseType={row.caseType}
-                  caseNumber={getCaseNumber(row)}
-                  descriptor={`${row.matchedValue}${
-                    row.matchedField === 'defendantName'
-                      ? ''
-                      : ` - ${row.defendantName}`
-                  }`}
-                  onClick={onClose}
-                />
-              ))
+            ? results.data?.searchCases.rows.map(
+                (row: SearchCasesRow, index: number) => (
+                  <SearchResultButton
+                    key={`${row.caseId}-${index}`}
+                    caseId={row.caseId}
+                    caseType={row.caseType}
+                    caseNumber={getCaseNumber(row)}
+                    descriptor={`${row.matchedValue}${
+                      row.matchedField === 'defendantName'
+                        ? ''
+                        : ` - ${row.defendantName}`
+                    }`}
+                    onClick={onClose}
+                  />
+                ),
+              )
             : [
                 <Text
                   key="no-results"
@@ -187,7 +193,9 @@ const SearchModal: FC<Props> = ({ onClose }) => {
 
         setFocusIndex(-1)
       } catch (error) {
-        console.error('Error searching cases:', error)
+        if (!cancelled) {
+          console.error('Error searching cases:', error)
+        }
       }
     }
 
@@ -196,6 +204,10 @@ const SearchModal: FC<Props> = ({ onClose }) => {
     } else {
       setSearchResults(undefined)
       setFocusIndex(-1)
+    }
+
+    return () => {
+      cancelled = true
     }
   }, [onClose, searchCases, searchString, user])
 
@@ -248,7 +260,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                 <ul className={grid({ gap: 2 })}>
                   {searchResults[0].map((searchResult, index) => (
                     <li
-                      key={searchResult.props.caseId ?? index}
+                      key={searchResult.key ?? index}
                       className={cn({ [styles.focus]: focusIndex === index })}
                       ref={(el) => {
                         itemRefs.current[index] = el

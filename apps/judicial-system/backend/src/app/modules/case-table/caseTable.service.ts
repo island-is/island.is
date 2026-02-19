@@ -32,29 +32,6 @@ import {
   userAccessWhereOptions,
 } from './caseTable.whereOptions'
 
-type SearchResult = {
-  count: number
-  rows: {
-    id: string
-    type: CaseType
-    decision: CaseDecision
-    policeCaseNumbers: string[]
-    courtCaseNumber: string | null
-    appealCaseNumber: string | null
-    defendantNationalId: string | null
-    defendantName: string | null
-    match: {
-      field:
-        | 'policeCaseNumbers'
-        | 'courtCaseNumber'
-        | 'appealCaseNumber'
-        | 'defendantNationalId'
-        | 'defendantName'
-      value: string
-    }
-  }[]
-}
-
 const getIsMyCaseAttributes = (user: TUser): string[] => {
   if (isProsecutionUser(user)) {
     return ['creatingProsecutorId', 'prosecutorId']
@@ -327,7 +304,7 @@ export class CaseTableService {
   async searchCases(query: string, user: TUser): Promise<SearchCasesResponse> {
     const safeQuery = this.sequelize.escape(`%${query}%`)
 
-    const results = await this.caseRepositoryService.findAndCountAll({
+    const cases = await this.caseRepositoryService.findAll({
       attributes: [
         'id',
         'type',
@@ -335,74 +312,14 @@ export class CaseTableService {
         'policeCaseNumbers',
         'courtCaseNumber',
         'appealCaseNumber',
-        [
-          literal(`
-            (
-              SELECT d."national_id"
-              FROM "defendant" d
-              WHERE d."case_id" = "Case"."id"
-              ORDER BY
-                (d."name" ILIKE ${safeQuery} OR d."national_id" ILIKE ${safeQuery}) DESC,
-                d."created" ASC
-              LIMIT 1
-            )
-          `),
-          'defendantNationalId',
-        ],
-        [
-          literal(`
-            (
-              SELECT d."name"
-              FROM "defendant" d
-              WHERE d."case_id" = "Case"."id"
-              ORDER BY
-                (d."name" ILIKE ${safeQuery} OR d."national_id" ILIKE ${safeQuery}) DESC,
-                d."created" ASC
-              LIMIT 1
-            )
-          `),
-          'defendantName',
-        ],
-        [
-          literal(`
-            (
-              SELECT json_build_object(
-                'value', match,
-                'field', match_source
-              )
-              FROM LATERAL (
-                SELECT unnest("Case"."police_case_numbers") AS match, 'policeCaseNumbers' AS match_source
-                UNION ALL
-                SELECT "Case"."court_case_number", 'courtCaseNumber'
-                WHERE "Case"."court_case_number" ILIKE ${safeQuery}
-                UNION ALL
-                SELECT "Case"."appeal_case_number", 'appealCaseNumber'
-                WHERE "Case"."appeal_case_number" ILIKE ${safeQuery}
-                UNION ALL
-                SELECT d."national_id", 'defendantNationalId'
-                FROM "defendant" d
-                WHERE d."case_id" = "Case"."id"
-                  AND d."national_id" ILIKE ${safeQuery}
-                UNION ALL
-                SELECT d."name", 'defendantName'
-                FROM "defendant" d
-                WHERE d."case_id" = "Case"."id"
-                  AND d."name" ILIKE ${safeQuery}
-              ) AS matches
-              WHERE match ILIKE ${safeQuery}
-              LIMIT 1
-            )
-          `),
-          'match',
-        ],
       ],
       include: [
         {
           model: Defendant,
           attributes: ['nationalId', 'name'],
           as: 'defendants',
-          required: true,
-          duplicating: false,
+          separate: true,
+          order: [['created', 'ASC']],
         },
       ],
       where: {
@@ -415,40 +332,114 @@ export class CaseTableService {
                   SELECT 1 FROM unnest("Case"."police_case_numbers") AS n
                   WHERE n ILIKE ${safeQuery}
                 )
-            `),
-              // Op.iLike makes it safe to use the original query string
+              `),
               { court_case_number: { [Op.iLike]: `%${query}%` } },
               { appeal_case_number: { [Op.iLike]: `%${query}%` } },
-              { '$defendants.name$': { [Op.iLike]: `%${query}%` } },
-              { '$defendants.national_id$': { [Op.iLike]: `%${query}%` } },
+              literal(`
+                EXISTS (
+                  SELECT 1 FROM "defendant" d
+                  WHERE d."case_id" = "Case"."id"
+                    AND d."name" ILIKE ${safeQuery}
+                )
+              `),
+              literal(`
+                EXISTS (
+                  SELECT 1 FROM "defendant" d
+                  WHERE d."case_id" = "Case"."id"
+                    AND d."national_id" ILIKE ${safeQuery}
+                )
+              `),
             ],
           },
         ],
       },
       order: [['id', 'ASC']],
       limit: 10,
-      raw: true,
     })
 
-    const { count, rows } = results as unknown as SearchResult
+    const rows = cases.flatMap((c) => {
+      const match = this.getMatch(c, query)
+
+      const caseType =
+        c.type === CaseType.CUSTODY &&
+        c.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+          ? CaseType.TRAVEL_BAN
+          : c.type
+
+      const defendants = c.defendants ?? []
+
+      if (defendants.length === 0) {
+        return [
+          {
+            caseId: c.id,
+            caseType,
+            matchedField: match.field,
+            matchedValue: match.value,
+            policeCaseNumbers: c.policeCaseNumbers,
+            courtCaseNumber: c.courtCaseNumber ?? null,
+            appealCaseNumber: c.appealCaseNumber ?? null,
+            defendantNationalId: null,
+            defendantName: null,
+          },
+        ]
+      }
+
+      return defendants.map((d) => ({
+        caseId: c.id,
+        caseType,
+        matchedField: match.field,
+        matchedValue: match.value,
+        policeCaseNumbers: c.policeCaseNumbers,
+        courtCaseNumber: c.courtCaseNumber ?? null,
+        appealCaseNumber: c.appealCaseNumber ?? null,
+        defendantNationalId: d.nationalId ?? null,
+        defendantName: d.name ?? null,
+      }))
+    })
 
     return {
-      rowCount: count,
-      rows: rows.map((r) => ({
-        caseId: r.id,
-        caseType:
-          r.type === CaseType.CUSTODY &&
-          r.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.TRAVEL_BAN
-            : r.type,
-        matchedField: r.match.field,
-        matchedValue: r.match.value,
-        policeCaseNumbers: r.policeCaseNumbers,
-        courtCaseNumber: r.courtCaseNumber,
-        appealCaseNumber: r.appealCaseNumber,
-        defendantNationalId: r.defendantNationalId,
-        defendantName: r.defendantName,
-      })),
+      rowCount: rows.length,
+      rows,
+    }
+  }
+
+  private getMatch(
+    theCase: Case,
+    query: string,
+  ): { field: string; value: string } {
+    const lowerQuery = query.toLowerCase()
+
+    const matchingPoliceCaseNumber = theCase.policeCaseNumbers?.find((pcn) =>
+      pcn.toLowerCase().includes(lowerQuery),
+    )
+
+    if (matchingPoliceCaseNumber) {
+      return { field: 'policeCaseNumbers', value: matchingPoliceCaseNumber }
+    }
+
+    if (theCase.courtCaseNumber?.toLowerCase().includes(lowerQuery)) {
+      return { field: 'courtCaseNumber', value: theCase.courtCaseNumber }
+    }
+
+    if (theCase.appealCaseNumber?.toLowerCase().includes(lowerQuery)) {
+      return { field: 'appealCaseNumber', value: theCase.appealCaseNumber }
+    }
+
+    for (const d of theCase.defendants ?? []) {
+      if (d.nationalId?.toLowerCase().includes(lowerQuery)) {
+        return { field: 'defendantNationalId', value: d.nationalId }
+      }
+    }
+
+    for (const d of theCase.defendants ?? []) {
+      if (d.name?.toLowerCase().includes(lowerQuery)) {
+        return { field: 'defendantName', value: d.name }
+      }
+    }
+
+    return {
+      field: 'policeCaseNumbers',
+      value: theCase.policeCaseNumbers?.[0] ?? '',
     }
   }
 }
