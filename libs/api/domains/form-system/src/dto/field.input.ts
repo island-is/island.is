@@ -48,6 +48,9 @@ export class UpdateFieldDtoInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 
+  @Field(() => String, { nullable: true })
+  identifier?: string
+
   @Field(() => LanguageTypeInput, { nullable: true })
   description?: LanguageTypeInput
 
@@ -81,6 +84,9 @@ export class UpdateFieldInput {
 export class FieldInput {
   @Field(() => String, { nullable: true })
   id?: string
+
+  @Field(() => String, { nullable: true })
+  identifier?: string
 
   @Field(() => String, { nullable: true })
   screenId?: string

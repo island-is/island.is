@@ -10,6 +10,9 @@ export class Field {
   id!: string
 
   @FieldType(() => String)
+  identifier!: string
+
+  @FieldType(() => String)
   screenId!: string
 
   @FieldType(() => LanguageType)
