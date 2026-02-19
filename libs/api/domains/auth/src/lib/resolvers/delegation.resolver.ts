@@ -19,6 +19,7 @@ import type { MergedDelegationDTO } from '@island.is/clients/auth/public-api'
 
 import {
   CreateDelegationInput,
+  CreateDelegationsInput,
   DelegationInput,
   DelegationsInput,
   DeleteDelegationInput,
@@ -99,6 +100,15 @@ export class DelegationResolver {
     input: CreateDelegationInput,
   ): Promise<DelegationDTO | null> {
     return this.meDelegationsService.createOrUpdateDelegation(user, input)
+  }
+
+  @Mutation(() => [Delegation], { name: 'createAuthDelegations' })
+  createDelegations(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => CreateDelegationsInput })
+    input: CreateDelegationsInput,
+  ): Promise<DelegationDTO[]> {
+    return this.meDelegationsService.createOrUpdateDelegations(user, input)
   }
 
   @Mutation(() => Delegation, {

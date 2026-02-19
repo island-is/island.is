@@ -14,6 +14,7 @@ import {
 
 import {
   CreateDelegationInput,
+  CreateDelegationsInput,
   DelegationInput,
   DelegationsInput,
   DeleteDelegationInput,
@@ -99,6 +100,24 @@ export class MeDelegationsService {
     return this.includeDomainNameInScopes(delegation)
   }
 
+  async createOrUpdateDelegations(
+    user: User,
+    { toNationalIds, scopes }: CreateDelegationsInput,
+  ): Promise<DelegationDTO[]> {
+    const scopesByDomain = groupBy(scopes, (scope) => scope.domainName)
+    const delegationPromises = toNationalIds.flatMap((toNationalId) =>
+      Object.entries(scopesByDomain).map(([domainName, domainScopes]) =>
+        this.createOrUpdateDelegation(user, {
+          toNationalId,
+          domainName,
+          scopes: domainScopes.map(({ name, validTo }) => ({ name, validTo })),
+        }),
+      ),
+    )
+
+    return Promise.all(delegationPromises)
+  }
+
   private createDelegation(
     user: User,
     { toNationalId, domainName, scopes }: CreateDelegationInput,
@@ -137,7 +156,6 @@ export class MeDelegationsService {
         name: scope.scopeName,
         validTo: scope.validTo,
       })) ?? []
-
     const updateScopes = differenceWith(
       newScopes,
       oldScopes,
@@ -251,6 +269,7 @@ export class MeDelegationsService {
             validFrom: scope.validFrom ?? undefined,
             validTo: scope.validTo ?? undefined,
             domainName: delegation.domainName ?? '',
+            delegationId: scope.delegationId ?? delegation.id ?? '',
           })) ?? [],
       )
 

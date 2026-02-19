@@ -11,10 +11,12 @@ export const ConfirmAccessModal = ({
   onClose,
   onConfirm,
   isVisible,
+  loading,
 }: {
   onClose: () => void
   onConfirm: () => void
   isVisible: boolean
+  loading: boolean
 }) => {
   const { formatMessage } = useLocale()
 
@@ -60,10 +62,10 @@ export const ConfirmAccessModal = ({
 
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
-          // loading={loading}
+          loading={loading}
           showShadow={false}
           onCancel={onClose}
-          // onConfirm={onConfirmHandler}
+          onConfirm={onConfirm}
           confirmLabel={formatMessage(coreMessages.codeConfirmation)}
           confirmIcon="checkmark"
           containerPaddingBottom={[3, 3, 6]}

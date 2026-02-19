@@ -19,6 +19,7 @@ import { AccessScopes } from '../../components/GrantAccessSteps/AccessScopes'
 import { ConfirmAccessModal } from '../../components/modals/ConfirmAccessModal'
 import { useState } from 'react'
 import { AccessPeriod } from '../../components/GrantAccessSteps/AccessPeriod'
+import { useCreateAuthDelegationsMutation } from './GrantAccessNew.generated'
 
 const GrantAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
@@ -29,6 +30,9 @@ const GrantAccess = () => {
   const { setIdentities, selectedScopes } = useDelegationForm()
 
   const navigate = useNavigate()
+
+  const [createAuthDelegations, { loading: mutationLoading }] =
+    useCreateAuthDelegationsMutation()
 
   const contentfulData = useLoaderData() as AccessControlLoaderResponse
 
@@ -97,8 +101,33 @@ const GrantAccess = () => {
         <ConfirmAccessModal
           onClose={() => setIsConfirmModalVisible(false)}
           onConfirm={() => {
-            console.log('confirm')
+            const scopes = selectedScopes
+              .map((scope) => {
+                if (!scope.domain?.name || !scope.validTo) {
+                  return null
+                }
+                return {
+                  name: scope.name,
+                  validTo: scope.validTo,
+                  domainName: scope.domain.name,
+                }
+              })
+              .filter((scope) => scope !== null)
+
+            createAuthDelegations({
+              variables: {
+                input: {
+                  toNationalIds: watchIdentities.map(
+                    (identity) => identity.nationalId,
+                  ),
+                  scopes,
+                },
+              },
+            }).then(() => {
+              navigate(DelegationPaths.DelegationsNew)
+            })
           }}
+          loading={mutationLoading}
           isVisible={isConfirmModalVisible}
         />
 

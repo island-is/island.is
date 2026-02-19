@@ -1,3 +1,13 @@
+mutation CreateAuthDelegations($input: CreateAuthDelegationsInput!) {
+  createAuthDelegations(input: $input) {
+    id
+    to {
+      nationalId
+      name
+    }
+  }
+}
+
 query AuthScopeCategoriesForGrant($lang: String!) {
   authScopeCategories(lang: $lang) {
     id

@@ -70,10 +70,6 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:accessControl',
     defaultMessage: 'Aðgangsstýring',
   },
-  accessControlNew: {
-    id: 'sp.access-control-delegations:accessControlNew',
-    defaultMessage: 'Aðgangsstýring (Nýtt)',
-  },
   digitalDelegations: {
     id: 'sp.access-control-delegations:digital-delegations',
     defaultMessage: 'Rafræn umboð',
@@ -225,6 +221,10 @@ export const m = defineMessages({
   newAccess: {
     id: 'sp.access-control-delegations:new-delegation',
     defaultMessage: 'Nýtt umboð',
+  },
+  grantDelegation: {
+    id: 'sp.access-control-delegations:grant-delegation',
+    defaultMessage: 'Veita umboð',
   },
   saveAccess: {
     id: 'sp.access-control-delegations:empty-new-access',

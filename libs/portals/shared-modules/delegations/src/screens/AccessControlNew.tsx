@@ -3,7 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
 import { isDefined } from '@island.is/shared/utils'
-import { useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { useMemo } from 'react'
 import groupBy from 'lodash/groupBy'
@@ -26,6 +26,8 @@ import {
   getProcuringHolderTableData,
 } from '../components/delegations/table/getTableData'
 import CustomDelegationsTable from '../components/delegations/table/CustomDelegationsTable'
+import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
+import { AccessControlLoaderResponse } from './AccessControl.loader'
 
 const AccessControlNew = () => {
   useNamespaces(['sp.access-control-delegations'])
@@ -35,6 +37,8 @@ const AccessControlNew = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { switchUser } = useAuth()
+
+  const contentfulData = useLoaderData() as AccessControlLoaderResponse
 
   // Use new identity-grouped queries for custom delegations
   const {
@@ -157,7 +161,7 @@ const AccessControlNew = () => {
               }
               size="small"
             >
-              {formatMessage(m.newAccess)}
+              {formatMessage(m.grantDelegation)}
             </Button>
           </Box>
         </GridColumn>
@@ -227,6 +231,12 @@ const AccessControlNew = () => {
             error={incomingPersonError}
           />
         )}
+
+      {contentfulData?.faqList && (
+        <Box paddingTop={8}>
+          <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
+        </Box>
+      )}
     </>
   )
 }

@@ -55,7 +55,7 @@ export const delegationsModule: PortalModule = {
 
     const newRoutes: PortalRoute[] = [
       {
-        name: m.accessControlNew,
+        name: m.digitalDelegations,
         navHide: false,
         enabled: hasAccess,
         path: DelegationPaths.DelegationsNew,
