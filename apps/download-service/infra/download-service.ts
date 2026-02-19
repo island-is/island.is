@@ -45,8 +45,6 @@ export const serviceSetup = (services: {
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT',
       REGULATIONS_FILE_UPLOAD_KEY_PUBLISH:
         '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH',
-      HMS_CONTRACTS_AUTH_CLIENT_SECRET:
-        '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
     })
     .xroad(
       Base,

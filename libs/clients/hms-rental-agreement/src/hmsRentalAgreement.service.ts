@@ -12,25 +12,15 @@ import {
   ContractDocumentItemDto,
   mapContractDocumentItemDto,
 } from './dtos/contractDocument.dto'
-import { HmsRentalAgreementClientConfig } from './hmsRentalAgreement.config'
-import { type ConfigType } from '@nestjs/config'
-import { EntraTokenMiddleware } from './middleware/entraTokenMiddleware'
-
 @Injectable()
 export class HmsRentalAgreementService {
   constructor(
-    @Inject(HmsRentalAgreementClientConfig.KEY)
-    private config: ConfigType<typeof HmsRentalAgreementClientConfig>,
     private readonly api: HomeApi,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private apiWithAuth = (user: User) => {
-    return this.api.withMiddleware(
-      new AuthMiddleware(user as Auth),
-      new EntraTokenMiddleware(this.config),
-    )
-  }
+  private apiWithAuth = (user: User) =>
+    this.api.withMiddleware(new AuthMiddleware(user as Auth))
 
   async getRentalAgreements(
     user: User,
