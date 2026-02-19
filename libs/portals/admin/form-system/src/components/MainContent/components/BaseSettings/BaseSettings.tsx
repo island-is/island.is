@@ -26,6 +26,7 @@ export const BaseSettings = () => {
   const { form } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
+
   return (
     <Stack space={2}>
       <Row>
@@ -185,12 +186,13 @@ export const BaseSettings = () => {
                 setErrorMsg('')
               }
             }}
-            onChange={(e) =>
+            onChange={(e) => {
+              const nextValue = e.target.value.replaceAll('/', '')
               controlDispatch({
                 type: 'CHANGE_SLUG',
-                payload: { newValue: e.target.value },
+                payload: { newValue: nextValue },
               })
-            }
+            }}
           />
         </Column>
       </Row>
