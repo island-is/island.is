@@ -14,10 +14,12 @@ import { useLocale } from '@island.is/localization'
 import CustomDelegationsPermissionsTable from './CustomDelegationsPermissionsTable'
 import { ApolloError } from '@apollo/client'
 import { Problem } from '@island.is/react-spa/shared'
-import { AuthDelegationDirection } from '@island.is/api/schema'
+import { AuthDelegationDirection, AuthDomain } from '@island.is/api/schema'
 import { IdentityInfo } from './IdentityInfo/IdentityInfo'
 import { m } from '../../../lib/messages'
 import { AuthDelegationsGroupedByIdentityOutgoingQuery } from '../../delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
+import { EditAccessModal } from '../../modals/EditAccessModal'
+import { useDelegationForm } from '../../../context'
 
 type DelegationsByPerson =
   AuthDelegationsGroupedByIdentityOutgoingQuery['authDelegationsGroupedByIdentityOutgoing'][number]
@@ -27,25 +29,22 @@ const CustomDelegationsTable = ({
   data,
   loading,
   error,
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  _direction,
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  _refetch,
 }: {
   title: string
   data: DelegationsByPerson[]
   loading: boolean
   error: ApolloError | undefined
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  _direction?: AuthDelegationDirection
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  _refetch?: () => void
 }) => {
   const { formatMessage } = useLocale()
   const [expandedRow, setExpandedRow] = useState<string | null | undefined>(
     null,
   )
   const [searchValue, setSearchValue] = useState('')
+  const [isEditAccessModalVisible, setIsEditAccessModalVisible] =
+    useState(false)
+  const { setSelectedScopes, setIdentities, clearForm } = useDelegationForm()
+
+  console.log(data[0])
 
   const headerArray = [
     { value: '' },
@@ -160,9 +159,29 @@ const CustomDelegationsTable = ({
                             iconType="outline"
                             size="small"
                             colorScheme="default"
-                            onClick={() =>
-                              console.log('edit', person.nationalId)
-                            }
+                            onClick={() => {
+                              setIsEditAccessModalVisible(true)
+                              setIdentities([
+                                {
+                                  nationalId: person.nationalId,
+                                  name: person.name,
+                                },
+                              ])
+                              setSelectedScopes(
+                                person.scopes.map((scope) => ({
+                                  name: scope.name,
+                                  displayName: scope.displayName,
+                                  description: scope.apiScope?.description,
+                                  domain: scope.domain as AuthDomain,
+                                  validTo: scope.validTo
+                                    ? new Date(scope.validTo)
+                                    : undefined,
+                                  validFrom: scope.validFrom
+                                    ? new Date(scope.validFrom)
+                                    : undefined,
+                                })),
+                              )
+                            }}
                           >
                             {formatMessage(coreMessages.buttonEdit)}
                           </Button>
@@ -198,6 +217,19 @@ const CustomDelegationsTable = ({
           </T.Body>
         </T.Table>
       )}
+      <EditAccessModal
+        isVisible={isEditAccessModalVisible}
+        onClose={() => {
+          setIsEditAccessModalVisible(false)
+          clearForm()
+        }}
+        onConfirm={() => {
+          // Todo: Implement edit access
+          setIsEditAccessModalVisible(false)
+          clearForm()
+        }}
+        loading={false}
+      />
     </Box>
   )
 }

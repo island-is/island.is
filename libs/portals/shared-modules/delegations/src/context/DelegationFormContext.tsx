@@ -10,40 +10,30 @@ import {
 
 export type ScopeSelection = AuthApiScope & {
   validTo?: Date
+  delegationId?: string
+}
+
+export type Identity = {
+  nationalId: string
+  name: string
 }
 
 export interface DelegationFormState {
-  // Step 1: Identity/Identities
-  identities: { nationalId: string; name: string }[]
-  setIdentities: Dispatch<
-    SetStateAction<{ nationalId: string; name: string }[]>
-  >
+  identities: Identity[]
+  setIdentities: Dispatch<SetStateAction<Identity[]>>
 
-  // Step 2: Scope Selection
   selectedScopes: ScopeSelection[]
   setSelectedScopes: Dispatch<SetStateAction<ScopeSelection[]>>
 
-  // Step 3: Validity Period
-  validityPeriod: Date | null
-  setValidityPeriod: Dispatch<SetStateAction<Date | null>>
-
-  // Option to use same validity for all scopes or per-scope dates
-  useSameValidityForAll: boolean
-  setUseSameValidityForAll: Dispatch<SetStateAction<boolean>>
-
-  // Helper to clear all form state
-  clearForm: () => void
+  clearForm: () => undefined
 }
 
-const defaultState: Omit<DelegationFormState, 'clearForm'> = {
+const defaultState: DelegationFormState = {
   identities: [],
   setIdentities: () => undefined,
   selectedScopes: [],
   setSelectedScopes: () => undefined,
-  validityPeriod: null,
-  setValidityPeriod: () => undefined,
-  useSameValidityForAll: true,
-  setUseSameValidityForAll: () => undefined,
+  clearForm: () => undefined,
 }
 
 export const DelegationFormContext = createContext<DelegationFormState>(
@@ -53,19 +43,8 @@ export const DelegationFormContext = createContext<DelegationFormState>(
 export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
-  const [identities, setIdentities] = useState<
-    { nationalId: string; name: string }[]
-  >([])
+  const [identities, setIdentities] = useState<Identity[]>([])
   const [selectedScopes, setSelectedScopes] = useState<ScopeSelection[]>([])
-  const [validityPeriod, setValidityPeriod] = useState<Date | null>(null)
-  const [useSameValidityForAll, setUseSameValidityForAll] = useState(true)
-
-  const clearForm = () => {
-    setIdentities([])
-    setSelectedScopes([])
-    setValidityPeriod(null)
-    setUseSameValidityForAll(true)
-  }
 
   return (
     <DelegationFormContext.Provider
@@ -74,11 +53,10 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
         setIdentities,
         selectedScopes,
         setSelectedScopes,
-        validityPeriod,
-        setValidityPeriod,
-        useSameValidityForAll,
-        setUseSameValidityForAll,
-        clearForm,
+        clearForm: () => {
+          setIdentities([])
+          setSelectedScopes([])
+        },
       }}
     >
       {children}

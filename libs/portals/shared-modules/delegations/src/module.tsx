@@ -8,11 +8,11 @@ import {
 import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { accessControlLoader } from './screens/AccessControl.loader'
-import { DelegationFormProvider } from './context'
 import { Features } from '@island.is/react/feature-flags'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const AccessControlNew = lazy(() => import('./screens/AccessControlNew'))
+const DelegationLayout = lazy(() => import('./screens/DelegationLayout'))
 const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
 const GrantAccessNew = lazy(() =>
   import('./screens/GrantAccessNew/GrantAccessNew'),
@@ -56,31 +56,35 @@ export const delegationsModule: PortalModule = {
     const newRoutes: PortalRoute[] = [
       {
         name: m.digitalDelegations,
-        navHide: false,
-        enabled: hasAccess,
         path: DelegationPaths.DelegationsNew,
-        element: <AccessControlNew />,
-        loader: accessControlLoader('umbod')(props),
-      },
-      {
-        name: m.grantAccessNewTitle,
-        path: DelegationPaths.DelegationsGrantNew,
-        navHide: !hasAccess,
         enabled: hasAccess,
-        element: (
-          <DelegationFormProvider>
-            <GrantAccessNew />
-          </DelegationFormProvider>
-        ),
-        loader: accessControlLoader('umbod/veita')(props),
-      },
-      {
-        name: m.serviceCategories,
-        path: DelegationPaths.ServiceCategories,
-        navHide: !hasAccess,
-        enabled: hasAccess,
-        element: <ServiceCategories />,
-        loader: accessControlLoader('umbod/thjonustuflokkar')(props),
+        element: <DelegationLayout />,
+        children: [
+          {
+            name: m.digitalDelegations,
+            navHide: false,
+            enabled: hasAccess,
+            path: DelegationPaths.DelegationsNew,
+            element: <AccessControlNew />,
+            loader: accessControlLoader('umbod')(props),
+          },
+          {
+            name: m.grantAccessNewTitle,
+            path: DelegationPaths.DelegationsGrantNew,
+            navHide: true,
+            enabled: hasAccess,
+            element: <GrantAccessNew />,
+            loader: accessControlLoader('umbod/veita')(props),
+          },
+          {
+            name: m.serviceCategories,
+            path: DelegationPaths.ServiceCategories,
+            navHide: true,
+            enabled: hasAccess,
+            element: <ServiceCategories />,
+            loader: accessControlLoader('umbod/thjonustuflokkar')(props),
+          },
+        ],
       },
     ]
 

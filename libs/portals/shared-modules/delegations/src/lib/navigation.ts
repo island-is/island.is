@@ -45,14 +45,12 @@ export const delegationsNavigationChildrenNew: PortalNavigationItem[] = [
     path: DelegationPaths.DelegationsNew,
     navHide: false,
     breadcrumbHide: true,
-    children: [
-      {
-        name: m.grantAccessNewTitle,
-        path: DelegationPaths.DelegationsGrantNew,
-        navHide: false,
-        breadcrumbHide: false,
-      },
-    ],
+  },
+  {
+    name: m.grantAccessNewTitle,
+    path: DelegationPaths.DelegationsGrantNew,
+    navHide: false,
+    breadcrumbHide: false,
   },
   {
     name: m.whichDelegationsSuit,
