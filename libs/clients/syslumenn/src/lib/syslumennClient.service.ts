@@ -334,6 +334,11 @@ export class SyslumennService {
       uploadDataId,
     )
 
+    logger.info('Syslumenn-client: calling uploadData', {
+      url: `${this.clientConfig.url}/api/v1/SyslMottakaGogn`,
+      uploadDataName,
+    })
+
     const response = await api.syslMottakaGognPost(payload).catch((e) => {
       throw new Error(`Syslumenn-client: uploadData failed ${e.type}`)
     })
@@ -658,10 +663,14 @@ export class SyslumennService {
     const { api } = await this.createApi()
 
     try {
-      // Call the Syslumenn API to get signatories
-      // The API accepts kennitala (deceased's national ID), typa (estate type), and audkenni (case number)
-      // Note: The generated Type enum may not include all estate types yet (danarbu, fyrirframgreiddur, etc.)
-      // so we cast the string to Type to allow passing all valid estate type strings
+      const queryParams = new URLSearchParams()
+      if (deceasedNationalId) queryParams.set('kennitala', deceasedNationalId)
+      if (estateType) queryParams.set('typa', estateType)
+      if (caseNumber) queryParams.set('audkenni', caseNumber)
+      logger.info('Syslumenn-client: calling getSignatories', {
+        url: `${this.clientConfig.url}/api/v1/AdilarMalsUndirritanir?${queryParams.toString()}`,
+      })
+
       const response = await api.adilarMalsUndirritanirGet({
         kennitala: deceasedNationalId,
         typa: estateType as unknown as Type,

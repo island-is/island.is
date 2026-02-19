@@ -18,6 +18,7 @@ export enum States {
   draft = 'draft',
   inReview = 'inReview',
   payment = 'payment',
+  signing = 'signing',
   done = 'done',
 }
 
@@ -25,6 +26,7 @@ export enum ApiActions {
   completeApplication = 'completeApplication',
   syslumennOnEntry = 'syslumennOnEntry',
   approveByAssignee = 'approveByAssignee',
+  getSignatories = 'getSignatories',
 }
 
 export type EstateEvent =
