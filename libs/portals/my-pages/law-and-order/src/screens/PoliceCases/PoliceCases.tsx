@@ -75,7 +75,7 @@ const PoliceCases = () => {
               tag={
                 c.status?.headerDisplayString
                   ? {
-                      label: c.status?.headerDisplayString,
+                      label: c.status.headerDisplayString,
                       variant: 'blue',
                     }
                   : undefined

@@ -108,11 +108,9 @@ const PoliceCaseDetail = () => {
               loading={loading}
               label={m.caseStatus}
               content={
-                policeCase?.status?.policeStatusString ||
                 policeCase?.status?.headerDisplayString ? (
                   <Tag variant="blue" outlined disabled>
-                    {policeCase?.status?.policeStatusString ??
-                      policeCase?.status?.headerDisplayString}
+                    {policeCase.status.headerDisplayString}
                   </Tag>
                 ) : undefined
               }

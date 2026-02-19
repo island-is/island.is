@@ -25,7 +25,7 @@ export const mapPoliceCase = (
         mapPoliceCaseStatusValue(data.status),
         formatMessage,
       ),
-      policeStatusString: data.status,
+      headerDisplayString: data.status,
     },
     contact: data.contact,
     courtAdvocate: data.courtAdvocate,
