@@ -21,6 +21,7 @@ export class ApplicationMapper {
   ): ApplicationDto {
     const applicationDto: ApplicationDto = {
       id: application.id,
+      nationalId: application.nationalId,
       isTest: application.isTest,
       dependencies: application.dependencies,
       completed: application.completed,
@@ -32,8 +33,9 @@ export class ApplicationMapper {
       draftFinishedSteps: application.draftFinishedSteps,
       draftTotalSteps: application.draftTotalSteps,
       zendeskInternal: form.zendeskInternal,
+      useValidate: form.useValidate,
+      usePopulate: form.usePopulate,
       submissionServiceUrl: form.submissionServiceUrl,
-      validationServiceUrl: form.validationServiceUrl,
       allowProceedOnValidationFail: form.allowProceedOnValidationFail,
       hasPayment: form.hasPayment,
       hasSummaryScreen: form.hasSummaryScreen,
@@ -73,7 +75,13 @@ export class ApplicationMapper {
               name: screen.name,
               displayOrder: screen.displayOrder,
               multiset: screen.multiset,
-              callRuleset: screen.callRuleset,
+              shouldValidate: form.useValidate && screen.shouldValidate,
+              shouldPopulate: form.usePopulate && screen.shouldPopulate,
+              screenError: {
+                hasError: false,
+                title: { is: '', en: '' },
+                message: { is: '', en: '' },
+              },
               isHidden: this.isHidden(
                 screen.id,
                 application.dependencies,
