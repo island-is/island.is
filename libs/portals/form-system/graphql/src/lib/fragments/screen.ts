@@ -5,6 +5,7 @@ import { LanguageFields } from './languageFields'
 export const ScreenFragment = gql`
   fragment Screen on FormSystemScreen {
     id
+    identifier
     sectionId
     name {
       ...LanguageFields

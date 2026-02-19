@@ -4,6 +4,7 @@ import {
   IsBoolean,
   IsNumber,
   IsOptional,
+  IsUUID,
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
@@ -14,6 +15,11 @@ export class UpdateScreenDto {
   @Type(() => LanguageType)
   @ApiPropertyOptional({ type: LanguageType })
   name?: LanguageType
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  identifier?: string
 
   @IsOptional()
   @IsNumber()

@@ -34,6 +34,11 @@ export const MainContent = () => {
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
 
+  const showIdentifier =
+    (form.useValidate &&
+      (activeItem.data as FormSystemScreen)?.shouldValidate) ||
+    (form.usePopulate && (activeItem.data as FormSystemScreen)?.shouldPopulate)
+
   return (
     <Box>
       {activeItem.type === 'Field' ? (
@@ -120,7 +125,7 @@ export const MainContent = () => {
           </Row>
           {activeItem.type === 'Screen' && (
             <Row>
-              <Column>
+              <Column span="12/12">
                 {/* <Checkbox
                   name="multi"
                   label={formatMessage(m.allowMultiple)}
@@ -141,7 +146,7 @@ export const MainContent = () => {
                 {form.submissionServiceUrl !== 'zendesk' && (
                   <>
                     {form.useValidate && (
-                      <Box marginTop={1}>
+                      <Box marginTop={2}>
                         <Checkbox
                           name="validate"
                           label={formatMessage(m.screenValidate)}
@@ -182,6 +187,21 @@ export const MainContent = () => {
                         />
                       </Box>
                     )}
+                    {showIdentifier && (
+                      <Box marginTop={4}>
+                        <Input
+                          label="identifier"
+                          name="identifier"
+                          value={
+                            (activeItem.data as FormSystemScreen).identifier ??
+                            ''
+                          }
+                          backgroundColor="blue"
+                          onFocus={(e) => setFocus(e.target.value)}
+                          readOnly
+                        />
+                      </Box>
+                    )}
                   </>
                 )}
               </Column>
@@ -189,9 +209,11 @@ export const MainContent = () => {
           )}
           <Row>
             <Column>
-              <Button variant="ghost" onClick={() => setOpenPreview(true)}>
-                {formatMessage(m.preview)}
-              </Button>
+              <Box marginTop={4}>
+                <Button variant="ghost" onClick={() => setOpenPreview(true)}>
+                  {formatMessage(m.preview)}
+                </Button>
+              </Box>
             </Column>
           </Row>
         </Stack>

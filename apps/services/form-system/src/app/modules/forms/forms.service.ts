@@ -748,6 +748,7 @@ export class FormsService {
     ]
     const screenKeys = [
       'id',
+      'identifier',
       'sectionId',
       'name',
       'created',
@@ -760,6 +761,7 @@ export class FormsService {
     ]
     const fieldKeys = [
       'id',
+      'identifier',
       'screenId',
       'name',
       'created',

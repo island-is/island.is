@@ -23,6 +23,9 @@ export class UpdateSectionDtoInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 
+  @Field(() => String, { nullable: true })
+  identifier?: string
+
   @Field(() => Int, { nullable: true })
   multiset?: number
 
@@ -73,6 +76,9 @@ export class UpdateScreensDisplayOrderInput {
 export class ScreenInput {
   @Field(() => String, { nullable: true })
   id?: string
+
+  @Field(() => String, { nullable: true })
+  identifier?: string
 
   @Field(() => String, { nullable: true })
   sectionId?: string

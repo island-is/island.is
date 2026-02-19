@@ -9,6 +9,9 @@ export class Screen {
   id!: string
 
   @Field(() => String)
+  identifier!: string
+
+  @Field(() => String)
   sectionId!: string
 
   @Field(() => LanguageType, { nullable: true })
