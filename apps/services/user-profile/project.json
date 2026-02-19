@@ -5,6 +5,7 @@
   "projectType": "application",
   "prefix": "services-user-profile",
   "tags": ["scope:nest"],
+  "implicitDependencies": ["service-portal"],
   "generators": {},
   "targets": {
     "build": {
