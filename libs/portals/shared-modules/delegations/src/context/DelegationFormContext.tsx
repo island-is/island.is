@@ -4,7 +4,9 @@ import {
   Dispatch,
   FC,
   SetStateAction,
+  useCallback,
   useContext,
+  useRef,
   useState,
 } from 'react'
 
@@ -25,7 +27,10 @@ export interface DelegationFormState {
   selectedScopes: ScopeSelection[]
   setSelectedScopes: Dispatch<SetStateAction<ScopeSelection[]>>
 
-  clearForm: () => undefined
+  originalScopes: ScopeSelection[]
+  setOriginalScopes: (scopes: ScopeSelection[]) => void
+
+  clearForm: () => void
 }
 
 const defaultState: DelegationFormState = {
@@ -33,6 +38,8 @@ const defaultState: DelegationFormState = {
   setIdentities: () => undefined,
   selectedScopes: [],
   setSelectedScopes: () => undefined,
+  originalScopes: [],
+  setOriginalScopes: () => undefined,
   clearForm: () => undefined,
 }
 
@@ -45,6 +52,17 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
 }) => {
   const [identities, setIdentities] = useState<Identity[]>([])
   const [selectedScopes, setSelectedScopes] = useState<ScopeSelection[]>([])
+  const originalScopesRef = useRef<ScopeSelection[]>([])
+
+  const setOriginalScopes = useCallback((scopes: ScopeSelection[]) => {
+    originalScopesRef.current = scopes
+  }, [])
+
+  const clearForm = useCallback(() => {
+    setIdentities([])
+    setSelectedScopes([])
+    originalScopesRef.current = []
+  }, [])
 
   return (
     <DelegationFormContext.Provider
@@ -53,10 +71,9 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
         setIdentities,
         selectedScopes,
         setSelectedScopes,
-        clearForm: () => {
-          setIdentities([])
-          setSelectedScopes([])
-        },
+        originalScopes: originalScopesRef.current,
+        setOriginalScopes,
+        clearForm,
       }}
     >
       {children}

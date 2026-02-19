@@ -5,20 +5,23 @@ import {
   SkeletonLoader,
   Table as T,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import ExpandableRow from './ExpandableRow/ExpandableRow'
 import format from 'date-fns/format'
-import { useMemo, useState } from 'react'
+import groupBy from 'lodash/groupBy'
+import { useCallback, useMemo, useState } from 'react'
 import { m as coreMessages } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
 import CustomDelegationsPermissionsTable from './CustomDelegationsPermissionsTable'
 import { ApolloError } from '@apollo/client'
 import { Problem } from '@island.is/react-spa/shared'
-import { AuthDelegationDirection, AuthDomain } from '@island.is/api/schema'
+import { AuthDomain } from '@island.is/api/schema'
 import { IdentityInfo } from './IdentityInfo/IdentityInfo'
 import { m } from '../../../lib/messages'
 import { AuthDelegationsGroupedByIdentityOutgoingQuery } from '../../delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
 import { EditAccessModal } from '../../modals/EditAccessModal'
+import { usePatchAuthDelegationMutation } from '../../modals/EditAccessModal.generated'
 import { useDelegationForm } from '../../../context'
 
 type DelegationsByPerson =
@@ -29,11 +32,13 @@ const CustomDelegationsTable = ({
   data,
   loading,
   error,
+  refetch,
 }: {
   title: string
   data: DelegationsByPerson[]
   loading: boolean
   error: ApolloError | undefined
+  refetch?: () => void
 }) => {
   const { formatMessage } = useLocale()
   const [expandedRow, setExpandedRow] = useState<string | null | undefined>(
@@ -42,9 +47,90 @@ const CustomDelegationsTable = ({
   const [searchValue, setSearchValue] = useState('')
   const [isEditAccessModalVisible, setIsEditAccessModalVisible] =
     useState(false)
-  const { setSelectedScopes, setIdentities, clearForm } = useDelegationForm()
+  const {
+    selectedScopes,
+    originalScopes,
+    setSelectedScopes,
+    setOriginalScopes,
+    setIdentities,
+    clearForm,
+  } = useDelegationForm()
 
-  console.log(data[0])
+  const [patchDelegation, { loading: patchLoading }] =
+    usePatchAuthDelegationMutation()
+
+  const handleConfirmEdit = useCallback(async () => {
+    const scopesByDelegation = groupBy(
+      selectedScopes.filter((s) => s.delegationId),
+      (s) => s.delegationId,
+    )
+
+    const originalByDelegation = groupBy(
+      originalScopes.filter((s) => s.delegationId),
+      (s) => s.delegationId,
+    )
+
+    const allDelegationIds = new Set([
+      ...Object.keys(scopesByDelegation),
+      ...Object.keys(originalByDelegation),
+    ])
+
+    try {
+      const promises = Array.from(allDelegationIds).map((delegationId) => {
+        const current = scopesByDelegation[delegationId] ?? []
+        const original = originalByDelegation[delegationId] ?? []
+
+        const currentNames = new Set(current.map((s) => s.name))
+        const originalNames = new Set(original.map((s) => s.name))
+
+        const updateScopes = current
+          .filter((scope): scope is typeof scope & { validTo: Date } => {
+            if (!scope.validTo) return false
+            const orig = original.find((o) => o.name === scope.name)
+            return (
+              !orig ||
+              scope.validTo.toISOString() !== orig.validTo?.toISOString()
+            )
+          })
+          .map((scope) => ({
+            name: scope.name,
+            validTo: scope.validTo,
+          }))
+
+        const deleteScopes = Array.from(originalNames)
+          .filter((name) => !currentNames.has(name))
+
+        if (updateScopes.length === 0 && deleteScopes.length === 0) {
+          return Promise.resolve()
+        }
+
+        return patchDelegation({
+          variables: {
+            input: {
+              delegationId,
+              updateScopes: updateScopes.length > 0 ? updateScopes : undefined,
+              deleteScopes: deleteScopes.length > 0 ? deleteScopes : undefined,
+            },
+          },
+        })
+      })
+
+      await Promise.all(promises)
+
+      setIsEditAccessModalVisible(false)
+      clearForm()
+      refetch?.()
+    } catch {
+      toast.error(formatMessage(coreMessages.somethingWrong))
+    }
+  }, [
+    selectedScopes,
+    originalScopes,
+    patchDelegation,
+    clearForm,
+    refetch,
+    formatMessage,
+  ])
 
   const headerArray = [
     { value: '' },
@@ -160,6 +246,19 @@ const CustomDelegationsTable = ({
                             size="small"
                             colorScheme="default"
                             onClick={() => {
+                              const scopes = person.scopes.map((scope) => ({
+                                name: scope.name,
+                                displayName: scope.displayName,
+                                description: scope.apiScope?.description,
+                                domain: scope.domain as AuthDomain,
+                                delegationId: scope.delegationId ?? undefined,
+                                validTo: scope.validTo
+                                  ? new Date(scope.validTo)
+                                  : undefined,
+                                validFrom: scope.validFrom
+                                  ? new Date(scope.validFrom)
+                                  : undefined,
+                              }))
                               setIsEditAccessModalVisible(true)
                               setIdentities([
                                 {
@@ -167,20 +266,8 @@ const CustomDelegationsTable = ({
                                   name: person.name,
                                 },
                               ])
-                              setSelectedScopes(
-                                person.scopes.map((scope) => ({
-                                  name: scope.name,
-                                  displayName: scope.displayName,
-                                  description: scope.apiScope?.description,
-                                  domain: scope.domain as AuthDomain,
-                                  validTo: scope.validTo
-                                    ? new Date(scope.validTo)
-                                    : undefined,
-                                  validFrom: scope.validFrom
-                                    ? new Date(scope.validFrom)
-                                    : undefined,
-                                })),
-                              )
+                              setOriginalScopes(scopes)
+                              setSelectedScopes(scopes)
                             }}
                           >
                             {formatMessage(coreMessages.buttonEdit)}
@@ -223,12 +310,8 @@ const CustomDelegationsTable = ({
           setIsEditAccessModalVisible(false)
           clearForm()
         }}
-        onConfirm={() => {
-          // Todo: Implement edit access
-          setIsEditAccessModalVisible(false)
-          clearForm()
-        }}
-        loading={false}
+        onConfirm={handleConfirmEdit}
+        loading={patchLoading}
       />
     </Box>
   )

@@ -27,6 +27,10 @@ export const EditScopesTable = () => {
       ),
     )
   }
+
+  const onDeleteScope = (scope: ScopeSelection) => {
+    setSelectedScopes(selectedScopes.filter((s) => s.name !== scope.name))
+  }
   const headerArray = [
     formatMessage(m.headerName),
     formatMessage(m.headerScopeName),
@@ -105,8 +109,7 @@ export const EditScopesTable = () => {
                   iconType="outline"
                   size="small"
                   colorScheme="destructive"
-
-                  // onClick={() => onDeleteScope(scope)}
+                  onClick={() => onDeleteScope(scope)}
                 >
                   {formatMessage(coreMessages.buttonDestroy)}
                 </Button>
