@@ -20,5 +20,4 @@ export class CaseStatus {
 
   @Field({ nullable: true })
   descriptionDisplayString?: string
-
 }
