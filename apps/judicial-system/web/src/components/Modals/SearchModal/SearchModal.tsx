@@ -199,7 +199,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
     return () => {
       cancelled = true
     }
-  }, [debouncedQuery, searchCases, user])
+  }, [debouncedQuery, searchCases])
 
   return (
     <ModalContainer title="Leit" onClose={onClose} position="top">
