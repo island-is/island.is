@@ -180,6 +180,14 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:case-status',
     defaultMessage: 'Staða máls',
   },
+  caseStatusLink: {
+    id: 'sp.law-and-order:case-status-link',
+    defaultMessage: 'Ferill sakamála',
+  },
+  caseStatusLinkUrl: {
+    id: 'sp.law-and-order:case-status-link-url',
+    defaultMessage: 'https://island.is/ferill-sakamala-i-rettarkerfinu',
+  },
   analysis: {
     id: 'sp.law-and-order:analysis',
     defaultMessage: 'Greining lögreglu',

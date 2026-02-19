@@ -42,7 +42,6 @@ const PoliceCaseDetail = () => {
 
   const policeCase = data?.lawAndOrderPoliceCase ?? null
   const currentCaseProgress = policeCase?.status?.timelineStep ?? -1
-
   return (
     <>
       <IntroWrapper
@@ -115,6 +114,11 @@ const PoliceCaseDetail = () => {
                   </Tag>
                 ) : undefined
               }
+              button={{
+                type: 'link',
+                to: formatMessage(m.caseStatusLinkUrl),
+                label: m.caseStatusLink,
+              }}
             />
             <InfoLine
               loading={loading}
