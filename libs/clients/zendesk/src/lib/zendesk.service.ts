@@ -4,7 +4,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ZendeskServiceConfig } from './zendesk.config'
 import type { ConfigType } from '@island.is/nest/config'
-import { writeFileSync } from 'fs'
 
 export enum TicketStatus {
   Open = 'open',
