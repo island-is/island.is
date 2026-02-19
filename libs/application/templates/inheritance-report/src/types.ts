@@ -1,13 +1,11 @@
 import { FormValue } from '@island.is/application/types'
-import { Advocate, EstateAsset } from '@island.is/clients/syslumenn'
+import {
+  Advocate,
+  EstateAsset,
+  InheritanceSignatory,
+} from '@island.is/clients/syslumenn'
 
-// Local type definition for InheritanceSignatory
-// This matches the type defined in @island.is/clients/syslumenn
-export interface InheritanceSignatory {
-  name: string
-  nationalId: string
-  signed: boolean
-}
+export type { InheritanceSignatory }
 
 export enum RoleConfirmationEnum {
   CONTINUE = 'continue',

@@ -69,7 +69,10 @@ export const signatoryStatusSection = buildSection({
                 const typedExternalData = externalData as InheritanceReportExternalData
                 const signatories =
                   typedExternalData?.getSignatories?.data?.signatories || []
-                return signatories.every((s) => s.signed)
+                return (
+                  signatories.length > 0 &&
+                  signatories.every((s) => s.signed)
+                )
               },
             },
           ],
