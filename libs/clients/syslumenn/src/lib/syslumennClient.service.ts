@@ -659,15 +659,14 @@ export class SyslumennService {
   async getInheritanceReportSignatories(
     deceasedNationalId: string,
     estateType: string,
-    caseNumber?: string,
   ): Promise<InheritanceSignatory[]> {
-    const { api } = await this.createApi()
+    const { id, api } = await this.createApi()
 
     try {
       const queryParams = new URLSearchParams()
       if (deceasedNationalId) queryParams.set('kennitala', deceasedNationalId)
       if (estateType) queryParams.set('typa', estateType)
-      if (caseNumber) queryParams.set('audkenni', caseNumber)
+      queryParams.set('audkenni', id)
       logger.info('Syslumenn-client: calling getSignatories', {
         url: `${this.clientConfig.url}/api/v1/AdilarMalsUndirritanir?${queryParams.toString()}`,
       })
@@ -675,7 +674,7 @@ export class SyslumennService {
       const response = await api.adilarMalsUndirritanirGet({
         kennitala: deceasedNationalId,
         typa: estateType as unknown as Type,
-        audkenni: caseNumber || null,
+        audkenni: id,
       })
 
       // Map the response to InheritanceSignatory format
@@ -689,7 +688,6 @@ export class SyslumennService {
         error,
         deceasedNationalId,
         estateType,
-        caseNumber,
       })
       throw error
     }
