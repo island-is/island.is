@@ -227,6 +227,7 @@ export const Services: EnvironmentServices = {
     paymentFlowUpdateHandlerService,
     formSystemApi,
     formSystemWeb,
+    formSystemWorker,
   ],
   staging: [
     appSystemApi,
@@ -271,6 +272,7 @@ export const Services: EnvironmentServices = {
     paymentFlowUpdateHandlerService,
     formSystemApi,
     formSystemWeb,
+    formSystemWorker,
   ],
   dev: [
     appSystemApi,
@@ -327,10 +329,6 @@ export const FeatureDeploymentServices: ServiceBuilder<any>[] = []
 
 // Services that are included in some environment above but should be excluded from feature deployments
 export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
-  userNotificationService,
-  userNotificationWorkerService,
-  userNotificationCleanupWorkerService,
-  userNotificationBirthdayWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,

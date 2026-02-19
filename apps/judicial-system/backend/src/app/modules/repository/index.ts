@@ -32,4 +32,4 @@ export { DefendantEventLogRepositoryService } from './services/defendantEventLog
 export { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 export { VerdictRepositoryService } from './services/verdictRepository.service'
 
-export { UpdateCase } from './types/caseRepository.types'
+export { caseInclude, UpdateCase } from './types/caseRepository.types'

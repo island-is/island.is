@@ -45,7 +45,6 @@ import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.cs
 import { ConfirmationInformation } from './ConfirmationInformation'
 import { CriminalRecordUpdate } from './CriminalRecordUpdate'
 import { DefendantServiceRequirement } from './DefendantServiceRequirement'
-import { InformationForDefendant } from './InformationForDefendant'
 import strings from './Completed.strings'
 
 type modal =
@@ -302,7 +301,6 @@ const Completed: FC = () => {
             <Box component="section">
               <SectionHeading
                 title={formatMessage(strings.serviceRequirementTitle)}
-                required
               />
               <div className={grid({ gap: 4 })}>
                 {workingCase.defendants?.map((defendant) => {
@@ -312,10 +310,6 @@ const Completed: FC = () => {
                   return (
                     <Box key={defendant.id} className={grid({ gap: 3 })}>
                       <DefendantServiceRequirement defendant={defendant} />
-                      {verdict.serviceRequirement ===
-                        ServiceRequirement.REQUIRED && (
-                        <InformationForDefendant defendant={defendant} />
-                      )}
                     </Box>
                   )
                 })}

@@ -98,6 +98,13 @@
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
+            "name": "mainType",
+            "required": false,
+            "in": "query",
+            "description": "One or more main types (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
             "name": "category",
             "required": false,
             "in": "query",
@@ -195,6 +202,13 @@
             "required": false,
             "in": "query",
             "description": "One or more types (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "mainType",
+            "required": false,
+            "in": "query",
+            "description": "One or more main types (by `slug`) to filter on.",
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {

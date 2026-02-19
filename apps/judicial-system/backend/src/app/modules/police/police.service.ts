@@ -855,7 +855,7 @@ export class PoliceService {
     const normalizedNationalId =
       normalizeAndFormatNationalId(defendantNationalId)[0]
 
-    const documentName = `Fyrirkall í máli ${theCase.courtCaseNumber}`
+    const documentName = `Fyrirkall í máli ${courtCaseNumber}`
     const arraignmentInfo = DateLog.arraignmentDate(dateLogs)
 
     try {

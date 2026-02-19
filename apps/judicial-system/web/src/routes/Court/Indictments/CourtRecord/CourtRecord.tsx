@@ -19,7 +19,10 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isIndictmentCourtRecordValid } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  isGeneratedIndictmentCourtRecordValid,
+  isNoGeneratedIndictmentCourtRecord,
+} from '@island.is/judicial-system-web/src/utils/validate'
 
 import CourtSessionAccordionItem from './CourtSessionAccordionItem'
 import { alertContainer } from './CourtRecord.css'
@@ -66,9 +69,8 @@ const CourtRecord: FC = () => {
   }, [workingCase.courtSessions?.length])
 
   const canCreateCourtSession =
-    !workingCase.courtSessions ||
-    workingCase.courtSessions.length === 0 ||
-    isIndictmentCourtRecordValid(workingCase)
+    isNoGeneratedIndictmentCourtRecord(workingCase) ||
+    isGeneratedIndictmentCourtRecordValid(workingCase)
 
   return (
     <PageLayout

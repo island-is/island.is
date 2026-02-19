@@ -59,7 +59,8 @@ import {
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
-  isIndictmentCourtRecordValid,
+  isGeneratedIndictmentCourtRecordValid,
+  isNoGeneratedIndictmentCourtRecord,
   validate,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -265,7 +266,7 @@ const Conclusion: FC = () => {
 
         const createSuccess = await Promise.all(promises)
 
-        if (!createSuccess) {
+        if (createSuccess.length === 0) {
           return
         }
       }
@@ -349,14 +350,17 @@ const Conclusion: FC = () => {
     )
   }
 
-  const isValidIndictmentCourtRecord = isIndictmentCourtRecordValid(workingCase)
-  const isCourtRecordValid: boolean =
-    isValidIndictmentCourtRecord ||
-    uploadFiles.some(
-      (file) =>
-        file.category === CaseFileCategory.COURT_RECORD &&
-        file.status === FileUploadStatus.done,
-    )
+  const isValidGeneratedIndictmentCourtRecord =
+    isGeneratedIndictmentCourtRecordValid(workingCase)
+  const isEmptyGeneratedIndictmentCourtRecord =
+    isNoGeneratedIndictmentCourtRecord(workingCase)
+  const isCourtRecordValid = workingCase.withCourtSessions
+    ? isValidGeneratedIndictmentCourtRecord
+    : uploadFiles.some(
+        (file) =>
+          file.category === CaseFileCategory.COURT_RECORD &&
+          file.status === FileUploadStatus.done,
+      )
 
   const stepIsValid = () => {
     // Do not leave any uploads unfinished
@@ -388,7 +392,10 @@ const Conclusion: FC = () => {
             return isCourtRecordValid
           case CaseIndictmentRulingDecision.MERGE:
             return (
-              isCourtRecordValid &&
+              (workingCase.withCourtSessions
+                ? isValidGeneratedIndictmentCourtRecord ||
+                  isEmptyGeneratedIndictmentCourtRecord
+                : true) &&
               Boolean(
                 workingCase.mergeCase?.id ||
                   validate([[mergeCaseNumber, ['empty', 'S-case-number']]])
@@ -406,22 +413,44 @@ const Conclusion: FC = () => {
     }
   }
 
-  const hasJudgementRuling =
+  const hasJudgementRuling = Boolean(
     workingCase.courtSessions?.some(
       (courtSession) =>
         courtSession.rulingType === CourtSessionRulingType.JUDGEMENT &&
-        Boolean(courtSession.ruling),
-    ) ?? false
+        courtSession.ruling,
+    ),
+  )
 
-  const missingValidCourtRecord =
-    selectedAction === IndictmentDecision.COMPLETING &&
-    !isValidIndictmentCourtRecord
+  const missingValidGeneratedCourtRecordForCompletion = Boolean(
+    workingCase.withCourtSessions &&
+      !isValidGeneratedIndictmentCourtRecord &&
+      selectedAction === IndictmentDecision.COMPLETING &&
+      (selectedDecision === CaseIndictmentRulingDecision.RULING ||
+        selectedDecision === CaseIndictmentRulingDecision.FINE ||
+        selectedDecision === CaseIndictmentRulingDecision.DISMISSAL ||
+        selectedDecision === CaseIndictmentRulingDecision.CANCELLATION),
+  )
 
-  const missingRulingInCourtSessions =
-    !!workingCase.withCourtSessions &&
-    selectedAction === IndictmentDecision.COMPLETING &&
-    selectedDecision === CaseIndictmentRulingDecision.RULING &&
-    !hasJudgementRuling
+  const missingValidGeneratedCourtRecordForCompletionWithMerge = Boolean(
+    workingCase.withCourtSessions &&
+      !isEmptyGeneratedIndictmentCourtRecord &&
+      !isValidGeneratedIndictmentCourtRecord &&
+      selectedAction === IndictmentDecision.COMPLETING &&
+      selectedDecision === CaseIndictmentRulingDecision.MERGE,
+  )
+
+  const missingValidGeneratedCourtRecordForSplitting = Boolean(
+    workingCase.withCourtSessions &&
+      !isValidGeneratedIndictmentCourtRecord &&
+      selectedAction === IndictmentDecision.SPLITTING,
+  )
+
+  const missingRulingInGeneratedCourtSessions = Boolean(
+    workingCase.withCourtSessions &&
+      selectedAction === IndictmentDecision.COMPLETING &&
+      selectedDecision === CaseIndictmentRulingDecision.RULING &&
+      !hasJudgementRuling,
+  )
 
   return (
     <PageLayout
@@ -887,14 +916,21 @@ const Conclusion: FC = () => {
           nextIsDisabled={!stepIsValid()}
           nextIsLoading={isUpdatingCase}
           hideNextButton={
-            missingValidCourtRecord || missingRulingInCourtSessions
+            missingValidGeneratedCourtRecordForCompletion ||
+            missingValidGeneratedCourtRecordForCompletionWithMerge ||
+            missingRulingInGeneratedCourtSessions ||
+            missingValidGeneratedCourtRecordForSplitting
           }
           infoBoxText={
-            !missingValidCourtRecord
-              ? missingRulingInCourtSessions
-                ? 'Þegar máli lýkur með dómi þarf að skrá dómsorðið á þingbókarskjá.'
-                : ''
-              : 'Til að ljúka máli þarf að staðfesta þingbók á þingbókarskjá.'
+            missingValidGeneratedCourtRecordForCompletion
+              ? 'Til að ljúka máli öðruvísi en með sameiningu þarf að staðfesta þingbók á þingbókarskjá.'
+              : missingValidGeneratedCourtRecordForCompletionWithMerge
+              ? 'Til að ljúka máli með sameiningu þarf að staðfesta þingbók á þingbókarskjá eða þingbók þarf að vera tóm.'
+              : missingRulingInGeneratedCourtSessions
+              ? 'Þegar máli lýkur með dómi þarf að skrá dómsorðið á þingbókarskjá.'
+              : missingValidGeneratedCourtRecordForSplitting
+              ? 'Til að kljúfa máli þarf að staðfesta þingbók á þingbókarskjá.'
+              : ''
           }
         />
       </FormContentContainer>
