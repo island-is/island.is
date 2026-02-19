@@ -7,8 +7,7 @@ export const SmsDelivery = {
   NEVER: 'NEVER',
 } as const
 
-export type SmsDeliveryOption =
-  (typeof SmsDelivery)[keyof typeof SmsDelivery]
+export type SmsDeliveryOption = typeof SmsDelivery[keyof typeof SmsDelivery]
 
 export const isDefined = <T>(x: T | null | undefined): x is T => x != null
 export const mapToLocale = (locale: string): Locale =>
