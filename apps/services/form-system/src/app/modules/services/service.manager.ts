@@ -5,6 +5,8 @@ import { ApplicationDto } from '../applications/models/dto/application.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { ValidationService } from './validation.service'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { NotificationCommands } from '@island.is/form-system/enums'
+import { NotificationResponseDto } from '../applications/models/dto/validation.response.dto'
 
 @Injectable()
 export class ServiceManager {
@@ -14,7 +16,9 @@ export class ServiceManager {
     private readonly validationService: ValidationService,
   ) {}
 
-  async send(applicationDto: ApplicationDto): Promise<boolean> {
+  async send(
+    applicationDto: ApplicationDto,
+  ): Promise<boolean | NotificationResponseDto> {
     const submitUrl = applicationDto.submissionServiceUrl
 
     if (!submitUrl) {
@@ -24,10 +28,18 @@ export class ServiceManager {
     if (submitUrl === 'zendesk') {
       return await this.zendeskService.sendToZendesk(applicationDto)
     } else if (submitUrl !== 'zendesk') {
-      return await this.notifyService.sendNotification(
-        applicationDto,
+      const notificationDto = {
+        applicationId: applicationDto.id ?? '',
+        nationalId: applicationDto.nationalId ?? '',
+        slug: applicationDto.slug ?? '',
+        isTest: applicationDto.isTest ?? false,
+        command: NotificationCommands.SUBMIT,
+      }
+      const response = await this.notifyService.sendNotification(
+        notificationDto,
         submitUrl,
       )
+      return response.operationSuccessful ?? false
     }
 
     return false
