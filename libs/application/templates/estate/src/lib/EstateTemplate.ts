@@ -46,7 +46,7 @@ import { getEstateDataFromApplication, isEstateInfo } from './utils'
 import { getAssigneesNationalIdList } from './utils/getAssigneesNationalIdList'
 import { allPartiesHaveApproved } from './utils/allPartiesHaveApproved'
 import { nationalIdsMatch } from './utils/helpers'
-import { EstateMember } from '../types'
+import { EstateMember, EstateExternalData } from '../types'
 
 const configuration = ApplicationConfigurations[ApplicationTypes.ESTATE]
 
@@ -411,12 +411,38 @@ const EstateTemplate: ApplicationTemplate<
               order: 1,
             }),
           ],
+          actionCard: {
+            pendingAction: (application) => {
+              const externalData =
+                application.externalData as EstateExternalData
+              const signatories =
+                externalData?.getSignatories?.data?.signatories || []
+
+              const allSigned =
+                signatories.length > 0 &&
+                signatories.every((s) => s.signed)
+
+              if (allSigned) {
+                return {
+                  title: m.signingCompleteTitle,
+                  content: m.signingCompleteDescription,
+                  displayStatus: 'success',
+                }
+              }
+
+              return {
+                title: m.signingPendingTitle,
+                content: m.signingPendingDescription,
+                displayStatus: 'info',
+              }
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT_NO_ASSETS,
               formLoader: () =>
-                import('../forms/Done').then((val) =>
-                  Promise.resolve(val.done),
+                import('../forms/Signing').then((val) =>
+                  Promise.resolve(val.signingForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               read: 'all',
@@ -424,8 +450,8 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_OFFICIAL_DIVISION,
               formLoader: () =>
-                import('../forms/Done').then((val) =>
-                  Promise.resolve(val.done),
+                import('../forms/Signing').then((val) =>
+                  Promise.resolve(val.signingForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               read: 'all',
@@ -433,8 +459,8 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
               formLoader: () =>
-                import('../forms/Done').then((val) =>
-                  Promise.resolve(val.done),
+                import('../forms/Signing').then((val) =>
+                  Promise.resolve(val.signingForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               read: 'all',
@@ -442,8 +468,8 @@ const EstateTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
               formLoader: () =>
-                import('../forms/Done').then((val) =>
-                  Promise.resolve(val.done),
+                import('../forms/Signing').then((val) =>
+                  Promise.resolve(val.signingForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               read: 'all',

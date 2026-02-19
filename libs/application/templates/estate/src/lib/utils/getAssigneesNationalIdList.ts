@@ -1,6 +1,7 @@
 import { Application } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { EstateMember } from '../../types'
+import { nationalIdsMatch } from './helpers'
 
 export const getAssigneesNationalIdList = (
   application: Application,
@@ -21,7 +22,7 @@ export const getAssigneesNationalIdList = (
     if (approved === true) return
 
     // Filter out the applicant if they are also a member
-    if (nationalId === application.applicant) return
+    if (nationalIdsMatch(nationalId, application.applicant)) return
 
     assigneesNationalIdList.push(nationalId)
   })

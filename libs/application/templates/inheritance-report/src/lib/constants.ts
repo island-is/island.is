@@ -67,7 +67,6 @@ export enum Roles {
 }
 
 export enum ApiActions {
-  completeApplication = 'completeApplication',
   syslumennOnEntry = 'syslumennOnEntry',
   submitToSyslumenn = 'submitToSyslumenn',
   getSignatories = 'getSignatories',

@@ -291,15 +291,6 @@ export class InheritanceReportService extends BaseTemplateApiService {
     }
   }
 
-
-  async completeApplication(_props: TemplateApiModuleActionProps) {
-    // This method is called when entering the 'done' state
-    // after all signatories have signed
-    // Currently, no additional actions are needed as submission
-    // was already handled in submitToSyslumenn
-    return { success: true }
-  }
-
   async maritalStatus(props: TemplateApiModuleActionProps) {
     const spouse = await this.nationalRegistryService.getSpouse(props)
     return { ...spouse, fullName: spouse?.name }

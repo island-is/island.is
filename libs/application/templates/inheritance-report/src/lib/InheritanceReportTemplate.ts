@@ -302,6 +302,8 @@ const InheritanceReportTemplate: ApplicationTemplate<
             }),
             defineTemplateApi({
               action: ApiActions.getSignatories,
+              shouldPersistToExternalData: true,
+              externalDataId: 'getSignatories',
               order: 1,
             }),
           ],
@@ -446,7 +448,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
 
         if (heirs && heirs.length > 0) {
           const updatedHeirs = heirs.map((heir) => {
-            if (heir.nationalId === applicantNationalId) {
+            if (nationalIdsMatch(heir.nationalId, applicantNationalId)) {
               return {
                 ...heir,
                 approved: true,

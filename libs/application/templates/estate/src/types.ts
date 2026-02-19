@@ -1,4 +1,8 @@
-import { EstateAsset, Advocate } from '@island.is/clients/syslumenn'
+import {
+  EstateAsset,
+  Advocate,
+  InheritanceSignatory,
+} from '@island.is/clients/syslumenn'
 
 export type Asset = Partial<EstateAsset & { initial: boolean }>
 export type AssetFormField = Asset & { id: string }
@@ -61,4 +65,14 @@ export type LookupProps = {
   nested?: boolean
   message?: string
   error: ErrorValue
+}
+
+export interface EstateExternalData {
+  getSignatories?: {
+    data: {
+      success: boolean
+      signatories: InheritanceSignatory[]
+    }
+    date: string
+  }
 }
