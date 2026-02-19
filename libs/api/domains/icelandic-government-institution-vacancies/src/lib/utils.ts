@@ -1,6 +1,7 @@
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 import sanitizeHtml from 'sanitize-html'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
+import type { Document } from '@contentful/rich-text-types'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandicGovernmentInstitutionVacanciesResponse'
 import { IcelandicGovernmentInstitutionVacancyByIdResponse } from './dto/icelandicGovernmentInstitutionVacancyByIdResponse'
@@ -33,6 +34,47 @@ const formatDate = (date?: Date | string | null) => {
   return `${day}.${month}.${year}`
 }
 
+/**
+ * Strips Advania-specific metadata from moreInfo HTML before converting to rich text:
+ * - Removes <other_languages>...</other_languages> blocks (multilingual content wrapper)
+ * - Removes trailing language code pairs (e.g. "is is", "is us") that Advania appends
+ * - Removes LAUNASKILMALI_* style all-caps template identifier tokens
+ */
+export const preprocessMoreInfo = (html: string): string => {
+  if (!html) return html
+
+  // Remove <other_languages>...</other_languages> blocks (including empty ones)
+  let processed = html.replace(
+    /<other_languages>[\s\S]*?<\/other_languages>/gi,
+    '',
+  )
+
+  // Remove trailing language code pairs like "is is", "is us", "us is", "us us"
+  processed = processed.replace(/\s+(is|us)\s+(is|us)\s*$/i, '')
+
+  // Remove all-caps underscore-separated token identifiers that Advania sends
+  // (e.g. LAUNASKILMALI_DEFAULT_STETTARFELAG, LAUNASKILMALI_TEMPLATE)
+  processed = processed.replace(
+    /\b[A-ZÁÉÍÓÚÝÞÆÖÐ][A-ZÁÉÍÓÚÝÞÆÖÐ0-9]*(?:_[A-ZÁÉÍÓÚÝÞÆÖÐ0-9]+)+\b/g,
+    '',
+  )
+
+  return processed.trim()
+}
+
+/**
+ * Strips a national ID (kennitala) prefix from a contact name.
+ * Advania sends names in the format "XXXXXX-XXXX : Full Name" or "XXXXXXXXXX : Full Name".
+ */
+export const stripNationalIdFromContactName = (
+  name: string | null | undefined,
+): string | undefined => {
+  if (!name) return undefined
+  // Kennitala format: 6 digits + optional dash + 4 digits, followed by colon separator
+  const cleaned = name.replace(/^\d{6}-?\d{4}\s*:\s*/, '').trim()
+  return cleaned || undefined
+}
+
 export const convertHtmlToPlainText = async (html: string) => {
   if (!html) return ''
   const contentfulRichText = await convertHtmlToContentfulRichText(html)
@@ -42,7 +84,11 @@ export const convertHtmlToPlainText = async (html: string) => {
 export const convertHtmlToContentfulRichText = async (
   html: string,
   id?: string,
-) => {
+): Promise<{
+  __typename: 'Html'
+  document: Document
+  id: string | undefined
+}> => {
   const sanitizedHtml = sanitizeHtml(html)
   const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
   const richText = await richTextFromMarkdown(markdown)
@@ -213,7 +259,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur =
       vacancy.contact1JobTitle
     ) {
       contacts.push({
-        name: vacancy.contact1Name ?? undefined,
+        name: stripNationalIdFromContactName(vacancy.contact1Name),
         email: vacancy.contact1EmailAddress ?? undefined,
         phone: vacancy.contact1PhoneNumber ?? undefined,
         jobTitle: vacancy.contact1JobTitle ?? undefined,
@@ -227,7 +273,7 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur =
       vacancy.contact2JobTitle
     ) {
       contacts.push({
-        name: vacancy.contact2Name ?? undefined,
+        name: stripNationalIdFromContactName(vacancy.contact2Name),
         email: vacancy.contact2EmailAddress ?? undefined,
         phone: vacancy.contact2PhoneNumber ?? undefined,
         jobTitle: vacancy.contact2JobTitle ?? undefined,
@@ -250,7 +296,10 @@ export const mapIcelandicGovernmentInstitutionVacancyByIdResponseFromElfur =
         vacancy.assignments ?? '',
         'tasksAndResponsibilities',
       ),
-      convertHtmlToContentfulRichText(vacancy.moreInfo ?? '', 'description'),
+      convertHtmlToContentfulRichText(
+        preprocessMoreInfo(vacancy.moreInfo ?? ''),
+        'description',
+      ),
       convertHtmlToContentfulRichText('', 'salaryTerms'),
     ])
 
