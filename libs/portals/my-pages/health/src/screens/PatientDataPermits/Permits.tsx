@@ -31,26 +31,19 @@ const PatientDataPermits: FC = () => {
   const { data, loading, error } = useGetPatientDataPermitsQuery({
     variables: {
       locale: lang,
-      input: {
-        status: [
-          HealthDirectoratePermitStatus.active,
-          HealthDirectoratePermitStatus.expired,
-          HealthDirectoratePermitStatus.inactive,
-          HealthDirectoratePermitStatus.unknown,
-          HealthDirectoratePermitStatus.awaitingApproval,
-        ],
-      },
     },
   })
 
-  const dataLength = data?.healthDirectoratePatientDataPermits.data.length ?? 0
+  const consent = data?.healthDirectoratePatientDataPermits?.consent
+  const allPermits = consent ? [consent] : []
 
-  const filteredData = data?.healthDirectoratePatientDataPermits?.data?.filter(
-    (item) =>
-      showExpiredPermits
-        ? item.status
-        : item.status === HealthDirectoratePermitStatus.active ||
-          item.status === HealthDirectoratePermitStatus.awaitingApproval,
+  const dataLength = allPermits.length
+
+  const filteredData = allPermits.filter((item) =>
+    showExpiredPermits
+      ? item.status
+      : item.status === HealthDirectoratePermitStatus.active ||
+        item.status === HealthDirectoratePermitStatus.awaitingApproval,
   )
 
   return (
@@ -169,7 +162,7 @@ const PatientDataPermits: FC = () => {
                     navigate(
                       HealthPaths.HealthPatientDataPermitsDetail.replace(
                         ':id',
-                        permit.id.toString(),
+                        permit.id ?? '',
                       ),
                     ),
                 }}

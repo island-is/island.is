@@ -18,14 +18,10 @@ import {
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 
-import {
-  InvalidatePermitInput,
-  PermitInput,
-  PermitsInput,
-} from '.././dto/permit.input'
+import { PermitInput } from '.././dto/permit.input'
 import { HealthDirectorateService } from '.././health-directorate.service'
 import { Countries } from '.././models/permits/country.model'
-import { Permit, PermitReturn, Permits } from '.././models/permits/permits'
+import { PermitReturn, Permits } from '.././models/permits/permits'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -44,26 +40,9 @@ export class PatientDataResolver {
   getPermits(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
-    @Args('input', { type: () => PermitsInput })
-    input: PermitsInput,
     @CurrentUser() user: User,
   ): Promise<Permits | null> {
-    return this.api.getPermits(user, locale, input)
-  }
-
-  @Query(() => Permit, {
-    name: 'healthDirectoratePatientDataPermit',
-  })
-  @Audit()
-  @Scopes(ApiScope.internal, ApiScope.health)
-  @FeatureFlag(Features.servicePortalHealthPatientPermitsPageEnabled)
-  getPermit(
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
-    @Args('id', { type: () => String }) id: string,
-    @CurrentUser() user: User,
-  ): Promise<Permit | null> {
-    return this.api.getPermit(user, locale, id)
+    return this.api.getPermits(user, locale)
   }
 
   @Query(() => Countries, {
@@ -102,9 +81,8 @@ export class PatientDataResolver {
   @Scopes(ApiScope.internal, ApiScope.health)
   @FeatureFlag(Features.servicePortalHealthPatientPermitsPageEnabled)
   async invalidatePermit(
-    @Args('input') input: InvalidatePermitInput,
     @CurrentUser() user: User,
   ): Promise<PermitReturn | null> {
-    return this.api.invalidatePermit(user, input)
+    return this.api.invalidatePermit(user)
   }
 }

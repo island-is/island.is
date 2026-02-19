@@ -10,51 +10,39 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import React, { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { InvalidatePermitModal } from '../../components/PatientDataPermit/InvalidatePermitModal'
 import { messages } from '../../lib/messages'
 import {
-  useGetPatientDataPermitQuery,
+  useGetPatientDataPermitsQuery,
   useInvalidatePatientDataPermitMutation,
 } from './PatientDataPermits.generated'
 import { HealthPaths } from '../../lib/paths'
 
-type UseParams = {
-  id: string
-}
 const PermitDetail: React.FC = () => {
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
-  const { id } = useParams() as UseParams
   const [modalOpen, setModalOpen] = useState<boolean>(false)
 
-  const { data, error, loading } = useGetPatientDataPermitQuery({
-    variables: { locale: lang, id },
+  const { data, error, loading } = useGetPatientDataPermitsQuery({
+    variables: { locale: lang },
   })
 
   const [invalidatePermit] = useInvalidatePatientDataPermitMutation({
     refetchQueries: ['GetPatientDataPermits'],
   })
 
-  const permit = data?.healthDirectoratePatientDataPermit
+  const permit = data?.healthDirectoratePatientDataPermits?.consent
 
   const onInvalidateSubmit = () => {
-    if (permit?.id) {
-      invalidatePermit({
-        variables: {
-          input: {
-            id: permit?.id,
-          },
-        },
+    invalidatePermit()
+      .then(() => {
+        toast.success(formatMessage(messages.permitInvalidated))
+        navigate(HealthPaths.HealthPatientDataPermits, { replace: true })
       })
-        .then(() => {
-          toast.success(formatMessage(messages.permitInvalidated))
-          navigate(HealthPaths.HealthPatientDataPermits, { replace: true })
-        })
-        .catch(() => {
-          toast.error(formatMessage(messages.permitInvalidatedError))
-        })
-    }
+      .catch(() => {
+        toast.error(formatMessage(messages.permitInvalidatedError))
+      })
   }
 
   return (

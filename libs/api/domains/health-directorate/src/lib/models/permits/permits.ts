@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ID, ObjectType } from '@nestjs/graphql'
 import { PermitStatusEnum } from '../enums'
 import { Country } from './country.model'
 
@@ -7,19 +7,19 @@ export class Permit {
   @Field(() => ID)
   cacheId!: string
 
-  @Field()
-  id!: string
+  @Field({ nullable: true })
+  id?: string
 
   @Field(() => PermitStatusEnum)
   status!: PermitStatusEnum
 
-  @Field({ nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdAt?: Date
 
-  @Field({ nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   validFrom?: Date
 
-  @Field({ nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   validTo?: Date
 
   @Field(() => [String])
@@ -29,10 +29,34 @@ export class Permit {
   countries!: Country[]
 }
 
+@ObjectType('HealthDirectoratePatientDataPermitHistoryEntry')
+export class PermitHistoryEntry {
+  @Field(() => [Country])
+  countries!: Country[]
+
+  @Field(() => [String])
+  consentTypes!: string[]
+
+  @Field(() => GraphQLISODateTime)
+  validFrom!: Date
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  validTo?: Date
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  changedAt?: Date
+
+  @Field(() => GraphQLISODateTime)
+  createdAt!: Date
+}
+
 @ObjectType('HealthDirectoratePatientDataPermits')
 export class Permits {
-  @Field(() => [Permit])
-  data!: Permit[]
+  @Field(() => Permit, { nullable: true })
+  consent!: Permit | null
+
+  @Field(() => [PermitHistoryEntry])
+  history!: PermitHistoryEntry[]
 }
 
 @ObjectType('HealthDirectoratePatientDataPermitReturn')
