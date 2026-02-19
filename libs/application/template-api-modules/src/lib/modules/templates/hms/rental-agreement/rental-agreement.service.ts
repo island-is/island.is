@@ -9,7 +9,6 @@ import {
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { mapRentalApplicationData } from './utils/mapRentalApplicationData'
-import { mapDraftToContractRequest } from './utils/mapDraftToContractRequest'
 import {
   fetchFinancialIndexationForMonths,
   listOfLastMonths,
@@ -37,11 +36,10 @@ export class RentalAgreementService extends BaseTemplateApiService {
   async sendDraft({ application, auth }: TemplateApiModuleActionProps) {
     const { id, answers } = application
 
-    const draft = draftAnswers(applicationAnswers(answers), id)
-    const contractDraftRequest = mapDraftToContractRequest(draft)
-
     return await this.homeApiWithAuth(auth).contractSendDraftPost({
-      contractDraftRequest,
+      draftRequest: {
+        ...draftAnswers(applicationAnswers(answers), id),
+      },
     })
   }
 

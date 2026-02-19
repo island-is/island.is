@@ -132,7 +132,7 @@ export const informationNavigation: PortalNavigationItem = {
       path: InformationPaths.MyContracts,
       children: [
         {
-          name: m.contract,
+          name: m.contracts,
           navHide: true,
           searchHide: true,
           path: InformationPaths.MyContractsDetail,
