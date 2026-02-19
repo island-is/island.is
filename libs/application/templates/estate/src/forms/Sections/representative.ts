@@ -31,7 +31,7 @@ export const representative = buildSection({
           title: m.phone,
           width: 'half',
           required: true,
-          allowedCountryCodes: ['IS'],
+          enableCountrySelector: true,
         }),
         buildTextField({
           id: 'representative.email',
