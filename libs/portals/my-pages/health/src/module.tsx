@@ -144,6 +144,9 @@ const Pregnancy = lazy(() => import('./screens/Pregnancy/Pregnancy'))
 const PregnancyCommunications = lazy(() =>
   import('./screens/Pregnancy/Communications'),
 )
+const PregnancyEducationalMaterial = lazy(() =>
+  import('./screens/Pregnancy/EducationalMaterial'),
+)
 const PregnancyMeasurements = lazy(() =>
   import('./screens/Pregnancy/Measurements'),
 )
@@ -547,6 +550,15 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <PregnancyCommunications />,
+    },
+    {
+      name: hm.infoMaterial,
+      path: HealthPaths.HealthPregnancyEducationalMaterial,
+      key: 'HealthPregnancy',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <PregnancyEducationalMaterial />,
     },
     {
       name: hm.measurements,

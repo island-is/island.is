@@ -125,7 +125,7 @@ const Pregnancy = () => {
             description: formatMessage(messages.changedLast, {
               arg: '10. janúar 2024',
             }),
-            to: HealthPaths.HealthQuestionnaires,
+            to: HealthPaths.HealthPregnancyEducationalMaterial,
           },
           {
             id: 'pregnancy-measurements-card',

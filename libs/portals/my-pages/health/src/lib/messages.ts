@@ -2599,6 +2599,19 @@ export const messages = defineMessages({
     defaultMessage: 'Fræðsluefni',
     id: 'sp.health:info-material',
   },
+  infoMaterialIntro: {
+    defaultMessage:
+      'Integer quis molestie duis in egestas congue viverra enim. Commodo nulla sed porttitor commodo. Turpis convallis congue pellentesque sed. Dictum eros quam.',
+    id: 'sp.health:info-material-intro',
+  },
+  sentDate: {
+    defaultMessage: 'Sent dags: {date}',
+    id: 'sp.health:sent-date',
+  },
+  viewMaterial: {
+    defaultMessage: 'Skoða nánar',
+    id: 'sp.health:view-material',
+  },
   labResults: {
     defaultMessage: 'Rannsóknarniðurstöður',
     id: 'sp.health:lab-results',

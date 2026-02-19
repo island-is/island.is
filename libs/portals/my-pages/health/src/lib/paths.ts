@@ -83,6 +83,7 @@ export enum HealthPaths {
   HealthPregnancy = '/heilsa/medganga',
   HealthPregnancyOverview = '/heilsa/medganga/min-medganga',
   HealthPregnancyCommunications = '/heilsa/medganga/samskipti',
+  HealthPregnancyEducationalMaterial = '/heilsa/medganga/fraedslufni',
   HealthPregnancyMeasurements = '/heilsa/medganga/maelingar',
   HealthPregnancyFiles = '/heilsa/medganga/skjol',
 }

@@ -43,6 +43,11 @@ export const healthNavigation: PortalNavigationItem = {
           path: HealthPaths.HealthPregnancyCommunications,
         },
         {
+          name: messages.infoMaterial,
+          path: HealthPaths.HealthPregnancyEducationalMaterial,
+          navHide: true,
+        },
+        {
           name: messages.measurements,
           path: HealthPaths.HealthPregnancyMeasurements,
         },
