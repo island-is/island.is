@@ -330,23 +330,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
   async getSignatories({ application }: TemplateApiModuleActionProps) {
     const answers = application.answers as unknown as EstateSchema
 
-    const completeData = application.externalData
-      ?.completeApplication as unknown as
-      | { data: { sucess: boolean; id?: string }; date: Date }
-      | undefined
-    const caseNumber = completeData?.data?.id
-
-    if (!caseNumber) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.failedDataProviderSubmit,
-          summary:
-            'Case number not found. Application must be submitted before retrieving signatories.',
-        },
-        400,
-      )
-    }
-
     const estateData = (
       application.externalData?.syslumennOnEntry?.data as {
         estates: Array<EstateInfo>
@@ -389,14 +372,13 @@ export class EstateTemplateService extends BaseTemplateApiService {
 
     try {
       this.logger.info(
-        '[estate]: Calling getSignatories API with caseNumber from completeApplication',
-        { deceasedNationalId, estateType, caseNumber },
+        '[estate]: Calling getSignatories API',
+        { deceasedNationalId, estateType },
       )
       const signatories =
         await this.syslumennService.getInheritanceReportSignatories(
           deceasedNationalId,
           estateType,
-          caseNumber,
         )
 
       return {

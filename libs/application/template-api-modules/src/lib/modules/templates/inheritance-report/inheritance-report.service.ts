@@ -227,24 +227,6 @@ export class InheritanceReportService extends BaseTemplateApiService {
     const { application } = _props
     const answers = application.answers as InheritanceSchema
 
-    // Get the case number from the submitToSyslumenn external data
-    const submitData = application.externalData
-      ?.submitToSyslumenn as unknown as
-      | { data: { success: boolean; id?: string }; date: Date }
-      | undefined
-    const caseNumber = submitData?.data?.id
-
-    if (!caseNumber) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.failedDataProviderSubmit,
-          summary:
-            'Case number not found. Application must be submitted before retrieving signatories.',
-        },
-        400,
-      )
-    }
-
     // Get the deceased national ID from the selected estate
     const estateInfoSelection = answers?.estateInfoSelection
     const syslumennData = application.externalData
@@ -282,13 +264,12 @@ export class InheritanceReportService extends BaseTemplateApiService {
     try {
       this.logger.info(
         '[inheritance-report]: Calling getSignatories API',
-        { deceasedNationalId, estateType, caseNumber },
+        { deceasedNationalId, estateType },
       )
       const signatories =
         await this.syslumennService.getInheritanceReportSignatories(
           deceasedNationalId,
           estateType,
-          caseNumber,
         )
 
       return {
