@@ -464,6 +464,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:registry',
     defaultMessage: 'Þjóðskrá',
   },
+  read: {
+    id: 'sp.access-control-delegations:read',
+    defaultMessage: 'Skoða',
+  },
+  readAndWrite: {
+    id: 'sp.access-control-delegations:read-and-write',
+    defaultMessage: 'Skoða og breyta',
+  },
   headerName: {
     id: 'sp.access-control-delegations:header-name',
     defaultMessage: 'Nafn',

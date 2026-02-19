@@ -21,22 +21,24 @@ export const AccessPeriod = () => {
       <Text variant="h4" marginBottom={4}>
         {formatMessage(m.stepThreeTitle)}
       </Text>
-      <Box display="flex" flexDirection="column" rowGap={2} marginBottom={4}>
-        <RadioButton
-          name="accessPeriodType"
-          id="accessPeriodCombined"
-          label={formatMessage(m.accessPeriodSame)}
-          checked={isSamePeriod}
-          onChange={() => setIsSamePeriod(true)}
-        />
-        <RadioButton
-          name="accessPeriodType"
-          id="accessPeriodSeparate"
-          label={formatMessage(m.accessPeriodDifferent)}
-          checked={!isSamePeriod}
-          onChange={() => setIsSamePeriod(false)}
-        />
-      </Box>
+      {selectedScopes.length > 1 && (
+        <Box display="flex" flexDirection="column" rowGap={2} marginBottom={4}>
+          <RadioButton
+            name="accessPeriodType"
+            id="accessPeriodCombined"
+            label={formatMessage(m.accessPeriodSame)}
+            checked={isSamePeriod}
+            onChange={() => setIsSamePeriod(true)}
+          />
+          <RadioButton
+            name="accessPeriodType"
+            id="accessPeriodSeparate"
+            label={formatMessage(m.accessPeriodDifferent)}
+            checked={!isSamePeriod}
+            onChange={() => setIsSamePeriod(false)}
+          />
+        </Box>
+      )}
       {isSamePeriod ? (
         <Box alignSelf="flexStart">
           <DatePicker

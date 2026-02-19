@@ -52,8 +52,8 @@ export const ScopesTable = ({
         {scopes.map((scope) => {
           // Determine permission type based on scope name
           const permissionType = scope.name.includes(':write')
-            ? 'Lesa og skrifa'
-            : 'Lesa'
+            ? formatMessage(m.readAndWrite)
+            : formatMessage(m.read)
 
           return (
             <T.Row key={scope.name}>
