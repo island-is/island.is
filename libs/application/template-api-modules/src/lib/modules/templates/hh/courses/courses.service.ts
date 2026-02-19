@@ -20,6 +20,7 @@ const GET_COURSE_BY_ID_QUERY = `
       course {
         id
         title
+        courseListPageId
         instances {
           id
           startDate
@@ -28,11 +29,17 @@ const GET_COURSE_BY_ID_QUERY = `
             endTime
           }
           chargeItemCode
+          location
         }
       }
     }
   }
 `
+
+const COURSE_LIST_PAGE_SLUG_MAP: Record<string, string> = {
+  '6pkONOn80xzGTGij6qtjai': 'namskeid-fyrir-almenning',
+  '147YftiWFQsBcbUFFe2rj1': 'namskeid-fyrir-fagfolk',
+}
 
 @Injectable()
 export class CoursesService extends BaseTemplateApiService {
@@ -50,6 +57,7 @@ export class CoursesService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{
     chargeItemCode?: string | null
+    courseTitle?: string | null
   }> {
     const courseId = getValueViaPath<ApplicationAnswers['courseSelect']>(
       application.answers,
@@ -60,13 +68,19 @@ export class CoursesService extends BaseTemplateApiService {
       'dateSelect',
     )
 
-    const { courseInstance } = await this.getCourseById(
+    if (!courseId || !courseInstanceId)
+      return { chargeItemCode: null, courseTitle: null }
+
+    const { course, courseInstance } = await this.getCourseById(
       courseId,
       courseInstanceId,
       auth.authorization,
     )
 
-    return { chargeItemCode: courseInstance.chargeItemCode }
+    return {
+      chargeItemCode: courseInstance.chargeItemCode,
+      courseTitle: course.title,
+    }
   }
 
   async submitApplication({
@@ -89,7 +103,7 @@ export class CoursesService extends BaseTemplateApiService {
       const { name, email, phone, healthcenter, nationalId } =
         await this.extractApplicantInfo(application)
 
-      if (!name || !email || !phone || !healthcenter || !nationalId)
+      if (!name || !email || !phone || !nationalId)
         throw new TemplateApiError(
           {
             title: 'No contact information found',
@@ -98,11 +112,13 @@ export class CoursesService extends BaseTemplateApiService {
           400,
         )
 
+      const courseUrl = this.getCourseUrl(course.id, course.courseListPageId)
+
       const message = await this.formatApplicationMessage(
         application,
         participantList,
-        course.id,
         course.title,
+        courseUrl,
         courseInstance,
         nationalId,
         name,
@@ -174,6 +190,7 @@ export class CoursesService extends BaseTemplateApiService {
           course: {
             id: string
             title: string
+            courseListPageId?: string | null
             instances: {
               id: string
               startDate: string
@@ -249,11 +266,23 @@ export class CoursesService extends BaseTemplateApiService {
     }
   }
 
+  private getCourseUrl(
+    courseId: string,
+    courseListPageId?: string | null,
+  ): string | null {
+    if (!courseListPageId) return null
+
+    const slug = COURSE_LIST_PAGE_SLUG_MAP[courseListPageId]
+    if (!slug) return null
+
+    return `https://island.is/s/hh/${slug}/${courseId}`
+  }
+
   private async formatApplicationMessage(
     application: ApplicationWithAttachments,
     participantList: ApplicationAnswers['participantList'],
-    courseId: string,
     courseTitle: string,
+    courseUrl: string | null,
     courseInstance: {
       id: string
       startDate: string
@@ -261,13 +290,19 @@ export class CoursesService extends BaseTemplateApiService {
         startTime?: string
         endTime?: string
       }
+      location?: string | null
     },
     nationalId: string,
     name: string,
     email: string,
     phone: string,
-    healthcenter: string,
+    healthcenter?: string,
   ): Promise<string> {
+    const courseHasChargeItemCode = getValueViaPath<boolean>(
+      application.answers,
+      'courseHasChargeItemCode',
+      false,
+    )
     const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
       application.answers,
       'payment.userIsPayingAsIndividual',
@@ -282,6 +317,7 @@ export class CoursesService extends BaseTemplateApiService {
 
     let message = ''
     message += `Námskeið: ${courseTitle}\n`
+    if (courseUrl) message += `Slóð námskeiðs: ${courseUrl}\n`
     let startDateTimeDuration = ''
     if (courseInstance.startDateTimeDuration?.startTime) {
       startDateTimeDuration = courseInstance.startDateTimeDuration.startTime
@@ -294,23 +330,26 @@ export class CoursesService extends BaseTemplateApiService {
       new Date(courseInstance.startDate.split('T')[0]),
       'dd.MM.yyyy',
     )} ${startDateTimeDuration ?? ''}\n`
+    message += `Staðsetning námskeiðs: ${courseInstance.location ?? ''}\n`
 
     message += `Kennitala umsækjanda: ${nationalId}\n`
     message += `Nafn umsækjanda: ${name}\n`
     message += `Netfang umsækjanda: ${email}\n`
     message += `Símanúmer umsækjanda: ${phone}\n`
-    message += `Heilsugæslustöð umsækjanda: ${healthcenter}\n`
+    message += `Heilsugæslustöð umsækjanda: ${healthcenter ?? ''}\n`
 
-    const payer =
-      userIsPayingAsIndividual === YesOrNoEnum.YES
-        ? {
-            name: 'Umsækjandi (einstaklingsgreiðsla)',
-            nationalId: application.applicant,
-          }
-        : companyPayment?.nationalIdWithName
+    if (courseHasChargeItemCode) {
+      const payer =
+        userIsPayingAsIndividual === YesOrNoEnum.YES
+          ? {
+              name: 'Umsækjandi (einstaklingsgreiðsla)',
+              nationalId: application.applicant,
+            }
+          : companyPayment?.nationalIdWithName
 
-    message += `Greiðandi: ${payer?.name ?? ''}\n`
-    message += `Kennitala greiðanda: ${payer?.nationalId ?? ''}\n`
+      message += `Greiðandi: ${payer?.name ?? ''}\n`
+      message += `Kennitala greiðanda: ${payer?.nationalId ?? ''}\n`
+    }
 
     participantList.forEach((participant, index) => {
       const p = participant.nationalIdWithName

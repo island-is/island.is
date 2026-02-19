@@ -38,6 +38,10 @@ interface UpdateCourtDocument {
   submittedBy?: string
 }
 
+interface FileAllAvailableCourtDocumentsInCourtSessionOptions {
+  transaction: Transaction
+}
+
 interface FileCourtDocumentInCourtSessionOptions {
   transaction: Transaction
 }
@@ -393,53 +397,142 @@ export class CourtDocumentRepositoryService {
     parentCaseCourtSessionId: string
     caseId: string
     transaction: Transaction
-  }) {
+  }): Promise<boolean> {
     try {
       this.logger.debug(
         `Updating court documents of case ${caseId} to be linked to court session ${parentCaseCourtSessionId} of case ${parentCaseId}`,
       )
 
-      const filedDocumentsInMergedCaseCount =
-        await this.courtDocumentModel.count({
-          where: {
-            caseId,
-            courtSessionId: { [Op.ne]: null },
-            documentOrder: { [Op.gt]: 0 },
-          },
-          transaction,
-        })
-      if (filedDocumentsInMergedCaseCount === 0) {
+      // Check if the case has court sessions, to determine which court documents to include
+      const numCourtSessions = await this.courtSessionModel.count({
+        where: { caseId },
+        transaction,
+      })
+
+      const courtDocumentsToFile = await this.courtDocumentModel.findAll({
+        where:
+          numCourtSessions > 0
+            ? {
+                caseId,
+                mergedCourtSessionId: null,
+                courtSessionId: { [Op.ne]: null },
+                documentOrder: { [Op.gt]: 0 },
+              }
+            : { caseId, mergedCourtSessionId: null },
+        attributes: ['id', 'created', 'documentOrder'],
+        order: [
+          ['documentOrder', 'ASC'],
+          ['created', 'ASC'],
+        ],
+        transaction,
+      })
+
+      if (courtDocumentsToFile.length === 0) {
         this.logger.debug(`No filed documents to merge from case ${caseId}`)
-        return
+
+        return false
       }
 
       const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable({
         caseId: parentCaseId,
         courtSessionId: parentCaseCourtSessionId,
         isMergedDocumentOrder: true,
-        reservedSlots: filedDocumentsInMergedCaseCount,
+        reservedSlots: courtDocumentsToFile.length,
         courtDocumentId: undefined,
         transaction,
       })
 
       // update all merging court documents
-      await this.courtDocumentModel.update(
-        {
-          mergedCourtSessionId: parentCaseCourtSessionId,
-          mergedDocumentOrder: literal(`${nextOrder} + document_order - 1`),
-        },
-        {
-          where: {
-            caseId,
-            courtSessionId: { [Op.ne]: null },
-            documentOrder: { [Op.gt]: 0 },
+      if (numCourtSessions > 0) {
+        await this.courtDocumentModel.update(
+          {
+            mergedCourtSessionId: parentCaseCourtSessionId,
+            mergedDocumentOrder: literal(`${nextOrder} + document_order - 1`),
           },
-          transaction,
-        },
+          {
+            where: { id: courtDocumentsToFile.map((d) => d.id) },
+            transaction,
+          },
+        )
+      } else {
+        for (let i = 0; i < courtDocumentsToFile.length; i++) {
+          await this.courtDocumentModel.update(
+            {
+              mergedCourtSessionId: parentCaseCourtSessionId,
+              mergedDocumentOrder: nextOrder + i,
+            },
+            {
+              where: { id: courtDocumentsToFile[i].id },
+              transaction,
+            },
+          )
+        }
+      }
+
+      this.logger.debug(
+        `Updated court documents of case ${caseId} to be linked to court session ${parentCaseCourtSessionId} of case ${parentCaseId}`,
       )
+
+      return true
     } catch (error) {
       this.logger.error(
-        `Error updating merged court document from ${caseId} to court session ${parentCaseCourtSessionId} of case ${parentCaseId}: `,
+        `Error updating merged court documents from ${caseId} to court session ${parentCaseCourtSessionId} of case ${parentCaseId}: `,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  async fileAllAvailableCourtDocumentsInCourtSession(
+    caseId: string,
+    courtSessionId: string,
+    options: FileAllAvailableCourtDocumentsInCourtSessionOptions,
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Filing all available court documents in court session ${courtSessionId} of case ${caseId}`,
+      )
+
+      const transaction = options.transaction
+
+      // Get all court documents that are not yet filed in a court session
+      const courtDocumentsToFile = await this.courtDocumentModel.findAll({
+        attributes: ['id', 'created'],
+        where: { caseId, courtSessionId: null, documentOrder: 0 },
+        order: [['created', 'ASC']],
+        transaction,
+      })
+
+      if (courtDocumentsToFile.length === 0) {
+        this.logger.debug(`No filed documents to merge from case ${caseId}`)
+        return
+      }
+
+      const nextOrder = await this.makeNextCourtSessionDocumentOrderAvailable({
+        caseId,
+        courtSessionId,
+        reservedSlots: courtDocumentsToFile.length,
+        courtDocumentId: undefined,
+        transaction,
+      })
+
+      // File all documents in the court session
+      for (let i = 0; i < courtDocumentsToFile.length; i++) {
+        await this.courtDocumentModel.update(
+          { courtSessionId, documentOrder: nextOrder + i },
+          { where: { id: courtDocumentsToFile[i].id }, transaction },
+        )
+      }
+
+      this.logger.debug(
+        `Filed all available court documents in court session ${courtSessionId} of case ${caseId}`,
+      )
+
+      return
+    } catch (error) {
+      this.logger.error(
+        `Error filing all available court documents in court session ${courtSessionId} of case ${caseId}:`,
         { error },
       )
 
@@ -490,7 +583,7 @@ export class CourtDocumentRepositoryService {
       }
 
       this.logger.debug(
-        `Updated court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+        `Filed court document ${courtDocumentId} in court session ${courtSessionId} of case ${caseId}`,
       )
 
       return courtDocuments[0]
@@ -613,9 +706,11 @@ export class CourtDocumentRepositoryService {
       })
 
       if (!documentToDelete) {
-        throw new InternalServerErrorException(
-          `Could not find court document for case file id ${caseFileId} of case ${caseId}`,
+        this.logger.debug(
+          `Nothing to delete - could not find a court document for case file id ${caseFileId} of case ${caseId}`,
         )
+
+        return
       }
 
       const deletedOrder = documentToDelete.documentOrder
@@ -693,21 +788,74 @@ export class CourtDocumentRepositoryService {
     }
   }
 
-  async deleteDocumentsInSession(
+  async removeAllCourtDocumentsFromCourtSession(
     caseId: string,
     courtSessionId: string,
     transaction: Transaction,
   ) {
-    const filedDocuments = await this.courtDocumentModel.findAll({
-      where: { caseId, courtSessionId },
-      order: [['documentOrder', 'DESC']],
-      transaction,
-    })
+    try {
+      // Note that this method should only be called for the latest court session
+      // so no adjustment is need to document orders
 
-    for (const f of filedDocuments) {
-      await this.removeFromCourtSession(caseId, courtSessionId, f.id, {
+      this.logger.debug(
+        `Removing all court documents from court session ${courtSessionId} of case ${caseId}`,
+      )
+
+      // Lock all court documents for the case to prevent race conditions
+      await this.courtDocumentModel.findAll({
+        where: { caseId },
+        attributes: ['id'],
+        lock: transaction.LOCK.UPDATE,
         transaction,
       })
+
+      // Count the documents to remove
+      const numDocumentsToDelete = await this.courtDocumentModel.count({
+        where: { caseId, courtSessionId },
+        transaction,
+      })
+
+      // Fisically delete all external documents in the court session
+      await this.courtDocumentModel.destroy({
+        where: {
+          caseId,
+          courtSessionId,
+          documentType: CourtDocumentType.EXTERNAL_DOCUMENT,
+        },
+        transaction,
+      })
+
+      // Unfile the remaining documents in the court session
+      await this.courtDocumentModel.update(
+        { courtSessionId: null, documentOrder: 0 },
+        { where: { caseId, courtSessionId }, transaction },
+      )
+
+      // Count the merged documents to remove
+      const numMergedDocumentsToDelete = await this.courtDocumentModel.count({
+        where: { mergedCourtSessionId: courtSessionId },
+        transaction,
+      })
+
+      // Unfile all merged documents linked to the court session
+      await this.courtDocumentModel.update(
+        { mergedCourtSessionId: null, mergedDocumentOrder: null },
+        {
+          where: { mergedCourtSessionId: courtSessionId },
+          transaction,
+        },
+      )
+
+      this.logger.debug(
+        `Deleted ${numDocumentsToDelete} court documents and ${numMergedDocumentsToDelete} merged court documents from court session ${courtSessionId} of case ${caseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error deleting all court documents from court session ${courtSessionId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
     }
   }
 

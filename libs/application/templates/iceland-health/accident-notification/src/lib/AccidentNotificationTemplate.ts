@@ -20,7 +20,7 @@ import { assign } from 'xstate'
 import { ApiActions } from '../shared'
 import { AccidentNotificationSchema } from './dataSchema'
 import { application } from './messages'
-import { IdentityApi, NationalRegistryUserApi } from '../dataProviders'
+import { IdentityApi, NationalRegistryV3UserApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
   AccidentTypeEnum,
@@ -104,7 +104,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi, IdentityApi],
+              api: [NationalRegistryV3UserApi, IdentityApi],
               delete: true,
             },
             {
@@ -117,7 +117,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi, IdentityApi],
+              api: [NationalRegistryV3UserApi, IdentityApi],
               delete: true,
             },
           ],
@@ -153,7 +153,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi],
+              api: [NationalRegistryV3UserApi],
               delete: true,
             },
             {
@@ -166,7 +166,7 @@ const AccidentNotificationTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi],
+              api: [NationalRegistryV3UserApi],
               delete: true,
             },
           ],

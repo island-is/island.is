@@ -1,3 +1,6 @@
 import { CatalogItem } from '@island.is/clients/charge-fjs-v2'
 
-export type CatalogItemWithQuantity = CatalogItem & { quantity: number }
+export type CatalogItemWithQuantity = CatalogItem & {
+  quantity: number
+  reference?: string
+}

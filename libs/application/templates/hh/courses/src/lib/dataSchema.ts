@@ -3,6 +3,7 @@ import * as kennitala from 'kennitala'
 import { isValidPhoneNumber } from '../utils/isValidPhoneNumber'
 import { YesOrNoEnum } from '@island.is/application/core'
 import { m } from './messages'
+import { COURSE_HAS_CHARGE_ITEM_CODE } from '../utils/constants'
 
 const paymentSchema = z
   .object({
@@ -53,7 +54,6 @@ const nationalIdWithNameSchema = z.object({
 
 const participantSchema = z.object({
   nationalIdWithName: nationalIdWithNameSchema,
-  healthcenter: z.string().optional(),
 })
 
 const userInformationSchema = z.object({
@@ -64,7 +64,7 @@ const userInformationSchema = z.object({
     .string()
     .min(1)
     .refine((v) => isValidPhoneNumber(v)),
-  healthcenter: z.string().min(1),
+  healthcenter: z.string().optional(),
 })
 
 export const dataSchema = z.object({
@@ -72,7 +72,8 @@ export const dataSchema = z.object({
   participantList: z.array(participantSchema).min(1),
   courseSelect: z.string().min(1),
   dateSelect: z.string().min(1),
-  payment: paymentSchema,
+  [COURSE_HAS_CHARGE_ITEM_CODE]: z.boolean().optional(),
+  payment: paymentSchema.optional(),
   userInformation: userInformationSchema,
 })
 
