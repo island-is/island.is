@@ -1144,7 +1144,9 @@ export const buildSliderField = (
     marginTop,
     marginBottom,
   } = data
+
   return {
+    ...extractCommonFields(data),
     component: FieldComponents.SLIDER,
     id,
     title,
