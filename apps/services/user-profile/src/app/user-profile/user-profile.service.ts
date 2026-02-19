@@ -1008,9 +1008,11 @@ export class UserProfileService {
           ClientType.FIRST_PARTY,
         )
         email = userProfile.email ?? null
-        emailStatus = userProfile.emailVerified
-          ? DataStatus.VERIFIED
-          : DataStatus.NOT_VERIFIED
+        if (email != null) {
+          emailStatus = userProfile.emailVerified
+            ? DataStatus.VERIFIED
+            : DataStatus.NOT_VERIFIED
+        }
       }
 
       return {
