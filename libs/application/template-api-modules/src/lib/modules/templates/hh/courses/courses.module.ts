@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
 import {
   ZendeskService,
   ZendeskServiceConfig,
@@ -16,9 +15,7 @@ import { HHCoursesConfig } from './courses.config'
   imports: [
     SharedTemplateAPIModule,
     ApplicationApiCoreModule,
-    ConfigModule.forRoot({
-      load: [HHCoursesConfig],
-    }),
+    HHCoursesConfig.registerOptional(),
   ],
   providers: [
     CoursesService,
