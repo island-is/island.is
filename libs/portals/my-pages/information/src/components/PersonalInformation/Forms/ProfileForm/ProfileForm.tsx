@@ -191,7 +191,9 @@ export const ProfileForm = ({
       const showDropModalType = showAll || showEmail || showTel || undefined
       const shouldShowDropModal =
         showDropModalType &&
-        (showDropModalType === 'mail' ? isShowingLegacyEmail : true)
+        (showDropModalType === 'mail' || showDropModalType === 'all'
+          ? isShowingLegacyEmail
+          : true)
 
       if (shouldShowDropModal) {
         setShowDropModal(showDropModalType)

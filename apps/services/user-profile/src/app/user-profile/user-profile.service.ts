@@ -706,14 +706,26 @@ export class UserProfileService {
       ],
     })
 
-    // Current user's profile for fallback email when actor has not selected one yet
-    const currentUserProfile = await this.findById(
-      toNationalId,
-      true,
-      ClientType.FIRST_PARTY,
-    )
-    const primaryEmail: string | null = currentUserProfile.email ?? null
-    const primaryEmailVerified = currentUserProfile.emailVerified
+    let primaryEmailLoad: Promise<{
+      email: string | null
+      emailVerified: boolean
+    }> | null = null
+    const loadPrimaryEmail = (): Promise<{
+      email: string | null
+      emailVerified: boolean
+    }> => {
+      if (!primaryEmailLoad) {
+        primaryEmailLoad = this.findById(
+          toNationalId,
+          true,
+          ClientType.FIRST_PARTY,
+        ).then((profile) => ({
+          email: profile.email ?? null,
+          emailVerified: profile.emailVerified,
+        }))
+      }
+      return primaryEmailLoad
+    }
 
     const actorProfiles = await Promise.all(
       incomingDelegations.data.map(async (delegation) => {
@@ -723,6 +735,7 @@ export class UserProfileService {
         )
 
         if (!emailPreference) {
+          const { email, emailVerified } = await loadPrimaryEmail()
           // Default email notifications off for company delegations when no actor profile yet
           const defaultEmailNotifications = kennitala.isCompany(
             delegation.fromNationalId,
@@ -732,18 +745,19 @@ export class UserProfileService {
           return {
             fromNationalId: delegation.fromNationalId,
             emailNotifications: defaultEmailNotifications,
-            email: primaryEmail,
-            emailVerified: primaryEmailVerified,
+            email,
+            emailVerified,
           }
         }
 
         const dto = emailPreference.toDto()
         // When actor profile exists but no email chosen yet (emailsId null), show primary email from the user profile
         if (dto.email == null && dto.emailsId == null) {
+          const { email, emailVerified } = await loadPrimaryEmail()
           return {
             ...dto,
-            email: primaryEmail,
-            emailVerified: primaryEmailVerified,
+            email,
+            emailVerified,
           }
         }
         return dto
