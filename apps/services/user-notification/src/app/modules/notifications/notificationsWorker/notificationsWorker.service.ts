@@ -259,7 +259,7 @@ export class NotificationsWorkerService {
     const { nationalId } = profile
 
     const allowSmsNotification = await this.featureFlagService.getValue(
-      Features.isSmsNotificationEnabled,
+      Features.isSendSmsNotificationsEnabled,
       false,
       { nationalId } as User,
     )
@@ -314,9 +314,9 @@ export class NotificationsWorkerService {
       return
     }
 
-    const fullName = await this.getName(nationalId)
+    const fullName = await this.getShortName(nationalId)
     const onBehalfOf = message.onBehalfOf?.nationalId
-      ? await this.getName(message.onBehalfOf?.nationalId)
+      ? await this.getShortName(message.onBehalfOf?.nationalId)
       : undefined
 
     try {
@@ -759,23 +759,47 @@ export class NotificationsWorkerService {
     }
   }
 
-  private async getName(nationalId: string): Promise<string> {
+  private async getPersonIdentity(
+    nationalId: string,
+  ): Promise<EinstaklingurDTONafnItar | null> {
     try {
-      let identity: CompanyExtendedInfo | EinstaklingurDTONafnItar | null
-
-      if (isCompany(nationalId)) {
-        identity = await this.companyRegistryService.getCompany(nationalId)
-        return identity?.name || ''
-      }
-
-      identity = await this.nationalRegistryService.getName(nationalId)
-      return identity?.birtNafn || identity?.fulltNafn || ''
+      return await this.nationalRegistryService.getName(nationalId)
     } catch (error) {
       this.logger.error('Error getting name from national registry', {
         error,
       })
+      return null
+    }
+  }
+
+  private async getCompanyName(nationalId: string): Promise<string> {
+    try {
+      const company = await this.companyRegistryService.getCompany(nationalId)
+      return company?.name || ''
+    } catch (error) {
+      this.logger.error('Error getting name from company registry', {
+        error,
+      })
       return ''
     }
+  }
+
+  private async getName(nationalId: string): Promise<string> {
+    if (isCompany(nationalId)) {
+      return this.getCompanyName(nationalId)
+    }
+    const identity = await this.getPersonIdentity(nationalId)
+    return identity?.birtNafn || identity?.fulltNafn || ''
+  }
+
+  private async getShortName(nationalId: string): Promise<string> {
+    if (isCompany(nationalId)) {
+      return this.getCompanyName(nationalId)
+    }
+    const identity = await this.getPersonIdentity(nationalId)
+    return (
+      identity?.eiginNafn || identity?.birtNafn || identity?.fulltNafn || ''
+    )
   }
 
   // When sending email to delegation holder we want to use third party login if we have a subjectId and are sending to a service portal url

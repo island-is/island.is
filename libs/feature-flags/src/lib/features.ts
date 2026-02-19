@@ -154,6 +154,7 @@ export enum Features {
 
   // SMS Notifications
   isSmsNotificationEnabled = 'isSmsNotificationEnabled',
+  isSendSmsNotificationsEnabled = 'isSendSmsNotificationsEnabled',
 }
 
 export enum ServerSideFeature {
