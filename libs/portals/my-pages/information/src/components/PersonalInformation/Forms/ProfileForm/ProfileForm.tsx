@@ -197,7 +197,9 @@ export const ProfileForm = ({
         setShowDropModal(showDropModalType)
       } else {
         setInternalLoading(true)
-        confirmNudge().then(() => closeAllModals())
+        confirmNudge()
+          .then(() => closeAllModals())
+          .catch(() => closeAllModals())
       }
     }
   }, [
