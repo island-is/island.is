@@ -5,21 +5,13 @@ import { Injectable } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
 
 import {
-  CaseActionType,
-  CaseAppealState,
-  CaseDecision,
-  CaseState,
   CaseTableColumnKey,
   caseTables,
   CaseTableType,
-  CaseType,
-  ContextMenuCaseActionType,
   IndictmentCaseReviewDecision,
   isDistrictCourtUser,
-  isIndictmentCase,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
-  isRequestCase,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -27,6 +19,13 @@ import { Case, CaseRepositoryService, Defendant, User } from '../repository'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
+import {
+  getActionOnRowClick,
+  getContextMenuActions,
+  getMatch,
+  isMyCase,
+  normalizeCaseTypeForDisplay,
+} from './caseTable.utils'
 import {
   caseTableWhereOptions,
   userAccessWhereOptions,
@@ -112,152 +111,12 @@ const getIncludes = (caseTableCellKeys: CaseTableColumnKey[], user: TUser) => {
   )
 }
 
-const isMyCase = (theCase: Case, user: TUser): boolean => {
-  if (isProsecutionUser(user)) {
-    return (
-      theCase.creatingProsecutorId === user.id ||
-      theCase.prosecutorId === user.id
-    )
-  }
-
-  if (isDistrictCourtUser(user)) {
-    return theCase.judge?.id === user.id || theCase.registrar?.id === user.id
-  }
-
-  return false
-}
-
-const getActionOnRowClick = (theCase: Case, user: TUser): CaseActionType => {
-  if (
-    isDistrictCourtUser(user) &&
-    isIndictmentCase(theCase.type) &&
-    theCase.state === CaseState.WAITING_FOR_CANCELLATION
-  ) {
-    return CaseActionType.COMPLETE_CANCELLED_CASE
-  }
-
-  return CaseActionType.OPEN_CASE
-}
-
-const canDeleteRequestCase = (caseToDelete: Case): boolean => {
-  return (
-    caseToDelete.state === CaseState.NEW ||
-    caseToDelete.state === CaseState.DRAFT ||
-    caseToDelete.state === CaseState.SUBMITTED ||
-    caseToDelete.state === CaseState.RECEIVED
-  )
-}
-
-const canDeleteIndictmentCase = (caseToDelete: Case): boolean => {
-  return (
-    caseToDelete.state === CaseState.DRAFT ||
-    caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
-  )
-}
-
-const canDeleteCase = (caseToDelete: Case, user: TUser): boolean => {
-  if (!isProsecutionUser(user)) {
-    return false
-  }
-
-  if (isRequestCase(caseToDelete.type)) {
-    return canDeleteRequestCase(caseToDelete)
-  }
-
-  if (isIndictmentCase(caseToDelete.type)) {
-    return canDeleteIndictmentCase(caseToDelete)
-  }
-
-  return false
-}
-
-const canCancelAppeal = (theCase: Case, user: TUser): boolean => {
-  if (!isProsecutionUser(user) || !isRequestCase(theCase.type)) {
-    return false
-  }
-
-  if (
-    (theCase.appealState === CaseAppealState.APPEALED ||
-      theCase.appealState === CaseAppealState.RECEIVED) &&
-    theCase.prosecutorPostponedAppealDate
-  ) {
-    return true
-  }
-
-  return false
-}
-
-const getContextMenuActions = (
-  theCase: Case,
-  user: TUser,
-): ContextMenuCaseActionType[] => {
-  if (
-    isDistrictCourtUser(user) &&
-    isIndictmentCase(theCase.type) &&
-    theCase.state === CaseState.WAITING_FOR_CANCELLATION
-  ) {
-    return []
-  }
-
-  const actions = [ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB]
-
-  if (canDeleteCase(theCase, user)) {
-    actions.push(ContextMenuCaseActionType.DELETE_CASE)
-  }
-
-  if (canCancelAppeal(theCase, user)) {
-    actions.push(ContextMenuCaseActionType.WITHDRAW_APPEAL)
-  }
-
-  return actions
-}
-
 @Injectable()
 export class CaseTableService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     private readonly caseRepositoryService: CaseRepositoryService,
   ) {}
-
-  private getMatch(
-    theCase: Case,
-    query: string,
-  ): { field: string; value: string } {
-    const lowerQuery = query.toLowerCase()
-
-    const matchingPoliceCaseNumber = theCase.policeCaseNumbers?.find((pcn) =>
-      pcn.toLowerCase().includes(lowerQuery),
-    )
-
-    if (matchingPoliceCaseNumber) {
-      return { field: 'policeCaseNumbers', value: matchingPoliceCaseNumber }
-    }
-
-    if (theCase.courtCaseNumber?.toLowerCase().includes(lowerQuery)) {
-      return { field: 'courtCaseNumber', value: theCase.courtCaseNumber }
-    }
-
-    if (theCase.appealCaseNumber?.toLowerCase().includes(lowerQuery)) {
-      return { field: 'appealCaseNumber', value: theCase.appealCaseNumber }
-    }
-
-    for (const d of theCase.defendants ?? []) {
-      if (d.nationalId?.toLowerCase().includes(lowerQuery)) {
-        return { field: 'defendantNationalId', value: d.nationalId }
-      }
-    }
-
-    for (const d of theCase.defendants ?? []) {
-      if (d.name?.toLowerCase().includes(lowerQuery)) {
-        return { field: 'defendantName', value: d.name }
-      }
-    }
-
-    return {
-      field: 'policeCaseNumbers',
-      value: theCase.policeCaseNumbers?.[0] ?? '',
-    }
-  }
 
   async getCaseTableRows(
     type: CaseTableType,
@@ -398,13 +257,9 @@ export class CaseTableService {
     })
 
     const rows = cases.flatMap((c) => {
-      const match = this.getMatch(c, query)
+      const match = getMatch(c, query)
 
-      const caseType =
-        c.type === CaseType.CUSTODY &&
-        c.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-          ? CaseType.TRAVEL_BAN
-          : c.type
+      const caseType = normalizeCaseTypeForDisplay(c.type, c.decision)
 
       const defendants = c.defendants ?? []
 
