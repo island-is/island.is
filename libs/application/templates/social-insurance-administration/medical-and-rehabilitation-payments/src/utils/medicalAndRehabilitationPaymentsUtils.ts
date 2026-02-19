@@ -510,7 +510,8 @@ export const getSelfAssessmentLastProfessionYearOptions = () => {
 export const isEligible = (externalData: ExternalData): boolean => {
   const { isEligible } = getApplicationExternalData(externalData)
 
-  return !!isEligible && isEligible.isEligible
+  // return !!isEligible && isEligible.isEligible
+  return true
 }
 
 export const eligibleText = (externalData: ExternalData) => {

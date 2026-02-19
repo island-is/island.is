@@ -91,7 +91,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
-        exit: ['populateIncomeTable'],
+        // exit: ['populateIncomeTable'],
         meta: {
           name: States.PREREQUISITES,
           status: FormModes.DRAFT,
