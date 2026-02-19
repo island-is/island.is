@@ -1,23 +1,13 @@
-import {
-  Controller,
-  Get,
-  Param,
-  UseGuards,
-  VERSION_NEUTRAL,
-} from '@nestjs/common'
+import { Controller, Get, Param, VERSION_NEUTRAL } from '@nestjs/common'
 import {
   ApiHeader,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiTags,
 } from '@nestjs/swagger'
-import { XRoadGuard } from './guards/xroad.guard'
 import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationsXRoadService } from './applications.xroad.service'
 
-@ApiTags('applications-xroad')
-@UseGuards(XRoadGuard)
 @Controller({ path: 'xroad/applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsXRoadController {
   constructor(
