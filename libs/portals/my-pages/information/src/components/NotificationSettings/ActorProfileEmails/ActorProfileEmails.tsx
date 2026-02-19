@@ -84,10 +84,10 @@ export const ActorProfileEmails = ({
     const emailsFilter = currentEmailId
       ? { email: currentEmailId }
       : actorProfile.emailsId
-        ? { id: actorProfile.emailsId }
-        : actorProfile.email
-          ? { email: actorProfile.email }
-          : null
+      ? { id: actorProfile.emailsId }
+      : actorProfile.email
+      ? { email: actorProfile.email }
+      : null
 
     if (!emails || !emailsFilter) {
       return
