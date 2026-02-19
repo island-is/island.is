@@ -166,17 +166,14 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           )}
           {answers?.fishingLicenseFurtherInformation?.attachments &&
             answers.fishingLicenseFurtherInformation.attachments.map(
-              (attachment, index) => (
+              (attachment, index, attachments) => (
                 <OverviewItem
                   label={
-                    overview.general[
-                      `attachment${
-                        (answers.fishingLicenseFurtherInformation.attachments
-                          ?.length ?? 0) > 1
-                          ? index + 1
-                          : ''
-                      }` as keyof typeof overview.general
-                    ]
+                    attachments.length > 1
+                      ? index === 0
+                        ? overview.general.attachment1
+                        : overview.general.attachment2
+                      : overview.general.attachment
                   }
                   value={attachment.name}
                   color="blue600"
