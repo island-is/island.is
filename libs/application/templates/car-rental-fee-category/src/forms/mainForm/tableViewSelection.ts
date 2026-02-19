@@ -4,11 +4,9 @@ import {
   buildSection,
   getValueViaPath,
 } from '@island.is/application/core'
-import { EntryModel } from '@island.is/clients-rental-day-rate'
 import { m } from '../../lib/messages'
-import { buildCurrentCarMap } from '../../utils/carCategoryUtils'
-import { RateCategory, UploadSelection } from '../../utils/constants'
-import { CurrentVehicleWithMilage } from '../../utils/types'
+import { getManualMileageTableRows } from '../../utils/carCategoryUtils'
+import { UploadSelection } from '../../utils/constants'
 
 export const tableViewSelectionSection = buildSection({
   condition: (answers) => {
@@ -30,40 +28,17 @@ export const tableViewSelectionSection = buildSection({
           doesNotRequireAnswer: true,
           rowIdKey: 'permno',
           rows: (application) => {
-            const vehicles =
-              getValueViaPath<CurrentVehicleWithMilage[]>(
+            return getManualMileageTableRows(
+              getValueViaPath(
                 application.externalData,
                 'getCurrentVehicles.data',
-              ) ?? []
-            const rates =
-              getValueViaPath<EntryModel[]>(
+              ),
+              getValueViaPath(
                 application.externalData,
                 'getCurrentVehiclesRateCategory.data',
-              ) ?? []
-            const rateToChangeTo = getValueViaPath<RateCategory>(
-              application.answers,
-              'categorySelectionRadio',
+              ),
+              getValueViaPath(application.answers, 'categorySelectionRadio'),
             )
-
-            const currentCarMap = buildCurrentCarMap(vehicles, rates)
-
-            return vehicles
-              .filter((vehicle) => {
-                if (!vehicle.permno) {
-                  return false
-                }
-
-                const currentCar = currentCarMap[vehicle.permno]
-                if (!currentCar) {
-                  return false
-                }
-
-                return currentCar.category !== rateToChangeTo
-              })
-              .map((vehicle) => ({
-                permno: vehicle.permno as string,
-                latestMilage: undefined,
-              }))
           },
           headers: [
             {
