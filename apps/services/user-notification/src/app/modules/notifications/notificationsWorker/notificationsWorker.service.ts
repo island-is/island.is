@@ -333,16 +333,6 @@ export class NotificationsWorkerService {
       return
     }
 
-    if (!actorProfile.emailNotifications) {
-      this.logger.info(
-        'Actor has email notifications disabled for this delegation',
-        {
-          messageId: args.messageId,
-        },
-      )
-      return
-    }
-
     const locale: Locale = actorProfile.locale
       ? mapToLocale(actorProfile.locale)
       : 'is'
