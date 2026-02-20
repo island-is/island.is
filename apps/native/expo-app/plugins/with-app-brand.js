@@ -10,7 +10,7 @@ const ADAPTIVE_ICON_FILES = [
 /**
  * Sets android:inset on the <foreground> element of adaptive icon XMLs.
  */
-const withAdaptiveIconInset = (config, inset = '10%') => {
+const withAdaptiveIconInset = (config, inset = '22%') => {
   return withDangerousMod(config, [
     'android',
     (mod) => {
@@ -22,11 +22,17 @@ const withAdaptiveIconInset = (config, inset = '10%') => {
 
         let content = fs.readFileSync(filePath, 'utf8')
 
+        // Match
+        // <foreground android:drawable="@mipmap/ic_launcher_foreground"/>
+
+        // Replace with
+        // <foreground><inset android:drawable="@mipmap/ic_launcher_foreground" android:inset="..." /></foreground>
+
         content = content.replace(
-          /(<foreground\b[^>]*?)(\/?>)/g,
+          /<foreground(\b[^>]*?)(\/?>)/g,
           (match, attrs, closing) => {
             if (attrs.includes('android:inset')) return match
-            return `${attrs} android:inset="${inset}"${closing}`
+            return `<foreground><inset${attrs} android:inset="${inset}" /></foreground>`
           },
         )
 

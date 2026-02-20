@@ -74,6 +74,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "./plugins/license-widget",
       "expo-router",
       "expo-sharing",
       "react-native-spotlight-search",
