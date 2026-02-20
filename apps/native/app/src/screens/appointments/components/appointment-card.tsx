@@ -3,12 +3,12 @@ import { useIntl } from 'react-intl'
 import { Image, ImageSourcePropType } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import calendarIcon from '../../../assets/icons/calendar.png'
-import chevronForward from '../../../assets/icons/chevron-forward.png'
 import locationIcon from '../../../assets/icons/location.png'
 import timeOutlineIcon from '../../../assets/icons/time-outline.png'
 import { Typography } from '../../../ui'
 import { dynamicColor } from '../../../ui/utils/dynamic-color'
 import { formatAppointmentDate } from '../formatAppointmentDate'
+import chevronForward from '../../../assets/icons/chevron-forward.png'
 
 const Host = styled.TouchableHighlight`
   border-radius: ${({ theme }) => theme.border.radius.large};
