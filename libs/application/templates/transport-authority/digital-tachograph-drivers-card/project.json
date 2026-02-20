@@ -20,7 +20,7 @@
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/transport-authority/digital-tachograph-drivers-card/src/**/*.{js,ts,tsx}'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/transport-authority/digital-tachograph-drivers-card/src/lib/messages/*.ts'"
       }
     }
   }
