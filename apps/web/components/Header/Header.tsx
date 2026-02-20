@@ -64,7 +64,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
       <Hidden print={true}>
         <FixedNav organizationSearchFilter={organizationSearchFilter} />
         <GridContainer>
-          <GridRow>
+          <GridRow marginTop={[4, 4, 0]}>
             <GridColumn span="12/12" paddingTop={2} paddingBottom={2}>
               <Columns alignY="center" space={2}>
                 <Column width="content">
