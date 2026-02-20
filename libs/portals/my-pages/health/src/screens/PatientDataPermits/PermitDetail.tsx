@@ -1,7 +1,15 @@
 import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
-import { Box, Tag, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Table as T,
+  Tag,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  ExpandRow,
   formatDate,
   formatDateWithTime,
   InfoLine,
@@ -18,6 +26,7 @@ import {
   useInvalidatePatientDataPermitMutation,
 } from './PatientDataPermits.generated'
 import { HealthPaths } from '../../lib/paths'
+import { permitTagSelector } from '../../utils/tagSelector'
 
 const PermitDetail: React.FC = () => {
   const { formatMessage, lang } = useLocale()
@@ -33,6 +42,11 @@ const PermitDetail: React.FC = () => {
   })
 
   const permit = data?.healthDirectoratePatientDataPermits?.consent
+  const history = data?.healthDirectoratePatientDataPermits?.history ?? []
+
+  const isActive =
+    permit?.status === HealthDirectoratePermitStatus.active ||
+    permit?.status === HealthDirectoratePermitStatus.awaitingApproval
 
   const onInvalidateSubmit = () => {
     invalidatePermit()
@@ -47,18 +61,49 @@ const PermitDetail: React.FC = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(messages.permit)}
-      intro={formatMessage(messages.patientDataPermitDescription)}
+      title={formatMessage(messages.patientDataPermit)}
+      intro={formatMessage(messages.permitDetailIntro)}
       serviceProviderSlug="landlaeknir"
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirPatientPermitsTooltip,
       )}
+      buttonGroup={
+        !loading && !error
+          ? [
+              <Button
+                key="downloadPDF"
+                variant="utility"
+                icon="download"
+                iconType="outline"
+                size="small"
+              >
+                {formatMessage(messages.downloadPDF)}
+              </Button>,
+              <Button
+                key="editPermit"
+                variant="utility"
+                colorScheme="primary"
+                icon="arrowForward"
+                iconType="outline"
+                size="small"
+                onClick={() =>
+                  navigate(HealthPaths.HealthPatientDataPermitsAdd)
+                }
+              >
+                {formatMessage(messages.editPermit)}
+              </Button>,
+            ]
+          : undefined
+      }
     >
       {error && !loading && (
         <Problem title={formatMessage(messages.errorTryAgain)} />
       )}
       {!error && (
         <Box>
+          <Text variant="eyebrow" color="purple400" marginBottom={2}>
+            {formatMessage(messages.information)}
+          </Text>
           <InfoLineStack>
             <InfoLine
               label={formatMessage(messages.referralFrom) ?? ''}
@@ -71,35 +116,29 @@ const PermitDetail: React.FC = () => {
               }}
             />
             <InfoLine
-              label={formatMessage(messages.publicationDate) ?? ''}
+              label={formatMessage(messages.lastModified) ?? ''}
               content={formatDateWithTime(permit?.createdAt?.toString() ?? '')}
               loading={loading}
             />
             <InfoLine
               label={formatMessage(messages.status) ?? ''}
               content={
-                <Tag
-                  variant={
-                    permit?.status === HealthDirectoratePermitStatus.active
-                      ? 'blue'
-                      : permit?.status === HealthDirectoratePermitStatus.expired
-                      ? 'red'
-                      : 'purple'
-                  }
-                  disabled
-                  outlined
-                >
-                  {permit?.status === HealthDirectoratePermitStatus.active
-                    ? formatMessage(messages.active)
-                    : permit?.status === HealthDirectoratePermitStatus.expired
-                    ? formatMessage(messages.expired)
-                    : permit?.status === HealthDirectoratePermitStatus.inactive
-                    ? formatMessage(messages.invalid)
-                    : formatMessage(messages.unknown)}
-                </Tag>
+                permit?.status ? (
+                  <Tag
+                    variant={
+                      permitTagSelector(permit.status, formatMessage).variant
+                    }
+                    outlined={
+                      permitTagSelector(permit.status, formatMessage).outlined
+                    }
+                    disabled
+                  >
+                    {permitTagSelector(permit.status, formatMessage).label}
+                  </Tag>
+                ) : undefined
               }
               button={
-                permit?.status === HealthDirectoratePermitStatus.active
+                isActive
                   ? {
                       action: () => setModalOpen(true),
                       label: formatMessage(messages.invalidatePermit),
@@ -114,9 +153,9 @@ const PermitDetail: React.FC = () => {
               label={formatMessage(messages.validTime)}
               content={
                 permit?.validFrom && permit?.validTo
-                  ? formatDate(permit?.validFrom?.toString()) +
+                  ? formatDate(permit.validFrom.toString()) +
                     ' - ' +
-                    formatDate(permit?.validTo?.toString())
+                    formatDate(permit.validTo.toString())
                   : undefined
               }
               loading={loading}
@@ -134,14 +173,75 @@ const PermitDetail: React.FC = () => {
               loading={loading}
             />
           </InfoLineStack>
+
+          {history.length > 0 && (
+            <Box marginTop={5}>
+              <Text variant="eyebrow" color="purple400" marginBottom={2}>
+                {formatMessage(messages.permitChangeHistory)}
+              </Text>
+              <T.Table>
+                <T.Head>
+                  <T.Row>
+                    <T.HeadData />
+                    <T.HeadData>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(messages.lastModified)}
+                      </Text>
+                    </T.HeadData>
+                    <T.HeadData>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(messages.medicineValidFrom)}
+                      </Text>
+                    </T.HeadData>
+                    <T.HeadData>
+                      <Text variant="medium" fontWeight="semiBold">
+                        {formatMessage(messages.medicineValidTo)}
+                      </Text>
+                    </T.HeadData>
+                  </T.Row>
+                </T.Head>
+                <T.Body>
+                  {history.map((entry, index) => (
+                    <ExpandRow
+                      key={index}
+                      data={[
+                        {
+                          value: formatDate(
+                            entry.changedAt?.toString() ??
+                              entry.createdAt?.toString() ??
+                              '',
+                          ),
+                        },
+                        {
+                          value: formatDate(entry.validFrom?.toString() ?? ''),
+                        },
+                        {
+                          value: entry.validTo
+                            ? formatDate(entry.validTo.toString())
+                            : '—',
+                        },
+                      ]}
+                    >
+                      <Box padding={2} background="blue100">
+                        <Text variant="small" fontWeight="semiBold">
+                          {formatMessage(messages.validForCountries)}
+                        </Text>
+                        <Text variant="small">
+                          {entry.countries.map((c) => c.name).join(', ')}
+                        </Text>
+                      </Box>
+                    </ExpandRow>
+                  ))}
+                </T.Body>
+              </T.Table>
+            </Box>
+          )}
         </Box>
       )}
       <InvalidatePermitModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSubmit={() => {
-          onInvalidateSubmit()
-        }}
+        onSubmit={onInvalidateSubmit}
         countries={permit?.countries}
         validFrom={formatDate(permit?.validFrom)}
         validTo={formatDate(permit?.validTo)}

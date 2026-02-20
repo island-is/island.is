@@ -2169,7 +2169,7 @@ export const messages = defineMessages({
     id: 'sp.health:landspitali',
   },
   invalidatePermit: {
-    defaultMessage: 'Eyða',
+    defaultMessage: 'Óvirkja heimild',
     id: 'sp.health:invalidate-permit',
   },
   areYouSureAboutInvalidatingPermit: {
@@ -2230,6 +2230,27 @@ export const messages = defineMessages({
     defaultMessage:
       'Ekki tókst að eyða heimild. Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:permit-invalidated-error',
+  },
+  permitDetailIntro: {
+    defaultMessage:
+      'Heimild þessi gildir til birtingar sjúkraskrárupplýsinga milli Íslands og þeirra landa sem eru valin. Þú getur valið að óvirkja heimildina hvenær sem er eða framlengja útrunna heimild.',
+    id: 'sp.health:permit-detail-intro',
+  },
+  permitChangeHistory: {
+    defaultMessage: 'Breytingasaga',
+    id: 'sp.health:permit-change-history',
+  },
+  lastModified: {
+    defaultMessage: 'Síðast breytt',
+    id: 'sp.health:last-modified',
+  },
+  activatePermit: {
+    defaultMessage: 'Virkja heimild',
+    id: 'sp.health:activate-permit',
+  },
+  editPermit: {
+    defaultMessage: 'Breyta heimild',
+    id: 'sp.health:edit-permit',
   },
   countriesError: {
     defaultMessage:

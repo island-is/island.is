@@ -1,33 +1,26 @@
-import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
 import {
   ActionCard,
   Box,
   Button,
   Stack,
-  Text,
-  ToggleSwitchButton,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCardLoader,
-  formatDate,
   IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { permitTagSelector } from '../../utils/tagSelector'
 import { useGetPatientDataPermitsQuery } from './PatientDataPermits.generated'
-import * as styles from './Permits.css'
 
 const PatientDataPermits: FC = () => {
   useNamespaces('sp.health')
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
-  const [showExpiredPermits, setShowExpiredPermits] = useState(false)
-
   const { data, loading, error } = useGetPatientDataPermitsQuery({
     variables: {
       locale: lang,
@@ -35,16 +28,7 @@ const PatientDataPermits: FC = () => {
   })
 
   const consent = data?.healthDirectoratePatientDataPermits?.consent
-  const allPermits = consent ? [consent] : []
-
-  const dataLength = allPermits.length
-
-  const filteredData = allPermits.filter((item) =>
-    showExpiredPermits
-      ? item.status
-      : item.status === HealthDirectoratePermitStatus.active ||
-        item.status === HealthDirectoratePermitStatus.awaitingApproval,
-  )
+  const permits = consent ? [consent] : []
 
   return (
     <IntroWrapper
@@ -66,19 +50,22 @@ const PatientDataPermits: FC = () => {
               >
                 {formatMessage(messages.readAboutPermit)}
               </Button>,
-              <Button
-                key="addNewPermit"
-                variant="utility"
-                colorScheme="primary"
-                icon="arrowForward"
-                iconType="outline"
-                size="small"
-                onClick={() =>
-                  navigate(HealthPaths.HealthPatientDataPermitsAdd)
-                }
-              >
-                {formatMessage(messages.addPermit)}
-              </Button>,
+              ...(!consent
+                ? [
+                    <Button
+                      key="addNewPermit"
+                      variant="primary"
+                      icon="arrowForward"
+                      iconType="outline"
+                      size="small"
+                      onClick={() =>
+                        navigate(HealthPaths.HealthPatientDataPermitsAdd)
+                      }
+                    >
+                      {formatMessage(messages.addPermit)}
+                    </Button>,
+                  ]
+                : []),
             ]
           : undefined
       }
@@ -89,7 +76,7 @@ const PatientDataPermits: FC = () => {
         </Box>
       )}
 
-      {!loading && !error && dataLength === 0 && (
+      {!loading && !error && permits.length === 0 && (
         <Problem
           type="no_data"
           noBorder={false}
@@ -100,76 +87,32 @@ const PatientDataPermits: FC = () => {
         />
       )}
       {!loading && error && <Problem error={error} noBorder={false} />}
-      {!loading && !error && dataLength > 0 && (
-        <Box>
-          <Box
-            justifyContent="spaceBetween"
-            alignItems="center"
-            display="flex"
-            marginBottom={2}
-            className={styles.toggleBox}
-          >
-            <Text variant="medium">
-              {filteredData?.length === 1
-                ? formatMessage(messages.singlePermit)
-                : formatMessage(messages.numberOfPermits, {
-                    number: filteredData?.length,
-                  })}
-            </Text>
-            <ToggleSwitchButton
-              className={styles.toggleButton}
-              label={formatMessage(messages.showExpiredPermits)}
-              onChange={() => setShowExpiredPermits(!showExpiredPermits)}
-              checked={showExpiredPermits}
-            />
-          </Box>
-          {dataLength > 0 &&
-            filteredData?.length === 0 &&
-            !showExpiredPermits && (
-              <Problem
-                type="no_data"
-                noBorder={false}
-                title={formatMessage(messages.noData)}
-                message={formatMessage(messages.noActivePermitsRegistered)}
-                imgSrc="./assets/images/empty_flower.svg"
-                imgAlt=""
-              />
-            )}
-          <Stack space={2}>
-            {filteredData?.map((permit) => (
-              <ActionCard
-                key={permit.id}
-                backgroundColor={
-                  permit.status ===
-                  HealthDirectoratePermitStatus.awaitingApproval
-                    ? 'blue'
-                    : 'white'
-                }
-                heading={formatMessage(messages.permit)}
-                text={permit.countries
-                  .map((country) => country.name)
-                  .join(', ')}
-                date={formatMessage(messages.validToFrom, {
-                  fromDate: formatDate(permit.validFrom),
-                  toDate: formatDate(permit.validTo),
-                })}
-                tag={permitTagSelector(permit.status, formatMessage)}
-                cta={{
-                  size: 'small',
-                  variant: 'text',
-                  label: formatMessage(messages.seeMore),
-                  onClick: () =>
-                    navigate(
-                      HealthPaths.HealthPatientDataPermitsDetail.replace(
-                        ':id',
-                        permit.id ?? '',
-                      ),
+      {!loading && !error && permits.length > 0 && (
+        <Stack space={2}>
+          {permits.map((permit) => (
+            <ActionCard
+              key={permit.id}
+              backgroundColor="white"
+              eyebrow={formatMessage(messages.healthDirectorate)}
+              eyebrowColor="purple400"
+              heading={formatMessage(messages.patientDataPermit)}
+              text={formatMessage(messages.patientDataSharedDescription)}
+              tag={permitTagSelector(permit.status, formatMessage)}
+              cta={{
+                size: 'small',
+                variant: 'text',
+                label: formatMessage(messages.seeMore),
+                onClick: () =>
+                  navigate(
+                    HealthPaths.HealthPatientDataPermitsDetail.replace(
+                      ':id',
+                      permit.id ?? '',
                     ),
-                }}
-              />
-            ))}
-          </Stack>
-        </Box>
+                  ),
+              }}
+            />
+          ))}
+        </Stack>
       )}
     </IntroWrapper>
   )
