@@ -88,6 +88,14 @@ export const NavComponent = ({
 
   const renderChevron = () => {
     const isSectionOrScreen = type === 'Section' || type === 'Screen'
+
+    if (
+      type === 'Section' &&
+      (data as FormSystemSection).sectionType === SectionTypes.PARTIES
+    ) {
+      return
+    }
+
     const isClosed =
       !openComponents.sections.includes(data.id) &&
       !openComponents.screens.includes(data.id)
