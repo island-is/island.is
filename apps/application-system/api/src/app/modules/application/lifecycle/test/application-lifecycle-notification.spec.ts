@@ -157,6 +157,9 @@ describe('ApplicationLifeCycleService', () => {
         {
           recipient: 'user345',
           templateId: 'template123',
+          onBehalfOf: {
+            nationalId: 'user123',
+          },
           args: [
             {
               key: 'externalBody',
@@ -171,6 +174,9 @@ describe('ApplicationLifeCycleService', () => {
         {
           recipient: 'user678',
           templateId: 'template123',
+          onBehalfOf: {
+            nationalId: 'user123',
+          },
           args: [
             {
               key: 'externalBody',
