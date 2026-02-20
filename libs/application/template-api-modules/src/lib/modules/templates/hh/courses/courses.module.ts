@@ -22,11 +22,16 @@ import { HHCoursesConfig } from './courses.config'
     ZendeskService,
     {
       provide: ZendeskServiceConfig.KEY,
-      useFactory: (config: ConfigType<typeof HHCoursesConfig>) => ({
-        subdomain: config.zendeskSubdomain,
-        formEmail: config.zendeskFormTokenEmail,
-        formToken: config.zendeskFormToken,
-      }),
+      useFactory: (config: ConfigType<typeof HHCoursesConfig>) => {
+        if (!config.isConfigured) {
+          return { subdomain: '', formEmail: '', formToken: '' }
+        }
+        return {
+          subdomain: config.zendeskSubdomain,
+          formEmail: config.zendeskFormTokenEmail,
+          formToken: config.zendeskFormToken,
+        }
+      },
       inject: [HHCoursesConfig.KEY],
     },
   ],
