@@ -20,7 +20,7 @@ import { TwoColumnText } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 import { webRichText } from '@island.is/web/utils/richText'
 
-const columnSpan: SpanType = ['12/12', '12/12', '12/12', '6/12']
+const columnSpan: SpanType = ['12/12', '12/12', '12/12', '12/12', '6/12']
 
 interface SliceProps {
   slice: TwoColumnText
@@ -75,7 +75,7 @@ export const TwoColumnTextSlice: React.FC<
           <GridRow>
             <GridColumn
               span={slice.onlyUseOneTitle ? '12/12' : columnSpan}
-              hiddenBelow="lg"
+              hiddenBelow="xl"
             >
               {slice.leftTitle && (
                 <Text variant="h2" as="h2" id={leftId}>
@@ -84,7 +84,7 @@ export const TwoColumnTextSlice: React.FC<
               )}
             </GridColumn>
             {!slice.onlyUseOneTitle && (
-              <GridColumn span={columnSpan} hiddenBelow="lg">
+              <GridColumn span={columnSpan} hiddenBelow="xl">
                 {slice.rightTitle && (
                   <Text variant="h2" as="h2" id={rightId}>
                     <Hyphen>{slice.rightTitle}</Hyphen>
@@ -96,7 +96,7 @@ export const TwoColumnTextSlice: React.FC<
           <GridRow>
             <GridColumn span={columnSpan}>
               {slice.leftTitle && (
-                <Hidden above="md">
+                <Hidden above="lg">
                   <Text variant="h2" as="h2">
                     {slice.leftTitle}
                   </Text>
@@ -129,7 +129,7 @@ export const TwoColumnTextSlice: React.FC<
               }
             >
               {!slice.onlyUseOneTitle && slice.rightTitle && (
-                <Hidden above="md">
+                <Hidden above="lg">
                   <Text variant="h2" as="h2">
                     {slice.rightTitle}
                   </Text>
