@@ -23,10 +23,10 @@ export const SecondarySchoolClientConfig = defineConfig<z.infer<typeof schema>>(
   },
 )
 
-export const SecondarySchoolPublicProgrammeClientConfig = defineConfig<
+export const SecondarySchoolPublicClientConfig = defineConfig<
   z.infer<typeof schema>
 >({
-  name: 'SecondarySchoolClient',
+  name: 'SecondarySchoolClientPublic',
   schema,
   load(env) {
     return {

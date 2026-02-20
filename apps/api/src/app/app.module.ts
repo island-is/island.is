@@ -229,7 +229,10 @@ import { emailModuleConfig } from '@island.is/email-service'
 import { ZendeskServiceConfig } from '@island.is/clients/zendesk'
 import { VerdictsClientConfig } from '@island.is/clients/verdicts'
 import { VerdictsModule } from '@island.is/api/domains/verdicts'
-import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import {
+  SecondarySchoolClientConfig,
+  SecondarySchoolPublicClientConfig,
+} from '@island.is/clients/secondary-school'
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { LshClientConfig } from '@island.is/clients/lsh'
@@ -501,6 +504,7 @@ const environment = getConfig
         emailModuleConfig,
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
+        SecondarySchoolPublicClientConfig,
         NationalRegistryV3ApplicationsClientConfig,
         PaymentsApiModuleConfig,
         VmstUnemploymentClientConfig,

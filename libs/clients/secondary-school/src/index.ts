@@ -3,4 +3,7 @@ export * from './lib/secondarySchoolClient.module'
 export * from './lib/secondarySchoolClient.types'
 export * from '../gen/fetch'
 
-export { SecondarySchoolClientConfig } from './lib/secondarySchoolClient.config'
+export {
+  SecondarySchoolClientConfig,
+  SecondarySchoolPublicClientConfig,
+} from './lib/secondarySchoolClient.config'
