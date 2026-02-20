@@ -228,20 +228,22 @@ describe('ApplicationLifeCycleService', () => {
 
       const result = await service['preparePrunedNotification'](mockApplication)
 
-      expect(result).toEqual({
-        recipient: 'user123',
-        templateId: 'template123',
-        args: [
-          {
-            key: 'externalBody',
-            value: 'external message for 123',
-          },
-          {
-            key: 'internalBody',
-            value: 'internal message for 123',
-          },
-        ],
-      })
+      expect(result).toEqual([
+        {
+          recipient: 'user123',
+          templateId: 'template123',
+          args: [
+            {
+              key: 'externalBody',
+              value: 'external message for 123',
+            },
+            {
+              key: 'internalBody',
+              value: 'internal message for 123',
+            },
+          ],
+        },
+      ])
     })
 
     it('should return null when required fields are missing', async () => {
