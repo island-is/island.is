@@ -1,10 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { ScreenErrorMessageDto } from './screenErrorMessage.dto'
+import { ValidationErrorDto } from '../../../screens/models/dto/validationError.dto'
 
 export class SubmitApplicationResponseDto {
   @ApiProperty()
-  success!: boolean
+  submissionFailed!: boolean
 
-  @ApiPropertyOptional({ type: [ScreenErrorMessageDto] })
-  screenErrorMessages?: ScreenErrorMessageDto[]
+  @ApiPropertyOptional({ type: ValidationErrorDto })
+  validationError?: ValidationErrorDto
 }

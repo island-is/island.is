@@ -40,6 +40,30 @@ export const buildCurrentCarMap = (
   }, {} as CarMap)
 }
 
+export const getManualMileageTableRows = (
+  vehicles: CurrentVehicleWithMilage[] | undefined,
+  rates: EntryModel[] | undefined,
+  rateToChangeTo: RateCategory | undefined,
+): Array<{ permno: string; latestMilage: undefined }> => {
+  if (!vehicles?.length) return []
+
+  const currentCarMap = buildCurrentCarMap(vehicles, rates)
+
+  return vehicles
+    .filter((vehicle) => {
+      if (!vehicle.permno) return false
+
+      const currentCar = currentCarMap[vehicle.permno]
+      if (!currentCar) return false
+
+      return currentCar.category !== rateToChangeTo
+    })
+    .map((vehicle) => ({
+      permno: vehicle.permno as string,
+      latestMilage: undefined,
+    }))
+}
+
 export const getUploadFileType = (
   nameOrMime: string,
 ): UploadFileType | null => {
