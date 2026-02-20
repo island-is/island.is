@@ -5,6 +5,7 @@ import { AppState, Keyboard } from 'react-native'
 import { authStore, useAuthStore } from '@/stores/auth-store'
 import { preferencesStore } from '@/stores/preferences-store'
 import { isOnboarded } from '@/utils/onboarding'
+import { config } from '../../config'
 
 export default function AuthLayout() {
   const router = useRouter()
@@ -30,7 +31,7 @@ export default function AuthLayout() {
   // On mount: always show the lock screen if the user is onboarded.
   // The lock screen itself decides whether to auto-dismiss (within timeout) or require unlock.
   useEffect(() => {
-    if (isOnboarded()) {
+    if (isOnboarded() && !config.isTestingApp) {
       showLockScreen()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

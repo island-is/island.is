@@ -221,12 +221,12 @@ export default function SettingsScreen() {
       })
   }
 
-  // <View style={{ flex: 1 }} testID={testIDs.SCREEN_SETTINGS}>
   return (
     <ScrollView
       style={{ flex: 1 }}
       testID={testIDs.USER_SCREEN_SETTINGS}
       stickyHeaderIndices={[0]}
+      nestedScrollEnabled={true}
     >
       <View>
         <NavigationBarSheet
@@ -597,5 +597,4 @@ export default function SettingsScreen() {
       </TableViewGroup>
     </ScrollView>
   )
-  // </View>
 }

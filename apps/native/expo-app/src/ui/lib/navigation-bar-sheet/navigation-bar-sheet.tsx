@@ -96,7 +96,14 @@ export function NavigationBarSheet({
   // then do the same isHandle check there to toggle status-bar color
 
   return (
-    <View style={{ backgroundColor: PlatformColor('systemBackground') }}>
+    <View
+      style={{
+        backgroundColor:
+          Platform.OS === 'ios'
+            ? PlatformColor('systemBackground')
+            : theme.shade.background,
+      }}
+    >
       {isHandle && closable && <Handle />}
       <SafeAreaView edges={['left', 'right']}>
         {(closable || title) && (
