@@ -111,6 +111,8 @@ export class FishingLicenseService {
               },
               invalidOption: o.ogildurValkostur,
             })) || [],
+          needsOwnershipRegistration:
+            l.serhaefdarSpurningarGogn?.vantarEignarhaldskraningu ?? false,
         }
       }) as FishingLicenseLicense[]
     } catch (error) {

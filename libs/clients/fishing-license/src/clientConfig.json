@@ -173,6 +173,11 @@
             "items": { "$ref": "#/components/schemas/Valmoguleiki" },
             "description": "Listi af dropdown valmöguleikum.",
             "nullable": true
+          },
+          "vantarEignarhaldskraningu": {
+            "type": "boolean",
+            "description": "Hvort eignarhalds skráning skuli fylgja umsókn.",
+            "nullable": true
           }
         },
         "additionalProperties": false

@@ -5,6 +5,7 @@ import { LanguageFields } from './languageFields'
 export const ScreenFragment = gql`
   fragment Screen on FormSystemScreen {
     id
+    identifier
     sectionId
     name {
       ...LanguageFields
@@ -13,7 +14,17 @@ export const ScreenFragment = gql`
     isHidden
     isCompleted
     multiset
-    callRuleset
+    shouldValidate
+    shouldPopulate
+    screenError {
+      hasError
+      title {
+        ...LanguageFields
+      }
+      message {
+        ...LanguageFields
+      }
+    }
     fields {
       ...Field
     }

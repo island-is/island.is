@@ -4,6 +4,7 @@ import {
   IsBoolean,
   IsNumber,
   IsOptional,
+  IsUUID,
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
@@ -16,6 +17,11 @@ export class UpdateScreenDto {
   name?: LanguageType
 
   @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  identifier?: string
+
+  @IsOptional()
   @IsNumber()
   @ApiPropertyOptional()
   multiset?: number
@@ -23,5 +29,10 @@ export class UpdateScreenDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
-  callRuleset?: boolean
+  shouldValidate?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  shouldPopulate?: boolean
 }
