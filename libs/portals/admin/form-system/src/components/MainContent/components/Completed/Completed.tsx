@@ -138,7 +138,7 @@ export const Completed = () => {
         <AlertMessage
           type="success"
           title={confirmationHeader?.is}
-          message={confirmationText?.is}
+          message={<Text whiteSpace="breakSpaces">{confirmationText?.is}</Text>}
         />
       </Box>
       <Input
