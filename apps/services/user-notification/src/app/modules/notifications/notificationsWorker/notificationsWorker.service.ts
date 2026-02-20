@@ -1,3 +1,4 @@
+import { SmsService } from '@island.is/nova-sms'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isCompany } from 'kennitala'
@@ -42,7 +43,7 @@ import { Notification } from '../notification.model'
 import { NotificationDispatchService } from '../notificationDispatch.service'
 import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
-import { mapToLocale } from '../utils'
+import { mapToLocale, SmsDelivery } from '../utils'
 
 type HandleNotification = {
   profile: {
@@ -51,6 +52,8 @@ type HandleNotification = {
     documentNotifications: boolean
     emailNotifications: boolean
     locale?: string
+    mobilePhoneNumber?: string | null
+    smsNotifications?: boolean | null
   }
   notificationId?: number | null
   messageId: string
@@ -71,7 +74,7 @@ export class NotificationsWorkerService {
     private readonly companyRegistryService: CompanyRegistryClientService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly emailService: EmailService,
-
+    private readonly smsService: SmsService,
     @InjectWorker('notifications')
     private readonly worker: WorkerService,
 
@@ -227,6 +230,119 @@ export class NotificationsWorkerService {
     }
   }
 
+  private createSmsContent({
+    fullName,
+    onBehalfOf,
+    template,
+  }: {
+    fullName: string
+    onBehalfOf?: string
+    template: HnippTemplate
+  }): string {
+    return `
+      ${fullName} ${onBehalfOf ? `(${onBehalfOf})` : ''}: ${template.title}
+     
+      ${template.externalBody}
+     
+      Skoda a Island.is:
+     
+      ${template.clickActionUrl}  
+    `
+  }
+
+  private async handleSmsNotification({
+    profile,
+    message,
+    messageId,
+    template,
+  }: HandleNotification): Promise<void> {
+    const { nationalId } = profile
+
+    const allowSmsNotification = await this.featureFlagService.getValue(
+      Features.isSendSmsNotificationsEnabled,
+      false,
+      { nationalId } as User,
+    )
+
+    if (!allowSmsNotification) {
+      this.logger.info(
+        'SMS notification feature flag is not enabled for user',
+        {
+          messageId,
+          nationalId,
+        },
+      )
+      return
+    }
+
+    if (
+      template.smsDelivery !== SmsDelivery.ALWAYS &&
+      template.smsDelivery !== SmsDelivery.OPT_IN
+    ) {
+      this.logger.info('SMS delivery is not enabled for template', {
+        messageId,
+        templateId: template.templateId,
+        smsDelivery: template.smsDelivery,
+      })
+      return
+    }
+
+    if (!template.smsPayer) {
+      this.logger.error('SMS payer is required for template', {
+        messageId,
+        templateId: template.templateId,
+      })
+      return
+    }
+
+    if (!profile.mobilePhoneNumber) {
+      this.logger.error('Phone number is required for template', {
+        messageId,
+        templateId: template.templateId,
+      })
+      return
+    }
+
+    if (
+      template.smsDelivery === SmsDelivery.OPT_IN &&
+      !profile.smsNotifications
+    ) {
+      this.logger.info('SMS notification is not enabled for user', {
+        messageId,
+        templateId: template.templateId,
+      })
+      return
+    }
+
+    const fullName = await this.getShortName(nationalId)
+    const onBehalfOf = message.onBehalfOf?.nationalId
+      ? await this.getShortName(message.onBehalfOf?.nationalId)
+      : undefined
+
+    try {
+      const smsContent = this.createSmsContent({
+        fullName,
+        onBehalfOf,
+        template: await this.notificationsService.formatArguments(
+          message.args,
+          { ...template },
+          message?.senderId,
+          profile.locale as Locale,
+        ),
+      })
+      await this.smsService.sendSms(profile.mobilePhoneNumber, smsContent)
+
+      this.logger.info('SMS notification sent', {
+        messageId,
+      })
+    } catch (error) {
+      this.logger.error('SMS notification error', {
+        error,
+        messageId,
+      })
+    }
+  }
+
   private async handleEmailNotification({
     profile,
     message,
@@ -371,8 +487,31 @@ export class NotificationsWorkerService {
       template,
     }
 
-    // Currently we only send email notifications to actors, not push notifications
+    // We send email and SMS notifications to actors, not push notifications
     await this.handleEmailNotification(handleNotificationArgs)
+
+    // For SMS we use the delegate's own mobilePhoneNumber from their user profile
+    // (not a per-delegation phone number like emails support)
+    const delegateUserProfile =
+      await this.userProfileApi.userProfileControllerFindUserProfile({
+        xParamNationalId: args.recipient,
+      })
+
+    if (delegateUserProfile) {
+      await this.handleSmsNotification({
+        ...handleNotificationArgs,
+        profile: {
+          ...handleNotificationArgs.profile,
+          mobilePhoneNumber: delegateUserProfile.mobilePhoneNumber,
+          smsNotifications: delegateUserProfile.smsNotifications,
+        },
+      })
+    } else {
+      this.logger.error('No delegate user profile found for user', {
+        messageId: args.messageId,
+        recipient: args.recipient,
+      })
+    }
   }
 
   private async createActorNotificationDbRecord(
@@ -502,6 +641,7 @@ export class NotificationsWorkerService {
       }
       await this.handleEmailNotification(handleNotificationArgs)
       await this.handlePushNotifications(handleNotificationArgs)
+      await this.handleSmsNotification(handleNotificationArgs)
     }
 
     await this.handleSendingNotificationsToDelegations(
@@ -619,23 +759,47 @@ export class NotificationsWorkerService {
     }
   }
 
-  private async getName(nationalId: string): Promise<string> {
+  private async getPersonIdentity(
+    nationalId: string,
+  ): Promise<EinstaklingurDTONafnItar | null> {
     try {
-      let identity: CompanyExtendedInfo | EinstaklingurDTONafnItar | null
-
-      if (isCompany(nationalId)) {
-        identity = await this.companyRegistryService.getCompany(nationalId)
-        return identity?.name || ''
-      }
-
-      identity = await this.nationalRegistryService.getName(nationalId)
-      return identity?.birtNafn || identity?.fulltNafn || ''
+      return await this.nationalRegistryService.getName(nationalId)
     } catch (error) {
       this.logger.error('Error getting name from national registry', {
         error,
       })
+      return null
+    }
+  }
+
+  private async getCompanyName(nationalId: string): Promise<string> {
+    try {
+      const company = await this.companyRegistryService.getCompany(nationalId)
+      return company?.name || ''
+    } catch (error) {
+      this.logger.error('Error getting name from company registry', {
+        error,
+      })
       return ''
     }
+  }
+
+  private async getName(nationalId: string): Promise<string> {
+    if (isCompany(nationalId)) {
+      return this.getCompanyName(nationalId)
+    }
+    const identity = await this.getPersonIdentity(nationalId)
+    return identity?.birtNafn || identity?.fulltNafn || ''
+  }
+
+  private async getShortName(nationalId: string): Promise<string> {
+    if (isCompany(nationalId)) {
+      return this.getCompanyName(nationalId)
+    }
+    const identity = await this.getPersonIdentity(nationalId)
+    return (
+      identity?.eiginNafn || identity?.birtNafn || identity?.fulltNafn || ''
+    )
   }
 
   // When sending email to delegation holder we want to use third party login if we have a subjectId and are sending to a service portal url

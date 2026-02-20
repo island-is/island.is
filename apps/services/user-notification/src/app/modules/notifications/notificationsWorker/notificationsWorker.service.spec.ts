@@ -18,6 +18,7 @@ import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { EmailService } from '@island.is/email-service'
+import { SmsService } from '@island.is/nova-sms'
 import { QueueService, getQueueServiceToken } from '@island.is/message-queue'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { testServer, truncate, useDatabase } from '@island.is/testing/nest'
@@ -94,6 +95,7 @@ describe('NotificationsWorkerService', () => {
   let userProfileApi: V2UsersApi
   let nationalRegistryService: NationalRegistryV3ClientService
   let companyRegistryService: CompanyRegistryClientService
+  let smsService: SmsService
 
   beforeAll(async () => {
     app = await testServer({
@@ -129,6 +131,7 @@ describe('NotificationsWorkerService', () => {
     userProfileApi = app.get(V2UsersApi)
     nationalRegistryService = app.get(NationalRegistryV3ClientService)
     companyRegistryService = app.get(CompanyRegistryClientService)
+    smsService = app.get(SmsService)
 
     notificationsWorkerService = await app.resolve(NotificationsWorkerService)
     notificationsWorkerService.run()
@@ -150,6 +153,10 @@ describe('NotificationsWorkerService', () => {
     jest
       .spyOn(notificationDispatch, 'sendPushNotification')
       .mockReturnValue(Promise.resolve())
+
+    jest
+      .spyOn(smsService, 'sendSms')
+      .mockReturnValue(Promise.resolve({ Code: 1, Message: 'OK' }))
 
     jest
       .spyOn(notificationsService, 'getTemplate')
