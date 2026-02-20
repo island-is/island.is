@@ -138,7 +138,7 @@ export const SubmissionUrls = () => {
         />
       )}
 
-      {form.submissionServiceUrl !== 'zendesk' && (
+      {form.submissionServiceUrl && form.submissionServiceUrl !== 'zendesk' && (
         <>
           <Checkbox
             label={formatMessage(m.useValidate)}
