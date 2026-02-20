@@ -178,6 +178,7 @@ const AccessControlNew = () => {
             loading={outgoingLoading || false}
             error={outgoingError}
             refetch={() => refetchOutgoing({ lang })}
+            direction="outgoing"
           />
         )}
 
@@ -233,6 +234,7 @@ const AccessControlNew = () => {
             loading={incomingPersonLoading || false}
             error={incomingPersonError}
             refetch={() => refetchIncoming({ lang })}
+            direction="incoming"
           />
         )}
 

@@ -22,9 +22,11 @@ import { m } from '../../../lib/messages'
 import { AuthDelegationsGroupedByIdentityOutgoingQuery } from '../../delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
 import { EditAccessModal } from '../../modals/EditAccessModal'
 import { usePatchAuthDelegationMutation } from '../../modals/EditAccessModal.generated'
+import { useDeleteAuthDelegationMutation } from '../../access/AccessDeleteModal/AccessDeleteModal.generated'
 import { useDelegationForm } from '../../../context'
+import { DeleteAccessModal } from '../../modals/DeleteAccessModal'
 
-type DelegationsByPerson =
+export type DelegationsByPerson =
   AuthDelegationsGroupedByIdentityOutgoingQuery['authDelegationsGroupedByIdentityOutgoing'][number]
 
 const CustomDelegationsTable = ({
@@ -33,12 +35,14 @@ const CustomDelegationsTable = ({
   loading,
   error,
   refetch,
+  direction,
 }: {
   title: string
   data: DelegationsByPerson[]
   loading: boolean
   error: ApolloError | undefined
   refetch?: () => void
+  direction: 'outgoing' | 'incoming'
 }) => {
   const { formatMessage } = useLocale()
   const [expandedRow, setExpandedRow] = useState<string | null | undefined>(
@@ -47,6 +51,9 @@ const CustomDelegationsTable = ({
   const [searchValue, setSearchValue] = useState('')
   const [isEditAccessModalVisible, setIsEditAccessModalVisible] =
     useState(false)
+
+  const [personToDelete, setPersonToDelete] =
+    useState<DelegationsByPerson | null>(null)
   const {
     selectedScopes,
     originalScopes,
@@ -58,6 +65,36 @@ const CustomDelegationsTable = ({
 
   const [patchDelegation, { loading: patchLoading }] =
     usePatchAuthDelegationMutation()
+  const [deleteDelegation, { loading: deleteLoading }] =
+    useDeleteAuthDelegationMutation()
+
+  const handleDelete = useCallback(
+    async (person: DelegationsByPerson) => {
+      const delegationIds = [
+        ...new Set(
+          person.scopes
+            .map((s) => s.delegationId)
+            .filter((id): id is string => !!id),
+        ),
+      ]
+
+      if (delegationIds.length === 0) return
+
+      try {
+        await Promise.all(
+          delegationIds.map((delegationId) =>
+            deleteDelegation({
+              variables: { input: { delegationId } },
+            }),
+          ),
+        )
+        refetch?.()
+      } catch {
+        toast.error(formatMessage(coreMessages.somethingWrong))
+      }
+    },
+    [deleteDelegation, refetch, formatMessage],
+  )
 
   const handleConfirmEdit = useCallback(async () => {
     const scopesByDelegation = groupBy(
@@ -97,8 +134,9 @@ const CustomDelegationsTable = ({
             validTo: scope.validTo,
           }))
 
-        const deleteScopes = Array.from(originalNames)
-          .filter((name) => !currentNames.has(name))
+        const deleteScopes = Array.from(originalNames).filter(
+          (name) => !currentNames.has(name),
+        )
 
         if (updateScopes.length === 0 && deleteScopes.length === 0) {
           return Promise.resolve()
@@ -156,6 +194,18 @@ const CustomDelegationsTable = ({
       )
     })
   }, [searchValue, data])
+
+  const mapScopesToScopeSelection = (person: DelegationsByPerson) => {
+    return person.scopes.map((scope) => ({
+      name: scope.name,
+      displayName: scope.displayName,
+      description: scope.apiScope?.description,
+      domain: scope.domain as AuthDomain,
+      delegationId: scope.delegationId ?? undefined,
+      validTo: scope.validTo ? new Date(scope.validTo) : undefined,
+      validFrom: scope.validFrom ? new Date(scope.validFrom) : undefined,
+    }))
+  }
 
   return (
     <Box marginTop={[4, 4, 6]} display="flex" flexDirection="column" rowGap={2}>
@@ -246,19 +296,7 @@ const CustomDelegationsTable = ({
                             size="small"
                             colorScheme="default"
                             onClick={() => {
-                              const scopes = person.scopes.map((scope) => ({
-                                name: scope.name,
-                                displayName: scope.displayName,
-                                description: scope.apiScope?.description,
-                                domain: scope.domain as AuthDomain,
-                                delegationId: scope.delegationId ?? undefined,
-                                validTo: scope.validTo
-                                  ? new Date(scope.validTo)
-                                  : undefined,
-                                validFrom: scope.validFrom
-                                  ? new Date(scope.validFrom)
-                                  : undefined,
-                              }))
+                              const scopes = mapScopesToScopeSelection(person)
                               setIsEditAccessModalVisible(true)
                               setIdentities([
                                 {
@@ -285,9 +323,11 @@ const CustomDelegationsTable = ({
                             iconType="outline"
                             size="small"
                             colorScheme="destructive"
-                            onClick={() =>
-                              console.log('delete', person.nationalId)
-                            }
+                            onClick={() => {
+                              const scopes = mapScopesToScopeSelection(person)
+                              setSelectedScopes(scopes)
+                              setPersonToDelete(person)
+                            }}
                           >
                             {formatMessage(coreMessages.buttonDestroy)}
                           </Button>
@@ -312,6 +352,23 @@ const CustomDelegationsTable = ({
         }}
         onConfirm={handleConfirmEdit}
         loading={patchLoading}
+      />
+      <DeleteAccessModal
+        isVisible={!!personToDelete}
+        onClose={() => {
+          setPersonToDelete(null)
+          clearForm()
+        }}
+        onDelete={() =>
+          personToDelete &&
+          handleDelete(personToDelete).then(() => {
+            setPersonToDelete(null)
+            clearForm()
+          })
+        }
+        loading={deleteLoading}
+        person={personToDelete}
+        direction={direction}
       />
     </Box>
   )
