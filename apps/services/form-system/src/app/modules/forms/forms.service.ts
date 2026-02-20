@@ -124,8 +124,9 @@ export class FormsService {
       'created',
       'modified',
       'zendeskInternal',
+      'useValidate',
+      'usePopulate',
       'submissionServiceUrl',
-      'validationServiceUrl',
       'isTranslated',
       'hasPayment',
       'beenPublished',
@@ -700,8 +701,9 @@ export class FormsService {
       'daysUntilApplicationPrune',
       'allowProceedOnValidationFail',
       'zendeskInternal',
+      'useValidate',
+      'usePopulate',
       'submissionServiceUrl',
-      'validationServiceUrl',
       'hasSummaryScreen',
       'completedSectionInfo',
       'dependencies',
@@ -746,6 +748,7 @@ export class FormsService {
     ]
     const screenKeys = [
       'id',
+      'identifier',
       'sectionId',
       'name',
       'created',
@@ -753,10 +756,12 @@ export class FormsService {
       'displayOrder',
       'isHidden',
       'multiset',
-      'callRuleset',
+      'shouldValidate',
+      'shouldPopulate',
     ]
     const fieldKeys = [
       'id',
+      'identifier',
       'screenId',
       'name',
       'created',
@@ -858,7 +863,7 @@ export class FormsService {
     await this.screenModel.create({
       sectionId: inputSection.id,
       displayOrder: 0,
-      name: { is: 'innsláttarsíða 1', en: 'Input screen 1' },
+      name: { is: 'innsláttarskjár 1', en: 'Input screen 1' },
     } as Screen)
   }
 
