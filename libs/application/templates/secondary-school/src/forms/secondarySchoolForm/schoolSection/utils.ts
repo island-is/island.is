@@ -277,7 +277,7 @@ export const getRequireSecondProgram = (
 ): boolean => {
   const secondProgramRequire =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'secondProgram.require', true)) ||
+      getValueViaPath<boolean>(activeField, 'secondProgram.require')) ||
     false
   return secondProgramRequire
 }
@@ -287,7 +287,7 @@ export const getIsClearableSecondProgram = (
 ): boolean => {
   const secondProgramRequire =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'secondProgram.require', true)) ||
+      getValueViaPath<boolean>(activeField, 'secondProgram.require')) ||
     false
   return !secondProgramRequire
 }
@@ -297,7 +297,7 @@ export const getConditionSecondProgram = (
 ): boolean => {
   const secondProgramInclude =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'secondProgram.include', true)) ||
+      getValueViaPath<boolean>(activeField, 'secondProgram.include')) ||
     false
   return secondProgramInclude
 }
@@ -343,7 +343,7 @@ export const getRequireThirdLanguage = (
 ): boolean => {
   const thirdLanguageRequire =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'thirdLanguage.require', true)) ||
+      getValueViaPath<boolean>(activeField, 'thirdLanguage.require')) ||
     false
   return thirdLanguageRequire
 }
