@@ -71,6 +71,7 @@ export class ApplicationMapper {
           screens: section.screens?.map((screen) => {
             return {
               id: screen.id,
+              identifier: screen.identifier,
               sectionId: screen.sectionId,
               name: screen.name,
               displayOrder: screen.displayOrder,
@@ -92,6 +93,7 @@ export class ApplicationMapper {
               fields: screen.fields?.map((field) => {
                 return {
                   id: field.id,
+                  identifier: field.identifier,
                   screenId: field.screenId,
                   name: field.name,
                   displayOrder: field.displayOrder,
