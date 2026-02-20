@@ -187,6 +187,12 @@ export class ZendeskService {
     let url: string | null = `${
       this.api
     }/search.json?per_page=10&query=${encodeURIComponent(query)}`
+    // TODO: Remove this after testing
+    this.logger.info('Searching Zendesk tickets', {
+      url,
+      formEmail: this.config.formEmail,
+      formSubdomain: this.config.subdomain,
+    })
     try {
       while (url) {
         const response: AxiosResponse<{
