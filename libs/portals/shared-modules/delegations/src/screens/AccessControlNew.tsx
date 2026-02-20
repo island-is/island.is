@@ -1,4 +1,4 @@
-import { Box, Button, GridColumn } from '@island.is/island-ui/core'
+import { Box, Button, GridColumn, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
@@ -8,13 +8,9 @@ import { useLocation } from 'react-use'
 import { useMemo } from 'react'
 import groupBy from 'lodash/groupBy'
 import {
-  AuthDelegationDirection,
-  AuthGeneralMandate,
-  AuthLegalGuardianDelegation,
-  AuthLegalGuardianMinorDelegation,
-  AuthProcuringHolderDelegation,
+  AuthDelegationsGroupedByIdentity,
+  AuthDelegationType,
 } from '@island.is/api/schema'
-import { useAuthDelegationsIncomingQuery } from '../components/delegations/incoming/DelegationIncoming.generated'
 import { useAuthDelegationsGroupedByIdentityOutgoingQuery } from '../components/delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
 import { useAuthDelegationsGroupedByIdentityIncomingQuery } from '../components/delegations/incoming/DelegationsGroupedByIdentityIncoming.generated'
 import { m } from '../lib/messages'
@@ -40,7 +36,7 @@ const AccessControlNew = () => {
 
   const contentfulData = useLoaderData() as AccessControlLoaderResponse
 
-  // Use new identity-grouped queries for custom delegations
+  // Outgoing
   const {
     data: outgoingData,
     loading: outgoingLoading,
@@ -51,25 +47,21 @@ const AccessControlNew = () => {
     fetchPolicy: 'cache-and-network',
     errorPolicy: 'all',
   })
+  const outgoingDelegations =
+    outgoingData?.authDelegationsGroupedByIdentityOutgoing
 
-  // For incoming, we still need the old query to get non-custom delegations
-  const {
-    data: incomingData,
-    loading: incomingLoading,
-    error: incomingError,
-  } = useAuthDelegationsIncomingQuery({
-    variables: {
-      lang,
-      input: {
-        direction: AuthDelegationDirection.incoming,
-      },
-    },
-    skip: !lang,
-    fetchPolicy: 'cache-and-network',
-    errorPolicy: 'all',
-  })
+  const outgoingDelegationGroups = useMemo(() => {
+    return groupBy(outgoingDelegations, 'type') as Record<
+      AuthDelegationType,
+      AuthDelegationsGroupedByIdentity[]
+    >
+  }, [outgoingDelegations])
 
-  // Use new identity-grouped query for incoming custom delegations
+  const outgoingCustomDelegations = outgoingDelegationGroups.Custom
+  const outgoingGeneralMandateDelegations =
+    outgoingDelegationGroups.GeneralMandate
+
+  // Incoming
   const {
     data: incomingPersonData,
     loading: incomingPersonLoading,
@@ -80,55 +72,34 @@ const AccessControlNew = () => {
     fetchPolicy: 'cache-and-network',
     errorPolicy: 'all',
   })
+  const incomingDelegations =
+    incomingPersonData?.authDelegationsGroupedByIdentityIncoming
 
-  // Filter identity-grouped view:
-  // Outgoing: Show Custom + GeneralMandate
-  // Incoming: Show only Custom (other types shown in their own tables)
-  const outgoingDelegationsByPerson =
-    outgoingData?.authDelegationsGroupedByIdentityOutgoing?.filter(
-      (delegation) =>
-        delegation.type === 'Custom' || delegation.type === 'GeneralMandate',
-    ) || []
-
-  const incomingDelegationsByPerson =
-    incomingPersonData?.authDelegationsGroupedByIdentityIncoming?.filter(
-      (delegation) => delegation.type === 'Custom',
-    ) || []
-
-  // Group incoming delegations by type for non-custom delegations
   const incomingDelegationGroups = useMemo(() => {
-    return groupBy(incomingData?.authDelegations, 'type')
-  }, [incomingData?.authDelegations])
+    return groupBy(incomingDelegations, 'type') as Record<
+      AuthDelegationType,
+      AuthDelegationsGroupedByIdentity[]
+    >
+  }, [incomingDelegations])
+
+  const incomingCustomDelegations = incomingDelegationGroups.Custom
 
   const legalGuardianDelegations = [
     ...(incomingDelegationGroups.LegalGuardian || []),
     ...(incomingDelegationGroups.LegalGuardianMinor || []),
-  ] as AuthLegalGuardianDelegation[] | AuthLegalGuardianMinorDelegation[]
+  ]
 
-  const procuringHolderDelegations =
-    incomingDelegationGroups.ProcurationHolder as AuthProcuringHolderDelegation[]
+  const procuringHolderDelegations = incomingDelegationGroups.ProcurationHolder
 
-  const generalMandateDelegations =
-    incomingDelegationGroups.GeneralMandate as AuthGeneralMandate[]
+  const incomingGeneralMandateDelegations =
+    incomingDelegationGroups.GeneralMandate
 
   // Don't show incoming delegations when user is logged in on behalf of someone else
   const onlyOutgoingDelegations = isDefined(userInfo?.profile?.actor)
 
   const onSwitchUser = (nationalId: string) => {
     switchUser(nationalId, `${location.origin}/minarsidur`)
-    navigate('/')
   }
-
-  // TODO: These handlers will be implemented when we add delete/edit functionality
-  // For now, they're here for future implementation
-  // const handleDeleteOutgoing = (nationalId: string) => {
-  //   // Should delete ALL delegations to this person across all domains
-  //   console.log('Delete delegation for:', nationalId)
-  // }
-  // const handleEditOutgoing = (nationalId: string) => {
-  //   // Should allow editing scopes across all domains
-  //   console.log('Edit delegation for:', nationalId)
-  // }
 
   return (
     <>
@@ -147,7 +118,7 @@ const AccessControlNew = () => {
                   'Hérna getur þú veitt öðrum umboð og skoðað umboð sem aðrir hafa veitt þér. Þú getur eytt umboðum eða bætt við nýjum.',
               })
         }
-        marginBottom={0}
+        marginBottom={4}
       >
         <GridColumn span={['8/8', '3/8']}>
           <Box
@@ -169,17 +140,88 @@ const AccessControlNew = () => {
         </GridColumn>
       </IntroHeader>
 
+      {!outgoingLoading &&
+        outgoingDelegations &&
+        outgoingDelegations.length > 0 && (
+          <Box
+            display="flex"
+            columnGap={1}
+            alignItems="center"
+            marginBottom={3}
+            paddingTop={2}
+          >
+            <Box
+              borderRadius="large"
+              background="blue100"
+              padding={1}
+              display="flex"
+              alignItems="center"
+            >
+              <Icon size="small" color="blue400" type="outline" icon="person" />
+              <Icon size="small" color="blue400" icon="arrowForward" />
+            </Box>
+            <Text variant="h4">
+              {formatMessage(m.outgoingDelegationsHeader)}
+            </Text>
+          </Box>
+        )}
+
       {/* Outgoing delegations - NEW person-centric view */}
-      {outgoingDelegationsByPerson &&
-        outgoingDelegationsByPerson.length > 0 && (
-          <CustomDelegationsTable
-            title={formatMessage(m.outgoingDelegationsTitle)}
-            data={outgoingDelegationsByPerson}
+      {outgoingCustomDelegations && outgoingCustomDelegations.length > 0 && (
+        <CustomDelegationsTable
+          title={formatMessage(m.outgoingDelegationsTitle)}
+          data={outgoingCustomDelegations}
+          loading={outgoingLoading || false}
+          error={outgoingError}
+          refetch={() => refetchOutgoing({ lang })}
+          direction="outgoing"
+        />
+      )}
+
+      {/* Outgoing general mandate delegations table */}
+      {outgoingGeneralMandateDelegations &&
+        outgoingGeneralMandateDelegations.length > 0 && (
+          <DelegationsTable
+            title="Allsherjarumboð"
+            data={getGeneralMandateTableData(
+              outgoingGeneralMandateDelegations,
+              onSwitchUser,
+              formatMessage,
+            )}
             loading={outgoingLoading || false}
             error={outgoingError}
-            refetch={() => refetchOutgoing({ lang })}
-            direction="outgoing"
           />
+        )}
+
+      {!incomingPersonLoading &&
+        incomingDelegations &&
+        incomingDelegations.length > 0 && (
+          <Box
+            display="flex"
+            columnGap={1}
+            alignItems="center"
+            marginBottom={3}
+            paddingTop={2}
+          >
+            <Box
+              borderRadius="large"
+              background="purple100"
+              padding={1}
+              display="flex"
+              alignItems="center"
+            >
+              <Icon
+                size="small"
+                color="purple400"
+                type="outline"
+                icon="person"
+              />
+              <Icon size="small" color="purple400" icon="arrowForward" />
+            </Box>
+            <Text variant="h4">
+              {formatMessage(m.incomingDelegationsHeader)}
+            </Text>
+          </Box>
         )}
 
       {/* Legal guardian delegations table */}
@@ -191,8 +233,8 @@ const AccessControlNew = () => {
             onSwitchUser,
             formatMessage,
           )}
-          loading={incomingLoading || false}
-          error={incomingError}
+          loading={incomingPersonLoading || false}
+          error={incomingPersonError}
         />
       )}
 
@@ -205,32 +247,33 @@ const AccessControlNew = () => {
             onSwitchUser,
             formatMessage,
           )}
-          loading={incomingLoading || false}
-          error={incomingError}
+          loading={incomingPersonLoading || false}
+          error={incomingPersonError}
         />
       )}
 
-      {/* General mandate delegations table */}
-      {generalMandateDelegations && generalMandateDelegations.length > 0 && (
-        <DelegationsTable
-          title="Allsherjarumboð"
-          data={getGeneralMandateTableData(
-            generalMandateDelegations,
-            onSwitchUser,
-            formatMessage,
-          )}
-          loading={incomingLoading || false}
-          error={incomingError}
-        />
-      )}
+      {/* Incoming general mandate delegations table */}
+      {incomingGeneralMandateDelegations &&
+        incomingGeneralMandateDelegations.length > 0 && (
+          <DelegationsTable
+            title="Allsherjarumboð"
+            data={getGeneralMandateTableData(
+              incomingGeneralMandateDelegations,
+              onSwitchUser,
+              formatMessage,
+            )}
+            loading={incomingPersonLoading || false}
+            error={incomingPersonError}
+          />
+        )}
 
       {/* Incoming custom delegations - NEW person-centric view */}
       {!onlyOutgoingDelegations &&
-        incomingDelegationsByPerson &&
-        incomingDelegationsByPerson.length > 0 && (
+        incomingCustomDelegations &&
+        incomingCustomDelegations.length > 0 && (
           <CustomDelegationsTable
             title={formatMessage(m.incomingCustomDelegationsTitle)}
-            data={incomingDelegationsByPerson}
+            data={incomingCustomDelegations}
             loading={incomingPersonLoading || false}
             error={incomingPersonError}
             refetch={() => refetchIncoming({ lang })}

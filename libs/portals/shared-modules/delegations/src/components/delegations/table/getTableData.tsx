@@ -1,9 +1,4 @@
-import {
-  AuthGeneralMandate,
-  AuthLegalGuardianDelegation,
-  AuthLegalGuardianMinorDelegation,
-  AuthProcuringHolderDelegation,
-} from '@island.is/api/schema'
+import { AuthDelegationsGroupedByIdentity } from '@island.is/api/schema'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { IdentityInfo } from './IdentityInfo/IdentityInfo'
 import { Box, Button, Text } from '@island.is/island-ui/core'
@@ -11,7 +6,7 @@ import { m } from '../../../lib/messages'
 import { FormatMessage } from '@island.is/localization'
 
 export const getLegalGuardianTableData = (
-  data: AuthLegalGuardianDelegation[] | AuthLegalGuardianMinorDelegation[],
+  data: AuthDelegationsGroupedByIdentity[],
   switchUser: (nationalId: string, targetLink?: string) => void,
   formatMessage: FormatMessage,
 ) => {
@@ -24,7 +19,7 @@ export const getLegalGuardianTableData = (
   const tableData = data.map((row) => {
     return [
       <IdentityInfo
-        identity={{ nationalId: row.from.nationalId, name: row.from.name }}
+        identity={{ nationalId: row.nationalId, name: row.name }}
         isExpanded={false}
       />,
       <Text variant="medium">
@@ -41,7 +36,7 @@ export const getLegalGuardianTableData = (
           size="small"
           colorScheme="default"
           onClick={() =>
-            switchUser(row.from.nationalId, 'http://localhost:4200/minarsidur')
+            switchUser(row.nationalId, 'http://localhost:4200/minarsidur')
           }
         >
           {formatMessage(m.switch)}
@@ -54,7 +49,7 @@ export const getLegalGuardianTableData = (
 }
 
 export const getProcuringHolderTableData = (
-  data: AuthProcuringHolderDelegation[],
+  data: AuthDelegationsGroupedByIdentity[],
   switchUser: (nationalId: string) => void,
   formatMessage: FormatMessage,
 ) => {
@@ -68,7 +63,7 @@ export const getProcuringHolderTableData = (
   const tableData = data.map((row) => {
     return [
       <IdentityInfo
-        identity={{ nationalId: row.from.nationalId, name: row.from.name }}
+        identity={{ nationalId: row.nationalId, name: row.name }}
         isExpanded={false}
         icon="briefcase"
       />,
@@ -82,7 +77,7 @@ export const getProcuringHolderTableData = (
           iconType="outline"
           size="small"
           colorScheme="default"
-          onClick={() => switchUser(row.from.nationalId)}
+          onClick={() => switchUser(row.nationalId)}
         >
           {formatMessage(m.switch)}
         </Button>
@@ -94,7 +89,7 @@ export const getProcuringHolderTableData = (
 }
 
 export const getGeneralMandateTableData = (
-  data: AuthGeneralMandate[],
+  data: AuthDelegationsGroupedByIdentity[],
   switchUser: (nationalId: string) => void,
   formatMessage: FormatMessage,
 ) => {
@@ -107,7 +102,7 @@ export const getGeneralMandateTableData = (
   const tableData = data.map((row) => {
     return [
       <IdentityInfo
-        identity={{ nationalId: row.from.nationalId, name: row.from.name }}
+        identity={{ nationalId: row.nationalId, name: row.name }}
         isExpanded={false}
       />,
       <Text variant="medium">
@@ -121,7 +116,7 @@ export const getGeneralMandateTableData = (
           iconType="outline"
           size="small"
           colorScheme="default"
-          onClick={() => switchUser(row.from.nationalId)}
+          onClick={() => switchUser(row.nationalId)}
         >
           {formatMessage(m.switch)}
         </Button>

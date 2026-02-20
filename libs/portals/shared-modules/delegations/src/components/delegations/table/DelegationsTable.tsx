@@ -41,7 +41,12 @@ export const DelegationsTable = ({
   }, [searchValue, tableData])
 
   return (
-    <Box marginTop={[4, 4, 6]} display="flex" flexDirection="column" rowGap={2}>
+    <Box
+      marginBottom={[4, 4, 6]}
+      display="flex"
+      flexDirection="column"
+      rowGap={2}
+    >
       <Box
         display="flex"
         alignItems="center"

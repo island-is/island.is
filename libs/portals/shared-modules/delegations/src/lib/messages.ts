@@ -58,6 +58,14 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:delegation-type-personal-representative-desc',
     defaultMessage: 'Samningar frá Réttindagæslu fatlaðra',
   },
+  outgoingDelegationsHeader: {
+    id: 'sp.access-control-delegations:outgoing-delegations-header',
+    defaultMessage: 'Umboð frá þér',
+  },
+  incomingDelegationsHeader: {
+    id: 'sp.access-control-delegations:incoming-delegations-header',
+    defaultMessage: 'Umboð til þín',
+  },
   outgoingDelegationsTitle: {
     id: 'sp.access-control-delegations:outgoing-delegations-title',
     defaultMessage: 'Umboð sem þú hefur veitt öðrum',
