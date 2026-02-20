@@ -236,7 +236,7 @@ const BankAccount = () => {
 
           {accountType === 'domestic' && (
             <Box>
-              <Text marginBottom={2}>
+              <Text marginBottom={3} variant="medium" fontWeight="light">
                 {formatMessage(m.icelandicAccountDescription)}
               </Text>
 
@@ -257,7 +257,7 @@ const BankAccount = () => {
 
           {accountType === 'foreign' && (
             <Box>
-              <Text marginBottom={2}>
+              <Text marginBottom={3} variant="medium" fontWeight="light">
                 {formatMessage(m.foreignAccountDescription)}
               </Text>
 

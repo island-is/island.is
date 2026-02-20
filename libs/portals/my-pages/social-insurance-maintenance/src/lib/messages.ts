@@ -174,7 +174,8 @@ export const m = defineMessages({
   },
   bankAccountDescription: {
     id: 'sp.social-insurance-maintenance:bank-account-description',
-    defaultMessage: 'Skoða og breyta bankareikningi',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar sem Tryggingastofnun hefur um þinn bankareikning. Allar greiðslur frá Tryggingastofnun til þín verða lagðar inn á reikninginn sem þú velur. Reikningurinn verður að vera á þinni kennitölu.',
   },
   accountTypeTitle: {
     id: 'sp.social-insurance-maintenance:account-type-title',

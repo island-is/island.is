@@ -160,7 +160,7 @@ export const BankAccountInput = ({
   return (
     <Box role="group" aria-labelledby={title ? titleId : undefined}>
       {title && (
-        <Box marginBottom={1}>
+        <Box marginBottom={2}>
           <Text variant="h5" id={titleId}>
             {title}
           </Text>
