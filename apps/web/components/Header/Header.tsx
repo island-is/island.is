@@ -17,14 +17,11 @@ import {
 } from '@island.is/island-ui/core'
 import { webMenuButtonClicked } from '@island.is/plausible'
 import { FixedNav, SearchInput } from '@island.is/web/components'
-import { GlobalContext } from '@island.is/web/context'
-import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 
 import { LanguageToggler } from '../LanguageToggler'
 import { Menu } from '../Menu/Menu'
-import { HeaderDropdownMenu } from './HeaderDropdownMenu'
 import { LoginButton } from './LoginButton'
 
 interface HeaderProps {
@@ -57,8 +54,6 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
 }) => {
   const { activeLocale, t } = useI18n()
   const { colorScheme } = useContext(ColorSchemeContext)
-  const { globalNamespace } = useContext(GlobalContext)
-  const gn = useNamespace(globalNamespace)
 
   const locale = activeLocale
   const english = activeLocale === 'en'
@@ -89,20 +84,6 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                       <Logo id="header-logo" width={140} solid={isWhite} />
                     </Hidden>
                   </FocusableBox>
-                </Column>
-                <Column width="content">
-                  <Box marginLeft={2}>
-                    <HeaderDropdownMenu
-                      label={gn(
-                        'headerInstitutions',
-                        activeLocale === 'is' ? 'Stofnanir' : 'Institutions',
-                      )}
-                    >
-                      <Box padding={3}>
-                        <p>Custom popover content goes here</p>
-                      </Box>
-                    </HeaderDropdownMenu>
-                  </Box>
                 </Column>
                 <Column>
                   <Box
