@@ -539,6 +539,7 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
         'nationalId',
         'name',
         'indictmentReviewDecision',
+        'isSentToPrisonAdmin',
       ],
       order: [['created', 'ASC']],
       separate: true,

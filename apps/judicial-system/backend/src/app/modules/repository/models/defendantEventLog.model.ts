@@ -49,6 +49,25 @@ export class DefendantEventLog extends Model {
       ?.created
   }
 
+  static hasValidOpenByPrisonAdminEvent(
+    eventLogs: DefendantEventLog[],
+  ): boolean {
+    const sentToPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
+      DefendantEventType.SENT_TO_PRISON_ADMIN,
+      eventLogs,
+    )
+    const openedByPrisonAdminDate =
+      DefendantEventLog.getEventLogDateByEventType(
+        DefendantEventType.OPENED_BY_PRISON_ADMIN,
+        eventLogs,
+      )
+    return Boolean(
+      sentToPrisonAdminDate &&
+        openedByPrisonAdminDate &&
+        sentToPrisonAdminDate <= openedByPrisonAdminDate,
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,
