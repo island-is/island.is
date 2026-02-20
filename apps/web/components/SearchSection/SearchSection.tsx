@@ -63,8 +63,6 @@ export const SearchSection = ({
     <>
       <GridContainer>
         <GridRow
-          marginTop={4}
-          marginBottom={[0, 0, 4]}
           className={styles.minHeight}
         >
           <GridColumn span={['12/12', '12/12', '6/12']}>
