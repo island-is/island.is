@@ -9,6 +9,7 @@ import {
   LinkProps,
   Text,
 } from '@island.is/island-ui/core'
+import { useMatomoTrackOrganization } from '@island.is/matomo'
 
 interface InstitutionPanelProps {
   img?: string
@@ -27,6 +28,7 @@ export const InstitutionPanel = ({
   linkProps,
   imgContainerDisplay,
 }: InstitutionPanelProps) => {
+  useMatomoTrackOrganization(institution)
   return (
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore make web strict

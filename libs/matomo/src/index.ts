@@ -1,0 +1,13 @@
+export type { MatomoPageAttributes, MatomoContextValue } from './lib/types'
+export { MatomoContext } from './lib/MatomoContext'
+export { MatomoProvider } from './lib/MatomoProvider'
+export { MatomoTracker } from './lib/MatomoTracker'
+export { MatomoInitScript } from './lib/MatomoInitScript'
+export {
+  useMatomo,
+  useMatomoPageView,
+  useSetOrganization,
+  useMatomoTrackOrganization,
+  useMatomoTrackSearch,
+} from './lib/hooks'
+export { trackEvent, trackSiteSearch, setCustomVariable } from './lib/tracking'
