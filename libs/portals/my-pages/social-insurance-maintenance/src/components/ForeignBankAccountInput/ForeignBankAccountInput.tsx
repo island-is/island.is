@@ -203,7 +203,7 @@ export const ForeignBankAccountInput = ({
         </Box>
       )}
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '10/12', '9/12', '7/12']}>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12', '8/12']}>
           <Stack space={2}>
             <Input
               id={`${id}.iban`}
@@ -224,7 +224,7 @@ export const ForeignBankAccountInput = ({
               readOnly={readOnly}
             />
             <GridRow rowGap={2}>
-              <GridColumn span={['12/12', '6/12', '6/12']}>
+              <GridColumn span={['12/12', '12/12', '12/12', '6/12', '6/12']}>
                 <Input
                   id={`${id}.swift`}
                   name={`${id}.swift`}
@@ -244,7 +244,7 @@ export const ForeignBankAccountInput = ({
                   readOnly={readOnly}
                 />
               </GridColumn>
-              <GridColumn span={['12/12', '6/12', '6/12']}>
+              <GridColumn span={['6/12', '6/12', '6/12', '6/12', '6/12']}>
                 <Select
                   id={`${id}.currency`}
                   name={`${id}.currency`}
