@@ -98,17 +98,15 @@ query getApplicationsInstitutionAdmin($input: ApplicationsAdminFilters!) {
   }
 }
 
-query getInstitutionApplicationTypes(
-  $input: ApplicationTypesInstitutionAdminInput!
-) {
-  applicationTypesInstitutionAdmin(input: $input) {
+query getInstitutionApplicationTypes {
+  applicationTypesInstitutionAdmin {
     id
     name
   }
 }
 
-query getSuperApplicationTypes {
-  applicationTypesSuperAdmin {
+query getSuperApplicationTypes($input: ApplicationTypesAdminInput!) {
+  applicationTypesSuperAdmin(input: $input) {
     id
     name
   }
@@ -160,7 +158,6 @@ query getApplicationsInstitutionStatistics(
 query getApplicationInstitutions {
   applicationApplicationsAdminInstitutions {
     nationalId
-    slug
     contentfulId
   }
 }

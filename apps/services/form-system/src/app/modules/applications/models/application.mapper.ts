@@ -12,6 +12,7 @@ import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { Field } from '../../fields/models/field.model'
 import type { Locale } from '@island.is/shared/types'
+import { ApplicationAdminDto } from './dto/applicationAdmin.dto'
 
 @Injectable()
 export class ApplicationMapper {
@@ -309,6 +310,24 @@ export class ApplicationMapper {
       formSystemFormSlug: app.formSlug,
       formSystemOrgContentfulId: app.orgContentfulId,
       formSystemOrgSlug: app.orgSlug,
+    }
+  }
+
+  mapApplicationToApplicationAdminDto(
+    application: Application,
+    form: Form | null,
+  ): ApplicationAdminDto {
+    return {
+      id: application.id,
+      created: application.created,
+      modified: application.modified,
+      formId: application.formId,
+      applicant: application.nationalId,
+      status: application.status,
+      state: application.state,
+      pruneAt: application.pruneAt,
+      pruned: application.pruned,
+      //TODOxy any other fields we might need?
     }
   }
 }

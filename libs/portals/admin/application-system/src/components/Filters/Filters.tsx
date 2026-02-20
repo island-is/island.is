@@ -14,10 +14,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { m } from '../../lib/messages'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
-import { BffUser, Organization } from '@island.is/shared/types'
+import { Organization } from '@island.is/shared/types'
 import { format as formatNationalId } from 'kennitala'
-import { useGetInstitutionApplicationTypesQuery } from '../../queries/overview.generated'
-import { useUserInfo } from '@island.is/react-spa/bff'
+import {
+  useGetInstitutionApplicationTypesQuery,
+  useGetSuperApplicationTypesQuery,
+} from '../../queries/overview.generated'
 
 interface Props {
   onTypeIdChange: (period: ApplicationFilters['typeIdValue']) => void
@@ -52,10 +54,9 @@ export const Filters = ({
   const [typeId, setTypeId] = useState<string | undefined>(undefined)
   const [nationalId, setNationalId] = useState('')
   const [searchStr, setSearchStr] = useState('')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale: lang } = useLocale()
   const [isMobile, setIsMobile] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
-  const userInfo: BffUser = useUserInfo()
   const { width } = useWindowSize()
   const [chosenInstituteNationalId, setChosenInstituteNationalId] = useState<
     string | undefined
@@ -68,22 +69,33 @@ export const Filters = ({
     a.title.localeCompare(b.title),
   )
 
+  //TODOxy rename all to institutionType
   const {
-    data: typeData,
-    loading: typesLoading,
-    refetch: refetchTypes,
+    data: institutionData,
+    loading: loadingInstitution,
+    refetch: refetchInstitution,
   } = useGetInstitutionApplicationTypesQuery({
+    ssr: false,
+    skip: isSuperAdmin, //do NOT run if user IS superAdmin
+  })
+
+  const {
+    data: superData,
+    loading: loadingSuper,
+    refetch: refetchSuper,
+  } = useGetSuperApplicationTypesQuery({
+    ssr: false,
     variables: {
       input: {
-        nationalId: isSuperAdmin
-          ? chosenInstituteNationalId || ''
-          : userInfo.profile.nationalId,
+        nationalId: chosenInstituteNationalId,
       },
     },
+    skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
   })
 
   useEffect(() => {
-    refetchTypes()
+    const refetch = isSuperAdmin ? refetchSuper : refetchInstitution
+    refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [multiChoiceFilters])
 
@@ -130,14 +142,20 @@ export const Filters = ({
 
   const institutionTypeIds = useMemo(() => {
     return (
-      typeData?.applicationTypesInstitutionAdmin
+      (isSuperAdmin
+        ? superData?.applicationTypesSuperAdmin
+        : institutionData?.applicationTypesInstitutionAdmin
+      )
         ?.map((type) => ({
           value: type.id,
           label: type.name ?? '',
         }))
-        .sort((a, b) => a.label.localeCompare(b.label, 'is')) ?? []
+        .sort((a, b) => a.label.localeCompare(b.label, lang)) ?? []
     )
-  }, [typeData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuperAdmin, superData, institutionData])
+
+  const isLoading = loadingSuper || loadingInstitution
 
   return (
     <Box
@@ -240,7 +258,7 @@ export const Filters = ({
                   }}
                   size="sm"
                   options={institutionTypeIds}
-                  isLoading={typesLoading}
+                  isLoading={isLoading}
                   isClearable={true}
                 />
               </Box>

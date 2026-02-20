@@ -11,5 +11,10 @@ export class ApplicationTypeDto {
   @ApiPropertyOptional()
   @Expose()
   @IsString()
-  name?: string
+  nameIs?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  nameEn?: string
 }

@@ -8,8 +8,9 @@ import {
 import {
   useGetApplicationInstitutionsQuery,
   useGetApplicationsInstitutionAdminQuery,
-  useGetApplicationsSuperAdminQuery,
+  // useGetApplicationsSuperAdminQuery,
   useGetOrganizationsQuery,
+  useGetApplicationV2ApplicationsSuperAdminQuery,
 } from '../../queries/overview.generated'
 import invertBy from 'lodash/invertBy'
 import flatten from 'lodash/flatten'
@@ -65,6 +66,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     })
 
   // A list of all institutions with active application types
+  //TODOxy use V2
   const {
     data: organizationDataWithNationalId,
     loading: loadinOrganizationDataWithNationalId,
@@ -93,6 +95,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     },
   }
 
+  //TODOxy use V2
   const {
     data: institutionData,
     loading: loadingInstitution,
@@ -157,7 +160,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     ? organizationListFromContentful?.flatMap((x) => {
         const itemFoundInResponse =
           organizationDataWithNationalId?.applicationApplicationsAdminInstitutions?.find(
-            (y) => y.slug === x.slug,
+            (y) => y.contentfulId === x.id,
           )
         if (!itemFoundInResponse) {
           return []
@@ -203,11 +206,11 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
   }
 
   const handleInstitutionIdChange = (
-    instituionNationalId: ApplicationFilters['institution'],
+    institutionNationalId: ApplicationFilters['institution'],
   ) => {
     setFilters((prev) => ({
       ...prev,
-      institution: instituionNationalId,
+      institution: institutionNationalId,
     }))
   }
 

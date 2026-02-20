@@ -19,7 +19,7 @@ import {
   ApplicationsSuperAdminFilters,
   ApplicationsAdminStatisticsInput,
   ApplicationsAdminFilters,
-  ApplicationTypesInstitutionAdminInput,
+  ApplicationTypesAdminInput,
 } from './application-admin/dto/applications-admin-inputs'
 
 @Injectable()
@@ -120,24 +120,24 @@ export class ApplicationService {
     })
   }
 
-  async findAllApplicationTypesInstitutionAdmin(
-    user: User,
-    locale: Locale,
-    input: ApplicationTypesInstitutionAdminInput,
-  ) {
+  async findAllApplicationTypesInstitutionAdmin(user: User, locale: Locale) {
     return this.applicationApiWithAuth(
       user,
     ).adminControllerGetApplicationTypesInstitutionAdmin({
-      nationalId: input.nationalId,
       locale,
     })
   }
 
-  async findAllApplicationTypesSuperAdmin(user: User, locale: Locale) {
+  async findAllApplicationTypesSuperAdmin(
+    user: User,
+    locale: Locale,
+    input: ApplicationTypesAdminInput,
+  ) {
     return this.applicationApiWithAuth(
       user,
     ).adminControllerGetApplicationTypesSuperAdmin({
       locale,
+      nationalId: input.nationalId,
     })
   }
 

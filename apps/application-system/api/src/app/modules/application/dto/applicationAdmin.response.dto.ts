@@ -137,16 +137,5 @@ export class ApplicationInstitution {
   @ApiProperty()
   @Expose()
   @IsString()
-  slug!: string
-
-  @ApiProperty()
-  @Expose()
-  @IsString()
   contentfulId!: string
-
-  @ApiProperty()
-  @Expose()
-  @IsArray()
-  @IsString({ each: true })
-  applicationTypes!: string[]
 }

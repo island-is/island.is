@@ -9,10 +9,18 @@ import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Scopes } from '@island.is/auth-nest-tools'
-import { ApplicationsSuperAdminFilters } from './dto/applications-admin-inputs'
+import {
+  ApplicationsAdminFilters,
+  ApplicationsAdminStatisticsInput,
+  ApplicationsSuperAdminFilters,
+  ApplicationTypesAdminInput,
+} from './dto/applications-admin-inputs'
 import {
   ApplicationAdmin,
   ApplicationAdminPaginatedResponse,
+  ApplicationInstitution,
+  ApplicationStatistics,
+  ApplicationTypeAdminInstitution,
 } from '../application.model'
 import { ApplicationV2Service } from '../applicationV2.service'
 
@@ -30,8 +38,92 @@ export class ApplicationAdminV2Resolver {
     @Args('input')
     input: ApplicationsSuperAdminFilters,
   ): Promise<ApplicationAdminPaginatedResponse | null> {
-    return this.applicationService.findAllSuperAdmin(user, locale, input)
+    return this.applicationService.findAllApplicationsForSuperAdmin(
+      user,
+      locale,
+      input,
+    )
   }
 
-  // TODOxy add rest of endpoints that are in V1 resolver
+  @Query(() => ApplicationAdminPaginatedResponse, { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  async applicationV2ApplicationsInstitutionAdmin(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input')
+    input: ApplicationsAdminFilters,
+  ): Promise<ApplicationAdminPaginatedResponse | null> {
+    return this.applicationService.findAllApplicationsForInstitutionAdmin(
+      user,
+      locale,
+      input,
+    )
+  }
+
+  @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  async applicationV2ApplicationTypesSuperAdmin(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: ApplicationTypesAdminInput,
+  ): Promise<ApplicationTypeAdminInstitution[] | null> {
+    return this.applicationService.findAllApplicationTypesForSuperAdmin(
+      user,
+      locale,
+      input,
+    )
+  }
+
+  @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  async applicationV2ApplicationTypesInstitutionAdmin(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ): Promise<ApplicationTypeAdminInstitution[] | null> {
+    return this.applicationService.findAllApplicationTypesForInstitutionAdmin(
+      user,
+      locale,
+    )
+  }
+
+  @Query(() => [ApplicationInstitution], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  async applicationV2InstitutionsSuperAdmin(@CurrentUser() user: User) {
+    return this.applicationService.findAllInstitutionsForSuperAdmin(user)
+  }
+
+  @Query(() => [ApplicationStatistics], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  async applicationV2ApplicationStatisticsSuperAdmin(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input')
+    input: ApplicationsAdminStatisticsInput,
+  ) {
+    return this.applicationService.getApplicationStatisticsForSuperAdmin(
+      user,
+      locale,
+      input,
+    )
+  }
+
+  @Query(() => [ApplicationStatistics], { nullable: true })
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  async applicationV2ApplicationStatisticsInstitutionAdmin(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input')
+    input: ApplicationsAdminStatisticsInput,
+  ) {
+    return this.applicationService.getApplicationStatisticsForInstitutionAdmin(
+      user,
+      locale,
+      input,
+    )
+  }
 }

@@ -13,7 +13,7 @@ import {
   ApplicationsAdminFilters,
   ApplicationsSuperAdminFilters,
   ApplicationsAdminStatisticsInput,
-  ApplicationTypesInstitutionAdminInput,
+  ApplicationTypesAdminInput,
 } from './dto/applications-admin-inputs'
 import {
   ApplicationAdmin,
@@ -54,20 +54,15 @@ export class ApplicationAdminResolver {
   }
 
   @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
-  @Scopes(
-    AdminPortalScope.applicationSystemInstitution,
-    AdminPortalScope.applicationSystemAdmin,
-  )
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
   async applicationTypesInstitutionAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
-    @Args('input') input: ApplicationTypesInstitutionAdminInput,
   ): Promise<ApplicationTypeAdminInstitution[] | null> {
     return this.applicationService.findAllApplicationTypesInstitutionAdmin(
       user,
       locale,
-      input,
     )
   }
 
@@ -77,10 +72,12 @@ export class ApplicationAdminResolver {
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
+    @Args('input') input: ApplicationTypesAdminInput,
   ): Promise<ApplicationTypeAdminInstitution[] | null> {
     return this.applicationService.findAllApplicationTypesSuperAdmin(
       user,
       locale,
+      input,
     )
   }
 

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { Op } from 'sequelize'
+import { Op, QueryTypes } from 'sequelize'
 import { Application } from './models/application.model'
 import { ApplicationDto } from './models/dto/application.dto'
 import { Form } from '../forms/models/form.model'
@@ -44,6 +44,10 @@ import type { Locale } from '@island.is/shared/types'
 import { calculatePruneAt } from '../../../utils/calculatePruneAt'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
+import { ApplicationTypeDto } from './models/dto/applicationType.dto'
+import { InstitutionDto } from './models/dto/institution.dto'
+import { ApplicationStatisticsDto } from './models/dto/applicationStatistics.dto'
+import { ApplicationAdminResponseDto } from './models/dto/applicationAdminResponse.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -357,59 +361,6 @@ export class ApplicationsService {
         ),
       )
     return applicationResponseDto
-  }
-
-  async findAllByAdminFilters(
-    page: number,
-    limit: number,
-    institutionNationalId?: string,
-    //TODOxy bæta við fleiri filtera
-  ): Promise<ApplicationResponseDto> {
-    const where: { isTest: boolean; organizationId?: string } = {
-      isTest: false,
-    }
-    if (institutionNationalId) {
-      where.organizationId = institutionNationalId
-    }
-
-    const offset = (page - 1) * limit
-    const { count: total, rows: data } =
-      await this.applicationModel.findAndCountAll({
-        where,
-        limit,
-        offset,
-        include: [
-          {
-            model: ApplicationEvent,
-            as: 'events',
-          },
-          // TODOxy afhverju erum við að sækja files?
-          {
-            model: Value,
-            as: 'files',
-            where: { fieldType: FieldTypesEnum.FILE },
-          },
-        ],
-        order: [
-          [{ model: ApplicationEvent, as: 'events' }, 'created', 'ASC'],
-          [{ model: Value, as: 'files' }, 'created', 'ASC'],
-        ],
-      })
-
-    const applicationMinimalDtos = await Promise.all(
-      data.map(async (application) => {
-        const form = await this.formModel.findByPk(application.formId)
-        return this.applicationMapper.mapApplicationToApplicationMinimalDto(
-          application,
-          form,
-        )
-      }),
-    )
-
-    return {
-      applications: applicationMinimalDtos,
-      total: total,
-    }
   }
 
   async getApplication(
@@ -1206,5 +1157,152 @@ export class ApplicationsService {
     }
 
     return loginTypes
+  }
+
+  async findAllApplicationsByAdminFilters(
+    page: number,
+    limit: number,
+    institutionNationalId?: string,
+    formId?: string,
+    applicantNationalId?: string,
+    searchStr?: string,
+    from?: string,
+    to?: string,
+  ): Promise<ApplicationAdminResponseDto> {
+    const toDate = to ? new Date(to) : undefined
+    const fromDate = from ? new Date(from) : undefined
+
+    const offset = (page - 1) * limit
+
+    const { count, rows } = await this.applicationModel.findAndCountAll({
+      where: {
+        [Op.and]: [
+          // TODOxy wondering if we need to join with Forms table instead to check if published?
+          // what if form is published after application is created, is isTest value updated?
+          { isTest: false },
+          institutionNationalId
+            ? { organizationId: institutionNationalId }
+            : {},
+          formId ? { formId } : {},
+          applicantNationalId ? { nationalId: applicantNationalId } : {},
+          // TODOxy filter by searchStr
+          fromDate ? { created: { [Op.gte]: fromDate } } : {},
+          toDate ? { created: { [Op.lte]: toDate } } : {},
+        ],
+      },
+      limit,
+      offset,
+      order: [['modified', 'DESC']],
+    })
+
+    const mappedRows = await Promise.all(
+      rows.map(async (application) => {
+        const form = await this.formModel.findByPk(application.formId)
+        return this.applicationMapper.mapApplicationToApplicationAdminDto(
+          application,
+          form,
+        )
+      }),
+    )
+
+    return {
+      rows: mappedRows,
+      count,
+    }
+  }
+
+  async getAllApplicationTypes(
+    institutionNationalId?: string,
+  ): Promise<ApplicationTypeDto[]> {
+    const forms = await this.formModel.findAll({
+      attributes: ['id', 'name'],
+      where: { status: FormStatus.PUBLISHED },
+      include: [
+        {
+          model: Application,
+          attributes: [],
+          required: true, // ensures at least one application exists
+          ...(institutionNationalId && {
+            where: { organizationId: institutionNationalId },
+          }),
+        },
+      ],
+      group: ['Form.id', 'Form.name'],
+    })
+
+    return forms.map((form) => ({
+      id: form.id,
+      nameIs: form.name?.is ?? '',
+      nameEn: form.name?.en ?? '',
+    }))
+  }
+
+  async getAllInstitutionsSuperAdmin(): Promise<InstitutionDto[]> {
+    const organizations = await this.organizationModel.findAll({
+      attributes: ['id', 'nationalId'],
+      include: [
+        {
+          model: Form,
+          attributes: ['id', 'name'],
+          required: true,
+          where: { status: FormStatus.PUBLISHED },
+          include: [
+            {
+              model: Application,
+              attributes: [], // ensures at least one application exists
+              required: true,
+            },
+          ],
+        },
+      ],
+      group: [
+        'Organization.id',
+        'Organization.nationalId',
+        'forms.id',
+        'forms.name',
+      ],
+    })
+
+    return organizations.map((org) => ({
+      nationalId: org.nationalId,
+      contentfulId:
+        getOrganizationInfoByNationalId(org.nationalId)?.contentfulId ?? '',
+    }))
+  }
+
+  async getApplicationCountByTypeIdAndStatus(
+    startDate: string,
+    endDate: string,
+    institutionNationalId?: string,
+  ): Promise<ApplicationStatisticsDto[]> {
+    const replacements: Record<string, unknown> = { startDate, endDate }
+    let institutionFilter = ''
+
+    if (institutionNationalId) {
+      replacements.institutionNationalId = institutionNationalId
+      institutionFilter = 'AND a.organization_id = :institutionNationalId'
+    }
+
+    const query = `
+    SELECT
+      a.form_id AS "formId",
+      f.name ->> 'is' AS "formNameIs",
+      f.name ->> 'en' AS "formNameEn",
+      COUNT(*) AS "totalCount",
+      COUNT(*) FILTER (WHERE a.state = '${ApplicationStatus.DRAFT}') AS "inProgressCount",
+      COUNT(*) FILTER (WHERE a.state = '${ApplicationStatus.COMPLETED}') AS "completedCount"
+    FROM public.application a
+    JOIN public.form f ON f.id = a.form_id
+    WHERE a.modified BETWEEN :startDate AND :endDate
+    ${institutionFilter}
+    GROUP BY a.form_id, f.name;
+  `
+
+    const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {
+      replacements,
+      type: QueryTypes.SELECT,
+    })
+
+    return stats
   }
 }

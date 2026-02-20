@@ -271,11 +271,5 @@ export class ApplicationInstitution {
   nationalId!: string
 
   @Field(() => String)
-  slug!: string
-
-  @Field(() => String)
   contentfulId!: string
-
-  @Field(() => [String])
-  applicationTypes!: string[]
 }
