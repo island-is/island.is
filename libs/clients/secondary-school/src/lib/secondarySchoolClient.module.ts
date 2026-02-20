@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common'
 import { SecondarySchoolClient } from './secondarySchoolClient.service'
-import { exportedApis } from './apiConfiguration'
+import { exportedApis, publicProgrammesApiProvider } from './apiConfiguration'
 
 @Module({
-  providers: [...exportedApis, SecondarySchoolClient],
+  providers: [
+    ...exportedApis,
+    publicProgrammesApiProvider,
+    SecondarySchoolClient,
+  ],
   exports: [SecondarySchoolClient],
 })
 export class SecondarySchoolClientModule {}

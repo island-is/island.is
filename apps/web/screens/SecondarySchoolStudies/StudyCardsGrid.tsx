@@ -25,9 +25,7 @@ export const StudyCardsGrid = ({
     <Box
       style={{
         display: 'grid',
-        gridTemplateColumns: isGridView
-          ? 'repeat(auto-fit, minmax(270px, 1fr))'
-          : '1fr',
+        gridTemplateColumns: isGridView ? 'repeat(3, 1fr)' : '1fr',
         gap: theme.spacing[gap],
       }}
     >
@@ -35,6 +33,7 @@ export const StudyCardsGrid = ({
         <SecondarySchoolStudyCard
           key={card.id}
           size={isGridView ? 'medium' : 'large'}
+          colorScheme="blue"
           {...card}
         />
       ))}

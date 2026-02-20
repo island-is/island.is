@@ -9,8 +9,12 @@ import {
   ApplicationsApi,
   Configuration,
   StudentsApi,
+  ProgrammesApi,
 } from '../../gen/fetch'
-import { SecondarySchoolClientConfig } from './secondarySchoolClient.config'
+import {
+  SecondarySchoolClientConfig,
+  SecondarySchoolPublicProgrammeClientConfig,
+} from './secondarySchoolClient.config'
 
 const configFactory = (
   xRoadConfig: ConfigType<typeof XRoadConfig>,
@@ -39,29 +43,69 @@ const configFactory = (
   basePath,
 })
 
-export const exportedApis = [ApplicationsApi, SchoolsApi, StudentsApi].map(
-  (Api) => ({
-    provide: Api,
-    useFactory: (
-      xRoadConfig: ConfigType<typeof XRoadConfig>,
-      config: ConfigType<typeof SecondarySchoolClientConfig>,
-      idsClientConfig: ConfigType<typeof IdsClientConfig>,
-    ) => {
-      return new Api(
-        new Configuration(
-          configFactory(
-            xRoadConfig,
-            config,
-            idsClientConfig,
-            `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
-          ),
-        ),
-      )
-    },
-    inject: [
-      XRoadConfig.KEY,
-      SecondarySchoolClientConfig.KEY,
-      IdsClientConfig.KEY,
-    ],
+const publicConfigFactory = (
+  xRoadConfig: ConfigType<typeof XRoadConfig>,
+  config: ConfigType<typeof SecondarySchoolClientConfig>,
+  basePath: string,
+) => ({
+  fetchApi: createEnhancedFetch({
+    name: 'clients-secondary-school-public',
+    organizationSlug: 'midstod-menntunar-og-skolathjonustu',
   }),
-)
+  headers: {
+    'X-Road-Client': xRoadConfig.xRoadClient,
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
+  basePath,
+})
+
+export const exportedApis = [
+  ApplicationsApi,
+  SchoolsApi,
+  StudentsApi,
+  ProgrammesApi,
+].map((Api) => ({
+  provide: Api,
+  useFactory: (
+    xRoadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof SecondarySchoolClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  ) => {
+    return new Api(
+      new Configuration(
+        configFactory(
+          xRoadConfig,
+          config,
+          idsClientConfig,
+          `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
+        ),
+      ),
+    )
+  },
+  inject: [
+    XRoadConfig.KEY,
+    SecondarySchoolClientConfig.KEY,
+    IdsClientConfig.KEY,
+  ],
+}))
+
+// Public ProgrammesApi without authentication and different
+export const publicProgrammesApiProvider = {
+  provide: ProgrammesApi,
+  useFactory: (
+    xRoadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof SecondarySchoolPublicProgrammeClientConfig>,
+  ) => {
+    return new ProgrammesApi(
+      new Configuration(
+        publicConfigFactory(
+          xRoadConfig,
+          config,
+          `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
+        ),
+      ),
+    )
+  },
+  inject: [XRoadConfig.KEY, SecondarySchoolPublicProgrammeClientConfig.KEY],
+}

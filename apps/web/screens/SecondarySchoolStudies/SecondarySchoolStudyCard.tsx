@@ -61,6 +61,7 @@ export const SecondarySchoolStudyCard = ({
         href={href}
         onClick={onCardClick}
         borderRadius="large"
+        color={'blue'}
         borderColor={borderColor}
         borderWidth="standard"
         background="white"
