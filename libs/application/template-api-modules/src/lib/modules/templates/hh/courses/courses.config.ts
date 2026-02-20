@@ -9,6 +9,7 @@ const schema = z.object({
   zendeskSubdomain: z.string(),
   zendeskFormEmail: z.string(),
   zendeskFormToken: z.string(),
+  zendeskFormTokenEmail: z.string(),
 })
 
 export const HHCoursesConfig = defineConfig({
@@ -22,5 +23,6 @@ export const HHCoursesConfig = defineConfig({
     zendeskSubdomain: env.required('HH_ZENDESK_CONTACT_FORM_SUBDOMAIN'),
     zendeskFormEmail: env.required('HH_ZENDESK_CONTACT_FORM_EMAIL'),
     zendeskFormToken: env.required('HH_ZENDESK_CONTACT_FORM_TOKEN'),
+    zendeskFormTokenEmail: env.required('HH_ZENDESK_CONTACT_FORM_TOKEN_EMAIL'),
   }),
 })

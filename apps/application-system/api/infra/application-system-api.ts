@@ -462,6 +462,8 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN',
       HH_ZENDESK_CONTACT_FORM_SUBDOMAIN:
         '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_SUBDOMAIN',
+      HH_ZENDESK_CONTACT_FORM_TOKEN_EMAIL:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN_EMAIL',
     })
     .db()
     .migrations()

@@ -24,7 +24,7 @@ import { HHCoursesConfig } from './courses.config'
       provide: ZendeskServiceConfig.KEY,
       useFactory: (config: ConfigType<typeof HHCoursesConfig>) => ({
         subdomain: config.zendeskSubdomain,
-        formEmail: config.zendeskFormEmail,
+        formEmail: config.zendeskFormTokenEmail,
         formToken: config.zendeskFormToken,
       }),
       inject: [HHCoursesConfig.KEY],
