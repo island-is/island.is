@@ -67,7 +67,7 @@ export default function TabLayout() {
           />
         </NativeTabs.Trigger>
 
-        <NativeTabs.Trigger name="two">
+        <NativeTabs.Trigger name="wallet">
           <NativeTabs.Trigger.Label>Skírteini</NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
             src={{
