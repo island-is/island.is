@@ -302,7 +302,7 @@ describe('caseTable.utils', () => {
       )
     })
 
-    it('includes WITHDRAW_APPEAL when prosecution user can cancel appeal', () => {
+    it('includes WITHDRAW_APPEAL when prosecution the user can cancel appeal', () => {
       const user = prosecutionUser('p-1')
       const theCase = {
         type: CaseType.CUSTODY,
