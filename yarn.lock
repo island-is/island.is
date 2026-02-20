@@ -5547,6 +5547,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@bacons/apple-targets@npm:4.0.3":
+  version: 4.0.3
+  resolution: "@bacons/apple-targets@npm:4.0.3"
+  dependencies:
+    "@bacons/xcode": "npm:1.0.0-alpha.27"
+    "@react-native/normalize-colors": "npm:^0.79.2"
+    debug: "npm:^4.3.4"
+    glob: "npm:^10.4.2"
+  peerDependencies:
+    expo: ">=52"
+  checksum: 10/6de031a5065e356983039f752ce5f0fb6292a4687f665a9759d7d2475a114c7db346f3a183d685565a8e9665fcaf7aa5d5e3befc9a7d0a189a5921eb518b3f3e
+  languageName: node
+  linkType: hard
+
+"@bacons/xcode@npm:1.0.0-alpha.27":
+  version: 1.0.0-alpha.27
+  resolution: "@bacons/xcode@npm:1.0.0-alpha.27"
+  dependencies:
+    "@expo/plist": "npm:^0.0.18"
+    debug: "npm:^4.3.4"
+    uuid: "npm:^8.3.2"
+  checksum: 10/1fdf83483997ef497e4b1df77769358b2b03d4eba327b35cb29e21d85ae64d7dd79d2199a548b2f57820f1d2d8866a235be97615a33782f978ab4985c7ec05ae
+  languageName: node
+  linkType: hard
+
 "@balena/dockerignore@npm:^1.0.2":
   version: 1.0.2
   resolution: "@balena/dockerignore@npm:1.0.2"
@@ -9383,7 +9408,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@expo/plist@npm:0.0.18":
+"@expo/plist@npm:0.0.18, @expo/plist@npm:^0.0.18":
   version: 0.0.18
   resolution: "@expo/plist@npm:0.0.18"
   dependencies:
@@ -9444,6 +9469,26 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: 10/411bedc294629ff468ca4bdaa87ffaf674e40078200c95634fd60d646a5e8d3ded6b8e817a63474ddd5e4b701ac70671220daa9a446dc34c1c70c747a414d33a
+  languageName: node
+  linkType: hard
+
+"@expo/prebuild-config@npm:^55.0.5":
+  version: 55.0.5
+  resolution: "@expo/prebuild-config@npm:55.0.5"
+  dependencies:
+    "@expo/config": "npm:~55.0.5"
+    "@expo/config-plugins": "npm:~55.0.5"
+    "@expo/config-types": "npm:^55.0.4"
+    "@expo/image-utils": "npm:^0.8.12"
+    "@expo/json-file": "npm:^10.0.12"
+    "@react-native/normalize-colors": "npm:0.83.2"
+    debug: "npm:^4.3.1"
+    resolve-from: "npm:^5.0.0"
+    semver: "npm:^7.6.0"
+    xml2js: "npm:0.6.0"
+  peerDependencies:
+    expo: "*"
+  checksum: 10/2c856b66c448dba61148b265b36fbc99497b1e35c58b72be5e23942bf30557e7151d1be3ad43c40b240ed7b49387861316540e03cf2fbb298ad7c32c0ebf6761
   languageName: node
   linkType: hard
 
@@ -12537,6 +12582,7 @@ __metadata:
   resolution: "@island.is/expo-app@workspace:apps/native/expo-app"
   dependencies:
     "@apollo/client": "npm:3.7.7"
+    "@bacons/apple-targets": "npm:4.0.3"
     "@datadog/mobile-react-native": "npm:3.0.2"
     "@emotion/native": "npm:11.11.0"
     "@emotion/react": "npm:11.14.0"
@@ -12573,8 +12619,9 @@ __metadata:
     expo-notifications: "npm:~55.0.7"
     expo-router: "npm:~55.0.0-preview.7"
     expo-sharing: "npm:~55.0.7"
-    expo-splash-screen: "npm:~55.0.5"
+    expo-splash-screen: "npm:~55.0.6"
     expo-status-bar: "npm:~55.0.2"
+    expo-system-ui: "npm:~55.0.6"
     expo-web-browser: "npm:~55.0.5"
     lodash: "npm:4.17.23"
     react: "npm:19.2.0"
@@ -17319,10 +17366,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native/normalize-colors@npm:0.83.2":
+  version: 0.83.2
+  resolution: "@react-native/normalize-colors@npm:0.83.2"
+  checksum: 10/57e09d151ac697b55207fd9ef47de79598682610c13d6d6c40be2de40abd1c0bc2b52e8acadead779ab19538e8a56e17f205a3c13ab7fa51b368e342c9f94d08
+  languageName: node
+  linkType: hard
+
 "@react-native/normalize-colors@npm:^0.74.1":
   version: 0.74.89
   resolution: "@react-native/normalize-colors@npm:0.74.89"
   checksum: 10/2e2e2f950cc4c2896af6094cb045f1d6e8d73101960b9cadb67b944b1254a9204b8f78a075dafd22cff39bc154a0cbe48b57f262b5d319ecb823c84519352545
+  languageName: node
+  linkType: hard
+
+"@react-native/normalize-colors@npm:^0.79.2":
+  version: 0.79.7
+  resolution: "@react-native/normalize-colors@npm:0.79.7"
+  checksum: 10/3bb3023101c6a71aa9f733d789966bf1021aa7ecf35a0477f5b967a3c5ae104fd8e797e73c5ec32b1f5d23a92c99b02cd6e23a9a9a9861457aa681d8bd3e811a
   languageName: node
   linkType: hard
 
@@ -33463,14 +33524,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-splash-screen@npm:~55.0.5":
-  version: 55.0.5
-  resolution: "expo-splash-screen@npm:55.0.5"
+"expo-splash-screen@npm:~55.0.6":
+  version: 55.0.6
+  resolution: "expo-splash-screen@npm:55.0.6"
   dependencies:
-    "@expo/prebuild-config": "npm:^55.0.4"
+    "@expo/prebuild-config": "npm:^55.0.5"
   peerDependencies:
     expo: "*"
-  checksum: 10/c968d82a5b70e9be0816cfa4aeaa59f55042c4785ec717bcda49bb986246c0618cc6fb097bcdfa4ec4aa9e1d069b75a8dfb47b4566efbcd7a896627725c09894
+  checksum: 10/7472e39edf4fdea785bc6e66864584b7c524357e7ce2cfc10563a4c0a0a2e3c703bc2a63c32fe1998cf0b5cc49471b60e43c665dda391370d474a80bb276676e
   languageName: node
   linkType: hard
 
@@ -33498,6 +33559,23 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/682a301c8249fd692648f668632b330dea52d067d935d41d7f08cda66e4e3f2827665fa7f2ebe41e93106a4b32c7089e81e18f59999d5af13745719216e25e3a
+  languageName: node
+  linkType: hard
+
+"expo-system-ui@npm:~55.0.6":
+  version: 55.0.6
+  resolution: "expo-system-ui@npm:55.0.6"
+  dependencies:
+    "@react-native/normalize-colors": "npm:0.83.2"
+    debug: "npm:^4.3.2"
+  peerDependencies:
+    expo: "*"
+    react-native: "*"
+    react-native-web: "*"
+  peerDependenciesMeta:
+    react-native-web:
+      optional: true
+  checksum: 10/75d9bcbf2434908ea5a9bc5e52c0fe345d98b2907f1fe8ba382822f66b1690dec9761d1633562adc78dbf25815141f3e71080e19560468e2c35d9cfb1228c86c
   languageName: node
   linkType: hard
 

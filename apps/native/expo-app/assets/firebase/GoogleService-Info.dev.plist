@@ -13,7 +13,7 @@
        <key>PLIST_VERSION</key>
        <string>1</string>
        <key>BUNDLE_ID</key>
-       <string>is.island.app</string>
+       <string>is.island.app.dev</string>
        <key>PROJECT_ID</key>
        <string>pc-api-8701487029959181480-770</string>
        <key>STORAGE_BUCKET</key>

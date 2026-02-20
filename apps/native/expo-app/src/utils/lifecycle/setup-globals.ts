@@ -19,7 +19,6 @@ import {
 } from 'react-native'
 import * as Application from 'expo-application';
 import KeyboardManager from 'react-native-keyboard-manager'
-import { Navigation } from 'react-native-navigation'
 import { getConfig } from '../../config'
 import { isIos } from '../devices'
 import { performanceMetrics } from '../performance-metrics'
@@ -95,20 +94,6 @@ if (__DEV__) {
 
   // initialize datadog rum
   DdSdkReactNative.initialize(ddconfig)
-
-  Navigation.events().registerComponentWillAppearListener(
-    ({ componentId, componentName }) => {
-      // Start a view with a unique view identifier, a custom view url, and an object to attach additional attributes to the view
-      DdRum.startView(componentId, componentName)
-    },
-  )
-
-  Navigation.events().registerComponentDidDisappearListener(
-    ({ componentId }) => {
-      // Stops a previously started view with the same unique view identifier, and an object to attach additional attributes to the view
-      DdRum.stopView(componentId)
-    },
-  )
 
   // enable performance metrics collection
   performanceMetrics()

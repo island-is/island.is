@@ -68,7 +68,7 @@ interface AuthStore {
 
 const getAppAuthConfig = () => {
   const config = getConfig()
-  const android = isAndroid && !config.isTestingApp ? '.auth' : ''
+  const android = isAndroid ? '.auth' : ''
 
   return {
     issuer: config.idsIssuer,
@@ -277,7 +277,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         throw new Error('No token to revoke')
       }
     } catch (e) {
-      console.error('Failed to revoke token', e)
+      console.log('Failed to revoke token', e)
       // NOOP
     }
 

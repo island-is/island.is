@@ -16,7 +16,8 @@ import {
 } from '@react-navigation/native'
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const systemScheme = useColorScheme()
+  const brokenSystemScheme = useColorScheme()
+  const [systemScheme, setSystemScheme] = useState(brokenSystemScheme)
   const preferences = usePreferencesStore()
   const selectedTheme = getThemeWithPreferences(preferences, systemScheme)
   const [prevColorScheme, setPrevColorScheme] = useState(
@@ -24,31 +25,37 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   )
 
   useEffect(() => {
+    if (brokenSystemScheme !== 'unspecified') {
+      setSystemScheme(brokenSystemScheme)
+    }
+  }, [brokenSystemScheme]);
+
+  useEffect(() => {
     if (prevColorScheme !== selectedTheme.colorScheme) {
       setPrevColorScheme(selectedTheme.colorScheme)
     }
     uiStore.setState({ theme: selectedTheme })
-    if (Platform.OS === 'ios') {
+    if (Platform.OS === 'ios' && preferences.appearanceMode === 'automatic') {
+      StatusBar.setBarStyle('default', true)
+    } else {
       StatusBar.setBarStyle(
-        preferences.appearanceMode === 'automatic'
-          ? 'default'
-          : selectedTheme.isDark
-          ? 'light-content'
-          : 'dark-content',
+        selectedTheme.isDark ? 'light-content' : 'dark-content',
         true,
       )
     }
   }, [selectedTheme])
 
-  useEffect(() => {
-    Appearance.setColorScheme(
-      preferences.appearanceMode === 'automatic'
-        ? 'unspecified' // default to light, change back to 'automatic' when dark mode is ready
-        : selectedTheme.isDark
-        ? 'dark'
-        : 'light',
-    )
-  }, [preferences.appearanceMode])
+  // @todo migration - This is uncessecery if we dont allow changing the theme.
+  // Also its buggy.
+  // useEffect(() => {
+  //   Appearance.setColorScheme(
+  //     preferences.appearanceMode === 'automatic'
+  //       ? 'unspecified' // default to light, change back to 'automatic' when dark mode is ready
+  //       : selectedTheme.isDark
+  //       ? 'dark'
+  //       : 'light',
+  //   )
+  // }, [preferences.appearanceMode])
 
   const navigationTheme = useMemo(() => {
     return {
@@ -69,25 +76,23 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       fonts: {
         regular: {
           fontFamily: 'IBMPlexSans_400Regular',
-          fontWeight: '400',
+          fontWeight: '400' as const,
         },
         medium: {
           fontFamily: 'IBMPlexSans_500Medium',
-          fontWeight: '500',
+          fontWeight: '500' as const,
         },
         bold: {
           fontFamily: 'IBMPlexSans_600SemiBold',
-          fontWeight: '600',
+          fontWeight: '600' as const,
         },
         heavy: {
           fontFamily: 'IBMPlexSans_700Bold',
-          fontWeight: '700',
+          fontWeight: '700' as const,
         },
       }
     }
   }, [selectedTheme])
-
-  console.log('Selected theme:', navigationTheme);
 
   return (
     <NavigationThemeProvider value={navigationTheme}>

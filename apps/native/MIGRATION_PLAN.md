@@ -11,6 +11,7 @@ Island.is Native App (apps/native/app)
 - Ætlum við að halda uppi Storybook?
 - Eigum við að fara í expo-updates og setja upp OTA updates? Hver yrði kostnaðurinn. Með nýja Hermes V1 er komið bytecode diffing þannig updates verða mun minni og hraðari.
 - Virkar mock environment? Að sleppa því minnkar typescript dependency tree um 99%.
+- Eigum við að fara í EAS builds eða halda okkur við Github Actions?
 
 -- Work list
 

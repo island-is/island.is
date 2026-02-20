@@ -40,16 +40,22 @@ export const useBrowser = () => {
           }
         }
         // If something goes wrong we fail silently and open the browser normally
-        WebBrowser.openBrowserAsync(url)
+        WebBrowser.openBrowserAsync(url, {
+          presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+        })
       } else if (hasOnboardedPasskeys) {
         // Has gone through onboarding but does not have a passkey, open url without passkeys
-        WebBrowser.openBrowserAsync(url)
+        WebBrowser.openBrowserAsync(url, {
+          presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+        })
       } else if (!hasOnboardedPasskeys) {
         // Open passkey onboarding screen
         navigateTo('/passkey', { url, parentComponentId: componentId })
       }
     } else {
-      WebBrowser.openBrowserAsync(url)
+      WebBrowser.openBrowserAsync(url, {
+        presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+      })
     }
   }
   return { openBrowser }

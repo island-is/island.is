@@ -12,21 +12,22 @@ import { ApolloProvider } from '@apollo/client'
 import { checkIsAuthenticated, readAuthorizeResult } from '../stores/auth-store'
 import { getNextOnboardingStep } from '../utils/onboarding'
 import type { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import { useFonts } from '@expo-google-fonts/ibm-plex-sans/useFonts';
-import { IBMPlexSans_100Thin } from '@expo-google-fonts/ibm-plex-sans/100Thin';
-import { IBMPlexSans_200ExtraLight } from '@expo-google-fonts/ibm-plex-sans/200ExtraLight';
-import { IBMPlexSans_300Light } from '@expo-google-fonts/ibm-plex-sans/300Light';
-import { IBMPlexSans_400Regular } from '@expo-google-fonts/ibm-plex-sans/400Regular';
-import { IBMPlexSans_500Medium } from '@expo-google-fonts/ibm-plex-sans/500Medium';
-import { IBMPlexSans_600SemiBold } from '@expo-google-fonts/ibm-plex-sans/600SemiBold';
-import { IBMPlexSans_700Bold } from '@expo-google-fonts/ibm-plex-sans/700Bold';
-import { IBMPlexSans_100Thin_Italic } from '@expo-google-fonts/ibm-plex-sans/100Thin_Italic';
-import { IBMPlexSans_200ExtraLight_Italic } from '@expo-google-fonts/ibm-plex-sans/200ExtraLight_Italic';
-import { IBMPlexSans_300Light_Italic } from '@expo-google-fonts/ibm-plex-sans/300Light_Italic';
-import { IBMPlexSans_400Regular_Italic } from '@expo-google-fonts/ibm-plex-sans/400Regular_Italic';
-import { IBMPlexSans_500Medium_Italic } from '@expo-google-fonts/ibm-plex-sans/500Medium_Italic';
-import { IBMPlexSans_600SemiBold_Italic } from '@expo-google-fonts/ibm-plex-sans/600SemiBold_Italic';
-import { IBMPlexSans_700Bold_Italic } from '@expo-google-fonts/ibm-plex-sans/700Bold_Italic';
+import { useFonts } from '@expo-google-fonts/ibm-plex-sans/useFonts'
+import { IBMPlexSans_100Thin } from '@expo-google-fonts/ibm-plex-sans/100Thin'
+import { IBMPlexSans_200ExtraLight } from '@expo-google-fonts/ibm-plex-sans/200ExtraLight'
+import { IBMPlexSans_300Light } from '@expo-google-fonts/ibm-plex-sans/300Light'
+import { IBMPlexSans_400Regular } from '@expo-google-fonts/ibm-plex-sans/400Regular'
+import { IBMPlexSans_500Medium } from '@expo-google-fonts/ibm-plex-sans/500Medium'
+import { IBMPlexSans_600SemiBold } from '@expo-google-fonts/ibm-plex-sans/600SemiBold'
+import { IBMPlexSans_700Bold } from '@expo-google-fonts/ibm-plex-sans/700Bold'
+import { IBMPlexSans_100Thin_Italic } from '@expo-google-fonts/ibm-plex-sans/100Thin_Italic'
+import { IBMPlexSans_200ExtraLight_Italic } from '@expo-google-fonts/ibm-plex-sans/200ExtraLight_Italic'
+import { IBMPlexSans_300Light_Italic } from '@expo-google-fonts/ibm-plex-sans/300Light_Italic'
+import { IBMPlexSans_400Regular_Italic } from '@expo-google-fonts/ibm-plex-sans/400Regular_Italic'
+import { IBMPlexSans_500Medium_Italic } from '@expo-google-fonts/ibm-plex-sans/500Medium_Italic'
+import { IBMPlexSans_600SemiBold_Italic } from '@expo-google-fonts/ibm-plex-sans/600SemiBold_Italic'
+import { IBMPlexSans_700Bold_Italic } from '@expo-google-fonts/ibm-plex-sans/700Bold_Italic'
+import { setupEventHandlers } from '../utils/lifecycle/setup-event-handlers'
 
 export { ErrorBoundary } from 'expo-router'
 
@@ -51,15 +52,20 @@ export default function RootLayout() {
     IBMPlexSans_400Regular_Italic,
     IBMPlexSans_500Medium_Italic,
     IBMPlexSans_600SemiBold_Italic,
-    IBMPlexSans_700Bold_Italic
-  });
+    IBMPlexSans_700Bold_Italic,
+  })
 
   const [appReady, setAppReady] = useState(false)
-  const [apolloClient, setApolloClient] =
-    useState<ApolloClient<NormalizedCacheObject> | null>(null)
+  const [
+    apolloClient,
+    setApolloClient,
+  ] = useState<ApolloClient<NormalizedCacheObject> | null>(null)
 
   // Initialize auth and Apollo on startup
   useEffect(() => {
+    // Register all event handlers
+    setupEventHandlers()
+
     async function init() {
       try {
         // 1. Restore auth tokens from keychain
@@ -113,20 +119,20 @@ function RootLayoutNav({
   apolloClient: ApolloClient<NormalizedCacheObject>
 }) {
   return (
-      <LocaleProvider>
-        <AppThemeProvider>
-          <FeatureFlagProvider>
-            <ApolloProvider client={apolloClient}>
-              <Stack>
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="login"
-                  options={{ headerShown: false, animation: 'none' }}
-                />
-              </Stack>
-            </ApolloProvider>
-          </FeatureFlagProvider>
-        </AppThemeProvider>
-      </LocaleProvider>
+    <LocaleProvider>
+      <AppThemeProvider>
+        <FeatureFlagProvider>
+          <ApolloProvider client={apolloClient}>
+            <Stack>
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="login"
+                options={{ headerShown: false, animation: 'none' }}
+              />
+            </Stack>
+          </ApolloProvider>
+        </FeatureFlagProvider>
+      </AppThemeProvider>
+    </LocaleProvider>
   )
 }

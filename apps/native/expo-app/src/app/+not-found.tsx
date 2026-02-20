@@ -1,7 +1,9 @@
-import { Link, Stack } from 'expo-router';
-import { StyleSheet, View, Text } from 'react-native';
+import { Link, Stack, usePathname } from 'expo-router'
+import { StyleSheet, View, Text } from 'react-native'
 
-export default function NotFoundScreen() {
+export default function NotFoundScreen(props: any) {
+  const pathname = usePathname()
+  console.log('Rendering NotFoundScreen with props', props, { pathname })
   return (
     <>
       <Stack.Screen options={{ title: 'Oops!' }} />
@@ -13,7 +15,7 @@ export default function NotFoundScreen() {
         </Link>
       </View>
     </>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -35,4 +37,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#2e78b7',
   },
-});
+})

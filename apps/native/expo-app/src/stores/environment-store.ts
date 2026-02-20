@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { config, environments } from '../config'
+import { config } from '../config'
+import { environments } from '../constants/environments'
 import { create, useStore } from 'zustand'
 
 export interface EnvironmentConfig {
@@ -48,7 +49,7 @@ export interface EnvironmentStore {
 export const environmentStore = create<EnvironmentStore>()(
   persist(
     (set, get) => ({
-      environment: config.isTestingApp ? environments.dev : environments.prod,
+      environment: environments.dev, // config.isTestingApp ? environments.dev : environments.prod,
       result: [],
       fetchedAt: 0,
       cognito: null,

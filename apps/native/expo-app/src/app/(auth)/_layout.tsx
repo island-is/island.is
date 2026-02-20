@@ -64,12 +64,33 @@ export default function AuthLayout() {
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="(modals)/settings"
+        options={{
+          headerShown: false,
+          presentation: 'formSheet',
+        }}
+      />
+      <Stack.Screen
+        name="(modals)/edit-phone"
+        options={{
+          headerShown: false,
+          presentation: 'formSheet',
+        }}
+      />
+      <Stack.Screen
+        name="(modals)/edit-confirm"
+        options={{
+          headerShown: false,
+          presentation: 'formSheet',
+        }}
+      />
       <Stack.Screen name="onboarding" options={{ headerShown: false }} />
       <Stack.Screen
         name="app-lock"
         options={{
           headerShown: false,
-          presentation: 'containedTransparentModal',
+          presentation: 'transparentModal',
           gestureEnabled: false,
           animation: 'fade',
         }}

@@ -71,86 +71,86 @@ const parseAndroidAction = (action: string) => {
 export function showPicker(
   options: ShowPickerOptions,
 ): Promise<ShowPickerResponse> {
-//   const {
-//     type,
-//     title,
-//     message,
-//     selectedId,
-//     items,
-//     cancel,
-//     cancelLabel = 'Cancel',
-//   } = options
+  const {
+    type,
+    title,
+    message,
+    selectedId,
+    items,
+    cancel,
+    cancelLabel = 'Cancel',
+  } = options
 
-//   const theme = uiStore.getState().theme!
+  const theme = uiStore.getState().theme!
 
-//   if (isIos) {
-//     return new Promise((resolve) => {
-//       const options = [
-//         ...items.map((item) => item.label),
-//         ...(cancel ? [cancelLabel] : []),
-//       ]
-//       ActionSheetIOS.showActionSheetWithOptions(
-//         {
-//           title,
-//           message,
-//           cancelButtonIndex: Math.max(
-//             0,
-//             Math.min(items.length, options.length - 1),
-//           ),
-//           disabledButtonIndices: [
-//             Math.max(
-//               0,
-//               Math.min(
-//                 options.length - 1,
-//                 items.findIndex((item) => item.id === selectedId),
-//               ),
-//             ),
-//           ],
-//           options,
-//         },
-//         (index: number) => {
-//           if (index < items.length) {
-//             resolve({ action: 'select', selectedItem: items[index] })
-//           } else {
-//             resolve({
-//               action: 'dismiss',
-//             })
-//           }
-//         },
-//       )
-//     })
-//   } else if (isAndroid) {
-//     return DialogAndroid.showPicker(title, message, {
-//       selectedId,
-//       cancelable: cancel,
-//       negativeText: cancel ? cancelLabel : undefined,
-//       type:
-//         type === 'radio' ? DialogAndroid.listRadio : DialogAndroid.listPlain,
-//       items,
-//       negativeColor: theme.color.dark400,
-//       positiveColor: theme.color.blue400,
-//       widgetColor: theme.color.blue400,
-//       linkColor: theme.color.blue400,
-//       contentColor: theme.shade.foreground,
-//       backgroundColor: theme.shade.background,
-//       neutralColor: theme.shade.foreground,
-//       titleColor: theme.shade.foreground,
-//     }).then(({ action, selectedItem }: any) => {
-//       let actn: ShowPickerResponse['action'] = 'neutral'
-//       if (action === 'actionDismiss') {
-//         actn = 'dismiss'
-//       } else if (action === 'actionNegative') {
-//         actn = 'negative'
-//       } else if (action === 'actionSelect') {
-//         actn = 'select'
-//       }
+  if (isIos) {
+    return new Promise((resolve) => {
+      const options = [
+        ...items.map((item) => item.label),
+        ...(cancel ? [cancelLabel] : []),
+      ]
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          title,
+          message,
+          cancelButtonIndex: Math.max(
+            0,
+            Math.min(items.length, options.length - 1),
+          ),
+          disabledButtonIndices: [
+            Math.max(
+              0,
+              Math.min(
+                options.length - 1,
+                items.findIndex((item) => item.id === selectedId),
+              ),
+            ),
+          ],
+          options,
+        },
+        (index: number) => {
+          if (index < items.length) {
+            resolve({ action: 'select', selectedItem: items[index] })
+          } else {
+            resolve({
+              action: 'dismiss',
+            })
+          }
+        },
+      )
+    })
+  } else if (isAndroid) {
+    //     return DialogAndroid.showPicker(title, message, {
+    //       selectedId,
+    //       cancelable: cancel,
+    //       negativeText: cancel ? cancelLabel : undefined,
+    //       type:
+    //         type === 'radio' ? DialogAndroid.listRadio : DialogAndroid.listPlain,
+    //       items,
+    //       negativeColor: theme.color.dark400,
+    //       positiveColor: theme.color.blue400,
+    //       widgetColor: theme.color.blue400,
+    //       linkColor: theme.color.blue400,
+    //       contentColor: theme.shade.foreground,
+    //       backgroundColor: theme.shade.background,
+    //       neutralColor: theme.shade.foreground,
+    //       titleColor: theme.shade.foreground,
+    //     }).then(({ action, selectedItem }: any) => {
+    //       let actn: ShowPickerResponse['action'] = 'neutral'
+    //       if (action === 'actionDismiss') {
+    //         actn = 'dismiss'
+    //       } else if (action === 'actionNegative') {
+    //         actn = 'negative'
+    //       } else if (action === 'actionSelect') {
+    //         actn = 'select'
+    //       }
 
-//       return {
-//         action: actn,
-//         selectedItem,
-//       }
-//     })
-  //   }
+    //       return {
+    //         action: actn,
+    //         selectedItem,
+    //       }
+    //     })
+  }
   // @todo migration
   return Promise.resolve({ action: 'neutral' })
 }
@@ -158,7 +158,7 @@ export function showPicker(
 export function showAndroidPrompt(
   title: string,
   content?: string,
-  options?: any
+  options?: any,
 ): Promise<any> {
   // @todo migration
   return Promise.resolve({ action: 'neutral', text: '' })

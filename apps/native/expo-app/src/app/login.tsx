@@ -9,8 +9,13 @@ import {
 import styled from 'styled-components/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import logo from '@/assets/logo/logo-64w.png'
+import testingLogo from '@/assets/logo/testing-logo-64w.png'
+import { isTestingApp } from '@/config'
+import { environments } from '@/constants/environments'
+import { DebugInfo } from '@/components/testing/debug-info'
 import { useBrowser } from '@/lib/use-browser'
 import { useAuthStore } from '@/stores/auth-store'
+import { useEnvironmentStore } from '@/stores/environment-store'
 import { preferencesStore } from '@/stores/preferences-store'
 import { Button, dynamicColor, font, Illustration } from '@/ui'
 import { nextOnboardingStep } from '@/utils/onboarding'
@@ -48,11 +53,31 @@ const LightButtonText = styled.Text`
 
 export default function LoginScreen() {
   const authStore = useAuthStore()
+  const { environment = environments.prod, cognito } = useEnvironmentStore()
   const { openBrowser } = useBrowser()
   const intl = useIntl()
   const [isLoggingIn, setIsLoggingIn] = useState(false)
 
   const onLoginPress = async () => {
+    if (environment.id === 'mock') {
+      preferencesStore.setState({
+        hasOnboardedBiometrics: true,
+        hasOnboardedPinCode: true,
+        hasOnboardedNotifications: true,
+      })
+      await nextOnboardingStep()
+      return
+    }
+
+    const isCognitoAuth = cognito?.accessToken && cognito?.expiresAt > Date.now()
+    if (environment.idsIssuer !== environments.prod.idsIssuer && !isCognitoAuth) {
+      Alert.alert(
+        'Cognito required',
+        'Please authenticate with cognito before logging in.',
+      )
+      return
+    }
+
     if (isLoggingIn) {
       return
     }
@@ -86,10 +111,7 @@ export default function LoginScreen() {
 
   const onNeedHelpPress = () => {
     const helpDeskUrl = 'https://island.is/flokkur/thjonusta-island-is'
-    // openBrowser(helpDeskUrl)
-    WebBrowser.openBrowserAsync(helpDeskUrl, {
-      presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
-    })
+    openBrowser(helpDeskUrl)
   }
 
   return (
@@ -105,7 +127,7 @@ export default function LoginScreen() {
           }}
         >
           <Image
-            source={logo}
+            source={isTestingApp ? testingLogo : logo}
             resizeMode="contain"
             style={{ width: 48, height: 48 }}
           />
@@ -134,7 +156,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </BottomRow>
       </SafeAreaView>
-      <Illustration isBottomAligned />
+      {isTestingApp ? <DebugInfo /> : <Illustration isBottomAligned />}
     </Host>
   )
 }

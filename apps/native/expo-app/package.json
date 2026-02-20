@@ -4,13 +4,14 @@
   "license": "0BSD",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web"
+    "start": "APP_VARIANT=development expo start",
+    "android": "APP_VARIANT=development expo run:android",
+    "ios": "APP_VARIANT=development expo run:ios",
+    "web": "APP_VARIANT=development expo start --web"
   },
   "dependencies": {
     "@apollo/client": "3.7.7",
+    "@bacons/apple-targets": "4.0.3",
     "@datadog/mobile-react-native": "3.0.2",
     "@emotion/native": "11.11.0",
     "@emotion/react": "11.14.0",
@@ -45,8 +46,9 @@
     "expo-notifications": "~55.0.7",
     "expo-router": "~55.0.0-preview.7",
     "expo-sharing": "~55.0.7",
-    "expo-splash-screen": "~55.0.5",
+    "expo-splash-screen": "~55.0.6",
     "expo-status-bar": "~55.0.2",
+    "expo-system-ui": "~55.0.6",
     "expo-web-browser": "~55.0.5",
     "lodash": "4.17.23",
     "react": "19.2.0",
