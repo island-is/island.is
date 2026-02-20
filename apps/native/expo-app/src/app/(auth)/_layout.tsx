@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef } from 'react'
 import { AppState, Keyboard } from 'react-native'
 
 import { authStore, useAuthStore } from '@/stores/auth-store'
-import { preferencesStore } from '@/stores/preferences-store'
 import { isOnboarded } from '@/utils/onboarding'
 import { config } from '../../config'
 

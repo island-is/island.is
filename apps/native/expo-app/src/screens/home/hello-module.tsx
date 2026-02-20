@@ -33,8 +33,6 @@ export const HelloModule = React.memo(() => {
     variables: { input: { pageIdentifier: 'frontpage' } },
   })
 
-  const cacheDirectory = `${FileSystem.cacheDirectory}homeScreenImages`
-
   // Need to add extension to the title due to an issue in react native https://github.com/facebook/react-native/issues/42234
   const fileExtension = image?.getFrontpage?.imageMobile?.url
     ? getFileExtension(image?.getFrontpage?.imageMobile?.url)
@@ -49,11 +47,16 @@ export const HelloModule = React.memo(() => {
       return
     }
 
-    const localPath = `${cacheDirectory}/${titleWithExtension}`
-    const fileInfo = await FileSystem.getInfoAsync(localPath)
+    const imageCacheDir = new FileSystem.Directory(
+      new FileSystem.Directory(FileSystem.Paths.cache).uri + 'homeScreenImages',
+    )
+    const localFile = new FileSystem.File(
+      imageCacheDir.uri + titleWithExtension,
+    )
+
     // Use image from cache if it exists
-    if (fileInfo.exists) {
-      setImageSrc(fileInfo.uri)
+    if (localFile.exists) {
+      setImageSrc(localFile.uri)
     } else {
       const imageSource = image.getFrontpage?.imageMobile?.url
       if (!imageSource) {
@@ -61,18 +64,13 @@ export const HelloModule = React.memo(() => {
       }
       setImageSrc(imageSource)
       // Download image and save in cache
-      const downloadResumable = FileSystem.createDownloadResumable(
-        imageSource,
-        localPath,
-      )
       try {
-        const directoryInfo = await FileSystem.getInfoAsync(cacheDirectory)
-        if (!directoryInfo.exists) {
-          await FileSystem.makeDirectoryAsync(cacheDirectory, {
-            intermediates: true,
-          })
+        if (!imageCacheDir.exists) {
+          imageCacheDir.create()
         }
-        await downloadResumable.downloadAsync()
+        const response = await fetch(imageSource)
+        const buffer = await response.arrayBuffer()
+        localFile.write(new Uint8Array(buffer))
       } catch (e) {
         console.error(e)
         // Do nothing, try again next time

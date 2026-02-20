@@ -1,74 +1,106 @@
-import { Stack } from 'expo-router'
-import { useRouter } from 'expo-router'
-import { StyleSheet, Text, View } from 'react-native'
-import { PdfView } from '@kishannareshpal/expo-pdf';
-import { Directory, File, Paths } from 'expo-file-system'
-import { cloneElement, useEffect, useMemo, useState } from 'react'
+import { useApolloClient } from '@apollo/client'
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import React, { useEffect, useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { Text, View } from 'react-native'
 
-function useRemoteFile(url: string) {
-  const [localPath, setLocalPath] = useState<string | null>(null)
+import { useGetDocumentQuery } from '@/graphql/types/schema'
+import { useLocale } from '@/hooks/use-locale'
+import * as FileSystem from 'expo-file-system'
+import { authStore } from '../../../../stores/auth-store'
+import { PdfView } from '@kishannareshpal/expo-pdf'
+import WebView from 'react-native-webview'
+
+function useDocument(id: string) {
+  const docRes = useGetDocumentQuery({
+    variables: {
+      input: {
+        id,
+        includeDocument: true,
+      },
+      locale: useLocale(),
+    },
+    fetchPolicy: 'no-cache',
+  })
+  const [contentLoading, setContentLoading] = useState(false)
+  const content = docRes.data?.documentV2?.content
+
+  const type = useMemo(() => {
+    const contentType = content?.type?.toLowerCase() ?? ''
+    if (contentType.includes('pdf')) {
+      return 'pdf'
+    }
+    if (contentType.includes('html')) {
+      return 'html'
+    }
+    return contentType
+  }, [content])
+
+  const cacheDir = useMemo(
+    () => new FileSystem.Directory(FileSystem.Paths.cache),
+    [],
+  )
+  const localFile = useMemo(
+    () => new FileSystem.File(cacheDir.uri, `doc-${id}.pdf`),
+    [cacheDir, id],
+  )
 
   useEffect(() => {
-    const downloadFile = async () => {
+    // @todo migration - check if file already exists, and load from that instead.
+    const writeContent = async () => {
+      if (!content?.value) return
+      if (!content?.type?.includes('PDF')) return
+      setContentLoading(true)
       try {
-        const file = await File.downloadFileAsync(
-          url,
-          new Directory(Paths.document),
-          { idempotent: true },
-        )
-        setLocalPath(file.uri)
-      } catch (error) {
-        console.error('Error downloading file:', error)
+        if (!localFile.exists) {
+          localFile.write(content?.value ?? '', { encoding: 'base64' })
+        }
+      } catch (e) {
+        console.error('Error downloading document', e)
       }
+      setContentLoading(false)
     }
-    downloadFile()
-  }, [url])
+    writeContent()
+  }, [content, type])
 
-  return localPath
+  if (localFile.exists) {
+    return {
+      loading: false,
+      type: 'pdf',
+      url: localFile.uri,
+    }
+  }
+
+  if (type === 'html') {
+    return {
+      loading: false,
+      type: 'html',
+      url: content?.value,
+    }
+  }
+
+  return {
+    loading: true,
+    type,
+  }
 }
 
-export default function DocumentScreen(props: { id: string }) {
+export default function DocumentScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
-  const localFile = useRemoteFile(
-    'http://bashupload.app/172ot0.pdf',
-  )
-
+  const client = useApolloClient()
+  const intl = useIntl()
+  const doc = useDocument(id)
+  console.log(doc)
   return (
-    <>
-      <Stack.Toolbar placement="left">
-        <Stack.Toolbar.Button
-          icon="chevron.left"
-          onPress={() => router.back()}
-        />
-      </Stack.Toolbar>
-      <Stack.Toolbar placement="right">
-        <Stack.Toolbar.Button icon="chevron.up" disabled />
-        <Stack.Toolbar.Button icon="chevron.down" />
-      </Stack.Toolbar>
-      <Stack.Toolbar>
-        <Stack.Toolbar.Button icon="star" onPress={() => {}} />
-        <Stack.Toolbar.Button icon="tray" onPress={() => {}} />
-        <Stack.Toolbar.Button icon="square.and.arrow.up" onPress={() => {}} />
-        <Stack.Toolbar.Spacer />
-        <Stack.Toolbar.Button
-          icon="square.and.pencil"
-          onPress={() => alert('Right button pressed!')}
-        />
-      </Stack.Toolbar>
-      {localFile ? <PdfView uri={localFile} style={{flex:1}} /> : <Text>Loading...</Text>}
-    </>
+    <View style={{ flex: 1 }}>
+      {doc.loading ? (
+        <Text>Loading...</Text>
+      ) : doc.type === 'pdf' ? (
+        <PdfView uri={doc.url ?? ''} style={{ flex: 1 }} />
+      ) : (
+        <WebView source={{ uri: doc.url ?? '' }} style={{ flex: 1 }} />
+      )}
+    </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 24,
-  },
-})

@@ -66,7 +66,27 @@
       },
       "package": "is.island.app",
       "versionCode": 264,
-      "permissions": ["android.permission.CAMERA"]
+      "permissions": ["android.permission.CAMERA"],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "island.is",
+              "pathPrefix": [
+                "/minarsidur/postholf",
+                "/minarsidur/skirteini",
+                "/minarsidur/eignir/fasteignir",
+                "/minarsidur/eignir/okutaeki/min-okutaeki",
+                "/minarsidur/loftbru"
+              ]
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "bundler": "metro",

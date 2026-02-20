@@ -302,7 +302,6 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
           title="Paste barcode"
           onPress={() => {
             Alert.prompt('Paste barcode', '', (text) => {
-              console.log('oki', text)
 
               void onCodeScanned(
                 [

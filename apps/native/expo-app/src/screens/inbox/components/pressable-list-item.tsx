@@ -5,6 +5,7 @@ import { navigateTo } from '../../../lib/deep-linking'
 import { useOrganizationsStore } from '../../../stores/organizations-store'
 import { InboxCard } from '../../../ui'
 import { Filters } from '../utils/inbox-filters'
+import { router } from 'expo-router'
 
 export type ListParams = Filters & { category?: DocumentCategory }
 
@@ -49,16 +50,17 @@ export const PressableListItem = memo(
           setSelectedState((prev) => !prev)
           setSelectedItems([...selectedItems, item.id])
         }}
-        onPress={() =>
-          selectable
+        onPress={() => {
+          return selectable
             ? isSelected
               ? setSelectedItems(selectedItems.filter((id) => id !== item.id))
               : setSelectedItems([...selectedItems, item.id])
             : navigateTo(`/inbox/${item.id}`, {
-                title: item.sender.name,
-                isUrgent: item.isUrgent,
-                listParams,
-              })
+              title: item.sender.name,
+              isUrgent: item.isUrgent,
+              listParams,
+            });
+        }
         }
       />
     )

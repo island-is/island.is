@@ -3,6 +3,7 @@
 // import createUse from 'zustand'
 // import create, { State } from 'zustand/vanilla'
 // import { bundleId } from '../config'
+import { router } from 'expo-router';
 import {
   GenericLicenseType,
   NotificationMessage,
@@ -148,6 +149,7 @@ export const addScheme = (scheme: string) => {
  * @returns
  */
 export function navigateTo(url: string, extraProps: any = {}) {
+  router.navigate(url as any);
   // @todo migration
 
   // const now = Date.now()
@@ -189,7 +191,9 @@ export function navigateToUniversalLink({
   // @todo migration
 
   // If no link do nothing
-  // if (!link) return
+  if (!link) return
+
+  router.navigate(link as any);
 
   // const appRoute = findRoute(link)
 

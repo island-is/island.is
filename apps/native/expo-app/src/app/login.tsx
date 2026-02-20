@@ -14,7 +14,7 @@ import { isTestingApp } from '@/config'
 import { environments } from '@/constants/environments'
 import { DebugInfo } from '@/components/testing/debug-info'
 import { useBrowser } from '@/lib/use-browser'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuthStore, authStore as rawAuthStore } from '@/stores/auth-store'
 import { useEnvironmentStore } from '@/stores/environment-store'
 import { preferencesStore } from '@/stores/preferences-store'
 import { Button, dynamicColor, font, Illustration } from '@/ui'
@@ -60,10 +60,27 @@ export default function LoginScreen() {
 
   const onLoginPress = async () => {
     if (environment.id === 'mock') {
+      const { setupNativeMocking } = await import('@island.is/api/mocks/native')
+      await setupNativeMocking()
       preferencesStore.setState({
         hasOnboardedBiometrics: true,
         hasOnboardedPinCode: true,
         hasOnboardedNotifications: true,
+      })
+      rawAuthStore.setState({
+        authorizeResult: {
+          accessToken: 'mock-access-token',
+          tokenType: 'Bearer',
+          accessTokenExpirationDate: new Date(Date.now() + 3600 * 1000).toISOString(),
+          authorizationCode: 'mock-authorization-code',
+          idToken: 'mock-id-token',
+          refreshToken: 'mock-refresh-token',
+        },
+        userInfo: {
+          name: 'Mock User',
+          nationalId: '0000000000',
+          sub: 'mock-user'
+        }
       })
       await nextOnboardingStep()
       return

@@ -379,7 +379,7 @@
     "@nx/node": "21.2.2",
     "@nx/playwright": "21.2.2",
     "@nx/react": "21.2.2",
-    "@nx/react-native": "21.2.2",
+    "@nx/react-native": "patch:@nx/react-native@npm%3A21.2.2#~/.yarn/patches/@nx-react-native-npm-21.2.2-372bafa458.patch",
     "@nx/storybook": "21.2.2",
     "@nx/web": "21.2.2",
     "@nx/webpack": "21.2.2",

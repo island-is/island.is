@@ -29,8 +29,6 @@ export default function MoreScreen() {
   const authStore = useAuthStore()
   const myPagesLinks = useMyPagesLinks()
 
-  console.log(JSON.stringify(authStore.userInfo, null, 2));
-
   const externalLinks = [
     {
       link: myPagesLinks.accessControl,

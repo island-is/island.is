@@ -6,11 +6,9 @@ export function redirectSystemPath({
   path: string
   initial: boolean
   }) {
-  console.log('Redirecting system path', { path, initial })
-
   // @todo migration - process web urls and redirect to native paths
   try {
-    if (path.includes('cognito')) {
+    if (path.includes('cognito') || path.includes('oauth')) {
       return '/'
     }
     if (initial) {
