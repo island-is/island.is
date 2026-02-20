@@ -243,12 +243,30 @@ export class MockDelegationsService {
       for (const scope of scopeArray) {
         const scopeKey = `${xQueryNationalId}:${scope}`
         if (delegationsByScope[scopeKey]) {
-          return { data: delegationsByScope[scopeKey] }
+          return {
+            data: delegationsByScope[scopeKey],
+            totalCount: delegationsByScope[scopeKey].length,
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          }
         }
       }
     }
     // Fallback to delegations without scope filtering
-    return { data: delegationsByScope[xQueryNationalId] ?? [] }
+    return {
+      data: delegationsByScope[xQueryNationalId] ?? [],
+      totalCount: delegationsByScope[xQueryNationalId]?.length ?? 0,
+      pageInfo: {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: '',
+        endCursor: '',
+      },
+    }
   }
 }
 

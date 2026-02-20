@@ -14,7 +14,11 @@ import {
   CompanyExtendedInfo,
   CompanyRegistryClientService,
 } from '@island.is/clients/rsk/company-registry'
-import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
+import {
+  ActorProfileDto,
+  UserProfileDto,
+  V2UsersApi,
+} from '@island.is/clients/user-profile'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { EmailService } from '@island.is/email-service'
@@ -53,6 +57,9 @@ import {
   userWithSendToDelegationsFeatureFlagDisabled,
 } from './mocks'
 import { NotificationsWorkerService } from './notificationsWorker.service'
+import { EmailWorkerService } from './emailWorker.service'
+import { SmsWorkerService } from './smsWorker.service'
+import { PushWorkerService } from './pushWorker.service'
 
 const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
@@ -134,7 +141,14 @@ describe('NotificationsWorkerService', () => {
     smsService = app.get(SmsService)
 
     notificationsWorkerService = await app.resolve(NotificationsWorkerService)
+    const emailWorkerService = await app.resolve(EmailWorkerService)
+    const smsWorkerService = await app.resolve(SmsWorkerService)
+    const pushWorkerService = await app.resolve(PushWorkerService)
+
     notificationsWorkerService.run()
+    emailWorkerService.run()
+    smsWorkerService.run()
+    pushWorkerService.run()
   })
 
   beforeEach(async () => {
@@ -161,7 +175,6 @@ describe('NotificationsWorkerService', () => {
     jest
       .spyOn(notificationsService, 'getTemplate')
       .mockReturnValue(Promise.resolve(getMockHnippTemplate({})))
-    jest.spyOn(notificationsWorkerService, 'createEmail')
 
     jest.spyOn(nationalRegistryService, 'getName')
 
@@ -409,7 +422,6 @@ describe('NotificationsWorkerService', () => {
   it('should not send email or push notification if no profile is found for recipient', async () => {
     await addToQueue('1234567890')
 
-    expect(notificationsWorkerService.createEmail).not.toHaveBeenCalled()
     expect(emailService.sendEmail).not.toHaveBeenCalled()
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
   })
@@ -431,7 +443,6 @@ describe('NotificationsWorkerService', () => {
   it('should not send email if user has no email registered', async () => {
     await addToQueue(userWithNoEmail.nationalId)
 
-    expect(notificationsWorkerService.createEmail).not.toHaveBeenCalled()
     expect(emailService.sendEmail).not.toHaveBeenCalled()
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
   })
@@ -453,7 +464,10 @@ describe('NotificationsWorkerService', () => {
   it('should call national registry for persons', async () => {
     await addToQueue(userWithNoDelegations.nationalId)
 
-    expect(nationalRegistryService.getName).toHaveBeenCalledTimes(1)
+    expect(nationalRegistryService.getName).toHaveBeenCalled()
+    expect(nationalRegistryService.getName).toHaveBeenCalledWith(
+      userWithNoDelegations.nationalId,
+    )
     expect(companyRegistryService.getCompany).not.toHaveBeenCalled()
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
@@ -463,7 +477,10 @@ describe('NotificationsWorkerService', () => {
     await addToQueue(companyUser.nationalId)
 
     expect(nationalRegistryService.getName).not.toHaveBeenCalled()
-    expect(companyRegistryService.getCompany).toHaveBeenCalledTimes(1)
+    expect(companyRegistryService.getCompany).toHaveBeenCalled()
+    expect(companyRegistryService.getCompany).toHaveBeenCalledWith(
+      companyUser.nationalId,
+    )
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
   })
@@ -804,6 +821,7 @@ describe('NotificationsWorkerService', () => {
                   toNationalId: actorWithDocumentsScope,
                   subjectId: null,
                   type: AuthDelegationType.ProcurationHolder,
+                  customDelegationScopes: null,
                 },
               ])
             } else if (scope === '@island.is/other-scope') {
@@ -813,6 +831,7 @@ describe('NotificationsWorkerService', () => {
                   toNationalId: actorWithOtherScope,
                   subjectId: null,
                   type: AuthDelegationType.ProcurationHolder,
+                  customDelegationScopes: null,
                 },
               ])
             }
@@ -821,12 +840,12 @@ describe('NotificationsWorkerService', () => {
           }
 
           // For other users, delegate to original mock implementation
-          // This calls the MockDelegationsService
           const mockService = new MockDelegationsService()
-          return mockService.delegationsControllerGetDelegationRecords({
+          const result = mockService.delegationsControllerGetDelegationRecords({
             xQueryNationalId,
             scopes,
           })
+          return createDelegationResponse(result.data)
         })
 
       // Mock user profile for test user
@@ -843,7 +862,7 @@ describe('NotificationsWorkerService', () => {
         )
 
       // Mock actor profiles
-      jest
+      const actorProfileSpy = jest
         .spyOn(userProfileApi, 'userProfileControllerGetActorProfile')
         .mockImplementation(async ({ xParamToNationalId }) => {
           if (
@@ -851,15 +870,14 @@ describe('NotificationsWorkerService', () => {
             xParamToNationalId === actorWithOtherScope
           ) {
             return {
-              nationalId: xParamToNationalId,
+              fromNationalId: testUserNationalId,
               email: `${xParamToNationalId}@test.com`,
               emailVerified: true,
               documentNotifications: true,
               emailNotifications: true,
-              locale: 'is',
-            } as UserProfileDto
+            } as ActorProfileDto
           }
-          return undefined
+          return undefined as unknown as ActorProfileDto
         })
 
       // Spy on queue.add to verify actor notifications
@@ -935,11 +953,29 @@ describe('NotificationsWorkerService', () => {
       // Clean up
       getDelegationRecordsSpy.mockRestore()
       queueAddSpy.mockRestore()
+      actorProfileSpy.mockRestore()
     })
 
     it('should create both user notification and actor notification and send email only to actor when onBehalfOf and rootMessageId are provided', async () => {
       // Clear email calls to isolate this test
       jest.clearAllMocks()
+
+      // Re-setup actor profile mock with default implementation, since test 6 sets a custom
+      // mockImplementation that may persist on the original jest.fn() after mockRestore()
+      jest
+        .spyOn(userProfileApi, 'userProfileControllerGetActorProfile')
+        .mockImplementation(({ xParamToNationalId }) => {
+          const profile = userProfiles.find(
+            (u) => u.nationalId === xParamToNationalId,
+          )
+          return Promise.resolve({
+            fromNationalId: profile?.nationalId ?? '',
+            emailNotifications: profile?.emailNotifications ?? false,
+            email: profile?.email,
+            emailVerified: profile?.emailVerified ?? false,
+            documentNotifications: profile?.documentNotifications ?? false,
+          } as ActorProfileDto)
+        })
 
       // First, create the root user notification (this would have been created by the original message)
       const rootUserNotification = await notificationModel.create({

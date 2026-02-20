@@ -30,7 +30,7 @@ import { MessageProcessorService } from './messageProcessor.service'
 @Module({
   exports: [NotificationsService],
   imports: [
-    SequelizeModule.forFeature([Notification, ActorNotification]),
+    SequelizeModule.forFeature([Notification, ActorNotification, NotificationDelivery]),
     LoggingModule,
     CmsTranslationsModule,
     QueueModule.register({
@@ -41,6 +41,36 @@ import { MessageProcessorService } from './messageProcessor.service'
         shouldSleepOutsideWorkingHours: true,
         deadLetterQueue: {
           queueName: environment.deadLetterQueueName,
+        },
+      },
+    }),
+    QueueModule.register({
+      client: environment.sqsConfig,
+      queue: {
+        name: 'notifications-email',
+        queueName: environment.emailQueueName,
+        deadLetterQueue: {
+          queueName: environment.emailDeadLetterQueueName,
+        },
+      },
+    }),
+    QueueModule.register({
+      client: environment.sqsConfig,
+      queue: {
+        name: 'notifications-sms',
+        queueName: environment.smsQueueName,
+        deadLetterQueue: {
+          queueName: environment.smsDeadLetterQueueName,
+        },
+      },
+    }),
+    QueueModule.register({
+      client: environment.sqsConfig,
+      queue: {
+        name: 'notifications-push',
+        queueName: environment.pushQueueName,
+        deadLetterQueue: {
+          queueName: environment.pushDeadLetterQueueName,
         },
       },
     }),
@@ -58,6 +88,9 @@ import { MessageProcessorService } from './messageProcessor.service'
     NotificationsService,
     NotificationDispatchService,
     NotificationsWorkerService,
+    EmailWorkerService,
+    SmsWorkerService,
+    PushWorkerService,
     MessageProcessorService,
     {
       provide: FIREBASE_PROVIDER,
