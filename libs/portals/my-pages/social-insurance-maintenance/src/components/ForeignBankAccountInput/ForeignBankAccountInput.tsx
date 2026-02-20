@@ -202,100 +202,107 @@ export const ForeignBankAccountInput = ({
           </Text>
         </Box>
       )}
-      <Stack space={2}>
-        <Input
-          id={`${id}.iban`}
-          name={`${id}.iban`}
-          label={formatMessage(m.ibanLabel)}
-          placeholder={formatMessage(m.ibanPlaceholder)}
-          backgroundColor="blue"
-          size="xs"
-          value={iban}
-          onChange={(e) => handleIbanChange(e.target.value)}
-          onBlur={handleIbanBlur}
-          hasError={!!ibanError}
-          errorMessage={ibanError}
-          icon={isIbanValid ? { name: 'checkmark' } : undefined}
-          maxLength={42}
-          required={required}
-          disabled={disabled}
-          readOnly={readOnly}
-        />
-        <GridRow rowGap={2}>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '10/12', '9/12', '7/12']}>
+          <Stack space={2}>
             <Input
-              id={`${id}.swift`}
-              name={`${id}.swift`}
-              label={formatMessage(m.swiftLabel)}
-              placeholder={formatMessage(m.swiftPlaceholder)}
+              id={`${id}.iban`}
+              name={`${id}.iban`}
+              label={formatMessage(m.ibanLabel)}
+              placeholder={formatMessage(m.ibanPlaceholder)}
               backgroundColor="blue"
               size="xs"
-              value={swift}
-              onChange={(e) => handleSwiftChange(e.target.value)}
-              onBlur={handleSwiftBlur}
-              hasError={!!swiftError}
-              errorMessage={swiftError}
-              icon={isSwiftValid ? { name: 'checkmark' } : undefined}
-              maxLength={14}
+              value={iban}
+              onChange={(e) => handleIbanChange(e.target.value)}
+              onBlur={handleIbanBlur}
+              hasError={!!ibanError}
+              errorMessage={ibanError}
+              icon={isIbanValid ? { name: 'checkmark' } : undefined}
+              maxLength={42}
               required={required}
               disabled={disabled}
               readOnly={readOnly}
             />
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/12']}>
-            <Select
-              id={`${id}.currency`}
-              name={`${id}.currency`}
-              label={formatMessage(m.currencyLabel)}
-              placeholder={formatMessage(m.currencyPlaceholder)}
+            <GridRow rowGap={2}>
+              <GridColumn span={['12/12', '6/12', '6/12']}>
+                <Input
+                  id={`${id}.swift`}
+                  name={`${id}.swift`}
+                  label={formatMessage(m.swiftLabel)}
+                  placeholder={formatMessage(m.swiftPlaceholder)}
+                  backgroundColor="blue"
+                  size="xs"
+                  value={swift}
+                  onChange={(e) => handleSwiftChange(e.target.value)}
+                  onBlur={handleSwiftBlur}
+                  hasError={!!swiftError}
+                  errorMessage={swiftError}
+                  icon={isSwiftValid ? { name: 'checkmark' } : undefined}
+                  maxLength={14}
+                  required={required}
+                  disabled={disabled}
+                  readOnly={readOnly}
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '6/12', '6/12']}>
+                <Select
+                  id={`${id}.currency`}
+                  name={`${id}.currency`}
+                  label={formatMessage(m.currencyLabel)}
+                  placeholder={formatMessage(m.currencyPlaceholder)}
+                  backgroundColor="blue"
+                  size="xs"
+                  options={currencyOptions}
+                  value={
+                    currencyOptions.find((opt) => opt.value === currency) ||
+                    null
+                  }
+                  onChange={(option) =>
+                    handleCurrencyChange(option?.value || '')
+                  }
+                  isLoading={currencyLoading}
+                  isDisabled={disabled}
+                  required={required}
+                />
+              </GridColumn>
+            </GridRow>
+            <Input
+              id={`${id}.bankName`}
+              name={`${id}.bankName`}
+              label={formatMessage(m.bankNameLabel)}
               backgroundColor="blue"
               size="xs"
-              options={currencyOptions}
-              value={
-                currencyOptions.find((opt) => opt.value === currency) || null
-              }
-              onChange={(option) => handleCurrencyChange(option?.value || '')}
-              isLoading={currencyLoading}
-              isDisabled={disabled}
+              value={bankName}
+              onChange={(e) => handleBankNameChange(e.target.value)}
+              onBlur={handleBankNameBlur}
+              hasError={!!bankNameError}
+              errorMessage={bankNameError}
+              icon={isBankNameValid ? { name: 'checkmark' } : undefined}
+              maxLength={100}
               required={required}
+              disabled={disabled}
+              readOnly={readOnly}
             />
-          </GridColumn>
-        </GridRow>
-        <Input
-          id={`${id}.bankName`}
-          name={`${id}.bankName`}
-          label={formatMessage(m.bankNameLabel)}
-          backgroundColor="blue"
-          size="xs"
-          value={bankName}
-          onChange={(e) => handleBankNameChange(e.target.value)}
-          onBlur={handleBankNameBlur}
-          hasError={!!bankNameError}
-          errorMessage={bankNameError}
-          icon={isBankNameValid ? { name: 'checkmark' } : undefined}
-          maxLength={100}
-          required={required}
-          disabled={disabled}
-          readOnly={readOnly}
-        />
-        <Input
-          id={`${id}.bankAddress`}
-          name={`${id}.bankAddress`}
-          label={formatMessage(m.bankAddressLabel)}
-          backgroundColor="blue"
-          size="xs"
-          value={bankAddress}
-          onChange={(e) => handleBankAddressChange(e.target.value)}
-          onBlur={handleBankAddressBlur}
-          hasError={!!bankAddressError}
-          errorMessage={bankAddressError}
-          icon={isBankAddressValid ? { name: 'checkmark' } : undefined}
-          maxLength={200}
-          required={required}
-          disabled={disabled}
-          readOnly={readOnly}
-        />
-      </Stack>
+            <Input
+              id={`${id}.bankAddress`}
+              name={`${id}.bankAddress`}
+              label={formatMessage(m.bankAddressLabel)}
+              backgroundColor="blue"
+              size="xs"
+              value={bankAddress}
+              onChange={(e) => handleBankAddressChange(e.target.value)}
+              onBlur={handleBankAddressBlur}
+              hasError={!!bankAddressError}
+              errorMessage={bankAddressError}
+              icon={isBankAddressValid ? { name: 'checkmark' } : undefined}
+              maxLength={200}
+              required={required}
+              disabled={disabled}
+              readOnly={readOnly}
+            />
+          </Stack>
+        </GridColumn>
+      </GridRow>
     </Box>
   )
 }
