@@ -405,58 +405,58 @@ Concentrated in browser handling, widget sync, biometrics labels, notification p
 
 Phase 0: Preparation (no breaking changes)
 
-- Upgrade zustand 3.5.12 → 5.x (update store patterns)
-- Replace react-native-pdf with @kishannareshpal/expo-pdf
-- Replace react-native-dialogs with RN Alert
+- [x] Upgrade zustand 3.5.12 → 5.x (update store patterns)
+- [x] Replace react-native-pdf with @kishannareshpal/expo-pdf
+- [ ] Replace react-native-dialogs with RN Alert
 -- We have showPicker in 2 places (change language and select Gjaldgrunnur)
 -- We have showAndroidPrompt in 1 place, for mileage input edit modal.
-- Replace react-native-inappbrowser-reborn → expo-web-browser
-- Replace react-native-share → expo-sharing
-- Replace react-native-device-info → expo-device + expo-constants
-- Replace @react-native-clipboard/clipboard → expo-clipboard
-- Remove deprecated progress bar/view packages
+- [x] Replace react-native-inappbrowser-reborn → expo-web-browser
+- [x] Replace react-native-share → expo-sharing
+- [x] Replace react-native-device-info → expo-device + expo-constants
+- [x] Replace @react-native-clipboard/clipboard → expo-clipboard
+- [x] Remove deprecated progress bar/view packages
 
 Phase 1: Expo SDK 55 Setup
 
-- Create app.config.ts with full Expo config (icons, splash, plugins)
-- Set up eas.json with build profiles (dev, staging, prod)
-- Migrate metro.config.js to use expo/metro-config
-- Configure expo-splash-screen to replace storyboard/XML splash
-- Configure expo-font for IBM Plex Sans
-- Set up expo-build-properties for Firebase and native module settings
-- Verify all kept native packages work with Expo dev client (npx expo prebuild)
+- [x] Create app.config.ts with full Expo config (icons, splash, plugins)
+- [x] Set up eas.json with build profiles (dev, staging, prod)
+- [x] Migrate metro.config.js to use expo/metro-config
+- [x] Configure expo-splash-screen to replace storyboard/XML splash
+- [x] Configure expo-font for IBM Plex Sans
+- [x] Set up expo-build-properties for Firebase and native module settings
+- [x] Verify all kept native packages work with Expo dev client (npx expo prebuild)
 
 Phase 2: Navigation Migration (highest risk)
 
-- Install expo-router v4, @react-navigation/native, @react-navigation/bottom-tabs
-- Create the app/ directory structure per the proposed layout above
-- Migrate screens incrementally by tab:
+- [x] Install expo-router v4, @react-navigation/native, @react-navigation/bottom-tabs
+- [x] Create the app/ directory structure per the proposed layout above
+- [ ] Migrate screens incrementally by tab:
   a. HomeStack (simplest - 2 screens)
   b. ApplicationsStack (4 screens, no modals)
   c. InboxStack (4 screens, complex document detail)
   d. WalletStack (3 screens, license scanner modal)
   e. MoreStack (15+ screens, deepest nesting)
-- Migrate modal screens to (modals) group
-- Port auth flow to root _layout.tsx redirect pattern
-- Port deep linking to expo-router's file-based scheme
-- Port universal link mapping to app.config.ts
+- [ ] Migrate modal screens to (modals) group
+- [x] Port auth flow to root _layout.tsx redirect pattern
+- [ ] Port deep linking to expo-router's file-based scheme
+- [ ] Port universal link mapping to app.config.ts
 
 Phase 3: Provider & State Integration
 
-- Replace registerComponent() wrapper with a single root _layout.tsx provider tree
-- Replace react-native-navigation-hooks (useNavigationButtonPress, useNavigationComponentDidAppear) with React Navigation equivalents (useNavigation, useFocusEffect)
-- Port createNavigationOptionHooks to expo-router <Stack.Screen options={}> pattern
-- Port uiStore tab tracking to React Navigation tab events
-- Port notification badge to expo-router tab bar badge
-- Port app lock overlay to expo-router modal or root-level component
+- [x] Replace registerComponent() wrapper with a single root _layout.tsx provider tree
+- [ ] Replace react-native-navigation-hooks (useNavigationButtonPress, useNavigationComponentDidAppear) with React Navigation equivalents (useNavigation, useFocusEffect)
+- [ ] Port createNavigationOptionHooks to expo-router <Stack.Screen options={}> pattern
+- [ ] Port uiStore tab tracking to React Navigation tab events
+- [ ] Port notification badge to expo-router tab bar badge
+- [x] Port app lock overlay to expo-router modal or root-level component
 
 Phase 4: Native Module Migration
 
-- Remove RNIsland.mm
-- Remove IslandModule.java
-- Keep widget implementations as-is (iOS WidgetKit + Android AppWidget are independent of navigation)
-- Update AppDelegate.swift from RNNAppDelegate to Expo's ExpoAppDelegate
-- Update MainApplication.java from NavigationApplication to standard RN + Expo
+- [x] Remove RNIsland.mm
+- [x] Remove IslandModule.java
+- [x] Keep widget implementations as-is (iOS WidgetKit + Android AppWidget are independent of navigation)
+- [x] Update AppDelegate.swift from RNNAppDelegate to Expo's ExpoAppDelegate
+- [x] Update MainApplication.java from NavigationApplication to standard RN + Expo
 
 Phase 5: Cleanup & Testing
 

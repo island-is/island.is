@@ -24,6 +24,13 @@ export default ({ config }) => {
     ios: {
       googleServicesFile: `./assets/firebase/${getGoogleServicesFile()}`,
       ...config.ios,
+      entitlements: {
+        ...config.ios.entitlements,
+        'com.apple.security.application-groups': [
+          'group.is.island.app',
+          ...(!IS_PROD ? ['group.is.island.app.dev'] : []),
+        ],
+      },
       infoPlist: {
         ...config.ios.infoPlist,
         CFBundleDisplayName: getAppName(),

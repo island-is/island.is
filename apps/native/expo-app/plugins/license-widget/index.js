@@ -335,6 +335,40 @@ function withLicenseWidgetAndroidStrings(config) {
   })
 }
 
+// ─── Android: register LicenseWidgetPackage in MainApplication.kt ────────────
+
+function withLicenseWidgetMainApplication(config) {
+  return withDangerousMod(config, [
+    'android',
+    (mod) => {
+      const mainAppPath = path.join(
+        mod.modRequest.projectRoot,
+        'android',
+        'app',
+        'src',
+        'main',
+        'java',
+        (config.android?.package ?? 'is.island.app').replace(/\./g, '/'),
+        'MainApplication.kt',
+      )
+
+      let contents = fs.readFileSync(mainAppPath, 'utf8')
+
+      // Idempotency: skip if already registered
+      if (contents.includes('LicenseWidgetPackage')) return mod
+
+      // Insert add(LicenseWidgetPackage()) after the placeholder comment
+      contents = contents.replace(
+        /(\s*\/\/ add\(MyReactNativePackage\(\)\))/,
+        '$1\n          add(LicenseWidgetPackage())',
+      )
+
+      fs.writeFileSync(mainAppPath, contents, 'utf8')
+      return mod
+    },
+  ])
+}
+
 // ─── Compose ─────────────────────────────────────────────────────────────────
 
 const withLicenseWidget = (config) => {
@@ -347,6 +381,7 @@ const withLicenseWidget = (config) => {
   config = withLicenseWidgetAndroidFiles(config)
   config = withLicenseWidgetAndroidManifest(config)
   config = withLicenseWidgetAndroidStrings(config)
+  config = withLicenseWidgetMainApplication(config)
 
   return config
 }

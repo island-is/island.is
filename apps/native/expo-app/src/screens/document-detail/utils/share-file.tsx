@@ -1,4 +1,4 @@
-import Share from 'react-native-share'
+import Share from 'expo-sharing'
 import RNFS from 'react-native-fs'
 
 import { isAndroid } from '../../../utils/devices'
@@ -43,17 +43,17 @@ export const shareFile = async ({
   }
 
   try {
-    await Share.open({
-      title: document.subject,
-      subject: document.subject,
-      message: `${document.sender.name} \n ${document.subject}`,
-      type: pdfUrl ? 'application/pdf' : isHtml ? 'text/html' : undefined,
-      url: pdfUrl
-        ? `file://${pdfUrl}`
-        : isHtml
+    const url = pdfUrl
+      ? `file://${pdfUrl}`
+      : isHtml
         ? `file://${htmlUrl}`
-        : content ?? undefined,
-    })
+        : content ?? undefined;
+    const mimeType = pdfUrl ? 'application/pdf' : isHtml ? 'text/html' : undefined;
+    await Share.shareAsync(url ?? '', {
+      dialogTitle: document.subject,
+      mimeType,
+      UTI: mimeType, // For iOS, to specify the file type
+    });
   } catch (error) {
     console.error('Failed to share document', error)
     return
