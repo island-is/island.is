@@ -31,6 +31,7 @@ import { ClientResolver } from './resolvers/client.resolver'
 import { ConsentResolver } from './resolvers/consent.resolver'
 import { PasskeyResolver } from './resolvers/passkey.resolver'
 import { PasskeyService } from './services/passkey.service'
+import { ScopeCategoriesResolver } from './resolvers/scopeCategories.resolver'
 
 @Module({
   providers: [
@@ -48,7 +49,6 @@ import { PasskeyService } from './services/passkey.service'
     ApiScopeLoader,
     ClientLoader,
     DomainLoader,
-    CmsModule,
     ClientsService,
     ConsentResolver,
     ConsentService,
@@ -58,6 +58,7 @@ import { PasskeyService } from './services/passkey.service'
     LoginRestrictionService,
     PasskeyService,
     PasskeyResolver,
+    ScopeCategoriesResolver,
   ],
   imports: [
     AuthPublicApiClientModule,

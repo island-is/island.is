@@ -74,6 +74,14 @@ import { mapTabSection, TabSection } from './models/tabSection.model'
 import { GenericTag, mapGenericTag } from './models/genericTag.model'
 import { GetEmailSignupInput } from './dto/getEmailSignup.input'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
+import {
+  DelegationScopeTag,
+  mapDelegationScopeTag,
+} from './models/delegationScopeTag.model'
+import {
+  ArticleCategory,
+  mapArticleCategory,
+} from './models/articleCategory.model'
 import { GetGenericTagBySlugInput } from './dto/getGenericTagBySlug.input'
 import { GetGenericTagsInTagGroupsInput } from './dto/getGenericTagsInTagGroups.input'
 import { Grant, mapGrant } from './models/grant.model'
@@ -113,6 +121,10 @@ import { mapCourseListPage } from './models/courseListPage.model'
 import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
 import { GetWebChatInput } from './dto/getWebChat.input'
 import { mapWebChat, WebChat } from './models/webChat.model'
+import {
+  mapServicePortalPage,
+  ServicePortalPage,
+} from './models/servicePortalPage.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -369,6 +381,27 @@ export class CmsContentfulService {
     return result ? mapOrganization(result as types.IOrganization) : null
   }
 
+  async getServicePortalPage(
+    slug: string,
+    lang: string,
+  ): Promise<ServicePortalPage> {
+    const params = {
+      ['content_type']: 'servicePortalPage',
+      include: 5,
+      'fields.slug': slug,
+      limit: 1,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IServicePortalPageFields>(lang, params)
+      .catch(errorHandler('getServicePortalPage'))
+
+    return (
+      (result.items as types.IServicePortalPage[]).map(
+        mapServicePortalPage,
+      )[0] ?? null
+    )
+  }
   async getOrganizationPage(
     slug: string,
     lang: string,
@@ -861,6 +894,34 @@ export class CmsContentfulService {
       .catch(errorHandler('getLifeEvents'))
 
     return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
+  }
+
+  async getDelegationScopeTags(lang: string): Promise<DelegationScopeTag[]> {
+    const params = {
+      ['content_type']: 'delegationScopeTag',
+      order: 'fields.title',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IDelegationScopeTagFields>(lang, params)
+      .catch(errorHandler('getDelegationScopeTags'))
+
+    return (result.items as types.IDelegationScopeTag[]).map(
+      mapDelegationScopeTag,
+    )
+  }
+
+  async getArticleCategories(lang: string): Promise<ArticleCategory[]> {
+    const params = {
+      ['content_type']: 'articleCategory',
+      order: 'fields.title',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IArticleCategoryFields>(lang, params)
+      .catch(errorHandler('getArticleCategories'))
+
+    return (result.items as types.IArticleCategory[]).map(mapArticleCategory)
   }
 
   async getLifeEventsInCategory(

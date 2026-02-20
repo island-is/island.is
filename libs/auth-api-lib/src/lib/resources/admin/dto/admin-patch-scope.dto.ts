@@ -112,6 +112,60 @@ export class AdminPatchScopeDto {
     example: ['Custom'],
   })
   removedDelegationTypes?: AuthDelegationType[]
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['4vQ4htPOAZvzcXBcjx06SH'],
+    description: 'CMS category IDs to add to this scope',
+  })
+  addedCategoryIds?: string[]
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['4vQ4htPOAZvzcXBcjx06SH'],
+    description: 'CMS category IDs to remove from this scope',
+  })
+  removedCategoryIds?: string[]
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['2eGxK9pLm3'],
+    description: 'CMS tag IDs to add to this scope',
+  })
+  addedTagIds?: string[]
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['2eGxK9pLm3'],
+    description: 'CMS tag IDs to remove from this scope',
+  })
+  removedTagIds?: string[]
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example: false,
+    description:
+      'Whether this scope allows write access (read access is always implicit)',
+  })
+  allowsWrite?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example: false,
+    description:
+      'Whether this scope requires step-up authentication (tvöfalt samþykki) for sensitive information access',
+  })
+  requiresConfirmation?: boolean
 }
 
 /**

@@ -9,6 +9,7 @@ export type Icon =
   | 'arrowUp'
   | 'arrowDown'
   | 'attach'
+  | 'briefcase'
   | 'business'
   | 'calculator'
   | 'calendar'
@@ -113,6 +114,7 @@ export default {
     arrowUp: 'ArrowUp',
     attach: 'Attach',
     bank: 'Bank',
+    briefcase: 'Briefcase',
     business: 'Business',
     calculator: 'Calculator',
     calendar: 'Calendar',
@@ -215,6 +217,7 @@ export default {
     arrowUp: 'ArrowUp',
     attach: 'AttachOutline',
     bank: 'BankOutline',
+    briefcase: 'BriefcaseOutline',
     business: 'BusinessOutline',
     calculator: 'CalculatorOutline',
     calendar: 'CalendarOutline',
