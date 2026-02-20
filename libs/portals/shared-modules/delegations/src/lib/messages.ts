@@ -333,6 +333,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:grant-access-new-title',
     defaultMessage: 'Beiðni um nýtt umboð',
   },
+  editAccessTitle: {
+    id: 'sp.access-control-delegations:edit-access-title',
+    defaultMessage: 'Breyta umboði',
+  },
   stepOneTitle: {
     id: 'sp.access-control-delegations:step-one-title',
     defaultMessage: 'Hver á að fá umboðið?',

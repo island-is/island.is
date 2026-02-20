@@ -5,6 +5,8 @@ import { m as coreMessages } from '@island.is/portals/core'
 import { Identity, ScopeSelection } from '../../context'
 import { EditScopesTable } from '../ScopesTable/EditScopesTable'
 import { Box, Button } from '@island.is/island-ui/core'
+import { DelegationPaths } from '../../lib/paths'
+import { useNavigate } from 'react-router-dom'
 
 export type EditAccessInitialValues = {
   identity: Identity
@@ -23,6 +25,7 @@ export const EditAccessModal = ({
   loading: boolean
 }) => {
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
 
   return (
     <Modal
@@ -53,7 +56,11 @@ export const EditAccessModal = ({
           {formatMessage(coreMessages.buttonCancel)}
         </Button>
         <Box display="flex" columnGap={3}>
-          <Button size="medium" variant="primary">
+          <Button
+            size="medium"
+            variant="primary"
+            onClick={() => navigate(DelegationPaths.DelegationsEdit)}
+          >
             {/* Todo: translate */}
             Bæta við réttindum
           </Button>

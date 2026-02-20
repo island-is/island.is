@@ -9,6 +9,7 @@ import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { accessControlLoader } from './screens/AccessControl.loader'
 import { Features } from '@island.is/react/feature-flags'
+import EditAccess from './screens/EditAccess.tsx/EditAccess'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const AccessControlNew = lazy(() => import('./screens/AccessControlNew'))
@@ -75,6 +76,14 @@ export const delegationsModule: PortalModule = {
             enabled: hasAccess,
             element: <GrantAccessNew />,
             loader: accessControlLoader('umbod/veita')(props),
+          },
+          {
+            name: m.editAccessTitle,
+            path: DelegationPaths.DelegationsEdit,
+            navHide: true,
+            enabled: hasAccess,
+            element: <EditAccess />,
+            loader: accessControlLoader('umbod/breyta')(props),
           },
           {
             name: m.serviceCategories,

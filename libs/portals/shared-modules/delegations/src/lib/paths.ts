@@ -7,5 +7,6 @@ export enum DelegationPaths {
   // Paths for updated delegation system
   DelegationsNew = '/umbod', // New person-centric view (testing)
   DelegationsGrantNew = '/umbod/veita', // New delegation grant flow
+  DelegationsEdit = '/umbod/breyta', // New delegation edit flow
   ServiceCategories = '/umbod/thjonustuflokkar', // Service categories with permissions
 }
