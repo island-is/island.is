@@ -17,7 +17,6 @@ import {
   application as applicationMessages,
 } from '../../../lib/messages'
 
-import { GaldurDomainModelsEducationProgramDTO } from '@island.is/clients/vmst-unemployment'
 import {
   getCourseOfStudy,
   getDegreeOptions,
@@ -29,6 +28,7 @@ import {
   showFinishedEducationField,
   wasStudyingInTheLastYear,
   wasStudyingLastSemester,
+  getYearOptions,
 } from '../../../utils/educationInformation'
 import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../shared'
 import { Application } from '@island.is/application/types'
@@ -212,14 +212,7 @@ export const educationHistorySubSection = buildSubSection({
         buildSelectField({
           id: 'educationHistory.lastSemester.endDate',
           title: educationMessages.labels.previousSchoolEndDate,
-          options: () => {
-            const currentYear = new Date().getFullYear()
-            const years = Array.from({ length: 51 }, (_, i) => {
-              const year = (currentYear - i).toString()
-              return { value: year, label: year }
-            })
-            return years
-          },
+          options: getYearOptions,
           condition: lastSemesterGeneralCondition,
         }),
         buildCheckboxField({
@@ -340,14 +333,7 @@ export const educationHistorySubSection = buildSubSection({
           title: educationMessages.labels.previousSchoolEndDate,
           required: (application: Application) =>
             showFinishedEducationDateField(application.answers),
-          options: () => {
-            const currentYear = new Date().getFullYear()
-            const years = Array.from({ length: 51 }, (_, i) => {
-              const year = (currentYear - i).toString()
-              return { value: year, label: year }
-            })
-            return years
-          },
+          options: getYearOptions,
           condition: showFinishedEducationDateField, // if education is the same but the user did not fill out yearFinished in lastSemester column
         }),
         buildAlertMessageField({
@@ -383,20 +369,8 @@ export const educationHistorySubSection = buildSubSection({
               component: 'select',
               required: true,
               options: (application, _, locale) => {
-                const education =
-                  getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
-                    application.externalData,
-                    'unemploymentApplication.data.supportData.educationPrograms',
-                  ) ?? []
-                return (
-                  education.map((program) => ({
-                    value: program.id ?? '',
-                    label:
-                      (locale === 'is'
-                        ? program.name
-                        : program.english ?? program.name) || '',
-                  })) ?? []
-                )
+                locale = locale ? locale : 'is'
+                return getLevelsOfStudyOptions(application, locale)
               },
             },
             degree: {
@@ -404,51 +378,25 @@ export const educationHistorySubSection = buildSubSection({
               component: 'select',
               required: true,
               options: (application, activeField, locale) => {
-                const education =
-                  getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
-                    application.externalData,
-                    'unemploymentApplication.data.supportData.educationPrograms',
-                  ) ?? []
                 const levelOfStudy = (activeField?.levelOfStudy as string) ?? ''
-                const chosenLevelDegrees = education?.filter(
-                  (program) => program.id === levelOfStudy,
-                )[0]?.degrees
-                return (
-                  chosenLevelDegrees?.map((degree) => ({
-                    value: degree.id ?? '',
-                    label:
-                      (locale === 'is'
-                        ? degree.name
-                        : degree.english ?? degree.name) || '',
-                  })) ?? []
-                )
+                locale = locale ? locale : 'is'
+                return getDegreeOptions(application, locale, levelOfStudy)
               },
             },
             courseOfStudy: {
               label: educationMessages.labels.courseOfStudyLabel,
               component: 'select',
               required: true,
-              options: (application, activeField) => {
-                const education = getValueViaPath<
-                  GaldurDomainModelsEducationProgramDTO[]
-                >(
-                  application.externalData,
-                  'unemploymentApplication.data.supportData.educationPrograms',
-                )
+              options: (application, activeField, locale) => {
                 const levelOfStudy = (activeField?.levelOfStudy as string) ?? ''
                 const degreeAnswer = (activeField?.degree as string) ?? ''
-                const chosenLevelDegrees = education?.filter(
-                  (program) => program.id === levelOfStudy,
-                )[0]?.degrees
 
-                const chosenDegreeSubjects = chosenLevelDegrees?.find(
-                  (degree) => degree.id === degreeAnswer,
-                )?.subjects
-                return (
-                  chosenDegreeSubjects?.map((subject) => ({
-                    value: subject.id ?? '',
-                    label: subject.name ?? '',
-                  })) ?? []
+                locale = locale ? locale : 'is'
+                return getCourseOfStudy(
+                  application,
+                  levelOfStudy,
+                  degreeAnswer,
+                  locale,
                 )
               },
             },
@@ -456,14 +404,7 @@ export const educationHistorySubSection = buildSubSection({
               label: educationMessages.labels.endOfStudies,
               component: 'select',
               placeholder: educationMessages.labels.endOfStudiesPlaceholder,
-              options: () => {
-                const currentYear = new Date().getFullYear()
-                const years = Array.from({ length: 51 }, (_, i) => {
-                  const year = (currentYear - i).toString()
-                  return { value: year, label: year }
-                })
-                return years
-              },
+              options: getYearOptions,
             },
             unfinishedStudy: {
               component: 'checkbox',
