@@ -16,10 +16,9 @@ export class ScreenDto {
   @IsString()
   id!: string
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsString()
-  identifier?: string
+  identifier!: string
 
   @ApiProperty()
   @IsString()
