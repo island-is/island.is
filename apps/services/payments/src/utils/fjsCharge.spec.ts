@@ -20,7 +20,6 @@ describe('generateChargeFJSPayload', () => {
       },
     ],
     systemId: '',
-    totalPrice: 1000,
   }
 
   it('it should include payInfo if passed as input', () => {
