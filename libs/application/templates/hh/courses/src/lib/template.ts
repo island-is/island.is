@@ -19,11 +19,15 @@ import { CodeOwners } from '@island.is/shared/constants'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import { UserProfileApi, NationalRegistryUserApi } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { dataSchema } from './dataSchema'
-import { HhCoursesSelectedChargeItemApi } from '../dataProviders'
+import {
+  HhCoursesSelectedChargeItemApi,
+  HhCoursesParticipantAvailabilityApi,
+} from '../dataProviders'
 
 import { m } from './messages'
 import { getChargeItems } from '../utils/getChargeItems'
@@ -125,8 +129,11 @@ const template: ApplicationTemplate<
             },
           ],
           onExit: [
-            HhCoursesSelectedChargeItemApi.configure({
+            HhCoursesParticipantAvailabilityApi.configure({
               order: 0,
+            }),
+            HhCoursesSelectedChargeItemApi.configure({
+              order: 1,
             }),
           ],
         },
@@ -149,6 +156,11 @@ const template: ApplicationTemplate<
           InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
         chargeItems: getChargeItems,
         submitTarget: States.COMPLETED,
+        lifecycle: {
+          shouldBeListed: true,
+          shouldBePruned: true,
+          whenToPrune: 20 * 60 * 1000, // 20 minutes
+        },
       }),
       [States.COMPLETED]: {
         meta: {
