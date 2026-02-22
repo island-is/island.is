@@ -99,7 +99,7 @@ export const NavComponent = ({
     const isClosed =
       !openComponents.sections.includes(data.id) &&
       !openComponents.screens.includes(data.id)
-    if (isSectionOrScreen && isClosed) {
+    if (isSectionOrScreen) {
       const hasChildren =
         type === 'Section'
           ? form.screens?.some((screen) => screen?.sectionId === data.id)
@@ -128,7 +128,11 @@ export const NavComponent = ({
                 }
               }}
             >
-              <Icon icon="chevronForward" size="small" color="dark300" />
+              {isClosed ? (
+                <Icon icon="chevronForward" size="small" color="dark300" />
+              ) : (
+                <Icon icon="chevronDown" size="small" color="dark300" />
+              )}
             </Box>
           </Box>
         )
@@ -181,8 +185,6 @@ export const NavComponent = ({
         [styles.navComponent.inputSelect]: type === 'Field' && !focusComponent,
       })}
       {...(focusComponent && {
-        ...listeners,
-        ...attributes,
         onClick: () => focusComponent(type, data.id as UniqueIdentifier),
       })}
       ref={setNodeRef}
@@ -195,8 +197,11 @@ export const NavComponent = ({
               [styles.navBackgroundActive.group]: type === 'Screen',
               [styles.navBackgroundActive.input]: type === 'Field',
             })}
+            {...listeners}
+            {...attributes}
           >
             {focusComponent ? index : ''}
+            {renderChevron()}
           </Box>
           <Box
             paddingLeft={1}
@@ -227,7 +232,6 @@ export const NavComponent = ({
             ) &&
               selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
-          {renderChevron()}
         </Box>
       ) : (
         <Box
@@ -244,7 +248,8 @@ export const NavComponent = ({
               [styles.navBackgroundDefault.input]: type === 'Field',
             })}
           >
-            {/* {index} */}
+            {index}
+            {renderChevron()}
           </Box>
           <Box
             data-testid="navcomponent-content"
@@ -298,7 +303,6 @@ export const NavComponent = ({
               <Checkbox checked={true} disabled={true} />
             </Box>
           )}
-          {renderChevron()}
         </Box>
       )}
     </Box>
