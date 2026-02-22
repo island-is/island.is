@@ -233,8 +233,10 @@ export class CoursesService extends BaseTemplateApiService {
     ])
 
     return {
-      slotsAvailable:
+      slotsAvailable: Math.max(
+        0,
         maxRegistrations - nationalIdsTakenByOtherApplications.size,
+      ),
       hasAvailability: maxRegistrations >= allNationalIds.size,
     }
   }

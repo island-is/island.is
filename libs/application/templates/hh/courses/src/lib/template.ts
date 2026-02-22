@@ -19,7 +19,6 @@ import { CodeOwners } from '@island.is/shared/constants'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
-  pruneAfterDays,
 } from '@island.is/application/core'
 import { UserProfileApi, NationalRegistryUserApi } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../utils/constants'
