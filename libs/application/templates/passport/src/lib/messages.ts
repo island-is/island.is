@@ -101,6 +101,11 @@ export const m = defineMessages({
     defaultMessage: 'Í gildi til',
     description: 'Some description',
   },
+  validTagWithDate: {
+    id: 'pa.application:selectPassport.validTagWithDate',
+    defaultMessage: 'Í gildi til {date}',
+    description: 'Valid passport tag with expiration date',
+  },
   noPassport: {
     id: 'pa.application:selectPassport.noPassport',
     defaultMessage: 'Vegabréf ekki til',
