@@ -62,7 +62,8 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
 
       const dayRateEntryMap = buildDayRateEntryMap(resp)
 
-      this.logger.info('DayRateEntryMap length', dayRateEntryMap.length)
+      const vehicleCount = Object.keys(dayRateEntryMap).length
+      this.logger.info('DayRateEntryMap key count', vehicleCount)
 
       const entries: Array<DayRateRecord> = Object.entries(dayRateEntryMap)
         .map(([permno, data]) => {
