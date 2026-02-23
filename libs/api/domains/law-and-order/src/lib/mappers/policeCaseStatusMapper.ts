@@ -73,7 +73,6 @@ export const mapPoliceCaseStatus = (
     return {
       value: statusValue,
       statusGroup: PoliceCaseStatusValueGroup.UNKNOWN,
-      headerDisplayString: rawStatus,
     }
   }
 
