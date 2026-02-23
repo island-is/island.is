@@ -13,6 +13,7 @@ import zipObject from 'lodash/zipObject'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
+  FieldTypesEnum,
   FormStatus,
   SectionTypes,
   UpdateFormError,
@@ -860,11 +861,18 @@ export class FormsService {
       name: { is: 'Kafli', en: 'Section' },
     } as Section)
 
-    await this.screenModel.create({
+    const inputScreen = await this.screenModel.create({
       sectionId: inputSection.id,
       displayOrder: 0,
-      name: { is: 'innsláttarskjár 1', en: 'Input screen 1' },
+      name: { is: 'Innsláttarskjár', en: 'Input screen' },
     } as Screen)
+
+    await this.fieldModel.create({
+      screenId: inputScreen.id,
+      fieldType: FieldTypesEnum.TEXTBOX,
+      displayOrder: 0,
+      name: { is: 'Textainnsláttur', en: 'Text input' },
+    } as Field)
   }
 
   private async updateDependencies(

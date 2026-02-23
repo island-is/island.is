@@ -125,22 +125,6 @@ export const Navbar = () => {
             (item: Maybe<FormSystemField> | undefined) => item?.id === id,
           )
 
-    if (type === 'Section') {
-      setOpenComponents((prev) => ({
-        ...prev,
-        sections: prev.sections.includes(id as string)
-          ? prev.sections.filter((sectionId) => sectionId !== id)
-          : [...prev.sections, id as string],
-      }))
-    } else if (type === 'Screen') {
-      setOpenComponents((prev) => ({
-        ...prev,
-        screens: prev.screens.includes(id as string)
-          ? prev.screens.filter((screenId) => screenId !== id)
-          : [...prev.screens, id as string],
-      }))
-    }
-
     if (id === baseSettingsStep.id) {
       controlDispatch({
         type: 'SET_ACTIVE_ITEM',
