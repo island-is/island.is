@@ -96,7 +96,6 @@ const VehiclesOverview = () => {
       intro={messages.intro}
       serviceProviderSlug={SAMGONGUSTOFA_SLUG}
       serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-      childrenWidthFull
       buttonGroup={
         (!loading && !error && filteredVehicles.length > 0) || searchLoading
           ? [
