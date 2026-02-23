@@ -188,7 +188,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
     // Study track / field of study
     if (programme.studyTrack?.name) {
       detailLines.push({
-        icon: 'reader' as const,
+        icon: 'grid' as const,
         text: programme.studyTrack.name,
       })
     }
@@ -196,7 +196,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
     // Credits
     if (programme.credits) {
       detailLines.push({
-        icon: 'document' as const,
+        icon: 'receipt' as const,
         text: `${programme.credits} einingar`,
       })
     }
@@ -602,29 +602,25 @@ const SecondarySchoolStudiesLandingPage: Screen<
                     />
                   </Box>
 
-                  {totalPages > 1 && (
-                    <Box marginTop={2} paddingBottom={2}>
-                      <Pagination
-                        variant="blue"
-                        page={selectedPage}
-                        itemsPerPage={ITEMS_PER_PAGE}
-                        totalItems={filteredResults.length}
-                        totalPages={totalPages}
-                        renderLink={(page, className, children) => (
-                          <button
-                            aria-label={
-                              selectedPage < page ? 'Next' : 'Previous'
-                            }
-                            onClick={() => {
-                              handlePageChange(page)
-                            }}
-                          >
-                            <span className={className}>{children}</span>
-                          </button>
-                        )}
-                      />
-                    </Box>
-                  )}
+                  <Box marginTop={2} paddingBottom={2}>
+                    <Pagination
+                      variant="blue"
+                      page={selectedPage}
+                      itemsPerPage={ITEMS_PER_PAGE}
+                      totalItems={filteredResults.length}
+                      totalPages={totalPages}
+                      renderLink={(page, className, children) => (
+                        <button
+                          aria-label={selectedPage < page ? 'Next' : 'Previous'}
+                          onClick={() => {
+                            handlePageChange(page)
+                          }}
+                        >
+                          <span className={className}>{children}</span>
+                        </button>
+                      )}
+                    />
+                  </Box>
                 </Box>
               </Box>
             </Box>

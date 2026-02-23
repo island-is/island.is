@@ -142,7 +142,7 @@ export const SecondarySchoolStudyCard = ({
                     <Icon
                       icon={line.icon}
                       color={iconColor}
-                      size="small"
+                      size="medium"
                       type="outline"
                     />
                   </Box>
