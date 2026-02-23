@@ -5,6 +5,7 @@ export const en: TranslatedMessages = {
   'button.change': 'Change',
   'button.open': 'Open',
   'button.moreInfoHere': 'More info here',
+  'button.seeMore': 'See more',
 
   // login
   'login.welcomeMessage': 'Log in to the app with electronic ID',
@@ -761,6 +762,17 @@ export const en: TranslatedMessages = {
   'health.overview.dentist': 'Dentist',
   'health.overview.noDentistRegistered': 'No dentist registered',
   'health.overview.prescriptions': 'Prescriptions',
+  'health.overview.medicine': 'Medicine',
+  'health.overview.seeAllCategories': 'See all categories',
+
+  // health: categories
+  'health.categories.screenTitle': 'Health Categories',
+  'health.categories.healthCategories': 'Health Categories',
+  'health.categories.moreOnMyPages': 'More on my pages',
+  'health.categories.referrals': 'Referrals',
+  'health.categories.paymentsAndRights': 'Payments and rights',
+  'health.categories.waitingLists': 'Waiting lists',
+  'health.categories.medicalRecords': 'Medical records',
 
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Questionnaires',
