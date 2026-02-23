@@ -27,9 +27,8 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useBrowser } from '../../lib/use-browser'
-import { showAndroidPrompt } from '../../lib/show-picker'
+import { showPrompt } from '../../lib/show-picker'
 import { MileageCell } from './components/mileage-cell'
-import { isAndroid, isIos } from '../../utils/devices'
 
 const HIGHEST_MILEAGE = 9999999
 
@@ -262,53 +261,19 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   )
 
   const onEdit = useCallback(async () => {
-    if (isIos) {
-      return Alert.prompt(
-        intl.formatMessage({ id: 'vehicle.mileage.promptEditTitle' }),
-        undefined,
-        [
-          {
-            isPreferred: true,
-            onPress(value?: string) {
-              return onEditMileageSubmit(value)
-            },
-            text: intl.formatMessage({
-              id: 'vehicle.mileage.promptEditButton',
-            }),
-            style: 'default',
-          },
-          {
-            text: intl.formatMessage({
-              id: 'vehicle.mileage.promptCancelButton',
-            }),
-            style: 'cancel',
-          },
-        ],
-        'plain-text',
-        String(latestMileage),
-        'number-pad',
-      )
-    }
-    if (isAndroid) {
-      await showAndroidPrompt(
-        intl.formatMessage({ id: 'vehicle.mileage.promptEditTitle' }),
-        undefined,
-        {
-          keyboardType: 'numeric',
-          allowEmptyInput: false,
-          defaultValue: String(latestMileage),
-          positiveText: intl.formatMessage({
-            id: 'vehicle.mileage.promptEditButton',
-          }),
-          negativeText: intl.formatMessage({
-            id: 'vehicle.mileage.promptCancelButton',
-          }),
-        },
-      ).then((res) => {
-        if (res.action === 'positive') {
-          return onEditMileageSubmit(res.text)
-        }
-      })
+    const res = await showPrompt({
+      title: intl.formatMessage({ id: 'vehicle.mileage.promptEditTitle' }),
+      defaultValue: String(latestMileage),
+      keyboardType: 'number-pad',
+      positiveText: intl.formatMessage({
+        id: 'vehicle.mileage.promptEditButton',
+      }),
+      negativeText: intl.formatMessage({
+        id: 'vehicle.mileage.promptCancelButton',
+      }),
+    })
+    if (res.action === 'positive') {
+      return onEditMileageSubmit(res.text)
     }
   }, [latestMileage, onEditMileageSubmit, intl])
 

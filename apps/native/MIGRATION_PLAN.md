@@ -407,9 +407,10 @@ Phase 0: Preparation (no breaking changes)
 
 - [x] Upgrade zustand 3.5.12 → 5.x (update store patterns)
 - [x] Replace react-native-pdf with @kishannareshpal/expo-pdf
-- [ ] Replace react-native-dialogs with RN Alert
--- We have showPicker in 2 places (change language and select Gjaldgrunnur)
--- We have showAndroidPrompt in 1 place, for mileage input edit modal.
+- [x] Replace react-native-dialogs with RN Alert
+-- showPicker: Android now uses Alert.alert with items as buttons (cross-platform)
+-- showAndroidPrompt replaced by showPrompt (cross-platform: Alert.prompt on iOS, PromptModal on Android)
+-- PromptModal mounted in root _layout.tsx, driven by promptStore (Zustand)
 - [x] Replace react-native-inappbrowser-reborn → expo-web-browser
 - [x] Replace react-native-share → expo-sharing
 - [x] Replace react-native-device-info → expo-device + expo-constants

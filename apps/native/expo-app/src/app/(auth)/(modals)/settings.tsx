@@ -335,19 +335,21 @@ export default function SettingsScreen() {
             id: 'settings.communication.newNotificationsEmailDescription',
           })}
           accessory={
-            <Switch
-              onValueChange={(value) => {
-                updateEmailNotifications(value)
-                setEmailNotifications(value)
-              }}
-              disabled={userProfile.loading && !userProfile.data}
-              value={emailNotifications}
-              thumbColor={Platform.select({ android: theme.color.dark100 })}
-              trackColor={{
-                false: theme.color.dark200,
-                true: theme.color.blue400,
-              }}
-            />
+            <View>
+              <Switch
+                onValueChange={(value) => {
+                  updateEmailNotifications(value)
+                  setEmailNotifications(value)
+                }}
+                disabled={userProfile.loading && !userProfile.data}
+                value={emailNotifications}
+                thumbColor={Platform.select({ android: theme.color.dark100 })}
+                trackColor={{
+                  false: theme.color.dark200,
+                  true: theme.color.blue400,
+                }}
+              />
+            </View>
           }
         />
         <TableViewCell
@@ -358,19 +360,21 @@ export default function SettingsScreen() {
             id: 'settings.communication.newNotificationsInAppDescription',
           })}
           accessory={
-            <Switch
-              onValueChange={(value) => {
-                updateDocumentNotifications(value)
-                setDocumentNotifications(value)
-              }}
-              disabled={userProfile.loading && !userProfile.data}
-              value={documentNotifications}
-              thumbColor={Platform.select({ android: theme.color.dark100 })}
-              trackColor={{
-                false: theme.color.dark200,
-                true: theme.color.blue400,
-              }}
-            />
+            <View>
+              <Switch
+                onValueChange={(value) => {
+                  updateDocumentNotifications(value)
+                  setDocumentNotifications(value)
+                }}
+                disabled={userProfile.loading && !userProfile.data}
+                value={documentNotifications}
+                thumbColor={Platform.select({ android: theme.color.dark100 })}
+                trackColor={{
+                  false: theme.color.dark200,
+                  true: theme.color.blue400,
+                }}
+              />
+            </View>
           }
         />
       </TableViewGroup>
@@ -418,29 +422,31 @@ export default function SettingsScreen() {
                 )
           }
           accessory={
-            <Switch
-              onValueChange={(value) => {
-                if (value && !hasAcceptedBiometrics) {
-                  authenticateAsync().then((result) => {
-                    if (result.success) {
-                      setUseBiometrics(true)
-                      preferencesStore.setState({
-                        hasAcceptedBiometrics: true,
-                      })
-                    }
-                  })
-                } else {
-                  setUseBiometrics(value)
-                }
-              }}
-              disabled={!isEnrolledBiometrics}
-              value={useBiometrics}
-              thumbColor={Platform.select({ android: theme.color.dark100 })}
-              trackColor={{
-                false: theme.color.dark200,
-                true: theme.color.blue400,
-              }}
-            />
+            <View>
+              <Switch
+                onValueChange={(value) => {
+                  if (value && !hasAcceptedBiometrics) {
+                    authenticateAsync().then((result) => {
+                      if (result.success) {
+                        setUseBiometrics(true)
+                        preferencesStore.setState({
+                          hasAcceptedBiometrics: true,
+                        })
+                      }
+                    })
+                  } else {
+                    setUseBiometrics(value)
+                  }
+                }}
+                disabled={!isEnrolledBiometrics}
+                value={useBiometrics}
+                thumbColor={Platform.select({ android: theme.color.dark100 })}
+                trackColor={{
+                  false: theme.color.dark200,
+                  true: theme.color.blue400,
+                }}
+              />
+            </View>
           }
         />
         {isPasskeyEnabled && (
@@ -510,6 +516,7 @@ export default function SettingsScreen() {
                 },
               ],
               cancel: true,
+              selectedId: String(appLockTimeout),
             }).then((res) => {
               if (res.selectedItem) {
                 preferencesStore.setState({
