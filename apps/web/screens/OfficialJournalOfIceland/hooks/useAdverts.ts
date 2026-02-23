@@ -15,6 +15,7 @@ export type UseAdvertsVariables = {
   pageSize?: number
   department?: Array<string>
   type?: Array<string>
+  mainType?: Array<string>
   category?: Array<string>
   involvedParty?: Array<string>
   dateFrom?: string
