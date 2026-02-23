@@ -168,7 +168,7 @@ export const BankAccountInput = ({
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12', '10/12']}>
           <GridRow rowGap={2}>
-            <GridColumn span={['12/12', '12/12', '12/12', '3/12', '3/12']}>
+            <GridColumn span={['12/12', '8/12', '8/12', '8/12', '4/12']}>
               <Input
                 id={`${id}.bankNumber`}
                 name={`${id}.bankNumber`}
@@ -192,7 +192,7 @@ export const BankAccountInput = ({
                 ref={bankRef}
               />
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '3/12', '3/12']}>
+            <GridColumn span={['12/12', '8/12', '8/12', '8/12', '3/12']}>
               <Input
                 id={`${id}.ledger`}
                 name={`${id}.ledger`}
@@ -216,7 +216,7 @@ export const BankAccountInput = ({
                 ref={ledgerRef}
               />
             </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12', '6/12']}>
+            <GridColumn span={['12/12', '8/12', '8/12', '8/12', '5/12']}>
               <Input
                 id={`${id}.accountNumber`}
                 name={`${id}.accountNumber`}

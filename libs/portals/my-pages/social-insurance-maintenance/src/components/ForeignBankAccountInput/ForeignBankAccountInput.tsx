@@ -244,7 +244,7 @@ export const ForeignBankAccountInput = ({
                   readOnly={readOnly}
                 />
               </GridColumn>
-              <GridColumn span={['6/12', '6/12', '6/12', '6/12', '6/12']}>
+              <GridColumn span={['12/12', '6/12', '6/12', '6/12', '6/12']}>
                 <Select
                   id={`${id}.currency`}
                   name={`${id}.currency`}
