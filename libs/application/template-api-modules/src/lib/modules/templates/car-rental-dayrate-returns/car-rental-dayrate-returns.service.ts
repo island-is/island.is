@@ -46,13 +46,23 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
       const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
       const lastMonthIndex = lastMonthDate.getMonth()
 
-      const resp = await this.rentalsApiWithAuth(
-        auth,
-      ).apiDayRateEntriesEntityIdGet({
-        entityId: auth.nationalId,
-      })
+      // Log the request url to the RSK day-rate API to debug
+      const resp = await this.rentalsApiWithAuth(auth)
+        .withPreMiddleware(async ({ url, init }) => {
+          this.logger.info('RSK day-rate request', {
+            url,
+            method: init?.method,
+          })
+        })
+        .apiDayRateEntriesEntityIdGet({
+          entityId: auth.nationalId,
+        })
+
+      this.logger.info('RSK day-rate response', resp)
 
       const dayRateEntryMap = buildDayRateEntryMap(resp)
+
+      this.logger.info('DayRateEntryMap length', dayRateEntryMap.length)
 
       const entries: Array<DayRateRecord> = Object.entries(dayRateEntryMap)
         .map(([permno, data]) => {
@@ -74,6 +84,8 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           }
         })
         .filter((entry): entry is DayRateRecord => entry !== null)
+
+      this.logger.info('Entries length', entries.length)
 
       return entries
     } catch (error) {
