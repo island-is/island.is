@@ -48,7 +48,10 @@ describe('BlueBoxWithDate', () => {
               rulingDate,
             }}
           >
-            <BlueBoxWithDate defendant={mockDefendant} />
+            <BlueBoxWithDate
+              defendant={mockDefendant}
+              canDefendantAppealVerdict={false}
+            />
           </FormContextWrapper>
         </ApolloProviderWrapper>
       </IntlProviderWrapper>,
@@ -70,7 +73,10 @@ describe('BlueBoxWithDate', () => {
               rulingDate,
             }}
           >
-            <BlueBoxWithDate defendant={mockDefendant} />
+            <BlueBoxWithDate
+              defendant={mockDefendant}
+              canDefendantAppealVerdict={true}
+            />
           </FormContextWrapper>
         </ApolloProviderWrapper>
       </IntlProviderWrapper>,

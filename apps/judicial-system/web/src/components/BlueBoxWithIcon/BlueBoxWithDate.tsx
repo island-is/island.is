@@ -262,18 +262,16 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     <Box className={styles.container} padding={[2, 2, 3, 3]}>
       <Box className={styles.dataContainer}>
         <SectionHeading
-          title={
-            isFine
-              ? formatMessage(strings.indictmentRulingDecisionFine)
-              : defendant.name || ''
-          }
+          title={defendant.name || ''}
           heading="h4"
           marginBottom={0}
         />
         {icon && (
           <Icon icon={icon} type="outline" color="blue400" size="large" />
         )}
-        <Text variant="eyebrow">Birting dóms</Text>
+        <Text variant="eyebrow">
+          {isFine ? 'Viðurlagaákvörðun' : 'Birting dóms'}
+        </Text>
       </Box>
       <AnimatePresence initial={false}>
         {textItems.map((text, index) => {
