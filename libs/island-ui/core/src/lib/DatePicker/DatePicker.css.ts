@@ -12,6 +12,8 @@ export const root = style({
   minWidth: '250px',
 })
 
+export const detached = style({})
+
 export const backgroundBlue = style({
   selectors: {
     [`${root} &`]: {
@@ -144,6 +146,7 @@ globalStyle(
 
 export const small = style({})
 export const extraSmall = style({})
+export const medium = style({})
 
 export const inputContainer = style({
   display: 'flex',
@@ -535,3 +538,66 @@ globalStyle(`${root} .react-datepicker__day--range-end`, {
 globalStyle(`${root} .react-datepicker__day--in-selecting-range`, {
   backgroundColor: `${theme.color.blue200} !important`,
 })
+
+// Detached calendar mode: calendar and input are visually separate
+globalStyle(`${root}.${detached}.${small}`, {
+  minWidth: 180,
+})
+
+globalStyle(`${root}.${detached}.${extraSmall}`, {
+  minWidth: 160,
+})
+
+globalStyle(`${root}.${detached}.${medium}`, {
+  minWidth: 230,
+})
+
+globalStyle(`${root}.${detached} input`, {
+  paddingRight: 0,
+  paddingLeft: 8,
+})
+
+globalStyle(`${root}.island-ui-datepicker.${detached} .react-datepicker`, {
+  borderRadius: '8px',
+  boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+  minWidth: '250px',
+})
+
+globalStyle(
+  `${root}.island-ui-datepicker.${detached} .react-datepicker-popper`,
+  {
+    width: 'auto',
+  },
+)
+
+globalStyle(
+  `${root}.island-ui-datepicker.${detached} .react-datepicker-popper[data-placement^="bottom"]`,
+  {
+    top: '0px !important',
+    paddingTop: `${theme.spacing[1]}px`,
+  },
+)
+
+globalStyle(
+  `${root}.island-ui-datepicker.${detached} .react-datepicker-popper[data-placement^="top"]`,
+  {
+    top: '0px !important',
+    paddingBottom: `${theme.spacing[1]}px`,
+  },
+)
+
+globalStyle(
+  `${root}.island-ui-datepicker.${detached} .react-datepicker-popper[data-placement^="top"] .react-datepicker`,
+  {
+    top: '0',
+    borderRadius: '8px',
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+  },
+)
+
+globalStyle(
+  `${root}.island-ui-datepicker.${detached}:has(.react-datepicker-wrapper:focus-within) .react-datepicker`,
+  {
+    boxShadow: `inset 0 0 0 1px ${theme.color.blue200}`,
+  },
+)

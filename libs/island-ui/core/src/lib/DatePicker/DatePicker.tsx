@@ -83,6 +83,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   isClearable = false,
   clearLabel,
   displaySelectInput = false,
+  detatchedCalendar = false,
 }) => {
   const isValidDate = (d: unknown): d is Date =>
     d instanceof Date && !isNaN((d as Date).getTime())
@@ -143,6 +144,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
         className={cn(styles.root, 'island-ui-datepicker', {
           [styles.small]: size === 'sm',
           [styles.extraSmall]: size === 'xs',
+          [styles.medium]: size === 'md',
+          [styles.detached]: detatchedCalendar,
         })}
       >
         <ReactDatePicker
@@ -255,7 +258,9 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             <CustomInput
               name={inputName}
               label={label}
-              fixedFocusState={datePickerState === 'open'}
+              fixedFocusState={
+                detatchedCalendar ? false : datePickerState === 'open'
+              }
               hasError={hasError}
               placeholderText={placeholderText}
               onInputClick={onInputClick}

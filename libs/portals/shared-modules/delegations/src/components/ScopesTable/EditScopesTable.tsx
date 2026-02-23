@@ -100,6 +100,7 @@ export const EditScopesTable = () => {
                   selected={scope.validTo}
                   handleChange={(date) => onChangeScopeDate(scope, date)}
                   placeholderText={formatMessage(portalMessages.chooseDate)}
+                  detatchedCalendar={true}
                 />
               </T.Data>
               <T.Data style={{ paddingInline: 16, minWidth: 85 }}>

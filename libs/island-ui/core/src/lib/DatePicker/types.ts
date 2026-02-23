@@ -72,6 +72,7 @@ export interface DatePickerProps {
     startDate?: Date | null
     endDate?: Date | null
   }
+  detatchedCalendar?: boolean
 }
 
 export interface DatePickerCustomHeaderProps {
