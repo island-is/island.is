@@ -72,7 +72,7 @@ const PoliceCases = () => {
                   : undefined
               }
               eyebrow={
-                c.prosecutionOffice ??
+                c.prosecutionOffice ||
                 formatMessage(messages.policeCaseCardEyebrow)
               }
               tag={
