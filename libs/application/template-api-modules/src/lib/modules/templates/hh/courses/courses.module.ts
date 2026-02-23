@@ -6,6 +6,7 @@ import { SharedTemplateAPIModule } from '../../../shared'
 
 import { CoursesService } from './courses.service'
 import { HHCoursesConfig } from './courses.config'
+import { ZendeskModule } from '@island.is/clients/zendesk'
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { HHCoursesConfig } from './courses.config'
     ConfigModule.forRoot({
       load: [HHCoursesConfig],
     }),
+    ZendeskModule,
   ],
   providers: [CoursesService],
   exports: [CoursesService],
