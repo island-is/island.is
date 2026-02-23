@@ -11,7 +11,7 @@ export const mapBankInformation = (
       ledger: dto.ledger,
       accountNumber: dto.accountNumber,
       currencies: dto.currencies,
-    } satisfies DomesticBankInformation
+    }
   }
 
   return {
@@ -23,5 +23,5 @@ export const mapBankInformation = (
     foreignBankAddress: dto.foreignBankAddress,
     foreignCurrency: dto.foreignCurrency,
     currencies: dto.currencies,
-  } satisfies ForeignBankInformation
+  }
 }
