@@ -1,5 +1,7 @@
 import {
+  BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -24,6 +26,7 @@ import {
   ApplicationEvents,
   FieldTypesEnum,
   ApplicantTypesEnum,
+  NotificationCommands,
 } from '@island.is/form-system/shared'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
@@ -44,6 +47,10 @@ import type { Locale } from '@island.is/shared/types'
 import { calculatePruneAt } from '../../../utils/calculatePruneAt'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
+import { NotificationResponseDto } from './models/dto/validation.response.dto'
+import { NotifyService } from '../services/notify.service'
+import { NotificationDto } from './models/dto/notification.dto'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 @Injectable()
 export class ApplicationsService {
@@ -58,8 +65,10 @@ export class ApplicationsService {
     private readonly organizationModel: typeof Organization,
     @InjectModel(ApplicationEvent)
     private readonly applicationEventModel: typeof ApplicationEvent,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
+    private readonly notifyService: NotifyService,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -261,7 +270,7 @@ export class ApplicationsService {
     }
     applicationDto.events.push(applicationEvent)
 
-    const success: boolean = await this.serviceManager.send(applicationDto)
+    const success = await this.serviceManager.send(applicationDto)
 
     if (success) {
       try {
@@ -278,18 +287,18 @@ export class ApplicationsService {
     }
 
     const submitResponseDto = new SubmitApplicationResponseDto()
-    submitResponseDto.success = success
+    submitResponseDto.submissionFailed = !success
     if (!success) {
-      submitResponseDto.screenErrorMessages = [
-        {
-          title: { is: 'Villa við innsendingu', en: 'Error submitting' },
-          message: {
-            is: 'Ekki tókst að senda inn umsóknina, reyndu aftur síðar eða sendu póst á island@island.is',
-            en: 'The application could not be submitted. Please try again later or send an email to island@island.is',
-          },
+      submitResponseDto.validationError = {
+        hasError: true,
+        title: { is: 'Villa við innsendingu', en: 'Error submitting' },
+        message: {
+          is: 'Ekki tókst að senda inn umsóknina, reyndu aftur síðar eða sendu póst á island@island.is',
+          en: 'The application could not be submitted. Please try again later or send an email to island@island.is',
         },
-      ]
+      }
     }
+
     return submitResponseDto
   }
 
@@ -645,7 +654,7 @@ export class ApplicationsService {
     return filteredApplications
   }
 
-  private async getApplicationForm(
+  public async getApplicationForm(
     formId: string,
     applicationId: string,
     slug: string,
@@ -699,6 +708,14 @@ export class ApplicationsService {
           { model: Section, as: 'sections' },
           { model: Screen, as: 'screens' },
           { model: Field, as: 'fields' },
+          'displayOrder',
+          'ASC',
+        ],
+        [
+          { model: Section, as: 'sections' },
+          { model: Screen, as: 'screens' },
+          { model: Field, as: 'fields' },
+          { model: ListItem, as: 'list' },
           'displayOrder',
           'ASC',
         ],
@@ -982,6 +999,93 @@ export class ApplicationsService {
 
       await application.destroy({ transaction })
     })
+  }
+
+  async notifyExternalService(
+    notificationDto: NotificationDto,
+    user: User,
+  ): Promise<NotificationResponseDto> {
+    const application = await this.applicationModel.findByPk(
+      notificationDto.applicationId,
+      { include: [{ model: Value, as: 'values' }] },
+    )
+
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${notificationDto.applicationId}' not found`,
+      )
+    }
+
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new UnauthorizedException(
+        `User is not authorized to notify for application '${notificationDto.applicationId}'`,
+      )
+    }
+
+    const form = await this.formModel.findByPk(application.formId)
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found for application '${notificationDto.applicationId}'`,
+      )
+    }
+
+    const submissionUrl = form.submissionServiceUrl
+
+    if (!submissionUrl) {
+      throw new BadRequestException(
+        `Form '${application.formId}' does not have a submissionServiceUrl configured`,
+      )
+    }
+
+    const nationalId = user.actor?.nationalId || user.nationalId
+
+    notificationDto.nationalId = nationalId
+
+    if (!notificationDto.screen) {
+      throw new BadRequestException(
+        `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
+      )
+    }
+
+    const response = await this.notifyService.sendNotification(
+      notificationDto,
+      submissionUrl,
+    )
+
+    if (!response.operationSuccessful) {
+      if (notificationDto.command === NotificationCommands.VALIDATE) {
+        notificationDto.screen.screenError = {
+          hasError: true,
+          title: {
+            is: 'Ekki tókst að tengjast ytri þjónustu',
+            en: 'Could not connect to external service',
+          },
+          message: {
+            is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
+            en: 'Please try again later or send an email to island@island.is',
+          },
+        }
+      } else if (notificationDto.command === NotificationCommands.POPULATE) {
+        notificationDto.screen.screenError = {
+          hasError: true,
+          title: {
+            is: 'Ekki tókst að tengjast ytri þjónustu',
+            en: 'Could not connect to external service',
+          },
+          message: {
+            is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
+            en: 'Please try to refresh the page or send an email to island@island.is',
+          },
+        }
+      }
+      response.screen = notificationDto.screen
+      this.logger.error(
+        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${notificationDto.screen?.id}' with command ${notificationDto.command}`,
+      )
+    }
+
+    return response
   }
 
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {

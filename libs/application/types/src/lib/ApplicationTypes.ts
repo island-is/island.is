@@ -477,11 +477,11 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
     slug: 'bilaleigu-gjaldflokkur',
-    translation: ['crfc.application', 'uiForms.application'],
+    translation: ['rsk.crfc.application', 'uiForms.application'],
   },
   [ApplicationTypes.CAR_RENTAL_DAYRATE_RETURNS]: {
     slug: 'skilagrein-daggjalds-utleigudagar',
-    translation: ['crdr.application', 'uiForms.application'],
+    translation: ['rsk.crdr.application', 'uiForms.application'],
   },
   [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: {
     slug: 'sjukra-og-endurhaefingargreidslur',

@@ -46,8 +46,18 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
   beforeEach(async () => {
     process.env.PRISON_ADMIN_INDICTMENT_EMAILS = emails.join(',')
 
-    const { emailService, internalNotificationController, notificationModel } =
-      await createTestingNotificationModule()
+    const {
+      emailService,
+      internalNotificationController,
+      notificationModel,
+      institutionContactRepositoryService,
+    } = await createTestingNotificationModule()
+
+    const getInstitutionContactMock = jest.mocked(
+      institutionContactRepositoryService.getInstitutionContact,
+    )
+
+    getInstitutionContactMock.mockResolvedValue('extra@omnitrix.is')
 
     defendantNotificationDTO = {
       type: DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
@@ -105,9 +115,12 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
     })
 
     it('should send a notification to prison admin emails', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(emails.length)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(
+        emails.length + 1,
+      ) // +1 for the institution contact email
+
       emails.forEach((email) => {
-        expect(mockEmailService.sendEmail).toBeCalledWith(
+        expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
           expect.objectContaining({
             to: [
               {
@@ -132,7 +145,7 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: defendantNotificationDTO.type,
-        recipients: emails.map((email) => ({
+        recipients: [...emails, 'extra@omnitrix.is'].map((email) => ({
           address: email,
           success: true,
         })),
