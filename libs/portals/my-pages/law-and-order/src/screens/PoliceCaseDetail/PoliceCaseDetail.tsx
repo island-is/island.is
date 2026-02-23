@@ -96,6 +96,11 @@ const PoliceCaseDetail = () => {
             />
             <InfoLine
               loading={loading}
+              label={m.prosecutionOffice}
+              content={policeCase?.prosecutionOffice ?? ''}
+            />
+            <InfoLine
+              loading={loading}
               label={m.contact}
               content={policeCase?.contact ?? ''}
             />

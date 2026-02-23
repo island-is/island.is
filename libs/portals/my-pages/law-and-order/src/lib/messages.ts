@@ -176,6 +176,10 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:legal-advisor',
     defaultMessage: 'Réttargæslumaður',
   },
+  prosecutionOffice: {
+    id: 'sp.law-and-order:prosecution-office',
+    defaultMessage: 'Embætti',
+  },
   caseStatus: {
     id: 'sp.law-and-order:case-status',
     defaultMessage: 'Staða máls',
