@@ -17,6 +17,7 @@ import { HHCoursesConfig } from './courses.config'
     SharedTemplateAPIModule,
     ApplicationApiCoreModule,
     ConfigModule.forRoot({
+      isGlobal: true,
       load: [HHCoursesConfig],
     }),
   ],
