@@ -1,7 +1,7 @@
 import type {
   FormSystemApplication,
   FormSystemScreen,
-  FormSystemScreenErrorMessage,
+  FormSystemValidationError,
   FormSystemSection,
 } from '@island.is/api/schema'
 
@@ -15,10 +15,11 @@ export interface ApplicationState {
   }
   currentScreen?: {
     index: number
+    isPopulateError?: boolean
     data?: FormSystemScreen
   }
   errors?: string[]
-  screenErrors?: FormSystemScreenErrorMessage[]
+  screenError?: FormSystemValidationError
   isValid?: boolean
   submitted?: boolean
 }

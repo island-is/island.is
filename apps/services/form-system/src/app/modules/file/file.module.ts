@@ -18,21 +18,6 @@ import { FileStorageWrapperModule } from './fileStorageWrapper'
     FileStorageWrapperModule,
     SequelizeModule.forFeature([Value]),
     ConfigModule.forFeature(FileConfig),
-    // NestBullModule.registerQueueAsync({
-    //   name: 'upload',
-    //   imports: [ConfigModule.forFeature(FileConfig)],
-    //   useFactory: (config: ConfigType<typeof FileConfig>) => ({
-    //     prefix: `{${config.bullModuleName ?? 'form_system_api_bull_module'}}`,
-    //     createClient: () =>
-    //       createRedisCluster({
-    //         name: config.bullModuleName ?? 'form_system_api_bull_module',
-    //         ssl: config.redis.ssl,
-    //         nodes: config.redis.nodes,
-    //         noPrefix: true,
-    //       }),
-    //   }),
-    //   inject: [FileConfig.KEY],
-    // }),
   ],
   controllers: [FileController],
   providers: [FileService],

@@ -345,7 +345,7 @@ test.describe.serial('Indictment tests', () => {
     await page.getByTestId('continueButton').click()
     await Promise.all([
       page.getByTestId('modalPrimaryButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'UpdateCase'),
+      verifyRequestCompletion(page, '/api/graphql', 'UpdateDefendant'),
     ])
 
     // Case list for reviewed cases

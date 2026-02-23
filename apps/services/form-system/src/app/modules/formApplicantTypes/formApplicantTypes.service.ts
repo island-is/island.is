@@ -146,6 +146,7 @@ export class FormApplicantTypesService {
   private mapToScreenDto(screen: Screen, field: Field): ScreenDto {
     const fieldKeys = [
       'id',
+      'identifier',
       'screenId',
       'name',
       'displayOrder',
@@ -162,11 +163,13 @@ export class FormApplicantTypesService {
 
     const screenKeys = [
       'id',
+      'identifier',
       'sectionId',
       'name',
       'displayOrder',
       'isCompleted',
-      'callRuleset',
+      'shouldValidate',
+      'shouldPopulate',
       'isHidden',
       'multiset',
     ]
