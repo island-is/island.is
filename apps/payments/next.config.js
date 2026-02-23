@@ -14,6 +14,7 @@ const {
   CONFIGCAT_SDK_KEY,
   BASEPATH = '/greida',
   PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET,
+  NEXT_PUBLIC_ALLOW_APPLE_PAY,
 } = process.env
 
 const apiPath = '/api'
@@ -45,6 +46,7 @@ const nextConfig = {
   basePath: `${BASEPATH}`,
   env: {
     API_MOCKS: process.env.API_MOCKS || '',
+    NEXT_PUBLIC_ALLOW_APPLE_PAY: NEXT_PUBLIC_ALLOW_APPLE_PAY || 'false',
   },
 }
 

@@ -91,13 +91,13 @@ const UserContractsOverview = () => {
           <Stack space={2}>
             {data.hmsRentalAgreements.data
               .map((contract) => {
-                const { id, status, property } = contract
+                const { id, status, contractProperty } = contract
                 const address =
-                  property &&
-                  property.streetAndHouseNumber &&
-                  property.municipality &&
-                  property.postalCode
-                    ? `${property.streetAndHouseNumber}, ${property.postalCode} ${property.municipality}`
+                  contractProperty &&
+                  contractProperty.streetAndHouseNumber &&
+                  contractProperty.municipality &&
+                  contractProperty.postalCode
+                    ? `${contractProperty.streetAndHouseNumber}, ${contractProperty.postalCode} ${contractProperty.municipality}`
                     : undefined
 
                 const { message, ...restOfTag } = mapStatusTypeToTag(
@@ -107,12 +107,13 @@ const UserContractsOverview = () => {
                 }
 
                 const subText =
-                  property?.type === HmsRentalAgreementPropertyType.RESIDENTIAL
+                  contractProperty?.type ===
+                  HmsRentalAgreementPropertyType.RESIDENTIAL
                     ? formatMessage(cm.typeResidential)
-                    : property?.type ===
+                    : contractProperty?.type ===
                       HmsRentalAgreementPropertyType.INDIVIDUAL_ROOM
                     ? formatMessage(cm.typeIndividualRoom)
-                    : property?.type ===
+                    : contractProperty?.type ===
                       HmsRentalAgreementPropertyType.NONRESIDENTIAL
                     ? formatMessage(cm.typeNonResidential)
                     : undefined

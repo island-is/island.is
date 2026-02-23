@@ -279,6 +279,17 @@ export const m = defineMessages({
     defaultMessage: 'Veldu afhendingarstað',
   },
 
+  overviewPhotoQualityPhoto: {
+    id: 'dld.application:overview.photoQualityPhoto',
+    defaultMessage: 'Ökuskírteinaskrá',
+    description: 'Quality photo from RLS driving license registry',
+  },
+  overviewPhotoThjodskra: {
+    id: 'dld.application:overview.photoThjodskra',
+    defaultMessage: 'Skilríkjaskrá',
+    description: 'Photo from national registry',
+  },
+
   /* Overview Section */
   overviewTitle: {
     id: 'dld.application:overview.title',
