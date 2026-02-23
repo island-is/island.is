@@ -43,10 +43,6 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:police-case-text',
     defaultMessage: 'Síðast uppfært: {arg}',
   },
-  policeCaseCardEyebrow: {
-    id: 'sp.law-and-order:police-case-eyebrow',
-    defaultMessage: 'Ríkislögreglustjóri',
-  },
   court: {
     id: 'sp.law-and-order:court',
     defaultMessage: 'Dómstóll',

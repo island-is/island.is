@@ -71,10 +71,7 @@ const PoliceCases = () => {
                     })
                   : undefined
               }
-              eyebrow={
-                c.prosecutionOffice ||
-                formatMessage(messages.policeCaseCardEyebrow)
-              }
+              eyebrow={c.prosecutionOffice ?? undefined}
               tag={
                 c.status?.headerDisplayString
                   ? {
