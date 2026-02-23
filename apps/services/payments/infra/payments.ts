@@ -133,10 +133,6 @@ export const serviceSetupForWorker =
       .image(imageName)
       .serviceAccount(serviceName)
       .codeOwner(CodeOwners.Aranja)
-      .db({
-        extensions: ['uuid-ossp'],
-      })
-      .migrations()
       .env({
         IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments',
         IDENTITY_SERVER_ISSUER_URL: {
@@ -175,6 +171,8 @@ export const serviceSetupForWorker =
           '/k8s/services-payments/PAYMENTS_PREVIOUS_PUBLIC_KEY',
       })
       .xroad(Base, Client, ChargeFjsV2)
+      .command('node')
+      .args('main.cjs', '--job', 'worker')
       .extraAttributes({
         dev: { schedule: '*/5 * * * *' },
         staging: { schedule: '*/5 * * * *' },
