@@ -1,0 +1,14 @@
+# TODO: GraphQL query for Subsidies
+# This file is postfixed with .txt until the API is ready
+
+query GetFarmerLandSubsidies($landId: String!) {
+  farmerLandSubsidies(landId: $landId) {
+    data {
+      id
+      year
+      subsidyType
+      amount
+      status
+    }
+  }
+}

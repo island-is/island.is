@@ -2,9 +2,17 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { CardLoader, m } from '@island.is/portals/my-pages/core'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
 import { ATVINNUVEGARADUNEYTID_SLUG } from '@island.is/portals/my-pages/core'
-import { farmerLandsMessages as fm} from '../../../lib/messages'
+import { farmerLandsMessages as fm } from '../../../lib/messages'
 import { useFarmerLandsOverviewQuery } from './FarmerLandsOverview.generated'
-import { ActionCard, Box, GridColumn, GridRow, Input, Pagination, Stack } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  Box,
+  GridColumn,
+  GridRow,
+  Input,
+  Pagination,
+  Stack,
+} from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { Problem } from '@island.is/react-spa/shared'
 import { useNavigate } from 'react-router-dom'
@@ -28,7 +36,7 @@ export const FarmerLandsOverview = () => {
       intro={formatMessage(fm.description)}
       serviceProviderSlug={ATVINNUVEGARADUNEYTID_SLUG}
     >
-      <Box marginBottom={2}>
+      <Box marginBottom={3}>
         <GridRow>
           <GridColumn span="4/12">
             <Input
@@ -42,7 +50,6 @@ export const FarmerLandsOverview = () => {
                 }
                 setSearch(search.target.value)
               }}
-              label={formatMessage(m.searchLabel)}
               name={formatMessage(m.searchLabel)}
               placeholder={formatMessage(m.inputSearchTerm)}
             />
@@ -58,26 +65,27 @@ export const FarmerLandsOverview = () => {
 
       {error && !loading && <Problem error={error} noBorder={false} />}
       <Stack space={4}>
-
-        {!error && farmerLands.map(land =>
-          <ActionCard
-            heading={land.name}
-            text={formatMessage(fm.farmNumber, {
-              arg: land.id
-            })}
-            cta={{
-              label: formatMessage(m.viewDetail),
-              variant: 'text',
-              onClick: () =>
-                navigate(
+        {!error &&
+          farmerLands.map((land) => (
+            <ActionCard
+              heading={land.name}
+              headingVariant="h4"
+              text={formatMessage(fm.farmNumber, {
+                arg: land.id,
+              })}
+              cta={{
+                label: formatMessage(m.viewDetail),
+                variant: 'text',
+                onClick: () =>
+                  navigate(
                     AssetsPaths.AssetsFarmerLandDetail.replace(
                       ':id',
                       land.id ?? '',
                     ),
-                ),
-            }}
-          />
-        )}
+                  ),
+              }}
+            />
+          ))}
         {totalPages > 1 && (
           <Pagination
             page={page}
