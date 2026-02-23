@@ -374,6 +374,7 @@ export class ApplicationService {
         'typeId',
         'state',
         'applicant',
+        'applicantActors',
         'answers',
         'externalData',
       ],
