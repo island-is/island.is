@@ -20,13 +20,11 @@ export const mapPoliceCase = (
     cacheId: `${data.caseNumber}${locale}`,
     number: data.caseNumber,
     type: data.type,
-    status: {
-      ...mapPoliceCaseStatus(
-        mapPoliceCaseStatusValue(data.status),
-        formatMessage,
-      ),
-      headerDisplayString: data.status,
-    },
+    status: mapPoliceCaseStatus(
+      mapPoliceCaseStatusValue(data.status),
+      formatMessage,
+      data.status,
+    ),
     contact: data.contact,
     courtAdvocate: data.courtAdvocate,
     department: data.department,
