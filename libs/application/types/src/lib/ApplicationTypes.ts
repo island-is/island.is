@@ -309,7 +309,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
     slug: 'evropska-sjukratryggingakortid',
-    translation: 'ehic.application',
+    translation: ['ehic.application', 'uiForms.application'],
   },
   [ApplicationTypes.OLD_AGE_PENSION]: {
     slug: 'ellilifeyrir',
