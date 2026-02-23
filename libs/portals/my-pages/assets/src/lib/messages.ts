@@ -181,7 +181,8 @@ export const farmerLandsMessages = defineMessages({
   },
   description: {
     id: 'sp.farmer-lands:description',
-    defaultMessage: 'Lorem ipsum dolor sit amet consectetur. Arcu accumsan elit quis consequat ac leo mauris urna vitae.',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet consectetur. Arcu accumsan elit quis consequat ac leo mauris urna vitae.',
   },
   farmNumber: {
     id: 'sp.farmer-lands:farm-number',

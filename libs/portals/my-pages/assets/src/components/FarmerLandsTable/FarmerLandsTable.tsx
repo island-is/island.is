@@ -13,7 +13,7 @@ interface FarmerLandsTableProps<T extends object> {
   renderExpandedRow?: (row: Row<T>) => React.ReactNode
 }
 
-export const FarmerLandsTable = <T extends object,>({
+export const FarmerLandsTable = <T extends object>({
   columns: providedColumns,
   data,
   loading = false,
