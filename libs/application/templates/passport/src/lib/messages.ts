@@ -223,6 +223,11 @@ export const m = defineMessages({
     defaultMessage: 'Almenn afhending',
     description: 'Some description',
   },
+  serviceTypeRegularLabel: {
+    id: 'pa.application:service.type.regular.label',
+    defaultMessage: 'Almenn afhending - {price}',
+    description: 'Label for regular service type radio option, includes price',
+  },
   serviceTypeRegularSublabel: {
     id: 'pa.application:service.regular.sublabel',
     defaultMessage: 'Innan 10 virkra daga frá myndatöku',
@@ -242,6 +247,11 @@ export const m = defineMessages({
     id: 'pa.application:service.type.express',
     defaultMessage: 'Hraðafhending',
     description: 'Some description',
+  },
+  serviceTypeExpressLabel: {
+    id: 'pa.application:service.type.express.label',
+    defaultMessage: 'Hraðafhending - {price}',
+    description: 'Label for express service type radio option, includes price',
   },
   serviceTypeExpressSublabel: {
     id: 'pa.application:service.express.sublabel',
