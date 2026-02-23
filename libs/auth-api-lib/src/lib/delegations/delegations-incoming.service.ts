@@ -359,6 +359,10 @@ export class DelegationsIncomingService {
           error,
         )
       }
+
+      if (legalRepIsValid) {
+        return true
+      }
     }
 
     // Check PersonalRepresentative ONLY if feature flag is ON
