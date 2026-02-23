@@ -481,6 +481,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.INNHEIMTUMADUR,
     contentfulId: InstitutionContentfulIds.INNHEIMTUMADUR,
   },
+  [ApplicationTypes.CAR_EXPORT_IMPORT]: {
+    nationalId: InstitutionNationalIds.INNHEIMTUMADUR,
+    slug: InstitutionTypes.INNHEIMTUMADUR,
+    contentfulId: InstitutionContentfulIds.INNHEIMTUMADUR,
+  },
   [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: {
     nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
     slug: InstitutionTypes.TRYGGINGASTOFNUN,
