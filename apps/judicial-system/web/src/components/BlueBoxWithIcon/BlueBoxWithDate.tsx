@@ -83,7 +83,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     showServiceDateDatePicker && !isServiceDatePickerClosing
 
   const collapsibleRowVariants = {
-    hidden: { opacity: 0, height: 0 },
     visible: { opacity: 1, height: 'auto' },
     exit: { opacity: 0, height: 0 },
   }
@@ -325,14 +324,13 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             <motion.div
               key="defendantAppealDate"
               variants={{
-                hidden: collapsibleRowVariants.hidden,
                 visible: {
                   ...collapsibleRowVariants.visible,
-                  transition: { delay: 0.4 },
+                  transition: { opacity: { delay: 0.3 } },
                 },
                 exit: collapsibleRowVariants.exit,
               }}
-              initial="hidden"
+              initial="exit"
               animate="visible"
               exit="exit"
             >
