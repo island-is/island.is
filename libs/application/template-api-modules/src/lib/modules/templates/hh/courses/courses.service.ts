@@ -37,6 +37,8 @@ export class CoursesService extends BaseTemplateApiService {
     chargeItemCode?: string | null
     courseTitle?: string | null
   }> {
+    this.logger.info('getSelectedChargeItem called', { application })
+
     const courseId = getValueViaPath<ApplicationAnswers['courseSelect']>(
       application.answers,
       'courseSelect',
@@ -49,10 +51,19 @@ export class CoursesService extends BaseTemplateApiService {
     if (!courseId || !courseInstanceId)
       return { chargeItemCode: null, courseTitle: null }
 
+    this.logger.info('getSelectedChargeItem - Getting course by id', {
+      courseId,
+      courseInstanceId,
+    })
     const { course, courseInstance } = await this.getCourseById(
       courseId,
       courseInstanceId,
       auth.authorization,
+    )
+
+    this.logger.info(
+      'getSelectedChargeItem - Course and course instance found',
+      { course, courseInstance },
     )
 
     return {
@@ -66,6 +77,8 @@ export class CoursesService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     try {
+      this.logger.info('submitApplication called', { application })
+
       const { course, courseInstance } = await this.getCourseById(
         getValueViaPath<string>(application.answers, 'courseSelect', ''),
         getValueViaPath<string>(application.answers, 'dateSelect', ''),
@@ -147,6 +160,7 @@ export class CoursesService extends BaseTemplateApiService {
     slotsAvailable?: number
     hasAvailability: boolean
   }> {
+    this.logger.info('checkParticipantAvailability called', { application })
     const courseId = getValueViaPath<string>(
       application.answers,
       'courseSelect',
@@ -178,6 +192,10 @@ export class CoursesService extends BaseTemplateApiService {
       auth.authorization,
     )
 
+    this.logger.info('checkParticipantAvailability - Course instance found', {
+      courseInstance,
+    })
+
     const maxRegistrations = courseInstance.maxRegistrations ?? 0
 
     if (maxRegistrations <= 0) {
@@ -191,6 +209,11 @@ export class CoursesService extends BaseTemplateApiService {
         application.id,
       ),
     ])
+
+    this.logger.info(
+      'checkParticipantAvailability - Zendesk and payment national ids found',
+      { zendeskNationalIds, paymentNationalIds },
+    )
 
     const currentApplicationParticipantNationalIds = new Set(
       participantList.map((p) => p.nationalIdWithName.nationalId),
