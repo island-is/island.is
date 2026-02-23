@@ -9,11 +9,16 @@ import {
   ValidateNested,
 } from 'class-validator'
 import { Type } from 'class-transformer'
+import { ValidationErrorDto } from './validationError.dto'
 
 export class ScreenDto {
   @ApiProperty()
   @IsString()
   id!: string
+
+  @ApiProperty()
+  @IsString()
+  identifier!: string
 
   @ApiProperty()
   @IsString()
@@ -43,11 +48,21 @@ export class ScreenDto {
 
   @ApiProperty()
   @IsBoolean()
-  callRuleset!: boolean
+  shouldValidate!: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  shouldPopulate!: boolean
+
+  @ApiPropertyOptional({ type: ValidationErrorDto })
+  @Type(() => ValidationErrorDto)
+  @IsOptional()
+  @ValidateNested()
+  screenError?: ValidationErrorDto
 
   @IsOptional()
   @ApiPropertyOptional({ type: [FieldDto] })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => FieldDto)
   fields?: FieldDto[]
 }

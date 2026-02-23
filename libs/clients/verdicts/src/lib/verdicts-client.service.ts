@@ -485,7 +485,7 @@ export class VerdictsClientService {
           judges: agenda.judges ?? [],
           lawyers: [],
           court: SUPREME_COURT,
-          type: agenda.caseType ?? '',
+          type: '',
           title: agenda.title ?? '',
         })
       }
