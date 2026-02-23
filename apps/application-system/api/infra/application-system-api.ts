@@ -344,11 +344,6 @@ export const serviceSetup = (services: {
               : 'application-system'
           }.svc.cluster.local`,
       ),
-      ZENDESK_CONTACT_FORM_SUBDOMAIN: {
-        dev: 'digitaliceland',
-        staging: 'digitaliceland',
-        prod: 'digitaliceland',
-      },
       HH_COURSES_ZENDESK_SUBJECT: {
         dev: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
         staging:
