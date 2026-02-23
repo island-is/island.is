@@ -403,7 +403,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           variants={collapsibleRowVariants}
           initial={false}
           animate="visible"
-          exit="exit"
           transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
           className={grid({ gap: 2, marginTop: 1 })}
         >
