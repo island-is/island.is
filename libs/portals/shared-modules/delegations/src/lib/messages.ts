@@ -418,6 +418,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:access-period-different',
     defaultMessage: 'Ég vil hafa mismunandi gildistíma fyrir mismunandi umboð',
   },
+  scopeValidityPeriodUpdated: {
+    id: 'sp.access-control-delegations:scope-validity-period-updated',
+    defaultMessage: 'Gildistími umboðs uppfærður',
+  },
 
   // Table messages
   name: {

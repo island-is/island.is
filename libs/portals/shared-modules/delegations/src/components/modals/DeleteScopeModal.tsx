@@ -1,35 +1,32 @@
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { Modal } from '@island.is/react/components'
+import { AuthDelegationScope } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import { m as coreMessages, formatNationalId } from '@island.is/portals/core'
-import { DelegationsByPerson } from '../delegations/table/CustomDelegationsTable'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
-import { Box } from '@island.is/island-ui/core'
-import { DateScopesTable } from '../ScopesTable/DateScopesTable'
-import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 
-export const DeleteAccessModal = ({
+export const DeleteScopeModal = ({
   onClose,
   isVisible,
-  onDelete,
-  loading,
-  // person,
   direction,
-  otherIdentity,
+  scope,
+  onDelete,
+  nationalId,
+  name,
 }: {
   onClose: () => void
   isVisible: boolean
-  onDelete: () => void
-  loading: boolean
-  // person: DelegationsByPerson | null
+  scope: AuthDelegationScope | null
   direction: 'outgoing' | 'incoming'
-  otherIdentity: { name: string; nationalId: string }
+  onDelete: () => void
+  nationalId: string
+  name: string
 }) => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
-
-  if (!otherIdentity) return null
+  console.log('scope', scope)
 
   const from =
     direction === 'outgoing'
@@ -37,21 +34,19 @@ export const DeleteAccessModal = ({
           name: userInfo?.profile.name,
           nationalId: userInfo?.profile.nationalId,
         }
-      : { name: otherIdentity.name, nationalId: otherIdentity.nationalId }
+      : { name: name, nationalId: nationalId }
   const to =
     direction === 'outgoing'
-      ? { name: otherIdentity.name, nationalId: otherIdentity.nationalId }
+      ? { name: name, nationalId: nationalId }
       : {
           name: userInfo?.profile.name,
           nationalId: userInfo?.profile.nationalId,
         }
-
   return (
     <Modal
-      id="delete-access-modal"
-      // Todo: translate
-      label="Delete access"
-      title="Delete access"
+      id="delete-scope-modal"
+      label="Delete scope"
+      title="Delete scope"
       onClose={onClose}
       closeButtonLabel={formatMessage(m.closeModal)}
       isVisible={isVisible}
@@ -82,20 +77,6 @@ export const DeleteAccessModal = ({
             color="purple"
           />
         )}
-      </Box>
-
-      <DateScopesTable editableDates={false} />
-
-      <Box position="sticky" bottom={0}>
-        <DelegationsFormFooter
-          loading={loading}
-          showShadow={false}
-          confirmButtonColorScheme="destructive"
-          onCancel={onClose}
-          onConfirm={onDelete}
-          containerPaddingBottom={[3, 3, 4]}
-          confirmLabel={formatMessage(m.deleteAccess)}
-        />
       </Box>
     </Modal>
   )

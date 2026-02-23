@@ -456,7 +456,7 @@ globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="top"]`,
   {
     zIndex: 99, // Needed to be above mobile header
-    top: '33px !important',
+    top: '15px !important',
   },
 )
 

@@ -342,7 +342,11 @@ const CustomDelegationsTable = ({
                     },
                   ]}
                 >
-                  <CustomDelegationsPermissionsTable data={person} />
+                  <CustomDelegationsPermissionsTable
+                    data={person}
+                    refetch={refetch}
+                    direction={direction}
+                  />
                 </ExpandableRow>
               )
             })}
@@ -372,7 +376,10 @@ const CustomDelegationsTable = ({
           })
         }
         loading={deleteLoading}
-        person={personToDelete}
+        otherIdentity={{
+          name: personToDelete?.name ?? '',
+          nationalId: personToDelete?.nationalId ?? '',
+        }}
         direction={direction}
       />
     </Box>
