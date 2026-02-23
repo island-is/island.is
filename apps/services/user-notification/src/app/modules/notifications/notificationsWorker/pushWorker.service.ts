@@ -3,14 +3,12 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  InjectQueue,
-  InjectWorker,
-  QueueService,
-  WorkerService,
-} from '@island.is/message-queue'
+import { InjectWorker, WorkerService } from '@island.is/message-queue'
 
-import { NotificationDelivery } from '../notification-delivery.model'
+import {
+  NotificationDelivery,
+  NotificationChannel,
+} from '../notification-delivery.model'
 import { NotificationDispatchService } from '../notificationDispatch.service'
 import { Notification } from '../types'
 
@@ -28,9 +26,6 @@ export class PushWorkerService {
 
     @InjectWorker('notifications-push')
     private readonly worker: WorkerService,
-
-    @InjectQueue('notifications-push')
-    private readonly queue: QueueService,
 
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -58,7 +53,7 @@ export class PushWorkerService {
         try {
           await this.notificationDeliveryModel.create({
             messageId,
-            channel: 'push',
+            channel: NotificationChannel.Push,
           })
         } catch (error) {
           this.logger.error('Error writing push delivery record to db', {

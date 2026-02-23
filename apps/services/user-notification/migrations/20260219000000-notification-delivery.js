@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
       },
       channel: {
-        type: Sequelize.STRING(10),
+        type: Sequelize.ENUM('email', 'sms', 'push'),
         allowNull: false,
       },
       created: {

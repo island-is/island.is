@@ -5,17 +5,15 @@ import { join } from 'path'
 import { Body, EmailService, Message } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  InjectQueue,
-  InjectWorker,
-  QueueService,
-  WorkerService,
-} from '@island.is/message-queue'
+import { InjectWorker, WorkerService } from '@island.is/message-queue'
 import { type ConfigType } from '@island.is/nest/config'
 
 import { UserNotificationsConfig } from '../../../../config'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
-import { NotificationDelivery } from '../notification-delivery.model'
+import {
+  NotificationDelivery,
+  NotificationChannel,
+} from '../notification-delivery.model'
 
 export type EmailQueueMessage = {
   messageId: string
@@ -34,9 +32,6 @@ export class EmailWorkerService {
 
     @InjectWorker('notifications-email')
     private readonly worker: WorkerService,
-
-    @InjectQueue('notifications-email')
-    private readonly queue: QueueService,
 
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -169,43 +164,41 @@ export class EmailWorkerService {
   }
 
   public async run() {
-    await this.worker.run<EmailQueueMessage>(
-      async (message): Promise<void> => {
-        const {
+    await this.worker.run<EmailQueueMessage>(async (message): Promise<void> => {
+      const {
+        messageId,
+        recipientEmail,
+        fullName,
+        isEnglish,
+        formattedTemplate,
+        subjectId,
+      } = message
+
+      this.logger.info('Email worker received message', { messageId })
+
+      const emailContent = this.createEmail({
+        formattedTemplate,
+        isEnglish,
+        recipientEmail,
+        fullName,
+        subjectId,
+      })
+
+      await this.emailService.sendEmail(emailContent)
+
+      this.logger.info('Email notification sent', { messageId })
+
+      try {
+        await this.notificationDeliveryModel.create({
           messageId,
-          recipientEmail,
-          fullName,
-          isEnglish,
-          formattedTemplate,
-          subjectId,
-        } = message
-
-        this.logger.info('Email worker received message', { messageId })
-
-        const emailContent = this.createEmail({
-          formattedTemplate,
-          isEnglish,
-          recipientEmail,
-          fullName,
-          subjectId,
+          channel: NotificationChannel.Email,
         })
-
-        await this.emailService.sendEmail(emailContent)
-
-        this.logger.info('Email notification sent', { messageId })
-
-        try {
-          await this.notificationDeliveryModel.create({
-            messageId,
-            channel: 'email',
-          })
-        } catch (error) {
-          this.logger.error('Error writing email delivery record to db', {
-            error,
-            messageId,
-          })
-        }
-      },
-    )
+      } catch (error) {
+        this.logger.error('Error writing email delivery record to db', {
+          error,
+          messageId,
+        })
+      }
+    })
   }
 }

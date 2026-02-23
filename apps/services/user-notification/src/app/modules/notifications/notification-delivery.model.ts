@@ -12,6 +12,12 @@ import {
   InferCreationAttributes,
 } from 'sequelize'
 
+export enum NotificationChannel {
+  Email = 'email',
+  Sms = 'sms',
+  Push = 'push',
+}
+
 @Table({
   tableName: 'notification_delivery',
   timestamps: false,
@@ -38,11 +44,11 @@ export class NotificationDelivery extends Model<
   messageId!: string
 
   @Column({
-    type: DataType.STRING(10),
+    type: DataType.ENUM(...Object.values(NotificationChannel)),
     allowNull: false,
     field: 'channel',
   })
-  channel!: 'email' | 'sms' | 'push'
+  channel!: NotificationChannel
 
   @Column({
     type: DataType.DATE,

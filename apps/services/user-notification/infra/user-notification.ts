@@ -19,12 +19,24 @@ const serviceBirthdayWorkerName = `${serviceName}-birthday-worker`
 const imageName = `services-${serviceName}`
 const MAIN_QUEUE_NAME = serviceName
 const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
+const EMAIL_QUEUE_NAME = `${serviceName}-email`
+const EMAIL_DEAD_LETTER_QUEUE_NAME = `${serviceName}-email-failure`
+const SMS_QUEUE_NAME = `${serviceName}-sms`
+const SMS_DEAD_LETTER_QUEUE_NAME = `${serviceName}-sms-failure`
+const PUSH_QUEUE_NAME = `${serviceName}-push`
+const PUSH_DEAD_LETTER_QUEUE_NAME = `${serviceName}-push-failure`
 
 const getEnv = (services: {
   userProfileApi: ServiceBuilder<'service-portal-api'>
 }) => ({
   MAIN_QUEUE_NAME,
   DEAD_LETTER_QUEUE_NAME,
+  EMAIL_QUEUE_NAME,
+  EMAIL_DEAD_LETTER_QUEUE_NAME,
+  SMS_QUEUE_NAME,
+  SMS_DEAD_LETTER_QUEUE_NAME,
+  PUSH_QUEUE_NAME,
+  PUSH_DEAD_LETTER_QUEUE_NAME,
   IDENTITY_SERVER_ISSUER_URL: {
     dev: 'https://identity-server.dev01.devland.is',
     staging: 'https://identity-server.staging01.devland.is',

@@ -33,6 +33,10 @@ import { AppModule } from '../../../app.module'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { Notification } from '../notification.model'
 import { ActorNotification } from '../actor-notification.model'
+import {
+  NotificationDelivery,
+  NotificationChannel,
+} from '../notification-delivery.model'
 import { NotificationDispatchService } from '../notificationDispatch.service'
 import { NotificationsService } from '../notifications.service'
 import { InternalCreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
@@ -57,9 +61,9 @@ import {
   userWithSendToDelegationsFeatureFlagDisabled,
 } from './mocks'
 import { NotificationsWorkerService } from './notificationsWorker.service'
-import { EmailWorkerService } from './emailWorker.service'
-import { SmsWorkerService } from './smsWorker.service'
-import { PushWorkerService } from './pushWorker.service'
+import { EmailWorkerService, EmailQueueMessage } from './emailWorker.service'
+import { SmsWorkerService, SmsQueueMessage } from './smsWorker.service'
+import { PushWorkerService, PushQueueMessage } from './pushWorker.service'
 
 const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
@@ -103,6 +107,7 @@ describe('NotificationsWorkerService', () => {
   let nationalRegistryService: NationalRegistryV3ClientService
   let companyRegistryService: CompanyRegistryClientService
   let smsService: SmsService
+  let notificationDeliveryModel: typeof NotificationDelivery
 
   beforeAll(async () => {
     app = await testServer({
@@ -134,6 +139,7 @@ describe('NotificationsWorkerService', () => {
     queue = app.get(getQueueServiceToken('notifications'))
     notificationModel = app.get(getModelToken(Notification))
     actorNotificationModel = app.get(getModelToken(ActorNotification))
+    notificationDeliveryModel = app.get(getModelToken(NotificationDelivery))
     notificationsService = app.get(NotificationsService)
     userProfileApi = app.get(V2UsersApi)
     nationalRegistryService = app.get(NationalRegistryV3ClientService)
@@ -1071,6 +1077,116 @@ describe('NotificationsWorkerService', () => {
         (call) => call[0].nationalId === userWithNoDelegations.nationalId,
       )
       expect(actorPushNotificationCall).toBeUndefined()
+    })
+  })
+
+  describe('Sub-queue workers', () => {
+    let emailSubQueue: QueueService
+    let smsSubQueue: QueueService
+    let pushSubQueue: QueueService
+
+    beforeAll(() => {
+      emailSubQueue = app.get(getQueueServiceToken('notifications-email'))
+      smsSubQueue = app.get(getQueueServiceToken('notifications-sms'))
+      pushSubQueue = app.get(getQueueServiceToken('notifications-push'))
+    })
+
+    it('should write an email delivery record to the database after sending email', async () => {
+      const messageId = randomUUID()
+
+      await emailSubQueue.add({
+        messageId,
+        recipientEmail: userWithNoDelegations.email ?? '',
+        fullName: userWithNoDelegations.name,
+        isEnglish: false,
+        formattedTemplate: getMockHnippTemplate({}),
+      } as EmailQueueMessage)
+
+      await wait(2)
+
+      const record = await notificationDeliveryModel.findOne({
+        where: { messageId, channel: NotificationChannel.Email },
+      })
+      expect(record).not.toBeNull()
+      expect(record?.channel).toBe(NotificationChannel.Email)
+      expect(record?.messageId).toBe(messageId)
+      expect(emailService.sendEmail).toHaveBeenCalled()
+    })
+
+    it('should write an SMS delivery record to the database after sending SMS', async () => {
+      const messageId = randomUUID()
+
+      await smsSubQueue.add({
+        messageId,
+        mobilePhoneNumber: userWithNoDelegations.mobilePhoneNumber ?? '',
+        smsContent: 'Test SMS content',
+      } as SmsQueueMessage)
+
+      await wait(2)
+
+      const record = await notificationDeliveryModel.findOne({
+        where: { messageId, channel: NotificationChannel.Sms },
+      })
+      expect(record).not.toBeNull()
+      expect(record?.channel).toBe(NotificationChannel.Sms)
+      expect(record?.messageId).toBe(messageId)
+      expect(smsService.sendSms).toHaveBeenCalledWith(
+        userWithNoDelegations.mobilePhoneNumber,
+        'Test SMS content',
+      )
+    })
+
+    it('should write a push delivery record to the database after sending push notification', async () => {
+      const messageId = randomUUID()
+
+      await pushSubQueue.add({
+        messageId,
+        nationalId: userWithNoDelegations.nationalId,
+        notification: {
+          title: 'Test title',
+          externalBody: 'Test body',
+          clickActionUrl: 'https://island.is',
+        },
+      } as PushQueueMessage)
+
+      await wait(2)
+
+      const record = await notificationDeliveryModel.findOne({
+        where: { messageId, channel: NotificationChannel.Push },
+      })
+      expect(record).not.toBeNull()
+      expect(record?.channel).toBe(NotificationChannel.Push)
+      expect(record?.messageId).toBe(messageId)
+      expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
+        expect.objectContaining({ nationalId: userWithNoDelegations.nationalId }),
+      )
+    })
+
+    it('should still send the notification even when the delivery record DB write fails', async () => {
+      jest
+        .spyOn(notificationDeliveryModel, 'create')
+        .mockRejectedValueOnce(new Error('DB write error'))
+
+      const messageId = randomUUID()
+
+      await emailSubQueue.add({
+        messageId,
+        recipientEmail: userWithNoDelegations.email ?? '',
+        fullName: userWithNoDelegations.name,
+        isEnglish: false,
+        formattedTemplate: getMockHnippTemplate({}),
+      } as EmailQueueMessage)
+
+      await wait(2)
+
+      // The email was still sent despite the DB failure
+      expect(emailService.sendEmail).toHaveBeenCalled()
+
+      // No delivery record was written due to the DB error
+      const record = await notificationDeliveryModel.findOne({
+        where: { messageId, channel: NotificationChannel.Email },
+      })
+      expect(record).toBeNull()
     })
   })
 })

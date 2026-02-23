@@ -39,7 +39,7 @@ import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
 
-function createSmsContent({
+const createSmsContent = ({
   fullName,
   onBehalfOf,
   template,
@@ -47,15 +47,18 @@ function createSmsContent({
   fullName: string
   onBehalfOf?: string
   template: HnippTemplate
-}): string {
+}): string => {
   return `
       ${fullName} ${onBehalfOf ? `(${onBehalfOf})` : ''}: ${template.title}
 
       ${template.externalBody}
 
-      Skoda a Island.is:
-
-      ${template.clickActionUrl}
+      ${
+        template.clickActionUrl
+          ? `Skoda a Island.is: 
+            ${template.clickActionUrl}`
+          : ''
+      }
     `
 }
 
@@ -145,18 +148,19 @@ export class NotificationsWorkerService {
       return
     }
 
-    // SMS uses the delegate's own phone number, not the actor profile's
+    // SMS uses the delegate's own phone number, not the actor profile's.
+    // Fetch it independently — a missing delegate profile should only skip SMS,
+    // not block email.
     const delegateProfile =
       await this.userProfileApi.userProfileControllerFindUserProfile({
         xParamNationalId: args.recipient,
       })
 
     if (!delegateProfile) {
-      this.logger.error('No delegate user profile found for user', {
+      this.logger.info('No delegate user profile found, SMS will be skipped', {
         messageId,
         recipient: args.recipient,
       })
-      return
     }
 
     const formattedTemplate = await this.notificationsService.formatArguments(
@@ -180,8 +184,8 @@ export class NotificationsWorkerService {
       this.buildSmsPayload({
         messageId,
         nationalId: args.recipient,
-        mobilePhoneNumber: delegateProfile.mobilePhoneNumber,
-        smsNotifications: delegateProfile.smsNotifications,
+        mobilePhoneNumber: delegateProfile?.mobilePhoneNumber,
+        smsNotifications: delegateProfile?.smsNotifications,
         formattedTemplate,
         onBehalfOfNationalId: args.onBehalfOf?.nationalId,
       }),
@@ -190,8 +194,10 @@ export class NotificationsWorkerService {
     // Phase 2: enqueue everything together
     const notificationId = dbRecord?.id
     const enqueues: Promise<unknown>[] = []
-    if (emailPayload) enqueues.push(this.emailQueue.add({ ...emailPayload, notificationId }))
-    if (smsPayload) enqueues.push(this.smsQueue.add({ ...smsPayload, notificationId }))
+    if (emailPayload)
+      enqueues.push(this.emailQueue.add({ ...emailPayload, notificationId }))
+    if (smsPayload)
+      enqueues.push(this.smsQueue.add({ ...smsPayload, notificationId }))
     await Promise.all(enqueues)
   }
 
@@ -346,11 +352,24 @@ export class NotificationsWorkerService {
 
     // Phase 2: enqueue everything together — only started after all data is collected
     const enqueues: Promise<unknown>[] = [
-      this.handleSendingNotificationsToDelegations(args, scope, actorNationalId),
+      this.handleSendingNotificationsToDelegations(
+        args,
+        scope,
+        actorNationalId,
+      ),
     ]
-    if (pushPayload) enqueues.push(this.pushQueue.add({ ...pushPayload, notificationId: dbRecord?.id }))
-    if (emailPayload) enqueues.push(this.emailQueue.add({ ...emailPayload, notificationId: dbRecord?.id }))
-    if (smsPayload) enqueues.push(this.smsQueue.add({ ...smsPayload, notificationId: dbRecord?.id }))
+    if (pushPayload)
+      enqueues.push(
+        this.pushQueue.add({ ...pushPayload, notificationId: dbRecord?.id }),
+      )
+    if (emailPayload)
+      enqueues.push(
+        this.emailQueue.add({ ...emailPayload, notificationId: dbRecord?.id }),
+      )
+    if (smsPayload)
+      enqueues.push(
+        this.smsQueue.add({ ...smsPayload, notificationId: dbRecord?.id }),
+      )
     await Promise.all(enqueues)
   }
 
