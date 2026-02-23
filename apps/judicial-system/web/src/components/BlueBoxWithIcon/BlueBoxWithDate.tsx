@@ -83,9 +83,9 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     showServiceDateDatePicker && !isServiceDatePickerClosing
 
   const collapsibleRowVariants = {
-    hidden: { opacity: 0, y: 3, height: 0 },
-    visible: { opacity: 1, y: 0, height: 'auto' },
-    exit: { opacity: 0, y: 3, height: 0 },
+    hidden: { opacity: 0, height: 0 },
+    visible: { opacity: 1, height: 'auto' },
+    exit: { opacity: 0, height: 0 },
   }
 
   const appealExpirationInfo = useMemo(() => {
@@ -309,7 +309,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       </AnimatePresence>
       {showDatePickers && (
         <AnimatePresence
-          mode="wait"
           onExitComplete={() => {
             if (isServiceDatePickerClosing && pendingServiceDate) {
               sendVerdictDate('serviceDate', pendingServiceDate)
@@ -325,7 +324,14 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           {shouldShowAppealDatePicker && (
             <motion.div
               key="defendantAppealDate"
-              variants={collapsibleRowVariants}
+              variants={{
+                hidden: collapsibleRowVariants.hidden,
+                visible: {
+                  ...collapsibleRowVariants.visible,
+                  transition: { delay: 0.4 },
+                },
+                exit: collapsibleRowVariants.exit,
+              }}
               initial="hidden"
               animate="visible"
               exit="exit"
@@ -359,11 +365,16 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           {shouldShowServiceDatePicker && (
             <motion.div
               key="defendantServiceDate"
-              variants={collapsibleRowVariants}
+              variants={{
+                visible: collapsibleRowVariants.visible,
+                exit: {
+                  ...collapsibleRowVariants.exit,
+                  transition: { height: { delay: 0.2 } },
+                },
+              }}
               initial={false}
               animate="visible"
               exit="exit"
-              transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
             >
               <Box className={styles.dataContainer}>
                 <DateTime
