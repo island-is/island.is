@@ -46,7 +46,6 @@ export class PaymentFulfillment extends Model<
     type: DataType.UUID,
     allowNull: false,
     field: 'payment_flow_id',
-    unique: true, // To prevent double payments
   })
   paymentFlowId!: string
 
@@ -73,7 +72,16 @@ export class PaymentFulfillment extends Model<
     allowNull: true,
     field: 'fjs_charge_id',
   })
-  fjsChargeId?: string
+  fjsChargeId?: string | null
+
+  @ApiProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    field: 'is_deleted',
+  })
+  isDeleted!: CreationOptional<boolean>
 
   @CreatedAt
   @ApiProperty()

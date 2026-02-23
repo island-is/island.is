@@ -11,9 +11,6 @@ export class VerifyCardInput {
   @Field((_) => Number)
   expiryYear!: number
 
-  @Field((_) => Number)
-  amount!: number
-
   @Field((_) => String)
   paymentFlowId!: string
 }

@@ -5,22 +5,21 @@ import {
   Charge,
   PayInfoPaymentMeansEnum,
 } from '@island.is/clients/charge-fjs-v2'
-import { CardErrorCode } from '@island.is/shared/constants'
 
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import {
-  ChargeResponse,
   MdNormalised,
   MdSerialized,
   SavedVerificationCompleteData,
-} from './cardPayment.types'
+} from '../../types/cardPayment'
 
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CardPaymentModuleConfigType } from './cardPayment.config'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 import { CatalogItemWithQuantity } from '../../types/charges'
-import { PaymentTrackingData } from '../../types/cardPayment'
+import { PaymentTrackingData, ApplePayPaymentInput } from '../../types'
+import { ApplePayChargeInput } from './dtos'
 
 const MdSerializedSchema = z.object({
   c: z.string().length(36, 'Correlation ID must be 36 characters long'),
@@ -56,13 +55,15 @@ export const generateVerificationRequestOptions = ({
   md,
   paymentApiConfig,
   webOrigin,
+  amount,
 }: {
   verifyCardInput: VerifyCardInput
   md: string
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
   webOrigin: string
+  amount: number
 }) => {
-  const { cardNumber, expiryMonth, expiryYear, amount } = verifyCardInput
+  const { cardNumber, expiryMonth, expiryYear } = verifyCardInput
   const {
     paymentsApiSecret,
     paymentsApiHeaderKey,
@@ -98,13 +99,15 @@ export const generateChargeRequestOptions = ({
   verificationData,
   paymentApiConfig,
   paymentTrackingData,
+  amount,
 }: {
   chargeCardInput: ChargeCardInput
   verificationData: SavedVerificationCompleteData
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
   paymentTrackingData: PaymentTrackingData
+  amount: number
 }) => {
-  const { cardNumber, expiryMonth, expiryYear, cvc, amount } = chargeCardInput
+  const { cardNumber, expiryMonth, expiryYear, cvc } = chargeCardInput
   const {
     paymentsApiSecret,
     paymentsApiHeaderKey,
@@ -143,12 +146,12 @@ export const generateChargeRequestOptions = ({
 export const generateRefundRequestOptions = ({
   amount,
   cardNumber,
-  charge,
+  acquirerReferenceNumber,
   paymentApiConfig,
 }: {
   amount: number
   cardNumber: string
-  charge: ChargeResponse
+  acquirerReferenceNumber: string
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
 }) => {
   const {
@@ -171,7 +174,7 @@ export const generateRefundRequestOptions = ({
       cardNumber: cardNumber,
       currency: 'ISK',
       amount: iskToAur(amount),
-      acquirerReferenceNumber: charge.acquirerReferenceNumber,
+      acquirerReferenceNumber: acquirerReferenceNumber,
       systemCalling,
     }),
   }
@@ -198,48 +201,24 @@ export const getPayloadFromMd = ({
   }
 }
 
-export const mapToCardErrorCode = (originalCode: string): CardErrorCode => {
-  // Only the first two characters are used to map the error code
-  const firstTwoCharacters = originalCode?.slice(0, 2)
-
-  const errorCodeMap: Record<string, CardErrorCode> = {
-    '51': CardErrorCode.InsufficientFunds,
-    '54': CardErrorCode.ExpiredCard,
-    '41': CardErrorCode.LostCard,
-    '43': CardErrorCode.StolenCard,
-    '46': CardErrorCode.ClosedAccount,
-    '57': CardErrorCode.TransactionNotPermitted,
-    '62': CardErrorCode.RestrictedCard,
-    '59': CardErrorCode.SuspectedFraud,
-    '61': CardErrorCode.ExceedsWithdrawalLimit,
-    '63': CardErrorCode.SecurityViolation,
-    '65': CardErrorCode.AdditionalAuthenticationRequired,
-    '70': CardErrorCode.ContactIssuer,
-    '91': CardErrorCode.IssuerUnavailable,
-    '94': CardErrorCode.DuplicateTransaction,
-    '96': CardErrorCode.PaymentSystemUnavailable,
-    '92': CardErrorCode.TransactionTimedOut,
-    R0: CardErrorCode.StopPaymentOrder,
-    R1: CardErrorCode.RevocationOfAuthorization,
-    R3: CardErrorCode.RevocationOfAllAuthorizations,
-    default: CardErrorCode.GenericDecline,
-  }
-
-  // Return the mapped value or the default
-  return errorCodeMap[firstTwoCharacters] || CardErrorCode.GenericDecline
+export type CardChargeInfo = {
+  maskedCardNumber: string
+  authorizationCode: string
+  cardScheme: string
+  cardUsage?: string
 }
 
 export const generateCardChargeFJSPayload = ({
   paymentFlow,
   charges,
-  chargeResponse,
+  cardChargeInfo,
   totalPrice,
   systemId,
   merchantReferenceData,
 }: {
   paymentFlow: PaymentFlowAttributes
   charges: CatalogItemWithQuantity[]
-  chargeResponse: ChargeResponse
+  cardChargeInfo: CardChargeInfo
   totalPrice: number
   systemId: string
   merchantReferenceData: string
@@ -249,17 +228,115 @@ export const generateCardChargeFJSPayload = ({
     charges,
     systemId,
     payInfo: {
-      PAN: chargeResponse.maskedCardNumber,
+      PAN: cardChargeInfo.maskedCardNumber,
       RRN: merchantReferenceData,
-      authCode: chargeResponse.authorizationCode,
-      cardType: chargeResponse.cardInformation.cardScheme,
+      authCode: cardChargeInfo.authorizationCode,
+      cardType: cardChargeInfo.cardScheme,
       payableAmount: totalPrice,
-      paymentMeans: chargeResponse.cardInformation.cardUsage
-        ?.toLowerCase()
-        ?.startsWith('d')
+      paymentMeans: cardChargeInfo.cardUsage?.toLowerCase()?.startsWith('d')
         ? PayInfoPaymentMeansEnum.Debetkort
         : PayInfoPaymentMeansEnum.Kreditkort,
     },
-    totalPrice,
   })
+}
+
+export const generateApplePayRequestHeaders = (
+  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway'],
+) => {
+  const { paymentsApiSecret, paymentsApiHeaderKey, paymentsApiHeaderValue } =
+    paymentApiConfig
+
+  return {
+    'Content-Type': 'application/json',
+    Authorization: paymentsApiSecret,
+    [paymentsApiHeaderKey]: paymentsApiHeaderValue,
+  }
+}
+
+export const generateApplePaySessionRequestOptions = ({
+  domainName,
+  displayName,
+  paymentApiConfig,
+}: {
+  domainName: string
+  displayName: string
+  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
+}) => {
+  return {
+    method: 'POST',
+    headers: generateApplePayRequestHeaders(paymentApiConfig),
+    body: JSON.stringify({
+      domainName,
+      displayName,
+    }),
+  }
+}
+
+export const generateApplePayChargeRequestOptions = ({
+  input,
+  paymentApiConfig,
+  paymentTrackingData,
+}: {
+  input: ApplePayChargeInput
+  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
+  paymentTrackingData: PaymentTrackingData
+}) => {
+  const { systemCalling } = paymentApiConfig
+
+  const body: ApplePayPaymentInput = {
+    Operation: 'Sale',
+    WalletPaymentType: 'ApplePay',
+    ApplePayWalletPayment: {
+      PaymentToken: {
+        PaymentData: {
+          Version: input.paymentData.version,
+          Data: input.paymentData.data,
+          Signature: input.paymentData.signature,
+          Header: {
+            EphemeralPublicKey: input.paymentData.header.ephemeralPublicKey,
+            PublicKeyHash: input.paymentData.header.publicKeyHash,
+            TransactionId: input.paymentData.header.transactionId,
+          },
+        },
+        PaymentMethod: {
+          DisplayName: input.paymentMethod.displayName,
+          Network: input.paymentMethod.network,
+        },
+        TransactionIdentifier: input.transactionIdentifier,
+      },
+    },
+    paymentAdditionalData: {
+      merchantReferenceData: paymentTrackingData.merchantReferenceData,
+    },
+    systemCalling,
+    correlationId: paymentTrackingData.correlationId,
+  }
+
+  return {
+    method: 'POST',
+    headers: generateApplePayRequestHeaders(paymentApiConfig),
+    body: JSON.stringify(body),
+  }
+}
+
+export const generateRefundWithCorrelationIdRequestOptions = ({
+  paymentApiConfig,
+  paymentTrackingData,
+}: {
+  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
+  paymentTrackingData: PaymentTrackingData
+}) => {
+  const { systemCalling } = paymentApiConfig
+
+  const body = {
+    originalCorrelationId: paymentTrackingData.correlationId,
+    originalTransactionDate: paymentTrackingData.paymentDate.toISOString(),
+    systemCalling: systemCalling,
+  }
+
+  return {
+    method: 'POST',
+    headers: generateApplePayRequestHeaders(paymentApiConfig),
+    body: JSON.stringify(body),
+  }
 }
