@@ -132,8 +132,6 @@ export class NotificationsWorkerService {
       locale,
     )
 
-    const dbRecord = await this.createActorNotificationDbRecord(args)
-
     const delegationsEnabled = await this.featureFlagService.getValue(
       Features.shouldSendEmailNotificationsToDelegations,
       false,
@@ -169,6 +167,8 @@ export class NotificationsWorkerService {
       args?.senderId,
       locale,
     )
+
+    const dbRecord = await this.createActorNotificationDbRecord(args)
 
     // Phase 1: collect all payloads (data fetching only, no queue side effects)
     const [emailPayload, smsPayload] = await Promise.all([
