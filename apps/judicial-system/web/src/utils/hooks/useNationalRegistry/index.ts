@@ -13,64 +13,44 @@ import { isBusiness } from '../../utils'
 import { validate } from '../../validate'
 
 const useNationalRegistry = (nationalId?: string | null) => {
-  const { formatMessage } = useIntl()
-  const [shouldFetch, setShouldFetch] = useState<boolean>(false)
-
-  const isMounted = useRef(false)
-
-  const isValidNationalId = validate([[nationalId, ['national-id']]]).isValid
-
-  const fetcher = (url: string) => fetch(url).then((res) => res.json())
-
-  const { data: personData, error: personError } =
-    useSWR<NationalRegistryResponsePerson>(
-      shouldFetch && nationalId && isValidNationalId && !isBusiness(nationalId)
-        ? `/api/nationalRegistry/getPersonByNationalId?nationalId=${nationalId}`
-        : null,
-      fetcher,
-    )
-
-  const personLoading = shouldFetch && !personData && !personError
-
-  const { data: businessData, error: businessError } =
-    useSWR<NationalRegistryResponseBusiness>(
-      shouldFetch && nationalId && isValidNationalId && isBusiness(nationalId)
-        ? `/api/nationalRegistry/getBusinessesByNationalId?nationalId=${nationalId}`
-        : null,
-      fetcher,
-    )
-
-  const businessLoading = shouldFetch && !businessData && !businessError
+  const [personData, setPersonData] = useState<NationalRegistryResponsePerson>()
+  const [businessData, setBusinessData] =
+    useState<NationalRegistryResponseBusiness>()
+  const [error, setError] = useState<Error>()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
-    if (shouldFetch) {
+    if (!nationalId) {
+      setIsLoading(false)
       return
-    } else if (isMounted.current) {
-      setShouldFetch(true)
-    } else {
-      isMounted.current = true
     }
-  }, [nationalId, shouldFetch])
 
-  useEffect(() => {
-    if (
-      (personData && personData.error) ||
-      personError ||
-      (businessData && businessData.error) ||
-      businessError
-    ) {
-      toast.error(formatMessage(errors.nationalRegistry))
-    }
-  }, [personData, businessData, personError, businessError, formatMessage])
+    const controller = new AbortController()
+    const isBusinessNationalId = isBusiness(nationalId)
+    const url = `/api/nationalRegistry/${
+      isBusinessNationalId ? 'getBusinessByNationalId' : 'getPersonByNationalId'
+    }?nationalId=${nationalId}`
 
-  return {
-    personData,
-    personError,
-    personLoading,
-    businessData,
-    businessError,
-    businessLoading,
-  }
+    setIsLoading(true)
+
+    fetch(url, { signal: controller.signal })
+      .then((res) => res.json())
+      .then(isBusinessNationalId ? setBusinessData : setPersonData)
+      .catch((e) => {
+        if (e.name !== 'AbortError') {
+          setError(e instanceof Error ? e : new Error('Unknown error'))
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setIsLoading(false)
+        }
+      })
+
+    return () => controller.abort()
+  }, [nationalId])
+
+  return { personData, businessData, error, isLoading }
 }
 
 export default useNationalRegistry
