@@ -11,6 +11,7 @@ import {
   CaseType,
   IndictmentCaseReviewDecision,
   isDistrictCourtUser,
+  isPrisonAdminUser,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
   type User as TUser,
@@ -177,12 +178,21 @@ export class CaseTableService {
         : []
     }
 
-    // Display defendants in separate lines for public prosecutors office
-    const displayCases: Case[] = isPublicProsecutionOfficeUser(user)
-      ? cases.flatMap((caseItem) =>
-          expandCaseWithDefendants(caseItem, getDefendantFilter(type)),
-        )
-      : cases
+    // Display defendants in separate lines for public prosecutors office and prison admin
+    let displayCases: Case[]
+    if (isPublicProsecutionOfficeUser(user)) {
+      displayCases = cases.flatMap((caseItem) =>
+        expandCaseWithDefendants(caseItem, getDefendantFilter(type)),
+      )
+    } else if (isPrisonAdminUser(user)) {
+      displayCases = cases.flatMap((caseItem) =>
+        expandCaseWithDefendants(caseItem, (d) =>
+          Boolean(d.isSentToPrisonAdmin),
+        ),
+      )
+    } else {
+      displayCases = cases
+    }
 
     return {
       rowCount: displayCases.length,
