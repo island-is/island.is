@@ -13,8 +13,8 @@ import {
 } from '@island.is/island-ui/core'
 import {
   ConnectedComponent,
-  GetPublicVehicleSearchQuery,
-  GetPublicVehicleSearchQueryVariables,
+  PublicVehicleSearchQuery,
+  PublicVehicleSearchQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 import { PUBLIC_VEHICLE_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicVehicleSearch'
@@ -183,11 +183,11 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
     ) && result.fee === 0
 
   const [search, { loading }] = useLazyQuery<
-    GetPublicVehicleSearchQuery,
-    GetPublicVehicleSearchQueryVariables
+    PublicVehicleSearchQuery,
+    PublicVehicleSearchQueryVariables
   >(PUBLIC_VEHICLE_SEARCH_QUERY, {
     onCompleted(data) {
-      const massLaden = data.getPublicVehicleSearch?.massLaden ?? 0
+      const massLaden = data.publicVehicleSearch?.massLaden ?? 0
       if (!massLaden) {
         setErrorMessage(formatMessage(translationStrings.noVehicleFound))
         return
@@ -203,11 +203,10 @@ const NewKilometerFee = ({ slice }: NewKilometerFeeProps) => {
 
       setResult({
         massLaden,
-        plateNumber:
-          data.getPublicVehicleSearch?.regno ?? inputState.plateNumber,
+        plateNumber: data.publicVehicleSearch?.regno ?? inputState.plateNumber,
         fee: newResult.fee,
         environmentalFee: newResult.environmentalFee,
-        vehicleType: formatVehicleType(data.getPublicVehicleSearch),
+        vehicleType: formatVehicleType(data.publicVehicleSearch),
       })
     },
     onError(error) {

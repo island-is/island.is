@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useContext, useState } from 'react'
+import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -47,6 +47,7 @@ import {
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { ReviewDecision } from '../../components/ReviewDecision/ReviewDecision'
 import {
@@ -76,8 +77,6 @@ export const Overview = () => {
 
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
     useState<Option<string> | null>()
-  const [isReviewedDecisionChanged, setIsReviewedDecisionChanged] =
-    useState<boolean>(false)
 
   const [confirmationModal, setConfirmationModal] = useState<
     ConfirmationModal | undefined
@@ -135,14 +134,30 @@ export const Overview = () => {
     [router, workingCase.id],
   )
 
-  const onSelect = (decision?: IndictmentCaseReviewDecision) => {
-    if (!decision) {
-      return
-    }
+  const [originalReviewDecisions, setOriginalReviewDecisions] = useState<
+    Record<string, IndictmentCaseReviewDecision | null | undefined>
+  >({})
 
-    const isDecisionChanged = decision !== workingCase.indictmentReviewDecision
-    setIsReviewedDecisionChanged(isDecisionChanged)
-  }
+  // Store original review decisions when workingCase loads to see if they change
+  useEffect(() => {
+    if (
+      workingCase.defendants?.length &&
+      workingCase.defendants.every((d) => d.id) &&
+      !Object.keys(originalReviewDecisions).length
+    ) {
+      const decisions = workingCase.defendants.reduce((acc, defendant) => {
+        acc[defendant.id] = defendant.indictmentReviewDecision
+        return acc
+      }, {} as Record<string, IndictmentCaseReviewDecision | null | undefined>)
+      setOriginalReviewDecisions(decisions)
+    }
+  }, [workingCase.defendants, originalReviewDecisions])
+
+  const hasReviewDecisionChanged = workingCase.defendants?.some(
+    (defendant) =>
+      defendant.indictmentReviewDecision !==
+      originalReviewDecisions[defendant.id],
+  )
 
   return (
     <PageLayout
@@ -291,7 +306,9 @@ export const Overview = () => {
                     onClick={() => handleSendToPrisonAdmin(defendant)}
                     size="small"
                     disabled={
-                      !workingCase.indictmentReviewDecision ||
+                      workingCase.defendants?.some(
+                        (defendant) => !defendant.indictmentReviewDecision,
+                      ) ||
                       (!isFine && !verdict?.serviceDate && isServiceRequired)
                     }
                   >
@@ -333,35 +350,47 @@ export const Overview = () => {
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
         <Box component="section" marginBottom={10}>
-          {!workingCase.indictmentReviewDecision ? (
+          {workingCase.defendants?.some(
+            (defendant) => !defendant.indictmentReviewDecision,
+          ) ? (
             <IndictmentReviewerSelector
               workingCase={workingCase}
               selectedIndictmentReviewer={selectedIndictmentReviewer}
               setSelectedIndictmentReviewer={setSelectedIndictmentReviewer}
             />
           ) : (
-            <ReviewDecision
-              caseId={workingCase.id}
-              currentDecision={workingCase.indictmentReviewDecision}
-              indictmentAppealDeadline={
-                workingCase.indictmentAppealDeadline ?? ''
-              }
-              indictmentAppealDeadlineIsInThePast={
-                workingCase.indictmentVerdictAppealDeadlineExpired ?? false
-              }
-              modalVisible={confirmationModal}
-              setModalVisible={setConfirmationModal}
-              isFine={
-                workingCase.indictmentRulingDecision ===
-                CaseIndictmentRulingDecision.FINE
-              }
-              onSelect={onSelect}
-            />
+            workingCase.defendants && (
+              <div className={grid({ gap: 3 })}>
+                {workingCase.defendants.map((defendant) => (
+                  <BlueBox key={`${defendant.id}_review_decision`}>
+                    <SectionHeading
+                      title={defendant.name ?? ''}
+                      variant="h4"
+                      heading="h4"
+                      marginBottom={2}
+                      required
+                    />
+                    <ReviewDecision
+                      caseId={workingCase.id}
+                      defendant={defendant}
+                      modalVisible={confirmationModal}
+                      setModalVisible={setConfirmationModal}
+                      isFine={
+                        workingCase.indictmentRulingDecision ===
+                        CaseIndictmentRulingDecision.FINE
+                      }
+                    />
+                  </BlueBox>
+                ))}
+              </div>
+            )
           )}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
-        {!workingCase.indictmentReviewDecision ? (
+        {workingCase.defendants?.some(
+          (defendant) => !defendant.indictmentReviewDecision,
+        ) ? (
           <FormFooter
             nextButtonIcon="arrowForward"
             previousUrl={getStandardUserDashboardRoute(user)}
@@ -379,7 +408,7 @@ export const Overview = () => {
           <FormFooter
             previousUrl={getStandardUserDashboardRoute(user)}
             nextIsLoading={isLoadingWorkingCase}
-            nextIsDisabled={!isReviewedDecisionChanged}
+            nextIsDisabled={!hasReviewDecisionChanged}
             onNextButtonClick={() =>
               setConfirmationModal(CONFIRM_PROSECUTOR_DECISION)
             }

@@ -66,7 +66,7 @@ export const FormHeader = () => {
   return (
     <Box>
       <Row>
-        <Column offset="3/12" span="9/12">
+        <Column offset="4/12" span="8/12">
           <Box
             style={{
               maxWidth: '1200px',

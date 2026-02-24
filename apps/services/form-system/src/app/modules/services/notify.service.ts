@@ -1,22 +1,22 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { ApplicationDto } from '../applications/models/dto/application.dto'
 import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import {
   createEnhancedFetch,
   EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
+import { NotificationResponseDto } from '../applications/models/dto/validation.response.dto'
+import { NotificationDto } from '../applications/models/dto/notification.dto'
 
 @Injectable()
 export class NotifyService {
   enhancedFetch: EnhancedFetchAPI
+  private readonly SYSLUMENN_USERNAME = process.env.SYSLUMENN_USERNAME
+  private readonly SYSLUMENN_PASSWORD = process.env.SYSLUMENN_PASSWORD
 
   constructor(
     @Inject(XRoadConfig.KEY)
     private readonly xRoadConfig: ConfigType<typeof XRoadConfig>,
-    @Inject(SyslumennClientConfig.KEY)
-    private syslumennConfig: ConfigType<typeof SyslumennClientConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     this.enhancedFetch = createEnhancedFetch({
@@ -30,27 +30,25 @@ export class NotifyService {
   private readonly xroadClient = this.xRoadConfig.xRoadClient
 
   async sendNotification(
-    applicationDto: ApplicationDto,
+    notificationDto: NotificationDto,
     url: string,
-  ): Promise<boolean> {
+  ): Promise<NotificationResponseDto> {
     if (!this.xroadBase || !this.xroadClient) {
       throw new Error(
         `X-Road configuration is missing for NotifyService. Please check environment variables.`,
       )
     }
-    let accessToken: string | null = null
+    let accessToken = ''
     try {
       accessToken = await this.getAccessToken(url)
     } catch (error) {
       this.logger.error(
-        `Error acquiring access token for application ${applicationDto.id}: ${error}`,
+        `Error acquiring access token for application ${notificationDto.applicationId}: ${error}`,
       )
-      return false
+      return { operationSuccessful: false }
     }
 
     const xRoadPath = `${this.xroadBase}/r1/${url}`
-
-    this.logger.info(`Sending notification to URL: ${xRoadPath}`)
 
     try {
       const response = await this.enhancedFetch(xRoadPath, {
@@ -60,34 +58,35 @@ export class NotifyService {
           'X-Road-Client': this.xroadClient,
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
-        body: JSON.stringify({
-          applicationId: applicationDto.id,
-          applicationType: applicationDto.slug,
-        }),
+        body: JSON.stringify(notificationDto),
       })
 
       if (!response.ok) {
         this.logger.error(
-          `Non-OK response for application ${applicationDto.id}`,
+          `Non-OK response for application ${notificationDto.applicationId}`,
         )
-        return false
+        return { operationSuccessful: false }
       }
+      const responseData = await response.json()
+      const externalSystemResponse: NotificationResponseDto = {
+        operationSuccessful: responseData.success === true,
+        screen: responseData.screen,
+      }
+      return externalSystemResponse
     } catch (error) {
       this.logger.error(
-        `Error sending notification for application ${applicationDto.id}: ${error}`,
+        `Error sending notification for application ${notificationDto.applicationId}: ${error}`,
       )
-      return false
+      return { operationSuccessful: false }
     }
-
-    return true
   }
 
-  private async getAccessToken(url: string): Promise<string | null> {
+  private async getAccessToken(url: string): Promise<string> {
     if (url.toLowerCase().includes('syslumenn-protected')) {
       return await this.getSyslumennAccessToken('syslumenn-protected')
     }
 
-    return null
+    return ''
   }
 
   private async getSyslumennAccessToken(org: string): Promise<string> {
@@ -109,8 +108,8 @@ export class NotifyService {
           'X-Road-Client': this.xroadClient,
         },
         body: JSON.stringify({
-          notandi: this.syslumennConfig.username,
-          lykilord: this.syslumennConfig.password,
+          notandi: this.SYSLUMENN_USERNAME,
+          lykilord: this.SYSLUMENN_PASSWORD,
         }),
       })
 

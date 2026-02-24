@@ -16,9 +16,8 @@ export interface GenerateChargeFJSPayloadInput {
   >
   charges: Pick<
     CatalogItemWithQuantity,
-    'chargeType' | 'priceAmount' | 'chargeItemCode' | 'quantity'
+    'chargeType' | 'priceAmount' | 'chargeItemCode' | 'quantity' | 'reference'
   >[]
-  totalPrice: number
   systemId: string
   payInfo?: PayInfo // If this is skipped, then the charge will create an invoice
   returnUrl?: string
@@ -44,8 +43,7 @@ export const generateChargeFJSPayload = ({
       chargeItemCode: charge.chargeItemCode,
       priceAmount: charge.priceAmount,
       quantity: charge.quantity,
-      // Reference id, empty for now
-      reference: '',
+      reference: charge.reference ?? '',
     })),
     immediateProcess: true,
     payeeNationalID: paymentFlow.payerNationalId,
@@ -90,4 +88,25 @@ export const fjsErrorMessageToCode = (
   }
 
   return FjsErrorCode.FailedToCreateCharge
+}
+
+/** Message used when FJS request failed due to network/transient error (no FJS response). */
+export const FJS_NETWORK_ERROR = 'FJS_NETWORK_ERROR'
+
+const NETWORK_ERROR_CODES = new Set([
+  'ECONNRESET',
+  'ETIMEDOUT',
+  'ECONNREFUSED',
+  'ENOTFOUND',
+  'ENETUNREACH',
+  'EAI_AGAIN',
+])
+
+/**
+ * Returns true if the error is a network/transient error (no response from FJS).
+ * In that case the worker should not record a failure event and will retry on the next run.
+ */
+export const isNetworkError = (e: unknown): boolean => {
+  const err = e as { code?: string }
+  return Boolean(err?.code && NETWORK_ERROR_CODES.has(err.code))
 }

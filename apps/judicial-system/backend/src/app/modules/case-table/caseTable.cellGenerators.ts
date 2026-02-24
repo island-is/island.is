@@ -533,7 +533,14 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['id', 'noNationalId', 'nationalId', 'name'],
+      attributes: [
+        'id',
+        'noNationalId',
+        'nationalId',
+        'name',
+        'indictmentReviewDecision',
+        'isSentToPrisonAdmin',
+      ],
       order: [['created', 'ASC']],
       separate: true,
     },
@@ -1132,10 +1139,10 @@ const indictmentRulingDecision: CaseTableCellGenerator<
 }
 
 const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
-  attributes: ['indictmentReviewDecision'],
   includes: {
     defendants: {
       model: Defendant,
+      attributes: ['indictmentReviewDecision'],
       order: [['created', 'ASC']],
       separate: true,
       includes: {
@@ -1151,12 +1158,14 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
   generate: (c: Case): CaseTableCell<TagPairValue> => {
     const firstTag = {
       color: 'darkerBlue',
-      text:
-        c.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL
-          ? c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-            ? 'Kæra'
-            : 'Áfrýja'
-          : 'Una',
+      text: c.defendants?.some(
+        (d) =>
+          d.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL,
+      )
+        ? c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+          ? 'Kæra'
+          : 'Áfrýja'
+        : 'Una',
     }
 
     const defendantAppealed = c.defendants?.some(

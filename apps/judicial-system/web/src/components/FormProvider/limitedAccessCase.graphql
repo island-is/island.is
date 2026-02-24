@@ -56,6 +56,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       punishmentType
       isAlternativeService
       alternativeServiceDescription
+      indictmentReviewDecision
       subpoenas {
         id
         created
@@ -168,6 +169,14 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealRulingDecision
     appealCaseNumber
     appealRulingModifiedHistory
+    notifications {
+      id
+      created
+      type
+      recipients {
+        success
+      }
+    }
     appealAssistant {
       id
       name
@@ -199,7 +208,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     postponedIndefinitelyExplanation
     indictmentDecision
     indictmentRulingDecision
-    indictmentReviewDecision
     indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadlineExpired
     indictmentReviewer {

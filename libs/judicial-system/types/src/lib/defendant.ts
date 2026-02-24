@@ -39,6 +39,11 @@ export enum VerdictServiceStatus {
   NOT_APPLICABLE = 'NOT_APPLICABLE', // ONLY used for old verdicts prior to delivering verdicts automatically to the police
 }
 
+export enum IndictmentCaseReviewDecision {
+  APPEAL = 'APPEAL',
+  ACCEPT = 'ACCEPT',
+}
+
 export enum PunishmentType {
   IMPRISONMENT = 'IMPRISONMENT',
   PROBATION = 'PROBATION',

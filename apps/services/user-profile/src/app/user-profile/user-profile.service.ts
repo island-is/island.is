@@ -693,7 +693,7 @@ export class UserProfileService {
     return this.findById(nationalId, true, ClientType.FIRST_PARTY)
   }
 
-  /* fetch actor profiles (delegation preferences) for each delegation */
+  // Fetches actor profiles (delegation notification preferences) for the current user.
   async getActorProfiles(
     toNationalId: string,
   ): Promise<PaginatedActorProfileDto> {
@@ -724,6 +724,27 @@ export class UserProfileService {
       ],
     })
 
+    let primaryEmailLoad: Promise<{
+      email: string | null
+      emailVerified: boolean
+    }> | null = null
+    const loadPrimaryEmail = (): Promise<{
+      email: string | null
+      emailVerified: boolean
+    }> => {
+      if (!primaryEmailLoad) {
+        primaryEmailLoad = this.findById(
+          toNationalId,
+          true,
+          ClientType.FIRST_PARTY,
+        ).then((profile) => ({
+          email: profile.email ?? null,
+          emailVerified: profile.emailVerified,
+        }))
+      }
+      return primaryEmailLoad
+    }
+
     const actorProfiles = await Promise.all(
       incomingDelegations.data.map(async (delegation) => {
         const emailPreference = emailPreferences.find(
@@ -732,20 +753,32 @@ export class UserProfileService {
         )
 
         if (!emailPreference) {
-          const userProfile = await this.findById(
+          const { email, emailVerified } = await loadPrimaryEmail()
+          // Default email notifications off for company delegations when no actor profile yet
+          const defaultEmailNotifications = kennitala.isCompany(
             delegation.fromNationalId,
-            true,
-            ClientType.FIRST_PARTY,
           )
+            ? false
+            : true
           return {
             fromNationalId: delegation.fromNationalId,
-            emailNotifications: true,
-            email: userProfile.email,
-            emailVerified: userProfile.emailVerified,
+            emailNotifications: defaultEmailNotifications,
+            email,
+            emailVerified,
           }
         }
 
-        return emailPreference?.toDto()
+        const dto = emailPreference.toDto()
+        // When actor profile exists but no email chosen yet (emailsId null), show primary email from the user profile
+        if (dto.email == null && dto.emailsId == null) {
+          const { email, emailVerified } = await loadPrimaryEmail()
+          return {
+            ...dto,
+            email,
+            emailVerified,
+          }
+        }
+        return dto
       }),
     )
 
@@ -796,7 +829,9 @@ export class UserProfileService {
               emailPreferences.emails?.emailStatus === DataStatus.VERIFIED,
           }
         : {
-            emailNotifications: true,
+            emailNotifications: kennitala.isCompany(fromNationalId)
+              ? false
+              : true,
             email: userProfile.email,
             emailVerified: userProfile.emailVerified,
           }),
@@ -854,11 +889,18 @@ export class UserProfileService {
         emailStatus = emailRecord.emailStatus
       }
 
+      // Default email notifications off for company delegations, on for personal
+      const defaultEmailNotifications = kennitala.isCompany(fromNationalId)
+        ? false
+        : true
+      const resolvedEmailNotifications =
+        emailNotifications ?? defaultEmailNotifications
+
       // Create or update the actor profile
       const [profile] = await this.delegationPreference.upsert({
         toNationalId,
         fromNationalId,
-        emailNotifications,
+        emailNotifications: resolvedEmailNotifications,
         emailsId,
       })
 
@@ -871,7 +913,7 @@ export class UserProfileService {
       // Return the updated profile details
       return {
         fromNationalId,
-        emailNotifications: emailNotifications ?? true,
+        emailNotifications: resolvedEmailNotifications,
         email,
         emailsId: profile.emailsId,
         emailVerified: emailStatus === DataStatus.VERIFIED,
@@ -913,7 +955,10 @@ export class UserProfileService {
       throw new BadRequestException('Delegation does not exist')
     }
 
-    // Get the actor profile
+    // Get the actor profile (default email notifications off for company delegations)
+    const defaultEmailNotifications = kennitala.isCompany(fromNationalId)
+      ? false
+      : true
     const [actorProfile] = await this.actorProfileModel.findOrCreate({
       where: {
         toNationalId,
@@ -922,7 +967,7 @@ export class UserProfileService {
       defaults: {
         toNationalId,
         fromNationalId,
-        emailNotifications: true,
+        emailNotifications: defaultEmailNotifications,
         lastNudge: date,
         nextNudge: addMonths(
           date,
@@ -986,7 +1031,21 @@ export class UserProfileService {
           emailStatus = emailByActorId.emailStatus
         }
       }
-      // Get the user name for the actor by using the national id
+
+      // When actor profile has no email set, fall back to user's primary email (same as "no actor profile" case)
+      if (email == null) {
+        const userProfile = await this.findById(
+          toNationalId,
+          true,
+          ClientType.FIRST_PARTY,
+        )
+        email = userProfile.email ?? null
+        if (email != null) {
+          emailStatus = userProfile.emailVerified
+            ? DataStatus.VERIFIED
+            : DataStatus.NOT_VERIFIED
+        }
+      }
 
       return {
         email,
@@ -1010,6 +1069,11 @@ export class UserProfileService {
       ClientType.FIRST_PARTY,
     )
 
+    // Default email notifications off for company delegations when no actor profile yet
+    const defaultEmailNotifications = kennitala.isCompany(fromNationalId)
+      ? false
+      : true
+
     return {
       email: userProfile.email,
       emailStatus: userProfile.emailVerified
@@ -1018,7 +1082,7 @@ export class UserProfileService {
       emailVerified: userProfile.emailVerified,
       needsNudge: null,
       nationalId: fromNationalId,
-      emailNotifications: true,
+      emailNotifications: defaultEmailNotifications,
     }
   }
 
@@ -1131,6 +1195,13 @@ export class UserProfileService {
         }
       }
 
+      // Default email notifications off for company delegations when not specified
+      const defaultEmailNotifications = kennitala.isCompany(fromNationalId)
+        ? false
+        : true
+      const resolvedEmailNotifications =
+        emailNotifications ?? defaultEmailNotifications
+
       // Get or create the actor profile
       const [actorProfile] = await this.actorProfileModel.findOrCreate({
         where: {
@@ -1140,7 +1211,7 @@ export class UserProfileService {
         defaults: {
           toNationalId,
           fromNationalId,
-          emailNotifications: emailNotifications ?? true,
+          emailNotifications: resolvedEmailNotifications,
           lastNudge: new Date(),
           nextNudge: addMonths(new Date(), NUDGE_INTERVAL),
           emailsId: emailRecord?.id,
@@ -1177,7 +1248,8 @@ export class UserProfileService {
         emailStatus,
         needsNudge: false,
         nationalId: fromNationalId,
-        emailNotifications: actorProfile.emailNotifications ?? true,
+        emailNotifications:
+          actorProfile.emailNotifications ?? defaultEmailNotifications,
       } as ActorProfileEmailDto
     })
   }

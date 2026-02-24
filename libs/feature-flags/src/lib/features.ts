@@ -67,7 +67,7 @@ export enum Features {
   isIDSAdminSsoSettingEnabled = 'isIDSAdminSsoSettingEnabled',
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
   isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
-
+  isServicePortalHealthPaymentOverviewTotalPageEnabled = 'isServicePortalHealthPaymentOverviewTotalPageEnabled',
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
   pkPassV2 = 'isPkPassV2Enabled',
@@ -129,6 +129,8 @@ export enum Features {
   useIslandisPaymentForApplicationSystem = 'useIslandisPaymentForApplicationSystem',
   isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
   isIslandisInvoicePaymentAllowedForUser = 'isislandisinvoicepaymentsallowedforuser',
+  isIslandisApplePayPaymentEnabled = 'isIslandisApplePayPaymentEnabled',
+  isIslandisApplePayPaymentAllowedForUser = 'isIslandisApplePayPaymentAllowedForUser',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
