@@ -315,7 +315,6 @@ const Conclusion: FC = () => {
         if (workingCase.indictmentRulingDecision) {
           setSelectedDecision(workingCase.indictmentRulingDecision)
         }
-        setSelectedAction(IndictmentDecision.COMPLETING)
         break
       default:
         return
@@ -328,11 +327,8 @@ const Conclusion: FC = () => {
   ])
 
   useEffect(() => {
-    if (
-      workingCase.indictmentDecision &&
-      workingCase.indictmentDecision !== IndictmentDecision.COMPLETING
-    ) {
-      setSelectedAction(IndictmentDecision.SCHEDULING)
+    if (workingCase.indictmentDecision) {
+      setSelectedAction(workingCase.indictmentDecision)
     }
   }, [workingCase.indictmentDecision])
 
