@@ -35,33 +35,31 @@ export class PushWorkerService {
   ) {}
 
   public async run() {
-    await this.worker.run<PushQueueMessage>(
-      async (message): Promise<void> => {
-        const { messageId, notificationId, nationalId, notification } = message
+    await this.worker.run<PushQueueMessage>(async (message): Promise<void> => {
+      const { messageId, notificationId, nationalId, notification } = message
 
-        this.logger.info('Push worker received message', { messageId })
+      this.logger.info('Push worker received message', { messageId })
 
-        await this.notificationDispatch.sendPushNotification({
-          nationalId,
-          notification,
+      await this.notificationDispatch.sendPushNotification({
+        nationalId,
+        notification,
+        messageId,
+        notificationId,
+      })
+
+      this.logger.info('Push notification sent', { messageId })
+
+      try {
+        await this.notificationDeliveryModel.create({
           messageId,
-          notificationId,
+          channel: NotificationChannel.Push,
         })
-
-        this.logger.info('Push notification sent', { messageId })
-
-        try {
-          await this.notificationDeliveryModel.create({
-            messageId,
-            channel: NotificationChannel.Push,
-          })
-        } catch (error) {
-          this.logger.error('Error writing push delivery record to db', {
-            error,
-            messageId,
-          })
-        }
-      },
-    )
+      } catch (error) {
+        this.logger.error('Error writing push delivery record to db', {
+          error,
+          messageId,
+        })
+      }
+    })
   }
 }

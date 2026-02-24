@@ -1158,7 +1158,9 @@ describe('NotificationsWorkerService', () => {
       expect(record?.channel).toBe(NotificationChannel.Push)
       expect(record?.messageId).toBe(messageId)
       expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
-        expect.objectContaining({ nationalId: userWithNoDelegations.nationalId }),
+        expect.objectContaining({
+          nationalId: userWithNoDelegations.nationalId,
+        }),
       )
     })
 
