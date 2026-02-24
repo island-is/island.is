@@ -1,13 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate } from 'react-router-dom'
 
 import { AuthDomain } from '@island.is/api/schema'
-import { Box, SkeletonLoader } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader, useQueryParam } from '@island.is/portals/core'
 
-import { useAuthDelegationsGroupedByIdentityIncomingQuery } from '../../components/delegations/incoming/DelegationsGroupedByIdentityIncoming.generated'
 import { useAuthDelegationsGroupedByIdentityOutgoingQuery } from '../../components/delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
 import { FlowStep, FlowStepper } from '../../components/FlowStepper'
 import { AccessPeriod } from '../../components/GrantAccessSteps/AccessPeriod'
@@ -17,6 +16,10 @@ import { m } from '../../lib/messages'
 import { DelegationPaths } from '../../lib/paths'
 
 import { m as coreMessages } from '@island.is/portals/core'
+import { ConfirmAccessModal } from '../../components/modals/ConfirmAccessModal'
+import { useCreateAuthDelegationsMutation } from '../GrantAccessNew/GrantAccessNew.generated'
+import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
+import { AccessControlLoaderResponse } from '../AccessControl.loader'
 
 const EditAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
@@ -24,11 +27,10 @@ const EditAccess = () => {
   const { formatMessage, lang } = useLocale()
   const { selectedScopes, setSelectedScopes, clearForm } = useDelegationForm()
   const nationalIdParam = useQueryParam('nationalId')
-  const directionParam = useQueryParam('direction') as
-    | 'outgoing'
-    | 'incoming'
-    | null
+
   const navigate = useNavigate()
+  const [isConfirmModalVisible, setIsConfirmModalVisible] =
+    useState<boolean>(false)
 
   // clear the state on unmount
   useEffect(() => {
@@ -36,30 +38,22 @@ const EditAccess = () => {
   }, [clearForm])
 
   const needsFetch = selectedScopes.length === 0 && !!nationalIdParam
-  const isOutgoing = directionParam !== 'incoming'
 
   const { data: outgoingData, loading: outgoingLoading } =
     useAuthDelegationsGroupedByIdentityOutgoingQuery({
       variables: { lang },
-      skip: !needsFetch || !isOutgoing,
+      skip: !needsFetch,
     })
 
-  const { data: incomingData, loading: incomingLoading } =
-    useAuthDelegationsGroupedByIdentityIncomingQuery({
-      variables: { lang },
-      skip: !needsFetch || isOutgoing,
-    })
-
-  const delegationsLoading = outgoingLoading || incomingLoading
+  const delegationsLoading = outgoingLoading
 
   useEffect(() => {
     if (!nationalIdParam || selectedScopes.length > 0) {
       return
     }
 
-    const allDelegations = isOutgoing
-      ? outgoingData?.authDelegationsGroupedByIdentityOutgoing
-      : incomingData?.authDelegationsGroupedByIdentityIncoming
+    const allDelegations =
+      outgoingData?.authDelegationsGroupedByIdentityOutgoing
 
     if (!allDelegations) {
       return
@@ -86,9 +80,7 @@ const EditAccess = () => {
     }
   }, [
     outgoingData,
-    incomingData,
     nationalIdParam,
-    isOutgoing,
     selectedScopes.length,
     setSelectedScopes,
     navigate,
@@ -100,10 +92,10 @@ const EditAccess = () => {
       (scope) => scope.validTo === selectedScopes[0]?.validTo,
     )
 
-  // const [createAuthDelegations, { loading: mutationLoading }] =
-  //   useCreateAuthDelegationsMutation()
+  const [createAuthDelegations, { loading: mutationLoading }] =
+    useCreateAuthDelegationsMutation()
 
-  // const contentfulData = useLoaderData() as AccessControlLoaderResponse
+  const contentfulData = useLoaderData() as AccessControlLoaderResponse
 
   const steps: FlowStep[] = [
     {
@@ -119,7 +111,7 @@ const EditAccess = () => {
       name: formatMessage(m.stepThreeLabel),
       content: <AccessPeriod initialIsSamePeriod={initialIsSamePeriod} />,
       onContinue: () => {
-        // setIsConfirmModalVisible(true)
+        setIsConfirmModalVisible(true)
       },
       continueButtonLabel: formatMessage(m.stepThreeContinueButtonLabel),
       continueButtonIcon: 'checkmark',
@@ -157,7 +149,7 @@ const EditAccess = () => {
           }}
         />
 
-        {/* <ConfirmAccessModal
+        <ConfirmAccessModal
           onClose={() => setIsConfirmModalVisible(false)}
           onConfirm={() => {
             const scopes = selectedScopes
@@ -172,29 +164,33 @@ const EditAccess = () => {
                 }
               })
               .filter((scope) => scope !== null)
-
+            if (!nationalIdParam) {
+              return
+            }
             createAuthDelegations({
               variables: {
                 input: {
-                  toNationalIds: watchIdentities.map(
-                    (identity) => identity.nationalId,
-                  ),
+                  toNationalIds: [nationalIdParam],
                   scopes,
                 },
               },
-            }).then(() => {
-              navigate(DelegationPaths.DelegationsNew)
             })
+              .then(() => {
+                navigate(DelegationPaths.DelegationsNew)
+              })
+              .catch(() => {
+                toast.error(formatMessage(coreMessages.somethingWrong))
+              })
           }}
           loading={mutationLoading}
           isVisible={isConfirmModalVisible}
-        /> */}
+        />
 
-        {/* {contentfulData?.faqList && (
+        {contentfulData?.faqList && (
           <Box paddingTop={8}>
             <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
           </Box>
-        )} */}
+        )}
       </div>
     </>
   )

@@ -152,36 +152,44 @@ const CustomDelegationsPermissionsTable = ({
           {scopes?.map((scope) => {
             return (
               <T.Row key={scope.id}>
-                <T.Data>
+                <T.Data style={{ paddingInline: 16 }}>
                   <Text variant="medium">{scope.domain?.displayName}</Text>
                 </T.Data>
-                <T.Data>
+                <T.Data style={{ paddingInline: 16 }}>
                   <Text variant="medium">{scope.displayName}</Text>
                 </T.Data>
-                <T.Data>
+                <T.Data style={{ paddingInline: 16 }}>
                   <Text variant="medium">
                     {scope.validFrom
                       ? format(new Date(scope.validFrom), 'dd.MM.yyyy')
                       : '-'}
                   </Text>
                 </T.Data>
-                <T.Data style={{ display: 'flex' }}>
-                  <Box flexShrink={1}>
-                    <DatePicker
-                      name={`validTo-${scope.id}`}
-                      locale="is"
-                      placeholderText={formatMessage(m.headerValidityPeriod)}
-                      selected={
-                        scope.validTo ? new Date(scope.validTo) : undefined
-                      }
-                      handleChange={(date) => handleDateChange(scope, date)}
-                      size="xs"
-                      backgroundColor="blue"
-                      detatchedCalendar={true}
-                    />
-                  </Box>
+                <T.Data style={{ display: 'flex', paddingInline: 16 }}>
+                  {direction === 'incoming' ? (
+                    <Text variant="medium">
+                      {scope.validTo
+                        ? format(new Date(scope.validTo), 'dd.MM.yyyy')
+                        : '-'}
+                    </Text>
+                  ) : (
+                    <Box flexShrink={1}>
+                      <DatePicker
+                        name={`validTo-${scope.id}`}
+                        locale="is"
+                        placeholderText={formatMessage(m.headerValidityPeriod)}
+                        selected={
+                          scope.validTo ? new Date(scope.validTo) : undefined
+                        }
+                        handleChange={(date) => handleDateChange(scope, date)}
+                        size="xs"
+                        backgroundColor="blue"
+                        detatchedCalendar={true}
+                      />
+                    </Box>
+                  )}
                 </T.Data>
-                <T.Data>
+                <T.Data style={{ paddingInline: 16 }}>
                   <Box display="flex" justifyContent="flexEnd">
                     <Box flexShrink={0}>
                       <Button

@@ -127,7 +127,7 @@ const CustomDelegationsTable = ({
     { value: formatMessage(m.name) },
     { value: formatMessage(m.numberOfDelegations) },
     { value: formatMessage(m.validityPeriod) },
-    { value: '' },
+    ...(direction === 'outgoing' ? [{ value: '' }] : []),
     { value: '' },
   ]
 
@@ -243,36 +243,40 @@ const CustomDelegationsTable = ({
                         ? format(new Date(person.latestValidTo), 'dd.MM.yyyy')
                         : formatMessage(m.noValidToDate),
                     },
-                    {
-                      value: (
-                        <Box flexShrink={0}>
-                          <Button
-                            variant="text"
-                            icon="pencil"
-                            iconType="outline"
-                            size="small"
-                            colorScheme="default"
-                            onClick={() => {
-                              const scopes = mapScopesToScopeSelection(person)
-                              setSelectedScopes(scopes)
-                              const query = new URLSearchParams({
-                                nationalId: person.nationalId ?? '',
-                                direction,
-                              })
+                    ...(direction === 'outgoing'
+                      ? [
+                          {
+                            value: (
+                              <Box flexShrink={0}>
+                                <Button
+                                  variant="text"
+                                  icon="pencil"
+                                  iconType="outline"
+                                  size="small"
+                                  colorScheme="default"
+                                  onClick={() => {
+                                    const scopes =
+                                      mapScopesToScopeSelection(person)
+                                    setSelectedScopes(scopes)
+                                    const query = new URLSearchParams({
+                                      nationalId: person.nationalId ?? '',
+                                    })
 
-                              navigate(
-                                `${
-                                  DelegationPaths.DelegationsEdit
-                                }?${query.toString()}`,
-                              )
-                            }}
-                          >
-                            {formatMessage(coreMessages.buttonEdit)}
-                          </Button>
-                        </Box>
-                      ),
-                      align: 'right',
-                    },
+                                    navigate(
+                                      `${
+                                        DelegationPaths.DelegationsEdit
+                                      }?${query.toString()}`,
+                                    )
+                                  }}
+                                >
+                                  {formatMessage(coreMessages.buttonEdit)}
+                                </Button>
+                              </Box>
+                            ),
+                            align: 'right' as const,
+                          },
+                        ]
+                      : []),
                     {
                       value: (
                         <Box flexShrink={0}>
