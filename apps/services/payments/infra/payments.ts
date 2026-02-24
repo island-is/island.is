@@ -151,6 +151,8 @@ export const serviceSetupForWorker =
           prod: `https://island.is/greida`,
         },
         PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
+        PAYMENTS_APPLE_PAY_DOMAIN: 'island.is',
+        PAYMENTS_APPLE_PAY_DISPLAY_NAME: 'island.is',
       })
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET:
