@@ -3,7 +3,6 @@
 import { useEffect } from 'react'
 import { setCustomVariable, trackSiteSearch } from './tracking'
 
-
 export const useMatomoTrackOrganization = (organization?: string | null) => {
   useEffect(() => {
     if (!organization) return
