@@ -1190,19 +1190,27 @@ export class ApplicationsService {
           toDate ? { created: { [Op.lte]: toDate } } : {},
         ],
       },
+      include: [
+        {
+          model: this.formModel,
+          attributes: ['id', 'name', 'slug', 'status'],
+          required: true,
+          include: [
+            {
+              model: this.organizationModel,
+              attributes: ['nationalId'],
+              required: true,
+            },
+          ],
+        },
+      ],
       limit,
       offset,
       order: [['modified', 'DESC']],
     })
 
-    const mappedRows = await Promise.all(
-      rows.map(async (application) => {
-        const form = await this.formModel.findByPk(application.formId)
-        return this.applicationMapper.mapApplicationToApplicationAdminDto(
-          application,
-          form,
-        )
-      }),
+    const mappedRows = rows.map((application) =>
+      this.applicationMapper.mapApplicationToApplicationAdminDto(application),
     )
 
     return {
@@ -1239,11 +1247,11 @@ export class ApplicationsService {
 
   async getAllInstitutionsSuperAdmin(): Promise<InstitutionDto[]> {
     const organizations = await this.organizationModel.findAll({
-      attributes: ['id', 'nationalId'],
+      attributes: ['nationalId'],
       include: [
         {
           model: Form,
-          attributes: ['id', 'name'],
+          attributes: [],
           required: true,
           where: { status: FormStatus.PUBLISHED },
           include: [
@@ -1255,12 +1263,7 @@ export class ApplicationsService {
           ],
         },
       ],
-      group: [
-        'Organization.id',
-        'Organization.nationalId',
-        'forms.id',
-        'forms.name',
-      ],
+      group: ['Organization.nationalId'],
     })
 
     return organizations.map((org) => ({

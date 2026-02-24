@@ -69,6 +69,7 @@ export const mapFormSystemApplicationAdmin = (
   application: FormSystemApplicationAdminDto,
 ): ApplicationAdmin => {
   return {
+    //TODOxy
     // id: application.id,
     // created: application.created,
     // modified: application.modified,
@@ -89,15 +90,16 @@ export const mapFormSystemApplicationAdmin = (
     pruned: application.pruned,
     state: application.status,
     status: application.status as ApplicationListAdminResponseDtoStatusEnum,
-    actionCard: undefined, //TODOx
+    actionCard: undefined,
     isFormSystem: true,
     typeId: application.formId,
-    name: 'TODOx',
-    institution: 'TODOx',
-    progress: undefined, //TODOx
-    applicantName: 'TODOx',
-    paymentStatus: undefined, //TODOx
-    adminData: undefined, //TODOx
+    name: 'TODO',
+    institution: 'TODO',
+    progress: undefined,
+    applicantName: 'TODO',
+    paymentStatus: undefined,
+    adminData: undefined,
+    institutionContentfulSlug: application.institutionContentfulSlug,
   }
 }
 

@@ -28,6 +28,10 @@ export class ApplicationAdminDto {
   @ApiPropertyOptional()
   pruned?: boolean
 
+  @ApiPropertyOptional()
+  institutionContentfulSlug?: string
+
+  //TODOxy add more fields if necessary
   // @ApiProperty()
   // assignees!: string[]
 

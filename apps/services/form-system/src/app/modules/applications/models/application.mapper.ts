@@ -13,6 +13,7 @@ import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response
 import { Field } from '../../fields/models/field.model'
 import type { Locale } from '@island.is/shared/types'
 import { ApplicationAdminDto } from './dto/applicationAdmin.dto'
+import { getOrganizationInfoByNationalId } from '../../../../utils/organizationInfo'
 
 @Injectable()
 export class ApplicationMapper {
@@ -315,7 +316,6 @@ export class ApplicationMapper {
 
   mapApplicationToApplicationAdminDto(
     application: Application,
-    form: Form | null,
   ): ApplicationAdminDto {
     return {
       id: application.id,
@@ -327,6 +327,9 @@ export class ApplicationMapper {
       state: application.state,
       pruneAt: application.pruneAt,
       pruned: application.pruned,
+      institutionContentfulSlug: getOrganizationInfoByNationalId(
+        application?.form?.organization?.nationalId,
+      )?.type,
       //TODOxy any other fields we might need?
     }
   }

@@ -12,6 +12,7 @@ import { ApplicationTemplateHelper } from '@island.is/application/core'
 import {
   ApplicationTypes,
   Application as BaseApplication,
+  institutionMapper,
 } from '@island.is/application/types'
 import {
   getApplicationTemplateByTypeId,
@@ -223,6 +224,7 @@ export class ApplicationAdminSerializer
         intl.formatMessage,
         this.identityService,
       ),
+      institutionContentfulSlug: institutionMapper[application.typeId]?.slug,
     })
     return instanceToPlain(dto)
   }

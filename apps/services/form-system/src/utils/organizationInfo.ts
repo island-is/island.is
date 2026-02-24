@@ -4,7 +4,7 @@ import {
   InstitutionTypes,
 } from '@island.is/application/types'
 
-export const getOrganizationInfoByNationalId = (nationalId: string) => {
+export const getOrganizationInfoByNationalId = (nationalId?: string) => {
   if (!nationalId) {
     return null
   }

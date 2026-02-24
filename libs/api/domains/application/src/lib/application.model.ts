@@ -240,6 +240,9 @@ export class ApplicationAdmin {
 
   @Field(() => [ApplicationAdminData], { nullable: true })
   adminData?: ApplicationAdminData[]
+
+  @Field(() => String, { nullable: true })
+  institutionContentfulSlug?: string
 }
 
 @ObjectType()

@@ -12,7 +12,11 @@ import {
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
-import { getLogo, getSlugFromType, statusMapper } from '../../shared/utils'
+import {
+  getLogoFromContentfulSlug,
+  getSlugFromType,
+  statusMapper,
+} from '../../shared/utils'
 import { AdminApplication } from '../../types/adminApplication'
 import { ApplicationDetails } from '../ApplicationDetails/ApplicationDetails'
 import { Organization } from '@island.is/shared/types'
@@ -115,7 +119,10 @@ export const ApplicationsTable = ({
             .slice(pagedDocuments.from, pagedDocuments.to)
             .map((application, index) => {
               const tag = statusMapper[application.status]
-              const logo = getLogo(application.typeId, organizations)
+              const logo = getLogoFromContentfulSlug(
+                organizations,
+                application.institutionContentfulSlug,
+              )
               const cellText = application.pruned ? 'dark300' : 'currentColor'
 
               return (

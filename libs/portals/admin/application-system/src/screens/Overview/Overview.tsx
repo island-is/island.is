@@ -158,7 +158,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     ? organizationListFromContentful?.flatMap((x) => {
         const itemFoundInResponse =
           organizationsWithApplicationData?.applicationV2InstitutionsSuperAdmin?.find(
-            (y) => y.slug === x.slug,
+            (y) => y.contentfulSlug === x.slug,
           )
         if (!itemFoundInResponse) {
           return []

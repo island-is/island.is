@@ -96,6 +96,7 @@ query getApplicationV2ApplicationsInstitutionAdmin(
         draftTotalSteps
         draftFinishedSteps
       }
+      institutionContentfulSlug
     }
     count
   }
@@ -217,6 +218,7 @@ query getApplicationV2ApplicationsSuperAdmin(
         draftTotalSteps
         draftFinishedSteps
       }
+      institutionContentfulSlug
     }
     count
   }
