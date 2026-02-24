@@ -17,7 +17,7 @@ import { AccessRecipients } from '../../components/GrantAccessSteps/AccessRecipi
 import { m as coreMessages } from '@island.is/portals/core'
 import { AccessScopes } from '../../components/GrantAccessSteps/AccessScopes'
 import { ConfirmAccessModal } from '../../components/modals/ConfirmAccessModal'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AccessPeriod } from '../../components/GrantAccessSteps/AccessPeriod'
 import { useCreateAuthDelegationsMutation } from './GrantAccessNew.generated'
 
@@ -27,12 +27,17 @@ const GrantAccess = () => {
     useState<boolean>(false)
 
   const { formatMessage } = useLocale()
-  const { setIdentities, selectedScopes } = useDelegationForm()
+  const { setIdentities, selectedScopes, clearForm } = useDelegationForm()
 
   const navigate = useNavigate()
 
   const [createAuthDelegations, { loading: mutationLoading }] =
     useCreateAuthDelegationsMutation()
+
+  // clear the state on unmount
+  useEffect(() => {
+    return () => clearForm()
+  }, [clearForm])
 
   const contentfulData = useLoaderData() as AccessControlLoaderResponse
 

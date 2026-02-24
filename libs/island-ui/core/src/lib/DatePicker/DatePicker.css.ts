@@ -487,6 +487,13 @@ globalStyle(
 )
 
 globalStyle(
+  `${root}.island-ui-datepicker.${small} .react-datepicker-popper[data-placement^="top"] .react-datepicker`,
+  {
+    top: '0px',
+  },
+)
+
+globalStyle(
   `${root}.island-ui-datepicker.${extraSmall} .react-datepicker-popper[data-placement^="top"] .react-datepicker`,
   {
     top: '7px',

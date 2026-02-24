@@ -28,8 +28,8 @@ export const DateScopesTable = ({
     formatMessage(m.headerName),
     formatMessage(m.headerScopeName),
     formatMessage(m.headerDescription),
-    formatMessage(m.headerDelegationType),
     formatMessage(m.headerValidityPeriod),
+    formatMessage(m.headerDelegationType),
   ]
 
   return (

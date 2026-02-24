@@ -190,7 +190,6 @@ const CustomDelegationsPermissionsTable = ({
                         iconType="outline"
                         size="small"
                         colorScheme="destructive"
-                        // onClick={() => handleDeleteScope(scope)}
                         onClick={() => {
                           setScopeToDelete(scope as AuthDelegationScope)
 

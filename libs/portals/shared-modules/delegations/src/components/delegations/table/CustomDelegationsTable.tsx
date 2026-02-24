@@ -9,7 +9,6 @@ import {
 } from '@island.is/island-ui/core'
 import ExpandableRow from './ExpandableRow/ExpandableRow'
 import format from 'date-fns/format'
-import groupBy from 'lodash/groupBy'
 import { useCallback, useMemo, useState } from 'react'
 import { m as coreMessages } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
@@ -19,13 +18,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { AuthDomain } from '@island.is/api/schema'
 import { IdentityInfo } from './IdentityInfo/IdentityInfo'
 import { m } from '../../../lib/messages'
-import {
-  AuthDelegationsGroupedByIdentityOutgoingDocument,
-  AuthDelegationsGroupedByIdentityOutgoingQuery,
-} from '../../delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
-import { AuthDelegationsGroupedByIdentityIncomingDocument } from '../../delegations/incoming/DelegationsGroupedByIdentityIncoming.generated'
-import { EditAccessModal } from '../../modals/EditAccessModal'
-import { usePatchAuthDelegationMutation } from '../../../screens/EditAccess.tsx/EditAccess.generated'
+import { AuthDelegationsGroupedByIdentityOutgoingQuery } from '../../delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
 import { useDeleteAuthDelegationMutation } from '../../access/AccessDeleteModal/AccessDeleteModal.generated'
 import { useDelegationForm } from '../../../context'
 import { DeleteAccessModal } from '../../modals/DeleteAccessModal'
@@ -48,36 +41,24 @@ const CustomDelegationsTable = ({
   error: ApolloError | undefined
   direction: 'outgoing' | 'incoming'
 }) => {
-  const { formatMessage, lang = 'is' } = useLocale()
+  const { formatMessage } = useLocale()
   const client = useApolloClient()
   const [expandedRow, setExpandedRow] = useState<string | null | undefined>(
     null,
   )
   const [searchValue, setSearchValue] = useState('')
-  const [isEditAccessModalVisible, setIsEditAccessModalVisible] =
-    useState(false)
   const navigate = useNavigate()
 
   const [personToDelete, setPersonToDelete] =
     useState<DelegationsByPerson | null>(null)
   const {
-    selectedScopes,
-    originalScopes,
     setSelectedScopes,
-    setOriginalScopes,
-    setIdentities,
+
     clearForm,
   } = useDelegationForm()
 
-  const [patchDelegation, { loading: patchLoading }] =
-    usePatchAuthDelegationMutation()
   const [deleteDelegation, { loading: deleteLoading }] =
     useDeleteAuthDelegationMutation()
-
-  const queryDocument =
-    direction === 'outgoing'
-      ? AuthDelegationsGroupedByIdentityOutgoingDocument
-      : AuthDelegationsGroupedByIdentityIncomingDocument
 
   const queryFieldName =
     direction === 'outgoing'
@@ -140,147 +121,6 @@ const CustomDelegationsTable = ({
     },
     [deleteDelegation, evictPerson, formatMessage],
   )
-
-  // const handleConfirmEdit = useCallback(async () => {
-  //   const scopesByDelegation = groupBy(
-  //     selectedScopes.filter((s) => s.delegationId),
-  //     (s) => s.delegationId,
-  //   )
-
-  //   const originalByDelegation = groupBy(
-  //     originalScopes.filter((s) => s.delegationId),
-  //     (s) => s.delegationId,
-  //   )
-
-  //   const allDelegationIds = new Set([
-  //     ...Object.keys(scopesByDelegation),
-  //     ...Object.keys(originalByDelegation),
-  //   ])
-
-  //   try {
-  //     const promises = Array.from(allDelegationIds).map((delegationId) => {
-  //       const current = scopesByDelegation[delegationId] ?? []
-  //       const original = originalByDelegation[delegationId] ?? []
-
-  //       const currentNames = new Set(current.map((s) => s.name))
-  //       const originalNames = new Set(original.map((s) => s.name))
-
-  //       const updateScopes = current
-  //         .filter((scope): scope is typeof scope & { validTo: Date } => {
-  //           if (!scope.validTo) return false
-  //           const orig = original.find((o) => o.name === scope.name)
-  //           return (
-  //             !orig ||
-  //             scope.validTo.toISOString() !== orig.validTo?.toISOString()
-  //           )
-  //         })
-  //         .map((scope) => ({
-  //           name: scope.name,
-  //           validTo: scope.validTo,
-  //         }))
-
-  //       const deleteScopes = Array.from(originalNames).filter(
-  //         (name) => !currentNames.has(name),
-  //       )
-
-  //       if (updateScopes.length === 0 && deleteScopes.length === 0) {
-  //         return Promise.resolve()
-  //       }
-
-  //       return patchDelegation({
-  //         variables: {
-  //           input: {
-  //             delegationId,
-  //             updateScopes: updateScopes.length > 0 ? updateScopes : undefined,
-  //             deleteScopes: deleteScopes.length > 0 ? deleteScopes : undefined,
-  //           },
-  //         },
-  //       })
-  //     })
-
-  //     await Promise.all(promises)
-
-  //     setIsEditAccessModalVisible(false)
-  //     clearForm()
-
-  //     const deletedScopeNames = new Set(
-  //       originalScopes
-  //         .filter((o) => !selectedScopes.some((s) => s.name === o.name))
-  //         .map((o) => o.name),
-  //     )
-
-  //     const updatedScopesByName = new Map(
-  //       selectedScopes
-  //         .filter((s): s is typeof s & { validTo: Date } => !!s.validTo)
-  //         .map((s) => [s.name, s.validTo.toISOString()]),
-  //     )
-
-  //     const affectedNationalIds = new Set(
-  //       [...selectedScopes, ...originalScopes]
-  //         .map((s) => s.delegationId)
-  //         .filter(Boolean),
-  //     )
-
-  //     client.cache.updateQuery(
-  //       { query: queryDocument, variables: { lang } },
-  //       (existing: Record<string, DelegationsByPerson[]> | null) => {
-  //         if (!existing) return existing
-  //         const persons = existing[queryFieldName]
-  //         if (!persons) return existing
-
-  //         return {
-  //           ...existing,
-  //           [queryFieldName]: persons
-  //             .map((person) => {
-  //               const hasAffectedScope = person.scopes.some(
-  //                 (s) =>
-  //                   s.delegationId && affectedNationalIds.has(s.delegationId),
-  //               )
-  //               if (!hasAffectedScope) return person
-
-  //               const updatedScopes = person.scopes
-  //                 .filter(
-  //                   (s) =>
-  //                     !deletedScopeNames.has(s.name) ||
-  //                     !s.delegationId ||
-  //                     !affectedNationalIds.has(s.delegationId),
-  //                 )
-  //                 .map((s) => {
-  //                   const newValidTo = updatedScopesByName.get(s.name)
-  //                   if (
-  //                     newValidTo &&
-  //                     s.delegationId &&
-  //                     affectedNationalIds.has(s.delegationId)
-  //                   ) {
-  //                     return { ...s, validTo: newValidTo }
-  //                   }
-  //                   return s
-  //                 })
-
-  //               return {
-  //                 ...person,
-  //                 scopes: updatedScopes,
-  //                 totalScopeCount: updatedScopes.length,
-  //               }
-  //             })
-  //             .filter((person) => person.scopes.length > 0),
-  //         }
-  //       },
-  //     )
-  //   } catch {
-  //     toast.error(formatMessage(coreMessages.somethingWrong))
-  //   }
-  // }, [
-  //   selectedScopes,
-  //   originalScopes,
-  //   patchDelegation,
-  //   clearForm,
-  //   client.cache,
-  //   queryDocument,
-  //   queryFieldName,
-  //   lang,
-  //   formatMessage,
-  // ])
 
   const headerArray = [
     { value: '' },
@@ -415,18 +255,17 @@ const CustomDelegationsTable = ({
                             onClick={() => {
                               const scopes = mapScopesToScopeSelection(person)
                               setSelectedScopes(scopes)
-                              navigate(DelegationPaths.DelegationsEdit)
+                              const query = new URLSearchParams({
+                                nationalId: person.nationalId ?? '',
+                                direction,
+                              })
+
+                              navigate(
+                                `${
+                                  DelegationPaths.DelegationsEdit
+                                }?${query.toString()}`,
+                              )
                             }}
-                            // onClick={() => {
-                            //   setIsEditAccessModalVisible(true)
-                            //   setIdentities([
-                            //     {
-                            //       nationalId: person.nationalId,
-                            //       name: person.name,
-                            //     },
-                            //   ])
-                            //   setOriginalScopes(scopes)
-                            // }}
                           >
                             {formatMessage(coreMessages.buttonEdit)}
                           </Button>

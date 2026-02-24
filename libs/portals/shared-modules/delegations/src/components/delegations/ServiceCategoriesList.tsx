@@ -33,6 +33,11 @@ export const ServiceCategoriesList = ({
             labelUse="h2"
             iconVariant="default"
             visibleContent={cat.description}
+            startExpanded={
+              !!selectedScopes?.some((s) =>
+                cat.scopes.some((cs) => cs.name === s.name),
+              )
+            }
           >
             <Box paddingY={3}>
               {cat.scopes.length === 0 ? (

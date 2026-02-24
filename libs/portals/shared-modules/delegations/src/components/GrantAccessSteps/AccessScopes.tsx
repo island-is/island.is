@@ -21,9 +21,10 @@ import {
 import { m } from '../../lib/messages'
 import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
 
+import { AuthDomainDirection } from '@island.is/api/schema'
 import { useDelegationForm } from '../../context'
 import add from 'date-fns/add'
-import { useDomains } from '../../hooks/useDomains/useDomains'
+import { useAuthDomainsQuery } from '../../hooks/useDomains/useDomains.generated'
 
 export const AccessScopes = () => {
   const { lang } = useLocale()
@@ -44,16 +45,28 @@ export const AccessScopes = () => {
   } = useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
     variables: { lang },
   })
-  const {
-    data: tagsData,
-    // loading: tagsLoading,
-    // error: tagsError,
-  } = useQuery<AuthScopeTagsQuery>(AuthScopeTagsDocument, {
-    variables: { lang },
-  })
+  const { data: tagsData } = useQuery<AuthScopeTagsQuery>(
+    AuthScopeTagsDocument,
+    {
+      variables: { lang },
+    },
+  )
   const { selectedScopes, setSelectedScopes } = useDelegationForm()
   const defaultDate = add(new Date(), { years: 1 })
-  const { options: domainOptions } = useDomains(false)
+
+  const { data: domainsData } = useAuthDomainsQuery({
+    variables: {
+      input: { lang, direction: AuthDomainDirection.outgoing },
+    },
+  })
+  const domainOptions = useMemo(
+    () =>
+      (domainsData?.authDomains || []).map((domain) => ({
+        label: domain.displayName,
+        value: domain.name,
+      })),
+    [domainsData?.authDomains],
+  )
 
   const filters = useMemo(() => {
     return [
