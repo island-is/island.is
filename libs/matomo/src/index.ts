@@ -1,6 +1,4 @@
-export type { MatomoPageAttributes, MatomoContextValue } from './lib/types'
-export { MatomoContext } from './lib/MatomoContext'
-export { MatomoProvider } from './lib/MatomoProvider'
+export type { MatomoInitScriptProps } from './lib/types'
 export { MatomoTracker } from './lib/MatomoTracker'
 export { MatomoInitScript } from './lib/MatomoInitScript'
 export {

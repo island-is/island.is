@@ -1,7 +1,7 @@
-interface MatomoInitScriptProps {
-  matomoDomain: string
-  matomoSiteId: string
-}
+import { useEffect } from "react"
+import { initMatomo } from "./init-matomo"
+import { MatomoInitScriptProps } from "./types"
+
 
 /**
  * Server-rendered Matomo initialization script tag.
@@ -14,24 +14,33 @@ export const MatomoInitScript = ({
   matomoDomain,
   matomoSiteId,
 }: MatomoInitScriptProps) => {
-  if (!matomoDomain || !matomoSiteId) {
-    console.warn(
-      '[MatomoInitScript] Missing matomoDomain or matomoSiteId, skipping Matomo initialization',
-    )
-    return null
-  }
-
   const normalizedDomain = matomoDomain.endsWith('/')
     ? matomoDomain
     : `${matomoDomain}/`
 
+  useEffect(() => {
+    if (!matomoDomain || !matomoSiteId) {
+    console.warn(
+      '[MatomoInitScript] Missing matomoDomain or matomoSiteId, skipping Matomo initialization',
+    )
+    return;
+  }
+  initMatomo({matomoDomain: normalizedDomain, matomoSiteId});
+  // This is empty on purpose - this should only happen once
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
+  if (!matomoDomain || !matomoSiteId) {
+    console.warn(
+      '[MatomoInitScript] Missing matomoDomain or matomoSiteId, skipping Matomo initialization',
+    )
+    return null;
+  }
   return (
     <script
-      id="matomo-init"
-      src="/scripts/matomo-init.js"
-      data-matomo-domain={normalizedDomain}
-      data-matomo-site-id={matomoSiteId}
+      async
       defer
+      src={`${normalizedDomain}matomo.js`}
     />
   )
 }
