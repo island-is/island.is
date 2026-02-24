@@ -7,7 +7,7 @@ enum FieldTypes {
   DATE_PICKER = 'Dagsetningarval',
   DROPDOWN_LIST = 'Fellilisti',
   PAYER = 'Greiðandi',
-  PAYMENT = 'Greiðsla',
+  // PAYMENT = 'Greiðsla',
   CHECKBOX = 'Hakbox',
   HOMESTAY_NUMBER = 'Heimagistingarnúmer',
   NATIONAL_ID = 'Kennitala',

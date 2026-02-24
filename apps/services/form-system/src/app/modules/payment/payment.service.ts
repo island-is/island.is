@@ -37,7 +37,7 @@ export class PaymentService {
     applicationId: string,
   ): Promise<Payment | null> {
     return this.paymentModel.findOne({
-      where: { application_id: applicationId },
+      where: { applicationId: applicationId },
     })
   }
 
@@ -50,12 +50,12 @@ export class PaymentService {
       await this.paymentModel.update(
         {
           fulfilled: true,
-          reference_id: receptionId,
+          referenceId: receptionId,
         },
         {
           where: {
             id: paymentId,
-            application_id: applicationId,
+            applicationId: applicationId,
           },
         },
       )
@@ -81,12 +81,12 @@ export class PaymentService {
           ...definition,
           paymentUrl: paymentUrl,
         },
-        request_id: requestId,
+        requestId: requestId,
       },
       {
         where: {
           id: paymentId,
-          application_id: applicationId,
+          applicationId: applicationId,
         },
       },
     )
@@ -111,9 +111,10 @@ export class PaymentService {
       }
     }
 
-    const paymentUrl: string = JSON.parse(
-      foundPayment.dataValues.definition,
-    ).paymentUrl
+    const definition = foundPayment.dataValues.definition as {
+      paymentUrl?: string
+    }
+    const paymentUrl: string = definition?.paymentUrl || ''
 
     return {
       fulfilled: foundPayment.fulfilled || false,
@@ -134,7 +135,7 @@ export class PaymentService {
       {
         where: {
           id: paymentId,
-          application_id: applicationId,
+          applicationId: applicationId,
         },
       },
     )
@@ -146,7 +147,7 @@ export class PaymentService {
     performingOrganizationID: string,
   ): Promise<Payment> {
     const paymentModel = {
-      application_id: applicationId,
+      applicationId: applicationId,
       fulfilled: false,
       amount: catalogChargeItems.reduce(
         (sum, item) => sum + (item?.priceAmount || 0) * (item?.quantity || 1),
@@ -162,9 +163,10 @@ export class PaymentService {
           quantity: chargeItem.quantity,
         })),
       },
-      expires_at: new Date(),
-      request_id: '',
+      expiresAt: new Date(),
+      requestId: '',
     }
+
     return await this.paymentModel.create(paymentModel)
   }
 

@@ -1,4 +1,8 @@
-import { CreationOptional } from 'sequelize'
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 import {
   Column,
   CreatedAt,
@@ -11,14 +15,17 @@ import {
 import { Application } from '../applications/models/application.model'
 
 @Table({ tableName: 'payment' })
-export class Payment extends Model<Payment> {
+export class Payment extends Model<
+  InferAttributes<Payment>,
+  InferCreationAttributes<Payment>
+> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @CreatedAt
   created!: CreationOptional<Date>
@@ -31,11 +38,12 @@ export class Payment extends Model<Payment> {
     allowNull: false,
     defaultValue: false,
   })
-  fulfilled!: boolean
+  fulfilled!: CreationOptional<boolean>
 
   @Column({
     type: DataType.UUID,
     allowNull: true,
+    field: 'reference_id',
   })
   referenceId?: string
 
@@ -49,7 +57,7 @@ export class Payment extends Model<Payment> {
     type: DataType.JSONB,
     defaultValue: {},
   })
-  definition?: object
+  definition!: CreationOptional<object>
 
   @Column({
     type: DataType.STRING,
@@ -59,12 +67,14 @@ export class Payment extends Model<Payment> {
 
   @Column({
     type: DataType.DATE,
+    field: 'expires_at',
   })
   expiresAt!: Date
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
+    field: 'request_id',
   })
   requestId?: string
 

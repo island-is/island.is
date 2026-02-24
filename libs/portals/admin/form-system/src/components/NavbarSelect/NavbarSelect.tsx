@@ -35,6 +35,11 @@ export const NavbarSelect = () => {
   const { sections, screens, fields } = form
   let selectable = false
 
+  const paymentSection = sections?.find(
+    (s): s is FormSystemSection =>
+      !!s && s.sectionType === SectionTypes.PAYMENT,
+  )
+
   const renderFieldsForScreen = (screen: Maybe<FormSystemScreen>) => {
     return fields
       ?.filter((field) => field?.screenId === screen?.id)
@@ -75,20 +80,34 @@ export const NavbarSelect = () => {
       ))
   }
 
-  const renderSections = () => {
-    return filterSections(sections).map((section) => (
-      <Box key={section.id}>
-        <SelectNavComponent
-          type="Section"
-          data={section}
-          active={activeItem?.data?.id === section.id}
-          selectable={selectable}
-        />
-        {openComponents.sections.includes(section.id) &&
-          renderScreensForSection(section)}
+  return (
+    <>
+      <Box style={{ flex: 1, overflowY: 'auto', paddingBottom: '1rem' }}>
+        {filterSections(sections).map((section) => (
+          <Box key={section.id}>
+            <SelectNavComponent
+              type="Section"
+              data={section}
+              active={activeItem?.data?.id === section.id}
+              selectable={selectable}
+            />
+            {openComponents.sections.includes(section.id) &&
+              renderScreensForSection(section)}
+          </Box>
+        ))}
       </Box>
-    ))
-  }
 
-  return <>{renderSections()}</>
+      {form.hasPayment && paymentSection ? (
+        <Box>
+          <SelectNavComponent
+            type="Section"
+            data={paymentSection}
+            active={activeItem?.data?.id === paymentSection.id}
+            selectable={selectable}
+          />
+          {renderScreensForSection(paymentSection)}
+        </Box>
+      ) : null}
+    </>
+  )
 }

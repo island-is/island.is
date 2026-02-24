@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client'
+import { FormSystemScreen } from '@island.is/api/schema'
 import {
   DELETE_FIELD,
   DELETE_SCREEN,
@@ -17,15 +18,22 @@ import * as styles from './MainColumn.css'
 export const MainContentColumn = () => {
   const { control, controlDispatch, inSettings } = useContext(ControlContext)
   const { activeItem, form } = control
-  const { screens, fields } = form
+  const { sections, screens, fields } = form
   const { type } = activeItem
   const { formatMessage } = useIntl()
   const deleteScreen = useMutation(DELETE_SCREEN)
   const deleteField = useMutation(DELETE_FIELD)
   const deleteSection = useMutation(DELETE_SECTION)
-  const partiesSection =
+  const staticSection =
     activeItem.type === 'Section' &&
-    (activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES'
+    ((activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES' ||
+      (activeItem.data as { sectionType?: string })?.sectionType === 'PAYMENT')
+  const staticScreen =
+    activeItem.type === 'Screen' &&
+    sections?.find(
+      (section) =>
+        section?.id === (activeItem?.data as FormSystemScreen)?.sectionId,
+    )?.sectionType === 'PAYMENT'
 
   const containsGroupOrInput = (): boolean => {
     if (type === 'Section') {
@@ -81,7 +89,7 @@ export const MainContentColumn = () => {
 
   return (
     <Box className={cn(styles.mainColumn)} padding={2}>
-      {!inSettings && !partiesSection ? (
+      {!inSettings && !staticSection && !staticScreen ? (
         containsGroupOrInput() ? (
           <DialogPrompt
             baseId="remove"

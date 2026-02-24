@@ -18,7 +18,7 @@ export const NavButtons = ({ id, type }: Props) => {
   const { control, controlDispatch, setOpenComponents } =
     useContext(ControlContext)
   const { form } = control
-  const { screens, fields } = form
+  const { sections, screens, fields } = form
   const { formatMessage } = useIntl()
 
   const hoverText =
@@ -28,6 +28,19 @@ export const NavButtons = ({ id, type }: Props) => {
 
   const createScreen = useMutation(CREATE_SCREEN)
   const createField = useMutation(CREATE_FIELD)
+
+  const isPayment = (screenId: string) => {
+    const screen = screens?.find((screen) => screen?.id === screenId)
+    if (screen) {
+      const section = sections?.find(
+        (section) => section?.id === screen.sectionId,
+      )
+      if (section) {
+        return section.sectionType === 'PAYMENT'
+      }
+    }
+    return false
+  }
 
   const addItem = async () => {
     if (type === 'Section') {
@@ -63,7 +76,9 @@ export const NavButtons = ({ id, type }: Props) => {
           input: {
             createFieldDto: {
               screenId: id,
-              fieldType: FieldTypesEnum.TEXTBOX,
+              fieldType: isPayment(id)
+                ? FieldTypesEnum.PAYMENT
+                : FieldTypesEnum.TEXTBOX,
               displayOrder: fields?.length ?? 0,
             },
           },

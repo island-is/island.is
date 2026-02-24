@@ -50,7 +50,10 @@ type ScreenActions =
 type FieldActions =
   | {
       type: 'ADD_FIELD'
-      payload: { field: FormSystemField; isApplicant?: boolean }
+      payload: {
+        field: FormSystemField
+        isApplicant?: boolean
+      }
     }
   | { type: 'REMOVE_FIELD'; payload: { id: string; isApplicant?: boolean } }
   | {
@@ -414,24 +417,26 @@ export const controlReducer = (
 
     // Fields
     case 'ADD_FIELD': {
-      if (action.payload.isApplicant) {
+      const { field, isApplicant } = action.payload
+      if (isApplicant) {
         return {
           ...state,
           form: {
             ...form,
-            fields: [...(fields || []), action.payload.field],
+            fields: [...(fields || []), field],
           },
         }
       }
+
       return {
         ...state,
         activeItem: {
           type: 'Field',
-          data: action.payload.field,
+          data: field,
         },
         form: {
           ...form,
-          fields: [...(fields || []), action.payload.field],
+          fields: [...(fields || []), field],
         },
       }
     }
