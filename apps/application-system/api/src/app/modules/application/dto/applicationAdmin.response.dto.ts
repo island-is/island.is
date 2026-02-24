@@ -137,5 +137,5 @@ export class ApplicationInstitution {
   @ApiProperty()
   @Expose()
   @IsString()
-  contentfulId!: string
+  contentfulSlug!: string
 }
