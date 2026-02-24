@@ -16,7 +16,7 @@ import { useLocale } from '@/hooks/use-locale'
 import { VaccinationsCard } from '../../../../components/vaccination-card'
 
 const Host = styled(SafeAreaView)`
-  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[4]}px;
 `
 

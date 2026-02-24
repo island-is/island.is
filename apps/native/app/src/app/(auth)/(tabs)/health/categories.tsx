@@ -46,16 +46,31 @@ export default function HealthCategoriesScreen() {
   const intl = useIntl()
   const origin = getConfig().apiUrl.replace(/\/api$/, '')
 
-  const isVaccinationsEnabled =
-    true || useFeatureFlag('isVaccinationsEnabled', false, null)
-  const isPrescriptionsEnabled =
-    true || useFeatureFlag('isPrescriptionsEnabled', false, null)
-  const isMedicineDelegationEnabled =
-    true || useFeatureFlag('isMedicineDelegationEnabled', false, null)
-  const isQuestionnaireFeatureEnabled =
-    true || useFeatureFlag('isQuestionnaireEnabled', false, null)
-  const isAppointmentsEnabled =
-    true || useFeatureFlag('isAppointmentsEnabled', false, null)
+  const isVaccinationsEnabled = useFeatureFlag(
+    'isVaccinationsEnabled',
+    false,
+    null,
+  )
+  const isPrescriptionsEnabled = useFeatureFlag(
+    'isPrescriptionsEnabled',
+    false,
+    null,
+  )
+  const isMedicineDelegationEnabled = useFeatureFlag(
+    'isMedicineDelegationEnabled',
+    false,
+    null,
+  )
+  const isQuestionnaireFeatureEnabled = useFeatureFlag(
+    'isQuestionnaireEnabled',
+    false,
+    null,
+  )
+  const isAppointmentsEnabled = useFeatureFlag(
+    'isAppointmentsEnabled',
+    false,
+    null,
+  )
 
   const healthCardRows = useMemo(() => {
     // Build the medicine subLinks based on feature flags
@@ -160,36 +175,34 @@ export default function HealthCategoriesScreen() {
   ]
 
   return (
-    <Container>
-      <ScrollView>
-        <ContentContainer>
-          <CategoriesContainer>
-            {healthCardRows.map((hc) => (
-              <LinkRowButton
-                key={hc.id}
-                link={{
-                  link: hc.route,
-                  title: intl.formatMessage({ id: hc.titleId }),
-                  icon: hc.icon,
-                }}
-                subLinks={hc.subLinks?.map((subLink) => ({
-                  link: subLink.route,
-                  title: intl.formatMessage({ id: subLink.titleId }),
-                  isExternal: false,
-                  tabId: subLink.id,
-                }))}
-              />
-            ))}
-          </CategoriesContainer>
-          <MoreInfoContiner
-            externalLinks={externalLinks.map((link) => ({
-              link: link.url,
-              title: intl.formatMessage({ id: link.titleId }),
-              isExternal: true,
-            }))}
-          />
-        </ContentContainer>
-      </ScrollView>
-    </Container>
+    <ScrollView style={{flex: 1}}>
+      <ContentContainer>
+        <CategoriesContainer>
+          {healthCardRows.map((hc) => (
+            <LinkRowButton
+              key={hc.id}
+              link={{
+                link: hc.route,
+                title: intl.formatMessage({ id: hc.titleId }),
+                icon: hc.icon,
+              }}
+              subLinks={hc.subLinks?.map((subLink) => ({
+                link: subLink.route,
+                title: intl.formatMessage({ id: subLink.titleId }),
+                isExternal: false,
+                tabId: subLink.id,
+              }))}
+            />
+          ))}
+        </CategoriesContainer>
+        <MoreInfoContiner
+          externalLinks={externalLinks.map((link) => ({
+            link: link.url,
+            title: intl.formatMessage({ id: link.titleId }),
+            isExternal: true,
+          }))}
+        />
+      </ContentContainer>
+    </ScrollView>
   )
 }

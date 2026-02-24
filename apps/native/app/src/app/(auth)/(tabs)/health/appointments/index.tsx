@@ -10,7 +10,7 @@ import { GeneralCardSkeleton, Problem, Typography } from '@/ui'
 import { AppointmentCard } from '../../../../../components/appointment-card'
 
 const Host = styled(SafeAreaView)`
-  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[4]}px;
 `
 

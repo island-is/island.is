@@ -26,7 +26,8 @@ type ActiveTabData = HealthDirectorateMedicineHistoryItem[] &
   RightsPortalDrugCertificate[]
 
 const Host = styled(SafeAreaView)`
-  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  margin-left: ${({ theme }) => theme.spacing[2]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[4]}px;
 `
 

@@ -1,11 +1,9 @@
-# New todo
+# Todo list
 
-- Offline toasts were using react native navigation. we need to migrate
+- [ ] Offline toasts migration from RNN.
 
 
-# Expo Router Migration TODO
-# [x] = migrated, [ ] = TODO
-# 64 done / ~6 remaining
+## Routes
 
 # New structure                                              # Old screen source
 
