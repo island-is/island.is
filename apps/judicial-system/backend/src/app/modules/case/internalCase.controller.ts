@@ -33,6 +33,7 @@ import { Case } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
+import { InternalCreateCaseV2Dto } from './dto/internalCreateCaseV2.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
 import { CaseExistsGuard } from './guards/caseExists.guard'
@@ -68,6 +69,24 @@ export class InternalCaseController {
     )
 
     this.eventService.postEvent('CREATE_XRD', createdCase as Case)
+
+    return createdCase
+  }
+
+  @UseInterceptors(CaseInterceptor)
+  @Post('case/v2')
+  @ApiCreatedResponse({
+    type: Case,
+    description: 'Creates a new case (v2, accused fetched separately)',
+  })
+  async createV2(@Body() caseToCreate: InternalCreateCaseV2Dto): Promise<Case> {
+    this.logger.debug('Creating a new case (v2)')
+
+    const createdCase = await this.sequelize.transaction((transaction) =>
+      this.internalCaseService.createV2(caseToCreate, transaction),
+    )
+
+    this.eventService.postEvent('CREATE_XRD', createdCase)
 
     return createdCase
   }
