@@ -370,8 +370,8 @@ export default function HealthOverviewScreen() {
 
   const handleAppointmentPress = useCallback(
     (appointmentId: string) => {
-      router.push({
-        pathname: '/(auth)/(tabs)/health/appointments',
+      router.navigate({
+        pathname: '/health/appointments',
         params: { appointmentId },
       })
     },

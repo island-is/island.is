@@ -481,7 +481,7 @@ export default function InboxScreen() {
                         availableSenders,
                         availableCategories,
                       })
-                      router.push('/(auth)/(tabs)/inbox/filter')
+                      router.push('/inbox/filter')
                     }}
                   />
                   <Button

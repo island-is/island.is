@@ -25,7 +25,7 @@ export default function MoreLayout() {
               ? () => (
                   <TouchableOpacity
                     onPress={() => {
-                      router.push('/settings')
+                      router.navigate('/settings')
                     }}
                   >
                     <Icon

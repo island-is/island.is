@@ -80,7 +80,7 @@ export default function EditPhoneScreen() {
         })
         if (res.data) {
           router.push({
-            pathname: '/(auth)/(modals)/edit-confirm',
+            pathname: '/edit-confirm',
             params: {
               type: 'phone',
               phone: `+354-${text.replace(/-/g, '')}`,

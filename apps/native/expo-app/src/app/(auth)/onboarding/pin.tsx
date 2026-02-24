@@ -54,8 +54,8 @@ export default function PinScreen() {
     if (code.length === MAX_PIN_CHARS) {
       setTimeout(() => {
         setCode('')
-        router.push({
-          pathname: '/(auth)/onboarding/confirm-pin',
+        router.navigate({
+          pathname: '/onboarding/confirm-pin',
           params: { confirmPin: code },
         })
       }, 110)

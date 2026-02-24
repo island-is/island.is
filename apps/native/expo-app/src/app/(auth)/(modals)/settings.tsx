@@ -259,7 +259,7 @@ export default function SettingsScreen() {
           subtitle={userProfile.data?.getUserProfile?.mobilePhoneNumber ?? '-'}
           accessory={
             <TouchableOpacity
-              onPress={() => router.push('/(auth)/(modals)/edit-phone')}
+              onPress={() => router.navigate('/edit-phone')}
               style={{
                 paddingLeft: 16,
                 paddingBottom: 10,
@@ -280,7 +280,7 @@ export default function SettingsScreen() {
           subtitle={userProfile.data?.getUserProfile?.email ?? '-'}
           accessory={
             <TouchableOpacity
-              onPress={() => router.push('/(auth)/(modals)/edit-email')}
+              onPress={() => router.navigate('/edit-email')}
               style={{
                 paddingLeft: 16,
                 paddingBottom: 10,
@@ -303,7 +303,7 @@ export default function SettingsScreen() {
           subtitle={userProfile.data?.getUserProfile?.bankInfo ?? '-'}
           accessory={
             <TouchableOpacity
-              onPress={() => router.push('/(auth)/(modals)/edit-bank-info')}
+              onPress={() => router.navigate('/edit-bank-info')}
               style={{
                 paddingLeft: 16,
                 paddingBottom: 10,
@@ -384,7 +384,7 @@ export default function SettingsScreen() {
         header={intl.formatMessage({ id: 'settings.security.groupTitle' })}
       >
         <PressableHighlight
-          onPress={() => router.push('/(auth)/onboarding/pin')}
+          onPress={() => router.navigate('/onboarding/pin')}
         >
           <TableViewCell
             title={intl.formatMessage({
@@ -454,7 +454,7 @@ export default function SettingsScreen() {
             onPress={() => {
               hasCreatedPasskey
                 ? onRemovePasskeyPress()
-                : router.push('/(auth)/passkey' as any)
+                : router.navigate('/passkey')
             }}
           >
             <TableViewCell

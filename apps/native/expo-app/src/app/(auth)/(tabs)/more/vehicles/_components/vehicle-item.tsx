@@ -51,8 +51,11 @@ export const VehicleItem = React.memo(
             theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
           }
           onPress={() => {
-            router.push({
-              pathname: '/(auth)/(tabs)/more/vehicles/[id]',
+            if (!item.permno) {
+              return;
+            }
+            router.navigate({
+              pathname: '/more/vehicles/[id]',
               params: { id: item.permno, title: item.make },
             })
           }}

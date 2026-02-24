@@ -223,8 +223,8 @@ export function FinanceStatusCard({
                       index % 2 === 0 ? theme.color.blue100 : theme.color.white,
                   }}
                   onPress={() => {
-                    router.push({
-                      pathname: '/(auth)/(tabs)/more/finance/status/[orgId]/[chargeTypeId]',
+                    router.navigate({
+                      pathname: '/more/finance/status/[orgId]/[chargeTypeId]',
                       params: {
                         orgId: org.id,
                         chargeTypeId: chargeType.id,

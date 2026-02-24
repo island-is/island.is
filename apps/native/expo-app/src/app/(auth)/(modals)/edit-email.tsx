@@ -61,7 +61,7 @@ export default function EditEmailScreen() {
         })
         if (res.data) {
           router.push({
-            pathname: '/(auth)/(modals)/edit-confirm',
+            pathname: '/edit-confirm',
             params: {
               type: 'email',
               email: text,

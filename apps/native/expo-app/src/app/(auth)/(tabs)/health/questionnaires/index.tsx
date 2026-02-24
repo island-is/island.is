@@ -105,8 +105,8 @@ export default function QuestionnairesScreen() {
 
   const openDetail = useCallback(
     (id: string, organization?: QuestionnaireQuestionnairesOrganizationEnum) => {
-      router.push({
-        pathname: '/(auth)/(tabs)/health/questionnaires/[id]',
+      router.navigate({
+        pathname: '/health/questionnaires/[id]',
         params: { id, organization },
       })
     },

@@ -282,7 +282,7 @@ export default function NotificationsScreen() {
                     id: 'notifications.settings',
                     defaultMessage: 'Mínar stillingar',
                   })}
-                  onPress={() => router.push('/(auth)/(modals)/settings')}
+                  onPress={() => router.navigate('/settings')}
                   icon={settings}
                   style={{
                     maxWidth: 145,

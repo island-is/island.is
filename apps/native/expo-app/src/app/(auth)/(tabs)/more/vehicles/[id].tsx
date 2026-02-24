@@ -77,8 +77,8 @@ export default function VehicleDetailScreen() {
                 icon={require('@/assets/icons/edit.png')}
                 isUtilityButton
                 onPress={() => {
-                  router.push({
-                    pathname: '/(auth)/(tabs)/more/vehicles/mileage/[id]',
+                  router.navigate({
+                    pathname: '/more/vehicles/mileage/[id]',
                     params: {
                       id,
                       vehicleType: title ?? '',

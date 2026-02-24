@@ -95,7 +95,7 @@ export default function DocumentReplyScreen() {
 
   const onSendPress = () => {
     if (!userProfile?.email) {
-      router.push('/(auth)/(modals)/edit-email')
+      router.navigate('/edit-email')
       return
     }
 
@@ -113,13 +113,13 @@ export default function DocumentReplyScreen() {
   }
 
   const onEmailPress = () => {
-    router.push('/(auth)/(modals)/settings')
+    router.navigate('/settings')
   }
 
   useEffect(() => {
     if (!userProfile?.email && !hasShownModal) {
       setHasShownModal(true)
-      router.push('/(auth)/(modals)/edit-email')
+      router.navigate('/edit-email')
     }
   }, [userProfile, hasShownModal])
 

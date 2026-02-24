@@ -17,13 +17,13 @@ import { getApplicationType } from '../_utils/get-application-type'
 import { getBadgeVariant } from '../_utils/get-badge-variant'
 import { useBrowser } from '@/lib/use-browser'
 import { getApplicationUrl } from '@/utils/applications-utils'
-import { useRouter } from 'expo-router'
+import { Href, useRouter } from 'expo-router'
 import { screenWidth } from '@/utils/dimensions'
 
 interface ApplicationsPreviewProps {
   applications: Application[]
   headingTitleId: string
-  headingTitleNavigationLink: string
+  headingTitleNavigationLink: Href
   numberOfItems?: number
   slider?: boolean
 }
@@ -131,14 +131,14 @@ export const ApplicationsPreview = ({
       {applications.length > 0 ? (
         <TouchableOpacity
           disabled={applications.length <= numberOfItems}
-          onPress={() => router.push(headingTitleNavigationLink as any)}
+          onPress={() => router.navigate(headingTitleNavigationLink)}
           style={{ marginHorizontal: theme.spacing[2] }}
         >
           <Heading
             button={
               applications.length > numberOfItems ? (
                 <TouchableOpacity
-                  onPress={() => router.push(headingTitleNavigationLink as any)}
+                  onPress={() => router.navigate(headingTitleNavigationLink)}
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',

@@ -113,7 +113,7 @@ export function MedicineDelegationContent({
             id: 'health.medicineDelegation.addButton',
           })}
           onPress={() =>
-            router.push('/(auth)/(tabs)/health/medicine/delegation/add')
+            router.navigate('/health/medicine/delegation/add')
           }
           icon={plusIcon}
           iconStyle={{
@@ -140,8 +140,8 @@ export function MedicineDelegationContent({
             <Card
               key={`${delegation.cacheId}-${index}`}
               onPress={() => {
-                router.push({
-                  pathname: '/(auth)/(tabs)/health/medicine/delegation/[id]',
+                router.navigate({
+                  pathname: '/health/medicine/delegation/[id]',
                   params: {
                     id: delegation.cacheId,
                     name: delegation.name ?? '',
