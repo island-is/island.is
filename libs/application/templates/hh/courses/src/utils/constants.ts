@@ -17,6 +17,7 @@ export enum Roles {
 
 export enum ApiActions {
   submitApplication = 'submitApplication',
+  checkParticipantAvailability = 'checkParticipantAvailability',
 }
 
 export enum IndividualOrCompany {
