@@ -161,9 +161,7 @@ describe('HTTPRoute definitions', () => {
 
     expect(result.serviceDef[0].httpRoute).toEqual({
       'primary-gw': {
-        parentRefs: [
-          { name: 'gateway-internal', namespace: 'gateway-system' },
-        ],
+        parentRefs: [{ name: 'gateway-internal', namespace: 'gateway-system' }],
         hostnames: ['007.internal.staging01.devland.is'],
         rules: [
           {
@@ -202,9 +200,7 @@ describe('HTTPRoute definitions', () => {
         rules: [{ matches: [{ pathPrefix: '/api' }] }],
       },
       'internal-gw': {
-        parentRefs: [
-          { name: 'gateway-internal', namespace: 'gateway-system' },
-        ],
+        parentRefs: [{ name: 'gateway-internal', namespace: 'gateway-system' }],
         hostnames: ['b.internal.staging01.devland.is'],
         rules: [{ matches: [{ pathPrefix: '/' }] }],
       },
@@ -325,9 +321,7 @@ describe('HTTPRoute definitions', () => {
     expect(result.serviceDef[0].ingress).toBeDefined()
     expect(result.serviceDef[0].httpRoute).toBeDefined()
     expect(Object.keys(result.serviceDef[0].ingress!)).toEqual(['primary-alb'])
-    expect(Object.keys(result.serviceDef[0].httpRoute!)).toEqual([
-      'primary-gw',
-    ])
+    expect(Object.keys(result.serviceDef[0].httpRoute!)).toEqual(['primary-gw'])
   })
 
   it('no httpRoute when no ingress defined', async () => {
