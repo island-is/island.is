@@ -39,14 +39,7 @@ export class SmsWorkerService {
 
       this.logger.info('SMS worker received message', { messageId })
 
-      try {
-        await this.smsService.sendSms(mobilePhoneNumber, smsContent)
-      } catch (error) {
-        this.logger.error('Error sending SMS', {
-          error,
-          messageId,
-        })
-      }
+      await this.smsService.sendSms(mobilePhoneNumber, smsContent)
 
       this.logger.info('SMS notification sent', { messageId })
 

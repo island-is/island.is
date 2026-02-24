@@ -37,5 +37,8 @@ module.exports = {
 
   async down(queryInterface) {
     await queryInterface.dropTable('notification_delivery')
+    await queryInterface.sequelize.query(
+      'DROP TYPE IF EXISTS "enum_notification_delivery_channel";',
+    )
   },
 }
