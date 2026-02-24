@@ -43,16 +43,19 @@ const createSmsContent = ({
   fullName,
   onBehalfOf,
   template,
+  isEnglish,
 }: {
   fullName: string
   onBehalfOf?: string
   template: HnippTemplate
+  isEnglish: boolean
 }): string => {
+  const linkText = isEnglish ? 'View on Island.is' : 'Skoda a Island.is'
   return `${fullName}${onBehalfOf ? ` (${onBehalfOf})` : ''}: ${
     template.title
-  }\n\n${template.externalBody}\n\n${
+  }\n\n${template.externalBody}${
     template.clickActionUrl
-      ? `Skoda a Island.is: \n\n${template.clickActionUrl}`
+      ? `\n\n${linkText}: \n\n${template.clickActionUrl}`
       : ''
   }
     `.trim()
@@ -184,6 +187,7 @@ export class NotificationsWorkerService {
         smsNotifications: delegateProfile?.smsNotifications,
         formattedTemplate,
         onBehalfOfNationalId: args.onBehalfOf?.nationalId,
+        locale,
       }),
     ])
 
@@ -342,6 +346,7 @@ export class NotificationsWorkerService {
           smsNotifications: userProfile.smsNotifications,
           formattedTemplate,
           onBehalfOfNationalId: message.onBehalfOf?.nationalId,
+          locale,
         }),
       ])
     }
@@ -443,6 +448,7 @@ export class NotificationsWorkerService {
     smsNotifications,
     formattedTemplate,
     onBehalfOfNationalId,
+    locale,
   }: {
     messageId: string
     nationalId: string
@@ -450,6 +456,7 @@ export class NotificationsWorkerService {
     smsNotifications?: boolean | null
     formattedTemplate: HnippTemplate
     onBehalfOfNationalId?: string
+    locale: Locale
   }): Promise<Omit<SmsQueueMessage, 'notificationId'> | null> {
     const enabled = await this.featureFlagService.getValue(
       Features.isSendSmsNotificationsEnabled,
@@ -508,6 +515,7 @@ export class NotificationsWorkerService {
         fullName,
         onBehalfOf,
         template: formattedTemplate,
+        isEnglish: locale === 'en',
       }),
     }
   }
