@@ -1,9 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
-import useSWR from 'swr'
+import { useEffect, useState } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
-import { errors } from '@island.is/judicial-system-web/messages'
 import {
   NationalRegistryResponseBusiness,
   NationalRegistryResponsePerson,
@@ -20,7 +17,9 @@ const useNationalRegistry = (nationalId?: string | null) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
-    if (!nationalId) {
+    const isValidNationalId = validate([[nationalId, ['national-id']]]).isValid
+
+    if (!nationalId || !isValidNationalId) {
       setIsLoading(false)
       return
     }
@@ -39,6 +38,7 @@ const useNationalRegistry = (nationalId?: string | null) => {
       .catch((e) => {
         if (e.name !== 'AbortError') {
           setError(e instanceof Error ? e : new Error('Unknown error'))
+          toast.error('Upp kom villa við að sækja gögn frá Þjóðskrá')
         }
       })
       .finally(() => {

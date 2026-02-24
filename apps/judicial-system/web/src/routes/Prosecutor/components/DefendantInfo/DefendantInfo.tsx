@@ -56,8 +56,9 @@ const DefendantInfo: FC<Props> = (props) => {
     updateDefendantState,
   } = props
   const { formatMessage } = useIntl()
-  const { personData, businessData, personError, businessError } =
-    useNationalRegistry(defendant.nationalId)
+  const { personData, businessData, error } = useNationalRegistry(
+    defendant.nationalId,
+  )
 
   const genderOptions: ReactSelectOption[] = [
     { label: formatMessage(core.male), value: Gender.MALE },
@@ -84,7 +85,7 @@ const DefendantInfo: FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    if (personError || (personData && personData.items?.length === 0)) {
+    if (error || (personData && personData.items?.length === 0)) {
       setNationalIdNotFound(true)
       return
     }
@@ -104,10 +105,10 @@ const DefendantInfo: FC<Props> = (props) => {
     }
     // We only want this to run when a lookup is done in the national registry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personData, personError])
+  }, [personData, error])
 
   useEffect(() => {
-    if (businessError || (businessData && businessData.items?.length === 0)) {
+    if (error || (businessData && businessData.items?.length === 0)) {
       setNationalIdNotFound(true)
       return
     }
@@ -127,7 +128,7 @@ const DefendantInfo: FC<Props> = (props) => {
     }
     // We only want this to run when a lookup is done in the national registry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [businessData, businessError])
+  }, [businessData, error])
 
   return (
     <BlueBox className={grid({ gap: 2 })}>

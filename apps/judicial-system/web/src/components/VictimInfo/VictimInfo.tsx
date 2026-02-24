@@ -43,9 +43,7 @@ export const VictimInfo: React.FC<Props> = ({
     string | null
   >(null)
   const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
-  const { personData, personLoading } = useNationalRegistry(
-    victimNationalIdUpdate,
-  )
+  const { personData, isLoading } = useNationalRegistry(victimNationalIdUpdate)
 
   const handleNationalIdBlur = (nationalId: string) => {
     const normalizedNationalId = normalizeAndFormatNationalId(nationalId)[0]
@@ -59,7 +57,7 @@ export const VictimInfo: React.FC<Props> = ({
 
       const items = personData?.items || []
       const person = items[0]
-      setNationalIdNotFound(!personLoading && items.length === 0)
+      setNationalIdNotFound(!isLoading && items.length === 0)
 
       updateVictimAndSetState(
         {
@@ -72,7 +70,7 @@ export const VictimInfo: React.FC<Props> = ({
       )
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [personData, personLoading],
+    [personData, isLoading],
   )
 
   return (
@@ -93,7 +91,7 @@ export const VictimInfo: React.FC<Props> = ({
           <Box marginBottom={2}>
             <Checkbox
               name={`hasNationalId-${victim.id}`}
-              label={'Brotaþoli er ekki með íslenska kennitölu'}
+              label="Brotaþoli er ekki með íslenska kennitölu"
               checked={victim.hasNationalId === false}
               onChange={(event) => {
                 setVictimNationalIdUpdate(null)
@@ -112,7 +110,6 @@ export const VictimInfo: React.FC<Props> = ({
               large
             />
           </Box>
-
           <Box marginBottom={2}>
             <Box marginBottom={2}>
               <InputNationalId
@@ -130,7 +127,7 @@ export const VictimInfo: React.FC<Props> = ({
               />
               {victim.nationalId?.length === 10 &&
                 nationalIdNotFound &&
-                !personLoading && (
+                !isLoading && (
                   <Text color="red600" variant="eyebrow" marginTop={1}>
                     Ekki tókst að fletta upp kennitölu
                   </Text>
