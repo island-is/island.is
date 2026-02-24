@@ -18,6 +18,7 @@ export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
 export {
   default as ContextMenu,
   type ContextMenuItem,
+  type ContextMenuPlacement,
 } from './ContextMenu/ContextMenu'
 export { useOpenCaseInNewTab } from './ContextMenu/ContextMenuItems/OpenCaseInNewTab'
 export { useDeleteCase } from './ContextMenu/ContextMenuItems/DeleteCase'
