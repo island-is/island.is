@@ -6,7 +6,7 @@ import styled from 'styled-components/native'
 
 import { useGetMedicineDelegationsLazyQuery } from '@/graphql/types/schema'
 import { GeneralCardSkeleton } from '@/ui'
-import { MedicineDelegationContent } from '@/screens/medicine-delegation/medicine-delegation-content'
+import { MedicineDelegationContent } from '../_components/medicine-delegation-content'
 
 const Host = styled.View`
   flex: 1;

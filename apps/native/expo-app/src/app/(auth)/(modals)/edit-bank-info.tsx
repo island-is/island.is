@@ -7,7 +7,7 @@ import { Button, NavigationBarSheet, TextField, Typography } from '@/ui'
 import { useGetProfileQuery } from '@/graphql/types/schema'
 import { bankInfoObject, stringifyBankData } from '@/lib/bank-info-helper'
 import { testIDs } from '@/utils/test-ids'
-import { useUpdateUserProfile } from '@/screens/settings/utils/profile-queries'
+import { useUpdateUserProfile } from './_hooks/use-update-user-profile'
 
 export default function EditBankInfoScreen() {
   const intl = useIntl()

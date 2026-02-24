@@ -24,8 +24,8 @@ import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import {
   DocumentListItem,
   TOGGLE_ANIMATION_DURATION,
-} from '@/screens/document-detail/components/document-list-item'
-import { ButtonDrawer } from '@/screens/document-detail/components/button-drawer'
+} from './_components/document-list-item'
+import { ButtonDrawer } from './_components/button-drawer'
 
 type FlatListItem = DocumentComment | { __typename: 'Skeleton'; id: string }
 

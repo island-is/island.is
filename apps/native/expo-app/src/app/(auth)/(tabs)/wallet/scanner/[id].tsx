@@ -4,7 +4,7 @@ import styled from 'styled-components/native'
 
 import { ScanResultCard, SupportedGenericLicenseTypes } from '@/ui'
 import { VerifyLicenseBarcodeError } from '@/graphql/types/schema'
-import { getScanResult } from '@/screens/license-scanner/scan-result-store'
+import { getScanResult } from '../_stores/scan-result-store'
 
 const Host = styled.View`
   flex: 1;

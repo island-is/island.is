@@ -12,13 +12,25 @@ import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
-import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
 import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
 import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
 import { getCustomUserAgent } from '../utils/user-agent'
 import { GenericUserLicense } from './types/schema'
+
+export function cognitoAuthUrl() {
+  const url = `https://cognito.shared.devland.is/login`
+  const params = {
+    approval_prompt: 'prompt',
+    client_id: 'bre6r7d5e7imkcgbt7et1kqlc',
+    redirect_uri: `${config.bundleId}://cognito`,
+    response_type: 'token',
+    scope: 'openid',
+    state: 'state',
+  }
+  return `${url}?${new URLSearchParams(params)}`
+}
 
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
 

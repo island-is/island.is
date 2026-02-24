@@ -40,12 +40,12 @@ import {
 } from '@/ui'
 import { isAndroid, isIos, isIosLiquidGlassEnabled } from '@/utils/devices'
 import { screenWidth } from '@/utils/dimensions'
-import { FieldRender } from '@/screens/wallet-pass/components/field-render'
+import { FieldRender } from '../_components/field-render'
 import {
   BARCODE_MAX_WIDTH,
   INFORMATION_BASE_TOP_SPACING,
   SHOW_INFO_ALERT_TYPES,
-} from '@/screens/wallet-pass/wallet-pass.constants'
+} from '../../_constants/wallet-pass.constants'
 
 const CARD_HEIGHT = 96
 

@@ -19,7 +19,7 @@ import {
   Problem,
   Typography,
 } from '@/ui'
-import { formatAppointmentDate } from '@/screens/appointments/formatAppointmentDate'
+import { formatAppointmentDate } from '../_utils/format-appointment-date'
 
 const HeaderContainer = styled.View`
   padding: ${({ theme }) => theme.spacing[2]}px;

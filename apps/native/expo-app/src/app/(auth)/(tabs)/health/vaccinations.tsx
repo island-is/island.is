@@ -13,7 +13,7 @@ import {
 } from '@/ui'
 import { useGetVaccinationsQuery } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
-import { VaccinationsCard } from '@/screens/vaccinations/components/vaccination-card'
+import { VaccinationsCard } from './_components/vaccination-card'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;

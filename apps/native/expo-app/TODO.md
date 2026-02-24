@@ -42,9 +42,9 @@
   │       │
   │       ├── inbox/
   │       │   ├── [x] _layout.tsx                              # Inbox stack layout
-  │       │   ├── [ ] index.tsx                                # /screens/inbox/inbox.tsx (InboxScreen)
-  │       │   ├── [/] [id].tsx                                 # /screens/document-detail/document-detail.tsx (DocumentDetailScreen)
-  │       │   ├── [ ] filter.tsx                               # /screens/inbox/inbox-filter.tsx (InboxFilterScreen)
+  │       │   ├── [x] index.tsx                                # /screens/inbox/inbox.tsx (InboxScreen)
+  │       │   ├── [x] [id].tsx                                 # /screens/document-detail/document-detail.tsx (DocumentDetailScreen)
+  │       │   ├── [x] filter.tsx                               # /screens/inbox/inbox-filter.tsx (InboxFilterScreen)
   │       │   ├── [x] [id]/communications.tsx                  # /screens/document-detail/document-communications.tsx (DocumentCommunicationsScreen)
   │       │   └── [x] [id]/reply.tsx                           # /screens/document-detail/document-reply.tsx (DocumentReplyScreen)
   │       │

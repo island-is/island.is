@@ -36,10 +36,10 @@ import {
 } from '@/ui'
 import { isAndroid } from '@/utils/devices'
 import { testIDs } from '@/utils/test-ids'
-import { ActionBar } from '@/screens/inbox/components/action-bar'
-import { PressableListItem } from '@/screens/inbox/components/pressable-list-item'
-import { Toast, ToastVariant } from '@/screens/inbox/components/toast'
-import { normalizesFilters } from '@/screens/inbox/utils/inbox-filters'
+import { ActionBar } from './_components/action-bar'
+import { PressableListItem } from './_components/pressable-list-item'
+import { Toast, ToastVariant } from './_components/toast'
+import { normalizesFilters } from './_utils/inbox-filters'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }

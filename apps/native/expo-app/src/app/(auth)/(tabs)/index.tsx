@@ -27,30 +27,30 @@ import {
   AirDiscountModule,
   useGetAirDiscountQuery,
   validateAirDiscountInitialData,
-} from '@/screens/home/air-discount-module'
+} from './_components/home/air-discount-module'
 import {
   ApplicationsModule,
   useListApplicationsQuery,
   validateApplicationsInitialData,
-} from '@/screens/home/applications-module'
-import { HelloModule } from '@/screens/home/hello-module'
+} from './_components/home/applications-module'
+import { HelloModule } from './_components/home/hello-module'
 import {
   InboxModule,
   useListDocumentsQuery,
   validateInboxInitialData,
-} from '@/screens/home/inbox-module'
+} from './_components/home/inbox-module'
 import {
   LicensesModule,
   useListLicensesQuery,
   validateLicensesInitialData,
-} from '@/screens/home/licenses-module'
-import { OnboardingModule } from '@/screens/home/onboarding-module'
+} from './_components/home/licenses-module'
+import { OnboardingModule } from './_components/home/onboarding-module'
 import {
   useListVehiclesV2Query,
   validateVehiclesInitialData,
   VehiclesModule,
-} from '@/screens/home/vehicles-module'
-import { INCLUDED_LICENSE_TYPES } from '@/screens/wallet-pass/wallet-pass.constants'
+} from './_components/home/vehicles-module'
+import { INCLUDED_LICENSE_TYPES } from './_constants/wallet-pass.constants'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { GenericLicenseType, useGetProfileQuery } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'

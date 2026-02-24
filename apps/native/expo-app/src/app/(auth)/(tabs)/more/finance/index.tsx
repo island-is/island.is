@@ -10,7 +10,7 @@ import { useGetFinanceStatusQuery } from '@/graphql/types/schema'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { useBrowser } from '@/lib/use-browser'
 import { Button, Heading, Skeleton, TableViewCell, Typography } from '@/ui'
-import { FinanceStatusCard } from '@/screens/finance/components/finance-status-card'
+import { FinanceStatusCard } from './_components/finance-status-card'
 
 export default function FinanceScreen() {
   const { openBrowser } = useBrowser()

@@ -22,7 +22,7 @@ import {
   TopLine,
   Typography,
 } from '@/ui'
-import { AirfaresUsageTable } from '@/screens/air-discount/airfares-usage-table'
+import { AirfaresUsageTable } from './_components/airfares-usage-table'
 import { useBrowser } from '@/lib/use-browser'
 
 const BulletList = styled.View`

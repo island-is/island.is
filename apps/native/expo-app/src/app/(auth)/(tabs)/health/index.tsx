@@ -44,7 +44,7 @@ import {
   Skeleton,
   Typography,
 } from '@/ui'
-import { AppointmentCard } from '@/screens/appointments/components/appointment-card'
+import { AppointmentCard } from './_components/appointment-card'
 
 const Row = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing.smallGutter}px;

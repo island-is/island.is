@@ -19,7 +19,7 @@ import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { MoreInfoContiner } from '@/components/more-info-container/more-info-container'
 import { EmptyList, GeneralCardSkeleton, TopLine } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
-import { VehicleItem } from '@/screens/vehicles/components/vehicle-item'
+import { VehicleItem } from './_components/vehicle-item'
 
 const PAGE_SIZE = 15
 

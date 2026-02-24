@@ -21,6 +21,8 @@ import {
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { syncLicenseWidgetData } from '@/lib/widget-sync'
+import { INCLUDED_LICENSE_TYPES } from '../_constants/wallet-pass.constants'
+import { WalletItem } from './_components/wallet-item'
 import { usePreferencesStore } from '@/stores/preferences-store'
 import {
   Alert,
@@ -28,13 +30,11 @@ import {
   EmptyList,
   GeneralCardSkeleton,
   TabButtons,
-  TopLine,
-  Typography,
+  Typography
 } from '@/ui'
 import { isIos } from '@/utils/devices'
 import { testIDs } from '@/utils/test-ids'
-import { INCLUDED_LICENSE_TYPES } from '@/screens/wallet-pass/wallet-pass.constants'
-import { WalletItem } from '@/screens/wallet/components/wallet-item'
+import { router, Stack } from 'expo-router'
 
 const Tabs = styled.View`
   margin-top: ${({ theme }) => theme.spacing[1]}px;
@@ -208,6 +208,15 @@ export default function WalletScreen() {
   }, [licenseItems, res.loading, res.data])
 
   return (
+    <>
+      <Stack.Toolbar placement='right'>
+        <Stack.Toolbar.Button
+          icon={require('@/assets/icons/navbar-scan.png')}
+          onPress={() => {
+            router.navigate('/wallet/scanner')
+          }}
+        />
+      </Stack.Toolbar>
     <FlatList
       ref={flatListRef}
       testID={testIDs.SCREEN_HOME}
@@ -305,6 +314,7 @@ export default function WalletScreen() {
       data={data}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
-    />
+      />
+      </>
   )
 }

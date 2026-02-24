@@ -20,7 +20,7 @@ import {
 } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { questionnaireUrls } from '@/utils/url-builder'
-import { getQuestionnaireOrganizationLabelId } from '@/screens/health/questionnaires/questionnaire-utils'
+import { getQuestionnaireOrganizationLabelId } from './_utils/questionnaire-utils'
 
 const Host = styled(SafeAreaView)`
   flex: 1;
