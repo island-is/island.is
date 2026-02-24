@@ -85,7 +85,10 @@ const DefendantInfo: FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    if (error || (personData && personData.items?.length === 0)) {
+    if (
+      !isBusiness(defendant.nationalId) &&
+      (error || (personData && personData.items?.length === 0))
+    ) {
       setNationalIdNotFound(true)
       return
     }
@@ -108,7 +111,10 @@ const DefendantInfo: FC<Props> = (props) => {
   }, [personData, error])
 
   useEffect(() => {
-    if (error || (businessData && businessData.items?.length === 0)) {
+    if (
+      isBusiness(defendant.nationalId) &&
+      (error || (businessData && businessData.items?.length === 0))
+    ) {
       setNationalIdNotFound(true)
       return
     }

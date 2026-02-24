@@ -8,6 +8,7 @@ import {
 
 import { isBusiness } from '../../utils'
 import { validate } from '../../validate'
+import { fakePerson } from './constants'
 
 const useNationalRegistry = (nationalId?: string | null) => {
   const [personData, setPersonData] = useState<NationalRegistryResponsePerson>()
@@ -18,8 +19,17 @@ const useNationalRegistry = (nationalId?: string | null) => {
 
   useEffect(() => {
     const isValidNationalId = validate([[nationalId, ['national-id']]]).isValid
+    const isFakePerson = nationalId === '000000-0000'
 
-    if (!nationalId || !isValidNationalId) {
+    // Each api call costs actualy money. This allows us to develop and test
+    // without actually making a real api call.
+    if (isFakePerson) {
+      setPersonData({
+        items: [fakePerson],
+      })
+    }
+
+    if (isFakePerson || !nationalId || !isValidNationalId) {
       setIsLoading(false)
       return
     }

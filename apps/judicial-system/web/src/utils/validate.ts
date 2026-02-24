@@ -60,7 +60,7 @@ const getRegexByValidation = (validation: Validation) => {
       }
     case 'national-id':
       return {
-        regex: /^\d{6}(-?\d{4})?$/,
+        regex: /^\d{6}-\d{4}$/,
         errorMessage: 'Dæmi: 000000-0000',
       }
     case 'date-of-birth':
