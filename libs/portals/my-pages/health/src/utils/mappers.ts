@@ -5,22 +5,25 @@ import { messages } from '../lib/messages'
 export const mapBlockedStatus = (
   reason: string,
   formatMessage: FormatMessage,
-): { status: string; description: string } => {
+): { status: string; description: string; showReason: boolean } => {
   switch (reason) {
     case HealthDirectoratePrescriptionRenewalBlockedReason.IsRegiment:
       return {
         status: formatMessage(messages.notAvailable),
         description: formatMessage(messages.prescriptionBlockedIsRegiment),
+        showReason: true,
       }
     case HealthDirectoratePrescriptionRenewalBlockedReason.NoMedCard:
       return {
         status: formatMessage(messages.notAvailable),
         description: formatMessage(messages.prescriptionBlockedNoMedCard),
+        showReason: true,
       }
     case HealthDirectoratePrescriptionRenewalBlockedReason.NoHealthClinic:
       return {
         status: formatMessage(messages.notAvailable),
         description: formatMessage(messages.prescriptionBlockedNoHealthClinic),
+        showReason: true,
       }
     case HealthDirectoratePrescriptionRenewalBlockedReason.NotFullyDispensed:
       return {
@@ -28,16 +31,19 @@ export const mapBlockedStatus = (
         description: formatMessage(
           messages.prescriptionBlockedNotFullyDispensed,
         ),
+        showReason: false,
       }
     case HealthDirectoratePrescriptionRenewalBlockedReason.PendingRequest:
       return {
         status: formatMessage(messages.medicineIsProcessedCertificate),
         description: formatMessage(messages.prescriptionBlockedPendingRequest),
+        showReason: false,
       }
     case HealthDirectoratePrescriptionRenewalBlockedReason.RejectedRequest:
       return {
         status: formatMessage(messages.vaccineDeclined),
         description: formatMessage(messages.prescriptionBlockedRejectedRequest),
+        showReason: false,
       }
     case HealthDirectoratePrescriptionRenewalBlockedReason.DismissedRequest:
       return {
@@ -45,6 +51,7 @@ export const mapBlockedStatus = (
         description: formatMessage(
           messages.prescriptionBlockedDismissedRequest,
         ),
+        showReason: true,
       }
     case HealthDirectoratePrescriptionRenewalBlockedReason.AlreadyRequested:
       return {
@@ -52,6 +59,7 @@ export const mapBlockedStatus = (
         description: formatMessage(
           messages.prescriptionBlockedAlreadyRequested,
         ),
+        showReason: false,
       }
     case HealthDirectoratePrescriptionRenewalBlockedReason.MoreRecentPrescriptionExists:
       return {
@@ -59,6 +67,7 @@ export const mapBlockedStatus = (
         description: formatMessage(
           messages.prescriptionBlockedMoreRecentExists,
         ),
+        showReason: true,
       }
     case HealthDirectoratePrescriptionRenewalBlockedReason.SpecialistOnlyPrescription:
       return {
@@ -66,16 +75,19 @@ export const mapBlockedStatus = (
         description: formatMessage(
           messages.prescriptionBlockedSpecialistOnlyPrescription,
         ),
+        showReason: true,
       }
     case HealthDirectoratePrescriptionRenewalBlockedReason.Unknown:
       return {
         status: formatMessage(messages.notAvailable),
         description: formatMessage(messages.prescriptionBlockedOther),
+        showReason: true,
       }
     default:
       return {
         status: formatMessage(messages.notAvailable),
         description: formatMessage(messages.prescriptionBlockedOther),
+        showReason: true,
       }
   }
 }
