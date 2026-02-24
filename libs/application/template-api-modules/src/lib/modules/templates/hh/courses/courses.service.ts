@@ -324,8 +324,8 @@ export class CoursesService extends BaseTemplateApiService {
     if (!courseInstanceId)
       throw new TemplateApiError(
         {
-          title: 'Vantar upplýsingar um námskeiðsinsdagsetningu',
-          summary: 'Vantar upplýsingar um námskeiðsinsdagsetningu',
+          title: 'Vantar upplýsingar um námskeiðsdagsetningu',
+          summary: 'Vantar upplýsingar um námskeiðsdagsetningu',
         },
         400,
       )
@@ -372,8 +372,8 @@ export class CoursesService extends BaseTemplateApiService {
     if (!courseInstance)
       throw new TemplateApiError(
         {
-          title: 'Námskeiðsinsdagsetning fannst ekki',
-          summary: 'Námskeiðsinsdagsetning fannst ekki',
+          title: 'Námskeiðsdagsetning fannst ekki',
+          summary: 'Námskeiðsdagsetning fannst ekki',
         },
         404,
       )
