@@ -18,6 +18,7 @@ query GetPoliceCaseDetail(
     contact
     courtAdvocate
     department
+    prosecutionOffice
     received
     receivedLocation
     modified

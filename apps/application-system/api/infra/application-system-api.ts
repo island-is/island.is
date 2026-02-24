@@ -350,11 +350,6 @@ export const serviceSetup = (services: {
         staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
         prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
       },
-      ZENDESK_CONTACT_FORM_SUBDOMAIN: {
-        dev: 'digitaliceland',
-        staging: 'digitaliceland',
-        prod: 'digitaliceland',
-      },
       HH_COURSES_ZENDESK_SUBJECT: {
         dev: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
         staging:
@@ -470,6 +465,12 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
       HH_ZENDESK_CONTACT_FORM_EMAIL:
         '/k8s/api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_EMAIL',
+      ZENDESK_CONTACT_FORM_TOKEN:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN',
+      ZENDESK_CONTACT_FORM_SUBDOMAIN:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_SUBDOMAIN',
+      ZENDESK_CONTACT_FORM_EMAIL:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN_EMAIL',
     })
     .db()
     .migrations()
