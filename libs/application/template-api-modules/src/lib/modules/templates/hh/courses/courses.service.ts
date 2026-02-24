@@ -84,8 +84,8 @@ export class CoursesService extends BaseTemplateApiService {
       if (!name || !email || !phone || !nationalId)
         throw new TemplateApiError(
           {
-            title: 'No contact information found',
-            summary: 'No contact information found',
+            title: 'Vantar tengiliðaupplýsingar',
+            summary: 'Vantar tengiliðaupplýsingar',
           },
           400,
         )
@@ -132,8 +132,8 @@ export class CoursesService extends BaseTemplateApiService {
 
       throw new TemplateApiError(
         {
-          title: 'Failed to submit application',
-          summary: error.message || 'An unexpected error occurred',
+          title: 'Villa kom upp við að senda umsókn',
+          summary: 'Villa kom upp við að senda umsókn',
         },
         500,
       )
@@ -165,8 +165,8 @@ export class CoursesService extends BaseTemplateApiService {
     if (!courseId || !courseInstanceId || !participantList.length) {
       throw new TemplateApiError(
         {
-          title: 'Invalid input',
-          summary: 'Invalid input',
+          title: 'Skráningarupplýsingar vantar',
+          summary: 'Skráningarupplýsingar vantar',
         },
         400,
       )
@@ -205,12 +205,31 @@ export class CoursesService extends BaseTemplateApiService {
       ...nationalIdsTakenByOtherApplications,
     ])
 
+    const hasAvailability = maxRegistrations >= allNationalIds.size
+
+    const slotsAvailable = Math.max(
+      0,
+      maxRegistrations - nationalIdsTakenByOtherApplications.size,
+    )
+
+    if (!hasAvailability) {
+      throw new TemplateApiError(
+        {
+          title: 'Ekki næg sæti laus',
+          summary: `${
+            slotsAvailable === 0 ? 'Engin' : slotsAvailable
+          } sæti eru laus í þessu námskeiði`,
+        },
+        400,
+      )
+    }
+
     return {
       slotsAvailable: Math.max(
         0,
         maxRegistrations - nationalIdsTakenByOtherApplications.size,
       ),
-      hasAvailability: maxRegistrations >= allNationalIds.size,
+      hasAvailability,
     }
   }
 
@@ -229,9 +248,8 @@ export class CoursesService extends BaseTemplateApiService {
       )
       throw new TemplateApiError(
         {
-          title:
-            'Failed to search Zendesk tickets for participant availability check',
-          summary: error.message,
+          title: 'Villa kom upp við að fletta upp skráningarfjölda',
+          summary: 'Ekki tókst að fletta upp skráningarfjölda',
         },
         500,
       )
@@ -284,9 +302,8 @@ export class CoursesService extends BaseTemplateApiService {
       )
       throw new TemplateApiError(
         {
-          title:
-            'Failed to query payment-state applications for participant availability check',
-          summary: error.message,
+          title: 'Villa kom upp við að fletta upp skráningarfjölda',
+          summary: 'Ekki tókst að fletta upp skráningarfjölda',
         },
         500,
       )
@@ -301,16 +318,16 @@ export class CoursesService extends BaseTemplateApiService {
     if (!courseId)
       throw new TemplateApiError(
         {
-          title: 'Course id not provided',
-          summary: 'Course id not provided',
+          title: 'Vantar upplýsingar um námskeið',
+          summary: 'Vantar upplýsingar um námskeið',
         },
         400,
       )
     if (!courseInstanceId)
       throw new TemplateApiError(
         {
-          title: 'Course instance id not provided',
-          summary: 'Course instance id not provided',
+          title: 'Vantar upplýsingar um námskeiðsinsdagsetningu',
+          summary: 'Vantar upplýsingar um námskeiðsinsdagsetningu',
         },
         400,
       )
@@ -349,16 +366,16 @@ export class CoursesService extends BaseTemplateApiService {
     if (!course)
       throw new TemplateApiError(
         {
-          title: 'Course not found',
-          summary: 'Course not found',
+          title: 'Námskeið fannst ekki',
+          summary: 'Námskeið fannst ekki',
         },
         404,
       )
     if (!courseInstance)
       throw new TemplateApiError(
         {
-          title: 'Course instance not found',
-          summary: 'Course instance not found',
+          title: 'Námskeiðsinsdagsetning fannst ekki',
+          summary: 'Námskeiðsinsdagsetning fannst ekki',
         },
         404,
       )
