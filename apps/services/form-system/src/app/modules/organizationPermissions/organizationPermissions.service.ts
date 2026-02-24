@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { OrganizationPermission } from './models/organizationPermission.model'
 import { UpdateOrganizationPermissionDto } from './models/dto/updateOrganizationPermission.dto'
@@ -7,6 +11,8 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { Organization } from '../organizations/models/organization.model'
+import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @Injectable()
 export class OrganizationPermissionsService {
@@ -18,8 +24,17 @@ export class OrganizationPermissionsService {
   ) {}
 
   async create(
+    user: User,
     createOrganizationPermissionDto: UpdateOrganizationPermissionDto,
   ): Promise<OrganizationPermissionDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    if (!isAdmin) {
+      throw new UnauthorizedException(
+        `User with nationalId '${user.nationalId}' does not have permission to create organization permission`,
+      )
+    }
+
     const organization = await this.organizationModel.findOne({
       where: {
         nationalId: createOrganizationPermissionDto.organizationNationalId,
@@ -50,8 +65,17 @@ export class OrganizationPermissionsService {
   }
 
   async delete(
+    user: User,
     deleteOrganizationPermissionDto: UpdateOrganizationPermissionDto,
   ): Promise<void> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    if (!isAdmin) {
+      throw new UnauthorizedException(
+        `User with nationalId '${user.nationalId}' does not have permission to delete organization permission`,
+      )
+    }
+
     const organization = await this.organizationModel.findOne({
       where: {
         nationalId: deleteOrganizationPermissionDto.organizationNationalId,

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Section } from './models/section.model'
 import { CreateSectionDto } from './models/dto/createSection.dto'
@@ -14,6 +18,8 @@ import {
   filterDependency,
 } from '../../../utils/dependenciesHelper'
 import { SectionTypes } from '@island.is/form-system/shared'
+import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @Injectable()
 export class SectionsService {
@@ -24,7 +30,26 @@ export class SectionsService {
     private readonly formModel: typeof Form,
   ) {}
 
-  async create(createSectionDto: CreateSectionDto): Promise<SectionDto> {
+  async create(
+    user: User,
+    createSectionDto: CreateSectionDto,
+  ): Promise<SectionDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    const form = await this.formModel.findByPk(createSectionDto.formId)
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${createSectionDto.formId}' not found`,
+      )
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User with nationalId '${user.nationalId}' does not have permission to create section for form with id '${createSectionDto.formId}'`,
+      )
+    }
+
     const section = createSectionDto as Section
     const newSection: Section = new this.sectionModel(section)
     await newSection.save()
@@ -35,7 +60,6 @@ export class SectionsService {
       zipObject(keys, Array(keys.length).fill(null)),
     ) as SectionDto
 
-    const form = await this.formModel.findByPk(section.formId)
     if (form) {
       form.draftTotalSteps++
       await form.save()
@@ -44,11 +68,32 @@ export class SectionsService {
     return sectionDto
   }
 
-  async update(id: string, updateSectionDto: UpdateSectionDto): Promise<void> {
+  async update(
+    user: User,
+    id: string,
+    updateSectionDto: UpdateSectionDto,
+  ): Promise<void> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const section = await this.sectionModel.findByPk(id)
 
     if (!section) {
       throw new NotFoundException(`Section with id '${id}' not found`)
+    }
+
+    const form = await this.formModel.findByPk(section.formId, {
+      attributes: ['organizationNationalId'],
+      raw: true,
+    })
+    if (!form) {
+      throw new NotFoundException(`Form with id '${section.formId}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User with nationalId '${user.nationalId}' does not have permission to update section with id '${section.id}'`,
+      )
     }
 
     Object.assign(section, updateSectionDto)
@@ -57,8 +102,11 @@ export class SectionsService {
   }
 
   async updateDisplayOrder(
+    user: User,
     updateSectionDisplayOrderDto: UpdateSectionsDisplayOrderDto,
   ): Promise<void> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const { sectionsDisplayOrderDto: sectionsDisplayOrderDto } =
       updateSectionDisplayOrderDto
 
@@ -77,8 +125,27 @@ export class SectionsService {
         section.sectionType === SectionTypes.SUMMARY ||
         section.sectionType === SectionTypes.PAYMENT ||
         section.sectionType === SectionTypes.COMPLETED
-      )
+      ) {
         continue
+      }
+
+      const form = await this.formModel.findByPk(section.formId, {
+        attributes: ['organizationNationalId'],
+        raw: true,
+      })
+      if (!form) {
+        throw new NotFoundException(
+          `Form with id '${section.formId}' not found`,
+        )
+      }
+
+      const formOwnerNationalId = form.organizationNationalId
+
+      if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+        throw new UnauthorizedException(
+          `User with nationalId '${user.nationalId}' does not have permission to update display order of section with id '${section.id}'`,
+        )
+      }
 
       await section.update({
         displayOrder: i,
@@ -86,41 +153,54 @@ export class SectionsService {
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(user: User, id: string): Promise<void> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const section = await this.sectionModel.findByPk(id)
 
     if (!section) {
       throw new NotFoundException(`Section with id '${id}' not found`)
     }
 
-    const form = await this.formModel.findByPk(section.formId)
-
-    if (form) {
-      const { dependencies } = form
-      const screens = await section.$get('screens', {
-        attributes: ['id'],
-      })
-      if (Array.isArray(screens) && screens.length) {
-        const screenIds = screens.map((screen: { id: string }) => screen.id)
-        const fieldsPerScreen = await Promise.all(
-          screens.map((s) => s.$get('fields', { attributes: ['id'] })),
-        )
-        const fieldIds = fieldsPerScreen
-          .flat()
-          .map((field: { id: string }) => field.id)
-        const newDependencies = filterArrayDependency(dependencies, [
-          ...screenIds,
-          ...fieldIds,
-          id,
-        ])
-        form.dependencies = newDependencies
-      } else {
-        form.dependencies = filterDependency(dependencies, id)
-      }
-      form.draftTotalSteps--
-      await form.save()
+    const form = await this.formModel.findByPk(section.formId, {
+      attributes: ['organizationNationalId'],
+      raw: true,
+    })
+    if (!form) {
+      throw new NotFoundException(`Form with id '${section.formId}' not found`)
     }
 
-    section.destroy()
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User with nationalId '${user.nationalId}' does not have permission to delete section with id '${section.id}'`,
+      )
+    }
+
+    const { dependencies } = form
+    const screens = await section.$get('screens', {
+      attributes: ['id'],
+    })
+    if (Array.isArray(screens) && screens.length) {
+      const screenIds = screens.map((screen: { id: string }) => screen.id)
+      const fieldsPerScreen = await Promise.all(
+        screens.map((s) => s.$get('fields', { attributes: ['id'] })),
+      )
+      const fieldIds = fieldsPerScreen
+        .flat()
+        .map((field: { id: string }) => field.id)
+      const newDependencies = filterArrayDependency(dependencies, [
+        ...screenIds,
+        ...fieldIds,
+        id,
+      ])
+      form.dependencies = newDependencies
+    } else {
+      form.dependencies = filterDependency(dependencies, id)
+    }
+    form.draftTotalSteps--
+    await form.save()
+
+    await section.destroy()
   }
 }

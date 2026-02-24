@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import defaults from 'lodash/defaults'
@@ -21,7 +22,6 @@ import {
   UpdateFormStatusDto,
 } from '@island.is/form-system/shared'
 import { randomUUID } from 'crypto'
-import { jwtDecode } from 'jwt-decode'
 import { Op, UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuidV4 } from 'uuid'
@@ -62,6 +62,7 @@ import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { Form } from './models/form.model'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { Dependency } from '../../dataTypes/dependency.model'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @Injectable()
 export class FormsService {
@@ -88,13 +89,17 @@ export class FormsService {
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
-    const token = jwtDecode<{ name: string; nationalId: string }>(
-      user.authorization,
-    )
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    if (user.nationalId !== nationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User with nationalId '${user.nationalId}' does not have permission to get forms for organization with nationalId '${nationalId}'`,
+      )
+    }
 
     // the loader is not sending the nationalId
     if (nationalId === '0') {
-      nationalId = token.nationalId
+      nationalId = user.nationalId
     }
 
     let organization = await this.organizationModel.findOne({
@@ -181,12 +186,23 @@ export class FormsService {
     return formResponseDto
   }
 
-  async findOne(id: string): Promise<FormResponseDto> {
+  async findOne(user: User, id: string): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const form = await this.findById(id)
 
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User with nationalId '${user.nationalId}' does not have permission to get form for organization with nationalId '${formOwnerNationalId}'`,
+      )
+    }
+
     const formResponse = await this.buildFormResponse(form)
 
     if (!formResponse) {
@@ -200,6 +216,14 @@ export class FormsService {
     user: User,
     organizationNationalId: string,
   ): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    if (user.nationalId !== organizationNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User with nationalId '${user.nationalId}' does not have permission to create form for organization with nationalId '${organizationNationalId}'`,
+      )
+    }
+
     const organization = await this.organizationModel.findOne({
       where: { nationalId: organizationNationalId },
     })
@@ -244,12 +268,24 @@ export class FormsService {
   }
 
   async update(
+    user: User,
     id: string,
     updateFormDto: UpdateFormDto,
   ): Promise<UpdateFormResponse> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const form = await this.formModel.findByPk(id)
+
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User with nationalId '${user.nationalId}' does not have permission to update form with id '${id}'`,
+      )
     }
 
     const originalHasPayment = form.hasPayment
@@ -295,11 +331,21 @@ export class FormsService {
     return response
   }
 
-  async copy(id: string): Promise<FormResponseDto> {
+  async copy(user: User, id: string): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const form = await this.findById(id)
 
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User with nationalId '${user.nationalId}' does not have permission to copy form with id '${id}'`,
+      )
     }
 
     const copyForm = await this.copyForm(id, false, `${form.slug}-afrit`)
@@ -313,13 +359,24 @@ export class FormsService {
   }
 
   async updateStatus(
+    user: User,
     id: string,
     updateFormStatusDto: UpdateFormStatusDto,
   ): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User with nationalId '${user.nationalId}' does not have permission to update status of form with id '${id}'`,
+      )
     }
 
     const { newStatus } = updateFormStatusDto

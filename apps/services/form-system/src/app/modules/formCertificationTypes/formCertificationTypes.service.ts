@@ -7,17 +7,42 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { FormCertificationTypeDto } from './models/dto/formCertificationType.dto'
+import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
+import { Form } from '../forms/models/form.model'
 
 @Injectable()
 export class FormCertificationTypesService {
   constructor(
     @InjectModel(FormCertificationType)
     private readonly formCertificationTypeModel: typeof FormCertificationType,
+    @InjectModel(Form)
+    private readonly formModel: typeof Form,
   ) {}
 
   async create(
+    user: User,
     createFormCertificationTypeDto: CreateFormCertificationTypeDto,
   ): Promise<FormCertificationTypeDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    const form = await this.formModel.findByPk(
+      createFormCertificationTypeDto.formId,
+    )
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${createFormCertificationTypeDto.formId}' not found`,
+      )
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new NotFoundException(
+        `User with nationalId '${user.nationalId}' does not have permission to create form certification type for form with id '${createFormCertificationTypeDto.formId}'`,
+      )
+    }
+
     const certificationType = CertificationTypes.find(
       (certificationType) =>
         certificationType.id ===
@@ -47,7 +72,9 @@ export class FormCertificationTypesService {
     return formCertificationTypeDto
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(user: User, id: string): Promise<void> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const formCertificationType =
       await this.formCertificationTypeModel.findByPk(id)
 
@@ -57,6 +84,21 @@ export class FormCertificationTypesService {
       )
     }
 
-    formCertificationType.destroy()
+    const form = await this.formModel.findByPk(formCertificationType.formId)
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${formCertificationType.formId}' not found`,
+      )
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new NotFoundException(
+        `User with nationalId '${user.nationalId}' does not have permission to delete form certification type for form with id '${formCertificationType.formId}'`,
+      )
+    }
+
+    await formCertificationType.destroy()
   }
 }
