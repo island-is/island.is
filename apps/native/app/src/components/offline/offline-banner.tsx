@@ -3,7 +3,7 @@ import { Animated, Easing, SafeAreaView } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import { Alert, DARK_YELLOW_200, dynamicColor } from '../../ui'
-import { getIntl } from '../../contexts/i18n-provider'
+import { getIntl } from '@/components/providers/locale-provider'
 import { useOfflineActions } from '../../stores/offline-store'
 import { ComponentRegistry as CR } from '../../utils/component-registry'
 

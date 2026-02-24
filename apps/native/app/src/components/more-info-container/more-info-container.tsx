@@ -2,7 +2,7 @@ import { useIntl } from 'react-intl'
 import { ImageSourcePropType, View } from 'react-native'
 import { useTheme } from 'styled-components'
 import { Typography } from '../../ui'
-import { LinkRowButton } from '../link-row-button/link-row-button'
+import { ExternalLink } from '../external-links/external-links'
 
 export interface MoreInfoConteinerProps {
   externalLinks: {
@@ -10,11 +10,11 @@ export interface MoreInfoConteinerProps {
     title: string
     icon?: ImageSourcePropType
   }[]
-  componentId: string
+  /** @deprecated Will be removed after full expo-router migration */
+  componentId?: string
 }
 export const MoreInfoContiner = ({
   externalLinks,
-  componentId,
 }: MoreInfoConteinerProps) => {
   const theme = useTheme()
   const intl = useIntl()
@@ -30,13 +30,9 @@ export const MoreInfoContiner = ({
       </Typography>
       <View style={{ marginHorizontal: -16 }}>
         {externalLinks.map((link) => (
-          <LinkRowButton
-            link={{
-              ...link,
-              isExternal: true,
-            }}
+          <ExternalLink
+            links={link}
             key={link.title}
-            componentId={componentId}
           />
         ))}
       </View>

@@ -1,28 +1,9 @@
 const { withNxMetro } = require('@nx/react-native')
-const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config')
+const { getDefaultConfig } = require('expo/metro-config');
 
-const defaultConfig = getDefaultConfig(__dirname)
-const { assetExts, sourceExts } = defaultConfig.resolver
+const config = getDefaultConfig(__dirname);
 
-/**
- * Metro configuration
- * https://reactnative.dev/docs/metro
- *
- * @type {import('@react-native/metro-config').MetroConfig}
- */
-const customConfig = {
-  transformer: {
-    babelTransformerPath: require.resolve('react-native-svg-transformer'),
-  },
-  resolver: {
-    assetExts: assetExts.filter((ext) => ext !== 'svg'),
-    sourceExts: [...sourceExts, 'cjs', 'mjs', 'svg'],
-    // Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
-    disableHierarchicalLookup: true,
-  },
-}
-
-module.exports = withNxMetro(mergeConfig(defaultConfig, customConfig), {
+const finalConfig = withNxMetro(config, {
   // Change this to true to see debugging info.
   // Useful if you have issues resolving modules
   debug: false,
@@ -30,4 +11,19 @@ module.exports = withNxMetro(mergeConfig(defaultConfig, customConfig), {
   extensions: [],
   // Specify folders to watch, in addition to Nx defaults (workspace libraries and node_modules)
   watchFolders: [],
-})
+});
+
+/**
+ * Support for ${configDir} in tsconfig paths.
+ * Need to patch "node_modules/@nx/react-native/plugins/metro-resolver.js"
+ *
+ * const configDirAbs = path.dirname(result.configFileAbsolutePath);
+ * const configDir = path.relative(devkit.workspaceRoot, configDirAbs);
+ * paths = Object.entries(result.paths).reduce((acc, [key, value]) => {
+ *   acc[key] = value.map((p) => p.replace('${configDir}', configDir));
+ *   return acc;
+ * }, {});
+ */
+
+
+module.exports = finalConfig;

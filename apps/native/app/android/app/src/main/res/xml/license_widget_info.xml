@@ -11,6 +11,6 @@
     android:targetCellHeight="1"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen"
-    android:configure="is.island.app.LicenseWidgetConfigActivity"
+    android:configure="is.island.app.dev.LicenseWidgetConfigActivity"
     android:widgetFeatures="reconfigurable">
 </appwidget-provider>

@@ -31,9 +31,9 @@ export const ComponentRegistry = {
   FinanceScreen: `${prefix}.screens.FinanceScreen`,
   FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
   HealthOverviewScreen: `${prefix}.screens.HealthOverviewScreen`,
-  HealthCategoriesScreen: `${prefix}.screens.HealthCategoriesScreen`,
   QuestionnairesScreen: `${prefix}.screens.QuestionnairesScreen`,
   QuestionnaireDetailScreen: `${prefix}.screens.QuestionnaireDetailScreen`,
+  MedicineDelegationScreen: `${prefix}.screens.MedicineDelegationScreen`,
   MedicineDelegationFormScreen: `${prefix}.screens.MedicineDelegationFormScreen`,
   MedicineDelegationDetailScreen: `${prefix}.screens.MedicineDelegationDetailScreen`,
   HomeOptionsScreen: `${prefix}.screens.HomeOptions`,
@@ -90,7 +90,7 @@ export const ButtonRegistry = {
 }
 
 export const StackRegistry = {
-  HealthStack: `${prefix}.stack.HealthStack`,
+  ApplicationsStack: `${prefix}.stack.ApplicationsStack`,
   HomeStack: `${prefix}.stack.HomeStack`,
   InboxStack: `${prefix}.stack.InboxStack`,
   LicenseScannerStack: `${prefix}.stack.LicenseScannerStack`,

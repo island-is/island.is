@@ -6,21 +6,31 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client'
-
+import * as WebBrowser from 'expo-web-browser'
 import { setContext } from '@apollo/client/link/context'
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
-import { openNativeBrowser } from '../lib/rn-island'
-import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
 import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
 import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
-import { MainBottomTabs } from '../utils/component-registry'
 import { getCustomUserAgent } from '../utils/user-agent'
 import { GenericUserLicense } from './types/schema'
+
+export function cognitoAuthUrl() {
+  const url = `https://cognito.shared.devland.is/login`
+  const params = {
+    approval_prompt: 'prompt',
+    client_id: 'bre6r7d5e7imkcgbt7et1kqlc',
+    redirect_uri: `${config.bundleId}://cognito`,
+    response_type: 'token',
+    scope: 'openid',
+    state: 'state',
+  }
+  return `${url}?${new URLSearchParams(params)}`
+}
 
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
 
@@ -79,7 +89,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
         authStore.setState({ cognitoAuthUrl: redirectUrl })
 
         if (config.isTestingApp && authStore.getState().authorizeResult) {
-          openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
+          WebBrowser.openBrowserAsync(cognitoAuthUrl())
         }
       }
     }
@@ -222,7 +232,20 @@ export const getApolloClient = () => {
 export const initializeApolloClient = async () => {
   await persistCache({
     cache,
-    storage: new MMKVStorageWrapper(apolloMMKVStorage),
+    storage: new MMKVStorageWrapper({
+      getItem: async (key) => {
+        const value = await apolloMMKVStorage.getStringAsync(key)
+        return value ?? null
+      },
+      setItem: async (key, value) => {
+        await apolloMMKVStorage.setItem(key, value)
+        return true
+      },
+      removeItem: async (key) => {
+        await apolloMMKVStorage.removeItem(key)
+        return true
+      },
+    }),
   })
 
   apolloClient = new ApolloClient({

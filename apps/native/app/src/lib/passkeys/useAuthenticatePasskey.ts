@@ -1,4 +1,4 @@
-import { Passkey, PasskeyAuthenticationResult } from 'react-native-passkey'
+import { Passkey, PasskeyGetResult } from 'react-native-passkey'
 import { btoa } from 'react-native-quick-base64'
 import {
   convertAuthenticationResultsToBase64Url,
@@ -35,7 +35,7 @@ export const useAuthenticatePasskey = () => {
         )
 
         // Authenticate Passkey on device
-        const result: PasskeyAuthenticationResult = await Passkey.authenticate(
+        const result: PasskeyGetResult = await Passkey.get(
           formattedAuthenticateOptions,
         )
 

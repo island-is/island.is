@@ -1,4 +1,4 @@
-import { Passkey, PasskeyRegistrationResult } from 'react-native-passkey'
+import { Passkey, PasskeyCreateResult } from 'react-native-passkey'
 import {
   convertBase64UrlToBase64String,
   convertRegisterResultsToBase64Url,
@@ -39,7 +39,7 @@ export const useRegisterPasskey = () => {
         )
 
         // Register Passkey on device
-        const result: PasskeyRegistrationResult = await Passkey.register(
+        const result: PasskeyCreateResult = await Passkey.create(
           formattedRegistrationOptions,
         )
 

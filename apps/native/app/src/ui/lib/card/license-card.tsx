@@ -21,7 +21,7 @@ import { LicenseCardPresets } from './license-list-card'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { Typography } from '../typography/typography'
 import { screenWidth } from '../../../utils/dimensions'
-import { BARCODE_MAX_WIDTH } from '../../../screens/wallet-pass/wallet-pass.constants'
+import { BARCODE_MAX_WIDTH } from '@/constants/wallet.constants'
 import {
   findProblemInApolloError,
   ProblemType,

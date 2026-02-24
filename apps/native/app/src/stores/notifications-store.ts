@@ -1,9 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getToken } from '@react-native-firebase/messaging'
 import { Navigation } from 'react-native-navigation'
-import createUse from 'zustand'
-import { persist } from 'zustand/middleware'
-import create, { State } from 'zustand/vanilla'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import { getApolloClientAsync } from '../graphql/client'
 import {
   AddUserProfileDeviceTokenDocument,
@@ -21,8 +19,10 @@ import { getRightButtons } from '../utils/get-main-root'
 import { setBadgeCountAsync } from 'expo-notifications'
 import { preferencesStore } from './preferences-store'
 import { app } from '../lib/firebase'
+import { create, useStore } from 'zustand'
+import * as Device from 'expo-device';
 
-interface NotificationsState extends State {
+interface NotificationsState {
   unseenCount: number
   pushToken?: string
 }
@@ -42,12 +42,16 @@ const initialState: NotificationsState = {
   pushToken: undefined,
 }
 
-export const notificationsStore = create<NotificationsStore>(
+export const notificationsStore = create<NotificationsStore>()(
   persist(
     (set, get) => ({
       ...initialState,
 
       async syncToken() {
+        if (!Device.isDevice) {
+          console.warn('Push notifications are not supported on simulators/emulators')
+          return
+        }
         const client = await getApolloClientAsync()
         const token = await getToken(app.messaging())
         const { pushToken: oldToken, deletePushToken } = get()
@@ -147,9 +151,10 @@ export const notificationsStore = create<NotificationsStore>(
     }),
     {
       name: 'notifications_07',
-      getStorage: () => AsyncStorage,
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({ pushToken: state.pushToken, unseenCount: state.unseenCount }), // only persist pushToken
     },
   ),
 )
 
-export const useNotificationsStore = createUse(notificationsStore)
+export const useNotificationsStore = <U = NotificationsStore>(selector?: (state: NotificationsStore) => U) => useStore(notificationsStore, selector!)

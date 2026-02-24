@@ -1,5 +1,6 @@
-import createUse from 'zustand'
-import create from 'zustand/vanilla'
+import { create } from 'zustand'
+import { useStore } from 'zustand/react'
+// import create from 'zustand/vanilla'
 import { isDefined } from '../utils/is-defined'
 
 interface OfflineState {
@@ -53,5 +54,5 @@ export const offlineStore = create<OfflineStore>((set) => ({
   },
 }))
 
-export const useOfflineStore = createUse(offlineStore)
-export const useOfflineActions = () => useOfflineStore(({ actions }) => actions)
+export const useOfflineStore = <U = OfflineStore>(selector?: (state: OfflineStore) => U) => useStore(offlineStore, selector!)
+export const useOfflineActions = () => useStore(offlineStore, (store) => store.actions)

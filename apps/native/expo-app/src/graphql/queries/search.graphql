@@ -1,8 +1,0 @@
-query ListSearch($input: SearcherInput!) {
-  searchResults(query: $input) {
-    total
-    items {
-      ...SearchArticleFragment
-    }
-  }
-}

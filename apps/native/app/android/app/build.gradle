@@ -1,24 +1,32 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
-apply plugin: 'com.google.gms.google-services'
 
-import com.android.build.OutputFile
+def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
  */
 react {
+    entryFile = file(["node", "-e", "require('expo/scripts/resolveAppEntry')", projectRoot, "android", "absolute"].execute(null, rootDir).text.trim())
+    reactNativeDir = new File(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim()).getParentFile().getAbsoluteFile()
+    hermesCommand = new File(["node", "--print", "require.resolve('hermes-compiler/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim()).getParentFile().getAbsolutePath() + "/hermesc/%OS-BIN%/hermesc"
+    codegenDir = new File(["node", "--print", "require.resolve('@react-native/codegen/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim()).getParentFile().getAbsoluteFile()
+
+    enableBundleCompression = (findProperty('android.enableBundleCompression') ?: false).toBoolean()
+    // Use Expo CLI to bundle the app, this ensures the Metro config
+    // works correctly with Expo projects.
+    cliFile = new File(["node", "--print", "require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })"].execute(null, rootDir).text.trim())
+    bundleCommand = "export:embed"
+
     /* Folders */
-      //   The root of your project, i.e. where "package.json" lives. Default is '../..'
+     //   The root of your project, i.e. where "package.json" lives. Default is '../..'
     // root = file("../../")
     //   The folder where the react-native NPM package is. Default is ../../node_modules/react-native
-    reactNativeDir = file("../../../../../node_modules/react-native")
+    // reactNativeDir = file("../../node_modules/react-native")
     //   The folder where the react-native Codegen package is. Default is ../../node_modules/@react-native/codegen
-    codegenDir = file("../../../../../node_modules/@react-native/codegen")
-    //   The cli.js file which is the React Native CLI entrypoint. Default is ../../node_modules/react-native/cli.js
-    cliFile = file("../../../../../node_modules/react-native/cli.js")
+    // codegenDir = file("../../node_modules/@react-native/codegen")
 
     /* Variants */
     //   The list of variants to that are debuggable. For those we're going to
@@ -29,9 +37,7 @@ react {
     /* Bundling */
     //   A list containing the node command and its flags. Default is just 'node'.
     // nodeExecutableAndArgs = ["node"]
-    //
-    //   The command to run when bundling. By default is 'bundle'
-    // bundleCommand = "ram-bundle"
+
     //
     //   The path to the CLI configuration file. Default is empty.
     // bundleConfig = file(../rn-cli.config.js)
@@ -48,7 +54,7 @@ react {
 
     /* Hermes Commands */
     //   The hermes compiler command to run. By default it is 'hermesc'
-    hermesCommand = file("../../../../../node_modules/react-native/sdks/hermesc/osx-bin/hermesc").absolutePath
+    // hermesCommand = "$rootDir/my-custom-hermesc/bin/hermesc"
     //
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]
@@ -58,9 +64,9 @@ react {
 }
 
 /**
- * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
+ * Set this to true in release builds to optimize the app using [R8](https://developer.android.com/topic/performance/app-optimization/enable-app-optimization).
  */
-def enableProguardInReleaseBuilds = false
+def enableMinifyInReleaseBuilds = (findProperty('android.enableMinifyInReleaseBuilds') ?: false).toBoolean()
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -73,19 +79,7 @@ def enableProguardInReleaseBuilds = false
  * give correct results when using with locales other than en-US. Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-def jscFlavor = 'org.webkit:android-jsc:+'
-
-// get version code from the specified property argument `-PversionCode` during the build call
-def getMyVersionCode(fallbackVersionCode = -1) {
-    return project.hasProperty('versionCode') ? versionCode.toInteger() : fallbackVersionCode
-}
-
-Properties properties = new Properties()
-if (project.rootProject.file('local.properties').exists()) {
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-} else {
-    println "WARN: Missing local.properties file"
-}
+def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
 android {
     ndkVersion rootProject.ext.ndkVersion
@@ -93,20 +87,17 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "is.island.app"
-
-    packagingOptions {
-        pickFirst 'lib/*/*.so'
-    }
-
+    namespace 'is.island.app.dev'
     defaultConfig {
-        applicationId "is.island.app"
+        applicationId 'is.island.app.dev'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode getMyVersionCode(143)
+        versionCode 264
         versionName "1.41.2"
+
+        buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
         manifestPlaceholders = [
-            appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
+            appAuthRedirectScheme: 'is.island.app.dev.auth',
         ]
     }
     signingConfigs {
@@ -116,20 +107,6 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {
-            // CI=true is exported by Codemagic
-            if (System.getenv()["CI"]) {
-                storeFile file(System.getenv()["CM_KEYSTORE_PATH"])
-                storePassword System.getenv()["CM_KEYSTORE_PASSWORD"]
-                keyAlias System.getenv()["CM_KEY_ALIAS"]
-                keyPassword System.getenv()["CM_KEY_PASSWORD"]
-            } else {
-                storeFile file(properties.getProperty('ISLANDAPP_UPLOAD_STORE_FILE'))
-                storePassword properties.getProperty('ISLANDAPP_UPLOAD_STORE_PASSWORD')
-                keyAlias properties.getProperty('ISLANDAPP_UPLOAD_KEY_ALIAS')
-                keyPassword properties.getProperty('ISLANDAPP_UPLOAD_STORE_PASSWORD')
-            }
-        }
     }
     buildTypes {
         debug {
@@ -138,34 +115,67 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.release
-            minifyEnabled enableProguardInReleaseBuilds
+            signingConfig signingConfigs.debug
+            def enableShrinkResources = findProperty('android.enableShrinkResourcesInReleaseBuilds') ?: 'false'
+            shrinkResources enableShrinkResources.toBoolean()
+            minifyEnabled enableMinifyInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            def enablePngCrunchInRelease = findProperty('android.enablePngCrunchInReleaseBuilds') ?: 'true'
+            crunchPngs enablePngCrunchInRelease.toBoolean()
         }
     }
-
-    flavorDimensions "env"
-    productFlavors {
-      dev {
-        resValue "string", "app_name", "Ísland.dev"
-        applicationIdSuffix ".dev"
-      }
-      prod {
-        resValue "string", "app_name", "Ísland.is"
-        applicationIdSuffix ""
-      }
+    packagingOptions {
+        jniLibs {
+            def enableLegacyPackaging = findProperty('expo.useLegacyPackaging') ?: 'false'
+            useLegacyPackaging enableLegacyPackaging.toBoolean()
+        }
+    }
+    androidResources {
+        ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
 }
 
-android.buildTypes.each { buildType ->
-    buildType.resValue 'string', "CODE_PUSH_APK_BUILD_TIME", String.format("\"%d\"", System.currentTimeMillis())
+// Apply static values from `gradle.properties` to the `android.packagingOptions`
+// Accepts values in comma delimited lists, example:
+// android.packagingOptions.pickFirsts=/LICENSE,**/picasa.ini
+["pickFirsts", "excludes", "merges", "doNotStrip"].each { prop ->
+    // Split option: 'foo,bar' -> ['foo', 'bar']
+    def options = (findProperty("android.packagingOptions.$prop") ?: "").split(",");
+    // Trim all elements in place.
+    for (i in 0..<options.size()) options[i] = options[i].trim();
+    // `[] - ""` is essentially `[""].filter(Boolean)` removing all empty strings.
+    options -= ""
+
+    if (options.length > 0) {
+        println "android.packagingOptions.$prop += $options ($options.length)"
+        // Ex: android.packagingOptions.pickFirsts += '**/SCCS/**'
+        options.each {
+            android.packagingOptions[prop] += it
+        }
+    }
 }
 
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
-    implementation project(':react-native-fs')
+    def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
+    def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";
+    def isWebpAnimatedEnabled = (findProperty('expo.webp.animated') ?: "") == "true";
+
+    if (isGifEnabled) {
+        // For animated gif support
+        implementation("com.facebook.fresco:animated-gif:${expoLibs.versions.fresco.get()}")
+    }
+
+    if (isWebpEnabled) {
+        // For webp support
+        implementation("com.facebook.fresco:webpsupport:${expoLibs.versions.fresco.get()}")
+        if (isWebpAnimatedEnabled) {
+            // Animated webp support
+            implementation("com.facebook.fresco:animated-webp:${expoLibs.versions.fresco.get()}")
+        }
+    }
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
@@ -173,3 +183,6 @@ dependencies {
         implementation jscFlavor
     }
 }
+
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.firebase-perf'

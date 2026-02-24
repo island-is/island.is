@@ -1,20 +1,35 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "isolatedModules": true,
+    "strict": true,
+    "allowJs": true,
+    "esModuleInterop": true,
     "jsx": "react-native",
-    "lib": ["esnext"],
+    "lib": ["DOM", "ESNext"],
+    "module": "preserve",
+    "moduleDetection": "force",
+    "moduleResolution": "bundler",
+    "customConditions": ["react-native"],
+    "noEmit": true,
     "resolveJsonModule": true,
-    "declaration": true
+    "skipLibCheck": true,
+    "target": "ESNext",
   },
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
+  "exclude": [
+    "${configDir}/node_modules",
+    "${configDir}/babel.config.js",
+    "${configDir}/metro.config.js",
+    "${configDir}/jest.config.js",
+    "${configDir}/android",
+    "${configDir}/ios",
+    "**/*.stories.tsx"
+  ],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "src/types/styled-components.d.ts",
+    "src/types/images.d.ts"
   ]
 }

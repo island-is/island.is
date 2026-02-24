@@ -1,161 +1,147 @@
-import { compile, match } from 'path-to-regexp'
-import { Navigation } from 'react-native-navigation'
-import createUse from 'zustand'
-import create, { State } from 'zustand/vanilla'
-import { bundleId } from '../config'
+// import { compile, match } from 'path-to-regexp'
+// import { Navigation } from 'react-native-navigation'
+// import createUse from 'zustand'
+// import create, { State } from 'zustand/vanilla'
+// import { bundleId } from '../config'
+import { router } from 'expo-router';
 import {
   GenericLicenseType,
   NotificationMessage,
 } from '../graphql/types/schema'
-import { ComponentRegistry, MainBottomTabs } from '../utils/component-registry'
-import { openNativeBrowser } from './rn-island'
 
-export type RouteCallbackArgs =
-  | boolean
-  | ({ path: string } & {
-      scheme: string
-      match?: RegExpExecArray
-      [key: string]: string | RegExpExecArray | undefined
-    })
+// export type RouteCallbackArgs =
+//   | boolean
+//   | ({ path: string } & {
+//       scheme: string
+//       match?: RegExpExecArray
+//       [key: string]: string | RegExpExecArray | undefined
+//     })
 
-export interface Route {
-  expression: string | RegExp
-  callback(args: RouteCallbackArgs): void
-}
+// export interface Route {
+//   expression: string | RegExp
+//   callback(args: RouteCallbackArgs): void
+// }
 
-export interface DeepLinkingStore extends State {
-  schemes: string[]
-  routes: Route[]
-}
+// export interface DeepLinkingStore extends State {
+//   schemes: string[]
+//   routes: Route[]
+// }
 
-export const deepLinkingStore = create<DeepLinkingStore>((set, get) => ({
-  schemes: [],
-  routes: [],
-}))
+// export const deepLinkingStore = create<DeepLinkingStore>((set, get) => ({
+//   schemes: [],
+//   routes: [],
+// }))
 
-export const useDeepLinkingStore = createUse(deepLinkingStore)
+// export const useDeepLinkingStore = createUse(deepLinkingStore)
 
-function fetchQueries(expression: string) {
-  const regex = /:([^/]*)/g
-  const queries = []
+// function fetchQueries(expression: string) {
+//   const regex = /:([^/]*)/g
+//   const queries = []
 
-  let match = regex.exec(expression)
-  while (match) {
-    if (match && match[0] && match[1]) {
-      queries.push(match[0])
-    }
+//   let match = regex.exec(expression)
+//   while (match) {
+//     if (match && match[0] && match[1]) {
+//       queries.push(match[0])
+//     }
 
-    match = regex.exec(expression)
-  }
+//     match = regex.exec(expression)
+//   }
 
-  return queries
-}
+//   return queries
+// }
 
-function execRegex(queries: string[], expression: string, path: string) {
-  let regexExpression = expression
-  queries.forEach((query) => {
-    regexExpression = regexExpression.replace(query, '(.*)')
-  })
+// function execRegex(queries: string[], expression: string, path: string) {
+//   let regexExpression = expression
+//   queries.forEach((query) => {
+//     regexExpression = regexExpression.replace(query, '(.*)')
+//   })
 
-  const queryRegex = new RegExp(regexExpression, 'g')
-  const match = queryRegex.exec(path)
+//   const queryRegex = new RegExp(regexExpression, 'g')
+//   const match = queryRegex.exec(path)
 
-  if (match && !match[1].includes('/')) {
-    let results = { path: match[0] }
-    queries.forEach((query, index) => {
-      const id = query.substring(1)
-      results = { [id]: match[index + 1], ...results }
-    })
+//   if (match && !match[1].includes('/')) {
+//     let results = { path: match[0] }
+//     queries.forEach((query, index) => {
+//       const id = query.substring(1)
+//       results = { [id]: match[index + 1], ...results }
+//     })
 
-    return results
-  }
+//     return results
+//   }
 
-  return false
-}
+//   return false
+// }
 
-function evaluateExpression(
-  expression: string | RegExp,
-  path: string,
-  scheme: string,
-) {
-  if (expression === path) {
-    return { scheme, path }
-  }
+// function evaluateExpression(
+//   expression: string | RegExp,
+//   path: string,
+//   scheme: string,
+// ) {
+//   if (expression === path) {
+//     return { scheme, path }
+//   }
 
-  try {
-    const regex = expression as RegExp
-    const match = regex.exec(path)
-    regex.lastIndex = 0
-    if (match) {
-      return { scheme, path, match }
-    }
-  } catch (e) {
-    // Error, expression is not regex
-  }
+//   try {
+//     const regex = expression as RegExp
+//     const match = regex.exec(path)
+//     regex.lastIndex = 0
+//     if (match) {
+//       return { scheme, path, match }
+//     }
+//   } catch (e) {
+//     // Error, expression is not regex
+//   }
 
-  if (typeof expression === 'string' && expression.includes(':')) {
-    const queries = fetchQueries(expression)
-    if (queries.length) {
-      return execRegex(queries, expression, path)
-    }
-  }
+//   if (typeof expression === 'string' && expression.includes(':')) {
+//     const queries = fetchQueries(expression)
+//     if (queries.length) {
+//       return execRegex(queries, expression, path)
+//     }
+//   }
 
-  return false
-}
+//   return false
+// }
 
 export function evaluateUrl(url: string, extraProps: any = {}) {
-  let solved = false
-  const { schemes, routes } = deepLinkingStore.getState()
-  schemes.forEach((scheme) => {
-    if (url.startsWith(scheme)) {
-      const path = url.substring(scheme.length - 1)
-      routes.forEach((route) => {
-        const result = evaluateExpression(route.expression, path, scheme)
-        if (result) {
-          solved = true
-          route.callback({ scheme, ...result, ...extraProps })
-        }
-      })
-    }
-  })
+  // @todo migration
+  return false;
+  // let solved = false
+  // const { schemes, routes } = deepLinkingStore.getState()
+  // schemes.forEach((scheme) => {
+  //   if (url.startsWith(scheme)) {
+  //     const path = url.substring(scheme.length - 1)
+  //     routes.forEach((route) => {
+  //       const result = evaluateExpression(route.expression, path, scheme)
+  //       if (result) {
+  //         solved = true
+  //         route.callback({ scheme, ...result, ...extraProps })
+  //       }
+  //     })
+  //   }
+  // })
 
-  return solved
+  // return solved
 }
 
 export const addRoute = (
   expression: string | RegExp,
-  callback: (args: RouteCallbackArgs) => void,
+  callback: (args: any) => void,
 ) => {
-  const route = { expression, callback }
-  deepLinkingStore.setState(({ routes }) => ({ routes: [...routes, route] }))
-}
-
-export const removeRoute = (expression: string | RegExp) => {
-  deepLinkingStore.setState(({ routes }) => {
-    const index = routes.findIndex((route) => route.expression === expression)
-    if (index >= 0) {
-      routes.splice(index, 1)
-    }
-    return { routes }
-  })
-}
-
-export const resetRoutes = () => {
-  deepLinkingStore.setState(() => ({ routes: [] }))
+  // @todo migration
+  // const route = { expression, callback }
+  // deepLinkingStore.setState(({ routes }) => ({ routes: [...routes, route] }))
 }
 
 export const addScheme = (scheme: string) => {
-  deepLinkingStore.setState(({ schemes }) => ({
-    schemes: [...schemes, scheme],
-  }))
+  // @todo migration
+  // deepLinkingStore.setState(({ schemes }) => ({
+  //   schemes: [...schemes, scheme],
+  // }))
 }
 
-export const resetSchemes = () => {
-  deepLinkingStore.setState(() => ({ schemes: [] }))
-}
 
-const navigateTimeMap = new Map()
-const NAVIGATE_TIMEOUT = 500
+// const navigateTimeMap = new Map()
+// const NAVIGATE_TIMEOUT = 500
 
 /**
  * Navigate to a specific url within the app
@@ -163,23 +149,26 @@ const NAVIGATE_TIMEOUT = 500
  * @returns
  */
 export function navigateTo(url: string, extraProps: any = {}) {
-  const now = Date.now()
-  // find last navigate time to this route
-  const lastNavigate = navigateTimeMap.get(url)
+  router.navigate(url as any);
+  // @todo migration
 
-  if (lastNavigate && now - lastNavigate <= NAVIGATE_TIMEOUT) {
-    // user tried to navigate to same route twice within TAP_TIMEOUT (500ms)
-    return
-  }
+  // const now = Date.now()
+  // // find last navigate time to this route
+  // const lastNavigate = navigateTimeMap.get(url)
 
-  // update navigate time for this route
-  navigateTimeMap.set(url, now)
+  // if (lastNavigate && now - lastNavigate <= NAVIGATE_TIMEOUT) {
+  //   // user tried to navigate to same route twice within TAP_TIMEOUT (500ms)
+  //   return
+  // }
 
-  // setup linking url
-  const linkingUrl = `${bundleId}://${String(url).replace(/^\//, '')}`
+  // // update navigate time for this route
+  // navigateTimeMap.set(url, now)
 
-  // evaluate and route
-  return evaluateUrl(linkingUrl, extraProps)
+  // // setup linking url
+  // const linkingUrl = `${bundleId}://${String(url).replace(/^\//, '')}`
+
+  // // evaluate and route
+  // return evaluateUrl(linkingUrl, extraProps)
 
   // @todo when to use native linking system?
   // return Linking.openURL(linkingUrl);
@@ -191,35 +180,39 @@ export function navigateTo(url: string, extraProps: any = {}) {
 export function navigateToUniversalLink({
   link,
   componentId,
-  openBrowser = openNativeBrowser,
+  openBrowser,
 }: {
   // url to navigate to
   link?: NotificationMessage['link']['url']
   // componentId to open web browser in
   componentId?: string
   openBrowser?: (link: string, componentId?: string) => void
-}) {
+  }) {
+  // @todo migration
+
   // If no link do nothing
   if (!link) return
 
-  const appRoute = findRoute(link)
+  router.navigate(link as any);
 
-  if (appRoute) {
-    navigateTo(appRoute)
+  // const appRoute = findRoute(link)
 
-    return
-  }
+  // if (appRoute) {
+  //   navigateTo(appRoute)
 
-  if (!componentId) {
-    // Use home tab for browser
-    Navigation.mergeOptions(MainBottomTabs, {
-      bottomTabs: {
-        currentTabIndex: 1,
-      },
-    })
-  }
+  //   return
+  // }
 
-  openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
+  // if (!componentId) {
+  //   // Use home tab for browser
+  //   Navigation.mergeOptions(MainBottomTabs, {
+  //     bottomTabs: {
+  //       currentTabIndex: 1,
+  //     },
+  //   })
+  // }
+
+  // openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
 }
 
 // Map between notification link and app screen
@@ -248,21 +241,21 @@ const urlMapping: { [key: string]: string } = {
   '/minarsidur/loftbru': '/air-discount',
 }
 
-const findRoute = (url: string) => {
-  // Remove trailing slash and spacess
-  const cleanLink = url.replace(/\/\s*$/, '')
-  // Remove domain
-  const path = cleanLink.replace(/https?:\/\/[^/]+/, '')
+// const findRoute = (url: string) => {
+//   // Remove trailing slash and spacess
+//   const cleanLink = url.replace(/\/\s*$/, '')
+//   // Remove domain
+//   const path = cleanLink.replace(/https?:\/\/[^/]+/, '')
 
-  for (const [pattern, routeTemplate] of Object.entries(urlMapping)) {
-    const matcher = match(pattern, { decode: decodeURIComponent })
-    const matchResult = matcher(path)
+//   for (const [pattern, routeTemplate] of Object.entries(urlMapping)) {
+//     const matcher = match(pattern, { decode: decodeURIComponent })
+//     const matchResult = matcher(path)
 
-    if (matchResult) {
-      const compiler = compile(routeTemplate)
-      return compiler(matchResult.params)
-    }
-  }
+//     if (matchResult) {
+//       const compiler = compile(routeTemplate)
+//       return compiler(matchResult.params)
+//     }
+//   }
 
-  return null
-}
+//   return null
+// }

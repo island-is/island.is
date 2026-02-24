@@ -2,7 +2,9 @@
 import {
   DdRum,
   DdSdkReactNative,
-  DdSdkReactNativeConfiguration,
+  DatadogProviderConfiguration,
+  TrackingConsent,
+  // DdSdkReactNativeConfiguration,
 } from '@datadog/mobile-react-native'
 import messaging from '@react-native-firebase/messaging'
 import { initializePerformance } from '@react-native-firebase/perf'
@@ -15,9 +17,9 @@ import {
   TextStyle,
   ViewStyle,
 } from 'react-native'
-import DeviceInfo from 'react-native-device-info'
+import * as Application from 'expo-application';
+import * as Device from 'expo-device'
 import KeyboardManager from 'react-native-keyboard-manager'
-import { Navigation } from 'react-native-navigation'
 import { getConfig } from '../../config'
 import { isIos } from '../devices'
 import { performanceMetrics } from '../performance-metrics'
@@ -72,42 +74,36 @@ if (__DEV__) {
   initializePerformance(app)
 } else {
   // datadog rum config
-  const ddconfig = new DdSdkReactNativeConfiguration(
+  // @todo migration
+  const ddconfig = new DatadogProviderConfiguration(
     getConfig().datadog ?? '',
     'production',
-    '2736367a-a841-492d-adef-6f5a509d6ec2',
-    false, // do not track User interactions (e.g.: Tap on buttons.)
-    true, // track XHR Resources
-    true, // track Errors
+    TrackingConsent.NOT_GRANTED,
+    {
+      site: 'EU',
+      service: 'mobile-app',
+      rumConfiguration: {
+        applicationId: '2736367a-a841-492d-adef-6f5a509d6ec2',
+        trackInteractions: false, // do not track User interactions (e.g.: Tap on buttons.)
+        trackResources: true, // track XHR Resources
+        trackErrors: true, // track Errors
+        sessionSampleRate: 10,
+        nativeCrashReportEnabled: true,
+      }
+    },
   )
-
-  ddconfig.nativeCrashReportEnabled = true
-  ddconfig.site = 'EU'
-  ddconfig.serviceName = 'mobile-app'
-  ddconfig.sessionSamplingRate = 10
 
   // initialize datadog rum
   DdSdkReactNative.initialize(ddconfig)
 
-  Navigation.events().registerComponentWillAppearListener(
-    ({ componentId, componentName }) => {
-      // Start a view with a unique view identifier, a custom view url, and an object to attach additional attributes to the view
-      DdRum.startView(componentId, componentName)
-    },
-  )
-
-  Navigation.events().registerComponentDidDisappearListener(
-    ({ componentId }) => {
-      // Stops a previously started view with the same unique view identifier, and an object to attach additional attributes to the view
-      DdRum.stopView(componentId)
-    },
-  )
-
   // enable performance metrics collection
   performanceMetrics()
 
+
   // register device for remote messages
-  messaging().registerDeviceForRemoteMessages()
+  if (Device.isDevice) {
+    messaging().registerDeviceForRemoteMessages()
+  }
 }
 
 // ignore expo warnings
@@ -130,8 +126,8 @@ export function setupGlobals() {
   // set NSUserDefaults
   if (isIos) {
     Settings.set({
-      version_preference: DeviceInfo.getVersion(),
-      build_preference: DeviceInfo.getBuildNumber(),
+      version_preference: Application.nativeApplicationVersion,
+      build_preference: Application.nativeBuildVersion,
     })
   }
 }
