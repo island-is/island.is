@@ -7,6 +7,7 @@ import { CaseType } from '@island.is/judicial-system/types'
 
 import appModuleConfig from '../app.config'
 import { CreateCaseDto } from '../dto/createCase.dto'
+import { CreateCaseV2Dto } from '../dto/createCaseV2.dto'
 import { Case } from '../models/case.model'
 import { createTestingAppModule } from './createTestingAppModule'
 
@@ -166,6 +167,71 @@ describe('AppController - Greate', () => {
     it('should throw a BadGatewayException', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
       expect(then.error.message).toBe('Failed to create a new case')
+    })
+  })
+})
+
+describe('AppController - CreateV2', () => {
+  let appController: Awaited<ReturnType<typeof createTestingAppModule>>
+
+  beforeEach(async () => {
+    appController = await createTestingAppModule()
+  })
+
+  describe('remote call', () => {
+    const caseToCreate: CreateCaseV2Dto = {
+      policeCaseNumber: '007-2022-2',
+      type: CaseType.CUSTODY,
+      prosecutorNationalId: '1111111111',
+      prosecutorsOfficeNationalId: '2222222222',
+      leadInvestigator: 'The Boss',
+    }
+
+    beforeEach(async () => {
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValueOnce({ id: 'case-id-v2' }),
+      })
+
+      await appController.createV2(caseToCreate)
+    })
+
+    it('should call backend at /api/internal/case/v2 with body without accused fields', () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backend.url}/api/internal/case/v2`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backend.accessToken}`,
+          },
+          body: JSON.stringify({
+            ...caseToCreate,
+            policeCaseNumber: undefined,
+            policeCaseNumbers: ['007-2022-2'],
+          }),
+        },
+      )
+    })
+  })
+
+  describe('case created', () => {
+    const caseToCreate = {} as CreateCaseV2Dto
+    const caseId = uuid()
+    const theCase = { id: caseId }
+
+    beforeEach(async () => {
+      const mockFetch = fetch as jest.Mock
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: jest.fn().mockResolvedValueOnce(theCase),
+      })
+    })
+
+    it('should return a new case', async () => {
+      const result = await appController.createV2(caseToCreate)
+      expect(result).toEqual({ id: caseId })
     })
   })
 })
