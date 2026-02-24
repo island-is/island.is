@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { ListItem } from './models/listItem.model'
 import { ListItemDto } from './models/dto/listItem.dto'
@@ -138,7 +142,7 @@ export class ListItemsService {
 
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
-      throw new NotFoundException(
+      throw new UnauthorizedException(
         `User does not have permission to manage list items of field with id '${fieldId}'`,
       )
     }

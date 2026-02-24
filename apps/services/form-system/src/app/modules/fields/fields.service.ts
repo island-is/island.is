@@ -53,26 +53,17 @@ export class FieldsService {
 
     const { screenId, fieldType, displayOrder } = createFieldDto
 
-    const screen = await this.screenModel.findByPk(screenId, {
-      attributes: ['sectionId'],
-      raw: true,
-    })
+    const screen = await this.screenModel.findByPk(screenId)
     if (!screen) {
       throw new NotFoundException(`Screen with id '${screenId}' not found`)
     }
-    const section = await this.sectionModel.findByPk(screen.sectionId, {
-      attributes: ['formId'],
-      raw: true,
-    })
+    const section = await this.sectionModel.findByPk(screen.sectionId)
     if (!section) {
       throw new NotFoundException(
         `Section with id '${screen.sectionId}' not found`,
       )
     }
-    const form = await this.formModel.findByPk(section.formId, {
-      attributes: ['organizationNationalId'],
-      raw: true,
-    })
+    const form = await this.formModel.findByPk(section.formId)
     if (!form) {
       throw new NotFoundException(`Form with id '${section.formId}' not found`)
     }

@@ -133,10 +133,7 @@ export class FormApplicantTypesService {
       throw new NotFoundException('PARTIES section not found for form')
     }
 
-    const form = await this.formModel.findByPk(partiesSection.formId, {
-      attributes: ['organizationNationalId'],
-      raw: true,
-    })
+    const form = await this.formModel.findByPk(partiesSection.formId)
     if (!form) {
       throw new NotFoundException(
         `Form with id '${partiesSection.formId}' not found`,

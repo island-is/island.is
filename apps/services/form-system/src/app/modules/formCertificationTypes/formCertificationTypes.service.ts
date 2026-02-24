@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { FormCertificationType } from './models/formCertificationType.model'
 import { CreateFormCertificationTypeDto } from './models/dto/createFormCertificationType.dto'
@@ -38,7 +42,7 @@ export class FormCertificationTypesService {
 
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
-      throw new NotFoundException(
+      throw new UnauthorizedException(
         `User does not have permission to create form certification type for form with id '${createFormCertificationTypeDto.formId}'`,
       )
     }
@@ -94,7 +98,7 @@ export class FormCertificationTypesService {
 
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
-      throw new NotFoundException(
+      throw new UnauthorizedException(
         `User does not have permission to delete form certification type for form with id '${formCertificationType.formId}'`,
       )
     }

@@ -81,10 +81,7 @@ export class SectionsService {
       throw new NotFoundException(`Section with id '${id}' not found`)
     }
 
-    const form = await this.formModel.findByPk(section.formId, {
-      attributes: ['organizationNationalId'],
-      raw: true,
-    })
+    const form = await this.formModel.findByPk(section.formId)
     if (!form) {
       throw new NotFoundException(`Form with id '${section.formId}' not found`)
     }
@@ -129,10 +126,7 @@ export class SectionsService {
         continue
       }
 
-      const form = await this.formModel.findByPk(section.formId, {
-        attributes: ['organizationNationalId'],
-        raw: true,
-      })
+      const form = await this.formModel.findByPk(section.formId)
       if (!form) {
         throw new NotFoundException(
           `Form with id '${section.formId}' not found`,
@@ -162,10 +156,7 @@ export class SectionsService {
       throw new NotFoundException(`Section with id '${id}' not found`)
     }
 
-    const form = await this.formModel.findByPk(section.formId, {
-      attributes: ['organizationNationalId'],
-      raw: true,
-    })
+    const form = await this.formModel.findByPk(section.formId)
     if (!form) {
       throw new NotFoundException(`Form with id '${section.formId}' not found`)
     }
