@@ -78,7 +78,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const shouldShowAppealDatePicker =
     showAppealDatePicker && !isAppealDatePickerClosing
 
-  const showServiceDateDatePicker = isServiceRequired && !verdict.serviceDate
+  const showServiceDateDatePicker = isServiceRequired && !verdict?.serviceDate
   const shouldShowServiceDatePicker =
     showServiceDateDatePicker && !isServiceDatePickerClosing
 
