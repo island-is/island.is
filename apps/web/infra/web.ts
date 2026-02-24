@@ -21,9 +21,9 @@ export const serviceSetup = (services: {
         prod: 'island.is',
       },
       NEXT_PUBLIC_MATOMO_ENABLED: {
-        dev: "true",
-        prod: "false",
-        staging: "false"
+        dev: 'true',
+        prod: 'false',
+        staging: 'false',
       },
       NEXT_PUBLIC_MATOMO_DOMAIN: {
         dev: 'https://matomo-dev.dev01.devland.is',

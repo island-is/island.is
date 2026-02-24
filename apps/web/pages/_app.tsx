@@ -13,7 +13,11 @@ const IslandWebApp = ({ Component, pageProps }: AppProps) => {
   const isMatomoEnabled = process.env.NEXT_PUBLIC_MATOMO_ENABLED === 'true'
   return (
     <>
-      <MatomoTracker enabled={isMatomoEnabled} matomoSiteId={matomoSiteId} matomoDomain={matomoDomain} />
+      <MatomoTracker
+        enabled={isMatomoEnabled}
+        matomoSiteId={matomoSiteId}
+        matomoDomain={matomoDomain}
+      />
       <Component {...pageProps} />
     </>
   )

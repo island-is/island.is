@@ -29,11 +29,19 @@ class MyDocument extends Document<Props> {
     const isMatomoEnabled = process.env.NEXT_PUBLIC_MATOMO_ENABLED === 'true'
     const lang = getLocaleFromPath(ctx?.req?.url)
 
-    return { ...initialProps, lang, domain, matomoDomain, matomoSiteId, isMatomoEnabled }
+    return {
+      ...initialProps,
+      lang,
+      domain,
+      matomoDomain,
+      matomoSiteId,
+      isMatomoEnabled,
+    }
   }
 
   render() {
-    const { lang, domain, matomoDomain, matomoSiteId, isMatomoEnabled } = this.props
+    const { lang, domain, matomoDomain, matomoSiteId, isMatomoEnabled } =
+      this.props
 
     return (
       <Html lang={String(lang)}>

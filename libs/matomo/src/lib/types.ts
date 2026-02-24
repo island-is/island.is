@@ -5,7 +5,7 @@ declare global {
 }
 
 export interface MatomoInitScriptProps {
-  enabled?: boolean;
+  enabled?: boolean
   matomoDomain: string
   matomoSiteId: string
 }

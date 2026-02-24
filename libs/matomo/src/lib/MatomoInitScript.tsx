@@ -10,10 +10,10 @@ import { MatomoInitScriptProps } from './types'
 export const MatomoInitScript = ({
   matomoDomain,
   matomoSiteId,
-  enabled
+  enabled,
 }: MatomoInitScriptProps) => {
   if (!enabled) {
-    return null;
+    return null
   }
   if (!matomoDomain || !matomoSiteId) {
     console.warn(

@@ -1,8 +1,7 @@
 import { useEffect } from 'react'
 import Router from 'next/router'
-import { initMatomo } from "./init-matomo"
+import { initMatomo } from './init-matomo'
 import type { MatomoInitScriptProps } from './types'
-
 
 /**
  * Matomo client-side route change tracker.
@@ -21,7 +20,11 @@ import type { MatomoInitScriptProps } from './types'
  * </>
  * ```
  */
-export const MatomoTracker = ({enabled, matomoDomain, matomoSiteId}: MatomoInitScriptProps) => {
+export const MatomoTracker = ({
+  enabled,
+  matomoDomain,
+  matomoSiteId,
+}: MatomoInitScriptProps) => {
   useEffect(() => {
     if (!enabled || !matomoDomain || !matomoSiteId) {
       return () => {
@@ -29,11 +32,11 @@ export const MatomoTracker = ({enabled, matomoDomain, matomoSiteId}: MatomoInitS
       }
     }
     const normalizedDomain = matomoDomain.endsWith('/')
-    ? matomoDomain
-    : `${matomoDomain}/`
+      ? matomoDomain
+      : `${matomoDomain}/`
 
     initMatomo({ matomoDomain: normalizedDomain, matomoSiteId })
- 
+
     const handleRouteChange = (url: string) => {
       console.log('[Matomo] routeChangeComplete:', url)
       window._paq?.push(['setCustomUrl', url])
