@@ -160,12 +160,12 @@ export function getMainRoot(): Layout {
         },
         {
           stack: {
-            id: StackRegistry.ApplicationsStack,
+            id: StackRegistry.HealthStack,
             children: [
               {
                 component: {
-                  id: ComponentRegistry.ApplicationsScreen,
-                  name: ComponentRegistry.ApplicationsScreen,
+                  id: ComponentRegistry.HealthOverviewScreen,
+                  name: ComponentRegistry.HealthOverviewScreen,
                   options: {
                     topBar: {
                       rightButtons,
