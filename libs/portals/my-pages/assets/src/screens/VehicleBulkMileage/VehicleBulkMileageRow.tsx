@@ -297,8 +297,12 @@ export const VehicleBulkMileageRow = ({
         {
           value: (
             <Box>
-              <Text variant="medium">{vehicle.vehicleType}</Text>
-              <Text variant="small">{vehicle.vehicleId}</Text>
+              <Text translate="no" variant="medium">
+                {vehicle.vehicleType}
+              </Text>
+              <Text translate="no" variant="small">
+                {vehicle.vehicleId}
+              </Text>
             </Box>
           ),
         },

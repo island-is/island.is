@@ -1,11 +1,11 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { MileageDetails } from './mileageDetails.model'
 import { Color } from './color.model'
 import { Registration } from './registration.model'
 
 @ObjectType()
 export class VehicleCurrentWithMileage {
-  @Field()
+  @Field(() => ID)
   vehicleId!: string
 
   @Field(() => Registration, { nullable: true })
