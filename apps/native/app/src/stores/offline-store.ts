@@ -1,6 +1,5 @@
 import { create } from 'zustand'
 import { useStore } from 'zustand/react'
-// import create from 'zustand/vanilla'
 import { isDefined } from '../utils/is-defined'
 
 interface OfflineState {

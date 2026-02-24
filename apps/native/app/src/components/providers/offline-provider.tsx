@@ -2,6 +2,7 @@ import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import { ReactNode, useEffect } from 'react'
 import { useAuthStore } from '@/stores/auth-store'
 import { useOfflineActions, useOfflineStore } from '@/stores/offline-store'
+import { OfflineBanner } from '../offline/offline-banner'
 
 interface OfflineHocProps {
   children: ReactNode
@@ -27,16 +28,14 @@ export const OfflineProvider = ({ children }: OfflineHocProps) => {
       !lockScreenActivatedAt
     ) {
       void impactAsync(ImpactFeedbackStyle.Heavy)
-      // @todo migration
-      // void Navigation.showOverlay({
-      //   component: {
-      //     id: CR.OfflineBanner,
-      //     name: CR.OfflineBanner,
-      //   },
-      // })
       setBannerHasBeenShown(true)
     }
   }, [bannerVisible, bannerHasBeenShown, isConnected, lockScreenActivatedAt])
 
-  return <>{children}</>
+  return (
+    <>
+      {children}
+      {bannerVisible && <OfflineBanner />}
+    </>
+  )
 }

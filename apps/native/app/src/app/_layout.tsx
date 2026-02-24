@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import 'react-native-reanimated'
 
 import { LocaleProvider } from '../components/providers/locale-provider'
+import { OfflineProvider } from '../components/providers/offline-provider'
 import { getApolloClientAsync } from '../graphql/client'
 import { FeatureFlagProvider } from '../components/providers/feature-flag-provider'
 import { ApolloProvider } from '@apollo/client'
@@ -124,14 +125,16 @@ function RootLayoutNav({
       <AppThemeProvider>
         <FeatureFlagProvider>
           <ApolloProvider client={apolloClient}>
-            <Stack>
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="login"
-                options={{ headerShown: false, animation: 'none' }}
-              />
-            </Stack>
-            <PromptModal />
+            <OfflineProvider>
+              <Stack>
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="login"
+                  options={{ headerShown: false, animation: 'none' }}
+                />
+              </Stack>
+              <PromptModal />
+            </OfflineProvider>
           </ApolloProvider>
         </FeatureFlagProvider>
       </AppThemeProvider>

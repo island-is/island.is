@@ -4,10 +4,16 @@ import styled from 'styled-components/native'
 import { Alert, DARK_YELLOW_200, dynamicColor } from '../../ui'
 import { getIntl } from '@/components/providers/locale-provider'
 import { useOfflineActions } from '../../stores/offline-store'
-import { ComponentRegistry as CR } from '../../utils/component-registry'
-import { router } from 'expo-router'
 
 const TranslateYValue = 200
+
+const Host = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+`
 
 const Overlay = styled(SafeAreaView)`
   position: relative;
@@ -41,7 +47,6 @@ export const OfflineBanner = () => {
       easing: Easing.out(Easing.ease),
     }).start(() => {
       toggleBanner(false)
-      router.dismissAll();
     })
   }
 
@@ -50,31 +55,24 @@ export const OfflineBanner = () => {
   }, [])
 
   return (
-    <Animated.View
-      style={{
-        transform: [{ translateY: popAnim }],
-      }}
-    >
-      <Overlay>
-        <Alert
-          type="warning"
-          title={intl.formatMessage({ id: 'offline.title' })}
-          message={intl.formatMessage({
-            id: 'offline.message',
-          })}
-          hasBottomBorder
-          onClose={popOut}
-        />
-      </Overlay>
-    </Animated.View>
+    <Host pointerEvents="box-none">
+      <Animated.View
+        style={{
+          transform: [{ translateY: popAnim }],
+        }}
+      >
+        <Overlay>
+          <Alert
+            type="warning"
+            title={intl.formatMessage({ id: 'offline.title' })}
+            message={intl.formatMessage({
+              id: 'offline.message',
+            })}
+            hasBottomBorder
+            onClose={popOut}
+          />
+        </Overlay>
+      </Animated.View>
+    </Host>
   )
-}
-
-OfflineBanner.options = {
-  layout: {
-    componentBackgroundColor: 'transparent',
-  },
-  overlay: {
-    interceptTouchOutside: false,
-  },
 }

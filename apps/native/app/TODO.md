@@ -1,6 +1,6 @@
 # Todo list
 
-- [ ] Offline toasts migration from RNN.
+- [x] Offline toasts migration from RNN.
 
 ---
 
@@ -29,17 +29,17 @@ All `@todo migration` comments found in the codebase, grouped by file.
 ### `src/hooks/use-deep-link-handling.ts`
 - **Line 37** — `useDeepLinkHandling()`: Verify this hook works end-to-end with expo-router's `useURL()` and Firebase notification handling. (Now uses the updated `navigateToUniversalLink` with `findRoute`).
 
-### `src/hooks/use-connectivity-indicator.ts`
-- **Line 34** — `useConnectivityIndicator()`: The `updateNavigationButtons()` body is empty; RNN `Navigation.mergeOptions` calls for offline/loading topBar buttons need to be replaced with an expo-router-compatible approach.
+### ~~`src/hooks/use-connectivity-indicator.ts`~~ ✅
+- ~~Deleted — had zero callers; RNN topBar button management replaced by `OfflineIcon` component rendered directly in `NavigationBarSheet`.~~
 
 ### `src/components/dropdown/dropdown-menu-overlay.tsx`
 - **Line 58** — `DropdownMenuOverlay`: Still uses `router.dismiss()` as a placeholder; the full overlay registration / dismiss cycle from RNN is not yet re-implemented.
 
-### `src/components/offline/offline-icon.tsx`
-- **Line 16** — `OfflineIcon`: The `onPress` handler is empty; show/dismiss the offline banner via expo-router (e.g. a modal route).
+### ~~`src/components/offline/offline-icon.tsx`~~ ✅
+- ~~`OfflineIcon`: `onPress` now toggles banner visibility via `offlineStore.toggleBanner()`.~~
 
-### `src/components/providers/offline-provider.tsx`
-- **Line 30** — `OfflineProvider`: `Navigation.showOverlay` call is commented out; needs to trigger the offline banner via expo-router overlay/modal instead.
+### ~~`src/components/providers/offline-provider.tsx`~~ ✅
+- ~~`OfflineProvider`: Renders `OfflineBanner` directly as an absolutely positioned overlay; mounted in root `_layout.tsx`.~~
 
 ### `src/components/providers/theme-provider.tsx`
 - **Line 48** — `ThemeProvider`: `Appearance.setColorScheme` block is commented out. Determine whether dynamic theme switching will be supported; if not, remove this block entirely.
