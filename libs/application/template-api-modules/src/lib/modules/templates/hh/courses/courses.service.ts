@@ -66,9 +66,20 @@ export class CoursesService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
     try {
+      const courseId = getValueViaPath<string>(
+        application.answers,
+        'courseSelect',
+        '',
+      )
+      const courseInstanceId = getValueViaPath<string>(
+        application.answers,
+        'dateSelect',
+        '',
+      )
+
       const { course, courseInstance } = await this.getCourseById(
-        getValueViaPath<string>(application.answers, 'courseSelect', ''),
-        getValueViaPath<string>(application.answers, 'dateSelect', ''),
+        courseId,
+        courseInstanceId,
         auth.authorization,
       )
 
@@ -77,6 +88,13 @@ export class CoursesService extends BaseTemplateApiService {
           application.answers,
           'participantList',
         ) ?? []
+
+      await this.assertParticipantAvailability({
+        courseInstanceId: courseInstance.id,
+        participantList,
+        maxRegistrations: courseInstance.maxRegistrations,
+        excludeApplicationId: application.id,
+      })
 
       const { name, email, phone, healthcenter, nationalId } =
         await this.extractApplicantInfo(application)
@@ -178,57 +196,12 @@ export class CoursesService extends BaseTemplateApiService {
       auth.authorization,
     )
 
-    const maxRegistrations = courseInstance.maxRegistrations ?? 0
-
-    if (maxRegistrations <= 0) {
-      return { hasAvailability: true }
-    }
-
-    const [zendeskNationalIds, paymentNationalIds] = await Promise.all([
-      this.getZendeskParticipantNationalIds(courseInstance.id),
-      this.getPaymentStateParticipantNationalIds(
-        courseInstance.id,
-        application.id,
-      ),
-    ])
-
-    const currentApplicationParticipantNationalIds = new Set(
-      participantList.map((p) => p.nationalIdWithName.nationalId),
-    )
-
-    const nationalIdsTakenByOtherApplications = new Set([
-      ...zendeskNationalIds,
-      ...paymentNationalIds,
-    ])
-    const allNationalIds = new Set([
-      ...currentApplicationParticipantNationalIds,
-      ...nationalIdsTakenByOtherApplications,
-    ])
-
-    const hasAvailability = maxRegistrations >= allNationalIds.size
-
-    const slotsAvailable = Math.max(
-      0,
-      maxRegistrations - nationalIdsTakenByOtherApplications.size,
-    )
-
-    if (!hasAvailability) {
-      throw new TemplateApiError(
-        {
-          title: 'Ekki næg sæti laus',
-          summary: `Laus sæti: ${slotsAvailable}`,
-        },
-        400,
-      )
-    }
-
-    return {
-      slotsAvailable: Math.max(
-        0,
-        maxRegistrations - nationalIdsTakenByOtherApplications.size,
-      ),
-      hasAvailability,
-    }
+    return this.assertParticipantAvailability({
+      courseInstanceId: courseInstance.id,
+      participantList,
+      maxRegistrations: courseInstance.maxRegistrations,
+      excludeApplicationId: application.id,
+    })
   }
 
   private async getZendeskParticipantNationalIds(
@@ -265,7 +238,7 @@ export class CoursesService extends BaseTemplateApiService {
     return nationalIds
   }
 
-  private async getPaymentStateParticipantNationalIds(
+  private async getApplicationsParticipantNationalIds(
     courseInstanceId: string,
     excludeApplicationId: string,
   ): Promise<Set<string>> {
@@ -273,10 +246,18 @@ export class CoursesService extends BaseTemplateApiService {
       const findQuery = this.applicationApiService.customTemplateFindQuery(
         ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID,
       )
-      const applications = await findQuery({
-        state: 'payment',
-        'answers.dateSelect': courseInstanceId,
-      })
+      const [paymentApplications, completedApplications] = await Promise.all([
+        findQuery({
+          state: 'payment',
+          'answers.dateSelect': courseInstanceId,
+        }),
+        findQuery({
+          state: 'completed',
+          'answers.dateSelect': courseInstanceId,
+        }),
+      ])
+
+      const applications = [...paymentApplications, ...completedApplications]
 
       const nationalIds = new Set<string>()
       for (const app of applications) {
@@ -295,7 +276,7 @@ export class CoursesService extends BaseTemplateApiService {
       return nationalIds
     } catch (error) {
       this.logger.warn(
-        'Failed to query payment-state applications for participant availability check',
+        'Failed to query applications for participant availability check',
         { error: error.message },
       )
       throw new TemplateApiError(
@@ -305,6 +286,69 @@ export class CoursesService extends BaseTemplateApiService {
         },
         500,
       )
+    }
+  }
+
+  private async assertParticipantAvailability({
+    courseInstanceId,
+    participantList,
+    maxRegistrations,
+    excludeApplicationId,
+  }: {
+    courseInstanceId: string
+    participantList: ApplicationAnswers['participantList']
+    maxRegistrations?: number
+    excludeApplicationId: string
+  }): Promise<{
+    slotsAvailable?: number
+    hasAvailability: boolean
+  }> {
+    const maxRegistrationsValue = maxRegistrations ?? 0
+
+    if (maxRegistrationsValue <= 0) {
+      return { hasAvailability: true }
+    }
+
+    const [zendeskNationalIds, applicationsNationalIds] = await Promise.all([
+      this.getZendeskParticipantNationalIds(courseInstanceId),
+      this.getApplicationsParticipantNationalIds(
+        courseInstanceId,
+        excludeApplicationId,
+      ),
+    ])
+
+    const nationalIdsTakenByOtherApplications = new Set([
+      ...zendeskNationalIds,
+      ...applicationsNationalIds,
+    ])
+
+    const currentApplicationParticipantNationalIds = new Set(
+      participantList.map((p) => p.nationalIdWithName.nationalId),
+    )
+    const allNationalIds = new Set([
+      ...currentApplicationParticipantNationalIds,
+      ...nationalIdsTakenByOtherApplications,
+    ])
+
+    const hasAvailability = maxRegistrationsValue >= allNationalIds.size
+    const slotsAvailable = Math.max(
+      0,
+      maxRegistrationsValue - nationalIdsTakenByOtherApplications.size,
+    )
+
+    if (!hasAvailability) {
+      throw new TemplateApiError(
+        {
+          title: `Laus sæti: ${slotsAvailable}`,
+          summary: '',
+        },
+        409,
+      )
+    }
+
+    return {
+      slotsAvailable,
+      hasAvailability,
     }
   }
 
