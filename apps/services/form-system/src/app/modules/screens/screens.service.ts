@@ -20,6 +20,7 @@ import {
 } from '../../../utils/dependenciesHelper'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { Field } from '../fields/models/field.model'
 
 @Injectable()
 export class ScreensService {
@@ -157,7 +158,9 @@ export class ScreensService {
   async delete(user: User, id: string): Promise<void> {
     const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
 
-    const screen = await this.screenModel.findByPk(id)
+    const screen = await this.screenModel.findByPk(id, {
+      include: [{ model: Field, as: 'fields' }],
+    })
     if (!screen) {
       throw new NotFoundException(`Screen with id '${id}' not found`)
     }
