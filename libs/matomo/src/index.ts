@@ -1,11 +1,5 @@
 export type { MatomoInitScriptProps } from './lib/types'
 export { MatomoTracker } from './lib/MatomoTracker'
 export { MatomoInitScript } from './lib/MatomoInitScript'
-export {
-  useMatomo,
-  useMatomoPageView,
-  useSetOrganization,
-  useMatomoTrackOrganization,
-  useMatomoTrackSearch,
-} from './lib/hooks'
+export { useMatomoTrackOrganization, useMatomoTrackSearch } from './lib/hooks'
 export { trackEvent, trackSiteSearch, setCustomVariable } from './lib/tracking'
