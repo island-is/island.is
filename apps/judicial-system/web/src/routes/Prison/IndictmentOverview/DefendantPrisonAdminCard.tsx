@@ -88,36 +88,28 @@ export const DefendantPrisonAdminCard = ({
         <Text variant="eyebrow" marginBottom={1}>
           Fullnusta
         </Text>
-        <Box marginBottom={2}>
+        <Box as="ul" marginLeft={2} marginBottom={2}>
           {defendant.verdict?.serviceDate && (
-            <Box display="flex" alignItems="center" marginBottom={1}>
-              <Text variant="small">
-                {`\u2022 Dómur birtur ${formatDate(
-                  defendant.verdict.serviceDate,
-                  'PPP',
-                )}`}
+            <li>
+              <Text as="span">
+                Dómur birtur {formatDate(defendant.verdict.serviceDate, 'PPP')}
               </Text>
-            </Box>
+            </li>
           )}
           {defendant.sentToPrisonAdminDate && (
-            <Box display="flex" alignItems="center" marginBottom={1}>
-              <Text variant="small">
-                {`\u2022 Sent til fullnustu ${formatDate(
-                  defendant.sentToPrisonAdminDate,
-                  'PPP',
-                )}`}
+            <li>
+              <Text as="span">
+                Sent til fullnustu{' '}
+                {formatDate(defendant.sentToPrisonAdminDate, 'PPP')}
               </Text>
-            </Box>
+            </li>
           )}
           {defendant.openedByPrisonAdminDate && (
-            <Box display="flex" alignItems="center" marginBottom={1}>
-              <Text variant="small">
-                {`\u2022 Móttekið ${formatDate(
-                  defendant.openedByPrisonAdminDate,
-                  'PPP',
-                )}`}
+            <li>
+              <Text as="span">
+                Móttekið {formatDate(defendant.openedByPrisonAdminDate, 'PPP')}
               </Text>
-            </Box>
+            </li>
           )}
         </Box>
         <Select
