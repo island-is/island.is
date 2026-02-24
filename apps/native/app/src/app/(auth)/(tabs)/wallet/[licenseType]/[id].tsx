@@ -40,12 +40,12 @@ import {
 } from '@/ui'
 import { isAndroid, isIos, isIosLiquidGlassEnabled } from '@/utils/devices'
 import { screenWidth } from '@/utils/dimensions'
-import { FieldRender } from '../_components/field-render'
+import { LicenseFieldRender } from '../../../../../components/license-field-render'
 import {
   BARCODE_MAX_WIDTH,
   INFORMATION_BASE_TOP_SPACING,
   SHOW_INFO_ALERT_TYPES,
-} from '../../_constants/wallet-pass.constants'
+} from '@/constants/wallet.constants'
 
 const CARD_HEIGHT = 96
 
@@ -611,7 +611,7 @@ export default function WalletPassScreen() {
                 style={{ marginTop: theme.spacing[4] }}
               />
             ) : (
-              <FieldRender data={fields} licenseType={licenseType} />
+              <LicenseFieldRender data={fields} licenseType={licenseType} />
             )}
           </SafeAreaView>
 

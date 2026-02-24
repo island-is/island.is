@@ -1,8 +1,4 @@
 import React, { ReactNode, useEffect } from 'react'
-import {
-  NavigationFunctionComponent,
-  Navigation,
-} from 'react-native-navigation'
 import { Pressable, View, SafeAreaView, Platform } from 'react-native'
 import styled from 'styled-components/native'
 
@@ -11,6 +7,7 @@ import {
   clearDropdownContent,
 } from './dropdown-content-registry'
 import { DropdownOverlayProvider } from './dropdown-overlay-context'
+import { router } from 'expo-router'
 
 export interface DropdownMenuOverlayProps {
   children?: ReactNode
@@ -58,11 +55,11 @@ const Dropdown = styled(View)(({ theme }) => ({
   borderRadius: 8,
 }))
 
-export const DropdownMenuOverlay: NavigationFunctionComponent<
-  DropdownMenuOverlayProps
-> = ({ componentId, children, contentId }) => {
+// @todo migration - needs RNN conversion
+export const DropdownMenuOverlay = ({ children, contentId }: any) => {
   const handleClose = () => {
-    void Navigation.dismissOverlay(componentId)
+    router.dismiss();
+    // void Navigation.dismissOverlay(componentId)
   }
 
   useEffect(() => {
@@ -77,7 +74,7 @@ export const DropdownMenuOverlay: NavigationFunctionComponent<
         <ContentContainer>
           <DropdownWrapper>
             <DropdownOverlayProvider
-              value={{ componentId, close: handleClose }}
+              value={{ close: handleClose }}
             >
               <Dropdown>
                 {children ?? (contentId ? getDropdownContent(contentId) : null)}

@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode, useContext } from 'react'
 
 interface DropdownOverlayContextValue {
-  componentId: string
+  componentId?: string
   close: () => void
 }
 

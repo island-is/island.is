@@ -12,7 +12,7 @@ import {
   blue400,
   theme,
 } from '@/ui'
-import { FilteringCheckbox } from './_components/filtering-checkbox'
+import { FilteringCheckbox } from '../../../../components/filtering-checkbox'
 import { inboxFilterStore, useInboxFilterStore } from '@/stores/inbox-filter-store'
 
 const ButtonContainer = styled(View)`

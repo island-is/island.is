@@ -10,7 +10,7 @@ import chevronForward from '../../assets/icons/chevron-forward.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { Badge } from '../badge/badge'
 import { Typography } from '../typography/typography'
-import { getQuestionnaireStatusLabelId } from '../../../app/(auth)/(tabs)/health/questionnaires/_utils/questionnaire-utils'
+import { getQuestionnaireStatusLabelId } from '../../../utils/questionnaire-utils'
 
 export type QuestionnaireCardAction = {
   text: string

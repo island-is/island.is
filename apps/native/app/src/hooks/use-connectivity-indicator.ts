@@ -1,8 +1,6 @@
 import { QueryResult } from '@apollo/client'
 import isEqual from 'lodash/isEqual'
 import { useEffect, useRef } from 'react'
-import { Navigation, OptionsTopBar } from 'react-native-navigation'
-import { OptionsTopBarButton } from 'react-native-navigation/lib/src/interfaces/Options'
 
 import { theme } from '../ui'
 import { useOfflineStore } from '../stores/offline-store'
@@ -10,7 +8,7 @@ import { ButtonRegistry as BR } from '../utils/component-registry'
 import { isDefined } from '../utils/is-defined'
 import { testIDs } from '../utils/test-ids'
 
-export const offlineButton: OptionsTopBarButton = {
+export const offlineButton = {
   accessibilityLabel: 'Offline',
   id: BR.OfflineButton,
   testID: testIDs.TOPBAR_OFFLINE_BUTTON,
@@ -23,7 +21,7 @@ export const offlineButton: OptionsTopBarButton = {
   },
 }
 
-const loadingButton: OptionsTopBarButton = {
+const loadingButton = {
   id: BR.LoadingButton,
   component: {
     id: BR.LoadingButton,
@@ -33,11 +31,13 @@ const loadingButton: OptionsTopBarButton = {
   },
 }
 
+// @todo migration - needs RNN conversion
+
 type PickedQueryResult = Pick<QueryResult, 'loading' | 'data'>
 
 type UseConnectivityIndicatorProps<Data> = {
   componentId: string
-  rightButtons?: OptionsTopBar['rightButtons']
+  rightButtons?: any;  // OptionsTopBar['rightButtons']
   queryResult?: PickedQueryResult | PickedQueryResult[]
   refetching?: boolean
   extraData?: Data
@@ -68,15 +68,15 @@ export const useConnectivityIndicator = <Data extends Array<unknown>>({
   const prevQueryResultRef = useRef<PickedQueryResult | PickedQueryResult[]>()
 
   const updateNavigationButtons = (showLoading = false) => {
-    Navigation.mergeOptions(componentId, {
-      topBar: {
-        rightButtons: [
-          ...rightButtons,
-          isConnected && showLoading ? loadingButton : undefined,
-          !isConnected ? offlineButton : undefined,
-        ].filter(isDefined),
-      },
-    })
+    // Navigation.mergeOptions(componentId, {
+    //   topBar: {
+    //     rightButtons: [
+    //       ...rightButtons,
+    //       isConnected && showLoading ? loadingButton : undefined,
+    //       !isConnected ? offlineButton : undefined,
+    //     ].filter(isDefined),
+    //   },
+    // })
   }
 
   useEffect(() => {

@@ -20,7 +20,7 @@ import {
   useListLicensesQuery,
 } from '@/graphql/types/schema'
 import illustrationSrc from '@/assets/illustrations/le-retirement-s3.png'
-import { WalletItem } from '../../wallet/_components/wallet-item'
+import { WalletItem } from '../wallet-item'
 import { screenWidth } from '@/utils/dimensions'
 
 const Host = styled.View`

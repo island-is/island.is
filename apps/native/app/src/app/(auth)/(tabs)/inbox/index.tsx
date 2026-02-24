@@ -37,10 +37,10 @@ import {
 } from '@/ui'
 import { isAndroid } from '@/utils/devices'
 import { testIDs } from '@/utils/test-ids'
-import { ActionBar } from './_components/action-bar'
-import { PressableListItem } from './_components/pressable-list-item'
-import { Toast, ToastVariant } from './_components/toast'
-import { normalizesFilters } from './_utils/inbox-filters'
+import { ActionBar } from '../../../../components/action-bar'
+import { PressableListItem } from '../../../../components/pressable-list-item'
+import { Toast, ToastVariant } from '../../../../components/toast'
+import { normalizesFilters } from '../../../../utils/inbox-filters'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }

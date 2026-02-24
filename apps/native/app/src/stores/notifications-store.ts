@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getToken } from '@react-native-firebase/messaging'
-import { Navigation } from 'react-native-navigation'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { getApolloClientAsync } from '../graphql/client'
 import {
@@ -14,8 +13,6 @@ import {
   GetUserNotificationsUnseenCountQuery,
   GetUserNotificationsUnseenCountQueryVariables,
 } from '../graphql/types/schema'
-import { ComponentRegistry } from '../utils/component-registry'
-import { getRightButtons } from '../utils/get-main-root'
 import { setBadgeCountAsync } from 'expo-notifications'
 import { preferencesStore } from './preferences-store'
 import { app } from '../lib/firebase'
@@ -111,14 +108,15 @@ export const notificationsStore = create<NotificationsStore>()(
         set({ unseenCount })
         setBadgeCountAsync(unseenCount)
 
-        Navigation.mergeOptions(ComponentRegistry.HomeScreen, {
-          topBar: {
-            rightButtons: getRightButtons({
-              unseenCount,
-              icons: ['notifications', 'options'],
-            }),
-          },
-        })
+        // @todo migration - needs RNN conversion
+        // Navigation.mergeOptions(ComponentRegistry.HomeScreen, {
+        //   topBar: {
+        //     rightButtons: getRightButtons({
+        //       unseenCount,
+        //       icons: ['notifications', 'options'],
+        //     }),
+        //   },
+        // })
       },
       async checkUnseen() {
         const client = await getApolloClientAsync()

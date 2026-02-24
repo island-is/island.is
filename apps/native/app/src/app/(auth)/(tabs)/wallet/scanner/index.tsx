@@ -35,7 +35,7 @@ import {
 import { isIos } from '@/utils/devices'
 import { isJWT } from '@/utils/token'
 import { authStore } from '@/stores/auth-store'
-import { setScanResult } from '../_stores/scan-result-store'
+import { setScanResult } from '../../../../../stores/scan-result-store'
 
 const BottomRight = styled.View`
   position: absolute;

@@ -14,7 +14,7 @@ import {
 } from '@/ui'
 import illustrationSrc from '@/assets/illustrations/le-moving-s4.png'
 import { navigateTo } from '@/lib/deep-linking'
-import { VehicleItem } from '../../more/vehicles/_components/vehicle-item'
+import { VehicleItem } from '../vehicle-item'
 import {
   ListVehiclesV2Query,
   useListVehiclesV2Query,

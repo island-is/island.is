@@ -27,30 +27,30 @@ import {
   AirDiscountModule,
   useGetAirDiscountQuery,
   validateAirDiscountInitialData,
-} from './_components/home/air-discount-module'
+} from '../../../components/home/air-discount-module'
 import {
   ApplicationsModule,
   useListApplicationsQuery,
   validateApplicationsInitialData,
-} from './_components/home/applications-module'
-import { HelloModule } from './_components/home/hello-module'
+} from '../../../components/home/applications-module'
+import { HelloModule } from '../../../components/home/hello-module'
 import {
   InboxModule,
   useListDocumentsQuery,
   validateInboxInitialData,
-} from './_components/home/inbox-module'
+} from '../../../components/home/inbox-module'
 import {
   LicensesModule,
   useListLicensesQuery,
   validateLicensesInitialData,
-} from './_components/home/licenses-module'
-import { OnboardingModule } from './_components/home/onboarding-module'
+} from '../../../components/home/licenses-module'
+import { OnboardingModule } from '../../../components/home/onboarding-module'
 import {
   useListVehiclesV2Query,
   validateVehiclesInitialData,
   VehiclesModule,
-} from './_components/home/vehicles-module'
-import { INCLUDED_LICENSE_TYPES } from './_constants/wallet-pass.constants'
+} from '../../../components/home/vehicles-module'
+import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { GenericLicenseType, useGetProfileQuery } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'

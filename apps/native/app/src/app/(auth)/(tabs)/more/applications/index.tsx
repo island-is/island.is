@@ -11,8 +11,8 @@ import {
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { EmptyList, StatusCardSkeleton, TopLine } from '@/ui'
-import { ApplicationsPreview } from './_components/applications-preview'
-import { sortApplicationsStatus } from './_utils/sort-applications-status'
+import { ApplicationsPreview } from '../../../../../components/applications-preview'
+import { sortApplicationsStatus } from '../../../../../utils/applications/sort-applications-status'
 
 const Host = styled.View`
   flex: 1;

@@ -40,7 +40,7 @@ import {
   TableViewCell,
   TableViewGroup,
 } from '@/ui'
-import { useBiometricType } from './_hooks/use-biometric-type'
+import { useBiometricType } from '../../../hooks/use-biometric-type'
 import { testIDs } from '@/utils/test-ids'
 
 import chevronForward from '@/ui/assets/icons/chevron-forward.png'

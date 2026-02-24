@@ -8,7 +8,7 @@ import locationIcon from '@/assets/icons/location.png'
 import timeOutlineIcon from '@/assets/icons/time-outline.png'
 import { Typography } from '@/ui'
 import { dynamicColor } from '@/ui/utils/dynamic-color'
-import { formatAppointmentDate } from '../_utils/format-appointment-date'
+import { formatAppointmentDate } from '../utils/format-appointment-date'
 
 const Host = styled.TouchableHighlight`
   border-radius: ${({ theme }) => theme.border.radius.large};

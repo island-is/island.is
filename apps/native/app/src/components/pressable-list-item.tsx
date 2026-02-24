@@ -4,7 +4,7 @@ import { DocumentCategory, DocumentV2 } from '@/graphql/types/schema'
 import { navigateTo } from '@/lib/deep-linking'
 import { useOrganizationsStore } from '@/stores/organizations-store'
 import { InboxCard } from '@/ui'
-import { Filters } from '../_utils/inbox-filters'
+import { Filters } from '../utils/inbox-filters'
 import { router } from 'expo-router'
 
 export type ListParams = Filters & { category?: DocumentCategory }

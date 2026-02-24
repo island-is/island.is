@@ -19,7 +19,7 @@ import {
 } from 'react-native'
 import * as Application from 'expo-application';
 import * as Device from 'expo-device'
-import KeyboardManager from 'react-native-keyboard-manager'
+// import KeyboardManager from 'react-native-keyboard-manager'
 import { getConfig } from '../../config'
 import { isIos } from '../devices'
 import { performanceMetrics } from '../performance-metrics'

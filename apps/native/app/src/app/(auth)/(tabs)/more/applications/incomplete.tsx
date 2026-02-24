@@ -5,7 +5,7 @@ import {
   useListApplicationsQuery,
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
-import { ApplicationsList } from './_components/applications-list'
+import { ApplicationsList } from '../../../../../components/applications-list'
 
 export default function ApplicationsIncompleteScreen() {
   const [refetching, setRefetching] = useState(false)

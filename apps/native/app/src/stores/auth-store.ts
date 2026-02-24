@@ -8,7 +8,6 @@ import {
   revoke,
 } from 'react-native-app-auth'
 import Keychain from 'react-native-keychain'
-import { Navigation } from 'react-native-navigation'
 
 import { bundleId, getConfig } from '../config'
 import { getIntl } from '../components/providers/locale-provider'
@@ -23,12 +22,12 @@ import {
   DeletePasskeyMutation,
   DeletePasskeyMutationVariables,
 } from '../graphql/types/schema'
-import { getAppRoot } from '../utils/lifecycle/get-app-root'
 import { deduplicatePromise } from '../utils/deduplicatePromise'
 import type { User } from 'configcat-js'
 import { clearWidgetData } from '../lib/widget-sync'
 import { create, useStore } from 'zustand'
 import { clearAllStorages } from './mmkv'
+import { router } from 'expo-router'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
@@ -197,7 +196,8 @@ export const authStore = create<AuthStore>((set, get) => ({
         )
 
         await get().logout(true)
-        await Navigation.setRoot({ root: await getAppRoot() })
+        // await Navigation.setRoot({ root: await getAppRoot() })
+        router.replace('/login')
       }
       throw e
     }

@@ -13,8 +13,8 @@ import {
   ViewPager,
 } from '@/ui'
 import { Application } from '@/graphql/types/schema'
-import { getApplicationType } from '../_utils/get-application-type'
-import { getBadgeVariant } from '../_utils/get-badge-variant'
+import { getApplicationType } from '../utils/applications/get-application-type'
+import { getBadgeVariant } from '../utils/applications/get-badge-variant'
 import { useBrowser } from '@/lib/use-browser'
 import { getApplicationUrl } from '@/utils/applications-utils'
 import { Href, useRouter } from 'expo-router'

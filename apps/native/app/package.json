@@ -1,5 +1,5 @@
 {
-  "name": "@island.is/expo-app",
+  "name": "@island.is/native-app",
   "main": "src/index",
   "license": "0BSD",
   "version": "1.0.0",
@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@apollo/client": "3.7.7",
-    "@bacons/apple-targets": "4.0.3",
     "@datadog/mobile-react-native": "3.0.2",
     "@emotion/native": "11.11.0",
     "@emotion/react": "11.14.0",
@@ -56,6 +55,7 @@
     "react-intl": "8.1.3",
     "react-native": "0.83.1",
     "react-native-app-auth": "8.1.0",
+    "react-native-date-picker": "5.0.13",
     "react-native-edge-to-edge": "1.7.0",
     "react-native-gesture-handler": "~2.30.0",
     "react-native-keychain": "10.0.0",

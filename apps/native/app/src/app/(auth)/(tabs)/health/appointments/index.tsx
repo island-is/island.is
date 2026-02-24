@@ -7,7 +7,7 @@ import styled from 'styled-components/native'
 import { BaseAppointmentStatuses } from '@/constants/base-appointment-statuses'
 import { useGetAppointmentsQuery } from '@/graphql/types/schema'
 import { GeneralCardSkeleton, Problem, Typography } from '@/ui'
-import { AppointmentCard } from '../_components/appointment-card'
+import { AppointmentCard } from '../../../../../components/appointment-card'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;

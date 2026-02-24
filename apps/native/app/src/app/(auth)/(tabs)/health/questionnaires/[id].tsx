@@ -22,7 +22,7 @@ import { questionnaireUrls } from '@/utils/url-builder'
 import {
   getQuestionnaireOrganizationLabelId,
   getQuestionnaireStatusLabelId,
-} from './_utils/questionnaire-utils'
+} from '../../../../../utils/questionnaire-utils'
 
 const Host = styled.View`
   flex: 1;

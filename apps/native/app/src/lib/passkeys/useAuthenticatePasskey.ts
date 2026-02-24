@@ -1,5 +1,5 @@
 import { Passkey, PasskeyGetResult } from 'react-native-passkey'
-import { btoa } from 'react-native-quick-base64'
+// import { btoa } from 'react-native-quick-base64'
 import {
   convertAuthenticationResultsToBase64Url,
   formatAuthenticationOptions,
@@ -44,6 +44,7 @@ export const useAuthenticatePasskey = () => {
 
         preferencesStore.setState({ lastUsedPasskey: new Date().getTime() })
 
+        // @todo migration - does this work? do we need btoa
         // TODO: Remove from updatedResult stuff we don't need to make url smaller
         const passkey = btoa(JSON.stringify(updatedResult))
 

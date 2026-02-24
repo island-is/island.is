@@ -1,9 +1,13 @@
- ---
-  # Expo Router Migration TODO
-  # [x] = migrated, [ ] = TODO
-  # 64 done / ~6 remaining
+# New todo
 
-  # New structure                                              # Old screen source
+- Offline toasts were using react native navigation. we need to migrate
+
+
+# Expo Router Migration TODO
+# [x] = migrated, [ ] = TODO
+# 64 done / ~6 remaining
+
+# New structure                                              # Old screen source
 
   app/
   ├── [x] _layout.tsx                                          # Root layout

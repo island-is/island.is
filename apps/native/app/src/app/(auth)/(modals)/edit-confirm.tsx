@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Alert, ScrollView, View } from 'react-native'
 
-import { useUpdateUserProfile } from './_hooks/use-update-user-profile'
+import { useUpdateUserProfile } from '../../../hooks/use-update-user-profile'
 import {
   Button,
   CancelButton,

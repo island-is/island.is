@@ -21,8 +21,8 @@ import {
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { syncLicenseWidgetData } from '@/lib/widget-sync'
-import { INCLUDED_LICENSE_TYPES } from '../_constants/wallet-pass.constants'
-import { WalletItem } from './_components/wallet-item'
+import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
+import { WalletItem } from '../../../../components/wallet-item'
 import { usePreferencesStore } from '@/stores/preferences-store'
 import {
   Alert,

@@ -1,17 +1,19 @@
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import { Image } from 'react-native'
-import { Navigation } from 'react-native-navigation'
 
 import styled from 'styled-components/native'
 import cloudOfflineIcon from '../../assets/icons/cloud-offline-outline.png'
 import { useOfflineStore } from '../../stores/offline-store'
 import { ComponentRegistry as CR } from '../../utils/component-registry'
 import { Pressable } from '../pressable/pressable'
+import { router } from 'expo-router'
 
 const Icon = styled(Image)(({ theme }) => ({
   width: theme.spacing[3],
   height: theme.spacing[3],
 }))
+
+// @todo migration - show the banner via expo app router.
 
 export const OfflineIcon = () => {
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
@@ -20,14 +22,16 @@ export const OfflineIcon = () => {
   const onPress = async () => {
     if (!bannerVisible) {
       void impactAsync(ImpactFeedbackStyle.Heavy)
-      void Navigation.showOverlay({
-        component: {
-          id: CR.OfflineBanner,
-          name: CR.OfflineBanner,
-        },
-      })
+      // router.navigate('/');
+      // void Navigation.showOverlay({
+      //   component: {
+      //     id: CR.OfflineBanner,
+      //     name: CR.OfflineBanner,
+      //   },
+      // })
     } else {
-      void Navigation.dismissOverlay(CR.OfflineBanner)
+      // router.back();
+      // void Navigation.dismissOverlay(CR.OfflineBanner)
     }
   }
 

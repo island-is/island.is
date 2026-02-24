@@ -16,7 +16,6 @@ import { Button, Typography, NavigationBarSheet, LinkText } from '@/ui'
 import logo from '@/assets/logo/logo-64w.png'
 import externalLink from '@/assets/icons/external-link.png'
 import illustrationSrc from '@/assets/illustrations/digital-services-m1-dots.png'
-import { openNativeBrowser } from '@/lib/rn-island'
 import { preferencesStore } from '@/stores/preferences-store'
 import { useRegisterPasskey } from '@/lib/passkeys/useRegisterPasskey'
 import { useAuthenticatePasskey } from '@/lib/passkeys/useAuthenticatePasskey'
@@ -82,12 +81,12 @@ export default function PasskeyScreen() {
   const { url } = useLocalSearchParams<{ url?: string }>()
   const intl = useIntl()
   const theme = useTheme()
-  const { openBrowser } = useBrowser()
   const { height } = useWindowDimensions()
   const isSmallDevice = height < 800
   const [isLoading, setIsLoading] = useState(false)
   const { registerPasskey } = useRegisterPasskey()
   const { authenticatePasskey } = useAuthenticatePasskey()
+  const { openBrowser } = useBrowser();
 
   useEffect(() => {
     preferencesStore.setState({
@@ -201,7 +200,7 @@ export default function PasskeyScreen() {
                       authenticationResponse,
                     )
                     if (urlWithLoginHint) {
-                      openNativeBrowser(urlWithLoginHint)
+                      openBrowser(urlWithLoginHint)
                     }
                   }
                   setIsLoading(false)
@@ -223,7 +222,7 @@ export default function PasskeyScreen() {
 
                 router.back()
                 if (url) {
-                  openNativeBrowser(url)
+                  openBrowser(url)
                 }
               }
             }}

@@ -8,7 +8,7 @@ import {
   GenericLicenseType,
 } from '@/graphql/types/schema'
 
-export const FieldRender = ({
+export const LicenseFieldRender = ({
   data,
   level = 1,
   licenseType,
@@ -65,7 +65,7 @@ export const FieldRender = ({
                     }}
                   >
                     <FieldLabel>{label}</FieldLabel>
-                    {FieldRender({
+                    {LicenseFieldRender({
                       data: fields as GenericLicenseDataField[],
                       level: 2,
                       licenseType: licenseType,
@@ -76,7 +76,7 @@ export const FieldRender = ({
               return (
                 <FieldGroup key={key}>
                   <View>
-                    {FieldRender({
+                    {LicenseFieldRender({
                       data: fields as GenericLicenseDataField[],
                       level: 2,
                       licenseType: licenseType,
@@ -96,7 +96,7 @@ export const FieldRender = ({
                     }}
                   >
                     <FieldLabel>{label}</FieldLabel>
-                    {FieldRender({
+                    {LicenseFieldRender({
                       data: fields as GenericLicenseDataField[],
                       level: 2,
                       licenseType: licenseType,
@@ -107,7 +107,7 @@ export const FieldRender = ({
               return (
                 <FieldGroup key={key}>
                   <View>
-                    {FieldRender({
+                    {LicenseFieldRender({
                       data: fields as GenericLicenseDataField[],
                       level: 2,
                       licenseType: licenseType,
@@ -126,7 +126,7 @@ export const FieldRender = ({
                   hasFields={!!fields}
                 >
                   <FieldRow>
-                    {FieldRender({
+                    {LicenseFieldRender({
                       data: fields as GenericLicenseDataField[],
                       level: 3,
                       licenseType: licenseType,

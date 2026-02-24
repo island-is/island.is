@@ -12,7 +12,7 @@ import {
   useListApplicationsQuery,
 } from '@/graphql/types/schema'
 
-import { ApplicationsPreview } from '../../more/applications/_components/applications-preview'
+import { ApplicationsPreview } from '../applications-preview'
 
 interface ApplicationsModuleProps {
   data: ListApplicationsQuery | undefined

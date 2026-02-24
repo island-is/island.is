@@ -28,7 +28,7 @@ import {
 import { useBrowser } from '@/lib/use-browser'
 import { getApplicationUrl } from '@/utils/applications-utils'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
-import { getBadgeVariant } from '../_utils/get-badge-variant'
+import { getBadgeVariant } from '../utils/applications/get-badge-variant'
 
 type FlatListItem =
   | Application

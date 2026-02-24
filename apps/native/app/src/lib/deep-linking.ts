@@ -1,5 +1,4 @@
 // import { compile, match } from 'path-to-regexp'
-// import { Navigation } from 'react-native-navigation'
 // import createUse from 'zustand'
 // import create, { State } from 'zustand/vanilla'
 // import { bundleId } from '../config'

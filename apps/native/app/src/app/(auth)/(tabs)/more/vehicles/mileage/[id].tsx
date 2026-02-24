@@ -25,7 +25,7 @@ import {
 } from '@/graphql/types/schema'
 import { useBrowser } from '@/lib/use-browser'
 import { showPrompt } from '@/lib/show-picker'
-import { MileageCell } from './_components/mileage-cell'
+import { MileageCell } from '../../../../../../components/mileage-cell'
 
 const HIGHEST_MILEAGE = 9999999
 

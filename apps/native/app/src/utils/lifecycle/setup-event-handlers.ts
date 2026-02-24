@@ -4,7 +4,6 @@ import {
   DeviceEventEmitter,
   Linking
 } from 'react-native'
-import { Navigation } from 'react-native-navigation'
 import { evaluateUrl } from '../../lib/deep-linking'
 import { environmentStore } from '../../stores/environment-store'
 import { offlineStore } from '../../stores/offline-store'
@@ -106,21 +105,21 @@ export function setupEventHandlers() {
   //   }
   // })
 
-  const handleOfflineButtonClick = () => {
-    const offlineState = offlineStore.getState()
+  // const handleOfflineButtonClick = () => {
+  //   const offlineState = offlineStore.getState()
 
-    if (!offlineState.bannerVisible) {
-      void impactAsync(ImpactFeedbackStyle.Heavy)
-      void Navigation.showOverlay({
-        component: {
-          id: CR.OfflineBanner,
-          name: CR.OfflineBanner,
-        },
-      })
-    } else {
-      void Navigation.dismissOverlay(CR.OfflineBanner)
-    }
-  }
+  //   if (!offlineState.bannerVisible) {
+  //     void impactAsync(ImpactFeedbackStyle.Heavy)
+  //     void Navigation.showOverlay({
+  //       component: {
+  //         id: CR.OfflineBanner,
+  //         name: CR.OfflineBanner,
+  //       },
+  //     })
+  //   } else {
+  //     void Navigation.dismissOverlay(CR.OfflineBanner)
+  //   }
+  // }
 
   // @todo migration
   // handle navigation topBar buttons

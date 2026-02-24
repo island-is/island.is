@@ -16,10 +16,10 @@ import {
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { GeneralCardSkeleton, Problem, Tag, Typography } from '@/ui'
-import { MedicineDelegationContent } from '../_components/medicine-delegation-content'
-import { CertificateCard } from './_components/certificate-card'
-import { MedicineHistoryCard } from './_components/medicine-history-card'
-import { PrescriptionCard } from './_components/prescription-card'
+import { MedicineDelegationContent } from '../../../../../../components/medicine-delegation-content'
+import { CertificateCard } from '../../../../../../components/certificate-card'
+import { MedicineHistoryCard } from '../../../../../../components/medicine-history-card'
+import { PrescriptionCard } from '../../../../../../components/prescription-card'
 
 type ActiveTabData = HealthDirectorateMedicineHistoryItem[] &
   HealthDirectoratePrescription[] &
