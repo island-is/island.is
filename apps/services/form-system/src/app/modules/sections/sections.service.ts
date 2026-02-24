@@ -46,7 +46,7 @@ export class SectionsService {
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to create section for form with id '${createSectionDto.formId}'`,
+        `User does not have permission to create section for form with id '${createSectionDto.formId}'`,
       )
     }
 
@@ -92,7 +92,7 @@ export class SectionsService {
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to update section with id '${section.id}'`,
+        `User does not have permission to update section with id '${section.id}'`,
       )
     }
 
@@ -143,7 +143,7 @@ export class SectionsService {
 
       if (user.nationalId !== formOwnerNationalId && !isAdmin) {
         throw new UnauthorizedException(
-          `User with nationalId '${user.nationalId}' does not have permission to update display order of section with id '${section.id}'`,
+          `User does not have permission to update display order of section with id '${section.id}'`,
         )
       }
 
@@ -173,7 +173,7 @@ export class SectionsService {
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to delete section with id '${section.id}'`,
+        `User does not have permission to delete section with id '${section.id}'`,
       )
     }
 

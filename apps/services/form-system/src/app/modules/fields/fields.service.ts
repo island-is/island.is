@@ -57,21 +57,29 @@ export class FieldsService {
       attributes: ['sectionId'],
       raw: true,
     })
-
-    const section = await this.sectionModel.findByPk(screen?.sectionId, {
+    if (!screen) {
+      throw new NotFoundException(`Screen with id '${screenId}' not found`)
+    }
+    const section = await this.sectionModel.findByPk(screen.sectionId, {
       attributes: ['formId'],
       raw: true,
     })
-
-    const form = await this.formModel.findByPk(section?.formId, {
+    if (!section) {
+      throw new NotFoundException(
+        `Section with id '${screen.sectionId}' not found`,
+      )
+    }
+    const form = await this.formModel.findByPk(section.formId, {
       attributes: ['organizationNationalId'],
       raw: true,
     })
-
-    const formOwnerNationalId = form?.organizationNationalId
+    if (!form) {
+      throw new NotFoundException(`Form with id '${section.formId}' not found`)
+    }
+    const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to create field for screen with id '${screenId}'`,
+        `User does not have permission to create field for screen with id '${screenId}'`,
       )
     }
 
@@ -142,7 +150,7 @@ export class FieldsService {
       const formOwnerNationalId = form.organizationNationalId
       if (user.nationalId !== formOwnerNationalId && !isAdmin) {
         throw new UnauthorizedException(
-          `User with nationalId '${user.nationalId}' does not have permission to update field with id '${id}'`,
+          `User does not have permission to update field with id '${id}'`,
         )
       }
 
@@ -160,7 +168,7 @@ export class FieldsService {
       const ids = listItemIds.length > 0 ? listItemIds : id
       const newDependencies = filterOnlyParents(dependencies, ids)
       form.dependencies = newDependencies
-      form.save()
+      await form.save()
     }
 
     Object.assign(field, updateFieldDto)
@@ -207,7 +215,7 @@ export class FieldsService {
       const formOwnerNationalId = form.organizationNationalId
       if (user.nationalId !== formOwnerNationalId && !isAdmin) {
         throw new UnauthorizedException(
-          `User with nationalId '${user.nationalId}' does not have permission to update display order of field with id '${field.id}'`,
+          `User does not have permission to update display order of field with id '${field.id}'`,
         )
       }
 
@@ -248,7 +256,7 @@ export class FieldsService {
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to delete field with id '${id}'`,
+        `User does not have permission to delete field with id '${id}'`,
       )
     }
 
@@ -266,8 +274,8 @@ export class FieldsService {
     const idsToRemove = listItemIds.length > 0 ? listItemIds : id
     const newDependencies = filterDependency(dependencies, idsToRemove)
     form.dependencies = newDependencies
-    form.save()
+    await form.save()
 
-    field?.destroy()
+    await field.destroy()
   }
 }

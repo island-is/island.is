@@ -48,7 +48,7 @@ export class ScreensService {
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new NotFoundException(
-        `User with nationalId '${user.nationalId}' does not have permission to create screen for section with id '${createScreenDto.sectionId}'`,
+        `User does not have permission to create screen for section with id '${createScreenDto.sectionId}'`,
       )
     }
 
@@ -93,7 +93,7 @@ export class ScreensService {
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new NotFoundException(
-        `User with nationalId '${user.nationalId}' does not have permission to update screen with id '${id}'`,
+        `User does not have permission to update screen with id '${id}'`,
       )
     }
 
@@ -139,7 +139,7 @@ export class ScreensService {
       const formOwnerNationalId = form.organizationNationalId
       if (user.nationalId !== formOwnerNationalId && !isAdmin) {
         throw new NotFoundException(
-          `User with nationalId '${user.nationalId}' does not have permission to update display order of screen with id '${screen.id}'`,
+          `User does not have permission to update display order of screen with id '${screen.id}'`,
         )
       }
 
@@ -173,7 +173,7 @@ export class ScreensService {
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new NotFoundException(
-        `User with nationalId '${user.nationalId}' does not have permission to delete screen with id '${id}'`,
+        `User does not have permission to delete screen with id '${id}'`,
       )
     }
 

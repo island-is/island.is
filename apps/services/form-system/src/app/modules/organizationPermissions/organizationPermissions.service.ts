@@ -31,7 +31,7 @@ export class OrganizationPermissionsService {
 
     if (!isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to create organization permission`,
+        `User does not have permission to create organization permission`,
       )
     }
 
@@ -72,7 +72,7 @@ export class OrganizationPermissionsService {
 
     if (!isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to delete organization permission`,
+        `User does not have permission to delete organization permission`,
       )
     }
 

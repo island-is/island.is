@@ -139,7 +139,7 @@ export class ListItemsService {
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new NotFoundException(
-        `User with nationalId '${user.nationalId}' does not have permission to manage list items of field with id '${fieldId}'`,
+        `User does not have permission to manage list items of field with id '${fieldId}'`,
       )
     }
   }

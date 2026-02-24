@@ -73,7 +73,7 @@ export class FormApplicantTypesService {
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to create form applicant type with id '${createFormApplicantTypeDto.applicantTypeId}'`,
+        `User does not have permission to create form applicant type with id '${createFormApplicantTypeDto.applicantTypeId}'`,
       )
     }
 
@@ -146,7 +146,7 @@ export class FormApplicantTypesService {
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to delete form applicant type with id '${deleteFormApplicantTypeDto.applicantTypeId}'`,
+        `User does not have permission to delete form applicant type with id '${deleteFormApplicantTypeDto.applicantTypeId}'`,
       )
     }
 

@@ -93,7 +93,7 @@ export class FormsService {
 
     if (user.nationalId !== nationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to get forms for organization with nationalId '${nationalId}'`,
+        `User does not have permission to get forms for organization with nationalId '${nationalId}'`,
       )
     }
 
@@ -199,7 +199,7 @@ export class FormsService {
 
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to get form for organization with nationalId '${formOwnerNationalId}'`,
+        `User does not have permission to get form for organization with nationalId '${formOwnerNationalId}'`,
       )
     }
 
@@ -220,7 +220,7 @@ export class FormsService {
 
     if (user.nationalId !== organizationNationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to create form for organization with nationalId '${organizationNationalId}'`,
+        `User does not have permission to create form for organization with nationalId '${organizationNationalId}'`,
       )
     }
 
@@ -284,7 +284,7 @@ export class FormsService {
 
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to update form with id '${id}'`,
+        `User does not have permission to update form with id '${id}'`,
       )
     }
 
@@ -344,7 +344,7 @@ export class FormsService {
 
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to copy form with id '${id}'`,
+        `User does not have permission to copy form with id '${id}'`,
       )
     }
 
@@ -375,7 +375,7 @@ export class FormsService {
 
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have permission to update status of form with id '${id}'`,
+        `User does not have permission to update status of form with id '${id}'`,
       )
     }
 

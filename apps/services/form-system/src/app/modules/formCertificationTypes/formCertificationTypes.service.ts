@@ -39,7 +39,7 @@ export class FormCertificationTypesService {
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new NotFoundException(
-        `User with nationalId '${user.nationalId}' does not have permission to create form certification type for form with id '${createFormCertificationTypeDto.formId}'`,
+        `User does not have permission to create form certification type for form with id '${createFormCertificationTypeDto.formId}'`,
       )
     }
 
@@ -95,7 +95,7 @@ export class FormCertificationTypesService {
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
       throw new NotFoundException(
-        `User with nationalId '${user.nationalId}' does not have permission to delete form certification type for form with id '${formCertificationType.formId}'`,
+        `User does not have permission to delete form certification type for form with id '${formCertificationType.formId}'`,
       )
     }
 

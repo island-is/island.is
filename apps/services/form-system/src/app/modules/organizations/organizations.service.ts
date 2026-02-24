@@ -32,9 +32,7 @@ export class OrganizationsService {
     const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
 
     if (user.nationalId !== nationalId && !isAdmin) {
-      throw new UnauthorizedException(
-        `User with nationalId '${user.nationalId}' does not have admin privileges'`,
-      )
+      throw new UnauthorizedException(`User does not have admin privileges'`)
     }
 
     // the loader is not sending the nationalId
