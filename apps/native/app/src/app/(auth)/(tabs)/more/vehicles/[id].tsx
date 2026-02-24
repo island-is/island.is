@@ -4,7 +4,7 @@ import { ScrollView, Text, View } from 'react-native'
 
 import { useGetVehicleQuery } from '@/graphql/types/schema'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
-import { useBrowser } from '@/lib/use-browser'
+import { useBrowser } from '@/hooks/use-browser'
 import { Button, Divider, Input, InputRow, Problem, theme } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
 

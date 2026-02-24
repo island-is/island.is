@@ -5,7 +5,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { HealthDirectorateMedicineDelegationItem } from '@/graphql/types/schema'
 import { useRouter } from 'expo-router'
-import { useBrowser } from '@/lib/use-browser'
+import { useBrowser } from '@/hooks/use-browser'
 import {
   Button,
   EmptyState,

@@ -1,6 +1,6 @@
 import { ActionSheetIOS, Alert, KeyboardTypeOptions } from 'react-native'
 import { isAndroid, isIos } from '../utils/devices'
-import { promptStore } from './prompt-store'
+import { promptStore } from '../stores/prompt-store'
 
 /**
  * ShowPickerItem

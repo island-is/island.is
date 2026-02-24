@@ -20,7 +20,7 @@ import { preferencesStore } from '@/stores/preferences-store'
 import { useRegisterPasskey } from '@/lib/passkeys/useRegisterPasskey'
 import { useAuthenticatePasskey } from '@/lib/passkeys/useAuthenticatePasskey'
 import { authStore } from '@/stores/auth-store'
-import { useBrowser } from '@/lib/use-browser'
+import { useBrowser } from '@/hooks/use-browser'
 import { addPasskeyAsLoginHint } from '@/lib/passkeys/helpers'
 
 const Text = styled.View<{ isSmallDevice: boolean }>`

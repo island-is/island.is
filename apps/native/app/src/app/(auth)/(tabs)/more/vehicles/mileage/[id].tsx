@@ -23,7 +23,7 @@ import {
   usePostVehicleMileageMutation,
   useUpdateVehicleMileageMutation,
 } from '@/graphql/types/schema'
-import { useBrowser } from '@/lib/use-browser'
+import { useBrowser } from '@/hooks/use-browser'
 import { showPrompt } from '@/lib/show-picker'
 import { MileageCell } from '../../../../../../components/mileage-cell'
 

@@ -11,7 +11,7 @@ import {
   useGetQuestionnairesQuery,
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
-import { useBrowser } from '@/lib/use-browser'
+import { useBrowser } from '@/hooks/use-browser'
 import {
   Problem,
   QuestionnaireCard,

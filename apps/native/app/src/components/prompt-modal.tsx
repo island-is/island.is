@@ -11,7 +11,7 @@ import { useTheme } from 'styled-components/native'
 import { useStore } from 'zustand'
 
 import { Typography } from '../ui'
-import { promptStore } from './prompt-store'
+import { promptStore } from '../stores/prompt-store'
 
 export function PromptModal() {
   const theme = useTheme()

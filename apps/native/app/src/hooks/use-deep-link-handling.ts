@@ -9,7 +9,7 @@ import { useMarkUserNotificationAsReadMutation } from '../graphql/types/schema'
 
 import { navigateToUniversalLink } from '../lib/deep-linking'
 import { app } from '../lib/firebase'
-import { useBrowser } from '../lib/use-browser'
+import { useBrowser } from './use-browser'
 import { useAuthStore } from '../stores/auth-store'
 import { isString } from '../utils/is-string'
 

@@ -9,7 +9,7 @@ import {
   DocumentV2,
 } from '@/graphql/types/schema'
 import { toggleAction } from '@/lib/post-mail-action'
-import { useBrowser } from '@/lib/use-browser'
+import { useBrowser } from '@/hooks/use-browser'
 import { getButtonsForActions } from '../../../../../utils/get-buttons-for-actions'
 import { shareFile } from '../../../../../utils/share-file'
 import { useOrganizationsStore } from '@/stores/organizations-store'

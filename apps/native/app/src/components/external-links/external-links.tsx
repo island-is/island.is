@@ -2,7 +2,7 @@ import { Pressable, TextStyle, View } from 'react-native'
 import { Icon, theme, Typography } from '../../ui'
 import { ImageSourcePropType } from 'react-native'
 import externalLinkIcon from '../../assets/icons/external-link.png'
-import { useBrowser } from '../../lib/use-browser'
+import { useBrowser } from '../../hooks/use-browser'
 import { useDropdownOverlay } from '../dropdown/dropdown-overlay-context'
 import styled from 'styled-components/native'
 

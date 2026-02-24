@@ -1,5 +1,4 @@
 import { addEventListener } from '@react-native-community/netinfo'
-import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import {
   DeviceEventEmitter,
   Linking
@@ -7,11 +6,8 @@ import {
 import { evaluateUrl } from '../../lib/deep-linking'
 import { environmentStore } from '../../stores/environment-store'
 import { offlineStore } from '../../stores/offline-store'
-import { ComponentRegistry as CR } from '../component-registry'
 import { handleQuickAction } from '../quick-actions'
 import * as WebBrowser from 'expo-web-browser'
-
-// let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
 
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
@@ -51,94 +47,10 @@ export function setupEventHandlers() {
   // })
 
   // @todo migration
-  // AppState.addEventListener('change', (status: AppStateStatus) => {
-  //   const { noLockScreenUntilNextAppStateActive } = authStore.getState()
-  //   const { appLockTimeout } = preferencesStore.getState()
-
-  //   if (!skipAppLock()) {
-  //     if (noLockScreenUntilNextAppStateActive) {
-  //       authStore.setState({ noLockScreenUntilNextAppStateActive: false })
-  //       return
-  //     }
-  //     clearTimeout(backgroundAppLockTimeout)
-
-  //     if (status === 'background' || status === 'inactive') {
-  //       // Add a small delay for those accidental backgrounds in iOS
-  //       if (isIos) {
-  //         backgroundAppLockTimeout = setTimeout(() => {
-  //           const { lockScreenComponentId, lockScreenActivatedAt } =
-  //             authStore.getState()
-
-  //           if (!lockScreenComponentId && !lockScreenActivatedAt) {
-  //             showAppLockOverlay({ status })
-  //           } else if (lockScreenComponentId) {
-  //             Navigation.updateProps(lockScreenComponentId, { status })
-  //           }
-  //         }, 100)
-  //       } else {
-  //         // set timeout does not work properly on android when app is in background
-  //         const { lockScreenComponentId, lockScreenActivatedAt } =
-  //           authStore.getState()
-
-  //         if (!lockScreenComponentId && !lockScreenActivatedAt) {
-  //           showAppLockOverlay({ status })
-  //         } else if (lockScreenComponentId) {
-  //           Navigation.updateProps(lockScreenComponentId, { status })
-  //         }
-  //       }
-  //     }
-
-  //     if (status === 'active') {
-  //       const { lockScreenComponentId, lockScreenActivatedAt } =
-  //         authStore.getState()
-  //       if (lockScreenComponentId) {
-  //         if (
-  //           lockScreenActivatedAt !== undefined &&
-  //           lockScreenActivatedAt + appLockTimeout > Date.now()
-  //         ) {
-  //           hideAppLockOverlay(lockScreenComponentId)
-  //         } else {
-  //           Navigation.updateProps(lockScreenComponentId, { status })
-  //         }
-  //       }
-  //     }
-  //   }
-  // })
-
-  // const handleOfflineButtonClick = () => {
-  //   const offlineState = offlineStore.getState()
-
-  //   if (!offlineState.bannerVisible) {
-  //     void impactAsync(ImpactFeedbackStyle.Heavy)
-  //     void Navigation.showOverlay({
-  //       component: {
-  //         id: CR.OfflineBanner,
-  //         name: CR.OfflineBanner,
-  //       },
-  //     })
-  //   } else {
-  //     void Navigation.dismissOverlay(CR.OfflineBanner)
-  //   }
-  // }
+  // AppState.addEventListener('change', (status: AppStateStatus) => { ... })
 
   // @todo migration
-  // handle navigation topBar buttons
-  // Navigation.events().registerNavigationButtonPressedListener(
-  //   ({ buttonId }) => {
-  //     switch (buttonId) {
-  //       case ButtonRegistry.SettingsButton:
-  //         return navigateTo('/settings')
-  //       case ButtonRegistry.NotificationsButton:
-  //         return navigateTo('/notifications')
-  //       case ButtonRegistry.ScanLicenseButton:
-  //         return navigateTo('/license-scanner')
-  //       case ButtonRegistry.OfflineButton:
-  //         return handleOfflineButtonClick()
-  //       case ButtonRegistry.HomeScreenOptionsButton:
-  //         return navigateTo('/home-options')
-  //     }
-  //   },
-  // )
+  // Navigation.events().registerNavigationButtonPressedListener(({ buttonId }) => { ... })
 
   // Handle quick actions
   DeviceEventEmitter.addListener('quickActionShortcut', handleQuickAction)

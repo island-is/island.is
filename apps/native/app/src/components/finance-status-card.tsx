@@ -21,7 +21,7 @@ import {
 import { useGetFinanceStatusDetailsQuery } from '@/graphql/types/schema'
 import { useRouter } from 'expo-router'
 import { showPicker } from '@/lib/show-picker'
-import { useBrowser } from '@/lib/use-browser'
+import { useBrowser } from '@/hooks/use-browser'
 import { DynamicColorIOS, Platform } from 'react-native'
 
 export const SelectButton = (props: ButtonProps) => {

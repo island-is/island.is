@@ -16,7 +16,7 @@ import chevronDown from '@/assets/icons/chevron-down.png'
 import clockIcon from '@/assets/icons/clock.png'
 import externalLinkIcon from '@/assets/icons/external-link.png'
 import { HealthDirectorateVaccination } from '@/graphql/types/schema'
-import { useBrowser } from '@/lib/use-browser'
+import { useBrowser } from '@/hooks/use-browser'
 import { usePreferencesStore } from '@/stores/preferences-store'
 
 const Row = styled.View<{ border?: boolean }>`

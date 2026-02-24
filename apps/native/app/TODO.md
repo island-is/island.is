@@ -2,6 +2,68 @@
 
 - [ ] Offline toasts migration from RNN.
 
+---
+
+## Migration TODOs
+
+All `@todo migration` comments found in the codebase, grouped by file.
+
+### `src/lib/deep-linking.ts`
+- **Line 105** — `evaluateUrl()`: Body is a stub returning `false`; the URL-matching logic (schemes/routes store lookup) is not yet wired to expo-router.
+- **Line 129** — `addRoute()`: No-op; route registration into the deep-link store is not implemented.
+- **Line 135** — `addScheme()`: No-op; scheme registration into the deep-link store is not implemented.
+- **Line 152** — `navigateTo()`: Missing throttle / duplicate-navigation protection (500 ms guard, `navigateTimeMap`).
+- **Line 190** — `navigateToUniversalLink()`: Universal-link → native-path mapping (`findRoute`) is commented out; currently falls through to `router.navigate(link)` unconditionally.
+
+### `src/utils/lifecycle/setup-event-handlers.ts`
+- **Line 45** — Bottom-tab selected listener: `Navigation.events().registerBottomTabSelectedListener` → needs expo-router equivalent to keep `uiStore` tab index in sync.
+- **Line 53** — App-lock `AppState` listener: Full background/foreground app-lock logic (timeouts, overlay show/hide) is commented out; needs expo-router overlay/modal approach.
+- **Line 124** — Navigation topBar button press listener: `Navigation.events().registerNavigationButtonPressedListener` → needs expo-router equivalent for settings, notifications, scanner, offline, and home-options buttons.
+
+### `src/lib/passkeys/useAuthenticatePasskey.ts`
+- **Line 47** — `authenticatePasskey()`: Verify that the native `btoa` global works correctly; the old `react-native-quick-base64` import was removed. Also confirm the result shape matches what the server expects.
+
+### `src/lib/passkeys/helpers.ts`
+- **Line 71** — `formatAuthenticationOptions()`: Mapping to the WebAuthn spec is incomplete; needs a proper field-by-field mapping.
+- **Line 82** — `formatRegisterOptions()`: Same as above for the registration flow.
+
+### `src/hooks/use-deep-link-handling.ts`
+- **Line 37** — `useDeepLinkHandling()`: Verify this hook works end-to-end with expo-router's `useURL()` and Firebase notification handling.
+
+### `src/hooks/use-connectivity-indicator.ts`
+- **Line 34** — `useConnectivityIndicator()`: The `updateNavigationButtons()` body is empty; RNN `Navigation.mergeOptions` calls for offline/loading topBar buttons need to be replaced with an expo-router-compatible approach.
+
+### `src/components/dropdown/dropdown-menu-overlay.tsx`
+- **Line 58** — `DropdownMenuOverlay`: Still uses `router.dismiss()` as a placeholder; the full overlay registration / dismiss cycle from RNN is not yet re-implemented.
+
+### `src/components/offline/offline-icon.tsx`
+- **Line 16** — `OfflineIcon`: The `onPress` handler is empty; show/dismiss the offline banner via expo-router (e.g. a modal route).
+
+### `src/components/providers/offline-provider.tsx`
+- **Line 30** — `OfflineProvider`: `Navigation.showOverlay` call is commented out; needs to trigger the offline banner via expo-router overlay/modal instead.
+
+### `src/components/providers/theme-provider.tsx`
+- **Line 48** — `ThemeProvider`: `Appearance.setColorScheme` block is commented out. Determine whether dynamic theme switching will be supported; if not, remove this block entirely.
+
+### `src/stores/notifications-store.ts`
+- **Line 111** — `updateNavigationUnseenCount()`: `Navigation.mergeOptions` call to update the topBar notification-badge button is commented out; needs expo-router equivalent.
+
+### `src/stores/preferences-store.ts`
+- **Line 122** — `onRehydrateStorage` callback: `Navigation.setDefaultOptions(getDefaultOptions(...))` call is commented out; determine whether default navigation options need to be re-applied after store hydration in expo-router.
+
+### `src/app/+native-intent.tsx`
+- **Line 9** — `redirectSystemPath()`: Web-URL → native-path mapping is not yet implemented; currently returns the path unchanged (except for cognito/oauth redirects to `/`).
+
+### `src/app/(auth)/(tabs)/_layout.tsx`
+- **Line 107** — Android tabbar overdraw: A decorative view meant to draw over the tabbar on Android is commented out; needs investigation for expo-router's tab layout.
+
+### `src/app/(auth)/(tabs)/wallet/[licenseType]/[id].tsx`
+- **Line 116** — `AddPassButton`: Stub component; needs to integrate with the native Wallet/PassKit API.
+- **Line 338** — Wallet pass download: The `pkpass` download and add-to-wallet flow after `generatePkPass` is incomplete.
+
+### `src/utils/lifecycle/setup-globals.ts`
+- **Line 77** — Datadog RUM configuration: The `DatadogProviderConfiguration` block is present but `TrackingConsent.NOT_GRANTED` is set by default; confirm consent flow and enable RUM for production.
+
 
 ## Routes
 

@@ -23,7 +23,7 @@ import {
   Typography,
 } from '@/ui'
 import { AirfaresUsageTable } from '@/components/airfares-usage-table'
-import { useBrowser } from '@/lib/use-browser'
+import { useBrowser } from '@/hooks/use-browser'
 
 const BulletList = styled.View`
   margin-vertical: 12px;

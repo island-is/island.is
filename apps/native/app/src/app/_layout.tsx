@@ -1,5 +1,5 @@
 import { ThemeProvider as AppThemeProvider } from '@/components/providers/theme-provider'
-import { PromptModal } from '@/lib/prompt-modal'
+import { PromptModal } from '@/components/prompt-modal'
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'

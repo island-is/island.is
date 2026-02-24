@@ -2,12 +2,12 @@ import { Passkey } from 'react-native-passkey'
 import { authStore } from '@/stores/auth-store'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { preferencesStore } from '@/stores/preferences-store'
-import { navigateTo } from './deep-linking'
-import { useAuthenticatePasskey } from './passkeys/useAuthenticatePasskey'
+import { navigateTo } from '../lib/deep-linking'
+import { useAuthenticatePasskey } from '../lib/passkeys/useAuthenticatePasskey'
 import {
   addPasskeyAsLoginHint,
   doesUrlSupportPasskey,
-} from './passkeys/helpers'
+} from '../lib/passkeys/helpers'
 import * as WebBrowser from 'expo-web-browser'
 
 export const useBrowser = () => {

@@ -25,7 +25,7 @@ import {
   Application,
   ListApplicationsQueryResult,
 } from '@/graphql/types/schema'
-import { useBrowser } from '@/lib/use-browser'
+import { useBrowser } from '@/hooks/use-browser'
 import { getApplicationUrl } from '@/utils/applications-utils'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { getBadgeVariant } from '../utils/applications/get-badge-variant'
