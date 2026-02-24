@@ -3397,6 +3397,90 @@ services-payments:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-payments'
     create: true
     name: 'services-payments'
+services-payments-worker:
+  args:
+    - 'main.cjs'
+    - '--job'
+    - 'worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    CODE_OWNER: 'aranja'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5'
+    PAYMENTS_WEB_URL: 'https://beta.dev01.devland.is/greida'
+    SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
+    XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
+  grantNamespaces:
+    - 'application-system'
+    - 'nginx-ingress-internal'
+    - 'islandis'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
+  namespace: 'services-payments'
+  podDisruptionBudget:
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  schedule: '*/5 * * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
+    PAYMENTS_JWT_SIGNING_KEY_ID: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_KEY_ID'
+    PAYMENTS_JWT_SIGNING_PRIVATE_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PRIVATE_KEY'
+    PAYMENTS_JWT_SIGNING_PUBLIC_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PUBLIC_KEY'
+    PAYMENTS_PREVIOUS_KEY_ID: '/k8s/services-payments/PAYMENTS_PREVIOUS_KEY_ID'
+    PAYMENTS_PREVIOUS_PUBLIC_KEY: '/k8s/services-payments/PAYMENTS_PREVIOUS_PUBLIC_KEY'
+    PAYMENTS_TOKEN_SIGNING_ALGORITHM: '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_ALGORITHM'
+    PAYMENTS_TOKEN_SIGNING_SECRET: '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_SECRET'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-payments'
+    create: true
+    name: 'services-payments'
 services-sessions:
   enabled: true
   env:
