@@ -1,5 +1,6 @@
-import { useContext } from 'react'
+import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
 import {
   Box,
@@ -63,9 +64,21 @@ const IndictmentOverview = () => {
     caseId: workingCase.id,
   })
 
+  const router = useRouter()
+  const defendantIdFromUrl =
+    typeof router.query.defendantId === 'string'
+      ? router.query.defendantId
+      : undefined
+
   const { defendants } = workingCase
-  const defendant =
-    defendants && defendants?.length > 0 ? defendants[0] : undefined
+  const defendant = useMemo(() => {
+    if (!defendants?.length) return undefined
+    if (defendantIdFromUrl) {
+      const match = defendants.find((d) => d.id === defendantIdFromUrl)
+      return match ?? defendants[0]
+    }
+    return defendants[0]
+  }, [defendants, defendantIdFromUrl])
 
   const onChange = (updatedPunishmentType: PunishmentType) => {
     if (!defendant) return

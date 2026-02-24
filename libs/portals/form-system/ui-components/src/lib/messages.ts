@@ -397,13 +397,8 @@ export const m = defineMessages({
   },
   submitUrls: {
     id: 'form.system:submitUrls',
-    defaultMessage: 'Innsendingarslóðir',
-    description: 'Submission URLs',
-  },
-  validationUrls: {
-    id: 'form.system:validationUrls',
-    defaultMessage: 'Reglukerfi',
-    description: 'Validation URLs',
+    defaultMessage: 'Veldu slóð',
+    description: 'Choose URL',
   },
   permissions: {
     id: 'form.system:permissions',
@@ -1140,5 +1135,31 @@ export const m = defineMessages({
     id: 'form.system:zendesk-private',
     defaultMessage: 'Umsóknirnar skulu vera merktar internal/private í Zendesk',
     description: 'Applications should be marked as internal/private in Zendesk',
+  },
+  useValidate: {
+    id: 'form.system:use-validate',
+    defaultMessage: 'Nota þjónustuna til að yfirfara (e. validate) gögnin',
+    description: 'Use the service to validate the data',
+  },
+  usePopulate: {
+    id: 'form.system:use-populate',
+    defaultMessage: 'Nota þjónustuna til að fylla út (e. populate) gögn',
+    description: 'Use the service to populate data',
+  },
+  screenValidate: {
+    id: 'form.system:screen-validate',
+    defaultMessage: 'Senda skjá/umsókn til yfirferðar (e. validation)',
+    description: 'Send the screen for validation',
+  },
+  screenPopulate: {
+    id: 'form.system:screen-populate',
+    defaultMessage:
+      'Senda skjá í sjálfvirka útfyllingu gagna (e. data population)',
+    description: 'Send the screen for automatic data population',
+  },
+  completedMessage: {
+    id: 'form.system:completed-message',
+    defaultMessage: 'Skilaboð á lokasíðu',
+    description: 'Message on completed page',
   },
 })

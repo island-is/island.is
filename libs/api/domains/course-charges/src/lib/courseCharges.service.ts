@@ -28,7 +28,9 @@ export class CourseChargesService {
     }
 
     const catalog =
-      await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(kennitala)
+      await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
+        performingOrgID: kennitala,
+      })
 
     const items: ChargeItemCodeByCourseIdItem[] = catalog.item.map((item) => ({
       code: item.chargeItemCode,

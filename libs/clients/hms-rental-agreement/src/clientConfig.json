@@ -2,20 +2,10 @@
   "openapi": "3.0.4",
   "info": {
     "title": "LeigusamningarService API",
-    "description": "API for handling rental contracts PDF generation and signing. This API uses dual authentication: Entra ID for client (app) authentication and Island.is for user authentication.",
+    "description": "API for handling rental contracts PDF generation and signing.",
     "version": "v1"
   },
   "paths": {
-    "/": {
-      "get": {
-        "tags": ["Home"],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/contract": {
       "post": {
         "tags": ["Home"],
@@ -36,142 +26,40 @@
                 "$ref": "#/components/schemas/LeaseApplication"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
             "description": "OK"
           }
         }
-      },
-      "get": {
-        "tags": ["Home"],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Contract"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Contract"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Contract"
-                  }
-                }
-              }
-            }
-          }
-        }
       }
     },
-    "/webhook": {
+    "/contract/send-draft": {
       "post": {
         "tags": ["Home"],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/WebhookEventPayload"
+                "$ref": "#/components/schemas/DraftRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/WebhookEventPayload"
+                "$ref": "#/components/schemas/DraftRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/WebhookEventPayload"
+                "$ref": "#/components/schemas/DraftRequest"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
             "description": "OK"
-          }
-        }
-      }
-    },
-    "/webhook/manual": {
-      "post": {
-        "tags": ["Home"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ManualWebhookRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ManualWebhookRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ManualWebhookRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/contract/with-documents": {
-      "get": {
-        "tags": ["Home"],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ContractWithDocuments"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ContractWithDocuments"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ContractWithDocuments"
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -222,6 +110,64 @@
         }
       }
     },
+    "/contract/cancel": {
+      "post": {
+        "tags": ["Home"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelContract"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelContract"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelContract"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/contract/terminate": {
+      "post": {
+        "tags": ["Home"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerminateContract"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerminateContract"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerminateContract"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/contract/kt/{kt}/with-documents": {
       "get": {
         "tags": ["Home"],
@@ -267,227 +213,276 @@
           }
         }
       }
-    },
-    "/contract/{contractId}": {
-      "get": {
-        "tags": ["Home"],
-        "parameters": [
-          {
-            "name": "contractId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Contract"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Contract"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Contract"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/contract/{contractId}/with-documents": {
-      "get": {
-        "tags": ["Home"],
-        "parameters": [
-          {
-            "name": "contractId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ContractWithDocuments"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ContractWithDocuments"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ContractWithDocuments"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/contract/{contractId}/document/{documentId}": {
-      "get": {
-        "tags": ["Home"],
-        "parameters": [
-          {
-            "name": "documentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "contractId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ContractDocumentItem"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ContractDocumentItem"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ContractDocumentItem"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "403": {
-            "description": "Forbidden"
-          }
-        }
-      }
-    },
-    "/contract/cancel": {
-      "post": {
-        "tags": ["Home"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CancelContract"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CancelContract"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CancelContract"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/contract/terminate": {
-      "post": {
-        "tags": ["Home"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TerminateContract"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TerminateContract"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/TerminateContract"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/contract/send-draft": {
-      "post": {
-        "tags": ["Home"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContractDraftRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContractDraftRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ContractDraftRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
     }
   },
   "components": {
     "schemas": {
+      "DraftRequest": {
+        "type": "object",
+        "properties": {
+          "contractId": {
+            "type": "string"
+          },
+          "landlords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftPartyContact"
+            }
+          },
+          "signingParties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftPartyContact"
+            }
+          },
+          "landlordRepresentatives": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftPartyContact"
+            }
+          },
+          "tenants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DraftPartyContact"
+            }
+          },
+          "units": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string"
+                },
+                "addressCode": {
+                  "type": "number"
+                },
+                "appraisalUnitCode": {
+                  "type": "number"
+                },
+                "fireInsuranceValuation": {
+                  "type": "number"
+                },
+                "propertyCode": {
+                  "type": "number"
+                },
+                "propertyUsageDescription": {
+                  "type": "string"
+                },
+                "propertyValue": {
+                  "type": "number"
+                },
+                "size": {
+                  "type": "number"
+                },
+                "sizeUnit": {
+                  "type": "string"
+                },
+                "unitCode": {
+                  "type": "string"
+                },
+                "checked": {
+                  "type": "boolean"
+                },
+                "changedSize": {
+                  "type": "number"
+                },
+                "numOfRooms": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "string"
+          },
+          "isIndexConnected": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "indexDate": {
+            "type": "string"
+          },
+          "indexRate": {
+            "type": "string"
+          },
+          "paymentMethodOther": {
+            "type": "string"
+          },
+          "paymentDateOptions": {
+            "type": "string"
+          },
+          "paymentDayOther": {
+            "type": "string"
+          },
+          "paymentMethodOptions": {
+            "type": "string"
+          },
+          "paymentMethodBankAccountNumber": {
+            "type": "object",
+            "properties": {
+              "bankNumber": {
+                "type": "string"
+              },
+              "ledger": {
+                "type": "string"
+              },
+              "accountNumber": {
+                "type": "string"
+              }
+            }
+          },
+          "securityDepositRequired": {
+            "type": "string"
+          },
+          "securityType": {
+            "type": "string"
+          },
+          "bankGuaranteeInfo": {
+            "type": "string"
+          },
+          "thirdPartyGuaranteeInfo": {
+            "type": "string"
+          },
+          "insuranceCompanyInfo": {
+            "type": "string"
+          },
+          "mutualFundInfo": {
+            "type": "string"
+          },
+          "otherInfo": {
+            "type": "string"
+          },
+          "securityDepositAmount": {
+            "type": "string"
+          },
+          "securityAmountOther": {
+            "type": "string"
+          },
+          "securityAmountCalculated": {
+            "type": "string"
+          },
+          "categoryType": {
+            "type": "string"
+          },
+          "categoryClass": {
+            "type": "string"
+          },
+          "categoryClassGroup": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "rules": {
+            "type": "string"
+          },
+          "conditionDescription": {
+            "type": "string"
+          },
+          "inspector": {
+            "type": "string"
+          },
+          "inspectorName": {
+            "type": "string"
+          },
+          "smokeDetectors": {
+            "type": "string"
+          },
+          "fireExtinguisher": {
+            "type": "string"
+          },
+          "fireBlanket": {
+            "type": "string"
+          },
+          "emergencyExits": {
+            "type": "string"
+          },
+          "housingFundPayee": {
+            "type": "string"
+          },
+          "housingFundAmount": {
+            "type": "string"
+          },
+          "electricityCostPayee": {
+            "type": "string"
+          },
+          "electricityCostMeterStatusDate": {
+            "type": "string"
+          },
+          "electricityCostMeterNumber": {
+            "type": "string"
+          },
+          "electricityCostMeterStatus": {
+            "type": "string"
+          },
+          "heatingCostPayee": {
+            "type": "string"
+          },
+          "heatingCostMeterStatusDate": {
+            "type": "string"
+          },
+          "heatingCostMeterNumber": {
+            "type": "string"
+          },
+          "heatingCostMeterStatus": {
+            "type": "string"
+          },
+          "otherCostPayedByTenant": {
+            "type": "string"
+          },
+          "otherCostItems": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "DraftPartyContact": {
+        "type": "object",
+        "properties": {
+          "nationalIdWithName": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "nationalId": {
+                "type": "string"
+              }
+            }
+          },
+          "phone": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "AppraisalUnit": {
         "required": ["appraisalUnitId", "rooms", "size"],
         "type": "object",
@@ -511,25 +506,6 @@
           "rooms": {
             "type": "number",
             "format": "float"
-          }
-        },
-        "additionalProperties": false
-      },
-      "BankAccountNumber": {
-        "required": ["accountNumber", "bankNumber", "ledger"],
-        "type": "object",
-        "properties": {
-          "ledger": {
-            "type": "string",
-            "nullable": true
-          },
-          "bankNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "accountNumber": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -667,13 +643,6 @@
               "$ref": "#/components/schemas/ContractProperty"
             },
             "nullable": true
-          },
-          "contract_document": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ContractDocumentMetadata"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -705,345 +674,6 @@
           },
           "currency_code": {
             "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ContractDocumentItem": {
-        "type": "object",
-        "properties": {
-          "contract_document_id": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "document_type": {
-            "type": "string",
-            "nullable": true
-          },
-          "document_type_use_code": {
-            "type": "string",
-            "nullable": true
-          },
-          "document_last_date": {
-            "type": "string",
-            "nullable": true
-          },
-          "document_mime": {
-            "type": "string",
-            "nullable": true
-          },
-          "document_filename": {
-            "type": "string",
-            "nullable": true
-          },
-          "document_description": {
-            "type": "string",
-            "nullable": true
-          },
-          "document": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ContractDocumentMetadata": {
-        "type": "object",
-        "properties": {
-          "contract_document_id": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "document_type": {
-            "type": "string",
-            "nullable": true
-          },
-          "document_type_use_code": {
-            "type": "string",
-            "nullable": true
-          },
-          "document_last_date": {
-            "type": "string",
-            "nullable": true
-          },
-          "document_mime": {
-            "type": "string",
-            "nullable": true
-          },
-          "document_filename": {
-            "type": "string",
-            "nullable": true
-          },
-          "document_description": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ContractDraftRequest": {
-        "required": [
-          "amount",
-          "categoryClass",
-          "categoryType",
-          "conditionDescription",
-          "contractId",
-          "description",
-          "electricityCostPayee",
-          "emergencyExits",
-          "endDate",
-          "fireBlanket",
-          "fireExtinguisher",
-          "heatingCostPayee",
-          "housingFundPayee",
-          "inspector",
-          "landlordRepresentatives",
-          "landlords",
-          "otherCostItems",
-          "otherCostPayedByTenant",
-          "paymentDateOptions",
-          "paymentMethodBankAccountNumber",
-          "paymentMethodOptions",
-          "rules",
-          "signingParties",
-          "smokeDetectors",
-          "startDate",
-          "tenants",
-          "units"
-        ],
-        "type": "object",
-        "properties": {
-          "contractId": {
-            "type": "string",
-            "nullable": true
-          },
-          "signingParties": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PartyContact"
-            },
-            "nullable": true
-          },
-          "landlords": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PartyContact"
-            },
-            "nullable": true
-          },
-          "landlordRepresentatives": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PartyContact"
-            },
-            "nullable": true
-          },
-          "tenants": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PartyContact"
-            },
-            "nullable": true
-          },
-          "units": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PropertyUnit"
-            },
-            "nullable": true
-          },
-          "startDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "endDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "amount": {
-            "type": "string",
-            "nullable": true
-          },
-          "isIndexConnected": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "indexDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "indexRate": {
-            "type": "string",
-            "nullable": true
-          },
-          "paymentMethodOther": {
-            "type": "string",
-            "nullable": true
-          },
-          "paymentDateOptions": {
-            "type": "string",
-            "nullable": true
-          },
-          "paymentDayOther": {
-            "type": "string",
-            "nullable": true
-          },
-          "paymentMethodOptions": {
-            "type": "string",
-            "nullable": true
-          },
-          "paymentMethodBankAccountNumber": {
-            "$ref": "#/components/schemas/BankAccountNumber"
-          },
-          "securityDepositRequired": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "securityType": {
-            "type": "string",
-            "nullable": true
-          },
-          "bankGuaranteeInfo": {
-            "type": "string",
-            "nullable": true
-          },
-          "thirdPartyGuaranteeInfo": {
-            "type": "string",
-            "nullable": true
-          },
-          "insuranceCompanyInfo": {
-            "type": "string",
-            "nullable": true
-          },
-          "mutualFundInfo": {
-            "type": "string",
-            "nullable": true
-          },
-          "otherInfo": {
-            "type": "string",
-            "nullable": true
-          },
-          "securityDepositAmount": {
-            "type": "string",
-            "nullable": true
-          },
-          "securityAmountOther": {
-            "type": "string",
-            "nullable": true
-          },
-          "securityAmountCalculated": {
-            "type": "string",
-            "nullable": true
-          },
-          "categoryType": {
-            "type": "string",
-            "nullable": true
-          },
-          "categoryClass": {
-            "type": "string",
-            "nullable": true
-          },
-          "categoryClassGroup": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "rules": {
-            "type": "string",
-            "nullable": true
-          },
-          "conditionDescription": {
-            "type": "string",
-            "nullable": true
-          },
-          "inspector": {
-            "type": "string",
-            "nullable": true
-          },
-          "inspectorName": {
-            "type": "string",
-            "nullable": true
-          },
-          "smokeDetectors": {
-            "type": "string",
-            "nullable": true
-          },
-          "fireExtinguisher": {
-            "type": "string",
-            "nullable": true
-          },
-          "fireBlanket": {
-            "type": "string",
-            "nullable": true
-          },
-          "emergencyExits": {
-            "type": "string",
-            "nullable": true
-          },
-          "housingFundPayee": {
-            "type": "string",
-            "nullable": true
-          },
-          "housingFundAmount": {
-            "type": "string",
-            "nullable": true
-          },
-          "electricityCostPayee": {
-            "type": "string",
-            "nullable": true
-          },
-          "electricityCostMeterStatusDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "electricityCostMeterNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "electricityCostMeterStatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "heatingCostPayee": {
-            "type": "string",
-            "nullable": true
-          },
-          "heatingCostMeterStatusDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "heatingCostMeterNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "heatingCostMeterStatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "otherCostPayedByTenant": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "otherCostItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/OtherCostItem"
-            },
             "nullable": true
           }
         },
@@ -1151,11 +781,13 @@
             "nullable": true
           },
           "floor": {
-            "type": "string",
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
           "apartment": {
-            "type": "string",
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
           "special_group_use_code": {
@@ -1202,32 +834,48 @@
         },
         "additionalProperties": false
       },
-      "DepositAmount": {
-        "enum": ["OneMonth", "TwoMonths", "ThreeMonths", "Other"],
-        "type": "string"
-      },
-      "EventSignature": {
-        "required": ["guid", "signature", "signedData"],
+      "ContractDocumentItem": {
         "type": "object",
         "properties": {
-          "timeStamp": {
+          "contract_document_id": {
             "type": "integer",
-            "format": "int64"
+            "format": "int32",
+            "nullable": true
           },
-          "guid": {
+          "document_type": {
             "type": "string",
             "nullable": true
           },
-          "signature": {
+          "document_type_use_code": {
             "type": "string",
             "nullable": true
           },
-          "signedData": {
+          "document_last_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_mime": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_filename": {
+            "type": "string",
+            "nullable": true
+          },
+          "document_description": {
+            "type": "string",
+            "nullable": true
+          },
+          "document": {
             "type": "string",
             "nullable": true
           }
         },
         "additionalProperties": false
+      },
+      "DepositAmount": {
+        "enum": ["OneMonth", "TwoMonths", "ThreeMonths", "Other"],
+        "type": "string"
       },
       "FireProtections": {
         "type": "object",
@@ -1357,35 +1005,23 @@
               "$ref": "#/components/schemas/Person"
             }
           },
+          "signingParties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            }
+          },
           "tenants": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Person"
             }
           },
-          "signingParties": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Person"
-            },
-            "nullable": true
-          },
           "property": {
             "$ref": "#/components/schemas/Property"
           },
           "lease": {
             "$ref": "#/components/schemas/Lease"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ManualWebhookRequest": {
-        "required": ["applicationId"],
-        "type": "object",
-        "properties": {
-          "applicationId": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1427,36 +1063,6 @@
         },
         "additionalProperties": false
       },
-      "NationalIdWithName": {
-        "required": ["name", "nationalId"],
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "OtherCostItem": {
-        "required": ["amount", "description"],
-        "type": "object",
-        "properties": {
-          "amount": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "OtherFees": {
         "required": [
           "electricityCost",
@@ -1480,28 +1086,6 @@
             "items": {
               "$ref": "#/components/schemas/MiscellaneousFees"
             },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "PartyContact": {
-        "required": ["email", "nationalIdWithName", "phone"],
-        "type": "object",
-        "properties": {
-          "nationalIdWithName": {
-            "$ref": "#/components/schemas/NationalIdWithName"
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "address": {
-            "type": "string",
             "nullable": true
           }
         },
@@ -1548,7 +1132,7 @@
         "type": "string"
       },
       "Person": {
-        "required": ["email", "name", "nationalId", "phone"],
+        "required": ["address", "email", "name", "nationalId", "phone"],
         "type": "object",
         "properties": {
           "nationalId": {
@@ -1568,8 +1152,8 @@
             "type": "string"
           },
           "address": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "isRepresentative": {
             "type": "boolean"
@@ -1633,78 +1217,6 @@
         "enum": ["House_Apartment", "Room", "Commercial"],
         "type": "string"
       },
-      "PropertyUnit": {
-        "required": [
-          "address",
-          "addressCode",
-          "appraisalUnitCode",
-          "fireInsuranceValuation",
-          "propertyCode",
-          "propertyUsageDescription",
-          "propertyValue",
-          "size",
-          "sizeUnit",
-          "unitCode"
-        ],
-        "type": "object",
-        "properties": {
-          "size": {
-            "type": "number",
-            "format": "double"
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "checked": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "sizeUnit": {
-            "type": "string",
-            "nullable": true
-          },
-          "unitCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "numOfRooms": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "addressCode": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "changedSize": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "propertyCode": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "propertyValue": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "appraisalUnitCode": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "fireInsuranceValuation": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "propertyUsageDescription": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "Rent": {
         "required": ["amount"],
         "type": "object",
@@ -1764,41 +1276,6 @@
         ],
         "type": "string"
       },
-      "SignedDocumentEventData": {
-        "required": ["meta", "signedDocument", "signees"],
-        "type": "object",
-        "properties": {
-          "signees": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Signee"
-            },
-            "nullable": true
-          },
-          "signedDocument": {
-            "type": "string",
-            "nullable": true
-          },
-          "meta": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Signee": {
-        "type": "object",
-        "properties": {
-          "signedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
       "SpecialGroup": {
         "enum": [
           "No",
@@ -1816,6 +1293,7 @@
           "document",
           "documentFilename",
           "documentMime",
+          "reasonUseCode",
           "terminateOn"
         ],
         "type": "object",
@@ -1862,44 +1340,7 @@
           "TENANT_TERMINATION"
         ],
         "type": "string"
-      },
-      "WebhookEventPayload": {
-        "required": ["eventData", "eventSignature"],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "eventData": {
-            "$ref": "#/components/schemas/SignedDocumentEventData"
-          },
-          "eventSignature": {
-            "$ref": "#/components/schemas/EventSignature"
-          }
-        },
-        "additionalProperties": false
-      }
-    },
-    "securitySchemes": {
-      "Bearer": {
-        "type": "http",
-        "description": "Island.is access token for user authentication. Format: Bearer {token}",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      },
-      "EntraAuth": {
-        "type": "apiKey",
-        "description": "Entra ID (Azure AD) access token for client authentication. Format: Bearer {token}",
-        "name": "X-Client-Authorization",
-        "in": "header"
       }
     }
-  },
-  "security": [
-    {
-      "Bearer": [],
-      "EntraAuth": []
-    }
-  ]
+  }
 }

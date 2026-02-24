@@ -33,7 +33,7 @@ export const SubmissionUrls = () => {
   return (
     <Stack space={2}>
       {!showInput && !submissionUrlInput && (
-        <Box marginTop={4}>
+        <Box marginTop={7}>
           <Button onClick={() => setShowInput(true)} variant="ghost">
             {formatMessage(m.addFormUrl)}
           </Button>
@@ -41,11 +41,7 @@ export const SubmissionUrls = () => {
       )}
 
       {(showInput || submissionUrlInput) && (
-        <Box marginTop={4}>
-          <Text variant="eyebrow">
-            Athugið að á meðan við vinnum að tengingum við ytri kerfi er
-            einungis í boði að nota tengingar við Zendesk
-          </Text>
+        <Box marginTop={7}>
           <Input
             label={formatMessage(m.newFormUrlButton)}
             placeholder="IS/..."
@@ -140,6 +136,33 @@ export const SubmissionUrls = () => {
             formUpdate({ ...form, zendeskInternal: e.target.checked })
           }}
         />
+      )}
+
+      {form.submissionServiceUrl && form.submissionServiceUrl !== 'zendesk' && (
+        <>
+          <Checkbox
+            label={formatMessage(m.useValidate)}
+            checked={!!form.useValidate}
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_USE_VALIDATE',
+                payload: { value: e.target.checked },
+              })
+              formUpdate({ ...form, useValidate: e.target.checked })
+            }}
+          />
+          <Checkbox
+            label={formatMessage(m.usePopulate)}
+            checked={!!form.usePopulate}
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_USE_POPULATE',
+                payload: { value: e.target.checked },
+              })
+              formUpdate({ ...form, usePopulate: e.target.checked })
+            }}
+          />
+        </>
       )}
     </Stack>
   )
