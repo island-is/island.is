@@ -32,8 +32,6 @@ import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/ho
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 
-import * as strings from './DefendantInfo.strings'
-
 interface Props {
   defendant: Defendant
   workingCase: Case
@@ -147,42 +145,39 @@ const DefendantInfo: FC<Props> = (props) => {
             size="small"
             data-testid="deleteDefendantButton"
           >
-            {formatMessage(strings.defendantInfo.delete)}
+            Eyða
           </Button>
         </Box>
       )}
-      <Checkbox
-        name={`noNationalId-${defendant.id}`}
-        label={formatMessage(
-          strings.defendantInfo.doesNotHaveIcelandicNationalId,
-          {
-            isIndictment: isIndictmentCase(workingCase.type),
-          },
-        )}
-        checked={Boolean(defendant.noNationalId)}
-        onChange={() => {
-          setNationalIdNotFound(false)
+      {!isIndictmentCase(workingCase.type) && (
+        <Checkbox
+          name={`noNationalId-${defendant.id}`}
+          label="Varnaraðili er ekki með íslenska kennitölu"
+          checked={Boolean(defendant.noNationalId)}
+          onChange={() => {
+            setNationalIdNotFound(false)
 
-          updateDefendantState(
-            {
+            updateDefendantState(
+              {
+                caseId: workingCase.id,
+                defendantId: defendant.id,
+                noNationalId: !defendant.noNationalId,
+                nationalId: null,
+              },
+              setWorkingCase,
+            )
+
+            onChange({
               caseId: workingCase.id,
               defendantId: defendant.id,
               noNationalId: !defendant.noNationalId,
               nationalId: null,
-            },
-            setWorkingCase,
-          )
-
-          onChange({
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            noNationalId: !defendant.noNationalId,
-            nationalId: null,
-          })
-        }}
-        filled
-        large
-      />
+            })
+          }}
+          filled
+          large
+        />
+      )}
       <InputNationalId
         isDateOfBirth={Boolean(defendant.noNationalId)}
         value={defendant.nationalId ?? ''}
