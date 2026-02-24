@@ -24,6 +24,7 @@ export class ClientClaim extends Model {
   @ApiProperty()
   clientId!: string
 
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -31,7 +32,6 @@ export class ClientClaim extends Model {
   @ApiProperty()
   type!: string
 
-  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
