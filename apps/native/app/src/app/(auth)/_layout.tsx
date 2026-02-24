@@ -43,16 +43,23 @@ export default function AuthLayout() {
   // Listen for app state changes to show/dismiss the lock screen
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
+      const { noLockScreenUntilNextAppStateActive } = authStore.getState()
+
       // Going to background: stamp the time and show lock immediately (covers app switcher)
       if (
         appStateRef.current === 'active' &&
         (nextAppState === 'inactive' || nextAppState === 'background')
       ) {
-        if (isOnboarded()) {
+        if (isOnboarded() && !noLockScreenUntilNextAppStateActive) {
           Keyboard.dismiss()
           authStore.setState({ lockScreenActivatedAt: Date.now() })
           showLockScreen()
         }
+      }
+
+      // Returning to foreground: reset the suppress flag
+      if (nextAppState === 'active' && noLockScreenUntilNextAppStateActive) {
+        authStore.setState({ noLockScreenUntilNextAppStateActive: false })
       }
 
       appStateRef.current = nextAppState

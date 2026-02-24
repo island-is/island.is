@@ -1,5 +1,5 @@
 import { Passkey } from 'react-native-passkey'
-import { authStore } from '@/stores/auth-store'
+import { suppressLockScreen } from '@/stores/auth-store'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { preferencesStore } from '@/stores/preferences-store'
 import { navigateTo } from '../lib/deep-linking'
@@ -24,9 +24,7 @@ export const useBrowser = () => {
     if (passkeysSupported && isPasskeyEnabled && doesUrlSupportPasskey(url)) {
       if (hasCreatedPasskey) {
         // Don't show lockscreen behind native passkey modals
-        authStore.setState({
-          noLockScreenUntilNextAppStateActive: true,
-        })
+        suppressLockScreen()
         // Open passkey flow to authenticate
         const authenticationResponse = await authenticatePasskey()
         if (authenticationResponse) {

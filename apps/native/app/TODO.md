@@ -8,17 +8,16 @@
 
 All `@todo migration` comments found in the codebase, grouped by file.
 
-### `src/lib/deep-linking.ts`
-- **Line 105** — `evaluateUrl()`: Body is a stub returning `false`; the URL-matching logic (schemes/routes store lookup) is not yet wired to expo-router.
-- **Line 129** — `addRoute()`: No-op; route registration into the deep-link store is not implemented.
-- **Line 135** — `addScheme()`: No-op; scheme registration into the deep-link store is not implemented.
-- **Line 152** — `navigateTo()`: Missing throttle / duplicate-navigation protection (500 ms guard, `navigateTimeMap`).
-- **Line 190** — `navigateToUniversalLink()`: Universal-link → native-path mapping (`findRoute`) is commented out; currently falls through to `router.navigate(link)` unconditionally.
+### ~~`src/lib/deep-linking.ts`~~ ✅
+- ~~`evaluateUrl()`: Deprecated no-op — expo-router handles URL routing.~~
+- ~~`addRoute()` / `addScheme()`: Removed — no longer needed with expo-router.~~
+- ~~`navigateTo()`: Throttle / duplicate-navigation protection restored.~~
+- ~~`navigateToUniversalLink()`: `findRoute()` implemented with `urlMapping`; falls back to `openBrowser`.~~
 
-### `src/utils/lifecycle/setup-event-handlers.ts`
-- **Line 45** — Bottom-tab selected listener: `Navigation.events().registerBottomTabSelectedListener` → needs expo-router equivalent to keep `uiStore` tab index in sync.
-- **Line 53** — App-lock `AppState` listener: Full background/foreground app-lock logic (timeouts, overlay show/hide) is commented out; needs expo-router overlay/modal approach.
-- **Line 124** — Navigation topBar button press listener: `Navigation.events().registerNavigationButtonPressedListener` → needs expo-router equivalent for settings, notifications, scanner, offline, and home-options buttons.
+### ~~`src/utils/lifecycle/setup-event-handlers.ts`~~ ✅
+- ~~Bottom-tab selected listener: Removed — expo-router handles tab state automatically.~~
+- ~~App-lock `AppState` listener: Removed — lives in `(auth)/_layout.tsx`, now respects `suppressLockScreen()`.~~
+- ~~Navigation button press listener: Removed — expo-router handles navigation buttons via screen options.~~
 
 ### `src/lib/passkeys/useAuthenticatePasskey.ts`
 - **Line 47** — `authenticatePasskey()`: Verify that the native `btoa` global works correctly; the old `react-native-quick-base64` import was removed. Also confirm the result shape matches what the server expects.
@@ -28,7 +27,7 @@ All `@todo migration` comments found in the codebase, grouped by file.
 - **Line 82** — `formatRegisterOptions()`: Same as above for the registration flow.
 
 ### `src/hooks/use-deep-link-handling.ts`
-- **Line 37** — `useDeepLinkHandling()`: Verify this hook works end-to-end with expo-router's `useURL()` and Firebase notification handling.
+- **Line 37** — `useDeepLinkHandling()`: Verify this hook works end-to-end with expo-router's `useURL()` and Firebase notification handling. (Now uses the updated `navigateToUniversalLink` with `findRoute`).
 
 ### `src/hooks/use-connectivity-indicator.ts`
 - **Line 34** — `useConnectivityIndicator()`: The `updateNavigationButtons()` body is empty; RNN `Navigation.mergeOptions` calls for offline/loading topBar buttons need to be replaced with an expo-router-compatible approach.
@@ -51,8 +50,8 @@ All `@todo migration` comments found in the codebase, grouped by file.
 ### `src/stores/preferences-store.ts`
 - **Line 122** — `onRehydrateStorage` callback: `Navigation.setDefaultOptions(getDefaultOptions(...))` call is commented out; determine whether default navigation options need to be re-applied after store hydration in expo-router.
 
-### `src/app/+native-intent.tsx`
-- **Line 9** — `redirectSystemPath()`: Web-URL → native-path mapping is not yet implemented; currently returns the path unchanged (except for cognito/oauth redirects to `/`).
+### ~~`src/app/+native-intent.tsx`~~ ✅
+- ~~`redirectSystemPath()`: Now uses `findRoute()` from deep-linking to map universal link paths to native routes.~~
 
 ### `src/app/(auth)/(tabs)/_layout.tsx`
 - **Line 107** — Android tabbar overdraw: A decorative view meant to draw over the tabbar on Android is commented out; needs investigation for expo-router's tab layout.

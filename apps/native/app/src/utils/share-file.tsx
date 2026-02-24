@@ -2,7 +2,7 @@ import * as Share from 'expo-sharing'
 import * as FileSystem from 'expo-file-system'
 
 import { isAndroid } from '@/utils/devices'
-import { authStore } from '@/stores/auth-store'
+import { suppressLockScreen } from '@/stores/auth-store'
 import { DocumentV2 } from '@/graphql/types/schema'
 
 interface ShareFileProps {
@@ -25,7 +25,7 @@ export const shareFile = async ({
   let htmlUrl: string | undefined
 
   if (isAndroid) {
-    authStore.setState({ noLockScreenUntilNextAppStateActive: true })
+    suppressLockScreen()
   }
 
   if (isHtml) {

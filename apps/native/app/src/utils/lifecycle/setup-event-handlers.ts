@@ -38,20 +38,6 @@ export function setupEventHandlers() {
     }
   })
 
-  // @todo migration
-  // Navigation.events().registerBottomTabSelectedListener((e) => {
-  //   uiStore.setState({
-  //     unselectedTab: e.unselectedTabIndex,
-  //     selectedTab: e.selectedTabIndex,
-  //   })
-  // })
-
-  // @todo migration
-  // AppState.addEventListener('change', (status: AppStateStatus) => { ... })
-
-  // @todo migration
-  // Navigation.events().registerNavigationButtonPressedListener(({ buttonId }) => { ... })
-
   // Handle quick actions
   DeviceEventEmitter.addListener('quickActionShortcut', handleQuickAction)
 

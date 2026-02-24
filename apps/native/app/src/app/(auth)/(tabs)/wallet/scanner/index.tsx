@@ -34,7 +34,7 @@ import {
 } from '@/graphql/types/schema'
 import { isIos } from '@/utils/devices'
 import { isJWT } from '@/utils/token'
-import { authStore } from '@/stores/auth-store'
+import { authStore, suppressLockScreen } from '@/stores/auth-store'
 import { setScanResult } from '../../../../../stores/scan-result-store'
 
 const BottomRight = styled.View`
@@ -167,9 +167,7 @@ export default function LicenseScannerScreen() {
   useEffect(() => {
     void requestPermission()
     if (!isIos) {
-      authStore.setState({
-        noLockScreenUntilNextAppStateActive: true,
-      })
+      suppressLockScreen()
     }
   }, [])
 

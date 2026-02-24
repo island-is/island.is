@@ -1,3 +1,4 @@
+import { findRoute } from '@/lib/deep-linking'
 
 export function redirectSystemPath({
   path,
@@ -5,15 +6,19 @@ export function redirectSystemPath({
 }: {
   path: string
   initial: boolean
-  }) {
-  // @todo migration - process web urls and redirect to native paths
+}) {
   try {
+    // Handle OAuth/Cognito redirects
     if (path.includes('cognito') || path.includes('oauth')) {
       return '/'
     }
-    if (initial) {
-      return path
+
+    // Try to map universal link paths (island.is) to native routes
+    const nativePath = findRoute(path)
+    if (nativePath) {
+      return nativePath
     }
+
     return path
   } catch {
     return '/unexpected-error'

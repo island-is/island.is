@@ -303,6 +303,15 @@ export const useAuthStore = <U = AuthStore>(
   selector?: (state: AuthStore) => U,
 ) => useStore(authStore, selector!)
 
+/**
+ * Temporarily suppress the app lock screen until the app returns to foreground.
+ * Use before triggering native modals (passkeys, permissions, share sheet, etc.)
+ * that cause the app to briefly go to background/inactive.
+ */
+export function suppressLockScreen() {
+  authStore.setState({ noLockScreenUntilNextAppStateActive: true })
+}
+
 export async function readAuthorizeResult(): Promise<void> {
   const { authorizeResult } = authStore.getState()
 

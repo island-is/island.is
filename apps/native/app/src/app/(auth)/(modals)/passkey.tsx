@@ -19,7 +19,7 @@ import illustrationSrc from '@/assets/illustrations/digital-services-m1-dots.png
 import { preferencesStore } from '@/stores/preferences-store'
 import { useRegisterPasskey } from '@/lib/passkeys/useRegisterPasskey'
 import { useAuthenticatePasskey } from '@/lib/passkeys/useAuthenticatePasskey'
-import { authStore } from '@/stores/auth-store'
+import { authStore, suppressLockScreen } from '@/stores/auth-store'
 import { useBrowser } from '@/hooks/use-browser'
 import { addPasskeyAsLoginHint } from '@/lib/passkeys/helpers'
 
@@ -170,9 +170,7 @@ export default function PasskeyScreen() {
             onPress={async () => {
               try {
                 setIsLoading(true)
-                authStore.setState(() => ({
-                  noLockScreenUntilNextAppStateActive: true,
-                }))
+                suppressLockScreen()
 
                 const registered = await registerPasskey()
 
