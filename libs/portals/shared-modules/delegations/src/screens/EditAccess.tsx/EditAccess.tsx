@@ -21,6 +21,12 @@ const EditAccess = () => {
   const { formatMessage } = useLocale()
   const { selectedScopes } = useDelegationForm()
 
+  const initialIsSamePeriod =
+    selectedScopes.length > 1 &&
+    selectedScopes.every(
+      (scope) => scope.validTo === selectedScopes[0]?.validTo,
+    )
+
   const navigate = useNavigate()
 
   // const [createAuthDelegations, { loading: mutationLoading }] =
@@ -40,7 +46,7 @@ const EditAccess = () => {
     {
       id: 'select-period',
       name: formatMessage(m.stepThreeLabel),
-      content: <AccessPeriod />,
+      content: <AccessPeriod initialIsSamePeriod={initialIsSamePeriod} />,
       onContinue: () => {
         // setIsConfirmModalVisible(true)
       },

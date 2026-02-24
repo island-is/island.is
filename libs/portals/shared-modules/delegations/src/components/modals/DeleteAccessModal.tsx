@@ -22,7 +22,7 @@ export const DeleteAccessModal = ({
   isVisible: boolean
   onDelete: () => void
   loading: boolean
-  // person: DelegationsByPerson | null
+
   direction: 'outgoing' | 'incoming'
   otherIdentity: { name: string; nationalId: string }
 }) => {

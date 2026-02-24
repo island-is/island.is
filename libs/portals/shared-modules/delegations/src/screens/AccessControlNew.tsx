@@ -41,7 +41,6 @@ const AccessControlNew = () => {
     data: outgoingData,
     loading: outgoingLoading,
     error: outgoingError,
-    refetch: refetchOutgoing,
   } = useAuthDelegationsGroupedByIdentityOutgoingQuery({
     variables: { lang },
     fetchPolicy: 'cache-and-network',
@@ -66,7 +65,6 @@ const AccessControlNew = () => {
     data: incomingPersonData,
     loading: incomingPersonLoading,
     error: incomingPersonError,
-    refetch: refetchIncoming,
   } = useAuthDelegationsGroupedByIdentityIncomingQuery({
     variables: { lang },
     fetchPolicy: 'cache-and-network',
@@ -173,7 +171,6 @@ const AccessControlNew = () => {
           data={outgoingCustomDelegations}
           loading={outgoingLoading || false}
           error={outgoingError}
-          refetch={() => refetchOutgoing({ lang })}
           direction="outgoing"
         />
       )}
@@ -276,7 +273,6 @@ const AccessControlNew = () => {
             data={incomingCustomDelegations}
             loading={incomingPersonLoading || false}
             error={incomingPersonError}
-            refetch={() => refetchIncoming({ lang })}
             direction="incoming"
           />
         )}

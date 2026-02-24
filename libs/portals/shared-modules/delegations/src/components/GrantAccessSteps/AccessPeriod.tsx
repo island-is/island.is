@@ -7,9 +7,13 @@ import { m as portalMessages } from '@island.is/portals/core'
 import { DateScopesTable } from '../../components/ScopesTable/DateScopesTable'
 import { useDelegationForm } from '../../context'
 
-export const AccessPeriod = () => {
+export const AccessPeriod = ({
+  initialIsSamePeriod = false,
+}: {
+  initialIsSamePeriod?: boolean
+}) => {
   const { formatMessage, lang } = useLocale()
-  const [isSamePeriod, setIsSamePeriod] = useState<boolean>(true)
+  const [isSamePeriod, setIsSamePeriod] = useState<boolean>(initialIsSamePeriod)
   const { selectedScopes, setSelectedScopes } = useDelegationForm()
 
   const onValidityPeriodChange = (date: Date) => {

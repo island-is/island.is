@@ -81,9 +81,6 @@ export const DateScopesTable = ({
                 <Text variant="medium">{scope.description || '-'}</Text>
               </T.Data>
               <T.Data style={{ paddingInline: 16 }}>
-                <Text variant="medium">{permissionType}</Text>
-              </T.Data>
-              <T.Data style={{ paddingInline: 16 }}>
                 {editableDates ? (
                   <DatePicker
                     id="validityPeriod"
@@ -93,6 +90,7 @@ export const DateScopesTable = ({
                     selected={scope.validTo}
                     handleChange={(date) => onChangeScopeDate(scope, date)}
                     placeholderText={formatMessage(portalMessages.chooseDate)}
+                    detatchedCalendar={true}
                   />
                 ) : (
                   <Text variant="medium">
@@ -101,6 +99,9 @@ export const DateScopesTable = ({
                       : '-'}
                   </Text>
                 )}
+              </T.Data>
+              <T.Data style={{ paddingInline: 16 }}>
+                <Text variant="medium">{permissionType}</Text>
               </T.Data>
             </T.Row>
           )

@@ -7,31 +7,30 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
-import { AuthCustomDelegation } from '../../../types/customDelegation'
 import { AuthDelegationsGroupedByIdentityOutgoingQuery } from '../outgoing/DelegationsGroupedByIdentityOutgoing.generated'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import { m as coreMessages } from '@island.is/portals/core'
-import { usePatchAuthDelegationMutation } from '../../modals/EditAccessModal.generated'
+
 import { useState } from 'react'
+import { Reference, useApolloClient } from '@apollo/client'
 import { useDelegationForm } from '../../../context'
-import { DeleteScopeModal } from '../../modals/DeleteScopeModal'
 import { AuthDelegationScope, AuthDomain } from '@island.is/api/schema'
 import { DeleteAccessModal } from '../../modals/DeleteAccessModal'
+import { usePatchAuthDelegationMutation } from '../../../screens/EditAccess.tsx/EditAccess.generated'
 
 type PersonCentricDelegation =
   AuthDelegationsGroupedByIdentityOutgoingQuery['authDelegationsGroupedByIdentityOutgoing'][number]
 
 const CustomDelegationsPermissionsTable = ({
   data,
-  refetch,
   direction,
 }: {
   data: PersonCentricDelegation
-  refetch?: () => void
   direction: 'outgoing' | 'incoming'
 }) => {
   const { formatMessage } = useLocale()
+  const client = useApolloClient()
   const scopes = data.scopes
   const [patchDelegation] = usePatchAuthDelegationMutation()
 
@@ -47,6 +46,12 @@ const CustomDelegationsPermissionsTable = ({
     // { value: 'Síðast notað' }, // TODO: Data not available yet
     { value: '' },
   ]
+
+  const personCacheId = client.cache.identify({
+    __typename: 'AuthDelegationsGroupedByIdentity',
+    nationalId: data.nationalId,
+    type: data.type,
+  })
 
   const handleDateChange = async (
     scope: typeof scopes[number],
@@ -69,8 +74,22 @@ const CustomDelegationsPermissionsTable = ({
             ],
           },
         },
+        update: (cache) => {
+          cache.modify({
+            id: personCacheId,
+            fields: {
+              scopes(existing: readonly Reference[], { readField }) {
+                return existing.map((scopeRef) =>
+                  readField('name', scopeRef) === scope.name &&
+                  readField('delegationId', scopeRef) === delegationId
+                    ? { ...scopeRef, validTo: newDate.toISOString() }
+                    : scopeRef,
+                )
+              },
+            },
+          })
+        },
       })
-      // refetch?.()
       toast.success(formatMessage(m.scopeValidityPeriodUpdated))
     } catch {
       toast.error(formatMessage(coreMessages.somethingWrong))
@@ -90,8 +109,26 @@ const CustomDelegationsPermissionsTable = ({
             deleteScopes: [scopeName],
           },
         },
+        update: (cache) => {
+          cache.modify({
+            id: personCacheId,
+            fields: {
+              scopes(existing: readonly Reference[], { readField }) {
+                return existing.filter(
+                  (scopeRef) =>
+                    !(
+                      readField('name', scopeRef) === scopeName &&
+                      readField('delegationId', scopeRef) === delegationId
+                    ),
+                )
+              },
+              totalScopeCount(existing: number) {
+                return existing - 1
+              },
+            },
+          })
+        },
       })
-      // refetch?.()
     } catch {
       toast.error(formatMessage(coreMessages.somethingWrong))
     }
@@ -183,19 +220,21 @@ const CustomDelegationsPermissionsTable = ({
       </T.Table>
       <DeleteAccessModal
         onClose={() => {
-          clearForm()
           setScopeToDelete(null)
+          // timeout to fix visual glitch
+          setTimeout(clearForm, 300)
         }}
         isVisible={!!scopeToDelete}
         direction={direction}
         otherIdentity={{ name: data.name, nationalId: data.nationalId }}
         onDelete={() => {
-          handleDeleteScope(
-            scopeToDelete?.delegationId ?? undefined,
-            scopeToDelete?.name ?? undefined,
-          )
-          clearForm()
+          const delegationId = scopeToDelete?.delegationId ?? undefined
+          const scopeName = scopeToDelete?.name ?? undefined
           setScopeToDelete(null)
+          handleDeleteScope(delegationId, scopeName).finally(() =>
+            // timeout to fix visual glitch
+            setTimeout(clearForm, 300),
+          )
         }}
         loading={false} //todo
       />
