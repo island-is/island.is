@@ -72,7 +72,7 @@ const CloseIcon = styled.Image`
 
 type NavigationBarSheetProps = {
   title?: React.ReactNode
-  componentId: string
+  componentId?: string
   onClosePress(): void
   style?: ViewStyle
   showLoading?: boolean

@@ -20,6 +20,7 @@ import { setBadgeCountAsync } from 'expo-notifications'
 import { preferencesStore } from './preferences-store'
 import { app } from '../lib/firebase'
 import { create, useStore } from 'zustand'
+import * as Device from 'expo-device';
 
 interface NotificationsState {
   unseenCount: number
@@ -47,6 +48,10 @@ export const notificationsStore = create<NotificationsStore>()(
       ...initialState,
 
       async syncToken() {
+        if (!Device.isDevice) {
+          console.warn('Push notifications are not supported on simulators/emulators')
+          return
+        }
         const client = await getApolloClientAsync()
         const token = await getToken(app.messaging())
         const { pushToken: oldToken, deletePushToken } = get()
@@ -147,6 +152,7 @@ export const notificationsStore = create<NotificationsStore>()(
     {
       name: 'notifications_07',
       storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({ pushToken: state.pushToken, unseenCount: state.unseenCount }), // only persist pushToken
     },
   ),
 )

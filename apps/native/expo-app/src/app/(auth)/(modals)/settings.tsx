@@ -280,7 +280,7 @@ export default function SettingsScreen() {
           subtitle={userProfile.data?.getUserProfile?.email ?? '-'}
           accessory={
             <TouchableOpacity
-              onPress={() => router.push('/(auth)/edit-email' as any)}
+              onPress={() => router.push('/(auth)/(modals)/edit-email')}
               style={{
                 paddingLeft: 16,
                 paddingBottom: 10,
@@ -303,7 +303,7 @@ export default function SettingsScreen() {
           subtitle={userProfile.data?.getUserProfile?.bankInfo ?? '-'}
           accessory={
             <TouchableOpacity
-              onPress={() => router.push('/(auth)/edit-bank-info' as any)}
+              onPress={() => router.push('/(auth)/(modals)/edit-bank-info')}
               style={{
                 paddingLeft: 16,
                 paddingBottom: 10,

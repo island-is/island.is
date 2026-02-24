@@ -60,9 +60,12 @@ export default function MoreScreen() {
   return (
     <>
       <Stack.Toolbar placement="right">
-        <Stack.Toolbar.Button icon={require('@/assets/icons/settings.png')} onPress={() => {
-          router.push('/settings')
-        }} />
+        <Stack.Toolbar.Button
+          icon={require('@/assets/icons/settings.png')}
+          onPress={() => {
+            router.navigate('/settings')
+          }}
+        />
       </Stack.Toolbar>
       <Animated.ScrollView
         style={{
@@ -77,7 +80,7 @@ export default function MoreScreen() {
               theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
             }
             onPress={() => {
-              router.push('/personalinfo')
+              router.navigate('/personal-info')
             }}
           >
             <FamilyMemberCard
@@ -90,36 +93,36 @@ export default function MoreScreen() {
           <MoreCard
             title={intl.formatMessage({ id: 'profile.family' })}
             icon={familyIcon}
-            onPress={() => router.push('/family')}
+            onPress={() => router.navigate('/more/family')}
           />
           <MoreCard
             title={intl.formatMessage({ id: 'profile.vehicles' })}
             icon={vehicleIcon}
-            onPress={() => router.push('/vehicles')}
+            onPress={() => router.navigate('/more/vehicles')}
           />
         </Row>
         <Row>
           <MoreCard
             title={intl.formatMessage({ id: 'profile.assets' })}
             icon={assetsIcon}
-            onPress={() => router.push('/assets')}
+            onPress={() => router.navigate('/more/assets')}
           />
           <MoreCard
             title={intl.formatMessage({ id: 'profile.finance' })}
             icon={financeIcon}
-            onPress={() => router.push('/finance')}
+            onPress={() => router.navigate('/more/finance')}
           />
         </Row>
         <Row>
           <MoreCard
-            title={intl.formatMessage({ id: 'profile.health' })}
-            icon={healthIcon}
-            onPress={() => router.push('/health-overview')}
+            title={intl.formatMessage({ id: 'applications.title' })}
+            icon={require('@/assets/icons/tabbar-applications.png')}
+            onPress={() => router.navigate('/more/applications')}
           />
           <MoreCard
             title={intl.formatMessage({ id: 'profile.airDiscount' })}
             icon={airplaneIcon}
-            onPress={() => router.push('/air-discount')}
+            onPress={() => router.navigate('/more/air-discount')}
           />
         </Row>
         <View

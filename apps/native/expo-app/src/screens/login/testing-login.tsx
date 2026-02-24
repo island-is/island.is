@@ -76,9 +76,8 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
   const onLoginPress = async () => {
     // Skip all login functionality if we are in mock environment
     if (environment.id === 'mock') {
-      // @todo migration
-      // const { setupNativeMocking } = await import('@island.is/api/mocks/native')
-      // await setupNativeMocking()
+      const { setupNativeMocking } = await import('@island.is/api/mocks/native')
+      await setupNativeMocking()
       // Skip onboarding steps when mocking
       preferencesStore.setState({
         hasOnboardedBiometrics: true,

@@ -8,7 +8,6 @@ import airplaneIcon from '../../assets/icons/airplane.png'
 import assetsIcon from '../../assets/icons/assets.png'
 import familyIcon from '../../assets/icons/family.png'
 import financeIcon from '../../assets/icons/finance.png'
-import healthIcon from '../../assets/icons/health.png'
 import vehicleIcon from '../../assets/icons/vehicle.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
@@ -157,9 +156,9 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
         </Row>
         <Row>
           <MoreCard
-            title={intl.formatMessage({ id: 'profile.health' })}
-            icon={healthIcon}
-            onPress={() => navigateTo('/health-overview')}
+            title={intl.formatMessage({ id: 'applications.title' })}
+            icon={require('@/assets/icons/tabbar-applications.png')}
+            onPress={() => navigateTo('/applications')}
           />
           <MoreCard
             title={intl.formatMessage({ id: 'profile.airDiscount' })}

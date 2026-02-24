@@ -17,7 +17,7 @@ import {
   Organization,
 } from '../../../graphql/types/finance.types'
 import { useGetFinanceStatusDetailsQuery } from '../../../graphql/types/schema'
-import { navigateTo } from '../../../lib/deep-linking'
+import { useRouter } from 'expo-router'
 import { showPicker } from '../../../lib/show-picker'
 import { SelectButton } from './select-button'
 import { useBrowser } from '../../../lib/use-browser'
@@ -88,14 +88,13 @@ const Total = styled(Typography)`
 export function FinanceStatusCard({
   chargeType,
   org,
-  componentId,
 }: {
   chargeType: ChargeType
   org: Organization
-  componentId: string
 }) {
   const intl = useIntl()
   const theme = useTheme()
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const { openBrowser } = useBrowser()
   const res = useGetFinanceStatusDetailsQuery({
@@ -224,9 +223,14 @@ export function FinanceStatusCard({
                       index % 2 === 0 ? theme.color.blue100 : theme.color.white,
                   }}
                   onPress={() => {
-                    navigateTo(
-                      `/finance/status/${org.id}/${chargeType.id}/${index}`,
-                    )
+                    router.push({
+                      pathname: '/(auth)/(tabs)/more/finance/status/[orgId]/[chargeTypeId]',
+                      params: {
+                        orgId: org.id,
+                        chargeTypeId: chargeType.id,
+                        index: String(index),
+                      },
+                    })
                   }}
                 >
                   <>
@@ -306,8 +310,7 @@ export function FinanceStatusCard({
                 <Pressable
                   onPress={() =>
                     openBrowser(
-                      `https://${org.email.replace(/https?:\/\//, '')}`,
-                      componentId,
+                      `https://${org.homepage.replace(/https?:\/\//, '')}`,
                     )
                   }
                 >

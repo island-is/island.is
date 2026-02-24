@@ -27,7 +27,6 @@ import {
 } from '../../../graphql/types/schema'
 import { useBrowser } from '../../../lib/use-browser'
 import { getApplicationUrl } from '../../../utils/applications-utils'
-import { BottomTabsIndicator } from '../../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { createSkeletonArr } from '../../../utils/create-skeleton-arr'
 import { getBadgeVariant } from '../utils/getBadgeVariant'
 
@@ -38,7 +37,6 @@ type FlatListItem =
 
 interface ApplicationsListProps {
   applicationsRes: ListApplicationsQueryResult
-  componentId: string
   displayProgress: boolean
   displayDescription: boolean
   onRefetch: (refetching: boolean) => void
@@ -46,7 +44,6 @@ interface ApplicationsListProps {
 
 export const ApplicationsList = ({
   applicationsRes,
-  componentId,
   displayDescription,
   displayProgress,
   onRefetch,
@@ -161,7 +158,7 @@ export const ApplicationsList = ({
                 id: 'applicationStatusCard.openButtonLabel',
               }),
               onPress() {
-                openBrowser(getApplicationUrl(item), componentId)
+                openBrowser(getApplicationUrl(item))
               },
             },
           ]}
@@ -219,7 +216,6 @@ export const ApplicationsList = ({
             renderItem={renderItem}
           />
           <TopLine scrollY={scrollY} />
-          <BottomTabsIndicator index={1} total={5} />
         </SafeAreaView>
       )}
     </View>

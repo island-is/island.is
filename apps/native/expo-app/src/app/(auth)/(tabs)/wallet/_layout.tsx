@@ -32,6 +32,13 @@ export default function WalletLayout() {
           headerShadowVisible: false,
         }}
       />
+      <Stack.Screen
+        name="scanner/index"
+        options={{
+          presentation: 'modal',
+        }}
+      />
+      <Stack.Screen name="scanner/[id]" />
     </Stack>
   )
 }

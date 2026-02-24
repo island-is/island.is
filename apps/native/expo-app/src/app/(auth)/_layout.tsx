@@ -6,6 +6,10 @@ import { authStore, useAuthStore } from '@/stores/auth-store'
 import { isOnboarded } from '@/utils/onboarding'
 import { config } from '../../config'
 
+export const unstable_settings = {
+  initialRouteName: '(tabs)',
+}
+
 export default function AuthLayout() {
   const router = useRouter()
   const authorizeResult = useAuthStore((s) => s.authorizeResult)
@@ -64,28 +68,14 @@ export default function AuthLayout() {
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="(modals)/settings"
-        options={{
-          headerShown: false,
-          presentation: 'formSheet',
-        }}
-      />
-      <Stack.Screen
-        name="(modals)/edit-phone"
-        options={{
-          headerShown: false,
-          presentation: 'formSheet',
-        }}
-      />
-      <Stack.Screen
-        name="(modals)/edit-confirm"
-        options={{
-          headerShown: false,
-          presentation: 'formSheet',
-        }}
-      />
       <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="(modals)"
+        options={{
+          headerShown: false,
+          presentation: 'formSheet',
+        }}
+      />
       <Stack.Screen
         name="app-lock"
         options={{

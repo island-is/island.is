@@ -17,11 +17,10 @@ import { getApplicationType } from '../utils/getApplicationType'
 import { getBadgeVariant } from '../utils/getBadgeVariant'
 import { useBrowser } from '../../../lib/use-browser'
 import { getApplicationUrl } from '../../../utils/applications-utils'
-import { navigateTo } from '../../../lib/deep-linking'
+import { useRouter } from 'expo-router'
 import { screenWidth } from '../../../utils/dimensions'
 
 interface ApplicationsPreviewProps {
-  componentId: string
   applications: Application[]
   headingTitleId: string
   headingTitleNavigationLink: string
@@ -30,7 +29,6 @@ interface ApplicationsPreviewProps {
 }
 
 export const ApplicationsPreview = ({
-  componentId,
   headingTitleId,
   headingTitleNavigationLink,
   applications,
@@ -38,6 +36,7 @@ export const ApplicationsPreview = ({
   slider = false,
 }: ApplicationsPreviewProps) => {
   const { openBrowser } = useBrowser()
+  const router = useRouter()
   const theme = useTheme()
   const intl = useIntl()
 
@@ -105,7 +104,7 @@ export const ApplicationsPreview = ({
                 id: 'applicationStatusCard.openButtonLabel',
               }),
               onPress() {
-                openBrowser(getApplicationUrl(application), componentId)
+                openBrowser(getApplicationUrl(application))
               },
             },
           ]}
@@ -132,14 +131,14 @@ export const ApplicationsPreview = ({
       {applications.length > 0 ? (
         <TouchableOpacity
           disabled={applications.length <= numberOfItems}
-          onPress={() => navigateTo(`${headingTitleNavigationLink}`)}
+          onPress={() => router.push(headingTitleNavigationLink as any)}
           style={{ marginHorizontal: theme.spacing[2] }}
         >
           <Heading
             button={
               applications.length > numberOfItems ? (
                 <TouchableOpacity
-                  onPress={() => navigateTo(`${headingTitleNavigationLink}`)}
+                  onPress={() => router.push(headingTitleNavigationLink as any)}
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',

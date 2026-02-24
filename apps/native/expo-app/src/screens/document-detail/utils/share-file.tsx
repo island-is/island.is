@@ -1,5 +1,5 @@
-import Share from 'expo-sharing'
-import RNFS from 'react-native-fs'
+import * as Share from 'expo-sharing'
+import * as FileSystem from 'expo-file-system'
 
 import { isAndroid } from '../../../utils/devices'
 import { authStore } from '../../../stores/auth-store'
@@ -33,9 +33,10 @@ export const shareFile = async ({
     const formattedHtml = utf8Prefix + content
     try {
       const encodedSubject = encodeURIComponent(document.subject)
-      const path = `${RNFS.TemporaryDirectoryPath}/${encodedSubject}.html`
-      await RNFS.writeFile(path, formattedHtml, 'utf8')
-      htmlUrl = path
+      const cacheDir = new FileSystem.Directory(FileSystem.Paths.cache)
+      const htmlFile = new FileSystem.File(cacheDir, `${encodedSubject}.html`)
+      htmlFile.write(formattedHtml)
+      htmlUrl = htmlFile.uri
     } catch (error) {
       console.error('Failed to write html file', error)
       return
@@ -44,9 +45,9 @@ export const shareFile = async ({
 
   try {
     const url = pdfUrl
-      ? `file://${pdfUrl}`
+      ? pdfUrl
       : isHtml
-        ? `file://${htmlUrl}`
+        ? htmlUrl
         : content ?? undefined;
     const mimeType = pdfUrl ? 'application/pdf' : isHtml ? 'text/html' : undefined;
     await Share.shareAsync(url ?? '', {

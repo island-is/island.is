@@ -18,6 +18,7 @@ import {
   ViewStyle,
 } from 'react-native'
 import * as Application from 'expo-application';
+import * as Device from 'expo-device'
 import KeyboardManager from 'react-native-keyboard-manager'
 import { getConfig } from '../../config'
 import { isIos } from '../devices'
@@ -98,8 +99,11 @@ if (__DEV__) {
   // enable performance metrics collection
   performanceMetrics()
 
+
   // register device for remote messages
-  messaging().registerDeviceForRemoteMessages()
+  if (Device.isDevice) {
+    messaging().registerDeviceForRemoteMessages()
+  }
 }
 
 // ignore expo warnings

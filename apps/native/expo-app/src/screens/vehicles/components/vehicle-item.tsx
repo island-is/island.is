@@ -5,7 +5,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { Label, VehicleCard } from '../../../ui'
 import { ListVehiclesV2Query } from '../../../graphql/types/schema'
-import { navigateTo } from '../../../lib/deep-linking'
+import { useRouter } from 'expo-router'
 
 function differenceInMonths(a: Date, b: Date) {
   return a.getMonth() - b.getMonth() + 12 * (a.getFullYear() - b.getFullYear())
@@ -32,6 +32,7 @@ export const VehicleItem = React.memo(
     style?: ViewStyle
   }) => {
     const theme = useTheme()
+    const router = useRouter()
     const nextInspection = item?.nextMainInspection
       ? new Date(item?.nextMainInspection)
       : null
@@ -50,9 +51,9 @@ export const VehicleItem = React.memo(
             theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
           }
           onPress={() => {
-            navigateTo(`/vehicle/`, {
-              id: item.permno,
-              title: item.make,
+            router.push({
+              pathname: '/(auth)/(tabs)/more/vehicles/[id]',
+              params: { id: item.permno, title: item.make },
             })
           }}
         >

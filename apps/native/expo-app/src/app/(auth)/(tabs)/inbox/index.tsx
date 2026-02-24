@@ -24,7 +24,8 @@ import {
   usePostMailActionMutationMutation,
 } from '@/graphql/types/schema'
 import { useThrottleState } from '@/hooks/use-throttle-state'
-import { navigateTo } from '@/lib/deep-linking'
+import { router } from 'expo-router'
+import { inboxFilterStore, useInboxFilterStore } from '@/stores/inbox-filter-store'
 import {
   Button,
   EmptyList,
@@ -83,14 +84,16 @@ export default function InboxScreen() {
     false,
   )
 
-  // Filter state (was component props in RNN, now local state)
-  const [opened, setOpened] = useState(false)
-  const [archived, setArchived] = useState(false)
-  const [bookmarked, setBookmarked] = useState(false)
-  const [senderNationalId, setSenderNationalId] = useState<string[]>([])
-  const [categoryIds, setCategoryIds] = useState<string[]>([])
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined)
-  const [dateTo, setDateTo] = useState<Date | undefined>(undefined)
+  // Filter state (shared with filter screen via store)
+  const {
+    opened,
+    archived,
+    bookmarked,
+    senderNationalId,
+    categoryIds,
+    dateFrom,
+    dateTo,
+  } = useInboxFilterStore()
 
   const [toastInfo, setToastInfo] = useState<{
     variant: ToastVariant
@@ -474,17 +477,11 @@ export default function InboxScreen() {
                     iconStyle={{ tintColor: theme.color.blue400 }}
                     onPress={() => {
                       resetSelectState()
-                      navigateTo('/inbox/filter', {
-                        opened,
-                        archived,
-                        bookmarked,
+                      inboxFilterStore.setState({
                         availableSenders,
                         availableCategories,
-                        selectedSenders: senderNationalId,
-                        selectedCategories: categoryIds,
-                        dateFrom,
-                        dateTo,
                       })
+                      router.push('/(auth)/(tabs)/inbox/filter')
                     }}
                   />
                   <Button
@@ -520,7 +517,7 @@ export default function InboxScreen() {
                       id: 'inbox.filterOpenedTagTitle',
                     })}
                     closable
-                    onClose={() => setOpened(false)}
+                    onClose={() => inboxFilterStore.setState({ opened: false })}
                   />
                 )}
                 {archived && (
@@ -529,7 +526,7 @@ export default function InboxScreen() {
                       id: 'inbox.filterArchivedTagTitle',
                     })}
                     closable
-                    onClose={() => setArchived(false)}
+                    onClose={() => inboxFilterStore.setState({ archived: false })}
                   />
                 )}
                 {bookmarked && (
@@ -538,7 +535,7 @@ export default function InboxScreen() {
                       id: 'inbox.filterStarredTagTitle',
                     })}
                     closable
-                    onClose={() => setBookmarked(false)}
+                    onClose={() => inboxFilterStore.setState({ bookmarked: false })}
                   />
                 )}
                 {!!senderNationalId.length &&
@@ -552,9 +549,11 @@ export default function InboxScreen() {
                         title={name?.name?.trim() ?? senderId}
                         closable
                         onClose={() =>
-                          setSenderNationalId((prev) =>
-                            prev.filter((id) => id !== senderId),
-                          )
+                          inboxFilterStore.setState((state) => ({
+                            senderNationalId: state.senderNationalId.filter(
+                              (id) => id !== senderId,
+                            ),
+                          }))
                         }
                       />
                     )
@@ -570,9 +569,11 @@ export default function InboxScreen() {
                         title={name?.name ?? categoryId}
                         closable
                         onClose={() =>
-                          setCategoryIds((prev) =>
-                            prev.filter((id) => id !== categoryId),
-                          )
+                          inboxFilterStore.setState((state) => ({
+                            categoryIds: state.categoryIds.filter(
+                              (id) => id !== categoryId,
+                            ),
+                          }))
                         }
                       />
                     )
@@ -583,7 +584,7 @@ export default function InboxScreen() {
                       id: 'inbox.filterDateFromLabel',
                     })} - ${intl.formatDate(dateFrom)}`}
                     closable
-                    onClose={() => setDateFrom(undefined)}
+                    onClose={() => inboxFilterStore.setState({ dateFrom: undefined })}
                   />
                 )}
                 {dateTo && (
@@ -592,7 +593,7 @@ export default function InboxScreen() {
                       id: 'inbox.filterDateToLabel',
                     })} - ${intl.formatDate(dateTo)}`}
                     closable
-                    onClose={() => setDateTo(undefined)}
+                    onClose={() => inboxFilterStore.setState({ dateTo: undefined })}
                   />
                 )}
               </TagsWrapper>

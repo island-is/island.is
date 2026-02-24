@@ -88,12 +88,12 @@ export default function TabLayout() {
             renderingMode="original"
           />
         </NativeTabs.Trigger>
-        <NativeTabs.Trigger name="three">
-          <NativeTabs.Trigger.Label>Umsóknir</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger name="health">
+          <NativeTabs.Trigger.Label>Heilsa</NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
             src={{
-              default: require('@/assets/icons/tabbar-applications.png'),
-              selected: require('@/assets/icons/tabbar-applications-selected.png'),
+              default: require('@/assets/icons/tabbar-health.png'),
+              selected: require('@/assets/icons/tabbar-health-selected.png'),
             }}
           />
         </NativeTabs.Trigger>
