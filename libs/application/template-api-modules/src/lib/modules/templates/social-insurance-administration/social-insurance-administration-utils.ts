@@ -112,22 +112,30 @@ export const transformApplicationToOldAgePensionDTO = (
     },
     comment: comment,
     applicationId: application.id,
-    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
-      ...((bankAccountType === undefined ||
-        bankAccountType === BankAccountType.ICELANDIC) && {
-        domesticBankInfo: {
-          bank: formatBank(bank),
-        },
-      }),
-      ...(bankAccountType === BankAccountType.FOREIGN && {
-        foreignBankInfo: {
-          iban: iban.replace(/[\s]+/g, ''),
-          swift: swift.replace(/[\s]+/g, ''),
-          foreignBankName: bankName,
-          foreignBankAddress: bankAddress,
-          foreignCurrency: currency,
-        },
-      }),
+    ...(!shouldNotUpdateBankAccount(bankInfo, bank) && {
+      ...(paymentInfo &&
+        (paymentInfo.bankAccountType === undefined ||
+          paymentInfo.bankAccountType === BankAccountType.ICELANDIC) &&
+        paymentInfo.bank && {
+          domesticBankInfo: {
+            bank: formatBank(getBankIsk(bank)),
+          },
+        }),
+      ...(paymentInfo &&
+        paymentInfo.bankAccountType === BankAccountType.FOREIGN &&
+        paymentInfo.iban &&
+        paymentInfo.swift &&
+        paymentInfo.bankName &&
+        paymentInfo.bankAddress &&
+        paymentInfo.currency && {
+          foreignBankInfo: {
+            iban: paymentInfo.iban.replace(/[\s]+/g, ''),
+            swift: paymentInfo.swift.replace(/[\s]+/g, ''),
+            foreignBankName: paymentInfo.bankName,
+            foreignBankAddress: paymentInfo.bankAddress,
+            foreignCurrency: paymentInfo.currency,
+          },
+        }),
     }),
     incomePlan: {
       incomeYear:

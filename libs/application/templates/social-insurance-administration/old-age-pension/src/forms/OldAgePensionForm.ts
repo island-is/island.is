@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildBankAccountField,
   buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
@@ -35,7 +36,6 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
-  getBankIsk,
   getCategoriesOptions,
   getCurrencies,
   getTaxOptions,
@@ -156,16 +156,13 @@ export const OldAgePensionForm: Form = buildForm({
                   largeButtons: false,
                   required: true,
                 }),
-                buildTextField({
+                buildBankAccountField({
                   id: 'paymentInfo.bank',
-                  title: socialInsuranceAdministrationMessage.payment.bank,
-                  format: '####-##-######',
-                  placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
                       application.externalData,
                     )
-                    return getBankIsk(bankInfo)
+                    return { ...bankInfo, bankNumber: bankInfo?.bank }
                   },
                   condition: (formValue: FormValue, externalData) => {
                     const { bankAccountType } = getApplicationAnswers(formValue)
@@ -177,6 +174,7 @@ export const OldAgePensionForm: Form = buildForm({
                       typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.ICELANDIC
                   },
+                  marginTop: 2,
                 }),
                 buildTextField({
                   id: 'paymentInfo.iban',
@@ -368,7 +366,6 @@ export const OldAgePensionForm: Form = buildForm({
                     socialInsuranceAdministrationMessage.incomePlanInstructions
                       .instructions,
                   space: 0,
-                  doesNotRequireAnswer: false,
                 }),
               ],
             }),
@@ -622,18 +619,42 @@ export const OldAgePensionForm: Form = buildForm({
                     )
                   },
                 },
-                january: generateMonthInput(socialInsuranceAdministrationMessage.months.january),
-                february: generateMonthInput(socialInsuranceAdministrationMessage.months.february),
-                march: generateMonthInput(socialInsuranceAdministrationMessage.months.march),
-                april: generateMonthInput(socialInsuranceAdministrationMessage.months.april),
-                may: generateMonthInput(socialInsuranceAdministrationMessage.months.may),
-                june: generateMonthInput(socialInsuranceAdministrationMessage.months.june),
-                july: generateMonthInput(socialInsuranceAdministrationMessage.months.july),
-                august: generateMonthInput(socialInsuranceAdministrationMessage.months.august),
-                september: generateMonthInput(socialInsuranceAdministrationMessage.months.september),
-                october: generateMonthInput(socialInsuranceAdministrationMessage.months.october),
-                november: generateMonthInput(socialInsuranceAdministrationMessage.months.november),
-                december: generateMonthInput(socialInsuranceAdministrationMessage.months.december),
+                january: generateMonthInput(
+                  socialInsuranceAdministrationMessage.months.january,
+                ),
+                february: generateMonthInput(
+                  socialInsuranceAdministrationMessage.months.february,
+                ),
+                march: generateMonthInput(
+                  socialInsuranceAdministrationMessage.months.march,
+                ),
+                april: generateMonthInput(
+                  socialInsuranceAdministrationMessage.months.april,
+                ),
+                may: generateMonthInput(
+                  socialInsuranceAdministrationMessage.months.may,
+                ),
+                june: generateMonthInput(
+                  socialInsuranceAdministrationMessage.months.june,
+                ),
+                july: generateMonthInput(
+                  socialInsuranceAdministrationMessage.months.july,
+                ),
+                august: generateMonthInput(
+                  socialInsuranceAdministrationMessage.months.august,
+                ),
+                september: generateMonthInput(
+                  socialInsuranceAdministrationMessage.months.september,
+                ),
+                october: generateMonthInput(
+                  socialInsuranceAdministrationMessage.months.october,
+                ),
+                november: generateMonthInput(
+                  socialInsuranceAdministrationMessage.months.november,
+                ),
+                december: generateMonthInput(
+                  socialInsuranceAdministrationMessage.months.december,
+                ),
               },
               table: {
                 format: {

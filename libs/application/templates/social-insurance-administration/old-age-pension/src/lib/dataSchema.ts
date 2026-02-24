@@ -7,7 +7,6 @@ import {
   employeeRatio,
 } from './constants'
 import {
-  formatBankInfo,
   validIBAN,
   validSWIFT,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
@@ -54,6 +53,20 @@ const FileSchema = z.object({
   key: z.string(),
   url: z.string().optional(),
 })
+
+const icelandicBank = z.object({
+  bankNumber: z.string().regex(/^\d{4}$/), 
+  ledger: z.string().regex(/^\d{2}$/), 
+  accountNumber: z.string().regex(/^\d{6}$/), 
+})
+
+const bankBase = z
+  .object({
+    bankNumber: z.string().optional(),
+    ledger: z.string().optional(),
+    accountNumber: z.string().optional(),
+  })
+  .optional()
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -228,35 +241,27 @@ export const dataSchema = z.object({
     ),
   paymentInfo: z
     .object({
-      bankAccountType: z.enum([
-        BankAccountType.ICELANDIC,
-        BankAccountType.FOREIGN,
-      ]),
-      bank: z.string(),
+      bankAccountType: z.nativeEnum(BankAccountType),
+      bank: bankBase,
       bankAddress: z.string(),
       bankName: z.string(),
       currency: z.string().nullable(),
       iban: z.string(),
       swift: z.string(),
       personalAllowance: z.enum([YES, NO]),
-      personalAllowanceUsage: z.string().optional(),
-      taxLevel: z.enum([
-        TaxLevelOptions.INCOME,
-        TaxLevelOptions.FIRST_LEVEL,
-        TaxLevelOptions.SECOND_LEVEL,
-      ]),
+      personalAllowanceUsage:  z.string().optional(),
+      taxLevel: z.nativeEnum(TaxLevelOptions),
     })
     .partial()
-    .refine(
-      ({ bank, bankAccountType }) => {
-        if (bankAccountType === BankAccountType.ICELANDIC) {
-          const bankAccount = formatBankInfo(bank ?? '')
-          return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+    .superRefine((data, ctx) => {
+      if (data.bankAccountType !== BankAccountType.ICELANDIC) return
+      const res = icelandicBank.safeParse(data.bank)
+      if (!res.success) {
+        for (const issue of res.error.issues) {
+          ctx.addIssue({ ...issue, path: ['bank', ...issue.path] })
         }
-        return true
-      },
-      { params: errorMessages.bank, path: ['bank'] },
-    )
+      }
+    })
     .refine(
       ({ iban, bankAccountType }) => {
         if (bankAccountType === BankAccountType.FOREIGN) {

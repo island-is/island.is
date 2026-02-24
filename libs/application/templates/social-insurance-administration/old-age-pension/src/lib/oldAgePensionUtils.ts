@@ -140,7 +140,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'paymentInfo.bankAccountType',
   ) as BankAccountType
 
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+  const bank = getValueViaPath<PaymentInfo>(answers, 'paymentInfo.bank')
 
   const iban = getValueViaPath(answers, 'paymentInfo.iban') as string
 
