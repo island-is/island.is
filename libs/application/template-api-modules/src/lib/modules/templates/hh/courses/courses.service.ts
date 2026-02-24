@@ -216,9 +216,7 @@ export class CoursesService extends BaseTemplateApiService {
       throw new TemplateApiError(
         {
           title: 'Ekki næg sæti laus',
-          summary: `${
-            slotsAvailable === 0 ? 'Engin' : slotsAvailable
-          } sæti eru laus í þessu námskeiði`,
+          summary: `Laus sæti: ${slotsAvailable}`,
         },
         400,
       )
