@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import { useRouteLoaderData } from 'react-router-dom'
 
 import { AuthAdminEnvironment } from '@island.is/api/schema'
-import { Text, Box, Select, Option } from '@island.is/island-ui/core'
+import { Text, Box, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { isDefined } from '@island.is/shared/utils'
 

@@ -1,0 +1,36 @@
+query AuthScopeCategories($lang: String!, $direction: AuthDelegationDirection) {
+  authScopeCategories(lang: $lang, direction: $direction) {
+    id
+    title
+    description
+    slug
+    scopes {
+      name
+      displayName
+      description
+      domain {
+        name
+        displayName
+        organisationLogoUrl
+      }
+    }
+  }
+}
+
+query AuthScopeTags($lang: String!, $direction: AuthDelegationDirection) {
+  authScopeTags(lang: $lang, direction: $direction) {
+    id
+    title
+    description
+    scopes {
+      name
+      displayName
+      description
+      domain {
+        name
+        displayName
+        organisationLogoUrl
+      }
+    }
+  }
+}

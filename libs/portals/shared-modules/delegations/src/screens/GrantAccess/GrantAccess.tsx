@@ -39,6 +39,9 @@ import {
 } from './GrantAccess.generated'
 
 import * as styles from './GrantAccess.css'
+import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
+import { AccessControlLoaderResponse } from '../AccessControl.loader'
+import { useLoaderData } from 'react-router-dom'
 
 const GrantAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
@@ -49,6 +52,7 @@ const GrantAccess = () => {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const navigate = useNavigate()
   const { md } = useBreakpoint()
+  const contentfulData = useLoaderData() as AccessControlLoaderResponse
   const {
     options,
     selectedOption,
@@ -64,17 +68,16 @@ const GrantAccess = () => {
     toast.warning(formatMessage(m.grantIdentityError))
   }
 
-  const [getIdentity, { data, loading: queryLoading, error }] =
-    useIdentityLazyQuery({
-      onError: (error) => {
-        setFormError(error)
-      },
-      onCompleted: (data) => {
-        if (!data.identity) {
-          noUserFoundToast()
-        }
-      },
-    })
+  const [getIdentity, { data, loading: queryLoading }] = useIdentityLazyQuery({
+    onError: (error) => {
+      setFormError(error)
+    },
+    onCompleted: (data) => {
+      if (!data.identity) {
+        noUserFoundToast()
+      }
+    },
+  })
 
   const { identity } = data || {}
 
@@ -258,7 +261,7 @@ const GrantAccess = () => {
                   <SelectController
                     id="domainName"
                     name="domainName"
-                    label={formatMessage(m.accessControl)}
+                    label={formatMessage(m.digitalDelegations)}
                     placeholder={formatMessage(m.chooseDomain)}
                     error={errors.domainName?.message}
                     options={options}
@@ -297,6 +300,12 @@ const GrantAccess = () => {
             </Box>
           </form>
         </FormProvider>
+
+        {contentfulData?.faqList && (
+          <Box paddingTop={8}>
+            <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
+          </Box>
+        )}
       </div>
     </>
   )

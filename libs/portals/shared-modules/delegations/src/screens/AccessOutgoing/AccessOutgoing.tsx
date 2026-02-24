@@ -31,7 +31,6 @@ const AccessOutgoing = () => {
     delegationError,
     scopeTreeLoading,
   } = useDelegation(AuthDomainDirection.outgoing)
-
   /**
    * If validity period is set then user cannot change scopes validity period individually
    */

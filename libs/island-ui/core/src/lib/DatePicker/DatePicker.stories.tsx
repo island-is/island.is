@@ -66,6 +66,22 @@ export const LocaleIS = () => {
   )
 }
 
+export const DetachedCalendar = () => {
+  return (
+    <Wrap>
+      <div style={{ width: '180px' }}>
+        <DatePicker
+          label="Date"
+          size="sm"
+          placeholderText="Pick a date"
+          detatchedCalendar={true}
+          handleChange={(date: Date) => console.log(date)}
+        />
+      </div>
+    </Wrap>
+  )
+}
+
 export const SelectYear = () => {
   const toDay = new Date()
   return (

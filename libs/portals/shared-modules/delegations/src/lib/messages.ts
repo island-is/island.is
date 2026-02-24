@@ -58,9 +58,74 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:delegation-type-personal-representative-desc',
     defaultMessage: 'Samningar frá Réttindagæslu fatlaðra',
   },
+  outgoingDelegationsHeader: {
+    id: 'sp.access-control-delegations:outgoing-delegations-header',
+    defaultMessage: 'Umboð frá þér',
+  },
+  incomingDelegationsHeader: {
+    id: 'sp.access-control-delegations:incoming-delegations-header',
+    defaultMessage: 'Umboð til þín',
+  },
+  outgoingDelegationsTitle: {
+    id: 'sp.access-control-delegations:outgoing-delegations-title',
+    defaultMessage: 'Umboð sem þú hefur veitt öðrum',
+  },
+  incomingCustomDelegationsTitle: {
+    id: 'sp.access-control-delegations:incoming-custom-delegations-title',
+    defaultMessage: 'Umboð sem þér hefur verið veitt',
+  },
   accessControl: {
     id: 'sp.access-control-delegations:accessControl',
     defaultMessage: 'Aðgangsstýring',
+  },
+  digitalDelegations: {
+    id: 'sp.access-control-delegations:digital-delegations',
+    defaultMessage: 'Rafræn umboð',
+  },
+  serviceCategories: {
+    id: 'sp.access-control-delegations:serviceCategories',
+    defaultMessage: 'Þjónustuflokkar',
+  },
+  serviceCategoriesDescription: {
+    id: 'sp.access-control-delegations:serviceCategoriesDescription',
+    defaultMessage:
+      'Hér má sjá yfirlit yfir þjónustuflokka og réttindi sem þeim tengjast.',
+  },
+  whichDelegationsSuit: {
+    id: 'sp.access-control-delegations:whichDelegationsSuit',
+    defaultMessage: 'Hvaða umboð henta í hvaða tilvikum?',
+  },
+  errorTitle: {
+    id: 'sp.access-control-delegations:errorTitle',
+    defaultMessage: 'Villa kom upp',
+  },
+  errorLoadingCategories: {
+    id: 'sp.access-control-delegations:errorLoadingCategories',
+    defaultMessage: 'Ekki tókst að sækja þjónustuflokka',
+  },
+  noCategoriesAvailable: {
+    id: 'sp.access-control-delegations:noCategoriesAvailable',
+    defaultMessage: 'Engir þjónustuflokkar í boði',
+  },
+  noScopesInCategory: {
+    id: 'sp.access-control-delegations:noScopesInCategory',
+    defaultMessage: 'Engin réttindi í þessum flokki',
+  },
+  viewPermissions: {
+    id: 'sp.access-control-delegations:viewPermissions',
+    defaultMessage: 'Skoða réttindi',
+  },
+  loadingPermissions: {
+    id: 'sp.access-control-delegations:loadingPermissions',
+    defaultMessage: 'Sæki réttindi...',
+  },
+  errorLoadingPermissions: {
+    id: 'sp.access-control-delegations:errorLoadingPermissions',
+    defaultMessage: 'Ekki tókst að sækja réttindi',
+  },
+  noPermissionsAvailable: {
+    id: 'sp.access-control-delegations:noPermissionsAvailable',
+    defaultMessage: 'Engin réttindi í boði',
   },
   accessControlDelegationsIncoming: {
     id: 'sp.access-control-delegations:to-me',
@@ -127,6 +192,10 @@ export const m = defineMessages({
     defaultMessage:
       'Reyndu að lágmarka þau réttindi sem þú vilt veita viðkomandi eins mikið og mögulegt er.',
   },
+  accessPeriod: {
+    id: 'sp.access-control-delegations:access-period',
+    defaultMessage: 'Gildistími',
+  },
   accessConfirmModalTitle: {
     id: 'sp.access-control-delegations:access-confirm-modal-title',
     defaultMessage: 'Þú ert að veita aðgang',
@@ -160,6 +229,10 @@ export const m = defineMessages({
   newAccess: {
     id: 'sp.access-control-delegations:new-delegation',
     defaultMessage: 'Nýtt umboð',
+  },
+  grantDelegation: {
+    id: 'sp.access-control-delegations:grant-delegation',
+    defaultMessage: 'Veita umboð',
   },
   saveAccess: {
     id: 'sp.access-control-delegations:empty-new-access',
@@ -227,6 +300,18 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:choose-access-rights',
     defaultMessage: 'Velja réttindi',
   },
+  grantChoosePeriod: {
+    id: 'sp.access-control-delegations:choose-period',
+    defaultMessage: 'Velja gildistíma umboðs',
+  },
+  grantAddMorePeople: {
+    id: 'sp.access-control-delegations:grant-add-more-people',
+    defaultMessage: 'Bæta við fleiri einstaklingum',
+  },
+  grantRemovePerson: {
+    id: 'sp.access-control-delegations:grant-remove-person',
+    defaultMessage: 'Fjarlægja',
+  },
   closeModal: {
     id: 'sp.access-control-delegations:close-modal',
     defaultMessage: 'Loka glugga',
@@ -250,5 +335,181 @@ export const m = defineMessages({
   viewDelegationModalTitle: {
     id: 'sp.access-control-delegations:view-delegation-modal-title',
     defaultMessage: 'Upplýsingar um umboð',
+  },
+  // New delegation grant flow
+  grantAccessNewTitle: {
+    id: 'sp.access-control-delegations:grant-access-new-title',
+    defaultMessage: 'Beiðni um nýtt umboð',
+  },
+  editAccessTitle: {
+    id: 'sp.access-control-delegations:edit-access-title',
+    defaultMessage: 'Breyta umboði',
+  },
+  stepOneTitle: {
+    id: 'sp.access-control-delegations:step-one-title',
+    defaultMessage: 'Hver á að fá umboðið?',
+  },
+  stepOneLabel: {
+    id: 'sp.access-control-delegations:step-one-label',
+    defaultMessage: 'Velja umboðsaðila',
+  },
+  stepOneContinueButtonLabel: {
+    id: 'sp.access-control-delegations:step-one-continue-button-label',
+    defaultMessage: 'Velja umboð til að veita',
+  },
+  stepTwoTitle: {
+    id: 'sp.access-control-delegations:step-two-title',
+    defaultMessage: 'Hvaða réttindi viltu veita viðkomandi?',
+  },
+  StepTwoLabel: {
+    id: 'sp.access-control-delegations:step-two-label',
+    defaultMessage: 'Velja réttindi',
+  },
+  stepTwoContinueButtonLabel: {
+    id: 'sp.access-control-delegations:step-two-continue-button-label',
+    defaultMessage: 'Velja gildistíma',
+  },
+  stepThreeTitle: {
+    id: 'sp.access-control-delegations:step-three-title',
+    defaultMessage: 'Hversu lengi á umboðið að gilda?',
+  },
+  stepThreeLabel: {
+    id: 'sp.access-control-delegations:step-three-label',
+    defaultMessage: 'Velja gildistíma',
+  },
+  stepThreeContinueButtonLabel: {
+    id: 'sp.access-control-delegations:step-three-continue-button-label',
+    defaultMessage: 'Staðfesta skráningu umboðs',
+  },
+  confirmAccessModalTitle: {
+    id: 'sp.access-control-delegations:confirm-access-modal-title',
+    defaultMessage: 'Staðfesta veitingu á nýju umboði',
+  },
+  searchScopesPlaceholder: {
+    id: 'sp.access-control-delegations:search-scopes-placeholder',
+    defaultMessage: 'Leita að umboði',
+  },
+  filterClearAll: {
+    id: 'sp.access-control-delegations:filter-clear-all',
+    defaultMessage: 'Hreinsa allar síur',
+  },
+  filterClear: {
+    id: 'sp.access-control-delegations:filter-clear',
+    defaultMessage: 'Hreinsa síu',
+  },
+  filterOpen: {
+    id: 'sp.access-control-delegations:filter-open',
+    defaultMessage: 'Opna síu',
+  },
+  grantAccessStepsTitle: {
+    id: 'sp.access-control-delegations:grant-access-scopes-title',
+    defaultMessage: 'Veita nýtt umboð',
+  },
+  grantAccessStepsIntro: {
+    id: 'sp.access-control-delegations:grant-access-scopes-intro',
+    defaultMessage:
+      'Hérna getur þú, í þremur skrefum, veitt einstaklingum umboð til að sinna þínum erindum á vefsvæðum opinberra stofnana',
+  },
+  accessPeriodSame: {
+    id: 'sp.access-control-delegations:access-period-same',
+    defaultMessage: 'Ég vil hafa sama gildistíma á öllum umboðum',
+  },
+  accessPeriodDifferent: {
+    id: 'sp.access-control-delegations:access-period-different',
+    defaultMessage: 'Ég vil hafa mismunandi gildistíma fyrir mismunandi umboð',
+  },
+
+  // Table messages
+  name: {
+    id: 'sp.access-control-delegations:name',
+    defaultMessage: 'Nafn',
+  },
+  numberOfDelegations: {
+    id: 'sp.access-control-delegations:number-of-delegations',
+    defaultMessage: 'Fjöldi umboða',
+  },
+  totalRights: {
+    id: 'sp.access-control-delegations:total-rights',
+    defaultMessage: 'Heildarfjöldi réttinda',
+  },
+  domains: {
+    id: 'sp.access-control-delegations:domains',
+    defaultMessage: 'Lén',
+  },
+  scopeDisplayName: {
+    id: 'sp.access-control-delegations:scope-display-name',
+    defaultMessage: 'Heiti réttinda',
+  },
+  validFrom: {
+    id: 'sp.access-control-delegations:valid-from',
+    defaultMessage: 'Gildir frá',
+  },
+  noDelegations: {
+    id: 'sp.access-control-delegations:no-delegations',
+    defaultMessage: 'Engin umboð fundust',
+  },
+  switch: {
+    id: 'sp.access-control-delegations:switch',
+    defaultMessage: 'Skipta',
+  },
+  procurationHolder: {
+    id: 'sp.access-control-delegations:procuration-holder',
+    defaultMessage: 'Prókúruhafi',
+  },
+  legalGuardian: {
+    id: 'sp.access-control-delegations:legal-guardian',
+    defaultMessage: 'Forsjá barns 16-19 ára',
+  },
+  legalGuardianMinor: {
+    id: 'sp.access-control-delegations:legal-guardian-minor',
+    defaultMessage: 'Forsjá barns 0-15 ára',
+  },
+  legalGuardianTableTitle: {
+    id: 'sp.access-control-delegations:legal-guardian-table-title',
+    defaultMessage: 'Börn í þinni forsjá',
+  },
+  procurationHolderTableTitle: {
+    id: 'sp.access-control-delegations:procuration-holder-table-title',
+    defaultMessage: 'Prókúruhafar í þinni forsjá',
+  },
+  registry: {
+    id: 'sp.access-control-delegations:registry',
+    defaultMessage: 'Þjóðskrá',
+  },
+  read: {
+    id: 'sp.access-control-delegations:read',
+    defaultMessage: 'Skoða',
+  },
+  readAndWrite: {
+    id: 'sp.access-control-delegations:read-and-write',
+    defaultMessage: 'Skoða og breyta',
+  },
+  headerName: {
+    id: 'sp.access-control-delegations:header-name',
+    defaultMessage: 'Nafn',
+  },
+  headerDomain: {
+    id: 'sp.access-control-delegations:header-domain',
+    defaultMessage: 'Stofnun',
+  },
+  headerDelegationType: {
+    id: 'sp.access-control-delegations:header-delegation-type',
+    defaultMessage: 'Tegund umboðs',
+  },
+  headerValidityPeriod: {
+    id: 'sp.access-control-delegations:header-validity-period',
+    defaultMessage: 'Gildistími',
+  },
+  headerRegisteredDate: {
+    id: 'sp.access-control-delegations:header-registered-date',
+    defaultMessage: 'Skráð dags.',
+  },
+  headerScopeName: {
+    id: 'sp.access-control-delegations:header-scope-name',
+    defaultMessage: 'Heiti umboðs',
+  },
+  headerDescription: {
+    id: 'sp.access-control-delegations:header-description',
+    defaultMessage: 'Lýsing á umboði',
   },
 })

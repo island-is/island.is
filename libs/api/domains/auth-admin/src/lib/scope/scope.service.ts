@@ -88,6 +88,8 @@ export class ScopeService extends MultiEnvironmentService {
         ...scope,
         scopeName: scope.name,
         environment: environments[index],
+        categoryIds: scope.categoryIds ?? [],
+        tagIds: scope.tagIds ?? [],
       }),
       prefixErrorMessage: `Failed to update scope ${scopeName}`,
     })
@@ -139,6 +141,8 @@ export class ScopeService extends MultiEnvironmentService {
     return {
       ...newScope,
       environment: targetEnvironment,
+      categoryIds: newScope.categoryIds ?? [],
+      tagIds: newScope.tagIds ?? [],
     }
   }
 
@@ -165,6 +169,8 @@ export class ScopeService extends MultiEnvironmentService {
               ({
                 ...scope,
                 environment: environments[index],
+                categoryIds: scope.categoryIds ?? [],
+                tagIds: scope.tagIds ?? [],
               } as ScopeEnvironment),
           ),
         prefixErrorMessage: `Failed to get scopes by tenantId ${tenantId}`,
@@ -207,6 +213,8 @@ export class ScopeService extends MultiEnvironmentService {
         mapper: (scope, index) => ({
           ...scope,
           environment: environments[index],
+          categoryIds: scope.categoryIds ?? [],
+          tagIds: scope.tagIds ?? [],
         }),
         prefixErrorMessage: `Failed to get scope ${input.scopeName}`,
       },

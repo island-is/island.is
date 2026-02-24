@@ -200,7 +200,7 @@ export const BffProvider = ({
   }, [bffUrlGenerator, postMessage, state.userInfo, bffBaseUrl])
 
   const switchUser = useCallback(
-    (nationalId?: string) => {
+    (nationalId?: string, targetLink?: string) => {
       dispatch({
         type: ActionType.SWITCH_USER,
       })
@@ -209,11 +209,12 @@ export const BffProvider = ({
       const targetLinkUri = loginQueryParams['target_link_uri']
 
       window.location.href = bffUrlGenerator('/login', {
-        target_link_uri: targetLinkUri,
+        target_link_uri: targetLink ?? targetLinkUri,
         ...(nationalId
           ? { login_hint: nationalId }
           : { prompt: 'select_account' }),
       })
+      console.log('window.location.href', window.location.href)
     },
     [bffUrlGenerator, getLoginQueryParams],
   )

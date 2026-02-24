@@ -1,8 +1,17 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@apollo/client'
 
 import { useLocale } from '@island.is/localization'
 import { getTranslatedValue } from '@island.is/portals/core'
-import { Box, Input, Stack, Tabs, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Divider,
+  Input,
+  Select,
+  Stack,
+  Tabs,
+  Text,
+} from '@island.is/island-ui/core'
 import { AuthAdminTranslatedValue } from '@island.is/api/schema'
 
 import { m } from '../../../lib/messages'
@@ -13,9 +22,24 @@ import { Languages } from '../../../utils/languages'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
+import {
+  GetScopeCategoriesDocument,
+  GetScopeCategoriesQuery,
+  GetScopeTagsDocument,
+  GetScopeTagsQuery,
+} from './PermissionCategoriesAndTags.generated'
+import isEqual from 'lodash/isEqual'
+import { MultiValue } from 'react-select'
 
 type Locales = Languages.IS | Languages.EN
 type ErrorKeys = `${Locales}_description` | `${Locales}_displayName`
+type Option = {
+  label: string
+  value: string
+  description: string
+}
+type Category = GetScopeCategoriesQuery['authAdminScopeCategories'][number]
+type Tag = GetScopeTagsQuery['authAdminScopeTags'][number]
 
 const languages = Object.values(Languages)
 
@@ -33,8 +57,12 @@ const createLanguagesState = (value: AuthAdminTranslatedValue[]) =>
     languages.map((langKey) => [langKey, getTranslatedValue(value, langKey)]),
   )
 
-export const PermissionContent = () => {
-  const { formatMessage } = useLocale()
+export const PermissionContent = ({
+  isNewPermissionsOptionsEnabled,
+}: {
+  isNewPermissionsOptionsEnabled: boolean
+}) => {
+  const { formatMessage, lang } = useLocale()
   const { formatErrorMessage } = useErrorFormatMessage()
   const { selectedPermission, actionData, permission } = usePermission()
   const [activeTab, setActiveTab] = useState<Languages>(Languages.IS)
@@ -44,6 +72,95 @@ export const PermissionContent = () => {
   const [descriptions, setDescriptions] = useEnvironmentState(
     createLanguagesState(selectedPermission.description),
   )
+
+  // Categories and Tags
+  const { data: categoriesData, loading: categoriesLoading } = useQuery(
+    GetScopeCategoriesDocument,
+    {
+      variables: { lang },
+    },
+  )
+
+  const { data: tagsData, loading: tagsLoading } = useQuery(
+    GetScopeTagsDocument,
+    {
+      variables: { lang },
+    },
+  )
+
+  const categories: Option[] = useMemo(
+    () =>
+      categoriesData?.authAdminScopeCategories.map((cat: Category) => ({
+        label: cat.title,
+        value: cat.id,
+        description: cat.description,
+      })) || [],
+    [categoriesData?.authAdminScopeCategories],
+  )
+
+  const tags: Option[] = useMemo(
+    () =>
+      tagsData?.authAdminScopeTags.map((tag: Tag) => ({
+        label: tag.title,
+        value: tag.id,
+        description: tag.description,
+      })) || [],
+    [tagsData?.authAdminScopeTags],
+  )
+
+  const [selectedCategories, setSelectedCategories] = useEnvironmentState<
+    MultiValue<Option>
+  >([])
+
+  const [selectedTags, setSelectedTags] = useEnvironmentState<
+    MultiValue<Option>
+  >([])
+
+  // initialize the selected categories and tags
+  // in some cases the data is not available yet when the state is initialized, so we need to wait for it to be available
+  useEffect(() => {
+    if (tags.length > 0 && categories.length > 0) {
+      setSelectedCategories(
+        (selectedPermission.categoryIds || ([] as string[]))
+          .map((id) => {
+            return categories.find((c) => c.value === id)
+          })
+          .filter((cat: Option | undefined) => cat !== undefined),
+      )
+
+      setSelectedTags(
+        (selectedPermission.tagIds || ([] as string[]))
+          .map((id) => {
+            const tag = tags.find((t) => t.value === id)
+            return tag
+          })
+          .filter((tag: Option | undefined) => tag !== undefined),
+      )
+    }
+    // only run this effect when the tags or categories populate
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tags, categories])
+
+  // changes to categories or tags aren't triggering a form change event, so we need to handle this manually
+  const customValidation = useCallback(() => {
+    return (
+      !isEqual(
+        selectedCategories.map((cat) => cat.value),
+        selectedPermission.categoryIds,
+      ) ||
+      !isEqual(
+        selectedTags.map((tag) => tag.value),
+        selectedPermission.tagIds,
+      )
+    )
+  }, [
+    selectedCategories,
+    selectedTags,
+    selectedPermission.categoryIds,
+    selectedPermission.tagIds,
+  ])
+
+  const loading = categoriesLoading || tagsLoading
 
   const renderTabs = (langKey: Languages) => {
     // Since we transform the Zod schema to strip out the locale prefixed keys then we need to
@@ -111,18 +228,112 @@ export const PermissionContent = () => {
       inSync={checkEnvironmentsSync(permission.environments, [
         'description',
         'displayName',
+        'categoryIds',
+        'tagIds',
       ])}
+      customValidation={customValidation}
     >
-      <Tabs
-        size="md"
-        contentBackground="white"
-        selected={activeTab}
-        label={formatMessage(m.translations)}
-        onChange={() =>
-          setActiveTab(activeTab === Languages.IS ? Languages.EN : Languages.IS)
-        }
-        tabs={languages.map(renderTabs)}
-      />
+      <Stack space={5}>
+        <Tabs
+          size="md"
+          contentBackground="white"
+          selected={activeTab}
+          label={formatMessage(m.translations)}
+          onChange={() =>
+            setActiveTab(
+              activeTab === Languages.IS ? Languages.EN : Languages.IS,
+            )
+          }
+          tabs={languages.map(renderTabs)}
+        />
+
+        {isNewPermissionsOptionsEnabled && <Divider />}
+
+        {/* Categories Section */}
+        {isNewPermissionsOptionsEnabled && (
+          <Box>
+            <Text variant="h4" marginBottom={2}>
+              {formatMessage(m.categories)}
+            </Text>
+            <Text variant="small" marginBottom={3}>
+              {formatMessage(m.categoriesDescription)}
+            </Text>
+
+            {loading ? (
+              <Text>{formatMessage(m.loading)}</Text>
+            ) : categories.length === 0 ? (
+              <Text>{formatMessage(m.noCategories)}</Text>
+            ) : (
+              <Stack space={2}>
+                {/* Hidden inputs to pass selected and original category IDs */}
+                <input
+                  type="hidden"
+                  name="categoryIds"
+                  value={JSON.stringify(
+                    selectedCategories.map((cat) => cat.value),
+                  )}
+                />
+                <input
+                  type="hidden"
+                  name="originalCategoryIds"
+                  value={JSON.stringify(selectedPermission.categoryIds || [])}
+                />
+                <Select
+                  value={selectedCategories}
+                  options={categories}
+                  onChange={(value) => {
+                    setSelectedCategories(value as MultiValue<Option>)
+                  }}
+                  placeholder={formatMessage(m.selectCategoriesPlaceholder)}
+                  isMulti
+                />
+              </Stack>
+            )}
+          </Box>
+        )}
+
+        {/* Tags Section */}
+        {isNewPermissionsOptionsEnabled && (
+          <Box>
+            <Text variant="h4" marginBottom={2}>
+              {formatMessage(m.tags)}
+            </Text>
+            <Text variant="small" marginBottom={3}>
+              {formatMessage(m.tagsDescription)}
+            </Text>
+
+            {loading ? (
+              <Text>{formatMessage(m.loading)}</Text>
+            ) : tags.length === 0 ? (
+              <Text>{formatMessage(m.noTags)}</Text>
+            ) : (
+              <Stack space={2}>
+                {/* Hidden inputs to pass selected and original tag IDs */}
+                <input
+                  type="hidden"
+                  name="tagIds"
+                  value={JSON.stringify(selectedTags.map((tag) => tag.value))}
+                />
+                <input
+                  type="hidden"
+                  name="originalTagIds"
+                  value={JSON.stringify(selectedPermission.tagIds || [])}
+                />
+
+                <Select
+                  value={selectedTags}
+                  options={tags}
+                  onChange={(value) => {
+                    setSelectedTags(value as MultiValue<Option>)
+                  }}
+                  placeholder={formatMessage(m.selectTagsPlaceholder)}
+                  isMulti
+                />
+              </Stack>
+            )}
+          </Box>
+        )}
+      </Stack>
     </FormCard>
   )
 }

@@ -1,0 +1,37 @@
+fragment AuthApiScope on AuthApiScope {
+  name
+  displayName
+  description
+}
+
+query AuthDelegationsGroupedByIdentityOutgoing($lang: String) {
+  authDelegationsGroupedByIdentityOutgoing {
+    nationalId
+    name
+    type
+    totalScopeCount
+    scopes {
+      id
+      name
+      displayName
+      delegationId
+      validFrom
+      validTo
+      domain(lang: $lang) {
+        name
+        displayName
+        organisationLogoKey
+        organisationLogoUrl
+      }
+      apiScope(lang: $lang) {
+        ...AuthApiScope
+        group {
+          name
+          displayName
+        }
+      }
+    }
+    earliestValidFrom
+    latestValidTo
+  }
+}

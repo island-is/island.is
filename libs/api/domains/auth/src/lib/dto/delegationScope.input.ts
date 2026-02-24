@@ -8,3 +8,9 @@ export class DelegationScopeInput {
   @Field(() => Date)
   validTo!: Date
 }
+
+@InputType('AuthDelegationScopeWithDomainInput')
+export class DelegationScopeWithDomainInput extends DelegationScopeInput {
+  @Field(() => String)
+  domainName!: string
+}
