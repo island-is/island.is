@@ -50,7 +50,11 @@ const useCaseList = () => {
   const router = useRouter()
 
   const openCase = useCallback(
-    (caseToOpen: Case, openCaseInNewTab?: boolean) => {
+    (
+      caseToOpen: Case,
+      openCaseInNewTab?: boolean,
+      defendantIds?: string[] | null,
+    ) => {
       let routeTo = null
 
       if (isDefenceUser(user)) {
@@ -139,10 +143,26 @@ const useCaseList = () => {
         }
       }
 
+      const path = `${routeTo}/${caseToOpen.id}`
+      const isPrisonClosedIndictment =
+        routeTo === constants.PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE
+      const singleDefendantId =
+        isPrisonClosedIndictment && defendantIds?.length === 1
+          ? defendantIds[0]
+          : undefined
+      const url =
+        singleDefendantId != null
+          ? `${path}?defendantId=${encodeURIComponent(singleDefendantId)}`
+          : path
+
+      if (!routeTo) {
+        return
+      }
+
       if (openCaseInNewTab) {
-        window.open(`${routeTo}/${caseToOpen.id}`, '_blank')
-      } else if (routeTo) {
-        router.push(`${routeTo}/${caseToOpen.id}`)
+        window.open(url, '_blank')
+      } else {
+        router.push(url)
       }
     },
     [router, user],
@@ -178,7 +198,7 @@ const useCaseList = () => {
       const getCaseToOpen = (id: string) => {
         getCase(
           id,
-          (caseData) => openCase(caseData, openInNewTab),
+          (caseData) => openCase(caseData, openInNewTab, defendantIds),
           () => {
             setClickedCase((prev) => {
               if (

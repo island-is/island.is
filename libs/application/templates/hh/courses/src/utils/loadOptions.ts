@@ -15,6 +15,11 @@ import {
   GET_COURSE_SELECT_OPTIONS_QUERY,
 } from '../graphql'
 
+const instanceChargeItemCodeCache: Record<string, boolean> = {}
+
+export const getInstanceHasChargeItemCode = (instanceId: string): boolean =>
+  instanceChargeItemCodeCache[instanceId] ?? false
+
 export const loadCourseSelectOptions = async ({
   apolloClient,
 }: AsyncSelectContext) => {
@@ -54,6 +59,9 @@ export const loadDateSelectOptions = async ({
     },
   })
   if (!data?.getCourseById?.course) return []
+
+  for (const instance of data.getCourseById.course.instances)
+    instanceChargeItemCodeCache[instance.id] = Boolean(instance.chargeItemCode)
 
   return data.getCourseById.course.instances.map((instance) => {
     const formattedDate = format(parseISO(instance.startDate), 'd. MMMM yyyy', {

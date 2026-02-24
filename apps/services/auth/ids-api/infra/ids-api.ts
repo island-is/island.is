@@ -72,11 +72,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         dev: '10001',
         staging: '6503760649',
       },
-      NOVA_ACCEPT_UNAUTHORIZED: {
-        dev: 'true',
-        staging: 'false',
-        prod: 'false',
-      },
       PASSKEY_CORE_RP_ID: 'island.is',
       PASSKEY_CORE_RP_NAME: 'Island.is',
       PASSKEY_CORE_CHALLENGE_TTL_MS: '120000',
@@ -105,6 +100,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         staging: 'false',
         prod: 'false',
       },
+      NOVA_SENDER_NAME: {
+        dev: 'Island Dev',
+        staging: 'Island Staging',
+        prod: 'Island.is',
+      },
     })
     .secrets({
       ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL',
@@ -113,9 +113,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         '/k8s/services-auth/ZENDESK_WEBHOOK_SECRET_GENERAL_MANDATE',
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
-      NOVA_URL: '/k8s/services-auth/NOVA_URL',
-      NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
-      NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
+      NOVA_URL: '/k8s/NOVA_URL_V1',
+      NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+      NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       SYSLUMENN_USERNAME: '/k8s/services-auth/SYSLUMENN_USERNAME',

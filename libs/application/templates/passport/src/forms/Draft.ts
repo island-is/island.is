@@ -126,19 +126,19 @@ export const Draft: Form = buildForm({
                 return [
                   {
                     value: Services.REGULAR,
-                    label:
-                      m.serviceTypeRegular.defaultMessage +
-                      ' - ' +
-                      regularPrices,
-                    subLabel: m.serviceTypeRegularSublabel.defaultMessage,
+                    label: {
+                      ...m.serviceTypeRegularLabel,
+                      values: { price: regularPrices },
+                    },
+                    subLabel: m.serviceTypeRegularSublabel,
                   },
                   {
                     value: Services.EXPRESS,
-                    label:
-                      m.serviceTypeExpress.defaultMessage +
-                      ' - ' +
-                      expressPrices,
-                    subLabel: m.serviceTypeExpressSublabel.defaultMessage,
+                    label: {
+                      ...m.serviceTypeExpressLabel,
+                      values: { price: expressPrices },
+                    },
+                    subLabel: m.serviceTypeExpressSublabel,
                   },
                 ]
               },
