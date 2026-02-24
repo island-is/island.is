@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { Screen } from './models/screen.model'
 import { InjectModel } from '@nestjs/sequelize'
 import { CreateScreenDto } from './models/dto/createScreen.dto'
@@ -47,7 +51,7 @@ export class ScreensService {
 
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
-      throw new NotFoundException(
+      throw new UnauthorizedException(
         `User does not have permission to create screen for section with id '${createScreenDto.sectionId}'`,
       )
     }
@@ -92,7 +96,7 @@ export class ScreensService {
 
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
-      throw new NotFoundException(
+      throw new UnauthorizedException(
         `User does not have permission to update screen with id '${id}'`,
       )
     }
@@ -138,12 +142,12 @@ export class ScreensService {
 
       const formOwnerNationalId = form.organizationNationalId
       if (user.nationalId !== formOwnerNationalId && !isAdmin) {
-        throw new NotFoundException(
+        throw new UnauthorizedException(
           `User does not have permission to update display order of screen with id '${screen.id}'`,
         )
       }
 
-      screen.update({
+      await screen.update({
         displayOrder: i,
         sectionId: screensDisplayOrderDto[i].sectionId,
       })
@@ -172,7 +176,7 @@ export class ScreensService {
 
     const formOwnerNationalId = form.organizationNationalId
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
-      throw new NotFoundException(
+      throw new UnauthorizedException(
         `User does not have permission to delete screen with id '${id}'`,
       )
     }
@@ -195,6 +199,6 @@ export class ScreensService {
     }
     await form.save()
 
-    screen.destroy()
+    await screen.destroy()
   }
 }
