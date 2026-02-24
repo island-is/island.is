@@ -244,6 +244,8 @@ import {
   LandspitaliApiModuleConfig,
 } from '@island.is/api/domains/landspitali'
 
+// TODO: Remove this comment
+
 const environment = getConfig
 
 @Module({
