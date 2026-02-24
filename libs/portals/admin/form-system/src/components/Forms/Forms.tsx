@@ -125,8 +125,8 @@ export const Forms = () => {
 
   return (
     <>
-      <GridRow>
-        {isAdmin && (
+      {isAdmin && (
+        <GridRow>
           <Box
             marginTop={4}
             marginBottom={3}
@@ -146,8 +146,8 @@ export const Forms = () => {
               {isAdmin && <OrganizationSelect />}
             </Box>
           </Box>
-        )}
-      </GridRow>
+        </GridRow>
+      )}
       <Box
         display="flex"
         width="full"
