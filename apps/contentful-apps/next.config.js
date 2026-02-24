@@ -5,8 +5,10 @@ const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
 
 const graphqlPath = '/api/graphql'
-const { API_URL = 'http://localhost:4444', PUBLIC_API_URL = 'https://island.is' } =
-  process.env
+const {
+  API_URL = 'http://localhost:4444',
+  PUBLIC_API_URL = 'https://island.is',
+} = process.env
 
 /**
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}

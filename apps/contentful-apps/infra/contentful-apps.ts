@@ -8,7 +8,11 @@ export const serviceSetup = (services: {
     .serviceAccount('contentful-apps')
     .env({
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
-      PUBLIC_API_URL: 'https://island.is',
+      PUBLIC_API_URL: {
+        dev: ref((h) => `https://beta.${h.env.domain}`),
+        staging: ref((h) => `https://beta.${h.env.domain}`),
+        prod: 'https://island.is',
+      },
     })
     .ingress({
       primary: {
