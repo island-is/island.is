@@ -10,6 +10,7 @@ import { UserProfileClientModule } from '@island.is/clients/user-profile'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { EmailModule } from '@island.is/email-service'
 import { LoggingModule } from '@island.is/logging'
+import { SmsModule } from '@island.is/nova-sms'
 import { QueueModule } from '@island.is/message-queue'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { type ConfigType } from '@island.is/nest/config'
@@ -50,6 +51,7 @@ import { MessageProcessorService } from './messageProcessor.service'
     AuthDelegationApiClientModule,
     CmsModule,
     CompanyRegistryClientModule,
+    SmsModule,
   ],
   controllers: [NotificationsController, MeNotificationsController],
   providers: [

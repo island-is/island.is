@@ -144,6 +144,8 @@ export class NotificationsController {
     this.notificationsService.validate(template, body.args)
     const validArgs = this.notificationsService.sanitize(template, body.args)
 
+    this.notificationsService.validateSmsDelivery(template)
+
     const sanitizedBody = {
       ...body,
       args: validArgs,

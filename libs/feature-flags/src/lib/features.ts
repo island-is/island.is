@@ -153,6 +153,10 @@ export enum Features {
   // Questionnaires
   questionnairesFromEL = 'isQuestionnairesHealthDirectorateClientEnabled',
   questionnairesFromLSH = 'isQuestionnairesLshClientEnabled',
+
+  // SMS Notifications
+  isSmsNotificationEnabled = 'isSmsNotificationEnabled',
+  isSendSmsNotificationsEnabled = 'isSendSmsNotificationsEnabled',
 }
 
 export enum ServerSideFeature {

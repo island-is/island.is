@@ -32,6 +32,7 @@ export const userWithDelegations: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithDelegations2: MockUserProfileDto = {
@@ -44,6 +45,7 @@ export const userWithDelegations2: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithNoDelegations: MockUserProfileDto = {
@@ -56,6 +58,7 @@ export const userWithNoDelegations: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithNoEmail: MockUserProfileDto = {
@@ -67,6 +70,7 @@ export const userWithNoEmail: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
@@ -78,6 +82,7 @@ export const userWithEmailNotificationsDisabled: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: false,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
@@ -90,6 +95,7 @@ export const userWithDocumentNotificationsDisabled: MockUserProfileDto = {
   documentNotifications: false,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithFeatureFlagDisabled: MockUserProfileDto = {
@@ -102,6 +108,7 @@ export const userWithFeatureFlagDisabled: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
@@ -115,6 +122,7 @@ export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
     documentNotifications: true,
     emailNotifications: true,
     isRestricted: false,
+    smsNotifications: true,
   }
 
 export const companyUser: MockUserProfileDto = {
@@ -127,6 +135,7 @@ export const companyUser: MockUserProfileDto = {
   documentNotifications: true,
   emailNotifications: true,
   isRestricted: false,
+  smsNotifications: true,
 }
 
 export const mockTemplateId = 'HNIPP.DEMO.ID'
@@ -139,6 +148,8 @@ export const getMockHnippTemplate = ({
   clickActionUrl = 'https://island.is/minarsidur/postholf',
   args = ['arg1', 'arg2'],
   scope = '@island.is/documents',
+  smsPayer = 'Landlæknir',
+  smsDelivery = 'OPT_IN',
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
   title,
@@ -147,6 +158,8 @@ export const getMockHnippTemplate = ({
   clickActionUrl,
   args,
   scope,
+  smsPayer,
+  smsDelivery,
 })
 
 export const userProfiles = [
