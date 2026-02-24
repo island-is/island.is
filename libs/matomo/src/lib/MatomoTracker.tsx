@@ -1,7 +1,8 @@
-'use client'
-
 import { useEffect } from 'react'
 import Router from 'next/router'
+import { initMatomo } from "./init-matomo"
+import type { MatomoInitScriptProps } from './types'
+
 
 /**
  * Matomo client-side route change tracker.
@@ -20,8 +21,19 @@ import Router from 'next/router'
  * </>
  * ```
  */
-export const MatomoTracker = () => {
+export const MatomoTracker = ({enabled, matomoDomain, matomoSiteId}: MatomoInitScriptProps) => {
   useEffect(() => {
+    if (!enabled || !matomoDomain || !matomoSiteId) {
+      return () => {
+        // Empty on purpose
+      }
+    }
+    const normalizedDomain = matomoDomain.endsWith('/')
+    ? matomoDomain
+    : `${matomoDomain}/`
+
+    initMatomo({ matomoDomain: normalizedDomain, matomoSiteId })
+ 
     const handleRouteChange = (url: string) => {
       console.log('[Matomo] routeChangeComplete:', url)
       window._paq?.push(['setCustomUrl', url])
@@ -33,6 +45,8 @@ export const MatomoTracker = () => {
     return () => {
       Router.events.off('routeChangeComplete', handleRouteChange)
     }
+    // This is empty on purpose - this should only happen once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return null

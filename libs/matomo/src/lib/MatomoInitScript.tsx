@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-import { initMatomo } from './init-matomo'
 import { MatomoInitScriptProps } from './types'
 
 /**
@@ -12,28 +10,20 @@ import { MatomoInitScriptProps } from './types'
 export const MatomoInitScript = ({
   matomoDomain,
   matomoSiteId,
+  enabled
 }: MatomoInitScriptProps) => {
-  const normalizedDomain = matomoDomain.endsWith('/')
-    ? matomoDomain
-    : `${matomoDomain}/`
-
-  useEffect(() => {
-    if (!matomoDomain || !matomoSiteId) {
-      console.warn(
-        '[MatomoInitScript] Missing matomoDomain or matomoSiteId, skipping Matomo initialization',
-      )
-      return
-    }
-    initMatomo({ matomoDomain: normalizedDomain, matomoSiteId })
-    // This is empty on purpose - this should only happen once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
+  if (!enabled) {
+    return null;
+  }
   if (!matomoDomain || !matomoSiteId) {
     console.warn(
       '[MatomoInitScript] Missing matomoDomain or matomoSiteId, skipping Matomo initialization',
     )
     return null
   }
+  const normalizedDomain = matomoDomain.endsWith('/')
+    ? matomoDomain
+    : `${matomoDomain}/`
+
   return <script async defer src={`${normalizedDomain}matomo.js`} />
 }

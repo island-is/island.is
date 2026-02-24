@@ -8,9 +8,12 @@ import '@island.is/api/mocks'
 globalStyles()
 
 const IslandWebApp = ({ Component, pageProps }: AppProps) => {
+  const matomoDomain = process.env.NEXT_PUBLIC_MATOMO_DOMAIN ?? ''
+  const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID ?? ''
+  const isMatomoEnabled = process.env.NEXT_PUBLIC_MATOMO_ENABLED === 'true'
   return (
     <>
-      <MatomoTracker />
+      <MatomoTracker enabled={isMatomoEnabled} matomoSiteId={matomoSiteId} matomoDomain={matomoDomain} />
       <Component {...pageProps} />
     </>
   )

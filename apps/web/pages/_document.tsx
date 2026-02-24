@@ -17,21 +17,23 @@ interface Props {
   domain: string
   matomoDomain: string
   matomoSiteId: string
+  isMatomoEnabled: boolean
 }
 
 class MyDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx)
     const domain = process.env.TRACKING_DOMAIN ?? ''
-    const matomoDomain = process.env.MATOMO_DOMAIN ?? ''
-    const matomoSiteId = process.env.MATOMO_SITE_ID ?? ''
+    const matomoDomain = process.env.NEXT_PUBLIC_MATOMO_DOMAIN ?? ''
+    const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID ?? ''
+    const isMatomoEnabled = process.env.NEXT_PUBLIC_MATOMO_ENABLED === 'true'
     const lang = getLocaleFromPath(ctx?.req?.url)
 
-    return { ...initialProps, lang, domain, matomoDomain, matomoSiteId }
+    return { ...initialProps, lang, domain, matomoDomain, matomoSiteId, isMatomoEnabled }
   }
 
   render() {
-    const { lang, domain, matomoDomain, matomoSiteId } = this.props
+    const { lang, domain, matomoDomain, matomoSiteId, isMatomoEnabled } = this.props
 
     return (
       <Html lang={String(lang)}>
@@ -44,6 +46,7 @@ class MyDocument extends Document<Props> {
             ></script>
           )}
           <MatomoInitScript
+            enabled={isMatomoEnabled}
             matomoDomain={matomoDomain}
             matomoSiteId={matomoSiteId}
           />
