@@ -14,6 +14,7 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { DefendantService } from '../../../defendant/defendant.service'
+import { CreateDefendantDto } from '../../../defendant/dto/createDefendant.dto'
 import {
   Case,
   CaseRepositoryService,
@@ -22,6 +23,7 @@ import {
 } from '../../../repository'
 import { UserService } from '../../../user'
 import { InternalCreateCaseV2Dto } from '../../dto/internalCreateCaseV2.dto'
+import { InternalCaseService } from '../../internalCase.service'
 
 interface Then {
   result: Case
@@ -42,6 +44,7 @@ describe('InternalCaseController - CreateV2', () => {
   let mockUserService: UserService
   let mockDefendantService: DefendantService
   let mockCaseRepositoryService: CaseRepositoryService
+  let internalCaseService: InternalCaseService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
@@ -52,20 +55,22 @@ describe('InternalCaseController - CreateV2', () => {
       sequelize,
       caseRepositoryService,
       internalCaseController,
+      internalCaseService: internalCaseSvc,
     } = await createTestingCaseModule()
 
     mockUserService = userService
     mockDefendantService = defendantService
     mockCaseRepositoryService = caseRepositoryService
+    internalCaseService = internalCaseSvc
 
     const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
     mockFindByNationalId.mockRejectedValue(new Error('Failed to find user'))
     const mockCreate = mockCaseRepositoryService.create as jest.Mock
     mockCreate.mockRejectedValue(new Error('Failed to create case'))
-    const mockDefendantCreate =
-      mockDefendantService.createForNewCase as jest.Mock
-    mockDefendantCreate.mockRejectedValue(
-      new Error('Failed to create defendant'),
+    const mockBulkCreateDefendants =
+      mockDefendantService.bulkCreateForNewCase as jest.Mock
+    mockBulkCreateDefendants.mockRejectedValue(
+      new Error('Failed to create defendants'),
     )
     const mockFindById = mockCaseRepositoryService.findById as jest.Mock
     mockFindById.mockRejectedValue(new Error('Failed to find case'))
@@ -112,9 +117,9 @@ describe('InternalCaseController - CreateV2', () => {
       mockFindByNationalId.mockResolvedValueOnce([user])
       const mockCreate = mockCaseRepositoryService.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
-      const mockDefendantCreate =
-        mockDefendantService.createForNewCase as jest.Mock
-      mockDefendantCreate.mockResolvedValue({ caseId } as Defendant)
+      const mockBulkCreateDefendants =
+        mockDefendantService.bulkCreateForNewCase as jest.Mock
+      mockBulkCreateDefendants.mockResolvedValue([{ caseId } as Defendant])
       const mockFindByPk = mockCaseRepositoryService.findById as jest.Mock
       mockFindByPk.mockResolvedValueOnce(returnedCase)
 
@@ -139,23 +144,109 @@ describe('InternalCaseController - CreateV2', () => {
       expect(createCall.policeDefendantNationalId).toBeUndefined()
     })
 
-    it('should create one defendant from fetched accused (mock)', () => {
-      expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
+    it('should bulk create defendants from fetched accused (mock)', () => {
+      expect(mockDefendantService.bulkCreateForNewCase).toHaveBeenCalledWith(
         caseId,
-        expect.objectContaining({
-          nationalId: '0000000000',
-          name: 'Dummy Accused',
-          address: '',
-        }),
+        [
+          expect.objectContaining({
+            nationalId: '0000000000',
+            name: 'Dummy Accused',
+            address: '',
+          }),
+        ],
         transaction,
       )
-      expect(mockDefendantService.createForNewCase).toHaveBeenCalledTimes(1)
+      expect(mockDefendantService.bulkCreateForNewCase).toHaveBeenCalledTimes(1)
     })
 
     it('should return the created case', () => {
       expect(mockCaseRepositoryService.findById).toHaveBeenCalledWith(caseId, {
         transaction,
       })
+      expect(then.result).toBe(returnedCase)
+    })
+  })
+
+  describe('creating case with multiple defendants', () => {
+    const userId = uuid()
+    const prosecutorsOfficeId = uuid()
+    const courtId = uuid()
+    const user = {
+      id: userId,
+      role: UserRole.PROSECUTOR,
+      institution: {
+        id: prosecutorsOfficeId,
+        nationalId: '1234567890',
+        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+        defaultCourtId: courtId,
+      },
+    } as User
+    const createdCase = { id: caseId } as Case
+    const returnedCase = { id: caseId } as Case
+    const multipleAccused: CreateDefendantDto[] = [
+      { nationalId: '1111111111', name: 'First Accused', address: 'Address 1' },
+      { nationalId: '2222222222', name: 'Second Accused', address: 'Address 2' },
+      { nationalId: '3333333333', name: 'Third Accused', address: '' },
+    ]
+    let then: Then
+
+    beforeEach(async () => {
+      const fetchAccusedSpy = jest.spyOn(
+        internalCaseService as InternalCaseService & {
+          fetchAccusedForCase: (_caseId: string) => Promise<CreateDefendantDto[]>
+        },
+        'fetchAccusedForCase',
+      ) as jest.SpyInstance<Promise<CreateDefendantDto[]>, [string]>
+      fetchAccusedSpy.mockResolvedValue(multipleAccused)
+
+      const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
+      mockFindByNationalId.mockResolvedValueOnce([user])
+      const mockCreate = mockCaseRepositoryService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(createdCase)
+      const mockBulkCreateDefendants =
+        mockDefendantService.bulkCreateForNewCase as jest.Mock
+      mockBulkCreateDefendants.mockResolvedValue(
+        multipleAccused.map((_, i) => ({ caseId, id: `defendant-${i}` }) as Defendant),
+      )
+      const mockFindById = mockCaseRepositoryService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce(returnedCase)
+
+      then = await givenWhenThen(caseToCreate)
+    })
+
+    it('should call bulkCreateForNewCase once with all accused', () => {
+      expect(mockDefendantService.bulkCreateForNewCase).toHaveBeenCalledTimes(1)
+      expect(mockDefendantService.bulkCreateForNewCase).toHaveBeenCalledWith(
+        caseId,
+        multipleAccused,
+        transaction,
+      )
+    })
+
+    it('should pass each defendant with correct shape', () => {
+      const [passedCaseId, accusedList] = (
+        mockDefendantService.bulkCreateForNewCase as jest.Mock
+      ).mock.calls[0]
+      expect(passedCaseId).toBe(caseId)
+      expect(accusedList).toHaveLength(3)
+      expect(accusedList[0]).toMatchObject({
+        nationalId: '1111111111',
+        name: 'First Accused',
+        address: 'Address 1',
+      })
+      expect(accusedList[1]).toMatchObject({
+        nationalId: '2222222222',
+        name: 'Second Accused',
+        address: 'Address 2',
+      })
+      expect(accusedList[2]).toMatchObject({
+        nationalId: '3333333333',
+        name: 'Third Accused',
+        address: '',
+      })
+    })
+
+    it('should return the created case', () => {
       expect(then.result).toBe(returnedCase)
     })
   })

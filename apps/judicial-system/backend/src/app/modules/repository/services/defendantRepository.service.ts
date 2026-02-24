@@ -202,6 +202,31 @@ export class DefendantRepositoryService {
     }
   }
 
+  async bulkCreate(
+    data: Partial<Defendant>[],
+    options: CreateDefendantOptions,
+  ): Promise<Defendant[]> {
+    if (data.length === 0) {
+      return []
+    }
+    try {
+      this.logger.debug('Bulk creating defendants', { count: data.length })
+
+      const results = await this.defendantModel.bulkCreate(data, options)
+
+      this.logger.debug(`Bulk created ${results.length} defendants`)
+
+      return results
+    } catch (error) {
+      this.logger.error('Error bulk creating defendants', {
+        count: data.length,
+        error,
+      })
+
+      throw error
+    }
+  }
+
   async update(
     caseId: string,
     defendantId: string,

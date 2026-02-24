@@ -181,6 +181,22 @@ export class DefendantService {
     )
   }
 
+  async bulkCreateForNewCase(
+    caseId: string,
+    defendantsToCreate: CreateDefendantDto[],
+    transaction: Transaction,
+  ): Promise<Defendant[]> {
+    if (defendantsToCreate.length === 0) {
+      return []
+    }
+    const data = defendantsToCreate.map((accused) => ({
+      ...accused,
+      caseId,
+      address: (accused.address ?? '').trim(),
+    }))
+    return this.defendantRepositoryService.bulkCreate(data, { transaction })
+  }
+
   async create(
     theCase: Case,
     defendantToCreate: CreateDefendantDto,

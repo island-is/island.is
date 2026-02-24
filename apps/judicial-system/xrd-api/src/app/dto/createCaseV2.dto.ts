@@ -28,11 +28,6 @@ export class CreateCaseV2Dto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly citizenship?: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
   readonly leadInvestigator?: string
 
   @IsOptional()
