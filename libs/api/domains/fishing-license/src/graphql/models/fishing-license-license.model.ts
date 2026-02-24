@@ -18,4 +18,6 @@ export class FishingLicenseLicense {
   areas?: FishingLicenseListOptions[] | undefined
   @Field({ nullable: true })
   attachmentInfo?: string
+  @Field({ nullable: true })
+  needsOwnershipRegistration?: boolean
 }
