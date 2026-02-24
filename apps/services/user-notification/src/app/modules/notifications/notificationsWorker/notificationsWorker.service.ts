@@ -48,18 +48,14 @@ const createSmsContent = ({
   onBehalfOf?: string
   template: HnippTemplate
 }): string => {
-  return `
-      ${fullName} ${onBehalfOf ? `(${onBehalfOf})` : ''}: ${template.title}
-
-      ${template.externalBody}
-
-      ${
-        template.clickActionUrl
-          ? `Skoda a Island.is: 
-            ${template.clickActionUrl}`
-          : ''
-      }
-    `
+  return `${fullName}${onBehalfOf ? ` (${onBehalfOf})` : ''}: ${
+    template.title
+  }\n\n${template.externalBody}\n\n${
+    template.clickActionUrl
+      ? `Skoda a Island.is: \n\n${template.clickActionUrl}`
+      : ''
+  }
+    `.trim()
 }
 
 @Injectable()
