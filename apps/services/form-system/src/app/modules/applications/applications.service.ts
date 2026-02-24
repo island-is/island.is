@@ -1265,8 +1265,8 @@ export class ApplicationsService {
 
     return organizations.map((org) => ({
       nationalId: org.nationalId,
-      contentfulId:
-        getOrganizationInfoByNationalId(org.nationalId)?.contentfulId ?? '',
+      contentfulSlug:
+        getOrganizationInfoByNationalId(org.nationalId)?.type ?? '',
     }))
   }
 

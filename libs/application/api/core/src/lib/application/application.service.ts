@@ -323,7 +323,7 @@ export class ApplicationService {
   }
 
   async getAllInstitutionsSuperAdmin(): Promise<
-    { nationalId: string; contentfulId: string }[]
+    { nationalId: string; contentfulSlug: string }[]
   > {
     const allInstitutions = getInstitutionsWithApplicationTypesIds()
 
@@ -358,7 +358,7 @@ export class ApplicationService {
       .filter((inst) =>
         inst.applicationTypesIds.some((t) => existingTypeIdSet.has(t)),
       )
-      .map((x) => ({ nationalId: x.nationalId, contentfulId: x.contentfulId }))
+      .map((x) => ({ nationalId: x.nationalId, contentfulSlug: x.slug }))
   }
 
   async findAllDueToBePruned(): Promise<Application[]> {

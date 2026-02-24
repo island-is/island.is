@@ -48,10 +48,13 @@ query getApplicationsSuperAdmin($input: ApplicationsSuperAdminFilters!) {
   }
 }
 
-query getApplicationsInstitutionAdmin($input: ApplicationsAdminFilters!) {
-  applicationApplicationsInstitutionAdmin(input: $input) {
+query getApplicationV2ApplicationsInstitutionAdmin(
+  $input: ApplicationsAdminFilters!
+) {
+  applicationV2ApplicationsInstitutionAdmin(input: $input) {
     rows {
       id
+      isFormSystem
       typeId
       applicant
       state
@@ -98,15 +101,17 @@ query getApplicationsInstitutionAdmin($input: ApplicationsAdminFilters!) {
   }
 }
 
-query getInstitutionApplicationTypes {
-  applicationTypesInstitutionAdmin {
+query getApplicationV2ApplicationTypesInstitutionAdmin {
+  applicationV2ApplicationTypesInstitutionAdmin {
     id
     name
   }
 }
 
-query getSuperApplicationTypes($input: ApplicationTypesAdminInput!) {
-  applicationTypesSuperAdmin(input: $input) {
+query getApplicationV2ApplicationTypesSuperAdmin(
+  $input: ApplicationTypesAdminInput!
+) {
+  applicationV2ApplicationTypesSuperAdmin(input: $input) {
     id
     name
   }
@@ -127,23 +132,10 @@ query getOrganizations($input: GetOrganizationsInput) {
   }
 }
 
-query getApplicationsStatistics($input: ApplicationsAdminStatisticsInput!) {
-  applicationApplicationsAdminStatistics(input: $input) {
-    typeid
-    count
-    draft
-    inprogress
-    completed
-    rejected
-    approved
-    name
-  }
-}
-
-query getApplicationsInstitutionStatistics(
+query getApplicationV2ApplicationStatisticsSuperAdmin(
   $input: ApplicationsAdminStatisticsInput!
 ) {
-  applicationApplicationsInstitutionStatistics(input: $input) {
+  applicationV2ApplicationStatisticsSuperAdmin(input: $input) {
     typeid
     count
     draft
@@ -155,10 +147,25 @@ query getApplicationsInstitutionStatistics(
   }
 }
 
-query getApplicationInstitutions {
-  applicationApplicationsAdminInstitutions {
+query getApplicationV2ApplicationStatisticsInstitutionAdmin(
+  $input: ApplicationsAdminStatisticsInput!
+) {
+  applicationV2ApplicationStatisticsInstitutionAdmin(input: $input) {
+    typeid
+    count
+    draft
+    inprogress
+    completed
+    rejected
+    approved
+    name
+  }
+}
+
+query getApplicationV2InstitutionsSuperAdmin {
+  applicationV2InstitutionsSuperAdmin {
     nationalId
-    contentfulId
+    contentfulSlug
   }
 }
 
@@ -168,6 +175,7 @@ query getApplicationV2ApplicationsSuperAdmin(
   applicationV2ApplicationsSuperAdmin(input: $input) {
     rows {
       id
+      isFormSystem
       typeId
       applicant
       state

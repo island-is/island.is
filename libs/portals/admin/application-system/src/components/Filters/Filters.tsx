@@ -17,8 +17,8 @@ import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { format as formatNationalId } from 'kennitala'
 import {
-  useGetInstitutionApplicationTypesQuery,
-  useGetSuperApplicationTypesQuery,
+  useGetApplicationV2ApplicationTypesInstitutionAdminQuery,
+  useGetApplicationV2ApplicationTypesSuperAdminQuery,
 } from '../../queries/overview.generated'
 
 interface Props {
@@ -69,21 +69,20 @@ export const Filters = ({
     a.title.localeCompare(b.title),
   )
 
-  //TODOxy rename all to institutionType
   const {
-    data: institutionData,
-    loading: loadingInstitution,
-    refetch: refetchInstitution,
-  } = useGetInstitutionApplicationTypesQuery({
+    data: institutionApplicationTypesData,
+    loading: loadingInstitutionApplicationTypes,
+    refetch: refetchInstitutionApplicationTypes,
+  } = useGetApplicationV2ApplicationTypesInstitutionAdminQuery({
     ssr: false,
     skip: isSuperAdmin, //do NOT run if user IS superAdmin
   })
 
   const {
-    data: superData,
-    loading: loadingSuper,
-    refetch: refetchSuper,
-  } = useGetSuperApplicationTypesQuery({
+    data: superApplicationTypesData,
+    loading: loadingSuperApplicationTypes,
+    refetch: refetchSuperApplicationTypes,
+  } = useGetApplicationV2ApplicationTypesSuperAdminQuery({
     ssr: false,
     variables: {
       input: {
@@ -94,7 +93,9 @@ export const Filters = ({
   })
 
   useEffect(() => {
-    const refetch = isSuperAdmin ? refetchSuper : refetchInstitution
+    const refetch = isSuperAdmin
+      ? refetchSuperApplicationTypes
+      : refetchInstitutionApplicationTypes
     refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [multiChoiceFilters])
@@ -143,8 +144,8 @@ export const Filters = ({
   const institutionTypeIds = useMemo(() => {
     return (
       (isSuperAdmin
-        ? superData?.applicationTypesSuperAdmin
-        : institutionData?.applicationTypesInstitutionAdmin
+        ? superApplicationTypesData?.applicationV2ApplicationTypesSuperAdmin
+        : institutionApplicationTypesData?.applicationV2ApplicationTypesInstitutionAdmin
       )
         ?.map((type) => ({
           value: type.id,
@@ -153,9 +154,10 @@ export const Filters = ({
         .sort((a, b) => a.label.localeCompare(b.label, lang)) ?? []
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuperAdmin, superData, institutionData])
+  }, [isSuperAdmin, superApplicationTypesData, institutionApplicationTypesData])
 
-  const isLoading = loadingSuper || loadingInstitution
+  const isLoading =
+    loadingSuperApplicationTypes || loadingInstitutionApplicationTypes
 
   return (
     <Box

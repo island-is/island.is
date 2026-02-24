@@ -6,11 +6,10 @@ import {
   FilterMultiChoiceProps,
 } from '@island.is/island-ui/core'
 import {
-  useGetApplicationInstitutionsQuery,
-  useGetApplicationsInstitutionAdminQuery,
-  // useGetApplicationsSuperAdminQuery,
   useGetOrganizationsQuery,
   useGetApplicationV2ApplicationsSuperAdminQuery,
+  useGetApplicationV2InstitutionsSuperAdminQuery,
+  useGetApplicationV2ApplicationsInstitutionAdminQuery,
 } from '../../queries/overview.generated'
 import invertBy from 'lodash/invertBy'
 import flatten from 'lodash/flatten'
@@ -66,11 +65,10 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     })
 
   // A list of all institutions with active application types
-  //TODOxy use V2
   const {
-    data: organizationDataWithNationalId,
-    loading: loadinOrganizationDataWithNationalId,
-  } = useGetApplicationInstitutionsQuery({
+    data: organizationsWithApplicationData,
+    loading: loadingOrganizationsWithApplication,
+  } = useGetApplicationV2InstitutionsSuperAdminQuery({
     ssr: false,
     skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
   })
@@ -95,17 +93,16 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     },
   }
 
-  //TODOxy use V2
   const {
-    data: institutionData,
-    loading: loadingInstitution,
-    refetch: refetchInstitution,
-  } = useGetApplicationsInstitutionAdminQuery({
+    data: institutionApplicationsData,
+    loading: loadingInstitutionApplications,
+    refetch: refetchInstitutionApplications,
+  } = useGetApplicationV2ApplicationsInstitutionAdminQuery({
     ssr: false,
     variables: commonVariables,
     skip: isSuperAdmin, //do NOT run if user IS superAdmin
     onCompleted: (q) => {
-      const names = q.applicationApplicationsInstitutionAdmin?.rows
+      const names = q.applicationV2ApplicationsInstitutionAdmin?.rows
         ?.filter((x) => !!x.name)
         ?.map((x) => x.name ?? '')
 
@@ -116,9 +113,9 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
   })
 
   const {
-    data: superData,
-    loading: loadingSuper,
-    refetch: refetchSuper,
+    data: superApplicationsData,
+    loading: loadingSuperApplications,
+    refetch: refetchSuperApplications,
   } = useGetApplicationV2ApplicationsSuperAdminQuery({
     ssr: false,
     variables: {
@@ -140,14 +137,15 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
   })
 
   const isLoading =
-    loadingSuper ||
-    loadingInstitution ||
+    loadingSuperApplications ||
+    loadingInstitutionApplications ||
     orgsLoading ||
-    loadinOrganizationDataWithNationalId
+    loadingOrganizationsWithApplication
 
   const applicationApplicationsAdmin = isSuperAdmin
-    ? superData?.applicationV2ApplicationsSuperAdmin?.rows
-    : institutionData?.applicationApplicationsInstitutionAdmin?.rows
+    ? superApplicationsData?.applicationV2ApplicationsSuperAdmin?.rows
+    : institutionApplicationsData?.applicationV2ApplicationsInstitutionAdmin
+        ?.rows
 
   const applicationAdminList =
     applicationApplicationsAdmin as AdminApplication[]
@@ -159,8 +157,8 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
   const availableOrganizations = isSuperAdmin
     ? organizationListFromContentful?.flatMap((x) => {
         const itemFoundInResponse =
-          organizationDataWithNationalId?.applicationApplicationsAdminInstitutions?.find(
-            (y) => y.contentfulId === x.id,
+          organizationsWithApplicationData?.applicationV2InstitutionsSuperAdmin?.find(
+            (y) => y.slug === x.slug,
           )
         if (!itemFoundInResponse) {
           return []
@@ -264,7 +262,9 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
   // Reset the page on filter change
   useEffect(() => {
     setPage(1)
-    const refetch = isSuperAdmin ? refetchSuper : refetchInstitution
+    const refetch = isSuperAdmin
+      ? refetchSuperApplications
+      : refetchInstitutionApplications
     refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, multiChoiceFilters])
@@ -299,8 +299,9 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
         organizations={availableOrganizations ?? []}
         numberOfDocuments={
           isSuperAdmin
-            ? superData?.applicationV2ApplicationsSuperAdmin?.count
-            : institutionData?.applicationApplicationsInstitutionAdmin?.count
+            ? superApplicationsData?.applicationV2ApplicationsSuperAdmin?.count
+            : institutionApplicationsData
+                ?.applicationV2ApplicationsInstitutionAdmin?.count
         }
         isSuperAdmin={isSuperAdmin}
         useAdvancedSearch={!!filters.typeIdValue}
@@ -324,8 +325,10 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
           shouldShowCardButtons={false}
           numberOfItems={
             isSuperAdmin
-              ? superData?.applicationV2ApplicationsSuperAdmin?.count
-              : institutionData?.applicationApplicationsInstitutionAdmin?.count
+              ? superApplicationsData?.applicationV2ApplicationsSuperAdmin
+                  ?.count
+              : institutionApplicationsData
+                  ?.applicationV2ApplicationsInstitutionAdmin?.count
           }
         />
       )}

@@ -55,7 +55,7 @@ export const ApplicationsTable = ({
 
   const copyApplicationLink = (application: AdminApplication) => {
     const typeId = application.typeId as unknown as ApplicationTypes
-    const baseUrl = getApplicationsBaseUrl()
+    const baseUrl = getApplicationsBaseUrl() //TODOxy get correct url for form system application
     const slug = getSlugFromType(typeId)
     const copied = copyToClipboard(`${baseUrl}/${slug}/${application.id}`)
 

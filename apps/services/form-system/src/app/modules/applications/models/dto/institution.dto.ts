@@ -11,5 +11,5 @@ export class InstitutionDto {
   @ApiProperty()
   @Expose()
   @IsString()
-  contentfulId!: string
+  contentfulSlug!: string
 }

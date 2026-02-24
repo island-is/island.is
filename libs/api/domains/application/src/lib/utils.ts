@@ -20,10 +20,7 @@ import {
   ApplicationStatisticsDto,
 } from '@island.is/clients/form-system'
 import { ApplicationResponseDtoStatusEnum } from '../../gen/fetch/models/ApplicationResponseDto'
-import {
-  ApplicationListAdminResponseDtoStatusEnum,
-  ApplicationListAdminResponseDtoTypeIdEnum,
-} from '../../gen/fetch/models/ApplicationListAdminResponseDto'
+import { ApplicationListAdminResponseDtoStatusEnum } from '../../gen/fetch/models/ApplicationListAdminResponseDto'
 import type { Locale } from '@island.is/shared/types'
 
 export const mapAppSystemCards = (
@@ -72,15 +69,35 @@ export const mapFormSystemApplicationAdmin = (
   application: FormSystemApplicationAdminDto,
 ): ApplicationAdmin => {
   return {
+    // id: application.id,
+    // created: application.created,
+    // modified: application.modified,
+    // isFormSystem: true,
+    // typeId: application.formId,
+    // applicant: application.applicant,
+    // assignees: [],
+    // applicantActors: [],
+    // status: application.status as ApplicationListAdminResponseDtoStatusEnum,
+    // state: application.status,
     id: application.id,
     created: application.created,
     modified: application.modified,
-    typeId: application.formId as ApplicationListAdminResponseDtoTypeIdEnum, //TODOxy should just allow string
     applicant: application.applicant,
     assignees: [],
     applicantActors: [],
-    status: application.status as ApplicationListAdminResponseDtoStatusEnum,
+    pruneAt: application.pruneAt,
+    pruned: application.pruned,
     state: application.status,
+    status: application.status as ApplicationListAdminResponseDtoStatusEnum,
+    actionCard: undefined, //TODOx
+    isFormSystem: true,
+    typeId: application.formId,
+    name: 'TODOx',
+    institution: 'TODOx',
+    progress: undefined, //TODOx
+    applicantName: 'TODOx',
+    paymentStatus: undefined, //TODOx
+    adminData: undefined, //TODOx
   }
 }
 
@@ -118,7 +135,7 @@ export const mapFormSystemInstitutionAdmin = (
 ): ApplicationInstitution => {
   return {
     nationalId: institution.nationalId,
-    contentfulId: institution.contentfulId,
+    contentfulSlug: institution.contentfulSlug,
   }
 }
 

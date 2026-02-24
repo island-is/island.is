@@ -91,7 +91,9 @@ export class ApplicationAdminV2Resolver {
 
   @Query(() => [ApplicationInstitution], { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async applicationV2InstitutionsSuperAdmin(@CurrentUser() user: User) {
+  async applicationV2InstitutionsSuperAdmin(
+    @CurrentUser() user: User,
+  ): Promise<ApplicationInstitution[] | null> {
     return this.applicationService.findAllInstitutionsForSuperAdmin(user)
   }
 
@@ -103,7 +105,7 @@ export class ApplicationAdminV2Resolver {
     locale: Locale = 'is',
     @Args('input')
     input: ApplicationsAdminStatisticsInput,
-  ) {
+  ): Promise<ApplicationStatistics[] | null> {
     return this.applicationService.getApplicationStatisticsForSuperAdmin(
       user,
       locale,
@@ -119,7 +121,7 @@ export class ApplicationAdminV2Resolver {
     locale: Locale = 'is',
     @Args('input')
     input: ApplicationsAdminStatisticsInput,
-  ) {
+  ): Promise<ApplicationStatistics[] | null> {
     return this.applicationService.getApplicationStatisticsForInstitutionAdmin(
       user,
       locale,
