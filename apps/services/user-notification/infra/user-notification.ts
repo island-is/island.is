@@ -39,6 +39,36 @@ const getEnv = (services: {
       ? `feat-${DEAD_LETTER_QUEUE_NAME}-${ctx.featureDeploymentName}`
       : DEAD_LETTER_QUEUE_NAME,
   ),
+  EMAIL_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${EMAIL_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : EMAIL_QUEUE_NAME,
+  ),
+  EMAIL_DEAD_LETTER_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${EMAIL_DEAD_LETTER_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : EMAIL_DEAD_LETTER_QUEUE_NAME,
+  ),
+  SMS_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${SMS_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : SMS_QUEUE_NAME,
+  ),
+  SMS_DEAD_LETTER_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${SMS_DEAD_LETTER_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : SMS_DEAD_LETTER_QUEUE_NAME,
+  ),
+  PUSH_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${PUSH_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : PUSH_QUEUE_NAME,
+  ),
+  PUSH_DEAD_LETTER_QUEUE_NAME: ref((ctx) =>
+    ctx.featureDeploymentName
+      ? `feat-${PUSH_DEAD_LETTER_QUEUE_NAME}-${ctx.featureDeploymentName}`
+      : PUSH_DEAD_LETTER_QUEUE_NAME,
+  ),
   IDENTITY_SERVER_ISSUER_URL: {
     dev: 'https://identity-server.dev01.devland.is',
     staging: 'https://identity-server.staging01.devland.is',
