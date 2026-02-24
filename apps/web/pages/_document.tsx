@@ -28,7 +28,7 @@ class MyDocument extends Document<Props> {
     const matomoSiteId = process.env.NEXT_PUBLIC_MATOMO_SITE_ID ?? ''
     const isMatomoEnabled = process.env.NEXT_PUBLIC_MATOMO_ENABLED === 'true'
     const lang = getLocaleFromPath(ctx?.req?.url)
-    console.log({matomoDomain, matomoSiteId, isMatomoEnabled});
+    console.log({ matomoDomain, matomoSiteId, isMatomoEnabled })
 
     return {
       ...initialProps,
