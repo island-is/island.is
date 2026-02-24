@@ -67,6 +67,7 @@ export const mapPoliceCaseStatusValue = (
 export const mapPoliceCaseStatus = (
   statusValue: PoliceCaseStatusValue,
   formatMessage: FormatMessage,
+  rawStatus?: string,
 ): CaseStatus => {
   if (statusValue === PoliceCaseStatusValue.UNKNOWN) {
     return {
@@ -81,7 +82,8 @@ export const mapPoliceCaseStatus = (
     value: statusValue,
     statusGroup: group,
     timelineStep: POLICE_CASE_GROUP_TIMELINE_STEP_LOOKUP[group],
-    headerDisplayString: header ? formatMessage(header) : undefined,
+    headerDisplayString:
+      rawStatus ?? (header ? formatMessage(header) : undefined),
     descriptionDisplayString: description
       ? formatMessage(description)
       : undefined,

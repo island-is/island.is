@@ -77,5 +77,9 @@ export class UserProfileDto {
 
   @ApiProperty()
   @IsBoolean()
+  smsNotifications!: boolean
+
+  @ApiProperty()
+  @IsBoolean()
   readonly isRestricted?: boolean
 }

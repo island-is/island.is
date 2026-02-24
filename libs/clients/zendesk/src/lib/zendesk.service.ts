@@ -1,5 +1,5 @@
 import { Inject } from '@nestjs/common'
-import axios from 'axios'
+import axios, { type AxiosResponse } from 'axios'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ZendeskServiceConfig } from './zendesk.config'
@@ -50,6 +50,7 @@ export type Ticket = {
   status: TicketStatus | string
   custom_fields: Array<{ id: number; value: string }>
   tags: Array<string>
+  description?: string
 }
 
 export interface ZendeskServiceOptions {
@@ -179,6 +180,32 @@ export class ZendeskService {
     }
 
     return true
+  }
+
+  async searchTickets(query: string): Promise<Array<Ticket>> {
+    const allResults: Array<Ticket> = []
+    let url: string | null = `${
+      this.api
+    }/search.json?per_page=10&query=${encodeURIComponent(query)}`
+
+    try {
+      while (url) {
+        const response: AxiosResponse<{
+          results: Array<Ticket>
+          next_page?: string | null
+        }> = await axios.get(url, this.params)
+        allResults.push(...response.data.results)
+        url = response.data.next_page ?? null
+      }
+    } catch (e) {
+      const errMsg = 'Failed to search Zendesk tickets'
+      const description = e.response?.data?.description ?? e.message
+      this.logger.error(errMsg, {
+        message: description,
+      })
+      throw new Error(`${errMsg}: ${description}`)
+    }
+    return allResults
   }
 
   async getTicket(ticketId: string): Promise<Ticket> {

@@ -131,7 +131,7 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               tag: tag(identityDocumentData.userPassport).tag,
               disabled:
                 tag(identityDocumentData.userPassport).tag.label ===
-                  m.orderedTag.defaultMessage ||
+                  formatMessage(m.orderedTag) ||
                 tag(identityDocumentData.userPassport).isDisabled,
             },
           ],
