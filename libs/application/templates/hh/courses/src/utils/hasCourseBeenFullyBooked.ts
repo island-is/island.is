@@ -5,6 +5,6 @@ export const hasCourseBeenFullyBooked = (application: Application) =>
   !(
     getValueViaPath<boolean>(
       application.externalData,
-      'hhCoursesParticipantAvailability.hasAvailability',
+      'hhCoursesParticipantAvailability.data.hasAvailability',
     ) ?? false
   )
