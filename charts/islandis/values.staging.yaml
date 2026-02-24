@@ -37,6 +37,17 @@ air-discount-scheme-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'loftbru.staging01.devland.is'
+        - 'loftbru-cf.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -127,6 +138,18 @@ air-discount-scheme-backend:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'loftbru.staging01.devland.is'
+        - 'loftbru-cf.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api/swagger'
+            - pathPrefix: '/api/public'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -236,6 +259,17 @@ air-discount-scheme-web:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'loftbru.staging01.devland.is'
+        - 'loftbru-cf.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -484,6 +518,16 @@ api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
@@ -802,6 +846,18 @@ application-system-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'application-payment-callback-xrd.internal.staging01.devland.is'
+        - 'application-callback-xrd.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/application-payment'
+            - pathPrefix: '/applications'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   ingress:
@@ -1066,6 +1122,16 @@ application-system-form:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/umsoknir'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
   ingress:
@@ -1371,6 +1437,16 @@ consultation-portal:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/samradsgatt'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/consultation-portal'
   ingress:
@@ -1476,6 +1552,16 @@ download-service:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'api.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/download'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
   ingress:
@@ -1674,6 +1760,16 @@ form-system-web:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/form'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/form-system-web'
   ingress:
@@ -1853,6 +1949,16 @@ island-ui-storybook:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'ui.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
   ingress:
@@ -1927,6 +2033,16 @@ license-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'license-api-xrd.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
   ingress:
@@ -2050,6 +2166,16 @@ payments:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/greida'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/payments'
   ingress:
@@ -2126,6 +2252,16 @@ portals-admin:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/stjornbord'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
   ingress:
@@ -2320,6 +2456,16 @@ search-indexer-service:
       replicas:
         max: 1
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'search-indexer-service.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
   ingress:
@@ -2452,6 +2598,16 @@ service-portal:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/minarsidur'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
   ingress:
@@ -2547,6 +2703,16 @@ service-portal-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'service-portal-api.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   ingress:
@@ -2664,6 +2830,16 @@ services-bff-portals-admin:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/stjornbord/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
   ingress:
@@ -2751,6 +2927,16 @@ services-bff-portals-my-pages:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
   ingress:
@@ -2932,6 +3118,16 @@ services-form-system-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'services-form-system-api.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
   ingress:
@@ -3113,6 +3309,16 @@ services-payment-flow-update-handler:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'services-payment-flow-update-handler.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payment-flow-update-handler'
   ingress:
@@ -3200,6 +3406,25 @@ services-payments:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'services-payments.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
+    primary-gw:
+      hostnames:
+        - 'services-payments-xrd.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
   ingress:
@@ -3416,6 +3641,16 @@ services-sessions:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'sessions-api.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   ingress:
@@ -3668,6 +3903,16 @@ services-university-gateway:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'services-university-gateway.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   ingress:
@@ -3860,6 +4105,16 @@ skilavottord-web:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/app/skilavottord/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
   ingress:
@@ -3938,6 +4193,16 @@ skilavottord-ws:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/app/skilavottord/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
   ingress:
@@ -4082,6 +4347,25 @@ user-notification:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'user-notification.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
+    primary-gw:
+      hostnames:
+        - 'user-notification-xrd.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   ingress:
@@ -4523,6 +4807,16 @@ web:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'beta.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:
