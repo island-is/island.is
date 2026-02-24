@@ -176,6 +176,9 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'support' : undefined,
       items: supportItems,
       condition: (answers, externalData) =>
+        //Business logic override as applicationConfig isn't ready on MMS side
+        //Should be removed when applicationConfig is ready
+        true ||
         !hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
