@@ -557,17 +557,11 @@ export class InternalCaseService {
     }
 
     const accusedList = await this.fetchAccusedForCase(newCase.id)
-    // TODO: Look into adding bulkCreateDefendants or similar.
-    for (const accused of accusedList) {
-      await this.defendantService.createForNewCase(
-        newCase.id,
-        {
-          ...accused,
-          address: (accused.address ?? '').trim(),
-        },
-        transaction,
-      )
-    }
+    await this.defendantService.bulkCreateForNewCase(
+      newCase.id,
+      accusedList,
+      transaction,
+    )
 
     const theCase = await this.caseRepositoryService.findById(newCase.id, {
       transaction,
