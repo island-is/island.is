@@ -125,37 +125,39 @@ export const Forms = () => {
 
   return (
     <>
-      <GridRow>
-        <Box
-          marginTop={4}
-          marginBottom={3}
-          marginRight={1}
-          marginLeft={2}
-          display="flex"
-          justifyContent="flexEnd"
-          width="full"
-        >
-          <Box justifyContent="spaceBetween" display="flex" width="full">
-            <Box
-              display="flex"
-              flexDirection="row"
-              alignItems="center"
-              columnGap={4}
-            >
-              <Button size="default" onClick={createForm}>
-                {formatMessage(m.newForm)}
-              </Button>
+      {isAdmin && (
+        <GridRow>
+          <Box
+            marginTop={4}
+            marginBottom={3}
+            marginRight={1}
+            marginLeft={2}
+            display="flex"
+            justifyContent="flexEnd"
+            width="full"
+          >
+            <Box justifyContent="spaceBetween" display="flex" width="full">
+              <Box
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                columnGap={4}
+              ></Box>
+              {isAdmin && <OrganizationSelect />}
             </Box>
-            {isAdmin && <OrganizationSelect />}
           </Box>
-        </Box>
-      </GridRow>
+        </GridRow>
+      )}
       <Box
         display="flex"
         width="full"
-        marginBottom={3}
+        marginBottom={2}
         justifyContent="flexEnd"
+        alignItems="baseline"
       >
+        <Button size="default" onClick={createForm}>
+          {formatMessage(m.newForm)}
+        </Button>
         <Filter
           labelClearAll="Hreinsa allar síur"
           labelClear="Hreinsa síu"
