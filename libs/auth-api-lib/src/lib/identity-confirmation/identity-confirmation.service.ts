@@ -99,7 +99,7 @@ export class IdentityConfirmationService {
           `Vinsamlegast opnaðu hlekkinn til að staðfesta þína auðkenningu: ${link}`,
         )
         .then((response) => {
-          return response.Code
+          return response.success
         })
     } catch (e) {
       console.error(e)

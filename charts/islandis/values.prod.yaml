@@ -671,8 +671,7 @@ application-system-api:
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
-    NOVA_ACCEPT_UNAUTHORIZED: 'false'
-    NOVA_USERNAME: 'IslandIs_User_Production'
+    NOVA_SENDER_NAME: 'Island.is'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
     RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
@@ -762,7 +761,6 @@ application-system-api:
     XROAD_VMST_MEMBER_CODE: '7005942039'
     XROAD_WORK_ACCIDENT_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token'
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
-    ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
     - 'services-payments'
     - 'nginx-ingress-internal'
@@ -872,8 +870,9 @@ application-system-api:
     HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
-    NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD'
-    NOVA_URL: '/k8s/application-system-api/NOVA_URL'
+    NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
+    NOVA_URL: '/k8s/NOVA_URL_V1'
+    NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
@@ -889,6 +888,9 @@ application-system-api:
     XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
     XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
     XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
+    ZENDESK_CONTACT_FORM_EMAIL: '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN_EMAIL'
+    ZENDESK_CONTACT_FORM_SUBDOMAIN: '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_SUBDOMAIN'
+    ZENDESK_CONTACT_FORM_TOKEN: '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2563,7 +2565,7 @@ service-portal-api:
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
-    NOVA_ACCEPT_UNAUTHORIZED: 'false'
+    NOVA_SENDER_NAME: 'Island.is'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BASE_URL: 'https://island.is/minarsidur'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
@@ -2657,9 +2659,9 @@ service-portal-api:
     IDENTITY_SERVER_CLIENT_ID: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_ID'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/service-portal/api/SERVICE_PORTAL_API_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
-    NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD'
-    NOVA_URL: '/k8s/service-portal-api/NOVA_URL'
-    NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME'
+    NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
+    NOVA_URL: '/k8s/NOVA_URL_V1'
+    NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -2946,7 +2948,6 @@ services-form-system-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
-    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
     S3_TIME_TO_LIVE_POST: '15'
@@ -3047,6 +3048,82 @@ services-form-system-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/form-system-api'
     create: true
     name: 'form-system-api'
+services-form-system-api-worker:
+  args:
+    - 'main.cjs'
+    - '--job'
+    - 'worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    CODE_OWNER: 'Advania'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_form_system_api'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_form_system_api'
+    FILE_STORAGE_UPLOAD_BUCKET: 'island-is-prod-upload-api'
+    FORM_SYSTEM_BUCKET: 'island-is-prod-form-system-presign-bucket'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    S3_REGION: 'eu-west-1'
+    S3_TIME_TO_LIVE_GET: '5'
+    S3_TIME_TO_LIVE_POST: '15'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+  grantNamespaces:
+    - 'islandis'
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
+  namespace: 'services-form-system-api'
+  podDisruptionBudget:
+    minAvailable: 1
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '768Mi'
+    requests:
+      cpu: '150m'
+      memory: '384Mi'
+  schedule: '*/30 * * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-form-system-api-worker'
+    create: true
+    name: 'services-form-system-api-worker'
 services-payment-flow-update-handler:
   enabled: true
   env:

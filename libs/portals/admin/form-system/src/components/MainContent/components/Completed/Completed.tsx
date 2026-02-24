@@ -80,7 +80,9 @@ export const Completed = () => {
 
   return (
     <Stack space={3}>
-      <Text variant="h3">Staðfestingarsíðu stillingar</Text>
+      <Box marginBottom={4}>
+        <Text variant="h3">{formatMessage(m.completedMessage)}</Text>
+      </Box>
       <Input
         name="title"
         label={formatMessage(m.completedTitleLabel)}
@@ -136,7 +138,7 @@ export const Completed = () => {
         <AlertMessage
           type="success"
           title={confirmationHeader?.is}
-          message={confirmationText?.is}
+          message={<Text whiteSpace="breakSpaces">{confirmationText?.is}</Text>}
         />
       </Box>
       <Input

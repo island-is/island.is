@@ -26,6 +26,7 @@ export const BaseSettings = () => {
   const { form } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
+
   return (
     <Stack space={2}>
       <Row>
@@ -185,12 +186,21 @@ export const BaseSettings = () => {
                 setErrorMsg('')
               }
             }}
-            onChange={(e) =>
+            onChange={(e) => {
+              const input = e.target as HTMLInputElement
+              const cursor = input.selectionStart ?? 0
+              const removed = (input.value.slice(0, cursor).match(/\//g) || [])
+                .length
+              const nextValue = input.value.replaceAll('/', '')
               controlDispatch({
                 type: 'CHANGE_SLUG',
-                payload: { newValue: e.target.value },
+                payload: { newValue: nextValue },
               })
-            }
+              // Restore cursor after React reconciles the value
+              requestAnimationFrame(() => {
+                input.setSelectionRange(cursor - removed, cursor - removed)
+              })
+            }}
           />
         </Column>
       </Row>

@@ -375,7 +375,7 @@ export const TableRow = ({
         animateOpacity
       >
         <Box paddingTop={1} paddingBottom={2} paddingLeft={1}>
-          <Column span="6/12">
+          <Column span="12/12">
             <Stack space={1}>
               <Row>
                 <Inline space={2}>
@@ -418,11 +418,6 @@ export const TableRow = ({
               <Row>
                 <Text variant="medium" className={styles.capitalizeText}>
                   <strong>Móttökukerfi:</strong> {url || '—'}
-                </Text>
-              </Row>
-              <Row>
-                <Text variant="medium">
-                  <strong>Númer:</strong> {id}
                 </Text>
               </Row>
             </Stack>

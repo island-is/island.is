@@ -211,8 +211,10 @@ const IndictmentOverview = () => {
                 <Text variant="h4" as="h4">
                   {defendant.name}
                 </Text>
-                <Box marginTop={1}>
-                  <Text>{`\u2022 ${getDefendantExplanation(defendant)}`}</Text>
+                <Box as="ul" marginTop={1}>
+                  <Text as="span">{`${getDefendantExplanation(
+                    defendant,
+                  )}`}</Text>
                 </Box>
               </Box>
             )

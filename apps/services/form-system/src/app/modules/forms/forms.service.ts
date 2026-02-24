@@ -13,6 +13,7 @@ import zipObject from 'lodash/zipObject'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
+  FieldTypesEnum,
   FormStatus,
   SectionTypes,
   UpdateFormError,
@@ -124,8 +125,9 @@ export class FormsService {
       'created',
       'modified',
       'zendeskInternal',
+      'useValidate',
+      'usePopulate',
       'submissionServiceUrl',
-      'validationServiceUrl',
       'isTranslated',
       'hasPayment',
       'beenPublished',
@@ -700,8 +702,9 @@ export class FormsService {
       'daysUntilApplicationPrune',
       'allowProceedOnValidationFail',
       'zendeskInternal',
+      'useValidate',
+      'usePopulate',
       'submissionServiceUrl',
-      'validationServiceUrl',
       'hasSummaryScreen',
       'completedSectionInfo',
       'dependencies',
@@ -746,6 +749,7 @@ export class FormsService {
     ]
     const screenKeys = [
       'id',
+      'identifier',
       'sectionId',
       'name',
       'created',
@@ -753,10 +757,12 @@ export class FormsService {
       'displayOrder',
       'isHidden',
       'multiset',
-      'callRuleset',
+      'shouldValidate',
+      'shouldPopulate',
     ]
     const fieldKeys = [
       'id',
+      'identifier',
       'screenId',
       'name',
       'created',
@@ -855,11 +861,18 @@ export class FormsService {
       name: { is: 'Kafli', en: 'Section' },
     } as Section)
 
-    await this.screenModel.create({
+    const inputScreen = await this.screenModel.create({
       sectionId: inputSection.id,
       displayOrder: 0,
-      name: { is: 'innsláttarsíða 1', en: 'Input screen 1' },
+      name: { is: 'Innsláttarskjár', en: 'Input screen' },
     } as Screen)
+
+    await this.fieldModel.create({
+      screenId: inputScreen.id,
+      fieldType: FieldTypesEnum.TEXTBOX,
+      displayOrder: 0,
+      name: { is: 'Textainnsláttur', en: 'Text input' },
+    } as Field)
   }
 
   private async updateDependencies(
