@@ -70,7 +70,7 @@ const PassportTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.PASSPORT,
-  name: m.formName.defaultMessage,
+  name: m.formName,
   codeOwner: CodeOwners.Juni,
   featureFlag: Features.passportApplication,
   translationNamespaces: [ApplicationConfigurations.Passport.translation],
@@ -96,12 +96,12 @@ const PassportTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: m.confirm.defaultMessage,
+                  name: m.confirm,
                   type: 'primary',
                 },
                 {
                   event: DefaultEvents.PAYMENT,
-                  name: m.confirm.defaultMessage,
+                  name: m.confirm,
                   type: 'primary',
                 },
               ],

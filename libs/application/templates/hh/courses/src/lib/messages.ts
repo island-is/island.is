@@ -13,6 +13,13 @@ export const m = {
         'Skráning á námskeið hjá Heilsugæslu höfuðborgarsvæðisins',
       description: 'Title of application',
     },
+    applicationTitleWithCourse: {
+      id: 'hh.courses.application:general.applicationTitleWithCourse',
+      defaultMessage:
+        '{value} - Námskeið hjá Heilsugæslunni á höfuðborgarsvæðinu',
+      description:
+        'Title of application with course name, shown in the application list',
+    },
     shorterApplicationTitle: {
       id: 'hh.courses.application:general.shorterApplicationTitle',
       defaultMessage: 'Skráning á námskeið',

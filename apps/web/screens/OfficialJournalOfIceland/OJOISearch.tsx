@@ -70,7 +70,8 @@ const DEBOUNCE_MS = 600
 type OJOISearchParams = {
   q: string
   deild: string
-  tegund: string
+  type: string
+  mainType: string
   timabil: string
   malaflokkur: string
   stofnun: string
@@ -117,7 +118,10 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       department: [defaultSearchParams.deild],
       category: [defaultSearchParams.malaflokkur],
       involvedParty: [defaultSearchParams.stofnun],
-      type: [defaultSearchParams.tegund],
+      type: defaultSearchParams.type ? defaultSearchParams.type.split(',') : [],
+      mainType: defaultSearchParams.mainType
+        ? defaultSearchParams.mainType.split(',')
+        : [],
       dateFrom: defaultSearchParams.dagsFra,
       dateTo: defaultSearchParams.dagsTil,
       search: defaultSearchParams.q,
@@ -133,7 +137,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
   const [searchState, setSearchState] = useState({
     q: defaultSearchParams.q,
     deild: defaultSearchParams.deild,
-    tegund: defaultSearchParams.tegund,
+    type: defaultSearchParams.type,
+    mainType: defaultSearchParams.mainType,
     timabil: defaultSearchParams.timabil,
     malaflokkur: defaultSearchParams.malaflokkur,
     stofnun: defaultSearchParams.stofnun,
@@ -165,7 +170,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
         const RESET_ON_CHANGE: Array<keyof typeof prev> = [
           'q',
           'deild',
-          'tegund',
+          'type',
+          'mainType',
           'malaflokkur',
           'stofnun',
           'dagsFra',
@@ -178,7 +184,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
         const RESET_SORTING_ON_CHANGE: Array<keyof typeof prev> = [
           'q',
           'deild',
-          'tegund',
+          'type',
+          'mainType',
           'malaflokkur',
           'stofnun',
           'dagsFra',
@@ -200,7 +207,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           ...prev,
           [key]: parsed,
           sida: nextPage,
-          ...(shouldClearType ? { tegund: '' } : {}),
+          ...(shouldClearType ? { type: '', mainType: '' } : {}),
           ...(RESET_SORTING_ON_CHANGE.includes(key) ? { sort: undefined } : {}),
         }
 
@@ -224,7 +231,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
               department: [next.deild].filter(Boolean),
               category: [next.malaflokkur].filter(Boolean),
               involvedParty: [next.stofnun].filter(Boolean),
-              type: next.tegund ? next.tegund.split(',') : [],
+              type: next.type ? next.type.split(',') : [],
+              mainType: next.mainType ? next.mainType.split(',') : [],
               dateFrom: next.dagsFra,
               dateTo: next.dagsTil,
               search: next.q,
@@ -259,7 +267,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     setSearchState({
       q: '',
       deild: '',
-      tegund: '',
+      type: '',
+      mainType: '',
       timabil: '',
       malaflokkur: '',
       stofnun: '',
@@ -277,6 +286,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
         category: [],
         involvedParty: [],
         type: [],
+        mainType: [],
         dateFrom: undefined,
         dateTo: undefined,
         search: '',
@@ -288,13 +298,14 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       },
     })
   }
-  const { types } = useTypes({
+  const { types, mainTypes } = useTypes({
     initalDepartmentId: searchState.deild,
   })
 
   const categoriesOptions = mapEntityToOptions(categories)
   const departmentsOptions = mapEntityToOptions(departments)
   const typesOptions = mapEntityToOptions(types)
+  const mainTypesOptions = mapEntityToOptions(mainTypes)
   const institutionsOptions = mapEntityToOptions(institutions)
   const yearOptions = mapYearOptions()
 
@@ -391,21 +402,37 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
             />
 
             <Select
-              name="tegund"
-              instanceId="ojoisearch-tegund"
-              inputId="ojoisearch-tegund-input"
+              name="mainType"
+              instanceId="ojoisearch-mainType"
+              inputId="ojoisearch-mainType-input"
               label={formatMessage(m.search.typeLabel)}
               size="xs"
               placeholder={formatMessage(m.search.typePlaceholder)}
               options={[
                 { ...emptyOption(formatMessage(m.search.typeAll)) },
+                ...mainTypesOptions,
+              ]}
+              isClearable
+              value={findValueOption(mainTypesOptions, searchState.mainType)}
+              onChange={(v) =>
+                updateSearchStateHandler('mainType', v?.value ?? '')
+              }
+            />
+
+            <Select
+              name="type"
+              instanceId="ojoisearch-type"
+              inputId="ojoisearch-type-input"
+              label={formatMessage(m.search.yfirheitiLabel)}
+              size="xs"
+              placeholder={formatMessage(m.search.yfirheitiPlaceholder)}
+              options={[
+                { ...emptyOption(formatMessage(m.search.yfirheitiAll)) },
                 ...typesOptions,
               ]}
               isClearable
-              value={findValueOption(typesOptions, searchState.tegund)}
-              onChange={(v) =>
-                updateSearchStateHandler('tegund', v?.value ?? '')
-              }
+              value={findValueOption(typesOptions, searchState.type)}
+              onChange={(v) => updateSearchStateHandler('type', v?.value ?? '')}
             />
 
             <Select
@@ -736,7 +763,8 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     malaflokkur: getStringFromQuery(query.malaflokkur),
     q: getStringFromQuery(query.q),
     stofnun: getStringFromQuery(query.stofnun),
-    tegund: getStringFromQuery(query.tegund),
+    type: getStringFromQuery(query.type) || getStringFromQuery(query.tegund), // backwards compatibility: tegund -> type
+    mainType: getStringFromQuery(query.mainType),
     timabil: getStringFromQuery(query.timabil),
     sida: page ?? 1,
     year,
@@ -775,7 +803,10 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
           page: defaultParams.sida,
           pageSize: defaultParams.pageSize,
           search: defaultParams.q,
-          type: [defaultParams.tegund],
+          type: defaultParams.type ? defaultParams.type.split(',') : [],
+          mainType: defaultParams.mainType
+            ? defaultParams.mainType.split(',')
+            : [],
           year: defaultParams.year,
           sortBy: defaultParams.sort?.split('-')[0],
           direction: defaultParams.sort?.split('-')[1],
@@ -840,7 +871,8 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
       malaflokkur: defaultParams.malaflokkur,
       q: defaultParams.q,
       stofnun: defaultParams.stofnun,
-      tegund: defaultParams.tegund,
+      type: defaultParams.type,
+      mainType: defaultParams.mainType,
       timabil: defaultParams.timabil,
       sida: defaultParams.sida,
       staerd: defaultParams.pageSize,

@@ -56,6 +56,7 @@ export class FieldsService {
 
     const keys = [
       'id',
+      'identifier',
       'screenId',
       'name',
       'displayOrder',
