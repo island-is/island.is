@@ -1,5 +1,12 @@
 import { HealthDirectorateWaitlistStatusTagColorEnum } from '@island.is/api/schema'
-import { ActionCard, Box, Button, Stack, TagVariant, Text } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  Box,
+  Button,
+  Stack,
+  TagVariant,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
