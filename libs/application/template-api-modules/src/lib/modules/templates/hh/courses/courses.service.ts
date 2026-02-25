@@ -215,10 +215,10 @@ export class CoursesService extends BaseTemplateApiService {
     if (!hasAvailability) {
       throw new TemplateApiError(
         {
-          title: 'Ekki næg sæti laus',
-          summary: `Laus sæti: ${slotsAvailable}`,
+          title: `Laus sæti: ${slotsAvailable}`,
+          summary: '',
         },
-        400,
+        409,
       )
     }
 
