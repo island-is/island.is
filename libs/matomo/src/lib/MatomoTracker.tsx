@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Router from 'next/router'
+import Script from "next/script"
 import { MatomoInitScriptProps } from './types'
 
 /**
@@ -68,11 +69,14 @@ export const MatomoTracker = ({
   }
 
   return (
-    <script
-      defer
+    <Script
+      id="matomo-script"
       async
       src={`${normalizedDomain.current}matomo.js`}
-      data-id="matomoscript"
+      strategy="afterInteractive"
+      onLoad={() => console.log("Matomo loaded:", `${normalizedDomain}matomo.js`)}
+      onError={(e) => console.error("Matomo failed to load:", e)}
+      data-id="matomo-script"
     />
   )
 }
