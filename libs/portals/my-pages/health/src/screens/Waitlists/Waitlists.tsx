@@ -1,5 +1,5 @@
 import { HealthDirectorateWaitlistStatusTagColorEnum } from '@island.is/api/schema'
-import { ActionCard, Stack, TagVariant, Text } from '@island.is/island-ui/core'
+import { ActionCard, Box, Button, Stack, TagVariant, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -51,19 +51,22 @@ const Waitlists: React.FC = () => {
     <IntroWrapper
       title={formatMessage(messages.waitlists)}
       introComponent={
-        <Text>
-          {formatMessage(messages.waitlistsIntroWithLink, {
-            link: (str: React.ReactNode) => (
-              <button
-                className={styles.link}
-                onClick={() => setIsModalOpen(true)}
-                aria-haspopup="dialog"
-              >
-                {str}
-              </button>
-            ),
-          })}
-        </Text>
+        <Box className={styles.linkText}>
+          <Text>
+            {formatMessage(messages.waitlistsIntroWithLink, {
+              link: (str: React.ReactNode) => (
+                <Button
+                  variant="text"
+                  size="medium"
+                  onClick={() => setIsModalOpen(true)}
+                  aria-haspopup="dialog"
+                >
+                  {str}
+                </Button>
+              ),
+            })}
+          </Text>
+        </Box>
       }
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
