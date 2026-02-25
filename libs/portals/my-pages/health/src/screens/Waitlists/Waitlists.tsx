@@ -57,6 +57,7 @@ const Waitlists: React.FC = () => {
               <button
                 className={styles.link}
                 onClick={() => setIsModalOpen(true)}
+                aria-haspopup="dialog"
               >
                 {str}
               </button>

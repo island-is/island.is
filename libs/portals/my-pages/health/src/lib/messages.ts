@@ -958,7 +958,7 @@ export const messages = defineMessages({
     defaultMessage: 'Biðlistar sem birtast hér:',
   },
   waitlistsModalBody: {
-    id: 'sp.health:waitlists-modal-body',
+    id: 'sp.health:waitlists-modal-body#markdown',
     defaultMessage:
       '- Landspítali (allar skurðaðgerðir, barna- og unglingageðdeild)\n- Heilbrigðisstofnun Vesturlands (liðskiptaaðgerðir)\n- Sjúkrahúsið á Akureyri (liðskiptaaðgerðir, endurhæfing)\n- Heilbrigðisstofnun Austurlands (geðheilsuteymi)\n- Klíníkin (liðskiptaaðgerðir)\n- Orkuhúsið (liðskiptaaðgerðir)\n- Reykjalundur (endurhæfing)',
   },
