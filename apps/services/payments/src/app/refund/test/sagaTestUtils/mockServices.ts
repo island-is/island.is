@@ -1,42 +1,22 @@
 import { v4 as uuid } from 'uuid'
 import { jest } from '@jest/globals'
 
-import type { CardPaymentService } from '../../cardPayment.service'
+import type { RefundService } from '../../refund.service'
 import type { PaymentFlowService } from '../../../paymentFlow/paymentFlow.service'
 import {
   mockCardPaymentConfirmation,
   mockPaymentFulfillmentWithoutFjs,
-  mockPaymentFlow,
-  mockCatalogItems,
-  mockPaymentResult,
   PAYMENT_FLOW_ID,
 } from './mocks'
 
 /** Cast for mockResolvedValue to satisfy strict jest.Mock from @jest/globals */
 const resolved = <T>(v: T): never => v as never
 
-/**
- * Creates a mock CardPaymentService with default resolutions for saga tests.
- * Override individual methods in tests as needed.
- */
-export const createMockCardPaymentService = (
-  overrides: Partial<Record<keyof CardPaymentService, jest.Mock>> = {},
-): jest.Mocked<CardPaymentService> => {
+export const createMockRefundService = (
+  overrides: Partial<Record<keyof RefundService, jest.Mock>> = {},
+): jest.Mocked<RefundService> => {
   const mock: Record<string, jest.Mock> = {
-    validatePaymentFlow: jest.fn().mockResolvedValue(
-      resolved({
-        paymentFlow: mockPaymentFlow,
-        catalogItems: mockCatalogItems,
-        totalPrice: 1000,
-        paymentStatus: 'unpaid',
-      }),
-    ),
-    charge: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
-    chargeApplePay: jest.fn().mockResolvedValue(resolved(mockPaymentResult)),
-    persistPaymentConfirmation: jest
-      .fn()
-      .mockResolvedValue(resolved(undefined)),
-    refund: jest.fn().mockResolvedValue(
+    refundWithCorrelationId: jest.fn().mockResolvedValue(
       resolved({
         isSuccess: true,
         acquirerReferenceNumber: 'refund-arn',
@@ -44,13 +24,9 @@ export const createMockCardPaymentService = (
     ),
     ...overrides,
   }
-  return mock as unknown as jest.Mocked<CardPaymentService>
+  return mock as unknown as jest.Mocked<RefundService>
 }
 
-/**
- * Creates a mock PaymentFlowService with default resolutions for saga tests.
- * Override individual methods in tests as needed.
- */
 export const createMockPaymentFlowService = (
   overrides: Partial<Record<keyof PaymentFlowService, jest.Mock>> = {},
 ): jest.Mocked<PaymentFlowService> => {

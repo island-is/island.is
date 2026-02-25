@@ -33,8 +33,6 @@ import {
   CardPaymentContext,
   CardPaymentStepResults,
   PaymentOrchestrator,
-  RefundContext,
-  RefundStepResults,
 } from './cardPayment.orchestrator'
 import {
   createCardPaymentContext,
@@ -48,20 +46,13 @@ import {
   ChargeCardInput,
   ChargeCardResponse,
   GetVerificationStatus,
-  RefundCardPaymentInput,
-  RefundCardPaymentResponse,
-  RefundMethod,
   VerificationCallbackInput,
   VerificationCallbackResponse,
   VerificationStatusResponse,
   VerifyCardInput,
   VerifyCardResponse,
 } from './dtos'
-import {
-  createRefundContext,
-  createRefundSaga,
-  REFUND_SAGA_START_STEP,
-} from './refund.saga'
+import { RefundService } from '../refund/refund.service'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -74,6 +65,7 @@ export class CardPaymentController {
   constructor(
     private readonly cardPaymentService: CardPaymentService,
     private readonly paymentFlowService: PaymentFlowService,
+    private readonly refundService: RefundService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -288,6 +280,7 @@ export class CardPaymentController {
     const context = createApplePayPaymentContext(paymentFlowId, chargeCardInput)
     const saga = createApplePayPaymentSaga(
       this.cardPaymentService,
+      this.refundService,
       this.paymentFlowService,
       this.logger,
     )
@@ -361,103 +354,6 @@ export class CardPaymentController {
           e.message,
           CardErrorCode.ErrorGettingApplePaySession,
         ),
-      )
-    }
-  }
-
-  @Post('/refund')
-  @ApiOkResponse({
-    type: RefundCardPaymentResponse,
-  })
-  async refund(
-    @Body() refundCardPaymentInput: RefundCardPaymentInput,
-  ): Promise<RefundCardPaymentResponse> {
-    const paymentFlowId = refundCardPaymentInput.paymentFlowId
-
-    const context = createRefundContext(paymentFlowId, refundCardPaymentInput)
-    const saga = createRefundSaga(
-      this.cardPaymentService,
-      this.paymentFlowService,
-      this.logger,
-    )
-    const orchestrator = new PaymentOrchestrator<
-      RefundContext,
-      RefundStepResults
-    >(this.logger, this.paymentFlowService)
-
-    try {
-      const result = await orchestrator.execute(
-        saga,
-        context,
-        REFUND_SAGA_START_STEP,
-      )
-
-      const refundMethod = result.context.completedSteps.includes(
-        'REFUND_PAYMENT',
-      )
-        ? RefundMethod.PAYMENT_GATEWAY
-        : RefundMethod.FJS_CHARGE_DELETED
-
-      return {
-        success: true,
-        refundMethod,
-        message: 'Payment successfully refunded',
-      }
-    } catch (e) {
-      const refundExecuted =
-        context.metadata?.refundSucceededButRollbackFailed === true
-
-      // User got their money back - log success so audit trail and upstream reflect reality
-      if (refundExecuted) {
-        await this.paymentFlowService.logPaymentFlowUpdate({
-          paymentFlowId,
-          type: 'success',
-          occurredAt: new Date(),
-          paymentMethod: PaymentMethod.CARD,
-          reason: 'refund_completed',
-          message: 'Payment successfully refunded, but cleanup failed',
-          metadata: {
-            cleanupFailed: true,
-            failedStep: context.failedStep,
-            error: e.message,
-          },
-        })
-
-        this.logger.error(
-          `[${paymentFlowId}][CRITICAL] Refund succeeded but cleanup failed`,
-          { error: e.message, context },
-        )
-
-        const refundMethod = context.completedSteps?.includes('REFUND_PAYMENT')
-          ? RefundMethod.PAYMENT_GATEWAY
-          : RefundMethod.FJS_CHARGE_DELETED
-
-        return {
-          success: true,
-          refundMethod,
-          message:
-            'Refund processed successfully. System cleanup is in progress.',
-        }
-      }
-
-      await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId,
-        type: 'error',
-        occurredAt: new Date(),
-        paymentMethod: PaymentMethod.CARD,
-        reason: 'refund_failed',
-        message: `Refund saga failed at step ${
-          context.failedStep || 'unknown'
-        }: ${e.message}`,
-        metadata: {
-          error: e.message,
-          failedStep: context.failedStep,
-          completedSteps: context.completedSteps,
-        },
-      })
-
-      throw new BadRequestException(
-        onlyReturnKnownErrorCode(e.message, CardErrorCode.UnknownCardError),
       )
     }
   }

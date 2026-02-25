@@ -6,6 +6,7 @@ import {
   PaymentOrchestrator,
 } from '../cardPayment.orchestrator'
 import { CardPaymentService } from '../cardPayment.service'
+import { RefundService } from '../../refund/refund.service'
 import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
 import {
   createApplePayPaymentContext,
@@ -18,6 +19,18 @@ import {
   getApplePayChargeInput,
 } from './sagaTestUtils'
 
+const resolved = <T>(v: T): never => v as never
+
+const createMockRefundService = (): jest.Mocked<RefundService> =>
+  ({
+    refundWithCorrelationId: jest.fn().mockResolvedValue(
+      resolved({
+        isSuccess: true,
+        acquirerReferenceNumber: 'refund-arn',
+      }),
+    ),
+  } as unknown as jest.Mocked<RefundService>)
+
 /**
  * Apple Pay saga tests.
  * Shared step tests (VALIDATE, PERSIST, NOTIFY) are in cardPaymentSagaSteps.shared.spec.ts
@@ -26,11 +39,13 @@ import {
 describe('Apple Pay Payment Saga - CHARGE_APPLE_PAY step specific', () => {
   let mockLogger: Logger
   let mockCardPaymentService: jest.Mocked<CardPaymentService>
+  let mockRefundService: jest.Mocked<RefundService>
   let mockPaymentFlowService: jest.Mocked<PaymentFlowService>
 
   beforeEach(() => {
     mockLogger = createMockLogger()
     mockCardPaymentService = createMockCardPaymentService()
+    mockRefundService = createMockRefundService()
     mockPaymentFlowService = createMockPaymentFlowService()
   })
 
@@ -58,6 +73,7 @@ describe('Apple Pay Payment Saga - CHARGE_APPLE_PAY step specific', () => {
       const context = createApplePayPaymentContext(input.paymentFlowId, input)
       const saga = createApplePayPaymentSaga(
         mockCardPaymentService,
+        mockRefundService,
         mockPaymentFlowService,
         mockLogger,
       )
@@ -83,6 +99,7 @@ describe('Apple Pay Payment Saga - CHARGE_APPLE_PAY step specific', () => {
       const context = createApplePayPaymentContext(input.paymentFlowId, input)
       const saga = createApplePayPaymentSaga(
         mockCardPaymentService,
+        mockRefundService,
         mockPaymentFlowService,
         mockLogger,
       )
@@ -96,7 +113,7 @@ describe('Apple Pay Payment Saga - CHARGE_APPLE_PAY step specific', () => {
       )
 
       expect(
-        mockCardPaymentService.refundWithCorrelationId,
+        mockRefundService.refundWithCorrelationId,
       ).not.toHaveBeenCalled()
     })
   })
@@ -111,6 +128,7 @@ describe('Apple Pay Payment Saga - CHARGE_APPLE_PAY step specific', () => {
       const context = createApplePayPaymentContext(input.paymentFlowId, input)
       const saga = createApplePayPaymentSaga(
         mockCardPaymentService,
+        mockRefundService,
         mockPaymentFlowService,
         mockLogger,
       )
@@ -124,7 +142,7 @@ describe('Apple Pay Payment Saga - CHARGE_APPLE_PAY step specific', () => {
       )
 
       expect(
-        mockCardPaymentService.refundWithCorrelationId,
+        mockRefundService.refundWithCorrelationId,
       ).toHaveBeenCalledWith({
         paymentTrackingData: context.trackingData,
       })

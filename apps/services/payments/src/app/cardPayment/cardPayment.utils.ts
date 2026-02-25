@@ -319,24 +319,3 @@ export const generateApplePayChargeRequestOptions = ({
   }
 }
 
-export const generateRefundWithCorrelationIdRequestOptions = ({
-  paymentApiConfig,
-  paymentTrackingData,
-}: {
-  paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
-  paymentTrackingData: PaymentTrackingData
-}) => {
-  const { systemCalling } = paymentApiConfig
-
-  const body = {
-    originalCorrelationId: paymentTrackingData.correlationId,
-    originalTransactionDate: paymentTrackingData.paymentDate.toISOString(),
-    systemCalling: systemCalling,
-  }
-
-  return {
-    method: 'POST',
-    headers: generateApplePayRequestHeaders(paymentApiConfig),
-    body: JSON.stringify(body),
-  }
-}

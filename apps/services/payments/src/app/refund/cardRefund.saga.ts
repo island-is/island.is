@@ -5,16 +5,19 @@ import { BadRequestException } from '@nestjs/common'
 import { PaymentMethod, RefundType } from '../../types'
 import { hasStepResult, requireStepResult } from '../../utils/orchestrator'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { RefundContext, RefundSagaDefinition } from './cardPayment.orchestrator'
-import { CardPaymentService } from './cardPayment.service'
-import { RefundCardPaymentInput } from './dtos'
+import { RefundPaymentInput } from './dtos/refundPayment.input'
+import {
+  CardRefundContext,
+  CardRefundSagaDefinition,
+} from './refund.orchestrator'
+import { RefundService } from './refund.service'
 
-export const REFUND_SAGA_START_STEP = 'VALIDATE_REFUND'
+export const CARD_REFUND_SAGA_START_STEP = 'VALIDATE_REFUND'
 
-export const createRefundContext = (
+export const createCardRefundContext = (
   paymentFlowId: string,
-  input: RefundCardPaymentInput,
-): RefundContext => {
+  input: RefundPaymentInput,
+): CardRefundContext => {
   return {
     paymentFlowId,
     paymentMethod: PaymentMethod.CARD,
@@ -27,7 +30,7 @@ export const createRefundContext = (
 
 const logRefundStarted = (
   paymentFlowService: PaymentFlowService,
-  ctx: RefundContext,
+  ctx: CardRefundContext,
 ) =>
   paymentFlowService.logPaymentFlowUpdate({
     paymentFlowId: ctx.paymentFlowId,
@@ -42,11 +45,11 @@ const logRefundStarted = (
     },
   })
 
-export const createRefundSaga = (
-  cardPaymentService: CardPaymentService,
+export const createCardRefundSaga = (
+  refundService: RefundService,
   paymentFlowService: PaymentFlowService,
   logger: Logger,
-): RefundSagaDefinition => ({
+): CardRefundSagaDefinition => ({
   VALIDATE_REFUND: {
     name: 'VALIDATE_REFUND',
     description: 'Validate the payment flow is eligible for refund',
@@ -182,7 +185,7 @@ export const createRefundSaga = (
         `[${ctx.paymentFlowId}] Refunding via payment gateway`,
       )
       const refundResult = await retry(() =>
-        cardPaymentService.refundWithCorrelationId({
+        refundService.refundWithCorrelationId({
           paymentTrackingData: {
             merchantReferenceData:
               cardPaymentConfirmation.merchantReferenceData,

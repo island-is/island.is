@@ -5,6 +5,7 @@ import { retry } from '@island.is/shared/utils/server'
 import { PaymentMethod, RefundType } from '../../types'
 import { requireStepResult } from '../../utils/orchestrator'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { RefundService } from '../refund/refund.service'
 import {
   ApplePayPaymentContext,
   ApplePayPaymentSagaDefinition,
@@ -36,6 +37,7 @@ export const createApplePayPaymentContext = (
 
 export const createApplePayPaymentSaga = (
   cardPaymentService: CardPaymentService,
+  refundService: RefundService,
   paymentFlowService: PaymentFlowService,
   logger: Logger,
 ): ApplePayPaymentSagaDefinition => [
@@ -78,7 +80,7 @@ export const createApplePayPaymentSaga = (
 
       try {
         const refund = await retry(() =>
-          cardPaymentService.refundWithCorrelationId({
+          refundService.refundWithCorrelationId({
             paymentTrackingData: ctx.trackingData,
           }),
         )

@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsString, IsOptional } from 'class-validator'
 
-export class RefundCardPaymentInput {
+export class RefundPaymentInput {
   @IsString()
   @ApiProperty({
     description: 'Id of the payment flow to refund',
