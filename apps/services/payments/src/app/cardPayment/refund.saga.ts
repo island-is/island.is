@@ -126,7 +126,7 @@ export const createRefundSaga = (
 
       if (deletedPaymentConfirmation) {
         logger.info(
-          `[${ctx.paymentFlowId}][REFUND] Restoring payment confirmation after refund step failed`,
+          `[${ctx.paymentFlowId}] Restoring payment confirmation`,
         )
         await paymentFlowService.restoreCardPaymentConfirmation(
           ctx.paymentFlowId,
@@ -136,7 +136,7 @@ export const createRefundSaga = (
 
       if (deletedPaymentFulfillment && deletedPaymentConfirmation) {
         logger.info(
-          `[${ctx.paymentFlowId}][REFUND] Restoring payment fulfillment after refund step failed`,
+          `[${ctx.paymentFlowId}] Restoring payment fulfillment`,
         )
         await paymentFlowService.restorePaymentFulfillment({
           paymentFlowId: ctx.paymentFlowId,
@@ -179,7 +179,7 @@ export const createRefundSaga = (
       await logRefundStarted(paymentFlowService, ctx)
 
       logger.info(
-        `[${ctx.paymentFlowId}][REFUND] Refunding via payment gateway`,
+        `[${ctx.paymentFlowId}] Refunding via payment gateway`,
       )
       const refundResult = await retry(() =>
         cardPaymentService.refundWithCorrelationId({
@@ -191,7 +191,7 @@ export const createRefundSaga = (
           },
         }),
       )
-      logger.info(`[${ctx.paymentFlowId}][REFUND] Refund executed successfully`)
+      logger.info(`[${ctx.paymentFlowId}] Refund completed via payment gateway`)
 
       return { action: 'refunded' as const, refundResult }
     },

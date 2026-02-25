@@ -86,6 +86,7 @@ export class CardPaymentController {
     @Body() cardVerificationInput: VerifyCardInput,
   ): Promise<VerifyCardResponse> {
     const paymentFlowId = cardVerificationInput.paymentFlowId
+    this.logger.info(`[${paymentFlowId}] Card verification requested`)
     try {
       const { totalPrice } = await this.cardPaymentService.validatePaymentFlow(
         paymentFlowId,
@@ -143,6 +144,7 @@ export class CardPaymentController {
         correlationId,
       )
     const { paymentFlowId } = savedVerificationPendingData
+    this.logger.info(`[${paymentFlowId}] Card verification callback received`)
 
     try {
       const { success } =
@@ -216,7 +218,6 @@ export class CardPaymentController {
   ): Promise<ChargeCardResponse> {
     const paymentFlowId = chargeCardInput.paymentFlowId
 
-    // setup payment context and flow
     const context = createCardPaymentContext(paymentFlowId, chargeCardInput)
     const saga = createCardPaymentSaga(
       this.cardPaymentService,
@@ -236,38 +237,36 @@ export class CardPaymentController {
 
       return { ...paymentResult, correlationId: paymentResult.correlationID }
     } catch (e) {
-      // check if the refund succeeded or failed
       const refundSucceeded = context.metadata?.refundSucceeded === true
       const refundFailed = context.metadata?.refundSucceeded === false
 
-      await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId,
-        type: 'error',
-        occurredAt: new Date(),
-        paymentMethod: PaymentMethod.CARD,
-        reason: 'other',
-        message: `Card payment saga failed at step ${
-          context.failedStep || 'unknown'
-        }: ${e.message}`,
-        metadata: {
-          error: e.message,
-          failedStep: context.failedStep,
-          completedSteps: context.completedSteps,
-          refundSucceeded,
-        },
-      })
-
       if (refundSucceeded) {
-        // Refund succeeded - user was not charged
         throw new BadRequestException(
           CardErrorCode.RefundedBecauseOfSystemError,
         )
       } else if (refundFailed) {
-        // CRITICAL: Payment taken but refund failed
         throw new BadRequestException(
           CardErrorCode.RefundFailedAfterPaymentError,
         )
       } else {
+        // Error happened before a charge completed (e.g. VALIDATE or CHARGE_CARD itself failed)
+        // let upstream know that the payment failed
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId,
+          type: 'error',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'payment_failed',
+          message: `Card payment saga failed at step ${
+            context.failedStep || 'unknown'
+          }: ${e.message}`,
+          metadata: {
+            error: e.message,
+            failedStep: context.failedStep,
+            completedSteps: context.completedSteps,
+          },
+        })
+
         throw new BadRequestException(
           onlyReturnKnownErrorCode(e.message, CardErrorCode.UnknownCardError),
         )
@@ -286,7 +285,6 @@ export class CardPaymentController {
   ): Promise<ApplePayChargeResponse> {
     const paymentFlowId = chargeCardInput.paymentFlowId
 
-    // setup payment context and flow
     const context = createApplePayPaymentContext(paymentFlowId, chargeCardInput)
     const saga = createApplePayPaymentSaga(
       this.cardPaymentService,
@@ -312,34 +310,33 @@ export class CardPaymentController {
       const refundSucceeded = context.metadata?.refundSucceeded === true
       const refundFailed = context.metadata?.refundSucceeded === false
 
-      await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId,
-        type: 'error',
-        occurredAt: new Date(),
-        paymentMethod: PaymentMethod.CARD,
-        reason: 'other',
-        message: `Apple Pay payment saga failed at step ${
-          context.failedStep || 'unknown'
-        }: ${e.message}`,
-        metadata: {
-          error: e.message,
-          failedStep: context.failedStep,
-          completedSteps: context.completedSteps,
-          refundSucceeded,
-          refundFailed,
-        },
-      })
-
       if (refundSucceeded) {
         throw new BadRequestException(
           CardErrorCode.RefundedBecauseOfSystemError,
         )
       } else if (refundFailed) {
-        // CRITICAL: Payment taken but refund failed
         throw new BadRequestException(
           CardErrorCode.RefundFailedAfterPaymentError,
         )
       } else {
+        // Error happened before a charge completed (e.g. VALIDATE or CHARGE_APPLE_PAY itself failed)
+        // let upstream know that the payment failed
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId,
+          type: 'error',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'payment_failed',
+          message: `Apple Pay payment saga failed at step ${
+            context.failedStep || 'unknown'
+          }: ${e.message}`,
+          metadata: {
+            error: e.message,
+            failedStep: context.failedStep,
+            completedSteps: context.completedSteps,
+          },
+        })
+
         throw new BadRequestException(
           onlyReturnKnownErrorCode(e.message, CardErrorCode.UnknownCardError),
         )
