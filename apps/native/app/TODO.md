@@ -32,8 +32,8 @@ All `@todo migration` comments found in the codebase, grouped by file.
 ### ~~`src/hooks/use-connectivity-indicator.ts`~~ ✅
 - ~~Deleted — had zero callers; RNN topBar button management replaced by `OfflineIcon` component rendered directly in `NavigationBarSheet`.~~
 
-### `src/components/dropdown/dropdown-menu-overlay.tsx`
-- **Line 58** — `DropdownMenuOverlay`: Still uses `router.dismiss()` as a placeholder; the full overlay registration / dismiss cycle from RNN is not yet re-implemented.
+### ~~`src/components/dropdown/dropdown-menu-overlay.tsx`~~ ✅
+- ~~Deleted — entire `dropdown/` directory removed (overlay, context, content registry). Was dead code: `DropdownMenuOverlay` was never rendered, `setDropdownContent` never called. Cleaned up `ExternalLink` and `LinkRowButton` to remove dead `useDropdownOverlay` references.~~
 
 ### ~~`src/components/offline/offline-icon.tsx`~~ ✅
 - ~~`OfflineIcon`: `onPress` now toggles banner visibility via `offlineStore.toggleBanner()`.~~

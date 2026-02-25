@@ -3,7 +3,6 @@ import { Icon, theme, Typography } from '../../ui'
 import { ImageSourcePropType } from 'react-native'
 import externalLinkIcon from '../../assets/icons/external-link.png'
 import { useBrowser } from '../../hooks/use-browser'
-import { useDropdownOverlay } from '../dropdown/dropdown-overlay-context'
 import styled from 'styled-components/native'
 
 export interface ExternalLinkItem {
@@ -17,8 +16,6 @@ export interface ExternalLinksProps {
   fontWeight?: TextStyle['fontWeight']
   borderBottom?: boolean
   fontSize?: number
-  /** @deprecated Will be removed after full expo-router migration */
-  componentId?: string
 }
 
 const Container = styled(Pressable)<{ $hasBorder: boolean }>(
@@ -55,12 +52,8 @@ export const ExternalLink = ({
   fontSize = 16,
 }: ExternalLinksProps) => {
   const { openBrowser } = useBrowser()
-  const overlay = useDropdownOverlay()
 
   const handlePress = () => {
-    if (overlay?.componentId) {
-      overlay.close()
-    }
     openBrowser(links.link)
   }
 

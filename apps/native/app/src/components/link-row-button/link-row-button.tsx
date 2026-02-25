@@ -4,8 +4,6 @@ import cheveronForwardIcon from '../../assets/icons/chevron-forward.png'
 import styled from 'styled-components/native'
 import { useBrowser } from '../../hooks/use-browser'
 import { Icon, theme, Typography } from '../../ui'
-import { useDropdownOverlay } from '../dropdown/dropdown-overlay-context'
-import { navigateTo } from '../../lib/deep-linking'
 import { Href, useRouter } from 'expo-router'
 
 export interface LinkItem {
@@ -88,14 +86,9 @@ export const LinkRowButton = ({
   isSubLink = false,
 }: LinkRowButtonProps) => {
   const { openBrowser } = useBrowser()
-  const overlay = useDropdownOverlay()
   const router = useRouter()
 
   const handlePress = () => {
-    if (overlay?.componentId) {
-      overlay.close()
-    }
-
     if (link.isExternal) {
       openBrowser(link.link as string)
     } else {

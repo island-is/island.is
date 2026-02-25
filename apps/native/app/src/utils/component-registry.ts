@@ -45,7 +45,6 @@ export const ComponentRegistry = {
   LoginScreen: `${prefix}.screens.${isTestingApp ? `TestingLogin` : `Login`}`,
   MoreScreen: `${prefix}.screens.MoreScreen`,
   NotificationsScreen: `${prefix}.screens.Notifications`,
-  DropdownMenuOverlay: `${prefix}.overlay.DropdownMenuOverlay`,
   OnboardingBiometricsScreen: `${prefix}.screens.OnboardingBiometrics`,
   OnboardingNotificationsScreen: `${prefix}.screens.OnboardingNotifications`,
   OnboardingPinCodeScreen: `${prefix}.screens.OnboardingPinCode`,

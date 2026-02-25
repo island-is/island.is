@@ -1,10 +1,22 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
+import { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView, Text, View } from 'react-native'
+import {
+  Image,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
+import { ExternalLink } from '@/components/external-links/external-links'
 import { useGetVehicleQuery } from '@/graphql/types/schema'
-import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { useBrowser } from '@/hooks/use-browser'
+import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { Button, Divider, Input, InputRow, Problem, theme } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
 
@@ -14,6 +26,7 @@ export default function VehicleDetailScreen() {
   const router = useRouter()
   const myPagesLinks = useMyPagesLinks()
   const { openBrowser } = useBrowser()
+  const [menuVisible, setMenuVisible] = useState(false)
 
   const { data, loading, error } = useGetVehicleQuery({
     variables: {
@@ -30,6 +43,41 @@ export default function VehicleDetailScreen() {
   } = data?.vehiclesDetail || {}
 
   const noInfo = data?.vehiclesDetail === null
+
+  const dropdownItems = [
+    {
+      title: intl.formatMessage({
+        id: 'vehicle.links.dropdown.orderNumberPlate',
+      }),
+      link: myPagesLinks.orderNumberPlate,
+    },
+    {
+      title: intl.formatMessage({
+        id: 'vehicle.links.dropdown.orderRegistrationCertificate',
+      }),
+      link: myPagesLinks.orderRegistrationCertificate,
+    },
+    {
+      title: intl.formatMessage({
+        id: 'vehicle.links.dropdown.changeCoOwner',
+      }),
+      link: myPagesLinks.changeCoOwner,
+    },
+    {
+      title: intl.formatMessage({
+        id: 'vehicle.links.dropdown.changeOperator',
+      }),
+      link: myPagesLinks.changeOperator,
+    },
+  ]
+
+  const handleDropdownPress = useCallback(
+    (link: string) => {
+      setMenuVisible(false)
+      openBrowser(link)
+    },
+    [openBrowser],
+  )
 
   if (noInfo && !loading) {
     return (
@@ -53,8 +101,45 @@ export default function VehicleDetailScreen() {
       <Stack.Screen
         options={{
           title: title ?? data?.vehiclesDetail?.basicInfo?.model ?? '',
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => setMenuVisible(true)}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Image
+                source={require('@/assets/icons/Ellipsis-vertical.png')}
+                style={{
+                  width: 24,
+                  height: 24,
+                  tintColor: theme.color.blue400,
+                }}
+              />
+            </TouchableOpacity>
+          ),
         }}
       />
+      <Modal
+        visible={menuVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setMenuVisible(false)}
+      >
+        <Pressable style={styles.backdrop} onPress={() => setMenuVisible(false)}>
+          <View style={styles.menuContainer}>
+            <View style={styles.menu}>
+              {dropdownItems.map((item, index) => (
+                <ExternalLink
+                  key={item.title}
+                  links={{ link: item.link, title: item.title }}
+                  borderBottom={index !== dropdownItems.length - 1}
+                  fontWeight="bold"
+                  fontSize={14}
+                />
+              ))}
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
       <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
         <View>
           <View
@@ -251,3 +336,25 @@ export default function VehicleDetailScreen() {
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.15)',
+  },
+  menuContainer: {
+    alignItems: 'flex-end',
+    paddingTop: Platform.OS === 'ios' ? 100 : 56,
+    paddingRight: theme.spacing[1],
+  },
+  menu: {
+    minWidth: 150,
+    backgroundColor: theme.color.white,
+    borderRadius: 8,
+    shadowRadius: 30,
+    shadowColor: theme.color.blue400,
+    shadowOpacity: 0.16,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+  },
+})
