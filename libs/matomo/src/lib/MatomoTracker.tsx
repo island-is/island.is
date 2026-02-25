@@ -21,14 +21,16 @@ import { initMatomo } from './init-matomo'
  */
 export const MatomoTracker = () => {
   useEffect(() => {
-    const el = document.querySelector('script[data-id="matomoscript"]') as HTMLScriptElement | null;
+    const el = document.querySelector(
+      'script[data-id="matomoscript"]',
+    ) as HTMLScriptElement | null
     if (!el) {
       return () => {
         // Empty on purpose
       }
     }
-    const matomoDomain = el.dataset.domain;
-    const matomoSiteId = el.dataset.siteid;
+    const matomoDomain = el.dataset.domain
+    const matomoSiteId = el.dataset.siteid
 
     if (!matomoDomain || !matomoSiteId) {
       return () => {
