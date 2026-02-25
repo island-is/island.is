@@ -46,7 +46,12 @@ export const OrganizationCard = ({
       color="blue"
       className={styles.card}
     >
-      <Box display="flex" flexDirection="row" alignItems="flexStart" flexGrow={1}>
+      <Box
+        display="flex"
+        flexDirection="row"
+        alignItems="flexStart"
+        flexGrow={1}
+      >
         <Box flexGrow={1}>
           <Text as="h3" variant="h3" color="dark400">
             <Hyphen>{heading}</Hyphen>
