@@ -326,6 +326,16 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
+      - name: Build app on runner (prebuilt optimization)
+        if: steps.gather.outcome == 'success'
+        env:
+          NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+        run: |
+          set -x
+          echo "Building ${AFFECTED_PROJECTS} on runner before Docker packaging..."
+          yarn nx build ${AFFECTED_PROJECTS} --prod
+          echo "Build complete. Assets available at dist/"
+
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/docker-login-ecr.sh
@@ -352,23 +362,11 @@ jobs:
             --build-arg="GIT_BRANCH=${GIT_BRANCH}"
             --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
             --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
-            --build-arg="NX_PARALLEL=${NX_PARALLEL}"
-            --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
-            --build-arg="NX_TASKS_RUNNER=ci"
           )
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
 
-          # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
-          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
-
-          # Add secret to EXTRA_DOCKER_BUILD_ARGS
-          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: Building Docker images
+      - name: Building Docker images (prebuilt)
         continue-on-error: true
         id: dockerbuild
         if: steps.gather.outcome == 'success'
@@ -380,11 +378,13 @@ jobs:
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+          echo "Docker build args are: '${EXTRA_DOCKER_BUILD_ARGS}'"
+          echo "Using prebuilt assets from dist/"
           export EXTRA_DOCKER_BUILD_ARGS
-          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+          # Use prebuilt scripts (91_*) instead of build-in-docker scripts (90_*)
+          ./scripts/ci/run-in-parallel.sh "91_${DOCKER_TYPE}-prebuilt"
 
-      - name: Building Docker images Retry
+      - name: Building Docker images Retry (prebuilt)
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         env:
           NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
@@ -394,9 +394,10 @@ jobs:
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
+          echo "Docker build args are: '${EXTRA_DOCKER_BUILD_ARGS}'"
+          echo "Retrying with prebuilt assets from dist/"
           export EXTRA_DOCKER_BUILD_ARGS
-          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+          ./scripts/ci/run-in-parallel.sh "91_${DOCKER_TYPE}-prebuilt"
 
       - name: Docker build output
         uses: cloudposse/github-action-matrix-outputs-write@v1
