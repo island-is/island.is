@@ -79,7 +79,9 @@ export const TwoColumnTextSlice: React.FC<
             >
               {slice.leftTitle && (
                 <Text variant="h2" as="h2" id={leftId}>
-                  <Hyphen>{slice.leftTitle}</Hyphen>
+                  <Hyphen minLeft={7} minRight={7}>
+                    {slice.leftTitle}
+                  </Hyphen>
                 </Text>
               )}
             </GridColumn>
@@ -87,7 +89,9 @@ export const TwoColumnTextSlice: React.FC<
               <GridColumn span={columnSpan} hiddenBelow="lg">
                 {slice.rightTitle && (
                   <Text variant="h2" as="h2" id={rightId}>
-                    <Hyphen>{slice.rightTitle}</Hyphen>
+                    <Hyphen minLeft={7} minRight={7}>
+                      {slice.rightTitle}
+                    </Hyphen>
                   </Text>
                 )}
               </GridColumn>
