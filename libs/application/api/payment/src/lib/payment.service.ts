@@ -333,6 +333,30 @@ export class PaymentService {
     }
   }
 
+  async refundPayment(applicationId: string): Promise<void> {
+    const payment = await this.findPaymentByApplicationId(applicationId)
+    if (!payment) {
+      throw new NotFoundException(
+        `payment was not found for application id ${applicationId}`,
+      )
+    }
+
+    try {
+      await this.paymentsApi.cardPaymentControllerRefund({
+        refundCardPaymentInput: {
+          paymentFlowId: payment.id,
+          reasonForRefund: 'refund',
+        },
+      })
+    } catch (error) {
+      this.logger.error(
+        `Failed to refund payment for application ${applicationId}`,
+        error,
+      )
+      throw error
+    }
+  }
+
   private auditPaymentCreation(
     user: User,
     applicationId: string,
