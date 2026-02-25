@@ -4,13 +4,16 @@ import { AppState, Keyboard } from 'react-native'
 
 import { authStore, useAuthStore } from '@/stores/auth-store'
 import { isOnboarded } from '@/utils/onboarding'
+import { useIntl } from 'react-intl'
 import { config } from '../../config'
+import { modalScreenOptions } from '../../constants/screen-options'
 
 export const unstable_settings = {
   initialRouteName: '(tabs)',
 }
 
 export default function AuthLayout() {
+  const intl = useIntl()
   const router = useRouter()
   const authorizeResult = useAuthStore((s) => s.authorizeResult)
   const appStateRef = useRef(AppState.currentState)
@@ -77,10 +80,48 @@ export default function AuthLayout() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="onboarding" options={{ headerShown: false }} />
       <Stack.Screen
-        name="(modals)"
+        name="(modals)/personal-info"
         options={{
+          ...modalScreenOptions,
+          headerTitle: intl.formatMessage({ id: 'personalInfo.screenTitle' }),
+        }}
+      />
+      <Stack.Screen
+        name="(modals)/settings"
+        options={{
+          ...modalScreenOptions,
+          headerTitle: intl.formatMessage({ id: 'setting.screenTitle' }),
+        }}
+      />
+      <Stack.Screen
+        name="(modals)/edit-phone"
+        options={{
+          ...modalScreenOptions,
+          headerTitle: intl.formatMessage({ id: 'edit.phone.screenTitle' }),
+        }}
+      />
+      <Stack.Screen
+        name="(modals)/edit-email"
+        options={{
+          ...modalScreenOptions,
+          headerTitle: intl.formatMessage({ id: 'edit.email.screenTitle' }),
+        }}
+      />
+      <Stack.Screen
+        name="(modals)/edit-bank-info"
+        options={{
+          ...modalScreenOptions,
+          headerTitle: intl.formatMessage({ id: 'edit.bankinfo.screenTitle' }),
+        }}
+      />
+      <Stack.Screen
+        name="(modals)/homescreen-options"
+        options={{
+          ...modalScreenOptions,
           headerShown: false,
           presentation: 'formSheet',
+          sheetAllowedDetents: 'fitToContents',
+          headerTitle: intl.formatMessage({ id: 'homeOptions.screenTitle' }),
         }}
       />
       <Stack.Screen

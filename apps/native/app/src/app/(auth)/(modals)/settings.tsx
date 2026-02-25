@@ -227,15 +227,17 @@ export default function SettingsScreen() {
       testID={testIDs.USER_SCREEN_SETTINGS}
       stickyHeaderIndices={[0]}
       nestedScrollEnabled={true}
+      contentInsetAdjustmentBehavior="automatic"
+      contentContainerStyle={{ paddingBottom: 32 }}
     >
       <View>
-        <NavigationBarSheet
+        {/* <NavigationBarSheet
           componentId="settings"
           title={intl.formatMessage({ id: 'setting.screenTitle' })}
           onClosePress={() => router.back()}
           style={{ marginHorizontal: 16 }}
           showLoading={userProfile.loading && !!userProfile.data}
-        />
+        /> */}
         <Alert
           type="info"
           visible={!isInfoDismissed}
@@ -383,9 +385,7 @@ export default function SettingsScreen() {
       <TableViewGroup
         header={intl.formatMessage({ id: 'settings.security.groupTitle' })}
       >
-        <PressableHighlight
-          onPress={() => router.navigate('/onboarding/pin')}
-        >
+        <PressableHighlight onPress={() => router.navigate('/onboarding/pin')}>
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.security.changePinLabel',
