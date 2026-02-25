@@ -24,6 +24,7 @@ import { useDelegationForm } from '../../../context'
 import { DeleteAccessModal } from '../../modals/DeleteAccessModal'
 import { DelegationPaths } from '../../../lib/paths'
 import { useNavigate } from 'react-router-dom'
+import * as styles from './Tables.css'
 
 export type DelegationsByPerson =
   AuthDelegationsGroupedByIdentityOutgoingQuery['authDelegationsGroupedByIdentityOutgoing'][number]
@@ -193,122 +194,127 @@ const CustomDelegationsTable = ({
       ) : error && !data?.length ? (
         <Problem error={error} />
       ) : (
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              {headerArray.map((item, i) => (
-                <T.HeadData key={item.value + i} style={{ paddingInline: 16 }}>
-                  <Text variant="medium" fontWeight="semiBold">
-                    {item.value}
-                  </Text>
-                </T.HeadData>
-              ))}
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {filteredDelegations?.map((person) => {
-              const identity = {
-                nationalId: person.nationalId,
-                name: person.name,
-                type: person.type,
-              }
+        <div className={styles.tableContainer}>
+          <T.Table>
+            <T.Head>
+              <T.Row>
+                {headerArray.map((item, i) => (
+                  <T.HeadData
+                    key={item.value + i}
+                    style={{ paddingInline: 16 }}
+                  >
+                    <Text variant="medium" fontWeight="semiBold">
+                      {item.value}
+                    </Text>
+                  </T.HeadData>
+                ))}
+              </T.Row>
+            </T.Head>
+            <T.Body>
+              {filteredDelegations?.map((person) => {
+                const identity = {
+                  nationalId: person.nationalId,
+                  name: person.name,
+                  type: person.type,
+                }
 
-              return (
-                <ExpandableRow
-                  key={`${person.nationalId}-${person.type}`}
-                  onExpandCallback={() =>
-                    setExpandedRow(`${person.nationalId}-${person.type}`)
-                  }
-                  data={[
-                    {
-                      value: (
-                        <IdentityInfo
-                          identity={identity}
-                          isExpanded={
-                            expandedRow ===
-                            `${person.nationalId}-${person.type}`
-                          }
-                        />
-                      ),
-                    },
-                    {
-                      value: (
-                        <Text variant="medium" fontWeight="semiBold">
-                          {person.totalScopeCount}
-                        </Text>
-                      ),
-                    },
-                    {
-                      value: person.latestValidTo
-                        ? format(new Date(person.latestValidTo), 'dd.MM.yyyy')
-                        : formatMessage(m.noValidToDate),
-                    },
-                    ...(direction === 'outgoing'
-                      ? [
-                          {
-                            value: (
-                              <Box flexShrink={0}>
-                                <Button
-                                  variant="text"
-                                  icon="pencil"
-                                  iconType="outline"
-                                  size="small"
-                                  colorScheme="default"
-                                  onClick={() => {
-                                    const scopes =
-                                      mapScopesToScopeSelection(person)
-                                    setSelectedScopes(scopes)
-                                    const query = new URLSearchParams({
-                                      nationalId: person.nationalId ?? '',
-                                    })
+                return (
+                  <ExpandableRow
+                    key={`${person.nationalId}-${person.type}`}
+                    onExpandCallback={() =>
+                      setExpandedRow(`${person.nationalId}-${person.type}`)
+                    }
+                    data={[
+                      {
+                        value: (
+                          <IdentityInfo
+                            identity={identity}
+                            isExpanded={
+                              expandedRow ===
+                              `${person.nationalId}-${person.type}`
+                            }
+                          />
+                        ),
+                      },
+                      {
+                        value: (
+                          <Text variant="medium" fontWeight="semiBold">
+                            {person.totalScopeCount}
+                          </Text>
+                        ),
+                      },
+                      {
+                        value: person.latestValidTo
+                          ? format(new Date(person.latestValidTo), 'dd.MM.yyyy')
+                          : formatMessage(m.noValidToDate),
+                      },
+                      ...(direction === 'outgoing'
+                        ? [
+                            {
+                              value: (
+                                <Box flexShrink={0}>
+                                  <Button
+                                    variant="text"
+                                    icon="pencil"
+                                    iconType="outline"
+                                    size="small"
+                                    colorScheme="default"
+                                    onClick={() => {
+                                      const scopes =
+                                        mapScopesToScopeSelection(person)
+                                      setSelectedScopes(scopes)
+                                      const query = new URLSearchParams({
+                                        nationalId: person.nationalId ?? '',
+                                      })
 
-                                    navigate(
-                                      `${
-                                        DelegationPaths.DelegationsEdit
-                                      }?${query.toString()}`,
-                                    )
-                                  }}
-                                >
-                                  {formatMessage(coreMessages.buttonEdit)}
-                                </Button>
-                              </Box>
-                            ),
-                            align: 'right' as const,
-                          },
-                        ]
-                      : []),
-                    {
-                      value: (
-                        <Box flexShrink={0}>
-                          <Button
-                            variant="text"
-                            icon="trash"
-                            iconType="outline"
-                            size="small"
-                            colorScheme="destructive"
-                            onClick={() => {
-                              const scopes = mapScopesToScopeSelection(person)
-                              setSelectedScopes(scopes)
-                              setPersonToDelete(person)
-                            }}
-                          >
-                            {formatMessage(coreMessages.buttonDestroy)}
-                          </Button>
-                        </Box>
-                      ),
-                      align: 'right',
-                    },
-                  ]}
-                >
-                  <CustomDelegationsPermissionsTable
-                    data={person}
-                    direction={direction}
-                  />
-                </ExpandableRow>
-              )
-            })}
-          </T.Body>
-        </T.Table>
+                                      navigate(
+                                        `${
+                                          DelegationPaths.DelegationsEdit
+                                        }?${query.toString()}`,
+                                      )
+                                    }}
+                                  >
+                                    {formatMessage(coreMessages.buttonEdit)}
+                                  </Button>
+                                </Box>
+                              ),
+                              align: 'right' as const,
+                            },
+                          ]
+                        : []),
+                      {
+                        value: (
+                          <Box flexShrink={0}>
+                            <Button
+                              variant="text"
+                              icon="trash"
+                              iconType="outline"
+                              size="small"
+                              colorScheme="destructive"
+                              onClick={() => {
+                                const scopes = mapScopesToScopeSelection(person)
+                                setSelectedScopes(scopes)
+                                setPersonToDelete(person)
+                              }}
+                            >
+                              {formatMessage(coreMessages.buttonDestroy)}
+                            </Button>
+                          </Box>
+                        ),
+                        align: 'right',
+                      },
+                    ]}
+                  >
+                    <CustomDelegationsPermissionsTable
+                      data={person}
+                      direction={direction}
+                    />
+                  </ExpandableRow>
+                )
+              })}
+            </T.Body>
+          </T.Table>
+        </div>
       )}
       <DeleteAccessModal
         isVisible={!!personToDelete}

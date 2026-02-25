@@ -18,6 +18,7 @@ import { useDelegationForm } from '../../../context'
 import { AuthDelegationScope, AuthDomain } from '@island.is/api/schema'
 import { DeleteAccessModal } from '../../modals/DeleteAccessModal'
 import { usePatchAuthDelegationMutation } from '../../../screens/EditAccess.tsx/EditAccess.generated'
+import * as styles from './Tables.css'
 
 type PersonCentricDelegation =
   AuthDelegationsGroupedByIdentityOutgoingQuery['authDelegationsGroupedByIdentityOutgoing'][number]
@@ -135,7 +136,7 @@ const CustomDelegationsPermissionsTable = ({
   }
 
   return (
-    <Box>
+    <div className={styles.tableContainer}>
       <T.Table>
         <T.Head>
           <T.Row>
@@ -152,10 +153,10 @@ const CustomDelegationsPermissionsTable = ({
           {scopes?.map((scope) => {
             return (
               <T.Row key={scope.id}>
-                <T.Data style={{ paddingInline: 16 }}>
+                <T.Data style={{ paddingInline: 16, wordBreak: 'break-word' }}>
                   <Text variant="medium">{scope.domain?.displayName}</Text>
                 </T.Data>
-                <T.Data style={{ paddingInline: 16 }}>
+                <T.Data style={{ paddingInline: 16, wordBreak: 'break-word' }}>
                   <Text variant="medium">{scope.displayName}</Text>
                 </T.Data>
                 <T.Data style={{ paddingInline: 16 }}>
@@ -165,7 +166,7 @@ const CustomDelegationsPermissionsTable = ({
                       : '-'}
                   </Text>
                 </T.Data>
-                <T.Data style={{ display: 'flex', paddingInline: 16 }}>
+                <T.Data style={{ paddingInline: 16, maxWidth: 180 }}>
                   {direction === 'incoming' ? (
                     <Text variant="medium">
                       {scope.validTo
@@ -173,20 +174,18 @@ const CustomDelegationsPermissionsTable = ({
                         : '-'}
                     </Text>
                   ) : (
-                    <Box flexShrink={1}>
-                      <DatePicker
-                        name={`validTo-${scope.id}`}
-                        locale="is"
-                        placeholderText={formatMessage(m.headerValidityPeriod)}
-                        selected={
-                          scope.validTo ? new Date(scope.validTo) : undefined
-                        }
-                        handleChange={(date) => handleDateChange(scope, date)}
-                        size="xs"
-                        backgroundColor="blue"
-                        detatchedCalendar={true}
-                      />
-                    </Box>
+                    <DatePicker
+                      name={`validTo-${scope.id}`}
+                      locale="is"
+                      placeholderText={formatMessage(m.headerValidityPeriod)}
+                      selected={
+                        scope.validTo ? new Date(scope.validTo) : undefined
+                      }
+                      handleChange={(date) => handleDateChange(scope, date)}
+                      size="xs"
+                      backgroundColor="blue"
+                      detatchedCalendar={true}
+                    />
                   )}
                 </T.Data>
                 <T.Data style={{ paddingInline: 16 }}>
@@ -245,7 +244,7 @@ const CustomDelegationsPermissionsTable = ({
         }}
         loading={false} //todo
       />
-    </Box>
+    </div>
   )
 }
 
