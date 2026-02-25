@@ -7,4 +7,5 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "$DIR"/_common.sh
 
 # Build Docker images for SPA/HTML or other static content (PREBUILT)
-exec "$DIR"/_docker-prebuilt.sh Dockerfile.prebuilt output-static
+# Uses the same Dockerfile but targets output-static-prebuilt
+exec "$DIR"/_docker.sh Dockerfile output-static-prebuilt

@@ -281,3 +281,193 @@ ENTRYPOINT ["./entrypoint.sh"]
 # ------------------------------------------------
 FROM output-base AS output-native
 RUN echo "not-implemented"
+
+# ================================================
+# PREBUILT TARGETS
+# These targets copy pre-built assets from the build context (runner)
+# instead of building inside Docker. Use with 91_docker-*-prebuilt.sh
+# ================================================
+
+# ------------------------------------------------
+# Express output (prebuilt)
+# ------------------------------------------------
+FROM output-base-with-pg AS output-express-prebuilt
+
+ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
+# Copy pre-built assets from runner's dist/ directory
+COPY ${APP_DIST_HOME}/ /webapp/
+
+ENV GIT_BRANCH=${GIT_BRANCH} \
+  GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL} \
+  DD_GIT_BRANCH=${GIT_BRANCH} \
+  DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+
+LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
+
+CMD ["node", "--no-experimental-fetch", "main.js"]
+
+# ------------------------------------------------
+# Express yarn output (prebuilt)
+# ------------------------------------------------
+FROM output-base AS output-express-yarn-prebuilt
+
+ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
+RUN npm install -g sequelize sequelize-cli pg
+
+COPY ${APP_DIST_HOME}/ /webapp/
+COPY .yarnrc.yml /webapp/
+COPY .yarn/patches /webapp/.yarn/patches
+COPY .yarn/releases /webapp/.yarn/releases
+
+# Install production dependencies
+RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
+  yarn workspaces focus --production
+
+USER runner
+
+ENV GIT_BRANCH=${GIT_BRANCH} \
+  GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL} \
+  DD_GIT_BRANCH=${GIT_BRANCH} \
+  DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+
+LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
+
+CMD ["node", "--no-experimental-fetch", "main.cjs"]
+
+# ------------------------------------------------
+# Next.js output (prebuilt)
+# ------------------------------------------------
+FROM output-base-with-pg AS output-next-prebuilt
+
+ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
+ENV PORT=4200
+
+# Copy node_modules from deps stage (Next.js needs runtime deps)
+COPY --from=deps /build/node_modules /webapp/node_modules
+# Copy pre-built assets from runner's dist/ directory
+COPY ${APP_DIST_HOME}/ /webapp/
+
+ENV GIT_BRANCH=${GIT_BRANCH} \
+  GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL} \
+  DD_GIT_BRANCH=${GIT_BRANCH} \
+  DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+
+LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
+
+CMD ["node", "main.js"]
+
+# ------------------------------------------------
+# Static output (NGINX) (prebuilt)
+# ------------------------------------------------
+FROM static-base AS output-static-prebuilt
+
+ARG APP
+ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
+COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
+COPY scripts/dockerfile-assets/bash/extract-environment.* /docker-entrypoint.d/
+COPY ${APP_DIST_HOME}/ /usr/share/nginx/html
+
+ENV GIT_BRANCH=${GIT_BRANCH} \
+  GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL} \
+  DD_GIT_BRANCH=${GIT_BRANCH} \
+  DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL} \
+  APP=${APP} \
+  BASEPATH=/
+
+LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
+
+# ------------------------------------------------
+# Jest output (prebuilt)
+# ------------------------------------------------
+FROM output-base AS output-jest-prebuilt
+
+ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
+RUN echo 'module.exports = {};' > jest.config.js
+RUN npm install -g jest
+
+COPY ${APP_DIST_HOME}/ /webapp/
+
+USER runner
+
+ENV GIT_BRANCH=${GIT_BRANCH} \
+  GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL} \
+  DD_GIT_BRANCH=${GIT_BRANCH} \
+  DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+
+LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
+
+CMD ["jest", "main.spec.js"]
+
+# ------------------------------------------------
+# Playwright output (prebuilt)
+# ------------------------------------------------
+FROM playwright-base AS output-playwright-prebuilt
+
+ARG APP_DIST_HOME
+ARG APP_HOME
+ARG PLAYWRIGHT_BROWSER=chromium
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
+RUN apt-get update && \
+  apt-get install -y zip awscli && \
+  apt-get purge -y && \
+  rm -rf /var/lib/apt/lists/*
+
+WORKDIR ${APP_DIST_HOME}
+
+COPY ${APP_DIST_HOME}/ .
+COPY ${APP_HOME}/package.json .
+RUN chown -R pwuser:pwuser .
+
+USER pwuser
+
+COPY .yarnrc.yml ./
+RUN mkdir ./.yarn
+COPY .yarn/releases ./.yarn/releases
+RUN yarn install
+RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
+
+COPY --chown=pwuser:pwuser --chmod=0755 ${APP_HOME}/entrypoint.sh .
+
+ENV GIT_BRANCH=${GIT_BRANCH} \
+  GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL} \
+  DD_GIT_BRANCH=${GIT_BRANCH} \
+  DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+
+LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
+
+ENTRYPOINT ["./entrypoint.sh"]

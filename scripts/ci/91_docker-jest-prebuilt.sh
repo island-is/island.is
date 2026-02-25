@@ -7,4 +7,5 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "$DIR"/_common.sh
 
 # Building Docker images for jest tests (PREBUILT)
-exec "$DIR"/_docker-prebuilt.sh Dockerfile.prebuilt output-jest
+# Uses the same Dockerfile but targets output-jest-prebuilt
+exec "$DIR"/_docker.sh Dockerfile output-jest-prebuilt
