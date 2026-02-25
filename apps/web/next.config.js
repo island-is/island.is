@@ -57,14 +57,15 @@ const nextConfig = {
       skipDefaultConversion: true,
     },
     '@island.is/island-ui/contentful': {
-      transform: '@island.is/island-ui/contentful/src/lib/{{member}}/{{member}}',
+      transform:
+        '@island.is/island-ui/contentful/src/lib/{{member}}/{{member}}',
       skipDefaultConversion: true,
     },
     '@island.is/logging': {
       transform: '@island.is/logging/src/lib/{{member}}',
       skipDefaultConversion: true,
     },
-    'lodash': {
+    lodash: {
       transform: 'lodash/{{member}}',
       preventFullImport: true,
     },
@@ -75,9 +76,7 @@ const nextConfig = {
   },
   // Optimize barrel file imports (automatic optimization for listed packages)
   experimental: {
-    optimizePackageImports: [
-      ...getIslandPackages(),
-    ],
+    optimizePackageImports: [...getIslandPackages()],
   },
   async rewrites() {
     return [
