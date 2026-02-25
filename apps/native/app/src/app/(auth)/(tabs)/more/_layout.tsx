@@ -2,24 +2,23 @@ import { Stack, useRouter } from 'expo-router'
 import { Button, Icon } from '../../../../ui'
 import { Platform, TouchableOpacity } from 'react-native'
 import { useTheme } from 'styled-components'
+import { tabScreenOptions } from '../../../../constants/screen-options'
+import { useIntl } from 'react-intl'
 
 export default function MoreLayout() {
+  const intl = useIntl()
   const router = useRouter()
-  const theme = useTheme()
   return (
     <Stack
       initialRouteName="index"
       screenOptions={{
-        headerShown: true,
-        headerTransparent: true,
-        headerShadowVisible: false,
+        ...tabScreenOptions,
       }}
     >
       <Stack.Screen
         name="index"
         options={{
-          title: 'Meira',
-          headerLargeTitleEnabled: false,
+          title: intl.formatMessage({ id: 'profile.screenTitle' }),
           headerRight:
             Platform.OS === 'android'
               ? () => (
@@ -38,7 +37,10 @@ export default function MoreLayout() {
               : undefined,
         }}
       />
-      <Stack.Screen name="family/index" options={{ title: 'Fjölskyldan' }} />
+      <Stack.Screen
+        name="family/index"
+        options={{ title: intl.formatMessage({ id: 'family.screenTitle' }) }}
+      />
       <Stack.Screen
         name="family/[type]/[nationalId]"
         options={{
@@ -46,7 +48,12 @@ export default function MoreLayout() {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="assets/index" options={{ title: 'Fasteignir' }} />
+      <Stack.Screen
+        name="assets/index"
+        options={{
+          title: intl.formatMessage({ id: 'assetsOvervies.screenTitle' }),
+        }}
+      />
       <Stack.Screen
         name="assets/[id]"
         options={{
@@ -54,7 +61,10 @@ export default function MoreLayout() {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="vehicles/index" options={{ title: 'Ökutæki' }} />
+      <Stack.Screen
+        name="vehicles/index"
+        options={{ title: intl.formatMessage({ id: 'vehicles.screenTitle' }) }}
+      />
       <Stack.Screen name="vehicles/[id]" />
       <Stack.Screen
         name="vehicles/mileage/[id]"
@@ -63,7 +73,10 @@ export default function MoreLayout() {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="finance/index" options={{ title: 'Fjármál' }} />
+      <Stack.Screen
+        name="finance/index"
+        options={{ title: intl.formatMessage({ id: 'finance.screenTitle' }) }}
+      />
       <Stack.Screen
         name="finance/status/[orgId]/[chargeTypeId]"
         options={{
@@ -71,20 +84,36 @@ export default function MoreLayout() {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="applications/index" options={{ title: 'Umsóknir' }} />
+      <Stack.Screen
+        name="applications/index"
+        options={{
+          title: intl.formatMessage({ id: 'applications.screenTitle' }),
+        }}
+      />
       <Stack.Screen
         name="applications/incomplete"
-        options={{ title: 'Ólokið' }}
+        options={{
+          title: intl.formatMessage({ id: 'applications.incomplete' }),
+        }}
       />
       <Stack.Screen
         name="applications/in-progress"
-        options={{ title: 'Í vinnslu' }}
+        options={{
+          title: intl.formatMessage({ id: 'applications.inProgress' }),
+        }}
       />
       <Stack.Screen
         name="applications/completed"
-        options={{ title: 'Lokið' }}
+        options={{
+          title: intl.formatMessage({ id: 'applications.completed' }),
+        }}
       />
-      <Stack.Screen name="air-discount" options={{ title: 'Loftbrú' }} />
+      <Stack.Screen
+        name="air-discount"
+        options={{
+          title: intl.formatMessage({ id: 'airDiscount.screenTitle' }),
+        }}
+      />
     </Stack>
   )
 }

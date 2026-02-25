@@ -88,7 +88,6 @@ export default function FilterScreen() {
     <SafeAreaView style={{ flex: 1, marginTop: theme.spacing[3] }}>
       <Stack.Screen
         options={{
-          title: intl.formatMessage({ id: 'inboxFilters.screenTitle' }),
           headerRight: isSelected
             ? () => (
                 <TouchableOpacity onPress={clearAllFilters}>
@@ -186,6 +185,7 @@ export default function FilterScreen() {
                 })}
                 onSelectDate={setDateFrom}
                 selectedDate={dateFrom}
+                maximumDate={dateTo}
               />
               <DatePickerInput
                 label={intl.formatMessage({

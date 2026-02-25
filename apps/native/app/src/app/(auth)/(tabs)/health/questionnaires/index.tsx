@@ -1,17 +1,18 @@
-import React, { useCallback } from 'react'
+import { useRouter } from 'expo-router'
+import React, { useCallback, useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import { RefreshControl, SafeAreaView, ScrollView } from 'react-native'
-import { Stack, useRouter } from 'expo-router'
-import styled, { useTheme } from 'styled-components/native'
+import { FlatList, RefreshControl } from 'react-native'
+import { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '@/assets/icons/external-link.png'
 import {
+  GetQuestionnairesQueryResult,
   QuestionnaireQuestionnairesOrganizationEnum,
   QuestionnaireQuestionnairesStatusEnum,
   useGetQuestionnairesQuery,
 } from '@/graphql/types/schema'
-import { useLocale } from '@/hooks/use-locale'
 import { useBrowser } from '@/hooks/use-browser'
+import { useLocale } from '@/hooks/use-locale'
 import {
   Problem,
   QuestionnaireCard,
@@ -19,16 +20,14 @@ import {
   Skeleton,
 } from '@/ui'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
+import { getQuestionnaireOrganizationLabelId } from '@/utils/questionnaire-utils'
 import { questionnaireUrls } from '@/utils/url-builder'
-import { getQuestionnaireOrganizationLabelId } from '../../../../../utils/questionnaire-utils'
 
-const Host = styled(SafeAreaView)`
-  flex: 1;
-`
-
-const ScrolledView = styled(ScrollView)`
-  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
-`
+type Item = NonNullable<
+  NonNullable<
+    NonNullable<GetQuestionnairesQueryResult['data']>['questionnairesList']
+  >['questionnaires']
+>[number]
 
 export default function QuestionnairesScreen() {
   const { openBrowser } = useBrowser()
@@ -104,7 +103,10 @@ export default function QuestionnairesScreen() {
   const isInitialLoading = loading && !data
 
   const openDetail = useCallback(
-    (id: string, organization?: QuestionnaireQuestionnairesOrganizationEnum) => {
+    (
+      id: string,
+      organization?: QuestionnaireQuestionnairesOrganizationEnum,
+    ) => {
       router.navigate({
         pathname: '/health/questionnaires/[id]',
         params: { id, organization },
@@ -113,82 +115,92 @@ export default function QuestionnairesScreen() {
     [router],
   )
 
-  const questionnaires = data?.questionnairesList?.questionnaires ?? []
+  const renderItem = useCallback(
+    ({ item }: { item: Item }) => {
+      const open = () => openDetail(item.id, item.organization ?? undefined)
+      return (
+        <QuestionnaireCard
+          key={item.id}
+          title={item.title}
+          organization={intl.formatMessage({
+            id: getQuestionnaireOrganizationLabelId(item.organization),
+          })}
+          date={new Date(item.sentDate)}
+          status={
+            item.status ?? QuestionnaireQuestionnairesStatusEnum.NotAnswered
+          }
+          onPress={open}
+          actionList={getActionList(
+            item.status,
+            item.organization,
+            item.id,
+            item.lastSubmissionId ?? undefined,
+          )}
+          style={{
+            marginBottom: theme.spacing[2]
+          }}
+        />
+      )
+    },
+    [getActionList, intl, openDetail],
+  )
+
+  const questionnaires = useMemo(
+    () =>
+      (data?.questionnairesList?.questionnaires ?? [])
+        .filter(
+          (item, index, self) =>
+            item?.id && index === self.findIndex((t) => t?.id === item?.id),
+        )
+        .slice(0, 64), // @todo needs paging
+    [data],
+  )
+
   return (
-    <Host>
-      <Stack.Screen
-        options={{
-          title: intl.formatMessage({
-            id: 'health.questionnaires.screenTitle',
-          }),
-        }}
-      />
-      <ScrolledView
-        refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refetch} />
-        }
-        contentContainerStyle={{
-          paddingTop: theme.spacing[3],
-          paddingBottom: theme.spacing[4],
-          gap: theme.spacing[2],
-        }}
-      >
-        {isInitialLoading ? (
-          <>
-            {createSkeletonArr(4).map((item) => (
-              <Skeleton
-                key={item.id}
-                active
-                backgroundColor={{
-                  dark: theme.shades.dark.shade300,
-                  light: theme.color.blue100,
-                }}
-                overlayColor={{
-                  dark: theme.shades.dark.shade200,
-                  light: theme.color.blue200,
-                }}
-                overlayOpacity={1}
-                height={112}
-                style={{
-                  borderRadius: 8,
-                }}
-              />
-            ))}
-          </>
-        ) : null}
+    <FlatList
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={refetch} />
+      }
+      style={{
+        paddingHorizontal: theme.spacing[2],
+        flex: 1,
+      }}
+      initialNumToRender={6}
+      data={questionnaires}
+      keyExtractor={(item) => item.id}
+      renderItem={renderItem}
+      ListEmptyComponent={
+        <>
+          {!loading && error && questionnaires.length === 0 ? (
+            <Problem error={error} withContainer />
+          ) : null}
 
-        {!loading && error && questionnaires.length === 0 ? (
-          <Problem error={error} withContainer />
-        ) : null}
-
-        {!loading && !error && questionnaires.length === 0 ? (
-          <Problem type="no_data" withContainer />
-        ) : null}
-
-        {questionnaires.map((item) => {
-          const open = () => openDetail(item.id, item.organization ?? undefined)
-          return (
-            <QuestionnaireCard
-              key={item.id}
-              title={item.title}
-              organization={intl.formatMessage({
-                id: getQuestionnaireOrganizationLabelId(item.organization),
-              })}
-              date={new Date(item.sentDate)}
-              status={
-                item.status ?? QuestionnaireQuestionnairesStatusEnum.NotAnswered
-              }
-              onPress={open}
-              actionList={getActionList(
-                item.status,
-                item.organization,
-                item.id,
-                item.lastSubmissionId ?? undefined,
-              )}
-            />
-          )
-        })}
-      </ScrolledView>
-    </Host>
+          {!loading && !error && questionnaires.length === 0 ? (
+            <Problem type="no_data" withContainer />
+          ) : null}
+          {isInitialLoading
+            ? createSkeletonArr(4).map((item) => (
+                <Skeleton
+                  key={item.id}
+                  active
+                  backgroundColor={{
+                    dark: theme.shades.dark.shade300,
+                    light: theme.color.blue100,
+                  }}
+                  overlayColor={{
+                    dark: theme.shades.dark.shade200,
+                    light: theme.color.blue200,
+                  }}
+                  overlayOpacity={1}
+                  height={112}
+                  style={{
+                    borderRadius: 8,
+                  }}
+                />
+              ))
+            : null}
+        </>
+      }
+    />
   )
 }

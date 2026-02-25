@@ -1,6 +1,13 @@
 import { useRef } from 'react'
 import { useIntl } from 'react-intl'
-import { Animated, TouchableHighlight, View, SafeAreaView } from 'react-native'
+import {
+  Animated,
+  TouchableHighlight,
+  View,
+  SafeAreaView,
+  TouchableNativeFeedback,
+  Image,
+} from 'react-native'
 import { Stack, useRouter } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -59,14 +66,23 @@ export default function MoreScreen() {
 
   return (
     <>
-      <Stack.Toolbar placement="right">
-        <Stack.Toolbar.Button
-          icon={require('@/assets/icons/settings.png')}
-          onPress={() => {
-            router.navigate('/settings')
-          }}
-        />
-      </Stack.Toolbar>
+      <Stack.Screen
+        options={{
+          headerTitle: intl.formatMessage({ id: 'profile.screenTitle' }),
+          headerRight: () => (
+            <>
+              <TouchableNativeFeedback
+                onPress={() => router.navigate('/settings')}
+              >
+                <Image
+                  source={require('@/assets/icons/settings.png')}
+                  style={{ width: 24, height: 24 }}
+                />
+              </TouchableNativeFeedback>
+            </>
+          ),
+        }}
+      />
       <Animated.ScrollView
         style={{
           flex: 1,

@@ -140,19 +140,19 @@ export default function QuestionnaireDetailScreen() {
     errorContent = <Problem type="no_data" withContainer />
   }
 
-  if (errorContent) {
-    return (
-      <Host>
-        <Stack.Screen options={{ title: '', headerShown: false }} />
-        <NavigationBarSheet
-          componentId="questionnaire-detail"
-          onClosePress={close}
-          style={{ marginHorizontal: 16 }}
-        />
-        <Content>{errorContent}</Content>
-      </Host>
-    )
-  }
+  // if (errorContent) {
+  //   return (
+  //     <Host>
+  //       <Stack.Screen options={{ title: '', headerShown: false }} />
+  //       <NavigationBarSheet
+  //         componentId="questionnaire-detail"
+  //         onClosePress={close}
+  //         style={{ marginHorizontal: 16 }}
+  //       />
+  //       <Content>{errorContent}</Content>
+  //     </Host>
+  //   )
+  // }
 
   const isAnswered =
     base?.status === QuestionnaireQuestionnairesStatusEnum.Answered
@@ -161,94 +161,94 @@ export default function QuestionnaireDetailScreen() {
     base?.status === QuestionnaireQuestionnairesStatusEnum.NotAnswered
 
   return (
-    <Host>
+    <>
       <Stack.Screen options={{ title }} />
-
       <ScrollView
         style={{ flex: 1 }}
-        contentInset={{ bottom: 24 }}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={refetch} />
         }
       >
-        <Content>
-          <Typography variant="body">
-            <FormattedMessage id="health.questionnaires.detail.description" />
-          </Typography>
-          <View>
-            <ButtonRow>
-              {(isNotAnswered || isDraft) && (
-                <Button
-                  title={intl.formatMessage({
-                    id: isDraft
-                      ? 'health.questionnaires.action.continue-draft'
-                      : 'health.questionnaires.action.answer',
-                  })}
-                  onPress={onAnswer}
-                  isFilledUtilityButton
-                  icon={externalLinkIcon}
-                  ellipsis
-                />
-              )}
-              {(isAnswered || isDraft) && (
-                <Button
-                  title={intl.formatMessage({
-                    id: 'health.questionnaires.action.view-answer',
-                  })}
-                  onPress={onView}
-                  isUtilityButton
-                  isOutlined
-                  icon={externalLinkIcon}
-                  ellipsis
-                />
-              )}
-            </ButtonRow>
-          </View>
+        {errorContent ? errorContent : (
+          <Content>
+            <Typography variant="body">
+              <FormattedMessage id="health.questionnaires.detail.description" />
+            </Typography>
+            <View>
+              <ButtonRow>
+                {(isNotAnswered || isDraft) && (
+                  <Button
+                    title={intl.formatMessage({
+                      id: isDraft
+                        ? 'health.questionnaires.action.continue-draft'
+                        : 'health.questionnaires.action.answer',
+                    })}
+                    onPress={onAnswer}
+                    isFilledUtilityButton
+                    icon={externalLinkIcon}
+                    ellipsis
+                  />
+                )}
+                {(isAnswered || isDraft) && (
+                  <Button
+                    title={intl.formatMessage({
+                      id: 'health.questionnaires.action.view-answer',
+                    })}
+                    onPress={onView}
+                    isUtilityButton
+                    isOutlined
+                    icon={externalLinkIcon}
+                    ellipsis
+                  />
+                )}
+              </ButtonRow>
+            </View>
 
-          <View>
-            <InfoRow>
-              <RowHeader>
-                <Label variant="eyebrow">
-                  <FormattedMessage id="health.questionnaires.detail.status" />
-                </Label>
-              </RowHeader>
-              <Typography variant="heading4">
-                <FormattedMessage
-                  id={getQuestionnaireStatusLabelId(base?.status)}
-                />
-              </Typography>
-            </InfoRow>
-
-            {base?.organization ? (
+            <View>
               <InfoRow>
                 <RowHeader>
                   <Label variant="eyebrow">
-                    <FormattedMessage id="health.questionnaires.detail.institution" />
+                    <FormattedMessage id="health.questionnaires.detail.status" />
                   </Label>
                 </RowHeader>
                 <Typography variant="heading4">
                   <FormattedMessage
-                    id={getQuestionnaireOrganizationLabelId(base?.organization)}
+                    id={getQuestionnaireStatusLabelId(base?.status)}
                   />
                 </Typography>
               </InfoRow>
-            ) : null}
 
-            {base?.sentDate ? (
-              <InfoRow>
-                <RowHeader>
-                  <Label variant="eyebrow">
-                    <FormattedMessage id="health.questionnaires.detail.sentDate" />
-                  </Label>
-                </RowHeader>
-                <Typography variant="heading4">
-                  {intl.formatDate(new Date(base?.sentDate ?? ''))}
-                </Typography>
-              </InfoRow>
-            ) : null}
-          </View>
-        </Content>
+              {base?.organization ? (
+                <InfoRow>
+                  <RowHeader>
+                    <Label variant="eyebrow">
+                      <FormattedMessage id="health.questionnaires.detail.institution" />
+                    </Label>
+                  </RowHeader>
+                  <Typography variant="heading4">
+                    <FormattedMessage
+                      id={getQuestionnaireOrganizationLabelId(base?.organization)}
+                    />
+                  </Typography>
+                </InfoRow>
+              ) : null}
+
+              {base?.sentDate ? (
+                <InfoRow>
+                  <RowHeader>
+                    <Label variant="eyebrow">
+                      <FormattedMessage id="health.questionnaires.detail.sentDate" />
+                    </Label>
+                  </RowHeader>
+                  <Typography variant="heading4">
+                    {intl.formatDate(new Date(base?.sentDate ?? ''))}
+                  </Typography>
+                </InfoRow>
+              ) : null}
+            </View>
+          </Content>
+        )}
       </ScrollView>
-    </Host>
+    </>
   )
 }

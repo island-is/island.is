@@ -1,7 +1,8 @@
 // import { Button as NativeButton } from '@expo/ui/swift-ui'
 // import { ContextMenu, Host } from '@expo/ui/swift-ui'
 // import { Host, Button as NativeButton } from '@expo/ui/swift-ui'
-import ContextMenu from 'react-native-context-menu-view'
+// import ContextMenu from 'react-native-context-menu-view'
+import { ContextMenu } from 'react-native-platform-components';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { useIntl } from 'react-intl'
 import {
@@ -94,14 +95,21 @@ export default function VehicleDetailScreen() {
           title: title ?? data?.vehiclesDetail?.basicInfo?.model ?? '',
           headerRight: () => (
             <ContextMenu
-              dropdownMenuMode
+              title="Fleiri valmöguleikar"
+              trigger="tap"
               actions={
                 dropdownItems.map((item) => ({
+                  id: item.link,
                   title: item.title,
-                  systemIcon: 'arrow.up.right',
-                  onPress: () => openBrowser(item.link),
+                  icon: 'arrow.up.right'
                 })) || []
               }
+              onPressAction={(id, title) => {
+                const item = dropdownItems.find((i) => i.link === id)
+                if (item) {
+                  openBrowser(item.link)
+                }
+              }}
             >
               <TouchableNativeFeedback>
                 <Image

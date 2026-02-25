@@ -7,8 +7,10 @@ import { isOnboarded } from '@/utils/onboarding'
 import { blue100, blue400 } from '../../../ui'
 import { Image, Platform, StyleSheet, View } from 'react-native'
 import { useTheme } from 'styled-components'
+import { useIntl } from 'react-intl'
 
 export default function TabLayout() {
+  const intl = useIntl()
   const theme = useTheme()
   const hasOnboardedPinCode = usePreferencesStore((s) => s.hasOnboardedPinCode)
   const hasOnboardedBiometrics = usePreferencesStore(
@@ -17,8 +19,6 @@ export default function TabLayout() {
   const hasOnboardedNotifications = usePreferencesStore(
     (s) => s.hasOnboardedNotifications,
   )
-  const route = usePathname()
-  const [vis, setVis] = useState(true)
 
   const onboarded = isOnboarded()
 
@@ -31,19 +31,9 @@ export default function TabLayout() {
       return <Redirect href="/(auth)/onboarding/notifications" />
     }
   }
-
-  useEffect(() => {
-    if (route.includes('inbox/') && route !== '/inbox/filter') {
-      setTimeout(() => setVis(false), 100)
-    } else {
-      setVis(true)
-    }
-  }, [route])
-
   return (
     <>
       <NativeTabs
-        hidden={!vis}
         labelVisibilityMode="labeled"
         backgroundColor={
           Platform.OS === 'android' ? theme.shade.background : undefined
@@ -58,7 +48,9 @@ export default function TabLayout() {
         iconColor={blue400}
       >
         <NativeTabs.Trigger name="inbox">
-          <NativeTabs.Trigger.Label>Pósthólf</NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Label>
+            {intl.formatMessage({ id: 'inbox.bottomTabText' })}
+          </NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
             src={{
               default: require('@/assets/icons/tabbar-mail.png'),
@@ -68,7 +60,9 @@ export default function TabLayout() {
         </NativeTabs.Trigger>
 
         <NativeTabs.Trigger name="wallet">
-          <NativeTabs.Trigger.Label>Skírteini</NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Label>
+            {intl.formatMessage({ id: 'wallet.bottomTabText' })}
+          </NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
             src={{
               default: require('@/assets/icons/tabbar-wallet.png'),
@@ -78,7 +72,7 @@ export default function TabLayout() {
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="index">
           <NativeTabs.Trigger.Label hidden={Platform.OS === 'ios'}>
-            Heim
+            {intl.formatMessage({ id: 'home.screenTitle' })}
           </NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
             src={{
@@ -89,7 +83,9 @@ export default function TabLayout() {
           />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="health">
-          <NativeTabs.Trigger.Label>Heilsa</NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Label>
+            {intl.formatMessage({ id: 'health.overview.screenTitle' })}
+          </NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
             src={{
               default: require('@/assets/icons/tabbar-health.png'),
@@ -98,7 +94,9 @@ export default function TabLayout() {
           />
         </NativeTabs.Trigger>
         <NativeTabs.Trigger name="more">
-          <NativeTabs.Trigger.Label>Meira</NativeTabs.Trigger.Label>
+          <NativeTabs.Trigger.Label>
+            {intl.formatMessage({ id: 'profile.screenTitle' })}
+          </NativeTabs.Trigger.Label>
           <NativeTabs.Trigger.Icon
             src={require('@/assets/icons/tabbar-more.png')}
           />

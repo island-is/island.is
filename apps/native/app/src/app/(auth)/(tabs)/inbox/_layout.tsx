@@ -1,30 +1,40 @@
 import { Stack } from 'expo-router'
+import { tabScreenOptions } from '../../../../constants/screen-options'
+import { useIntl } from 'react-intl'
 
 export default function InboxLayout() {
+  const intl = useIntl()
   return (
-    <Stack initialRouteName="index">
+    <Stack
+      initialRouteName="index"
+      screenOptions={{
+        ...tabScreenOptions,
+      }}
+    >
       <Stack.Screen
         name="index"
         options={{
-          headerShown: true,
-          headerTransparent: true,
-          title: 'Pósthólf',
+          title: intl.formatMessage({ id: 'inbox.screenTitle' }),
         }}
       />
-      <Stack.Screen name="filter"
+      <Stack.Screen
+        name="filter"
         options={{
-          headerTransparent: true,
-          title: 'Sía pósthólfið',
+          title: intl.formatMessage({ id: 'inboxFilters.screenTitle' }),
         }}
       />
       <Stack.Screen
         name="[id]/index"
         options={{
-          headerTransparent: true,
-          title: 'Póstur',
+          title: intl.formatMessage({ id: 'documentDetail.screenTitle' }),
         }}
       />
-      <Stack.Screen name="[id]/communications" options={{ title: 'Samskipti' }} />
+      <Stack.Screen
+        name="[id]/communications"
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen
         name="[id]/reply"
         options={{

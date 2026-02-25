@@ -6,6 +6,7 @@ import {
   Image,
   ListRenderItemInfo,
   RefreshControl,
+  TouchableNativeFeedback,
   View,
 } from 'react-native'
 import SpotlightSearch from 'react-native-spotlight-search'
@@ -30,7 +31,7 @@ import {
   EmptyList,
   GeneralCardSkeleton,
   TabButtons,
-  Typography
+  Typography,
 } from '@/ui'
 import { isIos } from '@/utils/devices'
 import { testIDs } from '@/utils/test-ids'
@@ -209,112 +210,121 @@ export default function WalletScreen() {
 
   return (
     <>
-      <Stack.Toolbar placement='right'>
-        <Stack.Toolbar.Button
-          icon={require('@/assets/icons/navbar-scan.png')}
-          onPress={() => {
-            router.navigate('/wallet/scanner')
-          }}
-        />
-      </Stack.Toolbar>
-    <FlatList
-      ref={flatListRef}
-      testID={testIDs.SCREEN_HOME}
-      style={{
-        zIndex: 9,
-      }}
-      contentInset={{
-        bottom: 32,
-      }}
-      contentContainerStyle={{
-        paddingTop: theme.spacing[2],
-      }}
-      refreshControl={
-        <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
-      }
-      scrollEventThrottle={16}
-      scrollToOverflowEnabled={true}
-      ListHeaderComponent={
-        (isIos && !isBarcodeEnabled) || hasChildLicenses ? (
-          <View style={{ marginBottom: 16 }}>
-            {isIos && !isBarcodeEnabled && (
-              <Alert
-                type="info"
-                visible={!dismissed.includes('howToUseLicence')}
-                message={intl.formatMessage({ id: 'wallet.alertMessage' })}
-                onClose={() => dismiss('howToUseLicence')}
-              />
-            )}
-            {hasChildLicenses && (
-              <Tabs>
-                <TabButtons
-                  buttons={[
-                    {
-                      title: intl.formatMessage({
-                        id: 'wallet.yourLicenses',
-                      }),
-                    },
-                    {
-                      title: intl.formatMessage({
-                        id: 'wallet.childLicenses',
-                      }),
-                    },
-                  ]}
-                  selectedTab={selectedTab}
-                  setSelectedTab={setSelectedTab}
+      <Stack.Screen
+        options={{
+          headerTitle: intl.formatMessage({ id: 'wallet.screenTitle' }),
+          headerRight: () => (
+            <>
+              <TouchableNativeFeedback
+                onPress={() => router.navigate('/wallet/scanner')}
+              >
+                <Image
+                  source={require('@/assets/icons/navbar-scan.png')}
+                  style={{ width: 32, height: 32 }}
                 />
-              </Tabs>
-            )}
-          </View>
-        ) : null
-      }
-      ListEmptyComponent={
-        <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
-          <EmptyList
-            title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
-            description={intl.formatMessage({
-              id: 'wallet.emptyListDescription',
-            })}
-            image={
-              <Image
-                source={illustrationSrc}
-                style={{ width: 146, height: 198 }}
-                resizeMode="contain"
-              />
-            }
-          />
-        </View>
-      }
-      ListFooterComponent={
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: theme.spacing[3],
-          }}
-        >
-          {lastUpdatedFormatted && (
-            <Typography variant="body3">
-              {intl.formatMessage(
-                { id: 'wallet.lastUpdated' },
-                { date: lastUpdatedFormatted },
-              )}
-            </Typography>
-          )}
-          <Button
-            onPress={() =>
-              isIos ? programmaticScrollWhenRefreshing() : onRefresh()
-            }
-            title={intl.formatMessage({ id: 'wallet.update' })}
-            isTransparent={true}
-            icon={refreshIcon}
-          />
-        </View>
-      }
-      data={data}
-      keyExtractor={keyExtractor}
-      renderItem={renderItem}
+              </TouchableNativeFeedback>
+            </>
+          ),
+        }}
       />
-      </>
+      <FlatList
+        ref={flatListRef}
+        testID={testIDs.SCREEN_HOME}
+        style={{
+          zIndex: 9,
+        }}
+        contentInset={{
+          bottom: 32,
+        }}
+        contentContainerStyle={{
+          paddingTop: theme.spacing[2],
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+        }
+        scrollEventThrottle={16}
+        scrollToOverflowEnabled={true}
+        ListHeaderComponent={
+          (isIos && !isBarcodeEnabled) || hasChildLicenses ? (
+            <View style={{ marginBottom: 16 }}>
+              {isIos && !isBarcodeEnabled && (
+                <Alert
+                  type="info"
+                  visible={!dismissed.includes('howToUseLicence')}
+                  message={intl.formatMessage({ id: 'wallet.alertMessage' })}
+                  onClose={() => dismiss('howToUseLicence')}
+                />
+              )}
+              {hasChildLicenses && (
+                <Tabs>
+                  <TabButtons
+                    buttons={[
+                      {
+                        title: intl.formatMessage({
+                          id: 'wallet.yourLicenses',
+                        }),
+                      },
+                      {
+                        title: intl.formatMessage({
+                          id: 'wallet.childLicenses',
+                        }),
+                      },
+                    ]}
+                    selectedTab={selectedTab}
+                    setSelectedTab={setSelectedTab}
+                  />
+                </Tabs>
+              )}
+            </View>
+          ) : null
+        }
+        ListEmptyComponent={
+          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
+            <EmptyList
+              title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
+              description={intl.formatMessage({
+                id: 'wallet.emptyListDescription',
+              })}
+              image={
+                <Image
+                  source={illustrationSrc}
+                  style={{ width: 146, height: 198 }}
+                  resizeMode="contain"
+                />
+              }
+            />
+          </View>
+        }
+        ListFooterComponent={
+          <View
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginTop: theme.spacing[3],
+            }}
+          >
+            {lastUpdatedFormatted && (
+              <Typography variant="body3">
+                {intl.formatMessage(
+                  { id: 'wallet.lastUpdated' },
+                  { date: lastUpdatedFormatted },
+                )}
+              </Typography>
+            )}
+            <Button
+              onPress={() =>
+                isIos ? programmaticScrollWhenRefreshing() : onRefresh()
+              }
+              title={intl.formatMessage({ id: 'wallet.update' })}
+              isTransparent={true}
+              icon={refreshIcon}
+            />
+          </View>
+        }
+        data={data}
+        keyExtractor={keyExtractor}
+        renderItem={renderItem}
+      />
+    </>
   )
 }

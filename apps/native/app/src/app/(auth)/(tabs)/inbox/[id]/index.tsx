@@ -1,20 +1,18 @@
 import { PdfView } from '@kishannareshpal/expo-pdf'
 import { Stack, useLocalSearchParams } from 'expo-router'
 import { useIntl } from 'react-intl'
-import { Image, TouchableOpacity, View } from 'react-native'
+import { Image, TouchableNativeFeedback } from 'react-native'
 import WebView from 'react-native-webview'
 import styled from 'styled-components/native'
 
-import {
-  DocumentV2,
-} from '@/graphql/types/schema'
-import { toggleAction } from '@/lib/post-mail-action'
+import { DocumentV2 } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
-import { getButtonsForActions } from '../../../../../utils/get-buttons-for-actions'
-import { shareFile } from '../../../../../utils/share-file'
+import { useDocument } from '@/hooks/use-document'
+import { toggleAction } from '@/lib/post-mail-action'
 import { useOrganizationsStore } from '@/stores/organizations-store'
 import { Alert, Header, Loader, Problem, blue400, dynamicColor } from '@/ui'
-import { useDocument } from '@/hooks/use-document'
+import { getButtonsForActions } from '../../../../../utils/get-buttons-for-actions'
+import { shareFile } from '../../../../../utils/share-file'
 
 // --- Styled ---
 
@@ -50,7 +48,8 @@ export default function DocumentScreen() {
   const onShare = () =>
     shareFile({
       document: document as DocumentV2,
-      type: contentType === 'pdf' ? 'pdf' : contentType === 'html' ? 'html' : 'url',
+      type:
+        contentType === 'pdf' ? 'pdf' : contentType === 'html' ? 'html' : 'url',
       pdfUrl: pdfUri ?? undefined,
       content: contentType !== 'pdf' ? document.content?.value : undefined,
     })
@@ -62,10 +61,7 @@ export default function DocumentScreen() {
 
   const onToggleBookmark = () => {
     if (document.id)
-      toggleAction(
-        document.bookmarked ? 'unbookmark' : 'bookmark',
-        document.id,
-      )
+      toggleAction(document.bookmarked ? 'unbookmark' : 'bookmark', document.id)
   }
 
   const hasAlert = !!document.alert?.title || !!document.alert?.data
@@ -75,36 +71,50 @@ export default function DocumentScreen() {
     <>
       <Stack.Screen
         options={{
-          title: intl.formatMessage({ id: 'documentDetail.screenTitle' }),
           headerRight: () => (
-            <View style={{ flexDirection: 'row', gap: 12 }}>
-              <TouchableOpacity onPress={onShare} disabled={!ready}>
+            <>
+              <TouchableNativeFeedback onPress={onShare} disabled={!ready}>
                 <Image
                   source={require('@/assets/icons/navbar-share.png')}
-                  style={{ width: 24, height: 24, tintColor: blue400 }}
+                  style={{
+                    width: 24,
+                    height: 24,
+                    tintColor: blue400,
+                    marginHorizontal: 8,
+                  }}
                 />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={onToggleArchive}>
+              </TouchableNativeFeedback>
+              <TouchableNativeFeedback onPress={onToggleArchive}>
                 <Image
                   source={
                     document.archived
                       ? require('@/assets/icons/tray-filled.png')
                       : require('@/assets/icons/tray.png')
                   }
-                  style={{ width: 24, height: 24, tintColor: blue400 }}
+                  style={{
+                    width: 24,
+                    height: 24,
+                    tintColor: blue400,
+                    marginHorizontal: 8,
+                  }}
                 />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={onToggleBookmark}>
+              </TouchableNativeFeedback>
+              <TouchableNativeFeedback onPress={onToggleBookmark}>
                 <Image
                   source={
                     document.bookmarked
                       ? require('@/assets/icons/star-filled.png')
                       : require('@/assets/icons/star.png')
                   }
-                  style={{ width: 24, height: 24, tintColor: blue400 }}
+                  style={{
+                    width: 24,
+                    height: 24,
+                    tintColor: blue400,
+                    marginHorizontal: 8,
+                  }}
                 />
-              </TouchableOpacity>
-            </View>
+              </TouchableNativeFeedback>
+            </>
           ),
         }}
       />
