@@ -44,6 +44,12 @@ const {
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  // Skip ESLint during builds (CI runs lint separately)
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  // Use SWC for minification (faster than Terser)
+  swcMinify: true,
   // Optimize barrel file imports (replaces babel-plugin-transform-imports)
   // Automatically includes all @island.is/* packages from tsconfig.base.json
   experimental: {
