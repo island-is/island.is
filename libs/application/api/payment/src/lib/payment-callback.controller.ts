@@ -30,11 +30,7 @@ export class PaymentCallbackController {
       // TODO: no-op.. it would be nice eventually to update all statuses
       return
     }
-    await this.paymentService.fulfillPayment(
-      id,
-      callback.receptionID,
-      applicationId,
-    )
+    await this.paymentService.fulfillPayment(id, applicationId)
 
     const application = await this.applicationService.findOneById(applicationId)
     if (application) {
@@ -95,7 +91,6 @@ export class PaymentCallbackController {
       // }
       await this.paymentService.fulfillPayment(
         callback.paymentFlowMetadata.paymentId,
-        callback.details?.eventMetadata?.charge?.receptionId ?? '',
         callback.paymentFlowMetadata.applicationId,
       )
 

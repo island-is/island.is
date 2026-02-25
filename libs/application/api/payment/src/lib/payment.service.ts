@@ -56,14 +56,13 @@ export class PaymentService {
 
   async fulfillPayment(
     paymentId: string,
-    receptionID: string,
     applicationId: string,
   ): Promise<void> {
     try {
       await this.paymentModel.update(
         {
           fulfilled: true,
-          reference_id: receptionID,
+          reference_id: null,
         },
         {
           where: {
