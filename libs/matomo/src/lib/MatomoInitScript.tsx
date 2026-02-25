@@ -24,15 +24,22 @@ export const MatomoInitScript = ({
   const normalizedDomain = matomoDomain.endsWith('/')
     ? matomoDomain
     : `${matomoDomain}/`
-
+  const inline = `
+    window._paq = window._paq || [];
+    window._paq.push(['setTrackerUrl', '${normalizedDomain}matomo.php']);
+    window._paq.push(['setSiteId', '${matomoSiteId}']);
+    window._paq.push(['trackPageView']);
+    window._paq.push(['enableLinkTracking']);
+  `
   return (
-    <script
-      async
-      defer
-      src={`${normalizedDomain}matomo.js`}
-      data-id="matomoscript"
-      data-domain={normalizedDomain}
-      data-siteid={matomoSiteId}
-    />
+    <>
+      <script dangerouslySetInnerHTML={{ __html: inline }} />
+      <script
+        async
+        defer
+        src={`${normalizedDomain}matomo.js`}
+        data-id="matomoscript"
+      />
+    </>
   )
 }
