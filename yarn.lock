@@ -8872,19 +8872,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@expo/ui@npm:~55.0.0":
-  version: 55.0.0
-  resolution: "@expo/ui@npm:55.0.0"
-  dependencies:
-    sf-symbols-typescript: "npm:^2.1.0"
-  peerDependencies:
-    expo: "*"
-    react: "*"
-    react-native: "*"
-  checksum: 10/6768f8135221285c8ec6f07937dc8bd6a03afd253e41004cc8d1e56ccdd4e608e7e34cad2319e8d6abf2a2979c9779d942ca5a39460080e57339f97a90f60f44
-  languageName: node
-  linkType: hard
-
 "@expo/vector-icons@npm:^15.0.2":
   version: 15.0.3
   resolution: "@expo/vector-icons@npm:15.0.3"
@@ -11179,7 +11166,6 @@ __metadata:
     "@apollo/client": "npm:3.7.7"
     "@datadog/mobile-react-native": "npm:3.0.2"
     "@expo-google-fonts/ibm-plex-sans": "npm:0.4.1"
-    "@expo/ui": "npm:~55.0.0"
     "@expo/vector-icons": "npm:^15.0.2"
     "@kishannareshpal/expo-pdf": "npm:0.3.1"
     "@react-native-async-storage/async-storage": "npm:2.2.0"
@@ -11221,9 +11207,8 @@ __metadata:
     react-dom: "npm:19.2.0"
     react-intl: "npm:8.1.3"
     react-native: "npm:0.83.1"
-    react-native-app-auth: "npm:8.1.0"
+    react-native-app-auth: "patch:react-native-app-auth@npm%3A8.1.0#~/.yarn/patches/react-native-app-auth-npm-8.1.0-287837dd4a.patch"
     react-native-context-menu-view: "npm:1.21.0"
-    react-native-date-picker: "npm:5.0.13"
     react-native-edge-to-edge: "npm:1.7.0"
     react-native-gesture-handler: "npm:~2.30.0"
     react-native-keychain: "npm:10.0.0"
@@ -11231,6 +11216,7 @@ __metadata:
     react-native-mmkv-storage: "npm:12.0.1"
     react-native-passkey: "npm:3.3.2"
     react-native-pdf-light: "npm:2.4.2"
+    react-native-platform-components: "npm:0.8.6"
     react-native-quick-actions: "npm:0.3.13"
     react-native-reanimated: "npm:~4.2.1"
     react-native-safe-area-context: "npm:~5.6.2"
@@ -46156,6 +46142,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-app-auth@patch:react-native-app-auth@npm%3A8.1.0#~/.yarn/patches/react-native-app-auth-npm-8.1.0-287837dd4a.patch":
+  version: 8.1.0
+  resolution: "react-native-app-auth@patch:react-native-app-auth@npm%3A8.1.0#~/.yarn/patches/react-native-app-auth-npm-8.1.0-287837dd4a.patch::version=8.1.0&hash=7fe4be"
+  dependencies:
+    invariant: "npm:2.2.4"
+    react-native-base64: "npm:0.0.2"
+  peerDependencies:
+    react-native: ">=0.63.0"
+  checksum: 10/fcd0b5932591546a77f0e545a6f4349241bb2add80ba9827110bab9ad5c97815d112ad0ee0993522bb1c061dcc62747b465f8f0b18812cf51d75c83b6d9277e3
+  languageName: node
+  linkType: hard
+
 "react-native-base64@npm:0.0.2":
   version: 0.0.2
   resolution: "react-native-base64@npm:0.0.2"
@@ -46170,16 +46168,6 @@ __metadata:
     react: ^16.8.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-native: ">=0.60.0-rc.0 <1.0.x"
   checksum: 10/719355771b28e6ec9231f42f38ab4cfcd603f6957532cfc76c79dcd0c11b8503c3a301a733aa170e5168f9b33543d7538ea21910fd0c43d7780dcef44556db8d
-  languageName: node
-  linkType: hard
-
-"react-native-date-picker@npm:5.0.13":
-  version: 5.0.13
-  resolution: "react-native-date-picker@npm:5.0.13"
-  peerDependencies:
-    react: ">= 17.0.1"
-    react-native: ">= 0.64.3"
-  checksum: 10/3a61bc300e005f9f0dc64bb8de10ea2aa0b53a430d259a615d7aa393d88c9b82c5967b393c0e0eb15a4d61cd210d7b529a526a92cb40645dddec822f305b7ace
   languageName: node
   linkType: hard
 
@@ -46290,6 +46278,16 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/38d9c688d73057a4ca28444cab957469740c939fb9bf25560b3ae020652738296681eb71874356e55f80a6fab9cca267dd11519d9132c09876a84c0049cbc056
+  languageName: node
+  linkType: hard
+
+"react-native-platform-components@npm:0.8.6":
+  version: 0.8.6
+  resolution: "react-native-platform-components@npm:0.8.6"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/0c4d059af19f028b89b0483030b9000c8b5c6c01a90b66d87fa5ad1371f8712306f2af292a885a1295414cbb4dd6a54e7c02c3522a1054c3133d4b7f7f0b04e9
   languageName: node
   linkType: hard
 
