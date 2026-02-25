@@ -35,7 +35,6 @@ export const MatomoInitScript = ({
     <>
       <script dangerouslySetInnerHTML={{ __html: inline }} />
       <script
-        async
         defer
         src={`${normalizedDomain}matomo.js`}
         data-id="matomoscript"
