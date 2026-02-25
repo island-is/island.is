@@ -79,7 +79,11 @@ type NavigationBarSheetProps = {
   closable?: boolean
 }
 
-export function NavigationBarSheet({
+export function NavigationBarSheet(props: NavigationBarSheetProps) {
+  return null;
+}
+
+export function OldNavigationBarSheet({
   title,
   onClosePress,
   style,
