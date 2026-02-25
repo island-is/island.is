@@ -40,7 +40,7 @@ const predeterminedLists = [
 export const ListSettings = () => {
   const { control, setInListBuilder, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
-  const { activeItem } = control
+  const { activeItem, isPublished } = control
   const { dependencies } = control.form
   const currentItem = activeItem.data as FormSystemField
   const [radio, setRadio] = useState([true, false, false])
@@ -101,6 +101,7 @@ export const ListSettings = () => {
               <Box onClick={() => onClickRadioHandler(0)}>
                 <RadioButton
                   label={formatMessage(m.customList)}
+                  disabled={isPublished}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
                   onChange={() => {}}
                   checked={radio[0]}
@@ -113,6 +114,7 @@ export const ListSettings = () => {
               <Box onClick={() => onClickRadioHandler(1)}>
                 <RadioButton
                   label={formatMessage(m.predeterminedLists)}
+                  disabled={isPublished}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
                   onChange={() => {}}
                   checked={radio[1]}
@@ -134,6 +136,7 @@ export const ListSettings = () => {
             name="predeterminedLists"
             label={formatMessage(m.predeterminedLists)}
             options={predeterminedLists}
+            isDisabled={isPublished}
             backgroundColor="blue"
             onChange={(option) => {
               const listType = getListType(option?.value as number)

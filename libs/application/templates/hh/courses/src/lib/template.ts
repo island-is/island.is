@@ -30,6 +30,7 @@ import {
 
 import { m } from './messages'
 import { getChargeItems } from '../utils/getChargeItems'
+import { hasCourseBeenFullyBooked } from '../utils/hasCourseBeenFullyBooked'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -140,12 +141,15 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: [
             {
               target: States.PAYMENT,
-              cond: ({ application }) => getChargeItems(application).length > 0,
+              cond: ({ application }) =>
+                getChargeItems(application).length > 0 &&
+                !hasCourseBeenFullyBooked(application),
             },
             {
               target: States.COMPLETED,
               cond: ({ application }) =>
-                getChargeItems(application).length === 0,
+                getChargeItems(application).length === 0 &&
+                !hasCourseBeenFullyBooked(application),
             },
           ],
         },
