@@ -22,7 +22,6 @@ import {
 import {
   createInvoiceRefundContext,
   createInvoiceRefundSaga,
-  INVOICE_REFUND_SAGA_START_STEP,
 } from './invoiceRefund.saga'
 import { RefundPaymentInput } from './dtos/refundPayment.input'
 import { RefundMethod, RefundPaymentResponse } from './dtos/refundPayment.response'
@@ -136,11 +135,7 @@ export class RefundController {
     >(this.logger, this.paymentFlowService)
 
     try {
-      await orchestrator.execute(
-        saga,
-        context,
-        INVOICE_REFUND_SAGA_START_STEP,
-      )
+      await orchestrator.execute(saga, context)
 
       return {
         success: true,

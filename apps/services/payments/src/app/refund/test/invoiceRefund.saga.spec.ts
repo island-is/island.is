@@ -10,7 +10,6 @@ import {
 import {
   createInvoiceRefundContext,
   createInvoiceRefundSaga,
-  INVOICE_REFUND_SAGA_START_STEP,
 } from '../invoiceRefund.saga'
 import {
   createMockLogger,
@@ -57,7 +56,7 @@ describe('Invoice Refund Saga', () => {
   describe('VALIDATE_INVOICE_REFUND', () => {
     it('should call findPaymentFulfillmentForPaymentFlow', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, INVOICE_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(saga, context)
 
       expect(
         mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow,
@@ -72,7 +71,7 @@ describe('Invoice Refund Saga', () => {
       const { context, saga, orchestrator } = setupSaga()
 
       await expect(
-        orchestrator.execute(saga, context, INVOICE_REFUND_SAGA_START_STEP),
+        orchestrator.execute(saga, context),
       ).rejects.toThrow(PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded)
     })
 
@@ -87,7 +86,7 @@ describe('Invoice Refund Saga', () => {
       const { context, saga, orchestrator } = setupSaga()
 
       await expect(
-        orchestrator.execute(saga, context, INVOICE_REFUND_SAGA_START_STEP),
+        orchestrator.execute(saga, context),
       ).rejects.toThrow(PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded)
     })
 
@@ -102,7 +101,7 @@ describe('Invoice Refund Saga', () => {
       const { context, saga, orchestrator } = setupSaga()
 
       await expect(
-        orchestrator.execute(saga, context, INVOICE_REFUND_SAGA_START_STEP),
+        orchestrator.execute(saga, context),
       ).rejects.toThrow(PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded)
     })
   })
@@ -110,7 +109,7 @@ describe('Invoice Refund Saga', () => {
   describe('DELETE_INVOICE_FULFILLMENT', () => {
     it('should call deletePaymentFulfillment', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, INVOICE_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(saga, context)
 
       expect(
         mockPaymentFlowService.deletePaymentFulfillment,
@@ -129,7 +128,7 @@ describe('Invoice Refund Saga', () => {
       const { context, saga, orchestrator } = setupSaga()
 
       await expect(
-        orchestrator.execute(saga, context, INVOICE_REFUND_SAGA_START_STEP),
+        orchestrator.execute(saga, context),
       ).rejects.toThrow(PaymentServiceCode.CouldNotDeletePaymentFulfillment)
     })
   })
@@ -137,7 +136,7 @@ describe('Invoice Refund Saga', () => {
   describe('DELETE_FJS_CHARGE', () => {
     it('should call deleteFjsCharge', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, INVOICE_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(saga, context)
 
       expect(mockPaymentFlowService.deleteFjsCharge).toHaveBeenCalledWith(
         input.paymentFlowId,
@@ -146,7 +145,7 @@ describe('Invoice Refund Saga', () => {
 
     it('should log refund started', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, INVOICE_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(saga, context)
 
       expect(mockPaymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -161,7 +160,7 @@ describe('Invoice Refund Saga', () => {
   describe('LOG_REFUND_SUCCESS', () => {
     it('should call logPaymentFlowUpdate with refund_completed', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, INVOICE_REFUND_SAGA_START_STEP)
+      await orchestrator.execute(saga, context)
 
       expect(mockPaymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -182,11 +181,7 @@ describe('Invoice Refund Saga', () => {
   describe('executes all steps in sequence', () => {
     it('completes all steps in order', async () => {
       const { context, saga, orchestrator } = setupSaga()
-      const result = await orchestrator.execute(
-        saga,
-        context,
-        INVOICE_REFUND_SAGA_START_STEP,
-      )
+      const result = await orchestrator.execute(saga, context)
 
       expect(result.success).toBe(true)
       expect(context.completedSteps).toEqual([
@@ -207,7 +202,7 @@ describe('Invoice Refund Saga', () => {
       const { input, context, saga, orchestrator } = setupSaga()
 
       await expect(
-        orchestrator.execute(saga, context, INVOICE_REFUND_SAGA_START_STEP),
+        orchestrator.execute(saga, context),
       ).rejects.toThrow('FJS delete failed')
 
       expect(
@@ -233,7 +228,7 @@ describe('Invoice Refund Saga', () => {
       const { context, saga, orchestrator } = setupSaga()
 
       await expect(
-        orchestrator.execute(saga, context, INVOICE_REFUND_SAGA_START_STEP),
+        orchestrator.execute(saga, context),
       ).rejects.toThrow('Log failed')
 
       expect(context.metadata?.refundSucceededButRollbackFailed).toBe(true)

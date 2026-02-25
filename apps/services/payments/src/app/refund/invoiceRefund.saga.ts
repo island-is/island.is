@@ -10,8 +10,6 @@ import {
   InvoiceRefundSagaDefinition,
 } from './refund.orchestrator'
 
-export const INVOICE_REFUND_SAGA_START_STEP = 'VALIDATE_INVOICE_REFUND'
-
 export const createInvoiceRefundContext = (
   paymentFlowId: string,
   input: RefundPaymentInput,
@@ -29,8 +27,8 @@ export const createInvoiceRefundContext = (
 export const createInvoiceRefundSaga = (
   paymentFlowService: PaymentFlowService,
   logger: Logger,
-): InvoiceRefundSagaDefinition => ({
-  VALIDATE_INVOICE_REFUND: {
+): InvoiceRefundSagaDefinition => [
+  {
     name: 'VALIDATE_INVOICE_REFUND',
     description: 'Validate the invoice payment flow is eligible for refund',
     execute: async (ctx) => {
@@ -56,9 +54,8 @@ export const createInvoiceRefundSaga = (
 
       return { paymentFulfillment }
     },
-    nextStep: 'DELETE_INVOICE_FULFILLMENT',
   },
-  DELETE_INVOICE_FULFILLMENT: {
+  {
     name: 'DELETE_INVOICE_FULFILLMENT',
     description:
       'Mark the invoice payment fulfillment as deleted to prevent double refunds',
@@ -99,9 +96,8 @@ export const createInvoiceRefundSaga = (
         })
       }
     },
-    nextStep: 'DELETE_FJS_CHARGE',
   },
-  DELETE_FJS_CHARGE: {
+  {
     name: 'DELETE_FJS_CHARGE',
     description: 'Delete FJS charge to refund the invoice payment',
     execute: async (ctx) => {
@@ -128,9 +124,8 @@ export const createInvoiceRefundSaga = (
         refundSucceededButRollbackFailed: true,
       }
     },
-    nextStep: 'LOG_REFUND_SUCCESS',
   },
-  LOG_REFUND_SUCCESS: {
+  {
     name: 'LOG_REFUND_SUCCESS',
     description: 'Log successful invoice refund completion',
     execute: async (ctx) => {
@@ -154,4 +149,4 @@ export const createInvoiceRefundSaga = (
       )
     },
   },
-})
+]
