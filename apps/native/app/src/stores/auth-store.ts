@@ -226,6 +226,7 @@ export const authStore = create<AuthStore>((set, get) => ({
         prompt_delegations: 'true',
         ui_locales: preferencesStore.getState().locale,
         externalUserAgent: 'yes',
+        // login_prompt: 'select_account',
       },
     })
 
