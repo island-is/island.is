@@ -303,7 +303,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
       const paymentStatus =
         await this.sharedTemplateAPIService.getPaymentStatus(application.id)
-      console.log('paymentStatus', paymentStatus)
+      console.log('paymentStatus', JSON.stringify(paymentStatus, null, 2))
 
       // Map the application to the dto interface
       const applicationDto = mapAnswersToApplicationDto(application, files)
@@ -314,6 +314,15 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       })
 
       if (res.status !== 200) {
+        try {
+          await this.sharedTemplateAPIService.refundPayment(application.id)
+          throw new TemplateApiError(
+            'Failed to submit application, non 200 status',
+            500,
+          )
+        } catch (e) {
+          this.logger.error('Failed to refund payment:', e.message)
+        }
         throw new TemplateApiError(
           'Failed to submit application, non 200 status',
           500,
