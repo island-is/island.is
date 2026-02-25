@@ -13,9 +13,6 @@ import { getLocaleFromPath } from '../i18n/withLocale'
 interface Props {
   lang: Locale
   domain: string
-  matomoDomain: string
-  matomoSiteId: string
-  isMatomoEnabled: boolean
 }
 
 class MyDocument extends Document<Props> {
@@ -24,11 +21,7 @@ class MyDocument extends Document<Props> {
     const domain = process.env.TRACKING_DOMAIN ?? ''
     const lang = getLocaleFromPath(ctx?.req?.url)
 
-    return {
-      ...initialProps,
-      lang,
-      domain,
-    }
+    return { ...initialProps, lang, domain }
   }
 
   render() {
