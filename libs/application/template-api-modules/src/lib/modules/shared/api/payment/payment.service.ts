@@ -144,11 +144,7 @@ export class PaymentService extends BaseTemplateApiService {
         'mockuser4',
       )
 
-      await this.paymentModelService.fulfillPayment(
-        result.id,
-        result.reference_id ?? uuid(),
-        application.id,
-      )
+      await this.paymentModelService.fulfillPayment(result.id, application.id)
 
       const slug = getSlugFromType(application.typeId)
 
