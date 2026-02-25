@@ -2,7 +2,7 @@ import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
-import { AlertMessage, Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
@@ -39,8 +39,13 @@ import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFil
 import { strings } from './IndictmentCaseFilesList.strings'
 import { grid } from '../../utils/styles/recipes.css'
 
+/** Temporary until we know the url to open as well as get the access token */
+type WorkingCaseWithIdesUrl = Case & {
+  idesUrl?: string | null
+}
+
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCaseWithIdesUrl
   displayGeneratedPDFs?: boolean
   displayHeading?: boolean
   connectedCaseParentId?: string
@@ -418,6 +423,34 @@ const IndictmentCaseFilesList: FC<Props> = ({
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCivilClaims}
             />
+            {isDistrictCourtUser(user) && (
+              <Box marginBottom={3}>
+                <SectionHeading
+                  title="Rafræn gögn"
+                  marginBottom={1}
+                  heading="h4"
+                  variant="h4"
+                />
+                <Text marginBottom={2}>
+                  Hnappurinn færir þig yfir á öruggt gagnasvæði lögreglunnar.
+                  Allar heimsóknir á þann vef eru skráðar og rekjanlegar.
+                </Text>
+                <Button
+                  variant="primary"
+                  size="small"
+                  icon="open"
+                  iconType="outline"
+                  disabled={!workingCase.idesUrl}
+                  onClick={() => {
+                    if (workingCase.idesUrl) {
+                      window.open(workingCase.idesUrl, '_blank')
+                    }
+                  }}
+                >
+                  Hljóð og myndupptökur
+                </Button>
+              </Box>
+            )}
             {(filteredFiles.courtRecords.length > 0 ||
               hasGeneratedCourtRecord ||
               (permissions.canViewRulings &&
