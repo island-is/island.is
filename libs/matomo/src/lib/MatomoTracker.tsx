@@ -3,18 +3,20 @@ import Router from 'next/router'
 import { MatomoInitScriptProps } from './types'
 
 /**
- * Matomo client-side route change tracker.
+ * Matomo client-side tracker and route change handler.
  *
- * Tracks page views on Next.js client-side route changes.
- * Initial page view and Matomo configuration are handled by
- * MatomoInitScript in _document.tsx.
- *
- * Renders null (sibling, not a wrapper) to avoid hydration issues.
+ * Initializes Matomo tracking and tracks page views on Next.js
+ * client-side route changes. Renders a script tag to load matomo.js
+ * after client hydration.
  *
  * Usage in _app.tsx:
  * ```tsx
  * <>
- *   <MatomoTracker />
+ *   <MatomoTracker
+ *     matomoDomain={domain}
+ *     matomoSiteId={siteId}
+ *     enabled={isEnabled}
+ *   />
  *   <Component {...pageProps} />
  * </>
  * ```
@@ -35,10 +37,10 @@ export const MatomoTracker = ({
     normalizedDomain.current = matomoDomain.endsWith('/')
       ? matomoDomain
       : `${matomoDomain}/`
+    console.log({normalizedDomain, isClientLoaded, enabled, matomoSiteId, matomoDomain});
     window._paq = window._paq || []
     window._paq.push(['setTrackerUrl', `${normalizedDomain.current}matomo.php`])
     window._paq.push(['setSiteId', `${matomoSiteId}`])
-    window._paq.push(['trackPageView'])
     window._paq.push(['enableLinkTracking'])
     const handleRouteChange = (url: string) => {
       window._paq?.push(['setCustomUrl', url])
@@ -62,6 +64,7 @@ export const MatomoTracker = ({
   return (
     <script
       defer
+      async
       src={`${normalizedDomain.current}matomo.js`}
       data-id="matomoscript"
     />
