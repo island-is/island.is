@@ -50,14 +50,33 @@ const nextConfig = {
   },
   // Use SWC for minification (faster than Terser)
   swcMinify: true,
-  // Optimize barrel file imports (replaces babel-plugin-transform-imports)
-  // Automatically includes all @island.is/* packages from tsconfig.base.json
+  // Transform barrel imports to direct imports (SWC replacement for babel-plugin-transform-imports)
+  modularizeImports: {
+    '@island.is/island-ui/core': {
+      transform: '@island.is/island-ui/core/src/lib/{{member}}/{{member}}',
+      skipDefaultConversion: true,
+    },
+    '@island.is/island-ui/contentful': {
+      transform: '@island.is/island-ui/contentful/src/lib/{{member}}/{{member}}',
+      skipDefaultConversion: true,
+    },
+    '@island.is/logging': {
+      transform: '@island.is/logging/src/lib/{{member}}',
+      skipDefaultConversion: true,
+    },
+    'lodash': {
+      transform: 'lodash/{{member}}',
+      preventFullImport: true,
+    },
+    'date-fns': {
+      transform: 'date-fns/{{member}}',
+      preventFullImport: true,
+    },
+  },
+  // Optimize barrel file imports (automatic optimization for listed packages)
   experimental: {
     optimizePackageImports: [
       ...getIslandPackages(),
-      // External packages (some already optimized by default in Next.js)
-      'lodash',
-      'date-fns',
     ],
   },
   async rewrites() {
