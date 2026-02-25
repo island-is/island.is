@@ -1,4 +1,5 @@
 const path = require('path')
+const fs = require('fs')
 const { IgnorePlugin } = require('webpack')
 const { composePlugins, withNx } = require('@nx/next')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
@@ -6,6 +7,25 @@ const withVanillaExtract = createVanillaExtractPlugin()
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default
 const { DuplicatesPlugin } = require('inspectpack/plugin')
+
+/**
+ * Automatically extract all @island.is/* packages from tsconfig.base.json
+ * This replaces the manual list and ensures new packages are automatically included
+ */
+function getIslandPackages() {
+  try {
+    const tsconfigPath = path.resolve(__dirname, '../../tsconfig.base.json')
+    const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, 'utf-8'))
+    const paths = tsconfig.compilerOptions?.paths || {}
+    
+    return Object.keys(paths)
+      .filter((key) => key.startsWith('@island.is/'))
+      .map((key) => key.replace('/*', '')) // Remove /* suffix if present
+  } catch (e) {
+    console.warn('Failed to read tsconfig.base.json for package optimization:', e.message)
+    return []
+  }
+}
 
 const graphqlPath = '/api/graphql'
 const {
@@ -22,11 +42,11 @@ const {
  **/
 const nextConfig = {
   // Optimize barrel file imports (replaces babel-plugin-transform-imports)
+  // Automatically includes all @island.is/* packages from tsconfig.base.json
   experimental: {
     optimizePackageImports: [
-      '@island.is/island-ui/core',
-      '@island.is/island-ui/contentful',
-      '@island.is/web/components',
+      ...getIslandPackages(),
+      // External packages (some already optimized by default in Next.js)
       'lodash',
       'date-fns',
     ],
