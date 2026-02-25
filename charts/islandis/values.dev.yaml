@@ -1347,6 +1347,7 @@ contentful-apps:
     API_URL: 'http://api.islandis.svc.cluster.local'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    PUBLIC_API_URL: 'https://beta.dev01.devland.is'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
