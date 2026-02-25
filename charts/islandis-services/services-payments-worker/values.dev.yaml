@@ -104,6 +104,6 @@ securityContext:
   privileged: false
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-payments-worker'
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-payments'
   create: true
-  name: 'services-payments-worker'
+  name: 'services-payments'
