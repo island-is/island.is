@@ -1,20 +1,46 @@
-import React, {
-  ReactElement,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import React, { ReactElement, useCallback, useEffect, useState } from 'react'
 import {
   Animated,
-  FlatList,
+  Image,
   ListRenderItemInfo,
   RefreshControl,
+  TouchableNativeFeedback,
 } from 'react-native'
 
-import { TopLine } from '@/ui'
+import {
+  AirDiscountModule,
+  useGetAirDiscountQuery,
+  validateAirDiscountInitialData,
+} from '@/components/home/air-discount-module'
+import {
+  ApplicationsModule,
+  useListApplicationsQuery,
+  validateApplicationsInitialData,
+} from '@/components/home/applications-module'
+import { HelloModule } from '@/components/home/hello-module'
+import {
+  InboxModule,
+  useListDocumentsQuery,
+  validateInboxInitialData,
+} from '@/components/home/inbox-module'
+import {
+  LicensesModule,
+  useListLicensesQuery,
+  validateLicensesInitialData,
+} from '@/components/home/licenses-module'
+import { OnboardingModule } from '@/components/home/onboarding-module'
+import {
+  useListVehiclesV2Query,
+  validateVehiclesInitialData,
+  VehiclesModule,
+} from '@/components/home/vehicles-module'
+import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
+import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
+import { GenericLicenseType, useGetProfileQuery } from '@/graphql/types/schema'
 import { useAndroidNotificationPermission } from '@/hooks/use-android-notification-permission'
 import { useDeepLinkHandling } from '@/hooks/use-deep-link-handling'
+import { useLocale } from '@/hooks/use-locale'
+import { navigateTo } from '@/lib/deep-linking'
 import { useNotificationsStore } from '@/stores/notifications-store'
 import {
   preferencesStore,
@@ -22,39 +48,8 @@ import {
 } from '@/stores/preferences-store'
 import { needsToUpdateAppVersion } from '@/utils/minimum-app-version'
 import { testIDs } from '@/utils/test-ids'
-import { navigateTo } from '@/lib/deep-linking'
-import {
-  AirDiscountModule,
-  useGetAirDiscountQuery,
-  validateAirDiscountInitialData,
-} from '../../../components/home/air-discount-module'
-import {
-  ApplicationsModule,
-  useListApplicationsQuery,
-  validateApplicationsInitialData,
-} from '../../../components/home/applications-module'
-import { HelloModule } from '../../../components/home/hello-module'
-import {
-  InboxModule,
-  useListDocumentsQuery,
-  validateInboxInitialData,
-} from '../../../components/home/inbox-module'
-import {
-  LicensesModule,
-  useListLicensesQuery,
-  validateLicensesInitialData,
-} from '../../../components/home/licenses-module'
-import { OnboardingModule } from '../../../components/home/onboarding-module'
-import {
-  useListVehiclesV2Query,
-  validateVehiclesInitialData,
-  VehiclesModule,
-} from '../../../components/home/vehicles-module'
-import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
-import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
-import { GenericLicenseType, useGetProfileQuery } from '@/graphql/types/schema'
-import { useLocale } from '@/hooks/use-locale'
-import { Stack } from 'expo-router'
+import { router, Stack } from 'expo-router'
+import { useIntl } from 'react-intl'
 
 interface ListItem {
   id: string
@@ -62,6 +57,7 @@ interface ListItem {
 }
 
 export default function HomeScreen() {
+  const intl = useIntl()
   const userProfile = useGetProfileQuery({
     fetchPolicy: 'cache-first',
   })
@@ -296,6 +292,20 @@ export default function HomeScreen() {
 
   return (
     <>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <TouchableNativeFeedback
+              onPress={() => router.navigate('/homescreen-options')}
+            >
+              <Image
+                source={require('@/assets/icons/options.png')}
+                style={{ width: 24, height: 24 }}
+              />
+            </TouchableNativeFeedback>
+          ),
+        }}
+      />
       <Animated.FlatList
         testID={testIDs.SCREEN_HOME}
         keyExtractor={keyExtractor}
