@@ -13,6 +13,7 @@ import { useLocale } from '@island.is/localization'
 import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { AdditionalInfo } from './components/AdditionalInfo'
+import is from 'libs/island-ui/core/src/lib/Hyphen/patterns/is'
 
 export const Completed = () => {
   const {
@@ -23,6 +24,7 @@ export const Completed = () => {
     setFocus,
     getTranslation,
   } = useContext(ControlContext)
+  const { isPublished } = control
   const { completedSectionInfo } = control.form
   const { title, confirmationHeader, confirmationText, additionalInfo } =
     completedSectionInfo || {}
@@ -87,6 +89,7 @@ export const Completed = () => {
         name="title"
         label={formatMessage(m.completedTitleLabel)}
         backgroundColor="blue"
+        readOnly={isPublished}
         value={title?.is || ''}
         onFocus={(e) => setFocus(e.target.value)}
         onChange={(e) => {
@@ -105,6 +108,7 @@ export const Completed = () => {
         label={formatMessage(m.completedTitleLabelEnglish)}
         backgroundColor="blue"
         value={title?.en || ''}
+        readOnly={isPublished}
         onFocus={async (e) => {
           if ((!title?.en || title?.en === '') && title?.is) {
             const translation = await getTranslation(title.is)
@@ -146,6 +150,7 @@ export const Completed = () => {
         label={formatMessage(m.confirmationHeaderLabel)}
         backgroundColor="blue"
         value={confirmationHeader?.is || ''}
+        readOnly={isPublished}
         onFocus={(e) => setFocus(e.target.value)}
         onChange={(e) => {
           controlDispatch({
@@ -163,6 +168,7 @@ export const Completed = () => {
         label={formatMessage(m.confirmationHeaderLabelEnglish)}
         backgroundColor="blue"
         value={confirmationHeader?.en || ''}
+        readOnly={isPublished}
         onFocus={async (e) => {
           if (
             (!confirmationHeader?.en || confirmationHeader?.en === '') &&
@@ -200,6 +206,7 @@ export const Completed = () => {
         backgroundColor="blue"
         textarea
         value={confirmationText?.is || ''}
+        readOnly={isPublished}
         onFocus={(e) => setFocus(e.target.value)}
         onChange={(e) => {
           controlDispatch({
@@ -218,6 +225,7 @@ export const Completed = () => {
         backgroundColor="blue"
         textarea
         value={confirmationText?.en || ''}
+        readOnly={isPublished}
         onFocus={async (e) => {
           if (
             (!confirmationText?.en || confirmationText?.en === '') &&
@@ -257,7 +265,12 @@ export const Completed = () => {
         alignItems="center"
       >
         <Text variant="h4">{formatMessage(m.completedListHeader)}</Text>
-        <Button variant="text" preTextIcon="add" onClick={add}>
+        <Button
+          variant="text"
+          preTextIcon="add"
+          onClick={add}
+          disabled={isPublished}
+        >
           {formatMessage(m.add)}
         </Button>
       </Box>

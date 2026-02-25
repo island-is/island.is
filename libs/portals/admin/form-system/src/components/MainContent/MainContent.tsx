@@ -30,7 +30,7 @@ export const MainContent = () => {
     focus,
     getTranslation,
   } = useContext(ControlContext)
-  const { activeItem, form } = control
+  const { activeItem, form, isPublished } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
 
@@ -71,6 +71,7 @@ export const MainContent = () => {
                 name="name"
                 value={activeItem?.data?.name?.is ?? ''}
                 backgroundColor="blue"
+                readOnly={isPublished}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_NAME',
@@ -92,6 +93,7 @@ export const MainContent = () => {
                 name="nameEn"
                 value={activeItem?.data?.name?.en ?? ''}
                 backgroundColor="blue"
+                readOnly={isPublished}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_NAME',
