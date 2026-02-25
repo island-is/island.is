@@ -55,9 +55,10 @@ export const updateActiveItemFn = async (
         },
       })
     } else if (type === 'Screen') {
-      const { id, name, multiset, callRuleset } = currentActiveItem
-        ? (currentActiveItem.data as FormSystemScreen)
-        : (activeItem.data as FormSystemScreen)
+      const { id, name, multiset, shouldValidate, shouldPopulate } =
+        currentActiveItem
+          ? (currentActiveItem.data as FormSystemScreen)
+          : (activeItem.data as FormSystemScreen)
       updateScreen({
         variables: {
           input: {
@@ -65,7 +66,8 @@ export const updateActiveItemFn = async (
             updateScreenDto: {
               name,
               multiset: multiset ? multiset : 0,
-              callRuleset: callRuleset ? callRuleset : false,
+              shouldValidate: shouldValidate ? shouldValidate : false,
+              shouldPopulate: shouldPopulate ? shouldPopulate : false,
             },
           },
         },

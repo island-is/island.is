@@ -78,14 +78,13 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const shouldShowAppealDatePicker =
     showAppealDatePicker && !isAppealDatePickerClosing
 
-  const showServiceDateDatePicker = isServiceRequired && !verdict.serviceDate
+  const showServiceDateDatePicker = isServiceRequired && !verdict?.serviceDate
   const shouldShowServiceDatePicker =
     showServiceDateDatePicker && !isServiceDatePickerClosing
 
   const collapsibleRowVariants = {
-    hidden: { opacity: 0, y: 3, height: 0 },
-    visible: { opacity: 1, y: 0, height: 'auto' },
-    exit: { opacity: 0, y: 3, height: 0 },
+    visible: { opacity: 1, height: 'auto' },
+    exit: { opacity: 0, height: 0 },
   }
 
   const appealExpirationInfo = useMemo(() => {
@@ -218,17 +217,9 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       setIsAppealDatePickerClosing(true)
       return
     }
-
-    const payload = {
-      caseId: workingCase.id,
-      defendantId: defendant.id,
-      [type]: formatDateForServer(date),
-    }
-
-    setAndSendVerdictToServer(payload, setWorkingCase)
   }
 
-  const sendVerdictDate = (type: 'serviceDate' | 'appealDate', date: Date) => {
+  const sendVerdictDate = (type: keyof typeof dates, date: Date) => {
     setAndSendVerdictToServer(
       {
         caseId: workingCase.id,
@@ -262,18 +253,16 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     <Box className={styles.container} padding={[2, 2, 3, 3]}>
       <Box className={styles.dataContainer}>
         <SectionHeading
-          title={
-            isFine
-              ? formatMessage(strings.indictmentRulingDecisionFine)
-              : defendant.name || ''
-          }
+          title={defendant.name || ''}
           heading="h4"
           marginBottom={0}
         />
         {icon && (
           <Icon icon={icon} type="outline" color="blue400" size="large" />
         )}
-        <Text variant="eyebrow">Birting dóms</Text>
+        <Text variant="eyebrow">
+          {isFine ? 'Viðurlagaákvörðun' : 'Birting dóms'}
+        </Text>
       </Box>
       <AnimatePresence initial={false}>
         {textItems.map((text, index) => {
@@ -311,7 +300,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       </AnimatePresence>
       {showDatePickers && (
         <AnimatePresence
-          mode="wait"
           onExitComplete={() => {
             if (isServiceDatePickerClosing && pendingServiceDate) {
               sendVerdictDate('serviceDate', pendingServiceDate)
@@ -327,8 +315,14 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           {shouldShowAppealDatePicker && (
             <motion.div
               key="defendantAppealDate"
-              variants={collapsibleRowVariants}
-              initial="hidden"
+              variants={{
+                visible: {
+                  ...collapsibleRowVariants.visible,
+                  transition: { opacity: { delay: 0.3 } },
+                },
+                exit: collapsibleRowVariants.exit,
+              }}
+              initial="exit"
               animate="visible"
               exit="exit"
             >
@@ -361,11 +355,16 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           {shouldShowServiceDatePicker && (
             <motion.div
               key="defendantServiceDate"
-              variants={collapsibleRowVariants}
+              variants={{
+                visible: collapsibleRowVariants.visible,
+                exit: {
+                  ...collapsibleRowVariants.exit,
+                  transition: { height: { delay: 0.2 } },
+                },
+              }}
               initial={false}
               animate="visible"
               exit="exit"
-              transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
             >
               <Box className={styles.dataContainer}>
                 <DateTime
@@ -403,7 +402,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           variants={collapsibleRowVariants}
           initial={false}
           animate="visible"
-          exit="exit"
           transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
           className={grid({ gap: 2, marginTop: 1 })}
         >

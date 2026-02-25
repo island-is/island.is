@@ -68,15 +68,16 @@ const Subpoena: FC = () => {
     string[]
   >([])
   const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
-  const [isSchedulingArraignmentDate, setIsSchedulingArraignmentDate] =
-    useState<boolean>()
-  // Note: we keep the arraignment scheduled state in a subpoena specific state otherwise
-  // re-renders (when updating case and defendants) will cause unexpected states within the subpoena component
-  const [isArraignmentScheduled, setIsArraignmentScheduled] =
-    useState<boolean>()
+
+  const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
+  const isSchedulingArraignmentDate = Boolean(
+    !isArraignmentScheduled ||
+      newSubpoenas.length > 0 ||
+      newAlternativeServices.length > 0,
+  )
   const [modalContent, setModalContent] = useState<ModalContent>()
 
-  const { updateDefendantState, updateDefendant } = useDefendants()
+  const { updateDefendant } = useDefendants()
   const { setAndSendCaseToServer } = useCase()
   const { createSubpoenas } = useCreateSubpoenas()
   const { formatMessage } = useIntl()
@@ -299,24 +300,6 @@ const Subpoena: FC = () => {
   }, [workingCase])
 
   useEffect(() => {
-    setIsArraignmentScheduled(Boolean(workingCase.arraignmentDate))
-  }, [workingCase.arraignmentDate])
-
-  useEffect(() => {
-    setIsSchedulingArraignmentDate(
-      Boolean(
-        !isArraignmentScheduled ||
-          newSubpoenas.length > 0 ||
-          newAlternativeServices.length > 0,
-      ),
-    )
-  }, [
-    isArraignmentScheduled,
-    newAlternativeServices.length,
-    newSubpoenas.length,
-  ])
-
-  useEffect(() => {
     if (navigateTo === undefined) {
       setModalContent(undefined)
       return
@@ -372,69 +355,74 @@ const Subpoena: FC = () => {
         <CourtCaseInfo workingCase={workingCase} />
         <div className={grid({ gap: 5, marginBottom: 10 })}>
           {updates?.defendants && (
-            <Box component="section">
-              <SubpoenaType
-                subpoenaItems={updates?.defendants?.map((defendant) => ({
-                  defendant,
-                  alternativeServiceDescriptionDisabled:
-                    !isRegisteringAlternativeServiceForDefendant(defendant),
-                  subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
-                  toggleNewAlternativeService: isArraignmentScheduled
-                    ? toggleNewAlternativeService(defendant)
-                    : undefined,
-                  onUpdate: handleDefendantUpdates,
-                  children: newSubpoenas.includes(defendant.id) ? (
-                    <Button
-                      variant="text"
-                      colorScheme="destructive"
-                      icon="trash"
-                      iconType="outline"
-                      disabled={workingCase.state === CaseState.CORRECTING}
-                      onClick={() => {
-                        setNewSubpoenas((previous) =>
-                          previous.filter((v) => v !== defendant.id),
-                        )
-                        setNewAlternativeServices((previous) =>
-                          previous.filter((v) => v !== defendant.id),
-                        )
-                        setIsArraignmentScheduled(true)
+            <SubpoenaType
+              subpoenaItems={updates?.defendants?.map((defendant) => ({
+                defendant,
+                alternativeServiceDescriptionDisabled:
+                  !isRegisteringAlternativeServiceForDefendant(defendant),
+                subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
+                toggleNewAlternativeService: isArraignmentScheduled
+                  ? toggleNewAlternativeService(defendant)
+                  : undefined,
+                onUpdate: handleDefendantUpdates,
+                children: newSubpoenas.includes(defendant.id) ? (
+                  <Button
+                    variant="text"
+                    colorScheme="destructive"
+                    icon="trash"
+                    iconType="outline"
+                    disabled={workingCase.state === CaseState.CORRECTING}
+                    onClick={() => {
+                      setNewSubpoenas((previous) =>
+                        previous.filter((v) => v !== defendant.id),
+                      )
+                      setNewAlternativeServices((previous) =>
+                        previous.filter((v) => v !== defendant.id),
+                      )
+                      setUpdates((prev) => {
+                        if (!prev) return prev
 
-                        setUpdates({
-                          defendants: workingCase.defendants,
-                          theCase: workingCase,
-                        })
-                      }}
-                    >
-                      Hætta við
-                    </Button>
-                  ) : isArraignmentScheduled ? (
-                    <Button
-                      variant="text"
-                      icon="reload"
-                      disabled={workingCase.state === CaseState.CORRECTING}
-                      onClick={() => {
-                        setNewSubpoenas((previous) => [
-                          ...previous,
-                          defendant.id,
-                        ])
-                        toggleNewAlternativeService(defendant)()
-                        updateDefendantState(
-                          {
-                            defendantId: defendant.id,
-                            caseId: workingCase.id,
-                            isAlternativeService: false,
-                          },
-                          setWorkingCase,
+                        const originalDefendant = workingCase.defendants?.find(
+                          (d) => d.id === defendant.id,
                         )
-                      }}
-                    >
-                      {formatMessage(strings.newSubpoenaButtonText)}
-                    </Button>
-                  ) : null,
-                }))}
-                workingCase={workingCase}
-              />
-            </Box>
+
+                        if (!originalDefendant) return prev
+
+                        return {
+                          ...prev,
+                          defendants: prev.defendants?.map((item) =>
+                            item.id === defendant.id ? originalDefendant : item,
+                          ),
+                        }
+                      })
+                    }}
+                  >
+                    Hætta við
+                  </Button>
+                ) : isArraignmentScheduled ? (
+                  <Button
+                    variant="text"
+                    icon="reload"
+                    disabled={workingCase.state === CaseState.CORRECTING}
+                    onClick={() => {
+                      setNewSubpoenas((previous) => [...previous, defendant.id])
+                      if (defendant.isAlternativeService) {
+                        toggleNewAlternativeService(defendant)()
+                      }
+                      handleDefendantUpdates({
+                        defendantId: defendant.id,
+                        caseId: workingCase.id,
+                        isAlternativeService: false,
+                        alternativeServiceDescription: null,
+                      })
+                    }}
+                  >
+                    {formatMessage(strings.newSubpoenaButtonText)}
+                  </Button>
+                ) : null,
+              }))}
+              workingCase={workingCase}
+            />
           )}
           <Box component="section">
             <SectionHeading

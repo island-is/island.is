@@ -131,6 +131,11 @@ export class UpdateDefendantDto {
   readonly isSentToPrisonAdmin?: boolean
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isRegisteredInPrisonSystem?: boolean
+
+  @IsOptional()
   @IsEnum(PunishmentType)
   @ApiPropertyOptional({ enum: PunishmentType })
   readonly punishmentType?: PunishmentType
