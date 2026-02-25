@@ -948,6 +948,20 @@ export const messages = defineMessages({
     id: 'sp.health:waitlists-intro',
     defaultMessage: 'Hér finnur þú biðlista ...',
   },
+  waitlistsIntroWithLink: {
+    id: 'sp.health:waitlists-intro-with-link',
+    defaultMessage:
+      'Hér getur þú séð hvar þú ert skráður á biðlista eftir heilbrigðisþjónustu. Núna birtast biðlistar frá <link>nokkrum stofnunum</link> en fleiri munu bætast við síðar.',
+  },
+  waitlistsModalTitle: {
+    id: 'sp.health:waitlists-modal-title',
+    defaultMessage: 'Biðlistar sem birtast hér:',
+  },
+  waitlistsModalBody: {
+    id: 'sp.health:waitlists-modal-body',
+    defaultMessage:
+      '- Landspítali (allar skurðaðgerðir, barna- og unglingageðdeild)\n- Heilbrigðisstofnun Vesturlands (liðskiptaaðgerðir)\n- Sjúkrahúsið á Akureyri (liðskiptaaðgerðir, endurhæfing)\n- Heilbrigðisstofnun Austurlands (geðheilsuteymi)\n- Klíníkin (liðskiptaaðgerðir)\n- Orkuhúsið (liðskiptaaðgerðir)\n- Reykjalundur (endurhæfing)',
+  },
   waitlistsDescriptionInfo: {
     id: 'sp.health:waitlists-description-info',
     defaultMessage: 'Lesa nánar um biðlista hér',
