@@ -365,7 +365,6 @@ jobs:
           )
           export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
-
       - name: Building Docker images (prebuilt)
         continue-on-error: true
         id: dockerbuild

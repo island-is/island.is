@@ -27,7 +27,6 @@ mkargs() {
     --file="${DIR}/$DOCKERFILE"
     --target="$TARGET"
     "${PUBLISH_TO_REGISTRY[@]}"
-    --secret "id=nx_cloud_access_token,src=nx_cloud_access_token.txt"
     --build-arg="APP=${APP}"
     --build-arg="APP_HOME=${APP_HOME}"
     --build-arg="APP_DIST_HOME=${APP_DIST_HOME}"
