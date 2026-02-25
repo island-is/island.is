@@ -217,6 +217,10 @@ export class SharedTemplateApiService {
     return this.paymentService.getStatus(applicationId)
   }
 
+  async refundPayment(applicationId: string) {
+    return this.paymentService.refundPayment(applicationId)
+  }
+
   async storeNonceForApplication(application: Application): Promise<string> {
     const nonce = uuid()
 

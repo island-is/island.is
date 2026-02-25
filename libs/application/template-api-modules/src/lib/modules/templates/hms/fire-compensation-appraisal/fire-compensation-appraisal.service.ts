@@ -28,6 +28,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
 import uniqBy from 'lodash/uniqBy'
 import { prereqMessages } from '@island.is/application/templates/hms/fire-compensation-appraisal'
+import { SharedTemplateApiService } from '../../../shared'
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
   constructor(
@@ -36,6 +37,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     private hmsApplicationSystemService: ApplicationApi,
     private readonly attachmentService: AttachmentS3Service,
     private readonly notificationsService: NotificationsService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.FIRE_COMPENSATION_APPRAISAL)
   }
@@ -299,6 +301,10 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         )
       }
 
+      const paymentStatus =
+        await this.sharedTemplateAPIService.getPaymentStatus(application.id)
+      console.log('paymentStatus', paymentStatus)
+
       // Map the application to the dto interface
       const applicationDto = mapAnswersToApplicationDto(application, files)
 
@@ -313,6 +319,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
           500,
         )
       }
+
       // Map the photos to the dto interface
       const applicationFilesContentDtoArray =
         mapAnswersToApplicationFilesContentDto(application, files)
