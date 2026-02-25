@@ -3456,6 +3456,8 @@ services-payments-worker:
   podDisruptionBudget:
     minAvailable: 1
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -3483,6 +3485,11 @@ services-payments-worker:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-payments-worker'
+    create: true
+    name: 'services-payments-worker'
 services-sessions:
   enabled: true
   env:
