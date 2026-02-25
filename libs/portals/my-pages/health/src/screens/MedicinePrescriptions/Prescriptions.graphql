@@ -2,6 +2,7 @@ query GetMedicinePrescriptions($locale: String) {
   healthDirectoratePrescriptions(locale: $locale) {
     prescriptions {
       id
+      prescriptionId
       name
       strength
       type

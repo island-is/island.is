@@ -1,4 +1,4 @@
-import { Field, ObjectType, GraphQLISODateTime } from '@nestjs/graphql'
+import { Field, Int, ObjectType, GraphQLISODateTime } from '@nestjs/graphql'
 import { Dispensation } from './dispensations.model'
 import {
   PrescribedItemCategoryEnum,
@@ -10,6 +10,9 @@ import {
 export class Prescription {
   @Field()
   id!: string
+
+  @Field(() => Int, { nullable: true })
+  prescriptionId?: number
 
   @Field({ nullable: true })
   name?: string

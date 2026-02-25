@@ -84,7 +84,9 @@ const RenewPrescriptionModal: React.FC<Props> = ({
     // TODO: Improve form submission when service is ready
     if (
       activePrescription.category === undefined ||
-      activePrescription.id === undefined
+      activePrescription.id === undefined ||
+      activePrescription.prescriptionId === undefined ||
+      activePrescription.prescriptionId === null
     ) {
       setError('Please select a valid prescription.')
       return
@@ -94,7 +96,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       const data = await postRenewal({
         variables: {
           input: {
-            id: activePrescription.id,
+            id: activePrescription.prescriptionId.toString(),
             medCardDrugCategory: activePrescription.category ?? '',
             medCardDrugId: activePrescription.medCardDrugId ?? '',
             prescribedItemId: activePrescription.id,

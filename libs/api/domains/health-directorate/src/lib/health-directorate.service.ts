@@ -285,6 +285,7 @@ export class HealthDirectorateService {
       data.map((item) => {
         return {
           id: item.product.id,
+          prescriptionId: item.prescriptionId,
           name: item.product.name,
           type: item.product.type,
           form: item.product.form,
