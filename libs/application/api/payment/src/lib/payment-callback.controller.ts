@@ -75,7 +75,10 @@ export class PaymentCallbackController {
   async apiClientPaymentCallback(
     @Body() callback: ApiClientCallback,
   ): Promise<void> {
-    console.log('apiClientPaymentCallback', JSON.stringify(callback, null, 2))
+    console.log(
+      'apiClientPaymentCallback body',
+      JSON.stringify(callback, null, 2),
+    )
     if (callback.type === 'success') {
       if (!callback.paymentFlowMetadata.paymentId) {
         throw new BadRequestException('No paymentId found in success callback')
