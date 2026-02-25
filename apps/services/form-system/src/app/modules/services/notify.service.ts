@@ -127,9 +127,7 @@ export class NotifyService {
         this.logger.error(
           `Syslumenn login failed with status: ${response.status}`,
         )
-        this.logger.error(
-          `Syslumenn login failed with: ${JSON.stringify(response)}`,
-        )
+        this.logger.error(`Syslumenn login failed with: ${response}`)
         throw new Error('Syslumenn login failed')
       }
 
