@@ -1,32 +1,31 @@
+// import { Button as NativeButton } from '@expo/ui/swift-ui'
+// import { ContextMenu, Host } from '@expo/ui/swift-ui'
+// import { Host, Button as NativeButton } from '@expo/ui/swift-ui'
+import ContextMenu from 'react-native-context-menu-view'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
-import { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Image,
-  Modal,
-  Platform,
-  Pressable,
   ScrollView,
-  StyleSheet,
   Text,
-  TouchableOpacity,
   View,
+  TouchableNativeFeedback,
 } from 'react-native'
 
-import { ExternalLink } from '@/components/external-links/external-links'
 import { useGetVehicleQuery } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
-import { Button, Divider, Input, InputRow, Problem, theme } from '@/ui'
+import { Button, Divider, Input, InputRow, Problem } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
+import { useTheme } from 'styled-components'
 
 export default function VehicleDetailScreen() {
   const { id, title } = useLocalSearchParams<{ id: string; title?: string }>()
   const intl = useIntl()
   const router = useRouter()
   const myPagesLinks = useMyPagesLinks()
+  const theme = useTheme()
   const { openBrowser } = useBrowser()
-  const [menuVisible, setMenuVisible] = useState(false)
 
   const { data, loading, error } = useGetVehicleQuery({
     variables: {
@@ -71,14 +70,6 @@ export default function VehicleDetailScreen() {
     },
   ]
 
-  const handleDropdownPress = useCallback(
-    (link: string) => {
-      setMenuVisible(false)
-      openBrowser(link)
-    },
-    [openBrowser],
-  )
-
   if (noInfo && !loading) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -102,44 +93,28 @@ export default function VehicleDetailScreen() {
         options={{
           title: title ?? data?.vehiclesDetail?.basicInfo?.model ?? '',
           headerRight: () => (
-            <TouchableOpacity
-              onPress={() => setMenuVisible(true)}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            <ContextMenu
+              dropdownMenuMode
+              actions={
+                dropdownItems.map((item) => ({
+                  title: item.title,
+                  systemIcon: 'arrow.up.right',
+                  onPress: () => openBrowser(item.link),
+                })) || []
+              }
             >
-              <Image
-                source={require('@/assets/icons/Ellipsis-vertical.png')}
-                style={{
-                  width: 24,
-                  height: 24,
-                  tintColor: theme.color.blue400,
-                }}
-              />
-            </TouchableOpacity>
+              <TouchableNativeFeedback>
+                <Image
+                  source={require('@/assets/icons/Ellipsis-vertical.png')}
+                  width={24}
+                  height={24}
+                  tintColor={theme.shade.foreground}
+                />
+              </TouchableNativeFeedback>
+            </ContextMenu>
           ),
         }}
       />
-      <Modal
-        visible={menuVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setMenuVisible(false)}
-      >
-        <Pressable style={styles.backdrop} onPress={() => setMenuVisible(false)}>
-          <View style={styles.menuContainer}>
-            <View style={styles.menu}>
-              {dropdownItems.map((item, index) => (
-                <ExternalLink
-                  key={item.title}
-                  links={{ link: item.link, title: item.title }}
-                  borderBottom={index !== dropdownItems.length - 1}
-                  fontWeight="bold"
-                  fontSize={14}
-                />
-              ))}
-            </View>
-          </View>
-        </Pressable>
-      </Modal>
       <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
         <View>
           <View
@@ -336,25 +311,3 @@ export default function VehicleDetailScreen() {
     </>
   )
 }
-
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.15)',
-  },
-  menuContainer: {
-    alignItems: 'flex-end',
-    paddingTop: Platform.OS === 'ios' ? 100 : 56,
-    paddingRight: theme.spacing[1],
-  },
-  menu: {
-    minWidth: 150,
-    backgroundColor: theme.color.white,
-    borderRadius: 8,
-    shadowRadius: 30,
-    shadowColor: theme.color.blue400,
-    shadowOpacity: 0.16,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
-  },
-})
