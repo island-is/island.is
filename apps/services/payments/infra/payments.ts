@@ -147,7 +147,7 @@ export const serviceSetupForWorker = (): ServiceBuilder<typeof workerName> =>
   service(workerName)
     .namespace(namespace)
     .image(imageName)
-    .serviceAccount(workerName)
+    .serviceAccount(serviceName)
     .db(db)
     .codeOwner(CodeOwners.Aranja)
     .env(env)
