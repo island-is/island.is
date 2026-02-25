@@ -17,12 +17,15 @@ function getIslandPackages() {
     const tsconfigPath = path.resolve(__dirname, '../../tsconfig.base.json')
     const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, 'utf-8'))
     const paths = tsconfig.compilerOptions?.paths || {}
-    
+
     return Object.keys(paths)
       .filter((key) => key.startsWith('@island.is/'))
       .map((key) => key.replace('/*', '')) // Remove /* suffix if present
   } catch (e) {
-    console.warn('Failed to read tsconfig.base.json for package optimization:', e.message)
+    console.warn(
+      'Failed to read tsconfig.base.json for package optimization:',
+      e.message,
+    )
     return []
   }
 }
