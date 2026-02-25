@@ -7,6 +7,7 @@ import {
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
+  ApplicationConfigurations,
   ApplicationTemplate,
   ApplicationTypes,
   BasicChargeItem,
@@ -72,6 +73,7 @@ const PassportTemplate: ApplicationTemplate<
   name: m.formName,
   codeOwner: CodeOwners.Juni,
   featureFlag: Features.passportApplication,
+  translationNamespaces: [ApplicationConfigurations.Passport.translation],
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,
