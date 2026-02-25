@@ -406,7 +406,6 @@ const OpenInvoicesOverview: CustomScreen<OpenInvoicesOverviewProps> = ({
 
 OpenInvoicesOverview.getProps = async ({ apolloClient, locale, query }) => {
   const today = new Date()
-  const oneMonthBack = addMonths(today, -1)
 
   const [
     {

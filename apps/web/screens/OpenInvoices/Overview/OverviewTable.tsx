@@ -38,7 +38,6 @@ export const OverviewTable = ({
         Header: () => null,
         Cell: ({ row }) => {
           const hasInvoices = row.original.totalCount > 0
-          console.log(row.original)
           return (
             <Box
               // eslint-disable-next-line @typescript-eslint/no-explicit-any

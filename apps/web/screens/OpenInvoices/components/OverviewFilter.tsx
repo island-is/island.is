@@ -151,7 +151,6 @@ export const OverviewFilter = ({
                     valueFrom={category.valueFrom}
                     valueTo={category.valueTo}
                     placeholder={category.placeholder}
-                    initiallyExpanded
                     onChange={(valueFrom, valueTo) => {
                       const valueFromString = valueFrom
                         ? valueFrom.toISOString()
@@ -181,7 +180,6 @@ export const OverviewFilter = ({
                     placeholder={category.placeholder}
                     items={category.items}
                     value={selectedValue}
-                    initiallyExpanded
                     onChange={(value) =>
                       onSearchUpdate(
                         category.id as keyof SearchState,

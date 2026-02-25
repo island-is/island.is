@@ -5,6 +5,8 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 
+import * as styles from './FilterSelectAccordion.css'
+
 interface Props {
   title: string
   id: string
@@ -15,7 +17,6 @@ interface Props {
   }>
   value?: string
   onChange: (value: string | undefined) => void
-  initiallyExpanded?: boolean
 }
 
 export const FilterSelectAccordion = ({
@@ -25,10 +26,9 @@ export const FilterSelectAccordion = ({
   items,
   value,
   onChange,
-  initiallyExpanded = false,
 }: Props) => {
   return (
-    <Box paddingTop={1} paddingX={3}>
+    <Box paddingTop={1} paddingX={3} className={styles.wrapper}>
       <Accordion
         space={3}
         dividerOnBottom={false}
@@ -42,7 +42,7 @@ export const FilterSelectAccordion = ({
           labelUse="h5"
           labelVariant="h5"
           iconVariant="small"
-          startExpanded={initiallyExpanded}
+          startExpanded={false}
         >
           <Select
             name={id}
