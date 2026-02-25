@@ -38,13 +38,7 @@ export const MatomoTracker = ({
     normalizedDomain.current = matomoDomain.endsWith('/')
       ? matomoDomain
       : `${matomoDomain}/`
-    console.log({
-      normalizedDomain,
-      isClientLoaded,
-      enabled,
-      matomoSiteId,
-      matomoDomain,
-    })
+
     window._paq = window._paq || []
     window._paq.push(['setTrackerUrl', `${normalizedDomain.current}matomo.php`])
     window._paq.push(['setSiteId', `${matomoSiteId}`])
@@ -74,10 +68,6 @@ export const MatomoTracker = ({
       async
       src={`${normalizedDomain.current}matomo.js`}
       strategy="afterInteractive"
-      onLoad={() =>
-        console.log('Matomo loaded:', `${normalizedDomain}matomo.js`)
-      }
-      onError={(e) => console.error('Matomo failed to load:', e)}
       data-id="matomo-script"
     />
   )

@@ -12,7 +12,7 @@ const IslandWebApp = ({ Component, pageProps }: AppProps) => {
   const {
     publicRuntimeConfig: { matomoSiteId, matomoDomain, isMatomoEnabled },
   } = getConfig()
-  console.log({ matomoDomain, matomoSiteId, isMatomoEnabled })
+
   return (
     <>
       <MatomoTracker
