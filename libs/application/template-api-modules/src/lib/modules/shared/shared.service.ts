@@ -59,10 +59,7 @@ export class SharedTemplateApiService {
       clientLocationOrigin,
     })
 
-    const normalizedPhoneNumber = this.normalizePhoneNumber(
-      phoneNumber,
-      application.id,
-    )
+    const normalizedPhoneNumber = this.normalizePhoneNumber(phoneNumber)
 
     return this.smsService.sendSms(normalizedPhoneNumber, message)
   }
@@ -81,25 +78,12 @@ export class SharedTemplateApiService {
       assignLink,
     )
 
-    const normalizedPhoneNumber = this.normalizePhoneNumber(
-      phoneNumber,
-      application.id,
-    )
+    const normalizedPhoneNumber = this.normalizePhoneNumber(phoneNumber)
 
     return this.smsService.sendSms(normalizedPhoneNumber, message)
   }
 
-  normalizePhoneNumber(phoneNumber: string, applicationId: string) {
-    if (phoneNumber.trim().length > 7) {
-      this.logger.warn(
-        `Recipient number for application ${applicationId} is longer than 7 characters, attempting to recover`,
-      )
-    }
-    if (phoneNumber.match(/\D/g)) {
-      this.logger.warn(
-        `Recipient number for application ${applicationId} contains non-numeric characters, attempting to recover`,
-      )
-    }
+  normalizePhoneNumber(phoneNumber: string) {
     return phoneNumber.trim().replace(/\D/g, '').slice(-7)
   }
 
