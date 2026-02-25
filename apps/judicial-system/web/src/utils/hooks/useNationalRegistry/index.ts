@@ -20,16 +20,24 @@ const useNationalRegistry = (nationalId?: string | null) => {
   useEffect(() => {
     const isValidNationalId = validate([[nationalId, ['national-id']]]).isValid
     const isFakePerson = nationalId === '000000-0000'
+    setError(undefined)
 
     // Each api call costs actualy money. This allows us to develop and test
     // without actually making a real api call.
     if (isFakePerson) {
+      setBusinessData(undefined)
       setPersonData({
         items: [fakePerson],
       })
+
+      setIsLoading(false)
+      return
     }
 
-    if (isFakePerson || !nationalId || !isValidNationalId) {
+    if (!nationalId || !isValidNationalId) {
+      setPersonData(undefined)
+      setBusinessData(undefined)
+
       setIsLoading(false)
       return
     }
