@@ -13,7 +13,6 @@ import { useLocale } from '@island.is/localization'
 import { useContext, useState } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
 import { AdditionalInfo } from './components/AdditionalInfo'
-import is from 'libs/island-ui/core/src/lib/Hyphen/patterns/is'
 
 export const Completed = () => {
   const {
