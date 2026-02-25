@@ -219,7 +219,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     }
   }
 
-  const sendVerdictDate = (type: 'serviceDate' | 'appealDate', date: Date) => {
+  const sendVerdictDate = (type: keyof typeof dates, date: Date) => {
     setAndSendVerdictToServer(
       {
         caseId: workingCase.id,
