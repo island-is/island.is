@@ -25,5 +25,14 @@ export const MatomoInitScript = ({
     ? matomoDomain
     : `${matomoDomain}/`
 
-  return <script async defer src={`${normalizedDomain}matomo.js`} />
+  return (
+    <script
+      async
+      defer
+      src={`${normalizedDomain}matomo.js`}
+      data-id="matomoscript"
+      data-domain={normalizedDomain}
+      data-siteid={matomoSiteId}
+    />
+  )
 }

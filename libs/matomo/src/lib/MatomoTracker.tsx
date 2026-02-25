@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import Router from 'next/router'
 import { initMatomo } from './init-matomo'
-import type { MatomoInitScriptProps } from './types'
 
 /**
  * Matomo client-side route change tracker.
@@ -20,13 +19,18 @@ import type { MatomoInitScriptProps } from './types'
  * </>
  * ```
  */
-export const MatomoTracker = ({
-  enabled,
-  matomoDomain,
-  matomoSiteId,
-}: MatomoInitScriptProps) => {
+export const MatomoTracker = () => {
   useEffect(() => {
-    if (!enabled || !matomoDomain || !matomoSiteId) {
+    const el = document.querySelector('script[data-id="matomoscript"]') as HTMLScriptElement | null;
+    if (!el) {
+      return () => {
+        // Empty on purpose
+      }
+    }
+    const matomoDomain = el.dataset.domain;
+    const matomoSiteId = el.dataset.siteid;
+
+    if (!matomoDomain || !matomoSiteId) {
       return () => {
         // Empty on purpose
       }
