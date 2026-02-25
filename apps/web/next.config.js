@@ -21,6 +21,16 @@ const {
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  // Optimize barrel file imports (replaces babel-plugin-transform-imports)
+  experimental: {
+    optimizePackageImports: [
+      '@island.is/island-ui/core',
+      '@island.is/island-ui/contentful',
+      '@island.is/web/components',
+      'lodash',
+      'date-fns',
+    ],
+  },
   async rewrites() {
     return [
       {
