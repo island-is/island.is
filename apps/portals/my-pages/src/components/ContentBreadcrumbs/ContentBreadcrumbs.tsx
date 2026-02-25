@@ -103,6 +103,7 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
       currentBreadcrumbs.pop()
     }
   }
+
   findBreadcrumbsPath(navigation, [])
   const isMobile = width < theme.breakpoints.md
   if (items.length < 2) return null

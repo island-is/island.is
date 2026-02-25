@@ -25,9 +25,9 @@ export const MatomoTracker = ({
   enabled,
 }: MatomoInitScriptProps) => {
   const [isClientLoaded, setIsClientLoaded] = useState(false)
-  const normalizedDomain = useRef(matomoDomain)
+  const normalizedDomain = useRef<string>('')
   useEffect(() => {
-    if (!enabled || !matomoSiteId || matomoDomain) {
+    if (!enabled || !matomoSiteId || !matomoDomain) {
       return () => {
         // Empty on purpose
       }
