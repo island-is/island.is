@@ -167,6 +167,14 @@ export const m = {
       id: 'web.openinvoices:overview.searchInputPlaceholder',
       defaultMessage: 'Leita í reikningum',
     },
+    emptyTable: {
+      id: 'web.openinvoices:overview.emptyTable',
+      defaultMessage: 'Engar upplýsingar til að birta',
+    },
+    noResults: {
+      id: 'web.openinvoices:overview.noResults',
+      defaultMessage: 'Ekkert fannst. Prófaðu að breyta skilyrðum',
+    },
   }),
   totals: defineMessages({
     title: {

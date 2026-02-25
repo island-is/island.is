@@ -1,1 +1,1 @@
-export const ORGANIZATION_SLUG = 'fsre'
+export const ORGANIZATION_SLUG = 'fjarsysla-rikisins'

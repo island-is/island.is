@@ -13,6 +13,6 @@ export const mapSuppliers = (data: SuppliersDto): Suppliers => {
   return {
     totalCount: data.totalCount,
     pageInfo: data.pageInfo,
-    data: suppliers,
+    data: suppliers.sort((a, b) => a.name.localeCompare(b.name)),
   }
 }

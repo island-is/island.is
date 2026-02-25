@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
-import debounce from 'lodash/debounce'
 import {
   parseAsArrayOf,
   parseAsInteger,
@@ -12,14 +11,8 @@ import {
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
-import {
-  Box,
-  FilterInput,
-  Pagination,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
-import { dateFormat, debounceTime } from '@island.is/shared/constants'
+import { Box, Pagination, Stack, Text } from '@island.is/island-ui/core'
+import { dateFormat } from '@island.is/shared/constants'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import { formatCurrency, isDefined } from '@island.is/shared/utils'
 import { MarkdownText } from '@island.is/web/components'
@@ -63,14 +56,21 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
 
-  const [getInvoiceGroups, { data: invoiceGroupsData }] = useLazyQuery<
+  const [
+    getInvoiceGroups,
+    {
+      data: invoiceGroupsData,
+      loading: invoiceGroupsLoading,
+      error: invoiceGroupsError,
+    },
+  ] = useLazyQuery<
     {
       icelandicGovernmentInstitutionsInvoiceGroups: IcelandicGovernmentInstitutionsInvoiceGroups
     },
     QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs
   >(GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS)
 
-  const baseUrl = linkResolver('openinvoicesoverview', [], locale).href
+  const baseUrl = linkResolver('openinvoices', [], locale).href
 
   const breadcrumbItems = [
     {
@@ -85,24 +85,20 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   ]
 
   const initialDates = useMemo(() => {
-    const today = new Date()
-    return {
-      dateFrom: addMonths(today, -1),
-      dateTo: today,
-    }
+    const dateTo = new Date()
+    return { dateTo, dateFrom: addMonths(dateTo, -1) }
   }, [])
 
   const [initialRender, setInitialRender] = useState<boolean>(true)
 
   const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
-  const [query, setQuery] = useQueryState('query')
-  const [dateRangeStart, setDateRangeStart] = useQueryState(
-    'dateRangeStart',
-    parseAsIsoDateTime.withDefault(initialDates.dateFrom),
-  )
   const [dateRangeEnd, setDateRangeEnd] = useQueryState(
     'dateRangeEnd',
     parseAsIsoDateTime.withDefault(initialDates.dateTo),
+  )
+  const [dateRangeStart, setDateRangeStart] = useQueryState(
+    'dateRangeStart',
+    parseAsIsoDateTime.withDefault(initialDates.dateFrom),
   )
   const [invoicePaymentTypes, setInvoiceTypes] = useQueryState(
     'invoicePaymentTypes',
@@ -116,7 +112,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     'customers',
     parseAsArrayOf(parseAsInteger),
   )
-  const [searchString, setSearchString] = useState<string | null>()
 
   const totalHits = useMemo(() => {
     if (
@@ -171,32 +166,13 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     customers,
     locale,
     suppliers,
-    searchString,
     invoicePaymentTypes,
     dateRangeStart,
     dateRangeEnd,
   ])
 
-  //SEARCH STATE UPDATES
-  const debouncedSearchUpdate = useMemo(() => {
-    return debounce(() => {
-      setSearchString(query)
-      setPage(null)
-    }, debounceTime.search)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query])
-
-  useEffect(() => {
-    debouncedSearchUpdate()
-    return () => {
-      debouncedSearchUpdate.cancel()
-    }
-  }, [debouncedSearchUpdate])
-
   const onResetFilter = () => {
     setPage(null)
-    setQuery(null)
-    setSearchString(null)
     setDateRangeStart(null)
     setDateRangeEnd(null)
     setInvoiceTypes(null)
@@ -280,13 +256,9 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       header={{
         breadcrumbs: breadcrumbItems,
       }}
-      footer={
-        organization
-          ? {
-              organization,
-            }
-          : undefined
-      }
+      footer={{
+        organization,
+      }}
     >
       <Box marginTop={12} background="blue100">
         <SidebarLayout
@@ -296,12 +268,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
               <Text variant="h4" as="h4" paddingY={1}>
                 {formatMessage(m.overview.searchTitle)}
               </Text>
-              <FilterInput
-                name="query"
-                placeholder={formatMessage(m.overview.searchInputPlaceholder)}
-                value={query ?? ''}
-                onChange={(option) => setQuery(option)}
-              />
               <OverviewFilter
                 onSearchUpdate={onSearchFilterUpdate}
                 onReset={onResetFilter}
@@ -334,17 +300,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                     type: 'multi',
                     sections: [
                       {
-                        id: 'invoicePaymentTypes',
-                        label: formatMessage(m.search.types),
-                        items:
-                          filters?.invoicePaymentTypes
-                            ?.filter((f) => f.name && f.value)
-                            .map((filter) => ({
-                              value: filter.value,
-                              label: filter.name,
-                            })) ?? [],
-                      },
-                      {
                         id: 'suppliers',
                         label: formatMessage(m.search.suppliers),
                         items:
@@ -364,6 +319,19 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
                       },
                     ],
                   },
+                  {
+                    type: 'select',
+                    id: 'invoicePaymentTypes',
+                    label: formatMessage(m.search.types),
+                    placeholder: '',
+                    items:
+                      filters?.invoicePaymentTypes
+                        ?.filter((f) => f.name && f.value)
+                        .map((filter) => ({
+                          value: filter.value,
+                          label: filter.name,
+                        })) ?? [],
+                  },
                 ]}
               />
             </Stack>
@@ -374,10 +342,14 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
             <OverviewTable
               invoiceGroups={
                 invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
-                  ?.data ?? []
+                  ?.data ??
+                initialInvoiceGroups?.data ??
+                []
               }
               dateFrom={dateRangeStart}
               dateTo={dateRangeEnd}
+              loading={invoiceGroupsLoading}
+              error={invoiceGroupsError}
             />
           </Box>
 
@@ -511,14 +483,20 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale, query }) => {
       .filter(isDefined) || undefined
   const invoicePaymentTypesInput = invoicePaymentTypesFilter?.filter(isDefined)
 
+  const dateToInput =
+    parseAsIsoDateTime.parseServerSide(query?.['dateRangeEnd']) ?? today
+  const dateFromInput =
+    parseAsIsoDateTime.parseServerSide(query?.['dateRangeStart']) ??
+    addMonths(dateToInput, -1)
+
   const {
     data: { icelandicGovernmentInstitutionsInvoiceGroups },
   } = await apolloClient.query<Query>({
     query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
     variables: {
       input: {
-        dateFrom: oneMonthBack,
-        dateTo: today,
+        dateFrom: dateFromInput,
+        dateTo: dateToInput,
         customers: customersInput,
         suppliers: suppliersInput,
         types: invoicePaymentTypesInput,
@@ -540,5 +518,4 @@ export default withMainLayout(
     CustomPageUniqueIdentifier.OpenInvoices,
     OpenInvoicesOverview,
   ),
-  { showFooter: false },
 )

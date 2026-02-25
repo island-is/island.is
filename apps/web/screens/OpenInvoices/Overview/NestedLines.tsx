@@ -52,7 +52,10 @@ export const NestedLines = ({
     return (
       <T.Row>
         <T.Data box={{ background: 'blue100' }} colSpan={4}>
-          <EmptyTable loading={loading} />
+          <EmptyTable
+            loading={loading}
+            message={formatMessage(m.overview.emptyTable)}
+          />
         </T.Data>
       </T.Row>
     )

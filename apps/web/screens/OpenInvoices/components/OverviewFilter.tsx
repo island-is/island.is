@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import {
   Box,
   Checkbox,
+  Divider,
   Filter,
   FilterMultiChoice,
   FilterProps,
@@ -12,6 +13,7 @@ import { isDefined } from '@island.is/shared/utils'
 
 import { m } from '../messages'
 import { FilterDateAccordion } from './FilterDateAccordion'
+import { FilterSelectAccordion } from './FilterSelectAccordion'
 
 export type SearchState = Record<string, Array<string> | undefined>
 
@@ -43,6 +45,17 @@ interface CheckboxProps {
   checked?: boolean
 }
 
+interface SelectProps {
+  type: 'select'
+  id: string
+  label: string
+  placeholder: string
+  items: Array<{
+    value: string
+    label: string
+  }>
+}
+
 interface Props {
   onSearchUpdate: (
     categoryId: keyof SearchState,
@@ -52,7 +65,9 @@ interface Props {
   searchState?: SearchState
   url: string
   locale: Locale
-  categories: Array<MultiSelectProps | DateSelectProps | CheckboxProps>
+  categories: Array<
+    MultiSelectProps | DateSelectProps | CheckboxProps | SelectProps
+  >
   variant?: FilterProps['variant']
   hits?: number
 }
@@ -90,79 +105,119 @@ export const OverviewFilter = ({
         align={'right'}
       >
         <Box background="white" borderRadius="large">
-          {categories.map((category) => {
+          {categories.map((category, index) => {
+            const divider =
+              index > 0 ? (
+                <Box paddingX={3}>
+                  <Divider />
+                </Box>
+              ) : null
+
             if (category.type === 'checkbox') {
               const searchStateValue = searchState?.[category.id]?.[0]
               return (
-                <Box
-                  paddingX={3}
-                  paddingY={3}
-                  borderRadius="large"
-                  background="white"
-                >
-                  <Checkbox
-                    key={category.id}
-                    name={category.id}
-                    label={category.label}
-                    checked={searchStateValue === 'true'}
-                    onChange={(event) =>
-                      onSearchUpdate(
-                        category.id as keyof SearchState,
-                        event.target.checked ? ['true'] : ['false'],
-                      )
-                    }
-                  />
-                </Box>
+                <>
+                  {divider}
+                  <Box
+                    paddingX={3}
+                    paddingY={3}
+                    borderRadius="large"
+                    background="white"
+                  >
+                    <Checkbox
+                      key={category.id}
+                      name={category.id}
+                      label={category.label}
+                      checked={searchStateValue === 'true'}
+                      onChange={(event) =>
+                        onSearchUpdate(
+                          category.id as keyof SearchState,
+                          event.target.checked ? ['true'] : ['false'],
+                        )
+                      }
+                    />
+                  </Box>
+                </>
               )
             }
             if (category.type === 'date') {
               return (
-                <FilterDateAccordion
-                  title={formatMessage(m.search.range)}
-                  id={category.id}
-                  locale={locale}
-                  valueFrom={category.valueFrom}
-                  valueTo={category.valueTo}
-                  placeholder={category.placeholder}
-                  initiallyExpanded
-                  onChange={(valueFrom, valueTo) => {
-                    const valueFromString = valueFrom
-                      ? valueFrom.toISOString()
-                      : undefined
-                    const valueToString = valueTo
-                      ? valueTo.toISOString()
-                      : undefined
-                    onSearchUpdate(
-                      category.id as keyof SearchState,
-                      [valueFromString, valueToString].filter(isDefined),
-                    )
-                  }}
-                />
+                <>
+                  {divider}
+                  <FilterDateAccordion
+                    title={formatMessage(m.search.range)}
+                    id={category.id}
+                    locale={locale}
+                    valueFrom={category.valueFrom}
+                    valueTo={category.valueTo}
+                    placeholder={category.placeholder}
+                    initiallyExpanded
+                    onChange={(valueFrom, valueTo) => {
+                      const valueFromString = valueFrom
+                        ? valueFrom.toISOString()
+                        : undefined
+                      const valueToString = valueTo
+                        ? valueTo.toISOString()
+                        : undefined
+                      onSearchUpdate(
+                        category.id as keyof SearchState,
+                        [valueFromString, valueToString].filter(isDefined),
+                      )
+                    }}
+                  />
+                </>
+              )
+            }
+
+            if (category.type === 'select') {
+              const selectedValue = searchState?.[category.id]?.[0]
+              return (
+                <>
+                  {divider}
+                  <FilterSelectAccordion
+                    key={category.id}
+                    id={category.id}
+                    title={category.label}
+                    placeholder={category.placeholder}
+                    items={category.items}
+                    value={selectedValue}
+                    initiallyExpanded
+                    onChange={(value) =>
+                      onSearchUpdate(
+                        category.id as keyof SearchState,
+                        value ? [value] : undefined,
+                      )
+                    }
+                  />
+                </>
               )
             }
 
             return (
-              <FilterMultiChoice
-                labelClear={formatMessage(m.search.clearFilterCategory)}
-                onChange={({ categoryId, selected }) => {
-                  onSearchUpdate(
-                    categoryId as keyof SearchState,
-                    selected.length ? selected : undefined,
-                  )
-                }}
-                onClear={(categoryId) => {
-                  onSearchUpdate(categoryId as keyof SearchState, undefined)
-                }}
-                categories={category.sections.map((section) => ({
-                  id: section.id,
-                  label: section.label,
-                  selected: searchState?.[section.id] ?? [],
-                  filters: section.items.map((item) => ({
-                    value: item.value,
-                    label: item.label,
-                  })),
-                }))}
-              />
+              <>
+                {divider}
+                <FilterMultiChoice
+                  labelClear={formatMessage(m.search.clearFilterCategory)}
+                  onChange={({ categoryId, selected }) => {
+                    onSearchUpdate(
+                      categoryId as keyof SearchState,
+                      selected.length ? selected : undefined,
+                    )
+                  }}
+                  onClear={(categoryId) => {
+                    onSearchUpdate(categoryId as keyof SearchState, undefined)
+                  }}
+                  categories={category.sections.map((section) => ({
+                    id: section.id,
+                    label: section.label,
+                    selected: searchState?.[section.id] ?? [],
+                    filters: section.items.map((item) => ({
+                      value: item.value,
+                      label: item.label,
+                    })),
+                  }))}
+                />
+              </>
             )
           })}
         </Box>

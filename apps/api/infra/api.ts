@@ -328,6 +328,7 @@ export const serviceSetup = (services: {
         dev: 'https://identity-server.staging01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
+      },
       HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: {
         dev: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
         staging:

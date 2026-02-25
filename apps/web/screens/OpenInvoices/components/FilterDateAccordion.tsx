@@ -3,7 +3,6 @@ import {
   AccordionItem,
   Box,
   DatePicker,
-  Divider,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 
@@ -48,7 +47,7 @@ export const FilterDateAccordion = ({
           <DatePicker
             name={id}
             backgroundColor="blue"
-            label={title}
+            label={''}
             placeholderText={placeholder}
             size="xs"
             locale={locale}
@@ -58,7 +57,6 @@ export const FilterDateAccordion = ({
           />
         </AccordionItem>
       </Accordion>
-      <Divider />
     </Box>
   )
 }

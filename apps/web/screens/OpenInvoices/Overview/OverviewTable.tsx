@@ -1,22 +1,32 @@
 import { useMemo } from 'react'
+import { useIntl } from 'react-intl'
 import { Column, useExpanded, useSortBy, useTable } from 'react-table'
+import { ApolloError } from '@apollo/client'
 
 import { IcelandicGovernmentInstitutionsInvoiceGroup } from '@island.is/api/schema'
 import { Box, Button, Icon, Table as T, Text } from '@island.is/island-ui/core'
 import { formatCurrency } from '@island.is/shared/utils'
 
 import { EmptyTable } from '../components/EmptyTable/EmptyTable'
+import { m } from '../messages'
 import { NestedLines } from './NestedLines'
 
 interface Props {
   dateTo?: Date
   dateFrom?: Date
   invoiceGroups: Array<IcelandicGovernmentInstitutionsInvoiceGroup>
-  //loading?: boolean
-  //error?: ApolloError
+  loading?: boolean
+  error?: ApolloError
 }
 
-export const OverviewTable = ({ dateTo, dateFrom, invoiceGroups }: Props) => {
+export const OverviewTable = ({
+  dateTo,
+  dateFrom,
+  invoiceGroups,
+  loading,
+  error,
+}: Props) => {
+  const { formatMessage } = useIntl()
   const data = useMemo(() => invoiceGroups ?? [], [invoiceGroups])
 
   const columns = useMemo<
@@ -26,28 +36,33 @@ export const OverviewTable = ({ dateTo, dateFrom, invoiceGroups }: Props) => {
       {
         id: 'expander',
         Header: () => null,
-        Cell: ({ row }) => (
-          <Box
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            {...(row as any).getToggleRowExpandedProps()}
-            display="flex"
-            alignItems="center"
-            justifyContent="flexStart"
-            cursor="pointer"
-          >
-            <Button
-              circle
-              colorScheme="light"
+        Cell: ({ row }) => {
+          const hasInvoices = row.original.totalCount > 0
+          console.log(row.original)
+          return (
+            <Box
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              icon={(row as any).isExpanded ? 'remove' : 'add'}
-              iconType="filled"
-              preTextIconType="filled"
-              size="small"
-              type="button"
-              variant="primary"
-            />
-          </Box>
-        ),
+              {...(hasInvoices ? (row as any).getToggleRowExpandedProps() : {})}
+              display="flex"
+              alignItems="center"
+              justifyContent="flexStart"
+              cursor={hasInvoices ? 'pointer' : 'default'}
+            >
+              <Button
+                circle
+                colorScheme="light"
+                disabled={!hasInvoices}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                icon={(row as any).isExpanded ? 'remove' : 'add'}
+                iconType="filled"
+                preTextIconType="filled"
+                size="small"
+                type="button"
+                variant="primary"
+              />
+            </Box>
+          )
+        },
       },
       {
         Header: 'Seljandi',
@@ -74,8 +89,13 @@ export const OverviewTable = ({ dateTo, dateFrom, invoiceGroups }: Props) => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     tableInstance
 
-  if (!data.length) {
-    return <EmptyTable message="Ekkert fannst. Prófaðu að breyta skilyrðum" />
+  if (!data.length || loading) {
+    return (
+      <EmptyTable
+        loading={loading}
+        message={formatMessage(m.overview.noResults)}
+      />
+    )
   }
 
   return (

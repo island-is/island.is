@@ -14,6 +14,6 @@ export const mapInvoiceTypes = (data: InvoiceTypesDto): InvoiceTypes => {
   return {
     totalCount: data.totalCount,
     pageInfo: data.pageInfo,
-    data: invoiceTypes,
+    data: invoiceTypes.sort((a, b) => a.name.localeCompare(b.name)),
   }
 }
