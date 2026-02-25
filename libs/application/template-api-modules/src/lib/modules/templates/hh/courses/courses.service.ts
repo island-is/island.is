@@ -212,21 +212,8 @@ export class CoursesService extends BaseTemplateApiService {
       maxRegistrations - nationalIdsTakenByOtherApplications.size,
     )
 
-    if (!hasAvailability) {
-      throw new TemplateApiError(
-        {
-          title: `Laus sæti: ${slotsAvailable}`,
-          summary: '',
-        },
-        409,
-      )
-    }
-
     return {
-      slotsAvailable: Math.max(
-        0,
-        maxRegistrations - nationalIdsTakenByOtherApplications.size,
-      ),
+      slotsAvailable,
       hasAvailability,
     }
   }
