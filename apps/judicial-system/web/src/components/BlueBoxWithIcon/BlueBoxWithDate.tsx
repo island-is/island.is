@@ -217,14 +217,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       setIsAppealDatePickerClosing(true)
       return
     }
-
-    const payload = {
-      caseId: workingCase.id,
-      defendantId: defendant.id,
-      [type]: formatDateForServer(date),
-    }
-
-    setAndSendVerdictToServer(payload, setWorkingCase)
   }
 
   const sendVerdictDate = (type: 'serviceDate' | 'appealDate', date: Date) => {
