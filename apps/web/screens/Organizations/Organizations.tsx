@@ -265,7 +265,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                       key={index}
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       // @ts-ignore make web strict
-                      text={organization?.description}
+                      // we do not want to show text on the card here, but the component requires it
+                      text={undefined}
                       heading={organization?.title}
                       hyphenate
                       {...(tags?.length && { tags })}
