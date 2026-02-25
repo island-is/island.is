@@ -35,7 +35,7 @@ export const OfflineProvider = ({ children }: OfflineHocProps) => {
   return (
     <>
       {children}
-      {bannerVisible && <OfflineBanner />}
+      {<OfflineBanner />}
     </>
   )
 }

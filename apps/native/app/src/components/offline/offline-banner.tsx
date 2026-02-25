@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react'
-import { Animated, Easing, SafeAreaView } from 'react-native'
+import { Animated, Easing, Modal, SafeAreaView } from 'react-native'
 import styled from 'styled-components/native'
 import { Alert, DARK_YELLOW_200, dynamicColor } from '../../ui'
 import { getIntl } from '@/components/providers/locale-provider'
-import { useOfflineActions } from '../../stores/offline-store'
+import { useOfflineActions, useOfflineStore } from '../../stores/offline-store'
 
 const TranslateYValue = 200
 
@@ -27,8 +27,9 @@ const Overlay = styled(SafeAreaView)`
 
 export const OfflineBanner = () => {
   const intl = getIntl()
-  const { toggleBanner } = useOfflineActions()
+  const { toggleBanner,  } = useOfflineActions()
   const popAnim = useRef(new Animated.Value(-TranslateYValue)).current
+  const bannerVisible = useOfflineStore(({ bannerVisible }) => bannerVisible)
 
   const popIn = () => {
     Animated.timing(popAnim, {
@@ -51,8 +52,12 @@ export const OfflineBanner = () => {
   }
 
   useEffect(() => {
-    popIn()
-  }, [])
+    if (bannerVisible) {
+      popIn()
+    } else {
+      popOut();
+    }
+  }, [bannerVisible])
 
   return (
     <Host pointerEvents="box-none">
