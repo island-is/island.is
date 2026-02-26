@@ -332,19 +332,10 @@ export class HealthDirectorateService {
 
   /* Renewal */
   async postRenewal(auth: Auth, input: HealthDirectorateRenewalInput) {
-    const parsedCategory = Number(input.medCardDrugCategory.trim())
-
-    if (isNaN(parsedCategory)) {
-      this.logger.warn('Invalid medCardDrugCategory for renewal', {
-        medCardDrugCategory: input.medCardDrugCategory,
-      })
-      return null
-    }
-
     await this.healthApi.postRenewalPrescription(auth, input.id, {
       productId: input.productId,
       medCardDrugId: input.medCardDrugId,
-      medCardDrugCategory: parsedCategory,
+      medCardDrugCategory: input.medCardDrugCategory,
     })
 
     return null

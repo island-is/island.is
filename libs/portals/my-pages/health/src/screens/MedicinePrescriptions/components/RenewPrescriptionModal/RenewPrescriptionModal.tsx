@@ -97,8 +97,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
         variables: {
           input: {
             id: activePrescription.prescriptionId.toString(),
-            medCardDrugCategory:
-              activePrescription.medCardDrugCategory.toString(),
+            medCardDrugCategory: activePrescription.medCardDrugCategory,
             medCardDrugId: activePrescription.medCardDrugId,
             productId: activePrescription.id,
           },
