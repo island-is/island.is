@@ -25,7 +25,7 @@ export default async function handler(
 ) {
   const nationalId = (req.query.nationalId as string).replace('-', '')
 
-  // Each api call costs actualy money. This allows us to develop and test
+  // Each api call costs actual money. This allows us to develop and test
   // without actually making a real api call.
   const people: NationalRegistryResponsePerson =
     process.env.NODE_ENV === 'production'
