@@ -11,8 +11,11 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 
+import { InferAttributes } from 'sequelize'
+
 import { PaymentMethod } from '../../types'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
+import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
   createCardRefundContext,
@@ -24,7 +27,10 @@ import {
   createInvoiceRefundSaga,
 } from './invoiceRefund.saga'
 import { RefundPaymentInput } from './dtos/refundPayment.input'
-import { RefundMethod, RefundPaymentResponse } from './dtos/refundPayment.response'
+import {
+  RefundMethod,
+  RefundPaymentResponse,
+} from './dtos/refundPayment.response'
 import {
   CardRefundContext,
   CardRefundStepResults,
@@ -61,16 +67,10 @@ export class RefundController {
         paymentFlowId,
       )
 
-    if (!paymentFulfillment) {
-      throw new BadRequestException(
-        PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded,
-      )
-    }
-
-    if (paymentFulfillment.paymentMethod === 'card') {
-      return this.handleCardRefund(refundPaymentInput)
-    } else if (paymentFulfillment.paymentMethod === 'invoice') {
-      return this.handleInvoiceRefund(refundPaymentInput)
+    if (paymentFulfillment?.paymentMethod === 'card') {
+      return this.handleCardRefund(refundPaymentInput, paymentFulfillment)
+    } else if (paymentFulfillment?.paymentMethod === 'invoice') {
+      return this.handleInvoiceRefund(refundPaymentInput, paymentFulfillment)
     }
 
     throw new BadRequestException(
@@ -80,10 +80,15 @@ export class RefundController {
 
   private async handleCardRefund(
     input: RefundPaymentInput,
+    paymentFulfillment: InferAttributes<PaymentFulfillment>,
   ): Promise<RefundPaymentResponse> {
     const { paymentFlowId } = input
 
-    const context = createCardRefundContext(paymentFlowId, input)
+    const context = createCardRefundContext(
+      paymentFlowId,
+      input,
+      paymentFulfillment,
+    )
     const saga = createCardRefundSaga(
       this.refundService,
       this.paymentFlowService,
@@ -124,10 +129,15 @@ export class RefundController {
 
   private async handleInvoiceRefund(
     input: RefundPaymentInput,
+    paymentFulfillment: InferAttributes<PaymentFulfillment>,
   ): Promise<RefundPaymentResponse> {
     const { paymentFlowId } = input
 
-    const context = createInvoiceRefundContext(paymentFlowId, input)
+    const context = createInvoiceRefundContext(
+      paymentFlowId,
+      input,
+      paymentFulfillment,
+    )
     const saga = createInvoiceRefundSaga(this.paymentFlowService, this.logger)
     const orchestrator = new PaymentOrchestrator<
       InvoiceRefundContext,
@@ -154,7 +164,11 @@ export class RefundController {
 
   private async handleRefundError(
     e: Error,
-    context: { metadata?: Record<string, unknown>; failedStep?: string; completedSteps?: string[] },
+    context: {
+      metadata?: Record<string, unknown>
+      failedStep?: string
+      completedSteps?: string[]
+    },
     paymentFlowId: string,
     paymentMethod: PaymentMethod,
   ): Promise<RefundPaymentResponse> {

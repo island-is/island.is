@@ -1,6 +1,9 @@
+import { InferAttributes } from 'sequelize'
+
 import type { Logger } from '@island.is/logging'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 
+import { PaymentFulfillment } from '../../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
 import {
   PaymentOrchestrator,
@@ -22,8 +25,15 @@ describe('Invoice Refund Saga', () => {
   let mockLogger: Logger
   let mockPaymentFlowService: jest.Mocked<PaymentFlowService>
 
-  const setupSaga = (input = getRefundInput()) => {
-    const context = createInvoiceRefundContext(input.paymentFlowId, input)
+  const setupSaga = (
+    input = getRefundInput(),
+    paymentFulfillment: InferAttributes<PaymentFulfillment> = mockInvoicePaymentFulfillment,
+  ) => {
+    const context = createInvoiceRefundContext(
+      input.paymentFlowId,
+      input,
+      paymentFulfillment,
+    )
     const saga = createInvoiceRefundSaga(mockPaymentFlowService, mockLogger)
     const orchestrator = new PaymentOrchestrator<
       InvoiceRefundContext,
@@ -35,78 +45,38 @@ describe('Invoice Refund Saga', () => {
   beforeEach(() => {
     mockLogger = createMockLogger()
     mockPaymentFlowService = createMockPaymentFlowService()
-    mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
-      mockInvoicePaymentFulfillment as never,
-    )
   })
 
   describe('createInvoiceRefundContext', () => {
-    it('should create context with paymentFlowId and input', () => {
+    it('should create context with paymentFlowId, input, and paymentFulfillment', () => {
       const input = getRefundInput()
-      const context = createInvoiceRefundContext('flow-123', input)
+      const context = createInvoiceRefundContext(
+        'flow-123',
+        input,
+        mockInvoicePaymentFulfillment,
+      )
 
       expect(context.paymentFlowId).toBe('flow-123')
       expect(context.input).toEqual(input)
       expect(context.paymentMethod).toBe('invoice')
+      expect(context.paymentFulfillment).toEqual(mockInvoicePaymentFulfillment)
       expect(context.stepResults).toEqual({})
       expect(context.completedSteps).toEqual([])
     })
   })
 
-  describe('VALIDATE_INVOICE_REFUND', () => {
-    it('should call findPaymentFulfillmentForPaymentFlow', async () => {
-      const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context)
-
-      expect(
-        mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow,
-      ).toHaveBeenCalledWith(input.paymentFlowId)
-    })
-
-    it('should throw when payment fulfillment is missing', async () => {
-      mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
-        null,
-      )
-
-      const { context, saga, orchestrator } = setupSaga()
-
-      await expect(
-        orchestrator.execute(saga, context),
-      ).rejects.toThrow(PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded)
-    })
-
-    it('should throw when payment method is not invoice', async () => {
-      mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
-        {
-          ...mockInvoicePaymentFulfillment,
-          paymentMethod: 'card' as const,
-        } as never,
-      )
-
-      const { context, saga, orchestrator } = setupSaga()
-
-      await expect(
-        orchestrator.execute(saga, context),
-      ).rejects.toThrow(PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded)
-    })
-
-    it('should throw when fjsChargeId is missing', async () => {
-      mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
-        {
-          ...mockInvoicePaymentFulfillment,
-          fjsChargeId: null,
-        } as never,
-      )
-
-      const { context, saga, orchestrator } = setupSaga()
-
-      await expect(
-        orchestrator.execute(saga, context),
-      ).rejects.toThrow(PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded)
-    })
-  })
-
   describe('DELETE_INVOICE_FULFILLMENT', () => {
+    it('should throw when fjsChargeId is missing', async () => {
+      const { context, saga, orchestrator } = setupSaga(undefined, {
+        ...mockInvoicePaymentFulfillment,
+        fjsChargeId: null,
+      })
+
+      await expect(orchestrator.execute(saga, context)).rejects.toThrow(
+        PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded,
+      )
+    })
+
     it('should call deletePaymentFulfillment', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
       await orchestrator.execute(saga, context)
@@ -127,9 +97,9 @@ describe('Invoice Refund Saga', () => {
 
       const { context, saga, orchestrator } = setupSaga()
 
-      await expect(
-        orchestrator.execute(saga, context),
-      ).rejects.toThrow(PaymentServiceCode.CouldNotDeletePaymentFulfillment)
+      await expect(orchestrator.execute(saga, context)).rejects.toThrow(
+        PaymentServiceCode.CouldNotDeletePaymentFulfillment,
+      )
     })
   })
 
@@ -185,7 +155,6 @@ describe('Invoice Refund Saga', () => {
 
       expect(result.success).toBe(true)
       expect(context.completedSteps).toEqual([
-        'VALIDATE_INVOICE_REFUND',
         'DELETE_INVOICE_FULFILLMENT',
         'DELETE_FJS_CHARGE',
         'LOG_REFUND_SUCCESS',
@@ -201,9 +170,9 @@ describe('Invoice Refund Saga', () => {
 
       const { input, context, saga, orchestrator } = setupSaga()
 
-      await expect(
-        orchestrator.execute(saga, context),
-      ).rejects.toThrow('FJS delete failed')
+      await expect(orchestrator.execute(saga, context)).rejects.toThrow(
+        'FJS delete failed',
+      )
 
       expect(
         mockPaymentFlowService.restorePaymentFulfillment,
@@ -227,9 +196,9 @@ describe('Invoice Refund Saga', () => {
 
       const { context, saga, orchestrator } = setupSaga()
 
-      await expect(
-        orchestrator.execute(saga, context),
-      ).rejects.toThrow('Log failed')
+      await expect(orchestrator.execute(saga, context)).rejects.toThrow(
+        'Log failed',
+      )
 
       expect(context.metadata?.refundSucceededButRollbackFailed).toBe(true)
     })

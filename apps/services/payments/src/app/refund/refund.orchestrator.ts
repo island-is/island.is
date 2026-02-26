@@ -12,7 +12,7 @@ import {
 import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { RefundPaymentInput } from './dtos/refundPayment.input'
+import { RefundPaymentInput } from './dtos'
 
 export interface PaymentContext<TStepResults extends object>
   extends ContextWithStepResults<TStepResults> {
@@ -73,12 +73,6 @@ export type CardRefundSagaDefinition = SagaDefinition<
 
 export interface CardRefundStepResults {
   VALIDATE_REFUND: {
-    paymentFulfillment: {
-      id: string
-      paymentFlowId: string
-      confirmationRefId: string
-      fjsChargeId?: string | null
-    }
     cardPaymentConfirmation: InferAttributes<CardPaymentDetails>
     hasFjsCharge: boolean
   }
@@ -94,6 +88,7 @@ export interface CardRefundStepResults {
 export interface CardRefundContext
   extends PaymentContext<CardRefundStepResults> {
   input: RefundPaymentInput
+  paymentFulfillment: InferAttributes<PaymentFulfillment>
 }
 
 // Invoice refund types
@@ -103,9 +98,6 @@ export type InvoiceRefundSagaDefinition = SagaDefinition<
 >
 
 export interface InvoiceRefundStepResults {
-  VALIDATE_INVOICE_REFUND: {
-    paymentFulfillment: InferAttributes<PaymentFulfillment>
-  }
   DELETE_INVOICE_FULFILLMENT: {
     deletedPaymentFulfillment: InferAttributes<PaymentFulfillment>
   }
@@ -116,4 +108,5 @@ export interface InvoiceRefundStepResults {
 export interface InvoiceRefundContext
   extends PaymentContext<InvoiceRefundStepResults> {
   input: RefundPaymentInput
+  paymentFulfillment: InferAttributes<PaymentFulfillment>
 }

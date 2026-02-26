@@ -1,8 +1,11 @@
+import { InferAttributes } from 'sequelize'
+
 import { Logger } from '@island.is/logging'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { BadRequestException } from '@nestjs/common'
 import { PaymentMethod, RefundType } from '../../types'
 import { requireStepResult } from '../../utils/orchestrator'
+import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { RefundPaymentInput } from './dtos/refundPayment.input'
 import {
@@ -13,11 +16,13 @@ import {
 export const createInvoiceRefundContext = (
   paymentFlowId: string,
   input: RefundPaymentInput,
+  paymentFulfillment: InferAttributes<PaymentFulfillment>,
 ): InvoiceRefundContext => {
   return {
     paymentFlowId,
     paymentMethod: PaymentMethod.INVOICE,
     input,
+    paymentFulfillment,
     stepResults: {},
     completedSteps: [],
     startTime: new Date(),
@@ -29,47 +34,21 @@ export const createInvoiceRefundSaga = (
   logger: Logger,
 ): InvoiceRefundSagaDefinition => [
   {
-    name: 'VALIDATE_INVOICE_REFUND',
-    description: 'Validate the invoice payment flow is eligible for refund',
-    execute: async (ctx) => {
-      const paymentFulfillment =
-        await paymentFlowService.findPaymentFulfillmentForPaymentFlow(
-          ctx.paymentFlowId,
-        )
-
-      if (
-        !paymentFulfillment ||
-        paymentFulfillment.paymentMethod !== 'invoice'
-      ) {
-        throw new BadRequestException(
-          PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded,
-        )
-      }
-
-      if (!paymentFulfillment.fjsChargeId) {
-        throw new BadRequestException(
-          PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded,
-        )
-      }
-
-      return { paymentFulfillment }
-    },
-  },
-  {
     name: 'DELETE_INVOICE_FULFILLMENT',
     description:
       'Mark the invoice payment fulfillment as deleted to prevent double refunds',
     execute: async (ctx) => {
-      const { paymentFulfillment } = requireStepResult(
-        ctx,
-        'VALIDATE_INVOICE_REFUND',
-      )
+      if (!ctx.paymentFulfillment.fjsChargeId) {
+        throw new BadRequestException(
+          PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded,
+        )
+      }
 
       const deletedPaymentFulfillment =
         await paymentFlowService.deletePaymentFulfillment({
           paymentFlowId: ctx.paymentFlowId,
-          confirmationRefId: paymentFulfillment.confirmationRefId,
-          correlationId: paymentFulfillment.id,
+          confirmationRefId: ctx.paymentFulfillment.confirmationRefId,
+          correlationId: ctx.paymentFulfillment.id,
         })
 
       if (!deletedPaymentFulfillment) {

@@ -1,9 +1,12 @@
+import { InferAttributes } from 'sequelize'
+
 import { Logger } from '@island.is/logging'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { retry } from '@island.is/shared/utils/server'
 import { BadRequestException } from '@nestjs/common'
 import { PaymentMethod, RefundType } from '../../types'
 import { hasStepResult, requireStepResult } from '../../utils/orchestrator'
+import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { RefundPaymentInput } from './dtos/refundPayment.input'
 import {
@@ -17,11 +20,13 @@ export const CARD_REFUND_SAGA_START_STEP = 'VALIDATE_REFUND'
 export const createCardRefundContext = (
   paymentFlowId: string,
   input: RefundPaymentInput,
+  paymentFulfillment: InferAttributes<PaymentFulfillment>,
 ): CardRefundContext => {
   return {
     paymentFlowId,
     paymentMethod: PaymentMethod.CARD,
     input,
+    paymentFulfillment,
     stepResults: {},
     completedSteps: [],
     startTime: new Date(),
@@ -54,29 +59,21 @@ export const createCardRefundSaga = (
     name: 'VALIDATE_REFUND',
     description: 'Validate the payment flow is eligible for refund',
     execute: async (ctx) => {
-      const [paymentFulfillment, cardPaymentConfirmation] = await Promise.all([
-        paymentFlowService.findPaymentFulfillmentForPaymentFlow(
+      const cardPaymentConfirmation =
+        await paymentFlowService.getCardPaymentConfirmationForPaymentFlow(
           ctx.paymentFlowId,
-        ),
-        paymentFlowService.getCardPaymentConfirmationForPaymentFlow(
-          ctx.paymentFlowId,
-        ),
-      ])
+        )
 
-      if (
-        !paymentFulfillment ||
-        paymentFulfillment.paymentMethod !== 'card' ||
-        !cardPaymentConfirmation
-      ) {
+      if (!cardPaymentConfirmation) {
         throw new BadRequestException(
           PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded,
         )
       }
 
-      const hasFjsCharge = !!paymentFulfillment.fjsChargeId
+      // we use this to determine how we should refund, via payment gateway or by deleting a fjs charge
+      const hasFjsCharge = !!ctx.paymentFulfillment.fjsChargeId
 
       return {
-        paymentFulfillment,
         cardPaymentConfirmation,
         hasFjsCharge,
       }
@@ -128,9 +125,7 @@ export const createCardRefundSaga = (
         requireStepResult(ctx, 'DELETE_CARD_PAYMENT_CONFIRMATION')
 
       if (deletedPaymentConfirmation) {
-        logger.info(
-          `[${ctx.paymentFlowId}] Restoring payment confirmation`,
-        )
+        logger.info(`[${ctx.paymentFlowId}] Restoring payment confirmation`)
         await paymentFlowService.restoreCardPaymentConfirmation(
           ctx.paymentFlowId,
           deletedPaymentConfirmation.id,
@@ -138,9 +133,7 @@ export const createCardRefundSaga = (
       }
 
       if (deletedPaymentFulfillment && deletedPaymentConfirmation) {
-        logger.info(
-          `[${ctx.paymentFlowId}] Restoring payment fulfillment`,
-        )
+        logger.info(`[${ctx.paymentFlowId}] Restoring payment fulfillment`)
         await paymentFlowService.restorePaymentFulfillment({
           paymentFlowId: ctx.paymentFlowId,
           confirmationRefId: deletedPaymentConfirmation.id,
@@ -181,9 +174,7 @@ export const createCardRefundSaga = (
 
       await logRefundStarted(paymentFlowService, ctx)
 
-      logger.info(
-        `[${ctx.paymentFlowId}] Refunding via payment gateway`,
-      )
+      logger.info(`[${ctx.paymentFlowId}] Refunding via payment gateway`)
       const refundResult = await retry(() =>
         refundService.refundWithCorrelationId({
           paymentTrackingData: {
