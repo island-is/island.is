@@ -317,15 +317,9 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       // eslint-disable-next-line no-constant-condition
       if (true) {
         // trigger refund for testing
-        try {
-          await this.sharedTemplateAPIService.refundPayment(application.id)
-          throw new TemplateApiError(
-            'Failed to submit application, non 200 status',
-            500,
-          )
-        } catch (e) {
-          this.logger.error('Failed to refund payment:', e.message)
-        }
+
+        await this.sharedTemplateAPIService.refundPayment(application.id)
+
         throw new TemplateApiError(
           'Failed to submit application, non 200 status',
           500,
@@ -359,7 +353,18 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       // return res
     } catch (e) {
       this.logger.error('Failed to submit application:', e.message)
-      throw new TemplateApiError(e, 500)
+      if (e instanceof TemplateApiError) {
+        const error = e as TemplateApiError
+        this.logger.error(
+          'Failed to submit application:',
+          JSON.stringify(error, null, 2),
+        )
+        throw error
+      }
+      throw new TemplateApiError(
+        `Failed to submit application: ${e.message}`,
+        500,
+      )
     }
   }
 }
