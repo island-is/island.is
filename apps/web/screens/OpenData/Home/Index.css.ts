@@ -180,7 +180,6 @@ export const searchResultIcon = style({
   height: '24px',
 })
 
-
 export const heroImage = style({
   width: '180px',
   height: 'auto',

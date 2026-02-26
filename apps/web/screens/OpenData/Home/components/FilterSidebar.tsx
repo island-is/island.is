@@ -31,7 +31,11 @@ interface FilterSidebarProps {
   filterOptions: FilterCategory[]
   filters: Record<string, string[]>
   isOpen: boolean[]
-  onFilterChange: (filterKey: string, filterValue: string, checked: boolean) => void
+  onFilterChange: (
+    filterKey: string,
+    filterValue: string,
+    checked: boolean,
+  ) => void
   onClearFilterType: (filterKey: string) => void
   onClearAllFilters: () => void
   onToggleIsOpen: (index: number, value: boolean) => void
@@ -102,8 +106,10 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                 >
                   <Box paddingY={1}>
                     {filter.options?.slice(0, 10).map((option) => {
-                      const optionValue = typeof option === 'string' ? option : option.value
-                      const optionLabel = typeof option === 'string' ? option : option.label
+                      const optionValue =
+                        typeof option === 'string' ? option : option.value
+                      const optionLabel =
+                        typeof option === 'string' ? option : option.label
                       return (
                         <Box paddingY={1} key={optionValue}>
                           <Checkbox
@@ -121,7 +127,11 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       )
                     })}
                     {selectedValues.length > 0 && (
-                      <Box paddingTop={2} display="flex" justifyContent="flexEnd">
+                      <Box
+                        paddingTop={2}
+                        display="flex"
+                        justifyContent="flexEnd"
+                      >
                         <Button
                           variant="text"
                           size="small"

@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -21,9 +21,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import {
-  Webreader,
-} from '@island.is/web/components'
+import { Webreader } from '@island.is/web/components'
 import {
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
@@ -94,7 +92,7 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
   const { id } = router.query
   const { width } = useWindowSize()
   const n = useNamespace(namespace)
-  
+
   const [hasMounted, setHasMounted] = useState(false)
   const [activeSection, setActiveSection] = useState('Yfirlit')
   const _isMobileScreenWidth = hasMounted && width < theme.breakpoints.md
@@ -105,15 +103,23 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
 
   // Track active section based on scroll position and hash changes
   useEffect(() => {
-    const sectionIds = ['yfirlit', 'lysigogn', 'uppfaerslur', 'abyrgdaradili', 'adgangur', 'svipud', 'abendingar']
+    const sectionIds = [
+      'yfirlit',
+      'lysigogn',
+      'uppfaerslur',
+      'abyrgdaradili',
+      'adgangur',
+      'svipud',
+      'abendingar',
+    ]
     const sectionTitles: Record<string, string> = {
-      'yfirlit': 'Yfirlit',
-      'lysigogn': 'Lýsigögn og niðurhal',
-      'uppfaerslur': 'Uppfærslur og viðhald',
-      'abyrgdaradili': 'Ábyrgðaraðili',
-      'adgangur': 'Aðgangur og endurnýting',
-      'svipud': 'Svipuð gagnasöfn',
-      'abendingar': 'Ábendingar',
+      yfirlit: 'Yfirlit',
+      lysigogn: 'Lýsigögn og niðurhal',
+      uppfaerslur: 'Uppfærslur og viðhald',
+      abyrgdaradili: 'Ábyrgðaraðili',
+      adgangur: 'Aðgangur og endurnýting',
+      svipud: 'Svipuð gagnasöfn',
+      abendingar: 'Ábendingar',
     }
 
     const handleHashChange = () => {
@@ -161,12 +167,36 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
 
   const navigationItems: NavigationItem[] = [
     { title: 'Yfirlit', href: '#yfirlit', active: activeSection === 'Yfirlit' },
-    { title: 'Lýsigögn og niðurhal', href: '#lysigogn', active: activeSection === 'Lýsigögn og niðurhal' },
-    { title: 'Uppfærslur og viðhald', href: '#uppfaerslur', active: activeSection === 'Uppfærslur og viðhald' },
-    { title: 'Ábyrgðaraðili', href: '#abyrgdaradili', active: activeSection === 'Ábyrgðaraðili' },
-    { title: 'Aðgangur og endurnýting', href: '#adgangur', active: activeSection === 'Aðgangur og endurnýting' },
-    { title: 'Svipuð gagnasöfn', href: '#svipud', active: activeSection === 'Svipuð gagnasöfn' },
-    { title: 'Ábendingar', href: '#abendingar', active: activeSection === 'Ábendingar' },
+    {
+      title: 'Lýsigögn og niðurhal',
+      href: '#lysigogn',
+      active: activeSection === 'Lýsigögn og niðurhal',
+    },
+    {
+      title: 'Uppfærslur og viðhald',
+      href: '#uppfaerslur',
+      active: activeSection === 'Uppfærslur og viðhald',
+    },
+    {
+      title: 'Ábyrgðaraðili',
+      href: '#abyrgdaradili',
+      active: activeSection === 'Ábyrgðaraðili',
+    },
+    {
+      title: 'Aðgangur og endurnýting',
+      href: '#adgangur',
+      active: activeSection === 'Aðgangur og endurnýting',
+    },
+    {
+      title: 'Svipuð gagnasöfn',
+      href: '#svipud',
+      active: activeSection === 'Svipuð gagnasöfn',
+    },
+    {
+      title: 'Ábendingar',
+      href: '#abendingar',
+      active: activeSection === 'Ábendingar',
+    },
   ]
 
   if (loading && !dataset) {
@@ -190,7 +220,10 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
               <Text variant="h3" color="red600">
                 {n('errorOccurred', 'Villa kom upp')}
               </Text>
-              <Text>{error?.message || n('datasetNotFound', 'Gagnasafn fannst ekki')}</Text>
+              <Text>
+                {error?.message ||
+                  n('datasetNotFound', 'Gagnasafn fannst ekki')}
+              </Text>
               <Box marginTop={3}>
                 <Button variant="text" onClick={() => router.push('/opingogn')}>
                   ← {n('backToOverview', 'Til baka í yfirlit')}
@@ -205,7 +238,6 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
 
   return (
     <Box>
-      
       {/* Main content */}
       <GridContainer>
         <SidebarLayout
@@ -216,11 +248,10 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
           sidebarContent={
             <Box paddingRight={[0, 0, 4]}>
               <Hidden below="md">
-
-                 <Box paddingTop={2} paddingBottom={4}>
-                  <Button 
-                    variant="text" 
-                    preTextIcon="arrowBack" 
+                <Box paddingTop={2} paddingBottom={4}>
+                  <Button
+                    variant="text"
+                    preTextIcon="arrowBack"
                     size="small"
                     onClick={() => router.push('/opingogn')}
                   >
@@ -228,36 +259,39 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                   </Button>
                 </Box>
 
-              {/* Header with organization logo */}
-              <Box 
-                paddingY={3} 
-                paddingX={3} 
-                marginBottom={3}
-                background="purple100" 
-                borderRadius="large"
-                display="flex" 
-                alignItems="center" 
-                style={{ gap: '1rem' }}
-              >
-                {dataset.organizationImage ? (
-                  <Box style={{ flexShrink: 0 }}>
-                    <img
-                      src={dataset.organizationImage}
-                      alt={dataset.publisher}
-                      style={{ height: '80px', width: '80px', objectFit: 'contain' }}
-                    />
+                {/* Header with organization logo */}
+                <Box
+                  paddingY={3}
+                  paddingX={3}
+                  marginBottom={3}
+                  background="purple100"
+                  borderRadius="large"
+                  display="flex"
+                  alignItems="center"
+                  style={{ gap: '1rem' }}
+                >
+                  {dataset.organizationImage ? (
+                    <Box style={{ flexShrink: 0 }}>
+                      <img
+                        src={dataset.organizationImage}
+                        alt={dataset.publisher}
+                        style={{
+                          height: '80px',
+                          width: '80px',
+                          objectFit: 'contain',
+                        }}
+                      />
+                    </Box>
+                  ) : null}
+                  <Box>
+                    <Text variant="eyebrow" color="purple600">
+                      {dataset.category || 'Náttúra'}
+                    </Text>
+                    <Text variant="h4" as="p" color="blueberry600">
+                      {dataset.publisher}
+                    </Text>
                   </Box>
-                ) : null}
-                <Box>
-                  <Text variant="eyebrow" color="purple600">
-                    {dataset.category || 'Náttúra'}
-                  </Text>
-                  <Text variant="h4" as="p" color="blueberry600">
-                    {dataset.publisher}
-                  </Text>
                 </Box>
-              </Box>
-
 
                 <Box marginBottom={3}>
                   <Navigation
@@ -267,7 +301,7 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                     activeItemTitle={activeSection}
                   />
                 </Box>
-                
+
                 {/* Key information sidebar */}
                 <Box background="purple100" padding={3} borderRadius="large">
                   <Text variant="h5" color="purple600" marginBottom={2}>
@@ -275,29 +309,43 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                   </Text>
                   <Stack space={2}>
                     <Box>
-                      <Text variant="small" color="dark300">{n('category', 'Efnisflokkur')}</Text>
-                      <Text>{dataset.category || n('notDefined', 'Ekki skilgreint')}</Text>
+                      <Text variant="small" color="dark300">
+                        {n('category', 'Efnisflokkur')}
+                      </Text>
+                      <Text>
+                        {dataset.category || n('notDefined', 'Ekki skilgreint')}
+                      </Text>
                     </Box>
                     <Box>
-                      <Text variant="small" color="dark300">{n('lastUpdated', 'Síðast uppfært')}</Text>
+                      <Text variant="small" color="dark300">
+                        {n('lastUpdated', 'Síðast uppfært')}
+                      </Text>
                       <Text>{formatDate(dataset.lastUpdated)}</Text>
                     </Box>
                     {dataset.metadata?.updateFrequency && (
                       <Box>
-                        <Text variant="small" color="dark300">{n('updateFrequency', 'Uppfærslutíðni')}</Text>
+                        <Text variant="small" color="dark300">
+                          {n('updateFrequency', 'Uppfærslutíðni')}
+                        </Text>
                         <Text>{dataset.metadata.updateFrequency}</Text>
                       </Box>
                     )}
                     <Box>
-                      <Text variant="small" color="dark300">{n('status', 'Staða')}</Text>
+                      <Text variant="small" color="dark300">
+                        {n('status', 'Staða')}
+                      </Text>
                       <Text>{n('active', 'Virkt')}</Text>
                     </Box>
                     <Box>
-                      <Text variant="small" color="dark300">{n('access', 'Aðgangur')}</Text>
+                      <Text variant="small" color="dark300">
+                        {n('access', 'Aðgangur')}
+                      </Text>
                       <Text>{n('open', 'Opinn')}</Text>
                     </Box>
                     <Box>
-                      <Text variant="small" color="dark300">{n('license', 'Notkunarleyfi')}</Text>
+                      <Text variant="small" color="dark300">
+                        {n('license', 'Notkunarleyfi')}
+                      </Text>
                       <Text>{dataset.license || 'CC-BY (4.0)'}</Text>
                     </Box>
                   </Stack>
@@ -307,37 +355,36 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
           }
         >
           <Box paddingLeft={[0, 0, 4]}>
-
-
             <Box paddingY={2}>
-          <Breadcrumbs
-            items={[
-              { title: 'Ísland.is', href: '/' },
-              { title: 'Opin gögn', href: '/opingogn' },
-              { title: dataset.publisher },
-            ]}
-            renderLink={(link, item) => {
-              return item?.href ? (
-                <NextLink href={item.href} legacyBehavior>
-                  {link}
-                </NextLink>
-              ) : (
-                link
-              )
-            }}
-          />
-        </Box>
+              <Breadcrumbs
+                items={[
+                  { title: 'Ísland.is', href: '/' },
+                  { title: 'Opin gögn', href: '/opingogn' },
+                  { title: dataset.publisher },
+                ]}
+                renderLink={(link, item) => {
+                  return item?.href ? (
+                    <NextLink href={item.href} legacyBehavior>
+                      {link}
+                    </NextLink>
+                  ) : (
+                    link
+                  )
+                }}
+              />
+            </Box>
 
             {/* Header with organization logo */}
-            <Box paddingTop={4}  style={{ gap: '1.5rem' }}>
+            <Box paddingTop={4} style={{ gap: '1.5rem' }}>
               <Text variant="h1" as="h1" marginBottom={2}>
                 {dataset.title}
               </Text>
               <Text color="dark400" marginBottom={3}>
-                {n('lastUpdated', 'Síðast uppfært')}: {formatDate(dataset.lastUpdated)}
+                {n('lastUpdated', 'Síðast uppfært')}:{' '}
+                {formatDate(dataset.lastUpdated)}
               </Text>
             </Box>
-            
+
             <Webreader />
 
             {/* Yfirlit Section */}
@@ -346,12 +393,15 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                 {n('overview', 'Yfirlit')}
               </Text>
               {dataset.description ? (
-                <Text marginBottom={3}>
-                  {dataset.description}
-                </Text>
+                <Text marginBottom={3}>{dataset.description}</Text>
               ) : null}
               {dataset.tags && dataset.tags.length > 0 && (
-                <Box display="flex" flexWrap="wrap" style={{ gap: '0.5rem' }} marginTop={dataset.description ? 3 : 0}>
+                <Box
+                  display="flex"
+                  flexWrap="wrap"
+                  style={{ gap: '0.5rem' }}
+                  marginTop={dataset.description ? 3 : 0}
+                >
                   {dataset.tags.map((tag) => (
                     <Tag key={tag} variant="blue" outlined>
                       {tag}
@@ -376,7 +426,9 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                         <T.HeadData>{n('file', 'Skrá')}</T.HeadData>
                         <T.HeadData>{n('format', 'Snið')}</T.HeadData>
                         <T.HeadData>{n('license', 'Notkunarleyfi')}</T.HeadData>
-                        <T.HeadData>{n('lastUpdated', 'Síðast uppfært')}</T.HeadData>
+                        <T.HeadData>
+                          {n('lastUpdated', 'Síðast uppfært')}
+                        </T.HeadData>
                         <T.HeadData>{n('download', 'Niðurhal')}</T.HeadData>
                       </T.Row>
                     </T.Head>
@@ -392,13 +444,25 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                             </Tag>
                           </T.Data>
                           <T.Data>
-                            <Text variant="small">{resource.license || dataset.license || 'CC-BY (4.0)'}</Text>
+                            <Text variant="small">
+                              {resource.license ||
+                                dataset.license ||
+                                'CC-BY (4.0)'}
+                            </Text>
                           </T.Data>
                           <T.Data>
-                            <Text variant="small">{formatDate(resource.lastModified || dataset.lastUpdated)}</Text>
+                            <Text variant="small">
+                              {formatDate(
+                                resource.lastModified || dataset.lastUpdated,
+                              )}
+                            </Text>
                           </T.Data>
                           <T.Data>
-                            <Link href={resource.url} color="blue400" underline="small">
+                            <Link
+                              href={resource.url}
+                              color="blue400"
+                              underline="small"
+                            >
                               {n('fetchData', 'Sækja gögn')}
                             </Link>
                           </T.Data>
@@ -409,7 +473,9 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                 </Box>
               ) : (
                 <Box padding={4} background="blue100" borderRadius="large">
-                  <Text>{n('noFilesAvailable', 'Engar skrár til niðurhals')}</Text>
+                  <Text>
+                    {n('noFilesAvailable', 'Engar skrár til niðurhals')}
+                  </Text>
                 </Box>
               )}
             </Box>
@@ -423,17 +489,30 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
               </Text>
               <Stack space={3}>
                 <Box>
-                  <Text fontWeight="semiBold" marginBottom={1}>{n('updateFrequency', 'Uppfærslutíðni')}</Text>
-                  <Text>{dataset.metadata?.updateFrequency || n('notDefined', 'Ekki skilgreint')}</Text>
+                  <Text fontWeight="semiBold" marginBottom={1}>
+                    {n('updateFrequency', 'Uppfærslutíðni')}
+                  </Text>
+                  <Text>
+                    {dataset.metadata?.updateFrequency ||
+                      n('notDefined', 'Ekki skilgreint')}
+                  </Text>
                 </Box>
                 <Box>
-                  <Text fontWeight="semiBold" marginBottom={1}>{n('lastUpdate', 'Síðasta uppfærsla')}</Text>
+                  <Text fontWeight="semiBold" marginBottom={1}>
+                    {n('lastUpdate', 'Síðasta uppfærsla')}
+                  </Text>
                   <Text>{formatDate(dataset.lastUpdated)}</Text>
                 </Box>
                 <Box>
-                  <Text fontWeight="semiBold" marginBottom={1}>{n('maintenanceAndResponsibility', 'Viðhald og ábyrgð')}</Text>
+                  <Text fontWeight="semiBold" marginBottom={1}>
+                    {n('maintenanceAndResponsibility', 'Viðhald og ábyrgð')}
+                  </Text>
                   <Text>
-                    {dataset.publisher} {n('maintenanceDescription', 'ber ábyrgð á viðhaldi gagnasafnsins og tryggir að gögn endurspegli skráða stöðu á hverjum tíma.')}
+                    {dataset.publisher}{' '}
+                    {n(
+                      'maintenanceDescription',
+                      'ber ábyrgð á viðhaldi gagnasafnsins og tryggir að gögn endurspegli skráða stöðu á hverjum tíma.',
+                    )}
                   </Text>
                 </Box>
               </Stack>
@@ -448,15 +527,22 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
               </Text>
               <Stack space={3}>
                 <Box>
-                  <Text fontWeight="semiBold" marginBottom={1}>{n('responsibleParty', 'Ábyrgðaraðili')}</Text>
+                  <Text fontWeight="semiBold" marginBottom={1}>
+                    {n('responsibleParty', 'Ábyrgðaraðili')}
+                  </Text>
                   <Text>{dataset.publisher}</Text>
                 </Box>
                 {dataset.maintainer && (
                   <Box>
-                    <Text fontWeight="semiBold" marginBottom={1}>{n('contactPerson', 'Tengiliður')}</Text>
+                    <Text fontWeight="semiBold" marginBottom={1}>
+                      {n('contactPerson', 'Tengiliður')}
+                    </Text>
                     <Text>{dataset.maintainer}</Text>
                     {dataset.maintainerEmail && (
-                      <Link href={`mailto:${dataset.maintainerEmail}`} color="blue400">
+                      <Link
+                        href={`mailto:${dataset.maintainerEmail}`}
+                        color="blue400"
+                      >
                         {dataset.maintainerEmail}
                       </Link>
                     )}
@@ -464,7 +550,9 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                 )}
                 {dataset.author && (
                   <Box>
-                    <Text fontWeight="semiBold" marginBottom={1}>{n('author', 'Höfundur')}</Text>
+                    <Text fontWeight="semiBold" marginBottom={1}>
+                      {n('author', 'Höfundur')}
+                    </Text>
                     <Text>{dataset.author}</Text>
                   </Box>
                 )}
@@ -480,14 +568,26 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
               </Text>
               <Stack space={3}>
                 <Box>
-                  <Text fontWeight="semiBold" marginBottom={1}>{n('accessLevel', 'Aðgangsstig')}</Text>
-                  <Text>{n('openAccessDescription', 'Opinn - Gögnin eru aðgengileg öllum án takmarkana.')}</Text>
+                  <Text fontWeight="semiBold" marginBottom={1}>
+                    {n('accessLevel', 'Aðgangsstig')}
+                  </Text>
+                  <Text>
+                    {n(
+                      'openAccessDescription',
+                      'Opinn - Gögnin eru aðgengileg öllum án takmarkana.',
+                    )}
+                  </Text>
                 </Box>
                 <Box>
-                  <Text fontWeight="semiBold" marginBottom={1}>{n('license', 'Notkunarleyfi')}</Text>
+                  <Text fontWeight="semiBold" marginBottom={1}>
+                    {n('license', 'Notkunarleyfi')}
+                  </Text>
                   <Text>{dataset.license || 'CC-BY (4.0)'}</Text>
                   <Text variant="small" color="dark300" marginTop={1}>
-                    {n('licenseDescription', 'Þetta leyfi leyfir endurnýtingu gagnanna að því tilskildu að uppruninn sé tilgreindur.')}
+                    {n(
+                      'licenseDescription',
+                      'Þetta leyfi leyfir endurnýtingu gagnanna að því tilskildu að uppruninn sé tilgreindur.',
+                    )}
                   </Text>
                 </Box>
               </Stack>
@@ -513,14 +613,24 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                 {n('feedback', 'Ábendingar')}
               </Text>
               <Text marginBottom={3}>
-                {n('feedbackDescription', 'Ef þú hefur ábendingar um þessi gögn, vinsamlegast hafðu samband við ábyrgðaraðila.')}
+                {n(
+                  'feedbackDescription',
+                  'Ef þú hefur ábendingar um þessi gögn, vinsamlegast hafðu samband við ábyrgðaraðila.',
+                )}
               </Text>
               {dataset.maintainerEmail && (
                 <Button
                   variant="ghost"
                   icon="mail"
                   iconType="outline"
-                  onClick={() => window.location.href = `mailto:${dataset.maintainerEmail}?subject=${n('feedbackSubject', 'Ábending um gagnasafn')}: ${dataset.title}`}
+                  onClick={() =>
+                    (window.location.href = `mailto:${
+                      dataset.maintainerEmail
+                    }?subject=${n(
+                      'feedbackSubject',
+                      'Ábending um gagnasafn',
+                    )}: ${dataset.title}`)
+                  }
                 >
                   {n('sendFeedback', 'Senda ábendingu')}
                 </Button>
@@ -535,15 +645,19 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
 
 OpenDataDetailsPage.getProps = async ({ apolloClient, query, locale }) => {
   const id = query.id as string
-  
+
   const [, namespaceResponse] = await Promise.all([
-    id ? apolloClient.query({
-      query: GET_OPEN_DATA_DATASET,
-      variables: { id },
-    }).catch((error) => {
-      console.error('Error prefetching dataset:', error)
-      return null
-    }) : Promise.resolve(null),
+    id
+      ? apolloClient
+          .query({
+            query: GET_OPEN_DATA_DATASET,
+            variables: { id },
+          })
+          .catch((error) => {
+            console.error('Error prefetching dataset:', error)
+            return null
+          })
+      : Promise.resolve(null),
     apolloClient.query<GetNamespaceQuery, QueryGetNamespaceArgs>({
       query: GET_NAMESPACE_QUERY,
       variables: {

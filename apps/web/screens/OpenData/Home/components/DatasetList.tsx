@@ -11,7 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 
-import { DataItem,DatasetCard } from './DatasetCard'
+import { DataItem, DatasetCard } from './DatasetCard'
 import * as styles from '../Index.css'
 
 interface TranslationFn {
@@ -78,7 +78,10 @@ export const DatasetList: React.FC<DatasetListProps> = ({
               <Text variant="h3" as="p">
                 {loading
                   ? n('loadingData', 'Hleð gögn...')
-                  : `${n('showingResults', 'Sýnir')} ${totalCount} ${n('datasets', 'gagnasett')}`}
+                  : `${n('showingResults', 'Sýnir')} ${totalCount} ${n(
+                      'datasets',
+                      'gagnasett',
+                    )}`}
               </Text>
             </Box>
             <Box display="flex" flexDirection="row" justifyContent="flexEnd">

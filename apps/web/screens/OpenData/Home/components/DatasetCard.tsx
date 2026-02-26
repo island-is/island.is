@@ -34,7 +34,12 @@ const CardHeader: React.FC<{
   category?: string
   organizationImage?: string
 }> = ({ publisher, category, organizationImage }) => (
-  <Box display="flex" justifyContent="spaceBetween" alignItems="flexStart" marginBottom={2}>
+  <Box
+    display="flex"
+    justifyContent="spaceBetween"
+    alignItems="flexStart"
+    marginBottom={2}
+  >
     <Box>
       <Text variant="eyebrow" as="div" color="blue400">
         {publisher}
@@ -46,7 +51,11 @@ const CardHeader: React.FC<{
       )}
     </Box>
     <Box style={{ width: '40px', height: '40px', flexShrink: 0 }}>
-      <OrganizationLogo image={organizationImage} name={publisher} size="small" />
+      <OrganizationLogo
+        image={organizationImage}
+        name={publisher}
+        size="small"
+      />
     </Box>
   </Box>
 )
@@ -73,7 +82,7 @@ const ViewMoreLink: React.FC<{
   variant: 'grid' | 'list'
 }> = ({ id, label, variant }) => {
   const _thickness = variant === 'grid' ? '2px' : '1px'
-  
+
   return (
     <NextLink href={`/opingogn/${id}`} passHref legacyBehavior>
       <Link href={`/opingogn/${id}`} underline="small" color="blue400">
@@ -125,7 +134,12 @@ const MetaInfo: React.FC<{
             marginBottom={index < metaItems.length - 1 ? 1 : 0}
             style={{ gap }}
           >
-            <Icon icon={meta.icon} type="outline" color="blue400" size={iconSize} />
+            <Icon
+              icon={meta.icon}
+              type="outline"
+              color="blue400"
+              size={iconSize}
+            />
             <Text variant="small" color={textColor}>
               {meta.label}: {meta.value}
             </Text>
@@ -136,10 +150,20 @@ const MetaInfo: React.FC<{
   }
 
   return (
-    <Box paddingTop={3} display="flex" style={{ gap: '2rem' }} alignItems="center">
+    <Box
+      paddingTop={3}
+      display="flex"
+      style={{ gap: '2rem' }}
+      alignItems="center"
+    >
       {metaItems.map((meta) => (
         <Box key={meta.icon} display="flex" alignItems="center" style={{ gap }}>
-          <Icon icon={meta.icon} type="outline" color="blue400" size={iconSize} />
+          <Icon
+            icon={meta.icon}
+            type="outline"
+            color="blue400"
+            size={iconSize}
+          />
           <Text variant="small" color={textColor}>
             {meta.label}: {meta.value}
           </Text>
@@ -202,19 +226,36 @@ export const DatasetCard: React.FC<DatasetCardProps> = ({
                 </Tag>
               )}
             </Box>
-            <ViewMoreLink id={item.id} label={n('viewMore', 'Skoða nánar')} variant="grid" />
+            <ViewMoreLink
+              id={item.id}
+              label={n('viewMore', 'Skoða nánar')}
+              variant="grid"
+            />
           </Box>
         </>
       ) : (
-        <Box paddingTop={3} display="flex" style={{ gap: '2rem' }} alignItems="center">
+        <Box
+          paddingTop={3}
+          display="flex"
+          style={{ gap: '2rem' }}
+          alignItems="center"
+        >
           <MetaInfo item={item} formatDate={formatDate} n={n} variant="list" />
-          <Box display="flex" alignItems="center" style={{ marginLeft: 'auto', gap: '1rem' }}>
+          <Box
+            display="flex"
+            alignItems="center"
+            style={{ marginLeft: 'auto', gap: '1rem' }}
+          >
             {item.tags && item.tags.length > 0 && (
               <Tag variant="blue" outlined>
                 {item.tags[0]}
               </Tag>
             )}
-            <ViewMoreLink id={item.id} label={n('viewMore', 'Skoða nánar')} variant="list" />
+            <ViewMoreLink
+              id={item.id}
+              label={n('viewMore', 'Skoða nánar')}
+              variant="list"
+            />
           </Box>
         </Box>
       )}
