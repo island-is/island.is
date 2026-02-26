@@ -34,8 +34,11 @@ export const overviewSection = buildSection({
           title: m.overview.payerHeading,
           items: getPayerOverviewItems,
           condition: (answers) =>
-            getValueViaPath<boolean>(answers, COURSE_HAS_CHARGE_ITEM_CODE, true) ===
-            true,
+            getValueViaPath<boolean>(
+              answers,
+              COURSE_HAS_CHARGE_ITEM_CODE,
+              true,
+            ) === true,
         }),
         buildSubmitField({
           id: 'submit',
@@ -53,8 +56,11 @@ export const overviewSection = buildSection({
           id: 'paymentWindowDescription',
           description: m.overview.paymentWindowDescription,
           condition: (answers) =>
-            getValueViaPath<boolean>(answers, COURSE_HAS_CHARGE_ITEM_CODE, true) ===
-            true,
+            getValueViaPath<boolean>(
+              answers,
+              COURSE_HAS_CHARGE_ITEM_CODE,
+              true,
+            ) === true,
         }),
       ],
     }),

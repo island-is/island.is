@@ -10,10 +10,6 @@ export const MainForm = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [
-    courseSection,
-    userInformation,
-    participantSection,
-  ],
+  children: [courseSection, userInformation, participantSection],
   logo: HeilsugaeslaHofudborgarsvaedisinsLogo,
 })
