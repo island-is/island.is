@@ -166,6 +166,11 @@ export const m = {
       defaultMessage: 'Símanúmer',
       description: 'Title of participant phone field',
     },
+    continueButtonLabel: {
+      id: 'hh.courses.application:participant.continueButtonLabel',
+      defaultMessage: 'Halda áfram',
+      description: 'Label of continue button',
+    },
   }),
   payer: defineMessages({
     sectionTitle: {

@@ -1,10 +1,11 @@
 import {
   buildMultiField,
   buildSection,
+  buildSubmitField,
   buildTableRepeaterField,
   getValueViaPath,
 } from '@island.is/application/core'
-import type { Application } from '@island.is/application/types'
+import { DefaultEvents, type Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 
 export const participantSection = buildSection({
@@ -71,6 +72,18 @@ export const participantSection = buildSection({
               emailRequired: true,
             },
           },
+        }),
+        buildSubmitField({
+          id: 'submitMainForm',
+          title: m.overview.submitTitle,
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: m.participant.continueButtonLabel,
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),

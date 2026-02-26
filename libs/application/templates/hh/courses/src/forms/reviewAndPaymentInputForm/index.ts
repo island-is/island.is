@@ -1,19 +1,14 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
 import { HeilsugaeslaHofudborgarsvaedisinsLogo } from '@island.is/application/assets/institution-logos'
-import { participantSection } from './participantSection'
-import { courseSection } from './courseSection'
-import { userInformation } from './userInformation'
+import { payerSection } from '../mainForm/payerSection'
+import { overviewSection } from '../mainForm/overview'
 
-export const MainForm = buildForm({
-  id: 'MainForm',
+export const ReviewAndPaymentInputForm = buildForm({
+  id: 'ReviewAndPaymentInputForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [
-    courseSection,
-    userInformation,
-    participantSection,
-  ],
   logo: HeilsugaeslaHofudborgarsvaedisinsLogo,
+  children: [payerSection, overviewSection],
 })

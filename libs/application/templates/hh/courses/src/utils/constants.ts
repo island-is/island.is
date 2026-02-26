@@ -10,6 +10,7 @@ export enum States {
   COMPLETED = 'completed',
   FULLY_BOOKED = 'fullyBooked',
   PAYMENT = 'payment',
+  OVERVIEW = 'overview',
 }
 
 export enum Roles {

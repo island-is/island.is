@@ -4,6 +4,7 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import {
@@ -11,6 +12,7 @@ import {
   getParticipantOverviewTableData,
 } from '../../utils/getOverviewItems'
 import { m } from '../../lib/messages'
+import { COURSE_HAS_CHARGE_ITEM_CODE } from '../../utils/constants'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -31,6 +33,9 @@ export const overviewSection = buildSection({
           bottomLine: false,
           title: m.overview.payerHeading,
           items: getPayerOverviewItems,
+          condition: (answers) =>
+            getValueViaPath<boolean>(answers, COURSE_HAS_CHARGE_ITEM_CODE, true) ===
+            true,
         }),
         buildSubmitField({
           id: 'submit',
@@ -47,6 +52,9 @@ export const overviewSection = buildSection({
         buildDescriptionField({
           id: 'paymentWindowDescription',
           description: m.overview.paymentWindowDescription,
+          condition: (answers) =>
+            getValueViaPath<boolean>(answers, COURSE_HAS_CHARGE_ITEM_CODE, true) ===
+            true,
         }),
       ],
     }),

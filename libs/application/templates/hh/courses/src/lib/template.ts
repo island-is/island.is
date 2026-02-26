@@ -128,13 +128,49 @@ const template: ApplicationTemplate<
               delete: true,
             },
           ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.OVERVIEW,
+            },
+          ],
+        },
+      },
+      [States.OVERVIEW]: {
+        meta: {
+          name: 'Overview',
+          progress: 0.7,
+          status: FormModes.DRAFT,
+          lifecycle: DefaultStateLifeCycle,
+          onEntry: [
+            HhCoursesSelectedChargeItemApi.configure({
+              order: 0,
+            }),
+          ],
           onExit: [
             HhCoursesParticipantAvailabilityApi.configure({
               order: 0,
             }),
-            HhCoursesSelectedChargeItemApi.configure({
-              order: 1,
-            }),
+          ],
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/reviewAndPaymentInputForm').then((module) =>
+                  Promise.resolve(module.ReviewAndPaymentInputForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.overview.submitTitle,
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
           ],
         },
         on: {
