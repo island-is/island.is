@@ -18,9 +18,14 @@
       "supportsTablet": true,
       "bundleIdentifier": "is.island.app.dev",
       "buildNumber": "264",
-      "associatedDomains": ["webcredentials:island.is", "applinks:island.is"],
+      "associatedDomains": [
+        "webcredentials:island.is",
+        "applinks:island.is"
+      ],
       "entitlements": {
-        "com.apple.security.application-groups": ["group.is.island.app"],
+        "com.apple.security.application-groups": [
+          "group.is.island.app"
+        ],
         "keychain-access-groups": [
           "$(AppIdentifierPrefix)is.island.app",
           "$(AppIdentifierPrefix)is.island.app.dev"
@@ -32,7 +37,10 @@
         "NSFaceIDUsageDescription": "Used for unlocking the app",
         "NSMicrophoneUsageDescription": "Used for license scanning capabilities",
         "NSPhotoLibraryUsageDescription": "$(PRODUCT_NAME) needs access to your Photo Library to save captured photos and videos.",
-        "UIBackgroundModes": ["fetch", "remote-notification"],
+        "UIBackgroundModes": [
+          "fetch",
+          "remote-notification"
+        ],
         "ITSAppUsesNonExemptEncryption": false,
         "LSApplicationCategoryType": "public.app-category.lifestyle"
       },
@@ -40,19 +48,32 @@
         "NSPrivacyAccessedAPITypes": [
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryFileTimestamp",
-            "NSPrivacyAccessedAPITypeReasons": ["C617.1", "0A2A.1", "3B52.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "C617.1",
+              "0A2A.1",
+              "3B52.1"
+            ]
           },
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
-            "NSPrivacyAccessedAPITypeReasons": ["CA92.1", "1C8F.1", "C56D.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1",
+              "1C8F.1",
+              "C56D.1"
+            ]
           },
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace",
-            "NSPrivacyAccessedAPITypeReasons": ["E174.1", "85F4.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "E174.1",
+              "85F4.1"
+            ]
           },
           {
             "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime",
-            "NSPrivacyAccessedAPITypeReasons": ["35F9.1"]
+            "NSPrivacyAccessedAPITypeReasons": [
+              "35F9.1"
+            ]
           }
         ]
       },
@@ -66,7 +87,9 @@
       },
       "package": "is.island.app",
       "versionCode": 264,
-      "permissions": ["android.permission.CAMERA"],
+      "permissions": [
+        "android.permission.CAMERA"
+      ],
       "intentFilters": [
         {
           "action": "VIEW",
@@ -84,7 +107,10 @@
               ]
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
@@ -116,6 +142,7 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "owner": "island-is"
   }
 }

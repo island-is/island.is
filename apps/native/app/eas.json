@@ -1,15 +1,48 @@
 {
+  "cli": {
+    "appVersionSource": "remote",
+    "promptToConfigurePushNotifications": false
+  },
   "build": {
     "development": {
+      "android": {
+        "buildType": "app-bundle",
+        "credentialsSource": "local"
+      },
       "developmentClient": true,
       "distribution": "internal",
       "env": {
         "APP_VARIANT": "development"
+      },
+      "experimental": {
+        "ios": {
+          "appExtensions": [
+            {
+              "targetName": "LicenseWidget",
+              "bundleIdentifier": "is.island.dev.LicenseWidget"
+            }
+          ]
+        }
       }
     },
     "production": {
+      "autoIncrement": true,
+      "android": {
+        "buildType": "app-bundle",
+        "credentialsSource": "local"
+      },
       "env": {
         "APP_VARIANT": "production"
+      },
+      "experimental": {
+        "ios": {
+          "appExtensions": [
+            {
+              "targetName": "LicenseWidget",
+              "bundleIdentifier": "is.island.LicenseWidget"
+            }
+          ]
+        }
       }
     }
   }
