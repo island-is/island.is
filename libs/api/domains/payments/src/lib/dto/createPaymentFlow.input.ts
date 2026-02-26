@@ -1,19 +1,19 @@
-import { Field, Float, InputType } from '@nestjs/graphql'
-import { Type } from 'class-transformer'
+import { Field, InputType, Float } from '@nestjs/graphql'
 import {
-  ArrayNotEmpty,
-  IsArray,
-  IsBoolean,
   IsEnum,
+  IsArray,
+  IsString,
   IsNumber,
   IsObject,
   IsOptional,
-  IsPositive,
-  IsString,
+  ArrayNotEmpty,
   Length,
   Matches,
+  IsPositive,
   ValidateNested,
+  IsBoolean,
 } from 'class-validator'
+import { Type } from 'class-transformer'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { CreatePaymentFlowInputAvailablePaymentMethodsEnum } from '@island.is/clients/payments'

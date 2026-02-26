@@ -19,9 +19,9 @@ export class PaymentResolver {
       throw Error('Missing performing organization ID')
     }
 
-    const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
-      performingOrgID: input.performingOrganizationID,
-    })
+    const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
+      input.performingOrganizationID,
+    )
 
     return {
       items: data.item,

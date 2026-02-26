@@ -3209,8 +3209,6 @@ services-payments:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
-    PAYMENTS_APPLE_PAY_DISPLAY_NAME: 'island.is'
-    PAYMENTS_APPLE_PAY_DOMAIN: 'island.is'
     PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5'
     PAYMENTS_WEB_URL: 'https://island.is/greida'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'

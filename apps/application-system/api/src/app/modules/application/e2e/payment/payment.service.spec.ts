@@ -32,24 +32,18 @@ class MockChargeFjsV2ClientService {
     })
   }
 
-  getCatalogByPerformingOrg({
-    performingOrgID,
-  }: {
-    performingOrgID: string
-    chargeType?: string
-    chargeItemCode?: string | string[]
-  }) {
+  getCatalogByPerformingOrg(performingOrganizationID: string) {
     return Promise.resolve<Catalog>({
       item: [
         {
-          performingOrgID,
+          performingOrgID: performingOrganizationID,
           chargeType: '1',
           chargeItemCode: 'asdf',
           chargeItemName: '1',
           priceAmount: 1,
         },
         {
-          performingOrgID,
+          performingOrgID: performingOrganizationID,
           chargeType: '1',
           chargeItemCode: 'asdf2',
           chargeItemName: '2',

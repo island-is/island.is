@@ -23,9 +23,6 @@ import { CreateInvoiceResponse } from './dto/createInvoice.response'
 import { CardVerificationResponse } from './dto/cardVerificationCallback.response'
 import { GetPaymentFlowsInput } from './dto/getPaymentFlows.input'
 import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
-import { GetApplePaySessionResponse } from './dto/getApplePaySession.response'
-import { ApplePayChargeResponse } from './dto/applePayCharge.response'
-import { ApplePayChargeInput } from './dto/applePayCharge.input'
 
 @Injectable()
 export class PaymentsService {
@@ -145,27 +142,6 @@ export class PaymentsService {
         paymentStatus:
           flow.paymentStatus as unknown as GetPaymentFlowDTOPaymentStatusEnum,
       })),
-    }
-  }
-
-  async getApplePaySession(): Promise<GetApplePaySessionResponse> {
-    return this.paymentsApi.cardPaymentControllerGetApplePaySession()
-  }
-
-  async chargeApplePay(
-    applePayChargeInput: ApplePayChargeInput,
-  ): Promise<ApplePayChargeResponse> {
-    const response = await this.paymentsApi.cardPaymentControllerChargeApplePay(
-      {
-        applePayChargeInput,
-      },
-    )
-
-    const { isSuccess, responseCode } = response
-
-    return {
-      isSuccess,
-      responseCode,
     }
   }
 }

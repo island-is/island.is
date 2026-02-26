@@ -25,8 +25,11 @@ class CardInformation {
   @Field(() => String, { description: 'Card category' })
   cardCategory!: string
 
-  @Field(() => Boolean, { description: 'Out-of-SCA scope status' })
-  outOfScaScope!: boolean
+  @Field(() => String, { description: 'Out-of-SCA scope status' })
+  outOfScaScope!: string
+
+  @Field(() => String, { description: 'Card product category' })
+  cardProductCategory!: string
 }
 
 @ObjectType('PaymentsVerifyCardResponse')
@@ -51,14 +54,14 @@ export class VerifyCardResponse {
   @Field(() => CardInformation, { description: 'Card information' })
   cardInformation!: CardInformation
 
-  @Field(() => String, {
-    description: 'Script path for further actions',
-    nullable: true,
-  })
-  scriptPath?: string
+  @Field(() => String, { description: 'Script path for further actions' })
+  scriptPath!: string
 
   @Field(() => String, { description: 'Response code from the verification' })
   responseCode!: string
+
+  @Field(() => String, { description: 'Description of the response' })
+  responseDescription!: string
 
   @Field(() => String, { description: 'Response time of the verification' })
   responseTime!: string

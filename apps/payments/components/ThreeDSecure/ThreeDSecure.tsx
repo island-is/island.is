@@ -8,7 +8,7 @@ import * as styles from './ThreeDSecure.css'
 interface ThreeDSecureProps {
   isActive: boolean
   postUrl: string
-  scriptPath?: string
+  scriptPath: string
   verificationFields: { name: string; value: string }[]
   hasData: boolean
   onClose: () => void
@@ -38,11 +38,11 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
       const iframeDoc = iframeRef.current.contentWindow?.document
 
       if (iframeDoc) {
-        const formHtml = generateFormHtml({
+        const formHtml = generateFormHtml(
           postUrl,
           scriptPath,
           verificationFields,
-        })
+        )
         iframeDoc.open()
         iframeDoc.write(formHtml)
         iframeDoc.close()

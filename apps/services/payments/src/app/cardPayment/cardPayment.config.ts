@@ -16,8 +16,6 @@ const schema = z.object({
     paymentsApiHeaderValue: z.string(),
     paymentsGatewayApiUrl: z.string(),
     systemCalling: z.string(),
-    applePayDomainName: z.string(),
-    applePayDisplayName: z.string(),
   }),
   tokenExpiryMinutes: z.number().int(),
   memCacheExpiryMinutes: z.number().int(),
@@ -51,8 +49,6 @@ export const CardPaymentModuleConfig = defineConfig({
       paymentsApiHeaderValue: env.required('PAYMENTS_GATEWAY_API_HEADER_VALUE'),
       paymentsGatewayApiUrl: env.required('PAYMENTS_GATEWAY_API_URL'),
       systemCalling: env.required('PAYMENTS_GATEWAY_SYSTEM_CALLING'),
-      applePayDomainName: env.required('PAYMENTS_APPLE_PAY_DOMAIN'),
-      applePayDisplayName: env.required('PAYMENTS_APPLE_PAY_DISPLAY_NAME'),
     },
     tokenExpiryMinutes: env.optionalJSON('PAYMENTS_TOKEN_EXPIRY_MINUTES') ?? 2,
     memCacheExpiryMinutes:
