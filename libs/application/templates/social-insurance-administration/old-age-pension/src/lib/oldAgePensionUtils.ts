@@ -1,6 +1,5 @@
 import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import {
-  BankAccountType,
   MONTHS,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -135,25 +134,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'tempAnswers',
   ) as Application['answers']
 
-  const bankAccountType = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountType',
-  ) as BankAccountType
-
   const bank = getValueViaPath<PaymentInfo>(answers, 'paymentInfo.bank')
-
-  const iban = getValueViaPath(answers, 'paymentInfo.iban') as string
-
-  const swift = getValueViaPath(answers, 'paymentInfo.swift') as string
-
-  const bankName = getValueViaPath(answers, 'paymentInfo.bankName') as string
-
-  const bankAddress = getValueViaPath(
-    answers,
-    'paymentInfo.bankAddress',
-  ) as string
-
-  const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
 
   const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
 
@@ -184,12 +165,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     earlyRetirementAttachments,
     taxLevel,
     tempAnswers,
-    bankAccountType,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
     paymentInfo,
     incomePlan,
   }

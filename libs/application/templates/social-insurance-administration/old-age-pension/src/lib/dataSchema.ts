@@ -55,9 +55,9 @@ const FileSchema = z.object({
 })
 
 const icelandicBank = z.object({
-  bankNumber: z.string().regex(/^\d{4}$/), 
-  ledger: z.string().regex(/^\d{2}$/), 
-  accountNumber: z.string().regex(/^\d{6}$/), 
+  bankNumber: z.string().regex(/^\d{4}$/),
+  ledger: z.string().regex(/^\d{2}$/),
+  accountNumber: z.string().regex(/^\d{6}$/),
 })
 
 const bankBase = z
@@ -249,7 +249,7 @@ export const dataSchema = z.object({
       iban: z.string(),
       swift: z.string(),
       personalAllowance: z.enum([YES, NO]),
-      personalAllowanceUsage:  z.string().optional(),
+      personalAllowanceUsage: z.string().optional(),
       taxLevel: z.nativeEnum(TaxLevelOptions),
     })
     .partial()

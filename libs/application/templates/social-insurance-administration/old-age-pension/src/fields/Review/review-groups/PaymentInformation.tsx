@@ -2,7 +2,6 @@ import {
   DataValue,
   RadioValue,
   ReviewGroup,
-  formatBankInfo,
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -27,13 +26,8 @@ export const PaymentInformation = ({
     taxLevel,
     personalAllowance,
     personalAllowanceUsage,
+    paymentInfo,
     bank,
-    bankAccountType,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
   } = getApplicationAnswers(application.answers)
 
   const { formatMessage } = useLocale()
@@ -44,7 +38,7 @@ export const PaymentInformation = ({
       isEditable={editable}
       editAction={() => goToScreen?.('paymentInfo')}
     >
-      {bankAccountType === BankAccountType.FOREIGN ? (
+      {paymentInfo.bankAccountType === BankAccountType.FOREIGN ? (
         <>
           <GridRow marginBottom={3}>
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
@@ -52,7 +46,7 @@ export const PaymentInformation = ({
                 label={formatMessage(
                   socialInsuranceAdministrationMessage.payment.iban,
                 )}
-                value={friendlyFormatIBAN(iban)}
+                value={friendlyFormatIBAN(paymentInfo.iban)}
               />
             </GridColumn>
           </GridRow>
@@ -65,7 +59,7 @@ export const PaymentInformation = ({
                 label={formatMessage(
                   socialInsuranceAdministrationMessage.payment.swift,
                 )}
-                value={friendlyFormatSWIFT(swift)}
+                value={friendlyFormatSWIFT(paymentInfo.swift)}
               />
             </GridColumn>
             <GridColumn
@@ -76,7 +70,7 @@ export const PaymentInformation = ({
                 label={formatMessage(
                   socialInsuranceAdministrationMessage.payment.currency,
                 )}
-                value={currency}
+                value={paymentInfo.currency}
               />
             </GridColumn>
           </GridRow>
@@ -90,7 +84,7 @@ export const PaymentInformation = ({
                 label={formatMessage(
                   socialInsuranceAdministrationMessage.payment.bankName,
                 )}
-                value={bankName}
+                value={paymentInfo.bankName}
               />
             </GridColumn>
             <GridColumn
@@ -101,7 +95,7 @@ export const PaymentInformation = ({
                 label={formatMessage(
                   socialInsuranceAdministrationMessage.payment.bankAddress,
                 )}
-                value={bankAddress}
+                value={paymentInfo.bankAddress}
               />
             </GridColumn>
           </GridRow>

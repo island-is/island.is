@@ -489,9 +489,9 @@ const OldAgePensionTemplate: ApplicationTemplate<
       }),
       clearBankAccountInfo: assign((context) => {
         const { application } = context
-        const { bankAccountType } = getApplicationAnswers(application.answers)
+        const { paymentInfo } = getApplicationAnswers(application.answers)
 
-        if (bankAccountType === BankAccountType.ICELANDIC) {
+        if (paymentInfo.bankAccountType === BankAccountType.ICELANDIC) {
           unset(application.answers, 'paymentInfo.iban')
           unset(application.answers, 'paymentInfo.swift')
           unset(application.answers, 'paymentInfo.bankName')
@@ -499,7 +499,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           unset(application.answers, 'paymentInfo.currency')
         }
 
-        if (bankAccountType === BankAccountType.FOREIGN) {
+        if (paymentInfo.bankAccountType === BankAccountType.FOREIGN) {
           unset(application.answers, 'paymentInfo.bank')
         }
 

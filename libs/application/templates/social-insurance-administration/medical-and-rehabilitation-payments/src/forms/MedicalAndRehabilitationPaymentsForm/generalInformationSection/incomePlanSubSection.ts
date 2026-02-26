@@ -24,11 +24,11 @@ import {
 import { Application } from '@island.is/application/types'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import {
+  incomeTypeValueModifier,
   currencyValueModifier,
   equalIncomePerMonthValueModifier,
   incomePerYearValueModifier,
-  incomeTypeValueModifier,
-} from '../../../utils/incomePlanUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
 import { getApplicationExternalData } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const incomePlanSubSection = buildSubSection({
@@ -88,7 +88,7 @@ export const incomePlanSubSection = buildSubSection({
           isSearchable: true,
           updateValueObj: {
             valueModifier: (application, activeField) =>
-              incomeTypeValueModifier(application.externalData, activeField),
+              incomeTypeValueModifier(application, activeField),
             watchValues: 'incomeCategory',
           },
           options: (application, activeField) => {
