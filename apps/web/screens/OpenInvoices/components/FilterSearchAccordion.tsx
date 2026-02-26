@@ -6,6 +6,8 @@ import {
   AccordionItem,
   Box,
   Checkbox,
+  Icon,
+  Inline,
   Input,
   Tag,
 } from '@island.is/island-ui/core'
@@ -81,35 +83,40 @@ export const FilterSearchAccordion = ({
           </Box>
 
           {selectedItems.length > 0 && (
-            <Box
-              display="flex"
-              flexWrap="wrap"
-              rowGap={1}
-              columnGap={1}
-              marginBottom={2}
-            >
-              {selectedItems.map((item) => (
-                <Tag
-                  key={item.value}
-                  variant="blue"
-                  onClick={() => toggle(item.value)}
-                >
-                  {item.label}
-                </Tag>
-              ))}
+            <Box marginTop={1} marginBottom={2} className={styles.tagList}>
+              <Inline space={1}>
+                {selectedItems.map((item) => (
+                  <Tag
+                    key={item.value}
+                    variant="blue"
+                    onClick={() => toggle(item.value)}
+                  >
+                    <Box
+                      component="span"
+                      display="flex"
+                      alignItems="center"
+                      columnGap={1}
+                    >
+                      <Box component="span" className={styles.tagLabel}>
+                        {item.label}
+                      </Box>
+                      <Icon icon="close" size="small" color="blue400" />
+                    </Box>
+                  </Tag>
+                ))}
+              </Inline>
             </Box>
           )}
 
           <Box className={styles.scrollList} paddingX={1}>
             {filteredItems.map((item) => (
-              <Box key={item.value} paddingBottom={1}>
-                <Checkbox
-                  name={`${id}-${item.value}`}
-                  label={item.label}
-                  checked={selected.includes(item.value)}
-                  onChange={() => toggle(item.value)}
-                />
-              </Box>
+              <Checkbox
+                key={item.value}
+                name={`${id}-${item.value}`}
+                label={item.label}
+                checked={selected.includes(item.value)}
+                onChange={() => toggle(item.value)}
+              />
             ))}
           </Box>
         </AccordionItem>

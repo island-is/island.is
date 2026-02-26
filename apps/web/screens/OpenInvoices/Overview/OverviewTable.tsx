@@ -101,7 +101,7 @@ export const OverviewTable = ({
     <T.Table {...getTableProps()}>
       <T.Head>
         {headerGroups.map((headerGroup) => (
-          <T.Row key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
+          <T.Row {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
               <T.HeadData
                 {...column.getHeaderProps(
