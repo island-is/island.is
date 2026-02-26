@@ -4,6 +4,7 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import {
@@ -11,6 +12,7 @@ import {
   getParticipantOverviewTableData,
 } from '../../utils/getOverviewItems'
 import { m } from '../../lib/messages'
+import { doesCourseInstanceHaveChargeItemCode } from '../../utils/loadOptions'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -47,6 +49,14 @@ export const overviewSection = buildSection({
         buildDescriptionField({
           id: 'paymentWindowDescription',
           description: m.overview.paymentWindowDescription,
+          condition: (answers) => {
+            const selectedInstanceId = getValueViaPath<string>(
+              answers,
+              'dateSelect',
+              '',
+            )
+            return doesCourseInstanceHaveChargeItemCode(selectedInstanceId)
+          },
         }),
       ],
     }),
