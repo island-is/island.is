@@ -42,8 +42,9 @@ export const VictimInfo: React.FC<Props> = ({
   const [victimNationalIdUpdate, setVictimNationalIdUpdate] = useState<
     string | null
   >(null)
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
-  const { personData, isLoading } = useNationalRegistry(victimNationalIdUpdate)
+  const { personData, isLoading, notFound } = useNationalRegistry(
+    victimNationalIdUpdate,
+  )
 
   const handleNationalIdBlur = (nationalId: string) => {
     const normalizedNationalId = normalizeAndFormatNationalId(nationalId)[0]
@@ -53,11 +54,12 @@ export const VictimInfo: React.FC<Props> = ({
 
   useEffect(
     () => {
-      if (!victimNationalIdUpdate) return
+      if (!victimNationalIdUpdate || victimNationalIdUpdate.length !== 10) {
+        return
+      }
 
       const items = personData?.items || []
       const person = items[0]
-      setNationalIdNotFound(!isLoading && items.length === 0)
 
       updateVictimAndSetState(
         {
@@ -95,7 +97,6 @@ export const VictimInfo: React.FC<Props> = ({
               checked={victim.hasNationalId === false}
               onChange={(event) => {
                 setVictimNationalIdUpdate(null)
-                setNationalIdNotFound(false)
                 updateVictimAndSetState(
                   {
                     caseId: workingCase.id,
@@ -117,23 +118,16 @@ export const VictimInfo: React.FC<Props> = ({
                 value={victim.nationalId ?? ''}
                 onBlur={(value) => handleNationalIdBlur(value)}
                 onChange={(value) => {
-                  if (value.length < 11) {
-                    setNationalIdNotFound(false)
-                  } else if (value.length === 11) {
-                    handleNationalIdBlur(value)
-                  }
+                  handleNationalIdBlur(value)
                 }}
                 required={victim.hasNationalId !== false}
               />
-              {victim.nationalId?.length === 10 &&
-                nationalIdNotFound &&
-                !isLoading && (
-                  <Text color="red600" variant="eyebrow" marginTop={1}>
-                    Ekki tókst að fletta upp kennitölu
-                  </Text>
-                )}
+              {notFound && !isLoading && (
+                <Text color="red600" variant="eyebrow" marginTop={1}>
+                  Ekki tókst að fletta upp kennitölu
+                </Text>
+              )}
             </Box>
-
             <Box marginBottom={2}>
               <InputName
                 value={victim.name ?? ''}

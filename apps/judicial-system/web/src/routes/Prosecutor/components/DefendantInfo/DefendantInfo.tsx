@@ -54,7 +54,7 @@ const DefendantInfo: FC<Props> = (props) => {
     updateDefendantState,
   } = props
   const { formatMessage } = useIntl()
-  const { personData, businessData, error } = useNationalRegistry(
+  const { personData, businessData, error, notFound } = useNationalRegistry(
     defendant.nationalId,
   )
 
@@ -63,8 +63,6 @@ const DefendantInfo: FC<Props> = (props) => {
     { label: formatMessage(core.female), value: Gender.FEMALE },
     { label: formatMessage(core.otherGender), value: Gender.OTHER },
   ]
-
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const [accusedAddressErrorMessage, setAccusedAddressErrorMessage] =
     useState<string>('')
@@ -83,17 +81,12 @@ const DefendantInfo: FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    if (
-      !isBusiness(defendant.nationalId) &&
-      (error || (personData && personData.items?.length === 0))
-    ) {
-      setNationalIdNotFound(true)
+    if (!isBusiness(defendant.nationalId) && (error || notFound)) {
       return
     }
 
     if (personData && personData.items && personData.items.length > 0) {
       setAccusedAddressErrorMessage('')
-      setNationalIdNotFound(false)
       setIsGenderAndCitizenshipDisabled(false)
 
       onChange({
@@ -109,11 +102,7 @@ const DefendantInfo: FC<Props> = (props) => {
   }, [personData, error])
 
   useEffect(() => {
-    if (
-      isBusiness(defendant.nationalId) &&
-      (error || (businessData && businessData.items?.length === 0))
-    ) {
-      setNationalIdNotFound(true)
+    if (isBusiness(defendant.nationalId) && (error || notFound)) {
       return
     }
 
@@ -155,8 +144,6 @@ const DefendantInfo: FC<Props> = (props) => {
           label="Varnaraðili er ekki með íslenska kennitölu"
           checked={Boolean(defendant.noNationalId)}
           onChange={() => {
-            setNationalIdNotFound(false)
-
             updateDefendantState(
               {
                 caseId: workingCase.id,
@@ -178,33 +165,35 @@ const DefendantInfo: FC<Props> = (props) => {
           large
         />
       )}
-      <InputNationalId
-        isDateOfBirth={Boolean(defendant.noNationalId)}
-        value={defendant.nationalId ?? ''}
-        onBlur={(value) =>
-          onChange({
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            nationalId: value || null,
-          })
-        }
-        onChange={(value) =>
-          updateDefendantState(
-            {
+      <div>
+        <InputNationalId
+          isDateOfBirth={Boolean(defendant.noNationalId)}
+          value={defendant.nationalId ?? ''}
+          onBlur={(value) =>
+            onChange({
               caseId: workingCase.id,
               defendantId: defendant.id,
               nationalId: value || null,
-            },
-            setWorkingCase,
-          )
-        }
-        required={!defendant.noNationalId}
-      />
-      {defendant.nationalId?.length === 11 && nationalIdNotFound && (
-        <Text color="red600" variant="eyebrow" marginTop={1}>
-          {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
-        </Text>
-      )}
+            })
+          }
+          onChange={(value) =>
+            updateDefendantState(
+              {
+                caseId: workingCase.id,
+                defendantId: defendant.id,
+                nationalId: value || null,
+              },
+              setWorkingCase,
+            )
+          }
+          required={!defendant.noNationalId}
+        />
+        {defendant.nationalId?.length === 11 && notFound && (
+          <Text color="red600" variant="eyebrow" marginTop={1}>
+            {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
+          </Text>
+        )}
+      </div>
       <InputName
         value={defendant.name ?? ''}
         onBlur={(value) =>

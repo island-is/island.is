@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { notFound } from 'next/navigation'
 
 import {
   Box,
@@ -8,6 +9,7 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
@@ -46,12 +48,12 @@ export const CivilClaimantFields = ({
 
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
     useState<{ nationalId: string | null; civilClaimantId: string }>()
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
   const [lookupNationalId, setLookupNationalId] = useState<string | null>(
     civilClaimant.nationalId ?? null,
   )
 
-  const { personData, businessData } = useNationalRegistry(lookupNationalId)
+  const { personData, businessData, notFound } =
+    useNationalRegistry(lookupNationalId)
   const {
     updateCivilClaimant,
     updateCivilClaimantState,
@@ -98,36 +100,38 @@ export const CivilClaimantFields = ({
         nationalId: nationalId || null,
       })
     } else {
-      const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
+      const cleanNationalId = formatNationalId(nationalId)
       setLookupNationalId(cleanNationalId || null)
-      setCivilClaimantNationalIdUpdate({
-        nationalId: cleanNationalId || null,
-        civilClaimantId,
-      })
+
+      console.log(cleanNationalId)
+      if (cleanNationalId.length === 11) {
+        setCivilClaimantNationalIdUpdate({
+          nationalId: cleanNationalId || null,
+          civilClaimantId,
+        })
+      }
     }
   }
 
   useEffect(() => {
-    if (!civilClaimantNationalIdUpdate) {
+    if (
+      !civilClaimantNationalIdUpdate ||
+      civilClaimantNationalIdUpdate.nationalId?.length !== 11
+    ) {
       return
     }
 
     let name: string | undefined
-    let notFound = false
 
     // Separately handle person and business data in order to populate
     // name correctly for companies as well.
     if (personData) {
       const person = personData.items?.[0]
       name = person?.name
-      notFound = !person || personData.items?.length === 0
     } else if (businessData) {
       const business = businessData.items?.[0]
       name = business?.full_name
-      notFound = !business || businessData.items?.length === 0
     }
-
-    setNationalIdNotFound(notFound)
 
     const update: UpdateCivilClaimant = {
       civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
@@ -178,20 +182,11 @@ export const CivilClaimantFields = ({
           value={civilClaimant.nationalId ?? undefined}
           required={Boolean(!civilClaimant.noNationalId)}
           onChange={(val) => {
-            if (val.length < 11) {
-              setNationalIdNotFound(false)
-            } else if (val.length === 11) {
-              handleCivilClaimantNationalIdBlur(
-                val,
-                civilClaimant.noNationalId,
-                civilClaimant.id,
-              )
-            }
-
-            handleUpdateCivilClaimantState({
-              civilClaimantId: civilClaimant.id ?? '',
-              nationalId: val,
-            })
+            handleCivilClaimantNationalIdBlur(
+              val,
+              civilClaimant.noNationalId,
+              civilClaimant.id,
+            )
           }}
           onBlur={(val) =>
             handleCivilClaimantNationalIdBlur(
@@ -201,7 +196,7 @@ export const CivilClaimantFields = ({
             )
           }
         />
-        {civilClaimant.nationalId?.length === 11 && nationalIdNotFound && (
+        {notFound && (
           <Text color="red600" variant="eyebrow" marginTop={1}>
             {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
           </Text>

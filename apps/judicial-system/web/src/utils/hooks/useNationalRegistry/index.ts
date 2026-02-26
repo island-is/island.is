@@ -16,11 +16,17 @@ const useNationalRegistry = (nationalId?: string | null) => {
     useState<NationalRegistryResponseBusiness>()
   const [error, setError] = useState<Error>()
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [notFound, setNotFound] = useState<boolean>(false)
 
   useEffect(() => {
-    const isValidNationalId = validate([[nationalId, ['national-id']]]).isValid
+    const cleanNationalId = nationalId?.replace('-', '')
+    const isValidNationalId = validate([
+      [cleanNationalId, ['national-id']],
+    ]).isValid
     const isFakePerson = nationalId === '000000-0000'
+
     setError(undefined)
+    setNotFound(false)
 
     // Each api call costs actualy money. This allows us to develop and test
     // without actually making a real api call.
@@ -45,13 +51,34 @@ const useNationalRegistry = (nationalId?: string | null) => {
     const controller = new AbortController()
     const isBusinessNationalId = isBusiness(nationalId)
     const url = `/api/nationalRegistry/${
-      isBusinessNationalId ? 'getBusinessByNationalId' : 'getPersonByNationalId'
+      isBusinessNationalId
+        ? 'getBusinessesByNationalId'
+        : 'getPersonByNationalId'
     }?nationalId=${nationalId}`
 
     setIsLoading(true)
 
+    // Reset state before fetching new data
+    setPersonData(undefined)
+    setBusinessData(undefined)
+    setNotFound(false)
+
     fetch(url, { signal: controller.signal })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Request failed with status ${res.status}`)
+        }
+
+        return res.json()
+      })
+      .then((res) => {
+        if (res.items && res.items.length === 0) {
+          setNotFound(true)
+          return
+        }
+
+        return res
+      })
       .then(isBusinessNationalId ? setBusinessData : setPersonData)
       .catch((e) => {
         if (e.name !== 'AbortError') {
@@ -68,7 +95,7 @@ const useNationalRegistry = (nationalId?: string | null) => {
     return () => controller.abort()
   }, [nationalId])
 
-  return { personData, businessData, error, isLoading }
+  return { personData, businessData, error, isLoading, notFound }
 }
 
 export default useNationalRegistry
