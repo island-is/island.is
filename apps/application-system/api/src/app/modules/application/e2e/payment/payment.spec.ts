@@ -28,11 +28,11 @@ class MockChargeFjsV2ClientService {
       receptionID: upcomingPayment.requestID,
     })
   }
-  getCatalogByPerformingOrg({ performingOrgID }: { performingOrgID: string }) {
+  getCatalogByPerformingOrg(performingOrganizationID: string) {
     return Promise.resolve<Catalog>({
       item: [
         {
-          performingOrgID,
+          performingOrgID: performingOrganizationID,
           chargeType: '1',
           chargeItemCode: 'asdf',
           chargeItemName: '1',

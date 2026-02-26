@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  CatalogperformingOrgperformingOrgIDGET3Request,
   ChargeStatusByRequestIDrequestIDGETResponse,
   ChargeStatusResultStatusEnum,
   DefaultApi,
@@ -122,15 +121,11 @@ export class ChargeFjsV2ClientService {
     }
   }
 
-  async getCatalogByPerformingOrg({
-    performingOrgID,
-    chargeType,
-    chargeItemCode,
-  }: CatalogperformingOrgperformingOrgIDGET3Request): Promise<Catalog> {
+  async getCatalogByPerformingOrg(
+    performingOrganizationID: string,
+  ): Promise<Catalog> {
     const response = await this.api.catalogperformingOrgperformingOrgIDGET3({
-      performingOrgID,
-      chargeType,
-      chargeItemCode,
+      performingOrgID: performingOrganizationID,
     })
 
     return {

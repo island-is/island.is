@@ -58,7 +58,7 @@ export default async function cardVerificationCallbackHandler(
   )
 
   try {
-    const { errors } = await client.mutate<
+    const { data, errors } = await client.mutate<
       VerificationCallbackMutation,
       VerificationCallbackMutationVariables
     >({

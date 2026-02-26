@@ -31,9 +31,6 @@ import { GetJwksResponse } from './dto/getJwks.response'
 import { GetPaymentFlowsInput } from './dto/getPaymentFlows.input'
 import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { GetApplePaySessionResponse } from './dto/getApplePaySession.response'
-import { ApplePayChargeInput } from './dto/applePayCharge.input'
-import { ApplePayChargeResponse } from './dto/applePayCharge.response'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -139,29 +136,6 @@ export class PaymentsResolver {
   async getJwks(): Promise<GetJwksResponse> {
     try {
       return this.paymentsService.getJwks()
-    } catch (e) {
-      throw new ApolloError(e.message)
-    }
-  }
-
-  @Query(() => GetApplePaySessionResponse, {
-    name: 'paymentsGetApplePaySession',
-  })
-  async getApplePaySession(): Promise<GetApplePaySessionResponse> {
-    try {
-      return this.paymentsService.getApplePaySession()
-    } catch (e) {
-      throw new ApolloError(e.message)
-    }
-  }
-
-  @Mutation(() => ApplePayChargeResponse, { name: 'paymentsChargeApplePay' })
-  async chargeApplePay(
-    @Args('input', { type: () => ApplePayChargeInput })
-    input: ApplePayChargeInput,
-  ): Promise<ApplePayChargeResponse> {
-    try {
-      return this.paymentsService.chargeApplePay(input)
     } catch (e) {
       throw new ApolloError(e.message)
     }

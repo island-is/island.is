@@ -17,19 +17,19 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import {
   InvoiceErrorCode,
   PaymentServiceCode,
 } from '@island.is/shared/constants'
-import { environment } from '../../environments'
+import { CreateInvoiceResponse } from './dtos/createInvoice.response'
+import { CreateInvoiceInput } from './dtos/createInvoice.input'
+import { CallbackInput } from './dtos/callback.input'
+import { PaidStatus } from './dtos/paidStatus.enum'
 import { PaymentMethod } from '../../types'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
+import { environment } from '../../environments'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
-import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
-import { CallbackInput } from './dtos/callback.input'
-import { CreateInvoiceInput } from './dtos/createInvoice.input'
-import { CreateInvoiceResponse } from './dtos/createInvoice.response'
-import { PaidStatus } from './dtos/paidStatus.enum'
 import { InvoicePaymentService } from './invoicePayment.service'
 
 @UseGuards(FeatureFlagGuard)
@@ -58,13 +58,14 @@ export class InvoicePaymentController {
       const paymentFlow = await this.paymentFlowService.getPaymentFlowDetails(
         createInvoiceInput.paymentFlowId,
       )
-      const [{ catalogItems }, { paymentStatus }] = await Promise.all([
-        this.paymentFlowService.getPaymentFlowChargeDetails(
-          paymentFlow.organisationId,
-          paymentFlow.charges,
-        ),
-        this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
-      ])
+      const [{ catalogItems, totalPrice }, { paymentStatus }] =
+        await Promise.all([
+          this.paymentFlowService.getPaymentFlowChargeDetails(
+            paymentFlow.organisationId,
+            paymentFlow.charges,
+          ),
+          this.paymentFlowService.getPaymentFlowStatus(paymentFlow),
+        ])
 
       if (paymentStatus === 'paid') {
         throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
@@ -83,6 +84,7 @@ export class InvoicePaymentController {
         generateChargeFJSPayload({
           paymentFlow,
           charges: catalogItems,
+          totalPrice,
           systemId: environment.chargeFjs.systemId,
           returnUrl: callbackUrl,
         }),
