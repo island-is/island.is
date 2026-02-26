@@ -848,6 +848,33 @@ export const IcelandicGovernmentInstitutionVacancies = new XroadConf({
   },
 })
 
+export const IcelandicGovernmentEmployees = new XroadConf({
+  env: {
+    FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH: {
+      dev: 'https://fjs-cdn-endpoint-elfur-dev-hhesbzhxabbwbqen.a03.azurefd.net',
+      staging:
+        'https://fjs-cdn-endpoint-elfur-test-hhesbzhxabbwbqen.a03.azurefd.net',
+      prod: 'https://fjs-cdn-endpoint-elfur-prod-hhesbzhxabbwbqen.a03.azurefd.net',
+    },
+    FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID: {
+      dev: '@fjs.is/stafraent-island-api-elfur',
+      staging: '@fjs.is/stafraent-island-api-elfur',
+      prod: '@fjs.is/stafraent-island-api-elfur',
+    },
+    FINANCIAL_MANAGEMENT_AUTHORITY_IDS_URL: {
+      dev: 'https://identity-server.staging01.devland.is',
+      staging: 'https://identity-server.staging01.devland.is',
+      prod: 'https://innskra.island.is',
+    },
+  },
+  secrets: {
+    FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET:
+      '/k8s/api/ELFUR_SI_ACCOUNT_CLIENT_SECRET',
+    FINANCIAL_MANAGEMENT_AUTHORITY_EXECUTE_AS_USERNAME:
+      '/k8s/api/ELFUR_API_USERNAME_KEY',
+  },
+})
+
 export const AircraftRegistry = new XroadConf({
   env: {
     XROAD_AIRCRAFT_REGISTRY_PATH: {

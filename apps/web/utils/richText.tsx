@@ -2,6 +2,9 @@ import { PropsWithChildren } from 'react'
 import { IntlConfig, IntlProvider } from 'react-intl'
 
 import {
+  defaultRenderComponentObject,
+  defaultRenderMarkObject,
+  defaultRenderNodeObject,
   FaqList,
   type FaqListProps,
   Image,
@@ -11,11 +14,6 @@ import {
   SectionWithImage,
   type SliceType,
   type TeamListProps,
-} from '@island.is/island-ui/contentful'
-import {
-  defaultRenderComponentObject,
-  defaultRenderMarkObject,
-  defaultRenderNodeObject,
 } from '@island.is/island-ui/contentful'
 import { GridContainer } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
@@ -102,6 +100,7 @@ import { ReligiousOrganizationList } from '../components/connected/syslumenn/Car
 import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
+import { ConnectedTeamList } from '../components/connected/TeamList'
 import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
 import { WHODASCalculator } from '../components/connected/WHODAS/Calculator'
 import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
@@ -245,6 +244,9 @@ export const webRenderConnectedComponent = (
       break
     case 'Syslumenn/DrivingInstructorList':
       connectedComponent = <SyslumennDrivingInstructorList slice={slice} />
+      break
+    case 'FSRE/EmployeeList':
+      connectedComponent = <ConnectedTeamList slice={slice} />
       break
     case 'LatestVerdicts':
       connectedComponent = <LatestVerdicts slice={slice} />

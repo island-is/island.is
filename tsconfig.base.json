@@ -138,6 +138,9 @@
       "@island.is/api/domains/icelandic-government-institution-vacancies": [
         "libs/api/domains/icelandic-government-institution-vacancies/src/index.ts"
       ],
+      "@island.is/api/domains/icelandic-government-employees": [
+        "libs/api/domains/icelandic-government-employees/src/index.ts"
+      ],
       "@island.is/api/domains/icelandic-names-registry": [
         "libs/api/domains/icelandic-names-registry/src/index.ts"
       ],

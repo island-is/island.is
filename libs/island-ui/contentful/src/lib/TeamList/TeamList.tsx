@@ -28,7 +28,6 @@ export interface TeamListProps {
     name: string
     image?: { url: string }
     imageOnSelect?: { url: string } | null
-
     /** Fields below are only visible if variant is set to "accordion" */
     intro?: SliceType[] | null
     email?: string
@@ -36,6 +35,10 @@ export interface TeamListProps {
     tagGroups?: {
       groupLabel: string
       tagLabels: string[]
+    }[]
+    extraIntroProperties?: {
+      label: string
+      value: string
     }[]
   }[]
 }
@@ -193,6 +196,12 @@ const TeamMemberAccordionList = ({
                       <Text>{member.phone}</Text>
                     </Inline>
                   )}
+                  {member.extraIntroProperties?.map((property) => (
+                    <Inline key={property.label} space={1} alignY="center">
+                      <Text fontWeight="semiBold">{property.label}:</Text>
+                      <Text>{property.value}</Text>
+                    </Inline>
+                  ))}
                   {member.tagGroups?.map((tagGroup) => (
                     <Inline key={tagGroup.groupLabel} space={1} alignY="center">
                       <Text fontWeight="semiBold">{tagGroup.groupLabel}</Text>
