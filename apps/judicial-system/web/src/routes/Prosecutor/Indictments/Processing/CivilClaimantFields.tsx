@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { notFound } from 'next/navigation'
 
 import {
   Box,
@@ -9,7 +8,6 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
@@ -100,10 +98,9 @@ export const CivilClaimantFields = ({
         nationalId: nationalId || null,
       })
     } else {
-      const cleanNationalId = formatNationalId(nationalId)
+      const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
       setLookupNationalId(cleanNationalId || null)
 
-      console.log(cleanNationalId)
       if (cleanNationalId.length === 11) {
         setCivilClaimantNationalIdUpdate({
           nationalId: cleanNationalId || null,
