@@ -24,6 +24,18 @@ export class OpenDataResource {
   license?: string
 }
 
+@ObjectType('OpenDataDatasetMetadata')
+export class OpenDataDatasetMetadata {
+  @Field({ nullable: true })
+  size?: string
+
+  @Field({ nullable: true })
+  recordCount?: number
+
+  @Field({ nullable: true })
+  updateFrequency?: string
+}
+
 @ObjectType('OpenDataDataset')
 export class OpenDataDataset {
   @Field(() => ID)
@@ -79,18 +91,6 @@ export class OpenDataDataset {
 
   @Field({ nullable: true })
   authorEmail?: string
-}
-
-@ObjectType('OpenDataDatasetMetadata')
-export class OpenDataDatasetMetadata {
-  @Field({ nullable: true })
-  size?: string
-
-  @Field({ nullable: true })
-  recordCount?: number
-
-  @Field({ nullable: true })
-  updateFrequency?: string
 }
 
 @ObjectType('OpenDataDatasetsResponse')

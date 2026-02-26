@@ -74,6 +74,7 @@ import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
 import { UniversityGatewayApiModule } from '@island.is/api/domains/university-gateway'
 import { OpenDataModule } from '@island.is/api/domains/open-data'
+import { OneSystemsRulingsModule } from '@island.is/api/domains/one-systems-rulings'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
 import {
@@ -376,6 +377,7 @@ const environment = getConfig
     AdministrationOfOccupationalSafetyAndHealthModule,
     UniversityGatewayApiModule,
     OpenDataModule,
+    OneSystemsRulingsModule,
     SessionsModule,
     AuthAdminModule,
     HousingBenefitCalculatorModule,
