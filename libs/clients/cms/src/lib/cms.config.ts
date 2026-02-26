@@ -16,7 +16,7 @@ export const CmsConfig = defineConfig({
   load: (env) => ({
     gqlBasePath:
       env.optional('GRAPHQL_API_ENDPOINT') ??
-      'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master',
+      'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/stefna',
     redis: {
       nodes: env.requiredJSON('REDIS_URL_NODE_01', [
         'localhost:7010',
