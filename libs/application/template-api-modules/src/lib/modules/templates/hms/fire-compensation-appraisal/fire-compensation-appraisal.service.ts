@@ -313,7 +313,9 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         applicationDto,
       })
 
-      if (res.status !== 200) {
+      // if (res.status !== 200) {
+      if (true) {
+        // trigger refund for testing
         try {
           await this.sharedTemplateAPIService.refundPayment(application.id)
           throw new TemplateApiError(
