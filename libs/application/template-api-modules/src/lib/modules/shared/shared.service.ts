@@ -217,8 +217,8 @@ export class SharedTemplateApiService {
     return this.paymentService.getStatus(applicationId)
   }
 
-  async refundPayment(applicationId: string) {
-    return this.paymentService.refundPayment(applicationId)
+  async refundPayment(applicationId: string, reasonForRefund?: string) {
+    return this.paymentService.refundPayment(applicationId, reasonForRefund)
   }
 
   async storeNonceForApplication(application: Application): Promise<string> {

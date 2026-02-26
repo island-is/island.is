@@ -332,7 +332,10 @@ export class PaymentService {
     }
   }
 
-  async refundPayment(applicationId: string): Promise<void> {
+  async refundPayment(
+    applicationId: string,
+    reasonForRefund?: string,
+  ): Promise<void> {
     const payment = await this.findPaymentByApplicationId(applicationId)
     if (!payment) {
       throw new NotFoundException(
@@ -347,7 +350,7 @@ export class PaymentService {
       await this.paymentsApi.cardPaymentControllerRefund({
         refundCardPaymentInput: {
           paymentFlowId: payment.request_id,
-          reasonForRefund: 'refund',
+          reasonForRefund,
         },
       })
     } catch (error) {
