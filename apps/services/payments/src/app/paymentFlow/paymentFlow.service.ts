@@ -941,7 +941,6 @@ export class PaymentFlowService {
       include: [
         {
           model: PaymentFulfillment,
-          as: 'paymentFulfillment',
           required: true,
           where: {
             paymentMethod: 'card',
