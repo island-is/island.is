@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import DatePicker from 'react-native-date-picker'
+import React, { useEffect, useMemo, useState } from 'react'
+// import DatePicker from 'react-native-date-picker'
 import styled from 'styled-components/native'
+import { DatePicker } from 'react-native-platform-components';
 
 import { useIntl } from 'react-intl'
 import { Image, View } from 'react-native'
@@ -70,6 +71,22 @@ export const DatePickerInput = ({
     setDate(selectedDate)
   }, [selectedDate])
 
+  const maxDate = useMemo(() => {
+    // Value or defined max date, which is higher
+    if (selectedDate && maximumDate) {
+      return selectedDate > maximumDate ? selectedDate : maximumDate
+    }
+    return maximumDate
+  }, [selectedDate, maximumDate])
+
+  const minDate = useMemo(() => {
+    // Value or defined min date, which is lower
+    if (selectedDate && minimumDate) {
+      return selectedDate < minimumDate ? selectedDate : minimumDate
+    }
+    return minimumDate
+  }, [selectedDate, minimumDate])
+
   return (
     <View>
       <DateInput onPress={() => setOpenDatePicker(true)}>
@@ -82,21 +99,19 @@ export const DatePickerInput = ({
         <Image source={calendarIcon} />
       </DateInput>
       <DatePicker
+        date={date ?? null}
+        maxDate={maxDate}
+        minDate={minDate}
+        presentation="modal"
         mode="date"
-        title={null}
-        maximumDate={maximumDate}
-        minimumDate={minimumDate}
-        modal
-        open={openDatePicker}
-        date={date ?? new Date()}
-        confirmText={intl.formatMessage({ id: 'inbox.filterDateConfirm' })}
-        cancelText={intl.formatMessage({ id: 'inbox.filterDateCancel' })}
-        onConfirm={(date) => {
+        onConfirm={(d) => {
           setOpenDatePicker(false)
-          setDate(date)
-          onSelectDate?.(date)
+          onSelectDate?.(d)
         }}
-        onCancel={() => {
+        ios={{ preferredStyle: 'inline' }}
+        android={{ material: 'system' }}
+        visible={openDatePicker}
+        onClosed={() => {
           setOpenDatePicker(false)
         }}
       />

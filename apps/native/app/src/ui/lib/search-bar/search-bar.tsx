@@ -19,7 +19,7 @@ import { font } from '../../utils/font'
 
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput)
 
-const Input = styled(AnimatedTextInput)<{
+const Input = styled(AnimatedTextInput) <{
   pressed?: React.MutableRefObject<Animated.Value>
   focused?: boolean
 }>`
@@ -29,7 +29,8 @@ const Input = styled(AnimatedTextInput)<{
   min-height: 40px;
 
   ${font({ fontSize: 14 })}
-`
+` as any;
+// @todo ^^ migration
 
 interface SearchBarProps extends TextInputProps {
   onSearchPress?(): void

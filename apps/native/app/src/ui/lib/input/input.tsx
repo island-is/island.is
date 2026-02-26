@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-clipboard/clipboard'
+import Clipboard from 'expo-clipboard'
 import React from 'react'
 import { Image, TouchableOpacity, View, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -126,7 +126,7 @@ export function Input({
                 </Typography>
                 {copy && (
                   <TouchableOpacity
-                    onPress={() => Clipboard.setString(value ?? '')}
+                    onPress={() => Clipboard.setStringAsync(value ?? '')}
                     style={{ marginLeft: 4 }}
                   >
                     <Image

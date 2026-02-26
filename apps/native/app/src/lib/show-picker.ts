@@ -1,8 +1,6 @@
-import { ActionSheetIOS } from 'react-native'
-import DialogAndroid from 'react-native-dialogs'
-import { dynamicColor } from '../ui'
-import { uiStore } from '../stores/ui-store'
+import { ActionSheetIOS, Alert, KeyboardTypeOptions } from 'react-native'
 import { isAndroid, isIos } from '../utils/devices'
+import { promptStore } from '../stores/prompt-store'
 
 /**
  * ShowPickerItem
@@ -25,7 +23,6 @@ export interface ShowPickerOptions {
   title: string
   /**
    * Message to show below title
-   * (iOS only)
    */
   message?: string
   /**
@@ -37,12 +34,9 @@ export interface ShowPickerOptions {
    */
   selectedId?: string
   /**
-   * Radio or list
-   * Default: 'radio'
-   * (Android only)
+   * Radio or list (iOS uses ActionSheet for both)
    */
   type?: 'radio' | 'list'
-
   /**
    * Show cancel button or not
    */
@@ -55,26 +49,10 @@ interface ShowPickerResponse {
   selectedItem?: ShowPickerItem
 }
 
-const parseAndroidAction = (action: string) => {
-  switch (action) {
-    case 'actionPositive':
-      return 'positive'
-    case 'actionNegative':
-      return 'negative'
-    case 'actionNeutral':
-      return 'neutral'
-    case 'actionDismiss':
-      return 'dismiss'
-    default:
-      return 'select'
-  }
-}
-
 export function showPicker(
   options: ShowPickerOptions,
 ): Promise<ShowPickerResponse> {
   const {
-    type,
     title,
     message,
     selectedId,
@@ -83,11 +61,9 @@ export function showPicker(
     cancelLabel = 'Cancel',
   } = options
 
-  const theme = uiStore.getState().theme!
-
   if (isIos) {
     return new Promise((resolve) => {
-      const options = [
+      const actionOptions = [
         ...items.map((item) => item.label),
         ...(cancel ? [cancelLabel] : []),
       ]
@@ -97,86 +73,141 @@ export function showPicker(
           message,
           cancelButtonIndex: Math.max(
             0,
-            Math.min(items.length, options.length - 1),
+            Math.min(items.length, actionOptions.length - 1),
           ),
           disabledButtonIndices: [
             Math.max(
               0,
               Math.min(
-                options.length - 1,
+                actionOptions.length - 1,
                 items.findIndex((item) => item.id === selectedId),
               ),
             ),
           ],
-          options,
+          options: actionOptions,
         },
         (index: number) => {
           if (index < items.length) {
             resolve({ action: 'select', selectedItem: items[index] })
           } else {
-            resolve({
-              action: 'dismiss',
-            })
+            resolve({ action: 'dismiss' })
           }
         },
       )
     })
-  } else if (isAndroid) {
-    return DialogAndroid.showPicker(title, message, {
-      selectedId,
-      cancelable: cancel,
-      negativeText: cancel ? cancelLabel : undefined,
-      type:
-        type === 'radio' ? DialogAndroid.listRadio : DialogAndroid.listPlain,
-      items,
-      negativeColor: theme.color.dark400,
-      positiveColor: theme.color.blue400,
-      widgetColor: theme.color.blue400,
-      linkColor: theme.color.blue400,
-      contentColor: theme.shade.foreground,
-      backgroundColor: theme.shade.background,
-      neutralColor: theme.shade.foreground,
-      titleColor: theme.shade.foreground,
-    }).then(({ action, selectedItem }: any) => {
-      let actn: ShowPickerResponse['action'] = 'neutral'
-      if (action === 'actionDismiss') {
-        actn = 'dismiss'
-      } else if (action === 'actionNegative') {
-        actn = 'negative'
-      } else if (action === 'actionSelect') {
-        actn = 'select'
-      }
-
-      return {
-        action: actn,
-        selectedItem,
-      }
-    })
   }
-  return Promise.resolve({ action: 'neutral' })
+
+  // Android (and fallback): use Alert.alert with items as buttons
+  return new Promise((resolve) => {
+    Alert.alert(
+      title,
+      message,
+      [
+        ...items.map((item) => ({
+          text: item.label,
+          onPress: () => resolve({ action: 'select', selectedItem: item }),
+        })),
+        ...(cancel
+          ? [
+              {
+                text: cancelLabel,
+                style: 'cancel' as const,
+                onPress: () => resolve({ action: 'dismiss' }),
+              },
+            ]
+          : []),
+      ],
+    )
+  })
 }
 
+export interface ShowPromptOptions {
+  title: string
+  message?: string
+  defaultValue?: string
+  keyboardType?: KeyboardTypeOptions
+  positiveText?: string
+  negativeText?: string
+  placeholder?: string
+}
+
+export interface ShowPromptResult {
+  action: 'positive' | 'negative' | 'dismiss'
+  text?: string
+}
+
+/**
+ * Cross-platform text input prompt.
+ * Uses Alert.prompt on iOS, a custom modal on Android.
+ *
+ * Requires <PromptModal /> to be mounted in the app root for Android.
+ */
+export function showPrompt(
+  options: ShowPromptOptions,
+): Promise<ShowPromptResult> {
+  const {
+    title,
+    message,
+    defaultValue,
+    keyboardType,
+    positiveText = 'OK',
+    negativeText = 'Cancel',
+  } = options
+
+  if (isIos) {
+    return new Promise((resolve) => {
+      Alert.prompt(
+        title,
+        message,
+        [
+          {
+            isPreferred: true,
+            text: positiveText,
+            onPress: (text?: string) =>
+              resolve({ action: 'positive', text }),
+            style: 'default',
+          },
+          {
+            text: negativeText,
+            onPress: () => resolve({ action: 'negative' }),
+            style: 'cancel',
+          },
+        ],
+        'plain-text',
+        defaultValue,
+        keyboardType,
+      )
+    })
+  }
+
+  // Android: delegate to the global PromptModal
+  return new Promise((resolve) => {
+    promptStore.getState().show(options, resolve)
+  })
+}
+
+/**
+ * @deprecated Use showPrompt instead
+ */
 export function showAndroidPrompt(
   title: string,
   content?: string,
-  options?: DialogAndroid.OptionsPrompt,
-): Promise<DialogAndroid.PromptResponse> {
-  const theme = uiStore.getState().theme!
-
-  return DialogAndroid.prompt(title, content, {
-    positiveColor: theme.color.blue400,
-    negativeColor: theme.color.red600,
-    widgetColor: theme.color.blue400,
-    contentColor: theme.shade.foreground,
-    backgroundColor: theme.shade.background,
-    neutralColor: theme.shade.foreground,
-    titleColor: theme.shade.foreground,
-    ...options,
-  }).then(({ action, text, ...rest }: any) => {
-    return {
-      action: parseAndroidAction(action),
-      text,
-      ...rest,
-    }
-  })
+  options?: any,
+): Promise<any> {
+  return showPrompt({
+    title,
+    message: content,
+    keyboardType: options?.keyboardType,
+    defaultValue: options?.defaultValue,
+    positiveText: options?.positiveText,
+    negativeText: options?.negativeText,
+  }).then((result) => ({
+    action:
+      result.action === 'positive'
+        ? 'positive'
+        : result.action === 'negative'
+        ? 'negative'
+        : 'dismiss',
+    text: result.text,
+  }))
 }

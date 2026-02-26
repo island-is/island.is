@@ -1,14 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { ImageSourcePropType } from 'react-native'
-import createUse from 'zustand'
-import { persist } from 'zustand/middleware'
-import create, { State } from 'zustand/vanilla'
+import { create, StateCreator } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
+import { useStore } from 'zustand/react'
 import islandLogoSrc from '../assets/logo/logo-64w.png'
 import organizations from '../graphql/cache/organizations.json'
 import { getApolloClientAsync } from '../graphql/client'
 import { ListOrganizationsDocument } from '../graphql/types/schema'
 import { lowerCase } from '../lib/lowercase'
 import { environmentStore } from './environment-store'
+import { omit } from 'lodash'
 
 interface Organization {
   id: string
@@ -28,7 +29,8 @@ interface Organization {
   query: string
 }
 
-interface OrganizationsStore extends State {
+interface OrganizationsStore {
+  organizations: Organization[]
   getOrganizationLogoUrl(
     forName: string,
     size?: number,
@@ -44,10 +46,10 @@ interface OrganizationsStore extends State {
     size?: number,
     canReturnEmpty?: boolean,
   ): ImageSourcePropType | undefined
-
-  organizations: Organization[]
   getOrganizationNameBySlug(slug: string): string
-  actions: Record<string, () => Promise<void> | void>
+  actions: {
+    updateOriganizations(): Promise<void>
+  }
 }
 
 function processItems(items: Omit<Organization, 'query'>[]) {
@@ -59,7 +61,7 @@ function processItems(items: Omit<Organization, 'query'>[]) {
 
 const logoCache = new Map()
 
-export const organizationsStore = create<OrganizationsStore>(
+export const organizationsStore = create<OrganizationsStore>()(
   persist(
     (set, get) => ({
       organizations: processItems(organizations),
@@ -135,21 +137,12 @@ export const organizationsStore = create<OrganizationsStore>(
     }),
     {
       name: 'organizations_02',
-      getStorage: () => AsyncStorage,
-      serialize({ state, version }) {
-        const res = { ...state }
-        return JSON.stringify({ state: res, version })
-      },
-      deserialize(str: string) {
-        const { state, version } = JSON.parse(str)
-        // actions
-        delete state.actions
-        return { state, version }
-      },
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => omit(state, ['actions']),
     },
   ),
 )
 
-export const useOrganizationsStore = createUse(organizationsStore)
+export const useOrganizationsStore = <U = OrganizationsStore>(selector?: (state: OrganizationsStore) => U) => useStore(organizationsStore, selector!)
 
 organizationsStore.getState().actions.updateOriganizations()

@@ -1,14 +1,14 @@
 import { NativeModules, Platform } from 'react-native'
-import { reloadTimelines, setItem } from 'react-native-widgetkit'
-import { config, isTestingApp } from '../config'
+import { reloadTimelines, setItem, getItem } from 'react-native-widgetkit'
+import { bundleId, config } from '../config'
 import { ListLicensesQueryResult } from '../graphql/types/schema'
 import { authStore } from '../stores/auth-store'
 
 // Constants for shared preferences key and group in iOS
+// Group is derived from bundleId to match what the widget extension calculates dynamically:
+// `group.${Bundle.main.bundleIdentifier.replacingOccurrences(of: ".LicenseWidget", with: "")}`
 const SHARED_PREFS_KEY = 'widget_licenses'
-const SHARED_PREFS_GROUP = isTestingApp
-  ? 'group.is.island.app.dev'
-  : 'group.is.island.app'
+const SHARED_PREFS_GROUP = `group.${bundleId}`
 const WIDGET_KIND = 'LicenseWidget'
 
 // Function to set license data for widgets
@@ -63,6 +63,9 @@ export async function syncLicenseWidgetData(
       },
     ]
   })
+  if (!entries?.length) {
+    return;
+  }
 
   const payload = JSON.stringify(entries || [])
 

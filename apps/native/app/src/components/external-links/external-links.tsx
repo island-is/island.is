@@ -2,8 +2,7 @@ import { Pressable, TextStyle, View } from 'react-native'
 import { Icon, theme, Typography } from '../../ui'
 import { ImageSourcePropType } from 'react-native'
 import externalLinkIcon from '../../assets/icons/external-link.png'
-import { useBrowser } from '../../lib/use-browser'
-import { useDropdownOverlay } from '../dropdown/dropdown-overlay-context'
+import { useBrowser } from '../../hooks/use-browser'
 import styled from 'styled-components/native'
 
 export interface ExternalLinkItem {
@@ -17,7 +16,6 @@ export interface ExternalLinksProps {
   fontWeight?: TextStyle['fontWeight']
   borderBottom?: boolean
   fontSize?: number
-  componentId: string
 }
 
 const Container = styled(Pressable)<{ $hasBorder: boolean }>(
@@ -52,16 +50,11 @@ export const ExternalLink = ({
   fontWeight = '300',
   borderBottom = true,
   fontSize = 16,
-  componentId,
 }: ExternalLinksProps) => {
   const { openBrowser } = useBrowser()
-  const overlay = useDropdownOverlay()
 
   const handlePress = () => {
-    if (overlay?.componentId) {
-      overlay.close()
-    }
-    openBrowser(links.link, componentId)
+    openBrowser(links.link)
   }
 
   return (

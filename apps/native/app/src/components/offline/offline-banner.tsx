@@ -1,13 +1,19 @@
 import React, { useEffect, useRef } from 'react'
-import { Animated, Easing, SafeAreaView } from 'react-native'
-import { Navigation } from 'react-native-navigation'
+import { Animated, Easing, Modal, SafeAreaView } from 'react-native'
 import styled from 'styled-components/native'
 import { Alert, DARK_YELLOW_200, dynamicColor } from '../../ui'
-import { getIntl } from '../../contexts/i18n-provider'
-import { useOfflineActions } from '../../stores/offline-store'
-import { ComponentRegistry as CR } from '../../utils/component-registry'
+import { getIntl } from '@/components/providers/locale-provider'
+import { useOfflineActions, useOfflineStore } from '../../stores/offline-store'
 
 const TranslateYValue = 200
+
+const Host = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+`
 
 const Overlay = styled(SafeAreaView)`
   position: relative;
@@ -21,8 +27,9 @@ const Overlay = styled(SafeAreaView)`
 
 export const OfflineBanner = () => {
   const intl = getIntl()
-  const { toggleBanner } = useOfflineActions()
+  const { toggleBanner,  } = useOfflineActions()
   const popAnim = useRef(new Animated.Value(-TranslateYValue)).current
+  const bannerVisible = useOfflineStore(({ bannerVisible }) => bannerVisible)
 
   const popIn = () => {
     Animated.timing(popAnim, {
@@ -41,40 +48,36 @@ export const OfflineBanner = () => {
       easing: Easing.out(Easing.ease),
     }).start(() => {
       toggleBanner(false)
-      void Navigation.dismissOverlay(CR.OfflineBanner)
     })
   }
 
   useEffect(() => {
-    popIn()
-  }, [])
+    if (bannerVisible) {
+      popIn()
+    } else {
+      popOut();
+    }
+  }, [bannerVisible])
 
   return (
-    <Animated.View
-      style={{
-        transform: [{ translateY: popAnim }],
-      }}
-    >
-      <Overlay>
-        <Alert
-          type="warning"
-          title={intl.formatMessage({ id: 'offline.title' })}
-          message={intl.formatMessage({
-            id: 'offline.message',
-          })}
-          hasBottomBorder
-          onClose={popOut}
-        />
-      </Overlay>
-    </Animated.View>
+    <Host pointerEvents="box-none">
+      <Animated.View
+        style={{
+          transform: [{ translateY: popAnim }],
+        }}
+      >
+        <Overlay>
+          <Alert
+            type="warning"
+            title={intl.formatMessage({ id: 'offline.title' })}
+            message={intl.formatMessage({
+              id: 'offline.message',
+            })}
+            hasBottomBorder
+            onClose={popOut}
+          />
+        </Overlay>
+      </Animated.View>
+    </Host>
   )
-}
-
-OfflineBanner.options = {
-  layout: {
-    componentBackgroundColor: 'transparent',
-  },
-  overlay: {
-    interceptTouchOutside: false,
-  },
 }

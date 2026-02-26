@@ -1,12 +1,11 @@
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import { Image } from 'react-native'
-import { Navigation } from 'react-native-navigation'
 
 import styled from 'styled-components/native'
 import cloudOfflineIcon from '../../assets/icons/cloud-offline-outline.png'
-import { useOfflineStore } from '../../stores/offline-store'
-import { ComponentRegistry as CR } from '../../utils/component-registry'
+import { useOfflineActions, useOfflineStore } from '../../stores/offline-store'
 import { Pressable } from '../pressable/pressable'
+import { LoadingIcon } from '../nav-loading-spinner/loading-icon'
 
 const Icon = styled(Image)(({ theme }) => ({
   width: theme.spacing[3],
@@ -16,19 +15,19 @@ const Icon = styled(Image)(({ theme }) => ({
 export const OfflineIcon = () => {
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const bannerVisible = useOfflineStore(({ bannerVisible }) => bannerVisible)
+  const { toggleBanner } = useOfflineActions()
 
-  const onPress = async () => {
+  const onPress = () => {
     if (!bannerVisible) {
       void impactAsync(ImpactFeedbackStyle.Heavy)
-      void Navigation.showOverlay({
-        component: {
-          id: CR.OfflineBanner,
-          name: CR.OfflineBanner,
-        },
-      })
+      toggleBanner(true)
     } else {
-      void Navigation.dismissOverlay(CR.OfflineBanner)
+      toggleBanner(false)
     }
+  }
+
+  if (!isConnected) {
+    return <LoadingIcon />
   }
 
   if (isConnected) {

@@ -10,11 +10,11 @@ export interface MoreInfoConteinerProps {
     title: string
     icon?: ImageSourcePropType
   }[]
-  componentId: string
+  /** @deprecated Will be removed after full expo-router migration */
+  componentId?: string
 }
 export const MoreInfoContiner = ({
   externalLinks,
-  componentId,
 }: MoreInfoConteinerProps) => {
   const theme = useTheme()
   const intl = useIntl()
@@ -33,7 +33,6 @@ export const MoreInfoContiner = ({
           <ExternalLink
             links={link}
             key={link.title}
-            componentId={componentId}
           />
         ))}
       </View>

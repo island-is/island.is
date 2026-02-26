@@ -1,6 +1,6 @@
-import DeviceInfo from 'react-native-device-info'
+import * as Application from 'expo-application';
 import compareVersions from 'compare-versions'
-import { featureFlagClient } from '../contexts/feature-flag-provider'
+import { featureFlagClient } from '@/components/providers/feature-flag-provider'
 
 export const needsToUpdateAppVersion = async (): Promise<boolean> => {
   const minimumVersionSupported = await featureFlagClient?.getValueAsync(
@@ -12,7 +12,7 @@ export const needsToUpdateAppVersion = async (): Promise<boolean> => {
     return false
   }
 
-  const currentVersion = DeviceInfo.getVersion()
+  const currentVersion = Application.nativeApplicationVersion ?? ''
 
   // @example compare('2.0.0', '1.5.0', '>') => true (update needed)
   return compareVersions.compare(minimumVersionSupported, currentVersion, '>')

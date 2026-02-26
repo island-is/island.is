@@ -1,6 +1,8 @@
 import {
-  PasskeyAuthenticationResult,
-  PasskeyRegistrationResult,
+  PasskeyCreateRequest,
+  PasskeyCreateResult,
+  PasskeyGetRequest,
+  PasskeyGetResult,
 } from 'react-native-passkey'
 import {
   AuthPasskeyAuthenticationOptions,
@@ -21,7 +23,7 @@ export const padChallenge = (challenge: string) => {
 }
 
 export const convertRegisterResultsToBase64Url = (
-  result: PasskeyRegistrationResult,
+  result: PasskeyCreateResult,
 ) => {
   return {
     ...result,
@@ -42,7 +44,7 @@ export const convertRegisterResultsToBase64Url = (
 }
 
 export const convertAuthenticationResultsToBase64Url = (
-  result: PasskeyAuthenticationResult,
+  result: PasskeyGetResult,
 ) => {
   return {
     ...result,
@@ -65,16 +67,20 @@ export const convertAuthenticationResultsToBase64Url = (
 
 export const formatAuthenticationOptions = (
   options: AuthPasskeyAuthenticationOptions,
-) => {
+): PasskeyGetRequest => {
+  // @todo migration
+  // Need to map correctly to spec
   return {
     ...options,
     challenge: padChallenge(convertBase64UrlToBase64String(options.challenge)),
-  }
+  } as PasskeyGetRequest;
 }
 
 export const formatRegisterOptions = (
   options: AuthPasskeyRegistrationOptions,
-) => {
+): PasskeyCreateRequest => {
+  // @todo migration
+  // Need to map correctly to spec
   return {
     ...options,
     challenge: padChallenge(convertBase64UrlToBase64String(options.challenge)),
@@ -95,7 +101,7 @@ export const formatRegisterOptions = (
             options.authenticatorSelection.userVerification || undefined,
         }
       : undefined,
-  }
+  } as PasskeyCreateRequest;
 }
 
 export const convertBase64StringToBase64Url = (base64String: string) => {

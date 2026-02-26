@@ -2,8 +2,9 @@ import React from 'react'
 import {
   ImageSourcePropType,
   Platform,
-  SafeAreaView,
+  PlatformColor,
   useWindowDimensions,
+  View,
   ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -13,6 +14,7 @@ import { useOfflineStore } from '../../../stores/offline-store'
 import closeIcon from '../../assets/icons/close.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Header = styled.View`
   padding-top: 20px;
@@ -70,14 +72,18 @@ const CloseIcon = styled.Image`
 
 type NavigationBarSheetProps = {
   title?: React.ReactNode
-  componentId: string
+  componentId?: string
   onClosePress(): void
   style?: ViewStyle
   showLoading?: boolean
   closable?: boolean
 }
 
-export function NavigationBarSheet({
+export function NavigationBarSheet(props: NavigationBarSheetProps) {
+  return null;
+}
+
+export function OldNavigationBarSheet({
   title,
   onClosePress,
   style,
@@ -94,9 +100,16 @@ export function NavigationBarSheet({
   // then do the same isHandle check there to toggle status-bar color
 
   return (
-    <>
+    <View
+      style={{
+        backgroundColor:
+          Platform.OS === 'ios'
+            ? PlatformColor('systemBackground')
+            : theme.shade.background,
+      }}
+    >
       {isHandle && closable && <Handle />}
-      <SafeAreaView>
+      <SafeAreaView edges={['left', 'right']}>
         {(closable || title) && (
           <Header style={style}>
             {typeof title === 'string' ? (
@@ -132,6 +145,6 @@ export function NavigationBarSheet({
           </Header>
         )}
       </SafeAreaView>
-    </>
+    </View>
   )
 }

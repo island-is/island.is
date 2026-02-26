@@ -15,12 +15,11 @@ definitions:
     #        include: true
     #        source: true
   environment: &environment
-    node: 20.19.5
-    # TODO: Remove/upgrade after upgrading to react-native 0.76.9 or higher, fixing 16.3 build issues:
-    # https://github.com/facebook/react-native/issues/50411#issuecomment-2776681575
-  xcode: '26.0.1'
+    node: 24.10.0
+    xcode: '26.0.1'
   shared_envs: &shared_envs
     XCODE_WORKSPACE: 'IslandApp.xcworkspace'
+    XCODE_SCHEME: 'IslandApp'
     CM_CLONE_DEPTH: 200
     NODE_OPTIONS: '--max-old-space-size=8192'
   scripts:
@@ -48,11 +47,6 @@ definitions:
       script: |
         pip3 install --upgrade setuptools
         python3 -c "import distutils; print(distutils.__file__)"
-    - &set_android_location
-      name: Prepare Android configuration
-      script: |
-        echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
-        echo $ANDROID_FIREBASE_SECRET > android/app/google-services.json
     - &npm_install
       name: Install npm dependencies
       working_directory: .
@@ -65,10 +59,22 @@ definitions:
       working_directory: .
       script: |
         yarn codegen
+    - &prebuild_ios
+      name: Expo prebuild for iOS
+      script: |
+        npx expo prebuild --platform ios --clean
+    - &prebuild_android
+      name: Expo prebuild for Android
+      script: |
+        npx expo prebuild --platform android --clean
     - &cocoapods
       name: Install CocoaPods dependencies
       script: |
         cd ios && pod install
+    - &set_android_location
+      name: Prepare Android configuration
+      script: |
+        echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
     - &provisioning_profiles
       name: Set up provisioning profiles settings on Xcode project
       script: xcode-project use-profiles
@@ -77,7 +83,7 @@ definitions:
       script: |
         cd ios
         APP_STORE_BUILD=$(app-store-connect get-latest-build-number "$APP_STORE_APPLE_ID")
-        PROJECT_BUILD=$(agvtool what-version -terse | tail -n 1) # tail -n 1takes the last line from the output
+        PROJECT_BUILD=$(agvtool what-version -terse | tail -n 1)
 
         if [ "$PROJECT_BUILD" -gt "$APP_STORE_BUILD" ]; then
           echo "Using project build: $PROJECT_BUILD"
@@ -103,7 +109,7 @@ definitions:
             UPDATED_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
         fi
         cd android
-        ./gradlew bundle${ANDROID_APP}Release -PversionCode=$UPDATED_BUILD_NUMBER
+        ./gradlew bundleRelease -PversionCode=$UPDATED_BUILD_NUMBER
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
@@ -142,13 +148,14 @@ workflows:
       vars:
         <<: *shared_envs
         BUNDLE_ID: 'is.island.app'
-        XCODE_SCHEME: 'Ísland.is'
         APP_STORE_APPLE_ID: 1569828682
+        APP_VARIANT: 'production'
     scripts:
       - *check_changes
       - *pip_install
       - *npm_install
       - *codegen
+      - *prebuild_ios
       - *cocoapods
       - *provisioning_profiles
       - *increment_build_number
@@ -177,13 +184,14 @@ workflows:
       vars:
         <<: *shared_envs
         BUNDLE_ID: 'is.island.app.dev'
-        XCODE_SCHEME: 'Ísland.dev'
         APP_STORE_APPLE_ID: 1570427360
+        APP_VARIANT: 'development'
     scripts:
       - *check_changes
       - *pip_install
       - *npm_install
       - *codegen
+      - *prebuild_ios
       - *cocoapods
       - *provisioning_profiles
       - *increment_build_number
@@ -218,13 +226,14 @@ workflows:
       vars:
         <<: *shared_envs
         PACKAGE_NAME: 'is.island.app'
-        ANDROID_APP: prod
+        APP_VARIANT: 'production'
     scripts:
       - *check_changes
-      - *set_android_location
       - *pip_install
       - *npm_install
       - *codegen
+      - *prebuild_android
+      - *set_android_location
       - *build_android
     artifacts: &android_artifacts
       - android/app/build/outputs/**/*.aab
@@ -249,13 +258,14 @@ workflows:
       vars:
         <<: *shared_envs
         PACKAGE_NAME: 'is.island.app.dev'
-        ANDROID_APP: dev
+        APP_VARIANT: 'development'
     scripts:
       - *check_changes
-      - *set_android_location
       - *pip_install
       - *npm_install
       - *codegen
+      - *prebuild_android
+      - *set_android_location
       - *build_android
     artifacts: *android_artifacts
     publishing:

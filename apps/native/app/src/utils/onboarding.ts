@@ -1,16 +1,9 @@
-import {
-  hasHardwareAsync,
-  isEnrolledAsync,
-  supportedAuthenticationTypesAsync,
-} from 'expo-local-authentication'
-
+import { hasHardwareAsync } from 'expo-local-authentication'
 import { Platform } from 'react-native'
-import { Navigation } from 'react-native-navigation'
+import { router } from 'expo-router'
 import { isIos } from './devices'
 import { androidIsVersion33OrAbove } from './versions-check'
 import { preferencesStore } from '../stores/preferences-store'
-import { ComponentRegistry } from './component-registry'
-import { getMainRoot } from './get-main-root'
 
 export function isOnboarded() {
   const {
@@ -26,85 +19,60 @@ export function isOnboarded() {
   )
 }
 
-export async function getOnboardingScreens() {
+/**
+ * Returns the next onboarding step that needs to be completed,
+ * or null if onboarding is done.
+ */
+export async function getNextOnboardingStep(): Promise<
+  'pin-code' | 'biometrics' | 'notifications' | null
+> {
   const {
     hasOnboardedNotifications,
     hasOnboardedBiometrics,
     hasOnboardedPinCode,
   } = preferencesStore.getState()
-  const screens = []
 
-  screens.push({
-    component: {
-      id: ComponentRegistry.OnboardingPinCodeScreen,
-      name: ComponentRegistry.OnboardingPinCodeScreen,
-    },
-  })
-
-  // show set pin code screen
   if (!hasOnboardedPinCode) {
-    return screens
+    return 'pin-code'
   }
 
   const hasHardware = await hasHardwareAsync()
-  const isEnrolled = await isEnrolledAsync()
-  const supportedAuthenticationTypes = await supportedAuthenticationTypesAsync()
-
   if (hasHardware) {
-    // biometrics screen
-    screens.push({
-      component: {
-        id: ComponentRegistry.OnboardingBiometricsScreen,
-        name: ComponentRegistry.OnboardingBiometricsScreen,
-        passProps: {
-          hasHardware,
-          isEnrolled,
-          supportedAuthenticationTypes,
-        },
-      },
-    })
-
-    // show enable biometrics screen
     if (!hasOnboardedBiometrics) {
-      return screens
+      return 'biometrics'
     }
   } else {
-    preferencesStore.setState({
-      hasOnboardedBiometrics: true,
-    })
+    // No biometric hardware — skip that step
+    preferencesStore.setState({ hasOnboardedBiometrics: true })
   }
 
-  // Android needs upfront Notifications permissions in version 33 and above
   if (isIos || androidIsVersion33OrAbove()) {
-    screens.push({
-      component: {
-        id: ComponentRegistry.OnboardingNotificationsScreen,
-        name: ComponentRegistry.OnboardingNotificationsScreen,
-      },
-    })
-
-    // show notifications accept screen
     if (!hasOnboardedNotifications) {
-      return screens
+      return 'notifications'
     }
   }
 
-  return []
+  return null
 }
 
+/**
+ * Advance to the next onboarding step or navigate to the main app.
+ * Called after login and after each onboarding screen completes.
+ */
 export async function nextOnboardingStep() {
-  const screens = await getOnboardingScreens()
+  const step = await getNextOnboardingStep()
 
-  if (screens.length === 0) {
-    Navigation.setRoot({ root: getMainRoot() })
+  if (step === null) {
+    // All onboarding complete — go to main tabs
+    router.replace('/(auth)/(tabs)')
     return
   }
 
-  if (screens.length === 1) {
-    Navigation.push(ComponentRegistry.LoginScreen, screens[0])
-    return
+  if (step === 'pin-code') {
+    router.replace('/(auth)/onboarding/pin')
+  } else if (step === 'biometrics') {
+    router.replace('/(auth)/onboarding/biometrics')
+  } else if (step === 'notifications') {
+    router.replace('/(auth)/onboarding/notifications')
   }
-
-  const [currentScreen, nextScreen] = screens.slice(-2)
-  Navigation.push(currentScreen.component.id, nextScreen)
 }
