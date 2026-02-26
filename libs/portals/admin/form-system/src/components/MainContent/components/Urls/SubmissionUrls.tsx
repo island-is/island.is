@@ -24,7 +24,7 @@ export const SubmissionUrls = () => {
     submissionUrlInput,
     setSubmissionUrlInput,
   } = useContext(ControlContext)
-  const { form } = control
+  const { form, isPublished } = control
 
   const [showInput, setShowInput] = useState(false)
 
@@ -34,7 +34,11 @@ export const SubmissionUrls = () => {
     <Stack space={2}>
       {!showInput && !submissionUrlInput && (
         <Box marginTop={7}>
-          <Button onClick={() => setShowInput(true)} variant="ghost">
+          <Button
+            onClick={() => setShowInput(true)}
+            variant="ghost"
+            disabled={isPublished}
+          >
             {formatMessage(m.addFormUrl)}
           </Button>
         </Box>
@@ -47,6 +51,7 @@ export const SubmissionUrls = () => {
             placeholder="IS/..."
             name="submission-url"
             value={submissionUrlInput}
+            readOnly={isPublished}
             backgroundColor="white"
             onChange={(e) => {
               setSubmissionUrlInput(e.target.value)
@@ -71,6 +76,7 @@ export const SubmissionUrls = () => {
           large
           name="submissionUrl"
           id="customSubmissionUrl"
+          disabled={isPublished}
           checked={form.submissionServiceUrl === submissionUrlInput}
           onChange={() => {
             controlDispatch({
@@ -96,6 +102,7 @@ export const SubmissionUrls = () => {
                 large
                 name="submissionUrl"
                 id={`submission-url-${sanitizeId(url ?? '')}`}
+                disabled={isPublished}
                 checked={form.submissionServiceUrl === url}
                 onChange={() => {
                   controlDispatch({
@@ -115,6 +122,7 @@ export const SubmissionUrls = () => {
         name="submissionUrl"
         id="zendesk"
         checked={form.submissionServiceUrl === 'zendesk'}
+        disabled={isPublished}
         onChange={(e) => {
           controlDispatch({
             type: 'CHANGE_SUBMISSION_URL',
@@ -128,6 +136,7 @@ export const SubmissionUrls = () => {
         <Checkbox
           label={formatMessage(m.zendeskPrivate)}
           checked={!!form.zendeskInternal}
+          disabled={isPublished}
           onChange={(e) => {
             controlDispatch({
               type: 'CHANGE_ZENDESK_INTERNAL',
@@ -143,6 +152,7 @@ export const SubmissionUrls = () => {
           <Checkbox
             label={formatMessage(m.useValidate)}
             checked={!!form.useValidate}
+            disabled={isPublished}
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_USE_VALIDATE',
@@ -154,6 +164,7 @@ export const SubmissionUrls = () => {
           <Checkbox
             label={formatMessage(m.usePopulate)}
             checked={!!form.usePopulate}
+            disabled={isPublished}
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_USE_POPULATE',

@@ -22,6 +22,7 @@ env:
   API_URL: 'http://api.islandis.svc.cluster.local'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+  PUBLIC_API_URL: 'https://island.is'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces: []
 grantNamespacesEnabled: false
