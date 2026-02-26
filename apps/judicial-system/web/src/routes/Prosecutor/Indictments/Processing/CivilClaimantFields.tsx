@@ -101,7 +101,7 @@ export const CivilClaimantFields = ({
       const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
       setLookupNationalId(cleanNationalId || null)
 
-      if (cleanNationalId.length === 11) {
+      if (cleanNationalId.length === 10) {
         setCivilClaimantNationalIdUpdate({
           nationalId: cleanNationalId || null,
           civilClaimantId,
@@ -113,7 +113,7 @@ export const CivilClaimantFields = ({
   useEffect(() => {
     if (
       !civilClaimantNationalIdUpdate ||
-      civilClaimantNationalIdUpdate.nationalId?.length !== 11
+      civilClaimantNationalIdUpdate.nationalId?.length !== 10
     ) {
       return
     }
