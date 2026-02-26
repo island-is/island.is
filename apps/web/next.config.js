@@ -144,7 +144,8 @@ function getBarrelExportNames(barrelPath) {
     const exportNames = new Set()
 
     // Direct exports
-    const directExportPattern = /export\s+(const|let|var|function|class)\s+(\w+)/g
+    const directExportPattern =
+      /export\s+(const|let|var|function|class)\s+(\w+)/g
     let match
     while ((match = directExportPattern.exec(content)) !== null) {
       exportNames.add(match[2])
