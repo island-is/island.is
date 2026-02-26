@@ -16,7 +16,6 @@ import { Application, FormValue } from '@island.is/application/types'
 import {
   isIndependent,
   isEmployed,
-  isEmployedPartTime,
   hasDataFromCurrentStatusItem,
   getDefaultFromCurrentStatus,
   hasEmployer,
@@ -229,42 +228,6 @@ export const employmentHistorySubSection = buildSubSection({
                   application.answers,
                   index,
                   'percentage',
-                )
-              },
-            },
-            startDate: {
-              component: 'date',
-              label:
-                employmentMessages.employmentHistory.labels.lastJobStartDate,
-              width: 'half',
-              required: true,
-              condition: (application, _activeField, index) => {
-                return (
-                  !hasDataFromCurrentStatus(application.answers, index) ||
-                  (isEmployedPartTime(application.answers) &&
-                    hasDataFromCurrentStatusItem(
-                      application.answers,
-                      index,
-                      'startDate',
-                    ))
-                )
-              },
-              readonly: (application, _, index) => {
-                return hasDataFromCurrentStatusItem(
-                  application.answers,
-                  index,
-                  'startDate',
-                )
-              },
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-              ) => {
-                return getDefaultFromCurrentStatus(
-                  application.answers,
-                  index,
-                  'startDate',
                 )
               },
             },
