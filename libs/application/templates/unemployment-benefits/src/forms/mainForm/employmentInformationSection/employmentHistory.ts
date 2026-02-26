@@ -201,6 +201,8 @@ export const employmentHistorySubSection = buildSubSection({
               type: 'number',
               suffix: '%',
               required: true,
+              max: 100,
+              allowNegative: false,
               condition: (application, _activeField, index) => {
                 return (
                   !hasDataFromCurrentStatus(application.answers, index) ||
@@ -329,7 +331,7 @@ export const employmentHistorySubSection = buildSubSection({
               type: 'number',
               suffix: '%',
               max: 100,
-              min: 1,
+              allowNegative: false,
               required: true,
             },
             startDate: {
