@@ -8,43 +8,21 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { ZendeskService } from '@island.is/clients/zendesk'
+import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import { SharedTemplateApiService } from '../../../shared'
 import type { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import type { ApplicationAnswers } from './types'
 import { HHCoursesConfig } from './courses.config'
-
-const GET_COURSE_BY_ID_QUERY = `
-  query GetCourseById($input: GetCourseByIdInput!) {
-    getCourseById(input: $input) {
-      course {
-        id
-        title
-        courseListPageId
-        instances {
-          id
-          startDate
-          startDateTimeDuration {
-            startTime
-            endTime
-          }
-          chargeItemCode
-          location
-        }
-      }
-    }
-  }
-`
-
-const COURSE_LIST_PAGE_SLUG_MAP: Record<string, string> = {
-  '6pkONOn80xzGTGij6qtjai': 'namskeid-fyrir-almenning',
-  '147YftiWFQsBcbUFFe2rj1': 'namskeid-fyrir-fagfolk',
-}
+import { COURSE_LIST_PAGE_SLUG_MAP, GET_COURSE_BY_ID_QUERY } from './constants'
 
 @Injectable()
 export class CoursesService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateApiService: SharedTemplateApiService,
+    private readonly zendeskService: ZendeskService,
+    private readonly applicationApiService: ApplicationApiService,
     @Inject(HHCoursesConfig.KEY)
     private readonly coursesConfig: ConfigType<typeof HHCoursesConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -106,8 +84,8 @@ export class CoursesService extends BaseTemplateApiService {
       if (!name || !email || !phone || !nationalId)
         throw new TemplateApiError(
           {
-            title: 'No contact information found',
-            summary: 'No contact information found',
+            title: 'Vantar tengiliðaupplýsingar',
+            summary: 'Vantar tengiliðaupplýsingar',
           },
           400,
         )
@@ -134,7 +112,7 @@ export class CoursesService extends BaseTemplateApiService {
             name: this.coursesConfig.applicationSenderName,
             address: this.coursesConfig.applicationSenderEmail,
           },
-          subject: this.coursesConfig.applicationEmailSubject,
+          subject: `${this.coursesConfig.applicationEmailSubject} - ${courseInstance.id}`,
           text: message,
           replyTo: email,
         }),
@@ -154,8 +132,176 @@ export class CoursesService extends BaseTemplateApiService {
 
       throw new TemplateApiError(
         {
-          title: 'Failed to submit application',
-          summary: error.message || 'An unexpected error occurred',
+          title: 'Villa kom upp við að senda umsókn',
+          summary: 'Villa kom upp við að senda umsókn',
+        },
+        500,
+      )
+    }
+  }
+
+  async checkParticipantAvailability({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<{
+    slotsAvailable?: number
+    hasAvailability: boolean
+  }> {
+    const courseId = getValueViaPath<string>(
+      application.answers,
+      'courseSelect',
+    )
+    const courseInstanceId = getValueViaPath<string>(
+      application.answers,
+      'dateSelect',
+    )
+
+    const participantList =
+      getValueViaPath<ApplicationAnswers['participantList']>(
+        application.answers,
+        'participantList',
+      ) ?? []
+
+    if (!courseId || !courseInstanceId || !participantList.length) {
+      throw new TemplateApiError(
+        {
+          title: 'Skráningarupplýsingar vantar',
+          summary: 'Skráningarupplýsingar vantar',
+        },
+        400,
+      )
+    }
+
+    const { courseInstance } = await this.getCourseById(
+      courseId,
+      courseInstanceId,
+      auth.authorization,
+    )
+
+    const maxRegistrations = courseInstance.maxRegistrations ?? 0
+
+    if (maxRegistrations <= 0) {
+      return { hasAvailability: true }
+    }
+
+    const [zendeskNationalIds, paymentNationalIds] = await Promise.all([
+      this.getZendeskParticipantNationalIds(courseInstance.id),
+      this.getPaymentStateParticipantNationalIds(
+        courseInstance.id,
+        application.id,
+      ),
+    ])
+
+    const currentApplicationParticipantNationalIds = new Set(
+      participantList.map((p) => p.nationalIdWithName.nationalId),
+    )
+
+    const nationalIdsTakenByOtherApplications = new Set([
+      ...zendeskNationalIds,
+      ...paymentNationalIds,
+    ])
+    const allNationalIds = new Set([
+      ...currentApplicationParticipantNationalIds,
+      ...nationalIdsTakenByOtherApplications,
+    ])
+
+    const hasAvailability = maxRegistrations >= allNationalIds.size
+
+    const slotsAvailable = Math.max(
+      0,
+      maxRegistrations - nationalIdsTakenByOtherApplications.size,
+    )
+
+    if (!hasAvailability) {
+      throw new TemplateApiError(
+        {
+          title: `Laus sæti: ${slotsAvailable}`,
+          summary: '',
+        },
+        409,
+      )
+    }
+
+    return {
+      slotsAvailable: Math.max(
+        0,
+        maxRegistrations - nationalIdsTakenByOtherApplications.size,
+      ),
+      hasAvailability,
+    }
+  }
+
+  private async getZendeskParticipantNationalIds(
+    courseInstanceId: string,
+  ): Promise<Set<string>> {
+    const subject = `${this.coursesConfig.applicationEmailSubject} - ${courseInstanceId}`
+    const query = `type:ticket subject:"${subject}"`
+    let tickets
+    try {
+      tickets = await this.zendeskService.searchTickets(query)
+    } catch (error) {
+      this.logger.warn(
+        'Failed to search Zendesk tickets for participant availability check',
+        { error: error.message },
+      )
+      throw new TemplateApiError(
+        {
+          title: 'Villa kom upp við að fletta upp skráningarfjölda',
+          summary: 'Ekki tókst að fletta upp skráningarfjölda',
+        },
+        500,
+      )
+    }
+
+    const nationalIds = new Set<string>()
+    for (const ticket of tickets) {
+      if (!ticket.description) continue
+      const matches = ticket.description.matchAll(
+        /Kennitala þátttakanda \d+: (\d{10})/g,
+      )
+      for (const match of matches) nationalIds.add(match[1])
+    }
+
+    return nationalIds
+  }
+
+  private async getPaymentStateParticipantNationalIds(
+    courseInstanceId: string,
+    excludeApplicationId: string,
+  ): Promise<Set<string>> {
+    try {
+      const findQuery = this.applicationApiService.customTemplateFindQuery(
+        ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID,
+      )
+      const applications = await findQuery({
+        state: 'payment',
+        'answers.dateSelect': courseInstanceId,
+      })
+
+      const nationalIds = new Set<string>()
+      for (const app of applications) {
+        if (app.id === excludeApplicationId) continue
+        const participantList = (app.answers as Record<string, unknown>)
+          ?.participantList
+        if (!Array.isArray(participantList)) continue
+        for (const p of participantList) {
+          const nid = p?.nationalIdWithName?.nationalId
+          if (typeof nid === 'string' && nid) {
+            nationalIds.add(nid)
+          }
+        }
+      }
+
+      return nationalIds
+    } catch (error) {
+      this.logger.warn(
+        'Failed to query payment-state applications for participant availability check',
+        { error: error.message },
+      )
+      throw new TemplateApiError(
+        {
+          title: 'Villa kom upp við að fletta upp skráningarfjölda',
+          summary: 'Ekki tókst að fletta upp skráningarfjölda',
         },
         500,
       )
@@ -170,16 +316,16 @@ export class CoursesService extends BaseTemplateApiService {
     if (!courseId)
       throw new TemplateApiError(
         {
-          title: 'Course id not provided',
-          summary: 'Course id not provided',
+          title: 'Vantar upplýsingar um námskeið',
+          summary: 'Vantar upplýsingar um námskeið',
         },
         400,
       )
     if (!courseInstanceId)
       throw new TemplateApiError(
         {
-          title: 'Course instance id not provided',
-          summary: 'Course instance id not provided',
+          title: 'Vantar upplýsingar um námskeiðsdagsetningu',
+          summary: 'Vantar upplýsingar um námskeiðsdagsetningu',
         },
         400,
       )
@@ -198,6 +344,7 @@ export class CoursesService extends BaseTemplateApiService {
                 startTime?: string
                 endTime?: string
               }
+              maxRegistrations?: number
               chargeItemCode?: string | null
             }[]
           }
@@ -217,16 +364,16 @@ export class CoursesService extends BaseTemplateApiService {
     if (!course)
       throw new TemplateApiError(
         {
-          title: 'Course not found',
-          summary: 'Course not found',
+          title: 'Námskeið fannst ekki',
+          summary: 'Námskeið fannst ekki',
         },
         404,
       )
     if (!courseInstance)
       throw new TemplateApiError(
         {
-          title: 'Course instance not found',
-          summary: 'Course instance not found',
+          title: 'Námskeiðsdagsetning fannst ekki',
+          summary: 'Námskeiðsdagsetning fannst ekki',
         },
         404,
       )
