@@ -136,7 +136,8 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                 : {
                     type: 'text' as const,
                     label: blockedStatus?.status ?? '',
-                    text: item.renewResponseMessage || blockedStatus?.description,
+                    text:
+                      item.renewResponseMessage || blockedStatus?.description,
                   },
 
               onExpandCallback: () => {

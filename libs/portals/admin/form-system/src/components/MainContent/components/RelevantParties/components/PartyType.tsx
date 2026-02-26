@@ -18,7 +18,8 @@ export const PartyType = ({
   formApplicantFields,
   handleCheckboxChange,
 }: Props) => {
-  const { applicantTypes } = useContext(ControlContext)
+  const { applicantTypes, control } = useContext(ControlContext)
+  const { isPublished } = control
 
   const getApplicantType = (type: string) => {
     return applicantTypes?.find((applicantType) => applicantType?.id === type)
@@ -33,6 +34,7 @@ export const PartyType = ({
       <Box paddingTop={4}>
         <Checkbox
           label={label}
+          disabled={isPublished}
           checked={isGroupChecked}
           onChange={async (e) =>
             await handleCheckboxChange(groupApplicantTypes, e.target.checked)
