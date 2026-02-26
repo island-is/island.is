@@ -36,6 +36,13 @@
       "dependsOn": ["sync-deps"],
       "options": {}
     },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "parallel": false,
+        "command": "graphql-codegen --config apps/native/app/codegen.yml"
+      }
+    },
     "submit": {
       "executor": "@nx/expo:submit",
       "options": {}
