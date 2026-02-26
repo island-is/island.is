@@ -7,9 +7,16 @@ import { z } from 'zod'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
+import {
+  CardErrorCode,
+  FjsErrorCode,
+  PaymentServiceCode,
+} from '@island.is/shared/constants'
 
-import { PaymentStatus } from '../../types'
+import { retry } from '@island.is/shared/utils/server'
+import { InferAttributes } from 'sequelize'
+import { environment } from '../../environments'
+import { PaymentMethod, PaymentStatus } from '../../types'
 import {
   ApplePaySessionResponseSchema,
   CachePaymentFlowStatus,
@@ -26,6 +33,7 @@ import {
 } from '../../types/cardPayment'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { mapToCardErrorCode } from '../../utils/paymentErrors'
+import { CardPaymentDetails } from '../paymentFlow/models/cardPaymentDetails.model'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
 import { CardPaymentModuleConfig } from './cardPayment.config'
@@ -33,6 +41,7 @@ import { paymentGatewayResponseCodes } from './cardPayment.constants'
 import {
   generateApplePayChargeRequestOptions,
   generateApplePaySessionRequestOptions,
+  generateCardChargeFJSPayload,
   generateChargeRequestOptions,
   generateMd,
   generateRefundRequestOptions,
@@ -519,6 +528,60 @@ export class CardPaymentService {
       totalPrice,
       paymentTrackingData,
     })
+  }
+
+  // FINALIZE METHODS ------------------------------------------------------------------------------------------------------
+
+  async createFjsCharge({
+    paymentFlowId,
+    cardPaymentConfirmation,
+  }: {
+    paymentFlowId: string
+    cardPaymentConfirmation: InferAttributes<CardPaymentDetails>
+  }) {
+    const { paymentFlow, catalogItems } = await this.getPaymentFlowDetails(
+      paymentFlowId,
+    )
+
+    const fjsChargePayload = generateCardChargeFJSPayload({
+      paymentFlow,
+      charges: catalogItems,
+      cardChargeInfo: cardPaymentConfirmation,
+      totalPrice: cardPaymentConfirmation.totalPrice,
+      systemId: environment.chargeFjs.systemId,
+      merchantReferenceData: cardPaymentConfirmation.merchantReferenceData,
+    })
+
+    const createdFjsCharge = await retry(
+      () =>
+        this.paymentFlowService.createFjsCharge(
+          paymentFlow.id,
+          fjsChargePayload,
+        ),
+      {
+        maxRetries: 3,
+        retryDelayMs: 1000,
+        logger: this.logger,
+        logPrefix: `[${paymentFlowId}] Create FJS Payment Charge`,
+        shouldRetryOnError: (error) => {
+          return error.message !== FjsErrorCode.AlreadyCreatedCharge
+        },
+      },
+    )
+
+    await this.paymentFlowService.logPaymentFlowUpdate({
+      paymentFlowId: paymentFlowId,
+      type: 'success',
+      occurredAt: new Date(),
+      paymentMethod: PaymentMethod.CARD,
+      reason: 'payment_finalized',
+      message: `Card payment finalized and FJS charge created`,
+      metadata: {
+        fjsChargeId: createdFjsCharge.receptionId,
+      },
+    })
+
+    return createdFjsCharge
   }
 
   // PRIVATE HELPER METHODS ------------------------------------------------------------------------------------------------

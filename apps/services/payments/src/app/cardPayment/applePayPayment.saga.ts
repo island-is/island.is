@@ -54,18 +54,6 @@ export const createApplePayPaymentSaga = (
         `[${ctx.paymentFlowId}][APPLE_PAY] Starting payment with correlation id ${ctx.trackingData.correlationId}`,
       )
 
-      await paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId: ctx.paymentFlowId,
-        type: 'update',
-        occurredAt: new Date(),
-        paymentMethod: PaymentMethod.CARD,
-        reason: 'payment_started',
-        message: `Apple Pay payment started`,
-        metadata: {
-          correlationId: ctx.trackingData.correlationId,
-        },
-      })
-
       const paymentResult = await cardPaymentService.chargeApplePay(
         ctx.input,
         ctx.trackingData,
