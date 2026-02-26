@@ -30,6 +30,7 @@ import {
 
 import { m } from './messages'
 import { getChargeItems } from '../utils/getChargeItems'
+import { hasCourseBeenFullyBooked } from '../utils/hasCourseBeenFullyBooked'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -140,12 +141,19 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: [
             {
               target: States.PAYMENT,
-              cond: ({ application }) => getChargeItems(application).length > 0,
+              cond: ({ application }) =>
+                getChargeItems(application).length > 0 &&
+                !hasCourseBeenFullyBooked(application),
             },
             {
               target: States.COMPLETED,
               cond: ({ application }) =>
-                getChargeItems(application).length === 0,
+                getChargeItems(application).length === 0 &&
+                !hasCourseBeenFullyBooked(application),
+            },
+            {
+              target: States.FULLY_BOOKED,
+              cond: ({ application }) => hasCourseBeenFullyBooked(application),
             },
           ],
         },
@@ -179,6 +187,29 @@ const template: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/completedForm').then((module) =>
                   Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+      },
+      [States.FULLY_BOOKED]: {
+        meta: {
+          name: 'Fully booked form',
+          progress: 1,
+          status: FormModes.COMPLETED,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 20 * 60 * 1000, // 20 minutes
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/fullyBookedForm').then((module) =>
+                  Promise.resolve(module.fullyBookedForm),
                 ),
               read: 'all',
               delete: true,

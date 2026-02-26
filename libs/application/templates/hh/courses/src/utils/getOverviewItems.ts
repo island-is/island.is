@@ -72,19 +72,14 @@ export const getPayerOverviewItems = (
       width: 'full',
       keyText: m.payer.companyTitle,
       valueText:
-        getValueViaPath<string>(
-          answers,
-          'payment.companyPayment.nationalIdWithName.name',
-        ) ?? '',
+        getValueViaPath<string>(answers, 'payment.companyPayment.name') ?? '',
     })
     items.push({
       width: 'full',
       keyText: m.payer.companyNationalId,
       valueText:
-        getValueViaPath<string>(
-          answers,
-          'payment.companyPayment.nationalIdWithName.nationalId',
-        ) ?? '',
+        getValueViaPath<string>(answers, 'payment.companyPayment.nationalId') ??
+        '',
     })
   }
 
