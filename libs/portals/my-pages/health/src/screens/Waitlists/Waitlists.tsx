@@ -1,5 +1,12 @@
 import { HealthDirectorateWaitlistStatusTagColorEnum } from '@island.is/api/schema'
-import { ActionCard, Stack, TagVariant } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  Box,
+  Button,
+  Stack,
+  TagVariant,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -10,16 +17,19 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { isDefined } from '@island.is/shared/utils'
-import React from 'react'
+import React, { useState } from 'react'
+import * as styles from './Waitlists.css'
 import { useNavigate } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { useGetWaitlistsQuery } from './Waitlists.generated'
+import { WaitlistsInfoModal } from './WaitlistsInfoModal'
 
 const Waitlists: React.FC = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data, loading, error } = useGetWaitlistsQuery({
     variables: { locale: lang },
@@ -47,7 +57,24 @@ const Waitlists: React.FC = () => {
   return (
     <IntroWrapper
       title={formatMessage(messages.waitlists)}
-      intro={formatMessage(messages.waitlistsIntro)}
+      introComponent={
+        <Box className={styles.linkText}>
+          <Text>
+            {formatMessage(messages.waitlistsIntroWithLink, {
+              link: (str: React.ReactNode) => (
+                <Button
+                  variant="text"
+                  size="medium"
+                  onClick={() => setIsModalOpen(true)}
+                  aria-haspopup="dialog"
+                >
+                  {str}
+                </Button>
+              ),
+            })}
+          </Text>
+        </Box>
+      }
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirWaitlistTooltip,
@@ -62,6 +89,10 @@ const Waitlists: React.FC = () => {
         />,
       ]}
     >
+      <WaitlistsInfoModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
       {!loading && !error && waitlists?.length === 0 && (
         <Problem
           type="no_data"
