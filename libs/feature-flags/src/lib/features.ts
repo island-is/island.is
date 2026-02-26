@@ -155,6 +155,8 @@ export enum Features {
   questionnairesFromLSH = 'isQuestionnairesLshClientEnabled',
   // Validate Personal representative delegations at syslumenn
   usePersonalRepresentativesFromSyslumenn = 'usePersonalRepresentativesFromSyslumenn',
+  // SMS Notifications
+  isSmsNotificationEnabled = 'isSmsNotificationEnabled',
 }
 
 export enum ServerSideFeature {

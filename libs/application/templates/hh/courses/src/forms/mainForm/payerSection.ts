@@ -41,7 +41,7 @@ export const payerSection = buildSection({
           titleVariant: 'h4',
           required: true,
           searchCompanies: true,
-          searchPersons: false,
+          searchPersons: true,
           condition: (answers) =>
             getValueViaPath<YesOrNoEnum>(
               answers,
