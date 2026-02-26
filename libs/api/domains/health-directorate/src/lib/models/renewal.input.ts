@@ -9,7 +9,7 @@ export class HealthDirectorateRenewalInput {
 
   @Field(() => String)
   @IsString()
-  prescribedItemId!: string
+  productId!: string
 
   @Field(() => String)
   @IsString()

@@ -41,6 +41,9 @@ export class Prescription {
   @Field({ nullable: true })
   medCardDrugId?: string
 
+  @Field(() => Int, { nullable: true })
+  medCardDrugCategory?: number
+
   @Field(() => GraphQLISODateTime)
   issueDate!: Date
 
