@@ -13,7 +13,6 @@ import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response
 import { Field } from '../../fields/models/field.model'
 import type { Locale } from '@island.is/shared/types'
 import { ApplicationAdminDto } from './dto/applicationAdmin.dto'
-import { getOrganizationInfoByNationalId } from '../../../../utils/organizationInfo'
 
 @Injectable()
 export class ApplicationMapper {
@@ -314,6 +313,7 @@ export class ApplicationMapper {
     }
   }
 
+  //TODOxy can we can rid of this and just do mapping in the serializer?
   mapApplicationToApplicationAdminDto(
     application: Application,
   ): ApplicationAdminDto {
@@ -322,15 +322,16 @@ export class ApplicationMapper {
       created: application.created,
       modified: application.modified,
       formId: application.formId,
+      //TODOxy senda locale hingað?
+      formNameIs: application.form?.name?.is,
+      formNameEn: application.form?.name?.en,
+      formSlug: application.form?.slug,
       applicant: application.nationalId,
       status: application.status,
       state: application.state,
       pruneAt: application.pruneAt,
       pruned: application.pruned,
-      institutionContentfulSlug: getOrganizationInfoByNationalId(
-        application?.form?.organization?.nationalId,
-      )?.type,
-      //TODOxy any other fields we might need?
+      institutionNationalId: application.form?.organization?.nationalId,
     }
   }
 }

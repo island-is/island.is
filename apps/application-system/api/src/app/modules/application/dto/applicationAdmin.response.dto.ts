@@ -56,6 +56,9 @@ export class ApplicationListAdminResponseDto extends BaseApplicationResponseDto 
   @Type(() => ApplicationAdminData)
   adminData?: ApplicationAdminData[]
 
+  @ApiPropertyOptional()
+  institutionContentfulSlug?: string
+
   constructor(partial: Partial<ApplicationListAdminResponseDto>) {
     super(partial)
     Object.assign(this, partial)

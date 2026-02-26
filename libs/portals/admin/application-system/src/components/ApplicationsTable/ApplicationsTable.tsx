@@ -24,7 +24,10 @@ import copyToClipboard from 'copy-to-clipboard'
 import * as styles from './ApplicationsTable.css'
 import { MouseEvent } from 'react'
 import { ApplicationTypes } from '@island.is/application/types'
-import { getApplicationsBaseUrl } from '@island.is/portals/core'
+import {
+  getApplicationsBaseUrl,
+  getFormSystemApplicationBaseUrl,
+} from '@island.is/portals/core'
 
 interface Props {
   applications: AdminApplication[]
@@ -58,10 +61,19 @@ export const ApplicationsTable = ({
   }
 
   const copyApplicationLink = (application: AdminApplication) => {
-    const typeId = application.typeId as unknown as ApplicationTypes
-    const baseUrl = getApplicationsBaseUrl() //TODOxy get correct url for form system application
-    const slug = getSlugFromType(typeId)
-    const copied = copyToClipboard(`${baseUrl}/${slug}/${application.id}`)
+    let copied: boolean | undefined
+    if (application.isFormSystem) {
+      const formSlug = application.formSlug
+      const applicationId = application.id
+      const baseUrl = getFormSystemApplicationBaseUrl()
+      copied = copyToClipboard(`${baseUrl}/${formSlug}/${applicationId}`)
+    } else {
+      const typeId = application.typeId as unknown as ApplicationTypes
+      const applicationId = application.id
+      const baseUrl = getApplicationsBaseUrl()
+      const slug = getSlugFromType(typeId)
+      copied = copyToClipboard(`${baseUrl}/${slug}/${applicationId}`)
+    }
 
     if (copied) {
       toast.success(formatMessage(m.copyLinkSuccessful))

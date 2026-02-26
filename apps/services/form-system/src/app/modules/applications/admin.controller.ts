@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   UseGuards,
+  UseInterceptors,
   VERSION_NEUTRAL,
   Query,
 } from '@nestjs/common'
@@ -16,6 +17,7 @@ import { ApplicationTypeDto } from './models/dto/applicationType.dto'
 import { InstitutionDto } from './models/dto/institution.dto'
 import { ApplicationAdminResponseDto } from './models/dto/applicationAdminResponse.dto'
 import { ApplicationStatisticsDto } from './models/dto/applicationStatistics.dto'
+import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('admin')
@@ -27,10 +29,11 @@ import { ApplicationStatisticsDto } from './models/dto/applicationStatistics.dto
 export class AdminController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
-  //TODOxy add interceptor? audit? BypassDelegation?
+  //TODOxy add audit? BypassDelegation?
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @Get('super-admin/overview/:page/:count')
+  @UseInterceptors(ApplicationAdminSerializer)
   @Documentation({
     description: 'Get applications for super admin overview',
     response: {
@@ -108,6 +111,7 @@ export class AdminController {
 
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @Get('institution-admin/overview/:page/:count')
+  @UseInterceptors(ApplicationAdminSerializer)
   @Documentation({
     description: 'Get applications for institution admin overview',
     response: {

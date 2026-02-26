@@ -160,8 +160,8 @@ export class ApplicationV2Service {
       )
     }
     if (formSystemSettled.status === 'fulfilled') {
-      formSystemRows = (formSystemSettled.value.rows ?? []).map(
-        mapFormSystemApplicationAdmin,
+      formSystemRows = (formSystemSettled.value.rows ?? []).map((x) =>
+        mapFormSystemApplicationAdmin(x, locale),
       )
     } else {
       this.logger.error(
@@ -229,8 +229,8 @@ export class ApplicationV2Service {
       )
     }
     if (formSystemSettled.status === 'fulfilled') {
-      formSystemRows = (formSystemSettled.value.rows ?? []).map(
-        mapFormSystemApplicationAdmin,
+      formSystemRows = (formSystemSettled.value.rows ?? []).map((x) =>
+        mapFormSystemApplicationAdmin(x, locale),
       )
     } else {
       this.logger.error(

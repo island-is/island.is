@@ -13,8 +13,20 @@ export class ApplicationAdminDto {
   @ApiProperty()
   formId!: string
 
+  @ApiPropertyOptional()
+  formNameIs?: string
+
+  @ApiPropertyOptional()
+  formNameEn?: string
+
+  @ApiProperty()
+  formSlug!: string
+
   @ApiProperty()
   applicant!: string
+
+  @ApiPropertyOptional()
+  applicantName?: string
 
   @ApiProperty()
   status!: string
@@ -29,33 +41,11 @@ export class ApplicationAdminDto {
   pruned?: boolean
 
   @ApiPropertyOptional()
+  institutionNationalId?: string
+
+  @ApiPropertyOptional()
+  institutionName?: string
+
+  @ApiPropertyOptional()
   institutionContentfulSlug?: string
-
-  //TODOxy add more fields if necessary
-  // @ApiProperty()
-  // assignees!: string[]
-
-  // @ApiProperty()
-  // applicantActors!: string[]
-
-  // @ApiPropertyOptional()
-  // actionCard?: ActionCardMetaData
-
-  // @ApiPropertyOptional()
-  // name?: string
-
-  // @ApiPropertyOptional()
-  // institution?: string
-
-  // @ApiPropertyOptional()
-  // progress?: number
-
-  // @ApiPropertyOptional()
-  // applicantName?: string
-
-  // @ApiPropertyOptional()
-  // paymentStatus?: string
-
-  // @ApiPropertyOptional()
-  // adminData?: ApplicationAdminData[]
 }

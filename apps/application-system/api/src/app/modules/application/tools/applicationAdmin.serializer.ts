@@ -177,6 +177,9 @@ export class ApplicationAdminSerializer
       application.id,
     )
 
+    const institutionContentfulSlug =
+      institutionMapper[application.typeId]?.slug
+
     const dto = plainToInstance(ApplicationListAdminResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
@@ -224,7 +227,7 @@ export class ApplicationAdminSerializer
         intl.formatMessage,
         this.identityService,
       ),
-      institutionContentfulSlug: institutionMapper[application.typeId]?.slug,
+      institutionContentfulSlug: institutionContentfulSlug,
     })
     return instanceToPlain(dto)
   }

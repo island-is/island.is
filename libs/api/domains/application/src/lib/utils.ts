@@ -67,39 +67,22 @@ export const mapFormSystemCards = (
 
 export const mapFormSystemApplicationAdmin = (
   application: FormSystemApplicationAdminDto,
+  locale: Locale,
 ): ApplicationAdmin => {
   return {
-    //TODOxy
-    // id: application.id,
-    // created: application.created,
-    // modified: application.modified,
-    // isFormSystem: true,
-    // typeId: application.formId,
-    // applicant: application.applicant,
-    // assignees: [],
-    // applicantActors: [],
-    // status: application.status as ApplicationListAdminResponseDtoStatusEnum,
-    // state: application.status,
-    id: application.id,
-    created: application.created,
-    modified: application.modified,
-    applicant: application.applicant,
+    ...application,
     assignees: [],
     applicantActors: [],
-    pruneAt: application.pruneAt,
-    pruned: application.pruned,
     state: application.status,
     status: application.status as ApplicationListAdminResponseDtoStatusEnum,
-    actionCard: undefined,
     isFormSystem: true,
     typeId: application.formId,
-    name: 'TODO',
-    institution: 'TODO',
+    name:
+      (locale === 'is' ? application.formNameIs : application.formNameEn) ?? '',
+    institution: application.institutionName,
     progress: undefined,
-    applicantName: 'TODO',
     paymentStatus: undefined,
     adminData: undefined,
-    institutionContentfulSlug: application.institutionContentfulSlug,
   }
 }
 

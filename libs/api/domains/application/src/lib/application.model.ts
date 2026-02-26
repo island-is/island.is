@@ -221,6 +221,9 @@ export class ApplicationAdmin {
   typeId!: string
 
   @Field(() => String, { nullable: true })
+  formSlug?: string
+
+  @Field(() => String, { nullable: true })
   name?: string
 
   @Field(() => String, { nullable: true })

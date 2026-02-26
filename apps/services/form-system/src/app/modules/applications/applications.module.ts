@@ -19,6 +19,7 @@ import { Section } from '../sections/models/section.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
 import { ListItem } from '../listItems/models/listItem.model'
+import { IdentityClientModule } from '@island.is/clients/identity'
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ListItem } from '../listItems/models/listItem.model'
       OrganizationPermission,
       ListItem,
     ]),
+    IdentityClientModule,
   ],
   controllers: [ApplicationsController, AdminController],
   providers: [

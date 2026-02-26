@@ -3,7 +3,9 @@ import { ActionCardMetaData, ApplicationAdminData } from '@island.is/api/schema'
 
 export interface AdminApplication {
   id: string
+  isFormSystem?: boolean
   typeId: string
+  formSlug?: string
   applicant: string
   state: string
   created: string

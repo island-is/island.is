@@ -56,6 +56,7 @@ query getApplicationV2ApplicationsInstitutionAdmin(
       id
       isFormSystem
       typeId
+      formSlug
       applicant
       state
       created
@@ -178,6 +179,7 @@ query getApplicationV2ApplicationsSuperAdmin(
       id
       isFormSystem
       typeId
+      formSlug
       applicant
       state
       created

@@ -1177,9 +1177,6 @@ export class ApplicationsService {
     const { count, rows } = await this.applicationModel.findAndCountAll({
       where: {
         [Op.and]: [
-          // TODOxy wondering if we need to join with Forms table instead to check if published?
-          // what if form is published after application is created, is isTest value updated?
-          { isTest: false },
           institutionNationalId
             ? { organizationId: institutionNationalId }
             : {},
@@ -1193,8 +1190,9 @@ export class ApplicationsService {
       include: [
         {
           model: this.formModel,
-          attributes: ['id', 'name', 'slug', 'status'],
+          attributes: ['id', 'name', 'slug', 'status', 'organizationId'],
           required: true,
+          where: { status: FormStatus.PUBLISHED },
           include: [
             {
               model: this.organizationModel,
@@ -1235,7 +1233,7 @@ export class ApplicationsService {
           }),
         },
       ],
-      group: ['Form.id', 'Form.name'],
+      group: ['Form.id'],
     })
 
     return forms.map((form) => ({
@@ -1247,7 +1245,7 @@ export class ApplicationsService {
 
   async getAllInstitutionsSuperAdmin(): Promise<InstitutionDto[]> {
     const organizations = await this.organizationModel.findAll({
-      attributes: ['nationalId'],
+      attributes: ['id', 'nationalId'],
       include: [
         {
           model: Form,
@@ -1263,7 +1261,7 @@ export class ApplicationsService {
           ],
         },
       ],
-      group: ['Organization.nationalId'],
+      group: ['Organization.id', 'Organization.national_id'],
     })
 
     return organizations.map((org) => ({
@@ -1298,7 +1296,7 @@ export class ApplicationsService {
     JOIN public.form f ON f.id = a.form_id
     WHERE a.modified BETWEEN :startDate AND :endDate
     ${institutionFilter}
-    GROUP BY a.form_id, f.name;
+    GROUP BY a.form_id, f.name ->> 'is', f.name ->> 'en';
   `
 
     const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {
