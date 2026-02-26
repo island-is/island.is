@@ -1,7 +1,5 @@
 import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
-
-const USER_SHIPS_FLAG = 'UserShips'
 import { m } from '@island.is/portals/my-pages/core'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { AssetsPaths } from './lib/paths'
@@ -10,6 +8,8 @@ import { Navigate } from 'react-router-dom'
 import { redirects } from './assetRedirects'
 import { isAllowedBulkMileageUploadLoader } from './loaders/isAllowedBulkMileageUploadloader'
 import { BulkMileageWrapper } from './wrappers/BulkMileageWrapper'
+
+const USER_SHIPS_FLAG = 'UserShips'
 
 const IPOverview = lazy(() =>
   import(
