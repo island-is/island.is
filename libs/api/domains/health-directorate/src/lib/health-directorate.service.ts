@@ -579,7 +579,6 @@ export class HealthDirectorateService {
     return data ? { status: true } : null
   }
 
-
   /* Appointments */
   public async getAppointments(
     auth: Auth,
