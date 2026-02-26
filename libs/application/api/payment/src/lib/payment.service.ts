@@ -339,11 +339,14 @@ export class PaymentService {
         `payment was not found for application id ${applicationId}`,
       )
     }
+    if (!payment.request_id) {
+      throw new Error('Request ID is not set for payment')
+    }
 
     try {
       await this.paymentsApi.cardPaymentControllerRefund({
         refundCardPaymentInput: {
-          paymentFlowId: payment.id,
+          paymentFlowId: payment.request_id,
           reasonForRefund: 'refund',
         },
       })
