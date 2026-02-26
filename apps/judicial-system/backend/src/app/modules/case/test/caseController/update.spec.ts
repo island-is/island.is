@@ -966,13 +966,16 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockCaseStringModel.create).toHaveBeenCalledWith(
+      expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
         {
           stringType: StringType.POSTPONED_INDEFINITELY_EXPLANATION,
           caseId,
           value: postponedIndefinitelyExplanation,
         },
-        { transaction },
+        {
+          conflictFields: ['case_id', 'string_type'],
+          transaction,
+        },
       )
     })
   })
@@ -986,13 +989,16 @@ describe('CaseController - Update', () => {
     })
 
     it('should update case', () => {
-      expect(mockCaseStringModel.create).toHaveBeenCalledWith(
+      expect(mockCaseStringModel.upsert).toHaveBeenCalledWith(
         {
           stringType: StringType.CIVIL_DEMANDS,
           caseId,
           value: civilDemands,
         },
-        { transaction },
+        {
+          conflictFields: ['case_id', 'string_type'],
+          transaction,
+        },
       )
     })
   })
