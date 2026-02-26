@@ -1,5 +1,7 @@
 import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
+
+const USER_SHIPS_FLAG = 'UserShips'
 import { m } from '@island.is/portals/my-pages/core'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { AssetsPaths } from './lib/paths'
@@ -46,6 +48,13 @@ const VehicleHistory = lazy(() =>
   import('./screens/VehicleHistory/VehicleHistory'),
 )
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
+const ShipsOverview = lazy(() =>
+  import('./screens/Ships/Overview/ShipsOverview'),
+)
+const ShipDetail = lazy(() =>
+  import('./screens/Ships/Detail/ShipDetail'),
+)
+
 const WorkMachinesOverview = lazy(() =>
   import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
 )
@@ -101,6 +110,20 @@ export const assetsModule: PortalModule = {
         path: AssetsPaths.AssetsRealEstateDetail,
         enabled: userInfo.scopes.includes(ApiScope.assets),
         element: <RealEstateAssetDetail />,
+      },
+      {
+        name: 'ShipsOverview',
+        path: AssetsPaths.AssetsShips,
+        key: USER_SHIPS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <ShipsOverview />,
+      },
+      {
+        name: 'ShipDetail',
+        path: AssetsPaths.AssetsShipDetail,
+        key: USER_SHIPS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <ShipDetail />,
       },
       {
         name: m.workMachines,

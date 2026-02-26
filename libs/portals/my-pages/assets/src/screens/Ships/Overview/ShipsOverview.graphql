@@ -1,0 +1,12 @@
+query ShipsOverview {
+  shipRegistryUserShips {
+    data {
+      id
+      name
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+    }
+  }
+}

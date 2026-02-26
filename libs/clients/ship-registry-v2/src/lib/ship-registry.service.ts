@@ -12,11 +12,7 @@ import {
 export class ShipRegistryClientV2Service {
   async getShipsByOwner(user: User): Promise<ShipBaseInfoDto[]> {
     const response = await withAuthContext(user, () =>
-      dataOr404Null(
-        getShipsByOwnerAndFisherySsn({
-          path: { ssn: user.nationalId },
-        }),
-      ),
+      dataOr404Null(getShipsByOwnerAndFisherySsn()),
     )
 
     return response ?? []
