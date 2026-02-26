@@ -5,7 +5,6 @@ import {
   Checkbox,
   Divider,
   Filter,
-  FilterMultiChoice,
   FilterProps,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
@@ -13,7 +12,7 @@ import { isDefined } from '@island.is/shared/utils'
 
 import { m } from '../messages'
 import { FilterDateAccordion } from './FilterDateAccordion'
-import { FilterSelectAccordion } from './FilterSelectAccordion'
+import { FilterSearchAccordion } from './FilterSearchAccordion'
 
 export type SearchState = Record<string, Array<string> | undefined>
 
@@ -169,21 +168,23 @@ export const OverviewFilter = ({
             }
 
             if (category.type === 'select') {
-              const selectedValue = searchState?.[category.id]?.[0]
               return (
                 <>
                   {divider}
-                  <FilterSelectAccordion
+                  <FilterSearchAccordion
                     key={category.id}
                     id={category.id}
                     title={category.label}
-                    placeholder={category.placeholder}
                     items={category.items}
-                    value={selectedValue}
-                    onChange={(value) =>
+                    selected={searchState?.[category.id] ?? []}
+                    showOptionsWhenEmpty={false}
+                    initiallyExpanded={
+                      (searchState?.[category.id] ?? []).length > 0
+                    }
+                    onChange={(values) =>
                       onSearchUpdate(
                         category.id as keyof SearchState,
-                        value ? [value] : undefined,
+                        values.length ? values : undefined,
                       )
                     }
                   />
@@ -194,27 +195,31 @@ export const OverviewFilter = ({
             return (
               <>
                 {divider}
-                <FilterMultiChoice
-                  labelClear={formatMessage(m.search.clearFilterCategory)}
-                  onChange={({ categoryId, selected }) => {
-                    onSearchUpdate(
-                      categoryId as keyof SearchState,
-                      selected.length ? selected : undefined,
-                    )
-                  }}
-                  onClear={(categoryId) => {
-                    onSearchUpdate(categoryId as keyof SearchState, undefined)
-                  }}
-                  categories={category.sections.map((section) => ({
-                    id: section.id,
-                    label: section.label,
-                    selected: searchState?.[section.id] ?? [],
-                    filters: section.items.map((item) => ({
-                      value: item.value,
-                      label: item.label,
-                    })),
-                  }))}
-                />
+                {category.sections.map((section, sectionIndex) => (
+                  <>
+                    {sectionIndex > 0 && (
+                      <Box paddingX={3}>
+                        <Divider />
+                      </Box>
+                    )}
+                    <FilterSearchAccordion
+                      key={section.id}
+                      id={section.id}
+                      title={section.label}
+                      items={section.items}
+                      selected={searchState?.[section.id] ?? []}
+                      initiallyExpanded={
+                        (searchState?.[section.id] ?? []).length > 0
+                      }
+                      onChange={(values) =>
+                        onSearchUpdate(
+                          section.id as keyof SearchState,
+                          values.length ? values : undefined,
+                        )
+                      }
+                    />
+                  </>
+                ))}
               </>
             )
           })}

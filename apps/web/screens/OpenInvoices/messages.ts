@@ -259,5 +259,9 @@ export const m = {
       id: 'web.openinvoices:search.noResultsFound',
       defaultMessage: 'Engar færslur fundust',
     },
+    filterSearch: {
+      id: 'web.openinvoices:search.filterSearch',
+      defaultMessage: 'Leita...',
+    },
   }),
 }

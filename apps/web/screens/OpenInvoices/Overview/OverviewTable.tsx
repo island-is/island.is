@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { Column, useExpanded, useSortBy, useTable } from 'react-table'
 import { ApolloError } from '@apollo/client'
@@ -101,7 +101,7 @@ export const OverviewTable = ({
     <T.Table {...getTableProps()}>
       <T.Head>
         {headerGroups.map((headerGroup) => (
-          <T.Row {...headerGroup.getHeaderGroupProps()}>
+          <T.Row key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
               <T.HeadData
                 {...column.getHeaderProps(
@@ -141,7 +141,7 @@ export const OverviewTable = ({
         {rows.map((row) => {
           prepareRow(row)
           return (
-            <>
+            <React.Fragment key={row.id}>
               <T.Row {...row.getRowProps()}>
                 {row.cells.map((cell) => (
                   <T.Data
@@ -174,7 +174,7 @@ export const OverviewTable = ({
                   />
                 )
               }
-            </>
+            </React.Fragment>
           )
         })}
       </T.Body>
