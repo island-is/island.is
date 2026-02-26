@@ -70,13 +70,13 @@ export const getPayerOverviewItems = (
   if (userIsPayingAsIndividual === YesOrNoEnum.NO) {
     items.push({
       width: 'full',
-      keyText: m.payer.companyTitle,
+      keyText: m.overview.payerName,
       valueText:
         getValueViaPath<string>(answers, 'payment.companyPayment.name') ?? '',
     })
     items.push({
       width: 'full',
-      keyText: m.payer.companyNationalId,
+      keyText: m.overview.payerNationalId,
       valueText:
         getValueViaPath<string>(answers, 'payment.companyPayment.nationalId') ??
         '',
