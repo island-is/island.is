@@ -3410,10 +3410,6 @@ services-payments-worker:
   enabled: true
   env:
     CODE_OWNER: 'aranja'
-    DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_payments'
-    DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
-    DB_USER: 'services_payments'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -3474,7 +3470,6 @@ services-payments-worker:
   schedule: '*/5 * * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services-payments/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
     PAYMENTS_JWT_SIGNING_KEY_ID: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_KEY_ID'
     PAYMENTS_JWT_SIGNING_PRIVATE_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PRIVATE_KEY'
