@@ -381,17 +381,28 @@ export class DelegationsIncomingService {
             String(dt).includes('PersonalRepresentative'),
           )
 
-          for (const prType of prTypes) {
-            void this.delegationsIndexService.removeDelegationRecord(
-              {
-                fromNationalId,
-                toNationalId: user.nationalId,
-                type: prType as AuthDelegationType,
+          const removeResults = await Promise.allSettled(
+            prTypes.map((prType) =>
+              this.delegationsIndexService.removeDelegationRecord(
+                {
+                  fromNationalId,
+                  toNationalId: user.nationalId,
+                  type: prType as AuthDelegationType,
+                  provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+                },
+                user,
+              ),
+            ),
+          )
+          removeResults.forEach((result, index) => {
+            if (result.status === 'rejected') {
+              logger.error('Failed to remove PersonalRepresentative delegation record', {
+                error: result.reason,
+                prType: prTypes[index],
                 provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-              },
-              user,
-            )
-          }
+              })
+            }
+          })
         }
       } catch (error) {
         logger.error(
