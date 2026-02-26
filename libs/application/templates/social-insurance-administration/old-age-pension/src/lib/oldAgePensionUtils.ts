@@ -241,11 +241,6 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationLatestIncomePlan.data',
   ) as LatestIncomePlan
 
-  const hasIncomePlanStatus = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationLatestIncomePlan.data.status',
-  ) as string
-
   const incomePlanConditions = getValueViaPath<IncomePlanConditions>(
     externalData,
     'socialInsuranceAdministrationIncomePlanConditions.data',
@@ -272,7 +267,6 @@ export const getApplicationExternalData = (
     userProfileEmail,
     userProfilePhoneNumber,
     latestIncomePlan,
-    hasIncomePlanStatus,
     incomePlanConditions,
     categorizedIncomeTypes,
   }

@@ -30,6 +30,7 @@ import {
   INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
   IS,
   ISK,
+  MONTH_NAMES,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
@@ -58,7 +59,10 @@ import {
   FormModes,
   FormValue,
 } from '@island.is/application/types'
-import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  buildFormConclusionSection,
+} from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import { ApplicationType, Employment, RatioType } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
@@ -137,7 +141,10 @@ export const OldAgePensionForm: Form = buildForm({
                       application.externalData,
                     )
 
-                    return typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
+                    return typeOfBankInfo(
+                      bankInfo,
+                      paymentInfo?.bankAccountType,
+                    )
                   },
                   options: [
                     {
@@ -450,7 +457,7 @@ export const OldAgePensionForm: Form = buildForm({
                   },
                 },
                 currency: {
-                  component: 'select', // ætti þetta að vera selectAsync?
+                  component: 'select',
                   label:
                     socialInsuranceAdministrationMessage.incomePlan.currency,
                   placeholder:
@@ -554,20 +561,7 @@ export const OldAgePensionForm: Form = buildForm({
                         activeField?.incomeCategory === INCOME &&
                         activeField?.unevenIncomePerYear?.[0] === YES
                       ) {
-                        return [
-                          'january',
-                          'february',
-                          'march',
-                          'april',
-                          'may',
-                          'june',
-                          'july',
-                          'august',
-                          'september',
-                          'october',
-                          'november',
-                          'december',
-                        ]
+                        return MONTH_NAMES
                       }
                       if (
                         activeField?.income === RatioType.MONTHLY &&
@@ -1061,31 +1055,16 @@ export const OldAgePensionForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'conclusionSection',
-      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
-      children: [
-        buildMultiField({
-          id: 'conclusion.multifield',
-          title: (application: Application) => {
-            const { hasIncomePlanStatus } = getApplicationExternalData(
-              application.externalData,
-            )
-            return hasIncomePlanStatus
-              ? socialInsuranceAdministrationMessage.conclusionScreen
-                  .receivedTitle
-              : socialInsuranceAdministrationMessage.conclusionScreen
-                  .receivedAwaitingIncomePlanTitle
-          },
-          children: [
-            buildCustomField({
-              component: 'Conclusion',
-              id: 'conclusion',
-              description: '',
-            }),
-          ],
-        }),
-      ],
+    buildFormConclusionSection({
+      multiFieldTitle:
+        socialInsuranceAdministrationMessage.conclusionScreen.receivedTitle,
+      alertTitle:
+        socialInsuranceAdministrationMessage.conclusionScreen.alertTitle,
+      alertMessage: oldAgePensionFormMessage.conclusionScreen.alertMessage,
+      expandableIntro:
+        oldAgePensionFormMessage.conclusionScreen.expandableIntro,
+      expandableDescription:
+        oldAgePensionFormMessage.conclusionScreen.expandableDescription,
     }),
   ],
 })
