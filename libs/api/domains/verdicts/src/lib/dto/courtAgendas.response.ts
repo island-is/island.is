@@ -72,6 +72,9 @@ class CourtAgenda {
 
   @Field(() => String)
   title!: string
+
+  @Field(() => String, { nullable: true })
+  caseSubType?: string
 }
 
 @ObjectType('WebCourtAgendasResponse')

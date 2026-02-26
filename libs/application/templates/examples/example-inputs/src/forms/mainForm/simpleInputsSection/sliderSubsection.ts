@@ -20,6 +20,7 @@ export const sliderSubsection = buildSubSection({
           title: 'Basic slider',
           min: 1,
           max: 10,
+          doesNotRequireAnswer: true,
         }),
         buildDividerField({ useDividerLine: false }),
 
@@ -32,6 +33,7 @@ export const sliderSubsection = buildSubSection({
           min: 1,
           max: 10,
           showRemainderOverlay: false,
+          doesNotRequireAnswer: true,
         }),
         buildDividerField({ useDividerLine: false }),
 
@@ -49,6 +51,7 @@ export const sliderSubsection = buildSubSection({
               background: theme.color.black,
             }
           },
+          doesNotRequireAnswer: true,
         }),
         buildDividerField({ useDividerLine: false }),
 
@@ -63,6 +66,7 @@ export const sliderSubsection = buildSubSection({
             singular: 'day',
             plural: 'days',
           },
+          doesNotRequireAnswer: true,
         }),
         buildDividerField({ useDividerLine: false }),
 
@@ -78,6 +82,7 @@ export const sliderSubsection = buildSubSection({
             singular: 'day',
             plural: 'days',
           },
+          doesNotRequireAnswer: true,
         }),
         buildDividerField({ useDividerLine: false }),
 
@@ -101,6 +106,7 @@ export const sliderSubsection = buildSubSection({
               background: theme.color.red600,
             }
           },
+          doesNotRequireAnswer: true,
         }),
         buildDividerField({ useDividerLine: false }),
 
@@ -120,6 +126,7 @@ export const sliderSubsection = buildSubSection({
             singular: 'day',
             plural: 'days',
           },
+          doesNotRequireAnswer: true,
         }),
         buildDividerField({ useDividerLine: false }),
 
@@ -138,6 +145,7 @@ export const sliderSubsection = buildSubSection({
             singular: 'day',
             plural: 'days',
           },
+          doesNotRequireAnswer: true,
         }),
         buildDividerField({ useDividerLine: false }),
 
@@ -158,6 +166,7 @@ export const sliderSubsection = buildSubSection({
             singular: 'day',
             plural: 'days',
           },
+          doesNotRequireAnswer: true,
         }),
         buildDividerField({ useDividerLine: false }),
 
@@ -177,6 +186,7 @@ export const sliderSubsection = buildSubSection({
             singular: 'day',
             plural: 'days',
           },
+          doesNotRequireAnswer: true,
         }),
         buildDividerField({ useDividerLine: false }),
 
@@ -207,6 +217,7 @@ export const sliderSubsection = buildSubSection({
               message: 'End date',
             },
           },
+          doesNotRequireAnswer: true,
         }),
         buildDividerField({ useDividerLine: false }),
 
@@ -227,6 +238,7 @@ export const sliderSubsection = buildSubSection({
           showLabel: true,
           showMinMaxLabels: true,
           showToolTip: true,
+          doesNotRequireAnswer: true,
           label: {
             singular: 'day',
             plural: 'days',

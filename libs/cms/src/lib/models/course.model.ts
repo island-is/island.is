@@ -37,6 +37,9 @@ export class CourseInstance {
 
   @Field(() => String, { nullable: true })
   chargeItemCode?: string | null
+
+  @Field(() => Int, { nullable: true })
+  maxRegistrations?: number | null
 }
 
 const mapCourseInstance = ({
@@ -53,6 +56,7 @@ const mapCourseInstance = ({
     description: fields.description ?? '',
     startDateTimeDuration: startTime ? { startTime, endTime } : null,
     chargeItemCode: fields.chargeItemCode ?? null,
+    maxRegistrations: fields.maxRegistrations ?? null,
   }
 }
 

@@ -222,26 +222,6 @@ export const Overview = () => {
                     icon="calendar"
                   />
                 </Box>
-                {canDefendantAppealVerdict && (
-                  <Box component="section">
-                    <BlueBox>
-                      <SectionHeading
-                        title="Afstaða dómfellda til dóms"
-                        heading="h4"
-                        marginBottom={2}
-                        required
-                      />
-                      <Box marginBottom={2}>
-                        <Text variant="eyebrow">{defendant.name}</Text>
-                      </Box>
-                      <VerdictAppealDecisionChoice
-                        defendant={defendant}
-                        verdict={verdict}
-                        disabled={!!defendant.isSentToPrisonAdmin}
-                      />
-                    </BlueBox>
-                  </Box>
-                )}
               </Box>
               <Box
                 display="flex"

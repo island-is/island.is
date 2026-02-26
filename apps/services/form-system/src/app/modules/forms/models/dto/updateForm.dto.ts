@@ -46,15 +46,20 @@ export class UpdateFormDto {
   @ApiPropertyOptional()
   zendeskInternal?: boolean
 
-  @IsString()
+  @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional()
-  submissionServiceUrl?: string
+  useValidate?: boolean
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  usePopulate?: boolean
 
   @IsString()
   @IsOptional()
   @ApiPropertyOptional()
-  validationServiceUrl?: string
+  submissionServiceUrl?: string
 
   @IsBoolean()
   @IsOptional()

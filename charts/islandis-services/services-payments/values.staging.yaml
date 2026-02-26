@@ -28,6 +28,8 @@ env:
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+  PAYMENTS_APPLE_PAY_DISPLAY_NAME: 'island.is'
+  PAYMENTS_APPLE_PAY_DOMAIN: 'island.is'
   PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5'
   PAYMENTS_WEB_URL: 'https://beta.staging01.devland.is/greida'
   REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'

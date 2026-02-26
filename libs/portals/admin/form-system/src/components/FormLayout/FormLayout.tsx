@@ -35,10 +35,10 @@ export const FormLayout = () => {
       </Box>
       <FormHeader />
       <Row>
-        <Column span="3/12">
+        <Column span="4/12">
           <NavbarColumn />
         </Column>
-        <Column span="9/12">
+        <Column span="8/12">
           <MainContentColumn />
         </Column>
       </Row>

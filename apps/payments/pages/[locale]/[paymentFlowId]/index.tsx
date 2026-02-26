@@ -6,13 +6,15 @@ import { Box, Button, LinkV2 } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
-
 import { CardErrorCode } from '@island.is/shared/constants'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
 import initApollo from '../../../graphql/client'
 import { PaymentHeader } from '../../../components/PaymentHeader/PaymentHeader'
-import { PaymentSelector } from '../../../components/PaymentSelector/PaymentSelector'
+import {
+  PaymentMethod,
+  PaymentSelector,
+} from '../../../components/PaymentSelector/PaymentSelector'
 import { CardPayment } from '../../../components/CardPayment/CardPayment'
 import { InvoicePayment } from '../../../components/InvoicePayment/InvoicePayment'
 import { ALLOWED_LOCALES, Locale } from '../../../utils'
@@ -54,6 +56,7 @@ interface PaymentPageProps {
     title: string
   }
   isInvoicePaymentEnabledForUser: boolean
+  isApplePayPaymentEnabledForUser: boolean
 }
 
 export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
@@ -91,6 +94,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   let paymentFlowErrorCode: PaymentPageProps['paymentFlowErrorCode'] = null
   let organization: PaymentPageProps['organization'] = null
   let isInvoicePaymentEnabledForUser = false
+  let isApplePayPaymentEnabledForUser = false
 
   try {
     const { data } = await client.query<
@@ -156,14 +160,14 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   }
 
   if (paymentFlow) {
-    try {
-      const userObj = {
-        identifier: paymentFlow.payerNationalId,
-        custom: {
-          nationalId: paymentFlow.payerNationalId,
-        },
-      }
+    const userObj = {
+      identifier: paymentFlow.payerNationalId,
+      custom: {
+        nationalId: paymentFlow.payerNationalId,
+      },
+    }
 
+    try {
       isInvoicePaymentEnabledForUser = await configCatClient.getValueAsync(
         Features.isIslandisInvoicePaymentAllowedForUser,
         false,
@@ -171,6 +175,16 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       )
     } catch (e) {
       console.error('Error getting invoice payment enabled for user', e)
+    }
+
+    try {
+      isApplePayPaymentEnabledForUser = await configCatClient.getValueAsync(
+        Features.isIslandisApplePayPaymentAllowedForUser,
+        false,
+        userObj,
+      )
+    } catch (e) {
+      console.error('Error getting Apple Pay payment enabled for user', e)
     }
   }
 
@@ -188,6 +202,7 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
       organization,
       productInformation,
       isInvoicePaymentEnabledForUser,
+      isApplePayPaymentEnabledForUser,
     },
   }
 }
@@ -197,6 +212,7 @@ function PaymentPage({
   organization,
   productInformation,
   isInvoicePaymentEnabledForUser,
+  isApplePayPaymentEnabledForUser,
 }: PaymentPageProps) {
   const methods = useForm({
     mode: 'onBlur',
@@ -219,9 +235,12 @@ function PaymentPage({
     isThreeDSecureModalActive,
     threeDSecureDataForModal,
     handleVerificationCancelledByModal,
+    supportsApplePay,
+    initiateApplePay,
   } = usePaymentOrchestration({
     paymentFlow,
     productInformation,
+    isApplePayPaymentEnabledForUser,
   })
 
   const availablePaymentMethods = useMemo(() => {
@@ -318,11 +337,18 @@ function PaymentPage({
               <form onSubmit={methods.handleSubmit(handleFormSubmit)}>
                 <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
                   <PaymentSelector
-                    availablePaymentMethods={availablePaymentMethods}
+                    availablePaymentMethods={
+                      availablePaymentMethods as PaymentMethod[]
+                    }
                     selectedPayment={selectedPaymentMethod as any}
                     onSelectPayment={changePaymentMethod}
                   />
-                  {selectedPaymentMethod === 'card' && <CardPayment />}
+                  {selectedPaymentMethod === 'card' && (
+                    <CardPayment
+                      supportsApplePay={supportsApplePay}
+                      initiateApplePay={initiateApplePay}
+                    />
+                  )}
                   {selectedPaymentMethod === 'invoice' && (
                     <InvoicePayment
                       nationalId={paymentFlow?.payerNationalId}

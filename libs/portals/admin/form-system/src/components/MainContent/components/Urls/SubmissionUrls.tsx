@@ -24,7 +24,7 @@ export const SubmissionUrls = () => {
     submissionUrlInput,
     setSubmissionUrlInput,
   } = useContext(ControlContext)
-  const { form } = control
+  const { form, isPublished } = control
 
   const [showInput, setShowInput] = useState(false)
 
@@ -33,24 +33,25 @@ export const SubmissionUrls = () => {
   return (
     <Stack space={2}>
       {!showInput && !submissionUrlInput && (
-        <Box marginTop={4}>
-          <Button onClick={() => setShowInput(true)} variant="ghost">
+        <Box marginTop={7}>
+          <Button
+            onClick={() => setShowInput(true)}
+            variant="ghost"
+            disabled={isPublished}
+          >
             {formatMessage(m.addFormUrl)}
           </Button>
         </Box>
       )}
 
       {(showInput || submissionUrlInput) && (
-        <Box marginTop={4}>
-          <Text variant="eyebrow">
-            Athugið að á meðan við vinnum að tengingum við ytri kerfi er
-            einungis í boði að nota tengingar við Zendesk
-          </Text>
+        <Box marginTop={7}>
           <Input
             label={formatMessage(m.newFormUrlButton)}
             placeholder="IS/..."
             name="submission-url"
             value={submissionUrlInput}
+            readOnly={isPublished}
             backgroundColor="white"
             onChange={(e) => {
               setSubmissionUrlInput(e.target.value)
@@ -75,6 +76,7 @@ export const SubmissionUrls = () => {
           large
           name="submissionUrl"
           id="customSubmissionUrl"
+          disabled={isPublished}
           checked={form.submissionServiceUrl === submissionUrlInput}
           onChange={() => {
             controlDispatch({
@@ -100,6 +102,7 @@ export const SubmissionUrls = () => {
                 large
                 name="submissionUrl"
                 id={`submission-url-${sanitizeId(url ?? '')}`}
+                disabled={isPublished}
                 checked={form.submissionServiceUrl === url}
                 onChange={() => {
                   controlDispatch({
@@ -119,6 +122,7 @@ export const SubmissionUrls = () => {
         name="submissionUrl"
         id="zendesk"
         checked={form.submissionServiceUrl === 'zendesk'}
+        disabled={isPublished}
         onChange={(e) => {
           controlDispatch({
             type: 'CHANGE_SUBMISSION_URL',
@@ -132,6 +136,7 @@ export const SubmissionUrls = () => {
         <Checkbox
           label={formatMessage(m.zendeskPrivate)}
           checked={!!form.zendeskInternal}
+          disabled={isPublished}
           onChange={(e) => {
             controlDispatch({
               type: 'CHANGE_ZENDESK_INTERNAL',
@@ -140,6 +145,35 @@ export const SubmissionUrls = () => {
             formUpdate({ ...form, zendeskInternal: e.target.checked })
           }}
         />
+      )}
+
+      {form.submissionServiceUrl && form.submissionServiceUrl !== 'zendesk' && (
+        <>
+          <Checkbox
+            label={formatMessage(m.useValidate)}
+            checked={!!form.useValidate}
+            disabled={isPublished}
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_USE_VALIDATE',
+                payload: { value: e.target.checked },
+              })
+              formUpdate({ ...form, useValidate: e.target.checked })
+            }}
+          />
+          <Checkbox
+            label={formatMessage(m.usePopulate)}
+            checked={!!form.usePopulate}
+            disabled={isPublished}
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_USE_POPULATE',
+                payload: { value: e.target.checked },
+              })
+              formUpdate({ ...form, usePopulate: e.target.checked })
+            }}
+          />
+        </>
       )}
     </Stack>
   )
