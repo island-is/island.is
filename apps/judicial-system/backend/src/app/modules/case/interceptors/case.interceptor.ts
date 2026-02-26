@@ -36,10 +36,12 @@ export const transformDefendants = ({
   defendants,
   indictmentRulingDecision,
   rulingDate,
+  isRegisteredInPrisonSystem,
 }: {
   defendants?: Defendant[]
   indictmentRulingDecision?: CaseIndictmentRulingDecision
   rulingDate?: Date
+  isRegisteredInPrisonSystem?: boolean
 }) => {
   return defendants?.map((defendant) => {
     // Only the latest verdict is relevant
@@ -88,6 +90,8 @@ export const transformDefendants = ({
         DefendantEventType.OPENED_BY_PRISON_ADMIN,
         defendant.eventLogs,
       ),
+      isRegisteredInPrisonSystem:
+        defendant.isRegisteredInPrisonSystem ?? isRegisteredInPrisonSystem,
     }
   })
 }
@@ -149,6 +153,7 @@ const transformCase = (theCase: Case, user: User | undefined) => {
       defendants: theCase.defendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
+      isRegisteredInPrisonSystem: theCase.isRegisteredInPrisonSystem,
     }),
     caseFiles: theCase.caseFiles?.filter(
       (file) =>

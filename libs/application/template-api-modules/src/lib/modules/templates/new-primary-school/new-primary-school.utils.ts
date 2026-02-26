@@ -293,14 +293,19 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         alternativeSpecialEducationDepartmentIds.length > 0 && {
           alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
         }),
-      ...(shouldShowPage(
-        application.answers,
-        application.externalData,
-        ApplicationFeatureKey.SOCIAL_INFO,
-      ) &&
-        !isSpecialEducation && {
-          requestingMeeting: requestingMeeting === YES,
-        }),
+      //Business logic override as applicationConfig isn't ready on MMS side
+      //Should be removed when applicationConfig is ready
+
+      // ...(shouldShowPage(
+      //   application.answers,
+      //   application.externalData,
+      //   ApplicationFeatureKey.SOCIAL_INFO,
+      // ) &&
+      //   !isSpecialEducation && {
+      //     requestingMeeting: requestingMeeting === YES,
+      //   }),
+      requestingMeeting: requestingMeeting === YES,
+
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && {
         expectedStartDate: expectedStartDate
           ? new Date(expectedStartDate)
@@ -341,15 +346,20 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         requestsMedicationAdministration:
           requestsMedicationAdministration === YES,
       },
-      ...(shouldShowPage(
-        application.answers,
-        application.externalData,
-        ApplicationFeatureKey.SOCIAL_INFO,
-      ) && {
-        social: isSpecialEducation
-          ? getSpecialEducationSocialProfile(application)
-          : getSocialProfile(application),
-      }),
+      //Business logic override as applicationConfig isn't ready on MMS side
+      //Should be removed when applicationConfig is ready
+
+      // ...(shouldShowPage(
+      //   application.answers,
+      //   application.externalData,
+      //   ApplicationFeatureKey.SOCIAL_INFO,
+      // ) && {
+      //   social: isSpecialEducation
+      //     ? getSpecialEducationSocialProfile(application)
+      //     : getSocialProfile(application),
+      // }),
+      social: getSocialProfile(application),
+
       language: {
         languageEnvironmentId: languageEnvironmentId,
         signLanguage: signLanguage === YES,

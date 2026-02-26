@@ -210,13 +210,13 @@ export const m = {
       description: 'Error message when company payment information is required',
     },
     userIsPayingAsIndividualDescription: {
-      id: 'hh.courses.application:payer.userIsPayingAsIndividualDescription',
-      defaultMessage: 'Kvittun verður send í stafræna pósthólfið þitt',
+      id: 'hh.courses.application:payer.userIsPayingAsIndividualDescription#markdown',
+      defaultMessage: '* Kvittun verður send í stafræna pósthólfið þitt',
       description: 'Description of user is paying as individual field',
     },
     userIsPayingAsCompanyDescription: {
-      id: 'hh.courses.application:payer.userIsPayingAsCompanyDescription',
-      defaultMessage: 'Kvittun verður send í stafrænt pósthólf fyrirtækisins',
+      id: 'hh.courses.application:payer.userIsPayingAsCompanyDescription#markdown',
+      defaultMessage: '* Kvittun verður send í stafrænt pósthólf fyrirtækisins',
       description: 'Description of user is paying as company field',
     },
   }),
@@ -318,6 +318,62 @@ export const m = {
       id: 'hh.courses.application:completedForm.bottomButtonMessage',
       defaultMessage: 'Þú getur nálgast þínar umsóknir á mínum síðum.',
       description: 'Message next to bottom button',
+    },
+  }),
+  fullyBookedForm: defineMessages({
+    bottomButtonLabel: {
+      id: 'hh.courses.application:fullyBookedForm.bottomButtonLabel',
+      defaultMessage: 'Opna námskeiðsyfirlit',
+      description: 'Label for button at bottom of fully booked screen',
+    },
+    bottomButtonMessage: {
+      id: 'hh.courses.application:fullyBookedForm.bottomButtonMessage',
+      defaultMessage:
+        'Þú getur nálgast yfirlit yfir nýlegar námskeiðsskráningar á Mínum síðum.',
+      description: 'Message next to bottom button',
+    },
+    sectionTitle: {
+      id: 'hh.courses.application:fullyBookedForm.sectionTitle',
+      defaultMessage: 'Námskeið er fullbókað',
+      description: 'Title of fully booked form section (sidebar)',
+    },
+    multiFieldTitle: {
+      id: 'hh.courses.application:fullyBookedForm.multiFieldTitle',
+      defaultMessage: 'Námskeiðið er fullbókað',
+      description: 'Main title on the fully booked form screen',
+    },
+    alertTitle: {
+      id: 'hh.courses.application:fullyBookedForm.alertTitle',
+      defaultMessage: 'Ekki tókst að klára skráningu',
+      description: 'Title of fully booked form alert',
+    },
+    alertMessage: {
+      id: 'hh.courses.application:fullyBookedForm.alertMessage',
+      defaultMessage: 'Því miður er námskeiðið orðið fullbókað',
+      description: 'Message of fully booked form alert',
+    },
+    alertMessageWithSlots: {
+      id: 'hh.courses.application:fullyBookedForm.alertMessageWithSlots',
+      defaultMessage:
+        'Því miður er námskeiðið orðið fullbókað. Laus sæti í augnablikinu: {slotsAvailable}',
+      description:
+        'Message of fully booked form alert including currently available slots',
+    },
+    expandableHeader: {
+      id: 'hh.courses.application:fullyBookedForm.expandableHeader',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'Header for expandable section on fully booked screen',
+    },
+    expandableIntro: {
+      id: 'hh.courses.application:fullyBookedForm.expandableIntro#markdown',
+      defaultMessage:
+        'Skráningin var ekki send inn þar sem námskeiðið er fullbókað.',
+      description: 'Intro text for expandable section',
+    },
+    expandableDescription: {
+      id: 'hh.courses.application:fullyBookedForm.expandableDescription#markdown',
+      defaultMessage: ' ',
+      description: 'Expandable section content (markdown)',
     },
   }),
 }
