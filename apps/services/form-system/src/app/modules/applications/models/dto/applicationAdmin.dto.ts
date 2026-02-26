@@ -14,10 +14,7 @@ export class ApplicationAdminDto {
   formId!: string
 
   @ApiPropertyOptional()
-  formNameIs?: string
-
-  @ApiPropertyOptional()
-  formNameEn?: string
+  formName?: string
 
   @ApiProperty()
   formSlug!: string

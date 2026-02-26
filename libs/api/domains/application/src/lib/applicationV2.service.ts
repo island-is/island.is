@@ -160,8 +160,8 @@ export class ApplicationV2Service {
       )
     }
     if (formSystemSettled.status === 'fulfilled') {
-      formSystemRows = (formSystemSettled.value.rows ?? []).map((x) =>
-        mapFormSystemApplicationAdmin(x, locale),
+      formSystemRows = (formSystemSettled.value.rows ?? []).map(
+        mapFormSystemApplicationAdmin,
       )
     } else {
       this.logger.error(
@@ -229,8 +229,8 @@ export class ApplicationV2Service {
       )
     }
     if (formSystemSettled.status === 'fulfilled') {
-      formSystemRows = (formSystemSettled.value.rows ?? []).map((x) =>
-        mapFormSystemApplicationAdmin(x, locale),
+      formSystemRows = (formSystemSettled.value.rows ?? []).map(
+        mapFormSystemApplicationAdmin,
       )
     } else {
       this.logger.error(
@@ -260,14 +260,14 @@ export class ApplicationV2Service {
       this.applicationApiWithAuth(
         user,
       ).adminControllerGetApplicationTypesSuperAdmin({
-        locale,
         nationalId: input.nationalId,
+        locale,
       }),
       this.formSystemAdminApiWithAuth(
         user,
       ).adminControllerGetApplicationTypesForSuperAdmin({
-        locale,
         nationalId: input.nationalId,
+        locale,
       }),
     ])
 
@@ -282,8 +282,8 @@ export class ApplicationV2Service {
       )
     }
     if (formSystemSettled.status === 'fulfilled') {
-      formSystemTypes = formSystemSettled.value.map((x) =>
-        mapFormSystemApplicationTypeAdmin(x, locale),
+      formSystemTypes = formSystemSettled.value.map(
+        mapFormSystemApplicationTypeAdmin,
       )
     } else {
       this.logger.error(
@@ -323,8 +323,8 @@ export class ApplicationV2Service {
       )
     }
     if (formSystemSettled.status === 'fulfilled') {
-      formSystemTypes = formSystemSettled.value.map((x) =>
-        mapFormSystemApplicationTypeAdmin(x, locale),
+      formSystemTypes = formSystemSettled.value.map(
+        mapFormSystemApplicationTypeAdmin,
       )
     } else {
       this.logger.error(
@@ -372,7 +372,7 @@ export class ApplicationV2Service {
 
   async getApplicationStatisticsForSuperAdmin(
     user: User,
-    locale: Locale,
+    _locale: Locale,
     input: ApplicationsAdminStatisticsInput,
   ): Promise<ApplicationStatistics[]> {
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
@@ -395,8 +395,8 @@ export class ApplicationV2Service {
       )
     }
     if (formSystemSettled.status === 'fulfilled') {
-      formSystemStatistics = formSystemSettled.value.map((x) =>
-        mapFormSystemStatisticsAdmin(x, locale),
+      formSystemStatistics = formSystemSettled.value.map(
+        mapFormSystemStatisticsAdmin,
       )
     } else {
       this.logger.error(
@@ -410,7 +410,7 @@ export class ApplicationV2Service {
 
   async getApplicationStatisticsForInstitutionAdmin(
     user: User,
-    locale: Locale,
+    _locale: Locale,
     input: ApplicationsAdminStatisticsInput,
   ): Promise<ApplicationStatistics[]> {
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
@@ -433,8 +433,8 @@ export class ApplicationV2Service {
       )
     }
     if (formSystemSettled.status === 'fulfilled') {
-      formSystemStatistics = formSystemSettled.value.map((x) =>
-        mapFormSystemStatisticsAdmin(x, locale),
+      formSystemStatistics = formSystemSettled.value.map(
+        mapFormSystemStatisticsAdmin,
       )
     } else {
       this.logger.error(

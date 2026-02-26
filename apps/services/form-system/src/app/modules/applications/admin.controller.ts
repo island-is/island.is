@@ -18,6 +18,7 @@ import { InstitutionDto } from './models/dto/institution.dto'
 import { ApplicationAdminResponseDto } from './models/dto/applicationAdminResponse.dto'
 import { ApplicationStatisticsDto } from './models/dto/applicationStatistics.dto'
 import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
+import type { Locale } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('admin')
@@ -84,6 +85,12 @@ export class AdminController {
           required: false,
           description: 'Only return results created before specified date',
         },
+        locale: {
+          type: 'string',
+          required: false,
+          description: 'Locale',
+          example: 'en',
+        },
       },
     },
   })
@@ -96,6 +103,7 @@ export class AdminController {
     @Query('searchStr') searchStr?: string,
     @Query('from') from?: string,
     @Query('to') to?: string,
+    @Query('locale') locale?: Locale,
   ): Promise<ApplicationAdminResponseDto> {
     return this.applicationsService.findAllApplicationsByAdminFilters(
       page,
@@ -106,6 +114,7 @@ export class AdminController {
       searchStr,
       from,
       to,
+      locale,
     )
   }
 
@@ -157,6 +166,12 @@ export class AdminController {
           required: false,
           description: 'Only return results created before specified date',
         },
+        locale: {
+          type: 'string',
+          required: false,
+          description: 'Locale',
+          example: 'en',
+        },
       },
     },
   })
@@ -169,6 +184,7 @@ export class AdminController {
     @Query('searchStr') searchStr?: string,
     @Query('from') from?: string,
     @Query('to') to?: string,
+    @Query('locale') locale?: Locale,
   ): Promise<ApplicationAdminResponseDto> {
     return this.applicationsService.findAllApplicationsByAdminFilters(
       page,
@@ -179,6 +195,7 @@ export class AdminController {
       searchStr,
       from,
       to,
+      locale,
     )
   }
 
@@ -198,13 +215,20 @@ export class AdminController {
           required: false,
           description: `To get the application types for a specific institution's national id.`,
         },
+        locale: {
+          type: 'string',
+          required: false,
+          description: 'Locale',
+          example: 'en',
+        },
       },
     },
   })
   async getApplicationTypesForSuperAdmin(
     @Query('nationalId') nationalId?: string,
+    @Query('locale') locale?: Locale,
   ): Promise<ApplicationTypeDto[]> {
-    return this.applicationsService.getAllApplicationTypes(nationalId)
+    return this.applicationsService.getAllApplicationTypes(nationalId, locale)
   }
 
   @Scopes(AdminPortalScope.applicationSystemInstitution)
@@ -215,11 +239,25 @@ export class AdminController {
       status: 200,
       type: [ApplicationTypeDto],
     },
+    request: {
+      query: {
+        locale: {
+          type: 'string',
+          required: false,
+          description: 'Locale',
+          example: 'en',
+        },
+      },
+    },
   })
   async getApplicationTypesForInstitutionAdmin(
     @CurrentUser() user: User,
+    @Query('locale') locale?: Locale,
   ): Promise<ApplicationTypeDto[]> {
-    return this.applicationsService.getAllApplicationTypes(user.nationalId)
+    return this.applicationsService.getAllApplicationTypes(
+      user.nationalId,
+      locale,
+    )
   }
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)

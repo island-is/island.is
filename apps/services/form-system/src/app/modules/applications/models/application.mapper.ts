@@ -316,15 +316,17 @@ export class ApplicationMapper {
   //TODOxy can we can rid of this and just do mapping in the serializer?
   mapApplicationToApplicationAdminDto(
     application: Application,
+    locale?: Locale,
   ): ApplicationAdminDto {
     return {
       id: application.id,
       created: application.created,
       modified: application.modified,
       formId: application.formId,
-      //TODOxy senda locale hingað?
-      formNameIs: application.form?.name?.is,
-      formNameEn: application.form?.name?.en,
+      formName:
+        locale === 'is'
+          ? application.form?.name?.is
+          : application.form?.name?.en,
       formSlug: application.form?.slug,
       applicant: application.nationalId,
       status: application.status,

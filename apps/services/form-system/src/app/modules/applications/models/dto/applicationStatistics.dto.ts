@@ -11,12 +11,7 @@ export class ApplicationStatisticsDto {
   @ApiPropertyOptional()
   @Expose()
   @IsString()
-  formNameIs?: string
-
-  @ApiPropertyOptional()
-  @Expose()
-  @IsString()
-  formNameEn?: string
+  formName?: string
 
   @ApiProperty()
   @Expose()

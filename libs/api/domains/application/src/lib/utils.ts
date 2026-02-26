@@ -21,7 +21,6 @@ import {
 } from '@island.is/clients/form-system'
 import { ApplicationResponseDtoStatusEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 import { ApplicationListAdminResponseDtoStatusEnum } from '../../gen/fetch/models/ApplicationListAdminResponseDto'
-import type { Locale } from '@island.is/shared/types'
 
 export const mapAppSystemCards = (
   application: AppSystemCardDto,
@@ -67,7 +66,6 @@ export const mapFormSystemCards = (
 
 export const mapFormSystemApplicationAdmin = (
   application: FormSystemApplicationAdminDto,
-  locale: Locale,
 ): ApplicationAdmin => {
   return {
     ...application,
@@ -77,8 +75,7 @@ export const mapFormSystemApplicationAdmin = (
     status: application.status as ApplicationListAdminResponseDtoStatusEnum,
     isFormSystem: true,
     typeId: application.formId,
-    name:
-      (locale === 'is' ? application.formNameIs : application.formNameEn) ?? '',
+    name: application.formName,
     institution: application.institutionName,
     progress: undefined,
     paymentStatus: undefined,
@@ -107,11 +104,10 @@ export const applicationAdminSortByCreated = (
 
 export const mapFormSystemApplicationTypeAdmin = (
   type: ApplicationTypeDto,
-  locale: Locale,
 ): ApplicationTypeAdmin => {
   return {
     id: type.id,
-    name: (locale === 'is' ? type.nameIs : type.nameEn) ?? '',
+    name: type.name ?? '',
   }
 }
 
@@ -126,12 +122,10 @@ export const mapFormSystemInstitutionAdmin = (
 
 export const mapFormSystemStatisticsAdmin = (
   statistics: ApplicationStatisticsDto,
-  locale: Locale,
 ): ApplicationStatistics => {
   return {
     typeid: statistics.formId,
-    name:
-      (locale === 'is' ? statistics.formNameIs : statistics.formNameEn) ?? '',
+    name: statistics.formName ?? '',
     count: statistics.totalCount,
     draft: 0,
     inprogress: statistics.inProgressCount,

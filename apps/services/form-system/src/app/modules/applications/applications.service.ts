@@ -1165,9 +1165,10 @@ export class ApplicationsService {
     institutionNationalId?: string,
     formId?: string,
     applicantNationalId?: string,
-    searchStr?: string,
+    _searchStr?: string,
     from?: string,
     to?: string,
+    locale?: Locale,
   ): Promise<ApplicationAdminResponseDto> {
     const toDate = to ? new Date(to) : undefined
     const fromDate = from ? new Date(from) : undefined
@@ -1208,7 +1209,10 @@ export class ApplicationsService {
     })
 
     const mappedRows = rows.map((application) =>
-      this.applicationMapper.mapApplicationToApplicationAdminDto(application),
+      this.applicationMapper.mapApplicationToApplicationAdminDto(
+        application,
+        locale,
+      ),
     )
 
     return {
@@ -1219,6 +1223,7 @@ export class ApplicationsService {
 
   async getAllApplicationTypes(
     institutionNationalId?: string,
+    locale?: Locale,
   ): Promise<ApplicationTypeDto[]> {
     const forms = await this.formModel.findAll({
       attributes: ['id', 'name'],
@@ -1238,8 +1243,7 @@ export class ApplicationsService {
 
     return forms.map((form) => ({
       id: form.id,
-      nameIs: form.name?.is ?? '',
-      nameEn: form.name?.en ?? '',
+      name: locale === 'is' ? form.name?.is : form.name?.en ?? '',
     }))
   }
 
@@ -1275,6 +1279,7 @@ export class ApplicationsService {
     startDate: string,
     endDate: string,
     institutionNationalId?: string,
+    locale?: Locale,
   ): Promise<ApplicationStatisticsDto[]> {
     const replacements: Record<string, unknown> = { startDate, endDate }
     let institutionFilter = ''
@@ -1287,8 +1292,7 @@ export class ApplicationsService {
     const query = `
     SELECT
       a.form_id AS "formId",
-      f.name ->> 'is' AS "formNameIs",
-      f.name ->> 'en' AS "formNameEn",
+      f.name ->> :locale AS "formName",
       COUNT(*) AS "totalCount",
       COUNT(*) FILTER (WHERE a.state = '${ApplicationStatus.DRAFT}') AS "inProgressCount",
       COUNT(*) FILTER (WHERE a.state = '${ApplicationStatus.COMPLETED}') AS "completedCount"
@@ -1300,7 +1304,7 @@ export class ApplicationsService {
   `
 
     const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {
-      replacements,
+      replacements: { ...replacements, locale },
       type: QueryTypes.SELECT,
     })
 
