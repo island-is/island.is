@@ -175,6 +175,22 @@ export const m = {
       id: 'web.openinvoices:overview.noResults',
       defaultMessage: 'Ekkert fannst. Prófaðu að breyta skilyrðum',
     },
+    headerLink1Title: {
+      id: 'web.openinvoices:overview.link1Title',
+      defaultMessage: 'Um vefinn',
+    },
+    headerLink2Title: {
+      id: 'web.openinvoices:overview.link2Title',
+      defaultMessage: 'Birtingarreglur',
+    },
+    headerLink1Url: {
+      id: 'web.openinvoices:overview.link1Url',
+      defaultMessage: 'todo',
+    },
+    headerLink2Url: {
+      id: 'web.openinvoices:overview.link2Url',
+      defaultMessage: 'todo',
+    },
   }),
   totals: defineMessages({
     title: {

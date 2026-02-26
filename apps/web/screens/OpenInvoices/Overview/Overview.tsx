@@ -255,6 +255,21 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
       }}
       header={{
         breadcrumbs: breadcrumbItems,
+        shortcuts: {
+          variant: 'tags',
+          items: [
+            {
+              title: formatMessage(m.overview.headerLink1Title),
+              href: formatMessage(m.overview.headerLink1Url),
+              variant: 'purple',
+            },
+            {
+              title: formatMessage(m.overview.headerLink2Title),
+              href: formatMessage(m.overview.headerLink2Url),
+              variant: 'purple',
+            },
+          ],
+        },
       }}
       footer={{
         organization,
