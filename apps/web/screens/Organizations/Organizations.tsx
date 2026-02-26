@@ -249,6 +249,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                 const tags =
                   organization?.tag &&
                   organization.tag.map((x) => ({
+                    id: x.id,
                     label: x.title,
                   }))
 

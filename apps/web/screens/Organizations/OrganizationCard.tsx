@@ -10,6 +10,7 @@ import {
 import * as styles from './OrganizationCard.css'
 
 type OrganizationTag = {
+  id: string
   label: string
 }
 
@@ -68,7 +69,7 @@ export const OrganizationCard = ({
           <Inline space="smallGutter">
             {tags.map((tag) => (
               <Tag
-                key={tag.label}
+                key={tag.id}
                 outlined
                 variant="blue"
                 truncate
