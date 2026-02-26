@@ -36,7 +36,7 @@ export const OrganizationCard = ({
       display="flex"
       flexDirection="column"
       paddingY={3}
-      paddingX={[3, 3, 3, 4]}
+      paddingX={3}
       borderRadius="large"
       borderColor="blue200"
       borderWidth="standard"
@@ -53,7 +53,7 @@ export const OrganizationCard = ({
         flexGrow={1}
       >
         <Box flexGrow={1}>
-          <Text as="h3" variant="h3" color="dark400">
+          <Text as="h3" variant="h4" color="dark400">
             <Hyphen>{heading}</Hyphen>
           </Text>
         </Box>
