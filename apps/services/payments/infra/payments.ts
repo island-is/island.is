@@ -54,8 +54,6 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         staging: 'XROAD:/IS-TEST/GOV/10000/island-is-protected/payments-v1',
         prod: 'XROAD:/IS/GOV/5501692829/island-is-protected/payments-v1',
       },
-      PAYMENTS_APPLE_PAY_DOMAIN: 'island.is',
-      PAYMENTS_APPLE_PAY_DISPLAY_NAME: 'island.is',
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
