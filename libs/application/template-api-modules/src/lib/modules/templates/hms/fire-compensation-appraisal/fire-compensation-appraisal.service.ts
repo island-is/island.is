@@ -314,6 +314,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       })
 
       // if (res.status !== 200) {
+      // eslint-disable-next-line no-constant-condition
       if (true) {
         // trigger refund for testing
         try {
@@ -332,30 +333,30 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       }
 
       // Map the photos to the dto interface
-      const applicationFilesContentDtoArray =
-        mapAnswersToApplicationFilesContentDto(application, files)
+      // const applicationFilesContentDtoArray =
+      //   mapAnswersToApplicationFilesContentDto(application, files)
 
-      // Send the photos in to HMS
-      const photoResults = await Promise.all(
-        applicationFilesContentDtoArray.map(
-          async (applicationFilesContentDto) => {
-            return await this.hmsApplicationSystemService.apiApplicationUploadPost(
-              {
-                applicationFilesContentDto,
-              },
-            )
-          },
-        ),
-      )
+      // // Send the photos in to HMS
+      // const photoResults = await Promise.all(
+      //   applicationFilesContentDtoArray.map(
+      //     async (applicationFilesContentDto) => {
+      //       return await this.hmsApplicationSystemService.apiApplicationUploadPost(
+      //         {
+      //           applicationFilesContentDto,
+      //         },
+      //       )
+      //     },
+      //   ),
+      // )
 
-      if (photoResults.some((result) => result.status !== 200)) {
-        throw new TemplateApiError(
-          'Failed to upload photos, non 200 status',
-          500,
-        )
-      }
+      // if (photoResults.some((result) => result.status !== 200)) {
+      //   throw new TemplateApiError(
+      //     'Failed to upload photos, non 200 status',
+      //     500,
+      //   )
+      // }
 
-      return res
+      // return res
     } catch (e) {
       this.logger.error('Failed to submit application:', e.message)
       throw new TemplateApiError(e, 500)
