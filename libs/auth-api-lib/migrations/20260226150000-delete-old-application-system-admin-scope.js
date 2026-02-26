@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /**
  * Sequelize migration:
@@ -18,8 +18,8 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    const OLD_SCOPE = '@admin.island.is/application-system';
-    const NEW_SCOPE = '@admin.island.is/application-system:admin';
+    const OLD_SCOPE = '@admin.island.is/application-system'
+    const NEW_SCOPE = '@admin.island.is/application-system:admin'
 
     await queryInterface.sequelize.transaction(async (transaction) => {
       // Ensure the old scope exists; if not, no-op (idempotent)
@@ -29,33 +29,33 @@ module.exports = {
           transaction,
           replacements: { oldScope: OLD_SCOPE },
           type: Sequelize.QueryTypes.SELECT,
-        }
-      );
+        },
+      )
 
       if (!oldScope || oldScope.length === 0) {
-        return;
+        return
       }
 
       // Delete dependent rows (NO ACTION FKs)
       await queryInterface.sequelize.query(
         `DELETE FROM api_scope_delegation_types WHERE api_scope_name = :oldScope`,
-        { transaction, replacements: { oldScope: OLD_SCOPE } }
-      );
+        { transaction, replacements: { oldScope: OLD_SCOPE } },
+      )
 
       await queryInterface.sequelize.query(
         `DELETE FROM api_scope_user_access WHERE scope = :oldScope`,
-        { transaction, replacements: { oldScope: OLD_SCOPE } }
-      );
+        { transaction, replacements: { oldScope: OLD_SCOPE } },
+      )
 
       await queryInterface.sequelize.query(
         `DELETE FROM api_scope_user_claim WHERE api_scope_name = :oldScope`,
-        { transaction, replacements: { oldScope: OLD_SCOPE } }
-      );
+        { transaction, replacements: { oldScope: OLD_SCOPE } },
+      )
 
       await queryInterface.sequelize.query(
         `DELETE FROM personal_representative_scope_permission WHERE api_scope_name = :oldScope`,
-        { transaction, replacements: { oldScope: OLD_SCOPE } }
-      );
+        { transaction, replacements: { oldScope: OLD_SCOPE } },
+      )
 
       // Only if there are delegation_scope rows to migrate, verify NEW_SCOPE exists, then migrate.
       const delegationToMigrate = await queryInterface.sequelize.query(
@@ -64,8 +64,8 @@ module.exports = {
           transaction,
           replacements: { oldScope: OLD_SCOPE },
           type: Sequelize.QueryTypes.SELECT,
-        }
-      );
+        },
+      )
 
       if (delegationToMigrate && delegationToMigrate.length > 0) {
         const newScope = await queryInterface.sequelize.query(
@@ -74,13 +74,13 @@ module.exports = {
             transaction,
             replacements: { newScope: NEW_SCOPE },
             type: Sequelize.QueryTypes.SELECT,
-          }
-        );
+          },
+        )
 
         if (!newScope || newScope.length === 0) {
           throw new Error(
-            `Migration aborted: target scope '${NEW_SCOPE}' does not exist in api_scope, but delegation_scope rows need migration from '${OLD_SCOPE}'.`
-          );
+            `Migration aborted: target scope '${NEW_SCOPE}' does not exist in api_scope, but delegation_scope rows need migration from '${OLD_SCOPE}'.`,
+          )
         }
 
         await queryInterface.sequelize.query(
@@ -88,21 +88,20 @@ module.exports = {
           {
             transaction,
             replacements: { oldScope: OLD_SCOPE, newScope: NEW_SCOPE },
-          }
-        );
+          },
+        )
       }
 
       // Finally delete the api_scope row itself
       await queryInterface.sequelize.query(
         `DELETE FROM api_scope WHERE name = :oldScope`,
-        { transaction, replacements: { oldScope: OLD_SCOPE } }
-      );
-    });
+        { transaction, replacements: { oldScope: OLD_SCOPE } },
+      )
+    })
   },
 
   down: async () => {
     // Down migration left empty as it's impossible to know the full state of deleted data,
     // and restoring it could cause data integrity issues.
-
   },
-};
+}
