@@ -1172,6 +1172,7 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
                         ? formatMessage(m.listPage.closedHearing)
                         : ''
                     }
+                    caseSubType={agenda.caseSubType}
                     date={
                       agenda.dateFrom
                         ? format(new Date(agenda.dateFrom), 'd. MMMM yyyy')

@@ -8,6 +8,7 @@ export enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   COMPLETED = 'completed',
+  FULLY_BOOKED = 'fullyBooked',
   PAYMENT = 'payment',
 }
 
