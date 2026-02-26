@@ -519,7 +519,7 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
       // It's ok to only check the first defendant here since this
       // checkmark is only used for public prosecutors office users
       // and each defendant has their own line in their cases table
-      c.defendants?.[0].publicProsecutorIsRegisteredInPoliceSystem
+      c.defendants?.[0]?.publicProsecutorIsRegisteredInPoliceSystem
 
     return generateCell(
       {
