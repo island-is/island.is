@@ -1,4 +1,5 @@
 import {
+  buildDescriptionField,
   buildMultiField,
   buildOverviewField,
   buildSection,
@@ -42,6 +43,10 @@ export const overviewSection = buildSection({
               type: 'primary',
             },
           ],
+        }),
+        buildDescriptionField({
+          id: 'paymentWindowDescription',
+          description: m.overview.paymentWindowDescription,
         }),
       ],
     }),

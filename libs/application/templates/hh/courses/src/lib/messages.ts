@@ -226,6 +226,12 @@ export const m = {
       defaultMessage: 'Yfirlit skráningar',
       description: 'Title of overview section',
     },
+    paymentWindowDescription: {
+      id: 'hh.courses.application:overview.paymentWindowDescription',
+      defaultMessage:
+        'Ef greiða þarf fyrir námskeið hefur þú 20 mínútur til að ljúka greiðslu. Eftir það er plássið ekki lengur frátekið og skráningarupplýsingar eyðast',
+      description: 'Payment window guidance in overview section',
+    },
     participantHeading: {
       id: 'hh.courses.application:overview.participantHeading',
       defaultMessage: 'Þátttakendur',
