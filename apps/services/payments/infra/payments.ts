@@ -37,6 +37,7 @@ const env = {
 
 // common database configuration
 const db = {
+  name: 'services-payments',
   extensions: ['uuid-ossp'],
 }
 
