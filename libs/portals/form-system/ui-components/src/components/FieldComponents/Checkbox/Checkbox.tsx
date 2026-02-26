@@ -5,6 +5,8 @@ import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
+import { m } from '../../../lib/messages'
+import { useIntl } from 'react-intl'
 
 interface Props {
   item: FormSystemField
@@ -13,6 +15,7 @@ interface Props {
 
 export const Checkbox = ({ item, dispatch }: Props) => {
   const { control } = useFormContext()
+  const { formatMessage } = useIntl()
   const { fieldSettings } = item
   const { isLarge, hasDescription } = fieldSettings as FormSystemFieldSettings
   const { lang } = useLocale()
@@ -22,12 +25,19 @@ export const Checkbox = ({ item, dispatch }: Props) => {
       name={item.id}
       control={control}
       defaultValue={getValue(item, 'checkboxValue') ?? false}
-      render={({ field }) => (
+      rules={{
+        required: {
+          value: item.isRequired ?? false,
+          message: formatMessage(m.required),
+        },
+      }}
+      render={({ field, fieldState }) => (
         <CheckboxField
           name={field.name}
           label={item?.name?.[lang] ?? ''}
           large={isLarge ?? false}
           subLabel={hasDescription ? item?.description?.[lang] ?? '' : ''}
+          required={item?.isRequired ?? false}
           checked={getValue(item, 'checkboxValue') ?? false}
           onChange={(e) => {
             field.onChange(e.target.checked)
@@ -38,6 +48,8 @@ export const Checkbox = ({ item, dispatch }: Props) => {
               })
             }
           }}
+          hasError={!!fieldState.error}
+          errorMessage={fieldState.error ? fieldState.error.message : undefined}
         />
       )}
     />
