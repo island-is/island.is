@@ -1,0 +1,25 @@
+query getBankInformation {
+  socialInsuranceBankInformation {
+    __typename
+    ... on SocialInsuranceDomesticBankInformation {
+      bank
+      ledger
+      accountNumber
+      currencies
+    }
+    ... on SocialInsuranceForeignBankInformation {
+      bank
+      ledger
+      iban
+      swift
+      foreignBankName
+      foreignBankAddress
+      foreignCurrency
+      currencies
+    }
+  }
+}
+
+mutation updateBankInformation($input: SocialInsuranceBankInformationInput!) {
+  updateSocialInsuranceBankInformation(input: $input)
+}
