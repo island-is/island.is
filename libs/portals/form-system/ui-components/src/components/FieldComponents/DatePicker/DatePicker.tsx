@@ -15,9 +15,10 @@ interface Props {
   lang: 'is' | 'en'
 }
 const df = 'yyyy-MM-dd'
+
 export const DatePickerField = ({ item, dispatch, lang = 'is' }: Props) => {
   const { formatMessage } = useIntl()
-  const { control, clearErrors } = useFormContext()
+  const { control, trigger } = useFormContext()
 
   const handleDateChange = (dateString: string) => {
     if (dispatch) {
@@ -55,19 +56,28 @@ export const DatePickerField = ({ item, dispatch, lang = 'is' }: Props) => {
           locale={lang}
           backgroundColor="blue"
           handleChange={(date) => {
-            clearErrors(item.id)
             if (!(date instanceof Date) || isNaN(date.getTime())) {
+              onControllerChange('')
+              handleDateChange('')
+              trigger(item.id)
               return
             }
             const newVal = format(date, df)
             onControllerChange(newVal)
             handleDateChange(newVal)
+            trigger(item.id)
           }}
           minDate={new Date(1970, 0)}
           required={item.isRequired ?? false}
           errorMessage={fieldState.error ? fieldState.error.message : undefined}
           hasError={!!fieldState.error}
           selected={value ? parseISO(value) : undefined}
+          handleClear={() => {
+            onControllerChange('')
+            handleDateChange('')
+            trigger(item.id)
+          }}
+          isClearable={!item.isRequired}
         />
       )}
     />

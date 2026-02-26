@@ -14,7 +14,7 @@ interface Props {
 }
 
 export const Checkbox = ({ item, dispatch }: Props) => {
-  const { control } = useFormContext()
+  const { control, trigger } = useFormContext()
   const { formatMessage } = useIntl()
   const { fieldSettings } = item
   const { isLarge, hasDescription } = fieldSettings as FormSystemFieldSettings
@@ -38,7 +38,7 @@ export const Checkbox = ({ item, dispatch }: Props) => {
           large={isLarge ?? false}
           subLabel={hasDescription ? item?.description?.[lang] ?? '' : ''}
           required={item?.isRequired ?? false}
-          checked={getValue(item, 'checkboxValue') ?? false}
+          checked={field.value ?? false}
           onChange={(e) => {
             field.onChange(e.target.checked)
             if (dispatch) {
@@ -46,6 +46,7 @@ export const Checkbox = ({ item, dispatch }: Props) => {
                 type: 'SET_CHECKBOX_VALUE',
                 payload: { id: item.id, value: e.target.checked },
               })
+              e.target.checked && trigger(item.id)
             }
           }}
           hasError={!!fieldState.error}

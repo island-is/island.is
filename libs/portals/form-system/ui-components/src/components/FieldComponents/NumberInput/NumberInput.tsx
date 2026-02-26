@@ -1,5 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -14,9 +14,9 @@ interface Props {
 
 export const NumberInput = ({ item, dispatch }: Props) => {
   const { fieldSettings } = item
-  const { control } = useFormContext()
+  const { control, trigger } = useFormContext()
   const { lang, formatMessage } = useLocale()
-  const { minValue, maxValue, hasDescription } = fieldSettings || {}
+  const { hasDescription } = fieldSettings || {}
   return (
     <Box>
       <Controller
@@ -41,9 +41,9 @@ export const NumberInput = ({ item, dispatch }: Props) => {
               hasDescription ? item?.description?.[lang] ?? '' : undefined
             }
             backgroundColor="blue"
-            value={getValue(item, 'text') ?? ''}
+            value={field.value ?? ''}
             onChange={(e) => {
-              field.onChange(e)
+              field.onChange(e.target.value)
               if (dispatch) {
                 dispatch({
                   type: 'SET_TEXT',
@@ -53,6 +53,7 @@ export const NumberInput = ({ item, dispatch }: Props) => {
                   },
                 })
               }
+              e.target.value && trigger(item.id)
             }}
             onBlur={(e) => {
               if (e.target.value === null || e.target.value === '') {

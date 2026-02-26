@@ -25,7 +25,7 @@ const listTypePlaceholder = {
   idngreinarMeistara: 'Veldu iðngrein',
 }
 
-export const List = ({ item, dispatch, hasError }: Props) => {
+export const List = ({ item, dispatch }: Props) => {
   const { lang, formatMessage } = useLocale()
   const { control, trigger } = useFormContext()
 

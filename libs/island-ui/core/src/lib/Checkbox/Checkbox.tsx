@@ -88,7 +88,6 @@ export const Checkbox = ({
 
     onChange?.(event)
   }
-  console.log('required:', required)
   return (
     <Box
       className={cn(styles.container, large, {
