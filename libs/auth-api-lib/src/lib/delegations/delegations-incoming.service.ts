@@ -388,7 +388,8 @@ export class DelegationsIncomingService {
                   fromNationalId,
                   toNationalId: user.nationalId,
                   type: prType as AuthDelegationType,
-                  provider: AuthDelegationProvider.DistrictCommissionersRegistry,
+                  provider:
+                    AuthDelegationProvider.DistrictCommissionersRegistry,
                 },
                 user,
               ),
@@ -396,11 +397,15 @@ export class DelegationsIncomingService {
           )
           removeResults.forEach((result, index) => {
             if (result.status === 'rejected') {
-              logger.error('Failed to remove PersonalRepresentative delegation record', {
-                error: result.reason,
-                prType: prTypes[index],
-                provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-              })
+              logger.error(
+                'Failed to remove PersonalRepresentative delegation record',
+                {
+                  error: result.reason,
+                  prType: prTypes[index],
+                  provider:
+                    AuthDelegationProvider.DistrictCommissionersRegistry,
+                },
+              )
             }
           })
         }
