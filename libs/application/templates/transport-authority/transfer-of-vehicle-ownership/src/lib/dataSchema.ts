@@ -2,6 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { VehicleMileage } from '../shared'
 import { error } from './messages'
+import { isValidMobileNumber } from '../utils'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -16,7 +17,10 @@ const UserSchemaBase = z.object({
     ),
   name: z.string().min(1),
   email: z.string().min(1),
-  phone: z.string().min(1),
+  phone: z
+    .string()
+    .min(1)
+    .refine((phone) => isValidMobileNumber(phone)),
 })
 
 const RemovableUserSchemaBase = z
