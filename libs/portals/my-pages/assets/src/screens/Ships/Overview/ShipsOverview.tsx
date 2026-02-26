@@ -1,5 +1,8 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroWrapper, SAMGONGUSTOFA_SLUG } from '@island.is/portals/my-pages/core'
+import {
+  IntroWrapper,
+  SAMGONGUSTOFA_SLUG,
+} from '@island.is/portals/my-pages/core'
 import { shipsMessages } from '../../../lib/messages'
 import { useShipsOverviewQuery } from './ShipsOverview.generated'
 

@@ -51,9 +51,7 @@ const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
 const ShipsOverview = lazy(() =>
   import('./screens/Ships/Overview/ShipsOverview'),
 )
-const ShipDetail = lazy(() =>
-  import('./screens/Ships/Detail/ShipDetail'),
-)
+const ShipDetail = lazy(() => import('./screens/Ships/Detail/ShipDetail'))
 
 const WorkMachinesOverview = lazy(() =>
   import('./screens/WorkMachinesOverview/WorkMachinesOverview'),

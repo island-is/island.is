@@ -104,7 +104,9 @@ export const ShipDetail = () => {
       {ship?.engines?.map((engine, i) => (
         <InfoLineStack
           key={i}
-          label={`${formatMessage(shipsMessages.enginesTitle)}${engine.manufacturer ? ` / ${engine.manufacturer}` : ''}`}
+          label={`${formatMessage(shipsMessages.enginesTitle)}${
+            engine.manufacturer ? ` / ${engine.manufacturer}` : ''
+          }`}
         >
           <InfoLine
             loading={loading}
@@ -175,7 +177,9 @@ export const ShipDetail = () => {
 
         {(ship || loading) && (
           <Tabs
-            label={`${formatMessage(shipsMessages.registrationTab)} / ${formatMessage(shipsMessages.certificatesTab)}`}
+            label={`${formatMessage(
+              shipsMessages.registrationTab,
+            )} / ${formatMessage(shipsMessages.certificatesTab)}`}
             contentBackground="white"
             tabs={[
               {
