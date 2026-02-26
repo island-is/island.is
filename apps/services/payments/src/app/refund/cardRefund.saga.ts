@@ -174,7 +174,6 @@ export const createCardRefundSaga = (
 
       await logRefundStarted(paymentFlowService, ctx)
 
-      logger.info(`[${ctx.paymentFlowId}] Refunding via payment gateway`)
       const refundResult = await retry(() =>
         refundService.refundWithCorrelationId({
           paymentTrackingData: {
@@ -185,7 +184,6 @@ export const createCardRefundSaga = (
           },
         }),
       )
-      logger.info(`[${ctx.paymentFlowId}] Refund completed via payment gateway`)
 
       return { action: 'refunded' as const, refundResult }
     },
