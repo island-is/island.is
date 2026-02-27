@@ -150,6 +150,7 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
         width="full"
         paddingY={5}
         paddingX={4}
+        columnGap={1}
       >
         <Button
           variant="ghost"

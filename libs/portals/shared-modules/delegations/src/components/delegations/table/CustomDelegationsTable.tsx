@@ -1,16 +1,19 @@
 import {
   Box,
   Button,
+  Divider,
   Input,
   SkeletonLoader,
+  Stack,
   Table as T,
   Text,
+  UserAvatar,
   toast,
 } from '@island.is/island-ui/core'
 import ExpandableRow from './ExpandableRow/ExpandableRow'
 import format from 'date-fns/format'
 import { useCallback, useMemo, useState } from 'react'
-import { m as coreMessages } from '@island.is/portals/core'
+import { m as coreMessages, formatNationalId } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
 import CustomDelegationsPermissionsTable from './CustomDelegationsPermissionsTable'
 import { ApolloError, Reference, useApolloClient } from '@apollo/client'
@@ -25,6 +28,10 @@ import { DeleteAccessModal } from '../../modals/DeleteAccessModal'
 import { DelegationPaths } from '../../../lib/paths'
 import { useNavigate } from 'react-router-dom'
 import * as styles from './Tables.css'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
+import AnimateHeight from 'react-animate-height'
+import cn from 'classnames'
 
 export type DelegationsByPerson =
   AuthDelegationsGroupedByIdentityOutgoingQuery['authDelegationsGroupedByIdentityOutgoing'][number]
@@ -42,6 +49,8 @@ const CustomDelegationsTable = ({
   error: ApolloError | undefined
   direction: 'outgoing' | 'incoming'
 }) => {
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.lg
   const { formatMessage } = useLocale()
   const client = useApolloClient()
   const [expandedRow, setExpandedRow] = useState<string | null | undefined>(
@@ -162,15 +171,17 @@ const CustomDelegationsTable = ({
 
   return (
     <Box
-      marginBottom={[4, 4, 6]}
+      marginBottom={6}
       display="flex"
       flexDirection="column"
-      rowGap={2}
+      rowGap={[0, 0, 0, 2]}
     >
       <Box
         display="flex"
-        alignItems="center"
+        flexDirection={['column', 'row', 'column', 'row']}
+        alignItems={['stretch', 'center', 'stretch', 'center']}
         columnGap={2}
+        rowGap={2}
         justifyContent="spaceBetween"
       >
         <Text variant="h5">{title}</Text>
@@ -193,6 +204,157 @@ const CustomDelegationsTable = ({
         </Box>
       ) : error && !data?.length ? (
         <Problem error={error} />
+      ) : isMobile ? (
+        <Box>
+          {filteredDelegations?.map((person, idx) => {
+            const isExpanded =
+              expandedRow === `${person.nationalId}-${person.type}`
+
+            return (
+              <Box
+                key={`${person.nationalId}-${person.type}`}
+                className={cn({
+                  [styles.mobileContainer]: isExpanded,
+                  [styles.mobileDivider]: !isExpanded,
+                })}
+                paddingTop={3}
+                marginTop={idx === 0 ? 0 : 3}
+                marginBottom={isExpanded ? 2 : 0}
+                position="relative"
+              >
+                <Box
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  alignItems="center"
+                  marginBottom={1}
+                >
+                  <Box display="flex" alignItems="center" columnGap={1}>
+                    <UserAvatar
+                      color={isExpanded ? 'white' : 'blue'}
+                      username={person.name}
+                      size="medium"
+                    />
+                    <Text variant="h4" color="blue400">
+                      {person.name}
+                    </Text>
+                  </Box>
+                  <Box marginLeft={1}>
+                    <Button
+                      circle
+                      icon={isExpanded ? 'remove' : 'add'}
+                      colorScheme="light"
+                      title={formatMessage(m.viewPermissions)}
+                      onClick={() =>
+                        setExpandedRow(
+                          isExpanded
+                            ? null
+                            : `${person.nationalId}-${person.type}`,
+                        )
+                      }
+                    />
+                  </Box>
+                </Box>
+
+                <Box marginBottom={2}>
+                  <Stack space={1}>
+                    <Box display="flex" flexDirection="row" columnGap={1}>
+                      <Box width="half" display="flex" alignItems="center">
+                        <Text fontWeight="semiBold" variant="default">
+                          {formatMessage(m.nationalId)}
+                        </Text>
+                      </Box>
+                      <Box width="half">
+                        <Text variant="default">
+                          {formatNationalId(person.nationalId)}
+                        </Text>
+                      </Box>
+                    </Box>
+                    <Box display="flex" flexDirection="row" columnGap={1}>
+                      <Box width="half" display="flex" alignItems="center">
+                        <Text fontWeight="semiBold" variant="default">
+                          {formatMessage(m.numberOfDelegations)}
+                        </Text>
+                      </Box>
+                      <Box width="half">
+                        <Text variant="default">{person.totalScopeCount}</Text>
+                      </Box>
+                    </Box>
+                    <Box display="flex" flexDirection="row" columnGap={1}>
+                      <Box width="half" display="flex" alignItems="center">
+                        <Text fontWeight="semiBold" variant="default">
+                          {formatMessage(m.validityPeriod)}
+                        </Text>
+                      </Box>
+                      <Box width="half">
+                        <Text variant="default">
+                          {person.latestValidTo
+                            ? format(
+                                new Date(person.latestValidTo),
+                                'dd.MM.yyyy',
+                              )
+                            : formatMessage(m.noValidToDate)}
+                        </Text>
+                      </Box>
+                    </Box>
+                  </Stack>
+                </Box>
+
+                <Box display="flex" marginBottom={1} columnGap={1}>
+                  <Button
+                    variant="ghost"
+                    icon="trash"
+                    iconType="outline"
+                    size="small"
+                    colorScheme="destructive"
+                    fluid
+                    onClick={() => {
+                      const scopes = mapScopesToScopeSelection(person)
+                      setSelectedScopes(scopes)
+                      setPersonToDelete(person)
+                    }}
+                  >
+                    {formatMessage(coreMessages.buttonDestroy)}
+                  </Button>
+                  {direction === 'outgoing' && (
+                    <Button
+                      variant="ghost"
+                      icon="pencil"
+                      iconType="outline"
+                      size="small"
+                      colorScheme="default"
+                      fluid
+                      onClick={() => {
+                        const scopes = mapScopesToScopeSelection(person)
+                        setSelectedScopes(scopes)
+                        const query = new URLSearchParams({
+                          nationalId: person.nationalId ?? '',
+                        })
+                        navigate(
+                          `${
+                            DelegationPaths.DelegationsEdit
+                          }?${query.toString()}`,
+                        )
+                      }}
+                    >
+                      {formatMessage(coreMessages.buttonEdit)}
+                    </Button>
+                  )}
+                </Box>
+
+                <AnimateHeight height={isExpanded ? 'auto' : 0} duration={300}>
+                  <Box paddingTop={2} paddingBottom={3}>
+                    <Divider />
+                  </Box>
+                  <CustomDelegationsPermissionsTable
+                    data={person}
+                    direction={direction}
+                    isMobile
+                  />
+                </AnimateHeight>
+              </Box>
+            )
+          })}
+        </Box>
       ) : (
         <div className={styles.tableContainer}>
           <T.Table>

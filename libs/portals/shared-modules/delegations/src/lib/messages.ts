@@ -423,6 +423,15 @@ export const m = defineMessages({
     defaultMessage: 'Gildistími umboðs uppfærður',
   },
 
+  nationalId: {
+    id: 'sp.access-control-delegations:national-id',
+    defaultMessage: 'Kennitala',
+  },
+  delegationNr: {
+    id: 'sp.access-control-delegations:delegation-nr',
+    defaultMessage: 'Umboð {index}',
+  },
+
   // Table messages
   name: {
     id: 'sp.access-control-delegations:name',

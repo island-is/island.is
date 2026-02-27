@@ -146,7 +146,7 @@ export const AccessScopes = () => {
       <Text variant="h4" marginBottom={4}>
         {formatMessage(m.stepTwoTitle)}
       </Text>
-      <Box display="flex" columnGap={2} marginBottom={4}>
+      <Box display="flex" columnGap={[0, 2]} marginBottom={4}>
         <div className={styles.input}>
           <Input
             name="search"

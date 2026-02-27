@@ -277,7 +277,7 @@ const AccessControlNew = () => {
           />
         )}
 
-      {contentfulData?.faqList && (
+      {contentfulData?.faqList && contentfulData.faqList.questions.length > 0 && (
         <Box paddingTop={8}>
           <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />
         </Box>

@@ -1,9 +1,16 @@
 import { AuthDelegationsGroupedByIdentity } from '@island.is/api/schema'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { IdentityInfo } from './IdentityInfo/IdentityInfo'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, IconProps, Text } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
 import { FormatMessage } from '@island.is/localization'
+
+export type MobileRowData = {
+  identity: { nationalId: string; name: string }
+  icon?: IconProps['icon']
+  dataRows: { label: string; content: string }[]
+  action: React.ReactElement
+}
 
 export const getLegalGuardianTableData = (
   data: AuthDelegationsGroupedByIdentity[],
@@ -45,7 +52,39 @@ export const getLegalGuardianTableData = (
     ]
   })
 
-  return { headerArray, tableData }
+  const mobileRows: MobileRowData[] = data.map((row) => ({
+    identity: { nationalId: row.nationalId, name: row.name },
+    dataRows: [
+      {
+        label: formatMessage(m.headerDelegationType),
+        content:
+          row.type === AuthDelegationType.LegalGuardian
+            ? formatMessage(m.legalGuardian)
+            : formatMessage(m.legalGuardianMinor),
+      },
+      {
+        label: formatMessage(m.headerDomain),
+        content: formatMessage(m.registry),
+      },
+    ],
+    action: (
+      <Button
+        variant="ghost"
+        icon="person"
+        iconType="outline"
+        size="small"
+        colorScheme="default"
+        fluid
+        onClick={() =>
+          switchUser(row.nationalId, 'http://localhost:4200/minarsidur')
+        }
+      >
+        {formatMessage(m.switch)}
+      </Button>
+    ),
+  }))
+
+  return { headerArray, tableData, mobileRows }
 }
 
 export const getProcuringHolderTableData = (
@@ -85,7 +124,39 @@ export const getProcuringHolderTableData = (
     ]
   })
 
-  return { headerArray, tableData }
+  const mobileRows: MobileRowData[] = data.map((row) => ({
+    identity: { nationalId: row.nationalId, name: row.name },
+    icon: 'briefcase' as const,
+    dataRows: [
+      {
+        label: formatMessage(m.headerDelegationType),
+        content: formatMessage(m.procurationHolder),
+      },
+      {
+        label: formatMessage(m.headerRegisteredDate),
+        content: 'TODO', // Todo: check if starting date is available
+      },
+      {
+        label: formatMessage(m.headerDomain),
+        content: formatMessage(m.registry),
+      },
+    ],
+    action: (
+      <Button
+        variant="ghost"
+        icon="person"
+        iconType="outline"
+        fluid
+        size="small"
+        colorScheme="default"
+        onClick={() => switchUser(row.nationalId)}
+      >
+        {formatMessage(m.switch)}
+      </Button>
+    ),
+  }))
+
+  return { headerArray, tableData, mobileRows }
 }
 
 export const getGeneralMandateTableData = (
@@ -124,5 +195,32 @@ export const getGeneralMandateTableData = (
     ]
   })
 
-  return { headerArray, tableData }
+  const mobileRows: MobileRowData[] = data.map((row) => ({
+    identity: { nationalId: row.nationalId, name: row.name },
+    dataRows: [
+      {
+        label: formatMessage(m.headerDelegationType),
+        content: formatMessage(m.delegationTypeGeneralMandate),
+      },
+      {
+        label: formatMessage(m.headerRegisteredDate),
+        content: 'TODO', // Todo: check if starting date is available
+      },
+    ],
+    action: (
+      <Button
+        variant="ghost"
+        icon="person"
+        iconType="outline"
+        fluid
+        size="small"
+        colorScheme="default"
+        onClick={() => switchUser(row.nationalId)}
+      >
+        {formatMessage(m.switch)}
+      </Button>
+    ),
+  }))
+
+  return { headerArray, tableData, mobileRows }
 }

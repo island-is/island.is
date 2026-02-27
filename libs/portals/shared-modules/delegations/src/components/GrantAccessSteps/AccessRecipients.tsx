@@ -36,7 +36,7 @@ export const AccessRecipients = ({
 
       <Box display="flex" flexDirection="column" rowGap={4}>
         {fields.map((field, index) => (
-          <Box key={field.id} display="flex" columnGap={4}>
+          <Box key={field.id} display="flex" columnGap={4} rowGap={2}>
             <IdentityLookup
               setFormError={setFormError}
               methods={methods}

@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   DatePicker,
+  Stack,
   Table as T,
   Text,
   toast,
@@ -26,9 +27,11 @@ type PersonCentricDelegation =
 const CustomDelegationsPermissionsTable = ({
   data,
   direction,
+  isMobile,
 }: {
   data: PersonCentricDelegation
   direction: 'outgoing' | 'incoming'
+  isMobile?: boolean
 }) => {
   const { formatMessage } = useLocale()
   const client = useApolloClient()
@@ -133,6 +136,141 @@ const CustomDelegationsPermissionsTable = ({
     } catch {
       toast.error(formatMessage(coreMessages.somethingWrong))
     }
+  }
+
+  if (isMobile) {
+    return (
+      <Box>
+        {scopes?.map((scope, idx) => (
+          <Box
+            key={scope.id}
+            padding={2}
+            paddingTop={3}
+            background={idx % 2 === 0 ? 'white' : 'blue100'}
+          >
+            <Box marginBottom={1}>
+              <Text variant="h5" color="blue400">
+                {formatMessage(m.delegationNr, { index: idx + 1 })}
+              </Text>
+            </Box>
+            <Box marginBottom={2}>
+              <Stack space={0}>
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Box
+                    width="half"
+                    display="flex"
+                    alignItems="center"
+                    paddingY={1}
+                  >
+                    <Text fontWeight="semiBold" variant="default">
+                      {formatMessage(m.headerDomain)}
+                    </Text>
+                  </Box>
+                  <Box width="half">
+                    <Text variant="default">{scope.domain?.displayName}</Text>
+                  </Box>
+                </Box>
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Box
+                    width="half"
+                    display="flex"
+                    alignItems="center"
+                    paddingY={1}
+                  >
+                    <Text fontWeight="semiBold" variant="default">
+                      {formatMessage(m.headerScopeName)}
+                    </Text>
+                  </Box>
+                  <Box width="half">
+                    <Text variant="default">{scope.displayName}</Text>
+                  </Box>
+                </Box>
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Box
+                    width="half"
+                    display="flex"
+                    alignItems="center"
+                    paddingY={1}
+                  >
+                    <Text fontWeight="semiBold" variant="default">
+                      {formatMessage(m.headerRegisteredDate)}
+                    </Text>
+                  </Box>
+                  <Box width="half">
+                    <Text variant="default">
+                      {scope.validFrom
+                        ? format(new Date(scope.validFrom), 'dd.MM.yyyy')
+                        : '-'}
+                    </Text>
+                  </Box>
+                </Box>
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  <Box
+                    width="half"
+                    display="flex"
+                    alignItems="center"
+                    paddingY={1}
+                  >
+                    <Text fontWeight="semiBold" variant="default">
+                      {formatMessage(m.headerValidityPeriod)}
+                    </Text>
+                  </Box>
+                  <Box width="half">
+                    {direction === 'incoming' ? (
+                      <Text variant="medium">
+                        {scope.validTo
+                          ? format(new Date(scope.validTo), 'dd.MM.yyyy')
+                          : '-'}
+                      </Text>
+                    ) : (
+                      <DatePicker
+                        name={`validTo-${scope.id}`}
+                        locale="is"
+                        placeholderText={formatMessage(m.headerValidityPeriod)}
+                        selected={
+                          scope.validTo ? new Date(scope.validTo) : undefined
+                        }
+                        handleChange={(date) => handleDateChange(scope, date)}
+                        size="xs"
+                        backgroundColor="blue"
+                        detatchedCalendar={true}
+                      />
+                    )}
+                  </Box>
+                </Box>
+                <Box display="flex" paddingTop={2}>
+                  <Button
+                    variant="ghost"
+                    icon="trash"
+                    iconType="outline"
+                    size="small"
+                    colorScheme="destructive"
+                    fluid
+                    onClick={() => {
+                      setScopeToDelete(scope as AuthDelegationScope)
+                      setSelectedScopes([
+                        {
+                          name: scope.name,
+                          displayName: scope.displayName,
+                          description: scope.apiScope?.description,
+                          domain: scope.domain as AuthDomain,
+                          delegationId: scope.delegationId ?? undefined,
+                          validTo: scope.validTo
+                            ? new Date(scope.validTo)
+                            : undefined,
+                        },
+                      ])
+                    }}
+                  >
+                    {formatMessage(coreMessages.buttonDestroy)}
+                  </Button>
+                </Box>
+              </Stack>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+    )
   }
 
   return (
