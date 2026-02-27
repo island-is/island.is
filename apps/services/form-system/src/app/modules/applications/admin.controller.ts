@@ -10,7 +10,12 @@ import {
 import { ApiTags, ApiHeader } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { ApplicationsService } from './applications.service'
-import { CurrentUser, IdsUserGuard, Scopes } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { ApplicationTypeDto } from './models/dto/applicationType.dto'
@@ -23,8 +28,9 @@ import {
 } from './tools/applicationAdmin.serializer'
 import type { Locale } from '@island.is/shared/types'
 import { CurrentLocale } from './utils/currentLocale'
+import { Audit } from '@island.is/nest/audit'
 
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('admin')
 @ApiHeader({
   name: 'locale',
@@ -34,11 +40,12 @@ import { CurrentLocale } from './utils/currentLocale'
 export class AdminController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 
-  //TODOxy add audit? BypassDelegation?
-
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @Get('super-admin/overview/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
+  @Audit<ApplicationAdminResponseDto>({
+    resources: (apps) => apps.rows.map((app) => app.id),
+  })
   @Documentation({
     description: 'Get applications for super admin overview',
     response: {
@@ -119,6 +126,9 @@ export class AdminController {
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @Get('institution-admin/overview/:page/:count')
   @UseInterceptors(ApplicationAdminSerializer)
+  @Audit<ApplicationAdminResponseDto>({
+    resources: (apps) => apps.rows.map((app) => app.id),
+  })
   @Documentation({
     description: 'Get applications for institution admin overview',
     response: {
