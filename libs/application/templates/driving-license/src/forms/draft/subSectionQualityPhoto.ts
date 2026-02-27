@@ -60,9 +60,7 @@ export const subSectionQualityPhoto = buildSubSection({
           options: ({ answers, externalData }) => {
             const photoOptions = []
 
-            if (
-              getValueViaPath(answers, 'fakeData.useFakeData') === YES
-            ) {
+            if (getValueViaPath(answers, 'fakeData.useFakeData') === YES) {
               photoOptions.push({
                 value: 'fakePhoto',
                 label: m.useFakeImage,

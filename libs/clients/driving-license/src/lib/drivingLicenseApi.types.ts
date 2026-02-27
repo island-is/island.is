@@ -134,7 +134,7 @@ export type CanApplyErrorCodeBFull =
   | 'HAS_DEPRIVATION'
 
 export interface CanApplyForCategoryResult<
-  T extends CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary,
+  T extends CanApplyErrorCodeBFull | CanApplyErrorCodeBTemporary
 > {
   result: boolean
   errorCode?: T | undefined
