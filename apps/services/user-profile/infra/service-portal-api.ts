@@ -71,6 +71,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
     .secrets(secrets)
     .xroad(Base, Client, NationalRegistryB2C)
     .migrations()
+    .seed()
     .liveness('/liveness')
     .readiness('/health/check')
     .replicaCount({

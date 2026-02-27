@@ -2484,6 +2484,19 @@ service-portal-api:
           requests:
             cpu: '50m'
             memory: '128Mi'
+      - args:
+          - 'sequelize-cli'
+          - 'db:seed:all'
+        command:
+          - 'npx'
+        name: 'seed'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'service_portal_api'
