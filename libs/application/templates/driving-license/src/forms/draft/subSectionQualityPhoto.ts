@@ -1,93 +1,113 @@
 import {
   buildMultiField,
-  buildCheckboxField,
-  buildCustomField,
   buildRadioField,
   buildSubSection,
-  getValueViaPath,
   buildDescriptionField,
+  getValueViaPath,
   YES,
-  NO,
 } from '@island.is/application/core'
+import { Application, ExternalData } from '@island.is/application/types'
 import { m } from '../../lib/messages'
-import { HasQualityPhotoData } from '../../lib/types'
-import { B_FULL, B_FULL_RENEWAL_65 } from '../../lib/constants'
-import {
-  hasNoDrivingLicenseInOtherCountry,
-  isApplicationForCondition,
-  isVisible,
-} from '../../lib/utils'
+import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
+import { createPhotoComponent } from '../../fields/CreatePhoto'
+
+interface ThjodskraPhoto {
+  biometricId: string
+  content: string
+  contentSpecification: 'FACIAL' | 'SIGNATURE'
+}
+
+const getFacialPhotosFromThjodskra = (
+  externalData: ExternalData,
+): ThjodskraPhoto[] => {
+  const photos: ThjodskraPhoto[] =
+    getValueViaPath(externalData, 'allPhotosFromThjodskra.data.images', []) ||
+    []
+  return photos.filter((p) => p.contentSpecification === 'FACIAL')
+}
 
 export const subSectionQualityPhoto = buildSubSection({
   id: 'photoStep',
-  title: m.applicationQualityPhotoTitle,
-  condition: isVisible(
-    isApplicationForCondition([B_FULL, B_FULL_RENEWAL_65]),
-    hasNoDrivingLicenseInOtherCountry,
-  ),
+  title: m.photoSelectionTitle,
+  condition: hasNoDrivingLicenseInOtherCountry,
   children: [
     buildMultiField({
-      id: 'info',
-      title: m.qualityPhotoTitle,
-      condition: (_, externalData) => {
-        return (
-          getValueViaPath<HasQualityPhotoData>(externalData, 'qualityPhoto')
-            ?.data?.hasQualityPhoto === true
-        )
-      },
+      id: 'photoSelection',
+      title: m.photoSelectionTitle,
+      description: m.photoSelectionDescription,
       children: [
-        buildCustomField({
-          title: m.eligibilityRequirementTitle,
-          component: 'QualityPhoto',
-          id: 'qphoto',
-        }),
         buildRadioField({
-          id: 'willBringQualityPhoto',
-          disabled: false,
-          options: [
-            { value: NO, label: m.qualityPhotoNoAcknowledgement },
-            { value: YES, label: m.qualityPhotoAcknowledgement },
-          ],
+          id: 'selectLicensePhoto',
+          width: 'full',
+          backgroundColor: 'blue',
+          required: true,
+          defaultValue: (application: Application) => {
+            const photos = getFacialPhotosFromThjodskra(
+              application.externalData,
+            )
+            if (photos.length > 0) {
+              return photos[0]?.biometricId
+            }
+            const qualityPhoto = getValueViaPath<string>(
+              application.externalData,
+              'qualityPhoto.data.qualityPhoto',
+            )
+            if (qualityPhoto) {
+              return 'qualityPhoto'
+            }
+            return 'bringNewPhoto'
+          },
+          options: ({ answers, externalData }) => {
+            const photoOptions = []
+
+            if (
+              getValueViaPath(answers, 'fakeData.useFakeData') === YES
+            ) {
+              photoOptions.push({
+                value: 'fakePhoto',
+                label: m.useFakeImage,
+                illustration: createPhotoComponent('fakePhoto'),
+              })
+            } else {
+              const facialPhotos = getFacialPhotosFromThjodskra(externalData)
+
+              facialPhotos.forEach((photo) => {
+                photoOptions.push({
+                  value: photo.biometricId,
+                  label: m.usePassportImage,
+                  illustration: photo.content
+                    ? createPhotoComponent(photo.content)
+                    : undefined,
+                })
+              })
+
+              const qualityPhoto = getValueViaPath<string>(
+                externalData,
+                'qualityPhoto.data.qualityPhoto',
+              )
+
+              if (qualityPhoto) {
+                photoOptions.push({
+                  value: 'qualityPhoto',
+                  label: m.useDriversLicenseImage,
+                  illustration: createPhotoComponent(qualityPhoto),
+                })
+              }
+            }
+
+            photoOptions.push({
+              value: 'bringNewPhoto',
+              label: m.qualityPhotoAcknowledgement,
+            })
+
+            return photoOptions
+          },
         }),
         buildDescriptionField({
           id: 'photodesc',
           description: m.qualityPhotoInstructionBullets,
           condition: (answers) =>
-            getValueViaPath(answers, 'willBringQualityPhoto') === YES,
-        }),
-      ],
-    }),
-    buildMultiField({
-      id: 'info',
-      title: m.qualityPhotoTitle,
-      condition: (_, externalData) => {
-        return (
-          getValueViaPath<HasQualityPhotoData>(externalData, 'qualityPhoto')
-            ?.data?.hasQualityPhoto === false
-        )
-      },
-      children: [
-        buildCustomField({
-          title: m.eligibilityRequirementTitle,
-          component: 'QualityPhoto',
-          id: 'qphoto',
-        }),
-        buildDescriptionField({
-          id: 'photodesc',
-          description: m.qualityPhotoInstructionBullets,
-        }),
-        buildDescriptionField({
-          id: 'space',
-          space: 'containerGutter',
-        }),
-        buildCheckboxField({
-          id: 'willBringQualityPhoto',
-          options: [
-            {
-              value: YES,
-              label: m.qualityPhotoAcknowledgement,
-            },
-          ],
+            getValueViaPath(answers, 'selectLicensePhoto') === 'bringNewPhoto',
         }),
       ],
     }),
