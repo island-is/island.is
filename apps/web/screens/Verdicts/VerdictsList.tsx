@@ -1441,13 +1441,12 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                         text: (
                           <Stack space={1}>
                             {verdict.verdictJudges.map((judge, index) => {
-                              const key = `${judge.name}-${index}`
-                              const judgeString = `${judge?.name ?? ''} ${
-                                judge?.title ?? ''
-                              }`
+                              const judgeName = judge?.name ?? ''
+                              let judgeTitle = judge?.title ?? ''
+                              if (judgeName === judgeTitle) judgeTitle = ''
                               return (
-                                <Text key={key} variant="small">
-                                  {judgeString}
+                                <Text key={index} variant="small">
+                                  {judgeName} {judgeTitle}
                                 </Text>
                               )
                             })}

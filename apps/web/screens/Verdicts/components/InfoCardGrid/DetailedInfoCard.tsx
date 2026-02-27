@@ -69,7 +69,7 @@ export const DetailedInfoCard = ({
               key={index}
               display="flex"
               flexDirection={'row'}
-              alignItems="center"
+              alignItems="flexStart"
               className={styles.iconBox}
             >
               <Icon
