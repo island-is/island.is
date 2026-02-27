@@ -17,7 +17,9 @@ export const IncomePlan = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { incomePlan, noOtherIncomeConfirmation } = getApplicationAnswers(application.answers)
+  const { incomePlan, noOtherIncomeConfirmation } = getApplicationAnswers(
+    application.answers,
+  )
 
   return (
     <ReviewGroup

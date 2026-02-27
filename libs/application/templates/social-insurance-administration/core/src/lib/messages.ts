@@ -610,8 +610,10 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     },
     noOtherIncomeConfirmation: {
       id: 'sia.application:income.plan.no.other.income.confirmation',
-      defaultMessage: 'Ertu viss um að þú sért ekki með neinar tekjur frá öðrum en Tryggingastofnun á árinu?',
-      description: 'Are you sure you do not have any income from sources other than the Social Insurance Administration during the year?',
+      defaultMessage:
+        'Ertu viss um að þú sért ekki með neinar tekjur frá öðrum en Tryggingastofnun á árinu?',
+      description:
+        'Are you sure you do not have any income from sources other than the Social Insurance Administration during the year?',
     },
   }),
 
