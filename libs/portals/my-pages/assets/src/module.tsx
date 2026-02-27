@@ -9,6 +9,8 @@ import { redirects } from './assetRedirects'
 import { isAllowedBulkMileageUploadLoader } from './loaders/isAllowedBulkMileageUploadloader'
 import { BulkMileageWrapper } from './wrappers/BulkMileageWrapper'
 
+const USER_SHIPS_FLAG = 'UserShips'
+
 const IPOverview = lazy(() =>
   import(
     './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
@@ -46,6 +48,11 @@ const VehicleHistory = lazy(() =>
   import('./screens/VehicleHistory/VehicleHistory'),
 )
 const Lookup = lazy(() => import('./screens/Lookup/Lookup'))
+const ShipsOverview = lazy(() =>
+  import('./screens/Ships/Overview/ShipsOverview'),
+)
+const ShipDetail = lazy(() => import('./screens/Ships/Detail/ShipDetail'))
+
 const WorkMachinesOverview = lazy(() =>
   import('./screens/WorkMachinesOverview/WorkMachinesOverview'),
 )
@@ -101,6 +108,20 @@ export const assetsModule: PortalModule = {
         path: AssetsPaths.AssetsRealEstateDetail,
         enabled: userInfo.scopes.includes(ApiScope.assets),
         element: <RealEstateAssetDetail />,
+      },
+      {
+        name: 'ShipsOverview',
+        path: AssetsPaths.AssetsShips,
+        key: USER_SHIPS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <ShipsOverview />,
+      },
+      {
+        name: 'ShipDetail',
+        path: AssetsPaths.AssetsShipDetail,
+        key: USER_SHIPS_FLAG,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <ShipDetail />,
       },
       {
         name: m.workMachines,

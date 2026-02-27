@@ -149,8 +149,9 @@ import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { SessionsApiClientConfig } from '@island.is/clients/sessions'
-import { PaymentsApiClientConfig } from '@island.is/clients/payments'
+import { ShipRegistryClientV2Config } from '@island.is/clients/ship-registry-v2'
 import { ShipRegistryClientConfig } from '@island.is/clients/ship-registry'
+import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
@@ -400,6 +401,8 @@ const environment = getConfig
         PCardClientConfig,
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
+        ShipRegistryClientV2Config,
+        ShipRegistryClientConfig,
         NationalRegistryV3ClientConfig,
         PoliceCasesClientConfig,
         FirearmLicenseClientConfig,
@@ -474,7 +477,6 @@ const environment = getConfig
         RskRelationshipsClientConfig,
         RskRentalDayRateClientConfig,
         AircraftRegistryClientConfig,
-        ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
         AgriculturalUniversityOfIcelandCareerClientConfig,
