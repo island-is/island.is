@@ -225,50 +225,86 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         }
       }
 
-      return this.drivingLicenseService.renewDrivingLicense65AndOver(
-        auth.authorization.replace('Bearer ', ''),
-        {
-          districtId: jurisdictionId
-            ? jurisdictionId
-            : setJurisdictionToKopavogur,
-          ...(deliveryMethod
-            ? {
-                pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
-                sendPlasticToPerson: deliveryMethod === Pickup.POST,
-              }
-            : {}),
-          ...(healtCertificate ? { healtCertificate } : {}),
-        },
-      )
-    } else if (applicationFor === 'B-full') {
-      return this.drivingLicenseService.newDrivingLicense(nationalId, {
-        jurisdictionId: jurisdictionId
+      const renewal65Input = {
+        districtId: jurisdictionId
           ? jurisdictionId
           : setJurisdictionToKopavogur,
-        sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
-        needsToPresentHealthCertificate: needsHealthCert || remarks,
-        needsToPresentQualityPhoto: needsQualityPhoto,
-        licenseCategory: DrivingLicenseCategory.B,
-      })
-    } else if (applicationFor === 'B-temp') {
-      if (needsHealthCert) {
-        await postHealthDeclaration(nationalId, answers, auth)
+        ...(deliveryMethod
+          ? {
+              pickupPlasticAtDistrict: deliveryMethod === Pickup.DISTRICT,
+              sendPlasticToPerson: deliveryMethod === Pickup.POST,
+            }
+          : {}),
+        ...(healtCertificate ? { healtCertificate } : {}),
       }
-      return this.drivingLicenseService.newTemporaryDrivingLicense(
+      // TEMP DEBUG LOG
+      this.log('info', 'B-full-renewal-65 input', {
+        hasHealthCertificate: !!healtCertificate,
+        healthCertLength: healtCertificate?.length ?? 0,
+        input: renewal65Input,
+      })
+      const renewal65Result =
+        await this.drivingLicenseService.renewDrivingLicense65AndOver(
+          auth.authorization.replace('Bearer ', ''),
+          renewal65Input,
+        )
+      // TEMP DEBUG LOG
+      this.log('info', 'B-full-renewal-65 result', { result: renewal65Result })
+      return renewal65Result
+    } else if (applicationFor === 'B-full') {
+      // TEMP DEBUG LOG
+      this.log('info', 'B-full input', {
+        needsHealthCert: needsHealthCert || remarks,
+        needsQualityPhoto,
+        jurisdictionId: jurisdictionId || setJurisdictionToKopavogur,
+        deliveryMethod,
+      })
+      const bFullResult = await this.drivingLicenseService.newDrivingLicense(
         nationalId,
-        auth.authorization.replace('Bearer ', ''),
         {
           jurisdictionId: jurisdictionId
             ? jurisdictionId
             : setJurisdictionToKopavogur,
-          sendLicenseInMail: deliveryMethod === Pickup.POST ? true : false,
-          needsToPresentHealthCertificate: needsHealthCert,
+          sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
+          needsToPresentHealthCertificate: needsHealthCert || remarks,
           needsToPresentQualityPhoto: needsQualityPhoto,
-          teacherNationalId: teacher,
-          email: email,
-          phone: phone,
+          licenseCategory: DrivingLicenseCategory.B,
         },
       )
+      // TEMP DEBUG LOG
+      this.log('info', 'B-full result', { result: bFullResult })
+      return bFullResult
+    } else if (applicationFor === 'B-temp') {
+      if (needsHealthCert) {
+        await postHealthDeclaration(nationalId, answers, auth)
+      }
+      // TEMP DEBUG LOG
+      this.log('info', 'B-temp input', {
+        needsHealthCert,
+        needsQualityPhoto,
+        jurisdictionId: jurisdictionId || setJurisdictionToKopavogur,
+        deliveryMethod,
+        teacherNationalId: teacher,
+      })
+      const bTempResult =
+        await this.drivingLicenseService.newTemporaryDrivingLicense(
+          nationalId,
+          auth.authorization.replace('Bearer ', ''),
+          {
+            jurisdictionId: jurisdictionId
+              ? jurisdictionId
+              : setJurisdictionToKopavogur,
+            sendLicenseInMail: deliveryMethod === Pickup.POST ? true : false,
+            needsToPresentHealthCertificate: needsHealthCert,
+            needsToPresentQualityPhoto: needsQualityPhoto,
+            teacherNationalId: teacher,
+            email: email,
+            phone: phone,
+          },
+        )
+      // TEMP DEBUG LOG
+      this.log('info', 'B-temp result', { result: bTempResult })
+      return bTempResult
     } else if (applicationFor === 'BE') {
       const instructorSSN = getValueViaPath<string>(
         answers,
@@ -329,7 +365,15 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         }
       }
 
-      return this.drivingLicenseService.applyForBELicense(
+      // TEMP DEBUG LOG
+      this.log('info', 'BE input', {
+        contentListLength: contentList?.length ?? 0,
+        instructorSSN: instructorSSN ?? '',
+        photoBiometricsId: imageBiometricsId,
+        signatureBiometricsId: signatureBiometricsId,
+        jurisdictionId,
+      })
+      const beResult = await this.drivingLicenseService.applyForBELicense(
         nationalId,
         auth.authorization,
         {
@@ -342,6 +386,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           signatureBiometricsId: signatureBiometricsId,
         },
       )
+      // TEMP DEBUG LOG
+      this.log('info', 'BE result', { result: beResult })
+      return beResult
     }
 
     throw new Error('application for unknown type of license')
