@@ -3,7 +3,7 @@ import {
   InfoLine,
   InfoLineStack,
   IntroWrapper,
-  LANDLAEKNIR_SLUG,
+  LANDSPITALI_SLUG,
   LinkButton,
   formatDate,
 } from '@island.is/portals/my-pages/core'
@@ -26,7 +26,8 @@ const Bloodtype: React.FC = () => {
     <IntroWrapper
       title={formatMessage(messages.bloodtype)}
       intro={bloodType?.description ?? formatMessage(messages.bloodtypeDesc)}
-      serviceProviderSlug={LANDLAEKNIR_SLUG}
+      serviceProviderSlug={LANDSPITALI_SLUG}
+      serviceProviderTooltip={formatMessage(messages.landspitaliTooltip)}
       marginBottom={6}
       buttonGroup={[
         <LinkButton

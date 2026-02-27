@@ -2182,6 +2182,10 @@ export const messages = defineMessages({
     defaultMessage: 'Landspítali',
     id: 'sp.health:landspitali',
   },
+  landspitaliTooltip: {
+    defaultMessage: 'Landspítali hefur umsjón með gögnum um blóðflokka.',
+    id: 'sp.health:landspitali-tooltip',
+  },
   invalidatePermit: {
     defaultMessage: 'Eyða',
     id: 'sp.health:invalidate-permit',
