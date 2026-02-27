@@ -48,6 +48,7 @@ import { ApplicationTypeDto } from './models/dto/applicationType.dto'
 import { InstitutionDto } from './models/dto/institution.dto'
 import { ApplicationStatisticsDto } from './models/dto/applicationStatistics.dto'
 import { ApplicationAdminResponseDto } from './models/dto/applicationAdminResponse.dto'
+import { escapeLike } from './utils/escapeLike'
 
 @Injectable()
 export class ApplicationsService {
@@ -1165,7 +1166,7 @@ export class ApplicationsService {
     institutionNationalId?: string,
     formId?: string,
     applicantNationalId?: string,
-    _searchStr?: string,
+    searchStr?: string,
     from?: string,
     to?: string,
     locale?: Locale,
@@ -1180,7 +1181,6 @@ export class ApplicationsService {
         [Op.and]: [
           formId ? { formId } : {},
           applicantNationalId ? { nationalId: applicantNationalId } : {},
-          // TODOxy filter by searchStr
           fromDate ? { created: { [Op.gte]: fromDate } } : {},
           toDate ? { created: { [Op.lte]: toDate } } : {},
         ],
@@ -1202,6 +1202,20 @@ export class ApplicationsService {
             },
           ],
         },
+        ...(searchStr
+          ? [
+              {
+                model: Value,
+                as: 'values',
+                attributes: [],
+                required: true,
+                where: Sequelize.where(
+                  Sequelize.cast(Sequelize.col('values.json'), 'text'),
+                  { [Op.iLike]: `%${escapeLike(searchStr)}%` },
+                ),
+              },
+            ]
+          : []),
       ],
       limit,
       offset,
@@ -1277,9 +1291,6 @@ export class ApplicationsService {
 
     return organizations.map((org) => ({
       nationalId: org.nationalId,
-      //TODOx should we move into serializer?
-      contentfulSlug:
-        getOrganizationInfoByNationalId(org.nationalId)?.type ?? '',
     }))
   }
 

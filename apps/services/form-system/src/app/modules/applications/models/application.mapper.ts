@@ -313,7 +313,6 @@ export class ApplicationMapper {
     }
   }
 
-  //TODOxy can we can rid of this and just do mapping in the serializer?
   mapApplicationToApplicationAdminDto(
     application: Application,
     locale?: Locale,

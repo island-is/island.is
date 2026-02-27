@@ -17,7 +17,10 @@ import { ApplicationTypeDto } from './models/dto/applicationType.dto'
 import { InstitutionDto } from './models/dto/institution.dto'
 import { ApplicationAdminResponseDto } from './models/dto/applicationAdminResponse.dto'
 import { ApplicationStatisticsDto } from './models/dto/applicationStatistics.dto'
-import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
+import {
+  ApplicationAdminSerializer,
+  InstitutionSerializer,
+} from './tools/applicationAdmin.serializer'
 import type { Locale } from '@island.is/shared/types'
 import { CurrentLocale } from './utils/currentLocale'
 
@@ -235,6 +238,7 @@ export class AdminController {
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @Get('super-admin/institutions')
+  @UseInterceptors(InstitutionSerializer)
   @Documentation({
     description: 'Get a list of all institutions with active application types',
     response: {

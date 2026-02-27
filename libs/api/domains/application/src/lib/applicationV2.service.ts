@@ -192,12 +192,6 @@ export class ApplicationV2Service {
 
     const mergedRows: ApplicationAdmin[] = [...appSystemRows, ...formSystemRows]
 
-    //TODOxy implement proper pagination
-    //Til að styðja við paging í báðum kerfum þurfum við bæði date og síðan id sem tie-breaker ef date er jafnt.
-    //Það þarf þá að bæta við í graphql kallið að senda síðasta date og id sem var birt á síðunni til að geta notað
-    //það sem upphafspunkt fyrir næstu blaðsíðu.
-    //Smá galli í þessari útfærslu að það er basically ekki hægt að fara frá bls 1 yfir á bls 10.
-    //Er samt með einhverjar pælingar um hvernig við gætum leyst það.
     mergedRows.sort(applicationAdminSortByCreated)
     mergedRows.slice(0, filters.count)
 
@@ -275,7 +269,6 @@ export class ApplicationV2Service {
 
     const mergedRows: ApplicationAdmin[] = [...appSystemRows, ...formSystemRows]
 
-    //TODOxy implement proper pagination
     mergedRows.sort(applicationAdminSortByCreated)
     mergedRows.slice(0, filters.count)
 

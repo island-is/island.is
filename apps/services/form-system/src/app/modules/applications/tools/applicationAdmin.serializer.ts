@@ -11,6 +11,7 @@ import { IdentityClientService } from '@island.is/clients/identity'
 import { getOrganizationInfoByNationalId } from '../../../../utils/organizationInfo'
 import { ApplicationAdminDto } from '../models/dto/applicationAdmin.dto'
 import { ApplicationAdminResponseDto } from '../models/dto/applicationAdminResponse.dto'
+import { InstitutionDto } from '../models/dto/institution.dto'
 
 @Injectable()
 export class ApplicationAdminSerializer
@@ -46,7 +47,6 @@ export class ApplicationAdminSerializer
       false,
     )
 
-    // TODOxy can we not get this name from the organization contentful page? app system fetches name from template (in application's namespace)
     const institutionName =
       application.institutionNationalId &&
       (await this.identityService.tryToGetNameFromNationalId(
@@ -63,6 +63,40 @@ export class ApplicationAdminSerializer
       applicantName: applicantName ?? '',
       institutionName: institutionName ?? '',
       institutionContentfulSlug: institutionInfo?.type,
+    })
+  }
+}
+
+@Injectable()
+export class InstitutionSerializer
+  implements NestInterceptor<InstitutionDto[], Promise<InstitutionDto[]>>
+{
+  intercept(
+    _context: ExecutionContext,
+    next: CallHandler<InstitutionDto[]>,
+  ): Observable<Promise<InstitutionDto[]>> {
+    return next.handle().pipe(
+      map(async (institutions: InstitutionDto[]) => {
+        return plainToInstance(
+          InstitutionDto,
+          await Promise.all(
+            institutions.map((institution) => this.serialize(institution)),
+          ),
+        )
+      }),
+    )
+  }
+
+  private async serialize(
+    institution: InstitutionDto,
+  ): Promise<InstitutionDto> {
+    const institutionInfo = getOrganizationInfoByNationalId(
+      institution.nationalId,
+    )
+
+    return plainToInstance(InstitutionDto, {
+      ...institution,
+      contentfulSlug: institutionInfo?.type,
     })
   }
 }

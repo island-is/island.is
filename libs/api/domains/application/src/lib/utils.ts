@@ -116,7 +116,7 @@ export const mapFormSystemInstitutionAdmin = (
 ): ApplicationInstitution => {
   return {
     nationalId: institution.nationalId,
-    contentfulSlug: institution.contentfulSlug,
+    contentfulSlug: institution.contentfulSlug ?? '',
   }
 }
 

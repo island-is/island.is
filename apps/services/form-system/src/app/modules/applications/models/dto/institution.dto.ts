@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
 import { IsString } from 'class-validator'
 
@@ -8,8 +8,8 @@ export class InstitutionDto {
   @IsString()
   nationalId!: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
   @IsString()
-  contentfulSlug!: string
+  contentfulSlug?: string
 }
