@@ -16,17 +16,17 @@ export const useDeleteApplication = (refetch?: (() => void) | undefined) => {
       },
     },
   )
-  const [deleteFormSystemApplicationMutation] = useMutation(
-    DELETE_FORM_SYSTEM_APPLICATION,
-    {
-      onCompleted: () => {
-        refetch?.()
-      },
-      onError: (error) => {
-        handleServerError(error, formatMessage)
-      },
+  const [
+    deleteFormSystemApplicationMutation,
+    { error: formSystemError, loading: formSystemLoading },
+  ] = useMutation(DELETE_FORM_SYSTEM_APPLICATION, {
+    onCompleted: () => {
+      refetch?.()
     },
-  )
+    onError: (formSystemError) => {
+      handleServerError(formSystemError, formatMessage)
+    },
+  })
 
   const deleteApplication = (applicationId: string, typeId?: string) => {
     if (typeId === '') {
@@ -47,8 +47,8 @@ export const useDeleteApplication = (refetch?: (() => void) | undefined) => {
 
   return {
     deleteApplication,
-    error,
-    loading,
+    error: error || formSystemError,
+    loading: loading || formSystemLoading,
   }
 }
 
