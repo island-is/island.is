@@ -10,7 +10,6 @@ export const currentJobSchema = z.object({
     .optional(),
   nationalIdWithName: z.string().optional(),
   percentage: z.string().optional(),
-  startDate: z.string().optional(),
   workHours: z.string().optional(),
   salary: z.string().optional(),
   estimatedSalary: z.string().optional(),
@@ -84,19 +83,6 @@ export const currentSituationSchema = z
           if (!job.percentage) {
             ctx.addIssue({
               path: ['currentSituationRepeater', index, 'percentage'],
-              code: z.ZodIssueCode.custom,
-            })
-          }
-        })
-    }
-  })
-  .superRefine((data, ctx) => {
-    if (data.status === EmploymentStatus.PARTJOB) {
-      data.currentSituationRepeater &&
-        data.currentSituationRepeater.forEach((job, index) => {
-          if (!job.startDate) {
-            ctx.addIssue({
-              path: ['currentSituationRepeater', index, 'startDate'],
               code: z.ZodIssueCode.custom,
             })
           }
