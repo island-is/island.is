@@ -133,11 +133,14 @@ export class ApplicationV2Service {
       user,
     )
 
+    // Fetch enough items from each source to cover the requested page
+    const fetchCount = filters.page * filters.count
+
     const appSystemPromise = this.appSystemApplicationApiWithAuth(
       user,
     ).adminControllerFindAllSuperAdmin({
-      count: filters.count,
-      page: filters.page,
+      count: fetchCount,
+      page: 1,
       applicantNationalId: filters.applicantNationalId,
       locale,
       status: filters.status?.join(','),
@@ -152,8 +155,8 @@ export class ApplicationV2Service {
       ? this.formSystemAdminApiWithAuth(
           user,
         ).adminControllerGetOverviewForSuperAdmin({
-          count: filters.count,
-          page: filters.page,
+          count: fetchCount,
+          page: 1,
           applicantNationalId: filters.applicantNationalId,
           locale,
           from: filters.from,
@@ -193,9 +196,11 @@ export class ApplicationV2Service {
       )
     }
 
+    // Merge, sort, and slice to correct page offset
+    const offset = (filters.page - 1) * filters.count
     const mergedRows = [...appSystemRows, ...formSystemRows]
       .sort(applicationAdminSortByCreated)
-      .slice(0, filters.count)
+      .slice(offset, offset + filters.count)
 
     return {
       rows: mergedRows,
@@ -214,11 +219,14 @@ export class ApplicationV2Service {
       user,
     )
 
+    // Fetch enough items from each source to cover the requested page
+    const fetchCount = filters.page * filters.count
+
     const appSystemPromise = this.appSystemApplicationApiWithAuth(
       user,
     ).adminControllerFindAllSuperAdmin({
-      count: filters.count,
-      page: filters.page,
+      count: fetchCount,
+      page: 1,
       applicantNationalId: filters.applicantNationalId,
       locale,
       status: filters.status?.join(','),
@@ -232,8 +240,8 @@ export class ApplicationV2Service {
       ? this.formSystemAdminApiWithAuth(
           user,
         ).adminControllerGetOverviewForInstitutionAdmin({
-          count: filters.count,
-          page: filters.page,
+          count: fetchCount,
+          page: 1,
           applicantNationalId: filters.applicantNationalId,
           locale,
           from: filters.from,
@@ -272,9 +280,11 @@ export class ApplicationV2Service {
       )
     }
 
+    // Merge, sort, and slice to correct page offset
+    const offset = (filters.page - 1) * filters.count
     const mergedRows = [...appSystemRows, ...formSystemRows]
       .sort(applicationAdminSortByCreated)
-      .slice(0, filters.count)
+      .slice(offset, offset + filters.count)
 
     return {
       rows: mergedRows,
