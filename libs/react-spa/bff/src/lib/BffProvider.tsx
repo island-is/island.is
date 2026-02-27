@@ -7,7 +7,10 @@ import { BffContext } from './BffContext'
 import { BffDoubleSessionModal } from './BffDoubleSession'
 import { BffError } from './BffError'
 import { BffPoller } from './BffPoller'
-import { BffSessionExpiredModal } from './BffSessionExpiredModal'
+import {
+  BffSessionExpiredModal,
+  SessionExpiredReason,
+} from './BffSessionExpiredModal'
 import { ErrorScreen } from './ErrorScreen'
 import { BffBroadcastEvents, useBffBroadcaster } from './bff.hooks'
 import { ActionType, LoggedInState, initialState, reducer } from './bff.state'
@@ -32,7 +35,8 @@ export const BffProvider = ({
   mockedInitialState,
   bffGlobalPrefix,
 }: BffProviderProps) => {
-  const [showSessionExpiredScreen, setSessionExpiredScreen] = useState(false)
+  const [sessionExpiredReason, setSessionExpiredReason] =
+    useState<SessionExpiredReason | null>(null)
   const bffUrlGenerator = createBffUrlGenerator(bffGlobalPrefix)
   const [state, dispatch] = useReducer(reducer, {
     ...(mockedInitialState ?? initialState),
@@ -64,7 +68,7 @@ export const BffProvider = ({
         event.data.type === BffBroadcastEvents.NEW_SESSION &&
         isNewUser(state.userInfo, event.data.userInfo)
       ) {
-        setSessionExpiredScreen(true)
+        setSessionExpiredReason('session-changed')
       } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
         // We will wait 1 seconds before we dispatch logout action.
         // The reason is that IDS will not log the user out immediately.
@@ -231,8 +235,8 @@ export const BffProvider = ({
     }
   })
 
-  const newSessionCb = useCallback(() => {
-    setSessionExpiredScreen(true)
+  const newSessionCb = useCallback((reason: SessionExpiredReason) => {
+    setSessionExpiredReason(reason)
   }, [])
 
   const onRetry = () => {
@@ -276,8 +280,13 @@ export const BffProvider = ({
       return <LoadingScreen ariaLabel="Er að vinna í innskráningu" />
     }
 
-    if (showSessionExpiredScreen) {
-      return <BffSessionExpiredModal onLogin={signIn} />
+    if (sessionExpiredReason) {
+      return (
+        <BffSessionExpiredModal
+          reason={sessionExpiredReason}
+          onLogin={signIn}
+        />
+      )
     }
 
     if (isLoggedIn) {
