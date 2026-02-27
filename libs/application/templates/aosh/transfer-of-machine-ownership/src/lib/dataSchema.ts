@@ -91,7 +91,7 @@ export const MachineAnswersSchema = z.object({
   seller: UserInformationSchema,
   machine: z
     .object({
-      id: z.string().optional(),
+      id: z.string(),
       date: z.string().optional(),
       type: z.string().optional(),
       plate: z.string().optional(),
