@@ -1,7 +1,10 @@
 import { Box, Button, ProblemTemplate } from '@island.is/island-ui/core'
 import { fullScreen } from './ErrorScreen.css'
 
+export type SessionExpiredReason = 'expired' | 'new-session-elsewhere'
+
 type BffSessionExpiredModalProps = {
+  reason: SessionExpiredReason
   /**
    * Login callback
    */
@@ -12,29 +15,43 @@ type BffSessionExpiredModalProps = {
  * This screen is unfortunately not translated because at this point we don't have a user locale.
  */
 export const BffSessionExpiredModal = ({
+  reason,
   onLogin,
-}: BffSessionExpiredModalProps) => (
-  <Box
-    display="flex"
-    justifyContent="center"
-    alignItems="center"
-    padding={[0, 6]}
-    className={fullScreen}
-  >
-    <ProblemTemplate
-      variant="warning"
-      expand
-      tag=""
-      title="Innskráning útrunnin"
-      message={
-        <>
-          Innskráning þín er útrunnin. Vinsamlegast{' '}
-          <Button variant="text" onClick={onLogin}>
-            skráðu þig inn
-          </Button>{' '}
-          aftur.
-        </>
-      }
-    />
-  </Box>
-)
+}: BffSessionExpiredModalProps) => {
+  const message =
+    reason === 'expired' ? (
+      <>
+        Innskráning þín er útrunnin vegna óvirkni. Vinsamlegast{' '}
+        <Button variant="text" onClick={onLogin}>
+          skráðu þig inn
+        </Button>{' '}
+        aftur.
+      </>
+    ) : (
+      <>
+        Þú hefur skráð þig inn í öðru umboði. Viltu{' '}
+        <Button variant="text" onClick={onLogin}>
+          skrá þig
+        </Button>{' '}
+        aftur inn?
+      </>
+    )
+
+  return (
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      padding={[0, 6]}
+      className={fullScreen}
+    >
+      <ProblemTemplate
+        variant="warning"
+        expand
+        tag=""
+        title="Innskráning útrunnin"
+        message={message}
+      />
+    </Box>
+  )
+}

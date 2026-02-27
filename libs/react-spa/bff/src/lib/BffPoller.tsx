@@ -7,11 +7,12 @@ import {
   useBffBroadcaster,
   useUserInfo,
 } from './bff.hooks'
+import { SessionExpiredReason } from './BffSessionExpiredModal'
 import { isNewUser } from './bff.utils'
 
 type BffPollerProps = {
   children: ReactNode
-  newSessionCb(): void
+  newSessionCb(reason: SessionExpiredReason): void
   pollIntervalMS?: number
 }
 
@@ -79,9 +80,8 @@ export const BffPoller = ({
 
   useEffect(() => {
     if (error) {
-      // If user polling fails, likely due to 401, show session expired modal
-      // instead of immediately redirecting to login
-      newSessionCb()
+      // If user polling fails, likely due to 401, show session expired modal (inactivity).
+      newSessionCb('expired')
     } else if (newUser) {
       // If user has changed (e.g. delegation switch), then notifiy tabs/windows/iframes and execute the callback.
       if (isNewUser(newUser, userInfo)) {
@@ -94,7 +94,7 @@ export const BffPoller = ({
           bffBaseUrl,
         })
 
-        newSessionCb()
+        newSessionCb('new-session-elsewhere')
       }
     }
   }, [newUser, error, userInfo, postMessage, newSessionCb, bffBaseUrl])
