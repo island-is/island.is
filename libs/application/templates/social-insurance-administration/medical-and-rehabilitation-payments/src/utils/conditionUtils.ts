@@ -1,9 +1,4 @@
 import { NO, YES } from '@island.is/application/core'
-import {
-  INCOME,
-  ISK,
-  RatioType,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import {
   getApplicationAnswers,
@@ -24,39 +19,6 @@ export const shouldShowEmployeeSickPayEndDate = (
     hasUtilizedEmployeeSickPayRights === NO
   )
 }
-
-// færði í sia utils
-
-// export const shouldShowIncomePlanMonths = (
-//   activeField?: Record<string, string>,
-// ): boolean => {
-//   return (
-//     activeField?.income === RatioType.MONTHLY &&
-//     activeField?.incomeCategory === INCOME &&
-//     activeField?.unevenIncomePerYear?.[0] === YES
-//   )
-// }
-
-
-// export const shouldShowEqualIncomePerMonth = (
-//   isForeign: boolean,
-//   activeField?: Record<string, string>,
-// ): boolean => {
-//   const unevenAndEmploymentIncome =
-//     activeField?.unevenIncomePerYear?.[0] !== YES ||
-//     (activeField?.incomeCategory !== INCOME &&
-//       activeField?.unevenIncomePerYear?.[0] === YES)
-
-//   const isCurrencyValid = isForeign
-//     ? activeField?.currency !== ISK
-//     : activeField?.currency === ISK
-
-//   return (
-//     activeField?.income === RatioType.MONTHLY &&
-//     isCurrencyValid &&
-//     unevenAndEmploymentIncome
-//   )
-// }
 
 export const shouldShowSpouseFields = (externalData: ExternalData): boolean => {
   const { hasSpouse } = getApplicationExternalData(externalData)

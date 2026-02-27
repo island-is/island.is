@@ -442,8 +442,14 @@ export const OldAgePensionForm: Form = buildForm({
                   width: 'half',
                   isSearchable: true,
                   updateValueObj: {
-                    valueModifier: (application, activeField) =>
-                      incomeTypeValueModifier(application, activeField),
+                    valueModifier: (application, activeField) => {
+                      const { categorizedIncomeTypes } =
+                        getApplicationExternalData(application.externalData)
+                      return incomeTypeValueModifier(
+                        categorizedIncomeTypes,
+                        activeField,
+                      )
+                    },
                     watchValues: 'incomeCategory',
                   },
                   options: (application, activeField) => {

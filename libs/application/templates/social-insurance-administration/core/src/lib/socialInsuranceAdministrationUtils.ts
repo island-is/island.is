@@ -2,7 +2,13 @@ import { NO, YES } from '@island.is/application/core'
 import { Option } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
 import { BankInfo, CategorizedIncomeTypes, PaymentInfo } from '../types'
-import { BankAccountType, INCOME, ISK, RatioType, TaxLevelOptions } from './constants'
+import {
+  BankAccountType,
+  INCOME,
+  ISK,
+  RatioType,
+  TaxLevelOptions,
+} from './constants'
 import { socialInsuranceAdministrationMessage } from './messages'
 
 export const formatBankInfo = (bankInfo: string) => {

@@ -88,9 +88,12 @@ export const transformApplicationToOldAgePensionDTO = (
     employers,
     incomePlan,
   } = getOAPApplicationAnswers(application.answers)
-  const { bankInfo, userProfileEmail, incomePlanConditions, categorizedIncomeTypes } = getOAPApplicationExternalData(
-    application.externalData,
-  )
+  const {
+    bankInfo,
+    userProfileEmail,
+    incomePlanConditions,
+    categorizedIncomeTypes,
+  } = getOAPApplicationExternalData(application.externalData)
 
   // If foreign residence is found then this is always true
   const residenceHistoryQuestion = getValueViaPath(

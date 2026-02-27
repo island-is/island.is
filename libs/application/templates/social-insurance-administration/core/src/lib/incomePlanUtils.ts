@@ -1,4 +1,5 @@
 import { YES } from '@island.is/application/core'
+import { CategorizedIncomeTypes } from '../types'
 import {
   DIVIDENDS_IN_FOREIGN_BANKS,
   FOREIGN_BASIC_PENSION,
@@ -8,17 +9,11 @@ import {
   INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
   ISK,
   RatioType,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+} from './constants'
 import {
   getTypesOptions,
   shouldShowEqualIncomePerMonth,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import {
-  Application,
-  ApplicationTypes,
-} from '@island.is/application/types'
-import { getApplicationExternalData as getMARPApplicationExternalData } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
-import { getApplicationExternalData as getOAPApplicationExternalData } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
+} from './socialInsuranceAdministrationUtils'
 
 export const equalIncomePerMonthValueModifier = (
   isForeign: boolean,
@@ -31,14 +26,9 @@ export const equalIncomePerMonthValueModifier = (
 }
 
 export const incomeTypeValueModifier = (
-  application: Application,
+  categorizedIncomeTypes: CategorizedIncomeTypes[],
   activeField?: Record<string, string>,
 ) => {
-  const { categorizedIncomeTypes } =
-    application.id === ApplicationTypes.OLD_AGE_PENSION
-      ? getOAPApplicationExternalData(application.externalData)
-      : getMARPApplicationExternalData(application.externalData)
-
   const options = getTypesOptions(
     categorizedIncomeTypes,
     activeField?.incomeCategory,

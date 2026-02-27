@@ -59,7 +59,7 @@ import {
   States,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { CodeOwners } from '@island.is/shared/constants'
-import { isEmpty } from 'lodash'
+import isEmpty from 'lodash/isEmpty'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -491,7 +491,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         const { application } = context
         const { paymentInfo } = getApplicationAnswers(application.answers)
 
-        if (paymentInfo.bankAccountType === BankAccountType.ICELANDIC) {
+        if (paymentInfo?.bankAccountType === BankAccountType.ICELANDIC) {
           unset(application.answers, 'paymentInfo.iban')
           unset(application.answers, 'paymentInfo.swift')
           unset(application.answers, 'paymentInfo.bankName')
@@ -499,7 +499,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           unset(application.answers, 'paymentInfo.currency')
         }
 
-        if (paymentInfo.bankAccountType === BankAccountType.FOREIGN) {
+        if (paymentInfo?.bankAccountType === BankAccountType.FOREIGN) {
           unset(application.answers, 'paymentInfo.bank')
         }
 
