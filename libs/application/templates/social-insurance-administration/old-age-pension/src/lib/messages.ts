@@ -290,7 +290,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     expandableDescription: {
       id: `oap.application:conclusionScreen.expandableDescription#markdown`,
       defaultMessage:
-        '# **Þú gætir átt rétt á:**\n\n Tryggingastofnun vekur athygli þína á að því þú gætir átt rétt á öðrum greiðslum samhliða ellilífeyrisgreiðslum, svo sem:\n\t* Heimilisuppbót\n* Barnalífeyri\n* Uppbót á lífeyri\n* Ellilífeyri vegna EES.\n\nTryggingastofnun hvetur þig til að sækja um þessar greiðslur teljir þú þig eiga rétt á þeim. Þær er hægt að nálgast inni á [tr.is](https://tr.is) og velur þar "Mínar síður". Innskráning á Mínar síður fer fram með rafrænum skilríkjum.\n\n Ef þú hefur spurningar eða athugasemdir er ávallt hægt að hafa samband í síma 560 4400 eða senda fyrirspurn í gegnum Mínar síður á tr.is.',
+        '# **Þú gætir átt rétt á:**\n\n Tryggingastofnun vekur athygli þína á að því þú gætir átt rétt á öðrum greiðslum samhliða ellilífeyrisgreiðslum, svo sem:\n* Heimilisuppbót\n* Barnalífeyri\n* Uppbót á lífeyri\n* Ellilífeyri vegna EES.\n\nTryggingastofnun hvetur þig til að sækja um þessar greiðslur teljir þú þig eiga rétt á þeim. Þær er hægt að nálgast inni á [tr.is](https://tr.is) og velur þar "Mínar síður". Innskráning á Mínar síður fer fram með rafrænum skilríkjum.\n\n Ef þú hefur spurningar eða athugasemdir er ávallt hægt að hafa samband í síma 560 4400 eða senda fyrirspurn í gegnum Mínar síður á tr.is.',
       description: 'BulletList',
     },
   }),
