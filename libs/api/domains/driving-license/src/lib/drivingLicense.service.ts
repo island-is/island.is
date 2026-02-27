@@ -551,6 +551,9 @@ export class DrivingLicenseService {
       instructorSSN: input.instructorSSN,
       email: input.studentEmail,
       phoneNumber: input.primaryPhoneNumber,
+      contentList: input.contentList,
+      photoBiometricsId: input.photoBiometricsId,
+      signatureBiometricsId: input.signatureBiometricsId,
     })
 
     return {
