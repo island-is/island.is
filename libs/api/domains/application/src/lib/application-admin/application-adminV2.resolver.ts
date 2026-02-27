@@ -91,7 +91,7 @@ export class ApplicationAdminV2Resolver {
 
   @Query(() => [ApplicationInstitution], { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async appliciationV2InsttutionsSuperAdmin(
+  async applicationV2InstitutionsSuperAdmin(
     @CurrentUser() user: User,
   ): Promise<ApplicationInstitution[] | null> {
     return this.applicationService.findAllInstitutionsForSuperAdmin(user)
