@@ -27,7 +27,7 @@ export type DetailedProps = BaseProps & {
   //max 5 lines
   detailLines?: Array<{
     icon: IconMapIcon
-    text: string
+    text: string | React.ReactNode
   }>
   tags?: Array<ActionCardProps['tag']>
 }
@@ -79,7 +79,11 @@ export const DetailedInfoCard = ({
                 color="blue400"
               />
               <Box marginLeft={2}>
-                <Text variant="small">{d.text}</Text>
+                {typeof d.text === 'string' ? (
+                  <Text variant="small">{d.text}</Text>
+                ) : (
+                  d.text
+                )}
               </Box>
             </Box>
           ))}
