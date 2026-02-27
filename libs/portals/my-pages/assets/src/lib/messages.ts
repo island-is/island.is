@@ -174,6 +174,22 @@ export const messages = defineMessages({
   },
 })
 
+export const farmerLandsMessages = defineMessages({
+  title: {
+    id: 'sp.farmer-lands:title',
+    defaultMessage: 'Jarðabók',
+  },
+  description: {
+    id: 'sp.farmer-lands:description',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet consectetur. Arcu accumsan elit quis consequat ac leo mauris urna vitae.',
+  },
+  farmNumber: {
+    id: 'sp.farmer-lands:farm-number',
+    defaultMessage: 'Búsnúmer: {arg}',
+  },
+})
+
 export const vehicleMessage = defineMessages({
   foundSingular: {
     id: 'sp.vehicles:found-singular',

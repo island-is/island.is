@@ -1,0 +1,13 @@
+# TODO: GraphQL query for RightsHolders
+# This file is postfixed with .txt until the API is ready
+
+query GetFarmerLandRightsHolders($landId: String!) {
+  farmerLandRightsHolders(landId: $landId) {
+    data {
+      id
+      name
+      nationalId
+      share
+    }
+  }
+}

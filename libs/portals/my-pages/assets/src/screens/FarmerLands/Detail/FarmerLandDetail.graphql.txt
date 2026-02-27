@@ -1,0 +1,8 @@
+# TODO: Add farmerLand detail query to the API domain module
+# For now, this query is commented out until the detail query is implemented
+# query FarmerLandDetail($id: ID!) {
+#   farmerLand(id: $id) {
+#     id
+#     name
+#   }
+# }

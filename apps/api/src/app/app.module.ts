@@ -32,6 +32,7 @@ import {
 } from '@island.is/api/domains/email-signup'
 import { EndorsementSystemModule } from '@island.is/api/domains/endorsement-system'
 import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
+import { FarmersModule } from '@island.is/api/domains/farmers'
 import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { FinanceModule } from '@island.is/api/domains/finance'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
@@ -88,6 +89,7 @@ import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
 import { AssetsClientConfig } from '@island.is/clients/assets'
+import { FarmersClientConfig } from '@island.is/clients/farmers'
 import { PoliceCasesClientConfig } from '@island.is/clients/police-cases'
 import { AuthAdminApiClientConfig } from '@island.is/clients/auth/admin-api'
 import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegation-api'
@@ -348,6 +350,7 @@ const environment = getConfig
     }),
     RegulationsModule,
     RegulationsAdminModule,
+    FarmersModule,
     FinanceModule,
     FinancialStatementsInaoModule,
     VehiclesModule,
@@ -401,6 +404,7 @@ const environment = getConfig
         DistrictCommissionersLicensesClientConfig,
         AdrAndMachineLicenseClientConfig,
         NationalRegistryV3ClientConfig,
+        FarmersClientConfig,
         PoliceCasesClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
