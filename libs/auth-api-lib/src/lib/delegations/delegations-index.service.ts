@@ -479,9 +479,9 @@ export class DelegationsIndexService {
     delegation: DelegationRecordInputDTO,
     auth: Auth,
   ) {
-    try {
-      validateCrudParams(delegation)
+    validateCrudParams(delegation)
 
+    try {
       await this.auditService.auditPromise(
         {
           auth,
