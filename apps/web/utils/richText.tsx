@@ -97,6 +97,7 @@ import HousingBenefitCalculator from '../components/connected/HousingBenefitCalc
 import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
 import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
 import { LatestVerdicts } from '../components/connected/LatestVerdicts'
+import { ComplaintsCommitteeRulings } from '../components/connected/ComplaintsCommitteeRulings'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
@@ -248,6 +249,9 @@ export const webRenderConnectedComponent = (
       break
     case 'LatestVerdicts':
       connectedComponent = <LatestVerdicts slice={slice} />
+      break
+    case 'KVTH/Rulings':
+      connectedComponent = <ComplaintsCommitteeRulings slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)

@@ -1,0 +1,24 @@
+{
+  "name": "api-domains-open-data",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/open-data/src",
+  "projectType": "library",
+  "tags": ["lib:api-domain"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/open-data/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/open-data"],
+      "options": {
+        "jestConfig": "libs/api/domains/open-data/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

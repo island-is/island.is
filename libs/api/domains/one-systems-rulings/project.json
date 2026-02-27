@@ -1,0 +1,26 @@
+{
+  "name": "api-domains-one-systems-rulings",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/one-systems-rulings/src",
+  "projectType": "library",
+  "tags": ["lib:api-domain"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/one-systems-rulings/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/api/domains/one-systems-rulings"
+      ],
+      "options": {
+        "jestConfig": "libs/api/domains/one-systems-rulings/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  }
+}
