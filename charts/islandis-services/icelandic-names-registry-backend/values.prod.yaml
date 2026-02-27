@@ -87,7 +87,7 @@ initContainer:
     DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
 namespace: 'icelandic-names-registry'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

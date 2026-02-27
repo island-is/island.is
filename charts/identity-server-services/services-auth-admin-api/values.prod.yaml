@@ -87,7 +87,7 @@ ingress:
           - '/backend'
 namespace: 'identity-server-admin'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

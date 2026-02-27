@@ -59,7 +59,7 @@ ingress:
           - '/app/skilavottord/'
 namespace: 'skilavottord'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

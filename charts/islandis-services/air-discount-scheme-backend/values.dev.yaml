@@ -101,7 +101,7 @@ initContainer:
     DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
 namespace: 'air-discount-scheme'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
