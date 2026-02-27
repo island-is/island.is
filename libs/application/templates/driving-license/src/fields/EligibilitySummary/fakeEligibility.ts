@@ -4,11 +4,9 @@ import { DrivingLicenseApplicationFor, B_FULL, BE } from '../../lib/constants'
 export const fakeEligibility = (
   applicationFor: DrivingLicenseApplicationFor,
   daysOfResidency = 365,
-  requiresHealthCertificate = false, //TODO: Remove when RLS/SGS supports health certificate in BE license
 ): ApplicationEligibility => {
   return {
-    //TODO: set to true when RLS/SGS supports health certificate in BE license
-    isEligible: applicationFor === BE ? !requiresHealthCertificate : true,
+    isEligible: true,
     requirements: [
       ...(applicationFor === B_FULL
         ? [
@@ -21,13 +19,8 @@ export const fakeEligibility = (
               requirementMet: true,
             },
           ]
-        : //TODO: Remove when RLS/SGS supports health certificate in BE license
-        applicationFor === BE
+        : applicationFor === BE
         ? [
-            {
-              key: RequirementKey.beRequiresHealthCertificate,
-              requirementMet: !requiresHealthCertificate,
-            },
             {
               key: RequirementKey.localResidency,
               daysOfResidency,
@@ -43,9 +36,7 @@ export const fakeEligibility = (
           ]),
       {
         key: RequirementKey.deniedByService,
-        //TODO: set to true when RLS/SGS supports health certificate in BE license
-        requirementMet:
-          applicationFor === BE ? !requiresHealthCertificate : true,
+        requirementMet: true,
       },
     ],
   }
