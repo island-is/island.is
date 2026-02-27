@@ -1,7 +1,10 @@
 import { useLocale } from '@island.is/localization'
 import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
-import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
+import {
+  formatCurrencyWithoutSuffix,
+  RadioValue,
+} from '@island.is/application/ui-components'
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
@@ -14,7 +17,7 @@ export const IncomePlan = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { incomePlan } = getApplicationAnswers(application.answers)
+  const { incomePlan, noOtherIncomeConfirmation } = getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup
@@ -23,7 +26,7 @@ export const IncomePlan = ({
       editAction={() => goToScreen && goToScreen('incomePlanTable')}
     >
       <GridRow>
-        <GridColumn span="12/12">
+        <GridColumn span="12/12" paddingBottom={3}>
           <Label>
             {formatMessage(
               socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
@@ -50,6 +53,15 @@ export const IncomePlan = ({
               }}
             />
           </Box>
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <RadioValue
+            label={formatMessage(
+              socialInsuranceAdministrationMessage.incomePlan
+                .noOtherIncomeConfirmation,
+            )}
+            value={noOtherIncomeConfirmation}
+          />
         </GridColumn>
       </GridRow>
     </ReviewGroup>

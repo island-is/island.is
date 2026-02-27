@@ -47,6 +47,10 @@ describe('SocialInsuranceAdministrationService', () => {
               Promise.resolve({
                 applicationLineId: '123',
               }),
+            sendApplicationV2: () =>
+              Promise.resolve({
+                applicationLineId: '',
+              }),
           })),
         },
       ],
@@ -76,7 +80,7 @@ describe('SocialInsuranceAdministrationService', () => {
       },
       answers: {
         paymentInfo: {
-          bank: '222200123456',
+          bank: { ledger: '00', bankNumber: '2222', accountNumber: '123456' },
           iban: '',
           swift: '',
           taxLevel: '2',
@@ -102,7 +106,7 @@ describe('SocialInsuranceAdministrationService', () => {
       currentUserLocale: 'is',
     })
 
-    expect(result).toMatchObject({ applicationLineId: '123' })
+    expect(result).toMatchObject({ applicationLineId: '' })
   })
 
   it('should send household supplement application', async () => {

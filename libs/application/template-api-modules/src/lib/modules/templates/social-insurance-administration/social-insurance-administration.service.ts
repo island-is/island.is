@@ -414,8 +414,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         attachments,
       )
 
-      console.log('oldAgePensionDTO', oldAgePensionDTO)
-
       const applicationType = getApplicationType(application).toLowerCase()
 
       const response = await this.siaClientService.sendApplicationV2(

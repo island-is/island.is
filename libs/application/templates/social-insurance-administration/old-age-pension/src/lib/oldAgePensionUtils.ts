@@ -140,6 +140,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const incomePlan =
     getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
+  
+  const noOtherIncomeConfirmation = getValueViaPath(
+    answers,
+    'incomePlan.noOtherIncomeConfirmation',
+  ) as YesOrNo
 
   return {
     pensionFundQuestion,
@@ -167,6 +172,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     tempAnswers,
     paymentInfo,
     incomePlan,
+    noOtherIncomeConfirmation,
   }
 }
 

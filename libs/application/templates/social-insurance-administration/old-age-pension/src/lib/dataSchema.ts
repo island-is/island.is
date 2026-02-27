@@ -191,6 +191,9 @@ export const dataSchema = z.object({
     .refine((i) => i === undefined || i.length > 0, {
       params: errorMessages.incomePlanRequired,
     }),
+  incomePlan: z.object({
+    noOtherIncomeConfirmation: z.enum([YES, NO]),
+  }),
   residenceHistory: z.object({
     question: z.enum([YES, NO]),
   }),
