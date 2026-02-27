@@ -224,7 +224,7 @@ export class ApplicationV2Service {
 
     const appSystemPromise = this.appSystemApplicationApiWithAuth(
       user,
-    ).adminControllerFindAllSuperAdmin({
+    ).adminControllerFindAllInstitutionAdmin({
       count: fetchCount,
       page: 1,
       applicantNationalId: filters.applicantNationalId,
