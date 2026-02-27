@@ -317,11 +317,6 @@ export const employment = {
         defaultMessage: 'Starfshlutfall',
         description: 'part time job percentage label',
       },
-      partTimeJobStartDate: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobStartDate',
-        defaultMessage: 'Upphaf hlutastarfs',
-        description: 'part time job start date label',
-      },
       jobEndDate: {
         id: 'vmst.ub.application:employment.currentSituation.labels.jobEndDate',
         defaultMessage: 'Hvenær lýkur uppsagnarfresti þínum',
