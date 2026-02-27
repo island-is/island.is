@@ -26,7 +26,12 @@ import {
   UnreadNotificationsCountDto,
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
-import { mapToContentfulLocale, mapToLocale, cleanString } from './utils'
+import {
+  mapToContentfulLocale,
+  mapToLocale,
+  cleanString,
+  SmsDelivery,
+} from './utils'
 import {
   CmsService,
   GetTemplateByTemplateId,
@@ -182,6 +187,7 @@ export class NotificationsService {
     )) as unknown as {
       hnippTemplateCollection: { items: HnippTemplate[] }
     }
+
     const items = res.hnippTemplateCollection.items
     if (items.length > 0) {
       const template = items[0]
@@ -209,6 +215,19 @@ export class NotificationsService {
         }': ${missingArgs.join(', ')}. Required args are: ${template.args.join(
           ', ',
         )}`,
+      )
+    }
+  }
+
+  validateSmsDelivery(template: HnippTemplate): void {
+    const isPayerPresent =
+      template.smsPayer !== null &&
+      template.smsPayer !== undefined &&
+      template.smsPayer !== ''
+
+    if (template.smsDelivery !== SmsDelivery.NEVER && !isPayerPresent) {
+      throw new BadRequestException(
+        'SMS payer is required when SMS delivery is not set to NEVER',
       )
     }
   }

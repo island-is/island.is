@@ -1,0 +1,60 @@
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  AutoIncrement,
+  PrimaryKey,
+} from 'sequelize-typescript'
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
+
+export enum NotificationChannel {
+  Email = 'email',
+  Sms = 'sms',
+  Push = 'push',
+}
+
+@Table({
+  tableName: 'notification_delivery',
+  timestamps: false,
+  indexes: [{ fields: ['message_id'] }],
+})
+export class NotificationDelivery extends Model<
+  InferAttributes<NotificationDelivery>,
+  InferCreationAttributes<NotificationDelivery>
+> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    field: 'id',
+  })
+  id!: CreationOptional<number>
+
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    field: 'message_id',
+  })
+  messageId!: string
+
+  @Column({
+    type: DataType.ENUM(...Object.values(NotificationChannel)),
+    allowNull: false,
+    field: 'channel',
+  })
+  channel!: NotificationChannel
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+    defaultValue: DataType.NOW,
+    field: 'created',
+  })
+  created!: CreationOptional<Date>
+}

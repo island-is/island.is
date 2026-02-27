@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isCompany } from 'kennitala'
-import { join } from 'path'
 
 import { User } from '@island.is/auth-nest-tools'
 import { DocumentsScope, notificationScopes } from '@island.is/auth/scopes'
@@ -14,7 +13,6 @@ import {
   NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
 import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
-import { Body, EmailService, Message } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -23,15 +21,10 @@ import {
   QueueService,
   WorkerService,
 } from '@island.is/message-queue'
-import { type ConfigType } from '@island.is/nest/config'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 
-import {
-  CompanyExtendedInfo,
-  CompanyRegistryClientService,
-} from '@island.is/clients/rsk/company-registry'
-import { UserNotificationsConfig } from '../../../../config'
+import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import {
   CreateHnippNotificationDto,
   InternalCreateHnippNotificationDto,
@@ -39,30 +32,35 @@ import {
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 import { MessageProcessorService } from '../messageProcessor.service'
 import { Notification } from '../notification.model'
-import { NotificationDispatchService } from '../notificationDispatch.service'
 import { NotificationsService } from '../notifications.service'
 import { ActorNotification } from '../actor-notification.model'
-import { mapToLocale } from '../utils'
+import { mapToLocale, SmsDelivery } from '../utils'
+import { EmailQueueMessage } from './emailWorker.service'
+import { SmsQueueMessage } from './smsWorker.service'
+import { PushQueueMessage } from './pushWorker.service'
 
-type HandleNotification = {
-  profile: {
-    nationalId: string
-    email?: string | null
-    documentNotifications: boolean
-    emailNotifications: boolean
-    locale?: string
-  }
-  notificationId?: number | null
-  messageId: string
-  rootMessageId?: string
-  message: InternalCreateHnippNotificationDto
+const createSmsContent = ({
+  fullName,
+  onBehalfOf,
+  template,
+}: {
+  fullName: string
+  onBehalfOf?: string
   template: HnippTemplate
+}): string => {
+  return `${fullName}${onBehalfOf ? ` (${onBehalfOf})` : ''}: ${
+    template.title
+  }\n\n${template.externalBody}\n\n${
+    template.clickActionUrl
+      ? `Skoda a Island.is: \n\n${template.clickActionUrl}`
+      : ''
+  }
+    `.trim()
 }
 
 @Injectable()
 export class NotificationsWorkerService {
   constructor(
-    private readonly notificationDispatch: NotificationDispatchService,
     private readonly messageProcessor: MessageProcessorService,
     private readonly notificationsService: NotificationsService,
     private readonly userProfileApi: V2UsersApi,
@@ -70,7 +68,6 @@ export class NotificationsWorkerService {
     private readonly nationalRegistryService: NationalRegistryV3ClientService,
     private readonly companyRegistryService: CompanyRegistryClientService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly emailService: EmailService,
 
     @InjectWorker('notifications')
     private readonly worker: WorkerService,
@@ -78,11 +75,17 @@ export class NotificationsWorkerService {
     @InjectQueue('notifications')
     private readonly queue: QueueService,
 
+    @InjectQueue('notifications-email')
+    private readonly emailQueue: QueueService,
+
+    @InjectQueue('notifications-sms')
+    private readonly smsQueue: QueueService,
+
+    @InjectQueue('notifications-push')
+    private readonly pushQueue: QueueService,
+
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-
-    @Inject(UserNotificationsConfig.KEY)
-    private readonly config: ConfigType<typeof UserNotificationsConfig>,
 
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
@@ -91,231 +94,16 @@ export class NotificationsWorkerService {
     private readonly actorNotificationModel: typeof ActorNotification,
   ) {}
 
-  async handlePushNotifications(args: HandleNotification) {
-    const { profile, messageId, notificationId, message } = args
-    // don't send message unless user wants this type of notification and national id is a person.
-    if (isCompany(profile.nationalId)) {
-      this.logger.info(
-        'User is not a person and will not receive document notifications',
-        { messageId },
-      )
-
-      return
-    }
-    if (!profile.documentNotifications) {
-      this.logger.info(
-        'User does not have notifications enabled this message type',
-        { messageId },
-      )
-
-      return
-    }
-
-    this.logger.info('User has notifications enabled this message type', {
-      messageId,
-    })
-
-    const notification = await this.messageProcessor.convertToNotification(
-      message,
-      profile.locale as Locale,
-    )
-
-    await this.notificationDispatch.sendPushNotification({
-      nationalId: profile.nationalId,
-      notification,
-      messageId,
-      notificationId,
-    })
-  }
-
-  createEmail({
-    isEnglish,
-    recipientEmail,
-    formattedTemplate,
-    fullName,
-    subjectId,
-  }: {
-    isEnglish: boolean
-    recipientEmail: string | null
-    formattedTemplate: HnippTemplate
-    fullName: string
-    subjectId?: string
-  }): Message {
-    if (!recipientEmail) {
-      throw new Error('Missing recipient email address')
-    }
-
-    const generateBody = (): Body[] => {
-      return [
-        {
-          component: 'Image',
-          context: {
-            src: join(__dirname, `./assets/images/island-2x-logo.png`),
-            alt: 'Ísland.is logo',
-          },
-        },
-        {
-          component: 'Tag',
-          context: {
-            label: fullName,
-          },
-        },
-        {
-          component: 'Heading',
-          context: {
-            copy: formattedTemplate.title,
-          },
-        },
-        {
-          component: 'Copy',
-          context: {
-            copy: formattedTemplate.externalBody,
-          },
-        },
-        {
-          component: 'Spacer',
-        },
-        ...(formattedTemplate.clickActionUrl
-          ? [
-              {
-                component: 'ImageWithLink',
-                context: {
-                  src: join(
-                    __dirname,
-                    `./assets/images/${
-                      isEnglish ? 'en' : 'is'
-                    }-button-open.png`,
-                  ),
-                  alt: isEnglish ? 'Open mailbox' : 'Opna Pósthólf',
-                  href: this.getClickActionUrl(formattedTemplate, subjectId),
-                },
-              },
-              {
-                component: 'Spacer',
-              },
-            ]
-          : [null]),
-        {
-          component: 'TextWithLink',
-          context: {
-            small: true,
-            preText: isEnglish ? 'In settings on ' : 'Í stillingum á ',
-            linkHref: 'https://www.island.is/minarsidur/min-gogn/stillingar/',
-            linkLabel: 'Ísland.is',
-            postText: isEnglish
-              ? ', you can decide if you want to be notified or not.'
-              : ' getur þú ákveðið hvort hnippt er í þig.',
-          },
-        },
-      ].filter((item) => item !== null) as Body[]
-    }
-
-    return {
-      from: {
-        name: 'Ísland.is',
-        address: this.config.emailFromAddress,
-      },
-      to: {
-        name: fullName,
-        address: recipientEmail,
-      },
-      subject: formattedTemplate.title,
-      template: {
-        title: formattedTemplate.title,
-        body: generateBody(),
-      },
-    }
-  }
-
-  private async handleEmailNotification({
-    profile,
-    message,
-    messageId,
-    template,
-  }: HandleNotification): Promise<void> {
-    const { nationalId } = profile
-
-    const allowEmailNotification = await this.featureFlagService.getValue(
-      Features.isNotificationEmailWorkerEnabled,
-      false,
-      { nationalId } as User,
-    )
-
-    if (!allowEmailNotification) {
-      this.logger.info('Email notification worker is not enabled for user', {
-        messageId,
-      })
-      return
-    }
-
-    if (!profile.email || !profile.emailNotifications) {
-      this.logger.info(
-        'User does not have registered email or email notifications enabled',
-        {
-          messageId,
-        },
-      )
-
-      return
-    }
-
-    let fullName = message.onBehalfOf?.name ?? ''
-
-    // if we don't have a full name, we try to get it from the national registry
-    if (!fullName) {
-      // we always use the name of the original recipient in the email
-      const nationalIdOfOriginalRecipient =
-        message.onBehalfOf?.nationalId ?? profile.nationalId
-
-      fullName = await this.getName(nationalIdOfOriginalRecipient)
-    }
-
-    const isEnglish = profile.locale === 'en'
-
-    const formattedTemplate = await this.notificationsService.formatArguments(
-      message.args,
-      // We need to shallow copy the template here so that the
-      // in-memory cache is not modified.
-      {
-        ...template,
-      },
-      message?.senderId,
-      profile.locale as Locale,
-    )
-
-    try {
-      const emailContent = this.createEmail({
-        formattedTemplate,
-        isEnglish,
-        recipientEmail: profile.email ?? null,
-        fullName,
-        subjectId: message.onBehalfOf?.subjectId,
-      })
-
-      await this.emailService.sendEmail(emailContent)
-
-      this.logger.info('Email notification sent', {
-        messageId,
-      })
-    } catch (error) {
-      this.logger.error('Email notification error', {
-        error,
-        messageId,
-      })
-    }
-  }
-
   private async handleActorNotification(
     args: InternalCreateHnippNotificationDto & { messageId: string },
   ) {
-    this.logger.info('Handling actor notification', {
-      messageId: args.messageId,
-    })
+    const { messageId } = args
 
-    // Get actor profile (which includes their preferred locale)
+    this.logger.info('Handling actor notification', { messageId })
+
     if (!args.onBehalfOf) {
       this.logger.error('onBehalfOf is required for actor notifications', {
-        messageId: args.messageId,
+        messageId,
       })
       return
     }
@@ -327,9 +115,7 @@ export class NotificationsWorkerService {
       })
 
     if (!actorProfile) {
-      this.logger.info('No actor profile found for user', {
-        messageId: args.messageId,
-      })
+      this.logger.info('No actor profile found for user', { messageId })
       return
     }
 
@@ -342,37 +128,73 @@ export class NotificationsWorkerService {
       locale,
     )
 
-    const dbNotification = await this.createActorNotificationDbRecord(args)
-
-    // Check if delegation email notifications are enabled for the original recipient
-    const shouldSendToDelegations = await this.featureFlagService.getValue(
+    const delegationsEnabled = await this.featureFlagService.getValue(
       Features.shouldSendEmailNotificationsToDelegations,
       false,
       { nationalId: args.onBehalfOf.nationalId } as User,
     )
 
-    if (!shouldSendToDelegations) {
+    if (!delegationsEnabled) {
       this.logger.info(
         'Email notifications to delegations are disabled for user',
-        {
-          messageId: args.messageId,
-          originalRecipient: args.onBehalfOf.nationalId,
-        },
+        { messageId, originalRecipient: args.onBehalfOf.nationalId },
       )
       return
     }
 
-    const handleNotificationArgs: HandleNotification = {
-      profile: { nationalId: args.recipient, ...actorProfile },
-      messageId: args.messageId,
-      rootMessageId: args.rootMessageId,
-      notificationId: dbNotification?.id,
-      message: args,
-      template,
+    // SMS uses the delegate's own phone number, not the actor profile's.
+    // Fetch it independently — a missing delegate profile should only skip SMS,
+    // not block email.
+    const delegateProfile =
+      await this.userProfileApi.userProfileControllerFindUserProfile({
+        xParamNationalId: args.recipient,
+      })
+
+    if (!delegateProfile) {
+      this.logger.info('No delegate user profile found, SMS will be skipped', {
+        messageId,
+        recipient: args.recipient,
+      })
     }
 
-    // Currently we only send email notifications to actors, not push notifications
-    await this.handleEmailNotification(handleNotificationArgs)
+    const formattedTemplate = await this.notificationsService.formatArguments(
+      args.args,
+      { ...template },
+      args?.senderId,
+      locale,
+    )
+
+    const dbRecord = await this.createActorNotificationDbRecord(args)
+
+    // Phase 1: collect all payloads (data fetching only, no queue side effects)
+    const [emailPayload, smsPayload] = await Promise.all([
+      this.buildEmailPayload({
+        messageId,
+        nationalId: args.recipient,
+        email: actorProfile.email,
+        emailNotifications: actorProfile.emailNotifications,
+        formattedTemplate,
+        locale,
+        onBehalfOf: args.onBehalfOf,
+      }),
+      this.buildSmsPayload({
+        messageId,
+        nationalId: args.recipient,
+        mobilePhoneNumber: delegateProfile?.mobilePhoneNumber,
+        smsNotifications: delegateProfile?.smsNotifications,
+        formattedTemplate,
+        onBehalfOfNationalId: args.onBehalfOf?.nationalId,
+      }),
+    ])
+
+    // Phase 2: enqueue everything together
+    const notificationId = dbRecord?.id
+    const enqueues: Promise<unknown>[] = []
+    if (emailPayload)
+      enqueues.push(this.emailQueue.add({ ...emailPayload, notificationId }))
+    if (smsPayload)
+      enqueues.push(this.smsQueue.add({ ...smsPayload, notificationId }))
+    await Promise.all(enqueues)
   }
 
   private async createActorNotificationDbRecord(
@@ -440,42 +262,38 @@ export class NotificationsWorkerService {
     actorNationalId?: string,
   ) {
     const { messageId, ...message } = args
+    const nationalId = message.recipient
 
-    const isCompanyRecipient = isCompany(message.recipient)
-
-    let locale: Locale = 'is' // Default locale
     let userProfile: UserProfileDto | undefined
-    let allowCompanyUserProfileEmails = false
+    let locale: Locale = 'is'
 
-    if (!isCompanyRecipient) {
+    if (!isCompany(nationalId)) {
       userProfile =
         await this.userProfileApi.userProfileControllerFindUserProfile({
-          xParamNationalId: message.recipient,
+          xParamNationalId: nationalId,
         })
 
       if (!userProfile) {
-        this.logger.info('No user profile found for user', {
-          messageId: args.messageId,
-        })
+        this.logger.info('No user profile found for user', { messageId })
         return
       }
 
       locale = userProfile.locale ? mapToLocale(userProfile.locale) : 'is'
     } else {
-      allowCompanyUserProfileEmails = await this.featureFlagService.getValue(
+      const allowCompanyEmails = await this.featureFlagService.getValue(
         Features.shouldSendEmailNotificationsToCompanyUserProfiles,
         false,
-        { nationalId: message.recipient } as User,
+        { nationalId } as User,
       )
 
-      if (allowCompanyUserProfileEmails) {
+      if (allowCompanyEmails) {
         userProfile =
           await this.userProfileApi.userProfileControllerFindUserProfile({
-            xParamNationalId: message.recipient,
+            xParamNationalId: nationalId,
           })
 
-        if (userProfile) {
-          locale = userProfile.locale ? mapToLocale(userProfile.locale) : 'is'
+        if (userProfile?.locale) {
+          locale = mapToLocale(userProfile.locale)
         }
       }
     }
@@ -484,31 +302,214 @@ export class NotificationsWorkerService {
       message.templateId,
       locale,
     )
-
     const scope = template.scope || DocumentsScope.main
-    const notification = await this.createUserNotificationDbRecord(args, scope)
+    const dbRecord = await this.createUserNotificationDbRecord(args, scope)
 
-    const shouldSendNotifications =
-      (!isCompanyRecipient && userProfile) ||
-      (isCompanyRecipient && userProfile && allowCompanyUserProfileEmails)
+    // Phase 1: collect all payloads (data fetching only, no queue side effects)
+    let pushPayload: PushQueueMessage | null = null
+    let emailPayload: EmailQueueMessage | null = null
+    let smsPayload: SmsQueueMessage | null = null
 
-    if (shouldSendNotifications && userProfile) {
-      const handleNotificationArgs: HandleNotification = {
-        profile: userProfile,
-        messageId: args.messageId,
-        notificationId: notification?.id,
-        message: args,
-        template,
-      }
-      await this.handleEmailNotification(handleNotificationArgs)
-      await this.handlePushNotifications(handleNotificationArgs)
+    if (userProfile) {
+      const formattedTemplate = await this.notificationsService.formatArguments(
+        message.args,
+        { ...template },
+        message?.senderId,
+        locale,
+      )
+
+      ;[pushPayload, emailPayload, smsPayload] = await Promise.all([
+        this.buildPushPayload({
+          messageId,
+          nationalId,
+          documentNotifications: userProfile.documentNotifications,
+          message,
+          locale,
+        }),
+        this.buildEmailPayload({
+          messageId,
+          nationalId,
+          email: userProfile.email,
+          emailNotifications: userProfile.emailNotifications,
+          formattedTemplate,
+          locale,
+          onBehalfOf: message.onBehalfOf,
+        }),
+        this.buildSmsPayload({
+          messageId,
+          nationalId,
+          mobilePhoneNumber: userProfile.mobilePhoneNumber,
+          smsNotifications: userProfile.smsNotifications,
+          formattedTemplate,
+          onBehalfOfNationalId: message.onBehalfOf?.nationalId,
+        }),
+      ])
     }
 
-    await this.handleSendingNotificationsToDelegations(
-      args,
-      scope,
-      actorNationalId,
+    // Phase 2: enqueue everything together — only started after all data is collected
+    const enqueues: Promise<unknown>[] = [
+      this.handleSendingNotificationsToDelegations(
+        args,
+        scope,
+        actorNationalId,
+      ),
+    ]
+    if (pushPayload)
+      enqueues.push(
+        this.pushQueue.add({ ...pushPayload, notificationId: dbRecord?.id }),
+      )
+    if (emailPayload)
+      enqueues.push(
+        this.emailQueue.add({ ...emailPayload, notificationId: dbRecord?.id }),
+      )
+    if (smsPayload)
+      enqueues.push(
+        this.smsQueue.add({ ...smsPayload, notificationId: dbRecord?.id }),
+      )
+    await Promise.all(enqueues)
+  }
+
+  private async buildPushPayload({
+    messageId,
+    nationalId,
+    documentNotifications,
+    message,
+    locale,
+  }: {
+    messageId: string
+    nationalId: string
+    documentNotifications?: boolean | null
+    message: CreateHnippNotificationDto
+    locale: Locale
+  }): Promise<Omit<PushQueueMessage, 'notificationId'> | null> {
+    if (isCompany(nationalId) || !documentNotifications) {
+      this.logger.info('Skipping push notification', { messageId })
+      return null
+    }
+
+    const notification = await this.messageProcessor.convertToNotification(
+      message,
+      locale,
     )
+    return { messageId, nationalId, notification }
+  }
+
+  private async buildEmailPayload({
+    messageId,
+    nationalId,
+    email,
+    emailNotifications,
+    formattedTemplate,
+    locale,
+    onBehalfOf,
+  }: {
+    messageId: string
+    nationalId: string
+    email?: string | null
+    emailNotifications?: boolean | null
+    formattedTemplate: HnippTemplate
+    locale: Locale
+    onBehalfOf?: { nationalId?: string; name?: string; subjectId?: string }
+  }): Promise<Omit<EmailQueueMessage, 'notificationId'> | null> {
+    const enabled = await this.featureFlagService.getValue(
+      Features.isNotificationEmailWorkerEnabled,
+      false,
+      { nationalId } as User,
+    )
+
+    if (!enabled || !email || !emailNotifications) {
+      this.logger.info('Skipping email notification', { messageId })
+      return null
+    }
+
+    const fullName =
+      onBehalfOf?.name ||
+      (await this.getName(onBehalfOf?.nationalId ?? nationalId))
+
+    return {
+      messageId,
+      recipientEmail: email,
+      fullName,
+      isEnglish: locale === 'en',
+      formattedTemplate,
+      subjectId: onBehalfOf?.subjectId,
+    }
+  }
+
+  private async buildSmsPayload({
+    messageId,
+    nationalId,
+    mobilePhoneNumber,
+    smsNotifications,
+    formattedTemplate,
+    onBehalfOfNationalId,
+  }: {
+    messageId: string
+    nationalId: string
+    mobilePhoneNumber?: string | null
+    smsNotifications?: boolean | null
+    formattedTemplate: HnippTemplate
+    onBehalfOfNationalId?: string
+  }): Promise<Omit<SmsQueueMessage, 'notificationId'> | null> {
+    const enabled = await this.featureFlagService.getValue(
+      Features.isSendSmsNotificationsEnabled,
+      false,
+      { nationalId } as User,
+    )
+
+    if (!enabled) {
+      this.logger.info('Skipping SMS notification: feature flag disabled', {
+        messageId,
+      })
+      return null
+    }
+
+    if (
+      formattedTemplate.smsDelivery !== SmsDelivery.ALWAYS &&
+      formattedTemplate.smsDelivery !== SmsDelivery.OPT_IN
+    ) {
+      this.logger.info('Skipping SMS notification: delivery not configured', {
+        messageId,
+      })
+      return null
+    }
+
+    if (!formattedTemplate.smsPayer) {
+      this.logger.error('SMS payer is required for template', {
+        messageId,
+        templateId: formattedTemplate.templateId,
+      })
+      return null
+    }
+
+    if (!mobilePhoneNumber) {
+      return null
+    }
+
+    if (
+      formattedTemplate.smsDelivery === SmsDelivery.OPT_IN &&
+      !smsNotifications
+    ) {
+      this.logger.info('Skipping SMS notification: user has not opted in', {
+        messageId,
+      })
+      return null
+    }
+
+    const fullName = await this.getShortName(nationalId)
+    const onBehalfOf = onBehalfOfNationalId
+      ? await this.getShortName(onBehalfOfNationalId)
+      : undefined
+
+    return {
+      messageId,
+      mobilePhoneNumber,
+      smsContent: createSmsContent({
+        fullName,
+        onBehalfOf,
+        template: formattedTemplate,
+      }),
+    }
   }
 
   private async handleSendingNotificationsToDelegations(
@@ -619,49 +620,47 @@ export class NotificationsWorkerService {
     }
   }
 
-  private async getName(nationalId: string): Promise<string> {
+  private async getPersonIdentity(
+    nationalId: string,
+  ): Promise<EinstaklingurDTONafnItar | null> {
     try {
-      let identity: CompanyExtendedInfo | EinstaklingurDTONafnItar | null
-
-      if (isCompany(nationalId)) {
-        identity = await this.companyRegistryService.getCompany(nationalId)
-        return identity?.name || ''
-      }
-
-      identity = await this.nationalRegistryService.getName(nationalId)
-      return identity?.birtNafn || identity?.fulltNafn || ''
+      return await this.nationalRegistryService.getName(nationalId)
     } catch (error) {
       this.logger.error('Error getting name from national registry', {
+        error,
+      })
+      return null
+    }
+  }
+
+  private async getCompanyName(nationalId: string): Promise<string> {
+    try {
+      const company = await this.companyRegistryService.getCompany(nationalId)
+      return company?.name || ''
+    } catch (error) {
+      this.logger.error('Error getting name from company registry', {
         error,
       })
       return ''
     }
   }
 
-  // When sending email to delegation holder we want to use third party login if we have a subjectId and are sending to a service portal url
-  private getClickActionUrl(
-    formattedTemplate: HnippTemplate,
-    subjectId?: string,
-  ) {
-    if (!formattedTemplate.clickActionUrl) {
-      return ''
+  private async getName(nationalId: string): Promise<string> {
+    if (isCompany(nationalId)) {
+      return this.getCompanyName(nationalId)
     }
+    const identity = await this.getPersonIdentity(nationalId)
+    return identity?.birtNafn || identity?.fulltNafn || ''
+  }
 
-    if (!subjectId) {
-      return formattedTemplate.clickActionUrl
+  private async getShortName(nationalId: string): Promise<string> {
+    if (isCompany(nationalId)) {
+      return this.getCompanyName(nationalId)
     }
-
-    const shouldUseThirdPartyLogin = formattedTemplate.clickActionUrl.includes(
-      this.config.servicePortalClickActionUrl,
+    const identity = await this.getPersonIdentity(nationalId)
+    return (
+      identity?.eiginNafn || identity?.birtNafn || identity?.fulltNafn || ''
     )
-
-    return shouldUseThirdPartyLogin
-      ? `${
-          this.config.servicePortalBffLoginUrl
-        }?login_hint=${subjectId}&target_link_uri=${encodeURI(
-          formattedTemplate.clickActionUrl,
-        )}`
-      : formattedTemplate.clickActionUrl
   }
 
   public async run() {
