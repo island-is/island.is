@@ -474,33 +474,45 @@ export class DelegationsIndexService {
     return updatedDelegation.toDTO()
   }
 
-  /* Delete record from index */
+  /* Remove record from index; logs errors internally. */
   async removeDelegationRecord(
     delegation: DelegationRecordInputDTO,
     auth: Auth,
   ) {
-    validateCrudParams(delegation)
+    try {
+      validateCrudParams(delegation)
 
-    await this.auditService.auditPromise(
-      {
-        auth,
-        action: 'remove-delegation-record',
-        namespace: '@island.is/auth/delegation-index',
-        resources: delegation.toNationalId,
-        alsoLog: true,
-        meta: {
-          delegation,
+      await this.auditService.auditPromise(
+        {
+          auth,
+          action: 'remove-delegation-record',
+          namespace: '@island.is/auth/delegation-index',
+          resources: delegation.toNationalId,
+          alsoLog: true,
+          meta: {
+            delegation,
+          },
         },
-      },
-      this.delegationIndexModel.destroy({
-        where: {
+        this.delegationIndexModel.destroy({
+          where: {
+            fromNationalId: delegation.fromNationalId,
+            toNationalId: delegation.toNationalId,
+            provider: delegation.provider,
+            type: delegation.type,
+          },
+        }),
+      )
+    } catch (error) {
+      this.logger.error('Failed to remove delegation record from index', {
+        error,
+        delegation: {
           fromNationalId: delegation.fromNationalId,
           toNationalId: delegation.toNationalId,
-          provider: delegation.provider,
           type: delegation.type,
+          provider: delegation.provider,
         },
-      }),
-    )
+      })
+    }
   }
 
   async getAvailableDistrictCommissionersRegistryRecords(

@@ -9,9 +9,7 @@ import { uuid } from 'uuidv4'
 
 import {
   SyslumennService,
-  SyslumennDelegationType,
 } from '@island.is/clients/syslumenn'
-import { logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   AuthDelegationProvider,
@@ -35,6 +33,7 @@ import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
 import filterByCustomScopeRule from './utils/filterByScopeCustomScopeRule'
 import { getScopeValidityWhereClause } from './utils/scopes'
+import { validateDistrictCommissionersDelegations } from './utils/delegations'
 
 import type { User } from '@island.is/auth-nest-tools'
 @Injectable()
@@ -335,99 +334,15 @@ export class DelegationScopeService {
     fromNationalId: string,
     delegationTypes: string[],
   ): Promise<string[]> {
-    const validatePersonalRepsAtSyslumenn =
-      await this.featureFlagService.getValue(
-        Features.usePersonalRepresentativesFromSyslumenn,
-        false,
+    const { validTypes } =
+      await validateDistrictCommissionersDelegations({
         user,
-      )
-
-    // Determine which delegation types are present
-    const hasLegalRepresentative = delegationTypes.includes(
-      AuthDelegationType.LegalRepresentative,
-    )
-    const hasPersonalRepresentative = delegationTypes.some((type) =>
-      String(type).includes('PersonalRepresentative'),
-    )
-
-    const validTypes: string[] = []
-
-    if (hasLegalRepresentative) {
-      try {
-        const legalRepIsValid =
-          await this.syslumennService.checkIfDelegationExists(
-            user.nationalId,
-            fromNationalId,
-            SyslumennDelegationType.LegalRepresentative,
-          )
-
-        if (legalRepIsValid) {
-          validTypes.push(AuthDelegationType.LegalRepresentative)
-        } else {
-          // Remove invalid LegalRepresentative from index
-          void this.delegationsIndexService.removeDelegationRecord(
-            {
-              fromNationalId,
-              toNationalId: user.nationalId,
-              type: AuthDelegationType.LegalRepresentative,
-              provider: AuthDelegationProvider.DistrictCommissionersRegistry,
-            },
-            user,
-          )
-        }
-      } catch (error) {
-        logger.error(
-          `Failed checking if LegalRepresentative delegation exists at syslumenn`,
-          error,
-        )
-      }
-    }
-
-    // Handle PersonalRepresentative based on feature flag
-    if (hasPersonalRepresentative) {
-      const prTypes = delegationTypes.filter((dt) =>
-        String(dt).includes('PersonalRepresentative'),
-      )
-
-      if (validatePersonalRepsAtSyslumenn) {
-        // Feature flag is ON: Check at syslumenn
-        try {
-          const personalRepIsValid =
-            await this.syslumennService.checkIfDelegationExists(
-              user.nationalId,
-              fromNationalId,
-              SyslumennDelegationType.PersonalRepresentative,
-            )
-
-          if (personalRepIsValid) {
-            // Add all personal rep types to valid types
-            validTypes.push(...prTypes)
-          } else {
-            // Remove all personal rep types from index
-            for (const prType of prTypes) {
-              void this.delegationsIndexService.removeDelegationRecord(
-                {
-                  fromNationalId,
-                  toNationalId: user.nationalId,
-                  type: prType as AuthDelegationType,
-                  provider:
-                    AuthDelegationProvider.DistrictCommissionersRegistry,
-                },
-                user,
-              )
-            }
-          }
-        } catch (error) {
-          logger.error(
-            `Failed checking if PersonalRepresentative delegation exists at syslumenn`,
-            error,
-          )
-        }
-      } else {
-        // Feature flag is OFF: Assume valid
-        validTypes.push(...prTypes)
-      }
-    }
+        fromNationalId,
+        delegationTypes: delegationTypes as AuthDelegationType[],
+        featureFlagService: this.featureFlagService,
+        syslumennService: this.syslumennService,
+        delegationsIndexService: this.delegationsIndexService,
+      })
 
     if (validTypes.length === 0) {
       return []
