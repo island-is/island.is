@@ -1,6 +1,5 @@
-import { useMutation } from '@apollo/client'
+import { gql, useMutation } from '@apollo/client'
 import { DELETE_APPLICATION } from '@island.is/application/graphql'
-import { DELETE_APPLICATION as DELETE_FORM_SYSTEM_APPLICATION } from '@island.is/form-system/graphql'
 import { handleServerError } from '../utilities/handleServerError'
 import { useLocale } from '@island.is/localization'
 
@@ -17,17 +16,17 @@ export const useDeleteApplication = (refetch?: (() => void) | undefined) => {
       },
     },
   )
-  const [
-    deleteFormSystemApplicationMutation,
-    { error: formSystemError, loading: formSystemLoading },
-  ] = useMutation(DELETE_FORM_SYSTEM_APPLICATION, {
-    onCompleted: () => {
-      refetch?.()
+  const [deleteFormSystemApplicationMutation] = useMutation(
+    DELETE_FORM_SYSTEM_APPLICATION,
+    {
+      onCompleted: () => {
+        refetch?.()
+      },
+      onError: (error) => {
+        handleServerError(error, formatMessage)
+      },
     },
-    onError: (formSystemError) => {
-      handleServerError(formSystemError, formatMessage)
-    },
-  })
+  )
 
   const deleteApplication = (applicationId: string, typeId?: string) => {
     if (typeId === '') {
@@ -52,3 +51,9 @@ export const useDeleteApplication = (refetch?: (() => void) | undefined) => {
     loading,
   }
 }
+
+export const DELETE_FORM_SYSTEM_APPLICATION = gql`
+  mutation DeleteFormSystemApplication($input: String!) {
+    deleteFormSystemApplication(input: $input)
+  }
+`
