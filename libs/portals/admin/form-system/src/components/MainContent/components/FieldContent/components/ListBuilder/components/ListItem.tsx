@@ -45,7 +45,7 @@ export const ListItem = ({
     setSelectStatus,
     getTranslation,
   } = useContext(ControlContext)
-  const { activeItem } = control
+  const { activeItem, isPublished } = control
   const currentItem = activeItem.data as FormSystemField
   const isRadio = currentItem.fieldType === FieldTypesEnum.RADIO_BUTTONS
 
@@ -125,6 +125,7 @@ export const ListItem = ({
           <ToggleSwitchCheckbox
             label={formatMessage(m.connect)}
             checked={connecting}
+            disabled={isPublished}
             onChange={(e) => {
               setSelectStatus(
                 e
@@ -143,6 +144,7 @@ export const ListItem = ({
           <ToggleSwitchCheckbox
             label={formatMessage(m.selected)}
             checked={listItem.isSelected ?? false}
+            disabled={isPublished}
             onChange={(e) => {
               toggleSelected(listItem.id ?? '', e)
               controlDispatch({
@@ -164,6 +166,7 @@ export const ListItem = ({
             marginRight={2}
             style={{ cursor: 'pointer' }}
             onClick={() => {
+              if (isPublished) return
               controlDispatch({
                 type: 'REMOVE_LIST_ITEM',
                 payload: {
@@ -179,7 +182,7 @@ export const ListItem = ({
               })
             }}
           >
-            <Icon icon="trash" color="blue400" />
+            {!isPublished && <Icon icon="trash" color="blue400" />}
           </Box>
         </Box>
       </Box>
@@ -191,6 +194,7 @@ export const ListItem = ({
             backgroundColor="blue"
             size="sm"
             value={listItem?.label?.is ?? ''}
+            readOnly={isPublished}
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => e.target.value !== focus && listItemUpdate()}
             onChange={(e) =>
@@ -213,6 +217,7 @@ export const ListItem = ({
             backgroundColor="blue"
             size="sm"
             value={listItem?.label?.en ?? ''}
+            readOnly={isPublished}
             onFocus={async (e) => {
               if (!listItem?.label?.en && listItem?.label?.is !== '') {
                 const translation = await getTranslation(
@@ -255,6 +260,7 @@ export const ListItem = ({
               backgroundColor="blue"
               size="sm"
               value={listItem?.description?.is ?? ''}
+              readOnly={isPublished}
               onFocus={(e) => setFocus(e.target.value)}
               onBlur={(e) => e.target.value !== focus && listItemUpdate()}
               onChange={(e) =>
@@ -277,6 +283,7 @@ export const ListItem = ({
               backgroundColor="blue"
               size="sm"
               value={listItem?.description?.en ?? ''}
+              readOnly={isPublished}
               onFocus={async (e) => {
                 if (
                   !listItem?.description?.en &&

@@ -117,8 +117,10 @@ export const createTestingCaseModule = async () => {
         provide: getModelToken(CaseString),
         useValue: {
           create: jest.fn(),
+          destroy: jest.fn(),
           findOne: jest.fn(),
           update: jest.fn(),
+          upsert: jest.fn(),
         },
       },
       CaseService,
