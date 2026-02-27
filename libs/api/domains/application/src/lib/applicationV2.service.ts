@@ -162,7 +162,7 @@ export class ApplicationV2Service {
           searchStr: filters.searchStr,
           institutionNationalId: filters.institutionNationalId,
         })
-      : Promise.resolve({ rows: [] })
+      : Promise.resolve({ rows: [], count: 0 })
 
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
       appSystemPromise,
@@ -171,8 +171,10 @@ export class ApplicationV2Service {
 
     let appSystemRows: ApplicationAdmin[] = []
     let formSystemRows: ApplicationAdmin[] = []
+    let totalCount = 0
     if (appSystemSettled.status === 'fulfilled') {
       appSystemRows = appSystemSettled.value.rows
+      totalCount += appSystemSettled.value.count
     } else {
       this.logger.error(
         'Error getting application system applications for super-admin',
@@ -183,6 +185,7 @@ export class ApplicationV2Service {
       formSystemRows = (formSystemSettled.value.rows ?? []).map(
         mapFormSystemApplicationAdmin,
       )
+      totalCount += formSystemSettled.value.count
     } else {
       this.logger.error(
         'Error getting form system applications for super-admin',
@@ -190,14 +193,13 @@ export class ApplicationV2Service {
       )
     }
 
-    const mergedRows: ApplicationAdmin[] = [...appSystemRows, ...formSystemRows]
-
-    mergedRows.sort(applicationAdminSortByCreated)
-    mergedRows.slice(0, filters.count)
+    const mergedRows = [...appSystemRows, ...formSystemRows]
+      .sort(applicationAdminSortByCreated)
+      .slice(0, filters.count)
 
     return {
       rows: mergedRows,
-      count: mergedRows.length,
+      count: totalCount,
     }
   }
 
@@ -239,7 +241,7 @@ export class ApplicationV2Service {
           formId: filters.typeIdValue,
           searchStr: filters.searchStr,
         })
-      : Promise.resolve({ rows: [] })
+      : Promise.resolve({ rows: [], count: 0 })
 
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
       appSystemPromise,
@@ -248,8 +250,10 @@ export class ApplicationV2Service {
 
     let appSystemRows: ApplicationAdmin[] = []
     let formSystemRows: ApplicationAdmin[] = []
+    let totalCount = 0
     if (appSystemSettled.status === 'fulfilled') {
       appSystemRows = appSystemSettled.value.rows
+      totalCount += appSystemSettled.value.count
     } else {
       this.logger.error(
         'Error getting application system applications for institution admin',
@@ -260,6 +264,7 @@ export class ApplicationV2Service {
       formSystemRows = (formSystemSettled.value.rows ?? []).map(
         mapFormSystemApplicationAdmin,
       )
+      totalCount += formSystemSettled.value.count
     } else {
       this.logger.error(
         'Error getting form system applications for institution admin',
@@ -267,14 +272,13 @@ export class ApplicationV2Service {
       )
     }
 
-    const mergedRows: ApplicationAdmin[] = [...appSystemRows, ...formSystemRows]
-
-    mergedRows.sort(applicationAdminSortByCreated)
-    mergedRows.slice(0, filters.count)
+    const mergedRows = [...appSystemRows, ...formSystemRows]
+      .sort(applicationAdminSortByCreated)
+      .slice(0, filters.count)
 
     return {
       rows: mergedRows,
-      count: mergedRows.length,
+      count: totalCount,
     }
   }
 
