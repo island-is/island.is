@@ -11,10 +11,8 @@ import {
   B_FULL_RENEWAL_65,
   BE,
   codesExtendedLicenseCategories,
-  codesRequiringHealthCertificate,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
-  otherLicenseCategories,
   remarksCannotRenew65,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
@@ -36,6 +34,11 @@ export interface UseEligibilityResult {
   error?: Error
   eligibility?: ApplicationEligibility
   loading: boolean
+}
+
+interface ThjodskraPhoto {
+  biometricId: string
+  contentSpecification: string
 }
 
 export const useEligibility = (
@@ -67,11 +70,6 @@ export const useEligibility = (
     },
   })
 
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  const hasGlasses = getValueViaPath<boolean>(
-    application.externalData,
-    'glassesCheck.data',
-  )
   const currentLicense = getValueViaPath<DrivingLicense>(
     application.externalData,
     'currentLicense.data',
@@ -82,19 +80,15 @@ export const useEligibility = (
       'qualityPhoto.data.hasQualityPhoto',
     ) ?? false
 
-  const hasOtherCategoryOrHealthRemarks = (
-    currentLicense: DrivingLicense | undefined,
-  ) => {
-    return (
-      (currentLicense?.categories.some((license) =>
-        otherLicenseCategories.includes(license.nr),
-      ) ??
-        false) ||
-      currentLicense?.remarks?.some((remark) =>
-        codesRequiringHealthCertificate.includes(remark.code),
-      )
-    )
-  }
+  const thjodskraPhotos =
+    getValueViaPath<ThjodskraPhoto[]>(
+      application.externalData,
+      'allPhotosFromThjodskra.data.images',
+    ) ?? []
+
+  const hasAnyPhoto =
+    hasQualityPhoto ||
+    thjodskraPhotos.some((p) => p.contentSpecification === 'FACIAL')
 
   const hasExtendedDrivingLicense = (
     currentLicense: DrivingLicense | undefined,
@@ -119,9 +113,6 @@ export const useEligibility = (
       eligibility: fakeEligibility(
         applicationFor,
         parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
-
-        //TODO: Remove when RLS/SGS supports health certificate in BE license
-        hasGlasses,
       ),
     }
   }
@@ -137,7 +128,6 @@ export const useEligibility = (
   const eligibility: ApplicationEligibilityRequirement[] =
     data.drivingLicenseApplicationEligibility?.requirements ?? []
 
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
   if (application.answers.applicationFor === BE) {
     return {
       loading: loading,
@@ -145,19 +135,12 @@ export const useEligibility = (
         isEligible: loading
           ? undefined
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
-            !hasGlasses &&
-            hasQualityPhoto &&
-            !hasOtherCategoryOrHealthRemarks(currentLicense),
+            hasAnyPhoto,
         requirements: [
           ...eligibility,
           {
-            key: RequirementKey.beRequiresHealthCertificate,
-            requirementMet:
-              !hasGlasses && !hasOtherCategoryOrHealthRemarks(currentLicense),
-          },
-          {
             key: RequirementKey.hasNoPhoto,
-            requirementMet: hasQualityPhoto,
+            requirementMet: hasAnyPhoto,
           },
         ],
       },

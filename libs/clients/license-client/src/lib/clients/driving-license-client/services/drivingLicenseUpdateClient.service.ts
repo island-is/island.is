@@ -106,7 +106,9 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
       }
     }
 
-    const inputValues = createPkPassDataInput(licenseInfo, remarks)
+    // v4 and v5 DriverLicenseDto are structurally identical but ts-node
+    // treats them as incompatible due to different import paths
+    const inputValues = createPkPassDataInput(licenseInfo as any, remarks)
 
     if (!inputValues || !licenseInfo.dateValidTo) {
       this.logger.error(

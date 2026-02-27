@@ -13,6 +13,7 @@ export {
   JurisdictionApi,
   QualityPhotoApi,
   ExistingApplicationApi,
+  AllPhotosFromThjodskraApi,
 } from '@island.is/application/types'
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({

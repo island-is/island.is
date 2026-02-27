@@ -78,7 +78,7 @@ export interface Category {
   categoryName?: string | null
   publishDate?: Date | null
   dateTo?: Date
-  validToCode?: number
+  validToCode?: number | null
   validToText?: string | null
   comment?: string | null
 }
