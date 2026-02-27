@@ -56,15 +56,17 @@ export const IncomePlan = ({
             />
           </Box>
         </GridColumn>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          <RadioValue
-            label={formatMessage(
-              socialInsuranceAdministrationMessage.incomePlan
-                .noOtherIncomeConfirmation,
-            )}
-            value={noOtherIncomeConfirmation}
-          />
-        </GridColumn>
+        {noOtherIncomeConfirmation && (
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <RadioValue
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.incomePlan
+                  .noOtherIncomeConfirmation,
+              )}
+              value={noOtherIncomeConfirmation}
+            />
+          </GridColumn>
+        )}
       </GridRow>
     </ReviewGroup>
   )

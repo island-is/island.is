@@ -47,10 +47,7 @@ describe('SocialInsuranceAdministrationService', () => {
               Promise.resolve({
                 applicationLineId: '123',
               }),
-            sendApplicationV2: () =>
-              Promise.resolve({
-                applicationLineId: '',
-              }),
+            sendApplicationV2: () => Promise.resolve(),
           })),
         },
       ],
