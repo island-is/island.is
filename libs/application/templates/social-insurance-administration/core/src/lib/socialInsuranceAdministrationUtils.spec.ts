@@ -32,6 +32,7 @@ describe('formatBankAccount', () => {
       bankNumber: '2222',
       ledger: '00',
       accountNumber: '123456',
+      bankAccountType: BankAccountType.ICELANDIC,
     }
     const bankInfoString = formatBankAccount(bankInfo)
     expect('2222-00-123456').toEqual(bankInfoString)
@@ -223,6 +224,7 @@ describe('shouldNotUpdateBankAccount', () => {
       bankNumber: '2222',
       ledger: '00',
       accountNumber: '123456',
+      bankAccountType: BankAccountType.ICELANDIC,
     }
     const res = shouldNotUpdateBankAccount(bankInfo, paymentInfo)
 
@@ -239,6 +241,7 @@ describe('shouldNotUpdateBankAccount', () => {
       bankNumber: '2222',
       ledger: '00',
       accountNumber: '000000',
+      bankAccountType: BankAccountType.ICELANDIC,
     }
     const res = shouldNotUpdateBankAccount(bankInfo, paymentInfo)
 

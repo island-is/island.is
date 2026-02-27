@@ -1,4 +1,5 @@
 import { YES } from '@island.is/application/core'
+import { CategorizedIncomeTypes } from '../types'
 import {
   DIVIDENDS_IN_FOREIGN_BANKS,
   FOREIGN_BASIC_PENSION,
@@ -8,11 +9,11 @@ import {
   INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
   ISK,
   RatioType,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { getTypesOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { ExternalData } from '@island.is/application/types'
-import { shouldShowEqualIncomePerMonth } from './conditionUtils'
-import { getApplicationExternalData } from './medicalAndRehabilitationPaymentsUtils'
+} from './constants'
+import {
+  getTypesOptions,
+  shouldShowEqualIncomePerMonth,
+} from './socialInsuranceAdministrationUtils'
 
 export const equalIncomePerMonthValueModifier = (
   isForeign: boolean,
@@ -25,10 +26,9 @@ export const equalIncomePerMonthValueModifier = (
 }
 
 export const incomeTypeValueModifier = (
-  externalData: ExternalData,
+  categorizedIncomeTypes: CategorizedIncomeTypes[],
   activeField?: Record<string, string>,
 ) => {
-  const { categorizedIncomeTypes } = getApplicationExternalData(externalData)
   const options = getTypesOptions(
     categorizedIncomeTypes,
     activeField?.incomeCategory,

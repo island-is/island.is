@@ -1,6 +1,8 @@
 import {
   buildAlertMessageField,
+  buildBankAccountField,
   buildCustomField,
+  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildHiddenInputWithWatchedValue,
@@ -11,6 +13,7 @@ import {
   buildSelectField,
   buildSubmitField,
   buildSubSection,
+  buildTableRepeaterField,
   buildTextField,
   NO,
   YES,
@@ -18,20 +21,37 @@ import {
 import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import {
   BankAccountType,
+  DIVIDENDS_IN_FOREIGN_BANKS,
   fileUploadSharedProps,
+  FOREIGN_BASIC_PENSION,
+  FOREIGN_INCOME,
+  FOREIGN_PENSION,
+  INCOME,
+  INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
   IS,
+  ISK,
+  MONTH_NAMES,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
-  getBankIsk,
+  getCategoriesOptions,
   getCurrencies,
   getTaxOptions,
+  getTypesOptions,
   getYesNoOptions,
+  shouldShowEqualIncomePerMonth,
   typeOfBankInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import {
+  incomeTypeValueModifier,
+  currencyValueModifier,
+  equalIncomePerMonthValueModifier,
+  incomePerYearValueModifier,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
+import { generateMonthInput } from '@island.is/application/templates/social-insurance-administration-core/lib/generateMonthInput'
 import {
   Application,
   DefaultEvents,
@@ -39,7 +59,10 @@ import {
   FormModes,
   FormValue,
 } from '@island.is/application/types'
-import { applicantInformationMultiField } from '@island.is/application/ui-forms'
+import {
+  applicantInformationMultiField,
+  buildFormConclusionSection,
+} from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import { ApplicationType, Employment, RatioType } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
@@ -50,6 +73,7 @@ import {
   getAvailableYears,
   isEarlyRetirement,
 } from '../lib/oldAgePensionUtils'
+import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',
@@ -87,7 +111,7 @@ export const OldAgePensionForm: Form = buildForm({
                   id: 'paymentInfo.alertMessage',
                   title: socialInsuranceAdministrationMessage.shared.alertTitle,
                   message: (application: Application) => {
-                    const { bankAccountType } = getApplicationAnswers(
+                    const { paymentInfo } = getApplicationAnswers(
                       application.answers,
                     )
                     const { bankInfo } = getApplicationExternalData(
@@ -95,8 +119,8 @@ export const OldAgePensionForm: Form = buildForm({
                     )
 
                     const type =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
+                      paymentInfo?.bankAccountType ??
+                      typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
 
                     return type === BankAccountType.ICELANDIC
                       ? socialInsuranceAdministrationMessage.payment
@@ -110,14 +134,17 @@ export const OldAgePensionForm: Form = buildForm({
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
                   defaultValue: (application: Application) => {
-                    const { bankAccountType } = getApplicationAnswers(
+                    const { paymentInfo } = getApplicationAnswers(
                       application.answers,
                     )
                     const { bankInfo } = getApplicationExternalData(
                       application.externalData,
                     )
 
-                    return typeOfBankInfo(bankInfo, bankAccountType)
+                    return typeOfBankInfo(
+                      bankInfo,
+                      paymentInfo?.bankAccountType,
+                    )
                   },
                   options: [
                     {
@@ -136,27 +163,25 @@ export const OldAgePensionForm: Form = buildForm({
                   largeButtons: false,
                   required: true,
                 }),
-                buildTextField({
+                buildBankAccountField({
                   id: 'paymentInfo.bank',
-                  title: socialInsuranceAdministrationMessage.payment.bank,
-                  format: '####-##-######',
-                  placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
                       application.externalData,
                     )
-                    return getBankIsk(bankInfo)
+                    return { ...bankInfo, bankNumber: bankInfo?.bank }
                   },
                   condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { paymentInfo } = getApplicationAnswers(formValue)
                     const { bankInfo } =
                       getApplicationExternalData(externalData)
 
                     const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
+                      paymentInfo?.bankAccountType ??
+                      typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
                     return radio === BankAccountType.ICELANDIC
                   },
+                  marginTop: 2,
                 }),
                 buildTextField({
                   id: 'paymentInfo.iban',
@@ -169,13 +194,13 @@ export const OldAgePensionForm: Form = buildForm({
                     return friendlyFormatIBAN(bankInfo.iban)
                   },
                   condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { paymentInfo } = getApplicationAnswers(formValue)
                     const { bankInfo } =
                       getApplicationExternalData(externalData)
 
                     const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
+                      paymentInfo?.bankAccountType ??
+                      typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -191,13 +216,13 @@ export const OldAgePensionForm: Form = buildForm({
                     return friendlyFormatSWIFT(bankInfo.swift)
                   },
                   condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { paymentInfo } = getApplicationAnswers(formValue)
                     const { bankInfo } =
                       getApplicationExternalData(externalData)
 
                     const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
+                      paymentInfo?.bankAccountType ??
+                      typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -219,13 +244,13 @@ export const OldAgePensionForm: Form = buildForm({
                     return !isEmpty(bankInfo) ? bankInfo.currency : ''
                   },
                   condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { paymentInfo } = getApplicationAnswers(formValue)
                     const { bankInfo } =
                       getApplicationExternalData(externalData)
 
                     const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
+                      paymentInfo?.bankAccountType ??
+                      typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -240,13 +265,13 @@ export const OldAgePensionForm: Form = buildForm({
                     return !isEmpty(bankInfo) ? bankInfo.foreignBankName : ''
                   },
                   condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { paymentInfo } = getApplicationAnswers(formValue)
                     const { bankInfo } =
                       getApplicationExternalData(externalData)
 
                     const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
+                      paymentInfo?.bankAccountType ??
+                      typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -262,13 +287,13 @@ export const OldAgePensionForm: Form = buildForm({
                     return !isEmpty(bankInfo) ? bankInfo.foreignBankAddress : ''
                   },
                   condition: (formValue: FormValue, externalData) => {
-                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { paymentInfo } = getApplicationAnswers(formValue)
                     const { bankInfo } =
                       getApplicationExternalData(externalData)
 
                     const radio =
-                      bankAccountType ??
-                      typeOfBankInfo(bankInfo, bankAccountType)
+                      paymentInfo?.bankAccountType ??
+                      typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -323,6 +348,360 @@ export const OldAgePensionForm: Form = buildForm({
                   largeButtons: true,
                   space: 'containerGutter',
                   defaultValue: TaxLevelOptions.INCOME,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'incomePlanInstructionsSubSection',
+          title:
+            socialInsuranceAdministrationMessage.incomePlan
+              .incomePlanInstructionsSubSectionTitle,
+          children: [
+            buildMultiField({
+              id: 'incomePlanInstructions',
+              title:
+                socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
+              description:
+                socialInsuranceAdministrationMessage.incomePlanInstructions
+                  .title,
+              children: [
+                buildDescriptionField({
+                  id: 'instructions',
+                  description:
+                    socialInsuranceAdministrationMessage.incomePlanInstructions
+                      .instructions,
+                  space: 0,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'incomePlan',
+          title:
+            socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
+          children: [
+            buildMultiField({
+              id: 'incomePlan',
+              title:
+                socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
+              children: [
+                buildTableRepeaterField({
+                  id: 'incomePlanTable',
+                  title:
+                    socialInsuranceAdministrationMessage.incomePlan
+                      .subSectionTitle,
+                  description: (application: Application) => {
+                    const { incomePlanConditions } = getApplicationExternalData(
+                      application.externalData,
+                    )
+
+                    return {
+                      ...socialInsuranceAdministrationMessage.incomePlan
+                        .description,
+                      values: {
+                        incomePlanYear:
+                          incomePlanConditions?.incomePlanYear ??
+                          new Date().getFullYear(),
+                      },
+                    }
+                  },
+                  formTitle:
+                    socialInsuranceAdministrationMessage.incomePlan
+                      .registerIncome,
+                  addItemButtonText:
+                    socialInsuranceAdministrationMessage.incomePlan.addIncome,
+                  saveItemButtonText:
+                    socialInsuranceAdministrationMessage.incomePlan.saveIncome,
+                  editField: true,
+                  editButtonTooltipText:
+                    socialInsuranceAdministrationMessage.incomePlan.editIncome,
+                  removeButtonTooltipText:
+                    socialInsuranceAdministrationMessage.incomePlan
+                      .removeIncome,
+                  fields: {
+                    incomeCategory: {
+                      component: 'select',
+                      label:
+                        socialInsuranceAdministrationMessage.incomePlan
+                          .incomeCategory,
+                      placeholder:
+                        socialInsuranceAdministrationMessage.incomePlan
+                          .selectIncomeCategory,
+                      displayInTable: false,
+                      width: 'half',
+                      isSearchable: true,
+                      options: (application) => {
+                        const { categorizedIncomeTypes } =
+                          getApplicationExternalData(application.externalData)
+
+                        return getCategoriesOptions(categorizedIncomeTypes)
+                      },
+                    },
+                    incomeType: {
+                      component: 'select',
+                      label:
+                        socialInsuranceAdministrationMessage.incomePlan
+                          .incomeType,
+                      placeholder:
+                        socialInsuranceAdministrationMessage.incomePlan
+                          .selectIncomeType,
+                      width: 'half',
+                      isSearchable: true,
+                      updateValueObj: {
+                        valueModifier: (application, activeField) => {
+                          const { categorizedIncomeTypes } =
+                            getApplicationExternalData(application.externalData)
+                          return incomeTypeValueModifier(
+                            categorizedIncomeTypes,
+                            activeField,
+                          )
+                        },
+                        watchValues: 'incomeCategory',
+                      },
+                      options: (application, activeField) => {
+                        const { categorizedIncomeTypes } =
+                          getApplicationExternalData(application.externalData)
+
+                        return getTypesOptions(
+                          categorizedIncomeTypes,
+                          activeField?.incomeCategory,
+                        )
+                      },
+                    },
+                    currency: {
+                      component: 'select',
+                      label:
+                        socialInsuranceAdministrationMessage.incomePlan
+                          .currency,
+                      placeholder:
+                        socialInsuranceAdministrationMessage.incomePlan
+                          .selectCurrency,
+                      isSearchable: true,
+                      updateValueObj: {
+                        valueModifier: (_, activeField) =>
+                          currencyValueModifier(activeField),
+                        watchValues: 'incomeType',
+                      },
+                      options: (application, activeField) => {
+                        const { currencies } = getApplicationExternalData(
+                          application.externalData,
+                        )
+                        const hideISKCurrency =
+                          activeField?.incomeType === FOREIGN_BASIC_PENSION ||
+                          activeField?.incomeType === FOREIGN_PENSION ||
+                          activeField?.incomeType === FOREIGN_INCOME ||
+                          activeField?.incomeType ===
+                            INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
+                          activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
+                            ? ISK
+                            : ''
+
+                        return getCurrencies(currencies, hideISKCurrency)
+                      },
+                    },
+                    income: {
+                      component: 'radio',
+                      displayInTable: false,
+                      largeButtons: false,
+                      options: [
+                        {
+                          value: RatioType.YEARLY,
+                          label:
+                            socialInsuranceAdministrationMessage.incomePlan
+                              .annualIncome,
+                        },
+                        {
+                          value: RatioType.MONTHLY,
+                          label:
+                            socialInsuranceAdministrationMessage.incomePlan
+                              .monthlyIncome,
+                        },
+                      ],
+                    },
+                    equalForeignIncomePerMonth: {
+                      component: 'input',
+                      label:
+                        socialInsuranceAdministrationMessage.incomePlan
+                          .equalForeignIncomePerMonth,
+                      width: 'half',
+                      type: 'number',
+                      displayInTable: false,
+                      currency: true,
+                      updateValueObj: {
+                        valueModifier: (_, activeField) =>
+                          equalIncomePerMonthValueModifier(true, activeField),
+                        watchValues: [
+                          'income',
+                          'currency',
+                          'unevenIncomePerYear',
+                        ],
+                      },
+                      suffix: '',
+                      condition: (_, activeField) =>
+                        shouldShowEqualIncomePerMonth(true, activeField),
+                    },
+                    equalIncomePerMonth: {
+                      component: 'input',
+                      label:
+                        socialInsuranceAdministrationMessage.incomePlan
+                          .equalIncomePerMonth,
+                      width: 'half',
+                      type: 'number',
+                      displayInTable: false,
+                      currency: true,
+                      updateValueObj: {
+                        valueModifier: (_, activeField) =>
+                          equalIncomePerMonthValueModifier(false, activeField),
+                        watchValues: [
+                          'income',
+                          'currency',
+                          'unevenIncomePerYear',
+                        ],
+                      },
+                      suffix: '',
+                      condition: (_, activeField) =>
+                        shouldShowEqualIncomePerMonth(false, activeField),
+                    },
+                    incomePerYear: {
+                      component: 'input',
+                      label:
+                        socialInsuranceAdministrationMessage.incomePlan
+                          .incomePerYear,
+                      width: 'half',
+                      type: 'number',
+                      currency: true,
+                      disabled: (_, activeField) => {
+                        return activeField?.income === RatioType.MONTHLY
+                      },
+                      updateValueObj: {
+                        valueModifier: (_, activeField) =>
+                          incomePerYearValueModifier(activeField),
+                        watchValues: (activeField) => {
+                          if (
+                            activeField?.income === RatioType.MONTHLY &&
+                            activeField?.incomeCategory === INCOME &&
+                            activeField?.unevenIncomePerYear?.[0] === YES
+                          ) {
+                            return MONTH_NAMES
+                          }
+                          if (
+                            activeField?.income === RatioType.MONTHLY &&
+                            activeField?.currency === ISK
+                          ) {
+                            return 'equalIncomePerMonth'
+                          }
+                          if (
+                            activeField?.income === RatioType.MONTHLY &&
+                            activeField?.currency !== ISK
+                          ) {
+                            return 'equalForeignIncomePerMonth'
+                          }
+                          return undefined
+                        },
+                      },
+                      suffix: '',
+                      condition: (_, activeField) => {
+                        return (
+                          activeField?.income === RatioType.YEARLY ||
+                          activeField?.income === RatioType.MONTHLY
+                        )
+                      },
+                    },
+                    unevenIncomePerYear: {
+                      component: 'checkbox',
+                      large: true,
+                      width: 'full',
+                      options: [
+                        {
+                          value: YES,
+                          label:
+                            socialInsuranceAdministrationMessage.incomePlan
+                              .monthlyDistributionOfIncome,
+                          tooltip:
+                            socialInsuranceAdministrationMessage.incomePlan
+                              .monthlyDistributionOfIncomeTooltip,
+                        },
+                      ],
+                      backgroundColor: 'blue',
+                      displayInTable: false,
+                      condition: (_, activeField) => {
+                        return (
+                          activeField?.income === RatioType.MONTHLY &&
+                          activeField?.incomeCategory === INCOME
+                        )
+                      },
+                    },
+                    january: generateMonthInput(
+                      socialInsuranceAdministrationMessage.months.january,
+                    ),
+                    february: generateMonthInput(
+                      socialInsuranceAdministrationMessage.months.february,
+                    ),
+                    march: generateMonthInput(
+                      socialInsuranceAdministrationMessage.months.march,
+                    ),
+                    april: generateMonthInput(
+                      socialInsuranceAdministrationMessage.months.april,
+                    ),
+                    may: generateMonthInput(
+                      socialInsuranceAdministrationMessage.months.may,
+                    ),
+                    june: generateMonthInput(
+                      socialInsuranceAdministrationMessage.months.june,
+                    ),
+                    july: generateMonthInput(
+                      socialInsuranceAdministrationMessage.months.july,
+                    ),
+                    august: generateMonthInput(
+                      socialInsuranceAdministrationMessage.months.august,
+                    ),
+                    september: generateMonthInput(
+                      socialInsuranceAdministrationMessage.months.september,
+                    ),
+                    october: generateMonthInput(
+                      socialInsuranceAdministrationMessage.months.october,
+                    ),
+                    november: generateMonthInput(
+                      socialInsuranceAdministrationMessage.months.november,
+                    ),
+                    december: generateMonthInput(
+                      socialInsuranceAdministrationMessage.months.desember,
+                    ),
+                  },
+                  table: {
+                    format: {
+                      incomePerYear: (value) =>
+                        value && formatCurrencyWithoutSuffix(value),
+                    },
+                    header: [
+                      socialInsuranceAdministrationMessage.incomePlan
+                        .incomeType,
+                      socialInsuranceAdministrationMessage.incomePlan
+                        .incomePerYear,
+                      socialInsuranceAdministrationMessage.incomePlan.currency,
+                    ],
+                    rows: ['incomeType', 'incomePerYear', 'currency'],
+                  },
+                }),
+                buildAlertMessageField({
+                  id: 'incomePlan.alertMessage',
+                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
+                  message:
+                    socialInsuranceAdministrationMessage.incomePlan
+                      .alertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'warning',
+                }),
+                buildRadioField({
+                  id: 'incomePlan.noOtherIncomeConfirmation',
+                  title:
+                    socialInsuranceAdministrationMessage.incomePlan
+                      .noOtherIncomeConfirmation,
+                  options: getYesNoOptions(),
+                  width: 'half',
                 }),
               ],
             }),
@@ -624,21 +1003,6 @@ export const OldAgePensionForm: Form = buildForm({
       title: socialInsuranceAdministrationMessage.fileUpload.title,
       children: [
         buildSubSection({
-          id: 'fileUpload.pension.section',
-          title: oldAgePensionFormMessage.fileUpload.pensionFileTitle,
-          children: [
-            buildFileUploadField({
-              id: 'fileUpload.pension',
-              title: oldAgePensionFormMessage.fileUpload.pensionFileTitle,
-              description:
-                oldAgePensionFormMessage.fileUpload.pensionFileDescription,
-              introduction:
-                oldAgePensionFormMessage.fileUpload.pensionFileDescription,
-              ...fileUploadSharedProps,
-            }),
-          ],
-        }),
-        buildSubSection({
           condition: (answers) => {
             const { applicationType } = getApplicationAnswers(answers)
             return applicationType === ApplicationType.SAILOR_PENSION
@@ -736,31 +1100,16 @@ export const OldAgePensionForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'conclusionSection',
-      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
-      children: [
-        buildMultiField({
-          id: 'conclusion.multifield',
-          title: (application: Application) => {
-            const { hasIncomePlanStatus } = getApplicationExternalData(
-              application.externalData,
-            )
-            return hasIncomePlanStatus
-              ? socialInsuranceAdministrationMessage.conclusionScreen
-                  .receivedTitle
-              : socialInsuranceAdministrationMessage.conclusionScreen
-                  .receivedAwaitingIncomePlanTitle
-          },
-          children: [
-            buildCustomField({
-              component: 'Conclusion',
-              id: 'conclusion',
-              description: '',
-            }),
-          ],
-        }),
-      ],
+    buildFormConclusionSection({
+      multiFieldTitle:
+        socialInsuranceAdministrationMessage.conclusionScreen.receivedTitle,
+      alertTitle:
+        socialInsuranceAdministrationMessage.conclusionScreen.alertTitle,
+      alertMessage: oldAgePensionFormMessage.conclusionScreen.alertMessage,
+      expandableIntro:
+        oldAgePensionFormMessage.conclusionScreen.expandableIntro,
+      expandableDescription:
+        oldAgePensionFormMessage.conclusionScreen.expandableDescription,
     }),
   ],
 })

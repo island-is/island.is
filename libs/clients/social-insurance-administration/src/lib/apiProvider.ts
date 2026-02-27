@@ -46,7 +46,7 @@ const apiCollection: Array<{
   },
   {
     api: ApplicationApi,
-    scopes: ['@tr.is/umsoknir:read'],
+    scopes: ['@tr.is/umsoknir:read', '@tr.is/fylgiskjol:write'],
     autoAuth: true,
   },
   {

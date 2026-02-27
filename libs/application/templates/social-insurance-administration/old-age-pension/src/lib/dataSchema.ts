@@ -7,13 +7,14 @@ import {
   employeeRatio,
 } from './constants'
 import {
-  formatBankInfo,
   validIBAN,
   validSWIFT,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   BankAccountType,
+  INCOME,
+  ISK,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { validatorErrorMessages } from './messages'
@@ -53,6 +54,20 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
+const icelandicBank = z.object({
+  bankNumber: z.string().regex(/^\d{4}$/),
+  ledger: z.string().regex(/^\d{2}$/),
+  accountNumber: z.string().regex(/^\d{6}$/),
+})
+
+const bankBase = z
+  .object({
+    bankNumber: z.string().optional(),
+    ledger: z.string().optional(),
+    accountNumber: z.string().optional(),
+  })
+  .optional()
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicationType: z.object({
@@ -70,6 +85,114 @@ export const dataSchema = z.object({
     phoneNumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
       params: errorMessages.phoneNumber,
     }),
+  }),
+  incomePlanTable: z
+    .array(
+      z
+        .object({
+          incomeCategory: z.string(),
+          incomeType: z.string().min(1),
+          income: z.enum([RatioType.MONTHLY, RatioType.YEARLY]),
+          incomePerYear: z.string().optional(),
+          equalIncomePerMonth: z.string().optional(),
+          equalForeignIncomePerMonth: z.string().optional(),
+          unevenIncomePerYear: z.array(z.enum([YES]).optional()).optional(),
+          currency: z.string().min(1),
+          january: z.string().optional(),
+          february: z.string().optional(),
+          march: z.string().optional(),
+          april: z.string().optional(),
+          may: z.string().optional(),
+          june: z.string().optional(),
+          july: z.string().optional(),
+          august: z.string().optional(),
+          september: z.string().optional(),
+          october: z.string().optional(),
+          november: z.string().optional(),
+          december: z.string().optional(),
+        })
+        .refine(
+          ({ income, incomePerYear }) =>
+            income === RatioType.YEARLY ? !!incomePerYear : true,
+          {
+            path: ['incomePerYear'],
+          },
+        )
+        .refine(
+          ({
+            income,
+            currency,
+            equalIncomePerMonth,
+            unevenIncomePerYear,
+            incomeCategory,
+          }) => {
+            const unevenAndEmploymentIncome =
+              unevenIncomePerYear?.[0] !== YES ||
+              (incomeCategory !== INCOME && unevenIncomePerYear?.[0] === YES)
+
+            return income === RatioType.MONTHLY &&
+              currency === ISK &&
+              unevenAndEmploymentIncome
+              ? !!equalIncomePerMonth
+              : true
+          },
+          {
+            path: ['equalIncomePerMonth'],
+          },
+        )
+        .refine(
+          ({
+            income,
+            currency,
+            equalForeignIncomePerMonth,
+            unevenIncomePerYear,
+            incomeCategory,
+          }) => {
+            const unevenAndEmploymentIncome =
+              unevenIncomePerYear?.[0] !== YES ||
+              (incomeCategory !== INCOME && unevenIncomePerYear?.[0] === YES)
+
+            return income === RatioType.MONTHLY &&
+              currency !== ISK &&
+              unevenAndEmploymentIncome
+              ? !!equalForeignIncomePerMonth
+              : true
+          },
+          {
+            path: ['equalForeignIncomePerMonth'],
+          },
+        )
+        .refine(
+          (incomePlanTable) =>
+            incomePlanTable.income === RatioType.MONTHLY &&
+            incomePlanTable?.incomeCategory === INCOME &&
+            incomePlanTable.unevenIncomePerYear?.[0] === YES
+              ? ![
+                  incomePlanTable.january,
+                  incomePlanTable.february,
+                  incomePlanTable.march,
+                  incomePlanTable.april,
+                  incomePlanTable.may,
+                  incomePlanTable.june,
+                  incomePlanTable.july,
+                  incomePlanTable.august,
+                  incomePlanTable.september,
+                  incomePlanTable.october,
+                  incomePlanTable.november,
+                  incomePlanTable.december,
+                ].every((value) => value === undefined || value === '')
+              : true,
+          {
+            path: ['incomePerYear'],
+            params: errorMessages.incomePlanMonthsRequired,
+          },
+        ),
+    )
+    .refine((i) => i === undefined || i.length > 0, {
+      params: errorMessages.incomePlanRequired,
+    }),
+  incomePlan: z.object({
+    noOtherIncomeConfirmation: z.enum([YES, NO]),
   }),
   residenceHistory: z.object({
     question: z.enum([YES, NO]),
@@ -121,11 +244,8 @@ export const dataSchema = z.object({
     ),
   paymentInfo: z
     .object({
-      bankAccountType: z.enum([
-        BankAccountType.ICELANDIC,
-        BankAccountType.FOREIGN,
-      ]),
-      bank: z.string(),
+      bankAccountType: z.nativeEnum(BankAccountType),
+      bank: bankBase,
       bankAddress: z.string(),
       bankName: z.string(),
       currency: z.string().nullable(),
@@ -133,23 +253,18 @@ export const dataSchema = z.object({
       swift: z.string(),
       personalAllowance: z.enum([YES, NO]),
       personalAllowanceUsage: z.string().optional(),
-      taxLevel: z.enum([
-        TaxLevelOptions.INCOME,
-        TaxLevelOptions.FIRST_LEVEL,
-        TaxLevelOptions.SECOND_LEVEL,
-      ]),
+      taxLevel: z.nativeEnum(TaxLevelOptions),
     })
     .partial()
-    .refine(
-      ({ bank, bankAccountType }) => {
-        if (bankAccountType === BankAccountType.ICELANDIC) {
-          const bankAccount = formatBankInfo(bank ?? '')
-          return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
+    .superRefine((data, ctx) => {
+      if (data.bankAccountType !== BankAccountType.ICELANDIC) return
+      const res = icelandicBank.safeParse(data.bank)
+      if (!res.success) {
+        for (const issue of res.error.issues) {
+          ctx.addIssue({ ...issue, path: ['bank', ...issue.path] })
         }
-        return true
-      },
-      { params: errorMessages.bank, path: ['bank'] },
-    )
+      }
+    })
     .refine(
       ({ iban, bankAccountType }) => {
         if (bankAccountType === BankAccountType.FOREIGN) {

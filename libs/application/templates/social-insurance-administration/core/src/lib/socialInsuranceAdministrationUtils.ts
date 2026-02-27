@@ -2,7 +2,13 @@ import { NO, YES } from '@island.is/application/core'
 import { Option } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
 import { BankInfo, CategorizedIncomeTypes, PaymentInfo } from '../types'
-import { BankAccountType, TaxLevelOptions } from './constants'
+import {
+  BankAccountType,
+  INCOME,
+  ISK,
+  RatioType,
+  TaxLevelOptions,
+} from './constants'
 import { socialInsuranceAdministrationMessage } from './messages'
 
 export const formatBankInfo = (bankInfo: string) => {
@@ -225,4 +231,34 @@ export const getTypesOptions = (
         label: item.incomeTypeName || '',
       }
     })
+}
+
+export const shouldShowEqualIncomePerMonth = (
+  isForeign: boolean,
+  activeField?: Record<string, string>,
+): boolean => {
+  const unevenAndEmploymentIncome =
+    activeField?.unevenIncomePerYear?.[0] !== YES ||
+    (activeField?.incomeCategory !== INCOME &&
+      activeField?.unevenIncomePerYear?.[0] === YES)
+
+  const isCurrencyValid = isForeign
+    ? activeField?.currency !== ISK
+    : activeField?.currency === ISK
+
+  return (
+    activeField?.income === RatioType.MONTHLY &&
+    isCurrencyValid &&
+    unevenAndEmploymentIncome
+  )
+}
+
+export const shouldShowIncomePlanMonths = (
+  activeField?: Record<string, string>,
+): boolean => {
+  return (
+    activeField?.income === RatioType.MONTHLY &&
+    activeField?.incomeCategory === INCOME &&
+    activeField?.unevenIncomePerYear?.[0] === YES
+  )
 }

@@ -416,7 +416,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
       const applicationType = getApplicationType(application).toLowerCase()
 
-      const response = await this.siaClientService.sendApplication(
+      const response = await this.siaClientService.sendApplicationV2(
         auth,
         oldAgePensionDTO,
         applicationType,
@@ -503,12 +503,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       const marpDTO =
         transformApplicationToMedicalAndRehabilitationPaymentsDTO(application)
 
-      const response =
-        await this.siaClientService.sendMedicalAndRehabilitationPaymentsApplication(
-          auth,
-          marpDTO,
-          application.typeId.toLowerCase(),
-        )
+      const response = await this.siaClientService.sendApplicationV2(
+        auth,
+        marpDTO,
+        application.typeId.toLowerCase(),
+      )
 
       return response
     }

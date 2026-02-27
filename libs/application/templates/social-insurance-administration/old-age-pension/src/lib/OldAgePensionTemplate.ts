@@ -24,6 +24,7 @@ import {
   DefaultStateLifeCycle,
   coreHistoryMessages,
   EphemeralStateLifeCycle,
+  YES,
 } from '@island.is/application/core'
 
 import { dataSchema } from './dataSchema'
@@ -39,19 +40,26 @@ import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationLatestIncomePlan,
+  SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+  SocialInsuranceAdministrationIncomePlanConditionsApi,
 } from '../dataProviders'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
+  getApplicationExternalData,
 } from './oldAgePensionUtils'
 import {
   Actions,
   BankAccountType,
+  defaultIncomeTypes,
   Events,
+  INCOME,
+  RatioType,
   Roles,
   States,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { CodeOwners } from '@island.is/shared/constants'
+import isEmpty from 'lodash/isEmpty'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -69,6 +77,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
+        exit: ['populateIncomeTable'],
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
@@ -101,6 +110,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationLatestIncomePlan,
+                SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+                SocialInsuranceAdministrationIncomePlanConditionsApi,
               ],
               delete: true,
             },
@@ -111,7 +122,12 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearBankAccountInfo', 'clearTemp', 'restoreAnswersFromTemp'],
+        exit: [
+          'clearBankAccountInfo',
+          'clearTemp',
+          'restoreAnswersFromTemp',
+          'unsetIncomePlan',
+        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -473,9 +489,9 @@ const OldAgePensionTemplate: ApplicationTemplate<
       }),
       clearBankAccountInfo: assign((context) => {
         const { application } = context
-        const { bankAccountType } = getApplicationAnswers(application.answers)
+        const { paymentInfo } = getApplicationAnswers(application.answers)
 
-        if (bankAccountType === BankAccountType.ICELANDIC) {
+        if (paymentInfo?.bankAccountType === BankAccountType.ICELANDIC) {
           unset(application.answers, 'paymentInfo.iban')
           unset(application.answers, 'paymentInfo.swift')
           unset(application.answers, 'paymentInfo.bankName')
@@ -483,7 +499,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           unset(application.answers, 'paymentInfo.currency')
         }
 
-        if (bankAccountType === BankAccountType.FOREIGN) {
+        if (paymentInfo?.bankAccountType === BankAccountType.FOREIGN) {
           unset(application.answers, 'paymentInfo.bank')
         }
 
@@ -515,6 +531,97 @@ const OldAgePensionTemplate: ApplicationTemplate<
           )
           unset(answers, 'fileUploadAdditionalFilesRequired')
         }
+
+        return context
+      }),
+      populateIncomeTable: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const { latestIncomePlan } = getApplicationExternalData(
+          application.externalData,
+        )
+
+        if (isEmpty(latestIncomePlan)) {
+          set(answers, 'incomePlanTable', cloneDeep(defaultIncomeTypes))
+        }
+
+        if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
+          latestIncomePlan.incomeTypeLines.forEach((income, i) => {
+            set(
+              answers,
+              `incomePlanTable[${i}].incomeType`,
+              income.incomeTypeName,
+            )
+            set(
+              answers,
+              `incomePlanTable[${i}].incomePerYear`,
+              String(income.totalSum),
+            )
+            set(answers, `incomePlanTable[${i}].currency`, income.currency)
+            set(answers, `incomePlanTable[${i}].income`, RatioType.YEARLY)
+            set(
+              answers,
+              `incomePlanTable[${i}].incomeCategory`,
+              income.incomeCategoryName,
+            )
+          })
+        }
+
+        return context
+      }),
+      unsetIncomePlan: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const { incomePlan } = getApplicationAnswers(answers)
+
+        incomePlan.forEach((income, index) => {
+          if (
+            (income.income === RatioType.MONTHLY &&
+              income.incomeCategory === INCOME &&
+              income.unevenIncomePerYear?.[0] === YES) ||
+            income.income === RatioType.YEARLY
+          ) {
+            unset(
+              application.answers,
+              `incomePlanTable[${index}].equalForeignIncomePerMonth`,
+            )
+
+            unset(
+              application.answers,
+              `incomePlanTable[${index}].equalIncomePerMonth`,
+            )
+          }
+
+          if (
+            (income.income === RatioType.MONTHLY &&
+              income.unevenIncomePerYear?.[0] !== YES) ||
+            income.income === RatioType.YEARLY ||
+            income.incomeCategory !== INCOME
+          ) {
+            unset(application.answers, `incomePlanTable[${index}].january`)
+            unset(application.answers, `incomePlanTable[${index}].february`)
+            unset(application.answers, `incomePlanTable[${index}].march`)
+            unset(application.answers, `incomePlanTable[${index}].april`)
+            unset(application.answers, `incomePlanTable[${index}].may`)
+            unset(application.answers, `incomePlanTable[${index}].june`)
+            unset(application.answers, `incomePlanTable[${index}].july`)
+            unset(application.answers, `incomePlanTable[${index}].august`)
+            unset(application.answers, `incomePlanTable[${index}].september`)
+            unset(application.answers, `incomePlanTable[${index}].october`)
+            unset(application.answers, `incomePlanTable[${index}].november`)
+            unset(application.answers, `incomePlanTable[${index}].december`)
+          }
+
+          if (
+            income.income === RatioType.YEARLY ||
+            income.incomeCategory !== INCOME
+          ) {
+            unset(
+              application.answers,
+              `incomePlanTable[${index}].unevenIncomePerYear`,
+            )
+          }
+        })
 
         return context
       }),

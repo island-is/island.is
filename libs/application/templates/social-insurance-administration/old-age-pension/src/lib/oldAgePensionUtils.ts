@@ -1,13 +1,16 @@
 import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import {
-  BankAccountType,
   MONTHS,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   Attachments,
   BankInfo,
+  CategorizedIncomeTypes,
   FileType,
+  IncomePlanConditions,
+  IncomePlanRow,
+  LatestIncomePlan,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
@@ -131,27 +134,17 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'tempAnswers',
   ) as Application['answers']
 
-  const bankAccountType = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountType',
-  ) as BankAccountType
-
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
-
-  const iban = getValueViaPath(answers, 'paymentInfo.iban') as string
-
-  const swift = getValueViaPath(answers, 'paymentInfo.swift') as string
-
-  const bankName = getValueViaPath(answers, 'paymentInfo.bankName') as string
-
-  const bankAddress = getValueViaPath(
-    answers,
-    'paymentInfo.bankAddress',
-  ) as string
-
-  const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
+  const bank = getValueViaPath<PaymentInfo>(answers, 'paymentInfo.bank')
 
   const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
+
+  const incomePlan =
+    getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
+
+  const noOtherIncomeConfirmation = getValueViaPath(
+    answers,
+    'incomePlan.noOtherIncomeConfirmation',
+  ) as YesOrNo
 
   return {
     pensionFundQuestion,
@@ -177,13 +170,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     earlyRetirementAttachments,
     taxLevel,
     tempAnswers,
-    bankAccountType,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
     paymentInfo,
+    incomePlan,
+    noOtherIncomeConfirmation,
   }
 }
 
@@ -253,10 +242,21 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationCurrencies.data',
   ) as Array<string>
 
-  const hasIncomePlanStatus = getValueViaPath(
+  const latestIncomePlan = getValueViaPath(
     externalData,
-    'socialInsuranceAdministrationLatestIncomePlan.data.status',
-  ) as string
+    'socialInsuranceAdministrationLatestIncomePlan.data',
+  ) as LatestIncomePlan
+
+  const incomePlanConditions = getValueViaPath<IncomePlanConditions>(
+    externalData,
+    'socialInsuranceAdministrationIncomePlanConditions.data',
+  )
+
+  const categorizedIncomeTypes =
+    getValueViaPath<CategorizedIncomeTypes[]>(
+      externalData,
+      'socialInsuranceAdministrationCategorizedIncomeTypes.data',
+    ) ?? []
 
   return {
     residenceHistory,
@@ -272,7 +272,9 @@ export const getApplicationExternalData = (
     currencies,
     userProfileEmail,
     userProfilePhoneNumber,
-    hasIncomePlanStatus,
+    latestIncomePlan,
+    incomePlanConditions,
+    categorizedIncomeTypes,
   }
 }
 

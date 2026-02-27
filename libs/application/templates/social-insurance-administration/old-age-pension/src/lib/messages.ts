@@ -280,33 +280,22 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'An application for old age pension has been sent to the Social Insurance Administration',
     },
-    bulletList: {
-      id: `oap.application:conclusionScreen.bulletList#markdown`,
-      defaultMessage: `* Þú verður að skila inn tekjuáætlun, ef ekki búið nú þegar.\n* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til elllífeyris. Vinnslutími umsókna um ellilífeyri er fjórar til sex vikur.\n* **Þú gætir átt rétt á:**\n\t* Heimilisuppbót\n\t* Barnalífeyri\n\t* Uppbót á lífeyri\n\t* Ellilífeyri vegna EES.`,
-      description: 'BulletList',
-    },
-    nextStepsText: {
-      id: 'oap.application:conclusionScreen.nextStepsText',
+    expandableIntro: {
+      id: 'oap.application:conclusionScreen.expandableIntro#markdown',
       defaultMessage:
-        'Hjá Tryggingastofnun verður farið yfir umsóknina. Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa borist er afstaða tekin til ellilífeyris.',
+        '* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.  \n\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. \n\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til elllífeyris. Vinnslutími umsókna um ellilífeyri er fjórar til sex vikur.',
       description:
-        'The application will be reviewed at the Insurance Agency. If needed, additional information/data is requested. Once all the necessary data have been received, a position is taken on the retirement pension.',
+        '* The Social Insurance Administration will review your application and confirm that all information provided is accurate.\n* If required, they will call for additional information/documents.\n* Once all necessary documents have been received, the Social Insurance Administration will review the application and determine whether an old-age pension will be granted. The processing time for old-age pensions applications is four to six weeks.',
+    },
+    expandableDescription: {
+      id: `oap.application:conclusionScreen.expandableDescription#markdown`,
+      defaultMessage:
+        '# **Þú gætir átt rétt á:**\n\n Tryggingastofnun vekur athygli þína á að því þú gætir átt rétt á öðrum greiðslum samhliða ellilífeyrisgreiðslum, svo sem:\n* Heimilisuppbót\n* Barnalífeyri\n* Uppbót á lífeyri\n* Ellilífeyri vegna EES.\n\nTryggingastofnun hvetur þig til að sækja um þessar greiðslur teljir þú þig eiga rétt á þeim. Þær er hægt að nálgast inni á [tr.is](https://tr.is) og velur þar "Mínar síður". Innskráning á Mínar síður fer fram með rafrænum skilríkjum.\n\n Ef þú hefur spurningar eða athugasemdir er ávallt hægt að hafa samband í síma 560 4400 eða senda fyrirspurn í gegnum Mínar síður á tr.is.',
+      description: 'BulletList',
     },
   }),
 
   fileUpload: defineMessages({
-    pensionFileTitle: {
-      id: 'oap.application:fileUpload.pensionFile.title',
-      defaultMessage: 'Fylgiskjöl lífeyrissjóða',
-      description: 'Pension fund attachment',
-    },
-    pensionFileDescription: {
-      id: 'oap.application:fileUpload.pensionFile.description#markdown',
-      defaultMessage:
-        'Hér getur þú skilað staðfestingu greiðslna hjá lífeyrissjóði. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you can return confirmation of payments to the pension fund. Note that the document must be in .pdf format.',
-    },
     fishermenFileTitle: {
       id: 'oap.application:fileUpload.sailor.title',
       defaultMessage: 'Fylgiskjöl sjómanna',
@@ -526,9 +515,9 @@ export const statesMessages = defineMessages({
   oldAgePensionSubmittedContent: {
     id: 'oap.application:oldAgePensionSubmittedContent#markdown',
     defaultMessage:
-      'Umsókn þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til hún er tekin til yfirferðar. Athugið að ef ekki er búið að skila inn tekjuáætlun þarf að gera það hér.',
+      'Umsókn þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til hún er tekin til yfirferðar.',
     description:
-      'Your application is awaiting review. It is possible to edit the application until it is under review. Please note that if you have not submitted an income plan, you must do so here.',
+      'Your application is awaiting review. It is possible to edit the application until it is under review.',
   },
   oldAgePensionDismissed: {
     id: 'oap.application:application.dismissed',

@@ -487,6 +487,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
   }),
 
   incomePlan: defineMessages({
+    incomePlanInstructionsSubSectionTitle: {
+      id: 'sia.application:income.plan.instructions.sub.section.title',
+      defaultMessage: 'Tekjuáætlun - Leiðbeiningar',
+      description: 'Income Plan - Instructions',
+    },
     subSectionTitle: {
       id: 'sia.application:income.plan.sub.section.title',
       defaultMessage: 'Tekjuáætlun',
@@ -595,6 +600,20 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       id: 'sia.application:income.plan.select.currency',
       defaultMessage: 'Veldu gjaldmiðil',
       description: 'Select currency',
+    },
+    alertMessage: {
+      id: 'sia.application:income.plan.alert.message',
+      defaultMessage:
+        'Þú hefur ekki sett inn neina upphæð í tekjuáætlun. Ertu viss um að tekjuáætlunin sem þú sért að senda inn sé rétt? Röng tekjuáætlun getur leitt til kröfu sem þú þarft að greiða.',
+      description:
+        'You have not entered any amount in the income plan. Are you sure the income plan you are submitting is correct? An incorrect income plan may result in a claim that you will have to pay.',
+    },
+    noOtherIncomeConfirmation: {
+      id: 'sia.application:income.plan.no.other.income.confirmation',
+      defaultMessage:
+        'Ertu viss um að þú sért ekki með neinar tekjur frá öðrum en Tryggingastofnun á árinu?',
+      description:
+        'Are you sure you do not have any income from sources other than the Social Insurance Administration during the year?',
     },
   }),
 
