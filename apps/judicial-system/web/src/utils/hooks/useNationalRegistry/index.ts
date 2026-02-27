@@ -1,9 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
-import useSWR from 'swr'
+import { useEffect, useState } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
-import { errors } from '@island.is/judicial-system-web/messages'
 import {
   NationalRegistryResponseBusiness,
   NationalRegistryResponsePerson,
@@ -13,64 +10,78 @@ import { isBusiness } from '../../utils'
 import { validate } from '../../validate'
 
 const useNationalRegistry = (nationalId?: string | null) => {
-  const { formatMessage } = useIntl()
-  const [shouldFetch, setShouldFetch] = useState<boolean>(false)
-
-  const isMounted = useRef(false)
-
-  const isValidNationalId = validate([[nationalId, ['national-id']]]).isValid
-
-  const fetcher = (url: string) => fetch(url).then((res) => res.json())
-
-  const { data: personData, error: personError } =
-    useSWR<NationalRegistryResponsePerson>(
-      shouldFetch && nationalId && isValidNationalId && !isBusiness(nationalId)
-        ? `/api/nationalRegistry/getPersonByNationalId?nationalId=${nationalId}`
-        : null,
-      fetcher,
-    )
-
-  const personLoading = shouldFetch && !personData && !personError
-
-  const { data: businessData, error: businessError } =
-    useSWR<NationalRegistryResponseBusiness>(
-      shouldFetch && nationalId && isValidNationalId && isBusiness(nationalId)
-        ? `/api/nationalRegistry/getBusinessesByNationalId?nationalId=${nationalId}`
-        : null,
-      fetcher,
-    )
-
-  const businessLoading = shouldFetch && !businessData && !businessError
+  const [personData, setPersonData] = useState<NationalRegistryResponsePerson>()
+  const [businessData, setBusinessData] =
+    useState<NationalRegistryResponseBusiness>()
+  const [error, setError] = useState<Error>()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [notFound, setNotFound] = useState<boolean>(false)
 
   useEffect(() => {
-    if (shouldFetch) {
+    const cleanNationalId = nationalId?.replace('-', '')
+    const isValidNationalId = validate([
+      [cleanNationalId, ['national-id']],
+    ]).isValid
+
+    setError(undefined)
+    setNotFound(false)
+
+    if (!nationalId || !isValidNationalId) {
+      setPersonData(undefined)
+      setBusinessData(undefined)
+
+      setIsLoading(false)
       return
-    } else if (isMounted.current) {
-      setShouldFetch(true)
-    } else {
-      isMounted.current = true
     }
-  }, [nationalId, shouldFetch])
 
-  useEffect(() => {
-    if (
-      (personData && personData.error) ||
-      personError ||
-      (businessData && businessData.error) ||
-      businessError
-    ) {
-      toast.error(formatMessage(errors.nationalRegistry))
-    }
-  }, [personData, businessData, personError, businessError, formatMessage])
+    const controller = new AbortController()
+    const isBusinessNationalId = isBusiness(nationalId)
+    const url = `/api/nationalRegistry/${
+      isBusinessNationalId
+        ? 'getBusinessesByNationalId'
+        : 'getPersonByNationalId'
+    }?nationalId=${nationalId}`
 
-  return {
-    personData,
-    personError,
-    personLoading,
-    businessData,
-    businessError,
-    businessLoading,
-  }
+    setIsLoading(true)
+
+    // Reset state before fetching new data
+    setPersonData(undefined)
+    setBusinessData(undefined)
+    setNotFound(false)
+
+    fetch(url, { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Request failed with status ${res.status}`)
+        }
+
+        return res.json()
+      })
+      .then((res) => {
+        if (res.items && res.items.length === 0) {
+          setNotFound(true)
+          return
+        }
+
+        return res
+      })
+      .then(isBusinessNationalId ? setBusinessData : setPersonData)
+      .catch((e) => {
+        if (e.name !== 'AbortError') {
+          setError(e instanceof Error ? e : new Error('Unknown error'))
+          toast.error('Upp kom villa við að sækja gögn frá Þjóðskrá')
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setIsLoading(false)
+        }
+      })
+
+    return () => controller.abort()
+  }, [nationalId])
+
+  return { personData, businessData, error, isLoading, notFound }
 }
 
 export default useNationalRegistry

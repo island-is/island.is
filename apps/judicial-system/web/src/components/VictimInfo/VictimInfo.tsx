@@ -42,8 +42,7 @@ export const VictimInfo: React.FC<Props> = ({
   const [victimNationalIdUpdate, setVictimNationalIdUpdate] = useState<
     string | null
   >(null)
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
-  const { personData, personLoading } = useNationalRegistry(
+  const { personData, isLoading, notFound } = useNationalRegistry(
     victimNationalIdUpdate,
   )
 
@@ -55,11 +54,12 @@ export const VictimInfo: React.FC<Props> = ({
 
   useEffect(
     () => {
-      if (!victimNationalIdUpdate) return
+      if (!victimNationalIdUpdate || victimNationalIdUpdate.length !== 10) {
+        return
+      }
 
       const items = personData?.items || []
       const person = items[0]
-      setNationalIdNotFound(!personLoading && items.length === 0)
 
       updateVictimAndSetState(
         {
@@ -72,7 +72,7 @@ export const VictimInfo: React.FC<Props> = ({
       )
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [personData, personLoading],
+    [personData, isLoading],
   )
 
   return (
@@ -93,11 +93,10 @@ export const VictimInfo: React.FC<Props> = ({
           <Box marginBottom={2}>
             <Checkbox
               name={`hasNationalId-${victim.id}`}
-              label={'Brotaþoli er ekki með íslenska kennitölu'}
+              label="Brotaþoli er ekki með íslenska kennitölu"
               checked={victim.hasNationalId === false}
               onChange={(event) => {
                 setVictimNationalIdUpdate(null)
-                setNationalIdNotFound(false)
                 updateVictimAndSetState(
                   {
                     caseId: workingCase.id,
@@ -112,7 +111,6 @@ export const VictimInfo: React.FC<Props> = ({
               large
             />
           </Box>
-
           <Box marginBottom={2}>
             <Box marginBottom={2}>
               <InputNationalId
@@ -120,23 +118,16 @@ export const VictimInfo: React.FC<Props> = ({
                 value={victim.nationalId ?? ''}
                 onBlur={(value) => handleNationalIdBlur(value)}
                 onChange={(value) => {
-                  if (value.length < 11) {
-                    setNationalIdNotFound(false)
-                  } else if (value.length === 11) {
-                    handleNationalIdBlur(value)
-                  }
+                  handleNationalIdBlur(value)
                 }}
                 required={victim.hasNationalId !== false}
               />
-              {victim.nationalId?.length === 10 &&
-                nationalIdNotFound &&
-                !personLoading && (
-                  <Text color="red600" variant="eyebrow" marginTop={1}>
-                    Ekki tókst að fletta upp kennitölu
-                  </Text>
-                )}
+              {notFound && !isLoading && (
+                <Text color="red600" variant="eyebrow" marginTop={1}>
+                  Ekki tókst að fletta upp kennitölu
+                </Text>
+              )}
             </Box>
-
             <Box marginBottom={2}>
               <InputName
                 value={victim.name ?? ''}

@@ -42,8 +42,7 @@ describe('Validate time format', () => {
 describe('Validate national id format', () => {
   test('should be valid if all digits filled in', () => {
     // Arrange
-    // eslint-disable-next-line local-rules/disallow-kennitalas
-    const nid = '999999-9999'
+    const nid = '000000-0000'
 
     // Act
     const r = validate([[nid, ['national-id']]])
@@ -52,7 +51,18 @@ describe('Validate national id format', () => {
     expect(r.isValid).toEqual(true)
   })
 
-  test('should be valid given just the first six digits', () => {
+  test('should be valid with no -', () => {
+    // Arrange
+    const nid = '0000000000'
+
+    // Act
+    const r = validate([[nid, ['national-id']]])
+
+    // Assert
+    expect(r.isValid).toEqual(true)
+  })
+
+  test('should not be valid given just the first six digits', () => {
     // Arrange
     const nid = '010101'
 
@@ -60,8 +70,8 @@ describe('Validate national id format', () => {
     const r = validate([[nid, ['national-id']]])
 
     // Assert
-    expect(r.isValid).toEqual(true)
-    expect(r.errorMessage).toEqual('')
+    expect(r.isValid).toEqual(false)
+    expect(r.errorMessage).toEqual('Dæmi: 000000-0000')
   })
 
   test('should not be valid given too few digits', () => {

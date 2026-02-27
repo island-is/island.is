@@ -171,7 +171,7 @@ export const UserForm: FC<Props> = ({
     mobileNumber: existingUser.mobileNumber,
   })
 
-  const { personData, personError } = useNationalRegistry(user.nationalId)
+  const { personData, error } = useNationalRegistry(user.nationalId)
 
   const [nameErrorMessage, setNameErrorMessage] = useState<string>()
   const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>()
@@ -193,7 +193,7 @@ export const UserForm: FC<Props> = ({
   )
 
   useEffect(() => {
-    if (personError || (personData && personData.items?.length === 0)) {
+    if (error || (personData && personData.items?.length === 0)) {
       setNationalIdErrorMessage('Kennitala fannst ekki í þjóðskrá')
       return
     }
@@ -202,7 +202,7 @@ export const UserForm: FC<Props> = ({
       setNationalIdErrorMessage(undefined)
       setName(personData.items[0].name)
     }
-  }, [personData, personError, setName])
+  }, [personData, error, setName])
 
   const selectInstitutions = institutions
     .filter(
