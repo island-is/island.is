@@ -7,6 +7,7 @@ import {
 } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../../shared'
+import { AttachmentS3Service } from '../../../shared/services'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import {
   coreErrorMessages,
@@ -14,7 +15,9 @@ import {
   YES,
 } from '@island.is/application/core'
 import {
+  Application,
   ApplicationTypes,
+  ApplicationWithAttachments,
   FormValue,
   InstitutionNationalIds,
 } from '@island.is/application/types'
@@ -45,6 +48,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly attachmentS3Service: AttachmentS3Service,
   ) {
     super(ApplicationTypes.DRIVING_LICENSE)
   }
@@ -98,7 +102,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     let result
     try {
-      result = await this.createLicense(nationalId, answers, auth)
+      result = await this.createLicense(nationalId, answers, auth, application)
     } catch (e) {
       this.log('error', 'Creating license failed', {
         e,
@@ -139,6 +143,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     nationalId: string,
     answers: FormValue,
     auth: User,
+    application: Application,
   ): Promise<NewDrivingLicenseResult> {
     // If using fake data, skip calling RLS and pretend submission succeeded
     const useFakeData = getValueViaPath<'yes' | 'no'>(
@@ -160,7 +165,16 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
     const remarks = answers.hasHealthRemarks === 'yes'
-    const needsQualityPhoto = answers.willBringQualityPhoto === 'yes'
+
+    // Determine photo selection
+    const selectedPhoto = getValueViaPath<string>(
+      answers,
+      'selectLicensePhoto',
+    )
+    const needsQualityPhoto =
+      selectedPhoto === 'bringNewPhoto' ||
+      answers.willBringQualityPhoto === 'yes'
+
     const jurisdictionId = Number(
       getValueViaPath(answers, 'delivery.jurisdiction'),
     )
@@ -191,6 +205,29 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     }
 
     if (applicationFor === 'B-full-renewal-65') {
+      // Read uploaded health certificate if present
+      let healtCertificate: string | null = null
+      const healthCertFiles = getValueViaPath<
+        Array<{ key: string; name: string }>
+      >(answers, 'healthCertificate')
+
+      if (healthCertFiles?.length) {
+        try {
+          const files = await this.attachmentS3Service.getFiles(
+            application as ApplicationWithAttachments,
+            ['healthCertificate'],
+          )
+          const firstFile = files.find((f) => f.fileContent)
+          if (firstFile) {
+            healtCertificate = firstFile.fileContent
+          }
+        } catch (e) {
+          this.log('error', 'Failed to read health certificate files for 65+', {
+            e,
+          })
+        }
+      }
+
       return this.drivingLicenseService.renewDrivingLicense65AndOver(
         auth.authorization.replace('Bearer ', ''),
         {
@@ -203,6 +240,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
                 sendPlasticToPerson: deliveryMethod === Pickup.POST,
               }
             : {}),
+          ...(healtCertificate ? { healtCertificate } : {}),
         },
       )
     } else if (applicationFor === 'B-full') {
@@ -213,10 +251,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         sendLicenseInMail: deliveryMethod === Pickup.POST ? 1 : 0,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
-        licenseCategory:
-          applicationFor === 'B-full'
-            ? DrivingLicenseCategory.B
-            : DrivingLicenseCategory.BE,
+        licenseCategory: DrivingLicenseCategory.B,
       })
     } else if (applicationFor === 'B-temp') {
       if (needsHealthCert) {
@@ -242,16 +277,71 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         answers,
         'drivingInstructor',
       )
-      const email = getValueViaPath<string>(answers, 'email')
-      const phone = getValueViaPath<string>(answers, 'phone')
+      const beEmail = getValueViaPath<string>(answers, 'email')
+      const bePhone = getValueViaPath<string>(answers, 'phone')
+
+      // Determine biometric IDs from photo selection
+      const imageBiometricsId =
+        !selectedPhoto ||
+        selectedPhoto === 'qualityPhoto' ||
+        selectedPhoto === 'fakePhoto' ||
+        selectedPhoto === 'bringNewPhoto'
+          ? null
+          : selectedPhoto
+
+      const allThjodskraPhotos = getValueViaPath<
+        { biometricId: string; contentSpecification: string }[]
+      >(application.externalData, 'allPhotosFromThjodskra.data.images', [])
+
+      const signatureBiometricsId = imageBiometricsId
+        ? allThjodskraPhotos?.find(
+            (p) => p.contentSpecification === 'SIGNATURE',
+          )?.biometricId ?? null
+        : null
+
+      // Get health certificate files if uploaded
+      let contentList = null
+      if (needsHealthCert || remarks) {
+        const healthCertFiles = getValueViaPath<
+          Array<{ key: string; name: string }>
+        >(answers, 'healthCertificate')
+
+        if (healthCertFiles?.length) {
+          try {
+            const files = await this.attachmentS3Service.getFiles(
+              application as ApplicationWithAttachments,
+              ['healthCertificate'],
+            )
+
+            contentList = files
+              .filter((f) => f.fileContent)
+              .map((f) => {
+                const ext = f.fileName.split('.').pop() ?? ''
+                return {
+                  fileName: f.fileName,
+                  fileExtension: ext,
+                  contentType: ext === 'pdf' ? 'application/pdf' : `image/${ext}`,
+                  content: f.fileContent,
+                  description: 'Læknisvottorð',
+                }
+              })
+          } catch (e) {
+            this.log('error', 'Failed to read health certificate files', { e })
+          }
+        }
+      }
+
       return this.drivingLicenseService.applyForBELicense(
         nationalId,
         auth.authorization,
         {
           jurisdiction: jurisdictionId,
           instructorSSN: instructorSSN ?? '',
-          primaryPhoneNumber: phone ?? '',
-          studentEmail: email ?? '',
+          primaryPhoneNumber: bePhone ?? '',
+          studentEmail: beEmail ?? '',
+          contentList: contentList?.length ? contentList : undefined,
+          photoBiometricsId: imageBiometricsId,
+          signatureBiometricsId: signatureBiometricsId,
         },
       )
     }

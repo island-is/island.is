@@ -5,17 +5,20 @@ import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useFormContext } from 'react-hook-form'
-import { BE } from '../lib/constants'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
 }
 
-const HealthDeclaration = ({ field, application }: PropTypes): JSX.Element => {
+const HealthDeclaration = ({
+  field,
+  application,
+  error,
+}: PropTypes): JSX.Element => {
   const { formatMessage } = useLocale()
   const props = field.props as { title?: string; label: string }
 
-  const { setValue, getValues } = useFormContext()
+  const { setValue } = useFormContext()
 
   const checkForGlassesMismatch = (value: string) => {
     if (field.id === 'healthDeclaration.usesContactGlasses') {
@@ -49,6 +52,7 @@ const HealthDeclaration = ({ field, application }: PropTypes): JSX.Element => {
             split="1/2"
             smallScreenSplit="1/2"
             largeButtons={false}
+            error={error}
             defaultValue={
               (getValueViaPath(application.answers, field.id) as string[]) ??
               undefined
@@ -64,26 +68,6 @@ const HealthDeclaration = ({ field, application }: PropTypes): JSX.Element => {
               },
             ]}
             onSelect={(value) => {
-              //TODO: Remove when RLS/SGS supports health certificate in BE license
-              if (application.answers.applicationFor === BE) {
-                const currValues = getValues(
-                  'healthDeclarationValidForBELicense',
-                ) as string[]
-                if (
-                  value === YES &&
-                  !(currValues as string[])?.some((x) => x === field.id)
-                ) {
-                  setValue('healthDeclarationValidForBELicense', [
-                    ...(currValues ?? []),
-                    field.id,
-                  ])
-                } else {
-                  setValue(
-                    'healthDeclarationValidForBELicense',
-                    currValues?.filter((x) => x !== field.id),
-                  )
-                }
-              }
               if (field.id === 'healthDeclaration.usesContactGlasses') {
                 checkForGlassesMismatch(value)
               }
