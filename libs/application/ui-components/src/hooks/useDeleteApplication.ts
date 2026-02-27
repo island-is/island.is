@@ -4,10 +4,7 @@ import { DELETE_APPLICATION as DELETE_FORM_SYSTEM_APPLICATION } from '@island.is
 import { handleServerError } from '../utilities/handleServerError'
 import { useLocale } from '@island.is/localization'
 
-export const useDeleteApplication = (
-  refetch?: (() => void) | undefined,
-  typeId?: string,
-) => {
+export const useDeleteApplication = (refetch?: (() => void) | undefined) => {
   const { formatMessage } = useLocale()
   const [deleteApplicationMutation, { error, loading }] = useMutation(
     DELETE_APPLICATION,
