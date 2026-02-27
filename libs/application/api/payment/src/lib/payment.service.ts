@@ -56,14 +56,13 @@ export class PaymentService {
 
   async fulfillPayment(
     paymentId: string,
-    receptionID: string,
     applicationId: string,
   ): Promise<void> {
     try {
       await this.paymentModel.update(
         {
           fulfilled: true,
-          reference_id: receptionID,
+          reference_id: null,
         },
         {
           where: {
@@ -330,6 +329,36 @@ export class PaymentService {
     return {
       id: paymentModel.id,
       paymentUrl,
+    }
+  }
+
+  async refundPayment(
+    applicationId: string,
+    reasonForRefund?: string,
+  ): Promise<void> {
+    const payment = await this.findPaymentByApplicationId(applicationId)
+    if (!payment) {
+      throw new NotFoundException(
+        `payment was not found for application id ${applicationId}`,
+      )
+    }
+    if (!payment.request_id) {
+      throw new Error('Request ID is not set for payment')
+    }
+
+    try {
+      await this.paymentsApi.cardPaymentControllerRefund({
+        refundCardPaymentInput: {
+          paymentFlowId: payment.request_id,
+          reasonForRefund,
+        },
+      })
+    } catch (error) {
+      this.logger.error(
+        `Failed to refund payment for application ${applicationId}`,
+        error,
+      )
+      throw error
     }
   }
 

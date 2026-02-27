@@ -28,6 +28,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
 import uniqBy from 'lodash/uniqBy'
 import { prereqMessages } from '@island.is/application/templates/hms/fire-compensation-appraisal'
+import { SharedTemplateApiService } from '../../../shared'
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
   constructor(
@@ -36,6 +37,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     private hmsApplicationSystemService: ApplicationApi,
     private readonly attachmentService: AttachmentS3Service,
     private readonly notificationsService: NotificationsService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.FIRE_COMPENSATION_APPRAISAL)
   }
@@ -299,6 +301,10 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         )
       }
 
+      const paymentStatus =
+        await this.sharedTemplateAPIService.getPaymentStatus(application.id)
+      console.log('paymentStatus', JSON.stringify(paymentStatus, null, 2))
+
       // Map the application to the dto interface
       const applicationDto = mapAnswersToApplicationDto(application, files)
 
@@ -307,40 +313,61 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         applicationDto,
       })
 
-      if (res.status !== 200) {
+      // if (res.status !== 200) {
+      // eslint-disable-next-line no-constant-condition
+      if (true) {
+        // trigger refund for testing
+
+        await this.sharedTemplateAPIService.refundPayment(
+          application.id,
+          'Fulfillment failure',
+        )
+
         throw new TemplateApiError(
           'Failed to submit application, non 200 status',
           500,
         )
       }
+
       // Map the photos to the dto interface
-      const applicationFilesContentDtoArray =
-        mapAnswersToApplicationFilesContentDto(application, files)
+      // const applicationFilesContentDtoArray =
+      //   mapAnswersToApplicationFilesContentDto(application, files)
 
-      // Send the photos in to HMS
-      const photoResults = await Promise.all(
-        applicationFilesContentDtoArray.map(
-          async (applicationFilesContentDto) => {
-            return await this.hmsApplicationSystemService.apiApplicationUploadPost(
-              {
-                applicationFilesContentDto,
-              },
-            )
-          },
-        ),
-      )
+      // // Send the photos in to HMS
+      // const photoResults = await Promise.all(
+      //   applicationFilesContentDtoArray.map(
+      //     async (applicationFilesContentDto) => {
+      //       return await this.hmsApplicationSystemService.apiApplicationUploadPost(
+      //         {
+      //           applicationFilesContentDto,
+      //         },
+      //       )
+      //     },
+      //   ),
+      // )
 
-      if (photoResults.some((result) => result.status !== 200)) {
-        throw new TemplateApiError(
-          'Failed to upload photos, non 200 status',
-          500,
-        )
-      }
+      // if (photoResults.some((result) => result.status !== 200)) {
+      //   throw new TemplateApiError(
+      //     'Failed to upload photos, non 200 status',
+      //     500,
+      //   )
+      // }
 
-      return res
+      // return res
     } catch (e) {
       this.logger.error('Failed to submit application:', e.message)
-      throw new TemplateApiError(e, 500)
+      if (e instanceof TemplateApiError) {
+        const error = e as TemplateApiError
+        this.logger.error(
+          'Failed to submit application:',
+          JSON.stringify(error, null, 2),
+        )
+        throw error
+      }
+      throw new TemplateApiError(
+        `Failed to submit application: ${e.message}`,
+        500,
+      )
     }
   }
 }
