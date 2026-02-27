@@ -222,7 +222,7 @@ initContainer:
     DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
 namespace: 'application-system'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

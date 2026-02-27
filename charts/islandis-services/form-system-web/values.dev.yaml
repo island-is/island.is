@@ -60,7 +60,7 @@ ingress:
           - '/form'
 namespace: 'form-system-web'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

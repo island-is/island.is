@@ -59,7 +59,7 @@ ingress:
           - '/'
 namespace: 'personal-representative'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
