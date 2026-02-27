@@ -19,6 +19,7 @@ export const Checkbox = ({ item, dispatch }: Props) => {
   const { fieldSettings } = item
   const { isLarge, hasDescription } = fieldSettings as FormSystemFieldSettings
   const { lang } = useLocale()
+
   return (
     <Controller
       key={item.id}
@@ -34,10 +35,13 @@ export const Checkbox = ({ item, dispatch }: Props) => {
       render={({ field, fieldState }) => (
         <CheckboxField
           name={field.name}
-          label={item?.name?.[lang] ?? ''}
+          label={
+            item.isRequired
+              ? `${item?.name?.[lang] ?? ''} *`
+              : item?.name?.[lang] ?? ''
+          }
           large={isLarge ?? false}
           subLabel={hasDescription ? item?.description?.[lang] ?? '' : ''}
-          required={item?.isRequired ?? false}
           checked={field.value ?? false}
           onChange={(e) => {
             field.onChange(e.target.checked)
