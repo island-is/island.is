@@ -48,6 +48,16 @@ hpa:
     replicas:
       max: 10
       min: 3
+httpRoute:
+  internal-gw:
+    hostnames:
+      - 'services-payment-flow-update-handler.internal.island.is'
+    parentRefs:
+      - name: 'gateway-internal'
+        namespace: 'gateway-system'
+    rules:
+      - matches:
+          - pathPrefix: '/'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payment-flow-update-handler'
 ingress:

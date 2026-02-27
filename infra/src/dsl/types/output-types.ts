@@ -40,6 +40,10 @@ export type OutputPersistentVolumeClaim = {
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
 export type IngressClass = 'nginx-internal-alb' | 'nginx-external-alb'
+export type GatewayName =
+  | 'gateway-external'
+  | 'gateway-internal'
+  | 'gateway-auth-routing'
 
 export interface HelmService {
   replicaCount?: {
@@ -101,6 +105,16 @@ export interface HelmService {
       }
       pathTypeOverride?: 'Exact' | 'Prefix' | 'ImplementationSpecific'
       hosts: { host: string; paths: string[] }[]
+    }
+  }
+
+  httpRoute?: {
+    [name: string]: {
+      parentRefs: { name: GatewayName; namespace: string }[]
+      hostnames: string[]
+      rules: {
+        matches: { pathPrefix: string }[]
+      }[]
     }
   }
 
