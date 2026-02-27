@@ -1,6 +1,6 @@
 'use strict'
 
-const { QueryTypes } = require('sequelize');
+const { QueryTypes } = require('sequelize')
 
 /**
  * Sequelize migration:
@@ -31,8 +31,8 @@ module.exports = {
           transaction,
           replacements: { oldScope: OLD_SCOPE },
           type: QueryTypes.SELECT,
-        }
-      );
+        },
+      )
 
       if (!oldScope || oldScope.length === 0) {
         return
@@ -66,8 +66,8 @@ module.exports = {
           transaction,
           replacements: { oldScope: OLD_SCOPE },
           type: QueryTypes.SELECT,
-        }
-      );
+        },
+      )
 
       if (delegationToMigrate && delegationToMigrate.length > 0) {
         const newScope = await queryInterface.sequelize.query(
@@ -76,8 +76,8 @@ module.exports = {
             transaction,
             replacements: { newScope: NEW_SCOPE },
             type: QueryTypes.SELECT,
-          }
-        );
+          },
+        )
 
         if (!newScope || newScope.length === 0) {
           throw new Error(
