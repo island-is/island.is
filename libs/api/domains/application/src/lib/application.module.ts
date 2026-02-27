@@ -17,6 +17,7 @@ export interface Config {
   baseApiUrl: string
   formSystemBaseApiUrl: string
 }
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({})
 export class ApplicationModule {
@@ -78,6 +79,7 @@ export class ApplicationModule {
           ),
         },
       ],
+      imports: [FeatureFlagModule],
       exports: [],
     }
   }

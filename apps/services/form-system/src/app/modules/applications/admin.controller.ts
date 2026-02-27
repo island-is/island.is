@@ -19,6 +19,7 @@ import { ApplicationAdminResponseDto } from './models/dto/applicationAdminRespon
 import { ApplicationStatisticsDto } from './models/dto/applicationStatistics.dto'
 import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
 import type { Locale } from '@island.is/shared/types'
+import { CurrentLocale } from './utils/currentLocale'
 
 @UseGuards(IdsUserGuard)
 @ApiTags('admin')
@@ -85,16 +86,11 @@ export class AdminController {
           required: false,
           description: 'Only return results created before specified date',
         },
-        locale: {
-          type: 'string',
-          required: false,
-          description: 'Locale',
-          example: 'en',
-        },
       },
     },
   })
   async getOverviewForSuperAdmin(
+    @CurrentLocale() locale: Locale,
     @Param('page') page: number,
     @Param('count') count: number,
     @Query('institutionNationalId') institutionNationalId?: string,
@@ -103,7 +99,6 @@ export class AdminController {
     @Query('searchStr') searchStr?: string,
     @Query('from') from?: string,
     @Query('to') to?: string,
-    @Query('locale') locale?: Locale,
   ): Promise<ApplicationAdminResponseDto> {
     return this.applicationsService.findAllApplicationsByAdminFilters(
       page,
@@ -166,17 +161,12 @@ export class AdminController {
           required: false,
           description: 'Only return results created before specified date',
         },
-        locale: {
-          type: 'string',
-          required: false,
-          description: 'Locale',
-          example: 'en',
-        },
       },
     },
   })
   async getOverviewForInstitutionAdmin(
     @CurrentUser() user: User,
+    @CurrentLocale() locale: Locale,
     @Param('page') page: number,
     @Param('count') count: number,
     @Query('formId') formId?: string,
@@ -184,7 +174,6 @@ export class AdminController {
     @Query('searchStr') searchStr?: string,
     @Query('from') from?: string,
     @Query('to') to?: string,
-    @Query('locale') locale?: Locale,
   ): Promise<ApplicationAdminResponseDto> {
     return this.applicationsService.findAllApplicationsByAdminFilters(
       page,
@@ -215,18 +204,12 @@ export class AdminController {
           required: false,
           description: `To get the application types for a specific institution's national id.`,
         },
-        locale: {
-          type: 'string',
-          required: false,
-          description: 'Locale',
-          example: 'en',
-        },
       },
     },
   })
   async getApplicationTypesForSuperAdmin(
+    @CurrentLocale() locale: Locale,
     @Query('nationalId') nationalId?: string,
-    @Query('locale') locale?: Locale,
   ): Promise<ApplicationTypeDto[]> {
     return this.applicationsService.getAllApplicationTypes(nationalId, locale)
   }
@@ -239,20 +222,10 @@ export class AdminController {
       status: 200,
       type: [ApplicationTypeDto],
     },
-    request: {
-      query: {
-        locale: {
-          type: 'string',
-          required: false,
-          description: 'Locale',
-          example: 'en',
-        },
-      },
-    },
   })
   async getApplicationTypesForInstitutionAdmin(
     @CurrentUser() user: User,
-    @Query('locale') locale?: Locale,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationTypeDto[]> {
     return this.applicationsService.getAllApplicationTypes(
       user.nationalId,
@@ -300,10 +273,12 @@ export class AdminController {
   async getStatisticsForSuperAdmin(
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
+    @CurrentLocale() locale: Locale,
   ): Promise<ApplicationStatisticsDto[]> {
     return this.applicationsService.getApplicationCountByTypeIdAndStatus(
       startDate,
       endDate,
+      locale,
     )
   }
 
@@ -332,12 +307,14 @@ export class AdminController {
   })
   async getStatisticsForInstitutionAdmin(
     @CurrentUser() user: User,
+    @CurrentLocale() locale: Locale,
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
   ): Promise<ApplicationStatisticsDto[]> {
     return this.applicationsService.getApplicationCountByTypeIdAndStatus(
       startDate,
       endDate,
+      locale,
       user.nationalId,
     )
   }

@@ -1178,9 +1178,6 @@ export class ApplicationsService {
     const { count, rows } = await this.applicationModel.findAndCountAll({
       where: {
         [Op.and]: [
-          institutionNationalId
-            ? { organizationId: institutionNationalId }
-            : {},
           formId ? { formId } : {},
           applicantNationalId ? { nationalId: applicantNationalId } : {},
           // TODOxy filter by searchStr
@@ -1199,6 +1196,9 @@ export class ApplicationsService {
               model: this.organizationModel,
               attributes: ['nationalId'],
               required: true,
+              where: institutionNationalId
+                ? { nationalId: institutionNationalId }
+                : {},
             },
           ],
         },
@@ -1233,9 +1233,16 @@ export class ApplicationsService {
           model: Application,
           attributes: [],
           required: true, // ensures at least one application exists
-          ...(institutionNationalId && {
-            where: { organizationId: institutionNationalId },
-          }),
+          include: institutionNationalId
+            ? [
+                {
+                  model: this.organizationModel,
+                  attributes: [],
+                  required: true,
+                  where: { nationalId: institutionNationalId },
+                },
+              ]
+            : [],
         },
       ],
       group: ['Form.id'],
@@ -1270,6 +1277,7 @@ export class ApplicationsService {
 
     return organizations.map((org) => ({
       nationalId: org.nationalId,
+      //TODOx should we move into serializer?
       contentfulSlug:
         getOrganizationInfoByNationalId(org.nationalId)?.type ?? '',
     }))
@@ -1278,33 +1286,47 @@ export class ApplicationsService {
   async getApplicationCountByTypeIdAndStatus(
     startDate: string,
     endDate: string,
-    institutionNationalId?: string,
     locale?: Locale,
+    institutionNationalId?: string,
   ): Promise<ApplicationStatisticsDto[]> {
-    const replacements: Record<string, unknown> = { startDate, endDate }
-    let institutionFilter = ''
+    if (!locale || !['is', 'en'].includes(locale)) {
+      throw new Error(`Unsupported locale: ${locale}`)
+    }
 
+    let institutionJoin = ''
+    let institutionFilter = ''
     if (institutionNationalId) {
-      replacements.institutionNationalId = institutionNationalId
-      institutionFilter = 'AND a.organization_id = :institutionNationalId'
+      institutionJoin = `
+      JOIN public.organization o
+        ON o.id = f.organization_id
+    `
+
+      institutionFilter = `
+      AND o.national_id = :institutionNationalId
+    `
     }
 
     const query = `
     SELECT
       a.form_id AS "formId",
-      f.name ->> :locale AS "formName",
+      f.name ->> '${locale}' AS "formName",
       COUNT(*) AS "totalCount",
-      COUNT(*) FILTER (WHERE a.state = '${ApplicationStatus.DRAFT}') AS "inProgressCount",
-      COUNT(*) FILTER (WHERE a.state = '${ApplicationStatus.COMPLETED}') AS "completedCount"
+      COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.DRAFT}') AS "inProgressCount",
+      COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.COMPLETED}') AS "completedCount"
     FROM public.application a
     JOIN public.form f ON f.id = a.form_id
+    ${institutionJoin}
     WHERE a.modified BETWEEN :startDate AND :endDate
     ${institutionFilter}
-    GROUP BY a.form_id, f.name ->> 'is', f.name ->> 'en';
+    GROUP BY a.form_id, f.name ->> '${locale}';
   `
 
     const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {
-      replacements: { ...replacements, locale },
+      replacements: {
+        startDate,
+        endDate,
+        ...(institutionNationalId ? { institutionNationalId } : {}),
+      },
       type: QueryTypes.SELECT,
     })
 

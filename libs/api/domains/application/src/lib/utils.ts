@@ -64,25 +64,6 @@ export const mapFormSystemCards = (
   }
 }
 
-export const mapFormSystemApplicationAdmin = (
-  application: FormSystemApplicationAdminDto,
-): ApplicationAdmin => {
-  return {
-    ...application,
-    assignees: [],
-    applicantActors: [],
-    state: application.status,
-    status: application.status as ApplicationListAdminResponseDtoStatusEnum,
-    isFormSystem: true,
-    typeId: application.formId,
-    name: application.formName,
-    institution: application.institutionName,
-    progress: undefined,
-    paymentStatus: undefined,
-    adminData: undefined,
-  }
-}
-
 export const cardSortByModified = (
   a: ApplicationCard,
   b: ApplicationCard,
@@ -100,6 +81,25 @@ export const applicationAdminSortByCreated = (
   }
 
   return a.id.localeCompare(b.id)
+}
+
+export const mapFormSystemApplicationAdmin = (
+  application: FormSystemApplicationAdminDto,
+): ApplicationAdmin => {
+  return {
+    ...application,
+    assignees: [],
+    applicantActors: [],
+    state: application.status,
+    status: application.status as ApplicationListAdminResponseDtoStatusEnum,
+    isFormSystem: true,
+    typeId: application.formId,
+    name: application.formName,
+    institution: application.institutionName,
+    progress: undefined,
+    paymentStatus: undefined,
+    adminData: undefined,
+  }
 }
 
 export const mapFormSystemApplicationTypeAdmin = (

@@ -8,7 +8,6 @@ import { MessageDescriptor } from 'react-intl'
 import { Organization } from '@island.is/shared/types'
 import { m } from '../lib/messages'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import { AdminApplication } from '../types/adminApplication'
 
 interface Tag {
   variant: ActionCardTag
@@ -63,22 +62,4 @@ export const getSlugFromType = (type: ApplicationTypes) => {
   }
 
   return undefined
-}
-
-export const getFilteredApplications = (
-  applications: AdminApplication[],
-  {
-    institutionFilters,
-  }: {
-    institutionFilters?: string[]
-  },
-) => {
-  let filteredApplications = applications
-  if (institutionFilters) {
-    filteredApplications = filteredApplications.filter((x) =>
-      institutionFilters.includes(x.typeId),
-    )
-  }
-
-  return filteredApplications
 }

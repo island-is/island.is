@@ -151,6 +151,9 @@ export enum Features {
   // Questionnaires
   questionnairesFromEL = 'isQuestionnairesHealthDirectorateClientEnabled',
   questionnairesFromLSH = 'isQuestionnairesLshClientEnabled',
+
+  // Admin portal
+  isFormSystemInAdminPortalEnabled = 'isFormSystemInAdminPortalEnabled',
 }
 
 export enum ServerSideFeature {

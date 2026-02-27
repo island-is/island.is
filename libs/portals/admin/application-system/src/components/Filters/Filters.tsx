@@ -4,7 +4,6 @@ import {
   Filter,
   FilterInput,
   DatePicker,
-  FilterMultiChoiceProps,
   Select,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -13,7 +12,7 @@ import { debounceTime } from '@island.is/shared/constants'
 import { useEffect, useMemo, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { m } from '../../lib/messages'
-import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
+import { ApplicationFilters } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { format as formatNationalId } from 'kennitala'
 import {
@@ -22,13 +21,12 @@ import {
 } from '../../queries/overview.generated'
 
 interface Props {
-  onTypeIdChange: (period: ApplicationFilters['typeIdValue']) => void
+  onTypeIdChange: (typeIdValue: ApplicationFilters['typeIdValue']) => void
   onSearchChange: (query: string) => void
   onSearchStrChange: (query: string) => void
   onDateChange: (period: ApplicationFilters['period']) => void
-  onFilterChange: FilterMultiChoiceProps['onChange']
+  onInstitutionChange: (institution: ApplicationFilters['institution']) => void
   onFilterClear: (categoryId?: string) => void
-  multiChoiceFilters: Record<MultiChoiceFilter, string[] | undefined>
   filters: ApplicationFilters
   applications: string[]
   organizations: Organization[]
@@ -42,11 +40,10 @@ export const Filters = ({
   onSearchChange,
   onSearchStrChange,
   onFilterClear,
-  onFilterChange,
+  onInstitutionChange,
   onDateChange,
   filters,
   numberOfDocuments,
-  multiChoiceFilters,
   organizations,
   isSuperAdmin = false,
   useAdvancedSearch = false,
@@ -98,7 +95,7 @@ export const Filters = ({
       : refetchInstitutionApplicationTypes
     refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [multiChoiceFilters])
+  }, [chosenInstituteNationalId])
 
   useDebounce(
     () => {
@@ -199,7 +196,7 @@ export const Filters = ({
                   paddingBottom={isMobile ? 3 : 0}
                 >
                   <Select
-                    id={MultiChoiceFilter.INSTITUTION}
+                    id="institution"
                     label={formatMessage(m.institution)}
                     placeholder={formatMessage(
                       m.institutionDropdownPlaceholder,
@@ -227,10 +224,7 @@ export const Filters = ({
                         institution?.nationalId || '',
                       )
                       setChosenInstituteSlug(institution?.slug || '')
-                      onFilterChange({
-                        categoryId: MultiChoiceFilter.INSTITUTION,
-                        selected: v ? [v.value] : [],
-                      })
+                      onInstitutionChange(institution?.nationalId || '')
                     }}
                     options={sortedOrganizations.map((x) => ({
                       value: x.slug,
@@ -244,7 +238,7 @@ export const Filters = ({
                 paddingLeft={isMobile || !isSuperAdmin ? 0 : 3}
               >
                 <Select
-                  id={MultiChoiceFilter.TYPE_ID}
+                  id="typeId"
                   label={formatMessage(m.applicationType)}
                   placeholder={formatMessage(
                     m.applicationTypeDropdownPlaceholder,
