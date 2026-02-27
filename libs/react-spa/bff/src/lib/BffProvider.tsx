@@ -7,7 +7,10 @@ import { BffContext } from './BffContext'
 import { BffDoubleSessionModal } from './BffDoubleSession'
 import { BffError } from './BffError'
 import { BffPoller } from './BffPoller'
-import { BffSessionExpiredModal, SessionExpiredReason } from './BffSessionExpiredModal'
+import {
+  BffSessionExpiredModal,
+  SessionExpiredReason,
+} from './BffSessionExpiredModal'
 import { ErrorScreen } from './ErrorScreen'
 import { BffBroadcastEvents, useBffBroadcaster } from './bff.hooks'
 import { ActionType, LoggedInState, initialState, reducer } from './bff.state'
