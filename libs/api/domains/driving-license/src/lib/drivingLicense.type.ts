@@ -13,6 +13,7 @@ export interface PostRenewal65AndOverInput {
   districtId?: number
   pickupPlasticAtDistrict?: boolean | null
   sendPlasticToPerson?: boolean | null
+  healtCertificate?: string | null
 }
 
 export enum Pickup {
@@ -38,11 +39,22 @@ export interface NewTemporaryDrivingLicenseInput {
   sendLicenseInMail: boolean
 }
 
+export interface NewBEDrivingLicenseContentItem {
+  fileName?: string | null
+  fileExtension?: string | null
+  contentType?: string | null
+  content?: string | null
+  description?: string | null
+}
+
 export interface NewBEDrivingLicenseInput {
   jurisdiction: number
   instructorSSN: string
   primaryPhoneNumber: string
   studentEmail: string
+  contentList?: NewBEDrivingLicenseContentItem[] | null
+  photoBiometricsId?: string | null
+  signatureBiometricsId?: string | null
 }
 
 export interface NewDrivingLicenseResult {
@@ -85,8 +97,6 @@ export enum RequirementKey {
   hasPoints = 'HasPoints',
   personNotAtLeast24YearsOld = 'PersonNotAtLeast24YearsOld',
   hasHadValidCategoryForFiveYearsOrMore = 'HasHadValidCategoryForFiveYearsOrMore',
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  beRequiresHealthCertificate = 'beRequiresHealthCertificate',
   noExtendedDrivingLicense = 'NoExtendedDrivingLicense',
 }
 

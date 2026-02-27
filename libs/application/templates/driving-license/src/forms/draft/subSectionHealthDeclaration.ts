@@ -4,6 +4,7 @@ import {
   buildSubSection,
   buildAlertMessageField,
   buildDescriptionField,
+  buildFileUploadField,
   YES,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -13,7 +14,9 @@ import {
   hasHealthRemarks,
   needsHealthCertificateCondition,
 } from '../../lib/utils/formUtils'
-import { BE, B_FULL_RENEWAL_65 } from '../../lib/constants'
+import { B_FULL_RENEWAL_65 } from '../../lib/constants'
+
+const FILE_SIZE_LIMIT = 10000000 // 10MB
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -35,7 +38,7 @@ export const subSectionHealthDeclaration = buildSubSection({
           id: 'remarks',
           component: 'HealthRemarks',
           condition: (answers, externalData) =>
-            hasHealthRemarks(externalData) && answers.applicationFor !== BE,
+            hasHealthRemarks(externalData),
         }),
         buildCustomField(
           {
@@ -143,22 +146,27 @@ export const subSectionHealthDeclaration = buildSubSection({
           message: m.alertHealthDeclarationGlassesMismatch,
           alertType: 'warning',
           condition: (answers) =>
-            answers.applicationFor !== BE &&
             getValueViaPath(
               answers,
               'healthDeclaration.contactGlassesMismatch',
             ) === true,
         }),
-        //TODO: Remove when RLS/SGS supports health certificate in BE license
-        buildDescriptionField({
-          id: 'healthDeclarationValidForBELicense',
-        }),
         buildAlertMessageField({
-          id: 'healthDeclaration.BE',
-          message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
-          alertType: 'warning',
+          id: 'healthDeclaration.BE.info',
+          message: m.healthCertificateDescription,
+          alertType: 'info',
           condition: (answers, externalData) =>
-            answers.applicationFor === BE &&
+            needsHealthCertificateCondition(YES)(answers, externalData),
+        }),
+        buildFileUploadField({
+          id: 'healthCertificate',
+          title: m.healthCertificateTitle,
+          maxSize: FILE_SIZE_LIMIT,
+          uploadAccept: '.pdf, .jpg, .jpeg, .png',
+          uploadHeader: m.healthCertificateUploadHeader,
+          uploadDescription: m.healthCertificateUploadDescription,
+          uploadButtonLabel: m.healthCertificateUploadButtonLabel,
+          condition: (answers, externalData) =>
             needsHealthCertificateCondition(YES)(answers, externalData),
         }),
       ],
@@ -172,6 +180,15 @@ export const subSectionHealthDeclaration = buildSubSection({
         buildDescriptionField({
           id: 'healthDeclarationDescription65',
           description: m.healthDeclarationMultiField65Description,
+        }),
+        buildFileUploadField({
+          id: 'healthCertificate',
+          title: m.healthCertificateTitle,
+          maxSize: FILE_SIZE_LIMIT,
+          uploadAccept: '.pdf, .jpg, .jpeg, .png',
+          uploadHeader: m.healthCertificateUploadHeader,
+          uploadDescription: m.healthCertificateUploadDescription,
+          uploadButtonLabel: m.healthCertificateUploadButtonLabel,
         }),
       ],
     }),

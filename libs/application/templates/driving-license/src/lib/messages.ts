@@ -359,6 +359,60 @@ export const m = defineMessages({
       '* Myndin skal vera andlitsmynd, tekin þannig að andlitið snúi beint að myndavél og bæði augu sjáist.\n* Umsækjandi má ekki bera höfuðfat. Þó má heimila slíkt ef umsækjandi fer fram á það af trúarástæðum.\n* Lýsing andlits þarf að vera jöfn og góð.\n* Umsækjandi má ekki bera dökk gleraugu eða gleraugu með speglun.\n* Myndin skal vera jafnlýst, bakgrunnur ljósgrár, hlutlaus og án skugga.\n* Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.',
     description: 'Description of photo requirements',
   },
+  photoSelectionTitle: {
+    id: 'dl.application:photoSelection.title',
+    defaultMessage: 'Mynd í ökuskírteini',
+    description: 'Photo selection section title',
+  },
+  photoSelectionDescription: {
+    id: 'dl.application:photoSelection.description',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um þær myndir sem hægt er að nota í ökuskírteinið.',
+    description: 'Photo selection section description',
+  },
+  usePassportImage: {
+    id: 'dl.application:photoSelection.usePassportImage#markdown',
+    defaultMessage:
+      'Ég staðfesti að nota núverandi mynd úr vegabréfa- og skilríkjaskrá í ökuskírteinið',
+    description: 'Use photo from national registry',
+  },
+  useDriversLicenseImage: {
+    id: 'dl.application:photoSelection.useDriversLicenseImage#markdown',
+    defaultMessage:
+      'Ég staðfesti að nota núverandi mynd úr ökuskírteinaskrá í ökuskírteinið',
+    description: 'Use photo from driving license registry',
+  },
+  useFakeImage: {
+    id: 'dl.application:photoSelection.useFakeImage',
+    defaultMessage: 'Ég staðfesti að nota fakeData mynd',
+    description: 'Use fake photo for testing',
+  },
+  healthCertificateTitle: {
+    id: 'dl.application:healthCertificate.title',
+    defaultMessage: 'Læknisvottorð',
+    description: 'Health certificate title',
+  },
+  healthCertificateDescription: {
+    id: 'dl.application:healthCertificate.description',
+    defaultMessage:
+      'Þú þarft að hlaða inn læknisvottorði vegna heilbrigðisyfirlýsingar.',
+    description: 'Health certificate upload description',
+  },
+  healthCertificateUploadHeader: {
+    id: 'dl.application:healthCertificate.uploadHeader',
+    defaultMessage: 'Dragðu læknisvottorð hingað til að hlaða upp',
+    description: 'Health certificate upload header',
+  },
+  healthCertificateUploadDescription: {
+    id: 'dl.application:healthCertificate.uploadDescription',
+    defaultMessage: 'Tekið er við skjölum með endingunum: .pdf, .jpg, .jpeg, .png',
+    description: 'Health certificate upload format description',
+  },
+  healthCertificateUploadButtonLabel: {
+    id: 'dl.application:healthCertificate.uploadButtonLabel',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
+    description: 'Health certificate upload button label',
+  },
   overviewBringAlongTitle: {
     id: 'dl.application:overview.overviewBringAlongTitle',
     defaultMessage: 'Gögn höfð meðferðis til sýslumanns',
@@ -368,6 +422,11 @@ export const m = defineMessages({
     id: 'dl.application:overview.bringCertificateData',
     defaultMessage: 'Ég kem með vottorð frá lækni meðferðis',
     description: `I'll bring a certificate from a doctor`,
+  },
+  overviewHealthCertificateUploaded: {
+    id: 'dl.application:overview.healthCertificateUploaded',
+    defaultMessage: 'Læknisvottorð hlaðið upp',
+    description: 'Uploaded health certificate',
   },
   overviewPickupPost: {
     id: 'dl.application:overview.pickupPost',
