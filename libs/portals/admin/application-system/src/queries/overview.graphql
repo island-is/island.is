@@ -1,8 +1,12 @@
-query getApplicationsSuperAdmin($input: ApplicationsSuperAdminFilters!) {
-  applicationApplicationsAdmin(input: $input) {
+query getApplicationV2ApplicationsSuperAdmin(
+  $input: ApplicationsSuperAdminFilters!
+) {
+  applicationV2ApplicationsSuperAdmin(input: $input) {
     rows {
       id
+      isFormSystem
       typeId
+      formSlug
       applicant
       state
       created
@@ -43,6 +47,7 @@ query getApplicationsSuperAdmin($input: ApplicationsSuperAdminFilters!) {
         draftTotalSteps
         draftFinishedSteps
       }
+      institutionContentfulSlug
     }
     count
   }
@@ -168,60 +173,5 @@ query getApplicationV2InstitutionsSuperAdmin {
   applicationV2InstitutionsSuperAdmin {
     nationalId
     contentfulSlug
-  }
-}
-
-query getApplicationV2ApplicationsSuperAdmin(
-  $input: ApplicationsSuperAdminFilters!
-) {
-  applicationV2ApplicationsSuperAdmin(input: $input) {
-    rows {
-      id
-      isFormSystem
-      typeId
-      formSlug
-      applicant
-      state
-      created
-      modified
-      assignees
-      applicantActors
-      name
-      pruned
-      pruneAt
-      institution
-      progress
-      status
-      adminData {
-        key
-        values
-        label
-      }
-      applicantName
-      paymentStatus
-      actionCard {
-        title
-        description
-        tag {
-          label
-          variant
-        }
-        pendingAction {
-          displayStatus
-          content
-          title
-        }
-        history {
-          log
-          subLog
-          date
-        }
-        deleteButton
-        draftTotalSteps
-        draftFinishedSteps
-      }
-      institutionContentfulSlug
-    }
-    count
   }
 }

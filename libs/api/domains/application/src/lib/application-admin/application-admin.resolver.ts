@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -22,26 +22,41 @@ import {
   ApplicationTypeAdminInstitution,
   ApplicationInstitution,
 } from '../application.model'
-import { ApplicationService } from '../application.service'
+import { ApplicationAdminService } from './application-admin.service'
 
+@Directive(
+  '@deprecated(reason: "Use ApplicationV2Resolver which merges results from both application-system and form-system")',
+)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => ApplicationAdmin)
 export class ApplicationAdminResolver {
-  constructor(private applicationService: ApplicationService) {}
+  constructor(private applicationService: ApplicationAdminService) {}
 
-  @Query(() => ApplicationAdminPaginatedResponse, { nullable: true })
+  @Query(() => ApplicationAdminPaginatedResponse, {
+    nullable: true,
+    deprecationReason:
+      'Use ApplicationV2Resolver which merges results from both application-system and form-system',
+  })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async applicationApplicationsAdmin(
+  async applicationApplicationsSuperAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input')
     input: ApplicationsSuperAdminFilters,
   ): Promise<ApplicationAdminPaginatedResponse | null> {
-    return this.applicationService.findAllSuperAdmin(user, locale, input)
+    return this.applicationService.findAllApplicationsForSuperAdmin(
+      user,
+      locale,
+      input,
+    )
   }
 
-  @Query(() => ApplicationAdminPaginatedResponse, { nullable: true })
+  @Query(() => ApplicationAdminPaginatedResponse, {
+    nullable: true,
+    deprecationReason:
+      'Use ApplicationV2Resolver which merges results from both application-system and form-system',
+  })
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   async applicationApplicationsInstitutionAdmin(
     @CurrentUser() user: User,
@@ -50,66 +65,90 @@ export class ApplicationAdminResolver {
     @Args('input')
     input: ApplicationsAdminFilters,
   ): Promise<ApplicationAdminPaginatedResponse | null> {
-    return this.applicationService.findAllInstitutionAdmin(user, locale, input)
+    return this.applicationService.findAllApplicationsForInstitutionAdmin(
+      user,
+      locale,
+      input,
+    )
   }
 
-  @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
+  @Query(() => [ApplicationTypeAdminInstitution], {
+    nullable: true,
+    deprecationReason:
+      'Use ApplicationV2Resolver which merges results from both application-system and form-system',
+  })
   @Scopes(AdminPortalScope.applicationSystemInstitution)
-  async applicationTypesInstitutionAdmin(
+  async applicationApplicationTypesInstitutionAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
   ): Promise<ApplicationTypeAdminInstitution[] | null> {
-    return this.applicationService.findAllApplicationTypesInstitutionAdmin(
+    return this.applicationService.findAllApplicationTypesForInstitutionAdmin(
       user,
       locale,
     )
   }
 
-  @Query(() => [ApplicationTypeAdminInstitution], { nullable: true })
+  @Query(() => [ApplicationTypeAdminInstitution], {
+    nullable: true,
+    deprecationReason:
+      'Use ApplicationV2Resolver which merges results from both application-system and form-system',
+  })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async applicationTypesSuperAdmin(
+  async applicationApplicationTypesSuperAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input') input: ApplicationTypesAdminInput,
   ): Promise<ApplicationTypeAdminInstitution[] | null> {
-    return this.applicationService.findAllApplicationTypesSuperAdmin(
+    return this.applicationService.findAllApplicationTypesForSuperAdmin(
       user,
       locale,
       input,
     )
   }
 
-  @Query(() => [ApplicationStatistics], { nullable: true })
+  @Query(() => [ApplicationInstitution], {
+    nullable: true,
+    deprecationReason:
+      'Use ApplicationV2Resolver which merges results from both application-system and form-system',
+  })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async applicationApplicationsAdminStatistics(
+  async applicationInstitutionsSuperAdmin(@CurrentUser() user: User) {
+    return this.applicationService.findAllInstitutionsForSuperAdmin(user)
+  }
+
+  @Query(() => [ApplicationStatistics], {
+    nullable: true,
+    deprecationReason:
+      'Use ApplicationV2Resolver which merges results from both application-system and form-system',
+  })
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  async applicationApplicationStatisticsSuperAdmin(
     @CurrentUser() user: User,
     @Args('input')
     input: ApplicationsAdminStatisticsInput,
   ) {
-    return this.applicationService.getSuperAdminApplicationCountByTypeIdAndStatus(
+    return this.applicationService.getApplicationStatisticsForSuperAdmin(
       user,
       input,
     )
   }
 
-  @Query(() => [ApplicationStatistics], { nullable: true })
+  @Query(() => [ApplicationStatistics], {
+    nullable: true,
+    deprecationReason:
+      'Use ApplicationV2Resolver which merges results from both application-system and form-system',
+  })
   @Scopes(AdminPortalScope.applicationSystemInstitution)
-  async applicationApplicationsInstitutionStatistics(
+  async applicationApplicationStatisticsInstitutionAdmin(
     @CurrentUser() user: User,
     @Args('input')
     input: ApplicationsAdminStatisticsInput,
   ) {
-    return this.applicationService.getInstitutionApplicationCountByTypeIdAndStatus(
+    return this.applicationService.getApplicationStatisticsForInstitutionAdmin(
       user,
       input,
     )
-  }
-
-  @Query(() => [ApplicationInstitution], { nullable: true })
-  @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async applicationApplicationsAdminInstitutions(@CurrentUser() user: User) {
-    return this.applicationService.getApplicationInstitutions(user)
   }
 }

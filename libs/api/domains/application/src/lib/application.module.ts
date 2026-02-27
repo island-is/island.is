@@ -5,19 +5,19 @@ import { ApplicationService } from './application.service'
 import { ApplicationV2Service } from './applicationV2.service'
 import { ApplicationsApi, PaymentsApi, Configuration } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { ApplicationAdminResolver } from './application-admin/application-admin.resolver'
 import { ApplicationAdminV2Resolver } from './application-admin/application-adminV2.resolver'
+import { ApplicationAdminV2Service } from './application-admin/application-adminV2.service'
 import {
   ApplicationsApi as FormSystemApplicationsApi,
   AdminApi as FormSystemAdminApi,
   Configuration as FormSystemConfiguration,
 } from '@island.is/clients/form-system'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 export interface Config {
   baseApiUrl: string
   formSystemBaseApiUrl: string
 }
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({})
 export class ApplicationModule {
@@ -27,10 +27,10 @@ export class ApplicationModule {
       providers: [
         ApplicationResolver,
         ApplicationV2Resolver,
-        ApplicationAdminResolver,
         ApplicationAdminV2Resolver,
         ApplicationService,
         ApplicationV2Service,
+        ApplicationAdminV2Service,
         {
           provide: ApplicationsApi,
           useValue: new ApplicationsApi(

@@ -22,12 +22,12 @@ import {
   ApplicationStatistics,
   ApplicationTypeAdminInstitution,
 } from '../application.model'
-import { ApplicationV2Service } from '../applicationV2.service'
+import { ApplicationAdminV2Service } from './application-adminV2.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => ApplicationAdmin)
 export class ApplicationAdminV2Resolver {
-  constructor(private applicationService: ApplicationV2Service) {}
+  constructor(private applicationService: ApplicationAdminV2Service) {}
 
   @Query(() => ApplicationAdminPaginatedResponse, { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
@@ -91,7 +91,7 @@ export class ApplicationAdminV2Resolver {
 
   @Query(() => [ApplicationInstitution], { nullable: true })
   @Scopes(AdminPortalScope.applicationSystemAdmin)
-  async applicationV2InstitutionsSuperAdmin(
+  async appliciationV2InsttutionsSuperAdmin(
     @CurrentUser() user: User,
   ): Promise<ApplicationInstitution[] | null> {
     return this.applicationService.findAllInstitutionsForSuperAdmin(user)
