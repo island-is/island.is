@@ -28,6 +28,7 @@ export class FormField {
     | 'file'
     | 'nationalId (kennitala)'
     | 'information'
+    | 'date'
     | 'numeric'
 
   @Field()

@@ -18,6 +18,7 @@ type GridItemsProps = {
   half?: boolean
   quarter?: boolean
   third?: boolean
+  showGradients?: boolean
 }
 
 export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
@@ -31,10 +32,18 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
   half = false,
   quarter = false,
   third = false,
+  showGradients = false,
   children,
 }) => {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | null>(null)
+  const [showLeftGradient, setShowLeftGradient] = useState(false)
+  const [showRightGradient, setShowRightGradient] = useState(false)
+  const [leftGradientWidth, setLeftGradientWidth] = useState(80)
+  const [rightGradientWidth, setRightGradientWidth] = useState(80)
+  const [leftGradientOpacity, setLeftGradientOpacity] = useState(0)
+  const [rightGradientOpacity, setRightGradientOpacity] = useState(1)
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null)
 
   const items = Children.toArray(children)
 
@@ -46,15 +55,49 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
     }
   }, [quarter, width])
 
+  const handleScroll = () => {
+    const container = scrollContainerRef.current
+    if (!container) return
+
+    const { scrollLeft, scrollWidth, clientWidth } = container
+    const maxScroll = scrollWidth - clientWidth
+
+    setShowLeftGradient(scrollLeft > 10)
+    setShowRightGradient(scrollLeft < maxScroll - 10)
+
+    const distanceFromLeft = Math.min(scrollLeft / 100, 1)
+    const distanceFromRight = Math.min((maxScroll - scrollLeft) / 100, 1)
+
+    setLeftGradientWidth(45 + distanceFromLeft * 90)
+    setRightGradientWidth(45 + distanceFromRight * 90)
+
+    setLeftGradientOpacity(Math.max(0, 1 - distanceFromRight)) // Fades in as you approach end
+    setRightGradientOpacity(distanceFromRight) // Fades out as you approach end
+  }
+
+  useEffect(() => {
+    const container = scrollContainerRef.current
+    if (!container || !isMobile) return
+
+    // Initial check
+    handleScroll()
+
+    container.addEventListener('scroll', handleScroll)
+    return () => container.removeEventListener('scroll', handleScroll)
+  }, [isMobile])
+
   let style = null
 
   const count = items.length
   const perRow = Math.ceil(count / mobileItemsRows)
 
   if (isMobile) {
+    const horizontalPadding = theme.grid.gutter.mobile * 4
+    const columnGaps = theme.spacing[2] * (perRow - 1)
+
     style = {
-      width: mobileItemWidth * perRow,
-      gridTemplateColumns: `repeat(${perRow}, minmax(${mobileItemWidth}px, 1fr))`,
+      width: mobileItemWidth * perRow + horizontalPadding + columnGaps,
+      gridTemplateColumns: `repeat(${perRow}, ${mobileItemWidth}px)`,
       minHeight: 0,
       minWidth: 0,
     }
@@ -65,20 +108,42 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
       <Box
         marginTop={marginTop}
         marginBottom={marginBottom}
-        className={styles.container}
+        className={styles.scrollContainer}
       >
-        <Box
-          paddingTop={paddingTop}
-          paddingBottom={paddingBottom}
-          className={cx(styles.wrapper, {
-            [styles.half]: half,
-            [styles.quarter]: quarter,
-            [styles.third]: third,
-          })}
-          {...(style && { style })}
-        >
-          {children}
+        <Box className={styles.container} ref={scrollContainerRef}>
+          <Box
+            paddingTop={paddingTop}
+            paddingBottom={paddingBottom}
+            className={cx(styles.wrapper, {
+              [styles.half]: half,
+              [styles.quarter]: quarter,
+              [styles.third]: third,
+            })}
+            {...(style && { style })}
+          >
+            {children}
+          </Box>
         </Box>
+        {isMobile && showGradients && showLeftGradient && (
+          <div
+            className={styles.fadeOverlayLeft}
+            style={{
+              width: `${leftGradientWidth}px`,
+              opacity: leftGradientOpacity,
+            }}
+            aria-hidden="true"
+          />
+        )}
+        {isMobile && showGradients && showRightGradient && (
+          <div
+            className={styles.fadeOverlayRight}
+            style={{
+              width: `${rightGradientWidth}px`,
+              opacity: rightGradientOpacity,
+            }}
+            aria-hidden="true"
+          />
+        )}
       </Box>
     </Wrapper>
   )
