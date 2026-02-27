@@ -4,31 +4,39 @@ import { Locale } from '@island.is/shared/types'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApplicationCardsInput } from './dto/applicationCards.input'
 import { ApplicationCard } from './applicationV2.model'
-import { ApplicationResponseDtoStatusEnum } from '../../gen/fetch/models/ApplicationResponseDto'
-import { ApplicationsApi as FormSystemApplicationsApi } from '@island.is/clients/form-system'
 import {
-  institutionMapper,
-  ApplicationConfigurations,
-} from '@island.is/application/types'
+  ApplicationsApi as FormSystemApplicationApi,
+  AdminApi as FormSystemAdminApi,
+} from '@island.is/clients/form-system'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  cardSortByModified,
+  mapAppSystemCards,
+  mapFormSystemCards,
+} from './utils'
 
 @Injectable()
 export class ApplicationV2Service {
   constructor(
-    private readonly applicationApi: ApplicationsApi,
-    private readonly formSystemApplicationsApi: FormSystemApplicationsApi,
+    private readonly appSystemApplicationApi: ApplicationsApi,
+    private readonly formSystemApplicationApi: FormSystemApplicationApi,
+    private readonly formSystemAdminApi: FormSystemAdminApi,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
-  applicationApiWithAuth(auth: Auth) {
-    return this.applicationApi.withMiddleware(new AuthMiddleware(auth))
+  appSystemApplicationApiWithAuth(auth: Auth) {
+    return this.appSystemApplicationApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  formSystemApplicationsApiWithAuth(auth: User) {
-    return this.formSystemApplicationsApi.withMiddleware(
+  formSystemApplicationApiWithAuth(auth: User) {
+    return this.formSystemApplicationApi.withMiddleware(
       new AuthMiddleware(auth),
     )
+  }
+
+  formSystemAdminApiWithAuth(auth: User) {
+    return this.formSystemAdminApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getApplicationCards(
@@ -40,14 +48,16 @@ export class ApplicationV2Service {
     let formSystemCards: ApplicationCard[] = []
     const [applicationsSettled, formSystemApplicationsSettled] =
       await Promise.allSettled([
-        this.applicationApiWithAuth(user).applicationControllerFindAll({
-          nationalId: user.nationalId,
-          locale,
-          typeId: input?.typeId?.join(','),
-          status: input?.status?.join(','),
-          scopeCheck: input?.scopeCheck,
-        }),
-        this.formSystemApplicationsApiWithAuth(
+        this.appSystemApplicationApiWithAuth(user).applicationControllerFindAll(
+          {
+            nationalId: user.nationalId,
+            locale,
+            typeId: input?.typeId?.join(','),
+            status: input?.status?.join(','),
+            scopeCheck: input?.scopeCheck,
+          },
+        ),
+        this.formSystemApplicationApiWithAuth(
           user,
         ).applicationsControllerFindAllByUser({
           locale,
@@ -55,27 +65,7 @@ export class ApplicationV2Service {
       ])
 
     if (applicationsSettled.status === 'fulfilled') {
-      appSystemCards = applicationsSettled.value.map(
-        (application): ApplicationCard => {
-          return {
-            id: application.id,
-            created: application.created,
-            modified: application.modified,
-            typeId: application.typeId,
-            status: application.status,
-            name: application.name,
-            progress: application.progress,
-            slug: ApplicationConfigurations[application.typeId]?.slug,
-            org: institutionMapper[application.typeId].slug,
-            applicationPath: `umsoknir/${
-              ApplicationConfigurations[application.typeId]?.slug
-            }/${application.id}`,
-            orgContentfulId: institutionMapper[application.typeId].contentfulId,
-            nationalId: institutionMapper[application.typeId].nationalId,
-            actionCard: application.actionCard,
-          }
-        },
-      )
+      appSystemCards = applicationsSettled.value.map(mapAppSystemCards)
     } else {
       this.logger.error(
         'Error getting application system cards',
@@ -83,34 +73,15 @@ export class ApplicationV2Service {
       )
     }
     if (formSystemApplicationsSettled.status === 'fulfilled') {
-      formSystemCards = formSystemApplicationsSettled.value.map(
-        (application): ApplicationCard => {
-          return {
-            id: application.id,
-            created: application.created,
-            modified: application.modified,
-            typeId: application.typeId,
-            status: application.status as ApplicationResponseDtoStatusEnum,
-            name: application.name,
-            progress: application.progress,
-            slug: application.formSystemFormSlug,
-            org: application.formSystemOrgSlug,
-            applicationPath: `form/${application.formSystemFormSlug}/${application.id}`,
-            orgContentfulId: application.formSystemOrgContentfulId,
-            nationalId: undefined, // TODO: add nationalId if possible
-            actionCard: application.actionCard,
-          }
-        },
-      )
+      formSystemCards =
+        formSystemApplicationsSettled.value.map(mapFormSystemCards)
     } else {
       this.logger.error(
         'Error getting form system cards',
         formSystemApplicationsSettled.reason,
       )
     }
-    return [...appSystemCards, ...formSystemCards].sort(
-      (a, b) => b.modified.getTime() - a.modified.getTime(),
-    )
+    return [...appSystemCards, ...formSystemCards].sort(cardSortByModified)
   }
 
   async getApplicationSystemCards(
@@ -118,7 +89,7 @@ export class ApplicationV2Service {
     locale: Locale,
     input: ApplicationCardsInput,
   ): Promise<ApplicationCard[]> {
-    const applications = await this.applicationApiWithAuth(
+    const applications = await this.appSystemApplicationApiWithAuth(
       user,
     ).applicationControllerFindAll({
       nationalId: user.nationalId,
@@ -128,27 +99,7 @@ export class ApplicationV2Service {
       scopeCheck: input?.scopeCheck,
     })
 
-    const appSystemCards = applications.map((application): ApplicationCard => {
-      return {
-        id: application.id,
-        created: application.created,
-        modified: application.modified,
-        typeId: application.typeId,
-        status: application.status,
-        name: application.name,
-        progress: application.progress,
-        slug: ApplicationConfigurations[application.typeId]?.slug,
-        org: institutionMapper[application.typeId].slug,
-        applicationPath: `umsoknir/${
-          ApplicationConfigurations[application.typeId]?.slug
-        }/${application.id}`,
-        orgContentfulId: institutionMapper[application.typeId].contentfulId,
-        nationalId: institutionMapper[application.typeId].nationalId,
-        actionCard: application.actionCard,
-      }
-    })
-    return appSystemCards.sort(
-      (a, b) => b.modified.getTime() - a.modified.getTime(),
-    )
+    const appSystemCards = applications.map(mapAppSystemCards)
+    return appSystemCards.sort(cardSortByModified)
   }
 }

@@ -12,6 +12,7 @@ import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { Field } from '../../fields/models/field.model'
 import type { Locale } from '@island.is/shared/types'
+import { ApplicationAdminDto } from './dto/applicationAdmin.dto'
 
 @Injectable()
 export class ApplicationMapper {
@@ -319,6 +320,22 @@ export class ApplicationMapper {
       formSystemFormSlug: app.formSlug,
       formSystemOrgContentfulId: app.orgContentfulId,
       formSystemOrgSlug: app.orgSlug,
+    }
+  }
+
+  mapApplicationToApplicationAdminDto(
+    application: Application,
+    locale?: Locale,
+  ): ApplicationAdminDto {
+    return {
+      ...application,
+      applicant: application.nationalId,
+      formName:
+        locale === 'is'
+          ? application.form?.name?.is
+          : application.form?.name?.en,
+      formSlug: application.form?.slug,
+      institutionNationalId: application.form?.organization?.nationalId,
     }
   }
 }

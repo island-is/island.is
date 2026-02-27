@@ -214,8 +214,14 @@ export class ApplicationAdmin {
   @Field(() => ActionCardMetaData, { nullable: true })
   actionCard?: ActionCardMetaData
 
-  @Field(() => ApplicationListAdminResponseDtoTypeIdEnum)
-  typeId!: ApplicationListAdminResponseDtoTypeIdEnum
+  @Field(() => Boolean, { nullable: true })
+  isFormSystem?: boolean
+
+  @Field(() => String)
+  typeId!: string
+
+  @Field(() => String, { nullable: true })
+  formSlug?: string
 
   @Field(() => String, { nullable: true })
   name?: string
@@ -237,6 +243,9 @@ export class ApplicationAdmin {
 
   @Field(() => [ApplicationAdminData], { nullable: true })
   adminData?: ApplicationAdminData[]
+
+  @Field(() => String, { nullable: true })
+  institutionContentfulSlug?: string
 }
 
 @ObjectType()
@@ -271,11 +280,5 @@ export class ApplicationInstitution {
   nationalId!: string
 
   @Field(() => String)
-  slug!: string
-
-  @Field(() => String)
-  contentfulId!: string
-
-  @Field(() => [String])
-  applicationTypes!: string[]
+  contentfulSlug!: string
 }

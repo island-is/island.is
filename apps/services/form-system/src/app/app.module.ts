@@ -3,6 +3,7 @@ import { LoggingModule } from '@island.is/logging'
 import { AuditModule } from '@island.is/nest/audit'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+import { ConfigModule } from '@island.is/nest/config'
 import { environment } from '../environments'
 import { ApplicationsModule } from './modules/applications/applications.module'
 import { FieldsModule } from './modules/fields/fields.module'
@@ -18,6 +19,8 @@ import { SectionsModule } from './modules/sections/sections.module'
 import { ServicesModule } from './modules/services/services.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { PruneModule } from './modules/services/prune/prune.module'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 
 @Module({
   imports: [
@@ -40,6 +43,10 @@ import { PruneModule } from './modules/services/prune/prune.module'
     ServicesModule,
     FileModule,
     PruneModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [NationalRegistryV3ClientConfig, CompanyRegistryConfig],
+    }),
   ],
 })
 export class AppModule {}

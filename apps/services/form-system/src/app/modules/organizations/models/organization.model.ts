@@ -31,6 +31,7 @@ export class Organization extends Model<Organization> {
     type: DataType.STRING,
     allowNull: false,
     defaultValue: '',
+    field: 'national_id',
   })
   nationalId!: string
 

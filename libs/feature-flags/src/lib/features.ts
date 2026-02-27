@@ -156,6 +156,9 @@ export enum Features {
 
   // SMS Notifications
   isSmsNotificationEnabled = 'isSmsNotificationEnabled',
+
+  // Admin portal
+  isFormSystemInAdminPortalEnabled = 'isFormSystemInAdminPortalEnabled',
 }
 
 export enum ServerSideFeature {
