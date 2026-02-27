@@ -5,7 +5,6 @@ import {
   HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
-  PrescriptionRenewalRequestDto,
   UserVisibleAppointmentStatuses,
   VaccinationDto,
   organLocale,
@@ -13,7 +12,6 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import type { Locale } from '@island.is/shared/types'
 import { Inject, Injectable } from '@nestjs/common'
-import isNumber from 'lodash/isNumber'
 import sortBy from 'lodash/sortBy'
 import { PATIENT_PERMIT_CODE } from './constants'
 import { HealthDirectorateAppointmentsInput } from './dto/appointments.input'
@@ -285,6 +283,7 @@ export class HealthDirectorateService {
       data.map((item) => {
         return {
           id: item.product.id,
+          prescriptionId: item.prescriptionId,
           name: item.product.name,
           type: item.product.type,
           form: item.product.form,
@@ -293,6 +292,7 @@ export class HealthDirectorateService {
           quantity: item.product?.quantity?.toString(),
           prescriberName: item.prescriber.name,
           medCardDrugId: item.medCard?.id,
+          medCardDrugCategory: item.medCard?.category,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
@@ -332,23 +332,11 @@ export class HealthDirectorateService {
 
   /* Renewal */
   async postRenewal(auth: Auth, input: HealthDirectorateRenewalInput) {
-    const parsedInput = this.castRenewalInputToNumber(input)
-
-    if (!parsedInput) return null
-
-    // TODO: FIX WHEN RESPONSE BODY IS READY FROM CLIENT
-    await this.healthApi
-      .postRenewalPrescription(auth, input.id, {
-        medCardDrugId: input.medCardDrugId ?? input.id,
-        medCardDrugCategory: parsedInput.medCardDrugCategory,
-        prescribedItemId: parsedInput.prescribedItemId,
-      })
-      .catch((e) => {
-        return e
-      })
-      .then(() => {
-        return
-      })
+    await this.healthApi.postRenewalPrescription(auth, input.id, {
+      productId: input.productId,
+      medCardDrugId: input.medCardDrugId,
+      medCardDrugCategory: input.medCardDrugCategory,
+    })
 
     return null
   }
@@ -580,26 +568,6 @@ export class HealthDirectorateService {
   ): Promise<PermitReturn | null> {
     const data = await this.healthApi.deactivatePermit(auth, input.id)
     return data ? { status: true } : null
-  }
-
-  private castRenewalInputToNumber = (
-    input: HealthDirectorateRenewalInput,
-  ): PrescriptionRenewalRequestDto | null => {
-    // Trim whitespace from the string
-    const trimmedCategory = input.medCardDrugCategory.trim()
-    const trimmedId = input.prescribedItemId.trim()
-
-    // Try to convert the string to a number
-    const parsedCategory = Number(trimmedCategory)
-    const parsedId = Number(trimmedId)
-
-    if (isNumber(parsedCategory) && isNumber(parsedId)) {
-      return {
-        prescribedItemId: parsedId,
-        medCardDrugCategory: parsedCategory,
-        medCardDrugId: input.medCardDrugId,
-      }
-    } else return null
   }
 
   /* Appointments */

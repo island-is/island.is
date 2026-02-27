@@ -103,6 +103,13 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
               ? new Date(item.expiryDate) < new Date()
               : false
 
+            const blockedStatus = !item.isRenewable
+              ? mapBlockedStatus(
+                  item.renewalBlockedReason?.toString() ?? '',
+                  formatMessage,
+                )
+              : null
+
             return {
               id: `${item.id}-${i}`,
               medicine: item?.name + ' ' + item?.strength,
@@ -128,16 +135,9 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                   }
                 : {
                     type: 'text' as const,
-                    label: mapBlockedStatus(
-                      item.renewalBlockedReason?.toString() ?? '',
-                      formatMessage,
-                    ).status,
+                    label: blockedStatus?.status ?? '',
                     text:
-                      item.renewResponseMessage ||
-                      mapBlockedStatus(
-                        item.renewalBlockedReason?.toString() ?? '',
-                        formatMessage,
-                      ).description,
+                      item.renewResponseMessage || blockedStatus?.description,
                   },
 
               onExpandCallback: () => {
@@ -146,18 +146,16 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
 
               children: (
                 <Box background="blue100" paddingBottom={1}>
-                  <Box paddingX={[0, 0, 3]} marginBottom={[2, 2, 0]}>
-                    <AlertMessage
-                      type="info"
-                      message={
-                        item.renewResponseMessage ||
-                        mapBlockedStatus(
-                          item.renewalBlockedReason?.toString() ?? '',
-                          formatMessage,
-                        ).description
-                      }
-                    />
-                  </Box>
+                  {blockedStatus?.showReason && (
+                    <Box paddingX={[0, 0, 3]} marginBottom={[2, 2, 0]}>
+                      <AlertMessage
+                        type="info"
+                        message={
+                          item.renewResponseMessage || blockedStatus.description
+                        }
+                      />
+                    </Box>
+                  )}
 
                   <Stack space={2}>
                     <>
