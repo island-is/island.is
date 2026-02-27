@@ -2,7 +2,10 @@ import kennitala from 'kennitala'
 import { Op, WhereOptions } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
-import { SyslumennDelegationType, SyslumennService } from '@island.is/clients/syslumenn'
+import {
+  SyslumennDelegationType,
+  SyslumennService,
+} from '@island.is/clients/syslumenn'
 import { logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
@@ -102,12 +105,11 @@ export async function validateDistrictCommissionersDelegations(
     delegationsIndexService,
   } = params
 
-  const validatePersonalRepsAtSyslumenn =
-    await featureFlagService.getValue(
-      Features.usePersonalRepresentativesFromSyslumenn,
-      false,
-      user,
-    )
+  const validatePersonalRepsAtSyslumenn = await featureFlagService.getValue(
+    Features.usePersonalRepresentativesFromSyslumenn,
+    false,
+    user,
+  )
 
   const hasLegalRepresentative = delegationTypes.includes(
     AuthDelegationType.LegalRepresentative,
@@ -122,12 +124,11 @@ export async function validateDistrictCommissionersDelegations(
 
   if (hasLegalRepresentative) {
     try {
-      const valid =
-        await syslumennService.checkIfDelegationExists(
-          user.nationalId,
-          fromNationalId,
-          SyslumennDelegationType.LegalRepresentative,
-        )
+      const valid = await syslumennService.checkIfDelegationExists(
+        user.nationalId,
+        fromNationalId,
+        SyslumennDelegationType.LegalRepresentative,
+      )
       if (valid) {
         validTypes.push(AuthDelegationType.LegalRepresentative)
         legalRepIsValid = true
@@ -157,12 +158,11 @@ export async function validateDistrictCommissionersDelegations(
 
     if (validatePersonalRepsAtSyslumenn) {
       try {
-        const valid =
-          await syslumennService.checkIfDelegationExists(
-            user.nationalId,
-            fromNationalId,
-            SyslumennDelegationType.PersonalRepresentative,
-          )
+        const valid = await syslumennService.checkIfDelegationExists(
+          user.nationalId,
+          fromNationalId,
+          SyslumennDelegationType.PersonalRepresentative,
+        )
         if (valid) {
           validTypes.push(...prTypes)
           personalRepIsValid = true
@@ -173,8 +173,7 @@ export async function validateDistrictCommissionersDelegations(
                 fromNationalId,
                 toNationalId: user.nationalId,
                 type: prType as AuthDelegationType,
-                provider:
-                  AuthDelegationProvider.DistrictCommissionersRegistry,
+                provider: AuthDelegationProvider.DistrictCommissionersRegistry,
               } as DelegationRecordInputDTO,
               user,
             )

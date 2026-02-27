@@ -7,9 +7,7 @@ import * as kennitala from 'kennitala'
 import { Op, Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
-import {
-  SyslumennService,
-} from '@island.is/clients/syslumenn'
+import { SyslumennService } from '@island.is/clients/syslumenn'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   AuthDelegationProvider,
@@ -334,15 +332,14 @@ export class DelegationScopeService {
     fromNationalId: string,
     delegationTypes: string[],
   ): Promise<string[]> {
-    const { validTypes } =
-      await validateDistrictCommissionersDelegations({
-        user,
-        fromNationalId,
-        delegationTypes: delegationTypes as AuthDelegationType[],
-        featureFlagService: this.featureFlagService,
-        syslumennService: this.syslumennService,
-        delegationsIndexService: this.delegationsIndexService,
-      })
+    const { validTypes } = await validateDistrictCommissionersDelegations({
+      user,
+      fromNationalId,
+      delegationTypes: delegationTypes as AuthDelegationType[],
+      featureFlagService: this.featureFlagService,
+      syslumennService: this.syslumennService,
+      delegationsIndexService: this.delegationsIndexService,
+    })
 
     if (validTypes.length === 0) {
       return []
