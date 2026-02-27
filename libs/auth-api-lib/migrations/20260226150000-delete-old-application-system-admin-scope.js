@@ -1,5 +1,7 @@
 'use strict';
 
+const { QueryTypes } = require('sequelize');
+
 /**
  * Sequelize migration:
  * - Deletes api_scope '@admin.island.is/application-system' after handling FK references.
@@ -28,7 +30,7 @@ module.exports = {
         {
           transaction,
           replacements: { oldScope: OLD_SCOPE },
-          type: Sequelize.QueryTypes.SELECT,
+          type: QueryTypes.SELECT,
         }
       );
 
@@ -63,7 +65,7 @@ module.exports = {
         {
           transaction,
           replacements: { oldScope: OLD_SCOPE },
-          type: Sequelize.QueryTypes.SELECT,
+          type: QueryTypes.SELECT,
         }
       );
 
@@ -73,7 +75,7 @@ module.exports = {
           {
             transaction,
             replacements: { newScope: NEW_SCOPE },
-            type: Sequelize.QueryTypes.SELECT,
+            type: QueryTypes.SELECT,
           }
         );
 
