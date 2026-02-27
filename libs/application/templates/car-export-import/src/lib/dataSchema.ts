@@ -33,6 +33,6 @@ export const dataSchema = z.object({
   exportVehicleMileage: z.array(vehicleMileageEntrySchema).min(1).optional(),
   importVehicleMileage: z.array(vehicleMileageEntrySchema).min(1).optional(),
   importVehicleMileageFile: z.array(uploadFileSchema).min(1).optional(),
-  })
+})
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

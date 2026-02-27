@@ -31,8 +31,7 @@ const template: ApplicationTemplate<
   name: m.application.name,
   codeOwner: CodeOwners.NordaApplications,
   institution: m.application.institution,
-  translationNamespaces:
-    ApplicationConfigurations.CarExportImport.translation,
+  translationNamespaces: ApplicationConfigurations.CarExportImport.translation,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
