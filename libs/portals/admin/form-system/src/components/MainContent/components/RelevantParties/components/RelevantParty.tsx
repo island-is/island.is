@@ -16,6 +16,8 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
   const { formatMessage } = useIntl()
   const { setFocus, focus, getTranslation, controlDispatch, control } =
     useContext(ControlContext)
+  const { isPublished } = control
+
   const [updateField] = useMutation(UPDATE_FIELD)
 
   const [currentApplicant, setCurrentApplicant] =
@@ -38,6 +40,7 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
             label={applicantType.description?.is ?? ''}
             name={currentApplicant.fieldSettings?.applicantType ?? ''}
             backgroundColor="blue"
+            readOnly={isPublished}
             value={currentApplicant.name?.is ?? ''}
             onFocus={(e) => setFocus(e.target.value)}
             onChange={(e) => {
@@ -73,6 +76,7 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
             label={formatMessage(m.englishTranslation)}
             name={'en-' + (currentApplicant.fieldSettings?.applicantType ?? '')}
             backgroundColor="blue"
+            readOnly={isPublished}
             value={currentApplicant.name?.en ?? ''}
             onFocus={async (e) => {
               if (!currentApplicant.name?.en && currentApplicant.name?.is) {

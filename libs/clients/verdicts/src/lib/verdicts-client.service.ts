@@ -3,6 +3,7 @@ import sanitizeHtml from 'sanitize-html'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 import { isValidDate, sortAlpha } from '@island.is/shared/utils'
+import isUrl from 'is-url'
 
 import {
   ExtensionPublishedVerdictApi,
@@ -170,15 +171,16 @@ export class VerdictsClientService {
 
     if (goproResponse.status === 'fulfilled') {
       for (const goproItem of goproResponse.value.items ?? []) {
+        const judges = goproItem.judges ?? []
+        let presidentJudge = judges.find((judge) => Boolean(judge?.isPresident))
+        if (judges.length === 1) presidentJudge = judges[0]
         items.push({
           id: goproItem.id ? `${GOPRO_ID_PREFIX}${goproItem.id}` : '',
           title: goproItem.title ?? '',
           court: goproItem.court?.name ?? '',
           caseNumber: goproItem.caseNumber ?? '',
           verdictDate: goproItem.verdictDate,
-          presidentJudge: goproItem.judges?.find((judge) =>
-            Boolean(judge?.isPresident),
-          ),
+          presidentJudge,
           keywords: goproItem.keywords ?? [],
           presentings: goproItem.presentings ?? '',
         })
@@ -187,6 +189,9 @@ export class VerdictsClientService {
 
     if (supremeCourtResponse.status === 'fulfilled') {
       for (const supremeCourtItem of supremeCourtResponse.value.items ?? []) {
+        const judges = supremeCourtItem.judges ?? []
+        let presidentJudge = judges.find((judge) => Boolean(judge?.isPresident))
+        if (judges.length === 1) presidentJudge = judges[0]
         items.push({
           id: supremeCourtItem.id
             ? `${SUPREME_COURT_ID_PREFIX}${supremeCourtItem.id}`
@@ -195,9 +200,7 @@ export class VerdictsClientService {
           court: supremeCourtItem.court ?? '',
           caseNumber: supremeCourtItem.caseNumber ?? '',
           verdictDate: supremeCourtItem.publishDate,
-          presidentJudge: supremeCourtItem.judges?.find((judge) =>
-            Boolean(judge?.isPresident),
-          ),
+          presidentJudge,
           keywords: supremeCourtItem.keywords ?? [],
           presentings: supremeCourtItem.presentings ?? '',
         })
@@ -264,6 +267,12 @@ export class VerdictsClientService {
             caseNumber: response.item.caseNumber ?? '',
             keywords: response.item.keywords ?? [],
             presentings: response.item.presentings ?? '',
+            resolutionLink:
+              response.item.resolutionLink &&
+              isUrl(response.item.resolutionLink) &&
+              response.item.resolutionLink.toLowerCase().startsWith('http')
+                ? response.item.resolutionLink
+                : '',
           },
         }
     }
@@ -478,7 +487,7 @@ export class VerdictsClientService {
           judges: agenda.judges ?? [],
           lawyers: [],
           court: SUPREME_COURT,
-          type: agenda.caseType ?? '',
+          type: '',
           title: agenda.title ?? '',
         })
       }
@@ -503,6 +512,7 @@ export class VerdictsClientService {
           court: agenda.court?.name ?? '',
           type: agenda.bookingType ?? '',
           title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
+          caseSubType: agenda.caseSubType ?? '',
         })
       }
     } else {

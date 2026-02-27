@@ -14,6 +14,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  IndictmentCaseReviewDecision,
   PunishmentType,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
@@ -130,6 +131,11 @@ export class UpdateDefendantDto {
   readonly isSentToPrisonAdmin?: boolean
 
   @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isRegisteredInPrisonSystem?: boolean
+
+  @IsOptional()
   @IsEnum(PunishmentType)
   @ApiPropertyOptional({ enum: PunishmentType })
   readonly punishmentType?: PunishmentType
@@ -146,7 +152,12 @@ export class UpdateDefendantDto {
   readonly alternativeServiceDescription?: string
 
   @IsOptional()
+  @IsEnum(IndictmentCaseReviewDecision)
+  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
+  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  isDrivingLicenseSuspended?: boolean
+  readonly isDrivingLicenseSuspended?: boolean
 }

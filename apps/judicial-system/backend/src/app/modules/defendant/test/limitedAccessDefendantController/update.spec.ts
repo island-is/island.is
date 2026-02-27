@@ -4,8 +4,11 @@ import { v4 as uuid } from 'uuid'
 import { Message } from '@island.is/judicial-system/message'
 import {
   CaseType,
+  DefendantEventType,
+  InstitutionType,
   PunishmentType,
   User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
@@ -13,6 +16,7 @@ import { createTestingDefendantModule } from '../createTestingDefendantModule'
 import {
   Case,
   Defendant,
+  DefendantEventLogRepositoryService,
   DefendantRepositoryService,
 } from '../../../repository'
 import { UpdateDefendantDto } from '../../dto/updateDefendant.dto'
@@ -24,12 +28,16 @@ interface Then {
 
 type GivenWhenThen = (
   defendantUpdate: UpdateDefendantDto,
-  type: CaseType,
-  courtCaseNumber?: string,
+  theCase: Case,
+  defendantOverride?: Defendant,
 ) => Promise<Then>
 
 describe('LimitedAccessDefendantController - Update', () => {
-  const user = { id: uuid() } as User
+  const prisonAdminUser = {
+    id: uuid(),
+    role: UserRole.PRISON_SYSTEM_STAFF,
+    institution: { type: InstitutionType.PRISON_ADMIN },
+  } as User
   const caseId = uuid()
   const defendantId = uuid()
   const defendant = {
@@ -42,6 +50,7 @@ describe('LimitedAccessDefendantController - Update', () => {
   let mockQueuedMessages: Message[]
   let transaction: Transaction
   let mockDefendantRepositoryService: DefendantRepositoryService
+  let mockDefendantEventLogRepositoryService: DefendantEventLogRepositoryService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -49,11 +58,13 @@ describe('LimitedAccessDefendantController - Update', () => {
       queuedMessages,
       sequelize,
       defendantRepositoryService,
+      defendantEventLogRepositoryService,
       limitedAccessDefendantController,
     } = await createTestingDefendantModule()
 
     mockQueuedMessages = queuedMessages
     mockDefendantRepositoryService = defendantRepositoryService
+    mockDefendantEventLogRepositoryService = defendantEventLogRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -66,17 +77,19 @@ describe('LimitedAccessDefendantController - Update', () => {
 
     givenWhenThen = async (
       defendantUpdate: UpdateDefendantDto,
-      type: CaseType,
+      theCase: Case,
+      defendantOverride?: Defendant,
     ) => {
       const then = {} as Then
+      const defendantToUse = defendantOverride ?? defendant
 
       await limitedAccessDefendantController
         .update(
           caseId,
           defendantId,
-          user,
-          { id: caseId, type } as Case,
-          defendant,
+          prisonAdminUser,
+          theCase,
+          defendantToUse,
           defendantUpdate,
         )
         .then((result) => (then.result = result))
@@ -95,7 +108,10 @@ describe('LimitedAccessDefendantController - Update', () => {
       const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
       mockUpdate.mockResolvedValueOnce(updatedDefendant)
 
-      then = await givenWhenThen(defendantUpdate, CaseType.INDICTMENT)
+      then = await givenWhenThen(defendantUpdate, {
+        id: caseId,
+        type: CaseType.INDICTMENT,
+      } as Case)
     })
 
     it('should update the defendant without queuing', () => {
@@ -107,6 +123,67 @@ describe('LimitedAccessDefendantController - Update', () => {
       )
       expect(then.result).toBe(updatedDefendant)
       expect(mockQueuedMessages).toEqual([])
+    })
+  })
+
+  describe('marks only the updated defendant as opened when punishmentType is set', () => {
+    const defendantUpdate = { punishmentType: PunishmentType.IMPRISONMENT }
+    const updatedDefendant = { ...defendant, ...defendantUpdate }
+
+    const earlier = new Date(Date.now() - 10000)
+    const currentDefendantWithLogs = {
+      ...defendant,
+      isSentToPrisonAdmin: true,
+      eventLogs: [
+        {
+          eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+          created: earlier,
+        },
+      ],
+    } as Defendant
+
+    const theCase = {
+      id: caseId,
+      type: CaseType.INDICTMENT,
+      defendants: [currentDefendantWithLogs],
+    } as Case
+
+    beforeEach(() => {
+      const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValue(updatedDefendant)
+
+      const mockCreateWithUser =
+        mockDefendantEventLogRepositoryService.createWithUser as jest.Mock
+      mockCreateWithUser.mockResolvedValue(undefined)
+    })
+
+    it('should mark only the current defendant as opened when punishmentType is set', async () => {
+      await givenWhenThen(defendantUpdate, theCase, currentDefendantWithLogs)
+
+      const mockCreateWithUser =
+        mockDefendantEventLogRepositoryService.createWithUser as jest.Mock
+
+      expect(mockCreateWithUser).toHaveBeenCalledTimes(1)
+      expect(mockCreateWithUser).toHaveBeenCalledWith(
+        DefendantEventType.OPENED_BY_PRISON_ADMIN,
+        caseId,
+        defendantId,
+        prisonAdminUser,
+        transaction,
+      )
+    })
+
+    it('should not create OPENED_BY_PRISON_ADMIN when punishmentType is not set', async () => {
+      const mockCreateWithUser =
+        mockDefendantEventLogRepositoryService.createWithUser as jest.Mock
+      mockCreateWithUser.mockClear()
+
+      await givenWhenThen({}, theCase, currentDefendantWithLogs)
+
+      const openedByPrisonAdminCalls = mockCreateWithUser.mock.calls.filter(
+        (call) => call[0] === DefendantEventType.OPENED_BY_PRISON_ADMIN,
+      )
+      expect(openedByPrisonAdminCalls).toHaveLength(0)
     })
   })
 })

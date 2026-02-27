@@ -18707,6 +18707,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/applepayjs@npm:14.0.9":
+  version: 14.0.9
+  resolution: "@types/applepayjs@npm:14.0.9"
+  checksum: 10/57e87054274982503a44c32e65d085d4c404f99d14b6081bca7677c1657ae1bef218307620cafb31f2c65b49ce8f148980934566852cc851633aede3ed64c405
+  languageName: node
+  linkType: hard
+
 "@types/archiver@npm:6.0.2":
   version: 6.0.2
   resolution: "@types/archiver@npm:6.0.2"
@@ -36024,6 +36031,7 @@ __metadata:
     "@testing-library/react": "npm:16.1.0"
     "@testing-library/react-native": "npm:12.9.0"
     "@testing-library/user-event": "npm:14.6.1"
+    "@types/applepayjs": "npm:14.0.9"
     "@types/archiver": "npm:6.0.2"
     "@types/aws-sdk": "npm:2.7.0"
     "@types/aws4": "npm:1.5.1"
@@ -36197,7 +36205,7 @@ __metadata:
     juice: "npm:8.0.0"
     jwks-rsa: "npm:3.0.1"
     jwt-decode: "npm:4.0.0"
-    kennitala: "npm:@island.is/kennitala@3.1.2"
+    kennitala: "npm:3.1.1"
     keyv: "npm:5.5.3"
     libphonenumber-js: "npm:1.7.53"
     license-checker: "npm:25.0.1"
@@ -38023,10 +38031,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kennitala@npm:@island.is/kennitala@3.1.2":
-  version: 3.1.2
-  resolution: "@island.is/kennitala@npm:3.1.2"
-  checksum: 10/5d53c3f44d34f8f65a47c410676e35cfd8fffd4283efb3c4f8e32cdae674150275f40a66bd710c57de76dcb2fc22a81b6b77ab63240e99c015fa1cb003729793
+"kennitala@npm:3.1.1":
+  version: 3.1.1
+  resolution: "kennitala@npm:3.1.1"
+  checksum: 10/3439e349a91ef7168462df3cb15a960ef5baa0258fd5326b27768e287f221cc90dda3b5037ffaa03315decd88fa1f0fa353ecc6ec283c69f2afe4fbf3a9858fa
   languageName: node
   linkType: hard
 

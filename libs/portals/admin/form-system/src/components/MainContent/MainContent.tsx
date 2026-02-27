@@ -30,9 +30,14 @@ export const MainContent = () => {
     focus,
     getTranslation,
   } = useContext(ControlContext)
-  const { activeItem } = control
+  const { activeItem, form, isPublished } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
+
+  const showIdentifier =
+    (form.useValidate &&
+      (activeItem.data as FormSystemScreen)?.shouldValidate) ||
+    (form.usePopulate && (activeItem.data as FormSystemScreen)?.shouldPopulate)
 
   return (
     <Box>
@@ -66,6 +71,7 @@ export const MainContent = () => {
                 name="name"
                 value={activeItem?.data?.name?.is ?? ''}
                 backgroundColor="blue"
+                readOnly={isPublished}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_NAME',
@@ -87,6 +93,7 @@ export const MainContent = () => {
                 name="nameEn"
                 value={activeItem?.data?.name?.en ?? ''}
                 backgroundColor="blue"
+                readOnly={isPublished}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_NAME',
@@ -120,8 +127,8 @@ export const MainContent = () => {
           </Row>
           {activeItem.type === 'Screen' && (
             <Row>
-              <Column>
-                <Checkbox
+              <Column span="12/12">
+                {/* <Checkbox
                   name="multi"
                   label={formatMessage(m.allowMultiple)}
                   checked={
@@ -137,15 +144,78 @@ export const MainContent = () => {
                       },
                     })
                   }
-                />
+                /> */}
+                {form.submissionServiceUrl !== 'zendesk' && (
+                  <>
+                    {form.useValidate && (
+                      <Box marginTop={2}>
+                        <Checkbox
+                          name="validate"
+                          label={formatMessage(m.screenValidate)}
+                          checked={
+                            (activeItem.data as FormSystemScreen)
+                              .shouldValidate ?? false
+                          }
+                          onChange={(e) =>
+                            controlDispatch({
+                              type: 'TOGGLE_SHOULD_VALIDATE',
+                              payload: {
+                                checked: e.target.checked,
+                                update: updateActiveItem,
+                              },
+                            })
+                          }
+                        />
+                      </Box>
+                    )}
+                    {form.usePopulate && (
+                      <Box marginTop={2}>
+                        <Checkbox
+                          name="populate"
+                          label={formatMessage(m.screenPopulate)}
+                          checked={
+                            (activeItem.data as FormSystemScreen)
+                              .shouldPopulate ?? false
+                          }
+                          onChange={(e) =>
+                            controlDispatch({
+                              type: 'TOGGLE_SHOULD_POPULATE',
+                              payload: {
+                                checked: e.target.checked,
+                                update: updateActiveItem,
+                              },
+                            })
+                          }
+                        />
+                      </Box>
+                    )}
+                    {showIdentifier && (
+                      <Box marginTop={4}>
+                        <Input
+                          label="identifier"
+                          name="identifier"
+                          value={
+                            (activeItem.data as FormSystemScreen).identifier ??
+                            ''
+                          }
+                          backgroundColor="blue"
+                          onFocus={(e) => setFocus(e.target.value)}
+                          readOnly
+                        />
+                      </Box>
+                    )}
+                  </>
+                )}
               </Column>
             </Row>
           )}
           <Row>
             <Column>
-              <Button variant="ghost" onClick={() => setOpenPreview(true)}>
-                {formatMessage(m.preview)}
-              </Button>
+              <Box marginTop={4}>
+                <Button variant="ghost" onClick={() => setOpenPreview(true)}>
+                  {formatMessage(m.preview)}
+                </Button>
+              </Box>
             </Column>
           </Row>
         </Stack>

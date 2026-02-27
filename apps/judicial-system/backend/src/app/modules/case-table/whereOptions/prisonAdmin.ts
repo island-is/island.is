@@ -4,6 +4,10 @@ import {
   prisonAdminIndictmentsAccessWhereOptions,
   prisonAdminRequestCasesAccessWhereOptions,
 } from './access'
+import {
+  buildHasDefendantSentToPrisonAdminNotRegisteredCondition,
+  buildHasDefendantSentToPrisonAdminRegisteredCondition,
+} from './conditions'
 
 // Prison admin restriction cases
 
@@ -26,13 +30,13 @@ export const prisonAdminRequestCasesDoneWhereOptions = () => ({
 export const prisonAdminIndictmentsSentToPrisonAdminWhereOptions = () => ({
   [Op.and]: [
     prisonAdminIndictmentsAccessWhereOptions,
-    { is_registered_in_prison_system: { [Op.not]: true } },
+    buildHasDefendantSentToPrisonAdminNotRegisteredCondition(),
   ],
 })
 
 export const prisonAdminIndictmentsRegisteredRulingWhereOptions = () => ({
   [Op.and]: [
     prisonAdminIndictmentsAccessWhereOptions,
-    { is_registered_in_prison_system: true },
+    buildHasDefendantSentToPrisonAdminRegisteredCondition(),
   ],
 })

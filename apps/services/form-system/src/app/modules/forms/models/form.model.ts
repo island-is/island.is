@@ -84,18 +84,25 @@ export class Form extends Model<Form> {
   zendeskInternal!: boolean
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
-    defaultValue: '',
+    defaultValue: false,
   })
-  submissionServiceUrl!: string
+  useValidate!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  usePopulate!: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
     defaultValue: '',
   })
-  validationServiceUrl!: string
+  submissionServiceUrl!: string
 
   @Column({
     type: DataType.BOOLEAN,

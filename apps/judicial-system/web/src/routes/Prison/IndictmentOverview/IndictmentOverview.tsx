@@ -1,14 +1,7 @@
-import { useContext } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  Box,
-  ButtonTypes,
-  IconMapIcon,
-  RadioButton,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Option, Text, toast } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -18,11 +11,9 @@ import {
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
-  BlueBox,
   Conclusion,
   FormContentContainer,
   FormContext,
-  FormFooter,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
@@ -38,23 +29,40 @@ import {
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  Defendant,
+  IndictmentCaseReviewDecision,
   PunishmentType,
+  ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
-  useCase,
   useDefendants,
   useFileList,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { strings } from './IndictmentOverview.strings'
+import { DefendantPrisonAdminCard } from './DefendantPrisonAdminCard'
+
+const getDefendantExplanation = (defendant: Defendant): string => {
+  if (
+    defendant.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL
+  ) {
+    return 'Áfrýjun'
+  }
+
+  if (
+    defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED &&
+    !defendant.verdict?.serviceDate
+  ) {
+    return 'Dómur er í birtingarferli'
+  }
+
+  return 'Ekki sent til fullnustu'
+}
 
 const IndictmentOverview = () => {
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-
-  const { updateCase, isUpdatingCase } = useCase()
 
   const { formatMessage } = useIntl()
   const { limitedAccessUpdateDefendant, updateDefendantState } = useDefendants()
@@ -62,22 +70,6 @@ const IndictmentOverview = () => {
   const { onOpen } = useFileList({
     caseId: workingCase.id,
   })
-
-  const { defendants } = workingCase
-  const defendant =
-    defendants && defendants?.length > 0 ? defendants[0] : undefined
-
-  const onChange = (updatedPunishmentType: PunishmentType) => {
-    if (!defendant) return
-
-    const defendantUpdate = {
-      defendantId: defendant.id,
-      caseId: workingCase.id,
-      punishmentType: updatedPunishmentType,
-    }
-    updateDefendantState(defendantUpdate, setWorkingCase)
-    limitedAccessUpdateDefendant(defendantUpdate)
-  }
 
   const sentToPrisonAdminFiles = workingCase.caseFiles?.filter(
     (file) => file.category === CaseFileCategory.SENT_TO_PRISON_ADMIN_FILE,
@@ -98,8 +90,6 @@ const IndictmentOverview = () => {
     (isCompletedWithRulingOrFine && sentToPrisonAdminDate) ||
     isNonEmptyArray(sentToPrisonAdminFiles)
 
-  const hasPunishmentType = (punishmentType: PunishmentType) =>
-    defendant?.punishmentType === punishmentType
   const hasRuling = workingCase.caseFiles?.some(
     (file) => file.category === CaseFileCategory.RULING,
   )
@@ -118,43 +108,69 @@ const IndictmentOverview = () => {
     workingCase.courtSessions,
     user,
   )
-  const savePunishmentType = async () => {
-    const updatedCase = await updateCase(workingCase.id, {
-      isRegisteredInPrisonSystem: !workingCase.isRegisteredInPrisonSystem,
-    })
 
-    if (!updatedCase) {
-      toast.error('Tókst ekki að skrá í fangelsiskerfi')
-      return
-    }
+  const handlePunishmentTypeChange = useCallback(
+    (defendant: Defendant, selectedOption: Option<PunishmentType> | null) => {
+      if (!selectedOption) return
 
-    toast.success(
-      !updatedCase.isRegisteredInPrisonSystem
-        ? 'Dómur afskráður'
-        : 'Dómur skráður',
-    )
-
-    setWorkingCase((prevWorkingCase) => ({
-      ...prevWorkingCase,
-      isRegisteredInPrisonSystem: updatedCase.isRegisteredInPrisonSystem,
-    }))
-  }
-
-  const footerNextButtonText: {
-    title: string
-    colorScheme: ButtonTypes['colorScheme']
-    icon: IconMapIcon
-  } = !workingCase?.isRegisteredInPrisonSystem
-    ? {
-        title: 'Dómur skráður',
-        colorScheme: 'default',
-        icon: 'checkmark',
+      const defendantUpdate = {
+        defendantId: defendant.id,
+        caseId: workingCase.id,
+        punishmentType: selectedOption.value,
       }
-    : {
-        title: 'Afskrá dóm',
-        colorScheme: 'destructive',
-        icon: 'close',
+
+      const stateUpdate = {
+        ...defendantUpdate,
+        ...(defendant.openedByPrisonAdminDate
+          ? {}
+          : {
+              openedByPrisonAdminDate: new Date().toISOString().split('T')[0],
+            }),
       }
+
+      updateDefendantState(stateUpdate, setWorkingCase)
+      limitedAccessUpdateDefendant(defendantUpdate)
+    },
+    [
+      workingCase.id,
+      setWorkingCase,
+      updateDefendantState,
+      limitedAccessUpdateDefendant,
+    ],
+  )
+
+  const handleToggleRegistration = useCallback(
+    async (defendant: Defendant) => {
+      const newValue = !defendant.isRegisteredInPrisonSystem
+
+      const defendantUpdate = {
+        defendantId: defendant.id,
+        caseId: workingCase.id,
+        isRegisteredInPrisonSystem: newValue,
+      }
+
+      updateDefendantState(defendantUpdate, setWorkingCase)
+
+      const success = await limitedAccessUpdateDefendant(defendantUpdate)
+
+      if (!success) {
+        toast.error('Ekki tókst að uppfæra skráningu')
+        updateDefendantState(
+          { ...defendantUpdate, isRegisteredInPrisonSystem: !newValue },
+          setWorkingCase,
+        )
+        return
+      }
+
+      toast.success(newValue ? 'Dómur skráður' : 'Dómur afskráður')
+    },
+    [
+      workingCase.id,
+      setWorkingCase,
+      updateDefendantState,
+      limitedAccessUpdateDefendant,
+    ],
+  )
 
   return (
     <PageLayout
@@ -162,14 +178,13 @@ const IndictmentOverview = () => {
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
     >
-      <PageHeader title={formatMessage(strings.htmlTitle)} />
+      <PageHeader title="Yfirlit ákæru - Réttarvörslugátt" />
       <FormContentContainer>
         <PageTitle previousUrl={getStandardUserDashboardRoute(user)}>
-          {formatMessage(strings.title, {
-            isFine:
-              workingCase.indictmentRulingDecision ===
-              CaseIndictmentRulingDecision.FINE,
-          })}
+          {workingCase.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.FINE
+            ? 'Viðurlagaákvörðun til fullnustu'
+            : 'Dómur til fullnustu'}
         </PageTitle>
         <Box marginBottom={5}>
           {workingCase.courtCaseNumber && (
@@ -183,22 +198,45 @@ const IndictmentOverview = () => {
           )}
           {workingCase.rulingDate && (
             <Text variant="h4" as="h3">
-              {formatMessage(strings.indictmentCompletedTitle, {
-                date: formatDate(workingCase.rulingDate, 'PPP'),
-              })}
-            </Text>
-          )}
-          {defendant?.openedByPrisonAdminDate && (
-            <Text variant="h4" as="h3">
-              {formatMessage(strings.indictmentReceivedTitle, {
-                date: formatDate(defendant.openedByPrisonAdminDate, 'PPP'),
-              })}
+              {`Dómsuppkvaðning ${formatDate(workingCase.rulingDate, 'PPP')}`}
             </Text>
           )}
         </Box>
+
+        {workingCase.defendants?.map((defendant) => {
+          const isSentToPrisonAdmin = defendant.isSentToPrisonAdmin
+          if (!isSentToPrisonAdmin) {
+            return (
+              <Box key={defendant.id} marginBottom={3}>
+                <Text variant="h4" as="h4">
+                  {defendant.name}
+                </Text>
+                <Box as="ul" marginTop={1}>
+                  <Text as="span">{`${getDefendantExplanation(
+                    defendant,
+                  )}`}</Text>
+                </Box>
+              </Box>
+            )
+          }
+
+          return (
+            <DefendantPrisonAdminCard
+              key={defendant.id}
+              defendant={defendant}
+              onToggleRegistration={handleToggleRegistration}
+              onPunishmentTypeChange={handlePunishmentTypeChange}
+            />
+          )
+        })}
+
         <Box marginBottom={5}>
-          <InfoCardClosedIndictment displayVerdictViewDate />
+          <InfoCardClosedIndictment
+            displayVerdictViewDate={false}
+            displaySentToPrisonAdminDate={false}
+          />
         </Box>
+
         {isCompletedCase(workingCase.state) &&
           isRulingOrDismissalCase(workingCase.indictmentRulingDecision) &&
           workingCase.courtSessions?.at(-1)?.ruling && (
@@ -218,7 +256,7 @@ const IndictmentOverview = () => {
         {isNonEmptyArray(criminalRecordUpdateFile) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(strings.criminalRecordUpdateSection)}
+              Tilkynning til sakaskrár
             </Text>
             <RenderFiles
               onOpenFile={onOpen}
@@ -228,9 +266,7 @@ const IndictmentOverview = () => {
         )}
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(
-              hasRuling ? strings.verdictTitle : strings.courtRecordTitle,
-            )}
+            {hasRuling ? 'Dómur' : 'Þingbók'}
           </Text>
           {showGeneratedCourtRecord && (
             <PdfButton
@@ -275,7 +311,7 @@ const IndictmentOverview = () => {
         {displaySentToPrisonAdminFiles && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4" marginBottom={1}>
-              {formatMessage(strings.sentToPrisonAdminFileTitle)}
+              Fullnusta
             </Text>
             {sentToPrisonAdminFiles && sentToPrisonAdminFiles.length > 0 && (
               <RenderFiles
@@ -295,107 +331,6 @@ const IndictmentOverview = () => {
             )}
           </Box>
         )}
-        <Box marginBottom={10}>
-          <Text variant="h4" as="h4" marginBottom={2}>
-            {formatMessage(strings.punishmentTypeTitle)}
-          </Text>
-          <BlueBox>
-            <Box marginBottom={2}>
-              <RadioButton
-                id="punishment-type-imprisonment"
-                name="punishmentTypeImprisonment"
-                checked={hasPunishmentType(PunishmentType.IMPRISONMENT)}
-                onChange={() => {
-                  onChange(PunishmentType.IMPRISONMENT)
-                }}
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.punishmentTypeImprisonment)}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                id="punishment-type-probation"
-                name="punishmentTypeProbation"
-                checked={hasPunishmentType(PunishmentType.PROBATION)}
-                onChange={() => {
-                  onChange(PunishmentType.PROBATION)
-                }}
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.punishmentTypeProbation)}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                id="punishment-type-fine"
-                name="punishmentTypeFine"
-                checked={hasPunishmentType(PunishmentType.FINE)}
-                onChange={() => {
-                  onChange(PunishmentType.FINE)
-                }}
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.punishmentTypeFine)}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                id="punishment-type-indictment-ruling-decision-fine"
-                name="punishmentTypeIndictmentRulingDecisionFine"
-                checked={hasPunishmentType(
-                  PunishmentType.INDICTMENT_RULING_DECISION_FINE,
-                )}
-                onChange={() => {
-                  onChange(PunishmentType.INDICTMENT_RULING_DECISION_FINE)
-                }}
-                large
-                backgroundColor="white"
-                label={formatMessage(
-                  strings.punishmentTypeIndictmentRulingDecisionFine,
-                )}
-              />
-            </Box>
-            <Box marginBottom={2}>
-              <RadioButton
-                id="punishment-type-indictment-signed-fine-invitation"
-                name="punishmentTypeIndictmentSignedFineInvitation"
-                checked={hasPunishmentType(
-                  PunishmentType.SIGNED_FINE_INVITATION,
-                )}
-                onChange={() => {
-                  onChange(PunishmentType.SIGNED_FINE_INVITATION)
-                }}
-                large
-                backgroundColor="white"
-                label={formatMessage(
-                  strings.punishmentTypeSignedFineInvitation,
-                )}
-              />
-            </Box>
-            <RadioButton
-              id="punishment-type-other"
-              name="punishmentTypeOther"
-              checked={hasPunishmentType(PunishmentType.OTHER)}
-              onChange={() => {
-                onChange(PunishmentType.OTHER)
-              }}
-              large
-              backgroundColor="white"
-              label="Annað"
-            />
-          </BlueBox>
-        </Box>
-      </FormContentContainer>
-      <FormContentContainer isFooter>
-        <FormFooter
-          previousUrl={getStandardUserDashboardRoute(user)}
-          nextButtonText={footerNextButtonText.title}
-          onNextButtonClick={savePunishmentType}
-          nextButtonColorScheme={footerNextButtonText.colorScheme}
-          nextButtonIcon={footerNextButtonText.icon}
-          nextIsLoading={isUpdatingCase}
-        />
       </FormContentContainer>
     </PageLayout>
   )

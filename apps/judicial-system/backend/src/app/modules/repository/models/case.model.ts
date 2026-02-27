@@ -30,7 +30,6 @@ import {
   CaseType,
   CourtDocument as TCourtDocument,
   CourtSessionType,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
@@ -1029,17 +1028,6 @@ export class Case extends Model {
   @BelongsTo(() => User, 'indictmentReviewerId')
   @ApiPropertyOptional({ type: User })
   indictmentReviewer?: User
-
-  /**********
-   * The review decision in indictment cases
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(IndictmentCaseReviewDecision),
-  })
-  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
-  indictmentReviewDecision?: IndictmentCaseReviewDecision
 
   /**********
    * The judge's pending decision in indictment cases - example: POSTPONING

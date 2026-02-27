@@ -30,6 +30,7 @@ import {
   eventTypes,
   isIndictmentCase,
   isRequestCase,
+  NotificationType,
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -52,6 +53,7 @@ import {
   EventLog,
   IndictmentCount,
   Institution,
+  Notification,
   Offense,
   Subpoena,
   User,
@@ -117,7 +119,6 @@ export const attributes: (keyof Case)[] = [
   'indictmentRulingDecision',
   'indictmentHash',
   'courtSessionType',
-  'indictmentReviewDecision',
   'indictmentReviewerId',
   'hasCivilClaims',
   'isCompletedWithoutRuling',
@@ -337,6 +338,15 @@ export const include: Includeable[] = [
     as: 'caseStrings',
     required: false,
     where: { stringType: stringTypes },
+    separate: true,
+  },
+  // Only expose APPEAL_COMPLETED to limited-access users (e.g. defenders) for the appeal banner date.
+  {
+    model: Notification,
+    as: 'notifications',
+    required: false,
+    where: { type: NotificationType.APPEAL_COMPLETED },
+    order: [['created', 'DESC']],
     separate: true,
   },
   {

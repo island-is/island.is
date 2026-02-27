@@ -41,14 +41,13 @@ const UserOnboarding = () => {
       )
     }
     isFlagEnabled()
-  }, [])
+  }, [featureFlagCLI])
 
   if (data && !loading && userInfo && userProfile.current) {
     const showTheModal = showUserOnboardingModal(userProfile.current)
 
     if (
       (!hiddenByFeatureFlag || isCompanyUser) &&
-      //!isDevelopment &&
       userInfo.scopes.includes(UserProfileScope.write) &&
       showTheModal
     ) {

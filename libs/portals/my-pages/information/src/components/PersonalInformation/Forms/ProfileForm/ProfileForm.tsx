@@ -59,6 +59,8 @@ interface ProfileFormProps {
   showIntroTitle?: boolean
   showIntroText?: boolean
   setFormLoading?: (isLoading: boolean) => void
+  /** When true, adds extra spacing above the legacy email block (used in onboarding modal). */
+  isOnboardingModal?: boolean
 }
 
 export const ProfileForm = ({
@@ -69,6 +71,7 @@ export const ProfileForm = ({
   setFormLoading,
   showIntroTitle,
   showIntroText = true,
+  isOnboardingModal = false,
 }: ProfileFormProps) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
@@ -89,22 +92,10 @@ export const ProfileForm = ({
   const { isDelegationTypeEnabled, isCheckingFeatureFlag } =
     useDelegationTypeFeatureFlag()
 
+  const isCompanyUser = isCompany(userInfo)
   const featureFlagClient = useFeatureFlagClient()
   const [allowCompanyUserProfileEmails, setAllowCompanyUserProfileEmails] =
     useState(false)
-
-  // Filter out emails that are not set
-  const emails = useMemo(() => {
-    return (
-      orderBy(
-        userProfile?.emails?.filter((item) => item.email),
-        ['email'],
-      ) ?? []
-    )
-  }, [userProfile?.emails])
-
-  const [confirmNudge] = useConfirmNudgeMutation()
-  const isCompanyUser = isCompany(userInfo)
 
   useEffect(() => {
     const checkFeatureFlag = async () => {
@@ -120,9 +111,20 @@ export const ProfileForm = ({
         setAllowCompanyUserProfileEmails(isEnabled as boolean)
       }
     }
-
     checkFeatureFlag()
   }, [isCompanyUser, featureFlagClient, userInfo])
+
+  // Filter out emails that are not set
+  const emails = useMemo(() => {
+    return (
+      orderBy(
+        userProfile?.emails?.filter((item) => item.email),
+        ['email'],
+      ) ?? []
+    )
+  }, [userProfile?.emails])
+
+  const [confirmNudge] = useConfirmNudgeMutation()
 
   const {
     wantsPaper,
@@ -177,20 +179,38 @@ export const ProfileForm = ({
     }
   }, [deleteLoading])
 
+  const isShowingLegacyEmail =
+    (!isDelegationTypeEnabled && hasUserProfileWriteScope) ||
+    (isCompanyUser && allowCompanyUserProfileEmails)
+
   useEffect(() => {
-    if (canDrop && onCloseOverlay) {
+    if (!isCheckingFeatureFlag && canDrop && onCloseOverlay) {
       const showAll = telDirty && 'all'
       const showEmail = emailDirty && 'mail'
       const showTel = telDirty && 'tel'
-      const showDropModal = showAll || showEmail || showTel || undefined
-      if (showDropModal) {
-        setShowDropModal(showDropModal)
+      const showDropModalType = showAll || showEmail || showTel || undefined
+      const shouldShowDropModal =
+        showDropModalType &&
+        (showDropModalType === 'mail' || showDropModalType === 'all'
+          ? isShowingLegacyEmail
+          : true)
+
+      if (shouldShowDropModal) {
+        setShowDropModal(showDropModalType)
       } else {
         setInternalLoading(true)
-        confirmNudge().then(() => closeAllModals())
+        confirmNudge()
+          .then(() => closeAllModals())
+          .catch(() => closeAllModals())
       }
     }
-  }, [canDrop])
+  }, [
+    canDrop,
+    isCheckingFeatureFlag,
+    isShowingLegacyEmail,
+    emailDirty,
+    telDirty,
+  ])
 
   const closeAllModals = () => {
     if (onCloseOverlay && setFormLoading) {
@@ -310,7 +330,7 @@ export const ProfileForm = ({
             ) : (
               ((!isDelegationTypeEnabled && hasUserProfileWriteScope) ||
                 (isCompanyUser && allowCompanyUserProfileEmails)) && (
-                <Box marginTop={2}>
+                <Box marginTop={isOnboardingModal ? 7 : 2}>
                   <InputEmail
                     buttonText={formatMessage(msg.saveEmail)}
                     email={userProfile?.email || ''}
