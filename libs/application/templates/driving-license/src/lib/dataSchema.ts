@@ -44,7 +44,9 @@ export const dataSchema = z.object({
   willBringQualityPhoto: z
     .union([z.array(z.enum([YES, NO])).nonempty(), z.enum([YES, NO])])
     .optional(),
-  healthCertificate: z.array(z.object({ name: z.string(), key: z.string() })).optional(),
+  healthCertificate: z
+    .array(z.object({ name: z.string(), key: z.string() }))
+    .optional(),
   requirementsMet: z.boolean().refine((v) => v),
   certificate: z.array(z.enum([YES, NO])).nonempty(),
   applicationFor: z.enum([B_FULL, B_TEMP, BE, B_FULL_RENEWAL_65, B_ADVANCED]),

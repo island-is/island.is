@@ -405,7 +405,8 @@ export const m = defineMessages({
   },
   healthCertificateUploadDescription: {
     id: 'dl.application:healthCertificate.uploadDescription',
-    defaultMessage: 'Tekið er við skjölum með endingunum: .pdf, .jpg, .jpeg, .png',
+    defaultMessage:
+      'Tekið er við skjölum með endingunum: .pdf, .jpg, .jpeg, .png',
     description: 'Health certificate upload format description',
   },
   healthCertificateUploadButtonLabel: {
@@ -963,7 +964,8 @@ export const m = defineMessages({
   },
   //TODO: Remove when RLS/SGS supports health certificate in BE license
   beLicenseHealthDeclarationRequiresHealthCertificate: {
-    id: 'dl.application:requirementunmet.beLicenseHealthDeclarationRequiresHealthCertificate',
+    id:
+      'dl.application:requirementunmet.beLicenseHealthDeclarationRequiresHealthCertificate',
     defaultMessage:
       'Athugaðu að þar sem þú þarft að skila inn læknisvottorði getur þú ekki haldið áfram með umsóknina. Þú þarft þú að mæta í þitt sýslumanns embætti með læknisvottorð og leggja inn umsókn á staðnum',
     description:
@@ -1201,7 +1203,8 @@ export const requirementsMessages = defineMessages({
   },
   //TODO: Remove when RLS/SGS supports health certificate in BE license
   beLicenseRequiresHealthCertificateDescription: {
-    id: 'dl.application:requirementunmet.beLicenseRequiresHealthCertificateDescription',
+    id:
+      'dl.application:requirementunmet.beLicenseRequiresHealthCertificateDescription',
     defaultMessage:
       'Ef tákntölur sem varða heilsufar/sjón eru skráðar á fyrri ökuskírteini eða umsækjandi er nú þegar með aukin ökuréttindi, þarf umsækjandi að mæta í sitt sýslumanns embætti með vottorð og leggja inn umsókn á staðnum',
     description:
@@ -1209,7 +1212,8 @@ export const requirementsMessages = defineMessages({
   },
   //TODO: Remove when RLS/SGS supports health certificate in BE license
   beLicenseRequiresHealthCertificateTitle: {
-    id: 'dl.application:requirementunmet.beLicenseRequiresHealthCertificateTitle',
+    id:
+      'dl.application:requirementunmet.beLicenseRequiresHealthCertificateTitle',
     defaultMessage: 'Læknisvottorð',
     description:
       'BE application does not support health certificate requirement',
@@ -1235,7 +1239,8 @@ export const requirementsMessages = defineMessages({
     description: 'requirement unmet 65 plus renewal',
   },
   noExtendedDrivingLicenseDescription: {
-    id: 'dl.application:requirementunmet.noExtendedDrivingLicenseDescription#markdown',
+    id:
+      'dl.application:requirementunmet.noExtendedDrivingLicenseDescription#markdown',
     defaultMessage: 'Ekki hægt að sækja um endurnýjun á 65+ ökuskírteini.',
     description: 'requirement unmet 65 plus renewal',
   },

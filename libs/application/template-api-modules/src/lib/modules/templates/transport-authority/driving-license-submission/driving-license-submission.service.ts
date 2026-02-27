@@ -167,10 +167,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const remarks = answers.hasHealthRemarks === 'yes'
 
     // Determine photo selection
-    const selectedPhoto = getValueViaPath<string>(
-      answers,
-      'selectLicensePhoto',
-    )
+    const selectedPhoto = getValueViaPath<string>(answers, 'selectLicensePhoto')
     const needsQualityPhoto =
       selectedPhoto === 'bringNewPhoto' ||
       answers.willBringQualityPhoto === 'yes'
@@ -320,7 +317,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
                 return {
                   fileName: f.fileName,
                   fileExtension: ext,
-                  contentType: ext === 'pdf' ? 'application/pdf' : `image/${ext}`,
+                  contentType:
+                    ext === 'pdf' ? 'application/pdf' : `image/${ext}`,
                   content: f.fileContent,
                   description: 'Læknisvottorð',
                 }
