@@ -3,37 +3,37 @@ import { S3Service } from '@island.is/nest/aws'
 import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ADOPTION,
-  ChildInformation,
-  FileType,
-  OTHER_NO_CHILDREN_FOUND,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-  PARENTAL_LEAVE,
-  PERMANENT_FOSTER_CARE,
-  ParentalRelations,
-  SINGLE,
-  States,
-  UnEmployedBenefitTypes,
   calculateDaysUsedByPeriods,
   calculatePeriodLength,
+  ChildInformation,
+  clamp,
+  Files,
+  FileType,
   getAdditionalSingleParentRightsInDays,
+  getAdditionalSingleParentRightsInMonths,
   getApplicationAnswers,
   getApplicationExternalData,
   getAvailablePersonalRightsInDays,
   getMultipleBirthsDays,
+  getMultipleBirthsDaysInMonths,
+  getPersonalDays,
+  getPersonalDaysInMonths,
   getSelectedChild,
   getTransferredDays,
   getTransferredDaysInMonths,
   getUnApprovedEmployers,
   isParentWithoutBirthParent,
+  OTHER_NO_CHILDREN_FOUND,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  ParentalRelations,
   Period as AnswerPeriod,
-  getPersonalDays,
-  getPersonalDaysInMonths,
+  PERMANENT_FOSTER_CARE,
+  SINGLE,
   StartDateOptions,
-  getAdditionalSingleParentRightsInMonths,
-  clamp,
-  getMultipleBirthsDaysInMonths,
-  Files,
+  States,
+  UnEmployedBenefitTypes,
 } from '@island.is/application/templates/parental-leave'
 import {
   Application,
@@ -52,19 +52,20 @@ import {
 } from '@island.is/clients/vmst'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { TemplateApiError } from '@island.is/nest/problem'
 import { ConfigService, ConfigType } from '@nestjs/config'
 import {
   SharedModuleConfig,
   TemplateApiModuleActionProps,
 } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { SharedTemplateApiService, sharedModuleConfig } from '../../shared'
+import { sharedModuleConfig, SharedTemplateApiService } from '../../shared'
 import { getConfigValue } from '../../shared/shared.utils'
 import { ChildrenService } from './children/children.service'
 import {
-  SIX_MONTHS_IN_SECONDS_EXPIRES,
   apiConstants,
   rightsDescriptions,
+  SIX_MONTHS_IN_SECONDS_EXPIRES,
 } from './constants'
 import {
   generateApplicationApprovedByEmployerEmail,
@@ -75,12 +76,12 @@ import {
   generateOtherParentRejected,
 } from './emailGenerators'
 import {
-  getType,
   checkIfPhoneNumberIsGSM,
-  getRightsCode,
-  transformApplicationToParentalLeaveDTO,
   getFromDate,
+  getRightsCode,
+  getType,
   isFixedRight,
+  transformApplicationToParentalLeaveDTO,
 } from './parental-leave.utils'
 import {
   generateAssignEmployerApplicationSms,
@@ -91,12 +92,8 @@ import {
 import parseISO from 'date-fns/parseISO'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 
-interface VMSTError {
-  type: string
-  title: string
-  status: number
-  traceId: string
-  errors: Record<string, string[]>
+interface VMSTErrorResponse {
+  status?: string
 }
 
 @Injectable()
@@ -116,16 +113,33 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
 
-  private parseErrors(e: Error | VMSTError) {
-    if (e instanceof Error) {
-      return e.message
+  private async parseVMSTError(e: unknown): Promise<never> {
+    let errorMessage = 'Villa kom upp í samskiptum við Vinnumálastofnun'
+    try {
+      if (e instanceof Response) {
+        const body: VMSTErrorResponse = await e.json()
+        if (body.status) {
+          errorMessage = body.status
+        }
+      } else if (e && typeof e === 'object' && 'status' in e) {
+        const body = e as VMSTErrorResponse
+        if (typeof body.status === 'string' && body.status.length > 0) {
+          errorMessage = body.status
+        }
+      } else if (e instanceof Error) {
+        errorMessage = e.message
+      }
+    } catch (parseError) {
+      this.logger.warn('Failed to parse VMST error response', parseError)
     }
 
-    return {
-      message: e.errors
-        ? Object.entries(e.errors).map(([, values]) => values.join(', '))
-        : e.status,
-    }
+    throw new TemplateApiError(
+      {
+        title: errorMessage,
+        summary: errorMessage,
+      },
+      500,
+    )
   }
 
   async getChildren({ application, auth }: TemplateApiModuleActionProps) {
@@ -1000,7 +1014,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return response
     } catch (e) {
       this.logger.error('Failed to send the parental leave application', e)
-      throw this.parseErrors(e)
+      await this.parseVMSTError(e)
     }
   }
 
@@ -1042,7 +1056,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return
     } catch (e) {
       this.logger.warn('Failed to validate the parental leave application', e)
-      throw this.parseErrors(e as VMSTError)
+      await this.parseVMSTError(e)
     }
   }
 
