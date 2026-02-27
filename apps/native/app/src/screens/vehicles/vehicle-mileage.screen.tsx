@@ -147,7 +147,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
     (value?: string, allowLower?: boolean) => {
       const mileage = Number(String(value ?? '').replace(/\D/g, ''))
 
-      if (mileage <= latestMileage && !allowLower) {
+      if (mileage < latestMileage && !allowLower) {
         Alert.alert(
           intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
           intl.formatMessage({ id: 'vehicle.mileage.errorMileageInputTooLow' }),
