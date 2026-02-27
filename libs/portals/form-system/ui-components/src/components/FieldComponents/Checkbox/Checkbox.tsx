@@ -51,7 +51,7 @@ export const Checkbox = ({ item, dispatch }: Props) => {
                 payload: { id: item.id, value: e.target.checked },
               })
             }
-            e.target.checked && trigger(item.id)
+            trigger(item.id)
           }}
           hasError={!!fieldState.error}
           errorMessage={fieldState.error ? fieldState.error.message : undefined}
