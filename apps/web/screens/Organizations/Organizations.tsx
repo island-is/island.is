@@ -5,7 +5,6 @@ import NextLink from 'next/link'
 import {
   Box,
   Breadcrumbs,
-  CategoryCard,
   ColorSchemeContext,
   GridColumn,
   GridContainer,
@@ -45,6 +44,7 @@ import {
   FilterMenu,
   FilterOptions,
 } from './FilterMenu'
+import { OrganizationCard } from './OrganizationCard'
 import * as styles from './Organizations.css'
 
 const CARDS_PER_PAGE = 12
@@ -93,6 +93,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
       { label: n('sortByTitleAscending', 'Heiti (a-ö)'), value: 'asc' },
       { label: n('sortByTitleDescending', 'Heiti (ö-a)'), value: 'desc' },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   )
 
@@ -248,7 +249,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                 const tags =
                   organization?.tag &&
                   organization.tag.map((x) => ({
-                    title: x.title,
+                    id: x.id,
                     label: x.title,
                   }))
 
@@ -258,26 +259,15 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     span={['12/12', '6/12', '6/12', '4/12']}
                     paddingBottom={verticalSpacing}
                   >
-                    <CategoryCard
+                    <OrganizationCard
                       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       // @ts-ignore make web strict
                       href={getOrganizationLink(organization, activeLocale)}
-                      key={index}
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-ignore make web strict
-                      text={organization?.description}
                       heading={organization?.title}
-                      hyphenate
                       {...(tags?.length && { tags })}
-                      tagOptions={{
-                        hyphenate: true,
-                        textLeft: true,
-                        truncate: true,
-                      }}
                       {...(organization?.logo?.url && {
                         src: organization.logo.url,
                         alt: organization.logo.title,
-                        autoStack: true,
                       })}
                     />
                   </GridColumn>
