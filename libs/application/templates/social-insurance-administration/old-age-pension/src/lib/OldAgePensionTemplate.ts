@@ -542,7 +542,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         )
 
         if (isEmpty(latestIncomePlan)) {
-          set(answers, 'incomePlanTable', defaultIncomeTypes)
+          set(answers, 'incomePlanTable', cloneDeep(defaultIncomeTypes))
         }
 
         if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {

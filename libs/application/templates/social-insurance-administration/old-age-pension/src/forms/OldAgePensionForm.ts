@@ -540,12 +540,12 @@ export const OldAgePensionForm: Form = buildForm({
                   currency: true,
                   updateValueObj: {
                     valueModifier: (_, activeField) =>
-                      equalIncomePerMonthValueModifier(true, activeField),
+                      equalIncomePerMonthValueModifier(false, activeField),
                     watchValues: ['income', 'currency', 'unevenIncomePerYear'],
                   },
                   suffix: '',
                   condition: (_, activeField) =>
-                    shouldShowEqualIncomePerMonth(true, activeField),
+                    shouldShowEqualIncomePerMonth(false, activeField),
                 },
                 incomePerYear: {
                   component: 'input',
@@ -650,7 +650,7 @@ export const OldAgePensionForm: Form = buildForm({
                   socialInsuranceAdministrationMessage.months.november,
                 ),
                 december: generateMonthInput(
-                  socialInsuranceAdministrationMessage.months.december,
+                  socialInsuranceAdministrationMessage.months.desember,
                 ),
               },
               table: {
