@@ -19,7 +19,6 @@ export interface CheckboxProps {
   tooltip?: React.ReactNode
   hasError?: boolean
   errorMessage?: string
-  required?: boolean
   value?: string
   defaultChecked?: boolean
   strong?: boolean
@@ -45,7 +44,6 @@ export const Checkbox = ({
   name,
   id = name,
   disabled,
-  required,
   onChange,
   tooltip,
   hasError,
@@ -88,6 +86,7 @@ export const Checkbox = ({
 
     onChange?.(event)
   }
+
   return (
     <Box
       className={cn(styles.container, large, {
@@ -137,12 +136,6 @@ export const Checkbox = ({
           >
             <Text as="span" variant={labelVariant}>
               {label}
-              {required && (
-                <span aria-hidden="true" className={styles.isRequiredStar}>
-                  {' '}
-                  *
-                </span>
-              )}
             </Text>
           </div>
           <div
@@ -164,7 +157,6 @@ export const Checkbox = ({
             </Text>
           )}
         </span>
-
         {rightContent && large && <div>{rightContent}</div>}
         {tooltip && (
           <div

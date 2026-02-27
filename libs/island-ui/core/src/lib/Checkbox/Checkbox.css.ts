@@ -102,10 +102,6 @@ export const checkboxLabelDisabled = style({
 export const checkboxError = style(inputErrorState)
 export const errorMessage = style(inputErrorMessage)
 
-export const isRequiredStar = style({
-  color: theme.color.red600,
-})
-
 export const tooltipContainer = style({
   display: 'inline-block',
   marginLeft: theme.spacing[2],
