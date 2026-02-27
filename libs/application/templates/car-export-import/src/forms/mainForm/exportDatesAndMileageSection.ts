@@ -9,6 +9,7 @@ import {
 import { Application, FormValue } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { VehicleWithMileage } from '../../lib/types'
+import { RegistrationType } from '../../utils/constants'
 
 const getSelectedVehicles = (application: Application) => {
   const selectedPermnos =
@@ -22,33 +23,36 @@ const getSelectedVehicles = (application: Application) => {
   return vehicles.filter((v) => v.permno && selectedPermnos.includes(v.permno))
 }
 
-export const datesAndMileageSection = buildSection({
-  id: 'datesAndMileageSection',
-  title: m.datesAndMileage.sectionTitle,
+export const exportDatesAndMileageSection = buildSection({
+  condition: (answers) => {
+    const registrationTypeValue = getValueViaPath<string>(
+      answers,
+      'registrationType',
+    )
+
+    return registrationTypeValue === RegistrationType.EXPORT
+  },
+  id: 'exportDatesAndMileageSection',
+  title: m.commonDatesAndMileageMessages.sectionTitle,
   children: [
     buildSubSection({
-      id: 'datesSubSection',
-      title: m.datesAndMileage.sectionTitle,
+      id: 'exportDatesSubSection',
+      title: m.commonDatesAndMileageMessages.sectionTitle,
       children: [
         buildMultiField({
-          id: 'datesMultiField',
-          title: m.datesAndMileage.title,
-          description: m.datesAndMileage.description,
+          id: 'exportDatesMultiField',
+          title: m.commonDatesAndMileageMessages.title,
+          description: m.exportDatesAndMileage.description,
           children: [
             buildDateField({
-              id: 'departureDate',
-              title: m.datesAndMileage.departureDateLabel,
+              id: 'exportDate',
+              title: m.exportDatesAndMileage.returnDateLabel,
               required: true,
               defaultValue: '',
               width: 'half',
             }),
-            buildDateField({
-              id: 'returnDate',
-              title: m.datesAndMileage.returnDateLabel,
-              width: 'half',
-            }),
             buildFieldsRepeaterField({
-              id: 'vehicleMileage',
+              id: 'exportVehicleMileage',
               title: '',
               hideAddButton: true,
               hideRemoveButton: true,
@@ -81,7 +85,7 @@ export const datesAndMileageSection = buildSection({
               fields: {
                 mileage: {
                   component: 'input',
-                  label: m.datesAndMileage.mileageLabel,
+                  label: m.exportDatesAndMileage.mileageLabel,
                   type: 'number',
                   suffix: ' km',
                   required: true,

@@ -130,35 +130,67 @@ export const m = {
     },
   }),
 
-  datesAndMileage: defineMessages({
+  commonDatesAndMileageMessages: defineMessages({
     sectionTitle: {
       id: 'rsk.cei.application:dates.mileage.section.title',
       defaultMessage: 'Dagsetningar og km staða',
-      description: 'Dates and mileage section title',
+      description: 'Common dates and mileage section title',
     },
     title: {
       id: 'rsk.cei.application:dates.mileage.title',
       defaultMessage: 'Dagsetningar og km staða',
-      description: 'Dates and mileage title',
+      description: 'Common dates and mileage title',
     },
+  }),
+
+  importDatesAndMileage: defineMessages({
     description: {
-      id: 'rsk.cei.application:dates.mileage.description',
+      id: 'rsk.cei.application:importDates.mileage.description',
+      defaultMessage:
+        'Skráðu dagsetningar ferðar og km stöðu hvers ökutækis við komu inn í landið.',
+      description: 'Dates and mileage description',
+    },
+    returnDateLabel: {
+      id: 'rsk.cei.application:importDates.mileage.return.date',
+      defaultMessage: 'Áætlaður heimkomudagur',
+      description: 'Return date label',
+    },
+    mileageLabel: {
+      id: 'rsk.cei.application:importDates.mileage.mileage.label',
+      defaultMessage: 'Km staða við heimkomu',
+      description: 'Mileage at arrival label',
+    },
+    mileageFileLabel: {
+      id: 'rsk.cei.application:importDates.mileage.file.label',
+      defaultMessage: 'Staðfesting á heimkomu',
+      description: 'Mileage file label',
+    },
+    uploadDocsHeader: {
+      id: 'rsk.cei.application:importDates.mileage.upload.docs.header',
+      defaultMessage: 'Hlaða upp skjölum fyrir staðfestingu á heimkomu.',
+      description: 'Upload docs header',
+    },
+    uploadDocsDescription: {
+      id: 'rsk.cei.application:importDates.mileage.upload.docs.description',
+      defaultMessage: 'Samþykktar skráartegundir eru .pdf,',
+      description: 'Upload docs description',
+    },
+  }),
+
+  exportDatesAndMileage: defineMessages({
+    description: {
+      id: 'rsk.cei.application:exportDates.mileage.description',
       defaultMessage:
         'Skráðu dagsetningar ferðar og km stöðu hvers ökutækis við brottför.',
       description: 'Dates and mileage description',
     },
-    departureDateLabel: {
-      id: 'rsk.cei.application:dates.mileage.departure.date',
+    returnDateLabel: {
+      id: 'rsk.cei.application:exportDates.mileage.return.date',
       defaultMessage: 'Áætlaður brottfaradagur',
       description: 'Departure date label',
     },
-    returnDateLabel: {
-      id: 'rsk.cei.application:dates.mileage.return.date',
-      defaultMessage: 'Áætlaður heimkomudagur (valkvætt)',
-      description: 'Return date label',
-    },
     mileageLabel: {
-      id: 'rsk.cei.application:dates.mileage.mileage.label',
+      id: 'rsk.cei.application:exportDates.mileage.mileage.label',
       defaultMessage: 'Km staða við brottför',
       description: 'Mileage at departure label',
     },

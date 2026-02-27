@@ -33,22 +33,35 @@ export const overviewSection = buildSection({
           bottomLine: true,
           items: (answers: FormValue) => {
             const departureDate =
-              getValueViaPath<string>(answers, 'departureDate') ?? ''
+              getValueViaPath<string | null>(answers, 'exportDate') ?? null
             const returnDate =
-              getValueViaPath<string>(answers, 'returnDate') ?? ''
+              getValueViaPath<string | null>(answers, 'importDate') ?? null
 
-            return [
-              {
+            if (!departureDate && !returnDate) {
+              throw new Error(
+                'Both exportDate and importDate are missing in overview',
+              )
+            }
+
+            const dateItems = []
+
+            if (departureDate) {
+              dateItems.push({
                 width: 'half' as const,
                 keyText: m.overview.departureDateLabel,
                 valueText: formatDate(departureDate),
-              },
-              {
+              })
+            }
+
+            if (returnDate) {
+              dateItems.push({
                 width: 'half' as const,
                 keyText: m.overview.returnDateLabel,
-                valueText: returnDate ? formatDate(returnDate) : '—',
-              },
-            ]
+                valueText: formatDate(returnDate),
+              })
+            }
+
+            return dateItems
           },
         }),
         buildOverviewField({

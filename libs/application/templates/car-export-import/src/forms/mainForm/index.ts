@@ -3,8 +3,19 @@ import { FormModes } from '@island.is/application/types'
 import { registrationTypeSection } from './registrationType'
 import { exportVehiclesSection } from './exportVehicles'
 import { importVehiclesSection } from './importVehicles'
-import { datesAndMileageSection } from './datesAndMileage'
 import { overviewSection } from './overview'
+import { importDatesAndMileageSection } from './importDatesAndMileageSection'
+import { exportDatesAndMileageSection } from './exportDatesAndMileageSection'
+
+const exportApplicationPath = [
+  exportVehiclesSection,
+  exportDatesAndMileageSection,
+]
+
+const importApplicationPath = [
+  importVehiclesSection,
+  importDatesAndMileageSection,
+]
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -12,9 +23,8 @@ export const MainForm = buildForm({
   renderLastScreenButton: true,
   children: [
     registrationTypeSection,
-    exportVehiclesSection,
-    importVehiclesSection,
-    datesAndMileageSection,
+    ...exportApplicationPath,
+    ...importApplicationPath,
     overviewSection,
   ],
 })

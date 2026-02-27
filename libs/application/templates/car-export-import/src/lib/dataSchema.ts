@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { RegistrationType } from '../utils/constants'
 
-const vehicleMileageEntry = z
+const vehicleMileageEntrySchema = z
   .object({
     mileage: z.string().min(1),
     lastMileage: z.string().optional(),
@@ -18,13 +18,21 @@ const vehicleMileageEntry = z
     },
   )
 
+const uploadFileSchema = z.object({
+  name: z.string(),
+  key: z.string().optional(),
+})
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   registrationType: z.nativeEnum(RegistrationType),
-  selectedVehicles: z.array(z.string()).min(1),
-  departureDate: z.string().min(1),
-  returnDate: z.string().optional(),
-  vehicleMileage: z.array(vehicleMileageEntry).min(1),
-})
+  selectedExportVehicles: z.array(z.string()).min(1).optional(),
+  selectedImportVehicles: z.array(z.string()).min(1).optional(),
+  exportDate: z.string().min(1).optional(),
+  importDate: z.string().min(1).optional(),
+  exportVehicleMileage: z.array(vehicleMileageEntrySchema).min(1).optional(),
+  importVehicleMileage: z.array(vehicleMileageEntrySchema).min(1).optional(),
+  importVehicleMileageFile: z.array(uploadFileSchema).min(1).optional(),
+  })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
