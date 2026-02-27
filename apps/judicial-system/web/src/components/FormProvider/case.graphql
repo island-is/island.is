@@ -44,6 +44,7 @@ query Case($input: CaseQueryInput!) {
       subpoenaType
       isSentToPrisonAdmin
       sentToPrisonAdminDate
+      publicProsecutorIsRegisteredInPoliceSystem
       openedByPrisonAdminDate
       punishmentType
       isAlternativeService
@@ -245,7 +246,6 @@ query Case($input: CaseQueryInput!) {
     defendantWaivesRightToCounsel
     crimeScenes
     indictmentIntroduction
-    publicProsecutorIsRegisteredInPoliceSystem
     indictmentReviewedDate
     indictmentCounts {
       id

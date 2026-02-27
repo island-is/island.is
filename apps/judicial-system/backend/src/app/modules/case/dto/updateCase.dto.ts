@@ -548,11 +548,6 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
   readonly isRegisteredInPrisonSystem?: boolean
 
   @IsOptional()

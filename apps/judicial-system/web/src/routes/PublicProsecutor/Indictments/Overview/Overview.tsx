@@ -69,7 +69,7 @@ export const Overview = () => {
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
-  const { updateCase, setAndSendCaseToServer } = useCase()
+  const { updateCase } = useCase()
   const { setAndSendDefendantToServer, isUpdatingDefendant } = useDefendants()
   const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -233,26 +233,24 @@ export const Overview = () => {
                 <Button
                   size="small"
                   onClick={() =>
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          publicProsecutorIsRegisteredInPoliceSystem:
-                            !workingCase.publicProsecutorIsRegisteredInPoliceSystem,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
+                    setAndSendDefendantToServer(
+                      {
+                        publicProsecutorIsRegisteredInPoliceSystem:
+                          !defendant.publicProsecutorIsRegisteredInPoliceSystem,
+                        caseId: workingCase.id,
+                        defendantId: defendant.id,
+                      },
                       setWorkingCase,
                     )
                   }
                   variant="text"
                   colorScheme={
-                    workingCase.publicProsecutorIsRegisteredInPoliceSystem
+                    defendant.publicProsecutorIsRegisteredInPoliceSystem
                       ? 'destructive'
                       : 'default'
                   }
                 >
-                  {workingCase.publicProsecutorIsRegisteredInPoliceSystem
+                  {defendant.publicProsecutorIsRegisteredInPoliceSystem
                     ? 'Afskrá í LÖKE'
                     : 'Skráð í LÖKE'}
                 </Button>

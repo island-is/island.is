@@ -160,4 +160,9 @@ export class UpdateDefendantDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly isDrivingLicenseSuspended?: boolean
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }
