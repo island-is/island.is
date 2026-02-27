@@ -79,8 +79,13 @@ const useInfoCardItems = () => {
       values: defendants
         ? [
             <div key="defendants-grid" className={grid({ gap: 3 })}>
-              {defendants.map((defendant) => (
-                <div key={defendant.id} className={styles.renderDividerFull}>
+              {defendants.map((defendant, index) => (
+                <div
+                  key={defendant.id}
+                  className={cn({
+                    [styles.renderDividerFull]: index !== defendants.length - 1,
+                  })}
+                >
                   <DefendantInfo
                     defendant={defendant}
                     workingCaseId={workingCase.id}
@@ -411,8 +416,15 @@ const useInfoCardItems = () => {
     values: workingCase.civilClaimants
       ? [
           <div key="civil-claimants-grid" className={grid({ gap: 3 })}>
-            {workingCase.civilClaimants.map((civilClaimant) => (
-              <div key={civilClaimant.id} className={styles.renderDividerFull}>
+            {workingCase.civilClaimants.map((civilClaimant, index) => (
+              <div
+                key={civilClaimant.id}
+                className={cn({
+                  [styles.renderDividerFull]:
+                    workingCase.civilClaimants &&
+                    index !== workingCase.civilClaimants.length - 1,
+                })}
+              >
                 <CivilClaimantInfo civilClaimant={civilClaimant} />
               </div>
             ))}
@@ -433,10 +445,14 @@ const useInfoCardItems = () => {
     values: workingCase.victims
       ? [
           <div key="victims-grid" className={grid({ gap: 3 })}>
-            {workingCase.victims.map((victim) => (
+            {workingCase.victims.map((victim, index) => (
               <div
                 key={victim.id}
-                className={cn(styles.renderDividerFull, grid({ gap: 1 }))}
+                className={cn(grid({ gap: 1 }), {
+                  [styles.renderDividerFull]:
+                    workingCase.victims &&
+                    index !== workingCase.victims.length - 1,
+                })}
               >
                 <VictimInfo victim={victim} />
               </div>
