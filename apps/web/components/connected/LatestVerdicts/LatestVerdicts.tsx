@@ -104,6 +104,7 @@ const LatestVerdicts = ({ slice }: LatestVerdictsProps) => {
                         <Stack space={1}>
                           {verdict.verdictJudges.map((judge, index) => {
                             const judgeName = judge?.name ?? ''
+                            if (!judgeName) return null
                             let judgeTitle = judge?.title ?? ''
                             if (judgeName === judgeTitle) judgeTitle = ''
                             return (
