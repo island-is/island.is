@@ -11,7 +11,7 @@ export class Value {
   number?: number
 
   @Field(() => Date, { nullable: true })
-  date?: Date
+  date?: Date | null
 
   @Field(() => String, { nullable: true })
   listValue?: string
