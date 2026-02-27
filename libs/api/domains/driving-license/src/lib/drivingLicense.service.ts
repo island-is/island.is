@@ -529,9 +529,15 @@ export class DrivingLicenseService {
     auth: User['authorization'],
     input: PostRenewal65AndOverInput,
   ): Promise<NewDrivingLicenseResult> {
+    // TEMP DEBUG LOG
+    this.logger.info(`${LOGTAG} renewDrivingLicense65AndOver input`, { input })
     const response = await this.drivingLicenseApi.postRenewLicenseOver65({
       input,
       auth: auth,
+    })
+    // TEMP DEBUG LOG
+    this.logger.info(`${LOGTAG} renewDrivingLicense65AndOver response`, {
+      response,
     })
     return {
       success: response.isOk ?? false,
