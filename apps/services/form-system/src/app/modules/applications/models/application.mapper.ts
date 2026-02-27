@@ -249,7 +249,7 @@ export class ApplicationMapper {
           label: app.tagLabel,
           variant: app.tagVariant,
         },
-        deleteButton: false,
+        deleteButton: true,
         pendingAction: {
           displayStatus: 'displayStatus',
           title: 'title',
