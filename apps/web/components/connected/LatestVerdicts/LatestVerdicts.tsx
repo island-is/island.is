@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Hyphen,
+  type IconMapIcon,
   LinkV2,
   SkeletonLoader,
   Stack,
@@ -83,7 +84,10 @@ const LatestVerdicts = ({ slice }: LatestVerdictsProps) => {
                 variant="detailed-reveal"
                 columns={1}
                 cards={items.map((verdict) => {
-                  const detailLines = [
+                  const detailLines: {
+                    icon: IconMapIcon
+                    text: string | React.ReactNode
+                  }[] = [
                     {
                       icon: 'calendar',
                       text: verdict.verdictDate
@@ -93,12 +97,24 @@ const LatestVerdicts = ({ slice }: LatestVerdictsProps) => {
                     { icon: 'hammer', text: verdict.court ?? '' },
                   ]
 
-                  if (verdict.presidentJudge?.name) {
+                  if (verdict.verdictJudges?.length) {
                     detailLines.push({
                       icon: 'person',
-                      text: `${verdict.presidentJudge?.name ?? ''} ${
-                        verdict.presidentJudge?.title ?? ''
-                      }`,
+                      text: (
+                        <Stack space={1}>
+                          {verdict.verdictJudges.map((judge, index) => {
+                            const key = `${judge.name}-${index}`
+                            const judgeString = `${judge?.name ?? ''} ${
+                              judge?.title ?? ''
+                            }`
+                            return (
+                              <Text key={key} variant="small">
+                                {judgeString}
+                              </Text>
+                            )
+                          })}
+                        </Stack>
+                      ),
                     })
                   }
 
