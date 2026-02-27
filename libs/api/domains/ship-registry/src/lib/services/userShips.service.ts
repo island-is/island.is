@@ -4,6 +4,7 @@ import { ShipRegistryClientV2Service } from '@island.is/clients/ship-registry-v2
 import { UserShipsCollection } from '../models/userShipsCollection.model'
 import { mapToUserShipCollection, mapToUserShipFromDetails } from '../mapper'
 import { UserShip } from '../models/userShip.model'
+import { LocaleEnum } from '../dto/locale.enum'
 
 @Injectable()
 export class UserShipsService {
@@ -24,13 +25,13 @@ export class UserShipsService {
     }
   }
 
-  async getUserShip(user: User, id: string): Promise<UserShip | null> {
+  async getUserShip(user: User, id: string, locale?: LocaleEnum): Promise<UserShip | null> {
     const ship = await this.shipRegistryClientV2Service.getShipDetails(user, id)
 
     if (!ship) {
       return null
     }
 
-    return mapToUserShipFromDetails(ship) ?? null
+    return mapToUserShipFromDetails(ship, locale) ?? null
   }
 }

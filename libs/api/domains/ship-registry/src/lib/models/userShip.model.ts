@@ -10,6 +10,9 @@ export class UserShip {
   @Field(() => ID)
   id!: string
 
+  @Field(() => Int)
+  registrationNumber!: number
+
   @Field()
   name!: string
 

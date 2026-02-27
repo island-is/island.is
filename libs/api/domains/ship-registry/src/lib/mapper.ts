@@ -3,17 +3,19 @@ import {
   ShipDetailsModel,
 } from '@island.is/clients/ship-registry-v2'
 import { isDefined } from '@island.is/shared/utils'
+import { UserShipCollectionItem } from './models/userShipCollectionItem.model'
 import { UserShip } from './models/userShip.model'
+import { LocaleEnum } from './dto/locale.enum'
 
 export const mapToUserShipCollection = (
   ships: ShipBaseInfoDto[],
-): UserShip[] => {
-  return ships.map(mapToUserShipFromBaseInfo).filter(isDefined)
+): UserShipCollectionItem[] => {
+  return ships.map(mapToUserShipCollectionItem).filter(isDefined)
 }
 
-export const mapToUserShipFromBaseInfo = (
+export const mapToUserShipCollectionItem = (
   ship: ShipBaseInfoDto,
-): UserShip | undefined => {
+): UserShipCollectionItem | undefined => {
   if (!ship.shipRegistrationNumber || !ship.shipName) {
     return undefined
   }
@@ -21,18 +23,29 @@ export const mapToUserShipFromBaseInfo = (
   return {
     id: ship.shipRegistrationNumber,
     name: ship.shipName,
+    regionAcronym: ship.regionalAcronym || undefined,
+    seaworthiness: ship.seaWorthyExpiry
+      ? {
+          isValid: new Date(ship.seaWorthyExpiry) >= new Date(),
+          validTo: ship.seaWorthyExpiry.toString(),
+        }
+      : undefined,
   }
 }
 
 export const mapToUserShipFromDetails = (
   ship: ShipDetailsModel,
+  locale: LocaleEnum = LocaleEnum.Is,
 ): UserShip | undefined => {
   if (!ship.shipRegistrationNumber || !ship.name) {
     return undefined
   }
 
+  const registrationNumber = Number(ship.shipRegistrationNumber)
+
   return {
-    id: ship.shipRegistrationNumber.toString(),
+    id: `${registrationNumber}_${locale}`,
+    registrationNumber,
     name: ship.name,
     usageType: ship.usageType || undefined,
     imoNumber: ship.imoNumber || undefined,

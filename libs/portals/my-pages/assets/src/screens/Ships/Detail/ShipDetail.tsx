@@ -12,11 +12,11 @@ import { useShipDetailQuery } from './ShipDetail.generated'
 
 export const ShipDetail = () => {
   useNamespaces('sp.ships')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { id } = useParams()
 
   const { data, loading, error } = useShipDetailQuery({
-    variables: { input: { id: id ?? '' } },
+    variables: { input: { id: id ?? '', locale: lang } },
   })
 
   const ship = data?.shipRegistryUserShip
@@ -155,7 +155,7 @@ export const ShipDetail = () => {
             <InfoLine
               loading={loading}
               label={formatMessage(shipsMessages.registrationNumber)}
-              content={ship?.id}
+              content={ship?.registrationNumber?.toString()}
             />
             <InfoLine
               loading={loading}

@@ -5,8 +5,8 @@ export class ShipRegistryIdentification {
   @Field()
   regionAcronym!: string
 
-  @Field()
-  regionName!: string
+  @Field({ nullable: true })
+  regionName?: string
 
   @Field({ nullable: true })
   homeHarbor?: string

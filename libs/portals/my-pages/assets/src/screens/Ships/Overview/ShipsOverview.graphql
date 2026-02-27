@@ -3,6 +3,11 @@ query ShipsOverview {
     data {
       id
       name
+      regionAcronym
+      seaworthiness {
+        isValid
+        validTo
+      }
     }
     totalCount
     pageInfo {
