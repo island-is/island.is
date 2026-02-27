@@ -47,6 +47,8 @@ export const payerSection = buildSection({
           required: true,
           searchCompanies: true,
           searchPersons: true,
+          customNationalIdLabel: m.payer.companyNationalId,
+          customNameLabel: m.payer.companyTitle,
           condition: (answers) =>
             getValueViaPath<YesOrNoEnum>(
               answers,

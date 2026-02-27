@@ -180,12 +180,12 @@ export const m = {
     },
     companyTitle: {
       id: 'hh.courses.application:payer.companyTitle',
-      defaultMessage: 'Nafn fyrirtækis',
+      defaultMessage: 'Nafn greiðanda',
       description: 'Title of company field',
     },
     companyNationalId: {
       id: 'hh.courses.application:payer.companyNationalId',
-      defaultMessage: 'Kennitala fyrirtækis',
+      defaultMessage: 'Kennitala greiðanda',
       description: 'Title of company national id field',
     },
     userIsPayingAsIndividualLabel: {
@@ -259,12 +259,12 @@ export const m = {
     },
     payerName: {
       id: 'hh.courses.application:overview.payerName',
-      defaultMessage: 'Nafn',
+      defaultMessage: 'Nafn greiðanda',
       description: 'Heading for payer name in overview section',
     },
     payerNationalId: {
       id: 'hh.courses.application:overview.payerNationalId',
-      defaultMessage: 'Kennitala',
+      defaultMessage: 'Kennitala greiðanda',
       description: 'Heading for payer national id in overview section',
     },
     payerHeading: {
