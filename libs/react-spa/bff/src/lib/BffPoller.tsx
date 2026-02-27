@@ -94,7 +94,7 @@ export const BffPoller = ({
           bffBaseUrl,
         })
 
-        newSessionCb('new-session-elsewhere')
+        newSessionCb('session-changed')
       }
     }
   }, [newUser, error, userInfo, postMessage, newSessionCb, bffBaseUrl])

@@ -1,7 +1,7 @@
 import { Box, Button, ProblemTemplate } from '@island.is/island-ui/core'
 import { fullScreen } from './ErrorScreen.css'
 
-export type SessionExpiredReason = 'expired' | 'new-session-elsewhere'
+export type SessionExpiredReason = 'expired' | 'session-changed'
 
 type BffSessionExpiredModalProps = {
   reason: SessionExpiredReason
@@ -37,6 +37,11 @@ export const BffSessionExpiredModal = ({
       </>
     )
 
+  const title =
+    reason === 'session-changed'
+      ? 'Ný innskráning á öðru stæði'
+      : 'Innskráning útrunnin'
+
   return (
     <Box
       display="flex"
@@ -49,7 +54,7 @@ export const BffSessionExpiredModal = ({
         variant="warning"
         expand
         tag=""
-        title="Innskráning útrunnin"
+        title={title}
         message={message}
       />
     </Box>

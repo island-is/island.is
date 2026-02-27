@@ -68,7 +68,7 @@ export const BffProvider = ({
         event.data.type === BffBroadcastEvents.NEW_SESSION &&
         isNewUser(state.userInfo, event.data.userInfo)
       ) {
-        setSessionExpiredReason('new-session-elsewhere')
+        setSessionExpiredReason('session-changed')
       } else if (event.data.type === BffBroadcastEvents.LOGOUT) {
         // We will wait 1 seconds before we dispatch logout action.
         // The reason is that IDS will not log the user out immediately.
