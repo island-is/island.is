@@ -261,6 +261,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/car-rental-fee-category'),
   [ApplicationTypes.CAR_RENTAL_DAYRATE_RETURNS]: () =>
     import('@island.is/application/templates/car-rental-dayrate-returns'),
+  [ApplicationTypes.CAR_EXPORT_IMPORT]: () =>
+    import('@island.is/application/templates/car-export-import'),
   [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: () =>
     import(
       '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'

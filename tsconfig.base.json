@@ -362,6 +362,9 @@
       "@island.is/application/templates/car-rental-fee-category": [
         "libs/application/templates/car-rental-fee-category/src/index.ts"
       ],
+      "@island.is/application/templates/car-export-import": [
+        "libs/application/templates/car-export-import/src/index.ts"
+      ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
       ],
