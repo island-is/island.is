@@ -3,4 +3,6 @@ import { PaginatedResponse } from '@island.is/nest/pagination'
 import { UserShipCollectionItem } from './userShipCollectionItem.model'
 
 @ObjectType('ShipRegistryUserShips')
-export class UserShipsCollection extends PaginatedResponse(UserShipCollectionItem) {}
+export class UserShipsCollection extends PaginatedResponse(
+  UserShipCollectionItem,
+) {}

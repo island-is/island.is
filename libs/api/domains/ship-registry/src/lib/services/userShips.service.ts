@@ -25,7 +25,11 @@ export class UserShipsService {
     }
   }
 
-  async getUserShip(user: User, id: string, locale?: LocaleEnum): Promise<UserShip | null> {
+  async getUserShip(
+    user: User,
+    id: string,
+    locale?: LocaleEnum,
+  ): Promise<UserShip | null> {
     const ship = await this.shipRegistryClientV2Service.getShipDetails(user, id)
 
     if (!ship) {
