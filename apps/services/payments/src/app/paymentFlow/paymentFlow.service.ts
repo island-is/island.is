@@ -948,7 +948,6 @@ export class PaymentFlowService {
       include: [
         {
           model: PaymentFulfillment,
-          as: 'paymentFulfillment',
           required: true,
           where: {
             paymentMethod: 'card',
@@ -957,16 +956,14 @@ export class PaymentFlowService {
             isDeleted: false,
           },
         },
-        { model: PaymentFlowCharge, as: 'charges' },
+        { model: PaymentFlowCharge },
         {
           model: CardPaymentDetails,
-          as: 'cardPaymentDetails',
           required: true,
           where: { isDeleted: false },
         },
         {
           model: PaymentWorkerEvent,
-          as: 'workerEvents',
           required: false,
           where: { taskType: 'create_fjs_charge' },
           order: [['created', 'DESC']],

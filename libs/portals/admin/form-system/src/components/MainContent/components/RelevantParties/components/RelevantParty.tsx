@@ -44,18 +44,16 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
             value={currentApplicant.name?.is ?? ''}
             onFocus={(e) => setFocus(e.target.value)}
             onChange={(e) => {
-              !isPublished ||
-                controlDispatch({
-                  type: 'CHANGE_APPLICANT_NAME',
-                  payload: {
-                    lang: 'is',
-                    newValue: e.target.value,
-                    id: currentApplicant.id,
-                  },
-                })
+              controlDispatch({
+                type: 'CHANGE_APPLICANT_NAME',
+                payload: {
+                  lang: 'is',
+                  newValue: e.target.value,
+                  id: currentApplicant.id,
+                },
+              })
             }}
             onBlur={async (e) =>
-              !isPublished &&
               e.target.value !== focus &&
               updateField({
                 variables: {
@@ -81,11 +79,7 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
             readOnly={isPublished}
             value={currentApplicant.name?.en ?? ''}
             onFocus={async (e) => {
-              if (
-                !isPublished &&
-                !currentApplicant.name?.en &&
-                currentApplicant.name?.is
-              ) {
+              if (!currentApplicant.name?.en && currentApplicant.name?.is) {
                 const translation = await getTranslation(
                   currentApplicant.name.is,
                 )
@@ -101,7 +95,6 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
               setFocus(e.target.value)
             }}
             onChange={(e) =>
-              !isPublished ||
               controlDispatch({
                 type: 'CHANGE_APPLICANT_NAME',
                 payload: {
@@ -112,7 +105,6 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
               })
             }
             onBlur={(e) =>
-              !isPublished &&
               e.target.value !== focus &&
               updateField({
                 variables: {

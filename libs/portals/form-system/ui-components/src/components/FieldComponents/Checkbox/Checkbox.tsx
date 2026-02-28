@@ -5,6 +5,8 @@ import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
+import { m } from '../../../lib/messages'
+import { useIntl } from 'react-intl'
 
 interface Props {
   item: FormSystemField
@@ -12,23 +14,35 @@ interface Props {
 }
 
 export const Checkbox = ({ item, dispatch }: Props) => {
-  const { control } = useFormContext()
+  const { control, trigger } = useFormContext()
+  const { formatMessage } = useIntl()
   const { fieldSettings } = item
   const { isLarge, hasDescription } = fieldSettings as FormSystemFieldSettings
   const { lang } = useLocale()
+
   return (
     <Controller
       key={item.id}
       name={item.id}
       control={control}
       defaultValue={getValue(item, 'checkboxValue') ?? false}
-      render={({ field }) => (
+      rules={{
+        required: {
+          value: item.isRequired ?? false,
+          message: formatMessage(m.required),
+        },
+      }}
+      render={({ field, fieldState }) => (
         <CheckboxField
           name={field.name}
-          label={item?.name?.[lang] ?? ''}
+          label={
+            item.isRequired
+              ? `${item?.name?.[lang] ?? ''} *`
+              : item?.name?.[lang] ?? ''
+          }
           large={isLarge ?? false}
           subLabel={hasDescription ? item?.description?.[lang] ?? '' : ''}
-          checked={getValue(item, 'checkboxValue') ?? false}
+          checked={field.value ?? false}
           onChange={(e) => {
             field.onChange(e.target.checked)
             if (dispatch) {
@@ -37,7 +51,10 @@ export const Checkbox = ({ item, dispatch }: Props) => {
                 payload: { id: item.id, value: e.target.checked },
               })
             }
+            trigger(item.id)
           }}
+          hasError={!!fieldState.error}
+          errorMessage={fieldState.error ? fieldState.error.message : undefined}
         />
       )}
     />
