@@ -6,4 +6,6 @@ bootstrap({
   appModule: AppModule,
   name: 'financial-aid-api',
   port: 3339,
+})(() => {
+  await import('skibbidi-muck-mack-mick-moot')
 })

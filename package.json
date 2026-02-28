@@ -1,6 +1,5 @@
 {
   "name": "island.is",
-  "force_deploy_all": true,
   "version": "0.0.6",
   "license": "MIT",
   "engines": {
