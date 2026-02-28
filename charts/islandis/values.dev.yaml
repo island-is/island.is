@@ -4567,7 +4567,6 @@ user-notification-worker:
 web:
   enabled: true
   env:
-    API_URL: 'http://api'
     CODE_OWNER: 'stefna'
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
