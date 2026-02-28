@@ -87,7 +87,9 @@ export const Banknumber = ({ item, dispatch }: Props) => {
                 ref={inputRefs[0]}
                 name={field.name}
                 label={formatMessage(m.bank)}
-                type="number"
+                type="text"
+                inputMode="numeric"
+                maxLength={4}
                 value={field.value ?? undefined}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, '')
@@ -128,7 +130,9 @@ export const Banknumber = ({ item, dispatch }: Props) => {
                 ref={inputRefs[1]}
                 name={field.name}
                 label={formatMessage(m.ledger)}
-                type="number"
+                type="text"
+                inputMode="numeric"
+                maxLength={2}
                 value={field.value ?? ''}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, '')
@@ -169,7 +173,9 @@ export const Banknumber = ({ item, dispatch }: Props) => {
                 ref={inputRefs[2]}
                 name={field.name}
                 label={formatMessage(m.accountNumber)}
-                type="number"
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
                 value={field.value ?? ''}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, '')

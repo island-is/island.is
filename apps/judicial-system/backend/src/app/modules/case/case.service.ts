@@ -45,7 +45,6 @@ import {
   CaseTransition,
   CaseType,
   CourtDocumentType,
-  CourtSessionStringType,
   DateType,
   dateTypes,
   defendantEventTypes,
@@ -1600,27 +1599,22 @@ export class CaseService {
       if (updateCaseString !== undefined) {
         const stringType = caseStringTypes[caseStringKey]
 
-        const caseString = await this.caseStringModel.findOne({
-          where: { caseId: theCase.id, stringType },
-          transaction,
-        })
-
-        if (caseString) {
-          if (updateCaseString === null) {
-            await this.caseStringModel.destroy({
-              where: { caseId: theCase.id, stringType },
+        if (updateCaseString === null) {
+          await this.caseStringModel.destroy({
+            where: { caseId: theCase.id, stringType },
+            transaction,
+          })
+        } else {
+          await this.caseStringModel.upsert(
+            {
+              caseId: theCase.id,
+              stringType,
+              value: updateCaseString,
+            },
+            {
+              conflictFields: ['case_id', 'string_type'],
               transaction,
-            })
-          } else {
-            await this.caseStringModel.update(
-              { value: updateCaseString },
-              { where: { caseId: theCase.id, stringType }, transaction },
-            )
-          }
-        } else if (updateCaseString !== null) {
-          await this.caseStringModel.create(
-            { caseId: theCase.id, stringType, value: updateCaseString },
-            { transaction },
+            },
           )
         }
 

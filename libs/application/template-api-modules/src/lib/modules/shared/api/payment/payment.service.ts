@@ -40,9 +40,9 @@ export class PaymentService extends BaseTemplateApiService {
     if (!params?.organizationId) {
       throw Error('Missing performing organization ID')
     }
-    const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
-      params.organizationId,
-    )
+    const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
+      performingOrgID: params.organizationId,
+    })
     return data.item
   }
 
@@ -144,11 +144,7 @@ export class PaymentService extends BaseTemplateApiService {
         'mockuser4',
       )
 
-      await this.paymentModelService.fulfillPayment(
-        result.id,
-        result.reference_id ?? uuid(),
-        application.id,
-      )
+      await this.paymentModelService.fulfillPayment(result.id, application.id)
 
       const slug = getSlugFromType(application.typeId)
 

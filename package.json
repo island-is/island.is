@@ -406,6 +406,7 @@
     "@testing-library/react": "16.1.0",
     "@testing-library/react-native": "12.9.0",
     "@testing-library/user-event": "14.6.1",
+    "@types/applepayjs": "14.0.9",
     "@types/aws-sdk": "2.7.0",
     "@types/aws4": "1.5.1",
     "@types/classnames": "2.2.10",
