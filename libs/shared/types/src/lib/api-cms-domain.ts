@@ -12,6 +12,7 @@ export enum CustomPageUniqueIdentifier {
   Verdicts = 'Verdicts',
   BloodDonationRestrictions = 'BloodDonationRestrictions',
   CourtAgendas = 'CourtAgendas',
+  OpenInvoices = 'OpenInvoices',
   LandspitaliWebPaymentSuccessful = 'LandspitaliWebPaymentSuccessful',
   SupremeCourtDeterminations = 'SupremeCourtDeterminations',
 }
