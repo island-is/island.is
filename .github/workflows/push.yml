@@ -1,5 +1,8 @@
 name: Monorepo pipeline - build and deploy
 
+# INTENTIONAL BREAK FOR TESTING - REMOVE THIS LINE
+this_is_invalid_yaml: [
+
 on:
   push:
     branches:
