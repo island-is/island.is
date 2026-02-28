@@ -11,15 +11,12 @@ describe('paymentFlow.utils', () => {
       const charges = [
         { paymentOptions: [FjsPaymentMethod.CARD, FjsPaymentMethod.CLAIM] },
         { paymentOptions: [FjsPaymentMethod.CARD, FjsPaymentMethod.CLAIM] },
-        { paymentOptions: [FjsPaymentMethod.CARD, FjsPaymentMethod.CLAIM] },
+        { paymentOptions: [FjsPaymentMethod.CARD] },
       ] as CatalogItemWithQuantity[]
 
       const paymentMethods = determinePaymentMethods(charges)
 
-      expect(paymentMethods).toEqual([
-        PaymentMethod.CARD,
-        PaymentMethod.INVOICE,
-      ])
+      expect(paymentMethods).toEqual([PaymentMethod.CARD])
     })
 
     it('should return an empty array if no payment methods are common to all charges', () => {
