@@ -1,8 +1,5 @@
 name: Monorepo pipeline - build and deploy
 
-# INTENTIONAL BREAK FOR TESTING - REMOVE THIS LINE
-this_is_invalid_yaml: [
-
 on:
   push:
     branches:
@@ -80,6 +77,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Intentional failure for testing
+        run: |
+          echo "This is an intentional failure for testing purposes"
+          exit 1
 
       - name: Derive appropriate SHAs
         uses: ./.github/actions/set-shas
