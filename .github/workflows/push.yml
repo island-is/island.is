@@ -78,11 +78,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Intentional failure for testing
-        run: |
-          echo "This is an intentional failure for testing purposes"
-          exit 1
-
       - name: Derive appropriate SHAs
         uses: ./.github/actions/set-shas
       - name: Setup yarn
@@ -139,7 +134,7 @@ jobs:
         continue-on-error: false
         run: |
           set -euo pipefail
-          export NODE_IMAGE_VERSION="$NODE_IMAGE_VERSION"
+          export NODE_IMAGE_VERSION="$NODE_IMAGE_VERSIOM"
           echo "NODE_IMAGE_VERSION: '${NODE_IMAGE_VERSION}'"
           echo NODE_IMAGE_VERSION="${NODE_IMAGE_VERSION}" >> "$GITHUB_OUTPUT"
           echo NODE_IMAGE_VERSION="${NODE_IMAGE_VERSION}" >> "$GITHUB_ENV"
