@@ -193,6 +193,8 @@ export class PaymentFlowService {
     const { item } =
       await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
         performingOrgID: organisationId,
+        chargeType: charges[0].chargeType,
+        chargeItemCode: charges.map((c) => c.chargeItemCode),
         paymentOptions: true,
       })
 
