@@ -18,6 +18,7 @@ const charges = [
     chargeType: 'A',
     quantity: 1,
     price: 1000,
+    paymentOptions: ['CARD', 'CLAIM'],
   },
 ]
 
