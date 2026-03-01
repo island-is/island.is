@@ -142,7 +142,9 @@ export class ChargeFjsV2ClientService {
         chargeItemCode: item.chargeItemCode,
         chargeItemName: item.chargeItemName,
         priceAmount: item.priceAmount,
-        paymentOptions: item.paymentOptions ? item.paymentOptions.split(',').filter(Boolean) : undefined,
+        paymentOptions: item.paymentOptions
+          ? item.paymentOptions.split(',').filter(Boolean)
+          : undefined,
       })),
     }
   }
