@@ -59,7 +59,10 @@ describe('InvoicePaymentController', () => {
       .spyOn(PaymentFlowService.prototype as any, 'getPaymentFlowChargeDetails')
       .mockReturnValue(
         Promise.resolve({
-          catalogItems: charges,
+          catalogItems: charges.map((charge) => ({
+            ...charge,
+            paymentOptions: ['CARD', 'CLAIM'],
+          })),
           totalPrice: 1000,
           isAlreadyPaid: false,
           hasInvoice: false,
@@ -77,6 +80,7 @@ describe('InvoicePaymentController', () => {
           priceAmount: charge.price,
           performingOrgID: 'TODO',
           chargeItemName: 'TODO',
+          paymentOptions: ['CARD', 'CLAIM'],
         })),
       }),
     )
@@ -131,6 +135,7 @@ describe('InvoicePaymentController', () => {
             priceAmount: charge.price,
             performingOrgID: 'TODO',
             chargeItemName: 'TODO',
+            paymentOptions: ['CARD', 'CLAIM'],
           })),
           totalPrice: 1000,
           firstProductTitle: 'TODO',
@@ -170,6 +175,7 @@ describe('InvoicePaymentController', () => {
             priceAmount: charge.price,
             performingOrgID: 'TODO',
             chargeItemName: 'TODO',
+            paymentOptions: ['CARD', 'CLAIM'],
           })),
           totalPrice: 1000,
           firstProductTitle: 'TODO',
@@ -210,6 +216,7 @@ describe('InvoicePaymentController', () => {
             priceAmount: charge.price,
             performingOrgID: 'TODO',
             chargeItemName: 'TODO',
+            paymentOptions: ['CARD', 'CLAIM'],
           })),
           totalPrice: 1000,
           firstProductTitle: 'TODO',

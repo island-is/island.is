@@ -126,11 +126,13 @@ export class ChargeFjsV2ClientService {
     performingOrgID,
     chargeType,
     chargeItemCode,
+    paymentOptions,
   }: CatalogperformingOrgperformingOrgIDGET3Request): Promise<Catalog> {
     const response = await this.api.catalogperformingOrgperformingOrgIDGET3({
       performingOrgID,
       chargeType,
       chargeItemCode,
+      paymentOptions,
     })
 
     return {
@@ -140,6 +142,9 @@ export class ChargeFjsV2ClientService {
         chargeItemCode: item.chargeItemCode,
         chargeItemName: item.chargeItemName,
         priceAmount: item.priceAmount,
+        paymentOptions: item.paymentOptions
+          ? item.paymentOptions.split(',').filter(Boolean)
+          : undefined,
       })),
     }
   }
