@@ -63,7 +63,7 @@ export interface CatalogItem {
   chargeItemName: string
   priceAmount: number
   quantity?: number
-  paymentOptions: string[]
+  paymentOptions?: string[]
 }
 
 export enum PayInfoPaymentMeansEnum {

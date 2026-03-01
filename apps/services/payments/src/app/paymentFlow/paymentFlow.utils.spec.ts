@@ -45,6 +45,17 @@ describe('paymentFlow.utils', () => {
       expect(paymentMethods).toEqual([PaymentMethod.CARD])
     })
 
+    it('should handle charges with no payment options', () => {
+      const charges = [
+        { paymentOptions: [FjsPaymentMethod.CARD] },
+        { paymentOptions: undefined },
+      ] as CatalogItemWithQuantity[]
+
+      const paymentMethods = determinePaymentMethods(charges)
+
+      expect(paymentMethods).toEqual([])
+    })
+
     it('should return an empty array for empty charges', () => {
       expect(determinePaymentMethods([])).toEqual([])
     })

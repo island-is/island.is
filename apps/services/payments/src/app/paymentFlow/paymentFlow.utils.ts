@@ -20,7 +20,7 @@ export const determinePaymentMethods = (
   const paymentMethods = charges.map((charge) => charge.paymentOptions)
 
   const commonPaymentMethods = paymentMethods.reduce((acc, paymentOptions) => {
-    return acc.filter((option) => paymentOptions.includes(option))
+    return acc?.filter((option) => paymentOptions?.includes(option)) ?? []
   }, paymentMethods[0])
 
   return (commonPaymentMethods ?? [])
