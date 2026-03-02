@@ -37,6 +37,17 @@ switch (job) {
       })
     break
   }
+  case 'web-sitemap': {
+    import('./app/web-sitemap/web-sitemap-worker')
+      .then((app) => app.webSitemapWorker())
+      .catch((error) => {
+        console.error(
+          'Failed to import or execute the web sitemap worker:',
+          error,
+        )
+      })
+    break
+  }
   default: {
     console.debug('No argument provided, nothing executed')
   }
