@@ -57,7 +57,7 @@
     "expo-local-authentication": "15.0.2",
     "expo-notifications": "0.28.19",
     "intl": "1.2.5",
-    "lodash": "4.17.21",
+    "lodash": "4.17.23",
     "metro-config": "0.81.0",
     "path-to-regexp": "6.2.2",
     "react": "18.3.1",
