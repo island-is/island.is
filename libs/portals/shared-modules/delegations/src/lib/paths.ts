@@ -9,4 +9,5 @@ export enum DelegationPaths {
   DelegationsGrantNew = '/umbod/veita', // New delegation grant flow
   DelegationsEdit = '/umbod/breyta', // New delegation edit flow
   ServiceCategories = '/umbod/thjonustuflokkar', // Service categories with permissions
+  CategoryDetails = '/umbod/thjonustuflokkar/:slug', // Category details
 }

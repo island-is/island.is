@@ -86,6 +86,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:serviceCategories',
     defaultMessage: 'Þjónustuflokkar',
   },
+  categoryDetails: {
+    id: 'sp.access-control-delegations:categoryDetails',
+    defaultMessage: 'Þjónustuflokkur',
+  },
   serviceCategoriesDescription: {
     id: 'sp.access-control-delegations:serviceCategoriesDescription',
     defaultMessage:
@@ -94,6 +98,10 @@ export const m = defineMessages({
   whichDelegationsSuit: {
     id: 'sp.access-control-delegations:whichDelegationsSuit',
     defaultMessage: 'Hvaða umboð henta í hvaða tilvikum?',
+  },
+  delegationsThatSuit: {
+    id: 'sp.access-control-delegations:delegationsThatSuit',
+    defaultMessage: 'Rafræn umboð sem henta',
   },
   errorTitle: {
     id: 'sp.access-control-delegations:errorTitle',
@@ -345,40 +353,44 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:edit-access-title',
     defaultMessage: 'Breyta umboði',
   },
-  stepOneTitle: {
-    id: 'sp.access-control-delegations:step-one-title',
+  chooseRecipientsTitle: {
+    id: 'sp.access-control-delegations:choose-recipients-title',
     defaultMessage: 'Hver á að fá umboðið?',
   },
-  stepOneLabel: {
-    id: 'sp.access-control-delegations:step-one-label',
+  chooseRecipientsLabel: {
+    id: 'sp.access-control-delegations:choose-recipients-label',
     defaultMessage: 'Velja umboðsaðila',
   },
-  stepOneContinueButtonLabel: {
-    id: 'sp.access-control-delegations:step-one-continue-button-label',
+  choosePermmissionsButtonLabel: {
+    id: 'sp.access-control-delegations:choose-permissions-button-label',
     defaultMessage: 'Velja umboð til að veita',
   },
-  stepTwoTitle: {
-    id: 'sp.access-control-delegations:step-two-title',
+  choosePermissionsTitle: {
+    id: 'sp.access-control-delegations:choose-permissions-title',
     defaultMessage: 'Hvaða réttindi viltu veita viðkomandi?',
   },
-  StepTwoLabel: {
-    id: 'sp.access-control-delegations:step-two-label',
+  choosePermissionsLabel: {
+    id: 'sp.access-control-delegations:choose-permissions-label',
     defaultMessage: 'Velja réttindi',
   },
-  stepTwoContinueButtonLabel: {
-    id: 'sp.access-control-delegations:step-two-continue-button-label',
+  choosePeriodButtonLabel: {
+    id: 'sp.access-control-delegations:choose-period-button-label',
     defaultMessage: 'Velja gildistíma',
   },
-  stepThreeTitle: {
-    id: 'sp.access-control-delegations:step-three-title',
+  chooseRecipientsButtonLabel: {
+    id: 'sp.access-control-delegations:choose-recipients-label',
+    defaultMessage: 'Velja umboðsaðila',
+  },
+  choosePeriodTitle: {
+    id: 'sp.access-control-delegations:choose-period-title',
     defaultMessage: 'Hversu lengi á umboðið að gilda?',
   },
-  stepThreeLabel: {
-    id: 'sp.access-control-delegations:step-three-label',
+  choosePeriodLabel: {
+    id: 'sp.access-control-delegations:choose-period-label',
     defaultMessage: 'Velja gildistíma',
   },
-  stepThreeContinueButtonLabel: {
-    id: 'sp.access-control-delegations:step-three-continue-button-label',
+  confirmAccessButtonLabel: {
+    id: 'sp.access-control-delegations:confirm-access-button-label',
     defaultMessage: 'Staðfesta skráningu umboðs',
   },
   confirmAccessModalTitle: {

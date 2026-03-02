@@ -62,6 +62,7 @@ export type Icon =
   | 'pencil'
   | 'people'
   | 'person'
+  | 'personAdd'
   | 'playCircle'
   | 'pause'
   | 'pauseCircle'
@@ -170,6 +171,7 @@ export default {
     pencil: 'Pencil',
     people: 'People',
     person: 'Person',
+    personAdd: 'PersonAdd',
     playCircle: 'PlayCircle',
     print: 'Print',
     reader: 'Reader',
@@ -273,6 +275,7 @@ export default {
     pencil: 'PencilOutline',
     people: 'PeopleOutline',
     person: 'PersonOutline',
+    personAdd: 'PersonAddOutline',
     playCircle: 'PlayCircleOutline',
     print: 'PrintOutline',
     reader: 'ReaderOutline',

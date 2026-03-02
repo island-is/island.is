@@ -100,20 +100,20 @@ const EditAccess = () => {
   const steps: FlowStep[] = [
     {
       id: 'select-permissions',
-      name: formatMessage(m.StepTwoLabel),
+      name: formatMessage(m.choosePermissionsLabel),
       content: <AccessScopes />,
       continueButtonDisabled: selectedScopes.length === 0,
-      continueButtonLabel: formatMessage(m.stepTwoContinueButtonLabel),
+      continueButtonLabel: formatMessage(m.choosePeriodButtonLabel),
       continueButtonIcon: 'arrowForward',
     },
     {
       id: 'select-period',
-      name: formatMessage(m.stepThreeLabel),
+      name: formatMessage(m.choosePeriodLabel),
       content: <AccessPeriod initialIsSamePeriod={initialIsSamePeriod} />,
       onContinue: () => {
         setIsConfirmModalVisible(true)
       },
-      continueButtonLabel: formatMessage(m.stepThreeContinueButtonLabel),
+      continueButtonLabel: formatMessage(m.confirmAccessButtonLabel),
       continueButtonIcon: 'checkmark',
     },
   ]
@@ -145,6 +145,7 @@ const EditAccess = () => {
           steps={steps}
           cancelButtonLabel={formatMessage(coreMessages.buttonCancel)}
           onCancel={() => {
+            clearForm()
             navigate(DelegationPaths.DelegationsNew)
           }}
         />

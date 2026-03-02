@@ -10,6 +10,7 @@ import { m } from './lib/messages'
 import { accessControlLoader } from './screens/AccessControl.loader'
 import { Features } from '@island.is/react/feature-flags'
 import EditAccess from './screens/EditAccess.tsx/EditAccess'
+import { CategoryDetails } from './screens/CategoryDetails/CategoryDetails'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
 const AccessControlNew = lazy(() => import('./screens/AccessControlNew'))
@@ -92,6 +93,13 @@ export const delegationsModule: PortalModule = {
             enabled: hasAccess,
             element: <ServiceCategories />,
             loader: accessControlLoader('umbod/thjonustuflokkar')(props),
+          },
+          {
+            name: m.categoryDetails,
+            path: DelegationPaths.CategoryDetails,
+            navHide: true,
+            enabled: hasAccess,
+            element: <CategoryDetails />,
           },
         ],
       },

@@ -23,7 +23,7 @@ export const AccessPeriod = ({
   return (
     <Box display="flex" flexDirection="column">
       <Text variant="h4" marginBottom={4}>
-        {formatMessage(m.stepThreeTitle)}
+        {formatMessage(m.choosePeriodTitle)}
       </Text>
       {selectedScopes.length > 1 && (
         <Box display="flex" flexDirection="column" rowGap={2} marginBottom={4}>

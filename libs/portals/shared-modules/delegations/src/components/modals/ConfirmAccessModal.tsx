@@ -43,6 +43,7 @@ export const ConfirmAccessModal = ({
           {identities.map((identity) => {
             return (
               <div
+                key={identity.nationalId}
                 style={{
                   flexBasis:
                     identities.length >= 3 ? 'calc(33% - 9px)' : 'auto',

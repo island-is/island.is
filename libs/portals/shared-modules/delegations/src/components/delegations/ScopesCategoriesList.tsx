@@ -5,7 +5,7 @@ import { m } from '../../lib/messages'
 import { AuthApiScope } from '@island.is/api/schema'
 import { AuthScopeCategoriesQuery } from '../../screens/ServiceCategories/ServiceCategories.generated'
 
-export const ServiceCategoriesList = ({
+export const ScopesCategoriesList = ({
   loading,
   error,
   categories,
@@ -59,4 +59,4 @@ export const ServiceCategoriesList = ({
   )
 }
 
-export default ServiceCategoriesList
+export default ScopesCategoriesList

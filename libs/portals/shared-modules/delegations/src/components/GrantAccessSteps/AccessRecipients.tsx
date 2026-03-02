@@ -31,7 +31,7 @@ export const AccessRecipients = ({
   return (
     <FormProvider {...methods}>
       <Text variant="h4" marginBottom={4}>
-        {formatMessage(m.stepOneTitle)}
+        {formatMessage(m.chooseRecipientsTitle)}
       </Text>
 
       <Box display="flex" flexDirection="column" rowGap={4}>

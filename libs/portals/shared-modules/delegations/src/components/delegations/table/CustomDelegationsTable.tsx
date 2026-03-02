@@ -61,11 +61,8 @@ const CustomDelegationsTable = ({
 
   const [personToDelete, setPersonToDelete] =
     useState<DelegationsByPerson | null>(null)
-  const {
-    setSelectedScopes,
-
-    clearForm,
-  } = useDelegationForm()
+  const { setSelectedScopes, setIdentities, clearForm, skipNextClear } =
+    useDelegationForm()
 
   const [deleteDelegation, { loading: deleteLoading }] =
     useDeleteAuthDelegationMutation()
@@ -167,6 +164,29 @@ const CustomDelegationsTable = ({
       validTo: scope.validTo ? new Date(scope.validTo) : undefined,
       validFrom: scope.validFrom ? new Date(scope.validFrom) : undefined,
     }))
+  }
+  const onClickEdit = (person: DelegationsByPerson) => {
+    const scopes = mapScopesToScopeSelection(person)
+    setSelectedScopes(scopes)
+
+    setIdentities([
+      {
+        nationalId: person.nationalId ?? '',
+        name: person.name ?? '',
+      },
+    ])
+    const query = new URLSearchParams({
+      nationalId: person.nationalId ?? '',
+    })
+    skipNextClear()
+
+    navigate(`${DelegationPaths.DelegationsEdit}?${query.toString()}`)
+  }
+
+  const onClickDelete = (person: DelegationsByPerson) => {
+    const scopes = mapScopesToScopeSelection(person)
+    setSelectedScopes(scopes)
+    setPersonToDelete(person)
   }
 
   return (
@@ -308,9 +328,7 @@ const CustomDelegationsTable = ({
                     colorScheme="destructive"
                     fluid
                     onClick={() => {
-                      const scopes = mapScopesToScopeSelection(person)
-                      setSelectedScopes(scopes)
-                      setPersonToDelete(person)
+                      onClickDelete(person)
                     }}
                   >
                     {formatMessage(coreMessages.buttonDestroy)}
@@ -323,18 +341,7 @@ const CustomDelegationsTable = ({
                       size="small"
                       colorScheme="default"
                       fluid
-                      onClick={() => {
-                        const scopes = mapScopesToScopeSelection(person)
-                        setSelectedScopes(scopes)
-                        const query = new URLSearchParams({
-                          nationalId: person.nationalId ?? '',
-                        })
-                        navigate(
-                          `${
-                            DelegationPaths.DelegationsEdit
-                          }?${query.toString()}`,
-                        )
-                      }}
+                      onClick={() => onClickEdit(person)}
                     >
                       {formatMessage(coreMessages.buttonEdit)}
                     </Button>
@@ -422,18 +429,7 @@ const CustomDelegationsTable = ({
                                     size="small"
                                     colorScheme="default"
                                     onClick={() => {
-                                      const scopes =
-                                        mapScopesToScopeSelection(person)
-                                      setSelectedScopes(scopes)
-                                      const query = new URLSearchParams({
-                                        nationalId: person.nationalId ?? '',
-                                      })
-
-                                      navigate(
-                                        `${
-                                          DelegationPaths.DelegationsEdit
-                                        }?${query.toString()}`,
-                                      )
+                                      onClickEdit(person)
                                     }}
                                   >
                                     {formatMessage(coreMessages.buttonEdit)}
@@ -454,9 +450,7 @@ const CustomDelegationsTable = ({
                               size="small"
                               colorScheme="destructive"
                               onClick={() => {
-                                const scopes = mapScopesToScopeSelection(person)
-                                setSelectedScopes(scopes)
-                                setPersonToDelete(person)
+                                onClickDelete(person)
                               }}
                             >
                               {formatMessage(coreMessages.buttonDestroy)}

@@ -54,7 +54,7 @@ const GrantAccess = () => {
   const steps: FlowStep[] = [
     {
       id: 'access-recipients',
-      name: formatMessage(m.stepOneLabel),
+      name: formatMessage(m.chooseRecipientsLabel),
       content: <AccessRecipients methods={methods} />,
       onContinue: () => {
         setIdentities(watchIdentities)
@@ -64,25 +64,25 @@ const GrantAccess = () => {
         watchIdentities.some(
           (identity) => identity.nationalId.length < 10 || !identity.name,
         ),
-      continueButtonLabel: formatMessage(m.stepOneContinueButtonLabel),
+      continueButtonLabel: formatMessage(m.choosePermmissionsButtonLabel),
       continueButtonIcon: 'arrowForward',
     },
     {
       id: 'select-permissions',
-      name: formatMessage(m.StepTwoLabel),
+      name: formatMessage(m.choosePermissionsLabel),
       content: <AccessScopes />,
       continueButtonDisabled: selectedScopes.length === 0,
-      continueButtonLabel: formatMessage(m.stepTwoContinueButtonLabel),
+      continueButtonLabel: formatMessage(m.choosePeriodButtonLabel),
       continueButtonIcon: 'arrowForward',
     },
     {
       id: 'select-period',
-      name: formatMessage(m.stepThreeLabel),
+      name: formatMessage(m.choosePeriodLabel),
       content: <AccessPeriod />,
       onContinue: () => {
         setIsConfirmModalVisible(true)
       },
-      continueButtonLabel: formatMessage(m.stepThreeContinueButtonLabel),
+      continueButtonLabel: formatMessage(m.confirmAccessButtonLabel),
       continueButtonIcon: 'checkmark',
     },
   ]

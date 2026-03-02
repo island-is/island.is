@@ -3,8 +3,6 @@ import { useQuery } from '@apollo/client'
 import {
   Box,
   Text,
-  Stack,
-  SkeletonLoader,
   AlertMessage,
   AccordionCard,
 } from '@island.is/island-ui/core'
@@ -20,7 +18,7 @@ import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import { useLoaderData } from 'react-router-dom'
 import { AccessControlLoaderResponse } from '../AccessControl.loader'
-import ServiceCategoriesList from '../../components/delegations/ServiceCategoriesList'
+import { ServiceCategoriesGrid } from '../../components/ServiceCategoriesGrid/ServiceCategoriesGrid'
 
 export const ServiceCategories = () => {
   const { formatMessage, lang } = useLocale()
@@ -55,14 +53,6 @@ export const ServiceCategories = () => {
         intro={formatMessage(m.serviceCategoriesDescription)}
       />
       <Box marginTop={[3, 3, 6]}>
-        {loading && (
-          <Stack space={2}>
-            <SkeletonLoader height={80} borderRadius="large" />
-            <SkeletonLoader height={80} borderRadius="large" />
-            <SkeletonLoader height={80} borderRadius="large" />
-          </Stack>
-        )}
-
         {error && (
           <AlertMessage
             type="error"
@@ -70,6 +60,19 @@ export const ServiceCategories = () => {
             message={formatMessage(m.errorLoadingCategories)}
           />
         )}
+        {!loading && !error && categories.length > 0 && (
+          <Box marginTop={6} marginBottom={2}>
+            <Text variant="h3" color="blue400">
+              {formatMessage(m.serviceCategories)}
+            </Text>
+          </Box>
+        )}
+
+        <ServiceCategoriesGrid
+          categories={categories}
+          loading={loading}
+          error={!!error}
+        />
 
         {!loading && !error && tags.length === 0 && (
           <Box
@@ -120,18 +123,6 @@ export const ServiceCategories = () => {
             </>
           )}
         </Box>
-        {!loading && !error && categories.length > 0 && (
-          <Box marginTop={6} marginBottom={2}>
-            <Text variant="h3" color="blue400">
-              {formatMessage(m.serviceCategories)}
-            </Text>
-          </Box>
-        )}
-        <ServiceCategoriesList
-          loading={loading}
-          error={!!error}
-          categories={categories}
-        />
         {contentfulData?.faqList && (
           <Box paddingTop={8}>
             <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />

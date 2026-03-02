@@ -6,7 +6,7 @@ import {
   AuthScopeTagsQuery,
 } from '../../screens/ServiceCategories/ServiceCategories.generated'
 import { useLocale } from '@island.is/localization'
-import ServiceCategoriesList from '../../components/delegations/ServiceCategoriesList'
+import { ScopesCategoriesList } from '../delegations/ScopesCategoriesList'
 import { useMemo, useState } from 'react'
 import * as styles from './GrantAccessSteps.css'
 
@@ -144,7 +144,7 @@ export const AccessScopes = () => {
   return (
     <div>
       <Text variant="h4" marginBottom={4}>
-        {formatMessage(m.stepTwoTitle)}
+        {formatMessage(m.choosePermissionsTitle)}
       </Text>
       <Box display="flex" columnGap={[0, 2]} marginBottom={4}>
         <div className={styles.input}>
@@ -198,7 +198,7 @@ export const AccessScopes = () => {
           selectedScopes={selectedScopes}
         />
       ) : (
-        <ServiceCategoriesList
+        <ScopesCategoriesList
           loading={categoriesLoading}
           error={!!categoriesError}
           categories={categoriesData?.authScopeCategories || []}

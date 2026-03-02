@@ -31,6 +31,7 @@ export interface DelegationFormState {
   setOriginalScopes: (scopes: ScopeSelection[]) => void
 
   clearForm: () => void
+  skipNextClear: () => void
 }
 
 const defaultState: DelegationFormState = {
@@ -41,6 +42,7 @@ const defaultState: DelegationFormState = {
   originalScopes: [],
   setOriginalScopes: () => undefined,
   clearForm: () => undefined,
+  skipNextClear: () => undefined,
 }
 
 export const DelegationFormContext = createContext<DelegationFormState>(
@@ -58,7 +60,17 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
     originalScopesRef.current = scopes
   }, [])
 
+  const skipClearRef = useRef(false)
+
+  const skipNextClear = useCallback(() => {
+    skipClearRef.current = true
+  }, [])
+
   const clearForm = useCallback(() => {
+    if (skipClearRef.current) {
+      skipClearRef.current = false
+      return
+    }
     setIdentities([])
     setSelectedScopes([])
     originalScopesRef.current = []
@@ -74,6 +86,7 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
         originalScopes: originalScopesRef.current,
         setOriginalScopes,
         clearForm,
+        skipNextClear,
       }}
     >
       {children}
