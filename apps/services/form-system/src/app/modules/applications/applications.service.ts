@@ -1428,9 +1428,9 @@ export class ApplicationsService {
     SELECT
       a.form_id AS "formId",
       ${localeColumn} AS "formName",
-      COUNT(*) AS "totalCount",
-      COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.DRAFT}') AS "inProgressCount",
-      COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.COMPLETED}') AS "completedCount"
+      COUNT(*)::integer AS "totalCount",
+      COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.DRAFT}')::integer AS "inProgressCount",
+      COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.COMPLETED}')::integer AS "completedCount"
     FROM public.application a
     JOIN public.form f ON f.id = a.form_id
     ${institutionJoin}
