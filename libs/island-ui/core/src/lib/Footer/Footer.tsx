@@ -86,26 +86,17 @@ export const Footer = ({
 }: FooterProps) => {
   const useNewDesign = !!bottomBarLinks
 
-  const middleColumnSpan = showTagLinks
-    ? (['12/12', '12/12', '5/12', '5/12'] as const)
-    : (['12/12', '12/12', '8/12', '9/12'] as const)
-
-  console.log('middleLinksTitle', middleLinksTitle)
   return (
     <footer>
-      <Box width="full" background="blue100" paddingY={6}>
+      <Box width="full" background="blue100" paddingY={7}>
         <GridContainer>
           <GridRow>
-            <GridColumn span="12/12">
-              <Box paddingBottom={2}>
-                <Logo iconOnly id="footer_logo" width={32} height={32} />
-              </Box>
-            </GridColumn>
             <GridColumn
-              span={['12/12', '12/12', '4/12', '3/12']}
+              span={['12/12', '12/12', '4/12', '4/12']}
               paddingBottom={[4, 4, 0]}
               className={styles.withDecorator}
             >
+              <Logo iconOnly id="footer_logo" width={32} height={32} />
               <Box paddingRight={[0, 0, 1]} className={styles.topLinksContainer}>
                 <LinkContext.Provider
                   value={{
@@ -260,11 +251,11 @@ export const Footer = ({
             </GridColumn>
             {showMiddleLinks && (
               <GridColumn
-                span={middleColumnSpan}
+                span={['12/12', '12/12', '4/12', '4/12']}
                 paddingBottom={[4, 4, 0]}
                 paddingTop={[4, 4, 0]}
               >
-                <Box paddingX={[0, 0, 1]}>
+                <Box paddingX={[0, 0, 1]} className={styles.columnTopSpace}>
                   {!!middleLinksTitle && (
                     <Text
                       as="h2"
@@ -321,11 +312,11 @@ export const Footer = ({
             )}
             {showTagLinks && tagLinks.length > 0 && (
               <GridColumn
-                span={['12/12', '12/12', '3/12', '4/12']}
+                span={['12/12', '12/12', '4/12', '4/12']}
                 paddingBottom={[4, 4, 0]}
                 paddingTop={[4, 4, 0]}
               >
-                <Box>
+                <Box className={styles.columnTopSpace}>
                   {!!tagLinksTitle && (
                     <Text
                       as="h2"
