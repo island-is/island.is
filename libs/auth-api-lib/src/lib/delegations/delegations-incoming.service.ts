@@ -3,10 +3,14 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import { SyslumennService } from '@island.is/clients/syslumenn'
-import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import {
+  FeatureFlagService,
+  Features,
+} from '@island.is/nest/feature-flags'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
+  isPersonalRepresentativeDelegationType,
 } from '@island.is/shared/types'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
@@ -221,24 +225,36 @@ export class DelegationsIncomingService {
       )
     }
 
-    if (
-      providers.includes(AuthDelegationProvider.PersonalRepresentativeRegistry)
-    ) {
-      delegationPromises.push(
-        this.delegationsIncomingRepresentativeService
-          .findAllIncoming(
-            {
-              nationalId: user.nationalId,
-              clientAllowedApiScopes,
-              requireApiScopes: client.requireApiScopes,
-            },
-            false,
-            user,
-          )
-          .then((ds) =>
-            ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
-          ),
-      )
+    // PersonalRepresentative: type-based so we support both syslumenn and legacy regardless of delegation_type.provider.
+    // - Flag OFF (legacy): use talsmannagrunnur via delegationsIncomingRepresentativeService.
+    // - Flag ON: use syslumenn (DistrictCommissionersRegistry index) via the branch below when providers includes DistrictCommissionersRegistry.
+    const hasPersonalRepresentativeType = types?.some(
+      (t) => isPersonalRepresentativeDelegationType(String(t)),
+    )
+    if (hasPersonalRepresentativeType) {
+      const usePersonalRepresentativesFromSyslumenn =
+        await this.featureFlagService.getValue(
+          Features.usePersonalRepresentativesFromSyslumenn,
+          false,
+          user,
+        )
+      if (!usePersonalRepresentativesFromSyslumenn) {
+        delegationPromises.push(
+          this.delegationsIncomingRepresentativeService
+            .findAllIncoming(
+              {
+                nationalId: user.nationalId,
+                clientAllowedApiScopes,
+                requireApiScopes: client.requireApiScopes,
+              },
+              false,
+              user,
+            )
+            .then((ds) =>
+              ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
+            ),
+        )
+      }
     }
 
     if (
