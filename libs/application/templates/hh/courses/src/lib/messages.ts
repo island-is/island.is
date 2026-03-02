@@ -280,8 +280,7 @@ export const m = {
     submitRegistrationTitle: {
       id: 'hh.courses.application:overview.submitRegistrationTitle',
       defaultMessage: 'Staðfesta skráningu',
-      description:
-        'Title of submit button in overview section without payment',
+      description: 'Title of submit button in overview section without payment',
     },
   }),
   completedForm: defineMessages({
