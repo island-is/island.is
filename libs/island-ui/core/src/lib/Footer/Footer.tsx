@@ -15,6 +15,7 @@ import { Button } from '../Button/Button'
 import Hyphen from '../Hyphen/Hyphen'
 import { LinkContext } from '../context/LinkContext/LinkContext'
 import { Stack } from '../Stack/Stack'
+import { Tag } from '../Tag/Tag'
 
 import * as styles from './Footer.css'
 
@@ -45,14 +46,32 @@ interface FooterProps {
   linkToHelpWeb?: string
   linkToHelpWebText?: string
   languageSwitchOnClick?: () => void
+  /**
+   * Tag/chip-style shortcut links shown in the right column.
+   */
+  tagLinks?: FooterLinkProps[]
+  tagLinksTitle?: string
+  showTagLinks?: boolean
+  /**
+   * Bottom bar links with hardcoded icons. When provided, renders the new
+   * bottom bar instead of the old "Aðrir opinberir vefir" section, and
+   * simplifies the left column (removing contact/privacy/terms/language/Facebook).
+   */
+  bottomBarLinks?: FooterLinkProps[]
 }
+
+const bottomBarIcons = [
+  'informationCircle',
+  'person',
+  'document',
+] as const
 
 export const Footer = ({
   topLinks = defaultTopLinksInfo,
   topLinksContact = defaultTopLinksContact,
   bottomLinks = defaultBottomLinks,
   middleLinks = defaultBottomLinks,
-  middleLinksTitle = 'Tenglar',
+  middleLinksTitle = 'Meira á Ísland.is',
   bottomLinksTitle = 'Aðrir opinberir vefir',
   showMiddleLinks = false,
   languageSwitchLink = defaultLanguageSwitchLink,
@@ -60,15 +79,26 @@ export const Footer = ({
   termsLink = defaultTermsLink,
   hideLanguageSwitch = false,
   languageSwitchOnClick,
+  tagLinks = [],
+  tagLinksTitle = 'Flýtileiðir',
+  showTagLinks = false,
+  bottomBarLinks,
 }: FooterProps) => {
+  const useNewDesign = !!bottomBarLinks
+
+  const middleColumnSpan = showTagLinks
+    ? (['12/12', '12/12', '5/12', '5/12'] as const)
+    : (['12/12', '12/12', '8/12', '9/12'] as const)
+
+  console.log('middleLinksTitle', middleLinksTitle)
   return (
     <footer>
       <Box width="full" background="blue100" paddingY={6}>
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12">
-              <Box paddingBottom={5}>
-                <Logo iconOnly id="footer_logo" />
+              <Box paddingBottom={2}>
+                <Logo iconOnly id="footer_logo" width={32} height={32} />
               </Box>
             </GridColumn>
             <GridColumn
@@ -76,7 +106,7 @@ export const Footer = ({
               paddingBottom={[4, 4, 0]}
               className={styles.withDecorator}
             >
-              <Box paddingRight={[0, 0, 1]}>
+              <Box paddingRight={[0, 0, 1]} className={styles.topLinksContainer}>
                 <LinkContext.Provider
                   value={{
                     linkRenderer: (href, children) => (
@@ -92,7 +122,7 @@ export const Footer = ({
                       <Text
                         key={index}
                         variant="intro"
-                        paddingBottom={isLast ? 4 : 2}
+                        paddingBottom={isLast && useNewDesign ? 0 : isLast ? 4 : 2}
                         color={'blue600'}
                       >
                         <a href={href}>
@@ -102,97 +132,135 @@ export const Footer = ({
                     )
                   })}
                 </LinkContext.Provider>
-                <Box display="flex" flexDirection={'column'} paddingBottom={4}>
-                  {topLinksContact.map(({ title, href }, index) => {
-                    const isLast = index + 1 === topLinksContact.length
-                    const isInternalLink = !shouldLinkOpenInNewWindow(href)
-                    return (
-                      <Box marginBottom={isLast ? 0 : 3} key={index}>
-                        <Link href={href} skipTab>
-                          <Button
-                            colorScheme="default"
-                            icon={isInternalLink ? 'arrowForward' : undefined}
-                            iconType={isInternalLink ? 'filled' : undefined}
-                            size="default"
-                            variant="text"
-                            as="span"
-                          >
-                            {title}
-                          </Button>
-                        </Link>
-                      </Box>
-                    )
-                  })}
-                </Box>
-                <div>
-                  <Stack space={1}>
+                {!useNewDesign && (
+                  <>
                     <Box
                       display="flex"
-                      rowGap={1}
-                      columnGap={1}
-                      flexWrap="nowrap"
-                      justifyContent="flexStart"
+                      flexDirection={'column'}
+                      paddingBottom={4}
                     >
-                      <Box className={styles.iconPaddingTop}>
-                        <Icon
-                          icon="informationCircle"
-                          size="small"
-                          color="blue400"
-                          type="outline"
-                        />
-                      </Box>
-
-                      <Text variant="h5" color="blue600" fontWeight="light">
-                        <Link href={privacyPolicyLink.href}>
-                          {privacyPolicyLink.title}
-                        </Link>
-                      </Text>
+                      {topLinksContact.map(({ title, href }, index) => {
+                        const isLast =
+                          index + 1 === topLinksContact.length
+                        const isInternalLink =
+                          !shouldLinkOpenInNewWindow(href)
+                        return (
+                          <Box marginBottom={isLast ? 0 : 3} key={index}>
+                            <Link href={href} skipTab>
+                              <Button
+                                colorScheme="default"
+                                icon={
+                                  isInternalLink
+                                    ? 'arrowForward'
+                                    : undefined
+                                }
+                                iconType={
+                                  isInternalLink ? 'filled' : undefined
+                                }
+                                size="default"
+                                variant="text"
+                                as="span"
+                              >
+                                {title}
+                              </Button>
+                            </Link>
+                          </Box>
+                        )
+                      })}
                     </Box>
-                    <Inline space={1} alignY="center">
-                      <Icon
-                        type="outline"
-                        icon="document"
-                        size={'small'}
-                        color="blue400"
-                      />
-                      <Text variant="h5" color="blue600" fontWeight="light">
-                        <Link href={termsLink.href}>{termsLink.title}</Link>
-                      </Text>
-                    </Inline>
-                    {!hideLanguageSwitch && (
-                      <Inline space={1} alignY="center">
-                        <Icon
-                          size="small"
-                          icon="globe"
-                          type="outline"
-                          color="blue400"
-                        />
-                        <Text variant="h5" color="blue600" fontWeight="light">
-                          <Link
-                            href={languageSwitchLink.href}
-                            onClick={languageSwitchOnClick}
-                          >
-                            {languageSwitchLink.title}
-                          </Link>
-                        </Text>
-                      </Inline>
-                    )}
+                    <div>
+                      <Stack space={1}>
+                        <Box
+                          display="flex"
+                          rowGap={1}
+                          columnGap={1}
+                          flexWrap="nowrap"
+                          justifyContent="flexStart"
+                        >
+                          <Box className={styles.iconPaddingTop}>
+                            <Icon
+                              icon="informationCircle"
+                              size="small"
+                              color="blue400"
+                              type="outline"
+                            />
+                          </Box>
 
-                    <Inline space={1} alignY="center">
-                      <Icon size="small" icon="facebook" color="blue400" />
-                      <Text variant="h5" color="blue600" fontWeight="light">
-                        <Link href="https://www.facebook.com/islandid">
-                          Facebook
-                        </Link>
-                      </Text>
-                    </Inline>
-                  </Stack>
-                </div>
+                          <Text
+                            variant="h5"
+                            color="blue600"
+                            fontWeight="light"
+                          >
+                            <Link href={privacyPolicyLink.href}>
+                              {privacyPolicyLink.title}
+                            </Link>
+                          </Text>
+                        </Box>
+                        <Inline space={1} alignY="center">
+                          <Icon
+                            type="outline"
+                            icon="document"
+                            size={'small'}
+                            color="blue400"
+                          />
+                          <Text
+                            variant="h5"
+                            color="blue600"
+                            fontWeight="light"
+                          >
+                            <Link href={termsLink.href}>
+                              {termsLink.title}
+                            </Link>
+                          </Text>
+                        </Inline>
+                        {!hideLanguageSwitch && (
+                          <Inline space={1} alignY="center">
+                            <Icon
+                              size="small"
+                              icon="globe"
+                              type="outline"
+                              color="blue400"
+                            />
+                            <Text
+                              variant="h5"
+                              color="blue600"
+                              fontWeight="light"
+                            >
+                              <Link
+                                href={languageSwitchLink.href}
+                                onClick={languageSwitchOnClick}
+                              >
+                                {languageSwitchLink.title}
+                              </Link>
+                            </Text>
+                          </Inline>
+                        )}
+
+                        <Inline space={1} alignY="center">
+                          <Icon
+                            size="small"
+                            icon="facebook"
+                            color="blue400"
+                          />
+                          <Text
+                            variant="h5"
+                            color="blue600"
+                            fontWeight="light"
+                          >
+                            <Link href="https://www.facebook.com/islandid">
+                              Facebook
+                            </Link>
+                          </Text>
+                        </Inline>
+                      </Stack>
+                    </div>
+                  </>
+                )}
               </Box>
             </GridColumn>
             {showMiddleLinks && (
               <GridColumn
-                span={['12/12', '12/12', '8/12', '9/12']}
+                span={middleColumnSpan}
                 paddingBottom={[4, 4, 0]}
                 paddingTop={[4, 4, 0]}
               >
@@ -201,8 +269,8 @@ export const Footer = ({
                     <Text
                       as="h2"
                       variant="eyebrow"
-                      color="blue400"
-                      paddingBottom={3}
+                      color={showTagLinks ? 'dark400' : 'blue400'}
+                      paddingBottom={2}
                     >
                       {middleLinksTitle}
                     </Text>
@@ -210,15 +278,32 @@ export const Footer = ({
                   <LinkContext.Provider
                     value={{
                       linkRenderer: (href, children) => (
-                        <Link href={href} color="blue600" underline="normal">
+                        <Link
+                          href={href}
+                          color="blue600"
+                          underline="normal"
+                        >
                           {children}
                         </Link>
                       ),
                     }}
                   >
-                    <Tiles space={2} columns={[1, 2, 2, 2, 3]}>
-                      {middleLinks.map(({ title, href }, index) => {
-                        return (
+                    {showTagLinks ? (
+                      <div className={styles.middleLinksGrid}>
+                        {middleLinks.map(({ title, href }, index) => (
+                          <Text
+                            key={index}
+                            variant="medium"
+                            color="blue600"
+                            fontWeight="light"
+                          >
+                            <a href={href}>{title}</a>
+                          </Text>
+                        ))}
+                      </div>
+                    ) : (
+                      <Tiles space={2} columns={[1, 2, 2, 2, 3]}>
+                        {middleLinks.map(({ title, href }, index) => (
                           <Text
                             key={index}
                             variant="h5"
@@ -227,60 +312,111 @@ export const Footer = ({
                           >
                             <a href={href}>{title}</a>
                           </Text>
-                        )
-                      })}
-                    </Tiles>
+                        ))}
+                      </Tiles>
+                    )}
                   </LinkContext.Provider>
+                </Box>
+              </GridColumn>
+            )}
+            {showTagLinks && tagLinks.length > 0 && (
+              <GridColumn
+                span={['12/12', '12/12', '3/12', '4/12']}
+                paddingBottom={[4, 4, 0]}
+                paddingTop={[4, 4, 0]}
+              >
+                <Box>
+                  {!!tagLinksTitle && (
+                    <Text
+                      as="h2"
+                      variant="eyebrow"
+                      color="dark400"
+                      paddingBottom={2}
+                    >
+                      {tagLinksTitle}
+                    </Text>
+                  )}
+                  <Inline space={1}>
+                    {tagLinks.map(({ title, href }, index) => (
+                      <Tag key={index} variant="blue" outlined href={href}>
+                        {title}
+                      </Tag>
+                    ))}
+                  </Inline>
                 </Box>
               </GridColumn>
             )}
           </GridRow>
         </GridContainer>
       </Box>
-      <Box paddingY={4}>
-        <GridContainer>
-          <Box paddingBottom={2}>
-            <Text as="h2" variant="eyebrow" color="blue400">
-              {bottomLinksTitle}
-            </Text>
-          </Box>
-          <Box>
-            <LinkContext.Provider
-              value={{
-                linkRenderer: (href, children) => (
-                  <Link href={href} underline="normal">
-                    {children}
-                  </Link>
-                ),
-              }}
-            >
-              <Inline space={[2, 2, 4]}>
-                {bottomLinks.map(({ title, href }, index) => (
-                  <Text key={index} variant="small" color="blue600">
-                    <a href={href}>{title}</a>
+      {bottomBarLinks ? (
+        <Box paddingY={3} className={styles.bottomBar}>
+          <GridContainer>
+            <Inline space={[2, 2, 4]} alignY="center">
+              {bottomBarLinks.map(({ title, href }, index) => (
+                <Inline key={index} space={1} alignY="center">
+                  <Icon
+                    size="small"
+                    icon={bottomBarIcons[index] ?? 'informationCircle'}
+                    type="outline"
+                    color="blue400"
+                  />
+                  <Text variant="h5" color="blue600" fontWeight="light">
+                    <Link href={href} underline="normal">
+                      {title}
+                    </Link>
                   </Text>
-                ))}
-              </Inline>
-            </LinkContext.Provider>
-          </Box>
-        </GridContainer>
-      </Box>
+                </Inline>
+              ))}
+            </Inline>
+          </GridContainer>
+        </Box>
+      ) : (
+        <Box paddingY={4}>
+          <GridContainer>
+            <Box paddingBottom={2}>
+              <Text as="h2" variant="eyebrow" color="blue400">
+                {bottomLinksTitle}
+              </Text>
+            </Box>
+            <Box>
+              <LinkContext.Provider
+                value={{
+                  linkRenderer: (href, children) => (
+                    <Link href={href} underline="normal">
+                      {children}
+                    </Link>
+                  ),
+                }}
+              >
+                <Inline space={[2, 2, 4]}>
+                  {bottomLinks.map(({ title, href }, index) => (
+                    <Text key={index} variant="small" color="blue600">
+                      <a href={href}>{title}</a>
+                    </Text>
+                  ))}
+                </Inline>
+              </LinkContext.Provider>
+            </Box>
+          </GridContainer>
+        </Box>
+      )}
     </footer>
   )
 }
 
 const defaultTopLinksInfo = [
   {
-    title: 'Um Stafrænt Ísland',
-    href: 'https://stafraent.island.is/',
-  },
-  {
     title: 'Stofnanir',
     href: '/stofnanir',
   },
   {
-    title: 'Vörur og þjónusta Ísland.is',
-    href: 'https://island.is/flokkur/vorur-og-thjonusta-island-is',
+    title: 'Þjónustuflokkar',
+    href: '/flokkur',
+  },
+  {
+    title: 'Lífsviðburðir',
+    href: '/lifsvidburdir',
   },
 ]
 
