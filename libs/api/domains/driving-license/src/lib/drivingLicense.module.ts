@@ -7,10 +7,10 @@ import {
 } from './graphql'
 import { DrivingLicenseService } from './drivingLicense.service'
 import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
-import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
+import { NationalRegistryV3ApplicationsClientModule } from '@island.is/clients/national-registry-v3-applications'
 
 @Module({
-  imports: [NationalRegistryXRoadModule, DrivingLicenseApiModule],
+  imports: [NationalRegistryV3ApplicationsClientModule, DrivingLicenseApiModule],
   providers: [
     MainResolver,
     QualityPhotoResolver,

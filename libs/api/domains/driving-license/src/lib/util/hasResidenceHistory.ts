@@ -3,46 +3,25 @@ import {
   Residence,
 } from '@island.is/residence-history'
 import compareDesc from 'date-fns/compareDesc'
-
-interface NationalRegistryResidence {
-  address: NationalRegistryAddress
-
-  houseIdentificationCode?: string | null
-
-  realEstateNumber?: string | null
-
-  country?: string | null
-
-  dateOfChange?: Date | null
-}
-
-interface NationalRegistryAddress {
-  streetName: string
-
-  postalCode?: string | null
-
-  city?: string | null
-
-  municipalityCode?: string | null
-}
+import { ResidenceEntryDto } from '@island.is/clients/national-registry-v3-applications'
 
 export const mapResidence = (
-  history: NationalRegistryResidence[] | undefined,
+  history: ResidenceEntryDto[],
 ): Residence[] => {
-  const mappedHistory = history?.map((residence) => {
+  const mappedHistory = history.map((residence) => {
     if (residence.country && residence.dateOfChange)
       return {
         address: {
-          streetAddress: residence.address.streetName || undefined,
-          postalCode: residence.address.postalCode || undefined,
-          city: residence.address.city || undefined,
-          municipalityCode: residence.address.municipalityCode || undefined,
+          streetAddress: residence.streetName || undefined,
+          postalCode: residence.postalCode || undefined,
+          city: residence.city || undefined,
+          municipalityCode: residence.municipalityCode || undefined,
         },
         country: residence.country,
         dateOfChange: new Date(residence.dateOfChange),
       } as Residence
   })
-  return mappedHistory?.filter(Boolean) as Residence[]
+  return mappedHistory.filter(Boolean) as Residence[]
 }
 
 export const hasResidenceHistory = (residence: Residence[] | undefined) => {
