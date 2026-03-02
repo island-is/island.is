@@ -5,37 +5,38 @@ import {
   CallHandler,
 } from '@nestjs/common'
 import { plainToInstance } from 'class-transformer'
-import { map } from 'rxjs/operators'
-import { Observable } from 'rxjs'
+import { mergeMap } from 'rxjs/operators'
+import { Observable, from } from 'rxjs'
 import { IdentityClientService } from '@island.is/clients/identity'
 import { getOrganizationInfoByNationalId } from '../../../../utils/organizationInfo'
-import { ApplicationAdminDto } from '../models/dto/applicationAdmin.dto'
-import { ApplicationAdminResponseDto } from '../models/dto/applicationAdminResponse.dto'
-import { InstitutionDto } from '../models/dto/institution.dto'
+import { ApplicationAdminDto } from '../models/dto/admin/applicationAdmin.dto'
+import { ApplicationAdminResponseDto } from '../models/dto/admin/applicationAdminResponse.dto'
+import { InstitutionDto } from '../models/dto/admin/institution.dto'
 
 @Injectable()
 export class ApplicationAdminSerializer
   implements
-    NestInterceptor<
-      ApplicationAdminResponseDto,
-      Promise<ApplicationAdminResponseDto>
-    >
+    NestInterceptor<ApplicationAdminResponseDto, ApplicationAdminResponseDto>
 {
   constructor(private identityService: IdentityClientService) {}
 
   intercept(
     _context: ExecutionContext,
     next: CallHandler<ApplicationAdminResponseDto>,
-  ): Observable<Promise<ApplicationAdminResponseDto>> {
+  ): Observable<ApplicationAdminResponseDto> {
     return next.handle().pipe(
-      map(async (res: ApplicationAdminResponseDto) => {
-        return plainToInstance(ApplicationAdminResponseDto, {
-          count: res.count,
-          rows: await Promise.all(
+      mergeMap((res: ApplicationAdminResponseDto) =>
+        from(
+          Promise.all(
             res.rows.map((application) => this.serialize(application)),
+          ).then((rows) =>
+            plainToInstance(ApplicationAdminResponseDto, {
+              count: res.count,
+              rows,
+            }),
           ),
-        })
-      }),
+        ),
+      ),
     )
   }
 
@@ -69,22 +70,23 @@ export class ApplicationAdminSerializer
 
 @Injectable()
 export class InstitutionSerializer
-  implements NestInterceptor<InstitutionDto[], Promise<InstitutionDto[]>>
+  implements NestInterceptor<InstitutionDto[], InstitutionDto[]>
 {
   intercept(
     _context: ExecutionContext,
     next: CallHandler<InstitutionDto[]>,
-  ): Observable<Promise<InstitutionDto[]>> {
-    return next.handle().pipe(
-      map(async (institutions: InstitutionDto[]) => {
-        return plainToInstance(
-          InstitutionDto,
-          await Promise.all(
-            institutions.map((institution) => this.serialize(institution)),
+  ): Observable<InstitutionDto[]> {
+    return next
+      .handle()
+      .pipe(
+        mergeMap((institutions: InstitutionDto[]) =>
+          from(
+            Promise.all(
+              institutions.map((institution) => this.serialize(institution)),
+            ).then((serialized) => plainToInstance(InstitutionDto, serialized)),
           ),
-        )
-      }),
-    )
+        ),
+      )
   }
 
   private async serialize(

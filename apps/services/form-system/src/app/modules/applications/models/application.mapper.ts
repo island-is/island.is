@@ -12,7 +12,7 @@ import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { Field } from '../../fields/models/field.model'
 import type { Locale } from '@island.is/shared/types'
-import { ApplicationAdminDto } from './dto/applicationAdmin.dto'
+import { ApplicationAdminDto } from './dto/admin/applicationAdmin.dto'
 
 @Injectable()
 export class ApplicationMapper {

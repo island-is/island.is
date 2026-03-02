@@ -44,16 +44,20 @@ export class ApplicationAdminV2Service {
     return this.formSystemAdminApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private async getIncludeFormSystem(user: User): Promise<boolean> {
+    return this.featureFlagService.getValue(
+      Features.isFormSystemInAdminPortalEnabled,
+      false,
+      user,
+    )
+  }
+
   async findAllApplicationsForSuperAdmin(
     user: User,
     locale: Locale,
     filters: ApplicationsSuperAdminFilters,
   ): Promise<ApplicationAdminPaginatedResponse> {
-    const includeFormSystem = await this.featureFlagService.getValue(
-      Features.isFormSystemInAdminPortalEnabled,
-      true,
-      user,
-    )
+    const includeFormSystem = await this.getIncludeFormSystem(user)
 
     // Fetch enough items from each source to cover the requested page
     const fetchCount = filters.page * filters.count
@@ -135,11 +139,7 @@ export class ApplicationAdminV2Service {
     locale: Locale,
     filters: ApplicationsAdminFilters,
   ): Promise<ApplicationAdminPaginatedResponse> {
-    const includeFormSystem = await this.featureFlagService.getValue(
-      Features.isFormSystemInAdminPortalEnabled,
-      true,
-      user,
-    )
+    const includeFormSystem = await this.getIncludeFormSystem(user)
 
     // Fetch enough items from each source to cover the requested page
     const fetchCount = filters.page * filters.count
@@ -219,11 +219,7 @@ export class ApplicationAdminV2Service {
     locale: Locale,
     input: ApplicationTypesAdminInput,
   ): Promise<ApplicationTypeAdmin[]> {
-    const includeFormSystem = await this.featureFlagService.getValue(
-      Features.isFormSystemInAdminPortalEnabled,
-      true,
-      user,
-    )
+    const includeFormSystem = await this.getIncludeFormSystem(user)
 
     const appSystemPromise = this.appSystemApplicationApiWithAuth(
       user,
@@ -274,11 +270,7 @@ export class ApplicationAdminV2Service {
     user: User,
     locale: Locale,
   ): Promise<ApplicationTypeAdmin[]> {
-    const includeFormSystem = await this.featureFlagService.getValue(
-      Features.isFormSystemInAdminPortalEnabled,
-      true,
-      user,
-    )
+    const includeFormSystem = await this.getIncludeFormSystem(user)
 
     const appSystemPromise = this.appSystemApplicationApiWithAuth(
       user,
@@ -326,11 +318,7 @@ export class ApplicationAdminV2Service {
   async findAllInstitutionsForSuperAdmin(
     user: User,
   ): Promise<ApplicationInstitution[]> {
-    const includeFormSystem = await this.featureFlagService.getValue(
-      Features.isFormSystemInAdminPortalEnabled,
-      true,
-      user,
-    )
+    const includeFormSystem = await this.getIncludeFormSystem(user)
 
     const appSystemPromise = this.appSystemApplicationApiWithAuth(
       user,
@@ -377,11 +365,7 @@ export class ApplicationAdminV2Service {
     locale: Locale,
     input: ApplicationsAdminStatisticsInput,
   ): Promise<ApplicationStatistics[]> {
-    const includeFormSystem = await this.featureFlagService.getValue(
-      Features.isFormSystemInAdminPortalEnabled,
-      true,
-      user,
-    )
+    const includeFormSystem = await this.getIncludeFormSystem(user)
 
     const appSystemPromise =
       this.appSystemApplicationApiWithAuth(
@@ -432,11 +416,7 @@ export class ApplicationAdminV2Service {
     locale: Locale,
     input: ApplicationsAdminStatisticsInput,
   ): Promise<ApplicationStatistics[]> {
-    const includeFormSystem = await this.featureFlagService.getValue(
-      Features.isFormSystemInAdminPortalEnabled,
-      true,
-      user,
-    )
+    const includeFormSystem = await this.getIncludeFormSystem(user)
 
     const appSystemPromise =
       this.appSystemApplicationApiWithAuth(

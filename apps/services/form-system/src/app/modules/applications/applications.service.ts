@@ -51,10 +51,10 @@ import { NotificationResponseDto } from './models/dto/validation.response.dto'
 import { NotifyService } from '../services/notify.service'
 import { NotificationDto } from './models/dto/notification.dto'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { ApplicationTypeDto } from './models/dto/applicationType.dto'
-import { InstitutionDto } from './models/dto/institution.dto'
-import { ApplicationStatisticsDto } from './models/dto/applicationStatistics.dto'
-import { ApplicationAdminResponseDto } from './models/dto/applicationAdminResponse.dto'
+import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
+import { InstitutionDto } from './models/dto/admin/institution.dto'
+import { ApplicationStatisticsDto } from './models/dto/admin/applicationStatistics.dto'
+import { ApplicationAdminResponseDto } from './models/dto/admin/applicationAdminResponse.dto'
 import { escapeLike } from './utils/escapeLike'
 
 @Injectable()
@@ -1281,6 +1281,8 @@ export class ApplicationsService {
     const offset = (page - 1) * limit
 
     const { count, rows } = await this.applicationModel.findAndCountAll({
+      distinct: true,
+      col: 'id',
       where: {
         [Op.and]: [
           formId ? { formId } : {},

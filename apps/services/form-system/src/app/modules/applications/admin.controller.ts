@@ -18,10 +18,10 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { ApplicationTypeDto } from './models/dto/applicationType.dto'
-import { InstitutionDto } from './models/dto/institution.dto'
-import { ApplicationAdminResponseDto } from './models/dto/applicationAdminResponse.dto'
-import { ApplicationStatisticsDto } from './models/dto/applicationStatistics.dto'
+import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
+import { InstitutionDto } from './models/dto/admin/institution.dto'
+import { ApplicationAdminResponseDto } from './models/dto/admin/applicationAdminResponse.dto'
+import { ApplicationStatisticsDto } from './models/dto/admin/applicationStatistics.dto'
 import {
   ApplicationAdminSerializer,
   InstitutionSerializer,
