@@ -44,6 +44,9 @@ test.describe.serial('Indictment tests', () => {
       .fill(today)
     await page.keyboard.press('Escape')
     await page.getByTestId('inputNationalId').fill('000000-0000')
+    await page.getByTestId('inputName').click()
+    await page.getByTestId('inputName').fill(accusedName)
+    await page.getByTestId('inputName').press('Tab')
     await Promise.all([
       page.getByRole('button', { name: 'Stofna mál' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCase').then(
