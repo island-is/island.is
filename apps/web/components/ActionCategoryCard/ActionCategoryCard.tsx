@@ -150,20 +150,20 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
           >
             <Box>
               {cta.href ? (
-                <LinkV2 href={cta.href} newTab={true}>
-                  <Button
-                    {...(cta.buttonType ?? { variant: cta.variant })}
-                    size={cta.size}
-                    fluid
-                    disabled={cta.disabled}
-                    icon={cta.icon}
-                    iconType={cta.iconType}
-                    nowrap
-                    unfocusable
-                  >
+                <Button
+                  {...(cta.buttonType ?? { variant: cta.variant })}
+                  size={cta.size}
+                  fluid
+                  disabled={cta.disabled}
+                  icon={cta.icon}
+                  iconType={cta.iconType}
+                  nowrap
+                  unfocusable
+                >
+                  <LinkV2 href={cta.href} newTab={true}>
                     {cta.label}
-                  </Button>
-                </LinkV2>
+                  </LinkV2>
+                </Button>
               ) : (
                 <Button
                   {...(cta.buttonType ?? { variant: cta.variant })}

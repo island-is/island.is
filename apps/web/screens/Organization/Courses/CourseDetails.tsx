@@ -110,10 +110,14 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
       }
     }
 
-    const registrationHref = `/umsoknir/hh-namskeid?selection=${JSON.stringify({
-      courseId: course.id,
-      courseInstanceId: instance.id,
-    })}`
+    const selection = encodeURIComponent(
+      JSON.stringify({
+        courseId: course.id,
+        courseInstanceId: instance.id,
+      }),
+    )
+
+    const registrationHref = `/umsoknir/hh-namskeid?selection=${selection}`
 
     return {
       id: instance.id,
@@ -179,6 +183,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
             <Stack space={3}>
               {instanceCards.map((instance) => (
                 <ActionCategoryCard
+                  key={instance.id}
                   heading={instance.title}
                   subHeading={instance.location}
                   text={instance.description}
