@@ -201,7 +201,6 @@ export const searchResultIcon = style({
   height: '24px',
 })
 
-
 export const heroImage = style({
   maxWidth: '200px',
   ...themeUtils.responsiveStyle({

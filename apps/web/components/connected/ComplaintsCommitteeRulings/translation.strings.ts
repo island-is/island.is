@@ -28,7 +28,8 @@ export const m = defineMessages({
   },
   errorLoadingRulings: {
     id: 'web.complaintsCommitteeRulings:errorLoadingRulings',
-    defaultMessage: 'Villa kom upp við að sækja úrskurði. Vinsamlegast reyndu aftur síðar.',
+    defaultMessage:
+      'Villa kom upp við að sækja úrskurði. Vinsamlegast reyndu aftur síðar.',
     description: 'Error message when rulings fail to load',
   },
 })

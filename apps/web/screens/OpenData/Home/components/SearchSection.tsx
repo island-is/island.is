@@ -166,8 +166,10 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                   label: filter.label,
                   selected: filters[filterField] || [],
                   filters: (filter.options || []).map((option) => {
-                    const optionValue = typeof option === 'string' ? option : option.value
-                    const optionLabel = typeof option === 'string' ? option : option.label
+                    const optionValue =
+                      typeof option === 'string' ? option : option.value
+                    const optionLabel =
+                      typeof option === 'string' ? option : option.label
                     return {
                       value: optionValue,
                       label: optionLabel,

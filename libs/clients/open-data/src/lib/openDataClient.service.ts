@@ -97,7 +97,8 @@ const DUMMY_DATASETS: Dataset[] = [
   {
     id: '7',
     title: 'Air Quality Measurements',
-    description: 'Air quality monitoring data from stations throughout Iceland.',
+    description:
+      'Air quality monitoring data from stations throughout Iceland.',
     category: 'Environment',
     publisher: 'Environment Agency',
     publisherId: 'env-agency',
@@ -222,21 +223,30 @@ export class OpenDataClientService {
 
   private mapCKANToDataset(ckanPackage: CKANPackage): Dataset {
     // Get the first group title as the category (thematic grouping)
-    const groupTitle = ckanPackage.groups?.[0]?.title || 
-                       ckanPackage.groups?.[0]?.display_name || 
-                       ckanPackage.groups?.[0]?.name || 
-                       ''
-    
+    const groupTitle =
+      ckanPackage.groups?.[0]?.title ||
+      ckanPackage.groups?.[0]?.display_name ||
+      ckanPackage.groups?.[0]?.name ||
+      ''
+
     // Map all resources
-    const resources = (ckanPackage.resources || []).map((res: CKANResource) => ({
-      id: res.id || res.name || '',
-      name: res.name || res.description || res.url || 'Unnamed resource',
-      format: res.format || 'Unknown',
-      url: res.url || '',
-      size: res.size ? (typeof res.size === 'string' ? parseInt(res.size, 10) : res.size) : undefined,
-      lastModified: res.last_modified || res.created || ckanPackage.metadata_modified,
-      license: ckanPackage.license_title || ckanPackage.license_id || undefined,
-    }))
+    const resources = (ckanPackage.resources || []).map(
+      (res: CKANResource) => ({
+        id: res.id || res.name || '',
+        name: res.name || res.description || res.url || 'Unnamed resource',
+        format: res.format || 'Unknown',
+        url: res.url || '',
+        size: res.size
+          ? typeof res.size === 'string'
+            ? parseInt(res.size, 10)
+            : res.size
+          : undefined,
+        lastModified:
+          res.last_modified || res.created || ckanPackage.metadata_modified,
+        license:
+          ckanPackage.license_title || ckanPackage.license_id || undefined,
+      }),
+    )
 
     return {
       id: ckanPackage.id || ckanPackage.name,
@@ -312,21 +322,27 @@ export class OpenDataClientService {
 
         // Build CKAN filter query (fq) for server-side filtering
         const fqParts: string[] = []
-        
+
         if (input.publishers && input.publishers.length > 0) {
           // CKAN uses organization name (slug) for filtering
-          const orgFilter = input.publishers.map(p => `organization:${p}`).join(' OR ')
+          const orgFilter = input.publishers
+            .map((p) => `organization:${p}`)
+            .join(' OR ')
           fqParts.push(`(${orgFilter})`)
         }
 
         if (input.formats && input.formats.length > 0) {
-          const formatFilter = input.formats.map(f => `res_format:${f}`).join(' OR ')
+          const formatFilter = input.formats
+            .map((f) => `res_format:${f}`)
+            .join(' OR ')
           fqParts.push(`(${formatFilter})`)
         }
 
         if (input.categories && input.categories.length > 0) {
           // Categories are typically stored as tags in CKAN
-          const tagFilter = input.categories.map(c => `tags:${c}`).join(' OR ')
+          const tagFilter = input.categories
+            .map((c) => `tags:${c}`)
+            .join(' OR ')
           fqParts.push(`(${tagFilter})`)
         }
 
@@ -343,8 +359,12 @@ export class OpenDataClientService {
         this.logger.info('=== CKAN QUERY DEBUG ===')
         this.logger.info(`Search query (q): ${queryParams.q}`)
         this.logger.info(`Input searchQuery: ${input.searchQuery}`)
-        this.logger.info(`Input publishers: ${JSON.stringify(input.publishers)}`)
-        this.logger.info(`Input categories: ${JSON.stringify(input.categories)}`)
+        this.logger.info(
+          `Input publishers: ${JSON.stringify(input.publishers)}`,
+        )
+        this.logger.info(
+          `Input categories: ${JSON.stringify(input.categories)}`,
+        )
         this.logger.info(`Input formats: ${JSON.stringify(input.formats)}`)
         this.logger.info(`fq query: ${queryParams.fq}`)
 
@@ -353,7 +373,7 @@ export class OpenDataClientService {
             params: queryParams,
             timeout: 10000,
             headers: {
-              'Accept': 'application/json',
+              Accept: 'application/json',
             },
             httpsAgent: this.httpsAgent,
           }),
@@ -369,17 +389,27 @@ export class OpenDataClientService {
         this.logger.info('=== CKAN RESPONSE DEBUG ===')
         this.logger.info(`Success: ${response.data.success}`)
         this.logger.info(`Count: ${response.data.result?.count}`)
-        this.logger.info(`Results count: ${response.data.result?.results?.length}`)
+        this.logger.info(
+          `Results count: ${response.data.result?.results?.length}`,
+        )
         if (response.data.result?.results?.length > 0) {
-          this.logger.info(`First result org name: ${response.data.result.results[0]?.organization?.name}`)
-          this.logger.info(`First result org title: ${response.data.result.results[0]?.organization?.title}`)
-          const orgNames = response.data.result.results.map((r: CKANPackage) => r.organization?.name)
-          this.logger.info(`All org names in results: ${JSON.stringify(orgNames)}`)
+          this.logger.info(
+            `First result org name: ${response.data.result.results[0]?.organization?.name}`,
+          )
+          this.logger.info(
+            `First result org title: ${response.data.result.results[0]?.organization?.title}`,
+          )
+          const orgNames = response.data.result.results.map(
+            (r: CKANPackage) => r.organization?.name,
+          )
+          this.logger.info(
+            `All org names in results: ${JSON.stringify(orgNames)}`,
+          )
         }
 
         if (response.data.success && response.data.result) {
-          const datasets = response.data.result.results.map((pkg: CKANPackage) =>
-            this.mapCKANToDataset(pkg),
+          const datasets = response.data.result.results.map(
+            (pkg: CKANPackage) => this.mapCKANToDataset(pkg),
           )
 
           // Server-side filtering is now done via fq parameter
@@ -389,14 +419,18 @@ export class OpenDataClientService {
             total: response.data.result.count,
             page,
             limit,
-            hasMore: (page - 1) * limit + datasets.length < response.data.result.count,
+            hasMore:
+              (page - 1) * limit + datasets.length < response.data.result.count,
           }
         }
       } catch (error) {
-        this.logger.warn('Failed to fetch from CKAN API, falling back to dummy data', {
-          error: error instanceof Error ? error.message : 'Unknown error',
-          stack: error instanceof Error ? error.stack : undefined,
-        })
+        this.logger.warn(
+          'Failed to fetch from CKAN API, falling back to dummy data',
+          {
+            error: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined,
+          },
+        )
       }
     }
 
@@ -424,7 +458,7 @@ export class OpenDataClientService {
             params: { id },
             timeout: 10000,
             headers: {
-              'Accept': 'application/json',
+              Accept: 'application/json',
             },
             httpsAgent: this.httpsAgent,
           }),
@@ -449,46 +483,50 @@ export class OpenDataClientService {
     if (!this.config.useDummyData) {
       try {
         // Fetch organizations, tags, licenses, and groups from CKAN
-        const [orgsResponse, tagsResponse, licensesResponse, groupsResponse] = await Promise.all([
-          firstValueFrom(
-            this.httpService.get(`${this.config.basePath}/organization_list`, {
-              params: { all_fields: true },
-              timeout: 10000,
-              headers: { 'Accept': 'application/json' },
-              httpsAgent: this.httpsAgent,
-            }),
-          ),
-          firstValueFrom(
-            this.httpService.get(`${this.config.basePath}/tag_list`, {
-              params: { all_fields: true },
-              timeout: 10000,
-              headers: { 'Accept': 'application/json' },
-              httpsAgent: this.httpsAgent,
-            }),
-          ),
-          firstValueFrom(
-            this.httpService.get(`${this.config.basePath}/license_list`, {
-              timeout: 10000,
-              headers: { 'Accept': 'application/json' },
-              httpsAgent: this.httpsAgent,
-            }),
-          ),
-          firstValueFrom(
-            this.httpService.get(`${this.config.basePath}/group_list`, {
-              params: { all_fields: true },
-              timeout: 10000,
-              headers: { 'Accept': 'application/json' },
-              httpsAgent: this.httpsAgent,
-            }),
-          ),
-        ])
+        const [orgsResponse, tagsResponse, licensesResponse, groupsResponse] =
+          await Promise.all([
+            firstValueFrom(
+              this.httpService.get(
+                `${this.config.basePath}/organization_list`,
+                {
+                  params: { all_fields: true },
+                  timeout: 10000,
+                  headers: { Accept: 'application/json' },
+                  httpsAgent: this.httpsAgent,
+                },
+              ),
+            ),
+            firstValueFrom(
+              this.httpService.get(`${this.config.basePath}/tag_list`, {
+                params: { all_fields: true },
+                timeout: 10000,
+                headers: { Accept: 'application/json' },
+                httpsAgent: this.httpsAgent,
+              }),
+            ),
+            firstValueFrom(
+              this.httpService.get(`${this.config.basePath}/license_list`, {
+                timeout: 10000,
+                headers: { Accept: 'application/json' },
+                httpsAgent: this.httpsAgent,
+              }),
+            ),
+            firstValueFrom(
+              this.httpService.get(`${this.config.basePath}/group_list`, {
+                params: { all_fields: true },
+                timeout: 10000,
+                headers: { Accept: 'application/json' },
+                httpsAgent: this.httpsAgent,
+              }),
+            ),
+          ])
 
         // Get formats from a sample of datasets
         const datasetsResponse = await firstValueFrom(
           this.httpService.get(`${this.config.basePath}/package_search`, {
             params: { rows: 100 },
             timeout: 10000,
-            headers: { 'Accept': 'application/json' },
+            headers: { Accept: 'application/json' },
             httpsAgent: this.httpsAgent,
           }),
         )
@@ -497,8 +535,9 @@ export class OpenDataClientService {
 
         // Organizations (Stofnun / Ráðuneyti) - only include orgs with datasets
         if (orgsResponse.data.success && orgsResponse.data.result) {
-          const orgs = orgsResponse.data.result
-            .filter((org: CKANOrganization) => (org.package_count || 0) > 0) // Only orgs with datasets
+          const orgs = orgsResponse.data.result.filter(
+            (org: CKANOrganization) => (org.package_count || 0) > 0,
+          ) // Only orgs with datasets
           filters.push({
             id: 'organization',
             field: 'publisher',
@@ -518,10 +557,13 @@ export class OpenDataClientService {
             id: 'category',
             field: 'category',
             label: 'Efnisflokkur',
-            options: Array.isArray(tags) 
+            options: Array.isArray(tags)
               ? tags.slice(0, 20).map((tag: CKANTag | string) => ({
                   value: typeof tag === 'string' ? tag : tag.name,
-                  label: typeof tag === 'string' ? tag : tag.display_name || tag.name,
+                  label:
+                    typeof tag === 'string'
+                      ? tag
+                      : tag.display_name || tag.name,
                 }))
               : [],
           })
@@ -541,10 +583,12 @@ export class OpenDataClientService {
             id: 'format',
             field: 'format',
             label: 'Gagnsnið',
-            options: Array.from(formats).sort().map((f) => ({
-              value: f,
-              label: f,
-            })),
+            options: Array.from(formats)
+              .sort()
+              .map((f) => ({
+                value: f,
+                label: f,
+              })),
           })
         }
 
@@ -640,9 +684,12 @@ export class OpenDataClientService {
 
         return filters
       } catch (error) {
-        this.logger.warn('Failed to fetch filters from CKAN API, falling back to dummy data', {
-          error: error instanceof Error ? error.message : 'Unknown error',
-        })
+        this.logger.warn(
+          'Failed to fetch filters from CKAN API, falling back to dummy data',
+          {
+            error: error instanceof Error ? error.message : 'Unknown error',
+          },
+        )
       }
     }
 
