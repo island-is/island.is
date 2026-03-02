@@ -1,6 +1,6 @@
-import { useState, useCallback, useRef } from 'react'
+import { useCallback, useRef,useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery, useLazyQuery } from '@apollo/client'
+import { useLazyQuery,useQuery } from '@apollo/client'
 
 import {
   Box,
@@ -23,8 +23,8 @@ import type {
 } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
-  GET_ONE_SYSTEMS_RULINGS,
   GET_ONE_SYSTEMS_RULING_PDF,
+  GET_ONE_SYSTEMS_RULINGS,
 } from '@island.is/web/screens/queries'
 
 import { m } from './translation.strings'
