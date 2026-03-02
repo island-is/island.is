@@ -7,23 +7,24 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   Defendant,
-  IndictmentCaseReviewDecision,
   PunishmentType,
   ServiceRequirement,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 const getDefendantExplanation = (defendant: Defendant): string => {
-  if (
-    defendant.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL
-  ) {
-    return 'Áfrýjun'
-  }
-
   if (
     defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED &&
     !defendant.verdict?.serviceDate
   ) {
     return 'Dómur er í birtingarferli'
+  }
+
+  if (
+    defendant.verdict?.appealDecision === VerdictAppealDecision.POSTPONE ||
+    defendant.verdict?.appealDate
+  ) {
+    return 'Áfrýjun'
   }
 
   return 'Ekki sent til fullnustu'
