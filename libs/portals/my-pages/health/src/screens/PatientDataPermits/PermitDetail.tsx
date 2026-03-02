@@ -70,15 +70,16 @@ const PermitDetail: React.FC = () => {
       buttonGroup={
         !loading && !error
           ? [
-              <Button
-                key="downloadPDF"
-                variant="utility"
-                icon="download"
-                iconType="outline"
-                size="small"
-              >
-                {formatMessage(messages.downloadPDF)}
-              </Button>,
+              // TODO: Re-enable when backend PDF endpoint is available
+              // <Button
+              //   key="downloadPDF"
+              //   variant="utility"
+              //   icon="download"
+              //   iconType="outline"
+              //   size="small"
+              // >
+              //   {formatMessage(messages.downloadPDF)}
+              // </Button>,
               <Button
                 key="editPermit"
                 variant="utility"
