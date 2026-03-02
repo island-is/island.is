@@ -763,7 +763,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 <div className={styles.grid}>
                   <DateTime
                     name="courtStartDate"
-                    datepickerLabel="Dagsetning þingfestingar"
+                    datepickerLabel="Dagsetning þinghalds"
                     timeLabel="Þinghald hófst (kk:mm)"
                     selectedDate={
                       courtSession.startDate ??
