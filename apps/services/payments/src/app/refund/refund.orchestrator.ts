@@ -98,6 +98,7 @@ export type InvoiceRefundSagaDefinition = SagaDefinition<
 >
 
 export interface InvoiceRefundStepResults {
+  VALIDATE_REFUND: void
   DELETE_INVOICE_FULFILLMENT: {
     deletedPaymentFulfillment: InferAttributes<PaymentFulfillment>
   }

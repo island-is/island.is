@@ -34,16 +34,21 @@ export const createInvoiceRefundSaga = (
   logger: Logger,
 ): InvoiceRefundSagaDefinition => [
   {
-    name: 'DELETE_INVOICE_FULFILLMENT',
-    description:
-      'Mark the invoice payment fulfillment as deleted to prevent double refunds',
+    name: 'VALIDATE_REFUND',
+    description: 'Validate the invoice payment flow is eligible for refund',
     execute: async (ctx) => {
       if (!ctx.paymentFulfillment.fjsChargeId) {
         throw new BadRequestException(
           PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded,
         )
       }
-
+    },
+  },
+  {
+    name: 'DELETE_INVOICE_FULFILLMENT',
+    description:
+      'Mark the invoice payment fulfillment as deleted to prevent double refunds',
+    execute: async (ctx) => {
       const deletedPaymentFulfillment =
         await paymentFlowService.deletePaymentFulfillment({
           paymentFlowId: ctx.paymentFlowId,

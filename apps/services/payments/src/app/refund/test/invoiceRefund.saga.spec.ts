@@ -65,7 +65,7 @@ describe('Invoice Refund Saga', () => {
     })
   })
 
-  describe('DELETE_INVOICE_FULFILLMENT', () => {
+  describe('VALIDATE_REFUND', () => {
     it('should throw when fjsChargeId is missing', async () => {
       const { context, saga, orchestrator } = setupSaga(undefined, {
         ...mockInvoicePaymentFulfillment,
@@ -76,7 +76,9 @@ describe('Invoice Refund Saga', () => {
         PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded,
       )
     })
+  })
 
+  describe('DELETE_INVOICE_FULFILLMENT', () => {
     it('should call deletePaymentFulfillment', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
       await orchestrator.execute(saga, context)
@@ -155,6 +157,7 @@ describe('Invoice Refund Saga', () => {
 
       expect(result.success).toBe(true)
       expect(context.completedSteps).toEqual([
+        'VALIDATE_REFUND',
         'DELETE_INVOICE_FULFILLMENT',
         'DELETE_FJS_CHARGE',
         'LOG_REFUND_SUCCESS',
