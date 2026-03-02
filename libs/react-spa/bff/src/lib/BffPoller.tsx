@@ -7,8 +7,15 @@ import {
   useBffBroadcaster,
   useUserInfo,
 } from './bff.hooks'
-import { SessionExpiredReason } from './BffSessionExpiredModal'
+import type { SessionExpiredReason } from '@island.is/shared/types'
 import { isNewUser } from './bff.utils'
+
+class SessionExpiredError extends Error {
+  constructor() {
+    super('Session expired')
+    this.name = 'SessionExpiredError'
+  }
+}
 
 type BffPollerProps = {
   children: ReactNode
@@ -25,9 +32,8 @@ type BffPollerProps = {
  *
  * Features:
  * - Polls the backend at a specified interval to fetch user session data.
- * - If the user's session expires or the backend returns an error, it
- *   displays a session expired modal informing the user and allowing them
- *   to log in again.
+ * - If the user's session expires (401/403 from the user endpoint), it
+ *   displays a session expired modal.
  * - If a change in user session (e.g., a new session ID) is detected, it
  *   broadcasts a message to all open tabs/windows and triggers the provided
  *   `newSessionCb` callback to handle the current tab/window.
@@ -64,8 +70,10 @@ export const BffPoller = ({
     })
 
     if (!res.ok) {
-      // Session expired - show the session expired modal instead of immediately redirecting
-      throw new Error('Session expired')
+      if (res.status === 401 || res.status === 403) {
+        throw new SessionExpiredError()
+      }
+      throw new Error(`Request failed: ${res.status} ${res.statusText}`)
     }
 
     return res.json() as Promise<BffUser>
@@ -79,8 +87,7 @@ export const BffPoller = ({
   })
 
   useEffect(() => {
-    if (error) {
-      // If user polling fails, likely due to 401, show session expired modal (inactivity).
+    if (error instanceof SessionExpiredError) {
       newSessionCb('expired')
     } else if (newUser) {
       // If user has changed (e.g. delegation switch), then notifiy tabs/windows/iframes and execute the callback.

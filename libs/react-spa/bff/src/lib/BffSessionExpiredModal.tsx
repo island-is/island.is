@@ -1,7 +1,6 @@
 import { Box, Button, ProblemTemplate } from '@island.is/island-ui/core'
+import type { SessionExpiredReason } from '@island.is/shared/types'
 import { fullScreen } from './ErrorScreen.css'
-
-export type SessionExpiredReason = 'expired' | 'session-changed'
 
 type BffSessionExpiredModalProps = {
   reason: SessionExpiredReason
