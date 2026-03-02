@@ -74,6 +74,7 @@ export class ComplaintsCommitteeRulingsClientService {
 
   async getRulings(
     input: GetRulingsRequest,
+    isRetry = false,
   ): Promise<ComplaintsCommitteeRulingsResponse> {
     try {
       const token = await this.ensureAuthenticated()
@@ -93,11 +94,11 @@ export class ComplaintsCommitteeRulingsClientService {
         totalCount: response.totalCount ?? 0,
       }
     } catch (error) {
-      if (error instanceof FetchError && error.status === 401) {
+      if (error instanceof FetchError && error.status === 401 && !isRetry) {
         // Token might be invalid, clear it and retry once
         this.accessToken = null
         this.tokenExpiry = null
-        throw error
+        return this.getRulings(input, true)
       }
       throw error
     }
@@ -108,18 +109,22 @@ export class ComplaintsCommitteeRulingsClientService {
       const token = await this.ensureAuthenticated()
 
       // Fetch PDF as binary directly (bypass generated client which treats response as text)
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 10_000)
       const response = await fetch(
         `${this.config.basePath}/OneRulings/api/rulings/${encodeURIComponent(
           id,
         )}/pdf`,
         {
           method: 'GET',
+          signal: controller.signal,
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: 'application/pdf',
           },
         },
       )
+      clearTimeout(timeout)
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -130,12 +135,7 @@ export class ComplaintsCommitteeRulingsClientService {
 
       // Get as ArrayBuffer and convert to base64
       const arrayBuffer = await response.arrayBuffer()
-      const bytes = new Uint8Array(arrayBuffer)
-      let binary = ''
-      for (let i = 0; i < bytes.byteLength; i++) {
-        binary += String.fromCharCode(bytes[i])
-      }
-      return Buffer.from(binary, 'binary').toString('base64')
+      return Buffer.from(arrayBuffer).toString('base64')
     } catch (error) {
       if (error instanceof FetchError && error.status === 404) {
         throw new Error(`Ruling with id ${id} not found`)

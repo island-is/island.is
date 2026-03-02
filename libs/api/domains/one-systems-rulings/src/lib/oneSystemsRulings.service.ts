@@ -22,7 +22,7 @@ export class OneSystemsRulingsService {
     })
 
     return {
-      rulings: response.rulings.map((ruling) => ({
+      rulings: (response.rulings ?? []).map((ruling) => ({
         id: ruling.id,
         title: ruling.title,
         description: ruling.description,

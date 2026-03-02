@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery, useLazyQuery } from '@apollo/client'
 
@@ -59,6 +59,7 @@ const ComplaintsCommitteeRulings = ({
   )
   const [currentPage, setCurrentPage] = useState(1)
   const [downloadingId, setDownloadingId] = useState<string | null>(null)
+  const popupRef = useRef<Window | null>(null)
 
   const { data, loading, error } = useQuery<
     GetOneSystemsRulingsQuery,
@@ -72,6 +73,7 @@ const ComplaintsCommitteeRulings = ({
       },
     },
     fetchPolicy: 'no-cache',
+    ssr: false, // Fetch client-side only to avoid blocking SSR
     onError(error) {
       console.error(error)
     },
@@ -94,7 +96,10 @@ const ComplaintsCommitteeRulings = ({
           const blob = new Blob([byteArray], { type: 'application/pdf' })
 
           const url = window.URL.createObjectURL(blob)
-          window.open(url, '_blank')
+          if (popupRef.current) {
+            popupRef.current.location.href = url
+          }
+          setTimeout(() => window.URL.revokeObjectURL(url), 60_000)
         } catch (e) {
           console.error('Failed to decode PDF:', e)
         }
@@ -108,13 +113,29 @@ const ComplaintsCommitteeRulings = ({
 
   const handleOpenPdf = useCallback(
     (id: string) => {
+      popupRef.current = window.open('', '_blank')
+      if (!popupRef.current) {
+        return
+      }
       setDownloadingId(id)
       fetchPdf({ variables: { id } })
     },
     [fetchPdf],
   )
 
-  if (error) return null
+  if (error) {
+    return (
+      <Box
+        background="red100"
+        borderColor="red200"
+        borderWidth="standard"
+        borderRadius="large"
+        padding={3}
+      >
+        <Text color="red600">{formatMessage(m.errorLoadingRulings)}</Text>
+      </Box>
+    )
+  }
 
   const items =
     data?.oneSystemsRulings?.rulings?.filter((ruling) => Boolean(ruling.id)) ??

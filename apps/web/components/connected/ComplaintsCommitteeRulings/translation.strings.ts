@@ -26,4 +26,9 @@ export const m = defineMessages({
     defaultMessage: 'Opna PDF',
     description: 'Open PDF button label',
   },
+  errorLoadingRulings: {
+    id: 'web.complaintsCommitteeRulings:errorLoadingRulings',
+    defaultMessage: 'Villa kom upp við að sækja úrskurði. Vinsamlegast reyndu aftur síðar.',
+    description: 'Error message when rulings fail to load',
+  },
 })

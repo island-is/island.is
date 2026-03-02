@@ -16,5 +16,5 @@ yarn nx run rulings:codegen/backend-client
 
 This client requires the following environment variables:
 
-- `RULINGS_API_BASE_PATH`: The base URL for the Rulings API (default: `https://api.onesystems.is`)
-- `RULINGS_API_KEY`: The API key for authentication
+- `COMPLAINTS_COMMITTEE_RULINGS_API_BASE_PATH`: The base URL for the Rulings API (default: `https://api.onesystems.is`)
+- `COMPLAINTS_COMMITTEE_RULINGS_API_KEY`: The API key for authentication
