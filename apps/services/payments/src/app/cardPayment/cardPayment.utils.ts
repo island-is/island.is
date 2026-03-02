@@ -318,4 +318,3 @@ export const generateApplePayChargeRequestOptions = ({
     body: JSON.stringify(body),
   }
 }
-

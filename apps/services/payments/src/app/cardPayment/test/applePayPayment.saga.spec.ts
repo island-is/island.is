@@ -112,9 +112,7 @@ describe('Apple Pay Payment Saga - CHARGE_APPLE_PAY step specific', () => {
         'Payment gateway error',
       )
 
-      expect(
-        mockRefundService.refundWithCorrelationId,
-      ).not.toHaveBeenCalled()
+      expect(mockRefundService.refundWithCorrelationId).not.toHaveBeenCalled()
     })
   })
 
@@ -141,9 +139,7 @@ describe('Apple Pay Payment Saga - CHARGE_APPLE_PAY step specific', () => {
         'Database error',
       )
 
-      expect(
-        mockRefundService.refundWithCorrelationId,
-      ).toHaveBeenCalledWith({
+      expect(mockRefundService.refundWithCorrelationId).toHaveBeenCalledWith({
         paymentTrackingData: context.trackingData,
       })
       expect(mockPaymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledWith(

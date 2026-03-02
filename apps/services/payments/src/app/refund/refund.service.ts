@@ -68,8 +68,7 @@ export class RefundService {
       },
       body: JSON.stringify({
         originalCorrelationId: paymentTrackingData.correlationId,
-        originalTransactionDate:
-          paymentTrackingData.paymentDate.toISOString(),
+        originalTransactionDate: paymentTrackingData.paymentDate.toISOString(),
         systemCalling,
       }),
     }

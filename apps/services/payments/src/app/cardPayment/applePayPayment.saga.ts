@@ -158,9 +158,7 @@ export const createApplePayPaymentSaga = (
         throw new Error('Failed to delete payment fulfillment during rollback')
       }
 
-      logger.info(
-        `[${ctx.paymentFlowId}] Payment confirmation deleted`,
-      )
+      logger.info(`[${ctx.paymentFlowId}] Payment confirmation deleted`)
     },
   },
   {

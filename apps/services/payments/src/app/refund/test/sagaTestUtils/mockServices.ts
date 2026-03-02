@@ -6,6 +6,7 @@ import type { PaymentFlowService } from '../../../paymentFlow/paymentFlow.servic
 import {
   mockCardPaymentConfirmation,
   mockPaymentFulfillmentWithoutFjs,
+  mockInvoicePaymentFulfillment,
   PAYMENT_FLOW_ID,
 } from './mocks'
 
@@ -39,7 +40,9 @@ export const createMockPaymentFlowService = (
         paymentFlowId: PAYMENT_FLOW_ID,
       }),
     ),
-    deletePaymentFulfillment: jest.fn().mockResolvedValue(resolved({})),
+    deletePaymentFulfillment: jest
+      .fn()
+      .mockResolvedValue(resolved(mockInvoicePaymentFulfillment)),
     restoreCardPaymentConfirmation: jest.fn().mockResolvedValue(resolved({})),
     restorePaymentFulfillment: jest.fn().mockResolvedValue(resolved({})),
     findPaymentFulfillmentForPaymentFlow: jest

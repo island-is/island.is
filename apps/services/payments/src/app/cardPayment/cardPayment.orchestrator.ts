@@ -8,7 +8,10 @@ import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { PaymentContext } from '../refund/refund.orchestrator'
 import { ApplePayChargeInput, ChargeCardInput } from './dtos'
 
-export { PaymentOrchestrator, PaymentContext } from '../refund/refund.orchestrator'
+export {
+  PaymentOrchestrator,
+  PaymentContext,
+} from '../refund/refund.orchestrator'
 
 // Card payment types
 export type CardPaymentSagaDefinition = SagaDefinition<
