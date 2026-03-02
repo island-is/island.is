@@ -206,8 +206,8 @@ const Confirmation: FC = () => {
             !hideNextButton
               ? undefined
               : isCorrectingRuling
-                ? 'Einungis skráður dómari eða dómritari getur lokið máli'
-                : 'Einungis skráður dómari getur undirritað úrskurð'
+              ? 'Einungis skráður dómari eða dómritari getur lokið máli'
+              : 'Einungis skráður dómari getur undirritað úrskurð'
           }
         />
       </FormContentContainer>
