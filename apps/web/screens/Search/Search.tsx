@@ -422,11 +422,10 @@ const Search: Screen<CategoryProps> = ({
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
-  const matomoSearchCategory =
-    [query.type, query.category, query.organization]
-      .flat()
-      .filter(Boolean)
-      .join(',') || false
+  const matomoSearchCategory = [query.type, query.category, query.organization]
+    .flat()
+    .filter(Boolean)
+    .join(',')
   useMatomoTrackSearch(q, matomoSearchCategory, totalSearchResults)
 
   const searchResultsText =
