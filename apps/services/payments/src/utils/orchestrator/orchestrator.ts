@@ -264,7 +264,7 @@ export class Orchestrator<
     }
   }
 
-  private async rollback(context: TContext, prefix: string = '') {
+  private async rollback(context: TContext, prefix = '') {
     const stepsToCompensate = [...this.completedSteps]
       .reverse()
       .filter((s) => s.compensate)
