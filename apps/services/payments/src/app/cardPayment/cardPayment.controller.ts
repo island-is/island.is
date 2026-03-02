@@ -115,7 +115,7 @@ export class CardPaymentController {
         })
       } catch (logError) {
         this.logger.warn(
-          'Failed to log payment flow update and notify upstream after verification error',
+          `[${paymentFlowId}] Failed to log payment flow update and notify upstream after verification error: ${logError.message}`,
           { paymentFlowId, logError },
         )
       }
@@ -184,7 +184,7 @@ export class CardPaymentController {
         })
       } catch (logError) {
         this.logger.warn(
-          'Failed to log payment flow update and notify upstream after verification callback error',
+          `[${paymentFlowId}] Failed to log payment flow update and notify upstream after verification callback error: ${logError.message}`,
           { paymentFlowId, logError },
         )
       }
@@ -275,7 +275,7 @@ export class CardPaymentController {
           })
         } catch (logError) {
           this.logger.warn(
-            'Failed to log payment flow update and notify upstream after card payment saga failed',
+            `[${paymentFlowId}] Failed to log payment flow update and notify upstream after card payment saga failed: ${logError.message}`,
             { paymentFlowId, logError },
           )
         }
@@ -353,7 +353,7 @@ export class CardPaymentController {
           })
         } catch (logError) {
           this.logger.warn(
-            'Failed to log payment flow update and notify upstream after Apple Pay saga failed',
+            `[${paymentFlowId}] Failed to log payment flow update and notify upstream after Apple Pay saga failed: ${logError.message}`,
             { paymentFlowId, logError },
           )
         }

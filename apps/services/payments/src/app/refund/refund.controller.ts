@@ -176,19 +176,26 @@ export class RefundController {
       context.metadata?.refundSucceededButRollbackFailed === true
 
     if (refundExecuted) {
-      await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId,
-        type: 'success',
-        occurredAt: new Date(),
-        paymentMethod,
-        reason: 'refund_completed',
-        message: 'Payment successfully refunded, but cleanup failed',
-        metadata: {
-          cleanupFailed: true,
-          failedStep: context.failedStep,
-          error: e.message,
-        },
-      })
+      try {
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId,
+          type: 'success',
+          occurredAt: new Date(),
+          paymentMethod,
+          reason: 'refund_completed',
+          message: 'Payment successfully refunded, but cleanup failed',
+          metadata: {
+            cleanupFailed: true,
+            failedStep: context.failedStep,
+            error: e.message,
+          },
+        })
+      } catch (logError) {
+        this.logger.warn(
+          `[${paymentFlowId}] Failed to log payment flow update and notify upstream after refund cleanup failed: ${logError.message}`,
+          { paymentFlowId, logError },
+        )
+      }
 
       this.logger.error(
         `[${paymentFlowId}][CRITICAL] Refund succeeded but cleanup failed`,
