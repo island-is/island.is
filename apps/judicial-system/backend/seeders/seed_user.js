@@ -120,7 +120,7 @@ const userSeeds = `[
     "mobile_number": "9999999",
     "email": "testsaekjandi@dummy.dd",
     "role": "PROSECUTOR",
-    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
+    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85",
     "can_confirm_indictment": true
   },
   {
