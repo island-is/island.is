@@ -328,13 +328,20 @@ export class ApplicationMapper {
     locale?: Locale,
   ): ApplicationAdminDto {
     return {
-      ...application,
-      applicant: application.nationalId,
+      id: application.id,
+      created: application.created,
+      modified: application.modified,
+      formId: application.formId,
       formName:
         locale === 'is'
           ? application.form?.name?.is
           : application.form?.name?.en,
-      formSlug: application.form?.slug ?? '',
+      formSlug: application.form?.slug,
+      applicant: application.nationalId,
+      status: application.status,
+      state: application.state,
+      pruneAt: application.pruneAt,
+      pruned: application.pruned,
       institutionNationalId: application.form?.organization?.nationalId,
     }
   }
