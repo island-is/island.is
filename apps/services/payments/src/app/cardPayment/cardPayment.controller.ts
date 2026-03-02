@@ -101,17 +101,24 @@ export class CardPaymentController {
       // All required data to build the 3DS screen
       return { ...verification, correlationId: verification.correlationID }
     } catch (e) {
-      await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId: paymentFlowId,
-        type: 'update',
-        occurredAt: new Date(),
-        paymentMethod: PaymentMethod.CARD,
-        reason: 'payment_failed',
-        message: `Card verification was not started due to an error: ${e.message}`,
-        metadata: {
-          error: e.message,
-        },
-      })
+      try {
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId: paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'payment_failed',
+          message: `Card verification was not started due to an error: ${e.message}`,
+          metadata: {
+            error: e.message,
+          },
+        })
+      } catch (logError) {
+        this.logger.warn(
+          'Failed to log payment flow update and notify upstream after verification error',
+          { paymentFlowId, logError },
+        )
+      }
 
       throw new BadRequestException(
         onlyReturnKnownErrorCode(e.message, CardErrorCode.VerificationFailed),
@@ -163,17 +170,24 @@ export class CardPaymentController {
         paymentFlowId,
       }
     } catch (e) {
-      await this.paymentFlowService.logPaymentFlowUpdate({
-        paymentFlowId,
-        type: 'update',
-        occurredAt: new Date(),
-        paymentMethod: PaymentMethod.CARD,
-        reason: 'other',
-        message: `Card verification callback failed: ${e.message}`,
-        metadata: {
-          error: e.message,
-        },
-      })
+      try {
+        await this.paymentFlowService.logPaymentFlowUpdate({
+          paymentFlowId,
+          type: 'update',
+          occurredAt: new Date(),
+          paymentMethod: PaymentMethod.CARD,
+          reason: 'other',
+          message: `Card verification callback failed: ${e.message}`,
+          metadata: {
+            error: e.message,
+          },
+        })
+      } catch (logError) {
+        this.logger.warn(
+          'Failed to log payment flow update and notify upstream after verification callback error',
+          { paymentFlowId, logError },
+        )
+      }
 
       throw new BadRequestException(
         onlyReturnKnownErrorCode(
@@ -243,21 +257,28 @@ export class CardPaymentController {
       } else {
         // Error happened before a charge completed (e.g. VALIDATE or CHARGE_CARD itself failed)
         // let upstream know that the payment failed
-        await this.paymentFlowService.logPaymentFlowUpdate({
-          paymentFlowId,
-          type: 'error',
-          occurredAt: new Date(),
-          paymentMethod: PaymentMethod.CARD,
-          reason: 'payment_failed',
-          message: `Card payment saga failed at step ${
-            context.failedStep || 'unknown'
-          }: ${e.message}`,
-          metadata: {
-            error: e.message,
-            failedStep: context.failedStep,
-            completedSteps: context.completedSteps,
-          },
-        })
+        try {
+          await this.paymentFlowService.logPaymentFlowUpdate({
+            paymentFlowId,
+            type: 'error',
+            occurredAt: new Date(),
+            paymentMethod: PaymentMethod.CARD,
+            reason: 'payment_failed',
+            message: `Card payment saga failed at step ${
+              context.failedStep || 'unknown'
+            }: ${e.message}`,
+            metadata: {
+              error: e.message,
+              failedStep: context.failedStep,
+              completedSteps: context.completedSteps,
+            },
+          })
+        } catch (logError) {
+          this.logger.warn(
+            'Failed to log payment flow update and notify upstream after card payment saga failed',
+            { paymentFlowId, logError },
+          )
+        }
 
         throw new BadRequestException(
           onlyReturnKnownErrorCode(e.message, CardErrorCode.UnknownCardError),
@@ -314,21 +335,28 @@ export class CardPaymentController {
       } else {
         // Error happened before a charge completed (e.g. VALIDATE or CHARGE_APPLE_PAY itself failed)
         // let upstream know that the payment failed
-        await this.paymentFlowService.logPaymentFlowUpdate({
-          paymentFlowId,
-          type: 'error',
-          occurredAt: new Date(),
-          paymentMethod: PaymentMethod.CARD,
-          reason: 'payment_failed',
-          message: `Apple Pay payment saga failed at step ${
-            context.failedStep || 'unknown'
-          }: ${e.message}`,
-          metadata: {
-            error: e.message,
-            failedStep: context.failedStep,
-            completedSteps: context.completedSteps,
-          },
-        })
+        try {
+          await this.paymentFlowService.logPaymentFlowUpdate({
+            paymentFlowId,
+            type: 'error',
+            occurredAt: new Date(),
+            paymentMethod: PaymentMethod.CARD,
+            reason: 'payment_failed',
+            message: `Apple Pay payment saga failed at step ${
+              context.failedStep || 'unknown'
+            }: ${e.message}`,
+            metadata: {
+              error: e.message,
+              failedStep: context.failedStep,
+              completedSteps: context.completedSteps,
+            },
+          })
+        } catch (logError) {
+          this.logger.warn(
+            'Failed to log payment flow update and notify upstream after Apple Pay saga failed',
+            { paymentFlowId, logError },
+          )
+        }
 
         throw new BadRequestException(
           onlyReturnKnownErrorCode(e.message, CardErrorCode.UnknownCardError),
