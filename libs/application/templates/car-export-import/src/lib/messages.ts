@@ -151,8 +151,7 @@ export const m = {
     },
     lastRecordedMileage: {
       id: 'rsk.cei.application:dates.mileage.last.recorded',
-      defaultMessage:
-        '{permno} — Síðasta skráða km staða: {mileage} km',
+      defaultMessage: '{permno} — Síðasta skráða km staða: {mileage} km',
       description:
         'Vehicle title with last recorded mileage, e.g. AB123 — Síðasta skráða km staða: 10.000 km',
     },
