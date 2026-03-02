@@ -179,12 +179,7 @@ export const Footer = ({
         <GridContainer>
           <Inline space={[2, 2, 4]} alignY="center">
             {bottomBarLinks.map(({ title, href }, index) => (
-              <Box
-                key={index}
-                display="flex"
-                alignItems="center"
-                columnGap={1}
-              >
+              <Box key={index} display="flex" alignItems="center" columnGap={1}>
                 <Icon
                   size="small"
                   icon={bottomBarIcons[index] ?? 'informationCircle'}
@@ -229,7 +224,6 @@ const defaultTopLinksInfo = [
     href: '/lifsvidburdir',
   },
 ]
-
 
 const defaultBottomLinks = [
   {
