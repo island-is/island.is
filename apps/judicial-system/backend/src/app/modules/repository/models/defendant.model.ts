@@ -17,6 +17,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  IndictmentCaseReviewDecision,
   PunishmentType,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
@@ -214,6 +215,10 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Boolean })
   isSentToPrisonAdmin?: boolean
 
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isRegisteredInPrisonSystem?: boolean
+
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -238,6 +243,14 @@ export class Defendant extends Model {
   @HasMany(() => Verdict, { foreignKey: 'defendantId' })
   @ApiPropertyOptional({ type: () => Verdict, isArray: true })
   verdicts?: Verdict[]
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(IndictmentCaseReviewDecision),
+  })
+  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
+  indictmentReviewDecision?: IndictmentCaseReviewDecision
 
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })

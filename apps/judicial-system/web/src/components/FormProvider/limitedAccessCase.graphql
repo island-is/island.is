@@ -51,11 +51,13 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isVerdictAppealDeadlineExpired
       subpoenaType
       isSentToPrisonAdmin
+      isRegisteredInPrisonSystem
       sentToPrisonAdminDate
       openedByPrisonAdminDate
       punishmentType
       isAlternativeService
       alternativeServiceDescription
+      indictmentReviewDecision
       subpoenas {
         id
         created
@@ -168,6 +170,14 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealRulingDecision
     appealCaseNumber
     appealRulingModifiedHistory
+    notifications {
+      id
+      created
+      type
+      recipients {
+        success
+      }
+    }
     appealAssistant {
       id
       name
@@ -199,7 +209,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     postponedIndefinitelyExplanation
     indictmentDecision
     indictmentRulingDecision
-    indictmentReviewDecision
     indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadlineExpired
     indictmentReviewer {
@@ -302,6 +311,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         isVerdictAppealDeadlineExpired
         subpoenaType
         isSentToPrisonAdmin
+        isRegisteredInPrisonSystem
         sentToPrisonAdminDate
         openedByPrisonAdminDate
         punishmentType

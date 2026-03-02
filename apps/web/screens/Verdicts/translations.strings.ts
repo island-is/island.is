@@ -221,6 +221,11 @@ export const m = {
     },
   }),
   verdictPage: defineMessages({
+    resolutionLink: {
+      id: 'web.verdicts:verdictPage.resolutionLink',
+      defaultMessage: 'Úrlausn Landsréttar / Héraðsdóms',
+      description: 'Texti á "Úrlausn Landsréttar / Héraðsdóms" hnapp',
+    },
     heading: {
       id: 'web.verdicts:verdictPage.heading',
       defaultMessage: 'Dómur',

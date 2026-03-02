@@ -442,10 +442,7 @@ export class CaseRepositoryService {
       // Move the defendant to the new case
       const defendantUpdateOptions: UpdateOptions = {
         where: { id: defendantId, caseId },
-      }
-
-      if (transaction) {
-        defendantUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -458,10 +455,7 @@ export class CaseRepositoryService {
       // Move the defandant's subpoenas to the new case
       const subpoenaUpdateOptions: UpdateOptions = {
         where: { caseId, defendantId },
-      }
-
-      if (transaction) {
-        subpoenaUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -474,10 +468,7 @@ export class CaseRepositoryService {
       // Move the defendant's verdicts to the new case
       const verdictUpdateOptions: UpdateOptions = {
         where: { caseId, defendantId },
-      }
-
-      if (transaction) {
-        verdictUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -487,10 +478,7 @@ export class CaseRepositoryService {
       // Move the defendant's event logs to the new case
       const defendantEventLogUpdateOptions: UpdateOptions = {
         where: { caseId, defendantId },
-      }
-
-      if (transaction) {
-        defendantEventLogUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -501,11 +489,7 @@ export class CaseRepositoryService {
       )
 
       // Set the postponedIndefinitelyExplanation case string
-      const caseStringCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        caseStringCreateOptions.transaction = transaction
-      }
+      const caseStringCreateOptions: CreateOptions = { transaction }
 
       promises.push(
         this.caseStringModel.create(
@@ -540,11 +524,7 @@ export class CaseRepositoryService {
       })
 
       if (arraignmentDate) {
-        const dateLogCreateOptions: CreateOptions = {}
-
-        if (transaction) {
-          dateLogCreateOptions.transaction = transaction
-        }
+        const dateLogCreateOptions: CreateOptions = { transaction }
 
         promises.push(
           this.dateLogModel.create(
@@ -567,11 +547,7 @@ export class CaseRepositoryService {
         transaction,
       })
 
-      const eventLogCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        eventLogCreateOptions.transaction = transaction
-      }
+      const eventLogCreateOptions: CreateOptions = { transaction }
 
       for (const eventLog of eventLogs) {
         promises.push(
@@ -588,11 +564,7 @@ export class CaseRepositoryService {
         transaction,
       })
 
-      const victimCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        victimCreateOptions.transaction = transaction
-      }
+      const victimCreateOptions: CreateOptions = { transaction }
 
       for (const victim of victims) {
         promises.push(
@@ -609,11 +581,7 @@ export class CaseRepositoryService {
         transaction,
       })
 
-      const indictmentCountCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        indictmentCountCreateOptions.transaction = transaction
-      }
+      const indictmentCountCreateOptions: CreateOptions = { transaction }
 
       for (const indictmentCount of indictmentCounts) {
         promises.push(
@@ -643,10 +611,7 @@ export class CaseRepositoryService {
 
       const caseFileUpdateOptions: UpdateOptions = {
         where: { caseId, defendantId, category: caseFilesCategoriesToMove },
-      }
-
-      if (transaction) {
-        caseFileUpdateOptions.transaction = transaction
+        transaction,
       }
 
       promises.push(
@@ -666,11 +631,7 @@ export class CaseRepositoryService {
         transaction,
       })
 
-      const caseFileCreateOptions: CreateOptions = {}
-
-      if (transaction) {
-        caseFileCreateOptions.transaction = transaction
-      }
+      const caseFileCreateOptions: CreateOptions = { transaction }
 
       for (const caseFile of caseFiles) {
         promises.push(

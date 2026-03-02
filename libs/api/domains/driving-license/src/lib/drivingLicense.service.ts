@@ -445,6 +445,7 @@ export class DrivingLicenseService {
     stolenOrLost: boolean
     pickUpLicense: boolean
     imageBiometricsId: string | null
+    signatureBiometricsId: string | null
   }): Promise<number> {
     const {
       districtId,
@@ -452,6 +453,7 @@ export class DrivingLicenseService {
       stolenOrLost,
       pickUpLicense,
       imageBiometricsId,
+      signatureBiometricsId,
     } = params
     return await this.drivingLicenseApi.postApplicationNewCollaborative({
       districtId,
@@ -459,6 +461,7 @@ export class DrivingLicenseService {
       token,
       pickUpLicense,
       imageBiometricsId,
+      signatureBiometricsId,
     })
   }
 

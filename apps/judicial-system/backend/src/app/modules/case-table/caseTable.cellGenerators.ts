@@ -533,7 +533,15 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['id', 'noNationalId', 'nationalId', 'name'],
+      attributes: [
+        'id',
+        'noNationalId',
+        'nationalId',
+        'name',
+        'indictmentReviewDecision',
+        'isSentToPrisonAdmin',
+        'isRegisteredInPrisonSystem',
+      ],
       order: [['created', 'ASC']],
       separate: true,
     },
@@ -883,7 +891,12 @@ const punishmentType: CaseTableCellGenerator<TagValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['id', 'punishmentType'],
+      attributes: [
+        'id',
+        'punishmentType',
+        'isSentToPrisonAdmin',
+        'isRegisteredInPrisonSystem',
+      ],
       order: [['created', 'ASC']],
       separate: true,
     },
@@ -925,6 +938,7 @@ const punishmentType: CaseTableCellGenerator<TagValue> = {
 }
 
 const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
+  attributes: ['isRegisteredInPrisonSystem'],
   includes: {
     defendants: {
       model: Defendant,
@@ -955,6 +969,7 @@ const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
 }
 
 const prisonAdminState: CaseTableCellGenerator<TagValue> = {
+  attributes: ['isRegisteredInPrisonSystem'],
   includes: {
     defendants: {
       model: Defendant,
@@ -1132,10 +1147,10 @@ const indictmentRulingDecision: CaseTableCellGenerator<
 }
 
 const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
-  attributes: ['indictmentReviewDecision'],
   includes: {
     defendants: {
       model: Defendant,
+      attributes: ['indictmentReviewDecision'],
       order: [['created', 'ASC']],
       separate: true,
       includes: {
@@ -1151,12 +1166,14 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
   generate: (c: Case): CaseTableCell<TagPairValue> => {
     const firstTag = {
       color: 'darkerBlue',
-      text:
-        c.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL
-          ? c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-            ? 'Kæra'
-            : 'Áfrýja'
-          : 'Una',
+      text: c.defendants?.some(
+        (d) =>
+          d.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL,
+      )
+        ? c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+          ? 'Kæra'
+          : 'Áfrýja'
+        : 'Una',
     }
 
     const defendantAppealed = c.defendants?.some(

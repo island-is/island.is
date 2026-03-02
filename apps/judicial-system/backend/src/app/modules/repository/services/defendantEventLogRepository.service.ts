@@ -5,6 +5,8 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
+import { DefendantEventType, User } from '@island.is/judicial-system/types'
+
 import { DefendantEventLog } from '../models/defendantEventLog.model'
 
 interface CreateDefendantEventLogOptions {
@@ -18,6 +20,28 @@ export class DefendantEventLogRepositoryService {
     private readonly defendantEventLogModel: typeof DefendantEventLog,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  async createWithUser(
+    eventType: DefendantEventType,
+    caseId: string,
+    defendantId: string,
+    user: User,
+    transaction: Transaction,
+  ): Promise<void> {
+    await this.create(
+      {
+        eventType,
+        caseId,
+        defendantId,
+        nationalId: user.nationalId,
+        userRole: user.role,
+        userName: user.name,
+        userTitle: user.title,
+        institutionName: user.institution?.name,
+      },
+      { transaction },
+    )
+  }
 
   async create(
     data: Partial<DefendantEventLog>,

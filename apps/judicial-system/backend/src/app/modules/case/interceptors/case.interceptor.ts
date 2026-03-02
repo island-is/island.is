@@ -36,10 +36,12 @@ export const transformDefendants = ({
   defendants,
   indictmentRulingDecision,
   rulingDate,
+  isRegisteredInPrisonSystem,
 }: {
   defendants?: Defendant[]
   indictmentRulingDecision?: CaseIndictmentRulingDecision
   rulingDate?: Date
+  isRegisteredInPrisonSystem?: boolean
 }) => {
   return defendants?.map((defendant) => {
     // Only the latest verdict is relevant
@@ -88,6 +90,8 @@ export const transformDefendants = ({
         DefendantEventType.OPENED_BY_PRISON_ADMIN,
         defendant.eventLogs,
       ),
+      isRegisteredInPrisonSystem:
+        defendant.isRegisteredInPrisonSystem ?? isRegisteredInPrisonSystem,
     }
   })
 }
@@ -149,6 +153,7 @@ const transformCase = (theCase: Case, user: User | undefined) => {
       defendants: theCase.defendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
+      isRegisteredInPrisonSystem: theCase.isRegisteredInPrisonSystem,
     }),
     caseFiles: theCase.caseFiles?.filter(
       (file) =>
@@ -186,9 +191,9 @@ const transformCase = (theCase: Case, user: User | undefined) => {
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
     ),
-    indictmentReviewedDate: EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_REVIEWED,
-      theCase.eventLogs,
+    indictmentReviewedDate: DefendantEventLog.getEventLogDateByEventType(
+      DefendantEventType.INDICTMENT_REVIEWED,
+      theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
     ),
     indictmentSentToPublicProsecutorDate: EventLog.getEventLogDateByEventType(
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,

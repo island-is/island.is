@@ -10,6 +10,7 @@ import {
   ApplicationsControllerFindAllByOrganizationRequest,
   ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerNotifyRequest,
   ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
   ApplicationsControllerUpdateRequest,
@@ -26,6 +27,8 @@ import {
   ApplicationResponse,
   SubmitApplicationResponse,
 } from '../../models/applications.model'
+import { NotificationResponse } from '../../models/screen.model'
+import { NotificationInput } from '../../dto/notification.input'
 
 @Injectable()
 export class ApplicationsService {
@@ -137,6 +140,20 @@ export class ApplicationsService {
     await this.applicationsApiWithAuth(auth).applicationsControllerSaveScreen(
       input as ApplicationsControllerSaveScreenRequest,
     )
+  }
+
+  async notifyExternalSystem(
+    auth: User,
+    input: NotificationInput,
+  ): Promise<NotificationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerNotify({
+        notificationDto: input,
+      } as ApplicationsControllerNotifyRequest)
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to notify external system'),
+      )
+    return response as NotificationResponse
   }
 
   async deleteApplication(auth: User, input: string): Promise<void> {

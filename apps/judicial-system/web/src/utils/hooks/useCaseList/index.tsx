@@ -37,7 +37,7 @@ import useCase from '../useCase'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])
-  // The id of the case that's about to be opened
+  // The case and row (defendant ids) that's about to be opened - used for loading state only
   const [clickedCase, setClickedCase] = useState<{
     id: string | null
     defendantIds?: string[] | null
@@ -50,7 +50,11 @@ const useCaseList = () => {
   const router = useRouter()
 
   const openCase = useCallback(
-    (caseToOpen: Case, openCaseInNewTab?: boolean) => {
+    (
+      caseToOpen: Case,
+      openCaseInNewTab?: boolean,
+      defendantIds?: string[] | null,
+    ) => {
       let routeTo = null
 
       if (isDefenceUser(user)) {
@@ -139,10 +143,16 @@ const useCaseList = () => {
         }
       }
 
+      const url = `${routeTo}/${caseToOpen.id}`
+
+      if (!routeTo) {
+        return
+      }
+
       if (openCaseInNewTab) {
-        window.open(`${routeTo}/${caseToOpen.id}`, '_blank')
-      } else if (routeTo) {
-        router.push(`${routeTo}/${caseToOpen.id}`)
+        window.open(url, '_blank')
+      } else {
+        router.push(url)
       }
     },
     [router, user],
@@ -178,7 +188,7 @@ const useCaseList = () => {
       const getCaseToOpen = (id: string) => {
         getCase(
           id,
-          (caseData) => openCase(caseData, openInNewTab),
+          (caseData) => openCase(caseData, openInNewTab, defendantIds),
           () => {
             setClickedCase((prev) => {
               if (

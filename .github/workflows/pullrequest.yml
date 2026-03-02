@@ -247,67 +247,21 @@ jobs:
       - prepare
     runs-on: arc-shared
     timeout-minutes: 35
-    if: needs.prepare.outputs.LINT_CHUNKS
     env:
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
       NODE_OPTIONS: --max-old-space-size=4096
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
 
+      - name: Fetch NX_BASE commit
+        run: git fetch --depth=1 origin ${{ needs.prepare.outputs.NX_BASE }}
+
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Create output directory for lint output
-        run: |
-          mkdir -p dist/
-          echo "HEAD_LINT_FILE_PATH=dist/lints-processed-head.txt" >> "$GITHUB_ENV"
-          echo "BASE_LINT_FILE_PATH=dist/lints-processed-base.txt" >> "$GITHUB_ENV"
-
-      - name: Lint head
-        id: lint-head
-        run: |
-          ./scripts/ci/lint-and-parse.sh \
-            "$AFFECTED_PROJECTS" \
-            "$HEAD_LINT_FILE_PATH"
-          echo "lints-file=$HEAD_LINT_FILE_PATH" | tee -a "$GITHUB_OUTPUT"
-
-      # Checkout for linting base
-      - uses: actions/checkout@v4
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
-        with:
-          ref: ${{ github.event.pull_request.base.ref }}
-          clean: false
-
-      - name: Lint base
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
-        id: lint-base
-        run: |
-          ./scripts/ci/lint-and-parse.sh \
-            "$AFFECTED_PROJECTS" \
-            "$BASE_LINT_FILE_PATH"
-          echo "lints-file=$BASE_LINT_FILE_PATH" | tee -a "$GITHUB_OUTPUT"
-
-      - name: No new lints
-        id: newlints
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
-        env:
-          HEAD_LINT_PROCESSED_FILE: ${{steps.lint-head.outputs.lints-file}}
-          BASE_LINT_PROCESSED_FILE: ${{steps.lint-base.outputs.lints-file}}
-        run: |
-          # compare-lints.sh <BASE_LINT_PROCESSED_FILE> <HEAD_LINT_PROCESSED_FILE>
-          ./scripts/ci/compare-lints.sh \
-            "$BASE_LINT_PROCESSED_FILE" \
-            "$HEAD_LINT_PROCESSED_FILE"
-
-      - name: Checkout back to PR
-        uses: actions/checkout@v4
-        with:
-          clean: false
+      - name: Linting
+        run: yarn nx affected --target=lint
 
   build:
     needs:

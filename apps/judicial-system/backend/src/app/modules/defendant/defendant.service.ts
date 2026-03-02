@@ -19,12 +19,14 @@ import {
   DefendantNotificationType,
   DefenderChoice,
   isIndictmentCase,
+  isPrisonAdminUser,
 } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../court'
 import {
   Case,
   Defendant,
+  DefendantEventLog,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
 } from '../repository'
@@ -240,10 +242,49 @@ export class DefendantService {
       caseId: string
       defendantId: string
       eventType: DefendantEventType
+      user?: User
     },
     transaction: Transaction,
   ): Promise<void> {
-    await this.defendantEventLogRepositoryService.create(event, { transaction })
+    if (event.user) {
+      await this.defendantEventLogRepositoryService.createWithUser(
+        event.eventType,
+        event.caseId,
+        event.defendantId,
+        event.user,
+        transaction,
+      )
+
+      return
+    }
+
+    await this.defendantEventLogRepositoryService.create(event, {
+      transaction,
+    })
+  }
+
+  private async handleEventLogUpdates(
+    theCase: Case,
+    defendant: Defendant,
+    updatedDefendant: UpdateDefendantDto,
+    user: User,
+    transaction: Transaction,
+  ) {
+    if (
+      updatedDefendant.indictmentReviewDecision &&
+      updatedDefendant.indictmentReviewDecision !==
+        defendant.indictmentReviewDecision
+    ) {
+      await this.createDefendantEvent(
+        {
+          caseId: theCase.id,
+          defendantId: defendant.id,
+          eventType: DefendantEventType.INDICTMENT_REVIEWED,
+          user,
+        },
+        transaction,
+      )
+    }
   }
 
   private async updateIndictmentCaseDefendant(
@@ -277,6 +318,36 @@ export class DefendantService {
       defendant,
       user,
     )
+
+    await this.handleEventLogUpdates(
+      theCase,
+      defendant,
+      updatedDefendant,
+      user,
+      transaction,
+    )
+
+    if (
+      update.punishmentType !== undefined &&
+      update.punishmentType !== null &&
+      isPrisonAdminUser(user)
+    ) {
+      const eventLogs = defendant.eventLogs ?? []
+      if (
+        defendant.isSentToPrisonAdmin &&
+        !DefendantEventLog.hasValidOpenByPrisonAdminEvent(eventLogs)
+      ) {
+        await this.createDefendantEvent(
+          {
+            caseId: theCase.id,
+            defendantId: defendant.id,
+            eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
+            user,
+          },
+          transaction,
+        )
+      }
+    }
 
     return updatedDefendant
   }
