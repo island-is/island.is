@@ -3,7 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/one-systems-rulings/src",
   "projectType": "library",
-  "tags": ["lib:api-domain"],
+  "tags": ["lib:api", "scope:api"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
