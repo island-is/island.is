@@ -10,7 +10,10 @@ import { DrivingLicenseApiModule } from '@island.is/clients/driving-license'
 import { NationalRegistryV3ApplicationsClientModule } from '@island.is/clients/national-registry-v3-applications'
 
 @Module({
-  imports: [NationalRegistryV3ApplicationsClientModule, DrivingLicenseApiModule],
+  imports: [
+    NationalRegistryV3ApplicationsClientModule,
+    DrivingLicenseApiModule,
+  ],
   providers: [
     MainResolver,
     QualityPhotoResolver,
