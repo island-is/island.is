@@ -1960,10 +1960,7 @@ export class CaseNotificationService extends BaseNotificationService {
       user.email === recipientEmail
 
     const promises = []
-    if (
-      theCase.judge &&
-      !isCurrentUserRecipient(user, theCase.judge.email)
-    ) {
+    if (theCase.judge && !isCurrentUserRecipient(user, theCase.judge.email)) {
       promises.push(
         this.sendCaseFilesUpdatedNotification(
           theCase.courtCaseNumber,
