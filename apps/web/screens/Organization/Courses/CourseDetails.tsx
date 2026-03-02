@@ -29,6 +29,7 @@ import { webRichText } from '@island.is/web/utils/richText'
 import { GET_NAMESPACE_QUERY } from '../../queries'
 import {
   GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY,
+  GET_COURSE_AVAILABILITY_QUERY,
   GET_COURSE_BY_ID_QUERY,
   GET_COURSE_LIST_PAGE_BY_ID_QUERY,
 } from '../../queries/Courses'
@@ -55,6 +56,7 @@ export interface CourseDetailsProps {
   namespace: Record<string, string>
   courseListPage: Query['getCourseListPageById']
   chargeItems: ChargeItemCodeByCourseIdItem[]
+  fullyBookedInstanceIds: string[]
 }
 
 const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
@@ -63,6 +65,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
   namespace,
   courseListPage,
   chargeItems,
+  fullyBookedInstanceIds,
 }) => {
   const router = useRouter()
   const n = useNamespace(namespace)
@@ -71,6 +74,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
   const { format } = useDateUtils()
 
   const chargeItemMap = new Map(chargeItems.map((item) => [item.code, item]))
+  const fullyBookedSet = new Set(fullyBookedInstanceIds)
   const instanceCards = course.instances.map((instance) => {
     const title = instance.displayedTitle?.trim() || course.title
     const startDateLabel = `${n(
@@ -119,6 +123,8 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
 
     const registrationHref = `/umsoknir/hh-namskeid?selection=${selection}`
 
+    const isFullyBooked = fullyBookedSet.has(instance.id)
+
     return {
       id: instance.id,
       title,
@@ -129,6 +135,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
       dateLabel,
       priceLabel,
       registrationHref,
+      isFullyBooked,
     }
   })
 
@@ -187,7 +194,27 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                   heading={instance.title}
                   subHeading={instance.location}
                   text={instance.description}
-                  href={instance.registrationHref}
+                  href={
+                    instance.isFullyBooked
+                      ? undefined
+                      : instance.registrationHref
+                  }
+                  tags={
+                    instance.isFullyBooked
+                      ? [
+                          {
+                            label: n(
+                              'courseInstanceFullyBookedLabel',
+                              activeLocale === 'is'
+                                ? 'Fullbókað'
+                                : 'Fully booked',
+                            ),
+                            disabled: true,
+                          },
+                        ]
+                      : []
+                  }
+                  colorScheme={instance.isFullyBooked ? 'red' : 'blue'}
                   stackWidth={theme.breakpoints.sm}
                   autoStack={true}
                   sidePanelConfig={{
@@ -219,15 +246,19 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                           ]
                         : []),
                     ],
-                    cta: {
-                      href: instance.registrationHref,
-                      label: n(
-                        'courseInstanceRegistrationButtonLabel',
-                        activeLocale === 'is' ? 'Skráning' : 'Registration',
-                      ),
-                      variant: 'primary',
-                      size: 'medium',
-                    },
+                    cta: instance.isFullyBooked
+                      ? undefined
+                      : {
+                          href: instance.registrationHref,
+                          label: n(
+                            'courseInstanceRegistrationButtonLabel',
+                            activeLocale === 'is'
+                              ? 'Skráning'
+                              : 'Registration',
+                          ),
+                          variant: 'primary',
+                          size: 'medium',
+                        },
                   }}
                 />
               ))}
@@ -261,6 +292,7 @@ CourseDetails.getProps = async ({
     },
     courseListPage,
     chargeItemsResponse,
+    availabilityResponse,
   ] = await Promise.all([
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
@@ -305,6 +337,20 @@ CourseDetails.getProps = async ({
         },
       })
       .catch(() => null),
+    apolloClient
+      .query<{
+        getCourseAvailability: {
+          instances: Array<{ id: string; isFullyBooked: boolean | null }>
+        }
+      }>({
+        query: GET_COURSE_AVAILABILITY_QUERY,
+        variables: {
+          input: {
+            courseId,
+          },
+        },
+      })
+      .catch(() => null),
   ])
 
   if (!getCourseById?.course) {
@@ -321,6 +367,12 @@ CourseDetails.getProps = async ({
     )
   }
 
+  const fullyBookedInstanceIds = (
+    availabilityResponse?.data?.getCourseAvailability?.instances ?? []
+  )
+    .filter((instance) => instance.isFullyBooked === true)
+    .map((instance) => instance.id)
+
   return {
     organizationPage,
     course: getCourseById.course,
@@ -328,6 +380,7 @@ CourseDetails.getProps = async ({
     courseListPage: courseListPage.data?.getCourseListPageById,
     chargeItems:
       chargeItemsResponse?.data?.getChargeItemCodesByCourseId?.items ?? [],
+    fullyBookedInstanceIds,
     languageToggleHrefOverride: {
       is: getCourseById.activeLocales?.is ? languageToggleHrefOverride?.is : '',
       en: getCourseById.activeLocales?.en ? languageToggleHrefOverride?.en : '',

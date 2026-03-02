@@ -15,7 +15,10 @@ import { AuthAdminModule } from '@island.is/api/domains/auth-admin'
 import { CompanyRegistryModule } from '@island.is/api/domains/company-registry'
 import { ConsultationPortalModule } from '@island.is/api/domains/consultation-portal'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
-import { CourseChargesModule } from '@island.is/api/domains/course-charges'
+import {
+  CourseChargesModule,
+  CourseAvailabilityConfig,
+} from '@island.is/api/domains/course-charges'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
 import { DocumentProviderModule } from '@island.is/api/domains/document-provider'
@@ -498,6 +501,7 @@ const environment = getConfig
         WorkAccidentClientConfig,
         PracticalExamsClientConfig,
         ZendeskServiceConfig,
+        CourseAvailabilityConfig,
         emailModuleConfig,
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
