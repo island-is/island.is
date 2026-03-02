@@ -95,7 +95,7 @@ initContainer:
     DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
 namespace: 'services-form-system-api'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
