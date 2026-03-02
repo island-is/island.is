@@ -1,4 +1,4 @@
-import { FC, useContext, useMemo, useState } from 'react'
+import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -28,7 +28,9 @@ import DateTime from '../DateTime/DateTime'
 import { FormContext } from '../FormProvider/FormProvider'
 import { getAppealExpirationInfo } from '../InfoCard/DefendantInfo/DefendantInfo.logic'
 import SectionHeading from '../SectionHeading/SectionHeading'
+import VerdictAppealDecisionChoice from '../VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
 import { strings } from './BlueBoxWithDate.strings'
+import { grid } from '../../utils/styles/recipes.css'
 import * as styles from './BlueBoxWithIcon.css'
 
 interface Props {
@@ -40,8 +42,19 @@ interface Props {
 const BlueBoxWithDate: FC<Props> = (props) => {
   const { defendant, canDefendantAppealVerdict, icon } = props
   const { verdict } = defendant
-
   const { formatMessage } = useIntl()
+  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { setAndSendVerdictToServer } = useVerdict()
+
+  const hasMountedRef = useRef<boolean>(false)
+  const previousTextCountRef = useRef<number>(0)
+
+  const [pendingServiceDate, setPendingServiceDate] = useState<Date>()
+  const [pendingAppealDate, setPendingAppealDate] = useState<Date>()
+  const [isServiceDatePickerClosing, setIsServiceDatePickerClosing] =
+    useState<boolean>(false)
+  const [isAppealDatePickerClosing, setIsAppealDatePickerClosing] =
+    useState<boolean>(false)
   const [dates, setDates] = useState<{
     serviceDate?: Date
     appealDate?: Date
@@ -49,10 +62,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     serviceDate: undefined,
     appealDate: undefined,
   })
-  const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
-  const [triggerAnimation2, setTriggerAnimation2] = useState<boolean>(false)
-  const { setAndSendVerdictToServer } = useVerdict()
-  const { workingCase, setWorkingCase } = useContext(FormContext)
 
   const isFine =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
@@ -61,49 +70,21 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
   const showDatePickers = !defendant.isSentToPrisonAdmin && !isFine
+
   const showAppealDatePicker =
     canDefendantAppealVerdict &&
     !verdict?.appealDate &&
     !defendant.isVerdictAppealDeadlineExpired
-  const showServiceDateDatePicker = isServiceRequired && !verdict.serviceDate
+  const shouldShowAppealDatePicker =
+    showAppealDatePicker && !isAppealDatePickerClosing
 
-  const handleDateChange = (
-    date: Date | undefined,
-    valid: boolean,
-    type: keyof typeof dates,
-  ) => {
-    if (!date) {
-      // Do nothing
-      return
-    }
+  const showServiceDateDatePicker = isServiceRequired && !verdict?.serviceDate
+  const shouldShowServiceDatePicker =
+    showServiceDateDatePicker && !isServiceDatePickerClosing
 
-    if (!valid) {
-      toast.error(formatMessage(errors.invalidDate))
-      return
-    }
-
-    setDates((prev) => ({ ...prev, [type]: date }))
-  }
-
-  const handleSetDate = (type: keyof typeof dates) => {
-    const date = dates[type]
-
-    if (!date) {
-      toast.error(formatMessage(errors.invalidDate))
-      return
-    }
-
-    const payload = {
-      caseId: workingCase.id,
-      defendantId: defendant.id,
-      [type]: formatDateForServer(date),
-    }
-
-    setAndSendVerdictToServer(payload, setWorkingCase)
-
-    if (type === 'appealDate') {
-      setTriggerAnimation2(true)
-    }
+  const collapsibleRowVariants = {
+    visible: { opacity: 1, height: 'auto' },
+    exit: { opacity: 0, height: 0 },
   }
 
   const appealExpirationInfo = useMemo(() => {
@@ -197,77 +178,151 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     verdict,
   ])
 
-  const serviceDateVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: { opacity: 1, y: 0 },
-    exit: {
-      opacity: 0,
-      y: 15,
-    },
+  const handleDateChange = (
+    date: Date | undefined,
+    valid: boolean,
+    type: keyof typeof dates,
+  ) => {
+    if (!date) {
+      // Do nothing
+      return
+    }
+
+    if (!valid) {
+      toast.error(formatMessage(errors.invalidDate))
+      return
+    }
+
+    setDates((prev) => ({ ...prev, [type]: date }))
   }
 
-  const appealDateVariants = {
-    hidden: { opacity: 0, y: 15 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      height: 'auto',
-      transition: { delay: triggerAnimation ? 0 : 0.4 },
-    },
-    exit: {
-      opacity: 0,
-      height: 0,
-      transition: { opacity: { duration: 0.2 } },
-    },
+  const handleSetDate = (type: keyof typeof dates) => {
+    const date = dates[type]
+
+    if (!date) {
+      toast.error(formatMessage(errors.invalidDate))
+      return
+    }
+
+    // Service date: hide picker first, then submit on exit complete
+    if (type === 'serviceDate') {
+      setPendingServiceDate(date)
+      setIsServiceDatePickerClosing(true)
+      return
+    }
+
+    // Appeal date: hide picker first, then submit on exit complete
+    if (type === 'appealDate') {
+      setPendingAppealDate(date)
+      setIsAppealDatePickerClosing(true)
+      return
+    }
   }
+
+  const sendVerdictDate = (type: keyof typeof dates, date: Date) => {
+    setAndSendVerdictToServer(
+      {
+        caseId: workingCase.id,
+        defendantId: defendant.id,
+        [type]: formatDateForServer(date),
+      },
+      setWorkingCase,
+    )
+  }
+
+  useEffect(() => {
+    hasMountedRef.current = true
+    previousTextCountRef.current = textItems.length
+  }, [textItems.length])
+
+  useEffect(() => {
+    if (isServiceDatePickerClosing && verdict?.serviceDate) {
+      setIsServiceDatePickerClosing(false)
+      setPendingServiceDate(undefined)
+    }
+  }, [isServiceDatePickerClosing, verdict?.serviceDate])
+
+  useEffect(() => {
+    if (isAppealDatePickerClosing && verdict?.appealDate) {
+      setIsAppealDatePickerClosing(false)
+      setPendingAppealDate(undefined)
+    }
+  }, [isAppealDatePickerClosing, verdict?.appealDate])
 
   return (
     <Box className={styles.container} padding={[2, 2, 3, 3]}>
       <Box className={styles.dataContainer}>
         <SectionHeading
-          title={formatMessage(
-            isFine ? strings.indictmentRulingDecisionFine : strings.keyDates,
-          )}
+          title={defendant.name || ''}
           heading="h4"
           marginBottom={0}
         />
         {icon && (
           <Icon icon={icon} type="outline" color="blue400" size="large" />
         )}
-        <Text variant="eyebrow">{defendant.name}</Text>
+        <Text variant="eyebrow">
+          {isFine ? 'Viðurlagaákvörðun' : 'Birting dóms'}
+        </Text>
       </Box>
-      <AnimatePresence>
-        {textItems.map((text, index) => (
-          <motion.div
-            key={index}
-            initial={{
-              opacity: 0,
-              y: 20,
-              height: triggerAnimation2 ? 0 : 'auto',
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              height: 'auto',
-            }}
-            exit={{ opacity: 0, y: 20, height: 0 }}
-            transition={{
-              delay: index < 4 ? index * 0.2 : 0,
-              duration: 0.3,
-            }}
-            onAnimationComplete={() => setTriggerAnimation(true)}
-          >
-            <Text>{`• ${text}`}</Text>
-          </motion.div>
-        ))}
+      <AnimatePresence initial={false}>
+        {textItems.map((text, index) => {
+          const addedStartIndex = previousTextCountRef.current
+          const isNewItem = hasMountedRef.current && index >= addedStartIndex
+          const staggerIndex = isNewItem ? index - addedStartIndex : 0
+
+          return (
+            <motion.div
+              key={`${defendant.id}-${text}`}
+              initial={
+                isNewItem
+                  ? {
+                      opacity: 0,
+                      y: 20,
+                      height: 0,
+                    }
+                  : false
+              }
+              animate={{
+                opacity: 1,
+                y: 0,
+                height: 'auto',
+              }}
+              exit={{ opacity: 0, y: 20, height: 0 }}
+              transition={{
+                delay: isNewItem ? staggerIndex * 0.2 : 0,
+                duration: 0.3,
+              }}
+            >
+              <Text>{`• ${text}`}</Text>
+            </motion.div>
+          )
+        })}
       </AnimatePresence>
       {showDatePickers && (
-        <AnimatePresence mode="wait">
-          {showAppealDatePicker && (
+        <AnimatePresence
+          onExitComplete={() => {
+            if (isServiceDatePickerClosing && pendingServiceDate) {
+              sendVerdictDate('serviceDate', pendingServiceDate)
+              setPendingServiceDate(undefined)
+            }
+
+            if (isAppealDatePickerClosing && pendingAppealDate) {
+              sendVerdictDate('appealDate', pendingAppealDate)
+              setPendingAppealDate(undefined)
+            }
+          }}
+        >
+          {shouldShowAppealDatePicker && (
             <motion.div
               key="defendantAppealDate"
-              variants={appealDateVariants}
-              initial="hidden"
+              variants={{
+                visible: {
+                  ...collapsibleRowVariants.visible,
+                  transition: { opacity: { delay: 0.3 } },
+                },
+                exit: collapsibleRowVariants.exit,
+              }}
+              initial="exit"
               animate="visible"
               exit="exit"
             >
@@ -297,14 +352,19 @@ const BlueBoxWithDate: FC<Props> = (props) => {
               </Box>
             </motion.div>
           )}
-          {showServiceDateDatePicker && (
+          {shouldShowServiceDatePicker && (
             <motion.div
               key="defendantServiceDate"
-              variants={serviceDateVariants}
+              variants={{
+                visible: collapsibleRowVariants.visible,
+                exit: {
+                  ...collapsibleRowVariants.exit,
+                  transition: { height: { delay: 0.2 } },
+                },
+              }}
               initial={false}
               animate="visible"
               exit="exit"
-              transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
             >
               <Box className={styles.dataContainer}>
                 <DateTime
@@ -335,6 +395,23 @@ const BlueBoxWithDate: FC<Props> = (props) => {
             </motion.div>
           )}
         </AnimatePresence>
+      )}
+      {canDefendantAppealVerdict && verdict && (
+        <motion.div
+          key="defendantVerdictAppealDecisionChoice"
+          variants={collapsibleRowVariants}
+          initial={false}
+          animate="visible"
+          transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
+          className={grid({ gap: 2, marginTop: 1 })}
+        >
+          <Text variant="eyebrow">Afstaða dómfellda til dóms</Text>
+          <VerdictAppealDecisionChoice
+            defendant={defendant}
+            verdict={verdict}
+            disabled={!!defendant.isSentToPrisonAdmin}
+          />
+        </motion.div>
       )}
     </Box>
   )
