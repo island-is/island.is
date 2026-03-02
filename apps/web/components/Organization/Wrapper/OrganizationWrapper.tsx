@@ -1,7 +1,6 @@
 import React, {
   PropsWithChildren,
   ReactNode,
-  useContext,
   useEffect,
   useMemo,
   useState,
@@ -17,7 +16,6 @@ import {
   BreadCrumbItem,
   Breadcrumbs,
   Button,
-  Divider,
   GridColumn,
   GridContainer,
   GridRow,
@@ -50,7 +48,6 @@ import {
   SLICE_SPACING,
   STICKY_NAV_MAX_WIDTH_LG,
 } from '@island.is/web/constants'
-import { GlobalContext } from '@island.is/web/context'
 import {
   GetWebChatQuery,
   Image,
@@ -70,33 +67,11 @@ import { GET_WEB_CHAT } from '@island.is/web/screens/queries/WebChat'
 import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
-import { DigitalIcelandFooter } from './Themes/DigitalIcelandTheme/DigitalIcelandFooter'
 import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
-import { FiskistofaFooter } from './Themes/FiskistofaTheme'
-import { GevFooter } from './Themes/GevTheme'
-import { HeilbrigdisstofnunAusturlandsFooter } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
-import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
-import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { HljodbokasafnIslandsHeader } from './Themes/HljodbokasafnIslandsTheme'
-import { HveFooter } from './Themes/HveTheme'
-import { IcelandicNaturalDisasterInsuranceFooter } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
-import { LandskjorstjornFooter } from './Themes/LandkjorstjornTheme'
-import { LandlaeknirFooter } from './Themes/LandlaeknirTheme'
-import { MannaudstorgFooter } from './Themes/MannaudstorgTheme'
-import { RikislogmadurFooter } from './Themes/RikislogmadurTheme'
-import { SAkFooter } from './Themes/SAkTheme'
-import { ShhFooter } from './Themes/SHHTheme'
-import {
-  SjukratryggingarDefaultHeader,
-  SjukratryggingarFooter,
-} from './Themes/SjukratryggingarTheme'
-import {
-  SyslumennDefaultHeader,
-  SyslumennFooter,
-} from './Themes/SyslumennTheme'
+import { SjukratryggingarDefaultHeader } from './Themes/SjukratryggingarTheme'
+import { SyslumennDefaultHeader } from './Themes/SyslumennTheme'
 import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
-import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
-import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
 import { watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
@@ -244,236 +219,7 @@ export const OrganizationHeader: React.FC<
     isSubpage,
   }
 
-  switch (organizationPage.theme) {
-    case 'syslumenn':
-      return (
-        <SyslumennDefaultHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-          isSubpage={isSubpage}
-        />
-      )
-    case 'sjukratryggingar':
-      return (
-        <SjukratryggingarDefaultHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-          isSubpage={isSubpage}
-        />
-      )
-    case 'digital_iceland':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          titleClassName={styles.digitalIcelandHeaderTitle}
-        />
-      )
-    case 'hsn':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'hsnHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/4v20729OMrRYkktuaCTWRi/675807c8c848895833c4a6a162f2813a/hsn-header-icon.svg',
-          )}
-        />
-      )
-    case 'landlaeknir':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'landlaeknirHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/2p6UWMBdVkVHBAjsnX20bY/c04b402332dbae96c198db7b8640f20b/Header_illustration_1.svg',
-          )}
-          className={
-            isSubpage
-              ? styles.landlaeknirHeaderGridContainerSubpage
-              : styles.landlaeknirHeaderGridContainer
-          }
-        />
-      )
-    case 'fiskistofa':
-      return (
-        <FiskistofaDefaultHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-          isSubpage={isSubpage}
-        />
-      )
-    case 'rikislogmadur':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.rikislogmadurHeaderGridContainerWidthSubpage
-              : styles.rikislogmadurHeaderGridContainerWidth
-          }
-        />
-      )
-    case 'landskjorstjorn':
-      return <DefaultHeader {...defaultProps} />
-    case 'landing_page':
-      return null
-    case 'fjarsysla-rikisins':
-      return <DefaultHeader {...defaultProps} />
-    case 'sak':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.sakHeaderGridContainerSubpage
-              : styles.sakHeaderGridContainer
-          }
-          image={n(
-            `sakHeaderBgImage`,
-            'https://images.ctfassets.net/8k0h54kbe6bj/4SjqwRBZRMWVWG0y73sXxq/cf8d0d16704cfea124362eca03afdb41/sak-header-trans_2x.png',
-          )}
-          titleSectionPaddingLeft={isSubpage ? 0 : 10}
-        />
-      )
-    case 'gev':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'gevHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/13E4vIA69gDNF87pkHwJgc/c2175b5ce58e50c93ddef5ea26854740/figura.png',
-          )}
-        />
-      )
-    case 'hve':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.hveHeaderGridContainerSubpage
-              : styles.hveHeaderGridContainer
-          }
-          image={n(
-            'hveHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/7ie5X2T4g8a7g5PLvu5226/4ec8b2cb69b5cb7193a61c562f9b36e0/minstur1.png',
-          )}
-        />
-      )
-    case 'shh':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.shhHeaderGridContainerWidthSubpage
-              : styles.shhHeaderGridContainerWidth
-          }
-          titleSectionPaddingLeft={isSubpage ? 0 : 5}
-        />
-      )
-    case 'hsa':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.hsaHeaderGridContainerWidthSubpage
-              : styles.hsaHeaderGridContainerWidth
-          }
-        />
-      )
-    case 'haskolanam':
-      return (
-        <UniversityStudiesHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
-    case 'nti':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'icelandicNaturalDisasterInsuranceHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/eXqcbclteE88H5iQ6J3lo/bbc1d0c9d3abee93d34ec0aa718c833b/Group__1_.svg',
-          )}
-        />
-      )
-
-    case 'samgongustofa':
-      return <DefaultHeader {...defaultProps} />
-    case 'geislavarnir-rikisins':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          background="linear-gradient(96.23deg, rgba(1, 54, 65, 0.8) 0.85%, rgba(19, 101, 103, 0.93) 16.4%, rgba(19, 101, 103, 0.885709) 32.16%, rgba(1, 73, 87, 0.88) 56.43%, rgba(2, 69, 91, 0.98) 78.47%, rgba(1, 52, 62, 0.96) 100.8%)"
-          image={n(
-            'geislavarnirRikisinsHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/5KjaMY9IIB0aX0GOUU60H7/176b6ed26dc01fe4e2559ba2957e85b7/skjaldamerki-transparent.svg',
-          )}
-        />
-      )
-    case 'rettindagaesla-fatlads-folks':
-      return <DefaultHeader {...defaultProps} />
-    case 'hms':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          image={n(
-            'hmsHeaderImage',
-            'https://images.ctfassets.net/8k0h54kbe6bj/5pAFV6h9PVzSTQgJY67rbT/3117436e3043bebf720b2f9a7e7619b8/hms-header-image.svg',
-          )}
-        />
-      )
-    case 'rikissaksoknari':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          className={
-            isSubpage
-              ? styles.rikissaksoknariHeaderGridContainerSubpage
-              : styles.rikissaksoknariHeaderGridContainerWidth
-          }
-        />
-      )
-    case 'vinnueftirlitid':
-      return (
-        <VinnueftilitidHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
-    case 'hljodbokasafn-islands':
-      return (
-        <HljodbokasafnIslandsHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
-    case 'tryggingastofnun':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          customTitleColor={n('tryggingastofnunHeaderTitleColor', '#007339')}
-        />
-      )
-    case 'faggilding':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          logoImageClassName={styles.logoLarge}
-        />
-      )
-    case 'rannis':
-      return (
-        <DefaultHeader
-          {...defaultProps}
-          background="linear-gradient(271deg, #C00B02 5.72%, #DB0B00 91.04%)"
-        />
-      )
-    default:
-      return <DefaultHeader {...defaultProps} />
-  }
+  return <DefaultHeader {...defaultProps} />
 }
 
 interface ExternalLinksProps {
@@ -551,258 +297,16 @@ export const OrganizationFooter: React.FC<
     ? organizations[0]
     : organizations.find((x) => x?.footerItems?.length > 0)
 
-  const namespace = useMemo(
-    () => JSON.parse(organization?.namespace?.fields || '{}'),
-    [],
+  const footerItems = organization?.footerItems ?? []
+  if (footerItems.length === 0) return null
+  return (
+    <WebFooter
+      heading={organization?.title ?? ''}
+      columns={footerItems}
+      background={organization?.footerConfig?.background}
+      color={organization?.footerConfig?.textColor}
+    />
   )
-  const n = useNamespace(namespace)
-
-  let OrganizationFooterComponent = null
-
-  const { isServiceWeb } = useContext(GlobalContext)
-
-  switch (organization?.slug) {
-    case 'syslumenn':
-    case 'district-commissioner':
-      OrganizationFooterComponent = (
-        <SyslumennFooter
-          title={organization.title}
-          logo={organization.logo?.url}
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'sjukratryggingar':
-    case 'icelandic-health-insurance':
-    case 'iceland-health':
-      OrganizationFooterComponent = (
-        <SjukratryggingarFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-          organizationSlug={organization.slug}
-        />
-      )
-      break
-    case 'utlendingastofnun':
-    case 'directorate-of-immigration':
-      OrganizationFooterComponent = (
-        <UtlendingastofnunFooter
-          title={organization.title}
-          logo={organization.logo?.url}
-          footerItems={organization.footerItems}
-          organizationSlug={organization.slug}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'mannaudstorg':
-      OrganizationFooterComponent = (
-        <MannaudstorgFooter
-          title={organization.title}
-          logoSrc={organization.logo?.url}
-          footerItems={organization.footerItems}
-        />
-      )
-      break
-    case 'landlaeknir':
-    case 'directorate-of-health':
-      OrganizationFooterComponent = (
-        <LandlaeknirFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'hsn':
-      OrganizationFooterComponent = (
-        <HeilbrigdisstofnunNordurlandsFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'hsu':
-      OrganizationFooterComponent = (
-        <HeilbrigdisstofnunSudurlandsFooter
-          title={organization.title}
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'fiskistofa':
-    case 'directorate-of-fisheries':
-      OrganizationFooterComponent = (
-        <FiskistofaFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'landskjorstjorn':
-      OrganizationFooterComponent = (
-        <LandskjorstjornFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'rikislogmadur':
-    case 'office-of-the-attorney-general-civil-affairs':
-      OrganizationFooterComponent = (
-        <RikislogmadurFooter
-          title={organization.title}
-          footerItems={organization.footerItems}
-          logo={organization.logo?.url}
-        />
-      )
-      break
-    case 'sak':
-    case 'sjukrahusid-akureyri':
-    case 'akureyri-hospital':
-      OrganizationFooterComponent = (
-        <SAkFooter
-          title={organization.title}
-          footerItems={organization.footerItems}
-          logo={organization.logo?.url}
-        />
-      )
-      break
-    case 'hve':
-      OrganizationFooterComponent = (
-        <HveFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-          logo={organization.logo?.url}
-          title={organization.title}
-        />
-      )
-      break
-    case 'haskolanam':
-    case 'university-studies':
-      OrganizationFooterComponent = (
-        <UniversityStudiesFooter organization={organization} />
-      )
-      break
-    case 'gev':
-      OrganizationFooterComponent = (
-        <GevFooter
-          title={organization.title}
-          namespace={namespace}
-          footerItems={organization.footerItems}
-        />
-      )
-      break
-    case 'shh':
-    case 'samskiptamidstoed-heyrnarlausra-og-heyrnarskertra':
-    case 'the-communication-center-for-the-deaf-and-hearing-impaired':
-      OrganizationFooterComponent = (
-        <ShhFooter
-          title={organization.title}
-          namespace={namespace}
-          footerItems={organization.footerItems}
-        />
-      )
-      break
-    case 'hsa':
-      OrganizationFooterComponent = (
-        <HeilbrigdisstofnunAusturlandsFooter
-          title={organization.title}
-          namespace={namespace}
-          footerItems={organization.footerItems}
-        />
-      )
-      break
-    case 'nti':
-      OrganizationFooterComponent = (
-        <IcelandicNaturalDisasterInsuranceFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'samgongustofa':
-    case 'transport-authority':
-      OrganizationFooterComponent = (
-        <WebFooter
-          imageUrl={organization.logo?.url}
-          heading={organization.title}
-          columns={organization.footerItems}
-          titleVariant="h2"
-        />
-      )
-      break
-    case 'rettindagaesla-fatlads-folks':
-    case 'disability-rights-protection':
-      OrganizationFooterComponent = (
-        <>
-          <WebFooter
-            imageUrl={organization.logo?.url}
-            heading={organization.title}
-            columns={organization.footerItems}
-            background={organization.footerConfig?.background}
-            color={
-              organization.footerConfig?.color ||
-              organization.footerConfig?.textColor
-            }
-          />
-          <Divider />
-        </>
-      )
-      break
-    case 'vinnueftirlitid':
-    case 'aosh':
-      {
-        const footerItems = organization?.footerItems ?? []
-        if (footerItems.length === 0) break
-        OrganizationFooterComponent = (
-          <WebFooter
-            heading={organization?.title ?? ''}
-            columns={footerItems}
-            background={
-              isServiceWeb
-                ? theme.color.purple100
-                : organization?.footerConfig?.background
-            }
-            color={
-              isServiceWeb
-                ? theme.color.dark400
-                : organization?.footerConfig?.textColor
-            }
-          />
-        )
-      }
-      break
-    case 'stafraent-island':
-    case 'digital-iceland':
-      OrganizationFooterComponent = (
-        <GridContainer>
-          <DigitalIcelandFooter
-            illustrationSrc={n(
-              'digitalIcelandFooterIllustrationSrc',
-              'https://images.ctfassets.net/8k0h54kbe6bj/X3D3BSLC0PHyxvOkfhlbt/7d6b3bb0a552af01275b15cac8b16eb9/DigitalIcelandHeaderImage_1__1_.svg',
-            )}
-            links={n('digitalIcelandFooterLinks', [])}
-          />
-        </GridContainer>
-      )
-      break
-    default: {
-      const footerItems = organization?.footerItems ?? []
-      if (footerItems.length === 0) break
-      OrganizationFooterComponent = (
-        <WebFooter
-          heading={organization?.title ?? ''}
-          columns={footerItems}
-          background={organization?.footerConfig?.background}
-          color={organization?.footerConfig?.textColor}
-        />
-      )
-    }
-  }
-
-  return OrganizationFooterComponent
 }
 
 export const OrganizationChatPanel = ({
