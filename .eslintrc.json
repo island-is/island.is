@@ -162,6 +162,18 @@
                 "onlyDependOnLibsWithTags": ["lib:judicial-system", "lib:js"]
               },
               {
+                "sourceTag": "scope:form-system-api",
+                "onlyDependOnLibsWithTags": [
+                  "lib:api",
+                  "lib:form-system",
+                  "lib:form-system-api",
+                  "lib:client",
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js"
+                ]
+              },
+              {
                 "sourceTag": "scope:react",
                 "onlyDependOnLibsWithTags": ["lib:react", "lib:dom", "lib:js"]
               },
