@@ -1,0 +1,43 @@
+query ShipDetail($input: ShipRegistryUserShipInput!) {
+  shipRegistryUserShip(input: $input) {
+    id
+    registrationNumber
+    name
+    usageType
+    imoNumber
+    status
+    constructionYear
+    constructionStation
+    constructionPlace
+    hullMaterial
+    classificationSociety
+    seaworthiness {
+      isValid
+      validTo
+    }
+    identification {
+      regionAcronym
+      regionName
+      homeHarbor
+    }
+    measurements {
+      length
+      mostLength
+      width
+      depth
+      bruttoGrt
+      nettoWeightTons
+    }
+    fishery {
+      name
+      address
+      postalCode
+    }
+    engines {
+      power
+      year
+      usage
+      manufacturer
+    }
+  }
+}
