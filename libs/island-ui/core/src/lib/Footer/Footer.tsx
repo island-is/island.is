@@ -38,11 +38,7 @@ interface FooterProps {
   bottomBarLinks: FooterLinkProps[]
 }
 
-const bottomBarIcons = [
-  'informationCircle',
-  'person',
-  'document',
-] as const
+const bottomBarIcons = ['informationCircle', 'person', 'document'] as const
 
 export const Footer = ({
   topLinks = defaultTopLinksInfo,
@@ -65,7 +61,10 @@ export const Footer = ({
               className={styles.withDecorator}
             >
               <Logo iconOnly id="footer_logo" width={32} height={32} />
-              <Box paddingRight={[0, 0, 1]} className={styles.topLinksContainer}>
+              <Box
+                paddingRight={[0, 0, 1]}
+                className={styles.topLinksContainer}
+              >
                 <LinkContext.Provider
                   value={{
                     linkRenderer: (href, children) => (
@@ -78,11 +77,7 @@ export const Footer = ({
                   <Box className={styles.topLinksGrid}>
                     {topLinks.map(({ title, href }, index) => {
                       return (
-                        <Text
-                          key={index}
-                          variant="intro"
-                          color={'blue600'}
-                        >
+                        <Text key={index} variant="intro" color={'blue600'}>
                           <a href={href}>
                             <Hyphen>{title}</Hyphen>
                           </a>
@@ -112,11 +107,7 @@ export const Footer = ({
                   <LinkContext.Provider
                     value={{
                       linkRenderer: (href, children) => (
-                        <Link
-                          href={href}
-                          color="blue600"
-                          underline="normal"
-                        >
+                        <Link href={href} color="blue600" underline="normal">
                           {children}
                         </Link>
                       ),
@@ -154,9 +145,7 @@ export const Footer = ({
               </GridColumn>
             )}
             {showTagLinks && tagLinks.length > 0 && (
-              <GridColumn
-                span={['12/12', '12/12', '3/12', '3/12']}
-              >
+              <GridColumn span={['12/12', '12/12', '3/12', '3/12']}>
                 <Box className={styles.columnTopSpace}>
                   {!!tagLinksTitle && (
                     <Text
@@ -170,7 +159,12 @@ export const Footer = ({
                   )}
                   <Inline space={1}>
                     {tagLinks.map(({ title, href }, index) => (
-                      <Tag key={index} variant="blue" whiteBackground href={href}>
+                      <Tag
+                        key={index}
+                        variant="blue"
+                        whiteBackground
+                        href={href}
+                      >
                         {title}
                       </Tag>
                     ))}
