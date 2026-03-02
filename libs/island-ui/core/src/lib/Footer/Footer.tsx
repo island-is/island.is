@@ -98,7 +98,7 @@ export const Footer = ({
                     <Text
                       as="h2"
                       variant="eyebrow"
-                      color={showTagLinks ? 'dark400' : 'blue400'}
+                      color="dark400"
                       paddingBottom={2}
                     >
                       {middleLinksTitle}
