@@ -112,7 +112,7 @@ const MetaInfo: React.FC<{
       value: formatDate(item.lastUpdated),
     },
     {
-      icon: (isGrid ? 'person' : 'lockOpened') as const,
+      icon: isGrid ? ('person' as const) : ('lockOpened' as const),
       label: n('access', 'Aðgangur'),
       value: n('open', 'Opinn'),
     },
