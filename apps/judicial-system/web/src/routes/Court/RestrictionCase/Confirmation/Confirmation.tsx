@@ -203,9 +203,11 @@ const Confirmation: FC = () => {
           nextIsLoading={isTransitioningCase}
           hideNextButton={hideNextButton}
           infoBoxText={
-            hideNextButton
-              ? formatMessage(strings.onlyAssigendJudgeCanSign)
-              : undefined
+            !hideNextButton
+              ? undefined
+              : isCorrectingRuling
+                ? 'Einungis skráður dómari eða dómritari getur lokið máli'
+                : 'Einungis skráður dómari getur undirritað úrskurð'
           }
         />
       </FormContentContainer>
