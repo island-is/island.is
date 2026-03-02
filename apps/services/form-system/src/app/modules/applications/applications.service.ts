@@ -511,7 +511,7 @@ export class ApplicationsService {
         form?.organizationNationalId ?? '',
       )
 
-      app.orgSlug = organizationInfo?.type
+      app.orgSlug = organizationInfo?.slug
       app.orgContentfulId = organizationInfo?.contentfulId
     }
 
@@ -1407,6 +1407,7 @@ export class ApplicationsService {
     if (!locale || !['is', 'en'].includes(locale)) {
       throw new Error(`Unsupported locale: ${locale}`)
     }
+    const localeColumn = locale === 'is' ? `f.name ->> 'is'` : `f.name ->> 'en'`
 
     let institutionJoin = ''
     let institutionFilter = ''
@@ -1424,7 +1425,7 @@ export class ApplicationsService {
     const query = `
     SELECT
       a.form_id AS "formId",
-      f.name ->> '${locale}' AS "formName",
+      ${localeColumn} AS "formName",
       COUNT(*) AS "totalCount",
       COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.DRAFT}') AS "inProgressCount",
       COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.COMPLETED}') AS "completedCount"
@@ -1433,7 +1434,7 @@ export class ApplicationsService {
     ${institutionJoin}
     WHERE a.modified BETWEEN :startDate AND :endDate
     ${institutionFilter}
-    GROUP BY a.form_id, f.name ->> '${locale}';
+    GROUP BY a.form_id, ${localeColumn};
   `
 
     const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
-import { IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 
 export class InstitutionDto {
   @ApiProperty()
@@ -11,5 +11,6 @@ export class InstitutionDto {
   @ApiPropertyOptional()
   @Expose()
   @IsString()
+  @IsOptional()
   contentfulSlug?: string
 }

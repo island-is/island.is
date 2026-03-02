@@ -21,7 +21,7 @@ export const getOrganizationInfoByNationalId = (nationalId?: string) => {
   return {
     contentfulId:
       InstitutionContentfulIds[key as keyof typeof InstitutionContentfulIds],
-    type: InstitutionTypes[key as keyof typeof InstitutionTypes],
+    slug: InstitutionTypes[key as keyof typeof InstitutionTypes],
     nationalId:
       InstitutionNationalIds[key as keyof typeof InstitutionNationalIds],
   }

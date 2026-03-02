@@ -62,7 +62,7 @@ export class ApplicationAdminSerializer
       ...application,
       applicantName: applicantName ?? '',
       institutionName: institutionName ?? '',
-      institutionContentfulSlug: institutionInfo?.type,
+      institutionContentfulSlug: institutionInfo?.slug,
     })
   }
 }
@@ -96,7 +96,7 @@ export class InstitutionSerializer
 
     return plainToInstance(InstitutionDto, {
       ...institution,
-      contentfulSlug: institutionInfo?.type,
+      contentfulSlug: institutionInfo?.slug,
     })
   }
 }

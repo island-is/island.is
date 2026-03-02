@@ -334,7 +334,7 @@ export class ApplicationMapper {
         locale === 'is'
           ? application.form?.name?.is
           : application.form?.name?.en,
-      formSlug: application.form?.slug,
+      formSlug: application.form?.slug ?? '',
       institutionNationalId: application.form?.organization?.nationalId,
     }
   }

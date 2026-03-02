@@ -4,10 +4,7 @@ import { Locale } from '@island.is/shared/types'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApplicationCardsInput } from './dto/applicationCards.input'
 import { ApplicationCard } from './applicationV2.model'
-import {
-  ApplicationsApi as FormSystemApplicationApi,
-  AdminApi as FormSystemAdminApi,
-} from '@island.is/clients/form-system'
+import { ApplicationsApi as FormSystemApplicationApi } from '@island.is/clients/form-system'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   cardSortByModified,
@@ -20,7 +17,6 @@ export class ApplicationV2Service {
   constructor(
     private readonly appSystemApplicationApi: ApplicationsApi,
     private readonly formSystemApplicationApi: FormSystemApplicationApi,
-    private readonly formSystemAdminApi: FormSystemAdminApi,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -33,10 +29,6 @@ export class ApplicationV2Service {
     return this.formSystemApplicationApi.withMiddleware(
       new AuthMiddleware(auth),
     )
-  }
-
-  formSystemAdminApiWithAuth(auth: User) {
-    return this.formSystemAdminApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getApplicationCards(

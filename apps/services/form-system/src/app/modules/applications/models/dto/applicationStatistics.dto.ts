@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
-import { IsNumber, IsString } from 'class-validator'
+import { IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class ApplicationStatisticsDto {
   @ApiProperty()
@@ -11,6 +11,7 @@ export class ApplicationStatisticsDto {
   @ApiPropertyOptional()
   @Expose()
   @IsString()
+  @IsOptional()
   formName?: string
 
   @ApiProperty()

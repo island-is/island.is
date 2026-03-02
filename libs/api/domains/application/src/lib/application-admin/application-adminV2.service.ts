@@ -12,6 +12,7 @@ import {
 } from '../application-admin/dto/applications-admin-inputs'
 import {
   applicationAdminSortByCreated,
+  deduplicateInstitutions,
   mapFormSystemApplicationAdmin,
   mapFormSystemApplicationTypeAdmin,
   mapFormSystemInstitutionAdmin,
@@ -365,7 +366,10 @@ export class ApplicationAdminV2Service {
       )
     }
 
-    return [...appSystemInstitutions, ...formSystemInstitutions]
+    return deduplicateInstitutions([
+      ...appSystemInstitutions,
+      ...formSystemInstitutions,
+    ])
   }
 
   async getApplicationStatisticsForSuperAdmin(

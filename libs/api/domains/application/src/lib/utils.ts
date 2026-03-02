@@ -34,12 +34,12 @@ export const mapAppSystemCards = (
     name: application.name,
     progress: application.progress,
     slug: ApplicationConfigurations[application.typeId]?.slug,
-    org: institutionMapper[application.typeId].slug,
+    org: institutionMapper[application.typeId]?.slug,
     applicationPath: `umsoknir/${
       ApplicationConfigurations[application.typeId]?.slug
     }/${application.id}`,
-    orgContentfulId: institutionMapper[application.typeId].contentfulId,
-    nationalId: institutionMapper[application.typeId].nationalId,
+    orgContentfulId: institutionMapper[application.typeId]?.contentfulId,
+    nationalId: institutionMapper[application.typeId]?.nationalId,
     actionCard: application.actionCard,
   }
 }
@@ -133,4 +133,18 @@ export const mapFormSystemStatisticsAdmin = (
     rejected: 0,
     approved: 0,
   }
+}
+
+export const deduplicateInstitutions = (
+  institutions: ApplicationInstitution[],
+): ApplicationInstitution[] => {
+  const seenNationalIds = new Set<string>()
+  const uniqueInstitutions: ApplicationInstitution[] = []
+  for (const institution of institutions) {
+    if (!seenNationalIds.has(institution.nationalId)) {
+      seenNationalIds.add(institution.nationalId)
+      uniqueInstitutions.push(institution)
+    }
+  }
+  return uniqueInstitutions
 }

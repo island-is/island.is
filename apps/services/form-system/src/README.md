@@ -56,7 +56,7 @@ yarn dev services-form-system-api
 yarn dev portals-admin
 ```
 
-Open localhost:4200/stjornbord -> Log in as Gervimaður Færeyjar as 65°Artic -> go to "Umsóknarsmiður" -> Create new form type -> Select Zendesk under "slóðir" -> Give the form type the status Published
+Open localhost:4200/stjornbord -> Log in as Gervimaður Færeyjar as 65° Arctic -> go to "Umsóknarsmiður" -> Create new form type -> Select Zendesk under "slóðir" -> Give the form type the status Published
 
 ## Create / view form application
 

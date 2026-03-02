@@ -72,7 +72,6 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
   const {
     data: institutionApplicationsData,
     loading: loadingInstitutionApplications,
-    refetch: refetchInstitutionApplications,
   } = useGetApplicationV2ApplicationsInstitutionAdminQuery({
     ssr: false,
     variables: commonVariables,
@@ -88,29 +87,26 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
     },
   })
 
-  const {
-    data: superApplicationsData,
-    loading: loadingSuperApplications,
-    refetch: refetchSuperApplications,
-  } = useGetApplicationV2ApplicationsSuperAdminQuery({
-    ssr: false,
-    variables: {
-      input: {
-        ...commonVariables.input,
-        institutionNationalId: filters.institution,
+  const { data: superApplicationsData, loading: loadingSuperApplications } =
+    useGetApplicationV2ApplicationsSuperAdminQuery({
+      ssr: false,
+      variables: {
+        input: {
+          ...commonVariables.input,
+          institutionNationalId: filters.institution,
+        },
       },
-    },
-    skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
-    onCompleted: (q) => {
-      const names = q.applicationV2ApplicationsSuperAdmin?.rows
-        ?.filter((x) => !!x.name)
-        ?.map((x) => x.name ?? '')
+      skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
+      onCompleted: (q) => {
+        const names = q.applicationV2ApplicationsSuperAdmin?.rows
+          ?.filter((x) => !!x.name)
+          ?.map((x) => x.name ?? '')
 
-      if (names) {
-        setAvailableApplications(uniq(names))
-      }
-    },
-  })
+        if (names) {
+          setAvailableApplications(uniq(names))
+        }
+      },
+    })
 
   const isLoading =
     loadingSuperApplications ||
@@ -182,12 +178,12 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
   const handleInstitutionChange = (
     institution: ApplicationFilters['institution'],
   ) => {
-    // Reset typeIdValue when institution filter changes
-    setFilters({ ...filters, typeIdValue: '' })
-
     setFilters((prev) => ({
       ...prev,
       institution,
+
+      // Reset typeIdValue when institution filter changes
+      typeIdValue: '',
     }))
   }
 
@@ -207,13 +203,10 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
   }
 
   // Reset the page on filter change
+  // Note: Apollo will automatically refetch
+  // when commonVariables change due to the updated page/filters state
   useEffect(() => {
     setPage(1)
-    const refetch = isSuperAdmin
-      ? refetchSuperApplications
-      : refetchInstitutionApplications
-    refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters])
 
   return (
