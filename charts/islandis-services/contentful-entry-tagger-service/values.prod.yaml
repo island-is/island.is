@@ -54,7 +54,7 @@ ingress:
           - '/'
 namespace: 'contentful-entry-tagger'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
