@@ -338,7 +338,7 @@ export const Footer = ({
                   )}
                   <Inline space={1}>
                     {tagLinks.map(({ title, href }, index) => (
-                      <Tag key={index} variant="blue" outlined href={href}>
+                      <Tag key={index} variant="blue" whiteBackground href={href}>
                         {title}
                       </Tag>
                     ))}
@@ -364,7 +364,7 @@ export const Footer = ({
                     size="small"
                     icon={bottomBarIcons[index] ?? 'informationCircle'}
                     type="filled"
-                    color="blue400"
+                    color="blue600"
                   />
                   <Text
                     variant="medium"
