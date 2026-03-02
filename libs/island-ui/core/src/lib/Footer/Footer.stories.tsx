@@ -9,9 +9,26 @@ export default {
   parameters: withFigma('Footer'),
 }
 
-export const Default = () => <Footer showMiddleLinks />
+const defaultBottomBarLinks = [
+  {
+    title: 'Getum við aðstoðað?',
+    href: '/s/stafraent-island/hafa-samband',
+  },
+  {
+    title: 'Persónuverndarstefna',
+    href: '/personuverndarstefna-stafraent-islands',
+  },
+  {
+    title: 'Notendaskilmálar',
+    href: '/skilmalar-island-is',
+  },
+]
 
-export const NewDesign = () => (
+export const Default = () => (
+  <Footer showMiddleLinks bottomBarLinks={defaultBottomBarLinks} />
+)
+
+export const WithTagLinks = () => (
   <Footer
     showMiddleLinks
     showTagLinks
@@ -26,19 +43,6 @@ export const NewDesign = () => (
       { title: 'Atvinnuleysisbætur', href: '/atvinnuleysisbaetur' },
       { title: 'Loftbrú', href: '/loftbru' },
     ]}
-    bottomBarLinks={[
-      {
-        title: 'Getum við aðstoðað?',
-        href: '/s/stafraent-island/hafa-samband',
-      },
-      {
-        title: 'Persónuverndarstefna',
-        href: '/personuverndarstefna-stafraent-islands',
-      },
-      {
-        title: 'Notendaskilmálar',
-        href: '/skilmalar-island-is',
-      },
-    ]}
+    bottomBarLinks={defaultBottomBarLinks}
   />
 )
