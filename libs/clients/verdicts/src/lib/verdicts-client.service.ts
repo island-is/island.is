@@ -164,23 +164,20 @@ export class VerdictsClientService {
       court: string
       caseNumber: string
       verdictDate?: Date | null
-      presidentJudge?: { name?: string; title?: string }
+      verdictJudges?: { name?: string; title?: string }[]
       keywords: string[]
       presentings: string
     }[] = []
 
     if (goproResponse.status === 'fulfilled') {
       for (const goproItem of goproResponse.value.items ?? []) {
-        const judges = goproItem.judges ?? []
-        let presidentJudge = judges.find((judge) => Boolean(judge?.isPresident))
-        if (judges.length === 1) presidentJudge = judges[0]
         items.push({
           id: goproItem.id ? `${GOPRO_ID_PREFIX}${goproItem.id}` : '',
           title: goproItem.title ?? '',
           court: goproItem.court?.name ?? '',
           caseNumber: goproItem.caseNumber ?? '',
           verdictDate: goproItem.verdictDate,
-          presidentJudge,
+          verdictJudges: goproItem.judges ?? [],
           keywords: goproItem.keywords ?? [],
           presentings: goproItem.presentings ?? '',
         })
@@ -189,9 +186,6 @@ export class VerdictsClientService {
 
     if (supremeCourtResponse.status === 'fulfilled') {
       for (const supremeCourtItem of supremeCourtResponse.value.items ?? []) {
-        const judges = supremeCourtItem.judges ?? []
-        let presidentJudge = judges.find((judge) => Boolean(judge?.isPresident))
-        if (judges.length === 1) presidentJudge = judges[0]
         items.push({
           id: supremeCourtItem.id
             ? `${SUPREME_COURT_ID_PREFIX}${supremeCourtItem.id}`
@@ -200,7 +194,7 @@ export class VerdictsClientService {
           court: supremeCourtItem.court ?? '',
           caseNumber: supremeCourtItem.caseNumber ?? '',
           verdictDate: supremeCourtItem.publishDate,
-          presidentJudge,
+          verdictJudges: supremeCourtItem.judges ?? [],
           keywords: supremeCourtItem.keywords ?? [],
           presentings: supremeCourtItem.presentings ?? '',
         })
