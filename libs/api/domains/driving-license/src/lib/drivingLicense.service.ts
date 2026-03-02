@@ -267,8 +267,10 @@ export class DrivingLicenseService {
         token,
       })
 
-    const residenceHistory =
-      await this.nationalRegistryV3.getResidenceHistory(nationalId, user)
+    const residenceHistory = await this.nationalRegistryV3.getResidenceHistory(
+      nationalId,
+      user,
+    )
 
     const residence = mapResidence(residenceHistory ?? [])
     const residenceTime = computeCountryResidence(residence)
