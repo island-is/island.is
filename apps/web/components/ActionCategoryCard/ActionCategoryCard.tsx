@@ -4,6 +4,7 @@ import { UseMeasureRef } from 'react-use/lib/useMeasure'
 
 import {
   Box,
+  type BoxProps,
   Button,
   ButtonSizes,
   ButtonTypes,
@@ -51,6 +52,8 @@ type SidePanelItems = {
 
 type SidePanelConfigProps = {
   buttonLabel?: string
+  paddingLeft?: BoxProps['paddingLeft']
+  paddingTop?: BoxProps['paddingTop']
   items?: Array<SidePanelItems>
   cta?: CTAProps
 }
@@ -147,19 +150,20 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
           >
             <Box>
               {cta.href ? (
-                <Button
-                  {...(cta.buttonType ?? { variant: cta.variant })}
-                  size={cta.size}
-                  fluid
-                  disabled={cta.disabled}
-                  icon={cta.icon}
-                  iconType={cta.iconType}
-                  nowrap
-                >
-                  <LinkV2 href={cta.href} newTab={true}>
+                <LinkV2 href={cta.href} newTab={true}>
+                  <Button
+                    {...(cta.buttonType ?? { variant: cta.variant })}
+                    size={cta.size}
+                    fluid
+                    disabled={cta.disabled}
+                    icon={cta.icon}
+                    iconType={cta.iconType}
+                    nowrap
+                    unfocusable
+                  >
                     {cta.label}
-                  </LinkV2>
-                </Button>
+                  </Button>
+                </LinkV2>
               ) : (
                 <Button
                   {...(cta.buttonType ?? { variant: cta.variant })}
@@ -299,7 +303,8 @@ const Component = forwardRef<HTMLElement, ActionCategoryCardProps>(
               flexDirection="column"
               position="relative"
               justifyContent="flexStart"
-              paddingLeft={5}
+              paddingLeft={sidePanelConfig.paddingLeft ?? 5}
+              paddingTop={sidePanelConfig.paddingTop ?? 0}
               style={{ alignSelf: 'stretch' }}
             >
               {sidePanelConfig.items &&
