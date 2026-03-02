@@ -1,6 +1,9 @@
 import React, { ReactNode, useState } from 'react'
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
-import { IconMapIcon as IconType } from '@island.is/island-ui/core'
+import { Box } from '../Box/Box'
+import { Button } from '../Button/Button'
+import { Icon } from '../IconRC/Icon'
+import { Text } from '../Text/Text'
+import { IconMapIcon as IconType } from '../IconRC/types'
 import * as styles from './FlowStepper.css'
 import cn from 'classnames'
 

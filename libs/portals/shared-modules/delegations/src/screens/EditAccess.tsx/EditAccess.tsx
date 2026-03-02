@@ -8,7 +8,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader, useQueryParam } from '@island.is/portals/core'
 
 import { useAuthDelegationsGroupedByIdentityOutgoingQuery } from '../../components/delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
-import { FlowStep, FlowStepper } from '../../components/FlowStepper'
+import { FlowStep, FlowStepper } from '@island.is/island-ui/core'
 import { AccessPeriod } from '../../components/GrantAccessSteps/AccessPeriod'
 import { AccessScopes } from '../../components/GrantAccessSteps/AccessScopes'
 import { useDelegationForm } from '../../context'
