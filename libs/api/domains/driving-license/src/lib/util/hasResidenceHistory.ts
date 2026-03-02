@@ -7,22 +7,22 @@ import { ResidenceEntryDto } from '@island.is/clients/national-registry-v3-appli
 
 export const mapResidence = (
   history: ResidenceEntryDto[],
-): Residence[] => {
-  const mappedHistory = history.map((residence) => {
-    if (residence.country && residence.dateOfChange)
-      return {
+): Residence[] =>
+  history.reduce<Residence[]>((acc, residence) => {
+    if (residence.country && residence.dateOfChange) {
+      acc.push({
         address: {
-          streetAddress: residence.streetName || undefined,
+          streetName: residence.streetName || undefined,
           postalCode: residence.postalCode || undefined,
           city: residence.city || undefined,
           municipalityCode: residence.municipalityCode || undefined,
         },
         country: residence.country,
         dateOfChange: new Date(residence.dateOfChange),
-      } as Residence
-  })
-  return mappedHistory.filter(Boolean) as Residence[]
-}
+      })
+    }
+    return acc
+  }, [])
 
 export const hasResidenceHistory = (residence: Residence[] | undefined) => {
   if (residence) {
