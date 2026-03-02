@@ -1,15 +1,20 @@
 import { useMemo, useState } from 'react'
-import { useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
-import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  Box,
+  Button,
+  DatePicker,
+  Input,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 
 import { translation as translationStrings } from './translation.strings'
 
 interface InputState {
-  startDate: string
-  endDate: string
+  startDate: Date
+  endDate: Date
   employerCount: number
 }
 interface Results {
@@ -20,36 +25,30 @@ interface Results {
 const VerAnnouncementCalculator = () => {
   const { formatMessage } = useIntl()
   const [inputState, setInputState] = useState<InputState>({
-    startDate: '',
-    endDate: '',
+    startDate: new Date(),
+    endDate: new Date(),
     employerCount: 0,
   })
   const [results, setResults] = useState<Results | null>(null)
 
-  const updateInputState = (key: keyof InputState, value: string | number) => {
+  const updateInputState = (key: keyof InputState, value: Date | number) => {
     setInputState((prevState) => ({ ...prevState, [key]: value }))
   }
 
-  const { control, getValues } = useForm()
-
   const canSubmit = useMemo(() => {
     return (
-      inputState.startDate.length > 0 &&
-      inputState.endDate.length > 0 &&
-      inputState.employerCount > 0
+      inputState.startDate && inputState.endDate && inputState.employerCount > 0
     )
   }, [inputState])
 
   const calculateResults = (
-    startDate: string,
-    endDate: string,
+    startDate: Date,
+    endDate: Date,
     employerCount: number,
   ): Results => {
-    const start = new Date(startDate)
-    const end = new Date(endDate)
     let daysDifferenceWithoutWeekend = 0
-    const current = new Date(start)
-    while (current <= end) {
+    const current = startDate
+    while (current <= endDate) {
       const dayOfWeek = current.getDay()
       if (dayOfWeek !== 0 && dayOfWeek !== 6) {
         daysDifferenceWithoutWeekend++
@@ -66,11 +65,10 @@ const VerAnnouncementCalculator = () => {
   }
 
   const calculate = () => {
-    const values = getValues() as InputState
     const calculatedResults = calculateResults(
-      values.startDate,
-      values.endDate,
-      values.employerCount,
+      inputState.startDate,
+      inputState.endDate,
+      inputState.employerCount,
     )
     setResults(calculatedResults)
   }
@@ -85,14 +83,13 @@ const VerAnnouncementCalculator = () => {
       >
         <Stack space={5}>
           <Box>
-            <InputController
+            <DatePicker
               id="startDate"
-              control={control}
               name="startDate"
               label={formatMessage(translationStrings.startDateLabel)}
-              type="date"
-              onChange={(event) => {
-                updateInputState('startDate', event.target.value)
+              placeholderText={formatMessage(translationStrings.startDateLabel)}
+              handleChange={(event) => {
+                updateInputState('startDate', event)
               }}
               size="sm"
               required={true}
@@ -100,14 +97,13 @@ const VerAnnouncementCalculator = () => {
           </Box>
 
           <Box>
-            <InputController
+            <DatePicker
               id="endDate"
-              control={control}
               name="endDate"
               label={formatMessage(translationStrings.endDateLabel)}
-              type="date"
-              onChange={(event) => {
-                updateInputState('endDate', event.target.value)
+              placeholderText={formatMessage(translationStrings.endDateLabel)}
+              handleChange={(event) => {
+                updateInputState('endDate', event)
               }}
               size="sm"
               required={true}
@@ -115,9 +111,8 @@ const VerAnnouncementCalculator = () => {
           </Box>
 
           <Box>
-            <InputController
+            <Input
               id="employerCount"
-              control={control}
               name="employerCount"
               label={formatMessage(translationStrings.countLabel)}
               type="number"
@@ -150,7 +145,7 @@ const VerAnnouncementCalculator = () => {
           <Stack space={3}>
             <Box>
               <Text
-                variant="large"
+                variant="medium"
                 fontWeight="light"
                 paddingBottom={1}
                 paddingTop={2}
@@ -161,14 +156,14 @@ const VerAnnouncementCalculator = () => {
               </Text>
             </Box>
             <Box>
-              <Text variant="large" fontWeight="light" paddingBottom={1}>
+              <Text variant="medium" fontWeight="light" paddingBottom={1}>
                 {formatMessage(translationStrings.amountOfDaysWork)}
                 {': '}
                 {results.totalCount}
               </Text>
             </Box>
             <Box>
-              <Text variant="large" fontWeight="light" paddingBottom={1}>
+              <Text variant="medium" fontWeight="light" paddingBottom={1}>
                 <strong>
                   {results?.totalCount && results.totalCount > 500
                     ? formatMessage(translationStrings.needsAnnouncement)
