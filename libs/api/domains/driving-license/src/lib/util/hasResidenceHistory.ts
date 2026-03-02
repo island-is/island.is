@@ -5,9 +5,7 @@ import {
 import compareDesc from 'date-fns/compareDesc'
 import { ResidenceEntryDto } from '@island.is/clients/national-registry-v3-applications'
 
-export const mapResidence = (
-  history: ResidenceEntryDto[],
-): Residence[] =>
+export const mapResidence = (history: ResidenceEntryDto[]): Residence[] =>
   history.reduce<Residence[]>((acc, residence) => {
     if (residence.country && residence.dateOfChange) {
       acc.push({
