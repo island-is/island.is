@@ -354,19 +354,34 @@ export const Footer = ({
           <GridContainer>
             <Inline space={[2, 2, 4]} alignY="center">
               {bottomBarLinks.map(({ title, href }, index) => (
-                <Inline key={index} space={1} alignY="center">
+                <Box
+                  key={index}
+                  display="flex"
+                  alignItems="center"
+                  columnGap={1}
+                >
                   <Icon
                     size="small"
                     icon={bottomBarIcons[index] ?? 'informationCircle'}
-                    type="outline"
+                    type="filled"
                     color="blue400"
                   />
-                  <Text variant="h5" color="blue600" fontWeight="light">
-                    <Link href={href} underline="normal">
-                      {title}
+                  <Text
+                    variant="medium"
+                    color="blue600"
+                    fontWeight={index === 0 ? 'semiBold' : 'light'}
+                  >
+                    <Link href={href}>
+                      {index === 0 ? (
+                        <span className={styles.bottomBarLinkUnderline}>
+                          {title}
+                        </span>
+                      ) : (
+                        title
+                      )}
                     </Link>
                   </Text>
-                </Inline>
+                </Box>
               ))}
             </Inline>
           </GridContainer>

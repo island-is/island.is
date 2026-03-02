@@ -21,6 +21,10 @@ export const topLinksContainer = style({
   marginTop: '44px',
 })
 
+export const bottomBarLinkUnderline = style({
+  textDecoration: 'underline',
+})
+
 export const middleLinksGrid = style({
   display: 'grid',
   gridTemplateColumns: '1fr',
