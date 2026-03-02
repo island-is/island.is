@@ -93,7 +93,7 @@ export const Footer = ({
           <GridRow>
             <GridColumn
               span={['12/12', '12/12', '4/12', '4/12']}
-              paddingBottom={[4, 4, 0]}
+              paddingBottom={[5, 5, 0]}
               className={styles.withDecorator}
             >
               <Logo iconOnly id="footer_logo" width={32} height={32} />
@@ -107,21 +107,24 @@ export const Footer = ({
                     ),
                   }}
                 >
-                  {topLinks.map(({ title, href }, index) => {
-                    const isLast = index + 1 === topLinks.length
-                    return (
-                      <Text
-                        key={index}
-                        variant="intro"
-                        paddingBottom={isLast && useNewDesign ? 0 : isLast ? 4 : 2}
-                        color={'blue600'}
-                      >
-                        <a href={href}>
-                          <Hyphen>{title}</Hyphen>
-                        </a>
-                      </Text>
-                    )
-                  })}
+                  <Box
+                    className={styles.topLinksGrid}
+                    paddingBottom={useNewDesign ? 0 : 4}
+                  >
+                    {topLinks.map(({ title, href }, index) => {
+                      return (
+                        <Text
+                          key={index}
+                          variant="intro"
+                          color={'blue600'}
+                        >
+                          <a href={href}>
+                            <Hyphen>{title}</Hyphen>
+                          </a>
+                        </Text>
+                      )
+                    })}
+                  </Box>
                 </LinkContext.Provider>
                 {!useNewDesign && (
                   <>
@@ -251,9 +254,8 @@ export const Footer = ({
             </GridColumn>
             {showMiddleLinks && (
               <GridColumn
-                span={['12/12', '12/12', '4/12', '4/12']}
-                paddingBottom={[4, 4, 0]}
-                paddingTop={[4, 4, 0]}
+                span={['12/12', '12/12', '5/12', '5/12']}
+                paddingBottom={[5, 5, 0]}
               >
                 <Box paddingX={[0, 0, 1]} className={styles.columnTopSpace}>
                   {!!middleLinksTitle && (
@@ -312,9 +314,7 @@ export const Footer = ({
             )}
             {showTagLinks && tagLinks.length > 0 && (
               <GridColumn
-                span={['12/12', '12/12', '4/12', '4/12']}
-                paddingBottom={[4, 4, 0]}
-                paddingTop={[4, 4, 0]}
+                span={['12/12', '12/12', '3/12', '3/12']}
               >
                 <Box className={styles.columnTopSpace}>
                   {!!tagLinksTitle && (

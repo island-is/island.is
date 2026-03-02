@@ -23,13 +23,25 @@ export const columnTopSpace = style({
   paddingTop: '18px',
 })
 
+export const topLinksGrid = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '20px',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      gap: '12px',
+    },
+  },
+})
+
 export const middleLinksGrid = style({
   display: 'grid',
   gridTemplateColumns: '1fr',
-  gap: '4px',
+  gap: '24px',
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
       gridTemplateColumns: 'repeat(2, 1fr)',
+      gap: '4px',
     },
   },
 })
