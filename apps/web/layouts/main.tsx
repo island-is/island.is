@@ -455,20 +455,11 @@ const Layout: Screen<LayoutProps> = ({
                   showTagLinks
                   bottomBarLinks={[
                     {
-                      title: n(
-                        'helpTitle',
-                        'Getum við aðstoðað?',
-                      ),
-                      href: n(
-                        'helpHref',
-                        '/s/stafraent-island/hafa-samband',
-                      ),
+                      title: n('helpTitle', 'Getum við aðstoðað?'),
+                      href: n('helpHref', '/s/stafraent-island/hafa-samband'),
                     },
                     {
-                      title: n(
-                        'privacyPolicyTitle',
-                        'Persónuverndarstefna',
-                      ),
+                      title: n('privacyPolicyTitle', 'Persónuverndarstefna'),
                       href: n(
                         'privacyPolicyHref',
                         '/personuverndarstefna-stafraent-islands',

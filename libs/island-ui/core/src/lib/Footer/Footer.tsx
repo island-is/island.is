@@ -60,11 +60,7 @@ interface FooterProps {
   bottomBarLinks?: FooterLinkProps[]
 }
 
-const bottomBarIcons = [
-  'informationCircle',
-  'person',
-  'document',
-] as const
+const bottomBarIcons = ['informationCircle', 'person', 'document'] as const
 
 export const Footer = ({
   topLinks = defaultTopLinksInfo,
@@ -97,7 +93,10 @@ export const Footer = ({
               className={styles.withDecorator}
             >
               <Logo iconOnly id="footer_logo" width={32} height={32} />
-              <Box paddingRight={[0, 0, 1]} className={styles.topLinksContainer}>
+              <Box
+                paddingRight={[0, 0, 1]}
+                className={styles.topLinksContainer}
+              >
                 <LinkContext.Provider
                   value={{
                     linkRenderer: (href, children) => (
@@ -113,11 +112,7 @@ export const Footer = ({
                   >
                     {topLinks.map(({ title, href }, index) => {
                       return (
-                        <Text
-                          key={index}
-                          variant="intro"
-                          color={'blue600'}
-                        >
+                        <Text key={index} variant="intro" color={'blue600'}>
                           <a href={href}>
                             <Hyphen>{title}</Hyphen>
                           </a>
@@ -134,23 +129,17 @@ export const Footer = ({
                       paddingBottom={4}
                     >
                       {topLinksContact.map(({ title, href }, index) => {
-                        const isLast =
-                          index + 1 === topLinksContact.length
-                        const isInternalLink =
-                          !shouldLinkOpenInNewWindow(href)
+                        const isLast = index + 1 === topLinksContact.length
+                        const isInternalLink = !shouldLinkOpenInNewWindow(href)
                         return (
                           <Box marginBottom={isLast ? 0 : 3} key={index}>
                             <Link href={href} skipTab>
                               <Button
                                 colorScheme="default"
                                 icon={
-                                  isInternalLink
-                                    ? 'arrowForward'
-                                    : undefined
+                                  isInternalLink ? 'arrowForward' : undefined
                                 }
-                                iconType={
-                                  isInternalLink ? 'filled' : undefined
-                                }
+                                iconType={isInternalLink ? 'filled' : undefined}
                                 size="default"
                                 variant="text"
                                 as="span"
@@ -180,11 +169,7 @@ export const Footer = ({
                             />
                           </Box>
 
-                          <Text
-                            variant="h5"
-                            color="blue600"
-                            fontWeight="light"
-                          >
+                          <Text variant="h5" color="blue600" fontWeight="light">
                             <Link href={privacyPolicyLink.href}>
                               {privacyPolicyLink.title}
                             </Link>
@@ -197,14 +182,8 @@ export const Footer = ({
                             size={'small'}
                             color="blue400"
                           />
-                          <Text
-                            variant="h5"
-                            color="blue600"
-                            fontWeight="light"
-                          >
-                            <Link href={termsLink.href}>
-                              {termsLink.title}
-                            </Link>
+                          <Text variant="h5" color="blue600" fontWeight="light">
+                            <Link href={termsLink.href}>{termsLink.title}</Link>
                           </Text>
                         </Inline>
                         {!hideLanguageSwitch && (
@@ -231,16 +210,8 @@ export const Footer = ({
                         )}
 
                         <Inline space={1} alignY="center">
-                          <Icon
-                            size="small"
-                            icon="facebook"
-                            color="blue400"
-                          />
-                          <Text
-                            variant="h5"
-                            color="blue600"
-                            fontWeight="light"
-                          >
+                          <Icon size="small" icon="facebook" color="blue400" />
+                          <Text variant="h5" color="blue600" fontWeight="light">
                             <Link href="https://www.facebook.com/islandid">
                               Facebook
                             </Link>
@@ -271,11 +242,7 @@ export const Footer = ({
                   <LinkContext.Provider
                     value={{
                       linkRenderer: (href, children) => (
-                        <Link
-                          href={href}
-                          color="blue600"
-                          underline="normal"
-                        >
+                        <Link href={href} color="blue600" underline="normal">
                           {children}
                         </Link>
                       ),
@@ -313,9 +280,7 @@ export const Footer = ({
               </GridColumn>
             )}
             {showTagLinks && tagLinks.length > 0 && (
-              <GridColumn
-                span={['12/12', '12/12', '3/12', '3/12']}
-              >
+              <GridColumn span={['12/12', '12/12', '3/12', '3/12']}>
                 <Box className={styles.columnTopSpace}>
                   {!!tagLinksTitle && (
                     <Text
@@ -329,7 +294,12 @@ export const Footer = ({
                   )}
                   <Inline space={1}>
                     {tagLinks.map(({ title, href }, index) => (
-                      <Tag key={index} variant="blue" whiteBackground href={href}>
+                      <Tag
+                        key={index}
+                        variant="blue"
+                        whiteBackground
+                        href={href}
+                      >
                         {title}
                       </Tag>
                     ))}
