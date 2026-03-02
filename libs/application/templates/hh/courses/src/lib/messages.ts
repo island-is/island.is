@@ -272,10 +272,16 @@ export const m = {
       defaultMessage: 'Greiðandi',
       description: 'Heading for payer in overview section',
     },
-    submitTitle: {
-      id: 'hh.courses.application:overview.submitTitle',
+    submitAndPayTitle: {
+      id: 'hh.courses.application:overview.submitAndPayTitle',
+      defaultMessage: 'Staðfesta og greiða',
+      description: 'Title of submit button in overview section with payment',
+    },
+    submitRegistrationTitle: {
+      id: 'hh.courses.application:overview.submitRegistrationTitle',
       defaultMessage: 'Staðfesta skráningu',
-      description: 'Title of submit button in overview section',
+      description:
+        'Title of submit button in overview section without payment',
     },
   }),
   completedForm: defineMessages({
