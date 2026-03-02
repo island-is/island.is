@@ -1,6 +1,6 @@
-import { useCallback, useRef,useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useLazyQuery,useQuery } from '@apollo/client'
+import { useLazyQuery, useQuery } from '@apollo/client'
 
 import {
   Box,
