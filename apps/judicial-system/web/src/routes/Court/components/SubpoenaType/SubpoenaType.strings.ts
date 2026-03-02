@@ -21,7 +21,7 @@ export const strings = {
         'Notaður sem texti fyrir Handtökufyrirkall valkost á Fyrirkalls skjá í dómaraflæði í ákærum.',
     },
   }),
-  alternativeService: 'Birt með öðrum hætti',
+  alternativeService: 'Ákæra var birt með öðrum hætti',
   alternativeServiceTooltip:
     'Ef ákæra og fyrirkall eru birt utan gáttarinnar, t.d. í þinghaldi eða í Lögbirtingablaðinu, þá er hægt að haka í þennan reit til að komast áfram án þess að gefa út fyrirkall í gegnum Réttarvörslugátt.',
   alternativeServiceDescriptionLabel: 'Skráðu hvernig birting fór fram',
