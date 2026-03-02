@@ -11,7 +11,6 @@ import {
 } from '@island.is/island-ui/core'
 
 import { translation as translationStrings } from './translation.strings'
-
 interface InputState {
   startDate: Date
   endDate: Date
@@ -47,13 +46,14 @@ const VerAnnouncementCalculator = () => {
     employerCount: number,
   ): Results => {
     let daysDifferenceWithoutWeekend = 0
-    const current = startDate
-    while (current <= endDate) {
-      const dayOfWeek = current.getDay()
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    while (start <= end) {
+      const dayOfWeek = start.getDay()
       if (dayOfWeek !== 0 && dayOfWeek !== 6) {
         daysDifferenceWithoutWeekend++
       }
-      current.setDate(current.getDate() + 1)
+      start.setDate(start.getDate() + 1)
     }
 
     const resultNumber = daysDifferenceWithoutWeekend * employerCount
@@ -163,7 +163,7 @@ const VerAnnouncementCalculator = () => {
               </Text>
             </Box>
             <Box>
-              <Text variant="medium" fontWeight="light" paddingBottom={1}>
+              <Text variant="medium" paddingBottom={1}>
                 <strong>
                   {results?.totalCount && results.totalCount > 500
                     ? formatMessage(translationStrings.needsAnnouncement)
