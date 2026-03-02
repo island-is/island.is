@@ -79,7 +79,10 @@ export const importDatesAndMileageSection = buildSection({
                 if (!vehicle) return ''
                 const mileageStr =
                   vehicle.milage?.toLocaleString('is-IS') ?? '—'
-                return `${vehicle.permno} — Síðasta skráða km staða: ${mileageStr} km`
+                return {
+                  ...m.commonDatesAndMileageMessages.lastRecordedMileage,
+                  values: { permno: vehicle.permno, mileage: mileageStr },
+                }
               },
               formTitleVariant: 'h4',
               formTitleNumbering: 'none',

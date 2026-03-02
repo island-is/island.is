@@ -43,6 +43,14 @@ export const m = {
     },
   }),
 
+  dataSchema: defineMessages({
+    mileageTooLow: {
+      id: 'rsk.cei.application:dataSchema.mileage.too.low',
+      defaultMessage: 'Km staða má ekki vera lægri en síðasta skráða km staða',
+      description: 'Mileage too low error message',
+    },
+  }),
+
   registrationType: defineMessages({
     sectionTitle: {
       id: 'rsk.cei.application:registration.type.section.title',
@@ -141,6 +149,13 @@ export const m = {
       defaultMessage: 'Dagsetningar og km staða',
       description: 'Common dates and mileage title',
     },
+    lastRecordedMileage: {
+      id: 'rsk.cei.application:dates.mileage.last.recorded',
+      defaultMessage:
+        '{permno} — Síðasta skráða km staða: {mileage} km',
+      description:
+        'Vehicle title with last recorded mileage, e.g. AB123 — Síðasta skráða km staða: 10.000 km',
+    },
   }),
 
   importDatesAndMileage: defineMessages({
@@ -231,6 +246,21 @@ export const m = {
       id: 'rsk.cei.application:overview.mileage.at.departure',
       defaultMessage: 'Km staða við brottför',
       description: 'Mileage at departure label in overview',
+    },
+    mileageAtArrival: {
+      id: 'rsk.cei.application:overview.mileage.at.arrival',
+      defaultMessage: 'Km staða við heimkomu',
+      description: 'Mileage at arrival label in overview',
+    },
+    exportVehiclesHeader: {
+      id: 'rsk.cei.application:overview.export.vehicles.header',
+      defaultMessage: 'Útflutt ökutæki og km staða',
+      description: 'Overview export vehicles section header',
+    },
+    importVehiclesHeader: {
+      id: 'rsk.cei.application:overview.import.vehicles.header',
+      defaultMessage: 'Innflutt ökutæki og km staða',
+      description: 'Overview import vehicles section header',
     },
     submitButton: {
       id: 'rsk.cei.application:overview.submit',

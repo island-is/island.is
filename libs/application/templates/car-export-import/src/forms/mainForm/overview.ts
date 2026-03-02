@@ -11,11 +11,49 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { m } from '../../lib/messages'
+import { RegistrationType } from '../../utils/constants'
 import { formatDate } from '../../utils/dateUtils'
 
 interface VehicleWithMileage {
   permno: string | null
   milage: number | null
+}
+
+const getVehicleOverviewItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+  type: RegistrationType,
+) => {
+  const isExport = type === RegistrationType.EXPORT
+  const selectedPermnos =
+    getValueViaPath<string[]>(
+      answers,
+      isExport ? 'selectedExportVehicles' : 'selectedImportVehicles',
+    ) ?? []
+  const vehicleMileageEntries =
+    getValueViaPath<Array<{ mileage?: string }>>(
+      answers,
+      isExport ? 'exportVehicleMileage' : 'importVehicleMileage',
+    ) ?? []
+  const vehicles =
+    getValueViaPath<VehicleWithMileage[]>(
+      externalData,
+      'getCurrentVehicles.data',
+    ) ?? []
+  const selectedVehicles = vehicles.filter(
+    (v) => v.permno && selectedPermnos.includes(v.permno),
+  )
+  const mileageLabel = isExport
+    ? m.overview.mileageAtDeparture
+    : m.overview.mileageAtArrival
+
+  return selectedVehicles.map((vehicle, index) => ({
+    width: 'full' as const,
+    keyText: (vehicle.permno ?? '') + ':',
+    valueText: `${mileageLabel.defaultMessage}: ${
+      vehicleMileageEntries[index]?.mileage ?? '—'
+    } km`,
+  }))
 }
 
 export const overviewSection = buildSection({
@@ -32,20 +70,18 @@ export const overviewSection = buildSection({
           titleVariant: 'h4',
           bottomLine: true,
           items: (answers: FormValue) => {
+            const registrationType = getValueViaPath<RegistrationType>(
+              answers,
+              'registrationType',
+            )
             const departureDate =
               getValueViaPath<string | null>(answers, 'exportDate') ?? null
             const returnDate =
               getValueViaPath<string | null>(answers, 'importDate') ?? null
 
-            if (!departureDate && !returnDate) {
-              throw new Error(
-                'Both exportDate and importDate are missing in overview',
-              )
-            }
-
             const dateItems = []
 
-            if (departureDate) {
+            if (registrationType === RegistrationType.EXPORT && departureDate) {
               dateItems.push({
                 width: 'half' as const,
                 keyText: m.overview.departureDateLabel,
@@ -53,7 +89,7 @@ export const overviewSection = buildSection({
               })
             }
 
-            if (returnDate) {
+            if (registrationType === RegistrationType.IMPORT && returnDate) {
               dateItems.push({
                 width: 'half' as const,
                 keyText: m.overview.returnDateLabel,
@@ -65,35 +101,34 @@ export const overviewSection = buildSection({
           },
         }),
         buildOverviewField({
-          id: 'overviewVehicles',
-          title: m.overview.vehiclesHeader,
+          id: 'overviewExportVehicles',
+          title: m.overview.exportVehiclesHeader,
           titleVariant: 'h4',
           bottomLine: true,
-          items: (answers: FormValue, externalData: ExternalData) => {
-            const selectedPermnos =
-              getValueViaPath<string[]>(answers, 'selectedVehicles') ?? []
-            const vehicleMileageEntries =
-              getValueViaPath<Array<{ mileage?: string }>>(
-                answers,
-                'vehicleMileage',
-              ) ?? []
-            const vehicles =
-              getValueViaPath<VehicleWithMileage[]>(
-                externalData,
-                'getCurrentVehicles.data',
-              ) ?? []
-            const selectedVehicles = vehicles.filter(
-              (v) => v.permno && selectedPermnos.includes(v.permno),
-            )
-
-            return selectedVehicles.map((vehicle, index) => ({
-              width: 'full' as const,
-              keyText: vehicle.permno ?? '',
-              valueText: `${m.overview.mileageAtDeparture.defaultMessage}: ${
-                vehicleMileageEntries[index]?.mileage ?? '—'
-              } km`,
-            }))
-          },
+          condition: (answers: FormValue) =>
+            getValueViaPath<RegistrationType>(answers, 'registrationType') ===
+            RegistrationType.EXPORT,
+          items: (answers: FormValue, externalData: ExternalData) =>
+            getVehicleOverviewItems(
+              answers,
+              externalData,
+              RegistrationType.EXPORT,
+            ),
+        }),
+        buildOverviewField({
+          id: 'overviewImportVehicles',
+          title: m.overview.importVehiclesHeader,
+          titleVariant: 'h4',
+          bottomLine: true,
+          condition: (answers: FormValue) =>
+            getValueViaPath<RegistrationType>(answers, 'registrationType') ===
+            RegistrationType.IMPORT,
+          items: (answers: FormValue, externalData: ExternalData) =>
+            getVehicleOverviewItems(
+              answers,
+              externalData,
+              RegistrationType.IMPORT,
+            ),
         }),
         buildSubmitField({
           id: 'overviewSubmit',
