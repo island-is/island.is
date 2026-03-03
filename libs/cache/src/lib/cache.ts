@@ -156,17 +156,6 @@ export const createRedisApolloCache = (options: Options) => {
 
 export const createRedisCluster = (options: Options): Cluster => {
   const nodes = parseNodes(options.nodes)
-  if (nodes.length === 0) {
-    logger.warn(
-      `createRedisCluster(${options.name}): No Redis nodes configured, creating disabled cluster`,
-    )
-    return new Cluster([{ host: '0.0.0.0', port: 1 }], {
-      ...getRedisClusterOptions(options),
-      lazyConnect: true,
-      clusterRetryStrategy: () => null,
-      enableOfflineQueue: false,
-    })
-  }
   logger.info(`Making caching connection with nodes: `, nodes)
   return new Cluster(nodes, getRedisClusterOptions(options))
 }
