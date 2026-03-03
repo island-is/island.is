@@ -8,7 +8,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ExpandRow,
   formatDate,
@@ -31,6 +31,7 @@ import { permitTagSelector } from '../../utils/tagSelector'
 import { Markdown } from '@island.is/shared/components'
 
 const PermitDetail: React.FC = () => {
+  useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState<boolean>(false)
