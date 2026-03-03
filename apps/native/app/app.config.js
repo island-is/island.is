@@ -45,6 +45,9 @@ export default ({ config }) => {
     android: {
       ...config.android,
       package: getUniqueIdentifier(),
+      ...(process.env.ANDROID_VERSION_CODE && {
+        versionCode: parseInt(process.env.ANDROID_VERSION_CODE, 10),
+      }),
       adaptiveIcon: {
         foregroundImage: `${getIconFolder()}/icon.png`,
         backgroundColor: '#ffffff',

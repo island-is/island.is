@@ -100,17 +100,22 @@ definitions:
         xcode-project build-ipa \
           --workspace "ios/$XCODE_WORKSPACE" \
           --scheme "$XCODE_SCHEME"
+    - &get_android_version_code
+      name: Get latest Android version code
+      script: |
+        LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME")
+        if [ -z "$LATEST_GOOGLE_PLAY_BUILD_NUMBER" ]; then
+            echo "Failed to get build number from Google Play"
+            exit 1
+        fi
+        ANDROID_VERSION_CODE=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
+        echo "ANDROID_VERSION_CODE=$ANDROID_VERSION_CODE" >> $CM_ENV
+        echo "Using Android version code: $ANDROID_VERSION_CODE"
     - &build_android
       name: Build Android release
       script: |
-        LATEST_GOOGLE_PLAY_BUILD_NUMBER=$(google-play get-latest-build-number --package-name "$PACKAGE_NAME")
-        if [ -z $LATEST_GOOGLE_PLAY_BUILD_NUMBER ]; then
-            exit 1
-        else
-            UPDATED_BUILD_NUMBER=$(($LATEST_GOOGLE_PLAY_BUILD_NUMBER + 1))
-        fi
         cd android
-        ./gradlew bundleRelease -PversionCode=$UPDATED_BUILD_NUMBER
+        ./gradlew bundleRelease
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
@@ -233,6 +238,7 @@ workflows:
       - *pip_install
       - *npm_install
       - *codegen
+      - *get_android_version_code
       - *prebuild_android
       - *set_android_location
       - *build_android
@@ -265,6 +271,7 @@ workflows:
       - *pip_install
       - *npm_install
       - *codegen
+      - *get_android_version_code
       - *prebuild_android
       - *set_android_location
       - *build_android
