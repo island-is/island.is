@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'services-bff-portals-admin'
+allowExternalNetwork: true
+allowInternalNetwork: false
 enabled: true
 env:
   BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.staging01.devland.is"]'
@@ -40,7 +42,6 @@ env:
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
-  - 'nginx-ingress-external'
   - 'identity-server'
 grantNamespacesEnabled: true
 healthCheck:

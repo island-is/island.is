@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'services-auth-personal-representative-public'
+allowExternalNetwork: false
+allowInternalNetwork: false
 enabled: true
 env:
   DB_HOST: 'postgres-ids.internal'

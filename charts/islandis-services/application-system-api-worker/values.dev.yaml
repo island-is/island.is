@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'application-system-api-worker'
+allowExternalNetwork: false
+allowInternalNetwork: false
 args:
   - 'main.cjs'
   - '--job'
@@ -67,7 +69,6 @@ env:
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token'
 grantNamespaces:
   - 'services-payments'
-  - 'nginx-ingress-internal'
   - 'islandis'
 grantNamespacesEnabled: true
 healthCheck:

@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'services-sessions-worker'
+allowExternalNetwork: false
+allowInternalNetwork: false
 args:
   - 'main.cjs'
   - '--job=worker'
@@ -37,7 +39,6 @@ env:
   REDIS_USE_SSL: 'true'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
-  - 'nginx-ingress-internal'
   - 'islandis'
   - 'identity-server'
 grantNamespacesEnabled: true

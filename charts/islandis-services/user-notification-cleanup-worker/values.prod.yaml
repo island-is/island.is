@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'user-notification-cleanup-worker'
+allowExternalNetwork: false
+allowInternalNetwork: false
 args:
   - '--no-experimental-fetch'
   - 'main.cjs'
@@ -34,7 +36,6 @@ env:
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
-  - 'nginx-ingress-internal'
   - 'islandis'
   - 'identity-server-delegation'
   - 'application-system'

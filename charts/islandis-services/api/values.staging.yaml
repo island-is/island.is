@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'api'
+allowExternalNetwork: true
+allowInternalNetwork: false
 args:
   - '--tls-min-v1.0'
   - '--no-experimental-fetch'
@@ -194,7 +196,6 @@ env:
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
 grantNamespaces:
-  - 'nginx-ingress-external'
   - 'api-catalogue'
   - 'application-system'
   - 'consultation-portal'

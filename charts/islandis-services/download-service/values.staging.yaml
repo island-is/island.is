@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'download-service'
+allowExternalNetwork: true
+allowInternalNetwork: false
 enabled: true
 env:
   HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
@@ -57,7 +59,6 @@ env:
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
 grantNamespaces:
   - 'islandis'
-  - 'nginx-ingress-external'
   - 'services-bff-portals-admin'
 grantNamespacesEnabled: true
 healthCheck:
