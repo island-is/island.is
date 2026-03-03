@@ -1,25 +1,28 @@
-import { ActionCard, toast } from '@island.is/island-ui/core'
+import { useApolloClient } from '@apollo/client'
+import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import { ConfirmModal } from '../../components/PatientDataPermit/ConfirmModal'
 import Countries from '../../components/PatientDataPermit/Countries'
 import Dates from '../../components/PatientDataPermit/Dates'
 import Terms from '../../components/PatientDataPermit/Terms'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { PermitInput } from '../../utils/types'
-import { useCreatePatientDataPermitMutation } from './PatientDataPermits.generated'
+import {
+  GetPatientDataPermitsDocument,
+  useCreatePatientDataPermitMutation,
+} from './PatientDataPermits.generated'
 import { Markdown } from '@island.is/shared/components'
 
 const DEFAULT_STEP = 1 // Default to step 1 to start with the first step
 
 const NewPermit: React.FC = () => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
+  const client = useApolloClient()
   const [step, setStep] = useState<number>(DEFAULT_STEP)
-  const [openModal, setOpenModal] = useState<boolean>(false)
   const [formState, setFormState] = useState<PermitInput>()
 
   const navigate = useNavigate()
@@ -36,7 +39,6 @@ const NewPermit: React.FC = () => {
         formState.dates.validFrom &&
         formState.dates.validTo
       ) {
-        setOpenModal(false)
         createPermit({
           variables: {
             input: {
@@ -53,15 +55,26 @@ const NewPermit: React.FC = () => {
             ) {
               setFormState(undefined)
               toast.success(formatMessage(messages.permitCreated))
-              navigate(HealthPaths.HealthPatientDataPermits, {
-                replace: true,
+              const data = client.readQuery({
+                query: GetPatientDataPermitsDocument,
+                variables: { locale: lang },
               })
-            } else
-              toast.error(
-                formatMessage(messages.permitCreatedError, {
-                  arg: '',
-                }),
+              const permitId =
+                data?.healthDirectoratePatientDataPermits?.consent?.id
+              navigate(
+                permitId
+                  ? HealthPaths.HealthPatientDataPermitsDetail.replace(
+                      ':id',
+                      permitId,
+                    )
+                  : HealthPaths.HealthPatientDataPermits,
+                { replace: true },
               )
+            } else {
+              toast.error(
+                formatMessage(messages.permitCreatedError, { arg: '' }),
+              )
+            }
           })
           .catch(() => {
             toast.error(formatMessage(messages.permitCreatedError, { arg: '' }))
@@ -100,30 +113,7 @@ const NewPermit: React.FC = () => {
         <Terms
           goBack={() => setStep(2)}
           loading={loading}
-          onClick={() => setOpenModal(true)}
-        />
-      )}
-
-      {openModal && (
-        <ConfirmModal
-          title={formatMessage(messages.newPermit)}
-          description={formatMessage(messages.addNewPermitTitle)}
-          onSubmit={handleSubmit}
-          open={openModal}
-          onClose={() => setOpenModal(false)}
-          loading={loading}
-          content={
-            <ActionCard
-              date={formatMessage(messages.validToFrom, {
-                fromDate: formState?.dates.validFrom?.toLocaleDateString(),
-                toDate: formState?.dates.validTo?.toLocaleDateString(),
-              })}
-              heading={formatMessage(messages.permit)}
-              text={formState?.countries
-                .map((country) => country.name)
-                .join(', ')}
-            />
-          }
+          onClick={handleSubmit}
         />
       )}
     </IntroWrapper>

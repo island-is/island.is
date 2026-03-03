@@ -1506,6 +1506,10 @@ export const messages = defineMessages({
     defaultMessage: 'Sjá nánar',
     id: 'sp.health:see-more',
   },
+  furtherDetails: {
+    defaultMessage: 'Skoða nánar',
+    id: 'sp.health:further-details',
+  },
   speechDescriptionLink: {
     defaultMessage: 'https://island.is/greidsluthatttaka-vegna-talthjalfunar',
     id: 'sp.health:speech-description-link',
@@ -2088,6 +2092,10 @@ export const messages = defineMessages({
     defaultMessage: 'Áfram',
     id: 'sp.health:forward',
   },
+  saveChanges: {
+    defaultMessage: 'Vista breytingar',
+    id: 'sp.health:save-changes',
+  },
   goBack: {
     defaultMessage: 'Til baka',
     id: 'sp.health:go-back',
@@ -2248,7 +2256,7 @@ export const messages = defineMessages({
     id: 'sp.health:confirm',
   },
   permitCreated: {
-    defaultMessage: 'Nýrri heimild hefur verið bætt við',
+    defaultMessage: 'Heimild hefur verið bætt við',
     id: 'sp.health:permit-created',
   },
   permitDeleted: {

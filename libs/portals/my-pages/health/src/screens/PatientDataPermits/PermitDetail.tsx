@@ -110,7 +110,7 @@ const PermitDetail: React.FC = () => {
         <Problem title={formatMessage(messages.errorTryAgain)} />
       )}
       {!error && (
-        <Box>
+        <Box marginTop={2}>
           <Text variant="eyebrow" color="purple400" marginBottom={2}>
             {formatMessage(messages.information)}
           </Text>

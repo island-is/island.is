@@ -96,7 +96,7 @@ const PatientDataPermits: FC = () => {
               cta={{
                 size: 'small',
                 variant: 'text',
-                label: formatMessage(messages.seeMore),
+                label: formatMessage(messages.furtherDetails),
                 onClick: () =>
                   navigate(
                     HealthPaths.HealthPatientDataPermitsDetail.replace(

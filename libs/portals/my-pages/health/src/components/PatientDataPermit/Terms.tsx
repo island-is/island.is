@@ -16,7 +16,7 @@ const Terms: React.FC<TermsProps> = ({ onClick, goBack, loading }) => {
   const { formatMessage } = useLocale()
 
   const [modalOpen, setModalOpen] = useState<boolean>(false)
-  const [accepted, setAccepted] = useState<boolean>(false)
+  const [isAccepted, setIsAccepted] = useState<boolean>(false)
   return (
     <Box>
       <Text variant="eyebrow" color="purple400">
@@ -43,10 +43,9 @@ const Terms: React.FC<TermsProps> = ({ onClick, goBack, loading }) => {
       <Box marginTop={3}>
         <Checkbox
           backgroundColor="blue"
-          checked={accepted}
+          checked={isAccepted}
           onChange={() => {
-            console.log('checkbox')
-            setAccepted(!accepted)
+            setIsAccepted(!isAccepted)
           }}
           large
           label={formatMessage(messages.permitApproval)}
@@ -55,7 +54,7 @@ const Terms: React.FC<TermsProps> = ({ onClick, goBack, loading }) => {
       <Box
         display="flex"
         justifyContent="spaceBetween"
-        marginTop={5}
+        marginTop={6}
         flexWrap="nowrap"
         columnGap={2}
       >
@@ -74,13 +73,13 @@ const Terms: React.FC<TermsProps> = ({ onClick, goBack, loading }) => {
           <Button
             fluid
             size="small"
-            disabled={!accepted || loading}
+            disabled={!isAccepted || loading}
             onClick={() => {
               onClick && onClick()
             }}
             loading={loading}
           >
-            {formatMessage(messages.forward)}
+            {formatMessage(messages.saveChanges)}
           </Button>
         </Box>
       </Box>
