@@ -574,9 +574,7 @@ export class SignatureCollectionClientService {
     })
 
     const candidate = user.frambod ? mapCandidate(user.frambod) : undefined
-    const activeSignature = user.medmaeli?.find(
-      (signature) => signature.valid,
-    )
+    const activeSignature = user.medmaeli?.find((signature) => signature.valid)
     const signatures = user.medmaeli?.map((signature) =>
       mapSignature(signature),
     )
