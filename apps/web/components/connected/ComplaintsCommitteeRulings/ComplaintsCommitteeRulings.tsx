@@ -73,46 +73,52 @@ const ComplaintsCommitteeRulings = ({
       },
     },
     fetchPolicy: 'no-cache',
-    ssr: false, // Fetch client-side only to avoid blocking SSR
-    onError(error) {
-      console.error(error)
-    },
+    ssr: false,
   })
 
   const [fetchPdf] = useLazyQuery<RulingPdfData>(GET_ONE_SYSTEMS_RULING_PDF, {
     fetchPolicy: 'no-cache',
     onCompleted: (pdfData) => {
-      if (pdfData?.oneSystemsRulingPdf?.base64) {
-        const base64Data = pdfData.oneSystemsRulingPdf.base64
-
-        try {
-          // Decode base64 to binary
-          const byteCharacters = atob(base64Data)
-          const byteNumbers = new Array(byteCharacters.length)
-          for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i)
-          }
-          const byteArray = new Uint8Array(byteNumbers)
-          const blob = new Blob([byteArray], { type: 'application/pdf' })
-
-          const url = window.URL.createObjectURL(blob)
-          if (popupRef.current) {
-            popupRef.current.location.href = url
-          }
-          setTimeout(() => window.URL.revokeObjectURL(url), 60_000)
-        } catch (e) {
-          console.error('Failed to decode PDF:', e)
-        }
+      if (!pdfData?.oneSystemsRulingPdf?.base64) {
+        popupRef.current?.close()
+        popupRef.current = null
+        setDownloadingId(null)
+        return
       }
+
+      const base64Data = pdfData.oneSystemsRulingPdf.base64
+
+      try {
+        // Decode base64 to binary
+        const byteCharacters = atob(base64Data)
+        const byteNumbers = new Array(byteCharacters.length)
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i)
+        }
+        const byteArray = new Uint8Array(byteNumbers)
+        const blob = new Blob([byteArray], { type: 'application/pdf' })
+
+        const url = window.URL.createObjectURL(blob)
+        if (popupRef.current) {
+          popupRef.current.location.href = url
+        }
+        setTimeout(() => window.URL.revokeObjectURL(url), 60_000)
+      } catch {
+        popupRef.current?.close()
+      }
+      popupRef.current = null
       setDownloadingId(null)
     },
     onError: () => {
+      popupRef.current?.close()
+      popupRef.current = null
       setDownloadingId(null)
     },
   })
 
   const handleOpenPdf = useCallback(
     (id: string) => {
+      if (downloadingId) return
       popupRef.current = window.open('', '_blank')
       if (!popupRef.current) {
         return
@@ -120,7 +126,7 @@ const ComplaintsCommitteeRulings = ({
       setDownloadingId(id)
       fetchPdf({ variables: { id } })
     },
-    [fetchPdf],
+    [fetchPdf, downloadingId],
   )
 
   if (error) {

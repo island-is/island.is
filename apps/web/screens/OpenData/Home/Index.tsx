@@ -163,15 +163,18 @@ const OpenDataPage: Screen<OpenDataProps> = ({ namespace }) => {
   }
 
   const clearFilterType = (filterKey: string) => {
+    setSelectedPage(1)
     setFilters({ ...filters, [filterKey]: [] })
   }
 
   const clearAllFilters = () => {
+    setSelectedPage(1)
     setFilters(initialFilters)
     setQuery('')
   }
 
   const handleRemoveTag = (filterKey: string, value: string) => {
+    setSelectedPage(1)
     const specificArray = (filters[filterKey] || []).filter((v) => v !== value)
     setFilters({ ...filters, [filterKey]: specificArray })
   }

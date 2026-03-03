@@ -87,6 +87,15 @@ const formatDate = (dateString: string): string => {
   }
 }
 
+const getSafeExternalUrl = (value: string): string | null => {
+  try {
+    const url = new URL(value)
+    return ['http:', 'https:'].includes(url.protocol) ? url.toString() : null
+  } catch {
+    return null
+  }
+}
+
 const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
   const router = useRouter()
   const { id } = router.query
@@ -157,9 +166,11 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
     }
   }, [])
 
+  const { id } = router.query
+  const datasetId = Array.isArray(id) ? id[0] : id
   const { data, loading, error } = useQuery(GET_OPEN_DATA_DATASET, {
-    variables: { id },
-    skip: !id,
+    variables: { id: datasetId as string },
+    skip: !datasetId,
     fetchPolicy: 'cache-and-network',
   })
 
@@ -458,13 +469,24 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                             </Text>
                           </T.Data>
                           <T.Data>
-                            <Link
-                              href={resource.url}
-                              color="blue400"
-                              underline="small"
-                            >
-                              {n('fetchData', 'Sækja gögn')}
-                            </Link>
+                            {getSafeExternalUrl(resource.url) ? (
+                              <Link
+                                href={
+                                  getSafeExternalUrl(resource.url) as string
+                                }
+                                color="blue400"
+                                underline="small"
+                              >
+                                {n('fetchData', 'Sækja gögn')}
+                              </Link>
+                            ) : (
+                              <Text variant="small" color="dark300">
+                                {n(
+                                  'invalidDownloadUrl',
+                                  'Ógild slóð',
+                                )}
+                              </Text>
+                            )}
                           </T.Data>
                         </T.Row>
                       ))}
@@ -623,14 +645,13 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                   variant="ghost"
                   icon="mail"
                   iconType="outline"
-                  onClick={() =>
-                    (window.location.href = `mailto:${
-                      dataset.maintainerEmail
-                    }?subject=${n(
+                  onClick={() => {
+                    const subject = `${n(
                       'feedbackSubject',
                       'Ábending um gagnasafn',
-                    )}: ${dataset.title}`)
-                  }
+                    )}: ${dataset.title}`
+                    window.location.href = `mailto:${dataset.maintainerEmail}?subject=${encodeURIComponent(subject)}`
+                  }}
                 >
                   {n('sendFeedback', 'Senda ábendingu')}
                 </Button>
@@ -644,10 +665,11 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
 }
 
 OpenDataDetailsPage.getProps = async ({ apolloClient, query, locale }) => {
-  const id = query.id as string
+  const rawId = query.id
+  const id = Array.isArray(rawId) ? rawId[0] : rawId
 
   const [, namespaceResponse] = await Promise.all([
-    id
+    id && typeof id === 'string'
       ? apolloClient
           .query({
             query: GET_OPEN_DATA_DATASET,

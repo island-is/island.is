@@ -129,7 +129,6 @@ export const DatasetList: React.FC<DatasetListProps> = ({
           <Text variant="h3" color="red600">
             {n('errorFetchingDatasets', 'Villa kom upp við að sækja gagnasöfn')}
           </Text>
-          <Text>{error.message}</Text>
         </Box>
       ) : (
         <>
@@ -185,7 +184,9 @@ export const DatasetList: React.FC<DatasetListProps> = ({
           totalPages={totalPages}
           renderLink={(page, className, children) => (
             <button
-              aria-label={selectedPage < page ? 'Next' : 'Previous'}
+              className={className}
+              type="button"
+              aria-label={`${n('page', 'Síða')} ${page}`}
               onClick={() => {
                 onPageChange(page)
                 if (titleRef.current) {
@@ -195,7 +196,7 @@ export const DatasetList: React.FC<DatasetListProps> = ({
                 }
               }}
             >
-              <span className={className}>{children}</span>
+              {children}
             </button>
           )}
         />

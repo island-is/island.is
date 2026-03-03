@@ -117,7 +117,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
                       display: 'flex',
                       alignItems: 'center',
                     }}
-                    aria-label={`Remove ${tag}`}
+                    aria-label={`${n('remove', 'Remove')} ${tag}`}
                   >
                     ×
                   </span>
@@ -143,16 +143,16 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           <Filter
             resultCount={totalCount}
             variant="dialog"
-            labelClear="Hreinsa"
-            labelClearAll="Hreinsa allar síur"
-            labelOpen="Opna"
-            labelClose="Loka"
-            labelResult="Sýna niðurstöður"
-            labelTitle="Sía niðurstöður"
+           labelClear={n('clear', 'Hreinsa')}
+            labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
+            labelOpen={n('open', 'Opna')}
+            labelClose={n('close', 'Loka')}
+            labelResult={n('showResults', 'Sýna niðurstöður')}
+            labelTitle={n('filterResults', 'Sía niðurstöður')}
             onFilterClear={onClearAllFilters}
           >
             <FilterMultiChoice
-              labelClear="Hreinsa val"
+              labelClear={n('clear', 'Hreinsa val')}
               onChange={({ categoryId, selected }) => {
                 onFilterTypeChange(categoryId, selected)
               }}

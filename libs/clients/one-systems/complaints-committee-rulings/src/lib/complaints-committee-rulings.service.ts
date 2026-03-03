@@ -13,7 +13,7 @@ export interface ComplaintsCommitteeRuling {
   id: string
   title: string
   description: string
-  publishedDate: Date
+  publishedDate: Date | null
 }
 
 export interface ComplaintsCommitteeRulingsResponse {
@@ -89,7 +89,7 @@ export class ComplaintsCommitteeRulingsClientService {
           description: ruling.description ?? '',
           publishedDate: ruling.publishedDate
             ? new Date(ruling.publishedDate)
-            : new Date(),
+            : null,
         })),
         totalCount: response.totalCount ?? 0,
       }
@@ -104,13 +104,13 @@ export class ComplaintsCommitteeRulingsClientService {
     }
   }
 
-  async getRulingPdf(id: string): Promise<string> {
+  async getRulingPdf(id: string, isRetry = false): Promise<string> {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 10_000)
     try {
       const token = await this.ensureAuthenticated()
 
       // Fetch PDF as binary directly (bypass generated client which treats response as text)
-      const controller = new AbortController()
-      const timeout = setTimeout(() => controller.abort(), 10_000)
       const response = await fetch(
         `${this.config.basePath}/OneRulings/api/rulings/${encodeURIComponent(
           id,
@@ -124,9 +124,13 @@ export class ComplaintsCommitteeRulingsClientService {
           },
         },
       )
-      clearTimeout(timeout)
 
       if (!response.ok) {
+        if (response.status === 401 && !isRetry) {
+          this.accessToken = null
+          this.tokenExpiry = null
+          return this.getRulingPdf(id, true)
+        }
         if (response.status === 404) {
           throw new Error(`Ruling with id ${id} not found`)
         }
@@ -141,6 +145,8 @@ export class ComplaintsCommitteeRulingsClientService {
         throw new Error(`Ruling with id ${id} not found`)
       }
       throw error
+    } finally {
+      clearTimeout(timeout)
     }
   }
 }

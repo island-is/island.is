@@ -105,7 +105,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({
                   onToggle={(isOpenValue) => onToggleIsOpen(index, isOpenValue)}
                 >
                   <Box paddingY={1}>
-                    {filter.options?.slice(0, 10).map((option) => {
+                    {filter.options?.map((option) => {
                       const optionValue =
                         typeof option === 'string' ? option : option.value
                       const optionLabel =

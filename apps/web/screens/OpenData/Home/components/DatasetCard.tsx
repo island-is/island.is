@@ -204,9 +204,9 @@ export const DatasetCard: React.FC<DatasetCardProps> = ({
       />
 
       <Text variant={isGrid ? 'default' : 'small'} color="dark400">
-        {isGrid && item.description?.length > 150
+        {isGrid && item.description && item.description.length > 150
           ? `${item.description.substring(0, 150)}...`
-          : item.description}
+          : item.description ?? ''}
       </Text>
 
       {isGrid ? (

@@ -11,8 +11,8 @@ export class OneSystemsRuling {
   @Field()
   description!: string
 
-  @Field()
-  publishedDate!: Date
+  @Field(() => Date, { nullable: true })
+  publishedDate!: Date | null
 }
 
 @ObjectType('OneSystemsRulingsResponse')

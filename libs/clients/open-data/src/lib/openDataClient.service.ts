@@ -20,190 +20,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import * as https from 'https'
 
-// Dummy data for fallback
-const DUMMY_DATASETS: Dataset[] = [
-  {
-    id: '1',
-    title: 'Population Statistics 2025',
-    description:
-      'Comprehensive population data including demographics, age distribution, and regional statistics.',
-    category: 'Demographics',
-    publisher: 'Statistics Iceland',
-    publisherId: 'stats-iceland',
-    lastUpdated: '2025-01-01',
-    format: 'CSV',
-    tags: ['population', 'demographics', 'statistics'],
-  },
-  {
-    id: '2',
-    title: 'Weather Data Archive',
-    description:
-      'Historical weather data from stations across Iceland including temperature, precipitation, and wind data.',
-    category: 'Environment',
-    publisher: 'Icelandic Met Office',
-    publisherId: 'met-office',
-    lastUpdated: '2024-12-15',
-    format: 'JSON',
-    tags: ['weather', 'climate', 'meteorology'],
-  },
-  {
-    id: '3',
-    title: 'Traffic Flow Data',
-    description:
-      'Real-time and historical traffic flow data from major roads and intersections.',
-    category: 'Transportation',
-    publisher: 'Road Administration',
-    publisherId: 'road-admin',
-    lastUpdated: '2024-12-20',
-    format: 'API',
-    tags: ['traffic', 'transportation', 'roads'],
-  },
-  {
-    id: '4',
-    title: 'Healthcare Service Locations',
-    description:
-      'Geographic data of healthcare facilities including hospitals, clinics, and emergency services.',
-    category: 'Healthcare',
-    publisher: 'Directorate of Health',
-    publisherId: 'health-directorate',
-    lastUpdated: '2024-11-30',
-    format: 'GeoJSON',
-    tags: ['healthcare', 'hospitals', 'medical'],
-  },
-  {
-    id: '5',
-    title: 'Economic Indicators',
-    description:
-      'Key economic indicators including GDP, inflation, unemployment rates, and trade statistics.',
-    category: 'Economy',
-    publisher: 'Central Bank of Iceland',
-    publisherId: 'central-bank',
-    lastUpdated: '2025-01-05',
-    format: 'CSV',
-    tags: ['economy', 'finance', 'indicators'],
-  },
-  {
-    id: '6',
-    title: 'Education Statistics',
-    description:
-      'Data on schools, student enrollment, graduation rates, and educational outcomes.',
-    category: 'Education',
-    publisher: 'Ministry of Education',
-    publisherId: 'education-ministry',
-    lastUpdated: '2024-12-10',
-    format: 'JSON',
-    tags: ['education', 'schools', 'students'],
-  },
-  {
-    id: '7',
-    title: 'Air Quality Measurements',
-    description:
-      'Air quality monitoring data from stations throughout Iceland.',
-    category: 'Environment',
-    publisher: 'Environment Agency',
-    publisherId: 'env-agency',
-    lastUpdated: '2025-01-06',
-    format: 'CSV',
-    tags: ['environment', 'air-quality', 'pollution'],
-  },
-  {
-    id: '8',
-    title: 'Tourism Statistics',
-    description:
-      'Visitor numbers, accommodation data, and tourism-related economic impact statistics.',
-    category: 'Tourism',
-    publisher: 'Tourism Board',
-    publisherId: 'tourism-board',
-    lastUpdated: '2024-12-28',
-    format: 'JSON',
-    tags: ['tourism', 'visitors', 'hospitality'],
-  },
-  {
-    id: '9',
-    title: 'Energy Consumption Data',
-    description:
-      'Data on energy production and consumption across different sectors.',
-    category: 'Energy',
-    publisher: 'National Energy Authority',
-    publisherId: 'energy-authority',
-    lastUpdated: '2024-12-31',
-    format: 'API',
-    tags: ['energy', 'power', 'consumption'],
-  },
-  {
-    id: '10',
-    title: 'Public Transport Schedules',
-    description:
-      'Bus routes, schedules, and real-time location data for public transportation.',
-    category: 'Transportation',
-    publisher: 'Public Transport Authority',
-    publisherId: 'transport-authority',
-    lastUpdated: '2025-01-03',
-    format: 'GTFS',
-    tags: ['transport', 'bus', 'public-transit'],
-  },
-  {
-    id: '11',
-    title: 'Building Permits',
-    description:
-      'Data on building permits issued, including location, type, and value of construction projects.',
-    category: 'Construction',
-    publisher: 'Housing Authority',
-    publisherId: 'housing-authority',
-    lastUpdated: '2024-12-22',
-    format: 'CSV',
-    tags: ['construction', 'building', 'permits'],
-  },
-  {
-    id: '12',
-    title: 'Environmental Monitoring',
-    description:
-      'Data from environmental monitoring stations tracking various ecological parameters.',
-    category: 'Environment',
-    publisher: 'Environment Agency',
-    publisherId: 'env-agency',
-    lastUpdated: '2025-01-04',
-    format: 'JSON',
-    tags: ['environment', 'monitoring', 'ecology'],
-  },
-  {
-    id: '13',
-    title: 'Business Registry',
-    description:
-      'Information on registered businesses including industry classification and location data.',
-    category: 'Economy',
-    publisher: 'Statistics Iceland',
-    publisherId: 'stats-iceland',
-    lastUpdated: '2024-12-18',
-    format: 'API',
-    tags: ['business', 'registry', 'companies'],
-  },
-  {
-    id: '14',
-    title: 'Crime Statistics',
-    description:
-      'Anonymized crime data including incident types, locations, and temporal patterns.',
-    category: 'Public Safety',
-    publisher: 'Police Department',
-    publisherId: 'police',
-    lastUpdated: '2024-12-15',
-    format: 'CSV',
-    tags: ['crime', 'safety', 'police'],
-  },
-  {
-    id: '15',
-    title: 'Water Quality Data',
-    description:
-      'Water quality measurements from lakes, rivers, and coastal areas.',
-    category: 'Environment',
-    publisher: 'Environment Agency',
-    publisherId: 'env-agency',
-    lastUpdated: '2025-01-02',
-    format: 'JSON',
-    tags: ['water', 'quality', 'environment'],
-  },
-]
-
 @Injectable()
 export class OpenDataClientService {
   private readonly httpsAgent: https.Agent
@@ -238,7 +54,7 @@ export class OpenDataClientService {
         url: res.url || '',
         size: res.size
           ? typeof res.size === 'string'
-            ? parseInt(res.size, 10)
+            ? parseInt(res.size, 10) || undefined
             : res.size
           : undefined,
         lastModified:
@@ -270,45 +86,18 @@ export class OpenDataClientService {
     }
   }
 
-  private filterDatasets(
-    datasets: Dataset[],
-    input: GetDatasetsInput,
-  ): Dataset[] {
-    let filtered = [...datasets]
-
-    if (input.searchQuery) {
-      const searchLower = input.searchQuery.toLowerCase()
-      filtered = filtered.filter(
-        (d) =>
-          d.title.toLowerCase().includes(searchLower) ||
-          d.description.toLowerCase().includes(searchLower) ||
-          d.tags.some((tag) => tag.toLowerCase().includes(searchLower)),
-      )
-    }
-
-    if (input.categories && input.categories.length > 0) {
-      filtered = filtered.filter((d) => input.categories?.includes(d.category))
-    }
-
-    if (input.publishers && input.publishers.length > 0) {
-      filtered = filtered.filter((d) => input.publishers?.includes(d.publisher))
-    }
-
-    if (input.formats && input.formats.length > 0) {
-      filtered = filtered.filter((d) => input.formats?.includes(d.format))
-    }
-
-    return filtered
+  private escapeSolrValue(value: string): string {
+    // Escape Solr special characters and quote values with spaces
+    const escaped = value.replace(/([+\-&|!(){}[\]^"~*?:\\/])/g, '\\$1')
+    return escaped.includes(' ') ? `"${escaped}"` : escaped
   }
 
   async getDatasets(input: GetDatasetsInput): Promise<DatasetsResponse> {
     const page = input.page || 1
     const limit = input.limit || 12
 
-    // Try to fetch from CKAN API if not using dummy data
-    if (!this.config.useDummyData) {
-      try {
-        const queryParams: Record<string, string | number> = {
+    try {
+      const queryParams: Record<string, string | number> = {
           rows: limit,
           start: (page - 1) * limit,
         }
@@ -316,7 +105,7 @@ export class OpenDataClientService {
         if (input.searchQuery) {
           // Use trailing wildcard for partial matching (e.g., "stud" matches "students")
           // Trailing wildcards are supported by Solr, leading wildcards are not
-          const searchTerm = input.searchQuery.trim()
+          const searchTerm = this.escapeSolrValue(input.searchQuery.trim())
           queryParams.q = `${searchTerm}*`
         }
 
@@ -326,14 +115,14 @@ export class OpenDataClientService {
         if (input.publishers && input.publishers.length > 0) {
           // CKAN uses organization name (slug) for filtering
           const orgFilter = input.publishers
-            .map((p) => `organization:${p}`)
+            .map((p) => `organization:${this.escapeSolrValue(p)}`)
             .join(' OR ')
           fqParts.push(`(${orgFilter})`)
         }
 
         if (input.formats && input.formats.length > 0) {
           const formatFilter = input.formats
-            .map((f) => `res_format:${f}`)
+            .map((f) => `res_format:${this.escapeSolrValue(f)}`)
             .join(' OR ')
           fqParts.push(`(${formatFilter})`)
         }
@@ -341,7 +130,7 @@ export class OpenDataClientService {
         if (input.categories && input.categories.length > 0) {
           // Categories are typically stored as tags in CKAN
           const tagFilter = input.categories
-            .map((c) => `tags:${c}`)
+            .map((c) => `tags:${this.escapeSolrValue(c)}`)
             .join(' OR ')
           fqParts.push(`(${tagFilter})`)
         }
@@ -423,66 +212,55 @@ export class OpenDataClientService {
               (page - 1) * limit + datasets.length < response.data.result.count,
           }
         }
-      } catch (error) {
-        this.logger.warn(
-          'Failed to fetch from CKAN API, falling back to dummy data',
-          {
-            error: error instanceof Error ? error.message : 'Unknown error',
-            stack: error instanceof Error ? error.stack : undefined,
-          },
-        )
-      }
-    }
 
-    // Fallback to dummy data
-    const filtered = this.filterDatasets(DUMMY_DATASETS, input)
-    const startIndex = (page - 1) * limit
-    const paginatedDatasets = filtered.slice(startIndex, startIndex + limit)
-
-    return {
-      datasets: paginatedDatasets,
-      total: filtered.length,
-      page,
-      limit,
-      hasMore: startIndex + paginatedDatasets.length < filtered.length,
+        return {
+          datasets: [],
+          total: 0,
+          page,
+          limit,
+          hasMore: false,
+        }
+    } catch (error) {
+      this.logger.error('Failed to fetch from CKAN API', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : undefined,
+      })
+      throw error
     }
   }
 
   async getDataset(id: string): Promise<Dataset | null> {
-    if (!this.config.useDummyData) {
-      try {
-        this.logger.info('Fetching dataset from CKAN API', { id })
+    try {
+      this.logger.info('Fetching dataset from CKAN API', { id })
 
-        const response = await firstValueFrom(
-          this.httpService.get(`${this.config.basePath}/package_show`, {
-            params: { id },
-            timeout: 10000,
-            headers: {
-              Accept: 'application/json',
-            },
-            httpsAgent: this.httpsAgent,
-          }),
-        )
+      const response = await firstValueFrom(
+        this.httpService.get(`${this.config.basePath}/package_show`, {
+          params: { id },
+          timeout: 10000,
+          headers: {
+            Accept: 'application/json',
+          },
+          httpsAgent: this.httpsAgent,
+        }),
+      )
 
-        if (response.data.success && response.data.result) {
-          return this.mapCKANToDataset(response.data.result)
-        }
-      } catch (error) {
-        this.logger.warn('Failed to fetch dataset from CKAN API', {
-          id,
-          error: error instanceof Error ? error.message : 'Unknown error',
-        })
+      if (response.data.success && response.data.result) {
+        return this.mapCKANToDataset(response.data.result)
       }
-    }
 
-    return DUMMY_DATASETS.find((d) => d.id === id) || null
+      return null
+    } catch (error) {
+      this.logger.error('Failed to fetch dataset from CKAN API', {
+        id,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      })
+      throw error
+    }
   }
 
   async getFilters(): Promise<DatasetFilter[]> {
-    // Try to fetch from CKAN API
-    if (!this.config.useDummyData) {
-      try {
-        // Fetch organizations, tags, licenses, and groups from CKAN
+    try {
+      // Fetch organizations, tags, licenses, and groups from CKAN
         const [orgsResponse, tagsResponse, licensesResponse, groupsResponse] =
           await Promise.all([
             firstValueFrom(
@@ -683,108 +461,40 @@ export class OpenDataClientService {
         })
 
         return filters
-      } catch (error) {
-        this.logger.warn(
-          'Failed to fetch filters from CKAN API, falling back to dummy data',
-          {
-            error: error instanceof Error ? error.message : 'Unknown error',
-          },
-        )
-      }
+    } catch (error) {
+      this.logger.error('Failed to fetch filters from CKAN API', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      })
+      throw error
     }
-
-    // Fallback to dummy data
-    const datasets = DUMMY_DATASETS
-
-    const categories = Array.from(new Set(datasets.map((d) => d.category)))
-    const publishers = Array.from(new Set(datasets.map((d) => d.publisher)))
-    const formats = Array.from(new Set(datasets.map((d) => d.format)))
-
-    return [
-      {
-        id: 'organization',
-        field: 'publisher',
-        label: 'Stofnun / Ráðuneyti',
-        options: publishers.map((p) => ({ value: p, label: p })),
-      },
-      {
-        id: 'category',
-        field: 'category',
-        label: 'Efnisflokkur',
-        options: categories.map((c) => ({ value: c, label: c })),
-      },
-      {
-        id: 'format',
-        field: 'format',
-        label: 'Gagnsnið',
-        options: formats.map((f) => ({ value: f, label: f })),
-      },
-      {
-        id: 'status',
-        field: 'status',
-        label: 'Staða gagnasetts',
-        options: [
-          { value: 'active', label: 'Virkt' },
-          { value: 'inactive', label: 'Óvirkt' },
-        ],
-      },
-      {
-        id: 'lastUpdated',
-        field: 'lastUpdated',
-        label: 'Síðast uppfært',
-        options: [
-          { value: 'week', label: 'Síðustu 7 daga' },
-          { value: 'month', label: 'Síðasta mánuð' },
-          { value: 'year', label: 'Síðasta ár' },
-        ],
-      },
-      {
-        id: 'updateFrequency',
-        field: 'updateFrequency',
-        label: 'Uppfærslutíðni',
-        options: [
-          { value: 'daily', label: 'Daglega' },
-          { value: 'weekly', label: 'Vikulega' },
-          { value: 'monthly', label: 'Mánaðarlega' },
-          { value: 'annually', label: 'Árlega' },
-        ],
-      },
-      {
-        id: 'timePeriod',
-        field: 'timePeriod',
-        label: 'Tímabil gagna',
-        options: [
-          { value: '2025', label: '2025' },
-          { value: '2024', label: '2024' },
-          { value: '2023', label: '2023' },
-        ],
-      },
-      {
-        id: 'license',
-        field: 'license',
-        label: 'Noktunarleyfi',
-        options: [
-          { value: 'cc-by', label: 'Creative Commons BY' },
-          { value: 'cc-by-sa', label: 'Creative Commons BY-SA' },
-          { value: 'odc-by', label: 'Open Data Commons BY' },
-        ],
-      },
-    ]
   }
 
   async getPublishers(): Promise<Publisher[]> {
-    const datasets = DUMMY_DATASETS
-    const publishersMap = new Map<string, Publisher>()
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get(`${this.config.basePath}/organization_list`, {
+          params: { all_fields: true },
+          timeout: 10000,
+          headers: { Accept: 'application/json' },
+          httpsAgent: this.httpsAgent,
+        }),
+      )
 
-    datasets.forEach((d) => {
-      if (!publishersMap.has(d.publisherId)) {
-        publishersMap.set(d.publisherId, {
-          id: d.publisherId,
-          name: d.publisher,
-        })
+      if (response.data.success && response.data.result) {
+        return response.data.result
+          .filter((org: CKANOrganization) => (org.package_count || 0) > 0)
+          .map((org: CKANOrganization) => ({
+            id: org.id || org.name,
+            name: org.title || org.name,
+          }))
       }
-    })
 
-    return Array.from(publishersMap.values())
+      return []
+    } catch (error) {
+      this.logger.error('Failed to fetch publishers from CKAN API', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      })
+      throw error
+    }
   }
 }

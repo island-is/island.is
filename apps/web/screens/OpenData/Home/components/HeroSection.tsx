@@ -35,7 +35,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ n }) => {
             <Text>
               {n(
                 'heroDescription2',
-                'Gögnin eru aðgengileg til niðurhals og endurnýtingar og veita innsýn í ólik málefni samfélagsins. Þú getur leitað, síað og nálgast gögn frá mörgum ólikum aðilum á einum stað.',
+                'Gögnin eru aðgengileg til niðurhals og endurnýtingar og veita innsýn í ólík málefni samfélagsins. Þú getur leitað, síað og nálgast gögn frá mörgum ólíkum aðilum á einum stað.',
               )}
             </Text>
           </Box>
