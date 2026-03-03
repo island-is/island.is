@@ -42,6 +42,9 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       if (error instanceof TemplateApiError) {
         throw error
       }
+      this.logger.warn('Failed to get signee for candidate check', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      })
       throw new TemplateApiError(errorMessages.active, 405)
     }
 
@@ -109,6 +112,9 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       if (error instanceof TemplateApiError) {
         throw error
       }
+      this.logger.warn('Failed to get municipal collection data', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+      })
       throw new TemplateApiError(
         errorMessages.currentCollectionNotMunicipal,
         405,
