@@ -44,14 +44,16 @@ export class ApplicationsSuperAdminFilters extends ApplicationsAdminFilters {
 export class ApplicationsAdminStatisticsInput {
   @Field(() => String)
   startDate!: string
+
   @Field(() => String)
   endDate!: string
 }
 
 @InputType()
-export class ApplicationTypesInstitutionAdminInput {
-  @Field(() => String)
-  nationalId!: string
+export class ApplicationTypesAdminInput {
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  nationalId?: string
 }
 
 @InputType()

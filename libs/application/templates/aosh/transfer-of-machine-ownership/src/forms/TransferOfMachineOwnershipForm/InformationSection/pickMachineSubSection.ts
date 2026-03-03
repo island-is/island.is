@@ -30,11 +30,6 @@ export const pickMachineSubSection = buildSubSection({
 
             return machines.totalCount <= 5
           },
-          defaultValue: (application: Application) => {
-            const machineList = application?.externalData.machinesList
-              .data as MachinesWithTotalCount
-            return machineList?.machines[0].id ?? ''
-          },
           options: (application) => {
             const machineList = application?.externalData.machinesList
               .data as MachinesWithTotalCount

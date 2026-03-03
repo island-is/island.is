@@ -28,10 +28,11 @@ const InfoCard: FC<Props> = (props) => {
 
   return (
     <BlueBox className={grid({ gap: 3 })}>
-      {sections.map((section) => (
+      {sections.map((section, index) => (
         <Box
           className={cn(styles.grid, {
             [styles.twoCols]: section.columns === 2,
+            [styles.renderDividerFull]: index !== sections.length - 1,
           })}
           key={section.id}
         >

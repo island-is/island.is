@@ -763,7 +763,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 <div className={styles.grid}>
                   <DateTime
                     name="courtStartDate"
-                    datepickerLabel="Dagsetning þingfestingar"
+                    datepickerLabel="Dagsetning þinghalds"
                     timeLabel="Þinghald hófst (kk:mm)"
                     selectedDate={
                       courtSession.startDate ??
@@ -1418,7 +1418,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 <Input
                   data-testid="entries"
                   name="entries"
-                  label="Afstaða varnaraðila, málflutningur og aðrar bókanir"
+                  label="Afstaða ákærða, málflutningur og aðrar bókanir"
                   value={courtSession.entries || ''}
                   placeholder="Nánari útlistun á afstöðu varnaraðila, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
                   onChange={(event) => {
