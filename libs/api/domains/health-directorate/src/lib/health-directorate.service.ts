@@ -49,7 +49,12 @@ import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
 import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 import { Countries } from './models/permits/country.model'
-import { Permit, PermitHistoryEntry, PermitReturn, Permits } from './models/permits/permits'
+import {
+  Permit,
+  PermitHistoryEntry,
+  PermitReturn,
+  Permits,
+} from './models/permits/permits'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
@@ -504,10 +509,7 @@ export class HealthDirectorateService {
   }
 
   /* Patient data - Permits */
-  async getPermits(
-    auth: Auth,
-    locale: Locale,
-  ): Promise<Permits | null> {
+  async getPermits(auth: Auth, locale: Locale): Promise<Permits | null> {
     const response = await this.healthApi.getPermits(auth, locale)
 
     if (!response) {
