@@ -217,6 +217,10 @@ export const m = {
       id: 'web.secondarySchoolStudies:details.level3',
       defaultMessage: 'Þrep 3',
     },
+    level4: {
+      id: 'web.secondarySchoolStudies:details.level4',
+      defaultMessage: 'Þrep 4',
+    },
     level1Mobile: {
       id: 'web.secondarySchoolStudies:details.level1Mobile',
       defaultMessage: 'Þ. 1',
@@ -228,6 +232,10 @@ export const m = {
     level3Mobile: {
       id: 'web.secondarySchoolStudies:details.level3Mobile',
       defaultMessage: 'Þ. 3',
+    },
+    level4Mobile: {
+      id: 'web.secondarySchoolStudies:details.level4Mobile',
+      defaultMessage: 'Þ. 4',
     },
     units: {
       id: 'web.secondarySchoolStudies:details.units',

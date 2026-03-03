@@ -11,6 +11,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
 import { GET_SECONDARY_SCHOOL_PROGRAMME_BY_ID_QUERY } from '../queries/SecondarySchoolStudies'
@@ -118,7 +119,11 @@ SecondarySchoolStudiesDetailsPage.getProps = async ({
       },
     })
 
-  const programme = programmeResult.data.secondarySchoolProgrammeById
+  const programme = programmeResult?.data?.secondarySchoolProgrammeById
+
+  if (!programme?.id) {
+    throw new CustomNextError(404, 'Programme not found')
+  }
 
   return {
     programme,
@@ -136,5 +141,6 @@ export default withMainLayout(
   ),
   {
     footerVersion: 'organization',
+    showSearchInHeader: false,
   },
 )

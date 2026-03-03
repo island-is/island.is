@@ -26,8 +26,8 @@ export const DetailSidebarMobile = ({ schools }: DetailSidebarMobileProps) => {
   const hasMultipleSchools = schools && schools.length > 1
   const singleSchool = schools?.[0]
 
-  const getSchoolIcon = (schoolId?: string | null) => {
-    return getSchoolData(schoolId).icon
+  const getSchoolIcon = (schoolAbbrv?: string | null) => {
+    return getSchoolData(schoolAbbrv).icon
   }
 
   return (
@@ -86,30 +86,31 @@ export const DetailSidebarMobile = ({ schools }: DetailSidebarMobileProps) => {
           {isExpanded && (
             <Box display="flex" flexDirection="column" rowGap={2} marginTop={3}>
               {schools?.map((school) => (
-                <Box
+                <a
                   key={school?.id}
-                  display="flex"
-                  flexDirection="row"
-                  alignItems="center"
-                  columnGap={2}
+                  href={getSchoolData(school?.abbreviation).website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: theme.color.purple400 }}
                 >
-                  <img
-                    src={`/assets/framhaldsskolar/${getSchoolIcon(school?.id)}`}
-                    alt={`${school?.name || 'School'} logo`}
-                    className={styles.schoolIconSmall}
-                  />
-                  <Text variant="medium" color="purple600">
-                    {school?.name || formatMessage(m.details.unknownSchool)}
-                  </Text>
-                  <a
-                    href={getSchoolData(school?.id).website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: theme.color.purple400 }}
+                  <Box
+                    display="flex"
+                    flexDirection="row"
+                    alignItems="center"
+                    columnGap={2}
                   >
-                    {getSchoolData(school?.id).website}
-                  </a>
-                </Box>
+                    <img
+                      src={`/assets/framhaldsskolar/${getSchoolIcon(
+                        school?.abbreviation,
+                      )}`}
+                      alt={`${school?.name || 'School'} logo`}
+                      className={styles.schoolIconSmall}
+                    />
+                    <Text variant="medium" color="purple600">
+                      {school?.name || formatMessage(m.details.unknownSchool)}
+                    </Text>
+                  </Box>
+                </a>
               ))}
             </Box>
           )}
@@ -128,7 +129,9 @@ export const DetailSidebarMobile = ({ schools }: DetailSidebarMobileProps) => {
         >
           <Box display="flex" justifyContent="center" alignSelf="center">
             <img
-              src={`/assets/framhaldsskolar/${getSchoolIcon(singleSchool?.id)}`}
+              src={`/assets/framhaldsskolar/${getSchoolIcon(
+                singleSchool?.abbreviation,
+              )}`}
               alt={`${singleSchool?.name || 'School'} logo`}
               className={styles.schoolIcon}
             />

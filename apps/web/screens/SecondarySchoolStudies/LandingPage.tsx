@@ -45,14 +45,25 @@ import * as styles from './SecondarySchoolStudies.css'
 
 const ITEMS_PER_PAGE = 18
 
+const getDeterministicWeight = (value: string) => {
+  let hash = 0
+
+  for (let index = 0; index < value.length; index++) {
+    hash = (hash * 31 + value.charCodeAt(index)) % 2147483647
+  }
+
+  return hash
+}
+
 interface SecondarySchoolStudiesLandingPageProps {
   programmes: SecondarySchoolAllProgrammesQuery['secondarySchoolAllProgrammes']
   filterOptions: SecondarySchoolProgrammeFilterOptionsQuery['secondarySchoolProgrammeFilterOptions']
+  hourlySeed: string
 }
 
 const SecondarySchoolStudiesLandingPage: Screen<
   SecondarySchoolStudiesLandingPageProps
-> = ({ programmes, filterOptions }) => {
+> = ({ programmes, filterOptions, hourlySeed }) => {
   const { formatMessage } = useIntl()
 
   const [isMounted, setIsMounted] = useState(false)
@@ -96,10 +107,23 @@ const SecondarySchoolStudiesLandingPage: Screen<
           },
         ]
       })
-      .sort(() => Math.random() - 0.5) // Randomize initial order
+      .sort((left, right) => {
+        const leftWeight = getDeterministicWeight(
+          `${hourlySeed}:${left.item.id ?? left.refIndex}`,
+        )
+        const rightWeight = getDeterministicWeight(
+          `${hourlySeed}:${right.item.id ?? right.refIndex}`,
+        )
+
+        if (leftWeight === rightWeight) {
+          return left.refIndex - right.refIndex
+        }
+
+        return leftWeight - rightWeight
+      })
 
     setOriginalSortedResults(sortedResultsWithSchools)
-  }, [programmes])
+  }, [hourlySeed, programmes])
 
   // Calculate total pages when filtered results change
   useEffect(() => {
@@ -380,9 +404,18 @@ SecondarySchoolStudiesLandingPage.getProps = async ({
   const filterOptions =
     filterOptionsResponse?.data.secondarySchoolProgrammeFilterOptions
 
+  const now = new Date()
+  const hourlySeed = [
+    now.getUTCFullYear(),
+    String(now.getUTCMonth() + 1).padStart(2, '0'),
+    String(now.getUTCDate()).padStart(2, '0'),
+    String(now.getUTCHours()).padStart(2, '0'),
+  ].join('')
+
   return {
     programmes,
     filterOptions,
+    hourlySeed,
     languageToggleHrefOverride: {
       is: '/framhaldsskolanam',
       en: '/en/secondary-school-studies',
@@ -397,5 +430,6 @@ export default withMainLayout(
   ),
   {
     footerVersion: 'organization',
+    showSearchInHeader: false,
   },
 )

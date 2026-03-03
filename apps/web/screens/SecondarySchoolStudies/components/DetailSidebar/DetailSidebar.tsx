@@ -24,8 +24,8 @@ export const DetailSidebar = ({ schools }: DetailSidebarProps) => {
   const hasMultipleSchools = schools && schools.length > 1
   const singleSchool = schools?.[0]
 
-  const getSchoolIcon = (schoolId?: string | null) => {
-    return getSchoolData(schoolId).icon
+  const getSchoolIcon = (schoolAbbrv?: string | null) => {
+    return getSchoolData(schoolAbbrv).icon
   }
 
   return (
@@ -59,7 +59,7 @@ export const DetailSidebar = ({ schools }: DetailSidebarProps) => {
             {schools?.map((school) => (
               <a
                 key={school?.id}
-                href={getSchoolData(school?.id).website}
+                href={getSchoolData(school?.abbreviation).website}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ color: theme.color.purple400 }}
@@ -72,7 +72,9 @@ export const DetailSidebar = ({ schools }: DetailSidebarProps) => {
                   cursor="pointer"
                 >
                   <img
-                    src={`/assets/framhaldsskolar/${getSchoolIcon(school?.id)}`}
+                    src={`/assets/framhaldsskolar/${getSchoolIcon(
+                      school?.abbreviation,
+                    )}`}
                     alt={`${school?.name || 'School'} logo`}
                     className={styles.schoolIconSmall}
                   />
@@ -86,7 +88,7 @@ export const DetailSidebar = ({ schools }: DetailSidebarProps) => {
         </Box>
       ) : (
         <a
-          href={getSchoolData(singleSchool?.id).website}
+          href={getSchoolData(singleSchool?.abbreviation).website}
           target="_blank"
           rel="noopener noreferrer"
           style={{ color: theme.color.purple400 }}
@@ -102,7 +104,7 @@ export const DetailSidebar = ({ schools }: DetailSidebarProps) => {
             <Box display="flex" justifyContent="center" alignSelf="center">
               <img
                 src={`/assets/framhaldsskolar/${getSchoolIcon(
-                  singleSchool?.id,
+                  singleSchool?.abbreviation,
                 )}`}
                 alt={`${singleSchool?.name || 'School'} logo`}
                 className={styles.schoolIcon}

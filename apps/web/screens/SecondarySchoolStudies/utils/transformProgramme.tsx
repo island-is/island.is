@@ -49,7 +49,7 @@ export const transformProgrammeToCard = (
     })
   }
 
-  const schoolData = getSchoolData(school?.id)
+  const schoolData = getSchoolData(school?.abbreviation)
 
   return {
     id: `${programme.id}-${school?.id || 'unknown'}`,

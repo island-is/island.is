@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import ReactHtmlParser from 'react-html-parser'
 import { useIntl } from 'react-intl'
 
@@ -152,6 +152,11 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                       )}
                     </T.HeadData>
                     <T.HeadData style={{ textAlign: 'right' }}>
+                      {formatMessage(
+                        md ? m.details.level4 : m.details.level4Mobile,
+                      )}
+                    </T.HeadData>
+                    <T.HeadData style={{ textAlign: 'right' }}>
                       {formatMessage(m.details.units)}
                     </T.HeadData>
                   </T.Row>
@@ -167,9 +172,9 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                         ) || 0
 
                       return (
-                        <>
+                        <Fragment key={`core-fragment-${groupIndex}`}>
                           <T.Row key={`core-group-${groupIndex}`}>
-                            <T.Data colSpan={4}>
+                            <T.Data colSpan={5}>
                               <Text variant="small" color="dark300">
                                 {group.title
                                   ? group.title
@@ -216,12 +221,17 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                                 <T.Data
                                   style={{ textAlign: 'right', ...borderStyle }}
                                 >
+                                  {subject.level4 || '-'}
+                                </T.Data>
+                                <T.Data
+                                  style={{ textAlign: 'right', ...borderStyle }}
+                                >
                                   {subject.credits || '-'}
                                 </T.Data>
                               </T.Row>
                             )
                           })}
-                        </>
+                        </Fragment>
                       )
                     },
                   )}
@@ -229,12 +239,14 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                   {programme.programmeStructure.packageChoices?.map(
                     (choice, choiceIndex) => {
                       return (
-                        <>
+                        <Fragment
+                          key={`package-choice-fragment-${choiceIndex}`}
+                        >
                           {choice.requiredPackages !== undefined &&
                             choice.packages &&
                             choice.packages.length > 1 && (
                               <T.Row key={`package-choice-${choiceIndex}`}>
-                                <T.Data colSpan={5}>
+                                <T.Data colSpan={6}>
                                   <Text variant="small" color="dark300">
                                     {formatMessage(m.details.chooseXofY, {
                                       required: choice.requiredPackages,
@@ -259,7 +271,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                                     key={`package-${choiceIndex}-${pkgIndex}`}
                                   >
                                     <T.Data
-                                      colSpan={4}
+                                      colSpan={5}
                                       style={{ paddingLeft: '24px' }}
                                     >
                                       <Text variant="small" color="dark300">
@@ -329,6 +341,14 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                                           ...borderStyle,
                                         }}
                                       >
+                                        {subject.level4 || '-'}
+                                      </T.Data>
+                                      <T.Data
+                                        style={{
+                                          textAlign: 'right',
+                                          ...borderStyle,
+                                        }}
+                                      >
                                         {subject.credits || '-'}
                                       </T.Data>
                                     </T.Row>
@@ -337,7 +357,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                               </>
                             )
                           })}
-                        </>
+                        </Fragment>
                       )
                     },
                   )}
@@ -352,10 +372,10 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                         ) || 0
 
                       return (
-                        <>
+                        <Fragment key={`subject-choice-fragment-${groupIndex}`}>
                           {group.requiredCredits !== undefined && (
                             <T.Row key={`choice-group-${groupIndex}`}>
-                              <T.Data colSpan={4}>
+                              <T.Data colSpan={5}>
                                 <Text variant="small" color="dark300">
                                   {formatMessage(
                                     m.details.subjectChoiceGroupsSubtitle,
@@ -406,12 +426,17 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                                 <T.Data
                                   style={{ textAlign: 'right', ...borderStyle }}
                                 >
+                                  {subject.level4 || '-'}
+                                </T.Data>
+                                <T.Data
+                                  style={{ textAlign: 'right', ...borderStyle }}
+                                >
                                   {subject.credits || '-'}
                                 </T.Data>
                               </T.Row>
                             )
                           })}
-                        </>
+                        </Fragment>
                       )
                     },
                   )}
