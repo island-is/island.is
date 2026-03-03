@@ -12,7 +12,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { Locale } from '@island.is/shared/types'
 import { HeadWithSocialSharing } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
