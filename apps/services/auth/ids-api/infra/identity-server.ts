@@ -204,6 +204,5 @@ export const serviceSetup = (services: {
         },
       },
     })
-    .allowExternalNetwork()
     .grantNamespaces('user-notification', 'portals-admin', 'datadog')
 }

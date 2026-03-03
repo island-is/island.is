@@ -94,4 +94,4 @@ export const serviceSetup = (): ServiceBuilder<'license-api'> =>
     })
     .liveness('/liveness')
     .readiness('/liveness')
-    .allowInternalNetwork()
+    .grantNamespaces('nginx-ingress-internal')

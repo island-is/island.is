@@ -76,8 +76,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
     })
     .liveness('/liveness')
     .readiness('/liveness')
-    .allowInternalNetwork()
-    .grantNamespaces('islandis', 'application-system')
+    .grantNamespaces('islandis', 'nginx-ingress-internal', 'application-system')
 }
 
 export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {

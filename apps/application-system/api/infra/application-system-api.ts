@@ -516,5 +516,4 @@ export const serviceSetup = (services: {
         },
       },
     })
-    .allowInternalNetwork()
-    .grantNamespaces('services-payments', 'islandis')
+    .grantNamespaces('services-payments', 'nginx-ingress-internal', 'islandis')

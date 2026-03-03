@@ -62,4 +62,4 @@ export const serviceSetup = (services: {
         },
       },
     })
-    .allowExternalNetwork()
+    .grantNamespaces('nginx-ingress-external')

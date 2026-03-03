@@ -89,8 +89,8 @@ export const serviceSetup = (services: {
       staging: { basicAuth: '/k8s/web/basic_auth' },
       prod: {},
     })
-    .allowExternalNetwork()
     .grantNamespaces(
+      'nginx-ingress-external',
       'api-catalogue',
       'application-system',
       'consultation-portal',

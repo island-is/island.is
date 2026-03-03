@@ -142,8 +142,6 @@ export interface HelmService {
 
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
-  allowExternalNetwork: boolean
-  allowInternalNetwork: boolean
 
   env: ContainerEnvironmentVariables
   secrets: ContainerSecrets

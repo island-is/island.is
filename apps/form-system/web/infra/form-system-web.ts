@@ -55,4 +55,4 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         paths: ['/form'],
       },
     })
-    .allowExternalNetwork()
+    .grantNamespaces('nginx-ingress-external')

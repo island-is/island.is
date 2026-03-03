@@ -147,7 +147,5 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       min: 2,
       max: 10,
     })
-    .allowExternalNetwork()
-    .allowInternalNetwork()
     .grantNamespaces('islandis')
 }

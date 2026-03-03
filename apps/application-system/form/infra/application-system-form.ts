@@ -48,6 +48,4 @@ export const serviceSetup = (): ServiceBuilder<'application-system-form'> =>
         paths: ['/umsoknir'],
       },
     })
-    .allowExternalNetwork()
-    .allowInternalNetwork()
     .grantNamespaces('islandis')

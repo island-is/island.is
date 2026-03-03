@@ -141,8 +141,7 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     .xroad(Base, Client, ChargeFjsV2)
     .readiness('/liveness')
     .liveness('/liveness')
-    .allowInternalNetwork()
-    .grantNamespaces('application-system', 'islandis')
+    .grantNamespaces('application-system', 'nginx-ingress-internal', 'islandis')
 
 // worker setup
 export const serviceSetupForWorker =

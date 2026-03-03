@@ -97,8 +97,6 @@ export function prepareServiceForEnv(
     files: serviceDef.files,
     grantNamespaces: serviceDef.grantNamespaces,
     grantNamespacesEnabled: serviceDef.grantNamespacesEnabled,
-    allowExternalNetwork: serviceDef.allowExternalNetwork,
-    allowInternalNetwork: serviceDef.allowInternalNetwork,
     ingress: ingress,
     liveness: serviceDef.liveness,
     namespace: serviceDef.namespace,
