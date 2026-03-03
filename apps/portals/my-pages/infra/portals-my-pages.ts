@@ -49,8 +49,4 @@ export const serviceSetup = (): ServiceBuilder<'service-portal'> =>
     })
     .allowExternalNetwork()
     .allowInternalNetwork()
-    .grantNamespaces(
-      'islandis',
-      'user-notification',
-      'identity-server',
-    )
+    .grantNamespaces('islandis', 'user-notification', 'identity-server')

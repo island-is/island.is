@@ -174,7 +174,6 @@ describe('Env definition defaults', () => {
   })
 })
 
-
 describe('Network access methods', () => {
   it('allowExternalNetwork sets field to true', async () => {
     const sut = service('api')

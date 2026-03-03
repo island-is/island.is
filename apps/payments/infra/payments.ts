@@ -80,6 +80,4 @@ export const serviceSetup = (services: {
     .liveness('/liveness')
     .allowExternalNetwork()
     .allowInternalNetwork()
-    .grantNamespaces(
-      'islandis',
-    )
+    .grantNamespaces('islandis')
