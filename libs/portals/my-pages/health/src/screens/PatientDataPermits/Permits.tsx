@@ -39,6 +39,7 @@ const PatientDataPermits: FC = () => {
         !loading && !error
           ? [
               <LinkButton
+                key="readAboutPermit"
                 variant="utility"
                 size="small"
                 to={formatMessage(messages.patientDataPermitsLink)}
