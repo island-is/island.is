@@ -15,6 +15,9 @@ const {
   APP_VERSION,
   ENVIRONMENT,
   CONFIGCAT_SDK_KEY,
+  MATOMO_SITE_ID,
+  MATOMO_DOMAIN,
+  MATOMO_ENABLED,
 } = process.env
 
 /**
@@ -235,6 +238,9 @@ const nextConfig = {
     appVersion: APP_VERSION,
     environment: ENVIRONMENT,
     configCatSdkKey: CONFIGCAT_SDK_KEY,
+    matomoSiteId: MATOMO_SITE_ID,
+    matomoDomain: MATOMO_DOMAIN,
+    isMatomoEnabled: MATOMO_ENABLED === 'true',
   },
 
   env: {
