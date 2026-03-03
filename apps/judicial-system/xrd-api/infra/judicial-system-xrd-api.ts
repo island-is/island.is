@@ -30,4 +30,4 @@ export const serviceSetup = (services: {
         public: false,
       },
     })
-    .grantNamespaces('nginx-ingress-internal')
+    .allowInternalNetwork()

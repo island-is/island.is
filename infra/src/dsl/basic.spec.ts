@@ -76,6 +76,11 @@ describe('Basic serialization', () => {
     expect(result.serviceDef[0].grantNamespacesEnabled).toBe(false)
   })
 
+  it('network access defaults', () => {
+    expect(result.serviceDef[0].allowExternalNetwork).toBe(false)
+    expect(result.serviceDef[0].allowInternalNetwork).toBe(false)
+  })
+
   it('resources', () => {
     expect(result.serviceDef[0].resources).toStrictEqual({
       requests: {
@@ -166,5 +171,57 @@ describe('Env definition defaults', () => {
       max: 3,
       default: 2,
     })
+  })
+})
+
+
+describe('Network access methods', () => {
+  it('allowExternalNetwork sets field to true', async () => {
+    const sut = service('api')
+      .namespace('islandis')
+      .image('test')
+      .allowExternalNetwork()
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+
+    expect(result.serviceDef[0].allowExternalNetwork).toBe(true)
+    expect(result.serviceDef[0].allowInternalNetwork).toBe(false)
+  })
+
+  it('allowInternalNetwork sets field to true', async () => {
+    const sut = service('api')
+      .namespace('islandis')
+      .image('test')
+      .allowInternalNetwork()
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+
+    expect(result.serviceDef[0].allowExternalNetwork).toBe(false)
+    expect(result.serviceDef[0].allowInternalNetwork).toBe(true)
+  })
+
+  it('both network access methods can be set simultaneously', async () => {
+    const sut = service('api')
+      .namespace('islandis')
+      .image('test')
+      .allowExternalNetwork()
+      .allowInternalNetwork()
+    const result = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sut,
+      runtime: new Kubernetes(Staging),
+      env: Staging,
+    })) as SerializeSuccess<HelmService>
+
+    expect(result.serviceDef[0].allowExternalNetwork).toBe(true)
+    expect(result.serviceDef[0].allowInternalNetwork).toBe(true)
   })
 })

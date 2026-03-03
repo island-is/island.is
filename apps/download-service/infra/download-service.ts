@@ -99,9 +99,9 @@ export const serviceSetup = (services: {
     })
     .liveness('download/v1/liveness')
     .readiness('download/v1/readiness')
+    .allowExternalNetwork()
     .grantNamespaces(
       'islandis',
-      'nginx-ingress-external',
       'services-bff-portals-admin',
     )
     .resources({

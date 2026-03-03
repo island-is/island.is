@@ -109,6 +109,8 @@ export type ServiceDefinitionCore = {
   namespace: string
   grantNamespaces: string[]
   grantNamespacesEnabled: boolean
+  allowExternalNetwork: boolean
+  allowInternalNetwork: boolean
   name: string
   accountName?: string
   serviceAccountEnabled: boolean
