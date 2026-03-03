@@ -58,6 +58,7 @@ export const BaseInput = () => {
     return false
   }
 
+  console.log('currentItem', currentItem.fieldType)
   return (
     <Stack space={2}>
       <Row>
@@ -214,24 +215,25 @@ export const BaseInput = () => {
           </Row>
         </>
       )}
-      <Row>
-        {/* Required checkbox */}
-        <Column span="5/10">
-          <Checkbox
-            label={formatMessage(m.required)}
-            checked={currentItem.isRequired ?? false}
-            disabled={isPublished}
-            onChange={() =>
-              controlDispatch({
-                type: 'CHANGE_IS_REQUIRED',
-                payload: {
-                  update: updateActiveItem,
-                },
-              })
-            }
-          />
-        </Column>
-      </Row>
+      {currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX && (
+        <Row>
+          <Column span="5/10">
+            <Checkbox
+              label={formatMessage(m.required)}
+              checked={currentItem.isRequired ?? false}
+              disabled={isPublished}
+              onChange={() =>
+                controlDispatch({
+                  type: 'CHANGE_IS_REQUIRED',
+                  payload: {
+                    update: updateActiveItem,
+                  },
+                })
+              }
+            />
+          </Column>
+        </Row>
+      )}
     </Stack>
   )
 }
