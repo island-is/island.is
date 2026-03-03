@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { Box, Button, Text, Tooltip } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { SecondarySchoolProgrammeByIdQuery } from '@island.is/web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks'
 
 import { m } from '../../messages/messages'
 import { getSchoolData } from '../../utils/schoolDataMap'
@@ -11,14 +12,21 @@ import * as styles from './DetailSidebar.css'
 
 interface DetailSidebarProps {
   schools?: SecondarySchoolProgrammeByIdQuery['secondarySchoolProgrammeById']['schools']
+  locale: string
 }
 
-export const DetailSidebar = ({ schools }: DetailSidebarProps) => {
+export const DetailSidebar = ({ schools, locale }: DetailSidebarProps) => {
   const router = useRouter()
   const { formatMessage } = useIntl()
-
+  const { linkResolver } = useLinkResolver()
   const handleBackClick = () => {
-    router.push('/framhaldsskolanam')
+    router.push(
+      linkResolver(
+        'secondaryschoolstudieslandingpage',
+        [],
+        locale === 'en' ? 'en' : 'is',
+      ).href,
+    )
   }
 
   const hasMultipleSchools = schools && schools.length > 1

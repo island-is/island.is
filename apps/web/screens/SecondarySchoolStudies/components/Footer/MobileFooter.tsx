@@ -81,13 +81,13 @@ export const MobileFooter = () => {
             fluid
             onClick={() =>
               window.open(
-                'https://innritun.is/',
+                'https://naestaskref.is',
                 '_blank',
                 'noopener,noreferrer',
               )
             }
           >
-            {formatMessage(m.general.innritun)}
+            {formatMessage(m.general.nextStep)}
           </Button>
           <Button
             variant="ghost"
@@ -98,13 +98,13 @@ export const MobileFooter = () => {
             fluid
             onClick={() =>
               window.open(
-                'https://naestaskref.is',
+                'https://island.is/umsokn-um-framhaldsskola',
                 '_blank',
                 'noopener,noreferrer',
               )
             }
           >
-            {formatMessage(m.general.nextStep)}
+            {formatMessage(m.general.innritun)}
           </Button>
         </Box>
       </Box>

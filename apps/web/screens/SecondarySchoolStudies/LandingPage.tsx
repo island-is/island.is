@@ -12,12 +12,14 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { Locale } from '@island.is/shared/types'
 import { HeadWithSocialSharing } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   SecondarySchoolAllProgrammesQuery,
   SecondarySchoolProgrammeFilterOptionsQuery,
 } from '@island.is/web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 
@@ -59,20 +61,24 @@ interface SecondarySchoolStudiesLandingPageProps {
   programmes: SecondarySchoolAllProgrammesQuery['secondarySchoolAllProgrammes']
   filterOptions: SecondarySchoolProgrammeFilterOptionsQuery['secondarySchoolProgrammeFilterOptions']
   hourlySeed: string
+  locale: string
 }
 
 const SecondarySchoolStudiesLandingPage: Screen<
   SecondarySchoolStudiesLandingPageProps
-> = ({ programmes, filterOptions, hourlySeed }) => {
+> = ({ programmes, filterOptions, hourlySeed, locale }) => {
   const { formatMessage } = useIntl()
-
+  const { linkResolver } = useLinkResolver()
   const [isMounted, setIsMounted] = useState(false)
   const [isGridView, setIsGridView] = useState(true)
   const { width } = useWindowSize()
 
   const isTablet = isMounted && width <= theme.breakpoints.lg
-
-  const pathname = '/framhaldsskolanam'
+  const pathname = linkResolver(
+    'secondaryschoolstudieslandingpage',
+    [],
+    locale === 'en' ? 'en' : 'is',
+  ).href
 
   const {
     selectedFilters,
@@ -389,7 +395,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
 
 SecondarySchoolStudiesLandingPage.getProps = async ({
   apolloClient,
-  locale: _locale,
+  locale,
 }) => {
   const [programmesResponse, filterOptionsResponse] = await Promise.all([
     apolloClient.query<SecondarySchoolAllProgrammesQuery>({
@@ -420,6 +426,7 @@ SecondarySchoolStudiesLandingPage.getProps = async ({
       is: '/framhaldsskolanam',
       en: '/en/secondary-school-studies',
     },
+    locale,
   }
 }
 

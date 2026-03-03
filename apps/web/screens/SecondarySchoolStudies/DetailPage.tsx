@@ -29,11 +29,12 @@ import * as styles from './SecondarySchoolStudies.css'
 
 interface SecondarySchoolStudiesDetailsPageProps {
   programme: SecondarySchoolProgrammeByIdQuery['secondarySchoolProgrammeById']
+  locale: string
 }
 
 const SecondarySchoolStudiesDetailsPage: Screen<
   SecondarySchoolStudiesDetailsPageProps
-> = ({ programme }) => {
+> = ({ programme, locale }) => {
   const { formatMessage } = useIntl()
   const [isMounted, setIsMounted] = useState(false)
   const { width } = useWindowSize()
@@ -71,14 +72,19 @@ const SecondarySchoolStudiesDetailsPage: Screen<
               className={styles.sidebar}
               style={{ top: 72 }}
             >
-              <DetailSidebar schools={programme.schools} />
+              <DetailSidebar schools={programme.schools} locale={locale} />
             </Box>
           )}
 
           {/* Content Wrapper */}
           <Box flexGrow={1} paddingLeft={2} className={styles.contentWrapper}>
             {/* ADD mobile showing of the schools  */}
-            {isTablet && <DetailSidebarMobile schools={programme.schools} />}
+            {isTablet && (
+              <DetailSidebarMobile
+                schools={programme.schools}
+                locale={locale}
+              />
+            )}
 
             <Box display="flex" flexDirection="column" rowGap={4}>
               <ProgrammeHeader
@@ -108,9 +114,13 @@ const SecondarySchoolStudiesDetailsPage: Screen<
 
 SecondarySchoolStudiesDetailsPage.getProps = async ({
   apolloClient,
-  locale: _locale,
+  locale,
   query,
 }) => {
+  if (!query?.id) {
+    throw new CustomNextError(404, 'Programme not found')
+  }
+
   const programmeResult =
     await apolloClient.query<SecondarySchoolProgrammeByIdQuery>({
       query: GET_SECONDARY_SCHOOL_PROGRAMME_BY_ID_QUERY,
@@ -121,7 +131,7 @@ SecondarySchoolStudiesDetailsPage.getProps = async ({
 
   const programme = programmeResult?.data?.secondarySchoolProgrammeById
 
-  if (!programme?.id) {
+  if (!programme) {
     throw new CustomNextError(404, 'Programme not found')
   }
 
@@ -131,6 +141,7 @@ SecondarySchoolStudiesDetailsPage.getProps = async ({
       is: `/framhaldsskolanam/${programme.id}`,
       en: `/en/secondary-school-studies/${programme.id}`,
     },
+    locale,
   }
 }
 

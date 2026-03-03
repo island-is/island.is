@@ -52,15 +52,15 @@ export const transformProgrammeToCard = (
   const schoolData = getSchoolData(school?.abbreviation)
 
   return {
-    id: `${programme.id}-${school?.id || 'unknown'}`,
-    schoolName: school?.name || 'Óþekktur skóli',
+    id: `${programme.id}-${school?.id || ''}`,
+    schoolName: school?.name || '',
     schoolIcon: (
       <img
         src={`/assets/framhaldsskolar/${schoolData.icon}`}
         alt={`${school?.name || 'School'} logo`}
       />
     ),
-    title: programme.title || 'Óþekkt námsbraut',
+    title: programme.title || '',
     description: programme.description || undefined,
     detailLines,
     href: `/framhaldsskolanam/${programme.id}`,

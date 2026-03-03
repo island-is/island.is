@@ -4,7 +4,7 @@ export interface SchoolData {
   website: string
 }
 
-// Website belong on contentful ?
+// Website url probably belongs on Contentful ?
 export const SCHOOL_DATA_MAP: Record<string, SchoolData> = {
   SA: {
     icon: 'SA.svg',

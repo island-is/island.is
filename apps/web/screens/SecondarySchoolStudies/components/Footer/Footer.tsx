@@ -76,7 +76,7 @@ export const Footer = () => {
                 iconType="outline"
                 onClick={() =>
                   window.open(
-                    'https://naestaskref.is/is',
+                    'https://island.is/umsokn-um-framhaldsskola',
                     '_blank',
                     'noopener,noreferrer',
                   )
@@ -92,8 +92,9 @@ export const Footer = () => {
                 iconType="outline"
                 onClick={() =>
                   window.open(
-                    'https://island.is/umsokn-um-framhaldsskola',
+                    'https://naestaskref.is/is',
                     '_blank',
+                    'noopener,noreferrer',
                   )
                 }
               >
