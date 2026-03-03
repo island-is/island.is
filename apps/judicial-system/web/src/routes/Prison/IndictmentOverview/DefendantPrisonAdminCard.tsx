@@ -1,6 +1,6 @@
 import { Box, Icon, Option, Select, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import BlueBoxWithContextMenu from '@island.is/judicial-system-web/src/components/BlueBoxWithIcon/BlueBoxWithContextMenu'
+import ContextMenuCard from '@island.is/judicial-system-web/src/components/Cards/ContextMenuCard/ContextMenuCard'
 import {
   Defendant,
   PunishmentType,
@@ -39,7 +39,7 @@ export const DefendantPrisonAdminCard = ({
 
   return (
     <Box marginBottom={3}>
-      <BlueBoxWithContextMenu
+      <ContextMenuCard
         title={
           <Box display="flex" alignItems="center" columnGap={1}>
             <Text variant="h4" as="h4">
@@ -105,7 +105,7 @@ export const DefendantPrisonAdminCard = ({
           }
           size="sm"
         />
-      </BlueBoxWithContextMenu>
+      </ContextMenuCard>
     </Box>
   )
 }

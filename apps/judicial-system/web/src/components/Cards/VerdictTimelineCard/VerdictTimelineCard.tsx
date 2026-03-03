@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text, toast } from '@island.is/island-ui/core'
 import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
 import {
   formatDate,
@@ -19,13 +19,13 @@ import {
 } from '../../../graphql/schema'
 import { formatDateForServer, useDefendants } from '../../../utils/hooks'
 import useVerdict from '../../../utils/hooks/useVerdict'
-import BlueBoxWithContextMenu from '../../BlueBoxWithIcon/BlueBoxWithContextMenu'
 import DateTime from '../../DateTime/DateTime'
 import { FormContext } from '../../FormProvider/FormProvider'
 import { getAppealExpirationInfo } from '../../InfoCard/DefendantInfo/DefendantInfo.logic'
 import Modal from '../../Modals/Modal/Modal'
 import SectionHeading from '../../SectionHeading/SectionHeading'
 import VerdictAppealDecisionChoice from '../../VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
+import ContextMenuCard from '../ContextMenuCard/ContextMenuCard'
 import { strings } from './VerdictTimelineCard.strings'
 import { grid } from '../../../utils/styles/recipes.css'
 import * as styles from '../../BlueBoxWithIcon/BlueBoxWithIcon.css'
@@ -255,13 +255,27 @@ const VerdictTimelineCard: FC<Props> = (props) => {
 
   return (
     <>
-      <BlueBoxWithContextMenu
+      <ContextMenuCard
         title={
-          <SectionHeading
-            title={defendant.name || ''}
-            heading="h4"
-            marginBottom={0}
-          />
+          <Box display="flex" alignItems="center" columnGap={1}>
+            <SectionHeading
+              title={defendant.name || ''}
+              heading="h4"
+              marginBottom={0}
+            />
+            <AnimatePresence>
+              {defendant.publicProsecutorIsRegisteredInPoliceSystem && (
+                <motion.span
+                  style={{ display: 'flex' }}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                >
+                  <Icon icon="checkmark" color="blue400" size="medium" />
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </Box>
         }
         contextMenuItems={[
           {
@@ -475,7 +489,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
             </motion.div>
           )}
         </Box>
-      </BlueBoxWithContextMenu>
+      </ContextMenuCard>
       {modalVisible?.type === 'REVOKE_SEND_TO_PRISON_ADMIN' && (
         <Modal
           title="Afturkalla úr fullnustu"

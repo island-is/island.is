@@ -136,105 +136,110 @@ export const Overview = () => {
             />
           </Box>
         )}
-        {workingCase.defendants?.map((defendant) => {
-          const { verdict } = defendant
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          {workingCase.defendants?.map((defendant) => {
+            const { verdict } = defendant
 
-          const isServiceRequired =
-            verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+            const isServiceRequired =
+              verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
-          const isServiceNotApplicable =
-            verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+            const isServiceNotApplicable =
+              verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
 
-          const canDefendantAppealVerdict = !!(
-            verdict &&
-            !verdict.isDefaultJudgement &&
-            (isServiceNotApplicable ||
-              (isServiceRequired && !!verdict.serviceDate))
-          )
+            const canDefendantAppealVerdict = !!(
+              verdict &&
+              !verdict.isDefaultJudgement &&
+              (isServiceNotApplicable ||
+                (isServiceRequired && !!verdict.serviceDate))
+            )
 
-          return (
-            <Fragment key={defendant.id}>
-              <Box className={styles.container}>
-                {verdict && (
-                  <VerdictStatusAlert verdict={verdict} defendant={defendant} />
-                )}
-                <Box component="section">
-                  <VerdictTimelineCard
-                    defendant={defendant}
-                    canDefendantAppealVerdict={canDefendantAppealVerdict}
-                  />
+            return (
+              <Fragment key={defendant.id}>
+                <Box className={styles.container}>
+                  {verdict && (
+                    <VerdictStatusAlert
+                      verdict={verdict}
+                      defendant={defendant}
+                    />
+                  )}
+                  <Box component="section">
+                    <VerdictTimelineCard
+                      defendant={defendant}
+                      canDefendantAppealVerdict={canDefendantAppealVerdict}
+                    />
+                  </Box>
                 </Box>
+              </Fragment>
+            )
+          })}
+          <Box component="section">
+            <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
+          </Box>
+          {workingCase.courtSessions?.at(-1)?.ruling &&
+            isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
+              <Box component="section">
+                <Conclusion
+                  title={`${
+                    workingCase.indictmentRulingDecision ===
+                    CaseIndictmentRulingDecision.RULING
+                      ? 'Dóms'
+                      : 'Úrskurðar'
+                  }orð héraðsdóms`}
+                  conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
+                  judgeName={workingCase.judge?.name}
+                />
               </Box>
-            </Fragment>
-          )
-        })}
-        <Box component="section" marginBottom={5}>
-          <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
-        </Box>
-        {workingCase.courtSessions?.at(-1)?.ruling &&
-          isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
-            <Box marginBottom={5} component="section">
-              <Conclusion
-                title={`${
-                  workingCase.indictmentRulingDecision ===
-                  CaseIndictmentRulingDecision.RULING
-                    ? 'Dóms'
-                    : 'Úrskurðar'
-                }orð héraðsdóms`}
-                conclusionText={workingCase.courtSessions?.at(-1)?.ruling}
-                judgeName={workingCase.judge?.name}
-              />
-            </Box>
-          )}
-        {/* 
+            )}
+          {/* 
         NOTE: Temporarily hidden while list of laws broken is not complete in
         indictment cases
         
         {lawsBroken.size > 0 && (
-          <Box marginBottom={5}>
+          <Box component="section">
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
         )} */}
-        <Box component="section" marginBottom={5}>
-          <IndictmentCaseFilesList workingCase={workingCase} />
-        </Box>
-        <Box component="section" marginBottom={10}>
-          {workingCase.defendants?.some(
-            (defendant) => !defendant.indictmentReviewDecision,
-          ) ? (
-            <IndictmentReviewerSelector
-              workingCase={workingCase}
-              selectedIndictmentReviewer={selectedIndictmentReviewer}
-              setSelectedIndictmentReviewer={setSelectedIndictmentReviewer}
-            />
-          ) : (
-            workingCase.defendants && (
-              <div className={grid({ gap: 3 })}>
-                {workingCase.defendants.map((defendant) => (
-                  <BlueBox key={`${defendant.id}_review_decision`}>
-                    <SectionHeading
-                      title={defendant.name ?? ''}
-                      variant="h4"
-                      heading="h4"
-                      marginBottom={2}
-                      required
-                    />
-                    <ReviewDecision
-                      caseId={workingCase.id}
-                      defendant={defendant}
-                      modalVisible={confirmationModal}
-                      setModalVisible={setConfirmationModal}
-                      isFine={
-                        workingCase.indictmentRulingDecision ===
-                        CaseIndictmentRulingDecision.FINE
-                      }
-                    />
-                  </BlueBox>
-                ))}
-              </div>
-            )
-          )}
-        </Box>
+          <Box component="section">
+            <IndictmentCaseFilesList workingCase={workingCase} />
+          </Box>
+          <Box component="section">
+            {workingCase.defendants?.some(
+              (defendant) => !defendant.indictmentReviewDecision,
+            ) ? (
+              <IndictmentReviewerSelector
+                workingCase={workingCase}
+                selectedIndictmentReviewer={selectedIndictmentReviewer}
+                setSelectedIndictmentReviewer={setSelectedIndictmentReviewer}
+              />
+            ) : (
+              workingCase.defendants && (
+                <div className={grid({ gap: 3 })}>
+                  {workingCase.defendants.map((defendant) => (
+                    <BlueBox key={`${defendant.id}_review_decision`}>
+                      <SectionHeading
+                        title={defendant.name ?? ''}
+                        variant="h4"
+                        heading="h4"
+                        marginBottom={2}
+                        required
+                      />
+                      <ReviewDecision
+                        caseId={workingCase.id}
+                        defendant={defendant}
+                        modalVisible={confirmationModal}
+                        setModalVisible={setConfirmationModal}
+                        isFine={
+                          workingCase.indictmentRulingDecision ===
+                          CaseIndictmentRulingDecision.FINE
+                        }
+                      />
+                    </BlueBox>
+                  ))}
+                </div>
+              )
+            )}
+          </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         {workingCase.defendants?.some(

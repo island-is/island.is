@@ -2,18 +2,18 @@ import { FC, PropsWithChildren, ReactElement } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
 
-import BlueBox from '../BlueBox/BlueBox'
-import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
-import IconButton from '../IconButton/IconButton'
+import BlueBox from '../../BlueBox/BlueBox'
+import ContextMenu, { ContextMenuItem } from '../../ContextMenu/ContextMenu'
+import IconButton from '../../IconButton/IconButton'
 
-interface BlueBoxWithContextMenuProps {
+interface ContextMenuCardProps {
   title: ReactElement | string
   contextMenuItems?: ContextMenuItem[]
 }
 
-const BlueBoxWithContextMenu: FC<
-  PropsWithChildren<BlueBoxWithContextMenuProps>
-> = (props) => {
+const ContextMenuCard: FC<PropsWithChildren<ContextMenuCardProps>> = (
+  props,
+) => {
   const { title, contextMenuItems, children } = props
 
   return (
@@ -46,4 +46,4 @@ const BlueBoxWithContextMenu: FC<
   )
 }
 
-export default BlueBoxWithContextMenu
+export default ContextMenuCard

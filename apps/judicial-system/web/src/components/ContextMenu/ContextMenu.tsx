@@ -152,6 +152,9 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
                       menuItemBoxStyle,
                       menuItemTextStyle,
                       styles.menuItem,
+                      {
+                        [styles.menuItemDisabled]: item.disabled,
+                      },
                     )}
                     disabled={item.disabled}
                   >
