@@ -149,7 +149,5 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
     })
     .allowExternalNetwork()
     .allowInternalNetwork()
-    .grantNamespaces(
-      'islandis',
-    )
+    .grantNamespaces('islandis')
 }

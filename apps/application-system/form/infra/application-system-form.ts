@@ -50,6 +50,4 @@ export const serviceSetup = (): ServiceBuilder<'application-system-form'> =>
     })
     .allowExternalNetwork()
     .allowInternalNetwork()
-    .grantNamespaces(
-      'islandis',
-    )
+    .grantNamespaces('islandis')
