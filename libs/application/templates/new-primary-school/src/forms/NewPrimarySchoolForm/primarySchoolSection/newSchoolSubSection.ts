@@ -51,6 +51,10 @@ export const newSchoolSubSection = buildSubSection({
               key: 'newSchool.alternativeSpecialEducationDepartment',
               value: [],
             },
+            {
+              key: 'newSchool.school',
+              value: undefined,
+            },
           ],
           defaultValue: (application: Application) => {
             const { applicantMunicipalityCode } = getApplicationExternalData(
