@@ -171,19 +171,11 @@ export const Users = () => {
                 }}
               >
                 <Box component="td" paddingX={3} paddingY={2}>
-                  <Box display="flex" flexDirection="column">
-                    <Text as="span">{user.name}</Text>
-                    {user.email && (
-                      <Text variant="small" as="span">
-                        {user.email}
-                      </Text>
-                    )}
-                    {user.mobileNumber && (
-                      <Text variant="small" as="span">
-                        {user.mobileNumber}
-                      </Text>
-                    )}
-                  </Box>
+                  <Text>{user.name}</Text>
+                  {user.email && <Text variant="small">{user.email}</Text>}
+                  {user.mobileNumber && (
+                    <Text variant="small">{user.mobileNumber}</Text>
+                  )}
                 </Box>
                 <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{formatNationalId(user.nationalId)}</Text>
