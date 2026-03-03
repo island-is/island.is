@@ -797,6 +797,10 @@ export const messages = defineMessages({
     defaultMessage: 'Síðast afgreitt',
     id: 'sp.health:last-dispensed',
   },
+  lastChanged: {
+    defaultMessage: 'Síðast breytt',
+    id: 'sp.health:last-changed',
+  },
   lightTherapy: {
     defaultMessage: 'Ljósböð',
     id: 'sp.health:lights-therapy',
@@ -2047,6 +2051,18 @@ export const messages = defineMessages({
       'Hér getur þú veitt heimild fyrir því að lykilheilsufarsupplýsingar þínar verða aðgengilegar heilbrigðisstarfsfólki í öðrum löndum innan Evrópska efnahagssvæðisins, í gegnum landstengigátt hjá Embætti landlæknis. ',
     id: 'sp.health:patient-data-permit-description',
   },
+  patientDataPermitsLink: {
+    defaultMessage: 'https://island.is/heilbrigdisthjonusta-yfir-landamaeri',
+    id: 'sp.health:patient-data-permits-link',
+  },
+  patientDataPermitsLinkText: {
+    defaultMessage: 'Lesa um heimildina hér',
+    id: 'sp.health:patient-data-permits-link-text',
+  },
+  patientDataPermitInvalidate: {
+    defaultMessage: 'Óvirkja heimild',
+    id: 'sp.health:invalidate-permit',
+  },
   readAboutPermit: {
     defaultMessage: 'Lesa um heimildina hér',
     id: 'sp.health:read-about-permit',
@@ -2253,6 +2269,11 @@ export const messages = defineMessages({
     defaultMessage:
       'Heimild þessi gildir til birtingar <link>sjúkraskrárupplýsinga</link> milli Íslands og þeirra landa sem eru valin. Þú getur valið að óvirkja heimildina hvenær sem er eða framlengja útrunna heimild.',
     id: 'sp.health:permit-detail-intro',
+  },
+  permitDetailIntroWithLink: {
+    id: 'sp.health:permit-detail-intro-with-link#markdown',
+    defaultMessage:
+      'Heimild þessi gildir til birtingar sjúkraskrárupplýsinga milli Íslands og þeirra landa sem eru valin. Þú getur valið að óvirkja heimildina hvenær sem er eða framlengja útrunna heimild.',
   },
   permitChangeHistory: {
     defaultMessage: 'Breytingasaga',

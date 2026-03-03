@@ -5,7 +5,6 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { ConfirmModal } from '../../components/PatientDataPermit/ConfirmModal'
-import { PermitIntro } from '../../components/PatientDataPermit/PermitIntro'
 import Countries from '../../components/PatientDataPermit/Countries'
 import Dates from '../../components/PatientDataPermit/Dates'
 import Terms from '../../components/PatientDataPermit/Terms'
@@ -13,6 +12,7 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { PermitInput } from '../../utils/types'
 import { useCreatePatientDataPermitMutation } from './PatientDataPermits.generated'
+import { Markdown } from '@island.is/shared/components'
 
 const DEFAULT_STEP = 1 // Default to step 1 to start with the first step
 
@@ -73,7 +73,9 @@ const NewPermit: React.FC = () => {
   return (
     <IntroWrapper
       title={formatMessage(messages.patientDataPermitTitle)}
-      introComponent={<PermitIntro />}
+      introComponent={
+        <Markdown>{formatMessage(messages.permitDetailIntroWithLink)}</Markdown>
+      }
       serviceProviderSlug="landlaeknir"
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirPatientPermitsTooltip,

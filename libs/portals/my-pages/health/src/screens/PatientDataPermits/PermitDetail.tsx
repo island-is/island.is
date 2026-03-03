@@ -21,7 +21,6 @@ import { Problem } from '@island.is/react-spa/shared'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { InvalidatePermitModal } from '../../components/PatientDataPermit/InvalidatePermitModal'
-import { PermitIntro } from '../../components/PatientDataPermit/PermitIntro'
 import { messages } from '../../lib/messages'
 import {
   useGetPatientDataPermitsQuery,
@@ -29,6 +28,7 @@ import {
 } from './PatientDataPermits.generated'
 import { HealthPaths } from '../../lib/paths'
 import { permitTagSelector } from '../../utils/tagSelector'
+import { Markdown } from '@island.is/shared/components'
 
 const PermitDetail: React.FC = () => {
   const { formatMessage, lang } = useLocale()
@@ -64,7 +64,9 @@ const PermitDetail: React.FC = () => {
   return (
     <IntroWrapper
       title={formatMessage(messages.patientDataPermit)}
-      introComponent={<PermitIntro />}
+      introComponent={
+        <Markdown>{formatMessage(messages.permitDetailIntroWithLink)}</Markdown>
+      }
       serviceProviderSlug="landlaeknir"
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirPatientPermitsTooltip,
@@ -119,7 +121,7 @@ const PermitDetail: React.FC = () => {
               }}
             />
             <InfoLine
-              label={formatMessage(messages.lastModified) ?? ''}
+              label={formatMessage(messages.lastChanged) ?? ''}
               content={formatDateWithTime(permit?.createdAt?.toString() ?? '')}
               loading={loading}
             />
@@ -144,7 +146,9 @@ const PermitDetail: React.FC = () => {
                 isActive
                   ? {
                       action: () => setModalOpen(true),
-                      label: formatMessage(messages.invalidatePermit),
+                      label: formatMessage(
+                        messages.patientDataPermitInvalidate,
+                      ),
                       type: 'action',
                       icon: 'arrowForward',
                     }

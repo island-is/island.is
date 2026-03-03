@@ -1,13 +1,9 @@
-import {
-  ActionCard,
-  Box,
-  Button,
-  Stack,
-} from '@island.is/island-ui/core'
+import { ActionCard, Box, Button, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCardLoader,
   IntroWrapper,
+  LinkButton,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { FC } from 'react'
@@ -42,14 +38,13 @@ const PatientDataPermits: FC = () => {
       buttonGroup={
         !loading && !error
           ? [
-              <Button
-                key="readAboutPermit"
+              <LinkButton
                 variant="utility"
+                size="small"
+                to={formatMessage(messages.patientDataPermitsLink)}
+                text={formatMessage(messages.patientDataPermitsLinkText)}
                 icon="open"
-                iconType="outline"
-              >
-                {formatMessage(messages.readAboutPermit)}
-              </Button>,
+              />,
               ...(!consent
                 ? [
                     <Button
