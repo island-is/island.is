@@ -1,4 +1,4 @@
-import SecondarySchoolStudyDetails from '@island.is/web/screens/SecondarySchoolStudies/SecondarySchoolStudyDetails'
+import SecondarySchoolStudyDetails from '@island.is/web/screens/SecondarySchoolStudies/DetailPage'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
 import withApollo from '../../../../graphql/withApollo'

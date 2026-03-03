@@ -30,6 +30,9 @@ export class SecondarySchoolProgrammeSimple {
   @Field(() => String, { nullable: true })
   description?: string | null
 
+  @Field(() => SecondarySchoolSimple, { nullable: true })
+  school?: SecondarySchoolSimple
+
   @Field(() => [SecondarySchoolSimple], { nullable: true })
-  schools?: SecondarySchoolSimple[] | null
+  otherSchools?: SecondarySchoolSimple[] | null
 }

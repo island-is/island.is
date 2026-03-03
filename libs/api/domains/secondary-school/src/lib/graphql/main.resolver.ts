@@ -16,6 +16,12 @@ import {
   SecondarySchoolProgrammeFilterOptions,
   SecondarySchoolProgrammeDetail,
 } from './models'
+import { SECONDARY_SCHOOL_PUBLIC_CACHE_CONTROL_MAX_AGE } from '../cacheControl'
+import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
+
+const defaultCache: CacheControlOptions = {
+  maxAge: SECONDARY_SCHOOL_PUBLIC_CACHE_CONTROL_MAX_AGE,
+}
 
 @Resolver()
 export class MainResolver {
@@ -36,18 +42,21 @@ export class MainResolver {
     )
   }
 
+  @CacheControl(defaultCache)
   @BypassAuth()
   @Query(() => [SecondarySchoolProgrammeSimple])
   secondarySchoolAllProgrammes() {
     return this.secondarySchoolApi.getAllProgrammes()
   }
 
+  @CacheControl(defaultCache)
   @BypassAuth()
   @Query(() => SecondarySchoolProgrammeFilterOptions)
   secondarySchoolProgrammeFilterOptions() {
     return this.secondarySchoolApi.getProgrammeFilterOptions()
   }
 
+  @CacheControl(defaultCache)
   @BypassAuth()
   @Query(() => SecondarySchoolProgrammeDetail)
   secondarySchoolProgrammeById(@Args('id', { type: () => String }) id: string) {

@@ -1,4 +1,4 @@
-import SecondarySchoolStudyDetails from '@island.is/web/screens/SecondarySchoolStudies/SecondarySchoolStudyDetails'
+import SecondarySchoolStudyDetailsPage from '@island.is/web/screens/SecondarySchoolStudies/DetailPage'
 import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
 
 import withApollo from '../../../graphql/withApollo'
@@ -7,7 +7,7 @@ import { withLocale } from '../../../i18n'
 const Screen = withApollo(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
-  withLocale('is')(SecondarySchoolStudyDetails),
+  withLocale('is')(SecondarySchoolStudyDetailsPage),
 )
 
 export default Screen

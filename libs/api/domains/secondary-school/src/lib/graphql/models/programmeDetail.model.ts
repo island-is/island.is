@@ -4,6 +4,7 @@ import { SecondarySchoolQualification } from './qualification.model'
 import { SecondarySchoolSpecialization } from './specialization.model'
 import { SecondarySchoolSimple } from './schoolSimple.model'
 import { SecondarySchoolAdmissionRequirements } from './admissionRequirements.model'
+import { SecondarySchoolProgrammeStructure } from './programmeStructure'
 
 @ObjectType('SecondarySchoolProgrammeDetail')
 export class SecondarySchoolProgrammeDetail {
@@ -60,6 +61,9 @@ export class SecondarySchoolProgrammeDetail {
 
   @Field(() => SecondarySchoolAdmissionRequirements, { nullable: true })
   admissionRequirements?: SecondarySchoolAdmissionRequirements
+
+  @Field(() => SecondarySchoolProgrammeStructure, { nullable: true })
+  programmeStructure?: SecondarySchoolProgrammeStructure
 
   @Field(() => [SecondarySchoolSimple], { nullable: true })
   schools?: SecondarySchoolSimple[] | null

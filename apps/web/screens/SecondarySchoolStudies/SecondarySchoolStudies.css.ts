@@ -31,3 +31,18 @@ export const studyCardsWrapper = style({})
 globalStyle(`${studyCardsWrapper} p`, {
   wordBreak: 'break-word',
 })
+
+export const truncatedText = style({
+  display: '-webkit-box',
+  WebkitLineClamp: 3,
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+})
+
+export const mobileFilterButton = style({})
+
+globalStyle(`${mobileFilterButton} button div span`, {
+  width: '100%',
+  display: 'flex',
+  justifyContent: 'space-between',
+})

@@ -339,6 +339,14 @@ export const routesTemplate = {
     is: '/undirskriftalistar',
     en: '/en/petitions',
   },
+  secondaryschoolstudiesdetailpage: {
+    is: '/framhaldsskolanam/[id]',
+    en: '/en/secondary-school-studies[id]',
+  },
+  secondaryschoolstudieslandingpage: {
+    is: '/framhaldsskolanam',
+    en: '/en/secondary-school-studies',
+  },
 }
 
 // This considers one block ("[someVar]") to be one variable and ignores the path variables name
