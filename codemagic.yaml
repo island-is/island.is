@@ -209,9 +209,9 @@ workflows:
   prod-app-android:
     <<: *base
     name: Island.is Prod App Android
-    instance_type: mac_mini_m2
+    # instance_type: mac_mini_m
     ## Switch when we have billing
-    # instance_type: linux_x2
+    instance_type: linux_x4
     cache: &android_cache
       cache_paths:
         - ~/.gradle/caches
