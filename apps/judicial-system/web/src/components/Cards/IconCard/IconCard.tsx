@@ -2,14 +2,14 @@ import { FC, ReactNode } from 'react'
 
 import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 
-import * as styles from './BlueBoxWithIcon.css'
+import * as styles from './IconCard.css'
 
 interface Props {
   data: { title: string; value?: ReactNode }[]
   icon?: IconMapIcon
 }
 
-const BlueBoxWithIcon: FC<Props> = (props) => {
+const IconCard: FC<Props> = (props) => {
   const { data, icon } = props
 
   return (
@@ -37,4 +37,4 @@ const BlueBoxWithIcon: FC<Props> = (props) => {
   )
 }
 
-export default BlueBoxWithIcon
+export default IconCard

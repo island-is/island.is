@@ -28,7 +28,7 @@ import VerdictAppealDecisionChoice from '../../VerdictAppealDecisionChoice/Verdi
 import ContextMenuCard from '../ContextMenuCard/ContextMenuCard'
 import { strings } from './VerdictTimelineCard.strings'
 import { grid } from '../../../utils/styles/recipes.css'
-import * as styles from '../../BlueBoxWithIcon/BlueBoxWithIcon.css'
+import * as styles from '../IconCard/IconCard.css'
 
 interface Props {
   defendant: Defendant
