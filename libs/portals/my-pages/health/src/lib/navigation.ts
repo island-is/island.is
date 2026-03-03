@@ -271,6 +271,7 @@ export const healthNavigation: PortalNavigationItem = {
               name: messages.patientDataPermit,
               path: HealthPaths.HealthPatientDataPermitsAdd,
               navHide: true,
+              breadcrumbHide: true,
             },
             {
               name: messages.permit,
