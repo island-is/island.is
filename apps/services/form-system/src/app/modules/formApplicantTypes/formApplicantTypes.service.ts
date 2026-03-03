@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Form } from '../forms/models/form.model'
 import { CreateFormApplicantTypeDto } from './models/dto/createFormApplicantType.dto'
@@ -15,6 +19,8 @@ import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model
 import { FieldDto } from '../fields/models/dto/field.dto'
 import { DeleteFormApplicantTypeDto } from './models/dto/deleteFormApplicantType.dto'
 import { Sequelize } from 'sequelize-typescript'
+import { User } from '@island.is/auth-nest-tools'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @Injectable()
 export class FormApplicantTypesService {
@@ -29,8 +35,11 @@ export class FormApplicantTypesService {
   ) {}
 
   async create(
+    user: User,
     createFormApplicantTypeDto: CreateFormApplicantTypeDto,
   ): Promise<ScreenDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const applicantType = ApplicantTypes.find(
       (applicantType) =>
         applicantType.id === createFormApplicantTypeDto.applicantTypeId,
@@ -58,6 +67,13 @@ export class FormApplicantTypesService {
     if (!form) {
       throw new NotFoundException(
         `Form with id '${createFormApplicantTypeDto.formId}' not found`,
+      )
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User does not have permission to create form applicant type with id '${createFormApplicantTypeDto.applicantTypeId}'`,
       )
     }
 
@@ -89,8 +105,11 @@ export class FormApplicantTypesService {
   }
 
   async delete(
+    user: User,
     deleteFormApplicantTypeDto: DeleteFormApplicantTypeDto,
   ): Promise<ScreenDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const partiesSection = await Section.findOne({
       where: {
         formId: deleteFormApplicantTypeDto.formId,
@@ -113,6 +132,21 @@ export class FormApplicantTypesService {
     if (!partiesSection) {
       throw new NotFoundException('PARTIES section not found for form')
     }
+
+    const form = await this.formModel.findByPk(partiesSection.formId)
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${partiesSection.formId}' not found`,
+      )
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new UnauthorizedException(
+        `User does not have permission to delete form applicant type with id '${deleteFormApplicantTypeDto.applicantTypeId}'`,
+      )
+    }
+
     const targetScreen = partiesSection?.screens?.find((screen) =>
       (screen.fields ?? []).some(
         (f) =>
@@ -146,6 +180,7 @@ export class FormApplicantTypesService {
   private mapToScreenDto(screen: Screen, field: Field): ScreenDto {
     const fieldKeys = [
       'id',
+      'identifier',
       'screenId',
       'name',
       'displayOrder',
@@ -162,11 +197,13 @@ export class FormApplicantTypesService {
 
     const screenKeys = [
       'id',
+      'identifier',
       'sectionId',
       'name',
       'displayOrder',
       'isCompleted',
-      'callRuleset',
+      'shouldValidate',
+      'shouldPopulate',
       'isHidden',
       'multiset',
     ]

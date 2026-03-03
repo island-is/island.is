@@ -4,7 +4,6 @@ import {
   Filter,
   FilterInput,
   DatePicker,
-  FilterMultiChoiceProps,
   Select,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -13,20 +12,21 @@ import { debounceTime } from '@island.is/shared/constants'
 import { useEffect, useMemo, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import { m } from '../../lib/messages'
-import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
-import { BffUser, Organization } from '@island.is/shared/types'
+import { ApplicationFilters } from '../../types/filters'
+import { Organization } from '@island.is/shared/types'
 import { format as formatNationalId } from 'kennitala'
-import { useGetInstitutionApplicationTypesQuery } from '../../queries/overview.generated'
-import { useUserInfo } from '@island.is/react-spa/bff'
+import {
+  useGetApplicationV2ApplicationTypesInstitutionAdminQuery,
+  useGetApplicationV2ApplicationTypesSuperAdminQuery,
+} from '../../queries/overview.generated'
 
 interface Props {
-  onTypeIdChange: (period: ApplicationFilters['typeIdValue']) => void
+  onTypeIdChange: (typeIdValue: ApplicationFilters['typeIdValue']) => void
   onSearchChange: (query: string) => void
   onSearchStrChange: (query: string) => void
   onDateChange: (period: ApplicationFilters['period']) => void
-  onFilterChange: FilterMultiChoiceProps['onChange']
+  onInstitutionChange: (institution: ApplicationFilters['institution']) => void
   onFilterClear: (categoryId?: string) => void
-  multiChoiceFilters: Record<MultiChoiceFilter, string[] | undefined>
   filters: ApplicationFilters
   applications: string[]
   organizations: Organization[]
@@ -40,11 +40,10 @@ export const Filters = ({
   onSearchChange,
   onSearchStrChange,
   onFilterClear,
-  onFilterChange,
+  onInstitutionChange,
   onDateChange,
   filters,
   numberOfDocuments,
-  multiChoiceFilters,
   organizations,
   isSuperAdmin = false,
   useAdvancedSearch = false,
@@ -52,10 +51,9 @@ export const Filters = ({
   const [typeId, setTypeId] = useState<string | undefined>(undefined)
   const [nationalId, setNationalId] = useState('')
   const [searchStr, setSearchStr] = useState('')
-  const { formatMessage } = useLocale()
+  const { formatMessage, locale: lang } = useLocale()
   const [isMobile, setIsMobile] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
-  const userInfo: BffUser = useUserInfo()
   const { width } = useWindowSize()
   const [chosenInstituteNationalId, setChosenInstituteNationalId] = useState<
     string | undefined
@@ -69,23 +67,35 @@ export const Filters = ({
   )
 
   const {
-    data: typeData,
-    loading: typesLoading,
-    refetch: refetchTypes,
-  } = useGetInstitutionApplicationTypesQuery({
+    data: institutionApplicationTypesData,
+    loading: loadingInstitutionApplicationTypes,
+    refetch: refetchInstitutionApplicationTypes,
+  } = useGetApplicationV2ApplicationTypesInstitutionAdminQuery({
+    ssr: false,
+    skip: isSuperAdmin, //do NOT run if user IS superAdmin
+  })
+
+  const {
+    data: superApplicationTypesData,
+    loading: loadingSuperApplicationTypes,
+    refetch: refetchSuperApplicationTypes,
+  } = useGetApplicationV2ApplicationTypesSuperAdminQuery({
+    ssr: false,
     variables: {
       input: {
-        nationalId: isSuperAdmin
-          ? chosenInstituteNationalId || ''
-          : userInfo.profile.nationalId,
+        nationalId: chosenInstituteNationalId,
       },
     },
+    skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
   })
 
   useEffect(() => {
-    refetchTypes()
+    const refetch = isSuperAdmin
+      ? refetchSuperApplicationTypes
+      : refetchInstitutionApplicationTypes
+    refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [multiChoiceFilters])
+  }, [chosenInstituteNationalId])
 
   useDebounce(
     () => {
@@ -130,14 +140,21 @@ export const Filters = ({
 
   const institutionTypeIds = useMemo(() => {
     return (
-      typeData?.applicationTypesInstitutionAdmin
+      (isSuperAdmin
+        ? superApplicationTypesData?.applicationV2ApplicationTypesSuperAdmin
+        : institutionApplicationTypesData?.applicationV2ApplicationTypesInstitutionAdmin
+      )
         ?.map((type) => ({
           value: type.id,
           label: type.name ?? '',
         }))
-        .sort((a, b) => a.label.localeCompare(b.label, 'is')) ?? []
+        .sort((a, b) => a.label.localeCompare(b.label, lang)) ?? []
     )
-  }, [typeData])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSuperAdmin, superApplicationTypesData, institutionApplicationTypesData])
+
+  const isLoading =
+    loadingSuperApplicationTypes || loadingInstitutionApplicationTypes
 
   return (
     <Box
@@ -179,7 +196,7 @@ export const Filters = ({
                   paddingBottom={isMobile ? 3 : 0}
                 >
                   <Select
-                    id={MultiChoiceFilter.INSTITUTION}
+                    id="institution"
                     label={formatMessage(m.institution)}
                     placeholder={formatMessage(
                       m.institutionDropdownPlaceholder,
@@ -207,10 +224,7 @@ export const Filters = ({
                         institution?.nationalId || '',
                       )
                       setChosenInstituteSlug(institution?.slug || '')
-                      onFilterChange({
-                        categoryId: MultiChoiceFilter.INSTITUTION,
-                        selected: v ? [v.value] : [],
-                      })
+                      onInstitutionChange(institution?.nationalId || '')
                     }}
                     options={sortedOrganizations.map((x) => ({
                       value: x.slug,
@@ -224,7 +238,7 @@ export const Filters = ({
                 paddingLeft={isMobile || !isSuperAdmin ? 0 : 3}
               >
                 <Select
-                  id={MultiChoiceFilter.TYPE_ID}
+                  id="typeId"
                   label={formatMessage(m.applicationType)}
                   placeholder={formatMessage(
                     m.applicationTypeDropdownPlaceholder,
@@ -240,7 +254,7 @@ export const Filters = ({
                   }}
                   size="sm"
                   options={institutionTypeIds}
-                  isLoading={typesLoading}
+                  isLoading={isLoading}
                   isClearable={true}
                 />
               </Box>

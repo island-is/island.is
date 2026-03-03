@@ -1,6 +1,6 @@
 import includes from 'lodash/includes'
 import { Message } from '@island.is/email-service'
-import { DrivingLicenseApplicationType } from '@island.is/api/domains/driving-license'
+import { DrivingLicenseApplicationFor } from '@island.is/application/templates/driving-license'
 import { EmailTemplateGenerator } from '../../../../../types'
 import { m } from './messages'
 import { EmailComplete, EmailHeader, EmailRequirements } from './EmailUi'
@@ -18,7 +18,7 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
   } = props
 
   const applicationFor =
-    getValueViaPath<DrivingLicenseApplicationType>(
+    getValueViaPath<DrivingLicenseApplicationFor>(
       application.answers,
       'applicationFor',
     ) ?? 'B-full'
@@ -51,6 +51,12 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
   )
   const [firstName] = nationalRegistryDetails?.data?.fullName?.split(' ') ?? []
 
+  const deliveryMethod = getValueViaPath<string>(
+    application.answers,
+    'delivery.deliveryMethod',
+  )
+  const isHomeDelivery = deliveryMethod === 'post'
+
   const selectedJurisdictionId = getValueViaPath<number>(
     application.answers,
     'delivery.jurisdiction',
@@ -60,15 +66,6 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
     application.externalData,
     'jurisdictions.data',
   )
-
-  if (
-    !(willBringQualityPhoto || willBringHealthCert) &&
-    (!jurisdictions || !selectedJurisdictionId)
-  ) {
-    throw new Error(
-      'no jurisdiction or selected juristication ID - not handled',
-    )
-  }
 
   const jurisdictionInfo = jurisdictions?.find(
     (x) => x.id == selectedJurisdictionId,
@@ -99,6 +96,7 @@ export const generateDrivingLicenseSubmittedEmail: EmailTemplateGenerator = (
           ? []
           : EmailComplete({
               selectedDistrictCommissioner: jurisdictionInfo?.name,
+              isHomeDelivery,
             })),
       ],
     },

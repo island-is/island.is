@@ -127,6 +127,7 @@ const SelectionSchema = z
       .optional(),
     thirdLanguage: z
       .object({
+        require: z.boolean().optional(),
         code: z.string().optional().nullable(),
         name: z.string().optional(),
       })
@@ -167,6 +168,13 @@ const SelectionSchema = z
       )
     },
     { path: ['secondProgram', 'id'], params: error.errorProgramDuplicate },
+  )
+  .refine(
+    ({ thirdLanguage }) => {
+      if (!thirdLanguage?.require) return true
+      return !!thirdLanguage?.code
+    },
+    { path: ['thirdLanguage', 'code'] },
   )
 
 export const SecondarySchoolSchema = z.object({

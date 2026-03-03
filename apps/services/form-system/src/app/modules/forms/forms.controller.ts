@@ -75,8 +75,11 @@ export class FormsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<FormResponseDto> {
-    return await this.formsService.findOne(id)
+  async findOne(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<FormResponseDto> {
+    return await this.formsService.findOne(user, id)
   }
 
   @ApiOperation({ summary: 'Update form status' })
@@ -88,10 +91,11 @@ export class FormsController {
   @ApiParam({ name: 'id', type: String })
   @Put('updateStatus/:id')
   async updateStatus(
+    @CurrentUser() user: User,
     @Param('id') id: string,
     @Body() updateFormStatusDto: UpdateFormStatusDto,
   ): Promise<FormResponseDto> {
-    return await this.formsService.updateStatus(id, updateFormStatusDto)
+    return await this.formsService.updateStatus(user, id, updateFormStatusDto)
   }
 
   @ApiOperation({ summary: 'Copy form' })
@@ -101,8 +105,11 @@ export class FormsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Put('copy/:id')
-  async copy(@Param('id') id: string): Promise<FormResponseDto> {
-    return await this.formsService.copy(id)
+  async copy(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<FormResponseDto> {
+    return await this.formsService.copy(user, id)
   }
 
   @ApiOperation({ summary: 'Update form' })
@@ -114,9 +121,10 @@ export class FormsController {
   @ApiParam({ name: 'id', type: String })
   @Put(':id')
   async updateForm(
+    @CurrentUser() user: User,
     @Param('id') id: string,
     @Body() updateFormDto: UpdateFormDto,
   ): Promise<UpdateFormResponse> {
-    return await this.formsService.update(id, updateFormDto)
+    return await this.formsService.update(user, id, updateFormDto)
   }
 }

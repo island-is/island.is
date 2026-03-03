@@ -309,7 +309,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
     slug: 'evropska-sjukratryggingakortid',
-    translation: 'ehic.application',
+    translation: ['ehic.application', 'uiForms.application'],
   },
   [ApplicationTypes.OLD_AGE_PENSION]: {
     slug: 'ellilifeyrir',
@@ -477,11 +477,11 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
     slug: 'bilaleigu-gjaldflokkur',
-    translation: ['crfc.application', 'uiForms.application'],
+    translation: ['rsk.crfc.application', 'uiForms.application'],
   },
   [ApplicationTypes.CAR_RENTAL_DAYRATE_RETURNS]: {
     slug: 'skilagrein-daggjalds-utleigudagar',
-    translation: ['crdr.application', 'uiForms.application'],
+    translation: ['rsk.crdr.application', 'uiForms.application'],
   },
   [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: {
     slug: 'sjukra-og-endurhaefingargreidslur',

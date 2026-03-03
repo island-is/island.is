@@ -262,6 +262,36 @@ export const m = {
       defaultMessage: 'Skrá bifreiðar',
       description: 'Table view multi field title',
     },
+    searchLabel: {
+      id: 'rsk.crfc.application:table.view.search.label',
+      defaultMessage: 'Leita eftir bílnúmeri',
+      description: 'Vehicle table search input label',
+    },
+    searchPlaceholder: {
+      id: 'rsk.crfc.application:table.view.search.placeholder',
+      defaultMessage: 'Bílnúmer...',
+      description: 'Vehicle table search input placeholder',
+    },
+    tableHeaderPermno: {
+      id: 'rsk.crfc.application:table.view.header.permno',
+      defaultMessage: 'Bílnúmer',
+      description: 'Vehicle table permno column header',
+    },
+    tableHeaderMileage: {
+      id: 'rsk.crfc.application:table.view.header.mileage',
+      defaultMessage: 'Kílómetrastaða',
+      description: 'Vehicle table mileage column header',
+    },
+    emptyState: {
+      id: 'rsk.crfc.application:table.view.empty.state',
+      defaultMessage: 'Ekkert fannst fyrir þessa leit.',
+      description: 'Vehicle table empty state message',
+    },
+    submitErrorMessage: {
+      id: 'rsk.crfc.application:table.view.submit.error',
+      defaultMessage: 'Ekki tókst að vista kílómetrastöðu. Reyndu aftur.',
+      description: 'Vehicle table submit save error',
+    },
   }),
 
   endOfMonth: defineMessages({

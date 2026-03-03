@@ -28,7 +28,7 @@ export const BaseInput = () => {
     getTranslation,
     selectStatus,
   } = useContext(ControlContext)
-  const { activeItem } = control
+  const { activeItem, isPublished } = control
   const currentItem = activeItem.data as FormSystemField
   const selectList = fieldTypesSelectObject()
   const defaultValue = fieldTypes?.find(
@@ -70,7 +70,9 @@ export const BaseInput = () => {
             backgroundColor="blue"
             isSearchable
             value={defaultOption}
-            isDisabled={selectStatus === NavbarSelectStatus.NORMAL}
+            isDisabled={
+              selectStatus === NavbarSelectStatus.NORMAL || isPublished
+            }
             onChange={(e: SingleValue<Option<string>>) => {
               controlDispatch({
                 type: 'CHANGE_FIELD_TYPE',
@@ -93,6 +95,7 @@ export const BaseInput = () => {
             name="name"
             value={currentItem?.name?.is ?? ''}
             backgroundColor="blue"
+            readOnly={isPublished}
             onChange={(e) =>
               controlDispatch({
                 type: 'CHANGE_NAME',
@@ -114,6 +117,7 @@ export const BaseInput = () => {
             name="nameEn"
             value={currentItem?.name?.en ?? ''}
             backgroundColor="blue"
+            readOnly={isPublished}
             onChange={(e) =>
               controlDispatch({
                 type: 'CHANGE_NAME',
@@ -153,6 +157,7 @@ export const BaseInput = () => {
                 value={currentItem?.description?.is ?? ''}
                 textarea
                 backgroundColor="blue"
+                readOnly={isPublished}
                 onFocus={(e) => setFocus(e.target.value)}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
                 onChange={(e) =>
@@ -175,6 +180,7 @@ export const BaseInput = () => {
                 value={currentItem?.description?.en ?? ''}
                 textarea
                 backgroundColor="blue"
+                readOnly={isPublished}
                 onFocus={async (e) => {
                   if (
                     !currentItem?.description?.en &&
@@ -214,6 +220,7 @@ export const BaseInput = () => {
           <Checkbox
             label={formatMessage(m.required)}
             checked={currentItem.isRequired ?? false}
+            disabled={isPublished}
             onChange={() =>
               controlDispatch({
                 type: 'CHANGE_IS_REQUIRED',

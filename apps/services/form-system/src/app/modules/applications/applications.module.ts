@@ -3,6 +3,7 @@ import { Application } from './models/application.model'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { ApplicationsService } from './applications.service'
 import { ApplicationsController } from './applications.controller'
+import { AdminController } from './admin.controller'
 import { Form } from '../forms/models/form.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { Value } from './models/value.model'
@@ -18,6 +19,9 @@ import { Section } from '../sections/models/section.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
 import { ListItem } from '../listItems/models/listItem.model'
+import { ApplicationsXRoadController } from './applications.xroad.controller'
+import { ApplicationsXRoadService } from './applications.xroad.service'
+import { IdentityClientModule } from '@island.is/clients/identity'
 
 @Module({
   imports: [
@@ -34,10 +38,16 @@ import { ListItem } from '../listItems/models/listItem.model'
       OrganizationPermission,
       ListItem,
     ]),
+    IdentityClientModule,
   ],
-  controllers: [ApplicationsController],
+  controllers: [
+    ApplicationsController,
+    ApplicationsXRoadController,
+    AdminController,
+  ],
   providers: [
     ApplicationsService,
+    ApplicationsXRoadService,
     ApplicationMapper,
     ServiceManager,
     ZendeskService,

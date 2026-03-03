@@ -43,10 +43,6 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:police-case-text',
     defaultMessage: 'Síðast uppfært: {arg}',
   },
-  policeCaseCardEyebrow: {
-    id: 'sp.law-and-order:police-case-eyebrow',
-    defaultMessage: 'Ríkislögreglustjóri',
-  },
   court: {
     id: 'sp.law-and-order:court',
     defaultMessage: 'Dómstóll',
@@ -176,9 +172,21 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:legal-advisor',
     defaultMessage: 'Réttargæslumaður',
   },
+  prosecutionOffice: {
+    id: 'sp.law-and-order:prosecution-office',
+    defaultMessage: 'Embætti',
+  },
   caseStatus: {
     id: 'sp.law-and-order:case-status',
     defaultMessage: 'Staða máls',
+  },
+  caseStatusLink: {
+    id: 'sp.law-and-order:case-status-link',
+    defaultMessage: 'Ferill sakamála',
+  },
+  caseStatusLinkUrl: {
+    id: 'sp.law-and-order:case-status-link-url',
+    defaultMessage: 'https://island.is/ferill-sakamala-i-rettarkerfinu',
   },
   analysis: {
     id: 'sp.law-and-order:analysis',

@@ -1,5 +1,6 @@
 import {
   CreateNotificationResponse,
+  HnippNotificationOriginalRecipientDto,
   NotificationsApi,
 } from '@island.is/clients/user-notification'
 import type { Logger } from '@island.is/logging'
@@ -62,6 +63,7 @@ export class NotificationsService {
     messageParties: {
       recipient: string
       sender?: string
+      onBehalfOf?: HnippNotificationOriginalRecipientDto
     }
     applicationId?: string
     args?: NotificationArgs<T>
@@ -72,6 +74,7 @@ export class NotificationsService {
       recipient: data.messageParties.recipient,
       templateId,
       senderId: data.messageParties.sender,
+      onBehalfOf: data.messageParties.onBehalfOf,
       args: Object.entries(data.args ?? {}).map(([key, value]) => ({
         key,
         value: String(value),

@@ -1,12 +1,14 @@
 import {
+  BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { Op } from 'sequelize'
+import { Op, QueryTypes } from 'sequelize'
 import { Application } from './models/application.model'
 import { ApplicationDto } from './models/dto/application.dto'
 import { Form } from '../forms/models/form.model'
@@ -24,6 +26,7 @@ import {
   ApplicationEvents,
   FieldTypesEnum,
   ApplicantTypesEnum,
+  NotificationCommands,
 } from '@island.is/form-system/shared'
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
@@ -44,6 +47,15 @@ import type { Locale } from '@island.is/shared/types'
 import { calculatePruneAt } from '../../../utils/calculatePruneAt'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { SubmitApplicationResponseDto } from './models/dto/submitApplication.response.dto'
+import { NotificationResponseDto } from './models/dto/validation.response.dto'
+import { NotifyService } from '../services/notify.service'
+import { NotificationDto } from './models/dto/notification.dto'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
+import { InstitutionDto } from './models/dto/admin/institution.dto'
+import { ApplicationStatisticsDto } from './models/dto/admin/applicationStatistics.dto'
+import { ApplicationAdminResponseDto } from './models/dto/admin/applicationAdminResponse.dto'
+import { escapeLike } from './utils/escapeLike'
 
 @Injectable()
 export class ApplicationsService {
@@ -58,8 +70,10 @@ export class ApplicationsService {
     private readonly organizationModel: typeof Organization,
     @InjectModel(ApplicationEvent)
     private readonly applicationEventModel: typeof ApplicationEvent,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
+    private readonly notifyService: NotifyService,
     private readonly sequelize: Sequelize,
   ) {}
 
@@ -261,7 +275,7 @@ export class ApplicationsService {
     }
     applicationDto.events.push(applicationEvent)
 
-    const success: boolean = await this.serviceManager.send(applicationDto)
+    const success = await this.serviceManager.send(applicationDto)
 
     if (success) {
       try {
@@ -278,18 +292,18 @@ export class ApplicationsService {
     }
 
     const submitResponseDto = new SubmitApplicationResponseDto()
-    submitResponseDto.success = success
+    submitResponseDto.submissionFailed = !success
     if (!success) {
-      submitResponseDto.screenErrorMessages = [
-        {
-          title: { is: 'Villa við innsendingu', en: 'Error submitting' },
-          message: {
-            is: 'Ekki tókst að senda inn umsóknina, reyndu aftur síðar eða sendu póst á island@island.is',
-            en: 'The application could not be submitted. Please try again later or send an email to island@island.is',
-          },
+      submitResponseDto.validationError = {
+        hasError: true,
+        title: { is: 'Villa við innsendingu', en: 'Error submitting' },
+        message: {
+          is: 'Ekki tókst að senda inn umsóknina, reyndu aftur síðar eða sendu póst á island@island.is',
+          en: 'The application could not be submitted. Please try again later or send an email to island@island.is',
         },
-      ]
+      }
     }
+
     return submitResponseDto
   }
 
@@ -497,7 +511,7 @@ export class ApplicationsService {
         form?.organizationNationalId ?? '',
       )
 
-      app.orgSlug = organizationInfo?.type
+      app.orgSlug = organizationInfo?.slug
       app.orgContentfulId = organizationInfo?.contentfulId
     }
 
@@ -645,7 +659,7 @@ export class ApplicationsService {
     return filteredApplications
   }
 
-  private async getApplicationForm(
+  public async getApplicationForm(
     formId: string,
     applicationId: string,
     slug: string,
@@ -699,6 +713,14 @@ export class ApplicationsService {
           { model: Section, as: 'sections' },
           { model: Screen, as: 'screens' },
           { model: Field, as: 'fields' },
+          'displayOrder',
+          'ASC',
+        ],
+        [
+          { model: Section, as: 'sections' },
+          { model: Screen, as: 'screens' },
+          { model: Field, as: 'fields' },
+          { model: ListItem, as: 'list' },
           'displayOrder',
           'ASC',
         ],
@@ -984,6 +1006,93 @@ export class ApplicationsService {
     })
   }
 
+  async notifyExternalService(
+    notificationDto: NotificationDto,
+    user: User,
+  ): Promise<NotificationResponseDto> {
+    const application = await this.applicationModel.findByPk(
+      notificationDto.applicationId,
+      { include: [{ model: Value, as: 'values' }] },
+    )
+
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${notificationDto.applicationId}' not found`,
+      )
+    }
+
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new UnauthorizedException(
+        `User is not authorized to notify for application '${notificationDto.applicationId}'`,
+      )
+    }
+
+    const form = await this.formModel.findByPk(application.formId)
+    if (!form) {
+      throw new NotFoundException(
+        `Form with id '${application.formId}' not found for application '${notificationDto.applicationId}'`,
+      )
+    }
+
+    const submissionUrl = form.submissionServiceUrl
+
+    if (!submissionUrl) {
+      throw new BadRequestException(
+        `Form '${application.formId}' does not have a submissionServiceUrl configured`,
+      )
+    }
+
+    const nationalId = user.actor?.nationalId || user.nationalId
+
+    notificationDto.nationalId = nationalId
+
+    if (!notificationDto.screen) {
+      throw new BadRequestException(
+        `Screen was not provided in the notification DTO for application '${notificationDto.applicationId}'`,
+      )
+    }
+
+    const response = await this.notifyService.sendNotification(
+      notificationDto,
+      submissionUrl,
+    )
+
+    if (!response.operationSuccessful) {
+      if (notificationDto.command === NotificationCommands.VALIDATE) {
+        notificationDto.screen.screenError = {
+          hasError: true,
+          title: {
+            is: 'Ekki tókst að tengjast ytri þjónustu',
+            en: 'Could not connect to external service',
+          },
+          message: {
+            is: 'Vinsamlega reyndu aftur síðar eða sendu póst á island@island.is',
+            en: 'Please try again later or send an email to island@island.is',
+          },
+        }
+      } else if (notificationDto.command === NotificationCommands.POPULATE) {
+        notificationDto.screen.screenError = {
+          hasError: true,
+          title: {
+            is: 'Ekki tókst að tengjast ytri þjónustu',
+            en: 'Could not connect to external service',
+          },
+          message: {
+            is: 'Vinsamlega reyndu að endurhlaða síðuna eða sendu póst á island@island.is',
+            en: 'Please try to refresh the page or send an email to island@island.is',
+          },
+        }
+      }
+      response.screen = notificationDto.screen
+      this.logger.error(
+        `Failed to notify external service for application '${notificationDto.applicationId}' on screen: '${notificationDto.screen?.id}' with command ${notificationDto.command}`,
+      )
+    }
+
+    return response
+  }
+
   private doesSectionHaveScreen(sectionDto: SectionDto): boolean {
     return sectionDto.screens !== undefined && sectionDto.screens.length > 0
   }
@@ -1153,5 +1262,192 @@ export class ApplicationsService {
     }
 
     return loginTypes
+  }
+
+  async findAllApplicationsByAdminFilters(
+    page: number,
+    limit: number,
+    institutionNationalId?: string,
+    formId?: string,
+    applicantNationalId?: string,
+    searchStr?: string,
+    from?: string,
+    to?: string,
+    locale?: Locale,
+  ): Promise<ApplicationAdminResponseDto> {
+    const toDate = to ? new Date(to) : undefined
+    const fromDate = from ? new Date(from) : undefined
+
+    const offset = (page - 1) * limit
+
+    const { count, rows } = await this.applicationModel.findAndCountAll({
+      distinct: true,
+      col: 'id',
+      where: {
+        [Op.and]: [
+          formId ? { formId } : {},
+          applicantNationalId ? { nationalId: applicantNationalId } : {},
+          fromDate ? { created: { [Op.gte]: fromDate } } : {},
+          toDate ? { created: { [Op.lte]: toDate } } : {},
+        ],
+      },
+      include: [
+        {
+          model: this.formModel,
+          attributes: ['id', 'name', 'slug', 'status', 'organizationId'],
+          required: true,
+          where: { status: FormStatus.PUBLISHED },
+          include: [
+            {
+              model: this.organizationModel,
+              attributes: ['nationalId'],
+              required: true,
+              where: institutionNationalId
+                ? { nationalId: institutionNationalId }
+                : {},
+            },
+          ],
+        },
+        ...(searchStr
+          ? [
+              {
+                model: Value,
+                as: 'values',
+                attributes: [],
+                required: true,
+                where: Sequelize.where(
+                  Sequelize.cast(Sequelize.col('values.json'), 'text'),
+                  { [Op.iLike]: `%${escapeLike(searchStr)}%` },
+                ),
+              },
+            ]
+          : []),
+      ],
+      limit,
+      offset,
+      order: [['modified', 'DESC']],
+    })
+
+    const mappedRows = rows.map((application) =>
+      this.applicationMapper.mapApplicationToApplicationAdminDto(
+        application,
+        locale,
+      ),
+    )
+
+    return {
+      rows: mappedRows,
+      count,
+    }
+  }
+
+  async getAllApplicationTypes(
+    institutionNationalId?: string,
+    locale?: Locale,
+  ): Promise<ApplicationTypeDto[]> {
+    const forms = await this.formModel.findAll({
+      attributes: ['id', 'name'],
+      where: { status: FormStatus.PUBLISHED },
+      include: [
+        {
+          model: Application,
+          attributes: [],
+          required: true, // ensures at least one application exists
+          include: institutionNationalId
+            ? [
+                {
+                  model: this.organizationModel,
+                  attributes: [],
+                  required: true,
+                  where: { nationalId: institutionNationalId },
+                },
+              ]
+            : [],
+        },
+      ],
+      group: ['Form.id'],
+    })
+
+    return forms.map((form) => ({
+      id: form.id,
+      name: locale === 'is' ? form.name?.is : form.name?.en ?? '',
+    }))
+  }
+
+  async getAllInstitutionsSuperAdmin(): Promise<InstitutionDto[]> {
+    const organizations = await this.organizationModel.findAll({
+      attributes: ['id', 'nationalId'],
+      include: [
+        {
+          model: Form,
+          attributes: [],
+          required: true,
+          where: { status: FormStatus.PUBLISHED },
+          include: [
+            {
+              model: Application,
+              attributes: [], // ensures at least one application exists
+              required: true,
+            },
+          ],
+        },
+      ],
+      group: ['Organization.id', 'Organization.national_id'],
+    })
+
+    return organizations.map((org) => ({
+      nationalId: org.nationalId,
+    }))
+  }
+
+  async getApplicationCountByTypeIdAndStatus(
+    startDate: string,
+    endDate: string,
+    locale?: Locale,
+    institutionNationalId?: string,
+  ): Promise<ApplicationStatisticsDto[]> {
+    if (!locale || !['is', 'en'].includes(locale)) {
+      throw new Error(`Unsupported locale: ${locale}`)
+    }
+    const localeColumn = locale === 'is' ? `f.name ->> 'is'` : `f.name ->> 'en'`
+
+    let institutionJoin = ''
+    let institutionFilter = ''
+    if (institutionNationalId) {
+      institutionJoin = `
+      JOIN public.organization o
+        ON o.id = f.organization_id
+    `
+
+      institutionFilter = `
+      AND o.national_id = :institutionNationalId
+    `
+    }
+
+    const query = `
+    SELECT
+      a.form_id AS "formId",
+      ${localeColumn} AS "formName",
+      COUNT(*)::integer AS "totalCount",
+      COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.DRAFT}')::integer AS "inProgressCount",
+      COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.COMPLETED}')::integer AS "completedCount"
+    FROM public.application a
+    JOIN public.form f ON f.id = a.form_id
+    ${institutionJoin}
+    WHERE a.modified BETWEEN :startDate AND :endDate
+    ${institutionFilter}
+    GROUP BY a.form_id, ${localeColumn};
+  `
+
+    const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {
+      replacements: {
+        startDate,
+        endDate,
+        ...(institutionNationalId ? { institutionNationalId } : {}),
+      },
+      type: QueryTypes.SELECT,
+    })
+
+    return stats
   }
 }
