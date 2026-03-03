@@ -90,6 +90,9 @@
       "permissions": [
         "android.permission.CAMERA"
       ],
+      "blockedPermissions": [
+        "com.google.android.gms.permission.AD_ID"
+      ],
       "intentFilters": [
         {
           "action": "VIEW",
