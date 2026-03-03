@@ -314,9 +314,6 @@
       "@island.is/application/templates/activation-allowance": [
         "libs/application/templates/activation-allowance/src/index.ts"
       ],
-      "@island.is/application/templates/alcohol-tax-redemption": [
-        "libs/application/templates/alcohol-tax-redemption/src/index.ts"
-      ],
       "@island.is/application/templates/announcement-of-death": [
         "libs/application/templates/announcement-of-death/src/index.ts"
       ],
