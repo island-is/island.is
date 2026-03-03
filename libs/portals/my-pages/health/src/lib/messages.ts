@@ -2025,7 +2025,7 @@ export const messages = defineMessages({
     id: 'sp.health:patient-data-permit',
   },
   patientDataPermitTitle: {
-    defaultMessage: 'Heimild til birtingar sjúkraskrárupplýsinga milli landa',
+    defaultMessage: 'Bæta við heimild',
     id: 'sp.health:patient-data-permit-title',
   },
   patientDataPermitDescription: {
@@ -2233,7 +2233,7 @@ export const messages = defineMessages({
   },
   permitDetailIntro: {
     defaultMessage:
-      'Heimild þessi gildir til birtingar sjúkraskrárupplýsinga milli Íslands og þeirra landa sem eru valin. Þú getur valið að óvirkja heimildina hvenær sem er eða framlengja útrunna heimild.',
+      'Heimild þessi gildir til birtingar <link>sjúkraskrárupplýsinga</link> milli Íslands og þeirra landa sem eru valin. Þú getur valið að óvirkja heimildina hvenær sem er eða framlengja útrunna heimild.',
     id: 'sp.health:permit-detail-intro',
   },
   permitChangeHistory: {
@@ -2241,7 +2241,7 @@ export const messages = defineMessages({
     id: 'sp.health:permit-change-history',
   },
   lastModified: {
-    defaultMessage: 'Síðast breytt',
+    defaultMessage: 'Breytt',
     id: 'sp.health:last-modified',
   },
   activatePermit: {
@@ -2303,9 +2303,17 @@ export const messages = defineMessages({
     defaultMessage: 'Gildir í eftirfarandi löndum',
     id: 'sp.health:valid-for-countries',
   },
+  countries: {
+    defaultMessage: 'Lönd',
+    id: 'sp.health:countries',
+  },
   patientDataShared: {
     defaultMessage: 'Sjúkraskrárupplýsingar til birtingar',
     id: 'sp.health:patient-data-shared',
+  },
+  dataShared: {
+    defaultMessage: 'Upplýsingar til birtingar',
+    id: 'sp.health:data-shared',
   },
   patientDataSharedDescription: {
     defaultMessage:

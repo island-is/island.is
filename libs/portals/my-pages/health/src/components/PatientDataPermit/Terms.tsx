@@ -40,20 +40,22 @@ const Terms: React.FC<TermsProps> = ({ onClick, goBack, loading }) => {
           })}
         </Text>
       </Box>
-      <Checkbox
-        backgroundColor="blue"
-        checked={accepted}
-        onChange={() => {
-          console.log('checkbox')
-          setAccepted(!accepted)
-        }}
-        large
-        label={formatMessage(messages.permitApproval)}
-      />
+      <Box marginTop={3}>
+        <Checkbox
+          backgroundColor="blue"
+          checked={accepted}
+          onChange={() => {
+            console.log('checkbox')
+            setAccepted(!accepted)
+          }}
+          large
+          label={formatMessage(messages.permitApproval)}
+        />
+      </Box>
       <Box
         display="flex"
         justifyContent="spaceBetween"
-        marginTop={4}
+        marginTop={5}
         flexWrap="nowrap"
         columnGap={2}
       >

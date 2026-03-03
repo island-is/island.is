@@ -264,11 +264,11 @@ export const healthNavigation: PortalNavigationItem = {
       searchTags: [s.healthPatientData],
       children: [
         {
-          name: messages.patientDataPermit,
+          name: messages.patientData,
           path: HealthPaths.HealthPatientDataPermits,
           children: [
             {
-              name: messages.addPermit,
+              name: messages.patientDataPermit,
               path: HealthPaths.HealthPatientDataPermitsAdd,
               navHide: true,
             },
@@ -277,6 +277,7 @@ export const healthNavigation: PortalNavigationItem = {
               path: HealthPaths.HealthPatientDataPermitsDetail,
               navHide: true,
               searchHide: true,
+              breadcrumbHide: true,
             },
           ],
         },

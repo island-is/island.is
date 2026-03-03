@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { ConfirmModal } from '../../components/PatientDataPermit/ConfirmModal'
+import { PermitIntro } from '../../components/PatientDataPermit/PermitIntro'
 import Countries from '../../components/PatientDataPermit/Countries'
 import Dates from '../../components/PatientDataPermit/Dates'
 import Terms from '../../components/PatientDataPermit/Terms'
@@ -72,7 +73,7 @@ const NewPermit: React.FC = () => {
   return (
     <IntroWrapper
       title={formatMessage(messages.patientDataPermitTitle)}
-      intro={formatMessage(messages.patientDataPermitDescription)}
+      introComponent={<PermitIntro />}
       serviceProviderSlug="landlaeknir"
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirPatientPermitsTooltip,

@@ -2,6 +2,7 @@ import { HealthDirectoratePermitStatus } from '@island.is/api/schema'
 import {
   Box,
   Button,
+  Stack,
   Table as T,
   Tag,
   Text,
@@ -20,6 +21,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { InvalidatePermitModal } from '../../components/PatientDataPermit/InvalidatePermitModal'
+import { PermitIntro } from '../../components/PatientDataPermit/PermitIntro'
 import { messages } from '../../lib/messages'
 import {
   useGetPatientDataPermitsQuery,
@@ -62,7 +64,7 @@ const PermitDetail: React.FC = () => {
   return (
     <IntroWrapper
       title={formatMessage(messages.patientDataPermit)}
-      intro={formatMessage(messages.permitDetailIntro)}
+      introComponent={<PermitIntro />}
       serviceProviderSlug="landlaeknir"
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirPatientPermitsTooltip,
@@ -223,13 +225,31 @@ const PermitDetail: React.FC = () => {
                         },
                       ]}
                     >
-                      <Box padding={2} background="blue100">
-                        <Text variant="small" fontWeight="semiBold">
-                          {formatMessage(messages.validForCountries)}
-                        </Text>
-                        <Text variant="small">
-                          {entry.countries.map((c) => c.name).join(', ')}
-                        </Text>
+                      <Box padding={3} background="blue100">
+                        <Stack space={3}>
+                          <Box>
+                            <Text variant="small" fontWeight="semiBold">
+                              {formatMessage(messages.countries)}
+                            </Text>
+                            <Box marginTop={1} padding={3} background="white">
+                              <Text variant="small">
+                                {entry.countries.map((c) => c.name).join(', ')}
+                              </Text>
+                            </Box>
+                          </Box>
+                          <Box>
+                            <Text variant="small" fontWeight="semiBold">
+                              {formatMessage(messages.dataShared)}
+                            </Text>
+                            <Box marginTop={1} padding={3} background="white">
+                              <Text variant="small">
+                                {formatMessage(
+                                  messages.patientDataSharedDescription,
+                                )}
+                              </Text>
+                            </Box>
+                          </Box>
+                        </Stack>
                       </Box>
                     </ExpandRow>
                   ))}
