@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
 import {
   ApproveOptions,
@@ -16,6 +16,11 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import {
   ApplicationApi,
+  ApplicationModel,
+  ApplicationModelEmploymentEnum,
+  ApplicationModelFamilyStatusEnum,
+  ApplicationModelHomeCircumstancesEnum,
+  ApplicationModelStateEnum,
   MunicipalityApi,
   MunicipalityModel,
   PersonalTaxReturnApi,
@@ -30,6 +35,8 @@ import {
 import { FetchError } from '@island.is/clients/middlewares'
 import { messages } from '@island.is/application/templates/financial-aid'
 import { TemplateApiError } from '@island.is/nest/problem'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 type Props = Omit<TemplateApiModuleActionProps, 'application'> & {
   application: FAApplication
@@ -41,6 +48,8 @@ export class FinancialAidService extends BaseTemplateApiService {
     private applicationApi: ApplicationApi,
     private municipalityApi: MunicipalityApi,
     private personalTaxReturnApi: PersonalTaxReturnApi,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {
     super(ApplicationTypes.FINANCIAL_AID)
   }
@@ -68,6 +77,67 @@ export class FinancialAidService extends BaseTemplateApiService {
       },
       500,
     )
+  }
+
+  private fakeApplicationResponse: ApplicationModel = {
+    id: '12345678-1234-1234-1234-123456789012',
+    created: new Date('2026-02-20T10:00:00Z'),
+    modified: new Date('2026-02-20T10:00:00Z'),
+    appliedDate: new Date('2026-02-20T10:00:00Z'),
+    nationalId: '0101302989', // Example national id
+    name: 'Gervimaður Færeyjar',
+    phoneNumber: '5555555',
+    email: 'gervimadur@island.is',
+    homeCircumstances: ApplicationModelHomeCircumstancesEnum.OwnPlace,
+    homeCircumstancesCustom: '',
+    employment: ApplicationModelEmploymentEnum.Working,
+    employmentCustom: '',
+    student: false,
+    studentCustom: '',
+    usePersonalTaxCredit: true,
+    hasIncome: false,
+    bankNumber: '0000',
+    ledger: '00',
+    accountNumber: '000000',
+    interview: false,
+    formComment: 'No comments on form',
+    childrenComment: '',
+    spouseFormComment: '',
+    state: ApplicationModelStateEnum.New,
+    files: [],
+    rejection: '',
+    staffId: 'staff-123',
+    staff: {
+      id: 'staff-123',
+      name: 'Starfsmaður',
+      nationalId: '0101302989',
+      municipalityIds: ['0000'],
+      roles: ['SuperAdmin'],
+      active: true,
+      usePseudoName: false,
+      phoneNumber: '5555555',
+      created: new Date('2026-02-20T10:00:00Z'),
+      modified: new Date('2026-02-20T10:00:00Z'),
+      nickname: 'Staffy',
+      email: 'staff@island.is',
+    },
+    familyStatus: ApplicationModelFamilyStatusEnum.Cohabitation,
+    spouseName: 'Gervikona',
+    spouseNationalId: '0101302989',
+    spousePhoneNumber: '',
+    spouseEmail: '',
+    applicationEvents: [],
+    children: [],
+    amount: null,
+    city: 'Reykjavík',
+    streetName: 'Laugavegur 1',
+    postalCode: '101',
+    municipalityCode: '0000',
+    directTaxPayments: [],
+    applicationSystemId: 'sys-id-1234',
+    hasFetchedDirectTaxPayment: true,
+    spouseHasFetchedDirectTaxPayment: false,
+    navSuccess: true,
   }
 
   async createApplication({
@@ -164,10 +234,12 @@ export class FinancialAidService extends BaseTemplateApiService {
       nationalId: externalData.nationalRegistry.data.nationalId,
       phoneNumber: answers.contactInfo.phone,
       email: answers.contactInfo.email,
-      homeCircumstances: answers.homeCircumstances.type,
-      homeCircumstancesCustom: answers.homeCircumstances.custom,
+      homeCircumstances:
+        answers.homeCircumstances.type || 'fakeHomeCircumstances',
+      homeCircumstancesCustom:
+        answers.homeCircumstances.custom || 'fakeHomeCircumstancesCustom',
       student: Boolean(answers.student.isStudent === ApproveOptions.Yes),
-      studentCustom: answers.student.custom,
+      studentCustom: answers.student.custom || 'fakeStudentCustom',
       hasIncome: Boolean(answers.income === ApproveOptions.Yes),
       usePersonalTaxCredit: Boolean(
         answers.personalTaxCredit === ApproveOptions.Yes,
@@ -176,23 +248,28 @@ export class FinancialAidService extends BaseTemplateApiService {
       ledger: answers.bankInfo.ledger,
       accountNumber: answers.bankInfo.accountNumber,
       employment: answers.employment.type,
-      employmentCustom: answers.employment.custom,
-      formComment: answers.formComment,
+      employmentCustom: answers.employment.custom || 'fakeEmploymentCustom',
+      formComment: answers.formComment || 'fakeFormComment',
       state: ApplicationState.NEW,
       files: files,
       children: children,
-      childrenComment: answers.childrenComment,
+      childrenComment: answers.childrenComment || 'fakeChildrenComment',
       spouseNationalId:
         externalData.nationalRegistrySpouse.data?.nationalId ||
-        answers.relationshipStatus?.spouseNationalId,
+        answers.relationshipStatus?.spouseNationalId ||
+        'fakeSpouseNationalId',
       spouseEmail:
         answers.spouseContactInfo?.email ||
         answers.spouse?.email ||
-        answers.relationshipStatus?.spouseEmail,
-      spousePhoneNumber: answers.spouseContactInfo?.phone,
+        answers.relationshipStatus?.spouseEmail ||
+        'fakeSpouseEmail',
+      spousePhoneNumber:
+        answers.spouseContactInfo?.phone || 'fakeSpousePhoneNumber',
       spouseName:
-        externalData.nationalRegistrySpouse.data?.name || answers.spouseName,
-      spouseFormComment: answers.spouseFormComment,
+        externalData.nationalRegistrySpouse.data?.name ||
+        answers.spouseName ||
+        'fakeName',
+      spouseFormComment: answers.spouseFormComment || 'fakeSpouseFormComment',
       familyStatus: findFamilyStatus(answers, externalData),
       streetName: externalData.nationalRegistry.data.address?.streetAddress,
       postalCode: externalData.nationalRegistry.data.address?.postalCode,
@@ -209,13 +286,34 @@ export class FinancialAidService extends BaseTemplateApiService {
     }
 
     return await this.applicationApiWithAuth(auth)
+      .withPreMiddleware(async (context) => {
+        return {
+          ...context,
+          url: 'https://app-veita-api-test.azurewebsites.net/applications',
+
+          init: {
+            ...context.init,
+            headers: {
+              ...context.init.headers,
+              'X-Tenant-Identifier': 'reykjavik',
+            },
+          },
+        }
+      })
+      .withPostMiddleware(async () => {
+        return new Response(JSON.stringify(this.fakeApplicationResponse), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      })
       .applicationControllerCreate({
         createApplicationDto: newApplication as any,
       })
       .then((res) => {
         return { currentApplicationId: res.id }
       })
-      .catch(() => {
+      .catch((e) => {
+        this.logger.error('Error creating application', { error: e })
         throw new TemplateApiError(
           {
             title: messages.serviceErrors.createApplication.title,
