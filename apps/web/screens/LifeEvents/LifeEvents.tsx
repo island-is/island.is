@@ -1,6 +1,7 @@
 import Head from 'next/head'
 
 import {
+  Box,
   Breadcrumbs,
   GridColumn,
   GridContainer,
@@ -43,79 +44,84 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
       <Head>
         <title>{n('pageTitle', 'Lífsviðburðir')} | Ísland.is</title>
       </Head>
-      <GridContainer>
-        <GridRow>
-          <GridColumn
-            span={['12/12', '12/12', '11/12', '11/12', '11/12']}
-            offset={['0', '0', '1/12', '1/12', '1/12']}
-          >
-            <Breadcrumbs
-              items={[
-                {
-                  title: 'Ísland.is',
-                  href: '/',
-                },
-                {
-                  title: 'Lífsviðburðir',
-                },
-              ]}
-            />
-            <Text variant="h1" as="h1" marginTop={5} marginBottom={2}>
-              {n('pageTitle', 'Lífsviðburðir')}
-            </Text>
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn
-            span={['12/12', '12/12', '9/12', '9/12', '6/12']}
-            offset={['0', '0', '1/12', '1/12']}
-          >
-            <Text variant="intro" as="p">
-              {n(
-                'pageBody',
-                'Samantekt yfir helstu þjónustu sem fólk þarf á tilteknum tímamótum í lífinu, til að mynda að eignast barn, fara í nám, stofna fyrirtæki og að undirbúa starfslok og efri árin.',
-              )}
-            </Text>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-      <GridItems
-        mobileItemWidth={215}
-        mobileItemsRows={5}
-        insideGridContainer
-        paddingTop={5}
-        paddingBottom={2}
-        third
-      >
-        {lifeEvents?.map(
-          ({
-            __typename: typename,
-            shortTitle,
-            title,
-            slug,
-            tinyThumbnail,
-            featured,
-            seeMoreText,
-            id,
-          }) => {
-            return (
-              <CardWithFeaturedItems
-                key={id}
-                heading={shortTitle ?? title}
-                imgSrc={tinyThumbnail?.url ?? ''}
-                dataTestId={'lifeevent-card-with-featured-items'}
-                href={linkResolver(typename as LinkType, [slug]).href}
-                featuredItems={featured ?? []}
-                buttonTitle={
-                  seeMoreText && seeMoreText !== ''
-                    ? seeMoreText
-                    : n('cardsButtonTitle', 'Skoða lífsviðburð')
-                }
+      <Box background="white">
+        <GridContainer>
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', '11/12', '11/12', '11/12']}
+              offset={['0', '0', '1/12', '1/12', '1/12']}
+            >
+              <Breadcrumbs
+                items={[
+                  {
+                    title: 'Ísland.is',
+                    href: '/',
+                  },
+                  {
+                    title: 'Lífsviðburðir',
+                  },
+                ]}
               />
-            )
-          },
-        )}
-      </GridItems>
+              <Text variant="h1" as="h1" marginTop={5} marginBottom={2}>
+                {n('pageTitle', 'Lífsviðburðir')}
+              </Text>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn
+              span={['12/12', '12/12', '9/12', '9/12', '6/12']}
+              offset={['0', '0', '1/12', '1/12']}
+            >
+              <Text variant="intro" as="p" paddingBottom={4}>
+                {n(
+                  'pageBody',
+                  'Samantekt yfir helstu þjónustu sem fólk þarf á tilteknum tímamótum í lífinu, til að mynda að eignast barn, fara í nám, stofna fyrirtæki og að undirbúa starfslok og efri árin.',
+                )}
+              </Text>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
+      <Box background="purple100">
+        <GridItems
+          mobileItemWidth={215}
+          mobileItemsRows={5}
+          insideGridContainer
+          paddingTop={5}
+          paddingBottom={2}
+          third
+        >
+          {lifeEvents?.map(
+            ({
+              __typename: typename,
+              shortTitle,
+              title,
+              slug,
+              tinyThumbnail,
+              featured,
+              seeMoreText,
+              id,
+            }) => {
+              return (
+                <CardWithFeaturedItems
+                  key={id}
+                  heading={shortTitle ?? title}
+                  imgSrc={tinyThumbnail?.url ?? ''}
+                  dataTestId={'lifeevent-card-with-featured-items'}
+                  href={linkResolver(typename as LinkType, [slug]).href}
+                  featuredItems={featured ?? []}
+                  white
+                  buttonTitle={
+                    seeMoreText && seeMoreText !== ''
+                      ? seeMoreText
+                      : n('cardsButtonTitle', 'Skoða lífsviðburð')
+                  }
+                />
+              )
+            },
+          )}
+        </GridItems>
+      </Box>
     </>
   )
 }
