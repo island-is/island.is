@@ -62,8 +62,6 @@ interface ContextMenuProps {
 
   // Skidding along the anchor (e.g. for left placement: negative = up, positive = down)
   shift?: number
-
-  disabled?: boolean
 }
 
 const DEFAULT_GUTTER = 8
@@ -77,7 +75,6 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
       placement = 'bottom-start',
       gutter = DEFAULT_GUTTER,
       shift,
-      disabled = false,
     },
     ref,
   ) => {
