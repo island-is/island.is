@@ -8,9 +8,7 @@
   "paths": {
     "/v1/applications/{islandIsApplicationId}": {
       "get": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "summary": "[GET] Fetch an application.",
         "parameters": [
           {
@@ -48,9 +46,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "summary": "[PUT] Overwrites an existing application",
         "parameters": [
           {
@@ -116,9 +112,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "summary": "[DELETE] Deletes an application.",
         "parameters": [
           {
@@ -141,9 +135,7 @@
     },
     "/v1/applications/{islandIsApplicationId}/id": {
       "get": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "summary": "[GET] Fetch an applicationId.",
         "parameters": [
           {
@@ -186,9 +178,7 @@
     },
     "/v1/applications": {
       "post": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "summary": "[POST] Creates a new application.",
         "requestBody": {
           "description": "(required) Application MMS.Core.Domain.Dtos.Application.ApplicationBaseDto.",
@@ -241,9 +231,7 @@
     },
     "/v1/applications/application-period": {
       "get": {
-        "tags": [
-          "Applications"
-        ],
+        "tags": ["Applications"],
         "summary": "[GET] Returns current registration end dates and review start dates for general and freshmen from the active standardized semester.",
         "parameters": [
           {
@@ -282,9 +270,7 @@
     },
     "/v1/programmes/{programmeId}": {
       "get": {
-        "tags": [
-          "Programmes"
-        ],
+        "tags": ["Programmes"],
         "summary": "[GET] Get ministry accepted programme by id.",
         "parameters": [
           {
@@ -324,9 +310,7 @@
     },
     "/v1/programmes": {
       "get": {
-        "tags": [
-          "Programmes"
-        ],
+        "tags": ["Programmes"],
         "summary": "[GET] Get all ministry accepted programmes.",
         "responses": {
           "200": {
@@ -363,9 +347,7 @@
     },
     "/v1/programmes/filter-options": {
       "get": {
-        "tags": [
-          "Programmes"
-        ],
+        "tags": ["Programmes"],
         "summary": "[GET] Get filter options for programmes.",
         "responses": {
           "200": {
@@ -393,9 +375,7 @@
     },
     "/v1/schools/{schoolId}": {
       "get": {
-        "tags": [
-          "Schools"
-        ],
+        "tags": ["Schools"],
         "summary": "[GET] Fetch information on school.",
         "parameters": [
           {
@@ -435,9 +415,7 @@
     },
     "/v1/schools": {
       "get": {
-        "tags": [
-          "Schools"
-        ],
+        "tags": ["Schools"],
         "summary": "[GET] Fetch list of schools.",
         "parameters": [
           {
@@ -496,9 +474,7 @@
     },
     "/v1/schools/{schoolId}/programmes": {
       "get": {
-        "tags": [
-          "Schools"
-        ],
+        "tags": ["Schools"],
         "summary": "[GET] Get a list of programmes for a school.",
         "parameters": [
           {
@@ -555,9 +531,7 @@
     },
     "/v1/schools/admissions/open": {
       "get": {
-        "tags": [
-          "Schools"
-        ],
+        "tags": ["Schools"],
         "summary": "[GET] Check if any programme is open for admission for any school.",
         "responses": {
           "200": {
@@ -585,9 +559,7 @@
     },
     "/v1/students/{nationalId}/elementary-grades": {
       "get": {
-        "tags": [
-          "Students"
-        ],
+        "tags": ["Students"],
         "summary": "[GET] Fetch list of grades by national Id.",
         "parameters": [
           {
@@ -635,9 +607,7 @@
     },
     "/v1/students/info": {
       "get": {
-        "tags": [
-          "Students"
-        ],
+        "tags": ["Students"],
         "summary": "[GET] Fetch student information",
         "responses": {
           "200": {
@@ -665,9 +635,7 @@
     },
     "/v1/students/isfreshman": {
       "get": {
-        "tags": [
-          "Students"
-        ],
+        "tags": ["Students"],
         "summary": "[GET] Check if student is a freshman",
         "responses": {
           "200": {
@@ -983,11 +951,7 @@
         "additionalProperties": false
       },
       "ApplicationStatus": {
-        "enum": [
-          "NewApplication",
-          "Processed",
-          "Dismissed"
-        ],
+        "enum": ["NewApplication", "Processed", "Dismissed"],
         "type": "string",
         "description": "Enum for describing Application Status\r\nNewApplication = 0,\r\nProcessed = 1,\r\nDismissed = 2,"
       },
@@ -1208,11 +1172,7 @@
         "additionalProperties": false
       },
       "NextOfKinDto": {
-        "required": [
-          "name",
-          "nationalId",
-          "phoneNumber"
-        ],
+        "required": ["name", "nationalId", "phoneNumber"],
         "type": "object",
         "properties": {
           "nationalId": {
