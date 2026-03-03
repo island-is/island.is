@@ -66,6 +66,7 @@ definitions:
     - &prebuild_android
       name: Expo prebuild for Android
       script: |
+        echo $ANDROID_FIREBASE_SECRET > assets/firebase/google-services.json
         npx expo prebuild --platform android --clean
     - &cocoapods
       name: Install CocoaPods dependencies
