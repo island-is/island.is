@@ -105,16 +105,8 @@ const AccessControlNew = () => {
         title={formatMessage(m.accessControl)}
         intro={
           onlyOutgoingDelegations
-            ? formatMessage({
-                id: 'sp.access-control-delegations:header-intro-company',
-                defaultMessage:
-                  'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
-              })
-            : formatMessage({
-                id: 'sp.access-control-delegations:header-intro-individual',
-                defaultMessage:
-                  'Hérna getur þú veitt öðrum umboð og skoðað umboð sem aðrir hafa veitt þér. Þú getur eytt umboðum eða bætt við nýjum.',
-              })
+            ? formatMessage(m.accessControlIntroOnlyOutgoing)
+            : formatMessage(m.accessControlIntro)
         }
         marginBottom={4}
       >
@@ -164,7 +156,7 @@ const AccessControlNew = () => {
           </Box>
         )}
 
-      {/* Outgoing delegations - NEW person-centric view */}
+      {/* Outgoing delegations */}
       {outgoingCustomDelegations && outgoingCustomDelegations.length > 0 && (
         <CustomDelegationsTable
           title={formatMessage(m.outgoingDelegationsTitle)}
@@ -179,7 +171,7 @@ const AccessControlNew = () => {
       {outgoingGeneralMandateDelegations &&
         outgoingGeneralMandateDelegations.length > 0 && (
           <DelegationsTable
-            title="Allsherjarumboð"
+            title={formatMessage(m.delegationTypeGeneralMandate)}
             data={getGeneralMandateTableData(
               outgoingGeneralMandateDelegations,
               onSwitchUser,
@@ -224,7 +216,7 @@ const AccessControlNew = () => {
       {/* Legal guardian delegations table */}
       {legalGuardianDelegations && legalGuardianDelegations.length > 0 && (
         <DelegationsTable
-          title="Börn í þinni forsjá"
+          title={formatMessage(m.legalGuardianTableTitle)}
           data={getLegalGuardianTableData(
             legalGuardianDelegations,
             onSwitchUser,
@@ -238,7 +230,7 @@ const AccessControlNew = () => {
       {/* Procuring holder delegations table */}
       {procuringHolderDelegations && procuringHolderDelegations.length > 0 && (
         <DelegationsTable
-          title="Prókúruhafar í þinni forsjá"
+          title={formatMessage(m.procurationHolderTableTitle)}
           data={getProcuringHolderTableData(
             procuringHolderDelegations,
             onSwitchUser,
@@ -253,7 +245,7 @@ const AccessControlNew = () => {
       {incomingGeneralMandateDelegations &&
         incomingGeneralMandateDelegations.length > 0 && (
           <DelegationsTable
-            title="Allsherjarumboð"
+            title={formatMessage(m.delegationTypeGeneralMandate)}
             data={getGeneralMandateTableData(
               incomingGeneralMandateDelegations,
               onSwitchUser,
@@ -264,7 +256,7 @@ const AccessControlNew = () => {
           />
         )}
 
-      {/* Incoming custom delegations - NEW person-centric view */}
+      {/* Incoming custom delegations */}
       {!onlyOutgoingDelegations &&
         incomingCustomDelegations &&
         incomingCustomDelegations.length > 0 && (

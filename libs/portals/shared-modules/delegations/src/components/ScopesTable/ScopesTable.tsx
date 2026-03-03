@@ -35,6 +35,7 @@ export const ScopesTable = ({
     formatMessage(m.headerDescription),
     formatMessage(m.headerDelegationType),
   ]
+
   return (
     <T.Table>
       <T.Head>

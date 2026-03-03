@@ -19,7 +19,6 @@ import { AccessScopes } from '../../components/GrantAccessSteps/AccessScopes'
 import { ConfirmAccessModal } from '../../components/modals/ConfirmAccessModal'
 import { useEffect, useState } from 'react'
 import { AccessPeriod } from '../../components/GrantAccessSteps/AccessPeriod'
-import { useCreateAuthDelegationsMutation } from './GrantAccessNew.generated'
 
 const GrantAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
@@ -30,9 +29,6 @@ const GrantAccess = () => {
   const { setIdentities, selectedScopes, clearForm } = useDelegationForm()
 
   const navigate = useNavigate()
-
-  const [createAuthDelegations, { loading: mutationLoading }] =
-    useCreateAuthDelegationsMutation()
 
   // clear the state on unmount
   useEffect(() => {
@@ -101,38 +97,11 @@ const GrantAccess = () => {
           onCancel={() => {
             navigate(DelegationPaths.DelegationsNew)
           }}
+          backButtonLabel={formatMessage(m.backButton)}
         />
 
         <ConfirmAccessModal
           onClose={() => setIsConfirmModalVisible(false)}
-          onConfirm={() => {
-            const scopes = selectedScopes
-              .map((scope) => {
-                if (!scope.domain?.name || !scope.validTo) {
-                  return null
-                }
-                return {
-                  name: scope.name,
-                  validTo: scope.validTo,
-                  domainName: scope.domain.name,
-                }
-              })
-              .filter((scope) => scope !== null)
-
-            createAuthDelegations({
-              variables: {
-                input: {
-                  toNationalIds: watchIdentities.map(
-                    (identity) => identity.nationalId,
-                  ),
-                  scopes,
-                },
-              },
-            }).then(() => {
-              navigate(DelegationPaths.DelegationsNew)
-            })
-          }}
-          loading={mutationLoading}
           isVisible={isConfirmModalVisible}
         />
 

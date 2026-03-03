@@ -5,10 +5,13 @@ export const flowStepper = style({
   boxShadow: '0px 4px 30px 0px rgba(0, 97, 255, 0.08)',
   borderRadius: 8,
   overflow: 'hidden',
+  width: '100%',
+  contain: 'inline-size',
 })
 
 export const progressContainer = style({
   borderBottom: `1px solid ${theme.color.blue200}`,
+  overflow: 'auto',
 })
 
 export const progress = style({

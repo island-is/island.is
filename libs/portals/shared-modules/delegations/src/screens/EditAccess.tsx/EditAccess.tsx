@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { defineMessage } from 'react-intl'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 
 import { AuthDomain } from '@island.is/api/schema'
-import { Box, SkeletonLoader, toast } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader, useQueryParam } from '@island.is/portals/core'
 
@@ -17,7 +17,6 @@ import { DelegationPaths } from '../../lib/paths'
 
 import { m as coreMessages } from '@island.is/portals/core'
 import { ConfirmAccessModal } from '../../components/modals/ConfirmAccessModal'
-import { useCreateAuthDelegationsMutation } from '../GrantAccessNew/GrantAccessNew.generated'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import { AccessControlLoaderResponse } from '../AccessControl.loader'
 
@@ -39,23 +38,19 @@ const EditAccess = () => {
 
   const needsFetch = selectedScopes.length === 0 && !!nationalIdParam
 
-  const { data: outgoingData, loading: outgoingLoading } =
+  const { data: delegationsData, loading: delegationsLoading } =
     useAuthDelegationsGroupedByIdentityOutgoingQuery({
       variables: { lang },
       skip: !needsFetch,
     })
 
-  const delegationsLoading = outgoingLoading
-
+  // if the state gets cleared (for example after a refresh),
+  // we need to fetch users' current delegations for the initial state
   useEffect(() => {
-    if (!nationalIdParam || selectedScopes.length > 0) {
-      return
-    }
-
     const allDelegations =
-      outgoingData?.authDelegationsGroupedByIdentityOutgoing
+      delegationsData?.authDelegationsGroupedByIdentityOutgoing
 
-    if (!allDelegations) {
+    if (!nationalIdParam || selectedScopes.length > 0 || !allDelegations) {
       return
     }
 
@@ -79,21 +74,22 @@ const EditAccess = () => {
       setSelectedScopes(scopes)
     }
   }, [
-    outgoingData,
+    delegationsData,
     nationalIdParam,
     selectedScopes.length,
     setSelectedScopes,
     navigate,
   ])
 
-  const initialIsSamePeriod =
-    selectedScopes.length > 1 &&
-    selectedScopes.every(
-      (scope) => scope.validTo === selectedScopes[0]?.validTo,
+  // if all scopes have the same validTo date, then the initial setting of the access period is the same for all scopes
+  const initialIsSamePeriod = useMemo(() => {
+    return (
+      selectedScopes.length > 1 &&
+      selectedScopes.every(
+        (scope) => scope.validTo === selectedScopes[0]?.validTo,
+      )
     )
-
-  const [createAuthDelegations, { loading: mutationLoading }] =
-    useCreateAuthDelegationsMutation()
+  }, [selectedScopes])
 
   const contentfulData = useLoaderData() as AccessControlLoaderResponse
 
@@ -148,42 +144,11 @@ const EditAccess = () => {
             clearForm()
             navigate(DelegationPaths.DelegationsNew)
           }}
+          backButtonLabel={formatMessage(m.backButton)}
         />
 
         <ConfirmAccessModal
           onClose={() => setIsConfirmModalVisible(false)}
-          onConfirm={() => {
-            const scopes = selectedScopes
-              .map((scope) => {
-                if (!scope.domain?.name || !scope.validTo) {
-                  return null
-                }
-                return {
-                  name: scope.name,
-                  validTo: scope.validTo,
-                  domainName: scope.domain.name,
-                }
-              })
-              .filter((scope) => scope !== null)
-            if (!nationalIdParam) {
-              return
-            }
-            createAuthDelegations({
-              variables: {
-                input: {
-                  toNationalIds: [nationalIdParam],
-                  scopes,
-                },
-              },
-            })
-              .then(() => {
-                navigate(DelegationPaths.DelegationsNew)
-              })
-              .catch(() => {
-                toast.error(formatMessage(coreMessages.somethingWrong))
-              })
-          }}
-          loading={mutationLoading}
           isVisible={isConfirmModalVisible}
         />
 

@@ -31,7 +31,6 @@ export const ServiceCategoriesGrid = ({
             key={category.id}
             heading={category.title}
             text={category.description ?? ''}
-            // href={`/service-categories/${category.slug}`}
             href={`/minarsidur${DelegationPaths.CategoryDetails.replace(
               ':slug',
               category.slug,

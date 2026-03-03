@@ -98,7 +98,7 @@ export const IdentityLookup = ({
   return (
     <Box
       display="flex"
-      flexDirection={['column', 'row']}
+      flexDirection={['column', 'column', 'column', 'row']}
       rowGap={2}
       columnGap={3}
       flexGrow={1}

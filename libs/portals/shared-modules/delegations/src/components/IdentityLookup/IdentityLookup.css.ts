@@ -1,9 +1,18 @@
+import { theme } from '@island.is/island-ui/theme'
 import { globalStyle, keyframes, style } from '@vanilla-extract/css'
 
 export const inputWrapper = style({
   display: 'inline-block',
   position: 'relative',
   width: '100%',
+
+  maxWidth: 270,
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      maxWidth: 'none',
+    },
+  },
 })
 
 export const nationalIdInput = style([

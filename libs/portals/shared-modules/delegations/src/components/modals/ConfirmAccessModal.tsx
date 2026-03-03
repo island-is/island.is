@@ -6,6 +6,9 @@ import { ActionCard, Box } from '@island.is/island-ui/core'
 import { m as coreMessages } from '@island.is/portals/core'
 import { useDelegationForm } from '../../context'
 import { DateScopesTable } from '../ScopesTable/DateScopesTable'
+import { DelegationPaths } from '../../lib/paths'
+import { useCreateAuthDelegationsMutation } from '../../screens/GrantAccessNew/GrantAccessNew.generated'
+import { useNavigate } from 'react-router-dom'
 
 export const ConfirmAccessModal = ({
   onClose,
@@ -14,13 +17,47 @@ export const ConfirmAccessModal = ({
   loading,
 }: {
   onClose: () => void
-  onConfirm: () => void
+  onConfirm?: () => void
   isVisible: boolean
-  loading: boolean
+  loading?: boolean
 }) => {
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
 
-  const { identities } = useDelegationForm()
+  const { identities, selectedScopes } = useDelegationForm()
+
+  const [createAuthDelegations, { loading: mutationLoading }] =
+    useCreateAuthDelegationsMutation()
+
+  const handleConfirm = () => {
+    if (onConfirm) {
+      onConfirm()
+    } else {
+      const scopes = selectedScopes
+        .map((scope) => {
+          if (!scope.domain?.name || !scope.validTo) {
+            return null
+          }
+          return {
+            name: scope.name,
+            validTo: scope.validTo,
+            domainName: scope.domain.name,
+          }
+        })
+        .filter((scope) => scope !== null)
+
+      createAuthDelegations({
+        variables: {
+          input: {
+            toNationalIds: identities.map((identity) => identity.nationalId),
+            scopes,
+          },
+        },
+      }).then(() => {
+        navigate(DelegationPaths.DelegationsNew)
+      })
+    }
+  }
 
   return (
     <Modal
@@ -63,10 +100,10 @@ export const ConfirmAccessModal = ({
 
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
-          loading={loading}
+          loading={loading || mutationLoading}
           showShadow={false}
           onCancel={onClose}
-          onConfirm={onConfirm}
+          onConfirm={handleConfirm}
           confirmLabel={formatMessage(coreMessages.codeConfirmation)}
           confirmIcon="checkmark"
           containerPaddingBottom={[3, 3, 6]}

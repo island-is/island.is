@@ -4,7 +4,7 @@ import {
   AuthScopeCategoriesQuery,
 } from '../ServiceCategories/ServiceCategories.generated'
 import { useLocale } from '@island.is/localization'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { IntroHeader } from '@island.is/portals/core'
 import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
 import { Box, Button, SkeletonLoader, Text } from '@island.is/island-ui/core'
@@ -12,16 +12,14 @@ import { m } from '../../lib/messages'
 import { AuthApiScope } from '@island.is/api/schema'
 import { useDelegationForm } from '../../context/DelegationFormContext'
 import add from 'date-fns/add'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AccessRecipients } from '../../components/GrantAccessSteps/AccessRecipients'
 import { AccessScopes } from '../../components/GrantAccessSteps/AccessScopes'
 import { FlowStep, FlowStepper } from '@island.is/island-ui/core'
 import { useForm } from 'react-hook-form'
 import { AccessPeriod } from '../../components/GrantAccessSteps/AccessPeriod'
 import { m as coreMessages } from '@island.is/portals/core'
-import { DelegationPaths } from '../../lib/paths'
 import { ConfirmAccessModal } from '../../components/modals/ConfirmAccessModal'
-import { useCreateAuthDelegationsMutation } from '../GrantAccessNew/GrantAccessNew.generated'
 
 export const CategoryDetails = () => {
   const { lang } = useLocale()
@@ -38,18 +36,13 @@ export const CategoryDetails = () => {
   } = useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
     variables: { lang },
   })
-  const { selectedScopes, setSelectedScopes, setIdentities } =
+  const { selectedScopes, setSelectedScopes, setIdentities, clearForm } =
     useDelegationForm()
   const defaultDate = add(new Date(), { years: 1 })
 
   const category = categoriesData?.authScopeCategories?.find(
     (category) => category.slug === slug,
   )
-
-  const [createAuthDelegations, { loading: mutationLoading }] =
-    useCreateAuthDelegationsMutation()
-
-  const navigate = useNavigate()
 
   const onSelectScope = (scope: AuthApiScope) => {
     if (selectedScopes.some((s) => s.name === scope.name)) {
@@ -58,6 +51,11 @@ export const CategoryDetails = () => {
       setSelectedScopes([...selectedScopes, { ...scope, validTo: defaultDate }])
     }
   }
+
+  // clear the state on unmount
+  useEffect(() => {
+    return () => clearForm()
+  }, [clearForm])
 
   const methods = useForm({
     mode: 'onChange',
@@ -77,9 +75,6 @@ export const CategoryDetails = () => {
       continueButtonDisabled: selectedScopes.length === 0,
       continueButtonLabel: formatMessage(m.chooseRecipientsButtonLabel),
       continueButtonIcon: 'arrowForward',
-      onContinue: () => {
-        setActiveStep(activeStep + 1)
-      },
     },
     {
       id: 'access-recipients',
@@ -87,7 +82,6 @@ export const CategoryDetails = () => {
       content: <AccessRecipients methods={methods} />,
       onContinue: () => {
         setIdentities(watchIdentities)
-        setActiveStep(activeStep + 1)
       },
       continueButtonDisabled:
         !formState.isValid ||
@@ -127,12 +121,7 @@ export const CategoryDetails = () => {
                 selectedScopes={selectedScopes}
               />
               {categoriesLoading && (
-                <>
-                  <SkeletonLoader width="100%" height={50} />
-                  <SkeletonLoader width="100%" height={50} />
-                  <SkeletonLoader width="100%" height={50} />
-                  <SkeletonLoader width="100%" height={50} />
-                </>
+                <SkeletonLoader width="100%" height={50} repeat={4} />
               )}
             </Box>
             <Button
@@ -154,38 +143,11 @@ export const CategoryDetails = () => {
             onCancel={() => setShowFlow(false)}
             activeStep={activeStep}
             onStepChange={setActiveStep}
+            backButtonLabel={formatMessage(m.backButton)}
           />
         )}
         <ConfirmAccessModal
           onClose={() => setIsConfirmModalVisible(false)}
-          onConfirm={() => {
-            const scopes = selectedScopes
-              .map((scope) => {
-                if (!scope.domain?.name || !scope.validTo) {
-                  return null
-                }
-                return {
-                  name: scope.name,
-                  validTo: scope.validTo,
-                  domainName: scope.domain.name,
-                }
-              })
-              .filter((scope) => scope !== null)
-
-            createAuthDelegations({
-              variables: {
-                input: {
-                  toNationalIds: watchIdentities.map(
-                    (identity) => identity.nationalId,
-                  ),
-                  scopes,
-                },
-              },
-            }).then(() => {
-              navigate(DelegationPaths.DelegationsNew)
-            })
-          }}
-          loading={mutationLoading}
           isVisible={isConfirmModalVisible}
         />
       </div>

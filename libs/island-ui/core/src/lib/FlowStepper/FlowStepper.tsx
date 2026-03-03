@@ -15,11 +15,13 @@ export interface FlowStep {
   continueButtonIcon?: IconType
   onContinue?: () => void | Promise<void>
   continueButtonDisabled?: boolean
+  onBack?: () => void
 }
 
 export interface FlowStepperProps {
   steps: FlowStep[]
   cancelButtonLabel?: string
+  backButtonLabel?: string
   onCancel?: () => void
   loading?: boolean
   onStepChange?: (stepIndex: number) => void
@@ -29,6 +31,7 @@ export interface FlowStepperProps {
 export const FlowStepper: React.FC<FlowStepperProps> = ({
   steps,
   cancelButtonLabel,
+  backButtonLabel,
   onCancel,
   loading = false,
   onStepChange,
@@ -48,8 +51,9 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
     if (newStep < activeStep) {
       if (controlledActiveStep === undefined) {
         setInternalActiveStep(newStep)
+      } else {
+        onStepChange?.(newStep)
       }
-      onStepChange?.(newStep)
     }
   }
 
@@ -60,8 +64,24 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
     if (activeStep < steps.length - 1) {
       if (controlledActiveStep === undefined) {
         setInternalActiveStep(activeStep + 1)
+      } else {
+        onStepChange?.(activeStep + 1)
       }
-      onStepChange?.(activeStep + 1)
+    }
+  }
+
+  const handleBack = () => {
+    if (currentStep?.onBack) {
+      currentStep.onBack()
+    }
+    if (activeStep === 0) {
+      onCancel?.()
+    } else {
+      if (controlledActiveStep === undefined) {
+        setInternalActiveStep(activeStep - 1)
+      } else {
+        onStepChange?.(activeStep - 1)
+      }
     }
   }
 
@@ -81,6 +101,7 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
           alignItems="center"
           justifyContent="spaceAround"
           className={styles.progress}
+          style={{ minWidth: 120 * steps.length }}
         >
           {/* Connector line */}
           <div
@@ -157,11 +178,11 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
       >
         <Button
           variant="ghost"
-          onClick={onCancel}
+          onClick={activeStep === 0 ? onCancel : handleBack}
           disabled={loading}
           size="small"
         >
-          {cancelButtonLabel}
+          {activeStep === 0 ? cancelButtonLabel : backButtonLabel}
         </Button>
         <Button
           variant="primary"

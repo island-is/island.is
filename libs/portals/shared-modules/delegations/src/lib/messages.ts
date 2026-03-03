@@ -242,6 +242,16 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:grant-delegation',
     defaultMessage: 'Veita umboð',
   },
+  accessControlIntro: {
+    id: 'sp.access-control-delegations:header-intro-individual',
+    defaultMessage:
+      'Hérna getur þú veitt öðrum umboð og skoðað umboð sem aðrir hafa veitt þér. Þú getur eytt umboðum eða bætt við nýjum.',
+  },
+  accessControlIntroOnlyOutgoing: {
+    id: 'sp.access-control-delegations:header-intro-only-outgoing',
+    defaultMessage:
+      'Hérna kemur listi yfir þau umboð sem þú hefur gefið öðrum. Þú getur eytt umboðum eða bætt við nýjum.',
+  },
   saveAccess: {
     id: 'sp.access-control-delegations:empty-new-access',
     defaultMessage: 'Veita aðgang',
@@ -443,6 +453,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:delegation-nr',
     defaultMessage: 'Umboð {index}',
   },
+  backButton: {
+    id: 'sp.access-control-delegations:back-button',
+    defaultMessage: 'Til baka',
+  },
 
   // Table messages
   name: {
@@ -495,7 +509,7 @@ export const m = defineMessages({
   },
   procurationHolderTableTitle: {
     id: 'sp.access-control-delegations:procuration-holder-table-title',
-    defaultMessage: 'Prókúruhafar í þinni forsjá',
+    defaultMessage: 'Fyrirtæki þar sem þú ert prókúruhafi',
   },
   registry: {
     id: 'sp.access-control-delegations:registry',

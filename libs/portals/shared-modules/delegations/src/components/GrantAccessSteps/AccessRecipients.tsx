@@ -36,7 +36,7 @@ export const AccessRecipients = ({
 
       <Box display="flex" flexDirection="column" rowGap={4}>
         {fields.map((field, index) => (
-          <Box key={field.id} display="flex" columnGap={4} rowGap={2}>
+          <Box key={field.id} display="flex" columnGap={2} rowGap={2}>
             <IdentityLookup
               setFormError={setFormError}
               methods={methods}
@@ -45,21 +45,18 @@ export const AccessRecipients = ({
             <Box
               display="flex"
               flexShrink={0}
-              alignItems="center"
+              alignItems="flexEnd"
               justifyContent="flexEnd"
-              style={{ width: 85 }}
+              style={{ width: 48, paddingBottom: 4 }}
             >
               {index > 0 && (
                 <Button
-                  variant="text"
-                  size="small"
-                  icon="trash"
-                  iconType="outline"
-                  colorScheme="destructive"
+                  variant="ghost"
+                  circle
+                  icon="remove"
+                  colorScheme="default"
                   onClick={() => remove(index)}
-                >
-                  {formatMessage(m.grantRemovePerson)}
-                </Button>
+                />
               )}
             </Box>
           </Box>
