@@ -132,11 +132,17 @@ const Countries: FC<CountriesProps> = ({
                     large
                     backgroundColor="blue"
                     value={country.code}
-                    checked={selectedCountries.includes(country)}
+                    checked={selectedCountries.some(
+                      (c) => c.code === country.code,
+                    )}
                     onChange={() => {
-                      if (selectedCountries.includes(country)) {
+                      if (
+                        selectedCountries.some((c) => c.code === country.code)
+                      ) {
                         setSelectedCountries(
-                          selectedCountries.filter((c) => c !== country),
+                          selectedCountries.filter(
+                            (c) => c.code !== country.code,
+                          ),
                         )
                       } else {
                         setSelectedCountries([...selectedCountries, country])

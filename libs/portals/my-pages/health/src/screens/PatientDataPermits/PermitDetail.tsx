@@ -95,7 +95,18 @@ const PermitDetail: React.FC = () => {
                 iconType="outline"
                 size="small"
                 onClick={() =>
-                  navigate(HealthPaths.HealthPatientDataPermitsAdd)
+                  navigate(
+                    HealthPaths.HealthPatientDataPermitsAdd,
+                    isInactive
+                      ? undefined
+                      : {
+                          state: {
+                            countries: permit?.countries ?? [],
+                            validFrom: permit?.validFrom ?? null,
+                            validTo: permit?.validTo ?? null,
+                          },
+                        },
+                  )
                 }
               >
                 {formatMessage(

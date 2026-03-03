@@ -3,7 +3,7 @@ import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import Countries from '../../components/PatientDataPermit/Countries'
 import Dates from '../../components/PatientDataPermit/Dates'
@@ -19,11 +19,41 @@ import { Markdown } from '@island.is/shared/components'
 
 const DEFAULT_STEP = 1 // Default to step 1 to start with the first step
 
+type EditRouteState = {
+  countries?: { code: string; name: string }[]
+  validFrom?: string | null
+  validTo?: string | null
+}
+
+const buildInitialFormState = (
+  state: EditRouteState | null,
+): PermitInput | undefined => {
+  if (!state?.countries?.length) return undefined
+
+  const now = new Date()
+  now.setHours(0, 0, 0, 0)
+
+  const validFromDate = state.validFrom ? new Date(state.validFrom) : null
+  const validToDate = state.validTo ? new Date(state.validTo) : null
+  const datesStillValid = validFromDate !== null && validFromDate >= now
+
+  return {
+    countries: state.countries,
+    dates: {
+      validFrom: datesStillValid ? validFromDate : null,
+      validTo: datesStillValid ? validToDate : null,
+    },
+  }
+}
+
 const NewPermit: React.FC = () => {
   const { formatMessage, lang } = useLocale()
   const client = useApolloClient()
+  const location = useLocation()
   const [step, setStep] = useState<number>(DEFAULT_STEP)
-  const [formState, setFormState] = useState<PermitInput>()
+  const [formState, setFormState] = useState<PermitInput | undefined>(() =>
+    buildInitialFormState((location.state as EditRouteState) ?? null),
+  )
 
   const navigate = useNavigate()
 
