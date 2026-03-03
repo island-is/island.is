@@ -133,7 +133,7 @@ workflows:
   prod-app-ios:
     <<: *base
     name: Island.is Prod App iOS
-    instance_type: mac_mini_m2
+    instance_type: mac_mini_m4
     cache: &ios_cache
       cache_paths:
         - ~/Library/Caches/CocoaPods
@@ -173,7 +173,7 @@ workflows:
   dev-app-ios:
     <<: *base
     name: Island.is Dev App iOS
-    instance_type: mac_mini_m2
+    instance_type: mac_mini_m4
     cache: *ios_cache
     integrations:
       app_store_connect: 'Island.is API Key'
@@ -245,7 +245,7 @@ workflows:
   dev-app-android:
     <<: *base
     name: Island.is Dev App Android
-    instance_type: mac_mini_m2
+    instance_type: linux_x4
     ## Switch when we have billing
     # instance_type: linux_x2
     cache: *android_cache
