@@ -17,7 +17,7 @@ import {
 } from '../../../utils/testHelpers'
 import VerdictTimelineCard from './VerdictTimelineCard'
 
-jest.mock('../DateTime/DateTime', () => ({
+jest.mock('../../DateTime/DateTime', () => ({
   __esModule: true,
   default: ({
     name,
@@ -51,11 +51,14 @@ const mockVerdictAppealDecisionChoice = jest.fn(
   ),
 )
 
-jest.mock('../VerdictAppealDecisionChoice/VerdictAppealDecisionChoice', () => ({
-  __esModule: true,
-  default: (props: { disabled: boolean }) =>
-    mockVerdictAppealDecisionChoice(props),
-}))
+jest.mock(
+  '../../VerdictAppealDecisionChoice/VerdictAppealDecisionChoice',
+  () => ({
+    __esModule: true,
+    default: (props: { disabled: boolean }) =>
+      mockVerdictAppealDecisionChoice(props),
+  }),
+)
 
 jest.mock('next/router', () => ({
   useRouter() {
