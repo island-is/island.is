@@ -40,14 +40,19 @@ export class SecondarySchoolClient {
     return this.studentsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  // TODOx temporary untill API is ready
-  async getApplicationPeriodInfo(_auth: User): Promise<ApplicationPeriod> {
+  async getApplicationPeriodInfo(auth: User): Promise<ApplicationPeriod> {
+    const periodInfo = await this.applicationsApiWithAuth(
+      auth,
+    ).v1ApplicationsApplicationPeriodGet({ date: new Date() })
     return {
-      allowFreshmanApplication: true,
-      registrationEndDateGeneral: new Date('2026-05-26'),
-      registrationEndDateFreshman: new Date('2026-06-10'),
-      reviewStartDateGeneral: new Date('2026-05-27'),
-      reviewStartDateFreshman: new Date('2026-06-11'),
+      allowFreshmanApplication: periodInfo?.allowFreshmenApplication || false,
+      registrationEndDateGeneral:
+        periodInfo?.registrationEndDateGeneral || new Date(),
+      registrationEndDateFreshman:
+        periodInfo?.registrationEndDateFreshman || new Date(),
+      reviewStartDateGeneral: periodInfo?.reviewStartDateGeneral || new Date(),
+      reviewStartDateFreshman:
+        periodInfo?.reviewStartDateFreshman || new Date(),
     }
   }
 
@@ -80,6 +85,7 @@ export class SecondarySchoolClient {
           name: language.name || '',
         })) || [],
       allowRequestDormitory: school.availableDormitory || false,
+      requireThirdLanguage: school.requireThirdLanguage || false,
       isOpenForAdmissionGeneral: school.anyOpenForAdmissionGeneral || false,
       isOpenForAdmissionFreshman: school.anyOpenForAdmissionFreshman || false,
     }))

@@ -8,7 +8,7 @@ type NationalIdWithName = {
 }
 
 export type ApplicationAnswers = {
-  payment: {
+  payment?: {
     userIsPayingAsIndividual: YesOrNoEnum
     companyPayment?: {
       nationalIdWithName: NationalIdWithName
@@ -26,4 +26,5 @@ export type ApplicationAnswers = {
   }
   courseSelect: string
   dateSelect: string
+  courseHasChargeItemCode?: boolean
 }

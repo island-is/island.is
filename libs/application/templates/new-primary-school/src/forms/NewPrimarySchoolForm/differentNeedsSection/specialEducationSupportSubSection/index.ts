@@ -23,6 +23,9 @@ export const specialEducationSupportSubSection = buildSubSection({
   id: 'specialEducationSupportSubSection',
   title: differentNeedsMessages.support.subSectionTitle,
   condition: (answers, externalData) =>
+    //Business logic override as applicationConfig isn't ready on MMS side
+    //Should be removed when applicationConfig is ready
+    false &&
     shouldShowPage(answers, externalData, ApplicationFeatureKey.SOCIAL_INFO) &&
     hasSpecialEducationSubType(answers, externalData),
   children: [

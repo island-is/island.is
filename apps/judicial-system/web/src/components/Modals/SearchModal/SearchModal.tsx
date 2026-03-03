@@ -1,4 +1,5 @@
 import { FC, useContext, useEffect, useRef, useState } from 'react'
+import { useDebounce } from 'react-use'
 import cn from 'classnames'
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -23,6 +24,16 @@ import { UserContext } from '../../UserProvider/UserProvider'
 import { ModalContainer } from '../Modal/Modal'
 import { useSearchCasesLazyQuery } from './searchCases.generated'
 import * as styles from './SearchModal.css'
+
+const SEARCH_DEBOUNCE_MS = 300
+
+type SearchResultsState =
+  | {
+      rows: SearchCasesRow[]
+      rowCount: number
+      query: string
+    }
+  | undefined
 
 interface Props {
   onClose: () => void
@@ -75,12 +86,17 @@ const SearchModal: FC<Props> = ({ onClose }) => {
   const { user } = useContext(UserContext)
 
   const [searchString, setSearchString] = useState<string>('')
+  const [debouncedQuery, setDebouncedQuery] = useState<string>('')
   const [focusIndex, setFocusIndex] = useState<number>(-1)
-  const [searchResults, setSearchResults] =
-    useState<[JSX.Element[], number | undefined]>()
+  const [searchResults, setSearchResults] = useState<SearchResultsState>()
 
   const searchInputRef = useRef<HTMLInputElement>(null)
   const itemRefs = useRef<(HTMLLIElement | null)[]>([])
+  const focusIndexRef = useRef(focusIndex)
+  const searchResultsRef = useRef(searchResults)
+
+  focusIndexRef.current = focusIndex
+  searchResultsRef.current = searchResults
 
   const [searchCases] = useSearchCasesLazyQuery({
     fetchPolicy: 'no-cache',
@@ -88,33 +104,43 @@ const SearchModal: FC<Props> = ({ onClose }) => {
   })
 
   useEffect(() => {
+    if (searchString.trim() === '') {
+      setDebouncedQuery('')
+    }
+  }, [searchString])
+
+  useDebounce(
+    () => {
+      const trimmed = searchString.trim()
+      if (trimmed) setDebouncedQuery(trimmed)
+    },
+    SEARCH_DEBOUNCE_MS,
+    [searchString],
+  )
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!searchResults || searchResults[1] === 0) {
-        return
-      }
+      const results = searchResultsRef.current
+      const idx = focusIndexRef.current
+      if (!results || results.rowCount === 0) return
+
+      const { rows } = results
+      const len = rows.length
 
       if (e.key === 'ArrowDown') {
         e.preventDefault()
-        setFocusIndex((prev) =>
-          prev < 0 ? 0 : (prev + 1) % searchResults[0].length,
-        )
+        setFocusIndex((prev) => (prev < 0 ? 0 : (prev + 1) % len))
       }
 
       if (e.key === 'ArrowUp') {
         e.preventDefault()
-        setFocusIndex((prev) =>
-          prev < 0
-            ? searchResults[0].length - 1
-            : (prev - 1 + searchResults[0].length) % searchResults[0].length,
-        )
+        setFocusIndex((prev) => (prev < 0 ? len - 1 : (prev - 1 + len) % len))
       }
 
-      if (e.key === 'Enter' && focusIndex >= 0) {
-        const el = searchResults[0][focusIndex]
-        const caseId = el?.props?.caseId
-
-        if (caseId) {
-          handleOpenCase(caseId)
+      if (e.key === 'Enter' && idx >= 0) {
+        const row = rows[idx]
+        if (row?.caseId) {
+          handleOpenCase(row.caseId)
           onClose()
         }
       }
@@ -122,7 +148,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [focusIndex, handleOpenCase, onClose, searchResults])
+  }, [handleOpenCase, onClose])
 
   useEffect(() => {
     if (focusIndex >= 0 && itemRefs.current[focusIndex]) {
@@ -140,64 +166,40 @@ const SearchModal: FC<Props> = ({ onClose }) => {
   }, [])
 
   useEffect(() => {
-    const handleSearch = async () => {
+    if (debouncedQuery === '') {
+      setSearchResults(undefined)
+      setFocusIndex(-1)
+      return
+    }
+
+    let cancelled = false
+
+    const runSearch = async () => {
       try {
         const results = await searchCases({
-          variables: { input: { query: searchString } },
+          variables: { input: { query: debouncedQuery } },
         })
 
-        const getCaseNumber = (row: SearchCasesRow) => {
-          if (!user) {
-            return undefined
-          }
+        if (cancelled) return
 
-          return isProsecutionUser(user)
-            ? row.policeCaseNumbers[0]
-            : isDistrictCourtUser(user)
-            ? row.courtCaseNumber
-            : isCourtOfAppealsUser(user)
-            ? row.appealCaseNumber
-            : undefined
-        }
+        const data = results.data?.searchCases
+        const rowCount = data?.rowCount ?? 0
+        const rows = data?.rows ?? []
 
-        setSearchResults([
-          results.data && results.data.searchCases.rowCount > 0
-            ? results.data?.searchCases.rows.map((row: SearchCasesRow) => (
-                <SearchResultButton
-                  key={row.caseId}
-                  caseId={row.caseId}
-                  caseType={row.caseType}
-                  caseNumber={getCaseNumber(row)}
-                  descriptor={`${row.matchedValue}${
-                    row.matchedField === 'defendantName'
-                      ? ''
-                      : ` - ${row.defendantName}`
-                  }`}
-                  onClick={onClose}
-                />
-              ))
-            : [
-                <Text
-                  key="no-results"
-                  variant="small"
-                >{`Engar niðurstöður fundust fyrir: ${searchString}`}</Text>,
-              ],
-          results.data?.searchCases.rowCount,
-        ])
-
+        setSearchResults({ rows, rowCount, query: debouncedQuery })
         setFocusIndex(-1)
       } catch (error) {
-        console.error('Error searching cases:', error)
+        if (!cancelled) {
+          console.error('Error searching cases:', error)
+        }
       }
     }
 
-    if (searchString.trim().length > 0) {
-      handleSearch()
-    } else {
-      setSearchResults(undefined)
-      setFocusIndex(-1)
+    runSearch()
+    return () => {
+      cancelled = true
     }
-  }, [onClose, searchCases, searchString, user])
+  }, [debouncedQuery, searchCases])
 
   return (
     <ModalContainer title="Leit" onClose={onClose} position="top">
@@ -243,20 +245,52 @@ const SearchModal: FC<Props> = ({ onClose }) => {
             >
               <div className={grid({ gap: 2 })}>
                 <Text variant="eyebrow" color="dark300">
-                  {`Leitarniðurstöður (${searchResults[1]})`}
+                  {`Leitarniðurstöður (${searchResults.rowCount})`}
                 </Text>
                 <ul className={grid({ gap: 2 })}>
-                  {searchResults[0].map((searchResult, index) => (
-                    <li
-                      key={searchResult.props.caseId ?? index}
-                      className={cn({ [styles.focus]: focusIndex === index })}
-                      ref={(el) => {
-                        itemRefs.current[index] = el
-                      }}
-                    >
-                      {searchResult}
+                  {searchResults.rowCount > 0 ? (
+                    searchResults.rows.map((row, index) => {
+                      const caseNumber = user
+                        ? isProsecutionUser(user)
+                          ? row.policeCaseNumbers[0]
+                          : isDistrictCourtUser(user)
+                          ? row.courtCaseNumber
+                          : isCourtOfAppealsUser(user)
+                          ? row.appealCaseNumber
+                          : undefined
+                        : undefined
+                      return (
+                        <li
+                          key={`${row.caseId}-${index}`}
+                          className={cn({
+                            [styles.focus]: focusIndex === index,
+                          })}
+                          ref={(el) => {
+                            itemRefs.current[index] = el
+                          }}
+                        >
+                          <SearchResultButton
+                            caseId={row.caseId}
+                            caseType={row.caseType}
+                            caseNumber={caseNumber}
+                            descriptor={`${row.matchedValue}${
+                              row.matchedField === 'defendantName' ||
+                              !row.defendantName
+                                ? ''
+                                : ` - ${row.defendantName}`
+                            }`}
+                            onClick={onClose}
+                          />
+                        </li>
+                      )
+                    })
+                  ) : (
+                    <li>
+                      <Text variant="small">
+                        {`Engar niðurstöður fundust fyrir: ${searchResults.query}`}
+                      </Text>
                     </li>
-                  ))}
+                  )}
                 </ul>
               </div>
             </motion.div>

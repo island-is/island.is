@@ -45,10 +45,13 @@ export class FormDto {
   zendeskInternal!: boolean
 
   @ApiProperty()
-  submissionServiceUrl!: string
+  useValidate!: boolean
 
   @ApiProperty()
-  validationServiceUrl!: string
+  usePopulate!: boolean
+
+  @ApiProperty()
+  submissionServiceUrl!: string
 
   @ApiProperty()
   hasPayment!: boolean

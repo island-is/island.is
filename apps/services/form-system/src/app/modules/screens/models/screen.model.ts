@@ -69,7 +69,14 @@ export class Screen extends Model<Screen> {
     allowNull: false,
     defaultValue: false,
   })
-  callRuleset!: boolean
+  shouldValidate!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  shouldPopulate!: boolean
 
   @HasMany(() => Field)
   fields!: Field[]

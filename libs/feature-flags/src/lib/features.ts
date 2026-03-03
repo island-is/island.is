@@ -129,6 +129,8 @@ export enum Features {
   useIslandisPaymentForApplicationSystem = 'useIslandisPaymentForApplicationSystem',
   isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
   isIslandisInvoicePaymentAllowedForUser = 'isislandisinvoicepaymentsallowedforuser',
+  isIslandisApplePayPaymentEnabled = 'isIslandisApplePayPaymentEnabled',
+  isIslandisApplePayPaymentAllowedForUser = 'isIslandisApplePayPaymentAllowedForUser',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
@@ -151,6 +153,10 @@ export enum Features {
   // Questionnaires
   questionnairesFromEL = 'isQuestionnairesHealthDirectorateClientEnabled',
   questionnairesFromLSH = 'isQuestionnairesLshClientEnabled',
+  // Validate Personal representative delegations at syslumenn
+  usePersonalRepresentativesFromSyslumenn = 'usePersonalRepresentativesFromSyslumenn',
+  // SMS Notifications
+  isSmsNotificationEnabled = 'isSmsNotificationEnabled',
 }
 
 export enum ServerSideFeature {

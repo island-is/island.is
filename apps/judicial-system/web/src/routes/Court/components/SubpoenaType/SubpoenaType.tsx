@@ -45,7 +45,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
   const { formatMessage } = useIntl()
 
   return (
-    <>
+    <div>
       <SectionHeading
         title={formatMessage(strings.title)}
         required={required}
@@ -157,7 +157,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
           {item.children}
         </Box>
       ))}
-    </>
+    </div>
   )
 }
 

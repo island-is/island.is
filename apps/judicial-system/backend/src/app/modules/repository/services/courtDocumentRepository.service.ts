@@ -403,7 +403,7 @@ export class CourtDocumentRepositoryService {
         `Updating court documents of case ${caseId} to be linked to court session ${parentCaseCourtSessionId} of case ${parentCaseId}`,
       )
 
-      // Check if the case has court sessions, to determin which court documents to include
+      // Check if the case has court sessions, to determine which court documents to include
       const numCourtSessions = await this.courtSessionModel.count({
         where: { caseId },
         transaction,
@@ -583,7 +583,7 @@ export class CourtDocumentRepositoryService {
       }
 
       this.logger.debug(
-        `Updated court document ${courtDocumentId} for court session ${courtSessionId} of case ${caseId}`,
+        `Filed court document ${courtDocumentId} in court session ${courtSessionId} of case ${caseId}`,
       )
 
       return courtDocuments[0]
@@ -788,21 +788,74 @@ export class CourtDocumentRepositoryService {
     }
   }
 
-  async deleteDocumentsInSession(
+  async removeAllCourtDocumentsFromCourtSession(
     caseId: string,
     courtSessionId: string,
     transaction: Transaction,
   ) {
-    const filedDocuments = await this.courtDocumentModel.findAll({
-      where: { caseId, courtSessionId },
-      order: [['documentOrder', 'DESC']],
-      transaction,
-    })
+    try {
+      // Note that this method should only be called for the latest court session
+      // so no adjustment is need to document orders
 
-    for (const f of filedDocuments) {
-      await this.removeFromCourtSession(caseId, courtSessionId, f.id, {
+      this.logger.debug(
+        `Removing all court documents from court session ${courtSessionId} of case ${caseId}`,
+      )
+
+      // Lock all court documents for the case to prevent race conditions
+      await this.courtDocumentModel.findAll({
+        where: { caseId },
+        attributes: ['id'],
+        lock: transaction.LOCK.UPDATE,
         transaction,
       })
+
+      // Count the documents to remove
+      const numDocumentsToDelete = await this.courtDocumentModel.count({
+        where: { caseId, courtSessionId },
+        transaction,
+      })
+
+      // Fisically delete all external documents in the court session
+      await this.courtDocumentModel.destroy({
+        where: {
+          caseId,
+          courtSessionId,
+          documentType: CourtDocumentType.EXTERNAL_DOCUMENT,
+        },
+        transaction,
+      })
+
+      // Unfile the remaining documents in the court session
+      await this.courtDocumentModel.update(
+        { courtSessionId: null, documentOrder: 0 },
+        { where: { caseId, courtSessionId }, transaction },
+      )
+
+      // Count the merged documents to remove
+      const numMergedDocumentsToDelete = await this.courtDocumentModel.count({
+        where: { mergedCourtSessionId: courtSessionId },
+        transaction,
+      })
+
+      // Unfile all merged documents linked to the court session
+      await this.courtDocumentModel.update(
+        { mergedCourtSessionId: null, mergedDocumentOrder: null },
+        {
+          where: { mergedCourtSessionId: courtSessionId },
+          transaction,
+        },
+      )
+
+      this.logger.debug(
+        `Deleted ${numDocumentsToDelete} court documents and ${numMergedDocumentsToDelete} merged court documents from court session ${courtSessionId} of case ${caseId}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        `Error deleting all court documents from court session ${courtSessionId} of case ${caseId}:`,
+        { error },
+      )
+
+      throw error
     }
   }
 

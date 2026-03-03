@@ -513,15 +513,6 @@ export const OrganizationExternalLinks: React.FC<
               isSjukratryggingar &&
               (link.text.includes('Gagna') || link.text.includes('Data'))
 
-            let variant = undefined
-            if (
-              isSjukratryggingar &&
-              organizationPage.externalLinks &&
-              organizationPage.externalLinks.length === 2
-            ) {
-              variant = index === 0 ? 'primary' : 'ghost'
-            }
-
             return (
               <Link
                 href={link.url}
@@ -529,9 +520,6 @@ export const OrganizationExternalLinks: React.FC<
                 pureChildren={true}
               >
                 <Button
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  variant={variant}
                   unfocusable
                   icon={buttonHasLockIcon ? 'lockClosed' : 'open'}
                   iconType="outline"
