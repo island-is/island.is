@@ -2165,6 +2165,15 @@ export const messages = defineMessages({
     defaultMessage:
       '* Sjúkdómsgreiningar\n* Ofnæmi og lífsógnandi sjúkdóma\n* Yfirlit yfir núverandi lyf\n* Ígræði, t.d. hjartagangráður og bjargráður\n* Bólusetningar\n* Nýlegar meðferðir\n* Meðgöngu',
   },
+  keyHealthInformationToBeShared: {
+    id: 'sp.health:key-health-information-to-be-shared',
+    defaultMessage: 'Sjúkraskrárupplýsingar til birtingar',
+  },
+  keyHealthInformationToBeSharedDescription: {
+    id: 'sp.health:key-health-information-to-be-shared-description',
+    defaultMessage:
+      'Heimildin nær utan um lykil heilsufarsupplýsingar sem inniheldur eftirfarandi upplýsingar:',
+  },
   errorTryAgain: {
     id: 'sp.health:error-try-again',
     defaultMessage:
