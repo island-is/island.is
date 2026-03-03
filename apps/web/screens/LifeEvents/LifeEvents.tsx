@@ -112,7 +112,10 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
         </GridContainer>
       </Box>
       <Box background="purple100">
-        <GridContainer>
+        <Box
+          paddingX={[3, 3, 6, 6, 6]}
+          style={{ maxWidth: 1440, margin: '0 auto' }}
+        >
           <Box
             paddingTop={8}
             paddingBottom={3}
@@ -152,7 +155,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
               </Inline>
             </Box>
           </Box>
-        </GridContainer>
+        </Box>
         <GridItems
           mobileItemWidth={215}
           mobileItemsRows={5}
