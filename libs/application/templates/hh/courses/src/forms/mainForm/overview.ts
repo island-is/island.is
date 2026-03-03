@@ -29,6 +29,14 @@ export const overviewSection = buildSection({
           tableData: getParticipantOverviewTableData,
         }),
         buildOverviewField({
+          condition: (answers) => {
+            const selectedInstanceId = getValueViaPath<string>(
+              answers,
+              'dateSelect',
+              '',
+            )
+            return doesCourseInstanceHaveChargeItemCode(selectedInstanceId)
+          },
           id: 'payerOverview',
           bottomLine: false,
           title: m.overview.payerHeading,
