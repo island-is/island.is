@@ -29,8 +29,11 @@ const VerAnnouncementCalculator = () => {
     employerCount: 0,
   })
   const [results, setResults] = useState<Results | null>(null)
+  const [buttonDisabled, setButtonDisabled] = useState(false)
 
   const updateInputState = (key: keyof InputState, value: Date | number) => {
+    setResults(null)
+    setButtonDisabled(false)
     setInputState((prevState) => ({ ...prevState, [key]: value }))
   }
 
@@ -65,6 +68,7 @@ const VerAnnouncementCalculator = () => {
   }
 
   const calculate = () => {
+    setButtonDisabled(true)
     const calculatedResults = calculateResults(
       inputState.startDate,
       inputState.endDate,
@@ -127,7 +131,7 @@ const VerAnnouncementCalculator = () => {
             />
           </Box>
 
-          <Button onClick={calculate} disabled={!canSubmit}>
+          <Button onClick={calculate} disabled={!canSubmit || buttonDisabled}>
             {formatMessage(translationStrings.calculate)}
           </Button>
         </Stack>
