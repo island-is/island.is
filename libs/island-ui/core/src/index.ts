@@ -144,3 +144,6 @@ export * as alertBannerStyles from './lib/AlertBanner/AlertBanner.css'
 // Hooks
 export * from './hooks/useBreakpoint'
 export { ErrorMessage } from './lib/Input/ErrorMessage'
+
+// Utilities
+export { withFigma } from './utils/withFigma'
