@@ -3,7 +3,11 @@ import {
   service,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
-import { Base, Client } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  NationalRegistryB2C,
+} from '../../../../infra/src/dsl/xroad'
 
 const serviceName = 'services-form-system-api'
 const workerName = `${serviceName}-worker`
@@ -48,12 +52,14 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
-    .xroad(Base, Client)
+    .xroad(Base, Client, NationalRegistryB2C)
     .ingress({
       primary: {
         host: {
