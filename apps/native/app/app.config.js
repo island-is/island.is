@@ -73,7 +73,7 @@ export default ({ config }) => {
           ],
         },
       ],
-      './plugins/with-app-brand',
+      './plugins/with-island-app',
     ],
   }
 }
