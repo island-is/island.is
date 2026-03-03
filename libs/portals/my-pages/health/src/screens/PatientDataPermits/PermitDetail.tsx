@@ -162,9 +162,7 @@ const PermitDetail: React.FC = () => {
                 isActive
                   ? {
                       action: () => setModalOpen(true),
-                      label: formatMessage(
-                        messages.patientDataPermitInvalidate,
-                      ),
+                      label: formatMessage(messages.patientDataPermitInvalidate),
                       type: 'action',
                       icon: 'arrowForward',
                     }

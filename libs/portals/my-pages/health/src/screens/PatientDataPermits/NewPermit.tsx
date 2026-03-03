@@ -115,7 +115,7 @@ const NewPermit: React.FC = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(messages.patientDataPermitTitle)}
+      title={formatMessage(messages.addPermit)}
       introComponent={
         <Markdown>{formatMessage(messages.permitDetailIntroWithLink)}</Markdown>
       }

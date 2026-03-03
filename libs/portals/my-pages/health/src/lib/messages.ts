@@ -2047,7 +2047,7 @@ export const messages = defineMessages({
     id: 'sp.health:patient-data-permit',
   },
   patientDataPermitTitle: {
-    defaultMessage: 'Bæta við heimild',
+    defaultMessage: 'Heimild til birtingar sjúkraskrárupplýsinga milli landa',
     id: 'sp.health:patient-data-permit-title',
   },
   patientDataPermitDescription: {
@@ -2062,10 +2062,6 @@ export const messages = defineMessages({
   patientDataPermitsLinkText: {
     defaultMessage: 'Lesa um heimildina hér',
     id: 'sp.health:patient-data-permits-link-text',
-  },
-  patientDataPermitInvalidate: {
-    defaultMessage: 'Óvirkja heimild',
-    id: 'sp.health:invalidate-permit',
   },
   readAboutPermit: {
     defaultMessage: 'Lesa um heimildina hér',
@@ -2220,8 +2216,12 @@ export const messages = defineMessages({
     id: 'sp.health:landspitali-tooltip',
   },
   invalidatePermit: {
-    defaultMessage: 'Óvirkja heimild',
+    defaultMessage: 'Eyða',
     id: 'sp.health:invalidate-permit',
+  },
+  patientDataPermitInvalidate: {
+    defaultMessage: 'Óvirkja heimild',
+    id: 'sp.health:patient-data-permit-invalidate',
   },
   areYouSureAboutInvalidatingPermit: {
     defaultMessage: 'Ertu viss um að þú viljir óvirkja heimild?',
