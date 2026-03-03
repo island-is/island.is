@@ -50,6 +50,8 @@ const PermitDetail: React.FC = () => {
     permit?.status === HealthDirectoratePermitStatus.active ||
     permit?.status === HealthDirectoratePermitStatus.awaitingApproval
 
+  const isInactive = permit?.status === HealthDirectoratePermitStatus.inactive
+
   const onInvalidateSubmit = () => {
     invalidatePermit()
       .then(() => {
@@ -95,7 +97,9 @@ const PermitDetail: React.FC = () => {
                   navigate(HealthPaths.HealthPatientDataPermitsAdd)
                 }
               >
-                {formatMessage(messages.editPermit)}
+                {formatMessage(
+                  isInactive ? messages.activatePermit : messages.editPermit,
+                )}
               </Button>,
             ]
           : undefined

@@ -2207,11 +2207,11 @@ export const messages = defineMessages({
     id: 'sp.health:invalidate-permit',
   },
   areYouSureAboutInvalidatingPermit: {
-    defaultMessage: 'Ertu viss um að þú viljir eyða heimild?',
+    defaultMessage: 'Ertu viss um að þú viljir óvirkja heimild?',
     id: 'sp.health:are-you-sure-about-invalidating-permit',
   },
   youAreAboutToInvalidateThisPermit: {
-    defaultMessage: 'Þú ert að fara eyða eftirfarandi heimild:',
+    defaultMessage: 'Þú ert að fara gera eftirfarandi heimild óvirka:',
     id: 'sp.health:you-are-about-to-invalidate-this-permit',
   },
   youAreAboutToDeleteThisPermit: {
@@ -2257,12 +2257,12 @@ export const messages = defineMessages({
     id: 'sp.health:permit-created-error',
   },
   permitInvalidated: {
-    defaultMessage: 'Heimild hefur verið eytt',
+    defaultMessage: 'Heimild hefur verið óvirkjuð',
     id: 'sp.health:permit-invalidated',
   },
   permitInvalidatedError: {
     defaultMessage:
-      'Ekki tókst að eyða heimild. Vinsamlegast reyndu aftur síðar.',
+      'Ekki tókst að óvirkja heimild. Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:permit-invalidated-error',
   },
   permitDetailIntro: {

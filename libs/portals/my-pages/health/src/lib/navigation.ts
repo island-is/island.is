@@ -264,7 +264,7 @@ export const healthNavigation: PortalNavigationItem = {
       searchTags: [s.healthPatientData],
       children: [
         {
-          name: messages.patientData,
+          name: messages.patientDataPermit,
           path: HealthPaths.HealthPatientDataPermits,
           children: [
             {
