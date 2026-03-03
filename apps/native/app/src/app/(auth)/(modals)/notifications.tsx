@@ -5,9 +5,9 @@ import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
   FlatList,
-  SafeAreaView,
   View,
   Image,
+  Platform,
 } from 'react-native'
 import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
@@ -31,10 +31,7 @@ import {
 } from '@/graphql/types/schema'
 import { navigateToUniversalLink } from '@/lib/deep-linking'
 import { useNotificationsStore } from '@/stores/notifications-store'
-import {
-  createSkeletonArr,
-  SkeletonItem,
-} from '@/utils/create-skeleton-arr'
+import { createSkeletonArr, SkeletonItem } from '@/utils/create-skeleton-arr'
 import { isAndroid } from '@/utils/devices'
 import { testIDs } from '@/utils/test-ids'
 import settings from '@/assets/icons/settings.png'
@@ -42,6 +39,7 @@ import inboxRead from '@/assets/icons/inbox-read.png'
 import emptyIllustrationSrc from '@/assets/illustrations/le-company-s3.png'
 import { useBrowser } from '@/hooks/use-browser'
 import { useLocale } from '@/hooks/use-locale'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const LoadingWrapper = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
@@ -50,9 +48,8 @@ const LoadingWrapper = styled.View`
 
 const ButtonWrapper = styled.View`
   flex-direction: row;
-  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
-  margin-top: ${({ theme }) => theme.spacing[2]}px;
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
+  padding: ${({ theme }) => theme.spacing[2]}px;
+  background-color: ${({ theme }) => theme.shade.background};
 `
 
 const DEFAULT_PAGE_SIZE = 50
@@ -236,78 +233,69 @@ export default function NotificationsScreen() {
 
   const keyExtractor = useCallback((item: ListItem) => item.id.toString(), [])
 
+  if (showError) {
+    return <Problem type="error" withContainer />
+  }
+
   return (
-    <>
-      <NavigationBarSheet
-        componentId="notifications"
-        title={intl.formatMessage({ id: 'notifications.screenTitle' })}
-        onClosePress={() => router.back()}
-        style={{ marginHorizontal: 16 }}
-        showLoading={loading && !!data}
-      />
-      <SafeAreaView style={{ flex: 1 }} testID={testIDs.SCREEN_NOTIFICATIONS}>
-        {showError ? (
-          <Problem type="error" withContainer />
-        ) : (
-          <FlatList
-            style={{ flex: 1, marginTop: theme.spacing[2] }}
-            data={memoizedData}
-            keyExtractor={keyExtractor}
-            renderItem={renderNotificationItem}
-            onEndReachedThreshold={0.5}
-            onEndReached={handleEndReached}
-            scrollEventThrottle={16}
-            scrollToOverflowEnabled
-            ListHeaderComponent={
-              <ButtonWrapper>
-                <Button
-                  isOutlined
-                  isUtilityButton
-                  title={intl.formatMessage({
-                    id: 'notifications.markAllAsRead',
-                    defaultMessage: 'Merkja allt lesið',
-                  })}
-                  style={{
-                    marginRight: theme.spacing[2],
-                    maxWidth: 145,
-                  }}
-                  icon={inboxRead}
-                  iconStyle={{ tintColor: theme.color.blue400 }}
-                  onPress={() => markAllUserNotificationsAsRead()}
-                />
-                <Button
-                  isOutlined
-                  isUtilityButton
-                  title={intl.formatMessage({
-                    id: 'notifications.settings',
-                    defaultMessage: 'Mínar stillingar',
-                  })}
-                  onPress={() => router.navigate('/settings')}
-                  icon={settings}
-                  style={{
-                    maxWidth: 145,
-                  }}
-                  iconStyle={{
-                    tintColor: theme.color.blue400,
-                    resizeMode: 'contain',
-                  }}
-                />
-              </ButtonWrapper>
-            }
-            ListFooterComponent={
-              loadingMore && !error ? (
-                <LoadingWrapper>
-                  <ActivityIndicator
-                    size="small"
-                    animating
-                    color={theme.color.blue400}
-                  />
-                </LoadingWrapper>
-              ) : null
-            }
-          />
-        )}
-      </SafeAreaView>
-    </>
+    <FlatList
+      style={{ flex: 1 }}
+      data={memoizedData}
+      keyExtractor={keyExtractor}
+      renderItem={renderNotificationItem}
+      onEndReachedThreshold={0.5}
+      onEndReached={handleEndReached}
+      scrollEventThrottle={16}
+      contentInsetAdjustmentBehavior="automatic"
+      nestedScrollEnabled
+      stickyHeaderIndices={Platform.OS === 'android' ? [0] : undefined}
+      ListHeaderComponent={
+          <ButtonWrapper>
+            <Button
+              isOutlined
+              isUtilityButton
+              title={intl.formatMessage({
+                id: 'notifications.markAllAsRead',
+                defaultMessage: 'Merkja allt lesið',
+              })}
+              style={{
+                marginRight: theme.spacing[2],
+                maxWidth: 145,
+              }}
+              icon={inboxRead}
+              iconStyle={{ tintColor: theme.color.blue400 }}
+              onPress={() => markAllUserNotificationsAsRead()}
+            />
+            <Button
+              isOutlined
+              isUtilityButton
+              title={intl.formatMessage({
+                id: 'notifications.settings',
+                defaultMessage: 'Mínar stillingar',
+              })}
+              onPress={() => router.navigate('/settings')}
+              icon={settings}
+              style={{
+                maxWidth: 145,
+              }}
+              iconStyle={{
+                tintColor: theme.color.blue400,
+                resizeMode: 'contain',
+              }}
+            />
+          </ButtonWrapper>
+      }
+      ListFooterComponent={
+        loadingMore && !error ? (
+          <LoadingWrapper>
+            <ActivityIndicator
+              size="small"
+              animating
+              color={theme.color.blue400}
+            />
+          </LoadingWrapper>
+        ) : null
+      }
+    />
   )
 }

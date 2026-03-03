@@ -6,7 +6,7 @@ import { authStore, useAuthStore } from '@/stores/auth-store'
 import { isOnboarded } from '@/utils/onboarding'
 import { useIntl } from 'react-intl'
 import { config } from '../../config'
-import { modalScreenOptions } from '../../constants/screen-options'
+import { modalScreenOptions, tabScreenOptions } from '../../constants/screen-options'
 
 export const unstable_settings = {
   initialRouteName: '(tabs)',
@@ -112,6 +112,14 @@ export default function AuthLayout() {
         options={{
           ...modalScreenOptions,
           headerTitle: intl.formatMessage({ id: 'edit.bankinfo.screenTitle' }),
+        }}
+      />
+      <Stack.Screen
+        name="(modals)/notifications"
+        options={{
+          ...modalScreenOptions,
+          ...tabScreenOptions,
+          headerTitle: intl.formatMessage({ id: 'notifications.screenTitle' }),
         }}
       />
       <Stack.Screen

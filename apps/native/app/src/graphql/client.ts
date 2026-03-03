@@ -18,6 +18,7 @@ import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
 import { getCustomUserAgent } from '../utils/user-agent'
 import { GenericUserLicense } from './types/schema'
+import { createNetworkStatusNotifier } from 'react-apollo-network-status'
 
 export function cognitoAuthUrl() {
   const url = `https://cognito.shared.devland.is/login`
@@ -32,22 +33,27 @@ export function cognitoAuthUrl() {
   return `${url}?${new URLSearchParams(params)}`
 }
 
+const NetworkStatusNotifier = createNetworkStatusNotifier()
+
+export const useApolloNetworkStatus =
+  NetworkStatusNotifier.useApolloNetworkStatus
+
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
 
-const connectivityLink = new ApolloLink((operation, forward) => {
-  return forward(operation).map((response) => {
-    // Check if the network response was successful
-    const success =
-      response.errors === undefined || response.errors.length === 0
+// const connectivityLink = new ApolloLink((operation, forward) => {
+//   return forward(operation).map((response) => {
+//     // Check if the network response was successful
+//     const success =
+//       response.errors === undefined || response.errors.length === 0
 
-    // This is a fallback check if the @react-native-community/netinfo will fail to detect if the network status is available again.
-    if (success && !offlineStore.getState().isConnected) {
-      offlineStore.setState({ isConnected: true })
-    }
+//     // This is a fallback check if the @react-native-community/netinfo will fail to detect if the network status is available again.
+//     if (success && !offlineStore.getState().isConnected) {
+//       offlineStore.setState({ isConnected: true })
+//     }
 
-    return response
-  })
-})
+//     return response
+//   })
+// })
 
 const httpLink = new HttpLink({
   uri() {
@@ -250,11 +256,10 @@ export const initializeApolloClient = async () => {
 
   apolloClient = new ApolloClient({
     link: ApolloLink.from([
-      connectivityLink,
       retryLink,
       errorLink,
       authLink,
-      httpLink,
+      NetworkStatusNotifier.link.concat(httpLink),
     ]),
     defaultOptions: {
       watchQuery: {

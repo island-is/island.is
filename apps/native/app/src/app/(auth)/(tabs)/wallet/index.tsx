@@ -36,6 +36,7 @@ import {
 import { isIos } from '@/utils/devices'
 import { testIDs } from '@/utils/test-ids'
 import { router, Stack } from 'expo-router'
+import { StackScreen } from '../../../../components/stack-screen'
 
 const Tabs = styled.View`
   margin-top: ${({ theme }) => theme.spacing[1]}px;
@@ -210,21 +211,21 @@ export default function WalletScreen() {
 
   return (
     <>
-      <Stack.Screen
+      <StackScreen
+        networkStatus={[res.networkStatus]}
         options={{
           headerTitle: intl.formatMessage({ id: 'wallet.screenTitle' }),
-          headerRight: () => (
-            <>
-              <TouchableNativeFeedback
-                onPress={() => router.navigate('/wallet/scanner')}
-              >
-                <Image
-                  source={require('@/assets/icons/navbar-scan.png')}
-                  style={{ width: 32, height: 32 }}
-                />
-              </TouchableNativeFeedback>
-            </>
-          ),
+          headerRightItems: [
+            {
+              type: 'button',
+              label: intl.formatMessage({ id: 'wallet.scanButton' }),
+              icon: {
+                type: 'image',
+                source: require('@/assets/icons/navbar-scan.png'),
+              },
+              onPress: () => router.navigate('/wallet/scanner'),
+            },
+          ],
         }}
       />
       <FlatList

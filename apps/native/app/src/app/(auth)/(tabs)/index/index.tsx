@@ -50,6 +50,7 @@ import { needsToUpdateAppVersion } from '@/utils/minimum-app-version'
 import { testIDs } from '@/utils/test-ids'
 import { router, Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
+import { StackScreen } from '../../../../components/stack-screen'
 
 interface ListItem {
   id: string
@@ -292,18 +293,39 @@ export default function HomeScreen() {
 
   return (
     <>
-      <Stack.Screen
+      <StackScreen
+        networkStatus={[
+          applicationsRes.networkStatus,
+          inboxRes.networkStatus,
+          licensesRes.networkStatus,
+          airDiscountRes.networkStatus,
+          vehiclesRes.networkStatus,
+        ]}
         options={{
-          headerRight: () => (
-            <TouchableNativeFeedback
-              onPress={() => router.navigate('/homescreen-options')}
-            >
-              <Image
-                source={require('@/assets/icons/options.png')}
-                style={{ width: 24, height: 24 }}
-              />
-            </TouchableNativeFeedback>
-          ),
+          headerRightItems: [
+            {
+              identifier: 'options',
+              type: 'button',
+              label: 'Options',
+              icon: {
+                type: 'image',
+                source: require('@/assets/icons/options.png'),
+              },
+              onPress: () => router.navigate('/homescreen-options'),
+            },
+            {
+              type: 'button',
+              label: 'Notifications',
+              selected: false,
+              icon: {
+                type: 'image',
+                source: require('@/assets/icons/topbar-notifications.png'),
+              },
+              sharesBackground: false,
+              identifier: 'notifications',
+              onPress: () => router.navigate('/notifications'),
+            },
+          ],
         }}
       />
       <Animated.FlatList

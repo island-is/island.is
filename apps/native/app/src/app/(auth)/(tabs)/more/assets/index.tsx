@@ -18,6 +18,7 @@ import { useListAssetsQuery } from '@/graphql/types/schema'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { AssetCard, EmptyList, Skeleton, TopLine } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
+import { StackScreen } from '../../../../../components/stack-screen'
 
 const AssetItem = React.memo(({ item }: { item: any }) => {
   const theme = useTheme()
@@ -193,6 +194,7 @@ export default function AssetsOverviewScreen() {
 
   return (
     <>
+      <StackScreen networkStatus={assetsRes.networkStatus} />
       <Animated.FlatList
         ref={flatListRef}
         testID={testIDs.SCREEN_HOME}

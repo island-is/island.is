@@ -22,6 +22,7 @@ import { formatNationalId } from '@/lib/format-national-id'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { useAuthStore } from '@/stores/auth-store'
 import { FamilyMemberCard, MoreCard, TopLine } from '@/ui'
+import { StackScreen } from '../../../../components/stack-screen'
 
 const Row = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[1]}px;
@@ -66,21 +67,19 @@ export default function MoreScreen() {
 
   return (
     <>
-      <Stack.Screen
+      <StackScreen
         options={{
-          headerTitle: intl.formatMessage({ id: 'profile.screenTitle' }),
-          headerRight: () => (
-            <>
-              <TouchableNativeFeedback
-                onPress={() => router.navigate('/settings')}
-              >
-                <Image
-                  source={require('@/assets/icons/settings.png')}
-                  style={{ width: 24, height: 24 }}
-                />
-              </TouchableNativeFeedback>
-            </>
-          ),
+          headerRightItems: [
+            {
+              label: intl.formatMessage({ id: 'profile.settings' }),
+              type: 'button',
+              icon: {
+                type: 'image',
+                source: require('@/assets/icons/settings.png'),
+              },
+              onPress: () => router.navigate('/settings'),
+            },
+          ],
         }}
       />
       <Animated.ScrollView

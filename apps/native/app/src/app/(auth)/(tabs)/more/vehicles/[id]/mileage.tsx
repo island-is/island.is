@@ -26,6 +26,7 @@ import {
 import { useBrowser } from '@/hooks/use-browser'
 import { showPrompt } from '@/lib/show-picker'
 import { MileageCell } from '../../../../../../components/mileage-cell'
+import { StackScreen } from '../../../../../../components/stack-screen'
 
 const HIGHEST_MILEAGE = 9999999
 
@@ -231,6 +232,7 @@ export default function VehicleMileageScreen() {
 
   return (
     <>
+      <StackScreen networkStatus={[res.networkStatus, info.networkStatus]} />
       <FlatList
         data={data}
         renderItem={({ item, index }) =>

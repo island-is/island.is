@@ -5,6 +5,7 @@ import { router, Stack, useLocalSearchParams } from 'expo-router'
 import { Divider, Input, InputRow, NavigationBarSheet } from '@/ui'
 import { useGetAssetQuery } from '@/graphql/types/schema'
 import { testIDs } from '@/utils/test-ids'
+import { StackScreen } from '../../../../../components/stack-screen'
 
 export default function AssetsDetailScreen() {
   const { id, address } = useLocalSearchParams<{
@@ -13,7 +14,7 @@ export default function AssetsDetailScreen() {
   }>()
   const intl = useIntl()
 
-  const { data, loading } = useGetAssetQuery({
+  const { data, loading, networkStatus } = useGetAssetQuery({
     variables: { input: { assetId: id } },
   })
 
@@ -23,7 +24,7 @@ export default function AssetsDetailScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
+      <StackScreen networkStatus={networkStatus} options={{ headerShown: false }} />
       <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL} stickyHeaderIndices={[0]}>
         <NavigationBarSheet
           title={address ?? ''}

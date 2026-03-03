@@ -13,6 +13,7 @@ import { useLocale } from '@/hooks/use-locale'
 import { EmptyList, StatusCardSkeleton, TopLine } from '@/ui'
 import { ApplicationsPreview } from '../../../../../components/applications-preview'
 import { sortApplicationsStatus } from '../../../../../utils/applications/sort-applications-status'
+import { StackScreen } from '../../../../../components/stack-screen'
 
 const Host = styled.View`
   flex: 1;
@@ -52,6 +53,7 @@ export default function ApplicationsScreen() {
 
   return (
     <Host>
+      <StackScreen networkStatus={applicationsRes.networkStatus} />
       <Animated.ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />

@@ -123,6 +123,7 @@
       "./plugins/license-widget",
       "expo-router",
       "expo-sharing",
+      "expo-web-browser",
       "react-native-spotlight-search",
       "react-native-vision-camera",
       "@react-native-firebase/app",

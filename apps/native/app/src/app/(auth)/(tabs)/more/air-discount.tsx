@@ -24,6 +24,7 @@ import {
 } from '@/ui'
 import { AirfaresUsageTable } from '@/components/airfares-usage-table'
 import { useBrowser } from '@/hooks/use-browser'
+import { StackScreen } from '../../../../components/stack-screen'
 
 const BulletList = styled.View`
   margin-vertical: 12px;
@@ -111,9 +112,10 @@ export default function AirDiscountScreen() {
     false,
   )
 
-  const { data, loading, error } = useGetAirDiscountQuery({
+  const airDiscountRes = useGetAirDiscountQuery({
     fetchPolicy: 'network-only',
   })
+  const { data, loading, error } = airDiscountRes
 
   const airDiscountFlightLegsRes = useGetAirDiscountFlightLegsQuery()
 
@@ -144,6 +146,12 @@ export default function AirDiscountScreen() {
           },
         )}
       >
+        <StackScreen
+          networkStatus={[
+            airDiscountFlightLegsRes.networkStatus,
+            airDiscountRes.networkStatus,
+          ]}
+        />
         <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
           <Heading>
             <FormattedMessage

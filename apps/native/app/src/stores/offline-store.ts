@@ -23,7 +23,7 @@ export type OfflineStore = OfflineState & {
 
 export const offlineStore = create<OfflineStore>((set) => ({
   pastIsConnected: true,
-  isConnected: true,
+  isConnected: false,
   bannerVisible: false,
   bannerHasBeenShown: false,
 

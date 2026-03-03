@@ -5,6 +5,7 @@ import { router, Stack, useLocalSearchParams } from 'expo-router'
 import { Input, InputRow, NavigationBarSheet } from '@/ui'
 import { useGetFinanceStatusDetailsQuery } from '@/graphql/types/schema'
 import { testIDs } from '@/utils/test-ids'
+import { StackScreen } from '../../../../../../../components/stack-screen'
 
 export default function FinanceStatusDetailScreen() {
   const { chargeTypeId, orgId, index } = useLocalSearchParams<{
@@ -13,7 +14,7 @@ export default function FinanceStatusDetailScreen() {
     index: string
   }>()
   const intl = useIntl()
-  const { loading, ...financeStatusDetails } = useGetFinanceStatusDetailsQuery({
+  const { loading, networkStatus, ...financeStatusDetails } = useGetFinanceStatusDetailsQuery({
     variables: {
       input: {
         orgID: orgId,
@@ -33,7 +34,7 @@ export default function FinanceStatusDetailScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
+      <StackScreen options={{ headerShown: false }} networkStatus={networkStatus} />
       <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_FINANCE_DETAIL} stickyHeaderIndices={[0]}>
         <NavigationBarSheet
           title={intl.formatMessage({ id: 'financeDetail.title' })}

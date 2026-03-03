@@ -1,16 +1,13 @@
-import { View } from 'react-native'
+import { Platform, View } from 'react-native'
 import { OfflineIcon } from '../offline/offline-icon'
 import { router } from 'expo-router'
 import { NativeStackHeaderItem } from '@react-navigation/native-stack'
+import { NetworkStatus } from '@apollo/client'
 
-export function navbarOfflineItem(): NativeStackHeaderItem {
+export function navbarOfflineItem(networkStatus?: NetworkStatus | NetworkStatus[]): NativeStackHeaderItem {
   return {
     type: 'custom',
-    element: (
-      <View style={{ paddingLeft: 92 }}>
-        <OfflineIcon />
-      </View>
-    ),
+    element: <OfflineIcon networkStatus={networkStatus} />,
     hidesSharedBackground: true,
   }
 }

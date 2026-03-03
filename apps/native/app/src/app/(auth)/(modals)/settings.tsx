@@ -45,6 +45,7 @@ import { testIDs } from '@/utils/test-ids'
 
 import chevronForward from '@/ui/assets/icons/chevron-forward.png'
 import editIcon from '@/assets/icons/edit.png'
+import { StackScreen } from '../../../components/stack-screen'
 
 export default function SettingsScreen() {
   const router = useRouter()
@@ -230,14 +231,8 @@ export default function SettingsScreen() {
       contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{ paddingBottom: 32 }}
     >
+      <StackScreen closeable networkStatus={[userProfile.networkStatus]} />
       <View>
-        {/* <NavigationBarSheet
-          componentId="settings"
-          title={intl.formatMessage({ id: 'setting.screenTitle' })}
-          onClosePress={() => router.back()}
-          style={{ marginHorizontal: 16 }}
-          showLoading={userProfile.loading && !!userProfile.data}
-        /> */}
         <Alert
           type="info"
           visible={!isInfoDismissed}

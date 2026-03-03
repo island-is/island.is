@@ -20,6 +20,7 @@ import { MoreInfoContiner } from '@/components/more-info-container/more-info-con
 import { EmptyList, GeneralCardSkeleton, TopLine } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
 import { VehicleItem } from '../../../../../components/vehicle-item'
+import { StackScreen } from '../../../../../components/stack-screen'
 
 const PAGE_SIZE = 15
 
@@ -27,9 +28,7 @@ type VehicleListItem = NonNullable<
   NonNullable<ListVehiclesV2Query['vehiclesListV2']>['vehicleList']
 >[0]
 
-type ListItem =
-  | { id: number; __typename: 'Skeleton' }
-  | VehicleListItem
+type ListItem = { id: number; __typename: 'Skeleton' } | VehicleListItem
 
 export default function VehiclesScreen() {
   const theme = useTheme()
@@ -124,6 +123,7 @@ export default function VehiclesScreen() {
 
   return (
     <>
+      <StackScreen networkStatus={res.networkStatus} />
       <Animated.FlatList
         ref={flatListRef}
         testID={testIDs.SCREEN_HOME}
@@ -162,10 +162,8 @@ export default function VehiclesScreen() {
         onEndReachedThreshold={0.5}
         onEndReached={() => {
           if (res.loading || loadingMore) return
-          const pageNumber =
-            res.data?.vehiclesListV2?.paging?.pageNumber ?? 1
-          const totalPages =
-            res.data?.vehiclesListV2?.paging?.totalPages ?? 1
+          const pageNumber = res.data?.vehiclesListV2?.paging?.pageNumber ?? 1
+          const totalPages = res.data?.vehiclesListV2?.paging?.totalPages ?? 1
           if (pageNumber >= totalPages) return
 
           setLoadingMore(true)

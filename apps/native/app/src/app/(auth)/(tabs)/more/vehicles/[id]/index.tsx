@@ -2,22 +2,25 @@
 // import { ContextMenu, Host } from '@expo/ui/swift-ui'
 // import { Host, Button as NativeButton } from '@expo/ui/swift-ui'
 // import ContextMenu from 'react-native-context-menu-view'
-import { ContextMenu } from 'react-native-platform-components';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useIntl } from 'react-intl'
 import {
   Image,
+  RefreshControl,
   ScrollView,
   Text,
-  View,
   TouchableNativeFeedback,
+  View,
 } from 'react-native'
+import { ContextMenu } from 'react-native-platform-components'
 
+import { StackScreen } from '@/components/stack-screen'
 import { useGetVehicleQuery } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { Button, Divider, Input, InputRow, Problem } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
+import { useState } from 'react'
 import { useTheme } from 'styled-components'
 
 export default function VehicleDetailScreen() {
@@ -27,12 +30,14 @@ export default function VehicleDetailScreen() {
   const myPagesLinks = useMyPagesLinks()
   const theme = useTheme()
   const { openBrowser } = useBrowser()
+  const [showContext, setShowContext] = useState(false)
 
-  const { data, loading, error } = useGetVehicleQuery({
+  const res = useGetVehicleQuery({
     variables: {
       input: { regno: '', permno: id, vin: '' },
     },
   })
+  const { data, loading, error } = res
 
   const {
     mainInfo,
@@ -90,40 +95,59 @@ export default function VehicleDetailScreen() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: title ?? data?.vehiclesDetail?.basicInfo?.model ?? '',
-          headerRight: () => (
-            <ContextMenu
-              title="Fleiri valmöguleikar"
-              trigger="tap"
-              actions={
-                dropdownItems.map((item) => ({
-                  id: item.link,
-                  title: item.title,
-                  icon: 'arrow.up.right'
-                })) || []
-              }
-              onPressAction={(id, title) => {
-                const item = dropdownItems.find((i) => i.link === id)
-                if (item) {
-                  openBrowser(item.link)
-                }
-              }}
-            >
-              <TouchableNativeFeedback>
-                <Image
-                  source={require('@/assets/icons/Ellipsis-vertical.png')}
-                  width={24}
-                  height={24}
-                  tintColor={theme.shade.foreground}
-                />
-              </TouchableNativeFeedback>
-            </ContextMenu>
-          ),
-        }}
-      />
-      <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={res.loading && !data}
+            onRefresh={() => res.refetch()}
+          />
+        }
+        style={{ flex: 1 }}
+        testID={testIDs.SCREEN_VEHICLE_DETAIL}
+      >
+        <StackScreen
+          networkStatus={res.networkStatus}
+          options={{
+            title: title ?? data?.vehiclesDetail?.basicInfo?.model ?? '',
+            headerRightItems: [
+              {
+                type: 'custom',
+                element: (
+                  <ContextMenu
+                    title="Fleiri valmöguleikar"
+                    trigger="tap"
+                    android={{ visible: showContext }}
+                    actions={
+                      dropdownItems.map((item) => ({
+                        id: item.link,
+                        title: item.title,
+                        icon: 'arrow.up.right',
+                      })) || []
+                    }
+                    onPressAction={(id, title) => {
+                      const item = dropdownItems.find((i) => i.link === id)
+                      if (item) {
+                        openBrowser(item.link)
+                      }
+                    }}
+                    onMenuClose={() => setShowContext(false)}
+                  >
+                    <TouchableNativeFeedback
+                      onPress={() => setShowContext(true)}
+                    >
+                      <Image
+                        source={require('@/assets/icons/Ellipsis-vertical.png')}
+                        width={24}
+                        height={24}
+                        tintColor={theme.shade.foreground}
+                      />
+                    </TouchableNativeFeedback>
+                  </ContextMenu>
+                ),
+              },
+            ],
+          }}
+        />
         <View>
           <View
             style={{
@@ -146,7 +170,7 @@ export default function VehicleDetailScreen() {
                 isUtilityButton
                 onPress={() => {
                   router.navigate({
-                    pathname: '/more/vehicles/mileage/[id]',
+                    pathname: '/more/vehicles/[id]/mileage',
                     params: {
                       id,
                       vehicleType: title ?? '',

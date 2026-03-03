@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
@@ -7,10 +7,13 @@ import {
   FlatList,
   Image,
   ListRenderItemInfo,
+  Platform,
   RefreshControl,
+  TouchableNativeFeedback,
   View,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+// import { DockedSearchBar, Host, SearchBar, Text } from '@expo/ui/jetpack-compose'
 
 import { useApolloClient } from '@apollo/client'
 import filterIcon from '@/assets/icons/filter-icon.png'
@@ -25,8 +28,11 @@ import {
   usePostMailActionMutationMutation,
 } from '@/graphql/types/schema'
 import { useThrottleState } from '@/hooks/use-throttle-state'
-import { router } from 'expo-router'
-import { inboxFilterStore, useInboxFilterStore } from '@/stores/inbox-filter-store'
+import { router, Stack } from 'expo-router'
+import {
+  inboxFilterStore,
+  useInboxFilterStore,
+} from '@/stores/inbox-filter-store'
 import {
   Button,
   EmptyList,
@@ -34,6 +40,7 @@ import {
   SearchBar,
   Tag,
   TopLine,
+  Typography,
 } from '@/ui'
 import { isAndroid } from '@/utils/devices'
 import { testIDs } from '@/utils/test-ids'
@@ -41,6 +48,8 @@ import { ActionBar } from '../../../../components/action-bar'
 import { PressableListItem } from '../../../../components/pressable-list-item'
 import { Toast, ToastVariant } from '../../../../components/toast'
 import { normalizesFilters } from '../../../../utils/inbox-filters'
+import { Text } from 'react-native'
+import { StackScreen } from '../../../../components/stack-screen'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
@@ -404,24 +413,65 @@ export default function InboxScreen() {
 
   return (
     <>
+      <StackScreen
+        networkStatus={[res.networkStatus]}
+        options={
+          {
+            // headerRightItems: [
+            //   {
+            //     type: 'custom',
+            //     // label: 'Sía',
+            //     // onPress: () => router.push('/inbox/filter'),
+            //     // icon: {
+            //     //   type: 'image',
+            //     //   source: require('@/assets/icons/filter-icon.png')
+            //     // },
+            //     element: (
+            //       <TouchableNativeFeedback
+            //         onPress={() => router.push('/inbox/filter')}
+            //       >
+            //         <View
+            //           style={{
+            //             flexDirection: 'row',
+            //             alignItems: 'center',
+            //             gap: 8,
+            //             paddingHorizontal: 16,
+            //           }}
+            //         >
+            //           <Typography variant="heading5">Sía</Typography>
+            //           <Image source={require('@/assets/icons/filter-icon.png')} />
+            //         </View>
+            //       </TouchableNativeFeedback>
+            //     ),
+            //   },
+            // ],
+            // headerLeftItems: [
+            //   {
+            //     type: 'button',
+            //     label: 'Velja skjöl',
+            //     // icon: {
+            //     //   type: 'image',
+            //     //   source: require('@/assets/icons/inbox-read.png'),
+            //     // },
+            //     onPress() {
+            //       setSelectedState((prev) => !prev)
+            //     },
+            //   },
+            // ],
+          }
+        }
+      />
       <Animated.FlatList
         ref={flatListRef}
         testID={testIDs.SCREEN_HOME}
         scrollEventThrottle={16}
         scrollToOverflowEnabled
         onEndReachedThreshold={0.5}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          {
-            useNativeDriver: true,
-          },
-        )}
-        style={{ marginHorizontal: 0 }}
+        style={{ flex: 1 }}
         data={data}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
-        keyboardDismissMode="on-drag"
-        keyboardShouldPersistTaps="handled"
+        contentInsetAdjustmentBehavior="automatic"
         ListHeaderComponent={
           <>
             <ListHeaderWrapper>
@@ -527,7 +577,9 @@ export default function InboxScreen() {
                       id: 'inbox.filterArchivedTagTitle',
                     })}
                     closable
-                    onClose={() => inboxFilterStore.setState({ archived: false })}
+                    onClose={() =>
+                      inboxFilterStore.setState({ archived: false })
+                    }
                   />
                 )}
                 {bookmarked && (
@@ -536,7 +588,9 @@ export default function InboxScreen() {
                       id: 'inbox.filterStarredTagTitle',
                     })}
                     closable
-                    onClose={() => inboxFilterStore.setState({ bookmarked: false })}
+                    onClose={() =>
+                      inboxFilterStore.setState({ bookmarked: false })
+                    }
                   />
                 )}
                 {!!senderNationalId.length &&
@@ -585,7 +639,9 @@ export default function InboxScreen() {
                       id: 'inbox.filterDateFromLabel',
                     })} - ${intl.formatDate(dateFrom)}`}
                     closable
-                    onClose={() => inboxFilterStore.setState({ dateFrom: undefined })}
+                    onClose={() =>
+                      inboxFilterStore.setState({ dateFrom: undefined })
+                    }
                   />
                 )}
                 {dateTo && (
@@ -594,7 +650,9 @@ export default function InboxScreen() {
                       id: 'inbox.filterDateToLabel',
                     })} - ${intl.formatDate(dateTo)}`}
                     closable
-                    onClose={() => inboxFilterStore.setState({ dateTo: undefined })}
+                    onClose={() =>
+                      inboxFilterStore.setState({ dateTo: undefined })
+                    }
                   />
                 )}
               </TagsWrapper>

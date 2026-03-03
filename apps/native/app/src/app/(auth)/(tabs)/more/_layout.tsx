@@ -2,8 +2,13 @@ import { Stack, useRouter } from 'expo-router'
 import { Button, Icon } from '../../../../ui'
 import { Platform, TouchableOpacity } from 'react-native'
 import { useTheme } from 'styled-components'
-import { tabScreenOptions } from '../../../../constants/screen-options'
+import {
+  modalScreenOptions,
+  tabScreenOptions,
+} from '../../../../constants/screen-options'
 import { useIntl } from 'react-intl'
+import { navbarOfflineItem } from '../../../../components/navbar/navbar-items'
+import { StackScreen } from '../../../../components/stack-screen'
 
 export default function MoreLayout() {
   const intl = useIntl()
@@ -19,22 +24,6 @@ export default function MoreLayout() {
         name="index"
         options={{
           title: intl.formatMessage({ id: 'profile.screenTitle' }),
-          headerRight:
-            Platform.OS === 'android'
-              ? () => (
-                  <TouchableOpacity
-                    onPress={() => {
-                      router.navigate('/settings')
-                    }}
-                  >
-                    <Icon
-                      source={require('@/assets/icons/settings.png')}
-                      width={24}
-                      height={24}
-                    />
-                  </TouchableOpacity>
-                )
-              : undefined,
         }}
       />
       <Stack.Screen
@@ -63,14 +52,16 @@ export default function MoreLayout() {
       />
       <Stack.Screen
         name="vehicles/index"
-        options={{ title: intl.formatMessage({ id: 'vehicles.screenTitle' }) }}
+        options={{
+          title: intl.formatMessage({ id: 'vehicles.screenTitle' }),
+        }}
       />
       <Stack.Screen name="vehicles/[id]" />
       <Stack.Screen
-        name="vehicles/mileage/[id]"
+        name="vehicles/[id]/mileage"
         options={{
-          presentation: 'formSheet',
-          headerShown: false,
+          ...modalScreenOptions,
+          title: intl.formatMessage({ id: 'vehicles.registerMileage' }),
         }}
       />
       <Stack.Screen
@@ -80,14 +71,13 @@ export default function MoreLayout() {
       <Stack.Screen
         name="finance/status/[orgId]/[chargeTypeId]"
         options={{
-          presentation: 'formSheet',
-          headerShown: false,
+          ...modalScreenOptions,
         }}
       />
       <Stack.Screen
         name="applications/index"
         options={{
-          title: intl.formatMessage({ id: 'applications.screenTitle' }),
+          title: intl.formatMessage({ id: 'applications.title' }),
         }}
       />
       <Stack.Screen

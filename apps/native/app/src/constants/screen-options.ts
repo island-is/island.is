@@ -32,6 +32,5 @@ export const modalScreenOptions: StackScreenProps['options'] = {
   sheetGrabberVisible: true,
   sheetCornerRadius: 16,
   presentation: Platform.OS === 'android' ? 'modal' : 'formSheet',
-  unstable_headerRightItems: () => [navbarOfflineItem(), navbarCloseItem()],
-  headerRight: () => navbarAndroidOfflineItem()
+  unstable_headerRightItems: () => [navbarCloseItem()],
 }

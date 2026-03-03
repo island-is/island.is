@@ -22,6 +22,7 @@ import {
 import { formatNationalId } from '@/lib/format-national-id'
 import { testIDs } from '@/utils/test-ids'
 import React from 'react'
+import { StackScreen } from '../../../../../components/stack-screen'
 
 type ChildItem = NationalRegistryChildCustody & {
   type: 'custodyChild' | 'bioChild'
@@ -184,6 +185,7 @@ export default function FamilyScreen() {
 
   return (
     <>
+      <StackScreen networkStatus={familyRes.networkStatus} />
       {(familyRes.data || familyRes.loading) && (
         <Animated.FlatList
           ref={flatListRef}
