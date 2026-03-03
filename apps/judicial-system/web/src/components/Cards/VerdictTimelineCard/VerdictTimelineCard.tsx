@@ -251,7 +251,11 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           marginBottom={0}
         />
       }
-      contextMenuItems={[]}
+      contextMenuItems={[
+        {
+          title: 'Skráð í LÖKE',
+        },
+      ]}
     >
       <Box className={styles.container}>
         <Text variant="eyebrow">
