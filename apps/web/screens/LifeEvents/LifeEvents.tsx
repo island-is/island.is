@@ -114,7 +114,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
       <Box background="purple100">
         <GridContainer>
           <Box
-            paddingTop={5}
+            paddingTop={8}
             paddingBottom={3}
             display="flex"
             justifyContent="spaceBetween"
@@ -125,7 +125,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
             <Box>
               <FilterInput
                 name="life-events-search"
-                placeholder={n('searchPlaceholder', 'Leita að lífsviðburði')}
+                placeholder={n('searchPlaceholder', 'Sía eftir leitarorði')}
                 value={searchValue}
                 onChange={setSearchValue}
                 backgroundColor="white"
@@ -136,7 +136,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
                 <RadioButton
                   name="life-events-sort"
                   id="sort-a-z"
-                  label={n('sortAZ', 'A–Ö')}
+                  label={n('sortAZ', 'Heiti (A - Ö)')}
                   value="a-z"
                   checked={sort === 'a-z'}
                   onChange={() => setSort('a-z')}
@@ -144,7 +144,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
                 <RadioButton
                   name="life-events-sort"
                   id="sort-z-a"
-                  label={n('sortZA', 'Ö–A')}
+                  label={n('sortZA', 'Heiti (Ö - A)')}
                   value="z-a"
                   checked={sort === 'z-a'}
                   onChange={() => setSort('z-a')}
