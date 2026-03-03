@@ -298,6 +298,14 @@ export const TableRow = ({
     })
   }
 
+  const view = async () => {
+    navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
+      state: {
+        id,
+      },
+    })
+  }
+
   return (
     <Box paddingTop={2} role="button" aria-expanded={isOpen} tabIndex={0}>
       <Box onClick={handleToggle} className={styles.clickable}>
@@ -345,6 +353,21 @@ export const TableRow = ({
                     colorScheme="negative"
                     inline
                     onClick={() => updateForm(status)}
+                  />
+                </Box>
+              )}
+              {status === FormStatus.PUBLISHED && (
+                <Box
+                  onClick={(e) => {
+                    e.stopPropagation()
+                  }}
+                >
+                  <Button
+                    icon="eye"
+                    circle
+                    colorScheme="negative"
+                    inline
+                    onClick={() => view()}
                   />
                 </Box>
               )}
