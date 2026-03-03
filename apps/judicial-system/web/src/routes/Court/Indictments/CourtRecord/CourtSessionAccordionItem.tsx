@@ -1420,7 +1420,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   name="entries"
                   label="Afstaða ákærða, málflutningur og aðrar bókanir"
                   value={courtSession.entries || ''}
-                  placeholder="Nánari útlistun á afstöðu varnaraðila, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
+                  placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
                   onChange={(event) => {
                     setEntriesErrorMessage('')
 
