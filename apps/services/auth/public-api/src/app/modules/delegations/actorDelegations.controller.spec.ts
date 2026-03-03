@@ -957,7 +957,9 @@ describe('ActorDelegationsController', () => {
               })
 
               await delegationProviderModel.findOrCreate({
-                where: { id: AuthDelegationProvider.PersonalRepresentativeRegistry },
+                where: {
+                  id: AuthDelegationProvider.PersonalRepresentativeRegistry,
+                },
                 defaults: {
                   name: 'Talsmannagrunnur',
                   description: 'Talsmannagrunnur',
