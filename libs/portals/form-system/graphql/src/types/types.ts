@@ -36,7 +36,6 @@ export interface FormLoaderResponse {
 }
 
 export interface ApplicationsLoaderResponse {
-  applications: FormSystemApplication[]
   organizations: Option<string>[]
   isAdmin: boolean
   organizationNationalId: string
