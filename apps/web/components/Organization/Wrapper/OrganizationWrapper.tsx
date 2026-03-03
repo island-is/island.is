@@ -32,6 +32,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useMatomoTrackOrganization } from '@island.is/matomo'
 import { shouldLinkBeAnAnchorTag } from '@island.is/shared/utils'
 import {
   DefaultHeaderProps,
@@ -969,6 +970,7 @@ export const OrganizationWrapper: React.FC<
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
+  useMatomoTrackOrganization(organizationPage.organization?.slug)
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
   useEffect(() => {
     setIsMobile(width < theme.breakpoints.md)
