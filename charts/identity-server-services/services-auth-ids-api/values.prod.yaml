@@ -124,7 +124,7 @@ initContainer:
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
 namespace: 'identity-server'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

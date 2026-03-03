@@ -69,7 +69,7 @@ export const Overview = () => {
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
-  const { updateCase, setAndSendCaseToServer } = useCase()
+  const { updateCase } = useCase()
   const { setAndSendDefendantToServer, isUpdatingDefendant } = useDefendants()
   const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -222,26 +222,6 @@ export const Overview = () => {
                     icon="calendar"
                   />
                 </Box>
-                {canDefendantAppealVerdict && (
-                  <Box component="section">
-                    <BlueBox>
-                      <SectionHeading
-                        title="Afstaða dómfellda til dóms"
-                        heading="h4"
-                        marginBottom={2}
-                        required
-                      />
-                      <Box marginBottom={2}>
-                        <Text variant="eyebrow">{defendant.name}</Text>
-                      </Box>
-                      <VerdictAppealDecisionChoice
-                        defendant={defendant}
-                        verdict={verdict}
-                        disabled={!!defendant.isSentToPrisonAdmin}
-                      />
-                    </BlueBox>
-                  </Box>
-                )}
               </Box>
               <Box
                 display="flex"
@@ -253,26 +233,24 @@ export const Overview = () => {
                 <Button
                   size="small"
                   onClick={() =>
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          publicProsecutorIsRegisteredInPoliceSystem:
-                            !workingCase.publicProsecutorIsRegisteredInPoliceSystem,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
+                    setAndSendDefendantToServer(
+                      {
+                        publicProsecutorIsRegisteredInPoliceSystem:
+                          !defendant.publicProsecutorIsRegisteredInPoliceSystem,
+                        caseId: workingCase.id,
+                        defendantId: defendant.id,
+                      },
                       setWorkingCase,
                     )
                   }
                   variant="text"
                   colorScheme={
-                    workingCase.publicProsecutorIsRegisteredInPoliceSystem
+                    defendant.publicProsecutorIsRegisteredInPoliceSystem
                       ? 'destructive'
                       : 'default'
                   }
                 >
-                  {workingCase.publicProsecutorIsRegisteredInPoliceSystem
+                  {defendant.publicProsecutorIsRegisteredInPoliceSystem
                     ? 'Afskrá í LÖKE'
                     : 'Skráð í LÖKE'}
                 </Button>

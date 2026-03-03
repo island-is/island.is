@@ -1,15 +1,30 @@
 import {
+  buildDescriptionField,
   buildMultiField,
   buildOverviewField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
+import { type Application, DefaultEvents } from '@island.is/application/types'
 import {
   getPayerOverviewItems,
   getParticipantOverviewTableData,
 } from '../../utils/getOverviewItems'
 import { m } from '../../lib/messages'
+import { doesCourseInstanceHaveChargeItemCode } from '../../utils/loadOptions'
+
+const getOverviewSubmitLabel = (application: Application) => {
+  const selectedInstanceId = getValueViaPath<string>(
+    application.answers,
+    'dateSelect',
+    '',
+  )
+
+  return doesCourseInstanceHaveChargeItemCode(selectedInstanceId)
+    ? m.overview.submitAndPayTitle
+    : m.overview.submitRegistrationTitle
+}
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -33,15 +48,27 @@ export const overviewSection = buildSection({
         }),
         buildSubmitField({
           id: 'submit',
-          title: m.overview.submitTitle,
+          title: getOverviewSubmitLabel,
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: m.overview.submitTitle,
+              name: getOverviewSubmitLabel,
               type: 'primary',
             },
           ],
+        }),
+        buildDescriptionField({
+          id: 'paymentWindowDescription',
+          description: m.overview.paymentWindowDescription,
+          condition: (answers) => {
+            const selectedInstanceId = getValueViaPath<string>(
+              answers,
+              'dateSelect',
+              '',
+            )
+            return doesCourseInstanceHaveChargeItemCode(selectedInstanceId)
+          },
         }),
       ],
     }),
