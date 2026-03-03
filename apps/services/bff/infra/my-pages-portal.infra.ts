@@ -72,4 +72,5 @@ export const serviceSetup = (
         paths: ['/bff'],
       },
     })
-    .grantNamespaces('nginx-ingress-external', 'identity-server')
+    .allowExternalNetwork()
+    .grantNamespaces('identity-server')

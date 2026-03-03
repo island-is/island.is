@@ -117,8 +117,8 @@ export const serviceSetup = (services: {
         public: false,
       },
     })
+    .allowInternalNetwork()
     .grantNamespaces(
-      'nginx-ingress-internal',
       'islandis',
       'service-portal',
       'user-notification-worker',

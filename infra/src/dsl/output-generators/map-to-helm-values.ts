@@ -59,6 +59,8 @@ const serializeService: SerializeMethod<HelmService> = async (
     enabled: true,
     grantNamespaces: grantNamespaces,
     grantNamespacesEnabled: grantNamespacesEnabled,
+    allowExternalNetwork: serviceDef.allowExternalNetwork,
+    allowInternalNetwork: serviceDef.allowInternalNetwork,
     namespace: namespace,
     image: {
       repository: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
@@ -533,6 +535,8 @@ const serviceMockDef = (options: {
     enabled: true,
     grantNamespaces: ['e2e-dev', 'e2e-staging'],
     grantNamespacesEnabled: true,
+    allowExternalNetwork: false,
+    allowInternalNetwork: false,
     namespace: getFeatureDeploymentNamespace(options.env),
     image: {
       repository: `bbyars/mountebank`,

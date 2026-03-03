@@ -56,6 +56,14 @@ export const getHelmValueFile = (
           s.grantNamespaces = grantNamespaces
         }),
     )
+
+  // NOTE: We intentionally do NOT propagate allowExternalNetwork / allowInternalNetwork
+  // across co-namespace services. Unlike grantNamespaces (which uses a namespace-level
+  // podSelector: {} that must cover all pods in the namespace), these new netpols use
+  // podSelector on specific pod labels (island.is/allow-external-network, etc.).
+  // Only pods explicitly opted in via .allowExternalNetwork() / .allowInternalNetwork()
+  // will carry those labels and match the policy — propagation would incorrectly expose
+  // services that never requested ALB access.
   return {
     namespaces: Array.from(
       Object.values(servicesAndMocks)

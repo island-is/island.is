@@ -67,6 +67,8 @@ export class ServiceBuilder<ServiceType extends string> {
       name: name,
       grantNamespaces: [],
       grantNamespacesEnabled: false,
+      allowExternalNetwork: false,
+      allowInternalNetwork: false,
       secrets: COMMON_SECRETS,
       ingress: {},
       namespace: 'islandis',
@@ -146,6 +148,26 @@ export class ServiceBuilder<ServiceType extends string> {
   grantNamespaces(...namespaces: string[]) {
     this.serviceDef.grantNamespaces = namespaces
     this.serviceDef.grantNamespacesEnabled = true
+    return this
+  }
+
+  /**
+   * Allow this service to receive traffic from the external ALB (internet-facing).
+   * This adds a network policy allowing ingress from external ALB subnet CIDRs.
+   * Use this for services that need to be reachable from the public internet via the Gateway API.
+   */
+  allowExternalNetwork() {
+    this.serviceDef.allowExternalNetwork = true
+    return this
+  }
+
+  /**
+   * Allow this service to receive traffic from the internal ALB.
+   * This adds a network policy allowing ingress from internal ALB subnet CIDRs.
+   * Use this for services that need to be reachable via the internal Gateway (VPN/inter-service).
+   */
+  allowInternalNetwork() {
+    this.serviceDef.allowInternalNetwork = true
     return this
   }
 
