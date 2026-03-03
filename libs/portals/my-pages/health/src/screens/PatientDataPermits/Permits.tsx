@@ -98,12 +98,7 @@ const PatientDataPermits: FC = () => {
                 variant: 'text',
                 label: formatMessage(messages.furtherDetails),
                 onClick: () =>
-                  navigate(
-                    HealthPaths.HealthPatientDataPermitsDetail.replace(
-                      ':id',
-                      permit.id ?? '',
-                    ),
-                  ),
+                  navigate(HealthPaths.HealthPatientDataPermitsDetail),
               }}
             />
           ))}

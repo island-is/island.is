@@ -1,4 +1,3 @@
-import { useApolloClient } from '@apollo/client'
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
@@ -11,10 +10,7 @@ import Terms from '../../components/PatientDataPermit/Terms'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { PermitInput } from '../../utils/types'
-import {
-  GetPatientDataPermitsDocument,
-  useCreatePatientDataPermitMutation,
-} from './PatientDataPermits.generated'
+import { useCreatePatientDataPermitMutation } from './PatientDataPermits.generated'
 import { Markdown } from '@island.is/shared/components'
 
 const DEFAULT_STEP = 1 // Default to step 1 to start with the first step
@@ -47,8 +43,7 @@ const buildInitialFormState = (
 }
 
 const NewPermit: React.FC = () => {
-  const { formatMessage, lang } = useLocale()
-  const client = useApolloClient()
+  const { formatMessage } = useLocale()
   const location = useLocation()
   const [step, setStep] = useState<number>(DEFAULT_STEP)
   const [formState, setFormState] = useState<PermitInput | undefined>(() =>
@@ -59,7 +54,6 @@ const NewPermit: React.FC = () => {
 
   const [createPermit, { loading }] = useCreatePatientDataPermitMutation({
     refetchQueries: ['GetPatientDataPermits'],
-    awaitRefetchQueries: true,
   })
 
   const handleSubmit = () => {
@@ -85,21 +79,9 @@ const NewPermit: React.FC = () => {
             ) {
               setFormState(undefined)
               toast.success(formatMessage(messages.permitCreated))
-              const data = client.readQuery({
-                query: GetPatientDataPermitsDocument,
-                variables: { locale: lang },
+              navigate(HealthPaths.HealthPatientDataPermitsDetail, {
+                replace: true,
               })
-              const permitId =
-                data?.healthDirectoratePatientDataPermits?.consent?.id
-              navigate(
-                permitId
-                  ? HealthPaths.HealthPatientDataPermitsDetail.replace(
-                      ':id',
-                      permitId,
-                    )
-                  : HealthPaths.HealthPatientDataPermits,
-                { replace: true },
-              )
             } else {
               toast.error(
                 formatMessage(messages.permitCreatedError, { arg: '' }),
