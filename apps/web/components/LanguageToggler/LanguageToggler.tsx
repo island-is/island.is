@@ -55,7 +55,6 @@ export const LanguageToggler = ({
     if (showDialog) {
       return null
     }
-    console.log('HREFOVERRIDE', hrefOverride)
 
     if (hrefOverride) {
       if (hrefOverride[otherLanguage])
