@@ -120,8 +120,15 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
             paddingTop={8}
             paddingBottom={3}
             display="flex"
-            justifyContent="spaceBetween"
-            alignItems="center"
+            flexDirection={['column', 'column', 'column', 'row', 'row']}
+            justifyContent={[
+              'flexStart',
+              'flexStart',
+              'flexStart',
+              'spaceBetween',
+              'spaceBetween',
+            ]}
+            alignItems={['stretch', 'stretch', 'stretch', 'center', 'center']}
             flexWrap="wrap"
             rowGap={2}
           >
