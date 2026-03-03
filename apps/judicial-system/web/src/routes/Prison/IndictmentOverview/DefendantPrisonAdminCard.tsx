@@ -1,10 +1,6 @@
 import { Box, Icon, Option, Select, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  BlueBox,
-  ContextMenu,
-  IconButton,
-} from '@island.is/judicial-system-web/src/components'
+import BlueBoxWithContextMenu from '@island.is/judicial-system-web/src/components/BlueBoxWithIcon/BlueBoxWithContextMenu'
 import {
   Defendant,
   PunishmentType,
@@ -43,13 +39,8 @@ export const DefendantPrisonAdminCard = ({
 
   return (
     <Box marginBottom={3}>
-      <BlueBox>
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="center"
-          marginBottom={2}
-        >
+      <BlueBoxWithContextMenu
+        title={
           <Box display="flex" alignItems="center" columnGap={1}>
             <Text variant="h4" as="h4">
               {defendant.name}
@@ -58,33 +49,21 @@ export const DefendantPrisonAdminCard = ({
               <Icon icon="checkmark" color="blue400" size="medium" />
             )}
           </Box>
-          <ContextMenu
-            placement="left-start"
-            shift={-12}
-            items={[
-              isRegistered
-                ? {
-                    title: 'Afskrá dóm',
-                    icon: 'close',
-                    onClick: () => onToggleRegistration(defendant),
-                  }
-                : {
-                    title: 'Dómur skráður',
-                    icon: 'checkmark',
-                    onClick: () => onToggleRegistration(defendant),
-                  },
-            ]}
-            render={
-              <IconButton
-                icon="ellipsisVertical"
-                colorScheme="transparent"
-                onClick={(evt) => {
-                  evt.stopPropagation()
-                }}
-              />
-            }
-          />
-        </Box>
+        }
+        contextMenuItems={[
+          isRegistered
+            ? {
+                title: 'Afskrá dóm',
+                icon: 'close',
+                onClick: () => onToggleRegistration(defendant),
+              }
+            : {
+                title: 'Dómur skráður',
+                icon: 'checkmark',
+                onClick: () => onToggleRegistration(defendant),
+              },
+        ]}
+      >
         <Text variant="eyebrow" marginBottom={1}>
           Fullnusta
         </Text>
@@ -126,7 +105,7 @@ export const DefendantPrisonAdminCard = ({
           }
           size="sm"
         />
-      </BlueBox>
+      </BlueBoxWithContextMenu>
     </Box>
   )
 }

@@ -8,14 +8,14 @@ import {
   CaseIndictmentRulingDecision,
   CaseType,
   Defendant,
-} from '../../graphql/schema'
-import { mockCase } from '../../utils/mocks'
+} from '../../../graphql/schema'
+import { mockCase } from '../../../utils/mocks'
 import {
   ApolloProviderWrapper,
   FormContextWrapper,
   IntlProviderWrapper,
-} from '../../utils/testHelpers'
-import BlueBoxWithDate from './BlueBoxWithDate'
+} from '../../../utils/testHelpers'
+import VerdictTimelineCard from './VerdictTimelineCard'
 
 jest.mock('../DateTime/DateTime', () => ({
   __esModule: true,
@@ -70,7 +70,7 @@ jest.mock('next/router', () => ({
 
 window.scrollTo = jest.fn()
 
-describe('BlueBoxWithDate', () => {
+describe('VerdictTimelineCard', () => {
   const name = faker.name.firstName()
   const rulingDate = new Date().toISOString()
   const toastErrorSpy = jest.spyOn(toast, 'error').mockImplementation(jest.fn())
@@ -96,7 +96,7 @@ describe('BlueBoxWithDate', () => {
               rulingDate,
             }}
           >
-            <BlueBoxWithDate
+            <VerdictTimelineCard
               defendant={defendant}
               canDefendantAppealVerdict={canDefendantAppealVerdict}
             />

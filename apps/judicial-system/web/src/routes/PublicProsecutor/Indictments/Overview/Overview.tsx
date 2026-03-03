@@ -2,13 +2,7 @@ import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import {
-  AlertMessage,
-  Box,
-  Button,
-  Option,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Option } from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
@@ -17,7 +11,6 @@ import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
-  BlueBoxWithDate,
   Conclusion,
   CourtCaseInfo,
   FormContentContainer,
@@ -33,8 +26,8 @@ import {
   PageTitle,
   SectionHeading,
   UserContext,
+  VerdictTimelineCard,
 } from '@island.is/judicial-system-web/src/components'
-import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseIndictmentRulingDecision,
@@ -216,10 +209,9 @@ export const Overview = () => {
                   <VerdictStatusAlert verdict={verdict} defendant={defendant} />
                 )}
                 <Box component="section">
-                  <BlueBoxWithDate
+                  <VerdictTimelineCard
                     defendant={defendant}
                     canDefendantAppealVerdict={canDefendantAppealVerdict}
-                    icon="calendar"
                   />
                 </Box>
               </Box>
