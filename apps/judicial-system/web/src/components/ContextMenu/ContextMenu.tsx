@@ -24,6 +24,7 @@ export interface ContextMenuItem {
   onClick?: () => void
   title: string
   icon?: IconMapIcon
+  disabled?: boolean
 }
 
 export type MenuItems = ContextMenuItem[]
@@ -61,6 +62,8 @@ interface ContextMenuProps {
 
   // Skidding along the anchor (e.g. for left placement: negative = up, positive = down)
   shift?: number
+
+  disabled?: boolean
 }
 
 const DEFAULT_GUTTER = 8
@@ -74,6 +77,7 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
       placement = 'bottom-start',
       gutter = DEFAULT_GUTTER,
       shift,
+      disabled = false,
     },
     ref,
   ) => {
@@ -149,6 +153,7 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
                       menuItemTextStyle,
                       styles.menuItem,
                     )}
+                    disabled={item.disabled}
                   >
                     {item.icon && (
                       <Box display="flex" marginRight={2}>

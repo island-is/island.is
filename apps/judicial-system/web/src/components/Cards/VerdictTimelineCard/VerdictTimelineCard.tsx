@@ -1,26 +1,29 @@
 import { FC, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
+import { useRouter } from 'next/router'
 
 import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import { PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE } from '@island.is/judicial-system/consts'
 import {
   formatDate,
   getServiceRequirementText,
 } from '@island.is/judicial-system/formatters'
 import { getIndictmentAppealDeadline } from '@island.is/judicial-system/types'
-import { errors } from '@island.is/judicial-system-web/messages'
+import { core, errors } from '@island.is/judicial-system-web/messages'
 
 import {
   CaseIndictmentRulingDecision,
   Defendant,
   ServiceRequirement,
 } from '../../../graphql/schema'
-import { formatDateForServer } from '../../../utils/hooks'
+import { formatDateForServer, useDefendants } from '../../../utils/hooks'
 import useVerdict from '../../../utils/hooks/useVerdict'
 import BlueBoxWithContextMenu from '../../BlueBoxWithIcon/BlueBoxWithContextMenu'
 import DateTime from '../../DateTime/DateTime'
 import { FormContext } from '../../FormProvider/FormProvider'
 import { getAppealExpirationInfo } from '../../InfoCard/DefendantInfo/DefendantInfo.logic'
+import Modal from '../../Modals/Modal/Modal'
 import SectionHeading from '../../SectionHeading/SectionHeading'
 import VerdictAppealDecisionChoice from '../../VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
 import { strings } from './VerdictTimelineCard.strings'
@@ -32,16 +35,24 @@ interface Props {
   canDefendantAppealVerdict: boolean
 }
 
+type VisibleModal = {
+  type: 'REVOKE_SEND_TO_PRISON_ADMIN'
+  defendant: Defendant
+}
+
 const VerdictTimelineCard: FC<Props> = (props) => {
+  const router = useRouter()
   const { defendant, canDefendantAppealVerdict } = props
   const { verdict } = defendant
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { setAndSendDefendantToServer, isUpdatingDefendant } = useDefendants()
   const { setAndSendVerdictToServer } = useVerdict()
 
   const hasMountedRef = useRef<boolean>(false)
   const previousTextCountRef = useRef<number>(0)
 
+  const [modalVisible, setModalVisible] = useState<VisibleModal>()
   const [pendingServiceDate, setPendingServiceDate] = useState<Date>()
   const [pendingAppealDate, setPendingAppealDate] = useState<Date>()
   const [isServiceDatePickerClosing, setIsServiceDatePickerClosing] =
@@ -243,177 +254,256 @@ const VerdictTimelineCard: FC<Props> = (props) => {
   }, [isAppealDatePickerClosing, verdict?.appealDate])
 
   return (
-    <BlueBoxWithContextMenu
-      title={
-        <SectionHeading
-          title={defendant.name || ''}
-          heading="h4"
-          marginBottom={0}
-        />
-      }
-      contextMenuItems={[
-        {
-          title: 'Skráð í LÖKE',
-        },
-      ]}
-    >
-      <Box className={styles.container}>
-        <Text variant="eyebrow">
-          {isFine ? 'Viðurlagaákvörðun' : 'Birting dóms'}
-        </Text>
-        <AnimatePresence initial={false}>
-          {textItems.map((text, index) => {
-            const addedStartIndex = previousTextCountRef.current
-            const isNewItem = hasMountedRef.current && index >= addedStartIndex
-            const staggerIndex = isNewItem ? index - addedStartIndex : 0
-
-            return (
-              <motion.div
-                key={`${defendant.id}-${text}`}
-                initial={
-                  isNewItem
-                    ? {
-                        opacity: 0,
-                        y: 20,
-                        height: 0,
-                      }
-                    : false
-                }
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  height: 'auto',
-                }}
-                exit={{ opacity: 0, y: 20, height: 0 }}
-                transition={{
-                  delay: isNewItem ? staggerIndex * 0.2 : 0,
-                  duration: 0.3,
-                }}
-              >
-                <Text>{`• ${text}`}</Text>
-              </motion.div>
-            )
-          })}
-        </AnimatePresence>
-        {showDatePickers && (
-          <AnimatePresence
-            onExitComplete={() => {
-              if (isServiceDatePickerClosing && pendingServiceDate) {
-                sendVerdictDate('serviceDate', pendingServiceDate)
-                setPendingServiceDate(undefined)
-              }
-
-              if (isAppealDatePickerClosing && pendingAppealDate) {
-                sendVerdictDate('appealDate', pendingAppealDate)
-                setPendingAppealDate(undefined)
-              }
-            }}
-          >
-            {shouldShowAppealDatePicker && (
-              <motion.div
-                key="defendantAppealDate"
-                variants={{
-                  visible: {
-                    ...collapsibleRowVariants.visible,
-                    transition: { opacity: { delay: 0.3 } },
+    <>
+      <BlueBoxWithContextMenu
+        title={
+          <SectionHeading
+            title={defendant.name || ''}
+            heading="h4"
+            marginBottom={0}
+          />
+        }
+        contextMenuItems={[
+          {
+            title: defendant.publicProsecutorIsRegisteredInPoliceSystem
+              ? 'Afskrá í LÖKE'
+              : 'Skráð í LÖKE',
+            onClick: () => {
+              setAndSendDefendantToServer(
+                {
+                  caseId: workingCase.id,
+                  defendantId: defendant.id,
+                  publicProsecutorIsRegisteredInPoliceSystem:
+                    !defendant.publicProsecutorIsRegisteredInPoliceSystem,
+                },
+                setWorkingCase,
+              )
+            },
+          },
+          ...(verdict?.appealDate
+            ? [
+                {
+                  title: 'Afturkalla áfrýjun',
+                  onClick: () => {
+                    setAndSendVerdictToServer(
+                      {
+                        caseId: workingCase.id,
+                        defendantId: defendant.id,
+                        appealDate: null,
+                      },
+                      setWorkingCase,
+                    )
                   },
-                  exit: collapsibleRowVariants.exit,
-                }}
-                initial="exit"
-                animate="visible"
-                exit="exit"
-              >
-                <Box className={styles.dataContainer}>
-                  <DateTime
-                    name="defendantAppealDate"
-                    datepickerLabel={formatMessage(
-                      strings.defendantAppealDateLabel,
-                    )}
-                    datepickerPlaceholder={formatMessage(
-                      strings.defendantAppealDatePlaceholder,
-                    )}
-                    size="sm"
-                    onChange={(date, valid) =>
-                      handleDateChange(date, valid, 'appealDate')
-                    }
-                    maxDate={new Date()}
-                    blueBox={false}
-                    dateOnly
-                  />
-                  <Button
-                    onClick={() => handleSetDate('appealDate')}
-                    disabled={!dates.appealDate}
-                  >
-                    {formatMessage(strings.defendantAppealDateButtonText)}
-                  </Button>
-                </Box>
-              </motion.div>
-            )}
-            {shouldShowServiceDatePicker && (
-              <motion.div
-                key="defendantServiceDate"
-                variants={{
-                  visible: collapsibleRowVariants.visible,
-                  exit: {
-                    ...collapsibleRowVariants.exit,
-                    transition: { height: { delay: 0.2 } },
-                  },
-                }}
-                initial={false}
-                animate="visible"
-                exit="exit"
-              >
-                <Box className={styles.dataContainer}>
-                  <DateTime
-                    name="defendantServiceDate"
-                    datepickerLabel={formatMessage(
-                      strings.defendantVerdictServiceDateLabel,
-                    )}
-                    datepickerPlaceholder={formatMessage(
-                      strings.defendantVerdictServiceDatePlaceholder,
-                    )}
-                    size="sm"
-                    selectedDate={dates.serviceDate}
-                    onChange={(date, valid) =>
-                      handleDateChange(date, valid, 'serviceDate')
-                    }
-                    blueBox={false}
-                    maxDate={new Date()}
-                    dateOnly
-                  />
-                  <Button
-                    dataTestId="button-defendant-service-date"
-                    onClick={() => handleSetDate('serviceDate')}
-                    disabled={!dates.serviceDate}
-                  >
-                    {formatMessage(
-                      strings.defendantVerdictServiceDateButtonText,
-                    )}
-                  </Button>
-                </Box>
-              </motion.div>
-            )}
+                },
+              ]
+            : []),
+          {
+            title: defendant.isSentToPrisonAdmin
+              ? 'Afturkalla úr fullnustu'
+              : 'Senda til fullnustu',
+            disabled:
+              (!defendant.isSentToPrisonAdmin &&
+                !defendant.indictmentReviewDecision) ||
+              (!isFine && !verdict?.serviceDate && isServiceRequired),
+            onClick: () => {
+              defendant.isSentToPrisonAdmin
+                ? setModalVisible({
+                    type: 'REVOKE_SEND_TO_PRISON_ADMIN',
+                    defendant,
+                  })
+                : router.push(
+                    `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE}/${workingCase.id}/${defendant.id}`,
+                  )
+            },
+          },
+        ]}
+      >
+        <Box className={styles.container}>
+          <Text variant="eyebrow">
+            {isFine ? 'Viðurlagaákvörðun' : 'Birting dóms'}
+          </Text>
+          <AnimatePresence initial={false}>
+            {textItems.map((text, index) => {
+              const addedStartIndex = previousTextCountRef.current
+              const isNewItem =
+                hasMountedRef.current && index >= addedStartIndex
+              const staggerIndex = isNewItem ? index - addedStartIndex : 0
+
+              return (
+                <motion.div
+                  key={`${defendant.id}-${text}`}
+                  initial={
+                    isNewItem
+                      ? {
+                          opacity: 0,
+                          y: 20,
+                          height: 0,
+                        }
+                      : false
+                  }
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    height: 'auto',
+                  }}
+                  exit={{ opacity: 0, y: 20, height: 0 }}
+                  transition={{
+                    delay: isNewItem ? staggerIndex * 0.2 : 0,
+                    duration: 0.3,
+                  }}
+                >
+                  <Text>{`• ${text}`}</Text>
+                </motion.div>
+              )
+            })}
           </AnimatePresence>
-        )}
-        {canDefendantAppealVerdict && verdict && (
-          <motion.div
-            key="defendantVerdictAppealDecisionChoice"
-            variants={collapsibleRowVariants}
-            initial={false}
-            animate="visible"
-            transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
-            className={grid({ gap: 2, marginTop: 1 })}
-          >
-            <Text variant="eyebrow">Afstaða dómfellda til dóms</Text>
-            <VerdictAppealDecisionChoice
-              defendant={defendant}
-              verdict={verdict}
-              disabled={!!defendant.isSentToPrisonAdmin}
-            />
-          </motion.div>
-        )}
-      </Box>
-    </BlueBoxWithContextMenu>
+          {showDatePickers && (
+            <AnimatePresence
+              onExitComplete={() => {
+                if (isServiceDatePickerClosing && pendingServiceDate) {
+                  sendVerdictDate('serviceDate', pendingServiceDate)
+                  setPendingServiceDate(undefined)
+                }
+
+                if (isAppealDatePickerClosing && pendingAppealDate) {
+                  sendVerdictDate('appealDate', pendingAppealDate)
+                  setPendingAppealDate(undefined)
+                }
+              }}
+            >
+              {shouldShowAppealDatePicker && (
+                <motion.div
+                  key="defendantAppealDate"
+                  variants={{
+                    visible: {
+                      ...collapsibleRowVariants.visible,
+                      transition: { opacity: { delay: 0.3 } },
+                    },
+                    exit: collapsibleRowVariants.exit,
+                  }}
+                  initial="exit"
+                  animate="visible"
+                  exit="exit"
+                >
+                  <Box className={styles.dataContainer}>
+                    <DateTime
+                      name="defendantAppealDate"
+                      datepickerLabel={formatMessage(
+                        strings.defendantAppealDateLabel,
+                      )}
+                      datepickerPlaceholder={formatMessage(
+                        strings.defendantAppealDatePlaceholder,
+                      )}
+                      size="sm"
+                      onChange={(date, valid) =>
+                        handleDateChange(date, valid, 'appealDate')
+                      }
+                      maxDate={new Date()}
+                      blueBox={false}
+                      dateOnly
+                    />
+                    <Button
+                      onClick={() => handleSetDate('appealDate')}
+                      disabled={!dates.appealDate}
+                    >
+                      {formatMessage(strings.defendantAppealDateButtonText)}
+                    </Button>
+                  </Box>
+                </motion.div>
+              )}
+              {shouldShowServiceDatePicker && (
+                <motion.div
+                  key="defendantServiceDate"
+                  variants={{
+                    visible: collapsibleRowVariants.visible,
+                    exit: {
+                      ...collapsibleRowVariants.exit,
+                      transition: { height: { delay: 0.2 } },
+                    },
+                  }}
+                  initial={false}
+                  animate="visible"
+                  exit="exit"
+                >
+                  <Box className={styles.dataContainer}>
+                    <DateTime
+                      name="defendantServiceDate"
+                      datepickerLabel={formatMessage(
+                        strings.defendantVerdictServiceDateLabel,
+                      )}
+                      datepickerPlaceholder={formatMessage(
+                        strings.defendantVerdictServiceDatePlaceholder,
+                      )}
+                      size="sm"
+                      selectedDate={dates.serviceDate}
+                      onChange={(date, valid) =>
+                        handleDateChange(date, valid, 'serviceDate')
+                      }
+                      blueBox={false}
+                      maxDate={new Date()}
+                      dateOnly
+                    />
+                    <Button
+                      dataTestId="button-defendant-service-date"
+                      onClick={() => handleSetDate('serviceDate')}
+                      disabled={!dates.serviceDate}
+                    >
+                      {formatMessage(
+                        strings.defendantVerdictServiceDateButtonText,
+                      )}
+                    </Button>
+                  </Box>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          )}
+          {canDefendantAppealVerdict && verdict && (
+            <motion.div
+              key="defendantVerdictAppealDecisionChoice"
+              variants={collapsibleRowVariants}
+              initial={false}
+              animate="visible"
+              transition={{ duration: 0.2, ease: 'easeInOut', delay: 0.4 }}
+              className={grid({ gap: 2, marginTop: 1 })}
+            >
+              <Text variant="eyebrow">Afstaða dómfellda til dóms</Text>
+              <VerdictAppealDecisionChoice
+                defendant={defendant}
+                verdict={verdict}
+                disabled={!!defendant.isSentToPrisonAdmin}
+              />
+            </motion.div>
+          )}
+        </Box>
+      </BlueBoxWithContextMenu>
+      {modalVisible?.type === 'REVOKE_SEND_TO_PRISON_ADMIN' && (
+        <Modal
+          title="Afturkalla úr fullnustu"
+          text={`Mál ${workingCase.courtCaseNumber} verður afturkallað.\nÁkærði: ${modalVisible.defendant.name}.`}
+          primaryButton={{
+            text: 'Afturkalla',
+            onClick: () => {
+              setAndSendDefendantToServer(
+                {
+                  caseId: workingCase.id,
+                  defendantId: defendant.id,
+                  isSentToPrisonAdmin: false,
+                },
+                setWorkingCase,
+              )
+
+              setModalVisible(undefined)
+            },
+
+            isLoading: isUpdatingDefendant,
+          }}
+          secondaryButton={{
+            text: formatMessage(core.cancel),
+            onClick: () => setModalVisible(undefined),
+          }}
+        />
+      )}
+    </>
   )
 }
 

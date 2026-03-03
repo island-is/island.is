@@ -2,11 +2,8 @@ import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Button, Option } from '@island.is/island-ui/core'
-import {
-  getStandardUserDashboardRoute,
-  PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { AlertMessage, Box, Option } from '@island.is/island-ui/core'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -31,15 +28,10 @@ import {
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseIndictmentRulingDecision,
-  Defendant,
   IndictmentCaseReviewDecision,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  useCase,
-  useDefendants,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { ReviewDecision } from '../../components/ReviewDecision/ReviewDecision'
@@ -53,19 +45,12 @@ import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
 import * as styles from './Overview.css'
 
-type VisibleModal = {
-  type: 'REVOKE_SEND_TO_PRISON_ADMIN'
-  defendant: Defendant
-}
-
 export const Overview = () => {
   const { user } = useContext(UserContext)
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
   const { updateCase } = useCase()
-  const { setAndSendDefendantToServer, isUpdatingDefendant } = useDefendants()
-  const { setAndSendVerdictToServer } = useVerdict()
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
@@ -74,7 +59,6 @@ export const Overview = () => {
   const [confirmationModal, setConfirmationModal] = useState<
     ConfirmationModal | undefined
   >()
-  const [modalVisible, setModalVisible] = useState<VisibleModal>()
 
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
 
@@ -90,36 +74,6 @@ export const Overview = () => {
     }
 
     setConfirmationModal(REVIEWER_ASSIGNED)
-  }
-
-  const handleSendToPrisonAdmin = (defendant: Defendant) => {
-    router.push(
-      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE}/${workingCase.id}/${defendant.id}`,
-    )
-  }
-
-  const handleRevokeAppeal = (defendant: Defendant) => {
-    setAndSendVerdictToServer(
-      {
-        caseId: workingCase.id,
-        defendantId: defendant.id,
-        appealDate: null,
-      },
-      setWorkingCase,
-    )
-  }
-
-  const handleRevokeSendToPrisonAdmin = (defendant: Defendant) => {
-    setAndSendDefendantToServer(
-      {
-        caseId: workingCase.id,
-        defendantId: defendant.id,
-        isSentToPrisonAdmin: false,
-      },
-      setWorkingCase,
-    )
-
-    setModalVisible(undefined)
   }
 
   const handleNavigationTo = useCallback(
@@ -185,10 +139,6 @@ export const Overview = () => {
         {workingCase.defendants?.map((defendant) => {
           const { verdict } = defendant
 
-          const isFine =
-            workingCase.indictmentRulingDecision ===
-            CaseIndictmentRulingDecision.FINE
-
           const isServiceRequired =
             verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
@@ -214,77 +164,6 @@ export const Overview = () => {
                     canDefendantAppealVerdict={canDefendantAppealVerdict}
                   />
                 </Box>
-              </Box>
-              <Box
-                display="flex"
-                justifyContent="flexEnd"
-                marginBottom={5}
-                marginTop={1}
-                columnGap={2}
-              >
-                <Button
-                  size="small"
-                  onClick={() =>
-                    setAndSendDefendantToServer(
-                      {
-                        publicProsecutorIsRegisteredInPoliceSystem:
-                          !defendant.publicProsecutorIsRegisteredInPoliceSystem,
-                        caseId: workingCase.id,
-                        defendantId: defendant.id,
-                      },
-                      setWorkingCase,
-                    )
-                  }
-                  variant="text"
-                  colorScheme={
-                    defendant.publicProsecutorIsRegisteredInPoliceSystem
-                      ? 'destructive'
-                      : 'default'
-                  }
-                >
-                  {defendant.publicProsecutorIsRegisteredInPoliceSystem
-                    ? 'Afskrá í LÖKE'
-                    : 'Skráð í LÖKE'}
-                </Button>
-                {verdict?.appealDate ? (
-                  <Button
-                    variant="text"
-                    onClick={() => handleRevokeAppeal(defendant)}
-                    size="small"
-                    colorScheme="destructive"
-                  >
-                    Afturkalla áfrýjun
-                  </Button>
-                ) : defendant.isSentToPrisonAdmin ? (
-                  <Button
-                    variant="text"
-                    onClick={() =>
-                      setModalVisible({
-                        type: 'REVOKE_SEND_TO_PRISON_ADMIN',
-                        defendant,
-                      })
-                    }
-                    size="small"
-                    colorScheme="destructive"
-                  >
-                    Afturkalla úr fullnustu
-                  </Button>
-                ) : (
-                  <Button
-                    dataTestId="button-send-case-to-prison-admin"
-                    variant="text"
-                    onClick={() => handleSendToPrisonAdmin(defendant)}
-                    size="small"
-                    disabled={
-                      workingCase.defendants?.some(
-                        (defendant) => !defendant.indictmentReviewDecision,
-                      ) ||
-                      (!isFine && !verdict?.serviceDate && isServiceRequired)
-                    }
-                  >
-                    Senda til fullnustu
-                  </Button>
-                )}
               </Box>
             </Fragment>
           )
@@ -396,22 +275,6 @@ export const Overview = () => {
           secondaryButton={{
             text: fm(core.back),
             onClick: () => router.push(getStandardUserDashboardRoute(user)),
-          }}
-        />
-      )}
-      {modalVisible?.type === 'REVOKE_SEND_TO_PRISON_ADMIN' && (
-        <Modal
-          title="Afturkalla úr fullnustu"
-          text={`Mál ${workingCase.courtCaseNumber} verður afturkallað.\nÁkærði: ${modalVisible.defendant.name}.`}
-          primaryButton={{
-            text: 'Afturkalla',
-            onClick: () =>
-              handleRevokeSendToPrisonAdmin(modalVisible.defendant),
-            isLoading: isUpdatingDefendant,
-          }}
-          secondaryButton={{
-            text: fm(core.cancel),
-            onClick: () => setModalVisible(undefined),
           }}
         />
       )}
