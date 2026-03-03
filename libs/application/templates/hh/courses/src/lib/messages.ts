@@ -180,12 +180,12 @@ export const m = {
     },
     companyTitle: {
       id: 'hh.courses.application:payer.companyTitle',
-      defaultMessage: 'Nafn fyrirtækis',
+      defaultMessage: 'Nafn greiðanda',
       description: 'Title of company field',
     },
     companyNationalId: {
       id: 'hh.courses.application:payer.companyNationalId',
-      defaultMessage: 'Kennitala fyrirtækis',
+      defaultMessage: 'Kennitala greiðanda',
       description: 'Title of company national id field',
     },
     userIsPayingAsIndividualLabel: {
@@ -226,6 +226,12 @@ export const m = {
       defaultMessage: 'Yfirlit skráningar',
       description: 'Title of overview section',
     },
+    paymentWindowDescription: {
+      id: 'hh.courses.application:overview.paymentWindowDescription',
+      defaultMessage:
+        'Ef greiða þarf fyrir námskeið hefur þú 20 mínútur til að ljúka greiðslu. Eftir það er plássið ekki lengur frátekið og skráningarupplýsingar eyðast',
+      description: 'Payment window guidance in overview section',
+    },
     participantHeading: {
       id: 'hh.courses.application:overview.participantHeading',
       defaultMessage: 'Þátttakendur',
@@ -253,12 +259,12 @@ export const m = {
     },
     payerName: {
       id: 'hh.courses.application:overview.payerName',
-      defaultMessage: 'Nafn',
+      defaultMessage: 'Nafn greiðanda',
       description: 'Heading for payer name in overview section',
     },
     payerNationalId: {
       id: 'hh.courses.application:overview.payerNationalId',
-      defaultMessage: 'Kennitala',
+      defaultMessage: 'Kennitala greiðanda',
       description: 'Heading for payer national id in overview section',
     },
     payerHeading: {
@@ -266,10 +272,15 @@ export const m = {
       defaultMessage: 'Greiðandi',
       description: 'Heading for payer in overview section',
     },
-    submitTitle: {
-      id: 'hh.courses.application:overview.submitTitle',
+    submitAndPayTitle: {
+      id: 'hh.courses.application:overview.submitAndPayTitle',
+      defaultMessage: 'Staðfesta og greiða',
+      description: 'Title of submit button in overview section with payment',
+    },
+    submitRegistrationTitle: {
+      id: 'hh.courses.application:overview.submitRegistrationTitle',
       defaultMessage: 'Staðfesta skráningu',
-      description: 'Title of submit button in overview section',
+      description: 'Title of submit button in overview section without payment',
     },
   }),
   completedForm: defineMessages({

@@ -119,7 +119,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: m.overview.submitTitle,
+                  name: m.overview.submitRegistrationTitle,
                   type: 'primary',
                 },
               ],

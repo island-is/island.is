@@ -480,16 +480,15 @@ const generateCaseNumberSortValue = (
 }
 
 const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
-  attributes: [
-    'policeCaseNumbers',
-    'courtCaseNumber',
-    'appealCaseNumber',
-    'publicProsecutorIsRegisteredInPoliceSystem',
-  ],
+  attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
   includes: {
     court: {
       model: Institution,
       attributes: ['name'],
+    },
+    defendants: {
+      model: Defendant,
+      attributes: ['publicProsecutorIsRegisteredInPoliceSystem'],
     },
   },
   generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
@@ -517,7 +516,10 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
 
     const hasCheckMark =
       isPublicProsecutionOfficeUser(user) &&
-      c.publicProsecutorIsRegisteredInPoliceSystem
+      // It's ok to only check the first defendant here since this
+      // checkmark is only used for public prosecutors office users
+      // and each defendant has their own line in their cases table
+      c.defendants?.[0]?.publicProsecutorIsRegisteredInPoliceSystem
 
     return generateCell(
       {
