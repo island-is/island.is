@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'services-auth-ids-api'
+allowExternalNetwork: true
+allowInternalNetwork: false
 enabled: true
 env:
   ALSO_USE_FAKE_USER_API: 'true'
@@ -62,7 +64,6 @@ env:
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
 grantNamespaces:
-  - 'nginx-ingress-external'
   - 'user-notification'
   - 'datadog'
 grantNamespacesEnabled: true

@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'web'
+allowExternalNetwork: true
+allowInternalNetwork: false
 enabled: true
 env:
   API_URL: 'http://api'
@@ -30,7 +32,6 @@ env:
   SERVERSIDE_FEATURES_ON: ''
   TRACKING_DOMAIN: 'beta.dev01.devland.is'
 grantNamespaces:
-  - 'nginx-ingress-external'
   - 'api-catalogue'
   - 'application-system'
   - 'consultation-portal'

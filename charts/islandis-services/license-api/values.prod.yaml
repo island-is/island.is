@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'license-api'
+allowExternalNetwork: false
+allowInternalNetwork: true
 enabled: true
 env:
   CODE_OWNER: 'hugsmidjan'
@@ -38,9 +40,8 @@ env:
   XROAD_NVS_PERMITS_PATH: 'IS/GOV/7009241570/NVS-Protected/api'
   XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
-grantNamespaces:
-  - 'nginx-ingress-internal'
-grantNamespacesEnabled: true
+grantNamespaces: []
+grantNamespacesEnabled: false
 healthCheck:
   liveness:
     initialDelaySeconds: 3

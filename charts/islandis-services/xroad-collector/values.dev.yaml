@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'xroad-collector'
+allowExternalNetwork: false
+allowInternalNetwork: false
 args:
   - '--no-experimental-fetch'
   - 'main.cjs'

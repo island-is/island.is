@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'services-form-system-api-worker'
+allowExternalNetwork: false
+allowInternalNetwork: false
 args:
   - 'main.cjs'
   - '--job'
@@ -41,7 +43,6 @@ env:
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'islandis'
-  - 'nginx-ingress-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

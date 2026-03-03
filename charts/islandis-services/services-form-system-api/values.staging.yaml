@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'services-form-system-api'
+allowExternalNetwork: true
+allowInternalNetwork: false
 enabled: true
 env:
   CODE_OWNER: 'Advania'
@@ -40,7 +42,6 @@ env:
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
 grantNamespaces:
   - 'islandis'
-  - 'nginx-ingress-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'github-actions-cache'
+allowExternalNetwork: false
+allowInternalNetwork: false
 args:
   - '--tls-min-v1.0'
   - '--no-experimental-fetch'

@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'judicial-system-scheduler'
+allowExternalNetwork: false
+allowInternalNetwork: false
 args:
   - '--no-experimental-fetch'
   - 'main.cjs'
@@ -32,9 +34,8 @@ env:
   SQS_QUEUE_NAME: 'sqs-judicial-system'
   SQS_REGION: 'eu-west-1'
   TIME_TO_LIVE_MINUTES: '30'
-grantNamespaces:
-  - 'nginx-ingress-external'
-grantNamespacesEnabled: true
+grantNamespaces: []
+grantNamespacesEnabled: false
 healthCheck:
   liveness:
     initialDelaySeconds: 3
