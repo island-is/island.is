@@ -10,7 +10,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
-import { ApplicationState } from '@island.is/form-system/ui'
+import { ApplicationState } from '../../../lib/reducerTypes'
 import { FieldTypesEnum } from '@island.is/form-system/enums'
 
 interface Props {
@@ -24,15 +24,9 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
   const { formatMessage, lang } = useLocale()
   const label = item?.name?.[lang]
   const { control } = useFormContext()
-  console.log('currentScreen', currentScreen)
-
-  console.log('item', item)
-  if (!currentScreen) {
-    return null
-  }
 
   let sum = 0
-  currentScreen.data?.fields?.forEach((field) => {
+  currentScreen?.data?.fields?.forEach((field) => {
     if (field && field.fieldType === FieldTypesEnum.ISK_NUMBERBOX) {
       const value = getValue(field, 'iskNumber')
       if (value) {
@@ -46,7 +40,6 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
 
   const formattedSum = sum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
   useEffect(() => {
-    console.log('formattedSum', formattedSum)
     if (dispatch) {
       dispatch({
         type: 'SET_CURRENCY',
@@ -56,7 +49,7 @@ export const CurrencySumField = ({ item, dispatch, state }: Props) => {
         },
       })
     }
-  }, [formattedSum])
+  }, [dispatch, formattedSum, item.id])
 
   return (
     <Row marginTop={2}>
