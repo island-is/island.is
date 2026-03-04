@@ -2184,7 +2184,7 @@ export const messages = defineMessages({
   keyHealthInformationToBeSharedDescription: {
     id: 'sp.health:key-health-information-to-be-shared-description',
     defaultMessage:
-      'Heimildin nær utan um lykil heilsufarsupplýsingar sem inniheldur eftirfarandi upplýsingar:',
+      'Heimildin nær utan um lykilheilsufarsupplýsingar sem inniheldur eftirfarandi upplýsingar:',
   },
   errorTryAgain: {
     id: 'sp.health:error-try-again',
@@ -2214,6 +2214,10 @@ export const messages = defineMessages({
   healthDirectorate: {
     defaultMessage: 'Embætti landlæknis',
     id: 'sp.health:health-directorate',
+  },
+  healthDirectorateUrl: {
+    defaultMessage: 'https://www.landlaeknir.is',
+    id: 'sp.health:health-directorate-url',
   },
   landspitali: {
     defaultMessage: 'Landspítali',

@@ -139,7 +139,16 @@ const PermitDetail: React.FC = () => {
       {error && !loading && (
         <Problem title={formatMessage(messages.errorTryAgain)} />
       )}
-      {!error && (
+      {!error && !loading && !permit && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(messages.noPermit)}
+          message={formatMessage(messages.noPermitsRegistered)}
+          imgSrc="./assets/images/empty_flower.svg"
+        />
+      )}
+      {!error && permit && (
         <Box marginTop={2}>
           <Text variant="eyebrow" color="purple400" marginBottom={2}>
             {formatMessage(messages.information)}
@@ -150,7 +159,7 @@ const PermitDetail: React.FC = () => {
               content={formatMessage(messages.healthDirectorate)}
               loading={loading}
               button={{
-                to: 'https://www.landlaeknir.is',
+                to: formatMessage(messages.healthDirectorateUrl),
                 label: formatMessage(messages.organizationWebsite),
                 type: 'link',
               }}
@@ -163,19 +172,23 @@ const PermitDetail: React.FC = () => {
             <InfoLine
               label={formatMessage(messages.status) ?? ''}
               content={
-                permit?.status ? (
-                  <Tag
-                    variant={
-                      permitTagSelector(permit.status, formatMessage).variant
-                    }
-                    outlined={
-                      permitTagSelector(permit.status, formatMessage).outlined
-                    }
-                    disabled
-                  >
-                    {permitTagSelector(permit.status, formatMessage).label}
-                  </Tag>
-                ) : undefined
+                permit?.status
+                  ? (() => {
+                      const tag = permitTagSelector(
+                        permit.status,
+                        formatMessage,
+                      )
+                      return (
+                        <Tag
+                          variant={tag.variant}
+                          outlined={tag.outlined}
+                          disabled
+                        >
+                          {tag.label}
+                        </Tag>
+                      )
+                    })()
+                  : undefined
               }
               loading={loading}
             />
@@ -236,7 +249,7 @@ const PermitDetail: React.FC = () => {
                     : history.slice(0, HISTORY_VISIBLE_COUNT)
                   ).map((entry, index) => (
                     <ExpandRow
-                      key={index}
+                      key={entry.createdAt?.toString() ?? index}
                       data={[
                         {
                           value: formatDateWithTime(

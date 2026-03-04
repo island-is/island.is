@@ -21,10 +21,17 @@ type EditRouteState = {
   validTo?: string | null
 }
 
-const buildInitialFormState = (
-  state: EditRouteState | null,
-): PermitInput | undefined => {
-  if (!state?.countries?.length) return undefined
+const isEditRouteState = (state: unknown): state is EditRouteState =>
+  typeof state === 'object' &&
+  state !== null &&
+  (!('countries' in state) ||
+    (Array.isArray((state as EditRouteState).countries) &&
+      ((state as EditRouteState).countries ?? []).every(
+        (c) => typeof c.code === 'string' && typeof c.name === 'string',
+      )))
+
+const buildInitialFormState = (state: unknown): PermitInput | undefined => {
+  if (!isEditRouteState(state) || !state.countries?.length) return undefined
 
   const now = new Date()
   now.setHours(0, 0, 0, 0)
@@ -47,13 +54,14 @@ const NewPermit: React.FC = () => {
   const location = useLocation()
   const [step, setStep] = useState<number>(DEFAULT_STEP)
   const [formState, setFormState] = useState<PermitInput | undefined>(() =>
-    buildInitialFormState((location.state as EditRouteState) ?? null),
+    buildInitialFormState(location.state),
   )
 
   const navigate = useNavigate()
 
   const [createPermit, { loading }] = useCreatePatientDataPermitMutation({
     refetchQueries: ['GetPatientDataPermits'],
+    awaitRefetchQueries: true,
   })
 
   const handleSubmit = () => {
@@ -69,6 +77,8 @@ const NewPermit: React.FC = () => {
               validFrom: formState.dates.validFrom?.toISOString(),
               validTo: formState.dates.validTo?.toISOString(),
               countryCodes: formState.countries.map((c) => c.code),
+              // Currently only patient-summary consent type is available.
+              // When more become availablein the near future, consent types will be added and sent here.
               codes: [''],
             },
           },

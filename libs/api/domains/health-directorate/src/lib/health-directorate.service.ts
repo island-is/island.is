@@ -48,13 +48,11 @@ import {
 import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
 import { Donor, DonorInput, Organ } from './models/organ-donation.model'
-import {
-  Countries,
-  Permit,
-  PermitHistoryEntry,
-  PermitReturn,
-  Permits,
-} from './models/permits'
+import { Countries } from './models/permits/country.model'
+import { Permit } from './models/permits/permit.model'
+import { PermitHistoryEntry } from './models/permits/permitHistoryEntry.model'
+import { PermitReturn } from './models/permits/permitReturn.model'
+import { Permits } from './models/permits/permits.model'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
@@ -561,7 +559,7 @@ export class HealthDirectorateService {
   /* Patient data - invalidate permit */
   async invalidatePermit(auth: Auth): Promise<PermitReturn | null> {
     const data = await this.healthApi.deactivatePermit(auth)
-    return data !== undefined ? { status: true } : null
+    return data != null ? { status: true } : null
   }
 
   private castRenewalInputToNumber = (

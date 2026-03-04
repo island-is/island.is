@@ -69,7 +69,7 @@ const PatientDataPermits: FC = () => {
     >
       {loading && !error && (
         <Box marginY={3}>
-          <ActionCardLoader repeat={3} />
+          <ActionCardLoader />
         </Box>
       )}
 

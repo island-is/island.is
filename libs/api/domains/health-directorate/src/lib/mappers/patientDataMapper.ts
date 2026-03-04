@@ -5,9 +5,11 @@ import {
 } from '@island.is/clients/health-directorate'
 import { PermitStatusEnum } from '../models/enums'
 
-import { Country, Permit, PermitHistoryEntry } from '../models/permits'
+import { Country } from '../models/permits/country.model'
+import { Permit } from '../models/permits/permit.model'
+import { PermitHistoryEntry } from '../models/permits/permitHistoryEntry.model'
 
-export const mapPermitStatus = (
+const mapPermitStatus = (
   status: EuPatientConsentStatus,
 ): PermitStatusEnum => {
   switch (status) {
