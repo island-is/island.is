@@ -1,5 +1,11 @@
 import React from 'react'
-import { render, fireEvent, waitFor, act } from '@testing-library/react'
+import {
+  render,
+  fireEvent,
+  waitFor,
+  act,
+  getAllByText,
+} from '@testing-library/react'
 import { DatePicker } from './DatePicker'
 import '@testing-library/jest-dom'
 
@@ -169,9 +175,9 @@ describe('DatePicker', () => {
         fireEvent.click(input)
       }
       // Click first date to start range
-      fireEvent.click(getByText('1'))
+      fireEvent.click(getAllByText(container, '1')[0])
       // Calendar should stay open, click second date to complete range
-      fireEvent.click(getByText('15'))
+      fireEvent.click(getAllByText(container, '15')[0])
       // handleChange should only be called when both dates are selected
       expect(handleChange).toHaveBeenCalledTimes(1)
       expect(handleChange).toHaveBeenCalledWith(
