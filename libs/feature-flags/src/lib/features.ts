@@ -11,7 +11,6 @@ export enum Features {
   passportApplication = 'isPassportApplicationEnabled',
   passportAnnulmentApplication = 'isPassportAnnulmentApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
-  alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
@@ -157,6 +156,9 @@ export enum Features {
   usePersonalRepresentativesFromSyslumenn = 'usePersonalRepresentativesFromSyslumenn',
   // SMS Notifications
   isSmsNotificationEnabled = 'isSmsNotificationEnabled',
+
+  // Admin portal
+  isFormSystemInAdminPortalEnabled = 'isFormSystemInAdminPortalEnabled',
 }
 
 export enum ServerSideFeature {

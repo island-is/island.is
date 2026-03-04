@@ -50,6 +50,7 @@ describe('PaymentFlowService', () => {
           quantity: 1,
           price: 100,
           reference: 'charge-ref-xyz',
+          paymentOptions: ['CARD', 'CLAIM'],
         },
       ]
 
@@ -65,7 +66,6 @@ describe('PaymentFlowService', () => {
         )
 
       const paymentInfo: CreatePaymentFlowInput = {
-        availablePaymentMethods: [PaymentMethod.CARD],
         charges,
         payerNationalId: '1234567890',
         onUpdateUrl: 'http://localhost:3333/update',

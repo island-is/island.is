@@ -18,6 +18,7 @@ import {
 import { m } from './messages'
 import { inheritanceReportSchema } from './dataSchema'
 import {
+  DRAFT_PRUNE_DAYS,
   ApiActions,
   ESTATE_INHERITANCE,
   InheritanceReportEvent,
@@ -65,7 +66,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0,
-          lifecycle: pruneAfterDays(60),
+          lifecycle: pruneAfterDays(DRAFT_PRUNE_DAYS),
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -114,7 +115,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           name: '',
           status: 'draft',
           progress: 0.15,
-          lifecycle: pruneAfterDays(60),
+          lifecycle: pruneAfterDays(DRAFT_PRUNE_DAYS),
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
