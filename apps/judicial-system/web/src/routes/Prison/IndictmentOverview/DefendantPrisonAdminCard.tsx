@@ -1,5 +1,6 @@
 import { Box, Icon, Option, Select, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
+import { BlueBox } from '@island.is/judicial-system-web/src/components'
 import ContextMenuCard from '@island.is/judicial-system-web/src/components/Cards/ContextMenuCard/ContextMenuCard'
 import {
   Defendant,
