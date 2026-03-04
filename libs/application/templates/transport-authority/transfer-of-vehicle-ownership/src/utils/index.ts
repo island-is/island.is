@@ -6,6 +6,7 @@ import {
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { TransferOfVehicleOwnershipAnswers } from '..'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export const formatIsk = (value: number): string =>
   value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
@@ -17,6 +18,17 @@ export const formatPhoneNumber = (phoneNumber: string | undefined): string => {
   if (!phoneNumber) return ''
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone?.formatNational() || phoneNumber
+}
+
+export const isValidMobileNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
+    return !!phone && /^[06-8]/.test(String(phone?.nationalNumber))
+  } else {
+    return (
+      phone && phone.isValid() && /^[6-8]/.test(String(phone?.nationalNumber))
+    )
+  }
 }
 
 export { getSelectedVehicle } from './getSelectedVehicle'
