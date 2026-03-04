@@ -3,7 +3,6 @@ import {
   DeviceEventEmitter,
   Linking
 } from 'react-native'
-import { evaluateUrl } from '../../lib/deep-linking'
 import { environmentStore } from '../../stores/environment-store'
 import { offlineStore } from '../../stores/offline-store'
 import { handleQuickAction } from '../quick-actions'
@@ -13,9 +12,6 @@ export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
   Linking.addEventListener('url', ({ url }) => {
     console.log('Received url event:', url);
-    if (url.includes('wallet/')) {
-      return evaluateUrl(url)
-    }
 
     // Handle Cognito
     if (/cognito/.test(url)) {

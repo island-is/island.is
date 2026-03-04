@@ -35,7 +35,7 @@ import {
   View
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { LicenseFieldRender } from '../../../../../components/license-field-render'
+import { LicenseFieldRender } from '@/components/license-field-render'
 
 const CARD_HEIGHT = 96
 
@@ -149,6 +149,9 @@ export default function WalletPassScreen() {
     licenseType: string
     id: string
   }>()
+
+  console.log('oki', {type, id})
+
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)
@@ -166,13 +169,12 @@ export default function WalletPassScreen() {
     fetchPolicy: 'network-only',
     variables: {
       input: {
-        licenseType: type,
+        licenseType: type as GenericLicenseType,
         licenseId: id,
       },
       locale: useLocale(),
     },
   })
-
   // useFragment will get the license by license type and license id from license list cache
   const licenseFromCache = useFragment_experimental<GenericUserLicense>({
     fragment: GenericUserLicenseFragmentFragmentDoc,
@@ -190,6 +192,7 @@ export default function WalletPassScreen() {
     },
     returnPartialData: true,
   })
+  console.log('licenseFromCache', licenseFromCache)
 
   const data = res.data?.genericLicense ?? licenseFromCache?.data
   const isExpired = data?.payload?.metadata?.expired
@@ -327,7 +330,7 @@ export default function WalletPassScreen() {
         <LicenseCardWrapper>
           <LicenseCard
             nativeID={`license-${licenseType}_destination`}
-            type={licenseType}
+            type={licenseType ?? (type as GenericLicenseType)}
             title={
               data?.payload?.metadata?.title ??
               data?.payload?.metadata?.name ??

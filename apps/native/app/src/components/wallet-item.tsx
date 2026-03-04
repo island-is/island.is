@@ -4,13 +4,11 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { LicenseListCard, Link, LinkText } from '@/ui'
 import { Pressable as PressableRaw } from '@/components/pressable/pressable'
-import {
-  GenericLicenseType,
-  GenericUserLicense,
-} from '@/graphql/types/schema'
+import { GenericLicenseType, GenericUserLicense } from '@/graphql/types/schema'
 import { navigateTo } from '@/lib/deep-linking'
 import externalLinkIcon from '@/assets/icons/external-link.png'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { router } from 'expo-router'
 
 const Container = styled.View`
   padding-left: ${({ theme }) => theme.spacing[2]}px;
@@ -95,15 +93,15 @@ export const WalletItem = React.memo(
         ) : (
           <Pressable
             onPress={() => {
-              navigateTo(
-                `/wallet/${item?.license.type}/${item.payload?.metadata?.licenseId}`,
-                {
-                  item,
-                  fromId: `license-${item?.license?.type}_source`,
-                  toId: `license-${item?.license?.type}_destination`,
-                  cardHeight,
+              router.navigate({
+                pathname: '/wallet/[licenseType]/[id]',
+                params: {
+                  licenseType: item.license.type,
+                  id:
+                    item.payload?.metadata?.licenseId ??
+                    'default',
                 },
-              )
+              })
             }}
           >
             <SafeAreaView>
