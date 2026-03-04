@@ -77,17 +77,16 @@ export const ApplicationCard = ({
   )
 
   const MS_PER_DAY = 1000 * 60 * 60 * 24
+  const toUtcStartOfDay = (value: Date | string) => {
+    const date = new Date(value)
+    return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
+  }
   const daysRemaining =
     pruneAt && actionCard?.displayPruneAt
-      ? (() => {
-          const pruneDate = new Date(pruneAt)
-          const today = new Date()
-          pruneDate.setHours(0, 0, 0, 0)
-          today.setHours(0, 0, 0, 0)
-          return Math.round(
-            (pruneDate.getTime() - today.getTime()) / MS_PER_DAY,
-          )
-        })()
+      ? Math.ceil(
+          (toUtcStartOfDay(pruneAt) - toUtcStartOfDay(new Date())) /
+            MS_PER_DAY,
+        )
       : undefined
 
   const shouldRenderProgress = status === 'draft'
