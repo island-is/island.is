@@ -9,9 +9,7 @@ import { Country } from '../models/permits/country.model'
 import { Permit } from '../models/permits/permit.model'
 import { PermitHistoryEntry } from '../models/permits/permitHistoryEntry.model'
 
-const mapPermitStatus = (
-  status: EuPatientConsentStatus,
-): PermitStatusEnum => {
+const mapPermitStatus = (status: EuPatientConsentStatus): PermitStatusEnum => {
   switch (status) {
     case EuPatientConsentStatus.ACTIVE:
       return PermitStatusEnum.active
