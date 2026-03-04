@@ -2,11 +2,10 @@ import { useLocale } from '@island.is/localization'
 import { Modal } from '@island.is/react/components'
 import { m } from '../../lib/messages'
 import { m as coreMessages, formatNationalId } from '@island.is/portals/core'
-import { DelegationsByPerson } from '../delegations/table/CustomDelegationsTable'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { Box } from '@island.is/island-ui/core'
-import { DateScopesTable } from '../ScopesTable/DateScopesTable'
+import { ScopesTable } from '../ScopesTable/ScopesTable'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 
 export const DeleteAccessModal = ({
@@ -14,7 +13,6 @@ export const DeleteAccessModal = ({
   isVisible,
   onDelete,
   loading,
-  // person,
   direction,
   otherIdentity,
 }: {
@@ -84,7 +82,7 @@ export const DeleteAccessModal = ({
         )}
       </Box>
 
-      <DateScopesTable editableDates={false} />
+      <ScopesTable showDate editableDates={false} />
 
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter

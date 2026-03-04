@@ -4,11 +4,11 @@ import { Box, DatePicker, RadioButton, Text } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { m as portalMessages } from '@island.is/portals/core'
 
-import { DateScopesTable } from '../../components/ScopesTable/DateScopesTable'
+import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
 import { useDelegationForm } from '../../context'
 
 export const AccessPeriod = ({
-  initialIsSamePeriod = false,
+  initialIsSamePeriod = true,
 }: {
   initialIsSamePeriod?: boolean
 }) => {
@@ -59,7 +59,7 @@ export const AccessPeriod = ({
         </Box>
       ) : (
         <Box>
-          <DateScopesTable />
+          <ScopesTable showDate editableDates />
         </Box>
       )}
     </Box>

@@ -5,7 +5,7 @@ import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
 import { ActionCard, Box } from '@island.is/island-ui/core'
 import { m as coreMessages } from '@island.is/portals/core'
 import { useDelegationForm } from '../../context'
-import { DateScopesTable } from '../ScopesTable/DateScopesTable'
+import { ScopesTable } from '../ScopesTable/ScopesTable'
 import { DelegationPaths } from '../../lib/paths'
 import { useCreateAuthDelegationsMutation } from '../../screens/GrantAccessNew/GrantAccessNew.generated'
 import { useNavigate } from 'react-router-dom'
@@ -95,7 +95,7 @@ export const ConfirmAccessModal = ({
             )
           })}
         </Box>
-        <DateScopesTable editableDates={false} />
+        <ScopesTable showDate editableDates={false} />
       </Box>
 
       <Box position="sticky" bottom={0}>

@@ -47,6 +47,7 @@ export const ScopesCategoriesList = ({
               ) : (
                 <ScopesTable
                   scopes={cat.scopes}
+                  showCheckbox
                   onSelectScope={onSelectScope}
                   selectedScopes={selectedScopes}
                 />

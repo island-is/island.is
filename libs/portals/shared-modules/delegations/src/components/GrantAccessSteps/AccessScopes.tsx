@@ -194,6 +194,7 @@ export const AccessScopes = () => {
       searchQuery.length > 0 ? (
         <ScopesTable
           scopes={filteredScopes}
+          showCheckbox
           onSelectScope={onSelectScope}
           selectedScopes={selectedScopes}
         />

@@ -117,6 +117,7 @@ export const CategoryDetails = () => {
             <Box paddingTop={2} paddingBottom={4}>
               <ScopesTable
                 scopes={category?.scopes ?? []}
+                showCheckbox
                 onSelectScope={onSelectScope}
                 selectedScopes={selectedScopes}
               />
