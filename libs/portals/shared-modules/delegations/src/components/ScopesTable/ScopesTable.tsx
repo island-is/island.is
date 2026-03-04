@@ -1,4 +1,3 @@
-import { useContext as useReactContext } from 'react'
 import { AuthApiScope } from '@island.is/api/schema'
 import {
   Box,
@@ -11,7 +10,7 @@ import { useLocale } from '@island.is/localization'
 import { m as coreMessages } from '@island.is/portals/core'
 import format from 'date-fns/format'
 import {
-  DelegationFormContext,
+  useDelegationForm,
   type ScopeSelection,
 } from '../../context/DelegationFormContext'
 import { m } from '../../lib/messages'
@@ -31,11 +30,8 @@ type Scope = {
 
 type ScopesTableProps = {
   scopes?: Scope[]
-
   showCheckbox?: boolean
   onSelectScope?: (scope: AuthApiScope) => void
-  selectedScopes?: AuthApiScope[]
-
   showDate?: boolean
   editableDates?: boolean
 }
@@ -44,18 +40,17 @@ export const ScopesTable = ({
   scopes: scopesProp,
   showCheckbox,
   onSelectScope,
-  selectedScopes,
   showDate,
   editableDates = true,
 }: ScopesTableProps) => {
   const { formatMessage } = useLocale()
 
-  const delegationForm = useReactContext(DelegationFormContext)
-  const scopes = scopesProp ?? delegationForm?.selectedScopes ?? []
+  const { selectedScopes, setSelectedScopes } = useDelegationForm()
+  const scopes = scopesProp ?? selectedScopes ?? []
 
   const onChangeScopeDate = (scope: ScopeSelection, date: Date) => {
-    delegationForm?.setSelectedScopes(
-      delegationForm.selectedScopes.map((s) =>
+    setSelectedScopes(
+      selectedScopes.map((s) =>
         s.name === scope.name ? { ...s, validTo: date } : s,
       ),
     )

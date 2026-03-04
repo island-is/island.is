@@ -1,29 +1,56 @@
-import { Box, Button, GridColumn, Icon, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  Icon,
+  Input,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
 import { isDefined } from '@island.is/shared/utils'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-use'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import groupBy from 'lodash/groupBy'
 import {
   AuthDelegationsGroupedByIdentity,
   AuthDelegationType,
 } from '@island.is/api/schema'
-import { useAuthDelegationsGroupedByIdentityOutgoingQuery } from '../components/delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
-import { useAuthDelegationsGroupedByIdentityIncomingQuery } from '../components/delegations/incoming/DelegationsGroupedByIdentityIncoming.generated'
-import { m } from '../lib/messages'
-import { DelegationPaths } from '../lib/paths'
-import { DelegationsTable } from '../components/delegations/table/DelegationsTable'
+import {
+  AuthDelegationsGroupedByIdentityOutgoingQuery,
+  useAuthDelegationsGroupedByIdentityOutgoingQuery,
+} from '../../components/delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
+import { useAuthDelegationsGroupedByIdentityIncomingQuery } from '../../components/delegations/incoming/DelegationsGroupedByIdentityIncoming.generated'
+import { m } from '../../lib/messages'
+import { DelegationPaths } from '../../lib/paths'
+import { DelegationsTable } from '../../components/tables/DelegationsTable'
 import {
   getGeneralMandateTableData,
   getLegalGuardianTableData,
   getProcuringHolderTableData,
-} from '../components/delegations/table/getTableData'
-import CustomDelegationsTable from '../components/delegations/table/CustomDelegationsTable'
+} from '../../components/tables/getTableData'
+import CustomDelegationsTable from '../../components/tables/CustomDelegationsTable'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
-import { AccessControlLoaderResponse } from './AccessControl.loader'
+import { AccessControlLoaderResponse } from '../AccessControl.loader'
+import * as styles from './AccessControlNew.css'
+
+const filterDelegations = (
+  searchValue: string,
+  delegations?: AuthDelegationsGroupedByIdentityOutgoingQuery['authDelegationsGroupedByIdentityOutgoing'],
+) => {
+  if (!searchValue) {
+    return delegations
+  }
+  return delegations?.filter((person) => {
+    const searchValueLower = searchValue.toLowerCase()
+    const name = person?.name?.toLowerCase()
+    const nationalId = person?.nationalId?.toLowerCase()
+
+    return name?.includes(searchValueLower) || nationalId?.includes(searchValue)
+  })
+}
 
 const AccessControlNew = () => {
   useNamespaces(['sp.access-control-delegations'])
@@ -33,6 +60,7 @@ const AccessControlNew = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { switchUser } = useAuth()
+  const [searchValue, setSearchValue] = useState('')
 
   const contentfulData = useLoaderData() as AccessControlLoaderResponse
 
@@ -49,12 +77,17 @@ const AccessControlNew = () => {
   const outgoingDelegations =
     outgoingData?.authDelegationsGroupedByIdentityOutgoing
 
+  const filteredOutgoingDelegations = useMemo(
+    () => filterDelegations(searchValue, outgoingDelegations),
+    [outgoingDelegations, searchValue],
+  )
+
   const outgoingDelegationGroups = useMemo(() => {
-    return groupBy(outgoingDelegations, 'type') as Record<
+    return groupBy(filteredOutgoingDelegations, 'type') as Record<
       AuthDelegationType,
       AuthDelegationsGroupedByIdentity[]
     >
-  }, [outgoingDelegations])
+  }, [filteredOutgoingDelegations])
 
   const outgoingCustomDelegations = outgoingDelegationGroups.Custom
   const outgoingGeneralMandateDelegations =
@@ -73,12 +106,19 @@ const AccessControlNew = () => {
   const incomingDelegations =
     incomingPersonData?.authDelegationsGroupedByIdentityIncoming
 
+  const filteredIncomingDelegations = useMemo(
+    () => filterDelegations(searchValue, incomingDelegations),
+    [incomingDelegations, searchValue],
+  )
+  console.log('incomingDelegations', incomingDelegations)
+  console.log('filteredIncomingDelegations', filteredIncomingDelegations)
+
   const incomingDelegationGroups = useMemo(() => {
-    return groupBy(incomingDelegations, 'type') as Record<
+    return groupBy(filteredIncomingDelegations, 'type') as Record<
       AuthDelegationType,
       AuthDelegationsGroupedByIdentity[]
     >
-  }, [incomingDelegations])
+  }, [filteredIncomingDelegations])
 
   const incomingCustomDelegations = incomingDelegationGroups.Custom
 
@@ -128,6 +168,18 @@ const AccessControlNew = () => {
             </Button>
           </Box>
         </GridColumn>
+        <div className={styles.inputWrapper}>
+          <Input
+            name="search"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            placeholder={formatMessage(m.searchAllPlaceholder)}
+            size="xs"
+            type="text"
+            backgroundColor="blue"
+            icon={{ name: 'search' }}
+          />
+        </div>
       </IntroHeader>
 
       {!outgoingLoading &&
@@ -174,7 +226,6 @@ const AccessControlNew = () => {
             title={formatMessage(m.delegationTypeGeneralMandate)}
             data={getGeneralMandateTableData(
               outgoingGeneralMandateDelegations,
-              onSwitchUser,
               formatMessage,
             )}
             loading={outgoingLoading || false}
@@ -248,8 +299,8 @@ const AccessControlNew = () => {
             title={formatMessage(m.delegationTypeGeneralMandate)}
             data={getGeneralMandateTableData(
               incomingGeneralMandateDelegations,
-              onSwitchUser,
               formatMessage,
+              onSwitchUser,
             )}
             loading={incomingPersonLoading || false}
             error={incomingPersonError}

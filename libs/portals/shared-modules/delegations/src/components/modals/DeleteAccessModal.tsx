@@ -29,27 +29,23 @@ export const DeleteAccessModal = ({
 
   if (!otherIdentity) return null
 
-  const from =
-    direction === 'outgoing'
-      ? {
-          name: userInfo?.profile.name,
-          nationalId: userInfo?.profile.nationalId,
-        }
-      : { name: otherIdentity.name, nationalId: otherIdentity.nationalId }
-  const to =
-    direction === 'outgoing'
-      ? { name: otherIdentity.name, nationalId: otherIdentity.nationalId }
-      : {
-          name: userInfo?.profile.name,
-          nationalId: userInfo?.profile.nationalId,
-        }
+  const user = {
+    name: userInfo?.profile.name,
+    nationalId: userInfo?.profile.nationalId,
+  }
+  const otherId = {
+    name: otherIdentity.name,
+    nationalId: otherIdentity.nationalId,
+  }
+
+  const from = direction === 'outgoing' ? user : otherId
+  const to = direction === 'outgoing' ? otherId : user
 
   return (
     <Modal
       id="delete-access-modal"
-      // Todo: translate
-      label="Delete access"
-      title="Delete access"
+      label={formatMessage(m.deleteAccess)}
+      title={formatMessage(m.deleteAccess)}
       onClose={onClose}
       closeButtonLabel={formatMessage(m.closeModal)}
       isVisible={isVisible}

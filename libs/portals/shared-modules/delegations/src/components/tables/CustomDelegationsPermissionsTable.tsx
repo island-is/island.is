@@ -8,17 +8,17 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
-import { AuthDelegationsGroupedByIdentityOutgoingQuery } from '../outgoing/DelegationsGroupedByIdentityOutgoing.generated'
+import { AuthDelegationsGroupedByIdentityOutgoingQuery } from '../../components/delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../lib/messages'
+import { m } from '../../lib/messages'
 import { m as coreMessages } from '@island.is/portals/core'
 
 import { useState } from 'react'
 import { Reference, useApolloClient } from '@apollo/client'
-import { useDelegationForm } from '../../../context'
+import { useDelegationForm } from '../../context'
 import { AuthDelegationScope, AuthDomain } from '@island.is/api/schema'
-import { DeleteAccessModal } from '../../modals/DeleteAccessModal'
-import { usePatchAuthDelegationMutation } from '../../../screens/EditAccess.tsx/EditAccess.generated'
+import { DeleteAccessModal } from '../modals/DeleteAccessModal'
+import { usePatchAuthDelegationMutation } from '../../screens/EditAccess.tsx/EditAccess.generated'
 import * as styles from './Tables.css'
 
 type PersonCentricDelegation =

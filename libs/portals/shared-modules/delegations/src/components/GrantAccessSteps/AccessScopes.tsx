@@ -6,7 +6,7 @@ import {
   AuthScopeTagsQuery,
 } from '../../screens/ServiceCategories/ServiceCategories.generated'
 import { useLocale } from '@island.is/localization'
-import { ScopesCategoriesList } from '../delegations/ScopesCategoriesList'
+import { ScopesCategoriesList } from '../ScopesCategoriesList'
 import { useMemo, useState } from 'react'
 import * as styles from './GrantAccessSteps.css'
 
@@ -196,7 +196,6 @@ export const AccessScopes = () => {
           scopes={filteredScopes}
           showCheckbox
           onSelectScope={onSelectScope}
-          selectedScopes={selectedScopes}
         />
       ) : (
         <ScopesCategoriesList

@@ -22,6 +22,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:search-placeholder',
     defaultMessage: 'Leita eftir nafni eða kt.',
   },
+  searchAllPlaceholder: {
+    id: 'sp.access-control-delegations:search-all-placeholder',
+    defaultMessage: 'Leita í öllum umboðum',
+  },
   delegationTypeCustom: {
     id: 'sp.access-control-delegations:delegation-type-custom',
     defaultMessage: 'Umboð',

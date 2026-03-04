@@ -13,7 +13,9 @@ import EditAccess from './screens/EditAccess.tsx/EditAccess'
 import { CategoryDetails } from './screens/CategoryDetails/CategoryDetails'
 
 const AccessControl = lazy(() => import('./screens/AccessControl'))
-const AccessControlNew = lazy(() => import('./screens/AccessControlNew'))
+const AccessControlNew = lazy(() =>
+  import('./screens/AccessControlNew/AccessControlNew'),
+)
 const DelegationLayout = lazy(() => import('./screens/DelegationLayout'))
 const GrantAccess = lazy(() => import('./screens/GrantAccess/GrantAccess'))
 const GrantAccessNew = lazy(() =>

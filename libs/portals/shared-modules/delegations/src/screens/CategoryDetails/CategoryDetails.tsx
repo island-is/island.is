@@ -119,7 +119,6 @@ export const CategoryDetails = () => {
                 scopes={category?.scopes ?? []}
                 showCheckbox
                 onSelectScope={onSelectScope}
-                selectedScopes={selectedScopes}
               />
               {categoriesLoading && (
                 <SkeletonLoader width="100%" height={50} repeat={4} />

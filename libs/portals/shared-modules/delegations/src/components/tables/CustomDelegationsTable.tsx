@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Divider,
-  Input,
   SkeletonLoader,
   Stack,
   Table as T,
@@ -12,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import ExpandableRow from './ExpandableRow/ExpandableRow'
 import format from 'date-fns/format'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { m as coreMessages, formatNationalId } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
 import CustomDelegationsPermissionsTable from './CustomDelegationsPermissionsTable'
@@ -20,12 +19,12 @@ import { ApolloError, Reference, useApolloClient } from '@apollo/client'
 import { Problem } from '@island.is/react-spa/shared'
 import { AuthDomain } from '@island.is/api/schema'
 import { IdentityInfo } from './IdentityInfo/IdentityInfo'
-import { m } from '../../../lib/messages'
-import { AuthDelegationsGroupedByIdentityOutgoingQuery } from '../../delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
-import { useDeleteAuthDelegationMutation } from '../../access/AccessDeleteModal/AccessDeleteModal.generated'
-import { useDelegationForm } from '../../../context'
-import { DeleteAccessModal } from '../../modals/DeleteAccessModal'
-import { DelegationPaths } from '../../../lib/paths'
+import { m } from '../../lib/messages'
+import { AuthDelegationsGroupedByIdentityOutgoingQuery } from '../delegations/outgoing/DelegationsGroupedByIdentityOutgoing.generated'
+import { useDeleteAuthDelegationMutation } from '../access/AccessDeleteModal/AccessDeleteModal.generated'
+import { useDelegationForm } from '../../context'
+import { DeleteAccessModal } from '../modals/DeleteAccessModal'
+import { DelegationPaths } from '../../lib/paths'
 import { useNavigate } from 'react-router-dom'
 import * as styles from './Tables.css'
 import { useWindowSize } from 'react-use'
@@ -56,7 +55,6 @@ const CustomDelegationsTable = ({
   const [expandedRow, setExpandedRow] = useState<string | null | undefined>(
     null,
   )
-  const [searchValue, setSearchValue] = useState('')
   const navigate = useNavigate()
 
   const [personToDelete, setPersonToDelete] =
@@ -138,22 +136,6 @@ const CustomDelegationsTable = ({
     { value: '' },
   ]
 
-  const filteredDelegations = useMemo(() => {
-    if (!searchValue) {
-      return data
-    }
-
-    return data.filter((person) => {
-      const searchValueLower = searchValue.toLowerCase()
-      const name = person.name?.toLowerCase()
-      const nationalId = person.nationalId?.toLowerCase()
-
-      return (
-        name?.includes(searchValueLower) || nationalId?.includes(searchValue)
-      )
-    })
-  }, [searchValue, data])
-
   const mapScopesToScopeSelection = (person: DelegationsByPerson) => {
     return person.scopes.map((scope) => ({
       name: scope.name,
@@ -196,28 +178,8 @@ const CustomDelegationsTable = ({
       flexDirection="column"
       rowGap={[0, 0, 0, 2]}
     >
-      <Box
-        display="flex"
-        flexDirection={['column', 'row', 'column', 'row']}
-        alignItems={['stretch', 'center', 'stretch', 'center']}
-        columnGap={2}
-        rowGap={2}
-        justifyContent="spaceBetween"
-      >
-        <Text variant="h5">{title}</Text>
-        {data?.length > 5 && (
-          <Input
-            name="search"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            placeholder={formatMessage(m.searchPlaceholder)}
-            size="xs"
-            type="text"
-            backgroundColor="blue"
-            icon={{ name: 'search' }}
-          />
-        )}
-      </Box>
+      <Text variant="h5">{title}</Text>
+
       {loading ? (
         <Box padding={3}>
           <SkeletonLoader space={1} height={40} repeat={2} />
@@ -226,7 +188,7 @@ const CustomDelegationsTable = ({
         <Problem error={error} />
       ) : isMobile ? (
         <Box>
-          {filteredDelegations?.map((person, idx) => {
+          {data?.map((person, idx) => {
             const isExpanded =
               expandedRow === `${person.nationalId}-${person.type}`
 
@@ -380,7 +342,7 @@ const CustomDelegationsTable = ({
               </T.Row>
             </T.Head>
             <T.Body>
-              {filteredDelegations?.map((person) => {
+              {data?.map((person) => {
                 const identity = {
                   nationalId: person.nationalId,
                   name: person.name,

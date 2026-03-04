@@ -2,7 +2,6 @@ import { ApolloError } from '@apollo/client'
 import {
   Box,
   Icon,
-  Input,
   SkeletonLoader,
   Stack,
   Table as T,
@@ -11,9 +10,8 @@ import {
 } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { alignRight } from './ExpandableRow/ExpandableRow.css'
-import { useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../lib/messages'
+import { m } from '../../lib/messages'
 import { MobileRowData } from './getTableData'
 import { formatNationalId } from '@island.is/portals/core'
 import { useWindowSize } from 'react-use'
@@ -38,37 +36,6 @@ export const DelegationsTable = ({
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   const { formatMessage } = useLocale()
-  const [searchValue, setSearchValue] = useState('')
-
-  const filteredDelegations = useMemo(() => {
-    if (!searchValue) {
-      return tableData
-    }
-
-    return tableData.filter((person) => {
-      const searchValueLower = searchValue.toLowerCase()
-      const name = person[0]?.props?.identity.name?.toLowerCase()
-      const nationalId = person[0]?.props?.identity.nationalId?.toLowerCase()
-
-      return (
-        name?.includes(searchValueLower) || nationalId?.includes(searchValue)
-      )
-    })
-  }, [searchValue, tableData])
-
-  const filteredMobileRows = useMemo(() => {
-    if (!searchValue || !mobileRows) return mobileRows
-
-    return mobileRows.filter((row) => {
-      const searchValueLower = searchValue.toLowerCase()
-      const name = row.identity.name?.toLowerCase()
-      const nationalId = row.identity.nationalId?.toLowerCase()
-
-      return (
-        name?.includes(searchValueLower) || nationalId?.includes(searchValue)
-      )
-    })
-  }, [searchValue, mobileRows])
 
   return (
     <Box
@@ -77,37 +44,17 @@ export const DelegationsTable = ({
       flexDirection="column"
       rowGap={[0, 0, 0, 2]}
     >
-      <Box
-        display="flex"
-        flexDirection={['column', 'row', 'column', 'row']}
-        alignItems={['stretch', 'center', 'stretch', 'center']}
-        columnGap={1}
-        rowGap={2}
-        justifyContent="spaceBetween"
-      >
-        <Text variant="h5">{title}</Text>
-        {tableData?.length > 5 && (
-          <Input
-            name="search"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            placeholder={formatMessage(m.searchPlaceholder)}
-            size="xs"
-            type="text"
-            backgroundColor="blue"
-            icon={{ name: 'search' }}
-          />
-        )}
-      </Box>
+      <Text variant="h5">{title}</Text>
+
       {loading ? (
         <Box padding={3}>
           <SkeletonLoader space={1} height={40} repeat={2} />
         </Box>
       ) : error && !tableData?.length ? (
         <Problem error={error} />
-      ) : isMobile && filteredMobileRows ? (
+      ) : isMobile && mobileRows ? (
         <Box>
-          {filteredMobileRows.map((mobileRow, idx) => (
+          {mobileRows.map((mobileRow, idx) => (
             <Box
               key={`${mobileRow.identity.nationalId}-${idx}`}
               className={styles.mobileDivider}
@@ -191,7 +138,7 @@ export const DelegationsTable = ({
             </T.Row>
           </T.Head>
           <T.Body>
-            {filteredDelegations?.map((row, i) => {
+            {tableData?.map((row, i) => {
               return (
                 <T.Row key={i}>
                   {row.map((cell, j) => {
@@ -199,7 +146,9 @@ export const DelegationsTable = ({
                       <T.Data key={j} style={{ paddingInline: 16 }}>
                         <Box
                           className={
-                            j === row.length - 1 ? alignRight : undefined
+                            j === row.length - 1 && headerArray[j] === ''
+                              ? alignRight
+                              : undefined
                           }
                           style={{ maxWidth: 300 }}
                         >

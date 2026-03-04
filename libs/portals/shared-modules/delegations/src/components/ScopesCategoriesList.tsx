@@ -1,9 +1,9 @@
 import { AccordionCard, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ScopesTable } from '../ScopesTable/ScopesTable'
-import { m } from '../../lib/messages'
+import { ScopesTable } from './ScopesTable/ScopesTable'
+import { m } from '../lib/messages'
 import { AuthApiScope } from '@island.is/api/schema'
-import { AuthScopeCategoriesQuery } from '../../screens/ServiceCategories/ServiceCategories.generated'
+import { AuthScopeCategoriesQuery } from '../screens/ServiceCategories/ServiceCategories.generated'
 
 export const ScopesCategoriesList = ({
   loading,
@@ -49,7 +49,6 @@ export const ScopesCategoriesList = ({
                   scopes={cat.scopes}
                   showCheckbox
                   onSelectScope={onSelectScope}
-                  selectedScopes={selectedScopes}
                 />
               )}
             </Box>
