@@ -76,10 +76,11 @@ export const ApplicationCard = ({
     shouldShowCardButtons ? openApplication : undefined,
   )
 
+  const MS_PER_DAY = 1000 * 60 * 60 * 24
   const daysRemaining =
     pruneAt && actionCard?.displayPruneAt
       ? Math.ceil(
-          (new Date(pruneAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+          (new Date(pruneAt).getTime() - Date.now()) / MS_PER_DAY,
         )
       : undefined
 
