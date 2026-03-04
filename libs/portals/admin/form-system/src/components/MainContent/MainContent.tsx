@@ -67,6 +67,9 @@ export const MainContent = () => {
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'Lifetime' ? (
         <Lifetime />
+      ) : (activeItem.data as FormSystemSection).sectionType ===
+        SectionTypes.PAYMENT ? (
+        <Payment />
       ) : (
         <Stack space={2}>
           <Row>

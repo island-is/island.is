@@ -11,6 +11,7 @@ import { ZendeskSettings } from './components/ZendeskSettings/ZendeskSettings'
 export const FieldContent = () => {
   const { control, inListBuilder, setFocus } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
+  const { fieldType } = currentItem
   const screenId = (control.activeItem.data as FormSystemField).screenId
   const screen = control.form.screens?.find((s) => s && s.id === screenId)
   const hasZendeskSettings = control.form.submissionServiceUrl === 'zendesk'
