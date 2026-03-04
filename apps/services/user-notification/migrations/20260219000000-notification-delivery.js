@@ -12,10 +12,14 @@ module.exports = {
       user_notification_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: { model: 'user_notification', key: 'id' },
+        onDelete: 'CASCADE',
       },
       actor_notification_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
+        references: { model: 'actor_notification', key: 'id' },
+        onDelete: 'CASCADE',
       },
       channel: {
         type: Sequelize.ENUM('email', 'sms', 'push'),
