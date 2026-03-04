@@ -1,4 +1,3 @@
-import { HealthDirectoratePatientDataApprovalCountry } from '@island.is/api/schema'
 import { ActionCard } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React from 'react'
@@ -9,7 +8,6 @@ interface InvalidatePermitModalProps {
   open: boolean
   onClose: () => void
   onSubmit: () => void
-  countries?: HealthDirectoratePatientDataApprovalCountry[]
   validFrom?: string
   validTo?: string
 }
@@ -18,7 +16,6 @@ export const InvalidatePermitModal: React.FC<InvalidatePermitModalProps> = ({
   open,
   onClose,
   onSubmit,
-  countries = [],
   validFrom,
   validTo,
 }) => {
@@ -33,13 +30,13 @@ export const InvalidatePermitModal: React.FC<InvalidatePermitModalProps> = ({
       description={formatMessage(messages.youAreAboutToInvalidateThisPermit)}
       content={
         <ActionCard
-          date={formatMessage(messages.validToFrom, {
+          backgroundColor="white"
+          eyebrow={formatMessage(messages.healthDirectorate)}
+          eyebrowColor="purple400"
+          heading={formatMessage(messages.patientDataPermit)}
+          text={formatMessage(messages.validToFrom, {
             fromDate: validFrom,
             toDate: validTo,
-          })}
-          heading={formatMessage(messages.permit)}
-          text={formatMessage(messages.permitValidFor, {
-            country: countries.map((country) => country.name).join(', '),
           })}
         />
       }

@@ -287,7 +287,6 @@ const PermitDetail: React.FC = () => {
         open={modalOpen}
         onClose={() => setModalOpen(false)}
         onSubmit={onInvalidateSubmit}
-        countries={permit?.countries}
         validFrom={formatDate(permit?.validFrom)}
         validTo={formatDate(permit?.validTo)}
       />
