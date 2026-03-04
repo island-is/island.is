@@ -62,6 +62,7 @@ import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
 import { PaymentFulfillment } from './models/paymentFulfillment.model'
 import { PaymentWorkerEvent } from './models/paymentWorkerEvent.model'
+import { determinePaymentMethods } from './paymentFlow.utils'
 
 interface PaymentFlowUpdateConfig {
   /**
@@ -117,6 +118,12 @@ export class PaymentFlowService {
         processedCharges,
       )
 
+      const paymentMethods = determinePaymentMethods(chargeDetails.catalogItems)
+
+      if (paymentMethods.length === 0) {
+        throw new BadRequestException(PaymentServiceCode.InvalidPaymentMethods)
+      }
+
       await this.validateCharge(
         {
           id: paymentFlowId,
@@ -132,6 +139,7 @@ export class PaymentFlowService {
         const paymentFlow = await this.paymentFlowModel.create(
           {
             ...paymentInfo,
+            availablePaymentMethods: paymentMethods,
             id: paymentFlowId,
             charges: [],
           },
@@ -187,6 +195,7 @@ export class PaymentFlowService {
         performingOrgID: organisationId,
         chargeType: charges[0].chargeType,
         chargeItemCode: charges.map((c) => c.chargeItemCode),
+        paymentOptions: true,
       })
 
     const filteredChargeInformation: CatalogItemWithQuantity[] = []
