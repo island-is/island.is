@@ -176,7 +176,6 @@ export class CaseTableService {
       }
 
       const filteredDefendants = caseItem.defendants.filter(filter)
-      console.log(caseItem.defendants)
 
       return filteredDefendants.length > 0
         ? filteredDefendants.map((defendant) => ({
