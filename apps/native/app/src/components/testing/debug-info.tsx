@@ -11,7 +11,6 @@ import {
   useEnvironmentStore,
 } from '@/stores/environment-store'
 import { Button, dynamicColor } from '@/ui'
-import { ContextMenu } from '@expo/ui/swift-ui'
 
 const DebugHost = styled.SafeAreaView`
   background-color: ${dynamicColor((props) => ({

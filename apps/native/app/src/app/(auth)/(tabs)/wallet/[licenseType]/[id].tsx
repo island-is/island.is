@@ -1,33 +1,16 @@
-import * as FileSystem from 'expo-file-system'
-import { Stack, useLocalSearchParams } from 'expo-router'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
-import {
-  ActivityIndicator,
-  Alert,
-  Animated,
-  Button,
-  Easing,
-  Linking,
-  NativeModules,
-  Platform,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
-import Wallet from 'react-native-wallet-manager'
-import styled, { useTheme } from 'styled-components/native'
-import { useFragment_experimental } from '@apollo/client/react/hooks'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
+import {
+  BARCODE_MAX_WIDTH,
+  INFORMATION_BASE_TOP_SPACING,
+  SHOW_INFO_ALERT_TYPES,
+} from '@/constants/wallet.constants'
 import {
   GenericLicenseType,
   GenericUserLicense,
   GenericUserLicenseExpiryStatus,
   GenericUserLicenseFragmentFragmentDoc,
   GenericUserLicensePkPassStatus,
-  useGeneratePkPassMutation,
-  useGetLicenseQuery,
+  useGetLicenseQuery
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { useOfflineStore } from '@/stores/offline-store'
@@ -40,12 +23,19 @@ import {
 } from '@/ui'
 import { isAndroid, isIos, isIosLiquidGlassEnabled } from '@/utils/devices'
 import { screenWidth } from '@/utils/dimensions'
-import { LicenseFieldRender } from '../../../../../components/license-field-render'
+import { useFragment_experimental } from '@apollo/client/react/hooks'
+import { Stack, useLocalSearchParams } from 'expo-router'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
-  BARCODE_MAX_WIDTH,
-  INFORMATION_BASE_TOP_SPACING,
-  SHOW_INFO_ALERT_TYPES,
-} from '@/constants/wallet.constants'
+  ActivityIndicator,
+  Animated,
+  Easing,
+  SafeAreaView,
+  View
+} from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+import { LicenseFieldRender } from '../../../../../components/license-field-render'
 
 const CARD_HEIGHT = 96
 
@@ -113,13 +103,6 @@ const Spacer = styled.View`
   height: 150px;
 `
 
-// @todo migration
-const AddPassButton = (props: any) => (
-  <TouchableOpacity {...props}>
-    <Text>Add Pass</Text>
-  </TouchableOpacity>
-)
-
 const getInfoAlertMessageIds = (
   licenseType: GenericLicenseType,
   licenseNumber?: string,
@@ -176,14 +159,9 @@ export default function WalletPassScreen() {
     (state) => state.setWalletPassInfoAlertDismissed,
   )
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
-  const isAddToWalletButtonEnabled = useFeatureFlag(
-    'isAddToWalletButtonEnabled',
-    true,
-  )
   const fadeInAnim = useRef(new Animated.Value(0)).current
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
 
-  const [generatePkPass] = useGeneratePkPassMutation()
   const res = useGetLicenseQuery({
     fetchPolicy: 'network-only',
     variables: {
@@ -277,8 +255,6 @@ export default function WalletPassScreen() {
         ? 340
         : !allowLicenseBarcode
         ? 80 // less spacing needed if no barcode available (expired or not available)
-        : isAddToWalletButtonEnabled
-        ? 182
         : 192 // Extra spacing needed at bottom if no button is shown
       : 0
 
@@ -287,7 +263,7 @@ export default function WalletPassScreen() {
     // Used to rerender ScrollView to have correct ContentInset based on barcode/no barcode
     // Remove once barcodes are live
     setKey((prev) => prev + 1)
-  }, [isBarcodeEnabled, isAddToWalletButtonEnabled])
+  }, [isBarcodeEnabled])
 
   const fadeIn = () => {
     Animated.timing(fadeInAnim, {
@@ -305,147 +281,6 @@ export default function WalletPassScreen() {
     }
   }, [pkPassAllowed, isBarcodeEnabled])
 
-  const onAddPkPass = async () => {
-    const { canAddPasses, addPass } = Platform.select({
-      ios: Wallet,
-      android: NativeModules.IslandModule,
-    })
-
-    const canAddPass = await canAddPasses()
-
-    if (canAddPass || isAndroid) {
-      try {
-        setAddingToWallet(true)
-        const { data } = await generatePkPass({
-          variables: {
-            input: {
-              licenseType: licenseType ?? '',
-            },
-          },
-        })
-        if (!data?.generatePkPass.pkpassUrl) {
-          throw Error('Failed to generate pkpass')
-        }
-        if (isAndroid) {
-          const docDirectory = new FileSystem.Directory(
-            FileSystem.Paths.document,
-          )
-
-          const pkPassUri =
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            docDirectory.uri! + Date.now() + '.pkpass'
-
-          // @todo migration
-
-          await FileSystem.downloadAsync(
-            data.generatePkPass.pkpassUrl,
-            pkPassUri,
-            {
-              headers: {
-                'User-Agent':
-                  'Mozilla/5.0 (iPhone; CPU iPhone OS 15_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Mobile/15E148 Safari/604.1',
-              },
-            },
-          )
-          const pkPassContentUri = await FileSystem.getContentUriAsync(
-            pkPassUri,
-          )
-
-          addPass(pkPassContentUri, 'com.snjallveskid').catch(() => {
-            if (!canAddPass) {
-              Alert.alert(
-                intl.formatMessage({
-                  id: 'walletPass.errorTitle',
-                }),
-                intl.formatMessage({
-                  id: 'walletPass.errorCannotAddPasses',
-                }),
-              )
-            } else {
-              Alert.alert(
-                intl.formatMessage({
-                  id: 'walletPass.errorTitle',
-                }),
-                intl.formatMessage({
-                  id: 'walletPass.errorAddingOrFetching',
-                }),
-              )
-            }
-          })
-          setAddingToWallet(false)
-          return
-        }
-        const res = await fetch(data.generatePkPass.pkpassUrl, {
-          headers: {
-            'User-Agent':
-              'Mozilla/5.0 (iPhone; CPU iPhone OS 15_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Mobile/15E148 Safari/604.1',
-          },
-        })
-        const blob = await res.blob()
-        const reader = new FileReader()
-        reader.readAsDataURL(blob)
-        reader.onloadend = () => {
-          const passData = reader.result?.toString()
-          if (passData) {
-            if (passData.includes('text/html')) {
-              throw new Error('Pass has expired')
-            }
-            addPass(passData.substring(41), 'com.snjallveskid')
-          }
-          setAddingToWallet(false)
-        }
-      } catch (err) {
-        if (!canAddPass) {
-          Alert.alert(
-            intl.formatMessage({
-              id: 'walletPass.errorTitle',
-            }),
-            intl.formatMessage({
-              id: 'walletPass.errorCannotAddPasses',
-            }),
-          )
-        } else {
-          Alert.alert(
-            intl.formatMessage({
-              id: 'walletPass.errorTitle',
-            }),
-            licenseType === GenericLicenseType.DriversLicense
-              ? intl.formatMessage({
-                  id: 'walletPass.errorNotPossibleToAddDriverLicense',
-                })
-              : intl.formatMessage({
-                  id: 'walletPass.errorAddingOrFetching',
-                }),
-            licenseType === GenericLicenseType.DriversLicense
-              ? [
-                  {
-                    text: intl.formatMessage({
-                      id: 'walletPass.moreInfo',
-                    }),
-                    onPress: () =>
-                      Linking.openURL('https://island.is/okuskirteini'),
-                  },
-
-                  {
-                    text: intl.formatMessage({
-                      id: 'walletPass.alertClose',
-                    }),
-                    style: 'cancel',
-                  },
-                ]
-              : [],
-          )
-        }
-        setAddingToWallet(false)
-        console.error(err)
-      }
-    } else {
-      Alert.alert(
-        intl.formatMessage({ id: 'walletPass.errorNotPossibleOnThisDevice' }),
-      )
-    }
-  }
-
   const expirationTimeCallback = useCallback(() => {
     void res.refetch()
   }, [])
@@ -461,16 +296,6 @@ export default function WalletPassScreen() {
 
       return expDt
     }
-  }
-
-  const renderButtons = () => {
-    if (isIos) {
-      return <AddPassButton style={{ height: 52 }} onPress={onAddPkPass} />
-    }
-
-    return (
-      <Button title="Add to Wallet" onPress={onAddPkPass} color="#111111" />
-    )
   }
 
   // If we don't have cache data we want to return a loading spinner for the whole screen to prevent showing the wrong license while fetching
@@ -615,9 +440,6 @@ export default function WalletPassScreen() {
             )}
           </SafeAreaView>
 
-          {isAddToWalletButtonEnabled && pkPassAllowed && isBarcodeEnabled && (
-            <ButtonWrapper>{renderButtons()}</ButtonWrapper>
-          )}
           {isAndroid && <Spacer />}
         </Information>
         {/*
@@ -625,13 +447,6 @@ export default function WalletPassScreen() {
             The reason for the animation is to avoid rendering flicker.
             The component will on first render the isBarcodeEnabled flag to be false and then set it to true after Configcat has fetched the flag.
          */}
-        {isAddToWalletButtonEnabled && pkPassAllowed && !isBarcodeEnabled && (
-          <ButtonWrapper floating>
-            <Animated.View style={{ opacity: fadeInAnim }}>
-              {renderButtons()}
-            </Animated.View>
-          </ButtonWrapper>
-        )}
         {addingToWallet && (
           <LoadingOverlay>
             <ActivityIndicator

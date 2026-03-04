@@ -13,7 +13,6 @@ import {
   View,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-// import { DockedSearchBar, Host, SearchBar, Text } from '@expo/ui/jetpack-compose'
 
 import { useApolloClient } from '@apollo/client'
 import filterIcon from '@/assets/icons/filter-icon.png'
