@@ -69,7 +69,7 @@ export class PaymentCallbackController {
    *    to handle potential error states
    *
    */
-  @Post('application-payment/api-client-payment-callback/')
+  @Post('form-payment/api-client-payment-callback/')
   async apiClientPaymentCallback(
     @Body() callback: ApiClientCallback,
   ): Promise<void> {

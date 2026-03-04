@@ -16,6 +16,7 @@ import { ControlContext } from '../../context/ControlContext'
 import { BaseSettings } from './components/BaseSettings/BaseSettings'
 import { Completed } from './components/Completed/Completed'
 import { FieldContent } from './components/FieldContent/FieldContent'
+import { Payment } from './components/Payment/Payment'
 import { Premises } from './components/Premises/Premises'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
@@ -57,6 +58,10 @@ export const MainContent = () => {
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'Urls' ? (
         <Urls />
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).sectionType ===
+          SectionTypes.PAYMENT ? (
+        <Payment />
       ) : (
         <Stack space={2}>
           <Row>

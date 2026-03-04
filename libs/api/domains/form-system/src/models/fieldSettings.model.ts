@@ -78,4 +78,22 @@ export class FieldSettings {
 
   @Field(() => Boolean, { nullable: true })
   hasDescription?: boolean
+
+  @Field(() => String, { nullable: true })
+  chargeItemCode?: string
+
+  @Field(() => String, { nullable: true })
+  chargeItemName?: string
+
+  @Field(() => String, { nullable: true })
+  chargeType?: string
+
+  @Field(() => String, { nullable: true })
+  performingOrgID?: string
+
+  @Field(() => Int, { nullable: true })
+  priceAmount?: number
+
+  @Field(() => Boolean, { nullable: true })
+  chooseQuantity?: boolean
 }

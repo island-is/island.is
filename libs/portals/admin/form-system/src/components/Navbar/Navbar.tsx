@@ -15,18 +15,18 @@ import {
 import { m } from '@island.is/form-system/ui'
 import { Box, Button } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import { Fragment, useContext, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { createPortal } from 'react-dom'
 import { useIntl } from 'react-intl'
 import { ControlContext, IControlContext } from '../../context/ControlContext'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
+import { urlSettingsStep } from '../../lib/utils/getUrlSettingsSection'
 import { ItemType } from '../../lib/utils/interfaces'
 import { removeTypename } from '../../lib/utils/removeTypename'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
 import { NavComponent } from '../NavComponent/NavComponent'
 import * as styles from './Navbar.css'
-import { urlSettingsStep } from '../../lib/utils/getUrlSettingsSection'
 
 export const Navbar = () => {
   const {
@@ -179,12 +179,12 @@ export const Navbar = () => {
   const renderNonInputSections = () => {
     return sections
       ?.filter((s): s is FormSystemSection => s !== null && s !== undefined)
-      .filter(
-        (s) =>
-          s.sectionType !== SectionTypes.INPUT &&
-          s.sectionType !== SectionTypes.SUMMARY &&
-          s.sectionType !== SectionTypes.PAYMENT,
-      )
+      .filter((s) => {
+        if (s.sectionType === SectionTypes.INPUT) return false
+        if (s.sectionType === SectionTypes.SUMMARY) return false
+        if (!hasPayment && s.sectionType === SectionTypes.PAYMENT) return false
+        return true
+      })
       .map((s) => (
         <Box key={s.id}>
           <NavComponent
@@ -331,7 +331,7 @@ export const Navbar = () => {
           )}
         </DndContext>
       </Box>
-      {payment && hasPayment && (
+      {/* {payment && hasPayment && (
         <Fragment>
           <NavComponent
             type="Section"
@@ -341,7 +341,7 @@ export const Navbar = () => {
           />
           {renderScreensForSection(payment as FormSystemSection)}
         </Fragment>
-      )}
+      )} */}
       <Box
         display="flex"
         justifyContent="center"

@@ -7,6 +7,7 @@ import { Preview } from '../Preview/Preview'
 import { BaseInput } from './components/BaseInput'
 import { FieldSettings } from './components/FieldSettings/FieldSettings'
 import { ListBuilder } from './components/ListBuilder/ListBuilder'
+import { PaymentField } from './components/PaymentField/PaymentField'
 import { ZendeskSettings } from './components/ZendeskSettings/ZendeskSettings'
 
 export const FieldContent = () => {
@@ -16,11 +17,13 @@ export const FieldContent = () => {
   const hasZendeskSettings = control.form.submissionServiceUrl === 'zendesk'
   const { fieldType } = currentItem
 
+  console.log('Current item in FieldContent:', currentItem)
+
   if (inListBuilder) {
     return <ListBuilder />
   } else {
     if (fieldType === FieldTypesEnum.PAYMENT) {
-      return <>Blaa</>
+      return <PaymentField />
     }
     return (
       <Stack space={2}>

@@ -45,17 +45,17 @@ type ScreenActions =
       type: 'ADD_SCREEN'
       payload: { screen: FormSystemScreen; isApplicant?: boolean }
     }
-  | { type: 'REMOVE_SCREEN'; payload: { id: string; isApplicant?: boolean } }
+  | { type: 'REMOVE_SCREEN'; payload: { id: string; skipActiveItem?: boolean } }
 
 type FieldActions =
   | {
       type: 'ADD_FIELD'
       payload: {
         field: FormSystemField
-        isApplicant?: boolean
+        skipActiveItem?: boolean
       }
     }
-  | { type: 'REMOVE_FIELD'; payload: { id: string; isApplicant?: boolean } }
+  | { type: 'REMOVE_FIELD'; payload: { id: string; skipActiveItem?: boolean } }
   | {
       type: 'CHANGE_FIELD_TYPE'
       payload: {
@@ -71,6 +71,13 @@ type FieldActions =
   | {
       type: 'CHANGE_IS_REQUIRED'
       payload: { update: (updatedActiveItem?: ActiveItem) => void }
+    }
+  | {
+      type: 'ADD_PAYMENT_FIELD'
+      payload: {
+        field: FormSystemField
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
 
 type SectionActions =
@@ -210,6 +217,19 @@ type InputSettingsActions =
         property: 'isMulti' | 'fileMaxSize' | 'maxFiles' | 'fileTypes'
         checked?: boolean
         value?: string | number
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'SET_PAYMENT_SETTINGS'
+      payload: {
+        field: FormSystemField
+        chargeItemCode?: string
+        chargeItemName?: string
+        chargeType?: string
+        performingOrgID?: string
+        priceAmount?: number
+        chooseQuantity?: boolean
         update: (updatedActiveItem?: ActiveItem) => void
       }
     }
@@ -389,7 +409,7 @@ export const controlReducer = (
       const newScreens = state.form.screens?.filter(
         (screen) => screen?.id !== action.payload.id,
       )
-      if (action.payload.isApplicant) {
+      if (action.payload.skipActiveItem) {
         return {
           ...state,
           form: {
@@ -417,8 +437,8 @@ export const controlReducer = (
 
     // Fields
     case 'ADD_FIELD': {
-      const { field, isApplicant } = action.payload
-      if (isApplicant) {
+      const { field, skipActiveItem } = action.payload
+      if (skipActiveItem) {
         return {
           ...state,
           form: {
@@ -444,7 +464,7 @@ export const controlReducer = (
       const newFields = state.form.fields?.filter(
         (field) => field?.id !== action.payload.id,
       )
-      if (action.payload.isApplicant) {
+      if (action.payload.skipActiveItem) {
         return {
           ...state,
           form: {
@@ -951,6 +971,43 @@ export const controlReducer = (
           type: 'Field',
           data: newField,
         },
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_PAYMENT_SETTINGS': {
+      const {
+        chargeItemCode,
+        chargeItemName,
+        chargeType,
+        performingOrgID,
+        priceAmount,
+        chooseQuantity,
+        update,
+        field,
+      } = action.payload
+
+      const newField = {
+        ...field,
+        name: {
+          is: chargeItemName,
+          en: chargeItemName,
+        },
+        fieldSettings: {
+          ...field.fieldSettings,
+          chargeItemCode,
+          chargeItemName,
+          chargeType,
+          performingOrgID,
+          priceAmount,
+          chooseQuantity,
+        },
+      }
+      update({ type: 'Field', data: newField })
+      return {
+        ...state,
         form: {
           ...form,
           fields: fields?.map((i) => (i?.id === field.id ? newField : i)),

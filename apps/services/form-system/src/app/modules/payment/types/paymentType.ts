@@ -13,5 +13,5 @@ export interface PaymentType {
 export interface BasicChargeItem {
   code: string
   quantity?: number
-  amount?: number // Is used to set a dynamic charge amount based on the application data
+  amount?: number
 }
