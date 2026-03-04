@@ -14,7 +14,10 @@ import Intro from '../shared/Intro'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Skeleton } from '../../lib/skeletons'
-import { EmptyState } from '@island.is/portals/my-pages/core'
+import {
+  EmptyState,
+  LANDSKJORSTJORN_SLUG,
+} from '@island.is/portals/my-pages/core'
 
 const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
@@ -52,6 +55,7 @@ const SignatureCollectionMunicipal = () => {
         title={formatMessage(m.pageTitleMunicipal)}
         intro={formatMessage(m.pageIntro)}
         slug={listsForOwner?.[0]?.slug}
+        providerSlug={LANDSKJORSTJORN_SLUG}
       />
       {isOwner?.success || user?.profile.actor ? (
         isOwner?.success ? (
@@ -63,7 +67,7 @@ const SignatureCollectionMunicipal = () => {
         ) : (
           <EmptyState
             title={m.noCollectionIsActive}
-            description={m.noCollectionIsActiveDescription}
+            description={m.noCollectionIsActiveMunicipalDescription}
           />
         )
       ) : (
