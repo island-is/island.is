@@ -50,7 +50,8 @@ const PatientDataPermits: FC = () => {
                 ? [
                     <Button
                       key="addNewPermit"
-                      variant="primary"
+                      variant="utility"
+                      colorScheme="primary"
                       icon="arrowForward"
                       iconType="outline"
                       size="small"
