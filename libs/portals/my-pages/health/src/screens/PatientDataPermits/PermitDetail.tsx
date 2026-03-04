@@ -51,7 +51,9 @@ const PermitDetail: React.FC = () => {
     permit?.status === HealthDirectoratePermitStatus.active ||
     permit?.status === HealthDirectoratePermitStatus.awaitingApproval
 
-  const isInactive = permit?.status === HealthDirectoratePermitStatus.inactive
+  const isInactive =
+    permit?.status === HealthDirectoratePermitStatus.inactive ||
+    permit?.status === HealthDirectoratePermitStatus.expired
 
   const onInvalidateSubmit = () => {
     invalidatePermit()
