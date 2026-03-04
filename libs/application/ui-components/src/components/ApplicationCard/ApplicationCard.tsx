@@ -12,6 +12,7 @@ import { defaultCardDataByStatus } from './utils/defaultData'
 import { ApplicationCardFields } from './types'
 import { buildHistoryItems } from './utils/history'
 import { ApplicationStatus } from '@island.is/application/types'
+import { coreMessages } from '@island.is/application/core'
 import { useOpenApplication } from '../../hooks/useOpenApplication'
 
 export type ApplicationCardProps = {
@@ -132,13 +133,11 @@ export const ApplicationCard = ({
                     variant="small"
                     color={daysRemaining < 7 ? 'red400' : 'dark300'}
                   >
-                    {locale === 'is'
-                      ? `${daysRemaining} ${
-                          daysRemaining === 1 ? 'dagur' : 'dagar'
-                        } eftir`
-                      : `${daysRemaining} ${
-                          daysRemaining === 1 ? 'day' : 'days'
-                        } remaining`}
+                    {daysRemaining === 1
+                      ? formatMessage(coreMessages.oneDayRemaining)
+                      : formatMessage(coreMessages.daysRemaining, {
+                          count: daysRemaining,
+                        })}
                   </Text>
                 </>
               )}
