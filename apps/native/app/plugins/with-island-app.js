@@ -90,7 +90,10 @@ const withSigningConfig = (config) => {
                 if (propertiesFile.exists()) {
                     properties.load(propertiesFile.newDataInputStream())
                 }
-                storeFile file(properties.getProperty('ISLANDAPP_UPLOAD_STORE_FILE'))
+                def storeFilePath = properties.getProperty('ISLANDAPP_UPLOAD_STORE_FILE')
+                if (storeFilePath != null) {
+                    storeFile file(storeFilePath)
+                }
                 storePassword properties.getProperty('ISLANDAPP_UPLOAD_STORE_PASSWORD')
                 keyAlias properties.getProperty('ISLANDAPP_UPLOAD_KEY_ALIAS')
                 keyPassword properties.getProperty('ISLANDAPP_UPLOAD_STORE_PASSWORD')

@@ -9,7 +9,7 @@ import {
   TouchableNativeFeedback,
   View,
 } from 'react-native'
-import SpotlightSearch from 'react-native-spotlight-search'
+import ExpoCoreSpotlight, { CoreSpotlightItem } from 'expo-core-spotlight';
 import styled, { useTheme } from 'styled-components/native'
 
 import refreshIcon from '@/assets/icons/refresh.png'
@@ -122,7 +122,7 @@ export default function WalletScreen() {
 
   // Index items for spotlight search on iOS
   useEffect(() => {
-    const indexItems = licenseItems.map((item) => {
+    const indexItems: CoreSpotlightItem[] = licenseItems.map((item) => {
       return {
         title: item.payload?.metadata?.name ?? item.license.type,
         type: item.license.type,
@@ -132,7 +132,7 @@ export default function WalletScreen() {
       }
     })
     if (isIos) {
-      SpotlightSearch.indexItems(indexItems)
+      ExpoCoreSpotlight.indexItems(indexItems)
     }
   }, [licenseItems])
 
