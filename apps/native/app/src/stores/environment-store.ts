@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { config } from '../config'
+import { config } from '../config-constants'
 import { environments } from '../constants/environments'
 import { create, useStore } from 'zustand'
 

@@ -21,6 +21,7 @@ import {
   useListLicensesQuery,
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
+import { useAuthStore } from '@/stores/auth-store'
 import { syncLicenseWidgetData } from '@/lib/widget-sync'
 import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
 import { WalletItem } from '../../../../components/wallet-item'
@@ -61,6 +62,7 @@ export default function WalletScreen() {
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
+  const userName = useAuthStore((s) => s.userInfo?.name)
   const { dismiss, dismissed } = usePreferencesStore()
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
   const isIdentityDocumentEnabled = useFeatureFlag(
@@ -103,7 +105,7 @@ export default function WalletScreen() {
 
   useEffect(() => {
     if (licenseItems) {
-      syncLicenseWidgetData(licenseItems)
+      syncLicenseWidgetData(licenseItems, userName)
     }
   }, [licenseItems])
 

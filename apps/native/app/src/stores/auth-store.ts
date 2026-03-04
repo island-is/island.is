@@ -11,12 +11,12 @@ import Keychain from 'react-native-keychain'
 
 import { bundleId, getConfig } from '../config'
 import { getIntl } from '../components/providers/locale-provider'
-import { getApolloClientAsync } from '../graphql/client'
+import { getApolloClientAsync } from '../graphql/client-instance'
 import { isAndroid } from '../utils/devices'
 import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 import { notificationsStore } from './notifications-store'
-import { featureFlagClient } from '../components/providers/feature-flag-provider'
+import { featureFlagClient } from '../lib/feature-flag-client'
 import {
   DeletePasskeyDocument,
   DeletePasskeyMutation,
@@ -25,6 +25,7 @@ import {
 import { deduplicatePromise } from '../utils/deduplicatePromise'
 import type { User } from 'configcat-js'
 import { clearWidgetData } from '../lib/widget-sync'
+import { setAuthStoreRef } from './auth-store-ref'
 import { create, useStore } from 'zustand'
 import { clearAllStorages } from './mmkv'
 import { router } from 'expo-router'
@@ -299,6 +300,9 @@ export const authStore = create<AuthStore>((set, get) => ({
     return true
   },
 }))
+
+// Register ref so graphql/client.ts can access authStore without a circular import
+setAuthStoreRef(authStore)
 
 export const useAuthStore = <U = AuthStore>(
   selector?: (state: AuthStore) => U,

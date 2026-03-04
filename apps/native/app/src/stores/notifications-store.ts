@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getToken } from '@react-native-firebase/messaging'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { getApolloClientAsync } from '../graphql/client'
+import { getApolloClientAsync } from '../graphql/client-instance'
 import {
   AddUserProfileDeviceTokenDocument,
   AddUserProfileDeviceTokenMutation,

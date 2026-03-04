@@ -71,7 +71,7 @@ export default function MoreScreen() {
         options={{
           headerRightItems: [
             {
-              label: intl.formatMessage({ id: 'profile.settings' }),
+              label: intl.formatMessage({ id: 'setting.screenTitle' }),
               type: 'button',
               icon: {
                 type: 'image',

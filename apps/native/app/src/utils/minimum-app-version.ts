@@ -1,6 +1,6 @@
 import * as Application from 'expo-application';
 import compareVersions from 'compare-versions'
-import { featureFlagClient } from '@/components/providers/feature-flag-provider'
+import { featureFlagClient } from '@/lib/feature-flag-client'
 
 export const needsToUpdateAppVersion = async (): Promise<boolean> => {
   const minimumVersionSupported = await featureFlagClient?.getValueAsync(

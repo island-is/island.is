@@ -4,7 +4,6 @@ import {
   DdSdkReactNative,
   DatadogProviderConfiguration,
   TrackingConsent,
-  // DdSdkReactNativeConfiguration,
 } from '@datadog/mobile-react-native'
 import messaging from '@react-native-firebase/messaging'
 import { initializePerformance } from '@react-native-firebase/perf'
@@ -19,7 +18,6 @@ import {
 } from 'react-native'
 import * as Application from 'expo-application';
 import * as Device from 'expo-device'
-// import KeyboardManager from 'react-native-keyboard-manager'
 import { getConfig } from '../../config'
 import { isIos } from '../devices'
 import { performanceMetrics } from '../performance-metrics'
@@ -113,15 +111,10 @@ LogBox.ignoreLogs([
   /toggling bottomTabs visibility is deprecated on iOS/,
   /Require cycle:/,
   /new NativeEventEmitter/,
+  /Found screens with the same name nested inside one another/
 ])
 
 export function setupGlobals() {
-  // keyboard manager
-  if (isIos) {
-    KeyboardManager.setEnable(true)
-    KeyboardManager.setEnableAutoToolbar(true)
-    KeyboardManager.setToolbarPreviousNextButtonEnable(true)
-  }
 
   // set NSUserDefaults
   if (isIos) {

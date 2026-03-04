@@ -103,8 +103,8 @@ export const ApplicationsPreview = ({
               text: intl.formatMessage({
                 id: 'applicationStatusCard.openButtonLabel',
               }),
-              onPress() {
-                openBrowser(getApplicationUrl(application))
+              async onPress() {
+                openBrowser(await getApplicationUrl(application))
               },
             },
           ]}

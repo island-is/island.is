@@ -9,7 +9,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { environments } from '@/config'
+import { environments } from '@/constants/environments'
 import { useAuthStore } from '@/stores/auth-store'
 import { useEnvironmentStore } from '@/stores/environment-store'
 import { Platform } from 'react-native'
@@ -58,9 +58,7 @@ class ConfigCatAsyncStorageCache {
   }
 }
 
-// Temporary way to get feature flag values in logout function.
-// Consider removing when not needed anymore.
-export let featureFlagClient: configcat.IConfigCatClient | null = null
+import { setFeatureFlagClient } from '@/lib/feature-flag-client'
 
 export const FeatureFlagProvider: FC<
   React.PropsWithChildren<FeatureFlagContextProviderProps>
@@ -80,7 +78,7 @@ export const FeatureFlagProvider: FC<
       },
     )
   }, [environment])
-  featureFlagClient = client
+  setFeatureFlagClient(client)
 
   useEffect(() => {
     const listener = () => setTime(Date.now())
@@ -119,7 +117,7 @@ export const FeatureFlagProvider: FC<
       dispose: () => client.dispose(),
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [featureFlagClient, userInfo, time])
+  }, [client, userInfo, time])
 
   return (
     <FeatureFlagContext.Provider value={context}>

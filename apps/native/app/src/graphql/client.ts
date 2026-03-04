@@ -4,7 +4,6 @@ import {
   defaultDataIdFromObject,
   HttpLink,
   InMemoryCache,
-  NormalizedCacheObject,
 } from '@apollo/client'
 import * as WebBrowser from 'expo-web-browser'
 import { setContext } from '@apollo/client/link/context'
@@ -12,7 +11,8 @@ import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
-import { authStore } from '../stores/auth-store'
+import { setInitializer } from './client-instance'
+import { getAuthStoreRef } from '../stores/auth-store-ref'
 import { environmentStore } from '../stores/environment-store'
 import { createMMKVStorage } from '../stores/mmkv'
 import { offlineStore } from '../stores/offline-store'
@@ -77,9 +77,9 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
         redirectUrl &&
         redirectUrl.indexOf('cognito.shared.devland.is') >= 0
       ) {
-        authStore.setState({ cognitoAuthUrl: redirectUrl })
+        getAuthStoreRef().setState({ cognitoAuthUrl: redirectUrl })
 
-        if (config.isTestingApp && authStore.getState().authorizeResult) {
+        if (config.isTestingApp && getAuthStoreRef().getState().authorizeResult) {
           WebBrowser.openBrowserAsync(cognitoAuthUrl())
         }
       }
@@ -88,8 +88,8 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
 })
 
 const getAndRefreshToken = async () => {
-  const { refresh } = authStore.getState()
-  let { authorizeResult } = authStore.getState()
+  const { refresh } = getAuthStoreRef().getState()
+  let { authorizeResult } = getAuthStoreRef().getState()
 
   const timeUntilExpiration =
     new Date(authorizeResult?.accessTokenExpirationDate ?? 0).getTime() -
@@ -99,7 +99,7 @@ const getAndRefreshToken = async () => {
   if (isTokenPerhapsExpired) {
     // get a new token to be safe
     await refresh()
-    authorizeResult = authStore.getState().authorizeResult
+    authorizeResult = getAuthStoreRef().getState().authorizeResult
   } else if (isTokenCloseToExpiring) {
     // expires in less than 60 seconds, so refresh in the background
     refresh().catch((err) => {
@@ -121,7 +121,7 @@ const authLink = setContext(async (_, { headers }) => {
         environmentStore.getState().cognito?.accessToken
       }`,
       'User-Agent': getCustomUserAgent(),
-      cookie: [authStore.getState().cookies]
+      cookie: [getAuthStoreRef().getState().cookies]
         .filter((x) => String(x) !== '')
         .join('; '),
     },
@@ -200,27 +200,10 @@ const cache = new InMemoryCache({
   },
 })
 
-let apolloClientPromise: Promise<ApolloClient<NormalizedCacheObject>> | null =
-  null
-let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
+// Re-export from client-instance for backward compatibility
+export { getApolloClientAsync, getApolloClient } from './client-instance'
 
-export const getApolloClientAsync = () => {
-  if (!apolloClientPromise) {
-    apolloClientPromise = initializeApolloClient()
-  }
-
-  return apolloClientPromise
-}
-
-export const getApolloClient = () => {
-  if (!apolloClient) {
-    throw new Error('Apollo client not initialized')
-  }
-
-  return apolloClient
-}
-
-export const initializeApolloClient = async () => {
+const initializeApolloClient = async () => {
   await persistCache({
     cache,
     storage: new MMKVStorageWrapper({
@@ -239,7 +222,7 @@ export const initializeApolloClient = async () => {
     }),
   })
 
-  apolloClient = new ApolloClient({
+  return new ApolloClient({
     link: ApolloLink.from([
       retryLink,
       errorLink,
@@ -253,6 +236,7 @@ export const initializeApolloClient = async () => {
     },
     cache,
   })
-
-  return apolloClient
 }
+
+// Register the initializer so client-instance can create the client on demand
+setInitializer(initializeApolloClient)

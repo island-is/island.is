@@ -468,6 +468,7 @@ export const is = {
   'wallet.update': 'Uppfæra',
   'wallet.yourLicenses': 'Þín skírteini',
   'wallet.childLicenses': 'Skírteini barna þinna',
+  'wallet.scanButton': 'Skanna',
 
   // wallet pass
   'walletPass.screenTitle': 'Skírteini',

@@ -157,8 +157,8 @@ export const ApplicationsList = ({
               text: intl.formatMessage({
                 id: 'applicationStatusCard.openButtonLabel',
               }),
-              onPress() {
-                openBrowser(getApplicationUrl(item))
+              async onPress() {
+                openBrowser(await getApplicationUrl(item))
               },
             },
           ]}

@@ -56,7 +56,7 @@ export default function MoreLayout() {
           title: intl.formatMessage({ id: 'vehicles.screenTitle' }),
         }}
       />
-      <Stack.Screen name="vehicles/[id]" />
+      <Stack.Screen name="vehicles/[id]/index" />
       <Stack.Screen
         name="vehicles/[id]/mileage"
         options={{
@@ -78,24 +78,6 @@ export default function MoreLayout() {
         name="applications/index"
         options={{
           title: intl.formatMessage({ id: 'applications.title' }),
-        }}
-      />
-      <Stack.Screen
-        name="applications/incomplete"
-        options={{
-          title: intl.formatMessage({ id: 'applications.incomplete' }),
-        }}
-      />
-      <Stack.Screen
-        name="applications/in-progress"
-        options={{
-          title: intl.formatMessage({ id: 'applications.inProgress' }),
-        }}
-      />
-      <Stack.Screen
-        name="applications/completed"
-        options={{
-          title: intl.formatMessage({ id: 'applications.completed' }),
         }}
       />
       <Stack.Screen
