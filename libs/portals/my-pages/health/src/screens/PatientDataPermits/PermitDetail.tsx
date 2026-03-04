@@ -231,7 +231,7 @@ const PermitDetail: React.FC = () => {
                       key={index}
                       data={[
                         {
-                          value: formatDate(
+                          value: formatDateWithTime(
                             entry.changedAt?.toString() ??
                               entry.createdAt?.toString() ??
                               '',
