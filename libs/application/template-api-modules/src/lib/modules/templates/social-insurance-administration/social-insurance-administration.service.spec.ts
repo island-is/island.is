@@ -47,7 +47,10 @@ describe('SocialInsuranceAdministrationService', () => {
               Promise.resolve({
                 applicationLineId: '123',
               }),
-            sendApplicationV2: () => Promise.resolve(),
+            sendApplicationV2: () =>
+              Promise.resolve({
+                applicationLineId: '0',
+              }),
           })),
         },
       ],
@@ -103,7 +106,7 @@ describe('SocialInsuranceAdministrationService', () => {
       currentUserLocale: 'is',
     })
 
-    expect(result).toMatchObject({ applicationLineId: '' })
+    expect(result).toMatchObject({ applicationLineId: '0' })
   })
 
   it('should send household supplement application', async () => {

@@ -31,7 +31,6 @@ import {
   INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
   IS,
   ISK,
-  MONTH_NAMES,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
@@ -50,6 +49,8 @@ import {
   incomeTypeValueModifier,
   equalIncomePerMonthValueModifier,
   incomePerYearValueModifier,
+  incomePerYearWatchValues,
+  incomePlanHasOnlyZeroIncome,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
 import { generateMonthInput } from '@island.is/application/templates/social-insurance-administration-core/lib/generateMonthInput'
 import {
@@ -72,7 +73,6 @@ import {
   getAvailableMonths,
   getAvailableYears,
   isEarlyRetirement,
-  incomePlanHasOnlyZeroIncome,
 } from '../lib/oldAgePensionUtils'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 
@@ -388,27 +388,24 @@ export const OldAgePensionForm: Form = buildForm({
               id: 'incomePlan',
               title:
                 socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
+              description: (application: Application) => {
+                const { incomePlanConditions } = getApplicationExternalData(
+                  application.externalData,
+                )
+
+                return {
+                  ...socialInsuranceAdministrationMessage.incomePlan
+                    .description,
+                  values: {
+                    incomePlanYear:
+                      incomePlanConditions?.incomePlanYear ??
+                      new Date().getFullYear(),
+                  },
+                }
+              },
               children: [
                 buildTableRepeaterField({
                   id: 'incomePlanTable',
-                  title:
-                    socialInsuranceAdministrationMessage.incomePlan
-                      .subSectionTitle,
-                  description: (application: Application) => {
-                    const { incomePlanConditions } = getApplicationExternalData(
-                      application.externalData,
-                    )
-
-                    return {
-                      ...socialInsuranceAdministrationMessage.incomePlan
-                        .description,
-                      values: {
-                        incomePlanYear:
-                          incomePlanConditions?.incomePlanYear ??
-                          new Date().getFullYear(),
-                      },
-                    }
-                  },
                   formTitle:
                     socialInsuranceAdministrationMessage.incomePlan
                       .registerIncome,
@@ -575,28 +572,7 @@ export const OldAgePensionForm: Form = buildForm({
                       updateValueObj: {
                         valueModifier: (_, activeField) =>
                           incomePerYearValueModifier(activeField),
-                        watchValues: (activeField) => {
-                          if (
-                            activeField?.income === RatioType.MONTHLY &&
-                            activeField?.incomeCategory === INCOME &&
-                            activeField?.unevenIncomePerYear?.[0] === YES
-                          ) {
-                            return MONTH_NAMES
-                          }
-                          if (
-                            activeField?.income === RatioType.MONTHLY &&
-                            activeField?.currency === ISK
-                          ) {
-                            return 'equalIncomePerMonth'
-                          }
-                          if (
-                            activeField?.income === RatioType.MONTHLY &&
-                            activeField?.currency !== ISK
-                          ) {
-                            return 'equalForeignIncomePerMonth'
-                          }
-                          return undefined
-                        },
+                        watchValues: incomePerYearWatchValues,
                       },
                       suffix: '',
                       condition: (_, activeField) => {
@@ -681,6 +657,7 @@ export const OldAgePensionForm: Form = buildForm({
                     ],
                     rows: ['incomeType', 'incomePerYear', 'currency'],
                   },
+                  marginTop: 1,
                 }),
                 buildHiddenInput({
                   id: 'incomePlan.shouldShow',

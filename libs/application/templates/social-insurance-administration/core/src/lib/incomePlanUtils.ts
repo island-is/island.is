@@ -1,5 +1,5 @@
 import { YES } from '@island.is/application/core'
-import { CategorizedIncomeTypes } from '../types'
+import { CategorizedIncomeTypes, IncomePlanRow } from '../types'
 import {
   DIVIDENDS_IN_FOREIGN_BANKS,
   FOREIGN_BASIC_PENSION,
@@ -8,6 +8,7 @@ import {
   INCOME,
   INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
   ISK,
+  MONTH_NAMES,
   RatioType,
 } from './constants'
 import {
@@ -89,4 +90,40 @@ export const incomePerYearValueModifier = (
   }
 
   return undefined
+}
+
+export const incomePerYearWatchValues = (
+  activeField?: Record<string, string>,
+) => {
+  if (
+    activeField?.income === RatioType.MONTHLY &&
+    activeField?.incomeCategory === INCOME &&
+    activeField?.unevenIncomePerYear?.[0] === YES
+  ) {
+    return MONTH_NAMES
+  }
+  if (
+    activeField?.income === RatioType.MONTHLY &&
+    activeField?.currency === ISK
+  ) {
+    return 'equalIncomePerMonth'
+  }
+  if (
+    activeField?.income === RatioType.MONTHLY &&
+    activeField?.currency !== ISK
+  ) {
+    return 'equalForeignIncomePerMonth'
+  }
+  return undefined
+}
+
+// If income plan table has no income > 0, show alert and question to confirm that applicant has no other income.
+// This is to prevent applicants from submitting an income plan with 0 income by mistake.
+export const incomePlanHasOnlyZeroIncome = (
+  incomePlan: IncomePlanRow[],
+): boolean => {
+  return (
+    incomePlan.length > 0 &&
+    incomePlan.every((income) => Number(income.incomePerYear) === 0)
+  )
 }

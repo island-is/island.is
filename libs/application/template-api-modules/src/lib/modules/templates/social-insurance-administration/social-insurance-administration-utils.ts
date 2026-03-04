@@ -51,7 +51,6 @@ import {
   Employment,
   getApplicationAnswers as getOAPApplicationAnswers,
   getApplicationExternalData as getOAPApplicationExternalData,
-  incomePlanHasOnlyZeroIncome,
   RatioType,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import {
@@ -68,6 +67,7 @@ import {
   Employer as TrWebEmployer,
 } from '@island.is/clients/social-insurance-administration'
 import parse from 'date-fns/parse'
+import { incomePlanHasOnlyZeroIncome } from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,

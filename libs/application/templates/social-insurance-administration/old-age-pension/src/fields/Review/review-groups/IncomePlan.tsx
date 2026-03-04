@@ -10,7 +10,7 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { StaticTableFormField } from '@island.is/application/ui-fields'
 import { FieldComponents, FieldTypes } from '@island.is/application/types'
-import { incomePlanHasOnlyZeroIncome } from '../../../lib/oldAgePensionUtils'
+import { incomePlanHasOnlyZeroIncome } from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
 
 export const IncomePlan = ({
   application,

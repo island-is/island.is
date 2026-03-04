@@ -47,7 +47,6 @@ import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
   getApplicationExternalData,
-  incomePlanHasOnlyZeroIncome,
 } from './oldAgePensionUtils'
 import {
   Actions,
@@ -61,6 +60,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import isEmpty from 'lodash/isEmpty'
+import { incomePlanHasOnlyZeroIncome } from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
