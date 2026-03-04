@@ -1,16 +1,13 @@
 import { BadRequestException } from '@nestjs/common'
 
-import { TestApp } from '@island.is/testing/nest'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { PaymentServiceCode } from '@island.is/shared/constants'
+import { TestApp } from '@island.is/testing/nest'
 
 import { setupTestApp } from '../../../test/setup'
 import { PaymentMethod, PaymentStatus } from '../../types'
-
-import { PaymentFlowService } from './paymentFlow.service'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
-import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
-import { getModelToken } from '@nestjs/sequelize'
+import { PaymentFlowService } from './paymentFlow.service'
 
 // A helper type to satisfy the linter for partial mocks.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -93,12 +90,6 @@ describe('PaymentFlowService', () => {
       onUpdateUrl: 'http://some.url/update',
     }
 
-    let paymentFlowModel: typeof PaymentFlow
-
-    beforeAll(() => {
-      paymentFlowModel = app.get<typeof PaymentFlow>(getModelToken(PaymentFlow))
-    })
-
     beforeEach(() => {
       jest.restoreAllMocks()
     })
@@ -162,9 +153,12 @@ describe('PaymentFlowService', () => {
         .spyOn(service, 'deleteFjsCharge')
         .mockResolvedValue(undefined)
 
-      const destroySpy = jest
-        .spyOn(paymentFlowModel, 'destroy')
-        .mockResolvedValue(1)
+      const paymentFlowModel = (service as TestPartial).paymentFlowModel
+      const updateSpy = jest
+        .spyOn(paymentFlowModel, 'update')
+        .mockImplementation(() =>
+          Promise.resolve([1, []] as [number, unknown[]]),
+        )
 
       const result = await service.deletePaymentFlow(paymentFlowId)
 
@@ -172,7 +166,10 @@ describe('PaymentFlowService', () => {
       expect(result.paymentStatus).toBe(PaymentStatus.INVOICE_PENDING)
       expect(service.getPaymentFlowDetails).toHaveBeenCalledWith(paymentFlowId)
       expect(deleteFjsChargeSpy).toHaveBeenCalledWith(paymentFlowId)
-      expect(destroySpy).toHaveBeenCalledWith({ where: { id: paymentFlowId } })
+      expect(updateSpy).toHaveBeenCalledWith(
+        { isDeleted: true },
+        { where: { id: paymentFlowId, isDeleted: false } },
+      )
       expect(service.logPaymentFlowUpdate).toHaveBeenCalled()
     })
 
@@ -201,9 +198,12 @@ describe('PaymentFlowService', () => {
         .spyOn(service, 'deleteFjsCharge')
         .mockResolvedValue(undefined)
 
-      const destroySpy = jest
-        .spyOn(paymentFlowModel, 'destroy')
-        .mockResolvedValue(1)
+      const paymentFlowModel = (service as TestPartial).paymentFlowModel
+      const updateSpy = jest
+        .spyOn(paymentFlowModel, 'update')
+        .mockImplementation(() =>
+          Promise.resolve([1, []] as [number, unknown[]]),
+        )
 
       const result = await service.deletePaymentFlow(paymentFlowId)
 
@@ -211,7 +211,10 @@ describe('PaymentFlowService', () => {
       expect(result.paymentStatus).toBe(PaymentStatus.UNPAID)
       expect(service.getPaymentFlowDetails).toHaveBeenCalledWith(paymentFlowId)
       expect(deleteFjsChargeSpy).not.toHaveBeenCalled()
-      expect(destroySpy).toHaveBeenCalledWith({ where: { id: paymentFlowId } })
+      expect(updateSpy).toHaveBeenCalledWith(
+        { isDeleted: true },
+        { where: { id: paymentFlowId, isDeleted: false } },
+      )
       expect(service.logPaymentFlowUpdate).toHaveBeenCalled()
     })
 
@@ -240,14 +243,20 @@ describe('PaymentFlowService', () => {
         .spyOn(service, 'logPaymentFlowUpdate')
         .mockResolvedValue(undefined)
 
-      const destroySpy = jest
-        .spyOn(paymentFlowModel, 'destroy')
-        .mockResolvedValue(1)
+      const paymentFlowModel = (service as TestPartial).paymentFlowModel
+      const updateSpy = jest
+        .spyOn(paymentFlowModel, 'update')
+        .mockImplementation(() =>
+          Promise.resolve([1, []] as [number, unknown[]]),
+        )
 
       await service.deletePaymentFlow(paymentFlowId)
 
       expect(logSpy).not.toHaveBeenCalled()
-      expect(destroySpy).toHaveBeenCalledWith({ where: { id: paymentFlowId } })
+      expect(updateSpy).toHaveBeenCalledWith(
+        { isDeleted: true },
+        { where: { id: paymentFlowId, isDeleted: false } },
+      )
     })
   })
 })

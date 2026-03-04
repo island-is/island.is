@@ -1064,7 +1064,6 @@ export class PaymentFlowService {
       await this.deleteFjsCharge(id)
     }
 
-    // Soft-delete the payment flow (related records remain for audit/history)
     await this.paymentFlowModel.update(
       { isDeleted: true },
       { where: { id, isDeleted: false } },
