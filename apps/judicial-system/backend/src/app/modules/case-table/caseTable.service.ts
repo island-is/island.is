@@ -187,7 +187,6 @@ export class CaseTableService {
 
     const getDisplayCases = (casesToDisplay: Case[]): Case[] => {
       if (isPublicProsecutionOfficeUser(user)) {
-        console.log(casesToDisplay)
         return casesToDisplay.flatMap((caseItem) =>
           expandCaseWithDefendants(caseItem, getDefendantFilter(type)),
         )

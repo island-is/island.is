@@ -333,7 +333,8 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                 },
               ]
             : []),
-          ...(workingCase.indictmentReviewer
+          ...(workingCase.indictmentReviewer &&
+          Boolean(defendant.indictmentReviewDecision)
             ? [
                 {
                   title: `${
