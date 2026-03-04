@@ -215,7 +215,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
     const paginatedResults = filteredResults.slice(startIndex, endIndex)
 
     return paginatedResults.map((result) => ({
-      ...transformProgrammeToCard(result.item),
+      ...transformProgrammeToCard(result.item, formatMessage),
       uniqueKey: `${result.refIndex}-${result.item.id}`,
     }))
   }

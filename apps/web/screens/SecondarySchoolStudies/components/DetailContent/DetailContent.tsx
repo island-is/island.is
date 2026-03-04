@@ -22,20 +22,18 @@ interface DetailContentProps {
 }
 
 export const DetailContent = ({ programme }: DetailContentProps) => {
-  const [isOpen, setIsOpen] = useState<boolean[]>([
-    false,
-    false,
-    false,
-    false,
-    false,
-  ])
+  const [isOpen, setIsOpen] = useState({
+    admissionRequirements: false,
+    studyStructure: false,
+    assessment: false,
+    competenceCriteria: false,
+    coursesLevelsUnits: false,
+  })
   const { formatMessage } = useIntl()
   const { md } = useBreakpoint()
 
-  const toggleIsOpen = (index: number) => {
-    const newIsOpen = [...isOpen]
-    newIsOpen[index] = !newIsOpen[index]
-    setIsOpen(newIsOpen)
+  const toggleIsOpen = (key: keyof typeof isOpen) => {
+    setIsOpen((prev) => ({ ...prev, [key]: !prev[key] }))
   }
 
   return (
@@ -57,8 +55,8 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           labelUse="p"
           labelVariant="h3"
           iconVariant="default"
-          expanded={isOpen[0]}
-          onToggle={() => toggleIsOpen(0)}
+          expanded={isOpen.admissionRequirements}
+          onToggle={() => toggleIsOpen('admissionRequirements')}
         >
           <Box>
             <Text>{programme.admissionRequirements?.freeText}</Text>
@@ -71,8 +69,8 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           labelUse="p"
           labelVariant="h3"
           iconVariant="default"
-          expanded={isOpen[1]}
-          onToggle={() => toggleIsOpen(1)}
+          expanded={isOpen.studyStructure}
+          onToggle={() => toggleIsOpen('studyStructure')}
         >
           <Box>
             <Text>{programme.structureDescription}</Text>
@@ -85,8 +83,8 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           labelUse="p"
           labelVariant="h3"
           iconVariant="default"
-          expanded={isOpen[2]}
-          onToggle={() => toggleIsOpen(2)}
+          expanded={isOpen.assessment}
+          onToggle={() => toggleIsOpen('assessment')}
         >
           <Box>
             <Text>{programme.academicEvaluation}</Text>
@@ -99,8 +97,8 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           labelUse="p"
           labelVariant="h3"
           iconVariant="default"
-          expanded={isOpen[3]}
-          onToggle={() => toggleIsOpen(3)}
+          expanded={isOpen.competenceCriteria}
+          onToggle={() => toggleIsOpen('competenceCriteria')}
         >
           <Box>
             <Text marginBottom={2}>
@@ -123,8 +121,8 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           labelUse="p"
           labelVariant="h3"
           iconVariant="default"
-          expanded={isOpen[4]}
-          onToggle={() => toggleIsOpen(4)}
+          expanded={isOpen.coursesLevelsUnits}
+          onToggle={() => toggleIsOpen('coursesLevelsUnits')}
         >
           <Box>
             {!programme.programmeStructure ? (

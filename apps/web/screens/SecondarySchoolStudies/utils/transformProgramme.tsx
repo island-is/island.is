@@ -1,7 +1,9 @@
 import { ReactElement } from 'react'
+import { IntlShape } from 'react-intl'
 
 import { SecondarySchoolAllProgrammesQuery } from '@island.is/web/graphql/schema'
 
+import { m } from '../messages/messages'
 import { getSchoolData } from './schoolDataMap'
 
 type SecondarySchoolProgramme =
@@ -22,6 +24,7 @@ export interface ProgrammeCardProps {
 
 export const transformProgrammeToCard = (
   programme: SecondarySchoolProgramme,
+  formatMessage: IntlShape['formatMessage'],
 ): ProgrammeCardProps => {
   const school = programme.school
   const detailLines: ProgrammeCardProps['detailLines'] = []
@@ -36,7 +39,7 @@ export const transformProgrammeToCard = (
   if (programme.credits) {
     detailLines.push({
       icon: 'receipt',
-      text: `${programme.credits} einingar`,
+      text: `${programme.credits} ${formatMessage(m.details.credits)}`,
     })
   }
 
