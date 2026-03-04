@@ -274,7 +274,7 @@ describe('NotificationsWorkerService', () => {
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         nationalId: userWithDelegations.nationalId,
-        notificationId: recipientMessage?.id,
+        userNotificationId: recipientMessage?.id,
       }),
     )
 
@@ -1094,8 +1094,17 @@ describe('NotificationsWorkerService', () => {
     it('should write an email delivery record to the database after sending email', async () => {
       const messageId = randomUUID()
 
+      const notification = await notificationModel.create({
+        messageId,
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [],
+        scope: '@island.is/documents',
+      })
+
       await emailSubQueue.add({
         messageId,
+        userNotificationId: notification.id,
         recipientEmail: userWithNoDelegations.email ?? '',
         fullName: userWithNoDelegations.name,
         isEnglish: false,
@@ -1105,19 +1114,32 @@ describe('NotificationsWorkerService', () => {
       await wait(2)
 
       const record = await notificationDeliveryModel.findOne({
-        where: { messageId, channel: NotificationChannel.Email },
+        where: {
+          userNotificationId: notification.id,
+          channel: NotificationChannel.Email,
+        },
       })
       expect(record).not.toBeNull()
       expect(record?.channel).toBe(NotificationChannel.Email)
-      expect(record?.messageId).toBe(messageId)
+      expect(record?.userNotificationId).toBe(notification.id)
+      expect(record?.sentTo).toBe(userWithNoDelegations.email)
       expect(emailService.sendEmail).toHaveBeenCalled()
     })
 
     it('should write an SMS delivery record to the database after sending SMS', async () => {
       const messageId = randomUUID()
 
+      const notification = await notificationModel.create({
+        messageId,
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [],
+        scope: '@island.is/documents',
+      })
+
       await smsSubQueue.add({
         messageId,
+        userNotificationId: notification.id,
         mobilePhoneNumber: userWithNoDelegations.mobilePhoneNumber ?? '',
         smsContent: 'Test SMS content',
       } as SmsQueueMessage)
@@ -1125,22 +1147,35 @@ describe('NotificationsWorkerService', () => {
       await wait(2)
 
       const record = await notificationDeliveryModel.findOne({
-        where: { messageId, channel: NotificationChannel.Sms },
+        where: {
+          userNotificationId: notification.id,
+          channel: NotificationChannel.Sms,
+        },
       })
       expect(record).not.toBeNull()
       expect(record?.channel).toBe(NotificationChannel.Sms)
-      expect(record?.messageId).toBe(messageId)
+      expect(record?.userNotificationId).toBe(notification.id)
+      expect(record?.sentTo).toBe(userWithNoDelegations.mobilePhoneNumber)
       expect(smsService.sendSms).toHaveBeenCalledWith(
         userWithNoDelegations.mobilePhoneNumber,
         'Test SMS content',
       )
     })
 
-    it('should write a push delivery record to the database after sending push notification', async () => {
+    it('should call sendPushNotification with correct args including userNotificationId', async () => {
       const messageId = randomUUID()
+
+      const notification = await notificationModel.create({
+        messageId,
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [],
+        scope: '@island.is/documents',
+      })
 
       await pushSubQueue.add({
         messageId,
+        userNotificationId: notification.id,
         nationalId: userWithNoDelegations.nationalId,
         notification: {
           title: 'Test title',
@@ -1151,15 +1186,11 @@ describe('NotificationsWorkerService', () => {
 
       await wait(2)
 
-      const record = await notificationDeliveryModel.findOne({
-        where: { messageId, channel: NotificationChannel.Push },
-      })
-      expect(record).not.toBeNull()
-      expect(record?.channel).toBe(NotificationChannel.Push)
-      expect(record?.messageId).toBe(messageId)
       expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
         expect.objectContaining({
           nationalId: userWithNoDelegations.nationalId,
+          userNotificationId: notification.id,
+          messageId,
         }),
       )
     })
@@ -1171,8 +1202,17 @@ describe('NotificationsWorkerService', () => {
 
       const messageId = randomUUID()
 
+      const notification = await notificationModel.create({
+        messageId,
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [],
+        scope: '@island.is/documents',
+      })
+
       await emailSubQueue.add({
         messageId,
+        userNotificationId: notification.id,
         recipientEmail: userWithNoDelegations.email ?? '',
         fullName: userWithNoDelegations.name,
         isEnglish: false,
@@ -1186,7 +1226,10 @@ describe('NotificationsWorkerService', () => {
 
       // No delivery record was written due to the DB error
       const record = await notificationDeliveryModel.findOne({
-        where: { messageId, channel: NotificationChannel.Email },
+        where: {
+          userNotificationId: notification.id,
+          channel: NotificationChannel.Email,
+        },
       })
       expect(record).toBeNull()
     })
