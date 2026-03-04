@@ -40,21 +40,6 @@ export const useApolloNetworkStatus =
 
 const apolloMMKVStorage = createMMKVStorage({ withEncryption: true })
 
-// const connectivityLink = new ApolloLink((operation, forward) => {
-//   return forward(operation).map((response) => {
-//     // Check if the network response was successful
-//     const success =
-//       response.errors === undefined || response.errors.length === 0
-
-//     // This is a fallback check if the @react-native-community/netinfo will fail to detect if the network status is available again.
-//     if (success && !offlineStore.getState().isConnected) {
-//       offlineStore.setState({ isConnected: true })
-//     }
-
-//     return response
-//   })
-// })
-
 const httpLink = new HttpLink({
   uri() {
     return `${getConfig().apiUrl.replace(/\/$/, '')}/graphql`
@@ -74,7 +59,7 @@ const retryLink = new RetryLink({
   },
 })
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
+const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   if (graphQLErrors) {
     graphQLErrors.map((graphQLError) =>
       console.log(`[GraphQL error]: ${JSON.stringify(graphQLError, null, 2)}`),
