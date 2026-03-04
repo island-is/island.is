@@ -4,7 +4,27 @@ import ContextMenuCard from '@island.is/judicial-system-web/src/components/Cards
 import {
   Defendant,
   PunishmentType,
+  ServiceRequirement,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+
+const getDefendantExplanation = (defendant: Defendant): string => {
+  if (
+    defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED &&
+    !defendant.verdict?.serviceDate
+  ) {
+    return 'Dómur er í birtingarferli'
+  }
+
+  if (
+    defendant.verdict?.appealDecision === VerdictAppealDecision.POSTPONE ||
+    defendant.verdict?.appealDate
+  ) {
+    return 'Áfrýjun'
+  }
+
+  return 'Ekki sent til fullnustu'
+}
 
 const PUNISHMENT_TYPE_OPTIONS: Option<PunishmentType>[] = [
   { label: 'Óskilorðsbundið', value: PunishmentType.IMPRISONMENT },
@@ -32,6 +52,23 @@ export const DefendantPrisonAdminCard = ({
   onToggleRegistration,
   onPunishmentTypeChange,
 }: DefendantPrisonAdminCardProps) => {
+  const isSentToPrisonAdmin = defendant.isSentToPrisonAdmin
+
+  if (!isSentToPrisonAdmin) {
+    return (
+      <Box marginBottom={3}>
+        <BlueBox>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {defendant.name}
+          </Text>
+          <Box as="ul" marginTop={1}>
+            <Text as="span">{getDefendantExplanation(defendant)}</Text>
+          </Box>
+        </BlueBox>
+      </Box>
+    )
+  }
+
   const isRegistered = defendant.isRegisteredInPrisonSystem === true
   const selectedPunishment = PUNISHMENT_TYPE_OPTIONS.find(
     (o) => o.value === defendant.punishmentType,
