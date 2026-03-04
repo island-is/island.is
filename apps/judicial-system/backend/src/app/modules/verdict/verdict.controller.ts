@@ -155,10 +155,7 @@ export class VerdictController {
       verdictToUpdate.serviceDate &&
       verdict.serviceRequirement === ServiceRequirement.REQUIRED
     const defendant = theCase.defendants?.find((d) => d.id === defendantId)
-    if (
-      isNowServedByManualEntry &&
-      defendant?.isDrivingLicenseSuspended
-    ) {
+    if (isNowServedByManualEntry && defendant?.isDrivingLicenseSuspended) {
       addMessagesToQueue({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,
