@@ -357,6 +357,22 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                 },
               ]
             : []),
+          {
+            title: `${
+              verdict?.defendantHasRequestedAppeal ? 'Afskrá' : 'Skrá'
+            } áfrýjunarleyfi`,
+            onClick: () => {
+              setAndSendVerdictToServer(
+                {
+                  caseId: workingCase.id,
+                  defendantId: defendant.id,
+                  defendantHasRequestedAppeal:
+                    !verdict?.defendantHasRequestedAppeal,
+                },
+                setWorkingCase,
+              )
+            },
+          },
         ]}
       >
         <Box className={styles.container}>

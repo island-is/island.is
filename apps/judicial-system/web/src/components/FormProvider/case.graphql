@@ -83,6 +83,7 @@ query Case($input: CaseQueryInput!) {
         servedBy
         isDefaultJudgement
         isAcquittedByPublicProsecutionOffice
+        defendantHasRequestedAppeal
       }
     }
     defenderName

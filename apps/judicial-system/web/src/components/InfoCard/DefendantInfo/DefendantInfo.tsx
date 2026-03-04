@@ -241,6 +241,8 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             key={
               defendant.verdict.isAcquittedByPublicProsecutionOffice
                 ? 'acquitted'
+                : defendant.verdict.defendantHasRequestedAppeal
+                ? 'appealRequested'
                 : defendant.verdict.isDefaultJudgement
                 ? 'defaultJudgement'
                 : 'convicted'
@@ -250,6 +252,11 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             isPublicProsecutionOfficeUser(user) ? (
               <Tag variant="darkerBlue" outlined disabled>
                 Sýknudómur
+              </Tag>
+            ) : defendant.verdict.defendantHasRequestedAppeal &&
+              isPublicProsecutionOfficeUser(user) ? (
+              <Tag variant="darkerBlue" outlined disabled>
+                Áfrýjunarleyfi
               </Tag>
             ) : (
               <Tag

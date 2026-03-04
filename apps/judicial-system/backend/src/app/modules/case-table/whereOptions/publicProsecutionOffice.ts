@@ -236,3 +236,26 @@ export const publicProsecutionOfficeAcquittedIndictmentsWhereOptions = () => ({
     },
   ],
 })
+
+export const publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions =
+  () => ({
+    [Op.and]: [
+      publicProsecutionOfficeIndictmentsAccessWhereOptions,
+      {
+        [Op.and]: [
+          literal(`EXISTS (
+              SELECT 1 
+              FROM verdict
+              JOIN defendant ON verdict.defendant_id = defendant.id
+              WHERE defendant.case_id = "Case".id
+                AND (verdict.defendant_has_requested_appeal = true)
+                AND verdict.created = (
+                    SELECT MAX(v2.created)
+                    FROM verdict v2
+                    WHERE v2.defendant_id = defendant.id
+                )
+          )`),
+        ],
+      },
+    ],
+  })

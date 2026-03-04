@@ -5,6 +5,26 @@ import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/s
 
 import { strings } from './DefendantInfo.strings'
 
+type VerdictTagVariant = 'darkerBlue' | 'purple' | 'blue' | 'rose' | 'mint'
+
+type VerdictTagKey =
+  | 'acquitted'
+  | 'appealRequested'
+  | 'defaultJudgement'
+  | 'convicted'
+
+type DefendantVerdictTagInput = {
+  isAcquittedByPublicProsecutionOffice?: boolean | null
+  defendantHasRequestedAppeal?: boolean | null
+  isDefaultJudgement?: boolean | null
+}
+
+export type DefendantTagConfig = {
+  label: string
+  variant: VerdictTagVariant
+  key?: VerdictTagKey
+}
+
 export const getAppealExpirationInfo = ({
   verdictAppealDeadline,
   isVerdictAppealDeadlineExpired,
@@ -42,4 +62,76 @@ export const getVerdictViewDateText = (
   } else {
     return formatMessage(strings.serviceRequired)
   }
+}
+
+export const getDefendantTagConfig = ({
+  verdict,
+  isPublicProsecutionOffice,
+  isDismissalCase,
+  isCancellationCase,
+  isFineCase,
+}: {
+  verdict?: DefendantVerdictTagInput | null
+  isPublicProsecutionOffice: boolean
+  isDismissalCase?: boolean
+  isCancellationCase?: boolean
+  isFineCase?: boolean
+}): DefendantTagConfig | null => {
+  if (verdict) {
+    if (
+      verdict.isAcquittedByPublicProsecutionOffice &&
+      isPublicProsecutionOffice
+    ) {
+      return {
+        key: 'acquitted',
+        label: 'Sýknudómur',
+        variant: 'darkerBlue',
+      }
+    }
+
+    if (verdict.defendantHasRequestedAppeal && isPublicProsecutionOffice) {
+      return {
+        key: 'appealRequested',
+        label: 'Áfrýjunarleyfi',
+        variant: 'darkerBlue',
+      }
+    }
+
+    if (verdict.isDefaultJudgement) {
+      return {
+        key: 'defaultJudgement',
+        label: 'Útivistardómur',
+        variant: 'purple',
+      }
+    }
+
+    return {
+      key: 'convicted',
+      label: 'Dómur',
+      variant: 'darkerBlue',
+    }
+  }
+
+  if (isDismissalCase) {
+    return {
+      label: 'Frávísun',
+      variant: 'blue',
+    }
+  }
+
+  if (isCancellationCase) {
+    return {
+      label: 'Niðurfelling',
+      variant: 'rose',
+    }
+  }
+
+  if (isFineCase) {
+    return {
+      label: 'Viðurlagaákvörðun',
+      variant: 'mint',
+    }
+  }
+
+  return null
 }
