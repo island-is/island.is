@@ -75,6 +75,9 @@ const SignatureCollectionMunicipal = () => {
           collectionType={collectionType}
           listsForUser={listsForUser}
           signedLists={signedLists}
+          emptyStateDescriptionMessage={
+            m.noCollectionIsActiveMunicipalDescription
+          }
         />
       )}
     </Box>
