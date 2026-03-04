@@ -220,12 +220,11 @@ export class NotificationsService {
   }
 
   validateSmsDelivery(template: HnippTemplate): void {
-    const isPayerPresent =
-      template.smsPayer !== null &&
-      template.smsPayer !== undefined &&
-      template.smsPayer !== ''
+    const smsDelivery = template.smsDelivery ?? SmsDelivery.NEVER
+    const smsPayer = template.smsPayer?.trim()
+    const isPayerPresent = Boolean(smsPayer)
 
-    if (template.smsDelivery !== SmsDelivery.NEVER && !isPayerPresent) {
+    if (smsDelivery !== SmsDelivery.NEVER && !isPayerPresent) {
       throw new BadRequestException(
         'SMS payer is required when SMS delivery is not set to NEVER',
       )

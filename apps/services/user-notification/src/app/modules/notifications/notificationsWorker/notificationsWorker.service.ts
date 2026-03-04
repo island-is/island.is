@@ -160,12 +160,19 @@ export class NotificationsWorkerService {
       })
     }
 
-    const formattedTemplate = await this.notificationsService.formatArguments(
-      args.args,
-      { ...template },
-      args?.senderId,
-      locale,
-    )
+    const [formattedTemplate, recipientNames, onBehalfOfNames] =
+      await Promise.all([
+        this.notificationsService.formatArguments(
+          args.args,
+          { ...template },
+          args?.senderId,
+          locale,
+        ),
+        this.getNames(args.recipient),
+        args.onBehalfOf?.nationalId
+          ? this.getNames(args.onBehalfOf.nationalId)
+          : Promise.resolve(undefined),
+      ])
 
     const dbRecord = await this.createActorNotificationDbRecord(args)
 
@@ -176,9 +183,13 @@ export class NotificationsWorkerService {
         nationalId: args.recipient,
         email: actorProfile.email,
         emailNotifications: actorProfile.emailNotifications,
+        fullName:
+          args.onBehalfOf?.name ||
+          onBehalfOfNames?.fullName ||
+          recipientNames.fullName,
         formattedTemplate,
         locale,
-        onBehalfOf: args.onBehalfOf,
+        subjectId: args.onBehalfOf?.subjectId,
       }),
       this.buildSmsPayload({
         messageId,
@@ -186,7 +197,8 @@ export class NotificationsWorkerService {
         mobilePhoneNumber: delegateProfile?.mobilePhoneNumber,
         smsNotifications: delegateProfile?.smsNotifications,
         formattedTemplate,
-        onBehalfOfNationalId: args.onBehalfOf?.nationalId,
+        fullName: recipientNames.shortName,
+        onBehalfOf: onBehalfOfNames?.shortName,
         locale,
       }),
     ])
@@ -315,12 +327,19 @@ export class NotificationsWorkerService {
     let smsPayload: SmsQueueMessage | null = null
 
     if (userProfile) {
-      const formattedTemplate = await this.notificationsService.formatArguments(
-        message.args,
-        { ...template },
-        message?.senderId,
-        locale,
-      )
+      const [formattedTemplate, recipientNames, onBehalfOfNames] =
+        await Promise.all([
+          this.notificationsService.formatArguments(
+            message.args,
+            { ...template },
+            message?.senderId,
+            locale,
+          ),
+          this.getNames(nationalId),
+          message.onBehalfOf?.nationalId
+            ? this.getNames(message.onBehalfOf.nationalId)
+            : Promise.resolve(undefined),
+        ])
 
       ;[pushPayload, emailPayload, smsPayload] = await Promise.all([
         this.buildPushPayload({
@@ -335,9 +354,13 @@ export class NotificationsWorkerService {
           nationalId,
           email: userProfile.email,
           emailNotifications: userProfile.emailNotifications,
+          fullName:
+            message.onBehalfOf?.name ||
+            onBehalfOfNames?.fullName ||
+            recipientNames.fullName,
           formattedTemplate,
           locale,
-          onBehalfOf: message.onBehalfOf,
+          subjectId: message.onBehalfOf?.subjectId,
         }),
         this.buildSmsPayload({
           messageId,
@@ -345,7 +368,8 @@ export class NotificationsWorkerService {
           mobilePhoneNumber: userProfile.mobilePhoneNumber,
           smsNotifications: userProfile.smsNotifications,
           formattedTemplate,
-          onBehalfOfNationalId: message.onBehalfOf?.nationalId,
+          fullName: recipientNames.shortName,
+          onBehalfOf: onBehalfOfNames?.shortName,
           locale,
         }),
       ])
@@ -404,17 +428,19 @@ export class NotificationsWorkerService {
     nationalId,
     email,
     emailNotifications,
+    fullName,
     formattedTemplate,
     locale,
-    onBehalfOf,
+    subjectId,
   }: {
     messageId: string
     nationalId: string
     email?: string | null
     emailNotifications?: boolean | null
+    fullName: string
     formattedTemplate: HnippTemplate
     locale: Locale
-    onBehalfOf?: { nationalId?: string; name?: string; subjectId?: string }
+    subjectId?: string
   }): Promise<Omit<EmailQueueMessage, 'notificationId'> | null> {
     const enabled = await this.featureFlagService.getValue(
       Features.isNotificationEmailWorkerEnabled,
@@ -427,17 +453,13 @@ export class NotificationsWorkerService {
       return null
     }
 
-    const fullName =
-      onBehalfOf?.name ||
-      (await this.getName(onBehalfOf?.nationalId ?? nationalId))
-
     return {
       messageId,
       recipientEmail: email,
       fullName,
       isEnglish: locale === 'en',
       formattedTemplate,
-      subjectId: onBehalfOf?.subjectId,
+      subjectId,
     }
   }
 
@@ -447,7 +469,8 @@ export class NotificationsWorkerService {
     mobilePhoneNumber,
     smsNotifications,
     formattedTemplate,
-    onBehalfOfNationalId,
+    fullName,
+    onBehalfOf,
     locale,
   }: {
     messageId: string
@@ -455,7 +478,8 @@ export class NotificationsWorkerService {
     mobilePhoneNumber?: string | null
     smsNotifications?: boolean | null
     formattedTemplate: HnippTemplate
-    onBehalfOfNationalId?: string
+    fullName: string
+    onBehalfOf?: string
     locale: Locale
   }): Promise<Omit<SmsQueueMessage, 'notificationId'> | null> {
     const enabled = await this.featureFlagService.getValue(
@@ -502,11 +526,6 @@ export class NotificationsWorkerService {
       })
       return null
     }
-
-    const fullName = await this.getShortName(nationalId)
-    const onBehalfOf = onBehalfOfNationalId
-      ? await this.getShortName(onBehalfOfNationalId)
-      : undefined
 
     return {
       messageId,
@@ -669,6 +688,21 @@ export class NotificationsWorkerService {
     return (
       identity?.eiginNafn || identity?.birtNafn || identity?.fulltNafn || ''
     )
+  }
+
+  private async getNames(
+    nationalId: string,
+  ): Promise<{ fullName: string; shortName: string }> {
+    if (isCompany(nationalId)) {
+      const name = await this.getCompanyName(nationalId)
+      return { fullName: name, shortName: name }
+    }
+    const identity = await this.getPersonIdentity(nationalId)
+    return {
+      fullName: identity?.birtNafn || identity?.fulltNafn || '',
+      shortName:
+        identity?.eiginNafn || identity?.birtNafn || identity?.fulltNafn || '',
+    }
   }
 
   public async run() {
