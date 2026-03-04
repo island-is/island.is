@@ -79,9 +79,7 @@ export const ApplicationCard = ({
   const MS_PER_DAY = 1000 * 60 * 60 * 24
   const daysRemaining =
     pruneAt && actionCard?.displayPruneAt
-      ? Math.ceil(
-          (new Date(pruneAt).getTime() - Date.now()) / MS_PER_DAY,
-        )
+      ? Math.ceil((new Date(pruneAt).getTime() - Date.now()) / MS_PER_DAY)
       : undefined
 
   const shouldRenderProgress = status === 'draft'
