@@ -178,21 +178,33 @@ export class CaseTableService {
         : []
     }
 
-    // Display defendants in separate lines for public prosecutors office and prison admin
-    let displayCases: Case[]
-    if (isPublicProsecutionOfficeUser(user)) {
-      displayCases = cases.flatMap((caseItem) =>
-        expandCaseWithDefendants(caseItem, getDefendantFilter(type)),
-      )
-    } else if (isPrisonAdminUser(user)) {
-      displayCases = cases.flatMap((caseItem) =>
-        expandCaseWithDefendants(caseItem, (d) =>
-          Boolean(d.isSentToPrisonAdmin),
-        ),
-      )
-    } else {
-      displayCases = cases
+    const getDisplayCases = (casesToDisplay: Case[]): Case[] => {
+      if (isPublicProsecutionOfficeUser(user)) {
+        return casesToDisplay.flatMap((caseItem) =>
+          expandCaseWithDefendants(caseItem, getDefendantFilter(type)),
+        )
+      }
+      if (isPrisonAdminUser(user)) {
+        const isRegisteredRulingTab =
+          type === CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING
+        return casesToDisplay.flatMap((caseItem) =>
+          expandCaseWithDefendants(caseItem, (d) => {
+            if (!d.isSentToPrisonAdmin) {
+              return false
+            }
+            const effectiveRegistered =
+              d.isRegisteredInPrisonSystem ??
+              caseItem.isRegisteredInPrisonSystem
+            return isRegisteredRulingTab
+              ? Boolean(effectiveRegistered)
+              : !effectiveRegistered
+          }),
+        )
+      }
+      return casesToDisplay
     }
+
+    const displayCases = getDisplayCases(cases)
 
     return {
       rowCount: displayCases.length,

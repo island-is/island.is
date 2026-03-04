@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const strings = defineMessages({
-  keyDates: {
-    id: 'judicial.system.core:blue_box_with_date.key_dates_v1',
-    defaultMessage: 'Birting dóms',
-    description: 'Notaður sem titill í lykildagsetningarsvæði dómfellda.',
-  },
   defendantVerdictServiceDateLabel: {
     id: 'judicial.system.core:blue_box_with_date.defendant_verdict_service_date_label',
     defaultMessage: 'Dagsetning birtingar',
@@ -57,12 +52,6 @@ export const strings = defineMessages({
     defaultMessage: 'Sent til fullnustu {date}',
     description:
       'Notaður sem texti í valmynd fyrir aðgerðina að senda mál til fullnustu',
-  },
-  indictmentRulingDecisionFine: {
-    id: 'judicial.system.core:blue_box_with_date.indictment_ruling_decision_fine',
-    defaultMessage: 'Viðurlagaákvörðun',
-    description:
-      'Notaður sem titill í svæði þar sem kærufrestur viðurlagaákvörðunar er tekinn fram',
   },
   fineAppealDeadline: {
     id: 'judicial.system.core:blue_box_with_date.fine_appeal_deadline',

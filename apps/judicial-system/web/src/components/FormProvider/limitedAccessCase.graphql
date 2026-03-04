@@ -51,6 +51,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isVerdictAppealDeadlineExpired
       subpoenaType
       isSentToPrisonAdmin
+      isRegisteredInPrisonSystem
       sentToPrisonAdminDate
       openedByPrisonAdminDate
       punishmentType
@@ -310,6 +311,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         isVerdictAppealDeadlineExpired
         subpoenaType
         isSentToPrisonAdmin
+        isRegisteredInPrisonSystem
         sentToPrisonAdminDate
         openedByPrisonAdminDate
         punishmentType

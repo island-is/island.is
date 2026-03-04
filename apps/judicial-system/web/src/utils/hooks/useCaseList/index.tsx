@@ -37,7 +37,7 @@ import useCase from '../useCase'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])
-  // The id of the case that's about to be opened
+  // The case and row (defendant ids) that's about to be opened - used for loading state only
   const [clickedCase, setClickedCase] = useState<{
     id: string | null
     defendantIds?: string[] | null
@@ -143,17 +143,7 @@ const useCaseList = () => {
         }
       }
 
-      const path = `${routeTo}/${caseToOpen.id}`
-      const isPrisonClosedIndictment =
-        routeTo === constants.PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE
-      const singleDefendantId =
-        isPrisonClosedIndictment && defendantIds?.length === 1
-          ? defendantIds[0]
-          : undefined
-      const url =
-        singleDefendantId != null
-          ? `${path}?defendantId=${encodeURIComponent(singleDefendantId)}`
-          : path
+      const url = `${routeTo}/${caseToOpen.id}`
 
       if (!routeTo) {
         return
