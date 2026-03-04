@@ -12,8 +12,6 @@ export interface IFormsContext {
   setForms: Dispatch<SetStateAction<FormSystemForm[]>>
   organizations: Option<string>[]
   setOrganizations: Dispatch<SetStateAction<Option<string>[]>>
-  applications: FormSystemApplication[]
-  setApplications: Dispatch<SetStateAction<FormSystemApplication[]>>
   isAdmin: boolean
   organizationId: string
   setOrganizationId: Dispatch<SetStateAction<string>>
@@ -41,12 +39,6 @@ export const FormsContext = createContext<IFormsContext>({
   organizations: [],
   setOrganizations: function (_value: SetStateAction<Option<string>[]>): void {
     throw new Error('setOrganizations function not implemented')
-  },
-  applications: [],
-  setApplications: function (
-    _value: SetStateAction<FormSystemApplication[]>,
-  ): void {
-    throw new Error('setApplications function not implemented')
   },
   isAdmin: false,
   organizationId: '',

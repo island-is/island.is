@@ -1,5 +1,4 @@
 import { FC, ReactNode } from 'react'
-import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -21,7 +20,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { strings } from './SubpoenaType.strings'
 import * as styles from '../../Indictments/Subpoena/Subpoena.css'
 
 interface SubpoenaTypeProps {
@@ -42,14 +40,9 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
   workingCase,
   required = true,
 }) => {
-  const { formatMessage } = useIntl()
-
   return (
     <div>
-      <SectionHeading
-        title={formatMessage(strings.title)}
-        required={required}
-      />
+      <SectionHeading title={'Tegund fyrirkalls'} required={required} />
       {subpoenaItems.map((item, index) => (
         <Box
           key={item.defendant.id}
@@ -64,7 +57,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
               </Text>
               <Checkbox
                 id={`alternativeService-${item.defendant.id}`}
-                label={strings.alternativeService}
+                label={'Ákæra var birt með öðrum hætti'}
                 checked={Boolean(item.defendant.isAlternativeService)}
                 onChange={() => {
                   const { id: defendantId } = item.defendant
@@ -77,7 +70,9 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
 
                   item.onUpdate({ caseId, defendantId, isAlternativeService })
                 }}
-                tooltip={strings.alternativeServiceTooltip}
+                tooltip={
+                  'Ef ákæra og fyrirkall eru birt utan gáttarinnar, t.d. í þinghaldi eða í Lögbirtingablaðinu, þá er hægt að haka í þennan reit til að komast áfram án þess að gefa út fyrirkall í gegnum Réttarvörslugátt.'
+                }
                 disabled={workingCase.state === CaseState.CORRECTING}
                 backgroundColor="white"
                 large
@@ -86,10 +81,10 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
               {item.defendant.isAlternativeService && (
                 <Input
                   name="alternativeServiceDescription"
-                  label={strings.alternativeServiceDescriptionLabel}
+                  label={'Skráðu hvernig birting fór fram'}
                   autoComplete="off"
                   value={item.defendant.alternativeServiceDescription ?? ''}
-                  placeholder={strings.alternativeServiceDescriptionPlaceholder}
+                  placeholder={'T.d. í þinghaldi eða í Lögbirtingablaðinu'}
                   onChange={(evt) => {
                     const { id: defendantId } = item.defendant
                     const { id: caseId } = workingCase
@@ -114,7 +109,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                   name={`subpoenaType-${item.defendant.id}`}
                   id={`subpoenaTypeAbsence${item.defendant.id}`}
                   backgroundColor="white"
-                  label={formatMessage(strings.absence)}
+                  label={'Útivistarfyrirkall'}
                   checked={
                     item.defendant.subpoenaType === SubpoenaTypeEnum.ABSENCE
                   }
@@ -135,7 +130,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                   name={`subpoenaType-${item.defendant.id}`}
                   id={`subpoenaTypeArrest${item.defendant.id}`}
                   backgroundColor="white"
-                  label={formatMessage(strings.arrest)}
+                  label={'Handtökufyrirkall'}
                   checked={
                     item.defendant.subpoenaType === SubpoenaTypeEnum.ARREST
                   }
