@@ -72,6 +72,7 @@ import {
   getAvailableMonths,
   getAvailableYears,
   isEarlyRetirement,
+  noOtherIncomeConfirmationShowAlertAndQuestion,
 } from '../lib/oldAgePensionUtils'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 
@@ -480,11 +481,6 @@ export const OldAgePensionForm: Form = buildForm({
                         socialInsuranceAdministrationMessage.incomePlan
                           .selectCurrency,
                       isSearchable: true,
-                      updateValueObj: {
-                        valueModifier: (_, activeField) =>
-                          currencyValueModifier(activeField),
-                        watchValues: 'incomeType',
-                      },
                       options: (application, activeField) => {
                         const { currencies } = getApplicationExternalData(
                           application.externalData,
@@ -694,6 +690,8 @@ export const OldAgePensionForm: Form = buildForm({
                       .alertMessage,
                   doesNotRequireAnswer: true,
                   alertType: 'warning',
+                  marginTop: 4,
+                  condition: noOtherIncomeConfirmationShowAlertAndQuestion,
                 }),
                 buildRadioField({
                   id: 'incomePlan.noOtherIncomeConfirmation',
@@ -702,6 +700,7 @@ export const OldAgePensionForm: Form = buildForm({
                       .noOtherIncomeConfirmation,
                   options: getYesNoOptions(),
                   width: 'half',
+                  condition: noOtherIncomeConfirmationShowAlertAndQuestion,
                 }),
               ],
             }),

@@ -25,7 +25,7 @@ export const IncomePlan = ({
     <ReviewGroup
       isLast
       isEditable={editable}
-      editAction={() => goToScreen && goToScreen('incomePlanTable')}
+      editAction={() => goToScreen && goToScreen('incomePlan')}
     >
       <GridRow>
         <GridColumn span="12/12" paddingBottom={3}>
