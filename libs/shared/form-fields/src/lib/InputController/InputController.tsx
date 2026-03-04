@@ -183,7 +183,7 @@ export const InputController = forwardRef(
             {...props}
           />
         )
-      } else if (type === 'number' && suffix) {
+      } else if (type === 'number') {
         return (
           <NumberFormat
             size={size}
