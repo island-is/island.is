@@ -2127,6 +2127,14 @@ export const messages = defineMessages({
     defaultMessage: 'Sýna óvirkar',
     id: 'sp.health:show-expired-permits',
   },
+  showMoreHistory: {
+    defaultMessage: 'Sýna fleiri',
+    id: 'sp.health:show-more-history',
+  },
+  showLessHistory: {
+    defaultMessage: 'Sýna færri',
+    id: 'sp.health:show-less-history',
+  },
   permit: {
     defaultMessage: 'Heimild',
     id: 'sp.health:permit',

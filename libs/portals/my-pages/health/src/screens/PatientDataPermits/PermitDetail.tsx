@@ -35,6 +35,9 @@ const PermitDetail: React.FC = () => {
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState<boolean>(false)
+  const [showAllHistory, setShowAllHistory] = useState(false)
+
+  const HISTORY_VISIBLE_COUNT = 10
 
   const { data, error, loading } = useGetPatientDataPermitsQuery({
     variables: { locale: lang },
@@ -228,7 +231,10 @@ const PermitDetail: React.FC = () => {
                   </T.Row>
                 </T.Head>
                 <T.Body>
-                  {history.map((entry, index) => (
+                  {(showAllHistory
+                    ? history
+                    : history.slice(0, HISTORY_VISIBLE_COUNT)
+                  ).map((entry, index) => (
                     <ExpandRow
                       key={index}
                       data={[
@@ -279,6 +285,23 @@ const PermitDetail: React.FC = () => {
                   ))}
                 </T.Body>
               </T.Table>
+              {history.length > HISTORY_VISIBLE_COUNT && (
+                <Box display="flex" justifyContent="center" marginTop={3}>
+                  <Button
+                    variant="text"
+                    size="small"
+                    icon={showAllHistory ? 'chevronUp' : 'chevronDown'}
+                    iconType="outline"
+                    onClick={() => setShowAllHistory(!showAllHistory)}
+                  >
+                    {formatMessage(
+                      showAllHistory
+                        ? messages.showLessHistory
+                        : messages.showMoreHistory,
+                    )}
+                  </Button>
+                </Box>
+              )}
             </Box>
           )}
         </Box>
