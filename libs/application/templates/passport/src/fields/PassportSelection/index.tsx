@@ -51,8 +51,8 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const tag = (identityDocument: IdentityDocument): TagCheck => {
     const today = new Date()
     const expirationDate = new Date(identityDocument?.expirationDate)
-    const todayPlus6Months = new Date(
-      new Date().setMonth(new Date().getMonth() + 6),
+    const todayPlus9Months = new Date(
+      new Date().setMonth(new Date().getMonth() + 9),
     )
 
     let tagObject = {} as Tag
@@ -70,7 +70,7 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         variant: 'red',
         outlined: true,
       }
-    } else if (todayPlus6Months > expirationDate) {
+    } else if (todayPlus9Months > expirationDate) {
       tagObject = {
         label:
           formatMessage(m.validTag) +
@@ -79,7 +79,7 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         variant: 'red',
         outlined: true,
       }
-    } else if (todayPlus6Months < expirationDate) {
+    } else if (todayPlus9Months < expirationDate) {
       isDisabled = true
       tagObject = {
         label:
@@ -131,7 +131,7 @@ export const PassportSelection: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               tag: tag(identityDocumentData.userPassport).tag,
               disabled:
                 tag(identityDocumentData.userPassport).tag.label ===
-                  m.orderedTag.defaultMessage ||
+                  formatMessage(m.orderedTag) ||
                 tag(identityDocumentData.userPassport).isDisabled,
             },
           ],

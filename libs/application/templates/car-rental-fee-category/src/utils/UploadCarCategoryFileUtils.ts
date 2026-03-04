@@ -2,7 +2,7 @@ import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
 import { RateCategory } from './constants'
 import { CarCategoryError, CarCategoryRecord, CarMap } from './types'
-import { is30DaysOrMoreFromDate } from './dayRateUtils'
+import { is15DaysOrMoreFromDate } from './dayRateUtils'
 import { m } from '../lib/messages'
 import { MessageDescriptor } from 'react-intl'
 
@@ -61,12 +61,12 @@ export const parseFileToCarCategory = async (
       if (rateToChangeTo === RateCategory.KMRATE) {
         const validFromDate = currentCarData[carNr].activeDayRate?.validFrom
         if (validFromDate) {
-          const is30orMoreDays = is30DaysOrMoreFromDate(validFromDate)
+          const is15orMoreDays = is15DaysOrMoreFromDate(validFromDate)
 
-          if (!is30orMoreDays) {
+          if (!is15orMoreDays) {
             return {
               code: 1,
-              message: m.multiUploadErrors.dayRateMin30Days,
+              message: m.multiUploadErrors.dayRateMin15Days,
               carNr,
             }
           }

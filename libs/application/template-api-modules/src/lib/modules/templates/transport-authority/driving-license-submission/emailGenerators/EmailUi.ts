@@ -4,7 +4,7 @@ import type {
   CopyComponent,
   ListComponent,
 } from '@island.is/email-service'
-import { DrivingLicenseApplicationType } from '@island.is/api/domains/driving-license'
+import { DrivingLicenseApplicationFor } from '@island.is/application/templates/driving-license'
 import { m } from './messages'
 import { pathToAsset } from './utils'
 
@@ -47,7 +47,7 @@ const Heading = (
   } as HeadingComponent)
 
 type EmailHeaderOptions = {
-  applicationFor?: DrivingLicenseApplicationType
+  applicationFor?: DrivingLicenseApplicationFor
   firstName?: string
 }
 
@@ -67,12 +67,16 @@ export const EmailHeader = (opts?: EmailHeaderOptions) => {
 
 type EmailCompleteOptions = {
   selectedDistrictCommissioner?: string
+  isHomeDelivery?: boolean
 }
 
 export const EmailComplete = (opts?: EmailCompleteOptions) => {
-  return m.completeFooter.map((str) => {
-    if (str.includes('%s') && opts?.selectedDistrictCommissioner) {
-      str = str.replace('%s', `<em>${opts?.selectedDistrictCommissioner}</em>`)
+  const footer = opts?.isHomeDelivery ? m.completeFooterPost : m.completeFooter
+  return footer.map((str) => {
+    if (str.includes('%s')) {
+      str = opts?.selectedDistrictCommissioner
+        ? str.replace('%s', `<em>${opts.selectedDistrictCommissioner}</em>`)
+        : str.replace(/\s*\(%s\)/, '')
     }
 
     return Copy(str, {
@@ -83,7 +87,7 @@ export const EmailComplete = (opts?: EmailCompleteOptions) => {
 }
 
 export const EmailRequirements = (
-  applicationFor: DrivingLicenseApplicationType = 'B-full',
+  applicationFor: DrivingLicenseApplicationFor = 'B-full',
   willBringQualityPhoto: boolean,
   willBringHealthCert: boolean,
 ) => {

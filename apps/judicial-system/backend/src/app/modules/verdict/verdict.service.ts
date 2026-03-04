@@ -12,7 +12,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CourtSessionRulingType,
@@ -72,7 +75,6 @@ export class VerdictService {
     private readonly defendantService: DefendantService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
-    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -288,6 +290,7 @@ export class VerdictService {
 
     return [
       { code: 'RVG_CASE_ID', value: theCase.id },
+      { code: 'RVG_VERDICT_ID', value: verdict.id },
       ...(receiverSsn ? [{ code: 'RECEIVER_SSN', value: receiverSsn }] : []),
       ...(theCase.courtCaseNumber
         ? [
@@ -568,7 +571,8 @@ export class VerdictService {
     transaction: Transaction,
   ): Promise<{ queued: boolean }> {
     const defendants = theCase.defendants ?? []
-    const messages = await Promise.all(
+
+    const queued = await Promise.all(
       defendants
         .filter(
           (defendant) =>
@@ -594,17 +598,15 @@ export class VerdictService {
             )
           }
 
-          return {
+          addMessagesToQueue({
             type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
             user,
             caseId: theCase.id,
             elementId: [defendant.id],
-          }
+          })
         }),
     )
 
-    await this.messageService.sendMessagesToQueue(messages)
-
-    return { queued: messages.length > 0 }
+    return { queued: queued.length > 0 }
   }
 }

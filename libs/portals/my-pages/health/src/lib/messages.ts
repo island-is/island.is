@@ -916,6 +916,10 @@ export const messages = defineMessages({
     id: 'sp.health:no-referrals',
     defaultMessage: 'Engar tilvísanir',
   },
+  referralValidTo: {
+    id: 'sp.health:referral-valid-to',
+    defaultMessage: 'Gildir til',
+  },
   organizationWebsite: {
     id: 'sp.health:referrals-org-website',
     defaultMessage: 'Vefur stofnunar',
@@ -943,6 +947,20 @@ export const messages = defineMessages({
   waitlistsIntro: {
     id: 'sp.health:waitlists-intro',
     defaultMessage: 'Hér finnur þú biðlista ...',
+  },
+  waitlistsIntroWithLink: {
+    id: 'sp.health:waitlists-intro-with-link',
+    defaultMessage:
+      'Hér getur þú séð hvar þú ert skráður á biðlista eftir heilbrigðisþjónustu. Núna birtast biðlistar frá <link>nokkrum stofnunum</link> en fleiri munu bætast við síðar.',
+  },
+  waitlistsModalTitle: {
+    id: 'sp.health:waitlists-modal-title',
+    defaultMessage: 'Biðlistar sem birtast hér:',
+  },
+  waitlistsModalBody: {
+    id: 'sp.health:waitlists-modal-body#markdown',
+    defaultMessage:
+      '- Landspítali (allar skurðaðgerðir, barna- og unglingageðdeild)\n- Heilbrigðisstofnun Vesturlands (liðskiptaaðgerðir)\n- Sjúkrahúsið á Akureyri (liðskiptaaðgerðir, endurhæfing)\n- Heilbrigðisstofnun Austurlands (geðheilsuteymi)\n- Klíníkin (liðskiptaaðgerðir)\n- Orkuhúsið (liðskiptaaðgerðir)\n- Reykjalundur (endurhæfing)',
   },
   waitlistsDescriptionInfo: {
     id: 'sp.health:waitlists-description-info',
@@ -1243,6 +1261,28 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðsluyfirlit',
     id: 'sp.health:payment-overview',
   },
+  paymentOverviewInvoices: {
+    defaultMessage: 'Yfirlit reikninga',
+    id: 'sp.health:payment-overview-invoices',
+  },
+  paymentOverviewTotals: {
+    defaultMessage: 'Útlagður kostnaður',
+    id: 'sp.health:payment-overview-totals',
+  },
+  paymentOverviewTotalsIntro: {
+    defaultMessage:
+      'Hér er hægt að taka út upplýsingar um útlagðan kostnað þinn vegna heilbrigðisþjónustu fyrir valið tímabil.',
+    id: 'sp.health:payment-overview-totals-intro',
+  },
+  paymentOverviewTotalsDownload: {
+    defaultMessage: 'Sækja samtölur (PDF)',
+    id: 'sp.health:payment-overview-totals-download',
+  },
+  paymentOverviewTotalsDownloadError: {
+    defaultMessage:
+      'Ekki tókst að sækja samtölur. Vinsamlegast reyndu aftur síðar.',
+    id: 'sp.health:payment-overview-totals-download-error',
+  },
   paymentParticationExplanation: {
     defaultMessage:
       'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði {basePayment} kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
@@ -1283,8 +1323,13 @@ export const messages = defineMessages({
   },
   paymentsIntro: {
     defaultMessage:
-      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum.',
+      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig vegna þjónustu sérgreinalækna, þjálfunar, myndgreininga, rannsókna og sálfræðiþjónustu sem sérstaklega er samið um við Sjúkratryggingar. Skilyrði er að viðkomandi þjónustuveitandi sé með samning við Sjúkratryggingar um sína þjónustu.',
     id: 'sp.health:payments-intro',
+  },
+  paymentsParticipationInfo: {
+    defaultMessage:
+      'Sjúkratryggingar taka þátt í kostnaði við heilbrigðisþjónustu og sjá til þess að einstaklingar greiði ekki meira en ákveðna hámarksfjárhæð í hverjum mánuði fyrir hana. <link>Lesa nánar um greiðsluþátttökukerfið.</link>',
+    id: 'sp.health:payments-participation-info',
   },
   paymentTarget: {
     defaultMessage: 'Greiðslumark',
@@ -2136,6 +2181,10 @@ export const messages = defineMessages({
   landspitali: {
     defaultMessage: 'Landspítali',
     id: 'sp.health:landspitali',
+  },
+  landspitaliTooltip: {
+    defaultMessage: 'Landspítali hefur umsjón með gögnum um blóðflokka.',
+    id: 'sp.health:landspitali-tooltip',
   },
   invalidatePermit: {
     defaultMessage: 'Eyða',

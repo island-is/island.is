@@ -13,7 +13,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
@@ -27,6 +30,7 @@ import {
   eventTypes,
   isIndictmentCase,
   isRequestCase,
+  NotificationType,
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -49,6 +53,7 @@ import {
   EventLog,
   IndictmentCount,
   Institution,
+  Notification,
   Offense,
   Subpoena,
   User,
@@ -114,7 +119,6 @@ export const attributes: (keyof Case)[] = [
   'indictmentRulingDecision',
   'indictmentHash',
   'courtSessionType',
-  'indictmentReviewDecision',
   'indictmentReviewerId',
   'hasCivilClaims',
   'isCompletedWithoutRuling',
@@ -336,6 +340,15 @@ export const include: Includeable[] = [
     where: { stringType: stringTypes },
     separate: true,
   },
+  // Only expose APPEAL_COMPLETED to limited-access users (e.g. defenders) for the appeal banner date.
+  {
+    model: Notification,
+    as: 'notifications',
+    required: false,
+    where: { type: NotificationType.APPEAL_COMPLETED },
+    order: [['created', 'DESC']],
+    separate: true,
+  },
   {
     model: Case,
     as: 'mergeCase',
@@ -448,7 +461,6 @@ export const include: Includeable[] = [
 @Injectable()
 export class LimitedAccessCaseService {
   constructor(
-    private readonly messageService: MessageService,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
     @Inject(forwardRef(() => CivilClaimantService))
@@ -485,31 +497,27 @@ export class LimitedAccessCaseService {
   ): Promise<Case> {
     await this.caseRepositoryService.update(theCase.id, update, { transaction })
 
-    const messages = []
-
     if (update.appealState === CaseAppealState.APPEALED) {
-      theCase.caseFiles
-        ?.filter(
-          (caseFile) =>
-            caseFile.state === CaseFileState.STORED_IN_RVG &&
-            caseFile.isKeyAccessible &&
-            caseFile.category &&
-            [
-              CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-              CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-            ].includes(caseFile.category),
-        )
-        .forEach((caseFile) => {
-          const message = {
+      for (const caseFile of theCase.caseFiles ?? []) {
+        if (
+          caseFile.state === CaseFileState.STORED_IN_RVG &&
+          caseFile.isKeyAccessible &&
+          caseFile.category &&
+          [
+            CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+            CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+          ].includes(caseFile.category)
+        ) {
+          addMessagesToQueue({
             type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId: theCase.id,
             elementId: caseFile.id,
-          }
-          messages.push(message)
-        })
+          })
+        }
+      }
 
-      messages.push({
+      addMessagesToQueue({
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
@@ -518,7 +526,7 @@ export class LimitedAccessCaseService {
     }
 
     if (update.appealState === CaseAppealState.WITHDRAWN) {
-      messages.push({
+      addMessagesToQueue({
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
@@ -533,16 +541,12 @@ export class LimitedAccessCaseService {
       updatedCase.defendantStatementDate?.getTime() !==
       theCase.defendantStatementDate?.getTime()
     ) {
-      messages.push({
+      addMessagesToQueue({
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
         body: { type: CaseNotificationType.APPEAL_STATEMENT },
       })
-    }
-
-    if (messages.length > 0) {
-      await this.messageService.sendMessagesToQueue(messages)
     }
 
     return updatedCase

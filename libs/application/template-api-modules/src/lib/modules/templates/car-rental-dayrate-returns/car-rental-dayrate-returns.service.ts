@@ -46,46 +46,63 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
       const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
       const lastMonthIndex = lastMonthDate.getMonth()
 
-      const resp = await this.rentalsApiWithAuth(
-        auth,
-      ).apiDayRateEntriesEntityIdGet({
-        entityId: auth.nationalId,
-      })
+      // Log the request url to the RSK day-rate API to debug
+      const resp = await this.rentalsApiWithAuth(auth)
+        .withPreMiddleware(async ({ url, init }) => {
+          const headers = init?.headers
+            ? Object.fromEntries(new Headers(init.headers).entries())
+            : undefined
+
+          const reqData = {
+            url,
+            method: init?.method,
+            headers: headers
+              ? {
+                  ...headers,
+                  authorization: headers.authorization
+                    ? '[REDACTED]'
+                    : undefined,
+                  cookie: headers.cookie ? '[REDACTED]' : undefined,
+                }
+              : undefined,
+          }
+          this.logger.info('RSK day-rate request', reqData)
+        })
+        .apiDayRateEntriesEntityIdGet({
+          entityId: auth.nationalId,
+        })
 
       const dayRateEntryMap = buildDayRateEntryMap(resp)
 
-      const records: Array<DayRateRecord> = Object.entries(dayRateEntryMap)
+      const entries: Array<DayRateRecord> = Object.entries(dayRateEntryMap)
         .map(([permno, data]) => {
           const result = getMonthTotalDayRateDays({
             dayRateEntries: data,
             targetYear: lastMonthDate.getFullYear(),
             targetMonthIndex: lastMonthIndex,
           })
-          const { totalDays, entryIds } = result
 
-          if (totalDays === 0 || entryIds.length === 0) return null
+          if (!result) return null
+          const { totalDays, entryId } = result
 
-          const uniqueEntryIds = new Set(entryIds)
-
-          if (uniqueEntryIds.size > 1) {
-            this.logger.warn(
-              `Multiple day rate entries found for vehicle ${permno} in month ${
-                lastMonthIndex + 1
-              } ${lastMonthDate.getFullYear()}: ${Array.from(
-                uniqueEntryIds,
-              ).join(', ')}`,
-            )
-          }
+          if (totalDays === 0 || !entryId) return null
 
           return {
             permno,
             prevPeriodTotalDays: totalDays,
-            dayRateEntryId: uniqueEntryIds.values().next().value,
+            dayRateEntryId: entryId,
           }
         })
-        .filter((row): row is DayRateRecord => row !== null)
+        .filter((entry): entry is DayRateRecord => entry !== null)
 
-      return records
+      this.logger.info('RSK day-rate response count', {
+        responseCount: resp.length,
+      })
+      this.logger.info('Computed previous-period entries', {
+        entryCount: entries.length,
+      })
+
+      return entries
     } catch (error) {
       this.logger.error('Error getting previous period day rate entries', error)
       throw error
@@ -191,14 +208,35 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         }
       })
 
-      await this.rentalDaysApiWithAuth(auth).apiRentalDaysEntityIdPost({
-        entityId: auth.nationalId,
-        rentalDayRegistrationModel: {
-          year: lastMonthDate.getFullYear(),
-          month: lastMonthIndex + 1, // Date is 0-11 based, but Skatturinn expects 1-12
-          entries,
-        },
-      })
+      await this.rentalDaysApiWithAuth(auth)
+        .withPreMiddleware(async ({ url, init }) => {
+          const headers = init?.headers
+            ? Object.fromEntries(new Headers(init.headers).entries())
+            : undefined
+
+          const reqData = {
+            url,
+            method: init?.method,
+            headers: headers
+              ? {
+                  ...headers,
+                  authorization: headers.authorization
+                    ? '[REDACTED]'
+                    : undefined,
+                  cookie: headers.cookie ? '[REDACTED]' : undefined,
+                }
+              : undefined,
+          }
+          this.logger.info('Skatturinn request', reqData)
+        })
+        .apiRentalDaysEntityIdPost({
+          entityId: auth.nationalId,
+          rentalDayRegistrationModel: {
+            year: lastMonthDate.getFullYear(),
+            month: lastMonthIndex + 1, // Date is 0-11 based, but Skatturinn expects 1-12
+            entries,
+          },
+        })
 
       return true
     } catch (error) {

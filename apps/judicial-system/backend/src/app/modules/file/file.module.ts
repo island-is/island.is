@@ -3,8 +3,6 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 
-import { MessageModule } from '@island.is/judicial-system/message'
-
 import { CaseFile } from '../repository'
 import {
   AwsS3Module,
@@ -22,7 +20,6 @@ import { LimitedAccessFileController } from './limitedAccessFile.controller'
 @Module({
   imports: [
     CmsTranslationsModule,
-    MessageModule,
     forwardRef(() => CriminalRecordModule),
     forwardRef(() => RepositoryModule),
     forwardRef(() => UserModule),

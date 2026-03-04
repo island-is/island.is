@@ -11,14 +11,17 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { getServiceStatusText } from '@island.is/judicial-system/formatters'
 import {
-  Message,
-  MessageService,
+  formatDate,
+  getServiceStatusText,
+} from '@island.is/judicial-system/formatters'
+import {
+  addMessagesToQueue,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
+  CaseOrigin,
   CourtDocumentType,
   HashAlgorithm,
   isFailedServiceStatus,
@@ -48,6 +51,7 @@ import {
   SubpoenaRepositoryService,
   User,
 } from '../repository'
+import { CreateSubpoenasDto } from './dto/createSubpoenas.dto'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
 
@@ -88,7 +92,6 @@ export class SubpoenaService {
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
-    private readonly messageService: MessageService,
     @Inject(forwardRef(() => PoliceService))
     private readonly policeService: PoliceService,
     private readonly eventService: EventService,
@@ -101,7 +104,7 @@ export class SubpoenaService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async createSubpoena(
+  private async createSubpoena(
     defendantId: string,
     caseId: string,
     transaction: Transaction,
@@ -121,56 +124,169 @@ export class SubpoenaService {
     )
   }
 
+  async createSubpoenasForDefendants(
+    createSubpoenasDto: CreateSubpoenasDto,
+    transaction: Transaction,
+    theCase: Case,
+    user: TUser,
+  ): Promise<Subpoena[]> {
+    const { id: caseId, defendants, withCourtSessions, courtSessions } = theCase
+
+    // Filter defendants by the provided IDs
+    const requestedDefendants =
+      defendants?.filter((defendant) =>
+        createSubpoenasDto.defendantIds.includes(defendant.id),
+      ) ?? []
+
+    if (requestedDefendants.length === 0) {
+      throw new NotFoundException(
+        `No defendants found for case ${caseId} with the provided IDs`,
+      )
+    }
+
+    // Filter out defendants with alternative service
+    const defendantsToProcess = requestedDefendants.filter(
+      (defendant) => !defendant.isAlternativeService,
+    )
+
+    if (defendantsToProcess.length === 0) {
+      this.logger.warn(
+        `No defendants eligible for subpoenas (all have alternative service) for case ${caseId}`,
+      )
+      return []
+    }
+
+    // Create subpoenas for eligible defendants
+    const subpoenas = await Promise.all(
+      defendantsToProcess.map(async (defendant) => {
+        return this.createSubpoena(
+          defendant.id,
+          caseId,
+          transaction,
+          createSubpoenasDto.arraignmentDate,
+          createSubpoenasDto.location,
+          defendant.subpoenaType,
+        )
+      }),
+    )
+
+    // Create court documents if court sessions exist
+    if (withCourtSessions && courtSessions && courtSessions.length > 0) {
+      for (let i = 0; i < defendantsToProcess.length; i++) {
+        const defendant = defendantsToProcess[i]
+        const subpoena = subpoenas[i]
+        const name = `Fyrirkall ${defendant.name} ${formatDate(
+          subpoena.created,
+        )}`
+
+        await this.courtDocumentService.create(
+          caseId,
+          {
+            documentType: CourtDocumentType.GENERATED_DOCUMENT,
+            name,
+            generatedPdfUri: `/api/case/${caseId}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
+          },
+          transaction,
+        )
+      }
+    }
+
+    // Queue messages for delivering subpoenas to police, court, and national commissioners office
+    await this.queueSubpoenaDeliveryMessages(
+      theCase,
+      defendantsToProcess,
+      subpoenas,
+      user,
+    )
+
+    return subpoenas
+  }
+
+  private async queueSubpoenaDeliveryMessages(
+    theCase: Case,
+    defendants: Defendant[],
+    subpoenas: Subpoena[],
+    user: TUser,
+  ): Promise<void> {
+    const messages = []
+
+    for (let i = 0; i < defendants.length; i++) {
+      const defendant = defendants[i]
+      const subpoena = subpoenas[i]
+
+      // For LOKE origin cases, also send to police
+      if (theCase.origin === CaseOrigin.LOKE) {
+        messages.push({
+          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
+          user,
+          caseId: theCase.id,
+          elementId: [defendant.id, subpoena.id],
+        })
+      }
+
+      // Always send to national commissioners office and court
+      messages.push(
+        {
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendant.id, subpoena.id],
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_SUBPOENA,
+          user,
+          caseId: theCase.id,
+          elementId: [defendant.id, subpoena.id],
+        },
+      )
+    }
+
+    if (messages.length > 0) {
+      addMessagesToQueue(...messages)
+    }
+  }
+
   setHash(
-    caseId: string,
-    defendantId: string,
-    subpoenaId: string,
+    subpoena: Subpoena,
     hash: string,
     hashAlgorithm: HashAlgorithm,
     transaction: Transaction,
   ): Promise<Subpoena> {
+    // The subpoena may belong to a split case, so we do not pass in the current case id here
     return this.subpoenaRepositoryService.update(
-      caseId,
-      defendantId,
-      subpoenaId,
+      subpoena.caseId,
+      subpoena.defendantId,
+      subpoena.id,
       { hash, hashAlgorithm },
       { transaction },
     )
   }
 
-  private async addMessagesForSubpoenaUpdateToQueue(
+  private addMessagesForSubpoenaUpdateToQueue(
     subpoena: Subpoena,
     serviceStatus?: ServiceStatus,
-  ): Promise<void> {
-    let message: Message | undefined = undefined
-
+  ): void {
     if (serviceStatus && serviceStatus !== subpoena.serviceStatus) {
       if (isSuccessfulServiceStatus(serviceStatus)) {
-        message = {
+        addMessagesToQueue({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
           body: {
             type: SubpoenaNotificationType.SERVICE_SUCCESSFUL,
           },
-        }
+        })
       } else if (isFailedServiceStatus(serviceStatus)) {
-        message = {
+        addMessagesToQueue({
           type: MessageType.SUBPOENA_NOTIFICATION,
           caseId: subpoena.caseId,
           elementId: [subpoena.defendantId, subpoena.id],
           body: {
             type: SubpoenaNotificationType.SERVICE_FAILED,
           },
-        }
+        })
       }
     }
-
-    if (!message) {
-      return
-    }
-
-    return this.messageService.sendMessagesToQueue([message])
   }
 
   async update(
@@ -261,7 +377,7 @@ export class SubpoenaService {
     }
 
     // No need to wait for this to finish
-    await this.addMessagesForSubpoenaUpdateToQueue(subpoena, serviceStatus)
+    this.addMessagesForSubpoenaUpdateToQueue(subpoena, serviceStatus)
 
     if (
       update.serviceStatus &&
@@ -359,14 +475,15 @@ export class SubpoenaService {
         subpoena,
       )
 
-      const createdSubpoena = await this.policeService.createSubpoena(
+      const createdSubpoena = await this.policeService.createSubpoena({
         theCase,
         defendant,
-        Base64.btoa(subpoenaPdf.toString('binary')),
-        Base64.btoa(indictmentPdf.toString('binary')),
+        subpoenaId: subpoena.id,
+        subpoena: Base64.btoa(subpoenaPdf.toString('binary')),
+        indictment: Base64.btoa(indictmentPdf.toString('binary')),
         user,
-        civilClaimPdfs,
-      )
+        civilClaims: civilClaimPdfs,
+      })
 
       if (!createdSubpoena) {
         this.logger.error('Failed to create subpoena file for police')

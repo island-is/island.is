@@ -176,14 +176,18 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'support' : undefined,
       items: supportItems,
       condition: (answers, externalData) =>
-        !hasSpecialEducationSubType(answers, externalData),
+        //Business logic override as applicationConfig isn't ready on MMS side
+        //Should be removed when applicationConfig is ready
+        true || !hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.specialEducationSupport',
       backId: editable ? 'specialEducationSupport' : undefined,
       loadItems: specialEducationSupportItems,
       condition: (answers, externalData) =>
-        hasSpecialEducationSubType(answers, externalData),
+        //Business logic override as applicationConfig isn't ready on MMS side
+        //Should be removed when applicationConfig is ready
+        false && hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.payer',

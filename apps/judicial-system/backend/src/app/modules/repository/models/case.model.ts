@@ -30,7 +30,6 @@ import {
   CaseType,
   CourtDocument as TCourtDocument,
   CourtSessionType,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
@@ -1031,17 +1030,6 @@ export class Case extends Model {
   indictmentReviewer?: User
 
   /**********
-   * The review decision in indictment cases
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(IndictmentCaseReviewDecision),
-  })
-  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
-  indictmentReviewDecision?: IndictmentCaseReviewDecision
-
-  /**********
    * The judge's pending decision in indictment cases - example: POSTPONING
    **********/
   @Column({
@@ -1134,15 +1122,6 @@ export class Case extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isCompletedWithoutRuling?: boolean
-
-  /**********
-   * NOTE: This is a temporary field to indicate whether a public prosecutors
-   * user has marked a case as registered in the police system. This will be
-   * removed in the future.
-   **********/
-  @Column({ type: DataType.BOOLEAN, allowNull: true })
-  @ApiPropertyOptional({ type: Boolean })
-  publicProsecutorIsRegisteredInPoliceSystem?: boolean
 
   /**********
    * The case's victims

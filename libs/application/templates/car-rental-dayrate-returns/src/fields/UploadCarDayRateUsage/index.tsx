@@ -170,6 +170,11 @@ export const UploadCarDayRateUsage = ({
       return null
     }
 
+    if (parsed.records.length !== dayRateRecordsByPermno.size) {
+      setUploadErrorMessage(formatMessage(m.multiUpload.allCarsMustBePresent))
+      return null
+    }
+
     return parsed.records.length
   }
 

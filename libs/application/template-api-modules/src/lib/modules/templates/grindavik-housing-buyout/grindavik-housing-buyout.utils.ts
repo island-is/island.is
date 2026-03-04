@@ -1,17 +1,18 @@
-import { ResidenceEntryDto } from '@island.is/clients/national-registry-v2'
+import { ResidenceEntryDto } from '@island.is/clients/national-registry-v3-applications'
 
 const getDomicileOnDate = (
-  data: ResidenceEntryDto[],
+  data: ResidenceEntryDto[] | null,
   date: string,
 ): ResidenceEntryDto | null => {
   const targetDate = new Date(date)
 
-  const result = data.find((entry) => {
-    const entryStartDate = entry.dateOfChange
-      ? entry.dateOfChange
-      : new Date('1986-01-01T00:00:00.000Z') // If the value is null, that means that the registration is from before 1986.
-    return entryStartDate <= targetDate
-  })
+  const result =
+    data?.find((entry) => {
+      const entryStartDate = entry.dateOfChange
+        ? entry.dateOfChange
+        : new Date('1986-01-01T00:00:00.000Z') // If the value is null, that means that the registration is from before 1986.
+      return entryStartDate <= targetDate
+    }) ?? null
   return result ? result : null
 }
 

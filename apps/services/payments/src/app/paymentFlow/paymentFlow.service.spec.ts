@@ -9,7 +9,7 @@ import { PaymentMethod, PaymentStatus } from '../../types'
 
 import { PaymentFlowService } from './paymentFlow.service'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
-import { PaymentFlow } from './models/paymentFlow.model'
+import { PaymentFlow, PaymentFlowCharge } from './models/paymentFlow.model'
 import { getModelToken } from '@nestjs/sequelize'
 
 // A helper type to satisfy the linter for partial mocks.
@@ -49,6 +49,8 @@ describe('PaymentFlowService', () => {
           chargeType: 'A',
           quantity: 1,
           price: 100,
+          reference: 'charge-ref-xyz',
+          paymentOptions: ['CARD', 'CLAIM'],
         },
       ]
 
@@ -64,7 +66,6 @@ describe('PaymentFlowService', () => {
         )
 
       const paymentInfo: CreatePaymentFlowInput = {
-        availablePaymentMethods: [PaymentMethod.CARD],
         charges,
         payerNationalId: '1234567890',
         onUpdateUrl: 'http://localhost:3333/update',

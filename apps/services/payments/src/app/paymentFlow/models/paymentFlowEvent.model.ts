@@ -74,6 +74,10 @@ export class PaymentFlowEvent extends Model<
       'payment_started',
       'payment_completed',
       'payment_failed',
+      'payment_finalized',
+      'refund_started',
+      'refund_completed',
+      'refund_failed',
       'deleted_admin',
       'deleted_auto',
       'other',
@@ -84,6 +88,10 @@ export class PaymentFlowEvent extends Model<
     | 'payment_started'
     | 'payment_completed'
     | 'payment_failed'
+    | 'payment_finalized'
+    | 'refund_started'
+    | 'refund_completed'
+    | 'refund_failed'
     | 'deleted_admin'
     | 'deleted_auto'
     | 'other' // further explained in message

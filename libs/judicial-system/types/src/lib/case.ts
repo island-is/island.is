@@ -353,11 +353,6 @@ export enum CaseIndictmentRulingDecision {
   WITHDRAWAL = 'WITHDRAWAL',
 }
 
-export enum IndictmentCaseReviewDecision {
-  APPEAL = 'APPEAL',
-  ACCEPT = 'ACCEPT',
-}
-
 export enum SessionArrangements {
   ALL_PRESENT = 'ALL_PRESENT',
   ALL_PRESENT_SPOKESPERSON = 'ALL_PRESENT_SPOKESPERSON',

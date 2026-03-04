@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType, GraphQLISODateTime } from '@nestjs/graphql'
+import { ReferralStatusEnum } from './enums'
 
 @ObjectType('HealthDirectorateReferralContact')
 export class ReferralContact {
@@ -31,6 +32,9 @@ export class Referral {
 
   @Field({ nullable: true })
   stateDisplay?: string
+
+  @Field(() => ReferralStatusEnum, { nullable: true })
+  status?: ReferralStatusEnum
 
   @Field({ nullable: true })
   reason?: string

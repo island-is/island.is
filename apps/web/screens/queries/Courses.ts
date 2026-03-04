@@ -78,6 +78,20 @@ export const GET_COURSE_BY_ID_QUERY = gql`
   ${slices}
 `
 
+export const GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY = gql`
+  query GetChargeItemCodesByCourseId(
+    $input: GetChargeItemCodesByCourseIdInput!
+  ) {
+    getChargeItemCodesByCourseId(input: $input) {
+      items {
+        code
+        name
+        priceAmount
+      }
+    }
+  }
+`
+
 export const GET_COURSE_LIST_PAGE_BY_ID_QUERY = gql`
   query GetCourseListPageById($input: GetCourseListPageByIdInput!) {
     getCourseListPageById(input: $input) {

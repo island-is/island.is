@@ -21,4 +21,7 @@ export class CourtAgendasInput {
 
   @CacheField(() => [String], { nullable: true })
   scheduleTypes?: string[]
+
+  @CacheField(() => [String], { nullable: true })
+  caseTypes?: string[]
 }

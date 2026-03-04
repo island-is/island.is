@@ -15,7 +15,7 @@ import {
 } from '@island.is/application/types'
 import {
   HealthInsuranceApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '../dataProviders'
 import { m } from '../lib/messages/messages'
@@ -39,7 +39,7 @@ export const PrerequisitesForm: Form = buildForm({
           checkboxLabel: m.externalDataCheckbox,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: m.nationalRegistryTitle,
               subTitle: m.nationalRegistrySubTitle,
             }),

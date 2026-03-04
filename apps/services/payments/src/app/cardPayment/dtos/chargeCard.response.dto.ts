@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsObject, IsString } from 'class-validator'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator'
 
 class CardInformation {
   @ApiProperty({
@@ -21,13 +21,9 @@ class CardInformation {
   @IsString()
   cardCategory!: string
 
-  @ApiProperty({ description: 'Out-of-SCA scope status', type: String })
-  @IsString()
-  outOfScaScope!: string
-
-  @ApiProperty({ description: 'Card product category', type: String })
-  @IsString()
-  cardProductCategory!: string
+  @ApiProperty({ description: 'Out-of-SCA scope status', type: Boolean })
+  @IsBoolean()
+  outOfScaScope!: boolean
 }
 
 export class ChargeCardResponse {
@@ -70,9 +66,13 @@ export class ChargeCardResponse {
   @IsString()
   responseCode!: string
 
-  @ApiProperty({ description: 'Description of the response', type: String })
+  @ApiPropertyOptional({
+    description: 'Description of the response',
+    type: String,
+  })
   @IsString()
-  responseDescription!: string
+  @IsOptional()
+  responseDescription?: string
 
   @ApiProperty({ description: 'Response time of the charge', type: String })
   @IsString()

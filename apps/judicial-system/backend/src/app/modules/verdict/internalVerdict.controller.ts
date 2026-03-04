@@ -27,6 +27,7 @@ import {
   getVerdictServiceStatusText,
 } from '@island.is/judicial-system/formatters'
 import {
+  addMessagesToQueue,
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
@@ -34,7 +35,9 @@ import {
   CaseIndictmentRulingDecision,
   getDefendantServiceDate,
   getIndictmentAppealDeadline,
+  IndictmentCaseNotificationType,
   indictmentCases,
+  isSuccessfulVerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -219,6 +222,26 @@ export class InternalVerdictController {
       updatedVerdict.serviceStatus &&
       updatedVerdict.serviceStatus !== verdict.serviceStatus
     ) {
+      const hasDrivingLicenseSuspension =
+        theCase.defendants?.some(
+          (defendant) =>
+            updatedVerdict.defendantId === defendant.id &&
+            defendant.isDrivingLicenseSuspended,
+        ) ?? false
+
+      if (
+        isSuccessfulVerdictServiceStatus(updatedVerdict.serviceStatus) &&
+        hasDrivingLicenseSuspension
+      ) {
+        addMessagesToQueue({
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId: theCase.id,
+          body: {
+            type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+          },
+        })
+      }
+
       this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
         Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
         Birt: formatDate(updatedVerdict.serviceDate, 'Pp') ?? 'ekki skráð',

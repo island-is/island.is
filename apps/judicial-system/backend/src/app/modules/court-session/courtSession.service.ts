@@ -10,30 +10,19 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  CaseFileCategory,
-  CourtDocumentType,
-  EventType,
-  ServiceStatus,
-} from '@island.is/judicial-system/types'
-
 import {
   Case,
   CourtSession,
   CourtSessionRepositoryService,
   CourtSessionString,
-  EventLog,
 } from '../repository'
 import { CourtSessionStringDto } from './dto/CourtSessionStringDto.dto'
 import { UpdateCourtSessionDto } from './dto/updateCourtSession.dto'
-import { CourtDocumentService } from './courtDocument.service'
 
 @Injectable()
 export class CourtSessionService {
   constructor(
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
-    private readonly courtDocumentService: CourtDocumentService,
     // TODO: Move to a repository service - models should only be used in repository services
     // It would be best to hide the details of the court session model from all but the backend
     @InjectModel(CourtSessionString)
@@ -41,161 +30,10 @@ export class CourtSessionService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async create(theCase: Case, transaction: Transaction): Promise<CourtSession> {
-    const courtSession = await this.courtSessionRepositoryService.create(
-      theCase.id,
-      { transaction },
-    )
-
-    // If this is not the first court session, then we are done
-    if (theCase.courtSessions && theCase.courtSessions.length > 0) {
-      return courtSession
-    }
-
-    const indictmentConfirmedDate = EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_CONFIRMED,
-      theCase.eventLogs,
-    )
-
-    // Start with the generated indictment PDF
-    await this.courtDocumentService.createInCourtSession(
-      theCase.id,
-      courtSession.id,
-      {
-        documentType: CourtDocumentType.GENERATED_DOCUMENT,
-        name: `Ákæra${
-          indictmentConfirmedDate
-            ? ` ${formatDate(indictmentConfirmedDate)}`
-            : ''
-        }`,
-        generatedPdfUri: `/api/case/${theCase.id}/indictment/Ákæra`,
-      },
+  create(theCase: Case, transaction: Transaction): Promise<CourtSession> {
+    return this.courtSessionRepositoryService.create(theCase.id, {
       transaction,
-    )
-
-    const caseFiles = theCase.caseFiles ?? []
-
-    // Add all criminal records
-    for (const caseFile of caseFiles.filter(
-      (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
-    ) ?? []) {
-      await this.courtDocumentService.createInCourtSession(
-        theCase.id,
-        courtSession.id,
-        {
-          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
-          caseFileId: caseFile.id,
-        },
-        transaction,
-      )
-    }
-
-    // Add all cost breakdowns
-    for (const caseFile of caseFiles.filter(
-      (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
-    ) ?? []) {
-      await this.courtDocumentService.createInCourtSession(
-        theCase.id,
-        courtSession.id,
-        {
-          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
-          caseFileId: caseFile.id,
-        },
-        transaction,
-      )
-    }
-
-    // Add all case files records
-    for (const policeCaseNumber of theCase.policeCaseNumbers) {
-      const name = `Skjalaskrá ${policeCaseNumber}`
-
-      await this.courtDocumentService.createInCourtSession(
-        theCase.id,
-        courtSession.id,
-        {
-          documentType: CourtDocumentType.GENERATED_DOCUMENT,
-          name,
-          generatedPdfUri: `/api/case/${theCase.id}/caseFilesRecord/${policeCaseNumber}/${name}`,
-        },
-        transaction,
-      )
-    }
-
-    // Add all remaining case files
-    for (const caseFile of caseFiles?.filter(
-      (file) =>
-        file.category &&
-        [
-          CaseFileCategory.CASE_FILE,
-          CaseFileCategory.PROSECUTOR_CASE_FILE,
-          CaseFileCategory.DEFENDANT_CASE_FILE,
-          CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
-          CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
-          CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
-          CaseFileCategory.CIVIL_CLAIM,
-        ].includes(file.category),
-    ) ?? []) {
-      await this.courtDocumentService.createInCourtSession(
-        theCase.id,
-        courtSession.id,
-        {
-          documentType: CourtDocumentType.UPLOADED_DOCUMENT,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
-          caseFileId: caseFile.id,
-        },
-        transaction,
-      )
-    }
-
-    for (const defendant of (theCase.defendants ?? []).filter(
-      (defendant) => !defendant.isAlternativeService,
-    )) {
-      for (const subpoena of defendant.subpoenas ?? []) {
-        const subpoenaName = `Fyrirkall ${defendant.name} ${formatDate(
-          subpoena.created,
-        )}`
-
-        await this.courtDocumentService.createInCourtSession(
-          theCase.id,
-          courtSession.id,
-          {
-            documentType: CourtDocumentType.GENERATED_DOCUMENT,
-            name: subpoenaName,
-            generatedPdfUri: `/api/case/${theCase.id}/subpoena/${defendant.id}/${subpoena.id}/${subpoenaName}`,
-          },
-          transaction,
-        )
-
-        const wasSubpoenaSuccessfullyServed =
-          subpoena.serviceStatus &&
-          [
-            ServiceStatus.DEFENDER,
-            ServiceStatus.ELECTRONICALLY,
-            ServiceStatus.IN_PERSON,
-          ].includes(subpoena.serviceStatus)
-
-        if (!wasSubpoenaSuccessfullyServed) {
-          continue
-        }
-
-        const certificateName = `Birtingarvottorð ${defendant.name}`
-
-        await this.courtDocumentService.createInCourtSession(
-          theCase.id,
-          courtSession.id,
-          {
-            documentType: CourtDocumentType.GENERATED_DOCUMENT,
-            name: certificateName,
-            generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}/${certificateName}`,
-          },
-          transaction,
-        )
-      }
-    }
-
-    return courtSession
+    })
   }
 
   async createOrUpdateCourtSessionString({

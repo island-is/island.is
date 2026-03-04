@@ -33,17 +33,14 @@ export const HiddenInputFormField: FC<HiddenInputFormFieldProps> = ({
         : watchedValue
       setValue(id, finalValue)
     } else if (getDefaultValue !== undefined) {
-      setValue(id, defaultValue)
+      const defaultValNow =
+        typeof getDefaultValue === 'function' //adding defaultValue to dependency array causes infinite loop, so we need to call it here as well
+          ? getDefaultValue(application, field)
+          : getDefaultValue
+      setValue(id, defaultValNow)
     }
-  }, [
-    application,
-    defaultValue,
-    id,
-    setValue,
-    watchedValue,
-    valueModifier,
-    getDefaultValue,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [application, id, setValue, watchedValue, valueModifier, getDefaultValue])
 
   // Initialize field with undefined when:
   // - getDefaultValue is undefined, and

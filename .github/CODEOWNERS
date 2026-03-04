@@ -245,7 +245,6 @@ codemagic.yaml                                                                  
 /libs/api/domains/legal-gazette                                                                                              @island-is/hugsmidjan
 /libs/clients/judicial-system-sp/                                                                                            @island-is/hugsmidjan
 
-/libs/application/templates/alcohol-tax-redemption/                                                                          @island-is/norda
 /libs/application/templates/complaints-to-althingi-ombudsman/                                                                @island-is/norda
 /libs/application/templates/data-protection-complaint/                                                                       @island-is/norda
 /libs/application/templates/document-provider-onboarding/                                                                    @island-is/norda
@@ -256,7 +255,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/grindavik-housing-buyout/                                                                        @island-is/norda
 /libs/application/templates/hms/fire-compensation-appraisal/                                                                 @island-is/norda
 /libs/application/templates/hms/terminate-rental-agreement/                                                                  @island-is/norda
-/libs/application/templates/hms/registration-of-new-property-numbers/                                                        @island-is/origo
+/libs/application/templates/hms/rental-agreement/                                                                            @island-is/norda
 /libs/application/templates/home-support/                                                                                    @island-is/norda
 /libs/application/templates/iceland-health/accident-notification/                                                            @island-is/norda
 /libs/application/templates/iceland-health/european-health-insurance-card/                                                   @island-is/norda
@@ -279,7 +278,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/grindavik-housing-buyout/                                   @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/fire-compensation-appraisal/                            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/terminate-rental-agreement/                             @island-is/norda
-/libs/application/template-api-modules/src/lib/modules/templates/hms/registration-of-new-property-numbers/                   @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/hms/rental-agreement/                                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/home-support/                                               @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/iceland-health/accident-notification/                       @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/iceland-health/european-health-insurance-card/              @island-is/norda
@@ -357,6 +356,7 @@ codemagic.yaml                                                                  
 /apps/services/payment-flow-update-handler/                                                                                  @island-is/stefna
 /libs/application/templates/hh/courses/                                                                                      @island-is/stefna
 /libs/application/template-api-modules/src/lib/modules/templates/hh/courses/                                                 @island-is/stefna
+/libs/api/domains/course-charges/                                                                                            @island-is/stefna
 
 /libs/island-ui/                                                                                                             @island-is/island-ui
 
@@ -495,6 +495,9 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/energy-funds/                                               @island-is/origo
 /libs/api/domains/energy-funds/                                                                                              @island-is/origo
 /libs/clients/energy-funds/                                                                                                  @island-is/origo
+
+/libs/application/template-api-modules/src/lib/modules/templates/hms/registration-of-new-property-numbers/                   @island-is/origo
+/libs/application/templates/hms/registration-of-new-property-numbers/                                                        @island-is/origo
 
 /libs/application/templates/university/                                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/university/                                                 @island-is/origo

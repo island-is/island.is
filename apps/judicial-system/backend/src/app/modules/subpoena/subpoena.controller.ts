@@ -2,17 +2,19 @@ import { Response } from 'express'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
+  Body,
   Controller,
   Get,
   Header,
   Inject,
   Param,
+  Post,
   Query,
   Res,
   UseGuards,
 } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -49,6 +51,7 @@ import {
   SplitDefendantExistsGuard,
 } from '../defendant'
 import { Case, Defendant, Subpoena } from '../repository'
+import { CreateSubpoenasDto } from './dto/createSubpoenas.dto'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import {
   SubpoenaExistsGuard,
@@ -56,7 +59,7 @@ import {
 } from './guards/subpoenaExists.guard'
 import { SubpoenaService } from './subpoena.service'
 
-@Controller('api/case/:caseId/defendant/:defendantId/subpoena')
+@Controller('api/case/:caseId')
 @ApiTags('subpoenas')
 @UseGuards(
   JwtAuthUserGuard,
@@ -74,13 +77,46 @@ export class SubpoenaController {
   ) {}
 
   @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Post('subpoenas')
+  @ApiCreatedResponse({
+    type: Subpoena,
+    isArray: true,
+    description: 'Creates subpoenas for multiple defendants',
+  })
+  async createSubpoenas(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() createSubpoenasDto: CreateSubpoenasDto,
+    @CurrentHttpUser() user: User,
+  ): Promise<Subpoena[]> {
+    this.logger.debug(
+      `Creating subpoenas for defendants ${createSubpoenasDto.defendantIds.join(
+        ', ',
+      )} in case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.subpoenaService.createSubpoenasForDefendants(
+        createSubpoenasDto,
+        transaction,
+        theCase,
+        user,
+      ),
+    )
+  }
+
+  @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
     districtCourtJudgeRule,
     districtCourtAssistantRule,
     districtCourtRegistrarRule,
   )
-  @Get(':subpoenaId')
+  @Get('defendant/:defendantId/subpoena/:subpoenaId')
   @UseGuards(DefendantExistsGuard, SubpoenaExistsGuard)
   @ApiOkResponse({
     type: Subpoena,
@@ -118,7 +154,10 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get(['', ':subpoenaId/pdf'])
+  @Get([
+    'defendant/:defendantId/subpoena',
+    'defendant/:defendantId/subpoena/:subpoenaId/pdf',
+  ])
   // Strictly speaking, only district court users need access to
   // split case defendants' subpoenas
   // However, giving prosecution users access does not pose a security risk
@@ -169,7 +208,7 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get(':subpoenaId/serviceCertificate')
+  @Get('defendant/:defendantId/subpoena/:subpoenaId/serviceCertificate')
   // Strictly speaking, only district court users need access to
   // split case defendants' subpoena service certificates
   // However, giving prosecution users access does not pose a security risk

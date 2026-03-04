@@ -28,7 +28,10 @@ export const overviewStatistics = buildSection({
             const carsOnDayRateLastMonth = safeRates.length
 
             return [
-              [m.overview.registeredCount, carsOnDayRateLastMonth.toString()],
+              [
+                m.overview.carsThatRequireAnswers,
+                carsOnDayRateLastMonth.toString(),
+              ],
             ]
           },
         }),

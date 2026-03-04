@@ -30,6 +30,7 @@ import { HealthDirectorateResponse } from './dto/response.dto'
 import {
   mapAppointmentStatus,
   mapStatusIdToColor,
+  mapReferralStatusValueToStatus,
   mapVaccinationStatus,
 } from './mappers/basicInformationMapper'
 import {
@@ -240,6 +241,7 @@ export class HealthDirectorateService {
           createdDate: item.createdDate,
           validUntilDate: item.validUntilDate,
           stateDisplay: item.statusDisplay,
+          status: mapReferralStatusValueToStatus(item.statusValue),
           reason: item.reasonForReferral,
           diagnoses: item.diagnoses?.join(', '),
           fromContactInfo: item.fromContactInfo,

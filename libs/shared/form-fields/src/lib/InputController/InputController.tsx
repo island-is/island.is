@@ -41,6 +41,7 @@ interface Props {
   readOnly?: boolean
   rightAlign?: boolean
   thousandSeparator?: boolean
+  decimalScale?: number
   allowNegative?: boolean
   maxLength?: number
   loading?: boolean
@@ -115,6 +116,7 @@ export const InputController = forwardRef(
       setOnChange,
       tooltip,
       allowNegative,
+      decimalScale,
     } = props
     const formContext = useFormContext()
 
@@ -239,6 +241,7 @@ export const InputController = forwardRef(
             required={required}
             decimalSeparator={thousandSeparator ? ',' : undefined}
             thousandSeparator={thousandSeparator ? '.' : undefined}
+            decimalScale={decimalScale}
             isNumericString={thousandSeparator}
             getInputRef={ref}
             {...props}
