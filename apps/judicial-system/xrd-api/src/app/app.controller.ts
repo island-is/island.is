@@ -56,13 +56,16 @@ export class AppController {
   }
 
   @UseInterceptors(EventInterceptor)
-  @Post('case/v2')
-  @ApiCreatedResponse({ type: Case, description: 'Creates a new case (v2, accused fetched separately)' })
+  @Post('case/create')
+  @ApiCreatedResponse({
+    type: Case,
+    description: 'Creates a new case (accused fetched separately)',
+  })
   async createV2(@Body() caseToCreate: CreateCaseV2Dto): Promise<Case> {
-    this.logger.debug('Creating a case (v2)')
+    this.logger.debug('Creating a case')
 
     return this.appService.createV2(caseToCreate).then((createdCase) => {
-      this.logger.info(`Case ${createdCase.id} created (v2)`)
+      this.logger.info(`Case ${createdCase.id} created`)
 
       return createdCase
     })
