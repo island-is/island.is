@@ -139,7 +139,8 @@ export class CaseTableService {
         type === CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS
       ) {
         return (defendant: Defendant) =>
-          Boolean(defendant.verdicts?.[0].isAcquittedByPublicProsecutionOffice)
+          // Only the latest verdict is relevant
+          Boolean(defendant.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
       }
 
       const reviewedTypes = [
