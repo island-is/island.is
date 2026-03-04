@@ -13,7 +13,8 @@ import {
 
 export type SmsQueueMessage = {
   messageId: string
-  notificationId?: number
+  userNotificationId?: number
+  actorNotificationId?: number
   mobilePhoneNumber: string
   smsContent: string
 }
@@ -35,7 +36,13 @@ export class SmsWorkerService {
 
   public async run() {
     await this.worker.run<SmsQueueMessage>(async (message): Promise<void> => {
-      const { messageId, mobilePhoneNumber, smsContent } = message
+      const {
+        messageId,
+        userNotificationId,
+        actorNotificationId,
+        mobilePhoneNumber,
+        smsContent,
+      } = message
 
       this.logger.info('SMS worker received message', { messageId })
 
@@ -43,16 +50,20 @@ export class SmsWorkerService {
 
       this.logger.info('SMS notification sent', { messageId })
 
-      try {
-        await this.notificationDeliveryModel.create({
-          messageId,
-          channel: NotificationChannel.Sms,
-        })
-      } catch (error) {
-        this.logger.error('Error writing SMS delivery record to db', {
-          error,
-          messageId,
-        })
+      if (userNotificationId) {
+        try {
+          await this.notificationDeliveryModel.create({
+            userNotificationId,
+            actorNotificationId,
+            channel: NotificationChannel.Sms,
+            sentTo: mobilePhoneNumber,
+          })
+        } catch (error) {
+          this.logger.error('Error writing SMS delivery record to db', {
+            error,
+            messageId,
+          })
+        }
       }
     })
   }

@@ -17,7 +17,8 @@ import {
 
 export type EmailQueueMessage = {
   messageId: string
-  notificationId?: number
+  userNotificationId?: number
+  actorNotificationId?: number
   recipientEmail: string
   fullName: string
   isEnglish: boolean
@@ -167,6 +168,8 @@ export class EmailWorkerService {
     await this.worker.run<EmailQueueMessage>(async (message): Promise<void> => {
       const {
         messageId,
+        userNotificationId,
+        actorNotificationId,
         recipientEmail,
         fullName,
         isEnglish,
@@ -188,16 +191,20 @@ export class EmailWorkerService {
 
       this.logger.info('Email notification sent', { messageId })
 
-      try {
-        await this.notificationDeliveryModel.create({
-          messageId,
-          channel: NotificationChannel.Email,
-        })
-      } catch (error) {
-        this.logger.error('Error writing email delivery record to db', {
-          error,
-          messageId,
-        })
+      if (userNotificationId) {
+        try {
+          await this.notificationDeliveryModel.create({
+            userNotificationId,
+            actorNotificationId,
+            channel: NotificationChannel.Email,
+            sentTo: recipientEmail,
+          })
+        } catch (error) {
+          this.logger.error('Error writing email delivery record to db', {
+            error,
+            messageId,
+          })
+        }
       }
     })
   }

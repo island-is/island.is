@@ -204,12 +204,23 @@ export class NotificationsWorkerService {
     ])
 
     // Phase 2: enqueue everything together
-    const notificationId = dbRecord?.id
     const enqueues: Promise<unknown>[] = []
     if (emailPayload)
-      enqueues.push(this.emailQueue.add({ ...emailPayload, notificationId }))
+      enqueues.push(
+        this.emailQueue.add({
+          ...emailPayload,
+          userNotificationId: dbRecord?.userNotificationId,
+          actorNotificationId: dbRecord?.id,
+        }),
+      )
     if (smsPayload)
-      enqueues.push(this.smsQueue.add({ ...smsPayload, notificationId }))
+      enqueues.push(
+        this.smsQueue.add({
+          ...smsPayload,
+          userNotificationId: dbRecord?.userNotificationId,
+          actorNotificationId: dbRecord?.id,
+        }),
+      )
     await Promise.all(enqueues)
   }
 
@@ -385,15 +396,24 @@ export class NotificationsWorkerService {
     ]
     if (pushPayload)
       enqueues.push(
-        this.pushQueue.add({ ...pushPayload, notificationId: dbRecord?.id }),
+        this.pushQueue.add({
+          ...pushPayload,
+          userNotificationId: dbRecord?.id,
+        }),
       )
     if (emailPayload)
       enqueues.push(
-        this.emailQueue.add({ ...emailPayload, notificationId: dbRecord?.id }),
+        this.emailQueue.add({
+          ...emailPayload,
+          userNotificationId: dbRecord?.id,
+        }),
       )
     if (smsPayload)
       enqueues.push(
-        this.smsQueue.add({ ...smsPayload, notificationId: dbRecord?.id }),
+        this.smsQueue.add({
+          ...smsPayload,
+          userNotificationId: dbRecord?.id,
+        }),
       )
     await Promise.all(enqueues)
   }
@@ -410,7 +430,7 @@ export class NotificationsWorkerService {
     documentNotifications?: boolean | null
     message: CreateHnippNotificationDto
     locale: Locale
-  }): Promise<Omit<PushQueueMessage, 'notificationId'> | null> {
+  }): Promise<Omit<PushQueueMessage, 'userNotificationId' | 'actorNotificationId'> | null> {
     if (isCompany(nationalId) || !documentNotifications) {
       this.logger.info('Skipping push notification', { messageId })
       return null
@@ -441,7 +461,7 @@ export class NotificationsWorkerService {
     formattedTemplate: HnippTemplate
     locale: Locale
     subjectId?: string
-  }): Promise<Omit<EmailQueueMessage, 'notificationId'> | null> {
+  }): Promise<Omit<EmailQueueMessage, 'userNotificationId' | 'actorNotificationId'> | null> {
     const enabled = await this.featureFlagService.getValue(
       Features.isNotificationEmailWorkerEnabled,
       false,
@@ -481,7 +501,7 @@ export class NotificationsWorkerService {
     fullName: string
     onBehalfOf?: string
     locale: Locale
-  }): Promise<Omit<SmsQueueMessage, 'notificationId'> | null> {
+  }): Promise<Omit<SmsQueueMessage, 'userNotificationId' | 'actorNotificationId'> | null> {
     const enabled = await this.featureFlagService.getValue(
       Features.isSendSmsNotificationsEnabled,
       false,
@@ -678,16 +698,6 @@ export class NotificationsWorkerService {
     }
     const identity = await this.getPersonIdentity(nationalId)
     return identity?.birtNafn || identity?.fulltNafn || ''
-  }
-
-  private async getShortName(nationalId: string): Promise<string> {
-    if (isCompany(nationalId)) {
-      return this.getCompanyName(nationalId)
-    }
-    const identity = await this.getPersonIdentity(nationalId)
-    return (
-      identity?.eiginNafn || identity?.birtNafn || identity?.fulltNafn || ''
-    )
   }
 
   private async getNames(

@@ -21,7 +21,7 @@ export enum NotificationChannel {
 @Table({
   tableName: 'notification_delivery',
   timestamps: false,
-  indexes: [{ fields: ['message_id'] }],
+  indexes: [{ fields: ['user_notification_id'] }],
 })
 export class NotificationDelivery extends Model<
   InferAttributes<NotificationDelivery>,
@@ -37,11 +37,25 @@ export class NotificationDelivery extends Model<
   id!: CreationOptional<number>
 
   @Column({
-    type: DataType.UUID,
+    type: DataType.INTEGER,
     allowNull: false,
-    field: 'message_id',
+    field: 'user_notification_id',
   })
-  messageId!: string
+  userNotificationId!: number
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+    field: 'actor_notification_id',
+  })
+  actorNotificationId!: CreationOptional<number | null>
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'sent_to',
+  })
+  sentTo!: string
 
   @Column({
     type: DataType.ENUM(...Object.values(NotificationChannel)),

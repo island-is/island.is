@@ -9,12 +9,20 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true,
       },
-      message_id: {
-        type: Sequelize.UUID,
+      user_notification_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
+      },
+      actor_notification_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
       },
       channel: {
         type: Sequelize.ENUM('email', 'sms', 'push'),
+        allowNull: false,
+      },
+      sent_to: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       created: {
@@ -24,15 +32,13 @@ module.exports = {
       },
     })
 
-    await queryInterface.addIndex('notification_delivery', ['message_id'], {
-      name: 'notification_delivery_message_id_idx',
-    })
-
-    await queryInterface.addConstraint('notification_delivery', {
-      fields: ['message_id', 'channel'],
-      type: 'unique',
-      name: 'notification_delivery_message_id_channel_unique',
-    })
+    await queryInterface.addIndex(
+      'notification_delivery',
+      ['user_notification_id'],
+      {
+        name: 'notification_delivery_user_notification_id_idx',
+      },
+    )
   },
 
   async down(queryInterface) {
