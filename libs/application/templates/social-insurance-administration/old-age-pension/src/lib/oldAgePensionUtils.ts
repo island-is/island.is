@@ -584,9 +584,15 @@ export const determineNameFromApplicationAnswers = (
     : oldAgePensionFormMessage.shared.applicationTitle
 }
 
-// If income plan table has no income > 0, show alert and question to confirm that applicant has no other income. 
+// If income plan table has no income > 0, show alert and question to confirm that applicant has no other income.
 // This is to prevent applicants from submitting an income plan with 0 income by mistake.
-export const noOtherIncomeConfirmationShowAlertAndQuestion = (answers: FormValue): boolean => {
-  const incomePlan = getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
-  return incomePlan.length > 0 && incomePlan.every((income) => Number(income.incomePerYear) === 0)
+export const noOtherIncomeConfirmationShowAlertAndQuestion = (
+  answers: FormValue,
+): boolean => {
+  const incomePlan =
+    getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
+  return (
+    incomePlan.length > 0 &&
+    incomePlan.every((income) => Number(income.incomePerYear) === 0)
+  )
 }
