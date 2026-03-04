@@ -20,8 +20,7 @@ import type { Locale } from '@island.is/shared/types'
 
 import { PermitInput } from '.././dto/permit.input'
 import { HealthDirectorateService } from '.././health-directorate.service'
-import { Countries } from '.././models/permits/country.model'
-import { PermitReturn, Permits } from '.././models/permits/permits'
+import { Countries, PermitReturn, Permits } from '.././models/permits'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
