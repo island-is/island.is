@@ -80,6 +80,15 @@ export class FjsCharge extends Model<
     'unpaid' | 'paid' | 'cancelled' | 'recreated' | 'recreatedAndPaid'
   >
 
+  @ApiProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    field: 'is_deleted',
+  })
+  isDeleted!: CreationOptional<boolean>
+
   @CreatedAt
   @Column({
     type: DataType.DATE,
