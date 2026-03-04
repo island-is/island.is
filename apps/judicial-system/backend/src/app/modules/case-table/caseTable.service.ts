@@ -135,6 +135,13 @@ export class CaseTableService {
     })
 
     const getDefendantFilter = (type: CaseTableType) => {
+      if (
+        type === CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS
+      ) {
+        return (defendant: Defendant) =>
+          Boolean(defendant.verdicts?.[0].isAcquittedByPublicProsecutionOffice)
+      }
+
       const reviewedTypes = [
         CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
         CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
@@ -169,6 +176,7 @@ export class CaseTableService {
       }
 
       const filteredDefendants = caseItem.defendants.filter(filter)
+      console.log(caseItem.defendants)
 
       return filteredDefendants.length > 0
         ? filteredDefendants.map((defendant) => ({
@@ -180,6 +188,7 @@ export class CaseTableService {
 
     const getDisplayCases = (casesToDisplay: Case[]): Case[] => {
       if (isPublicProsecutionOfficeUser(user)) {
+        console.log(casesToDisplay)
         return casesToDisplay.flatMap((caseItem) =>
           expandCaseWithDefendants(caseItem, getDefendantFilter(type)),
         )
