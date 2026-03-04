@@ -53,7 +53,9 @@ export const NumberInput = ({ item, dispatch }: Props) => {
               const raw = e.target.value
 
               // Keep empty as empty, otherwise coerce to an integer
-              const nextValue = raw === '' ? '' : parseInt(raw, 10)
+              const parsed = parseInt(raw, 10)
+              const nextValue =
+                raw === '' ? '' : Number.isNaN(parsed) ? '' : parsed
 
               field.onChange(nextValue)
 
@@ -62,11 +64,11 @@ export const NumberInput = ({ item, dispatch }: Props) => {
                   type: 'SET_NUMBER',
                   payload: {
                     id: item.id,
-                    value: raw === '' ? null : nextValue,
+                    value: nextValue === '' ? null : nextValue,
                   },
                 })
               }
-              if (raw !== '') trigger(item.id)
+              if (nextValue !== '') trigger(item.id)
             }}
             onBlur={(e) => {
               if (e.target.value === null || e.target.value === '') {
