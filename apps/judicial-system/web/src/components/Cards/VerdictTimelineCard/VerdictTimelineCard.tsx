@@ -311,9 +311,10 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                 },
               ]
             : []),
-          ...((!defendant.isSentToPrisonAdmin &&
+          ...(!verdict?.isAcquittedByPublicProsecutionOffice &&
+          ((!defendant.isSentToPrisonAdmin &&
             !defendant.indictmentReviewDecision) ||
-          (!isFine && !verdict?.serviceDate && isServiceRequired)
+            (!isFine && !verdict?.serviceDate && isServiceRequired))
             ? [
                 {
                   title: defendant.isSentToPrisonAdmin
