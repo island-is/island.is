@@ -55,6 +55,14 @@ export const PaymentPending: FC<
       })
     }
 
+    console.log('getRedirectStatus()', getRedirectStatus())
+    console.log('paymentStatus', paymentStatus)
+    console.log('href', window.document.location.href)
+    console.log(
+      'href URL',
+      new URL(window.document.location.href).pathname.split('/'),
+    )
+
     if (hasSubmitted.current) return
     if (getRedirectStatus() === 'cancelled') {
       stopPolling()
@@ -108,6 +116,24 @@ export const PaymentPending: FC<
         <Box>
           <Button onClick={() => refetch?.()}>
             {msg(coreErrorMessages.paymentSubmitRetryButtonCaption)}
+          </Button>
+          <Button
+            onClick={() =>
+              submitCancelApplication().then(() => {
+                refetch?.()
+              })
+            }
+          >
+            {'Refund payment and adjust application'}
+          </Button>
+          <Button
+            onClick={() =>
+              submitCancelApplication().then(() => {
+                window.location.href = '/umsoknir'
+              })
+            }
+          >
+            {'Refund payment and cancel application'}
           </Button>
         </Box>
       </Box>
