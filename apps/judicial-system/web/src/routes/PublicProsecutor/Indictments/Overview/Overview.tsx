@@ -106,7 +106,10 @@ export const Overview = () => {
   )
 
   const { verdictStatusAlerts, verdictTimelineCards } = useMemo(() => {
-    return (workingCase.defendants || []).reduce(
+    return (workingCase.defendants || []).reduce<{
+      verdictStatusAlerts: JSX.Element[]
+      verdictTimelineCards: JSX.Element[]
+    }>(
       (acc, defendant) => {
         const { verdict } = defendant
 
@@ -144,8 +147,8 @@ export const Overview = () => {
         return acc
       },
       {
-        verdictStatusAlerts: [] as JSX.Element[],
-        verdictTimelineCards: [] as JSX.Element[],
+        verdictStatusAlerts: [],
+        verdictTimelineCards: [],
       },
     )
   }, [workingCase.defendants])
