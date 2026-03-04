@@ -86,7 +86,8 @@ export const generateVerificationRequestOptions = ({
       amount: iskToAur(amount),
       currency: 'ISK',
       // authenticationUrl: `${webOrigin}/api/card/callback`,
-      authenticationUrl: 'https://webhook.site/5d77bee0-bccc-43a1-8ad3-11172639a9c7',
+      authenticationUrl:
+        'https://webhook.site/5d77bee0-bccc-43a1-8ad3-11172639a9c7',
       MD: md,
       systemCalling,
     }),
