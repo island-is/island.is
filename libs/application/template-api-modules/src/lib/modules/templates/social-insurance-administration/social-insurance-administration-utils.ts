@@ -51,6 +51,7 @@ import {
   Employment,
   getApplicationAnswers as getOAPApplicationAnswers,
   getApplicationExternalData as getOAPApplicationExternalData,
+  incomePlanHasOnlyZeroIncome,
   RatioType,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import {
@@ -87,6 +88,7 @@ export const transformApplicationToOldAgePensionDTO = (
     employmentStatus,
     employers,
     incomePlan,
+    noOtherIncomeConfirmation,
   } = getOAPApplicationAnswers(application.answers)
   const {
     bankInfo,
@@ -160,6 +162,9 @@ export const transformApplicationToOldAgePensionDTO = (
       }),
     }),
     uploads,
+    ...(incomePlanHasOnlyZeroIncome(incomePlan) && {
+      awarenessOfIncomeDeclaration: noOtherIncomeConfirmation === YES,
+    }),
   }
 
   return oldAgePensionDTO

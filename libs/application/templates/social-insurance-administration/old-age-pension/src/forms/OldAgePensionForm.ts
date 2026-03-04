@@ -5,6 +5,7 @@ import {
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
+  buildHiddenInput,
   buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
@@ -47,7 +48,6 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   incomeTypeValueModifier,
-  currencyValueModifier,
   equalIncomePerMonthValueModifier,
   incomePerYearValueModifier,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
@@ -72,7 +72,7 @@ import {
   getAvailableMonths,
   getAvailableYears,
   isEarlyRetirement,
-  noOtherIncomeConfirmationShowAlertAndQuestion,
+  incomePlanHasOnlyZeroIncome,
 } from '../lib/oldAgePensionUtils'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 
@@ -682,6 +682,15 @@ export const OldAgePensionForm: Form = buildForm({
                     rows: ['incomeType', 'incomePerYear', 'currency'],
                   },
                 }),
+                buildHiddenInput({
+                  id: 'incomePlan.shouldShow',
+                  defaultValue: (application: Application) => {
+                    const { incomePlan } = getApplicationAnswers(
+                      application.answers,
+                    )
+                    return incomePlanHasOnlyZeroIncome(incomePlan)
+                  },
+                }),
                 buildAlertMessageField({
                   id: 'incomePlan.alertMessage',
                   title: socialInsuranceAdministrationMessage.shared.alertTitle,
@@ -691,7 +700,10 @@ export const OldAgePensionForm: Form = buildForm({
                   doesNotRequireAnswer: true,
                   alertType: 'warning',
                   marginTop: 4,
-                  condition: noOtherIncomeConfirmationShowAlertAndQuestion,
+                  condition: (answers) => {
+                    const { incomePlan } = getApplicationAnswers(answers)
+                    return incomePlanHasOnlyZeroIncome(incomePlan)
+                  },
                 }),
                 buildRadioField({
                   id: 'incomePlan.noOtherIncomeConfirmation',
@@ -700,7 +712,10 @@ export const OldAgePensionForm: Form = buildForm({
                       .noOtherIncomeConfirmation,
                   options: getYesNoOptions(),
                   width: 'half',
-                  condition: noOtherIncomeConfirmationShowAlertAndQuestion,
+                  condition: (answers) => {
+                    const { incomePlan } = getApplicationAnswers(answers)
+                    return incomePlanHasOnlyZeroIncome(incomePlan)
+                  },
                 }),
               ],
             }),

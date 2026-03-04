@@ -15,7 +15,6 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
   Application,
-  FormValue,
   NationalRegistryResidenceHistory,
 } from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
@@ -586,11 +585,9 @@ export const determineNameFromApplicationAnswers = (
 
 // If income plan table has no income > 0, show alert and question to confirm that applicant has no other income.
 // This is to prevent applicants from submitting an income plan with 0 income by mistake.
-export const noOtherIncomeConfirmationShowAlertAndQuestion = (
-  answers: FormValue,
+export const incomePlanHasOnlyZeroIncome = (
+  incomePlan: IncomePlanRow[],
 ): boolean => {
-  const incomePlan =
-    getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
   return (
     incomePlan.length > 0 &&
     incomePlan.every((income) => Number(income.incomePerYear) === 0)

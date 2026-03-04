@@ -10,6 +10,7 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { StaticTableFormField } from '@island.is/application/ui-fields'
 import { FieldComponents, FieldTypes } from '@island.is/application/types'
+import { incomePlanHasOnlyZeroIncome } from '../../../lib/oldAgePensionUtils'
 
 export const IncomePlan = ({
   application,
@@ -56,7 +57,7 @@ export const IncomePlan = ({
             />
           </Box>
         </GridColumn>
-        {noOtherIncomeConfirmation && (
+        {incomePlanHasOnlyZeroIncome(incomePlan) && (
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <RadioValue
               label={formatMessage(

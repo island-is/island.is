@@ -47,6 +47,7 @@ import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
   getApplicationExternalData,
+  incomePlanHasOnlyZeroIncome,
 } from './oldAgePensionUtils'
 import {
   Actions,
@@ -501,6 +502,16 @@ const OldAgePensionTemplate: ApplicationTemplate<
 
         if (paymentInfo?.bankAccountType === BankAccountType.FOREIGN) {
           unset(application.answers, 'paymentInfo.bank')
+        }
+
+        return context
+      }),
+      clearNoOtherIncomeConfirmation: assign((context) => {
+        const { application } = context
+        const { incomePlan } = getApplicationAnswers(application.answers)
+
+        if (!incomePlanHasOnlyZeroIncome(incomePlan)) {
+          unset(application.answers, 'noOtherIncomeConfirmation')
         }
 
         return context
