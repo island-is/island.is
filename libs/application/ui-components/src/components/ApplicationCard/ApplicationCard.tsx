@@ -60,7 +60,7 @@ export const ApplicationCard = ({
   focused = false,
   shouldShowCardButtons = true,
 }: ApplicationCardProps) => {
-  const { status, actionCard, modified } = application
+  const { status, actionCard, modified, pruneAt } = application
   const { lang: locale, formatMessage } = useLocale()
   const { openApplication: defaultOpen, slug } = useOpenApplication(application)
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
@@ -75,6 +75,13 @@ export const ApplicationCard = ({
     formattedDate,
     shouldShowCardButtons ? openApplication : undefined,
   )
+
+  const daysRemaining =
+    pruneAt && actionCard?.displayPruneAt
+      ? Math.ceil(
+          (new Date(pruneAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+        )
+      : undefined
 
   const shouldRenderProgress = status === 'draft'
   const showHistory =
@@ -108,6 +115,24 @@ export const ApplicationCard = ({
           <Box display="flex" justifyContent="center">
             <Text variant="small">
               {format(new Date(modified), formattedDate)}
+              {daysRemaining !== undefined && daysRemaining > 0 && (
+                <>
+                  {' · '}
+                  <Text
+                    as="span"
+                    variant="small"
+                    color={daysRemaining < 7 ? 'red400' : 'dark300'}
+                  >
+                    {locale === 'is'
+                      ? `${daysRemaining} ${
+                          daysRemaining === 1 ? 'dagur' : 'dagar'
+                        } eftir`
+                      : `${daysRemaining} ${
+                          daysRemaining === 1 ? 'day' : 'days'
+                        } remaining`}
+                  </Text>
+                </>
+              )}
             </Text>
           </Box>
         </Box>
