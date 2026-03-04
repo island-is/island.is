@@ -47,7 +47,7 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS,
       route: 'syknudomar',
       title: 'Sýknudómar',
-      description: 'Mál sem hafa verið merkt sem sýknudómar.',
+      description: 'Yfirlesnir sýknudómar.',
     },
   ],
 }
