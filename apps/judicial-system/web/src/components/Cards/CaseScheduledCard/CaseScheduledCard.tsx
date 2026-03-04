@@ -4,8 +4,8 @@ import { useIntl } from 'react-intl'
 import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
-import { Institution } from '../../graphql/schema'
-import BlueBoxWithIcon from './BlueBoxWithIcon'
+import { Institution } from '../../../graphql/schema'
+import IconCard from '../IconCard/IconCard'
 import { strings } from './CaseScheduledCard.strings'
 
 interface Props {
@@ -20,7 +20,7 @@ const CaseScheduledCard: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   return (
-    <BlueBoxWithIcon
+    <IconCard
       data={[
         {
           title: title ?? formatMessage(strings.scheduled),
