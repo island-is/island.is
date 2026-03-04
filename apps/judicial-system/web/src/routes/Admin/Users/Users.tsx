@@ -159,7 +159,7 @@ export const Users = () => {
               </Box>
             </tr>
           </thead>
-          <tbody>
+          <tbody className={cn(styles.tbody)}>
             {users.map((user, i) => (
               <tr
                 key={i}
@@ -171,7 +171,11 @@ export const Users = () => {
                 }}
               >
                 <Box component="td" paddingX={3} paddingY={2}>
-                  <Text as="span">{user.name}</Text>
+                  <Text>{user.name}</Text>
+                  {user.email && <Text variant="small">{user.email}</Text>}
+                  {user.mobileNumber && (
+                    <Text variant="small">{user.mobileNumber}</Text>
+                  )}
                 </Box>
                 <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{formatNationalId(user.nationalId)}</Text>

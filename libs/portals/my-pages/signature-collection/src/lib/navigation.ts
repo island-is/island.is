@@ -5,6 +5,7 @@ import { PortalNavigationItem } from '@island.is/portals/core'
 export const companySignatureCollectionNavigation: PortalNavigationItem = {
   name: m.signatureCollectionLists,
   searchHide: true,
+  navHide: true,
   path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
   icon: {
     icon: 'receipt',
