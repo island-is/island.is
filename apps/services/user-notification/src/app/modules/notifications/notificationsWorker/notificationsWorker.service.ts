@@ -430,7 +430,10 @@ export class NotificationsWorkerService {
     documentNotifications?: boolean | null
     message: CreateHnippNotificationDto
     locale: Locale
-  }): Promise<Omit<PushQueueMessage, 'userNotificationId' | 'actorNotificationId'> | null> {
+  }): Promise<Omit<
+    PushQueueMessage,
+    'userNotificationId' | 'actorNotificationId'
+  > | null> {
     if (isCompany(nationalId) || !documentNotifications) {
       this.logger.info('Skipping push notification', { messageId })
       return null
@@ -461,7 +464,10 @@ export class NotificationsWorkerService {
     formattedTemplate: HnippTemplate
     locale: Locale
     subjectId?: string
-  }): Promise<Omit<EmailQueueMessage, 'userNotificationId' | 'actorNotificationId'> | null> {
+  }): Promise<Omit<
+    EmailQueueMessage,
+    'userNotificationId' | 'actorNotificationId'
+  > | null> {
     const enabled = await this.featureFlagService.getValue(
       Features.isNotificationEmailWorkerEnabled,
       false,
@@ -501,7 +507,10 @@ export class NotificationsWorkerService {
     fullName: string
     onBehalfOf?: string
     locale: Locale
-  }): Promise<Omit<SmsQueueMessage, 'userNotificationId' | 'actorNotificationId'> | null> {
+  }): Promise<Omit<
+    SmsQueueMessage,
+    'userNotificationId' | 'actorNotificationId'
+  > | null> {
     const enabled = await this.featureFlagService.getValue(
       Features.isSendSmsNotificationsEnabled,
       false,
