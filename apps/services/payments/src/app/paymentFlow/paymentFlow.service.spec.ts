@@ -1,12 +1,16 @@
 import { BadRequestException } from '@nestjs/common'
+import { getModelToken } from '@nestjs/sequelize'
 
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { TestApp } from '@island.is/testing/nest'
+import { v4 as uuid } from 'uuid'
 
 import { setupTestApp } from '../../../test/setup'
 import { PaymentMethod, PaymentStatus } from '../../types'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
+import { FjsCharge } from './models/fjsCharge.model'
+import { PaymentFlow } from './models/paymentFlow.model'
 import { PaymentFlowService } from './paymentFlow.service'
 
 // A helper type to satisfy the linter for partial mocks.
@@ -257,6 +261,75 @@ describe('PaymentFlowService', () => {
         { isDeleted: true },
         { where: { id: paymentFlowId, isDeleted: false } },
       )
+    })
+  })
+
+  describe('createInvoicePaymentConfirmation', () => {
+    it('should throw PaymentFlowNotFound when charge is not found (e.g. flow soft-deleted)', async () => {
+      const paymentFlowId = uuid()
+      const receptionId = `reception-${uuid()}`
+
+      const fjsChargeModel = (service as TestPartial).fjsChargeModel
+      jest.spyOn(fjsChargeModel, 'findOne').mockResolvedValue(null)
+
+      await expect(
+        service.createInvoicePaymentConfirmation(paymentFlowId, receptionId),
+      ).rejects.toMatchObject({
+        response: { message: PaymentServiceCode.PaymentFlowNotFound },
+      })
+
+      expect(fjsChargeModel.findOne).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            paymentFlowId,
+            receptionId,
+            isDeleted: false,
+          },
+          include: [
+            {
+              model: PaymentFlow,
+              where: { isDeleted: false },
+              required: true,
+              attributes: [],
+            },
+          ],
+        }),
+      )
+    })
+
+    it('should throw PaymentFlowNotFound when payment flow is soft-deleted (real DB query)', async () => {
+      const paymentFlowModel = app.get<typeof PaymentFlow>(
+        getModelToken(PaymentFlow),
+      )
+      const fjsChargeModel = app.get<typeof FjsCharge>(getModelToken(FjsCharge))
+
+      const paymentFlowId = uuid()
+      const receptionId = `reception-${uuid()}`
+
+      await paymentFlowModel.create({
+        id: paymentFlowId,
+        payerNationalId: '1234567890',
+        availablePaymentMethods: [PaymentMethod.CARD, PaymentMethod.INVOICE],
+        organisationId: '5534567890',
+      } as TestPartial)
+
+      await fjsChargeModel.create({
+        paymentFlowId,
+        receptionId,
+        user4: 'user4-value',
+        status: 'unpaid',
+      })
+
+      await paymentFlowModel.update(
+        { isDeleted: true },
+        { where: { id: paymentFlowId } },
+      )
+
+      await expect(
+        service.createInvoicePaymentConfirmation(paymentFlowId, receptionId),
+      ).rejects.toMatchObject({
+        response: { message: PaymentServiceCode.PaymentFlowNotFound },
+      })
     })
   })
 })

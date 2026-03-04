@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -46,6 +47,9 @@ export class FjsCharge extends Model<
     field: 'payment_flow_id',
   })
   paymentFlowId!: string
+
+  @BelongsTo(() => PaymentFlow)
+  paymentFlow?: PaymentFlow
 
   @ApiProperty()
   @Column({

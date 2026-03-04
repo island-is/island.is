@@ -739,6 +739,9 @@ export class PaymentFlowService {
    * This method is idempotent - calling it multiple times with the same parameters
    * will not create duplicate fulfillments.
    *
+   * Soft-deleted flows are rejected by findFjsChargeByReceptionId (charge lookup
+   * requires a non-deleted payment flow).
+   *
    * @param paymentFlowId - The payment flow ID
    * @param receptionId - The FJS reception ID from the callback
    * @returns Promise<void>
@@ -758,6 +761,7 @@ export class PaymentFlowService {
 
   /**
    * Finds an FJS charge by reception ID and validates it belongs to the payment flow.
+   * Only returns a charge when both the charge and the referenced payment flow are not soft-deleted.
    * This provides an additional security check in case of token issues.
    */
   private async findFjsChargeByReceptionId(
@@ -766,6 +770,14 @@ export class PaymentFlowService {
   ) {
     const fjsCharge = await this.fjsChargeModel.findOne({
       where: { paymentFlowId, receptionId, isDeleted: false },
+      include: [
+        {
+          model: PaymentFlow,
+          where: { isDeleted: false },
+          required: true,
+          attributes: [],
+        },
+      ],
     })
 
     if (!fjsCharge) {
