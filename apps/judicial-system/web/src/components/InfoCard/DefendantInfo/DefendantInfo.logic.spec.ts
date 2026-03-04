@@ -186,7 +186,7 @@ describe('DefendantInfo', () => {
       })
     })
 
-    test('should return convicted tag when verdict exists and no prior verdict statuses match', () => {
+    test('should return verdict tag when verdict exists and no prior verdict statuses match', () => {
       const tag = getDefendantTagConfig({
         verdict: {
           isAcquittedByPublicProsecutionOffice: false,
@@ -197,7 +197,7 @@ describe('DefendantInfo', () => {
       })
 
       expect(tag).toStrictEqual({
-        key: 'convicted',
+        key: 'verdict',
         label: 'Dómur',
         variant: 'darkerBlue',
       })

@@ -24,6 +24,7 @@ import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
 import { useConnectedCasesQuery } from './connectedCases.generated'
 import {
   getAppealExpirationInfo,
+  getDefendantTagConfig,
   getVerdictViewDateText,
 } from './DefendantInfo.logic'
 import { strings as infoCardStrings } from '../useInfoCardItems.strings'
@@ -159,6 +160,14 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     serviceRequirement: defendant.verdict?.serviceRequirement,
   })
 
+  const defendantTagConfig = getDefendantTagConfig({
+    verdict: defendant.verdict,
+    isPublicProsecutionOffice: isPublicProsecutionOfficeUser(user),
+    isDismissalCase,
+    isCancellationCase,
+    isFineCase,
+  })
+
   return (
     <Box display="flex" justifyContent="spaceBetween">
       <div className={grid({ gap: 1 })}>
@@ -232,58 +241,22 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           />
         )}
       </div>
-      {defendant.verdict ? (
+      {defendantTagConfig && defendant.verdict ? (
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
             initial={{ opacity: 0, y: 3 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            key={
-              defendant.verdict.isAcquittedByPublicProsecutionOffice
-                ? 'acquitted'
-                : defendant.verdict.defendantHasRequestedAppeal
-                ? 'appealRequested'
-                : defendant.verdict.isDefaultJudgement
-                ? 'defaultJudgement'
-                : 'convicted'
-            }
+            key={defendantTagConfig.key}
           >
-            {defendant.verdict.isAcquittedByPublicProsecutionOffice &&
-            isPublicProsecutionOfficeUser(user) ? (
-              <Tag variant="darkerBlue" outlined disabled>
-                Sýknudómur
-              </Tag>
-            ) : defendant.verdict.defendantHasRequestedAppeal &&
-              isPublicProsecutionOfficeUser(user) ? (
-              <Tag variant="darkerBlue" outlined disabled>
-                Áfrýjunarleyfi
-              </Tag>
-            ) : (
-              <Tag
-                variant={
-                  defendant.verdict.isDefaultJudgement ? 'purple' : 'darkerBlue'
-                }
-                outlined
-                disabled
-              >
-                {defendant.verdict.isDefaultJudgement
-                  ? 'Útivistardómur'
-                  : 'Dómur'}
-              </Tag>
-            )}
+            <Tag variant={defendantTagConfig.variant} outlined disabled>
+              {defendantTagConfig.label}
+            </Tag>
           </motion.span>
         </AnimatePresence>
-      ) : isDismissalCase ? (
-        <Tag variant="blue" outlined disabled>
-          Frávísun
-        </Tag>
-      ) : isCancellationCase ? (
-        <Tag variant="rose" outlined disabled>
-          Niðurfelling
-        </Tag>
-      ) : isFineCase ? (
-        <Tag variant="mint" outlined disabled>
-          Viðurlagaákvörðun
+      ) : defendantTagConfig ? (
+        <Tag variant={defendantTagConfig.variant} outlined disabled>
+          {defendantTagConfig.label}
         </Tag>
       ) : null}
     </Box>

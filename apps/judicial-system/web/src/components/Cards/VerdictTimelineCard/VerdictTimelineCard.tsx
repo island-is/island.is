@@ -335,7 +335,8 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               ]
             : []),
           ...(workingCase.indictmentReviewer &&
-          Boolean(defendant.indictmentReviewDecision)
+          Boolean(defendant.indictmentReviewDecision) &&
+          !verdict?.defendantHasRequestedAppeal
             ? [
                 {
                   title: `${
@@ -357,22 +358,26 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                 },
               ]
             : []),
-          {
-            title: `${
-              verdict?.defendantHasRequestedAppeal ? 'Afskrá' : 'Skrá'
-            } áfrýjunarleyfi`,
-            onClick: () => {
-              setAndSendVerdictToServer(
+          ...(!verdict?.isAcquittedByPublicProsecutionOffice
+            ? [
                 {
-                  caseId: workingCase.id,
-                  defendantId: defendant.id,
-                  defendantHasRequestedAppeal:
-                    !verdict?.defendantHasRequestedAppeal,
+                  title: `${
+                    verdict?.defendantHasRequestedAppeal ? 'Afskrá' : 'Skrá'
+                  } áfrýjunarleyfi`,
+                  onClick: () => {
+                    setAndSendVerdictToServer(
+                      {
+                        caseId: workingCase.id,
+                        defendantId: defendant.id,
+                        defendantHasRequestedAppeal:
+                          !verdict?.defendantHasRequestedAppeal,
+                      },
+                      setWorkingCase,
+                    )
+                  },
                 },
-                setWorkingCase,
-              )
-            },
-          },
+              ]
+            : []),
         ]}
       >
         <Box className={styles.container}>

@@ -11,7 +11,7 @@ type VerdictTagKey =
   | 'acquitted'
   | 'appealRequested'
   | 'defaultJudgement'
-  | 'convicted'
+  | 'verdict'
 
 type DefendantVerdictTagInput = {
   isAcquittedByPublicProsecutionOffice?: boolean | null
@@ -106,7 +106,7 @@ export const getDefendantTagConfig = ({
     }
 
     return {
-      key: 'convicted',
+      key: 'verdict',
       label: 'Dómur',
       variant: 'darkerBlue',
     }
