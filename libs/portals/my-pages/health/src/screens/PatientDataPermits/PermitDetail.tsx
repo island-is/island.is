@@ -89,6 +89,20 @@ const PermitDetail: React.FC = () => {
               // >
               //   {formatMessage(messages.downloadPDF)}
               // </Button>,
+              ...(isActive
+                ? [
+                    <Button
+                      key="invalidatePermit"
+                      variant="utility"
+                      icon="eyeOff"
+                      iconType="outline"
+                      size="small"
+                      onClick={() => setModalOpen(true)}
+                    >
+                      {formatMessage(messages.patientDataPermitInvalidate)}
+                    </Button>,
+                  ]
+                : []),
               <Button
                 key="editPermit"
                 variant="utility"
@@ -159,18 +173,6 @@ const PermitDetail: React.FC = () => {
                     {permitTagSelector(permit.status, formatMessage).label}
                   </Tag>
                 ) : undefined
-              }
-              button={
-                isActive
-                  ? {
-                      action: () => setModalOpen(true),
-                      label: formatMessage(
-                        messages.patientDataPermitInvalidate,
-                      ),
-                      type: 'action',
-                      icon: 'arrowForward',
-                    }
-                  : undefined
               }
               loading={loading}
             />
