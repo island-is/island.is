@@ -160,12 +160,11 @@ export const updateAppendixWording = (input: string): string => {
 
 export const formatDate = (date: Date) => {
   const newDate = new Date(date)
-  if (newDate) {
-    const formattedDate = format(new Date(date), 'dd. MMMM yyyy', {
-      locale: is,
-    })
-    return formattedDate.replace(/^0+/, '')
-  } else {
+  if (isNaN(newDate.getTime())) {
     return ''
   }
+  const formattedDate = format(newDate, 'dd. MMMM yyyy', {
+    locale: is,
+  })
+  return formattedDate.replace(/^0+/, '')
 }

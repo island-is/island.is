@@ -36,9 +36,9 @@ export const RegulationPreviewScreen = (props: OJOIFieldBaseProps) => {
     answers: application.answers as unknown as Record<string, unknown>,
   })
 
-  const handleNavigate = (screenId?: string) => {
+  const handleNavigate = async (screenId?: string) => {
     if (draftId) {
-      saveDraft()
+      await saveDraft()
     }
     props.goToScreen?.(screenId ?? '')
   }

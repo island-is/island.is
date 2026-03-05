@@ -27,9 +27,9 @@ export const RegulationContentScreen = (props: OJOIFieldBaseProps) => {
 
   // Sync OJOI answer fields (advert title/html, signature) to the
   // regulation DB when navigating away from this screen.
-  const handleNavigate = (screenId?: string) => {
+  const handleNavigate = async (screenId?: string) => {
     if (draftId) {
-      saveDraft()
+      await saveDraft()
     }
     props.goToScreen?.(screenId ?? '')
   }

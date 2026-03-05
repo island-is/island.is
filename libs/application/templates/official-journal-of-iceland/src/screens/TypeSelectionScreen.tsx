@@ -124,7 +124,6 @@ export const TypeSelectionScreen = ({
                 label={option.label}
                 value={option.value}
                 checked={selected === option.value}
-                onChange={() => handleSelect(option.value)}
                 large
               />
               <Box marginTop={1} paddingLeft={4}>
