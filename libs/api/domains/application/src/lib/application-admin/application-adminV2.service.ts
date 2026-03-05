@@ -11,7 +11,7 @@ import {
   ApplicationTypesAdminInput,
 } from '../application-admin/dto/applications-admin-inputs'
 import {
-  applicationAdminSortByCreated,
+  applicationAdminSortByModified,
   deduplicateInstitutions,
   mapFormSystemApplicationAdmin,
   mapFormSystemApplicationTypeAdmin,
@@ -125,7 +125,7 @@ export class ApplicationAdminV2Service {
     // Merge, sort, and slice to correct page offset
     const offset = (filters.page - 1) * filters.count
     const mergedRows = [...appSystemRows, ...formSystemRows]
-      .sort(applicationAdminSortByCreated)
+      .sort(applicationAdminSortByModified)
       .slice(offset, offset + filters.count)
 
     return {
@@ -205,7 +205,7 @@ export class ApplicationAdminV2Service {
     // Merge, sort, and slice to correct page offset
     const offset = (filters.page - 1) * filters.count
     const mergedRows = [...appSystemRows, ...formSystemRows]
-      .sort(applicationAdminSortByCreated)
+      .sort(applicationAdminSortByModified)
       .slice(offset, offset + filters.count)
 
     return {
