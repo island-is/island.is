@@ -122,68 +122,7 @@ export const InputController = forwardRef(
 
     const renderChildInput = (c: ChildParams & TestSupport) => {
       const { value, onChange, ...props } = c
-      if (currency) {
-        return (
-          <NumberFormat
-            size={size}
-            customInput={Input}
-            id={id}
-            icon={icon ? { name: icon } : undefined}
-            disabled={disabled}
-            readOnly={readOnly}
-            placeholder={placeholder}
-            label={label}
-            data-testid={dataTestId}
-            type="text"
-            decimalSeparator=","
-            backgroundColor={backgroundColor}
-            thousandSeparator="."
-            suffix={suffix ?? ' kr.'}
-            value={value}
-            format={format}
-            maxLength={maxLength}
-            allowNegative={allowNegative}
-            isAllowed={(values) => {
-              const { floatValue } = values
-              return floatValue && max ? floatValue <= max : true
-            }}
-            autoComplete={autoComplete}
-            loading={loading}
-            rightAlign={rightAlign}
-            inputMode={inputMode}
-            onChange={async (
-              e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-            ) => {
-              if (onInputChange) {
-                onInputChange(e)
-              }
-              if (clearOnChange && formContext?.setValue) {
-                clearInputsOnChange(
-                  clearOnChange,
-                  formContext.setValue,
-                  clearOnChangeDefaultValue,
-                )
-              }
-              if (setOnChange) {
-                setInputsOnChange(
-                  typeof setOnChange === 'function'
-                    ? await setOnChange(e?.target?.value)
-                    : setOnChange,
-                  formContext.setValue,
-                )
-              }
-            }}
-            onValueChange={({ value }) => {
-              onChange(value)
-            }}
-            hasError={error !== undefined}
-            errorMessage={error}
-            required={required}
-            getInputRef={ref}
-            {...props}
-          />
-        )
-      } else if (type === 'number') {
+      if (currency || type === 'number') {
         return (
           <NumberFormat
             size={size}
@@ -197,15 +136,15 @@ export const InputController = forwardRef(
             placeholder={placeholder}
             data-testid={dataTestId}
             label={label}
-            suffix={suffix}
+            suffix={suffix ?? (currency ? ' kr.' : undefined)}
             value={value}
             format={format}
             maxLength={maxLength}
             autoComplete={autoComplete}
             loading={loading}
             inputMode={inputMode}
-            max={max}
-            min={min}
+            max={type === 'number' ? max : undefined}
+            min={type === 'number' ? min : undefined}
             allowNegative={allowNegative}
             isAllowed={(values) => {
               const { floatValue } = values
@@ -239,11 +178,12 @@ export const InputController = forwardRef(
             hasError={error !== undefined}
             errorMessage={error}
             required={required}
-            decimalSeparator={thousandSeparator ? ',' : undefined}
-            thousandSeparator={thousandSeparator ? '.' : undefined}
-            decimalScale={decimalScale}
-            isNumericString={thousandSeparator}
+            decimalSeparator={currency || thousandSeparator ? ',' : undefined}
+            thousandSeparator={currency || thousandSeparator ? '.' : undefined}
+            decimalScale={currency ? undefined : decimalScale}
+            isNumericString={currency ? undefined : thousandSeparator}
             getInputRef={ref}
+            type={currency ? 'text' : undefined}
             {...props}
           />
         )
