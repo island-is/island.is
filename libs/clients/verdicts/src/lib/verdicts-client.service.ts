@@ -164,7 +164,7 @@ export class VerdictsClientService {
       court: string
       caseNumber: string
       verdictDate?: Date | null
-      presidentJudge?: { name?: string; title?: string }
+      verdictJudges?: { name?: string; title?: string }[]
       keywords: string[]
       presentings: string
     }[] = []
@@ -177,9 +177,10 @@ export class VerdictsClientService {
           court: goproItem.court?.name ?? '',
           caseNumber: goproItem.caseNumber ?? '',
           verdictDate: goproItem.verdictDate,
-          presidentJudge: goproItem.judges?.find((judge) =>
-            Boolean(judge?.isPresident),
-          ),
+          verdictJudges:
+            goproItem.court?.code !== 'landsrettur'
+              ? goproItem.judges ?? []
+              : [],
           keywords: goproItem.keywords ?? [],
           presentings: goproItem.presentings ?? '',
         })
@@ -196,9 +197,7 @@ export class VerdictsClientService {
           court: supremeCourtItem.court ?? '',
           caseNumber: supremeCourtItem.caseNumber ?? '',
           verdictDate: supremeCourtItem.publishDate,
-          presidentJudge: supremeCourtItem.judges?.find((judge) =>
-            Boolean(judge?.isPresident),
-          ),
+          verdictJudges: [],
           keywords: supremeCourtItem.keywords ?? [],
           presentings: supremeCourtItem.presentings ?? '',
         })
@@ -510,6 +509,7 @@ export class VerdictsClientService {
           court: agenda.court?.name ?? '',
           type: agenda.bookingType ?? '',
           title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
+          caseSubType: agenda.caseSubType ?? '',
         })
       }
     } else {

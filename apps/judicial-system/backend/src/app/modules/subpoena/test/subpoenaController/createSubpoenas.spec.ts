@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { BadRequestException, NotFoundException } from '@nestjs/common'
+import { NotFoundException } from '@nestjs/common'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
 import {

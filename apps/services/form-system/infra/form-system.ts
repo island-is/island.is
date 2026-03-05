@@ -3,7 +3,11 @@ import {
   service,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
-import { Base, Client } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  NationalRegistryB2C,
+} from '../../../../infra/src/dsl/xroad'
 
 const serviceName = 'services-form-system-api'
 const workerName = `${serviceName}-worker`
@@ -35,6 +39,11 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         staging: 'island-is-staging-form-system-presign-bucket',
         prod: 'island-is-prod-form-system-presign-bucket',
       },
+      COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+        dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+        staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+        prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+      },
     })
     .secrets({
       FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX:
@@ -48,12 +57,14 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST',
       SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME',
       SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
-    .xroad(Base, Client)
+    .xroad(Base, Client, NationalRegistryB2C)
     .ingress({
       primary: {
         host: {

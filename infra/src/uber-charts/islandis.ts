@@ -18,6 +18,7 @@ import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/us
 // Payments
 import { serviceSetup as paymentsWebSetup } from '../../../apps/payments/infra/payments'
 import { serviceSetup as paymentsServiceSetup } from '../../../apps/services/payments/infra/payments'
+import { serviceSetupForWorker as paymentsServiceWorkerSetup } from '../../../apps/services/payments/infra/payments'
 
 // Bff's
 import { serviceSetup as bffAdminPortalServiceSetup } from '../../../apps/services/bff/infra/admin-portal.infra'
@@ -86,6 +87,7 @@ const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 const documentsService = serviceDocumentsSetup()
 const servicePortalApi = servicePortalApiSetup()
 const paymentsService = paymentsServiceSetup()
+const paymentsServiceWorker = paymentsServiceWorkerSetup()
 
 const userNotificationService = userNotificationServiceSetup({
   userProfileApi: servicePortalApi,
@@ -316,6 +318,7 @@ export const Services: EnvironmentServices = {
     bffAdminPortalService,
     paymentsWebApp,
     paymentsService,
+    paymentsServiceWorker,
     bffServicePortalService,
     formSystemApi,
     formSystemWorker,

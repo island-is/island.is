@@ -12,6 +12,7 @@ import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { Field } from '../../fields/models/field.model'
 import type { Locale } from '@island.is/shared/types'
+import { ApplicationAdminDto } from './dto/admin/applicationAdmin.dto'
 
 @Injectable()
 export class ApplicationMapper {
@@ -71,6 +72,7 @@ export class ApplicationMapper {
           screens: section.screens?.map((screen) => {
             return {
               id: screen.id,
+              identifier: screen.identifier,
               sectionId: screen.sectionId,
               name: screen.name,
               displayOrder: screen.displayOrder,
@@ -92,6 +94,7 @@ export class ApplicationMapper {
               fields: screen.fields?.map((field) => {
                 return {
                   id: field.id,
+                  identifier: field.identifier,
                   screenId: field.screenId,
                   name: field.name,
                   displayOrder: field.displayOrder,
@@ -247,7 +250,7 @@ export class ApplicationMapper {
           label: app.tagLabel,
           variant: app.tagVariant,
         },
-        deleteButton: false,
+        deleteButton: true,
         pendingAction: {
           displayStatus: 'displayStatus',
           title: 'title',
@@ -317,6 +320,29 @@ export class ApplicationMapper {
       formSystemFormSlug: app.formSlug,
       formSystemOrgContentfulId: app.orgContentfulId,
       formSystemOrgSlug: app.orgSlug,
+    }
+  }
+
+  mapApplicationToApplicationAdminDto(
+    application: Application,
+    locale?: Locale,
+  ): ApplicationAdminDto {
+    return {
+      id: application.id,
+      created: application.created,
+      modified: application.modified,
+      formId: application.formId,
+      formName:
+        locale === 'is'
+          ? application.form?.name?.is
+          : application.form?.name?.en,
+      formSlug: application.form?.slug,
+      applicant: application.nationalId,
+      status: application.status,
+      state: application.state,
+      pruneAt: application.pruneAt,
+      pruned: application.pruned,
+      institutionNationalId: application.form?.organization?.nationalId,
     }
   }
 }

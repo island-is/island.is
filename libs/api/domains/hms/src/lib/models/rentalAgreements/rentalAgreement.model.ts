@@ -1,8 +1,46 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { ContractParty } from './contractParty.model'
 import { ContractProperty } from './contractProperty.model'
-import { AgreementStatusType, TemporalType } from '../../enums'
-import { ContractDocument } from './contractDocument.model'
+
+export enum AgreementStatusType {
+  VALID = 'valid',
+  INVALID = 'invalid',
+  EXPIRED = 'expired',
+  CANCELLED = 'cancelled',
+  TERMINATED = 'terminated',
+  CANCELLATION_REQUESTED = 'cancellationRequested',
+  PENDING_CANCELLATION = 'pendingCancellation',
+  PENDING_TERMINATION = 'pendingTermination',
+  UNKNOWN = 'unknown',
+}
+
+registerEnumType(AgreementStatusType, {
+  name: 'HmsRentalAgreementStatusType',
+})
+
+export enum PartyType {
+  OWNER = 'owner',
+  TENANT = 'tenant',
+  AGENCY = 'agency',
+  AGENT_FOR_OWNER = 'agentForOwner',
+  AGENT_FOR_TENANT = 'agentForTenant',
+  OWNER_TAKEOVER = 'ownerTakeover',
+  UNKNOWN = 'unknown',
+}
+
+registerEnumType(PartyType, {
+  name: 'HmsRentalAgreementPartyType',
+})
+
+export enum TemporalType {
+  TEMPORARY = 'temporary',
+  INDEFINITE = 'indefinite',
+  UNKNOWN = 'unknown',
+}
+
+registerEnumType(TemporalType, {
+  name: 'HmsRentalAgreementTemporalType',
+})
 
 @ObjectType('HmsRentalAgreement')
 export class RentalAgreement {
@@ -22,7 +60,10 @@ export class RentalAgreement {
   dateTo?: string
 
   @Field({ nullable: true, description: 'ISO8601' })
-  terminationDate?: string
+  signatureDate?: string
+
+  @Field({ nullable: true, description: 'ISO8601' })
+  receivedDate?: string
 
   @Field(() => [ContractParty], { nullable: true })
   landlords?: ContractParty[]
@@ -31,8 +72,8 @@ export class RentalAgreement {
   tenants?: ContractParty[]
 
   @Field(() => ContractProperty, { nullable: true })
-  property?: ContractProperty
+  contractProperty?: ContractProperty
 
-  @Field(() => [ContractDocument], { nullable: true })
-  documents?: ContractDocument[]
+  @Field({ nullable: true })
+  downloadUrl?: string
 }

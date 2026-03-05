@@ -2,11 +2,14 @@ export const m = {
   drivingLicenseSubject: {
     'B-temp': 'Umsókn um ökunám móttekin',
     'B-full': 'Umsókn um fullnaðarskírteini móttekin',
+    'B-full-renewal-65': 'Umsókn um endurnýjun ökuskírteinis móttekin',
     BE: 'Umsókn um kerruréttindi móttekin',
   },
   drivingLicenseHeading: {
     'B-temp': 'Umsókn þín um ökunám hefur verið móttekin',
     'B-full': 'Umsókn þín um fullnaðarskírteinið hefur verið móttekin',
+    'B-full-renewal-65':
+      'Umsókn þín um endurnýjun ökuskírteinis hefur verið móttekin',
     BE: 'Umsókn þín um kerruréttindi móttekin',
   },
   inPersonRequirements: {
@@ -15,6 +18,8 @@ export const m = {
         'Til að klára umsóknina þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum',
       'B-full':
         'Áður en hægt er að panta fullnaðarskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum',
+      'B-full-renewal-65':
+        'Áður en hægt er að endurnýja ökuskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum',
       BE: 'Áður en hægt er að panta ökuskírteini, þarf að koma á skrifstofu sýslumanns og skila eftirfarandi gögnum',
     },
     healthDeclaration: {
@@ -36,9 +41,12 @@ export const m = {
     },
   },
   completeFooter: [
-    'Skírteinið verður tilbúið á völdum afhendingarstað (%s) eftir þrjár vikur.',
-    '<strong>Áríðandi:</strong> Skila þarf inn bráðabirgðaskírteini áður en nýtt skírteini er afhent.',
-    '<a href="https://island.is/okuskirteini">Hér</a> getur þú uppfært stafræna skírteinið þitt.',
+    'Ökuskírteinið þitt verður tilbúið á völdum afhendingastað (%s) eftir 7 virka daga.',
+    'Þú getur uppfært stafræna ökuskírteinið þitt í <a href="https://island.is/okuskirteini">Ísland.is appinu</a>.',
   ],
-  congratulations: 'Til hamingju',
+  completeFooterPost: [
+    'Ökuskírteinið þitt verður sent á lögheimili þitt.',
+    'Þú getur uppfært stafræna ökuskírteinið þitt í <a href="https://island.is/okuskirteini">Ísland.is appinu</a>.',
+  ],
+  congratulations: 'Góðan daginn',
 }

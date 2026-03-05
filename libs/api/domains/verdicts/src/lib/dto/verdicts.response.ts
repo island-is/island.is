@@ -32,8 +32,8 @@ class VerdictItem {
   @Field(() => Date, { nullable: true })
   verdictDate?: Date | null
 
-  @CacheField(() => VerdictJudge, { nullable: true })
-  presidentJudge?: VerdictJudge | null
+  @CacheField(() => [VerdictJudge], { nullable: true })
+  verdictJudges?: VerdictJudge[] | null
 
   @CacheField(() => [String])
   keywords!: string[]
