@@ -252,9 +252,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                           href: instance.registrationHref,
                           label: n(
                             'courseInstanceRegistrationButtonLabel',
-                            activeLocale === 'is'
-                              ? 'Skráning'
-                              : 'Registration',
+                            activeLocale === 'is' ? 'Skráning' : 'Registration',
                           ),
                           variant: 'primary',
                           size: 'medium',
