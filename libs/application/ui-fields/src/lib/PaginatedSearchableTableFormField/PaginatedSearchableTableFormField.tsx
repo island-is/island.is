@@ -546,10 +546,29 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
                               name={`${answerKey}.${rowKey}.${header.key}`}
                               label=""
                               type={header.inputType ?? 'text'}
+                              inputMode={
+                                header.inputType === 'number'
+                                  ? 'numeric'
+                                  : undefined
+                              }
                               min={header.min}
                               size="xs"
                               backgroundColor="white"
                               value={String(value)}
+                              onKeyDown={
+                                header.inputType === 'number'
+                                  ? (e) => {
+                                      if (
+                                        e.key.length === 1 &&
+                                        !e.ctrlKey &&
+                                        !e.metaKey &&
+                                        !/[0-9eE+\-.]/.test(e.key)
+                                      ) {
+                                        e.preventDefault()
+                                      }
+                                    }
+                                  : undefined
+                              }
                               onChange={handleEditableCellChange(
                                 row,
                                 header.key,
