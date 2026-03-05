@@ -114,7 +114,10 @@ export const PaymentInformation = ({
       )}
 
       <GridRow>
-        <GridColumn span="12/12" paddingBottom={3}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12']}
+          paddingBottom={3}
+        >
           <RadioValue
             label={formatMessage(
               socialInsuranceAdministrationMessage.confirm.personalAllowance,
