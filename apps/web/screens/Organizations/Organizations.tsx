@@ -6,6 +6,7 @@ import {
   Box,
   Breadcrumbs,
   ColorSchemeContext,
+  FilterInput,
   GridColumn,
   GridContainer,
   GridRow,
@@ -224,29 +225,49 @@ const OrganizationPage: Screen<OrganizationProps> = ({
         <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
           <GridContainer id="organizations-list">
             <Box marginY={[3, 3, 6]}>
-              <FilterMenu
-                {...filterLabels}
-                categories={categories}
-                filter={filter}
-                setFilter={setFilter}
-                resultCount={filteredItems.length}
-                onBeforeUpdate={() => goToPage(1, false)}
-                align="right"
-                variant={isMobile ? 'dialog' : 'popover'}
-              />
-              <Box className={styles.orderByContainer}>
-                <Select
-                  label={n('orderBy', 'Raða eftir')}
-                  name="sort-option-select"
-                  size="xs"
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  onChange={(option) => {
-                    setSelectedTitleSortOption(option as TitleSortOption)
-                  }}
-                  value={selectedTitleSortOption}
-                  options={titleSortOptions}
-                />
+              <Box
+                display="flex"
+                justifyContent="spaceBetween"
+                alignItems="flexEnd"
+                flexWrap="wrap"
+                rowGap={2}
+              >
+                <Box className={styles.searchContainer}>
+                  <FilterInput
+                    name="filter-input"
+                    placeholder={filterLabels.inputPlaceholder}
+                    value={filter.input}
+                    onChange={(value) =>
+                      setFilter({ ...filter, input: value })
+                    }
+                  />
+                </Box>
+                <Box display="flex" alignItems="flexEnd" columnGap={2}>
+                  <FilterMenu
+                    {...filterLabels}
+                    categories={categories}
+                    filter={filter}
+                    setFilter={setFilter}
+                    resultCount={filteredItems.length}
+                    onBeforeUpdate={() => goToPage(1, false)}
+                    align="right"
+                    variant={isMobile ? 'dialog' : 'popover'}
+                  />
+                  <Box className={styles.orderByContainer}>
+                    <Select
+                      label={n('orderBy', 'Raða eftir')}
+                      name="sort-option-select"
+                      size="xs"
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
+                      onChange={(option) => {
+                        setSelectedTitleSortOption(option as TitleSortOption)
+                      }}
+                      value={selectedTitleSortOption}
+                      options={titleSortOptions}
+                    />
+                  </Box>
+                </Box>
               </Box>
             </Box>
 
