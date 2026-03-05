@@ -14,7 +14,6 @@ import {
   Pagination,
   RadioButton,
   ResponsiveSpace,
-  Select,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -93,8 +92,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
 
   const titleSortOptions = useMemo<TitleSortOption[]>(
     () => [
-      { label: n('sortByTitleAscending', 'Heiti (a-ö)'), value: 'asc' },
-      { label: n('sortByTitleDescending', 'Heiti (ö-a)'), value: 'desc' },
+      { label: n('sortByTitleAscending', 'Heiti (A - Ö)'), value: 'asc' },
+      { label: n('sortByTitleDescending', 'Heiti (Ö - A)'), value: 'desc' },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
@@ -121,6 +120,16 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   )
 
   const categories: CategoriesProps[] = [
+    {
+      id: 'sorting',
+      label: n('orderBy', 'Raða eftir'),
+      selected: [selectedTitleSortOption.value],
+      singleOption: true,
+      filters: titleSortOptions.map((o) => ({
+        value: o.value,
+        label: o.label,
+      })),
+    },
     {
       id: 'raduneyti',
       label: n('ministries', 'Ráðuneyti'),
@@ -174,7 +183,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const filterLabels: FilterLabels = {
     labelClearAll: n('filterClearAll', 'Hreinsa allar síur'),
     labelClear: n('filterClear', 'Hreinsa síu'),
-    labelOpen: n('filterOpen', 'Sía niðurstöður'),
+    labelOpen: n('filterOpen', 'Sía'),
     labelClose: n('filterClose', 'Loka síu'),
     labelTitle: n('filterOrganization', 'Sía stofnanir'),
     labelResult: n('showResults', 'Sýna niðurstöður'),
@@ -258,23 +267,18 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     setFilter={setFilter}
                     resultCount={filteredItems.length}
                     onBeforeUpdate={() => goToPage(1, false)}
+                    onSortChange={(value) => {
+                      const option = titleSortOptions.find(
+                        (o) => o.value === value,
+                      )
+                      if (option) setSelectedTitleSortOption(option)
+                    }}
+                    onSortClear={() =>
+                      setSelectedTitleSortOption(titleSortOptions[0])
+                    }
                     align="right"
                     variant={isMobile ? 'dialog' : 'popover'}
                   />
-                  <Box className={styles.orderByContainer}>
-                    <Select
-                      label={n('orderBy', 'Raða eftir')}
-                      name="sort-option-select"
-                      size="xs"
-                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      // @ts-ignore make web strict
-                      onChange={(option) => {
-                        setSelectedTitleSortOption(option as TitleSortOption)
-                      }}
-                      value={selectedTitleSortOption}
-                      options={titleSortOptions}
-                    />
-                  </Box>
                   <Inline space={2} alignY="center">
                     <RadioButton
                       name="organization-filter-type"

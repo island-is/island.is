@@ -5,11 +5,6 @@ export const searchContainer = style({
   maxWidth: '100%',
 })
 
-export const orderByContainer = style({
-  width: '200px',
-  maxWidth: '100%',
-})
-
 export const heading = style({
   fontSize: 32,
   paddingTop: 16,

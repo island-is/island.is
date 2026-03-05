@@ -17,6 +17,8 @@ interface FilterMenuProps {
   setFilter: Dispatch<SetStateAction<FilterOptions>>
   resultCount: number
   onBeforeUpdate: () => void
+  onSortChange?: (value: string) => void
+  onSortClear?: () => void
 }
 
 export type FilterLabels = Pick<
@@ -34,6 +36,7 @@ export type CategoriesProps = {
   label: string
   selected: Array<string>
   filters: Array<{ value: string; label: string }>
+  singleOption?: boolean
 }
 
 export const FilterMenu = ({
@@ -42,6 +45,8 @@ export const FilterMenu = ({
   setFilter,
   resultCount,
   onBeforeUpdate,
+  onSortChange,
+  onSortClear,
   labelClear = 'Hreinsa síu',
   labelClearAll = 'Hreinsa allar síur',
   labelOpen = 'Sía niðurstöður',
@@ -61,17 +66,23 @@ export const FilterMenu = ({
     resultCount={resultCount}
     variant={variant}
     align={align}
-    onFilterClear={() =>
+    onFilterClear={() => {
       setFilter({
         raduneyti: [],
         input: '',
       })
-    }
+      onSortClear?.()
+    }}
   >
     <FilterMultiChoice
       labelClear={labelClear}
       categories={categories}
       onChange={(event) => {
+        const category = categories.find((c) => c.id === event.categoryId)
+        if (category?.singleOption && onSortChange) {
+          onSortChange(event.selected[0])
+          return
+        }
         onBeforeUpdate()
         setFilter({
           ...filter,
@@ -79,6 +90,11 @@ export const FilterMenu = ({
         })
       }}
       onClear={(categoryId) => {
+        const category = categories.find((c) => c.id === categoryId)
+        if (category?.singleOption && onSortClear) {
+          onSortClear()
+          return
+        }
         onBeforeUpdate()
         setFilter({
           ...filter,
