@@ -9,8 +9,8 @@ import {
   Institution,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import BlueBoxWithIcon from './BlueBoxWithIcon'
-import CaseScheduledCard from './CaseScheduledCard'
+import CaseScheduledCard from '../CaseScheduledCard/CaseScheduledCard'
+import IconCard from '../IconCard/IconCard'
 import { strings } from './IndictmentCaseScheduledCard.strings'
 
 interface Props {
@@ -35,7 +35,7 @@ const IndictmentCaseScheduledCard: FC<Props> = (props) => {
 
   return indictmentDecision ? (
     indictmentDecision === IndictmentDecision.POSTPONING ? (
-      <BlueBoxWithIcon
+      <IconCard
         data={[
           {
             title: formatMessage(strings.postponingTitle),
@@ -47,7 +47,7 @@ const IndictmentCaseScheduledCard: FC<Props> = (props) => {
         icon="calendar"
       />
     ) : indictmentDecision === IndictmentDecision.POSTPONING_UNTIL_VERDICT ? (
-      <BlueBoxWithIcon
+      <IconCard
         data={[
           {
             title: formatMessage(strings.schedulingUntilVerdictTitle),

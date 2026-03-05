@@ -516,7 +516,10 @@ export class LimitedAccessCaseService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findById(caseId: string): Promise<Case> {
+  async findById(
+    caseId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<Case> {
     const theCase = await this.caseRepositoryService.findOne({
       attributes,
       include,
@@ -525,6 +528,7 @@ export class LimitedAccessCaseService {
         state: { [Op.not]: CaseState.DELETED },
         isArchived: false,
       },
+      transaction: options?.transaction,
     })
 
     if (!theCase) {
@@ -579,8 +583,8 @@ export class LimitedAccessCaseService {
       })
     }
 
-    // Return limited access case
-    const updatedCase = await this.findById(theCase.id)
+    // Return limited access case (read within transaction so we see the updated row)
+    const updatedCase = await this.findById(theCase.id, { transaction })
 
     if (
       updatedCase.defendantStatementDate?.getTime() !==
