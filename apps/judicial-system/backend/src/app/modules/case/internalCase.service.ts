@@ -476,23 +476,6 @@ export class InternalCaseService {
     return theCase as Case
   }
 
-  /**
-   * Fetches accused individuals for a case. Currently mocked; replace with
-   * real integration when the endpoint to fetch accused by case id is ready.
-   */
-  private async fetchAccusedForCase(
-    _caseId: string,
-  ): Promise<CreateDefendantDto[]> {
-    // TODO: Replace with real fetch when endpoint is available.
-    return Promise.resolve([
-      {
-        nationalId: '0000000000',
-        name: 'Dummy Accused',
-        address: '',
-      },
-    ])
-  }
-
   async createV2(
     caseToCreate: InternalCreateCaseV2Dto,
     transaction: Transaction,
@@ -555,13 +538,6 @@ export class InternalCaseService {
         )
       }
     }
-
-    const accusedList = await this.fetchAccusedForCase(newCase.id)
-    await this.defendantService.bulkCreateForNewCase(
-      newCase.id,
-      accusedList,
-      transaction,
-    )
 
     const theCase = await this.caseRepositoryService.findById(newCase.id, {
       transaction,

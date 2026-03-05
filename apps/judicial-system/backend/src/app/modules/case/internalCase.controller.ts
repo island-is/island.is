@@ -74,10 +74,10 @@ export class InternalCaseController {
   }
 
   @UseInterceptors(CaseInterceptor)
-  @Post('case/v2')
+  @Post('case/create')
   @ApiCreatedResponse({
     type: Case,
-    description: 'Creates a new case (v2, accused fetched separately)',
+    description: 'Creates a new case (accused fetched separately)',
   })
   async createV2(@Body() caseToCreate: InternalCreateCaseV2Dto): Promise<Case> {
     this.logger.debug('Creating a new case (v2)')

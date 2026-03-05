@@ -105,7 +105,7 @@ export class AppService {
   }
 
   private async createCaseV2(caseToCreate: CreateCaseV2Dto): Promise<Case> {
-    return fetch(`${this.config.backend.url}/api/internal/case/v2`, {
+    return fetch(`${this.config.backend.url}/api/internal/case/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
