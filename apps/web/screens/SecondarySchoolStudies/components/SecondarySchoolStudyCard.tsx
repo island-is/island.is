@@ -102,7 +102,7 @@ export const SecondarySchoolStudyCard = ({
             {/* Title */}
             <Box paddingBottom={description ? 2 : 3}>
               <Text
-                as="h3"
+                as="h4"
                 variant={isLarge ? 'h3' : 'h4'}
                 color={textColor}
                 truncate={false}

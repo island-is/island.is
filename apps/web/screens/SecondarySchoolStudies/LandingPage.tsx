@@ -10,6 +10,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
@@ -18,6 +19,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
 
 import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
 import {
@@ -208,8 +210,9 @@ const SecondarySchoolStudiesLandingPage: Screen<
 
   const handlePageChange = (page: number) => {
     setSelectedPage(page)
-    // Scroll to top
+    // Scroll to top and move focus to the results heading
     titleRef.current?.scrollIntoView({ behavior: 'smooth' })
+    titleRef.current?.focus({ preventScroll: true })
   }
 
   const handleClearAll = () => {
@@ -262,9 +265,10 @@ const SecondarySchoolStudiesLandingPage: Screen<
               alignSelf="flexStart"
               className={styles.sidebar}
               style={{ top: 72 }}
+              component="aside"
             >
               <Stack space={3}>
-                <Text variant="h4" as="h4" paddingY={1}>
+                <Text variant="h3" as="h3" paddingY={1}>
                   {formatMessage(m.search.search)}
                 </Text>
                 <FilterSection
@@ -281,13 +285,17 @@ const SecondarySchoolStudiesLandingPage: Screen<
             </Box>
 
             {/* Content */}
-            <Box flexGrow={1} paddingLeft={2} className={styles.contentWrapper}>
+            <Box
+              flexGrow={1}
+              paddingLeft={2}
+              className={styles.contentWrapper}
+              component={'article'}
+            >
               <Box
                 display={['block', 'block', 'block', 'none']}
                 marginBottom={2}
-                className={styles.webReader}
               >
-                <Webreader />
+                <Webreader marginBottom={0} marginTop={0} />
               </Box>
 
               <Box display={'flex'} flexDirection={'column'} rowGap={4}>
@@ -308,12 +316,8 @@ const SecondarySchoolStudiesLandingPage: Screen<
                   />
                 </Box>
 
-                <Box
-                  display={['none', 'none', 'none', 'block']}
-                  margin={0}
-                  className={styles.webReader}
-                >
-                  <Webreader />
+                <Box display={['none', 'none', 'none', 'block']} margin={0}>
+                  <Webreader marginBottom={0} marginTop={0} />
                 </Box>
 
                 <SearchSection
@@ -328,7 +332,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
                 />
                 {/* Search result number and grid vs list view button */}
                 <Box display={'flex'} justifyContent={'spaceBetween'}>
-                  <Box>
+                  <Box aria-live="polite" aria-atomic="true">
                     <Text>
                       <strong>{filteredResults.length}</strong>{' '}
                       {formatMessage(m.search.programmesVisible)}
@@ -368,7 +372,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
                     totalPages={totalPages}
                     renderLink={(page, className, children) => (
                       <button
-                        aria-label={selectedPage < page ? 'Next' : 'Previous'}
+                        aria-label={formatMessage(m.search.goToPage, { page })}
                         onClick={() => {
                           handlePageChange(page)
                         }}
@@ -384,10 +388,10 @@ const SecondarySchoolStudiesLandingPage: Screen<
         </GridContainer>
       </Box>
       {/* Main ends */}
-      <Box display={['none', 'none', 'none', 'block']}>
+      <Box display={['none', 'none', 'none', 'block']} component="footer">
         <Footer />
       </Box>
-      <Box display={['block', 'block', 'block', 'none']}>
+      <Box display={['block', 'block', 'block', 'none']} component="footer">
         <MobileFooter />
       </Box>
     </Box>
@@ -398,6 +402,9 @@ SecondarySchoolStudiesLandingPage.getProps = async ({
   apolloClient,
   locale,
 }) => {
+  if (isRunningOnEnvironment('production'))
+    throw new CustomNextError(404, 'Feature not live')
+
   const [programmesResponse, filterOptionsResponse] = await Promise.all([
     apolloClient.query<SecondarySchoolAllProgrammesQuery>({
       query: GET_SECONDARY_SCHOOL_ALL_PROGRAMMES_QUERY,

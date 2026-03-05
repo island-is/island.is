@@ -37,7 +37,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
   return (
     <Box>
       <Box marginBottom={4}>
-        <Text variant="h2" marginBottom={2}>
+        <Text variant="h2" as="h3" marginBottom={2}>
           {formatMessage(m.details.aboutProgramme)}
         </Text>
       </Box>
@@ -273,7 +273,9 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                                 0,
                               ) || 0
                             return (
-                              <>
+                              <Fragment
+                                key={`package-${choiceIndex}-${pkgIndex}`}
+                              >
                                 {pkg.title && (
                                   <T.Row
                                     key={`package-${choiceIndex}-${pkgIndex}`}
@@ -362,7 +364,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                                     </T.Row>
                                   )
                                 })}
-                              </>
+                              </Fragment>
                             )
                           })}
                         </Fragment>

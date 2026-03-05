@@ -17,7 +17,7 @@ export const Header = () => {
   return (
     <>
       {/* Mobile/tablet header */}
-      <Box display={['block', 'block', 'block', 'none']}>
+      <Box display={['block', 'block', 'block', 'none']} as="header">
         <GridRow marginBottom={5}>
           <GridColumn span="1/1">
             <Box
@@ -44,7 +44,7 @@ export const Header = () => {
                   <Text variant="h1" as="h1" marginBottom={2} color="white">
                     {formatMessage(m.home.title)}
                   </Text>
-                  <Text variant="h3" as="h2" color="white">
+                  <Text variant="h3" as="p" color="white">
                     {formatMessage(m.home.subtitle)}
                   </Text>
                 </Box>
@@ -68,7 +68,7 @@ export const Header = () => {
       </Box>
 
       {/* Desktop header */}
-      <Box display={['none', 'none', 'none', 'block']}>
+      <Box display={['none', 'none', 'none', 'block']} as="header">
         <GridContainer>
           <Box>
             <GridRow marginBottom={5}>
@@ -101,7 +101,7 @@ export const Header = () => {
                       <Text variant="h1" as="h1" marginBottom={2} color="white">
                         {formatMessage(m.home.title)}
                       </Text>
-                      <Text variant="h3" as="h2" color="white">
+                      <Text variant="h3" as="p" color="white">
                         {formatMessage(m.home.subtitle)}
                       </Text>
                     </Box>

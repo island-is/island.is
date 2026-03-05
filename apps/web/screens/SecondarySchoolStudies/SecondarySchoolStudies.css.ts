@@ -49,9 +49,3 @@ globalStyle(`${mobileFilterButton} button div span`, {
   display: 'flex',
   justifyContent: 'space-between',
 })
-
-export const webReader = style({})
-
-globalStyle(`${webReader} div`, {
-  margin: 0,
-})

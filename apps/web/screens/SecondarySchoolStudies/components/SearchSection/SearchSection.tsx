@@ -31,9 +31,11 @@ export const SearchSection = ({
 }: SearchSectionProps) => {
   return (
     <Box display={'flex'} rowGap={2} flexDirection={'column'}>
-      <Text ref={titleRef} variant="h2" as="h2" lineHeight="xs">
-        {formatMessage(m.search.searchResults)}
-      </Text>
+      <Box ref={titleRef} tabIndex={-1}>
+        <Text variant="h2" as="h2" lineHeight="xs">
+          {formatMessage(m.search.searchResults)}
+        </Text>
+      </Box>
       <Input
         placeholder={formatMessage(m.search.searchPrograms)}
         id="searchprogrammes"

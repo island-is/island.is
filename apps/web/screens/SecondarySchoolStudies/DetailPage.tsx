@@ -1,6 +1,7 @@
 import { useIntl } from 'react-intl'
 
 import { Box, GridContainer, Text } from '@island.is/island-ui/core'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
@@ -57,6 +58,7 @@ const SecondarySchoolStudiesDetailsPage: Screen<
             display={['none', 'none', 'none', 'block']}
             position="sticky"
             alignSelf="flexStart"
+            component="aside"
             className={styles.sidebar}
             style={{ top: 72 }}
           >
@@ -64,13 +66,14 @@ const SecondarySchoolStudiesDetailsPage: Screen<
           </Box>
 
           {/* Content Wrapper */}
-          <Box flexGrow={1} paddingLeft={2} className={styles.contentWrapper}>
-            <Box
-              display={['block', 'block', 'block', 'none']}
-              marginBottom={2}
-              className={styles.webReader}
-            >
-              <Webreader />
+          <Box
+            component="article"
+            flexGrow={1}
+            paddingLeft={2}
+            className={styles.contentWrapper}
+          >
+            <Box display={['block', 'block', 'block', 'none']} marginBottom={2}>
+              <Webreader marginBottom={0} marginTop={0} />
             </Box>
             <Box display={['block', 'block', 'block', 'none']}>
               <DetailSidebarMobile
@@ -80,11 +83,7 @@ const SecondarySchoolStudiesDetailsPage: Screen<
             </Box>
 
             <Box display="flex" flexDirection="column" rowGap={4}>
-              <Box
-                display={['none', 'none', 'none', 'block']}
-                margin={0}
-                className={styles.webReader}
-              >
+              <Box display={['none', 'none', 'none', 'block']} margin={0}>
                 <Webreader />
               </Box>
               <ProgrammeHeader
@@ -107,10 +106,10 @@ const SecondarySchoolStudiesDetailsPage: Screen<
           </Box>
         </Box>
       </GridContainer>
-      <Box display={['none', 'none', 'none', 'block']}>
+      <Box display={['none', 'none', 'none', 'block']} component="footer">
         <Footer />
       </Box>
-      <Box display={['block', 'block', 'block', 'none']}>
+      <Box display={['block', 'block', 'block', 'none']} component="footer">
         <MobileFooter />
       </Box>
     </Box>
@@ -122,6 +121,9 @@ SecondarySchoolStudiesDetailsPage.getProps = async ({
   locale,
   query,
 }) => {
+  if (isRunningOnEnvironment('production'))
+    throw new CustomNextError(404, 'Feature not live')
+
   if (!query?.id) {
     throw new CustomNextError(404, 'Programme not found')
   }

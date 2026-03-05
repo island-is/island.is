@@ -26,7 +26,7 @@ export const ProgrammeHeader = ({
   return (
     <Stack space={3}>
       <Box>
-        <Text variant="h1" as="h1">
+        <Text variant="h1" as="h2">
           {title || formatMessage(m.details.unknownProgramme)}
         </Text>
         {ministrySerial && (

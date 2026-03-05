@@ -26,7 +26,7 @@ export const m = {
   search: defineMessages({
     search: {
       id: 'web.secondarySchoolStudies:search.search',
-      defaultMessage: 'Leit',
+      defaultMessage: 'Sía leitarniðurstöður ',
     },
     searchResults: {
       id: 'web.secondarySchoolStudies:search.searchResults',
@@ -75,6 +75,10 @@ export const m = {
     programmesVisible: {
       id: 'web.secondarySchoolStudies:search.programmesVisible',
       defaultMessage: 'námsbrautir sýnilegar',
+    },
+    goToPage: {
+      id: 'web.secondarySchoolStudies:search.goToPage',
+      defaultMessage: 'Fara á síðu {page}',
     },
   }),
   filters: defineMessages({
