@@ -1,6 +1,12 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { SectionTypes } from '@island.is/form-system/ui'
-import { AlertMessage, Box, GridColumn, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  GridColumn,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
 import { useApplicationContext } from '../../context/ApplicationProvider'
@@ -24,6 +30,9 @@ export const Screen = () => {
   const { currentSection, currentScreen } = state
   const [notifyExternal] = useMutation(NOTIFY_EXTERNAL_SERVICE)
   const [loading, setLoading] = useState(false)
+  const multiset = currentScreen?.data?.multiset ?? 0
+
+  const [numberOfItems, setNumberOfItems] = useState(1)
 
   const screenTitle =
     currentScreen?.data?.name?.[lang] ??
@@ -84,7 +93,20 @@ export const Screen = () => {
     populateScreen()
   }, [currentScreen?.data?.id])
 
+  const handleNewItem = () => {
+    setNumberOfItems(numberOfItems + 1)
+  }
+
+  const handleRemoveItem = () => {
+    if (numberOfItems > 1) {
+      setNumberOfItems(numberOfItems - 1)
+    }
+  }
+
   if (loading) return <LoadingScreen ariaLabel="loading" />
+
+  console.log('Current screen:', currentScreen)
+  console.log('numberOfItems:', numberOfItems)
 
   return (
     <Box
@@ -139,7 +161,33 @@ export const Screen = () => {
             .map((field, index) => {
               return <Field field={field} key={index} />
             })}
+        {multiset > 0 && (
+          <Box display="flex" justifyContent="flexEnd" paddingTop={6}>
+            <Box marginRight={2}>
+              {numberOfItems > 1 && (
+                <Button
+                  variant="ghost"
+                  colorScheme="destructive"
+                  type="button"
+                  onClick={handleRemoveItem}
+                >
+                  Fjarlægja
+                </Button>
+              )}
+            </Box>
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={handleNewItem}
+              icon="add"
+              disabled={numberOfItems >= multiset}
+            >
+              Bæta við línu
+            </Button>
+          </Box>
+        )}
       </GridColumn>
+
       <Footer externalDataAgreement={externalDataAgreement} />
     </Box>
   )

@@ -128,7 +128,7 @@ export const MainContent = () => {
           {activeItem.type === 'Screen' && (
             <Row>
               <Column span="12/12">
-                {/* <Checkbox
+                <Checkbox
                   name="multi"
                   label={formatMessage(m.allowMultiple)}
                   checked={
@@ -144,7 +144,7 @@ export const MainContent = () => {
                       },
                     })
                   }
-                /> */}
+                />
                 {form.submissionServiceUrl !== 'zendesk' && (
                   <>
                     {form.useValidate && (
