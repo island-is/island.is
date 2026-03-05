@@ -266,11 +266,6 @@ export const serviceSetup = (services: {
         staging: 'Gunnar Ingi',
         prod: 'Stafrænt Ísland',
       },
-      NOVA_USERNAME: {
-        dev: 'IslandIs_User_Development',
-        prod: 'IslandIs_User_Production',
-        staging: 'IslandIs_User_Development',
-      },
       FINANCIAL_STATEMENTS_INAO_BASE_PATH: {
         dev: 'https://dev-re.crm4.dynamics.com/api/data/v9.1',
         staging: 'https://dev-re.crm4.dynamics.com/api/data/v9.1',
@@ -305,11 +300,6 @@ export const serviceSetup = (services: {
         dev: 'IS-DEV/GOV/10021/FJS-Public/TBRBankMgrService_v1',
         staging: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1',
         prod: 'IS/GOV/5402697509/FJS-Public/TBRBankMgrService_v1',
-      },
-      NOVA_ACCEPT_UNAUTHORIZED: {
-        dev: 'true',
-        staging: 'false',
-        prod: 'false',
       },
       AUTH_PUBLIC_API_URL: {
         dev: 'https://identity-server.dev01.devland.is/api',
@@ -360,11 +350,6 @@ export const serviceSetup = (services: {
         staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
         prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
       },
-      ZENDESK_CONTACT_FORM_SUBDOMAIN: {
-        dev: 'digitaliceland',
-        staging: 'digitaliceland',
-        prod: 'digitaliceland',
-      },
       HH_COURSES_ZENDESK_SUBJECT: {
         dev: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
         staging:
@@ -381,6 +366,11 @@ export const serviceSetup = (services: {
         prod: json([
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
+      },
+      NOVA_SENDER_NAME: {
+        dev: 'Island Dev',
+        staging: 'Island Staging',
+        prod: 'Island.is',
       },
     })
     .xroad(
@@ -433,7 +423,9 @@ export const serviceSetup = (services: {
       VMSTUnemployment,
     )
     .secrets({
-      NOVA_URL: '/k8s/application-system-api/NOVA_URL',
+      NOVA_URL: '/k8s/NOVA_URL_V1',
+      NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+      NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
       DOKOBIT_URL: '/k8s/application-system-api/DOKOBIT_URL',
       SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN',
@@ -455,7 +447,6 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_USERNAME',
       DRIVING_LICENSE_BOOK_PASSWORD:
         '/k8s/application-system-api/DRIVING_LICENSE_BOOK_PASSWORD',
-      NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD',
       ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL',
       FINANCIAL_STATEMENTS_INAO_CLIENT_ID:
         '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID',
@@ -474,6 +465,12 @@ export const serviceSetup = (services: {
         '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET',
       HH_ZENDESK_CONTACT_FORM_EMAIL:
         '/k8s/api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_EMAIL',
+      ZENDESK_CONTACT_FORM_TOKEN:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN',
+      ZENDESK_CONTACT_FORM_SUBDOMAIN:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_SUBDOMAIN',
+      ZENDESK_CONTACT_FORM_EMAIL:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN_EMAIL',
     })
     .db()
     .migrations()

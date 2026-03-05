@@ -30,6 +30,7 @@ import {
   eventTypes,
   isIndictmentCase,
   isRequestCase,
+  NotificationType,
   stringTypes,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -52,6 +53,7 @@ import {
   EventLog,
   IndictmentCount,
   Institution,
+  Notification,
   Offense,
   Subpoena,
   User,
@@ -338,6 +340,15 @@ export const include: Includeable[] = [
     where: { stringType: stringTypes },
     separate: true,
   },
+  // Only expose APPEAL_COMPLETED to limited-access users (e.g. defenders) for the appeal banner date.
+  {
+    model: Notification,
+    as: 'notifications',
+    required: false,
+    where: { type: NotificationType.APPEAL_COMPLETED },
+    order: [['created', 'DESC']],
+    separate: true,
+  },
   {
     model: Case,
     as: 'mergeCase',
@@ -460,7 +471,10 @@ export class LimitedAccessCaseService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findById(caseId: string): Promise<Case> {
+  async findById(
+    caseId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<Case> {
     const theCase = await this.caseRepositoryService.findOne({
       attributes,
       include,
@@ -469,6 +483,7 @@ export class LimitedAccessCaseService {
         state: { [Op.not]: CaseState.DELETED },
         isArchived: false,
       },
+      transaction: options?.transaction,
     })
 
     if (!theCase) {
@@ -523,8 +538,8 @@ export class LimitedAccessCaseService {
       })
     }
 
-    // Return limited access case
-    const updatedCase = await this.findById(theCase.id)
+    // Return limited access case (read within transaction so we see the updated row)
+    const updatedCase = await this.findById(theCase.id, { transaction })
 
     if (
       updatedCase.defendantStatementDate?.getTime() !==

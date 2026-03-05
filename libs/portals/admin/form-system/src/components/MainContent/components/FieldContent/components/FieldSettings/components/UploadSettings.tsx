@@ -18,7 +18,7 @@ import { m } from '@island.is/form-system/ui'
 export const FileUploadSettings = () => {
   const { control, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
-  const { activeItem } = control
+  const { activeItem, isPublished } = control
   const currentItem = activeItem.data as FormSystemField
   const { fieldSettings } = currentItem
 
@@ -46,6 +46,7 @@ export const FileUploadSettings = () => {
             name="maxFileSize"
             placeholder={formatMessage(m.selectMaxFileSize)}
             backgroundColor="blue"
+            isDisabled={isPublished}
             value={fileSizeOptions.find(
               (f) => f.value === fieldSettings?.fileMaxSize,
             )}
@@ -68,6 +69,7 @@ export const FileUploadSettings = () => {
             name="maxAmount"
             placeholder={formatMessage(m.selectMaxFileAmount)}
             backgroundColor="blue"
+            isDisabled={isPublished}
             value={fileAmountOptions.find(
               (f) => f.value === fieldSettings?.maxFiles,
             )}
@@ -98,6 +100,7 @@ export const FileUploadSettings = () => {
                 label={key}
                 value={value as string}
                 checked={types?.includes(key)}
+                disabled={isPublished}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'SET_FILE_UPLOAD_SETTINGS',

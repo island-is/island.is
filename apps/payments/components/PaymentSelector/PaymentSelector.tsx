@@ -5,7 +5,7 @@ import { ButtonPayment as Button } from '../ButtonPayment/ButtonPayment'
 
 import { card, invoice } from '../../messages'
 
-type PaymentMethod = 'card' | 'invoice'
+export type PaymentMethod = 'card' | 'invoice'
 
 interface PaymentSelectorProps {
   availablePaymentMethods: PaymentMethod[]
@@ -22,7 +22,10 @@ export const PaymentSelector = ({
   const hasCard = availablePaymentMethods.includes('card')
   const hasInvoice = availablePaymentMethods.includes('invoice')
 
-  if (availablePaymentMethods.length <= 1) {
+  // show card and invoice buttons if both are available
+  const showPaymentMethodOptions = hasCard && hasInvoice
+
+  if (!showPaymentMethodOptions) {
     return null
   }
 
@@ -33,24 +36,21 @@ export const PaymentSelector = ({
       justifyContent="spaceBetween"
       columnGap={1}
     >
-      {hasCard && (
-        <Button
-          isSelected={selectedPayment === 'card'}
-          onClick={() => onSelectPayment('card')}
-          type="card"
-        >
-          {formatMessage(card.paymentMethodTitle)}
-        </Button>
-      )}
-      {hasInvoice && (
-        <Button
-          isSelected={selectedPayment === 'invoice'}
-          onClick={() => onSelectPayment('invoice')}
-          type="invoice"
-        >
-          {formatMessage(invoice.paymentMethodTitle)}
-        </Button>
-      )}
+      <Button
+        isSelected={selectedPayment === 'card'}
+        onClick={() => onSelectPayment('card')}
+        type="card"
+      >
+        {formatMessage(card.paymentMethodTitle)}
+      </Button>
+
+      <Button
+        isSelected={selectedPayment === 'invoice'}
+        onClick={() => onSelectPayment('invoice')}
+        type="invoice"
+      >
+        {formatMessage(invoice.paymentMethodTitle)}
+      </Button>
     </Box>
   )
 }
