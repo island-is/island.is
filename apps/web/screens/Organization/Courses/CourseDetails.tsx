@@ -188,11 +188,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                   key={instance.id}
                   heading={instance.title}
                   text={instance.description}
-                  href={
-                    instance.isFullyBooked
-                      ? undefined
-                      : instance.registrationHref
-                  }
+                  href={instance.isFullyBooked ? '' : instance.registrationHref}
                   tags={
                     instance.isFullyBooked
                       ? [
