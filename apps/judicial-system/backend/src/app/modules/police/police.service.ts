@@ -47,6 +47,7 @@ import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
+import { PoliceDigitalCaseFile } from './models/PoliceDigitalCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
 
@@ -303,39 +304,25 @@ export class PoliceService {
     return { key, size: pdf.length }
   }
 
-  async getAllPoliceCaseFiles(
+  private async getPoliceCaseFilesAndPoliceCaseUnits(
     caseId: string,
     user: User,
-  ): Promise<PoliceCaseFile[]> {
+    source: string,
+  ) {
     const startTime = nowFactory()
 
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
     )
       .then(async (res: Response) => {
+        console.log({ res })
         if (res.ok) {
           const response: z.infer<typeof this.responseStructure> =
             await res.json()
 
           this.responseStructure.parse(response)
-
-          const files: PoliceCaseFile[] = []
-
-          response.skjol?.forEach((file) => {
-            const id = file.rvMalSkjolMals_ID.toString()
-            if (!files.find((item) => item.id === id)) {
-              files.push({
-                id,
-                name: `${file.heitiSkjals}${file.skjalasnid ?? '.pdf'}`,
-                policeCaseNumber: file.malsnumer,
-                chapter: getChapter(file.domsSkjalsFlokkun),
-                displayDate: file.dagsStofnad,
-                type: file.tegundSkjals?.kodi ?? undefined,
-              })
-            }
-          })
-
-          return files
+          console.log({ response })
+          return response
         }
 
         const reason = await res.text()
@@ -362,23 +349,166 @@ export class PoliceService {
         }
 
         this.eventService.postErrorEvent(
-          'Failed to get police case files',
+          'Failed to get police case files and case units',
           {
             caseId,
             actor: user.name,
             institution: user.institution?.name,
             startTime,
             endTime: nowFactory(),
+            source,
           },
           reason,
         )
 
         throw new BadGatewayException({
           ...reason,
-          message: `Failed to get police case files for case ${caseId}`,
+          message: `Failed to get police case files and case units for case ${caseId}`,
           detail: reason.message,
         })
       })
+  }
+
+  private async getDigitalCaseFiles(
+    caseId: string,
+    user: User,
+    source: string,
+  ) {
+    const startTime = nowFactory()
+
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/V4/GetRVRafraengogn/${caseId}`,
+    )
+      .then(async (res: Response) => {
+        if (res.ok) {
+          // TODO: adjust response structure
+          const response = await res.json()
+
+          // this.responseStructure.parse(response)
+
+          return response
+        }
+
+        const reason = await res.text()
+
+        // The police system does not provide a structured error response.
+        // When a police case does not exist, a stack trace is returned.
+        throw new NotFoundException({
+          message: `Police case for case ${caseId} does not exist`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Police case for case ${caseId} does not exist`,
+            detail: reason.message,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get police digital case files',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            startTime,
+            endTime: nowFactory(),
+            source,
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          ...reason,
+          message: `Failed to get police digital case files for case ${caseId}`,
+          detail: reason.message,
+        })
+      })
+  }
+
+  async getAllPoliceCaseFiles(
+    caseId: string,
+    user: User,
+  ): Promise<PoliceCaseFile[]> {
+    const caseFiles = await this.getPoliceCaseFilesAndPoliceCaseUnits(
+      caseId,
+      user,
+      'getAllPoliceCaseFiles',
+    )
+
+    const files: PoliceCaseFile[] = []
+
+    caseFiles?.skjol?.forEach((file) => {
+      const id = file.rvMalSkjolMals_ID.toString()
+      if (!files.find((item) => item.id === id)) {
+        files.push({
+          id,
+          name: `${file.heitiSkjals}${file.skjalasnid ?? '.pdf'}`,
+          policeCaseNumber: file.malsnumer,
+          chapter: getChapter(file.domsSkjalsFlokkun),
+          displayDate: file.dagsStofnad,
+          type: file.tegundSkjals?.kodi ?? undefined,
+        })
+      }
+    })
+
+    return files
+  }
+
+  async getAllPoliceDigitalCaseFiles(
+    caseId: string,
+    user: User,
+  ): Promise<PoliceDigitalCaseFile[]> {
+    const caseFiles = await this.getDigitalCaseFiles(
+      caseId,
+      user,
+      'getAllPoliceDigitalCaseFiles',
+    )
+
+    const files: PoliceDigitalCaseFile[] = []
+
+    console.log({ caseFiles })
+
+    // caseFiles?.list?.forEach((file) => {
+    //   const id = file.rvMalSkjolMals_ID.toString()
+    //   if (!files.find((item) => item.id === id)) {
+    //     files.push({
+    //       id,
+    //       name: `${file.heitiSkjals}${file.skjalasnid ?? '.pdf'}`,
+    //       policeCaseNumber: file.malsnumer,
+    //       chapter: getChapter(file.domsSkjalsFlokkun),
+    //       displayDate: file.dagsStofnad,
+    //       type: file.tegundSkjals?.kodi ?? undefined,
+    //     })
+    //   }
+    // })
+
+    // temp data
+    files.push(
+      {
+        id: '123',
+        name: '007-2024-000019 Yfirheyrsla yfir Dodda',
+        policeCaseNumber: '007-2024-000019',
+        policeDigitalSystemRecordingId: '4667',
+        displayDate: new Date(2025, 1, 1),
+      },
+      {
+        id: '124',
+        name: '007-2024-000019 Búkmyndavélaupptaka',
+        policeCaseNumber: '007-2024-000019',
+        policeDigitalSystemRecordingId: '4668',
+        displayDate: new Date(2025, 1, 2),
+      },
+    )
+
+    return files
   }
 
   async getSubpoenaStatus(
@@ -460,128 +590,114 @@ export class PoliceService {
     caseId: string,
     user: User,
   ): Promise<PoliceCaseInfo[]> {
-    return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
-    )
-      .then(async (res: Response) => {
-        if (res.ok) {
-          const response: z.infer<typeof this.responseStructure> =
-            await res.json()
-
-          this.responseStructure.parse(response)
-
-          const cases: PoliceCaseInfo[] = [
-            { policeCaseNumber: response.malsnumer },
-          ]
-
-          response.skjol?.forEach((info: { malsnumer: string }) => {
-            if (
-              !cases.find((item) => item.policeCaseNumber === info.malsnumer)
-            ) {
-              cases.push({ policeCaseNumber: info.malsnumer })
-            }
-          })
-
-          await Promise.all(
-            (response.malseinings ?? []).map(
-              async (info: {
-                upprunalegtMalsnumer: string
-                vettvangur?: string
-                brotFra?: string
-                licencePlate?: string
-                gotuHeiti?: string | null
-                gotuNumer?: string | null
-                sveitafelag?: string | null
-                artalNrGreinLidur?: string | null
-              }) => {
-                const policeCaseNumber = info.upprunalegtMalsnumer
-                const article = info.artalNrGreinLidur
-                const subtype = await this.getSubtypeByArticle(article)
-                const key = Object.keys(IndictmentCaseSubtypes).find(
-                  (k) =>
-                    IndictmentCaseSubtypes[
-                      k as keyof typeof IndictmentCaseSubtypes
-                    ] === subtype?.offenseType,
-                )
-
-                const place = formatCrimeScenePlace(
-                  info.gotuHeiti,
-                  info.gotuNumer,
-                  info.sveitafelag,
-                )
-                const date = info.brotFra ? new Date(info.brotFra) : undefined
-                const licencePlate = info.licencePlate
-
-                const foundCase = cases.find(
-                  (item) => item.policeCaseNumber === policeCaseNumber,
-                )
-
-                if (!foundCase) {
-                  cases.push({
-                    policeCaseNumber,
-                    place,
-                    date,
-                    licencePlate,
-                    subtypes: key ? [key] : [],
-                  })
-                } else {
-                  if (date && (!foundCase.date || date > foundCase.date)) {
-                    foundCase.place = place
-                    foundCase.date = date
-                    foundCase.licencePlate = licencePlate
-                    foundCase.subtypes = []
-                  }
-
-                  if (key && !foundCase.subtypes?.includes(key)) {
-                    foundCase.subtypes?.push(key)
-                  }
-                }
-              },
-            ),
-          )
-
-          return cases
-        }
-
-        const reason = await res.text()
-
-        // The police system does not provide a structured error response.
-        // When a police case does not exist, a stack trace is returned.
-        throw new NotFoundException({
-          message: `Police case info for case ${caseId} does not exist`,
-          detail: reason,
-        })
-      })
-      .catch((reason) => {
-        if (reason instanceof NotFoundException) {
-          throw reason
-        }
-
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the case does not exist
-          throw new NotFoundException({
-            ...reason,
-            message: `Police case info for case ${caseId} does not exist`,
-            detail: reason.message,
-          })
-        }
-
-        this.eventService.postErrorEvent(
-          'Failed to get police case info',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-          },
-          reason,
+    try {
+      const policeCaseResponse =
+        await this.getPoliceCaseFilesAndPoliceCaseUnits(
+          caseId,
+          user,
+          'getPoliceCaseInfo',
         )
+      console.log({ policeCaseResponse })
+      const policeDigitalCaseFilesResponse = await this.getDigitalCaseFiles(
+        caseId,
+        user,
+        'getPoliceCaseInfo',
+      )
+      console.log({ policeDigitalCaseFilesResponse })
+      const policeCaseNumbers = new Set<string>([policeCaseResponse.malsnumer])
 
-        throw new BadGatewayException({
-          ...reason,
-          message: `Failed to get police case info for case ${caseId}`,
-          detail: reason.message,
-        })
+      // fetch unique police case numbers from case files and digital case files
+      policeCaseResponse.skjol?.forEach((info: { malsnumer: string }) => {
+        policeCaseNumbers.add(info.malsnumer)
       })
+      // policeDigitalCaseFilesResponse.list?.forEach(
+      //   (info: { malsnumer: string }) => {
+      //     policeCaseNumbers.add(info.malsnumer)
+      //   },
+      // )
+      const cases: PoliceCaseInfo[] = Array.from(policeCaseNumbers).map(
+        (number) => ({
+          policeCaseNumber: number,
+        }),
+      )
+
+      // fetch and populate essential police case information from the case units
+      await Promise.all(
+        (policeCaseResponse.malseinings ?? []).map(
+          async (info: {
+            upprunalegtMalsnumer: string
+            vettvangur?: string
+            brotFra?: string
+            licencePlate?: string
+            gotuHeiti?: string | null
+            gotuNumer?: string | null
+            sveitafelag?: string | null
+            artalNrGreinLidur?: string | null
+          }) => {
+            const policeCaseNumber = info.upprunalegtMalsnumer
+            const article = info.artalNrGreinLidur
+            const subtype = await this.getSubtypeByArticle(article)
+            const key = Object.keys(IndictmentCaseSubtypes).find(
+              (k) =>
+                IndictmentCaseSubtypes[
+                  k as keyof typeof IndictmentCaseSubtypes
+                ] === subtype?.offenseType,
+            )
+
+            const place = formatCrimeScenePlace(
+              info.gotuHeiti,
+              info.gotuNumer,
+              info.sveitafelag,
+            )
+            const date = info.brotFra ? new Date(info.brotFra) : undefined
+            const licencePlate = info.licencePlate
+
+            const foundCase = cases.find(
+              (item) => item.policeCaseNumber === policeCaseNumber,
+            )
+
+            if (!foundCase) {
+              cases.push({
+                policeCaseNumber,
+                place,
+                date,
+                licencePlate,
+                subtypes: key ? [key] : [],
+              })
+            } else {
+              if (date && (!foundCase.date || date > foundCase.date)) {
+                foundCase.place = place
+                foundCase.date = date
+                foundCase.licencePlate = licencePlate
+                foundCase.subtypes = []
+              }
+
+              if (key && !foundCase.subtypes?.includes(key)) {
+                foundCase.subtypes?.push(key)
+              }
+            }
+          },
+        ),
+      )
+
+      return cases
+    } catch (reason) {
+      this.eventService.postErrorEvent(
+        'Failed to parse police case info',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+        },
+        reason,
+      )
+
+      throw new Error({
+        ...reason,
+        message: `Failed to parse police case info for case ${caseId}`,
+        detail: reason.message,
+      })
+    }
   }
 
   async uploadPoliceCaseFile(
