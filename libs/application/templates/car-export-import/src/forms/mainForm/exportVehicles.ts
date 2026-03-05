@@ -88,7 +88,9 @@ export const exportVehiclesSection = buildSection({
                 subLabel: {
                   ...m.commonVehicleMessages.vehicleCheckboxSubLabel,
                   values: {
-                    mileage: `<b>${v.milage?.toLocaleString('is-IS') ?? '—'}</b>`,
+                    mileage: `<b>${
+                      v.milage?.toLocaleString('is-IS') ?? '—'
+                    }</b>`,
                   },
                 },
                 value: v.permno as string,
@@ -188,8 +190,7 @@ export const exportVehiclesSection = buildSection({
             })
 
             const vehicleList = data?.vehiclesListV2?.vehicleList ?? []
-            const totalRecords =
-              data?.vehiclesListV2?.paging?.totalRecords ?? 0
+            const totalRecords = data?.vehiclesListV2?.paging?.totalRecords ?? 0
 
             return {
               rows: vehicleList.map(
