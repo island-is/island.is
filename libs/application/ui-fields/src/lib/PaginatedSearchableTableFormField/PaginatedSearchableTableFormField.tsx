@@ -15,8 +15,10 @@ import {
 } from '@island.is/island-ui/core'
 import { ChangeEvent, FC, useEffect, useMemo, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useDebounce } from 'react-use'
 
 const DEFAULT_PAGE_SIZE = 10
+const DEFAULT_SEARCH_DEBOUNCE_MS = 300
 
 interface Props extends FieldBaseProps {
   field: PaginatedSearchableTableField
@@ -80,8 +82,18 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
 }) => {
   const { register, setValue, unregister } = useFormContext<FormValues>()
   const { formatMessage } = useLocale()
-  const [searchTerm, setSearchTerm] = useState('')
+  const [inputValue, setInputValue] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [page, setPage] = useState(1)
+
+  useDebounce(
+    () => {
+      setDebouncedSearchTerm(inputValue)
+      setPage(1)
+    },
+    DEFAULT_SEARCH_DEBOUNCE_MS,
+    [inputValue],
+  )
   const [changedRowsById, setChangedRowsById] = useState<
     Record<string, PaginatedSearchableTableRow>
   >({})
@@ -160,11 +172,11 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
   }, [answerKey, application.answers, baseRowsById, rowIdKey])
 
   const filteredRows = useMemo(() => {
-    if (!searchTerm.trim()) {
+    if (!debouncedSearchTerm.trim()) {
       return rows
     }
 
-    const normalizedSearchTerm = searchTerm.trim().toLowerCase()
+    const normalizedSearchTerm = debouncedSearchTerm.trim().toLowerCase()
 
     return rows.filter((row) => {
       return searchKeys.some((searchKey) => {
@@ -173,7 +185,7 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
           .includes(normalizedSearchTerm)
       })
     })
-  }, [rows, searchKeys, searchTerm])
+  }, [rows, searchKeys, debouncedSearchTerm])
 
   const totalPages = useMemo(() => {
     return Math.max(1, Math.ceil(filteredRows.length / pageSize))
@@ -296,11 +308,8 @@ export const PaginatedSearchableTableFormField: FC<Props> = ({
         icon={{ name: 'search' }}
         backgroundColor="blue"
         size="sm"
-        value={searchTerm}
-        onChange={(event) => {
-          setSearchTerm(event.target.value)
-          setPage(1)
-        }}
+        value={inputValue}
+        onChange={(event) => setInputValue(event.target.value)}
       />
 
       <T.Table>

@@ -120,6 +120,36 @@ export const m = {
       defaultMessage: 'Ökutæki valin',
       description: 'Export vehicles selected count label',
     },
+    tableHeaderPermno: {
+      id: 'rsk.cei.application:exportVehicles.table.header.permno',
+      defaultMessage: 'Skráningarnúmer',
+      description: 'Export vehicles table header for registration number',
+    },
+    tableHeaderType: {
+      id: 'rsk.cei.application:exportVehicles.table.header.type',
+      defaultMessage: 'Tegund',
+      description: 'Export vehicles table header for vehicle type',
+    },
+    tableHeaderMileage: {
+      id: 'rsk.cei.application:exportVehicles.table.header.mileage',
+      defaultMessage: 'Síðasta akstursstaða',
+      description: 'Export vehicles table header for last recorded mileage',
+    },
+    searchLabel: {
+      id: 'rsk.cei.application:exportVehicles.search.label',
+      defaultMessage: 'Leita að ökutæki',
+      description: 'Export vehicles search input label',
+    },
+    searchPlaceholder: {
+      id: 'rsk.cei.application:exportVehicles.search.placeholder',
+      defaultMessage: 'Leita eftir skráningarnúmeri',
+      description: 'Export vehicles search input placeholder',
+    },
+    emptyState: {
+      id: 'rsk.cei.application:exportVehicles.empty.state',
+      defaultMessage: 'Ekkert ökutæki fannst',
+      description: 'Export vehicles table empty state message',
+    },
   }),
 
   importVehicles: defineMessages({
@@ -143,6 +173,36 @@ export const m = {
       id: 'rsk.cei.application:importVehicles.selected.count',
       defaultMessage: 'Ökutæki valin',
       description: 'Import vehicles selected count label',
+    },
+    tableHeaderPermno: {
+      id: 'rsk.cei.application:importVehicles.table.header.permno',
+      defaultMessage: 'Skráningarnúmer',
+      description: 'Import vehicles table header for registration number',
+    },
+    tableHeaderType: {
+      id: 'rsk.cei.application:importVehicles.table.header.type',
+      defaultMessage: 'Tegund',
+      description: 'Import vehicles table header for vehicle type',
+    },
+    tableHeaderMileage: {
+      id: 'rsk.cei.application:importVehicles.table.header.mileage',
+      defaultMessage: 'Síðasta akstursstaða',
+      description: 'Import vehicles table header for last recorded mileage',
+    },
+    searchLabel: {
+      id: 'rsk.cei.application:importVehicles.search.label',
+      defaultMessage: 'Leita að ökutæki',
+      description: 'Import vehicles search input label',
+    },
+    searchPlaceholder: {
+      id: 'rsk.cei.application:importVehicles.search.placeholder',
+      defaultMessage: 'Leita eftir skráningarnúmeri',
+      description: 'Import vehicles search input placeholder',
+    },
+    emptyState: {
+      id: 'rsk.cei.application:importVehicles.empty.state',
+      defaultMessage: 'Ekkert ökutæki fannst',
+      description: 'Import vehicles table empty state message',
     },
   }),
 

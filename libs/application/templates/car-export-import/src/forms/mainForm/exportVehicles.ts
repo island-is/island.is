@@ -3,13 +3,22 @@ import {
   buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
+  buildPaginatedSearchableTableField,
   buildSection,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
+import { Application, ExternalData } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { VehicleWithMileage } from '../../lib/types'
 import { RegistrationType } from '../../utils/constants'
+
+const VEHICLE_TABLE_THRESHOLD = 5
+
+const getVehicles = (externalData: ExternalData): VehicleWithMileage[] =>
+  getValueViaPath<VehicleWithMileage[]>(
+    externalData,
+    'getCurrentVehicles.data',
+  ) ?? []
 
 export const exportVehiclesSection = buildSection({
   condition: (answers) => {
@@ -42,12 +51,12 @@ export const exportVehiclesSection = buildSection({
           id: 'selectedExportVehicles',
           title: m.exportVehicles.checkboxLabel,
           required: true,
+          condition: (_formValue, externalData) => {
+            const vehicles = getVehicles(externalData)
+            return vehicles.filter((v) => v.permno).length <= VEHICLE_TABLE_THRESHOLD
+          },
           options: (application: Application) => {
-            const vehicles =
-              getValueViaPath<VehicleWithMileage[]>(
-                application.externalData,
-                'getCurrentVehicles.data',
-              ) ?? []
+            const vehicles = getVehicles(application.externalData)
 
             return vehicles
               .filter((v) => v.permno)
@@ -68,6 +77,45 @@ export const exportVehiclesSection = buildSection({
                 value: v.permno as string,
               }))
           },
+        }),
+        buildPaginatedSearchableTableField({
+          id: 'selectedExportVehicles',
+          doesNotRequireAnswer: true,
+          condition: (_formValue, externalData) => {
+            const vehicles = getVehicles(externalData)
+            return vehicles.length > VEHICLE_TABLE_THRESHOLD
+          },
+          rowIdKey: 'permno',
+          rows: (application) => {
+            const vehicles = getVehicles(application.externalData)
+
+            return vehicles
+              .filter((v) => v.permno)
+              .map((v) => ({
+                permno: v.permno as string,
+                type: v.type ?? '',
+                mileage: v.milage ? `${v.milage.toLocaleString('is-IS')} km` : '—',
+              }))
+          },
+          headers: [
+            {
+              key: 'permno',
+              label: m.exportVehicles.tableHeaderPermno,
+            },
+            {
+              key: 'type',
+              label: m.exportVehicles.tableHeaderType,
+            },
+            {
+              key: 'mileage',
+              label: m.exportVehicles.tableHeaderMileage,
+            },
+          ],
+          searchLabel: m.exportVehicles.searchLabel,
+          searchPlaceholder: m.exportVehicles.searchPlaceholder,
+          emptyState: m.exportVehicles.emptyState,
+          searchKeys: ['permno', 'type'],
+          pageSize: VEHICLE_TABLE_THRESHOLD,
         }),
       ],
     }),
