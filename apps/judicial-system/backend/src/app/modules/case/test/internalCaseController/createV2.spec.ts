@@ -24,7 +24,7 @@ interface Then {
 
 type GivenWhenThen = (caseToCreate: InternalCreateCaseV2Dto) => Promise<Then>
 
-describe('InternalCaseController - CreateV2', () => {
+describe('InternalCaseController - CreateV2 - Create without accused', () => {
   const prosecutorNationalId = '1234567890'
   const caseToCreate: InternalCreateCaseV2Dto = {
     type: CaseType.CUSTODY,
