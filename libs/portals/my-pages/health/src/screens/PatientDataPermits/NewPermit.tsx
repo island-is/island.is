@@ -36,19 +36,14 @@ const isEditRouteState = (state: unknown): state is EditRouteState =>
 const buildInitialFormState = (state: unknown): PermitInput | undefined => {
   if (!isEditRouteState(state) || !state.countries?.length) return undefined
 
-  const now = new Date()
-  now.setHours(0, 0, 0, 0)
-
   const validFromDate = state.validFrom ? new Date(state.validFrom) : null
   const validToDate = state.validTo ? new Date(state.validTo) : null
-  const datesStillValid =
-    isValidDate(validFromDate) && validFromDate !== null && validFromDate >= now
 
   return {
     countries: state.countries,
     dates: {
-      validFrom: datesStillValid ? validFromDate : null,
-      validTo: datesStillValid && isValidDate(validToDate) ? validToDate : null,
+      validFrom: isValidDate(validFromDate) ? validFromDate : null,
+      validTo: isValidDate(validToDate) ? validToDate : null,
     },
   }
 }
