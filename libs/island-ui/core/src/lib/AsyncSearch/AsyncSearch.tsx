@@ -290,6 +290,10 @@ const getIconColor = (
   return 'blue400'
 }
 
+const noop = () => {
+  /* synthetic event stub */
+}
+
 export type AsyncSearchInputPropsInputProps = InputProps & {
   format?: string | ((inputValue: string) => string)
 }
@@ -346,6 +350,7 @@ export const AsyncSearchInput = forwardRef<
       ...restInputProps
     } = inputProps
     const showLabel = Boolean(label)
+    const effectiveValue = value ?? _defaultValue
     const useFormat =
       format &&
       (inputType === 'tel' || inputType === 'text' || inputType === 'number')
@@ -398,11 +403,22 @@ export const AsyncSearchInput = forwardRef<
               type={
                 inputType === 'number' ? 'text' : (inputType as 'text' | 'tel')
               }
-              value={value == null ? '' : String(value)}
+              value={
+                effectiveValue == null ? '' : String(effectiveValue)
+              }
               onValueChange={({ value: formattedValue }) => {
-                inputOnChange?.({
-                  target: { value: formattedValue },
-                } as React.ChangeEvent<HTMLInputElement>)
+                if (!inputOnChange) return
+                const target = { value: formattedValue }
+                const event = {
+                  target,
+                  currentTarget: target,
+                  preventDefault: noop,
+                  stopPropagation: noop,
+                  persist: noop,
+                  type: 'change' as const,
+                  nativeEvent: {} as Event,
+                } as React.ChangeEvent<HTMLInputElement>
+                inputOnChange(event)
               }}
               getInputRef={ref}
               inputSize={size}
@@ -412,7 +428,9 @@ export const AsyncSearchInput = forwardRef<
               color={inputColor}
               isOpen={isOpen}
               hasError={hasError}
-              placeholder={value ? undefined : restInputProps.placeholder}
+              placeholder={
+                effectiveValue ? undefined : restInputProps.placeholder
+              }
             />
           ) : (
             <Input
@@ -428,7 +446,9 @@ export const AsyncSearchInput = forwardRef<
               isOpen={isOpen}
               ref={ref}
               hasError={hasError}
-              placeholder={value ? undefined : restInputProps.placeholder}
+              placeholder={
+                effectiveValue ? undefined : restInputProps.placeholder
+              }
             />
           )}
           {!loading ? (
@@ -439,9 +459,9 @@ export const AsyncSearchInput = forwardRef<
                   blueberryColorScheme ||
                   darkColorScheme ||
                   blueColorScheme,
-                [styles.focusable]: value,
+                [styles.focusable]: effectiveValue,
               })}
-              tabIndex={value ? 0 : -1}
+              tabIndex={effectiveValue ? 0 : -1}
               {...buttonProps}
             >
               <Icon size={normalizedSize} icon={'search'} color={iconColor} />
