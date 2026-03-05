@@ -41,12 +41,12 @@ const apiCollection: Array<{
 }> = [
   {
     api: ApplicationWriteApi,
-    scopes: ['@tr.is/umsoknir:write'],
+    scopes: ['@tr.is/umsoknir:write', '@tr.is/fylgiskjol:write'],
     autoAuth: true,
   },
   {
     api: ApplicationApi,
-    scopes: ['@tr.is/umsoknir:read', '@tr.is/fylgiskjol:write'],
+    scopes: ['@tr.is/umsoknir:read'],
     autoAuth: true,
   },
   {
