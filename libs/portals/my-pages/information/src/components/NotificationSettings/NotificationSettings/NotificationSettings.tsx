@@ -18,10 +18,12 @@ import {
   useUserProfileSettingsQuery,
 } from './getUserProfile.query.generated'
 import { safeAwait } from '@island.is/shared/utils'
+import { Features, useFeatureFlag } from '@island.is/react/feature-flags'
 
 type UserProfileNotificationSettings = {
   documentNotifications: boolean
   canNudge: boolean
+  smsNotifications: boolean
   wantsPaper: boolean
 }
 
@@ -39,11 +41,16 @@ export const NotificationSettings = () => {
     postPaperMailMutation,
     loading: paperMailLoading,
   } = usePaperMail()
+  const { value: isSmsNotificationEnabled } = useFeatureFlag(
+    Features.isSmsNotificationEnabled,
+    false,
+  )
 
   const [settings, setSettings] = useState<UserProfileNotificationSettings>({
     documentNotifications:
       userProfile?.getUserProfile?.documentNotifications ?? true,
     canNudge: userProfile?.getUserProfile?.canNudge ?? true,
+    smsNotifications: userProfile?.getUserProfile?.smsNotifications ?? false,
     wantsPaper: wantsPaper ?? false,
   })
 
@@ -54,6 +61,7 @@ export const NotificationSettings = () => {
         documentNotifications:
           userProfile?.getUserProfile.documentNotifications,
         canNudge: userProfile?.getUserProfile.canNudge ?? true,
+        smsNotifications: userProfile?.getUserProfile.smsNotifications ?? false,
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,6 +85,7 @@ export const NotificationSettings = () => {
           input: {
             documentNotifications: newSettings.documentNotifications,
             canNudge: newSettings.canNudge,
+            smsNotifications: newSettings.smsNotifications,
           },
         },
       }),
@@ -140,6 +149,24 @@ export const NotificationSettings = () => {
           }
         />
         <Divider />
+        {isSmsNotificationEnabled && (
+          <>
+            <SettingsCard
+              title={formatMessage(mNotifications.smsNotifications)}
+              subtitle={formatMessage(
+                mNotifications.smsNotificationsDescription,
+              )}
+              toggleLabel={formatMessage(
+                mNotifications.smsNotificationsAriaLabel,
+              )}
+              checked={settings.smsNotifications}
+              onChange={(active: boolean) =>
+                onChange({ smsNotifications: active })
+              }
+            />
+            <Divider />
+          </>
+        )}
         <SettingsCard
           title={formatMessage(mNotifications.paperMailTitle)}
           subtitle={formatMessage(mNotifications.paperMailDescription)}

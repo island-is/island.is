@@ -3,7 +3,6 @@ import {
   Box,
   GridColumn,
   GridRow,
-  Text,
   Checkbox,
   Input,
 } from '@island.is/island-ui/core'
@@ -17,6 +16,7 @@ interface Props {
 export const ZendeskSettings = ({ fieldSettings }: Props) => {
   const { control, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
+  const { isPublished } = control
 
   return (
     <Box marginTop={2}>
@@ -25,6 +25,7 @@ export const ZendeskSettings = ({ fieldSettings }: Props) => {
           <Checkbox
             checked={fieldSettings?.zendeskIsCustomField ?? false}
             label="Zendesk reitur"
+            disabled={isPublished}
             onChange={(e) => {
               controlDispatch({
                 type: 'SET_ZENDESK_FIELD_SETTINGS',
@@ -51,6 +52,7 @@ export const ZendeskSettings = ({ fieldSettings }: Props) => {
               <Input
                 name="custom-field-id"
                 placeholder="Zendesk field id"
+                readOnly={isPublished}
                 value={fieldSettings?.zendeskCustomFieldId ?? ''}
                 onChange={(e) =>
                   controlDispatch({

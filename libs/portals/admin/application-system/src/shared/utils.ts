@@ -7,10 +7,7 @@ import {
 import { MessageDescriptor } from 'react-intl'
 import { Organization } from '@island.is/shared/types'
 import { m } from '../lib/messages'
-import { institutionMapper } from '@island.is/application/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
-import { ApplicationListAdminResponseDtoTypeIdEnum } from '@island.is/api/schema'
-import { AdminApplication } from '../types/adminApplication'
 
 interface Tag {
   variant: ActionCardTag
@@ -44,12 +41,13 @@ export const statusMapper: Record<ApplicationStatus, Tag> = {
   },
 }
 
-export const getLogo = (
-  typeId: ApplicationListAdminResponseDtoTypeIdEnum,
+export const getLogoFromContentfulSlug = (
   organizations: Organization[],
+  institutionContentfulSlug?: string,
 ): string => {
-  const institutionSlug = institutionMapper[typeId].slug
-  const institution = organizations.find((x) => x.slug === institutionSlug)
+  const institution = organizations.find(
+    (x) => x.slug === institutionContentfulSlug,
+  )
   return getOrganizationLogoUrl(
     institution?.title ?? 'stafraent-island',
     organizations,
@@ -64,22 +62,4 @@ export const getSlugFromType = (type: ApplicationTypes) => {
   }
 
   return undefined
-}
-
-export const getFilteredApplications = (
-  applications: AdminApplication[],
-  {
-    institutionFilters,
-  }: {
-    institutionFilters?: string[]
-  },
-) => {
-  let filteredApplications = applications
-  if (institutionFilters) {
-    filteredApplications = filteredApplications.filter((x) =>
-      institutionFilters.includes(x.typeId),
-    )
-  }
-
-  return filteredApplications
 }

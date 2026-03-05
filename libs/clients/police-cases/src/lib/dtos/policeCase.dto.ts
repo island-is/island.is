@@ -8,6 +8,7 @@ export interface PoliceCaseDto {
   contact?: string
   courtAdvocate?: string
   department?: string
+  prosecutionOffice?: string
   receivedDate?: Date
   recievedLocation?: string
   modifiedDate?: Date
@@ -18,6 +19,7 @@ export const mapCaseDto = (caseDto: CaseDto): PoliceCaseDto => {
     ...caseDto,
     personId: caseDto.personId,
     department: caseDto.embaetti,
+    prosecutionOffice: caseDto.embaettiIferli,
     modifiedDate: caseDto.modified,
   }
 }
