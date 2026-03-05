@@ -74,7 +74,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     secrets: {},
     podDisruptionBudget: serviceDef.podDisruptionBudget ?? {
       unhealthyPodEvictionPolicy: 'IfHealthyBudget',
-      minAvailable: 1,
+      minAvailable: '50%',
     },
     healthCheck: {
       liveness: {

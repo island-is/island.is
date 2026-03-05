@@ -71,11 +71,11 @@ const PoliceCases = () => {
                     })
                   : undefined
               }
-              eyebrow={formatMessage(messages.policeCaseCardEyebrow)}
+              eyebrow={c.prosecutionOffice ?? undefined}
               tag={
                 c.status?.headerDisplayString
                   ? {
-                      label: c.status?.headerDisplayString,
+                      label: c.status.headerDisplayString,
                       variant: 'blue',
                     }
                   : undefined

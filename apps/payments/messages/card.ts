@@ -41,6 +41,11 @@ export const card = defineMessages({
     defaultMessage: 'Greiða',
     description: 'Pay',
   },
+  cardOptionLabel: {
+    id: 'payments:card.cardOptionLabel',
+    defaultMessage: 'Eða borgaðu með korti',
+    description: 'Label for card option if apple pay is available',
+  },
 })
 
 export const cardSuccess = defineMessages({
@@ -269,6 +274,18 @@ export const cardError = defineMessages({
     description:
       'Payment was refunded due to a system error. Please try again.',
   },
+  refundFailedTitle: {
+    id: 'payments:cardError.refundFailedTitle',
+    defaultMessage: 'Óvænt villa',
+    description: 'Unexpected error',
+  },
+  refundFailed: {
+    id: 'payments:cardError.refundFailed',
+    defaultMessage:
+      'Óvænt villa kom upp og endurgreiðsla tókst ekki. Greiðslan hefur verið skráð og verður endurgreidd handvirkt.',
+    description:
+      'An unexpected error occurred and the refund could not be completed. The payment has been logged and will be refunded manually.',
+  },
   additionalAuthenticationRequiredTitle: {
     id: 'payments:cardError.additionalAuthenticationRequiredTitle',
     defaultMessage: 'Viðbótarauðkenning krafist',
@@ -383,6 +400,16 @@ export const cardError = defineMessages({
     id: 'payments:cardError.verificationDeadlineExceeded',
     defaultMessage: 'Tími til að staðfesta kort er útrunninn.',
     description: 'Generic decline description',
+  },
+  errorGettingApplePaySessionTitle: {
+    id: 'payments:cardError.errorGettingApplePaySessionTitle',
+    defaultMessage: 'Villa við Apple Pay tengingu',
+    description: 'Error connecting to Apple Pay',
+  },
+  errorGettingApplePaySession: {
+    id: 'payments:cardError.errorGettingApplePaySession',
+    defaultMessage: 'Ekki var hægt að tengjast Apple Pay. Reyndu aftur síðar.',
+    description: 'Error connecting to Apple Pay description',
   },
   unknownTitle: {
     id: 'payments:cardError.unknownTitle',
