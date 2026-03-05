@@ -60,9 +60,15 @@ const PermitDetail: React.FC = () => {
 
   const onInvalidateSubmit = () => {
     invalidatePermit()
-      .then(() => {
-        toast.success(formatMessage(messages.permitInvalidated))
-        navigate(HealthPaths.HealthPatientDataPermits, { replace: true })
+      .then((response) => {
+        if (
+          response.data?.healthDirectoratePatientDataInvalidatePermit?.status
+        ) {
+          toast.success(formatMessage(messages.permitInvalidated))
+          navigate(HealthPaths.HealthPatientDataPermits, { replace: true })
+        } else {
+          toast.error(formatMessage(messages.permitInvalidatedError))
+        }
       })
       .catch(() => {
         toast.error(formatMessage(messages.permitInvalidatedError))

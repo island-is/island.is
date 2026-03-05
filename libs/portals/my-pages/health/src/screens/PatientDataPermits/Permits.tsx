@@ -88,7 +88,7 @@ const PatientDataPermits: FC = () => {
         <Stack space={2}>
           {permits.map((permit) => (
             <ActionCard
-              key={permit.id}
+              key={permit.cacheId}
               backgroundColor="white"
               eyebrow={formatMessage(messages.healthDirectorate)}
               eyebrowColor="purple400"

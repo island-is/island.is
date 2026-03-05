@@ -21,6 +21,9 @@ type EditRouteState = {
   validTo?: string | null
 }
 
+const isValidDate = (date: Date | null) =>
+  date !== null && !Number.isNaN(date.getTime())
+
 const isEditRouteState = (state: unknown): state is EditRouteState =>
   typeof state === 'object' &&
   state !== null &&
@@ -38,13 +41,14 @@ const buildInitialFormState = (state: unknown): PermitInput | undefined => {
 
   const validFromDate = state.validFrom ? new Date(state.validFrom) : null
   const validToDate = state.validTo ? new Date(state.validTo) : null
-  const datesStillValid = validFromDate !== null && validFromDate >= now
+  const datesStillValid =
+    isValidDate(validFromDate) && validFromDate !== null && validFromDate >= now
 
   return {
     countries: state.countries,
     dates: {
       validFrom: datesStillValid ? validFromDate : null,
-      validTo: datesStillValid ? validToDate : null,
+      validTo: datesStillValid && isValidDate(validToDate) ? validToDate : null,
     },
   }
 }
