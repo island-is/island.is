@@ -47,7 +47,7 @@ import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
   getApplicationExternalData,
-} from './oldAgePensionUtils'
+} from '../utils/oldAgePensionUtils'
 import {
   Actions,
   BankAccountType,

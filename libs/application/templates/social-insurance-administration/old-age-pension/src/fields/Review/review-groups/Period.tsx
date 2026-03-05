@@ -8,7 +8,7 @@ import { MONTHS } from '@island.is/application/templates/social-insurance-admini
 import {
   getApplicationAnswers,
   isMoreThan2Year,
-} from '../../../lib/oldAgePensionUtils'
+} from '../../../utils/oldAgePensionUtils'
 
 export const Period = ({
   application,

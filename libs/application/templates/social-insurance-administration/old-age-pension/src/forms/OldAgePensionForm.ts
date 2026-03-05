@@ -65,7 +65,7 @@ import {
   buildFormConclusionSection,
 } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
-import { ApplicationType, Employment, RatioType } from '../lib/constants'
+import { ApplicationType, Employment, RatioType } from '../utils/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   getApplicationAnswers,
@@ -73,7 +73,7 @@ import {
   getAvailableMonths,
   getAvailableYears,
   isEarlyRetirement,
-} from '../lib/oldAgePensionUtils'
+} from '../utils/oldAgePensionUtils'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 
 export const OldAgePensionForm: Form = buildForm({

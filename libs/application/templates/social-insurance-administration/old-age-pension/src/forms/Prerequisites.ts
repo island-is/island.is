@@ -20,7 +20,7 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
-import { ApplicationType } from '../lib/constants'
+import { ApplicationType } from '../utils/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
@@ -28,7 +28,7 @@ import {
   getApplicationExternalData,
   getEligibleDesc,
   getEligibleLabel,
-} from '../lib/oldAgePensionUtils'
+} from '../utils/oldAgePensionUtils'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   NationalRegistryResidenceHistoryApi,

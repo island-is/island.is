@@ -1,5 +1,5 @@
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { RatioType } from './lib/constants'
+import { RatioType } from './constants'
 export interface CombinedResidenceHistory {
   country: string
   periodFrom: Date

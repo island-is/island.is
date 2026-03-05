@@ -1,6 +1,6 @@
 import { useLocale } from '@island.is/localization'
 import { ReviewGroupProps } from './props'
-import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
+import { getApplicationAnswers } from '../../../utils/oldAgePensionUtils'
 import {
   formatCurrencyWithoutSuffix,
   RadioValue,

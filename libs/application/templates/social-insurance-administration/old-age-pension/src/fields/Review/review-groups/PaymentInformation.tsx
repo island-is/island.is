@@ -13,7 +13,7 @@ import {
   friendlyFormatSWIFT,
   getTaxLevelOption,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
+import { getApplicationAnswers } from '../../../utils/oldAgePensionUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { YES } from '@island.is/application/core'
 

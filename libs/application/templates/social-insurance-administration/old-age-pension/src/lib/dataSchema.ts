@@ -5,7 +5,7 @@ import {
   Employment,
   RatioType,
   employeeRatio,
-} from './constants'
+} from '../utils/constants'
 import {
   validIBAN,
   validSWIFT,
@@ -18,8 +18,8 @@ import {
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { validatorErrorMessages } from './messages'
-import { filterValidEmployers } from './oldAgePensionUtils'
-import { Employer } from '../types'
+import { filterValidEmployers } from '../utils/oldAgePensionUtils'
+import { Employer } from '../utils/types'
 import { NO, YES } from '@island.is/application/core'
 
 const getTotalRatio = (employers: Employer[]) => {

@@ -26,7 +26,7 @@ import {
   FileUpload,
   IncompleteEmployer,
   SelfEmployed,
-} from '../types'
+} from './types'
 import {
   ApplicationType,
   AttachmentLabel,
@@ -36,7 +36,7 @@ import {
   Employment,
   oldAgePensionAge,
 } from './constants'
-import { oldAgePensionFormMessage } from './messages'
+import { oldAgePensionFormMessage } from '../lib/messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const pensionFundQuestion = getValueViaPath(

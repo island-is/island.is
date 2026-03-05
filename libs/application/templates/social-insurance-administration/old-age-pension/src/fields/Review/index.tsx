@@ -20,8 +20,8 @@ import { ResidenceHistory } from './review-groups/ResidenceHistory'
 import { Employers } from './review-groups/Employers'
 import { PaymentInformation } from './review-groups/PaymentInformation'
 import { oldAgePensionFormMessage } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
-import { ApplicationType } from '../../lib/constants'
+import { getApplicationAnswers } from '../../utils/oldAgePensionUtils'
+import { ApplicationType } from '../../utils/constants'
 import {
   RadioValue,
   ReviewGroup,

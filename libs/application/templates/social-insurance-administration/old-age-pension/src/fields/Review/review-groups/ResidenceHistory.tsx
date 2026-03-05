@@ -11,7 +11,7 @@ import ResidenceHistoryTable from '../../ResidenceHistory/ResidenceHistoryTable'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-} from '../../../lib/oldAgePensionUtils'
+} from '../../../utils/oldAgePensionUtils'
 import { NO, YES } from '@island.is/application/core'
 
 export const ResidenceHistory = ({

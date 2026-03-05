@@ -8,8 +8,8 @@ import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { EmployersTable } from '../../components/EmployersTable'
-import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
-import { Employment } from '../../../lib/constants'
+import { getApplicationAnswers } from '../../../utils/oldAgePensionUtils'
+import { Employment } from '../../../utils/constants'
 
 export const Employers = ({
   application,
