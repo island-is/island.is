@@ -72,7 +72,6 @@ import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
-import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import { GevFooter } from './Themes/GevTheme'
 import { HeilbrigdisstofnunAusturlandsFooter } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
 import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
@@ -625,15 +624,6 @@ export const OrganizationFooter: React.FC<
       OrganizationFooterComponent = (
         <HeilbrigdisstofnunSudurlandsFooter
           title={organization.title}
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'fiskistofa':
-    case 'directorate-of-fisheries':
-      OrganizationFooterComponent = (
-        <FiskistofaFooter
           footerItems={organization.footerItems}
           namespace={namespace}
         />
