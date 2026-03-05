@@ -1,5 +1,6 @@
 import {
   buildCheckboxField,
+  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildPaginatedSearchableTableField,
@@ -8,16 +9,29 @@ import {
 import { Application, ExternalData } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { VehicleWithMileage } from '../../lib/types'
+import {
+  VehicleWithMileage,
+  VehiclesResponse,
+  SERVER_SIDE_VEHICLE_THRESHOLD,
+} from '../../lib/types'
 import { RegistrationType } from '../../utils/constants'
 
 const VEHICLE_TABLE_THRESHOLD = 5
 
+const getVehiclesResponse = (
+  externalData: ExternalData,
+): VehiclesResponse | null =>
+  getValueViaPath<VehiclesResponse>(externalData, 'getCurrentVehicles.data') ??
+  null
+
 const getVehicles = (externalData: ExternalData): VehicleWithMileage[] =>
-  getValueViaPath<VehicleWithMileage[]>(
-    externalData,
-    'getCurrentVehicles.data',
-  ) ?? []
+  getVehiclesResponse(externalData)?.vehicles ?? []
+
+const getTotalRecords = (externalData: ExternalData): number =>
+  getVehiclesResponse(externalData)?.totalRecords ?? 0
+
+const isServerSide = (externalData: ExternalData): boolean =>
+  getTotalRecords(externalData) > SERVER_SIDE_VEHICLE_THRESHOLD
 
 export const importVehiclesSection = buildSection({
   condition: (answers) => {
@@ -44,8 +58,11 @@ export const importVehiclesSection = buildSection({
           title: m.importVehicles.checkboxLabel,
           required: true,
           condition: (_formValue, externalData) => {
+            if (isServerSide(externalData)) return false
             const vehicles = getVehicles(externalData)
-            return vehicles.filter((v) => v.permno).length <= VEHICLE_TABLE_THRESHOLD
+            return (
+              vehicles.filter((v) => v.permno).length <= VEHICLE_TABLE_THRESHOLD
+            )
           },
           options: (application: Application) => {
             const vehicles = getVehicles(application.externalData)
@@ -74,6 +91,7 @@ export const importVehiclesSection = buildSection({
           id: 'selectedImportVehicles',
           doesNotRequireAnswer: true,
           condition: (_formValue, externalData) => {
+            if (isServerSide(externalData)) return false
             const vehicles = getVehicles(externalData)
             return vehicles.length > VEHICLE_TABLE_THRESHOLD
           },
@@ -86,7 +104,9 @@ export const importVehiclesSection = buildSection({
               .map((v) => ({
                 permno: v.permno as string,
                 type: v.type ?? '',
-                mileage: v.milage ? `${v.milage.toLocaleString('is-IS')} km` : '—',
+                mileage: v.milage
+                  ? `${v.milage.toLocaleString('is-IS')} km`
+                  : '—',
               }))
           },
           headers: [
@@ -109,6 +129,29 @@ export const importVehiclesSection = buildSection({
           searchKeys: ['permno', 'type'],
           pageSize: VEHICLE_TABLE_THRESHOLD,
         }),
+        buildCustomField(
+          {
+            id: 'selectedImportVehiclesServer',
+            title: '',
+            doesNotRequireAnswer: true,
+            component: 'VehicleSelectionField',
+            condition: (_formValue, externalData) =>
+              isServerSide(externalData),
+          },
+          {
+            answerKey: 'selectedImportVehicles',
+            detailsKey: 'selectedImportVehicleDetails',
+            messages: {
+              searchLabel: m.importVehicles.searchLabel,
+              searchPlaceholder: m.importVehicles.searchPlaceholder,
+              emptyState: m.importVehicles.emptyState,
+              tableHeaderPermno: m.importVehicles.tableHeaderPermno,
+              tableHeaderType: m.importVehicles.tableHeaderType,
+              tableHeaderMileage: m.importVehicles.tableHeaderMileage,
+              selectedCount: m.importVehicles.selectedCount,
+            },
+          },
+        ),
       ],
     }),
   ],

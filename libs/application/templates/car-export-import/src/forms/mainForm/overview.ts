@@ -11,7 +11,7 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { m } from '../../lib/messages'
-import { VehicleWithMileage } from '../../lib/types'
+import { VehicleWithMileage, VehiclesResponse } from '../../lib/types'
 import { RegistrationType } from '../../utils/constants'
 import { formatDate } from '../../utils/dateUtils'
 
@@ -31,14 +31,32 @@ const getVehicleOverviewItems = (
       answers,
       isExport ? 'exportVehicleMileage' : 'importVehicleMileage',
     ) ?? []
-  const vehicles =
+
+  const serverDetails =
     getValueViaPath<VehicleWithMileage[]>(
+      answers,
+      isExport
+        ? 'selectedExportVehicleDetails'
+        : 'selectedImportVehicleDetails',
+    ) ?? []
+
+  let selectedVehicles: VehicleWithMileage[]
+
+  if (serverDetails.length > 0) {
+    selectedVehicles = serverDetails.filter(
+      (v) => v.permno && selectedPermnos.includes(v.permno),
+    )
+  } else {
+    const response = getValueViaPath<VehiclesResponse>(
       externalData,
       'getCurrentVehicles.data',
-    ) ?? []
-  const selectedVehicles = vehicles.filter(
-    (v) => v.permno && selectedPermnos.includes(v.permno),
-  )
+    )
+    const vehicles = response?.vehicles ?? []
+    selectedVehicles = vehicles.filter(
+      (v) => v.permno && selectedPermnos.includes(v.permno),
+    )
+  }
+
   const mileageLabel = isExport
     ? m.overview.mileageAtDeparture
     : m.overview.mileageAtArrival

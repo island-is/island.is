@@ -8,18 +8,31 @@ import {
 } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
 import { m } from '../../lib/messages'
-import { VehicleWithMileage } from '../../lib/types'
+import { VehicleWithMileage, VehiclesResponse } from '../../lib/types'
 import { RegistrationType } from '../../utils/constants'
 
 const getSelectedVehicles = (application: Application) => {
   const selectedPermnos =
     getValueViaPath<string[]>(application.answers, 'selectedExportVehicles') ??
     []
-  const vehicles =
+
+  const serverDetails =
     getValueViaPath<VehicleWithMileage[]>(
-      application.externalData,
-      'getCurrentVehicles.data',
+      application.answers,
+      'selectedExportVehicleDetails',
     ) ?? []
+
+  if (serverDetails.length > 0) {
+    return serverDetails.filter(
+      (v) => v.permno && selectedPermnos.includes(v.permno),
+    )
+  }
+
+  const response = getValueViaPath<VehiclesResponse>(
+    application.externalData,
+    'getCurrentVehicles.data',
+  )
+  const vehicles = response?.vehicles ?? []
   return vehicles.filter((v) => v.permno && selectedPermnos.includes(v.permno))
 }
 
