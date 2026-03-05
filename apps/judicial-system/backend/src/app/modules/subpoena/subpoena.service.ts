@@ -170,7 +170,7 @@ export class SubpoenaService {
       }),
     )
 
-    // Create court documents if court sessions exist
+    // Create court documents if court sessions enabled for the case
     if (withCourtSessions) {
       for (let i = 0; i < defendantsToProcess.length; i++) {
         const defendant = defendantsToProcess[i]
