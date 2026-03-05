@@ -245,7 +245,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
               <Box
                 display="flex"
                 justifyContent="spaceBetween"
-                alignItems="flexEnd"
+                alignItems="center"
                 flexWrap="wrap"
                 rowGap={2}
               >
@@ -259,26 +259,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     }
                   />
                 </Box>
-                <Box display="flex" alignItems="flexEnd" columnGap={2}>
-                  <FilterMenu
-                    {...filterLabels}
-                    categories={categories}
-                    filter={filter}
-                    setFilter={setFilter}
-                    resultCount={filteredItems.length}
-                    onBeforeUpdate={() => goToPage(1, false)}
-                    onSortChange={(value) => {
-                      const option = titleSortOptions.find(
-                        (o) => o.value === value,
-                      )
-                      if (option) setSelectedTitleSortOption(option)
-                    }}
-                    onSortClear={() =>
-                      setSelectedTitleSortOption(titleSortOptions[0])
-                    }
-                    align="right"
-                    variant={isMobile ? 'dialog' : 'popover'}
-                  />
+                <Box display="flex" alignItems="center" columnGap={2}>
                   <Inline space={2} alignY="center">
                     <RadioButton
                       name="organization-filter-type"
@@ -307,6 +288,27 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                       }}
                     />
                   </Inline>
+                  <Box flexShrink={0} flexGrow={0}>
+                    <FilterMenu
+                    {...filterLabels}
+                    categories={categories}
+                    filter={filter}
+                    setFilter={setFilter}
+                    resultCount={filteredItems.length}
+                    onBeforeUpdate={() => goToPage(1, false)}
+                    onSortChange={(value) => {
+                      const option = titleSortOptions.find(
+                        (o) => o.value === value,
+                      )
+                      if (option) setSelectedTitleSortOption(option)
+                    }}
+                    onSortClear={() =>
+                      setSelectedTitleSortOption(titleSortOptions[0])
+                    }
+                    align="right"
+                    variant={isMobile ? 'dialog' : 'popover'}
+                  />
+                  </Box>
                 </Box>
               </Box>
             </Box>
