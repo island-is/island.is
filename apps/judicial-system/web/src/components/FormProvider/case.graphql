@@ -11,6 +11,19 @@ query Case($input: CaseQueryInput!) {
       defendants {
         id
         name
+        subpoenas {
+          id
+          created
+          modified
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
+          defenderNationalId
+          caseId
+          defendantId
+          policeSubpoenaId
+        }
       }
       caseFiles {
         id

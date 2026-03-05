@@ -18,6 +18,18 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       defendants {
         id
         name
+        subpoenas {
+          id
+          created
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
+          defenderNationalId
+          caseId
+          defendantId
+          policeSubpoenaId
+        }
       }
       caseFiles {
         id
