@@ -42,6 +42,8 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
+import { RegulationsClientConfig } from '@island.is/clients/regulations'
+import { RegulationsAdminClientConfig } from '@island.is/clients/regulations-admin'
 import { LegalGazetteClientConfig } from '@island.is/clients/legal-gazette'
 import {
   HealthDirectorateClientConfig,
@@ -118,6 +120,8 @@ import { ExemptionForTransportationClientConfig } from '@island.is/clients/trans
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
+        RegulationsClientConfig,
+        RegulationsAdminClientConfig,
         LegalGazetteClientConfig,
         HealthDirectorateVaccinationsClientConfig,
         HealthDirectorateOrganDonationClientConfig,

@@ -1,7 +1,7 @@
-import { InputFields, OJOIFieldBaseProps } from '../lib/types'
-import { SkeletonLoader, Stack } from '@island.is/island-ui/core'
+import { InputFields, OJOIFieldBaseProps, isRegulationApplication } from '../lib/types'
+import { AlertBanner, Box, SkeletonLoader, Stack } from '@island.is/island-ui/core'
 import { FormGroup } from '../components/form/FormGroup'
-import { advert } from '../lib/messages'
+import { advert, regulation } from '../lib/messages'
 import { useDepartments } from '../hooks/useDepartments'
 import { OJOISelectController } from '../components/input/OJOISelectController'
 import { useTypes } from '../hooks/useTypes'
@@ -15,11 +15,15 @@ import { DEPARTMENT_A, DEPARTMENT_B, OJOI_INPUT_HEIGHT } from '../lib/constants'
 import { useAdvertTemplateTypes } from '../hooks/useAdvertTemplateTypes'
 import { useAdvertTemplateLazy } from '../hooks/useAdvertTemplate'
 import { useMemo, useState } from 'react'
+import { useLocale } from '@island.is/localization'
 import { uuid } from 'uuidv4'
 import { AdvertPreview } from '../components/advertPreview/AdvertPreview'
 
 export const Advert = ({ application }: OJOIFieldBaseProps) => {
+  const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
+  const isAmending = application.answers?.applicationType === 'amending_regulation'
+  const [showDiffWarning, setShowDiffWarning] = useState(isAmending)
   const [isLoadingDepartments, setLoadingDepartments] = useState(false)
   const {
     application: currentApplication,
@@ -194,18 +198,30 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
 
       <FormGroup title={advert.headings.materialForPublication}>
         <Stack space={[2, 2, 3]}>
-          <OJOISelectController
-            width="half"
-            name={InputFields.misc.selectedTemplate}
-            label={advert.inputs.template.label}
-            placeholder={advert.inputs.template.placeholder}
-            applicationId={application.id}
-            options={templateOptions}
-            loading={advertTemplateLoading}
-            onChange={(type) => {
-              advertTemplateQuery({ variables: { params: { type: type } } })
-            }}
-          />
+          {showDiffWarning && (
+            <Box>
+              <AlertBanner
+                description={f(regulation.content.warnings.diffPrecisionWarning)}
+                variant="info"
+                dismissable
+                onDismiss={() => setShowDiffWarning(false)}
+              />
+            </Box>
+          )}
+          {!isRegulationApplication(application.answers) && (
+            <OJOISelectController
+              width="half"
+              name={InputFields.misc.selectedTemplate}
+              label={advert.inputs.template.label}
+              placeholder={advert.inputs.template.placeholder}
+              applicationId={application.id}
+              options={templateOptions}
+              loading={advertTemplateLoading}
+              onChange={(type) => {
+                advertTemplateQuery({ variables: { params: { type: type } } })
+              }}
+            />
+          )}
 
           <OJOIHtmlController
             applicationId={application.id}

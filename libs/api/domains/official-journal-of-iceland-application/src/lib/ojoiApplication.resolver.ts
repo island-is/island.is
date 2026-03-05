@@ -36,6 +36,18 @@ import { GetInvolvedPartySignature } from '../models/getInvolvedPartySignatures.
 import { OJOIApplicationAdvertTemplateTypesResponse } from '../models/applicationAdvertTemplateTypes.response'
 import { OJOIApplicationAdvertTemplateResponse } from '../models/applicationAdvertTemplate.response'
 import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
+import graphqlTypeJson from 'graphql-type-json'
+import { OJOIAGetRegulationsSearchInput } from '../models/getRegulationsSearch.input'
+import { OJOIAGetRegulationFromApiInput } from '../models/getRegulationFromApi.input'
+import { OJOIAGetRegulationImpactsInput } from '../models/getRegulationImpacts.input'
+import { OJOIACreateDraftRegulationInput } from '../models/createDraftRegulation.input'
+import { OJOIAUpdateDraftRegulationInput } from '../models/updateDraftRegulation.input'
+import { OJOIAGetDraftRegulationInput } from '../models/getDraftRegulation.input'
+import {
+  OJOIACreateDraftImpactInput,
+  OJOIAUpdateDraftImpactInput,
+  OJOIADeleteDraftImpactInput,
+} from '../models/draftImpact.input'
 
 @Scopes(ApiScope.ojoiAdverts, ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -196,5 +208,165 @@ export class OfficialJournalOfIcelandApplicationResolver {
     @CurrentUser() user: User,
   ) {
     return this.ojoiApplicationService.getInvolvedPartySignatures(input, user)
+  }
+
+  // ---- Regulation-related queries ----
+
+  @Query(() => graphqlTypeJson, {
+    name: 'OJOIAGetRegulationsOptionSearch',
+    nullable: true,
+  })
+  getRegulationsOptionSearch(
+    @Args('input') input: OJOIAGetRegulationsSearchInput,
+  ) {
+    return this.ojoiApplicationService.getRegulationsOptionSearch(input)
+  }
+
+  @Query(() => graphqlTypeJson, {
+    name: 'OJOIAGetRegulationFromApi',
+    nullable: true,
+  })
+  getRegulationFromApi(@Args('input') input: OJOIAGetRegulationFromApiInput) {
+    return this.ojoiApplicationService.getRegulationFromApi(input)
+  }
+
+  @Query(() => graphqlTypeJson, {
+    name: 'OJOIAGetRegulationImpactsByName',
+    nullable: true,
+  })
+  getRegulationImpactsByName(
+    @Args('input') input: OJOIAGetRegulationImpactsInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.getRegulationImpactsByName(
+      input.regulation,
+      user,
+    )
+  }
+
+  @Query(() => graphqlTypeJson, {
+    name: 'OJOIAGetLawChapters',
+    nullable: true,
+  })
+  getLawChapters() {
+    return this.ojoiApplicationService.getLawChapters()
+  }
+
+  @Query(() => graphqlTypeJson, {
+    name: 'OJOIAGetMinistries',
+    nullable: true,
+  })
+  getMinistries() {
+    return this.ojoiApplicationService.getMinistries()
+  }
+
+  @Mutation(() => graphqlTypeJson, {
+    name: 'OJOIACreateDraftRegulation',
+    nullable: true,
+  })
+  createDraftRegulation(
+    @Args('input') input: OJOIACreateDraftRegulationInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.createDraftRegulation(input.type, user)
+  }
+
+  @Query(() => graphqlTypeJson, {
+    name: 'OJOIAGetDraftRegulation',
+    nullable: true,
+  })
+  getDraftRegulation(
+    @Args('input') input: OJOIAGetDraftRegulationInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.getDraftRegulation(input.draftId, user)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'OJOIAUpdateDraftRegulation',
+  })
+  updateDraftRegulation(
+    @Args('input') input: OJOIAUpdateDraftRegulationInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.updateDraftRegulation(
+      input.draftId,
+      {
+        title: input.title,
+        text: input.text,
+        appendixes: input.appendixes,
+        draftingNotes: input.draftingNotes,
+        idealPublishDate: input.idealPublishDate,
+        effectiveDate: input.effectiveDate,
+        ministry: input.ministry,
+        signatureDate: input.signatureDate,
+        signatureText: input.signatureText,
+        lawChapters: input.lawChapters,
+        fastTrack: input.fastTrack,
+        type: input.type,
+        signedDocumentUrl: input.signedDocumentUrl,
+      },
+      user,
+    )
+  }
+
+  @Mutation(() => graphqlTypeJson, {
+    name: 'OJOIACreateDraftImpact',
+    nullable: true,
+  })
+  createDraftImpact(
+    @Args('input') input: OJOIACreateDraftImpactInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.createDraftImpact(
+      {
+        draftId: input.draftId,
+        type: input.type as 'amend' | 'repeal',
+        regulation: input.regulation,
+        date: input.date,
+        title: input.title,
+        text: input.text,
+        appendixes: input.appendixes,
+        comments: input.comments,
+        diff: input.diff,
+      },
+      user,
+    )
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'OJOIAUpdateDraftImpact',
+  })
+  updateDraftImpact(
+    @Args('input') input: OJOIAUpdateDraftImpactInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.updateDraftImpact(
+      {
+        impactId: input.impactId,
+        type: input.type as 'amend' | 'repeal',
+        date: input.date,
+        title: input.title,
+        text: input.text,
+        appendixes: input.appendixes,
+        comments: input.comments,
+        diff: input.diff,
+      },
+      user,
+    )
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'OJOIADeleteDraftImpact',
+  })
+  deleteDraftImpact(
+    @Args('input') input: OJOIADeleteDraftImpactInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.ojoiApplicationService.deleteDraftImpact(
+      input.impactId,
+      input.type as 'amend' | 'repeal',
+      user,
+    )
   }
 }
