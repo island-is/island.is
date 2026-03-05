@@ -94,7 +94,7 @@ export function MedicineDelegationContent({
         <ReadMoreButton
           accessibilityRole="button"
           onPress={() =>
-            openBrowser('https://island.is/s/landlaeknir/frett', componentId)
+            openBrowser('https://island.is/heilbrigdisthjonusta-yfir-landamaeri', componentId)
           }
         >
           <Typography
