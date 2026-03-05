@@ -5,11 +5,7 @@ import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-
-interface VehicleWithMileage {
-  permno: string | null
-  milage: number | null
-}
+import type { VehicleWithMileage } from '@island.is/application/templates/car-export-import'
 
 @Injectable()
 export class CarExportImportService extends BaseTemplateApiService {
@@ -51,6 +47,7 @@ export class CarExportImportService extends BaseTemplateApiService {
           .map((vehicle) => ({
             permno: vehicle.permno ?? null,
             milage: vehicle.latestMileage ?? null,
+            type: vehicle.make ?? null,
           })) || []
       )
     } catch (error) {

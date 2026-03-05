@@ -36,6 +36,7 @@ export const exportVehiclesSection = buildSection({
           alertType: 'info',
           title: m.exportVehicles.alertTitle,
           message: m.exportVehicles.alertMessage,
+          marginBottom: 4,
         }),
         buildCheckboxField({
           id: 'selectedExportVehicles',
@@ -51,9 +52,19 @@ export const exportVehiclesSection = buildSection({
             return vehicles
               .filter((v) => v.permno)
               .map((v) => ({
-                label: `${v.permno} — Síðasta km staða: ${
-                  v.milage?.toLocaleString('de-DE') ?? '—'
-                } km`,
+                label: {
+                  ...m.commonVehicleMessages.vehicleCheckboxLabel,
+                  values: {
+                    permno: v.permno,
+                    type: v.type ? ` - ${v.type}` : '',
+                  },
+                },
+                subLabel: {
+                  ...m.commonVehicleMessages.vehicleCheckboxSubLabel,
+                  values: {
+                    mileage: `<b>${v.milage?.toLocaleString('is-IS') ?? '—'}</b>`,
+                  },
+                },
                 value: v.permno as string,
               }))
           },

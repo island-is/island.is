@@ -9,7 +9,7 @@ import { m } from '../../lib/messages'
 
 export const registrationTypeSection = buildSection({
   id: 'registrationTypeSection',
-  title: m.registrationType.sectionTitle,
+  title: m.registrationType.title,
   children: [
     buildMultiField({
       id: 'registrationTypeMultiField',

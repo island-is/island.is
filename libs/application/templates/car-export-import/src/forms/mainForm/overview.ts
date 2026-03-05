@@ -11,13 +11,9 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { m } from '../../lib/messages'
+import { VehicleWithMileage } from '../../lib/types'
 import { RegistrationType } from '../../utils/constants'
 import { formatDate } from '../../utils/dateUtils'
-
-interface VehicleWithMileage {
-  permno: string | null
-  milage: number | null
-}
 
 const getVehicleOverviewItems = (
   answers: FormValue,

@@ -52,11 +52,6 @@ export const m = {
   }),
 
   registrationType: defineMessages({
-    sectionTitle: {
-      id: 'rsk.cei.application:registration.type.section.title',
-      defaultMessage: 'Tegund skráningar',
-      description: 'Registration type section title',
-    },
     title: {
       id: 'rsk.cei.application:registration.type.title',
       defaultMessage: 'Tegund skráningar',
@@ -64,18 +59,31 @@ export const m = {
     },
     description: {
       id: 'rsk.cei.application:registration.type.description',
-      defaultMessage: 'Skráning inn/út úr landi',
+      defaultMessage: 'Smelltu á viðeigandi valkost',
       description: 'Registration type description',
     },
     optionExport: {
       id: 'rsk.cei.application:registration.type.option.export',
-      defaultMessage: 'Skrá bíla út úr landi',
+      defaultMessage: 'Skrá brottför ökutækis úr landi',
       description: 'Export vehicles option',
     },
     optionImport: {
       id: 'rsk.cei.application:registration.type.option.import',
-      defaultMessage: 'Skrá bíla inn í landið',
+      defaultMessage: 'Skrá komu ökutækis til landsins',
       description: 'Import vehicles option',
+    },
+  }),
+
+  commonVehicleMessages: defineMessages({
+    vehicleCheckboxLabel: {
+      id: 'rsk.cei.application:common.vehicle.checkbox.label',
+      defaultMessage: '**{permno}** {type}',
+      description: 'Vehicle checkbox label with bold permno and vehicle type',
+    },
+    vehicleCheckboxSubLabel: {
+      id: 'rsk.cei.application:common.vehicle.checkbox.subLabel',
+      defaultMessage: 'Síðasta km staða: {mileage} km',
+      description: 'Vehicle checkbox sub-label showing last recorded mileage',
     },
   }),
 
@@ -94,7 +102,7 @@ export const m = {
     alertMessage: {
       id: 'rsk.cei.application:exportVehicles.alert.message',
       defaultMessage:
-        'Kílómetragjald er 6 kr/km. Þegar ökutæki er flutt tímabundið úr landi þarf að skrá km stöðu við brottför og komu til að tryggja að gjald sé ekki innheimt fyrir akstur erlendis.',
+        'Til að koma í veg fyrir greiðslu kílómetragjalds vegna aksturs erlendis, þegar ökutæki er flutt tímabundið úr landi, þarf að skrá stöðu akstursmælis við brottför og komu, senda inn staðfestingu á flutningi ökutækisins og sækja um lækkun gjaldsins til Skattsins.',
       description: 'Export vehicles info alert message',
     },
     alertTitle: {
@@ -141,7 +149,7 @@ export const m = {
   commonDatesAndMileageMessages: defineMessages({
     sectionTitle: {
       id: 'rsk.cei.application:dates.mileage.section.title',
-      defaultMessage: 'Dagsetningar og km staða',
+      defaultMessage: 'Dagsetning og akstursstaða',
       description: 'Common dates and mileage section title',
     },
     title: {
@@ -195,7 +203,7 @@ export const m = {
     description: {
       id: 'rsk.cei.application:exportDates.mileage.description',
       defaultMessage:
-        'Skráðu dagsetningar ferðar og km stöðu hvers ökutækis við brottför.',
+        'Skráðu dagsetningu ferðar og km stöðu hvers ökutækis við brottför.',
       description: 'Dates and mileage description',
     },
     returnDateLabel: {
@@ -223,12 +231,12 @@ export const m = {
     },
     datesHeader: {
       id: 'rsk.cei.application:overview.dates.header',
-      defaultMessage: 'Dagsetningar',
+      defaultMessage: 'Dagsetningar:',
       description: 'Overview dates section header',
     },
     departureDateLabel: {
       id: 'rsk.cei.application:overview.departure.date',
-      defaultMessage: 'Brottfarardagur',
+      defaultMessage: 'Brottfarardagur:',
       description: 'Overview departure date label',
     },
     returnDateLabel: {
@@ -253,12 +261,12 @@ export const m = {
     },
     exportVehiclesHeader: {
       id: 'rsk.cei.application:overview.export.vehicles.header',
-      defaultMessage: 'Útflutt ökutæki og km staða',
+      defaultMessage: 'Útflutt ökutæki og akstursstaða',
       description: 'Overview export vehicles section header',
     },
     importVehiclesHeader: {
       id: 'rsk.cei.application:overview.import.vehicles.header',
-      defaultMessage: 'Innflutt ökutæki og km staða',
+      defaultMessage: 'Innflutt ökutæki og akstursstaða',
       description: 'Overview import vehicles section header',
     },
     submitButton: {
