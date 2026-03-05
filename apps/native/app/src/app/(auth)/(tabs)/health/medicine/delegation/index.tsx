@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { RefreshControl, ScrollView, View } from 'react-native'
-import { Stack } from 'expo-router'
+import { StackScreen } from '@/components/stack-screen'
 import styled from 'styled-components/native'
 
 import { useGetMedicineDelegationsLazyQuery } from '@/graphql/types/schema'
@@ -55,7 +55,8 @@ export default function MedicineDelegationScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen
+      <StackScreen
+        networkStatus={delegationsRes.networkStatus}
         options={{
           title: intl.formatMessage({
             id: 'health.medicineDelegation.screenTitle',

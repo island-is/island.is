@@ -15,6 +15,7 @@ import {
   useGetProfileQuery,
 } from '@/graphql/types/schema'
 import { Button, NavigationBarSheet, TextField, Typography } from '@/ui'
+import { StackScreen } from '@/components/stack-screen'
 import { testIDs } from '@/utils/test-ids'
 
 const parsePhone = (phone: string) =>
@@ -106,6 +107,7 @@ export default function EditPhoneScreen() {
       testID={testIDs.SCREEN_EDIT_PHONE}
       stickyHeaderIndices={[0]}
     >
+      <StackScreen closeable networkStatus={userProfile.networkStatus} />
       <NavigationBarSheet
         componentId="edit-phone"
         title={intl.formatMessage({ id: 'edit.phone.screenTitle' })}

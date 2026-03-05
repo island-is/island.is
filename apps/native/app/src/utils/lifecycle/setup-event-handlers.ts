@@ -23,6 +23,7 @@ export function setupEventHandlers() {
           acc[key] = value
           return acc
         }, {} as Record<string, string>)
+      console.log('env store', environmentStore.getState());
       environmentStore.getState().actions.setCognito({
         idToken: params.id_token,
         accessToken: params.access_token,

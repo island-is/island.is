@@ -117,7 +117,7 @@ export const environmentStore = create<EnvironmentStore>()(
       },
     }),
     {
-      name: '@island/environment13',
+      name: '@island/environment15',
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         environment: !config.isTestingApp

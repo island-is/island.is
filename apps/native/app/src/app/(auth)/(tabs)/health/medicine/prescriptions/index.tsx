@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, TouchableOpacity, View } from 'react-native'
-import { Stack } from 'expo-router'
+import { StackScreen } from '@/components/stack-screen'
 import styled from 'styled-components/native'
 
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
@@ -344,7 +344,8 @@ export default function PrescriptionsScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen
+      <StackScreen
+        networkStatus={[prescriptionsRes.networkStatus, medicineDelegationsRes.networkStatus, medicineHistoryRes.networkStatus, certificatesRes.networkStatus]}
         options={{
           title: screenTitle,
           headerRight: isDelegationTab

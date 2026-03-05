@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { RefreshControl, ScrollView, View } from 'react-native'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
+import { StackScreen } from '@/components/stack-screen'
 import {
   HealthDirectorateMedicineHistoryDispensation,
   useGetMedicineDispensationForAtcQuery,
@@ -67,6 +68,7 @@ export default function MedicineHistoryScreen() {
     loading: atcLoading,
     refetch,
     error: atcError,
+    networkStatus: atcNetworkStatus,
   } = useGetMedicineDispensationForAtcQuery({
     fetchPolicy: 'no-cache',
     variables: {
@@ -97,7 +99,8 @@ export default function MedicineHistoryScreen() {
 
   return (
     <Host>
-      <Stack.Screen
+      <StackScreen
+        networkStatus={atcNetworkStatus}
         options={{
           title: intl.formatMessage({
             id: 'health.prescriptions.dispensations',

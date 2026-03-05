@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
-import { Stack } from 'expo-router'
+import { StackScreen } from '@/components/stack-screen'
 import styled from 'styled-components/native'
 
 import {
@@ -65,7 +65,8 @@ export default function VaccinationsScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen
+      <StackScreen
+        networkStatus={vaccinationsRes.networkStatus}
         options={{
           title: intl.formatMessage({ id: 'health.vaccinations.screenTitle' }),
         }}

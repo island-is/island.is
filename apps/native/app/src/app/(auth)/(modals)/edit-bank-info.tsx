@@ -4,6 +4,7 @@ import { Alert, ScrollView, View } from 'react-native'
 import { router } from 'expo-router'
 
 import { Button, NavigationBarSheet, TextField, Typography } from '@/ui'
+import { StackScreen } from '@/components/stack-screen'
 import { useGetProfileQuery } from '@/graphql/types/schema'
 import { bankInfoObject, stringifyBankData } from '@/lib/bank-info-helper'
 import { testIDs } from '@/utils/test-ids'
@@ -45,6 +46,7 @@ export default function EditBankInfoScreen() {
       testID={testIDs.SCREEN_EDIT_BANK_INFO}
       stickyHeaderIndices={[0]}
     >
+      <StackScreen closeable networkStatus={userProfile.networkStatus} />
       <NavigationBarSheet
         componentId="edit-bank-info"
         title={intl.formatMessage({ id: 'edit.bankinfo.screenTitle' })}

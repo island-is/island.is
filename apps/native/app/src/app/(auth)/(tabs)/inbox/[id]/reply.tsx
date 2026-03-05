@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView } from 'react-native'
-import { router, Stack, useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import styled from 'styled-components/native'
+
+import { StackScreen } from '@/components/stack-screen'
 
 import { LoadingIcon } from '@/components/nav-loading-spinner/loading-icon'
 import { Pressable } from '@/components/pressable/pressable'
@@ -77,7 +79,7 @@ export default function DocumentReplyScreen() {
   }>()
   const intl = useIntl()
   const { userInfo } = useAuthStore()
-  const { data: userProfileData, loading, error } = useGetProfileQuery()
+  const { data: userProfileData, loading, error, networkStatus } = useGetProfileQuery()
   const userProfile = userProfileData?.getUserProfile
 
   const [message, setMessage] = useState('')
@@ -125,7 +127,7 @@ export default function DocumentReplyScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: false }} />
+      <StackScreen networkStatus={networkStatus} options={{ headerShown: false }} />
       <NavigationBarSheet
         onClosePress={() => router.back()}
         style={{ marginHorizontal: 16 }}

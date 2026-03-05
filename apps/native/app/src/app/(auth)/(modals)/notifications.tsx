@@ -13,6 +13,7 @@ import { useTheme } from 'styled-components'
 import styled from 'styled-components/native'
 import { router } from 'expo-router'
 
+import { StackScreen } from '@/components/stack-screen'
 import {
   Button,
   NavigationBarSheet,
@@ -78,7 +79,7 @@ export default function NotificationsScreen() {
     ({ updateNavigationUnseenCount }) => updateNavigationUnseenCount,
   )
 
-  const { data, loading, error, fetchMore } = useGetUserNotificationsQuery({
+  const { data, loading, error, fetchMore, networkStatus } = useGetUserNotificationsQuery({
     variables: { input: { limit: DEFAULT_PAGE_SIZE }, locale: useLocale() },
   })
   const showError = error && !data
@@ -238,6 +239,8 @@ export default function NotificationsScreen() {
   }
 
   return (
+    <>
+    <StackScreen closeable networkStatus={networkStatus} />
     <FlatList
       style={{ flex: 1 }}
       data={memoizedData}
@@ -297,5 +300,6 @@ export default function NotificationsScreen() {
         ) : null
       }
     />
+    </>
   )
 }

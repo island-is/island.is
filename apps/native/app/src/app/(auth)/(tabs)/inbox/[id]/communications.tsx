@@ -12,6 +12,8 @@ import {
 } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
+
+import { StackScreen } from '@/components/stack-screen'
 import {
   DocumentComment,
   useGetDocumentQuery,
@@ -161,6 +163,7 @@ export default function DocumentCommunicationsScreen() {
 
   return (
     <>
+      <StackScreen networkStatus={docRes.networkStatus} />
       <CaseNumberWrapper>
         <Typography variant="eyebrow" color={theme.color.purple400}>
           {intl.formatMessage({ id: 'documentCommunications.caseNumber' })}

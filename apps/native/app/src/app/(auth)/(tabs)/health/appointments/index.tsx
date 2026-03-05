@@ -1,8 +1,10 @@
 import React, { useCallback, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native'
-import { Stack, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import styled from 'styled-components/native'
+
+import { StackScreen } from '@/components/stack-screen'
 
 import { BaseAppointmentStatuses } from '@/constants/base-appointment-statuses'
 import { useGetAppointmentsQuery } from '@/graphql/types/schema'
@@ -69,7 +71,8 @@ export default function AppointmentsScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen
+      <StackScreen
+        networkStatus={appointmentsRes.networkStatus}
         options={{
           title: intl.formatMessage({
             id: 'health.appointments.screenTitle',

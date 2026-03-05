@@ -6,9 +6,10 @@ import {
   ScrollView,
   View,
 } from 'react-native'
-import { router, Stack, useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
+import { StackScreen } from '@/components/stack-screen'
 import externalLinkIcon from '@/assets/icons/external-link.png'
 import {
   QuestionnaireQuestionnairesOrganizationEnum,
@@ -71,7 +72,7 @@ export default function QuestionnaireDetailScreen() {
   const locale = useLocale()
   const { openBrowser } = useBrowser()
   const shouldSkipQuery = !id
-  const { data, loading, error, refetch } = useGetQuestionnaireQuery({
+  const { data, loading, error, refetch, networkStatus } = useGetQuestionnaireQuery({
     variables: {
       locale,
       input: {
@@ -162,7 +163,7 @@ export default function QuestionnaireDetailScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title }} />
+      <StackScreen networkStatus={networkStatus} options={{ title }} />
       <ScrollView
         style={{ flex: 1 }}
         refreshControl={

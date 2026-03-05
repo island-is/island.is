@@ -24,7 +24,8 @@ import {
 import { isAndroid, isIos, isIosLiquidGlassEnabled } from '@/utils/devices'
 import { screenWidth } from '@/utils/dimensions'
 import { useFragment_experimental } from '@apollo/client/react/hooks'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams } from 'expo-router'
+import { StackScreen } from '@/components/stack-screen'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
@@ -314,7 +315,8 @@ export default function WalletPassScreen() {
 
   return (
     <>
-      <Stack.Screen
+      <StackScreen
+        networkStatus={res.networkStatus}
         options={{
           title: intl.formatMessage({ id: 'walletPass.screenTitle' }),
           headerShown: true,

@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { FlatList, RefreshControl } from 'react-native'
 import { useTheme } from 'styled-components/native'
 
+import { StackScreen } from '@/components/stack-screen'
 import externalLinkIcon from '@/assets/icons/external-link.png'
 import {
   GetQuestionnairesQueryResult,
@@ -94,7 +95,7 @@ export default function QuestionnairesScreen() {
     [intl, openBrowser],
   )
 
-  const { data, loading, error, refetch } = useGetQuestionnairesQuery({
+  const { data, loading, error, refetch, networkStatus } = useGetQuestionnairesQuery({
     variables: {
       locale,
     },
@@ -157,6 +158,8 @@ export default function QuestionnairesScreen() {
   )
 
   return (
+    <>
+    <StackScreen networkStatus={networkStatus} />
     <FlatList
       refreshControl={
         <RefreshControl refreshing={loading} onRefresh={refetch} />
@@ -202,5 +205,6 @@ export default function QuestionnairesScreen() {
         </>
       }
     />
+    </>
   )
 }

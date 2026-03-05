@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { ImageSourcePropType, Linking, ScrollView, View } from 'react-native'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams } from 'expo-router'
 
+import { StackScreen } from '@/components/stack-screen'
 import { useFragment_experimental } from '@apollo/client/react/hooks'
 import styled, { useTheme } from 'styled-components/native'
 import externalLink from '@/assets/icons/external-link.png'
@@ -55,7 +56,7 @@ export default function AppointmentDetailScreen() {
       returnPartialData: true,
     })
 
-  const { data, loading, error } = useGetAppointmentsQuery({
+  const { data, loading, error, networkStatus } = useGetAppointmentsQuery({
     variables: {
       from: undefined,
       status: BaseAppointmentStatuses,
@@ -101,7 +102,8 @@ export default function AppointmentDetailScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen
+      <StackScreen
+        networkStatus={networkStatus}
         options={{
           title: intl.formatMessage({
             id: 'health.appointments.detailTitle',
