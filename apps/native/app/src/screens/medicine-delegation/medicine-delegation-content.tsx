@@ -94,7 +94,10 @@ export function MedicineDelegationContent({
         <ReadMoreButton
           accessibilityRole="button"
           onPress={() =>
-            openBrowser('https://island.is/heilbrigdisthjonusta-yfir-landamaeri', componentId)
+            openBrowser(
+              'https://island.is/heilbrigdisthjonusta-yfir-landamaeri',
+              componentId,
+            )
           }
         >
           <Typography
