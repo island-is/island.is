@@ -12,12 +12,3 @@ export const companySignatureCollectionNavigation: PortalNavigationItem = {
   },
   description: m.signatureCollectionParliamentaryListsCompany,
 }
-
-export const municipalSignatureCollectionNavigation: PortalNavigationItem = {
-  name: m.signatureCollectionLists,
-  description: m.signatureCollectionMunicipalListsNavigationDescription,
-  path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
-  icon: {
-    icon: 'receipt',
-  },
-}
