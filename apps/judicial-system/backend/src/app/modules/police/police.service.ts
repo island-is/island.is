@@ -47,6 +47,7 @@ import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
+import { PoliceDefendant } from './models/policeDefendant.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
 
@@ -185,6 +186,16 @@ export class PoliceService {
       )
       .nullish(),
   })
+
+  private defendantStructure = z.object({
+    nationalId: z.string(),
+    name: z.string().nullish(),
+    gender: z.string().nullish(),
+    address: z.string().nullish(),
+    dateOfBirth: z.string().nullish(),
+    citizenship: z.string().nullish(),
+  })
+  private defendantsResponseStructure = z.array(this.defendantStructure)
 
   constructor(
     @InjectModel(IndictmentSubtype)
@@ -376,6 +387,72 @@ export class PoliceService {
         throw new BadGatewayException({
           ...reason,
           message: `Failed to get police case files for case ${caseId}`,
+          detail: reason.message,
+        })
+      })
+  }
+
+  async getDefendantsFromPolice(
+    caseId: string,
+    user: User,
+  ): Promise<PoliceDefendant[]> {
+    const startTime = nowFactory()
+
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/V4/GetDefendants/${caseId}`,
+    )
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const response: z.infer<typeof this.defendantsResponseStructure> =
+            await res.json()
+
+          this.defendantsResponseStructure.parse(response)
+
+          return response.map((defendant) => ({
+            nationalId: defendant.nationalId,
+            name: defendant.name ?? undefined,
+            gender: defendant.gender ?? undefined,
+            address: defendant.address ?? undefined,
+            dateOfBirth: defendant.dateOfBirth ?? undefined,
+            citizenship: defendant.citizenship ?? undefined,
+          }))
+        }
+
+        const reason = await res.text()
+
+        throw new NotFoundException({
+          message: `Police defendants for case ${caseId} do not exist`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          throw new NotFoundException({
+            ...reason,
+            message: `Police defendants for case ${caseId} do not exist`,
+            detail: reason.message,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get police defendants',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+            startTime,
+            endTime: nowFactory(),
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          ...reason,
+          message: `Failed to get police defendants for case ${caseId}`,
           detail: reason.message,
         })
       })
