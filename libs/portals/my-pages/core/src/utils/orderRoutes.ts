@@ -5,6 +5,14 @@ const menuConfigSchema = z.object({
   menu: z.array(z.string()),
 })
 
+const collectShortcuts = (
+  items: PortalNavigationItem[],
+): PortalNavigationItem[] =>
+  items.flatMap((item) => {
+    const nested = item.children ? collectShortcuts(item.children) : []
+    return item.customShortcut ? [{ ...item, navHide: true }, ...nested] : nested
+  })
+
 export const orderRoutes = (
   nav: PortalNavigationItem,
   orderInput?: string | string[],
@@ -30,7 +38,20 @@ export const orderRoutes = (
       return sa - sb
     })
 
-    nav.children = sorted.map((child) => orderRoutes(child, orderedArray))
+    const originalItems = sorted.filter(
+      (item) => !(item.navHide && item.customShortcut),
+    )
+    const shortcuts = collectShortcuts(originalItems)
+    const allItems = [...originalItems, ...shortcuts].sort((a, b) => {
+      const ia = orderedArray.indexOf(a.path ?? '')
+      const ib = orderedArray.indexOf(b.path ?? '')
+      const sa = ia === -1 ? Number.MAX_SAFE_INTEGER : ia
+      const sb = ib === -1 ? Number.MAX_SAFE_INTEGER : ib
+      return sa - sb
+    })
+    nav.children = allItems.map((child) =>
+      child.navHide && child.customShortcut ? child : orderRoutes(child, orderedArray),
+    )
     return nav
   } catch {
     return nav

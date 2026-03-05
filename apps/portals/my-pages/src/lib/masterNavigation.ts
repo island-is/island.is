@@ -22,10 +22,7 @@ import { consentNavigation } from '@island.is/portals/my-pages/consent'
 import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
 import { socialInsuranceMaintenanceNavigation } from '@island.is/portals/my-pages/social-insurance-maintenance'
 import { lawAndOrderNavigation } from '@island.is/portals/my-pages/law-and-order'
-import {
-  companySignatureCollectionNavigation,
-  municipalSignatureCollectionNavigation,
-} from '@island.is/portals/my-pages/signature-collection'
+import { companySignatureCollectionNavigation } from '@island.is/portals/my-pages/signature-collection'
 import { vehicleMileageNavigation } from '@island.is/portals/my-pages/mileage-registration'
 
 export const rootNavigationItem: PortalNavigationItem = {
@@ -54,7 +51,6 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
       ],
     },
     companySignatureCollectionNavigation,
-    municipalSignatureCollectionNavigation,
     informationNavigation,
     companyInformationNavigation,
     socialInsuranceMaintenanceNavigation,
