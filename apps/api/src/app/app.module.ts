@@ -17,7 +17,7 @@ import { ConsultationPortalModule } from '@island.is/api/domains/consultation-po
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import {
   CourseChargesModule,
-  CourseAvailabilityConfig,
+  CourseChargesConfig,
 } from '@island.is/api/domains/course-charges'
 import { DirectorateOfLabourModule } from '@island.is/api/domains/directorate-of-labour'
 import { DisabilityLicenseModule } from '@island.is/api/domains/disability-license'
@@ -501,7 +501,6 @@ const environment = getConfig
         WorkAccidentClientConfig,
         PracticalExamsClientConfig,
         ZendeskServiceConfig,
-        CourseAvailabilityConfig,
         emailModuleConfig,
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
@@ -510,6 +509,7 @@ const environment = getConfig
         VmstUnemploymentClientConfig,
         BankInfoClientConfig,
         LandspitaliApiModuleConfig,
+        CourseChargesConfig,
       ],
     }),
   ],

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type { ConfigType } from '@nestjs/config'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CmsContentfulService } from '@island.is/cms'
@@ -16,7 +16,7 @@ import {
   CourseAvailabilityResponse,
   CourseInstanceAvailability,
 } from './models/courseAvailability.model'
-import { CourseAvailabilityConfig } from './courseAvailability.config'
+import { CourseChargesConfig } from './courseCharges.config'
 
 const NATIONAL_ID_REGEX = /Kennitala þátttakanda \d+: (\d{10})/g
 
@@ -25,9 +25,9 @@ export class CourseChargesService {
   constructor(
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
-    @Inject(CourseAvailabilityConfig.KEY)
-    private readonly courseAvailabilityConfig: ConfigType<
-      typeof CourseAvailabilityConfig
+    @Inject(CourseChargesConfig.KEY)
+    private readonly courseChargesConfig: ConfigType<
+      typeof CourseChargesConfig
     >,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -79,8 +79,9 @@ export class CourseChargesService {
         }
 
         try {
-          const registeredCount =
-            await this.getZendeskRegistrationCount(instance.id)
+          const registeredCount = await this.getZendeskRegistrationCount(
+            instance.id,
+          )
           return {
             id: instance.id,
             isFullyBooked: registeredCount >= maxRegistrations,
@@ -101,8 +102,12 @@ export class CourseChargesService {
   private async getZendeskRegistrationCount(
     courseInstanceId: string,
   ): Promise<number> {
-    const { zendeskSubjectPrefix, zendeskSubdomain, zendeskEmail, zendeskToken } =
-      this.courseAvailabilityConfig
+    const {
+      zendeskSubjectPrefix,
+      zendeskSubdomain,
+      zendeskEmail,
+      zendeskToken,
+    } = this.courseChargesConfig
 
     const subject = `${zendeskSubjectPrefix} - ${courseInstanceId}`
     const query = `type:ticket subject:"${subject}"`
@@ -113,15 +118,17 @@ export class CourseChargesService {
     }
 
     const nationalIds = new Set<string>()
-    let url: string | null =
-      `${baseUrl}/search.json?per_page=100&query=${encodeURIComponent(query)}`
+    let url:
+      | string
+      | null = `${baseUrl}/search.json?per_page=10&query=${encodeURIComponent(
+      query,
+    )}`
 
     while (url) {
-      const response = await axios.get<{
+      const response: AxiosResponse<{
         results: Array<{ description?: string }>
         next_page?: string | null
-      }>(url, { auth })
-
+      }> = await axios.get(url, { auth })
       for (const ticket of response.data.results) {
         if (!ticket.description) continue
         const matches = ticket.description.matchAll(NATIONAL_ID_REGEX)
@@ -129,7 +136,6 @@ export class CourseChargesService {
           nationalIds.add(match[1])
         }
       }
-
       url = response.data.next_page ?? null
     }
 
