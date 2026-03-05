@@ -2,7 +2,6 @@ import React, { Dispatch, SetStateAction } from 'react'
 
 import {
   Filter,
-  FilterInput,
   FilterMultiChoice,
   FilterProps,
 } from '@island.is/island-ui/core'
@@ -49,7 +48,6 @@ export const FilterMenu = ({
   labelClose = 'Loka síu',
   labelTitle = 'Sía stofnanir',
   labelResult = 'Sýna niðurstöður',
-  inputPlaceholder = 'Sía eftir leitarorði',
   variant,
   align,
 }: FilterMenuProps & FilterLabels & Pick<FilterProps, 'variant' | 'align'>) => (
@@ -63,14 +61,6 @@ export const FilterMenu = ({
     resultCount={resultCount}
     variant={variant}
     align={align}
-    filterInput={
-      <FilterInput
-        name="filter-input"
-        placeholder={inputPlaceholder}
-        value={filter.input}
-        onChange={(value) => setFilter({ ...filter, input: value })}
-      />
-    }
     onFilterClear={() =>
       setFilter({
         raduneyti: [],
