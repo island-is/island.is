@@ -511,7 +511,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         const { incomePlan } = getApplicationAnswers(application.answers)
 
         if (!incomePlanHasOnlyZeroIncome(incomePlan)) {
-          unset(application.answers, 'noOtherIncomeConfirmation')
+          unset(application.answers, 'incomePlan.noOtherIncomeConfirmation')
         }
 
         return context
