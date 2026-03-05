@@ -481,6 +481,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`case/${caseId}/policeFiles`)
   }
 
+  getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
+    return this.get(`case/${caseId}/policeDigitalFiles`)
+  }
+
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
     return this.get(`case/${caseId}/policeCaseInfo`)
   }
