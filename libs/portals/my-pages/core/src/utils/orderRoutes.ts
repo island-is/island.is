@@ -10,7 +10,9 @@ const collectShortcuts = (
 ): PortalNavigationItem[] =>
   items.flatMap((item) => {
     const nested = item.children ? collectShortcuts(item.children) : []
-    return item.customShortcut ? [{ ...item, navHide: true }, ...nested] : nested
+    return item.customShortcut
+      ? [{ ...item, navHide: true }, ...nested]
+      : nested
   })
 
 export const orderRoutes = (
@@ -50,7 +52,9 @@ export const orderRoutes = (
       return sa - sb
     })
     nav.children = allItems.map((child) =>
-      child.navHide && child.customShortcut ? child : orderRoutes(child, orderedArray),
+      child.navHide && child.customShortcut
+        ? child
+        : orderRoutes(child, orderedArray),
     )
     return nav
   } catch {

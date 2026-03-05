@@ -138,7 +138,9 @@ export const Dashboard = () => {
                             ) : undefined)
                           )
                         }
-                        heading={formatMessage(navRoot.customShortcut?.name ?? navRoot.name)}
+                        heading={formatMessage(
+                          navRoot.customShortcut?.name ?? navRoot.name,
+                        )}
                         text={
                           navRoot.customShortcut?.description
                             ? formatMessage(navRoot.customShortcut.description)
