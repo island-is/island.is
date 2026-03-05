@@ -236,7 +236,10 @@ export class PaymentService extends BaseTemplateApiService {
 
       if (requestId) {
         this.logger.info('Calling deleteCharge with requestId', requestId)
-        await this.chargeFjsV2ClientService.deleteCharge(requestId)
+        await this.paymentModelService.refundPayment(
+          application.id,
+          'Application payment deleted',
+        )
       } else {
         this.logger.warn('No requestId found, skipping deleteCharge')
       }
