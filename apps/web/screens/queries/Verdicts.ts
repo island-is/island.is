@@ -12,7 +12,7 @@ export const GET_VERDICTS_QUERY = gql`
         verdictDate
         keywords
         presentings
-        presidentJudge {
+        verdictJudges {
           name
           title
         }

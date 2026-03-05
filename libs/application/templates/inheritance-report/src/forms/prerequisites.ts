@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildForm,
   buildMultiField,
   buildRadioField,
@@ -6,7 +7,11 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { ESTATE_INHERITANCE, PREPAID_INHERITANCE } from '../lib/constants'
+import {
+  DRAFT_PRUNE_DAYS,
+  ESTATE_INHERITANCE,
+  PREPAID_INHERITANCE,
+} from '../lib/constants'
 import { m } from '../lib/messages'
 
 export const getForm = ({
@@ -43,6 +48,15 @@ export const getForm = ({
                     disabled: !allowPrepaidApplication,
                   },
                 ],
+              }),
+              buildAlertMessageField({
+                id: 'estateSelectionInfoMessage',
+                message: (_app, _locale, formatMessage) =>
+                  formatMessage?.(m.selectEstateInfoMessage, {
+                    days: DRAFT_PRUNE_DAYS,
+                  }) ?? '',
+                alertType: 'warning',
+                condition: (answers) => !!answers.applicationFor,
               }),
               buildSubmitField({
                 id: 'inheritance.submit',
