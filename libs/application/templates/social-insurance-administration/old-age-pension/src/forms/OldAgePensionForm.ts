@@ -388,24 +388,24 @@ export const OldAgePensionForm: Form = buildForm({
               id: 'incomePlan',
               title:
                 socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
-              description: (application: Application) => {
-                const { incomePlanConditions } = getApplicationExternalData(
-                  application.externalData,
-                )
-
-                return {
-                  ...socialInsuranceAdministrationMessage.incomePlan
-                    .description,
-                  values: {
-                    incomePlanYear:
-                      incomePlanConditions?.incomePlanYear ??
-                      new Date().getFullYear(),
-                  },
-                }
-              },
               children: [
                 buildTableRepeaterField({
                   id: 'incomePlanTable',
+                  description: (application: Application) => {
+                    const { incomePlanConditions } = getApplicationExternalData(
+                      application.externalData,
+                    )
+
+                    return {
+                      ...socialInsuranceAdministrationMessage.incomePlan
+                        .description,
+                      values: {
+                        incomePlanYear:
+                          incomePlanConditions?.incomePlanYear ??
+                          new Date().getFullYear(),
+                      },
+                    }
+                  },
                   formTitle:
                     socialInsuranceAdministrationMessage.incomePlan
                       .registerIncome,
@@ -419,6 +419,7 @@ export const OldAgePensionForm: Form = buildForm({
                   removeButtonTooltipText:
                     socialInsuranceAdministrationMessage.incomePlan
                       .removeIncome,
+                  marginTop: 0,
                   fields: {
                     incomeCategory: {
                       component: 'select',
@@ -657,7 +658,6 @@ export const OldAgePensionForm: Form = buildForm({
                     ],
                     rows: ['incomeType', 'incomePerYear', 'currency'],
                   },
-                  marginTop: 1,
                 }),
                 buildHiddenInput({
                   id: 'incomePlan.shouldShow',
