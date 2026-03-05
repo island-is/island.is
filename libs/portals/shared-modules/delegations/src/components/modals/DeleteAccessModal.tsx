@@ -33,13 +33,9 @@ export const DeleteAccessModal = ({
     name: userInfo?.profile.name,
     nationalId: userInfo?.profile.nationalId,
   }
-  const otherId = {
-    name: otherIdentity.name,
-    nationalId: otherIdentity.nationalId,
-  }
 
-  const from = direction === 'outgoing' ? user : otherId
-  const to = direction === 'outgoing' ? otherId : user
+  const from = direction === 'outgoing' ? user : otherIdentity
+  const to = direction === 'outgoing' ? otherIdentity : user
 
   return (
     <Modal

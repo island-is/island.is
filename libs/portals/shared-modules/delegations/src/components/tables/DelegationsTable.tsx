@@ -35,7 +35,6 @@ export const DelegationsTable = ({
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  const { formatMessage } = useLocale()
 
   return (
     <Box
@@ -53,116 +52,143 @@ export const DelegationsTable = ({
       ) : error && !tableData?.length ? (
         <Problem error={error} />
       ) : isMobile && mobileRows ? (
-        <Box>
-          {mobileRows.map((mobileRow, idx) => (
-            <Box
-              key={`${mobileRow.identity.nationalId}-${idx}`}
-              className={styles.mobileDivider}
-              paddingTop={3}
-              marginTop={idx === 0 ? 0 : 3}
-              position="relative"
-            >
+        <MobileDelegationsTable mobileRows={mobileRows} />
+      ) : (
+        <DesktopDelegationsTable
+          headerArray={headerArray}
+          tableData={tableData}
+        />
+      )}
+    </Box>
+  )
+}
+
+const DesktopDelegationsTable = ({
+  headerArray,
+  tableData,
+}: {
+  headerArray: string[]
+  tableData: React.ReactElement[][]
+}) => {
+  return (
+    <T.Table>
+      <T.Head>
+        <T.Row>
+          {headerArray.map((item, i) => (
+            <T.HeadData key={item + i} style={{ paddingInline: 16 }}>
+              <Text variant="medium" fontWeight="semiBold">
+                {item}
+              </Text>
+            </T.HeadData>
+          ))}
+        </T.Row>
+      </T.Head>
+      <T.Body>
+        {tableData?.map((row, i) => {
+          return (
+            <T.Row key={i}>
+              {row.map((cell, j) => {
+                return (
+                  <T.Data key={j} style={{ paddingInline: 16 }}>
+                    <Box
+                      className={
+                        j === row.length - 1 && headerArray[j] === ''
+                          ? alignRight
+                          : undefined
+                      }
+                      style={{ maxWidth: 300 }}
+                    >
+                      {cell}
+                    </Box>
+                  </T.Data>
+                )
+              })}
+            </T.Row>
+          )
+        })}
+      </T.Body>
+    </T.Table>
+  )
+}
+
+const MobileDelegationsTable = ({
+  mobileRows,
+}: {
+  mobileRows: MobileRowData[]
+}) => {
+  const { formatMessage } = useLocale()
+
+  return (
+    <Box>
+      {mobileRows.map((mobileRow, idx) => (
+        <Box
+          key={`${mobileRow.identity.nationalId}-${idx}`}
+          className={styles.mobileDivider}
+          paddingTop={3}
+          marginTop={idx === 0 ? 0 : 3}
+          position="relative"
+        >
+          <Box
+            display="flex"
+            alignItems="center"
+            columnGap={1}
+            marginBottom={1}
+          >
+            {mobileRow.icon ? (
               <Box
                 display="flex"
                 alignItems="center"
-                columnGap={1}
-                marginBottom={1}
+                justifyContent="center"
+                borderRadius="full"
+                background="blue100"
+                style={{ width: 32, height: 32, flexShrink: 0 }}
               >
-                {mobileRow.icon ? (
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    borderRadius="full"
-                    background="blue100"
-                    style={{ width: 32, height: 32, flexShrink: 0 }}
-                  >
-                    <Icon icon={mobileRow.icon} color="blue400" />
-                  </Box>
-                ) : (
-                  <UserAvatar
-                    color="blue"
-                    username={mobileRow.identity.name}
-                    size="medium"
-                  />
-                )}
-                <Text variant="h4" as="h2" color="blue400">
-                  {mobileRow.identity.name}
-                </Text>
+                <Icon icon={mobileRow.icon} color="blue400" />
               </Box>
+            ) : (
+              <UserAvatar
+                color="blue"
+                username={mobileRow.identity.name}
+                size="medium"
+              />
+            )}
+            <Text variant="h4" as="h2" color="blue400">
+              {mobileRow.identity.name}
+            </Text>
+          </Box>
 
-              <Box marginBottom={2}>
-                <Stack space={1}>
-                  <Box display="flex" flexDirection="row">
-                    <Box width="half" display="flex" alignItems="center">
-                      <Text fontWeight="semiBold" variant="default">
-                        {formatMessage(m.nationalId)}
-                      </Text>
-                    </Box>
-                    <Box width="half">
-                      <Text variant="default">
-                        {formatNationalId(mobileRow.identity.nationalId)}
-                      </Text>
-                    </Box>
-                  </Box>
-                  {mobileRow.dataRows.map((dataRow, j) => (
-                    <Box key={j} display="flex" flexDirection="row">
-                      <Box width="half" display="flex" alignItems="center">
-                        <Text fontWeight="semiBold" variant="default">
-                          {dataRow.label}
-                        </Text>
-                      </Box>
-                      <Box width="half">
-                        <Text variant="default">{dataRow.content}</Text>
-                      </Box>
-                    </Box>
-                  ))}
-                </Stack>
-              </Box>
-
-              <Box marginBottom={1}>{mobileRow.action}</Box>
-            </Box>
-          ))}
-        </Box>
-      ) : (
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              {headerArray.map((item, i) => (
-                <T.HeadData key={item + i} style={{ paddingInline: 16 }}>
-                  <Text variant="medium" fontWeight="semiBold">
-                    {item}
+          <Box marginBottom={2}>
+            <Stack space={1}>
+              <Box display="flex" flexDirection="row">
+                <Box width="half" display="flex" alignItems="center">
+                  <Text fontWeight="semiBold" variant="default">
+                    {formatMessage(m.nationalId)}
                   </Text>
-                </T.HeadData>
+                </Box>
+                <Box width="half">
+                  <Text variant="default">
+                    {formatNationalId(mobileRow.identity.nationalId)}
+                  </Text>
+                </Box>
+              </Box>
+              {mobileRow.dataRows.map((dataRow, j) => (
+                <Box key={j} display="flex" flexDirection="row">
+                  <Box width="half" display="flex" alignItems="center">
+                    <Text fontWeight="semiBold" variant="default">
+                      {dataRow.label}
+                    </Text>
+                  </Box>
+                  <Box width="half">
+                    <Text variant="default">{dataRow.content}</Text>
+                  </Box>
+                </Box>
               ))}
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {tableData?.map((row, i) => {
-              return (
-                <T.Row key={i}>
-                  {row.map((cell, j) => {
-                    return (
-                      <T.Data key={j} style={{ paddingInline: 16 }}>
-                        <Box
-                          className={
-                            j === row.length - 1 && headerArray[j] === ''
-                              ? alignRight
-                              : undefined
-                          }
-                          style={{ maxWidth: 300 }}
-                        >
-                          {cell}
-                        </Box>
-                      </T.Data>
-                    )
-                  })}
-                </T.Row>
-              )
-            })}
-          </T.Body>
-        </T.Table>
-      )}
+            </Stack>
+          </Box>
+
+          <Box marginBottom={1}>{mobileRow.action}</Box>
+        </Box>
+      ))}
     </Box>
   )
 }

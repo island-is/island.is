@@ -15,7 +15,7 @@ import { m as coreMessages } from '@island.is/portals/core'
 
 import { useState } from 'react'
 import { Reference, useApolloClient } from '@apollo/client'
-import { useDelegationForm } from '../../context'
+import { ScopeSelection, useDelegationForm } from '../../context'
 import { AuthDelegationScope, AuthDomain } from '@island.is/api/schema'
 import { DeleteAccessModal } from '../modals/DeleteAccessModal'
 import { usePatchAuthDelegationMutation } from '../../screens/EditAccess.tsx/EditAccess.generated'
@@ -23,8 +23,9 @@ import * as styles from './Tables.css'
 
 type PersonCentricDelegation =
   AuthDelegationsGroupedByIdentityOutgoingQuery['authDelegationsGroupedByIdentityOutgoing'][number]
+type Scope = PersonCentricDelegation['scopes'][number]
 
-const CustomDelegationsPermissionsTable = ({
+export const CustomDelegationsPermissionsTable = ({
   data,
   direction,
   isMobile,
@@ -36,20 +37,12 @@ const CustomDelegationsPermissionsTable = ({
   const { formatMessage } = useLocale()
   const client = useApolloClient()
   const scopes = data.scopes
-  const [patchDelegation] = usePatchAuthDelegationMutation()
+  const [patchDelegation, { loading: patchLoading }] =
+    usePatchAuthDelegationMutation()
 
   const { setSelectedScopes, clearForm } = useDelegationForm()
 
-  const [scopeToDelete, setScopeToDelete] =
-    useState<AuthDelegationScope | null>(null)
-  const headerArray = [
-    { value: formatMessage(m.headerDomain) },
-    { value: formatMessage(m.headerScopeName) },
-    { value: formatMessage(m.headerRegisteredDate) },
-    { value: formatMessage(m.headerValidityPeriod) },
-    // { value: 'Síðast notað' }, // TODO: Data not available yet
-    { value: '' },
-  ]
+  const [scopeToDelete, setScopeToDelete] = useState<Scope | null>(null)
 
   const personCacheId = client.cache.identify({
     __typename: 'AuthDelegationsGroupedByIdentity',
@@ -138,140 +131,70 @@ const CustomDelegationsPermissionsTable = ({
     }
   }
 
-  if (isMobile) {
-    return (
-      <Box>
-        {scopes?.map((scope, idx) => (
-          <Box
-            key={scope.id}
-            padding={2}
-            paddingTop={3}
-            background={idx % 2 === 0 ? 'white' : 'blue100'}
-          >
-            <Box marginBottom={1}>
-              <Text variant="h5" color="blue400">
-                {formatMessage(m.delegationNr, { index: idx + 1 })}
-              </Text>
-            </Box>
-            <Box marginBottom={2}>
-              <Stack space={0}>
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  <Box
-                    width="half"
-                    display="flex"
-                    alignItems="center"
-                    paddingY={1}
-                  >
-                    <Text fontWeight="semiBold" variant="default">
-                      {formatMessage(m.headerDomain)}
-                    </Text>
-                  </Box>
-                  <Box width="half">
-                    <Text variant="default">{scope.domain?.displayName}</Text>
-                  </Box>
-                </Box>
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  <Box
-                    width="half"
-                    display="flex"
-                    alignItems="center"
-                    paddingY={1}
-                  >
-                    <Text fontWeight="semiBold" variant="default">
-                      {formatMessage(m.headerScopeName)}
-                    </Text>
-                  </Box>
-                  <Box width="half">
-                    <Text variant="default">{scope.displayName}</Text>
-                  </Box>
-                </Box>
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  <Box
-                    width="half"
-                    display="flex"
-                    alignItems="center"
-                    paddingY={1}
-                  >
-                    <Text fontWeight="semiBold" variant="default">
-                      {formatMessage(m.headerRegisteredDate)}
-                    </Text>
-                  </Box>
-                  <Box width="half">
-                    <Text variant="default">
-                      {scope.validFrom
-                        ? format(new Date(scope.validFrom), 'dd.MM.yyyy')
-                        : '-'}
-                    </Text>
-                  </Box>
-                </Box>
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  <Box
-                    width="half"
-                    display="flex"
-                    alignItems="center"
-                    paddingY={1}
-                  >
-                    <Text fontWeight="semiBold" variant="default">
-                      {formatMessage(m.headerValidityPeriod)}
-                    </Text>
-                  </Box>
-                  <Box width="half">
-                    {direction === 'incoming' ? (
-                      <Text variant="medium">
-                        {scope.validTo
-                          ? format(new Date(scope.validTo), 'dd.MM.yyyy')
-                          : '-'}
-                      </Text>
-                    ) : (
-                      <DatePicker
-                        name={`validTo-${scope.id}`}
-                        locale="is"
-                        placeholderText={formatMessage(m.headerValidityPeriod)}
-                        selected={
-                          scope.validTo ? new Date(scope.validTo) : undefined
-                        }
-                        handleChange={(date) => handleDateChange(scope, date)}
-                        size="xs"
-                        backgroundColor="blue"
-                        detatchedCalendar={true}
-                      />
-                    )}
-                  </Box>
-                </Box>
-                <Box display="flex" paddingTop={2}>
-                  <Button
-                    variant="ghost"
-                    icon="trash"
-                    iconType="outline"
-                    size="small"
-                    colorScheme="destructive"
-                    fluid
-                    onClick={() => {
-                      setScopeToDelete(scope as AuthDelegationScope)
-                      setSelectedScopes([
-                        {
-                          name: scope.name,
-                          displayName: scope.displayName,
-                          description: scope.apiScope?.description,
-                          domain: scope.domain as AuthDomain,
-                          delegationId: scope.delegationId ?? undefined,
-                          validTo: scope.validTo
-                            ? new Date(scope.validTo)
-                            : undefined,
-                        },
-                      ])
-                    }}
-                  >
-                    {formatMessage(coreMessages.buttonDestroy)}
-                  </Button>
-                </Box>
-              </Stack>
-            </Box>
-          </Box>
-        ))}
-      </Box>
-    )
-  }
+  return (
+    <>
+      {isMobile ? (
+        <MobileCustomDelegationsPermissionsTable
+          scopes={scopes}
+          direction={direction}
+          handleDateChange={handleDateChange}
+          setScopeToDelete={setScopeToDelete}
+          setSelectedScopes={setSelectedScopes}
+        />
+      ) : (
+        <DesktopCustomDelegationsPermissionsTable
+          scopes={scopes}
+          direction={direction}
+          handleDateChange={handleDateChange}
+          setScopeToDelete={setScopeToDelete}
+          setSelectedScopes={setSelectedScopes}
+        />
+      )}
+      <DeleteAccessModal
+        onClose={() => {
+          setScopeToDelete(null)
+          // timeout to fix visual glitch
+          setTimeout(clearForm, 300)
+        }}
+        isVisible={!!scopeToDelete}
+        direction={direction}
+        otherIdentity={{ name: data.name, nationalId: data.nationalId }}
+        onDelete={() => {
+          const delegationId = scopeToDelete?.delegationId ?? undefined
+          const scopeName = scopeToDelete?.name ?? undefined
+          setScopeToDelete(null)
+          handleDeleteScope(delegationId, scopeName).then(() => {
+            clearForm()
+          })
+        }}
+        loading={patchLoading}
+      />
+    </>
+  )
+}
+
+const DesktopCustomDelegationsPermissionsTable = ({
+  scopes,
+  direction,
+  handleDateChange,
+  setScopeToDelete,
+  setSelectedScopes,
+}: {
+  scopes: Scope[]
+  direction: 'outgoing' | 'incoming'
+  handleDateChange: (scope: Scope, newDate: Date) => void
+  setScopeToDelete: (scope: Scope) => void
+  setSelectedScopes: (scopes: ScopeSelection[]) => void
+}) => {
+  const { formatMessage } = useLocale()
+  const headerArray = [
+    { value: formatMessage(m.headerDomain) },
+    { value: formatMessage(m.headerScopeName) },
+    { value: formatMessage(m.headerRegisteredDate) },
+    { value: formatMessage(m.headerValidityPeriod) },
+    // { value: 'Síðast notað' }, // TODO: Data not available yet
+    { value: '' },
+  ]
 
   return (
     <div className={styles.tableContainer}>
@@ -362,28 +285,154 @@ const CustomDelegationsPermissionsTable = ({
           })}
         </T.Body>
       </T.Table>
-      <DeleteAccessModal
-        onClose={() => {
-          setScopeToDelete(null)
-          // timeout to fix visual glitch
-          setTimeout(clearForm, 300)
-        }}
-        isVisible={!!scopeToDelete}
-        direction={direction}
-        otherIdentity={{ name: data.name, nationalId: data.nationalId }}
-        onDelete={() => {
-          const delegationId = scopeToDelete?.delegationId ?? undefined
-          const scopeName = scopeToDelete?.name ?? undefined
-          setScopeToDelete(null)
-          handleDeleteScope(delegationId, scopeName).finally(() =>
-            // timeout to fix visual glitch
-            setTimeout(clearForm, 300),
-          )
-        }}
-        loading={false} //todo
-      />
     </div>
   )
 }
 
-export default CustomDelegationsPermissionsTable
+const MobileCustomDelegationsPermissionsTable = ({
+  scopes,
+  direction,
+  handleDateChange,
+  setScopeToDelete,
+  setSelectedScopes,
+}: {
+  scopes: Scope[]
+  direction: 'outgoing' | 'incoming'
+  handleDateChange: (scope: Scope, newDate: Date) => void
+  setScopeToDelete: (scope: Scope) => void
+  setSelectedScopes: (scopes: ScopeSelection[]) => void
+}) => {
+  const { formatMessage } = useLocale()
+  return (
+    <Box>
+      {scopes?.map((scope, idx) => (
+        <Box
+          key={scope.id}
+          padding={2}
+          paddingTop={3}
+          background={idx % 2 === 0 ? 'white' : 'blue100'}
+        >
+          <Box marginBottom={1}>
+            <Text variant="h5" color="blue400">
+              {formatMessage(m.delegationNr, { index: idx + 1 })}
+            </Text>
+          </Box>
+          <Box marginBottom={2}>
+            <Stack space={0}>
+              <Box display="flex" flexDirection="row" alignItems="center">
+                <Box
+                  width="half"
+                  display="flex"
+                  alignItems="center"
+                  paddingY={1}
+                >
+                  <Text fontWeight="semiBold" variant="default">
+                    {formatMessage(m.headerDomain)}
+                  </Text>
+                </Box>
+                <Box width="half">
+                  <Text variant="default">{scope.domain?.displayName}</Text>
+                </Box>
+              </Box>
+              <Box display="flex" flexDirection="row" alignItems="center">
+                <Box
+                  width="half"
+                  display="flex"
+                  alignItems="center"
+                  paddingY={1}
+                >
+                  <Text fontWeight="semiBold" variant="default">
+                    {formatMessage(m.headerScopeName)}
+                  </Text>
+                </Box>
+                <Box width="half">
+                  <Text variant="default">{scope.displayName}</Text>
+                </Box>
+              </Box>
+              <Box display="flex" flexDirection="row" alignItems="center">
+                <Box
+                  width="half"
+                  display="flex"
+                  alignItems="center"
+                  paddingY={1}
+                >
+                  <Text fontWeight="semiBold" variant="default">
+                    {formatMessage(m.headerRegisteredDate)}
+                  </Text>
+                </Box>
+                <Box width="half">
+                  <Text variant="default">
+                    {scope.validFrom
+                      ? format(new Date(scope.validFrom), 'dd.MM.yyyy')
+                      : '-'}
+                  </Text>
+                </Box>
+              </Box>
+              <Box display="flex" flexDirection="row" alignItems="center">
+                <Box
+                  width="half"
+                  display="flex"
+                  alignItems="center"
+                  paddingY={1}
+                >
+                  <Text fontWeight="semiBold" variant="default">
+                    {formatMessage(m.headerValidityPeriod)}
+                  </Text>
+                </Box>
+                <Box width="half">
+                  {direction === 'incoming' ? (
+                    <Text variant="medium">
+                      {scope.validTo
+                        ? format(new Date(scope.validTo), 'dd.MM.yyyy')
+                        : '-'}
+                    </Text>
+                  ) : (
+                    <DatePicker
+                      name={`validTo-${scope.id}`}
+                      locale="is"
+                      placeholderText={formatMessage(m.headerValidityPeriod)}
+                      selected={
+                        scope.validTo ? new Date(scope.validTo) : undefined
+                      }
+                      handleChange={(date) => handleDateChange(scope, date)}
+                      size="xs"
+                      backgroundColor="blue"
+                      detatchedCalendar={true}
+                    />
+                  )}
+                </Box>
+              </Box>
+              <Box display="flex" paddingTop={2}>
+                <Button
+                  variant="ghost"
+                  icon="trash"
+                  iconType="outline"
+                  size="small"
+                  colorScheme="destructive"
+                  fluid
+                  onClick={() => {
+                    setScopeToDelete(scope as AuthDelegationScope)
+                    setSelectedScopes([
+                      {
+                        name: scope.name,
+                        displayName: scope.displayName,
+                        description: scope.apiScope?.description,
+                        domain: scope.domain as AuthDomain,
+                        delegationId: scope.delegationId ?? undefined,
+                        validTo: scope.validTo
+                          ? new Date(scope.validTo)
+                          : undefined,
+                      },
+                    ])
+                  }}
+                >
+                  {formatMessage(coreMessages.buttonDestroy)}
+                </Button>
+              </Box>
+            </Stack>
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  )
+}

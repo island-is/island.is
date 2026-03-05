@@ -1,5 +1,5 @@
 import { Control, UseFormReturn } from 'react-hook-form'
-import { Box, Icon, toast } from '@island.is/island-ui/core'
+import { Button, Icon, toast } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -19,10 +19,14 @@ export const IdentityLookup = ({
   setFormError,
   methods,
   index = 0,
+  showRemoveButton = false,
+  onRemove,
 }: {
   setFormError: (error: Error) => void
   methods: UseFormReturn<FormData>
   index?: number
+  showRemoveButton?: boolean
+  onRemove?: () => void
 }) => {
   const { formatMessage } = useLocale()
 
@@ -96,82 +100,88 @@ export const IdentityLookup = ({
   }
 
   return (
-    <Box
-      display="flex"
-      flexDirection={['column', 'column', 'column', 'row']}
-      rowGap={2}
-      columnGap={3}
-      flexGrow={1}
-      alignItems="flexStart"
-    >
-      <div className={styles.nationalIdInput}>
-        <InputController
-          control={control as unknown as Control}
-          id={`identities.${index}.nationalId`}
-          name={`identities.${index}.nationalId`}
-          label={formatMessage(m.grantFormAccessHolder)}
-          format="######-####"
-          icon={watchName || queryLoading ? undefined : 'search'}
-          backgroundColor="blue"
-          onChange={(value) => {
-            requestDelegation(value)
-          }}
-          ref={inputRef}
-          placeholder={'000000-0000'}
-          size="xs"
-          error={
-            errors.identities?.[index]?.nationalId?.message as
-              | string
-              | undefined
-          }
-          rules={{
-            required: {
-              value: true,
-              message: formatMessage(m.grantRequiredSsn),
-            },
-            validate: {
-              value: (value: number) => {
-                const valueAsString = value.toString()
-                if (
-                  valueAsString.length === 10 &&
-                  !kennitala.isValid(valueAsString)
-                ) {
-                  return formatMessage(m.grantInvalidSsn)
-                }
-
-                if (valueAsString === userInfo.profile.nationalId) {
-                  return formatMessage(m.grantSameSsn)
-                }
-
-                if (valueAsString === userInfo.profile.actor?.nationalId) {
-                  return formatMessage(m.grantActorSsn)
-                }
-
-                if (kennitala.isCompany(valueAsString)) {
-                  return formatMessage(m.grantCompanySsn)
-                }
+    <div className={styles.container}>
+      <div className={styles.nationalIdRow}>
+        <div className={styles.nationalIdInput({ showRemoveButton })}>
+          <InputController
+            control={control as unknown as Control}
+            id={`identities.${index}.nationalId`}
+            name={`identities.${index}.nationalId`}
+            label={formatMessage(m.grantFormAccessHolder)}
+            format="######-####"
+            icon={watchName || queryLoading ? undefined : 'search'}
+            backgroundColor="blue"
+            onChange={(value) => {
+              requestDelegation(value)
+            }}
+            ref={inputRef}
+            placeholder={'000000-0000'}
+            size="xs"
+            error={
+              errors.identities?.[index]?.nationalId?.message as
+                | string
+                | undefined
+            }
+            rules={{
+              required: {
+                value: true,
+                message: formatMessage(m.grantRequiredSsn),
               },
-            },
-          }}
-        />
-        {queryLoading ? (
-          <span
-            className={cn(styles.icon, styles.loadingIcon)}
-            aria-label="Loading"
-          >
-            <Icon icon="reload" size="medium" color="blue400" />
-          </span>
-        ) : watchName ? (
-          <button
-            type="button"
-            disabled={queryLoading}
-            onClick={clearPersonState}
-            className={styles.icon}
-            aria-label={formatMessage(coreMessages.clearSelected)}
-          >
-            <Icon icon="close" size="medium" color="blue400" />
-          </button>
-        ) : null}
+              validate: {
+                value: (value: number) => {
+                  const valueAsString = value.toString()
+                  if (
+                    valueAsString.length === 10 &&
+                    !kennitala.isValid(valueAsString)
+                  ) {
+                    return formatMessage(m.grantInvalidSsn)
+                  }
+
+                  if (valueAsString === userInfo.profile.nationalId) {
+                    return formatMessage(m.grantSameSsn)
+                  }
+
+                  if (valueAsString === userInfo.profile.actor?.nationalId) {
+                    return formatMessage(m.grantActorSsn)
+                  }
+
+                  if (kennitala.isCompany(valueAsString)) {
+                    return formatMessage(m.grantCompanySsn)
+                  }
+                },
+              },
+            }}
+          />
+          {queryLoading ? (
+            <span
+              className={cn(styles.icon, styles.loadingIcon)}
+              aria-label="Loading"
+            >
+              <Icon icon="reload" size="medium" color="blue400" />
+            </span>
+          ) : watchName ? (
+            <button
+              type="button"
+              disabled={queryLoading}
+              onClick={clearPersonState}
+              className={styles.icon}
+              aria-label={formatMessage(coreMessages.clearSelected)}
+            >
+              <Icon icon="close" size="medium" color="blue400" />
+            </button>
+          ) : null}
+        </div>
+        {showRemoveButton && (
+          <div className={styles.removeButtonWrapper}>
+            <Button
+              variant="ghost"
+              circle
+              icon="remove"
+              colorScheme="default"
+              onClick={onRemove}
+            />
+          </div>
+        )}
       </div>
       <div className={styles.inputWrapper}>
         <InputController
@@ -182,6 +192,6 @@ export const IdentityLookup = ({
           size="xs"
         />
       </div>
-    </Box>
+    </div>
   )
 }

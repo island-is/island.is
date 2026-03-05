@@ -14,7 +14,7 @@ import format from 'date-fns/format'
 import { useCallback, useState } from 'react'
 import { m as coreMessages, formatNationalId } from '@island.is/portals/core'
 import { useLocale } from '@island.is/localization'
-import CustomDelegationsPermissionsTable from './CustomDelegationsPermissionsTable'
+import { CustomDelegationsPermissionsTable } from './CustomDelegationsPermissionsTable'
 import { ApolloError, Reference, useApolloClient } from '@apollo/client'
 import { Problem } from '@island.is/react-spa/shared'
 import { AuthDomain } from '@island.is/api/schema'
@@ -35,7 +35,7 @@ import cn from 'classnames'
 export type DelegationsByPerson =
   AuthDelegationsGroupedByIdentityOutgoingQuery['authDelegationsGroupedByIdentityOutgoing'][number]
 
-const CustomDelegationsTable = ({
+export default function CustomDelegationsTable({
   title,
   data,
   loading,
@@ -47,7 +47,7 @@ const CustomDelegationsTable = ({
   loading: boolean
   error: ApolloError | undefined
   direction: 'outgoing' | 'incoming'
-}) => {
+}) {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.lg
   const { formatMessage } = useLocale()
@@ -127,15 +127,6 @@ const CustomDelegationsTable = ({
     [deleteDelegation, evictPerson, formatMessage],
   )
 
-  const headerArray = [
-    { value: '' },
-    { value: formatMessage(m.name) },
-    { value: formatMessage(m.numberOfDelegations) },
-    { value: formatMessage(m.validityPeriod) },
-    ...(direction === 'outgoing' ? [{ value: '' }] : []),
-    { value: '' },
-  ]
-
   const mapScopesToScopeSelection = (person: DelegationsByPerson) => {
     return person.scopes.map((scope) => ({
       name: scope.name,
@@ -187,252 +178,23 @@ const CustomDelegationsTable = ({
       ) : error && !data?.length ? (
         <Problem error={error} />
       ) : isMobile ? (
-        <Box>
-          {data?.map((person, idx) => {
-            const isExpanded =
-              expandedRow === `${person.nationalId}-${person.type}`
-
-            return (
-              <Box
-                key={`${person.nationalId}-${person.type}`}
-                className={cn({
-                  [styles.mobileContainer]: isExpanded,
-                  [styles.mobileDivider]: !isExpanded,
-                })}
-                paddingTop={3}
-                marginTop={idx === 0 ? 0 : 3}
-                marginBottom={isExpanded ? 2 : 0}
-                position="relative"
-              >
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                  marginBottom={1}
-                >
-                  <Box display="flex" alignItems="center" columnGap={1}>
-                    <UserAvatar
-                      color={isExpanded ? 'white' : 'blue'}
-                      username={person.name}
-                      size="medium"
-                    />
-                    <Text variant="h4" color="blue400">
-                      {person.name}
-                    </Text>
-                  </Box>
-                  <Box marginLeft={1}>
-                    <Button
-                      circle
-                      icon={isExpanded ? 'remove' : 'add'}
-                      colorScheme="light"
-                      title={formatMessage(m.viewPermissions)}
-                      onClick={() =>
-                        setExpandedRow(
-                          isExpanded
-                            ? null
-                            : `${person.nationalId}-${person.type}`,
-                        )
-                      }
-                    />
-                  </Box>
-                </Box>
-
-                <Box marginBottom={2}>
-                  <Stack space={1}>
-                    <Box display="flex" flexDirection="row" columnGap={1}>
-                      <Box width="half" display="flex" alignItems="center">
-                        <Text fontWeight="semiBold" variant="default">
-                          {formatMessage(m.nationalId)}
-                        </Text>
-                      </Box>
-                      <Box width="half">
-                        <Text variant="default">
-                          {formatNationalId(person.nationalId)}
-                        </Text>
-                      </Box>
-                    </Box>
-                    <Box display="flex" flexDirection="row" columnGap={1}>
-                      <Box width="half" display="flex" alignItems="center">
-                        <Text fontWeight="semiBold" variant="default">
-                          {formatMessage(m.numberOfDelegations)}
-                        </Text>
-                      </Box>
-                      <Box width="half">
-                        <Text variant="default">{person.totalScopeCount}</Text>
-                      </Box>
-                    </Box>
-                    <Box display="flex" flexDirection="row" columnGap={1}>
-                      <Box width="half" display="flex" alignItems="center">
-                        <Text fontWeight="semiBold" variant="default">
-                          {formatMessage(m.validityPeriod)}
-                        </Text>
-                      </Box>
-                      <Box width="half">
-                        <Text variant="default">
-                          {person.latestValidTo
-                            ? format(
-                                new Date(person.latestValidTo),
-                                'dd.MM.yyyy',
-                              )
-                            : formatMessage(m.noValidToDate)}
-                        </Text>
-                      </Box>
-                    </Box>
-                  </Stack>
-                </Box>
-
-                <Box display="flex" marginBottom={1} columnGap={1}>
-                  <Button
-                    variant="ghost"
-                    icon="trash"
-                    iconType="outline"
-                    size="small"
-                    colorScheme="destructive"
-                    fluid
-                    onClick={() => {
-                      onClickDelete(person)
-                    }}
-                  >
-                    {formatMessage(coreMessages.buttonDestroy)}
-                  </Button>
-                  {direction === 'outgoing' && (
-                    <Button
-                      variant="ghost"
-                      icon="pencil"
-                      iconType="outline"
-                      size="small"
-                      colorScheme="default"
-                      fluid
-                      onClick={() => onClickEdit(person)}
-                    >
-                      {formatMessage(coreMessages.buttonEdit)}
-                    </Button>
-                  )}
-                </Box>
-
-                <AnimateHeight height={isExpanded ? 'auto' : 0} duration={300}>
-                  <Box paddingTop={2} paddingBottom={3}>
-                    <Divider />
-                  </Box>
-                  <CustomDelegationsPermissionsTable
-                    data={person}
-                    direction={direction}
-                    isMobile
-                  />
-                </AnimateHeight>
-              </Box>
-            )
-          })}
-        </Box>
+        <MobileCustomDelegationsTable
+          data={data}
+          direction={direction}
+          expandedRow={expandedRow}
+          setExpandedRow={setExpandedRow}
+          onClickDelete={onClickDelete}
+          onClickEdit={onClickEdit}
+        />
       ) : (
-        <div className={styles.tableContainer}>
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                {headerArray.map((item, i) => (
-                  <T.HeadData
-                    key={item.value + i}
-                    style={{ paddingInline: 16 }}
-                  >
-                    <Text variant="medium" fontWeight="semiBold">
-                      {item.value}
-                    </Text>
-                  </T.HeadData>
-                ))}
-              </T.Row>
-            </T.Head>
-            <T.Body>
-              {data?.map((person) => {
-                const identity = {
-                  nationalId: person.nationalId,
-                  name: person.name,
-                  type: person.type,
-                }
-
-                return (
-                  <ExpandableRow
-                    key={`${person.nationalId}-${person.type}`}
-                    onExpandCallback={() =>
-                      setExpandedRow(`${person.nationalId}-${person.type}`)
-                    }
-                    data={[
-                      {
-                        value: (
-                          <IdentityInfo
-                            identity={identity}
-                            isExpanded={
-                              expandedRow ===
-                              `${person.nationalId}-${person.type}`
-                            }
-                          />
-                        ),
-                      },
-                      {
-                        value: (
-                          <Text variant="medium" fontWeight="semiBold">
-                            {person.totalScopeCount}
-                          </Text>
-                        ),
-                      },
-                      {
-                        value: person.latestValidTo
-                          ? format(new Date(person.latestValidTo), 'dd.MM.yyyy')
-                          : formatMessage(m.noValidToDate),
-                      },
-                      ...(direction === 'outgoing'
-                        ? [
-                            {
-                              value: (
-                                <Box flexShrink={0}>
-                                  <Button
-                                    variant="text"
-                                    icon="pencil"
-                                    iconType="outline"
-                                    size="small"
-                                    colorScheme="default"
-                                    onClick={() => {
-                                      onClickEdit(person)
-                                    }}
-                                  >
-                                    {formatMessage(coreMessages.buttonEdit)}
-                                  </Button>
-                                </Box>
-                              ),
-                              align: 'right' as const,
-                            },
-                          ]
-                        : []),
-                      {
-                        value: (
-                          <Box flexShrink={0}>
-                            <Button
-                              variant="text"
-                              icon="trash"
-                              iconType="outline"
-                              size="small"
-                              colorScheme="destructive"
-                              onClick={() => {
-                                onClickDelete(person)
-                              }}
-                            >
-                              {formatMessage(coreMessages.buttonDestroy)}
-                            </Button>
-                          </Box>
-                        ),
-                        align: 'right',
-                      },
-                    ]}
-                  >
-                    <CustomDelegationsPermissionsTable
-                      data={person}
-                      direction={direction}
-                    />
-                  </ExpandableRow>
-                )
-              })}
-            </T.Body>
-          </T.Table>
-        </div>
+        <DesktopCustomDelegationsTable
+          data={data}
+          direction={direction}
+          expandedRow={expandedRow}
+          setExpandedRow={setExpandedRow}
+          onClickDelete={onClickDelete}
+          onClickEdit={onClickEdit}
+        />
       )}
       <DeleteAccessModal
         isVisible={!!personToDelete}
@@ -458,4 +220,287 @@ const CustomDelegationsTable = ({
   )
 }
 
-export default CustomDelegationsTable
+const DesktopCustomDelegationsTable = ({
+  data,
+  direction,
+  expandedRow,
+  setExpandedRow,
+  onClickDelete,
+  onClickEdit,
+}: {
+  data: DelegationsByPerson[]
+  direction: 'outgoing' | 'incoming'
+  expandedRow: string | null | undefined
+  setExpandedRow: (expandedRow: string | null | undefined) => void
+  onClickDelete: (person: DelegationsByPerson) => void
+  onClickEdit: (person: DelegationsByPerson) => void
+}) => {
+  const { formatMessage } = useLocale()
+
+  const headerArray = [
+    { value: '' },
+    { value: formatMessage(m.name) },
+    { value: formatMessage(m.numberOfDelegations) },
+    { value: formatMessage(m.validityPeriod) },
+    ...(direction === 'outgoing' ? [{ value: '' }] : []),
+    { value: '' },
+  ]
+
+  return (
+    <div className={styles.tableContainer}>
+      <T.Table>
+        <T.Head>
+          <T.Row>
+            {headerArray.map((item, i) => (
+              <T.HeadData key={item.value + i} style={{ paddingInline: 16 }}>
+                <Text variant="medium" fontWeight="semiBold">
+                  {item.value}
+                </Text>
+              </T.HeadData>
+            ))}
+          </T.Row>
+        </T.Head>
+        <T.Body>
+          {data?.map((person) => {
+            const identity = {
+              nationalId: person.nationalId,
+              name: person.name,
+              type: person.type,
+            }
+
+            return (
+              <ExpandableRow
+                key={`${person.nationalId}-${person.type}`}
+                onExpandCallback={() =>
+                  setExpandedRow(`${person.nationalId}-${person.type}`)
+                }
+                data={[
+                  {
+                    value: (
+                      <IdentityInfo
+                        identity={identity}
+                        isExpanded={
+                          expandedRow === `${person.nationalId}-${person.type}`
+                        }
+                      />
+                    ),
+                  },
+                  {
+                    value: (
+                      <Text variant="medium" fontWeight="semiBold">
+                        {person.totalScopeCount}
+                      </Text>
+                    ),
+                  },
+                  {
+                    value: person.latestValidTo
+                      ? format(new Date(person.latestValidTo), 'dd.MM.yyyy')
+                      : formatMessage(m.noValidToDate),
+                  },
+                  ...(direction === 'outgoing'
+                    ? [
+                        {
+                          value: (
+                            <Box flexShrink={0}>
+                              <Button
+                                variant="text"
+                                icon="pencil"
+                                iconType="outline"
+                                size="small"
+                                colorScheme="default"
+                                onClick={() => {
+                                  onClickEdit(person)
+                                }}
+                              >
+                                {formatMessage(coreMessages.buttonEdit)}
+                              </Button>
+                            </Box>
+                          ),
+                          align: 'right' as const,
+                        },
+                      ]
+                    : []),
+                  {
+                    value: (
+                      <Box flexShrink={0}>
+                        <Button
+                          variant="text"
+                          icon="trash"
+                          iconType="outline"
+                          size="small"
+                          colorScheme="destructive"
+                          onClick={() => {
+                            onClickDelete(person)
+                          }}
+                        >
+                          {formatMessage(coreMessages.buttonDestroy)}
+                        </Button>
+                      </Box>
+                    ),
+                    align: 'right',
+                  },
+                ]}
+              >
+                <CustomDelegationsPermissionsTable
+                  data={person}
+                  direction={direction}
+                />
+              </ExpandableRow>
+            )
+          })}
+        </T.Body>
+      </T.Table>
+    </div>
+  )
+}
+
+const MobileCustomDelegationsTable = ({
+  data,
+  direction,
+  expandedRow,
+  setExpandedRow,
+  onClickDelete,
+  onClickEdit,
+}: {
+  data: DelegationsByPerson[]
+  direction: 'outgoing' | 'incoming'
+  expandedRow: string | null | undefined
+  setExpandedRow: (expandedRow: string | null | undefined) => void
+  onClickDelete: (person: DelegationsByPerson) => void
+  onClickEdit: (person: DelegationsByPerson) => void
+}) => {
+  const { formatMessage } = useLocale()
+  return (
+    <Box>
+      {data?.map((person, idx) => {
+        const isExpanded = expandedRow === `${person.nationalId}-${person.type}`
+
+        return (
+          <Box
+            key={`${person.nationalId}-${person.type}`}
+            className={cn({
+              [styles.mobileContainer]: isExpanded,
+              [styles.mobileDivider]: !isExpanded,
+            })}
+            paddingTop={3}
+            marginTop={idx === 0 ? 0 : 3}
+            marginBottom={isExpanded ? 2 : 0}
+            position="relative"
+          >
+            <Box
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              marginBottom={1}
+            >
+              <Box display="flex" alignItems="center" columnGap={1}>
+                <UserAvatar
+                  color={isExpanded ? 'white' : 'blue'}
+                  username={person.name}
+                  size="medium"
+                />
+                <Text variant="h4" color="blue400">
+                  {person.name}
+                </Text>
+              </Box>
+              <Box marginLeft={1}>
+                <Button
+                  circle
+                  icon={isExpanded ? 'remove' : 'add'}
+                  colorScheme="light"
+                  title={formatMessage(m.viewPermissions)}
+                  onClick={() =>
+                    setExpandedRow(
+                      isExpanded ? null : `${person.nationalId}-${person.type}`,
+                    )
+                  }
+                />
+              </Box>
+            </Box>
+
+            <Box marginBottom={2}>
+              <Stack space={1}>
+                <Box display="flex" flexDirection="row" columnGap={1}>
+                  <Box width="half" display="flex" alignItems="center">
+                    <Text fontWeight="semiBold" variant="default">
+                      {formatMessage(m.nationalId)}
+                    </Text>
+                  </Box>
+                  <Box width="half">
+                    <Text variant="default">
+                      {formatNationalId(person.nationalId)}
+                    </Text>
+                  </Box>
+                </Box>
+                <Box display="flex" flexDirection="row" columnGap={1}>
+                  <Box width="half" display="flex" alignItems="center">
+                    <Text fontWeight="semiBold" variant="default">
+                      {formatMessage(m.numberOfDelegations)}
+                    </Text>
+                  </Box>
+                  <Box width="half">
+                    <Text variant="default">{person.totalScopeCount}</Text>
+                  </Box>
+                </Box>
+                <Box display="flex" flexDirection="row" columnGap={1}>
+                  <Box width="half" display="flex" alignItems="center">
+                    <Text fontWeight="semiBold" variant="default">
+                      {formatMessage(m.validityPeriod)}
+                    </Text>
+                  </Box>
+                  <Box width="half">
+                    <Text variant="default">
+                      {person.latestValidTo
+                        ? format(new Date(person.latestValidTo), 'dd.MM.yyyy')
+                        : formatMessage(m.noValidToDate)}
+                    </Text>
+                  </Box>
+                </Box>
+              </Stack>
+            </Box>
+
+            <Box display="flex" marginBottom={1} columnGap={1}>
+              <Button
+                variant="ghost"
+                icon="trash"
+                iconType="outline"
+                size="small"
+                colorScheme="destructive"
+                fluid
+                onClick={() => {
+                  onClickDelete(person)
+                }}
+              >
+                {formatMessage(coreMessages.buttonDestroy)}
+              </Button>
+              {direction === 'outgoing' && (
+                <Button
+                  variant="ghost"
+                  icon="pencil"
+                  iconType="outline"
+                  size="small"
+                  colorScheme="default"
+                  fluid
+                  onClick={() => onClickEdit(person)}
+                >
+                  {formatMessage(coreMessages.buttonEdit)}
+                </Button>
+              )}
+            </Box>
+
+            <AnimateHeight height={isExpanded ? 'auto' : 0} duration={300}>
+              <Box paddingTop={2} paddingBottom={3}>
+                <Divider />
+              </Box>
+              <CustomDelegationsPermissionsTable
+                data={person}
+                direction={direction}
+                isMobile
+              />
+            </AnimateHeight>
+          </Box>
+        )
+      })}
+    </Box>
+  )
+}

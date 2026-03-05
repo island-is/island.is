@@ -36,30 +36,14 @@ export const AccessRecipients = ({
 
       <Box display="flex" flexDirection="column" rowGap={4}>
         {fields.map((field, index) => (
-          <Box key={field.id} display="flex" columnGap={2} rowGap={2}>
-            <IdentityLookup
-              setFormError={setFormError}
-              methods={methods}
-              index={index}
-            />
-            <Box
-              display="flex"
-              flexShrink={0}
-              alignItems="flexEnd"
-              justifyContent="flexEnd"
-              style={{ width: 48, paddingBottom: 4 }}
-            >
-              {index > 0 && (
-                <Button
-                  variant="ghost"
-                  circle
-                  icon="remove"
-                  colorScheme="default"
-                  onClick={() => remove(index)}
-                />
-              )}
-            </Box>
-          </Box>
+          <IdentityLookup
+            key={field.id}
+            setFormError={setFormError}
+            methods={methods}
+            index={index}
+            showRemoveButton={fields.length > 1}
+            onRemove={() => remove(index)}
+          />
         ))}
         <Box>
           <Button

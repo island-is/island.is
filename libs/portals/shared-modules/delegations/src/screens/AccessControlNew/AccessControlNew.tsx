@@ -110,8 +110,6 @@ const AccessControlNew = () => {
     () => filterDelegations(searchValue, incomingDelegations),
     [incomingDelegations, searchValue],
   )
-  console.log('incomingDelegations', incomingDelegations)
-  console.log('filteredIncomingDelegations', filteredIncomingDelegations)
 
   const incomingDelegationGroups = useMemo(() => {
     return groupBy(filteredIncomingDelegations, 'type') as Record<
