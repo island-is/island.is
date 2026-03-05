@@ -85,7 +85,9 @@ const Root = () => {
                 inputSize: 'medium',
                 type: 'tel',
                 format: (inputValue: string) => {
-                  const digits = (inputValue || '').replace(/\D/g, '').slice(0, 10)
+                  const digits = (inputValue || '')
+                    .replace(/\D/g, '')
+                    .slice(0, 10)
                   return digits.length <= 6
                     ? digits
                     : `${digits.slice(0, 6)}-${digits.slice(6)}`
