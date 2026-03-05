@@ -53,6 +53,7 @@ type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   | 'appealDate'
   | 'serviceInformationForDefendant'
   | 'isDefaultJudgement'
+  | 'isAcquittedByPublicProsecutionOffice'
   | 'hash'
   | 'hashAlgorithm'
 >
