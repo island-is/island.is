@@ -14,7 +14,7 @@ export const textInputSubsection = buildSubSection({
       children: [
         buildTextField({
           id: 'textInput',
-          placeholder: 'The most basic text input.',
+          placeholder: 'The most basic text input',
         }),
         buildTextField({
           id: 'textInputTitle',
