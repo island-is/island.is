@@ -121,8 +121,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
       this.logger.warn('[estate]: Heir under 18 without advocate')
       throw new TemplateApiError(
         {
-          title:
-            coreErrorMessages.errorDataProviderEstateHeirsWithoutAdvocate,
+          title: coreErrorMessages.errorDataProviderEstateHeirsWithoutAdvocate,
           summary: coreErrorMessages.drivingLicenseNoTeachingRightsSummary,
         },
         400,
