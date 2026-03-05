@@ -5,7 +5,6 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 
 import illustrationSrc from '../../assets/illustrations/le-jobs-s3.png'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
   Application,
   ApplicationResponseDtoStatusEnum,
@@ -15,7 +14,6 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
 import { EmptyList, StatusCardSkeleton, TopLine } from '../../ui'
-import { testIDs } from '../../utils/test-ids'
 import { ApplicationsPreview } from './components/applications-preview'
 
 const Host = styled.View`
@@ -34,10 +32,6 @@ const { useNavigationOptions, getNavigationOptions } =
           visible: false,
         },
       },
-      bottomTab: {
-        iconColor: theme.color.blue400,
-        text: intl.formatMessage({ id: 'applications.bottomTabText' }),
-      },
     }),
     {
       topBar: {
@@ -45,14 +39,6 @@ const { useNavigationOptions, getNavigationOptions } =
           active: true,
           noBorder: true,
         },
-      },
-      bottomTab: {
-        testID: testIDs.TABBAR_TAB_APPLICATION,
-        iconInsets: {
-          bottom: -4,
-        },
-        icon: require('../../assets/icons/tabbar-applications.png'),
-        selectedIcon: require('../../assets/icons/tabbar-applications-selected.png'),
       },
     },
   )
@@ -190,7 +176,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         />
       </Animated.ScrollView>
       <TopLine scrollY={scrollY} />
-      <BottomTabsIndicator index={3} total={5} />
     </Host>
   )
 }

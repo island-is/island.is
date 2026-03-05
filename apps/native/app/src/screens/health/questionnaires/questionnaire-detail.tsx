@@ -207,7 +207,6 @@ export const QuestionnaireDetailScreen: NavigationFunctionComponent<{
                   })}
                   onPress={onAnswer}
                   isFilledUtilityButton
-                  compactPadding
                   icon={externalLinkIcon}
                   ellipsis
                 />
