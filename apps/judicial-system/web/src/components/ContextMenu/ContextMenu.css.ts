@@ -29,3 +29,9 @@ export const menuItem = style({
     },
   },
 })
+
+export const menuItemDisabled = style({
+  backgroundColor: theme.color.dark100,
+  color: theme.color.dark300,
+  pointerEvents: 'none',
+})

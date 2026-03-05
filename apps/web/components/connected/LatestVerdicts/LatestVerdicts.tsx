@@ -127,6 +127,11 @@ const LatestVerdicts = ({ slice }: LatestVerdictsProps) => {
                     subDescription: verdict.keywords.join(', '),
                     borderColor: 'blue200',
                     detailLines,
+                    revealMoreButtonProps: {
+                      revealLabel: formatMessage(m.revealMoreLabel),
+                      hideLabel: formatMessage(m.hideMoreLabel),
+                      revealedText: verdict.presentings ?? '',
+                    },
                   }
                 })}
               />
