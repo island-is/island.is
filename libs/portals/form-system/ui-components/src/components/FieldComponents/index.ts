@@ -1,6 +1,7 @@
 export { Banknumber } from './Banknumber/Banknumber'
 export { MessageWithLink } from './MessageWithLink/MessageWithLink'
 export { CurrencyField } from './CurrencyField/CurrencyField'
+export { CurrencySumField } from './CurrencyField/CurrencySumField'
 export { Email } from './Email/Email'
 export { FileUpload } from './FileUpload/FileUpload'
 export { NationalId } from './NationalId/NationalId'
