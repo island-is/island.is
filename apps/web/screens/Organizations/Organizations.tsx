@@ -10,7 +10,9 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Inline,
   Pagination,
+  RadioButton,
   ResponsiveSpace,
   Select,
   Stack,
@@ -101,6 +103,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const [selectedTitleSortOption, setSelectedTitleSortOption] =
     useState<TitleSortOption>(titleSortOptions[0])
 
+  const [showOnlyIslandIs, setShowOnlyIslandIs] = useState<boolean>(false)
+
   const organizationsItems = useMemo(() => {
     const items = [...organizations.items]
     if (selectedTitleSortOption.value === 'asc') {
@@ -130,9 +134,13 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     },
   ]
 
+  const islandIsItems = showOnlyIslandIs
+    ? organizationsItems.filter((x) => x.hasALandingPage)
+    : organizationsItems
+
   const hasFilters = filter.raduneyti.length || filter.input
   const filteredItems = hasFilters
-    ? organizationsItems.filter(
+    ? islandIsItems.filter(
         (x) =>
           (filter.input &&
             x.title
@@ -143,7 +151,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
             x.tag.find((t) => t.title === title),
           ),
       )
-    : organizationsItems
+    : islandIsItems
 
   const count = filteredItems.length
   const totalPages = Math.ceil(count / CARDS_PER_PAGE)
@@ -267,6 +275,34 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                       options={titleSortOptions}
                     />
                   </Box>
+                  <Inline space={2} alignY="center">
+                    <RadioButton
+                      name="organization-filter-type"
+                      id="organization-filter-all"
+                      label={n(
+                        'allPublicEntities',
+                        'Allir opinberir aðilar',
+                      )}
+                      checked={!showOnlyIslandIs}
+                      onChange={() => {
+                        setShowOnlyIslandIs(false)
+                        goToPage(1, false)
+                      }}
+                    />
+                    <RadioButton
+                      name="organization-filter-type"
+                      id="organization-filter-island-is"
+                      label={n(
+                        'websitesOnIslandIs',
+                        'Vefir á Ísland.is',
+                      )}
+                      checked={showOnlyIslandIs}
+                      onChange={() => {
+                        setShowOnlyIslandIs(true)
+                        goToPage(1, false)
+                      }}
+                    />
+                  </Inline>
                 </Box>
               </Box>
             </Box>
