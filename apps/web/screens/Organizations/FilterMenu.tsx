@@ -49,7 +49,7 @@ export const FilterMenu = ({
   onSortClear,
   labelClear = 'Hreinsa síu',
   labelClearAll = 'Hreinsa allar síur',
-  labelOpen = 'Sía niðurstöður',
+  labelOpen = 'Sía',
   labelClose = 'Loka síu',
   labelTitle = 'Sía stofnanir',
   labelResult = 'Sýna niðurstöður',
