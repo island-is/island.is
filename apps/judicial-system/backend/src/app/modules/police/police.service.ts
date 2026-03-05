@@ -398,64 +398,62 @@ export class PoliceService {
   ): Promise<PoliceDefendant[]> {
     const startTime = nowFactory()
 
-    return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/V4/GetDefendants/${caseId}`,
-    )
-      .then(async (res: Response) => {
-        if (res.ok) {
-          const response: z.infer<typeof this.defendantsResponseStructure> =
-            await res.json()
+    try {
+      const res = await this.fetchPoliceDocumentApi(
+        `${this.xRoadPath}/V4/GetDefendants/${caseId}`,
+      )
 
-          this.defendantsResponseStructure.parse(response)
-
-          return response.map((defendant) => ({
-            nationalId: defendant.nationalId,
-            name: defendant.name ?? undefined,
-            gender: defendant.gender ?? undefined,
-            address: defendant.address ?? undefined,
-            dateOfBirth: defendant.dateOfBirth ?? undefined,
-            citizenship: defendant.citizenship ?? undefined,
-          }))
-        }
-
+      if (!res.ok) {
         const reason = await res.text()
-
         throw new NotFoundException({
           message: `Police defendants for case ${caseId} do not exist`,
           detail: reason,
         })
-      })
-      .catch((reason) => {
-        if (reason instanceof NotFoundException) {
-          throw reason
-        }
+      }
 
-        if (reason instanceof ServiceUnavailableException) {
-          throw new NotFoundException({
-            ...reason,
-            message: `Police defendants for case ${caseId} do not exist`,
-            detail: reason.message,
-          })
-        }
+      const response: z.infer<typeof this.defendantsResponseStructure> =
+        await res.json()
+      this.defendantsResponseStructure.parse(response)
 
-        this.eventService.postErrorEvent(
-          'Failed to get police defendants',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            startTime,
-            endTime: nowFactory(),
-          },
-          reason,
-        )
+      return response.map((defendant) => ({
+        nationalId: defendant.nationalId,
+        name: defendant.name ?? undefined,
+        gender: defendant.gender ?? undefined,
+        address: defendant.address ?? undefined,
+        dateOfBirth: defendant.dateOfBirth ?? undefined,
+        citizenship: defendant.citizenship ?? undefined,
+      }))
+    } catch (reason) {
+      if (reason instanceof NotFoundException) {
+        throw reason
+      }
 
-        throw new BadGatewayException({
+      if (reason instanceof ServiceUnavailableException) {
+        throw new NotFoundException({
           ...reason,
-          message: `Failed to get police defendants for case ${caseId}`,
+          message: `Police defendants for case ${caseId} do not exist`,
           detail: reason.message,
         })
+      }
+
+      this.eventService.postErrorEvent(
+        'Failed to get police defendants',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          startTime,
+          endTime: nowFactory(),
+        },
+        reason,
+      )
+
+      throw new BadGatewayException({
+        ...reason,
+        message: `Failed to get police defendants for case ${caseId}`,
+        detail: reason.message,
       })
+    }
   }
 
   async getSubpoenaStatus(
