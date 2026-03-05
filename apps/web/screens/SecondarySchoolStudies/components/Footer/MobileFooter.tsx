@@ -1,9 +1,15 @@
+import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 
 import { m } from '../../messages/messages'
 import * as styles from './Footer.css'
+
+const ButtonLink = Button as React.ComponentType<
+  React.ComponentProps<typeof Button> &
+    React.AnchorHTMLAttributes<HTMLAnchorElement>
+>
 
 export const MobileFooter = () => {
   const { formatMessage } = useIntl()
@@ -72,40 +78,34 @@ export const MobileFooter = () => {
           width="full"
           style={{ maxWidth: '265px' }}
         >
-          <Button
+          <ButtonLink
             variant="ghost"
             size="medium"
             colorScheme="negative"
             icon="open"
             iconType="outline"
             fluid
-            onClick={() =>
-              window.open(
-                'https://naestaskref.is',
-                '_blank',
-                'noopener,noreferrer',
-              )
-            }
+            as="a"
+            href="https://naestaskref.is"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             {formatMessage(m.general.nextStep)}
-          </Button>
-          <Button
+          </ButtonLink>
+          <ButtonLink
             variant="ghost"
             size="medium"
             colorScheme="negative"
             icon="open"
             iconType="outline"
             fluid
-            onClick={() =>
-              window.open(
-                'https://island.is/umsokn-um-framhaldsskola',
-                '_blank',
-                'noopener,noreferrer',
-              )
-            }
+            as="a"
+            href="https://island.is/umsokn-um-framhaldsskola"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             {formatMessage(m.general.innritun)}
-          </Button>
+          </ButtonLink>
         </Box>
       </Box>
     </Box>

@@ -1,10 +1,7 @@
-import { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useWindowSize } from 'react-use'
 
 import { Box, GridContainer, Text } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
-import { HeadWithSocialSharing } from '@island.is/web/components'
+import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   SecondarySchoolProgrammeByIdQuery,
@@ -36,14 +33,6 @@ const SecondarySchoolStudiesDetailsPage: Screen<
   SecondarySchoolStudiesDetailsPageProps
 > = ({ programme, locale }) => {
   const { formatMessage } = useIntl()
-  const [isMounted, setIsMounted] = useState(false)
-  const { width } = useWindowSize()
-
-  const isTablet = isMounted && width <= theme.breakpoints.lg
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
 
   return (
     <Box>
@@ -52,7 +41,7 @@ const SecondarySchoolStudiesDetailsPage: Screen<
         description={programme?.description || ''}
       />
 
-      <Header isTablet={isTablet} />
+      <Header />
 
       <GridContainer>
         <Box
@@ -63,30 +52,41 @@ const SecondarySchoolStudiesDetailsPage: Screen<
           position="relative"
         >
           {/* Sidebar - Desktop only */}
-          {!isTablet && (
-            <Box
-              printHidden
-              display={['none', 'none', 'block']}
-              position="sticky"
-              alignSelf="flexStart"
-              className={styles.sidebar}
-              style={{ top: 72 }}
-            >
-              <DetailSidebar schools={programme.schools} locale={locale} />
-            </Box>
-          )}
+          <Box
+            printHidden
+            display={['none', 'none', 'none', 'block']}
+            position="sticky"
+            alignSelf="flexStart"
+            className={styles.sidebar}
+            style={{ top: 72 }}
+          >
+            <DetailSidebar schools={programme.schools} locale={locale} />
+          </Box>
 
           {/* Content Wrapper */}
           <Box flexGrow={1} paddingLeft={2} className={styles.contentWrapper}>
-            {/* ADD mobile showing of the schools  */}
-            {isTablet && (
+            <Box
+              display={['block', 'block', 'block', 'none']}
+              marginBottom={2}
+              className={styles.webReader}
+            >
+              <Webreader />
+            </Box>
+            <Box display={['block', 'block', 'block', 'none']}>
               <DetailSidebarMobile
                 schools={programme.schools}
                 locale={locale}
               />
-            )}
+            </Box>
 
             <Box display="flex" flexDirection="column" rowGap={4}>
+              <Box
+                display={['none', 'none', 'none', 'block']}
+                margin={0}
+                className={styles.webReader}
+              >
+                <Webreader />
+              </Box>
               <ProgrammeHeader
                 title={programme?.title}
                 ministrySerial={programme?.ministrySerial}
@@ -107,7 +107,12 @@ const SecondarySchoolStudiesDetailsPage: Screen<
           </Box>
         </Box>
       </GridContainer>
-      {isTablet ? <MobileFooter /> : <Footer />}
+      <Box display={['none', 'none', 'none', 'block']}>
+        <Footer />
+      </Box>
+      <Box display={['block', 'block', 'block', 'none']}>
+        <MobileFooter />
+      </Box>
     </Box>
   )
 }

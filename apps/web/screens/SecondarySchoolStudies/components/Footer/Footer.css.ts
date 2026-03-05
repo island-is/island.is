@@ -1,7 +1,5 @@
 import { style } from '@vanilla-extract/css'
 
-import { theme } from '@island.is/island-ui/theme'
-
 export const footer = style({
   backgroundColor: '#003D85',
   padding: '24px',
@@ -45,9 +43,6 @@ export const buttonsSection = style({
   display: 'flex',
   gap: '16px',
   flexShrink: 0,
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {},
-  },
 })
 
 export const link = style({

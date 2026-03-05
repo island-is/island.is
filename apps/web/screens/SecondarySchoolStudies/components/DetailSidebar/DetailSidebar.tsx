@@ -106,7 +106,7 @@ export const DetailSidebar = ({ schools, locale }: DetailSidebarProps) => {
             flexDirection="row"
             columnGap={2}
             alignItems={'center'}
-            padding={3} // Double check if its 24px
+            padding={3}
             style={{ backgroundColor: theme.color.purple100 }}
           >
             <Box display="flex" justifyContent="center" alignSelf="center">

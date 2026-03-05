@@ -1,3 +1,4 @@
+import React from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -10,6 +11,11 @@ import {
 
 import { m } from '../../messages/messages'
 import * as styles from './Footer.css'
+
+const ButtonLink = Button as React.ComponentType<
+  React.ComponentProps<typeof Button> &
+    React.AnchorHTMLAttributes<HTMLAnchorElement>
+>
 
 export const Footer = () => {
   const { formatMessage } = useIntl()
@@ -68,38 +74,32 @@ export const Footer = () => {
 
             {/* Buttons */}
             <Box className={styles.buttonsSection}>
-              <Button
+              <ButtonLink
                 variant="ghost"
                 size="small"
                 colorScheme="negative"
                 icon="open"
                 iconType="outline"
-                onClick={() =>
-                  window.open(
-                    'https://island.is/umsokn-um-framhaldsskola',
-                    '_blank',
-                    'noopener,noreferrer',
-                  )
-                }
+                as="a"
+                href="https://island.is/umsokn-um-framhaldsskola"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 {formatMessage(m.general.innritun)}
-              </Button>
-              <Button
+              </ButtonLink>
+              <ButtonLink
                 variant="ghost"
                 size="small"
                 colorScheme="negative"
                 icon="open"
                 iconType="outline"
-                onClick={() =>
-                  window.open(
-                    'https://naestaskref.is/is',
-                    '_blank',
-                    'noopener,noreferrer',
-                  )
-                }
+                as="a"
+                href="https://naestaskref.is/is"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 {formatMessage(m.general.nextStep)}
-              </Button>
+              </ButtonLink>
             </Box>
           </Box>
         </Box>

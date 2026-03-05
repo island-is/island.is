@@ -11,16 +11,13 @@ import {
 import { m } from '../../messages/messages'
 import * as styles from './Header.css'
 
-interface HeaderProps {
-  isTablet: boolean
-}
-
-export const Header = ({ isTablet }: HeaderProps) => {
+export const Header = () => {
   const { formatMessage } = useIntl()
 
-  if (isTablet) {
-    return (
-      <Box>
+  return (
+    <>
+      {/* Mobile/tablet header */}
+      <Box display={['block', 'block', 'block', 'none']}>
         <GridRow marginBottom={5}>
           <GridColumn span="1/1">
             <Box
@@ -32,7 +29,7 @@ export const Header = ({ isTablet }: HeaderProps) => {
             >
               <img
                 width={'100%'}
-                src={'/assets/bakgrunnsmynnstur_framhaldsskola_tablet.svg'}
+                src={'/assets/bakgrunnsmynstur_framhaldsskola_tablet.svg'}
                 alt=""
               />
               <Box
@@ -69,64 +66,65 @@ export const Header = ({ isTablet }: HeaderProps) => {
           </GridColumn>
         </GridRow>
       </Box>
-    )
-  }
 
-  return (
-    <GridContainer>
-      <Box>
-        <GridRow marginBottom={5}>
-          <GridColumn span="1/1">
-            <Box
-              position="relative"
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              className={styles.heroContainer}
-            >
-              <img
-                src={'/assets/bakgrunnsmynnstur_framhaldsskola.svg'}
-                alt=""
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-              <Box
-                position="absolute"
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-                textAlign="left"
-              >
-                <Box className="rs_read">
-                  <Text variant="h1" as="h1" marginBottom={2} color="white">
-                    {formatMessage(m.home.title)}
-                  </Text>
-                  <Text variant="h3" as="h2" color="white">
-                    {formatMessage(m.home.subtitle)}
-                  </Text>
+      {/* Desktop header */}
+      <Box display={['none', 'none', 'none', 'block']}>
+        <GridContainer>
+          <Box>
+            <GridRow marginBottom={5}>
+              <GridColumn span="1/1">
+                <Box
+                  position="relative"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  className={styles.heroContainer}
+                >
+                  <img
+                    src={'/assets/bakgrunnsmynstur_framhaldsskola.svg'}
+                    alt=""
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                  <Box
+                    position="absolute"
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    textAlign="left"
+                  >
+                    <Box className="rs_read">
+                      <Text variant="h1" as="h1" marginBottom={2} color="white">
+                        {formatMessage(m.home.title)}
+                      </Text>
+                      <Text variant="h3" as="h2" color="white">
+                        {formatMessage(m.home.subtitle)}
+                      </Text>
+                    </Box>
+                  </Box>
+                  <Box
+                    position="absolute"
+                    className={styles.coatOfArms}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <img
+                      src={'/assets/skjaldarmerki.svg'}
+                      alt="Icelandic coat of arms"
+                      className={styles.coatOfArmsImage}
+                    />
+                  </Box>
                 </Box>
-              </Box>
-              <Box
-                position="absolute"
-                className={styles.coatOfArms}
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <img
-                  src={'/assets/skjaldarmerki.svg'}
-                  alt="Icelandic coat of arms"
-                  className={styles.coatOfArmsImage}
-                />
-              </Box>
-            </Box>
-          </GridColumn>
-        </GridRow>
+              </GridColumn>
+            </GridRow>
+          </Box>
+        </GridContainer>
       </Box>
-    </GridContainer>
+    </>
   )
 }

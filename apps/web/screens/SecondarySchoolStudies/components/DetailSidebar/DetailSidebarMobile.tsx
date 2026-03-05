@@ -134,6 +134,7 @@ export const DetailSidebarMobile = ({
           columnGap={2}
           alignItems="center"
           padding={3}
+          marginBottom={2}
           style={{
             backgroundColor: theme.color.purple100,
             borderRadius: '8px',

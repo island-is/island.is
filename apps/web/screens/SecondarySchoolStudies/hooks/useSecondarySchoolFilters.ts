@@ -1,7 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import isEqual from 'lodash/isEqual'
-import { useRouter } from 'next/router'
+import {
+  parseAsArrayOf,
+  parseAsString,
+  useQueryState,
+  useQueryStates,
+} from 'next-usequerystate'
 
 import { SecondarySchoolProgrammeFilterOptionsQuery } from '@island.is/web/graphql/schema'
 
@@ -31,142 +35,48 @@ interface UseSecondarySchoolFiltersReturn {
   }>
 }
 
-const initialFilters: SelectedFilters = {
-  levels: [],
-  countryAreas: [],
-  schools: [],
-}
-
 export const useSecondarySchoolFilters = (
   filterOptions: FilterOptions,
-  pathname: string,
 ): UseSecondarySchoolFiltersReturn => {
-  const { query, replace, isReady } = useRouter()
   const { formatMessage } = useIntl()
 
-  const [selectedFilters, setSelectedFilters] =
-    useState<SelectedFilters>(initialFilters)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedFilters, setSelectedFilters] = useQueryStates(
+    {
+      levels: parseAsArrayOf(parseAsString).withDefault([]),
+      countryAreas: parseAsArrayOf(parseAsString).withDefault([]),
+      schools: parseAsArrayOf(parseAsString).withDefault([]),
+    },
+    { shallow: true },
+  )
 
-  const searchTermHasBeenInitialized = useRef(false)
+  const [searchTerm, setSearchTermRaw] = useQueryState(
+    'q',
+    parseAsString.withDefault(''),
+  )
 
-  // Parse query params on initial load
-  useEffect(() => {
-    if (!isReady) return
-
-    const updatedFilters: Partial<SelectedFilters> = {}
-
-    if (query.levels) {
-      updatedFilters.levels =
-        typeof query.levels === 'string' ? [query.levels] : query.levels
-    }
-
-    if (query.countryAreas) {
-      updatedFilters.countryAreas =
-        typeof query.countryAreas === 'string'
-          ? [query.countryAreas]
-          : query.countryAreas
-    }
-
-    if (query.schools) {
-      updatedFilters.schools =
-        typeof query.schools === 'string' ? [query.schools] : query.schools
-    }
-
-    if (Object.keys(updatedFilters).length > 0) {
-      setSelectedFilters((prev) => ({
-        ...prev,
-        ...updatedFilters,
-      }))
-    }
-
-    // Search term initialization
-    if (query.q && !searchTerm && !searchTermHasBeenInitialized.current) {
-      searchTermHasBeenInitialized.current = true
-      setSearchTerm(query.q as string)
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isReady])
-
-  // Sync state to URL when filters change
-  useEffect(() => {
-    if (!isReady) return
-
-    const updatedQuery: Record<string, string | string[]> = {}
-
-    // Preserve non-filter query params (like page)
-    if (query.page) {
-      updatedQuery.page = query.page as string
-    }
-
-    if (searchTerm) {
-      updatedQuery.q = searchTerm
-    }
-
-    if (selectedFilters.levels.length > 0) {
-      updatedQuery.levels = selectedFilters.levels
-    }
-
-    if (selectedFilters.countryAreas.length > 0) {
-      updatedQuery.countryAreas = selectedFilters.countryAreas
-    }
-
-    if (selectedFilters.schools.length > 0) {
-      updatedQuery.schools = selectedFilters.schools
-    }
-
-    // Only update URL if query actually changed
-    const currentQuery = { ...query }
-    // Remove undefined/empty values for comparison
-    Object.keys(currentQuery).forEach((key) => {
-      if (
-        currentQuery[key] === undefined ||
-        (Array.isArray(currentQuery[key]) &&
-          (currentQuery[key] as string[]).length === 0)
-      ) {
-        delete currentQuery[key]
-      }
-    })
-
-    if (!isEqual(currentQuery, updatedQuery)) {
-      replace(
-        {
-          pathname,
-          query: updatedQuery,
-        },
-        undefined,
-        { shallow: true },
-      )
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFilters, searchTerm, isReady])
+  const setSearchTerm = useCallback(
+    (term: string) => setSearchTermRaw(term || null),
+    [setSearchTermRaw],
+  )
 
   const updateFilter = useCallback(
     (categoryId: keyof SelectedFilters, selected: string[]) => {
-      setSelectedFilters((prev) => ({
-        ...prev,
-        [categoryId]: selected,
-      }))
+      setSelectedFilters({ [categoryId]: selected })
     },
-    [],
+    [setSelectedFilters],
   )
 
-  const clearFilter = useCallback((categoryId: keyof SelectedFilters) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      [categoryId]: [],
-    }))
-  }, [])
+  const clearFilter = useCallback(
+    (categoryId: keyof SelectedFilters) => {
+      setSelectedFilters({ [categoryId]: null })
+    },
+    [setSelectedFilters],
+  )
 
   const clearAllFilters = useCallback(() => {
-    setSelectedFilters({
-      levels: [],
-      countryAreas: [],
-      schools: [],
-    })
-    setSearchTerm('')
-  }, [])
+    setSelectedFilters({ levels: null, countryAreas: null, schools: null })
+    setSearchTermRaw(null)
+  }, [setSelectedFilters, setSearchTermRaw])
 
   const filterCategories = useMemo(() => {
     const schoolFilters =

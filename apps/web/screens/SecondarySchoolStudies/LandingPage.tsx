@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useWindowSize } from 'react-use'
 import Fuse from 'fuse.js'
 
 import {
@@ -11,14 +10,12 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
-import { HeadWithSocialSharing } from '@island.is/web/components'
+import { HeadWithSocialSharing, Webreader } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
   SecondarySchoolAllProgrammesQuery,
   SecondarySchoolProgrammeFilterOptionsQuery,
 } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 
@@ -65,19 +62,9 @@ interface SecondarySchoolStudiesLandingPageProps {
 
 const SecondarySchoolStudiesLandingPage: Screen<
   SecondarySchoolStudiesLandingPageProps
-> = ({ programmes, filterOptions, hourlySeed, locale }) => {
+> = ({ programmes, filterOptions, hourlySeed }) => {
   const { formatMessage } = useIntl()
-  const { linkResolver } = useLinkResolver()
-  const [isMounted, setIsMounted] = useState(false)
   const [isGridView, setIsGridView] = useState(true)
-  const { width } = useWindowSize()
-
-  const isTablet = isMounted && width <= theme.breakpoints.lg
-  const pathname = linkResolver(
-    'secondaryschoolstudieslandingpage',
-    [],
-    locale === 'en' ? 'en' : 'is',
-  ).href
 
   const {
     selectedFilters,
@@ -87,7 +74,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
     clearFilter,
     clearAllFilters,
     filterCategories,
-  } = useSecondarySchoolFilters(filterOptions, pathname)
+  } = useSecondarySchoolFilters(filterOptions)
 
   const [selectedPage, setSelectedPage] = useState(1)
   const [originalSortedResults, setOriginalSortedResults] = useState<
@@ -134,11 +121,6 @@ const SecondarySchoolStudiesLandingPage: Screen<
   useEffect(() => {
     setTotalPages(Math.ceil(filteredResults.length / ITEMS_PER_PAGE))
   }, [filteredResults])
-
-  // Set mounted state after first render
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
 
   // Debounce search input
   useEffect(() => {
@@ -260,7 +242,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
         description={formatMessage(m.home.metaDescription)}
       />
 
-      <Header isTablet={isTablet} />
+      <Header />
 
       {/* Main */}
       <Box>
@@ -273,21 +255,49 @@ const SecondarySchoolStudiesLandingPage: Screen<
             position="relative"
           >
             {/* Sidebar */}
-            {!isTablet && (
+            <Box
+              printHidden
+              display={['none', 'none', 'none', 'block']}
+              position="sticky"
+              alignSelf="flexStart"
+              className={styles.sidebar}
+              style={{ top: 72 }}
+            >
+              <Stack space={3}>
+                <Text variant="h4" as="h4" paddingY={1}>
+                  {formatMessage(m.search.search)}
+                </Text>
+                <FilterSection
+                  variant="default"
+                  filterCategories={filterCategories}
+                  selectedFilters={selectedFilters}
+                  updateFilter={updateFilter}
+                  clearFilter={clearFilter}
+                  handleClearAll={handleClearAll}
+                  resultCount={filteredResults.length}
+                  formatMessage={formatMessage}
+                />
+              </Stack>
+            </Box>
+
+            {/* Content */}
+            <Box flexGrow={1} paddingLeft={2} className={styles.contentWrapper}>
               <Box
-                printHidden
-                display={['none', 'none', 'block']}
-                position="sticky"
-                alignSelf="flexStart"
-                className={styles.sidebar}
-                style={{ top: 72 }}
+                display={['block', 'block', 'block', 'none']}
+                marginBottom={2}
+                className={styles.webReader}
               >
-                <Stack space={3}>
-                  <Text variant="h4" as="h4" paddingY={1}>
-                    {formatMessage(m.search.search)}
-                  </Text>
+                <Webreader />
+              </Box>
+
+              <Box display={'flex'} flexDirection={'column'} rowGap={4}>
+                {/* Mobile filter button */}
+                <Box
+                  display={['block', 'block', 'block', 'none']}
+                  className={styles.mobileFilterButton}
+                >
                   <FilterSection
-                    variant="default"
+                    variant="dialog"
                     filterCategories={filterCategories}
                     selectedFilters={selectedFilters}
                     updateFilter={updateFilter}
@@ -296,28 +306,15 @@ const SecondarySchoolStudiesLandingPage: Screen<
                     resultCount={filteredResults.length}
                     formatMessage={formatMessage}
                   />
-                </Stack>
-              </Box>
-            )}
+                </Box>
 
-            {/* Content */}
-            <Box flexGrow={1} paddingLeft={2} className={styles.contentWrapper}>
-              <Box display={'flex'} flexDirection={'column'} rowGap={4}>
-                {/* Mobile filter button */}
-                {isTablet && (
-                  <Box className={styles.mobileFilterButton}>
-                    <FilterSection
-                      variant="dialog"
-                      filterCategories={filterCategories}
-                      selectedFilters={selectedFilters}
-                      updateFilter={updateFilter}
-                      clearFilter={clearFilter}
-                      handleClearAll={handleClearAll}
-                      resultCount={filteredResults.length}
-                      formatMessage={formatMessage}
-                    />
-                  </Box>
-                )}
+                <Box
+                  display={['none', 'none', 'none', 'block']}
+                  margin={0}
+                  className={styles.webReader}
+                >
+                  <Webreader />
+                </Box>
 
                 <SearchSection
                   titleRef={titleRef}
@@ -337,7 +334,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
                       {formatMessage(m.search.programmesVisible)}
                     </Text>
                   </Box>
-                  {!isTablet && (
+                  <Box display={['none', 'none', 'none', 'block']}>
                     <Button
                       variant="utility"
                       icon={isGridView ? 'menu' : 'gridView'}
@@ -350,7 +347,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
                         ? formatMessage(m.general.displayList)
                         : formatMessage(m.general.displayGrid)}
                     </Button>
-                  )}
+                  </Box>
                 </Box>
                 <Box
                   style={{ minHeight: '100vh' }}
@@ -387,7 +384,12 @@ const SecondarySchoolStudiesLandingPage: Screen<
         </GridContainer>
       </Box>
       {/* Main ends */}
-      {isTablet ? <MobileFooter /> : <Footer />}
+      <Box display={['none', 'none', 'none', 'block']}>
+        <Footer />
+      </Box>
+      <Box display={['block', 'block', 'block', 'none']}>
+        <MobileFooter />
+      </Box>
     </Box>
   )
 }

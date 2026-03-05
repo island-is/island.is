@@ -9,7 +9,6 @@ import {
   Bullet,
   BulletList,
   Text,
-  useBreakpoint,
 } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -30,7 +29,6 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
     coursesLevelsUnits: false,
   })
   const { formatMessage } = useIntl()
-  const { md } = useBreakpoint()
 
   const toggleIsOpen = (key: keyof typeof isOpen) => {
     setIsOpen((prev) => ({ ...prev, [key]: !prev[key] }))
@@ -135,24 +133,36 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                       {formatMessage(m.details.subjectName)}
                     </T.HeadData>
                     <T.HeadData style={{ textAlign: 'right' }}>
-                      {formatMessage(
-                        md ? m.details.level1 : m.details.level1Mobile,
-                      )}
+                      <Box display={['none', 'none', 'block']}>
+                        {formatMessage(m.details.level1)}
+                      </Box>
+                      <Box display={['block', 'block', 'none']}>
+                        {formatMessage(m.details.level1Mobile)}
+                      </Box>
                     </T.HeadData>
                     <T.HeadData style={{ textAlign: 'right' }}>
-                      {formatMessage(
-                        md ? m.details.level2 : m.details.level2Mobile,
-                      )}
+                      <Box display={['none', 'none', 'block']}>
+                        {formatMessage(m.details.level2)}
+                      </Box>
+                      <Box display={['block', 'block', 'none']}>
+                        {formatMessage(m.details.level2Mobile)}
+                      </Box>
                     </T.HeadData>
                     <T.HeadData style={{ textAlign: 'right' }}>
-                      {formatMessage(
-                        md ? m.details.level3 : m.details.level3Mobile,
-                      )}
+                      <Box display={['none', 'none', 'block']}>
+                        {formatMessage(m.details.level3)}
+                      </Box>
+                      <Box display={['block', 'block', 'none']}>
+                        {formatMessage(m.details.level3Mobile)}
+                      </Box>
                     </T.HeadData>
                     <T.HeadData style={{ textAlign: 'right' }}>
-                      {formatMessage(
-                        md ? m.details.level4 : m.details.level4Mobile,
-                      )}
+                      <Box display={['none', 'none', 'block']}>
+                        {formatMessage(m.details.level4)}
+                      </Box>
+                      <Box display={['block', 'block', 'none']}>
+                        {formatMessage(m.details.level4Mobile)}
+                      </Box>
                     </T.HeadData>
                     <T.HeadData style={{ textAlign: 'right' }}>
                       {formatMessage(m.details.units)}
