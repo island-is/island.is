@@ -24,6 +24,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { PoliceFileTypeCode } from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
+import { CreateCaseV2Dto } from './dto/createCaseV2.dto'
 import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
@@ -48,6 +49,22 @@ export class AppController {
     this.logger.debug('Creating a case')
 
     return this.appService.create(caseToCreate).then((createdCase) => {
+      this.logger.info(`Case ${createdCase.id} created`)
+
+      return createdCase
+    })
+  }
+
+  @UseInterceptors(EventInterceptor)
+  @Post('case/create')
+  @ApiCreatedResponse({
+    type: Case,
+    description: 'Creates a new case (accused fetched separately)',
+  })
+  async createV2(@Body() caseToCreate: CreateCaseV2Dto): Promise<Case> {
+    this.logger.debug('Creating a case')
+
+    return this.appService.createV2(caseToCreate).then((createdCase) => {
       this.logger.info(`Case ${createdCase.id} created`)
 
       return createdCase
