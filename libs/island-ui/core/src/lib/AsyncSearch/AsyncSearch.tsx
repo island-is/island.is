@@ -14,6 +14,7 @@ import React, {
 } from 'react'
 import { Input, InputProps } from './shared/Input/Input'
 import { Menu, MenuProps } from './shared/Menu/Menu'
+import NumberFormat from 'react-number-format'
 
 import { helperStyles } from '@island.is/island-ui/theme'
 import { TestSupport } from '@island.is/island-ui/utils'
@@ -289,10 +290,14 @@ const getIconColor = (
   return 'blue400'
 }
 
+export type AsyncSearchInputPropsInputProps = InputProps & {
+  format?: string | ((inputValue: string) => string)
+}
+
 export interface AsyncSearchInputProps {
   hasFocus: boolean
   rootProps?: HTMLProps<HTMLDivElement>
-  inputProps: InputProps
+  inputProps: AsyncSearchInputPropsInputProps
   buttonProps: ButtonHTMLAttributes<HTMLButtonElement>
   menuProps?: Partial<MenuProps>
   white?: boolean
@@ -331,8 +336,19 @@ export const AsyncSearchInput = forwardRef<
     ref,
   ) => {
     const { colorScheme: colorSchemeContext } = useContext(ColorSchemeContext)
-    const { value, inputSize: size } = inputProps
+    const {
+      value,
+      inputSize: size,
+      format,
+      onChange: inputOnChange,
+      type: inputType = 'text',
+      defaultValue: _defaultValue,
+      ...restInputProps
+    } = inputProps
     const showLabel = Boolean(label)
+    const useFormat =
+      format &&
+      (inputType === 'tel' || inputType === 'text' || inputType === 'number')
     const isOpen = hasFocus && !!children && React.Children.count(children) > 0
 
     const whiteColorScheme = skipContext
@@ -375,16 +391,46 @@ export const AsyncSearchInput = forwardRef<
             [styles.hasError]: hasError,
           })}
         >
-          <Input
-            {...inputProps}
-            colored={inputProps.colored || blueColorScheme}
-            data-testid={dataTestId}
-            color={inputColor}
-            isOpen={isOpen}
-            ref={ref}
-            hasError={hasError}
-            placeholder={value ? undefined : inputProps.placeholder}
-          />
+          {useFormat ? (
+            <NumberFormat
+              customInput={Input}
+              format={format}
+              type={
+                inputType === 'number' ? 'text' : (inputType as 'text' | 'tel')
+              }
+              value={value == null ? '' : String(value)}
+              onValueChange={({ value: formattedValue }) => {
+                inputOnChange?.({
+                  target: { value: formattedValue },
+                } as React.ChangeEvent<HTMLInputElement>)
+              }}
+              getInputRef={ref}
+              inputSize={size}
+              {...restInputProps}
+              colored={restInputProps.colored || blueColorScheme}
+              data-testid={dataTestId}
+              color={inputColor}
+              isOpen={isOpen}
+              hasError={hasError}
+              placeholder={value ? undefined : restInputProps.placeholder}
+            />
+          ) : (
+            <Input
+              {...restInputProps}
+              value={value}
+              inputSize={size}
+              onChange={inputOnChange}
+              type={inputType}
+              defaultValue={_defaultValue}
+              colored={restInputProps.colored || blueColorScheme}
+              data-testid={dataTestId}
+              color={inputColor}
+              isOpen={isOpen}
+              ref={ref}
+              hasError={hasError}
+              placeholder={value ? undefined : restInputProps.placeholder}
+            />
+          )}
           {!loading ? (
             <button
               className={cn(styles.icon, styles.iconSizes[normalizedSize], {
