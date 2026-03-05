@@ -175,7 +175,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   return (
     <>
       <HeadWithSocialSharing title={metaTitle} />
-      <Box paddingTop={[2, 2, 2, 10]} paddingBottom={[4, 4, 4, 10]}>
+      <Box paddingTop={[2, 2, 2, 8]} paddingBottom={[4, 4, 4, 8]}>
         <GridContainer>
           <GridRow>
             <GridColumn
@@ -205,8 +205,14 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     )
                   }}
                 />
-                <Text variant="h1" as="h1">
+                <Text variant="h1" as="h1" className={styles.heading}>
                   {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
+                </Text>
+                <Text variant="intro" className={styles.description}>
+                  {n(
+                    'stofnanirDescription',
+                    'Samantekt yfir helstu þjónustu sem fólk þarf á tilteknum tímamótum í lífinu, til að mynda að eignast barn, fara í nám, stofna fyrirtæki og að undirbúa starfslok og efri árin.',
+                  )}
                 </Text>
               </Stack>
             </GridColumn>
