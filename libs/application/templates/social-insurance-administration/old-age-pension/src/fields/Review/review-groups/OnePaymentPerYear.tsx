@@ -20,7 +20,7 @@ export const OnePaymentPerYear = ({
       editAction={() => goToScreen?.('onePaymentPerYear')}
     >
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridColumn span="12/12">
           <RadioValue
             label={formatMessage(
               oldAgePensionFormMessage.onePaymentPerYear.onePaymentPerYearTitle,

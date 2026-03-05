@@ -58,7 +58,7 @@ export const IncomePlan = ({
           </Box>
         </GridColumn>
         {incomePlanHasOnlyZeroIncome(incomePlan) && (
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridColumn span="12/12">
             <RadioValue
               label={formatMessage(
                 socialInsuranceAdministrationMessage.incomePlan

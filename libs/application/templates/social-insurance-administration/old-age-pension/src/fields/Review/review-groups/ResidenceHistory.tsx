@@ -38,10 +38,7 @@ export const ResidenceHistory = ({
     >
       <GridRow>
         {residenceHistory.length > 0 && (
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '12/12']}
-            paddingBottom={3}
-          >
+          <GridColumn span="12/12" paddingBottom={3}>
             <Label>
               {formatMessage(
                 oldAgePensionFormMessage.residence.residenceHistoryTitle,
@@ -53,7 +50,7 @@ export const ResidenceHistory = ({
           </GridColumn>
         )}
         {residenceHistoryQuestion && (
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridColumn span="12/12">
             <RadioValue
               label={formatMessage(
                 oldAgePensionFormMessage.residence.residenceHistoryQuestion,

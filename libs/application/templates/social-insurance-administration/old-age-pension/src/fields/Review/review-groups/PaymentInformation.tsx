@@ -41,7 +41,7 @@ export const PaymentInformation = ({
       {paymentInfo.bankAccountType === BankAccountType.FOREIGN ? (
         <>
           <GridRow marginBottom={3}>
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            <GridColumn span="12/12">
               <DataValue
                 label={formatMessage(
                   socialInsuranceAdministrationMessage.payment.iban,
@@ -102,7 +102,7 @@ export const PaymentInformation = ({
         </>
       ) : (
         <GridRow marginBottom={3}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridColumn span="12/12">
             <DataValue
               label={formatMessage(
                 socialInsuranceAdministrationMessage.payment.bank,
@@ -114,10 +114,7 @@ export const PaymentInformation = ({
       )}
 
       <GridRow>
-        <GridColumn
-          span={['12/12', '12/12', '12/12', '5/12']}
-          paddingBottom={3}
-        >
+        <GridColumn span="12/12" paddingBottom={3}>
           <RadioValue
             label={formatMessage(
               socialInsuranceAdministrationMessage.confirm.personalAllowance,
@@ -127,10 +124,7 @@ export const PaymentInformation = ({
         </GridColumn>
 
         {personalAllowance === YES && (
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '5/12']}
-            paddingBottom={3}
-          >
+          <GridColumn span="12/12" paddingBottom={3}>
             <DataValue
               label={formatMessage(
                 socialInsuranceAdministrationMessage.confirm.ratio,
@@ -142,7 +136,7 @@ export const PaymentInformation = ({
       </GridRow>
 
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+        <GridColumn span="12/12">
           <DataValue
             label={formatMessage(
               socialInsuranceAdministrationMessage.payment.taxLevel,
