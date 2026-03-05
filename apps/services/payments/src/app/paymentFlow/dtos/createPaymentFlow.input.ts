@@ -105,16 +105,18 @@ export class ChargeInput {
 }
 
 export class CreatePaymentFlowInput {
-  @ApiProperty({
-    description: 'List of allowed payment methods for this payment flow',
+  @ApiPropertyOptional({
+    description: 'Payment methods are determined by the charges',
     type: [String],
     example: ['card', 'invoice'],
     enum: PaymentMethod,
     isArray: true,
+    deprecated: true,
   })
   @IsArray()
+  @IsOptional()
   @IsEnum(PaymentMethod, { each: true })
-  availablePaymentMethods!: PaymentMethod[]
+  availablePaymentMethods?: PaymentMethod[]
 
   @ApiProperty({
     description: 'Charges associated with the payment flow',
