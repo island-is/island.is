@@ -37,13 +37,13 @@ import { getCaseFileHash } from '../../formatters'
 import { InternalCaseService } from '../case/internalCase.service'
 import { PdfService } from '../case/pdf.service'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { CourtDocumentService } from '../court-session'
 import { DefendantService } from '../defendant/defendant.service'
 import { EventService } from '../event'
 import { FileService } from '../file/file.service'
 import { PoliceDocumentType, PoliceService } from '../police'
 import {
   Case,
+  CourtDocumentRepositoryService,
   CourtSession,
   Defendant,
   Institution,
@@ -88,6 +88,7 @@ export const include: Includeable[] = [
 @Injectable()
 export class SubpoenaService {
   constructor(
+    private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     private readonly subpoenaRepositoryService: SubpoenaRepositoryService,
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
@@ -97,7 +98,6 @@ export class SubpoenaService {
     private readonly eventService: EventService,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
-    private readonly courtDocumentService: CourtDocumentService,
     private readonly courtService: CourtService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
@@ -130,7 +130,7 @@ export class SubpoenaService {
     theCase: Case,
     user: TUser,
   ): Promise<Subpoena[]> {
-    const { id: caseId, defendants, withCourtSessions, courtSessions } = theCase
+    const { id: caseId, defendants, withCourtSessions } = theCase
 
     // Filter defendants by the provided IDs
     const requestedDefendants =
@@ -171,7 +171,7 @@ export class SubpoenaService {
     )
 
     // Create court documents if court sessions exist
-    if (withCourtSessions && courtSessions && courtSessions.length > 0) {
+    if (withCourtSessions) {
       for (let i = 0; i < defendantsToProcess.length; i++) {
         const defendant = defendantsToProcess[i]
         const subpoena = subpoenas[i]
@@ -179,14 +179,14 @@ export class SubpoenaService {
           subpoena.created,
         )}`
 
-        await this.courtDocumentService.create(
+        await this.courtDocumentRepositoryService.create(
           caseId,
           {
             documentType: CourtDocumentType.GENERATED_DOCUMENT,
             name,
             generatedPdfUri: `/api/case/${caseId}/subpoena/${defendant.id}/${subpoena.id}/${name}`,
           },
-          transaction,
+          { transaction },
         )
       }
     }
@@ -365,14 +365,14 @@ export class SubpoenaService {
     ) {
       const name = `Birtingarvottorð ${defendant.name}`
 
-      await this.courtDocumentService.create(
+      await this.courtDocumentRepositoryService.create(
         theCase.id,
         {
           documentType: CourtDocumentType.GENERATED_DOCUMENT,
           name,
           generatedPdfUri: `/api/case/${theCase.id}/subpoenaServiceCertificate/${defendant.id}/${subpoena.id}/${name}`,
         },
-        transaction,
+        { transaction },
       )
     }
 
