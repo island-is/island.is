@@ -127,7 +127,10 @@ export const PaymentInformation = ({
         </GridColumn>
 
         {personalAllowance === YES && (
-          <GridColumn span="12/12" paddingBottom={3}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '5/12']}
+            paddingBottom={3}
+          >
             <DataValue
               label={formatMessage(
                 socialInsuranceAdministrationMessage.confirm.ratio,
