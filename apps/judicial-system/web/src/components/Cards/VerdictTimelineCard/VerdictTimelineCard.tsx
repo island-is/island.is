@@ -311,25 +311,73 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                 },
               ]
             : []),
-          {
-            title: defendant.isSentToPrisonAdmin
-              ? 'Afturkalla úr fullnustu'
-              : 'Senda til fullnustu',
-            disabled:
-              (!defendant.isSentToPrisonAdmin &&
-                !defendant.indictmentReviewDecision) ||
-              (!isFine && !verdict?.serviceDate && isServiceRequired),
-            onClick: () => {
-              defendant.isSentToPrisonAdmin
-                ? setModalVisible({
-                    type: 'REVOKE_SEND_TO_PRISON_ADMIN',
-                    defendant,
-                  })
-                : router.push(
-                    `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE}/${workingCase.id}/${defendant.id}`,
-                  )
-            },
-          },
+          ...(!verdict?.isAcquittedByPublicProsecutionOffice &&
+          ((!defendant.isSentToPrisonAdmin &&
+            !defendant.indictmentReviewDecision) ||
+            (!isFine && !verdict?.serviceDate && isServiceRequired))
+            ? [
+                {
+                  title: defendant.isSentToPrisonAdmin
+                    ? 'Afturkalla úr fullnustu'
+                    : 'Senda til fullnustu',
+
+                  onClick: () => {
+                    defendant.isSentToPrisonAdmin
+                      ? setModalVisible({
+                          type: 'REVOKE_SEND_TO_PRISON_ADMIN',
+                          defendant,
+                        })
+                      : router.push(
+                          `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE}/${workingCase.id}/${defendant.id}`,
+                        )
+                  },
+                },
+              ]
+            : []),
+          ...(workingCase.indictmentReviewer &&
+          Boolean(defendant.indictmentReviewDecision) &&
+          !verdict?.defendantHasRequestedAppeal
+            ? [
+                {
+                  title: `${
+                    verdict?.isAcquittedByPublicProsecutionOffice
+                      ? 'Afskrá'
+                      : 'Skrá'
+                  } sýknudóm`,
+                  onClick: () => {
+                    setAndSendVerdictToServer(
+                      {
+                        caseId: workingCase.id,
+                        defendantId: defendant.id,
+                        isAcquittedByPublicProsecutionOffice:
+                          !verdict?.isAcquittedByPublicProsecutionOffice,
+                      },
+                      setWorkingCase,
+                    )
+                  },
+                },
+              ]
+            : []),
+          ...(!verdict?.isAcquittedByPublicProsecutionOffice
+            ? [
+                {
+                  title: `${
+                    verdict?.defendantHasRequestedAppeal ? 'Afskrá' : 'Skrá'
+                  } áfrýjunarleyfi`,
+                  onClick: () => {
+                    setAndSendVerdictToServer(
+                      {
+                        caseId: workingCase.id,
+                        defendantId: defendant.id,
+                        defendantHasRequestedAppeal:
+                          !verdict?.defendantHasRequestedAppeal,
+                      },
+                      setWorkingCase,
+                    )
+                  },
+                },
+              ]
+            : []),
         ]}
       >
         <Box className={styles.container}>

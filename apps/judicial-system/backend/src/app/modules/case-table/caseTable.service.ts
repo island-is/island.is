@@ -135,6 +135,23 @@ export class CaseTableService {
     })
 
     const getDefendantFilter = (type: CaseTableType) => {
+      if (
+        type === CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS
+      ) {
+        return (defendant: Defendant) =>
+          // Only the latest verdict is relevant
+          Boolean(defendant.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
+      }
+
+      if (
+        type ===
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL
+      ) {
+        return (defendant: Defendant) =>
+          // Only the latest verdict is relevant
+          Boolean(defendant.verdicts?.[0]?.defendantHasRequestedAppeal)
+      }
+
       const reviewedTypes = [
         CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
         CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
