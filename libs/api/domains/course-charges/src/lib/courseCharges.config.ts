@@ -6,6 +6,10 @@ const schema = z.object({
   zendeskSubdomain: z.string(),
   zendeskEmail: z.string(),
   zendeskToken: z.string(),
+  redis: z.object({
+    nodes: z.array(z.string()),
+    ssl: z.boolean(),
+  }),
 })
 
 export const CourseChargesConfig = defineConfig({
@@ -16,5 +20,9 @@ export const CourseChargesConfig = defineConfig({
     zendeskSubdomain: env.required('HH_ZENDESK_SUBDOMAIN'),
     zendeskEmail: env.required('HH_ZENDESK_EMAIL'),
     zendeskToken: env.required('HH_ZENDESK_TOKEN'),
+    redis: {
+      nodes: env.requiredJSON('APOLLO_CACHE_REDIS_NODES', []),
+      ssl: env.optionalJSON('APOLLO_CACHE_REDIS_SSL', false) ?? true,
+    },
   }),
 })

@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import type { ConfigType } from '@nestjs/config'
-import axios, { AxiosResponse } from 'axios'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
 import { CmsContentfulService } from '@island.is/cms'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 
@@ -17,6 +17,7 @@ import {
   CourseInstanceAvailability,
 } from './models/courseAvailability.model'
 import { CourseChargesConfig } from './courseCharges.config'
+import { COURSE_CHARGES_FETCH } from './courseCharges.fetch'
 
 const NATIONAL_ID_REGEX = /Kennitala þátttakanda \d+: (\d{10})/g
 
@@ -29,6 +30,8 @@ export class CourseChargesService {
     private readonly courseChargesConfig: ConfigType<
       typeof CourseChargesConfig
     >,
+    @Inject(COURSE_CHARGES_FETCH)
+    private readonly fetch: EnhancedFetchAPI,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -112,10 +115,9 @@ export class CourseChargesService {
     const subject = `${zendeskSubjectPrefix} - ${courseInstanceId}`
     const query = `type:ticket subject:"${subject}"`
     const baseUrl = `https://${zendeskSubdomain}.zendesk.com/api/v2`
-    const auth = {
-      username: `${zendeskEmail}/token`,
-      password: zendeskToken,
-    }
+    const credentials = Buffer.from(
+      `${zendeskEmail}/token:${zendeskToken}`,
+    ).toString('base64')
 
     const nationalIds = new Set<string>()
     let url:
@@ -125,18 +127,24 @@ export class CourseChargesService {
     )}`
 
     while (url) {
-      const response: AxiosResponse<{
+      const response = await this.fetch(url, {
+        headers: {
+          Authorization: `Basic ${credentials}`,
+          Accept: 'application/json',
+        },
+      })
+      const data: {
         results: Array<{ description?: string }>
         next_page?: string | null
-      }> = await axios.get(url, { auth })
-      for (const ticket of response.data.results) {
+      } = await response.json()
+      for (const ticket of data.results) {
         if (!ticket.description) continue
         const matches = ticket.description.matchAll(NATIONAL_ID_REGEX)
         for (const match of matches) {
           nationalIds.add(match[1])
         }
       }
-      url = response.data.next_page ?? null
+      url = data.next_page ?? null
     }
 
     return nationalIds.size
