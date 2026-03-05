@@ -13,6 +13,7 @@ import { CardPaymentModule } from './cardPayment/cardPayment.module'
 import { InvoicePaymentModule } from './invoicePayment/invoicePayment.module'
 import { JwksModule } from './jwks/jwks.module'
 import { PaymentFlowModule } from './paymentFlow/paymentFlow.module'
+import { RefundModule } from './refund/refund.module'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PaymentFlowModule } from './paymentFlow/paymentFlow.module'
     ProblemModule,
     LoggingModule,
     PaymentFlowModule,
+    RefundModule,
     CardPaymentModule,
     InvoicePaymentModule,
     JwksModule,
