@@ -1,7 +1,6 @@
 export { GET_ADDRESS_BY_NATIONALID } from './getAddress'
 export { GET_ALL_APPLICATIONS } from './getAllApplications'
 export { GET_APPLICATION } from './getApplication'
-export { GET_APPLICATIONS } from './getApplications'
 export { GET_COMPANY_BY_NATIONALID } from './getCompany'
 export { GET_FORM } from './getForm'
 export { GET_FORMS } from './getForms'

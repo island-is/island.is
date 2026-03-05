@@ -41,17 +41,6 @@ export class ApplicationsResolver {
   }
 
   @Query(() => ApplicationResponse, {
-    name: 'formSystemApplications',
-  })
-  async getApplications(
-    @Args('input', { type: () => ApplicationsInput })
-    input: ApplicationsInput,
-    @CurrentUser() user: User,
-  ): Promise<ApplicationResponse> {
-    return this.applicationsService.getApplications(user, input)
-  }
-
-  @Query(() => ApplicationResponse, {
     name: 'formSystemGetApplications',
   })
   async getAllApplications(

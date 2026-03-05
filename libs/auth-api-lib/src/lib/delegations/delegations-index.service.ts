@@ -11,6 +11,7 @@ import {
   AuthDelegationProvider,
   AuthDelegationType,
   getPersonalRepresentativeDelegationType,
+  isPersonalRepresentativeDelegationType,
 } from '@island.is/shared/types'
 
 import { PersonalRepresentativeScopePermissionService } from '../personal-representative/services/personal-representative-scope-permission.service'
@@ -522,11 +523,15 @@ export class DelegationsIndexService {
     requireApiScopes?: boolean,
   ): Promise<DelegationRecordDTO[]> {
     if (requireApiScopes) {
-      const noSupportedScope = !clientAllowedApiScopes.some(
-        (s) =>
-          s.supportedDelegationTypes?.some(
-            (dt) => dt.delegationType == AuthDelegationType.LegalRepresentative,
-          ) && !s.isAccessControlled,
+      const noSupportedScope = !clientAllowedApiScopes.some((s) =>
+        s.supportedDelegationTypes?.some(
+          (dt) =>
+            (dt.delegationType === AuthDelegationType.LegalRepresentative ||
+              isPersonalRepresentativeDelegationType(
+                String(dt.delegationType),
+              )) &&
+            !s.isAccessControlled,
+        ),
       )
       if (noSupportedScope) {
         return []

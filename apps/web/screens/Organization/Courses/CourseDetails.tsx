@@ -89,10 +89,6 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
       }
     }
 
-    const dateLabel = [startDateLabel, startDateTimeDuration]
-      .filter(Boolean)
-      .join(' - ')
-
     let priceLabel: string | undefined
     if (instance.chargeItemCode) {
       const chargeItem = chargeItemMap.get(instance.chargeItemCode)
@@ -126,7 +122,6 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
       location: instance.location ?? '',
       startDateLabel,
       startDateTimeDuration,
-      dateLabel,
       priceLabel,
       registrationHref,
     }
@@ -185,7 +180,6 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                 <ActionCategoryCard
                   key={instance.id}
                   heading={instance.title}
-                  subHeading={instance.location}
                   text={instance.description}
                   href={instance.registrationHref}
                   stackWidth={theme.breakpoints.sm}
@@ -202,8 +196,36 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                             color="blue400"
                           />
                         ),
-                        title: instance.dateLabel,
+                        title: instance.startDateLabel,
                       },
+                      ...(instance.startDateTimeDuration
+                        ? [
+                            {
+                              icon: (
+                                <Icon
+                                  icon="time"
+                                  type="outline"
+                                  color="blue400"
+                                />
+                              ),
+                              title: instance.startDateTimeDuration,
+                            },
+                          ]
+                        : []),
+                      ...(instance.location
+                        ? [
+                            {
+                              icon: (
+                                <Icon
+                                  icon="location"
+                                  type="outline"
+                                  color="blue400"
+                                />
+                              ),
+                              title: instance.location,
+                            },
+                          ]
+                        : []),
                       ...(instance.priceLabel
                         ? [
                             {

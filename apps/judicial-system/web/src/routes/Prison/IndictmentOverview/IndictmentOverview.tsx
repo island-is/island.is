@@ -30,9 +30,7 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   Defendant,
-  IndictmentCaseReviewDecision,
   PunishmentType,
-  ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
@@ -41,23 +39,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { DefendantPrisonAdminCard } from './DefendantPrisonAdminCard'
-
-const getDefendantExplanation = (defendant: Defendant): string => {
-  if (
-    defendant.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL
-  ) {
-    return 'Áfrýjun'
-  }
-
-  if (
-    defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED &&
-    !defendant.verdict?.serviceDate
-  ) {
-    return 'Dómur er í birtingarferli'
-  }
-
-  return 'Ekki sent til fullnustu'
-}
 
 const IndictmentOverview = () => {
   const { user } = useContext(UserContext)
@@ -203,32 +184,14 @@ const IndictmentOverview = () => {
           )}
         </Box>
 
-        {workingCase.defendants?.map((defendant) => {
-          const isSentToPrisonAdmin = defendant.isSentToPrisonAdmin
-          if (!isSentToPrisonAdmin) {
-            return (
-              <Box key={defendant.id} marginBottom={3}>
-                <Text variant="h4" as="h4">
-                  {defendant.name}
-                </Text>
-                <Box as="ul" marginTop={1}>
-                  <Text as="span">{`${getDefendantExplanation(
-                    defendant,
-                  )}`}</Text>
-                </Box>
-              </Box>
-            )
-          }
-
-          return (
-            <DefendantPrisonAdminCard
-              key={defendant.id}
-              defendant={defendant}
-              onToggleRegistration={handleToggleRegistration}
-              onPunishmentTypeChange={handlePunishmentTypeChange}
-            />
-          )
-        })}
+        {workingCase.defendants?.map((defendant) => (
+          <DefendantPrisonAdminCard
+            key={defendant.id}
+            defendant={defendant}
+            onToggleRegistration={handleToggleRegistration}
+            onPunishmentTypeChange={handlePunishmentTypeChange}
+          />
+        ))}
 
         <Box marginBottom={5}>
           <InfoCardClosedIndictment
