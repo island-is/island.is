@@ -197,9 +197,9 @@ describe('AppController - CreateV2', () => {
       await appController.createV2(caseToCreate)
     })
 
-    it('should call backend at /api/internal/case/v2 with body without accused fields', () => {
+    it('should call backend at /api/internal/case/create with body without accused fields', () => {
       expect(fetch).toHaveBeenCalledWith(
-        `${config.backend.url}/api/internal/case/v2`,
+        `${config.backend.url}/api/internal/case/create`,
         {
           method: 'POST',
           headers: {

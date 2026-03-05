@@ -13,17 +13,9 @@ import {
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
-import { DefendantService } from '../../../defendant/defendant.service'
-import { CreateDefendantDto } from '../../../defendant/dto/createDefendant.dto'
-import {
-  Case,
-  CaseRepositoryService,
-  Defendant,
-  User,
-} from '../../../repository'
+import { Case, CaseRepositoryService, User } from '../../../repository'
 import { UserService } from '../../../user'
 import { InternalCreateCaseV2Dto } from '../../dto/internalCreateCaseV2.dto'
-import { InternalCaseService } from '../../internalCase.service'
 
 interface Then {
   result: Case
@@ -42,26 +34,22 @@ describe('InternalCaseController - CreateV2', () => {
   }
   const caseId = uuid()
   let mockUserService: UserService
-  let mockDefendantService: DefendantService
+
   let mockCaseRepositoryService: CaseRepositoryService
-  let internalCaseService: InternalCaseService
+
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
       userService,
-      defendantService,
       sequelize,
       caseRepositoryService,
       internalCaseController,
-      internalCaseService: internalCaseSvc,
     } = await createTestingCaseModule()
 
     mockUserService = userService
-    mockDefendantService = defendantService
     mockCaseRepositoryService = caseRepositoryService
-    internalCaseService = internalCaseSvc
 
     const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
     mockFindByNationalId.mockRejectedValue(new Error('Failed to find user'))
@@ -142,59 +130,6 @@ describe('InternalCaseController - CreateV2', () => {
       expect(mockCaseRepositoryService.findById).toHaveBeenCalledWith(caseId, {
         transaction,
       })
-      expect(then.result).toBe(returnedCase)
-    })
-  })
-
-  describe('creating case with multiple defendants', () => {
-    const userId = uuid()
-    const prosecutorsOfficeId = uuid()
-    const courtId = uuid()
-    const user = {
-      id: userId,
-      role: UserRole.PROSECUTOR,
-      institution: {
-        id: prosecutorsOfficeId,
-        nationalId: '1234567890',
-        type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
-        defaultCourtId: courtId,
-      },
-    } as User
-    const createdCase = { id: caseId } as Case
-    const returnedCase = { id: caseId } as Case
-    const multipleAccused: CreateDefendantDto[] = [
-      { nationalId: '1111111111', name: 'First Accused', address: 'Address 1' },
-      {
-        nationalId: '2222222222',
-        name: 'Second Accused',
-        address: 'Address 2',
-      },
-      { nationalId: '3333333333', name: 'Third Accused', address: '' },
-    ]
-    let then: Then
-
-    beforeEach(async () => {
-      const fetchAccusedSpy = jest.spyOn(
-        internalCaseService as InternalCaseService & {
-          fetchAccusedForCase: (
-            _caseId: string,
-          ) => Promise<CreateDefendantDto[]>
-        },
-        'fetchAccusedForCase',
-      ) as jest.SpyInstance<Promise<CreateDefendantDto[]>, [string]>
-      fetchAccusedSpy.mockResolvedValue(multipleAccused)
-
-      const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
-      mockFindByNationalId.mockResolvedValueOnce([user])
-      const mockCreate = mockCaseRepositoryService.create as jest.Mock
-      mockCreate.mockResolvedValueOnce(createdCase)
-      const mockFindById = mockCaseRepositoryService.findById as jest.Mock
-      mockFindById.mockResolvedValueOnce(returnedCase)
-
-      then = await givenWhenThen(caseToCreate)
-    })
-
-    it('should return the created case', () => {
       expect(then.result).toBe(returnedCase)
     })
   })
