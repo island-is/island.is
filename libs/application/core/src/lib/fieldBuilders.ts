@@ -407,6 +407,10 @@ export const buildPaginatedSearchableTableField = (
     savePropertyNames,
     pageSize,
     callbackId,
+    serverSideFetch,
+    selectable,
+    selectedDetailsKey,
+    selectedCountLabel,
   } = data
 
   return {
@@ -424,6 +428,10 @@ export const buildPaginatedSearchableTableField = (
     savePropertyNames,
     pageSize,
     callbackId,
+    serverSideFetch,
+    selectable,
+    selectedDetailsKey,
+    selectedCountLabel,
   }
 }
 

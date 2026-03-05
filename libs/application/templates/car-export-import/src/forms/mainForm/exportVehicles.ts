@@ -1,7 +1,6 @@
 import {
   buildAlertMessageField,
   buildCheckboxField,
-  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildPaginatedSearchableTableField,
@@ -16,6 +15,7 @@ import {
   SERVER_SIDE_VEHICLE_THRESHOLD,
 } from '../../lib/types'
 import { RegistrationType } from '../../utils/constants'
+import { GetVehiclesListV2Query } from '../../graphql/queries'
 
 const VEHICLE_TABLE_THRESHOLD = 5
 
@@ -137,29 +137,79 @@ export const exportVehiclesSection = buildSection({
           searchKeys: ['permno', 'type'],
           pageSize: VEHICLE_TABLE_THRESHOLD,
         }),
-        buildCustomField(
-          {
-            id: 'selectedExportVehiclesServer',
-            title: '',
-            doesNotRequireAnswer: true,
-            component: 'VehicleSelectionField',
-            condition: (_formValue, externalData) =>
-              isServerSide(externalData),
-          },
-          {
-            answerKey: 'selectedExportVehicles',
-            detailsKey: 'selectedExportVehicleDetails',
-            messages: {
-              searchLabel: m.exportVehicles.searchLabel,
-              searchPlaceholder: m.exportVehicles.searchPlaceholder,
-              emptyState: m.exportVehicles.emptyState,
-              tableHeaderPermno: m.exportVehicles.tableHeaderPermno,
-              tableHeaderType: m.exportVehicles.tableHeaderType,
-              tableHeaderMileage: m.exportVehicles.tableHeaderMileage,
-              selectedCount: m.exportVehicles.selectedCount,
+        buildPaginatedSearchableTableField({
+          id: 'selectedExportVehicles',
+          doesNotRequireAnswer: true,
+          condition: (_formValue, externalData) => isServerSide(externalData),
+          rowIdKey: 'permno',
+          rows: [],
+          headers: [
+            {
+              key: 'permno',
+              label: m.exportVehicles.tableHeaderPermno,
             },
+            {
+              key: 'type',
+              label: m.exportVehicles.tableHeaderType,
+            },
+            {
+              key: 'mileage',
+              label: m.exportVehicles.tableHeaderMileage,
+            },
+          ],
+          searchLabel: m.exportVehicles.searchLabel,
+          searchPlaceholder: m.exportVehicles.searchPlaceholder,
+          emptyState: m.exportVehicles.emptyState,
+          searchKeys: ['permno', 'type'],
+          pageSize: 10,
+          selectable: true,
+          selectedDetailsKey: 'selectedExportVehicleDetails',
+          selectedCountLabel: m.exportVehicles.selectedCount,
+          serverSideFetch: async ({
+            apolloClient,
+            page,
+            pageSize,
+            searchTerm,
+          }) => {
+            const { data } = await apolloClient.query({
+              query: GetVehiclesListV2Query,
+              variables: {
+                input: {
+                  page,
+                  pageSize,
+                  onlyMileage: true,
+                  showOwned: true,
+                  showCoowned: true,
+                  showOperated: true,
+                  permno: searchTerm || undefined,
+                },
+              },
+              fetchPolicy: 'network-only',
+            })
+
+            const vehicleList = data?.vehiclesListV2?.vehicleList ?? []
+            const totalRecords =
+              data?.vehiclesListV2?.paging?.totalRecords ?? 0
+
+            return {
+              rows: vehicleList.map(
+                (v: {
+                  permno?: string
+                  make?: string
+                  latestMileage?: number
+                }) => ({
+                  permno: v.permno ?? '',
+                  type: v.make ?? '',
+                  mileage: v.latestMileage
+                    ? `${v.latestMileage.toLocaleString('is-IS')} km`
+                    : '—',
+                  milage: v.latestMileage ?? null,
+                }),
+              ),
+              totalRows: totalRecords,
+            }
           },
-        ),
+        }),
       ],
     }),
   ],
