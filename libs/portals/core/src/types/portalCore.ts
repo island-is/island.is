@@ -40,6 +40,15 @@ export interface PortalNavigationItem {
   breadcrumbHide?: boolean
 
   /**
+   * Dashboard shortcut configuration.
+   * Only use for nested items, not top level modules.
+   */
+  customShortcut?: {
+    name: MessageDescriptor
+    description: MessageDescriptor
+  }
+
+  /**
    * Indicates if the user has access to the navigation item
    */
   enabled?: boolean
