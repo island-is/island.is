@@ -7,7 +7,7 @@ query GetCustomerChargeType {
   }
 }
 
-query GetCustomerRecords($input: GetCustomerRecordsPagedInput!) {
+query GetCustomerRecordsPaged($input: GetCustomerRecordsPagedInput!) {
   getCustomerRecordsPaged(input: $input) {
     data {
       createDate
