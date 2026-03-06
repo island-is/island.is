@@ -347,8 +347,8 @@ export class PaymentService {
     }
 
     try {
-      await this.paymentsApi.cardPaymentControllerRefund({
-        refundCardPaymentInput: {
+      await this.paymentsApi.refundControllerRefund({
+        refundPaymentInput: {
           paymentFlowId: payment.request_id,
           reasonForRefund,
         },
