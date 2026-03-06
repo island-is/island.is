@@ -320,6 +320,7 @@ export class PaymentFlowService {
       await this.paymentFlowModel.findOne({
         where: {
           id,
+          isDeleted: false,
         },
       })
     )?.toJSON()
@@ -351,6 +352,7 @@ export class PaymentFlowService {
       await this.paymentFlowModel.findOne({
         where: {
           id,
+          isDeleted: false,
         },
         include: [
           {
@@ -358,6 +360,8 @@ export class PaymentFlowService {
           },
           {
             model: FjsCharge,
+            where: { isDeleted: false },
+            required: false,
           },
           ...(includeEvents
             ? [
@@ -401,6 +405,7 @@ export class PaymentFlowService {
       await this.fjsChargeModel.findOne({
         where: {
           paymentFlowId: paymentFlow.id,
+          isDeleted: false,
         },
       })
     )?.toJSON()
@@ -479,6 +484,7 @@ export class PaymentFlowService {
       await this.paymentFlowModel.findOne({
         where: {
           id: update.paymentFlowId,
+          isDeleted: false,
         },
       })
     )?.toJSON()
@@ -732,6 +738,9 @@ export class PaymentFlowService {
    * This method is idempotent - calling it multiple times with the same parameters
    * will not create duplicate fulfillments.
    *
+   * Soft-deleted flows are rejected by findFjsChargeByReceptionId (charge lookup
+   * requires a non-deleted payment flow).
+   *
    * @param paymentFlowId - The payment flow ID
    * @param receptionId - The FJS reception ID from the callback
    * @returns Promise<void>
@@ -751,6 +760,7 @@ export class PaymentFlowService {
 
   /**
    * Finds an FJS charge by reception ID and validates it belongs to the payment flow.
+   * Only returns a charge when both the charge and the referenced payment flow are not soft-deleted.
    * This provides an additional security check in case of token issues.
    */
   private async findFjsChargeByReceptionId(
@@ -758,7 +768,15 @@ export class PaymentFlowService {
     receptionId: string,
   ) {
     const fjsCharge = await this.fjsChargeModel.findOne({
-      where: { paymentFlowId, receptionId },
+      where: { paymentFlowId, receptionId, isDeleted: false },
+      include: [
+        {
+          model: PaymentFlow,
+          where: { isDeleted: false },
+          required: true,
+          attributes: [],
+        },
+      ],
     })
 
     if (!fjsCharge) {
@@ -946,6 +964,7 @@ export class PaymentFlowService {
     cutoffTime: Date,
   ): Promise<InferAttributes<PaymentFlow>[]> {
     const paymentFlows = await this.paymentFlowModel.findAll({
+      where: { isDeleted: false },
       include: [
         {
           model: PaymentFulfillment,
@@ -984,14 +1003,12 @@ export class PaymentFlowService {
         `[${paymentFlowId}] Successfully requested deletion of FJS charge (or it was already deleted/cancelled)`,
       )
 
-      // Delete local confirmation
-      const deletedConfirmations = await this.fjsChargeModel.destroy({
-        where: {
-          paymentFlowId,
-        },
-      })
-      if (deletedConfirmations > 0) {
-        this.logger.info(`[${paymentFlowId}] Deleted FjsCharge`)
+      const [updatedCount] = await this.fjsChargeModel.update(
+        { isDeleted: true },
+        { where: { paymentFlowId, isDeleted: false } },
+      )
+      if (updatedCount > 0) {
+        this.logger.info(`[${paymentFlowId}] Marked FjsCharge as deleted`)
       } else {
         this.logger.warn(`[${paymentFlowId}] No FjsCharge found to delete`)
       }
@@ -1058,9 +1075,10 @@ export class PaymentFlowService {
       await this.deleteFjsCharge(id)
     }
 
-    // By deleting the payment flow, the related charges, events, and other
-    // associated records will be deleted automatically by the database cascade.
-    await this.paymentFlowModel.destroy({ where: { id } })
+    await this.paymentFlowModel.update(
+      { isDeleted: true },
+      { where: { id, isDeleted: false } },
+    )
 
     return paymentFlowDTO
   }
@@ -1229,7 +1247,7 @@ export class PaymentFlowService {
     after?: string,
     before?: string,
   ): Promise<GetPaymentFlowsPaginatedDTO> {
-    const where: WhereOptions<PaymentFlow> = {}
+    const where: WhereOptions<PaymentFlow> = { isDeleted: false }
 
     if (payerNationalId && isValid(payerNationalId)) {
       where.payerNationalId = payerNationalId
