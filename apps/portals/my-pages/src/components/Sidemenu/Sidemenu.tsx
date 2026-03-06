@@ -82,7 +82,7 @@ const Sidemenu = ({
             {navigation?.children?.map(
               (navRoot, index) =>
                 navRoot.path !== ServicePortalPaths.Root &&
-                !navRoot.navHide && (
+                (!navRoot.navHide || navRoot.customShortcut) && (
                   <SidemenuItem
                     item={navRoot}
                     setSidemenuOpen={setSideMenuOpen}
