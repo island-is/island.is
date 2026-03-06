@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 /** Partial unique index: only one row per payment_flow_id can have is_deleted = false (active). */
 
@@ -22,4 +22,4 @@ module.exports = {
       )
     })
   },
-};
+}
