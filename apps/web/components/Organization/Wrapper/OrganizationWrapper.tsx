@@ -74,8 +74,6 @@ import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComp
 import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
 import { GevFooter } from './Themes/GevTheme'
 import { HeilbrigdisstofnunAusturlandsFooter } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
-import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
-import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { HljodbokasafnIslandsHeader } from './Themes/HljodbokasafnIslandsTheme'
 import { HveFooter } from './Themes/HveTheme'
 import { IcelandicNaturalDisasterInsuranceFooter } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
@@ -607,23 +605,6 @@ export const OrganizationFooter: React.FC<
     case 'directorate-of-health':
       OrganizationFooterComponent = (
         <LandlaeknirFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'hsn':
-      OrganizationFooterComponent = (
-        <HeilbrigdisstofnunNordurlandsFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'hsu':
-      OrganizationFooterComponent = (
-        <HeilbrigdisstofnunSudurlandsFooter
-          title={organization.title}
           footerItems={organization.footerItems}
           namespace={namespace}
         />
