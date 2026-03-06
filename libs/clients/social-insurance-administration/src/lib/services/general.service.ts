@@ -35,11 +35,11 @@ export class SocialInsuranceAdministrationGeneralService {
       user,
     ).apiProtectedV1GeneralCountriesGet()
 
-    return (
-      data
-        .map((d) => mapCountryDto(d, locale))
-        .filter((i): i is CountryDto => Boolean(i)) ?? null
-    )
+    const result = data
+      .map((d) => mapCountryDto(d, locale))
+      .filter((i): i is CountryDto => Boolean(i))
+
+    return result.length ? result : null
   }
 
   async getLanguages(

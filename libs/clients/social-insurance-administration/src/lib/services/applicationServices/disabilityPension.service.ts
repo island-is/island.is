@@ -9,7 +9,7 @@ import {
   QuestionnairesApiForDisabilityPension,
 } from '../../socialInsuranceAdministrationClient.type'
 import { TrWebContractsExternalServicePortalDisabilityPensionCertificate } from '../../../../gen/fetch/v1'
-import { INCOME_PLAN_APPLICATION_SLUG } from '../../constants'
+import { DISABILITY_PENSION_APPLICATION_SLUG } from '../../constants'
 
 @Injectable()
 export class SocialInsuranceAdministrationDisabilityPensionService {
@@ -36,7 +36,7 @@ export class SocialInsuranceAdministrationDisabilityPensionService {
     return this.applicationWriteApiV2WithAuth(
       user,
     ).apiProtectedV2ApplicationApplicationTypePost({
-      applicationType: INCOME_PLAN_APPLICATION_SLUG,
+      applicationType: DISABILITY_PENSION_APPLICATION_SLUG,
       body: input,
     })
   }
@@ -46,7 +46,7 @@ export class SocialInsuranceAdministrationDisabilityPensionService {
   ): Promise<TrWebApiServicesDomainApplicationsModelsIsEligibleForApplicationReturn> {
     return this.applicationService.getIsEligible(
       user,
-      INCOME_PLAN_APPLICATION_SLUG,
+      DISABILITY_PENSION_APPLICATION_SLUG,
     )
   }
 

@@ -4,6 +4,7 @@ import {
   ApplicantApi,
   QuestionnairesApi,
   TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
+  TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
 } from '../../../../gen/fetch/v1'
 
 @Injectable()
@@ -27,7 +28,12 @@ export class SocialInsuranceAdministrationMedicalAndRehabilitationService {
     ).apiProtectedV1ApplicantMedicalandrehabilitationpaymentsTypeGet()
   }
 
-  async getSelfAssessmentQuestionnaire(user: User, languages: Array<string>) {
+  async getSelfAssessmentQuestionnaire(
+    user: User,
+    languages: Array<string>,
+  ): Promise<
+    Array<TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto>
+  > {
     return this.questionnairesApiWithAuth(
       user,
     ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
