@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Context, Query, Resolver } from '@nestjs/graphql'
 import { Inject } from '@nestjs/common'
 import {
   VacancyApi,
@@ -44,6 +44,7 @@ import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FetchError } from '@island.is/clients/middlewares'
+import type { User } from '@island.is/auth-nest-tools'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 const defaultLang = 'is'
@@ -104,13 +105,30 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
+  private getFeatureFlagUser(req: Request): User {
+    const forwardedForHeader = req.headers['x-forwarded-for']
+    const forwardedFor = Array.isArray(forwardedForHeader)
+      ? forwardedForHeader.join(',')
+      : forwardedForHeader
+    const forwardedIp = forwardedFor
+      ?.split(',')
+      .map((ip) => ip.trim())
+      .find((ip) => ip.length > 0)
+
+    return {
+      ip: String(forwardedIp ?? (req as any).ip ?? ''),
+    } as User
+  }
+
   private async getVacanciesFromExternalSystem(
     input: IcelandicGovernmentInstitutionVacanciesInput,
+    user?: User,
   ) {
     // Check feature flag to determine which client to use
     const useNewApi = await this.featureFlagService.getValue(
       Features.useNewVacancyApi,
       false,
+      user,
     )
 
     let errorOccurred = false
@@ -282,11 +300,13 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   @Query(() => IcelandicGovernmentInstitutionVacanciesResponse)
   async icelandicGovernmentInstitutionVacancies(
     @Args('input') input: IcelandicGovernmentInstitutionVacanciesInput,
+    @Context('req') req: Request,
   ): Promise<IcelandicGovernmentInstitutionVacanciesResponse> {
+    const featureFlagUser = this.getFeatureFlagUser(req)
     const {
       vacancies: vacanciesFromExternalSystem,
       errorOccurred: externalSystemErrorOccurred,
-    } = await this.getVacanciesFromExternalSystem(input)
+    } = await this.getVacanciesFromExternalSystem(input, featureFlagUser)
     const { vacancies: vacanciesFromCms, errorOccurred: cmsErrorOccurred } =
       await this.getVacanciesFromCms()
 
@@ -316,11 +336,13 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   private async getVacancyFromExternalSystem(
     id: string,
     language?: VacancyLanguageEnum,
+    user?: User,
   ) {
     // Check feature flag to determine which client to use
     const useNewApi = await this.featureFlagService.getValue(
       Features.useNewVacancyApi,
       false,
+      user,
     )
 
     let vacancy
@@ -437,27 +459,31 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   @Query(() => IcelandicGovernmentInstitutionVacancyByIdResponse)
   async icelandicGovernmentInstitutionVacancyById(
     @Args('input') input: IcelandicGovernmentInstitutionVacancyByIdInput,
+    @Context('req') req: Request,
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse | null> {
+    const featureFlagUser = this.getFeatureFlagUser(req)
+
     // The prefix of the id determines what service to call
     if (input.id.startsWith(CMS_ID_PREFIX)) {
       return this.getVacancyFromCms(input.id.slice(CMS_ID_PREFIX.length))
     } else if (input.id.startsWith(EXTERNAL_SYSTEM_ID_PREFIX)) {
       const id = input.id.slice(EXTERNAL_SYSTEM_ID_PREFIX.length)
       if (id === '') return null
-      return this.getVacancyFromExternalSystem(id, input.language)
+      return this.getVacancyFromExternalSystem(id, input.language, featureFlagUser)
     }
 
     // If no prefix is present then we determine what service to call depending on the feature flag and id format
     const useNewApi = await this.featureFlagService.getValue(
       Features.useNewVacancyApi,
       false,
+      featureFlagUser,
     )
 
     if (useNewApi) {
       // New API: first try CMS, then external service
       const vacancyFromCms = await this.getVacancyFromCms(input.id)
       if (vacancyFromCms.vacancy === null) {
-        return this.getVacancyFromExternalSystem(input.id, input.language)
+        return this.getVacancyFromExternalSystem(input.id, input.language, featureFlagUser)
       }
       return vacancyFromCms
     } else {
@@ -466,7 +492,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       if (isNaN(numericId)) {
         return this.getVacancyFromCms(input.id)
       }
-      return this.getVacancyFromExternalSystem(input.id, input.language)
+      return this.getVacancyFromExternalSystem(input.id, input.language, featureFlagUser)
     }
   }
 }

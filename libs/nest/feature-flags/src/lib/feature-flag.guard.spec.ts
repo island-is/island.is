@@ -157,6 +157,28 @@ describe('FeatureFlagGuard', () => {
     )
   })
 
+  it('passes ip to getValue when user has ip', async () => {
+    // Arrange
+    const userWithIp = { ...testUser, ip: '10.0.0.1' }
+    jest.spyOn(authGuard, 'getAuth').mockReturnValue(userWithIp)
+
+    // Act
+    await request(app.getHttpServer()).get('/rest')
+
+    // Assert
+    expect(featureFlagClient.getValue).toHaveBeenCalledWith(
+      testFeature,
+      false,
+      {
+        id: userWithIp.nationalId,
+        attributes: {
+          subjectType: 'person',
+          ip: '10.0.0.1',
+        },
+      },
+    )
+  })
+
   it('guards resolver class if feature is disabled', async () => {
     // Arrange
     featureFlagClient.getValue.mockResolvedValue(false)

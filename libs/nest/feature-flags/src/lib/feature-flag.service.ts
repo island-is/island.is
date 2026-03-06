@@ -35,7 +35,10 @@ export class FeatureFlagService {
         ? 'legalEntity'
         : 'person'
     }
+    if (user.ip) {
+      attributes.ip = user.ip
+    }
 
-    return { id: user.nationalId, attributes }
+    return { id: user.nationalId ?? '', attributes }
   }
 }
