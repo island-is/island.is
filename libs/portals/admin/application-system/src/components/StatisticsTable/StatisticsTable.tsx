@@ -4,12 +4,19 @@ import { m } from '../../lib/messages'
 import { ApplicationStatistics } from '@island.is/api/schema'
 import * as styles from '../ApplicationsTable/ApplicationsTable.css'
 import { getLogoFromContentfulSlug } from '../../shared/utils'
+import { Organization } from '@island.is/shared/types'
 
 type Props = {
+  isSuperAdmin: boolean
   dataRows?: ApplicationStatistics[] | null
+  organizations: Organization[]
 }
 
-export default function StatisticsTable({ dataRows }: Props) {
+export default function StatisticsTable({
+  isSuperAdmin,
+  dataRows,
+  organizations,
+}: Props) {
   const { formatMessage } = useLocale()
 
   if (!dataRows?.length) {
@@ -25,7 +32,9 @@ export default function StatisticsTable({ dataRows }: Props) {
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData>{formatMessage(m.tableHeaderInstitution)}</T.HeadData>
+            {isSuperAdmin && (
+              <T.HeadData>{formatMessage(m.tableHeaderInstitution)}</T.HeadData>
+            )}
             <T.HeadData>{formatMessage(m.tableHeaderType)}</T.HeadData>
             <T.HeadData>{formatMessage(m.tableHeaderInProgress)}</T.HeadData>
             <T.HeadData>{formatMessage(m.tableHeaderCompleted)}</T.HeadData>
@@ -35,23 +44,27 @@ export default function StatisticsTable({ dataRows }: Props) {
         </T.Head>
         <T.Body>
           {dataRows?.map((row, i) => {
-            //todoxy: get logo from contentful
-            //todoxy: exclude logo when viewing as institutionadmin?
-            // const logo = getLogoFromContentfulSlug(
-            //   organizations,
-            //   row.institutionContentfulSlug,
-            // )
-            const logo =
-              'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
+            const contentfulOrg = organizations.find(
+              (x) => x.slug === row.institutionContentfulSlug,
+            )
+
+            const logo = getLogoFromContentfulSlug(
+              contentfulOrg ? [contentfulOrg] : [],
+              row.institutionContentfulSlug ?? '',
+            )
             return (
               <T.Row key={`${row.typeid}-${i}`}>
-                <T.Data>
-                  <Box display="flex" alignItems="center">
-                    <Tooltip text={row.institution}>
-                      <img src={logo} alt="" className={styles.logo} />
-                    </Tooltip>
-                  </Box>
-                </T.Data>
+                {isSuperAdmin && (
+                  <T.Data>
+                    <Box display="flex" alignItems="center">
+                      <Tooltip
+                        text={contentfulOrg?.title ?? row.institutionName ?? ''}
+                      >
+                        <img src={logo} alt="" className={styles.logo} />
+                      </Tooltip>
+                    </Box>
+                  </T.Data>
+                )}
                 <T.Data>{row.name || row.typeid}</T.Data>
                 <T.Data>{row.inprogress}</T.Data>
                 <T.Data>{row.completed}</T.Data>

@@ -29,11 +29,11 @@ export class ApplicationStatisticsDto {
   @IsNumber()
   completedCount!: number
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
-  institution?: string
+  institutionName?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
   institutionContentfulSlug?: string
 }

@@ -170,7 +170,7 @@ export class ApplicationStatistics {
   name?: string
 
   @Field(() => String, { nullable: true })
-  institution?: string
+  institutionName?: string
 
   @Field(() => String, { nullable: true })
   institutionContentfulSlug?: string

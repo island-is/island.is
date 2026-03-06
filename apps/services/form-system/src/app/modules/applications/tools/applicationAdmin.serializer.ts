@@ -176,8 +176,8 @@ export class ApplicationStatisticsSerializer
 
     return plainToInstance(ApplicationStatisticsDto, {
       ...applicationStatistic,
-      contentfulSlug: institutionInfo?.slug,
-      institution: institutionName ?? '',
+      institutionName: institutionName ?? '',
+      institutionContentfulSlug: institutionInfo?.slug,
     })
   }
 }

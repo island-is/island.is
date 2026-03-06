@@ -120,11 +120,11 @@ export class ApplicationStatistics {
   @IsString()
   name?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
-  institution?: string
+  institutionName?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @Expose()
   institutionContentfulSlug?: string
 }
