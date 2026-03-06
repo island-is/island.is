@@ -1,109 +1,100 @@
+import { InferAttributes } from 'sequelize'
+
 import type { Logger } from '@island.is/logging'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 
+import { PaymentFulfillment } from '../../paymentFlow/models/paymentFulfillment.model'
 import { PaymentFlowService } from '../../paymentFlow/paymentFlow.service'
 import {
   PaymentOrchestrator,
-  RefundContext,
-  RefundStepResults,
-} from '../cardPayment.orchestrator'
-import { CardPaymentService } from '../cardPayment.service'
+  CardRefundContext,
+  CardRefundStepResults,
+} from '../refund.orchestrator'
+import { RefundService } from '../refund.service'
 import {
-  createRefundContext,
-  createRefundSaga,
-  REFUND_SAGA_START_STEP,
-} from '../refund.saga'
+  createCardRefundContext,
+  createCardRefundSaga,
+  CARD_REFUND_SAGA_START_STEP,
+} from '../cardRefund.saga'
 import {
   createMockLogger,
   createMockPaymentFlowService,
+  createMockRefundService,
   getRefundInput,
   mockCardPaymentConfirmation,
   mockPaymentFulfillmentWithFjs,
   mockPaymentFulfillmentWithoutFjs,
-} from './sagaTestUtils'
+} from '../test/sagaTestUtils'
 
-describe('Refund Saga', () => {
+describe('Card Refund Saga', () => {
   let mockLogger: Logger
-  let mockCardPaymentService: jest.Mocked<CardPaymentService>
+  let mockRefundService: jest.Mocked<RefundService>
   let mockPaymentFlowService: jest.Mocked<PaymentFlowService>
 
-  const setupSaga = (input = getRefundInput()) => {
-    const context = createRefundContext(input.paymentFlowId, input)
-    const saga = createRefundSaga(
-      mockCardPaymentService,
+  const setupSaga = (
+    input = getRefundInput(),
+    paymentFulfillment: InferAttributes<PaymentFulfillment> = mockPaymentFulfillmentWithoutFjs,
+  ) => {
+    const context = createCardRefundContext(
+      input.paymentFlowId,
+      input,
+      paymentFulfillment,
+    )
+    const saga = createCardRefundSaga(
+      mockRefundService,
       mockPaymentFlowService,
       mockLogger,
     )
     const orchestrator = new PaymentOrchestrator<
-      RefundContext,
-      RefundStepResults
+      CardRefundContext,
+      CardRefundStepResults
     >(mockLogger, mockPaymentFlowService)
     return { input, context, saga, orchestrator }
   }
 
   beforeEach(() => {
     mockLogger = createMockLogger()
-    mockCardPaymentService = {
-      refundWithCorrelationId: jest.fn().mockResolvedValue({
-        isSuccess: true,
-        acquirerReferenceNumber: 'refund-arn',
-      }),
-    } as unknown as jest.Mocked<CardPaymentService>
-
+    mockRefundService = createMockRefundService()
     mockPaymentFlowService = createMockPaymentFlowService()
   })
 
-  describe('createRefundContext', () => {
-    it('should create context with paymentFlowId and input', () => {
+  describe('createCardRefundContext', () => {
+    it('should create context with paymentFlowId, input, and paymentFulfillment', () => {
       const input = getRefundInput()
-      const context = createRefundContext('flow-123', input)
+      const context = createCardRefundContext(
+        'flow-123',
+        input,
+        mockPaymentFulfillmentWithoutFjs,
+      )
 
       expect(context.paymentFlowId).toBe('flow-123')
       expect(context.input).toEqual(input)
       expect(context.paymentMethod).toBe('card')
+      expect(context.paymentFulfillment).toEqual(
+        mockPaymentFulfillmentWithoutFjs,
+      )
       expect(context.stepResults).toEqual({})
       expect(context.completedSteps).toEqual([])
     })
   })
 
   describe('VALIDATE_REFUND', () => {
-    it('should call findPaymentFulfillmentForPaymentFlow and getCardPaymentConfirmationForPaymentFlow', async () => {
+    it('should call getCardPaymentConfirmationForPaymentFlow', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, REFUND_SAGA_START_STEP)
+      await orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP)
 
-      expect(
-        mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow,
-      ).toHaveBeenCalledWith(input.paymentFlowId)
       expect(
         mockPaymentFlowService.getCardPaymentConfirmationForPaymentFlow,
       ).toHaveBeenCalledWith(input.paymentFlowId)
     })
 
-    it('should throw when payment fulfillment is missing', async () => {
-      mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
-        null,
-      )
-
+    it('should not call findPaymentFulfillmentForPaymentFlow', async () => {
       const { context, saga, orchestrator } = setupSaga()
+      await orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP)
 
-      await expect(
-        orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
-      ).rejects.toThrow(PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded)
-    })
-
-    it('should throw when payment method is not card', async () => {
-      mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
-        {
-          ...mockPaymentFulfillmentWithoutFjs,
-          paymentMethod: 'invoice' as const,
-        },
-      )
-
-      const { context, saga, orchestrator } = setupSaga()
-
-      await expect(
-        orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
-      ).rejects.toThrow(PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded)
+      expect(
+        mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow,
+      ).not.toHaveBeenCalled()
     })
 
     it('should throw when card payment confirmation is missing', async () => {
@@ -114,7 +105,7 @@ describe('Refund Saga', () => {
       const { context, saga, orchestrator } = setupSaga()
 
       await expect(
-        orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
+        orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP),
       ).rejects.toThrow(PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded)
     })
   })
@@ -122,7 +113,7 @@ describe('Refund Saga', () => {
   describe('REFUND_PAYMENT path (no FJS charge)', () => {
     it('should call refundWithCorrelationId and log refund started', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, REFUND_SAGA_START_STEP)
+      await orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP)
 
       expect(mockPaymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -131,9 +122,7 @@ describe('Refund Saga', () => {
           message: 'Refund started because of fulfillment failure',
         }),
       )
-      expect(
-        mockCardPaymentService.refundWithCorrelationId,
-      ).toHaveBeenCalledWith({
+      expect(mockRefundService.refundWithCorrelationId).toHaveBeenCalledWith({
         paymentTrackingData: {
           merchantReferenceData:
             mockCardPaymentConfirmation.merchantReferenceData,
@@ -145,36 +134,31 @@ describe('Refund Saga', () => {
 
     it('should not call deleteFjsCharge when hasFjsCharge is false', async () => {
       const { context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, REFUND_SAGA_START_STEP)
+      await orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP)
 
       expect(mockPaymentFlowService.deleteFjsCharge).not.toHaveBeenCalled()
     })
   })
 
   describe('DELETE_FJS_CHARGE path (has FJS charge)', () => {
-    beforeEach(() => {
-      mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
+    it('should call deleteFjsCharge and not refundWithCorrelationId', async () => {
+      const { input, context, saga, orchestrator } = setupSaga(
+        undefined,
         mockPaymentFulfillmentWithFjs,
       )
-    })
-
-    it('should call deleteFjsCharge and not refundWithCorrelationId', async () => {
-      const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, REFUND_SAGA_START_STEP)
+      await orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP)
 
       expect(mockPaymentFlowService.deleteFjsCharge).toHaveBeenCalledWith(
         input.paymentFlowId,
       )
-      expect(
-        mockCardPaymentService.refundWithCorrelationId,
-      ).not.toHaveBeenCalled()
+      expect(mockRefundService.refundWithCorrelationId).not.toHaveBeenCalled()
     })
   })
 
   describe('DELETE_CARD_PAYMENT_CONFIRMATION', () => {
     it('should call deleteCardPaymentConfirmation and deletePaymentFulfillment', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, REFUND_SAGA_START_STEP)
+      await orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP)
 
       expect(
         mockPaymentFlowService.deleteCardPaymentConfirmation,
@@ -195,7 +179,7 @@ describe('Refund Saga', () => {
   describe('LOG_REFUND_SUCCESS', () => {
     it('should call logPaymentFlowUpdate with refund_completed', async () => {
       const { input, context, saga, orchestrator } = setupSaga()
-      await orchestrator.execute(saga, context, REFUND_SAGA_START_STEP)
+      await orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP)
 
       expect(mockPaymentFlowService.logPaymentFlowUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -218,7 +202,7 @@ describe('Refund Saga', () => {
       const result = await orchestrator.execute(
         saga,
         context,
-        REFUND_SAGA_START_STEP,
+        CARD_REFUND_SAGA_START_STEP,
       )
 
       expect(result.success).toBe(true)
@@ -231,15 +215,14 @@ describe('Refund Saga', () => {
     })
 
     it('DELETE_FJS_CHARGE path completes all steps in order', async () => {
-      mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
+      const { context, saga, orchestrator } = setupSaga(
+        undefined,
         mockPaymentFulfillmentWithFjs,
       )
-
-      const { context, saga, orchestrator } = setupSaga()
       const result = await orchestrator.execute(
         saga,
         context,
-        REFUND_SAGA_START_STEP,
+        CARD_REFUND_SAGA_START_STEP,
       )
 
       expect(result.success).toBe(true)
@@ -261,12 +244,10 @@ describe('Refund Saga', () => {
       const { context, saga, orchestrator } = setupSaga()
 
       await expect(
-        orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
+        orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP),
       ).rejects.toThrow(PaymentServiceCode.CouldNotDeletePaymentConfirmation)
 
-      expect(
-        mockCardPaymentService.refundWithCorrelationId,
-      ).not.toHaveBeenCalled()
+      expect(mockRefundService.refundWithCorrelationId).not.toHaveBeenCalled()
       expect(
         mockPaymentFlowService.restoreCardPaymentConfirmation,
       ).not.toHaveBeenCalled()
@@ -275,14 +256,14 @@ describe('Refund Saga', () => {
 
   describe('REFUND_PAYMENT failure triggers restore', () => {
     it('should call restore when REFUND_PAYMENT fails', async () => {
-      mockCardPaymentService.refundWithCorrelationId.mockRejectedValue(
+      mockRefundService.refundWithCorrelationId.mockRejectedValue(
         new Error('Refund failed'),
       )
 
       const { input, context, saga, orchestrator } = setupSaga()
 
       await expect(
-        orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
+        orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP),
       ).rejects.toThrow('Refund failed')
 
       expect(
@@ -299,21 +280,18 @@ describe('Refund Saga', () => {
   })
 
   describe('DELETE_FJS_CHARGE failure triggers restore', () => {
-    beforeEach(() => {
-      mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
-        mockPaymentFulfillmentWithFjs,
-      )
-    })
-
     it('should call restore when DELETE_FJS_CHARGE fails', async () => {
       mockPaymentFlowService.deleteFjsCharge.mockRejectedValue(
         new Error('FJS delete failed'),
       )
 
-      const { input, context, saga, orchestrator } = setupSaga()
+      const { input, context, saga, orchestrator } = setupSaga(
+        undefined,
+        mockPaymentFulfillmentWithFjs,
+      )
 
       await expect(
-        orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
+        orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP),
       ).rejects.toThrow('FJS delete failed')
 
       expect(
@@ -343,7 +321,7 @@ describe('Refund Saga', () => {
       const { context, saga, orchestrator } = setupSaga()
 
       await expect(
-        orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
+        orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP),
       ).rejects.toThrow('Log failed')
 
       expect(context.metadata?.refundSucceededButRollbackFailed).toBe(true)
@@ -351,12 +329,6 @@ describe('Refund Saga', () => {
   })
 
   describe('DELETE_FJS_CHARGE compensate', () => {
-    beforeEach(() => {
-      mockPaymentFlowService.findPaymentFulfillmentForPaymentFlow.mockResolvedValue(
-        mockPaymentFulfillmentWithFjs,
-      )
-    })
-
     it('should set refundSucceededButRollbackFailed when LOG_REFUND_SUCCESS fails after FJS delete', async () => {
       mockPaymentFlowService.logPaymentFlowUpdate.mockImplementation(
         async (update: { reason?: string }) => {
@@ -367,10 +339,13 @@ describe('Refund Saga', () => {
         },
       )
 
-      const { context, saga, orchestrator } = setupSaga()
+      const { context, saga, orchestrator } = setupSaga(
+        undefined,
+        mockPaymentFulfillmentWithFjs,
+      )
 
       await expect(
-        orchestrator.execute(saga, context, REFUND_SAGA_START_STEP),
+        orchestrator.execute(saga, context, CARD_REFUND_SAGA_START_STEP),
       ).rejects.toThrow('Log failed')
 
       expect(context.metadata?.refundSucceededButRollbackFailed).toBe(true)
