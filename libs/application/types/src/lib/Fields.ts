@@ -996,6 +996,18 @@ export type PaginatedSearchableTableHeader = {
   min?: number
 }
 
+export interface PaginatedSearchableTableServerSideFetchParams {
+  apolloClient: ApolloClient<object>
+  page: number
+  pageSize: number
+  searchTerm: string
+}
+
+export interface PaginatedSearchableTableServerSideFetchResult {
+  rows: PaginatedSearchableTableRow[]
+  totalRows: number
+}
+
 export interface PaginatedSearchableTableField extends BaseField {
   readonly type: FieldTypes.PAGINATED_SEARCHABLE_TABLE
   component: FieldComponents.PAGINATED_SEARCHABLE_TABLE
@@ -1013,6 +1025,12 @@ export interface PaginatedSearchableTableField extends BaseField {
   savePropertyNames?: string[]
   pageSize?: number
   callbackId?: string
+  serverSideFetch?: (
+    params: PaginatedSearchableTableServerSideFetchParams,
+  ) => Promise<PaginatedSearchableTableServerSideFetchResult>
+  selectable?: boolean
+  selectedDetailsKey?: string
+  selectedCountLabel?: FormText
 }
 
 export interface SliderField extends BaseField {
