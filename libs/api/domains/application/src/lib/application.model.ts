@@ -279,6 +279,9 @@ export class ApplicationInstitution {
   @Field(() => String)
   nationalId!: string
 
+  @Field(() => String, { nullable: true })
+  name?: string
+
   @Field(() => String)
   contentfulSlug!: string
 }
