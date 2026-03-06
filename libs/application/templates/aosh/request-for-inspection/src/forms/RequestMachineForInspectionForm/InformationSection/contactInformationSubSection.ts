@@ -25,7 +25,6 @@ export const contactInformationSubSection = buildSubSection({
           large: false,
           backgroundColor: 'white',
           setOnChange: async (optionValue, application) => {
-            console.log('optionValue', optionValue)
             if (optionValue?.includes(YES)) {
               const applicantName =
                 getValueViaPath<string>(

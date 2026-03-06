@@ -25,7 +25,7 @@ export const TabsField: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   return (
     <Box paddingTop={2}>
-      {machineList.totalCount > 20 ? (
+      {machineList.totalCount > 20 || machineList.totalCount === 0 ? (
         <FindAllMachines {...props} />
       ) : (
         <Tabs
