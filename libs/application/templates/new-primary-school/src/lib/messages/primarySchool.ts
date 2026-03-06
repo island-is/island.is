@@ -118,6 +118,11 @@ export const primarySchoolMessages = {
       defaultMessage: '{grade}. bekkur',
       description: '{grade} grade',
     },
+    hasCurrentSchool: {
+      id: 'nps.application:primarySchool.currentSchool.hasCurrentSchool',
+      defaultMessage: 'Er barnið þitt í skóla á Íslandi?',
+      description: 'Does your child attend a school in Iceland?',
+    },
   }),
   currentNursery: defineMessages({
     subSectionTitle: {
