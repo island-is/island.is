@@ -204,6 +204,13 @@ export const primarySchoolMessages = {
       description:
         "If a school does not appear in the list, the enrollment period has not yet begun in the relevant municipality. Further information about the enrollment period can be found on the municipality's website.",
     },
+    noPreferredSchoolDescription: {
+      id: 'nps.application:primarySchool.newSchool.noPreferredSchoolDescription#markdown',
+      defaultMessage:
+        'Börn eiga rétt á skólavist í því sveitarfélagi þar sem þau eru með skráð lögheimili. Langflest sveitarfélög úthluta barni skólavist í hverfisskóla eða sem næst þeirra heimili. Eftir sem áður er það réttur forsjáraðila að sækja um annan skóla fyrir barnið sitt, hvort sem er innan sveitarfélagsins, utan þess eða í sjálfstætt starfandi skóla. Ekki er þó víst að sá skóli geti tekið á móti barninu og fer það eftir þeim reglum sem sveitarfélagið setur og aðstæðum í nýjum skóla hverju sinni. \n\nEf skóli birtist ekki í listanum er innritunartímabil ekki hafið hjá viðkomandi sveitarfélagi. Nánari upplýsingar um innritunartímabil er að finna á heimasíðu sveitarfélagsins.',
+      description:
+        'Children have the right to attend school in the municipality where they are registered as legal residents. Most municipalities assign children to their district school or the one closest to their home. However, it is the right of the guardian to apply for another school for their child, whether within the municipality, outside it, or in an independent school. However, it is not certain that the school will be able to accept the child, and this depends on the rules set by the municipality and the circumstances in the new school each time. \n\nIf a school does not appear in the list, the enrollment period has not yet begun in the relevant municipality. Further information about the enrollment period can be found on the municipality’s website.',
+    },
     alertMessage: {
       id: 'nps.application:primarySchool.newSchool.alertMessage',
       defaultMessage:

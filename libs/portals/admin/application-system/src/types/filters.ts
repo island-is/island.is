@@ -1,8 +1,3 @@
-export enum MultiChoiceFilter {
-  INSTITUTION = 'institution',
-  TYPE_ID = 'type_id',
-}
-
 export type ApplicationFilters = {
   searchStr?: string
   nationalId?: string

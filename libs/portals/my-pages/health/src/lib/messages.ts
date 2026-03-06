@@ -2017,6 +2017,10 @@ export const messages = defineMessages({
     defaultMessage: 'Svör þín við {title} hafa verið send',
     id: 'sp.health:your-answers-for-has-been-sent',
   },
+  yourAnswersHaveBeenSent: {
+    defaultMessage: 'Svör þín hafa verið send',
+    id: 'sp.health:your-answers-have-been-sent',
+  },
   questionnaireDraftSaved: {
     defaultMessage: 'Drög við {title} hafa verið vistuð',
     id: 'sp.health:questionnaire-draft-saved',
@@ -2181,6 +2185,10 @@ export const messages = defineMessages({
   landspitali: {
     defaultMessage: 'Landspítali',
     id: 'sp.health:landspitali',
+  },
+  landspitaliTooltip: {
+    defaultMessage: 'Landspítali hefur umsjón með gögnum um blóðflokka.',
+    id: 'sp.health:landspitali-tooltip',
   },
   invalidatePermit: {
     defaultMessage: 'Eyða',

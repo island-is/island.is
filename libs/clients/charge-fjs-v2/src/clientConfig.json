@@ -1,11 +1,11 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "FJS Charge v2",
-    "description": "FJS Charge service",
-    "version": "2.3"
+    "title": "FJS Charge  FJS  v2",
+    "description": "FJS Charge service  V2 for Xroad",
+    "version": "2.1"
   },
-  "servers": [{ "url": "/rad/TbrLeyfisgatt.api.v2:FJSCharge_v2" }],
+  "servers": [{ "url": "/rad/TbrLeyfisgatt.api.v2x._chargeFJS:FJSCharge_v2x" }],
   "paths": {
     "/charge": {
       "post": {
@@ -29,19 +29,7 @@
               }
             }
           },
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/charge_POST_response"
-                }
-              }
-            }
-          },
-          "400": { "description": "Bad request", "content": {} },
-          "401": { "description": "Access Denied", "content": {} },
-          "500": { "description": "Internal Server Error", "content": {} }
+          "401": { "description": "Access Denied", "content": {} }
         },
         "x-codegen-request-body-name": "input"
       }
@@ -94,6 +82,11 @@
             "style": "form",
             "explode": true,
             "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
+            "name": "paymentOptions",
+            "in": "query",
+            "schema": { "type": "boolean" }
           }
         ],
         "responses": {
@@ -134,10 +127,7 @@
               }
             }
           },
-          "400": { "description": "Bad Request", "content": {} },
-          "401": { "description": "Access Denied", "content": {} },
-          "404": { "description": "Not Found", "content": {} },
-          "500": { "description": "Internal Server Error", "content": {} }
+          "401": { "description": "Access Denied", "content": {} }
         }
       }
     },
@@ -207,34 +197,30 @@
           "error": { "$ref": "#/components/schemas/error" }
         }
       },
-      "extraData_DT": {
-        "required": ["name", "value"],
-        "type": "object",
-        "properties": {
-          "name": { "type": "string" },
-          "value": { "type": "string" }
-        }
-      },
       "catalogperformingOrgperformingOrgID_GET_response": {
         "required": ["error", "item"],
         "type": "object",
         "properties": {
+          "error": { "$ref": "#/components/schemas/error" },
           "item": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/catalogItem" }
-          },
-          "error": { "$ref": "#/components/schemas/error" }
+          }
         }
       },
-      "PostchargeResult_DT": {
-        "required": ["doc_num", "receptionID"],
+      "chargeStatusResult": {
+        "required": ["doc_num", "status"],
         "type": "object",
         "properties": {
           "doc_num": {
             "type": "string",
-            "description": "Document number /Ark"
+            "description": "Document number for Ark"
           },
-          "receptionID": { "type": "string" }
+          "status": {
+            "type": "string",
+            "description": "charge status",
+            "enum": ["In progress", "paid", "cancelled", "unpaid"]
+          }
         }
       },
       "error": {
@@ -246,6 +232,16 @@
           "errors": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/error_details" }
+          }
+        }
+      },
+      "validateChargeResult": {
+        "required": ["valid"],
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "string",
+            "description": "Document number for Ark"
           }
         }
       },
@@ -266,6 +262,102 @@
         "properties": {
           "error": { "$ref": "#/components/schemas/error" },
           "statusResult": { "$ref": "#/components/schemas/chargeStatusResult" }
+        }
+      },
+      "chargerequestID_DELETE_response": {
+        "required": ["error", "receptionID"],
+        "type": "object",
+        "properties": {
+          "receptionID": { "type": "string" },
+          "error": { "$ref": "#/components/schemas/error" }
+        }
+      },
+      "catalogItem": {
+        "required": [
+          "chargeItemCode",
+          "chargeItemName",
+          "chargeType",
+          "performingOrgID",
+          "priceAmount"
+        ],
+        "type": "object",
+        "properties": {
+          "performingOrgID": {
+            "type": "string",
+            "description": "performingorgID og national ID"
+          },
+          "chargeType": { "type": "string" },
+          "chargeItemCode": { "type": "string" },
+          "chargeItemName": { "type": "string" },
+          "priceAmount": { "type": "number", "format": "float" },
+          "paymentOptions": { "type": "string" }
+        }
+      },
+      "payeeInfonationalID_GET_response": {
+        "required": ["error", "payeeInfo"],
+        "type": "object",
+        "properties": {
+          "error": { "$ref": "#/components/schemas/error" },
+          "payeeInfo": { "$ref": "#/components/schemas/payeeInfo_DT" }
+        }
+      },
+      "PostchargeResult_DT": {
+        "required": ["doc_num", "receptionID"],
+        "type": "object",
+        "properties": {
+          "doc_num": {
+            "type": "string",
+            "description": "Document number /Ark"
+          },
+          "receptionID": { "type": "string" }
+        }
+      },
+      "extraData_DT": {
+        "required": ["name", "value"],
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "value": { "type": "string" }
+        }
+      },
+      "payInfo": {
+        "required": [
+          "PAN",
+          "RRN",
+          "authCode",
+          "cardType",
+          "payableAmount",
+          "paymentMeans"
+        ],
+        "type": "object",
+        "properties": {
+          "RRN": { "type": "string" },
+          "cardType": { "type": "string" },
+          "paymentMeans": {
+            "type": "string",
+            "description": "Grei slum ti  debet/Kredit kort",
+            "enum": ["Kreditkort", "Debetkort"]
+          },
+          "authCode": { "type": "string", "description": "Heimildarn mer" },
+          "PAN": { "type": "string", "description": "S  ustu stafir korts" },
+          "payableAmount": { "type": "integer", "format": "int64" }
+        }
+      },
+      "charge": {
+        "required": [
+          "amount",
+          "chargeItemCode",
+          "priceAmount",
+          "quantity",
+          "reference"
+        ],
+        "type": "object",
+        "properties": {
+          "chargeItemCode": { "type": "string" },
+          "quantity": { "type": "number", "format": "float" },
+          "priceAmount": { "type": "number", "format": "float" },
+          "amount": { "type": "integer", "format": "int64" },
+          "reference": { "type": "string" }
         }
       },
       "input_1": {
@@ -324,40 +416,25 @@
           }
         }
       },
-      "chargerequestID_DELETE_response": {
-        "required": ["error", "receptionID"],
-        "type": "object",
-        "properties": {
-          "receptionID": { "type": "string" },
-          "error": { "$ref": "#/components/schemas/error" }
-        }
-      },
-      "payeeInfonationalID_GET_response": {
-        "required": ["error", "payeeInfo"],
+      "validate_POST_response": {
+        "required": ["error", "validateResult"],
         "type": "object",
         "properties": {
           "error": { "$ref": "#/components/schemas/error" },
-          "payeeInfo": { "$ref": "#/components/schemas/payeeInfo_DT" }
+          "validateResult": {
+            "$ref": "#/components/schemas/validateChargeResult"
+          }
         }
       },
-      "catalogItem": {
-        "required": [
-          "chargeItemCode",
-          "chargeItemName",
-          "chargeType",
-          "performingOrgID",
-          "priceAmount"
-        ],
+      "error_details": {
+        "required": ["code", "help", "message", "param", "trackingId"],
         "type": "object",
         "properties": {
-          "performingOrgID": {
-            "type": "string",
-            "description": "performingorgID og national ID"
-          },
-          "chargeType": { "type": "string" },
-          "chargeItemCode": { "type": "string" },
-          "chargeItemName": { "type": "string" },
-          "priceAmount": { "type": "number", "format": "float" }
+          "code": { "type": "string", "format": "binary" },
+          "message": { "type": "string" },
+          "help": { "type": "string" },
+          "trackingId": { "type": "string" },
+          "param": { "type": "string" }
         }
       },
       "input": {
@@ -421,92 +498,6 @@
           "extraData": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/extraData_DT" }
-          }
-        }
-      },
-      "payInfo": {
-        "required": [
-          "PAN",
-          "RRN",
-          "authCode",
-          "cardType",
-          "payableAmount",
-          "paymentMeans"
-        ],
-        "type": "object",
-        "properties": {
-          "RRN": { "type": "string" },
-          "cardType": { "type": "string" },
-          "paymentMeans": {
-            "type": "string",
-            "description": "Greiðslumáti  debet/Kredit kort",
-            "enum": ["Kreditkort", "Debetkort"]
-          },
-          "authCode": { "type": "string", "description": "Heimildarnúmer" },
-          "PAN": { "type": "string", "description": "Síðustu stafir korts" },
-          "payableAmount": { "type": "integer", "format": "int64" }
-        }
-      },
-      "charge": {
-        "required": [
-          "amount",
-          "chargeItemCode",
-          "priceAmount",
-          "quantity",
-          "reference"
-        ],
-        "type": "object",
-        "properties": {
-          "chargeItemCode": { "type": "string" },
-          "quantity": { "type": "number", "format": "float" },
-          "priceAmount": { "type": "number", "format": "float" },
-          "amount": { "type": "integer", "format": "int64" },
-          "reference": { "type": "string" }
-        }
-      },
-      "validate_POST_response": {
-        "required": ["error", "validateResult"],
-        "type": "object",
-        "properties": {
-          "error": { "$ref": "#/components/schemas/error" },
-          "validateResult": {
-            "$ref": "#/components/schemas/validateChargeResult"
-          }
-        }
-      },
-      "validateChargeResult": {
-        "required": ["valid"],
-        "type": "object",
-        "properties": {
-          "valid": {
-            "type": "string",
-            "description": "Document number for Ark"
-          }
-        }
-      },
-      "error_details": {
-        "required": ["code", "help", "message", "param", "trackingId"],
-        "type": "object",
-        "properties": {
-          "code": { "type": "string", "format": "binary" },
-          "message": { "type": "string" },
-          "help": { "type": "string" },
-          "trackingId": { "type": "string" },
-          "param": { "type": "string" }
-        }
-      },
-      "chargeStatusResult": {
-        "required": ["doc_num", "status"],
-        "type": "object",
-        "properties": {
-          "doc_num": {
-            "type": "string",
-            "description": "Document number for Ark"
-          },
-          "status": {
-            "type": "string",
-            "description": "charge status",
-            "enum": ["In progress", "paid", "cancelled", "unpaid"]
           }
         }
       }

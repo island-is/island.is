@@ -66,12 +66,12 @@ export const userInformation = buildSection({
           condition: (_, externalData) =>
             !!getValueViaPath(
               externalData,
-              'currentHealthcenter.data.healthCenter.name',
+              'currentHealthcenter.data.healthCenter',
             ),
           defaultValue: (application: Application) =>
             getValueViaPath(
               application.externalData,
-              'currentHealthcenter.data.healthCenter.name',
+              'currentHealthcenter.data.healthCenter',
             ),
         }),
         buildAlertMessageField({
@@ -82,7 +82,7 @@ export const userInformation = buildSection({
           condition: (_, externalData) =>
             !getValueViaPath(
               externalData,
-              'currentHealthcenter.data.healthCenter.name',
+              'currentHealthcenter.data.healthCenter',
             ),
         }),
       ],
