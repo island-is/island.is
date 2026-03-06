@@ -159,7 +159,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
       ) ?? []
     : organizationListFromContentful?.map((x) => ({
         ...x,
-        nationalId: x.id,
+        nationalId: '',
       })) ?? []
 
   const handleSearchChange = (nationalId: string) => {
