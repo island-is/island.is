@@ -116,6 +116,7 @@ export const mapFormSystemInstitutionAdmin = (
 ): ApplicationInstitution => {
   return {
     nationalId: institution.nationalId,
+    name: institution.name,
     contentfulSlug: institution.contentfulSlug ?? '',
   }
 }
@@ -124,6 +125,7 @@ export const mapFormSystemStatisticsAdmin = (
   statistics: ApplicationStatisticsDto,
 ): ApplicationStatistics => {
   return {
+    ...statistics,
     typeid: statistics.formId,
     name: statistics.formName ?? '',
     count: statistics.totalCount,
