@@ -13,9 +13,9 @@ import { FileConfig } from '../../file/file.config'
 import { FileModule } from '../../file/file.module'
 import { FileStorageWrapperModule } from '../../file/fileStorageWrapper'
 import { PruneService } from './prune.service'
-import {FormsModule} from "../../forms/forms.module";
-import {OrganizationsModule} from "../../organizations/organizations.module";
-import {OrganizationPermissionsModule} from "../../organizationPermissions/organizationPermissions.module";
+import { FormsModule } from '../../forms/forms.module'
+import { OrganizationsModule } from '../../organizations/organizations.module'
+import { OrganizationPermissionsModule } from '../../organizationPermissions/organizationPermissions.module'
 
 @Module({
   imports: [
