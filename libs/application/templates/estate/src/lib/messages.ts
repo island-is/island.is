@@ -1158,8 +1158,7 @@ export const m = defineMessages({
     id: 'es.application:electronicIdCheckFailure',
     defaultMessage:
       'Rafræn skilríki ekki til staðar. Vinsamlegast hafðu samband við Auðkenni.',
-    description:
-      'Electronic ID not found. Please contact Auðkenni.',
+    description: 'Electronic ID not found. Please contact Auðkenni.',
   },
   errorEmail: {
     id: 'es.application:error.errorEmail',
