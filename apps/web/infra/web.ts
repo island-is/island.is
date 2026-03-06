@@ -22,7 +22,7 @@ export const serviceSetup = (services: {
       },
       MATOMO_ENABLED: {
         dev: 'true',
-        prod: 'false',
+        prod: 'true',
         staging: 'false',
       },
       MATOMO_DOMAIN: {
