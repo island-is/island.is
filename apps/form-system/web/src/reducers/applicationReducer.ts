@@ -2,10 +2,13 @@ import {
   FormSystemApplication,
   FormSystemScreen,
   FormSystemSection,
+  FormSystemValueDto,
 } from '@island.is/api/schema'
 import {
   Action,
   ApplicationState,
+  FieldTypeMapping,
+  getInitialJsonForField,
   initializeField,
   SectionTypes,
 } from '@island.is/form-system/ui'
@@ -180,8 +183,6 @@ export const applicationReducer = (
         isValid,
       }
     }
-    default:
-      return state
 
     case 'EXTERNAL_SERVICE_NOTIFICATION': {
       const { screen, isPopulateError } = action.payload
@@ -196,5 +197,73 @@ export const applicationReducer = (
         screenError,
       }
     }
+
+    case 'ADD_MULTISET_ITEM': {
+      if (!state.currentScreen || !state.currentScreen.data) return state
+
+      const updatedScreen: FormSystemScreen = {
+        ...state.currentScreen.data,
+        fields: (state.currentScreen?.data?.fields ?? []).map((field) => {
+          if (!field) return field
+
+          const fieldType = field.fieldType
+          const values = field.values ? field.values : []
+          const currentLength = values.length
+
+          const prev = values[currentLength - 1]
+          const maxOrder = Math.max(
+            ...values.map((v, i) =>
+              typeof v?.order === 'number' ? v.order : i,
+            ),
+          )
+          const nextOrder = maxOrder + 1
+          const valueJson =
+            getInitialJsonForField(fieldType as keyof FieldTypeMapping) ?? {}
+
+          const newValue: FormSystemValueDto = {
+            ...(prev ?? ({} as FormSystemValueDto)),
+            order: nextOrder,
+            json: valueJson,
+            id: crypto.randomUUID(),
+          }
+
+          return {
+            ...field,
+            values: [...values, newValue],
+          }
+        }),
+      }
+
+      return {
+        ...state,
+        currentScreen: { ...state.currentScreen, data: updatedScreen },
+      }
+    }
+
+    case 'REMOVE_MULTISET_ITEM': {
+      if (!state.currentScreen || !state.currentScreen.data) return state
+
+      const updatedScreen: FormSystemScreen = {
+        ...state.currentScreen.data,
+        fields: (state.currentScreen?.data?.fields ?? []).map((field) => {
+          if (!field) return field
+
+          const values = field.values ?? []
+
+          return {
+            ...field,
+            values: values.length > 0 ? values.slice(0, -1) : [],
+          }
+        }),
+      }
+
+      return {
+        ...state,
+        currentScreen: { ...state.currentScreen, data: updatedScreen },
+      }
+    }
+
+    default:
+      return state
   }
 }

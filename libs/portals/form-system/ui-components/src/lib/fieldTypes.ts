@@ -1,7 +1,7 @@
 import { FormSystemField, FormSystemValue } from '@island.is/api/schema'
 import { FieldTypesEnum } from './enums'
 
-type FieldTypeMapping = {
+export type FieldTypeMapping = {
   [FieldTypesEnum.TEXTBOX]: {
     text?: FormSystemValue['text']
   }
@@ -68,7 +68,7 @@ type FieldTypeMapping = {
   }
 }
 
-const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
+export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
   fieldType: T,
 ): FieldTypeMapping[T] => {
   switch (fieldType) {

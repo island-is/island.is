@@ -1,5 +1,9 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { SectionTypes } from '@island.is/form-system/ui'
+import {
+  FieldTypeMapping,
+  getInitialJsonForField,
+  SectionTypes,
+} from '@island.is/form-system/ui'
 import {
   AlertMessage,
   Box,
@@ -30,9 +34,24 @@ export const Screen = () => {
   const { currentSection, currentScreen } = state
   const [notifyExternal] = useMutation(NOTIFY_EXTERNAL_SERVICE)
   const [loading, setLoading] = useState(false)
-  const multiset = currentScreen?.data?.multiset ?? 0
+  const multiset = currentScreen?.data?.multiset ?? 1
 
-  const [numberOfItems, setNumberOfItems] = useState(1)
+  const visibleFields =
+    currentScreen?.data?.fields?.filter(
+      (field): field is NonNullable<typeof field> =>
+        field != null && !field.isHidden,
+    ) ?? []
+
+  const [numberOfItems, setNumberOfItems] = useState(
+    multiset > 1
+      ? Math.max(
+          1,
+          ...visibleFields.map(
+            (f) => ((f as any).values?.length as number) ?? 1,
+          ),
+        )
+      : 1,
+  )
 
   const screenTitle =
     currentScreen?.data?.name?.[lang] ??
@@ -95,18 +114,23 @@ export const Screen = () => {
 
   const handleNewItem = () => {
     setNumberOfItems(numberOfItems + 1)
+    dispatch({
+      type: 'ADD_MULTISET_ITEM',
+      payload: {},
+    })
   }
 
   const handleRemoveItem = () => {
     if (numberOfItems > 1) {
       setNumberOfItems(numberOfItems - 1)
+      dispatch({
+        type: 'REMOVE_MULTISET_ITEM',
+        payload: {},
+      })
     }
   }
 
   if (loading) return <LoadingScreen ariaLabel="loading" />
-
-  console.log('Current screen:', currentScreen)
-  console.log('numberOfItems:', numberOfItems)
 
   return (
     <Box
@@ -152,16 +176,24 @@ export const Screen = () => {
           !currentSection?.data?.isHidden && <Summary state={state} />}
 
         {currentSectionType === SectionTypes.COMPLETED && <Completed />}
+
         {currentScreen &&
-          currentScreen?.data?.fields
-            ?.filter(
-              (field): field is NonNullable<typeof field> =>
-                field != null && !field.isHidden,
-            )
-            .map((field, index) => {
-              return <Field field={field} key={index} />
-            })}
-        {multiset > 0 && (
+          Array.from({ length: numberOfItems }).map((_, itemIndex) => (
+            <Box key={`multiset-item-${itemIndex}`} marginBottom={4}>
+              {visibleFields
+                .filter((field) =>
+                  field.fieldType === 'MESSAGE' ? itemIndex === 0 : true,
+                )
+                .map((field) => (
+                  <Field
+                    field={field}
+                    key={`${field.id ?? 'field'}-${itemIndex}`}
+                  />
+                ))}
+            </Box>
+          ))}
+
+        {multiset > 1 && (
           <Box display="flex" justifyContent="flexEnd" paddingTop={6}>
             <Box marginRight={2}>
               {numberOfItems > 1 && (
