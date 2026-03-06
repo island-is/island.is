@@ -2017,6 +2017,10 @@ export const messages = defineMessages({
     defaultMessage: 'Svör þín við {title} hafa verið send',
     id: 'sp.health:your-answers-for-has-been-sent',
   },
+  yourAnswersHaveBeenSent: {
+    defaultMessage: 'Svör þín hafa verið send',
+    id: 'sp.health:your-answers-have-been-sent',
+  },
   questionnaireDraftSaved: {
     defaultMessage: 'Drög við {title} hafa verið vistuð',
     id: 'sp.health:questionnaire-draft-saved',
