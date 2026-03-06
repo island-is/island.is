@@ -1237,7 +1237,7 @@ export const m = defineMessages({
   heirAdvocateAgeValidation: {
     id: 'es.application:heirAdvocateAgeValidation',
     defaultMessage:
-      'Ekki er hægt að halda áfram með umsókn þar sem aðili undir 18 er skráður án málssvara yfir lögaldri',
+      'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlegast tilgreinið lögráða málsvara eða hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: '',
   },
   missingHeirUndividedEstateValidation: {
