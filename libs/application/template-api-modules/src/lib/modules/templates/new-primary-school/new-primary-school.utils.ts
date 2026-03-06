@@ -17,7 +17,7 @@ import {
   shouldShowExpectedEndDate,
   shouldShowPage,
   shouldShowAlternativeSpecialEducationDepartment,
-  shouldShowReasonForApplicationAndNewSchoolPages,
+  shouldShowReasonForApplicationPage,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -320,7 +320,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
               : undefined,
           }),
       }),
-      ...(shouldShowReasonForApplicationAndNewSchoolPages(
+      ...(shouldShowReasonForApplicationPage(
         application.answers,
         application.externalData,
       ) && {
