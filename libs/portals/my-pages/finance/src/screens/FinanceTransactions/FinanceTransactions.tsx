@@ -32,6 +32,7 @@ import { transactionFilter } from '../../utils/simpleFilter'
 import * as styles from '../Finance.css'
 import { NetworkStatus } from '@apollo/client'
 import {
+  GetCustomerRecordsPagedQuery,
   useGetCustomerChargeTypeQuery,
   useGetCustomerRecordsPagedLazyQuery,
 } from './FinanceTransactions.generated'
@@ -45,6 +46,7 @@ const FinanceTransactions = () => {
   const backInTheDay = sub(new Date(), {
     months: 3,
   })
+  const oneYearAgo = sub(new Date(), { years: 1 })
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
@@ -126,19 +128,20 @@ const FinanceTransactions = () => {
             dropdownSelect && dropdownSelect.length === 0
               ? getAllChargeTypes()
               : dropdownSelect ?? [],
-          dayFrom: format(fromDate!, 'yyyy-MM-dd'),
-          dayTo: format(toDate!, 'yyyy-MM-dd'),
+          dayFrom: format(fromDate ?? oneYearAgo, 'yyyy-MM-dd'),
+          dayTo: format(toDate ?? new Date(), 'yyyy-MM-dd'),
           nextKey,
         },
       },
-      updateQuery(previousData, { fetchMoreResult }) {
-        if (!fetchMoreResult) return previousData
+      updateQuery(previousData, { fetchMoreResult }): GetCustomerRecordsPagedQuery {
+        if (!fetchMoreResult?.getCustomerRecordsPaged) return previousData
         return {
+          ...fetchMoreResult,
           getCustomerRecordsPaged: {
             ...fetchMoreResult.getCustomerRecordsPaged,
             data: [
               ...(previousData.getCustomerRecordsPaged?.data ?? []),
-              ...(fetchMoreResult.getCustomerRecordsPaged?.data ?? []),
+              ...fetchMoreResult.getCustomerRecordsPaged.data,
             ],
           },
         }
