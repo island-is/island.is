@@ -1,5 +1,6 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
+import { m as localMessages } from './messages'
 import { SocialInsuranceMaintenancePaths } from './paths'
 
 export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
@@ -37,6 +38,17 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
           name: m.latestIncomePlan,
           path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
           navHide: true,
+        },
+      ],
+    },
+    {
+      name: localMessages.accountingInformation,
+      description: localMessages.bankAccountDescription,
+      path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceAccountingInformation,
+      children: [
+        {
+          name: localMessages.bankAccount,
+          path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceBankAccount,
         },
       ],
     },
