@@ -1,4 +1,20 @@
 import { z } from 'zod'
+import * as kennitala from 'kennitala'
+
+const applicantInformationSchema = z.object({
+  nationalId: z
+    .string()
+    .refine(
+      (nationalId) =>
+        nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
+    ),
+  name: z.string(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  postalCode: z.string().optional(),
+  email: z.string(),
+  phoneNumber: z.string(),
+})
 
 export const MachineAnswersSchema = z.object({
   machine: z
@@ -37,6 +53,7 @@ export const MachineAnswersSchema = z.object({
     phoneNumber: z.string().min(1),
     email: z.string().min(1),
   }),
+  applicantInformation: applicantInformationSchema,
 })
 
 export type MachineAnswers = z.TypeOf<typeof MachineAnswersSchema>

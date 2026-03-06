@@ -1,9 +1,12 @@
 import {
+  YES,
+  buildCheckboxField,
   buildMultiField,
   buildPhoneField,
   buildSubSection,
   buildSubmitField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { contactInformation } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
@@ -17,6 +20,66 @@ export const contactInformationSubSection = buildSubSection({
       title: contactInformation.general.title,
       description: contactInformation.general.description,
       children: [
+        buildCheckboxField({
+          id: 'contactInformation.sameAsApplicant',
+          large: false,
+          backgroundColor: 'white',
+          setOnChange: async (optionValue, application) => {
+            console.log('optionValue', optionValue)
+            if (optionValue?.includes(YES)) {
+              const applicantName =
+                getValueViaPath<string>(
+                  application.answers,
+                  'applicant.name',
+                ) ?? ''
+              const applicantEmail =
+                getValueViaPath<string>(
+                  application.answers,
+                  'applicant.email',
+                ) ?? ''
+              const applicantPhoneNumber =
+                getValueViaPath<string>(
+                  application.answers,
+                  'applicant.phoneNumber',
+                ) ?? ''
+
+              return [
+                {
+                  key: `contactInformation.name`,
+                  value: applicantName,
+                },
+                {
+                  key: `contactInformation.phoneNumber`,
+                  value: applicantPhoneNumber,
+                },
+                {
+                  key: `contactInformation.email`,
+                  value: applicantEmail,
+                },
+              ]
+            }
+            return [
+              {
+                key: `contactInformation.name`,
+                value: '',
+              },
+              {
+                key: `contactInformation.phoneNumber`,
+                value: '',
+              },
+              {
+                key: `contactInformation.email`,
+                value: '',
+              },
+            ]
+          },
+          options: [
+            {
+              label: contactInformation.labels.isSameAsApplicant,
+              value: YES,
+            },
+          ],
+        }),
         buildTextField({
           id: 'contactInformation.name',
           title: contactInformation.labels.name,
