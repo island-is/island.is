@@ -57,6 +57,7 @@ export const AdditionalEstateMember = ({
   const emailField = `${fieldIndex}.email`
 
   // Advocate
+  const advocateNationalIdField = `${fieldIndex}.advocate.nationalId`
   const advocatePhone = `${fieldIndex}.advocate.phone`
   const advocateEmail = `${fieldIndex}.advocate.email`
 
@@ -69,6 +70,11 @@ export const AdditionalEstateMember = ({
   const foreignCitizenship = useWatch({
     name: foreignCitizenshipField,
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
+  })
+
+  const advocateNationalId = useWatch({
+    name: advocateNationalIdField,
+    defaultValue: '',
   })
 
   const relation = useWatch({
@@ -210,7 +216,9 @@ export const AdditionalEstateMember = ({
             field={{
               id: `${fieldIndex}`,
               props: {
-                alertWhenUnder18: true,
+                alertWhenUnder18:
+                  !advocateNationalId ||
+                  !nationalId.isPerson(advocateNationalId),
                 requiredNationalId: true,
               },
             }}
