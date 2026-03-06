@@ -18,19 +18,17 @@ import {
   getCategoriesOptions,
   getCurrencies,
   getTypesOptions,
+  shouldShowEqualIncomePerMonth,
+  shouldShowIncomePlanMonths,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { Application } from '@island.is/application/types'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import {
-  shouldShowEqualIncomePerMonth,
-  shouldShowIncomePlanMonths,
-} from '../../../utils/conditionUtils'
-import {
+  incomeTypeValueModifier,
   currencyValueModifier,
   equalIncomePerMonthValueModifier,
   incomePerYearValueModifier,
-  incomeTypeValueModifier,
-} from '../../../utils/incomePlanUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
 import { getApplicationExternalData } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const incomePlanSubSection = buildSubSection({
@@ -89,8 +87,15 @@ export const incomePlanSubSection = buildSubSection({
           width: 'half',
           isSearchable: true,
           updateValueObj: {
-            valueModifier: (application, activeField) =>
-              incomeTypeValueModifier(application.externalData, activeField),
+            valueModifier: (application, activeField) => {
+              const { categorizedIncomeTypes } = getApplicationExternalData(
+                application.externalData,
+              )
+              return incomeTypeValueModifier(
+                categorizedIncomeTypes,
+                activeField,
+              )
+            },
             watchValues: 'incomeCategory',
           },
           options: (application, activeField) => {

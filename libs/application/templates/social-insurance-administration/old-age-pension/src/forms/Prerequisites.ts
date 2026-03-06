@@ -36,6 +36,8 @@ import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationLatestIncomePlan,
+  SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+  SocialInsuranceAdministrationIncomePlanConditionsApi,
 } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
@@ -165,6 +167,14 @@ export const PrerequisitesForm: Form = buildForm({
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationLatestIncomePlan,
                   title: '',
+                }),
+                buildDataProviderItem({
+                  provider:
+                    SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+                }),
+                buildDataProviderItem({
+                  provider:
+                    SocialInsuranceAdministrationIncomePlanConditionsApi,
                 }),
               ],
             }),

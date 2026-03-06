@@ -67,6 +67,7 @@ import {
   Employer as TrWebEmployer,
 } from '@island.is/clients/social-insurance-administration'
 import parse from 'date-fns/parse'
+import { incomePlanHasOnlyZeroIncome } from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -78,24 +79,23 @@ export const transformApplicationToOldAgePensionDTO = (
     selectedMonth,
     applicantPhonenumber,
     bank,
-    bankAccountType,
     onePaymentPerYear,
     comment,
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
     paymentInfo,
     employmentStatus,
     employers,
+    incomePlan,
+    noOtherIncomeConfirmation,
   } = getOAPApplicationAnswers(application.answers)
-  const { bankInfo, userProfileEmail } = getOAPApplicationExternalData(
-    application.externalData,
-  )
+  const {
+    bankInfo,
+    userProfileEmail,
+    incomePlanConditions,
+    categorizedIncomeTypes,
+  } = getOAPApplicationExternalData(application.externalData)
 
   // If foreign residence is found then this is always true
   const residenceHistoryQuestion = getValueViaPath(
@@ -111,23 +111,37 @@ export const transformApplicationToOldAgePensionDTO = (
     },
     comment: comment,
     applicationId: application.id,
-    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
-      ...((bankAccountType === undefined ||
-        bankAccountType === BankAccountType.ICELANDIC) && {
-        domesticBankInfo: {
-          bank: formatBank(bank),
-        },
-      }),
-      ...(bankAccountType === BankAccountType.FOREIGN && {
-        foreignBankInfo: {
-          iban: iban.replace(/[\s]+/g, ''),
-          swift: swift.replace(/[\s]+/g, ''),
-          foreignBankName: bankName,
-          foreignBankAddress: bankAddress,
-          foreignCurrency: currency,
-        },
-      }),
+    ...(!shouldNotUpdateBankAccount(bankInfo, bank) && {
+      ...(paymentInfo &&
+        (paymentInfo.bankAccountType === undefined ||
+          paymentInfo.bankAccountType === BankAccountType.ICELANDIC) &&
+        paymentInfo.bank && {
+          domesticBankInfo: {
+            bank: formatBank(getBankIsk(bank)),
+          },
+        }),
+      ...(paymentInfo &&
+        paymentInfo.bankAccountType === BankAccountType.FOREIGN &&
+        paymentInfo.iban &&
+        paymentInfo.swift &&
+        paymentInfo.bankName &&
+        paymentInfo.bankAddress &&
+        paymentInfo.currency && {
+          foreignBankInfo: {
+            iban: paymentInfo.iban.replace(/[\s]+/g, ''),
+            swift: paymentInfo.swift.replace(/[\s]+/g, ''),
+            foreignBankName: paymentInfo.bankName,
+            foreignBankAddress: paymentInfo.bankAddress,
+            foreignCurrency: paymentInfo.currency,
+          },
+        }),
     }),
+    incomePlan: {
+      incomeYear:
+        incomePlanConditions?.incomePlanYear ?? new Date().getFullYear(),
+      distributeIncomeByMonth: shouldDistributeIncomeByMonth(incomePlan),
+      incomeTypes: getIncomeTypes(incomePlan, categorizedIncomeTypes),
+    },
     taxInfo: {
       personalAllowance: YES === personalAllowance,
       personalAllowanceUsage:
@@ -148,6 +162,9 @@ export const transformApplicationToOldAgePensionDTO = (
       }),
     }),
     uploads,
+    ...(incomePlanHasOnlyZeroIncome(incomePlan) && {
+      awarenessOfIncomeDeclaration: noOtherIncomeConfirmation === YES,
+    }),
   }
 
   return oldAgePensionDTO
