@@ -1429,14 +1429,8 @@ export class ApplicationsService {
     }
     const localeColumn = locale === 'is' ? `f.name ->> 'is'` : `f.name ->> 'en'`
 
-    let institutionJoin = ''
     let institutionFilter = ''
     if (institutionNationalId) {
-      institutionJoin = `
-      JOIN public.organization o
-        ON o.id = f.organization_id
-    `
-
       institutionFilter = `
       AND o.national_id = :institutionNationalId
     `
@@ -1446,16 +1440,17 @@ export class ApplicationsService {
     SELECT
       a.form_id AS "formId",
       ${localeColumn} AS "formName",
+      o.national_id AS "institutionNationalId",
       COUNT(*)::integer AS "totalCount",
       COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.DRAFT}')::integer AS "inProgressCount",
       COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.COMPLETED}')::integer AS "completedCount"
     FROM public.application a
     JOIN public.form f ON f.id = a.form_id
-    ${institutionJoin}
+    JOIN public.organization o ON o.id = f.organization_id
     WHERE a.modified BETWEEN :startDate AND :endDate
       AND f.status = '${FormStatus.PUBLISHED}'
     ${institutionFilter}
-    GROUP BY a.form_id, ${localeColumn};
+    GROUP BY a.form_id, ${localeColumn}, o.national_id;
   `
 
     const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {
@@ -1468,24 +1463,5 @@ export class ApplicationsService {
     })
 
     return stats
-  }
-
-  async getOrganizationByFormId(
-    formId: string,
-  ): Promise<Organization | undefined> {
-    const form = await this.formModel.findByPk(formId, {
-      include: [
-        {
-          model: this.organizationModel,
-          attributes: ['id', 'nationalId'],
-        },
-      ],
-    })
-
-    if (!form) {
-      throw new NotFoundException(`Form with id '${formId}' not found`)
-    }
-
-    return form.organization
   }
 }

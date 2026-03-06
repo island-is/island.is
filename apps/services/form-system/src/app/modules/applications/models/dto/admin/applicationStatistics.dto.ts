@@ -29,6 +29,10 @@ export class ApplicationStatisticsDto {
   @IsNumber()
   completedCount!: number
 
+  @ApiProperty()
+  @Expose()
+  institutionNationalId!: string
+
   @ApiPropertyOptional()
   @Expose()
   institutionName?: string

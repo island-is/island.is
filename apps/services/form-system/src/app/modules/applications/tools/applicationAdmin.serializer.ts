@@ -150,28 +150,13 @@ export class ApplicationStatisticsSerializer
   private async serialize(
     applicationStatistic: ApplicationStatisticsDto,
   ): Promise<ApplicationStatisticsDto> {
-    const organization = await this.applicationService.getOrganizationByFormId(
-      applicationStatistic.formId,
-    )
-
-    if (!organization) {
-      this.logger.warn(
-        `Could not find organization for formId ${applicationStatistic.formId}`,
-      )
-      return plainToInstance(ApplicationStatisticsDto, {
-        ...applicationStatistic,
-        contentfulSlug: undefined,
-        institution: '',
-      })
-    }
-
     const institutionName =
       await this.identityService.tryToGetNameFromNationalId(
-        organization.nationalId,
+        applicationStatistic.institutionNationalId,
         false,
       )
     const institutionInfo = getOrganizationInfoByNationalId(
-      organization.nationalId,
+      applicationStatistic.institutionNationalId,
     )
 
     return plainToInstance(ApplicationStatisticsDto, {
