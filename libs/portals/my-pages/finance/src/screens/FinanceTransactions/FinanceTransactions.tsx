@@ -314,7 +314,7 @@ const FinanceTransactions = () => {
                 noBorder={false}
                 title={formatMessage(m.noData)}
                 message={formatMessage(m.noTransactionFound)}
-                imgSrc="./ascusets/images/sofa.svg"
+                imgSrc="./assets/images/sofa.svg"
                 imgAlt=""
               />
             )}
