@@ -70,13 +70,16 @@ const FinanceTransactions = () => {
   const chargeTypeData: CustomerChargeType =
     customerChartypeData?.getCustomerChargeType || {}
 
-  const [loadCustomerRecords, { data, loading, called, error, fetchMore, networkStatus }] =
-    useGetCustomerRecordsPagedLazyQuery({ notifyOnNetworkStatusChange: true })
+  const [
+    loadCustomerRecords,
+    { data, loading, called, error, fetchMore, networkStatus },
+  ] = useGetCustomerRecordsPagedLazyQuery({ notifyOnNetworkStatusChange: true })
 
   const isFetchingMore = networkStatus === NetworkStatus.fetchMore
   const isInitialLoading = loading && !isFetchingMore
 
-  const hasNextPage = data?.getCustomerRecordsPaged?.pageInfo?.hasNextPage ?? false
+  const hasNextPage =
+    data?.getCustomerRecordsPaged?.pageInfo?.hasNextPage ?? false
   const nextKey = data?.getCustomerRecordsPaged?.pageInfo?.startCursor
 
   useEffect(() => {
@@ -133,7 +136,10 @@ const FinanceTransactions = () => {
           nextKey,
         },
       },
-      updateQuery(previousData, { fetchMoreResult }): GetCustomerRecordsPagedQuery {
+      updateQuery(
+        previousData,
+        { fetchMoreResult },
+      ): GetCustomerRecordsPagedQuery {
         if (!fetchMoreResult?.getCustomerRecordsPaged) return previousData
         return {
           ...fetchMoreResult,
