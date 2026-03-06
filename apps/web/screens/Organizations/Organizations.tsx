@@ -10,7 +10,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Inline,
+
   Pagination,
   RadioButton,
   ResponsiveSpace,
@@ -194,7 +194,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     <>
       <HeadWithSocialSharing title={metaTitle} />
       <Box paddingTop={[2, 2, 2, 8]} paddingBottom={[4, 4, 4, 8]}>
-        <GridContainer>
+        <GridContainer className={styles.listContainer}>
           <GridRow>
             <GridColumn
               offset={['0', '0', '0', '1/12']}
@@ -240,15 +240,9 @@ const OrganizationPage: Screen<OrganizationProps> = ({
 
       <Box background="blue100" display="inlineBlock" width="full">
         <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-          <GridContainer id="organizations-list">
+          <GridContainer id="organizations-list" className={styles.listContainer}>
             <Box marginY={[3, 3, 6]}>
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                alignItems="center"
-                flexWrap="wrap"
-                rowGap={2}
-              >
+              <Box className={styles.filterBar}>
                 <Box className={styles.searchContainer}>
                   <FilterInput
                     name="filter-input"
@@ -257,39 +251,39 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     onChange={(value) =>
                       setFilter({ ...filter, input: value })
                     }
+                    backgroundColor="white"
                   />
                 </Box>
-                <Box display="flex" alignItems="center" columnGap={2}>
-                  <Inline space={2} alignY="center">
-                    <RadioButton
-                      name="organization-filter-type"
-                      id="organization-filter-island-is"
-                      label={n(
-                        'websitesOnIslandIs',
-                        'Vefir á Ísland.is',
-                      )}
-                      checked={showOnlyIslandIs}
-                      onChange={() => {
-                        setShowOnlyIslandIs(true)
-                        goToPage(1, false)
-                      }}
-                    />
-                    <RadioButton
-                      name="organization-filter-type"
-                      id="organization-filter-all"
-                      label={n(
-                        'allPublicEntities',
-                        'Allir opinberir aðilar',
-                      )}
-                      checked={!showOnlyIslandIs}
-                      onChange={() => {
-                        setShowOnlyIslandIs(false)
-                        goToPage(1, false)
-                      }}
-                    />
-                  </Inline>
-                  <Box flexShrink={0} flexGrow={0}>
-                    <FilterMenu
+                <Box className={styles.radioGroup}>
+                  <RadioButton
+                    name="organization-filter-type"
+                    id="organization-filter-island-is"
+                    label={n(
+                      'websitesOnIslandIs',
+                      'Vefir á Ísland.is',
+                    )}
+                    checked={showOnlyIslandIs}
+                    onChange={() => {
+                      setShowOnlyIslandIs(true)
+                      goToPage(1, false)
+                    }}
+                  />
+                  <RadioButton
+                    name="organization-filter-type"
+                    id="organization-filter-all"
+                    label={n(
+                      'allPublicEntities',
+                      'Allir opinberir aðilar',
+                    )}
+                    checked={!showOnlyIslandIs}
+                    onChange={() => {
+                      setShowOnlyIslandIs(false)
+                      goToPage(1, false)
+                    }}
+                  />
+                </Box>
+                <Box className={styles.filterButton}>
+                  <FilterMenu
                     {...filterLabels}
                     categories={categories}
                     filter={filter}
@@ -308,7 +302,6 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     align="right"
                     variant={isMobile ? 'dialog' : 'popover'}
                   />
-                  </Box>
                 </Box>
               </Box>
             </Box>
