@@ -50,11 +50,7 @@ const useCaseList = () => {
   const router = useRouter()
 
   const openCase = useCallback(
-    (
-      caseToOpen: Case,
-      openCaseInNewTab?: boolean,
-      defendantIds?: string[] | null,
-    ) => {
+    (caseToOpen: Case, openCaseInNewTab?: boolean) => {
       let routeTo = null
 
       if (isDefenceUser(user)) {
@@ -188,7 +184,7 @@ const useCaseList = () => {
       const getCaseToOpen = (id: string) => {
         getCase(
           id,
-          (caseData) => openCase(caseData, openInNewTab, defendantIds),
+          (caseData) => openCase(caseData, openInNewTab),
           () => {
             setClickedCase((prev) => {
               if (

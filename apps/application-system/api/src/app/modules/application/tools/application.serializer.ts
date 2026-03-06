@@ -155,6 +155,7 @@ export class ApplicationSerializer
         historyButton: actionCardMeta.historyButton
           ? intl.formatMessage(actionCardMeta.historyButton)
           : null,
+        displayPruneAt: actionCardMeta.displayPruneAt,
       },
       name: getApplicationNameTranslationString(
         template,

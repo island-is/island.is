@@ -1,5 +1,5 @@
 import archiver from 'archiver'
-import { Includeable, Op, Transaction } from 'sequelize'
+import { col, Includeable, Op, Transaction } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
@@ -456,6 +456,51 @@ export const include: Includeable[] = [
     model: Case,
     as: 'splitCase',
   },
+  {
+    model: Case,
+    as: 'splitCases',
+    include: [
+      {
+        model: Defendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        include: [
+          {
+            model: Subpoena,
+            as: 'subpoenas',
+            required: false,
+            order: [['created', 'DESC']],
+            where: { created: { [Op.lt]: col('Case.created') } },
+          },
+        ],
+      },
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: {
+          state: { [Op.not]: CaseFileState.DELETED },
+          defendantId: { [Op.not]: null },
+          category: {
+            [Op.in]: [
+              CaseFileCategory.CRIMINAL_RECORD,
+              CaseFileCategory.COST_BREAKDOWN,
+              CaseFileCategory.CASE_FILE,
+              CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIM,
+              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+            ],
+          },
+          created: { [Op.lt]: col('Case.created') },
+        },
+      },
+    ],
+    separate: true,
+  },
 ]
 
 @Injectable()
@@ -471,7 +516,10 @@ export class LimitedAccessCaseService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async findById(caseId: string): Promise<Case> {
+  async findById(
+    caseId: string,
+    options?: { transaction?: Transaction },
+  ): Promise<Case> {
     const theCase = await this.caseRepositoryService.findOne({
       attributes,
       include,
@@ -480,6 +528,7 @@ export class LimitedAccessCaseService {
         state: { [Op.not]: CaseState.DELETED },
         isArchived: false,
       },
+      transaction: options?.transaction,
     })
 
     if (!theCase) {
@@ -534,8 +583,8 @@ export class LimitedAccessCaseService {
       })
     }
 
-    // Return limited access case
-    const updatedCase = await this.findById(theCase.id)
+    // Return limited access case (read within transaction so we see the updated row)
+    const updatedCase = await this.findById(theCase.id, { transaction })
 
     if (
       updatedCase.defendantStatementDate?.getTime() !==

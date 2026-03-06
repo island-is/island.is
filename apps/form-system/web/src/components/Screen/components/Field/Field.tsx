@@ -3,6 +3,7 @@ import {
   Banknumber,
   Checkbox,
   CurrencyField,
+  CurrencySumField,
   DatePicker,
   Email,
   FieldTypesEnum,
@@ -29,6 +30,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.BANK_ACCOUNT]: Banknumber,
   [FieldTypesEnum.CHECKBOX]: Checkbox,
   [FieldTypesEnum.ISK_NUMBERBOX]: CurrencyField,
+  [FieldTypesEnum.ISK_SUMBOX]: CurrencySumField,
   [FieldTypesEnum.EMAIL]: Email,
   [FieldTypesEnum.FILE]: FileUpload,
   [FieldTypesEnum.NATIONAL_ID]: NationalId,
@@ -44,13 +46,14 @@ const FIELD_COMPONENT_MAP = {
 } as const
 
 export const Field = ({ field }: Props) => {
-  const { dispatch } = useApplicationContext()
+  const { dispatch, state } = useApplicationContext()
   const { control } = useFormContext()
 
   const fieldItems = {
     item: field,
     control,
     dispatch,
+    ...(field.fieldType === FieldTypesEnum.ISK_SUMBOX && { state }),
   }
 
   const FieldComponent =

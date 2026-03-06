@@ -41,6 +41,7 @@ export const mapAppSystemCards = (
     orgContentfulId: institutionMapper[application.typeId]?.contentfulId,
     nationalId: institutionMapper[application.typeId]?.nationalId,
     actionCard: application.actionCard,
+    pruneAt: application.pruneAt,
   }
 }
 
@@ -71,13 +72,13 @@ export const cardSortByModified = (
   return b.modified.getTime() - a.modified.getTime()
 }
 
-export const applicationAdminSortByCreated = (
+export const applicationAdminSortByModified = (
   a: ApplicationAdmin,
   b: ApplicationAdmin,
 ): number => {
-  const createdDiff = b.created.getTime() - a.created.getTime()
-  if (createdDiff !== 0) {
-    return createdDiff
+  const modifiedDiff = b.modified.getTime() - a.modified.getTime()
+  if (modifiedDiff !== 0) {
+    return modifiedDiff
   }
 
   return a.id.localeCompare(b.id)

@@ -1,11 +1,11 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import defaults from 'lodash/defaults'
@@ -92,7 +92,7 @@ export class FormsService {
     const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
 
     if (user.nationalId !== nationalId && !isAdmin) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         `User does not have permission to get forms for organization with nationalId '${nationalId}'`,
       )
     }
@@ -198,7 +198,7 @@ export class FormsService {
     const formOwnerNationalId = form.organizationNationalId
 
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         `User does not have permission to get form for organization with nationalId '${formOwnerNationalId}'`,
       )
     }
@@ -219,7 +219,7 @@ export class FormsService {
     const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
 
     if (user.nationalId !== organizationNationalId && !isAdmin) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         `User does not have permission to create form for organization with nationalId '${organizationNationalId}'`,
       )
     }
@@ -283,7 +283,7 @@ export class FormsService {
     const formOwnerNationalId = form.organizationNationalId
 
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         `User does not have permission to update form with id '${id}'`,
       )
     }
@@ -343,7 +343,7 @@ export class FormsService {
     const formOwnerNationalId = form.organizationNationalId
 
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         `User does not have permission to copy form with id '${id}'`,
       )
     }
@@ -374,7 +374,7 @@ export class FormsService {
     const formOwnerNationalId = form.organizationNationalId
 
     if (user.nationalId !== formOwnerNationalId && !isAdmin) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         `User does not have permission to update status of form with id '${id}'`,
       )
     }

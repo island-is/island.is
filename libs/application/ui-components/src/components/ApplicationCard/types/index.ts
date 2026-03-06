@@ -15,6 +15,7 @@ export type ApplicationCardFields = Pick<
   | 'orgContentfulId'
   | 'slug'
   | 'applicationPath'
+  | 'pruneAt'
 >
 
 export interface DefaultCardData {

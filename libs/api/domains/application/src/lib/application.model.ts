@@ -90,6 +90,9 @@ export class ActionCardMetaData {
 
   @Field(() => String, { nullable: true })
   historyButton?: string
+
+  @Field(() => Boolean, { nullable: true })
+  displayPruneAt?: boolean
 }
 
 @ObjectType()

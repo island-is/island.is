@@ -734,6 +734,7 @@ describe('Orchestrator', () => {
       it('should return step result if exists', () => {
         const ctx: TestContext = {
           id: 'test',
+
           stepResults: {
             STEP1: { value: 'hello' },
           },
@@ -749,6 +750,7 @@ describe('Orchestrator', () => {
       it('should return undefined if step result does not exist', () => {
         const ctx: TestContext = {
           id: 'test',
+
           stepResults: {},
           completedSteps: [],
           startTime: new Date(),
@@ -764,6 +766,7 @@ describe('Orchestrator', () => {
       it('should return step result if exists', () => {
         const ctx: TestContext = {
           id: 'test',
+
           stepResults: {
             STEP2: { count: 42 },
           },
@@ -779,6 +782,7 @@ describe('Orchestrator', () => {
       it('should throw error if step result does not exist', () => {
         const ctx: TestContext = {
           id: 'test',
+
           stepResults: {},
           completedSteps: [],
           startTime: new Date(),
@@ -792,6 +796,7 @@ describe('Orchestrator', () => {
       it('should throw error if step result is undefined', () => {
         const ctx: TestContext = {
           id: 'test',
+
           stepResults: {
             STEP1: undefined,
           },
@@ -809,6 +814,7 @@ describe('Orchestrator', () => {
       it('should return true if step result exists', () => {
         const ctx: TestContext = {
           id: 'test',
+
           stepResults: {
             STEP1: { value: 'exists' },
           },
@@ -824,6 +830,7 @@ describe('Orchestrator', () => {
       it('should return false if step result does not exist', () => {
         const ctx: TestContext = {
           id: 'test',
+
           stepResults: {},
           completedSteps: [],
           startTime: new Date(),
@@ -837,6 +844,7 @@ describe('Orchestrator', () => {
       it('should return false if step result is undefined', () => {
         const ctx: TestContext = {
           id: 'test',
+
           stepResults: {
             STEP1: undefined,
           },
