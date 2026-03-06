@@ -5,7 +5,13 @@ import {
   useEnvironmentStore,
 } from './stores/environment-store'
 
-type EnvironmentId = 'prod' | 'staging' | 'dev' | 'local' | 'mock'
+type EnvironmentId =
+  | 'prod'
+  | 'staging'
+  | 'experimental'
+  | 'dev'
+  | 'local'
+  | 'mock'
 
 export const environments: Record<EnvironmentId, EnvironmentConfig> = {
   prod: {
@@ -26,10 +32,19 @@ export const environments: Record<EnvironmentId, EnvironmentConfig> = {
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/7kWZdAnrz0acVfr_paEl5Q',
     datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
   },
+  experimental: {
+    id: 'experimental',
+    label: 'Experimental',
+    idsIssuer: 'https://podophyllic-valentine-marked.ngrok-free.dev',
+    apiUrl: 'https://beta.dev01.devland.is/api',
+    baseUrl: 'https://beta.dev01.devland.is',
+    configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
+    datadog: null,
+  },
   dev: {
     id: 'dev',
     label: 'Development',
-    idsIssuer: 'https://identity-server.dev01.devland.is/',
+    idsIssuer: 'https://podophyllic-valentine-marked.ngrok-free.dev/',
     apiUrl: 'https://beta.dev01.devland.is/api',
     baseUrl: 'https://beta.dev01.devland.is',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',

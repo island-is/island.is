@@ -13,6 +13,7 @@ import {
   MainBottomTabs,
   StackRegistry,
 } from '../component-registry'
+import { audkenniSessionStore } from '../../stores/audkenni-session-store'
 
 const selectTab = (currentTabIndex: number) => {
   // Selected Tab navigation event wont fire for this. Need to manually set in ui store.
@@ -591,5 +592,47 @@ export function setupRoutes() {
 
   addRoute('/e2e/disable-applock', () => {
     preferencesStore.setState({ dev__useLockScreen: false })
+  })
+
+  // Add Auðkenni App2App callback handler
+  addRoute('/auth/audkenni-callback', async (passProps: any) => {
+    const { sessionId, sessionSecretDigest, userChallengeVerifier } = passProps
+
+    // Verify we have a pending session
+    const pendingSession = audkenniSessionStore.getState().getSession(sessionId)
+
+    if (!pendingSession) {
+      console.error(
+        'No pending Auðkenni session found for sessionId:',
+        sessionId,
+      )
+      // Show error to user
+      return
+    }
+
+    // Remove the session to prevent replay attacks
+    audkenniSessionStore.getState().removeSession(sessionId)
+
+    // Send callback data to backend for verification
+    // The backend will:
+    // 1. Verify sessionSecretDigest matches SHA-256 of sessionSecret
+    // 2. Verify userChallengeVerifier (for auth flows)
+    // 3. Complete the authentication flow
+
+    try {
+      console.log('Auðkenni callback verification successful (mock)')
+      // Call your backend API to complete verification
+      // const result = await verifyAudkenniCallback({
+      //   sessionId,
+      //   sessionSecretDigest,
+      //   userChallengeVerifier,
+      // })
+      // if (result.success) {
+      //   // Authentication successful - handle tokens
+      //   // This depends on how your IDS integration works
+      // }
+    } catch (error) {
+      console.error('Auðkenni callback verification failed:', error)
+    }
   })
 }
