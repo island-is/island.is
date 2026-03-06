@@ -19,8 +19,6 @@ import {OrganizationPermissionsModule} from "../../organizationPermissions/organ
 
 @Module({
   imports: [
-    // Picking out models from the applicationsModule that are needed for pruning to avoid having to import the
-    // entire applicationsModule and its dependencies
     SequelizeModule.forFeature([Value, Application, ApplicationEvent]),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
