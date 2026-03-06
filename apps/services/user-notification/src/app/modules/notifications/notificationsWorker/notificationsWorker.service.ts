@@ -55,8 +55,8 @@ const getOnBehalfOfLabel = (
       ? 'child'
       : 'barn'
     : isEnglish
-      ? 'delegation'
-      : 'umboð'
+    ? 'delegation'
+    : 'umboð'
   return `${onBehalfOf}, ${suffix}`
 }
 
@@ -77,9 +77,7 @@ const createSmsContent = ({
   const namePrefix = onBehalfOf
     ? getOnBehalfOfLabel(onBehalfOf, onBehalfOfNationalId, isEnglish)
     : fullName
-  return `${namePrefix}: ${
-    template.title
-  }\n\n${template.externalBody}${
+  return `${namePrefix}: ${template.title}\n\n${template.externalBody}${
     template.clickActionUrl
       ? `\n\n${linkText}: \n\n${template.clickActionUrl}`
       : ''
