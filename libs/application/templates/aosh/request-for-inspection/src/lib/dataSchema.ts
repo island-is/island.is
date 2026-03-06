@@ -53,7 +53,7 @@ export const MachineAnswersSchema = z.object({
     phoneNumber: z.string().min(1),
     email: z.string().min(1),
   }),
-  applicantInformation: applicantInformationSchema,
+  applicant: applicantInformationSchema,
 })
 
 export type MachineAnswers = z.TypeOf<typeof MachineAnswersSchema>
