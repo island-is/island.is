@@ -239,7 +239,10 @@ const OrganizationPage: Screen<OrganizationProps> = ({
 
       <Box background="blue100" display="inlineBlock" width="full">
         <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-          <GridContainer id="organizations-list" className={styles.listContainer}>
+          <GridContainer
+            id="organizations-list"
+            className={styles.listContainer}
+          >
             <Box marginY={[3, 3, 6]}>
               <Box className={styles.filterBar}>
                 <Box className={styles.searchContainer}>
@@ -247,9 +250,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     name="filter-input"
                     placeholder={filterLabels.inputPlaceholder}
                     value={filter.input}
-                    onChange={(value) =>
-                      setFilter({ ...filter, input: value })
-                    }
+                    onChange={(value) => setFilter({ ...filter, input: value })}
                     backgroundColor="white"
                   />
                 </Box>
@@ -257,10 +258,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                   <RadioButton
                     name="organization-filter-type"
                     id="organization-filter-island-is"
-                    label={n(
-                      'websitesOnIslandIs',
-                      'Vefir á Ísland.is',
-                    )}
+                    label={n('websitesOnIslandIs', 'Vefir á Ísland.is')}
                     checked={showOnlyIslandIs}
                     onChange={() => {
                       setShowOnlyIslandIs(true)
@@ -270,10 +268,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                   <RadioButton
                     name="organization-filter-type"
                     id="organization-filter-all"
-                    label={n(
-                      'allPublicEntities',
-                      'Allir opinberir aðilar',
-                    )}
+                    label={n('allPublicEntities', 'Allir opinberir aðilar')}
                     checked={!showOnlyIslandIs}
                     onChange={() => {
                       setShowOnlyIslandIs(false)
