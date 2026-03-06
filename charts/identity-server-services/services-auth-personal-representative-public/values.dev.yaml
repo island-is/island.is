@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'services-auth-personal-representative-public'
+allowExternalNetwork: false
+allowInternalNetwork: false
 enabled: true
 env:
   DB_HOST: 'postgres-applications.internal'
@@ -46,6 +48,16 @@ hpa:
     replicas:
       max: 3
       min: 1
+httpRoute:
+  primary-gw:
+    hostnames:
+      - 'personal-representative-public-xrd.internal.dev01.devland.is'
+    parentRefs:
+      - name: 'gateway-internal'
+        namespace: 'gateway-system'
+    rules:
+      - matches:
+          - pathPrefix: '/'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
 ingress:

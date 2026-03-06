@@ -587,8 +587,8 @@ export const serviceSetup = (services: {
       min: 3,
       cpuAverageUtilization: 70,
     })
+    .allowExternalNetwork()
     .grantNamespaces(
-      'nginx-ingress-external',
       'api-catalogue',
       'application-system',
       'consultation-portal',

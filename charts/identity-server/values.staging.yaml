@@ -6,6 +6,8 @@
 #####################################################################
 
 auth-admin-web:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     BASE_URL: 'https://identity-server.staging01.devland.is/admin'
@@ -17,8 +19,6 @@ auth-admin-web:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - 'nginx-ingress-external'
-    - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -38,6 +38,16 @@ auth-admin-web:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'identity-server.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-auth-routing'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/admin'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
   ingress:
@@ -95,6 +105,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 identity-server:
+  allowExternalNetwork: true
+  allowInternalNetwork: false
   annotations:
     ad.datadoghq.com/identity-server.check_names: '["openmetrics"]'
     ad.datadoghq.com/identity-server.init_configs: '[{}]'
@@ -136,7 +148,6 @@ identity-server:
   files:
     - 'ids-signing.pfx'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
     - 'datadog'
@@ -159,6 +170,16 @@ identity-server:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'identity-server.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
   ingress:
@@ -229,6 +250,8 @@ namespaces:
     - 'identity-server-delegation'
     - 'personal-representative'
 services-auth-admin-api:
+  allowExternalNetwork: true
+  allowInternalNetwork: true
   enabled: true
   env:
     CODE_OWNER: 'aranja'
@@ -264,8 +287,6 @@ services-auth-admin-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
-    - 'nginx-ingress-external'
-    - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -285,6 +306,16 @@ services-auth-admin-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'identity-server.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/backend'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
   ingress:
@@ -341,6 +372,8 @@ services-auth-admin-api:
     create: true
     name: 'services-auth-admin-api'
 services-auth-delegation-api:
+  allowExternalNetwork: false
+  allowInternalNetwork: true
   enabled: true
   env:
     CODE_OWNER: 'aranja'
@@ -375,7 +408,6 @@ services-auth-delegation-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
-    - 'nginx-ingress-internal'
     - 'islandis'
     - 'service-portal'
     - 'user-notification-worker'
@@ -398,6 +430,16 @@ services-auth-delegation-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'auth-delegation-api.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
   ingress:
@@ -447,6 +489,8 @@ services-auth-delegation-api:
     create: true
     name: 'auth-delegation-api'
 services-auth-ids-api:
+  allowExternalNetwork: true
+  allowInternalNetwork: false
   enabled: true
   env:
     ALSO_USE_FAKE_USER_API: 'false'
@@ -492,7 +536,6 @@ services-auth-ids-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'user-notification'
     - 'datadog'
   grantNamespacesEnabled: true
@@ -592,6 +635,8 @@ services-auth-ids-api:
     create: true
     name: 'services-auth-ids-api'
 services-auth-ids-api-cleanup:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - 'main.cjs'
     - '--job=cleanup'
@@ -608,7 +653,6 @@ services-auth-ids-api-cleanup:
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
     - 'datadog'
@@ -663,6 +707,8 @@ services-auth-ids-api-cleanup:
     create: true
     name: 'services-auth-ids-api-cleanup'
 services-auth-personal-representative:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
@@ -713,6 +759,16 @@ services-auth-personal-representative:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'personal-representative-xrd.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
   ingress:
@@ -761,6 +817,8 @@ services-auth-personal-representative:
     create: true
     name: 'services-auth-personal-representative'
 services-auth-personal-representative-public:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -790,6 +848,16 @@ services-auth-personal-representative-public:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'personal-representative-public-xrd.internal.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
   ingress:
@@ -831,6 +899,8 @@ services-auth-personal-representative-public:
     create: true
     name: 'services-auth-personal-representative-public'
 services-auth-public-api:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     CODE_OWNER: 'aranja'
@@ -872,8 +942,6 @@ services-auth-public-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
-    - 'nginx-ingress-external'
-    - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -893,6 +961,16 @@ services-auth-public-api:
       replicas:
         max: 3
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'identity-server.staging01.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api(/|$)(.*)'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
   ingress:

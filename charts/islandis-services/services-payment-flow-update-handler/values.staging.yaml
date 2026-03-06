@@ -17,6 +17,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'services-payment-flow-update-handler'
+allowExternalNetwork: false
+allowInternalNetwork: false
 enabled: true
 env:
   CODE_OWNER: 'stefna'
@@ -48,6 +50,16 @@ hpa:
     replicas:
       max: 3
       min: 1
+httpRoute:
+  internal-gw:
+    hostnames:
+      - 'services-payment-flow-update-handler.internal.staging01.devland.is'
+    parentRefs:
+      - name: 'gateway-internal'
+        namespace: 'gateway-system'
+    rules:
+      - matches:
+          - pathPrefix: '/'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payment-flow-update-handler'
 ingress:

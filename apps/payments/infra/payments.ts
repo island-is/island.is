@@ -73,8 +73,6 @@ export const serviceSetup = (services: {
     })
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces(
-      'nginx-ingress-internal',
-      'nginx-ingress-external',
-      'islandis',
-    )
+    .allowExternalNetwork()
+    .allowInternalNetwork()
+    .grantNamespaces('islandis')

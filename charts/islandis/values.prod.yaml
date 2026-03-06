@@ -6,6 +6,8 @@
 #####################################################################
 
 air-discount-scheme-api:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     AUTH_AUDIENCE: 'loftbru.island.is'
@@ -17,7 +19,6 @@ air-discount-scheme-api:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -37,6 +38,16 @@ air-discount-scheme-api:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'loftbru.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -81,6 +92,8 @@ air-discount-scheme-api:
     create: true
     name: 'air-discount-scheme-api'
 air-discount-scheme-backend:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -123,6 +136,17 @@ air-discount-scheme-backend:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'loftbru.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api/swagger'
+            - pathPrefix: '/api/public'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -196,6 +220,8 @@ air-discount-scheme-backend:
     create: true
     name: 'air-discount-scheme-backend'
 air-discount-scheme-web:
+  allowExternalNetwork: true
+  allowInternalNetwork: false
   enabled: true
   env:
     API_URL: 'http://air-discount-scheme-api'
@@ -206,7 +232,6 @@ air-discount-scheme-web:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -226,6 +251,16 @@ air-discount-scheme-web:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'loftbru.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -264,6 +299,8 @@ air-discount-scheme-web:
     allowPrivilegeEscalation: false
     privileged: false
 api:
+  allowExternalNetwork: true
+  allowInternalNetwork: false
   args:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
@@ -440,7 +477,6 @@ api:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
@@ -467,6 +503,17 @@ api:
       replicas:
         max: 50
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
@@ -625,6 +672,8 @@ api:
     create: true
     name: 'api'
 application-system-api:
+  allowExternalNetwork: false
+  allowInternalNetwork: true
   args:
     - 'main.cjs'
   command:
@@ -767,7 +816,6 @@ application-system-api:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'services-payments'
-    - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -787,6 +835,18 @@ application-system-api:
       replicas:
         max: 60
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'application-payment-callback-xrd.internal.island.is'
+        - 'application-callback-xrd.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/application-payment'
+            - pathPrefix: '/applications'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   ingress:
@@ -904,6 +964,8 @@ application-system-api:
     create: true
     name: 'application-system-api'
 application-system-api-worker:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - 'main.cjs'
     - '--job'
@@ -954,7 +1016,6 @@ application-system-api-worker:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'services-payments'
-    - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1022,6 +1083,8 @@ application-system-api-worker:
     create: true
     name: 'application-system-api-worker'
 application-system-form:
+  allowExternalNetwork: true
+  allowInternalNetwork: true
   enabled: true
   env:
     BASEPATH: '/umsoknir'
@@ -1030,8 +1093,6 @@ application-system-form:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
   grantNamespaces:
-    - 'nginx-ingress-internal'
-    - 'nginx-ingress-external'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1051,6 +1112,17 @@ application-system-form:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/umsoknir'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
   ingress:
@@ -1098,6 +1170,8 @@ application-system-form:
     create: true
     name: 'application-system-form'
 cms-importer-energy-fund-import:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - 'main.cjs'
   command:
@@ -1152,6 +1226,8 @@ cms-importer-energy-fund-import:
     allowPrivilegeEscalation: false
     privileged: false
 cms-importer-fsre-buildings-import:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - 'main.cjs'
   command:
@@ -1206,6 +1282,8 @@ cms-importer-fsre-buildings-import:
     allowPrivilegeEscalation: false
     privileged: false
 cms-importer-worker:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - 'main.cjs'
     - '--job'
@@ -1263,6 +1341,8 @@ cms-importer-worker:
     allowPrivilegeEscalation: false
     privileged: false
 consultation-portal:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     API_URL: 'http://api.islandis.svc.cluster.local'
@@ -1294,6 +1374,17 @@ consultation-portal:
       replicas:
         max: 30
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/samradsgatt'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/consultation-portal'
   ingress:
@@ -1341,6 +1432,8 @@ consultation-portal:
     create: true
     name: 'consultation-portal'
 contentful-apps:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     API_URL: 'http://api.islandis.svc.cluster.local'
@@ -1367,6 +1460,16 @@ contentful-apps:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'contentful-apps.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-apps'
   ingress:
@@ -1407,6 +1510,8 @@ contentful-apps:
     create: true
     name: 'contentful-apps'
 contentful-entry-tagger-service:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     LOG_LEVEL: 'info'
@@ -1431,6 +1536,16 @@ contentful-entry-tagger-service:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'contentful-entry-tagger-service.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-contentful-entry-tagger'
   ingress:
@@ -1473,6 +1588,8 @@ contentful-entry-tagger-service:
     create: true
     name: 'contentful-entry-tagger'
 download-service:
+  allowExternalNetwork: true
+  allowInternalNetwork: false
   enabled: true
   env:
     HMS_CONTRACTS_AUTH_CLIENT_ID: '44055958-a462-4ba8-bbd2-5bfedbbd18c0'
@@ -1512,7 +1629,6 @@ download-service:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'islandis'
-    - 'nginx-ingress-external'
     - 'services-bff-portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1532,6 +1648,16 @@ download-service:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'api.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/download'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
   ingress:
@@ -1586,6 +1712,8 @@ download-service:
     create: true
     name: 'download-service'
 endorsement-system-api:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
@@ -1701,6 +1829,8 @@ endorsement-system-api:
     create: true
     name: 'endorsement-system-api'
 form-system-web:
+  allowExternalNetwork: true
+  allowInternalNetwork: false
   enabled: true
   env:
     BASEPATH: '/form'
@@ -1709,9 +1839,8 @@ form-system-web:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
-  grantNamespaces:
-    - 'nginx-ingress-external'
-  grantNamespacesEnabled: true
+  grantNamespaces: []
+  grantNamespacesEnabled: false
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -1729,6 +1858,17 @@ form-system-web:
       replicas:
         max: 4
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/form'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/form-system-web'
   ingress:
@@ -1788,6 +1928,8 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 icelandic-names-registry-backend:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -1886,6 +2028,8 @@ icelandic-names-registry-backend:
     create: true
     name: 'icelandic-names-registry'
 island-ui-storybook:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     LOG_LEVEL: 'info'
@@ -1911,6 +2055,16 @@ island-ui-storybook:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'ui.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
   ingress:
@@ -1944,6 +2098,8 @@ island-ui-storybook:
     allowPrivilegeEscalation: false
     privileged: false
 license-api:
+  allowExternalNetwork: false
+  allowInternalNetwork: true
   enabled: true
   env:
     CODE_OWNER: 'hugsmidjan'
@@ -1965,9 +2121,8 @@ license-api:
     XROAD_NVS_PERMITS_PATH: 'IS/GOV/7009241570/NVS-Protected/api'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
-  grantNamespaces:
-    - 'nginx-ingress-internal'
-  grantNamespacesEnabled: true
+  grantNamespaces: []
+  grantNamespacesEnabled: false
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -1985,6 +2140,16 @@ license-api:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'license-api-xrd.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
   ingress:
@@ -2078,6 +2243,8 @@ namespaces:
     - 'services-form-system-api'
     - 'form-system-web'
 payments:
+  allowExternalNetwork: true
+  allowInternalNetwork: true
   enabled: true
   env:
     API_EXTERNAL_BASEPATH: 'https://island.is'
@@ -2088,8 +2255,6 @@ payments:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-internal'
-    - 'nginx-ingress-external'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2109,6 +2274,17 @@ payments:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/greida'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/payments'
   ingress:
@@ -2158,6 +2334,8 @@ payments:
     create: true
     name: 'payments'
 portals-admin:
+  allowExternalNetwork: true
+  allowInternalNetwork: false
   enabled: true
   env:
     BASEPATH: '/stjornbord'
@@ -2167,7 +2345,6 @@ portals-admin:
     SI_PUBLIC_ENVIRONMENT: 'prod'
     SI_PUBLIC_FORM_SYSTEM_URL: 'https://island.is/form'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2187,6 +2364,17 @@ portals-admin:
       replicas:
         max: 30
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/stjornbord'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
   ingress:
@@ -2234,6 +2422,8 @@ portals-admin:
     create: true
     name: 'portals-admin'
 regulations-admin-backend:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     CODE_OWNER: 'hugsmidjan'
@@ -2339,6 +2529,8 @@ regulations-admin-backend:
     create: true
     name: 'regulations-admin-backend'
 search-indexer-service:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.island.is'
@@ -2373,6 +2565,16 @@ search-indexer-service:
       replicas:
         max: 1
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'search-indexer-service.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
   ingress:
@@ -2473,6 +2675,8 @@ search-indexer-service:
     create: true
     name: 'search-indexer'
 service-portal:
+  allowExternalNetwork: true
+  allowInternalNetwork: true
   enabled: true
   env:
     BASEPATH: '/minarsidur'
@@ -2481,8 +2685,6 @@ service-portal:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
   grantNamespaces:
-    - 'nginx-ingress-internal'
-    - 'nginx-ingress-external'
     - 'islandis'
     - 'user-notification'
     - 'identity-server'
@@ -2504,6 +2706,17 @@ service-portal:
       replicas:
         max: 30
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/minarsidur'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
   ingress:
@@ -2551,6 +2764,8 @@ service-portal:
     create: true
     name: 'service-portal'
 service-portal-api:
+  allowExternalNetwork: false
+  allowInternalNetwork: true
   enabled: true
   env:
     AUTH_DELEGATION_API_URL: 'https://auth-delegation-api.internal.innskra.island.is'
@@ -2579,7 +2794,6 @@ service-portal-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'nginx-ingress-internal'
     - 'islandis'
     - 'user-notification'
     - 'identity-server'
@@ -2602,6 +2816,16 @@ service-portal-api:
       replicas:
         max: 30
         min: 2
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'service-portal-api.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   ingress:
@@ -2676,6 +2900,8 @@ service-portal-api:
     create: true
     name: 'service-portal-api'
 services-bff-portals-admin:
+  allowExternalNetwork: true
+  allowInternalNetwork: false
   enabled: true
   env:
     BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.island.is"]'
@@ -2699,7 +2925,6 @@ services-bff-portals-admin:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2719,6 +2944,17 @@ services-bff-portals-admin:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/stjornbord/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
   ingress:
@@ -2766,6 +3002,8 @@ services-bff-portals-admin:
     create: true
     name: 'services-bff'
 services-bff-portals-my-pages:
+  allowExternalNetwork: true
+  allowInternalNetwork: false
   enabled: true
   env:
     BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.island.is"]'
@@ -2788,7 +3026,6 @@ services-bff-portals-my-pages:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2808,6 +3045,17 @@ services-bff-portals-my-pages:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
   ingress:
@@ -2855,6 +3103,8 @@ services-bff-portals-my-pages:
     create: true
     name: 'services-bff'
 services-documents:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -2941,6 +3191,8 @@ services-documents:
     create: true
     name: 'services-documents'
 services-form-system-api:
+  allowExternalNetwork: true
+  allowInternalNetwork: false
   enabled: true
   env:
     CODE_OWNER: 'Advania'
@@ -2971,7 +3223,6 @@ services-form-system-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'islandis'
-    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2990,6 +3241,16 @@ services-form-system-api:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'services-form-system-api.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
   ingress:
@@ -3062,6 +3323,8 @@ services-form-system-api:
     create: true
     name: 'form-system-api'
 services-form-system-api-worker:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - 'main.cjs'
     - '--job'
@@ -3086,7 +3349,6 @@ services-form-system-api-worker:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
-    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3138,6 +3400,8 @@ services-form-system-api-worker:
     create: true
     name: 'services-form-system-api-worker'
 services-payment-flow-update-handler:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     CODE_OWNER: 'stefna'
@@ -3169,6 +3433,16 @@ services-payment-flow-update-handler:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'services-payment-flow-update-handler.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payment-flow-update-handler'
   ingress:
@@ -3210,6 +3484,8 @@ services-payment-flow-update-handler:
     create: true
     name: 'services-payment-flow-update-handler'
 services-payments:
+  allowExternalNetwork: false
+  allowInternalNetwork: true
   enabled: true
   env:
     DB_EXTENSIONS: 'uuid-ossp'
@@ -3236,7 +3512,6 @@ services-payments:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'application-system'
-    - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -3256,6 +3531,25 @@ services-payments:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'services-payments.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
+    primary-gw:
+      hostnames:
+        - 'services-payments-xrd.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
   ingress:
@@ -3346,6 +3640,8 @@ services-payments:
     create: true
     name: 'services-payments'
 services-sessions:
+  allowExternalNetwork: false
+  allowInternalNetwork: true
   enabled: true
   env:
     CODE_OWNER: 'aranja'
@@ -3360,7 +3656,6 @@ services-sessions:
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server'
   grantNamespacesEnabled: true
@@ -3381,6 +3676,16 @@ services-sessions:
       replicas:
         max: 10
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'sessions-api.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   ingress:
@@ -3422,6 +3727,8 @@ services-sessions:
     create: true
     name: 'services-sessions'
 services-sessions-cleanup:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - 'main.cjs'
     - '--job=cleanup'
@@ -3438,7 +3745,6 @@ services-sessions-cleanup:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server'
   grantNamespacesEnabled: true
@@ -3485,6 +3791,8 @@ services-sessions-cleanup:
     allowPrivilegeEscalation: false
     privileged: false
 services-sessions-worker:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - 'main.cjs'
     - '--job=worker'
@@ -3505,7 +3813,6 @@ services-sessions-worker:
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server'
   grantNamespacesEnabled: true
@@ -3582,6 +3889,8 @@ services-sessions-worker:
     create: true
     name: 'sessions-worker'
 services-university-gateway:
+  allowExternalNetwork: false
+  allowInternalNetwork: true
   args:
     - 'main.cjs'
   command:
@@ -3613,7 +3922,6 @@ services-university-gateway:
     XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1'
   grantNamespaces:
     - 'islandis'
-    - 'nginx-ingress-internal'
     - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -3633,6 +3941,16 @@ services-university-gateway:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'services-university-gateway.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   ingress:
@@ -3711,6 +4029,8 @@ services-university-gateway:
     create: true
     name: 'services-university-gateway'
 services-university-gateway-worker:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - 'main.cjs'
     - '--job'
@@ -3744,7 +4064,6 @@ services-university-gateway-worker:
     XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1'
   grantNamespaces:
     - 'islandis'
-    - 'nginx-ingress-internal'
     - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -3798,6 +4117,8 @@ services-university-gateway-worker:
     create: true
     name: 'services-university-gateway-worker'
 skilavottord-web:
+  allowExternalNetwork: true
+  allowInternalNetwork: false
   enabled: true
   env:
     API_URL: 'http://skilavottord-ws'
@@ -3806,7 +4127,7 @@ skilavottord-web:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3825,6 +4146,17 @@ skilavottord-web:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/app/skilavottord/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
   ingress:
@@ -3875,6 +4207,8 @@ skilavottord-web:
     create: true
     name: 'skilavottord-web'
 skilavottord-ws:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -3905,6 +4239,17 @@ skilavottord-ws:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/app/skilavottord/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
   ingress:
@@ -3982,6 +4327,8 @@ skilavottord-ws:
     create: true
     name: 'skilavottord-ws'
 user-notification:
+  allowExternalNetwork: false
+  allowInternalNetwork: true
   args:
     - '--no-experimental-fetch'
     - 'main.cjs'
@@ -4023,7 +4370,6 @@ user-notification:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
@@ -4045,6 +4391,25 @@ user-notification:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'user-notification.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
+    primary-gw:
+      hostnames:
+        - 'user-notification-xrd.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   ingress:
@@ -4101,6 +4466,8 @@ user-notification:
     create: true
     name: 'user-notification'
 user-notification-birthday-worker:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - '--no-experimental-fetch'
     - 'main.cjs'
@@ -4144,7 +4511,6 @@ user-notification-birthday-worker:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
@@ -4204,6 +4570,8 @@ user-notification-birthday-worker:
     create: true
     name: 'user-notification-birthday-worker'
 user-notification-cleanup-worker:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - '--no-experimental-fetch'
     - 'main.cjs'
@@ -4221,7 +4589,6 @@ user-notification-cleanup-worker:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
@@ -4299,6 +4666,8 @@ user-notification-cleanup-worker:
     create: true
     name: 'user-notification-cleanup-worker'
 user-notification-worker:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - '--no-experimental-fetch'
     - 'main.cjs'
@@ -4343,7 +4712,6 @@ user-notification-worker:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
@@ -4425,6 +4793,8 @@ user-notification-worker:
     create: true
     name: 'user-notification-worker'
 web:
+  allowExternalNetwork: true
+  allowInternalNetwork: false
   enabled: true
   env:
     API_URL: 'http://api'
@@ -4441,7 +4811,6 @@ web:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     TRACKING_DOMAIN: 'island.is'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
@@ -4464,6 +4833,17 @@ web:
       replicas:
         max: 50
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:
@@ -4510,6 +4890,8 @@ web:
     create: true
     name: 'web'
 xroad-collector:
+  allowExternalNetwork: false
+  allowInternalNetwork: false
   args:
     - '--no-experimental-fetch'
     - 'main.cjs'

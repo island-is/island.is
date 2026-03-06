@@ -143,8 +143,8 @@ export const userNotificationServiceSetup = (services: {
         memory: '256Mi',
       },
     })
+    .allowInternalNetwork()
     .grantNamespaces(
-      'nginx-ingress-internal',
       'islandis',
       'identity-server-delegation',
       'application-system',

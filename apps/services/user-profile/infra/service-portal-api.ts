@@ -94,8 +94,8 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
       requests: { cpu: '100m', memory: '512Mi' },
     })
     .db()
+    .allowInternalNetwork()
     .grantNamespaces(
-      'nginx-ingress-internal',
       'islandis',
       'user-notification',
       'identity-server',

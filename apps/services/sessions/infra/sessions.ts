@@ -54,7 +54,8 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
         public: false,
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'islandis', 'identity-server')
+    .allowInternalNetwork()
+    .grantNamespaces('islandis', 'identity-server')
 
 export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
   service('services-sessions-worker')
