@@ -13,14 +13,22 @@ import { FileConfig } from '../../file/file.config'
 import { FileModule } from '../../file/file.module'
 import { FileStorageWrapperModule } from '../../file/fileStorageWrapper'
 import { PruneService } from './prune.service'
+import {FormsModule} from "../../forms/forms.module";
+import {OrganizationsModule} from "../../organizations/organizations.module";
+import {OrganizationPermissionsModule} from "../../organizationPermissions/organizationPermissions.module";
 
 @Module({
   imports: [
+    // Picking out models from the applicationsModule that are needed for pruning to avoid having to import the
+    // entire applicationsModule and its dependencies
     SequelizeModule.forFeature([Value, Application, ApplicationEvent]),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
     LoggingModule,
+    OrganizationsModule,
+    OrganizationPermissionsModule,
+    FormsModule,
     FileModule,
     FileStorageWrapperModule,
     AuditModule.forRoot(environment.audit),
