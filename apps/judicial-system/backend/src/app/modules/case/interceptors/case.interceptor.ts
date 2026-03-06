@@ -146,7 +146,10 @@ const transformCaseRepresentatives = (theCase: Case) => {
   ].filter((representative) => !!representative)
 }
 
-const transformCase = (theCase: Case, user: User | undefined) => {
+const transformCase = (
+  theCase: Case,
+  user: User | undefined,
+): Record<string, unknown> => {
   return {
     ...theCase.toJSON(),
     defendants: transformDefendants({
@@ -229,6 +232,16 @@ const transformCase = (theCase: Case, user: User | undefined) => {
       (isDefenceUser(user) || isPrisonSystemUser(user))
         ? undefined
         : theCase.rulingModifiedHistory,
+    parentCase: theCase.parentCase && transformCase(theCase.parentCase, user),
+    childCase: theCase.childCase && transformCase(theCase.childCase, user),
+    mergeCase: theCase.mergeCase && transformCase(theCase.mergeCase, user),
+    mergedCases:
+      theCase.mergedCases &&
+      theCase.mergedCases.map((mergedCase) => transformCase(mergedCase, user)),
+    splitCase: theCase.splitCase && transformCase(theCase.splitCase, user),
+    splitCases:
+      theCase.splitCases &&
+      theCase.splitCases.map((splitCase) => transformCase(splitCase, user)),
   }
 }
 

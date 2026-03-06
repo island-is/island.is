@@ -4,11 +4,13 @@ import { Box, Text, Stack } from '@island.is/island-ui/core'
 const TEXTBOX_COMPONENT_MAP = {
   BANK_ACCOUNT: 'bankAccount',
   ISK_NUMBERBOX: 'iskNumber',
+  ISK_SUMBOX: 'iskNumber',
   EMAIL: 'email',
   NATIONAL_ID: 'nationalId',
   PHONE_NUMBER: 'phoneNumber',
   PROPERTY_NUMBER: 'propertyNumber',
   TEXTBOX: 'text',
+  NUMBERBOX: 'number',
   TIME_INPUT: 'time',
   DATE_PICKER: 'date',
   DROPDOWN_LIST: 'listValue',

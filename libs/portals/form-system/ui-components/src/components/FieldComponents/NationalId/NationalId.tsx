@@ -42,7 +42,7 @@ const isCompanyNationalId = (id: string) => {
 
 export const NationalId = ({ item, dispatch, hasError }: Props) => {
   const { formatMessage } = useIntl()
-  const { control } = useFormContext()
+  const { control, setValue } = useFormContext()
 
   const watchedValue = useWatch({
     control,
@@ -66,6 +66,13 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
   const shouldQueryCompany =
     shouldQueryBase && isCompanyNationalId(queryId || '')
 
+  const nameField = `${item.id}_name`
+
+  // Keep RHF in sync with external "item" value (since Controller defaultValue won't update)
+  useEffect(() => {
+    setValue(nameField, getValue(item, 'name') ?? '')
+  }, [item, nameField, setValue])
+
   const { data: _nameData } = useQuery(IDENTITY_QUERY, {
     variables: { input: { nationalId: queryId } },
     fetchPolicy: 'cache-first',
@@ -73,6 +80,10 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
     onCompleted: (nameData) => {
       const newName = removeTypename(nameData?.identity?.name)
       if (newName) {
+        setValue(nameField, newName, {
+          shouldDirty: true,
+          shouldValidate: true,
+        })
         if (dispatch) {
           dispatch({
             type: 'SET_NAME',
@@ -91,6 +102,10 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
     onCompleted: (companyData) => {
       const fetched = companyData?.companyRegistryCompany?.name
       if (fetched) {
+        setValue(nameField, fetched, {
+          shouldDirty: true,
+          shouldValidate: true,
+        })
         if (dispatch) {
           dispatch({
             type: 'SET_NAME',
@@ -167,12 +182,29 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
 
       <Row>
         <Column span="10/10">
-          <Input
-            required={item?.isRequired ?? false}
-            label={formatMessage(m.namePerson)}
-            name="nafn"
-            disabled
-            value={getValue(item, 'name') ?? ''}
+          <Controller
+            key={item.id + '_name'}
+            name={item.id + '_name'}
+            control={control}
+            defaultValue={getValue(item, 'name') ?? ''}
+            rules={{
+              required: {
+                value: item?.isRequired ?? false,
+                message: formatMessage(m.required),
+              },
+            }}
+            render={({ field, fieldState }) => (
+              <Input
+                label={formatMessage(m.namePerson)}
+                name="nafn"
+                required={item?.isRequired ?? false}
+                backgroundColor="blue"
+                value={field.value}
+                readOnly
+                hasError={!!fieldState.error || !!hasError}
+                errorMessage={fieldState.error?.message}
+              />
+            )}
           />
         </Column>
       </Row>
