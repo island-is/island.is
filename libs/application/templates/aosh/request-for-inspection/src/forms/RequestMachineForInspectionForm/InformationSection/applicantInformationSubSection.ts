@@ -4,7 +4,7 @@ import { applicant as applicantMessages } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
 export const ApplicantInformationSubSection = buildSubSection({
-  id: 'applicantInformation',
+  id: 'applicant',
   title: applicantMessages.general.sectionTitle,
   children: [
     buildMultiField({
