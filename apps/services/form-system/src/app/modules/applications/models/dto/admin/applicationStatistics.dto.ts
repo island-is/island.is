@@ -28,4 +28,12 @@ export class ApplicationStatisticsDto {
   @Expose()
   @IsNumber()
   completedCount!: number
+
+  @ApiProperty()
+  @Expose()
+  institution?: string
+
+  @ApiProperty()
+  @Expose()
+  institutionContentfulSlug?: string
 }

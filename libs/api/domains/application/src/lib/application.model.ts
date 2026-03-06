@@ -168,6 +168,12 @@ export class ApplicationStatistics {
 
   @Field(() => String)
   name?: string
+
+  @Field(() => String, { nullable: true })
+  institution?: string
+
+  @Field(() => String, { nullable: true })
+  institutionContentfulSlug?: string
 }
 
 @ObjectType()

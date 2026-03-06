@@ -119,6 +119,14 @@ export class ApplicationStatistics {
   @Expose()
   @IsString()
   name?: string
+
+  @ApiProperty()
+  @Expose()
+  institution?: string
+
+  @ApiProperty()
+  @Expose()
+  institutionContentfulSlug?: string
 }
 
 export class ApplicationTypeAdmin {

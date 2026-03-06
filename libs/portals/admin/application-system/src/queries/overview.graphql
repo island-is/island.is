@@ -151,6 +151,8 @@ query getApplicationV2ApplicationStatisticsSuperAdmin(
     rejected
     approved
     name
+    institution
+    institutionContentfulSlug
   }
 }
 
@@ -166,6 +168,8 @@ query getApplicationV2ApplicationStatisticsInstitutionAdmin(
     rejected
     approved
     name
+    institution
+    institutionContentfulSlug
   }
 }
 

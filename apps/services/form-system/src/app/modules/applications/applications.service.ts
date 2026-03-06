@@ -1468,4 +1468,21 @@ export class ApplicationsService {
 
     return stats
   }
+
+  async getOrganizationByFormId(formId: string): Promise<Organization | undefined> {
+    const form = await this.formModel.findByPk(formId, {
+      include: [
+        {
+          model: this.organizationModel,
+          attributes: ['id', 'nationalId'],
+        },
+      ],
+    })
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${formId}' not found`)
+    }
+
+    return form.organization
+  }
 }

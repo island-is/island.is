@@ -2,7 +2,7 @@ import {
   Injectable,
   NestInterceptor,
   ExecutionContext,
-  CallHandler,
+  CallHandler, Inject,
 } from '@nestjs/common'
 import { plainToInstance } from 'class-transformer'
 import { mergeMap } from 'rxjs/operators'
@@ -12,6 +12,9 @@ import { getOrganizationInfoByNationalId } from '../../../../utils/organizationI
 import { ApplicationAdminDto } from '../models/dto/admin/applicationAdmin.dto'
 import { ApplicationAdminResponseDto } from '../models/dto/admin/applicationAdminResponse.dto'
 import { InstitutionDto } from '../models/dto/admin/institution.dto'
+import {ApplicationStatisticsDto} from "../models/dto/admin/applicationStatistics.dto";
+import {ApplicationsService} from "../applications.service";
+import {type Logger, LOGGER_PROVIDER} from "@island.is/logging";
 
 @Injectable()
 export class ApplicationAdminSerializer
@@ -99,6 +102,61 @@ export class InstitutionSerializer
     return plainToInstance(InstitutionDto, {
       ...institution,
       contentfulSlug: institutionInfo?.slug,
+    })
+  }
+}
+
+@Injectable()
+export class ApplicationStatisticsSerializer
+  implements NestInterceptor<ApplicationStatisticsDto[], ApplicationStatisticsDto[]>
+{
+  constructor(private identityService: IdentityClientService,
+              private applicationService: ApplicationsService,
+              @Inject(LOGGER_PROVIDER) private logger: Logger) {}
+  intercept(
+    _context: ExecutionContext,
+    next: CallHandler<ApplicationStatisticsDto[]>,
+  ): Observable<ApplicationStatisticsDto[]> {
+    return next
+      .handle()
+      .pipe(
+        mergeMap((applicationStatistics: ApplicationStatisticsDto[]) =>
+          from(
+            Promise.all(
+              applicationStatistics.map((applicationStatistics) => this.serialize(applicationStatistics)),
+            ).then((serialized) => plainToInstance(ApplicationStatisticsDto, serialized)),
+          ),
+        ),
+      )
+  }
+
+  private async serialize(
+    applicationStatistic: ApplicationStatisticsDto,
+  ): Promise<ApplicationStatisticsDto> {
+
+    const organization = await this.applicationService.getOrganizationByFormId(applicationStatistic.formId)
+
+    if (!organization) {
+      this.logger.warn(`Could not find organization for formId ${applicationStatistic.formId}`)
+      return plainToInstance(ApplicationStatisticsDto, {
+        ...applicationStatistic,
+        contentfulSlug: undefined,
+        institution: '',
+      })
+    }
+
+    const institutionName = await this.identityService.tryToGetNameFromNationalId(
+        organization.nationalId,
+        false,
+      )
+    const institutionInfo = getOrganizationInfoByNationalId(
+      organization.nationalId,
+    )
+
+    return plainToInstance(ApplicationStatisticsDto, {
+      ...applicationStatistic,
+      contentfulSlug: institutionInfo?.slug,
+      institution: institutionName ?? '',
     })
   }
 }
