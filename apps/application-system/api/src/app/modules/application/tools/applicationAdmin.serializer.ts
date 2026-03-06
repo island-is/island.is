@@ -369,7 +369,6 @@ export class ApplicationAdminStatisticsSerializer
     const institutionContentfulSlug =
       institutionMapper[model.typeid as ApplicationTypes]?.slug
 
-
     const dto = plainToInstance(ApplicationListAdminResponseDto, {
       ...model,
       name: name ?? '',

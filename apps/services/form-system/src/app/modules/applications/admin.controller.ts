@@ -23,7 +23,8 @@ import { InstitutionDto } from './models/dto/admin/institution.dto'
 import { ApplicationAdminResponseDto } from './models/dto/admin/applicationAdminResponse.dto'
 import { ApplicationStatisticsDto } from './models/dto/admin/applicationStatistics.dto'
 import {
-  ApplicationAdminSerializer, ApplicationStatisticsSerializer,
+  ApplicationAdminSerializer,
+  ApplicationStatisticsSerializer,
   InstitutionSerializer,
 } from './tools/applicationAdmin.serializer'
 import type { Locale } from '@island.is/shared/types'

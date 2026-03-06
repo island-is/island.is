@@ -1469,7 +1469,9 @@ export class ApplicationsService {
     return stats
   }
 
-  async getOrganizationByFormId(formId: string): Promise<Organization | undefined> {
+  async getOrganizationByFormId(
+    formId: string,
+  ): Promise<Organization | undefined> {
     const form = await this.formModel.findByPk(formId, {
       include: [
         {
