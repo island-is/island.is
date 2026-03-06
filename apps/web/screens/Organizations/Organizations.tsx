@@ -102,7 +102,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const [selectedTitleSortOption, setSelectedTitleSortOption] =
     useState<TitleSortOption>(titleSortOptions[0])
 
-  const [showOnlyIslandIs, setShowOnlyIslandIs] = useState<boolean>(false)
+  const [showOnlyIslandIs, setShowOnlyIslandIs] = useState<boolean>(true)
 
   const organizationsItems = useMemo(() => {
     const items = [...organizations.items]
@@ -263,19 +263,6 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                   <Inline space={2} alignY="center">
                     <RadioButton
                       name="organization-filter-type"
-                      id="organization-filter-all"
-                      label={n(
-                        'allPublicEntities',
-                        'Allir opinberir aðilar',
-                      )}
-                      checked={!showOnlyIslandIs}
-                      onChange={() => {
-                        setShowOnlyIslandIs(false)
-                        goToPage(1, false)
-                      }}
-                    />
-                    <RadioButton
-                      name="organization-filter-type"
                       id="organization-filter-island-is"
                       label={n(
                         'websitesOnIslandIs',
@@ -284,6 +271,19 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                       checked={showOnlyIslandIs}
                       onChange={() => {
                         setShowOnlyIslandIs(true)
+                        goToPage(1, false)
+                      }}
+                    />
+                    <RadioButton
+                      name="organization-filter-type"
+                      id="organization-filter-all"
+                      label={n(
+                        'allPublicEntities',
+                        'Allir opinberir aðilar',
+                      )}
+                      checked={!showOnlyIslandIs}
+                      onChange={() => {
+                        setShowOnlyIslandIs(false)
                         goToPage(1, false)
                       }}
                     />
