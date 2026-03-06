@@ -332,6 +332,36 @@ export class PaymentService {
     }
   }
 
+  async refundPayment(
+    applicationId: string,
+    reasonForRefund?: string,
+  ): Promise<void> {
+    const payment = await this.findPaymentByApplicationId(applicationId)
+    if (!payment) {
+      throw new NotFoundException(
+        `payment was not found for application id ${applicationId}`,
+      )
+    }
+    if (!payment.request_id) {
+      throw new Error('Request ID is not set for payment')
+    }
+
+    try {
+      await this.paymentsApi.refundControllerRefund({
+        refundPaymentInput: {
+          paymentFlowId: payment.request_id,
+          reasonForRefund,
+        },
+      })
+    } catch (error) {
+      this.logger.error(
+        `Failed to refund payment for application ${applicationId}`,
+        error,
+      )
+      throw error
+    }
+  }
+
   private auditPaymentCreation(
     user: User,
     applicationId: string,

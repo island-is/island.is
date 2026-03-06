@@ -68,7 +68,10 @@ export class ApplicationChargeService {
 
       if (requestId) {
         this.logger.info('deleteCharge chargeId', requestId)
-        await this.chargeFjsV2ClientService.deleteCharge(requestId)
+        await this.paymentService.refundPayment(
+          application.id,
+          'Application charge deleted',
+        )
       } else {
         this.logger.warn('No requestId found, skipping deleteCharge')
       }
