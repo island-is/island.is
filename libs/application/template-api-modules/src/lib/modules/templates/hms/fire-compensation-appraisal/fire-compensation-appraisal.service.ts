@@ -316,13 +316,6 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       // if (res.status !== 200) {
       // eslint-disable-next-line no-constant-condition
       if (true) {
-        // trigger refund for testing
-
-        await this.sharedTemplateAPIService.refundPayment(
-          application.id,
-          'Fulfillment failure',
-        )
-
         throw new TemplateApiError(
           'Failed to submit application, non 200 status',
           500,
