@@ -18,6 +18,7 @@ import { MessageDescriptor } from 'react-intl'
 import {
   differentNeedsMessages,
   pendingActionMessages,
+  primarySchoolMessages,
   sharedMessages,
 } from '../lib/messages'
 import {
@@ -1001,4 +1002,12 @@ export const mapApplicationType = (answers: FormValue) => {
     default:
       return ApplicationFeatureConfigType.ENROLLMENT
   }
+}
+
+export const getNewSchoolTitle = (application: Application) => {
+  const { applicationType } = getApplicationAnswers(application.answers)
+
+  return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+    ? primarySchoolMessages.school.subSectionTitle
+    : primarySchoolMessages.newSchool.subSectionTitle
 }

@@ -460,7 +460,7 @@ export class PaymentFlowService {
           : undefined,
       }
     } catch (e) {
-      this.logger.error(`Failed to get payment flow (${id})`, e)
+      this.logger.error(`[${id}] Failed to get payment flow`, e)
       throw e
     }
   }
@@ -478,7 +478,7 @@ export class PaymentFlowService {
     config: PaymentFlowUpdateConfig = { useRetry: false, throwOnError: false },
   ) {
     this.logger.info(
-      `Payment flow update [${update.paymentFlowId}][${update.type}][${update.message}]`,
+      `[${update.paymentFlowId}] ${update.type}: ${update.message}`,
     )
     const paymentFlow = (
       await this.paymentFlowModel.findOne({
@@ -562,10 +562,9 @@ export class PaymentFlowService {
           await this.updateEventDeliveryStatus(eventRecord.id, true)
 
           this.logger.info(
-            `[${update.paymentFlowId}] Successfully notified onUpdateUrl`,
+            `[${update.paymentFlowId}] Successfully notified onUpdateUrl [${update.type}]`,
             {
               url: paymentFlow.onUpdateUrl,
-              type: update.type,
               reason: update.reason,
             },
           )
@@ -717,7 +716,7 @@ export class PaymentFlowService {
       )
     } catch {
       this.logger.error(
-        `Failed to create payment confirmation (${paymentFlowId})`,
+        `[${paymentFlowId}] Failed to create payment confirmation`,
       )
 
       throw new BadRequestException(
@@ -921,12 +920,12 @@ export class PaymentFlowService {
       const code = mapFjsErrorToCode(e, true)
       if (code === FjsErrorCode.AlreadyCreatedCharge) {
         this.logger.error(
-          `CRITICAL: [${paymentFlowId}] FJS charge already exists but flow/fulfillment not updated. Manual reconciliation required.`,
+          `[${paymentFlowId}] CRITICAL: FJS charge already exists but flow/fulfillment not updated. Manual reconciliation required.`,
           e,
         )
       } else {
         this.logger.error(
-          `Failed to create payment charge (${paymentFlowId})`,
+          `[${paymentFlowId}] Failed to create payment charge`,
           e,
         )
       }
@@ -1096,9 +1095,6 @@ export class PaymentFlowService {
     paymentFlowId: string,
     correlationId: string,
   ): Promise<InferAttributes<CardPaymentDetails> | null> {
-    this.logger.info(
-      `Attempting to delete payment confirmation for flow ${paymentFlowId} with correlation ID ${correlationId}`,
-    )
     try {
       const [updatedCount, [updatedCardPaymentDetails]] =
         await this.cardPaymentDetailsModel.update(
@@ -1117,18 +1113,18 @@ export class PaymentFlowService {
 
       if (updatedCount > 0) {
         this.logger.info(
-          `Successfully marked payment confirmation for flow ${paymentFlowId}, correlation ID ${correlationId} as deleted`,
+          `[${paymentFlowId}] Payment confirmation marked as deleted (correlationId: ${correlationId})`,
         )
       } else {
         this.logger.warn(
-          `Payment confirmation not found or not marked as deleted for flow ${paymentFlowId}, correlation ID ${correlationId}. It might have been already deleted or never existed with this ID for the given flow.`,
+          `[${paymentFlowId}] Payment confirmation not found for deletion (correlationId: ${correlationId})`,
         )
       }
 
       return updatedCardPaymentDetails?.toJSON() ?? null
     } catch (error) {
       this.logger.error(
-        `Failed to delete payment confirmation for flow ${paymentFlowId}, correlation ID ${correlationId}`,
+        `[${paymentFlowId}] Failed to delete payment confirmation (correlationId: ${correlationId})`,
         { error },
       )
       // Not re-throwing, to prevent disruption of a primary flow (e.g., refund)
@@ -1145,9 +1141,6 @@ export class PaymentFlowService {
     confirmationRefId: string
     correlationId: string
   }): Promise<InferAttributes<PaymentFulfillment> | null> {
-    this.logger.info(
-      `Attempting to delete payment fulfillment for flow ${paymentFlowId} with correlation ID ${correlationId}`,
-    )
     try {
       const [updatedCount, [updatedPaymentFulfillment]] =
         await this.paymentFulfillmentModel.update(
@@ -1165,18 +1158,18 @@ export class PaymentFlowService {
         )
       if (updatedCount > 0) {
         this.logger.info(
-          `Successfully marked payment fulfillment for flow ${paymentFlowId}, correlation ID ${correlationId} as deleted`,
+          `[${paymentFlowId}] Payment fulfillment marked as deleted (correlationId: ${correlationId})`,
         )
       } else {
         this.logger.warn(
-          `Payment fulfillment not found or not marked as deleted for flow ${paymentFlowId}, correlation ID ${correlationId}. It might have been already deleted or never existed with this ID for the given flow.`,
+          `[${paymentFlowId}] Payment fulfillment not found for deletion (correlationId: ${correlationId})`,
         )
       }
 
       return updatedPaymentFulfillment?.toJSON() ?? null
     } catch (error) {
       this.logger.error(
-        `Failed to delete payment fulfillment for flow ${paymentFlowId}, correlation ID ${correlationId}`,
+        `[${paymentFlowId}] Failed to delete payment fulfillment (correlationId: ${correlationId})`,
         { error },
       )
       // Not re-throwing, to prevent disruption of a primary flow (e.g., refund)
@@ -1188,9 +1181,6 @@ export class PaymentFlowService {
     paymentFlowId: string,
     correlationId: string,
   ): Promise<InferAttributes<CardPaymentDetails> | null> {
-    this.logger.info(
-      `Attempting to restore payment confirmation for flow ${paymentFlowId} with correlation ID ${correlationId}`,
-    )
     const [updatedCount, [restoredCardPaymentDetails]] =
       await this.cardPaymentDetailsModel.update(
         { isDeleted: false },
@@ -1206,11 +1196,11 @@ export class PaymentFlowService {
 
     if (updatedCount > 0) {
       this.logger.info(
-        `Successfully restored payment confirmation for flow ${paymentFlowId}, correlation ID ${correlationId}`,
+        `[${paymentFlowId}] Payment confirmation restored (correlationId: ${correlationId})`,
       )
     } else {
       this.logger.warn(
-        `Payment confirmation not found or not restored for flow ${paymentFlowId}, correlation ID ${correlationId}`,
+        `[${paymentFlowId}] Payment confirmation not found for restore (correlationId: ${correlationId})`,
       )
     }
 
@@ -1224,9 +1214,6 @@ export class PaymentFlowService {
     paymentFlowId: string
     confirmationRefId: string
   }): Promise<InferAttributes<PaymentFulfillment> | null> {
-    this.logger.info(
-      `Attempting to restore payment fulfillment for flow ${paymentFlowId} with confirmationRefId ${confirmationRefId}`,
-    )
     const [updatedCount, [restoredPaymentFulfillment]] =
       await this.paymentFulfillmentModel.update(
         { isDeleted: false },
@@ -1242,11 +1229,11 @@ export class PaymentFlowService {
 
     if (updatedCount > 0) {
       this.logger.info(
-        `Successfully restored payment fulfillment for flow ${paymentFlowId}, confirmationRefId ${confirmationRefId}`,
+        `[${paymentFlowId}] Payment fulfillment restored (confirmationRefId: ${confirmationRefId})`,
       )
     } else {
       this.logger.warn(
-        `Payment fulfillment not found or not restored for flow ${paymentFlowId}, confirmationRefId ${confirmationRefId}`,
+        `[${paymentFlowId}] Payment fulfillment not found for restore (confirmationRefId: ${confirmationRefId})`,
       )
     }
 
