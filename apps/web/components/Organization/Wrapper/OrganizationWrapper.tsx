@@ -559,7 +559,7 @@ export const OrganizationFooter: React.FC<
 
   const { isServiceWeb } = useContext(GlobalContext)
 
-  if (namespace['usingDefaultFooter'] === true) {
+  if (namespace?.usingDefaultFooter === true) {
     const footerItems = organization?.footerItems ?? []
     if (footerItems.length === 0) return null
     return (
