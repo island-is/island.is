@@ -1,10 +1,4 @@
-import {
-  Field,
-  GraphQLISODateTime,
-  ID,
-  Int,
-  ObjectType,
-} from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
 import { Dispensation } from './dispensations.model'
 import {
   PrescribedItemCategoryEnum,

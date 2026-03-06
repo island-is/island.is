@@ -50,7 +50,9 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
     setPdfLoading(true)
 
     try {
-      const response = await getDocuments({ variables: { input: { id: productId } } })
+      const response = await getDocuments({
+        variables: { input: { id: productId } },
+      })
       const documents =
         response.data?.healthDirectoratePrescriptionDocuments.documents
 
