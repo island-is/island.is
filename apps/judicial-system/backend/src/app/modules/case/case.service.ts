@@ -1988,7 +1988,7 @@ export class CaseService {
     }
 
     // Handle court document creation on submitting an indictment case to court
-    if (shouldCreateCourtDocuments && theCase.withCourtSessions) {
+    if (shouldCreateCourtDocuments) {
       await this.handleInitialCourtDocumentCreation(theCase, transaction)
     }
 

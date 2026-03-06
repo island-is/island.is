@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common'
 import { MainResolver } from './graphql/main.resolver'
 import { SecondarySchoolApi } from './secondarySchool.service'
-import { SecondarySchoolClientModule } from '@island.is/clients/secondary-school'
+import {
+  SecondarySchoolClientModule,
+  SecondarySchoolPublicClientModule,
+} from '@island.is/clients/secondary-school'
 
 @Module({
-  imports: [SecondarySchoolClientModule],
+  imports: [SecondarySchoolClientModule, SecondarySchoolPublicClientModule],
   providers: [MainResolver, SecondarySchoolApi],
   exports: [SecondarySchoolApi],
 })
