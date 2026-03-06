@@ -46,11 +46,31 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
       const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
       const lastMonthIndex = lastMonthDate.getMonth()
 
-      const resp = await this.rentalsApiWithAuth(
-        auth,
-      ).apiDayRateEntriesEntityIdGet({
-        entityId: auth.nationalId,
-      })
+      // Log the request url to the RSK day-rate API to debug
+      const resp = await this.rentalsApiWithAuth(auth)
+        .withPreMiddleware(async ({ url, init }) => {
+          const headers = init?.headers
+            ? Object.fromEntries(new Headers(init.headers).entries())
+            : undefined
+
+          const reqData = {
+            url,
+            method: init?.method,
+            headers: headers
+              ? {
+                  ...headers,
+                  authorization: headers.authorization
+                    ? '[REDACTED]'
+                    : undefined,
+                  cookie: headers.cookie ? '[REDACTED]' : undefined,
+                }
+              : undefined,
+          }
+          this.logger.info('RSK day-rate request', reqData)
+        })
+        .apiDayRateEntriesEntityIdGet({
+          entityId: auth.nationalId,
+        })
 
       const dayRateEntryMap = buildDayRateEntryMap(resp)
 
@@ -74,6 +94,13 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           }
         })
         .filter((entry): entry is DayRateRecord => entry !== null)
+
+      this.logger.info('RSK day-rate response count', {
+        responseCount: resp.length,
+      })
+      this.logger.info('Computed previous-period entries', {
+        entryCount: entries.length,
+      })
 
       return entries
     } catch (error) {
@@ -181,14 +208,35 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         }
       })
 
-      await this.rentalDaysApiWithAuth(auth).apiRentalDaysEntityIdPost({
-        entityId: auth.nationalId,
-        rentalDayRegistrationModel: {
-          year: lastMonthDate.getFullYear(),
-          month: lastMonthIndex + 1, // Date is 0-11 based, but Skatturinn expects 1-12
-          entries,
-        },
-      })
+      await this.rentalDaysApiWithAuth(auth)
+        .withPreMiddleware(async ({ url, init }) => {
+          const headers = init?.headers
+            ? Object.fromEntries(new Headers(init.headers).entries())
+            : undefined
+
+          const reqData = {
+            url,
+            method: init?.method,
+            headers: headers
+              ? {
+                  ...headers,
+                  authorization: headers.authorization
+                    ? '[REDACTED]'
+                    : undefined,
+                  cookie: headers.cookie ? '[REDACTED]' : undefined,
+                }
+              : undefined,
+          }
+          this.logger.info('Skatturinn request', reqData)
+        })
+        .apiRentalDaysEntityIdPost({
+          entityId: auth.nationalId,
+          rentalDayRegistrationModel: {
+            year: lastMonthDate.getFullYear(),
+            month: lastMonthIndex + 1, // Date is 0-11 based, but Skatturinn expects 1-12
+            entries,
+          },
+        })
 
       return true
     } catch (error) {

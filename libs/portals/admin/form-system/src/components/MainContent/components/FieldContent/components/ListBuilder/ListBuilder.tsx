@@ -45,6 +45,7 @@ export const ListBuilder = () => {
   const [updateListItem] = useMutation(UPDATE_LIST_ITEM)
   const { control, controlDispatch, setSelectStatus, setInListBuilder } =
     useContext(ControlContext)
+  const { isPublished } = control
   const currentItem = control.activeItem.data as FormSystemField
   const { activeListItem } = control
   const listItems = currentItem?.list ?? ([] as FormSystemListItem[])
@@ -256,11 +257,13 @@ export const ListBuilder = () => {
         justifyContent="flexEnd"
         marginTop={2}
       >
-        <Box marginRight={2}>
-          <Button variant="ghost" onClick={addListItem}>
-            {formatMessage(m.addListItem)}
-          </Button>
-        </Box>
+        {!isPublished && (
+          <Box marginRight={2}>
+            <Button variant="ghost" onClick={addListItem}>
+              {formatMessage(m.addListItem)}
+            </Button>
+          </Box>
+        )}
         <div>
           <Button
             onClick={() => {

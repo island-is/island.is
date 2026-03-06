@@ -948,6 +948,20 @@ export const messages = defineMessages({
     id: 'sp.health:waitlists-intro',
     defaultMessage: 'Hér finnur þú biðlista ...',
   },
+  waitlistsIntroWithLink: {
+    id: 'sp.health:waitlists-intro-with-link',
+    defaultMessage:
+      'Hér getur þú séð hvar þú ert skráður á biðlista eftir heilbrigðisþjónustu. Núna birtast biðlistar frá <link>nokkrum stofnunum</link> en fleiri munu bætast við síðar.',
+  },
+  waitlistsModalTitle: {
+    id: 'sp.health:waitlists-modal-title',
+    defaultMessage: 'Biðlistar sem birtast hér:',
+  },
+  waitlistsModalBody: {
+    id: 'sp.health:waitlists-modal-body#markdown',
+    defaultMessage:
+      '- Landspítali (allar skurðaðgerðir, barna- og unglingageðdeild)\n- Heilbrigðisstofnun Vesturlands (liðskiptaaðgerðir)\n- Sjúkrahúsið á Akureyri (liðskiptaaðgerðir, endurhæfing)\n- Heilbrigðisstofnun Austurlands (geðheilsuteymi)\n- Klíníkin (liðskiptaaðgerðir)\n- Orkuhúsið (liðskiptaaðgerðir)\n- Reykjalundur (endurhæfing)',
+  },
   waitlistsDescriptionInfo: {
     id: 'sp.health:waitlists-description-info',
     defaultMessage: 'Lesa nánar um biðlista hér',
@@ -2003,6 +2017,10 @@ export const messages = defineMessages({
     defaultMessage: 'Svör þín við {title} hafa verið send',
     id: 'sp.health:your-answers-for-has-been-sent',
   },
+  yourAnswersHaveBeenSent: {
+    defaultMessage: 'Svör þín hafa verið send',
+    id: 'sp.health:your-answers-have-been-sent',
+  },
   questionnaireDraftSaved: {
     defaultMessage: 'Drög við {title} hafa verið vistuð',
     id: 'sp.health:questionnaire-draft-saved',
@@ -2167,6 +2185,10 @@ export const messages = defineMessages({
   landspitali: {
     defaultMessage: 'Landspítali',
     id: 'sp.health:landspitali',
+  },
+  landspitaliTooltip: {
+    defaultMessage: 'Landspítali hefur umsjón með gögnum um blóðflokka.',
+    id: 'sp.health:landspitali-tooltip',
   },
   invalidatePermit: {
     defaultMessage: 'Eyða',

@@ -1,5 +1,6 @@
 import { CreationOptional } from 'sequelize'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -132,6 +133,9 @@ export class Application extends Model<Application> {
   })
   formId!: string
 
+  @BelongsTo(() => Form, 'formId')
+  form!: Form
+
   @ForeignKey(() => Organization)
   @Column({
     type: DataType.STRING,
@@ -139,6 +143,9 @@ export class Application extends Model<Application> {
     field: 'organization_id',
   })
   organizationId!: string
+
+  @BelongsTo(() => Organization, 'organizationId')
+  organization?: Organization
 
   formName?: string
   formSlug?: string

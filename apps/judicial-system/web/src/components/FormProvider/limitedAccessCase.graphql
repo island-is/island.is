@@ -11,6 +11,44 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       id
       courtCaseNumber
     }
+    splitCases {
+      id
+      created
+      courtCaseNumber
+      defendants {
+        id
+        name
+        subpoenas {
+          id
+          created
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
+          defenderNationalId
+          caseId
+          defendantId
+          policeSubpoenaId
+        }
+      }
+      caseFiles {
+        id
+        created
+        modified
+        name
+        type
+        category
+        state
+        key
+        size
+        userGeneratedFilename
+        displayDate
+        submittedBy
+        fileRepresentative
+        isKeyAccessible
+        defendantId
+      }
+    }
     caseFiles {
       id
       created
@@ -51,6 +89,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       isVerdictAppealDeadlineExpired
       subpoenaType
       isSentToPrisonAdmin
+      isRegisteredInPrisonSystem
       sentToPrisonAdminDate
       openedByPrisonAdminDate
       punishmentType
@@ -169,6 +208,14 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealRulingDecision
     appealCaseNumber
     appealRulingModifiedHistory
+    notifications {
+      id
+      created
+      type
+      recipients {
+        success
+      }
+    }
     appealAssistant {
       id
       name
@@ -302,6 +349,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         isVerdictAppealDeadlineExpired
         subpoenaType
         isSentToPrisonAdmin
+        isRegisteredInPrisonSystem
         sentToPrisonAdminDate
         openedByPrisonAdminDate
         punishmentType

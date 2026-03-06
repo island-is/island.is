@@ -20,6 +20,7 @@ name: 'services-form-system-api'
 enabled: true
 env:
   CODE_OWNER: 'Advania'
+  COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'services_form_system_api'
   DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -28,6 +29,12 @@ env:
   FORM_SYSTEM_BUCKET: 'island-is-prod-form-system-presign-bucket'
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
+  NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+  NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default'
+  NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
+  NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+  NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
+  NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   S3_REGION: 'eu-west-1'
   S3_TIME_TO_LIVE_GET: '5'
@@ -95,7 +102,7 @@ initContainer:
     DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
 namespace: 'services-form-system-api'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -118,6 +125,7 @@ secrets:
   FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX'
   FORM_SYSTEM_ZENDESK_TENANT_ID_PROD: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_PROD'
   FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX'
+  NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
   SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST'
   SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD'
   SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME'

@@ -425,6 +425,19 @@ export const mNotifications = defineMessages({
     id: 'sp.notifications:app-notifications-aria-label',
     defaultMessage: 'Fá tilkynningar í Ísland.is appinu?',
   },
+  smsNotifications: {
+    id: 'sp.notifications:sms-notifications',
+    defaultMessage: 'Tilkynningar í smáskilaboðum (SMS)',
+  },
+  smsNotificationsDescription: {
+    id: 'sp.notifications:sms-notifications-description',
+    defaultMessage:
+      'Ef þú ert ekki með Ísland.is appið getur þú fengið ákveðnar tilkynningar frá stofnunum sendar sem smáskilaboð.',
+  },
+  smsNotificationsAriaLabel: {
+    id: 'sp.notifications:sms-notifications-aria-label',
+    defaultMessage: 'Fá tilkynningar í smáskilaboðum?',
+  },
   delegations: {
     id: 'sp.notifications:delegations',
     defaultMessage: 'Umboð',

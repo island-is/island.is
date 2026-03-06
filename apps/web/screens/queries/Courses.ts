@@ -92,6 +92,17 @@ export const GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY = gql`
   }
 `
 
+export const GET_COURSE_AVAILABILITY_QUERY = gql`
+  query GetCourseAvailability($input: GetCourseAvailabilityInput!) {
+    getCourseAvailability(input: $input) {
+      instances {
+        id
+        isFullyBooked
+      }
+    }
+  }
+`
+
 export const GET_COURSE_LIST_PAGE_BY_ID_QUERY = gql`
   query GetCourseListPageById($input: GetCourseListPageByIdInput!) {
     getCourseListPageById(input: $input) {

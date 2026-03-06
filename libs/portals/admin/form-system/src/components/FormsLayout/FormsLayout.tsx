@@ -8,7 +8,7 @@ import { Forms } from '../Forms/Forms'
 import { FormsHeader } from './components/FormsHeader'
 
 export const FormsLayout = () => {
-  const { location } = useContext(FormsContext)
+  const { location, isAdmin } = useContext(FormsContext)
   const { formatMessage } = useIntl()
 
   return (
@@ -22,7 +22,7 @@ export const FormsLayout = () => {
         />
         <InfoButton />
       </Box>
-      <FormsHeader />
+      {isAdmin && <FormsHeader />}
       {location === 'forms' ? (
         <Forms />
       ) : location === 'admin' ? (
