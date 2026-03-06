@@ -206,6 +206,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     selectedSchoolId,
     alternativeSpecialEducationDepartment,
     currentSchoolId,
+    hasCurrentSchool,
     currentNursery,
     applyForPreferredSchool,
     payerName,
@@ -274,7 +275,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         relationTypeId: relative.relation,
       })),
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
-        ? { defaultOrganizationId: primaryOrgId || currentSchoolId }
+        ? {
+            defaultOrganizationId:
+              primaryOrgId ||
+              (hasCurrentSchool === YES ? currentSchoolId : undefined),
+          }
         : applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && {
             defaultOrganizationId: currentNursery,
           }),
