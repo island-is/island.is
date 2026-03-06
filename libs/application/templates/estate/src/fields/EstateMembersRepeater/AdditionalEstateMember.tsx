@@ -293,11 +293,7 @@ export const AdditionalEstateMember = ({
               </GridColumn>
               <GridColumn span={['1/1']} paddingBottom={2}>
                 <LookupPerson
-                  message={
-                    selectedEstate === EstateTypes.divisionOfEstateByHeirs
-                      ? formatMessage(m.inheritanceUnder18Error)
-                      : formatMessage(m.inheritanceUnder18ErrorAdvocate)
-                  }
+                  message={formatMessage(m.inheritanceUnder18ErrorAdvocate)}
                   nested
                   field={{
                     id: `${fieldIndex}.advocate`,
@@ -334,8 +330,7 @@ export const AdditionalEstateMember = ({
           </Box>
         )}
       {/* ADVOCATE 2 */}
-      {selectedEstate === EstateTypes.divisionOfEstateByHeirs &&
-        (currentEstateMember?.nationalId || hasForeignCitizenship) &&
+      {(currentEstateMember?.nationalId || hasForeignCitizenship) &&
         requiresAdvocate && (
           <Box
             marginTop={2}
