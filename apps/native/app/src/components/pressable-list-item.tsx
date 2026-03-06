@@ -1,7 +1,6 @@
 import React, { memo } from 'react'
 
 import { DocumentCategory, DocumentV2 } from '@/graphql/types/schema'
-import { navigateTo } from '@/lib/deep-linking'
 import { useOrganizationsStore } from '@/stores/organizations-store'
 import { InboxCard } from '@/ui'
 import { Filters } from '../utils/inbox-filters'
@@ -55,10 +54,14 @@ export const PressableListItem = memo(
             ? isSelected
               ? setSelectedItems(selectedItems.filter((id) => id !== item.id))
               : setSelectedItems([...selectedItems, item.id])
-            : navigateTo(`/inbox/${item.id}`, {
-                title: item.sender.name,
-                isUrgent: item.isUrgent,
-                listParams,
+            : router.navigate({
+                pathname: '/inbox/:id',
+              params: {
+                  id: item.id,
+                  title: item.sender.name,
+                  isUrgent: String(item.isUrgent),
+                  listParams: JSON.stringify(listParams),
+                },
               });
         }
         }

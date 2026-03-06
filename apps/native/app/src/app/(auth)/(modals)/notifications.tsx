@@ -79,9 +79,10 @@ export default function NotificationsScreen() {
     ({ updateNavigationUnseenCount }) => updateNavigationUnseenCount,
   )
 
-  const { data, loading, error, fetchMore, networkStatus } = useGetUserNotificationsQuery({
-    variables: { input: { limit: DEFAULT_PAGE_SIZE }, locale: useLocale() },
-  })
+  const { data, loading, error, fetchMore, networkStatus } =
+    useGetUserNotificationsQuery({
+      variables: { input: { limit: DEFAULT_PAGE_SIZE }, locale: useLocale() },
+    })
   const showError = error && !data
 
   const [markUserNotificationAsRead] = useMarkUserNotificationAsReadMutation()
@@ -138,10 +139,9 @@ export default function NotificationsScreen() {
 
       navigateToUniversalLink({
         link: notification.message?.link?.url,
-        openBrowser,
       })
     },
-    [markUserNotificationAsRead, openBrowser],
+    [markUserNotificationAsRead],
   )
 
   const handleEndReached = async () => {
@@ -240,19 +240,19 @@ export default function NotificationsScreen() {
 
   return (
     <>
-    <StackScreen closeable networkStatus={networkStatus} />
-    <FlatList
-      style={{ flex: 1 }}
-      data={memoizedData}
-      keyExtractor={keyExtractor}
-      renderItem={renderNotificationItem}
-      onEndReachedThreshold={0.5}
-      onEndReached={handleEndReached}
-      scrollEventThrottle={16}
-      contentInsetAdjustmentBehavior="automatic"
-      nestedScrollEnabled
-      stickyHeaderIndices={Platform.OS === 'android' ? [0] : undefined}
-      ListHeaderComponent={
+      <StackScreen closeable networkStatus={networkStatus} />
+      <FlatList
+        style={{ flex: 1 }}
+        data={memoizedData}
+        keyExtractor={keyExtractor}
+        renderItem={renderNotificationItem}
+        onEndReachedThreshold={0.5}
+        onEndReached={handleEndReached}
+        scrollEventThrottle={16}
+        contentInsetAdjustmentBehavior="automatic"
+        nestedScrollEnabled
+        stickyHeaderIndices={Platform.OS === 'android' ? [0] : undefined}
+        ListHeaderComponent={
           <ButtonWrapper>
             <Button
               isOutlined
@@ -287,19 +287,19 @@ export default function NotificationsScreen() {
               }}
             />
           </ButtonWrapper>
-      }
-      ListFooterComponent={
-        loadingMore && !error ? (
-          <LoadingWrapper>
-            <ActivityIndicator
-              size="small"
-              animating
-              color={theme.color.blue400}
-            />
-          </LoadingWrapper>
-        ) : null
-      }
-    />
+        }
+        ListFooterComponent={
+          loadingMore && !error ? (
+            <LoadingWrapper>
+              <ActivityIndicator
+                size="small"
+                animating
+                color={theme.color.blue400}
+              />
+            </LoadingWrapper>
+          ) : null
+        }
+      />
     </>
   )
 }

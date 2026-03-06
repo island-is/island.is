@@ -1,24 +1,33 @@
 import { Href, router } from 'expo-router'
+import * as Router from 'expo-router'
 import {
   GenericLicenseType,
   NotificationMessage,
 } from '../graphql/types/schema'
+import { match } from 'path-to-regexp'
+import * as WebBrowser from 'expo-web-browser'
 
-type MapTemplate = Href | ((params: Record<string, string>) => Href)
+const UNIVERSAL_LINK_BASE = 'https://island.is'
 
-const minarSidurMap: Record<string, MapTemplate> = {
+// Map of universal link paths to native routes.
+// The key is a path pattern to match against the incoming URL,
+// and the value is either a static route or a function that generates a route with params.
+const routes: Record<
+  string,
+  Href | ((params: Router.UnknownInputParams) => Href)
+> = {
   // Inbox
   '/minarsidur/postholf': '/inbox',
   '/minarsidur/postholf/:id': ({ id }) => ({
     pathname: '/inbox/[id]',
-    params: { id },
+    params: { id: id as string },
   }),
   // Wallet
   '/minarsidur/skirteini': '/wallet',
   '/minarsidur/skirteini/:provider/:type/:id': ({ id, type }) => ({
     pathname: '/wallet/[licenseType]/[id]',
     params: {
-      id,
+      id: id as string,
       licenseType:
         {
           vegabref: GenericLicenseType.Passport,
@@ -31,7 +40,7 @@ const minarSidurMap: Record<string, MapTemplate> = {
           skotvopnaleyfi: GenericLicenseType.FirearmLicense,
           ororkuskirteini: GenericLicenseType.DisabilityLicense,
           nafnskirteini: GenericLicenseType.IdentityDocument,
-        }[type] || type,
+        }[type as string] || (type as string),
     },
   }),
   // Health
@@ -45,7 +54,7 @@ const minarSidurMap: Record<string, MapTemplate> = {
     '/health/medicine/delegation/new',
   '/minarsidur/heilsa/lyf/lyfjaumbod/:id': ({ id }) => ({
     pathname: '/health/medicine/delegation/[id]',
-    params: { id },
+    params: { id: id as string },
   }),
   // Family
   '/minarsidur/min-gogn/yfirlit': '/more/family',
@@ -60,7 +69,7 @@ const minarSidurMap: Record<string, MapTemplate> = {
           'klaradar-umsoknir': 'complete',
           'i-vinnslu': 'in-progress',
           'opnar-umsoknir': 'open',
-        }[status] || status,
+        }[status as string] || (status as string),
     },
   }),
   '/minarsidur/umsoknir/klaradar-umsoknir': {
@@ -71,7 +80,7 @@ const minarSidurMap: Record<string, MapTemplate> = {
   '/minarsidur/eignir/fasteignir': '/more/assets',
   '/minarsidur/eignir/fasteignir/:id': ({ id }) => ({
     pathname: '/more/assets/[id]',
-    params: { id },
+    params: { id: id as string },
   }),
   // Finance
   '/minarsidur/fjarmal/stada': '/more/finance',
@@ -79,11 +88,11 @@ const minarSidurMap: Record<string, MapTemplate> = {
   '/minarsidur/eignir/okutaeki/min-okutaeki': '/more/vehicles',
   '/minarsidur/eignir/okutaeki/min-okutaeki/:id': ({ id }) => ({
     pathname: '/more/vehicles/[id]',
-    params: { id },
+    params: { id: id as string },
   }),
   '/minarsidur/eignir/okutaeki/min-okutaeki/:id/kilometrastada': ({ id }) => ({
     pathname: '/more/vehicles/[id]/mileage',
-    params: { id },
+    params: { id: id as string },
   }),
   // Air discount
   '/minarsidur/loftbru': '/more/air-discount',
@@ -93,31 +102,10 @@ const minarSidurMap: Record<string, MapTemplate> = {
   '/minarsidur/min-gogn/tilkynningar': '/notifications',
 }
 
-const navigateTimeMap = new Map<string, number>()
-
-const NAVIGATE_TIMEOUT = 500
-
-function matchPattern(
-  pattern: string,
-  path: string,
-): Record<string, string> | null {
-  const patternParts = pattern.split('/')
-  const pathParts = path.split('/')
-
-  if (patternParts.length !== pathParts.length) return null
-
-  const params: Record<string, string> = {}
-
-  for (let i = 0; i < patternParts.length; i++) {
-    if (patternParts[i].startsWith(':')) {
-      params[patternParts[i].slice(1)] = decodeURIComponent(pathParts[i])
-    } else if (patternParts[i] !== pathParts[i]) {
-      return null
-    }
-  }
-
-  return params
-}
+// Compiled map of links
+const compiledRoutes = Object.entries(routes).map(
+  ([pattern, route]) => [match(pattern), route] as const,
+)
 
 /**
  * Find a matching native route for a universal link URL.
@@ -125,44 +113,22 @@ function matchPattern(
  * Returns the mapped expo-router path, or null if no match.
  */
 export function findRoute(url: string): Href | null {
-  // Remove trailing slash and spaces
-  const cleanLink = url.replace(/\/\s*$/, '')
-  // Remove domain if present
-  const pathWithQuery = cleanLink.replace(/https?:\/\/[^/]+/, '')
-  // Remove query string and hash
-  const path = pathWithQuery.replace(/[?#].*$/, '')
-
-  for (const [pattern, routeTemplate] of Object.entries(minarSidurMap)) {
-    const params = matchPattern(pattern, path)
-    if (typeof routeTemplate === 'function') {
-      return routeTemplate(params ?? {});
+  const cleanUrl = new URL(url, UNIVERSAL_LINK_BASE)
+  for (const [matchFn, href] of compiledRoutes) {
+    const result = matchFn(cleanUrl.pathname)
+    if (result) {
+      if (typeof href === 'function') {
+        // Combine params from the URL path and the query string.
+        const params = {
+          ...Object.fromEntries(cleanUrl.searchParams.entries()),
+          ...result.params,
+        } as Record<string, string>
+        return href(params)
+      }
+      return href
     }
-    return routeTemplate;
   }
-
   return null
-}
-
-/**
- * Navigate to a specific url within the app.
- * Includes a 500ms throttle to prevent duplicate navigations from double-taps.
- * @param url Navigating url (ex. /inbox, /inbox/my-document-id, /wallet etc.)
- */
-export function navigateTo(url: string, extraProps: Record<string, any> = {}) {
-  const now = Date.now()
-  const lastNavigate = navigateTimeMap.get(url)
-
-  if (lastNavigate && now - lastNavigate <= NAVIGATE_TIMEOUT) {
-    return
-  }
-
-  navigateTimeMap.set(url, now)
-
-  if (Object.keys(extraProps).length > 0) {
-    router.navigate({ pathname: url as any, params: extraProps })
-  } else {
-    router.navigate(url as any)
-  }
 }
 
 /**
@@ -171,21 +137,21 @@ export function navigateTo(url: string, extraProps: Record<string, any> = {}) {
  */
 export function navigateToUniversalLink({
   link,
-  openBrowser,
 }: {
   link?: NotificationMessage['link']['url']
-  openBrowser?: (link: string) => void
 }) {
   if (!link) return
 
   const appRoute = findRoute(link)
 
   if (appRoute) {
-    return router.navigate(appRoute);
+    return router.navigate(appRoute, {
+      withAnchor: true,
+    })
   }
 
   // No matching native route — open in browser
-  if (openBrowser) {
-    openBrowser(link)
-  }
+  WebBrowser.openBrowserAsync(link, {
+    presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+  })
 }

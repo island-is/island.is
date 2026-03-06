@@ -46,6 +46,7 @@
     "expo-system-ui": "~55.0.9",
     "expo-web-browser": "~55.0.9",
     "lodash": "4.17.23",
+    "path-to-regexp": "8.3.0",
     "react": "19.2.3",
     "react-apollo-network-status": "5",
     "react-dom": "19.2.3",
@@ -76,6 +77,7 @@
   "devDependencies": {
     "@types/lodash": "^4",
     "@types/react": "~19.2.2",
+    "firebase-admin": "13.7.0",
     "react-test-renderer": "19.2.0",
     "typescript": "~5.9.2"
   },

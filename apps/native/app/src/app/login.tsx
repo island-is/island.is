@@ -54,6 +54,7 @@ const LightButtonText = styled.Text`
 export default function LoginScreen() {
   const authStore = useAuthStore()
   const { environment = environments.prod, cognito } = useEnvironmentStore()
+  console.log('Current environment:', environment) // Debug log for environment
   const { openBrowser } = useBrowser()
   const intl = useIntl()
   const [isLoggingIn, setIsLoggingIn] = useState(false)

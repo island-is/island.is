@@ -14,12 +14,12 @@ import {
   AirDiscountCard,
 } from '@/ui'
 import illustrationSrc from '@/assets/illustrations/le-jobs-s2.png'
-import { navigateTo } from '@/lib/deep-linking'
 import {
   GetAirDiscountQuery,
   useGetAirDiscountQuery,
 } from '@/graphql/types/schema'
 import { screenWidth } from '@/utils/dimensions'
+import { router } from 'expo-router'
 
 const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
@@ -112,13 +112,13 @@ const AirDiscountModule = React.memo(
         <Host>
           <TouchableOpacity
             disabled={count === 0}
-            onPress={() => navigateTo(`/air-discount`)}
+            onPress={() => router.navigate(`/more/air-discount`)}
           >
             <Heading
               button={
                 count === 0 ? null : (
                   <TouchableOpacity
-                    onPress={() => navigateTo('/air-discount')}
+                    onPress={() => router.navigate(`/more/air-discount`)}
                     style={{
                       flexDirection: 'row',
                       alignItems: 'center',

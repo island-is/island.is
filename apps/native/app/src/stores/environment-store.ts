@@ -49,7 +49,7 @@ export interface EnvironmentStore {
 export const environmentStore = create<EnvironmentStore>()(
   persist(
     (set, get) => ({
-      environment: environments.dev, // config.isTestingApp ? environments.dev : environments.prod,
+      environment: config.isTestingApp ? environments.dev : environments.prod,
       result: [],
       fetchedAt: 0,
       cognito: null,
@@ -130,5 +130,4 @@ export const environmentStore = create<EnvironmentStore>()(
     },
   ),
 )
-
 export const useEnvironmentStore = <U = EnvironmentStore>(selector?: (state: EnvironmentStore) => U) => useStore(environmentStore, selector!)

@@ -13,7 +13,7 @@ import {
   InboxCard,
 } from '@/ui'
 import leCompanys3 from '@/assets/illustrations/le-company-s3.png'
-import { navigateTo } from '@/lib/deep-linking'
+import { router } from 'expo-router'
 import {
   ListDocumentsQuery,
   useListDocumentsQuery,
@@ -69,14 +69,14 @@ const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
       <Host>
         <TouchableOpacity
           disabled={!documents.length}
-          onPress={() => navigateTo(`/inbox`)}
+          onPress={() => router.navigate(`/inbox`)}
           style={{ marginHorizontal: theme.spacing[2] }}
         >
           <Heading
             button={
               documents.length === 0 ? null : (
                 <TouchableOpacity
-                  onPress={() => navigateTo('/inbox')}
+                  onPress={() => router.navigate('/inbox')}
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
@@ -130,9 +130,13 @@ const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
               }
               isUrgent={item.isUrgent}
               onPress={() =>
-                navigateTo(`/inbox/${item.id}`, {
-                  title: item.sender.name,
-                  isUrgent: item.isUrgent,
+                router.navigate({
+                  pathname: '/inbox/:id',
+                  params: {
+                    id: item.id,
+                    title: item.sender.name,
+                    isUrgent: String(item.isUrgent),
+                  },
                 })
               }
             />

@@ -40,7 +40,6 @@ import { GenericLicenseType, useGetProfileQuery } from '@/graphql/types/schema'
 import { useAndroidNotificationPermission } from '@/hooks/use-android-notification-permission'
 import { useDeepLinkHandling } from '@/hooks/use-deep-link-handling'
 import { useLocale } from '@/hooks/use-locale'
-import { navigateTo } from '@/lib/deep-linking'
 import { useNotificationsStore } from '@/stores/notifications-store'
 import {
   preferencesStore,
@@ -198,7 +197,7 @@ export default function HomeScreen() {
   const isAppUpdateRequired = useCallback(async () => {
     const needsUpdate = await needsToUpdateAppVersion()
     if (needsUpdate) {
-      navigateTo('/update-app', { closable: false })
+      router.navigate({ pathname: '/update-app', params: { closable: String(false) } })
     }
   }, [])
 

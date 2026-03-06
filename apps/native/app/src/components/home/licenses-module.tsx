@@ -12,7 +12,7 @@ import {
   EmptyCard,
   GeneralCardSkeleton,
 } from '@/ui'
-import { navigateTo } from '@/lib/deep-linking'
+import { router } from 'expo-router'
 import {
   GenericLicenseType,
   GenericUserLicense,
@@ -119,13 +119,13 @@ const LicensesModule = React.memo(
         <Host>
           <TouchableOpacity
             disabled={count === 0}
-            onPress={() => navigateTo(`/wallet`)}
+            onPress={() => router.navigate('/wallet')}
           >
             <Heading
               button={
                 count === 0 ? null : (
                   <TouchableOpacity
-                    onPress={() => navigateTo('/wallet')}
+                    onPress={() => router.navigate('/wallet')}
                     style={{
                       flexDirection: 'row',
                       alignItems: 'center',

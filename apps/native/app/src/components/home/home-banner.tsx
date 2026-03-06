@@ -6,7 +6,7 @@ import styled, { useTheme } from 'styled-components/native'
 import chevronForwardIcon from '@/assets/icons/chevron-forward.png'
 import closeIcon from '@/assets/icons/close.png'
 import vehicleIcon from '@/assets/icons/filled-vehicle.png'
-import { navigateTo } from '@/lib/deep-linking'
+import { router } from 'expo-router'
 import { Typography } from '@/ui'
 
 const Host = styled.View`
@@ -101,7 +101,7 @@ export const HomeBanner = ({ visible, onClose }: HomeBannerProps) => {
           })}
         </Typography>
 
-        <CtaRow onPress={() => navigateTo('/vehicles')}>
+        <CtaRow onPress={() => router.navigate('/more/vehicles')}>
           <Typography color={theme.color.blue400} variant="eyebrow">
             {intl.formatMessage({ id: 'homeBanner.vehicleMileage.cta' })}
           </Typography>

@@ -4,7 +4,7 @@ import { Image } from 'react-native'
 import styled from 'styled-components/native'
 import clockIcon from '@/assets/icons/clock.png'
 import { HealthDirectorateMedicineHistoryItem } from '@/graphql/types/schema'
-import { navigateTo } from '@/lib/deep-linking'
+import { router } from 'expo-router'
 import { theme, Typography } from '@/ui'
 import chevronForward from '@/assets/icons/chevron-forward.png'
 
@@ -48,9 +48,10 @@ type MedicineHistoryCardProps = {
 export function MedicineHistoryCard({ medicine }: MedicineHistoryCardProps) {
   const intl = useIntl()
   const handlePress = useCallback(() => {
-    navigateTo('/prescriptions/medicine-history', {
-      medicine,
-    })
+    router.navigate({
+      pathname: '/prescriptions/medicine-history',
+      params: { medicine },
+    } as any)
   }, [medicine])
 
   return (

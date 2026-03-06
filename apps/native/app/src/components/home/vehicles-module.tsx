@@ -13,7 +13,7 @@ import {
   GeneralCardSkeleton,
 } from '@/ui'
 import illustrationSrc from '@/assets/illustrations/le-moving-s4.png'
-import { navigateTo } from '@/lib/deep-linking'
+import { router } from 'expo-router'
 import { VehicleItem } from '../vehicle-item'
 import {
   ListVehiclesV2Query,
@@ -119,13 +119,13 @@ const VehiclesModule = React.memo(
         <Host>
           <TouchableOpacity
             disabled={count === 0}
-            onPress={() => navigateTo(`/vehicles`)}
+            onPress={() => router.navigate('/more/vehicles')}
           >
             <Heading
               button={
                 count === 0 ? null : (
                   <TouchableOpacity
-                    onPress={() => navigateTo('/vehicles')}
+                    onPress={() => router.navigate('/more/vehicles')}
                     style={{
                       flexDirection: 'row',
                       alignItems: 'center',

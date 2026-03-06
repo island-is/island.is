@@ -2,7 +2,7 @@ import { Passkey } from 'react-native-passkey'
 import { suppressLockScreen } from '@/stores/auth-store'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { preferencesStore } from '@/stores/preferences-store'
-import { navigateTo } from '../lib/deep-linking'
+import { router } from 'expo-router'
 import { useAuthenticatePasskey } from '../lib/passkeys/useAuthenticatePasskey'
 import {
   addPasskeyAsLoginHint,
@@ -48,7 +48,7 @@ export const useBrowser = () => {
         })
       } else if (!hasOnboardedPasskeys) {
         // Open passkey onboarding screen
-        navigateTo('/passkey', { url, parentComponentId: componentId })
+        router.navigate({ pathname: '/passkey', params: { url, parentComponentId: componentId } })
       }
     } else {
       WebBrowser.openBrowserAsync(url, {
