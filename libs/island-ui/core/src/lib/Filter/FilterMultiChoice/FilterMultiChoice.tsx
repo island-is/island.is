@@ -152,9 +152,7 @@ export const FilterMultiChoice: FC<
             labelUse={category.labelAs || 'h5'}
             labelVariant="h5"
             labelColor={
-              !category.singleOption && category.selected.length > 0
-                ? 'blue400'
-                : 'currentColor'
+              category.selected.length > 0 ? 'blue400' : 'currentColor'
             }
             iconVariant="small"
           >
