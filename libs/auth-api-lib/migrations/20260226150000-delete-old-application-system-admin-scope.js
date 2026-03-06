@@ -1,6 +1,6 @@
 'use strict'
 
-const { QueryTypes } = require('sequelize');
+const { QueryTypes } = require('sequelize')
 
 /**
  * Sequelize migration:
@@ -26,8 +26,8 @@ module.exports = {
           transaction,
           replacements: { oldScope: SCOPE_NAME },
           type: QueryTypes.SELECT,
-        }
-      );
+        },
+      )
 
       if (!oldScope || oldScope.length === 0) {
         return
