@@ -127,25 +127,40 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
 
   // Get organizations of all applications currently fetched
   const availableOrganizations = isSuperAdmin
-    ? organizationListFromContentful?.flatMap((x) => {
-        const itemFoundInResponse =
-          organizationsWithApplicationData?.applicationV2InstitutionsSuperAdmin?.find(
-            (y) => y.contentfulSlug === x.slug,
+    ? organizationsWithApplicationData?.applicationV2InstitutionsSuperAdmin?.flatMap(
+        (responseOrg) => {
+          const contentfulOrg = organizationListFromContentful?.find(
+            (x) => x.slug === responseOrg.contentfulSlug,
           )
-        if (!itemFoundInResponse) {
-          return []
-        }
-        return [
-          {
-            ...x,
-            nationalId: itemFoundInResponse?.nationalId || '',
-          },
-        ]
-      })
-    : organizationListFromContentful.map((x) => ({
+
+          if (!contentfulOrg) {
+            if (!responseOrg.nationalId) {
+              return []
+            } else {
+              return [
+                {
+                  id: '',
+                  title: responseOrg.name ?? responseOrg.nationalId ?? '',
+                  slug: '',
+                  nationalId: responseOrg.nationalId,
+                  logo: null,
+                },
+              ]
+            }
+          }
+
+          return [
+            {
+              ...contentfulOrg,
+              nationalId: responseOrg.nationalId,
+            },
+          ]
+        },
+      ) ?? []
+    : organizationListFromContentful?.map((x) => ({
         ...x,
         nationalId: '',
-      })) || []
+      })) ?? []
 
   const handleSearchChange = (nationalId: string) => {
     const nationalIdWithoutDash = nationalId.replace('-', '')

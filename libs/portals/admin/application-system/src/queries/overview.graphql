@@ -172,6 +172,7 @@ query getApplicationV2ApplicationStatisticsInstitutionAdmin(
 query getApplicationV2InstitutionsSuperAdmin {
   applicationV2InstitutionsSuperAdmin {
     nationalId
+    name
     contentfulSlug
   }
 }

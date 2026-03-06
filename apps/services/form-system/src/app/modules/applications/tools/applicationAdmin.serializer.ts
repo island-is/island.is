@@ -72,6 +72,8 @@ export class ApplicationAdminSerializer
 export class InstitutionSerializer
   implements NestInterceptor<InstitutionDto[], InstitutionDto[]>
 {
+  constructor(private identityService: IdentityClientService) {}
+
   intercept(
     _context: ExecutionContext,
     next: CallHandler<InstitutionDto[]>,
@@ -96,8 +98,15 @@ export class InstitutionSerializer
       institution.nationalId,
     )
 
+    const institutionName =
+      await this.identityService.tryToGetNameFromNationalId(
+        institution.nationalId,
+        false,
+      )
+
     return plainToInstance(InstitutionDto, {
       ...institution,
+      name: institutionName,
       contentfulSlug: institutionInfo?.slug,
     })
   }
