@@ -123,18 +123,14 @@ const CourseInstancesField = () => {
               >
                 Duplicate
               </MenuItem>,
-              cardProps.onEdit || cardProps.onRemove ? (
-                <MenuDivider key="divider-duplicate" />
-              ) : null,
+              <MenuDivider key="divider-duplicate" />,
               <MenuItem key="edit" onClick={onEdit}>
                 Edit
               </MenuItem>,
-              cardProps.onRemove ? (
-                <MenuItem key="remove" onClick={cardProps.onRemove}>
-                  Remove
-                </MenuItem>
-              ) : null,
-            ].filter((item): item is JSX.Element => Boolean(item))}
+              <MenuItem key="remove" onClick={cardProps.onRemove}>
+                Remove
+              </MenuItem>,
+            ]}
             onClick={onEdit}
           />
         )
