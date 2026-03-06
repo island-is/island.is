@@ -282,7 +282,8 @@ export class HealthDirectorateService {
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
-          id: item.product.id,
+          id: item.prescriptionId.toString(),
+          productId: item.product.id,
           prescriptionId: item.prescriptionId,
           name: item.product.name,
           type: item.product.type,

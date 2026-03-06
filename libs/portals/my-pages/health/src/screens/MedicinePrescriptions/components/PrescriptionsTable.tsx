@@ -45,17 +45,21 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
     }
   }, [data])
 
-  const fetchPDFlink = async (id: string) => {
+  const fetchPDFlink = async (productId: string, rowIndex: number) => {
     if (pdfLoading) return
     setPdfLoading(true)
 
     try {
-      const response = await getDocuments({ variables: { input: { id } } })
-      const currentPrescription = prescriptions?.find((item) => item.id === id)
+      const response = await getDocuments({ variables: { input: { id: productId } } })
       const documents =
         response.data?.healthDirectoratePrescriptionDocuments.documents
 
-      if (currentPrescription) {
+      setPrescriptions((prevPrescriptions) => {
+        if (!prevPrescriptions) return prevPrescriptions
+        const currentPrescription = prevPrescriptions[rowIndex]
+        if (!currentPrescription) {
+          return prevPrescriptions
+        }
         const updatedPrescription: PrescriptionItem = {
           ...currentPrescription,
           documents: documents?.map((doc) => ({
@@ -64,13 +68,10 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
             name: doc.name ?? '',
           })),
         }
-
-        setPrescriptions((prevPrescriptions) =>
-          prevPrescriptions?.map((prescription) =>
-            prescription.id === id ? updatedPrescription : prescription,
-          ),
+        return prevPrescriptions.map((prescription, index) =>
+          index === rowIndex ? updatedPrescription : prescription,
         )
-      }
+      })
     } catch (error) {
       console.error('Error fetching URL:', error)
       setError(formatMessage(messages.errorFetchingUrl))
@@ -111,7 +112,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
               : null
 
             return {
-              id: `${item.id}-${i}`,
+              id: item.id,
               medicine: item?.name + ' ' + item?.strength,
               usedFor: item?.indication ?? '',
               process: item?.amountRemaining ?? '',
@@ -141,7 +142,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                   },
 
               onExpandCallback: () => {
-                fetchPDFlink(item.id)
+                fetchPDFlink(item.productId ?? item.id, i)
               },
 
               children: (
