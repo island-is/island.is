@@ -6,7 +6,7 @@ export enum RefundMethod {
   PAYMENT_GATEWAY = 'payment_gateway',
 }
 
-export class RefundCardPaymentResponse {
+export class RefundPaymentResponse {
   @ApiProperty({
     description: 'Indicates if the payment refund was successful',
     type: Boolean,

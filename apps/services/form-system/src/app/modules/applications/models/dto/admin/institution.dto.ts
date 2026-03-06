@@ -12,5 +12,11 @@ export class InstitutionDto {
   @Expose()
   @IsString()
   @IsOptional()
+  name?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  @IsOptional()
   contentfulSlug?: string
 }
