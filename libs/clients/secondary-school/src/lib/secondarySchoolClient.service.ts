@@ -1,11 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import {
-  SchoolsApi,
-  ApplicationsApi,
-  StudentsApi,
-  ProgrammesApi,
-} from '../../gen/fetch/apis'
+import { SchoolsApi, ApplicationsApi, StudentsApi } from '../../gen/fetch/apis'
 import {
   Application,
   ApplicationPeriod,
@@ -13,11 +8,6 @@ import {
   SecondarySchool,
   Student,
 } from './secondarySchoolClient.types'
-import {
-  ProgrammeFilterOptionsDto,
-  ProgrammeReturnDto,
-  ProgrammeSimpleReturnDto,
-} from '../../gen/fetch'
 
 @Injectable()
 export class SecondarySchoolClient {
@@ -25,7 +15,6 @@ export class SecondarySchoolClient {
     private readonly applicationsApi: ApplicationsApi,
     private readonly schoolsApi: SchoolsApi,
     private readonly studentsApi: StudentsApi,
-    private readonly publicProgrammesApi: ProgrammesApi,
   ) {}
 
   private applicationsApiWithAuth(auth: Auth) {
@@ -212,19 +201,5 @@ export class SecondarySchoolClient {
         throw new Error(`Failed to create application: ${error.message}`)
       }
     }
-  }
-
-  async getAllProgrammes(): Promise<ProgrammeSimpleReturnDto[]> {
-    return await this.publicProgrammesApi.v1ProgrammesGet()
-  }
-
-  async getFilterOptions(): Promise<ProgrammeFilterOptionsDto> {
-    return await this.publicProgrammesApi.v1ProgrammesFilterOptionsGet()
-  }
-
-  async getProgrammeById(id: string): Promise<ProgrammeReturnDto> {
-    return await this.publicProgrammesApi.v1ProgrammesProgrammeIdGet({
-      programmeId: id,
-    })
   }
 }

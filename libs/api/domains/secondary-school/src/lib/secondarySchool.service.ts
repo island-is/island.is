@@ -6,11 +6,17 @@ import {
   SecondarySchoolProgrammeFilterOptions,
   SecondarySchoolProgrammeDetail,
 } from './graphql/models'
-import { SecondarySchoolClient } from '@island.is/clients/secondary-school'
+import {
+  SecondarySchoolClient,
+  SecondarySchoolPublicClient,
+} from '@island.is/clients/secondary-school'
 
 @Injectable()
 export class SecondarySchoolApi {
-  constructor(private readonly secondarySchoolClient: SecondarySchoolClient) {}
+  constructor(
+    private readonly secondarySchoolClient: SecondarySchoolClient,
+    private readonly secondarySchoolPublicClient: SecondarySchoolPublicClient,
+  ) {}
 
   async getProgramsBySchoolId(
     auth: User,
@@ -21,14 +27,14 @@ export class SecondarySchoolApi {
   }
 
   async getAllProgrammes(): Promise<SecondarySchoolProgrammeSimple[]> {
-    return this.secondarySchoolClient.getAllProgrammes()
+    return this.secondarySchoolPublicClient.getAllProgrammes()
   }
 
   async getProgrammeFilterOptions(): Promise<SecondarySchoolProgrammeFilterOptions> {
-    return this.secondarySchoolClient.getFilterOptions()
+    return this.secondarySchoolPublicClient.getFilterOptions()
   }
 
   async getProgrammeById(id: string): Promise<SecondarySchoolProgrammeDetail> {
-    return this.secondarySchoolClient.getProgrammeById(id)
+    return this.secondarySchoolPublicClient.getProgrammeById(id)
   }
 }
