@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { isCompany } from 'kennitala'
+import { info, isCompany } from 'kennitala'
 
 import { User } from '@island.is/auth-nest-tools'
 import { DocumentsScope, notificationScopes } from '@island.is/auth/scopes'
@@ -39,19 +39,45 @@ import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
 
+const getOnBehalfOfLabel = (
+  onBehalfOf: string,
+  onBehalfOfNationalId: string | undefined,
+  isEnglish: boolean,
+): string => {
+  if (!onBehalfOfNationalId) return onBehalfOf
+  const kennitalaInfo = info(onBehalfOfNationalId)
+  const isChild =
+    kennitalaInfo.age !== undefined && kennitalaInfo.age !== null
+      ? kennitalaInfo.age < 18
+      : false
+  const suffix = isChild
+    ? isEnglish
+      ? 'child'
+      : 'barn'
+    : isEnglish
+      ? 'delegation'
+      : 'umboð'
+  return `${onBehalfOf}, ${suffix}`
+}
+
 const createSmsContent = ({
   fullName,
   onBehalfOf,
+  onBehalfOfNationalId,
   template,
   isEnglish,
 }: {
   fullName: string
   onBehalfOf?: string
+  onBehalfOfNationalId?: string
   template: HnippTemplate
   isEnglish: boolean
 }): string => {
   const linkText = isEnglish ? 'View on Island.is' : 'Skoda a Island.is'
-  return `${fullName}${onBehalfOf ? ` (${onBehalfOf})` : ''}: ${
+  const namePrefix = onBehalfOf
+    ? getOnBehalfOfLabel(onBehalfOf, onBehalfOfNationalId, isEnglish)
+    : fullName
+  return `${namePrefix}: ${
     template.title
   }\n\n${template.externalBody}${
     template.clickActionUrl
@@ -199,6 +225,7 @@ export class NotificationsWorkerService {
         formattedTemplate,
         fullName: recipientNames.shortName,
         onBehalfOf: onBehalfOfNames?.shortName,
+        onBehalfOfNationalId: args.onBehalfOf?.nationalId,
         locale,
       }),
     ])
@@ -381,6 +408,7 @@ export class NotificationsWorkerService {
           formattedTemplate,
           fullName: recipientNames.shortName,
           onBehalfOf: onBehalfOfNames?.shortName,
+          onBehalfOfNationalId: message.onBehalfOf?.nationalId,
           locale,
         }),
       ])
@@ -497,6 +525,7 @@ export class NotificationsWorkerService {
     formattedTemplate,
     fullName,
     onBehalfOf,
+    onBehalfOfNationalId,
     locale,
   }: {
     messageId: string
@@ -506,6 +535,7 @@ export class NotificationsWorkerService {
     formattedTemplate: HnippTemplate
     fullName: string
     onBehalfOf?: string
+    onBehalfOfNationalId?: string
     locale: Locale
   }): Promise<Omit<
     SmsQueueMessage,
@@ -562,6 +592,7 @@ export class NotificationsWorkerService {
       smsContent: createSmsContent({
         fullName,
         onBehalfOf,
+        onBehalfOfNationalId,
         template: formattedTemplate,
         isEnglish: locale === 'en',
       }),
