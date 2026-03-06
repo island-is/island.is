@@ -403,9 +403,7 @@ export const AsyncSearchInput = forwardRef<
               type={
                 inputType === 'number' ? 'text' : (inputType as 'text' | 'tel')
               }
-              value={
-                effectiveValue == null ? '' : String(effectiveValue)
-              }
+              value={effectiveValue == null ? '' : String(effectiveValue)}
               onValueChange={({ value: formattedValue }) => {
                 if (!inputOnChange) return
                 const target = { value: formattedValue }
