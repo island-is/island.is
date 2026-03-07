@@ -23,7 +23,13 @@ interface MachineSearchFieldProps {
 
 export const MachineSelectField: FC<
   React.PropsWithChildren<MachineSearchFieldProps & FieldBaseProps>
-> = ({ currentMachineList, application, setFieldLoadingState, field }) => {
+> = ({
+  currentMachineList,
+  application,
+  setFieldLoadingState,
+  field,
+  setSubmitButtonDisabled,
+}) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const machineValue = getValueViaPath(
@@ -94,6 +100,7 @@ export const MachineSelectField: FC<
           )
           setMachineId(currentMachine?.id || '')
           setIsLoading(false)
+          setSubmitButtonDisabled?.(false)
         })
         .catch((error) => console.error(error))
     }
@@ -113,7 +120,7 @@ export const MachineSelectField: FC<
         options={currentMachineList.map((machine, index) => {
           return {
             value: index.toString(),
-            label: `${machine.type}` || '',
+            label: `${machine.regNumber}` || '',
           }
         })}
         placeholder={formatMessage(information.labels.pickMachine.placeholder)}

@@ -29,7 +29,7 @@ export class RequestInspectionTemplateService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<MachinesWithTotalCount> {
     const result = await this.workMachineClientService.getMachines(auth)
-    if (!result || !result.totalCount) {
+    if (!result) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.machinesEmptyListDefault,
@@ -38,7 +38,7 @@ export class RequestInspectionTemplateService extends BaseTemplateApiService {
         400,
       )
     }
-    if (result.totalCount <= 5) {
+    if (result.totalCount <= 5 && result.totalCount > 0) {
       return {
         machines: await Promise.all(
           result.machines.map(async (machine) => {
