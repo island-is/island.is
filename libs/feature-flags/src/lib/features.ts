@@ -156,6 +156,7 @@ export enum Features {
   usePersonalRepresentativesFromSyslumenn = 'usePersonalRepresentativesFromSyslumenn',
   // SMS Notifications
   isSmsNotificationEnabled = 'isSmsNotificationEnabled',
+  isSendSmsNotificationsEnabled = 'isSendSmsNotificationsEnabled',
 
   // Admin portal
   isFormSystemInAdminPortalEnabled = 'isFormSystemInAdminPortalEnabled',
