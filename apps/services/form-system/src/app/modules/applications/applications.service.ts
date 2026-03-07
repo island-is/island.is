@@ -1293,8 +1293,12 @@ export class ApplicationsService {
     to?: string,
     locale?: Locale,
   ): Promise<ApplicationAdminResponseDto> {
-    const toDate = to ? new Date(to) : undefined
-    const fromDate = from ? new Date(from) : undefined
+    const fromDate = from
+      ? new Date(new Date(from).setHours(0, 0, 0, 0))
+      : undefined
+    const toDate = to
+      ? new Date(new Date(to).setHours(23, 59, 59, 999))
+      : undefined
 
     const offset = (page - 1) * limit
 

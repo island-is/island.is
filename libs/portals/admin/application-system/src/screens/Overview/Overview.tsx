@@ -266,6 +266,7 @@ const Overview = ({
           pageSize={pageSize}
           showAdminData={!!filters.typeIdValue}
           shouldShowCardButtons={false}
+          isSuperAdmin={isSuperAdmin}
           numberOfItems={
             isSuperAdmin
               ? superApplicationsData?.applicationV2ApplicationsSuperAdmin
