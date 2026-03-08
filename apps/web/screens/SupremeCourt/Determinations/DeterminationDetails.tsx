@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
+import { BLOCKS } from '@contentful/rich-text-types'
 
 import { SliceType } from '@island.is/island-ui/contentful'
 import { Box, GridContainer, Stack, Text } from '@island.is/island-ui/core'
@@ -112,7 +113,7 @@ const HtmlView = ({ item }: HtmlViewProps) => {
           <Box className={cn('rs_read', styles.textMaxWidth, styles.richText)}>
             {webRichText([item.richText] as SliceType[], {
               renderNode: {
-                blockquote: (_: unknown, children: ReactNode) => {
+                [BLOCKS.QUOTE]: (_: unknown, children: ReactNode) => {
                   return (
                     <Box paddingLeft={[3, 3, 5, 8]}>
                       <Text>{children}</Text>

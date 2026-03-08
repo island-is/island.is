@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import capitalize from 'lodash/capitalize'
+import { BLOCKS } from '@contentful/rich-text-types'
 
 import type { SliceType } from '@island.is/island-ui/contentful'
 import {
@@ -287,7 +288,7 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
               >
                 {webRichText([item.richText] as SliceType[], {
                   renderNode: {
-                    blockquote: (_: unknown, children: ReactNode) => {
+                    [BLOCKS.QUOTE]: (_: unknown, children: ReactNode) => {
                       return (
                         <Box paddingLeft={[3, 3, 5, 8]}>
                           <Text>{children}</Text>
