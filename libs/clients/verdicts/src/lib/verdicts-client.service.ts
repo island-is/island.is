@@ -31,7 +31,11 @@ const GOPRO_ID_PREFIX = 'g-'
 const SUPREME_COURT_ID_PREFIX = 's-'
 
 const convertHtmlToContentfulRichText = async (html: string, id: string) => {
-  const sanitizedHtml = sanitizeHtml(html)
+  const sanitizedHtml = sanitizeHtml(html, {
+    exclusiveFilter(frame) {
+      return frame.tag === 'table'
+    },
+  })
   const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
   const richText = await richTextFromMarkdown(markdown)
   return {

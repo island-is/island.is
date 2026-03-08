@@ -269,18 +269,28 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
                       </Box>
                     )}
                   </Stack>
-                  <Box className={styles.textMaxWidth} paddingX={[0, 6, 8, 12]}>
-                    <Text variant="h4" as="h3">
-                      {formatMessage(m.verdictPage.keywords)}
-                    </Text>
-                    <Text>{item.keywords.join(', ')}</Text>
-                  </Box>
-                  <Box className={styles.textMaxWidth} paddingX={[0, 6, 8, 12]}>
-                    <Text variant="h4" as="h3">
-                      {formatMessage(m.verdictPage.presentings)}
-                    </Text>
-                    <Text textAlign="justify">{item.presentings}</Text>
-                  </Box>
+                  {item.keywords.length > 0 && (
+                    <Box
+                      className={styles.textMaxWidth}
+                      paddingX={[0, 6, 8, 12]}
+                    >
+                      <Text variant="h4" as="h3">
+                        {formatMessage(m.verdictPage.keywords)}
+                      </Text>
+                      <Text>{item.keywords.join(', ')}</Text>
+                    </Box>
+                  )}
+                  {Boolean(item.presentings) && (
+                    <Box
+                      className={styles.textMaxWidth}
+                      paddingX={[0, 6, 8, 12]}
+                    >
+                      <Text variant="h4" as="h3">
+                        {formatMessage(m.verdictPage.presentings)}
+                      </Text>
+                      <Text textAlign="justify">{item.presentings}</Text>
+                    </Box>
+                  )}
                 </Stack>
               </Box>
               <Box
