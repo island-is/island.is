@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
@@ -277,14 +278,24 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
                     <Text variant="h4" as="h3">
                       {formatMessage(m.verdictPage.presentings)}
                     </Text>
-                    <Text>{item.presentings}</Text>
+                    <Text textAlign="justify">{item.presentings}</Text>
                   </Box>
                 </Stack>
               </Box>
               <Box
                 className={cn('rs_read', styles.textMaxWidth, styles.richText)}
               >
-                {webRichText([item.richText] as SliceType[])}
+                {webRichText([item.richText] as SliceType[], {
+                  renderNode: {
+                    blockquote: (_: unknown, children: ReactNode) => {
+                      return (
+                        <Box paddingLeft={[3, 3, 5, 8]}>
+                          <Text>{children}</Text>
+                        </Box>
+                      )
+                    },
+                  },
+                })}
               </Box>
             </Box>
           </GridContainer>
