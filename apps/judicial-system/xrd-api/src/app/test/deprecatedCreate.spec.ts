@@ -17,9 +17,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (
-  caseToCreate: DeprecatedCreateCaseDto,
-) => Promise<Then>
+type GivenWhenThen = (caseToCreate: DeprecatedCreateCaseDto) => Promise<Then>
 
 const config = appModuleConfig()
 describe('AppController - Deprecated create', () => {

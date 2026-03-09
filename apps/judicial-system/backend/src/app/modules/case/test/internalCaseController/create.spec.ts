@@ -87,14 +87,13 @@ describe('InternalCaseController - Create', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
-    givenWhenThen = async (
-      caseToCreate: DeprecatedInternalCreateCaseDto,
-    ) => {
+    givenWhenThen = async (caseToCreate: DeprecatedInternalCreateCaseDto) => {
       const then = {} as Then
 
       try {
-        then.result =
-          await internalCaseController.deprecatedCreate(caseToCreate)
+        then.result = await internalCaseController.deprecatedCreate(
+          caseToCreate,
+        )
       } catch (error) {
         then.error = error as Error
       }
@@ -326,7 +325,9 @@ describe('InternalCaseController - Create', () => {
 
   describe('creating user lookup fails', () => {
     const prosecutorNationalId = '1234567890'
-    const caseToCreate = { prosecutorNationalId } as DeprecatedInternalCreateCaseDto
+    const caseToCreate = {
+      prosecutorNationalId,
+    } as DeprecatedInternalCreateCaseDto
     let then: Then
 
     beforeEach(async () => {
