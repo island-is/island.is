@@ -431,7 +431,7 @@ Phase 2: Navigation Migration (highest risk)
 
 - [x] Install expo-router v4, @react-navigation/native, @react-navigation/bottom-tabs
 - [x] Create the app/ directory structure per the proposed layout above
-- [ ] Migrate screens incrementally by tab:
+- [x] Migrate screens incrementally by tab:
   a. HomeStack (simplest - 2 screens)
   b. ApplicationsStack (4 screens, no modals)
   c. InboxStack (4 screens, complex document detail)
@@ -439,15 +439,15 @@ Phase 2: Navigation Migration (highest risk)
   e. MoreStack (15+ screens, deepest nesting)
 - [ ] Migrate modal screens to (modals) group
 - [x] Port auth flow to root _layout.tsx redirect pattern
-- [ ] Port deep linking to expo-router's file-based scheme
-- [ ] Port universal link mapping to app.config.ts
+- [x] Port deep linking to expo-router's file-based scheme
+- [x] Port universal link mapping to app.config.ts
 
 Phase 3: Provider & State Integration
 
 - [x] Replace registerComponent() wrapper with a single root _layout.tsx provider tree
-- [ ] Replace react-native-navigation-hooks (useNavigationButtonPress, useNavigationComponentDidAppear) with React Navigation equivalents (useNavigation, useFocusEffect)
-- [ ] Port createNavigationOptionHooks to expo-router <Stack.Screen options={}> pattern
-- [ ] Port uiStore tab tracking to React Navigation tab events
+- [x] Replace react-native-navigation-hooks (useNavigationButtonPress, useNavigationComponentDidAppear) with React Navigation equivalents (useNavigation, useFocusEffect)
+- [x] Port createNavigationOptionHooks to expo-router <Stack.Screen options={}> pattern
+- [-] Port uiStore tab tracking to React Navigation tab events
 - [ ] Port notification badge to expo-router tab bar badge
 - [x] Port app lock overlay to expo-router modal or root-level component
 
