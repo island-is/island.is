@@ -3,6 +3,7 @@ import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
+
 import { ConfigType } from '@island.is/nest/config'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
