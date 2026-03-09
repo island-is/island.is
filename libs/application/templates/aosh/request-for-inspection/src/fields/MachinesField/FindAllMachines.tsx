@@ -9,6 +9,8 @@ import { information, applicationCheck, error } from '../../lib/messages'
 import { FindVehicleFormField } from '@island.is/application/ui-fields'
 import { ApolloQueryResult } from '@apollo/client'
 import { useLazyMachineDetailsByRegno } from '../../hooks/useLazyMachineDetails'
+import { formatMachineInformation } from '../../utils'
+import { useLocale } from '@island.is/localization'
 
 export const FindAllMachines: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -16,16 +18,19 @@ export const FindAllMachines: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   setSubmitButtonDisabled,
 }) => {
   const getMachineDetails = useLazyMachineDetailsByRegno()
+  const { locale } = useLocale()
   const createGetMachineDetailsWrapper = (
     getMachineDetailsFunction: (variables: {
-      regno: string
-      rel: string
+      input: { registrationNumber: string; locale: string }
     }) => Promise<ApolloQueryResult<any>>,
   ) => {
     return async (plate: string) => {
-      const variables = { regno: plate, rel: 'requestInspection' }
+      const variables = { input: { registrationNumber: plate, locale } }
       const result = await getMachineDetailsFunction(variables)
-      return result.data.getWorkerMachineByRegno // Adjust based on your query
+      const formattedResults = formatMachineInformation(
+        result.data.workMachineForInspection,
+      )
+      return formattedResults
     }
   }
 

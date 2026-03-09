@@ -15,3 +15,4 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
 
 export { getSelectedMachine } from './getSelectedMachine'
 export { isContactDifferentFromApplicant } from './isContactDifferentFromApplicant'
+export { formatMachineInformation } from './formatMachineInformation'

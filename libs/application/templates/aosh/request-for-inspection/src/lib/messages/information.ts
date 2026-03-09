@@ -62,7 +62,7 @@ export const information = {
       },
       hasErrorTitle: {
         id: 'aosh.rifm.application:information.labels.pickMachine.hasErrorTitle',
-        defaultMessage: 'Ekki er hægt að selja þetta tæki vegna:',
+        defaultMessage: 'Ekki er hægt að skoða þetta tæki vegna:',
         description: 'Pick machine has an error title',
       },
       notFoundTitle: {

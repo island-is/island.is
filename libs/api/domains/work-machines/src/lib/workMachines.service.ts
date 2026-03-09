@@ -1,4 +1,5 @@
 import {
+  MachineFriendlyDto,
   MachineSubCategoryDto,
   MachineTypeDto,
   WorkMachinesClientService,
@@ -226,6 +227,41 @@ export class WorkMachinesService {
     rel: string,
   ): Promise<MachineDto> {
     return this.machineService.getMachineDetail(auth, id, rel)
+  }
+
+  async getMachineDetailsForInspection(
+    auth: User,
+    input: GetWorkMachineInput,
+  ): Promise<WorkMachine | null> {
+    let data: MachineFriendlyDto | null
+    const { id, registrationNumber } = input
+    if (registrationNumber) {
+      data = await this.machineService.getMachineDetailsForInspection(auth, {
+        registrationNumber,
+      })
+    } else if (id) {
+      data = await this.machineService.getMachineDetailsForInspection(auth, {
+        registrationNumber: id,
+      })
+    } else {
+      return null
+    }
+
+    const [type, ...subType] = data.type?.split(' ') || ''
+
+    return {
+      id: data.id || '',
+      ownerNumber: data.ownerNumber || '',
+      licensePlateNumber: data.licensePlateNumber || '',
+      subType: subType.join(' '),
+      type: type,
+      category: data.category || '',
+      registrationNumber: data.registrationNumber || '',
+      supervisor: { name: data.supervisor || '' },
+      status: data.status || '',
+      paymentRequiredForOwnerChange: data.paymentRequiredForOwnerChange ?? true,
+      errorMessage: data.errorMessage || '',
+    }
   }
 
   async getMachineByRegno(
