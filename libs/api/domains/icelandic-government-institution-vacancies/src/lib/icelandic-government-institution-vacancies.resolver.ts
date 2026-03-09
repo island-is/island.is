@@ -18,7 +18,8 @@ import {
   CmsElasticsearchService,
   Vacancy,
 } from '@island.is/cms'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
+import { Features, FEATURE_FLAG_CLIENT } from '@island.is/nest/feature-flags'
+import type { FeatureFlagClient, FeatureFlagUser } from '@island.is/feature-flags'
 import { IcelandicGovernmentInstitutionVacanciesInput } from './dto/icelandicGovernmentInstitutionVacancies.input'
 import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandicGovernmentInstitutionVacanciesResponse'
 import { IcelandicGovernmentInstitutionVacancyByIdInput } from './dto/icelandicGovernmentInstitutionVacancyById.input'
@@ -44,7 +45,7 @@ import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FetchError } from '@island.is/clients/middlewares'
-import type { User, GraphQLContext } from '@island.is/auth-nest-tools'
+import type { GraphQLContext } from '@island.is/auth-nest-tools'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 const defaultLang = 'is'
@@ -101,11 +102,12 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     private readonly xRoadApi: DefaultApi,
     private readonly cmsElasticService: CmsElasticsearchService,
     private readonly cmsContentfulService: CmsContentfulService,
-    private readonly featureFlagService: FeatureFlagService,
+    @Inject(FEATURE_FLAG_CLIENT)
+    private readonly featureFlagClient: FeatureFlagClient,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
-  private getFeatureFlagUser(req: GraphQLContext['req']): User {
+  private getFeatureFlagUser(req: GraphQLContext['req']): FeatureFlagUser {
     const forwardedForHeader = req.headers['x-forwarded-for']
     const forwardedFor = Array.isArray(forwardedForHeader)
       ? forwardedForHeader.join(',')
@@ -115,17 +117,20 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       .map((ip) => ip.trim())
       .find((ip) => ip.length > 0)
 
+    const ip = forwardedIp ?? (req as any).ip ?? ''
+
     return {
-      ip: String(forwardedIp ?? (req as any).ip ?? ''),
-    } as User
+      id: '',
+      attributes: { ip: String(ip) },
+    }
   }
 
   private async getVacanciesFromExternalSystem(
     input: IcelandicGovernmentInstitutionVacanciesInput,
-    user?: User,
+    user?: FeatureFlagUser,
   ) {
     // Check feature flag to determine which client to use
-    const useNewApi = await this.featureFlagService.getValue(
+    const useNewApi = await this.featureFlagClient.getValue(
       Features.useNewVacancyApi,
       false,
       user,
@@ -336,10 +341,10 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   private async getVacancyFromExternalSystem(
     id: string,
     language?: VacancyLanguageEnum,
-    user?: User,
+    user?: FeatureFlagUser,
   ) {
     // Check feature flag to determine which client to use
-    const useNewApi = await this.featureFlagService.getValue(
+    const useNewApi = await this.featureFlagClient.getValue(
       Features.useNewVacancyApi,
       false,
       user,
@@ -473,7 +478,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     }
 
     // If no prefix is present then we determine what service to call depending on the feature flag and id format
-    const useNewApi = await this.featureFlagService.getValue(
+    const useNewApi = await this.featureFlagClient.getValue(
       Features.useNewVacancyApi,
       false,
       featureFlagUser,
