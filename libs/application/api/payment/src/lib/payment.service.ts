@@ -29,6 +29,8 @@ import {
   CreatePaymentFlowInputAvailablePaymentMethodsEnum,
   PaymentsApi,
 } from '@island.is/clients/payments'
+import { PaymentServiceCode } from '@island.is/shared/constants'
+import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class PaymentService {
@@ -354,6 +356,20 @@ export class PaymentService {
         },
       })
     } catch (error) {
+      console.log('error', JSON.stringify(error, null, 2))
+      if (error instanceof FetchError) {
+        console.log('error.problem', error.problem)
+        console.log('error.problem.detail', error.problem?.detail)
+        const errorMessage = error.problem?.detail
+        if (
+          errorMessage === PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded
+        ) {
+          console.log(
+            'PaymentFlowNotEligibleToBeRefunded error caught, stopping error and returning',
+          )
+          return
+        }
+      }
       this.logger.error(
         `Failed to refund payment for application ${applicationId}`,
         error,
