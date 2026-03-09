@@ -1,4 +1,3 @@
-import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import {
   BARCODE_MAX_WIDTH,
   INFORMATION_BASE_TOP_SPACING,
@@ -21,17 +20,15 @@ import {
   LICENSE_CARD_ROW_GAP,
   LicenseCard,
 } from '@/ui'
-import { isAndroid, isIos, isIosLiquidGlassEnabled } from '@/utils/devices'
+import { isAndroid, isIosLiquidGlassEnabled } from '@/utils/devices'
 import { screenWidth } from '@/utils/dimensions'
 import { useFragment_experimental } from '@apollo/client/react/hooks'
 import { useLocalSearchParams } from 'expo-router'
 import { StackScreen } from '@/components/stack-screen'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   ActivityIndicator,
-  Animated,
-  Easing,
   SafeAreaView,
   View
 } from 'react-native'
@@ -160,8 +157,6 @@ export default function WalletPassScreen() {
   const setWalletPassInfoAlertDismissed = usePreferencesStore(
     (state) => state.setWalletPassInfoAlertDismissed,
   )
-  const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
-  const fadeInAnim = useRef(new Animated.Value(0)).current
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
 
   const res = useGetLicenseQuery({
@@ -204,7 +199,7 @@ export default function WalletPassScreen() {
   const pkPassAllowed =
     data?.license?.pkpass &&
     data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
-  const allowLicenseBarcode = isBarcodeEnabled && pkPassAllowed && !isExpired
+  const allowLicenseBarcode = pkPassAllowed && !isExpired
   const licenseType = data?.license?.type
   const barcodeWidth = isTablet
     ? BARCODE_MAX_WIDTH // For tablets - make sure barcode is not huge
@@ -252,36 +247,13 @@ export default function WalletPassScreen() {
 
   // Calculate bottom inset based on the content
   const bottomInset =
-    informationTopSpacing || (!isConnected && isBarcodeEnabled)
+    informationTopSpacing || !isConnected
       ? isTablet
         ? 340
         : !allowLicenseBarcode
         ? 80 // less spacing needed if no barcode available (expired or not available)
         : 192 // Extra spacing needed at bottom if no button is shown
       : 0
-
-  const [key, setKey] = useState(0)
-  useEffect(() => {
-    // Used to rerender ScrollView to have correct ContentInset based on barcode/no barcode
-    // Remove once barcodes are live
-    setKey((prev) => prev + 1)
-  }, [isBarcodeEnabled])
-
-  const fadeIn = () => {
-    Animated.timing(fadeInAnim, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-      delay: 300,
-      easing: Easing.in(Easing.ease),
-    }).start()
-  }
-
-  useEffect(() => {
-    if (pkPassAllowed && !isBarcodeEnabled) {
-      fadeIn()
-    }
-  }, [pkPassAllowed, isBarcodeEnabled])
 
   const expirationTimeCallback = useCallback(() => {
     void res.refetch()
@@ -338,11 +310,7 @@ export default function WalletPassScreen() {
             }
             loading={res.loading}
             error={res.error}
-            logo={
-              isBarcodeEnabled
-                ? data?.payload?.metadata.photo ?? undefined
-                : undefined
-            }
+            logo={data?.payload?.metadata.photo ?? undefined}
             date={
               shouldShowExpireDate
                 ? new Date(expireDate)
@@ -371,16 +339,12 @@ export default function WalletPassScreen() {
           contentInset={{
             bottom: bottomInset,
           }}
-          key={key}
           topSpacing={informationTopSpacing}
         >
           <SafeAreaView
             style={{
               marginHorizontal: theme.spacing[2],
-              marginBottom:
-                pkPassAllowed && !isBarcodeEnabled && isIos
-                  ? theme.spacing[15]
-                  : theme.spacing[2],
+              marginBottom: theme.spacing[2],
             }}
           >
             {/* Show info alert if PCard, Ehic, Passport or IdentityDocument */}
@@ -445,11 +409,6 @@ export default function WalletPassScreen() {
 
           {isAndroid && <Spacer />}
         </Information>
-        {/*
-            Remove once isBarcodeEnabled will be removed. This is only temporary.
-            The reason for the animation is to avoid rendering flicker.
-            The component will on first render the isBarcodeEnabled flag to be false and then set it to true after Configcat has fetched the flag.
-         */}
         {addingToWallet && (
           <LoadingOverlay>
             <ActivityIndicator

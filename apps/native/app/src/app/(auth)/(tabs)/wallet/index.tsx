@@ -25,9 +25,7 @@ import { useAuthStore } from '@/stores/auth-store'
 import { syncLicenseWidgetData } from '@/lib/widget-sync'
 import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
 import { WalletItem } from '../../../../components/wallet-item'
-import { usePreferencesStore } from '@/stores/preferences-store'
 import {
-  Alert,
   Button,
   EmptyList,
   GeneralCardSkeleton,
@@ -63,8 +61,6 @@ export default function WalletScreen() {
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const userName = useAuthStore((s) => s.userInfo?.name)
-  const { dismiss, dismissed } = usePreferencesStore()
-  const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
   const isIdentityDocumentEnabled = useFeatureFlag(
     'isIdentityDocumentEnabled',
     false,
@@ -248,16 +244,8 @@ export default function WalletScreen() {
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}
         ListHeaderComponent={
-          (isIos && !isBarcodeEnabled) || hasChildLicenses ? (
+          hasChildLicenses ? (
             <View style={{ marginBottom: 16 }}>
-              {isIos && !isBarcodeEnabled && (
-                <Alert
-                  type="info"
-                  visible={!dismissed.includes('howToUseLicence')}
-                  message={intl.formatMessage({ id: 'wallet.alertMessage' })}
-                  onClose={() => dismiss('howToUseLicence')}
-                />
-              )}
               {hasChildLicenses && (
                 <Tabs>
                   <TabButtons
