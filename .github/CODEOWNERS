@@ -246,7 +246,6 @@ codemagic.yaml                                                                  
 /libs/api/domains/legal-gazette                                                                                              @island-is/hugsmidjan
 /libs/clients/judicial-system-sp/                                                                                            @island-is/hugsmidjan
 
-/libs/application/templates/alcohol-tax-redemption/                                                                          @island-is/norda
 /libs/application/templates/complaints-to-althingi-ombudsman/                                                                @island-is/norda
 /libs/application/templates/data-protection-complaint/                                                                       @island-is/norda
 /libs/application/templates/document-provider-onboarding/                                                                    @island-is/norda
@@ -470,6 +469,8 @@ codemagic.yaml                                                                  
 /apps/web/screens/UniversitySearch/                                                                                          @island-is/origo
 /apps/web/screens/queries/UniversityGateway.ts                                                                               @island-is/origo
 /apps/web/components/ListViewCard/                                                                                           @island-is/origo
+
+/apps/web/screens/SecondarySchoolStudies/                                                                                    @island-is/origo
 
 /libs/application/templates/directorate-of-immigration/                                                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/                                 @island-is/origo

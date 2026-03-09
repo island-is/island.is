@@ -1,14 +1,14 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
-import { Op } from 'sequelize'
+import { Op, QueryTypes } from 'sequelize'
 import { Application } from './models/application.model'
 import { ApplicationDto } from './models/dto/application.dto'
 import { Form } from '../forms/models/form.model'
@@ -51,6 +51,11 @@ import { NotificationResponseDto } from './models/dto/validation.response.dto'
 import { NotifyService } from '../services/notify.service'
 import { NotificationDto } from './models/dto/notification.dto'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { ApplicationTypeDto } from './models/dto/admin/applicationType.dto'
+import { InstitutionDto } from './models/dto/admin/institution.dto'
+import { ApplicationStatisticsDto } from './models/dto/admin/applicationStatistics.dto'
+import { ApplicationAdminResponseDto } from './models/dto/admin/applicationAdminResponse.dto'
+import { escapeLike } from './utils/escapeLike'
 
 @Injectable()
 export class ApplicationsService {
@@ -188,11 +193,21 @@ export class ApplicationsService {
   async update(
     id: string,
     updateApplicationDto: UpdateApplicationDto,
+    user: User,
   ): Promise<void> {
-    const application = await this.applicationModel.findByPk(id)
+    const application = await this.applicationModel.findByPk(id, {
+      include: [{ model: Value, as: 'values' }],
+    })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found`)
+    }
+
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new ForbiddenException(
+        `User does not have permission to update application '${id}'`,
+      )
     }
 
     if (updateApplicationDto.completed) {
@@ -234,13 +249,23 @@ export class ApplicationsService {
     await application.save()
   }
 
-  async submit(id: string): Promise<SubmitApplicationResponseDto> {
-    const application = await this.applicationModel.findByPk(id)
-    const form = await this.formModel.findByPk(application?.formId || '')
+  async submit(id: string, user: User): Promise<SubmitApplicationResponseDto> {
+    const application = await this.applicationModel.findByPk(id, {
+      include: [{ model: Value, as: 'values' }],
+    })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
+
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new ForbiddenException(
+        `User does not have permission to submit application '${id}'`,
+      )
+    }
+
+    const form = await this.formModel.findByPk(application.formId)
 
     if (!form) {
       throw new NotFoundException(
@@ -401,10 +426,8 @@ export class ApplicationsService {
     )
 
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
-
     if (user) {
       const loginTypes = await this.getLoginTypes(user)
-
       if (
         !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
         !this.doesUserMatchApplication(application, user, loginTypes)
@@ -506,7 +529,7 @@ export class ApplicationsService {
         form?.organizationNationalId ?? '',
       )
 
-      app.orgSlug = organizationInfo?.type
+      app.orgSlug = organizationInfo?.slug
       app.orgContentfulId = organizationInfo?.contentfulId
     }
 
@@ -824,8 +847,8 @@ export class ApplicationsService {
 
     const loginTypes = await this.getLoginTypes(user)
     if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new UnauthorizedException(
-        `User is not authorized to save screen for application '${applicationId}'`,
+      throw new ForbiddenException(
+        `User does not have permission to save screen for application '${applicationId}'`,
       )
     }
 
@@ -981,8 +1004,8 @@ export class ApplicationsService {
 
     const loginTypes = await this.getLoginTypes(user)
     if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new UnauthorizedException(
-        `User is not authorized to delete application '${id}'`,
+      throw new ForbiddenException(
+        `User does not have permission to delete application '${id}'`,
       )
     }
 
@@ -1018,8 +1041,8 @@ export class ApplicationsService {
 
     const loginTypes = await this.getLoginTypes(user)
     if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new UnauthorizedException(
-        `User is not authorized to notify for application '${notificationDto.applicationId}'`,
+      throw new ForbiddenException(
+        `User does not have permission to notify for application '${notificationDto.applicationId}'`,
       )
     }
 
@@ -1257,5 +1280,193 @@ export class ApplicationsService {
     }
 
     return loginTypes
+  }
+
+  async findAllApplicationsByAdminFilters(
+    page: number,
+    limit: number,
+    institutionNationalId?: string,
+    formId?: string,
+    applicantNationalId?: string,
+    searchStr?: string,
+    from?: string,
+    to?: string,
+    locale?: Locale,
+  ): Promise<ApplicationAdminResponseDto> {
+    const toDate = to ? new Date(to) : undefined
+    const fromDate = from ? new Date(from) : undefined
+
+    const offset = (page - 1) * limit
+
+    const { count, rows } = await this.applicationModel.findAndCountAll({
+      distinct: true,
+      col: 'id',
+      where: {
+        [Op.and]: [
+          formId ? { formId } : {},
+          applicantNationalId ? { nationalId: applicantNationalId } : {},
+          fromDate ? { created: { [Op.gte]: fromDate } } : {},
+          toDate ? { created: { [Op.lte]: toDate } } : {},
+        ],
+      },
+      include: [
+        {
+          model: this.formModel,
+          attributes: ['id', 'name', 'slug', 'status', 'organizationId'],
+          required: true,
+          where: { status: FormStatus.PUBLISHED },
+          include: [
+            {
+              model: this.organizationModel,
+              attributes: ['nationalId'],
+              required: true,
+              where: institutionNationalId
+                ? { nationalId: institutionNationalId }
+                : {},
+            },
+          ],
+        },
+        ...(searchStr
+          ? [
+              {
+                model: Value,
+                as: 'values',
+                attributes: [],
+                required: true,
+                where: Sequelize.where(
+                  Sequelize.cast(Sequelize.col('values.json'), 'text'),
+                  { [Op.iLike]: `%${escapeLike(searchStr)}%` },
+                ),
+              },
+            ]
+          : []),
+      ],
+      limit,
+      offset,
+      order: [['modified', 'DESC']],
+    })
+
+    const mappedRows = rows.map((application) =>
+      this.applicationMapper.mapApplicationToApplicationAdminDto(
+        application,
+        locale,
+      ),
+    )
+
+    return {
+      rows: mappedRows,
+      count,
+    }
+  }
+
+  async getAllApplicationTypes(
+    institutionNationalId?: string,
+    locale?: Locale,
+  ): Promise<ApplicationTypeDto[]> {
+    const forms = await this.formModel.findAll({
+      attributes: ['id', 'name'],
+      where: { status: FormStatus.PUBLISHED },
+      include: [
+        {
+          model: Application,
+          attributes: [],
+          required: true, // ensures at least one application exists
+          include: institutionNationalId
+            ? [
+                {
+                  model: this.organizationModel,
+                  attributes: [],
+                  required: true,
+                  where: { nationalId: institutionNationalId },
+                },
+              ]
+            : [],
+        },
+      ],
+      group: ['Form.id'],
+    })
+
+    return forms.map((form) => ({
+      id: form.id,
+      name: locale === 'is' ? form.name?.is : form.name?.en ?? '',
+    }))
+  }
+
+  async getAllInstitutionsSuperAdmin(): Promise<InstitutionDto[]> {
+    const organizations = await this.organizationModel.findAll({
+      attributes: ['id', 'nationalId'],
+      include: [
+        {
+          model: Form,
+          attributes: [],
+          required: true,
+          where: { status: FormStatus.PUBLISHED },
+          include: [
+            {
+              model: Application,
+              attributes: [], // ensures at least one application exists
+              required: true,
+            },
+          ],
+        },
+      ],
+      group: ['Organization.id', 'Organization.national_id'],
+    })
+
+    return organizations.map((org) => ({
+      nationalId: org.nationalId,
+    }))
+  }
+
+  async getApplicationCountByTypeIdAndStatus(
+    startDate: string,
+    endDate: string,
+    locale?: Locale,
+    institutionNationalId?: string,
+  ): Promise<ApplicationStatisticsDto[]> {
+    if (!locale || !['is', 'en'].includes(locale)) {
+      throw new Error(`Unsupported locale: ${locale}`)
+    }
+    const localeColumn = locale === 'is' ? `f.name ->> 'is'` : `f.name ->> 'en'`
+
+    let institutionJoin = ''
+    let institutionFilter = ''
+    if (institutionNationalId) {
+      institutionJoin = `
+      JOIN public.organization o
+        ON o.id = f.organization_id
+    `
+
+      institutionFilter = `
+      AND o.national_id = :institutionNationalId
+    `
+    }
+
+    const query = `
+    SELECT
+      a.form_id AS "formId",
+      ${localeColumn} AS "formName",
+      COUNT(*)::integer AS "totalCount",
+      COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.DRAFT}')::integer AS "inProgressCount",
+      COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.COMPLETED}')::integer AS "completedCount"
+    FROM public.application a
+    JOIN public.form f ON f.id = a.form_id
+    ${institutionJoin}
+    WHERE a.modified BETWEEN :startDate AND :endDate
+      AND f.status = '${FormStatus.PUBLISHED}'
+    ${institutionFilter}
+    GROUP BY a.form_id, ${localeColumn};
+  `
+
+    const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {
+      replacements: {
+        startDate,
+        endDate,
+        ...(institutionNationalId ? { institutionNationalId } : {}),
+      },
+      type: QueryTypes.SELECT,
+    })
+
+    return stats
   }
 }

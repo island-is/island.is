@@ -130,4 +130,9 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly isDrivingLicenseSuspended?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }

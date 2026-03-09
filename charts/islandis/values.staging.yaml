@@ -53,7 +53,7 @@ air-discount-scheme-api:
             - '/api/graphql'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -168,7 +168,7 @@ air-discount-scheme-backend:
       DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -254,7 +254,7 @@ air-discount-scheme-web:
             - '/'
   namespace: 'air-discount-scheme'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
@@ -315,6 +315,7 @@ api:
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-TEST/GOV/6608922069/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
     FORM_SYSTEM_API_BASE_PATH: 'http://services-form-system-api.services-form-system-api.svc.cluster.local'
+    HH_COURSES_ZENDESK_SUBJECT: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins'
     HMS_CONTRACTS_AUTH_CLIENT_ID: 'e2411f5c-436a-4c17-aa14-eab9c225bc06'
     HMS_CONTRACTS_AUTH_TENANT_ID: 'c7256472-2622-417e-8955-a54eeb0a110e'
     HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
@@ -494,7 +495,7 @@ api:
             - '/api'
   namespace: 'islandis'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -566,6 +567,9 @@ api:
     FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
     FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
     FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY: '/k8s/form-system/FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY'
+    HH_ZENDESK_EMAIL: '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN_EMAIL'
+    HH_ZENDESK_SUBDOMAIN: '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_SUBDOMAIN'
+    HH_ZENDESK_TOKEN: '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN'
     HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
     HOUSING_BENEFIT_CALCULATOR_PASSWORD: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_PASSWORD'
     HOUSING_BENEFIT_CALCULATOR_USERNAME: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_USERNAME'
@@ -840,7 +844,7 @@ application-system-api:
       DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
   namespace: 'application-system'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -988,7 +992,7 @@ application-system-api-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   namespace: 'application-system'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1076,7 +1080,7 @@ application-system-form:
             - '/umsoknir'
   namespace: 'application-system'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1138,7 +1142,7 @@ cms-importer-energy-fund-import:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
   namespace: 'cms-importer'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
@@ -1192,7 +1196,7 @@ cms-importer-fsre-buildings-import:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
   namespace: 'cms-importer'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
@@ -1248,7 +1252,7 @@ cms-importer-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-cms-importer'
   namespace: 'cms-importer'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
@@ -1316,7 +1320,7 @@ consultation-portal:
             - '/samradsgatt'
   namespace: 'consultation-portal'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1418,7 +1422,7 @@ download-service:
             - '/download'
   namespace: 'download-service'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1544,7 +1548,7 @@ endorsement-system-api:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
   namespace: 'endorsement-system'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1617,7 +1621,7 @@ form-system-web:
             - '/form'
   namespace: 'form-system-web'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1728,7 +1732,7 @@ icelandic-names-registry-backend:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
   namespace: 'icelandic-names-registry'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1794,7 +1798,7 @@ island-ui-storybook:
             - '/'
   namespace: 'storybook'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
@@ -1868,7 +1872,7 @@ license-api:
             - '/'
   namespace: 'license-api'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -1993,7 +1997,7 @@ payments:
             - '/greida'
   namespace: 'payments'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2068,7 +2072,7 @@ portals-admin:
             - '/stjornbord'
   namespace: 'portals-admin'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2168,7 +2172,7 @@ regulations-admin-backend:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
   namespace: 'regulations-admin'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2305,7 +2309,7 @@ search-indexer-service:
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   namespace: 'search-indexer'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2383,7 +2387,7 @@ service-portal:
             - '/minarsidur'
   namespace: 'service-portal'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2499,7 +2503,7 @@ service-portal-api:
       DB_PASS: '/k8s/service-portal-api/DB_PASSWORD'
   namespace: 'service-portal'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2596,7 +2600,7 @@ services-bff-portals-admin:
             - '/stjornbord/bff'
   namespace: 'portals-admin'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2683,7 +2687,7 @@ services-bff-portals-my-pages:
             - '/bff'
   namespace: 'portals-my-pages'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2770,7 +2774,7 @@ services-documents:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
   namespace: 'services-documents'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2801,6 +2805,7 @@ services-form-system-api:
   enabled: true
   env:
     CODE_OWNER: 'Advania'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_form_system_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2809,6 +2814,12 @@ services-form-system-api:
     FORM_SYSTEM_BUCKET: 'island-is-staging-form-system-presign-bucket'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1'
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlunumsoknir/.default'
+    NATIONAL_REGISTRY_B2C_CLIENT_ID: 'ca128c23-b43c-443d-bade-ec5a146a933f'
+    NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
+    NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
+    NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
@@ -2876,7 +2887,7 @@ services-form-system-api:
       DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
   namespace: 'services-form-system-api'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -2899,6 +2910,7 @@ services-form-system-api:
     FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX'
     FORM_SYSTEM_ZENDESK_TENANT_ID_PROD: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_PROD'
     FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX: '/k8s/form-system/FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX'
+    NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
     SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME'
@@ -2958,7 +2970,7 @@ services-form-system-api-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
   namespace: 'services-form-system-api'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3031,7 +3043,7 @@ services-payment-flow-update-handler:
             - '/'
   namespace: 'services-payment-flow-update-handler'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3152,7 +3164,7 @@ services-payments:
       DB_PASS: '/k8s/services-payments/DB_PASSWORD'
   namespace: 'services-payments'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3243,7 +3255,7 @@ services-sessions:
             - '/'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3312,7 +3324,7 @@ services-sessions-cleanup:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   pvcs: []
   replicaCount:
@@ -3403,7 +3415,7 @@ services-sessions-worker:
       DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
   namespace: 'services-sessions'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3531,7 +3543,7 @@ services-university-gateway:
       DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3617,7 +3629,7 @@ services-university-gateway-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   namespace: 'services-university-gateway'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3689,7 +3701,7 @@ skilavottord-web:
             - '/app/skilavottord/'
   namespace: 'skilavottord'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3787,7 +3799,7 @@ skilavottord-ws:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
   namespace: 'skilavottord'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -3911,7 +3923,7 @@ user-notification:
             - '/'
   namespace: 'user-notification'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -4013,7 +4025,7 @@ user-notification-birthday-worker:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   namespace: 'user-notification'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -4113,7 +4125,7 @@ user-notification-cleanup-worker:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -4235,7 +4247,7 @@ user-notification-worker:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -4278,6 +4290,9 @@ web:
     DISABLE_SYSLUMENN_PAGE: 'false'
     ENVIRONMENT: 'staging'
     LOG_LEVEL: 'info'
+    MATOMO_DOMAIN: ''
+    MATOMO_ENABLED: 'false'
+    MATOMO_SITE_ID: '2'
     NODE_OPTIONS: '--max-old-space-size=1350 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
     TRACKING_DOMAIN: 'beta.staging01.devland.is'
@@ -4320,7 +4335,7 @@ web:
             - '/'
   namespace: 'islandis'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534
@@ -4388,7 +4403,7 @@ xroad-collector:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
   namespace: 'xroad-collector'
   podDisruptionBudget:
-    minAvailable: 1
+    minAvailable: '50%'
     unhealthyPodEvictionPolicy: 'IfHealthyBudget'
   podSecurityContext:
     fsGroup: 65534

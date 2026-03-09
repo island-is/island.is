@@ -43,17 +43,10 @@ test.describe.serial('Indictment tests', () => {
       .locator(`input[id=crime-scene-date-${policeCaseNumber}]`)
       .fill(today)
     await page.keyboard.press('Escape')
-    await page
-      .getByRole('checkbox', { name: 'Ákærði er ekki með íslenska kennitölu' })
-      .check()
-    await page.getByTestId('inputNationalId').click()
-    await page.getByTestId('inputNationalId').fill('01.01.2000')
+    await page.getByTestId('inputNationalId').fill('000000-0000')
     await page.getByTestId('inputName').click()
     await page.getByTestId('inputName').fill(accusedName)
     await page.getByTestId('inputName').press('Tab')
-    await page.getByTestId('accusedAddress').fill('Testgata 12')
-    await page.locator('#defendantGender').click()
-    await page.locator('#react-select-defendantGender-option-0').click()
     await Promise.all([
       page.getByRole('button', { name: 'Stofna mál' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCase').then(
@@ -364,7 +357,9 @@ test.describe.serial('Indictment tests', () => {
     await expect(page).toHaveURL('/malalistar/yfirlesin-sakamal')
     await page.getByText(accusedName).click()
 
-    await page.getByTestId('button-send-case-to-prison-admin').click()
+    await page.getByRole('button', { name: 'Valmynd' }).click()
+    await page.getByRole('menuitem', { name: 'Senda til fullnustu' }).click()
+
     await page.getByTestId('continueButton').click()
     await Promise.all([
       page.getByTestId('modalPrimaryButton').click(),

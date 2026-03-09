@@ -67,7 +67,6 @@ export const IndividualApplicant = ({
       <Stack space={2}>
         <>
           <NationalIdField
-            disabled
             nationalId={nationalId}
             name={getValue(applicant, 'name')}
           />
@@ -76,8 +75,7 @@ export const IndividualApplicant = ({
               <Input
                 label={formatMessage(m.address)}
                 name="address"
-                placeholder={formatMessage(m.address)}
-                disabled
+                readOnly
                 value={getValue(applicant, 'address') || ''}
               />
             </GridColumn>
@@ -86,8 +84,7 @@ export const IndividualApplicant = ({
                 <Input
                   label={formatMessage(m.postalCode)}
                   name="postalCode"
-                  placeholder={formatMessage(m.postalCode)}
-                  disabled
+                  readOnly
                   value={getValue(applicant, 'postalCode') || ''}
                 />
               </Box>

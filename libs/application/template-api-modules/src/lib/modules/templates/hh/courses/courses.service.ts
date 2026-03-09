@@ -333,6 +333,7 @@ export class CoursesService extends BaseTemplateApiService {
               }
               maxRegistrations?: number
               chargeItemCode?: string | null
+              location?: string | null
             }[]
           }
         }
@@ -425,6 +426,7 @@ export class CoursesService extends BaseTemplateApiService {
         endTime?: string
       }
       location?: string | null
+      chargeItemCode?: string | null
     },
     nationalId: string,
     name: string,
@@ -432,11 +434,7 @@ export class CoursesService extends BaseTemplateApiService {
     phone: string,
     healthcenter?: string,
   ): Promise<string> {
-    const courseHasChargeItemCode = getValueViaPath<boolean>(
-      application.answers,
-      'courseHasChargeItemCode',
-      false,
-    )
+    const courseHasChargeItemCode = Boolean(courseInstance.chargeItemCode)
     const userIsPayingAsIndividual = getValueViaPath<YesOrNoEnum>(
       application.answers,
       'payment.userIsPayingAsIndividual',
