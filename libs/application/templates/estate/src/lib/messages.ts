@@ -1139,6 +1139,27 @@ export const m = defineMessages({
     defaultMessage: 'Símanúmer virðist ekki vera rétt',
     description: 'Phone number is invalid',
   },
+  phoneElectronicIdError: {
+    id: 'es.application:error.phoneElectronicIdError',
+    defaultMessage: 'Rafræn skilríki ekki til staðar fyrir kennitölu',
+    description: 'Electronic ID not found for national ID',
+  },
+  electronicIdCheckLoading: {
+    id: 'es.application:electronicIdCheckLoading',
+    defaultMessage: 'Athuga rafræn skilríki...',
+    description: 'Checking electronic ID',
+  },
+  electronicIdCheckSuccess: {
+    id: 'es.application:electronicIdCheckSuccess',
+    defaultMessage: 'Rafræn skilríki staðfest',
+    description: 'Electronic ID confirmed',
+  },
+  electronicIdCheckFailure: {
+    id: 'es.application:electronicIdCheckFailure',
+    defaultMessage:
+      'Rafræn skilríki ekki til staðar. Vinsamlegast hafðu samband við Auðkenni.',
+    description: 'Electronic ID not found. Please contact Auðkenni.',
+  },
   errorEmail: {
     id: 'es.application:error.errorEmail',
     defaultMessage: 'Netfang virðist ekki vera rétt',

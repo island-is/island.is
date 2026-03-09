@@ -673,6 +673,7 @@ export const estateSchema = z.object({
       nationalId: z.string().optional(),
       phone: z.string().optional(),
       email: z.string().optional(),
+      electronicID: z.string().optional(),
     })
     /* ---- Validating whether the fields are either all filled out or all empty ---- */
     .refine(
@@ -713,6 +714,17 @@ export const estateSchema = z.object({
       },
       {
         path: ['name'],
+      },
+    )
+    .refine(
+      ({ name, nationalId, phone, email, electronicID }) => {
+        return !!name || !!nationalId || !!phone || !!email
+          ? electronicID !== ''
+          : true
+      },
+      {
+        params: m.phoneElectronicIdError,
+        path: ['phone'],
       },
     )
     .optional(),
