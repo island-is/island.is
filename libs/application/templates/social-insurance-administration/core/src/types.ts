@@ -31,6 +31,22 @@ export interface PaymentInfo {
   bankNumber?: string // used in BankAccountFormField
 }
 
+export interface Bank {
+  bankNumber: string
+  ledger: string
+  accountNumber: string
+}
+
+export interface PaymentInfoNew {
+  bankAccountType: BankAccountType
+  bank?: Bank
+  iban?: string
+  swift?: string
+  currency?: string
+  bankName?: string
+  bankAddress?: string
+}
+
 export interface Attachments {
   attachments: FileType[]
   label: MessageDescriptor

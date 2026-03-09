@@ -121,7 +121,7 @@ export const OldAgePensionForm: Form = buildForm({
 
                     const type =
                       paymentInfo?.bankAccountType ??
-                      typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
+                      typeOfBankInfo(bankInfo, paymentInfo!.bankAccountType)
 
                     return type === BankAccountType.ICELANDIC
                       ? socialInsuranceAdministrationMessage.payment

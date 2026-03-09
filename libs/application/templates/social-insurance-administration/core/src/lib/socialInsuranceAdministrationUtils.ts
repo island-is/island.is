@@ -1,7 +1,13 @@
 import { NO, YES } from '@island.is/application/core'
 import { Option } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
-import { BankInfo, CategorizedIncomeTypes, PaymentInfo } from '../types'
+import {
+  Bank,
+  BankInfo,
+  CategorizedIncomeTypes,
+  PaymentInfo,
+  PaymentInfoNew,
+} from '../types'
 import {
   BankAccountType,
   INCOME,
@@ -80,6 +86,14 @@ export const formatBank = (bankInfo: string) => {
   return bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
 }
 
+export const formatIcelandicBankAccount = (bank?: Bank) => {
+  const bankNumber = bank?.bankNumber ?? ''
+  const ledger = bank?.ledger ?? ''
+  const accountNumber = bank?.accountNumber ?? ''
+
+  return `${bankNumber}-${ledger}-${accountNumber}`
+}
+
 // We should only send bank account to TR if applicant is registering
 // new one or changing.
 export const shouldNotUpdateBankAccount = (
@@ -119,6 +133,40 @@ export const shouldNotUpdateBankAccount = (
   }
 }
 
+export const shouldNotUpdateBankAccountNew = (
+  bankInfo?: BankInfo,
+  paymentInfo?: PaymentInfoNew,
+) => {
+  if (!paymentInfo) {
+    return false
+  }
+
+  const {
+    bankAccountType,
+    bank,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+  } = paymentInfo
+  if (bankAccountType === BankAccountType.FOREIGN) {
+    return (
+      !isEmpty(bankInfo) &&
+      bankInfo.iban === iban?.replace(/[\s]+/g, '') &&
+      bankInfo.swift === swift?.replace(/[\s]+/g, '') &&
+      bankInfo.foreignBankName === bankName &&
+      bankInfo.foreignBankAddress === bankAddress &&
+      bankInfo.currency === currency
+    )
+  } else {
+    return (
+      getBankIsk(bankInfo) ===
+      (!isEmpty(bank) && formatIcelandicBankAccount(bank))
+    )
+  }
+}
+
 export const getCurrencies = (
   currencies: string[],
   hideISKCurrency?: string,
@@ -135,7 +183,7 @@ export const getCurrencies = (
 
 export const typeOfBankInfo = (
   bankInfo: BankInfo,
-  bankAccountType: BankAccountType,
+  bankAccountType?: BankAccountType,
 ) => {
   return bankAccountType
     ? bankAccountType

@@ -59,13 +59,15 @@ export const IncomePlan = ({
         </GridColumn>
         {incomePlanHasOnlyZeroIncome(incomePlan) && (
           <GridColumn span="12/12">
-            <RadioValue
-              label={formatMessage(
-                socialInsuranceAdministrationMessage.incomePlan
-                  .noOtherIncomeConfirmation,
-              )}
-              value={noOtherIncomeConfirmation}
-            />
+            {noOtherIncomeConfirmation && (
+              <RadioValue
+                label={formatMessage(
+                  socialInsuranceAdministrationMessage.incomePlan
+                    .noOtherIncomeConfirmation,
+                )}
+                value={noOtherIncomeConfirmation}
+              />
+            )}
           </GridColumn>
         )}
       </GridRow>

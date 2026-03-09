@@ -21,12 +21,15 @@ export const OnePaymentPerYear = ({
     >
       <GridRow>
         <GridColumn span="12/12">
-          <RadioValue
-            label={formatMessage(
-              oldAgePensionFormMessage.onePaymentPerYear.onePaymentPerYearTitle,
-            )}
-            value={onePaymentPerYear}
-          />
+          {onePaymentPerYear && (
+            <RadioValue
+              label={formatMessage(
+                oldAgePensionFormMessage.onePaymentPerYear
+                  .onePaymentPerYearTitle,
+              )}
+              value={onePaymentPerYear}
+            />
+          )}
         </GridColumn>
       </GridRow>
     </ReviewGroup>

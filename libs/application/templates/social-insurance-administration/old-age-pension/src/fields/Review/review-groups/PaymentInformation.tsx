@@ -8,7 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
 import {
-  formatBankAccount,
+  formatIcelandicBankAccount,
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
   getTaxLevelOption,
@@ -27,7 +27,6 @@ export const PaymentInformation = ({
     personalAllowance,
     personalAllowanceUsage,
     paymentInfo,
-    bank,
   } = getApplicationAnswers(application.answers)
 
   const { formatMessage } = useLocale()
@@ -38,92 +37,95 @@ export const PaymentInformation = ({
       isEditable={editable}
       editAction={() => goToScreen?.('paymentInfo')}
     >
-      {paymentInfo.bankAccountType === BankAccountType.FOREIGN ? (
-        <>
+      {paymentInfo &&
+        (paymentInfo.bankAccountType === BankAccountType.FOREIGN ? (
+          <>
+            <GridRow marginBottom={3}>
+              <GridColumn span="12/12">
+                <DataValue
+                  label={formatMessage(
+                    socialInsuranceAdministrationMessage.payment.iban,
+                  )}
+                  value={friendlyFormatIBAN(paymentInfo.iban)}
+                />
+              </GridColumn>
+            </GridRow>
+            <GridRow>
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '5/12']}
+                paddingBottom={3}
+              >
+                <DataValue
+                  label={formatMessage(
+                    socialInsuranceAdministrationMessage.payment.swift,
+                  )}
+                  value={friendlyFormatSWIFT(paymentInfo.swift)}
+                />
+              </GridColumn>
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '5/12']}
+                paddingBottom={3}
+              >
+                <DataValue
+                  label={formatMessage(
+                    socialInsuranceAdministrationMessage.payment.currency,
+                  )}
+                  value={paymentInfo.currency}
+                />
+              </GridColumn>
+            </GridRow>
+
+            <GridRow>
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '5/12']}
+                paddingBottom={3}
+              >
+                <DataValue
+                  label={formatMessage(
+                    socialInsuranceAdministrationMessage.payment.bankName,
+                  )}
+                  value={paymentInfo.bankName}
+                />
+              </GridColumn>
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '5/12']}
+                paddingBottom={3}
+              >
+                <DataValue
+                  label={formatMessage(
+                    socialInsuranceAdministrationMessage.payment.bankAddress,
+                  )}
+                  value={paymentInfo.bankAddress}
+                />
+              </GridColumn>
+            </GridRow>
+          </>
+        ) : (
           <GridRow marginBottom={3}>
             <GridColumn span="12/12">
               <DataValue
                 label={formatMessage(
-                  socialInsuranceAdministrationMessage.payment.iban,
+                  socialInsuranceAdministrationMessage.payment.bank,
                 )}
-                value={friendlyFormatIBAN(paymentInfo.iban)}
+                value={formatIcelandicBankAccount(paymentInfo.bank)}
               />
             </GridColumn>
           </GridRow>
-          <GridRow>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '5/12']}
-              paddingBottom={3}
-            >
-              <DataValue
-                label={formatMessage(
-                  socialInsuranceAdministrationMessage.payment.swift,
-                )}
-                value={friendlyFormatSWIFT(paymentInfo.swift)}
-              />
-            </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '5/12']}
-              paddingBottom={3}
-            >
-              <DataValue
-                label={formatMessage(
-                  socialInsuranceAdministrationMessage.payment.currency,
-                )}
-                value={paymentInfo.currency}
-              />
-            </GridColumn>
-          </GridRow>
-
-          <GridRow>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '5/12']}
-              paddingBottom={3}
-            >
-              <DataValue
-                label={formatMessage(
-                  socialInsuranceAdministrationMessage.payment.bankName,
-                )}
-                value={paymentInfo.bankName}
-              />
-            </GridColumn>
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '5/12']}
-              paddingBottom={3}
-            >
-              <DataValue
-                label={formatMessage(
-                  socialInsuranceAdministrationMessage.payment.bankAddress,
-                )}
-                value={paymentInfo.bankAddress}
-              />
-            </GridColumn>
-          </GridRow>
-        </>
-      ) : (
-        <GridRow marginBottom={3}>
-          <GridColumn span="12/12">
-            <DataValue
-              label={formatMessage(
-                socialInsuranceAdministrationMessage.payment.bank,
-              )}
-              value={formatBankAccount(bank)}
-            />
-          </GridColumn>
-        </GridRow>
-      )}
+        ))}
 
       <GridRow>
         <GridColumn
           span={['12/12', '12/12', '12/12', '5/12']}
           paddingBottom={3}
         >
-          <RadioValue
-            label={formatMessage(
-              socialInsuranceAdministrationMessage.confirm.personalAllowance,
-            )}
-            value={personalAllowance}
-          />
+          {personalAllowance && (
+            <RadioValue
+              label={formatMessage(
+                socialInsuranceAdministrationMessage.confirm.personalAllowance,
+              )}
+              value={personalAllowance}
+            />
+          )}
         </GridColumn>
 
         {personalAllowance === YES && (

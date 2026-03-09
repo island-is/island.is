@@ -5,8 +5,10 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBank,
+  formatIcelandicBankAccount,
   getBankIsk,
   shouldNotUpdateBankAccount,
+  shouldNotUpdateBankAccountNew,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   CategorizedIncomeTypes,
@@ -78,7 +80,6 @@ export const transformApplicationToOldAgePensionDTO = (
     selectedYear,
     selectedMonth,
     applicantPhonenumber,
-    bank,
     onePaymentPerYear,
     comment,
     personalAllowance,
@@ -111,13 +112,13 @@ export const transformApplicationToOldAgePensionDTO = (
     },
     comment: comment,
     applicationId: application.id,
-    ...(!shouldNotUpdateBankAccount(bankInfo, bank) && {
+    ...(!shouldNotUpdateBankAccountNew(bankInfo, paymentInfo) && {
       ...(paymentInfo &&
         (paymentInfo.bankAccountType === undefined ||
           paymentInfo.bankAccountType === BankAccountType.ICELANDIC) &&
         paymentInfo.bank && {
           domesticBankInfo: {
-            bank: formatBank(getBankIsk(bank)),
+            bank: formatIcelandicBankAccount(paymentInfo.bank),
           },
         }),
       ...(paymentInfo &&
@@ -143,9 +144,11 @@ export const transformApplicationToOldAgePensionDTO = (
       incomeTypes: getIncomeTypes(incomePlan, categorizedIncomeTypes),
     },
     taxInfo: {
-      personalAllowance: YES === personalAllowance,
+      personalAllowance: personalAllowance === YES,
       personalAllowanceUsage:
-        YES === personalAllowance ? +personalAllowanceUsage : 0,
+        personalAllowance === YES
+          ? Number.parseInt(personalAllowanceUsage)
+          : 0,
       taxLevel: +taxLevel,
     },
     applicantInfo: {
