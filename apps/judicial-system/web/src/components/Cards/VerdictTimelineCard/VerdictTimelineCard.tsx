@@ -312,24 +312,30 @@ const VerdictTimelineCard: FC<Props> = (props) => {
               ]
             : []),
           ...(!verdict?.isAcquittedByPublicProsecutionOffice &&
-          ((!defendant.isSentToPrisonAdmin &&
-            !defendant.indictmentReviewDecision) ||
+          !defendant.isSentToPrisonAdmin &&
+          (!defendant.indictmentReviewDecision ||
             (!isFine && !verdict?.serviceDate && isServiceRequired))
             ? [
                 {
-                  title: defendant.isSentToPrisonAdmin
-                    ? 'Afturkalla úr fullnustu'
-                    : 'Senda til fullnustu',
+                  title: 'Senda til fullnustu',
 
                   onClick: () => {
-                    defendant.isSentToPrisonAdmin
-                      ? setModalVisible({
-                          type: 'REVOKE_SEND_TO_PRISON_ADMIN',
-                          defendant,
-                        })
-                      : router.push(
-                          `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE}/${workingCase.id}/${defendant.id}`,
-                        )
+                    router.push(
+                      `${PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE}/${workingCase.id}/${defendant.id}`,
+                    )
+                  },
+                },
+              ]
+            : []),
+          ...(defendant.isSentToPrisonAdmin
+            ? [
+                {
+                  title: 'Afturkalla úr fullnustu',
+                  onClick: () => {
+                    setModalVisible({
+                      type: 'REVOKE_SEND_TO_PRISON_ADMIN',
+                      defendant,
+                    })
                   },
                 },
               ]
