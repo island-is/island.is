@@ -57,7 +57,14 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           onToggle={() => toggleIsOpen('admissionRequirements')}
         >
           <Box>
-            <Text>{programme.admissionRequirements?.freeText}</Text>
+            <Text>
+              {' '}
+              {ReactHtmlParser(
+                (programme.admissionRequirements?.freeText || '')
+                  .replaceAll('\n', '<br/>')
+                  .replace(/<(\/?)p>/g, '<$1span>'),
+              )}
+            </Text>
           </Box>
         </AccordionItem>
 
@@ -71,7 +78,14 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           onToggle={() => toggleIsOpen('studyStructure')}
         >
           <Box>
-            <Text>{programme.structureDescription}</Text>
+            <Text>
+              {' '}
+              {ReactHtmlParser(
+                (programme.description || '')
+                  .replaceAll('\n', '<br/>')
+                  .replace(/<(\/?)p>/g, '<$1span>'),
+              )}
+            </Text>
           </Box>
         </AccordionItem>
 
@@ -85,7 +99,14 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
           onToggle={() => toggleIsOpen('assessment')}
         >
           <Box>
-            <Text>{programme.academicEvaluation}</Text>
+            <Text>
+              {' '}
+              {ReactHtmlParser(
+                (programme.academicEvaluation || '')
+                  .replaceAll('\n', '<br/>')
+                  .replace(/<(\/?)p>/g, '<$1span>'),
+              )}
+            </Text>
           </Box>
         </AccordionItem>
 
@@ -465,10 +486,9 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                           </Text>
                           <Box />
                           {ReactHtmlParser(
-                            programme.freeChoiceDescription.replaceAll(
-                              '\n',
-                              '<br/>',
-                            ),
+                            programme.freeChoiceDescription
+                              .replaceAll('\n', '<br/>')
+                              .replace(/<(\/?)p>/g, '<$1span>'),
                           )}
                         </Box>
                       </T.Data>
