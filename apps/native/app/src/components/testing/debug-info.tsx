@@ -134,7 +134,12 @@ export function DebugInfo() {
           cancel: true,
         })
           .then(({ selectedItem }: any) => {
-            if (!isCognitoAuth && selectedItem?.id !== 'mock') {
+            const canSkipCognito =
+              selectedItem.id === 'mock' || selectedItem.id === 'prod'
+            if (selectedItem) {
+              environmentStore.getState().actions.setEnvironment(selectedItem)
+            }
+            if (!isCognitoAuth && !canSkipCognito) {
               return Alert.alert(
                 'Cognito Required',
                 'You can use production without cognito login, but you need it for other environments.',
@@ -153,9 +158,6 @@ export function DebugInfo() {
                   },
                 ].filter(Boolean) as AlertButton[],
               )
-            }
-            if (selectedItem) {
-              environmentStore.getState().actions.setEnvironment(selectedItem)
             }
           })
           .catch(() => {

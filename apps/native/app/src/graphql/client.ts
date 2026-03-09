@@ -59,6 +59,8 @@ const retryLink = new RetryLink({
   },
 })
 
+let cognitoBrowserOpen = false
+
 const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   if (graphQLErrors) {
     graphQLErrors.map((graphQLError) =>
@@ -78,9 +80,11 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
         redirectUrl.indexOf('cognito.shared.devland.is') >= 0
       ) {
         getAuthStoreRef().setState({ cognitoAuthUrl: redirectUrl })
-
-        if (config.isTestingApp && getAuthStoreRef().getState().authorizeResult) {
-          WebBrowser.openBrowserAsync(cognitoAuthUrl())
+        if (config.isTestingApp && getAuthStoreRef().getState().authorizeResult && !cognitoBrowserOpen) {
+          cognitoBrowserOpen = true
+          WebBrowser.openBrowserAsync(cognitoAuthUrl()).finally(() => {
+            cognitoBrowserOpen = false
+          })
         }
       }
     }
