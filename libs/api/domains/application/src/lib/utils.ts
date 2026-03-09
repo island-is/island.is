@@ -41,6 +41,7 @@ export const mapAppSystemCards = (
     orgContentfulId: institutionMapper[application.typeId]?.contentfulId,
     nationalId: institutionMapper[application.typeId]?.nationalId,
     actionCard: application.actionCard,
+    pruneAt: application.pruneAt,
   }
 }
 
@@ -116,6 +117,7 @@ export const mapFormSystemInstitutionAdmin = (
 ): ApplicationInstitution => {
   return {
     nationalId: institution.nationalId,
+    name: institution.name,
     contentfulSlug: institution.contentfulSlug ?? '',
   }
 }
