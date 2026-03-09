@@ -151,6 +151,7 @@ export const MainContent = () => {
                       <Box marginTop={2}>
                         <Checkbox
                           name="validate"
+                          disabled={isPublished}
                           label={formatMessage(m.screenValidate)}
                           checked={
                             (activeItem.data as FormSystemScreen)
