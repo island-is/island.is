@@ -180,8 +180,8 @@ export class ApplicationService {
       ? new Date(new Date(from).setHours(0, 0, 0, 0))
       : undefined
     const toDate = to
-      // Set to end of day to include applications created on the "to" date as well
-      ? new Date(new Date(to).setHours(23, 59, 59, 999))
+      ? // Set to end of day to include applications created on the "to" date as well
+        new Date(new Date(to).setHours(23, 59, 59, 999))
       : undefined
 
     const { applicationTypeIds, returnEmpty } = this.resolveApplicationTypeIds(

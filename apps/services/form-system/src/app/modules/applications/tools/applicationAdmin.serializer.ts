@@ -130,26 +130,24 @@ export class ApplicationStatisticsSerializer
     _context: ExecutionContext,
     next: CallHandler<ApplicationStatisticsDto[]>,
   ): Observable<ApplicationStatisticsDto[]> {
-    return next
-      .handle()
-      .pipe(
-        mergeMap((applicationStatistics: ApplicationStatisticsDto[]) =>
-          from(
-            Promise.all(
-              applicationStatistics.map((applicationStatistic) =>
-                this.serialize(applicationStatistic),
-              ),
-            ).then((serialized) =>
-              plainToInstance(
-                ApplicationStatisticsDto,
-                serialized.filter(
-                  (item): item is ApplicationStatisticsDto => item !== null,
-                ),
+    return next.handle().pipe(
+      mergeMap((applicationStatistics: ApplicationStatisticsDto[]) =>
+        from(
+          Promise.all(
+            applicationStatistics.map((applicationStatistic) =>
+              this.serialize(applicationStatistic),
+            ),
+          ).then((serialized) =>
+            plainToInstance(
+              ApplicationStatisticsDto,
+              serialized.filter(
+                (item): item is ApplicationStatisticsDto => item !== null,
               ),
             ),
           ),
         ),
-      )
+      ),
+    )
   }
 
   private async serialize(
