@@ -44,7 +44,7 @@ import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { FetchError } from '@island.is/clients/middlewares'
-import type { User } from '@island.is/auth-nest-tools'
+import type { User, GraphQLContext } from '@island.is/auth-nest-tools'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 const defaultLang = 'is'
@@ -105,7 +105,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
-  private getFeatureFlagUser(req: Request): User {
+  private getFeatureFlagUser(req: GraphQLContext['req']): User {
     const forwardedForHeader = req.headers['x-forwarded-for']
     const forwardedFor = Array.isArray(forwardedForHeader)
       ? forwardedForHeader.join(',')
@@ -300,7 +300,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   @Query(() => IcelandicGovernmentInstitutionVacanciesResponse)
   async icelandicGovernmentInstitutionVacancies(
     @Args('input') input: IcelandicGovernmentInstitutionVacanciesInput,
-    @Context('req') req: Request,
+    @Context('req') req: GraphQLContext['req'],
   ): Promise<IcelandicGovernmentInstitutionVacanciesResponse> {
     const featureFlagUser = this.getFeatureFlagUser(req)
     const {
@@ -459,7 +459,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
   @Query(() => IcelandicGovernmentInstitutionVacancyByIdResponse)
   async icelandicGovernmentInstitutionVacancyById(
     @Args('input') input: IcelandicGovernmentInstitutionVacancyByIdInput,
-    @Context('req') req: Request,
+    @Context('req') req: GraphQLContext['req'],
   ): Promise<IcelandicGovernmentInstitutionVacancyByIdResponse | null> {
     const featureFlagUser = this.getFeatureFlagUser(req)
 
