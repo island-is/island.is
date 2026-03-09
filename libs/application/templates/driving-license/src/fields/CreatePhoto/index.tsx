@@ -18,7 +18,11 @@ export const createPhotoComponent = (photoContent?: string) => {
       'data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjY2NjIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDY0IDY0Ij48Y2lyY2xlIGN4PSIzMiIgY3k9IjIwIiByPSIxMiIvPjxwYXRoIGQ9Ik0xMiA1MmMwLTExLjMgOS4yLTE2IDIwLTE2czIwIDQuNyAyMCAxNmgtNDB6Ii8+PC9zdmc+'
 
     const cleanedContent = cleanPhotoData(photoContent)
-    const imageSrc = `data:image/jpeg;base64,${cleanedContent}`
+    const isValidBase64 =
+      cleanedContent.length > 100 && !/[^A-Za-z0-9+/=]/.test(cleanedContent)
+    const imageSrc = isValidBase64
+      ? `data:image/jpeg;base64,${cleanedContent}`
+      : defaultPlaceholderSrc
 
     return (
       <img

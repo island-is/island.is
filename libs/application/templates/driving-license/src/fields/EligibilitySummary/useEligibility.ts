@@ -110,10 +110,15 @@ export const useEligibility = (
   if (usingFakeData) {
     return {
       loading: false,
-      eligibility: fakeEligibility(
+      eligibility: fakeEligibility({
         applicationFor,
-        parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
-      ),
+        daysOfResidency: parseInt(
+          fakeData?.howManyDaysHaveYouLivedInIceland.toString(),
+          10,
+        ),
+        hasPhoto: fakeData?.qualityPhoto === YES,
+        hasExtendedLicense: fakeData?.hasExtendedLicense === YES,
+      }),
     }
   }
 

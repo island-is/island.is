@@ -201,6 +201,8 @@ export interface DrivingLicenseFakeData {
   qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
   remarks?: YesOrNo
+  glassesCheck?: YesOrNo
+  hasExtendedLicense?: YesOrNo
   howManyDaysHaveYouLivedInIceland: string | number
   age: number
 }
