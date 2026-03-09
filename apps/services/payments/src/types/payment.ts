@@ -20,10 +20,19 @@ export enum PaymentFlowEventType {
   DELETED = 'deleted',
 }
 
+export enum RefundType {
+  PAYMENT_FAILURE = 'payment_failure', // Refunded due to payment failure in payment service
+  FULFILLMENT_FAILURE = 'fulfillment_failure', // Refunded due to fulfillment failure in upstream systems
+}
+
 export enum PaymentFlowEventReason {
   PAYMENT_STARTED = 'payment_started',
   PAYMENT_COMPLETED = 'payment_completed',
   PAYMENT_FAILED = 'payment_failed',
+  PAYMENT_FINALIZED = 'payment_finalized',
+  REFUND_STARTED = 'refund_started',
+  REFUND_COMPLETED = 'refund_completed',
+  REFUND_FAILED = 'refund_failed',
   DELETED_ADMIN = 'deleted_admin',
   DELETED_AUTO = 'deleted_auto',
   OTHER = 'other',

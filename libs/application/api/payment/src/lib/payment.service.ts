@@ -56,14 +56,13 @@ export class PaymentService {
 
   async fulfillPayment(
     paymentId: string,
-    receptionID: string,
     applicationId: string,
   ): Promise<void> {
     try {
       await this.paymentModel.update(
         {
           fulfilled: true,
-          reference_id: receptionID,
+          reference_id: null,
         },
         {
           where: {
@@ -351,9 +350,9 @@ export class PaymentService {
     targetChargeItems: BasicChargeItem[],
   ): Promise<CatalogItem[]> {
     const { item: catalogItems } =
-      await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
-        performingOrganizationID,
-      )
+      await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
+        performingOrgID: performingOrganizationID,
+      })
 
     // get list of items with catalog info, but make sure to allow duplicates
     const result: CatalogItem[] = []

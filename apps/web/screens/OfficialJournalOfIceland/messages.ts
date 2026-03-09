@@ -133,9 +133,21 @@ export const m = {
       id: 'web.ojoi:search.typePlaceholder',
       defaultMessage: 'Veldu tegund',
     },
+    yfirheitiLabel: {
+      id: 'web.ojoi:search.yfirheitiLabel',
+      defaultMessage: 'Yfirheiti',
+    },
+    yfirheitiPlaceholder: {
+      id: 'web.ojoi:search.yfirheitiPlaceholder',
+      defaultMessage: 'Veldu yfirheiti',
+    },
     typeAll: {
       id: 'web.ojoi:search.typeAll',
       defaultMessage: 'Allar tegundir',
+    },
+    yfirheitiAll: {
+      id: 'web.ojoi:search.yfirheitiAll',
+      defaultMessage: 'Öll yfirheiti',
     },
     chooseYear: {
       id: 'web.ojoi:search.chooseYear',

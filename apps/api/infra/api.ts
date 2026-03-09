@@ -314,6 +314,22 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      HMS_CONTRACTS_AUTH_TOKEN_ENDPOINT: {
+        dev: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        staging:
+          'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+        prod: 'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token',
+      },
+      HMS_CONTRACTS_AUTH_TENANT_ID: {
+        dev: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        staging: 'c7256472-2622-417e-8955-a54eeb0a110e',
+        prod: 'c7256472-2622-417e-8955-a54eeb0a110e',
+      },
+      HMS_CONTRACTS_AUTH_CLIENT_ID: {
+        dev: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        staging: 'e2411f5c-436a-4c17-aa14-eab9c225bc06',
+        prod: '44055958-a462-4ba8-bbd2-5bfedbbd18c0',
+      },
       LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
         (h) => `http://${h.svc(services.paymentFlowUpdateHandlerService)}`,
       ),
@@ -323,8 +339,20 @@ export const serviceSetup = (services: {
         prod: 'island.is',
       },
       ENVIRONMENT: ref((h) => h.env.type),
+      HH_COURSES_ZENDESK_SUBJECT: {
+        dev: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+        staging:
+          '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+        prod: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+      },
     })
     .secrets({
+      HH_ZENDESK_SUBDOMAIN:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_SUBDOMAIN',
+      HH_ZENDESK_EMAIL:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN_EMAIL',
+      HH_ZENDESK_TOKEN:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN',
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',
       DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL',

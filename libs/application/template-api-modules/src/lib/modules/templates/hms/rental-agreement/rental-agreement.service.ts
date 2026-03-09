@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
-import { HmsRentalAgreementService } from '@island.is/clients/hms-rental-agreement'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { HomeApi } from '@island.is/clients/hms-rental-agreement'
 import {
   applicationAnswers,
   draftAnswers,
@@ -8,7 +9,6 @@ import {
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { mapRentalApplicationData } from './utils/mapRentalApplicationData'
-import { mapDraftToContractRequest } from './utils/mapDraftToContractRequest'
 import {
   fetchFinancialIndexationForMonths,
   listOfLastMonths,
@@ -18,8 +18,12 @@ import {
 
 @Injectable()
 export class RentalAgreementService extends BaseTemplateApiService {
-  constructor(private readonly hmsService: HmsRentalAgreementService) {
+  constructor(private readonly homeApi: HomeApi) {
     super(ApplicationTypes.RENTAL_AGREEMENT)
+  }
+
+  private homeApiWithAuth(auth: Auth) {
+    return this.homeApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async consumerIndex(): Promise<FinancialIndexationEntry[]> {
@@ -32,10 +36,11 @@ export class RentalAgreementService extends BaseTemplateApiService {
   async sendDraft({ application, auth }: TemplateApiModuleActionProps) {
     const { id, answers } = application
 
-    const draft = draftAnswers(applicationAnswers(answers), id)
-    const contractDraftRequest = mapDraftToContractRequest(draft)
-
-    return await this.hmsService.postDraftContract(auth, contractDraftRequest)
+    return await this.homeApiWithAuth(auth).contractSendDraftPost({
+      draftRequest: {
+        ...draftAnswers(applicationAnswers(answers), id),
+      },
+    })
   }
 
   async submitApplicationToHmsRentalService({
@@ -52,8 +57,10 @@ export class RentalAgreementService extends BaseTemplateApiService {
       mappedAnswers,
     )
 
-    return await this.hmsService
-      .postContract(auth, { leaseApplication })
+    return await this.homeApiWithAuth(auth)
+      .contractPost({
+        leaseApplication,
+      })
       .catch((error) => {
         const errorMessage = `Error sending application ${id} to HMS Rental Service`
         console.error(errorMessage, error)

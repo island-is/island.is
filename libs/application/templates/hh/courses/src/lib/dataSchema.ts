@@ -71,7 +71,7 @@ export const dataSchema = z.object({
   participantList: z.array(participantSchema).min(1),
   courseSelect: z.string().min(1),
   dateSelect: z.string().min(1),
-  payment: paymentSchema,
+  payment: paymentSchema.optional(),
   userInformation: userInformationSchema,
 })
 
