@@ -9,13 +9,12 @@ import {
 
 import {
   HealthDirectorateHealthService,
-  QuestionnaireBaseDto,
   QuestionnaireDetailDto,
 } from '@island.is/clients/health-directorate'
 
 import {
   LshClientService,
-  Questionnaire as LSHQuestionnaireType,
+  Questionnaire as LshQuestionnaireType,
 } from '@island.is/clients/lsh'
 import { IntlService } from '@island.is/cms-translations'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
@@ -29,9 +28,17 @@ import {
 } from '../models/questionnaires.model'
 import { QuestionnairesResponse } from './dto/response.dto'
 import { mapToElAnswer } from './transform-mappers/el/answer/mapToELAnswer'
-import { mapELQuestionnaire } from './transform-mappers/el/display/mapQuestionnaire'
+import {
+  mapElQuestionnaireForm,
+  mapElQuestionnaireListItem,
+  mapElQuestionnaireOverview,
+} from './transform-mappers/el/display/mapQuestionnaire'
 import { mapToLshAnswer } from './transform-mappers/lsh/answer/mapToLSHAnswer'
-import { mapLshQuestionnaire } from './transform-mappers/lsh/display/mapQuestionnaire'
+import {
+  mapLshQuestionnaireForm,
+  mapLshQuestionnaireOverview,
+  mapLshQuestionnaireListItem,
+} from './transform-mappers/lsh/display/mapQuestionnaire'
 import { NAMESPACE } from './utils/constants'
 import { m } from './utils/messages'
 
@@ -50,38 +57,38 @@ export class QuestionnairesService {
     user: User,
     locale: Locale,
   ): Promise<QuestionnairesList | null> {
-    const { useEL, useLSH } = await this.getQuestionnaireFeatureFlags(user)
-    let ELError = false
-    let LSHError = false
-    let ELQuestionnairesList: QuestionnairesList = { questionnaires: [] }
-    let LSHQuestionnairesList: QuestionnairesList = { questionnaires: [] }
+    const { useEl, useLsh } = await this.getQuestionnaireFeatureFlags(user)
+    let elError = false
+    let lshError = false
+    let elQuestionnaires: QuestionnairesList = { questionnaires: [] }
+    let lshQuestionnaires: QuestionnairesList = { questionnaires: [] }
 
-    if (useEL) {
+    if (useEl) {
       try {
-        ELQuestionnairesList = await this.getELQuestionnaires(user, locale)
+        elQuestionnaires = await this.getElQuestionnaires(user, locale)
       } catch (error) {
-        ELError = true
+        elError = true
         this.logger.error('Failed to fetch EL questionnaires', error)
       }
     }
 
-    if (useLSH) {
+    if (useLsh) {
       try {
-        LSHQuestionnairesList = await this.getLSHQuestionnaires(user, locale)
+        lshQuestionnaires = await this.getLshQuestionnaires(user, locale)
       } catch (error) {
-        LSHError = true
+        lshError = true
         this.logger.error('Failed to fetch LSH questionnaires', error)
       }
     }
 
-    if (ELError && LSHError) {
+    if (elError && lshError) {
       throw new Error(
         `Failed to fetch questionnaires from both sources: EL and LSH`,
       )
     }
 
     return {
-      questionnaires: [ELQuestionnairesList, LSHQuestionnairesList]
+      questionnaires: [elQuestionnaires, lshQuestionnaires]
         .flatMap((list) => list.questionnaires)
         .filter((q) => q !== undefined)
         .sort((a, b) => {
@@ -104,14 +111,14 @@ export class QuestionnairesService {
     locale: Locale,
     input: GetQuestionnaireInput,
   ): Promise<Questionnaire | null> {
-    const { useEL, useLSH } = await this.getQuestionnaireFeatureFlags(user)
+    const { useEl, useLsh } = await this.getQuestionnaireFeatureFlags(user)
 
-    if (input.organization === QuestionnairesOrganizationEnum.LSH && useLSH) {
-      return this.getLSHQuestionnaireDetail(user, locale, input)
+    if (input.organization === QuestionnairesOrganizationEnum.LSH && useLsh) {
+      return this.getLshQuestionnaire(user, locale, input)
     }
 
-    if (input.organization === QuestionnairesOrganizationEnum.EL && useEL) {
-      return this.getELQuestionnaireDetail(user, locale, input)
+    if (input.organization === QuestionnairesOrganizationEnum.EL && useEl) {
+      return this.getElQuestionnaire(user, locale, input)
     }
 
     return null
@@ -191,7 +198,7 @@ export class QuestionnairesService {
   ): Promise<AnsweredQuestionnaires | null> {
     const organization = this.normalizeOrganization(input.organization)
 
-    const { useEL, useLSH } = await this.getQuestionnaireFeatureFlags(user)
+    const { useEl, useLsh } = await this.getQuestionnaireFeatureFlags(user)
 
     if (!organization || !input.id) {
       return null
@@ -200,9 +207,9 @@ export class QuestionnairesService {
     if (
       organization === QuestionnairesOrganizationEnum.EL &&
       input.submissionId &&
-      useEL
+      useEl
     ) {
-      return this.getELAnsweredQuestionnaire(
+      return this.getElAnsweredQuestionnaire(
         user,
         locale,
         input.id,
@@ -210,15 +217,15 @@ export class QuestionnairesService {
       )
     }
 
-    if (organization === QuestionnairesOrganizationEnum.LSH && useLSH) {
-      return this.getLSHAnsweredQuestionnaire(user, locale, input)
+    if (organization === QuestionnairesOrganizationEnum.LSH && useLsh) {
+      return this.getLshAnsweredQuestionnaire(user, locale, input)
     }
 
     return null
   }
 
   // Get Questionnaires Lists
-  private async getELQuestionnaires(
+  private async getElQuestionnaires(
     user: User,
     locale: Locale,
   ): Promise<QuestionnairesList> {
@@ -226,30 +233,16 @@ export class QuestionnairesService {
       [NAMESPACE],
       locale,
     )
-    const data: QuestionnaireBaseDto[] | null =
-      await this.api.getQuestionnaires(user, locale)
+    const data = await this.api.getQuestionnaires(user, locale)
 
     return {
-      questionnaires: (data ?? []).map((q) => ({
-        id: q.questionnaireId,
-        title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
-        description: q.message ?? undefined,
-        sentDate: q.createdDate?.toISOString() ?? '',
-        lastSubmissionId: q.lastCreatedSubmissionId,
-        organization: QuestionnairesOrganizationEnum.EL,
-        department: undefined,
-        status:
-          q.numSubmitted > 0 || q.lastSubmitted
-            ? QuestionnairesStatusEnum.answered
-            : q.hasDraft
-            ? QuestionnairesStatusEnum.draft
-            : QuestionnairesStatusEnum.notAnswered,
-        lastSubmitted: q.lastSubmitted,
-      })),
+      questionnaires: (data ?? []).map((q) =>
+        mapElQuestionnaireListItem(q, formatMessage),
+      ),
     }
   }
 
-  private async getLSHQuestionnaires(
+  private async getLshQuestionnaires(
     user: User,
     locale: Locale,
   ): Promise<QuestionnairesList> {
@@ -257,29 +250,16 @@ export class QuestionnairesService {
       [NAMESPACE],
       locale,
     )
-    const data: LSHQuestionnaireType[] | null =
-      await this.lshApi.getQuestionnaires(user, locale)
+    const data = await this.lshApi.getQuestionnaires(user, locale)
 
     return {
       questionnaires: (data ?? [])
         .filter((item) => item.gUID != null)
-        .map((item) => ({
-          id: item.gUID ?? 'undefined-id',
-          title: item.caption ?? formatMessage(m.questionnaireWithoutTitle),
-          description: item.description ?? undefined,
-          sentDate: item.validFromDateTime?.toISOString() ?? '',
-          organization: QuestionnairesOrganizationEnum.LSH,
-          department: item.department ?? undefined,
-          status: item.answerDateTime
-            ? QuestionnairesStatusEnum.answered
-            : new Date(item.validToDateTime) < new Date()
-            ? QuestionnairesStatusEnum.expired
-            : QuestionnairesStatusEnum.notAnswered,
-        })),
+        .map((item) => mapLshQuestionnaireListItem(item, formatMessage)),
     }
   }
 
-  private async getELAnsweredQuestionnaire(
+  private async getElAnsweredQuestionnaire(
     user: User,
     locale: Locale,
     questionnaireId: string,
@@ -360,7 +340,7 @@ export class QuestionnairesService {
     }
   }
 
-  private async getLSHAnsweredQuestionnaire(
+  private async getLshAnsweredQuestionnaire(
     user: User,
     locale: Locale,
     input: QuestionnaireAnsweredInput,
@@ -415,11 +395,16 @@ export class QuestionnairesService {
     return { data: [data] }
   }
 
-  private async getLSHQuestionnaireDetail(
+  private async getLshQuestionnaire(
     user: User,
     locale: Locale,
     input: GetQuestionnaireInput,
   ): Promise<Questionnaire | null> {
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
+
     if (input.includeQuestions) {
       const lshQuestionnaireWithQuestions = await this.lshApi.getQuestionnaire(
         user,
@@ -431,94 +416,32 @@ export class QuestionnairesService {
         return null
       }
 
-      return mapLshQuestionnaire(lshQuestionnaireWithQuestions)
+      return mapLshQuestionnaireForm(lshQuestionnaireWithQuestions, formatMessage)
     }
 
     const lshQuestionnaires = await this.lshApi.getQuestionnaires(user, locale)
-    const lshQuestionnaire: LSHQuestionnaireType | null =
+    const lshQuestionnaire: LshQuestionnaireType | null =
       lshQuestionnaires?.find((q) => q.gUID === input.id) ?? null
 
-    return this.getLSHQuestionnaire(locale, lshQuestionnaire)
+    if (!lshQuestionnaire) return null
+    return mapLshQuestionnaireOverview(lshQuestionnaire, formatMessage)
   }
 
-  private async getELQuestionnaireDetail(
+  private async getElQuestionnaire(
     user: User,
     locale: Locale,
     input: GetQuestionnaireInput,
   ): Promise<Questionnaire | null> {
     const elData: QuestionnaireDetailDto | null =
       await this.api.getQuestionnaire(user, locale, input.id)
-
-    return this.getELQuestionnaire(locale, input.includeQuestions, elData)
-  }
-
-  private async getELQuestionnaire(
-    locale: Locale,
-    withQuestions?: boolean,
-    data?: QuestionnaireDetailDto | null,
-  ): Promise<Questionnaire | null> {
-    if (!data) return null
+    if (!elData) return null
     const { formatMessage } = await this.intlService.useIntl(
       [NAMESPACE],
       locale,
     )
-
-    return withQuestions
-      ? mapELQuestionnaire(data, formatMessage)
-      : {
-          baseInformation: {
-            id: data.questionnaireId,
-            title: data.title ?? formatMessage(m.questionnaireWithoutTitle),
-            sentDate: data.lastSubmitted?.toDateString() ?? '',
-            status: data.hasDraft
-              ? QuestionnairesStatusEnum.draft
-              : data.submissions?.length > 0
-              ? QuestionnairesStatusEnum.answered
-              : !data.canSubmit
-              ? QuestionnairesStatusEnum.expired
-              : QuestionnairesStatusEnum.notAnswered,
-            description: data.message ?? undefined,
-            organization: QuestionnairesOrganizationEnum.EL,
-            lastSubmissionId: data.lastCreatedSubmissionId,
-          },
-          submissions: data.submissions?.map((sub) => ({
-            id: sub.id,
-            createdAt: sub.createdDate ?? undefined,
-            isDraft: sub.isDraft,
-            lastUpdated: sub.lastUpdatedDate ?? undefined,
-          })),
-          canSubmit: data.canSubmit,
-          expirationDate: data.expiryDate ?? undefined,
-        }
-  }
-
-  private async getLSHQuestionnaire(
-    locale: Locale,
-    data?: LSHQuestionnaireType | null | undefined,
-  ): Promise<Questionnaire | null> {
-    if (!data) return null
-    const { formatMessage } = await this.intlService.useIntl(
-      [NAMESPACE],
-      locale,
-    )
-
-    return {
-      baseInformation: {
-        id: data.gUID ?? 'undefined-id',
-        title: data.caption ?? formatMessage(m.questionnaireWithoutTitle),
-        status: data.answerDateTime
-          ? QuestionnairesStatusEnum.answered
-          : new Date(data.validToDateTime) < new Date()
-          ? QuestionnairesStatusEnum.expired
-          : QuestionnairesStatusEnum.notAnswered,
-        sentDate: data.validFromDateTime?.toISOString() ?? '',
-        description: data.description ?? undefined,
-        organization: QuestionnairesOrganizationEnum.LSH,
-        department: data.department ?? undefined,
-      },
-      expirationDate: data.validToDateTime ?? undefined,
-      canSubmit: data.answerDateTime ? false : true,
-    }
+    return input.includeQuestions
+      ? mapElQuestionnaireForm(elData, formatMessage)
+      : mapElQuestionnaireOverview(elData, formatMessage)
   }
 
   private formatDate(date?: Date | string | null): string | undefined {
@@ -532,21 +455,21 @@ export class QuestionnairesService {
   }
 
   private async getQuestionnaireFeatureFlags(user: User): Promise<{
-    useEL: boolean
-    useLSH: boolean
+    useEl: boolean
+    useLsh: boolean
   }> {
-    const useEL = await this.featureService.getValue(
+    const useEl = await this.featureService.getValue(
       Features.questionnairesFromEL,
       false,
       user,
     )
-    const useLSH = await this.featureService.getValue(
+    const useLsh = await this.featureService.getValue(
       Features.questionnairesFromLSH,
       false,
       user,
     )
 
-    return { useEL, useLSH }
+    return { useEl, useLsh }
   }
 
   /**
