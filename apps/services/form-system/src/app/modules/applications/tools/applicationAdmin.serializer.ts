@@ -87,7 +87,7 @@ export class InstitutionSerializer
       .pipe(
         mergeMap((institutions: InstitutionDto[]) =>
           from(
-            Promise.all(
+            Promise.allSettled(
               institutions.map((institution) => this.serialize(institution)),
             ).then((serialized) => plainToInstance(InstitutionDto, serialized)),
           ),
@@ -136,11 +136,16 @@ export class ApplicationStatisticsSerializer
         mergeMap((applicationStatistics: ApplicationStatisticsDto[]) =>
           from(
             Promise.all(
-              applicationStatistics.map((applicationStatistics) =>
-                this.serialize(applicationStatistics),
+              applicationStatistics.map((applicationStatistic) =>
+                this.serialize(applicationStatistic),
               ),
             ).then((serialized) =>
-              plainToInstance(ApplicationStatisticsDto, serialized),
+              plainToInstance(
+                ApplicationStatisticsDto,
+                serialized.filter(
+                  (item): item is ApplicationStatisticsDto => item !== null,
+                ),
+              ),
             ),
           ),
         ),
@@ -149,20 +154,29 @@ export class ApplicationStatisticsSerializer
 
   private async serialize(
     applicationStatistic: ApplicationStatisticsDto,
-  ): Promise<ApplicationStatisticsDto> {
-    const institutionName =
-      await this.identityService.tryToGetNameFromNationalId(
+  ): Promise<ApplicationStatisticsDto | null> {
+    try {
+      const institutionName =
+        await this.identityService.tryToGetNameFromNationalId(
+          applicationStatistic.institutionNationalId,
+          false,
+        )
+      const institutionInfo = getOrganizationInfoByNationalId(
         applicationStatistic.institutionNationalId,
-        false,
       )
-    const institutionInfo = getOrganizationInfoByNationalId(
-      applicationStatistic.institutionNationalId,
-    )
 
-    return plainToInstance(ApplicationStatisticsDto, {
-      ...applicationStatistic,
-      institutionName: institutionName ?? '',
-      institutionContentfulSlug: institutionInfo?.slug,
-    })
+      return plainToInstance(ApplicationStatisticsDto, {
+        ...applicationStatistic,
+        institutionName: institutionName ?? '',
+        institutionContentfulSlug: institutionInfo?.slug,
+      })
+    } catch (error) {
+      this.logger.warn(
+        `Failed to serialize ApplicationStatisticsDto for formId ${applicationStatistic.formId}`,
+        { error },
+      )
+
+      return null
+    }
   }
 }
