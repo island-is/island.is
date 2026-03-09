@@ -44,7 +44,9 @@ describe('VerdictService - update', () => {
     mockVerdictRepositoryService = verdictRepositoryService
     transaction = {} as Transaction
     mockAddMessagesToQueue = (
-      jest.requireMock('@island.is/judicial-system/message') as typeof MessageModule
+      jest.requireMock(
+        '@island.is/judicial-system/message',
+      ) as typeof MessageModule
     ).addMessagesToQueue as jest.Mock
 
     givenWhenThen = async ({ verdict, update, theCase, defendantId }) => {
