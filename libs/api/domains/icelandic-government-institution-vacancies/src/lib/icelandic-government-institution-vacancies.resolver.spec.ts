@@ -5,10 +5,7 @@ import request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 import { VacancyApi } from '@island.is/clients/financial-management-authority'
 import { DefaultApi } from '@island.is/clients/icelandic-government-institution-vacancies'
-import {
-  CmsContentfulService,
-  CmsElasticsearchService,
-} from '@island.is/cms'
+import { CmsContentfulService, CmsElasticsearchService } from '@island.is/cms'
 import {
   FeatureFlagModule,
   FeatureFlagConfig,
@@ -157,7 +154,9 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
   it('uses xroad list API when feature flag is disabled', async () => {
     featureFlagClient.getValue.mockResolvedValue(false)
 
-    await request(app.getHttpServer()).get('/graphql').query({ query: listQuery })
+    await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: listQuery })
 
     expect(mockXRoadApi.vacanciesGet).toHaveBeenCalledTimes(1)
     expect(mockElfurApi.v1VacancyGetVacancyListGet).not.toHaveBeenCalled()
@@ -166,7 +165,9 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
   it('uses new list API when feature flag is enabled', async () => {
     featureFlagClient.getValue.mockResolvedValue(true)
 
-    await request(app.getHttpServer()).get('/graphql').query({ query: listQuery })
+    await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: listQuery })
 
     expect(mockElfurApi.v1VacancyGetVacancyListGet).toHaveBeenCalledTimes(1)
     expect(mockXRoadApi.vacanciesGet).not.toHaveBeenCalled()
@@ -175,7 +176,9 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
   it('uses xroad detail API for vacancy by id when feature flag is disabled', async () => {
     featureFlagClient.getValue.mockResolvedValue(false)
 
-    await request(app.getHttpServer()).get('/graphql').query({ query: byIdQuery })
+    await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: byIdQuery })
 
     expect(mockXRoadApi.vacanciesVacancyIdGet).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -188,7 +191,9 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
   it('uses new detail API for vacancy by id when feature flag is enabled', async () => {
     featureFlagClient.getValue.mockResolvedValue(true)
 
-    await request(app.getHttpServer()).get('/graphql').query({ query: byIdQuery })
+    await request(app.getHttpServer())
+      .get('/graphql')
+      .query({ query: byIdQuery })
 
     expect(mockElfurApi.v1VacancyGetVacancyGet).toHaveBeenCalledWith({
       vacancyId: '123',
