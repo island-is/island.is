@@ -73,7 +73,7 @@ export const Dashboard = () => {
     // eslint-disable-next-line no-lone-blocks
     {
       return navigation?.children
-        ?.filter((item) => !item.navHide)
+        ?.filter((item) => !item.navHide || item.customShortcut)
         .map(
           (navRoot, index) =>
             navRoot.path !== ServicePortalPaths.Root &&
@@ -138,9 +138,13 @@ export const Dashboard = () => {
                             ) : undefined)
                           )
                         }
-                        heading={formatMessage(navRoot.name)}
+                        heading={formatMessage(
+                          navRoot.customShortcut?.name ?? navRoot.name,
+                        )}
                         text={
-                          navRoot.description
+                          navRoot.customShortcut?.description
+                            ? formatMessage(navRoot.customShortcut.description)
+                            : navRoot.description
                             ? formatMessage(navRoot.description)
                             : formatMessage(navRoot.name)
                         }

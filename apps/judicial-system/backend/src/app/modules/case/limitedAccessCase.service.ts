@@ -1,5 +1,5 @@
 import archiver from 'archiver'
-import { Includeable, Op, Transaction } from 'sequelize'
+import { col, Includeable, Op, Transaction } from 'sequelize'
 import { Writable } from 'stream'
 
 import {
@@ -455,6 +455,51 @@ export const include: Includeable[] = [
   {
     model: Case,
     as: 'splitCase',
+  },
+  {
+    model: Case,
+    as: 'splitCases',
+    include: [
+      {
+        model: Defendant,
+        as: 'defendants',
+        required: false,
+        order: [['created', 'ASC']],
+        include: [
+          {
+            model: Subpoena,
+            as: 'subpoenas',
+            required: false,
+            order: [['created', 'DESC']],
+            where: { created: { [Op.lt]: col('Case.created') } },
+          },
+        ],
+      },
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: {
+          state: { [Op.not]: CaseFileState.DELETED },
+          defendantId: { [Op.not]: null },
+          category: {
+            [Op.in]: [
+              CaseFileCategory.CRIMINAL_RECORD,
+              CaseFileCategory.COST_BREAKDOWN,
+              CaseFileCategory.CASE_FILE,
+              CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIM,
+              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+            ],
+          },
+          created: { [Op.lt]: col('Case.created') },
+        },
+      },
+    ],
+    separate: true,
   },
 ]
 
