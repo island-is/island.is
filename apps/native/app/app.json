@@ -113,7 +113,7 @@
             "forceStaticLinking": [
               "RNFBApp"
             ],
-            "ccacheEnabled": true,
+            "ccacheEnabled": false,
             "useHermesV1": true
           }
         }
