@@ -2,19 +2,17 @@ import { NetworkStatus } from '@apollo/client'
 import {
   NativeStackHeaderItem,
   NativeStackHeaderItemProps,
-  NativeStackNavigationOptions
+  NativeStackNavigationOptions,
 } from '@react-navigation/native-stack'
-import {
-  Stack
-} from 'expo-router'
-import { cloneElement, useCallback } from 'react'
-import { Image, Platform, TouchableNativeFeedback } from 'react-native'
+import { Stack } from 'expo-router'
+import { cloneElement, useCallback, useMemo } from 'react'
+import { Image, Platform, Text, TouchableNativeFeedback } from 'react-native'
 import { navbarCloseItem, navbarOfflineItem } from './navbar/navbar-items'
 
 export type StackScreenOptions = Omit<
   NativeStackNavigationOptions,
   'unstable_headerLeftItems' | 'unstable_headerRightItems'
-  > & {
+> & {
   headerRightItems?:
     | NativeStackHeaderItem[]
     | ((props: NativeStackHeaderItemProps) => NativeStackHeaderItem[])
@@ -48,20 +46,30 @@ function mapAndroidHeaderItem(
         key={item.identifier ?? index}
         onPress={item.onPress}
       >
-        <Image
-          source={item.icon?.type === 'image' ? item.icon.source : undefined}
-          style={{ width: 24, height: 24, marginHorizontal: 8 }}
-        />
+        {item.icon ? (
+          <Image
+            source={item.icon?.type === 'image' ? item.icon.source : undefined}
+            style={{ width: 24, height: 24, marginHorizontal: 8 }}
+          />
+        ) : (
+          <Text
+            style={{
+              fontFamily: item.labelStyle?.fontFamily,
+              fontSize: item.labelStyle?.fontSize,
+              fontWeight: item.labelStyle?.fontWeight as any,
+              color: item.tintColor,
+            }}
+          >
+            {item.label}
+          </Text>
+        )}
       </TouchableNativeFeedback>
     )
   }
 }
 
 function callbackOrValue<T>(
-  callbackOrValue?:
-    | T
-    | ((props: NativeStackHeaderItemProps) => T)
-    | undefined,
+  callbackOrValue?: T | ((props: NativeStackHeaderItemProps) => T) | undefined,
   props?: NativeStackHeaderItemProps,
 ): T | undefined {
   if (typeof callbackOrValue === 'function') {
@@ -73,40 +81,60 @@ function callbackOrValue<T>(
 export function StackScreen({
   networkStatus,
   options,
-  closeable
+  closeable,
 }: StackScreenProps) {
-  const headerLeftItems = useCallback((props?: NativeStackHeaderItemProps) => {
-    const currentLeftItems = callbackOrValue(options?.headerLeftItems, props) || [];
-    return [
-      ...currentLeftItems,
-    ]
-  }, [options?.headerLeftItems])
+  const headerLeftItems = useCallback(
+    (props?: NativeStackHeaderItemProps) => {
+      const currentLeftItems =
+        callbackOrValue(options?.headerLeftItems, props) || []
+      return [...currentLeftItems]
+    },
+    [options?.headerLeftItems],
+  )
 
-  const headerRightItems = useCallback((props?: NativeStackHeaderItemProps) => {
-    const currentRightItems = callbackOrValue(options?.headerRightItems, props) || [];
+  const headerRightItems = useCallback(
+    (props?: NativeStackHeaderItemProps) => {
+      const currentRightItems =
+        callbackOrValue(options?.headerRightItems, props) || []
 
-    const result = [
-      navbarOfflineItem(networkStatus),
-      ...currentRightItems,
-      closeable ? navbarCloseItem() : undefined,
-    ].filter(Boolean) as NativeStackHeaderItem[];
+      const result = [
+        navbarOfflineItem(networkStatus),
+        ...currentRightItems,
+        closeable && Platform.OS === 'ios' ? navbarCloseItem() : undefined,
+      ].filter(Boolean) as NativeStackHeaderItem[]
 
-    return result;
-  }, [options?.headerRightItems, networkStatus, closeable])
+      return result
+    },
+    [options?.headerRightItems, networkStatus, closeable],
+  )
+
+  // Android doesn't support dynamic header items, so we need to compute them here.
+  const { headerLeft, headerRight } = useMemo(() => {
+    if (Platform.OS === 'ios') {
+      return {
+        headerLeft: undefined,
+        headerRight: undefined,
+      }
+    }
+    const leftItems = headerLeftItems()
+      .map(mapAndroidHeaderItem)
+      .filter(Boolean)
+    const rightItems = headerRightItems()
+      .map(mapAndroidHeaderItem)
+      .filter(Boolean)
+    return {
+      headerLeft: leftItems.length > 0 ? () => <>{leftItems}</> : undefined,
+      headerRight: rightItems.length > 0 ? () => <>{rightItems}</> : undefined,
+    }
+  }, [headerLeftItems, headerRightItems])
 
   return (
     <Stack.Screen
       options={{
         unstable_headerLeftItems: headerLeftItems,
-        headerLeft:
-          Platform.OS === 'android' && headerLeftItems?.length
-            ? () => <>{headerLeftItems().map(mapAndroidHeaderItem)}</>
-            : undefined,
+        headerLeft,
         unstable_headerRightItems: headerRightItems,
-        headerRight:
-          Platform.OS === 'android'
-            ? () => <>{headerRightItems().map(mapAndroidHeaderItem)}</>
-            : undefined,
+        headerRight,
         ...options,
       }}
     />
