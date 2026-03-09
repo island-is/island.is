@@ -186,20 +186,22 @@ const IndictmentOverview = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
-      if (workingCase.defendants) {
-        const promises = workingCase.defendants.map((defendant) =>
-          updateDefendant({
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            subpoenaType: defendant.subpoenaType,
-          }),
-        )
+      if (!workingCase.defendants || workingCase.defendants.length === 0) {
+        return
+      }
 
-        const allDataSentToServer = await Promise.all(promises)
+      const promises = workingCase.defendants.map((defendant) =>
+        updateDefendant({
+          caseId: workingCase.id,
+          defendantId: defendant.id,
+          subpoenaType: defendant.subpoenaType,
+        }),
+      )
 
-        if (!allDataSentToServer.every(Boolean)) {
-          return
-        }
+      const allDataSentToServer = await Promise.all(promises)
+
+      if (!allDataSentToServer.every(Boolean)) {
+        return
       }
 
       router.push(`${destination}/${workingCase.id}`)

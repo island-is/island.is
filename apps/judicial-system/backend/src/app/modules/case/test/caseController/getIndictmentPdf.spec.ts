@@ -2,6 +2,8 @@ import { Response } from 'express'
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
+import { BadRequestException } from '@nestjs/common'
+
 import {
   CaseState,
   CaseType,
@@ -20,7 +22,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = () => Promise<Then>
+type GivenWhenThen = (caseOverride?: Case) => Promise<Then>
 
 describe('CaseController - Get indictment pdf', () => {
   const caseId = uuid()
@@ -34,6 +36,7 @@ describe('CaseController - Get indictment pdf', () => {
       [policeCaseNumber]: [IndictmentSubtype.TRAFFIC_VIOLATION],
     },
     indictmentHash: uuid(),
+    defendants: [{ id: uuid(), name: 'Test Defendant' }],
   } as Case
   const pdf = Buffer.from(uuid())
   const res = { end: jest.fn() } as unknown as Response
@@ -56,11 +59,16 @@ describe('CaseController - Get indictment pdf', () => {
     const mockGetObject = mockAwsS3Service.getObject as jest.Mock
     mockGetObject.mockRejectedValue(new Error('Some error'))
 
-    givenWhenThen = async () => {
+    givenWhenThen = async (caseOverride?: Case) => {
       const then = {} as Then
+      const caseToUse = caseOverride ?? theCase
 
       try {
-        await caseController.getIndictmentPdf(caseId, theCase, res)
+        await caseController.getIndictmentPdf(
+          caseToUse.id,
+          caseToUse,
+          res,
+        )
       } catch (error) {
         then.error = error as Error
       }
@@ -101,6 +109,25 @@ describe('CaseController - Get indictment pdf', () => {
 
     it('should return pdf', () => {
       expect(res.end).toHaveBeenCalledWith(pdf)
+    })
+  })
+
+  describe('when case has 0 defendants', () => {
+    it('should throw BadRequestException and not call createIndictment', async () => {
+      ;(createIndictment as jest.Mock).mockClear()
+
+      const caseWithNoDefendants = {
+        ...theCase,
+        defendants: [],
+      } as Case
+
+      const then = await givenWhenThen(caseWithNoDefendants)
+
+      expect(then.error).toBeInstanceOf(BadRequestException)
+      expect(then.error?.message).toContain(
+        'Cannot generate indictment PDF without at least one defendant',
+      )
+      expect(createIndictment).not.toHaveBeenCalled()
     })
   })
 })

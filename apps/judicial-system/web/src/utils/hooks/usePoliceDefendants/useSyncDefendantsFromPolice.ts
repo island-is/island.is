@@ -10,11 +10,11 @@ import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { usePoliceDefendantsQuery } from './policeDefendants.generated'
 
 const mapPoliceGenderToGender = (gender?: string | null): Gender | undefined =>
-  gender === 'MALE' || gender === 'male'
+  gender?.toLowerCase() === 'male'
     ? Gender.MALE
-    : gender === 'FEMALE' || gender === 'female'
+    : gender?.toLowerCase() === 'female'
     ? Gender.FEMALE
-    : gender === 'OTHER' || gender === 'other'
+    : gender?.toLowerCase() === 'other'
     ? Gender.OTHER
     : undefined
 
@@ -23,7 +23,6 @@ const mapPoliceGenderToGender = (gender?: string | null): Gender | undefined =>
  * - Adds defendants whose nationalId is in the payload but not in our list.
  * - Does nothing for nationalIds that already exist.
  * - Does nothing for nationalIds that exist in our data but not in the payload (no removal).
- * Must be used inside FormProvider.
  */
 export const useSyncDefendantsFromPolice = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)

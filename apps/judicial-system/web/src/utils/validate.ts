@@ -241,6 +241,7 @@ export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
           !workingCase.indictmentSubtypes[n] ||
           workingCase.indictmentSubtypes[n].length === 0,
       ) &&
+      (workingCase.defendants?.length ?? 0) > 0 &&
       !someDefendantIsInvalid(workingCase) &&
       validate([
         [workingCase.type, ['empty']],
@@ -280,9 +281,13 @@ export const isHearingArrangementsStepValidIC = (
 export const isProcessingStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  const defendantsAreValid = workingCase.defendants?.every(
-    (defendant) => validate([[defendant.defendantPlea, ['empty']]]).isValid,
-  )
+  const hasAtLeastOneDefendant =
+    (workingCase.defendants?.length ?? 0) > 0
+  const defendantsAreValid =
+    hasAtLeastOneDefendant &&
+    workingCase.defendants?.every(
+      (defendant) => validate([[defendant.defendantPlea, ['empty']]]).isValid,
+    )
 
   const hasCivilClaimSelected =
     workingCase.hasCivilClaims !== null &&
@@ -526,10 +531,15 @@ export const isSubpoenaStepValid = (
   const defendants = updatedDefendants || workingCase.defendants
 
   const validateDefendants = (defendants?: Defendant[] | null) => {
-    return defendants?.every((defendant) =>
-      defendant.isAlternativeService
-        ? defendant.alternativeServiceDescription
-        : defendant.subpoenaType,
+    const hasAtLeastOneDefendant = (defendants?.length ?? 0) > 0
+    return (
+      hasAtLeastOneDefendant &&
+      (defendants?.every((defendant) =>
+        defendant.isAlternativeService
+          ? defendant.alternativeServiceDescription
+          : defendant.subpoenaType,
+      ) ??
+        false)
     )
   }
 
@@ -542,8 +552,11 @@ export const isSubpoenaStepValid = (
 }
 
 export const isDefenderStepValid = (workingCase: Case): boolean => {
+  const hasAtLeastOneDefendant =
+    (workingCase.defendants?.length ?? 0) > 0
   const defendantsAreValid = () =>
-    workingCase.defendants?.every((defendant) => {
+    hasAtLeastOneDefendant &&
+    (workingCase.defendants?.every((defendant) => {
       return (
         defendant.defenderChoice === DefenderChoice.WAIVE ||
         defendant.defenderChoice === DefenderChoice.DELAY ||
@@ -555,7 +568,8 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
           [defendant.defenderPhoneNumber, ['phonenumber']],
         ]).isValid
       )
-    })
+    }) ??
+      false)
 
   return Boolean(workingCase.prosecutor && defendantsAreValid())
 }

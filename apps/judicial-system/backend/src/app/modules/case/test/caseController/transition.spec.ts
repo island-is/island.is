@@ -2,6 +2,7 @@ import each from 'jest-each'
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
+import { ForbiddenException } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
@@ -331,6 +332,7 @@ describe('CaseController - Transition', () => {
           },
         ]
         const courtEndTime = randomDate()
+        const defendants = [{ id: uuid(), name: 'Test Defendant' }]
         const theCase = {
           id: caseId,
           origin: CaseOrigin.LOKE,
@@ -340,6 +342,7 @@ describe('CaseController - Transition', () => {
           state: oldState,
           caseFiles,
           courtEndTime,
+          defendants,
         } as Case
         const updatedCase = {
           id: caseId,
@@ -350,6 +353,7 @@ describe('CaseController - Transition', () => {
           state: newState,
           caseFiles,
           courtEndTime,
+          defendants,
         } as Case
         let then: Then
 
@@ -553,6 +557,35 @@ describe('CaseController - Transition', () => {
       })
     },
   )
+
+  describe('indictment case with 0 defendants', () => {
+    each(indictmentCases).describe('%s case', (type) => {
+      it('should reject ASK_FOR_CONFIRMATION and not call update', async () => {
+        const caseId = uuid()
+        const policeCaseNumber = uuid()
+        const theCaseWithNoDefendants = {
+          id: caseId,
+          origin: CaseOrigin.LOKE,
+          type,
+          policeCaseNumbers: [policeCaseNumber],
+          state: CaseState.DRAFT,
+          defendants: [],
+        } as Case
+
+        const then = await givenWhenThen(
+          caseId,
+          theCaseWithNoDefendants,
+          { transition: CaseTransition.ASK_FOR_CONFIRMATION },
+        )
+
+        expect(then.error).toBeInstanceOf(ForbiddenException)
+        expect(then.error?.message).toContain(
+          'Cannot submit indictment to court without at least one defendant',
+        )
+        expect(mockCaseRepositoryService.update).not.toHaveBeenCalled()
+      })
+    })
+  })
 
   each`
       transition                        | caseState                    | currentAppealState           | newAppealState

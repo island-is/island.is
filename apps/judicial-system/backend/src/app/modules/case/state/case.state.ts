@@ -548,6 +548,16 @@ const transitionIndictmentCase = (
     )
   }
 
+  // Do not allow submitting indictment to court with 0 defendants
+  if (
+    transition === IndictmentCaseTransition.ASK_FOR_CONFIRMATION &&
+    (!theCase.defendants || theCase.defendants.length === 0)
+  ) {
+    throw new ForbiddenException(
+      'Cannot submit indictment to court without at least one defendant',
+    )
+  }
+
   return rule.transition(update, theCase, actor)
 }
 
