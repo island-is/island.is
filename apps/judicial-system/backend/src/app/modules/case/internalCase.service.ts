@@ -91,8 +91,8 @@ import {
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
+import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
-import { InternalCreateCaseV2Dto } from './dto/internalCreateCaseV2.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
 import { DeliverResponse } from './models/deliver.response'
@@ -391,8 +391,8 @@ export class InternalCaseService {
       })
   }
 
-  async create(
-    caseToCreate: InternalCreateCaseDto,
+  async deprecatedCreate(
+    caseToCreate: DeprecatedInternalCreateCaseDto,
     transaction: Transaction,
   ): Promise<Case> {
     const users = await this.userService
@@ -476,8 +476,8 @@ export class InternalCaseService {
     return theCase as Case
   }
 
-  async createV2(
-    caseToCreate: InternalCreateCaseV2Dto,
+  async create(
+    caseToCreate: InternalCreateCaseDto,
     transaction: Transaction,
   ): Promise<Case> {
     const users = await this.userService

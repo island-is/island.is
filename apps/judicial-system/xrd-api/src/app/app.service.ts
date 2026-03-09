@@ -31,7 +31,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
-import { CreateCaseV2Dto } from './dto/createCaseV2.dto'
+import { DeprecatedCreateCaseDto } from './dto/deprecatedCreateCase.dto'
 import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
@@ -48,6 +48,15 @@ export class AppService {
     private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+  async deprecatedCreate(caseToCreate: DeprecatedCreateCaseDto): Promise<Case> {
+    return this.auditTrailService.audit(
+      'xrd-api',
+      AuditedAction.CREATE_CASE,
+      this.deprecatedCreateCase(caseToCreate),
+      (theCase) => theCase.id,
+    )
+  }
+
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
     return this.auditTrailService.audit(
       'xrd-api',
@@ -57,16 +66,9 @@ export class AppService {
     )
   }
 
-  async createV2(caseToCreate: CreateCaseV2Dto): Promise<Case> {
-    return this.auditTrailService.audit(
-      'xrd-api',
-      AuditedAction.CREATE_CASE,
-      this.createCaseV2(caseToCreate),
-      (theCase) => theCase.id,
-    )
-  }
-
-  private async createCase(caseToCreate: CreateCaseDto): Promise<Case> {
+  private async deprecatedCreateCase(
+    caseToCreate: DeprecatedCreateCaseDto,
+  ): Promise<Case> {
     return fetch(`${this.config.backend.url}/api/internal/case/`, {
       method: 'POST',
       headers: {
@@ -104,7 +106,7 @@ export class AppService {
       })
   }
 
-  private async createCaseV2(caseToCreate: CreateCaseV2Dto): Promise<Case> {
+  private async createCase(caseToCreate: CreateCaseDto): Promise<Case> {
     return fetch(`${this.config.backend.url}/api/internal/case/create`, {
       method: 'POST',
       headers: {

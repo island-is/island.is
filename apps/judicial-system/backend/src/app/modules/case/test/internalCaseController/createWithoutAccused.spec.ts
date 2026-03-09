@@ -15,18 +15,18 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { Case, CaseRepositoryService, User } from '../../../repository'
 import { UserService } from '../../../user'
-import { InternalCreateCaseV2Dto } from '../../dto/internalCreateCaseV2.dto'
+import { InternalCreateCaseDto } from '../../dto/internalCreateCase.dto'
 
 interface Then {
   result: Case
   error: Error
 }
 
-type GivenWhenThen = (caseToCreate: InternalCreateCaseV2Dto) => Promise<Then>
+type GivenWhenThen = (caseToCreate: InternalCreateCaseDto) => Promise<Then>
 
-describe('InternalCaseController - CreateV2 - Create without accused', () => {
+describe('InternalCaseController - Create - Create without accused', () => {
   const prosecutorNationalId = '1234567890'
-  const caseToCreate: InternalCreateCaseV2Dto = {
+  const caseToCreate: InternalCreateCaseDto = {
     type: CaseType.CUSTODY,
     policeCaseNumbers: ['007-2021-777'],
     prosecutorNationalId,
@@ -65,11 +65,11 @@ describe('InternalCaseController - CreateV2 - Create without accused', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
-    givenWhenThen = async (caseToCreate: InternalCreateCaseV2Dto) => {
+    givenWhenThen = async (caseToCreate: InternalCreateCaseDto) => {
       const then = {} as Then
 
       try {
-        then.result = await internalCaseController.createV2(caseToCreate)
+        then.result = await internalCaseController.create(caseToCreate)
       } catch (error) {
         then.error = error as Error
       }
