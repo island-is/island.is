@@ -474,7 +474,11 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     } else if (input.id.startsWith(EXTERNAL_SYSTEM_ID_PREFIX)) {
       const id = input.id.slice(EXTERNAL_SYSTEM_ID_PREFIX.length)
       if (id === '') return null
-      return this.getVacancyFromExternalSystem(id, input.language, featureFlagUser)
+      return this.getVacancyFromExternalSystem(
+        id,
+        input.language,
+        featureFlagUser,
+      )
     }
 
     // If no prefix is present then we determine what service to call depending on the feature flag and id format
@@ -488,7 +492,11 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       // New API: first try CMS, then external service
       const vacancyFromCms = await this.getVacancyFromCms(input.id)
       if (vacancyFromCms.vacancy === null) {
-        return this.getVacancyFromExternalSystem(input.id, input.language, featureFlagUser)
+        return this.getVacancyFromExternalSystem(
+          input.id,
+          input.language,
+          featureFlagUser,
+        )
       }
       return vacancyFromCms
     } else {
@@ -497,7 +505,11 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       if (isNaN(numericId)) {
         return this.getVacancyFromCms(input.id)
       }
-      return this.getVacancyFromExternalSystem(input.id, input.language, featureFlagUser)
+      return this.getVacancyFromExternalSystem(
+        input.id,
+        input.language,
+        featureFlagUser,
+      )
     }
   }
 }
