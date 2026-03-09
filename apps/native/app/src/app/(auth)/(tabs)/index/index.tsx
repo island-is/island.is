@@ -3,10 +3,14 @@ import {
   Animated,
   Image,
   ListRenderItemInfo,
+  Platform,
+  Pressable,
   RefreshControl,
+  Text,
   TouchableNativeFeedback,
+  View,
 } from 'react-native'
-
+import { LiquidGlass } from 'react-native-platform-components'
 import {
   AirDiscountModule,
   useGetAirDiscountQuery,
@@ -50,6 +54,8 @@ import { testIDs } from '@/utils/test-ids'
 import { router, Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
 import { StackScreen } from '../../../../components/stack-screen'
+import { blue400, red400, Typography } from '../../../../ui'
+
 
 interface ListItem {
   id: string
@@ -67,6 +73,7 @@ export default function HomeScreen() {
   useAndroidNotificationPermission(documentNotifications)
   const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
   const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
+  const unseenCount = useNotificationsStore(({ unseenCount }) => unseenCount)
   const setLocale = usePreferencesStore(({ setLocale }) => setLocale)
   const isIdentityDocumentEnabled = useFeatureFlag(
     'isIdentityDocumentEnabled',
@@ -197,7 +204,10 @@ export default function HomeScreen() {
   const isAppUpdateRequired = useCallback(async () => {
     const needsUpdate = await needsToUpdateAppVersion()
     if (needsUpdate) {
-      router.navigate({ pathname: '/update-app', params: { closable: String(false) } })
+      router.navigate({
+        pathname: '/update-app',
+        params: { closable: String(false) },
+      })
     }
   }, [])
 
@@ -301,6 +311,16 @@ export default function HomeScreen() {
           vehiclesRes.networkStatus,
         ]}
         options={{
+          headerTitle: '',
+          headerLeftItems: [
+            {
+              type: 'custom',
+              element: (
+                <Image source={require('@/assets/logo/home-logo.png')} />
+              ),
+              hidesSharedBackground: true,
+            },
+          ],
           headerRightItems: [
             {
               identifier: 'options',
@@ -310,19 +330,63 @@ export default function HomeScreen() {
                 type: 'image',
                 source: require('@/assets/icons/options.png'),
               },
+              tintColor: blue400,
               onPress: () => router.navigate('/homescreen-options'),
+              sharesBackground: false,
             },
             {
-              type: 'button',
-              label: 'Notifications',
-              selected: false,
-              icon: {
-                type: 'image',
-                source: require('@/assets/icons/topbar-notifications.png'),
-              },
-              sharesBackground: false,
-              identifier: 'notifications',
-              onPress: () => router.navigate('/notifications'),
+              type: 'custom',
+              element: (
+                <Pressable onPress={() => router.navigate('/notifications')}>
+                  {Platform.OS === 'ios' ? (
+                    <LiquidGlass
+                      cornerRadius={24}
+                      ios={{ interactive: true, effect: 'regular' }}
+                      style={{
+                        width: 46,
+                        height: 46,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Image
+                        source={require('@/assets/icons/notifications.png')}
+                        style={{ width: 24, height: 24 }}
+                      />
+                    </LiquidGlass>
+                  ) : (
+                    <View
+                      style={{
+                        width: 48,
+                        height: 48,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <Image
+                        source={require('@/assets/icons/notifications.png')}
+                        style={{ width: 24, height: 24 }}
+                      />
+                    </View>
+                  )}
+                  {unseenCount > 0 ? <View
+                    style={{
+                      position: 'absolute',
+                      right: Platform.select({ ios: -4, android: 0 }),
+                      top: Platform.select({ ios: -4, android: 0 }),
+                      backgroundColor: red400,
+                      borderRadius: 8,
+                      paddingVertical: 2,
+                      paddingHorizontal: 4,
+                    }}
+                  >
+                    <Typography variant="eyebrow" color="white">
+                      {unseenCount}
+                    </Typography>
+                  </View> : null}
+                </Pressable>
+              ),
+              hidesSharedBackground: true,
             },
           ],
         }}
