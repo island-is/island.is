@@ -48,7 +48,9 @@ export class WorkerService {
 
     // Step 1: Find all payment flows that are paid (have fulfillment) but missing FJS charge
     const allFlows = await this.findPaymentFlowsToProcess()
-    this.logger.info(`Found ${allFlows.length} payment flow(s) pending FJS charge`)
+    this.logger.info(
+      `Found ${allFlows.length} payment flow(s) pending FJS charge`,
+    )
 
     // Step 2: Filter out flows that have reached the failure limit (manual intervention required)
     const paymentFlowsToProcess = allFlows.filter((flow) => {
