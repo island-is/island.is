@@ -50,11 +50,13 @@ export class AppController {
   ): Promise<Case> {
     this.logger.debug('Creating a case')
 
-    return this.appService.deprecatedCreate(caseToCreate).then((createdCase) => {
-      this.logger.info(`Case ${createdCase.id} created`)
+    return this.appService
+      .deprecatedCreate(caseToCreate)
+      .then((createdCase) => {
+        this.logger.info(`Case ${createdCase.id} created`)
 
-      return createdCase
-    })
+        return createdCase
+      })
   }
 
   @UseInterceptors(EventInterceptor)
