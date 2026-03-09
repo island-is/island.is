@@ -135,20 +135,33 @@ export class CaseTableService {
     })
 
     const getDefendantFilter = (type: CaseTableType) => {
+      const isAcquittedLatestVerdict = (defendant: Defendant) =>
+        // Only the latest verdict is relevant
+        Boolean(defendant.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
+
+      const isNotAcquittedLatestVerdict = (defendant: Defendant) =>
+        !isAcquittedLatestVerdict(defendant)
+
       if (
         type === CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS
       ) {
         return (defendant: Defendant) =>
           // Only the latest verdict is relevant
-          Boolean(defendant.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
+          isAcquittedLatestVerdict(defendant)
       }
 
-      if (type === CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW) {
-        return (defendant: Defendant) =>
-          // Only the latest verdict is relevant
-          Boolean(
-            !defendant.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice,
-          )
+      const allPublicProsecutionOfficeCaseTableTypes = [
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_IN_REVIEW,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_SENT_TO_PRISON_ADMIN,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED,
+        CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS,
+      ]
+
+      if (allPublicProsecutionOfficeCaseTableTypes.includes(type)) {
+        return (defendant: Defendant) => isNotAcquittedLatestVerdict(defendant)
       }
 
       const reviewedTypes = [
