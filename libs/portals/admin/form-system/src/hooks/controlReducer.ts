@@ -167,6 +167,20 @@ type ChangeActions =
       }
     }
   | {
+      type: 'TOGGLE_SHOULD_VALIDATE'
+      payload: {
+        checked: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'TOGGLE_SHOULD_POPULATE'
+      payload: {
+        checked: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
       type: 'CHANGE_CERTIFICATION'
       payload: {
         certificate: FormSystemFormCertificationTypeDto
@@ -181,6 +195,18 @@ type ChangeActions =
     }
   | {
       type: 'CHANGE_ZENDESK_INTERNAL'
+      payload: {
+        value: boolean
+      }
+    }
+  | {
+      type: 'CHANGE_USE_VALIDATE'
+      payload: {
+        value: boolean
+      }
+    }
+  | {
+      type: 'CHANGE_USE_POPULATE'
       payload: {
         value: boolean
       }
@@ -307,6 +333,7 @@ export interface ControlState {
   activeListItem: FormSystemListItem | null
   form: FormSystemForm
   organizationNationalId: string | null
+  isPublished: boolean
 }
 
 export const controlReducer = (
@@ -758,6 +785,26 @@ export const controlReducer = (
       }
       return updatedState
     }
+    case 'CHANGE_USE_VALIDATE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          useValidate: action.payload.value,
+        },
+      }
+      return updatedState
+    }
+    case 'CHANGE_USE_POPULATE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          usePopulate: action.payload.value,
+        },
+      }
+      return updatedState
+    }
     case 'UPDATE_APPLICANT_TYPES': {
       return {
         ...state,
@@ -828,6 +875,50 @@ export const controlReducer = (
         data: {
           ...currentData,
           multiset: action.payload.checked ? 1 : 0,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          screens: screens?.map((g) =>
+            g?.id === currentData?.id ? newActive.data : g,
+          ),
+        },
+      }
+    }
+
+    case 'TOGGLE_SHOULD_VALIDATE': {
+      const currentData = activeItem.data as FormSystemScreen
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          shouldValidate: action.payload.checked ? true : false,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          screens: screens?.map((g) =>
+            g?.id === currentData?.id ? newActive.data : g,
+          ),
+        },
+      }
+    }
+
+    case 'TOGGLE_SHOULD_POPULATE': {
+      const currentData = activeItem.data as FormSystemScreen
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          shouldPopulate: action.payload.checked ? true : false,
         },
       }
       action.payload.update(newActive)

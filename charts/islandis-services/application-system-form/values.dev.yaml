@@ -61,7 +61,7 @@ ingress:
           - '/umsoknir'
 namespace: 'application-system'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

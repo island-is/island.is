@@ -18,7 +18,6 @@ import { addMessagesToQueue, Message } from '@island.is/judicial-system/message'
 
 import { AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
-import { CourtSessionService } from '../../court-session'
 import { CivilClaimantService } from '../../defendant'
 import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
@@ -57,7 +56,6 @@ jest.mock('../../subpoena/subpoena.service')
 jest.mock('../../indictment-count/indictmentCount.service')
 jest.mock('../../repository/services/caseRepository.service')
 jest.mock('../../repository/services/caseArchiveRepository.service')
-jest.mock('../../court-session/courtSession.service')
 
 export const createTestingCaseModule = async () => {
   const caseModule = await Test.createTestingModule({
@@ -87,7 +85,6 @@ export const createTestingCaseModule = async () => {
       SubpoenaService,
       CaseRepositoryService,
       CaseArchiveRepositoryService,
-      CourtSessionService,
       {
         provide: IntlService,
         useValue: {
@@ -120,8 +117,10 @@ export const createTestingCaseModule = async () => {
         provide: getModelToken(CaseString),
         useValue: {
           create: jest.fn(),
+          destroy: jest.fn(),
           findOne: jest.fn(),
           update: jest.fn(),
+          upsert: jest.fn(),
         },
       },
       CaseService,
@@ -177,9 +176,6 @@ export const createTestingCaseModule = async () => {
     getModelToken(CaseString),
   )
 
-  const courtSessionService =
-    caseModule.get<CourtSessionService>(CourtSessionService)
-
   const caseConfig = caseModule.get<ConfigType<typeof caseModuleConfig>>(
     caseModuleConfig.KEY,
   )
@@ -224,7 +220,6 @@ export const createTestingCaseModule = async () => {
     indictmentCountService,
     caseRepositoryService,
     caseArchiveRepositoryService,
-    courtSessionService,
     logger,
     sequelize,
     dateLogModel,

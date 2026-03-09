@@ -5,7 +5,9 @@ import {
   capitalize,
   formatDate,
   getRoleTitleFromCaseFileCategory,
+  getWordByGender,
   lowercase,
+  Word,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
@@ -119,6 +121,7 @@ export const createIndictmentCourtRecordPdf = (
   addMediumHeading(doc, `Mál nr. ${theCase.courtCaseNumber}`)
 
   const caseFiles = theCase.caseFiles ?? []
+  const isMultipleDefendants = (theCase.defendants?.length ?? 0) > 1
   let nrOfFiledDocuments = 0
 
   for (const courtSession of theCase.courtSessions ?? []) {
@@ -166,10 +169,45 @@ export const createIndictmentCourtRecordPdf = (
       doc,
       `Sóknaraðili er ${theCase.prosecutorsOffice?.name ?? 'óþekktur'}.`,
     )
-    addNormalText(
-      doc,
-      `Varnaraðili er ${theCase.defendants?.[0].name ?? 'óþekktur'}.`,
-    )
+
+    if (isMultipleDefendants) {
+      // Check if all defendants have the same gender
+      const allDefendantsSameGender =
+        theCase.defendants?.every(
+          (defendant) => defendant.gender === theCase.defendants?.[0].gender,
+        ) ?? false
+
+      addNormalText(
+        doc,
+        `${
+          capitalize(
+            getWordByGender(
+              Word.AKAERDI,
+              allDefendantsSameGender
+                ? theCase.defendants?.[0].gender
+                : undefined,
+              true,
+            ),
+          ) || 'Ákærðir'
+        } eru ${
+          theCase.defendants
+            ?.map((defendant) => defendant.name)
+            .join(', ')
+            // finds the last comma+space and everything after it and
+            // replaces it with " og " + the last item
+            .replace(/, ([^,]*)$/, ' og $1') ?? 'óþekktir'
+        }.`,
+      )
+    } else {
+      addNormalText(
+        doc,
+        `${
+          capitalize(
+            getWordByGender(Word.AKAERDI, theCase.defendants?.[0].gender),
+          ) || 'Ákærði'
+        } er ${theCase.defendants?.[0].name ?? 'óþekktur'}.`,
+      )
+    }
 
     addEmptyLines(doc)
     addNormalText(doc, 'Mættir eru:', 'Times-Bold')

@@ -538,6 +538,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
+  createSubpoenas(
+    caseId: string,
+    createSubpoenas: {
+      defendantIds: string[]
+      arraignmentDate: string
+      location?: string
+    },
+  ): Promise<Subpoena[]> {
+    return this.post(`case/${caseId}/subpoenas`, createSubpoenas)
+  }
+
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
     return this.post(`case/${caseId}/verdicts`, createVerdicts)
   }

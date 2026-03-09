@@ -284,6 +284,7 @@ const VehicleMileage = () => {
                     type="number"
                     suffix=" km"
                     thousandSeparator
+                    decimalScale={0}
                     backgroundColor="blue"
                     size="xs"
                     maxLength={12}

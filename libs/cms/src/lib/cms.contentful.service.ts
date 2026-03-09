@@ -1704,4 +1704,22 @@ export class CmsContentfulService {
 
     return mapWebChat(bestMatch, input.lang)
   }
+
+  async getCourseOrganizationKennitala(
+    courseId: string,
+  ): Promise<string | undefined> {
+    const response =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        courseId,
+        'is',
+        {
+          content_type: 'course',
+          limit: 1,
+          include: 2,
+        },
+      )
+
+    return response?.fields?.courseListPage?.fields?.organization?.fields
+      ?.kennitala
+  }
 }

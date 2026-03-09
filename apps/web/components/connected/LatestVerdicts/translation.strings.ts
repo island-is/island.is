@@ -6,4 +6,14 @@ export const m = defineMessages({
     defaultMessage: 'Sjá fleiri dóma',
     description: 'Sjá fleiri dóma',
   },
+  revealMoreLabel: {
+    id: 'web.latestVerdicts:revealMoreLabel',
+    defaultMessage: 'Sjá reifun',
+    description: 'Sjá reifun',
+  },
+  hideMoreLabel: {
+    id: 'web.latestVerdicts:hideMoreLabel',
+    defaultMessage: 'Fela reifun',
+    description: 'Fela reifun',
+  },
 })

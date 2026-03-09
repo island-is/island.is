@@ -9,7 +9,8 @@ const userSeeds = `[
     "mobile_number": "0000000",
     "email": "aki@dummy.dd",
     "role": "PROSECUTOR",
-    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
+    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85",
+    "can_confirm_indictment": true
   },
   {
     "id": "7ac41587-061b-44b8-8028-fb19f997c8e7",
@@ -119,7 +120,8 @@ const userSeeds = `[
     "mobile_number": "9999999",
     "email": "testsaekjandi@dummy.dd",
     "role": "PROSECUTOR",
-    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
+    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85",
+    "can_confirm_indictment": true
   },
   {
     "id": "12301c51-2bb7-4014-9469-f7ac2cd9c794",

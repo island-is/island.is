@@ -52,6 +52,7 @@ export const informationModule: PortalModule = {
     const hasUserDetailsAccess = scopes.includes(ApiScope.meDetails)
     const hasNotificationsAccess = hasNotificationScopes(scopes)
     const hasSettingsAccess = hasNotificationScopes(scopes)
+    const isActor = !!routesProps.userInfo?.profile?.actor
 
     return [
       {
@@ -107,13 +108,15 @@ export const informationModule: PortalModule = {
       {
         name: m.mySettings,
         path: InformationPaths.Settings,
-        enabled: hasSettingsAccess,
+        enabled: hasSettingsAccess && !isActor,
+        navHide: isActor,
         element: <UserProfileSettings />,
       },
       {
         name: m.userInfo,
         path: InformationPaths.SettingsNotifications,
-        enabled: hasSettingsAccess,
+        enabled: hasSettingsAccess && !isActor,
+        navHide: isActor,
         element: <UserNotificationsSettings />,
       },
       {

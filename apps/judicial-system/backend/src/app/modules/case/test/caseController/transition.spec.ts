@@ -30,9 +30,8 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-import { Case, CaseRepositoryService } from '../../../repository'
+import { Case, caseInclude, CaseRepositoryService } from '../../../repository'
 import { caseModuleConfig } from '../../case.config'
-import { include } from '../../case.service'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 
 jest.mock('../../../../factories')
@@ -281,7 +280,7 @@ describe('CaseController - Transition', () => {
               expect(then.result).toBe(theCase)
             } else {
               expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-                include,
+                include: caseInclude,
                 where: {
                   id: caseId,
                   isArchived: false,
@@ -541,7 +540,7 @@ describe('CaseController - Transition', () => {
             expect(then.result).toBe(theCase)
           } else {
             expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-              include,
+              include: caseInclude,
               where: {
                 id: caseId,
                 isArchived: false,

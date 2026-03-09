@@ -6,6 +6,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  IndictmentCaseReviewDecision,
   PunishmentType,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
@@ -102,6 +103,11 @@ export class UpdateDefendantInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isRegisteredInPrisonSystem?: boolean
+
+  @Allow()
+  @IsOptional()
   @Field(() => PunishmentType, { nullable: true })
   readonly punishmentType?: PunishmentType
 
@@ -117,6 +123,16 @@ export class UpdateDefendantInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => IndictmentCaseReviewDecision, { nullable: true })
+  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  @Allow()
+  @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly isDrivingLicenseSuspended?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }

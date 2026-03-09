@@ -14,16 +14,24 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { MessageService } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  Message,
+  MessageService,
+} from '@island.is/judicial-system/message'
 
 import { CaseService, InternalCaseService, PdfService } from '../../case'
 import { CourtService } from '../../court'
-import { CourtDocumentService } from '../../court-session'
 import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
 import { FileService } from '../../file'
 import { PoliceService } from '../../police'
-import { Defendant, SubpoenaRepositoryService } from '../../repository'
+import {
+  CaseRepositoryService,
+  CourtDocumentRepositoryService,
+  Defendant,
+  SubpoenaRepositoryService,
+} from '../../repository'
 import { UserService } from '../../user'
 import { InternalSubpoenaController } from '../internalSubpoena.controller'
 import { LimitedAccessSubpoenaController } from '../limitedAccessSubpoena.controller'
@@ -37,11 +45,12 @@ jest.mock('../../case/pdf.service')
 jest.mock('../../police/police.service')
 jest.mock('../../event/event.service')
 jest.mock('../../defendant/defendant.service')
-jest.mock('../../court-session/courtDocument.service')
 jest.mock('../../court/court.service')
 jest.mock('../../file/file.service')
 jest.mock('../../case/internalCase.service')
+jest.mock('../../repository/services/courtDocumentRepository.service')
 jest.mock('../../repository/services/subpoenaRepository.service')
+jest.mock('../../repository/services/caseRepository.service')
 
 export const createTestingSubpoenaModule = async () => {
   const subpoenaModule = await Test.createTestingModule({
@@ -66,7 +75,6 @@ export const createTestingSubpoenaModule = async () => {
       PoliceService,
       EventService,
       DefendantService,
-      CourtDocumentService,
       CourtService,
       InternalCaseService,
       {
@@ -74,10 +82,13 @@ export const createTestingSubpoenaModule = async () => {
         useValue: {
           debug: jest.fn(),
           info: jest.fn(),
+          warn: jest.fn(),
           error: jest.fn(),
         },
       },
+      CourtDocumentRepositoryService,
       SubpoenaRepositoryService,
+      CaseRepositoryService,
       {
         provide: getModelToken(Defendant),
         useValue: {
@@ -115,6 +126,15 @@ export const createTestingSubpoenaModule = async () => {
 
   const subpoenaService = subpoenaModule.get<SubpoenaService>(SubpoenaService)
 
+  const caseRepositoryService = subpoenaModule.get<CaseRepositoryService>(
+    CaseRepositoryService,
+  )
+
+  const courtDocumentRepositoryService =
+    subpoenaModule.get<CourtDocumentRepositoryService>(
+      CourtDocumentRepositoryService,
+    )
+
   const subpoenaController =
     subpoenaModule.get<SubpoenaController>(SubpoenaController)
 
@@ -126,9 +146,18 @@ export const createTestingSubpoenaModule = async () => {
       LimitedAccessSubpoenaController,
     )
 
+  const messageService = subpoenaModule.get<MessageService>(MessageService)
+
+  const queuedMessages: Message[] = []
+  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
+  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
+    queuedMessages.push(...msgs)
+  })
+
   subpoenaModule.close()
 
   return {
+    queuedMessages,
     userService,
     pdfService,
     fileService,
@@ -137,9 +166,12 @@ export const createTestingSubpoenaModule = async () => {
     sequelize,
     internalCaseService,
     subpoenaRepositoryService,
+    caseRepositoryService,
+    courtDocumentRepositoryService,
     subpoenaService,
     subpoenaController,
     internalSubpoenaController,
     limitedAccessSubpoenaController,
+    messageService,
   }
 }

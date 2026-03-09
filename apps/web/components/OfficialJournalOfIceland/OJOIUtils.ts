@@ -7,6 +7,7 @@ import {
   OfficialJournalOfIcelandAdvertCategory,
   OfficialJournalOfIcelandAdvertEntity,
   OfficialJournalOfIcelandAdvertMainCategory,
+  OfficialJournalOfIcelandAdvertsMainType,
   OfficialJournalOfIcelandAdvertType,
 } from '@island.is/web/graphql/schema'
 
@@ -48,6 +49,7 @@ export type EntityOption = Option & {
 type Entity =
   | OfficialJournalOfIcelandAdvertEntity
   | OfficialJournalOfIcelandAdvertType
+  | OfficialJournalOfIcelandAdvertsMainType
   | OfficialJournalOfIcelandAdvertCategory
   | OfficialJournalOfIcelandAdvertMainCategory
 
@@ -59,15 +61,23 @@ export const mapEntityToOptions = (
   }
   const sortedEntities = [...entities].sort(sortAlpha<Entity>('title'))
 
-  // Combine duplicate titles for OfficialJournalOfIcelandAdvertType
-  if (sortedEntities[0]?.__typename === 'OfficialJournalOfIcelandAdvertType') {
+  if (
+    sortedEntities[0]?.__typename === 'OfficialJournalOfIcelandAdvertType' ||
+    sortedEntities[0]?.__typename === 'OfficialJournalOfIcelandAdvertsMainType'
+  ) {
+    console.log('sortedEntities', sortedEntities)
     const combinedTypes = sortedEntities.reduce<Record<string, string[]>>(
       (acc, entity) => {
-        const e = entity as OfficialJournalOfIcelandAdvertType
-        if (!acc[e.title]) {
-          acc[e.title] = []
+        const e = entity as
+          | OfficialJournalOfIcelandAdvertType
+          | OfficialJournalOfIcelandAdvertsMainType
+        const normalizedTitle = e.title
+          .replace(/\u00AD/g, '') // Remove soft hyphens
+          .trim()
+        if (!acc[normalizedTitle]) {
+          acc[normalizedTitle] = []
         }
-        acc[e.title].push(e.slug)
+        acc[normalizedTitle].push(e.slug)
         return acc
       },
       {},
