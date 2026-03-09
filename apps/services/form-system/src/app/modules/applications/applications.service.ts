@@ -1453,6 +1453,7 @@ export class ApplicationsService {
     JOIN public.form f ON f.id = a.form_id
     ${institutionJoin}
     WHERE a.modified BETWEEN :startDate AND :endDate
+      AND f.status = '${FormStatus.PUBLISHED}'
     ${institutionFilter}
     GROUP BY a.form_id, ${localeColumn};
   `
