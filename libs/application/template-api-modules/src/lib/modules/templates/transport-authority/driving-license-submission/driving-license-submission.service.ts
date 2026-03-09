@@ -322,9 +322,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
             contentList = files
               .filter((f) => f.fileContent)
               .map((f) => {
-                const ext = (
-                  f.fileName.split('.').pop() ?? ''
-                ).toLowerCase()
+                const ext = (f.fileName.split('.').pop() ?? '').toLowerCase()
                 const contentType =
                   ext === 'pdf'
                     ? 'application/pdf'
