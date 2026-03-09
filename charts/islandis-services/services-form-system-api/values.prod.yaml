@@ -20,6 +20,7 @@ name: 'services-form-system-api'
 enabled: true
 env:
   CODE_OWNER: 'Advania'
+  COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'services_form_system_api'
   DB_REPLICAS_HOST: 'postgres-applications.internal'

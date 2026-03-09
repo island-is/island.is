@@ -1,10 +1,20 @@
+import type { ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
+import { BLOCKS } from '@contentful/rich-text-types'
 
 import { SliceType } from '@island.is/island-ui/contentful'
-import { Box, GridContainer, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridContainer,
+  Inline,
+  LinkV2,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { OrganizationWrapper } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
@@ -103,13 +113,23 @@ const HtmlView = ({ item }: HtmlViewProps) => {
                   <Text variant="h4" as="h3">
                     {formatMessage(m.detailsPage.presentings)}
                   </Text>
-                  <Text>{item.presentings}</Text>
+                  <Text textAlign="justify">{item.presentings}</Text>
                 </Box>
               )}
             </Stack>
           </Box>
           <Box className={cn('rs_read', styles.textMaxWidth, styles.richText)}>
-            {webRichText([item.richText] as SliceType[])}
+            {webRichText([item.richText] as SliceType[], {
+              renderNode: {
+                [BLOCKS.QUOTE]: (_: unknown, children: ReactNode) => {
+                  return (
+                    <Box paddingLeft={[3, 3, 5, 8]}>
+                      <Text>{children}</Text>
+                    </Box>
+                  )
+                },
+              },
+            })}
           </Box>
         </Box>
       </GridContainer>
@@ -131,6 +151,9 @@ const DeterminationDetails: CustomScreen<DeterminationDetailsProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
+
+  const { formatMessage } = useIntl()
+
   return (
     <OrganizationWrapper
       pageTitle="Ákvarðanir"
@@ -154,7 +177,22 @@ const DeterminationDetails: CustomScreen<DeterminationDetailsProps> = ({
         },
       ]}
     >
-      <Stack space={2}>
+      <Stack space={6}>
+        {item.resolutionLink && (
+          <Inline justifyContent="flexEnd">
+            <LinkV2 href={item.resolutionLink} newTab>
+              <Button
+                variant="text"
+                icon="open"
+                iconType="outline"
+                size="small"
+                unfocusable
+              >
+                {formatMessage(m.detailsPage.resolutionLink)}
+              </Button>
+            </LinkV2>
+          </Inline>
+        )}
         <HtmlView item={item} />
       </Stack>
     </OrganizationWrapper>

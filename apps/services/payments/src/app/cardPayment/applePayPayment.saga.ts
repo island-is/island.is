@@ -5,6 +5,7 @@ import { retry } from '@island.is/shared/utils/server'
 import { PaymentMethod, RefundType } from '../../types'
 import { requireStepResult } from '../../utils/orchestrator'
 import { PaymentFlowService } from '../paymentFlow/paymentFlow.service'
+import { RefundService } from '../refund/refund.service'
 import {
   ApplePayPaymentContext,
   ApplePayPaymentSagaDefinition,
@@ -36,6 +37,7 @@ export const createApplePayPaymentContext = (
 
 export const createApplePayPaymentSaga = (
   cardPaymentService: CardPaymentService,
+  refundService: RefundService,
   paymentFlowService: PaymentFlowService,
   logger: Logger,
 ): ApplePayPaymentSagaDefinition => [
@@ -50,10 +52,6 @@ export const createApplePayPaymentSaga = (
     name: 'CHARGE_APPLE_PAY',
     description: 'Charge via Apple Pay',
     execute: async (ctx) => {
-      logger.info(
-        `[${ctx.paymentFlowId}][APPLE_PAY] Starting payment with correlation id ${ctx.trackingData.correlationId}`,
-      )
-
       await paymentFlowService.logPaymentFlowUpdate({
         paymentFlowId: ctx.paymentFlowId,
         type: 'update',
@@ -77,12 +75,12 @@ export const createApplePayPaymentSaga = (
       const { paymentResult } = requireStepResult(ctx, 'CHARGE_APPLE_PAY')
 
       logger.info(
-        `[${ctx.paymentFlowId}][APPLE_PAY] Attempting to refund payment with correlation id ${ctx.trackingData.correlationId}`,
+        `[${ctx.paymentFlowId}] Refunding payment (correlationId: ${ctx.trackingData.correlationId})`,
       )
 
       try {
         const refund = await retry(() =>
-          cardPaymentService.refundWithCorrelationId({
+          refundService.refundWithCorrelationId({
             paymentTrackingData: ctx.trackingData,
           }),
         )
@@ -139,10 +137,6 @@ export const createApplePayPaymentSaga = (
       })
     },
     compensate: async (ctx) => {
-      logger.info(
-        `[${ctx.paymentFlowId}][APPLE_PAY] Attempting to delete payment confirmation with correlation id ${ctx.trackingData.correlationId}`,
-      )
-
       const deletedPaymentConfirmation =
         await paymentFlowService.deleteCardPaymentConfirmation(
           ctx.paymentFlowId,
@@ -164,9 +158,7 @@ export const createApplePayPaymentSaga = (
         throw new Error('Failed to delete payment fulfillment during rollback')
       }
 
-      logger.info(
-        `[${ctx.paymentFlowId}][APPLE_PAY] Successfully deleted payment confirmation`,
-      )
+      logger.info(`[${ctx.paymentFlowId}] Payment confirmation deleted`)
     },
   },
   {

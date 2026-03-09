@@ -55,12 +55,8 @@ export const Filters = ({
   const [isMobile, setIsMobile] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
   const { width } = useWindowSize()
-  const [chosenInstituteNationalId, setChosenInstituteNationalId] = useState<
-    string | undefined
-  >(undefined)
-  const [chosenInstituteSlug, setChosenInstituteSlug] = useState<
-    string | undefined
-  >(undefined)
+  const [chosenInstitutionNationalId, setChosenInstitutionNationalId] =
+    useState<string | undefined>(undefined)
 
   const sortedOrganizations = organizations.sort((a, b) =>
     a.title.localeCompare(b.title),
@@ -83,7 +79,7 @@ export const Filters = ({
     ssr: false,
     variables: {
       input: {
-        nationalId: chosenInstituteNationalId,
+        nationalId: chosenInstitutionNationalId,
       },
     },
     skip: !isSuperAdmin, //do NOT run if user is NOT superAdmin
@@ -95,7 +91,7 @@ export const Filters = ({
       : refetchInstitutionApplicationTypes
     refetch()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chosenInstituteNationalId])
+  }, [chosenInstitutionNationalId])
 
   useDebounce(
     () => {
@@ -130,8 +126,7 @@ export const Filters = ({
   useEffect(() => {
     if (!filters.typeIdValue) setTypeId(undefined)
     if (!filters.institution) {
-      setChosenInstituteNationalId(undefined)
-      setChosenInstituteSlug(undefined)
+      setChosenInstitutionNationalId(undefined)
     }
 
     if (!filters.nationalId) setNationalId('')
@@ -177,8 +172,7 @@ export const Filters = ({
         labelTitle={formatMessage(m.filter)}
         onFilterClear={() => {
           onFilterClear()
-          setChosenInstituteNationalId(undefined)
-          setChosenInstituteSlug(undefined)
+          setChosenInstitutionNationalId(undefined)
           setTypeId(undefined)
           setSearchStr('')
         }}
@@ -206,28 +200,28 @@ export const Filters = ({
                     size="sm"
                     isClearable={true}
                     value={
-                      chosenInstituteSlug
+                      chosenInstitutionNationalId
                         ? {
-                            value: chosenInstituteSlug,
+                            value: chosenInstitutionNationalId,
                             label:
                               organizations.find(
-                                (x) => x.slug === chosenInstituteSlug,
+                                (x) =>
+                                  x.nationalId === chosenInstitutionNationalId,
                               )?.title || '',
                           }
                         : null
                     }
                     onChange={(v) => {
                       const institution = organizations.find(
-                        (x) => x.slug === v?.value,
+                        (x) => x.nationalId === v?.value,
                       )
-                      setChosenInstituteNationalId(
+                      setChosenInstitutionNationalId(
                         institution?.nationalId || '',
                       )
-                      setChosenInstituteSlug(institution?.slug || '')
                       onInstitutionChange(institution?.nationalId || '')
                     }}
                     options={sortedOrganizations.map((x) => ({
-                      value: x.slug,
+                      value: x.nationalId,
                       label: x.title,
                     }))}
                   />
