@@ -189,7 +189,7 @@ export class IdCardService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // 1. Delete charge so that the seller gets reimburshed
+    // 1. Delete charge so that the seller gets reimbursed
     const chargeId = getPaymentIdFromExternalData(application)
     if (chargeId) {
       await this.paymentsApi.refundControllerRefund({

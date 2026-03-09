@@ -256,7 +256,7 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     { application, auth }: TemplateApiModuleActionProps,
     rejectType: RejectType,
   ): Promise<void> {
-    // 1. Delete charge so that the seller gets reimburshed
+    // 1. Delete charge so that the seller gets reimbursed
     // Note: not necessary on delete, since that is done in the shared delete function
     if (rejectType !== RejectType.DELETE) {
       const chargeId = getPaymentIdFromExternalData(application)
