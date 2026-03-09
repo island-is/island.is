@@ -82,9 +82,15 @@ export class ApplicationChargeService {
           if (error instanceof FetchError && error.problem) {
             errorMessage = error.problem?.detail
           }
-          this.logger.warn(
-            `Failed to delete charge for application ${application.id}. Problem: ${errorMessage}. Error was not rethrown.`,
-          )
+          if (
+            errorMessage ===
+            PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded
+          ) {
+            this.logger.warn(
+              `Failed to delete charge for application ${application.id}. Problem: ${errorMessage}. Error was not rethrown.`,
+            )
+          }
+          throw error
         }
       } else {
         this.logger.warn('No requestId found, skipping deleteCharge')
