@@ -116,7 +116,9 @@ export class VerdictsClientService {
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
 
     const itemsPerPage =
-      typeof input.pageSize === 'number' && input.pageSize < ITEMS_PER_PAGE
+      typeof input.pageSize === 'number' &&
+      input.pageSize > 0 &&
+      input.pageSize < ITEMS_PER_PAGE
         ? input.pageSize
         : ITEMS_PER_PAGE
 
