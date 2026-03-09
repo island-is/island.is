@@ -357,7 +357,9 @@ test.describe.serial('Indictment tests', () => {
     await expect(page).toHaveURL('/malalistar/yfirlesin-sakamal')
     await page.getByText(accusedName).click()
 
-    await page.getByTestId('button-send-case-to-prison-admin').click()
+    await page.getByRole('button', { name: 'Valmynd' }).click()
+    await page.getByRole('menuitem', { name: 'Senda til fullnustu' }).click()
+
     await page.getByTestId('continueButton').click()
     await Promise.all([
       page.getByTestId('modalPrimaryButton').click(),
