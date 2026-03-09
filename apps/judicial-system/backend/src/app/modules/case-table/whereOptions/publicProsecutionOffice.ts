@@ -218,7 +218,6 @@ export const publicProsecutionOfficeAcquittedIndictmentsWhereOptions = () => ({
   [Op.and]: [
     publicProsecutionOfficeIndictmentsAccessWhereOptions,
     {
-      indictment_reviewer_id: { [Op.not]: null },
       [Op.and]: [
         literal(`EXISTS (
               SELECT 1 

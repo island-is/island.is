@@ -135,12 +135,17 @@ export class CaseTableService {
     })
 
     const getDefendantFilter = (type: CaseTableType) => {
+      const isAcquittedLatestVerdict = (defendant: Defendant) =>
+        // Only the latest verdict is relevant
+        Boolean(defendant.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
+
+      const isNotAcquittedLatestVerdict = (defendant: Defendant) =>
+        !isAcquittedLatestVerdict(defendant)
+
       if (
         type === CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS
       ) {
-        return (defendant: Defendant) =>
-          // Only the latest verdict is relevant
-          Boolean(defendant.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
+        return (defendant: Defendant) => isAcquittedLatestVerdict(defendant)
       }
 
       if (
@@ -160,7 +165,7 @@ export class CaseTableService {
       ]
 
       if (!reviewedTypes.includes(type)) {
-        return () => true
+        return (defendant: Defendant) => isNotAcquittedLatestVerdict(defendant)
       }
 
       const targetDecision = [
@@ -172,6 +177,7 @@ export class CaseTableService {
         : IndictmentCaseReviewDecision.APPEAL
 
       return (defendant: Defendant) =>
+        isNotAcquittedLatestVerdict(defendant) &&
         defendant.indictmentReviewDecision === targetDecision
     }
 
