@@ -1,10 +1,10 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
@@ -193,11 +193,21 @@ export class ApplicationsService {
   async update(
     id: string,
     updateApplicationDto: UpdateApplicationDto,
+    user: User,
   ): Promise<void> {
-    const application = await this.applicationModel.findByPk(id)
+    const application = await this.applicationModel.findByPk(id, {
+      include: [{ model: Value, as: 'values' }],
+    })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found`)
+    }
+
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new ForbiddenException(
+        `User does not have permission to update application '${id}'`,
+      )
     }
 
     if (updateApplicationDto.completed) {
@@ -239,13 +249,23 @@ export class ApplicationsService {
     await application.save()
   }
 
-  async submit(id: string): Promise<SubmitApplicationResponseDto> {
-    const application = await this.applicationModel.findByPk(id)
-    const form = await this.formModel.findByPk(application?.formId || '')
+  async submit(id: string, user: User): Promise<SubmitApplicationResponseDto> {
+    const application = await this.applicationModel.findByPk(id, {
+      include: [{ model: Value, as: 'values' }],
+    })
 
     if (!application) {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
+
+    const loginTypes = await this.getLoginTypes(user)
+    if (!this.doesUserMatchApplication(application, user, loginTypes)) {
+      throw new ForbiddenException(
+        `User does not have permission to submit application '${id}'`,
+      )
+    }
+
+    const form = await this.formModel.findByPk(application.formId)
 
     if (!form) {
       throw new NotFoundException(
@@ -406,10 +426,8 @@ export class ApplicationsService {
     )
 
     const allowedLoginTypes = await this.getAllowedLoginTypes(form)
-
     if (user) {
       const loginTypes = await this.getLoginTypes(user)
-
       if (
         !this.isLoginAllowed(loginTypes, allowedLoginTypes) ||
         !this.doesUserMatchApplication(application, user, loginTypes)
@@ -829,8 +847,8 @@ export class ApplicationsService {
 
     const loginTypes = await this.getLoginTypes(user)
     if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new UnauthorizedException(
-        `User is not authorized to save screen for application '${applicationId}'`,
+      throw new ForbiddenException(
+        `User does not have permission to save screen for application '${applicationId}'`,
       )
     }
 
@@ -986,8 +1004,8 @@ export class ApplicationsService {
 
     const loginTypes = await this.getLoginTypes(user)
     if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new UnauthorizedException(
-        `User is not authorized to delete application '${id}'`,
+      throw new ForbiddenException(
+        `User does not have permission to delete application '${id}'`,
       )
     }
 
@@ -1023,8 +1041,8 @@ export class ApplicationsService {
 
     const loginTypes = await this.getLoginTypes(user)
     if (!this.doesUserMatchApplication(application, user, loginTypes)) {
-      throw new UnauthorizedException(
-        `User is not authorized to notify for application '${notificationDto.applicationId}'`,
+      throw new ForbiddenException(
+        `User does not have permission to notify for application '${notificationDto.applicationId}'`,
       )
     }
 
@@ -1435,6 +1453,7 @@ export class ApplicationsService {
     JOIN public.form f ON f.id = a.form_id
     ${institutionJoin}
     WHERE a.modified BETWEEN :startDate AND :endDate
+      AND f.status = '${FormStatus.PUBLISHED}'
     ${institutionFilter}
     GROUP BY a.form_id, ${localeColumn};
   `

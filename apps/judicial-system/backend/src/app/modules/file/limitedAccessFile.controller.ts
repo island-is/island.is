@@ -48,6 +48,7 @@ import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
 import { LimitedAccessViewCaseFileGuard } from './guards/limitedAccessViewCaseFile.guard'
 import { LimitedAccessWriteCaseFileGuard } from './guards/limitedAccessWriteCaseFile.guard'
+import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
@@ -156,7 +157,7 @@ export class LimitedAccessFileController {
   @UseGuards(
     CaseReadGuard,
     MergedCaseExistsGuard,
-    CaseFileExistsGuard,
+    SplitCaseFileExistsGuard,
     LimitedAccessViewCaseFileGuard,
   )
   @RolesRules(prisonSystemStaffRule, defenderRule)

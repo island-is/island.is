@@ -454,11 +454,15 @@ export class PdfService {
 
     await this.refreshFormatMessage()
 
-    // In case of splits, we use the reconstructed full parent case for generation
-    const fullOriginalCase = await this.getFullOriginalCase(theCase)
+    // For subpoenas created before the split, use the reconstructed full parent
+    // case. For subpoenas created after the split, use the current case directly
+    // so the correct court case number appears in the PDF.
+    const caseForPdf = isSplitSubpoena
+      ? await this.getFullOriginalCase(theCase)
+      : theCase
 
     const generatedPdf = await createSubpoena(
-      fullOriginalCase,
+      caseForPdf,
       defendant,
       this.formatMessage,
       subpoena,
@@ -479,7 +483,7 @@ export class PdfService {
       )
 
       // No need to wait for this to finish
-      this.tryUploadPdfToS3(fullOriginalCase, key, generatedPdf)
+      this.tryUploadPdfToS3(caseForPdf, key, generatedPdf)
     }
 
     return generatedPdf
@@ -492,11 +496,18 @@ export class PdfService {
   ): Promise<Buffer> {
     await this.refreshFormatMessage()
 
-    // In case of splits, we use the reconstructed full parent case for generation
-    const fullOriginalCase = await this.getFullOriginalCase(theCase)
+    const isSplitSubpoena =
+      theCase.splitCaseId && subpoena.created < theCase.created
+
+    // For subpoenas created before the split, use the reconstructed full parent
+    // case. For subpoenas created after the split, use the current case directly
+    // so the correct court case number appears in the PDF.
+    const caseForPdf = isSplitSubpoena
+      ? await this.getFullOriginalCase(theCase)
+      : theCase
 
     const generatedPdf = await createSubpoenaServiceCertificate(
-      fullOriginalCase,
+      caseForPdf,
       defendant,
       subpoena,
       this.formatMessage,

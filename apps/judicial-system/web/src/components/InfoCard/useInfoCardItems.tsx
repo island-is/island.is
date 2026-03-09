@@ -1,4 +1,4 @@
-import { Fragment, useContext } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -278,22 +278,33 @@ const useInfoCardItems = () => {
     values: [mergedCase.court?.name],
   })
 
+  const splitCaseEntries =
+    workingCase.splitCases?.flatMap(
+      (splitCase) =>
+        splitCase.defendants?.map((defendant) => ({ defendant, splitCase })) ??
+        [],
+    ) ?? []
+
   const splitCases: Item = {
     id: 'split-cases-item',
     title: 'Klofinn frá',
     values:
-      workingCase.splitCases?.flatMap((splitCase) =>
-        splitCase.defendants?.map((defendant) => (
-          <Fragment key={defendant.id}>
-            <Text>{defendant.name}</Text>
-            <LinkComponent
-              href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
-            >
-              {splitCase.courtCaseNumber}
-            </LinkComponent>
-          </Fragment>
-        )),
-      ) || [],
+      splitCaseEntries.length > 0
+        ? [
+            <div key="split-cases-grid" className={grid({ gap: 2 })}>
+              {splitCaseEntries.map(({ defendant, splitCase }) => (
+                <div key={defendant.id}>
+                  <Text>{defendant.name}</Text>
+                  <LinkComponent
+                    href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
+                  >
+                    {splitCase.courtCaseNumber}
+                  </LinkComponent>
+                </div>
+              ))}
+            </div>,
+          ]
+        : [],
   }
 
   const splitCase: Item = {

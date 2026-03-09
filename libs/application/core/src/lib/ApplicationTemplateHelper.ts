@@ -74,6 +74,7 @@ export class ApplicationTemplateHelper<
     description?: StaticText
     tag: { variant?: string; label?: StaticText }
     historyButton?: StaticText
+    displayPruneAt?: boolean
   } {
     const actionCard =
       this.template.stateMachineConfig.states[stateKey]?.meta?.actionCard
@@ -83,6 +84,7 @@ export class ApplicationTemplateHelper<
       description: actionCard?.description,
       tag: { variant: actionCard?.tag?.variant, label: actionCard?.tag?.label },
       historyButton: actionCard?.historyButton,
+      displayPruneAt: actionCard?.displayPruneAt,
     }
   }
 

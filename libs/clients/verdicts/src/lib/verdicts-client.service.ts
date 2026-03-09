@@ -177,7 +177,10 @@ export class VerdictsClientService {
           court: goproItem.court?.name ?? '',
           caseNumber: goproItem.caseNumber ?? '',
           verdictDate: goproItem.verdictDate,
-          verdictJudges: goproItem.judges ?? [],
+          verdictJudges:
+            goproItem.court?.code !== 'landsrettur'
+              ? goproItem.judges ?? []
+              : [],
           keywords: goproItem.keywords ?? [],
           presentings: goproItem.presentings ?? '',
         })
@@ -194,7 +197,7 @@ export class VerdictsClientService {
           court: supremeCourtItem.court ?? '',
           caseNumber: supremeCourtItem.caseNumber ?? '',
           verdictDate: supremeCourtItem.publishDate,
-          verdictJudges: supremeCourtItem.judges ?? [],
+          verdictJudges: [],
           keywords: supremeCourtItem.keywords ?? [],
           presentings: supremeCourtItem.presentings ?? '',
         })

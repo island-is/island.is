@@ -32,6 +32,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useMatomoTrackOrganization } from '@island.is/matomo'
 import { shouldLinkBeAnAnchorTag } from '@island.is/shared/utils'
 import {
   DefaultHeaderProps,
@@ -71,11 +72,8 @@ import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
-import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import { GevFooter } from './Themes/GevTheme'
 import { HeilbrigdisstofnunAusturlandsFooter } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
-import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
-import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { HljodbokasafnIslandsHeader } from './Themes/HljodbokasafnIslandsTheme'
 import { HveFooter } from './Themes/HveTheme'
 import { IcelandicNaturalDisasterInsuranceFooter } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
@@ -559,6 +557,19 @@ export const OrganizationFooter: React.FC<
 
   const { isServiceWeb } = useContext(GlobalContext)
 
+  if (namespace?.usingDefaultFooter === true) {
+    const footerItems = organization?.footerItems ?? []
+    if (footerItems.length === 0) return null
+    return (
+      <WebFooter
+        heading={organization?.title ?? ''}
+        columns={footerItems}
+        background={organization?.footerConfig?.background}
+        color={organization?.footerConfig?.textColor}
+      />
+    )
+  }
+
   switch (organization?.slug) {
     case 'syslumenn':
     case 'district-commissioner':
@@ -607,32 +618,6 @@ export const OrganizationFooter: React.FC<
     case 'directorate-of-health':
       OrganizationFooterComponent = (
         <LandlaeknirFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'hsn':
-      OrganizationFooterComponent = (
-        <HeilbrigdisstofnunNordurlandsFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'hsu':
-      OrganizationFooterComponent = (
-        <HeilbrigdisstofnunSudurlandsFooter
-          title={organization.title}
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'fiskistofa':
-    case 'directorate-of-fisheries':
-      OrganizationFooterComponent = (
-        <FiskistofaFooter
           footerItems={organization.footerItems}
           namespace={namespace}
         />
@@ -941,6 +926,7 @@ export const OrganizationWrapper: React.FC<
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
+  useMatomoTrackOrganization(organizationPage.organization?.slug)
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
   useEffect(() => {
     setIsMobile(width < theme.breakpoints.md)
