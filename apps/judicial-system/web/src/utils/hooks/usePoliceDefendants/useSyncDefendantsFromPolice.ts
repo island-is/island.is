@@ -28,7 +28,12 @@ export const useSyncDefendantsFromPolice = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { createDefendant } = useDefendants()
 
-  const { data: policeDefendantsData } = usePoliceDefendantsQuery({
+  const {
+    data: policeDefendantsData,
+    loading,
+    error,
+    refetch,
+  } = usePoliceDefendantsQuery({
     variables: { input: { caseId: workingCase.id } },
     skip: workingCase.origin !== CaseOrigin.LOKE || !workingCase.id,
     fetchPolicy: 'cache-first',
@@ -100,4 +105,6 @@ export const useSyncDefendantsFromPolice = () => {
     createDefendant,
     setWorkingCase,
   ])
+
+  return { loading, error, refetch }
 }
