@@ -222,6 +222,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           this.log('error', 'Failed to read health certificate files for 65+', {
             e,
           })
+          throw new Error(
+            'Failed to read health certificate files for 65+ renewal',
+          )
         }
       }
 
@@ -341,6 +344,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
               })
           } catch (e) {
             this.log('error', 'Failed to read health certificate files', { e })
+            throw new Error('Failed to read health certificate files')
           }
         }
       }
