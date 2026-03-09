@@ -143,6 +143,14 @@ export class CaseTableService {
           Boolean(defendant.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
       }
 
+      if (type === CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW) {
+        return (defendant: Defendant) =>
+          // Only the latest verdict is relevant
+          Boolean(
+            !defendant.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice,
+          )
+      }
+
       const reviewedTypes = [
         CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
         CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
