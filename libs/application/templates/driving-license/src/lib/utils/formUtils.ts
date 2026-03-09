@@ -55,8 +55,7 @@ export const isApplicationForCondition =
   }
 
 export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
-  getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') !==
-  YES
+  getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') !== YES
 
 export const chooseDistrictCommissionerDescription = ({
   answers,

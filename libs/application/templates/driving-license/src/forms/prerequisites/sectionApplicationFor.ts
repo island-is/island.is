@@ -59,7 +59,7 @@ export const sectionApplicationFor = (
                 currentLicense =
                   fakeData.currentLicense === 'none'
                     ? null
-                    : (fakeData.currentLicense ?? null)
+                    : fakeData.currentLicense ?? null
                 categories =
                   fakeData.currentLicense === 'temp'
                     ? [{ nr: 'B', validToCode: 8 }]
