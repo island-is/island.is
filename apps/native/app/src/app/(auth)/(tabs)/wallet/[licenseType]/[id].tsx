@@ -151,8 +151,6 @@ export default function WalletPassScreen() {
     id: string
   }>()
 
-  console.log('oki', {type, id})
-
   const theme = useTheme()
   const intl = useIntl()
   const [addingToWallet, setAddingToWallet] = useState(false)

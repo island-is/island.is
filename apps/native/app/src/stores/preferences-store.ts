@@ -118,14 +118,6 @@ export const preferencesStore = create<PreferencesStore>()(
     {
       name: PREFERENCES_KEY,
       storage: createJSONStorage(() => AsyncStorage),
-      onRehydrateStorage: () => (state, err) => {
-        // @todo migration
-        // if (state) {
-        //   Navigation.setDefaultOptions(
-        //     getDefaultOptions(getThemeWithPreferences(state)),
-        //   )
-        // }
-      },
     },
   ),
 )

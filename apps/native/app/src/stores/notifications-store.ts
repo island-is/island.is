@@ -52,7 +52,6 @@ export const notificationsStore = create<NotificationsStore>()(
         const client = await getApolloClientAsync()
         const token = await getToken(app.messaging())
         const { pushToken: oldToken, deletePushToken } = get()
-        console.log(token);
 
         if (oldToken !== token) {
           if (oldToken) {
@@ -108,16 +107,6 @@ export const notificationsStore = create<NotificationsStore>()(
       updateNavigationUnseenCount(unseenCount: number) {
         set({ unseenCount })
         setBadgeCountAsync(unseenCount)
-
-        // @todo migration - needs RNN conversion
-        // Navigation.mergeOptions(ComponentRegistry.HomeScreen, {
-        //   topBar: {
-        //     rightButtons: getRightButtons({
-        //       unseenCount,
-        //       icons: ['notifications', 'options'],
-        //     }),
-        //   },
-        // })
       },
       async checkUnseen() {
         const client = await getApolloClientAsync()
@@ -152,9 +141,6 @@ export const notificationsStore = create<NotificationsStore>()(
       name: 'notifications_07',
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({ pushToken: state.pushToken, unseenCount: state.unseenCount }), // only persist pushToken
-      onRehydrateStorage: () => (state, error) => {
-        console.log(state, error)
-      },
     },
   ),
 )
