@@ -123,7 +123,7 @@ describe('Transition Case', () => {
         state: fromState,
         type,
         defendants: [{ id: uuid(), name: 'Test Defendant' }],
-      }) as Case
+      } as Case)
 
     describe.each(allowedFromStates)(
       'state %s - should ask for confirmation',

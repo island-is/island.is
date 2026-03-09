@@ -573,11 +573,9 @@ describe('CaseController - Transition', () => {
           defendants: [],
         } as Case
 
-        const then = await givenWhenThen(
-          caseId,
-          theCaseWithNoDefendants,
-          { transition: CaseTransition.ASK_FOR_CONFIRMATION },
-        )
+        const then = await givenWhenThen(caseId, theCaseWithNoDefendants, {
+          transition: CaseTransition.ASK_FOR_CONFIRMATION,
+        })
 
         expect(then.error).toBeInstanceOf(ForbiddenException)
         expect(then.error?.message).toContain(

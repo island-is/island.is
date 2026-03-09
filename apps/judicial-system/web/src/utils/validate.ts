@@ -281,8 +281,7 @@ export const isHearingArrangementsStepValidIC = (
 export const isProcessingStepValidIndictments = (
   workingCase: Case,
 ): boolean => {
-  const hasAtLeastOneDefendant =
-    (workingCase.defendants?.length ?? 0) > 0
+  const hasAtLeastOneDefendant = (workingCase.defendants?.length ?? 0) > 0
   const defendantsAreValid =
     hasAtLeastOneDefendant &&
     workingCase.defendants?.every(
@@ -552,8 +551,7 @@ export const isSubpoenaStepValid = (
 }
 
 export const isDefenderStepValid = (workingCase: Case): boolean => {
-  const hasAtLeastOneDefendant =
-    (workingCase.defendants?.length ?? 0) > 0
+  const hasAtLeastOneDefendant = (workingCase.defendants?.length ?? 0) > 0
   const defendantsAreValid = () =>
     hasAtLeastOneDefendant &&
     (workingCase.defendants?.every((defendant) => {
