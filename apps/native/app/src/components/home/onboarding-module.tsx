@@ -19,7 +19,9 @@ export const OnboardingModule = React.memo(() => {
   const intl = useIntl()
   const { dismissed, dismiss } = usePreferencesStore()
   const { userInfo } = useAuthStore()
-  const isHomeBannerEnabled = useFeatureFlag('isHomeBannerEnabled', false)
+
+  // @todo use this for something else?
+  // const isHomeBannerEnabled = useFeatureFlag('isHomeBannerEnabled', false)
 
   return (
     <SafeAreaView style={{ marginHorizontal: 16, marginTop: 16 }}>
@@ -90,13 +92,6 @@ export const OnboardingModule = React.memo(() => {
           </ViewPager>
         </>
       )}
-      <HomeBanner
-        visible={
-          isHomeBannerEnabled &&
-          !dismissed.includes(DISMISSED_KEYS.KILOMETER_ANNOUNCEMENT)
-        }
-        onClose={() => dismiss(DISMISSED_KEYS.KILOMETER_ANNOUNCEMENT)}
-      />
     </SafeAreaView>
   )
 })
