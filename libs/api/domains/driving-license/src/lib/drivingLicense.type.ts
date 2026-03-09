@@ -7,7 +7,11 @@ export interface DrivingLicenseType {
   name: string
 }
 
-export type DrivingLicenseApplicationType = 'B-full' | 'B-temp' | 'BE'
+export type DrivingLicenseApplicationType =
+  | 'B-full'
+  | 'B-temp'
+  | 'B-full-renewal-65'
+  | 'BE'
 
 export interface PostRenewal65AndOverInput {
   districtId?: number

@@ -521,22 +521,12 @@ export class DrivingLicenseApi {
       renewalDate: new Date(),
       userId: v5.DRIVING_LICENSE_API_USER_ID,
     }
-    // TEMP DEBUG LOG
-    console.log(
-      '[driving-license-client] postRenewLicenseOver65 payload:',
-      JSON.stringify(postRenewal65AndOver, null, 2),
-    )
     const result = await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
       jwttoken: params.auth,
       postRenewal65AndOver,
     })
-    // TEMP DEBUG LOG
-    console.log(
-      '[driving-license-client] postRenewLicenseOver65 result:',
-      JSON.stringify(result, null, 2),
-    )
     return result
   }
 

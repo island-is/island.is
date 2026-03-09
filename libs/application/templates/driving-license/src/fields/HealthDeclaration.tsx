@@ -53,7 +53,7 @@ const HealthDeclaration = ({
           largeButtons={false}
           error={error}
           defaultValue={
-            (getValueViaPath(application.answers, field.id) as string[]) ??
+            (getValueViaPath<string>(application.answers, field.id)) ??
             undefined
           }
           options={[
