@@ -25,8 +25,7 @@ export const useLazyMachineDetailsByRegno = () => {
       getWorkerMachineDetailsByRegno: MachineDto
     },
     {
-      regno: string
-      rel: string
+      input: { registrationNumber: string; locale: string }
     }
   >(
     gql`

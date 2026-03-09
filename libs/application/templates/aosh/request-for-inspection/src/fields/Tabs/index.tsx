@@ -18,6 +18,7 @@ export const TabsField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const { setValue } = useFormContext()
   const onChangeTab = () => {
     //clear choices
+    setValue('machine.permno', '')
     setValue('machine.id', '')
     //make submit button disabled again
     setSubmitButtonDisabled?.(true)

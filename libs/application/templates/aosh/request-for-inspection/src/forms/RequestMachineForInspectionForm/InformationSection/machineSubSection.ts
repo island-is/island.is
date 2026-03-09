@@ -8,6 +8,7 @@ import {
 import { information } from '../../../lib/messages'
 import { getSelectedMachine } from '../../../utils/getSelectedMachine'
 import { Machine } from '../../../shared/types'
+import { ExternalData, FormValue } from '@island.is/application/types'
 
 export const machineSubSection = buildSubSection({
   id: 'machine',
@@ -66,6 +67,10 @@ export const machineSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
+          condition: (answers: FormValue, externalData: ExternalData) => {
+            const machine = getSelectedMachine(externalData, answers) as Machine
+            return !!machine?.subType
+          },
           defaultValue: (application: Application) => {
             const machine = getSelectedMachine(
               application.externalData,
@@ -80,6 +85,10 @@ export const machineSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
+          condition: (answers: FormValue, externalData: ExternalData) => {
+            const machine = getSelectedMachine(externalData, answers) as Machine
+            return !!machine?.ownerNumber
+          },
           defaultValue: (application: Application) => {
             const machine = getSelectedMachine(
               application.externalData,
@@ -94,6 +103,10 @@ export const machineSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
+          condition: (answers: FormValue, externalData: ExternalData) => {
+            const machine = getSelectedMachine(externalData, answers) as Machine
+            return !!machine?.plate
+          },
           defaultValue: (application: Application) => {
             const machine = getSelectedMachine(
               application.externalData,
@@ -101,19 +114,6 @@ export const machineSubSection = buildSubSection({
             ) as Machine
             return machine?.plate || ''
           },
-        }),
-        buildDateField({
-          id: 'machine.date',
-          title: information.labels.machine.date,
-          required: false,
-          width: 'half',
-          maxDate: new Date(),
-          minDate: () => {
-            const minDate = new Date()
-            minDate.setDate(minDate.getDate() - 7)
-            return minDate
-          },
-          defaultValue: new Date().toISOString().substring(0, 10),
         }),
       ],
     }),

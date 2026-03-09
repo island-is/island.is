@@ -7,6 +7,7 @@ import {
   ApiMachineModelsGetRequest,
   ApiMachineOwnerChangeOwnerchangeIdDeleteRequest,
   ApiMachineParentCategoriesTypeModelGetRequest,
+  ApiMachineRequestInspectionRegistrationNumberGetRequest,
   ApiMachineStatusChangePostRequest,
   ApiMachineSubCategoriesGetRequest,
   ApiMachineTypesTypeByRegistrationNumberGetRequest,
@@ -16,6 +17,7 @@ import {
   ExcelRequest,
   LicenseApi,
   MachineCategoryApi,
+  MachineFriendlyDto,
   MachineInspectionRequestCreateDto,
   MachineLicenseTeachingApplicationApi,
   MachineModelDto,
@@ -260,6 +262,47 @@ export class WorkMachinesClientService {
         }) || [],
       totalCount: result?.pagination?.totalCount || 0,
     }
+  }
+
+  async getMachinesForInspection(
+    auth: User,
+    parameters?: ApiMachinesGetRequest,
+  ): Promise<Array<MachineFriendlyDto>> {
+    const result = await this.machineRequestInspectionApiWithAuth(
+      auth,
+    ).apiMachineRequestInspectionGet({
+      ...parameters,
+    })
+    return (
+      result?.map((machine) => {
+        return {
+          id: machine.id,
+          ownerNumber: machine?.ownerNumber || '',
+          licensePlateNumber: machine?.licensePlateNumber || '',
+          type: machine.type || '',
+          category: machine?.category || '',
+          registrationNumber: machine?.registrationNumber || '',
+          status: machine?.status || '',
+          paymentRequiredForOwnerChange:
+            machine?.paymentRequiredForOwnerChange ?? true,
+          errorMessage: machine?.errorMessage,
+          supervisor: machine?.supervisor || '',
+        }
+      }) || []
+    )
+  }
+
+  async getMachineDetailsForInspection(
+    auth: User,
+    parameters: ApiMachineRequestInspectionRegistrationNumberGetRequest,
+  ): Promise<MachineFriendlyDto> {
+    const result = await this.machineRequestInspectionApiWithAuth(
+      auth,
+    ).apiMachineRequestInspectionRegistrationNumberGet({
+      ...parameters,
+    })
+
+    return result
   }
 
   async getMachineByRegno(

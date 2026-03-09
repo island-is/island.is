@@ -29,7 +29,7 @@ export const contactInformationSubSection = buildSubSection({
           clearOnChange: [
             'contactInformation.name',
             'contactInformation.email',
-            'contactInformation.phone',
+            'contactInformation.phoneNumber',
           ],
           options: [
             {

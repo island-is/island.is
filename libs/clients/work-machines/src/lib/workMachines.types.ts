@@ -35,6 +35,7 @@ export type MachineDto = {
   supervisorName?: string
   status?: string
   paymentRequiredForOwnerChange?: boolean
+  errorMessage?: string | null
 }
 
 export type SupervisorChange = {
