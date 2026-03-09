@@ -19,7 +19,10 @@ import {
   Vacancy,
 } from '@island.is/cms'
 import { Features, FEATURE_FLAG_CLIENT } from '@island.is/nest/feature-flags'
-import type { FeatureFlagClient, FeatureFlagUser } from '@island.is/feature-flags'
+import type {
+  FeatureFlagClient,
+  FeatureFlagUser,
+} from '@island.is/feature-flags'
 import { IcelandicGovernmentInstitutionVacanciesInput } from './dto/icelandicGovernmentInstitutionVacancies.input'
 import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandicGovernmentInstitutionVacanciesResponse'
 import { IcelandicGovernmentInstitutionVacancyByIdInput } from './dto/icelandicGovernmentInstitutionVacancyById.input'
