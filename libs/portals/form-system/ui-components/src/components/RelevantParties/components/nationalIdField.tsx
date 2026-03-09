@@ -6,15 +6,9 @@ interface Props {
   nationalId?: string
   name?: string
   legalEntity?: boolean
-  disabled: boolean
 }
 
-export const NationalIdField = ({
-  nationalId,
-  name,
-  disabled,
-  legalEntity,
-}: Props) => {
+export const NationalIdField = ({ nationalId, name, legalEntity }: Props) => {
   const { formatMessage } = useLocale()
   return (
     <GridRow>
@@ -24,7 +18,7 @@ export const NationalIdField = ({
           name="nationalId"
           placeholder={formatMessage(m.nationalId)}
           value={nationalId}
-          disabled={disabled && !legalEntity}
+          readOnly
         />
       </GridColumn>
       <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
@@ -34,7 +28,7 @@ export const NationalIdField = ({
             name="name"
             value={name}
             placeholder={formatMessage(m.fullName)}
-            disabled={disabled && !legalEntity}
+            readOnly
           />
         </Box>
       </GridColumn>
