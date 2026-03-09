@@ -1,6 +1,6 @@
 import {
   CategoryDto,
-  DriverLicenseDto as DriversLicense,
+  DrivingLicenseV4V5Dto as DriversLicense,
   RemarkCode,
 } from '@island.is/clients/driving-license'
 import format from 'date-fns/format'
