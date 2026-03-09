@@ -113,17 +113,42 @@ describe('CaseTableService', () => {
           {
             id: 'def-accept-not-acquitted',
             indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
-            verdicts: [{ isAcquittedByPublicProsecutionOffice: false }],
+            verdicts: [
+              {
+                isAcquittedByPublicProsecutionOffice: false,
+                defendantHasRequestedAppeal: false,
+              },
+            ],
           },
           {
             id: 'def-appeal-not-acquitted',
             indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
-            verdicts: [{ isAcquittedByPublicProsecutionOffice: false }],
+            verdicts: [
+              {
+                isAcquittedByPublicProsecutionOffice: false,
+                defendantHasRequestedAppeal: false,
+              },
+            ],
           },
           {
             id: 'def-accept-acquitted',
             indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
-            verdicts: [{ isAcquittedByPublicProsecutionOffice: true }],
+            verdicts: [
+              {
+                isAcquittedByPublicProsecutionOffice: true,
+                defendantHasRequestedAppeal: false,
+              },
+            ],
+          },
+          {
+            id: 'def-appeal-requested',
+            indictmentReviewDecision: IndictmentCaseReviewDecision.APPEAL,
+            verdicts: [
+              {
+                isAcquittedByPublicProsecutionOffice: false,
+                defendantHasRequestedAppeal: true,
+              },
+            ],
           },
         ],
         toJSON: function () {
@@ -160,6 +185,30 @@ describe('CaseTableService', () => {
             'def-appeal-not-acquitted',
           ]),
         )
+        expect(result.rows.map((r) => r.defendantIds?.[0])).not.toContain(
+          'def-appeal-requested',
+        )
+      })
+
+      it('keeps only non-acquitted and non-requested defendants in in-review table', async () => {
+        const user = publicProsecutionOfficeUser('user-ppo-2b')
+        mockFindAll.mockResolvedValue([buildMockIndictmentCase()])
+
+        const result = await service.getCaseTableRows(
+          CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW,
+          user,
+        )
+
+        expect(result.rowCount).toBe(2)
+        expect(result.rows.map((r) => r.defendantIds?.[0])).toEqual(
+          expect.arrayContaining([
+            'def-accept-not-acquitted',
+            'def-appeal-not-acquitted',
+          ]),
+        )
+        expect(result.rows.map((r) => r.defendantIds?.[0])).not.toContain(
+          'def-appeal-requested',
+        )
       })
 
       it('keeps only ACCEPT and non-acquitted defendants on reviewed table', async () => {
@@ -190,6 +239,19 @@ describe('CaseTableService', () => {
         expect(result.rows[0].defendantIds).toEqual([
           'def-appeal-not-acquitted',
         ])
+      })
+
+      it('keeps only defendants with requested appeal on requested-appeal table', async () => {
+        const user = publicProsecutionOfficeUser('user-ppo-5')
+        mockFindAll.mockResolvedValue([buildMockIndictmentCase()])
+
+        const result = await service.getCaseTableRows(
+          CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL,
+          user,
+        )
+
+        expect(result.rowCount).toBe(1)
+        expect(result.rows[0].defendantIds).toEqual(['def-appeal-requested'])
       })
     })
   })

@@ -136,11 +136,16 @@ export class CaseTableService {
 
     const getDefendantFilter = (type: CaseTableType) => {
       const isAcquittedLatestVerdict = (defendant: Defendant) =>
-        // Only the latest verdict is relevant
         Boolean(defendant.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
+
+      const isAppealRequestLatestVerdict = (defendant: Defendant) =>
+        Boolean(defendant.verdicts?.[0]?.defendantHasRequestedAppeal)
 
       const isNotAcquittedLatestVerdict = (defendant: Defendant) =>
         !isAcquittedLatestVerdict(defendant)
+
+      const isNotAppealRequestLatestVerdict = (defendant: Defendant) =>
+        !isAppealRequestLatestVerdict(defendant)
 
       if (
         type === CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS
@@ -152,20 +157,16 @@ export class CaseTableService {
         type ===
         CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL
       ) {
-        return (defendant: Defendant) =>
-          // Only the latest verdict is relevant
-          Boolean(defendant.verdicts?.[0]?.defendantHasRequestedAppeal)
+        return (defendant: Defendant) => isAppealRequestLatestVerdict(defendant)
       }
 
-      const reviewedTypes = [
-        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
-        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
-        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED,
-        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_SENT_TO_PRISON_ADMIN,
-      ]
-
-      if (!reviewedTypes.includes(type)) {
-        return (defendant: Defendant) => isNotAcquittedLatestVerdict(defendant)
+      if (
+        type === CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW ||
+        type === CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW
+      ) {
+        return (defendant: Defendant) =>
+          isNotAcquittedLatestVerdict(defendant) &&
+          isNotAppealRequestLatestVerdict(defendant)
       }
 
       const targetDecision = [
@@ -178,6 +179,7 @@ export class CaseTableService {
 
       return (defendant: Defendant) =>
         isNotAcquittedLatestVerdict(defendant) &&
+        isNotAppealRequestLatestVerdict(defendant) &&
         defendant.indictmentReviewDecision === targetDecision
     }
 
