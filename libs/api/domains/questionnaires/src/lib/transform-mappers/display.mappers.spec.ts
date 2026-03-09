@@ -1,7 +1,7 @@
 import {
   mapLshQuestionnaireForm,
-  mapLshQuestionnaireFormOverview,
-  mapLshQuestionnaireFormListItem,
+  mapLshQuestionnaireOverview,
+  mapLshQuestionnaireListItem,
 } from './lsh/display/mapQuestionnaire'
 import {
   mapElQuestionnaireForm,
@@ -252,7 +252,7 @@ describe('display mappers', () => {
     } as unknown as LshQuestionnaireType
 
     it('maps an LSH list item to a Questionnaire overview', () => {
-      const mapped = mapLshQuestionnaireFormOverview(baseLshItem, formatMessage)
+      const mapped = mapLshQuestionnaireOverview(baseLshItem, formatMessage)
 
       expect(mapped.baseInformation.id).toBe('lsh-guid-h1')
       expect(mapped.baseInformation.title).toBe('LSH Header')
@@ -263,7 +263,7 @@ describe('display mappers', () => {
     })
 
     it('maps an LSH list item to a QuestionnairesBaseItem for the list', () => {
-      const mapped = mapLshQuestionnaireFormListItem(baseLshItem, formatMessage)
+      const mapped = mapLshQuestionnaireListItem(baseLshItem, formatMessage)
 
       expect(mapped.id).toBe('lsh-guid-h1')
       expect(mapped.title).toBe('LSH Header')
@@ -277,10 +277,10 @@ describe('display mappers', () => {
         validToDateTime: new Date('2000-01-01T00:00:00.000Z'),
       } as unknown as LshQuestionnaireType
 
-      expect(mapLshQuestionnaireFormOverview(expired, formatMessage).baseInformation.status).toBe(
+      expect(mapLshQuestionnaireOverview(expired, formatMessage).baseInformation.status).toBe(
         QuestionnairesStatusEnum.expired,
       )
-      expect(mapLshQuestionnaireFormListItem(expired, formatMessage).status).toBe(
+      expect(mapLshQuestionnaireListItem(expired, formatMessage).status).toBe(
         QuestionnairesStatusEnum.expired,
       )
     })
