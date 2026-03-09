@@ -4,7 +4,12 @@ import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Box, Text, TextInput } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
-const ALLOWED_EMBED_URLS = ['https://e.infogram.com', 'https://app.powerbi.com']
+const ALLOWED_EMBED_URLS = [
+  'https://e.infogram.com',
+  'https://app.powerbi.com',
+  'https://portal.land.is',
+  'https://www.facebook.com',
+]
 
 const EmbedLinkField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
