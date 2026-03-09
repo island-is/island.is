@@ -7,6 +7,26 @@ import {
 
 import { Case, Defendant } from '../repository'
 
+const isSentToPrisonAdmin = (d: Defendant) => Boolean(d.isSentToPrisonAdmin)
+
+const isRegisteredInPrisonSystem = (d: Defendant, c: Case): boolean =>
+  Boolean(d.isRegisteredInPrisonSystem ?? c.isRegisteredInPrisonSystem)
+
+const isAcquittedByPublicProsecutionOffice = (d: Defendant) =>
+  // Only the latest verdict is relevant
+  Boolean(d.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
+
+const isNotAcquittedByPublicProsecutionOffice = (d: Defendant) =>
+  !isAcquittedByPublicProsecutionOffice(d)
+
+const isAcceptedIndictmentReviewDecision = (d: Defendant) =>
+  isNotAcquittedByPublicProsecutionOffice(d) &&
+  d.indictmentReviewDecision === IndictmentCaseReviewDecision.ACCEPT
+
+const isAppealedIndictmentReviewDecision = (d: Defendant) =>
+  isNotAcquittedByPublicProsecutionOffice(d) &&
+  d.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL
+
 const expandCaseWithDefendants = (
   c: Case,
   filter: (d: Defendant) => boolean,
@@ -20,52 +40,48 @@ const expandCaseWithDefendants = (
 
 const genericDisplayCases = (cs: Case[]): Case[] => cs
 
-const prisonAdminNotRegisteredDefendantsDisplayCases = (cases: Case[]) =>
-  cases.flatMap((caseItem) =>
-    expandCaseWithDefendants(caseItem, (d) => {
-      return (
-        Boolean(d.isSentToPrisonAdmin) &&
-        !(d.isRegisteredInPrisonSystem ?? caseItem.isRegisteredInPrisonSystem)
-      )
-    }),
-  )
+const allDefendantsDisplayCases = (cs: Case[]) =>
+  cs.flatMap((c) => expandCaseWithDefendants(c, () => true))
 
-const prisonAdminRegisteredDefendantsDisplayCases = (cases: Case[]) =>
-  cases.flatMap((caseItem) =>
-    expandCaseWithDefendants(caseItem, (d) => {
-      return Boolean(
-        d.isSentToPrisonAdmin &&
-          (d.isRegisteredInPrisonSystem ?? caseItem.isRegisteredInPrisonSystem),
-      )
-    }),
-  )
-
-const allDefendantsDisplayCases = (cases: Case[]) =>
-  cases.flatMap((caseItem) => expandCaseWithDefendants(caseItem, () => true))
-
-const publicProsecutionOfficeAcceptedDefendantDisplayCases = (cases: Case[]) =>
-  cases.flatMap((caseItem) =>
+const prisonAdminNotRegisteredDefendantsDisplayCases = (cs: Case[]) =>
+  cs.flatMap((c) =>
     expandCaseWithDefendants(
-      caseItem,
-      (defendant) =>
-        defendant.indictmentReviewDecision ===
-        IndictmentCaseReviewDecision.ACCEPT,
+      c,
+      (d) => isSentToPrisonAdmin(d) && !isRegisteredInPrisonSystem(d, c),
     ),
   )
 
-const publicProsecutionOfficeAppealdDefendantDisplayCases = (cases: Case[]) =>
-  cases.flatMap((caseItem) =>
+const prisonAdminRegisteredDefendantsDisplayCases = (cs: Case[]) =>
+  cs.flatMap((c) =>
     expandCaseWithDefendants(
-      caseItem,
-      (defendant) =>
-        defendant.indictmentReviewDecision ===
-        IndictmentCaseReviewDecision.APPEAL,
+      c,
+      (d) => isSentToPrisonAdmin(d) && isRegisteredInPrisonSystem(d, c),
     ),
+  )
+
+const publicProsecutionOfficeAcquittedDefendantDisplayCases = (cs: Case[]) =>
+  cs.flatMap((c) =>
+    expandCaseWithDefendants(c, isAcquittedByPublicProsecutionOffice),
+  )
+
+const publicProsecutionOfficeInReviewDefendantDisplayCases = (cs: Case[]) =>
+  cs.flatMap((c) =>
+    expandCaseWithDefendants(c, isNotAcquittedByPublicProsecutionOffice),
+  )
+
+const publicProsecutionOfficeAcceptedDefendantDisplayCases = (cs: Case[]) =>
+  cs.flatMap((c) =>
+    expandCaseWithDefendants(c, isAcceptedIndictmentReviewDecision),
+  )
+
+const publicProsecutionOfficeAppealdDefendantDisplayCases = (cs: Case[]) =>
+  cs.flatMap((c) =>
+    expandCaseWithDefendants(c, isAppealedIndictmentReviewDecision),
   )
 
 export const caseTableDisplayCases: Record<
   CaseTableType,
-  (cases: Case[]) => Case[]
+  (cs: Case[]) => Case[]
 > = {
   [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_IN_PROGRESS]:
     genericDisplayCases,
@@ -89,7 +105,7 @@ export const caseTableDisplayCases: Record<
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW]:
     allDefendantsDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_IN_REVIEW]:
-    allDefendantsDisplayCases,
+    publicProsecutionOfficeInReviewDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED]:
     publicProsecutionOfficeAcceptedDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED]:
@@ -98,6 +114,8 @@ export const caseTableDisplayCases: Record<
     publicProsecutionOfficeAcceptedDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED]:
     publicProsecutionOfficeAppealdDefendantDisplayCases,
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS]:
+    publicProsecutionOfficeAcquittedDefendantDisplayCases,
   [CaseTableType.PROSECUTION_REQUEST_CASES_IN_PROGRESS]: genericDisplayCases,
   [CaseTableType.PROSECUTION_REQUEST_CASES_ACTIVE]: genericDisplayCases,
   [CaseTableType.PROSECUTION_REQUEST_CASES_APPEALED]: genericDisplayCases,
