@@ -57,6 +57,7 @@ export const AdditionalEstateMember = ({
   const emailField = `${fieldIndex}.email`
 
   // Advocate
+  const advocateNationalIdField = `${fieldIndex}.advocate.nationalId`
   const advocatePhone = `${fieldIndex}.advocate.phone`
   const advocateEmail = `${fieldIndex}.advocate.email`
 
@@ -69,6 +70,11 @@ export const AdditionalEstateMember = ({
   const foreignCitizenship = useWatch({
     name: foreignCitizenshipField,
     defaultValue: hasYes(field.foreignCitizenship) ? [YES] : '',
+  })
+
+  const advocateNationalId = useWatch({
+    name: advocateNationalIdField,
+    defaultValue: '',
   })
 
   const relation = useWatch({
@@ -211,7 +217,8 @@ export const AdditionalEstateMember = ({
               id: `${fieldIndex}`,
               props: {
                 alertWhenUnder18:
-                  selectedEstate === EstateTypes.divisionOfEstateByHeirs,
+                  !advocateNationalId ||
+                  !nationalId.isPerson(advocateNationalId),
                 requiredNationalId: true,
               },
             }}
@@ -294,11 +301,7 @@ export const AdditionalEstateMember = ({
               </GridColumn>
               <GridColumn span={['1/1']} paddingBottom={2}>
                 <LookupPerson
-                  message={
-                    selectedEstate === EstateTypes.divisionOfEstateByHeirs
-                      ? formatMessage(m.inheritanceUnder18Error)
-                      : formatMessage(m.inheritanceUnder18ErrorAdvocate)
-                  }
+                  message={formatMessage(m.inheritanceUnder18ErrorAdvocate)}
                   nested
                   field={{
                     id: `${fieldIndex}.advocate`,
@@ -335,8 +338,7 @@ export const AdditionalEstateMember = ({
           </Box>
         )}
       {/* ADVOCATE 2 */}
-      {selectedEstate === EstateTypes.divisionOfEstateByHeirs &&
-        (currentEstateMember?.nationalId || hasForeignCitizenship) &&
+      {(currentEstateMember?.nationalId || hasForeignCitizenship) &&
         requiresAdvocate && (
           <Box
             marginTop={2}

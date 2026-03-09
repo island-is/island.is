@@ -29,7 +29,7 @@ const AnswerQuestionnaire: FC = () => {
   const { data: organizations } = useOrganizations()
   const [submitQuestionnaire, { loading: submitting }] =
     useSubmitQuestionnaireMutation({
-      refetchQueries: ['GetAnsweredQuestionnaire'],
+      refetchQueries: ['GetQuestionnaire'],
       awaitRefetchQueries: true,
     })
 
@@ -149,27 +149,12 @@ const AnswerQuestionnaire: FC = () => {
                     data?.questionnairesDetail?.baseInformation.title ?? '',
                 }),
               )
-            : toast.success(
-                formatMessage(messages.yourAnswersForHasBeenSent, {
-                  title:
-                    data?.questionnairesDetail?.baseInformation.title ?? '',
-                }),
-              )
+            : toast.success(formatMessage(messages.yourAnswersHaveBeenSent))
           navigate(
-            HealthPaths.HealthQuestionnairesAnswered.replace(
+            HealthPaths.HealthQuestionnairesDetail.replace(
               ':org',
               organization?.toLocaleLowerCase() ?? '',
-            )
-              .replace(':id', id)
-              .replace(
-                ':submissionId',
-                response.data?.submitQuestionnaire.message ?? '',
-              ),
-            {
-              state: {
-                submissionId: response.data?.submitQuestionnaire.message ?? '',
-              },
-            },
+            ).replace(':id', id),
           )
         } else {
           toast.error(
