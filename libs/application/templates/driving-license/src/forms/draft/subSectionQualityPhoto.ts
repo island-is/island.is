@@ -21,7 +21,7 @@ const getFacialPhotosFromThjodskra = (
   externalData: ExternalData,
 ): ThjodskraPhoto[] => {
   const photos: ThjodskraPhoto[] =
-    getValueViaPath(externalData, 'allPhotosFromThjodskra.data.images', []) ||
+    getValueViaPath(externalData, 'allPhotosFromThjodskra.data.images', []) ??
     []
   return photos.filter((p) => p.contentSpecification === 'FACIAL')
 }

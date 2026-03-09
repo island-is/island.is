@@ -237,28 +237,13 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           : {}),
         ...(healtCertificate ? { healtCertificate } : {}),
       }
-      // TEMP DEBUG LOG
-      this.log('info', 'B-full-renewal-65 input', {
-        hasHealthCertificate: !!healtCertificate,
-        healthCertLength: healtCertificate?.length ?? 0,
-        input: renewal65Input,
-      })
       const renewal65Result =
         await this.drivingLicenseService.renewDrivingLicense65AndOver(
           auth.authorization.replace('Bearer ', ''),
           renewal65Input,
         )
-      // TEMP DEBUG LOG
-      this.log('info', 'B-full-renewal-65 result', { result: renewal65Result })
       return renewal65Result
     } else if (applicationFor === 'B-full') {
-      // TEMP DEBUG LOG
-      this.log('info', 'B-full input', {
-        needsHealthCert: needsHealthCert || remarks,
-        needsQualityPhoto,
-        jurisdictionId: jurisdictionId || setJurisdictionToKopavogur,
-        deliveryMethod,
-      })
       const bFullResult = await this.drivingLicenseService.newDrivingLicense(
         nationalId,
         {
@@ -271,21 +256,11 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           licenseCategory: DrivingLicenseCategory.B,
         },
       )
-      // TEMP DEBUG LOG
-      this.log('info', 'B-full result', { result: bFullResult })
       return bFullResult
     } else if (applicationFor === 'B-temp') {
       if (needsHealthCert) {
         await postHealthDeclaration(nationalId, answers, auth)
       }
-      // TEMP DEBUG LOG
-      this.log('info', 'B-temp input', {
-        needsHealthCert,
-        needsQualityPhoto,
-        jurisdictionId: jurisdictionId || setJurisdictionToKopavogur,
-        deliveryMethod,
-        teacherNationalId: teacher,
-      })
       const bTempResult =
         await this.drivingLicenseService.newTemporaryDrivingLicense(
           nationalId,
@@ -302,8 +277,6 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
             phone: phone,
           },
         )
-      // TEMP DEBUG LOG
-      this.log('info', 'B-temp result', { result: bTempResult })
       return bTempResult
     } else if (applicationFor === 'BE') {
       const instructorSSN = getValueViaPath<string>(
@@ -349,12 +322,21 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
             contentList = files
               .filter((f) => f.fileContent)
               .map((f) => {
-                const ext = f.fileName.split('.').pop() ?? ''
+                const ext = (
+                  f.fileName.split('.').pop() ?? ''
+                ).toLowerCase()
+                const contentType =
+                  ext === 'pdf'
+                    ? 'application/pdf'
+                    : ext === 'jpg' || ext === 'jpeg'
+                    ? 'image/jpeg'
+                    : ext
+                    ? `image/${ext}`
+                    : undefined
                 return {
                   fileName: f.fileName,
                   fileExtension: ext,
-                  contentType:
-                    ext === 'pdf' ? 'application/pdf' : `image/${ext}`,
+                  contentType,
                   content: f.fileContent,
                   description: 'Læknisvottorð',
                 }
@@ -365,14 +347,6 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         }
       }
 
-      // TEMP DEBUG LOG
-      this.log('info', 'BE input', {
-        contentListLength: contentList?.length ?? 0,
-        instructorSSN: instructorSSN ?? '',
-        photoBiometricsId: imageBiometricsId,
-        signatureBiometricsId: signatureBiometricsId,
-        jurisdictionId,
-      })
       const beResult = await this.drivingLicenseService.applyForBELicense(
         nationalId,
         auth.authorization,
@@ -386,8 +360,6 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           signatureBiometricsId: signatureBiometricsId,
         },
       )
-      // TEMP DEBUG LOG
-      this.log('info', 'BE result', { result: beResult })
       return beResult
     }
 
