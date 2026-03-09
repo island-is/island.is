@@ -1,9 +1,9 @@
-import { Box, Text, Stack, ActionCard, Input } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
-import { useGetPetitionLists } from './useGetPetitionLists'
+import { Box, Text, Stack, ActionCard, Input } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
 import { FC, useState } from 'react'
 import { ConnectedComponent, EndorsementList } from '@island.is/api/schema'
+import { useGetPetitionLists } from './useGetPetitionLists'
 import { useLocalization } from '../../../utils'
 
 interface GeneralPetitionProps {
@@ -19,7 +19,7 @@ const formatDate = (date: string) => {
 }
 
 const normalizeSearchTerm = (value: string) => {
-  return value.replaceAll("'", '').replaceAll('´', '').trim().toLowerCase()
+  return value.trim().toLowerCase()
 }
 
 export const GeneralPetitionLists: FC<
@@ -34,8 +34,11 @@ export const GeneralPetitionLists: FC<
 
   const filteredPetitionLists =
     petitionLists?.filter((petition: EndorsementList) => {
-      return normalizeSearchTerm(petition?.title ?? '').includes(
-        normalizeSearchTerm(queryString),
+      const normalizedTitle = normalizeSearchTerm(petition?.title ?? '')
+      const normalizedQueryString = normalizeSearchTerm(queryString)
+      return (
+        normalizedTitle.includes(normalizedQueryString) ||
+        normalizedTitle.includes(normalizedQueryString.replaceAll('´', ''))
       )
     }) ?? []
 
