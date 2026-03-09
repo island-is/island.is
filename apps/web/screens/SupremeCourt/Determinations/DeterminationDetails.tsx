@@ -6,7 +6,15 @@ import { useRouter } from 'next/router'
 import { BLOCKS } from '@contentful/rich-text-types'
 
 import { SliceType } from '@island.is/island-ui/contentful'
-import { Box, GridContainer, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridContainer,
+  Inline,
+  LinkV2,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { OrganizationWrapper } from '@island.is/web/components'
 import {
   CustomPageUniqueIdentifier,
@@ -143,6 +151,9 @@ const DeterminationDetails: CustomScreen<DeterminationDetailsProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
+
+  const { formatMessage } = useIntl()
+
   return (
     <OrganizationWrapper
       pageTitle="Ákvarðanir"
@@ -166,7 +177,22 @@ const DeterminationDetails: CustomScreen<DeterminationDetailsProps> = ({
         },
       ]}
     >
-      <Stack space={2}>
+      <Stack space={6}>
+        {item.resolutionLink && (
+          <Inline justifyContent="flexEnd">
+            <LinkV2 href={item.resolutionLink} newTab>
+              <Button
+                variant="text"
+                icon="open"
+                iconType="outline"
+                size="small"
+                unfocusable
+              >
+                {formatMessage(m.detailsPage.resolutionLink)}
+              </Button>
+            </LinkV2>
+          </Inline>
+        )}
         <HtmlView item={item} />
       </Stack>
     </OrganizationWrapper>

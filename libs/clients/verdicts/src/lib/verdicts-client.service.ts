@@ -664,6 +664,12 @@ export class VerdictsClientService {
           response.item?.verdictHtml ?? '',
           'verdictHtml',
         ),
+        resolutionLink:
+          response.item.resolutionLink &&
+          isUrl(response.item.resolutionLink) &&
+          response.item.resolutionLink.toLowerCase().startsWith('http')
+            ? response.item.resolutionLink
+            : '',
       },
     }
   }
