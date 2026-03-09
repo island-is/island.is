@@ -9,7 +9,8 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { contactInformation } from '../../../lib/messages'
-import { DefaultEvents } from '@island.is/application/types'
+import { Application, DefaultEvents } from '@island.is/application/types'
+import { isContactDifferentFromApplicant } from '../../../utils'
 
 export const contactInformationSubSection = buildSubSection({
   id: 'contactInformationSubSection',
@@ -24,54 +25,12 @@ export const contactInformationSubSection = buildSubSection({
           id: 'contactInformation.sameAsApplicant',
           large: false,
           backgroundColor: 'white',
-          setOnChange: async (optionValue, application) => {
-            if (optionValue?.includes(YES)) {
-              const applicantName =
-                getValueViaPath<string>(
-                  application.answers,
-                  'applicant.name',
-                ) ?? ''
-              const applicantEmail =
-                getValueViaPath<string>(
-                  application.answers,
-                  'applicant.email',
-                ) ?? ''
-              const applicantPhoneNumber =
-                getValueViaPath<string>(
-                  application.answers,
-                  'applicant.phoneNumber',
-                ) ?? ''
-
-              return [
-                {
-                  key: `contactInformation.name`,
-                  value: applicantName,
-                },
-                {
-                  key: `contactInformation.phoneNumber`,
-                  value: applicantPhoneNumber,
-                },
-                {
-                  key: `contactInformation.email`,
-                  value: applicantEmail,
-                },
-              ]
-            }
-            return [
-              {
-                key: `contactInformation.name`,
-                value: '',
-              },
-              {
-                key: `contactInformation.phoneNumber`,
-                value: '',
-              },
-              {
-                key: `contactInformation.email`,
-                value: '',
-              },
-            ]
-          },
+          doesNotRequireAnswer: true,
+          clearOnChange: [
+            'contactInformation.name',
+            'contactInformation.email',
+            'contactInformation.phone',
+          ],
           options: [
             {
               label: contactInformation.labels.isSameAsApplicant,
@@ -82,15 +41,19 @@ export const contactInformationSubSection = buildSubSection({
         buildTextField({
           id: 'contactInformation.name',
           title: contactInformation.labels.name,
-          width: 'half',
+          width: 'full',
           variant: 'text',
           required: true,
+          condition: (formValue, _) =>
+            isContactDifferentFromApplicant(formValue),
         }),
         buildPhoneField({
           id: 'contactInformation.phoneNumber',
           title: contactInformation.labels.phoneNumber,
           width: 'half',
           required: true,
+          condition: (formValue, _) =>
+            isContactDifferentFromApplicant(formValue),
         }),
         buildTextField({
           id: 'contactInformation.email',
@@ -98,6 +61,45 @@ export const contactInformationSubSection = buildSubSection({
           width: 'half',
           variant: 'email',
           required: true,
+          condition: (formValue, _) =>
+            isContactDifferentFromApplicant(formValue),
+        }),
+        // Readonly fields
+        buildTextField({
+          id: 'contactReadonly.name',
+          title: contactInformation.labels.name,
+          readOnly: true,
+          variant: 'text',
+          width: 'full',
+          condition: (formValue, _) =>
+            !isContactDifferentFromApplicant(formValue),
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(application.answers, 'applicant.name'),
+        }),
+        buildPhoneField({
+          id: 'contactReadonly.phone',
+          title: contactInformation.labels.phoneNumber,
+          enableCountrySelector: true,
+          readOnly: true,
+          width: 'half',
+          condition: (formValue, _) =>
+            !isContactDifferentFromApplicant(formValue),
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.answers,
+              'applicant.phoneNumber',
+            ),
+        }),
+        buildTextField({
+          id: 'contactReadonly.email',
+          title: contactInformation.labels.email,
+          variant: 'email',
+          readOnly: true,
+          width: 'half',
+          condition: (formValue, _) =>
+            !isContactDifferentFromApplicant(formValue),
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(application.answers, 'applicant.email'),
         }),
         buildSubmitField({
           id: 'submit',

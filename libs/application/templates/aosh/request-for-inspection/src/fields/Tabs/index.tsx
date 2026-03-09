@@ -1,7 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Tabs } from '@island.is/island-ui/core'
 import { FC } from 'react'
-import { AllMachinesField, MyMachinesField } from '../MachinesField'
+import { MyMachinesField } from '../MachinesField'
 import { MachinesWithTotalCount } from '@island.is/clients/work-machines'
 import { FindAllMachines } from '../MachinesField/FindAllMachines'
 import { useFormContext } from 'react-hook-form'
@@ -30,7 +30,7 @@ export const TabsField: FC<React.PropsWithChildren<FieldBaseProps>> = (
       ) : (
         <Tabs
           label=""
-          selected={machineList.totalCount > 0 ? 'ownMachines' : 'allMachines'}
+          selected={'ownMachines'}
           contentBackground="white"
           onChange={onChangeTab}
           tabs={[
@@ -46,7 +46,11 @@ export const TabsField: FC<React.PropsWithChildren<FieldBaseProps>> = (
               label: formatMessage(
                 information.labels.pickMachine.tabAllMachines,
               ),
-              content: <AllMachinesField {...props} />,
+              content: (
+                <Box paddingTop={2}>
+                  <FindAllMachines {...props} />
+                </Box>
+              ),
             },
           ]}
         ></Tabs>
