@@ -5,8 +5,15 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages } from '@island.is/application/core'
-import { RequestInspectionAnswers } from '@island.is/application/templates/aosh/request-for-inspection'
+import {
+  coreErrorMessages,
+  getValueViaPath,
+  YES,
+} from '@island.is/application/core'
+import {
+  ContactInAnswers,
+  RequestInspectionAnswers,
+} from '@island.is/application/templates/aosh/request-for-inspection'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { applicationCheck } from '@island.is/application/templates/aosh/change-machine-supervisor'
@@ -74,6 +81,12 @@ export class RequestInspectionTemplateService extends BaseTemplateApiService {
       )
     }
 
+    const contact = getValueViaPath<ContactInAnswers>(
+      answers,
+      'contactInformation',
+    )
+    const contactIsSameAsApplicant = contact?.sameAsApplicant?.[0] === YES
+
     const machineId = answers.machine?.id
     if (!machineId) {
       throw new Error('Machine has not been selected')
@@ -82,13 +95,20 @@ export class RequestInspectionTemplateService extends BaseTemplateApiService {
     await this.workMachineClientService.requestInspection(auth, {
       machineId: machineId,
       comments: answers.location.comment,
-      ownerNationalId: auth.nationalId,
       delegateNationalId: auth.nationalId,
       address: answers.location.address,
       postalCode: Number(answers.location.postalCode),
-      contactName: answers.contactInformation.name,
-      phoneNumber: cleanPhoneNumber(answers.contactInformation.phoneNumber),
-      email: answers.contactInformation.email,
+      contactName: contactIsSameAsApplicant
+        ? answers.applicant.name
+        : answers.contactInformation.name,
+      phoneNumber: cleanPhoneNumber(
+        contactIsSameAsApplicant
+          ? answers.applicant.phoneNumber || ''
+          : answers.contactInformation.phoneNumber || '',
+      ),
+      email: contactIsSameAsApplicant
+        ? answers.applicant.email
+        : answers.contactInformation.email,
       city: answers.location.city,
     })
   }
