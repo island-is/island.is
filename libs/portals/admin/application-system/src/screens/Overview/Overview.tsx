@@ -155,7 +155,7 @@ const Overview = ({
       ) ?? []
     : organizationListFromContentful?.map((x) => ({
         ...x,
-        nationalId: x.id,
+        nationalId: '',
       })) ?? []
 
   const handleSearchChange = (nationalId: string) => {
