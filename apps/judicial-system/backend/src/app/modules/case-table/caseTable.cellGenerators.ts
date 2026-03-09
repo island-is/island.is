@@ -544,6 +544,14 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
         'isSentToPrisonAdmin',
         'isRegisteredInPrisonSystem',
       ],
+      includes: {
+        verdicts: {
+          model: Verdict,
+          attributes: ['isAcquittedByPublicProsecutionOffice'],
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+      },
       order: [['created', 'ASC']],
       separate: true,
     },
