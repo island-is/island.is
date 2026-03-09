@@ -65,7 +65,7 @@ export const GeneralPetitionLists: FC<
             {filteredPetitionLists.map((petition: EndorsementList) => {
               return (
                 <ActionCard
-                  key={petition.title}
+                  key={petition.id}
                   backgroundColor="white"
                   heading={petition.title}
                   text={
