@@ -19,10 +19,7 @@ import { generateRequestReviewSms } from './smsGenerators/requestReviewSms'
 import { generateApplicationSubmittedEmail } from './emailGenerators/applicationSubmittedEmail'
 import { generateApplicationSubmittedSms } from './smsGenerators/applicationSubmittedSms'
 import { applicationCheck } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
-import {
-  ChargeFjsV2ClientService,
-  getPaymentIdFromExternalData,
-} from '@island.is/clients/charge-fjs-v2'
+import { getPaymentIdFromExternalData } from '@island.is/clients/charge-fjs-v2'
 import { generateApplicationRejectedEmail } from './emailGenerators/applicationRejectedEmail'
 import { generateApplicationRejectedSms } from './smsGenerators/applicationRejectedSms'
 import {
@@ -31,13 +28,14 @@ import {
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 import { User } from '@island.is/auth-nest-tools'
+import { PaymentsApi } from '@island.is/clients/payments'
 @Injectable()
 export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly workMachineClientService: WorkMachinesClientService,
+    private readonly paymentsApi: PaymentsApi,
   ) {
     super(ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP)
   }
@@ -294,7 +292,12 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     const chargeId = getPaymentIdFromExternalData(application)
     try {
       if (chargeId) {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+        await this.paymentsApi.refundControllerRefund({
+          refundPaymentInput: {
+            paymentFlowId: chargeId,
+            reasonForRefund: 'Charge deleted',
+          },
+        })
       }
     } catch (error) {
       this.logger.error(
@@ -369,7 +372,12 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     // 1. Delete charge so that the seller gets reimburshed
     const chargeId = getPaymentIdFromExternalData(application)
     if (chargeId) {
-      await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+      await this.paymentsApi.refundControllerRefund({
+        refundPaymentInput: {
+          paymentFlowId: chargeId,
+          reasonForRefund: 'Application rejected',
+        },
+      })
     }
 
     // 2. Delete owner change in work machines

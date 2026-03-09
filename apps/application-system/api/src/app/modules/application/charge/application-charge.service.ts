@@ -2,17 +2,17 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Application } from '@island.is/application/api/core'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { PaymentService } from '@island.is/application/api/payment'
+import { PaymentsApi } from '@island.is/clients/payments'
 
 @Injectable()
 export class ApplicationChargeService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private paymentService: PaymentService,
+    private readonly paymentsApi: PaymentsApi,
   ) {
     this.logger = logger.child({ context: 'ApplicationChargeService' })
   }
@@ -68,7 +68,12 @@ export class ApplicationChargeService {
 
       if (requestId) {
         this.logger.info('deleteCharge chargeId', requestId)
-        await this.chargeFjsV2ClientService.deleteCharge(requestId)
+        await this.paymentsApi.refundControllerRefund({
+          refundPaymentInput: {
+            paymentFlowId: requestId,
+            reasonForRefund: 'Charge deleted',
+          },
+        })
       } else {
         this.logger.warn('No requestId found, skipping deleteCharge')
       }
