@@ -223,7 +223,7 @@ export default function WalletScreen() {
               label: intl.formatMessage({ id: 'wallet.scanButton' }),
               icon: {
                 type: 'image',
-                source: require('@/assets/icons/navbar-scan.png'),
+                source: require('@/assets/icons/barcode-scan.png'),
               },
               onPress: () => router.navigate('/wallet/scanner'),
             },

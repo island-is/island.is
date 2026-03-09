@@ -135,7 +135,7 @@ export function findRoute(url: string): Href | null {
  * Navigate to a universal link. If our mapping returns a valid native screen,
  * navigate there directly. Otherwise, open in the in-app browser.
  */
-export function navigateToUniversalLink({
+export async function navigateToUniversalLink({
   link,
 }: {
   link?: NotificationMessage['link']['url']
@@ -151,7 +151,11 @@ export function navigateToUniversalLink({
   }
 
   // No matching native route — open in browser
-  WebBrowser.openBrowserAsync(link, {
-    presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
-  })
+  try {
+    await WebBrowser.openBrowserAsync(link, {
+      presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+    })
+  } catch (error) {
+    console.log('Failed to open link in browser', error)
+  }
 }

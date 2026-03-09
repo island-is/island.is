@@ -33,7 +33,9 @@ export const useBrowser = () => {
             authenticationResponse,
           )
           if (urlWithLoginHint) {
-            WebBrowser.openBrowserAsync(urlWithLoginHint)
+            WebBrowser.openBrowserAsync(urlWithLoginHint, {
+              presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+            })
             return
           }
         }

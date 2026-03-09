@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useIntl } from 'react-intl'
 import {
   Image,
+  Pressable,
   RefreshControl,
   ScrollView,
   Text,
@@ -89,6 +90,8 @@ export default function VehicleDetailScreen() {
     mainInfo?.requiresMileageRegistration ||
     mainInfo?.availableMileageRegistration
 
+    console.log('show context', { showContext, dropdownItems })
+
   return (
     <>
       <ScrollView
@@ -117,7 +120,7 @@ export default function VehicleDetailScreen() {
                       dropdownItems.map((item) => ({
                         id: item.link,
                         title: item.title,
-                        icon: 'arrow.up.right',
+                        image: 'arrow.up.forward',
                       })) || []
                     }
                     onPressAction={(id, title) => {
@@ -128,7 +131,7 @@ export default function VehicleDetailScreen() {
                     }}
                     onMenuClose={() => setShowContext(false)}
                   >
-                    <TouchableNativeFeedback
+                    <Pressable
                       onPress={() => setShowContext(true)}
                     >
                       <Image
@@ -137,7 +140,7 @@ export default function VehicleDetailScreen() {
                         height={24}
                         tintColor={theme.shade.foreground}
                       />
-                    </TouchableNativeFeedback>
+                    </Pressable>
                   </ContextMenu>
                 ),
               },
