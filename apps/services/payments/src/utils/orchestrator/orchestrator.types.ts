@@ -86,6 +86,12 @@ export interface OrchestratorConfig<
   logger: Logger
   onRollbackFailure?: RollbackFailureCallback<TContext, TStepResults>
   /**
+   * Extracts a log prefix from the context (e.g. "[paymentFlowId]") so that
+   * all orchestrator lifecycle logs can be correlated with the domain entity.
+   * Called once at the start of execute().
+   */
+  logContext?: (context: TContext) => string
+  /**
    * Per-step execution timeout in milliseconds. If set, each step.execute()
    * will be raced against this timeout; exceeding it throws StepTimeoutError
    * and triggers rollback. Omit to disable (no timeout).
