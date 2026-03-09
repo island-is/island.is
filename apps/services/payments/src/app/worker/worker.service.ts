@@ -48,15 +48,28 @@ export class WorkerService {
 
     // Step 1: Find all payment flows that are paid (have fulfillment) but missing FJS charge
     const allFlows = await this.findPaymentFlowsToProcess()
+    this.logger.info(
+      `Found ${allFlows.length} payment flow(s) pending FJS charge`,
+    )
 
     // Step 2: Filter out flows that have reached the failure limit (manual intervention required)
-    const paymentFlowsToProcess = allFlows.filter(
-      (flow) =>
-        !this.shouldSkipDueToFailureCount(
-          flow.workerEvents ?? [],
-          this.workerConfig.workerMaxFailureEventsPerFlow,
-        ),
-    )
+    const paymentFlowsToProcess = allFlows.filter((flow) => {
+      const shouldSkip = this.shouldSkipDueToFailureCount(
+        flow.workerEvents ?? [],
+        this.workerConfig.workerMaxFailureEventsPerFlow,
+      )
+
+      if (shouldSkip) {
+        const failureCount = (flow.workerEvents ?? []).filter(
+          (e) => e.status === 'failure',
+        ).length
+        this.logger.warn(
+          `[${flow.id}] Skipping payment flow — exceeded max failure attempts (failures: ${failureCount}, limit: ${this.workerConfig.workerMaxFailureEventsPerFlow}). Manual intervention required.`,
+        )
+      }
+
+      return !shouldSkip
+    })
 
     const skippedCount = allFlows.length - paymentFlowsToProcess.length
 
