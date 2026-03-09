@@ -203,6 +203,14 @@ const QuestionnaireDetail: FC = () => {
                 : formatMessage(messages.unknown)
             }
           />
+          {questionnaire?.expirationDate && (
+            <InfoLine
+              loading={loading}
+              key="questionnaire-expiration"
+              label={formatMessage(messages.questionnaireExpiration)}
+              content={formatDate(questionnaire.expirationDate)}
+            />
+          )}
         </InfoLineStack>
       )}
       {!loading && !data?.questionnairesDetail && !error && (

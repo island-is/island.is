@@ -1931,6 +1931,10 @@ export const messages = defineMessages({
     defaultMessage: 'Spurningalisti',
     id: 'sp.health:questionnaire',
   },
+  questionnaireExpiration: {
+    defaultMessage: 'Gildir til',
+    id: 'sp.health:questionnaire-expiration',
+  },
   expiredQuestionnaire: {
     defaultMessage: 'Útrunnið',
     id: 'sp.health:expired-questionnaire',

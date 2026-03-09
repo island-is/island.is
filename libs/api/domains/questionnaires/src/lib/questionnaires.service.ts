@@ -46,56 +46,142 @@ export class QuestionnairesService {
     private readonly featureService: FeatureFlagService,
   ) {}
 
+  async getQuestionnaires(
+    user: User,
+    locale: Locale,
+  ): Promise<QuestionnairesList | null> {
+    const { useEL, useLSH } = await this.getQuestionnaireFeatureFlags(user)
+    let ELError = false
+    let LSHError = false
+    let ELQuestionnairesList: QuestionnairesList = { questionnaires: [] }
+    let LSHQuestionnairesList: QuestionnairesList = { questionnaires: [] }
+
+    if (useEL) {
+      try {
+        ELQuestionnairesList = await this.getELQuestionnaires(user, locale)
+      } catch (error) {
+        ELError = true
+        this.logger.error('Failed to fetch EL questionnaires', error)
+      }
+    }
+
+    if (useLSH) {
+      try {
+        LSHQuestionnairesList = await this.getLSHQuestionnaires(user, locale)
+      } catch (error) {
+        LSHError = true
+        this.logger.error('Failed to fetch LSH questionnaires', error)
+      }
+    }
+
+    if (ELError && LSHError) {
+      throw new Error(
+        `Failed to fetch questionnaires from both sources: EL and LSH`,
+      )
+    }
+
+    return {
+      questionnaires: [ELQuestionnairesList, LSHQuestionnairesList]
+        .flatMap((list) => list.questionnaires)
+        .filter((q) => q !== undefined)
+        .sort((a, b) => {
+          const aIsExpired = a.status === QuestionnairesStatusEnum.expired
+          const bIsExpired = b.status === QuestionnairesStatusEnum.expired
+
+          if (aIsExpired && !bIsExpired) return 1
+          if (!aIsExpired && bIsExpired) return -1
+
+          const dateA = Date.parse(a.sentDate) || 0
+          const dateB = Date.parse(b.sentDate) || 0
+
+          return dateB - dateA
+        }),
+    }
+  }
+
   async getQuestionnaire(
     user: User,
     locale: Locale,
     input: GetQuestionnaireInput,
   ): Promise<Questionnaire | null> {
-    const useEL = await this.featureService.getValue(
-      Features.questionnairesFromEL,
-      false,
-      user,
-    )
-    const useLSH = await this.featureService.getValue(
-      Features.questionnairesFromLSH,
-      false,
-      user,
-    )
+    const { useEL, useLSH } = await this.getQuestionnaireFeatureFlags(user)
 
-    // Fetch questionnaire from LSH
     if (input.organization === QuestionnairesOrganizationEnum.LSH && useLSH) {
-      if (input.includeQuestions) {
-        // Fetch full questionnaire including sections and questions
-        const lshQuestionnaireWithQuestions =
-          await this.lshApi.getQuestionnaire(user, locale, input.id)
-
-        if (!lshQuestionnaireWithQuestions) {
-          return null
-        }
-
-        return mapLshQuestionnaire(lshQuestionnaireWithQuestions)
-      }
-
-      // Otherwise fetch the list and select the matching questionnaire header
-      const lshQuestionnaires = await this.lshApi.getQuestionnaires(
-        user,
-        locale,
-      )
-      const lshQuestionnaire: LSHQuestionnaireType | null =
-        lshQuestionnaires?.find((q) => q.gUID === input.id) ?? null
-
-      return await this.getLSHQuestionnaire(locale, lshQuestionnaire)
+      return this.getLSHQuestionnaireDetail(user, locale, input)
     }
 
     if (input.organization === QuestionnairesOrganizationEnum.EL && useEL) {
-      // Fetch questionnaire from EL (Health Directorate)
-      const elData: QuestionnaireDetailDto | null =
-        await this.api.getQuestionnaire(user, locale, input.id)
-
-      return this.getELQuestionnaire(locale, input.includeQuestions, elData)
+      return this.getELQuestionnaireDetail(user, locale, input)
     }
 
     return null
+  }
+
+  async submitQuestionnaire(
+    user: User,
+    input: QuestionnaireInput,
+    locale: Locale,
+  ): Promise<QuestionnairesResponse> {
+    const organization = this.normalizeOrganization(input.organization)
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
+    if (!organization) {
+      return {
+        success: false,
+        message: 'Organization is required to submit questionnaire',
+      }
+    }
+
+    // Submit to LSH
+    if (organization === QuestionnairesOrganizationEnum.LSH) {
+      try {
+        const lshAnswer = mapToLshAnswer(input)
+        const response = await this.lshApi.postAnsweredQuestionnaire(
+          user,
+          locale,
+          lshAnswer.gUID ?? input.id,
+          lshAnswer,
+        )
+        return {
+          success: true,
+          message: response?.message ?? 'Questionnaire submitted successfully',
+        }
+      } catch (e) {
+        return {
+          success: false,
+          message: 'Error submitting questionnaire to LSH',
+        }
+      }
+    }
+
+    // Submit to EL (Health Directorate)
+    if (organization === QuestionnairesOrganizationEnum.EL) {
+      try {
+        const elAnswer = mapToElAnswer(input, formatMessage)
+        const response = await this.api.submitQuestionnaire(
+          user,
+          locale,
+          input.id, // questionnaire ID
+          elAnswer, // SubmitQuestionnaireDto
+        )
+        return {
+          success: true,
+          message: response?.toString(),
+        }
+      } catch (e) {
+        return {
+          success: false,
+          message: 'Error submitting questionnaire to EL',
+        }
+      }
+    }
+
+    return {
+      success: false,
+      message: 'Unknown organization',
+    }
   }
 
   async getAnsweredQuestionnaire(
@@ -105,16 +191,7 @@ export class QuestionnairesService {
   ): Promise<AnsweredQuestionnaires | null> {
     const organization = this.normalizeOrganization(input.organization)
 
-    const useEL = await this.featureService.getValue(
-      Features.questionnairesFromEL,
-      false,
-      user,
-    )
-    const useLSH = await this.featureService.getValue(
-      Features.questionnairesFromLSH,
-      false,
-      user,
-    )
+    const { useEL, useLSH } = await this.getQuestionnaireFeatureFlags(user)
 
     if (!organization || !input.id) {
       return null
@@ -140,7 +217,68 @@ export class QuestionnairesService {
     return null
   }
 
-  // Build answered questionnaire response for EL (Health Directorate)
+  // Get Questionnaires Lists
+  private async getELQuestionnaires(
+    user: User,
+    locale: Locale,
+  ): Promise<QuestionnairesList> {
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
+    const data: QuestionnaireBaseDto[] | null =
+      await this.api.getQuestionnaires(user, locale)
+
+    return {
+      questionnaires: (data ?? []).map((q) => ({
+        id: q.questionnaireId,
+        title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
+        description: q.message ?? undefined,
+        sentDate: q.createdDate?.toISOString() ?? '',
+        lastSubmissionId: q.lastCreatedSubmissionId,
+        organization: QuestionnairesOrganizationEnum.EL,
+        department: undefined,
+        status:
+          q.numSubmitted > 0 || q.lastSubmitted
+            ? QuestionnairesStatusEnum.answered
+            : q.hasDraft
+            ? QuestionnairesStatusEnum.draft
+            : QuestionnairesStatusEnum.notAnswered,
+        lastSubmitted: q.lastSubmitted,
+      })),
+    }
+  }
+
+  private async getLSHQuestionnaires(
+    user: User,
+    locale: Locale,
+  ): Promise<QuestionnairesList> {
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
+    const data: LSHQuestionnaireType[] | null =
+      await this.lshApi.getQuestionnaires(user, locale)
+
+    return {
+      questionnaires: (data ?? [])
+        .filter((item) => item.gUID != null)
+        .map((item) => ({
+          id: item.gUID ?? 'undefined-id',
+          title: item.caption ?? formatMessage(m.questionnaireWithoutTitle),
+          description: item.description ?? undefined,
+          sentDate: item.validFromDateTime?.toISOString() ?? '',
+          organization: QuestionnairesOrganizationEnum.LSH,
+          department: item.department ?? undefined,
+          status: item.answerDateTime
+            ? QuestionnairesStatusEnum.answered
+            : new Date(item.validToDateTime) < new Date()
+            ? QuestionnairesStatusEnum.expired
+            : QuestionnairesStatusEnum.notAnswered,
+        })),
+    }
+  }
+
   private async getELAnsweredQuestionnaire(
     user: User,
     locale: Locale,
@@ -277,188 +415,41 @@ export class QuestionnairesService {
     return { data: [data] }
   }
 
-  async submitQuestionnaire(
+  private async getLSHQuestionnaireDetail(
     user: User,
-    input: QuestionnaireInput,
     locale: Locale,
-  ): Promise<QuestionnairesResponse> {
-    const organization = this.normalizeOrganization(input.organization)
-    const { formatMessage } = await this.intlService.useIntl(
-      [NAMESPACE],
-      locale,
-    )
-    if (!organization) {
-      return {
-        success: false,
-        message: 'Organization is required to submit questionnaire',
+    input: GetQuestionnaireInput,
+  ): Promise<Questionnaire | null> {
+    if (input.includeQuestions) {
+      const lshQuestionnaireWithQuestions = await this.lshApi.getQuestionnaire(
+        user,
+        locale,
+        input.id,
+      )
+
+      if (!lshQuestionnaireWithQuestions) {
+        return null
       }
+
+      return mapLshQuestionnaire(lshQuestionnaireWithQuestions)
     }
 
-    // Submit to LSH
-    if (organization === QuestionnairesOrganizationEnum.LSH) {
-      try {
-        const lshAnswer = mapToLshAnswer(input)
-        const response = await this.lshApi.postAnsweredQuestionnaire(
-          user,
-          locale,
-          lshAnswer.gUID ?? input.id,
-          lshAnswer,
-        )
-        return {
-          success: true,
-          message: response?.message ?? 'Questionnaire submitted successfully',
-        }
-      } catch (e) {
-        return {
-          success: false,
-          message: 'Error submitting questionnaire to LSH',
-        }
-      }
-    }
+    const lshQuestionnaires = await this.lshApi.getQuestionnaires(user, locale)
+    const lshQuestionnaire: LSHQuestionnaireType | null =
+      lshQuestionnaires?.find((q) => q.gUID === input.id) ?? null
 
-    // Submit to EL (Health Directorate)
-    if (organization === QuestionnairesOrganizationEnum.EL) {
-      try {
-        const elAnswer = mapToElAnswer(input, formatMessage)
-        const response = await this.api.submitQuestionnaire(
-          user,
-          locale,
-          input.id, // questionnaire ID
-          elAnswer, // SubmitQuestionnaireDto
-        )
-        return {
-          success: true,
-          message: response?.toString(),
-        }
-      } catch (e) {
-        return {
-          success: false,
-          message: 'Error submitting questionnaire to EL',
-        }
-      }
-    }
-
-    return {
-      success: false,
-      message: 'Unknown organization',
-    }
+    return this.getLSHQuestionnaire(locale, lshQuestionnaire)
   }
 
-  async getQuestionnaires(
+  private async getELQuestionnaireDetail(
     user: User,
     locale: Locale,
-  ): Promise<QuestionnairesList | null> {
-    let ELquestionnaires: QuestionnairesList = { questionnaires: [] }
-    let ELError = false
-    let LSHerror = false
-    const { formatMessage } = await this.intlService.useIntl(
-      [NAMESPACE],
-      locale,
-    )
-    const useEL = await this.featureService.getValue(
-      Features.questionnairesFromEL,
-      false,
-      user,
-    )
-    const useLSH = await this.featureService.getValue(
-      Features.questionnairesFromLSH,
-      false,
-      user,
-    )
-    if (useEL) {
-      try {
-        const data: QuestionnaireBaseDto[] | null =
-          await this.api.getQuestionnaires(user, locale)
-        ELquestionnaires = {
-          questionnaires:
-            (data ?? []).map((q) => {
-              return {
-                id: q.questionnaireId,
-                title: q.title ?? formatMessage(m.questionnaireWithoutTitle),
-                description: q.message ?? undefined,
-                sentDate: q.createdDate?.toISOString() ?? '',
-                lastSubmissionId: q.lastCreatedSubmissionId,
-                organization: QuestionnairesOrganizationEnum.EL,
-                department: undefined,
-                status:
-                  q.numSubmitted > 0 || q.lastSubmitted
-                    ? QuestionnairesStatusEnum.answered
-                    : q.hasDraft
-                    ? QuestionnairesStatusEnum.draft
-                    : QuestionnairesStatusEnum.notAnswered,
-                lastSubmitted: q.lastSubmitted,
-              }
-            }) ?? [],
-        }
-      } catch (error) {
-        ELError = true
-        this.logger.error('Failed to fetch EL questionnaires', error)
-      }
-    }
+    input: GetQuestionnaireInput,
+  ): Promise<Questionnaire | null> {
+    const elData: QuestionnaireDetailDto | null =
+      await this.api.getQuestionnaire(user, locale, input.id)
 
-    let LSHquestionnaires: QuestionnairesList = { questionnaires: [] }
-
-    if (useLSH) {
-      try {
-        const lshData: LSHQuestionnaireType[] | null =
-          await this.lshApi.getQuestionnaires(user, locale ?? 'is')
-        LSHquestionnaires = {
-          questionnaires:
-            (lshData ?? [])
-              .filter((item: LSHQuestionnaireType) => item.gUID != null)
-              .map((item: LSHQuestionnaireType) => {
-                return {
-                  id: item.gUID ?? 'undefined-id',
-                  title: item.caption
-                    ? item.caption
-                    : formatMessage(m.questionnaireWithoutTitle),
-                  description: item.description ?? undefined,
-                  sentDate: item.validFromDateTime?.toISOString() ?? '',
-                  organization: QuestionnairesOrganizationEnum.LSH,
-                  department: item.department ?? undefined,
-                  status: item.answerDateTime
-                    ? QuestionnairesStatusEnum.answered
-                    : new Date(item.validToDateTime) < new Date()
-                    ? QuestionnairesStatusEnum.expired
-                    : QuestionnairesStatusEnum.notAnswered,
-                }
-              }) || [],
-        }
-      } catch (error) {
-        LSHerror = true
-        this.logger.error('Failed to fetch LSH questionnaires', error)
-      }
-    }
-
-    const allLists = [ELquestionnaires, LSHquestionnaires]
-
-    // If both sources failed, throw an error
-    if (ELError && LSHerror) {
-      throw new Error(
-        `Failed to fetch questionnaires from both sources: EL and LSH`,
-      )
-    }
-
-    return {
-      questionnaires:
-        allLists
-          .flatMap((list) => list.questionnaires)
-          .filter((q) => q !== undefined)
-          .sort((a, b) => {
-            // First, sort by status (expired goes to bottom)
-            const aIsExpired = a.status === QuestionnairesStatusEnum.expired
-            const bIsExpired = b.status === QuestionnairesStatusEnum.expired
-
-            if (aIsExpired && !bIsExpired) return 1
-            if (!aIsExpired && bIsExpired) return -1
-
-            // Then sort by date (newest first)
-            const dateA = Date.parse(a.sentDate) || 0
-            const dateB = Date.parse(b.sentDate) || 0
-
-            return dateB - dateA
-          }) ?? null,
-    }
+    return this.getELQuestionnaire(locale, input.includeQuestions, elData)
   }
 
   private async getELQuestionnaire(
@@ -523,7 +514,9 @@ export class QuestionnairesService {
         sentDate: data.validFromDateTime?.toISOString() ?? '',
         description: data.description ?? undefined,
         organization: QuestionnairesOrganizationEnum.LSH,
+        department: data.department ?? undefined,
       },
+      expirationDate: data.validToDateTime ?? undefined,
       canSubmit: data.answerDateTime ? false : true,
     }
   }
@@ -536,6 +529,24 @@ export class QuestionnairesService {
       return isNaN(parsed.getTime()) ? date : parsed.toDateString()
     }
     return undefined
+  }
+
+  private async getQuestionnaireFeatureFlags(user: User): Promise<{
+    useEL: boolean
+    useLSH: boolean
+  }> {
+    const useEL = await this.featureService.getValue(
+      Features.questionnairesFromEL,
+      false,
+      user,
+    )
+    const useLSH = await this.featureService.getValue(
+      Features.questionnairesFromLSH,
+      false,
+      user,
+    )
+
+    return { useEL, useLSH }
   }
 
   /**
