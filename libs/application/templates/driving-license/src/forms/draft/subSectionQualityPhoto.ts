@@ -42,6 +42,18 @@ export const subSectionQualityPhoto = buildSubSection({
           backgroundColor: 'blue',
           required: true,
           defaultValue: (application: Application) => {
+            const usingFakeData =
+              getValueViaPath(application.answers, 'fakeData.useFakeData') ===
+              YES
+            if (usingFakeData) {
+              return getValueViaPath(
+                application.answers,
+                'fakeData.qualityPhoto',
+              ) === YES
+                ? 'fakePhoto'
+                : 'bringNewPhoto'
+            }
+
             const photos = getFacialPhotosFromThjodskra(
               application.externalData,
             )
@@ -61,11 +73,13 @@ export const subSectionQualityPhoto = buildSubSection({
             const photoOptions = []
 
             if (getValueViaPath(answers, 'fakeData.useFakeData') === YES) {
-              photoOptions.push({
-                value: 'fakePhoto',
-                label: m.useFakeImage,
-                illustration: createPhotoComponent('fakePhoto'),
-              })
+              if (getValueViaPath(answers, 'fakeData.qualityPhoto') === YES) {
+                photoOptions.push({
+                  value: 'fakePhoto',
+                  label: m.useFakeImage,
+                  illustration: createPhotoComponent('fakePhoto'),
+                })
+              }
             } else {
               const facialPhotos = getFacialPhotosFromThjodskra(externalData)
 
@@ -104,8 +118,31 @@ export const subSectionQualityPhoto = buildSubSection({
         buildDescriptionField({
           id: 'photodesc',
           description: m.qualityPhotoInstructionBullets,
-          condition: (answers) =>
-            getValueViaPath(answers, 'selectLicensePhoto') === 'bringNewPhoto',
+          condition: (answers, externalData) => {
+            const selected = getValueViaPath(answers, 'selectLicensePhoto')
+
+            // If explicitly selected, use that
+            if (selected) {
+              return selected === 'bringNewPhoto'
+            }
+
+            // Before the user has interacted, check if "bringNewPhoto"
+            // would be the default (i.e. no other photos are available)
+            const usingFakeData =
+              getValueViaPath(answers, 'fakeData.useFakeData') === YES
+            if (usingFakeData) {
+              return getValueViaPath(answers, 'fakeData.qualityPhoto') !== YES
+            }
+
+            const facialPhotos = getFacialPhotosFromThjodskra(externalData)
+            if (facialPhotos.length > 0) return false
+
+            const qualityPhoto = getValueViaPath<string>(
+              externalData,
+              'qualityPhoto.data.qualityPhoto',
+            )
+            return !qualityPhoto
+          },
         }),
       ],
     }),
