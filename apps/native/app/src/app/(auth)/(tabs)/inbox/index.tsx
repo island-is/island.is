@@ -35,6 +35,7 @@ import {
 import {
   Button,
   EmptyList,
+  fontByWeight,
   ListItemSkeleton,
   SearchBar,
   Tag,
@@ -414,51 +415,68 @@ export default function InboxScreen() {
     <>
       <StackScreen
         networkStatus={[res.networkStatus]}
-        options={
-          {
-            // headerRightItems: [
-            //   {
-            //     type: 'custom',
-            //     // label: 'Sía',
-            //     // onPress: () => router.push('/inbox/filter'),
-            //     // icon: {
-            //     //   type: 'image',
-            //     //   source: require('@/assets/icons/filter-icon.png')
-            //     // },
-            //     element: (
-            //       <TouchableNativeFeedback
-            //         onPress={() => router.push('/inbox/filter')}
-            //       >
-            //         <View
-            //           style={{
-            //             flexDirection: 'row',
-            //             alignItems: 'center',
-            //             gap: 8,
-            //             paddingHorizontal: 16,
-            //           }}
-            //         >
-            //           <Typography variant="heading5">Sía</Typography>
-            //           <Image source={require('@/assets/icons/filter-icon.png')} />
-            //         </View>
-            //       </TouchableNativeFeedback>
-            //     ),
-            //   },
-            // ],
-            // headerLeftItems: [
-            //   {
-            //     type: 'button',
-            //     label: 'Velja skjöl',
-            //     // icon: {
-            //     //   type: 'image',
-            //     //   source: require('@/assets/icons/inbox-read.png'),
-            //     // },
-            //     onPress() {
-            //       setSelectedState((prev) => !prev)
-            //     },
-            //   },
-            // ],
-          }
-        }
+        options={{
+          headerTitleAlign: 'center',
+          headerLeftItems: selectState
+            ? [
+                {
+                  type: 'button',
+                  label: intl.formatMessage({
+                    id: allDocumentsSelected
+                      ? 'inbox.bulkDeselectAllButton'
+                      : 'inbox.bulkSelectAllButton',
+                  }),
+                  labelStyle: {
+                    fontSize: 15,
+                    fontWeight: '400',
+                    fontFamily: fontByWeight('400'),
+                  },
+                  onPress() {
+                    allDocumentsSelected
+                      ? setSelectedItems([])
+                      : setSelectedItems(
+                          res.data?.documentsV2?.data.map((doc) => doc.id) ??
+                            [],
+                        )
+                  },
+                },
+              ]
+            : [
+                {
+                  type: 'button',
+                  label: intl.formatMessage({
+                    id: 'inbox.bulkSelectButton',
+                  }),
+                labelStyle: {
+                  fontSize: 15,
+                  fontWeight: '400',
+                  fontFamily: fontByWeight('400'),
+                },
+                  onPress() {
+                    setSelectedState((v) => !v)
+                  },
+                },
+              ],
+          headerRightItems: selectState
+            ? [
+                {
+                  type: 'button',
+                  label: intl.formatMessage({
+                    id: 'inbox.bulkSelectCancelButton',
+                  }),
+                labelStyle: {
+                  fontSize: 15,
+                  fontWeight: '400',
+                  fontFamily: fontByWeight('400'),
+                },
+                  onPress() {
+                    resetSelectState()
+                  },
+                  tintColor: theme.color.purple400,
+                },
+              ]
+            : [],
+        }}
       />
       <Animated.FlatList
         ref={flatListRef}
@@ -474,90 +492,48 @@ export default function InboxScreen() {
         ListHeaderComponent={
           <>
             <ListHeaderWrapper>
-              {selectState ? (
-                <>
-                  <Button
-                    title={intl.formatMessage({
-                      id: allDocumentsSelected
-                        ? 'inbox.bulkDeselectAllButton'
-                        : 'inbox.bulkSelectAllButton',
-                    })}
-                    isOutlined
-                    isUtilityButton
-                    style={{ flex: 1 }}
-                    onPress={() =>
-                      allDocumentsSelected
-                        ? setSelectedItems([])
-                        : setSelectedItems(
-                            res.data?.documentsV2?.data.map((doc) => doc.id) ??
-                              [],
-                          )
-                    }
-                  />
-                  <Button
-                    title={intl.formatMessage({
-                      id: 'inbox.bulkSelectCancelButton',
-                    })}
-                    isOutlined
-                    isUtilityButton
-                    onPress={resetSelectState}
-                  />
-                </>
-              ) : (
-                <>
-                  <SearchBar
-                    placeholder={intl.formatMessage({
-                      id: 'inbox.searchPlaceholder',
-                    })}
-                    value={query}
-                    onChangeText={(text) => setQuery(text)}
-                  />
-                  <Button
-                    title={intl.formatMessage({
-                      id: 'inbox.filterButtonTitle',
-                    })}
-                    isOutlined
-                    isUtilityButton
-                    style={{
-                      marginLeft: 8,
-                      paddingTop: 0,
-                      paddingBottom: 0,
-                    }}
-                    icon={filterIcon}
-                    iconStyle={{ tintColor: theme.color.blue400 }}
-                    onPress={() => {
-                      resetSelectState()
-                      inboxFilterStore.setState({
-                        availableSenders,
-                        availableCategories,
-                      })
-                      router.push('/inbox/filter')
-                    }}
-                  />
-                  <Button
-                    icon={inboxReadIcon}
-                    isUtilityButton
-                    isOutlined
-                    style={{
-                      paddingTop: 0,
-                      paddingBottom: 0,
-                      paddingLeft: 12,
-                      paddingRight: 12,
-                      minWidth: 40,
-                    }}
-                    onPress={onPressMarkAllAsRead}
-                  />
-                  <Button
-                    title={intl.formatMessage({
-                      id: 'inbox.bulkSelectButton',
-                    })}
-                    isOutlined
-                    isUtilityButton
-                    style={{ paddingTop: 0, paddingBottom: 0 }}
-                    onPress={() => setSelectedState(true)}
-                  />
-                </>
-              )}
+              <SearchBar
+                placeholder={intl.formatMessage({
+                  id: 'inbox.searchPlaceholder',
+                })}
+                value={query}
+                onChangeText={(text) => setQuery(text)}
+              />
+              <Button
+                title={intl.formatMessage({
+                  id: 'inbox.filterButtonTitle',
+                })}
+                isOutlined
+                isUtilityButton
+                style={{
+                  marginLeft: 8,
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                }}
+                icon={filterIcon}
+                iconStyle={{ tintColor: theme.color.blue400 }}
+                onPress={() => {
+                  resetSelectState()
+                  inboxFilterStore.setState({
+                    availableSenders,
+                    availableCategories,
+                  })
+                  router.push('/inbox/filter')
+                }}
+              />
+              <Button
+                icon={inboxReadIcon}
+                isUtilityButton
+                isOutlined
+                style={{
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                  minWidth: 40,
+                }}
+                onPress={onPressMarkAllAsRead}
+              />
             </ListHeaderWrapper>
             {isFilterApplied ? (
               <TagsWrapper>
