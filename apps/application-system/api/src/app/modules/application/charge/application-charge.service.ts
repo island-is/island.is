@@ -5,6 +5,8 @@ import type { Logger } from '@island.is/logging'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { PaymentService } from '@island.is/application/api/payment'
 import { PaymentsApi } from '@island.is/clients/payments'
+import { PaymentServiceCode } from '@island.is/shared/constants'
+import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class ApplicationChargeService {
@@ -68,12 +70,22 @@ export class ApplicationChargeService {
 
       if (requestId) {
         this.logger.info('deleteCharge chargeId', requestId)
-        await this.paymentsApi.refundControllerRefund({
-          refundPaymentInput: {
-            paymentFlowId: requestId,
-            reasonForRefund: 'Charge deleted',
-          },
-        })
+        try {
+          await this.paymentsApi.refundControllerRefund({
+            refundPaymentInput: {
+              paymentFlowId: requestId,
+              reasonForRefund: 'Charge deleted',
+            },
+          })
+        } catch (error) {
+          let errorMessage = error.message
+          if (error instanceof FetchError && error.problem) {
+            errorMessage = error.problem?.detail
+          }
+          this.logger.warn(
+            `Failed to delete charge for application ${application.id}. Problem: ${errorMessage}. Error was not rethrown.`,
+          )
+        }
       } else {
         this.logger.warn('No requestId found, skipping deleteCharge')
       }
