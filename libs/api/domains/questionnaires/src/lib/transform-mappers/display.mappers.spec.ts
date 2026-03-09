@@ -256,10 +256,14 @@ describe('display mappers', () => {
 
       expect(mapped.baseInformation.id).toBe('lsh-guid-h1')
       expect(mapped.baseInformation.title).toBe('LSH Header')
-      expect(mapped.baseInformation.status).toBe(QuestionnairesStatusEnum.notAnswered)
+      expect(mapped.baseInformation.status).toBe(
+        QuestionnairesStatusEnum.notAnswered,
+      )
       expect(mapped.baseInformation.department).toBe('Cardiology')
       expect(mapped.canSubmit).toBe(true)
-      expect(mapped.expirationDate).toEqual(new Date('2099-01-01T00:00:00.000Z'))
+      expect(mapped.expirationDate).toEqual(
+        new Date('2099-01-01T00:00:00.000Z'),
+      )
     })
 
     it('maps an LSH list item to a QuestionnairesBaseItem for the list', () => {
@@ -277,9 +281,10 @@ describe('display mappers', () => {
         validToDateTime: new Date('2000-01-01T00:00:00.000Z'),
       } as unknown as LshQuestionnaireType
 
-      expect(mapLshQuestionnaireOverview(expired, formatMessage).baseInformation.status).toBe(
-        QuestionnairesStatusEnum.expired,
-      )
+      expect(
+        mapLshQuestionnaireOverview(expired, formatMessage).baseInformation
+          .status,
+      ).toBe(QuestionnairesStatusEnum.expired)
       expect(mapLshQuestionnaireListItem(expired, formatMessage).status).toBe(
         QuestionnairesStatusEnum.expired,
       )
@@ -372,7 +377,9 @@ describe('display mappers', () => {
       expect(mapped.baseInformation.id).toBe('el-q-3')
       expect(mapped.sections).toBeUndefined()
       expect(mapped.draftAnswers).toBeUndefined()
-      expect(mapped.baseInformation.status).toBe(QuestionnairesStatusEnum.notAnswered)
+      expect(mapped.baseInformation.status).toBe(
+        QuestionnairesStatusEnum.notAnswered,
+      )
     })
 
     it('maps an EL questionnaire list item from a base DTO', () => {

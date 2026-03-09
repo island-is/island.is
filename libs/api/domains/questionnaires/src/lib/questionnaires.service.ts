@@ -416,7 +416,10 @@ export class QuestionnairesService {
         return null
       }
 
-      return mapLshQuestionnaireForm(lshQuestionnaireWithQuestions, formatMessage)
+      return mapLshQuestionnaireForm(
+        lshQuestionnaireWithQuestions,
+        formatMessage,
+      )
     }
 
     const lshQuestionnaires = await this.lshApi.getQuestionnaires(user, locale)
