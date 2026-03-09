@@ -29,12 +29,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   let idTokenToStore: string | undefined
 
   const callbacks = {
-    signIn(
+    async signIn(
       user: AuthUser,
       account: Record<string, unknown>,
       profile: Record<string, unknown>,
     ): Promise<boolean> {
-      return handleSignIn(user, account, profile, identityServerConfig.id)
+      return await handleSignIn(user, account, profile, identityServerConfig.id)
     },
 
     async jwt(token: JWT, user: AuthUser) {
