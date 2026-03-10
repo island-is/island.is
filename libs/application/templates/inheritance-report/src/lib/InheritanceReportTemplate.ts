@@ -96,6 +96,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
             },
           ],
           actionCard: {
+            displayPruneAt: true,
             historyLogs: [
               {
                 logMessage: coreHistoryMessages.applicationStarted,
@@ -116,6 +117,9 @@ const InheritanceReportTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.15,
           lifecycle: pruneAfterDays(DRAFT_PRUNE_DAYS),
+          actionCard: {
+            displayPruneAt: true,
+          },
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -162,6 +166,9 @@ const InheritanceReportTemplate: ApplicationTemplate<
           status: 'approved',
           progress: 1,
           lifecycle: pruneAfterDays(60),
+          actionCard: {
+            displayPruneAt: true,
+          },
           onEntry: defineTemplateApi({
             action: ApiActions.completeApplication,
             throwOnError: true,

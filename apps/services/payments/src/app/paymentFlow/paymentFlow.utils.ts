@@ -23,7 +23,13 @@ export const determinePaymentMethods = (
     return acc?.filter((option) => paymentOptions?.includes(option)) ?? []
   }, paymentMethods[0])
 
-  return (commonPaymentMethods ?? [])
+  const mappedPaymentMethods = (commonPaymentMethods ?? [])
     .map((method) => mapFjsPaymentMethodTo[method as FjsPaymentMethod])
-    .filter(Boolean) as PaymentMethod[]
+    .filter((pm) => pm !== null)
+
+  if (!mappedPaymentMethods || mappedPaymentMethods.length === 0) {
+    return [PaymentMethod.CARD]
+  }
+
+  return mappedPaymentMethods
 }
