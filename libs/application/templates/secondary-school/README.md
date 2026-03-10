@@ -20,11 +20,42 @@ State diagram for the Secondary School Application showing the states and possib
 
 ### Pre-requisites
 
-Data fetching from MMS, User Profile and National Registry. Users are blocked from continuing if they already have an active Seconday School application at MMS. Users are blocked from continuing if they haven't registered their email and phone number in the island.is User Profile, an exception is made when the user is making an application on behalf of someone else using a delegation as they cannot edit the user profile.
+Data fetching from MMS, User Profile and National Registry. 
+
+* Users are blocked from continuing if they already have an active Seconday School application at MMS. 
+* Users are blocked from continuing if they haven't registered their email and phone number in the island.is User Profile, an exception is made when the user is making an application on behalf of someone else using a delegation as they cannot edit the user profile.
 
 ### Draft
 
 Users fill in personal information, school selection and additional information. Once this is completed and validated they can submit the application to MMS. Users can only have one application in draft state.
+
+#### Applicant Personal Information
+
+* Name, national ID and address are fetched from the national registry
+* Email and phone number are fetched from the user profile, if either of these are missing the user is blocked from moving forward until they add the missing information to their user profile. If the user is applying on behalf of someone else using delegation they can manually enter phone and email.
+* If the current period allows freshman applications (as per externalData.applicationPeriodInfo.data.allowFreshmanApplication) is true the user can select if they are a freshman or general applicant, if the user is pre-flagged as a freshman by MMS (as per externalData.studentInfo.data.isFreshman) this step is skipped and they are automatically considered a freshman applicant.
+  * This is since the MMS data on primary school graduates isn't complete, for example it will not have data on applicants graduating primary school abroad.
+
+#### Contact Information
+
+* If the applicant is under 18 years old their legal guardians are automatically added as contacts to the application, this is done by fetching the legal guardian information from the national registry. The user needs to input their email and phone number.
+* Every applicant can add additional contacts to their application, but it's not required.
+
+#### School and track selection
+
+* Freshmen need to select at least 2 schools and can also add a third. For each school they must select a track (braut) they want to apply for as well as a backup track (braut til vara).
+  * The only exception to this is if the user selects a specialNeeds track (starfsbraut), this info is fetched via dynamic query to GetSecondarySchoolProgramsBySchoolId, if the user selects a specialNeeds track any further school and track selection is optional.
+* General applicants need to select at least 1 school with an option to select a second school. For each shool they must select a track, there is no option of a backup track.
+* If a user selects a specialNeeds track they get an alertMessage informing them that a track they've chosen is intended for students who require special assistance in their studies. This is to ensure that applicants are aware of the special needs track and don't accidentally select it without understanding the implications, as this could lead to their application being rejected by MMS.
+* For every school applicants can optionally select a third language as well as a nordic language if they have a background in a language other than Danish.
+  * List of third and nordic languages are fetched from MMS and found in externalData.schools.data
+* Schools can add an option for applicants to request a dormitory, this is controlled by the hasDormitory field in the school data fetched from MMS.
+
+#### Additional information
+
+* Applicants can select their mother tongue if different from Icelandic
+* Applicants can also provide additional information in a free text field and upload documents if they wish
+  * Note that for both those options we want to limit sensitive personal information being shared at this point, this should ideally just be generic information and specifics can be communicated to the admitting school directly if needed.
 
 ### Submitted
 
