@@ -1,0 +1,50 @@
+import { Injectable } from '@nestjs/common'
+import { User, withAuthContext } from '@island.is/auth-nest-tools'
+import { dataOr404Null } from '@island.is/clients/middlewares'
+import {
+  getV1IslandisassessmentsByStudentIdSubjects,
+  getV1IslandisassessmentsByStudentIdSubjectsByAssessmentSubjectIdTypes,
+  getV1IslandisstudentsStudentList,
+  type IslandIsAssessmentSubjectDto,
+  type IslandIsAssessmentTypeDto,
+  type IslandIsStudentDto,
+} from '../../gen/fetch'
+
+@Injectable()
+export class PrimarySchoolClientService {
+  async getStudents(user: User): Promise<IslandIsStudentDto[]> {
+    const response = await withAuthContext(user, () =>
+      dataOr404Null(getV1IslandisstudentsStudentList()),
+    )
+    return response ?? []
+  }
+
+  async getAssessmentSubjects(
+    user: User,
+    studentId: string,
+  ): Promise<IslandIsAssessmentSubjectDto[]> {
+    const response = await withAuthContext(user, () =>
+      dataOr404Null(
+        getV1IslandisassessmentsByStudentIdSubjects({
+          path: { studentId },
+        }),
+      ),
+    )
+    return response ?? []
+  }
+
+  async getAssessmentTypes(
+    user: User,
+    studentId: string,
+    assessmentSubjectId: string,
+  ): Promise<IslandIsAssessmentTypeDto[]> {
+    const response = await withAuthContext(user, () =>
+      dataOr404Null(
+        getV1IslandisassessmentsByStudentIdSubjectsByAssessmentSubjectIdTypes({
+          path: { studentId, assessmentSubjectId },
+        }),
+      ),
+    )
+    return response ?? []
+  }
+}

@@ -1,0 +1,8 @@
+query PrimarySchoolStudents {
+  primarySchoolStudents {
+    id
+    name
+    nationalId
+    relationType
+  }
+}

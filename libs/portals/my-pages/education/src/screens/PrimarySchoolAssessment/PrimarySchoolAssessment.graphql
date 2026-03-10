@@ -1,0 +1,13 @@
+query PrimarySchoolAssessmentSubjects($studentId: String!) {
+  primarySchoolAssessmentSubjects(studentId: $studentId) {
+    id
+    name
+    description
+    assessmentTypes {
+      id
+      name
+      identifier
+      testType
+    }
+  }
+}
