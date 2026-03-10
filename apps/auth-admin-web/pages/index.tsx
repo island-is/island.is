@@ -3,12 +3,13 @@ import Link from 'next/link'
 import React, { useEffect } from 'react'
 import ContentWrapper from '../components/Layout/ContentWrapper'
 import { isLoggedIn } from './../utils/auth.utils'
-import { useSession } from 'next-auth/client'
+import { useSession } from 'next-auth/react'
 import { SessionInfo } from '../entities/common/SessionInfo'
 import LocalizationUtils from '../utils/localization.utils'
 
 const Home: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const [session, loading] = useSession()
+  const { data: session, status } = useSession()
+  const loading = status === 'loading'
 
   useEffect(() => {
     document.title = LocalizationUtils.getPageTitle()

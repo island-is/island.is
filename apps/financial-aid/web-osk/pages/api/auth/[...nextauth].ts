@@ -1,68 +1,75 @@
-import NextAuth, { CallbacksOptions } from 'next-auth'
-import Providers from 'next-auth/providers'
+import NextAuth from 'next-auth'
+import type { NextAuthOptions } from 'next-auth'
+import { NextApiRequest, NextApiResponse } from 'next'
 import { identityServerConfig } from '@island.is/financial-aid/shared/lib'
 import {
-  AuthUser,
   signIn as handleSignIn,
   jwt as handleJwt,
   session as handleSession,
   AuthSession,
 } from '@island.is/next-ids-auth'
-import { NextApiRequest, NextApiResponse } from 'next-auth/internals/utils'
-import { JWT } from 'next-auth/jwt'
 import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
-const providers = [
-  Providers.IdentityServer4({
-    id: identityServerConfig.id,
-    name: identityServerConfig.name,
-    scope: `${identityServerConfig.scope} ${MunicipalitiesFinancialAidScope.applicant}`,
-    clientId: identityServerConfig.clientId,
-    domain: process.env.IDENTITY_SERVER_DOMAIN ?? '',
-    clientSecret: process.env.IDENTITY_SERVER_SECRET ?? '',
-    protection: 'pkce',
-  }),
-]
-
-const callbacks: CallbacksOptions = {
-  signIn: signIn,
-  jwt: jwt,
-  session: session,
+const options: NextAuthOptions = {
+  providers: [
+    {
+      id: identityServerConfig.id,
+      name: identityServerConfig.name,
+      type: 'oauth',
+      wellKnown: `https://${process.env.IDENTITY_SERVER_DOMAIN}/.well-known/openid-configuration`,
+      clientId: identityServerConfig.clientId,
+      clientSecret: process.env.IDENTITY_SERVER_SECRET ?? '',
+      authorization: {
+        params: {
+          scope: `${identityServerConfig.scope} ${MunicipalitiesFinancialAidScope.applicant}`,
+        },
+      },
+      checks: ['pkce', 'state'],
+      idToken: true,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          nationalId: profile.nationalId,
+        }
+      },
+    },
+  ],
+  secret: process.env.NEXTAUTH_SECRET,
+  session: { strategy: 'jwt' },
+  callbacks: {
+    async signIn({ account }) {
+      return handleSignIn(
+        account as Record<string, unknown>,
+        identityServerConfig.id,
+      )
+    },
+    async jwt({ token, user, account, profile }) {
+      if (account && user) {
+        token = {
+          ...token,
+          nationalId: (profile as unknown as { nationalId: string })
+            ?.nationalId,
+          name: user.name,
+          accessToken: account.access_token as string,
+          refreshToken: account.refresh_token as string,
+          idToken: account.id_token as string,
+          isRefreshTokenExpired: false,
+        }
+      }
+      return await handleJwt(
+        token,
+        identityServerConfig.clientId,
+        process.env.IDENTITY_SERVER_SECRET,
+        process.env.NEXTAUTH_URL,
+        process.env.IDENTITY_SERVER_DOMAIN,
+      )
+    },
+    async session({ session, token }) {
+      return handleSession(session as unknown as AuthSession, token)
+    },
+  },
 }
-
-async function signIn(
-  user: AuthUser,
-  account: Record<string, unknown>,
-  profile: Record<string, unknown>,
-): Promise<boolean> {
-  return handleSignIn(user, account, profile, identityServerConfig.id)
-}
-
-async function jwt(token: JWT, user: AuthUser) {
-  if (user) {
-    token = {
-      nationalId: user.nationalId,
-      name: user.name,
-      accessToken: user.accessToken,
-      refreshToken: user.refreshToken,
-      idToken: user.idToken,
-      isRefreshTokenExpired: false,
-    }
-  }
-  return await handleJwt(
-    token,
-    identityServerConfig.clientId,
-    process.env.IDENTITY_SERVER_SECRET,
-    process.env.NEXTAUTH_URL,
-    process.env.IDENTITY_SERVER_DOMAIN,
-  )
-}
-
-async function session(session: AuthSession, user: AuthUser) {
-  return handleSession(session, user)
-}
-
-const options = { providers, callbacks }
 
 export default (req: NextApiRequest, res: NextApiResponse) =>
   NextAuth(req, res, options)

@@ -1,23 +1,13 @@
 import { decode } from 'jsonwebtoken'
 
-import { AuthSession, AuthUser } from './types'
+import { AuthSession } from './types'
 import { checkExpiry, refreshAccessToken } from './utils'
 
 export const signIn = (
-  user: AuthUser,
   account: Record<string, unknown>,
-  profile: Record<string, unknown>,
   identityServerId: string,
 ) => {
-  if (account.provider === identityServerId) {
-    user.nationalId = profile.nationalId as string
-    user.accessToken = account.accessToken as string
-    user.refreshToken = account.refreshToken as string
-    user.idToken = account.idToken as string
-    return true
-  }
-
-  return false
+  return account.provider === identityServerId
 }
 
 export const jwt = async (
@@ -55,10 +45,10 @@ export const jwt = async (
   return token
 }
 
-export const session = (session: AuthSession, user: AuthUser) => {
-  session.accessToken = user.accessToken
-  session.idToken = user.idToken
-  const decoded = decode(user.accessToken)
+export const session = (session: AuthSession, token: Record<string, unknown>) => {
+  session.accessToken = token.accessToken as string
+  session.idToken = token.idToken as string
+  const decoded = decode(token.accessToken as string)
 
   if (
     decoded &&
@@ -66,7 +56,7 @@ export const session = (session: AuthSession, user: AuthUser) => {
     decoded['exp'] &&
     decoded['scope']
   ) {
-    session.expires = JSON.stringify(new Date(decoded.exp * 1000))
+    session.expires = new Date(decoded.exp * 1000).toISOString()
     session.scope = decoded.scope
   }
 
