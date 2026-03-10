@@ -62,16 +62,8 @@ export const useSyncDefendantsFromPolice = () => {
     }
 
     const sync = async () => {
-      const newDefendants: {
-        id: string
-        nationalId?: string | null
-        name?: string | null
-        gender?: Gender
-        address?: string | null
-        citizenship?: string | null
-      }[] = []
-      for (const p of toAdd) {
-        const defendantId = await createDefendant({
+      const defendantPromises = toAdd.map(async (p) => {
+        const defendant = await createDefendant({
           caseId: workingCase.id,
           nationalId: p.nationalId ?? undefined,
           name: p.name ?? undefined,
@@ -79,17 +71,21 @@ export const useSyncDefendantsFromPolice = () => {
           address: p.address ?? undefined,
           citizenship: p.citizenship ?? undefined,
         })
-        if (defendantId) {
-          newDefendants.push({
-            id: defendantId,
-            nationalId: p.nationalId,
-            name: p.name,
-            gender: mapPoliceGenderToGender(p.gender),
-            address: p.address,
-            citizenship: p.citizenship,
-          })
-        }
-      }
+        return defendant ? { defendantId: defendant, p } : null
+      })
+      const results = await Promise.all(defendantPromises)
+      const newDefendants = results
+        .filter((r): r is { defendantId: string; p: typeof toAdd[number] } =>
+          Boolean(r),
+        )
+        .map(({ defendantId, p }) => ({
+          id: defendantId,
+          nationalId: p.nationalId,
+          name: p.name,
+          gender: mapPoliceGenderToGender(p.gender),
+          address: p.address,
+          citizenship: p.citizenship,
+        }))
       if (newDefendants.length > 0) {
         setWorkingCase((prev) => ({
           ...prev,
