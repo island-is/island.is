@@ -126,7 +126,7 @@ export default function VehiclesScreen() {
       <StackScreen networkStatus={res.networkStatus} />
       <Animated.FlatList
         ref={flatListRef}
-        testID={testIDs.SCREEN_HOME}
+        testID={testIDs.SCREEN_VEHICLES}
         style={{ paddingTop: 16, zIndex: 9 }}
         contentContainerStyle={{ paddingBottom: 16 }}
         contentInset={{ bottom: 32 }}

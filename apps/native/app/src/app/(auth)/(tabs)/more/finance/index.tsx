@@ -12,6 +12,7 @@ import { useBrowser } from '@/hooks/use-browser'
 import { Button, Heading, Skeleton, TableViewCell, Typography } from '@/ui'
 import { FinanceStatusCard } from '../../../../../components/finance-status-card'
 import { StackScreen } from '../../../../../components/stack-screen'
+import { testIDs } from '@/utils/test-ids'
 
 export default function FinanceScreen() {
   const { openBrowser } = useBrowser()
@@ -98,7 +99,7 @@ export default function FinanceScreen() {
   const showLoading = res.loading && !res.data
 
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_FINANCE}>
       <StackScreen networkStatus={res.networkStatus} />
       <SafeAreaView style={{ marginHorizontal: 16 }}>
         <Heading>

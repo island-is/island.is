@@ -46,6 +46,7 @@ import {
 } from '@/ui'
 import { AppointmentCard } from '../../../../components/appointment-card'
 import { StackScreen } from '../../../../components/stack-screen'
+import { testIDs } from '@/utils/test-ids'
 
 const Row = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing.smallGutter}px;
@@ -395,6 +396,7 @@ export default function HealthOverviewScreen() {
         ]}
       />
       <Animated.ScrollView
+        testID={testIDs.SCREEN_HEALTH_OVERVIEW}
         style={{ flex: 1 }}
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
@@ -442,6 +444,7 @@ export default function HealthOverviewScreen() {
                   small
                   filled={card.filled}
                   style={{ flex: 0, width: cardWidth }}
+                  {...(card.id === 'vaccinations' ? { testID: testIDs.BUTTON_VACCINATIONS } : {})}
                 />
               ))}
             </Row>
@@ -696,7 +699,7 @@ export default function HealthOverviewScreen() {
             id: 'health.overview.basicInformation',
           })}
         />
-        <InputRow background>
+        <InputRow background testID={testIDs.HEALTH_CENTER}>
           <Input
             label={intl.formatMessage({
               id: 'health.overview.healthCenter',

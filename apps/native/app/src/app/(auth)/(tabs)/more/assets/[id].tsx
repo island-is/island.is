@@ -25,8 +25,9 @@ export default function AssetsDetailScreen() {
   return (
     <>
       <StackScreen networkStatus={networkStatus} options={{ headerShown: false }} />
-      <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL} stickyHeaderIndices={[0]}>
+      <ScrollView style={{ flex: 1 }} stickyHeaderIndices={[0]}>
         <NavigationBarSheet
+          testID={testIDs.SCREEN_ASSETS_DETAIL}
           title={address ?? ''}
           onClosePress={() => router.back()}
           style={{ marginHorizontal: 16 }}

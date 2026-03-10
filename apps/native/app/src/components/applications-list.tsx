@@ -29,6 +29,7 @@ import { useBrowser } from '@/hooks/use-browser'
 import { getApplicationUrl } from '@/utils/applications-utils'
 import { createSkeletonArr } from '@/utils/create-skeleton-arr'
 import { getBadgeVariant } from '../utils/applications/get-badge-variant'
+import { testIDs } from '../utils/test-ids'
 
 type FlatListItem =
   | Application
@@ -110,6 +111,7 @@ export const ApplicationsList = ({
 
       return (
         <StatusCard
+          testID={testIDs.APPLICATION_ITEM}
           key={item.id}
           title={item.name ?? ''}
           date={new Date(item.created)}
@@ -189,7 +191,7 @@ export const ApplicationsList = ({
   ]) as FlatListItem[]
 
   return (
-    <View>
+    <View testID={testIDs.SCREEN_APPLICATIONS_DETAILS}>
       {showError ? (
         <Problem withContainer />
       ) : (

@@ -34,6 +34,7 @@ import {
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import { LicenseFieldRender } from '@/components/license-field-render'
+import { testIDs } from '@/utils/test-ids'
 
 const CARD_HEIGHT = 96
 
@@ -403,7 +404,9 @@ export default function WalletPassScreen() {
                 style={{ marginTop: theme.spacing[4] }}
               />
             ) : (
-              <LicenseFieldRender data={fields} licenseType={licenseType} />
+              <View testID={testIDs.LICENSE_FIELDS}>
+                <LicenseFieldRender data={fields} licenseType={licenseType} />
+              </View>
             )}
           </SafeAreaView>
 

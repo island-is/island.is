@@ -22,6 +22,7 @@ import { formatNationalId } from '@/lib/format-national-id'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { useAuthStore } from '@/stores/auth-store'
 import { FamilyMemberCard, MoreCard, TopLine } from '@/ui'
+import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '../../../../components/stack-screen'
 
 const Row = styled.View`
@@ -106,11 +107,13 @@ export default function MoreScreen() {
         </SafeAreaView>
         <Row>
           <MoreCard
+            testID={testIDs.MORE_CARD_FAMILY}
             title={intl.formatMessage({ id: 'profile.family' })}
             icon={familyIcon}
             onPress={() => router.navigate('/more/family')}
           />
           <MoreCard
+            testID={testIDs.MORE_CARD_VEHICLES}
             title={intl.formatMessage({ id: 'profile.vehicles' })}
             icon={vehicleIcon}
             onPress={() => router.navigate('/more/vehicles')}
@@ -118,11 +121,13 @@ export default function MoreScreen() {
         </Row>
         <Row>
           <MoreCard
+            testID={testIDs.MORE_CARD_ASSETS}
             title={intl.formatMessage({ id: 'profile.assets' })}
             icon={assetsIcon}
             onPress={() => router.navigate('/more/assets')}
           />
           <MoreCard
+            testID={testIDs.MORE_CARD_FINANCE}
             title={intl.formatMessage({ id: 'profile.finance' })}
             icon={financeIcon}
             onPress={() => router.navigate('/more/finance')}
@@ -130,11 +135,13 @@ export default function MoreScreen() {
         </Row>
         <Row>
           <MoreCard
+            testID={testIDs.MORE_CARD_APPLICATIONS}
             title={intl.formatMessage({ id: 'applications.title' })}
             icon={require('@/assets/icons/tabbar-applications.png')}
             onPress={() => router.navigate('/more/applications')}
           />
           <MoreCard
+            testID={testIDs.MORE_CARD_AIR_DISCOUNT}
             title={intl.formatMessage({ id: 'profile.airDiscount' })}
             icon={airplaneIcon}
             onPress={() => router.navigate('/more/air-discount')}

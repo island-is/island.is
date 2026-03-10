@@ -7,6 +7,7 @@ import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 import { Typography } from '../typography/typography'
 import { ViewStyle } from 'react-native'
+import { testIDs } from '../../../utils/test-ids'
 
 const Host = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing[1]}px;
@@ -100,7 +101,7 @@ export function AirDiscountCard({
   const theme = useTheme()
   const discountCode = credit === 0 ? undefined : code ?? '0'
   return (
-    <Host style={style}>
+    <Host style={style} testID={testIDs.AIR_DISCOUNT_ITEM}>
       <Content>
         <Message>
           <Typography

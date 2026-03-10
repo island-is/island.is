@@ -14,6 +14,7 @@ import { useOfflineStore } from '../../../stores/offline-store'
 import closeIcon from '../../assets/icons/close.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
+import { testIDs } from '../../../utils/test-ids'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Header = styled.View`
@@ -77,6 +78,7 @@ type NavigationBarSheetProps = {
   style?: ViewStyle
   showLoading?: boolean
   closable?: boolean
+  testID?: string
 }
 
 export function NavigationBarSheet(props: NavigationBarSheetProps) {
@@ -89,6 +91,7 @@ export function OldNavigationBarSheet({
   style,
   showLoading,
   closable = true,
+  testID,
 }: NavigationBarSheetProps) {
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const wd = useWindowDimensions()
@@ -109,7 +112,7 @@ export function OldNavigationBarSheet({
       }}
     >
       {isHandle && closable && <Handle />}
-      <SafeAreaView edges={['left', 'right']}>
+      <SafeAreaView edges={['left', 'right']} testID={testID}>
         {(closable || title) && (
           <Header style={style}>
             {typeof title === 'string' ? (
@@ -124,7 +127,7 @@ export function OldNavigationBarSheet({
               {closable && (
                 <CloseButton
                   onPress={onClosePress}
-                  testID="NAVBAR_SHEET_CLOSE_BUTTON"
+                  testID={testIDs.NAVBAR_SHEET_CLOSE_BUTTON}
                   accessibilityLabel="Close"
                   hitSlop={{
                     top: 10,

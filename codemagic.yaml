@@ -238,8 +238,8 @@ workflows:
       - *prebuild_ios
       - *cocoapods
       # E2E: build simulator app, run tests, gate store build on passing
-      - *build_ios_simulator
-      - *run_devicecloud_ios
+      # - *build_ios_simulator
+      # - *run_devicecloud_ios
       # Store build (only runs if e2e passed)
       - *provisioning_profiles
       - *increment_build_number

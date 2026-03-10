@@ -78,7 +78,7 @@ export default function FamilyDetailScreen() {
   if (!person) return null
 
   return (
-    <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
+    <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_FAMILY_DETAIL}>
       <StackScreen
         networkStatus={[
           bioChildRes.networkStatus,

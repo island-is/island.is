@@ -23,6 +23,7 @@ import { useRouter } from 'expo-router'
 import { showPicker } from '@/lib/show-picker'
 import { useBrowser } from '@/hooks/use-browser'
 import { DynamicColorIOS, Platform } from 'react-native'
+import { testIDs } from '../utils/test-ids'
 
 export const SelectButton = (props: ButtonProps) => {
   const theme = useTheme()
@@ -175,6 +176,7 @@ export function FinanceStatusCard({
 
   return (
     <ExpandableCard
+      testID={testIDs.FINANCE_ITEM}
       title={chargeType.name}
       icon={chevronDown}
       message={
@@ -268,6 +270,7 @@ export function FinanceStatusCard({
               }
               return (
                 <TouchableRow
+                  testID={testIDs.FINANCE_ITEM_ROW}
                   key={index}
                   underlayColor="rgba(128,128,128,0.1)"
                   style={{

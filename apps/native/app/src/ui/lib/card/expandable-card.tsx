@@ -86,6 +86,7 @@ interface CardProps {
   children?: React.ReactNode
   open?: boolean
   onPress?: () => void
+  testID?: string
 }
 
 const toggleAnimation = {
@@ -118,6 +119,7 @@ export const ExpandableCard = ({
   children,
   open,
   onPress,
+  testID,
 }: CardProps) => {
   const theme = useTheme()
   const animationController = useRef(new Animated.Value(0)).current
@@ -140,6 +142,7 @@ export const ExpandableCard = ({
         shadowColor: 'rgb(0, 32, 128)',
         backgroundColor: theme.color.white,
       }}
+      testID={testID}
     >
       <Card
         onPress={() => {

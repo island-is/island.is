@@ -18,6 +18,7 @@ import externalLinkIcon from '@/assets/icons/external-link.png'
 import { HealthDirectorateVaccination } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
 import { usePreferencesStore } from '@/stores/preferences-store'
+import { testIDs } from '../utils/test-ids'
 
 const Row = styled.View<{ border?: boolean }>`
   flex-direction: row;
@@ -135,6 +136,7 @@ export function VaccinationsCard({
 
   return (
     <ExpandableCard
+      testID={testIDs.VACCINATION_ITEM}
       title={
         vaccination.lastVaccinationDate
           ? intl.formatDate(vaccination.lastVaccinationDate)
@@ -232,6 +234,7 @@ export function VaccinationsCard({
             ))
           : vaccination?.vaccinationsInfo?.map((vaccination, index) => (
               <TableRow
+                testID={testIDs.VACCINATION_ITEM_ROW}
                 key={index}
                 style={{
                   backgroundColor:

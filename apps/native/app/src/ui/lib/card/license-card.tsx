@@ -26,6 +26,7 @@ import {
   findProblemInApolloError,
   ProblemType,
 } from '@island.is/shared/problem'
+import { testIDs } from '../../../utils/test-ids'
 
 const Host = styled(Animated.View)`
   position: relative;
@@ -224,7 +225,11 @@ export function LicenseCard({
                     tintColor: error && theme.color.yellow600,
                   }}
                 />
-                <Typography color={textColor} variant="eyebrow">
+                <Typography
+                  color={textColor}
+                  variant="eyebrow"
+                  testID={testIDs.LICENSE_STATUS}
+                >
                   {intl.formatMessage({
                     id: error
                       ? 'walletPass.errorFetchingLicense'

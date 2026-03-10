@@ -3,6 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl'
 import { Animated, Image, SafeAreaView, View } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import { testIDs } from '@/utils/test-ids'
 import externalLinkIcon from '@/assets/icons/external-link.png'
 import { useConfig } from '@/config'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
@@ -138,6 +139,7 @@ export default function AirDiscountScreen() {
   return (
     <>
       <Animated.ScrollView
+        testID={testIDs.SCREEN_AIR_DISCOUNT}
         style={{ flex: 1 }}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],

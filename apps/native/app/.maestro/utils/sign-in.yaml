@@ -1,10 +1,26 @@
 appId: ${APP_ID}
 ---
+# Handle sign-in if needed
 - runFlow:
     when:
       visible:
         id: 'LOGIN_BUTTON_AUTHENTICATE'
         optional: true
     commands:
+      # Switch to Mock environment if not already selected
+      - runFlow:
+          when:
+            notVisible:
+              text: 'Mock'
+          commands:
+            - tapOn:
+                text: '(Switch)'
+            - tapOn:
+                text: 'Mock'
+            # Close modal on Android
+            - tapOn:
+                text: 'OK'
+                optional: true
+      # Tap the login button
       - tapOn:
           id: 'LOGIN_BUTTON_AUTHENTICATE'

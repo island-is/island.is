@@ -19,6 +19,7 @@ import { useBrowser } from '@/hooks/use-browser'
 import { getApplicationUrl } from '@/utils/applications-utils'
 import { Href, useRouter } from 'expo-router'
 import { screenWidth } from '@/utils/dimensions'
+import { testIDs } from '../utils/test-ids'
 
 interface ApplicationsPreviewProps {
   applications: Application[]
@@ -53,6 +54,7 @@ export const ApplicationsPreview = ({
 
       return (
         <StatusCard
+          testID={testIDs.APPLICATION_ITEM}
           key={application.id}
           title={application.name ?? ''}
           date={

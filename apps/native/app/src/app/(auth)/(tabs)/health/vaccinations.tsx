@@ -14,6 +14,7 @@ import {
 import { useGetVaccinationsQuery } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
 import { VaccinationsCard } from '../../../../components/vaccination-card'
+import { testIDs } from '@/utils/test-ids'
 
 const Host = styled(SafeAreaView)`
   margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -64,7 +65,7 @@ export default function VaccinationsScreen() {
   }, [vaccinationsRes])
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }} testID={testIDs.SCREEN_VACCINATIONS}>
       <StackScreen
         networkStatus={vaccinationsRes.networkStatus}
         options={{
