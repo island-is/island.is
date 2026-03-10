@@ -1,28 +1,68 @@
+import { useNavigate } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { ActionCard, Stack } from '@island.is/island-ui/core'
 import {
-  IntroWrapper,
+  CardLoader,
+  EmptyState,
+  IntroWrapperV2,
   SAMGONGUSTOFA_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { shipsMessages } from '../../../lib/messages'
+import { AssetsPaths } from '../../../lib/paths'
 import { useShipsOverviewQuery } from './ShipsOverview.generated'
 
 export const ShipsOverview = () => {
   useNamespaces('sp.ships')
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
 
   const { data, loading, error } = useShipsOverviewQuery()
 
+  const ships = data?.shipRegistryUserShips?.data
+
   return (
-    <IntroWrapper
+    <IntroWrapperV2
       title={formatMessage(shipsMessages.title)}
       intro={formatMessage(shipsMessages.intro)}
-      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-      serviceProviderTooltip={formatMessage(shipsMessages.tooltip)}
+      serviceProvider={{
+        slug: SAMGONGUSTOFA_SLUG,
+        tooltip: formatMessage(shipsMessages.tooltip),
+      }}
     >
-      {loading && <p>Loading...</p>}
-      {error && <p>Error loading ships</p>}
-      {data && <p>Hello World</p>}
-    </IntroWrapper>
+      {loading && <CardLoader />}
+      {!loading && !error && ships && ships.length === 0 && <EmptyState />}
+      {!loading && !error && ships && ships.length > 0 && (
+        <Stack space={2}>
+          {ships.map((ship) => (
+            <ActionCard
+              key={ship.id}
+              heading={ship.name}
+              text={ship.regionAcronym ?? undefined}
+              tag={
+                ship.seaworthiness
+                  ? {
+                      variant: ship.seaworthiness.isValid ? 'mint' : 'red',
+                      outlined: true,
+                      label: ship.seaworthiness.isValid
+                        ? formatMessage(shipsMessages.validTag)
+                        : formatMessage(shipsMessages.expiredTag),
+                    }
+                  : undefined
+              }
+              cta={{
+                label: formatMessage(shipsMessages.skoða),
+                variant: 'text',
+                icon: 'arrowForward',
+                onClick: () =>
+                  navigate(
+                    AssetsPaths.AssetsShipDetail.replace(':id', ship.id),
+                  ),
+              }}
+            />
+          ))}
+        </Stack>
+      )}
+    </IntroWrapperV2>
   )
 }
 

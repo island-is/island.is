@@ -1623,11 +1623,12 @@ export const urls = defineMessages({
 export const shipsMessages = defineMessages({
   title: {
     id: 'sp.ships:title',
-    defaultMessage: 'todo',
+    defaultMessage: 'Mín skip',
   },
   intro: {
     id: 'sp.ships:intro',
-    defaultMessage: 'todo',
+    defaultMessage:
+      'Hér finnur þú upplýsingar um þín skip úr skipaskrá Samgöngustofu',
   },
   tooltip: {
     id: 'sp.ships:tooltip',
@@ -1748,5 +1749,33 @@ export const shipsMessages = defineMessages({
   engineYear: {
     id: 'sp.ships:engine-year',
     defaultMessage: 'Árgerð',
+  },
+  skoða: {
+    id: 'sp.ships:view',
+    defaultMessage: 'Skoða',
+  },
+  certificatesType: {
+    id: 'sp.ships:certificates-type',
+    defaultMessage: 'Skírteinistegund',
+  },
+  certificatesExpiry: {
+    id: 'sp.ships:certificates-expiry',
+    defaultMessage: 'Gildisdagsetning',
+  },
+  certificatesStatus: {
+    id: 'sp.ships:certificates-status',
+    defaultMessage: 'Staða',
+  },
+  certificatesIssueDate: {
+    id: 'sp.ships:certificates-issue-date',
+    defaultMessage: 'Útgáfudagsetning',
+  },
+  certificatesExtendedTo: {
+    id: 'sp.ships:certificates-extended-to',
+    defaultMessage: 'Framlengt til',
+  },
+  certificatesEmpty: {
+    id: 'sp.ships:certificates-empty',
+    defaultMessage: 'Engin skírteini fundust',
   },
 })

@@ -1,7 +1,9 @@
 import { useParams } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { ShipRegistryLocale } from '@island.is/api/schema'
 import {
-  IntroWrapper,
+  EmptyState,
+  IntroWrapperV2,
   InfoLine,
   InfoLineStack,
   SAMGONGUSTOFA_SLUG,
@@ -16,7 +18,13 @@ export const ShipDetail = () => {
   const { id } = useParams()
 
   const { data, loading, error } = useShipDetailQuery({
-    variables: { input: { id: id ?? '', locale: lang } },
+    variables: {
+      input: {
+        id: id ?? '',
+        locale:
+          lang === 'en' ? ShipRegistryLocale.En : ShipRegistryLocale.Is,
+      },
+    },
   })
 
   const ship = data?.shipRegistryUserShip
@@ -28,17 +36,17 @@ export const ShipDetail = () => {
           <InfoLine
             loading={loading}
             label={formatMessage(shipsMessages.operatorName)}
-            content={ship.fishery.name}
+            content={ship.fishery.name ?? undefined}
           />
           <InfoLine
             loading={loading}
             label={formatMessage(shipsMessages.operatorAddress)}
-            content={ship.fishery.address}
+            content={ship.fishery.address ?? undefined}
           />
           <InfoLine
             loading={loading}
             label={formatMessage(shipsMessages.operatorLocation)}
-            content={ship.fishery.postalCode}
+            content={ship.fishery.postalCode ?? undefined}
           />
         </InfoLineStack>
       )}
@@ -47,7 +55,7 @@ export const ShipDetail = () => {
         <InfoLine
           loading={loading}
           label={formatMessage(shipsMessages.constructionYard)}
-          content={ship?.constructionStation}
+          content={ship?.constructionStation ?? undefined}
         />
         <InfoLine
           loading={loading}
@@ -57,12 +65,12 @@ export const ShipDetail = () => {
         <InfoLine
           loading={loading}
           label={formatMessage(shipsMessages.hullMaterial)}
-          content={ship?.hullMaterial}
+          content={ship?.hullMaterial ?? undefined}
         />
         <InfoLine
           loading={loading}
           label={formatMessage(shipsMessages.classification)}
-          content={ship?.classificationSociety}
+          content={ship?.classificationSociety ?? undefined}
         />
       </InfoLineStack>
 
@@ -124,11 +132,13 @@ export const ShipDetail = () => {
   )
 
   return (
-    <IntroWrapper
+    <IntroWrapperV2
       title={ship?.name ?? formatMessage(shipsMessages.title)}
       intro={formatMessage(shipsMessages.intro)}
-      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-      serviceProviderTooltip={formatMessage(shipsMessages.tooltip)}
+      serviceProvider={{
+        slug: SAMGONGUSTOFA_SLUG,
+        tooltip: formatMessage(shipsMessages.tooltip),
+      }}
     >
       {error && <p>Error loading ship</p>}
 
@@ -165,12 +175,12 @@ export const ShipDetail = () => {
             <InfoLine
               loading={loading}
               label={formatMessage(shipsMessages.shipType)}
-              content={ship?.usageType}
+              content={ship?.usageType ?? undefined}
             />
             <InfoLine
               loading={loading}
               label={formatMessage(shipsMessages.imoNumber)}
-              content={ship?.imoNumber}
+              content={ship?.imoNumber ?? undefined}
             />
           </InfoLineStack>
         </Box>
@@ -188,13 +198,17 @@ export const ShipDetail = () => {
               },
               {
                 label: formatMessage(shipsMessages.certificatesTab),
-                content: <Box />,
+                content: (
+                  <EmptyState
+                    description={shipsMessages.certificatesEmpty}
+                  />
+                ),
               },
             ]}
           />
         )}
       </Stack>
-    </IntroWrapper>
+    </IntroWrapperV2>
   )
 }
 
