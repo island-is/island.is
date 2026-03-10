@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
 
@@ -11,6 +12,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import type {
   ConnectedComponent,
   GetVerdictsQuery,
@@ -27,12 +29,17 @@ interface LatestVerdictsProps {
 }
 
 const DATE_FORMAT = 'd. MMMM yyyy'
-const DEFAULT_MAX_VERDICTS_TO_SHOW = 3
+const DEFAULT_MAX_VERDICTS_TO_SHOW = 2
 const MAX_ALLOWED_VERDICTS_TO_SHOW = 6
 
 const LatestVerdicts = ({ slice }: LatestVerdictsProps) => {
   const { format } = useDateUtils()
   const { formatMessage } = useIntl()
+
+  const mapWidthToCardSize = useCallback((width: number) => {
+    if (width < theme.breakpoints.xl) return 'small'
+    return 'large'
+  }, [])
 
   const { data, loading, error } = useQuery<
     GetVerdictsQuery,
@@ -83,6 +90,7 @@ const LatestVerdicts = ({ slice }: LatestVerdictsProps) => {
               <InfoCardGrid
                 variant="detailed-reveal"
                 columns={1}
+                mapWidthToCardSize={mapWidthToCardSize}
                 cards={items.map((verdict) => {
                   const detailLines: {
                     icon: IconMapIcon
