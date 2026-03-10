@@ -1293,8 +1293,12 @@ export class ApplicationsService {
     to?: string,
     locale?: Locale,
   ): Promise<ApplicationAdminResponseDto> {
-    const toDate = to ? new Date(to) : undefined
-    const fromDate = from ? new Date(from) : undefined
+    const fromDate = from
+      ? new Date(new Date(from).setHours(0, 0, 0, 0))
+      : undefined
+    const toDate = to
+      ? new Date(new Date(to).setHours(23, 59, 59, 999))
+      : undefined
 
     const offset = (page - 1) * limit
 
@@ -1429,14 +1433,8 @@ export class ApplicationsService {
     }
     const localeColumn = locale === 'is' ? `f.name ->> 'is'` : `f.name ->> 'en'`
 
-    let institutionJoin = ''
     let institutionFilter = ''
     if (institutionNationalId) {
-      institutionJoin = `
-      JOIN public.organization o
-        ON o.id = f.organization_id
-    `
-
       institutionFilter = `
       AND o.national_id = :institutionNationalId
     `
@@ -1446,16 +1444,17 @@ export class ApplicationsService {
     SELECT
       a.form_id AS "formId",
       ${localeColumn} AS "formName",
+      o.national_id AS "institutionNationalId",
       COUNT(*)::integer AS "totalCount",
       COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.DRAFT}')::integer AS "inProgressCount",
       COUNT(*) FILTER (WHERE a.status = '${ApplicationStatus.COMPLETED}')::integer AS "completedCount"
     FROM public.application a
     JOIN public.form f ON f.id = a.form_id
-    ${institutionJoin}
+    JOIN public.organization o ON o.id = f.organization_id
     WHERE a.modified BETWEEN :startDate AND :endDate
       AND f.status = '${FormStatus.PUBLISHED}'
     ${institutionFilter}
-    GROUP BY a.form_id, ${localeColumn};
+    GROUP BY a.form_id, ${localeColumn}, o.national_id;
   `
 
     const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {
