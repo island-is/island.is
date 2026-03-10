@@ -550,7 +550,8 @@ const transitionIndictmentCase = (
 
   // Do not allow submitting indictment to court with 0 defendants
   if (
-    transition === IndictmentCaseTransition.ASK_FOR_CONFIRMATION &&
+    (transition === IndictmentCaseTransition.ASK_FOR_CONFIRMATION ||
+      transition === IndictmentCaseTransition.SUBMIT) &&
     (!theCase.defendants || theCase.defendants.length === 0)
   ) {
     throw new ForbiddenException(

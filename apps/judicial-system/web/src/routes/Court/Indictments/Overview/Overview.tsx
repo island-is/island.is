@@ -184,6 +184,10 @@ const IndictmentOverview = () => {
     useContext(FormContext)
   const { updateDefendant } = useDefendants()
 
+  const hasDefendants = Boolean(
+    workingCase.defendants && workingCase.defendants.length > 0,
+  )
+
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (!workingCase.defendants || workingCase.defendants.length === 0) {
@@ -214,7 +218,7 @@ const IndictmentOverview = () => {
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isValid={true}
+      isValid={hasDefendants}
       onNavigationTo={handleNavigationTo}
     >
       <OverviewBody handleNavigationTo={handleNavigationTo} />
