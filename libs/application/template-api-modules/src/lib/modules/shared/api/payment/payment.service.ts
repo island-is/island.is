@@ -19,11 +19,13 @@ import { getConfigValue } from '../../shared.utils'
 import { ConfigService } from '@nestjs/config'
 import { uuid } from 'uuidv4'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { PaymentsApi } from '@island.is/clients/payments'
 
 @Injectable()
 export class PaymentService extends BaseTemplateApiService {
   constructor(
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private paymentsApi: PaymentsApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly paymentModelService: PaymentModelService,
     @Inject(ConfigService)

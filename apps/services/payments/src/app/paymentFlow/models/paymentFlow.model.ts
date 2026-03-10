@@ -245,6 +245,15 @@ export class PaymentFlow extends Model<
   })
   chargeItemSubjectId?: string
 
+  @ApiProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    field: 'is_deleted',
+  })
+  isDeleted!: CreationOptional<boolean>
+
   @CreatedAt
   @Column({
     type: DataType.DATE,
