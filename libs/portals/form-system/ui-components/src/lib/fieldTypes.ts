@@ -134,9 +134,20 @@ export const initializeField = (field: FormSystemField): FormSystemField => {
   const defaultJson = getInitialJsonForField(
     field.fieldType as keyof FieldTypeMapping,
   )
-  const existingValue = (field.values && field.values[0]) || {}
-  const cleanedJson = removeNullProperties(existingValue.json || {})
-  const mergedJson = { ...defaultJson, ...cleanedJson }
-  const updatedValue = { ...existingValue, json: mergedJson }
-  return { ...field, values: [updatedValue] }
+
+  const existingValues = (field.values ?? []).filter(
+    (v): v is NonNullable<typeof v> => v != null,
+  )
+
+  const baseValues = existingValues.length ? existingValues : ([{}] as any[])
+
+  const updatedValues = baseValues.map((value) => {
+    const cleanedJson = removeNullProperties(value.json || {})
+    return {
+      ...value,
+      json: { ...defaultJson, ...cleanedJson },
+    }
+  })
+
+  return { ...field, values: updatedValues }
 }

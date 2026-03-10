@@ -234,9 +234,26 @@ export const applicationReducer = (
         }),
       }
 
+      const updatedSections: FormSystemSection[] = state.sections.map(
+        (section) => ({
+          ...section,
+          screens: section.screens?.map((screen) => {
+            if (!screen) return screen
+            return screen.id === updatedScreen.id ? updatedScreen : screen
+          }),
+        }),
+      )
+
       return {
         ...state,
-        currentScreen: { ...state.currentScreen, data: updatedScreen },
+        sections: updatedSections,
+        application: {
+          ...state.application,
+          sections: updatedSections,
+        },
+        currentScreen: state.currentScreen
+          ? { ...state.currentScreen, data: updatedScreen }
+          : state.currentScreen,
       }
     }
 
@@ -249,17 +266,39 @@ export const applicationReducer = (
           if (!field) return field
 
           const values = field.values ?? []
+          const isMultisetField = field.isPartOfMultiset !== false
 
-          return {
-            ...field,
-            values: values.length > 0 ? values.slice(0, -1) : [],
+          if (!isMultisetField) {
+            return { ...field, values }
           }
+
+          // multiset field: keep at least 1 item
+          const nextValues = values.length > 1 ? values.slice(0, -1) : values
+
+          return { ...field, values: nextValues }
         }),
       }
 
+      const updatedSections: FormSystemSection[] = state.sections.map(
+        (section) => ({
+          ...section,
+          screens: section.screens?.map((screen) => {
+            if (!screen) return screen
+            return screen.id === updatedScreen.id ? updatedScreen : screen
+          }),
+        }),
+      )
+
       return {
         ...state,
-        currentScreen: { ...state.currentScreen, data: updatedScreen },
+        sections: updatedSections,
+        application: {
+          ...state.application,
+          sections: updatedSections,
+        },
+        currentScreen: state.currentScreen
+          ? { ...state.currentScreen, data: updatedScreen }
+          : state.currentScreen,
       }
     }
 
