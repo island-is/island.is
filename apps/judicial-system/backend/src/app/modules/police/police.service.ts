@@ -683,12 +683,15 @@ export class PoliceService {
         reason,
       )
 
-      console.log({ reason })
-      throw new NotFoundException({
-        ...reason,
-        message: `Failed to fetch and parse police case info for case ${caseId}`,
-        detail: reason.message,
-      })
+      if (
+        reason instanceof NotFoundException ||
+        reason instanceof BadGatewayException
+      ) {
+        throw reason
+      }
+      throw new Error(
+        `Failed to fetch and parse police case info for case ${caseId}`,
+      )
     }
   }
 

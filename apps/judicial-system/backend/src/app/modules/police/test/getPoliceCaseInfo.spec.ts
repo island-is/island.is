@@ -9,7 +9,6 @@ import { createTestingPoliceModule } from './createTestingPoliceModule'
 
 import { Case } from '../../repository'
 import { PoliceCaseInfo } from '../models/policeCaseInfo.model'
-import { PoliceService } from '../police.service'
 
 jest.mock('isomorphic-fetch')
 
@@ -216,9 +215,9 @@ describe('PoliceController - Get police case info', () => {
     })
 
     it('should throw error exception', () => {
-      expect(then.error).toBeInstanceOf(Error)
+      expect(then.error).toBeInstanceOf(NotFoundException)
       expect(then.error.message).toBe(
-        `Failed to fetch and parse police case info for case ${originalAncestorCaseId}`,
+        `Police case for case ${originalAncestorCaseId} does not exist`,
       )
     })
   })
