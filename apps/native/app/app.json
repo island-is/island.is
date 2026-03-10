@@ -34,7 +34,8 @@
         "NSPhotoLibraryUsageDescription": "$(PRODUCT_NAME) needs access to your Photo Library to save captured photos and videos.",
         "UIBackgroundModes": ["fetch", "remote-notification"],
         "ITSAppUsesNonExemptEncryption": false,
-        "LSApplicationCategoryType": "public.app-category.lifestyle"
+        "LSApplicationCategoryType": "public.app-category.lifestyle",
+        "NSLocationWhenInUseUsageDescription": "Used for nearby features"
       },
       "privacyManifests": {
         "NSPrivacyAccessedAPITypes": [
