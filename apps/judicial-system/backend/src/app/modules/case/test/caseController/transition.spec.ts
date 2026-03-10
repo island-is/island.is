@@ -3,6 +3,7 @@ import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { ForbiddenException } from '@nestjs/common'
+
 import { ConfigType } from '@island.is/nest/config'
 
 import { Message, MessageType } from '@island.is/judicial-system/message'
@@ -572,11 +573,9 @@ describe('CaseController - Transition', () => {
           defendants: [],
         } as Case
 
-        const then = await givenWhenThen(
-          caseId,
-          theCaseWithNoDefendants,
-          { transition: CaseTransition.ASK_FOR_CONFIRMATION },
-        )
+        const then = await givenWhenThen(caseId, theCaseWithNoDefendants, {
+          transition: CaseTransition.ASK_FOR_CONFIRMATION,
+        })
 
         expect(then.error).toBeInstanceOf(ForbiddenException)
         expect(then.error?.message).toContain(

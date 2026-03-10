@@ -64,11 +64,7 @@ describe('CaseController - Get indictment pdf', () => {
       const caseToUse = caseOverride ?? theCase
 
       try {
-        await caseController.getIndictmentPdf(
-          caseToUse.id,
-          caseToUse,
-          res,
-        )
+        await caseController.getIndictmentPdf(caseToUse.id, caseToUse, res)
       } catch (error) {
         then.error = error as Error
       }
