@@ -488,8 +488,6 @@ export class PoliceService {
 
     const files: PoliceDigitalCaseFile[] = []
 
-    console.log({ caseFiles })
-
     caseFiles?.forEach((filesPerCaseNumber) => {
       filesPerCaseNumber.gogn?.forEach((file) => {
         files.push({
@@ -598,6 +596,7 @@ export class PoliceService {
         user,
         'getPoliceCaseInfo',
       )
+
       const policeCaseNumbers = new Set<string>([policeCaseResponse.malsnumer])
 
       // fetch unique police case numbers from case files and digital case files
@@ -675,7 +674,7 @@ export class PoliceService {
       return cases
     } catch (reason) {
       this.eventService.postErrorEvent(
-        'Failed to parse police case info',
+        'Failed to fetch and parse police case info for case',
         {
           caseId,
           actor: user.name,
@@ -684,9 +683,10 @@ export class PoliceService {
         reason,
       )
 
-      throw new Error({
+      console.log({ reason })
+      throw new NotFoundException({
         ...reason,
-        message: `Failed to parse police case info for case ${caseId}`,
+        message: `Failed to fetch and parse police case info for case ${caseId}`,
         detail: reason.message,
       })
     }
