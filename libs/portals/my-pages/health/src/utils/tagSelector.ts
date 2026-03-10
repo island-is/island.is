@@ -54,13 +54,13 @@ export const permitTagSelector = (
       }
     case HealthDirectoratePermitStatus.expired:
       return {
-        label: formatMessage(messages.expired),
-        variant: 'red',
+        label: formatMessage(messages.inactive),
+        variant: 'purple',
         outlined: true,
       }
     case HealthDirectoratePermitStatus.inactive:
       return {
-        label: formatMessage(messages.withdrawn),
+        label: formatMessage(messages.inactive),
         variant: 'purple',
         outlined: true,
       }

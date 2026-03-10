@@ -90,6 +90,9 @@ export class ActionCardMetaData {
 
   @Field(() => String, { nullable: true })
   historyButton?: string
+
+  @Field(() => Boolean, { nullable: true })
+  displayPruneAt?: boolean
 }
 
 @ObjectType()
@@ -168,6 +171,12 @@ export class ApplicationStatistics {
 
   @Field(() => String)
   name?: string
+
+  @Field(() => String, { nullable: true })
+  institutionName?: string
+
+  @Field(() => String, { nullable: true })
+  institutionContentfulSlug?: string
 }
 
 @ObjectType()
@@ -278,6 +287,9 @@ export class ApplicationTypeAdminInstitution {
 export class ApplicationInstitution {
   @Field(() => String)
   nationalId!: string
+
+  @Field(() => String, { nullable: true })
+  name?: string
 
   @Field(() => String)
   contentfulSlug!: string

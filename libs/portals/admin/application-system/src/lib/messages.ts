@@ -236,6 +236,10 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:resultCount',
     defaultMessage: '{count} umsóknir fundust',
   },
+  tableHeaderInstitution: {
+    id: 'admin-portal.application-system:tableHeaderInstitution',
+    defaultMessage: 'Stofnun',
+  },
   tableHeaderType: {
     id: 'admin-portal.application-system:tableHeaderType',
     defaultMessage: 'Týpa',

@@ -1,3 +1,4 @@
+import ReactHtmlParser from 'react-html-parser'
 import { useIntl } from 'react-intl'
 
 import { Box, GridContainer, Text } from '@island.is/island-ui/core'
@@ -97,7 +98,14 @@ const SecondarySchoolStudiesDetailsPage: Screen<
 
               {programme?.description && (
                 <Box>
-                  <Text variant="default">{programme.description}</Text>
+                  <Text>
+                    {' '}
+                    {ReactHtmlParser(
+                      programme.description
+                        .replaceAll('\n', '<br/>')
+                        .replace(/<(\/?)p>/g, '<$1span>'),
+                    )}
+                  </Text>
                 </Box>
               )}
 

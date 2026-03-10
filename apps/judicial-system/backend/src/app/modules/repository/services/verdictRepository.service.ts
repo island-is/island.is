@@ -48,6 +48,7 @@ interface UpdateVerdict {
   appealDate?: Date
   serviceInformationForDefendant?: InformationForDefendant[]
   isDefaultJudgement?: boolean
+  isAcquittedByPublicProsecutionOffice?: boolean
   hash?: string
   hashAlgorithm?: HashAlgorithm
   serviceDate?: Date | null
