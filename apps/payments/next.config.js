@@ -27,7 +27,17 @@ const nextConfig = {
   nx: {
     svgr: false,
   },
-  webpack: (config, options) => {
+  webpack: (config, { dev }) => {
+    // Workaround for Firefox "unterminated comment" when loading vanilla-extract
+    // global.css (gzip+base64 in magic comments). Shorten those comments in dev
+    // so Firefox's parser doesn't choke (Firefox-only, dev-only bug).
+    if (dev) {
+      config.optimization = config.optimization || {}
+      config.optimization.moduleIds = 'deterministic'
+      config.output = config.output || {}
+      config.output.pathinfo = false
+      config.plugins = config.plugins || []
+    }
     return config
   },
   serverRuntimeConfig: {

@@ -243,6 +243,7 @@ export class PaymentService extends BaseTemplateApiService {
         await this.paymentModelService.refundPayment(
           application.id,
           'Application payment deleted',
+          true,
         )
       } else {
         this.logger.warn('No requestId found, skipping deleteCharge')

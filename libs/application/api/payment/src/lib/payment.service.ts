@@ -337,6 +337,7 @@ export class PaymentService {
   async refundPayment(
     applicationId: string,
     reasonForRefund?: string,
+    ignoreNotEligibleToBeRefunded?: boolean,
   ): Promise<void> {
     const payment = await this.findPaymentByApplicationId(applicationId)
     if (!payment) {
@@ -362,10 +363,12 @@ export class PaymentService {
         console.log('error.problem.detail', error.problem?.detail)
         const errorMessage = error.problem?.detail
         if (
-          errorMessage === PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded
+          errorMessage ===
+            PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded &&
+          (ignoreNotEligibleToBeRefunded ?? false)
         ) {
           console.log(
-            'PaymentFlowNotEligibleToBeRefunded error caught, stopping error and returning',
+            'PaymentFlowNotEligibleToBeRefunded error caught, suppressing error and returning',
           )
           return
         }
