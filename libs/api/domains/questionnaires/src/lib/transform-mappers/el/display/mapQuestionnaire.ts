@@ -92,11 +92,10 @@ export const mapElQuestionnaireListItem = (
   sentDate: q.createdDate?.toISOString() ?? '',
   lastSubmissionId: q.lastCreatedSubmissionId,
   organization: QuestionnairesOrganizationEnum.EL,
-  status:
-    q.numSubmitted > 0 || q.lastSubmitted
-      ? QuestionnairesStatusEnum.answered
-      : q.hasDraft
-      ? QuestionnairesStatusEnum.draft
-      : QuestionnairesStatusEnum.notAnswered,
+  status: q.hasDraft
+    ? QuestionnairesStatusEnum.draft
+    : q.numSubmitted > 0 || q.lastSubmitted
+    ? QuestionnairesStatusEnum.answered
+    : QuestionnairesStatusEnum.notAnswered,
   lastSubmitted: q.lastSubmitted,
 })

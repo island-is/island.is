@@ -36,7 +36,7 @@ export const mapLshQuestionnaireOverview = (
 ): Questionnaire => ({
   baseInformation: {
     id: data.gUID ?? 'undefined-id',
-    title: data.caption ?? formatMessage(m.questionnaireWithoutTitle),
+    title: data.caption || formatMessage(m.questionnaireWithoutTitle),
     status: data.answerDateTime
       ? QuestionnairesStatusEnum.answered
       : data.validToDateTime != null && data.validToDateTime < new Date()
@@ -48,7 +48,9 @@ export const mapLshQuestionnaireOverview = (
     department: data.department ?? undefined,
   },
   expirationDate: data.validToDateTime ?? undefined,
-  canSubmit: !data.answerDateTime,
+  canSubmit:
+    !data.answerDateTime &&
+    (data.validToDateTime == null || data.validToDateTime >= new Date()),
 })
 
 export const mapLshQuestionnaireListItem = (
@@ -56,7 +58,7 @@ export const mapLshQuestionnaireListItem = (
   formatMessage: FormatMessage,
 ): QuestionnairesBaseItem => ({
   id: data.gUID ?? 'undefined-id',
-  title: data.caption ?? formatMessage(m.questionnaireWithoutTitle),
+  title: data.caption || formatMessage(m.questionnaireWithoutTitle),
   description: data.description ?? undefined,
   sentDate: data.validFromDateTime?.toISOString() ?? '',
   organization: QuestionnairesOrganizationEnum.LSH,

@@ -81,7 +81,12 @@ export class QuestionnairesService {
       }
     }
 
-    if (elError && lshError) {
+    const allEnabledFailed =
+      (useEl && elError && !useLsh) ||
+      (useLsh && lshError && !useEl) ||
+      (elError && lshError)
+
+    if (allEnabledFailed) {
       throw new Error(
         `Failed to fetch questionnaires from both sources: EL and LSH`,
       )
@@ -141,8 +146,16 @@ export class QuestionnairesService {
       }
     }
 
+    const { useEl, useLsh } = await this.getQuestionnaireFeatureFlags(user)
+
     // Submit to LSH
     if (organization === QuestionnairesOrganizationEnum.LSH) {
+      if (!useLsh) {
+        return {
+          success: false,
+          message: 'LSH questionnaires are unavailable',
+        }
+      }
       try {
         const lshAnswer = mapToLshAnswer(input)
         const response = await this.lshApi.postAnsweredQuestionnaire(
@@ -165,6 +178,12 @@ export class QuestionnairesService {
 
     // Submit to EL (Health Directorate)
     if (organization === QuestionnairesOrganizationEnum.EL) {
+      if (!useEl) {
+        return {
+          success: false,
+          message: 'EL questionnaires are unavailable',
+        }
+      }
       try {
         const elAnswer = mapToElAnswer(input, formatMessage)
         const response = await this.api.submitQuestionnaire(
