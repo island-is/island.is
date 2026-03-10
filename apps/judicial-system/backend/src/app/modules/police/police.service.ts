@@ -488,15 +488,13 @@ export class PoliceService {
 
     const files: PoliceDigitalCaseFile[] = []
 
-    console.log({ caseFiles })
-
     caseFiles?.forEach((filesPerCaseNumber) => {
       filesPerCaseNumber.gogn?.forEach((file) => {
         files.push({
           id: file.rvMalID.toString(),
           name: file.externalVendorFileName,
           policeCaseNumber: filesPerCaseNumber.malsnumer,
-          policeDigitalSystemRecordingId: file.externalVendorID,
+          policeExternalVendorId: file.externalVendorID,
           displayDate: file.registeredAt
             ? new Date(file.registeredAt)
             : undefined,
