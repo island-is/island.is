@@ -1,4 +1,8 @@
-import { ActionCard, IntroWrapper, MMS_SLUG } from '@island.is/portals/my-pages/core'
+import {
+  ActionCard,
+  IntroWrapper,
+  MMS_SLUG,
+} from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Stack } from '@island.is/island-ui/core'
 import { generatePath, useParams } from 'react-router-dom'
@@ -26,7 +30,9 @@ export const PrimarySchoolStudent = () => {
           cta={{
             label: formatMessage(psm.seeDetails),
             variant: 'text',
-            url: generatePath(EducationPaths.PrimarySchoolOverview, { studentId: id }),
+            url: generatePath(EducationPaths.PrimarySchoolOverview, {
+              studentId: id,
+            }),
           }}
         />
         <ActionCard
@@ -36,7 +42,9 @@ export const PrimarySchoolStudent = () => {
           cta={{
             label: formatMessage(psm.seeDetails),
             variant: 'text',
-            url: generatePath(EducationPaths.PrimarySchoolAssessment, { studentId: id }),
+            url: generatePath(EducationPaths.PrimarySchoolAssessment, {
+              studentId: id,
+            }),
           }}
         />
         <ActionCard
@@ -46,7 +54,9 @@ export const PrimarySchoolStudent = () => {
           cta={{
             label: formatMessage(psm.seeDetails),
             variant: 'text',
-            url: generatePath(EducationPaths.PrimarySchoolStudentPermission, { studentId: id }),
+            url: generatePath(EducationPaths.PrimarySchoolStudentPermission, {
+              studentId: id,
+            }),
           }}
         />
       </Stack>

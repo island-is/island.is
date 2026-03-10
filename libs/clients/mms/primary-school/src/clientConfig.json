@@ -26,7 +26,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/IslandIsAssessmentSubjectDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/IslandIsAssessmentSubjectDto"
+                  }
                 }
               }
             }
@@ -76,7 +78,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/IslandIsAssessmentTypeDto" }
+                  "items": {
+                    "$ref": "#/components/schemas/IslandIsAssessmentTypeDto"
+                  }
                 }
               }
             }
@@ -141,7 +145,13 @@
   "components": {
     "schemas": {
       "AgentType": {
-        "enum": ["Guardian", "Relative", "Sibling", "Parent", "EmergencyContact"],
+        "enum": [
+          "Guardian",
+          "Relative",
+          "Sibling",
+          "Parent",
+          "EmergencyContact"
+        ],
         "type": "string"
       },
       "IslandIsAssessmentSubjectDto": {
@@ -153,7 +163,9 @@
           "description": { "type": "string", "nullable": true },
           "assessmentTypes": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/IslandIsAssessmentTypeDto" },
+            "items": {
+              "$ref": "#/components/schemas/IslandIsAssessmentTypeDto"
+            },
             "nullable": true
           }
         },
@@ -167,7 +179,9 @@
           "name": { "type": "string", "nullable": true },
           "description": { "type": "string", "nullable": true },
           "testType": { "$ref": "#/components/schemas/TestType" },
-          "assessmentSubject": { "$ref": "#/components/schemas/IslandIsAssessmentSubjectDto" }
+          "assessmentSubject": {
+            "$ref": "#/components/schemas/IslandIsAssessmentSubjectDto"
+          }
         },
         "additionalProperties": false
       },
@@ -207,8 +221,5 @@
     }
   },
   "security": [{}],
-  "tags": [
-    { "name": "IslandIsAssessments" },
-    { "name": "IslandIsStudents" }
-  ]
+  "tags": [{ "name": "IslandIsAssessments" }, { "name": "IslandIsStudents" }]
 }

@@ -1,10 +1,7 @@
 import { Inject, Module } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import {
-  IdsClientConfig,
-  XRoadConfig,
-} from '@island.is/nest/config'
+import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { client } from '../../gen/fetch/client.gen'
 import { PrimarySchoolClientConfig } from './primarySchoolClient.config'
 import { PrimarySchoolClientService } from './primarySchoolClient.service'

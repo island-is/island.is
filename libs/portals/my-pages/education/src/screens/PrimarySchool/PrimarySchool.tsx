@@ -1,4 +1,10 @@
-import { ActionCard, CardLoader, IntroWrapper, m, MMS_SLUG } from '@island.is/portals/my-pages/core'
+import {
+  ActionCard,
+  CardLoader,
+  IntroWrapper,
+  m,
+  MMS_SLUG,
+} from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Stack } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'

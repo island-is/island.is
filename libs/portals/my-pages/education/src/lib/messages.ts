@@ -80,7 +80,8 @@ export const primarySchoolMessages = defineMessages({
   },
   studentListIntro: {
     id: 'sp.education-primary-school:student-list-intro',
-    defaultMessage: 'Hér getur þú fundið yfirlit yfir grunnskólanám barna þinna.',
+    defaultMessage:
+      'Hér getur þú fundið yfirlit yfir grunnskólanám barna þinna.',
   },
   studentListCta: {
     id: 'sp.education-primary-school:student-list-cta',
