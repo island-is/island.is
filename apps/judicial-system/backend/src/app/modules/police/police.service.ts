@@ -187,15 +187,15 @@ export class PoliceService {
       .nullish(),
   })
 
-  private defendantStructure = z.object({
-    nationalId: z.string(),
-    name: z.string().nullish(),
-    gender: z.string().nullish(),
-    address: z.string().nullish(),
-    dateOfBirth: z.string().nullish(),
+  private defendantSchema = z.object({
+    accusedNationalId: z.string(),
+    accusedName: z.string().nullish(),
+    accusedAddress: z.string().nullish(),
+    accusedGender: z.string().nullish(),
+    accusedDOB: z.string().nullish(),
     citizenship: z.string().nullish(),
   })
-  private defendantsResponseStructure = z.array(this.defendantStructure)
+  private defendantsResponseSchema = z.array(this.defendantSchema)
 
   constructor(
     @InjectModel(IndictmentSubtype)
@@ -397,7 +397,6 @@ export class PoliceService {
     user: User,
   ): Promise<PoliceDefendant[]> {
     const startTime = nowFactory()
-
     try {
       const res = await this.fetchPoliceDocumentApi(
         `${this.xRoadPath}/V4/GetRVAdilarMals/${caseId}`,
@@ -411,16 +410,17 @@ export class PoliceService {
         })
       }
 
-      const response: z.infer<typeof this.defendantsResponseStructure> =
+      const response: z.infer<typeof this.defendantsResponseSchema> =
         await res.json()
-      this.defendantsResponseStructure.parse(response)
+
+      this.defendantsResponseSchema.parse(response)
 
       return response.map((defendant) => ({
-        nationalId: defendant.nationalId,
-        name: defendant.name ?? undefined,
-        gender: defendant.gender ?? undefined,
-        address: defendant.address ?? undefined,
-        dateOfBirth: defendant.dateOfBirth ?? undefined,
+        nationalId: defendant.accusedNationalId,
+        name: defendant.accusedName ?? undefined,
+        gender: defendant.accusedGender ?? undefined,
+        address: defendant.accusedAddress ?? undefined,
+        dateOfBirth: defendant.accusedDOB ?? undefined,
         citizenship: defendant.citizenship ?? undefined,
       }))
     } catch (reason) {

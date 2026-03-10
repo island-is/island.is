@@ -146,15 +146,6 @@ export const DefendantList = () => {
         {showPoliceDefendantsUI && (loading || isRetrying) && (
           <LoadingDots size="small" />
         )}
-        {showPoliceDefendantsUI && error && !isRetrying && !loading && (
-          <Button
-            variant="ghost"
-            size="small"
-            onClick={handleRetryFetchDefendants}
-          >
-            Reyna aftur
-          </Button>
-        )}
       </Box>
       <AnimatePresence>
         {workingCase.defendants?.map((defendant, index) => (
