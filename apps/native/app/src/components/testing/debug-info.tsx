@@ -5,12 +5,13 @@ import styled from 'styled-components/native'
 
 import { config, useConfig } from '@/config'
 import { environments } from '@/constants/environments'
-import { showPicker } from '@/lib/show-picker'
 import {
+  EnvironmentConfig,
   environmentStore,
   useEnvironmentStore,
 } from '@/stores/environment-store'
 import { Button, dynamicColor } from '@/ui'
+import { SelectionMenu } from 'react-native-platform-components'
 
 const DebugHost = styled.SafeAreaView`
   background-color: ${dynamicColor((props) => ({
@@ -119,6 +120,9 @@ export function DebugInfo() {
     })
   }
 
+  const [showEnvPicker, setShowEnvPicker] = React.useState(false)
+  const [envs, setEnvs] = React.useState<EnvironmentConfig[]>([])
+
   const onEnvironmentPress = () => {
     if (loading) return
 
@@ -126,43 +130,8 @@ export function DebugInfo() {
       .getState()
       .actions.loadEnvironments()
       .then((res) => {
-        showPicker({
-          type: 'radio',
-          title: 'Select environment',
-          items: res,
-          selectedId: environmentStore.getState().environment?.id,
-          cancel: true,
-        })
-          .then(({ selectedItem }: any) => {
-            const canSkipCognito =
-              selectedItem.id === 'mock' || selectedItem.id === 'prod'
-            if (selectedItem) {
-              environmentStore.getState().actions.setEnvironment(selectedItem)
-            }
-            if (!isCognitoAuth && !canSkipCognito) {
-              return Alert.alert(
-                'Cognito Required',
-                'You can use production without cognito login, but you need it for other environments.',
-                [
-                  environment.id !== 'prod' && {
-                    text: 'Switch to Production',
-                    onPress: () => actions.setEnvironment(environments.prod),
-                  },
-                  {
-                    text: 'Login with cognito',
-                    onPress: onCognitoLoginPress,
-                  },
-                  {
-                    text: 'Cancel',
-                    style: 'cancel',
-                  },
-                ].filter(Boolean) as AlertButton[],
-              )
-            }
-          })
-          .catch(() => {
-            // noop
-          })
+        setEnvs(res);
+        setShowEnvPicker(true)
       })
   }
 
@@ -178,6 +147,43 @@ export function DebugInfo() {
             onPress: onEnvironmentPress,
           },
         ]}
+      />
+      <SelectionMenu
+        visible={showEnvPicker}
+        options={envs.map((env) => ({ label: env.label, data: env.id }))}
+        selected={environment?.id ?? null}
+        onSelect={(data) => {
+          setShowEnvPicker(false)
+          console.log('emvs', envs);
+          const selectedEnv = envs.find((env) => env.id === data)
+          if (!selectedEnv) return
+
+          const canSkipCognito =
+            selectedEnv.id === 'mock' || selectedEnv.id === 'prod'
+          environmentStore.getState().actions.setEnvironment(selectedEnv)
+
+          if (!isCognitoAuth && !canSkipCognito) {
+            return Alert.alert(
+              'Cognito Required',
+              'You can use production without cognito login, but you need it for other environments.',
+              [
+                selectedEnv.id !== 'prod' && {
+                  text: 'Switch to Production',
+                  onPress: () => actions.setEnvironment(environments.prod),
+                },
+                {
+                  text: 'Login with cognito',
+                  onPress: onCognitoLoginPress,
+                },
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                },
+              ].filter(Boolean) as AlertButton[],
+            )
+          }
+        }}
+        onRequestClose={() => setShowEnvPicker(false)}
       />
       <DebugRow title="Bundle" value={config.bundleId} />
       <DebugRow title="IDS" value={environment?.idsIssuer ?? 'N/A'} />

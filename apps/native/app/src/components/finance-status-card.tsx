@@ -20,10 +20,10 @@ import {
 } from '@/graphql/types/finance.types'
 import { useGetFinanceStatusDetailsQuery } from '@/graphql/types/schema'
 import { useRouter } from 'expo-router'
-import { showPicker } from '@/lib/show-picker'
 import { useBrowser } from '@/hooks/use-browser'
 import { DynamicColorIOS, Platform } from 'react-native'
 import { testIDs } from '../utils/test-ids'
+import { SelectionMenu } from 'react-native-platform-components'
 
 export const SelectButton = (props: ButtonProps) => {
   const theme = useTheme()
@@ -174,6 +174,8 @@ export function FinanceStatusCard({
   const shouldShowAboutOrgBox =
     org.homepage || org.email || org.phone || org.name
 
+  const [showGjaldgrunnurPicker, setShowGjaldgrunnurPicker] = useState(false)
+
   return (
     <ExpandableCard
       testID={testIDs.FINANCE_ITEM}
@@ -212,26 +214,26 @@ export function FinanceStatusCard({
           }
           icon={chevronDown}
           textStyle={{ flex: 1 }}
-          onPress={() => {
-            showPicker({
-              title: intl.formatMessage({
-                id: 'finance.statusCard.paymentBase',
-                defaultMessage: 'Gjaldgrunnur',
-              }),
-              items: chargeItemSubjects.map((label, value) => ({
-                label,
-                value,
-                id: String(value),
-              })),
-              selectedId: String(selectedChargeItemSubject),
-              cancel: true,
-            }).then((value) => {
-              if (value.selectedItem) {
-                setSelectedChargeItemSubject(Number(value.selectedItem.id))
-              }
-            })
-            // void
+          onPress={() => setShowGjaldgrunnurPicker(true)}
+        />
+        <SelectionMenu
+          visible={showGjaldgrunnurPicker}
+          placeholder={intl.formatMessage({
+            id: 'finance.statusCard.paymentBase',
+            defaultMessage: 'Gjaldgrunnur',
+          })}
+          options={chargeItemSubjects.map((label, value) => ({
+            label,
+            value,
+            data: String(value),
+          }))}
+          selected={String(selectedChargeItemSubject)}
+          onSelect={(item) => {
+            setSelectedChargeItemSubject(Number(item))
+            setShowGjaldgrunnurPicker(false)
           }}
+          presentation="modal"
+          onRequestClose={() => setShowGjaldgrunnurPicker(false)}
         />
         <Row style={{ marginTop: 12 }}>
           <TableHeading>

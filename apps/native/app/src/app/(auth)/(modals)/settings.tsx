@@ -25,7 +25,6 @@ import {
   useDeletePasskeyMutation,
   useGetProfileQuery,
 } from '@/graphql/types/schema'
-import { showPicker } from '@/lib/show-picker'
 import { authStore } from '@/stores/auth-store'
 import {
   Locale,
@@ -46,6 +45,7 @@ import { testIDs } from '@/utils/test-ids'
 import chevronForward from '@/ui/assets/icons/chevron-forward.png'
 import editIcon from '@/assets/icons/edit.png'
 import { StackScreen } from '../../../components/stack-screen'
+import { SelectionMenu } from 'react-native-platform-components'
 
 export default function SettingsScreen() {
   const router = useRouter()
@@ -64,6 +64,9 @@ export default function SettingsScreen() {
     appLockTimeout,
     hasCreatedPasskey,
   } = usePreferencesStore()
+  const [localeDialogVisible, setLocaleDialogVisible] = useState(false)
+  const [screenLockTimeDialogVisible, setScreenLockTimeDialogVisible] =
+    useState(false)
 
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
   const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
@@ -123,26 +126,6 @@ export default function SettingsScreen() {
         },
       ],
     )
-  }
-
-  const onLanguagePress = () => {
-    showPicker({
-      type: 'radio',
-      title: intl.formatMessage({
-        id: 'settings.accessibilityLayout.language',
-      }),
-      items: [
-        { label: 'Íslenska', id: 'is-IS' },
-        { label: 'English', id: 'en-US' },
-      ],
-      selectedId: locale,
-      cancel: true,
-    }).then(({ selectedItem }) => {
-      if (selectedItem?.id) {
-        setLocale(selectedItem.id as Locale)
-        updateLocale(selectedItem.id === 'is-IS' ? 'is' : 'en')
-      }
-    })
   }
 
   const updateDocumentNotifications = (value: boolean) => {
@@ -473,53 +456,7 @@ export default function SettingsScreen() {
           </PressableHighlight>
         )}
         <PressableHighlight
-          onPress={() => {
-            showPicker({
-              title: intl.formatMessage({
-                id: 'settings.security.appLockTimeoutLabel',
-              }),
-              items: [
-                {
-                  id: '5000',
-                  label: `${intl.formatNumber(5, {
-                    style: 'decimal',
-                    unitDisplay: 'long',
-                    unit: 'second',
-                  })} ${intl.formatMessage({
-                    id: 'settings.security.appLockTimeoutSeconds',
-                  })}`,
-                },
-                {
-                  id: '10000',
-                  label: `${intl.formatNumber(10, {
-                    style: 'decimal',
-                    unitDisplay: 'long',
-                    unit: 'second',
-                  })} ${intl.formatMessage({
-                    id: 'settings.security.appLockTimeoutSeconds',
-                  })}`,
-                },
-                {
-                  id: '15000',
-                  label: `${intl.formatNumber(15, {
-                    style: 'decimal',
-                    unitDisplay: 'long',
-                    unit: 'second',
-                  })} ${intl.formatMessage({
-                    id: 'settings.security.appLockTimeoutSeconds',
-                  })}`,
-                },
-              ],
-              cancel: true,
-              selectedId: String(appLockTimeout),
-            }).then((res) => {
-              if (res.selectedItem) {
-                preferencesStore.setState({
-                  appLockTimeout: Number(res.selectedItem.id),
-                })
-              }
-            })
-          }}
+          onPress={() => setScreenLockTimeDialogVisible(true)}
         >
           <TableViewCell
             title={intl.formatMessage({
@@ -537,6 +474,53 @@ export default function SettingsScreen() {
                 })} ${intl.formatMessage({
                   id: 'settings.security.appLockTimeoutSeconds',
                 })}`}
+                <SelectionMenu
+                  placeholder={intl.formatMessage({
+                    id: 'settings.security.appLockTimeoutLabel',
+                  })}
+                  options={[
+                    {
+                      data: '5000',
+                      label: `${intl.formatNumber(5, {
+                        style: 'decimal',
+                        unitDisplay: 'long',
+                        unit: 'second',
+                      })} ${intl.formatMessage({
+                        id: 'settings.security.appLockTimeoutSeconds',
+                      })}`,
+                    },
+                    {
+                      data: '10000',
+                      label: `${intl.formatNumber(10, {
+                        style: 'decimal',
+                        unitDisplay: 'long',
+                        unit: 'second',
+                      })} ${intl.formatMessage({
+                        id: 'settings.security.appLockTimeoutSeconds',
+                      })}`,
+                    },
+                    {
+                      data: '15000',
+                      label: `${intl.formatNumber(15, {
+                        style: 'decimal',
+                        unitDisplay: 'long',
+                        unit: 'second',
+                      })} ${intl.formatMessage({
+                        id: 'settings.security.appLockTimeoutSeconds',
+                      })}`,
+                    },
+                  ]}
+                  selected={String(appLockTimeout)}
+                  visible={screenLockTimeDialogVisible}
+                  onSelect={(data) => {
+                    preferencesStore.setState({
+                      appLockTimeout: Number(data),
+                    })
+                    setScreenLockTimeDialogVisible(false)
+                  }}
+                  presentation="modal"
+                  onRequestClose={() => setScreenLockTimeDialogVisible(false)}
+                />
               </TableViewAccessory>
             }
           />
@@ -569,7 +553,7 @@ export default function SettingsScreen() {
       <TableViewGroup
         header={intl.formatMessage({ id: 'settings.about.groupTitle' })}
       >
-        <PressableHighlight onPress={onLanguagePress}>
+        <PressableHighlight onPress={() => setLocaleDialogVisible(true)}>
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.accessibilityLayout.language',
@@ -577,10 +561,29 @@ export default function SettingsScreen() {
             accessory={
               <TableViewAccessory>
                 {locale === 'is-IS' ? 'Íslenska' : 'English'}
+                <SelectionMenu
+                  placeholder={intl.formatMessage({
+                    id: 'settings.accessibilityLayout.language',
+                  })}
+                  options={[
+                    { label: 'Íslenska', data: 'is-IS' },
+                    { label: 'English', data: 'en-US' },
+                  ]}
+                  selected={locale}
+                  visible={localeDialogVisible}
+                  onSelect={(data) => {
+                    setLocale(data as Locale)
+                    updateLocale(data === 'is-IS' ? 'is' : 'en')
+                    setLocaleDialogVisible(false)
+                  }}
+                  presentation="modal"
+                  onRequestClose={() => setLocaleDialogVisible(false)}
+                />
               </TableViewAccessory>
             }
           />
         </PressableHighlight>
+
         <TableViewCell
           title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
           subtitle={`${Application.nativeApplicationVersion} build ${Application.nativeBuildVersion}`}
