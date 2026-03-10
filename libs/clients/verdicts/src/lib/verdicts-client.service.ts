@@ -31,7 +31,11 @@ const GOPRO_ID_PREFIX = 'g-'
 const SUPREME_COURT_ID_PREFIX = 's-'
 
 const convertHtmlToContentfulRichText = async (html: string, id: string) => {
-  const sanitizedHtml = sanitizeHtml(html)
+  const sanitizedHtml = sanitizeHtml(html, {
+    exclusiveFilter(frame) {
+      return frame.tag === 'table'
+    },
+  })
   const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
   const richText = await richTextFromMarkdown(markdown)
   return {
@@ -105,17 +109,25 @@ export class VerdictsClientService {
     dateFrom?: string
     dateTo?: string
     caseContact?: string
+    pageSize?: number
   }) {
     const onlyFetchSupremeCourtVerdicts = input.courtLevel === SUPREME_COURT
 
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
+
+    const itemsPerPage =
+      typeof input.pageSize === 'number' &&
+      input.pageSize > 0 &&
+      input.pageSize < ITEMS_PER_PAGE
+        ? input.pageSize
+        : ITEMS_PER_PAGE
 
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
       !onlyFetchSupremeCourtVerdicts
         ? goproVerdictApi.getVerdictsV2({
             requestData: {
               orderBy: 'verdictDate desc',
-              itemsPerPage: ITEMS_PER_PAGE,
+              itemsPerPage,
               pageNumber: input.pageNumber,
               searchTerm: input.searchTerm,
               courts: input.courtLevel ? input.courtLevel.split(',') : [],
@@ -135,7 +147,7 @@ export class VerdictsClientService {
         ? this.supremeCourtApi.apiV2VerdictGetVerdictsPost({
             verdictSearchRequest: {
               page: input.pageNumber,
-              limit: ITEMS_PER_PAGE,
+              limit: itemsPerPage,
               orderBy: 'publishDate DESC',
               searchTerm: input.searchTerm,
               keywords: input.keywords,
@@ -652,6 +664,12 @@ export class VerdictsClientService {
           response.item?.verdictHtml ?? '',
           'verdictHtml',
         ),
+        resolutionLink:
+          response.item.resolutionLink &&
+          isUrl(response.item.resolutionLink) &&
+          response.item.resolutionLink.toLowerCase().startsWith('http')
+            ? response.item.resolutionLink
+            : '',
       },
     }
   }
