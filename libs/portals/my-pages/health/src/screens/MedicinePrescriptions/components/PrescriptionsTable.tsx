@@ -154,7 +154,8 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                       <AlertMessage
                         type="info"
                         message={
-                          item.renewResponseMessage || blockedStatus?.description
+                          item.renewResponseMessage ||
+                          blockedStatus?.description
                         }
                       />
                     </Box>
