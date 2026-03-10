@@ -8,5 +8,5 @@ export const identityServerConfig = {
   domain: env.identityServerDomain,
 }
 
-export const signOutUrl = (window: Window, idToken: string) =>
-  `${window.location.origin}/samradsgatt/api/auth/logout?id_token=${idToken}`
+export const signOutUrl = (window: Window) =>
+  `${window.location.origin}/samradsgatt/api/auth/logout`
