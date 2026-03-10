@@ -2,13 +2,10 @@ import { QueryConsultationPortalGetCasesArgs } from '@island.is/api/schema'
 import { getSession } from 'next-auth/react'
 import { Error500 } from '../../components'
 import initApollo from '../../graphql/client'
-import {
-  SUB_GET_CASES,
-  SUB_GET_TYPES
-} from '../../graphql/queries.graphql'
+import { SUB_GET_CASES, SUB_GET_TYPES } from '../../graphql/queries.graphql'
 import {
   SubGetCasesQuery,
-  SubGetTypesQuery
+  SubGetTypesQuery,
 } from '../../graphql/queries.graphql.generated'
 import { withApollo } from '../../graphql/withApollo'
 import { useLogIn } from '../../hooks'

@@ -45,7 +45,10 @@ export const jwt = async (
   return token
 }
 
-export const session = (session: AuthSession, token: Record<string, unknown>) => {
+export const session = (
+  session: AuthSession,
+  token: Record<string, unknown>,
+) => {
   session.accessToken = token.accessToken as string
   session.idToken = token.idToken as string
   const decoded = decode(token.accessToken as string)
