@@ -12,9 +12,7 @@ import {
   GridColumn,
   GridRow,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
-import { regulation } from '../../lib/messages'
 
 // ---------------------------------------------------------------------------
 
@@ -32,8 +30,6 @@ export const ImpactDate = (props: ImpactDateProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     date ? new Date(date) : undefined,
   )
-
-  const { formatMessage: f } = useLocale()
 
   useEffect(() => {
     setHasCustomDate(!!date)

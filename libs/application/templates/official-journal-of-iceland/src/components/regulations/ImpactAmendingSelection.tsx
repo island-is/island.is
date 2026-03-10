@@ -10,7 +10,6 @@
  * - Simplified option formatting
  */
 import { useState, useEffect } from 'react'
-import { useLocale } from '@island.is/localization'
 import { AsyncSearch, Text } from '@island.is/island-ui/core'
 import { useDebounce } from 'react-use'
 import * as s from './Impacts.css'
