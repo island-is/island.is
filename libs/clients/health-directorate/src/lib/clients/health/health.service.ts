@@ -421,7 +421,7 @@ export class HealthDirectorateHealthService {
 
   /* Patient Data Permits */
 
- public async getPermits(
+  public async getPermits(
     auth: Auth,
     locale: Locale,
   ): Promise<EuPatientConsentResponseDto | null> {
@@ -437,7 +437,6 @@ export class HealthDirectorateHealthService {
 
     return permits ?? null
   }
-
 
   public async getPermitCountries(
     auth: Auth,
