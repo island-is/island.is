@@ -281,7 +281,7 @@ export class HealthDirectorateService {
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
-          id: item.prescriptionId.toString(),
+          id: item.prescriptionId,
           productId: item.product.id,
           prescriptionId: item.prescriptionId,
           name: item.product.name,
@@ -332,11 +332,7 @@ export class HealthDirectorateService {
 
   /* Renewal */
   async postRenewal(auth: Auth, input: HealthDirectorateRenewalInput) {
-    await this.healthApi.postRenewalPrescription(auth, input.id, {
-      productId: input.productId,
-      medCardDrugId: input.medCardDrugId,
-      medCardDrugCategory: input.medCardDrugCategory,
-    })
+    await this.healthApi.postRenewalPrescription(auth, input.id)
 
     return null
   }

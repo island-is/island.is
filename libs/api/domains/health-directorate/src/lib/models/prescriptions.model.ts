@@ -14,8 +14,8 @@ export class Prescription {
   @Field(() => ID)
   productId!: string
 
-  @Field(() => Int, { nullable: true })
-  prescriptionId?: number
+  @Field({ nullable: true })
+  prescriptionId?: string
 
   @Field({ nullable: true })
   name?: string

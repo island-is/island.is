@@ -149,12 +149,12 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
 
               children: (
                 <Box background="blue100" paddingBottom={1}>
-                  {blockedStatus?.showReason && (
+                  {(blockedStatus?.showReason || item.renewResponseMessage) && (
                     <Box paddingX={[0, 0, 3]} marginBottom={[2, 2, 0]}>
                       <AlertMessage
                         type="info"
                         message={
-                          item.renewResponseMessage || blockedStatus.description
+                          item.renewResponseMessage || blockedStatus?.description
                         }
                       />
                     </Box>

@@ -81,11 +81,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
 
   const submitForm = async () => {
     // TODO: Improve form submission when service is ready
-    if (
-      activePrescription.prescriptionId == null ||
-      activePrescription.medCardDrugId == null ||
-      activePrescription.medCardDrugCategory == null
-    ) {
+    if (activePrescription.prescriptionId == null) {
       setError('Please select a valid prescription.')
       return
     }
@@ -94,10 +90,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       const data = await postRenewal({
         variables: {
           input: {
-            id: activePrescription.prescriptionId.toString(),
-            medCardDrugCategory: activePrescription.medCardDrugCategory,
-            medCardDrugId: activePrescription.medCardDrugId,
-            productId: activePrescription.productId,
+            id: activePrescription.prescriptionId as string,
           },
         },
       })

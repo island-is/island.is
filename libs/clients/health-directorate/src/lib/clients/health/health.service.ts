@@ -10,7 +10,6 @@ import {
   OrganDonorDto,
   OrganDto,
   PrescribedItemDto,
-  PrescriptionRenewalRequestDto,
   ProductDocumentDto,
   ReferralDto,
   UpdateOrganDonorDto,
@@ -41,7 +40,6 @@ import {
 import {
   AppointmentDto,
   ConsentCountryDto,
-  ConsentHistoryEntryDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
   EuPatientConsentResponseDto,
@@ -134,18 +132,13 @@ export class HealthDirectorateHealthService {
   }
 
   /* Endurnýjun lyfseðils */
-  public async postRenewalPrescription(
-    auth: Auth,
-    id: string,
-    input: PrescriptionRenewalRequestDto,
-  ) {
+  public async postRenewalPrescription(auth: Auth, id: string) {
     return await withAuthContext(auth, () =>
       data(
         mePrescriptionControllerRenewPrescriptionV1({
           path: {
             id,
           },
-          body: input,
         }),
       ),
     )
