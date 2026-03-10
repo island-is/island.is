@@ -17,13 +17,19 @@ const mapFjsPaymentMethodTo: Record<FjsPaymentMethod, PaymentMethod | null> = {
 export const determinePaymentMethods = (
   charges: CatalogItemWithQuantity[],
 ): PaymentMethod[] => {
-  const paymentMethods = charges.map((charge) => charge.paymentOptions)
+  const paymentMethods = charges
+    .map((charge) => charge.paymentOptions)
+    .filter((charge) => charge !== undefined)
 
   const commonPaymentMethods = paymentMethods.reduce((acc, paymentOptions) => {
     return acc?.filter((option) => paymentOptions?.includes(option)) ?? []
   }, paymentMethods[0])
 
-  return (commonPaymentMethods ?? [])
+  if (commonPaymentMethods.length === 0) {
+    return [PaymentMethod.CARD]
+  }
+
+  return commonPaymentMethods
     .map((method) => mapFjsPaymentMethodTo[method as FjsPaymentMethod])
     .filter(Boolean) as PaymentMethod[]
 }
