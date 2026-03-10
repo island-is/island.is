@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-// TODO: We dont have the IDES nr. stored in RVG löke case. That was decided because it was not "used" for anything
 export class PoliceDigitalCaseFile {
   // digital file id in the police system
   @ApiProperty({ type: String })
@@ -22,7 +21,3 @@ export class PoliceDigitalCaseFile {
   @ApiPropertyOptional({ type: Date })
   displayDate?: Date
 }
-
-// additional stored internal digital case files props
-// caseId
-// orderWithinChapter

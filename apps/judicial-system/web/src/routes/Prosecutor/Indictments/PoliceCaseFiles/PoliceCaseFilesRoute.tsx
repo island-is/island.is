@@ -90,8 +90,6 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
       errorPolicy: 'all',
     })
 
-    console.log({ digitalCaseFiles })
-
     const [policeCaseFilesData, setPoliceCaseFiles] =
       useState<PoliceCaseFilesData>()
 
