@@ -460,6 +460,15 @@ export const healthModule: PortalModule = {
     },
     {
       name: hm.patientData,
+      path: HealthPaths.HealthPatientData,
+      key: 'HealthPatientPermits',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <Navigate to={HealthPaths.HealthPatientDataOverview} replace />,
+    },
+    {
+      name: hm.patientData,
       path: HealthPaths.HealthPatientDataOverview,
       key: 'HealthPatientPermits',
       enabled:

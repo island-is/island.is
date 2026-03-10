@@ -241,7 +241,7 @@
             "name": "productId",
             "required": true,
             "in": "path",
-            "description": "The product id (Norrænt vörumerki)",
+            "description": "The product id (Norr\u00e6nt v\u00f6rumerki)",
             "schema": {
               "type": "string"
             }
@@ -4361,6 +4361,64 @@
           }
         },
         "required": ["codes", "countryCodes"]
+      },
+      "ConsentHistoryEntryDto": {
+        "type": "object",
+        "properties": {
+          "countries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConsentCountryDto"
+            }
+          },
+          "consentTypes": {
+            "description": "Data type codes e.g. PATIENT_SUMMARY",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "validFrom": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "validTo": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "changedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When this version was superseded (deactivatedAt)"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": ["countries", "consentTypes", "validFrom", "createdAt"]
+      },
+      "EuPatientConsentResponseDto": {
+        "type": "object",
+        "properties": {
+          "consent": {
+            "nullable": true,
+            "description": "The most recent consent, or null if none has ever been created",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EuPatientConsentDto"
+              }
+            ]
+          },
+          "history": {
+            "description": "Change history for this patient",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConsentHistoryEntryDto"
+            }
+          }
+        },
+        "required": ["consent", "history"]
       }
     }
   }
