@@ -289,6 +289,21 @@ describe('display mappers', () => {
         QuestionnairesStatusEnum.expired,
       )
     })
+
+    it('sets notAnswered status when validToDateTime is null', () => {
+      const noExpiry = {
+        ...baseLshItem,
+        validToDateTime: null,
+      } as unknown as LshQuestionnaireType
+
+      expect(
+        mapLshQuestionnaireOverview(noExpiry, formatMessage).baseInformation
+          .status,
+      ).toBe(QuestionnairesStatusEnum.notAnswered)
+      expect(mapLshQuestionnaireListItem(noExpiry, formatMessage).status).toBe(
+        QuestionnairesStatusEnum.notAnswered,
+      )
+    })
   })
 
   describe('EL questionnaire mapping', () => {

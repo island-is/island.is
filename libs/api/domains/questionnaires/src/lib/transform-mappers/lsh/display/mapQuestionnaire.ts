@@ -39,7 +39,7 @@ export const mapLshQuestionnaireOverview = (
     title: data.caption ?? formatMessage(m.questionnaireWithoutTitle),
     status: data.answerDateTime
       ? QuestionnairesStatusEnum.answered
-      : new Date(data.validToDateTime) < new Date()
+      : data.validToDateTime != null && data.validToDateTime < new Date()
       ? QuestionnairesStatusEnum.expired
       : QuestionnairesStatusEnum.notAnswered,
     sentDate: data.validFromDateTime?.toISOString() ?? '',
@@ -63,7 +63,7 @@ export const mapLshQuestionnaireListItem = (
   department: data.department ?? undefined,
   status: data.answerDateTime
     ? QuestionnairesStatusEnum.answered
-    : new Date(data.validToDateTime) < new Date()
+    : data.validToDateTime != null && data.validToDateTime < new Date()
     ? QuestionnairesStatusEnum.expired
     : QuestionnairesStatusEnum.notAnswered,
 })
