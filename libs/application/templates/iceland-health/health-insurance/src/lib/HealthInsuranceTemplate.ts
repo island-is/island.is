@@ -73,8 +73,8 @@ const HealthInsuranceTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/HealthInsuranceForm').then((module) =>
-                  Promise.resolve(module.HealthInsuranceForm),
+                import('../forms/PrerequsitesForm/PrerequisitesForm').then(
+                  (module) => Promise.resolve(module.PrerequisitesForm),
                 ),
               actions: [
                 {
@@ -154,8 +154,8 @@ const HealthInsuranceTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ConclusionForm').then((module) =>
-                  Promise.resolve(module.conclusionForm),
+                import('../forms/ConclusionForm/ConclusionForm').then(
+                  (module) => Promise.resolve(module.conclusionForm),
                 ),
               read: 'all',
             },
