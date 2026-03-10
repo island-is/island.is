@@ -27,7 +27,6 @@ export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: m.prerequisitesFormTitle,
   logo: IcelandHealthLogo,
-  renderLastScreenButton: true,
   mode: FormModes.DRAFT,
   children: [
     buildSection({
@@ -39,19 +38,6 @@ export const PrerequisitesForm: Form = buildForm({
           id: 'approveExternalData',
           subTitle: m.externalDataSubtitle,
           checkboxLabel: m.externalDataCheckbox,
-          submitField: buildSubmitField({
-            id: 'submit',
-            placement: 'footer',
-            title: m.externalDataSuccessSubmitFieldTitle,
-            refetchApplicationAfterSubmit: true,
-            actions: [
-              {
-                event: 'SUBMIT',
-                name: coreMessages.buttonNext,
-                type: 'primary',
-              },
-            ],
-          }),
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryV3UserApi,
