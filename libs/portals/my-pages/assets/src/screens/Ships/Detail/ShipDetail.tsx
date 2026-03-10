@@ -21,8 +21,7 @@ export const ShipDetail = () => {
     variables: {
       input: {
         id: id ?? '',
-        locale:
-          lang === 'en' ? ShipRegistryLocale.En : ShipRegistryLocale.Is,
+        locale: lang === 'en' ? ShipRegistryLocale.En : ShipRegistryLocale.Is,
       },
     },
   })
@@ -199,9 +198,7 @@ export const ShipDetail = () => {
               {
                 label: formatMessage(shipsMessages.certificatesTab),
                 content: (
-                  <EmptyState
-                    description={shipsMessages.certificatesEmpty}
-                  />
+                  <EmptyState description={shipsMessages.certificatesEmpty} />
                 ),
               },
             ]}
