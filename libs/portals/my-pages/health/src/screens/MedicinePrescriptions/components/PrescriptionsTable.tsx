@@ -154,7 +154,10 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                       <AlertMessage
                         type="info"
                         message={
-                          item.renewResponseMessage || blockedStatus?.description
+                          <span style={{ whiteSpace: 'pre-line' }}>
+                            {item.renewResponseMessage ||
+                              blockedStatus?.description}
+                          </span>
                         }
                       />
                     </Box>
