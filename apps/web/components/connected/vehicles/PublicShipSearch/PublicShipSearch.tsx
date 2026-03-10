@@ -264,6 +264,18 @@ const PublicShipSearch = () => {
                     </Table.Data>
                   </Table.Row>
                 )}
+                {shipInformation.opid && (
+                  <Table.Row>
+                    <Table.Data>
+                      <Text fontWeight="semiBold">
+                        {formatMessage(translationStrings.opid)}
+                      </Text>
+                    </Table.Data>
+                    <Table.Data>
+                      <Text>{shipInformation.opid}</Text>
+                    </Table.Data>
+                  </Table.Row>
+                )}
                 {typeof shipInformation.owners?.length === 'number' &&
                   shipInformation.owners.length > 0 && (
                     <Table.Row>

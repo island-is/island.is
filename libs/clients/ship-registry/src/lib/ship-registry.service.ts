@@ -16,6 +16,7 @@ interface Ship {
   umdaemisbokstafir: string
   gerd: string
   smidastod: string
+  opid: string
   eigendur: {
     kennitala: string
     nafn: string
@@ -65,6 +66,7 @@ const mapShip = (ship: Ship) => {
     length: ship.skraningarlengd,
     manufactionYear: ship.smidaar,
     manufacturer: ship.smidastod,
+    opid: ship.opid,
     owners: ship.eigendur.map((owner) => ({
       name: owner.nafn,
       nationalId: owner.kennitala,
