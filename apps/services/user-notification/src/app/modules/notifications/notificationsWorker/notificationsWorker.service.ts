@@ -333,6 +333,13 @@ export class NotificationsWorkerService {
       return
     }
 
+    if (await this.isRecipientDeceased(args.recipient, args.messageId)) {
+      this.logger.info('Actor recipient is deceased, skipping notification', {
+        messageId: args.messageId,
+      })
+      return
+    }
+
     const locale: Locale = actorProfile.locale
       ? mapToLocale(actorProfile.locale)
       : 'is'
@@ -456,6 +463,13 @@ export class NotificationsWorkerService {
       if (!userProfile) {
         this.logger.info('No user profile found for user', {
           messageId: args.messageId,
+        })
+        return
+      }
+
+      if (await this.isRecipientDeceased(message.recipient, messageId)) {
+        this.logger.info('Recipient is deceased, skipping notification', {
+          messageId,
         })
         return
       }
@@ -616,6 +630,23 @@ export class NotificationsWorkerService {
         messageId,
       })
       return null
+    }
+  }
+
+  private async isRecipientDeceased(
+    nationalId: string,
+    messageId: string,
+  ): Promise<boolean> {
+    try {
+      const individual =
+        await this.nationalRegistryService.getAllDataIndividual(nationalId)
+      return individual?.afdrif === 'LÉST'
+    } catch (error) {
+      this.logger.warn(
+        'Failed to check deceased status from national registry, proceeding with notification',
+        { messageId, error },
+      )
+      return false
     }
   }
 
