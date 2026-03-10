@@ -188,7 +188,10 @@ export class QuestionnairesService {
     input: QuestionnaireInput,
     locale: Locale,
   ): Promise<QuestionnairesResponse> {
-    const { formatMessage } = await this.intlService.useIntl([NAMESPACE], locale)
+    const { formatMessage } = await this.intlService.useIntl(
+      [NAMESPACE],
+      locale,
+    )
     try {
       const elAnswer = mapToElAnswer(input, formatMessage)
       const response = await this.api.submitQuestionnaire(
