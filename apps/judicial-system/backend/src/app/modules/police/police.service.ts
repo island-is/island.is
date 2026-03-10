@@ -137,6 +137,14 @@ export class PoliceService {
     skjalasnid: z.optional(z.string()),
     tegundSkjals: this.policeCaseFileType.nullish(),
   })
+  private policeDigitalCaseFileStructure = z.object({
+    id: z.string(),
+    rvMalID: z.number(),
+    externalVendorFileName: z.string(),
+    externalVendorID: z.string(),
+    registeredAt: z.string().nullish(),
+  })
+
   private readonly crimeSceneStructure = z.object({
     vettvangur: z.optional(z.string()),
     brotFra: z.optional(z.string()),
@@ -153,6 +161,14 @@ export class PoliceService {
     skjol: z.optional(z.array(this.policeCaseFileStructure)),
     malseinings: z.optional(z.array(this.crimeSceneStructure)),
   })
+
+  private digitalCaseFilesStructure = z.array(
+    z.object({
+      malsnumer: z.string(),
+      gogn: z.optional(z.array(this.policeDigitalCaseFileStructure)),
+    }),
+  )
+
   private subpoenaStructure = z.object({
     acknowledged: z.boolean().nullish(),
     comment: z.string().nullish(),
@@ -315,13 +331,11 @@ export class PoliceService {
       `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
     )
       .then(async (res: Response) => {
-        console.log({ res })
         if (res.ok) {
           const response: z.infer<typeof this.responseStructure> =
             await res.json()
 
           this.responseStructure.parse(response)
-          console.log({ response })
           return response
         }
 
@@ -381,10 +395,10 @@ export class PoliceService {
     )
       .then(async (res: Response) => {
         if (res.ok) {
-          // TODO: adjust response structure
-          const response = await res.json()
+          const response: z.infer<typeof this.digitalCaseFilesStructure> =
+            await res.json()
 
-          // this.responseStructure.parse(response)
+          this.digitalCaseFilesStructure.parse(response)
 
           return response
         }
@@ -476,37 +490,19 @@ export class PoliceService {
 
     console.log({ caseFiles })
 
-    // caseFiles?.list?.forEach((file) => {
-    //   const id = file.rvMalSkjolMals_ID.toString()
-    //   if (!files.find((item) => item.id === id)) {
-    //     files.push({
-    //       id,
-    //       name: `${file.heitiSkjals}${file.skjalasnid ?? '.pdf'}`,
-    //       policeCaseNumber: file.malsnumer,
-    //       chapter: getChapter(file.domsSkjalsFlokkun),
-    //       displayDate: file.dagsStofnad,
-    //       type: file.tegundSkjals?.kodi ?? undefined,
-    //     })
-    //   }
-    // })
-
-    // temp data
-    files.push(
-      {
-        id: '123',
-        name: '007-2024-000019 Yfirheyrsla yfir Dodda',
-        policeCaseNumber: '007-2024-000019',
-        policeDigitalSystemRecordingId: '4667',
-        displayDate: new Date(2025, 1, 1),
-      },
-      {
-        id: '124',
-        name: '007-2024-000019 Búkmyndavélaupptaka',
-        policeCaseNumber: '007-2024-000019',
-        policeDigitalSystemRecordingId: '4668',
-        displayDate: new Date(2025, 1, 2),
-      },
-    )
+    caseFiles?.forEach((filesPerCaseNumber) => {
+      filesPerCaseNumber.gogn?.forEach((file) => {
+        files.push({
+          id: file.rvMalID.toString(),
+          name: file.externalVendorFileName,
+          policeCaseNumber: filesPerCaseNumber.malsnumer,
+          policeDigitalSystemRecordingId: file.externalVendorID,
+          displayDate: file.registeredAt
+            ? new Date(file.registeredAt)
+            : undefined,
+        })
+      })
+    })
 
     return files
   }
@@ -597,24 +593,20 @@ export class PoliceService {
           user,
           'getPoliceCaseInfo',
         )
-      console.log({ policeCaseResponse })
       const policeDigitalCaseFilesResponse = await this.getDigitalCaseFiles(
         caseId,
         user,
         'getPoliceCaseInfo',
       )
-      console.log({ policeDigitalCaseFilesResponse })
       const policeCaseNumbers = new Set<string>([policeCaseResponse.malsnumer])
 
       // fetch unique police case numbers from case files and digital case files
       policeCaseResponse.skjol?.forEach((info: { malsnumer: string }) => {
         policeCaseNumbers.add(info.malsnumer)
       })
-      // policeDigitalCaseFilesResponse.list?.forEach(
-      //   (info: { malsnumer: string }) => {
-      //     policeCaseNumbers.add(info.malsnumer)
-      //   },
-      // )
+      policeDigitalCaseFilesResponse?.forEach((info: { malsnumer: string }) => {
+        policeCaseNumbers.add(info.malsnumer)
+      })
       const cases: PoliceCaseInfo[] = Array.from(policeCaseNumbers).map(
         (number) => ({
           policeCaseNumber: number,

@@ -26,11 +26,13 @@ import {
   CaseFile,
   CaseOrigin,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TUploadFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { PoliceCaseFilesData } from '../../components'
-import { PoliceDigitalCaseFilesList } from '../../components/PoliceCaseFiles/PoliceDigitalCaseFiles'
+import {
+  PoliceDigitalCaseFilesData,
+  PoliceDigitalCaseFilesList,
+} from '../../components/PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { useIndictmentPoliceCaseFilesQuery } from './indictmentPoliceCaseFiles.generated'
 import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
 import UploadFilesToPoliceCase from './UploadFilesToPoliceCase'
@@ -93,7 +95,11 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
     const [policeCaseFilesData, setPoliceCaseFiles] =
       useState<PoliceCaseFilesData>()
 
+    const [policeDigitalCaseFileData, setPoliceDigitalCaseFileData] =
+      useState<PoliceDigitalCaseFilesData>()
+
     useEffect(() => {
+      // get case files
       if (caseOrigin !== CaseOrigin.LOKE) {
         setPoliceCaseFiles({
           files: [],
@@ -115,10 +121,35 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
           hasError: false,
         })
       } else {
-        // TODO: We fetch all files and filter in the client. Shouldn't we filter on backend?
-        // That would prob require extra call to the backend to fetch the selected police case ids or send them from the client to the backend
         setPoliceCaseFiles({
           files: policeData?.policeCaseFiles ?? [],
+          isLoading: false,
+          hasError: false,
+        })
+      }
+
+      // get digital case files
+      if (caseOrigin !== CaseOrigin.LOKE) {
+        setPoliceDigitalCaseFileData({
+          files: [],
+          isLoading: false,
+          hasError: false,
+        })
+      } else if (digitalCaseFilesError) {
+        setPoliceDigitalCaseFileData({
+          files: [],
+          isLoading: false,
+          hasError: true,
+        })
+      } else if (digitalCaseFilesLoading) {
+        setPoliceDigitalCaseFileData({
+          files: [],
+          isLoading: true,
+          hasError: false,
+        })
+      } else {
+        setPoliceDigitalCaseFileData({
+          files: digitalCaseFiles?.policeDigitalCaseFiles ?? [],
           isLoading: false,
           hasError: false,
         })
@@ -130,54 +161,73 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
       setPoliceCaseFiles,
       caseOrigin,
       caseFiles,
+      digitalCaseFilesError,
+      digitalCaseFilesLoading,
+      digitalCaseFiles?.policeDigitalCaseFiles,
     ])
 
     return (
       <Box className={grid({ gap: 4 })}>
-        {policeCaseNumbers?.map((policeCaseNumber, index) => (
-          <Box key={index}>
-            <SectionHeading
-              title={formatMessage(strings.policeCaseNumberSectionHeading, {
-                policeCaseNumber,
-              })}
-              marginBottom={2}
-            />
-            <Box marginBottom={3}>
-              <IndictmentInfo
-                policeCaseNumber={policeCaseNumber}
-                subtypes={subtypes}
-                crimeScenes={crimeScenes}
+        {policeCaseNumbers?.map((policeCaseNumber, index) => {
+          const currentDigitalCaseFiles =
+            policeDigitalCaseFileData?.files?.filter(
+              (file) => file.policeCaseNumber === policeCaseNumber,
+            ) ?? []
+          const showDigitalCaseFiles =
+            currentDigitalCaseFiles.length > 0 ||
+            policeDigitalCaseFileData?.hasError
+          return (
+            <Box key={index}>
+              <SectionHeading
+                title={formatMessage(strings.policeCaseNumberSectionHeading, {
+                  policeCaseNumber,
+                })}
+                marginBottom={2}
               />
-            </Box>
-            <UploadFilesToPoliceCase
-              caseId={caseId}
-              caseFiles={
-                caseFiles?.filter(
-                  (file) => file.policeCaseNumber === policeCaseNumber,
-                ) ?? []
-              }
-              policeCaseFilesData={{
-                files:
-                  policeCaseFilesData?.files?.filter(
+              <Box marginBottom={3}>
+                <IndictmentInfo
+                  policeCaseNumber={policeCaseNumber}
+                  subtypes={subtypes}
+                  crimeScenes={crimeScenes}
+                />
+              </Box>
+              <UploadFilesToPoliceCase
+                caseId={caseId}
+                caseFiles={
+                  caseFiles?.filter(
                     (file) => file.policeCaseNumber === policeCaseNumber,
-                  ) ?? [],
-                isLoading: !!policeCaseFilesData?.isLoading,
-                hasError: !!policeCaseFilesData?.hasError,
-                errorCode: policeCaseFilesData?.errorCode,
-              }}
-              policeCaseNumber={policeCaseNumber}
-              setAllUploaded={setAllUploaded(policeCaseNumber)}
-            />
-            <PoliceDigitalCaseFilesList
-              digitalCaseFiles={
-                digitalCaseFiles?.policeDigitalCaseFiles?.filter(
-                  (file) => file.policeCaseNumber === policeCaseNumber,
-                ) ?? []
-              }
-              isLoading={digitalCaseFilesLoading}
-            />
-          </Box>
-        ))}
+                  ) ?? []
+                }
+                policeCaseFilesData={{
+                  files:
+                    policeCaseFilesData?.files?.filter(
+                      (file) => file.policeCaseNumber === policeCaseNumber,
+                    ) ?? [],
+                  isLoading: !!policeCaseFilesData?.isLoading,
+                  hasError: !!policeCaseFilesData?.hasError,
+                  errorCode: policeCaseFilesData?.errorCode,
+                }}
+                policeCaseNumber={policeCaseNumber}
+                setAllUploaded={setAllUploaded(policeCaseNumber)}
+              />
+              {showDigitalCaseFiles && (
+                <PoliceDigitalCaseFilesList
+                  digitalCaseFiles={
+                    digitalCaseFiles?.policeDigitalCaseFiles?.filter(
+                      (file) => file.policeCaseNumber === policeCaseNumber,
+                    ) ?? []
+                  }
+                  isLoading={!!policeDigitalCaseFileData?.isLoading}
+                  errorMessage={
+                    policeDigitalCaseFileData?.hasError
+                      ? 'Ekki tókst að sækja rafræn skjöl í LÖKE.'
+                      : undefined
+                  }
+                />
+              )}
+            </Box>
+          )
+        })}
       </Box>
     )
   },

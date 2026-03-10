@@ -7,7 +7,13 @@ import { PoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/graphq
 
 import * as styles from '../../../../components/SelectableList/SelectableList.css'
 
-const selectableListItemVariants = {
+export interface PoliceDigitalCaseFilesData {
+  files: PoliceDigitalCaseFile[]
+  isLoading: boolean
+  hasError: boolean
+}
+
+const listItemVariants = {
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
@@ -21,15 +27,11 @@ const selectableListItemVariants = {
 export const PoliceDigitalCaseFilesList = ({
   digitalCaseFiles,
   isLoading,
-  successMessage,
   errorMessage,
-  warningMessage,
 }: {
   digitalCaseFiles: PoliceDigitalCaseFile[]
   isLoading: boolean
-  successMessage?: string
   errorMessage?: string
-  warningMessage?: string
 }) => {
   return (
     <Box
@@ -62,22 +64,6 @@ export const PoliceDigitalCaseFilesList = ({
               message={errorMessage}
             />
           </AnimateChildren>
-        ) : warningMessage ? (
-          <AnimateChildren id="warning-message">
-            <IconAndText
-              icon="warning"
-              iconColor="yellow400"
-              message={warningMessage}
-            />
-          </AnimateChildren>
-        ) : !isLoading && successMessage ? (
-          <AnimateChildren id="success-message">
-            <IconAndText
-              icon="checkmark"
-              iconColor="blue400"
-              message={successMessage}
-            />
-          </AnimateChildren>
         ) : (
           <ul className={styles.grid}>
             {digitalCaseFiles.map((item, index) => (
@@ -85,7 +71,7 @@ export const PoliceDigitalCaseFilesList = ({
                 custom={index}
                 initial="hidden"
                 animate="visible"
-                variants={selectableListItemVariants}
+                variants={listItemVariants}
                 key={item.id}
               >
                 <Box

@@ -20,7 +20,7 @@ export class PoliceDigitalCaseFile {
   // recording from external systems by system administrator we will not know the recording date...
   // The Police will try to add this date, but that can take a long time
   @ApiPropertyOptional({ type: Date })
-  displayDate!: Date
+  displayDate?: Date
 }
 
 // additional stored internal digital case files props
