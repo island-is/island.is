@@ -1,5 +1,7 @@
 import { WhereOptions } from 'sequelize'
 
+import { NotImplementedException } from '@nestjs/common'
+
 import {
   CaseTableType,
   isCourtOfAppealsUser,
@@ -180,5 +182,7 @@ export const caseTableWhereOptions: Record<
     prosecutionIndictmentsInProgressWhereOptions,
   [CaseTableType.PROSECUTION_INDICTMENTS_COMPLETED]:
     prosecutionIndictmentsCompletedWhereOptions,
-  [CaseTableType.STATISTICS]: () => ({}),
+  [CaseTableType.STATISTICS]: () => {
+    throw new NotImplementedException('Case table type not implemented')
+  },
 }

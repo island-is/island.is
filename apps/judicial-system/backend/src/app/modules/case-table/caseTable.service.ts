@@ -9,18 +9,16 @@ import {
   caseTables,
   CaseTableType,
   CaseType,
-  IndictmentCaseReviewDecision,
   isDistrictCourtUser,
-  isPrisonAdminUser,
   isProsecutionUser,
-  isPublicProsecutionOfficeUser,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-import { Case, CaseRepositoryService, Defendant, User } from '../repository'
+import { CaseRepositoryService, Defendant, User } from '../repository'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
+import { caseTableDisplayCases } from './caseTable.displayCases'
 import {
   getActionOnRowClick,
   getContextMenuActions,
@@ -134,108 +132,13 @@ export class CaseTableService {
       where: caseTableWhereOptions[type](user),
     })
 
-    const getDefendantFilter = (type: CaseTableType) => {
-      const isAcquittedLatestVerdict = (defendant: Defendant) =>
-        Boolean(defendant.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
-
-      const isAppealRequestLatestVerdict = (defendant: Defendant) =>
-        Boolean(defendant.verdicts?.[0]?.defendantHasRequestedAppeal)
-
-      const isNotAcquittedLatestVerdict = (defendant: Defendant) =>
-        !isAcquittedLatestVerdict(defendant)
-
-      const isNotAppealRequestLatestVerdict = (defendant: Defendant) =>
-        !isAppealRequestLatestVerdict(defendant)
-
-      if (
-        type === CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS
-      ) {
-        return (defendant: Defendant) => isAcquittedLatestVerdict(defendant)
-      }
-
-      if (
-        type ===
-        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL
-      ) {
-        return (defendant: Defendant) => isAppealRequestLatestVerdict(defendant)
-      }
-
-      if (
-        type === CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW ||
-        type === CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW
-      ) {
-        return (defendant: Defendant) =>
-          isNotAcquittedLatestVerdict(defendant) &&
-          isNotAppealRequestLatestVerdict(defendant)
-      }
-
-      const targetDecision = [
-        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED,
-        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED,
-        CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_SENT_TO_PRISON_ADMIN,
-      ].includes(type)
-        ? IndictmentCaseReviewDecision.ACCEPT
-        : IndictmentCaseReviewDecision.APPEAL
-
-      return (defendant: Defendant) =>
-        isNotAcquittedLatestVerdict(defendant) &&
-        isNotAppealRequestLatestVerdict(defendant) &&
-        defendant.indictmentReviewDecision === targetDecision
-    }
-
-    const expandCaseWithDefendants = (
-      caseItem: Case,
-      filter: (defendant: Defendant) => boolean,
-    ) => {
-      const jsonCase = caseItem.toJSON()
-
-      if (!caseItem.defendants?.length) {
-        return [jsonCase]
-      }
-
-      const filteredDefendants = caseItem.defendants.filter(filter)
-
-      return filteredDefendants.length > 0
-        ? filteredDefendants.map((defendant) => ({
-            ...jsonCase,
-            defendants: [defendant],
-          }))
-        : []
-    }
-
-    const getDisplayCases = (casesToDisplay: Case[]): Case[] => {
-      if (isPublicProsecutionOfficeUser(user)) {
-        return casesToDisplay.flatMap((caseItem) =>
-          expandCaseWithDefendants(caseItem, getDefendantFilter(type)),
-        )
-      }
-      if (isPrisonAdminUser(user)) {
-        const isRegisteredRulingTab =
-          type === CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING
-        return casesToDisplay.flatMap((caseItem) =>
-          expandCaseWithDefendants(caseItem, (d) => {
-            if (!d.isSentToPrisonAdmin) {
-              return false
-            }
-            const effectiveRegistered =
-              d.isRegisteredInPrisonSystem ??
-              caseItem.isRegisteredInPrisonSystem
-            return isRegisteredRulingTab
-              ? Boolean(effectiveRegistered)
-              : !effectiveRegistered
-          }),
-        )
-      }
-      return casesToDisplay
-    }
-
-    const displayCases = getDisplayCases(cases)
+    const displayCases = caseTableDisplayCases[type](cases)
 
     return {
       rowCount: displayCases.length,
       rows: displayCases.map((c) => ({
         caseId: c.id,
-        defendantIds: c.defendants?.map((d) => d.id),
+        defendantIds: c.defendants?.map((d: Defendant) => d.id),
         isMyCase: isMyCase(c, user),
         actionOnRowClick: getActionOnRowClick(c, user),
         contextMenuActions: getContextMenuActions(c, user),
