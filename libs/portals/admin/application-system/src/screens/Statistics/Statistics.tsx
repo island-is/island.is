@@ -10,12 +10,19 @@ import {
 import { useState } from 'react'
 import StatisticsTable from '../../components/StatisticsTable/StatisticsTable'
 import startOfMonth from 'date-fns/startOfMonth'
+import { Organization } from '@island.is/shared/types'
 
 interface StatisticsProps {
   isSuperAdmin: boolean
+  organizationListFromContentful: Organization[]
+  isLoadingOrganizationsFromContentful: boolean
 }
 
-const Statistics = ({ isSuperAdmin }: StatisticsProps) => {
+const Statistics = ({
+  isSuperAdmin,
+  organizationListFromContentful,
+  isLoadingOrganizationsFromContentful,
+}: StatisticsProps) => {
   const { formatMessage } = useLocale()
   const [dateInterval, setDateInterval] = useState<
     ApplicationFilters['period']
@@ -94,13 +101,18 @@ const Statistics = ({ isSuperAdmin }: StatisticsProps) => {
     ? superStatisticsData?.applicationV2ApplicationStatisticsSuperAdmin
     : institutionStatisticsData?.applicationV2ApplicationStatisticsInstitutionAdmin
 
+  const isLoading =
+    superStatisticsLoading ||
+    institutionStatisticsLoading ||
+    isLoadingOrganizationsFromContentful
+
   return (
     <Box>
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.statistics)}
       </Text>
       <StatisticsForm dateInterval={dateInterval} onDateChange={onDateChange} />
-      {(superStatisticsLoading || institutionStatisticsLoading) && (
+      {isLoading ? (
         <Box marginTop={[3, 3, 6]}>
           <SkeletonLoader
             height={60}
@@ -109,8 +121,13 @@ const Statistics = ({ isSuperAdmin }: StatisticsProps) => {
             borderRadius="large"
           />
         </Box>
+      ) : (
+        <StatisticsTable
+          isSuperAdmin={isSuperAdmin}
+          dataRows={dataRows}
+          organizations={organizationListFromContentful}
+        />
       )}
-      <StatisticsTable dataRows={dataRows} />
       {error && <Box marginTop={[3, 3, 6]}>{error}</Box>}
     </Box>
   )
