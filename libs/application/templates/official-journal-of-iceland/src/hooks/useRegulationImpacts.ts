@@ -12,6 +12,7 @@
  */
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLazyQuery, useMutation } from '@apollo/client'
+import { toast } from '@island.is/island-ui/core'
 import { RegulationImpactSchema } from '../lib/dataSchema'
 import { getDefaultDate } from '../lib/utils'
 import {
@@ -103,6 +104,12 @@ export const useRegulationImpacts = ({
   const [updateImpactMutation] = useMutation(UPDATE_DRAFT_IMPACT_MUTATION)
   const [deleteImpactMutation] = useMutation(DELETE_DRAFT_IMPACT_MUTATION)
 
+  // Reset when draftId changes so impacts are re-fetched for the new draft
+  useEffect(() => {
+    setImpactsLoaded(false)
+    setImpacts([])
+  }, [draftId])
+
   // Load impacts from DB when draftId becomes available
   useEffect(() => {
     if (!draftId || impactsLoaded) return
@@ -117,10 +124,9 @@ export const useRegulationImpacts = ({
           const loaded = mapDbImpactsToLocal(raw)
           setImpacts(loaded)
         }
+        setImpactsLoaded(true)
       } catch (error) {
         console.error('Failed to load impacts from DB:', error)
-      } finally {
-        setImpactsLoaded(true)
       }
     }
 
@@ -184,12 +190,12 @@ export const useRegulationImpacts = ({
       })
 
       const serverId = result.data?.OJOIACreateDraftImpact?.id
-      const impactWithServerId: RegulationImpactSchema = {
-        ...impact,
-        impactId: serverId ?? undefined,
+      if (!serverId) {
+        toast.error('Ekki tókst að vista færslu, reyndu aftur.')
+        return
       }
 
-      setImpacts((prev) => [...prev, impactWithServerId])
+      setImpacts((prev) => [...prev, { ...impact, impactId: serverId }])
     },
     [draftId, createImpactMutation],
   )

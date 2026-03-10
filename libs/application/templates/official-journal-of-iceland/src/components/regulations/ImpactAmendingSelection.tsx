@@ -50,6 +50,8 @@ export const ImpactAmendingSelection = ({
       if (value && value.length > 0) {
         setIsSearching(true)
         onSearch(value)
+      } else {
+        setIsSearching(false)
       }
     },
     600,

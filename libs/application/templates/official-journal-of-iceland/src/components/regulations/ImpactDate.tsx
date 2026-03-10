@@ -36,9 +36,16 @@ export const ImpactDate = (props: ImpactDateProps) => {
   const { formatMessage: f } = useLocale()
 
   useEffect(() => {
+    setHasCustomDate(!!date)
+    setSelectedDate(date ? new Date(date) : undefined)
+  }, [date])
+
+  useEffect(() => {
     if (hasCustomDate && !selectedDate && minDate) {
       setSelectedDate(minDate)
+      onChange(minDate)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasCustomDate, selectedDate, minDate])
 
   return (
@@ -49,6 +56,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
             <RadioButton
               name="set-no-custom-date"
               checked={!hasCustomDate}
+              disabled={readOnly}
               onChange={() => {
                 onChange(undefined)
                 setHasCustomDate(false)
@@ -62,6 +70,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
             <RadioButton
               name="select-custom-date"
               checked={hasCustomDate}
+              disabled={readOnly}
               onChange={() => {
                 setHasCustomDate(true)
               }}

@@ -70,7 +70,17 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
    */
   const generateAdvertText = useCallback(
     async (allImpacts: RegulationImpactSchema[]) => {
-      if (allImpacts.length === 0) return
+      if (allImpacts.length === 0) {
+        await updateApplicationV2({
+          path: InputFields.advert.html,
+          value: '',
+        })
+        await updateApplicationV2({
+          path: InputFields.advert.title,
+          value: '',
+        })
+        return
+      }
 
       // Generate body text from diffs
       const additions = formatAmendingBodyWithArticlePrefix(allImpacts)
