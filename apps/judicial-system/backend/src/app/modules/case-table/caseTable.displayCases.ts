@@ -38,10 +38,7 @@ const expandCaseWithDefendants = (
     .map((d) => ({ ...jsonCase, defendants: [d] }))
 }
 
-const genericDisplayCases = (cs: Case[]): Case[] => cs
-
-const allDefendantsDisplayCases = (cs: Case[]) =>
-  cs.flatMap((c) => expandCaseWithDefendants(c, () => true))
+const genericDisplayCases = (cs: Case[]) => cs.map((c) => c.toJSON())
 
 const prisonAdminNotRegisteredDefendantsDisplayCases = (cs: Case[]) =>
   cs.flatMap((c) =>
@@ -83,7 +80,7 @@ const publicProsecutionOfficeAppealedDefendantDisplayCases = (cs: Case[]) =>
 
 export const caseTableDisplayCases: Record<
   CaseTableType,
-  (cs: Case[]) => Case[]
+  (cs: Case[]) => ReturnType<typeof genericDisplayCases>
 > = {
   [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_IN_PROGRESS]:
     genericDisplayCases,
