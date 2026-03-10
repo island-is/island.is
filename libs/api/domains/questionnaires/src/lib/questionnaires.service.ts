@@ -135,10 +135,6 @@ export class QuestionnairesService {
     locale: Locale,
   ): Promise<QuestionnairesResponse> {
     const organization = this.normalizeOrganization(input.organization)
-    const { formatMessage } = await this.intlService.useIntl(
-      [NAMESPACE],
-      locale,
-    )
     if (!organization) {
       return {
         success: false,
@@ -148,65 +144,68 @@ export class QuestionnairesService {
 
     const { useEl, useLsh } = await this.getQuestionnaireFeatureFlags(user)
 
-    // Submit to LSH
-    if (organization === QuestionnairesOrganizationEnum.LSH) {
-      if (!useLsh) {
-        return {
-          success: false,
-          message: 'LSH questionnaires are unavailable',
-        }
-      }
-      try {
-        const lshAnswer = mapToLshAnswer(input)
-        const response = await this.lshApi.postAnsweredQuestionnaire(
-          user,
-          locale,
-          lshAnswer.gUID ?? input.id,
-          lshAnswer,
-        )
-        return {
-          success: true,
-          message: response?.message ?? 'Questionnaire submitted successfully',
-        }
-      } catch (e) {
-        return {
-          success: false,
-          message: 'Error submitting questionnaire to LSH',
-        }
-      }
+    if (organization === QuestionnairesOrganizationEnum.LSH && useLsh) {
+      return this.submitLshQuestionnaire(user, input, locale)
     }
 
-    // Submit to EL (Health Directorate)
-    if (organization === QuestionnairesOrganizationEnum.EL) {
-      if (!useEl) {
-        return {
-          success: false,
-          message: 'EL questionnaires are unavailable',
-        }
-      }
-      try {
-        const elAnswer = mapToElAnswer(input, formatMessage)
-        const response = await this.api.submitQuestionnaire(
-          user,
-          locale,
-          input.id, // questionnaire ID
-          elAnswer, // SubmitQuestionnaireDto
-        )
-        return {
-          success: true,
-          message: response?.toString(),
-        }
-      } catch (e) {
-        return {
-          success: false,
-          message: 'Error submitting questionnaire to EL',
-        }
-      }
+    if (organization === QuestionnairesOrganizationEnum.EL && useEl) {
+      return this.submitElQuestionnaire(user, input, locale)
     }
 
     return {
       success: false,
-      message: 'Unknown organization',
+      message: 'Organization not recognized or provider is unavailable',
+    }
+  }
+
+  private async submitLshQuestionnaire(
+    user: User,
+    input: QuestionnaireInput,
+    locale: Locale,
+  ): Promise<QuestionnairesResponse> {
+    try {
+      const lshAnswer = mapToLshAnswer(input)
+      const response = await this.lshApi.postAnsweredQuestionnaire(
+        user,
+        locale,
+        lshAnswer.gUID ?? input.id,
+        lshAnswer,
+      )
+      return {
+        success: true,
+        message: response?.message ?? 'Questionnaire submitted successfully',
+      }
+    } catch (e) {
+      return {
+        success: false,
+        message: 'Error submitting questionnaire to LSH',
+      }
+    }
+  }
+
+  private async submitElQuestionnaire(
+    user: User,
+    input: QuestionnaireInput,
+    locale: Locale,
+  ): Promise<QuestionnairesResponse> {
+    const { formatMessage } = await this.intlService.useIntl([NAMESPACE], locale)
+    try {
+      const elAnswer = mapToElAnswer(input, formatMessage)
+      const response = await this.api.submitQuestionnaire(
+        user,
+        locale,
+        input.id,
+        elAnswer,
+      )
+      return {
+        success: true,
+        message: response?.toString(),
+      }
+    } catch (e) {
+      return {
+        success: false,
+        message: 'Error submitting questionnaire to EL',
+      }
     }
   }
 
