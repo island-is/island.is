@@ -211,11 +211,13 @@ export const applicationReducer = (
           const currentLength = values.length
 
           const prev = values[currentLength - 1]
-          const maxOrder = Math.max(
-            ...values.map((v, i) =>
-              typeof v?.order === 'number' ? v.order : i,
-            ),
-          )
+          const maxOrder = values.length
+            ? Math.max(
+                ...values.map((v, i) =>
+                  typeof v?.order === 'number' ? v.order : i,
+                ),
+              )
+            : -1
           const nextOrder = maxOrder + 1
           const valueJson =
             getInitialJsonForField(fieldType as keyof FieldTypeMapping) ?? {}
@@ -226,6 +228,9 @@ export const applicationReducer = (
             json: valueJson,
             id: crypto.randomUUID(),
           }
+
+          const isMultisetField = field.isPartOfMultiset !== false
+          if (!isMultisetField) return field
 
           return {
             ...field,
