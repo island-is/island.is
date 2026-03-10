@@ -115,7 +115,7 @@ export const formerInsuranceSection = buildSection({
               answers,
               'formerInsurance.entitlement',
             )
-            if (entitlement === NO) {
+            if (entitlement === NO || entitlement === undefined) {
               return false
             }
 
