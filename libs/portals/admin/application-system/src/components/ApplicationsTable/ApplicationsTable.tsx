@@ -38,6 +38,7 @@ interface Props {
   shouldShowCardButtons?: boolean
   numberOfItems?: number // Set this if using paginated data from api
   showAdminData?: boolean
+  isSuperAdmin: boolean
 }
 
 export const ApplicationsTable = ({
@@ -49,6 +50,7 @@ export const ApplicationsTable = ({
   shouldShowCardButtons = true,
   numberOfItems,
   showAdminData,
+  isSuperAdmin,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -119,7 +121,7 @@ export const ApplicationsTable = ({
                 <Icon icon="chevronDown" ariaHidden />
               </Box>
             </T.HeadData>
-            {!showAdminData && (
+            {isSuperAdmin && !showAdminData && (
               <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
             )}
             <T.HeadData>{formatMessage(m.status)}</T.HeadData>
@@ -180,10 +182,10 @@ export const ApplicationsTable = ({
                       <T.Data text={{ color: cellText }}>
                         {format(new Date(application.modified), 'dd.MM.yyyy')}
                       </T.Data>
-                      {!showAdminData && (
+                      {isSuperAdmin && !showAdminData && (
                         <T.Data>
                           <Box display="flex" alignItems="center">
-                            <Tooltip text={application.institution}>
+                            <Tooltip text={application.institution ?? ''}>
                               <img src={logo} alt="" className={styles.logo} />
                             </Tooltip>
                           </Box>
