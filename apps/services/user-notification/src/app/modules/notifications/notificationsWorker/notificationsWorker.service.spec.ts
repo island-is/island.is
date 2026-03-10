@@ -454,6 +454,14 @@ describe('NotificationsWorkerService', () => {
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
   })
 
+  it('should not send email or push notification if recipient is deceased', async () => {
+    await addToQueue(deceasedUser.nationalId)
+
+    expect(notificationsWorkerService.createEmail).not.toHaveBeenCalled()
+    expect(emailService.sendEmail).not.toHaveBeenCalled()
+    expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
+  })
+
   it('should not send email if feature flag is turned off', async () => {
     await addToQueue(userWithFeatureFlagDisabled.nationalId)
 

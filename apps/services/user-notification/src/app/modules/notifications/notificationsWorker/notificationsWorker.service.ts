@@ -154,6 +154,13 @@ export class NotificationsWorkerService {
       return
     }
 
+    if (await this.isRecipientDeceased(args.recipient, args.messageId)) {
+      this.logger.info('Actor recipient is deceased, skipping notification', {
+        messageId: args.messageId,
+      })
+      return
+    }
+
     const locale: Locale = actorProfile.locale
       ? mapToLocale(actorProfile.locale)
       : 'is'
@@ -335,6 +342,13 @@ export class NotificationsWorkerService {
 
       if (!userProfile) {
         this.logger.info('No user profile found for user', { messageId })
+        return
+      }
+
+      if (await this.isRecipientDeceased(message.recipient, messageId)) {
+        this.logger.info('Recipient is deceased, skipping notification', {
+          messageId,
+        })
         return
       }
 
