@@ -835,6 +835,8 @@ export class ApplicationsService {
     const currentSection = this.getCurrentSection(sections, currentSectionId)
     const currentScreen = this.getCurrentScreen(currentSection, currentScreenId)
 
+    // console.log(`Current screen: ${JSON.stringify(currentScreen)}`)
+
     const application = await this.applicationModel.findByPk(applicationId, {
       include: [{ model: Value, as: 'values' }],
     })
@@ -935,6 +937,7 @@ export class ApplicationsService {
         )
 
         const filteredScreenDto = { ...currentScreen, fields: filteredFields }
+        console.log(`Filtered screen DTO: ${JSON.stringify(filteredScreenDto)}`)
         await Promise.all(
           (filteredScreenDto.fields ?? []).map(async (field) => {
             if (field.isPartOfMultiset) {

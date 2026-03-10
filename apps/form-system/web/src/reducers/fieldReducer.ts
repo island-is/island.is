@@ -36,8 +36,8 @@ export const fieldReducer = (
       return setFieldValue(state, 'phoneNumber', id, value)
     }
     case 'SET_TEXT': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'text', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'text', id, value, valueIndex)
     }
     case 'SET_NUMBER': {
       const { value, id } = action.payload

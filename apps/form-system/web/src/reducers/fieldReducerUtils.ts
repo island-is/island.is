@@ -245,6 +245,7 @@ export const setFieldValue = (
   fieldId: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
+  valueIndex?: number,
 ): ApplicationState => {
   const { currentScreen } = state
   if (!currentScreen || !currentScreen.data) {
@@ -252,11 +253,11 @@ export const setFieldValue = (
   }
 
   const screen = currentScreen.data
-
+  console.log('screen before update:', screen)
   // 1. Update the field's value on the current screen
   const updatedFields = screen.fields?.map((field) => {
     if (field?.id === fieldId) {
-      let newValue = field?.values?.[0] ?? {}
+      let newValue = field?.values?.[valueIndex ?? 0] ?? {}
       newValue = {
         ...newValue,
         json: {
@@ -264,14 +265,21 @@ export const setFieldValue = (
           [fieldProperty]: value,
         },
       }
+      // const values = field.values ?? []
+      const idx = valueIndex ?? 0
+      const nextValues = [...(field.values ?? [])]
+      nextValues[idx] = newValue
       return {
         ...field,
-        values: [newValue],
+        // values: [newValue],
+        // values: values?.map((v, i) => (i === idx ? newValue : v)),
+        values: nextValues,
       }
     }
     return field
   })
 
+  console.log('updatedFields:', updatedFields)
   const updatedScreen = {
     ...screen,
     fields: updatedFields,

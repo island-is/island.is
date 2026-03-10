@@ -38,7 +38,9 @@ export const BaseInput = () => {
     ? { value: defaultValue.id ?? '', label: defaultValue.name?.is ?? '' }
     : undefined
   const { formatMessage } = useIntl()
-
+  const screen = control.form.screens?.find(
+    (s) => s && s.id === currentItem.screenId,
+  )
   const renderDescription = () => {
     if (currentItem.fieldType === FieldTypesEnum.MESSAGE) {
       return true
@@ -213,6 +215,25 @@ export const BaseInput = () => {
             </Column>
           </Row>
         </>
+      )}
+      {screen?.isMulti && (
+        <Row>
+          <Column span="5/10">
+            <Checkbox
+              label={formatMessage(m.isPartOfMulti)}
+              checked={currentItem.isPartOfMultiset ?? false}
+              disabled={isPublished}
+              onChange={() =>
+                controlDispatch({
+                  type: 'CHANGE_IS_PART_OF_MULTI',
+                  payload: {
+                    update: updateActiveItem,
+                  },
+                })
+              }
+            />
+          </Column>
+        </Row>
       )}
       {currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX && (
         <Row>

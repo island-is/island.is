@@ -1,9 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
-import {
-  FieldTypeMapping,
-  getInitialJsonForField,
-  SectionTypes,
-} from '@island.is/form-system/ui'
+import { m, SectionTypes } from '@island.is/form-system/ui'
 import {
   AlertMessage,
   Box,
@@ -27,14 +23,17 @@ import {
   removeTypename,
 } from '@island.is/form-system/graphql'
 import { LoadingScreen } from '@island.is/react/components'
+import { useIntl } from 'react-intl'
 
 export const Screen = () => {
   const { state, dispatch } = useApplicationContext()
   const { lang } = useLocale()
   const { currentSection, currentScreen } = state
+  const { formatMessage } = useIntl()
   const [notifyExternal] = useMutation(NOTIFY_EXTERNAL_SERVICE)
   const [loading, setLoading] = useState(false)
-  const multiset = currentScreen?.data?.multiset ?? 1
+  const multiMax = currentScreen?.data?.multiMax ?? 1
+  const isMulti = currentScreen?.data?.isMulti ?? false
 
   const visibleFields =
     currentScreen?.data?.fields?.filter(
@@ -43,7 +42,7 @@ export const Screen = () => {
     ) ?? []
 
   const [numberOfItems, setNumberOfItems] = useState(
-    multiset > 1
+    isMulti && multiMax > 1
       ? Math.max(
           1,
           ...visibleFields.map(
@@ -181,19 +180,23 @@ export const Screen = () => {
           Array.from({ length: numberOfItems }).map((_, itemIndex) => (
             <Box key={`multiset-item-${itemIndex}`} marginBottom={4}>
               {visibleFields
-                .filter((field) =>
-                  field.fieldType === 'MESSAGE' ? itemIndex === 0 : true,
+                .filter(
+                  (field) =>
+                    field.isPartOfMultiset !== false || itemIndex === 0,
                 )
                 .map((field) => (
                   <Field
                     field={field}
+                    valueIndex={
+                      field.isPartOfMultiset === false ? 0 : itemIndex
+                    }
                     key={`${field.id ?? 'field'}-${itemIndex}`}
                   />
                 ))}
             </Box>
           ))}
 
-        {multiset > 1 && (
+        {isMulti && multiMax > 1 && (
           <Box display="flex" justifyContent="flexEnd" paddingTop={6}>
             <Box marginRight={2}>
               {numberOfItems > 1 && (
@@ -203,7 +206,7 @@ export const Screen = () => {
                   type="button"
                   onClick={handleRemoveItem}
                 >
-                  Fjarlægja
+                  {formatMessage(m.removeMulti)}
                 </Button>
               )}
             </Box>
@@ -212,9 +215,9 @@ export const Screen = () => {
               type="button"
               onClick={handleNewItem}
               icon="add"
-              disabled={numberOfItems >= multiset}
+              disabled={numberOfItems >= multiMax}
             >
-              Bæta við línu
+              {formatMessage(m.addMulti)}
             </Button>
           </Box>
         )}

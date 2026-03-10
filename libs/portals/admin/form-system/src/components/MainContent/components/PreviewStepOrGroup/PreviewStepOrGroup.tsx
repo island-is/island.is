@@ -39,7 +39,7 @@ export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
                 <Box marginBottom={1}>
                   <Text variant="h3">{screen?.name?.is}</Text>
                 </Box>
-                {screen?.multiset !== 0 ? (
+                {screen?.multiMax !== 0 ? (
                   <MultiSet screen={screen as FormSystemScreen} />
                 ) : (
                   fields
@@ -61,7 +61,7 @@ export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
           <div>
             <Text variant="h2">{activeItem?.data?.name?.is}</Text>
           </div>
-          {(activeItem.data as FormSystemScreen).multiset !== 0 ? (
+          {(activeItem.data as FormSystemScreen).multiMax !== 0 ? (
             <MultiSet screen={activeItem.data as FormSystemScreen} />
           ) : (
             fields
