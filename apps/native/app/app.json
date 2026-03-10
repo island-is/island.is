@@ -109,12 +109,16 @@
         {
           "ios": {
             "useFrameworks": "static",
-            "buildReactNativeFromSource": true,
+            "buildReactNativeFromSource": false,
             "forceStaticLinking": [
               "RNFBApp"
             ],
             "ccacheEnabled": false,
-            "useHermesV1": true
+            "useHermesV1": false
+          },
+          "android": {
+            "buildReactNativeFromSource": false,
+            "useHermesV1": false
           }
         }
       ],

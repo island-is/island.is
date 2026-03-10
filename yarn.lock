@@ -33707,10 +33707,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hermes-compiler@npm:250829098.0.4":
-  version: 250829098.0.4
-  resolution: "hermes-compiler@npm:250829098.0.4"
-  checksum: 10/822d715e599372b1880b1be7df9404231fe84e1945a966b48cc302beb24838f8c8b088fc5ea762cbe0890f91204feb0be7b6daeb7c435d4eb332e694b61d1c8a
+"hermes-compiler@npm:0.14.1":
+  version: 0.14.1
+  resolution: "hermes-compiler@npm:0.14.1"
+  checksum: 10/dbb0f4886532b26262721fa34de5947502b265cea8574f6094915abf59d31c757da6a41730cb6f6d088ec7607d659e8b4036782d227dcf072e9a49152bbef756
   languageName: node
   linkType: hard
 

@@ -116,6 +116,42 @@ definitions:
       script: |
         cd android
         ./gradlew bundleRelease
+    - &build_ios_simulator
+      name: Build iOS simulator app (Release)
+      script: |
+        xcodebuild \
+          -workspace "ios/$XCODE_WORKSPACE" \
+          -scheme "$XCODE_SCHEME" \
+          -configuration Release \
+          -sdk iphonesimulator \
+          -derivedDataPath ios/build \
+          ARCHS="arm64" \
+          ONLY_ACTIVE_ARCH=YES
+
+        # Zip the .app for devicecloud upload
+        APP_PATH=$(find ios/build -name "*.app" -type d | head -1)
+        cd "$(dirname "$APP_PATH")"
+        zip -r "$CM_BUILD_DIR/IslandApp.zip" "$(basename "$APP_PATH")"
+    - &build_android_apk
+      name: Build Android release APK
+      script: |
+        cd android
+        ./gradlew assembleRelease
+    - &run_devicecloud_ios
+      name: Upload iOS to DeviceCloud
+      script: |
+        npx --yes @devicecloud.dev/dcd@latest cloud \
+          "$CM_BUILD_DIR/IslandApp.zip" \
+          .maestro/ \
+          --apiKey "$DCD_API_KEY"
+    - &run_devicecloud_android
+      name: Upload Android to DeviceCloud
+      script: |
+        APK_PATH=$(find android/app/build/outputs -name "*.apk" -type f | head -1)
+        npx --yes @devicecloud.dev/dcd@latest cloud \
+          "$APK_PATH" \
+          .maestro/ \
+          --apiKey "$DCD_API_KEY"
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
@@ -166,7 +202,7 @@ workflows:
       - *provisioning_profiles
       - *increment_build_number
       - *build_ipa
-    artifacts: &ios_artifacts
+    artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
@@ -187,6 +223,8 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: is.island.app.dev
+      groups:
+        - devicecloud
       vars:
         <<: *shared_envs
         BUNDLE_ID: 'is.island.app.dev'
@@ -199,10 +237,19 @@ workflows:
       - *codegen
       - *prebuild_ios
       - *cocoapods
+      # E2E: build simulator app, run tests, gate store build on passing
+      - *build_ios_simulator
+      - *run_devicecloud_ios
+      # Store build (only runs if e2e passed)
       - *provisioning_profiles
       - *increment_build_number
       - *build_ipa
-    artifacts: *ios_artifacts
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+      - $CM_BUILD_DIR/IslandApp.zip
     publishing:
       <<: *ios_publishing
       slack:
@@ -242,7 +289,7 @@ workflows:
       - *prebuild_android
       - *set_android_location
       - *build_android
-    artifacts: &android_artifacts
+    artifacts:
       - android/app/build/outputs/**/*.aab
     publishing:
       <<: *android_publishing
@@ -262,6 +309,7 @@ workflows:
       groups:
         - google_credentials
         - firebase_credentials_dev
+        - devicecloud
       vars:
         <<: *shared_envs
         PACKAGE_NAME: 'is.island.app.dev'
@@ -271,11 +319,17 @@ workflows:
       - *pip_install
       - *npm_install
       - *codegen
-      - *get_android_version_code
       - *prebuild_android
       - *set_android_location
+      # E2E: build APK, run tests, gate store build on passing
+      - *build_android_apk
+      - *run_devicecloud_android
+      # Store build (only runs if e2e passed, fast due to Gradle cache)
+      - *get_android_version_code
       - *build_android
-    artifacts: *android_artifacts
+    artifacts:
+      - android/app/build/outputs/**/*.aab
+      - android/app/build/outputs/**/*.apk
     publishing:
       <<: *android_publishing
       <<: *slack_errors

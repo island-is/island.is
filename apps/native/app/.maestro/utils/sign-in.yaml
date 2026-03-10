@@ -1,0 +1,10 @@
+appId: ${APP_ID}
+---
+- runFlow:
+    when:
+      visible:
+        id: 'LOGIN_BUTTON_AUTHENTICATE'
+        optional: true
+    commands:
+      - tapOn:
+          id: 'LOGIN_BUTTON_AUTHENTICATE'
