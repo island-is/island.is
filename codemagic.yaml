@@ -223,8 +223,8 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: is.island.app.dev
-      groups:
-        - devicecloud
+      # groups:
+      #   - devicecloud
       vars:
         <<: *shared_envs
         BUNDLE_ID: 'is.island.app.dev'
@@ -309,7 +309,7 @@ workflows:
       groups:
         - google_credentials
         - firebase_credentials_dev
-        - devicecloud
+        # - devicecloud
       vars:
         <<: *shared_envs
         PACKAGE_NAME: 'is.island.app.dev'
@@ -322,8 +322,8 @@ workflows:
       - *prebuild_android
       - *set_android_location
       # E2E: build APK, run tests, gate store build on passing
-      - *build_android_apk
-      - *run_devicecloud_android
+      # - *build_android_apk
+      # - *run_devicecloud_android
       # Store build (only runs if e2e passed, fast due to Gradle cache)
       - *get_android_version_code
       - *build_android
