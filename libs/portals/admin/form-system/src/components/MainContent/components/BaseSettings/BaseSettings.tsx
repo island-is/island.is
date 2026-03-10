@@ -1,17 +1,17 @@
+import { UpdateFormResponse } from '@island.is/form-system/shared'
+import { m } from '@island.is/form-system/ui'
 import {
-  Stack,
-  GridRow as Row,
-  GridColumn as Column,
-  Input,
-  DatePicker,
-  Checkbox,
   Box,
+  Checkbox,
+  GridColumn as Column,
+  DatePicker,
+  Input,
+  GridRow as Row,
+  Stack,
 } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
-import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
-import { UpdateFormResponse } from '@island.is/form-system/shared'
+import { ControlContext } from '../../../../context/ControlContext'
 import { convertToSlug } from '../../../../lib/utils/convertToSlug'
 
 export const BaseSettings = () => {
@@ -291,27 +291,6 @@ export const BaseSettings = () => {
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_HAS_SUMMARY_SCREEN',
-                payload: {
-                  value: e.target.checked,
-                  update: formUpdate,
-                },
-              })
-            }}
-          />
-        </Column>
-      </Row>
-      <Row>
-        <Column>
-          <Checkbox
-            label={formatMessage(m.payment)}
-            checked={
-              form.hasPayment !== null && form.hasPayment !== undefined
-                ? form.hasPayment
-                : false
-            }
-            onChange={(e) => {
-              controlDispatch({
-                type: 'CHANGE_HAS_PAYMENT',
                 payload: {
                   value: e.target.checked,
                   update: formUpdate,

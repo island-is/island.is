@@ -182,7 +182,6 @@ export const Navbar = () => {
       .filter((s) => {
         if (s.sectionType === SectionTypes.INPUT) return false
         if (s.sectionType === SectionTypes.SUMMARY) return false
-        if (!hasPayment && s.sectionType === SectionTypes.PAYMENT) return false
         return true
       })
       .map((s) => (
@@ -331,17 +330,6 @@ export const Navbar = () => {
           )}
         </DndContext>
       </Box>
-      {/* {payment && hasPayment && (
-        <Fragment>
-          <NavComponent
-            type="Section"
-            data={payment}
-            active={activeItem.data?.id === payment.id}
-            focusComponent={focusComponent}
-          />
-          {renderScreensForSection(payment as FormSystemSection)}
-        </Fragment>
-      )} */}
       <Box
         display="flex"
         justifyContent="center"

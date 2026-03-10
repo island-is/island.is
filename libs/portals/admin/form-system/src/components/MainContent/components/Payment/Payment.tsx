@@ -20,8 +20,8 @@ import { PaymentItem } from './components/PaymentItem'
 const SYSLUMENNID = '6509142520' // Example organization ID, replace with actual ID as needed
 
 export const Payment = () => {
-  const { control, controlDispatch } = useContext(ControlContext)
-  const { sections, screens, fields } = control.form
+  const { control, controlDispatch, formUpdate } = useContext(ControlContext)
+  const { sections, screens, fields, hasPayment } = control.form
   const paymentSection = sections?.find(
     (s) => s?.sectionType === SectionTypes.PAYMENT,
   )
@@ -85,6 +85,15 @@ export const Payment = () => {
           skipActiveItem: true,
         },
       })
+      if (!hasPayment) {
+        controlDispatch({
+          type: 'CHANGE_HAS_PAYMENT',
+          payload: {
+            value: true,
+            update: formUpdate,
+          },
+        })
+      }
     }
   }
 
@@ -106,6 +115,7 @@ export const Payment = () => {
             field={field as FormSystemField}
             paymentCatalog={paymentCatalog}
             catalogNames={catalogNames}
+            paymentFields={paymentFields as FormSystemField[]}
           />
         ))}
       </Stack>

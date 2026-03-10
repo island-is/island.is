@@ -1,25 +1,57 @@
+import { useMutation } from '@apollo/client'
 import { FormSystemField, PaymentCatalogItem } from '@island.is/api/schema'
+import { DELETE_FIELD } from '@island.is/form-system/graphql'
 import {
   Box,
   Button,
-  Checkbox,
   GridColumn as Column,
   GridRow as Row,
   Select,
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { ControlContext } from '../../../../../context/ControlContext'
-import { toUndefined } from '../../../../../lib/utils/toUndefined'
 
 interface Props {
   field: FormSystemField
   paymentCatalog: PaymentCatalogItem[]
   catalogNames: { label: string; value: string }[]
+  paymentFields: FormSystemField[]
 }
 
-export const PaymentItem = ({ field, paymentCatalog, catalogNames }: Props) => {
-  const { controlDispatch, updateActiveItem } = useContext(ControlContext)
+export const PaymentItem = ({
+  field,
+  paymentCatalog,
+  catalogNames,
+  paymentFields,
+}: Props) => {
+  const { controlDispatch, updateActiveItem, formUpdate } =
+    useContext(ControlContext)
+  const deleteField = useMutation(DELETE_FIELD)[0]
   const { fieldSettings } = field
+
+  const handleRemove = async () => {
+    const result = await deleteField({
+      variables: { input: { id: field.id } },
+    })
+    if (!result.errors) {
+      controlDispatch({
+        type: 'REMOVE_FIELD',
+        payload: {
+          id: field.id,
+          skipActiveItem: true,
+        },
+      })
+      if (paymentFields.filter((f) => f.id !== field.id).length === 0) {
+        controlDispatch({
+          type: 'CHANGE_HAS_PAYMENT',
+          payload: {
+            value: false,
+            update: formUpdate,
+          },
+        })
+      }
+    }
+  }
   return (
     <Box border="standard" borderRadius="large" padding={3}>
       <Row>
@@ -38,7 +70,6 @@ export const PaymentItem = ({ field, paymentCatalog, catalogNames }: Props) => {
                 type: 'SET_PAYMENT_SETTINGS',
                 payload: {
                   ...paymentSettings,
-                  chooseQuantity: false,
                   field,
                   update: updateActiveItem,
                 },
@@ -60,69 +91,13 @@ export const PaymentItem = ({ field, paymentCatalog, catalogNames }: Props) => {
               name={`remove-${field.id}`}
               variant="ghost"
               colorScheme="destructive"
-              onClick={() => {
-                controlDispatch({
-                  type: 'REMOVE_FIELD',
-                  payload: {
-                    id: field.id,
-                    skipActiveItem: true,
-                  },
-                })
-              }}
+              onClick={handleRemove}
               size="small"
               icon="trash"
             />
           </Box>
         </Column>
       </Row>
-      <Row>
-        <Column span="12/12">
-          <Box marginTop={2}>
-            <Checkbox
-              label="Fjölda val"
-              checked={fieldSettings?.chooseQuantity || false}
-              onChange={(e) => {
-                controlDispatch({
-                  type: 'SET_PAYMENT_SETTINGS',
-                  payload: {
-                    ...fieldSettings,
-                    chargeItemCode: toUndefined(fieldSettings?.chargeItemCode),
-                    chargeItemName: toUndefined(fieldSettings?.chargeItemName),
-                    chargeType: toUndefined(fieldSettings?.chargeType),
-                    performingOrgID: toUndefined(
-                      fieldSettings?.performingOrgID,
-                    ),
-                    priceAmount: toUndefined(fieldSettings?.priceAmount),
-                    chooseQuantity: e.target.checked,
-                    field,
-                    update: updateActiveItem,
-                  },
-                })
-              }}
-            />
-          </Box>
-        </Column>
-      </Row>
-      {/* <Box marginTop={2}>
-        <Stack space={1}>
-          <Text>
-            {`ChargeItemCode: ${fieldSettings?.chargeItemCode || 'Ekki skráð'}`}
-          </Text>
-          <Text>
-            {`ChargeItemName: ${fieldSettings?.chargeItemName || 'Ekki skráð'}`}
-          </Text>
-          <Text>
-            {`ChargeType: ${fieldSettings?.chargeType || 'Ekki skráð'}`}
-          </Text>
-          <Text>
-            {`PriceAmount: ${
-              fieldSettings?.priceAmount !== undefined
-                ? fieldSettings.priceAmount
-                : 'Ekki skráð'
-            }`}
-          </Text>
-        </Stack>
-      </Box> */}
     </Box>
   )
 }

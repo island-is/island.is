@@ -5,6 +5,7 @@ import { ControlContext } from '../../../../../../context/ControlContext'
 import { CheckboxSettings } from './components/CheckboxSettings'
 import { ListSettings } from './components/ListSettings'
 import { MessageWithLinkSettings } from './components/MessageWithLinkSettings'
+import { PaymentFieldSettings } from './components/PaymentFieldSettings'
 import { TextFieldSettings } from './components/TextFieldSettings'
 import { FileUploadSettings } from './components/UploadSettings'
 
@@ -28,6 +29,9 @@ export const FieldSettings = () => {
       )}
       {currentItem.fieldType === FieldTypesEnum.CHECKBOX && (
         <CheckboxSettings />
+      )}
+      {currentItem.fieldType === FieldTypesEnum.PAYMENT_QUANTITY && (
+        <PaymentFieldSettings />
       )}
     </>
   )

@@ -178,7 +178,7 @@ export const FormProvider: React.FC<{
   useEffect(() => {
     if (process.env.NODE_ENV !== 'development') return
     // Dev-only logic
-    console.debug('[FormProvider] Dev mode', {
+    console.log('[FormProvider] Dev mode', {
       formId: control.form?.id,
       activeItemType: control.activeItem?.type,
       inSettings,
@@ -188,6 +188,7 @@ export const FormProvider: React.FC<{
     })
   }, [
     control.form?.id,
+    control.form?.hasPayment,
     control.activeItem?.type,
     inSettings,
     inListBuilder,

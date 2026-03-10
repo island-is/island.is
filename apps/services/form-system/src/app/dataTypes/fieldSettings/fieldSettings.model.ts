@@ -161,5 +161,10 @@ export class FieldSettings {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  chooseQuantity?: boolean
+  isDropdown?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  paymentQuantityId?: string
 }

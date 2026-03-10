@@ -28,9 +28,9 @@ export const BaseInput = () => {
     getTranslation,
     selectStatus,
   } = useContext(ControlContext)
-  const { activeItem } = control
+  const { activeItem, form } = control
   const currentItem = activeItem.data as FormSystemField
-  const selectList = fieldTypesSelectObject()
+  const selectList = fieldTypesSelectObject(form.hasPayment ?? false)
   const defaultValue = fieldTypes?.find(
     (fieldType) => fieldType?.id === currentItem.fieldType,
   )
@@ -43,6 +43,9 @@ export const BaseInput = () => {
     if (currentItem.fieldType === FieldTypesEnum.MESSAGE) {
       return true
     }
+    // if (currentItem.fieldType === FieldTypesEnum.PAYMENT_QUANTITY) {
+    //   return true
+    // }
     if (
       currentItem.fieldType === FieldTypesEnum.CHECKBOX &&
       currentItem.fieldSettings?.hasDescription
@@ -210,20 +213,22 @@ export const BaseInput = () => {
       )}
       <Row>
         {/* Required checkbox */}
-        <Column span="5/10">
-          <Checkbox
-            label={formatMessage(m.required)}
-            checked={currentItem.isRequired ?? false}
-            onChange={() =>
-              controlDispatch({
-                type: 'CHANGE_IS_REQUIRED',
-                payload: {
-                  update: updateActiveItem,
-                },
-              })
-            }
-          />
-        </Column>
+        {currentItem.fieldType !== FieldTypesEnum.PAYMENT_QUANTITY && (
+          <Column span="5/10">
+            <Checkbox
+              label={formatMessage(m.required)}
+              checked={currentItem.isRequired ?? false}
+              onChange={() =>
+                controlDispatch({
+                  type: 'CHANGE_IS_REQUIRED',
+                  payload: {
+                    update: updateActiveItem,
+                  },
+                })
+              }
+            />
+          </Column>
+        )}
       </Row>
     </Stack>
   )

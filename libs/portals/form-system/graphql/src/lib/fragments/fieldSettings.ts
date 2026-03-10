@@ -38,7 +38,8 @@ export const FieldSettingsFragment = gql`
     chargeType
     performingOrgID
     priceAmount
-    chooseQuantity
+    isDropdown
+    paymentQuantityId
   }
   ${ListItemFragment}
   ${LanguageFields}

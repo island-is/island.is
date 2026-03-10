@@ -25,6 +25,7 @@ enum FieldTypes {
   NUMBERBOX = 'Tölubox',
   RADIO_BUTTONS = 'Valhnappar',
   APPLICANT = 'Umsækjandi',
+  PAYMENT_QUANTITY = 'Greiðslu magn',
 }
 
 export const getFieldTypeValue = (type: string) => {
@@ -39,10 +40,19 @@ export const getFieldTypeKey = (value: string) => {
   )
 }
 
-export const fieldTypesSelectObject = (): readonly Option<string>[] => {
-  const fieldTypes = Object.keys(FieldTypes).map((key) => ({
-    label: FieldTypes[key as keyof typeof FieldTypes],
-    value: FieldTypesEnum[key as keyof typeof FieldTypes],
-  }))
-  return fieldTypes
+export const fieldTypesSelectObject = (
+  hasPayment: boolean,
+): readonly Option<string>[] => {
+  return Object.keys(FieldTypes)
+    .map((key) => ({
+      label: FieldTypes[key as keyof typeof FieldTypes],
+      value: FieldTypesEnum[key as keyof typeof FieldTypes],
+    }))
+    .filter(
+      (option) =>
+        hasPayment || option.value !== FieldTypesEnum.PAYMENT_QUANTITY,
+    )
+    .sort((a, b) =>
+      a.label.localeCompare(b.label, 'is', { sensitivity: 'base' }),
+    )
 }

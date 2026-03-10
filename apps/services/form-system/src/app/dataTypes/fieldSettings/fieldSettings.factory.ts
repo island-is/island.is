@@ -54,8 +54,11 @@ export class FieldSettingsFactory {
           'chargeType',
           'performingOrgID',
           'priceAmount',
-          'chooseQuantity',
+          'paymentQuantityId',
         ]
+        return this.pickSettings(fieldSettings, keys)
+      case FieldTypesEnum.PAYMENT_QUANTITY:
+        keys = ['minValue', 'maxValue', 'isDropdown']
         return this.pickSettings(fieldSettings, keys)
       default:
         return this.pickSettings(fieldSettings, keys)
