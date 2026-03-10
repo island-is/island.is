@@ -926,7 +926,6 @@ export const controlReducer = (
 
     case 'CHANGE_MULTI_MAX': {
       const currentData = activeItem.data as FormSystemScreen
-      console.log('action.payload.value', action.payload.value)
       const newActive = {
         ...activeItem,
         data: {

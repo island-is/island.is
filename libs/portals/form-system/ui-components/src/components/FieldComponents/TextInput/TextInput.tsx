@@ -19,7 +19,6 @@ export const TextInput = ({ item, valueIndex = 0, dispatch }: Props) => {
   const { lang, formatMessage } = useLocale()
   const { isLarge, maxLength: maxL, hasDescription } = fieldSettings || {}
   const maxLength = maxL === undefined || maxL === 0 ? -1 : maxL
-  console.log('value index', valueIndex)
   return (
     <Box>
       {isLarge && maxLength && maxLength > 0 && (

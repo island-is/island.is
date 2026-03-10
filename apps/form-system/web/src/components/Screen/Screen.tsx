@@ -41,16 +41,19 @@ export const Screen = () => {
         field != null && !field.isHidden,
     ) ?? []
 
-  const [numberOfItems, setNumberOfItems] = useState(
-    isMulti && multiMax > 1
-      ? Math.max(
-          1,
-          ...visibleFields.map(
-            (f) => ((f as any).values?.length as number) ?? 1,
-          ),
-        )
-      : 1,
-  )
+  const [numberOfItems, setNumberOfItems] = useState(1)
+
+  useEffect(() => {
+    if (isMulti && multiMax > 1) {
+      const maxItems = Math.max(
+        1,
+        ...visibleFields.map((f) => (f.values?.length as number) ?? 1),
+      )
+      setNumberOfItems(maxItems)
+    } else {
+      setNumberOfItems(1)
+    }
+  }, [currentScreen?.data?.id, isMulti, multiMax])
 
   const screenTitle =
     currentScreen?.data?.name?.[lang] ??
