@@ -400,7 +400,7 @@ export class PoliceService {
 
     try {
       const res = await this.fetchPoliceDocumentApi(
-        `${this.xRoadPath}/V4/GetDefendants/${caseId}`,
+        `${this.xRoadPath}/V4/GetRVAdilarMals/${caseId}`,
       )
 
       if (!res.ok) {
