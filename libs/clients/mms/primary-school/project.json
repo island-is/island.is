@@ -1,0 +1,26 @@
+{
+  "name": "clients-mms-primary-school",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/mms/primary-school/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/clients/mms/primary-school/jest.config.ts"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-ts -f libs/clients/mms/primary-school/src/lib/openapi-ts.config.ts"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}

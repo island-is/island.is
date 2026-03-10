@@ -73,6 +73,82 @@ export const edMessage = defineMessages({
   },
 })
 
+export const primarySchoolMessages = defineMessages({
+  studentListTitle: {
+    id: 'sp.education-primary-school:student-list-title',
+    defaultMessage: 'Grunnskóli',
+  },
+  studentListIntro: {
+    id: 'sp.education-primary-school:student-list-intro',
+    defaultMessage: 'Hér getur þú fundið yfirlit yfir grunnskólanám barna þinna.',
+  },
+  studentListCta: {
+    id: 'sp.education-primary-school:student-list-cta',
+    defaultMessage: 'Skoða upplýsingar',
+  },
+  studentHubIntro: {
+    id: 'sp.education-primary-school:student-hub-intro',
+    defaultMessage: 'Hér getur þú fundið yfirlit yfir námsmat',
+  },
+  overviewTitle: {
+    id: 'sp.education-primary-school:overview-title',
+    defaultMessage: 'Yfirlit grunnskóla',
+  },
+  overviewIntro: {
+    id: 'sp.education-primary-school:overview-intro',
+    defaultMessage: 'Hér koma grunnupplýsingar um grunnskólagöngu barns.',
+  },
+  assessmentTitle: {
+    id: 'sp.education-primary-school:assessment-title',
+    defaultMessage: 'Námsmat',
+  },
+  assessmentIntro: {
+    id: 'sp.education-primary-school:assessment-intro',
+    defaultMessage: 'Hér getur þú fundið yfirlit yfir námsmat',
+  },
+  permissionTitle: {
+    id: 'sp.education-primary-school:permission-title',
+    defaultMessage: 'Heimildir',
+  },
+  permissionIntro: {
+    id: 'sp.education-primary-school:permission-intro',
+    defaultMessage:
+      'Hér má finna samþykktir og leyfi sem forráðamenn þurfa að veita',
+  },
+  hubOverview: {
+    id: 'sp.education-primary-school:hub-overview',
+    defaultMessage: 'Yfirlit',
+  },
+  hubOverviewDescription: {
+    id: 'sp.education-primary-school:hub-overview-description',
+    defaultMessage: 'Yfirlit yfir grunnskólagöngu barns',
+  },
+  hubAssessment: {
+    id: 'sp.education-primary-school:hub-assessment',
+    defaultMessage: 'Námsmat',
+  },
+  hubAssessmentDescription: {
+    id: 'sp.education-primary-school:hub-assessment-description',
+    defaultMessage: 'Yfirlit yfir námsmat barns',
+  },
+  hubPermissions: {
+    id: 'sp.education-primary-school:hub-permissions',
+    defaultMessage: 'Heimildir',
+  },
+  hubPermissionsDescription: {
+    id: 'sp.education-primary-school:hub-permissions-description',
+    defaultMessage: 'Samþykktir og leyfi forráðamanna',
+  },
+  seeDetails: {
+    id: 'sp.education-primary-school:see-details',
+    defaultMessage: 'Skoða',
+  },
+  mmsEyebrow: {
+    id: 'sp.education-primary-school:mms-eyebrow',
+    defaultMessage: 'Miðstöð menntunar og skólaþjónustu',
+  },
+})
+
 export const uniMessages = defineMessages({
   degree: {
     id: 'sp.education-graduation:education-grad-detail-degree',

@@ -159,6 +159,9 @@ export enum Features {
 
   // Admin portal
   isFormSystemInAdminPortalEnabled = 'isFormSystemInAdminPortalEnabled',
+
+  // Primary school (guardian-facing)
+  isServicePortalPrimarySchoolPageEnabled = 'isServicePortalPrimarySchoolPageEnabled',
 }
 
 export enum ServerSideFeature {

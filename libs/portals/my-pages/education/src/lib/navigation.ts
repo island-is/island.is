@@ -22,6 +22,35 @@ export const educationNavigation: PortalNavigationItem = {
           searchHide: true,
           path: EducationPaths.EducationAssessment,
         },
+        {
+          name: m.educationGrunnskoli,
+          searchHide: true,
+          path: EducationPaths.PrimarySchoolList,
+          children: [
+            {
+              name: m.educationGrunnskoli,
+              navHide: true,
+              path: EducationPaths.PrimarySchoolStudent,
+              children: [
+                {
+                  name: m.educationGrunnskoli,
+                  navHide: true,
+                  path: EducationPaths.PrimarySchoolOverview,
+                },
+                {
+                  name: m.educationGrunnskoli,
+                  navHide: true,
+                  path: EducationPaths.PrimarySchoolAssessment,
+                },
+                {
+                  name: m.educationGrunnskoli,
+                  navHide: true,
+                  path: EducationPaths.PrimarySchoolStudentPermission,
+                },
+              ],
+            },
+          ],
+        },
       ],
     },
     {
