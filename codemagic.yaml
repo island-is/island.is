@@ -319,13 +319,13 @@ workflows:
       - *pip_install
       - *npm_install
       - *codegen
+      - *get_android_version_code
       - *prebuild_android
       - *set_android_location
       # E2E: build APK, run tests, gate store build on passing
       # - *build_android_apk
       # - *run_devicecloud_android
       # Store build (only runs if e2e passed, fast due to Gradle cache)
-      - *get_android_version_code
       - *build_android
     artifacts:
       - android/app/build/outputs/**/*.aab
