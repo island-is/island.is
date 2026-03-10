@@ -272,6 +272,7 @@ air-discount-scheme-web:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
     IDENTITY_SERVER_SECRET: '/k8s/air-discount-scheme/web/IDENTITY_SERVER_SECRET'
+    NEXTAUTH_SECRET: '/k8s/air-discount-scheme/web/NEXTAUTH_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1335,6 +1336,7 @@ consultation-portal:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
     IDENTITY_SERVER_SECRET: '/k8s/consultation-portal/IDENTITY_SERVER_SECRET'
+    NEXTAUTH_SECRET: '/k8s/consultation-portal/NEXTAUTH_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -3717,6 +3719,7 @@ skilavottord-web:
     DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
     IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
     IDENTITY_SERVER_LOGOUT_REDIRECT_URL: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
+    NEXTAUTH_SECRET: '/k8s/skilavottord/web/NEXTAUTH_SECRET'
     NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL'
     SKILAVOTTORD_WEB_IDS_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
   securityContext:
