@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import {
-  useGetOrganizationsQuery,
   useGetApplicationV2ApplicationsSuperAdminQuery,
   useGetApplicationV2InstitutionsSuperAdminQuery,
   useGetApplicationV2ApplicationsInstitutionAdminQuery,
@@ -24,21 +23,21 @@ const defaultFilters: ApplicationFilters = {
 
 interface OverviewProps {
   isSuperAdmin: boolean
+  organizationListFromContentful: Organization[]
+  isLoadingOrganizationsFromContentful: boolean
 }
 
 const pageSize = 12
 
-const Overview = ({ isSuperAdmin }: OverviewProps) => {
+const Overview = ({
+  isSuperAdmin,
+  organizationListFromContentful,
+  isLoadingOrganizationsFromContentful,
+}: OverviewProps) => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState(defaultFilters)
   const [availableApplications, setAvailableApplications] = useState<string[]>()
-
-  //These are all organizations in contentful
-  const { data: contentfulOrgDataResults, loading: orgsLoading } =
-    useGetOrganizationsQuery({
-      ssr: false,
-    })
 
   // A list of all institutions with active application types
   const {
@@ -111,7 +110,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
   const isLoading =
     loadingSuperApplications ||
     loadingInstitutionApplications ||
-    orgsLoading ||
+    isLoadingOrganizationsFromContentful ||
     loadingOrganizationsWithApplication
 
   const applicationApplicationsAdmin = isSuperAdmin
@@ -121,9 +120,6 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
 
   const applicationAdminList =
     applicationApplicationsAdmin as AdminApplication[]
-
-  const organizationListFromContentful = (contentfulOrgDataResults
-    ?.getOrganizations?.items ?? []) as Organization[]
 
   // Get organizations of all applications currently fetched
   const availableOrganizations = isSuperAdmin
@@ -270,6 +266,7 @@ const Overview = ({ isSuperAdmin }: OverviewProps) => {
           pageSize={pageSize}
           showAdminData={!!filters.typeIdValue}
           shouldShowCardButtons={false}
+          isSuperAdmin={isSuperAdmin}
           numberOfItems={
             isSuperAdmin
               ? superApplicationsData?.applicationV2ApplicationsSuperAdmin

@@ -557,6 +557,19 @@ export const OrganizationFooter: React.FC<
 
   const { isServiceWeb } = useContext(GlobalContext)
 
+  if (namespace?.usingDefaultFooter === true) {
+    const footerItems = organization?.footerItems ?? []
+    if (footerItems.length === 0) return null
+    return (
+      <WebFooter
+        heading={organization?.title ?? ''}
+        columns={footerItems}
+        background={organization?.footerConfig?.background}
+        color={organization?.footerConfig?.textColor}
+      />
+    )
+  }
+
   switch (organization?.slug) {
     case 'syslumenn':
     case 'district-commissioner':

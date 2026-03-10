@@ -80,4 +80,5 @@ interface Verdict {
   serviceInformationForDefendant?: InformationForDefendant[]
   appealDate?: Date
   isDefaultJudgement?: boolean
+  isAcquittedByPublicProsecutionOffice?: boolean
 }
