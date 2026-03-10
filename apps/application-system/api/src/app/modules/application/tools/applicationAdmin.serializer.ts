@@ -366,9 +366,16 @@ export class ApplicationAdminStatisticsSerializer
       intl.formatMessage,
     )
 
+    const institutionContentfulSlug =
+      institutionMapper[model.typeid as ApplicationTypes]?.slug
+
     const dto = plainToInstance(ApplicationListAdminResponseDto, {
       ...model,
       name: name ?? '',
+      institution: template.institution
+        ? intl.formatMessage(template.institution)
+        : null,
+      institutionContentfulSlug: institutionContentfulSlug,
     })
 
     return instanceToPlain(dto)
