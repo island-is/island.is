@@ -64,7 +64,9 @@ const publicProsecutionOfficeAcquittedDefendantDisplayCases = (cs: Case[]) =>
     expandCaseWithDefendants(c, isAcquittedByPublicProsecutionOffice),
   )
 
-const publicProsecutionOfficeInReviewDefendantDisplayCases = (cs: Case[]) =>
+const publicProsecutionOfficeNewOrInReviewDefendantDisplayCases = (
+  cs: Case[],
+) =>
   cs.flatMap((c) =>
     expandCaseWithDefendants(c, isNotAcquittedByPublicProsecutionOffice),
   )
@@ -103,9 +105,9 @@ export const caseTableDisplayCases: Record<
   [CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING]:
     prisonAdminRegisteredDefendantsDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW]:
-    allDefendantsDisplayCases,
+    publicProsecutionOfficeNewOrInReviewDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_IN_REVIEW]:
-    publicProsecutionOfficeInReviewDefendantDisplayCases,
+    publicProsecutionOfficeNewOrInReviewDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED]:
     publicProsecutionOfficeAcceptedDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED]:
