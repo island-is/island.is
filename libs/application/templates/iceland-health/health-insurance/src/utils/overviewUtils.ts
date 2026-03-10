@@ -1,6 +1,6 @@
 import { ExternalData, FormText, FormValue } from '@island.is/application/types'
 import { m } from '../lib/messages/messages'
-import { getValueViaPath, YES } from '@island.is/application/core'
+import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import { Applicant, FormerInsurance, Status } from './types'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { EmploymentStatus } from './constants'
@@ -77,7 +77,7 @@ export const statusAndChildrenOverviewItems = (
   _locale: string,
 ) => {
   const status = getValueViaPath<Status>(answers, 'status')
-  const children = getValueViaPath<Array<string>>(answers, 'children')
+  const children = getValueViaPath<YesOrNo>(answers, 'children')
   return [
     {
       width: 'full' as const,
@@ -87,7 +87,7 @@ export const statusAndChildrenOverviewItems = (
     {
       width: 'full' as const,
       keyText: m.childrenDescription,
-      valueText: children?.[0] === YES ? m.yesOptionLabel : m.noOptionLabel,
+      valueText: children === YES ? m.yesOptionLabel : m.noOptionLabel,
     },
   ]
 }
@@ -100,6 +100,8 @@ export const statusAttachmentsOverviewItems = (
     answers,
     'status.confirmationOfStudies',
   )
+
+  if (!files) return []
 
   return (
     files?.map((file) => ({
