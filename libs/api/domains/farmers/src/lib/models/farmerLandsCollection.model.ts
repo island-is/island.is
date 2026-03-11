@@ -3,4 +3,4 @@ import { PaginatedResponse } from '@island.is/nest/pagination'
 import { FarmerLand } from './farmerLand.model'
 
 @ObjectType('FarmerLands')
-export class FarmerLandsCollection extends PaginatedResponse(FarmerLand) {}
+export class LandsCollection extends PaginatedResponse(FarmerLand) {}

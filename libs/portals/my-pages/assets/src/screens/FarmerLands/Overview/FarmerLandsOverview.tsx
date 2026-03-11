@@ -1,6 +1,5 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { CardLoader, m } from '@island.is/portals/my-pages/core'
-import { IntroWrapper } from '@island.is/portals/my-pages/core'
+import { CardLoader, EmptyState, m, IntroWrapperV2 } from '@island.is/portals/my-pages/core'
 import { ATVINNUVEGARADUNEYTID_SLUG } from '@island.is/portals/my-pages/core'
 import { farmerLandsMessages as fm } from '../../../lib/messages'
 import { useFarmerLandsOverviewQuery } from './FarmerLandsOverview.generated'
@@ -31,10 +30,10 @@ export const FarmerLandsOverview = () => {
   const farmerLands = data?.farmerLands?.data ?? []
 
   return (
-    <IntroWrapper
-      title={formatMessage(fm.title)}
-      intro={formatMessage(fm.description)}
-      serviceProviderSlug={ATVINNUVEGARADUNEYTID_SLUG}
+    <IntroWrapperV2
+      title={fm.title}
+      intro={fm.description}
+      serviceProvider={{ slug: ATVINNUVEGARADUNEYTID_SLUG }}
     >
       <Box marginBottom={3}>
         <GridRow>
@@ -64,6 +63,9 @@ export const FarmerLandsOverview = () => {
       )}
 
       {error && !loading && <Problem error={error} noBorder={false} />}
+      {!loading && !error && farmerLands.length === 0 && (
+        <EmptyState title={m.noData} />
+      )}
       <Stack space={4}>
         {!error &&
           farmerLands.map((land) => (
@@ -103,7 +105,7 @@ export const FarmerLandsOverview = () => {
           />
         )}
       </Stack>
-    </IntroWrapper>
+    </IntroWrapperV2>
   )
 }
 

@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, ID, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
   IdsUserGuard,
@@ -16,7 +16,9 @@ import {
 } from '@island.is/nest/feature-flags'
 
 import { FarmerLand } from './models/farmerLand.model'
-import { FarmerLandsCollection } from './models/farmerLandsCollection.model'
+import { LandsCollection } from './models/farmerLandsCollection.model'
+import { LandBeneficiary } from './models/landBeneficiary.model'
+import { LandRegistryEntry } from './models/landRegistryEntry.model'
 import { FarmersService } from './farmers.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -27,13 +29,32 @@ import { FarmersService } from './farmers.service'
 export class FarmersResolver {
   constructor(private readonly farmersService: FarmersService) {}
 
-  @Query(() => FarmerLandsCollection, {
-    name: 'farmerLands',
-    nullable: true,
-  })
-  async farmerLandsList(
-    @CurrentUser() user: User,
-  ): Promise<FarmerLandsCollection> {
+  @Query(() => LandsCollection, { name: 'farmerLands', nullable: true })
+  async farmerLandsList(@CurrentUser() user: User): Promise<LandsCollection> {
     return this.farmersService.getList(user)
+  }
+
+  @Query(() => FarmerLand, { name: 'farmerLand', nullable: true })
+  async getFarmerLand(
+    @CurrentUser() user: User,
+    @Args('id', { type: () => ID }) id: string,
+  ): Promise<FarmerLand | null> {
+    return this.farmersService.getLand(user, id)
+  }
+
+  @ResolveField('beneficiaries', () => [LandBeneficiary], { nullable: true })
+  async resolveBeneficiaries(
+    @CurrentUser() user: User,
+    @Parent() land: FarmerLand,
+  ): Promise<LandBeneficiary[]> {
+    return this.farmersService.getBeneficiaries(user, String(land.id))
+  }
+
+  @ResolveField('landRegistry', () => [LandRegistryEntry], { nullable: true })
+  async resolveLandRegistry(
+    @CurrentUser() user: User,
+    @Parent() land: FarmerLand,
+  ): Promise<LandRegistryEntry[]> {
+    return this.farmersService.getLandRegistry(user, String(land.id))
   }
 }

@@ -1,0 +1,31 @@
+query FarmerLandDetail($id: ID!) {
+  farmerLand(id: $id) {
+    id
+    name
+    beneficiaries {
+      name
+      nationalId
+      bankInfo
+      isat
+      vskNumberDisplayString
+      payments {
+        categoryId
+        category
+        share
+        blocked
+        operating
+        dateFrom
+        dateTo
+      }
+    }
+    landRegistry {
+      id
+      name
+      properties {
+        ownershipType
+        usage
+        share
+      }
+    }
+  }
+}

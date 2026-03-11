@@ -8,8 +8,8 @@ interface FarmerLandsTableProps<T extends object> {
   data: T[]
   loading?: boolean
   error?: boolean
-  emptyMessage?: string
-  errorMessage?: string
+  emptyMessage: string
+  errorMessage: string
   renderExpandedRow?: (row: Row<T>) => React.ReactNode
 }
 
@@ -18,8 +18,8 @@ export const FarmerLandsTable = <T extends object>({
   data,
   loading = false,
   error = false,
-  emptyMessage = 'Engar færslur fundust',
-  errorMessage = 'Villa kom upp við að sækja gögn',
+  emptyMessage,
+  errorMessage,
   renderExpandedRow,
 }: FarmerLandsTableProps<T>) => {
   // Add expander column if renderExpandedRow is provided

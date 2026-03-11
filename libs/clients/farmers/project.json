@@ -15,6 +15,17 @@
         "jestConfig": "libs/clients/farmers/jest.config.ts"
       }
     },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10094/Afurd-Private/baendur-v1/island/schema.json > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/farmers"
+      }
+    },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
