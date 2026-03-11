@@ -60,11 +60,16 @@ export const ServiceCategories = () => {
             message={formatMessage(m.errorLoadingCategories)}
           />
         )}
+
+        <ServiceCategoriesGrid
+          categories={tags}
+          loading={loading}
+          error={!!error}
+        />
+
         {!loading && !error && categories.length > 0 && (
           <Box marginTop={6} marginBottom={2}>
-            <Text variant="h3" color="blue400">
-              {formatMessage(m.serviceCategories)}
-            </Text>
+            <Text variant="h3">{formatMessage(m.serviceCategories)}</Text>
           </Box>
         )}
 
@@ -85,44 +90,6 @@ export const ServiceCategories = () => {
           </Box>
         )}
 
-        <Box marginTop={6}>
-          {!loading && !error && tags.length > 0 && (
-            <>
-              <Text variant="h3" color="blue400">
-                Todo: Tags
-              </Text>
-
-              <Box
-                marginTop={2}
-                display="flex"
-                flexDirection="column"
-                rowGap={2}
-              >
-                {tags.map((tag) => (
-                  <AccordionCard
-                    key={tag.id}
-                    id={tag.id}
-                    label={tag.title}
-                    labelVariant="h3"
-                    labelUse="h2"
-                    iconVariant="default"
-                    visibleContent={tag.description}
-                  >
-                    <Box paddingY={3}>
-                      {tag.scopes.length === 0 ? (
-                        <Text variant="small" color="dark300">
-                          {formatMessage(m.noScopesInCategory)}
-                        </Text>
-                      ) : (
-                        <ScopesTable scopes={tag.scopes} />
-                      )}
-                    </Box>
-                  </AccordionCard>
-                ))}
-              </Box>
-            </>
-          )}
-        </Box>
         {contentfulData?.faqList && (
           <Box paddingTop={8}>
             <FaqList {...(contentfulData.faqList as unknown as FaqListProps)} />

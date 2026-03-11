@@ -43,7 +43,7 @@ export const DelegationsTable = ({
       flexDirection="column"
       rowGap={[0, 0, 0, 2]}
     >
-      <Text variant="h5">{title}</Text>
+      <Text variant={isMobile ? 'h4' : 'h5'}>{title}</Text>
 
       {loading ? (
         <Box padding={3}>
@@ -141,7 +141,7 @@ const MobileDelegationsTable = ({
                 justifyContent="center"
                 borderRadius="full"
                 background="blue100"
-                style={{ width: 32, height: 32, flexShrink: 0 }}
+                style={{ width: 40, height: 40, flexShrink: 0 }}
               >
                 <Icon icon={mobileRow.icon} color="blue400" />
               </Box>
@@ -152,7 +152,7 @@ const MobileDelegationsTable = ({
                 size="medium"
               />
             )}
-            <Text variant="h4" as="h2" color="blue400">
+            <Text variant="h4" as="h2">
               {mobileRow.identity.name}
             </Text>
           </Box>
@@ -161,12 +161,12 @@ const MobileDelegationsTable = ({
             <Stack space={1}>
               <Box display="flex" flexDirection="row">
                 <Box width="half" display="flex" alignItems="center">
-                  <Text fontWeight="semiBold" variant="default">
+                  <Text fontWeight="semiBold" variant="medium">
                     {formatMessage(m.nationalId)}
                   </Text>
                 </Box>
                 <Box width="half">
-                  <Text variant="default">
+                  <Text variant="medium">
                     {formatNationalId(mobileRow.identity.nationalId)}
                   </Text>
                 </Box>
@@ -174,12 +174,12 @@ const MobileDelegationsTable = ({
               {mobileRow.dataRows.map((dataRow, j) => (
                 <Box key={j} display="flex" flexDirection="row">
                   <Box width="half" display="flex" alignItems="center">
-                    <Text fontWeight="semiBold" variant="default">
+                    <Text fontWeight="semiBold" variant="medium">
                       {dataRow.label}
                     </Text>
                   </Box>
                   <Box width="half">
-                    <Text variant="default">{dataRow.content}</Text>
+                    <Text variant="medium">{dataRow.content}</Text>
                   </Box>
                 </Box>
               ))}

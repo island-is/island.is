@@ -25,6 +25,7 @@ import { AuthDomainDirection } from '@island.is/api/schema'
 import { useDelegationForm } from '../../context'
 import add from 'date-fns/add'
 import { useAuthDomainsQuery } from '../../hooks/useDomains/useDomains.generated'
+import { RecipientsTag } from '../RecipientsTag'
 
 export const AccessScopes = () => {
   const { lang } = useLocale()
@@ -97,6 +98,19 @@ export const AccessScopes = () => {
     }
   }
 
+  const onSelectCategory = (scopes: AuthApiScope[]) => {
+    if (selectedScopes.some((s) => scopes.some((cs) => cs.name === s.name))) {
+      setSelectedScopes(
+        selectedScopes.filter((s) => !scopes.some((cs) => cs.name === s.name)),
+      )
+    } else {
+      setSelectedScopes([
+        ...selectedScopes,
+        ...scopes.map((s) => ({ ...s, validTo: defaultDate })),
+      ])
+    }
+  }
+
   const filteredScopes = useMemo(() => {
     const searchQueryLower = searchQuery.toLowerCase()
 
@@ -142,11 +156,12 @@ export const AccessScopes = () => {
   }, [categoriesData, searchQuery, filter, tagsData])
 
   return (
-    <div>
-      <Text variant="h4" marginBottom={4}>
+    <Box display="flex" flexDirection="column" alignItems="flexStart">
+      <Text variant="h4" marginBottom={2}>
         {formatMessage(m.choosePermissionsTitle)}
       </Text>
-      <Box display="flex" columnGap={[0, 2]} marginBottom={4}>
+      <RecipientsTag />
+      <Box display="flex" columnGap={[0, 2]} marginBottom={2}>
         <div className={styles.input}>
           <Input
             name="search"
@@ -204,8 +219,9 @@ export const AccessScopes = () => {
           categories={categoriesData?.authScopeCategories || []}
           onSelectScope={onSelectScope}
           selectedScopes={selectedScopes}
+          onSelectCategory={onSelectCategory}
         />
       )}
-    </div>
+    </Box>
   )
 }

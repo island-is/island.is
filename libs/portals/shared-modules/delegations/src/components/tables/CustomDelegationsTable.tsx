@@ -30,7 +30,6 @@ import * as styles from './Tables.css'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import AnimateHeight from 'react-animate-height'
-import cn from 'classnames'
 
 export type DelegationsByPerson =
   AuthDelegationsGroupedByIdentityOutgoingQuery['authDelegationsGroupedByIdentityOutgoing'][number]
@@ -169,7 +168,7 @@ export default function CustomDelegationsTable({
       flexDirection="column"
       rowGap={[0, 0, 0, 2]}
     >
-      <Text variant="h5">{title}</Text>
+      <Text variant={isMobile ? 'h4' : 'h5'}>{title}</Text>
 
       {loading ? (
         <Box padding={3}>
@@ -371,20 +370,18 @@ const MobileCustomDelegationsTable = ({
 }) => {
   const { formatMessage } = useLocale()
   return (
-    <Box>
-      {data?.map((person, idx) => {
+    <Box marginTop={1}>
+      {data?.map((person) => {
         const isExpanded = expandedRow === `${person.nationalId}-${person.type}`
 
         return (
           <Box
             key={`${person.nationalId}-${person.type}`}
-            className={cn({
-              [styles.mobileContainer]: isExpanded,
-              [styles.mobileDivider]: !isExpanded,
-            })}
-            paddingTop={3}
-            marginTop={idx === 0 ? 0 : 3}
-            marginBottom={isExpanded ? 2 : 0}
+            className={styles.mobileContainer({ isExpanded })}
+            paddingTop={2}
+            paddingBottom={
+              isExpanded ? (person.scopes.length % 2 === 0 ? 0 : 3) : 2
+            }
             position="relative"
           >
             <Box
@@ -399,7 +396,7 @@ const MobileCustomDelegationsTable = ({
                   username={person.name}
                   size="medium"
                 />
-                <Text variant="h4" color="blue400">
+                <Text variant="default" fontWeight="semiBold">
                   {person.name}
                 </Text>
               </Box>
@@ -422,34 +419,34 @@ const MobileCustomDelegationsTable = ({
               <Stack space={1}>
                 <Box display="flex" flexDirection="row" columnGap={1}>
                   <Box width="half" display="flex" alignItems="center">
-                    <Text fontWeight="semiBold" variant="default">
+                    <Text fontWeight="semiBold" variant="medium">
                       {formatMessage(m.nationalId)}
                     </Text>
                   </Box>
                   <Box width="half">
-                    <Text variant="default">
+                    <Text variant="medium">
                       {formatNationalId(person.nationalId)}
                     </Text>
                   </Box>
                 </Box>
                 <Box display="flex" flexDirection="row" columnGap={1}>
                   <Box width="half" display="flex" alignItems="center">
-                    <Text fontWeight="semiBold" variant="default">
+                    <Text fontWeight="semiBold" variant="medium">
                       {formatMessage(m.numberOfDelegations)}
                     </Text>
                   </Box>
                   <Box width="half">
-                    <Text variant="default">{person.totalScopeCount}</Text>
+                    <Text variant="medium">{person.totalScopeCount}</Text>
                   </Box>
                 </Box>
                 <Box display="flex" flexDirection="row" columnGap={1}>
                   <Box width="half" display="flex" alignItems="center">
-                    <Text fontWeight="semiBold" variant="default">
+                    <Text fontWeight="semiBold" variant="medium">
                       {formatMessage(m.validityPeriod)}
                     </Text>
                   </Box>
                   <Box width="half">
-                    <Text variant="default">
+                    <Text variant="medium">
                       {person.latestValidTo
                         ? format(new Date(person.latestValidTo), 'dd.MM.yyyy')
                         : formatMessage(m.noValidToDate)}
@@ -489,9 +486,7 @@ const MobileCustomDelegationsTable = ({
             </Box>
 
             <AnimateHeight height={isExpanded ? 'auto' : 0} duration={300}>
-              <Box paddingTop={2} paddingBottom={3}>
-                <Divider />
-              </Box>
+              <Box paddingTop={2}></Box>
               <CustomDelegationsPermissionsTable
                 data={person}
                 direction={direction}

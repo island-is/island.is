@@ -2,6 +2,8 @@ import { useQuery } from '@apollo/client'
 import {
   AuthScopeCategoriesDocument,
   AuthScopeCategoriesQuery,
+  AuthScopeTagsDocument,
+  AuthScopeTagsQuery,
 } from '../ServiceCategories/ServiceCategories.generated'
 import { useLocale } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
@@ -36,6 +38,13 @@ export const CategoryDetails = () => {
   } = useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
     variables: { lang },
   })
+  const {
+    data: tagsData,
+    loading: tagsLoading,
+    error: tagsError,
+  } = useQuery<AuthScopeTagsQuery>(AuthScopeTagsDocument, {
+    variables: { lang },
+  })
   const { selectedScopes, setSelectedScopes, setIdentities, clearForm } =
     useDelegationForm()
   const defaultDate = add(new Date(), { years: 1 })
@@ -43,6 +52,14 @@ export const CategoryDetails = () => {
   const category = categoriesData?.authScopeCategories?.find(
     (category) => category.slug === slug,
   )
+  const tag = tagsData?.authScopeTags?.find(
+    (tag) => tag.title.toLowerCase().replace(/ /g, '-') === slug,
+  )
+
+  const data = category || tag
+
+  const loading = categoriesLoading || tagsLoading
+  const error = categoriesError || tagsError
 
   const onSelectScope = (scope: AuthApiScope) => {
     if (selectedScopes.some((s) => s.name === scope.name)) {
@@ -104,11 +121,11 @@ export const CategoryDetails = () => {
   ]
 
   return (
-    !categoriesError && (
+    !error && (
       <div>
         <IntroHeader
-          title={category?.title ?? ''}
-          intro={category?.description ?? ''}
+          title={data?.title ?? ''}
+          intro={data?.description ?? ''}
         />
 
         {!showFlow && (
@@ -116,11 +133,11 @@ export const CategoryDetails = () => {
             <Text variant="h5">{formatMessage(m.delegationsThatSuit)}</Text>
             <Box paddingTop={2} paddingBottom={4}>
               <ScopesTable
-                scopes={category?.scopes ?? []}
+                scopes={data?.scopes ?? []}
                 showCheckbox
                 onSelectScope={onSelectScope}
               />
-              {categoriesLoading && (
+              {loading && (
                 <SkeletonLoader width="100%" height={50} repeat={4} />
               )}
             </Box>

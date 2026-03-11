@@ -213,7 +213,7 @@ export class ScopeService {
         return {
           id: tag.id,
           title: tag.title,
-          intro: tag.description ?? '',
+          description: tag.description ?? '',
           scopes,
         }
       })

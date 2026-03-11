@@ -199,6 +199,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:access-title',
     defaultMessage: 'Réttindi',
   },
+  selectedScopesWithValidityPeriod: {
+    id: 'sp.access-control-delegations:selected-scopes-with-validity-period',
+    defaultMessage: 'Umboð sem eru valin ásamt gildistíma',
+  },
   accessScopesIntro: {
     id: 'sp.access-control-delegations:access-intro',
     defaultMessage:
@@ -554,5 +558,9 @@ export const m = defineMessages({
   headerDescription: {
     id: 'sp.access-control-delegations:header-description',
     defaultMessage: 'Lýsing á umboði',
+  },
+  headerPermissionType: {
+    id: 'sp.access-control-delegations:header-permission-type',
+    defaultMessage: 'Tegund réttinda',
   },
 })

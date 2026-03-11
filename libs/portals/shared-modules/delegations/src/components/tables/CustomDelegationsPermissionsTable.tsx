@@ -308,16 +308,17 @@ const MobileCustomDelegationsPermissionsTable = ({
       {scopes?.map((scope, idx) => (
         <Box
           key={scope.id}
-          padding={2}
-          paddingTop={3}
-          background={idx % 2 === 0 ? 'white' : 'blue100'}
+          paddingX={1}
+          paddingTop={2}
+          paddingBottom={3}
+          background={idx % 2 === 0 ? 'white' : 'transparent'}
         >
           <Box marginBottom={1}>
-            <Text variant="h5" color="blue400">
+            <Text variant="h5">
               {formatMessage(m.delegationNr, { index: idx + 1 })}
             </Text>
           </Box>
-          <Box marginBottom={2}>
+          <Box>
             <Stack space={0}>
               <Box display="flex" flexDirection="row" alignItems="center">
                 <Box
@@ -326,12 +327,12 @@ const MobileCustomDelegationsPermissionsTable = ({
                   alignItems="center"
                   paddingY={1}
                 >
-                  <Text fontWeight="semiBold" variant="default">
+                  <Text fontWeight="semiBold" variant="medium">
                     {formatMessage(m.headerDomain)}
                   </Text>
                 </Box>
                 <Box width="half">
-                  <Text variant="default">{scope.domain?.displayName}</Text>
+                  <Text variant="medium">{scope.domain?.displayName}</Text>
                 </Box>
               </Box>
               <Box display="flex" flexDirection="row" alignItems="center">
@@ -341,12 +342,12 @@ const MobileCustomDelegationsPermissionsTable = ({
                   alignItems="center"
                   paddingY={1}
                 >
-                  <Text fontWeight="semiBold" variant="default">
+                  <Text fontWeight="semiBold" variant="medium">
                     {formatMessage(m.headerScopeName)}
                   </Text>
                 </Box>
                 <Box width="half">
-                  <Text variant="default">{scope.displayName}</Text>
+                  <Text variant="medium">{scope.displayName}</Text>
                 </Box>
               </Box>
               <Box display="flex" flexDirection="row" alignItems="center">
@@ -356,12 +357,12 @@ const MobileCustomDelegationsPermissionsTable = ({
                   alignItems="center"
                   paddingY={1}
                 >
-                  <Text fontWeight="semiBold" variant="default">
+                  <Text fontWeight="semiBold" variant="medium">
                     {formatMessage(m.headerRegisteredDate)}
                   </Text>
                 </Box>
                 <Box width="half">
-                  <Text variant="default">
+                  <Text variant="medium">
                     {scope.validFrom
                       ? format(new Date(scope.validFrom), 'dd.MM.yyyy')
                       : '-'}
@@ -375,7 +376,7 @@ const MobileCustomDelegationsPermissionsTable = ({
                   alignItems="center"
                   paddingY={1}
                 >
-                  <Text fontWeight="semiBold" variant="default">
+                  <Text fontWeight="semiBold" variant="medium">
                     {formatMessage(m.headerValidityPeriod)}
                   </Text>
                 </Box>

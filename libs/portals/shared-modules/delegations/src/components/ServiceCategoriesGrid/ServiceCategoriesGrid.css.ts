@@ -14,3 +14,7 @@ export const categoriesGrid = style({
     },
   },
 })
+
+export const categoryCard = style({
+  textAlign: 'left',
+})

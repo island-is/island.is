@@ -19,12 +19,19 @@ import { m as coreMessages } from '@island.is/portals/core'
 import { ConfirmAccessModal } from '../../components/modals/ConfirmAccessModal'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import { AccessControlLoaderResponse } from '../AccessControl.loader'
+import { useIdentityLazyQuery } from '../GrantAccess/GrantAccess.generated'
 
 const EditAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
 
   const { formatMessage, lang } = useLocale()
-  const { selectedScopes, setSelectedScopes, clearForm } = useDelegationForm()
+  const {
+    selectedScopes,
+    setSelectedScopes,
+    clearForm,
+    identities,
+    setIdentities,
+  } = useDelegationForm()
   const nationalIdParam = useQueryParam('nationalId')
 
   const navigate = useNavigate()
@@ -44,9 +51,27 @@ const EditAccess = () => {
       skip: !needsFetch,
     })
 
+  const [getIdentity, { data: identityData, loading: identityLoading }] =
+    useIdentityLazyQuery()
+
   // if the state gets cleared (for example after a refresh),
   // we need to fetch users' current delegations for the initial state
   useEffect(() => {
+    if (!identities.length && nationalIdParam) {
+      getIdentity({
+        variables: { input: { nationalId: nationalIdParam } },
+      })
+
+      if (identityData?.identity) {
+        setIdentities([
+          {
+            nationalId: identityData.identity.nationalId,
+            name: identityData.identity.name,
+          },
+        ])
+      }
+    }
+
     const allDelegations =
       delegationsData?.authDelegationsGroupedByIdentityOutgoing
 
@@ -79,6 +104,10 @@ const EditAccess = () => {
     selectedScopes.length,
     setSelectedScopes,
     navigate,
+    identities,
+    getIdentity,
+    identityData,
+    setIdentities,
   ])
 
   // if all scopes have the same validTo date, then the initial setting of the access period is the same for all scopes
@@ -114,7 +143,7 @@ const EditAccess = () => {
     },
   ]
 
-  if (delegationsLoading) {
+  if (delegationsLoading || identityLoading) {
     return (
       <>
         <IntroHeader

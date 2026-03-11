@@ -1,5 +1,6 @@
 import { globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
+import { recipe } from '@vanilla-extract/recipes'
 
 export const tableContainer = style({})
 
@@ -7,17 +8,27 @@ globalStyle(`${tableContainer} > div`, {
   overflow: 'visible',
 })
 
-export const mobileContainer = style({
-  '::before': {
-    content: '',
-    position: 'absolute',
-    top: 0,
-    bottom: '-24px',
-    zIndex: -1,
-    left: `-${theme.spacing[2]}px`,
-    right: `-${theme.spacing[2]}px`,
-    background: theme.color.blue100,
-    borderBottom: `1px solid ${theme.color.blue200}`,
+export const mobileContainer = recipe({
+  base: {
+    '::before': {
+      content: '',
+      position: 'absolute',
+      inset: 0,
+      zIndex: -1,
+      left: `-${theme.spacing[2]}px`,
+      right: `-${theme.spacing[2]}px`,
+
+      borderBottom: `1px solid ${theme.color.blue200}`,
+    },
+  },
+  variants: {
+    isExpanded: {
+      true: {
+        '::before': {
+          background: theme.color.blue100,
+        },
+      },
+    },
   },
 })
 

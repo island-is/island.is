@@ -1,4 +1,10 @@
-import React, { ReactNode, useState } from 'react'
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
 import { Icon } from '../IconRC/Icon'
@@ -38,6 +44,18 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
   activeStep: controlledActiveStep,
 }) => {
   const [internalActiveStep, setInternalActiveStep] = useState(0)
+  const stepRefs = useRef<Map<number, HTMLDivElement>>(new Map())
+
+  const setStepRef = useCallback(
+    (index: number) => (el: HTMLDivElement | null) => {
+      if (el) {
+        stepRefs.current.set(index, el)
+      } else {
+        stepRefs.current.delete(index)
+      }
+    },
+    [],
+  )
 
   // Use controlled or uncontrolled state
   const activeStep =
@@ -46,6 +64,15 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
       : internalActiveStep
 
   const currentStep = steps[activeStep]
+
+  useEffect(() => {
+    const el = stepRefs.current.get(activeStep)
+    el?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'center',
+    })
+  }, [activeStep])
 
   const handleStepChange = (newStep: number) => {
     if (newStep < activeStep) {
@@ -89,21 +116,19 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
     <div className={styles.flowStepper}>
       {/* Progress Indicator */}
       <Box
-        marginBottom={6}
+        marginBottom={[3, 6]}
         background="overlay"
-        paddingTop={3}
-        paddingBottom={2}
-        paddingX={4}
         className={styles.progressContainer}
       >
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="spaceAround"
+        <div
           className={styles.progress}
-          style={{ minWidth: 120 * steps.length }}
+          style={
+            {
+              '--steps-min-width': `${120 * steps.length}px`,
+            } as React.CSSProperties
+          }
         >
-          {/* Connector line */}
+          {/* Connector line (hidden on mobile) */}
           <div
             className={styles.backgroundLine}
             style={
@@ -121,15 +146,11 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
             const isCompleted = index < activeStep
 
             return (
-              <Box
+              <div
                 key={step.id}
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                position="relative"
-                rowGap={1}
+                ref={setStepRef(index)}
+                className={styles.stepItem}
               >
-                {/* Step Number Circle */}
                 <button
                   type="button"
                   onClick={() => handleStepChange(index)}
@@ -147,8 +168,7 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
                     </Text>
                   )}
                 </button>
-                {/* Step Name */}
-                <Box className={styles.stepName}>
+                <div className={styles.stepName}>
                   <Text
                     variant="small"
                     fontWeight={isActive ? 'semiBold' : 'regular'}
@@ -156,15 +176,15 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
                   >
                     {step.name}
                   </Text>
-                </Box>
-              </Box>
+                </div>
+              </div>
             )
           })}
-        </Box>
+        </div>
       </Box>
 
       {/* Step Content */}
-      <Box paddingX={4}>{currentStep?.content}</Box>
+      <Box paddingX={[2, 4]}>{currentStep?.content}</Box>
 
       {/* Footer  */}
       <Box
@@ -173,7 +193,7 @@ export const FlowStepper: React.FC<FlowStepperProps> = ({
         justifyContent="spaceBetween"
         width="full"
         paddingY={5}
-        paddingX={4}
+        paddingX={[2, 4]}
         columnGap={1}
       >
         <Button

@@ -6,6 +6,7 @@ import { m as portalMessages } from '@island.is/portals/core'
 
 import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
 import { useDelegationForm } from '../../context'
+import { RecipientsTag } from '../RecipientsTag'
 
 export const AccessPeriod = ({
   initialIsSamePeriod = true,
@@ -21,10 +22,11 @@ export const AccessPeriod = ({
   }
 
   return (
-    <Box display="flex" flexDirection="column">
-      <Text variant="h4" marginBottom={4}>
+    <Box display="flex" flexDirection="column" alignItems="flexStart">
+      <Text variant="h4" marginBottom={2}>
         {formatMessage(m.choosePeriodTitle)}
       </Text>
+      <RecipientsTag />
       {selectedScopes.length > 1 && (
         <Box display="flex" flexDirection="column" rowGap={2} marginBottom={4}>
           <RadioButton

@@ -3,8 +3,10 @@ import {
   Box,
   Checkbox,
   DatePicker,
+  Divider,
   Table as T,
   Text,
+  useBreakpoint,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m as coreMessages } from '@island.is/portals/core'
@@ -44,6 +46,7 @@ export const ScopesTable = ({
   editableDates = true,
 }: ScopesTableProps) => {
   const { formatMessage } = useLocale()
+  const { md } = useBreakpoint()
 
   const { selectedScopes, setSelectedScopes } = useDelegationForm()
   const scopes = scopesProp ?? selectedScopes ?? []
@@ -53,6 +56,130 @@ export const ScopesTable = ({
       selectedScopes.map((s) =>
         s.name === scope.name ? { ...s, validTo: date } : s,
       ),
+    )
+  }
+
+  if (!md) {
+    return (
+      <Box display="flex" flexDirection="column">
+        {scopes.map((scope, index) => {
+          const permissionType = scope.name.includes(':write')
+            ? formatMessage(m.readAndWrite)
+            : formatMessage(m.read)
+
+          const isChecked = selectedScopes?.some((s) => s.name === scope.name)
+          const validTo = (scope as ScopeSelection).validTo
+
+          return (
+            <>
+              <Box
+                key={scope.name + index}
+                paddingTop={2}
+                paddingBottom={index < scopes.length - 1 ? 2 : 0}
+                overflow={showDate ? 'visible' : undefined}
+              >
+                <Box display="flex">
+                  {showCheckbox && (
+                    <Checkbox
+                      name={`mobile-scope-${scope.name}`}
+                      checked={isChecked}
+                      onChange={() => onSelectScope?.(scope as AuthApiScope)}
+                    />
+                  )}
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    rowGap={2}
+                    style={{ flex: 1, minWidth: 0 }}
+                  >
+                    <div>
+                      <Box
+                        display="flex"
+                        justifyContent="spaceBetween"
+                        alignItems="center"
+                        columnGap={2}
+                      >
+                        <Text variant="h5" fontWeight="semiBold">
+                          {scope.displayName}
+                        </Text>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          columnGap={1}
+                          flexShrink={0}
+                        >
+                          {scope.domain?.organisationLogoUrl && (
+                            <img
+                              src={scope.domain.organisationLogoUrl}
+                              width="12"
+                              alt=""
+                              aria-hidden
+                            />
+                          )}
+                          <Text variant="small">
+                            {scope.domain?.displayName ||
+                              scope.domain?.name ||
+                              '-'}
+                          </Text>
+                        </Box>
+                      </Box>
+                      <Text variant="medium">{scope.description || '-'}</Text>
+                    </div>
+
+                    <Box
+                      display="flex"
+                      flexDirection={editableDates ? 'column' : 'row'}
+                      rowGap={2}
+                    >
+                      <Box flexGrow={1}>
+                        <Text variant="eyebrow" fontWeight="semiBold">
+                          {formatMessage(m.headerPermissionType)}
+                        </Text>
+                        <Text variant="medium">{permissionType}</Text>
+                      </Box>
+
+                      {showDate && (
+                        <Box flexGrow={1}>
+                          <Text
+                            variant="eyebrow"
+                            fontWeight="semiBold"
+                            color={editableDates ? 'blue400' : undefined}
+                          >
+                            {formatMessage(m.headerValidityPeriod)}
+                          </Text>
+                          {editableDates ? (
+                            <DatePicker
+                              id={`validityPeriod-${scope.name}`}
+                              size="sm"
+                              backgroundColor="blue"
+                              minDate={new Date()}
+                              selected={(scope as ScopeSelection).validTo}
+                              handleChange={(date) =>
+                                onChangeScopeDate(scope as ScopeSelection, date)
+                              }
+                              placeholderText={formatMessage(
+                                coreMessages.chooseDate,
+                              )}
+                              detatchedCalendar={true}
+                            />
+                          ) : (
+                            <Text variant="medium">
+                              {validTo
+                                ? format(new Date(validTo), 'dd.MM.yyyy')
+                                : '-'}
+                            </Text>
+                          )}
+                        </Box>
+                      )}
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+              {index < scopes.length - 1 && <Divider />}
+            </>
+          )
+        })}
+      </Box>
     )
   }
 
@@ -66,7 +193,9 @@ export const ScopesTable = ({
   ]
 
   return (
-    <T.Table style={showDate ? { overflow: 'visible' } : undefined}>
+    <T.Table
+      box={{ overflow: showDate ? 'visible' : undefined, alignSelf: 'stretch' }}
+    >
       <T.Head>
         <T.Row>
           {headers.map((item) => (
@@ -83,6 +212,8 @@ export const ScopesTable = ({
           const permissionType = scope.name.includes(':write')
             ? formatMessage(m.readAndWrite)
             : formatMessage(m.read)
+
+          const validTo = (scope as ScopeSelection).validTo
 
           return (
             <T.Row key={scope.name}>
@@ -137,12 +268,7 @@ export const ScopesTable = ({
                     />
                   ) : (
                     <Text variant="medium">
-                      {(() => {
-                        const validTo = (scope as ScopeSelection).validTo
-                        return validTo
-                          ? format(new Date(validTo), 'dd.MM.yyyy')
-                          : '-'
-                      })()}
+                      {validTo ? format(new Date(validTo), 'dd.MM.yyyy') : '-'}
                     </Text>
                   )}
                 </T.Data>

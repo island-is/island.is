@@ -11,7 +11,7 @@ import { IntroHeader } from '@island.is/portals/core'
 import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
 import { isDefined } from '@island.is/shared/utils'
 import { useLoaderData, useNavigate } from 'react-router-dom'
-import { useLocation } from 'react-use'
+import { useLocation, useWindowSize } from 'react-use'
 import { useMemo, useState } from 'react'
 import groupBy from 'lodash/groupBy'
 import {
@@ -35,6 +35,7 @@ import CustomDelegationsTable from '../../components/tables/CustomDelegationsTab
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import { AccessControlLoaderResponse } from '../AccessControl.loader'
 import * as styles from './AccessControlNew.css'
+import { theme } from '@island.is/island-ui/theme'
 
 const filterDelegations = (
   searchValue: string,
@@ -61,6 +62,9 @@ const AccessControlNew = () => {
   const location = useLocation()
   const { switchUser } = useAuth()
   const [searchValue, setSearchValue] = useState('')
+
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   const contentfulData = useLoaderData() as AccessControlLoaderResponse
 
@@ -146,7 +150,7 @@ const AccessControlNew = () => {
             ? formatMessage(m.accessControlIntroOnlyOutgoing)
             : formatMessage(m.accessControlIntro)
         }
-        marginBottom={4}
+        marginBottom={[2, 2, 4]}
       >
         <GridColumn span={['8/8', '3/8']}>
           <Box
@@ -189,6 +193,9 @@ const AccessControlNew = () => {
             alignItems="center"
             marginBottom={3}
             paddingTop={2}
+            borderBottomWidth="standard"
+            borderColor="blue200"
+            paddingBottom={2}
           >
             <Box
               borderRadius="large"
@@ -200,7 +207,7 @@ const AccessControlNew = () => {
               <Icon size="small" color="blue400" type="outline" icon="person" />
               <Icon size="small" color="blue400" icon="arrowForward" />
             </Box>
-            <Text variant="h4">
+            <Text variant={isMobile ? 'h3' : 'h4'}>
               {formatMessage(m.outgoingDelegationsHeader)}
             </Text>
           </Box>
@@ -256,7 +263,7 @@ const AccessControlNew = () => {
               />
               <Icon size="small" color="purple400" icon="arrowForward" />
             </Box>
-            <Text variant="h4">
+            <Text variant={isMobile ? 'h3' : 'h4'}>
               {formatMessage(m.incomingDelegationsHeader)}
             </Text>
           </Box>
