@@ -312,7 +312,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
       '[estate]: completeApplication received caseNumber from uploadData',
       { caseNumber: result.caseNumber },
     )
-    return { sucess: result.success, id: result.caseNumber }
+    return { success: result.success, id: result.caseNumber }
   }
 
   async getSignatories({ application }: TemplateApiModuleActionProps) {

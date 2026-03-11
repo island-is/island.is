@@ -3,25 +3,23 @@ import { getValueViaPath } from '@island.is/application/core'
 import { EstateMember } from '../../types'
 import { nationalIdsMatch } from './helpers'
 
+const ESTATE_MEMBERS_PATH = 'estate.estateMembers'
+
 export const getAssigneesNationalIdList = (
   application: Application,
+  membersPath: string = ESTATE_MEMBERS_PATH,
 ): string[] => {
   const assigneesNationalIdList: string[] = []
 
-  const estateMembers = getValueViaPath<EstateMember[]>(
+  const members = getValueViaPath<EstateMember[]>(
     application.answers,
-    'estate.estateMembers',
+    membersPath,
     [],
   )
 
-  estateMembers?.forEach(({ nationalId, enabled, approved }) => {
-    // Only include enabled members
+  members?.forEach(({ nationalId, enabled, approved }) => {
     if (!nationalId || enabled === false) return
-
-    // Don't assign members that have already approved
     if (approved === true) return
-
-    // Filter out the applicant if they are also a member
     if (nationalIdsMatch(nationalId, application.applicant)) return
 
     assigneesNationalIdList.push(nationalId)

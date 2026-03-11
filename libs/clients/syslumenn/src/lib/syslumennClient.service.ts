@@ -677,6 +677,10 @@ export class SyslumennService {
         audkenni: id,
       })
 
+      logger.info('Syslumenn-client: getSignatories raw response', {
+        response: JSON.stringify(response),
+      })
+
       // Map the response to InheritanceSignatory format
       return response.map((item) => ({
         name: item.nafn || '',

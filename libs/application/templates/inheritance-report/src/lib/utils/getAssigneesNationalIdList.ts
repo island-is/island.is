@@ -3,25 +3,23 @@ import { getValueViaPath } from '@island.is/application/core'
 import { nationalIdsMatch } from './helpers'
 import { EstateMember } from '../../types'
 
+const HEIRS_DATA_PATH = 'heirs.data'
+
 export const getAssigneesNationalIdList = (
   application: Application,
+  membersPath: string = HEIRS_DATA_PATH,
 ): string[] => {
   const assigneesNationalIdList: string[] = []
 
-  const heirs = getValueViaPath<EstateMember[]>(
+  const members = getValueViaPath<EstateMember[]>(
     application.answers,
-    'heirs.data',
+    membersPath,
     [],
   )
 
-  heirs?.forEach(({ nationalId, enabled, approved }) => {
-    // Only include enabled heirs
+  members?.forEach(({ nationalId, enabled, approved }) => {
     if (!nationalId || enabled === false) return
-
-    // Don't assign heirs that have already approved
     if (approved === true) return
-
-    // Filter out the applicant if they are also a heir
     if (nationalIdsMatch(nationalId, application.applicant)) return
 
     assigneesNationalIdList.push(nationalId)
@@ -29,4 +27,3 @@ export const getAssigneesNationalIdList = (
 
   return assigneesNationalIdList
 }
-
