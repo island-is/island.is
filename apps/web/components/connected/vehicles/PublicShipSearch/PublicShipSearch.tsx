@@ -277,9 +277,10 @@ const PublicShipSearch = () => {
                       <Text>
                         {activeLocale === 'en' && shipInformation.opid === 'Já'
                           ? 'Yes'
-                          : activeLocale === 'en' && shipInformation.opid === 'Nei'
-                            ? 'No'
-                            : shipInformation.opid}
+                          : activeLocale === 'en' &&
+                            shipInformation.opid === 'Nei'
+                          ? 'No'
+                          : shipInformation.opid}
                       </Text>
                     </Table.Data>
                   </Table.Row>
