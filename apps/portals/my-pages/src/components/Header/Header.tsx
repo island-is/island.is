@@ -21,7 +21,11 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { DocumentsPaths } from '@island.is/portals/my-pages/documents'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
+import {
+  DelegationBanner,
+  UserLanguageSwitcher,
+  UserMenu,
+} from '@island.is/shared/components'
 import cn from 'classnames'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
@@ -139,6 +143,7 @@ export const Header = ({
           transition: disableTransition ? 'none' : undefined,
         }}
       >
+        <div className={styles.headerNav}>
         <GridContainer>
           <GridRow>
             <GridColumn
@@ -271,6 +276,8 @@ export const Header = ({
             </GridColumn>
           </GridRow>
         </GridContainer>
+        </div>
+        <DelegationBanner />
       </header>
     </div>
   )

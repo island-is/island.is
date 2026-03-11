@@ -6,8 +6,13 @@ import {
   ServicePortalPaths,
   useDynamicRoutesWithNavigation,
 } from '@island.is/portals/my-pages/core'
+import {
+  DELEGATION_BANNER_HEIGHT,
+} from '@island.is/portals/my-pages/constants'
 import { useAlertBanners } from '@island.is/portals/my-pages/graphql'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useUserInfo } from '@island.is/react-spa/bff'
+import { checkDelegation } from '@island.is/shared/utils'
 import React, { FC, useEffect, useState } from 'react'
 import { matchPath, useLocation } from 'react-router-dom'
 import { useMeasure } from 'react-use'
@@ -23,6 +28,8 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   useNamespaces(['service.portal', 'global', 'portals', 'sp.search.tags'])
   const activeModule = useActiveModule()
   const { pathname } = useLocation()
+  const user = useUserInfo()
+  const isDelegation = checkDelegation(user)
 
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const activeParent = navigation?.children?.find((item) => {
@@ -36,6 +43,10 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
     banner.servicePortalPaths?.includes('*'),
   )
   const isFullwidth = activeModule?.layout === 'full'
+
+  const alertBannerHeight = height && globalBanners.length > 0 ? height : 0
+  const delegationBannerHeight = isDelegation ? DELEGATION_BANNER_HEIGHT : 0
+  const totalBannerOffset = alertBannerHeight + delegationBannerHeight
 
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [headerVisible, setHeaderVisible] = useState<boolean>(true)
@@ -71,7 +82,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
           <GlobalAlertBannerSection ref={ref} banners={globalBanners} />
         )}
         <Header
-          position={height && globalBanners.length > 0 ? height : 0}
+          position={alertBannerHeight}
           includeSearchInHeader={!disableSearch && showSearch}
           onHeaderVisibilityChange={setHeaderVisible}
         />
@@ -79,7 +90,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
         {!isFullwidth && activeParent && (
           <NarrowLayout
             activeParent={activeParent}
-            height={height}
+            height={totalBannerOffset}
             pathname={pathname}
           >
             {children}
@@ -88,7 +99,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
         {(isFullwidth || !activeParent) && (
           <FullWidthLayout
             activeParent={activeParent}
-            height={height}
+            height={totalBannerOffset}
             pathname={pathname}
           >
             {children}
