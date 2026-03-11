@@ -37,7 +37,7 @@ export const Navbar = () => {
     openComponents,
   } = useContext(ControlContext) as IControlContext
   const { formatMessage } = useIntl()
-  const { activeItem, form } = control
+  const { activeItem, form, isPublished } = control
   const { sections, screens, fields } = form
   const payment = sections?.find((s) => s?.sectionType === SectionTypes.PAYMENT)
   const { hasPayment } = form
@@ -332,7 +332,12 @@ export const Navbar = () => {
         paddingTop={3}
         className={cn(styles.addSectionButton)}
       >
-        <Button variant="ghost" size="small" onClick={addSection}>
+        <Button
+          variant="ghost"
+          size="small"
+          onClick={addSection}
+          disabled={isPublished}
+        >
           {formatMessage(m.addSection)}
         </Button>
       </Box>
