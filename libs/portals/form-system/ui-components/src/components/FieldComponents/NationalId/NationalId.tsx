@@ -52,7 +52,7 @@ export const NationalId = ({
 
   const watchedValue = useWatch({
     control,
-    name: item.id,
+    name: `${item.id}.${valueIndex}`,
     defaultValue: getValue(item, 'nationalId', valueIndex) ?? '',
   }) as string
 
@@ -72,7 +72,7 @@ export const NationalId = ({
   const shouldQueryCompany =
     shouldQueryBase && isCompanyNationalId(queryId || '')
 
-  const nameField = `${item.id}_name`
+  const nameField = `${item.id}.${valueIndex}_name`
 
   // Keep RHF in sync with external "item" value (since Controller defaultValue won't update)
   useEffect(() => {
@@ -140,8 +140,8 @@ export const NationalId = ({
       <Row>
         <Column span="5/10">
           <Controller
-            key={item.id}
-            name={item.id}
+            key={`${item.id}-${valueIndex}`}
+            name={`${item.id}.${valueIndex}`}
             control={control}
             defaultValue={getValue(item, 'nationalId', valueIndex) ?? ''}
             rules={{
@@ -189,8 +189,8 @@ export const NationalId = ({
       <Row>
         <Column span="10/10">
           <Controller
-            key={item.id + '_name'}
-            name={item.id + '_name'}
+            key={`${item.id}-${valueIndex}_name`}
+            name={`${item.id}.${valueIndex}_name`}
             control={control}
             defaultValue={getValue(item, 'name', valueIndex) ?? ''}
             rules={{
