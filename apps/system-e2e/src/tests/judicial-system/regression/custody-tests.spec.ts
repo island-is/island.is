@@ -123,7 +123,6 @@ test.describe.serial('Custody tests', () => {
     await page.keyboard.type('Þetta er ekki löglegt')
     await page.locator('textarea[name=comments]').click()
     await page.keyboard.type('Sakborningur er hættulegur')
-    await page.locator('textarea[name=demands]').click()
     await expect(
       page.getByRole('button', { name: 'Rannsóknargögn' }),
     ).toBeVisible()
