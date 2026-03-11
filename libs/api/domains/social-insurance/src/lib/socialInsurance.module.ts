@@ -9,6 +9,7 @@ import {
   MedicalDocumentsResolver,
   PaymentPlanResolver,
   PensionResolver,
+  PersonalTaxCreditResolver,
 } from './resolvers'
 import { SocialInsuranceService } from './socialInsurance.service'
 
@@ -25,6 +26,7 @@ import { SocialInsuranceService } from './socialInsurance.service'
     MedicalDocumentsResolver,
     PaymentPlanResolver,
     PensionResolver,
+    PersonalTaxCreditResolver,
     SocialInsuranceService,
   ],
 })

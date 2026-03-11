@@ -9,6 +9,7 @@ import {
   Api,
   ApplicationWriteApi,
   BankInformationWriteApi,
+  PersonalTaxCreditWriteApi,
   MedicalDocumentApiForDisabilityPension,
   QuestionnairesApiForDisabilityPension,
   Scope,
@@ -25,6 +26,7 @@ import {
   DeathBenefitsApi,
   MedicalDocumentsApi,
   QuestionnairesApi,
+  PersonalTaxCreditApi,
   Configuration,
 } from '../../gen/fetch/v1'
 import {
@@ -114,6 +116,16 @@ const apiCollection: Array<{
   {
     api: QuestionnairesApiForDisabilityPension,
     scopes: ['@tr.is/ororkulifeyrir:read', '@tr.is/umsoknir:read'],
+    autoAuth: true,
+  },
+  {
+    api: PersonalTaxCreditApi,
+    scopes: ['@tr.is/skattkort:read'],
+    autoAuth: true,
+  },
+  {
+    api: PersonalTaxCreditWriteApi,
+    scopes: ['@tr.is/skattkort:write'],
     autoAuth: true,
   },
 ]
