@@ -16,6 +16,7 @@ import {
   GetPublicShipSearchQuery,
   GetPublicShipSearchQueryVariables,
 } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
 import { PUBLIC_SHIP_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicShipSearch'
 
 import { translation as translationStrings } from './translation.strings'
@@ -26,6 +27,7 @@ const PublicShipSearch = () => {
   const [hasFocus, setHasFocus] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const router = useRouter()
+  const { activeLocale } = useI18n()
   const queryParamInitialized = useRef(false)
 
   const [ships, setShips] = useState<
@@ -272,7 +274,13 @@ const PublicShipSearch = () => {
                       </Text>
                     </Table.Data>
                     <Table.Data>
-                      <Text>{shipInformation.opid}</Text>
+                      <Text>
+                        {activeLocale === 'en' && shipInformation.opid === 'Já'
+                          ? 'Yes'
+                          : activeLocale === 'en' && shipInformation.opid === 'Nei'
+                            ? 'No'
+                            : shipInformation.opid}
+                      </Text>
                     </Table.Data>
                   </Table.Row>
                 )}
