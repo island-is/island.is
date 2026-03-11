@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import { FarmersClientService } from '@island.is/clients/farmers'
-import { mapToFarmerLand, mapToFarmerLandCollection, mapToLandBeneficiary } from './mapper'
+import {
+  mapToFarmerLand,
+  mapToFarmerLandCollection,
+  mapToLandBeneficiary,
+} from './mapper'
 import { FarmerLand } from './models/farmerLand.model'
 import { LandBeneficiary } from './models/landBeneficiary.model'
 import { LandRegistryEntry } from './models/landRegistryEntry.model'

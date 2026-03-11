@@ -1,5 +1,10 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { CardLoader, EmptyState, m, IntroWrapperV2 } from '@island.is/portals/my-pages/core'
+import {
+  CardLoader,
+  EmptyState,
+  m,
+  IntroWrapperV2,
+} from '@island.is/portals/my-pages/core'
 import { ATVINNUVEGARADUNEYTID_SLUG } from '@island.is/portals/my-pages/core'
 import { farmerLandsMessages as fm } from '../../../lib/messages'
 import { useFarmerLandsOverviewQuery } from './FarmerLandsOverview.generated'

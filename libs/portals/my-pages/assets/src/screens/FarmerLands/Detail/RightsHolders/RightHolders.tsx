@@ -69,35 +69,37 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
         </T.Row>
       </T.Head>
       <T.Body>
-        {(row.original.payments ?? []).map((p: FarmerLandBeneficiaryPayment) => (
-          <T.Row key={p.categoryId}>
-            <T.Data box={{ background: 'white' }}>
-              <Text variant="small">{p.category}</Text>
-            </T.Data>
-            <T.Data box={{ background: 'white' }}>
-              <Text variant="small">
-                {p.share != null ? `${p.share}%` : ''}
-              </Text>
-            </T.Data>
-            <T.Data box={{ background: 'white' }}>
-              <Text variant="small">
-                {p.blocked ? formatMessage(m.yes) : formatMessage(m.no)}
-              </Text>
-            </T.Data>
-            <T.Data box={{ background: 'white' }}>
-              <Text variant="small">
-                {p.operating
-                  ? formatMessage(fm.inOperation)
-                  : formatMessage(fm.finished)}
-              </Text>
-            </T.Data>
-            <T.Data box={{ background: 'white' }}>
-              <Text variant="small">
-                {formatDateRange(p.dateFrom, p.dateTo)}
-              </Text>
-            </T.Data>
-          </T.Row>
-        ))}
+        {(row.original.payments ?? []).map(
+          (p: FarmerLandBeneficiaryPayment) => (
+            <T.Row key={p.categoryId}>
+              <T.Data box={{ background: 'white' }}>
+                <Text variant="small">{p.category}</Text>
+              </T.Data>
+              <T.Data box={{ background: 'white' }}>
+                <Text variant="small">
+                  {p.share != null ? `${p.share}%` : ''}
+                </Text>
+              </T.Data>
+              <T.Data box={{ background: 'white' }}>
+                <Text variant="small">
+                  {p.blocked ? formatMessage(m.yes) : formatMessage(m.no)}
+                </Text>
+              </T.Data>
+              <T.Data box={{ background: 'white' }}>
+                <Text variant="small">
+                  {p.operating
+                    ? formatMessage(fm.inOperation)
+                    : formatMessage(fm.finished)}
+                </Text>
+              </T.Data>
+              <T.Data box={{ background: 'white' }}>
+                <Text variant="small">
+                  {formatDateRange(p.dateFrom, p.dateTo)}
+                </Text>
+              </T.Data>
+            </T.Row>
+          ),
+        )}
       </T.Body>
     </T.Table>
   )
