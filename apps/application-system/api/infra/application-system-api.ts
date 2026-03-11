@@ -187,6 +187,7 @@ export const serviceSetup = (services: {
   servicePortalApi: ServiceBuilder<'service-portal-api'>
   userNotificationService: ServiceBuilder<'services-user-notification'>
   paymentsApi: ServiceBuilder<'services-payments'>
+  regulationsAdminBackend: ServiceBuilder<'regulations-admin-backend'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -372,6 +373,9 @@ export const serviceSetup = (services: {
         staging: 'Island Staging',
         prod: 'Island.is',
       },
+      REGULATIONS_ADMIN_URL: ref(
+        (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
+      ),
     })
     .xroad(
       Base,

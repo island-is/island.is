@@ -93,6 +93,8 @@ const userNotificationService = userNotificationServiceSetup({
   userProfileApi: servicePortalApi,
 })
 
+const rabBackend = rabBackendSetup()
+
 const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
@@ -100,6 +102,7 @@ const appSystemApi = appSystemApiSetup({
   servicePortalApi,
   userNotificationService,
   paymentsApi: paymentsService,
+  regulationsAdminBackend: rabBackend,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup({
   userNotificationService,
@@ -111,7 +114,6 @@ const nameRegistryBackend = serviceNameRegistryBackendSetup()
 const adsBackend = adsBackendSetup()
 const adsApi = adsApiSetup({ adsBackend })
 const adsWeb = adsWebSetup({ adsApi })
-const rabBackend = rabBackendSetup()
 
 const sessionsService = sessionsServiceSetup()
 const sessionsWorker = sessionsWorkerSetup()
