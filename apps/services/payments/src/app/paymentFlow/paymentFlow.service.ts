@@ -520,6 +520,8 @@ export class PaymentFlowService {
           this.logger,
         )
 
+        this.logger.warn('updateBody', updateBody)
+
         const response = await fetch(paymentFlow.onUpdateUrl, {
           method: 'POST',
           headers: {
