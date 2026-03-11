@@ -11,6 +11,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -63,8 +64,9 @@ import {
   CurrentDefendant,
   DefendantExistsGuard,
 } from '../defendant'
-import { Case, CaseFile, Defendant } from '../repository'
+import { Case, CaseFile, Defendant, PoliceDigitalCaseFile } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
+import { CreatePoliceDigitalCaseFileDto } from './dto/createPoliceDigitalCaseFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -80,6 +82,7 @@ import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordF
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { CriminalRecordService } from './criminalRecord.service'
 import { FileService } from './file.service'
+import { PoliceDigitalCaseFileService } from './policeDigitalCaseFile.service'
 
 @Controller('api/case/:caseId')
 @ApiTags('files')
@@ -88,6 +91,7 @@ export class FileController {
   constructor(
     private readonly fileService: FileService,
     private readonly criminalRecordService: CriminalRecordService,
+    private readonly policeDigitalCaseFileService: PoliceDigitalCaseFileService,
     @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -425,5 +429,51 @@ export class FileController {
       defendant,
       user,
     })
+  }
+
+  @UseGuards(CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Post('policeDigitalCaseFile')
+  @ApiCreatedResponse({
+    type: PoliceDigitalCaseFile,
+    description: 'Creates a new police digital case file entry',
+  })
+  createPoliceDigitalCaseFile(
+    @Param('caseId') caseId: string,
+    @Body() dto: CreatePoliceDigitalCaseFileDto,
+  ): Promise<PoliceDigitalCaseFile> {
+    this.logger.debug(
+      `Creating police digital case file for case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.policeDigitalCaseFileService.createPoliceDigitalCaseFile(
+        caseId,
+        dto,
+        transaction,
+      ),
+    )
+  }
+
+  @UseGuards(CaseReadGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Get('policeDigitalCaseFiles')
+  @ApiOkResponse({
+    type: PoliceDigitalCaseFile,
+    isArray: true,
+    description: 'Gets all police digital case file entries for a case',
+  })
+  getPoliceDigitalCaseFiles(
+    @Param('caseId') caseId: string,
+    @Query('policeCaseNumber') policeCaseNumber?: string,
+  ): Promise<PoliceDigitalCaseFile[]> {
+    this.logger.debug(
+      `Getting police digital case files for case ${caseId}`,
+    )
+
+    return this.policeDigitalCaseFileService.getPoliceDigitalCaseFiles(
+      caseId,
+      policeCaseNumber,
+    )
   }
 }

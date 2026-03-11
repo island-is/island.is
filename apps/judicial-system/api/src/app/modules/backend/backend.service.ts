@@ -38,6 +38,7 @@ import {
 } from '../defendant'
 import {
   CaseFile,
+  CasePoliceDigitalCaseFile,
   DeleteFileResponse,
   PresignedPost,
   SignedUrl,
@@ -484,6 +485,24 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceDigitalCaseFile[]> {
     return this.get(`case/${caseId}/policeDigitalFiles`)
+  }
+
+  createPoliceDigitalCaseFile(
+    caseId: string,
+    dto: unknown,
+  ): Promise<CasePoliceDigitalCaseFile> {
+    return this.post(`case/${caseId}/policeDigitalCaseFile`, dto)
+  }
+
+  getCasePoliceDigitalCaseFiles(
+    caseId: string,
+    policeCaseNumber?: string,
+  ): Promise<CasePoliceDigitalCaseFile[]> {
+    const query = policeCaseNumber
+      ? `?policeCaseNumber=${encodeURIComponent(policeCaseNumber)}`
+      : ''
+
+    return this.get(`case/${caseId}/policeDigitalCaseFiles${query}`)
   }
 
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {

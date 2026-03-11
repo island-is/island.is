@@ -1,0 +1,12 @@
+mutation CreatePoliceDigitalCaseFile($input: CreatePoliceDigitalCaseFileInput!) {
+  createPoliceDigitalCaseFile(input: $input) {
+    id
+    caseId
+    policeCaseNumber
+    policeDigitalFileId
+    policeExternalVendorId
+    name
+    displayDate
+    orderWithinChapter
+  }
+}

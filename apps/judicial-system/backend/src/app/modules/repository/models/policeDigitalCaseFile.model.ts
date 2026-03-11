@@ -16,7 +16,7 @@ import { Case } from './case.model'
   tableName: 'police_digital_case_file',
   timestamps: true,
 })
-export class CaseFile extends Model {
+export class PoliceDigitalCaseFile extends Model {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
