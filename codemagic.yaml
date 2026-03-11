@@ -143,7 +143,8 @@ definitions:
         npx --yes @devicecloud.dev/dcd@latest cloud \
           "$CM_BUILD_DIR/IslandApp.zip" \
           .maestro/ \
-          --apiKey "$DCD_API_KEY"
+          --apiKey "$DCD_API_KEY" \
+          --quiet
     - &run_devicecloud_android
       name: Upload Android to DeviceCloud
       script: |
@@ -151,7 +152,8 @@ definitions:
         npx --yes @devicecloud.dev/dcd@latest cloud \
           "$APK_PATH" \
           .maestro/ \
-          --apiKey "$DCD_API_KEY"
+          --apiKey "$DCD_API_KEY" \
+          --quiet
   publishing:
     ios_publishing: &ios_publishing
       app_store_connect:
@@ -223,8 +225,6 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: is.island.app.dev
-      # groups:
-      #   - devicecloud
       vars:
         <<: *shared_envs
         BUNDLE_ID: 'is.island.app.dev'
@@ -237,10 +237,6 @@ workflows:
       - *codegen
       - *prebuild_ios
       - *cocoapods
-      # E2E: build simulator app, run tests, gate store build on passing
-      # - *build_ios_simulator
-      # - *run_devicecloud_ios
-      # Store build (only runs if e2e passed)
       - *provisioning_profiles
       - *increment_build_number
       - *build_ipa
@@ -362,6 +358,7 @@ workflows:
       android_signing:
         - island-upload-keystore
       groups:
+        - google_credentials
         - firebase_credentials_dev
         - devicecloud
       vars:
