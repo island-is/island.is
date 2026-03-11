@@ -340,6 +340,55 @@ export class InternalCaseService {
       })
   }
 
+  private async uploadCourtRecordWorkingDocumentToCourt(
+    theCase: Case,
+    user: TUser,
+    transaction: Transaction,
+    buffer?: Buffer,
+  ): Promise<boolean> {
+    try {
+      let pdf = buffer
+
+      if (!pdf) {
+        if (isIndictmentCase(theCase.type)) {
+          pdf = await this.pdfService.getCourtRecordPdfForIndictmentCase(
+            theCase,
+            user,
+            transaction,
+          )
+        } else {
+          pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+        }
+      }
+
+      const fileName = this.formatMessage(courtUpload.courtRecord, {
+        courtCaseNumber: theCase.courtCaseNumber,
+        date: format(nowFactory(), 'yyyy-MM-dd HH:mm'),
+      })
+
+      await this.courtService.createDocument(
+        user,
+        theCase.id,
+        theCase.courtId,
+        theCase.courtCaseNumber,
+        CourtDocumentFolder.WORKING_DOCUMENTS,
+        fileName,
+        `${fileName}.pdf`,
+        'application/pdf',
+        pdf,
+      )
+
+      return true
+    } catch (error) {
+      this.logger.warn(
+        `Failed to upload court record working document to court for case ${theCase.id}`,
+        { error },
+      )
+
+      return false
+    }
+  }
+
   private getSignedRulingPdf(theCase: Case) {
     return this.awsS3Service.getGeneratedRequestCaseObject(
       theCase.type,
@@ -967,6 +1016,20 @@ export class InternalCaseService {
     return this.uploadCourtRecordPdfToCourt(theCase, user, transaction).then(
       (delivered) => ({ delivered }),
     )
+  }
+
+  async deliverCourtRecordWorkingDocumentToCourt(
+    theCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ): Promise<DeliverResponse> {
+    await this.refreshFormatMessage()
+
+    return this.uploadCourtRecordWorkingDocumentToCourt(
+      theCase,
+      user,
+      transaction,
+    ).then((delivered) => ({ delivered }))
   }
 
   async deliverSignedRulingToCourt(
