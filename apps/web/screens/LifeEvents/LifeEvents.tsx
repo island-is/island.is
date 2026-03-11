@@ -112,11 +112,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
               span={['12/12', '12/12', '9/12', '9/12', '6/12']}
               offset={['0', '0', '1/12', '1/12']}
             >
-              <Text
-                variant="intro"
-                as="p"
-                className={styles.description}
-              >
+              <Text variant="intro" as="p" className={styles.description}>
                 {n(
                   'pageBody',
                   'Samantekt yfir helstu þjónustu sem fólk þarf á tilteknum tímamótum í lífinu, til að mynda að eignast barn, fara í nám, stofna fyrirtæki og að undirbúa starfslok og efri árin.',
