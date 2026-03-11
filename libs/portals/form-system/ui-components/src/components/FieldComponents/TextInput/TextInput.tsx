@@ -29,8 +29,8 @@ export const TextInput = ({ item, valueIndex = 0, dispatch }: Props) => {
         </Box>
       )}
       <Controller
-        key={item.id}
-        name={item.id}
+        key={`${item.id}-${valueIndex}`}
+        name={`${item.id}.${valueIndex}`}
         control={control}
         defaultValue={getValue(item, 'text', valueIndex) ?? ''}
         rules={{

@@ -53,7 +53,7 @@ export const Screen = () => {
     } else {
       setNumberOfItems(1)
     }
-  }, [currentScreen?.data?.id, isMulti, multiMax])
+  }, [currentScreen?.data?.id, currentScreen?.data?.fields, isMulti, multiMax])
 
   const screenTitle =
     currentScreen?.data?.name?.[lang] ??

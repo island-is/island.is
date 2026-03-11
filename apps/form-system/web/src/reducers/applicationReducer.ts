@@ -206,6 +206,9 @@ export const applicationReducer = (
         fields: (state.currentScreen?.data?.fields ?? []).map((field) => {
           if (!field) return field
 
+          const isMultisetField = field.isPartOfMultiset !== false
+          if (!isMultisetField) return field
+
           const fieldType = field.fieldType
           const values = field.values ? field.values : []
           const currentLength = values.length
@@ -229,9 +232,6 @@ export const applicationReducer = (
             id: crypto.randomUUID(),
           }
 
-          const isMultisetField = field.isPartOfMultiset !== false
-          if (!isMultisetField) return field
-
           return {
             ...field,
             values: [...values, newValue],
@@ -249,9 +249,14 @@ export const applicationReducer = (
         }),
       )
 
+      const updatedScreens = updatedSections
+        .flatMap((section) => section.screens ?? [])
+        .filter(Boolean) as FormSystemScreen[]
+
       return {
         ...state,
         sections: updatedSections,
+        screens: updatedScreens,
         application: {
           ...state.application,
           sections: updatedSections,
@@ -294,9 +299,14 @@ export const applicationReducer = (
         }),
       )
 
+      const updatedScreens = updatedSections
+        .flatMap((section) => section.screens ?? [])
+        .filter(Boolean) as FormSystemScreen[]
+
       return {
         ...state,
         sections: updatedSections,
+        screens: updatedScreens,
         application: {
           ...state.application,
           sections: updatedSections,
