@@ -3,6 +3,7 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
+  Inject,
 } from '@nestjs/common'
 import { plainToInstance } from 'class-transformer'
 import { mergeMap } from 'rxjs/operators'
@@ -12,6 +13,9 @@ import { getOrganizationInfoByNationalId } from '../../../../utils/organizationI
 import { ApplicationAdminDto } from '../models/dto/admin/applicationAdmin.dto'
 import { ApplicationAdminResponseDto } from '../models/dto/admin/applicationAdminResponse.dto'
 import { InstitutionDto } from '../models/dto/admin/institution.dto'
+import { ApplicationStatisticsDto } from '../models/dto/admin/applicationStatistics.dto'
+import { ApplicationsService } from '../applications.service'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class ApplicationAdminSerializer
@@ -72,6 +76,8 @@ export class ApplicationAdminSerializer
 export class InstitutionSerializer
   implements NestInterceptor<InstitutionDto[], InstitutionDto[]>
 {
+  constructor(private identityService: IdentityClientService) {}
+
   intercept(
     _context: ExecutionContext,
     next: CallHandler<InstitutionDto[]>,
@@ -81,7 +87,7 @@ export class InstitutionSerializer
       .pipe(
         mergeMap((institutions: InstitutionDto[]) =>
           from(
-            Promise.all(
+            Promise.allSettled(
               institutions.map((institution) => this.serialize(institution)),
             ).then((serialized) => plainToInstance(InstitutionDto, serialized)),
           ),
@@ -96,9 +102,79 @@ export class InstitutionSerializer
       institution.nationalId,
     )
 
+    const institutionName =
+      await this.identityService.tryToGetNameFromNationalId(
+        institution.nationalId,
+        false,
+      )
+
     return plainToInstance(InstitutionDto, {
       ...institution,
+      name: institutionName,
       contentfulSlug: institutionInfo?.slug,
     })
+  }
+}
+
+@Injectable()
+export class ApplicationStatisticsSerializer
+  implements
+    NestInterceptor<ApplicationStatisticsDto[], ApplicationStatisticsDto[]>
+{
+  constructor(
+    private identityService: IdentityClientService,
+    private applicationService: ApplicationsService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+  ) {}
+  intercept(
+    _context: ExecutionContext,
+    next: CallHandler<ApplicationStatisticsDto[]>,
+  ): Observable<ApplicationStatisticsDto[]> {
+    return next.handle().pipe(
+      mergeMap((applicationStatistics: ApplicationStatisticsDto[]) =>
+        from(
+          Promise.all(
+            applicationStatistics.map((applicationStatistic) =>
+              this.serialize(applicationStatistic),
+            ),
+          ).then((serialized) =>
+            plainToInstance(
+              ApplicationStatisticsDto,
+              serialized.filter(
+                (item): item is ApplicationStatisticsDto => item !== null,
+              ),
+            ),
+          ),
+        ),
+      ),
+    )
+  }
+
+  private async serialize(
+    applicationStatistic: ApplicationStatisticsDto,
+  ): Promise<ApplicationStatisticsDto | null> {
+    try {
+      const institutionName =
+        await this.identityService.tryToGetNameFromNationalId(
+          applicationStatistic.institutionNationalId,
+          false,
+        )
+      const institutionInfo = getOrganizationInfoByNationalId(
+        applicationStatistic.institutionNationalId,
+      )
+
+      return plainToInstance(ApplicationStatisticsDto, {
+        ...applicationStatistic,
+        institutionName: institutionName ?? '',
+        institutionContentfulSlug: institutionInfo?.slug,
+      })
+    } catch (error) {
+      this.logger.warn(
+        `Failed to serialize ApplicationStatisticsDto for formId ${applicationStatistic.formId}`,
+        { error },
+      )
+
+      return null
+    }
   }
 }

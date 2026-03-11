@@ -10,6 +10,7 @@ import {
   TestApi,
   MedicalDocumentsApi,
   QuestionnairesApi,
+  BankInformationApi,
 } from '../../gen/fetch/v1'
 
 export type Scope =
@@ -24,6 +25,8 @@ export type Scope =
   | '@tr.is/danarbaetur:read'
   | '@tr.is/sjukraogendurhaefingargreidslur:read'
   | '@tr.is/ororkulifeyrir:read'
+  | '@tr.is/bankaupplysingar:write'
+  | '@tr.is/bankaupplysingar:read'
 
 export type Api =
   | typeof ApplicationApi
@@ -38,8 +41,11 @@ export type Api =
   | typeof TestApi
   | typeof MedicalDocumentsApi
   | typeof QuestionnairesApi
+  | typeof BankInformationApi
+  | typeof BankInformationWriteApi
 
 export class ApplicationWriteApi extends ApplicationApi {}
+export class BankInformationWriteApi extends BankInformationApi {}
 export class MedicalDocumentApiForDisabilityPension extends MedicalDocumentsApi {}
 export class QuestionnairesApiForDisabilityPension extends QuestionnairesApi {}
 

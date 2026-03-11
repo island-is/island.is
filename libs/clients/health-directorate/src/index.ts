@@ -36,6 +36,8 @@ export {
   PrescriptionCommissionDto,
   EuPatientConsentDto,
   EuPatientConsentStatus,
+  EuPatientConsentResponseDto,
+  ConsentHistoryEntryDto,
   PrescriptionCommissionStatus,
   SubmitQuestionnaireDto,
   CreateEuPatientConsentDto,
