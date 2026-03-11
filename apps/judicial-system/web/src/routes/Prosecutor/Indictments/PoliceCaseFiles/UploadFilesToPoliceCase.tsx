@@ -173,9 +173,11 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
 
     setIsUploadingPoliceCaseFiles(true)
 
-    await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
-
-    setIsUploadingPoliceCaseFiles(false)
+    try {
+      await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
+    } finally {
+      setIsUploadingPoliceCaseFiles(false)
+    }
   }
 
   return (

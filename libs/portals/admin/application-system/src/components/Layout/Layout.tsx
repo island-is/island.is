@@ -13,6 +13,10 @@ import { useLocale } from '@island.is/localization'
 import { ApplicationSystemPaths } from '../../lib/paths'
 import { m } from '../../lib/messages'
 import Statistics from '../../screens/Statistics/Statistics'
+import {
+  GetOrganizationsQuery,
+  useGetOrganizationsQuery,
+} from '../../queries/overview.generated'
 
 interface LayoutProps {
   isSuperAdmin: boolean
@@ -22,6 +26,16 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
   isSuperAdmin,
 }) => {
   const { formatMessage } = useLocale()
+
+  //These are all organizations in contentful
+  const { data: contentfulOrgData, loading: contentfulOrgLoading } =
+    useGetOrganizationsQuery({
+      ssr: false,
+    })
+
+  const organizationListFromContentful: GetOrganizationsQuery['getOrganizations']['items'] =
+    contentfulOrgData?.getOrganizations?.items ?? []
+
   return (
     <GridContainer>
       <Breadcrumbs
@@ -47,12 +61,32 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
                 {
                   id: 'overview',
                   label: formatMessage(m.overview),
-                  content: <Overview isSuperAdmin={isSuperAdmin} />,
+                  content: (
+                    <Overview
+                      isSuperAdmin={isSuperAdmin}
+                      organizationListFromContentful={
+                        organizationListFromContentful
+                      }
+                      isLoadingOrganizationsFromContentful={
+                        contentfulOrgLoading
+                      }
+                    />
+                  ),
                 },
                 {
                   id: 'statistics',
                   label: formatMessage(m.statistics),
-                  content: <Statistics isSuperAdmin={isSuperAdmin} />,
+                  content: (
+                    <Statistics
+                      isSuperAdmin={isSuperAdmin}
+                      organizationListFromContentful={
+                        organizationListFromContentful
+                      }
+                      isLoadingOrganizationsFromContentful={
+                        contentfulOrgLoading
+                      }
+                    />
+                  ),
                 },
               ]}
             />

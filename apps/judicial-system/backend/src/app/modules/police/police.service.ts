@@ -596,6 +596,7 @@ export class PoliceService {
         user,
         'getPoliceCaseInfo',
       )
+
       const policeCaseNumbers = new Set<string>([policeCaseResponse.malsnumer])
 
       // fetch unique police case numbers from case files and digital case files
@@ -673,7 +674,7 @@ export class PoliceService {
       return cases
     } catch (reason) {
       this.eventService.postErrorEvent(
-        'Failed to parse police case info',
+        'Failed to fetch and parse police case info for case',
         {
           caseId,
           actor: user.name,
@@ -682,11 +683,15 @@ export class PoliceService {
         reason,
       )
 
-      throw new Error({
-        ...reason,
-        message: `Failed to parse police case info for case ${caseId}`,
-        detail: reason.message,
-      })
+      if (
+        reason instanceof NotFoundException ||
+        reason instanceof BadGatewayException
+      ) {
+        throw reason
+      }
+      throw new Error(
+        `Failed to fetch and parse police case info for case ${caseId}`,
+      )
     }
   }
 

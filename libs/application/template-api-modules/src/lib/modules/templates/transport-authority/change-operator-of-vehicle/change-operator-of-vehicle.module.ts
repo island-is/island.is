@@ -3,10 +3,6 @@ import { ConfigModule } from '@nestjs/config'
 import { SharedTemplateAPIModule } from '../../../shared'
 import { ChangeOperatorOfVehicleService } from './change-operator-of-vehicle.service'
 import {
-  ChargeFjsV2ClientConfig,
-  ChargeFjsV2ClientModule,
-} from '@island.is/clients/charge-fjs-v2'
-import {
   VehicleOperatorsClientModule,
   VehicleOperatorsClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-operators'
@@ -30,21 +26,20 @@ import {
   VehiclesMileageClientModule,
   VehiclesMileageClientConfig,
 } from '@island.is/clients/vehicles-mileage'
-
+import { ClientsPaymentsModule } from '@island.is/clients/payments'
 @Module({
   imports: [
     SharedTemplateAPIModule,
-    ChargeFjsV2ClientModule,
     VehicleOperatorsClientModule,
     VehicleOwnerChangeClientModule,
     VehicleCodetablesClientModule,
     VehicleServiceFjsV1ClientModule,
     VehiclesClientModule,
     VehiclesMileageClientModule,
+    ClientsPaymentsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        ChargeFjsV2ClientConfig,
         VehicleOperatorsClientConfig,
         VehicleOwnerChangeClientConfig,
         VehicleCodetablesClientConfig,
