@@ -350,7 +350,8 @@ export class QuestionnairesService {
                   }
                 }) ?? [],
             )
-            .filter((answer) => answer != null && answer.values.length > 0) ?? [],
+            .filter((answer) => answer != null && answer.values.length > 0) ??
+          [],
       }
 
       return {
