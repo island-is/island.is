@@ -23,6 +23,12 @@ export const lawAndOrderModule: PortalModule = {
       element: <Navigate to={LawAndOrderPaths.CourtCases} replace />,
     },
     {
+      name: m.lawAndOrder,
+      path: LawAndOrderPaths.OverviewRedirect,
+      enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
+      element: <Navigate to={LawAndOrderPaths.CourtCases} replace />,
+    },
+    {
       name: m.courtCases,
       path: LawAndOrderPaths.CourtCases,
       enabled: userInfo.scopes.includes(ApiScope.lawAndOrder),
