@@ -278,4 +278,6 @@ Categories.getProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(Categories)
+export default withMainLayout(Categories, {
+  showFooterIllustration: true,
+})
