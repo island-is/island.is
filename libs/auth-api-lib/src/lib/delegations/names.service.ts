@@ -40,6 +40,11 @@ export class NamesService {
         `A person with nationalId<${nationalId}> could not be found`,
       )
     }
+    if (person.afdrif === 'LÉST') {
+      throw new BadRequestException(
+        `Cannot create a delegation to a deceased individual`,
+      )
+    }
     return person.nafn ?? ''
   }
 }
