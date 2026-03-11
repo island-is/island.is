@@ -108,7 +108,9 @@ const AnswerQuestionnaire: FC = () => {
     answers: { [key: string]: QuestionAnswer },
     asDraft?: boolean,
   ) => {
-    if (!organization || !id) {
+    const formId = data?.questionnairesDetail?.baseInformation.formId
+
+    if (!organization || !id || !formId) {
       toast.error(
         formatMessage(messages.errorSendingAnswers, {
           title:
@@ -135,7 +137,7 @@ const AnswerQuestionnaire: FC = () => {
           organization: organization,
           saveAsDraft: asDraft,
           entries: entries,
-          formId: data?.questionnairesDetail?.baseInformation.formId ?? '',
+          formId,
         },
         locale: lang,
       },

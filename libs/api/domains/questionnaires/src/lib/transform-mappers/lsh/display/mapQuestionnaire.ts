@@ -18,17 +18,25 @@ import { mapSection } from './mapSection'
 export const mapLshQuestionnaireForm = (
   form: QuestionnaireBody,
   formatMessage: FormatMessage,
-): Questionnaire => ({
-  baseInformation: {
-    id: form.gUID || 'undefined-id',
-    formId: form.formID || 'undefined-form-id',
-    title: form.header || formatMessage(m.questionnaireWithoutTitle),
-    description: form.description || undefined,
-    organization: QuestionnairesOrganizationEnum.LSH,
-    sentDate: '',
-  },
-  sections: form.sections ? form.sections.map(mapSection) : [],
-})
+): Questionnaire => {
+  if (!form.gUID) {
+    throw new Error(`LSH questionnaire is missing gUID`)
+  }
+  if (!form.formID) {
+    throw new Error(`LSH questionnaire ${form.gUID} is missing formID`)
+  }
+  return {
+    baseInformation: {
+      id: form.gUID,
+      formId: form.formID,
+      title: form.header || formatMessage(m.questionnaireWithoutTitle),
+      description: form.description || undefined,
+      organization: QuestionnairesOrganizationEnum.LSH,
+      sentDate: '',
+    },
+    sections: form.sections ? form.sections.map(mapSection) : [],
+  }
+}
 
 export const mapLshQuestionnaireOverview = (
   data: LshQuestionnaireType,

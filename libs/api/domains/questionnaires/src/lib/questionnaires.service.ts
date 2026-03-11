@@ -386,13 +386,23 @@ export class QuestionnairesService {
       return null
     }
 
+    if (!LSHdata.gUID) {
+      this.logger.warn('LSH answered questionnaire is missing gUID', { submissionId: input.submissionId })
+      return null
+    }
+
     const data = {
-      id: LSHdata.gUID ?? 'undefined-id',
+      id: LSHdata.gUID,
       title:
         LSHquestionnaire?.header ?? formatMessage(m.questionnaireWithoutTitle),
       description: LSHquestionnaire?.description ?? undefined,
       date: this.formatDate(LSHdata.answerDateTime),
-      answers: LSHdata.answers?.map((answer) => {
+      answers: LSHdata.answers?.flatMap((answer) => {
+        if (!answer.entryID) {
+          this.logger.warn('Skipping LSH answer with missing entryID', { submissionId: input.submissionId })
+          return []
+        }
+
         // Search through all sections to find the matching question
         const question = LSHquestionnaire?.sections
           ?.flatMap((section) => section.questions ?? [])
@@ -405,11 +415,11 @@ export class QuestionnairesService {
             return option?.label ?? value
           }) ?? []
 
-        return {
-          id: answer.entryID ?? 'undefined-id',
+        return [{
+          id: answer.entryID,
           label: question?.question ?? formatMessage(m.noLabel),
           values: valueLabels,
-        }
+        }]
       }),
     }
 
