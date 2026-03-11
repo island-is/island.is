@@ -95,11 +95,13 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
     normalizeDate(range ? selectedRange?.endDate : null) ?? null,
   )
   const datePickerRef = useRef<ReactDatePicker>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
   const [forceOpen, setForceOpen] = useState<boolean | undefined>(undefined)
+  const [shouldAlignEnd, setShouldAlignEnd] = useState(false)
 
   // Check if range selection is complete
   const isRangeComplete = range && isDefined(startDate) && isDefined(endDate)
@@ -139,7 +141,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   }, [isRangeComplete, forceOpen])
 
   return (
-    <div className={coreStyles.root} data-testid="datepicker">
+    <div
+      ref={containerRef}
+      className={coreStyles.root}
+      data-testid="datepicker"
+    >
       <div
         className={cn(styles.root, 'island-ui-datepicker', {
           [styles.small]: size === 'sm',
@@ -156,6 +162,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             [styles.popperSmall]: size === 'sm',
             [styles.popperSmallWithoutLabel]: size === 'sm' && !label,
             [styles.popperWithoutLabel]: size === 'md' && !label,
+            [styles.popperAlignEnd]: shouldAlignEnd,
           })}
           id={id}
           name={name}
@@ -177,8 +184,15 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           showPopperArrow={false}
           popperPlacement="bottom-start"
           open={forceOpen ?? undefined}
-          onInputClick={() => setForceOpen(true)}
+          onInputClick={() => {
+            setForceOpen(true)
+          }}
           onCalendarOpen={() => {
+            if (containerRef.current) {
+              const rect = containerRef.current.getBoundingClientRect()
+              const calendarWidth = 310
+              setShouldAlignEnd(rect.left + calendarWidth > window.innerWidth)
+            }
             setDatePickerState('open')
             setForceOpen(true)
             handleOpenCalendar && handleOpenCalendar()

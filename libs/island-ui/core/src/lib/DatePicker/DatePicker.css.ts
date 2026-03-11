@@ -315,6 +315,11 @@ export const popperWithoutLabel = style({
   }),
 })
 
+export const popperAlignEnd = style({
+  display: 'flex',
+  justifyContent: 'flex-end',
+})
+
 export const popperInline = style({
   position: `relative !important` as never,
   transform: 'none !important',
