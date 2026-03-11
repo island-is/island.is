@@ -10,22 +10,22 @@ const usePoliceDigitalCaseFile = (
   caseId: string,
   policeCaseNumber?: string,
 ) => {
-  const { data, loading: isLoading, error } = useCasePoliceDigitalCaseFilesQuery(
-    {
-      variables: { input: { caseId, policeCaseNumber } },
-      skip: !caseId,
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const {
+    data,
+    loading: isLoading,
+    error,
+  } = useCasePoliceDigitalCaseFilesQuery({
+    variables: { input: { caseId, policeCaseNumber } },
+    skip: !caseId,
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   const [createMutation, { loading: isCreating }] =
     useCreatePoliceDigitalCaseFileMutation()
 
   const createPoliceDigitalCaseFile = useCallback(
-    async (
-      input: Omit<CreatePoliceDigitalCaseFileInput, 'caseId'>,
-    ) => {
+    async (input: Omit<CreatePoliceDigitalCaseFileInput, 'caseId'>) => {
       try {
         const { data } = await createMutation({
           variables: { input: { caseId, ...input } },

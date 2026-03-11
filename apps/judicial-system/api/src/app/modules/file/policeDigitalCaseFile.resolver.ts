@@ -38,9 +38,7 @@ export class PoliceDigitalCaseFileResolver {
   ): Promise<CasePoliceDigitalCaseFile> {
     const { caseId, ...dto } = input
 
-    this.logger.debug(
-      `Creating police digital case file for case ${caseId}`,
-    )
+    this.logger.debug(`Creating police digital case file for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,

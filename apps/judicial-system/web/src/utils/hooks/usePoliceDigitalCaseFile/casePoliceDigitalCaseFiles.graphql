@@ -1,4 +1,6 @@
-query CasePoliceDigitalCaseFiles($input: CasePoliceDigitalCaseFilesQueryInput!) {
+query CasePoliceDigitalCaseFiles(
+  $input: CasePoliceDigitalCaseFilesQueryInput!
+) {
   casePoliceDigitalCaseFiles(input: $input) {
     id
     caseId

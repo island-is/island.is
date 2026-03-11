@@ -22,9 +22,7 @@ export class PoliceDigitalCaseFileService {
     dto: CreatePoliceDigitalCaseFileDto,
     transaction: Transaction,
   ): Promise<PoliceDigitalCaseFile> {
-    this.logger.debug(
-      `Creating police digital case file for case ${caseId}`,
-    )
+    this.logger.debug(`Creating police digital case file for case ${caseId}`)
 
     return this.policeDigitalCaseFileRepositoryService.create(
       { caseId, ...dto },
@@ -36,9 +34,7 @@ export class PoliceDigitalCaseFileService {
     caseId: string,
     policeCaseNumber?: string,
   ): Promise<PoliceDigitalCaseFile[]> {
-    this.logger.debug(
-      `Getting police digital case files for case ${caseId}`,
-    )
+    this.logger.debug(`Getting police digital case files for case ${caseId}`)
 
     const where: Record<string, string> = { caseId }
 

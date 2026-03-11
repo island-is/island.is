@@ -1,4 +1,6 @@
-mutation CreatePoliceDigitalCaseFile($input: CreatePoliceDigitalCaseFileInput!) {
+mutation CreatePoliceDigitalCaseFile(
+  $input: CreatePoliceDigitalCaseFileInput!
+) {
   createPoliceDigitalCaseFile(input: $input) {
     id
     caseId

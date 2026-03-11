@@ -442,9 +442,7 @@ export class FileController {
     @Param('caseId') caseId: string,
     @Body() dto: CreatePoliceDigitalCaseFileDto,
   ): Promise<PoliceDigitalCaseFile> {
-    this.logger.debug(
-      `Creating police digital case file for case ${caseId}`,
-    )
+    this.logger.debug(`Creating police digital case file for case ${caseId}`)
 
     return this.sequelize.transaction((transaction) =>
       this.policeDigitalCaseFileService.createPoliceDigitalCaseFile(
@@ -467,9 +465,7 @@ export class FileController {
     @Param('caseId') caseId: string,
     @Query('policeCaseNumber') policeCaseNumber?: string,
   ): Promise<PoliceDigitalCaseFile[]> {
-    this.logger.debug(
-      `Getting police digital case files for case ${caseId}`,
-    )
+    this.logger.debug(`Getting police digital case files for case ${caseId}`)
 
     return this.policeDigitalCaseFileService.getPoliceDigitalCaseFiles(
       caseId,
