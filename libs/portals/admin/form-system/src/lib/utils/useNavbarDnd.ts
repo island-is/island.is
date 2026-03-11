@@ -21,7 +21,7 @@ export const useNavbarDnD = () => {
   const { controlDispatch, updateDnD, control, formUpdate } = useContext(
     ControlContext,
   ) as IControlContext
-  const { activeItem, form } = control
+  const { activeItem, form, isPublished } = control
   const { dependencies } = form
 
   const sensors = useSensors(
@@ -32,7 +32,21 @@ export const useNavbarDnD = () => {
     }),
   )
 
-  const onDragStart = (event: DragStartEvent) => {
+  const noopDragStart = (_event: DragStartEvent) => {
+    return
+  }
+
+  const noopDragOver = (_event: DragOverEvent) => {
+    return
+  }
+
+  const noopDragEnd = () => {
+    return
+  }
+
+  const onDragStart = isPublished
+    ? noopDragStart
+    : (event: DragStartEvent) => {
     controlDispatch({
       type: 'SET_ACTIVE_ITEM',
       payload: {
@@ -42,9 +56,11 @@ export const useNavbarDnD = () => {
         },
       },
     })
-  }
+    }
 
-  const onDragOver = (event: DragOverEvent) => {
+  const onDragOver = isPublished
+    ? noopDragOver
+    : (event: DragOverEvent) => {
     const { active, over } = event
     if (!over) return
 
@@ -106,11 +122,14 @@ export const useNavbarDnD = () => {
         }
       }
     }
-  }
+    }
 
-  const onDragEnd = () => {
-    updateDnD(activeItem.type)
-  }
+  const onDragEnd = isPublished ? noopDragEnd : () => updateDnD(activeItem.type)
 
-  return { sensors, onDragStart, onDragOver, onDragEnd }
+  return {
+    sensors: isPublished ? [] : sensors,
+    onDragStart,
+    onDragOver,
+    onDragEnd,
+  }
 }

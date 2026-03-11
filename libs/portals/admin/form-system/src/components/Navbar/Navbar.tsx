@@ -281,10 +281,10 @@ export const Navbar = () => {
     <div>
       <Box className={cn(styles.navbarContainer)}>
         <DndContext
-          sensors={sensors}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          onDragOver={onDragOver}
+          sensors={isPublished ? [] : sensors}
+          onDragStart={isPublished ? undefined : onDragStart}
+          onDragEnd={isPublished ? undefined : onDragEnd}
+          onDragOver={isPublished ? undefined : onDragOver}
         >
           <SortableContext items={sectionIds ?? []}>
             {renderInputSections()}
