@@ -365,7 +365,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                 },
               ]
             : []),
-          ...(!verdict?.isAcquittedByPublicProsecutionOffice
+          ...(Boolean(verdict) && !verdict?.isAcquittedByPublicProsecutionOffice
             ? [
                 {
                   title: `${
