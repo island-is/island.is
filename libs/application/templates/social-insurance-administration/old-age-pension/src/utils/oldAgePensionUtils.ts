@@ -45,10 +45,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'questions.pensionFund',
   )
 
-  const applicationType = getValueViaPath<ApplicationType>(
-    answers,
-    'applicationType.option',
- ) ?? ApplicationType.OLD_AGE_PENSION
+  const applicationType =
+    getValueViaPath<ApplicationType>(answers, 'applicationType.option') ??
+    ApplicationType.OLD_AGE_PENSION
 
   const selectedYear = getValueViaPath<string>(answers, 'period.year') ?? ''
 
@@ -59,10 +58,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'period.hiddenInput',
   )
 
-  const applicantPhonenumber = getValueViaPath<string>(
-    answers,
-    'applicant.phoneNumber',
-  ) ?? ''
+  const applicantPhonenumber =
+    getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? ''
 
   // If foreign residence is found then this is always true
   const residenceHistoryQuestion = getValueViaPath<YesOrNo>(
@@ -90,45 +87,37 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'paymentInfo.personalAllowance',
   )
 
-  const personalAllowanceUsage = getValueViaPath<string>(
-    answers,
-    'paymentInfo.personalAllowanceUsage',
-  ) ?? ''
+  const personalAllowanceUsage =
+    getValueViaPath<string>(answers, 'paymentInfo.personalAllowanceUsage') ?? ''
 
-  const taxLevel = getValueViaPath<TaxLevelOptions>(
-    answers,
-    'paymentInfo.taxLevel',
-  ) ?? TaxLevelOptions.INCOME
+  const taxLevel =
+    getValueViaPath<TaxLevelOptions>(answers, 'paymentInfo.taxLevel') ??
+    TaxLevelOptions.INCOME
 
-  const additionalAttachments = getValueViaPath<FileType[]>(
-    answers,
-    'fileUploadAdditionalFiles.additionalDocuments',
-  ) ?? []
+  const additionalAttachments =
+    getValueViaPath<FileType[]>(
+      answers,
+      'fileUploadAdditionalFiles.additionalDocuments',
+    ) ?? []
 
-  const additionalAttachmentsRequired = getValueViaPath<FileType[]>(
-    answers,
-    'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
-  )
+  const additionalAttachmentsRequired =
+    getValueViaPath<FileType[]>(
+      answers,
+      'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
+    ) ?? []
 
-  const pensionAttachments = getValueViaPath<FileType[]>(
-    answers,
-    'fileUpload.pension',
-  )
+  const pensionAttachments =
+    getValueViaPath<FileType[]>(answers, 'fileUpload.pension') ?? []
 
-  const fishermenAttachments = getValueViaPath<FileType[]>(
-    answers,
-    'fileUpload.fishermen',
-  )
+  const fishermenAttachments =
+    getValueViaPath<FileType[]>(answers, 'fileUpload.fishermen') ?? []
 
-  const selfEmployedAttachments = getValueViaPath<FileType[]>(
-    answers,
-    'employment.selfEmployedAttachment',
-  )
+  const selfEmployedAttachments =
+    getValueViaPath<FileType[]>(answers, 'employment.selfEmployedAttachment') ??
+    []
 
-  const earlyRetirementAttachments = getValueViaPath<FileType[]>(
-    answers,
-    'fileUpload.earlyRetirement',
-  )
+  const earlyRetirementAttachments =
+    getValueViaPath<FileType[]>(answers, 'fileUpload.earlyRetirement') ?? []
 
   const tempAnswers = getValueViaPath<Application['answers']>(
     answers,
