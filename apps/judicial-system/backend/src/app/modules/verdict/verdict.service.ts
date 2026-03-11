@@ -254,14 +254,12 @@ export class VerdictService {
     // When prosecution office manually records service date (defendant did not
     // open ruling on island.is), send driving license suspension notification
     // so the office can register it in the separate system.
-    const wasNotServedBefore = !verdict.serviceDate
-    const isNowServedByManualEntry =
-      wasNotServedBefore &&
-      update.serviceDate &&
-      verdict.serviceRequirement === ServiceRequirement.REQUIRED
     const defendant = theCase.defendants?.find((d) => d.id === defendantId)
+    const isVerdictServed = !verdict.serviceDate && update.serviceDate
+    const shouldSendDrivingLicenseSuspensionNotification =
+      isVerdictServed && defendant?.isDrivingLicenseSuspended
 
-    if (isNowServedByManualEntry && defendant?.isDrivingLicenseSuspended) {
+    if (shouldSendDrivingLicenseSuspensionNotification) {
       addMessagesToQueue({
         type: MessageType.INDICTMENT_CASE_NOTIFICATION,
         caseId: theCase.id,

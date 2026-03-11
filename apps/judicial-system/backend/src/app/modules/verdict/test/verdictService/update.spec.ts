@@ -159,45 +159,4 @@ describe('VerdictService - update', () => {
       expect(then.result).toBeDefined()
     })
   })
-
-  describe('when service requirement is not required', () => {
-    let then: Then
-
-    beforeEach(async () => {
-      const verdict = {
-        id: verdictId,
-        caseId,
-        defendantId,
-        serviceRequirement: ServiceRequirement.NOT_REQUIRED,
-        serviceDate: null,
-      } as unknown as Verdict
-
-      const update = {
-        serviceDate: new Date(2025, 1, 1),
-      } as UpdateVerdictDto
-
-      const theCase = {
-        id: caseId,
-        defendants: [
-          {
-            id: defendantId,
-            isDrivingLicenseSuspended: true,
-          },
-        ],
-      } as Case
-
-      const updatedVerdict = { ...verdict, ...update } as unknown as Verdict
-
-      const mockUpdate = mockVerdictRepositoryService.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce(updatedVerdict)
-
-      then = await givenWhenThen({ verdict, update, theCase, defendantId })
-    })
-
-    it('should update verdict without enqueuing notification', () => {
-      expect(mockVerdictRepositoryService.update).toHaveBeenCalledTimes(1)
-      expect(mockAddMessagesToQueue).not.toHaveBeenCalled()
-      expect(then.result).toBeDefined()
-    })
-  })
 })
