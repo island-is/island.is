@@ -49,6 +49,13 @@ import { ensureRegName, nameToSlug } from '@island.is/regulations'
 import type { Year, ISODate } from '@island.is/regulations'
 import { OJOIAGetRegulationsSearchInput } from '../models/getRegulationsSearch.input'
 import { OJOIAGetRegulationFromApiInput } from '../models/getRegulationFromApi.input'
+import {
+  OJOIARegulationOptionSearchResponse,
+  OJOIADraftImpactsResponse,
+  OJOIALawChaptersResponse,
+  OJOIAMinistriesResponse,
+  OJOIACreateDraftResponse,
+} from '../models/regulation.response'
 import { convertDateToDaysAgo } from './utils'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
@@ -403,8 +410,10 @@ export class OfficialJournalOfIcelandApplicationService {
 
   // ---- Regulation-related methods ----
 
-  async getRegulationsOptionSearch(input: OJOIAGetRegulationsSearchInput) {
-    return this.regulationsService.getRegulationsOptionSearch(
+  async getRegulationsOptionSearch(
+    input: OJOIAGetRegulationsSearchInput,
+  ): Promise<OJOIARegulationOptionSearchResponse | null> {
+    const results = await this.regulationsService.getRegulationsOptionSearch(
       input.q,
       input.rn,
       input.year as Year | undefined,
@@ -414,6 +423,12 @@ export class OfficialJournalOfIcelandApplicationService {
       input.iR,
       input.page,
     )
+
+    if (!results) {
+      return null
+    }
+
+    return { regulations: results }
   }
 
   async getRegulationFromApi(input: OJOIAGetRegulationFromApiInput) {
@@ -429,27 +444,56 @@ export class OfficialJournalOfIcelandApplicationService {
     )
   }
 
-  async getRegulationImpactsByName(regulation: string, user: User) {
+  async getRegulationImpactsByName(
+    regulation: string,
+    user: User,
+  ): Promise<OJOIADraftImpactsResponse | null> {
     const name = ensureRegName(regulation)
     if (!name) {
       return null
     }
 
-    return this.regulationsAdminClientService.getImpactsByName(
+    const impacts = await this.regulationsAdminClientService.getImpactsByName(
       nameToSlug(name),
       user,
     )
+
+    if (!impacts) {
+      return null
+    }
+
+    return {
+      changes: impacts.filter((i) => i.type === 'amend'),
+      cancellations: impacts.filter((i) => i.type === 'repeal'),
+    }
   }
 
-  async getLawChapters() {
-    return this.regulationsService.getRegulationsLawChapters(false)
+  async getLawChapters(): Promise<OJOIALawChaptersResponse | null> {
+    const result = await this.regulationsService.getRegulationsLawChapters(
+      false,
+    )
+
+    if (!result) {
+      return null
+    }
+
+    return { lawChapters: result }
   }
 
-  async getMinistries() {
-    return this.regulationsService.getRegulationsMinistries()
+  async getMinistries(): Promise<OJOIAMinistriesResponse | null> {
+    const result = await this.regulationsService.getRegulationsMinistries()
+
+    if (!result) {
+      return null
+    }
+
+    return { ministries: result }
   }
 
-  async createDraftRegulation(type: string, user: User) {
+  async createDraftRegulation(
+    type: string,
+    user: User,
+  ): Promise<OJOIACreateDraftResponse | null> {
     const draft = await this.regulationsAdminClientService.create(user, {
       type: type || 'base',
     })
@@ -549,7 +593,7 @@ export class OfficialJournalOfIcelandApplicationService {
       diff?: string
     },
     user: User,
-  ): Promise<{ id: string } | null> {
+  ): Promise<OJOIACreateDraftResponse | null> {
     try {
       if (input.type === 'amend') {
         const result =

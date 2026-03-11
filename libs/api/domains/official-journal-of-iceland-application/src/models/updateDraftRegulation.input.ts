@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsOptional } from 'class-validator'
-import graphqlTypeJson from 'graphql-type-json'
+import { OJOIAAppendixInput } from './appendix.input'
 
 @InputType()
 export class OJOIAUpdateDraftRegulationInput {
@@ -15,9 +15,9 @@ export class OJOIAUpdateDraftRegulationInput {
   @IsOptional()
   text?: string
 
-  @Field(() => graphqlTypeJson, { nullable: true })
+  @Field(() => [OJOIAAppendixInput], { nullable: true })
   @IsOptional()
-  appendixes?: Array<{ title: string; text: string }>
+  appendixes?: OJOIAAppendixInput[]
 
   @Field({ nullable: true })
   @IsOptional()

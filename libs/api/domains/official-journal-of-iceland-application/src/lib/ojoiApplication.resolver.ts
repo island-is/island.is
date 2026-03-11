@@ -37,6 +37,13 @@ import { OJOIApplicationAdvertTemplateTypesResponse } from '../models/applicatio
 import { OJOIApplicationAdvertTemplateResponse } from '../models/applicationAdvertTemplate.response'
 import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
 import graphqlTypeJson from 'graphql-type-json'
+import {
+  OJOIARegulationOptionSearchResponse,
+  OJOIADraftImpactsResponse,
+  OJOIALawChaptersResponse,
+  OJOIAMinistriesResponse,
+  OJOIACreateDraftResponse,
+} from '../models/regulation.response'
 import { OJOIAGetRegulationsSearchInput } from '../models/getRegulationsSearch.input'
 import { OJOIAGetRegulationFromApiInput } from '../models/getRegulationFromApi.input'
 import { OJOIAGetRegulationImpactsInput } from '../models/getRegulationImpacts.input'
@@ -212,7 +219,7 @@ export class OfficialJournalOfIcelandApplicationResolver {
 
   // ---- Regulation-related queries ----
 
-  @Query(() => graphqlTypeJson, {
+  @Query(() => OJOIARegulationOptionSearchResponse, {
     name: 'OJOIAGetRegulationsOptionSearch',
     nullable: true,
   })
@@ -230,7 +237,7 @@ export class OfficialJournalOfIcelandApplicationResolver {
     return this.ojoiApplicationService.getRegulationFromApi(input)
   }
 
-  @Query(() => graphqlTypeJson, {
+  @Query(() => OJOIADraftImpactsResponse, {
     name: 'OJOIAGetRegulationImpactsByName',
     nullable: true,
   })
@@ -244,7 +251,7 @@ export class OfficialJournalOfIcelandApplicationResolver {
     )
   }
 
-  @Query(() => graphqlTypeJson, {
+  @Query(() => OJOIALawChaptersResponse, {
     name: 'OJOIAGetLawChapters',
     nullable: true,
   })
@@ -252,7 +259,7 @@ export class OfficialJournalOfIcelandApplicationResolver {
     return this.ojoiApplicationService.getLawChapters()
   }
 
-  @Query(() => graphqlTypeJson, {
+  @Query(() => OJOIAMinistriesResponse, {
     name: 'OJOIAGetMinistries',
     nullable: true,
   })
@@ -260,7 +267,7 @@ export class OfficialJournalOfIcelandApplicationResolver {
     return this.ojoiApplicationService.getMinistries()
   }
 
-  @Mutation(() => graphqlTypeJson, {
+  @Mutation(() => OJOIACreateDraftResponse, {
     name: 'OJOIACreateDraftRegulation',
     nullable: true,
   })
@@ -310,7 +317,7 @@ export class OfficialJournalOfIcelandApplicationResolver {
     )
   }
 
-  @Mutation(() => graphqlTypeJson, {
+  @Mutation(() => OJOIACreateDraftResponse, {
     name: 'OJOIACreateDraftImpact',
     nullable: true,
   })
