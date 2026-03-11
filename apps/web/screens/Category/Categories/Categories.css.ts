@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
@@ -21,4 +21,14 @@ export const listContainer = style({
       paddingRight: 24,
     },
   },
+})
+
+export const card = style({
+  minHeight: 108,
+})
+
+export const cardLink = style({})
+
+globalStyle(`${cardLink} span`, {
+  fontSize: 14,
 })
