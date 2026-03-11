@@ -23,8 +23,7 @@ export const typeSelection = {
     },
     adDescription: {
       id: 'ojoi.application:typeSelection.options.adDescription',
-      defaultMessage:
-        'Almenn auglýsing til birtingar í Stjórnartíðindum.',
+      defaultMessage: 'Almenn auglýsing til birtingar í Stjórnartíðindum.',
     },
     baseRegulation: {
       id: 'ojoi.application:typeSelection.options.baseRegulation',

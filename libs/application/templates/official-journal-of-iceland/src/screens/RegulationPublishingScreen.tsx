@@ -29,9 +29,11 @@ export const RegulationPublishingScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
   const { application } = props
 
-  const { application: currentApplication, updateApplication } = useApplication({
-    applicationId: application.id,
-  })
+  const { application: currentApplication, updateApplication } = useApplication(
+    {
+      applicationId: application.id,
+    },
+  )
 
   const [isUpdatingCategory, setIsUpdatingCategory] = useState(false)
   const {
@@ -72,16 +74,11 @@ export const RegulationPublishingScreen = (props: OJOIFieldBaseProps) => {
 
   const selectedCategories = currentApplication.answers.advert?.categories
 
-  const {
-    draftId,
-    draftData,
-    loadDraft,
-    saveDraft,
-    updateDraftField,
-  } = useRegulationDraft({
-    applicationId: application.id,
-    answers: application.answers as unknown as Record<string, unknown>,
-  })
+  const { draftId, draftData, loadDraft, saveDraft, updateDraftField } =
+    useRegulationDraft({
+      applicationId: application.id,
+      answers: application.answers as unknown as Record<string, unknown>,
+    })
 
   // Load regulation draft on mount to get current fastTrack state
   const loadRef = useRef(false)

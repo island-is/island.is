@@ -88,7 +88,9 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
       const base64Body = Buffer.from(bodyHtml).toString('base64')
 
       // Generate amending title (without "Reglugerð" prefix in OJOI flow)
-      const title = formatAmendingRegTitle(allImpacts, { skipRegulationPrefix: true })
+      const title = formatAmendingRegTitle(allImpacts, {
+        skipRegulationPrefix: true,
+      })
 
       // Persist both to application answers
       await updateApplicationV2({

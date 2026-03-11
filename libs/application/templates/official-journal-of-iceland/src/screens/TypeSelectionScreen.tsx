@@ -42,7 +42,10 @@ export const TypeSelectionScreen = ({
   useEffect(() => {
     if (!currentType) {
       setValue('applicationType', ApplicationTypes.AD)
-      updateApplicationV2({ path: 'applicationType', value: ApplicationTypes.AD })
+      updateApplicationV2({
+        path: 'applicationType',
+        value: ApplicationTypes.AD,
+      })
     }
   }, [currentType, setValue, updateApplicationV2])
 

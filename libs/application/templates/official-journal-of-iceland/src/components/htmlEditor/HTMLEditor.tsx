@@ -67,7 +67,9 @@ export const HTMLEditor = ({
           <Stack space={[2, 2, 3]}>
             {title && <Text variant="h5">{title}</Text>}
             <Box
-              className={`${editorWrapper({ error: !!error })}${isImpact ? ` ${isImpactClass}` : ''}`}
+              className={`${editorWrapper({ error: !!error })}${
+                isImpact ? ` ${isImpactClass}` : ''
+              }`}
             >
               <Editor
                 readOnly={readOnly}
@@ -102,7 +104,9 @@ export const HTMLEditor = ({
         </Text>
       )}
       <Box
-        className={`${editorWrapper({ error: !!error })}${isImpact ? ` ${isImpactClass}` : ''}`}
+        className={`${editorWrapper({ error: !!error })}${
+          isImpact ? ` ${isImpactClass}` : ''
+        }`}
       >
         <Editor
           readOnly={readOnly}

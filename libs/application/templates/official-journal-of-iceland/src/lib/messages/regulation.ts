@@ -246,8 +246,7 @@ export const regulation = {
       noContentMessage: {
         id: 'ojoi.application:regulation.preview.errors.noContentMessage',
         defaultMessage: 'Að lágmarki þarf að fylla út',
-        description:
-          'Error message detail when regulation content is missing',
+        description: 'Error message detail when regulation content is missing',
       },
     }),
   },

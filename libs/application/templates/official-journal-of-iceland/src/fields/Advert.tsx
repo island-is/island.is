@@ -1,5 +1,14 @@
-import { InputFields, OJOIFieldBaseProps, isRegulationApplication } from '../lib/types'
-import { AlertBanner, Box, SkeletonLoader, Stack } from '@island.is/island-ui/core'
+import {
+  InputFields,
+  OJOIFieldBaseProps,
+  isRegulationApplication,
+} from '../lib/types'
+import {
+  AlertBanner,
+  Box,
+  SkeletonLoader,
+  Stack,
+} from '@island.is/island-ui/core'
 import { FormGroup } from '../components/form/FormGroup'
 import { advert, regulation } from '../lib/messages'
 import { useDepartments } from '../hooks/useDepartments'
@@ -22,7 +31,8 @@ import { AdvertPreview } from '../components/advertPreview/AdvertPreview'
 export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
-  const isAmending = application.answers?.applicationType === 'amending_regulation'
+  const isAmending =
+    application.answers?.applicationType === 'amending_regulation'
   const [showDiffWarning, setShowDiffWarning] = useState(isAmending)
   const [isLoadingDepartments, setLoadingDepartments] = useState(false)
   const {
@@ -201,7 +211,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
           {showDiffWarning && (
             <Box>
               <AlertBanner
-                description={f(regulation.content.warnings.diffPrecisionWarning)}
+                description={f(
+                  regulation.content.warnings.diffPrecisionWarning,
+                )}
                 variant="info"
                 dismissable
                 onDismiss={() => setShowDiffWarning(false)}

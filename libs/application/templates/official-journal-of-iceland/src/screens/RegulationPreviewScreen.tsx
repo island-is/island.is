@@ -83,9 +83,7 @@ export const RegulationPreviewScreen = (props: OJOIFieldBaseProps) => {
                 title={f(regulation.preview.errors.noContent)}
                 message={
                   <Stack space={2}>
-                    <Text>
-                      {f(regulation.preview.errors.noContentMessage)}
-                    </Text>
+                    <Text>{f(regulation.preview.errors.noContentMessage)}</Text>
                     <BulletList color="black">
                       {contentValidation.error.issues.map((issue, i) => {
                         const parsedIssue = parseZodIssue(
@@ -95,9 +93,7 @@ export const RegulationPreviewScreen = (props: OJOIFieldBaseProps) => {
                       })}
                     </BulletList>
                     <Button
-                      onClick={() =>
-                        handleNavigate(Routes.REGULATION_CONTENT)
-                      }
+                      onClick={() => handleNavigate(Routes.REGULATION_CONTENT)}
                       size="small"
                       variant="text"
                       preTextIcon="arrowBack"
@@ -123,9 +119,7 @@ export const RegulationPreviewScreen = (props: OJOIFieldBaseProps) => {
                       })}
                     </BulletList>
                     <Button
-                      onClick={() =>
-                        handleNavigate(Routes.REGULATION_CONTENT)
-                      }
+                      onClick={() => handleNavigate(Routes.REGULATION_CONTENT)}
                       size="small"
                       variant="text"
                       preTextIcon="arrowBack"
