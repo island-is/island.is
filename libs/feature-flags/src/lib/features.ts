@@ -160,6 +160,9 @@ export enum Features {
 
   // Admin portal
   isFormSystemInAdminPortalEnabled = 'isFormSystemInAdminPortalEnabled',
+
+  // Service portal sidebar grid layout
+  isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
 }
 
 export enum ServerSideFeature {
