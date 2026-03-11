@@ -268,15 +268,17 @@ export const healthNavigation: PortalNavigationItem = {
           path: HealthPaths.HealthPatientDataPermits,
           children: [
             {
-              name: messages.addPermit,
+              name: messages.patientDataPermit,
               path: HealthPaths.HealthPatientDataPermitsAdd,
               navHide: true,
+              breadcrumbHide: true,
             },
             {
               name: messages.permit,
               path: HealthPaths.HealthPatientDataPermitsDetail,
               navHide: true,
               searchHide: true,
+              breadcrumbHide: true,
             },
           ],
         },

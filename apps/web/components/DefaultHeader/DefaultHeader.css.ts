@@ -9,7 +9,7 @@ export const gridContainer = style({
   ...themeUtils.responsiveStyle({
     lg: {
       gridTemplateRows: '315px',
-      gridTemplateColumns: '65fr 35fr',
+      gridTemplateColumns: '60fr 40fr',
     },
   }),
 })

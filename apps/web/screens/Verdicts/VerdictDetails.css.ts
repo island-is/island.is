@@ -27,6 +27,10 @@ globalStyle(`${richText} h1:first-of-type, ${richText} h2:last-of-type`, {
   textAlign: 'center',
 })
 
+globalStyle(`${richText} p`, {
+  textAlign: 'justify',
+})
+
 export const verdictHtmlTitleContainer = style({
   maxWidth: '774px',
   textAlign: 'center',

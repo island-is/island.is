@@ -4,7 +4,7 @@ import { DisabilityDiagnosis } from '../models/medicalDocuments/disabilityDiagno
 import type {
   TrWebContractsExternalServicePortalDisabilityDiagnosis,
   TrWebContractsExternalServicePortalDisabilityPensionCertificate,
-  TrWebContractsExternalServicePortalDoctorInfo,
+  TrWebContractsExternalServicePortalDoctor,
   TrWebContractsExternalServicePortalHealthImpact,
   TrWebContractsExternalServicePortalQuestionnaireResult,
 } from '@island.is/clients/social-insurance-administration'
@@ -20,7 +20,7 @@ import { StabilityOfHealth } from '../models/medicalDocuments/stabilityOfHealth.
 import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate.model'
 
 const mapDoctor = (
-  doctorInfo?: TrWebContractsExternalServicePortalDoctorInfo,
+  doctorInfo?: TrWebContractsExternalServicePortalDoctor,
 ): Doctor | undefined => {
   if (!doctorInfo) return undefined
 

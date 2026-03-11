@@ -15,10 +15,6 @@ import {
   VehicleCodetablesClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-codetables'
 import {
-  ChargeFjsV2ClientConfig,
-  ChargeFjsV2ClientModule,
-} from '@island.is/clients/charge-fjs-v2'
-import {
   VehicleServiceFjsV1ClientModule,
   VehicleServiceFjsV1ClientConfig,
 } from '@island.is/clients/vehicle-service-fjs-v1'
@@ -30,6 +26,7 @@ import {
   VehiclesMileageClientModule,
   VehiclesMileageClientConfig,
 } from '@island.is/clients/vehicles-mileage'
+import { ClientsPaymentsModule } from '@island.is/clients/payments'
 
 @Module({
   imports: [
@@ -37,17 +34,16 @@ import {
     VehicleOwnerChangeClientModule,
     VehicleOperatorsClientModule,
     VehicleCodetablesClientModule,
-    ChargeFjsV2ClientModule,
     VehicleServiceFjsV1ClientModule,
     VehiclesClientModule,
     VehiclesMileageClientModule,
+    ClientsPaymentsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
         VehicleOwnerChangeClientConfig,
         VehicleOperatorsClientConfig,
         VehicleCodetablesClientConfig,
-        ChargeFjsV2ClientConfig,
         VehicleServiceFjsV1ClientConfig,
         VehiclesClientConfig,
         VehiclesMileageClientConfig,

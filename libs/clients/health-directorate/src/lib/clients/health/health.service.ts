@@ -23,7 +23,6 @@ import {
   mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1,
   mePatientConcentEuControllerGetCountriesV1,
   mePatientConcentEuControllerGetEuPatientConsentForPatientV1,
-  mePatientConcentEuControllerGetEuPatientConsentV1,
   mePrescriptionCommissionControllerCreateOrUpdatePrescriptionCommissionV1,
   mePrescriptionCommissionControllerGetPrescriptionCommissionsV1,
   mePrescriptionControllerGetPrescribedItemDocumentsV1,
@@ -42,10 +41,10 @@ import {
 import {
   AppointmentDto,
   ConsentCountryDto,
+  ConsentHistoryEntryDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
-  EuPatientConsentDto,
-  EuPatientConsentStatus,
+  EuPatientConsentResponseDto,
   Locale,
   PrescriptionCommissionDto,
   QuestionnaireBaseDto,
@@ -432,45 +431,18 @@ export class HealthDirectorateHealthService {
   public async getPermits(
     auth: Auth,
     locale: Locale,
-    status: EuPatientConsentStatus[],
-    dateFrom?: Date | undefined,
-    dateTo?: Date | undefined,
-  ): Promise<EuPatientConsentDto[] | null> {
+  ): Promise<EuPatientConsentResponseDto | null> {
     const permits = await withAuthContext(auth, () =>
       data(
         mePatientConcentEuControllerGetEuPatientConsentForPatientV1({
           query: {
             locale: this.mapLocale(locale),
-            status: status,
-            validFrom: dateFrom ?? undefined,
-            validTo: dateTo ?? undefined,
           },
         }),
       ),
     )
 
     return permits ?? null
-  }
-
-  public async getPermit(
-    auth: Auth,
-    locale: Locale,
-    id: string,
-  ): Promise<EuPatientConsentDto | null> {
-    const permit = await withAuthContext(auth, () =>
-      data(
-        mePatientConcentEuControllerGetEuPatientConsentV1({
-          query: {
-            locale: this.mapLocale(locale),
-          },
-          path: {
-            id: id,
-          },
-        }),
-      ),
-    )
-
-    return permit ?? null
   }
 
   public async getPermitCountries(
@@ -509,24 +481,22 @@ export class HealthDirectorateHealthService {
   public async createPermit(
     auth: Auth,
     input: CreateEuPatientConsentDto,
-  ): Promise<unknown> {
-    return await withAuthContext(auth, () =>
+  ): Promise<EuPatientConsentResponseDto | null> {
+    const result = await withAuthContext(auth, () =>
       data(
         mePatientConcentEuControllerCreateEuPatientConsentForPatientV1({
           body: input,
         }),
       ),
     )
+
+    return result ?? null
   }
 
-  public async deactivatePermit(auth: Auth, id: string): Promise<unknown> {
+  public async deactivatePermit(auth: Auth): Promise<unknown> {
     return await withAuthContext(auth, () =>
       data(
-        mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1({
-          path: {
-            id: id,
-          },
-        }),
+        mePatientConcentEuControllerDeactivateEuPatientConsentForPatientV1(),
       ),
     )
   }
