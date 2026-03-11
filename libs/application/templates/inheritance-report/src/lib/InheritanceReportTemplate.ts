@@ -264,6 +264,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
                 { event: DefaultEvents.APPROVE, name: '', type: 'primary' },
                 { event: DefaultEvents.REJECT, name: '', type: 'reject' },
               ],
+              write: 'all',
               read: 'all',
             },
           ],
@@ -358,6 +359,14 @@ const InheritanceReportTemplate: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/signing').then((val) =>
+                  Promise.resolve(val.signingForm),
+                ),
               read: 'all',
             },
           ],

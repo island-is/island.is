@@ -351,6 +351,7 @@ const EstateTemplate: ApplicationTemplate<
                 { event: DefaultEvents.APPROVE, name: '', type: 'primary' },
                 { event: DefaultEvents.REJECT, name: '', type: 'reject' },
               ],
+              write: 'all',
               read: 'all',
             },
           ],
@@ -472,6 +473,14 @@ const EstateTemplate: ApplicationTemplate<
                   Promise.resolve(val.signingForm),
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/Signing').then((val) =>
+                  Promise.resolve(val.signingForm),
+                ),
               read: 'all',
             },
           ],

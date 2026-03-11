@@ -5,7 +5,7 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { ApplicationTypes } from '@island.is/application/types'
 import { InheritanceReportService } from './inheritance-report.service'
 import { SyslumennService } from '@island.is/clients/syslumenn'
-import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { S3Service } from '@island.is/nest/aws'
 
 const mockLogger = {
@@ -13,6 +13,14 @@ const mockLogger = {
   error: jest.fn(),
   warn: jest.fn(),
   debug: jest.fn(),
+}
+
+const mockSyslumennService = {
+  getEstateRelations: jest.fn(),
+  getEstateInfoForInheritanceReport: jest.fn(),
+  getInheritanceTax: jest.fn(),
+  uploadData: jest.fn(),
+  getInheritanceReportSignatories: jest.fn(),
 }
 
 describe('InheritanceReportService', () => {
@@ -24,8 +32,8 @@ describe('InheritanceReportService', () => {
       providers: [
         InheritanceReportService,
         { provide: LOGGER_PROVIDER, useValue: mockLogger },
-        { provide: SyslumennService, useValue: {} },
-        { provide: NationalRegistryXRoadService, useValue: {} },
+        { provide: SyslumennService, useValue: mockSyslumennService },
+        { provide: NationalRegistryV3Service, useValue: {} },
         { provide: S3Service, useValue: {} },
       ],
     }).compile()
@@ -35,6 +43,10 @@ describe('InheritanceReportService', () => {
 
   afterAll(async () => {
     await module.close()
+  })
+
+  beforeEach(() => {
+    jest.clearAllMocks()
   })
 
   describe('approveByAssignee', () => {
@@ -130,27 +142,41 @@ describe('InheritanceReportService', () => {
   })
 
   describe('getSignatories', () => {
-    it('returns signatories based on enabled heirs', async () => {
-      const application = createApplication({
+    const createApplicationWithEstate = (
+      estateInfoSelection: string,
+      nationalId: string,
+      applicationFor = 'estateInheritance',
+    ) =>
+      createApplication({
         typeId: ApplicationTypes.INHERITANCE_REPORT,
         answers: {
-          heirs: {
-            data: [
-              {
-                name: 'Heir A',
-                nationalId: '0101302209',
-                enabled: true,
-              },
-              {
-                name: 'Heir B',
-                nationalId: '0101302399',
-                enabled: true,
-              },
-            ],
+          estateInfoSelection,
+          applicationFor,
+        },
+        externalData: {
+          syslumennOnEntry: {
+            data: {
+              inheritanceReportInfos: [
+                { caseNumber: estateInfoSelection, nationalId },
+              ],
+            },
+            date: new Date(),
+            status: 'success',
           },
         },
       })
 
+    it('returns signatories from Syslumenn API', async () => {
+      const deceasedNationalId = '0101307789'
+      mockSyslumennService.getInheritanceReportSignatories.mockResolvedValue([
+        { name: 'Heir A', nationalId: '0101302209', signed: true },
+        { name: 'Heir B', nationalId: '0101302399', signed: false },
+      ])
+
+      const application = createApplicationWithEstate(
+        'CASE-001',
+        deceasedNationalId,
+      )
       const auth = createCurrentUser({
         nationalId: '0101301234',
         scope: ['@island.is/applications:write'],
@@ -167,37 +193,56 @@ describe('InheritanceReportService', () => {
       expect(result.signatories[0]).toEqual({
         name: 'Heir A',
         nationalId: '0101302209',
-        signed: true, // Mock: first heir is signed
+        signed: true,
       })
       expect(result.signatories[1]).toEqual({
         name: 'Heir B',
         nationalId: '0101302399',
-        signed: false, // Mock: rest are pending
+        signed: false,
       })
+      expect(
+        mockSyslumennService.getInheritanceReportSignatories,
+      ).toHaveBeenCalledWith(deceasedNationalId, 'ErfdafjarSkyrsla')
     })
 
-    it('filters out disabled heirs', async () => {
+    it('uses FyrirFramGreiddur estate type for prepaid inheritance', async () => {
+      const deceasedNationalId = '0101307789'
+      mockSyslumennService.getInheritanceReportSignatories.mockResolvedValue([])
+
+      const application = createApplicationWithEstate(
+        'CASE-001',
+        deceasedNationalId,
+        'prepaidInheritance',
+      )
+      const auth = createCurrentUser({
+        nationalId: '0101301234',
+        scope: ['@island.is/applications:write'],
+      })
+
+      await service.getSignatories({
+        application,
+        auth,
+        currentUserLocale: 'is',
+      } as any)
+
+      expect(
+        mockSyslumennService.getInheritanceReportSignatories,
+      ).toHaveBeenCalledWith(deceasedNationalId, 'FyrirFramGreiddur')
+    })
+
+    it('throws when deceased national ID is not found', async () => {
       const application = createApplication({
         typeId: ApplicationTypes.INHERITANCE_REPORT,
         answers: {
-          heirs: {
-            data: [
-              {
-                name: 'Heir A',
-                nationalId: '0101302209',
-                enabled: true,
-              },
-              {
-                name: 'Heir B (disabled)',
-                nationalId: '0101302399',
-                enabled: false,
-              },
-              {
-                name: 'Heir C',
-                nationalId: '0101302499',
-                enabled: true,
-              },
-            ],
+          estateInfoSelection: 'CASE-001',
+        },
+        externalData: {
+          syslumennOnEntry: {
+            data: {
+              inheritanceReportInfos: [],
+            },
+            date: new Date(),
+            status: 'success',
           },
         },
       })
@@ -207,108 +252,37 @@ describe('InheritanceReportService', () => {
         scope: ['@island.is/applications:write'],
       })
 
-      const result = await service.getSignatories({
-        application,
-        auth,
-        currentUserLocale: 'is',
-      } as any)
-
-      expect(result.success).toBe(true)
-      expect(result.signatories).toHaveLength(2)
-      expect(result.signatories[0].name).toBe('Heir A')
-      expect(result.signatories[1].name).toBe('Heir C')
+      await expect(
+        service.getSignatories({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        } as any),
+      ).rejects.toBeTruthy()
     })
 
-    it('returns empty array when no heirs exist', async () => {
-      const application = createApplication({
-        typeId: ApplicationTypes.INHERITANCE_REPORT,
-        answers: {
-          heirs: {
-            data: [],
-          },
-        },
-      })
+    it('throws when Syslumenn API call fails', async () => {
+      const deceasedNationalId = '0101307789'
+      mockSyslumennService.getInheritanceReportSignatories.mockRejectedValue(
+        new Error('API error'),
+      )
 
+      const application = createApplicationWithEstate(
+        'CASE-001',
+        deceasedNationalId,
+      )
       const auth = createCurrentUser({
         nationalId: '0101301234',
         scope: ['@island.is/applications:write'],
       })
 
-      const result = await service.getSignatories({
-        application,
-        auth,
-        currentUserLocale: 'is',
-      } as any)
-
-      expect(result.success).toBe(true)
-      expect(result.signatories).toEqual([])
-    })
-
-    it('handles undefined heirs data', async () => {
-      const application = createApplication({
-        typeId: ApplicationTypes.INHERITANCE_REPORT,
-        answers: {
-          heirs: {},
-        },
-      })
-
-      const auth = createCurrentUser({
-        nationalId: '0101301234',
-        scope: ['@island.is/applications:write'],
-      })
-
-      const result = await service.getSignatories({
-        application,
-        auth,
-        currentUserLocale: 'is',
-      } as any)
-
-      expect(result.success).toBe(true)
-      expect(result.signatories).toEqual([])
-    })
-
-    it('sets first heir as signed and rest as pending (mock behavior)', async () => {
-      const application = createApplication({
-        typeId: ApplicationTypes.INHERITANCE_REPORT,
-        answers: {
-          heirs: {
-            data: [
-              {
-                name: 'Heir A',
-                nationalId: '0101302209',
-                enabled: true,
-              },
-              {
-                name: 'Heir B',
-                nationalId: '0101302399',
-                enabled: true,
-              },
-              {
-                name: 'Heir C',
-                nationalId: '0101302499',
-                enabled: true,
-              },
-            ],
-          },
-        },
-      })
-
-      const auth = createCurrentUser({
-        nationalId: '0101301234',
-        scope: ['@island.is/applications:write'],
-      })
-
-      const result = await service.getSignatories({
-        application,
-        auth,
-        currentUserLocale: 'is',
-      } as any)
-
-      expect(result.success).toBe(true)
-      expect(result.signatories).toHaveLength(3)
-      expect(result.signatories[0].signed).toBe(true)
-      expect(result.signatories[1].signed).toBe(false)
-      expect(result.signatories[2].signed).toBe(false)
+      await expect(
+        service.getSignatories({
+          application,
+          auth,
+          currentUserLocale: 'is',
+        } as any),
+      ).rejects.toBeTruthy()
     })
   })
 })
