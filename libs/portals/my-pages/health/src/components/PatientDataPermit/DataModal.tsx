@@ -17,9 +17,9 @@ export const InfoModal: React.FC<InfoModalProps> = ({ open, onClose }) => {
       id={'patient-data-permit-info-modal'}
       initialVisibility={open}
       isVisible={open}
-      title={formatMessage(messages.keyHealthInformation)}
+      title={formatMessage(messages.keyHealthInformationToBeShared)}
       onCloseModal={onClose}
-      text={formatMessage(messages.keyHealthInformationDescription)}
+      text={formatMessage(messages.keyHealthInformationToBeSharedDescription)}
     >
       <Text marginTop={2}>
         <Markdown>{formatMessage(messages.keyHealthInformationList)}</Markdown>

@@ -1,5 +1,6 @@
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Icon, LinkV2, Tag, Text } from '@island.is/island-ui/core'
 import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
@@ -9,6 +10,7 @@ import {
   formatDOB,
   normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { isPublicProsecutionOfficeUser } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   Defendant,
@@ -17,6 +19,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import { UserContext } from '../../UserProvider/UserProvider'
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
 import { useConnectedCasesQuery } from './connectedCases.generated'
 import {
@@ -138,6 +141,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     isFineCase,
   } = props
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
   const hasDefender = defendant.defenderName || defender?.name
   const defenderLabel =
     defender?.sessionArrangement ===
@@ -229,15 +233,39 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         )}
       </div>
       {defendant.verdict ? (
-        <Tag
-          variant={
-            defendant.verdict.isDefaultJudgement ? 'purple' : 'darkerBlue'
-          }
-          outlined
-          disabled
-        >
-          {defendant.verdict.isDefaultJudgement ? 'Útivistardómur' : 'Dómur'}
-        </Tag>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            initial={{ opacity: 0, y: 3 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            key={
+              defendant.verdict.isAcquittedByPublicProsecutionOffice
+                ? 'acquitted'
+                : defendant.verdict.isDefaultJudgement
+                ? 'defaultJudgement'
+                : 'convicted'
+            }
+          >
+            {defendant.verdict.isAcquittedByPublicProsecutionOffice &&
+            isPublicProsecutionOfficeUser(user) ? (
+              <Tag variant="darkerBlue" outlined disabled>
+                Sýknudómur
+              </Tag>
+            ) : (
+              <Tag
+                variant={
+                  defendant.verdict.isDefaultJudgement ? 'purple' : 'darkerBlue'
+                }
+                outlined
+                disabled
+              >
+                {defendant.verdict.isDefaultJudgement
+                  ? 'Útivistardómur'
+                  : 'Dómur'}
+              </Tag>
+            )}
+          </motion.span>
+        </AnimatePresence>
       ) : isDismissalCase ? (
         <Tag variant="blue" outlined disabled>
           Frávísun

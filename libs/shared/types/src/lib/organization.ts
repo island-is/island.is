@@ -3,7 +3,7 @@ export interface Organization {
   title: string
   slug: string
   nationalId?: string
-  logo: null | {
+  logo?: null | {
     id: string
     url: string
     title: string

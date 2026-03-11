@@ -1,4 +1,3 @@
-import { useMyPagesLinks } from '../../lib/my-pages-links'
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { ScrollView, Text, View } from 'react-native'
@@ -6,22 +5,23 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+import { useMyPagesLinks } from '../../lib/my-pages-links'
 
-import { Button, Divider, Input, InputRow, Problem, theme } from '../../ui'
+import { useNavigationButtonPress } from 'react-native-navigation-hooks'
+import { setDropdownContent } from '../../components/dropdown/dropdown-content-registry'
+import { LinkRowButton } from '../../components/link-row-button/link-row-button'
 import { useGetVehicleQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
-import { testIDs } from '../../utils/test-ids'
-import { getRightButtons } from '../../utils/get-main-root'
-import { useNavigationButtonPress } from 'react-native-navigation-hooks'
+import { useBrowser } from '../../lib/use-browser'
+import { Button, Divider, Input, InputRow, Problem, theme } from '../../ui'
 import {
   ButtonRegistry,
   ComponentRegistry,
 } from '../../utils/component-registry'
-import { ExternalLink } from '../../components/external-links/external-links'
-import { setDropdownContent } from '../../components/dropdown/dropdown-content-registry'
-import { useBrowser } from '../../lib/use-browser'
+import { getRightButtons } from '../../utils/get-main-root'
+import { testIDs } from '../../utils/test-ids'
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks((theme) => ({
@@ -94,10 +94,10 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
         contentId,
         <View>
           {items.map((item, index) => (
-            <ExternalLink
+            <LinkRowButton
               componentId={componentId}
               key={item.title}
-              links={{ link: item.link, title: item.title }}
+              link={{ link: item.link, title: item.title, isExternal: true }}
               borderBottom={index !== items.length - 1}
               fontWeight={'bold'}
               fontSize={14}
