@@ -97,7 +97,9 @@ export const loadDateSelectOptions = async ({
 
     return {
       value: instance.id,
-      label: `${formattedDate} ${startDateTimeDuration}`,
+      label: `${formattedDate} ${startDateTimeDuration} ${
+        instance.displayedTitle ? `- ${instance.displayedTitle}` : ''
+      }`,
     }
   })
 }
