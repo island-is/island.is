@@ -49,9 +49,19 @@ export const session = (
   session: AuthSession,
   token: Record<string, unknown>,
 ) => {
-  session.accessToken = token.accessToken as string
-  session.idToken = token.idToken as string
-  const decoded = decode(token.accessToken as string)
+  if (typeof token.accessToken !== 'string' || typeof token.idToken !== 'string') {
+    return {
+      ...session,
+      accessToken: '',
+      idToken: '',
+      scope: session.scope ?? [],
+    }
+  }
+
+  session.accessToken = token.accessToken
+  session.idToken = token.idToken
+  session.scope = session.scope ?? []
+  const decoded = decode(token.accessToken)
 
   if (
     decoded &&
@@ -60,7 +70,11 @@ export const session = (
     decoded['scope']
   ) {
     session.expires = new Date(decoded.exp * 1000).toISOString()
-    session.scope = decoded.scope
+    session.scope = Array.isArray(decoded.scope)
+      ? decoded.scope
+      : typeof decoded.scope === 'string'
+        ? decoded.scope.split(' ')
+        : []
   }
 
   return session

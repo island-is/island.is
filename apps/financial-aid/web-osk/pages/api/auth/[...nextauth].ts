@@ -10,6 +10,12 @@ import {
 } from '@island.is/next-ids-auth'
 import { MunicipalitiesFinancialAidScope } from '@island.is/auth/scopes'
 
+const identityServerSecret = process.env.IDENTITY_SERVER_SECRET
+
+if (!identityServerSecret) {
+  throw new Error('IDENTITY_SERVER_SECRET is required')
+}
+
 const options: NextAuthOptions = {
   providers: [
     {
@@ -18,7 +24,7 @@ const options: NextAuthOptions = {
       type: 'oauth',
       wellKnown: `https://${process.env.IDENTITY_SERVER_DOMAIN}/.well-known/openid-configuration`,
       clientId: identityServerConfig.clientId,
-      clientSecret: process.env.IDENTITY_SERVER_SECRET ?? '',
+      clientSecret: identityServerSecret,
       authorization: {
         params: {
           scope: `${identityServerConfig.scope} ${MunicipalitiesFinancialAidScope.applicant}`,
@@ -60,7 +66,7 @@ const options: NextAuthOptions = {
       return await handleJwt(
         token,
         identityServerConfig.clientId,
-        process.env.IDENTITY_SERVER_SECRET,
+        identityServerSecret,
         process.env.NEXTAUTH_URL,
         process.env.IDENTITY_SERVER_DOMAIN,
       )
