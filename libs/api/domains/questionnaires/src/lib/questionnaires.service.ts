@@ -387,7 +387,9 @@ export class QuestionnairesService {
     }
 
     if (!LSHdata.gUID) {
-      this.logger.warn('LSH answered questionnaire is missing gUID', { submissionId: input.submissionId })
+      this.logger.warn('LSH answered questionnaire is missing gUID', {
+        submissionId: input.submissionId,
+      })
       return null
     }
 
@@ -399,7 +401,9 @@ export class QuestionnairesService {
       date: this.formatDate(LSHdata.answerDateTime),
       answers: LSHdata.answers?.flatMap((answer) => {
         if (!answer.entryID) {
-          this.logger.warn('Skipping LSH answer with missing entryID', { submissionId: input.submissionId })
+          this.logger.warn('Skipping LSH answer with missing entryID', {
+            submissionId: input.submissionId,
+          })
           return []
         }
 
@@ -415,11 +419,13 @@ export class QuestionnairesService {
             return option?.label ?? value
           }) ?? []
 
-        return [{
-          id: answer.entryID,
-          label: question?.question ?? formatMessage(m.noLabel),
-          values: valueLabels,
-        }]
+        return [
+          {
+            id: answer.entryID,
+            label: question?.question ?? formatMessage(m.noLabel),
+            values: valueLabels,
+          },
+        ]
       }),
     }
 
