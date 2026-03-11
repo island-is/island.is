@@ -1,4 +1,11 @@
-import { Args, ID, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  ID,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
   IdsUserGuard,
