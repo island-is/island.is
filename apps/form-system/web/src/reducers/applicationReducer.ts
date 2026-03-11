@@ -221,9 +221,17 @@ export const applicationReducer = (
                 ),
               )
             : -1
+
           const nextOrder = maxOrder + 1
-          const valueJson =
-            getInitialJsonForField(fieldType as keyof FieldTypeMapping) ?? {}
+
+          let valueJson: Record<string, unknown> = {}
+
+          try {
+            valueJson =
+              getInitialJsonForField(fieldType as keyof FieldTypeMapping) ?? {}
+          } catch {
+            valueJson = {}
+          }
 
           const newValue: FormSystemValueDto = {
             ...(prev ?? ({} as FormSystemValueDto)),
