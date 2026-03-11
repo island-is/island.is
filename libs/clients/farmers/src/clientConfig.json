@@ -1,0 +1,261 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Farmers island api",
+    "version": "1.0",
+    "contact": {
+      "name": "Stefna ehf",
+      "url": "https://stefna.is",
+      "email": "no-support@stefna.is"
+    }
+  },
+  "servers": [],
+  "tags": [],
+  "paths": {
+    "/v1/island/farms": {
+      "get": {
+        "operationId": "listFarms",
+        "description": "list of farms",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ListFarm" }
+              }
+            },
+            "description": "ok"
+          },
+          "400": { "$ref": "#/components/responses/InputError" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/v1/island/farms/{farmId}/beneficiaries": {
+      "parameters": [
+        {
+          "in": "path",
+          "required": true,
+          "name": "farmId",
+          "description": "B\u00fasn\u00famer",
+          "schema": { "type": "string" }
+        }
+      ],
+      "get": {
+        "operationId": "listBeneficiaries",
+        "description": "list of beneficiaries of a farm",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ListBeneficiaries" }
+              }
+            },
+            "description": "ok"
+          },
+          "400": { "$ref": "#/components/responses/InputError" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
+    "/v1/island/farms/{farmId}/assets": {
+      "parameters": [
+        {
+          "in": "path",
+          "required": true,
+          "name": "farmId",
+          "description": "B\u00fasn\u00famer",
+          "schema": { "type": "string" }
+        }
+      ],
+      "get": {
+        "operationId": "listAssets",
+        "description": "list of assets for a farm",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ListAssets" }
+              }
+            },
+            "description": "ok"
+          },
+          "400": { "$ref": "#/components/responses/InputError" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ListFarm": {
+        "type": "object",
+        "readOnly": true,
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Farm" }
+          }
+        }
+      },
+      "Farm": {
+        "type": "object",
+        "properties": {
+          "farmId": {
+            "type": "integer",
+            "description": "",
+            "minimum": 1000000,
+            "maximum": 9999999
+          },
+          "farmName": { "type": "string", "description": "b\u00fanumer" }
+        }
+      },
+      "Error": {
+        "title": "Generic Error Object",
+        "type": "object",
+        "properties": {
+          "messages": { "type": "string" },
+          "code": { "type": "string" }
+        }
+      },
+      "ListBeneficiaries": {
+        "type": "object",
+        "readOnly": true,
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/BeneficiaryWrapper" }
+          }
+        }
+      },
+      "BeneficiaryWrapper": {
+        "type": "object",
+        "properties": {
+          "details": {
+            "type": "object",
+            "properties": {
+              "beneficiaryName": { "type": "string" },
+              "beneficiaryNationalId": { "type": "string" },
+              "beneficiaryBankInfo": { "type": "string" },
+              "beneficiaryIsat": { "type": "string" },
+              "beneficiaryVsk": { "type": "string" }
+            }
+          },
+          "list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/BeneficiaryPaymentType" }
+          }
+        }
+      },
+      "BeneficiaryPaymentType": {
+        "type": "object",
+        "properties": {
+          "paymentCategoryId": { "type": "integer" },
+          "paymentCategory": { "type": "string" },
+          "share": { "type": "string" },
+          "paymentStop": { "type": "string" },
+          "operating": { "type": "string" },
+          "from": { "type": "string", "format": "date" },
+          "to": { "type": "string", "format": "date" }
+        }
+      },
+      "ListAssets": {
+        "type": "object",
+        "readOnly": true,
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AssetOwner" }
+          }
+        }
+      },
+      "AssetOwner": {
+        "type": "object",
+        "properties": {
+          "details": {
+            "type": "object",
+            "properties": {
+              "farmName": { "type": "string" },
+              "farmId": { "type": "string" },
+              "name": { "type": "string" },
+              "nationalId": { "type": "string" }
+            }
+          },
+          "list": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Asset" }
+          }
+        }
+      },
+      "Asset": {
+        "type": "object",
+        "properties": {
+          "ownerType": { "type": "string" },
+          "usage": { "type": "string" },
+          "share": { "type": "string" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearer-token": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Either island jwt or our own jwt token"
+      }
+    },
+    "responses": {
+      "InputError": {
+        "description": "Generic input error",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Need to authenticate to access resource",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Access denied",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Requested resource not found",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      },
+      "InternalError": {
+        "description": "Unknown internal error",
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
+      }
+    }
+  },
+  "security": [{ "bearer-token": [] }]
+}
