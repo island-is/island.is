@@ -261,9 +261,7 @@ workflows:
   prod-app-android:
     <<: *base
     name: Island.is Prod App Android
-    instance_type: mac_mini_m2
-    ## Switch when we have billing
-    # instance_type: linux_x2
+    instance_type: linux_x2
     cache: &android_cache
       cache_paths:
         - ~/.gradle/caches
@@ -298,9 +296,7 @@ workflows:
   dev-app-android:
     <<: *base
     name: Island.is Dev App Android
-    instance_type: mac_mini_m2
-    ## Switch when we have billing
-    # instance_type: linux_x2
+    instance_type: linux_x2
     cache: *android_cache
     environment:
       <<: *environment
@@ -309,7 +305,6 @@ workflows:
       groups:
         - google_credentials
         - firebase_credentials_dev
-        # - devicecloud
       vars:
         <<: *shared_envs
         PACKAGE_NAME: 'is.island.app.dev'
@@ -322,10 +317,6 @@ workflows:
       - *get_android_version_code
       - *prebuild_android
       - *set_android_location
-      # E2E: build APK, run tests, gate store build on passing
-      # - *build_android_apk
-      # - *run_devicecloud_android
-      # Store build (only runs if e2e passed, fast due to Gradle cache)
       - *build_android
     artifacts:
       - android/app/build/outputs/**/*.aab
@@ -333,3 +324,59 @@ workflows:
     publishing:
       <<: *android_publishing
       <<: *slack_errors
+
+  e2e-tests-ios:
+    <<: *base
+    name: Island.is E2E Tests iOS
+    instance_type: mac_mini_m2
+    cache: *ios_cache
+    environment:
+      <<: *environment
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: is.island.app.dev
+      groups:
+        - devicecloud
+      vars:
+        <<: *shared_envs
+        BUNDLE_ID: 'is.island.app.dev'
+        APP_STORE_APPLE_ID: 1570427360
+        APP_VARIANT: 'development'
+    scripts:
+      - *check_changes
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *prebuild_ios
+      - *cocoapods
+      - *build_ios_simulator
+      - *run_devicecloud_ios
+
+  e2e-tests-android:
+    <<: *base
+    name: Island.is E2E Tests Android
+    instance_type: linux_x2
+    cache: *android_cache
+    environment:
+      <<: *environment
+      android_signing:
+        - island-upload-keystore
+      groups:
+        - firebase_credentials_dev
+        - devicecloud
+      vars:
+        <<: *shared_envs
+        PACKAGE_NAME: 'is.island.app.dev'
+        APP_VARIANT: 'development'
+    scripts:
+      - *check_changes
+      - *pip_install
+      - *npm_install
+      - *codegen
+      - *get_android_version_code
+      - *prebuild_android
+      - *set_android_location
+      - *build_android_apk
+      - *run_devicecloud_android
+    artifacts:
+      - android/app/build/outputs/**/*.apk
