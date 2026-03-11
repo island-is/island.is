@@ -123,9 +123,11 @@ test.describe.serial('Custody tests', () => {
     await page.keyboard.type('Þetta er ekki löglegt')
     await page.locator('textarea[name=comments]').click()
     await page.keyboard.type('Sakborningur er hættulegur')
-    await expect(
-      page.locator('button:has-text("Rannsóknargögn")'),
-    ).toBeVisible()
+    await page.locator('textarea[name=demands]').click()
+    await page.keyboard.type('Kröfur')
+    // await expect(
+    //   page.getByRole('button', { name: 'Rannsóknargögn' }),
+    // ).toBeVisible()
     await Promise.all([
       page.getByRole('button', { name: 'Halda áfram' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'Case'),

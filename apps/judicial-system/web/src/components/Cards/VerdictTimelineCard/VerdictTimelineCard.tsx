@@ -314,7 +314,7 @@ const VerdictTimelineCard: FC<Props> = (props) => {
           ...(!verdict?.isAcquittedByPublicProsecutionOffice &&
           !defendant.isSentToPrisonAdmin &&
           (!defendant.indictmentReviewDecision ||
-            (!isFine && !verdict?.serviceDate && isServiceRequired))
+            (!isFine && verdict?.serviceDate && isServiceRequired))
             ? [
                 {
                   title: 'Senda til fullnustu',
