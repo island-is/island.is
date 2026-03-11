@@ -43,10 +43,21 @@ test.describe.serial('Indictment tests', () => {
       .locator(`input[id=crime-scene-date-${policeCaseNumber}]`)
       .fill(today)
     await page.keyboard.press('Escape')
-    await page.getByTestId('inputNationalId').fill('000000-0000')
-    await page.getByTestId('inputName').click()
-    await page.getByTestId('inputName').fill(accusedName)
-    await page.getByTestId('inputName').press('Tab')
+    const nationalIdInput = page.getByTestId('inputNationalId')
+    const nameInput = page.getByTestId('inputName')
+
+    await Promise.all([
+      page.waitForResponse(
+        (resp) =>
+          resp.url().includes('/api/nationalRegistry/getPersonByNationalId') &&
+          resp.request().method() === 'GET',
+      ),
+      nationalIdInput.fill('000000-0000'),
+    ])
+
+    await nameInput.fill(accusedName)
+    await nameInput.press('Tab')
+    await expect(nameInput).toHaveValue(accusedName)
     await Promise.all([
       page.getByRole('button', { name: 'Stofna mál' }).click(),
       verifyRequestCompletion(page, '/api/graphql', 'CreateCase').then(
@@ -228,6 +239,10 @@ test.describe.serial('Indictment tests', () => {
 
     // Indictment court record
     await expect(page).toHaveURL(`domur/akaera/thingbok/${caseId}`)
+    await Promise.all([
+      page.getByRole('button', { name: 'Bæta við þinghaldi' }).click(),
+      verifyRequestCompletion(page, '/api/graphql', 'CreateCourtSession'),
+    ])
     await page.getByTestId('entries').fill('Afstaða, málflutningur, og bókun')
 
     await page.locator('label').filter({ hasText: 'Dómur kveðinn upp' }).click()
