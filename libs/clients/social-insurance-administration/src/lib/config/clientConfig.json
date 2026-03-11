@@ -870,13 +870,19 @@
           "description": "Input for application, varies by type",
           "content": {
             "application/json; x-api-version=1.0": {
-              "schema": {}
+              "schema": {
+                "type": "object"
+              }
             },
             "text/json; x-api-version=1.0": {
-              "schema": {}
+              "schema": {
+                "type": "object"
+              }
             },
             "application/*+json; x-api-version=1.0": {
-              "schema": {}
+              "schema": {
+                "type": "object"
+              }
             }
           }
         },
@@ -1144,7 +1150,8 @@
                 }
               }
             }
-          }
+          },
+          "required": "true"
         },
         "responses": {
           "400": {
@@ -1993,7 +2000,8 @@
                 }
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "400": {
@@ -2137,7 +2145,8 @@
                 }
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "400": {
@@ -2281,7 +2290,8 @@
                 }
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "400": {
@@ -14100,7 +14110,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       },
       "TrWeb.Api.External.SharePointIntegration.Models.SharePointBrowseResponse": {
         "type": "object",
@@ -14701,6 +14711,7 @@
             "nullable": true
           },
           "answers": {
+            "type": "object",
             "nullable": true
           },
           "message": {
@@ -15802,7 +15813,7 @@
           },
           "start": {
             "type": "integer",
-            "description": "Byrjar á ellilífeyri frá TR:\n 2017 eða fyrr   = 1 \n 2018 eða seinna = 2",
+            "description": "Byrjar á ellilífeyri frá TR:\n 2017 eða fyrr = 1 \n 2018 eða seinna = 2",
             "format": "int32"
           },
           "yearOfBirth": {
@@ -15812,7 +15823,7 @@
           },
           "startPension": {
             "type": "integer",
-            "description": "Byrjar á ellilífeyri frá TR:\n 2017 eða fyrr   = 1\n 2018 eða seinna = 2\n Sjálfvalið gildi er 2018 eða seinna",
+            "description": "Byrjar á ellilífeyri frá TR:\n 2017 eða fyrr = 1\n 2018 eða seinna = 2\n Sjálfvalið gildi er 2018 eða seinna",
             "format": "int32"
           },
           "childCount": {
@@ -17453,6 +17464,7 @@
             "nullable": true
           },
           "contentAsObject": {
+            "type": "object",
             "nullable": true
           }
         },
@@ -18080,6 +18092,13 @@
         "enum": [0, 1, 2, 3, 4, 5, 6],
         "type": "integer",
         "format": "int32"
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset": {
+        "properties": {
+          "gildi": {
+            "type": "string"
+          }
+        }
       }
     },
     "securitySchemes": {
