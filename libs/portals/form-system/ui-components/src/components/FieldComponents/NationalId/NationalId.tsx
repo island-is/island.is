@@ -22,6 +22,7 @@ interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   hasError?: boolean
+  valueIndex?: number
 }
 
 const nationalIdRegex = /^\d{6}-\d{4}$/
@@ -40,14 +41,19 @@ const isCompanyNationalId = (id: string) => {
   return true
 }
 
-export const NationalId = ({ item, dispatch, hasError }: Props) => {
+export const NationalId = ({
+  item,
+  dispatch,
+  hasError,
+  valueIndex = 0,
+}: Props) => {
   const { formatMessage } = useIntl()
   const { control, setValue } = useFormContext()
 
   const watchedValue = useWatch({
     control,
     name: item.id,
-    defaultValue: getValue(item, 'nationalId') ?? '',
+    defaultValue: getValue(item, 'nationalId', valueIndex) ?? '',
   }) as string
 
   const nationalId = (watchedValue ?? '').trim()
@@ -70,8 +76,8 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
 
   // Keep RHF in sync with external "item" value (since Controller defaultValue won't update)
   useEffect(() => {
-    setValue(nameField, getValue(item, 'name') ?? '')
-  }, [item, nameField, setValue])
+    setValue(nameField, getValue(item, 'name', valueIndex) ?? '')
+  }, [item, nameField, setValue, valueIndex])
 
   const { data: _nameData } = useQuery(IDENTITY_QUERY, {
     variables: { input: { nationalId: queryId } },
@@ -87,7 +93,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
         if (dispatch) {
           dispatch({
             type: 'SET_NAME',
-            payload: { id: item.id, value: newName },
+            payload: { id: item.id, value: newName, valueIndex },
           })
         }
         lastQueriedRef.current = queryId
@@ -109,7 +115,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
         if (dispatch) {
           dispatch({
             type: 'SET_NAME',
-            payload: { id: item.id, value: fetched },
+            payload: { id: item.id, value: fetched, valueIndex },
           })
         }
         lastQueriedRef.current = queryId
@@ -123,11 +129,11 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
       if (dispatch) {
         dispatch({
           type: 'SET_NAME',
-          payload: { id: item.id, value: '' },
+          payload: { id: item.id, value: '', valueIndex },
         })
       }
     }
-  }, [isValidFormat, dispatch, item.id])
+  }, [isValidFormat, dispatch, item.id, valueIndex])
 
   return (
     <Stack space={2}>
@@ -137,7 +143,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
             key={item.id}
             name={item.id}
             control={control}
-            defaultValue={getValue(item, 'nationalId') ?? ''}
+            defaultValue={getValue(item, 'nationalId', valueIndex) ?? ''}
             rules={{
               required: {
                 value: item?.isRequired ?? false,
@@ -167,7 +173,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
                   if (dispatch) {
                     dispatch({
                       type: 'SET_NATIONAL_ID',
-                      payload: { id: item.id, value },
+                      payload: { id: item.id, value, valueIndex },
                     })
                   }
                 }}
@@ -186,7 +192,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
             key={item.id + '_name'}
             name={item.id + '_name'}
             control={control}
-            defaultValue={getValue(item, 'name') ?? ''}
+            defaultValue={getValue(item, 'name', valueIndex) ?? ''}
             rules={{
               required: {
                 value: item?.isRequired ?? false,

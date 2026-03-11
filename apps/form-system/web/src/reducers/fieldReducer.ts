@@ -28,8 +28,8 @@ export const fieldReducer = (
       return setFieldValue(state, 'email', id, value)
     }
     case 'SET_NATIONAL_ID': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'nationalId', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'nationalId', id, value, valueIndex)
     }
     case 'SET_PHONE_NUMBER': {
       const { value, id } = action.payload
