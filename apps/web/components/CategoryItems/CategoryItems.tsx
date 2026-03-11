@@ -6,8 +6,8 @@ import { GetArticleCategoriesQuery } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface CategoryItemsProps {
-  heading: string
-  headingId: string
+  heading?: string
+  headingId?: string
   items: GetArticleCategoriesQuery['getArticleCategories']
 }
 
@@ -20,11 +20,13 @@ export const CategoryItems = ({
 
   return (
     <>
-      <GridContainer>
-        <Text variant="h2" as="h2" id={headingId}>
-          {heading}
-        </Text>
-      </GridContainer>
+      {heading && (
+        <GridContainer>
+          <Text variant="h2" as="h2" id={headingId}>
+            {heading}
+          </Text>
+        </GridContainer>
+      )}
       <GridItems
         mobileItemWidth={270}
         mobileItemsRows={3}
