@@ -49,7 +49,10 @@ export const session = (
   session: AuthSession,
   token: Record<string, unknown>,
 ) => {
-  if (typeof token.accessToken !== 'string' || typeof token.idToken !== 'string') {
+  if (
+    typeof token.accessToken !== 'string' ||
+    typeof token.idToken !== 'string'
+  ) {
     return {
       ...session,
       accessToken: '',
@@ -73,8 +76,8 @@ export const session = (
     session.scope = Array.isArray(decoded.scope)
       ? decoded.scope
       : typeof decoded.scope === 'string'
-        ? decoded.scope.split(' ')
-        : []
+      ? decoded.scope.split(' ')
+      : []
   }
 
   return session
