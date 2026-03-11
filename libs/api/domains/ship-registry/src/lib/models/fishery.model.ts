@@ -1,13 +1,17 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { ShipRegistryLocalizedValue } from './localizedValue.model'
 
 @ObjectType('ShipRegistryFishery')
 export class ShipRegistryFishery {
-  @Field({ nullable: true })
-  name?: string
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  name?: ShipRegistryLocalizedValue
 
-  @Field({ nullable: true })
-  address?: string
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  address?: ShipRegistryLocalizedValue
 
-  @Field({ nullable: true })
-  postalCode?: string
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  municipality?: ShipRegistryLocalizedValue
+
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  phoneNo?: ShipRegistryLocalizedValue
 }

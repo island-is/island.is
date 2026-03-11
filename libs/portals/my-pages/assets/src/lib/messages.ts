@@ -1634,17 +1634,13 @@ export const shipsMessages = defineMessages({
     id: 'sp.ships:tooltip',
     defaultMessage: 'todo',
   },
-  seafaringCertificate: {
-    id: 'sp.ships:seafaring-certificate',
-    defaultMessage: 'Gildistími haffæraskírteinis',
+  notFound: {
+    id: 'sp.ships:not-found',
+    defaultMessage: 'Skip fannst ekki',
   },
   registrationNumber: {
     id: 'sp.ships:registration-number',
     defaultMessage: 'Skráningarnúmer',
-  },
-  districtLetters: {
-    id: 'sp.ships:district-letters',
-    defaultMessage: 'Umdæmisbókstafir',
   },
   shipType: {
     id: 'sp.ships:ship-type',
@@ -1653,10 +1649,6 @@ export const shipsMessages = defineMessages({
   imoNumber: {
     id: 'sp.ships:imo-number',
     defaultMessage: 'IMO-nr',
-  },
-  onboardPhone: {
-    id: 'sp.ships:onboard-phone',
-    defaultMessage: 'Sími um borð',
   },
   validTag: {
     id: 'sp.ships:valid-tag',
@@ -1689,6 +1681,18 @@ export const shipsMessages = defineMessages({
   operatorLocation: {
     id: 'sp.ships:operator-location',
     defaultMessage: 'Staður',
+  },
+  region: {
+    id: 'sp.ships:region',
+    defaultMessage: 'Umdæmisnr.',
+  },
+  phoneOnBoard: {
+    id: 'sp.ships:phone-on-board',
+    defaultMessage: 'Sími um borð',
+  },
+  bruttoWeight: {
+    id: 'sp.ships:brutto-tonnage',
+    defaultMessage: 'Brúttótonn',
   },
   constructionTitle: {
     id: 'sp.ships:construction-title',
@@ -1729,10 +1733,6 @@ export const shipsMessages = defineMessages({
   grossTonnage: {
     id: 'sp.ships:gross-tonnage',
     defaultMessage: 'B.rúml.',
-  },
-  netTonnage: {
-    id: 'sp.ships:net-tonnage',
-    defaultMessage: 'Br.tonn',
   },
   depth: {
     id: 'sp.ships:depth',

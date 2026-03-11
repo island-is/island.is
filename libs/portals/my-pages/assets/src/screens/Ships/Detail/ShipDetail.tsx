@@ -8,9 +8,15 @@ import {
   InfoLineStack,
   SAMGONGUSTOFA_SLUG,
 } from '@island.is/portals/my-pages/core'
-import { Box, Stack, Tag, Tabs } from '@island.is/island-ui/core'
+import { Box, Stack, Tabs } from '@island.is/island-ui/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { shipsMessages } from '../../../lib/messages'
 import { useShipDetailQuery } from './ShipDetail.generated'
+
+const formatMeasurement = (value?: string | null, unit?: string | null) => {
+  if (!value) return undefined
+  return unit ? `${value} ${unit}` : value
+}
 
 export const ShipDetail = () => {
   useNamespaces('sp.ships')
@@ -34,18 +40,27 @@ export const ShipDetail = () => {
         <InfoLineStack label={formatMessage(shipsMessages.operatorTitle)}>
           <InfoLine
             loading={loading}
-            label={formatMessage(shipsMessages.operatorName)}
-            content={ship.fishery.name ?? undefined}
+            label={
+              ship.fishery.name?.label ??
+              formatMessage(shipsMessages.operatorName)
+            }
+            content={ship.fishery.name?.value ?? undefined}
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(shipsMessages.operatorAddress)}
-            content={ship.fishery.address ?? undefined}
+            label={
+              ship.fishery.address?.label ??
+              formatMessage(shipsMessages.operatorAddress)
+            }
+            content={ship.fishery.address?.value ?? undefined}
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(shipsMessages.operatorLocation)}
-            content={ship.fishery.postalCode ?? undefined}
+            label={
+              ship.fishery.municipality?.label ??
+              formatMessage(shipsMessages.operatorLocation)
+            }
+            content={ship.fishery.municipality?.value ?? undefined}
           />
         </InfoLineStack>
       )}
@@ -53,23 +68,35 @@ export const ShipDetail = () => {
       <InfoLineStack label={formatMessage(shipsMessages.constructionTitle)}>
         <InfoLine
           loading={loading}
-          label={formatMessage(shipsMessages.constructionYard)}
-          content={ship?.constructionStation ?? undefined}
+          label={
+            ship?.constructionStation?.label ??
+            formatMessage(shipsMessages.constructionYard)
+          }
+          content={ship?.constructionStation?.value ?? undefined}
         />
         <InfoLine
           loading={loading}
-          label={formatMessage(shipsMessages.constructionYear)}
-          content={ship?.constructionYear?.toString()}
+          label={
+            ship?.constructionYear?.label ??
+            formatMessage(shipsMessages.constructionYear)
+          }
+          content={ship?.constructionYear?.value ?? undefined}
         />
         <InfoLine
           loading={loading}
-          label={formatMessage(shipsMessages.hullMaterial)}
-          content={ship?.hullMaterial ?? undefined}
+          label={
+            ship?.hullMaterial?.label ??
+            formatMessage(shipsMessages.hullMaterial)
+          }
+          content={ship?.hullMaterial?.value ?? undefined}
         />
         <InfoLine
           loading={loading}
-          label={formatMessage(shipsMessages.classification)}
-          content={ship?.classificationSociety ?? undefined}
+          label={
+            ship?.classificationSociety?.label ??
+            formatMessage(shipsMessages.classification)
+          }
+          content={ship?.classificationSociety?.value ?? undefined}
         />
       </InfoLineStack>
 
@@ -77,33 +104,69 @@ export const ShipDetail = () => {
         <InfoLineStack label={formatMessage(shipsMessages.measurementsTitle)}>
           <InfoLine
             loading={loading}
-            label={formatMessage(shipsMessages.registeredLength)}
-            content={ship.measurements.length?.toString()}
+            label={
+              ship.measurements.length?.label ??
+              formatMessage(shipsMessages.registeredLength)
+            }
+            content={formatMeasurement(
+              ship.measurements.length?.value,
+              ship.measurements.length?.unit,
+            )}
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(shipsMessages.maxLength)}
-            content={ship.measurements.mostLength?.toString()}
+            label={
+              ship.measurements.maxLength?.label ??
+              formatMessage(shipsMessages.maxLength)
+            }
+            content={formatMeasurement(
+              ship.measurements.maxLength?.value,
+              ship.measurements.maxLength?.unit,
+            )}
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(shipsMessages.width)}
-            content={ship.measurements.width?.toString()}
+            label={
+              ship.measurements.width?.label ??
+              formatMessage(shipsMessages.width)
+            }
+            content={formatMeasurement(
+              ship.measurements.width?.value,
+              ship.measurements.width?.unit,
+            )}
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(shipsMessages.grossTonnage)}
-            content={ship.measurements.bruttoGrt?.toString()}
+            label={
+              ship.measurements.bruttoGrossTonnage?.label ??
+              formatMessage(shipsMessages.grossTonnage)
+            }
+            content={formatMeasurement(
+              ship.measurements.bruttoGrossTonnage?.value,
+              ship.measurements.bruttoGrossTonnage?.unit,
+            )}
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(shipsMessages.netTonnage)}
-            content={ship.measurements.nettoWeightTons?.toString()}
+            label={
+              ship.measurements.bruttoWeight?.label ??
+              formatMessage(shipsMessages.bruttoWeight)
+            }
+            content={formatMeasurement(
+              ship.measurements.bruttoWeight?.value,
+              ship.measurements.bruttoWeight?.unit,
+            )}
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(shipsMessages.depth)}
-            content={ship.measurements.depth?.toString()}
+            label={
+              ship.measurements.depth?.label ??
+              formatMessage(shipsMessages.depth)
+            }
+            content={formatMeasurement(
+              ship.measurements.depth?.value,
+              ship.measurements.depth?.unit,
+            )}
           />
         </InfoLineStack>
       )}
@@ -112,18 +175,22 @@ export const ShipDetail = () => {
         <InfoLineStack
           key={i}
           label={`${formatMessage(shipsMessages.enginesTitle)}${
-            engine.manufacturer ? ` / ${engine.manufacturer}` : ''
+            engine.name?.value ? ` / ${engine.name.value}` : ''
           }`}
         >
           <InfoLine
             loading={loading}
-            label={formatMessage(shipsMessages.enginePower)}
-            content={engine.power != null ? `${engine.power} kW` : undefined}
+            label={
+              engine.power?.label ?? formatMessage(shipsMessages.enginePower)
+            }
+            content={formatMeasurement(engine.power?.value, engine.power?.unit)}
           />
           <InfoLine
             loading={loading}
-            label={formatMessage(shipsMessages.engineYear)}
-            content={engine.year?.toString()}
+            label={
+              engine.year?.label ?? formatMessage(shipsMessages.engineYear)
+            }
+            content={engine.year?.value ?? undefined}
           />
         </InfoLineStack>
       ))}
@@ -139,28 +206,14 @@ export const ShipDetail = () => {
         tooltip: formatMessage(shipsMessages.tooltip),
       }}
     >
-      {error && <p>Error loading ship</p>}
+      {error && <Problem error={error} noBorder={false} />}
+      {!loading && !error && !ship && (
+        <EmptyState description={shipsMessages.notFound} />
+      )}
 
       <Stack space={3}>
         <Box background="blue100" padding={[2, 3, 4]} borderRadius="large">
           <InfoLineStack>
-            <InfoLine
-              loading={loading}
-              label={formatMessage(shipsMessages.seafaringCertificate)}
-              content={
-                ship?.seaworthiness ? (
-                  <Tag
-                    outlined
-                    variant={ship.seaworthiness.isValid ? 'mint' : 'red'}
-                    disabled
-                  >
-                    {ship.seaworthiness.isValid
-                      ? formatMessage(shipsMessages.validTag)
-                      : formatMessage(shipsMessages.expiredTag)}
-                  </Tag>
-                ) : undefined
-              }
-            />
             <InfoLine
               loading={loading}
               label={formatMessage(shipsMessages.registrationNumber)}
@@ -168,18 +221,30 @@ export const ShipDetail = () => {
             />
             <InfoLine
               loading={loading}
-              label={formatMessage(shipsMessages.districtLetters)}
-              content={ship?.identification?.regionAcronym}
+              label={ship?.region?.label ?? formatMessage(shipsMessages.region)}
+              content={ship?.region?.value ?? undefined}
             />
             <InfoLine
               loading={loading}
-              label={formatMessage(shipsMessages.shipType)}
-              content={ship?.usageType ?? undefined}
+              label={
+                ship?.usageType?.label ?? formatMessage(shipsMessages.shipType)
+              }
+              content={ship?.usageType?.value ?? undefined}
             />
             <InfoLine
               loading={loading}
-              label={formatMessage(shipsMessages.imoNumber)}
-              content={ship?.imoNumber ?? undefined}
+              label={
+                ship?.imoNumber?.label ?? formatMessage(shipsMessages.imoNumber)
+              }
+              content={ship?.imoNumber?.value ?? undefined}
+            />
+            <InfoLine
+              loading={loading}
+              label={
+                ship?.phoneOnBoard?.label ??
+                formatMessage(shipsMessages.phoneOnBoard)
+              }
+              content={ship?.phoneOnBoard?.value ?? undefined}
             />
           </InfoLineStack>
         </Box>

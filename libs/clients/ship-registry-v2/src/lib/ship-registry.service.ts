@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { User, withAuthContext } from '@island.is/auth-nest-tools'
 import { dataOr404Null } from '@island.is/clients/middlewares'
 import {
-  getShipInfoDetail,
+  getShipInfoCertDetail,
   getShipsByOwnerAndFisherySsn,
+  MyShipDetailDto,
   ShipBaseInfoDto,
-  ShipDetailsModel,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -21,10 +21,10 @@ export class ShipRegistryClientV2Service {
   async getShipDetails(
     user: User,
     registryNumber: string,
-  ): Promise<ShipDetailsModel | null> {
+  ): Promise<MyShipDetailDto | null> {
     const response = await withAuthContext(user, () =>
       dataOr404Null(
-        getShipInfoDetail({
+        getShipInfoCertDetail({
           path: { shipRegistrationNumber: registryNumber },
         }),
       ),

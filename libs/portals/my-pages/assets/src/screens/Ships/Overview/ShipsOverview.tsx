@@ -7,6 +7,7 @@ import {
   IntroWrapperV2,
   SAMGONGUSTOFA_SLUG,
 } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { shipsMessages } from '../../../lib/messages'
 import { AssetsPaths } from '../../../lib/paths'
 import { useShipsOverviewQuery } from './ShipsOverview.generated'
@@ -30,6 +31,7 @@ export const ShipsOverview = () => {
       }}
     >
       {loading && <CardLoader />}
+      {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && ships && ships.length === 0 && <EmptyState />}
       {!loading && !error && ships && ships.length > 0 && (
         <Stack space={2}>
@@ -37,7 +39,11 @@ export const ShipsOverview = () => {
             <ActionCard
               key={ship.id}
               heading={ship.name}
-              text={ship.regionAcronym ?? undefined}
+              text={
+                ship.regionAcronym
+                  ? `${ship.id}, ${ship.regionAcronym}`
+                  : ship.id
+              }
               tag={
                 ship.seaworthiness
                   ? {

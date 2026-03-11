@@ -1,9 +1,9 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
-import { ShipRegistrySeaworthiness } from './seaworthiness.model'
-import { ShipRegistryIdentification } from './identification.model'
+import { ShipRegistryLocalizedValue } from './localizedValue.model'
 import { ShipRegistryMeasurements } from './measurements.model'
 import { ShipRegistryFishery } from './fishery.model'
 import { ShipRegistryEngine } from './engine.model'
+import { ShipRegistryCertificate } from './certificate.model'
 
 @ObjectType('ShipRegistryUserShip')
 export class UserShip {
@@ -16,35 +16,32 @@ export class UserShip {
   @Field()
   name!: string
 
-  @Field({ nullable: true })
-  usageType?: string
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  region?: ShipRegistryLocalizedValue
 
-  @Field({ nullable: true })
-  imoNumber?: string
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  usageType?: ShipRegistryLocalizedValue
 
-  @Field({ nullable: true })
-  status?: string
+  @Field(() => ShipRegistryLocalizedValue, {
+    nullable: true,
+    description: 'International Maritime Organization number',
+  })
+  imoNumber?: ShipRegistryLocalizedValue
 
-  @Field(() => Int, { nullable: true })
-  constructionYear?: number
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  phoneOnBoard?: ShipRegistryLocalizedValue
 
-  @Field({ nullable: true })
-  constructionStation?: string
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  constructionYear?: ShipRegistryLocalizedValue
 
-  @Field({ nullable: true })
-  constructionPlace?: string
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  constructionStation?: ShipRegistryLocalizedValue
 
-  @Field({ nullable: true })
-  hullMaterial?: string
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  hullMaterial?: ShipRegistryLocalizedValue
 
-  @Field({ nullable: true })
-  classificationSociety?: string
-
-  @Field(() => ShipRegistrySeaworthiness, { nullable: true })
-  seaworthiness?: ShipRegistrySeaworthiness
-
-  @Field(() => ShipRegistryIdentification, { nullable: true })
-  identification?: ShipRegistryIdentification
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  classificationSociety?: ShipRegistryLocalizedValue
 
   @Field(() => ShipRegistryMeasurements, { nullable: true })
   measurements?: ShipRegistryMeasurements
@@ -54,4 +51,7 @@ export class UserShip {
 
   @Field(() => [ShipRegistryEngine], { nullable: true })
   engines?: ShipRegistryEngine[]
+
+  @Field(() => [ShipRegistryCertificate], { nullable: true })
+  certificates?: ShipRegistryCertificate[]
 }

@@ -1,43 +1,89 @@
+fragment LocalizedValue on ShipRegistryLocalizedValue {
+  label
+  value
+  unit
+}
+
 query ShipDetail($input: ShipRegistryUserShipInput!) {
   shipRegistryUserShip(input: $input) {
     id
     registrationNumber
     name
-    usageType
-    imoNumber
-    status
-    constructionYear
-    constructionStation
-    constructionPlace
-    hullMaterial
-    classificationSociety
-    seaworthiness {
-      isValid
-      validTo
+    region {
+      ...LocalizedValue
     }
-    identification {
-      regionAcronym
-      regionName
-      homeHarbor
+    usageType {
+      ...LocalizedValue
+    }
+    imoNumber {
+      ...LocalizedValue
+    }
+    constructionYear {
+      ...LocalizedValue
+    }
+    constructionStation {
+      ...LocalizedValue
+    }
+    hullMaterial {
+      ...LocalizedValue
+    }
+    classificationSociety {
+      ...LocalizedValue
+    }
+    phoneOnBoard {
+      ...LocalizedValue
     }
     measurements {
-      length
-      mostLength
-      width
-      depth
-      bruttoGrt
-      nettoWeightTons
+      length {
+        ...LocalizedValue
+      }
+      maxLength {
+        ...LocalizedValue
+      }
+      width {
+        ...LocalizedValue
+      }
+      depth {
+        ...LocalizedValue
+      }
+      bruttoGrossTonnage {
+        ...LocalizedValue
+      }
+      bruttoWeight {
+        ...LocalizedValue
+      }
     }
     fishery {
-      name
-      address
-      postalCode
+      name {
+        ...LocalizedValue
+      }
+      address {
+        ...LocalizedValue
+      }
+      municipality {
+        ...LocalizedValue
+      }
+      phoneNo {
+        ...LocalizedValue
+      }
     }
     engines {
-      power
-      year
-      usage
-      manufacturer
+      name {
+        ...LocalizedValue
+      }
+      year {
+        ...LocalizedValue
+      }
+      power {
+        ...LocalizedValue
+      }
+    }
+    certificates {
+      name
+      status
+      issueDate
+      validToDate
+      extensionDate
     }
   }
 }

@@ -1,11 +1,26 @@
 import {
+  MyShipDetailDto,
   ShipBaseInfoDto,
-  ShipDetailsModel,
+  ValueMessageDto,
+  ValueUnitMessageDto,
 } from '@island.is/clients/ship-registry-v2'
 import { isDefined } from '@island.is/shared/utils'
 import { UserShipCollectionItem } from './models/userShipCollectionItem.model'
 import { UserShip } from './models/userShip.model'
+import { ShipRegistryLocalizedValue } from './models/localizedValue.model'
 import { LocaleEnum } from './dto/locale.enum'
+
+const toLocalizedValue = (
+  dto: ValueMessageDto | ValueUnitMessageDto | undefined,
+  locale: LocaleEnum,
+): ShipRegistryLocalizedValue | undefined => {
+  if (!dto) return undefined
+  return {
+    label: locale === LocaleEnum.En ? dto.translation.en : dto.translation.is,
+    value: dto.value || undefined,
+    unit: 'unit' in dto ? dto.unit || undefined : undefined,
+  }
+}
 
 export const mapToUserShipCollection = (
   ships: ShipBaseInfoDto[],
@@ -34,66 +49,62 @@ export const mapToUserShipCollectionItem = (
 }
 
 export const mapToUserShipFromDetails = (
-  ship: ShipDetailsModel,
+  ship: MyShipDetailDto,
   locale: LocaleEnum = LocaleEnum.Is,
 ): UserShip | undefined => {
-  if (!ship.shipRegistrationNumber || !ship.name) {
+  const info = ship.shipRegistrationInfo
+  const spec = ship.shipSpec
+
+  if (!info?.shipRegistrationNumber?.value || !info?.shipName?.value) {
     return undefined
   }
 
-  const registrationNumber = Number(ship.shipRegistrationNumber)
+  const registrationNumber = Number(info.shipRegistrationNumber.value)
 
   return {
     id: `${registrationNumber}_${locale}`,
     registrationNumber,
-    name: ship.name,
-    usageType: ship.usageType || undefined,
-    imoNumber: ship.imoNumber || undefined,
-    status: ship.status || undefined,
-    constructionYear: ship.constructionYear || undefined,
-    constructionStation: ship.constructionStation || undefined,
-    constructionPlace: ship.constructionPlace || undefined,
-    hullMaterial: ship.hullMaterial || undefined,
-    classificationSociety: ship.classificationSociety || undefined,
-    seaworthiness: ship.seaworthiness
+    name: info.shipName.value,
+    region: toLocalizedValue(info.regionString, locale),
+    usageType: toLocalizedValue(info.usageTypeString, locale),
+    imoNumber: toLocalizedValue(info.imoNumber, locale),
+    constructionYear: toLocalizedValue(info.constructionYear, locale),
+    constructionStation: toLocalizedValue(info.constructionStation, locale),
+    hullMaterial: toLocalizedValue(info.hullMaterial, locale),
+    classificationSociety: toLocalizedValue(info.classificationSociety, locale),
+    phoneOnBoard: toLocalizedValue(info.phoneOnBoardShip, locale),
+    measurements: spec
       ? {
-          isValid: ship.seaworthiness.isValid,
-          validTo: ship.seaworthiness.validTo
-            ? ship.seaworthiness.validTo.toString()
-            : '',
+          length: toLocalizedValue(spec.length, locale),
+          maxLength: toLocalizedValue(spec.maxLength, locale),
+          width: toLocalizedValue(spec.width, locale),
+          depth: toLocalizedValue(spec.depth, locale),
+          bruttoGrossTonnage: toLocalizedValue(spec.bruttoGRT, locale),
+          bruttoWeight: toLocalizedValue(spec.bruttoTonnage, locale),
         }
       : undefined,
-    identification: ship.identification
+    fishery: info.fishery?.value
       ? {
-          regionAcronym: ship.identification.regionAcronym,
-          regionName: ship.identification.regionName,
-          homeHarbor: ship.identification.homeHarbor || undefined,
+          name: toLocalizedValue(info.fishery, locale),
+          address: toLocalizedValue(info.fisheryAddress, locale),
+          municipality: toLocalizedValue(info.fisheryMunicipality, locale),
+          phoneNo: toLocalizedValue(info.fisheryPhoneNo, locale),
         }
       : undefined,
-    measurements: ship.mainMeasurements
-      ? {
-          length: ship.mainMeasurements.length,
-          mostLength: ship.mainMeasurements.mostLength,
-          width: ship.mainMeasurements.width,
-          depth: ship.mainMeasurements.depth,
-          bruttoGrt: ship.mainMeasurements.bruttoGrt,
-          nettoWeightTons: ship.mainMeasurements.nettoWeightTons,
-        }
-      : undefined,
-    fishery: ship.fishery
-      ? {
-          name: ship.fishery.name || undefined,
-          address: ship.fishery.address || undefined,
-          postalCode: ship.fishery.postalCode || undefined,
-        }
-      : undefined,
-    engines: ship.engines
-      ? ship.engines.map((engine) => ({
-          power: engine.power || undefined,
-          year: engine.year || undefined,
-          usage: engine.usage?.name || undefined,
-          manufacturer: engine.manufacturer?.name || undefined,
-        }))
-      : undefined,
+    engines: ship.mainEngines?.map((engine) => ({
+      name: toLocalizedValue(engine.engineName, locale),
+      year: toLocalizedValue(engine.engineYear, locale),
+      power: toLocalizedValue(engine.enginePower, locale),
+    })),
+    certificates: ship.shipCertificateDetails?.map((cert) => ({
+      name: cert.certificateTypeName,
+      status:
+        locale === LocaleEnum.En
+          ? cert.certificateIssueStatus?.en
+          : cert.certificateIssueStatus?.is,
+      issueDate: cert.issueDate ?? '',
+      validToDate: cert.validToDate ?? '',
+      extensionDate: cert.extensionDate || undefined,
+    })),
   }
 }

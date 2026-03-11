@@ -1,16 +1,17 @@
-import { Field, Float, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
+import { ShipRegistryLocalizedValue } from './localizedValue.model'
 
 @ObjectType('ShipRegistryEngine')
 export class ShipRegistryEngine {
-  @Field(() => Float, { nullable: true })
-  power?: number
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  name?: ShipRegistryLocalizedValue
 
-  @Field(() => Int, { nullable: true })
-  year?: number
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  year?: ShipRegistryLocalizedValue
 
-  @Field({ nullable: true })
-  usage?: string
-
-  @Field({ nullable: true })
-  manufacturer?: string
+  @Field(() => ShipRegistryLocalizedValue, {
+    description: 'In kilowatts',
+    nullable: true,
+  })
+  power?: ShipRegistryLocalizedValue
 }

@@ -1,22 +1,23 @@
-import { Field, Float, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
+import { ShipRegistryLocalizedValue } from './localizedValue.model'
 
 @ObjectType('ShipRegistryMeasurements')
 export class ShipRegistryMeasurements {
-  @Field(() => Float)
-  length!: number
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  length?: ShipRegistryLocalizedValue
 
-  @Field(() => Float)
-  mostLength!: number
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  maxLength?: ShipRegistryLocalizedValue
 
-  @Field(() => Float)
-  width!: number
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  width?: ShipRegistryLocalizedValue
 
-  @Field(() => Float)
-  depth!: number
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  depth?: ShipRegistryLocalizedValue
 
-  @Field(() => Float)
-  bruttoGrt!: number
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  bruttoGrossTonnage?: ShipRegistryLocalizedValue
 
-  @Field(() => Float)
-  nettoWeightTons!: number
+  @Field(() => ShipRegistryLocalizedValue, { nullable: true })
+  bruttoWeight?: ShipRegistryLocalizedValue
 }
