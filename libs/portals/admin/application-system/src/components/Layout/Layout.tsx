@@ -13,8 +13,10 @@ import { useLocale } from '@island.is/localization'
 import { ApplicationSystemPaths } from '../../lib/paths'
 import { m } from '../../lib/messages'
 import Statistics from '../../screens/Statistics/Statistics'
-import { useGetOrganizationsQuery } from '../../queries/overview.generated'
-import { Organization } from '@island.is/shared/types'
+import {
+  GetOrganizationsQuery,
+  useGetOrganizationsQuery,
+} from '../../queries/overview.generated'
 
 interface LayoutProps {
   isSuperAdmin: boolean
@@ -31,8 +33,8 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
       ssr: false,
     })
 
-  const organizationListFromContentful = (contentfulOrgData?.getOrganizations
-    ?.items ?? []) as Organization[]
+  const organizationListFromContentful: GetOrganizationsQuery['getOrganizations']['items'] =
+    contentfulOrgData?.getOrganizations?.items ?? []
 
   return (
     <GridContainer>
