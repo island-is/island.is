@@ -35,7 +35,7 @@ export const pickMachineSubSection = buildSubSection({
               .data as MachinesWithTotalCount
             return machineList.machines.map((machine) => {
               return {
-                value: machine.id || '',
+                value: machine.id != null ? String(machine.id) : '',
                 label: machine?.regNumber || '',
                 subLabel: `${machine.category}: ${machine.type} - ${machine.subType}`,
                 disabled: machine?.disabled || false,

@@ -60,7 +60,7 @@ export const MachineSelectField: FC<
     setIsLoading(true)
     setSelected(true)
     if (currentMachine.id) {
-      getMachineDetailsCallback(currentMachine.id)
+      getMachineDetailsCallback(String(currentMachine.id))
         .then((response) => {
           setSelectedMachine(response.getWorkerMachineDetails)
           setValue(
@@ -85,7 +85,7 @@ export const MachineSelectField: FC<
             'machine.ownerNumber',
             response.getWorkerMachineDetails.ownerNumber || '',
           )
-          setValue('machine.id', response.getWorkerMachineDetails.id)
+          setValue('machine.id', String(response.getWorkerMachineDetails.id))
           setValue('machine.date', new Date().toISOString())
           setValue('machine.findVehicle', true)
           setValue(
