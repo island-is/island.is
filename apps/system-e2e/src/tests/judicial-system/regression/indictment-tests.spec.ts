@@ -239,7 +239,10 @@ test.describe.serial('Indictment tests', () => {
 
     // Indictment court record
     await expect(page).toHaveURL(`domur/akaera/thingbok/${caseId}`)
-    await page.getByRole('button', { name: 'Bæta við þinghaldi' }).click()
+    await Promise.all([
+      page.getByRole('button', { name: 'Bæta við þinghaldi' }).click(),
+      verifyRequestCompletion(page, '/api/graphql', 'CreateCourtSession'),
+    ])
     await page.getByTestId('entries').fill('Afstaða, málflutningur, og bókun')
 
     await page.locator('label').filter({ hasText: 'Dómur kveðinn upp' }).click()
