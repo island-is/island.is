@@ -24,10 +24,7 @@ import {
   QueryGetArticleCategoriesArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import {
-  useLinkResolver,
-  useNamespaceStrict,
-} from '@island.is/web/hooks'
+import { useLinkResolver, useNamespaceStrict } from '@island.is/web/hooks'
 import { LinkType } from '@island.is/web/hooks/useLinkResolver'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
@@ -51,9 +48,7 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
   const [sort, setSort] = useState<SortOption>('a-z')
 
   const allItems =
-    (
-      categories as GetArticleCategoriesQuery['getArticleCategories']
-    )?.filter(
+    (categories as GetArticleCategoriesQuery['getArticleCategories'])?.filter(
       (item) =>
         item.slug !== 'thjonusta-island-is' &&
         item.slug !== 'services-on-island-is',
@@ -135,13 +130,7 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
                 'spaceBetween',
                 'spaceBetween',
               ]}
-              alignItems={[
-                'stretch',
-                'stretch',
-                'stretch',
-                'center',
-                'center',
-              ]}
+              alignItems={['stretch', 'stretch', 'stretch', 'center', 'center']}
               flexWrap="wrap"
               rowGap={2}
             >
@@ -178,7 +167,10 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
             <Box paddingBottom={[3, 3, 6]}>
               <GridRow>
                 {items.map(
-                  ({ title, description, slug, __typename: typename }, index) => {
+                  (
+                    { title, description, slug, __typename: typename },
+                    index,
+                  ) => {
                     const href = linkResolver(typename as LinkType, [slug]).href
                     return (
                       <GridColumn
@@ -220,10 +212,7 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
                                 icon="arrowForward"
                                 size="small"
                               >
-                                {n(
-                                  'viewCategoryLink',
-                                  'Skoða þjónustuflokk',
-                                )}
+                                {n('viewCategoryLink', 'Skoða þjónustuflokk')}
                               </Button>
                             </Link>
                           </Box>
