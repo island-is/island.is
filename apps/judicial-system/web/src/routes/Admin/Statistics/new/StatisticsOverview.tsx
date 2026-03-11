@@ -12,6 +12,7 @@ import { CaseTableType } from '@island.is/judicial-system-web/src/graphql/schema
 const StatisticsOverview: FC = () => {
   const router = useRouter()
 
+  /*
   const statistics = {
     title: 'Tölfræði',
     pages: [
@@ -29,6 +30,7 @@ const StatisticsOverview: FC = () => {
       },
     ],
   }
+*/
 
   const data = {
     title: 'Gögn',
@@ -62,7 +64,7 @@ const StatisticsOverview: FC = () => {
           />
         ))}
       </CasesDashboardLayout>
-      <CasesDashboardLayout title={statistics.title}>
+      {/* <CasesDashboardLayout title={statistics.title}>
         {statistics.pages.map((t, idx) => (
           <CasesCard
             title={t.title}
@@ -72,7 +74,7 @@ const StatisticsOverview: FC = () => {
             type={t.type}
           />
         ))}
-      </CasesDashboardLayout>
+      </CasesDashboardLayout> */}
     </CasesLayout>
   )
 }
