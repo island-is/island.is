@@ -16,7 +16,7 @@ interface Ship {
   umdaemisbokstafir: string
   gerd: string
   smidastod: string
-  opid: string
+  opid?: string
   eigendur: {
     kennitala: string
     nafn: string
