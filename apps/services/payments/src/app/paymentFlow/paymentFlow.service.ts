@@ -521,6 +521,7 @@ export class PaymentFlowService {
         )
 
         this.logger.warn(`updateBody: ${JSON.stringify(updateBody)}`)
+        console.log(`updateBody: ${JSON.stringify(updateBody)}`)
 
         const response = await fetch(paymentFlow.onUpdateUrl, {
           method: 'POST',
