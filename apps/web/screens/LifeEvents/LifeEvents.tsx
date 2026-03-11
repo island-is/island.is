@@ -33,6 +33,7 @@ import {
   GET_NAMESPACE_QUERY,
 } from '../queries'
 import { ApplicationsTexts } from './LifeEvents.types'
+import * as styles from './LifeEvents.css'
 
 type LifeEvents = GetLifeEventsForOverviewQuery['getLifeEventsForOverview']
 interface Props {
@@ -73,7 +74,11 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
       <Head>
         <title>{n('pageTitle', 'Lífsviðburðir')} | Ísland.is</title>
       </Head>
-      <Box background="white">
+      <Box
+        background="white"
+        paddingTop={[2, 2, 2, 8]}
+        paddingBottom={[4, 4, 4, 8]}
+      >
         <GridContainer>
           <GridRow>
             <GridColumn
@@ -91,7 +96,13 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
                   },
                 ]}
               />
-              <Text variant="h1" as="h1" marginTop={5} marginBottom={2}>
+              <Text
+                variant="h1"
+                as="h1"
+                marginTop={2}
+                marginBottom={2}
+                className={styles.heading}
+              >
                 {n('pageTitle', 'Lífsviðburðir')}
               </Text>
             </GridColumn>
@@ -101,7 +112,11 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
               span={['12/12', '12/12', '9/12', '9/12', '6/12']}
               offset={['0', '0', '1/12', '1/12']}
             >
-              <Text variant="intro" as="p" paddingBottom={4}>
+              <Text
+                variant="intro"
+                as="p"
+                className={styles.description}
+              >
                 {n(
                   'pageBody',
                   'Samantekt yfir helstu þjónustu sem fólk þarf á tilteknum tímamótum í lífinu, til að mynda að eignast barn, fara í nám, stofna fyrirtæki og að undirbúa starfslok og efri árin.',
