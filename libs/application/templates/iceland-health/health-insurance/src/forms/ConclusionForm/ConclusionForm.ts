@@ -1,10 +1,10 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messages/messages'
+import { m } from '../../lib/messages/messages'
 import { IcelandHealthLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
-export const HealthInsuranceConfirmation: Form = buildForm({
+export const conclusionForm: Form = buildForm({
   id: 'HealthInsuranceConfirmation',
   title: m.formTitle,
   logo: IcelandHealthLogo,

@@ -317,18 +317,16 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       const applicationFilesContentDtoArray =
         mapAnswersToApplicationFilesContentDto(application, files)
 
-      // Send the photos in to HMS
-      const photoResults = await Promise.all(
-        applicationFilesContentDtoArray.map(
-          async (applicationFilesContentDto) => {
-            return await this.hmsApplicationSystemService.apiApplicationUploadPost(
-              {
-                applicationFilesContentDto,
-              },
-            )
-          },
-        ),
-      )
+      // Send the photos to HMS sequentially to avoid overwhelming
+      // the pod with concurrent uploads of large files
+      const photoResults = []
+      for (const applicationFilesContentDto of applicationFilesContentDtoArray) {
+        const result =
+          await this.hmsApplicationSystemService.apiApplicationUploadPost({
+            applicationFilesContentDto,
+          })
+        photoResults.push(result)
+      }
 
       if (photoResults.some((result) => result.status !== 200)) {
         throw new TemplateApiError(
