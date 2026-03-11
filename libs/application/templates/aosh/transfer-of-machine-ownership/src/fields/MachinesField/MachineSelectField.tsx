@@ -96,7 +96,7 @@ export const MachineSelectField: FC<
             'machine.isValid',
             response.getWorkerMachineDetails.disabled ? undefined : true,
           )
-          setMachineId(currentMachine?.id || '')
+          setMachineId(currentMachine?.id != null ? String(currentMachine.id) : '')
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
