@@ -391,12 +391,6 @@ export const OldAgePensionForm: Form = buildForm({
               children: [
                 buildTableRepeaterField({
                   id: 'incomePlanTable',
-<<<<<<< HEAD
-=======
-                  title:
-                    socialInsuranceAdministrationMessage.incomePlan
-                      .subSectionTitle,
->>>>>>> b6d7e2713c (fix unit test, remove console.log, add alert message and radio button to income plan page)
                   description: (application: Application) => {
                     const { incomePlanConditions } = getApplicationExternalData(
                       application.externalData,
@@ -425,10 +419,7 @@ export const OldAgePensionForm: Form = buildForm({
                   removeButtonTooltipText:
                     socialInsuranceAdministrationMessage.incomePlan
                       .removeIncome,
-<<<<<<< HEAD
                   marginTop: 0,
-=======
->>>>>>> b6d7e2713c (fix unit test, remove console.log, add alert message and radio button to income plan page)
                   fields: {
                     incomeCategory: {
                       component: 'select',
@@ -488,14 +479,6 @@ export const OldAgePensionForm: Form = buildForm({
                         socialInsuranceAdministrationMessage.incomePlan
                           .selectCurrency,
                       isSearchable: true,
-<<<<<<< HEAD
-=======
-                      updateValueObj: {
-                        valueModifier: (_, activeField) =>
-                          currencyValueModifier(activeField),
-                        watchValues: 'incomeType',
-                      },
->>>>>>> b6d7e2713c (fix unit test, remove console.log, add alert message and radio button to income plan page)
                       options: (application, activeField) => {
                         const { currencies } = getApplicationExternalData(
                           application.externalData,
@@ -590,32 +573,7 @@ export const OldAgePensionForm: Form = buildForm({
                       updateValueObj: {
                         valueModifier: (_, activeField) =>
                           incomePerYearValueModifier(activeField),
-<<<<<<< HEAD
                         watchValues: incomePerYearWatchValues,
-=======
-                        watchValues: (activeField) => {
-                          if (
-                            activeField?.income === RatioType.MONTHLY &&
-                            activeField?.incomeCategory === INCOME &&
-                            activeField?.unevenIncomePerYear?.[0] === YES
-                          ) {
-                            return MONTH_NAMES
-                          }
-                          if (
-                            activeField?.income === RatioType.MONTHLY &&
-                            activeField?.currency === ISK
-                          ) {
-                            return 'equalIncomePerMonth'
-                          }
-                          if (
-                            activeField?.income === RatioType.MONTHLY &&
-                            activeField?.currency !== ISK
-                          ) {
-                            return 'equalForeignIncomePerMonth'
-                          }
-                          return undefined
-                        },
->>>>>>> b6d7e2713c (fix unit test, remove console.log, add alert message and radio button to income plan page)
                       },
                       suffix: '',
                       condition: (_, activeField) => {
@@ -685,7 +643,6 @@ export const OldAgePensionForm: Form = buildForm({
                     december: generateMonthInput(
                       socialInsuranceAdministrationMessage.months.desember,
                     ),
-<<<<<<< HEAD
                   },
                   table: {
                     format: {
@@ -724,32 +681,6 @@ export const OldAgePensionForm: Form = buildForm({
                     const { incomePlan } = getApplicationAnswers(answers)
                     return incomePlanHasOnlyZeroIncome(incomePlan)
                   },
-=======
-                  },
-                  table: {
-                    format: {
-                      incomePerYear: (value) =>
-                        value && formatCurrencyWithoutSuffix(value),
-                    },
-                    header: [
-                      socialInsuranceAdministrationMessage.incomePlan
-                        .incomeType,
-                      socialInsuranceAdministrationMessage.incomePlan
-                        .incomePerYear,
-                      socialInsuranceAdministrationMessage.incomePlan.currency,
-                    ],
-                    rows: ['incomeType', 'incomePerYear', 'currency'],
-                  },
-                }),
-                buildAlertMessageField({
-                  id: 'incomePlan.alertMessage',
-                  title: socialInsuranceAdministrationMessage.shared.alertTitle,
-                  message:
-                    socialInsuranceAdministrationMessage.incomePlan
-                      .alertMessage,
-                  doesNotRequireAnswer: true,
-                  alertType: 'warning',
->>>>>>> b6d7e2713c (fix unit test, remove console.log, add alert message and radio button to income plan page)
                 }),
                 buildRadioField({
                   id: 'incomePlan.noOtherIncomeConfirmation',
@@ -758,13 +689,10 @@ export const OldAgePensionForm: Form = buildForm({
                       .noOtherIncomeConfirmation,
                   options: getYesNoOptions(),
                   width: 'half',
-<<<<<<< HEAD
                   condition: (answers) => {
                     const { incomePlan } = getApplicationAnswers(answers)
                     return incomePlanHasOnlyZeroIncome(incomePlan)
                   },
-=======
->>>>>>> b6d7e2713c (fix unit test, remove console.log, add alert message and radio button to income plan page)
                 }),
               ],
             }),

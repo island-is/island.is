@@ -128,7 +128,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const incomePlan =
     getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
-  
+
   const noOtherIncomeConfirmation = getValueViaPath<YesOrNo>(
     answers,
     'incomePlan.noOtherIncomeConfirmation',
