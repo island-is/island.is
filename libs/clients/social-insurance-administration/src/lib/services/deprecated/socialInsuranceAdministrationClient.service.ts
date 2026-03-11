@@ -1,29 +1,33 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import { Inject, Injectable } from '@nestjs/common'
-import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
-import { EmploymentDto, mapEmploymentDto } from './dto/employment.dto'
+import { IncomePlanDto, mapIncomePlanDto } from '../../dto/incomePlan.dto'
+import { EmploymentDto, mapEmploymentDto } from '../../dto/employment.dto'
 import {
   ApplicationWriteApi,
+  BankInformationWriteApi,
   MedicalDocumentApiForDisabilityPension,
   QuestionnairesApiForDisabilityPension,
-} from './socialInsuranceAdministrationClient.type'
-import { ApplicationTypeEnum } from './enums'
-import { mapApplicationEnumToType } from './mapper'
-import { mapProfessionDto, ProfessionDto } from './dto/profession.dto'
+} from '../../socialInsuranceAdministrationClient.type'
+import { ApplicationTypeEnum } from '../../enums'
+import { mapApplicationEnumToType } from '../../mapper'
+import { mapProfessionDto, ProfessionDto } from '../../dto/profession.dto'
 import {
   mapProfessionActivityDto,
   ProfessionActivityDto,
-} from './dto/professionActivity.dto'
-import { mapResidenceDto, ResidenceDto } from './dto/residence.dto'
-import { GenericLocaleInputDto } from './dto/genericLocale.dto.input'
-import { LanguageDto, mapLanguageDto } from './dto/language.dto'
-import { CountryDto, mapCountryDto } from './dto/country.dto'
-import { mapMaritalStatusDto, MaritalStatusDto } from './dto/maritalStatus.dto'
-import { DisabilityPensionDto } from './dto'
+} from '../../dto/professionActivity.dto'
+import { mapResidenceDto, ResidenceDto } from '../../dto/residence.dto'
+import { GenericLocaleInputDto } from '../../dto/genericLocale.dto.input'
+import { LanguageDto, mapLanguageDto } from '../../dto/language.dto'
+import { CountryDto, mapCountryDto } from '../../dto/country.dto'
+import {
+  mapMaritalStatusDto,
+  MaritalStatusDto,
+} from '../../dto/maritalStatus.dto'
+import { DisabilityPensionDto } from '../../dto'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { ApplicationApi as ApplicationWriteApiV2 } from '../../gen/fetch/v2'
+import { ApplicationApi as ApplicationWriteApiV2 } from '../../../../gen/fetch/v2'
 import {
   ApplicationApi,
   ApplicantApi,
@@ -64,8 +68,17 @@ import {
   TrWebContractsExternalServicePortalConfirmationOfIllHealth,
   TrWebContractsExternalServicePortalConfirmationOfPendingResolution,
   TrWebContractsExternalServicePortalNationalRegistryAddress,
-} from '../../gen/fetch/v1'
+  BankInformationApi,
+  TrWebApiServicesCommonClientsModelsBankInformationInputModel,
+} from '../../../../gen/fetch/v1'
+import {
+  BankInformationDto,
+  mapToBankInformationDto,
+} from '../../dto/bankInformation/bankInformation.dto'
 
+/**
+ * @deprecated Use the scoped services instead.
+ */
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
   constructor(
@@ -81,6 +94,8 @@ export class SocialInsuranceAdministrationClientService {
     private readonly generalApi: GeneralApi,
     private readonly medicalDocumentsApi: MedicalDocumentsApi,
     private readonly questionnairesApi: QuestionnairesApi,
+    private readonly bankInformationApi: BankInformationApi,
+    private readonly bankInformationWriteApi: BankInformationWriteApi,
     private readonly medicalDocumentsApiForDisabilityPension: MedicalDocumentApiForDisabilityPension,
     private readonly questionnairesApiForDisabilityPension: QuestionnairesApiForDisabilityPension,
     private readonly featureFlagService: FeatureFlagService,
@@ -110,6 +125,14 @@ export class SocialInsuranceAdministrationClientService {
 
   private generalApiWithAuth = (user: User) =>
     this.generalApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private bankInformationApiWithAuth = (user: User) =>
+    this.bankInformationApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private bankInformationWriteApiWithAuth = (user: User) =>
+    this.bankInformationWriteApi.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
 
   private medicalDocumentsApiWithAuth = (user: User) =>
     this.medicalDocumentsApi.withMiddleware(new AuthMiddleware(user as Auth))
@@ -151,6 +174,29 @@ export class SocialInsuranceAdministrationClientService {
     }
 
     return mapIncomePlanDto(incomePlan) ?? null
+  }
+
+  async getBankInformation(user: User): Promise<BankInformationDto | null> {
+    const bankInformation = await this.bankInformationApiWithAuth(user)
+      .apiProtectedV1BankInformationBankInformationGet()
+      .catch(handle404)
+
+    if (!bankInformation) {
+      return null
+    }
+
+    return mapToBankInformationDto(bankInformation) ?? null
+  }
+
+  async postBankInformation(
+    user: User,
+    input: TrWebApiServicesCommonClientsModelsBankInformationInputModel,
+  ): Promise<void> {
+    await this.bankInformationApiWithAuth(
+      user,
+    ).apiProtectedV1BankInformationBankInformationPost({
+      trWebApiServicesCommonClientsModelsBankInformationInputModel: input,
+    })
   }
 
   async getIncomePlanConditions(

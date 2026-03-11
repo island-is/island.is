@@ -39,6 +39,50 @@ const buildApplication = (data: {
 }
 
 describe('New Primary School Template', () => {
+  it('should transition from pre to draft on submit', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: States.PREREQUISITES,
+        externalData: {
+          isApplicationBlocked: {
+            data: { hasActiveApplications: false },
+            date: new Date(),
+            status: 'success',
+          },
+        },
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.SUBMIT,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe(States.DRAFT)
+  })
+
+  it('should transition from pre to applicationBlocked on submit', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: States.PREREQUISITES,
+        externalData: {
+          isApplicationBlocked: {
+            data: { hasActiveApplications: true },
+            date: new Date(),
+            status: 'success',
+          },
+        },
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.SUBMIT,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe(States.APPLICATION_BLOCKED)
+  })
+
   it('should transition from draft to submitted on submit', () => {
     const helper = new ApplicationTemplateHelper(
       buildApplication({
