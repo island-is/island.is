@@ -31,6 +31,7 @@ The Air Discount Scheme (Loftbrú) provides flight discounts for residents of re
 Manages discount code creation, caching, and usage.
 
 **Discount Code Generation:**
+
 - Codes are 8-character alphanumeric strings
 - Character set: digits 1-9, letters A-N, P-Z (excludes 0 and O to avoid user confusion)
 - Normal flight codes end with digit 0-4
@@ -38,6 +39,7 @@ Manages discount code creation, caching, and usage.
 - Codes are stored in Redis with a 24-hour TTL by default
 
 **Key Methods (DiscountService):**
+
 - `createDiscountCode(user, nationalId, connectableFlights, ...)` — Generates a main discount code and one connection discount code per connectable flight
 - `createExplicitDiscountCode(auth, nationalId, ...)` — Admin-created discount for special cases. Records in ExplicitCode DB table with audit trail
 - `createManualDiscountCode(body, auth, isExplicit)` — Creates explicit codes via admin form
@@ -57,6 +59,7 @@ Manages discount code creation, caching, and usage.
 | `explicit_code_lookup_{code}` | Flags a code as admin-created |
 
 **Models:**
+
 - `Discount` — Value object: user, discountCode, connectionDiscountCodes[], nationalId, expiresIn
 - `ExplicitCode` — DB model: id, code, customerId, employeeId, comment, flightId
 - `ConnectionDiscountCode` — Value object: code, flightId, flightDesc, validUntil
@@ -66,10 +69,12 @@ Manages discount code creation, caching, and usage.
 Manages flight registration, validation, and financial state tracking.
 
 **DB Models:**
+
 - `Flight` — id, nationalId, userInfo (JSONB), bookingDate, connectable (boolean), flightLegs[]
 - `FlightLeg` — id, flightId, airline, cooperation, origin, destination, originalPrice, discountPrice, date, isConnectingFlight, financialState, financialStateUpdated
 
 **Financial State Machine:**
+
 ```
 awaitingDebit ──(send)──▶ sentDebit ──(revoke)──▶ awaitingCredit ──(send)──▶ sentCredit [final]
 awaitingDebit ──(revoke)──▶ cancelled [final]
@@ -77,16 +82,19 @@ awaitingDebit ──(revoke)──▶ cancelled [final]
 
 **Connecting Flight Logic:**
 A connecting flight is valid when ALL conditions are met:
+
 1. One flight touches Reykjavik (RKV/REK)
 2. One flight touches Akureyri (AEY) — Akureyri must be the common point
 3. Both flights use allowed airports: VPN (Vopnafjörður), GRY (Grímsey), THO (Þórshöfn), AEY (Akureyri)
 4. Flights are within 48 hours of each other
 
 **Grace Period:**
+
 - Flights departing FROM Reykjavik: connection code valid for 48 hours after flight date
 - Flights arriving TO Reykjavik: connection code valid until flight date
 
 **Constants:**
+
 - `CONNECTING_FLIGHT_GRACE_PERIOD`: 48 hours (ms)
 - `REYKJAVIK_FLIGHT_CODES`: ['RKV', 'REK']
 - `AKUREYRI_FLIGHT_CODES`: ['AEY']
@@ -97,12 +105,14 @@ A connecting flight is valid when ALL conditions are met:
 Manages user eligibility and fund calculations.
 
 **Eligibility (ADS Postal Codes):**
+
 - 380 (Reykhólahreppur)
 - 471–510 (Þingeyri to Hólmavík)
 - 530–785 (Hvammstangi to Öræfi) — excludes 530, 531 (Hvammstangi)
 - 900 (Vestmannaeyjar)
 
 **Fund Calculation:**
+
 - 6 flight legs per year (default since 2021; 2 in 2020)
 - Fund = { credit: remaining legs, used: booked legs, total: year allocation }
 - Eligible if: lives in ADS postal code, OR is a minor with eligible parent/custodian, OR isManual flag
@@ -110,6 +120,7 @@ Manages user eligibility and fund calculations.
 #### 4. National Registry Module (`backend/src/app/modules/nationalRegistry/`)
 
 Integrates with Iceland's National Registry (Þjóðskrá) API.
+
 - `getUser(nationalId)` — Fetches individual data (address, name, gender)
 - `getCustodians(nationalId)` — Gets custody parents for a child
 - `getRelations(nationalId, auth)` — Gets user's dependent children
@@ -118,6 +129,7 @@ Integrates with Iceland's National Registry (Þjóðskrá) API.
 #### 5. Cache Module (`backend/src/app/modules/cache/`)
 
 Redis-based distributed caching.
+
 - Production: Redis Cluster with SSL (ioredis)
 - Test: In-memory cache
 
@@ -157,12 +169,14 @@ Authentication guard that validates Bearer token API keys from environment confi
 NestJS GraphQL API at `/api/graphql`. Acts as a gateway between the web frontend and the backend REST API.
 
 **Modules:**
+
 - **DiscountResolver** — `discounts` query (fetches/creates discounts for user and relations), `createExplicitDiscountCode` mutation
 - **UserResolver** — `user` query, computed `role` and `meetsADSRequirements` fields
 - **FlightResolver** — Resolves flight user field
 - **FlightLegResolver** — `flightLegs` query (admin filtered), `confirmInvoice` mutation
 
 **Key Resolver Logic (discounts query):**
+
 1. Gets user's relations (dependents)
 2. Filters to eligible users (fund.credit === fund.total - fund.used)
 3. For each relation: gets existing discount or creates new one if expired (≤2 hours TTL)
@@ -177,12 +191,14 @@ NestJS GraphQL API at `/api/graphql`. Acts as a gateway between the web frontend
 Next.js application with Apollo Client for GraphQL.
 
 **Pages:**
+
 - `/` — Home (CMS content)
 - `/min-rettindi` (is) / `/en/my-benefits` — User benefits/discount page
 - `/admin` — Admin dashboard (flight leg management, invoicing)
 - `/admin/discount` — Admin manual discount code creation
 
 **Key Screens:**
+
 - **Subsidy/Benefits** — Shows user discount codes (CodeCard components), connection flight codes, usage stats
 - **Admin** — Filters, panels, summary, CSV export, invoice confirmation
 - **AdminCreateDiscount** — Form for explicit discount code creation
@@ -194,9 +210,11 @@ Next.js application with Apollo Client for GraphQL.
 ## Shared Libraries
 
 ### Types (`libs/air-discount-scheme/types/`)
+
 Shared TypeScript interfaces: FlightLeg, Flight, User, Fund, Discount, ConnectionDiscountCode, ExplicitCode, Gender, Role, etc.
 
 ### Constants (`libs/air-discount-scheme/consts/`)
+
 Shared constants: routes, flight constants, cookie configs. Airline enum, States enum, Actions enum.
 
 ---
