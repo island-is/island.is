@@ -36,7 +36,6 @@ import {
   generateChargeRequestOptions,
   generateMd,
   generateRefundRequestOptions,
-  generateRefundWithCorrelationIdRequestOptions,
   generateVerificationRequestOptions,
   getPayloadFromMd,
 } from './cardPayment.utils'
@@ -474,32 +473,6 @@ export class CardPaymentService {
       this.logger.error(`[${paymentFlowId}] Failed to refund payment`, e)
       throw e
     }
-  }
-
-  async refundWithCorrelationId({
-    paymentTrackingData,
-  }: {
-    paymentTrackingData: PaymentTrackingData
-  }): Promise<RefundSuccessResponse> {
-    const { paymentsGatewayApiUrl } = this.config.paymentGateway
-
-    const requestOptions = generateRefundWithCorrelationIdRequestOptions({
-      paymentApiConfig: this.config.paymentGateway,
-      paymentTrackingData,
-    })
-
-    const response = await fetch(
-      `${paymentsGatewayApiUrl}/Payment/RefundWithCorrelationId`,
-      requestOptions,
-    )
-
-    const data = await this.parsePaymentGatewayResponseAndHandleErrors({
-      response,
-      schema: RefundResponseSchema,
-      errorMessage: 'Failed to refund payment with correlation id',
-    })
-
-    return data as RefundSuccessResponse
   }
 
   async persistPaymentConfirmation({

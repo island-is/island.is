@@ -33,7 +33,7 @@ import {
 } from '../../types/cardPayment'
 import { generateMd, getPayloadFromMd } from './cardPayment.utils'
 import { ChargeCardInput, VerificationCallbackInput } from './dtos'
-import { RefundCardPaymentInput } from './dtos/refundCardPayment.input'
+import { RefundPaymentInput } from '../refund/dtos/refundPayment.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 
 const charges = [
@@ -118,6 +118,7 @@ describe('CardPaymentController', () => {
             priceAmount: charge.price,
             performingOrgID: 'TODO',
             chargeItemName: 'TODO',
+            paymentOptions: ['CARD', 'CLAIM'],
           })),
           totalPrice: 1000,
           firstProductTitle: 'Test',
@@ -246,6 +247,7 @@ describe('CardPaymentController', () => {
             priceAmount: charge.price,
             performingOrgID: 'TODO',
             chargeItemName: 'TODO',
+            paymentOptions: ['CARD', 'CLAIM'],
           })),
           totalPrice: serverSideTotalPrice,
           firstProductTitle: 'Test',
@@ -293,6 +295,7 @@ describe('CardPaymentController', () => {
           priceAmount: charge.price,
           performingOrgID: 'TODO',
           chargeItemName: 'TODO',
+          paymentOptions: ['CARD', 'CLAIM'],
         })),
         totalPrice: 1000,
         firstProductTitle: 'Test',
@@ -662,13 +665,13 @@ describe('CardPaymentController', () => {
 
   describe('refund', () => {
     it('should return 400 when payment flow is not eligible for refund', async () => {
-      const refundInput: RefundCardPaymentInput = {
+      const refundInput: RefundPaymentInput = {
         paymentFlowId,
         reasonForRefund: 'fulfillment_failure',
       }
 
       const response = await server
-        .post('/v1/payments/card/refund')
+        .post('/v1/payments/refund')
         .send(refundInput)
 
       expect(response.status).toBe(400)
@@ -736,13 +739,13 @@ describe('CardPaymentController', () => {
           } as Response
         })
 
-      const refundInput: RefundCardPaymentInput = {
+      const refundInput: RefundPaymentInput = {
         paymentFlowId,
         reasonForRefund: 'fulfillment_failure',
       }
 
       const response = await server
-        .post('/v1/payments/card/refund')
+        .post('/v1/payments/refund')
         .send(refundInput)
 
       expect(response.status).toBe(201)
@@ -807,6 +810,7 @@ describe('CardPaymentController', () => {
           priceAmount: charge.price,
           performingOrgID: 'TODO',
           chargeItemName: 'TODO',
+          paymentOptions: ['CARD', 'CLAIM'],
         })),
         totalPrice: 1000,
         firstProductTitle: 'TODO',
@@ -1127,6 +1131,7 @@ describe('CardPaymentController', () => {
               priceAmount: charge.price,
               performingOrgID: 'TODO',
               chargeItemName: 'TODO',
+              paymentOptions: ['CARD', 'CLAIM'],
             })),
             totalPrice: 1000,
             firstProductTitle: 'TODO',
@@ -1375,6 +1380,7 @@ describe('CardPaymentController', () => {
               priceAmount: charge.price,
               performingOrgID: 'TODO',
               chargeItemName: 'TODO',
+              paymentOptions: ['CARD', 'CLAIM'],
             })),
             totalPrice: 1000,
             firstProductTitle: 'TODO',

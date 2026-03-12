@@ -16,7 +16,7 @@ import {
   GET_COURSE_SELECT_OPTIONS_QUERY,
 } from '../graphql'
 
-const cache = storageFactory(() => sessionStorage)
+const cache = storageFactory(() => localStorage)
 
 const createCacheKey = (instanceId: string): string =>
   `hhCourseInstanceChargeItemCode:${instanceId}`
@@ -97,7 +97,9 @@ export const loadDateSelectOptions = async ({
 
     return {
       value: instance.id,
-      label: `${formattedDate} ${startDateTimeDuration}`,
+      label: `${formattedDate} ${startDateTimeDuration} ${
+        instance.displayedTitle ? `- ${instance.displayedTitle}` : ''
+      }`,
     }
   })
 }

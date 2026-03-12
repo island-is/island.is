@@ -42,12 +42,6 @@ export const createMockCardPaymentService = (
         acquirerReferenceNumber: 'refund-arn',
       }),
     ),
-    refundWithCorrelationId: jest.fn().mockResolvedValue(
-      resolved({
-        isSuccess: true,
-        acquirerReferenceNumber: 'refund-arn',
-      }),
-    ),
     ...overrides,
   }
   return mock as unknown as jest.Mocked<CardPaymentService>
