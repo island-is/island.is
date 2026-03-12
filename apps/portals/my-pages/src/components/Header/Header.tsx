@@ -144,138 +144,142 @@ export const Header = ({
         }}
       >
         <div className={styles.headerNav}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn
-              span="12/12"
-              paddingTop={[2, 2, 2, 4]}
-              paddingBottom={[2, 2, 2, 4]}
-            >
-              <PortalPageLoader />
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                span="12/12"
+                paddingTop={[2, 2, 2, 4]}
+                paddingBottom={[2, 2, 2, 4]}
+              >
+                <PortalPageLoader />
 
-              <Box width="full">
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  alignItems="center"
-                  width="full"
-                >
-                  <Link to={ServicePortalPaths.Root}>
-                    <FocusableBox component="div">
-                      <Hidden above="sm">
-                        <Logo
-                          width={40}
-                          height={40}
-                          iconOnly
-                          id="header-mobile"
-                        />
-                      </Hidden>
-                      <Hidden below="md">
-                        <Logo width={136} height={22} id="header" />
-                      </Hidden>
-                    </FocusableBox>
-                  </Link>
+                <Box width="full">
                   <Box
-                    width="full"
                     display="flex"
+                    justifyContent="spaceBetween"
                     alignItems="center"
-                    justifyContent="flexEnd"
-                    flexWrap="nowrap"
-                    marginLeft={[1, 1, 2]}
-                    printHidden
+                    width="full"
                   >
-                    {includeSearchInHeader && (
-                      <Box
-                        marginRight={[1, 1, 2]}
-                        flexGrow={isMobile ? 0 : 1}
-                        className={styles.search}
-                      >
-                        <SearchInput
-                          placeholder={formatMessage(m.searchOnMyPages)}
-                          buttonAriaLabel={formatMessage(m.searchOnMyPages)}
-                          whiteMenuBackground
-                          hideInput={isMobile}
-                          box={{ marginLeft: 'auto' }}
-                        />
-                      </Box>
-                    )}
-                    <Hidden below="md">
-                      <Box marginRight={[1, 1, 2]} position="relative">
-                        <LinkResolver
-                          href={DocumentsPaths.ElectronicDocumentsRoot}
-                        >
-                          <Button
-                            icon="mail"
-                            iconType="outline"
-                            colorScheme="white"
-                            size="small"
-                            type="span"
-                            variant="utility"
-                            aria-label={formatMessage(m.openDocuments)}
-                            unfocusable
+                    <Link to={ServicePortalPaths.Root}>
+                      <FocusableBox component="div">
+                        <Hidden above="sm">
+                          <Logo
+                            width={40}
+                            height={40}
+                            iconOnly
+                            id="header-mobile"
                           />
-                          <span className={helperStyles.srOnly}>
-                            {formatMessage(m.openDocuments)}
-                          </span>
-                        </LinkResolver>
+                        </Hidden>
+                        <Hidden below="md">
+                          <Logo width={136} height={22} id="header" />
+                        </Hidden>
+                      </FocusableBox>
+                    </Link>
+                    <Box
+                      width="full"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="flexEnd"
+                      flexWrap="nowrap"
+                      marginLeft={[1, 1, 2]}
+                      printHidden
+                    >
+                      {includeSearchInHeader && (
+                        <Box
+                          marginRight={[1, 1, 2]}
+                          flexGrow={isMobile ? 0 : 1}
+                          className={styles.search}
+                        >
+                          <SearchInput
+                            placeholder={formatMessage(m.searchOnMyPages)}
+                            buttonAriaLabel={formatMessage(m.searchOnMyPages)}
+                            whiteMenuBackground
+                            hideInput={isMobile}
+                            box={{ marginLeft: 'auto' }}
+                          />
+                        </Box>
+                      )}
+                      <Hidden below="md">
+                        <Box marginRight={[1, 1, 2]} position="relative">
+                          <LinkResolver
+                            href={DocumentsPaths.ElectronicDocumentsRoot}
+                          >
+                            <Button
+                              icon="mail"
+                              iconType="outline"
+                              colorScheme="white"
+                              size="small"
+                              type="span"
+                              variant="utility"
+                              aria-label={formatMessage(m.openDocuments)}
+                              unfocusable
+                            />
+                            <span className={helperStyles.srOnly}>
+                              {formatMessage(m.openDocuments)}
+                            </span>
+                          </LinkResolver>
+                        </Box>
+                      </Hidden>
+
+                      <NotificationButton
+                        setMenuState={(val: MenuTypes) => setMenuOpen(val)}
+                        showMenu={menuOpen === 'notifications'}
+                        disabled={!hasNotificationsDelegationAccess}
+                      />
+
+                      {user && <UserLanguageSwitcher />}
+
+                      <Box className={styles.overview} marginRight={[1, 1, 2]}>
+                        <Button
+                          variant="utility"
+                          colorScheme="white"
+                          icon={
+                            menuOpen === 'side' && isMobile ? 'close' : 'dots'
+                          }
+                          onClick={() => {
+                            menuOpen === 'side' && isMobile
+                              ? setMenuOpen(undefined)
+                              : setMenuOpen('side')
+                          }}
+                          aria-label={formatMessage(m.overview)}
+                          ref={ref}
+                        >
+                          <Hidden below="sm">
+                            {formatMessage(m.overview)}
+                          </Hidden>
+                        </Button>
                       </Box>
-                    </Hidden>
 
-                    <NotificationButton
-                      setMenuState={(val: MenuTypes) => setMenuOpen(val)}
-                      showMenu={menuOpen === 'notifications'}
-                      disabled={!hasNotificationsDelegationAccess}
-                    />
-
-                    {user && <UserLanguageSwitcher />}
-
-                    <Box className={styles.overview} marginRight={[1, 1, 2]}>
-                      <Button
-                        variant="utility"
-                        colorScheme="white"
-                        icon={
-                          menuOpen === 'side' && isMobile ? 'close' : 'dots'
+                      <Sidemenu
+                        setSideMenuOpen={(set: boolean) =>
+                          setMenuOpen(set ? 'side' : undefined)
                         }
-                        onClick={() => {
-                          menuOpen === 'side' && isMobile
-                            ? setMenuOpen(undefined)
-                            : setMenuOpen('side')
-                        }}
-                        aria-label={formatMessage(m.overview)}
-                        ref={ref}
-                      >
-                        <Hidden below="sm">{formatMessage(m.overview)}</Hidden>
-                      </Button>
+                        sideMenuOpen={menuOpen === 'side'}
+                        rightPosition={
+                          ref.current?.getBoundingClientRect().right
+                        }
+                      />
+
+                      <UserMenu
+                        setUserMenuOpen={(set: boolean) =>
+                          setMenuOpen(
+                            set
+                              ? 'user'
+                              : menuOpen === 'user'
+                              ? undefined
+                              : menuOpen,
+                          )
+                        }
+                        iconOnlyMobile
+                        showLanguageSwitcher={false}
+                        userMenuOpen={menuOpen === 'user'}
+                      />
                     </Box>
-
-                    <Sidemenu
-                      setSideMenuOpen={(set: boolean) =>
-                        setMenuOpen(set ? 'side' : undefined)
-                      }
-                      sideMenuOpen={menuOpen === 'side'}
-                      rightPosition={ref.current?.getBoundingClientRect().right}
-                    />
-
-                    <UserMenu
-                      setUserMenuOpen={(set: boolean) =>
-                        setMenuOpen(
-                          set
-                            ? 'user'
-                            : menuOpen === 'user'
-                            ? undefined
-                            : menuOpen,
-                        )
-                      }
-                      iconOnlyMobile
-                      showLanguageSwitcher={false}
-                      userMenuOpen={menuOpen === 'user'}
-                    />
                   </Box>
                 </Box>
-              </Box>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </div>
         <DelegationBanner />
       </header>

@@ -14,8 +14,8 @@ export class ScopeTreeDTO {
       model instanceof ApiScope
         ? model.allowsWrite ?? false
         : 'allowsWrite' in model
-          ? model.allowsWrite ?? false
-          : false
+        ? model.allowsWrite ?? false
+        : false
 
     if (model instanceof ApiScopeGroup) {
       this.children = []

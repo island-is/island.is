@@ -1,4 +1,10 @@
-import { Box, Button, GridContainer, Hidden, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridContainer,
+  Hidden,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
 import { userMessages } from '@island.is/shared/translations'
