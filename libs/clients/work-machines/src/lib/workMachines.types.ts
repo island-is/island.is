@@ -54,3 +54,23 @@ export type MachinesWithTotalCount = {
   machines: MachineDto[]
   totalCount: number
 }
+
+export type MachineForInspectionDto = {
+  id?: string
+  ownerNumber?: string
+  licensePlateNumber?: string
+  type?: string
+  subType?: string
+  category?: string
+  registrationNumber?: string
+  supervisor?: string
+  status?: string
+  paymentRequiredForOwnerChange?: boolean
+  errorMessage?: string | null
+  disabled?: boolean
+}
+
+export type MachineForInspectionTotalCount = {
+  machines: MachineForInspectionDto[]
+  totalCount: number
+}

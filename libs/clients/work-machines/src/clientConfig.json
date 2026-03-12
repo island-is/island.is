@@ -513,6 +513,38 @@
         "summary": "Get a list of machines owned or supervised by the logged in user.",
         "parameters": [
           {
+            "name": "totalCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "currentPage",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "totalPages",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
             "name": "X-Correlation-ID",
             "in": "header",
             "description": "Unique identifier associated with the request",
@@ -535,13 +567,20 @@
           },
           "200": {
             "description": "OK",
+            "headers": {
+              "X-Pagination": {
+                "description": "Paging info",
+                "schema": {
+                  "type": "string",
+                  "description": "Paging info",
+                  "format": "{\"totalCount\":6,\"pageSize\":10,\"currentPage\":1,\"totalPages\":1}"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MachineFriendlyDto"
-                  }
+                  "$ref": "#/components/schemas/MachineFriendlyDtoIEnumerableListReturnValueDto"
                 }
               }
             }
@@ -2067,6 +2106,22 @@
           "errorMessage": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineFriendlyDtoIEnumerableListReturnValueDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MachineFriendlyDto"
+            },
+            "nullable": true
+          },
+          "_pagination": {
+            "$ref": "#/components/schemas/PaginationDto"
           }
         },
         "additionalProperties": false
