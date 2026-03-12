@@ -17,6 +17,7 @@ export type SmsQueueMessage = {
   actorNotificationId?: number
   mobilePhoneNumber: string
   smsContent: string
+  smsPayer?: string
 }
 
 @Injectable()
@@ -42,11 +43,14 @@ export class SmsWorkerService {
         actorNotificationId,
         mobilePhoneNumber,
         smsContent,
+        smsPayer,
       } = message
 
       this.logger.info('SMS worker received message', { messageId })
 
-      await this.smsService.sendSms(mobilePhoneNumber, smsContent)
+      await this.smsService.sendSms(mobilePhoneNumber, smsContent, {
+        payer: smsPayer,
+      })
 
       this.logger.info('SMS notification sent', { messageId })
 
