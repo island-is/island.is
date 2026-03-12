@@ -18,7 +18,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { applicationCheck } from '@island.is/application/templates/aosh/change-machine-supervisor'
 import {
-  MachinesWithTotalCount,
+  MachineForInspectionTotalCount,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 import { cleanPhoneNumber } from './request-inspection.utils'
@@ -34,8 +34,10 @@ export class RequestInspectionTemplateService extends BaseTemplateApiService {
 
   async getMachines({
     auth,
-  }: TemplateApiModuleActionProps): Promise<MachinesWithTotalCount> {
-    const result = await this.workMachineClientService.getMachines(auth)
+  }: TemplateApiModuleActionProps): Promise<MachineForInspectionTotalCount> {
+    const result = await this.workMachineClientService.getMachinesForInspection(
+      auth,
+    )
     if (!result) {
       throw new TemplateApiError(
         {
@@ -50,10 +52,9 @@ export class RequestInspectionTemplateService extends BaseTemplateApiService {
         machines: await Promise.all(
           result.machines.map(async (machine) => {
             if (machine.id) {
-              return await this.workMachineClientService.getMachineDetail(
+              return await this.workMachineClientService.getMachineDetailsForInspection(
                 auth,
-                machine.id,
-                'requestInspection',
+                { registrationNumber: machine.id },
               )
             }
             return machine

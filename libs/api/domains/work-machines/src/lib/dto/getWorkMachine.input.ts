@@ -23,5 +23,6 @@ export class GetWorkMachineInput {
 
   @Field()
   @IsString()
-  locale!: string
+  @IsOptional()
+  locale?: string
 }
