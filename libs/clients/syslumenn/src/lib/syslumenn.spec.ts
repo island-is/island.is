@@ -100,7 +100,6 @@ describe('SyslumennService', () => {
           load: [config, IdsClientConfig, FeatureFlagConfig],
         }),
       ],
-      providers: [SyslumennService],
     }).compile()
 
     service = module.get(SyslumennService)
