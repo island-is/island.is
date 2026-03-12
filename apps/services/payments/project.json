@@ -106,6 +106,13 @@
         "cwd": "apps/services/payments"
       }
     },
+    "migrate/undo": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sequelize-cli db:migrate:undo --name {args.name}",
+        "cwd": "apps/services/payments"
+      }
+    },
     "docker-express-yarn": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     },

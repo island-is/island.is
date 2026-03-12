@@ -23,19 +23,3 @@ export class PermitInput {
   @IsString({ each: true })
   countryCodes!: string[]
 }
-
-@InputType('HealthDirectoratePatientDataPermitsInput')
-export class PermitsInput {
-  @Field(() => [String])
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsString({ each: true })
-  status!: string[]
-}
-
-@InputType('HealthDirectoratePatientDataInvalidatePermitInput')
-export class InvalidatePermitInput {
-  @Field()
-  @IsString()
-  id!: string
-}

@@ -170,7 +170,7 @@ export const DetailedInfoCard = ({
       )
     }
     return (
-      <Box marginTop={2}>
+      <Box>
         <Text variant="h3" color="blue400">
           {title}
         </Text>
