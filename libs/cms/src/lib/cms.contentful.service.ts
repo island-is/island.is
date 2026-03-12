@@ -1582,7 +1582,7 @@ export class CmsContentfulService {
         {
           content_type: 'course',
           limit: 1,
-          include: 4,
+          include: 0,
           'fields.slug': input.id,
           select: 'sys',
         },
