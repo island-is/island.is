@@ -164,4 +164,121 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:payment-plan-breakdown',
     defaultMessage: 'Sundurliðun',
   },
+  accountingInformation: {
+    id: 'sp.social-insurance-maintenance:accounting-information',
+    defaultMessage: 'Reikningsupplýsingar',
+  },
+  bankAccount: {
+    id: 'sp.social-insurance-maintenance:bank-account',
+    defaultMessage: 'Bankareikningur',
+  },
+  bankAccountDescription: {
+    id: 'sp.social-insurance-maintenance:bank-account-description',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar sem Tryggingastofnun hefur um þinn bankareikning. Allar greiðslur frá Tryggingastofnun til þín verða lagðar inn á reikninginn sem þú velur. Reikningurinn verður að vera á þinni kennitölu.',
+  },
+  accountTypeTitle: {
+    id: 'sp.social-insurance-maintenance:account-type-title',
+    defaultMessage: 'Tegund bankareikníngs',
+  },
+  icelandicAccount: {
+    id: 'sp.social-insurance-maintenance:icelandic-account',
+    defaultMessage: 'Íslenskur reikningur',
+  },
+  foreignAccount: {
+    id: 'sp.social-insurance-maintenance:foreign-account',
+    defaultMessage: 'Erlendur reikningur',
+  },
+  icelandicAccountDescription: {
+    id: 'sp.social-insurance-maintenance:icelandic-account-description',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar sem Tryggingastofnun hefur um þinn bankareikning. Allar greiðslur frá Tryggingastofnun til þín verða lagðar inn á reikninginn sem þú velur. Reikningurinn verður að vera á þinni kennitölu.',
+  },
+  foreignAccountDescription: {
+    id: 'sp.social-insurance-maintenance:foreign-account-description',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar sem Tryggingastofnun hefur um þinn erlenda bankareikning.',
+  },
+  accountInformationTitle: {
+    id: 'sp.social-insurance-maintenance:account-information-title',
+    defaultMessage: 'Upplýsingar um bankareikning',
+  },
+  bankLabel: {
+    id: 'sp.social-insurance-maintenance:bank-label',
+    defaultMessage: 'Banki',
+  },
+  ledgerLabel: {
+    id: 'sp.social-insurance-maintenance:ledger-label',
+    defaultMessage: 'Hb.',
+  },
+  accountNumberLabel: {
+    id: 'sp.social-insurance-maintenance:account-number-label',
+    defaultMessage: 'Reikningsnúmer',
+  },
+  invalidAccountNumber: {
+    id: 'sp.social-insurance-maintenance:invalid-account-number',
+    defaultMessage: 'Ógilt reikningsnúmer',
+  },
+  ibanLabel: {
+    id: 'sp.social-insurance-maintenance:iban-label',
+    defaultMessage: 'IBAN',
+  },
+  ibanPlaceholder: {
+    id: 'sp.social-insurance-maintenance:iban-placeholder',
+    defaultMessage: 'AB00 XXXX XXXX XXXX XXXX XX',
+  },
+  swiftLabel: {
+    id: 'sp.social-insurance-maintenance:swift-label',
+    defaultMessage: 'SWIFT/BIC',
+  },
+  swiftPlaceholder: {
+    id: 'sp.social-insurance-maintenance:swift-placeholder',
+    defaultMessage: 'AAAABBCCXXX',
+  },
+  currencyLabel: {
+    id: 'sp.social-insurance-maintenance:currency-label',
+    defaultMessage: 'Mynt',
+  },
+  currencyPlaceholder: {
+    id: 'sp.social-insurance-maintenance:currency-placeholder',
+    defaultMessage: 'Veldu mynt',
+  },
+  bankNameLabel: {
+    id: 'sp.social-insurance-maintenance:bank-name-label',
+    defaultMessage: 'Heiti banka',
+  },
+  bankAddressLabel: {
+    id: 'sp.social-insurance-maintenance:bank-address-label',
+    defaultMessage: 'Heimilisfang banka',
+  },
+  accountChangeInfo: {
+    id: 'sp.social-insurance-maintenance:account-change-info',
+    defaultMessage:
+      'Greitt er inn á skráð reikningsnúmer. Ef reikningsnúmeri er breytt í lok mánaðar þá tekur breytingin gildi um þar næstu mánaðarmót.',
+  },
+  foreignAccountChangeInfo: {
+    id: 'sp.social-insurance-maintenance:foreign-account-change-info',
+    defaultMessage:
+      'Allar greiðslur frá TR verða lagðar inn á reikninginn sem þú velur. Mikilvægt er að bankaupplýsingar séu réttar. Gott er að hafa samband við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um IBAN númer og SWIFT númer.\n\nVinsamlega athugið að greiðslur inn á erlenda reikninginn geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.',
+  },
+  invalidIban: {
+    id: 'sp.social-insurance-maintenance:invalid-iban',
+    defaultMessage: 'Ógilt IBAN',
+  },
+  invalidSwift: {
+    id: 'sp.social-insurance-maintenance:invalid-swift',
+    defaultMessage: 'Ógilt SWIFT',
+  },
+  bankAccountSavedSuccess: {
+    id: 'sp.social-insurance-maintenance:bank-account-saved-success',
+    defaultMessage: 'Bankareikningur hefur verið vistaður',
+  },
+  bankAccountSaveError: {
+    id: 'sp.social-insurance-maintenance:bank-account-save-error',
+    defaultMessage: 'Ekki tókst að vista bankareikninginn',
+  },
+  fieldRequired: {
+    id: 'sp.social-insurance-maintenance:field-required',
+    defaultMessage: 'Þennan reit þarf að fylla út',
+  },
 })
