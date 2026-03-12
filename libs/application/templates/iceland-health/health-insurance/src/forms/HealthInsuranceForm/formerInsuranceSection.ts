@@ -8,6 +8,8 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
+  getValueViaPath,
+  NO,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages/messages'
 import { FormValue } from '@island.is/application/types'
@@ -43,21 +45,18 @@ export const formerInsuranceSection = buildSection({
           description: m.formerInsuranceDetails,
           placeholder: m.formerInsuranceCountryPlaceholder,
           required: true,
-          backgroundColor: 'blue',
           options: countryOptions,
         }),
         buildTextField({
           id: 'formerInsurance.personalId',
           title: m.formerPersonalId,
           width: 'half',
-          backgroundColor: 'blue',
           required: true,
         }),
         buildTextField({
           id: 'formerInsurance.institution',
           title: m.formerInsuranceInstitution,
           width: 'half',
-          backgroundColor: 'blue',
           required: true,
         }),
         buildAlertMessageField({
@@ -77,6 +76,7 @@ export const formerInsuranceSection = buildSection({
         buildFileUploadField({
           id: 'formerInsurance.confirmationOfResidencyDocument',
           maxSize: FILE_SIZE_LIMIT,
+          marginTop: 4,
           introduction: m.confirmationOfResidencyFileUpload,
           uploadHeader: m.fileUploadHeader,
           uploadDescription: m.fileUploadDescription,
@@ -102,6 +102,7 @@ export const formerInsuranceSection = buildSection({
           largeButtons: true,
           options: getYesNoOptions({}),
           condition: (answers: FormValue) => formerInsuranceCondition(answers),
+          clearOnChange: ['formerInsurance.entitlementReason'],
         }),
         buildTextField({
           id: 'formerInsurance.entitlementReason',
@@ -109,8 +110,17 @@ export const formerInsuranceSection = buildSection({
           placeholder: m.formerInsuranceAdditionalInformationPlaceholder,
           variant: 'textarea',
           rows: 4,
-          backgroundColor: 'blue',
-          condition: (answers: FormValue) => formerInsuranceCondition(answers),
+          condition: (answers: FormValue) => {
+            const entitlement = getValueViaPath<string>(
+              answers,
+              'formerInsurance.entitlement',
+            )
+            if (entitlement === NO || entitlement === undefined) {
+              return false
+            }
+
+            return formerInsuranceCondition(answers)
+          },
         }),
       ],
     }),
