@@ -1,6 +1,6 @@
-query GetCustomerRecords($input: GetCustomerRecordsInput!) {
-  getCustomerRecords(input: $input) {
-    records {
+query GetCustomerRecordsPaged($input: GetCustomerRecordsPagedInput!) {
+  getCustomerRecordsPaged(input: $input) {
+    data {
       createDate
       createTime
       valueDate
@@ -18,6 +18,10 @@ query GetCustomerRecords($input: GetCustomerRecordsInput!) {
       reference
       referenceToLevy
       accountReference
+    }
+    pageInfo {
+      hasNextPage
+      startCursor
     }
   }
 }

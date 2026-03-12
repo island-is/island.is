@@ -174,12 +174,13 @@
         }
       },
       "customerRercords_output_dt": {
-        "required": ["message", "more", "nextKey", "records"],
+        "required": ["message", "more", "nextKey", "pagesize", "records"],
         "type": "object",
         "properties": {
           "more": { "type": "boolean", "description": "true more data" },
           "nextKey": { "type": "string", "description": "nextKey - next data" },
           "message": { "type": "string" },
+          "pagesize": { "type": "integer", "format": "int64" },
           "records": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/record" }
