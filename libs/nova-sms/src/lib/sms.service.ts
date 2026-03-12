@@ -118,7 +118,10 @@ export class SmsService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: this.buildBasicAuthHeader(creds.username, creds.password),
+          Authorization: this.buildBasicAuthHeader(
+            creds.username,
+            creds.password,
+          ),
         },
         body: JSON.stringify(requestBody),
       })
