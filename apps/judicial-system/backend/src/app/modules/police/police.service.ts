@@ -407,14 +407,17 @@ export class PoliceService {
         return response
       }
 
-      const reason = await res.text()
+
+      return undefined
+      // TODO - fix when RLS has adjusted this endpoint to return an empty array for a case that exists but has no files
+      // const reason = await res.text()
 
       // The police system does not provide a structured error response.
       // When a police case does not exist, a stack trace is returned.
-      throw new NotFoundException({
-        message: `Police case for case ${caseId} does not exist`,
-        detail: reason,
-      })
+      // throw new NotFoundException({
+      //   message: `Police case for case ${caseId} does not exist`,
+      //   detail: reason,
+      // })
     } catch (reason) {
       if (reason instanceof NotFoundException) {
         throw reason
