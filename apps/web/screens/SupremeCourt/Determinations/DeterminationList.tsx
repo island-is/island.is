@@ -250,6 +250,10 @@ Determinations.getProps = async ({ apolloClient, query, locale }) => {
     initialData: data.webSupremeCourtDeterminations,
     organizationPage: organizationPage.data.getOrganizationPage,
     namespace,
+    languageToggleHrefOverride: {
+      is: '',
+      en: '',
+    },
   }
 }
 

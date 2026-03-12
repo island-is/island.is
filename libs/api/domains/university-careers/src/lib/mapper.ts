@@ -1,4 +1,5 @@
 import {
+  StudentFileType,
   StudentTrackDto,
   StudentTrackOverviewDto,
 } from '@island.is/clients/university-careers'
@@ -6,7 +7,37 @@ import { isDefined } from '@island.is/shared/utils'
 import { StudentTrack } from './models/studentTrack.model'
 import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
 import { Institution } from './models/institution.model'
-import { InstitutionProps } from './universityCareers.types'
+import { FileType, InstitutionProps } from './universityCareers.types'
+
+const mapTypeToEnum = (type: StudentFileType): FileType | null => {
+  switch (type) {
+    case 'course_descriptions':
+      return FileType.COURSE_DESCRIPTIONS
+    case 'diploma':
+      return FileType.DIPLOMA
+    case 'diploma_supplement':
+      return FileType.DIPLOMA_SUPPLEMENT
+    case 'transcript':
+      return FileType.TRANSCRIPT
+    default:
+      return null
+  }
+}
+
+export const mapEnumToType = (type: FileType): StudentFileType | null => {
+  switch (type) {
+    case FileType.COURSE_DESCRIPTIONS:
+      return 'course_descriptions'
+    case FileType.DIPLOMA:
+      return 'diploma'
+    case FileType.DIPLOMA_SUPPLEMENT:
+      return 'diploma_supplement'
+    case FileType.TRANSCRIPT:
+      return 'transcript'
+    default:
+      return null
+  }
+}
 
 export const mapToStudent = (
   data: StudentTrackDto,
@@ -72,12 +103,13 @@ export const mapToStudentTrackModel = (
     files:
       data.files
         ?.map((d) => {
-          if (!d.type || !d.locale || !d.displayName || !d.fileName) {
+          const type = mapTypeToEnum(d.type)
+          if (!type || !d.locale || !d.displayName || !d.fileName) {
             return null
           }
 
           return {
-            type: d.type,
+            type,
             locale: d.locale,
             displayName: d.displayName,
             fileName: d.fileName,

@@ -78,5 +78,9 @@ export enum ApiActions {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ErrorValue = { [key: string]: any }
 
+// Number of days applicants have to submit the application after starting it.
+// Used by the lifecycle pruning (prerequisites/draft states) and the frontend info message.
+export const DRAFT_PRUNE_DAYS = 90
+
 // TODO: this value should be fetched from the API at some point
 export const DEFAULT_TAX_FREE_LIMIT = 6_203_409

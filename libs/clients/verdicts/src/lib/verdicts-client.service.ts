@@ -3,6 +3,7 @@ import sanitizeHtml from 'sanitize-html'
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown'
 import { NodeHtmlMarkdown } from 'node-html-markdown'
 import { isValidDate, sortAlpha } from '@island.is/shared/utils'
+import isUrl from 'is-url'
 
 import {
   ExtensionPublishedVerdictApi,
@@ -30,7 +31,11 @@ const GOPRO_ID_PREFIX = 'g-'
 const SUPREME_COURT_ID_PREFIX = 's-'
 
 const convertHtmlToContentfulRichText = async (html: string, id: string) => {
-  const sanitizedHtml = sanitizeHtml(html)
+  const sanitizedHtml = sanitizeHtml(html, {
+    exclusiveFilter(frame) {
+      return frame.tag === 'table'
+    },
+  })
   const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
   const richText = await richTextFromMarkdown(markdown)
   return {
@@ -104,17 +109,25 @@ export class VerdictsClientService {
     dateFrom?: string
     dateTo?: string
     caseContact?: string
+    pageSize?: number
   }) {
     const onlyFetchSupremeCourtVerdicts = input.courtLevel === SUPREME_COURT
 
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
+
+    const itemsPerPage =
+      typeof input.pageSize === 'number' &&
+      input.pageSize > 0 &&
+      input.pageSize < ITEMS_PER_PAGE
+        ? input.pageSize
+        : ITEMS_PER_PAGE
 
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
       !onlyFetchSupremeCourtVerdicts
         ? goproVerdictApi.getVerdictsV2({
             requestData: {
               orderBy: 'verdictDate desc',
-              itemsPerPage: ITEMS_PER_PAGE,
+              itemsPerPage,
               pageNumber: input.pageNumber,
               searchTerm: input.searchTerm,
               courts: input.courtLevel ? input.courtLevel.split(',') : [],
@@ -134,7 +147,7 @@ export class VerdictsClientService {
         ? this.supremeCourtApi.apiV2VerdictGetVerdictsPost({
             verdictSearchRequest: {
               page: input.pageNumber,
-              limit: ITEMS_PER_PAGE,
+              limit: itemsPerPage,
               orderBy: 'publishDate DESC',
               searchTerm: input.searchTerm,
               keywords: input.keywords,
@@ -163,7 +176,7 @@ export class VerdictsClientService {
       court: string
       caseNumber: string
       verdictDate?: Date | null
-      presidentJudge?: { name?: string; title?: string }
+      verdictJudges?: { name?: string; title?: string }[]
       keywords: string[]
       presentings: string
     }[] = []
@@ -176,9 +189,10 @@ export class VerdictsClientService {
           court: goproItem.court?.name ?? '',
           caseNumber: goproItem.caseNumber ?? '',
           verdictDate: goproItem.verdictDate,
-          presidentJudge: goproItem.judges?.find((judge) =>
-            Boolean(judge?.isPresident),
-          ),
+          verdictJudges:
+            goproItem.court?.code !== 'landsrettur'
+              ? goproItem.judges ?? []
+              : [],
           keywords: goproItem.keywords ?? [],
           presentings: goproItem.presentings ?? '',
         })
@@ -195,9 +209,7 @@ export class VerdictsClientService {
           court: supremeCourtItem.court ?? '',
           caseNumber: supremeCourtItem.caseNumber ?? '',
           verdictDate: supremeCourtItem.publishDate,
-          presidentJudge: supremeCourtItem.judges?.find((judge) =>
-            Boolean(judge?.isPresident),
-          ),
+          verdictJudges: [],
           keywords: supremeCourtItem.keywords ?? [],
           presentings: supremeCourtItem.presentings ?? '',
         })
@@ -264,6 +276,12 @@ export class VerdictsClientService {
             caseNumber: response.item.caseNumber ?? '',
             keywords: response.item.keywords ?? [],
             presentings: response.item.presentings ?? '',
+            resolutionLink:
+              response.item.resolutionLink &&
+              isUrl(response.item.resolutionLink) &&
+              response.item.resolutionLink.toLowerCase().startsWith('http')
+                ? response.item.resolutionLink
+                : '',
           },
         }
     }
@@ -407,6 +425,7 @@ export class VerdictsClientService {
     dateTo?: string
     lawyer?: string
     scheduleTypes?: string[]
+    caseTypes?: string[]
   }) {
     const onlyFetchSupremeCourtAgendas = input.court === SUPREME_COURT
     const pageNumber = input.page ?? 1
@@ -415,7 +434,8 @@ export class VerdictsClientService {
     const { goproCourtAgendasApi } = await this.getAuthenticatedGoproApis()
 
     const [supremeCourtResponse, goproResponse] = await Promise.allSettled([
-      (!input.court && !input.scheduleTypes) || onlyFetchSupremeCourtAgendas
+      (!input.court && !input.scheduleTypes?.length) ||
+      onlyFetchSupremeCourtAgendas
         ? this.supremeCourtApi.apiV2VerdictGetAgendasPost({
             agendaSearchRequest: {
               page: pageNumber,
@@ -436,6 +456,7 @@ export class VerdictsClientService {
               ),
               lawyer: input.lawyer ? input.lawyer : undefined,
               orderBy: 'verdictDate ASC',
+              caseTypes: input.caseTypes ? input.caseTypes : undefined,
             },
           } as ApiV2VerdictGetAgendasPostRequest)
         : { status: 'rejected', items: [], total: 0 },
@@ -455,6 +476,7 @@ export class VerdictsClientService {
             orderBy: 'StartDateTime',
             orderDirection: 'ASC',
             scheduleType: input.scheduleTypes ? input.scheduleTypes : undefined,
+            caseType: input.caseTypes ? input.caseTypes : undefined,
           }),
     ])
 
@@ -474,7 +496,7 @@ export class VerdictsClientService {
           judges: agenda.judges ?? [],
           lawyers: [],
           court: SUPREME_COURT,
-          type: agenda.caseType ?? '',
+          type: '',
           title: agenda.title ?? '',
         })
       }
@@ -499,6 +521,7 @@ export class VerdictsClientService {
           court: agenda.court?.name ?? '',
           type: agenda.bookingType ?? '',
           title: agenda.caseTitle?.raw ? agenda.caseTitle.raw : '',
+          caseSubType: agenda.caseSubType ?? '',
         })
       }
     } else {
@@ -641,6 +664,12 @@ export class VerdictsClientService {
           response.item?.verdictHtml ?? '',
           'verdictHtml',
         ),
+        resolutionLink:
+          response.item.resolutionLink &&
+          isUrl(response.item.resolutionLink) &&
+          response.item.resolutionLink.toLowerCase().startsWith('http')
+            ? response.item.resolutionLink
+            : '',
       },
     }
   }

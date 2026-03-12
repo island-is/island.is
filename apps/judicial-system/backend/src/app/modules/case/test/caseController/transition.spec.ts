@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid'
 
 import { ConfigType } from '@island.is/nest/config'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseAppealRulingDecision,
   CaseAppealState,
@@ -30,9 +30,8 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
-import { Case, CaseRepositoryService } from '../../../repository'
+import { Case, caseInclude, CaseRepositoryService } from '../../../repository'
 import { caseModuleConfig } from '../../case.config'
-import { include } from '../../case.service'
 import { TransitionCaseDto } from '../../dto/transitionCase.dto'
 
 jest.mock('../../../../factories')
@@ -58,7 +57,7 @@ describe('CaseController - Transition', () => {
     institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
   } as User
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let transaction: Transaction
   let mockConfig: ConfigType<typeof caseModuleConfig>
   let mockCaseRepositoryService: CaseRepositoryService
@@ -66,14 +65,14 @@ describe('CaseController - Transition', () => {
 
   beforeEach(async () => {
     const {
-      messageService,
+      queuedMessages,
       sequelize,
       caseConfig,
       caseRepositoryService,
       caseController,
     } = await createTestingCaseModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockConfig = caseConfig
     mockCaseRepositoryService = caseRepositoryService
 
@@ -211,9 +210,7 @@ describe('CaseController - Transition', () => {
             )
 
             if (completedRequestCaseStates.includes(newState)) {
-              expect(
-                mockMessageService.sendMessagesToQueue,
-              ).toHaveBeenCalledWith([
+              expect(mockQueuedMessages).toEqual([
                 {
                   type: MessageType.DELIVERY_TO_COURT_CASE_CONCLUSION,
                   user: {
@@ -249,9 +246,7 @@ describe('CaseController - Transition', () => {
                 },
               ])
             } else if (newState === CaseState.DELETED) {
-              expect(
-                mockMessageService.sendMessagesToQueue,
-              ).toHaveBeenCalledWith([
+              expect(mockQueuedMessages).toEqual([
                 {
                   type: MessageType.NOTIFICATION,
                   user: {
@@ -266,9 +261,7 @@ describe('CaseController - Transition', () => {
               oldState === CaseState.SUBMITTED &&
               newState === CaseState.RECEIVED
             ) {
-              expect(
-                mockMessageService.sendMessagesToQueue,
-              ).toHaveBeenCalledWith([
+              expect(mockQueuedMessages).toEqual([
                 {
                   type: MessageType.NOTIFICATION,
                   user: {
@@ -280,16 +273,14 @@ describe('CaseController - Transition', () => {
                 },
               ])
             } else {
-              expect(
-                mockMessageService.sendMessagesToQueue,
-              ).not.toHaveBeenCalled()
+              expect(mockQueuedMessages).toEqual([])
             }
 
             if (transition === CaseTransition.DELETE) {
               expect(then.result).toBe(theCase)
             } else {
               expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-                include,
+                include: caseInclude,
                 where: {
                   id: caseId,
                   isArchived: false,
@@ -401,171 +392,155 @@ describe('CaseController - Transition', () => {
           )
 
           if (completedIndictmentCaseStates.includes(newState)) {
-            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
-              [
-                {
-                  type: MessageType.NOTIFICATION,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  body: { type: CaseNotificationType.RULING },
+            expect(mockQueuedMessages).toEqual([
+              {
+                type: MessageType.NOTIFICATION,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
-                {
-                  type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
+                caseId,
+                body: { type: CaseNotificationType.RULING },
+              },
+              {
+                type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
-              ],
-            )
+                caseId,
+              },
+            ])
           } else if (
             newState === CaseState.DELETED &&
             !isIndictmentCase(theCase.type)
           ) {
-            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
-              [
-                {
-                  type: MessageType.NOTIFICATION,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  body: { type: CaseNotificationType.REVOKED },
+            expect(mockQueuedMessages).toEqual([
+              {
+                type: MessageType.NOTIFICATION,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
-              ],
-            )
+                caseId,
+                body: { type: CaseNotificationType.REVOKED },
+              },
+            ])
           } else if (newState === CaseState.SUBMITTED) {
-            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
-              [
-                {
-                  type: MessageType.NOTIFICATION,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  body: { type: CaseNotificationType.READY_FOR_COURT },
+            expect(mockQueuedMessages).toEqual([
+              {
+                type: MessageType.NOTIFICATION,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
-              ],
-            )
+                caseId,
+                body: { type: CaseNotificationType.READY_FOR_COURT },
+              },
+            ])
           } else if (
             oldState === CaseState.SUBMITTED &&
             newState === CaseState.RECEIVED
           ) {
-            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
-              [
-                {
-                  type: MessageType.NOTIFICATION,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  body: { type: CaseNotificationType.RECEIVED_BY_COURT },
+            expect(mockQueuedMessages).toEqual([
+              {
+                type: MessageType.NOTIFICATION,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
-                {
-                  type: MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
+                caseId,
+                body: { type: CaseNotificationType.RECEIVED_BY_COURT },
+              },
+              {
+                type: MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
-                {
-                  type: MessageType.DELIVERY_TO_POLICE_INDICTMENT,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
+                caseId,
+              },
+              {
+                type: MessageType.DELIVERY_TO_POLICE_INDICTMENT,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
-                {
-                  type: MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: policeCaseNumber,
+                caseId,
+              },
+              {
+                type: MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
-              ],
-            )
+                caseId,
+                elementId: policeCaseNumber,
+              },
+            ])
           } else if (
             newState === CaseState.DRAFT &&
             oldState === CaseState.RECEIVED
           ) {
-            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
-              [
-                {
-                  type: MessageType.NOTIFICATION,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  body: { type: CaseNotificationType.INDICTMENT_RETURNED },
+            expect(mockQueuedMessages).toEqual([
+              {
+                type: MessageType.NOTIFICATION,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
-              ],
-            )
+                caseId,
+                body: { type: CaseNotificationType.INDICTMENT_RETURNED },
+              },
+            ])
           } else if (
             newState === CaseState.DRAFT &&
             oldState === CaseState.WAITING_FOR_CONFIRMATION
           ) {
-            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
-              [
-                {
-                  type: MessageType.NOTIFICATION,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  body: { type: CaseNotificationType.INDICTMENT_DENIED },
+            expect(mockQueuedMessages).toEqual([
+              {
+                type: MessageType.NOTIFICATION,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
-              ],
-            )
+                caseId,
+                body: { type: CaseNotificationType.INDICTMENT_DENIED },
+              },
+            ])
           } else if (
             newState === CaseState.WAITING_FOR_CANCELLATION &&
             isIndictmentCase(theCase.type)
           ) {
-            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
-              [
-                {
-                  type: MessageType.NOTIFICATION,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  body: { type: CaseNotificationType.REVOKED },
+            expect(mockQueuedMessages).toEqual([
+              {
+                type: MessageType.NOTIFICATION,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
-                {
-                  type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  body: { withCourtCaseNumber: true },
+                caseId,
+                body: { type: CaseNotificationType.REVOKED },
+              },
+              {
+                type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
+                user: {
+                  ...defaultUser,
+                  canConfirmIndictment: isIndictmentCase(theCase.type),
                 },
-              ],
-            )
+                caseId,
+                body: { withCourtCaseNumber: true },
+              },
+            ])
           } else {
-            expect(
-              mockMessageService.sendMessagesToQueue,
-            ).not.toHaveBeenCalled()
+            expect(mockQueuedMessages).toEqual([])
           }
 
           if (transition === CaseTransition.DELETE) {
             expect(then.result).toBe(theCase)
           } else {
             expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-              include,
+              include: caseInclude,
               where: {
                 id: caseId,
                 isArchived: false,
@@ -680,9 +655,7 @@ describe('CaseController - Transition', () => {
 
           it('should send notifications to queue when case is appealed', () => {
             if (transition === CaseTransition.APPEAL) {
-              expect(
-                mockMessageService.sendMessagesToQueue,
-              ).toHaveBeenCalledWith([
+              expect(mockQueuedMessages).toEqual([
                 {
                   type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
                   user: {
@@ -727,9 +700,7 @@ describe('CaseController - Transition', () => {
 
           it('should send notifications to queue when appeal is received', () => {
             if (transition === CaseTransition.RECEIVE_APPEAL) {
-              expect(
-                mockMessageService.sendMessagesToQueue,
-              ).toHaveBeenCalledWith([
+              expect(mockQueuedMessages).toEqual([
                 {
                   type: MessageType.NOTIFICATION,
                   user: {
@@ -745,9 +716,7 @@ describe('CaseController - Transition', () => {
 
           it('should send notifications to queue when appeal is completed', () => {
             if (transition === CaseTransition.COMPLETE_APPEAL) {
-              expect(
-                mockMessageService.sendMessagesToQueue,
-              ).toHaveBeenCalledWith([
+              expect(mockQueuedMessages).toEqual([
                 {
                   type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
                   user: {
@@ -790,9 +759,7 @@ describe('CaseController - Transition', () => {
 
           it('should send notifications to queue when appeal is withdrawn', () => {
             if (transition === CaseTransition.WITHDRAW_APPEAL) {
-              expect(
-                mockMessageService.sendMessagesToQueue,
-              ).toHaveBeenCalledWith([
+              expect(mockQueuedMessages).toEqual([
                 {
                   type: MessageType.NOTIFICATION,
                   user: {

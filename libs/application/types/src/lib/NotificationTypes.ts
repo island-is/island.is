@@ -7,8 +7,9 @@ export enum NotificationType {
   ChildrenResidenceChangeApprovedByOrg = 'ChildrenResidenceChangeApprovedByOrgNotification',
   ReferenceTemplate = 'ReferenceTemplateNotification',
   ChildrenResidenceChangeAssignParent = 'ChildrenResidenceChangeV2AssignParentNotification',
-  TrainingLicenseOnWorkMachineRejected = 'TrainingLicenseOnWorkMachineRejected',
-  TrainingLicenseOnWorkMachineApproved = 'TrainingLicenseOnWorkMachineApproved',
+  TrainingLicenseOnWorkMachinePruned = 'TrainingLicenseOnWorkMachinePrunedNotification',
+  TrainingLicenseOnWorkMachineRejected = 'TrainingLicenseOnWorkMachineRejectedNotification',
+  TrainingLicenseOnWorkMachineApproved = 'TrainingLicenseOnWorkMachineApprovedNotification',
   FireCompensationAppraisal = 'FireCompensationAppraisalNotification',
   NewPrimarySchoolAssignOtherGuardian = 'NewPrimarySchoolAssignOtherGuardianNotification',
   NewPrimarySchoolOtherGuardianApproved = 'NewPrimarySchoolOtherGuardianApprovedNotification',
@@ -16,6 +17,9 @@ export enum NotificationType {
   NewPrimarySchoolAssignPayer = 'NewPrimarySchoolAssignPayerNotification',
   NewPrimarySchoolPayerApproved = 'NewPrimarySchoolPayerApprovedNotification',
   NewPrimarySchoolPayerRejected = 'NewPrimarySchoolPayerRejectedNotification',
+  TransferOfVehicleOwnershipPruned = 'TransferOfVehicleOwnershipPrunedNotification',
+  ChangeCoOwnerOfVehiclePruned = 'ChangeCoOwnerOfVehiclePrunedNotification',
+  ChangeOperatorOfVehiclePruned = 'ChangeOperatorOfVehiclePrunedNotification',
 }
 
 export const NotificationConfig = {
@@ -50,6 +54,10 @@ export const NotificationConfig = {
   [NotificationType.ChildrenResidenceChangeAssignParent]: {
     templateId: 'HNIPP.AS.CRC.V2.ASSIGN.PARENT',
     keys: {} as { applicantName: string; applicationId: string },
+  },
+  [NotificationType.TrainingLicenseOnWorkMachinePruned]: {
+    templateId: 'HNIPP.AS.VER.TLWM.PRUNED',
+    keys: {},
   },
   [NotificationType.TrainingLicenseOnWorkMachineRejected]: {
     templateId: 'HNIPP.AS.VER.TLWM.REJECTED',
@@ -91,6 +99,18 @@ export const NotificationConfig = {
   [NotificationType.NewPrimarySchoolPayerRejected]: {
     templateId: 'HNIPP.AS.NPS.PAYER.REJECTED',
     keys: {} as { applicationLink: string },
+  },
+  [NotificationType.TransferOfVehicleOwnershipPruned]: {
+    templateId: 'HNIPP.AS.TA.TVO.PRUNED',
+    keys: {},
+  },
+  [NotificationType.ChangeCoOwnerOfVehiclePruned]: {
+    templateId: 'HNIPP.AS.TA.CCOV.PRUNED',
+    keys: {},
+  },
+  [NotificationType.ChangeOperatorOfVehiclePruned]: {
+    templateId: 'HNIPP.AS.TA.COV.PRUNED',
+    keys: {},
   },
 }
 

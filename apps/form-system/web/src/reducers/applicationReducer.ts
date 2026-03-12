@@ -18,6 +18,7 @@ import {
   incrementWithScreens,
   jumpToScreen,
   setCurrentScreen,
+  setExternalServiceErrors,
 } from './reducerUtils'
 
 export const initialState = {
@@ -27,6 +28,11 @@ export const initialState = {
   currentSection: { data: {} as FormSystemSection, index: 0 },
   currentScreen: undefined,
   errors: [],
+  screenError: {
+    hasError: false,
+    title: { is: '', en: '' },
+    message: { is: '', en: '' },
+  },
 }
 
 export const initialReducer = (state: ApplicationState): ApplicationState => {
@@ -177,10 +183,17 @@ export const applicationReducer = (
     default:
       return state
 
+    case 'EXTERNAL_SERVICE_NOTIFICATION': {
+      const { screen, isPopulateError } = action.payload
+      return setExternalServiceErrors(state, screen, isPopulateError)
+    }
+
     case 'SUBMITTED': {
+      const { submitted, screenError } = action.payload
       return {
         ...state,
-        submitted: action.payload,
+        submitted,
+        screenError,
       }
     }
   }

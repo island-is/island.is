@@ -22,5 +22,6 @@ export const serviceSetup =
           paths: ['/'],
         },
       })
+      .grantNamespaces('nginx-ingress-external')
       .liveness('/liveness')
       .readiness('/readiness')

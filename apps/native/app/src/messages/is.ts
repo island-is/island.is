@@ -742,6 +742,7 @@ export const is = {
   'health.overview.paymentDebt': 'Skuld',
   'health.overview.therapy': 'Þjálfun',
   'health.overview.vaccinations': 'Bólusetningar',
+  'health.overview.appointments': 'Tímabókanir',
   'health.overview.questionnaires': 'Spurningalistar',
   'health.overview.aidsAndNutrition': 'Hjálpartæki og næring',
   'health.overview.medicinePurchase': 'Lyfjakaup',
@@ -759,6 +760,17 @@ export const is = {
   'health.overview.noBloodTypeRegistered': 'Ekki verið flokkaður',
   'health.overview.dentist': 'Tannlæknir',
   'health.overview.noDentistRegistered': 'Enginn tannlæknir skráður',
+  'health.overview.medicine': 'Lyf',
+  'health.overview.seeAllCategories': 'Sjá alla flokka',
+
+  // health: categories
+  'health.categories.screenTitle': 'Heilsuflokkar',
+  'health.categories.healthCategories': 'Heilsuflokkar',
+  'health.categories.moreOnMyPages': 'Meira á mínum síðum',
+  'health.categories.referrals': 'Tilvísanir',
+  'health.categories.paymentsAndRights': 'Greiðslur og réttindi',
+  'health.categories.waitingLists': 'Bíðlistar',
+  'health.categories.medicalRecords': 'Sjúkraskrá',
 
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Spurningalistar',
@@ -799,6 +811,32 @@ export const is = {
   'health.vaccinations.noVaccinationsDescription':
     'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   'health.vaccinations.directorateOfHealth': 'Embætti landlæknis',
+
+  // health - appointments
+  'health.appointments.screenTitle': 'Tímabókanir',
+  'health.appointments.title': 'Tímabókanir',
+  'health.appointments.description':
+    'Hér getur þú séð tímabókanir þínar í heilbrigðiskerfinu.',
+  'health.appointments.detailTitle': 'Tímabókun hjá heilsugæslunni',
+  'health.appointments.dateAndTime': 'Dagsetning og tími',
+  'health.appointments.duration': 'Lengd',
+  'health.appointments.location': 'Staðsetning',
+  'health.appointments.address': 'Heimilisfang',
+  'health.appointments.practitioners': 'Tími hjá: {practitioner}',
+  'health.appointments.appointmentWith': 'Tími hjá',
+  'health.appointments.atTime': 'kl {time}',
+  'health.appointments.timePrefix': 'kl',
+  'health.appointments.instructions': 'Leiðbeiningar',
+  'health.appointments.openMap': 'Sjá á korti',
+  'health.appointments.type': 'Tegund',
+  'health.appointments.noAppointmentsTitle': 'Engar tímabókanir',
+  'health.appointments.noAppointmentsText':
+    'Þú ert ekki með neinar komandi tímabókanir.',
+  'health.appointments.errorMessage':
+    'Ekki tókst að sækja tímabókanir. Vinsamlegast reyndu aftur síðar.',
+  'health.appointments.notFoundMessage':
+    'Tímabókun fannst ekki. Hún kann að hafa verið felld niður.',
+  'health.appointments.minutesFormat': '{minutes} mínútur',
 
   // health - organ donation
   'health.organDonation': 'Líffæragjöf',

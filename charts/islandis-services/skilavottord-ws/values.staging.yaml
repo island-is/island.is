@@ -83,7 +83,7 @@ initContainer:
     DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
 namespace: 'skilavottord'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

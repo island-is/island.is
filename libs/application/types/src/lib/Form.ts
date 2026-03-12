@@ -170,6 +170,7 @@ export interface ExternalDataProvider extends FormItem {
   checkboxLabel?: StaticText
   subTitle?: StaticText
   description?: StaticText
+  subDescription?: StaticText
   submitField?: SubmitField
 }
 

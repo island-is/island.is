@@ -42,10 +42,16 @@ export class FormDto {
   modified!: Date
 
   @ApiProperty()
-  submissionServiceUrl!: string
+  zendeskInternal!: boolean
 
   @ApiProperty()
-  validationServiceUrl!: string
+  useValidate!: boolean
+
+  @ApiProperty()
+  usePopulate!: boolean
+
+  @ApiProperty()
+  submissionServiceUrl!: string
 
   @ApiProperty()
   hasPayment!: boolean

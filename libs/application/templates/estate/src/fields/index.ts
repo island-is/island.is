@@ -13,4 +13,8 @@ export { MoneyAndDepositFields } from './MoneyAndDepositFields'
 export { DebtsRepeater } from './DebtsRepeater'
 export { DecimalInputController } from './DecimalInputController'
 export { LookupPerson } from './LookupPerson'
+<<<<<<< HEAD
 export { SignatoryStatus } from './SignatoryStatus'
+=======
+export { PhoneWithElectronicId } from './PhoneWithElectronicId'
+>>>>>>> main

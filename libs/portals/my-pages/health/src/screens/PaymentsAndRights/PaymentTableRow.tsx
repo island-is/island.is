@@ -75,7 +75,7 @@ export const PaymentTableRow = ({ periodId, headerData }: Props) => {
                   fontWeight: 'semiBold',
                 }}
               >
-                {formatMessage(messages.medicinePaidByInsuranceShort)}
+                {formatMessage(messages.insuranceShare)}
               </T.HeadData>
               <T.HeadData
                 text={{

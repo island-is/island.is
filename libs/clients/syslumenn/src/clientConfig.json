@@ -759,9 +759,13 @@
     },
     "/api/VirkUmbod/{audkenni}": {
       "get": {
+<<<<<<< HEAD
         "tags": [
           "Syslumenn"
         ],
+=======
+        "tags": ["Syslumenn"],
+>>>>>>> main
         "operationId": "VirkUmbod_Get",
         "parameters": [
           {
@@ -2590,9 +2594,13 @@
     },
     "/api/FasteignaskraHeimilisfang/{audkenni}": {
       "get": {
+<<<<<<< HEAD
         "tags": [
           "Syslumenn"
         ],
+=======
+        "tags": ["Syslumenn"],
+>>>>>>> main
         "operationId": "FasteignaskraHeimilisfang_Get",
         "parameters": [
           {
@@ -2676,9 +2684,13 @@
     },
     "/api/FateignaskraFastanumer/{audkenni}": {
       "get": {
+<<<<<<< HEAD
         "tags": [
           "Syslumenn"
         ],
+=======
+        "tags": ["Syslumenn"],
+>>>>>>> main
         "operationId": "FateignaskraFastanumer_Get",
         "parameters": [
           {
@@ -2783,9 +2795,13 @@
     },
     "/api/v1/AdilarMalsUndirritanir": {
       "get": {
+<<<<<<< HEAD
         "tags": [
           "Syslumenn"
         ],
+=======
+        "tags": ["Syslumenn"],
+>>>>>>> main
         "operationId": "AdilarMalsUndirritanir_Get",
         "parameters": [
           {
@@ -2801,7 +2817,11 @@
             "name": "typa",
             "in": "query",
             "schema": {
+<<<<<<< HEAD
               "$ref": "#/components/schemas/EstateType"
+=======
+              "$ref": "#/components/schemas/Type"
+>>>>>>> main
             },
             "x-position": 2
           },
@@ -3967,9 +3987,13 @@
     },
     "/api/MalsnumerAdila": {
       "get": {
+<<<<<<< HEAD
         "tags": [
           "Syslumenn"
         ],
+=======
+        "tags": ["Syslumenn"],
+>>>>>>> main
         "operationId": "MalsnumerAdila_Get",
         "parameters": [
           {
@@ -4026,9 +4050,13 @@
     },
     "/api/MalStarfsmanns": {
       "post": {
+<<<<<<< HEAD
         "tags": [
           "Syslumenn"
         ],
+=======
+        "tags": ["Syslumenn"],
+>>>>>>> main
         "operationId": "MalStarfsmanns_Get",
         "requestBody": {
           "x-name": "skeyti",
@@ -4184,6 +4212,7 @@
         ]
       }
     },
+<<<<<<< HEAD
     "/api/MottakaTolvupostUrOutlook": {
       "post": {
         "tags": [
@@ -4242,6 +4271,11 @@
         "tags": [
           "Syslumenn"
         ],
+=======
+    "/api/NyttZendeskMal": {
+      "post": {
+        "tags": ["Syslumenn"],
+>>>>>>> main
         "operationId": "NyttZendeskMal_Post",
         "requestBody": {
           "x-name": "skeyti",
@@ -6167,7 +6201,8 @@
               {
                 "$ref": "#/components/schemas/AdfaraBeidni"
               }
-            ]
+            ],
+            "type": "object"
           },
           "audkenni": {
             "type": "string",
@@ -6204,7 +6239,8 @@
               {
                 "$ref": "#/components/schemas/AdfaraAdili"
               }
-            ]
+            ],
+            "type": "object"
           },
           "umbodsmadur": {
             "nullable": true,
@@ -6212,7 +6248,8 @@
               {
                 "$ref": "#/components/schemas/AdfaraAdili"
               }
-            ]
+            ],
+            "type": "object"
           },
           "dags": {
             "type": "string",
@@ -6261,7 +6298,8 @@
               {
                 "$ref": "#/components/schemas/Fyrirsvarsmadur"
               }
-            ]
+            ],
+            "type": "object"
           }
         }
       },
@@ -6466,7 +6504,8 @@
               {
                 "$ref": "#/components/schemas/Stadavidskiptamanns"
               }
-            ]
+            ],
+            "type": "object"
           }
         }
       },
@@ -7185,7 +7224,8 @@
               {
                 "$ref": "#/components/schemas/Malsvari"
               }
-            ]
+            ],
+            "type": "object"
           },
           "arfshlutfall": {
             "type": "number",
@@ -7622,7 +7662,11 @@
           }
         }
       },
+<<<<<<< HEAD
       "EstateType": {
+=======
+      "Type": {
+>>>>>>> main
         "type": "string",
         "description": "",
         "x-enumNames": [
@@ -7674,7 +7718,12 @@
               {
                 "$ref": "#/components/schemas/SyslGagnaSkeyti"
               }
+<<<<<<< HEAD
             ]
+=======
+            ],
+            "type": "object"
+>>>>>>> main
           }
         }
       },
@@ -7760,6 +7809,7 @@
       "AdiliTegund": {
         "type": "integer",
         "description": "0 = Malshefjandi\n1 = Gagnadili\n2 = Barn",
+<<<<<<< HEAD
         "x-enumNames": [
           "Malshefjandi",
           "Gagnadili",
@@ -7770,6 +7820,10 @@
           1,
           2
         ]
+=======
+        "x-enumNames": ["Malshefjandi", "Gagnadili", "Barn"],
+        "enum": [0, 1, 2]
+>>>>>>> main
       },
       "VidhengiSkra": {
         "type": "object",
@@ -7893,8 +7947,13 @@
             "nullable": true
           },
           "gildi": {
+<<<<<<< HEAD
             "type": "object",
             "nullable": true
+=======
+            "nullable": true,
+            "type": "object"
+>>>>>>> main
           }
         }
       },
@@ -8044,8 +8103,13 @@
             "nullable": true
           },
           "gildi": {
+<<<<<<< HEAD
             "type": "object",
             "nullable": true
+=======
+            "nullable": true,
+            "type": "object"
+>>>>>>> main
           }
         }
       },
@@ -8671,7 +8735,8 @@
               {
                 "$ref": "#/components/schemas/ActiveCertsModel"
               }
-            ]
+            ],
+            "type": "object"
           }
         }
       },
@@ -8909,7 +8974,8 @@
               {
                 "$ref": "#/components/schemas/SignedDocumentEventData"
               }
-            ]
+            ],
+            "type": "object"
           },
           "eventSignature": {
             "nullable": true,
@@ -8917,7 +8983,8 @@
               {
                 "$ref": "#/components/schemas/EventSignature"
               }
-            ]
+            ],
+            "type": "object"
           }
         }
       },
@@ -9054,6 +9121,7 @@
           }
         }
       },
+<<<<<<< HEAD
       "MottakaTolvupostUrOutlookSkeyti": {
         "type": "object",
         "additionalProperties": false,
@@ -9080,6 +9148,12 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+=======
+      "ZendeskSkeyti": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+>>>>>>> main
           "kennitala": {
             "type": "string",
             "nullable": true
@@ -9135,7 +9209,8 @@
               {
                 "$ref": "#/components/schemas/Villur"
               }
-            ]
+            ],
+            "type": "object"
           }
         }
       },
@@ -9162,7 +9237,8 @@
               {
                 "$ref": "#/components/schemas/Utgefandi"
               }
-            ]
+            ],
+            "type": "object"
           },
           "stada": {
             "nullable": true,
@@ -9170,7 +9246,8 @@
               {
                 "$ref": "#/components/schemas/Stada"
               }
-            ]
+            ],
+            "type": "object"
           }
         }
       },
@@ -9230,7 +9307,8 @@
               {
                 "$ref": "#/components/schemas/Leyfi"
               }
-            ]
+            ],
+            "type": "object"
           },
           "svid": {
             "type": "array",
@@ -9245,7 +9323,8 @@
               {
                 "$ref": "#/components/schemas/Textar"
               }
-            ]
+            ],
+            "type": "object"
           },
           "adgerdir": {
             "type": "array",
@@ -9267,7 +9346,8 @@
               {
                 "$ref": "#/components/schemas/Villur"
               }
-            ]
+            ],
+            "type": "object"
           }
         }
       },
@@ -9679,7 +9759,8 @@
               {
                 "$ref": "#/components/schemas/Okutaeki"
               }
-            ]
+            ],
+            "type": "object"
           },
           "skip": {
             "nullable": true,
@@ -9687,7 +9768,8 @@
               {
                 "$ref": "#/components/schemas/Skip"
               }
-            ]
+            ],
+            "type": "object"
           }
         }
       },
@@ -9785,7 +9867,8 @@
               {
                 "$ref": "#/components/schemas/Seaworhiness"
               }
-            ]
+            ],
+            "type": "object"
           },
           "identification": {
             "nullable": true,
@@ -9793,7 +9876,8 @@
               {
                 "$ref": "#/components/schemas/Identification"
               }
-            ]
+            ],
+            "type": "object"
           },
           "mainMeasurements": {
             "nullable": true,
@@ -9801,7 +9885,8 @@
               {
                 "$ref": "#/components/schemas/Mainmeasurements"
               }
-            ]
+            ],
+            "type": "object"
           },
           "crew": {
             "type": "array",
@@ -9844,7 +9929,8 @@
               {
                 "$ref": "#/components/schemas/Fishery"
               }
-            ]
+            ],
+            "type": "object"
           },
           "constructionPlace": {
             "type": "string",
@@ -10111,7 +10197,8 @@
               {
                 "$ref": "#/components/schemas/Insurancetype"
               }
-            ]
+            ],
+            "type": "object"
           },
           "insuranceCompany": {
             "nullable": true,
@@ -10119,7 +10206,8 @@
               {
                 "$ref": "#/components/schemas/Insurancecompany"
               }
-            ]
+            ],
+            "type": "object"
           }
         }
       },
@@ -10181,7 +10269,8 @@
               {
                 "$ref": "#/components/schemas/Usage"
               }
-            ]
+            ],
+            "type": "object"
           },
           "manufacturer": {
             "nullable": true,
@@ -10189,7 +10278,8 @@
               {
                 "$ref": "#/components/schemas/Manufacturer"
               }
-            ]
+            ],
+            "type": "object"
           }
         }
       },

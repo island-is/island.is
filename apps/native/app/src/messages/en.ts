@@ -5,6 +5,7 @@ export const en: TranslatedMessages = {
   'button.change': 'Change',
   'button.open': 'Open',
   'button.moreInfoHere': 'More info here',
+  'button.seeMore': 'See more',
 
   // login
   'login.welcomeMessage': 'Log in to the app with electronic ID',
@@ -744,6 +745,7 @@ export const en: TranslatedMessages = {
   'health.overview.paymentDebt': 'Debt',
   'health.overview.therapy': 'Therapy',
   'health.overview.vaccinations': 'Vaccinations',
+  'health.overview.appointments': 'Appointments',
   'health.overview.questionnaires': 'Questionnaires',
   'health.overview.aidsAndNutrition': 'Aids and nutrition',
   'health.overview.medicinePurchase': 'Medicine purchase',
@@ -760,6 +762,17 @@ export const en: TranslatedMessages = {
   'health.overview.dentist': 'Dentist',
   'health.overview.noDentistRegistered': 'No dentist registered',
   'health.overview.prescriptions': 'Prescriptions',
+  'health.overview.medicine': 'Medicine',
+  'health.overview.seeAllCategories': 'See all categories',
+
+  // health: categories
+  'health.categories.screenTitle': 'Health Categories',
+  'health.categories.healthCategories': 'Health Categories',
+  'health.categories.moreOnMyPages': 'More on my pages',
+  'health.categories.referrals': 'Referrals',
+  'health.categories.paymentsAndRights': 'Payments and rights',
+  'health.categories.waitingLists': 'Waiting lists',
+  'health.categories.medicalRecords': 'Medical records',
 
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Questionnaires',
@@ -800,6 +813,32 @@ export const en: TranslatedMessages = {
   'health.vaccinations.noVaccinationsDescription':
     'If you believe you have data that should appear here, please contact service provider.',
   'health.vaccinations.directorateOfHealth': 'The directorate of Health',
+
+  // health - appointments
+  'health.appointments.screenTitle': 'Appointments',
+  'health.appointments.title': 'Appointments',
+  'health.appointments.description':
+    'Here you can see your appointments in the healthcare system.',
+  'health.appointments.detailTitle': 'Healthcare appointment',
+  'health.appointments.dateAndTime': 'Date and time',
+  'health.appointments.duration': 'Duration',
+  'health.appointments.location': 'Location',
+  'health.appointments.address': 'Address',
+  'health.appointments.practitioners': 'Appointment with: {practitioner}',
+  'health.appointments.appointmentWith': 'Appointment with',
+  'health.appointments.atTime': 'at {time}',
+  'health.appointments.timePrefix': 'at',
+  'health.appointments.instructions': 'Instructions',
+  'health.appointments.openMap': 'Open map',
+  'health.appointments.type': 'Type',
+  'health.appointments.noAppointmentsTitle': 'No appointments',
+  'health.appointments.noAppointmentsText':
+    'You do not have any upcoming appointments.',
+  'health.appointments.errorMessage':
+    'Failed to fetch appointments. Please try again later.',
+  'health.appointments.notFoundMessage':
+    'Appointment not found. It may have been cancelled.',
+  'health.appointments.minutesFormat': '{minutes} minutes',
 
   // health - organ donation
   'health.organDonation': 'Organ Donation',

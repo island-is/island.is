@@ -66,9 +66,8 @@ env:
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
-  NOVA_ACCEPT_UNAUTHORIZED: 'false'
-  NOVA_USERNAME: 'IslandIs_User_Production'
+  NODE_OPTIONS: '--max-old-space-size=1382 --enable-source-maps -r dd-trace/init'
+  NOVA_SENDER_NAME: 'Island.is'
   PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
   PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
   RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
@@ -158,7 +157,6 @@ env:
   XROAD_VMST_MEMBER_CODE: '7005942039'
   XROAD_WORK_ACCIDENT_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/slysaskraning-token'
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
-  ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
 grantNamespaces:
   - 'services-payments'
   - 'nginx-ingress-internal'
@@ -224,7 +222,7 @@ initContainer:
     DB_PASS: '/k8s/application-system-api/DB_PASSWORD'
 namespace: 'application-system'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -236,10 +234,10 @@ replicaCount:
 resources:
   limits:
     cpu: '600m'
-    memory: '1024Mi'
+    memory: '1536Mi'
   requests:
     cpu: '200m'
-    memory: '512Mi'
+    memory: '768Mi'
 secrets:
   ALTHINGI_OMBUDSMAN_XROAD_PASSWORD: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'
   ALTHINGI_OMBUDSMAN_XROAD_USERNAME: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME'
@@ -264,11 +262,13 @@ secrets:
   EMAIL_REPLY_TO_NAME: '/k8s/application-system/api/EMAIL_REPLY_TO_NAME'
   FINANCIAL_STATEMENTS_INAO_CLIENT_ID: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_ID'
   FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET: '/k8s/api/FINANCIAL_STATEMENTS_INAO_CLIENT_SECRET'
+  HH_ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_EMAIL'
   HMS_CONTRACTS_AUTH_CLIENT_SECRET: '/k8s/application-system-api/HMS_CONTRACTS_AUTH_CLIENT_SECRET'
   IDENTITY_SERVER_CLIENT_SECRET: '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET'
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
-  NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD'
-  NOVA_URL: '/k8s/application-system-api/NOVA_URL'
+  NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
+  NOVA_URL: '/k8s/NOVA_URL_V1'
+  NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
   SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
   SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
   SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
@@ -284,8 +284,9 @@ secrets:
   XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
   XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
   XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
-  ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
-  ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
+  ZENDESK_CONTACT_FORM_EMAIL: '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN_EMAIL'
+  ZENDESK_CONTACT_FORM_SUBDOMAIN: '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_SUBDOMAIN'
+  ZENDESK_CONTACT_FORM_TOKEN: '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

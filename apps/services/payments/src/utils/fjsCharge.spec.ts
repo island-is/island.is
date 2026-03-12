@@ -20,7 +20,6 @@ describe('generateChargeFJSPayload', () => {
       },
     ],
     systemId: '',
-    totalPrice: 1000,
   }
 
   it('it should include payInfo if passed as input', () => {
@@ -215,5 +214,50 @@ describe('generateChargeFJSPayload', () => {
     expect(twoItemsTwoQuantityResult.charges[1].priceAmount).toBe(1000)
     expect(twoItemsTwoQuantityResult.charges[1].amount).toBe(2000)
     expect(twoItemsTwoQuantityResult.charges[1].quantity).toBe(2)
+  })
+
+  it('should include reference in charges when provided', () => {
+    const charges = [
+      {
+        chargeItemCode: 'A101',
+        quantity: 1,
+        chargeType: 'A',
+        priceAmount: 1000,
+        reference: 'my-ref-123',
+      },
+      {
+        chargeItemCode: 'B101',
+        quantity: 1,
+        chargeType: 'B',
+        priceAmount: 500,
+        reference: 'other-ref',
+      },
+    ]
+
+    const result = generateChargeFJSPayload({
+      ...sampleInput,
+      charges,
+    })
+
+    expect(result.charges[0].reference).toBe('my-ref-123')
+    expect(result.charges[1].reference).toBe('other-ref')
+  })
+
+  it('should use empty string for reference when not provided', () => {
+    const charges = [
+      {
+        chargeItemCode: 'A101',
+        quantity: 1,
+        chargeType: 'A',
+        priceAmount: 1000,
+      },
+    ]
+
+    const result = generateChargeFJSPayload({
+      ...sampleInput,
+      charges,
+    })
+
+    expect(result.charges[0].reference).toBe('')
   })
 })

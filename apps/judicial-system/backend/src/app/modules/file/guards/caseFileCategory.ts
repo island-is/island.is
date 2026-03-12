@@ -34,6 +34,7 @@ const defenderDefaultCaseFileCategoriesForIndictmentCases = [
 const defenderCaseFileCategoriesForIndictmentCases =
   defenderDefaultCaseFileCategoriesForIndictmentCases.concat(
     CaseFileCategory.CRIMINAL_RECORD,
+    CaseFileCategory.CRIMINAL_RECORD_UPDATE,
     CaseFileCategory.COST_BREAKDOWN,
     CaseFileCategory.CASE_FILE,
     CaseFileCategory.PROSECUTOR_CASE_FILE,
@@ -110,6 +111,7 @@ const canDefenceUserViewCaseFile = ({
   caseFileCategory,
   defendants,
   civilClaimants,
+  defendantId,
 }: {
   nationalId: string
   userName: string
@@ -120,12 +122,29 @@ const canDefenceUserViewCaseFile = ({
   caseFileCategory: CaseFileCategory
   defendants?: Defendant[]
   civilClaimants?: CivilClaimant[]
+  defendantId?: string
 }) => {
   if (isRequestCase(caseType)) {
     return canDefenceUserViewCaseFileOfRequestCase(caseState, caseFileCategory)
   }
 
   if (isIndictmentCase(caseType)) {
+    if (
+      (caseFileCategory === CaseFileCategory.CRIMINAL_RECORD ||
+        caseFileCategory === CaseFileCategory.CRIMINAL_RECORD_UPDATE) &&
+      defendantId
+    ) {
+      if (
+        !Defendant.isConfirmedDefenderOfSpecificDefendantWithCaseFileAccess(
+          nationalId,
+          defendantId,
+          defendants,
+        )
+      ) {
+        return false
+      }
+    }
+
     // TODO: This is not optimal as we can have multiple users that have identical names.
     // It is unlikely that a defenders with identical user names have been assigned to the same case but we should remove that possibility for sure.
     // Since defenders aren't registered in the system we should rather rely on the user's national id when submitting a file
@@ -174,6 +193,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   fileRepresentative,
   defendants,
   civilClaimants,
+  defendantId,
 }: {
   user: User
   caseType: CaseType
@@ -183,6 +203,7 @@ export const canLimitedAccessUserViewCaseFile = ({
   fileRepresentative?: string
   defendants?: Defendant[]
   civilClaimants?: CivilClaimant[]
+  defendantId?: string
 }) => {
   if (!caseFileCategory) {
     return false
@@ -199,6 +220,7 @@ export const canLimitedAccessUserViewCaseFile = ({
       caseFileCategory,
       defendants,
       civilClaimants,
+      defendantId,
     })
   }
 

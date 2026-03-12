@@ -12,11 +12,15 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CourtSessionRulingType,
   DefendantEventType,
+  IndictmentCaseNotificationType,
   isVerdictInfoChanged,
   PoliceFileTypeCode,
   type User as TUser,
@@ -50,6 +54,7 @@ type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   | 'appealDate'
   | 'serviceInformationForDefendant'
   | 'isDefaultJudgement'
+  | 'isAcquittedByPublicProsecutionOffice'
   | 'hash'
   | 'hashAlgorithm'
 >
@@ -72,7 +77,6 @@ export class VerdictService {
     private readonly defendantService: DefendantService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
-    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -231,16 +235,41 @@ export class VerdictService {
     verdict: Verdict,
     update: UpdateVerdictDto,
     transaction: Transaction,
-    rulingDate?: Date,
+    theCase: Case,
+    defendantId: string,
   ): Promise<Verdict> {
     const enhancedUpdate = await this.handleServiceRequirementUpdate(
       verdict.id,
       update,
       transaction,
-      rulingDate,
+      theCase.rulingDate,
     )
 
-    return this.updateVerdict(verdict, enhancedUpdate, transaction)
+    const updatedVerdict = await this.updateVerdict(
+      verdict,
+      enhancedUpdate,
+      transaction,
+    )
+
+    // When prosecution office manually records service date (defendant did not
+    // open ruling on island.is), send driving license suspension notification
+    // so the office can register it in the separate system.
+    const defendant = theCase.defendants?.find((d) => d.id === defendantId)
+    const isVerdictServed = !verdict.serviceDate && update.serviceDate
+    const shouldSendDrivingLicenseSuspensionNotification =
+      isVerdictServed && defendant?.isDrivingLicenseSuspended
+
+    if (shouldSendDrivingLicenseSuspensionNotification) {
+      addMessagesToQueue({
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+        },
+      })
+    }
+
+    return updatedVerdict
   }
 
   async updateRestricted(
@@ -288,6 +317,7 @@ export class VerdictService {
 
     return [
       { code: 'RVG_CASE_ID', value: theCase.id },
+      { code: 'RVG_VERDICT_ID', value: verdict.id },
       ...(receiverSsn ? [{ code: 'RECEIVER_SSN', value: receiverSsn }] : []),
       ...(theCase.courtCaseNumber
         ? [
@@ -568,7 +598,8 @@ export class VerdictService {
     transaction: Transaction,
   ): Promise<{ queued: boolean }> {
     const defendants = theCase.defendants ?? []
-    const messages = await Promise.all(
+
+    const queued = await Promise.all(
       defendants
         .filter(
           (defendant) =>
@@ -594,17 +625,15 @@ export class VerdictService {
             )
           }
 
-          return {
+          addMessagesToQueue({
             type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
             user,
             caseId: theCase.id,
             elementId: [defendant.id],
-          }
+          })
         }),
     )
 
-    await this.messageService.sendMessagesToQueue(messages)
-
-    return { queued: messages.length > 0 }
+    return { queued: queued.length > 0 }
   }
 }

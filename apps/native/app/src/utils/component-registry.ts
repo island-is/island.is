@@ -14,6 +14,8 @@ export const ComponentRegistry = {
   ApplicationsInProgressScreen: `${prefix}.screens.ApplicationsInProgressScreen`,
   ApplicationsScreen: `${prefix}.screens.ApplicationsScreen`,
   AppLockScreen: `${prefix}.screens.AppLock`,
+  AppointmentDetailScreen: `${prefix}.screens.AppointmentDetailScreen`,
+  AppointmentsScreen: `${prefix}.screens.AppointmentsScreen`,
   AssetsDetailScreen: `${prefix}.screens.AssetsDetailScreen`,
   AssetsOverviewScreen: `${prefix}.screens.AssetsOverviewScreen`,
   CognitoAuthScreen: `${prefix}.screens.CognitoAuth`,
@@ -29,9 +31,9 @@ export const ComponentRegistry = {
   FinanceScreen: `${prefix}.screens.FinanceScreen`,
   FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
   HealthOverviewScreen: `${prefix}.screens.HealthOverviewScreen`,
+  HealthCategoriesScreen: `${prefix}.screens.HealthCategoriesScreen`,
   QuestionnairesScreen: `${prefix}.screens.QuestionnairesScreen`,
   QuestionnaireDetailScreen: `${prefix}.screens.QuestionnaireDetailScreen`,
-  MedicineDelegationScreen: `${prefix}.screens.MedicineDelegationScreen`,
   MedicineDelegationFormScreen: `${prefix}.screens.MedicineDelegationFormScreen`,
   MedicineDelegationDetailScreen: `${prefix}.screens.MedicineDelegationDetailScreen`,
   HomeOptionsScreen: `${prefix}.screens.HomeOptions`,
@@ -88,7 +90,7 @@ export const ButtonRegistry = {
 }
 
 export const StackRegistry = {
-  ApplicationsStack: `${prefix}.stack.ApplicationsStack`,
+  HealthStack: `${prefix}.stack.HealthStack`,
   HomeStack: `${prefix}.stack.HomeStack`,
   InboxStack: `${prefix}.stack.InboxStack`,
   LicenseScannerStack: `${prefix}.stack.LicenseScannerStack`,

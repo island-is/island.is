@@ -257,7 +257,7 @@ export const getJobCareer = (
   const currentJobCareer =
     employmentHistory?.currentJobs?.map((job, index) => {
       let workHours
-      if (currentJob && currentJob.length > 0) {
+      if (currentJob && currentJob.length > index) {
         workHours = getValueViaPath<string>(currentJob[index], 'workHours', '')
       }
       const employerSSN =
@@ -272,7 +272,6 @@ export const getJobCareer = (
       return {
         employerSSN: employerSSN,
         employer: employerName,
-        started: job.startDate,
         quit: job.endDate,
         workRatio: parseInt(job.percentage || ''),
         workHours: workHours || '',
@@ -817,7 +816,6 @@ export const getPensionAndOtherPayments = (
                 : job.employer?.nationalId,
             estimatedIncome: job.salary ? parseInt(job.salary) : 0,
             ratio: parseInt(job.percentage || ''),
-            periodFrom: job.startDate,
           }
         })
       : []

@@ -1,14 +1,15 @@
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
-import { Sequelize } from 'sequelize-typescript'
-import { Application } from '../../applications/models/application.model'
-import { Value } from '../../applications/models/value.model'
 import {
   ApplicationStatus,
   FieldTypesEnum,
 } from '@island.is/form-system/shared'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
+import { Application } from '../../applications/models/application.model'
+import { Value } from '../../applications/models/value.model'
+import { FileService } from '../../file/file.service'
 
 @Injectable()
 export class PruneService {
@@ -18,6 +19,7 @@ export class PruneService {
     @InjectModel(Application)
     private readonly applicationModel: typeof Application,
     private readonly sequelize: Sequelize,
+    private readonly fileService: FileService,
   ) {
     this.logger = logger.child({ context: 'PruneService' })
   }
@@ -40,12 +42,40 @@ export class PruneService {
       ],
     })
 
+    this.logger.info(
+      `Found ${applicationsToBePruned.length} applications to be pruned.`,
+    )
+
     for (const application of applicationsToBePruned) {
       try {
         if (
           application.isTest ||
           application.status === ApplicationStatus.DRAFT
         ) {
+          await this.sequelize.transaction(async (transaction) => {
+            await Promise.all(
+              application.values?.map(async (value) => {
+                if (value.fieldType === FieldTypesEnum.FILE) {
+                  const { json } = value
+                  if (json) {
+                    const keys = json.s3Key
+                    this.logger.info('Deleting file keys', {
+                      keys,
+                      valueId: value.id,
+                    })
+                    if (Array.isArray(keys)) {
+                      await Promise.all(
+                        keys.map((key) =>
+                          this.fileService.deleteFile(key, value.id),
+                        ),
+                      )
+                    }
+                  }
+                }
+                return value.destroy({ transaction })
+              }) ?? [],
+            )
+          })
           await application.destroy()
           this.logger.info('test/draft application destroyed', {
             id: application.id,
@@ -53,9 +83,26 @@ export class PruneService {
         } else {
           await this.sequelize.transaction(async (transaction) => {
             await Promise.all(
-              application.values?.map((value) =>
-                value.destroy({ transaction }),
-              ) ?? [],
+              application.values?.map(async (value) => {
+                if (value.fieldType === FieldTypesEnum.FILE) {
+                  const { json } = value
+                  if (json) {
+                    const keys = json.s3Key
+                    this.logger.info('Deleting file keys', {
+                      keys,
+                      valueId: value.id,
+                    })
+                    if (Array.isArray(keys)) {
+                      await Promise.all(
+                        keys.map((key) =>
+                          this.fileService.deleteFile(key, value.id),
+                        ),
+                      )
+                    }
+                  }
+                }
+                return value.destroy({ transaction })
+              }) ?? [],
             )
             await application.update(
               {

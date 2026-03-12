@@ -1,27 +1,28 @@
 import { m } from '../../lib/messages'
-import {
-  Box,
-  Breadcrumbs,
-  SkeletonLoader,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, SkeletonLoader, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ApplicationSystemPaths } from '../../lib/paths'
 import type { ApplicationFilters } from '../../types/filters'
 import { StatisticsForm } from '../../components/StatisticsForm/StatisticsForm'
 import {
-  useGetApplicationsInstitutionStatisticsQuery,
-  useGetApplicationsStatisticsQuery,
+  useGetApplicationV2ApplicationStatisticsInstitutionAdminQuery,
+  useGetApplicationV2ApplicationStatisticsSuperAdminQuery,
 } from '../../queries/overview.generated'
 import { useState } from 'react'
 import StatisticsTable from '../../components/StatisticsTable/StatisticsTable'
 import startOfMonth from 'date-fns/startOfMonth'
+import { Organization } from '@island.is/shared/types'
 
 interface StatisticsProps {
   isSuperAdmin: boolean
+  organizationListFromContentful: Organization[]
+  isLoadingOrganizationsFromContentful: boolean
 }
 
-const Statistics = ({ isSuperAdmin }: StatisticsProps) => {
+const Statistics = ({
+  isSuperAdmin,
+  organizationListFromContentful,
+  isLoadingOrganizationsFromContentful,
+}: StatisticsProps) => {
   const { formatMessage } = useLocale()
   const [dateInterval, setDateInterval] = useState<
     ApplicationFilters['period']
@@ -54,8 +55,8 @@ const Statistics = ({ isSuperAdmin }: StatisticsProps) => {
 
   const hasSelectedDates = dateInterval.from && dateInterval.to
 
-  const { data: superAdminData, loading: superAdminLoading } =
-    useGetApplicationsStatisticsQuery({
+  const { data: superStatisticsData, loading: superStatisticsLoading } =
+    useGetApplicationV2ApplicationStatisticsSuperAdminQuery({
       ssr: false,
       skip:
         !isSuperAdmin || // do NOT run if user is NOT superAdmin
@@ -74,47 +75,44 @@ const Statistics = ({ isSuperAdmin }: StatisticsProps) => {
       },
     })
 
-  const { data: institutionData, loading: institutionLoading } =
-    useGetApplicationsInstitutionStatisticsQuery({
-      ssr: false,
-      skip:
-        isSuperAdmin || // do NOT run if user IS superAdmin
-        !hasSelectedDates,
-      variables: {
-        input: {
-          startDate: getFormattedDate(dateInterval.from),
-          endDate: getFormattedDate(dateInterval.to),
-        },
+  const {
+    data: institutionStatisticsData,
+    loading: institutionStatisticsLoading,
+  } = useGetApplicationV2ApplicationStatisticsInstitutionAdminQuery({
+    ssr: false,
+    skip:
+      isSuperAdmin || // do NOT run if user IS superAdmin
+      !hasSelectedDates,
+    variables: {
+      input: {
+        startDate: getFormattedDate(dateInterval.from),
+        endDate: getFormattedDate(dateInterval.to),
       },
-      onCompleted: () => {
-        setError(null)
-      },
-      onError: (e) => {
-        setError(e.message)
-      },
-    })
+    },
+    onCompleted: () => {
+      setError(null)
+    },
+    onError: (e) => {
+      setError(e.message)
+    },
+  })
 
   const dataRows = isSuperAdmin
-    ? superAdminData?.applicationApplicationsAdminStatistics
-    : institutionData?.applicationApplicationsInstitutionStatistics
+    ? superStatisticsData?.applicationV2ApplicationStatisticsSuperAdmin
+    : institutionStatisticsData?.applicationV2ApplicationStatisticsInstitutionAdmin
+
+  const isLoading =
+    superStatisticsLoading ||
+    institutionStatisticsLoading ||
+    isLoadingOrganizationsFromContentful
 
   return (
     <Box>
-      <Breadcrumbs
-        items={[
-          { title: 'Ísland.is', href: '/stjornbord' },
-          {
-            title: formatMessage(m.applicationSystem),
-            href: `/stjornbord${ApplicationSystemPaths.Root}`,
-          },
-          { title: formatMessage(m.statistics) },
-        ]}
-      />
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.statistics)}
       </Text>
       <StatisticsForm dateInterval={dateInterval} onDateChange={onDateChange} />
-      {(superAdminLoading || institutionLoading) && (
+      {isLoading ? (
         <Box marginTop={[3, 3, 6]}>
           <SkeletonLoader
             height={60}
@@ -123,8 +121,13 @@ const Statistics = ({ isSuperAdmin }: StatisticsProps) => {
             borderRadius="large"
           />
         </Box>
+      ) : (
+        <StatisticsTable
+          isSuperAdmin={isSuperAdmin}
+          dataRows={dataRows}
+          organizations={organizationListFromContentful}
+        />
       )}
-      <StatisticsTable dataRows={dataRows} />
       {error && <Box marginTop={[3, 3, 6]}>{error}</Box>}
     </Box>
   )

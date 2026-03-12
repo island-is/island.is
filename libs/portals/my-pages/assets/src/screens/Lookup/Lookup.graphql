@@ -31,3 +31,23 @@ query GetVehiclesSearch($input: GetVehicleSearchInput!) {
 query GetUsersVehiclesSearchLimit {
   vehiclesSearchLimit
 }
+
+query PublicVehicleSearchWithAuth($input: GetPublicVehicleSearchInput!) {
+  publicVehicleSearchWithAuth(input: $input) {
+    permno
+    regno
+    vin
+    make
+    vehicleCommercialName
+    color
+    firstRegDate
+    vehicleStatus
+    nextVehicleMainInspection
+    co2
+    weightedCo2
+    co2WLTP
+    weightedCo2WLTP
+    massLaden
+    mass
+  }
+}

@@ -1,6 +1,10 @@
+import { ApiScope } from '../api.scope'
 import { DocumentsScope } from '../documents.scope'
 
-export const notificationScopes: string[] = [DocumentsScope.main]
+export const notificationScopes: string[] = [
+  DocumentsScope.main,
+  ApiScope.samgongustofaVehicles,
+]
 
 /**
  * Checks if the user has any of the notification scopes

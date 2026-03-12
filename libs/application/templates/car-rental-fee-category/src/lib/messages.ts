@@ -29,6 +29,12 @@ export const m = {
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
       description: 'Consent checkbox label',
     },
+    linkToDayrateReturnsApplication: {
+      id: 'rsk.crfc.application:prerequisites.link.to.dayrate.returns',
+      defaultMessage:
+        'Skýrsla um notkun á ökutækjum: [Skilagrein daggjalds - Útleigudagar](/umsoknir/skilagrein-daggjalds-utleigudagar)',
+      description: 'Link to day rate returns',
+    },
     skatturTitle: {
       id: 'rsk.crfc.application:prerequisites.skattur.title',
       defaultMessage: 'Upplýsingar frá Skattinum',
@@ -230,8 +236,18 @@ export const m = {
     errorMessageToUser: {
       id: 'rsk.crfc.application:multi.upload.error.message.to.user',
       defaultMessage:
-        'villur fundust. Hlaða má niður sniðmáti með villum og reynda aftur.',
+        'villur fundust. Hlaða má niður sniðmáti með villum og reyna aftur.',
       description: 'Error message to user',
+    },
+    noCarsToChangeFound: {
+      id: 'rsk.crfc.application:multi.upload.error.no.cars',
+      defaultMessage: 'Engar breytingar fundust í skjalinu',
+      description: 'No cars to change found error',
+    },
+    invalidFileType: {
+      id: 'rsk.crfc.application:multi.upload.error.invalid.file.type',
+      defaultMessage: 'Skrá verður að vera .csv eða .xlsx',
+      description: 'Invalid file type upload error',
     },
   }),
 
@@ -245,6 +261,36 @@ export const m = {
       id: 'rsk.crfc.application:table.view.multi.title',
       defaultMessage: 'Skrá bifreiðar',
       description: 'Table view multi field title',
+    },
+    searchLabel: {
+      id: 'rsk.crfc.application:table.view.search.label',
+      defaultMessage: 'Leita eftir bílnúmeri',
+      description: 'Vehicle table search input label',
+    },
+    searchPlaceholder: {
+      id: 'rsk.crfc.application:table.view.search.placeholder',
+      defaultMessage: 'Bílnúmer...',
+      description: 'Vehicle table search input placeholder',
+    },
+    tableHeaderPermno: {
+      id: 'rsk.crfc.application:table.view.header.permno',
+      defaultMessage: 'Bílnúmer',
+      description: 'Vehicle table permno column header',
+    },
+    tableHeaderMileage: {
+      id: 'rsk.crfc.application:table.view.header.mileage',
+      defaultMessage: 'Kílómetrastaða',
+      description: 'Vehicle table mileage column header',
+    },
+    emptyState: {
+      id: 'rsk.crfc.application:table.view.empty.state',
+      defaultMessage: 'Ekkert fannst fyrir þessa leit.',
+      description: 'Vehicle table empty state message',
+    },
+    submitErrorMessage: {
+      id: 'rsk.crfc.application:table.view.submit.error',
+      defaultMessage: 'Ekki tókst að vista kílómetrastöðu. Reyndu aftur.',
+      description: 'Vehicle table submit save error',
     },
   }),
 
@@ -323,10 +369,10 @@ export const m = {
   }),
 
   multiUploadErrors: defineMessages({
-    dayRateMin30Days: {
-      id: 'rsk.crfc.application:multi.upload.error.dayrate.min30days',
+    dayRateMin15Days: {
+      id: 'rsk.crfc.application:multi.upload.error.dayrate.min15days',
       defaultMessage:
-        'Bílar þurfa að vera skráðir á daggjald í amk 30 daga áður en hægt er að breyta til baka!',
+        'Bílar þurfa að vera skráðir á daggjald í amk 15 daga áður en hægt er að breyta til baka!',
       description: 'Changing from day rate to km rate too soon',
     },
     carNotFound: {

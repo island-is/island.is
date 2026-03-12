@@ -17,14 +17,14 @@ import {
 import { m } from '../lib/messages'
 import { CanSignApi, GetListApi } from '../dataProviders/index'
 import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
-import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
+import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: NationalRegistryLogo,
+  logo: NationalElectoralCommissionLogo,
   children: [
     buildSection({
       id: 'intro',

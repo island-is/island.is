@@ -1,7 +1,7 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseNotificationType,
   CaseType,
@@ -41,20 +41,20 @@ describe('DefendantController - Update', () => {
     defenderEmail: uuid(),
   } as Defendant
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let mockDefendantRepositoryService: DefendantRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const {
-      messageService,
+      queuedMessages,
       sequelize,
       defendantRepositoryService,
       defendantController,
     } = await createTestingDefendantModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockDefendantRepositoryService = defendantRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -109,7 +109,7 @@ describe('DefendantController - Update', () => {
         { transaction },
       )
       expect(then.result).toBe(updatedDefendant)
-      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 
@@ -125,7 +125,7 @@ describe('DefendantController - Update', () => {
     })
 
     it('should not queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 
@@ -141,7 +141,7 @@ describe('DefendantController - Update', () => {
     })
 
     it('should queue messages', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
           user,
@@ -164,7 +164,7 @@ describe('DefendantController - Update', () => {
     })
 
     it('should queue messages', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.NOTIFICATION,
           user,
@@ -203,7 +203,7 @@ describe('DefendantController - Update', () => {
 
       if (shouldSendEmail) {
         it('should queue messages if defender has been confirmed', () => {
-          expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          expect(mockQueuedMessages).toEqual([
             {
               type: MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER,
               user,
@@ -229,7 +229,7 @@ describe('DefendantController - Update', () => {
         })
       } else {
         it('should not queue message if defender has not been confirmed', () => {
-          expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+          expect(mockQueuedMessages).toEqual([])
         })
       }
     },
@@ -247,7 +247,7 @@ describe('DefendantController - Update', () => {
     })
 
     it('should queue messages', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.DEFENDANT_NOTIFICATION,
           caseId,
@@ -257,7 +257,6 @@ describe('DefendantController - Update', () => {
           },
         },
       ])
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledTimes(1)
     })
   })
 
@@ -273,7 +272,7 @@ describe('DefendantController - Update', () => {
     })
 
     it('should queue messages for indictment withdrawn from prison admin', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.DEFENDANT_NOTIFICATION,
           caseId,
@@ -283,7 +282,6 @@ describe('DefendantController - Update', () => {
           },
         },
       ])
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledTimes(1)
     })
   })
 

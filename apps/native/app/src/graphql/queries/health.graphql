@@ -236,3 +236,14 @@ mutation DeleteMedicineDelegation(
     message
   }
 }
+
+query getAppointments(
+  $from: DateTime
+  $status: [HealthDirectorateAppointmentStatus!]
+) {
+  healthDirectorateAppointments(from: $from, status: $status) {
+    data {
+      ...AppointmentFragment
+    }
+  }
+}

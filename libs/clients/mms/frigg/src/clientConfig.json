@@ -281,6 +281,35 @@
         "summary": "Get preferred schools for child.",
         "tags": ["Frigg"]
       }
+    },
+    "/students/{nationalId}/applications": {
+      "get": {
+        "description": "Returns a boolean indicating if the student has active applications.",
+        "operationId": "getApplications",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActiveApplicationsModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "bearer": [] }],
+        "summary": "Gets if student has active applications.",
+        "tags": ["Frigg"]
+      }
     }
   },
   "info": {
@@ -856,7 +885,8 @@
               "member",
               "principal",
               "student",
-              "teacher"
+              "teacher",
+              "staff"
             ]
           },
           "classificationId": { "type": "string" },
@@ -997,6 +1027,11 @@
           "phone",
           "mobile"
         ]
+      },
+      "ActiveApplicationsModel": {
+        "type": "object",
+        "properties": { "hasActiveApplications": { "type": "boolean" } },
+        "required": ["hasActiveApplications"]
       }
     }
   }

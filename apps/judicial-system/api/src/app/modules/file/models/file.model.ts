@@ -22,6 +22,9 @@ export class CaseFile {
   @Field(() => ID, { nullable: true })
   readonly caseId?: string
 
+  @Field(() => ID, { nullable: true })
+  readonly defendantId?: string
+
   @Field(() => String, { nullable: true })
   readonly name?: string
 

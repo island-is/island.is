@@ -10,7 +10,7 @@ import {
   FormModes,
 } from '@island.is/application/types'
 import {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   checkResidence,
   grindaVikHousing,
@@ -91,7 +91,7 @@ const GrindavikHousingBuyoutTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 UserProfileApi,
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 checkResidence,
                 grindaVikHousing,
               ],

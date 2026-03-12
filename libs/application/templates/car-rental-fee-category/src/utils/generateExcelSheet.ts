@@ -12,10 +12,11 @@ export const generateExcelSheet = (
   base64Content: string
   fileType: string
 } => {
-  const islandicHeaders = ['Bílnúmer', 'Síðasta staða', 'Núverandi staða']
+  const icelandicHeaders = ['Bílnúmer', 'Síðasta staða', 'Núverandi staða']
   const englishHeaders = ['Vehicle number', 'Last mileage', 'Current mileage']
+  const headers = locale === 'is' ? icelandicHeaders : englishHeaders
   const sheetData = [
-    locale === 'is' ? islandicHeaders : englishHeaders,
+    headers,
     ...Object.entries(vehicleRateMap)
       .filter(([_, data]) => data.category !== rateToChangeTo)
       .map(([permno, data]) => [permno, data.milage, '']),

@@ -16,6 +16,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { getStaticEnv } from '@island.is/shared/utils'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { useIntl } from 'react-intl'
@@ -39,10 +40,7 @@ interface Props {
   url?: string
 }
 
-const PATH =
-  process.env.NODE_ENV === 'production'
-    ? `https://island.is/form`
-    : `https://beta.dev01.devland.is/form`
+const PATH = getStaticEnv('SI_PUBLIC_FORM_SYSTEM_URL')
 
 interface ColumnTextProps {
   text: string | number
@@ -300,6 +298,14 @@ export const TableRow = ({
     })
   }
 
+  const view = async () => {
+    navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
+      state: {
+        id,
+      },
+    })
+  }
+
   return (
     <Box paddingTop={2} role="button" aria-expanded={isOpen} tabIndex={0}>
       <Box onClick={handleToggle} className={styles.clickable}>
@@ -350,6 +356,21 @@ export const TableRow = ({
                   />
                 </Box>
               )}
+              {status === FormStatus.PUBLISHED && (
+                <Box
+                  onClick={(e) => {
+                    e.stopPropagation()
+                  }}
+                >
+                  <Button
+                    icon="eye"
+                    circle
+                    colorScheme="negative"
+                    inline
+                    onClick={() => view()}
+                  />
+                </Box>
+              )}
               <Box marginRight={2} onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu
                   menuLabel={`${formatMessage(m.actions)} ${name}`}
@@ -377,7 +398,7 @@ export const TableRow = ({
         animateOpacity
       >
         <Box paddingTop={1} paddingBottom={2} paddingLeft={1}>
-          <Column span="6/12">
+          <Column span="12/12">
             <Stack space={1}>
               <Row>
                 <Inline space={2}>
@@ -420,11 +441,6 @@ export const TableRow = ({
               <Row>
                 <Text variant="medium" className={styles.capitalizeText}>
                   <strong>Móttökukerfi:</strong> {url || '—'}
-                </Text>
-              </Row>
-              <Row>
-                <Text variant="medium">
-                  <strong>Númer:</strong> {id}
                 </Text>
               </Row>
             </Stack>

@@ -34,7 +34,6 @@ export const getChargeItems = (
       return acc
     }, {} as { [key: string]: BasicChargeItem }),
   )
-
   return summarizedItems
 }
 
@@ -70,8 +69,22 @@ export const getChargeItemsWithExtraLabel = (
         ),
     )
     .map((property) => {
+      let chargeItemCode: string
+      if (property.propertyType === '0') {
+        chargeItemCode = ChargeItemCode.MORTGAGE_CERTIFICATE.toString()
+      } else if (property.propertyType === '1') {
+        chargeItemCode = ChargeItemCode.MORTGAGE_CERTIFICATE_VEHICLES.toString()
+      } else if (property.propertyType === '2') {
+        chargeItemCode = ChargeItemCode.MORTGAGE_CERTIFICATE_SHIPS.toString()
+      } else if (property.propertyType === '3') {
+        chargeItemCode =
+          ChargeItemCode.MORTGAGE_CERTIFICATE_LIQUID_ASSETS.toString()
+      } else {
+        chargeItemCode = ChargeItemCode.MORTGAGE_CERTIFICATE.toString()
+      }
+
       result.push({
-        chargeItemCode: ChargeItemCode.MORTGAGE_CERTIFICATE.toString(),
+        chargeItemCode,
         extraLabel: `${property?.propertyName}`,
       })
     })

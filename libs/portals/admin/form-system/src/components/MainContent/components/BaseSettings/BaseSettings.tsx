@@ -23,9 +23,10 @@ export const BaseSettings = () => {
     formUpdate,
     getTranslation,
   } = useContext(ControlContext)
-  const { form } = control
+  const { form, isPublished } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
+
   return (
     <Stack space={2}>
       <Row>
@@ -56,6 +57,7 @@ export const BaseSettings = () => {
             name="organizationDisplayName"
             value={form?.organizationDisplayName?.is ?? ''}
             backgroundColor="blue"
+            readOnly={isPublished}
             onFocus={(e) => {
               if (!form.organizationDisplayName?.is) {
                 controlDispatch({
@@ -87,6 +89,7 @@ export const BaseSettings = () => {
             name="organizationDisplayNameEn"
             value={form?.organizationDisplayName?.en ?? ''}
             backgroundColor="blue"
+            readOnly={isPublished}
             onFocus={(e) => {
               if (!form.organizationDisplayName?.en) {
                 controlDispatch({
@@ -118,6 +121,7 @@ export const BaseSettings = () => {
             name="formName"
             value={form?.name?.is ?? ''}
             backgroundColor="blue"
+            readOnly={isPublished}
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) => {
@@ -137,6 +141,7 @@ export const BaseSettings = () => {
             name="formNameEn"
             value={form?.name?.en ?? ''}
             backgroundColor="blue"
+            readOnly={isPublished}
             onFocus={async (e) => {
               if (!form?.name?.en && form?.name?.is !== '') {
                 const translation = await getTranslation(form.name.is ?? '')
@@ -166,6 +171,7 @@ export const BaseSettings = () => {
             value={form?.slug ?? ''}
             backgroundColor="blue"
             errorMessage={errorMsg}
+            readOnly={isPublished}
             onFocus={(e) => {
               if (!form.slug) {
                 controlDispatch({
@@ -185,12 +191,21 @@ export const BaseSettings = () => {
                 setErrorMsg('')
               }
             }}
-            onChange={(e) =>
+            onChange={(e) => {
+              const input = e.target as HTMLInputElement
+              const cursor = input.selectionStart ?? 0
+              const removed = (input.value.slice(0, cursor).match(/\//g) || [])
+                .length
+              const nextValue = input.value.replaceAll('/', '')
               controlDispatch({
                 type: 'CHANGE_SLUG',
-                payload: { newValue: e.target.value },
+                payload: { newValue: nextValue },
               })
-            }
+              // Restore cursor after React reconciles the value
+              requestAnimationFrame(() => {
+                input.setSelectionRange(cursor - removed, cursor - removed)
+              })
+            }}
           />
         </Column>
       </Row>
@@ -207,6 +222,7 @@ export const BaseSettings = () => {
                 : form.daysUntilApplicationPrune ?? ''
             }
             backgroundColor="blue"
+            readOnly={isPublished}
             type="number"
             max={30}
             min={1}
@@ -243,6 +259,7 @@ export const BaseSettings = () => {
             label={formatMessage(m.deadline)}
             placeholderText={formatMessage(m.chooseDate)}
             backgroundColor="blue"
+            disabled={isPublished}
             selected={
               form.invalidationDate ? new Date(form.invalidationDate) : null
             }
@@ -256,7 +273,7 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
-      <Row>
+      {/* <Row>
         <Column>
           <Checkbox
             label={formatMessage(m.allowProgress)}
@@ -277,11 +294,12 @@ export const BaseSettings = () => {
             }}
           />
         </Column>
-      </Row>
+      </Row> */}
       <Row>
         <Column>
           <Checkbox
             label={formatMessage(m.summaryScreen)}
+            disabled={isPublished}
             checked={
               form.hasSummaryScreen !== null &&
               form.hasSummaryScreen !== undefined
@@ -304,6 +322,7 @@ export const BaseSettings = () => {
         <Column>
           <Checkbox
             label={formatMessage(m.payment)}
+            disabled={isPublished}
             checked={
               form.hasPayment !== null && form.hasPayment !== undefined
                 ? form.hasPayment

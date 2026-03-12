@@ -6,10 +6,40 @@ query Case($input: CaseQueryInput!) {
     type
     splitCases {
       id
+      created
       courtCaseNumber
       defendants {
         id
         name
+        subpoenas {
+          id
+          created
+          modified
+          serviceStatus
+          serviceDate
+          servedBy
+          comment
+          defenderNationalId
+          caseId
+          defendantId
+          policeSubpoenaId
+        }
+      }
+      caseFiles {
+        id
+        created
+        modified
+        name
+        type
+        category
+        state
+        key
+        size
+        userGeneratedFilename
+        displayDate
+        submittedBy
+        isKeyAccessible
+        defendantId
       }
     }
     splitCase {
@@ -44,10 +74,13 @@ query Case($input: CaseQueryInput!) {
       subpoenaType
       isSentToPrisonAdmin
       sentToPrisonAdminDate
+      publicProsecutorIsRegisteredInPoliceSystem
       openedByPrisonAdminDate
       punishmentType
       isAlternativeService
       alternativeServiceDescription
+      indictmentReviewDecision
+      isDrivingLicenseSuspended
       subpoenas {
         id
         created
@@ -79,6 +112,7 @@ query Case($input: CaseQueryInput!) {
         deliveredToDefenderNationalId
         servedBy
         isDefaultJudgement
+        isAcquittedByPublicProsecutionOffice
       }
     }
     defenderName
@@ -212,6 +246,7 @@ query Case($input: CaseQueryInput!) {
     }
     caseFiles {
       id
+      caseId
       created
       modified
       name
@@ -230,6 +265,7 @@ query Case($input: CaseQueryInput!) {
       submissionDate
       fileRepresentative
       isKeyAccessible
+      defendantId
     }
     isAppealDeadlineExpired
     isAppealGracePeriodExpired
@@ -241,7 +277,7 @@ query Case($input: CaseQueryInput!) {
     defendantWaivesRightToCounsel
     crimeScenes
     indictmentIntroduction
-    publicProsecutorIsRegisteredInPoliceSystem
+    indictmentReviewedDate
     indictmentCounts {
       id
       caseId
@@ -403,7 +439,6 @@ query Case($input: CaseQueryInput!) {
     indictmentVerdictAppealDeadlineExpired
     indictmentVerdictViewedByAll
     indictmentDecision
-    indictmentReviewDecision
     courtSessionType
     mergeCase {
       id

@@ -26,10 +26,10 @@ import { CaseTableResponse, SearchCasesResponse } from '../case-table'
 import {
   CourtDocumentResponse,
   CourtSessionResponse,
+  CourtSessionString,
   DeleteCourtDocumentResponse,
   DeleteCourtSessionResponse,
 } from '../court-session'
-import { CourtSessionString } from '../court-session/dto/courtSessionString.response'
 import {
   CivilClaimant,
   Defendant,
@@ -306,6 +306,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`case/${caseId}/connectedCases`)
   }
 
+  getCandidateMergeCases(caseId: string): Promise<Case[]> {
+    return this.get(`case/${caseId}/candidateMergeCases`)
+  }
+
   createCase(createCase: unknown): Promise<Case> {
     return this.post<unknown, Case>('case', createCase, caseTransformer)
   }
@@ -448,6 +452,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`case/${caseId}${mergedCaseInjection}/file/${fileId}/url`)
   }
 
+  rejectCaseFile(caseId: string, fileId: string): Promise<CaseFile> {
+    return this.post(`case/${caseId}/file/${fileId}/reject`)
+  }
+
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/file/${fileId}`)
   }
@@ -528,6 +536,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(
       `case/${caseId}/defendant/${defendantId}/subpoena/${subpoenaId}`,
     )
+  }
+
+  createSubpoenas(
+    caseId: string,
+    createSubpoenas: {
+      defendantIds: string[]
+      arraignmentDate: string
+      location?: string
+    },
+  ): Promise<Subpoena[]> {
+    return this.post(`case/${caseId}/subpoenas`, createSubpoenas)
   }
 
   createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {

@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const PUBLIC_VEHICLE_SEARCH_QUERY = gql`
-  query GetPublicVehicleSearch($input: GetPublicVehicleSearchInput!) {
-    getPublicVehicleSearch(input: $input) {
+  query publicVehicleSearch($input: GetPublicVehicleSearchInput!) {
+    publicVehicleSearch(input: $input) {
       permno
       regno
       vin

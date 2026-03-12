@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsBoolean, IsObject, IsString } from 'class-validator'
+import {
+  IsArray,
+  IsBoolean,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 class VerificationField {
   @ApiProperty({ description: 'Field name', type: String })
@@ -31,13 +37,9 @@ class CardInformation {
   @IsString()
   cardCategory!: string
 
-  @ApiProperty({ description: 'Out-of-SCA scope status', type: String })
-  @IsString()
-  outOfScaScope!: string
-
-  @ApiProperty({ description: 'Card product category', type: String })
-  @IsString()
-  cardProductCategory!: string
+  @ApiProperty({ description: 'Out-of-SCA scope status', type: Boolean })
+  @IsBoolean()
+  outOfScaScope!: boolean
 }
 
 export class VerifyCardResponse {
@@ -76,7 +78,8 @@ export class VerifyCardResponse {
 
   @ApiProperty({ description: 'Script path for further actions', type: String })
   @IsString()
-  scriptPath!: string
+  @IsOptional()
+  scriptPath?: string
 
   @ApiProperty({
     description: 'Response code from the verification',
@@ -84,10 +87,6 @@ export class VerifyCardResponse {
   })
   @IsString()
   responseCode!: string
-
-  @ApiProperty({ description: 'Description of the response', type: String })
-  @IsString()
-  responseDescription!: string
 
   @ApiProperty({
     description: 'Response time of the verification',

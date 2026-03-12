@@ -17,7 +17,7 @@ import {
   ApplicationConfigurations,
   BasicChargeItem,
 } from '@island.is/application/types'
-import { Events, States, Roles } from './constants'
+import { Events, States, Roles, Delivery } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { ApiActions } from './constants'
@@ -72,7 +72,8 @@ const getCodes = (application: Application): BasicChargeItem[] => {
   }
 
   const withDeliveryFee =
-    getValueViaPath<number>(application.answers, 'deliveryMethod') === 1
+    getValueViaPath(application.answers, 'delivery.deliveryMethod') ===
+    Delivery.SEND_HOME
 
   codes.push({ code: chargeItemCode as string })
   if (withDeliveryFee) {

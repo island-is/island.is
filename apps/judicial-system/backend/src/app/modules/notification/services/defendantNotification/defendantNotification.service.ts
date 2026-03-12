@@ -33,6 +33,7 @@ import {
   Case,
   DateLog,
   Defendant,
+  InstitutionContactRepositoryService,
   Notification,
   Recipient,
 } from '../../../repository'
@@ -53,6 +54,7 @@ export class DefendantNotificationService extends BaseNotificationService {
     emailService: EmailService,
     eventService: EventService,
     private readonly courtService: CourtService,
+    private readonly institutionContactRepositoryService: InstitutionContactRepositoryService,
   ) {
     super(
       notificationModel,
@@ -340,11 +342,12 @@ export class DefendantNotificationService extends BaseNotificationService {
     return { delivered: true }
   }
 
-  private sendIndictmentSentToPrisonAdminNotification(theCase: Case) {
+  private async sendIndictmentSentToPrisonAdminNotification(theCase: Case) {
     const dashboardRoute = getStandardUserDashboardRoute({
       role: UserRole.PRISON_SYSTEM_STAFF,
       institution: { type: InstitutionType.PRISON_ADMIN },
     })
+
     const formattedSubject = this.formatMessage(
       strings.indictmentSentToPrisonAdminSubject,
       {
@@ -361,8 +364,16 @@ export class DefendantNotificationService extends BaseNotificationService {
       },
     )
 
+    const institutionContact =
+      await this.institutionContactRepositoryService.getInstitutionContact(
+        this.config.prisonAdminId,
+        DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
+      )
+
     // We want to send separate emails to each recipient
-    const to = this.config.email.prisonAdminIndictmentEmails
+    const to = `${this.config.email.prisonAdminIndictmentEmails}${
+      institutionContact ? `,${institutionContact}` : ''
+    }`
       .split(',')
       .map((email) => email.trim())
       .map((email) => {

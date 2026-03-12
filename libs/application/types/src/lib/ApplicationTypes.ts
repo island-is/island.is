@@ -49,7 +49,6 @@ export enum ApplicationTypes {
   ORDER_VEHICLE_REGISTRATION_CERTIFICATE = 'OrderVehicleRegistrationCertificate',
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
-  ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
   OLD_AGE_PENSION = 'OldAgePension',
   DISABILITY_PENSION = 'DisabilityPension',
@@ -92,6 +91,7 @@ export enum ApplicationTypes {
   UNEMPLOYMENT_BENEFITS = 'UnemploymentBenefits',
   ACTIVATION_ALLOWANCE = 'ActivationAllowance',
   CAR_RENTAL_FEE_CATEGORY = 'CarRentalFeeCategory',
+  CAR_RENTAL_DAYRATE_RETURNS = 'CarRentalDayrateReturns',
   MEDICAL_AND_REHABILITATION_PAYMENTS = 'MedicalAndRehabilitationPayments',
   FIRE_COMPENSATION_APPRAISAL = 'FireCompensationAppraisal',
   LEGAL_GAZETTE = 'LegalGazette',
@@ -302,13 +302,9 @@ export const ApplicationConfigurations = {
     slug: 'okunam-okukennari',
     translation: 'dlbui.application',
   },
-  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
-    slug: 'endugreidsla-afengisutgjalda',
-    translation: 'atr.application',
-  },
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
     slug: 'evropska-sjukratryggingakortid',
-    translation: 'ehic.application',
+    translation: ['ehic.application', 'uiForms.application'],
   },
   [ApplicationTypes.OLD_AGE_PENSION]: {
     slug: 'ellilifeyrir',
@@ -476,7 +472,11 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
     slug: 'bilaleigu-gjaldflokkur',
-    translation: ['crfc.application', 'uiForms.application'],
+    translation: ['rsk.crfc.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.CAR_RENTAL_DAYRATE_RETURNS]: {
+    slug: 'skilagrein-daggjalds-utleigudagar',
+    translation: ['rsk.crdr.application', 'uiForms.application'],
   },
   [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: {
     slug: 'sjukra-og-endurhaefingargreidslur',

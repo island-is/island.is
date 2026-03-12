@@ -3,7 +3,6 @@ import { useLocale } from '@island.is/localization'
 import {
   downloadLink,
   IntroWrapper,
-  LinkButton,
   SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
 } from '@island.is/portals/my-pages/core'
@@ -85,15 +84,6 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
 
       <Box paddingY={4} background="white">
         {children}
-        <Box marginTop={4}>
-          <LinkButton
-            to={formatMessage(
-              messages.readAboutPaymentParticipationSystemsLink,
-            )}
-            text={formatMessage(messages.readAboutPaymentParticipationSystems)}
-            variant="text"
-          />
-        </Box>
       </Box>
     </IntroWrapper>
   )

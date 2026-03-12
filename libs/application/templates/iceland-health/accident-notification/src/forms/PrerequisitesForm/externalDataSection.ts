@@ -6,7 +6,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages'
-import { NationalRegistryUserApi } from '../../dataProviders'
+import { NationalRegistryV3UserApi } from '../../dataProviders'
 
 export const externalDataSection = buildSection({
   id: 'ExternalDataRegularSection',
@@ -52,7 +52,7 @@ export const externalDataSection = buildSection({
           subTitle: externalData.municipalCollectionAgency.description,
         }),
         buildDataProviderItem({
-          provider: NationalRegistryUserApi,
+          provider: NationalRegistryV3UserApi,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.description,
         }),

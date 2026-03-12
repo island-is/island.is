@@ -11,9 +11,12 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomEnum } from '../../../../test'
-import { CourtSessionService } from '../../../court-session'
-import { Case, CaseRepositoryService, Defendant } from '../../../repository'
-import { include } from '../../case.service'
+import {
+  Case,
+  caseInclude,
+  CaseRepositoryService,
+  Defendant,
+} from '../../../repository'
 
 interface Then {
   result: Case
@@ -29,19 +32,13 @@ type GivenWhenThen = (
 
 describe('CaseController - Split defendant from case', () => {
   let mockCaseRepositoryService: CaseRepositoryService
-  let mockCourtSessionService: CourtSessionService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      sequelize,
-      caseRepositoryService,
-      courtSessionService,
-      caseController,
-    } = await createTestingCaseModule()
+    const { sequelize, caseRepositoryService, caseController } =
+      await createTestingCaseModule()
     mockCaseRepositoryService = caseRepositoryService
-    mockCourtSessionService = courtSessionService
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {
@@ -119,6 +116,7 @@ describe('CaseController - Split defendant from case', () => {
       ...splitCase,
       defendants: [defendantToSplit],
     } as Case
+
     let then: Then
 
     beforeEach(async () => {
@@ -138,7 +136,7 @@ describe('CaseController - Split defendant from case', () => {
         { transaction },
       )
       expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
-        include,
+        include: caseInclude,
         where: {
           id: splitCaseId,
           state: { [Op.not]: CaseState.DELETED },
@@ -146,10 +144,6 @@ describe('CaseController - Split defendant from case', () => {
         },
         transaction,
       })
-      expect(mockCourtSessionService.create).toHaveBeenCalledWith(
-        fullSplitCase,
-        transaction,
-      )
       expect(then.result).toBe(splitCase)
     })
   })

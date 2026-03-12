@@ -1960,14 +1960,14 @@ export class CaseNotificationService extends BaseNotificationService {
       user.email === recipientEmail
 
     const promises = []
-    if (!isCurrentUserRecipient(user, theCase.judge?.email)) {
+    if (theCase.judge && !isCurrentUserRecipient(user, theCase.judge.email)) {
       promises.push(
         this.sendCaseFilesUpdatedNotification(
           theCase.courtCaseNumber,
           theCase.court?.name,
           `${this.config.clientUrl}${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${theCase.id}`,
-          theCase.judge?.name,
-          theCase.judge?.email,
+          theCase.judge.name,
+          theCase.judge.email,
         ),
       )
     }
@@ -2380,7 +2380,7 @@ export class CaseNotificationService extends BaseNotificationService {
     const courtOfAppealsAssistantEmails =
       this.config.email.courtOfAppealsAssistantEmails
         .split(',')
-        .map((email) => email.trim())
+        .map((email: string) => email.trim())
 
     const allCourtOfAppealsEmails = [
       ...courtOfAppealsAssistantEmails,

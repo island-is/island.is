@@ -4,6 +4,7 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 
 import externalLinkIcon from '../../assets/icons/external-link.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
 import { getConfig } from '../../config'
 import { GetFinanceStatus } from '../../graphql/types/finance.types'
@@ -16,13 +17,23 @@ import { Button, Heading, Skeleton, TableViewCell, Typography } from '../../ui'
 import { FinanceStatusCard } from './components/finance-status-card'
 
 const { useNavigationOptions, getNavigationOptions } =
-  createNavigationOptionHooks((theme, intl) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({ id: 'finance.screenTitle' }),
+  createNavigationOptionHooks(
+    (theme, intl) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({ id: 'finance.screenTitle' }),
+        },
+      },
+    }),
+    {
+      topBar: {
+        scrollEdgeAppearance: {
+          active: true,
+          noBorder: true,
+        },
       },
     },
-  }))
+  )
 
 export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
@@ -33,7 +44,6 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
   const res = useGetFinanceStatusQuery({
     errorPolicy: 'ignore',
   })
-
   useConnectivityIndicator({
     componentId,
     queryResult: res,
@@ -117,107 +127,110 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
   const showLoading = res.loading && !res.data
 
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <SafeAreaView style={{ marginHorizontal: 16 }}>
-        <Heading>
-          <FormattedMessage
-            id="finance.heading.title"
-            defaultMessage="Staða við ríkissjóð og stofnanir"
-          />
-        </Heading>
-        <Typography>
-          <FormattedMessage
-            id="finance.heading.subtitle"
-            defaultMessage="Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum."
-          />
-        </Typography>
-      </SafeAreaView>
-      <TableViewCell
-        style={{
-          marginTop: 16,
-          marginBottom: 24,
-        }}
-        title={
-          <Typography size={13} style={{ marginBottom: 4 }}>
+    <>
+      <ScrollView style={{ flex: 1 }}>
+        <SafeAreaView style={{ marginHorizontal: 16 }}>
+          <Heading>
             <FormattedMessage
-              id="finance.statusCard.total"
-              defaultMessage="Samtals"
+              id="finance.heading.title"
+              defaultMessage="Staða við ríkissjóð og stofnanir"
             />
-            :
+          </Heading>
+          <Typography>
+            <FormattedMessage
+              id="finance.heading.subtitle"
+              defaultMessage="Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum."
+            />
           </Typography>
-        }
-        subtitle={
-          showLoading ? (
-            <Skeleton
-              active
-              style={{ borderRadius: 4, width: 150 }}
-              height={26}
-            />
-          ) : (
-            <Typography size={20} weight="600">{`${intl.formatNumber(
-              getChargeTypeTotal(),
-            )} kr.`}</Typography>
-          )
-        }
-      />
-      {scheduleButtonVisible && (
-        <SafeAreaView
+        </SafeAreaView>
+        <TableViewCell
           style={{
-            marginHorizontal: 16,
+            marginTop: 16,
             marginBottom: 24,
-            alignItems: 'flex-start',
+          }}
+          title={
+            <Typography size={13} style={{ marginBottom: 4 }}>
+              <FormattedMessage
+                id="finance.statusCard.total"
+                defaultMessage="Samtals"
+              />
+              :
+            </Typography>
+          }
+          subtitle={
+            showLoading ? (
+              <Skeleton
+                active
+                style={{ borderRadius: 4, width: 150 }}
+                height={26}
+              />
+            ) : (
+              <Typography size={20} weight="600">{`${intl.formatNumber(
+                getChargeTypeTotal(),
+              )} kr.`}</Typography>
+            )
+          }
+        />
+        {scheduleButtonVisible && (
+          <SafeAreaView
+            style={{
+              marginHorizontal: 16,
+              marginBottom: 24,
+              alignItems: 'flex-start',
+            }}
+          >
+            <Button
+              title={intl.formatMessage({
+                id: 'finance.statusCard.schedulePaymentPlan',
+              })}
+              isOutlined
+              isUtilityButton
+              icon={externalLinkIcon}
+              disabled={!scheduleButtonVisible}
+              iconStyle={{ tintColor: theme.color.dark300 }}
+              style={{ flex: 1 }}
+              onPress={() =>
+                openBrowser(
+                  `${getConfig().apiUrl.replace(
+                    /\/api/,
+                    '',
+                  )}/umsoknir/greidsluaaetlun`,
+                  componentId,
+                )
+              }
+            />
+          </SafeAreaView>
+        )}
+        <SafeAreaView style={{ marginHorizontal: 16 }}>
+          {showLoading
+            ? skeletonItems
+            : organizations.length > 0 || financeStatusZero
+            ? organizations.map((org, i) =>
+                (org.chargeTypes ?? []).map((chargeType, ii: number) => (
+                  <FinanceStatusCard
+                    key={`${org.id}-${chargeType.id}-${i}-${ii}`}
+                    chargeType={chargeType}
+                    org={org}
+                    componentId={componentId}
+                  />
+                )),
+              )
+            : null}
+        </SafeAreaView>
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingVertical: 12,
           }}
         >
-          <Button
-            title={intl.formatMessage({
-              id: 'finance.statusCard.schedulePaymentPlan',
-            })}
-            isOutlined
-            isUtilityButton
-            icon={externalLinkIcon}
-            disabled={!scheduleButtonVisible}
-            iconStyle={{ tintColor: theme.color.dark300 }}
-            style={{ flex: 1 }}
-            onPress={() =>
-              openBrowser(
-                `${getConfig().apiUrl.replace(
-                  /\/api/,
-                  '',
-                )}/umsoknir/greidsluaaetlun`,
-                componentId,
-              )
-            }
+          <MoreInfoContiner
+            externalLinks={externalLinks}
+            componentId={componentId}
           />
-        </SafeAreaView>
-      )}
-      <SafeAreaView style={{ marginHorizontal: 16 }}>
-        {showLoading
-          ? skeletonItems
-          : organizations.length > 0 || financeStatusZero
-          ? organizations.map((org, i) =>
-              (org.chargeTypes ?? []).map((chargeType, ii: number) => (
-                <FinanceStatusCard
-                  key={`${org.id}-${chargeType.id}-${i}-${ii}`}
-                  chargeType={chargeType}
-                  org={org}
-                  componentId={componentId}
-                />
-              )),
-            )
-          : null}
-      </SafeAreaView>
-      <View
-        style={{
-          paddingHorizontal: 16,
-          paddingVertical: 12,
-        }}
-      >
-        <MoreInfoContiner
-          externalLinks={externalLinks}
-          componentId={componentId}
-        />
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+      <BottomTabsIndicator index={4} total={5} />
+    </>
   )
 }
 

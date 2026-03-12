@@ -1,7 +1,9 @@
+import type { ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import capitalize from 'lodash/capitalize'
+import { BLOCKS } from '@contentful/rich-text-types'
 
 import type { SliceType } from '@island.is/island-ui/contentful'
 import {
@@ -193,6 +195,18 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
               <Inline alignY="center" justifyContent="spaceBetween" space={3}>
                 <Webreader readClass="rs_read" marginBottom={0} marginTop={2} />
                 <Inline alignY="center" space={2}>
+                  {item.resolutionLink && (
+                    <LinkV2 href={item.resolutionLink} newTab>
+                      <Button
+                        icon="open"
+                        iconType="outline"
+                        size="small"
+                        unfocusable
+                      >
+                        {formatMessage(m.verdictPage.resolutionLink)}
+                      </Button>
+                    </LinkV2>
+                  )}
                   <Hidden print={true}>
                     <Button
                       icon="print"
@@ -255,24 +269,44 @@ const HtmlView = ({ item }: VerdictDetailsProps) => {
                       </Box>
                     )}
                   </Stack>
-                  <Box className={styles.textMaxWidth} paddingX={[0, 6, 8, 12]}>
-                    <Text variant="h4" as="h3">
-                      {formatMessage(m.verdictPage.keywords)}
-                    </Text>
-                    <Text>{item.keywords.join(', ')}</Text>
-                  </Box>
-                  <Box className={styles.textMaxWidth} paddingX={[0, 6, 8, 12]}>
-                    <Text variant="h4" as="h3">
-                      {formatMessage(m.verdictPage.presentings)}
-                    </Text>
-                    <Text>{item.presentings}</Text>
-                  </Box>
+                  {item.keywords.length > 0 && (
+                    <Box
+                      className={styles.textMaxWidth}
+                      paddingX={[0, 6, 8, 12]}
+                    >
+                      <Text variant="h4" as="h3">
+                        {formatMessage(m.verdictPage.keywords)}
+                      </Text>
+                      <Text>{item.keywords.join(', ')}</Text>
+                    </Box>
+                  )}
+                  {Boolean(item.presentings) && (
+                    <Box
+                      className={styles.textMaxWidth}
+                      paddingX={[0, 6, 8, 12]}
+                    >
+                      <Text variant="h4" as="h3">
+                        {formatMessage(m.verdictPage.presentings)}
+                      </Text>
+                      <Text textAlign="justify">{item.presentings}</Text>
+                    </Box>
+                  )}
                 </Stack>
               </Box>
               <Box
                 className={cn('rs_read', styles.textMaxWidth, styles.richText)}
               >
-                {webRichText([item.richText] as SliceType[])}
+                {webRichText([item.richText] as SliceType[], {
+                  renderNode: {
+                    [BLOCKS.QUOTE]: (_: unknown, children: ReactNode) => {
+                      return (
+                        <Box paddingLeft={[3, 3, 5, 8]}>
+                          <Text>{children}</Text>
+                        </Box>
+                      )
+                    },
+                  },
+                })}
               </Box>
             </Box>
           </GridContainer>
