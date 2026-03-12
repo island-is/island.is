@@ -75,4 +75,10 @@ export interface EstateExternalData {
     }
     date: string
   }
+  checkReviewFlag?: {
+    data: {
+      reviewEnabled: boolean
+    }
+    date: string
+  }
 }

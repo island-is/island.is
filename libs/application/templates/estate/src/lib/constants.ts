@@ -27,6 +27,7 @@ export enum ApiActions {
   syslumennOnEntry = 'syslumennOnEntry',
   approveByAssignee = 'approveByAssignee',
   getSignatories = 'getSignatories',
+  checkReviewFlag = 'checkReviewFlag',
 }
 
 export type EstateEvent =

@@ -50,6 +50,11 @@ import { EstateMember, EstateExternalData } from '../types'
 
 const configuration = ApplicationConfigurations[ApplicationTypes.ESTATE]
 
+const isReviewEnabled = (context: ApplicationContext) => {
+  const externalData = context.application.externalData as EstateExternalData
+  return externalData?.checkReviewFlag?.data?.reviewEnabled === true
+}
+
 const EstateTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<EstateEvent>,
@@ -138,6 +143,12 @@ const EstateTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.25,
           lifecycle: pruneAfterDays(60),
+          onEntry: defineTemplateApi({
+            action: ApiActions.checkReviewFlag,
+            shouldPersistToExternalData: true,
+            externalDataId: 'checkReviewFlag',
+            throwOnError: false,
+          }),
           roles: [
             {
               id: Roles.APPLICANT_NO_ASSETS,
@@ -212,14 +223,26 @@ const EstateTemplate: ApplicationTemplate<
           },
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.inReview,
-            actions: 'setApplicantAsApproved',
-          },
-          [DefaultEvents.PAYMENT]: {
-            target: States.inReview,
-            actions: 'setApplicantAsApproved',
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.inReview,
+              cond: isReviewEnabled,
+              actions: 'setApplicantAsApproved',
+            },
+            {
+              target: States.done,
+            },
+          ],
+          [DefaultEvents.PAYMENT]: [
+            {
+              target: States.inReview,
+              cond: isReviewEnabled,
+              actions: 'setApplicantAsApproved',
+            },
+            {
+              target: States.payment,
+            },
+          ],
         },
       },
       [States.inReview]: {
@@ -377,7 +400,15 @@ const EstateTemplate: ApplicationTemplate<
       [States.payment]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItems: getChargeItems,
-        submitTarget: States.signing,
+        submitTarget: [
+          {
+            target: States.signing,
+            cond: isReviewEnabled,
+          },
+          {
+            target: States.done,
+          },
+        ],
         abortTarget: States.draft,
         lifecycle: {
           shouldBeListed: true,
@@ -541,6 +572,10 @@ const EstateTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(60),
+          onEntry: defineTemplateApi({
+            action: ApiActions.completeApplication,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT_NO_ASSETS,
@@ -654,28 +689,35 @@ const EstateTemplate: ApplicationTemplate<
       } else return Roles.APPLICANT
     }
 
-    // Check if user is in assignees (for pending approvals)
-    if (assignees && assignees.includes(nationalId)) {
-      return Roles.ASSIGNEE
-    }
+    // Only assign ASSIGNEE role when review feature flag is enabled
+    const externalData = application.externalData as EstateExternalData
+    const reviewEnabled =
+      externalData?.checkReviewFlag?.data?.reviewEnabled === true
 
-    // Check if user is an estate member in the application (including approved members)
-    const estateMembers = getValueViaPath<EstateMember[]>(
-      application.answers,
-      'estate.estateMembers',
-      [],
-    )
-    const isMember =
-      estateMembers &&
-      estateMembers.some(
-        (member) =>
-          nationalIdsMatch(member.nationalId, nationalId) &&
-          member.enabled !== false &&
-          !nationalIdsMatch(member.nationalId, applicant),
+    if (reviewEnabled) {
+      // Check if user is in assignees (for pending approvals)
+      if (assignees && assignees.includes(nationalId)) {
+        return Roles.ASSIGNEE
+      }
+
+      // Check if user is an estate member in the application (including approved members)
+      const estateMembers = getValueViaPath<EstateMember[]>(
+        application.answers,
+        'estate.estateMembers',
+        [],
       )
+      const isMember =
+        estateMembers &&
+        estateMembers.some(
+          (member) =>
+            nationalIdsMatch(member.nationalId, nationalId) &&
+            member.enabled !== false &&
+            !nationalIdsMatch(member.nationalId, applicant),
+        )
 
-    if (isMember) {
-      return Roles.ASSIGNEE
+      if (isMember) {
+        return Roles.ASSIGNEE
+      }
     }
 
     return undefined

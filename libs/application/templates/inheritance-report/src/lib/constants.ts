@@ -68,9 +68,11 @@ export enum Roles {
 
 export enum ApiActions {
   syslumennOnEntry = 'syslumennOnEntry',
+  completeApplication = 'completeApplication',
   submitToSyslumenn = 'submitToSyslumenn',
   getSignatories = 'getSignatories',
   approveByAssignee = 'approveByAssignee',
+  checkReviewFlag = 'checkReviewFlag',
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
