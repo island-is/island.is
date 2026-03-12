@@ -85,6 +85,7 @@ import {
 } from './syslumennClient.utils'
 import type { ConfigType } from '@island.is/nest/config'
 import { IdsClientConfig } from '@island.is/nest/config'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { logger } from '@island.is/logging'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
@@ -96,6 +97,8 @@ export class SyslumennService {
 
     @Inject(IdsClientConfig.KEY)
     private idsClientConfig: ConfigType<typeof IdsClientConfig>,
+
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   private async createApi() {
@@ -765,11 +768,22 @@ export class SyslumennService {
     delegationType: SyslumennDelegationType,
   ): Promise<boolean> {
     const { id, api } = await this.createApi()
-    const delegations = await api.virkUmbodGet({
-      audkenni: id,
-      kennitala: toNationalId,
-      tegundUmbods: delegationType,
-    })
+
+    const useVirkUmbodEndpoint = await this.featureFlagService.getValue(
+      Features.usePersonalRepresentativesFromSyslumenn,
+      false,
+    )
+
+    const delegations = useVirkUmbodEndpoint
+      ? await api.virkUmbodGet({
+          audkenni: id,
+          kennitala: toNationalId,
+          tegundUmbods: delegationType,
+        })
+      : await api.logradamadurGet({
+          audkenni: id,
+          kennitala: toNationalId,
+        })
 
     return delegations.some(
       (delegation) =>
