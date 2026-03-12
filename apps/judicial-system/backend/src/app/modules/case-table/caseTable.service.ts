@@ -19,6 +19,7 @@ import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import { caseTableDisplayCases } from './caseTable.displayCases'
+import { caseIncludeSchema } from './caseTable.includeSchema'
 import {
   getActionOnRowClick,
   getContextMenuActions,
@@ -82,31 +83,154 @@ const getIsMyCaseIncludes = (user: TUser): Includeable[] => {
   return []
 }
 
-const getIncludes = (caseTableCellKeys: CaseTableColumnKey[], user: TUser) => {
-  return getIsMyCaseIncludes(user).concat(
-    caseTableCellKeys
-      .filter((k) => caseTableCellGenerators[k].includes)
-      .map(
-        (k) =>
+type CellInclude = {
+  attributes?: string[]
+  where?: unknown
+  includes?: Record<
+    string,
+    { attributes?: string[]; where?: unknown } | undefined
+  >
+}
+
+type MergedEntry = {
+  attrSets: (string[] | undefined)[]
+  hasNoWhere: boolean
+  wheres: unknown[]
+  nested: Map<
+    string,
+    {
+      attrSets: (string[] | undefined)[]
+      hasNoWhere: boolean
+      wheres: unknown[]
+    }
+  >
+}
+
+const mergeAttrs = (
+  attrSets: (string[] | undefined)[],
+): string[] | undefined => {
+  if (attrSets.some((s) => s === undefined)) return undefined
+
+  return [...new Set(attrSets.flatMap((s) => s as string[]))]
+}
+
+const mergeWhere = (hasNoWhere: boolean, wheres: unknown[]): unknown => {
+  if (hasNoWhere || wheres.length === 0) return undefined
+
+  return wheres.length === 1 ? wheres[0] : { [Op.or]: wheres }
+}
+
+const getIncludes = (
+  caseTableCellKeys: CaseTableColumnKey[],
+  user: TUser,
+): Includeable[] => {
+  const collected = new Map<string, MergedEntry>()
+
+  for (const k of caseTableCellKeys) {
+    const gen = caseTableCellGenerators[k]
+    if (!gen.includes) continue
+
+    for (const [assocKey, assocVal] of Object.entries(gen.includes) as [
+      string,
+      CellInclude | undefined,
+    ][]) {
+      if (!assocVal) continue
+
+      if (!collected.has(assocKey)) {
+        collected.set(assocKey, {
+          attrSets: [],
+          hasNoWhere: false,
+          wheres: [],
+          nested: new Map(),
+        })
+      }
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const entry = collected.get(assocKey)!
+
+      entry.attrSets.push(assocVal.attributes)
+      if (assocVal.where !== undefined) {
+        entry.wheres.push(assocVal.where)
+      } else {
+        entry.hasNoWhere = true
+      }
+
+      if (assocVal.includes) {
+        for (const [nestedKey, nestedVal] of Object.entries(
+          assocVal.includes,
+        ) as [
+          string,
+          { attributes?: string[]; where?: unknown } | undefined,
+        ][]) {
+          if (!nestedVal) continue
+
+          if (!entry.nested.has(nestedKey)) {
+            entry.nested.set(nestedKey, {
+              attrSets: [],
+              hasNoWhere: false,
+              wheres: [],
+            })
+          }
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          Object.entries(caseTableCellGenerators[k].includes!).map(
-            ([k, v]) => ({
-              ...v,
-              includes: undefined,
-              as: k,
-              ...(v.includes
-                ? {
-                    include: Object.entries(v.includes).map(([k, v]) => ({
-                      ...v,
-                      as: k,
-                    })),
-                  }
-                : undefined),
-            }),
-          ) as Includeable,
-      )
-      .flat(),
-  )
+          const nEntry = entry.nested.get(nestedKey)!
+
+          nEntry.attrSets.push(nestedVal.attributes)
+          if (nestedVal.where !== undefined) {
+            nEntry.wheres.push(nestedVal.where)
+          } else {
+            nEntry.hasNoWhere = true
+          }
+        }
+      }
+    }
+  }
+
+  const result: Includeable[] = getIsMyCaseIncludes(user)
+
+  for (const [assocKey, entry] of collected) {
+    const schema = caseIncludeSchema[assocKey as keyof typeof caseIncludeSchema]
+    if (!schema) continue
+
+    const attributes = mergeAttrs(entry.attrSets)
+    const where = mergeWhere(entry.hasNoWhere, entry.wheres)
+
+    const nestedIncludes: Includeable[] = []
+    for (const [nestedKey, nEntry] of entry.nested) {
+      const nestedSchema = (
+        schema.includes as
+          | Record<
+              string,
+              | { model: unknown; order?: unknown[]; separate?: boolean }
+              | undefined
+            >
+          | undefined
+      )?.[nestedKey]
+      if (!nestedSchema) continue
+
+      const nAttributes = mergeAttrs(nEntry.attrSets)
+      const nWhere = mergeWhere(nEntry.hasNoWhere, nEntry.wheres)
+
+      nestedIncludes.push({
+        model: nestedSchema.model,
+        ...(nestedSchema.order ? { order: nestedSchema.order } : {}),
+        ...(nestedSchema.separate ? { separate: nestedSchema.separate } : {}),
+        as: nestedKey,
+        ...(nAttributes !== undefined ? { attributes: nAttributes } : {}),
+        ...(nWhere !== undefined ? { where: nWhere } : {}),
+      } as Includeable)
+    }
+
+    result.push({
+      model: schema.model,
+      ...(schema.order ? { order: schema.order } : {}),
+      ...(schema.separate ? { separate: schema.separate } : {}),
+      as: assocKey,
+      ...(attributes !== undefined ? { attributes } : {}),
+      ...(where !== undefined ? { where } : {}),
+      ...(nestedIncludes.length > 0 ? { include: nestedIncludes } : {}),
+    } as Includeable)
+  }
+
+  return result
 }
 
 @Injectable()
