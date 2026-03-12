@@ -66,6 +66,7 @@ import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { DefendantService } from '../defendant'
+import { CreateDefendantDto } from '../defendant/dto/createDefendant.dto'
 import { EventService } from '../event'
 import { FileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
@@ -90,6 +91,7 @@ import {
 } from '../repository'
 import { SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
+import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
@@ -389,8 +391,8 @@ export class InternalCaseService {
       })
   }
 
-  async create(
-    caseToCreate: InternalCreateCaseDto,
+  async deprecatedCreate(
+    caseToCreate: DeprecatedInternalCreateCaseDto,
     transaction: Transaction,
   ): Promise<Case> {
     const users = await this.userService
@@ -472,6 +474,80 @@ export class InternalCaseService {
     })
 
     return theCase as Case
+  }
+
+  async create(
+    caseToCreate: InternalCreateCaseDto,
+    transaction: Transaction,
+  ): Promise<Case> {
+    const users = await this.userService
+      .findByNationalId(caseToCreate.prosecutorNationalId)
+      .catch(() => undefined)
+
+    const creator = users?.find(
+      (user) =>
+        isProsecutionUser(user) &&
+        (!caseToCreate.prosecutorsOfficeNationalId ||
+          user.institution?.nationalId ===
+            caseToCreate.prosecutorsOfficeNationalId),
+    )
+
+    if (!creator) {
+      throw new BadRequestException(
+        'Creating user not found or is not registered as a prosecution user',
+      )
+    }
+
+    if (
+      creator.role === UserRole.PROSECUTOR_REPRESENTATIVE &&
+      !isIndictmentCase(caseToCreate.type)
+    ) {
+      throw new BadRequestException(
+        'Creating user is registered as a representative and can only create indictments',
+      )
+    }
+
+    const newCase = await this.caseRepositoryService.create(
+      {
+        ...caseToCreate,
+        ...(isRequestCase(caseToCreate.type)
+          ? {
+              state: CaseState.NEW,
+              courtId: creator.institution?.defaultCourtId,
+            }
+          : {
+              state: CaseState.DRAFT,
+              courtId: undefined,
+              withCourtSessions: true,
+            }),
+        origin: CaseOrigin.LOKE,
+        creatingProsecutorId: creator.id,
+        prosecutorId:
+          creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
+        prosecutorsOfficeId: creator.institution?.id,
+      },
+      { transaction },
+    )
+
+    if (isIndictmentCase(newCase.type)) {
+      for (const policeCaseNumber of newCase.policeCaseNumbers) {
+        await this.indictmentCountService.createWithPoliceCaseNumber(
+          newCase.id,
+          policeCaseNumber,
+          transaction,
+        )
+      }
+    }
+
+    const theCase = await this.caseRepositoryService.findById(newCase.id, {
+      transaction,
+    })
+
+    if (!theCase) {
+      throw new NotFoundException('Case not found')
+    }
+
+    return theCase
   }
 
   async archive(transaction: Transaction): Promise<ArchiveResponse> {
