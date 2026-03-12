@@ -18,14 +18,12 @@ export class CardInformation {
   @IsOptional()
   issuingCountry?: string | null = null
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Card usage description',
     type: String,
-    nullable: true,
   })
   @IsString()
-  @IsOptional()
-  cardUsage?: string | null = null
+  cardUsage!: string
 
   @ApiPropertyOptional({
     description: 'Card category',
