@@ -1,0 +1,53 @@
+query getPersonalTaxCredit {
+  socialInsuranceTaxAllowanceActions
+  socialInsuranceTaxCards {
+    taxCards {
+      percentage
+      validFrom
+      validTo
+      taxCardType
+    }
+    canRegisterPersonalAllowance
+  }
+  socialInsuranceSpouseDeceasedTaxAllowanceEligibility {
+    canApply
+    reasonNotAllowed
+    allowedYearMonths {
+      year
+      months {
+        month
+        selectable
+      }
+    }
+  }
+}
+
+mutation setSocialInsuranceTaxCardAllowance(
+  $input: SocialInsuranceSetTaxCardAllowanceInput!
+) {
+  setSocialInsuranceTaxCardAllowance(input: $input)
+}
+
+mutation editSocialInsuranceTaxCardAllowance(
+  $input: SocialInsuranceEditTaxCardAllowanceInput!
+) {
+  editSocialInsuranceTaxCardAllowance(input: $input)
+}
+
+mutation discontinueSocialInsuranceTaxCardAllowance(
+  $input: SocialInsuranceDiscontinueTaxCardAllowanceInput!
+) {
+  discontinueSocialInsuranceTaxCardAllowance(input: $input)
+}
+
+mutation setSocialInsuranceSpouseTaxCard(
+  $input: SocialInsuranceSetSpouseTaxCardInput!
+) {
+  setSocialInsuranceSpouseTaxCard(input: $input)
+}
+
+mutation setSocialInsuranceSpouseTaxCardDueToDeath(
+  $input: SocialInsuranceSetSpouseTaxCardDueToDeathInput!
+) {
+  setSocialInsuranceSpouseTaxCardDueToDeath(input: $input)
+}

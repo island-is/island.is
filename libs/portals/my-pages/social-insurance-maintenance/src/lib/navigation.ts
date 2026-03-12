@@ -50,6 +50,10 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
           name: localMessages.bankAccount,
           path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceBankAccount,
         },
+        {
+          name: localMessages.personalTaxCredit,
+          path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePersonalTaxCredit,
+        },
       ],
     },
   ],

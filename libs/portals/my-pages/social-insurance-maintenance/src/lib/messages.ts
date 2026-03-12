@@ -281,4 +281,79 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:field-required',
     defaultMessage: 'Þennan reit þarf að fylla út',
   },
+  personalTaxCredit: {
+    id: 'sp.social-insurance-maintenance:personal-tax-credit',
+    defaultMessage: 'Persónuafslátttur',
+  },
+  personalTaxCreditDescription: {
+    id: 'sp.social-insurance-maintenance:personal-tax-credit-description',
+    defaultMessage:
+      'Persónuafslátttur er 68.691 kr. á mánuði á árinu 2025. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  },
+  personalTaxCreditNotRegistered: {
+    id: 'sp.social-insurance-maintenance:personal-tax-credit-not-registered',
+    defaultMessage: 'Þú ert ekki með skráðan persónuafslátt hjá TR.',
+  },
+  myPersonalTaxCredit: {
+    id: 'sp.social-insurance-maintenance:my-personal-tax-credit',
+    defaultMessage: 'Persónuafslatturinn minn',
+  },
+  registerPersonalTaxCredit: {
+    id: 'sp.social-insurance-maintenance:register-personal-tax-credit',
+    defaultMessage: 'Ég óska eftir að nýta persónuafslátt hjá TR.',
+  },
+  editPersonalTaxCredit: {
+    id: 'sp.social-insurance-maintenance:edit-personal-tax-credit',
+    defaultMessage:
+      'Ég vil breyta núverandi hlutfalli persónuafsláttár sem skráð er hjá TR (breytist við næstu greiðslukeyrslu TR).',
+  },
+  discontinuePersonalTaxCredit: {
+    id: 'sp.social-insurance-maintenance:discontinue-personal-tax-credit',
+    defaultMessage: 'Ég óska eftir að hætta að nýta persónuafslátt hjá TR.',
+  },
+  spousePersonalTaxCredit: {
+    id: 'sp.social-insurance-maintenance:spouse-personal-tax-credit',
+    defaultMessage: 'Persónuafslattur maka',
+  },
+  spouseDeceasedTaxCredit: {
+    id: 'sp.social-insurance-maintenance:spouse-deceased-tax-credit',
+    defaultMessage:
+      'Ég óska eftir að nýta persónuafslátt vegna andláts maka.',
+  },
+  grantSpouseTaxCredit: {
+    id: 'sp.social-insurance-maintenance:grant-spouse-tax-credit',
+    defaultMessage: 'Ég veiti maka leyfi til að nota persónuafslátt minn.',
+  },
+  taxBracket: {
+    id: 'sp.social-insurance-maintenance:tax-bracket',
+    defaultMessage: 'Skattþrep',
+  },
+  taxBracketFromIncomePlan: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-from-income-plan',
+    defaultMessage:
+      'Ég vil að staðgreiðsla sé reiknuð út frá tekjuáætlun minni',
+  },
+  taxBracket1: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-1',
+    defaultMessage:
+      'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,49% af tekjum 0-472.005 kr.).',
+  },
+  taxBracket2: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-2',
+    defaultMessage:
+      'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,99% af tekjum 472.006 - 1.325.127 kr.).',
+  },
+  taxBracketInfo: {
+    id: 'sp.social-insurance-maintenance:tax-bracket-info',
+    defaultMessage:
+      'Skatthlutfall í staðgreiðslu samanstendur annarsvegar af tekjuskatti og hinsvegar meðaútsvari(14,95%). Skatthlutfallið er\n\n• 31,49% af tekjum 0-472.005 kr. (þar af 16,55% tekjuskattur)\n• 37,99% af tekjum 472.006 - 1.325.127 kr. (þar af 23,05% tekjuskattur)\n• 46,29% af tekjum yfir 1.325.127 kr. (þar af 31,35% tekjuskattur)\n\nPersónuafslattur er 68.691 kr. á mánuði á árinu 2025.',
+  },
+  personalTaxCreditSaveSuccess: {
+    id: 'sp.social-insurance-maintenance:personal-tax-credit-save-success',
+    defaultMessage: 'Persónuafslátttur hefur verið vistaður',
+  },
+  personalTaxCreditSaveError: {
+    id: 'sp.social-insurance-maintenance:personal-tax-credit-save-error',
+    defaultMessage: 'Ekki tókst að vista persónuafsláttinn',
+  },
 })

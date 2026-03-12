@@ -6,4 +6,5 @@ export enum SocialInsuranceMaintenancePaths {
   SocialInsuranceMaintenanceIncomePlanDetail = '/framfaersla/tekjuaaetlun/nuverandi',
   SocialInsuranceMaintenanceAccountingInformation = '/framfaersla/reikningsupplysingar',
   SocialInsuranceMaintenanceBankAccount = '/framfaersla/reikningsupplysingar/bankareikningur',
+  SocialInsuranceMaintenancePersonalTaxCredit = '/framfaersla/reikningsupplysingar/personuafslattur',
 }
