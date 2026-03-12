@@ -128,12 +128,12 @@ const FinanceTransactions = () => {
   const filters = useMemo(() => {
     const records = data?.getCustomerRecordsPaged?.data
     if (records) {
-      return Array.from(
-        new Set(records.map((r) => r.chargeItemSubject)),
-      ).map((s) => ({
-        label: s,
-        value: s,
-      }))
+      return Array.from(new Set(records.map((r) => r.chargeItemSubject))).map(
+        (s) => ({
+          label: s,
+          value: s,
+        }),
+      )
     }
   }, [data])
 
