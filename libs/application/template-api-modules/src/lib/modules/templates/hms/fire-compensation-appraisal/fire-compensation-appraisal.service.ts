@@ -309,9 +309,9 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       const applicationDto = mapAnswersToApplicationDto(application, files)
 
       // Send the application to HMS
-      const res = await this.hmsApplicationSystemService.apiApplicationPost({
-        applicationDto,
-      })
+      // const res = await this.hmsApplicationSystemService.apiApplicationPost({
+      //   applicationDto,
+      // })
 
       // if (res.status !== 200) {
       // eslint-disable-next-line no-constant-condition
@@ -322,26 +322,26 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         )
       }
       // Map the photos to the dto interface
-      const applicationFilesContentDtoArray =
-        mapAnswersToApplicationFilesContentDto(application, files)
+      // const applicationFilesContentDtoArray =
+      //   mapAnswersToApplicationFilesContentDto(application, files)
 
-      // Send the photos to HMS sequentially to avoid overwhelming
-      // the pod with concurrent uploads of large files
-      const photoResults = []
-      for (const applicationFilesContentDto of applicationFilesContentDtoArray) {
-        const result =
-          await this.hmsApplicationSystemService.apiApplicationUploadPost({
-            applicationFilesContentDto,
-          })
-        photoResults.push(result)
-      }
+      // // Send the photos to HMS sequentially to avoid overwhelming
+      // // the pod with concurrent uploads of large files
+      // const photoResults = []
+      // for (const applicationFilesContentDto of applicationFilesContentDtoArray) {
+      //   const result =
+      //     await this.hmsApplicationSystemService.apiApplicationUploadPost({
+      //       applicationFilesContentDto,
+      //     })
+      //   photoResults.push(result)
+      // }
 
-      if (photoResults.some((result) => result.status !== 200)) {
-        throw new TemplateApiError(
-          'Failed to upload photos, non 200 status',
-          500,
-        )
-      }
+      // if (photoResults.some((result) => result.status !== 200)) {
+      //   throw new TemplateApiError(
+      //     'Failed to upload photos, non 200 status',
+      //     500,
+      //   )
+      // }
 
       // Map the photos to the dto interface
       // const applicationFilesContentDtoArray =
