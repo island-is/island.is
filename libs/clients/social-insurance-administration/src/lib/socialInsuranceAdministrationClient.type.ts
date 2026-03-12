@@ -28,8 +28,8 @@ export type Scope =
   | '@tr.is/ororkulifeyrir:read'
   | '@tr.is/bankaupplysingar:write'
   | '@tr.is/bankaupplysingar:read'
-  | '@tr.is/skattkort:read'
-  | '@tr.is/skattkort:write'
+  | '@tr.is/personuafslattur:read'
+  | '@tr.is/personuafslattur:write'
 
 export type Api =
   | typeof ApplicationApi

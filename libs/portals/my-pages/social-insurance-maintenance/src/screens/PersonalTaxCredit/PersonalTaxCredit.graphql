@@ -1,5 +1,8 @@
 query getPersonalTaxCredit {
-  socialInsuranceTaxAllowanceActions
+  socialInsuranceTaxAllowanceActions {
+    value
+    name
+  }
   socialInsuranceTaxCards {
     taxCards {
       percentage

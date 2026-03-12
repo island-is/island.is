@@ -1,4 +1,4 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import {
   CurrentUser,
@@ -15,6 +15,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { SocialInsuranceAdministrationPersonalTaxCreditService } from '@island.is/clients/social-insurance-administration'
+import { TaxAllowanceAction } from '../models/personalTaxCredit/taxAllowanceAction.model'
 import { TaxCards } from '../models/personalTaxCredit/taxCard.model'
 import { TaxCardMonthsAndYears } from '../models/personalTaxCredit/taxCardMonthsAndYears.model'
 import { SpousalTaxCardEligibility } from '../models/personalTaxCredit/spousalTaxCardEligibility.model'
@@ -36,7 +37,7 @@ export class PersonalTaxCreditResolver {
     private readonly personalTaxCreditService: SocialInsuranceAdministrationPersonalTaxCreditService,
   ) {}
 
-  @Query(() => Int, {
+  @Query(() => [TaxAllowanceAction], {
     name: 'socialInsuranceTaxAllowanceActions',
     nullable: true,
   })

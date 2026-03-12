@@ -120,12 +120,12 @@ const apiCollection: Array<{
   },
   {
     api: PersonalTaxCreditApi,
-    scopes: ['@tr.is/skattkort:read'],
+    scopes: ['@tr.is/personuafslattur:read'],
     autoAuth: true,
   },
   {
     api: PersonalTaxCreditWriteApi,
-    scopes: ['@tr.is/skattkort:write'],
+    scopes: ['@tr.is/personuafslattur:write'],
     autoAuth: true,
   },
 ]
