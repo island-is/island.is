@@ -394,9 +394,7 @@ export const extractNodeContent = (
 
 export type ChildNodeOrder = 'asc-title' | 'desc-title' | 'manual'
 
-const getNormalizedChildNodeOrder = (
-  node: TreeNode | Tree,
-): ChildNodeOrder => {
+const getNormalizedChildNodeOrder = (node: TreeNode | Tree): ChildNodeOrder => {
   if (!('type' in node) || node.type !== TreeNodeType.CATEGORY) {
     return 'manual'
   }
@@ -440,7 +438,12 @@ export const getOrderedChildNodes = (
   entries: Record<string, EntryProps>,
 ) => {
   const childNodeOrder = getNormalizedChildNodeOrder(parentNode)
-  return orderChildNodes(parentNode.childNodes, childNodeOrder, language, entries)
+  return orderChildNodes(
+    parentNode.childNodes,
+    childNodeOrder,
+    language,
+    entries,
+  )
 }
 
 export const areChildNodesDraggable = (node: TreeNode | Tree) => {

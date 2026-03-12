@@ -17,7 +17,10 @@ import {
   SitemapTreeNode,
   SitemapTreeNodeType,
 } from '@island.is/shared/types'
-import { getOrganizationPageUrlPrefix, sortAlpha } from '@island.is/shared/utils'
+import {
+  getOrganizationPageUrlPrefix,
+  sortAlpha,
+} from '@island.is/shared/utils'
 import {
   IOrganizationParentSubpage,
   IOrganizationSubpage,
