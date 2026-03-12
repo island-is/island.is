@@ -9,7 +9,6 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import { m } from '../../lib/messages'
-import { EstateExternalData } from '../../types'
 
 export const signingForm: Form = buildForm({
   id: 'signingForm',
@@ -31,6 +30,7 @@ export const signingForm: Form = buildForm({
               id: 'signatoryStatusField',
               title: m.signingTableTitle,
               component: 'SignatoryStatus',
+              doesNotRequireAnswer: true,
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -50,16 +50,6 @@ export const signingForm: Form = buildForm({
                   event: DefaultEvents.SUBMIT,
                   name: m.signingComplete.defaultMessage,
                   type: 'primary',
-                  condition: (answers, externalData) => {
-                    const typedExternalData =
-                      externalData as EstateExternalData
-                    const signatories =
-                      typedExternalData?.getSignatories?.data?.signatories || []
-                    return (
-                      signatories.length > 0 &&
-                      signatories.every((s) => s.signed)
-                    )
-                  },
                 },
               ],
             }),

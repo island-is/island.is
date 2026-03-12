@@ -7,7 +7,6 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { InheritanceReportExternalData } from '../../types'
 import { m } from '../../lib/messages'
 
 export const signatoryStatusSection = buildSection({
@@ -23,6 +22,7 @@ export const signatoryStatusSection = buildSection({
           id: 'signatoryStatusField',
           title: m.signingTableTitle,
           component: 'SignatoryStatus',
+          doesNotRequireAnswer: true,
         }),
         buildDividerField({}),
         buildDescriptionField({
@@ -47,16 +47,6 @@ export const signatoryStatusSection = buildSection({
               event: DefaultEvents.SUBMIT,
               name: m.inReviewActionsComplete.defaultMessage,
               type: 'primary',
-              condition: (answers, externalData) => {
-                // Only show complete button when all signatories have signed
-                const typedExternalData = externalData as InheritanceReportExternalData
-                const signatories =
-                  typedExternalData?.getSignatories?.data?.signatories || []
-                return (
-                  signatories.length > 0 &&
-                  signatories.every((s) => s.signed)
-                )
-              },
             },
           ],
         }),

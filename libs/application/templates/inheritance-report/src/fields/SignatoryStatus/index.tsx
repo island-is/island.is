@@ -11,24 +11,40 @@ import {
 import { useLocale } from '@island.is/localization'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
-import { InheritanceReportExternalData } from '../../types'
 import { ApiActions } from '../../lib/constants'
-import { InheritanceSignatory } from '@island.is/clients/syslumenn'
+
+interface Signatory {
+  name: string
+  nationalId: string
+  signed: boolean
+}
+
+interface SignatoriesExternalData {
+  getSignatories?: {
+    data: {
+      success: boolean
+      signatories: Signatory[]
+    }
+    date: string
+  }
+}
 
 export const SignatoryStatus: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application, refetch }) => {
-  const { formatMessage } = useLocale()
+> = ({ application, setSubmitButtonDisabled }) => {
+  const { formatMessage, lang: locale } = useLocale()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
-  const [signatories, setSignatories] = useState<InheritanceSignatory[]>(
-    (application.externalData as InheritanceReportExternalData)?.getSignatories
-      ?.data?.signatories || [],
+  const [signatories, setSignatories] = useState<Signatory[]>(
+    (application.externalData as SignatoriesExternalData)?.getSignatories?.data
+      ?.signatories || [],
   )
 
   const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA)
 
   useEffect(() => {
+    setSubmitButtonDisabled?.(true)
+
     const fetchSignatories = async () => {
       try {
         const { data } = await updateExternalData({
@@ -42,16 +58,20 @@ export const SignatoryStatus: FC<
                 },
               ],
             },
-            locale: 'is',
+            locale,
           },
         })
 
         const externalData = data?.updateApplicationExternalData
-          ?.externalData as InheritanceReportExternalData | undefined
+          ?.externalData as SignatoriesExternalData | undefined
         const fetchedSignatories =
           externalData?.getSignatories?.data?.signatories || []
         setSignatories(fetchedSignatories)
-        refetch?.()
+
+        const allSigned =
+          fetchedSignatories.length > 0 &&
+          fetchedSignatories.every((s) => s.signed)
+        setSubmitButtonDisabled?.(!allSigned)
       } catch {
         setError(true)
       } finally {
