@@ -1664,7 +1664,7 @@ export const shipsMessages = defineMessages({
   },
   certificatesTab: {
     id: 'sp.ships:certificates-tab',
-    defaultMessage: 'Skírteini',
+    defaultMessage: 'Skírteini og leyfi',
   },
   operatorTitle: {
     id: 'sp.ships:operator-title',
@@ -1777,5 +1777,21 @@ export const shipsMessages = defineMessages({
   certificatesEmpty: {
     id: 'sp.ships:certificates-empty',
     defaultMessage: 'Engin skírteini fundust',
+  },
+  seaworthinessTitle: {
+    id: 'sp.ships:seaworthiness-title',
+    defaultMessage: 'Gildistími haffæraskírteinis',
+  },
+  seaworthinessValidTo: {
+    id: 'sp.ships:seaworthiness-valid-to',
+    defaultMessage: 'Í gildi til {date}',
+  },
+  certificatesSearchPlaceholder: {
+    id: 'sp.ships:certificates-search-placeholder',
+    defaultMessage: 'Sláðu inn leitarorð',
+  },
+  certificatesDownload: {
+    id: 'sp.ships:certificates-download',
+    defaultMessage: 'Sækja',
   },
 })

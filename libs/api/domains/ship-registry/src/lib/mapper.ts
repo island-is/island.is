@@ -9,6 +9,14 @@ import { UserShipCollectionItem } from './models/userShipCollectionItem.model'
 import { UserShip } from './models/userShip.model'
 import { ShipRegistryLocalizedValue } from './models/localizedValue.model'
 import { LocaleEnum } from './dto/locale.enum'
+import { ShipRegistryCertificateStatus } from './dto/certificate-status.enum'
+
+// TODO: Map raw API status strings once exact values are confirmed with provider
+const mapCertificateStatus = (
+  raw: string | undefined,
+): ShipRegistryCertificateStatus => {
+  return ShipRegistryCertificateStatus.Unknown
+}
 
 const toLocalizedValue = (
   dto: ValueMessageDto | ValueUnitMessageDto | undefined,
@@ -98,13 +106,15 @@ export const mapToUserShipFromDetails = (
     })),
     certificates: ship.shipCertificateDetails?.map((cert) => ({
       name: cert.certificateTypeName,
-      status:
+      status: mapCertificateStatus(
         locale === LocaleEnum.En
           ? cert.certificateIssueStatus?.en
           : cert.certificateIssueStatus?.is,
+      ),
       issueDate: cert.issueDate ?? '',
       validToDate: cert.validToDate ?? '',
       extensionDate: cert.extensionDate || undefined,
     })),
+    seaworthinessCertificateValidTo: undefined, // TODO: map from explicit API field
   }
 }

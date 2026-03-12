@@ -85,5 +85,6 @@ query ShipDetail($input: ShipRegistryUserShipInput!) {
       validToDate
       extensionDate
     }
+    seaworthinessCertificateValidTo
   }
 }
