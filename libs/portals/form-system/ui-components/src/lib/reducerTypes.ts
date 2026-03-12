@@ -1,5 +1,6 @@
 import type {
   FormSystemApplication,
+  FormSystemField,
   FormSystemScreen,
   FormSystemValidationError,
   FormSystemSection,
@@ -17,6 +18,10 @@ export interface ApplicationState {
     index: number
     isPopulateError?: boolean
     data?: FormSystemScreen
+  }
+  payment: {
+    paymentFields: FormSystemField[]
+    paymentQuantityFields: FormSystemField[]
   }
   errors?: string[]
   screenError?: FormSystemValidationError

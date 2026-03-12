@@ -44,6 +44,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.DATE_PICKER]: DatePicker,
   [FieldTypesEnum.MESSAGE]: MessageWithLink,
   [FieldTypesEnum.NUMBERBOX]: NumberInput,
+  [FieldTypesEnum.PAYMENT_QUANTITY]: PaymentQuantity,
 } as const
 
 export const Field = ({ field, valueIndex = 0 }: Props) => {
