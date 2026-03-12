@@ -13,7 +13,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
-import { getRedirectStatus, getRedirectUrl, isComingFromRedirect } from './util'
+import { getRedirectStatus, isComingFromRedirect } from './util'
 import { useSearchParams } from 'react-router-dom'
 
 export interface PaymentPendingProps {
@@ -105,7 +105,19 @@ export const PaymentPending: FC<
             message={msg(coreErrorMessages.paymentSubmitFailedDescription)}
           />
         </Box>
-        <Box>
+        <Box display="flex" justifyContent="spaceBetween" marginTop={2}>
+          <Button
+            onClick={() =>
+              submitCancelApplication().then(() => {
+                window.location.href = window.document.location.href
+                  .split('/')
+                  .slice(0, -1)
+                  .join('/')
+              })
+            }
+          >
+            {msg(coreErrorMessages.paymentSubmitRefundExitButtonCaption)}
+          </Button>
           <Button onClick={() => refetch?.()}>
             {msg(coreErrorMessages.paymentSubmitRetryButtonCaption)}
           </Button>

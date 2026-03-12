@@ -237,17 +237,20 @@ export class PaymentService extends BaseTemplateApiService {
       }
 
       if (requestId) {
-        this.logger.info('Calling deleteCharge with requestId', requestId)
-        await this.paymentsApi.refundControllerRefund({
-          refundPaymentInput: {
-            paymentFlowId: requestId,
-            reasonForRefund: 'Charge deleted',
-          },
-        })
+        this.logger.info(
+          `Calling deleteCharge with application id: ${application.id}`,
+        )
+        await this.paymentModelService.refundPayment(
+          application.id,
+          'Application payment deleted',
+          true,
+        )
       } else {
         this.logger.warn('No requestId found, skipping deleteCharge')
       }
 
+      console.log('deleting payment', requestId)
+      console.log('application id', application.id)
       await this.paymentModelService.delete(application.id, auth)
     } catch (error) {
       this.logger.error('Error deleting payment', {

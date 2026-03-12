@@ -29,6 +29,8 @@ import {
   CreatePaymentFlowInputAvailablePaymentMethodsEnum,
   PaymentsApi,
 } from '@island.is/clients/payments'
+import { PaymentServiceCode } from '@island.is/shared/constants'
+import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class PaymentService {
@@ -329,6 +331,53 @@ export class PaymentService {
     return {
       id: paymentModel.id,
       paymentUrl,
+    }
+  }
+
+  async refundPayment(
+    applicationId: string,
+    reasonForRefund?: string,
+    ignoreNotEligibleToBeRefunded?: boolean,
+  ): Promise<void> {
+    const payment = await this.findPaymentByApplicationId(applicationId)
+    if (!payment) {
+      throw new NotFoundException(
+        `payment was not found for application id ${applicationId}`,
+      )
+    }
+    if (!payment.request_id) {
+      throw new Error('Request ID is not set for payment')
+    }
+
+    try {
+      await this.paymentsApi.refundControllerRefund({
+        refundPaymentInput: {
+          paymentFlowId: payment.request_id,
+          reasonForRefund,
+        },
+      })
+    } catch (error) {
+      console.log('error', JSON.stringify(error, null, 2))
+      if (error instanceof FetchError) {
+        console.log('error.problem', error.problem)
+        console.log('error.problem.detail', error.problem?.detail)
+        const errorMessage = error.problem?.detail
+        if (
+          errorMessage ===
+            PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded &&
+          (ignoreNotEligibleToBeRefunded ?? false)
+        ) {
+          console.log(
+            'PaymentFlowNotEligibleToBeRefunded error caught, suppressing error and returning',
+          )
+          return
+        }
+      }
+      this.logger.error(
+        `Failed to refund payment for application ${applicationId}`,
+        error,
+      )
+      throw error
     }
   }
 
