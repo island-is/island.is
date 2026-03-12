@@ -1151,4 +1151,9 @@ export const m = defineMessages({
     defaultMessage: 'Magn má ekki vera hærra en {maxAmount}',
     description: 'Maximum amount must not be higher than {maxAmount}',
   },
+  total: {
+    id: 'form.system:total',
+    defaultMessage: 'Samtals',
+    description: 'Total',
+  },
 })

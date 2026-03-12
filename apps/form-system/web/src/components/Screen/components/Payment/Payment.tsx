@@ -1,4 +1,5 @@
-import { getValue, m } from '@island.is/form-system/ui'
+import { FormSystemField } from '@island.is/api/schema'
+import { FieldTypesEnum, getValue, m } from '@island.is/form-system/ui'
 import {
   Box,
   Divider,
@@ -14,8 +15,37 @@ import { useApplicationContext } from '../../../../context/ApplicationProvider'
 export const Payment = () => {
   const { formatMessage } = useLocale()
   const { state } = useApplicationContext()
-  const { paymentFields, paymentQuantityFields } = state.payment
-  console.log('Payment quantity fields:', paymentQuantityFields)
+  const screens = state.sections
+    .flatMap((section) => section.screens ?? [])
+    .filter(Boolean)
+
+  const paymentFields = screens
+    .flatMap((screen) => screen?.fields ?? [])
+    .filter(
+      (field) => field?.fieldType === FieldTypesEnum.PAYMENT && !field.isHidden,
+    )
+
+  const paymentQuantityFields = screens
+    .flatMap((screen) => screen?.fields ?? [])
+    .filter((field) => field?.fieldType === FieldTypesEnum.PAYMENT_QUANTITY)
+
+  const convertToPaymentNumber = (value: number): string => {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+  }
+  const getQuantity = (field?: FormSystemField | null) => {
+    const quantityField = paymentQuantityFields?.find(
+      (f) => f?.id === field?.fieldSettings?.paymentQuantityId,
+    )
+
+    return Number(quantityField ? getValue(quantityField, 'number') ?? 1 : 1)
+  }
+
+  const total = paymentFields.reduce((sum, field) => {
+    const quantity = getQuantity(field)
+    const price = Number(field?.fieldSettings?.priceAmount ?? 0)
+
+    return sum + price * quantity
+  }, 0)
 
   return (
     <GridContainer>
@@ -28,36 +58,33 @@ export const Payment = () => {
                 {formatMessage(m.payment)}
               </Text>
             </Box>
-            <Stack space={2}>
+            <Stack space={1}>
               <Text variant="h4" fontWeight="semiBold">
                 Til greiðslu
               </Text>
 
-              {paymentFields
-                ?.filter((field) => field != null && !field.isHidden)
-                .map((field, index) => {
-                  const paymentQuantityId =
-                    field.fieldSettings?.paymentQuantityId
-                  const paymentQuantityField = paymentQuantityFields?.find(
-                    (f) => f.id === paymentQuantityId,
-                  )
-                  const quantity = paymentQuantityField
-                    ? getValue(paymentQuantityField, 'number')
-                    : undefined
-                  return (
-                    // <Display field={field} key={index} />
-                    <Box
-                      key={index}
-                      display="flex"
-                      justifyContent="spaceBetween"
-                    >
-                      <Text>{field?.fieldSettings?.chargeItemName}</Text>
-                      <Text>{`${quantity && quantity} ${
-                        field.fieldSettings?.priceAmount
-                      } kr.`}</Text>
-                    </Box>
-                  )
-                })}
+              {paymentFields.map((field, index) => {
+                const quantity = getQuantity(field)
+                const priceString = `${quantity} x ${convertToPaymentNumber(
+                  Number(field?.fieldSettings?.priceAmount ?? 0),
+                )} kr.`
+
+                return (
+                  <Box key={index} display="flex" justifyContent="spaceBetween">
+                    <Text>{field?.fieldSettings?.chargeItemName ?? ''}</Text>
+                    <Text>{priceString}</Text>
+                  </Box>
+                )
+              })}
+              <Divider />
+              <Box display="flex" justifyContent="spaceBetween">
+                <Text variant="h5" fontWeight="semiBold">
+                  {formatMessage(m.total)}
+                </Text>
+                <Text variant="h5" fontWeight="semiBold" color="blue400">
+                  {convertToPaymentNumber(total)} kr.
+                </Text>
+              </Box>
             </Stack>
           </GridColumn>
         </GridRow>
