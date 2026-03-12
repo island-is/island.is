@@ -1,0 +1,26 @@
+{
+  "name": "application-assets",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/assets",
+  "projectType": "library",
+  "tags": ["scope:application-system-web"],
+  "targets": {
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "dependsOn": [],
+      "inputs": [
+        "{projectRoot}/institution-logos/svg/**/*.svg",
+        "{projectRoot}/institution-logos/svg/municipalities/**/*.svg",
+        "{projectRoot}/graphics/svg/**/*.svg",
+        "{projectRoot}/generate-components.mjs"
+      ],
+      "outputs": [
+        "{projectRoot}/institution-logos/gen/**/*.tsx",
+        "{projectRoot}/graphics/gen/**/*.tsx"
+      ],
+      "options": {
+        "command": "node libs/application/assets/generate-components.mjs"
+      }
+    }
+  }
+}

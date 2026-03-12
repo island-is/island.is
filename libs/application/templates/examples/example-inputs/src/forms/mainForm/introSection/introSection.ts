@@ -1,8 +1,12 @@
 import {
   buildDescriptionField,
+  buildImageField,
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
+import { OnThePhoneOutside } from '@island.is/application/assets/graphics'
+import { MinistryForForeignAffairsLogo } from '@island.is/application/assets/institution-logos'
+import { WomanWithLaptopIllustration } from '@island.is/application/assets/graphics'
 
 export const introSection = buildSection({
   id: 'introSection',
@@ -21,6 +25,18 @@ export const introSection = buildSection({
           id: 'introDescriotion2',
           description:
             'For examples on fields with no inputs, like descriptions, alerts, accordions, keyValue and so on, visit ```/umsoknir/example-no-inputs```',
+        }),
+        buildImageField({
+          id: 'assetImage',
+          image: OnThePhoneOutside,
+        }),
+        buildImageField({
+          id: 'assetImage',
+          image: WomanWithLaptopIllustration,
+        }),
+        buildImageField({
+          id: 'assetImage',
+          image: MinistryForForeignAffairsLogo,
         }),
       ],
     }),
