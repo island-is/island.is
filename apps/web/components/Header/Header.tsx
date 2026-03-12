@@ -64,8 +64,8 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
       <Hidden print={true}>
         <FixedNav organizationSearchFilter={organizationSearchFilter} />
         <GridContainer>
-          <GridRow>
-            <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
+          <GridRow marginTop={[4, 4, 0]}>
+            <GridColumn span="12/12" paddingTop={2} paddingBottom={2}>
               <Columns alignY="center" space={2}>
                 <Column width="content">
                   <FocusableBox
@@ -81,7 +81,7 @@ export const Header: FC<React.PropsWithChildren<HeaderProps>> = ({
                       />
                     </Hidden>
                     <Hidden below="lg">
-                      <Logo id="header-logo" width={160} solid={isWhite} />
+                      <Logo id="header-logo" width={140} solid={isWhite} />
                     </Hidden>
                   </FocusableBox>
                 </Column>
