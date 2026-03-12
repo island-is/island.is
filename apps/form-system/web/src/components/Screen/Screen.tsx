@@ -1,6 +1,12 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { SectionTypes } from '@island.is/form-system/ui'
-import { AlertMessage, Box, GridColumn, Text } from '@island.is/island-ui/core'
+import { m, SectionTypes } from '@island.is/form-system/ui'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  GridColumn,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
 import { useApplicationContext } from '../../context/ApplicationProvider'
@@ -17,13 +23,37 @@ import {
   removeTypename,
 } from '@island.is/form-system/graphql'
 import { LoadingScreen } from '@island.is/react/components'
+import { useIntl } from 'react-intl'
 
 export const Screen = () => {
   const { state, dispatch } = useApplicationContext()
   const { lang } = useLocale()
   const { currentSection, currentScreen } = state
+  const { formatMessage } = useIntl()
   const [notifyExternal] = useMutation(NOTIFY_EXTERNAL_SERVICE)
   const [loading, setLoading] = useState(false)
+  const multiMax = currentScreen?.data?.multiMax ?? 1
+  const isMulti = currentScreen?.data?.isMulti ?? false
+
+  const visibleFields =
+    currentScreen?.data?.fields?.filter(
+      (field): field is NonNullable<typeof field> =>
+        field != null && !field.isHidden,
+    ) ?? []
+
+  const [numberOfItems, setNumberOfItems] = useState(1)
+
+  useEffect(() => {
+    if (isMulti && multiMax > 1) {
+      const maxItems = Math.max(
+        1,
+        ...visibleFields.map((f) => (f.values?.length as number) ?? 1),
+      )
+      setNumberOfItems(maxItems)
+    } else {
+      setNumberOfItems(1)
+    }
+  }, [currentScreen?.data?.id, currentScreen?.data?.fields, isMulti, multiMax])
 
   const screenTitle =
     currentScreen?.data?.name?.[lang] ??
@@ -84,6 +114,24 @@ export const Screen = () => {
     populateScreen()
   }, [currentScreen?.data?.id])
 
+  const handleNewItem = () => {
+    setNumberOfItems(numberOfItems + 1)
+    dispatch({
+      type: 'ADD_MULTISET_ITEM',
+      payload: {},
+    })
+  }
+
+  const handleRemoveItem = () => {
+    if (numberOfItems > 1) {
+      setNumberOfItems(numberOfItems - 1)
+      dispatch({
+        type: 'REMOVE_MULTISET_ITEM',
+        payload: {},
+      })
+    }
+  }
+
   if (loading) return <LoadingScreen ariaLabel="loading" />
 
   return (
@@ -130,16 +178,54 @@ export const Screen = () => {
           !currentSection?.data?.isHidden && <Summary state={state} />}
 
         {currentSectionType === SectionTypes.COMPLETED && <Completed />}
+
         {currentScreen &&
-          currentScreen?.data?.fields
-            ?.filter(
-              (field): field is NonNullable<typeof field> =>
-                field != null && !field.isHidden,
-            )
-            .map((field, index) => {
-              return <Field field={field} key={index} />
-            })}
+          Array.from({ length: numberOfItems }).map((_, itemIndex) => (
+            <Box key={`multiset-item-${itemIndex}`} marginBottom={4}>
+              {visibleFields
+                .filter(
+                  (field) =>
+                    field.isPartOfMultiset !== false || itemIndex === 0,
+                )
+                .map((field) => (
+                  <Field
+                    field={field}
+                    valueIndex={
+                      field.isPartOfMultiset === false ? 0 : itemIndex
+                    }
+                    key={`${field.id ?? 'field'}-${itemIndex}`}
+                  />
+                ))}
+            </Box>
+          ))}
+
+        {isMulti && multiMax > 1 && (
+          <Box display="flex" justifyContent="flexEnd" paddingTop={6}>
+            <Box marginRight={2}>
+              {numberOfItems > 1 && (
+                <Button
+                  variant="ghost"
+                  colorScheme="destructive"
+                  type="button"
+                  onClick={handleRemoveItem}
+                >
+                  {formatMessage(m.removeMulti)}
+                </Button>
+              )}
+            </Box>
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={handleNewItem}
+              icon="add"
+              disabled={numberOfItems >= multiMax}
+            >
+              {formatMessage(m.addMulti)}
+            </Button>
+          </Box>
+        )}
       </GridColumn>
+
       <Footer externalDataAgreement={externalDataAgreement} />
     </Box>
   )
