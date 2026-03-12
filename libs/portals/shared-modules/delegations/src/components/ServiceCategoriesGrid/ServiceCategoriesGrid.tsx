@@ -41,7 +41,12 @@ export const ServiceCategoriesGrid = ({
               className={styles.categoryCard}
               onClick={(e) => {
                 e.preventDefault()
-                navigate(DelegationPaths.CategoryDetails.replace(':slug', category.slug))
+                navigate(
+                  DelegationPaths.CategoryDetails.replace(
+                    ':slug',
+                    category.slug,
+                  ),
+                )
               }}
             >
               <CategoryCard

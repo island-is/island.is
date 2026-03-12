@@ -6,9 +6,7 @@ import {
   ServicePortalPaths,
   useDynamicRoutesWithNavigation,
 } from '@island.is/portals/my-pages/core'
-import {
-  DELEGATION_BANNER_HEIGHT,
-} from '@island.is/portals/my-pages/constants'
+import { DELEGATION_BANNER_HEIGHT } from '@island.is/portals/my-pages/constants'
 import { useAlertBanners } from '@island.is/portals/my-pages/graphql'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useUserInfo } from '@island.is/react-spa/bff'
