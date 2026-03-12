@@ -405,12 +405,6 @@ const EstateTemplate: ApplicationTemplate<
               throwOnError: true,
               order: 0,
             }),
-            defineTemplateApi({
-              action: ApiActions.getSignatories,
-              shouldPersistToExternalData: true,
-              externalDataId: 'getSignatories',
-              order: 1,
-            }),
           ],
           actionCard: {
             pendingAction: (application) => {

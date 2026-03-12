@@ -2,14 +2,13 @@ import {
   buildSection,
   buildMultiField,
   buildDescriptionField,
-  buildStaticTableField,
+  buildCustomField,
   buildDividerField,
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { InheritanceReportExternalData } from '../../types'
 import { m } from '../../lib/messages'
-import { format as formatNationalId } from 'kennitala'
 
 export const signatoryStatusSection = buildSection({
   id: 'signatoryStatus',
@@ -20,26 +19,10 @@ export const signatoryStatusSection = buildSection({
       title: m.signingTitle,
       description: m.signingDescription,
       children: [
-        buildStaticTableField({
+        buildCustomField({
+          id: 'signatoryStatusField',
           title: m.signingTableTitle,
-          marginTop: 3,
-          header: [
-            m.inReviewSignatoriesNameLabel,
-            m.inReviewSignatoriesNationalIdLabel,
-            m.inReviewSignatoriesStatusLabel,
-          ],
-          rows: (application) => {
-            const externalData = application.externalData as InheritanceReportExternalData
-            const signatories = externalData?.getSignatories?.data?.signatories || []
-
-            return signatories.map((signatory) => [
-              signatory.name || '',
-              formatNationalId(signatory.nationalId || ''),
-              signatory.signed
-                ? m.inReviewStatusSigned.defaultMessage
-                : m.inReviewStatusPending.defaultMessage,
-            ])
-          },
+          component: 'SignatoryStatus',
         }),
         buildDividerField({}),
         buildDescriptionField({
@@ -81,4 +64,3 @@ export const signatoryStatusSection = buildSection({
     }),
   ],
 })
-
