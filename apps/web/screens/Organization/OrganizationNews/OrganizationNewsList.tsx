@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 
@@ -156,6 +157,15 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
     }),
   )
 
+  const organizationNamespace = useMemo(
+    () => extractNamespaceFromOrganization(organizationPage.organization),
+    [organizationPage.organization],
+  )
+
+  const hideNewsListOverviewCardImages: boolean | undefined =
+    (organizationNamespace?.hideNewsListOverviewCardImages as boolean) ??
+    undefined
+
   return (
     <OrganizationWrapper
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -206,6 +216,7 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
         // @ts-ignore make web strict
         newsTags={organizationPage.secondaryNewsTags}
         variant="digital-iceland"
+        mini={hideNewsListOverviewCardImages}
       />
     </OrganizationWrapper>
   )
