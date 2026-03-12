@@ -40,7 +40,7 @@ export const NavComponent = ({
     openComponents,
     setOpenComponents,
   } = useContext(ControlContext)
-  const { activeItem, activeListItem, form } = control
+  const { activeItem, activeListItem, form, isPublished } = control
   const activeGuid =
     selectStatus === NavbarSelectStatus.LIST_ITEM
       ? activeListItem?.id ?? ''
@@ -146,12 +146,17 @@ export const NavComponent = ({
       type: type,
       data,
     },
+    disabled: isPublished,
   })
+
+  const sortableRef = isPublished ? undefined : setNodeRef
+  const sortableAttributes = isPublished ? undefined : attributes
+  const sortableListeners = isPublished ? undefined : listeners
 
   if (isDragging) {
     return (
       <div
-        ref={setNodeRef}
+        ref={sortableRef}
         className={cn({
           [styles.navComponent.step]: type === 'Section' && focusComponent,
           [styles.navComponent.group]: type === 'Screen' && focusComponent,
@@ -187,7 +192,7 @@ export const NavComponent = ({
       {...(focusComponent && {
         onClick: () => focusComponent(type, data.id as UniqueIdentifier),
       })}
-      ref={setNodeRef}
+      ref={sortableRef}
     >
       {active ? (
         <Box display="flex" flexDirection="row">
@@ -197,8 +202,8 @@ export const NavComponent = ({
               [styles.navBackgroundActive.group]: type === 'Screen',
               [styles.navBackgroundActive.input]: type === 'Field',
             })}
-            {...listeners}
-            {...attributes}
+            {...sortableListeners}
+            {...sortableAttributes}
           >
             {focusComponent ? index : ''}
             {renderChevron()}

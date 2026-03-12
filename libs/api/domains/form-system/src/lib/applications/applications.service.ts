@@ -7,7 +7,6 @@ import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
   ApplicationsControllerDeleteApplicationRequest,
-  ApplicationsControllerFindAllByOrganizationRequest,
   ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerNotifyRequest,
@@ -73,20 +72,6 @@ export class ApplicationsService {
       )
       .catch((e) => handle4xx(e, this.handleError, 'failed to get application'))
 
-    return response as ApplicationResponse
-  }
-
-  async getApplications(
-    auth: User,
-    input: ApplicationsInput,
-  ): Promise<ApplicationResponse> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerFindAllByOrganization(
-        input as ApplicationsControllerFindAllByOrganizationRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to get applications'),
-      )
     return response as ApplicationResponse
   }
 

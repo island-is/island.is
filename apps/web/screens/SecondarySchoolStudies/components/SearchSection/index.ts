@@ -1,0 +1,1 @@
+export { SearchSection } from './SearchSection'
