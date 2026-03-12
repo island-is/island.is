@@ -30,7 +30,6 @@ const createForwardHeaders = (req: NextApiRequest) => {
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log('req', req)
   const queryString = req.url?.split('?')[1]
   const targetUrl = `${graphqlEndpoint}${queryString ? `?${queryString}` : ''}`
 
