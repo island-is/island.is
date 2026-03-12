@@ -2,6 +2,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import {
   ApplicantDisplay,
   CheckBoxDisplay,
+  DateDisplay,
   DefaultDisplay,
   FieldTypesEnum,
   FileUploadDisplay,
@@ -17,13 +18,14 @@ interface Props {
 const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.BANK_ACCOUNT]: DefaultDisplay,
   [FieldTypesEnum.ISK_NUMBERBOX]: DefaultDisplay,
+  [FieldTypesEnum.ISK_SUMBOX]: DefaultDisplay,
   [FieldTypesEnum.EMAIL]: DefaultDisplay,
   [FieldTypesEnum.NATIONAL_ID]: NationalIdDisplay,
   [FieldTypesEnum.PHONE_NUMBER]: DefaultDisplay,
   [FieldTypesEnum.TEXTBOX]: DefaultDisplay,
   [FieldTypesEnum.NUMBERBOX]: DefaultDisplay,
   [FieldTypesEnum.TIME_INPUT]: DefaultDisplay,
-  [FieldTypesEnum.DATE_PICKER]: DefaultDisplay,
+  [FieldTypesEnum.DATE_PICKER]: DateDisplay,
   [FieldTypesEnum.DROPDOWN_LIST]: DefaultDisplay,
   [FieldTypesEnum.CHECKBOX]: CheckBoxDisplay,
   [FieldTypesEnum.FILE]: FileUploadDisplay,

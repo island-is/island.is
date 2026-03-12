@@ -1,8 +1,10 @@
 import type { GetWebChatQuery } from '@island.is/web/graphql/schema'
+import { setupOneScreenWatsonChatBot } from '@island.is/web/utils/webChat'
 
 import {
   BoostChatPanel,
   LiveChatIncChatPanel,
+  WatsonChatPanel,
   ZendeskChatPanel,
 } from '../ChatPanel'
 
@@ -18,7 +20,7 @@ const WebChat = ({ webChat, pushUp, renderFallback }: WebChatProps) => {
   const webChatType = webChat.webChatConfiguration?.type
 
   if (webChatType === 'zendesk') {
-    const { snippetUrl, chatBubbleVariant } =
+    const { snippetUrl, chatBubbleVariant, urlTrackingTicketId } =
       webChat.webChatConfiguration.zendesk ?? {}
     if (!snippetUrl) return renderFallback?.() ?? null
     return (
@@ -26,6 +28,7 @@ const WebChat = ({ webChat, pushUp, renderFallback }: WebChatProps) => {
         snippetUrl={snippetUrl}
         pushUp={pushUp}
         chatBubbleVariant={chatBubbleVariant || 'circle'}
+        urlTrackingTicketId={urlTrackingTicketId}
       />
     )
   }
@@ -59,6 +62,52 @@ const WebChat = ({ webChat, pushUp, renderFallback }: WebChatProps) => {
     )
   }
 
+  if (webChatType === 'watson') {
+    const {
+      integrationID,
+      region,
+      serviceInstanceID,
+      showLauncher,
+      carbonTheme,
+      namespaceKey,
+      serviceDesk,
+      setupOneScreenWatsonChatBotParams,
+      clearSessionStorageParams,
+    } = webChat.webChatConfiguration.watson ?? {}
+    if (!integrationID || !region || !serviceInstanceID)
+      return renderFallback?.() ?? null
+
+    return (
+      <WatsonChatPanel
+        integrationID={integrationID}
+        region={region}
+        serviceInstanceID={serviceInstanceID}
+        showLauncher={showLauncher}
+        carbonTheme={carbonTheme}
+        namespaceKey={namespaceKey}
+        serviceDesk={serviceDesk}
+        onLoad={(instance) => {
+          const initialState = setupOneScreenWatsonChatBotParams
+          if (initialState?.categoryTitle && initialState?.categoryGroup) {
+            setupOneScreenWatsonChatBot(
+              instance,
+              initialState.categoryTitle,
+              initialState.categoryGroup,
+            )
+            return
+          }
+
+          const categoryGroupClearParam =
+            clearSessionStorageParams?.categoryGroup
+          if (
+            categoryGroupClearParam &&
+            sessionStorage.getItem(categoryGroupClearParam)
+          )
+            sessionStorage.clear()
+        }}
+      />
+    )
+  }
   return renderFallback?.() ?? null
 }
 

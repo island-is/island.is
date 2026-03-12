@@ -141,8 +141,6 @@ export const mapToRentalAgreement = (
     contractType: mapTemporalType(dto.contractType),
     dateFrom: dto.dateFrom?.toISOString(),
     dateTo: dto.dateTo?.toISOString(),
-    signatureDate: dto.signatureDate?.toISOString(),
-    receivedDate: dto.receivedDate?.toISOString(),
     landlords:
       parties?.filter((party) => LANDLORD_TYPES.includes(party.type)) ??
       undefined,

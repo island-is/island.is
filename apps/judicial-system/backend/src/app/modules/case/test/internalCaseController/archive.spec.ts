@@ -278,6 +278,7 @@ describe('InternalCaseController - Archive', () => {
           [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
         ],
         where: archiveFilter,
+        transaction,
       })
       expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,

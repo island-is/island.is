@@ -225,12 +225,6 @@ export const decrement = (
 ): ApplicationState => {
   const [submitScreen] = submitScreenMutation
   const [updateDependencies] = updateDependenciesMutation
-  const errors = state.errors ?? []
-  const isValid = state.isValid ?? true
-
-  if (errors.length > 0 || !isValid) {
-    return { ...state, errors }
-  }
 
   state.currentScreen = setCurrentScreen(
     state,
@@ -339,6 +333,150 @@ export const decrement = (
     currentScreen: resultCurrentScreen,
     sections: resultSections,
     errors: [],
+    screenError: {
+      hasError: false,
+      title: { is: '', en: '' },
+      message: { is: '', en: '' },
+    },
+  }
+}
+
+export const jumpToScreen = (
+  state: ApplicationState,
+  sectionIndex: number,
+  screenIndex: number,
+  updateCompletedMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
+): ApplicationState => {
+  const [updateCompleted] = updateCompletedMutation
+  const sections = state.sections ?? []
+  if (sectionIndex < 0 || sectionIndex >= sections.length) {
+    return state
+  }
+
+  // Reset isCompleted for sections and screens starting from sectionIndex
+  const updatedSections = sections.map((section, idx) => {
+    if (idx < sectionIndex) return section
+
+    const updatedScreens = Array.isArray(section.screens)
+      ? section.screens.map((screen, sIdx) =>
+          screen
+            ? idx > sectionIndex || sIdx >= screenIndex
+              ? ({ ...screen, isCompleted: false } as FormSystemScreen)
+              : screen
+            : null,
+        )
+      : section.screens
+
+    return {
+      ...section,
+      isCompleted: false,
+      screens: updatedScreens,
+    } as FormSystemSection
+  })
+
+  // Collect IDs to remove from application.completed
+  const idsToRemove: string[] = []
+  for (let i = sectionIndex; i < sections.length; i++) {
+    const sec = sections[i]
+    if (sec?.id != null) {
+      idsToRemove.push(sec.id)
+    }
+    const scrs = sec?.screens ?? []
+    for (let sIdx = 0; sIdx < scrs.length; sIdx++) {
+      const sc = scrs[sIdx]
+      if (sc?.id != null) {
+        if (i > sectionIndex || sIdx >= screenIndex) {
+          idsToRemove.push(sc.id)
+        }
+      }
+    }
+  }
+
+  updateCompleted({
+    variables: {
+      input: {
+        id: state.application.id,
+        updateApplicationDto: {
+          completed: idsToRemove,
+        },
+      },
+    },
+  }).catch((error) => {
+    console.error('Error updating completed array:', error)
+  })
+
+  return {
+    ...state,
+    sections: updatedSections,
+    application: {
+      ...state.application,
+    },
+  }
+}
+
+const removeNullsDeep = <T>(value: T): T => {
+  if (Array.isArray(value)) {
+    return value
+      .filter((v) => v != null)
+      .map((v) => removeNullsDeep(v)) as unknown as T
+  }
+  if (value !== null && typeof value === 'object') {
+    const result: any = {}
+    for (const [key, val] of Object.entries(value as any)) {
+      if (val != null) {
+        result[key] = removeNullsDeep(val)
+      }
+    }
+    return result
+  }
+  return value
+}
+
+export const setExternalServiceErrors = (
+  state: ApplicationState,
+  screen: FormSystemScreen,
+  isPopulateError = false,
+): ApplicationState => {
+  const normalizedScreenError = screen.screenError || {
+    hasError: false,
+    title: { is: '', en: '' },
+    message: { is: '', en: '' },
+  }
+
+  const cleanedScreen = removeNullsDeep(screen)
+
+  const sections = state.sections.map((section) => {
+    const hasMatch = section.screens?.some(
+      (s) => s != null && s.id === screen.id,
+    )
+    if (!hasMatch) return section
+
+    return {
+      ...section,
+      screens: section.screens?.map((s) =>
+        s != null && s.id === screen.id ? cleanedScreen : s,
+      ),
+    }
+  })
+
+  const updatedState = setCurrentScreen(
+    { ...state, sections },
+    state.currentSection.index,
+    state.currentScreen?.index ?? -1,
+  )
+
+  if (isPopulateError && updatedState.currentScreen) {
+    updatedState.currentScreen.isPopulateError = isPopulateError
+  }
+
+  return {
+    ...updatedState,
+    screenError: normalizedScreenError,
   }
 }
 

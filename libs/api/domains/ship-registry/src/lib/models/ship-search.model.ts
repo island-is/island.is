@@ -45,6 +45,9 @@ class Ship {
   @Field(() => String, { nullable: true })
   manufacturer?: string
 
+  @Field(() => String, { nullable: true })
+  opid?: string
+
   @CacheField(() => [ShipOwner], { nullable: true })
   owners?: ShipOwner[]
 }

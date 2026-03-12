@@ -100,6 +100,7 @@ const prosecutionIndictmentsInDraftColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
+  'prosecutor',
   'created',
 ]
 

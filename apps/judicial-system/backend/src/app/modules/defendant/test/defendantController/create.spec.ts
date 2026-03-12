@@ -1,6 +1,7 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import { Gender, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
@@ -31,16 +32,27 @@ describe('DefendantController - Create', () => {
   const defendantId = uuid()
   const createdDefendant = { id: defendantId, caseId }
 
-  let mockMessageService: MessageService
+  let mockQueuedMessages: Message[]
   let mockDefendantRepositoryService: DefendantRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, defendantRepositoryService, defendantController } =
-      await createTestingDefendantModule()
+    const {
+      queuedMessages,
+      sequelize,
+      defendantRepositoryService,
+      defendantController,
+    } = await createTestingDefendantModule()
 
-    mockMessageService = messageService
+    mockQueuedMessages = queuedMessages
     mockDefendantRepositoryService = defendantRepositoryService
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockCreate = mockDefendantRepositoryService.create as jest.Mock
     mockCreate.mockResolvedValue(createdDefendant)
@@ -70,10 +82,10 @@ describe('DefendantController - Create', () => {
     })
 
     it('should create a defendant', () => {
-      expect(mockDefendantRepositoryService.create).toHaveBeenCalledWith({
-        ...defendantToCreate,
-        caseId,
-      })
+      expect(mockDefendantRepositoryService.create).toHaveBeenCalledWith(
+        { ...defendantToCreate, caseId },
+        { transaction },
+      )
     })
 
     it('should return defendant', () => {
@@ -81,7 +93,7 @@ describe('DefendantController - Create', () => {
     })
 
     it('should not queue any messages', () => {
-      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 
@@ -91,7 +103,7 @@ describe('DefendantController - Create', () => {
     })
 
     it('should queue messages', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
           user,

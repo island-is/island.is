@@ -15,7 +15,7 @@ export const Application = () => {
   const { data, error, loading } = useQuery(GET_APPLICATION, {
     variables: { input: { id, slug } },
     skip: !id,
-    fetchPolicy: 'cache-first',
+    fetchPolicy: 'no-cache',
   })
 
   if (!id || !slug) {

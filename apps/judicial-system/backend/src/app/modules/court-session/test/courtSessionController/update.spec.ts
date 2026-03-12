@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
@@ -27,13 +28,18 @@ describe('CourtSessionController - Update', () => {
   const courtSessionToUpdate = { location, attendees }
 
   let mockCourtSessionRepositoryService: CourtSessionRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { courtSessionRepositoryService, courtSessionController } =
+    const { sequelize, courtSessionRepositoryService, courtSessionController } =
       await createTestingCourtSessionModule()
 
-    mockCourtSessionRepositoryService = courtSessionRepositoryService
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
     const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
@@ -81,7 +87,7 @@ describe('CourtSessionController - Update', () => {
         caseId,
         courtSessionId,
         courtSessionToUpdate,
-        { transaction: undefined },
+        { transaction },
       )
       expect(then.result).toBe(updatedCourtSession)
     })

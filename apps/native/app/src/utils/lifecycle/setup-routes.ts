@@ -51,16 +51,21 @@ export function setupRoutes() {
     selectTab(4)
   })
 
-  addRoute('/applications', async () => {
-    Navigation.dismissAllModals()
-    selectTab(3)
+  addRoute('/applications', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.popToRoot(StackRegistry.MoreStack)
+    await Navigation.push(StackRegistry.MoreStack, {
+      component: {
+        name: ComponentRegistry.ApplicationsScreen,
+        passProps,
+      },
+    })
   })
 
   addRoute('/applications-completed', async (passProps) => {
-    Navigation.dismissAllModals()
-    selectTab(3)
-    await Navigation.popToRoot(StackRegistry.ApplicationsStack)
-    await Navigation.push(ComponentRegistry.ApplicationsScreen, {
+    await Navigation.dismissAllModals()
+    await Navigation.push(StackRegistry.MoreStack, {
       component: {
         name: ComponentRegistry.ApplicationsCompletedScreen,
         passProps,
@@ -69,10 +74,8 @@ export function setupRoutes() {
   })
 
   addRoute('/applications-in-progress', async (passProps) => {
-    Navigation.dismissAllModals()
-    selectTab(3)
-    await Navigation.popToRoot(StackRegistry.ApplicationsStack)
-    await Navigation.push(ComponentRegistry.ApplicationsScreen, {
+    await Navigation.dismissAllModals()
+    await Navigation.push(StackRegistry.MoreStack, {
       component: {
         name: ComponentRegistry.ApplicationsInProgressScreen,
         passProps,
@@ -81,10 +84,8 @@ export function setupRoutes() {
   })
 
   addRoute('/applications-incomplete', async (passProps) => {
-    Navigation.dismissAllModals()
-    selectTab(3)
-    await Navigation.popToRoot(StackRegistry.ApplicationsStack)
-    await Navigation.push(ComponentRegistry.ApplicationsScreen, {
+    await Navigation.dismissAllModals()
+    await Navigation.push(StackRegistry.MoreStack, {
       component: {
         name: ComponentRegistry.ApplicationsIncompleteScreen,
         passProps,
@@ -150,13 +151,17 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/health-overview', async (passProps) => {
+  addRoute('/health-overview', async () => {
     await Navigation.dismissAllModals()
-    selectTab(4)
-    await Navigation.popToRoot(StackRegistry.MoreStack)
-    await Navigation.push(ComponentRegistry.MoreScreen, {
+    selectTab(3)
+  })
+
+  addRoute('/health-categories', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(3)
+    await Navigation.push(StackRegistry.HealthStack, {
       component: {
-        name: ComponentRegistry.HealthOverviewScreen,
+        name: ComponentRegistry.HealthCategoriesScreen,
         passProps,
       },
     })
@@ -164,8 +169,8 @@ export function setupRoutes() {
 
   addRoute('/vaccinations', async (passProps) => {
     await Navigation.dismissAllModals()
-    selectTab(4)
-    await Navigation.push(ComponentRegistry.MoreScreen, {
+    selectTab(3)
+    await Navigation.push(StackRegistry.HealthStack, {
       component: {
         name: ComponentRegistry.VaccinationsScreen,
         passProps,
@@ -173,10 +178,51 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/questionnaires', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(3)
+    await Navigation.push(StackRegistry.HealthStack, {
+      component: {
+        name: ComponentRegistry.QuestionnairesScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/medicine-delegation/add', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.MedicineDelegationFormScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
+  addRoute('/medicine-delegation/detail', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.MedicineDelegationDetailScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
   addRoute('/prescriptions', async (passProps) => {
     await Navigation.dismissAllModals()
-    selectTab(4)
-    await Navigation.push(ComponentRegistry.MoreScreen, {
+    selectTab(3)
+    await Navigation.push(StackRegistry.HealthStack, {
       component: {
         name: ComponentRegistry.PrescriptionsScreen,
         passProps,
@@ -186,8 +232,8 @@ export function setupRoutes() {
 
   addRoute('/prescriptions/medicine-history', async (passProps) => {
     await Navigation.dismissAllModals()
-    selectTab(4)
-    await Navigation.push(ComponentRegistry.MoreScreen, {
+    selectTab(3)
+    await Navigation.push(StackRegistry.HealthStack, {
       component: {
         name: ComponentRegistry.MedicineHistoryScreen,
         passProps,
@@ -206,6 +252,17 @@ export function setupRoutes() {
             },
           },
         ],
+      },
+    })
+  })
+
+  addRoute('/appointments', async (passProps) => {
+    await Navigation.dismissAllModals()
+    selectTab(3)
+    await Navigation.push(StackRegistry.HealthStack, {
+      component: {
+        name: ComponentRegistry.AppointmentsScreen,
+        passProps,
       },
     })
   })

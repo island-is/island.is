@@ -1,12 +1,13 @@
 import {
+  buildAlertMessageField,
   buildMultiField,
   buildSection,
   buildStaticTableField,
   buildSubmitField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { CarCategoryRecord } from '../../utils/types'
 import { m } from '../../lib/messages'
+import { formatDayRateApiErrorMessages } from '../../utils/errorFormatUtils'
 
 export const carsChangesCountSection = buildSection({
   id: 'carsChangesCountSection',
@@ -19,18 +20,31 @@ export const carsChangesCountSection = buildSection({
         buildStaticTableField({
           header: [m.carsChangesCount.header],
           rows: (application) => {
-            const data =
-              getValueViaPath<CarCategoryRecord[]>(
+            const carsToChangeCount = getValueViaPath<number>(
+              application.answers,
+              'carsToChangeCount',
+            )
+            const vehicleLatestMilageRows =
+              getValueViaPath<Array<unknown>>(
                 application.answers,
-                'carsToChange',
+                'vehicleLatestMilageRows',
               ) ?? []
+            const countToDisplay =
+              carsToChangeCount ?? vehicleLatestMilageRows.length
 
-            return [[data.length.toString()]]
+            return [[countToDisplay.toString()]]
           },
+        }),
+        buildAlertMessageField({
+          id: 'carsChangesCountAlertMessage',
+          alertType: 'info',
+          message: m.carsChangesCount.alertMessage,
         }),
         buildSubmitField({
           id: 'submit',
           refetchApplicationAfterSubmit: true,
+          renderLongErrors: true,
+          formatLongErrorMessage: formatDayRateApiErrorMessages,
           actions: [
             {
               event: 'SUBMIT',

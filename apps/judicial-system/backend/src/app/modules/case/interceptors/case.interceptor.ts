@@ -9,6 +9,7 @@ import {
 
 import {
   CaseFileCategory,
+  CaseFileState,
   CaseIndictmentRulingDecision,
   DefendantEventType,
   EventType,
@@ -25,6 +26,7 @@ import {
 import {
   Case,
   CaseString,
+  CivilClaimant,
   Defendant,
   DefendantEventLog,
   EventLog,
@@ -34,10 +36,12 @@ export const transformDefendants = ({
   defendants,
   indictmentRulingDecision,
   rulingDate,
+  isRegisteredInPrisonSystem,
 }: {
   defendants?: Defendant[]
   indictmentRulingDecision?: CaseIndictmentRulingDecision
   rulingDate?: Date
+  isRegisteredInPrisonSystem?: boolean
 }) => {
   return defendants?.map((defendant) => {
     // Only the latest verdict is relevant
@@ -86,6 +90,8 @@ export const transformDefendants = ({
         DefendantEventType.OPENED_BY_PRISON_ADMIN,
         defendant.eventLogs,
       ),
+      isRegisteredInPrisonSystem:
+        defendant.isRegisteredInPrisonSystem ?? isRegisteredInPrisonSystem,
     }
   })
 }
@@ -140,14 +146,42 @@ const transformCaseRepresentatives = (theCase: Case) => {
   ].filter((representative) => !!representative)
 }
 
-const transformCase = (theCase: Case, user?: User) => {
+const transformCase = (
+  theCase: Case,
+  user: User | undefined,
+): Record<string, unknown> => {
   return {
     ...theCase.toJSON(),
     defendants: transformDefendants({
       defendants: theCase.defendants,
       indictmentRulingDecision: theCase.indictmentRulingDecision,
       rulingDate: theCase.rulingDate,
+      isRegisteredInPrisonSystem: theCase.isRegisteredInPrisonSystem,
     }),
+    caseFiles: theCase.caseFiles?.filter(
+      (file) =>
+        // The user must be known
+        user &&
+        // Rejected files are only visible to relevant parties
+        (file.state !== CaseFileState.REJECTED ||
+          (file.category === CaseFileCategory.PROSECUTOR_CASE_FILE &&
+            isProsecutionUser(user)) ||
+          ((file.category === CaseFileCategory.DEFENDANT_CASE_FILE ||
+            file.category ===
+              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE) &&
+            Defendant.isConfirmedDefenderOfDefendant(
+              user.nationalId,
+              theCase.defendants,
+            )) ||
+          ((file.category ===
+            CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE ||
+            file.category ===
+              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE) &&
+            CivilClaimant.isConfirmedSpokespersonOfCivilClaimant(
+              user.nationalId,
+              theCase.civilClaimants,
+            ))),
+    ),
     caseRepresentatives: transformCaseRepresentatives(theCase),
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
@@ -160,9 +194,9 @@ const transformCase = (theCase: Case, user?: User) => {
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
       theCase.eventLogs,
     ),
-    indictmentReviewedDate: EventLog.getEventLogDateByEventType(
-      EventType.INDICTMENT_REVIEWED,
-      theCase.eventLogs,
+    indictmentReviewedDate: DefendantEventLog.getEventLogDateByEventType(
+      DefendantEventType.INDICTMENT_REVIEWED,
+      theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
     ),
     indictmentSentToPublicProsecutorDate: EventLog.getEventLogDateByEventType(
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
@@ -198,6 +232,16 @@ const transformCase = (theCase: Case, user?: User) => {
       (isDefenceUser(user) || isPrisonSystemUser(user))
         ? undefined
         : theCase.rulingModifiedHistory,
+    parentCase: theCase.parentCase && transformCase(theCase.parentCase, user),
+    childCase: theCase.childCase && transformCase(theCase.childCase, user),
+    mergeCase: theCase.mergeCase && transformCase(theCase.mergeCase, user),
+    mergedCases:
+      theCase.mergedCases &&
+      theCase.mergedCases.map((mergedCase) => transformCase(mergedCase, user)),
+    splitCase: theCase.splitCase && transformCase(theCase.splitCase, user),
+    splitCases:
+      theCase.splitCases &&
+      theCase.splitCases.map((splitCase) => transformCase(splitCase, user)),
   }
 }
 
@@ -205,7 +249,8 @@ const transformCase = (theCase: Case, user?: User) => {
 export class CaseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
-    const user = request.user?.currentUser as User | undefined
+
+    const user: User | undefined = request.user?.currentUser
 
     return next.handle().pipe(map((theCase) => transformCase(theCase, user)))
   }
@@ -214,10 +259,16 @@ export class CaseInterceptor implements NestInterceptor {
 @Injectable()
 export class CasesInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler) {
+    const request = context.switchToHttp().getRequest()
+
+    const user: User | undefined = request.user?.currentUser
+
     return next
       .handle()
       .pipe(
-        map((cases: Case[]) => cases.map((theCase) => transformCase(theCase))),
+        map((cases: Case[]) =>
+          cases.map((theCase) => transformCase(theCase, user)),
+        ),
       )
   }
 }

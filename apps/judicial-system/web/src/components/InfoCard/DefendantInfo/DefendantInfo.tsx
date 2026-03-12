@@ -1,23 +1,27 @@
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'motion/react'
 
-import { Box, Icon, LinkV2, Text } from '@island.is/island-ui/core'
+import { Box, Icon, LinkV2, Tag, Text } from '@island.is/island-ui/core'
 import { INDICTMENTS_COURT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   districtCourtAbbreviation,
   formatDate,
   formatDOB,
+  normalizeAndFormatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { isPublicProsecutionOfficeUser } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   Defendant,
   ServiceRequirement,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useConnectedCasesQuery } from '@island.is/judicial-system-web/src/routes/Court/Indictments/Conclusion/connectedCases.generated'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
+import { UserContext } from '../../UserProvider/UserProvider'
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
+import { useConnectedCasesQuery } from './connectedCases.generated'
 import {
   getAppealExpirationInfo,
   getVerdictViewDateText,
@@ -44,6 +48,9 @@ interface DefendantInfoProps {
   displaySentToPrisonAdminDate?: boolean
   defender?: Defender
   displayOpenCaseReference?: boolean
+  isDismissalCase?: boolean
+  isCancellationCase?: boolean
+  isFineCase?: boolean
 }
 
 const ConnectedCasesInfo = ({
@@ -56,36 +63,36 @@ const ConnectedCasesInfo = ({
   courtId?: string
 }) => {
   const { data: connectedCasesData } = useConnectedCasesQuery({
-    variables: {
-      input: {
-        id: workingCaseId,
-      },
-    },
+    variables: { input: { id: workingCaseId } },
   })
+
   const connectedCases = connectedCasesData?.connectedCases
     ?.filter((connectedCase) =>
-      connectedCase?.defendants?.some(
-        (d) => d.nationalId === defendant.nationalId,
+      connectedCase.defendants?.some((d) =>
+        defendant.noNationalId
+          ? defendant.nationalId === d.nationalId && defendant.name === d.name
+          : d.nationalId &&
+            normalizeAndFormatNationalId(defendant.nationalId).includes(
+              d.nationalId,
+            ),
       ),
     )
     .map((connectedCase) => {
       const hasCourtAccess = courtId === connectedCase.court?.id
+      const key = `${defendant.id}-${courtId}-${connectedCase.courtCaseNumber}`
+
       return hasCourtAccess ? (
         <LinkV2
           href={`${INDICTMENTS_COURT_OVERVIEW_ROUTE}/${connectedCase.id}`}
           className={link}
-          key={`${defendant.nationalId}-${connectedCase.courtCaseNumber}`}
+          key={key}
         >
           <Text as="span" whiteSpace="pre">
             {connectedCase.courtCaseNumber}
           </Text>
         </LinkV2>
       ) : (
-        <Text
-          as="span"
-          whiteSpace="pre"
-          key={`${defendant.nationalId}-${connectedCase.courtCaseNumber}`}
-        >
+        <Text as="span" whiteSpace="pre" key={key}>
           {`${connectedCase.courtCaseNumber} (${districtCourtAbbreviation(
             connectedCase.court?.name,
           )})`}
@@ -129,8 +136,12 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     displaySentToPrisonAdminDate = true,
     displayOpenCaseReference,
     defender,
+    isDismissalCase,
+    isCancellationCase,
+    isFineCase,
   } = props
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
   const hasDefender = defendant.defenderName || defender?.name
   const defenderLabel =
     defender?.sessionArrangement ===
@@ -149,76 +160,125 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   })
 
   return (
-    <Box className={grid({ gap: 1 })}>
-      <Text>
-        <Text as="span" fontWeight="semiBold">{`${formatMessage(
-          infoCardStrings.name,
-        )}: `}</Text>
-        <Text as="span">
-          {defendant.name}
-          {defendant.nationalId &&
-            `, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
-          {defendant.citizenship && `, (${defendant.citizenship})`}
+    <Box display="flex" justifyContent="spaceBetween">
+      <div className={grid({ gap: 1 })}>
+        <Text>
+          <Text as="span" fontWeight="semiBold">{`${formatMessage(
+            infoCardStrings.name,
+          )}: `}</Text>
+          <Text as="span">
+            {defendant.name}
+            {defendant.nationalId &&
+              `, ${formatDOB(defendant.nationalId, defendant.noNationalId)}`}
+            {defendant.citizenship && `, (${defendant.citizenship})`}
+          </Text>
         </Text>
-      </Text>
-      <Text>
-        <Text as="span" fontWeight="semiBold">{`${formatMessage(
-          core.addressOrResidence,
-        )}: `}</Text>
-        <Text as="span">
-          {defendant.address ? defendant.address : 'Ekki skráð'}
+        <Text>
+          <Text as="span" fontWeight="semiBold">{`${formatMessage(
+            core.addressOrResidence,
+          )}: `}</Text>
+          <Text as="span">
+            {defendant.address ? defendant.address : 'Ekki skráð'}
+          </Text>
         </Text>
-      </Text>
-      <Text>
-        <Text as="span" whiteSpace="pre" fontWeight="semiBold">
-          {`${defenderLabel}: `}
+        <Text>
+          <Text as="span" whiteSpace="pre" fontWeight="semiBold">
+            {`${defenderLabel}: `}
+          </Text>
+          {hasDefender ? (
+            RenderPersonalData({
+              name: defenderName,
+              email: defenderEmail,
+              phoneNumber: defenderPhoneNumber,
+              breakSpaces: false,
+            })
+          ) : (
+            <Text as="span">{formatMessage(strings.noDefender)}</Text>
+          )}
         </Text>
-        {hasDefender ? (
-          RenderPersonalData({
-            name: defenderName,
-            email: defenderEmail,
-            phoneNumber: defenderPhoneNumber,
-            breakSpaces: false,
-          })
-        ) : (
-          <Text as="span">{formatMessage(strings.noDefender)}</Text>
-        )}
-      </Text>
-      {displayAppealExpirationInfo && (
-        <Text fontWeight="semiBold">
-          {formatMessage(appealExpirationInfo.message, {
-            appealExpirationDate: appealExpirationInfo.date,
-            deadlineType: defendant.verdict?.isDefaultJudgement
-              ? 'Endurupptökufrestur'
-              : 'Áfrýjunarfrestur',
-          })}
-        </Text>
-      )}
-      {displayVerdictViewDate &&
-        defendant.verdict?.serviceRequirement &&
-        defendant.verdict?.serviceRequirement !==
-          ServiceRequirement.NOT_REQUIRED && (
+        {displayAppealExpirationInfo && (
           <Text fontWeight="semiBold">
-            {getVerdictViewDateText(
-              formatMessage,
-              defendant.verdict?.serviceDate,
-            )}
+            {formatMessage(appealExpirationInfo.message, {
+              appealExpirationDate: appealExpirationInfo.date,
+              deadlineType: defendant.verdict?.isDefaultJudgement
+                ? 'Endurupptökufrestur'
+                : 'Áfrýjunarfrestur',
+            })}
           </Text>
         )}
-      {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
-        <Text fontWeight="semiBold">
-          {formatMessage(strings.sendToPrisonAdminDate, {
-            date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
-          })}
-        </Text>
-      )}
-      {displayOpenCaseReference && (
-        <ConnectedCasesInfo
-          defendant={defendant}
-          workingCaseId={workingCaseId}
-          courtId={courtId}
-        />
-      )}
+        {displayVerdictViewDate &&
+          defendant.verdict?.serviceRequirement &&
+          defendant.verdict?.serviceRequirement !==
+            ServiceRequirement.NOT_REQUIRED && (
+            <Text fontWeight="semiBold">
+              {getVerdictViewDateText(
+                formatMessage,
+                defendant.verdict?.serviceDate,
+              )}
+            </Text>
+          )}
+        {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
+          <Text fontWeight="semiBold">
+            {formatMessage(strings.sendToPrisonAdminDate, {
+              date: formatDate(defendant.sentToPrisonAdminDate, 'PPP'),
+            })}
+          </Text>
+        )}
+        {displayOpenCaseReference && (
+          <ConnectedCasesInfo
+            defendant={defendant}
+            workingCaseId={workingCaseId}
+            courtId={courtId}
+          />
+        )}
+      </div>
+      {defendant.verdict ? (
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.span
+            initial={{ opacity: 0, y: 3 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            key={
+              defendant.verdict.isAcquittedByPublicProsecutionOffice
+                ? 'acquitted'
+                : defendant.verdict.isDefaultJudgement
+                ? 'defaultJudgement'
+                : 'convicted'
+            }
+          >
+            {defendant.verdict.isAcquittedByPublicProsecutionOffice &&
+            isPublicProsecutionOfficeUser(user) ? (
+              <Tag variant="darkerBlue" outlined disabled>
+                Sýknudómur
+              </Tag>
+            ) : (
+              <Tag
+                variant={
+                  defendant.verdict.isDefaultJudgement ? 'purple' : 'darkerBlue'
+                }
+                outlined
+                disabled
+              >
+                {defendant.verdict.isDefaultJudgement
+                  ? 'Útivistardómur'
+                  : 'Dómur'}
+              </Tag>
+            )}
+          </motion.span>
+        </AnimatePresence>
+      ) : isDismissalCase ? (
+        <Tag variant="blue" outlined disabled>
+          Frávísun
+        </Tag>
+      ) : isCancellationCase ? (
+        <Tag variant="rose" outlined disabled>
+          Niðurfelling
+        </Tag>
+      ) : isFineCase ? (
+        <Tag variant="mint" outlined disabled>
+          Viðurlagaákvörðun
+        </Tag>
+      ) : null}
     </Box>
   )
 }

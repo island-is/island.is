@@ -635,6 +635,11 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionMunicipalLists',
     defaultMessage: 'Sveitarstjórnarkosningar',
   },
+  signatureCollectionMunicipalListsNavigationDescription: {
+    id: 'service.portal:signatureCollectionMunicipalListsNavigationDescription',
+    defaultMessage:
+      'Hér sérðu framboð sem hægt er að mæla með í þínu sveitarfélagi fyrir sveitarstjórnarkosningar 2026',
+  },
   signatureCollectionParliamentaryLists: {
     id: 'service.portal:signatureCollectionParliamentaryLists',
     defaultMessage: 'Alþingiskosningar',
@@ -946,7 +951,7 @@ export const m = defineMessages({
   },
   contracts: {
     id: 'service.portal:contracts',
-    defaultMessage: 'Samningar',
+    defaultMessage: 'Húsaleigusamningar',
   },
   contract: {
     id: 'service.portal:contract',

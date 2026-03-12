@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import {
@@ -38,10 +39,18 @@ describe('CaseController - Get indictment pdf', () => {
   const res = { end: jest.fn() } as unknown as Response
 
   let mockAwsS3Service: AwsS3Service
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, caseController } = await createTestingCaseModule()
+    const { sequelize, awsS3Service, caseController } =
+      await createTestingCaseModule()
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     mockAwsS3Service = awsS3Service
     const mockGetObject = mockAwsS3Service.getObject as jest.Mock

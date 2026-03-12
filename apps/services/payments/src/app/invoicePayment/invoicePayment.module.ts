@@ -20,6 +20,7 @@ import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
 import { InvoicePaymentModuleConfig } from './invoicePayment.config'
 import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.model'
+import { PaymentWorkerEvent } from '../paymentFlow/models/paymentWorkerEvent.model'
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { PaymentFulfillment } from '../paymentFlow/models/paymentFulfillment.mod
       FjsCharge,
       CardPaymentDetails,
       PaymentFulfillment,
+      PaymentWorkerEvent,
     ]),
     ConfigModule.forRoot({
       load: [PaymentFlowModuleConfig, JwksConfig, InvoicePaymentModuleConfig],

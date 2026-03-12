@@ -12,10 +12,17 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 
+import categoriesIcon from '../../assets/icons/categories.png'
 import externalLinkIcon from '../../assets/icons/external-link.png'
+import medicineIcon from '../../assets/icons/medicine.png'
+import readerIcon from '../../assets/icons/reader.png'
+import vaccinationsIcon from '../../assets/icons/vaccinations.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { getConfig } from '../../config'
+import { BaseAppointmentStatuses } from '../../constants/base-appointment-statuses'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
+  useGetAppointmentsQuery,
   useGetBloodTypeOverviewQuery,
   useGetDentistOverviewQuery,
   useGetHealthCenterQuery,
@@ -28,37 +35,47 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
+import { useNavigationModal } from '../../hooks/use-navigation-modal'
 import { navigateTo } from '../../lib/deep-linking'
 import { useBrowser } from '../../lib/use-browser'
 import {
   Alert,
-  Button,
+  GeneralCardSkeleton,
   Heading,
   Input,
   InputRow,
+  MoreCard,
   Problem,
+  Skeleton,
   TopLine,
   Typography,
 } from '../../ui'
+import { ComponentRegistry } from '../../utils/component-registry'
+import { testIDs } from '../../utils/test-ids'
+import { AppointmentCard } from '../appointments/components/appointment-card'
 
-const ButtonWrapper = styled.View`
+const Row = styled.View`
+  margin-vertical: ${({ theme }) => theme.spacing.smallGutter}px;
+  column-gap: ${({ theme }) => theme.spacing[1]}px;
   flex-direction: row;
-  margin-top: ${({ theme }) => theme.spacing[3]}px;
-  margin-bottom: ${({ theme }) => -theme.spacing[1]}px;
-  gap: ${({ theme }) => theme.spacing[2]}px;
-  flex-wrap: wrap;
+`
+
+const AppointmentsContainer = styled.View`
+  row-gap: ${({ theme }) => theme.spacing[1]}px;
 `
 
 interface HeadingSectionProps {
   title: string
   linkTextId?: string
   onPress?: () => void
+  showIcon?: boolean
 }
 
 const HeadingSection: React.FC<HeadingSectionProps> = ({
   title,
   onPress,
   linkTextId,
+  showIcon = true,
 }) => {
   const theme = useTheme()
 
@@ -88,7 +105,7 @@ const HeadingSection: React.FC<HeadingSectionProps> = ({
                 >
                   <FormattedMessage id={linkTextId ?? 'button.seeAll'} />
                 </Typography>
-                <Image source={externalLinkIcon} />
+                {showIcon && <Image source={externalLinkIcon} />}
               </>
             )}
           </TouchableOpacity>
@@ -145,13 +162,29 @@ const showErrorComponent = (error: ApolloError) => {
 }
 
 const { getNavigationOptions, useNavigationOptions } =
-  createNavigationOptionHooks((_, intl) => ({
-    topBar: {
-      title: {
+  createNavigationOptionHooks(
+    (theme, intl) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({ id: 'health.overview.screenTitle' }),
+        },
+      },
+      bottomTab: {
+        iconColor: theme.color.blue400,
         text: intl.formatMessage({ id: 'health.overview.screenTitle' }),
       },
+    }),
+    {
+      bottomTab: {
+        testID: testIDs.TABBAR_TAB_HEALTH,
+        iconInsets: {
+          bottom: -4,
+        },
+        icon: require('../../assets/icons/tabbar-health.png'),
+        selectedIcon: require('../../assets/icons/tabbar-health-selected.png'),
+      },
     },
-  }))
+  )
 
 export const HealthOverviewScreen: NavigationFunctionComponent = ({
   componentId,
@@ -160,16 +193,109 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const theme = useTheme()
   const { openBrowser } = useBrowser()
+  const { showModal } = useNavigationModal()
   const origin = getConfig().apiUrl.replace(/\/api$/, '')
   const [refetching, setRefetching] = useState(false)
+
   const { width } = useWindowDimensions()
-  const buttonStyle = { flex: 1, minWidth: width * 0.5 - theme.spacing[3] }
-  const isVaccinationsEnabled = useFeatureFlag('isVaccinationsEnabled', false)
-  const isPrescriptionsEnabled = useFeatureFlag('isPrescriptionsEnabled', false)
-  const isOrganDonationEnabled = useFeatureFlag('isOrganDonationEnabled', false)
+
   const scrollY = useRef(new Animated.Value(0)).current
+  const isVaccinationsEnabled = useFeatureFlag(
+    'isVaccinationsEnabled',
+    false,
+    null,
+  )
+  const isMedicineDelegationEnabled = useFeatureFlag(
+    'isMedicineDelegationEnabled',
+    false,
+    null,
+  )
+  const isPrescriptionsEnabled = useFeatureFlag(
+    'isPrescriptionsEnabled',
+    false,
+    null,
+  )
+  const isOrganDonationEnabled = useFeatureFlag(
+    'isOrganDonationEnabled',
+    false,
+    null,
+  )
+  const isQuestionnaireFeatureEnabled = useFeatureFlag(
+    'isQuestionnaireEnabled',
+    false,
+    null,
+  )
+  const isAppointmentsEnabled = useFeatureFlag(
+    'isAppointmentsEnabled',
+    false,
+    null,
+  )
+
+  const isLoadingFeatureFlags =
+    isVaccinationsEnabled === null ||
+    isMedicineDelegationEnabled === null ||
+    isPrescriptionsEnabled === null ||
+    isOrganDonationEnabled === null ||
+    isQuestionnaireFeatureEnabled === null ||
+    isAppointmentsEnabled === null
 
   const now = useMemo(() => new Date().toISOString(), [])
+
+  const healthCardRows = useMemo(() => {
+    const healthCards = [
+      {
+        id: 'medicine',
+        titleId:
+          !isPrescriptionsEnabled && !isMedicineDelegationEnabled
+            ? 'health.drugCertificates.title'
+            : 'health.overview.medicine',
+        icon: medicineIcon,
+        route: '/prescriptions',
+        enabled: true,
+      },
+      {
+        id: 'questionnaires',
+        titleId: 'health.overview.questionnaires',
+        icon: readerIcon,
+        route: '/questionnaires',
+        enabled: isQuestionnaireFeatureEnabled,
+      },
+      {
+        id: 'vaccinations',
+        titleId: 'health.overview.vaccinations',
+        icon: vaccinationsIcon,
+        route: '/vaccinations',
+        enabled: isVaccinationsEnabled,
+      },
+      {
+        id: 'seeAllCategories',
+        titleId: 'health.overview.seeAllCategories',
+        icon: categoriesIcon,
+        route: '/health-categories',
+        enabled: true,
+        filled: true,
+      },
+    ].filter((card) => card.enabled)
+
+    const perRow = healthCards.length === 4 ? 2 : 3
+
+    const rows = []
+    for (let i = 0; i < healthCards.length; i += perRow) {
+      rows.push(healthCards.slice(i, i + perRow))
+    }
+
+    return { rows, itemsPerRow: perRow }
+  }, [
+    isPrescriptionsEnabled,
+    isMedicineDelegationEnabled,
+    isQuestionnaireFeatureEnabled,
+    isVaccinationsEnabled,
+  ])
+
+  const { rows: healthCardRowsList, itemsPerRow } = healthCardRows
+  const horizontalPadding = theme.spacing[2] * 2 // Left + right padding
+  const columnGaps = theme.spacing[1] * (itemsPerRow - 1) // Gaps between cards
+  const cardWidth = (width - horizontalPadding - columnGaps) / itemsPerRow
 
   const medicinePurchaseRes = useGetMedicineDataQuery()
   const organDonationRes = useGetOrganDonorStatusQuery({
@@ -201,6 +327,14 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
       },
     },
   })
+  const appointmentsRes = useGetAppointmentsQuery({
+    variables: {
+      from: undefined,
+      status: BaseAppointmentStatuses,
+    },
+    skip: !isAppointmentsEnabled,
+    notifyOnNetworkStatusChange: true,
+  })
 
   const medicinePurchaseData =
     medicinePurchaseRes.data?.rightsPortalDrugPeriods?.[0]
@@ -211,6 +345,8 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
     paymentOverviewRes.data?.rightsPortalPaymentOverview?.items?.[0]
   const organDonationData =
     organDonationRes.data?.healthDirectorateOrganDonation.donor
+  const appointments =
+    appointmentsRes.data?.healthDirectorateAppointments.data ?? []
 
   const isMedicinePeriodActive =
     medicinePurchaseData?.active ||
@@ -230,6 +366,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
       paymentOverviewRes,
       organDonationRes,
       dentistRes,
+      appointmentsRes,
     ],
   })
 
@@ -246,6 +383,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         dentistRes.refetch(),
         isOrganDonationEnabled && organDonationRes.refetch(),
         bloodTypeRes.refetch(),
+        isAppointmentsEnabled && appointmentsRes.refetch(),
       ].filter(Boolean)
       await Promise.all(promises)
     } catch (e) {
@@ -263,7 +401,20 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
     isOrganDonationEnabled,
     dentistRes,
     bloodTypeRes,
+    isAppointmentsEnabled,
+    appointmentsRes,
   ])
+
+  const handleAppointmentPress = useCallback(
+    (appointmentId: string) => {
+      showModal(ComponentRegistry.AppointmentDetailScreen, {
+        passProps: {
+          appointmentId,
+        },
+      })
+    },
+    [showModal],
+  )
 
   return (
     <>
@@ -282,81 +433,90 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
           },
         )}
       >
-        <Heading>
-          <FormattedMessage
-            id="health.overview.title"
-            defaultMessage="Heilsan mín"
-          />
-        </Heading>
-        <Typography>
-          <FormattedMessage
-            id="health.overview.description"
-            defaultMessage="Hér finnur þú þín heilsufarsgögn, heilsugæslu og sjúkratryggingar"
-          />
-        </Typography>
-        <ButtonWrapper>
-          {isVaccinationsEnabled && (
-            <Button
+        {isLoadingFeatureFlags ? (
+          <>
+            {Array.from({ length: 2 }).map((_, index) => (
+              <Row key={index}>
+                {Array.from({ length: itemsPerRow }).map((_, index) => (
+                  <Skeleton
+                    height={70}
+                    style={{ width: cardWidth, borderRadius: 16 }}
+                    key={index}
+                  />
+                ))}
+              </Row>
+            ))}
+          </>
+        ) : (
+          healthCardRowsList.map((row, rowIndex) => (
+            <Row key={`health-card-row-${rowIndex}`}>
+              {row.map((card) => (
+                <MoreCard
+                  key={card.id}
+                  title={intl.formatMessage({ id: card.titleId })}
+                  icon={card.icon}
+                  onPress={
+                    card.route
+                      ? () => navigateTo(card.route, componentId)
+                      : () => {
+                          // noop
+                        }
+                  }
+                  small
+                  filled={card.filled}
+                  style={{ flex: 0, width: cardWidth }}
+                />
+              ))}
+            </Row>
+          ))
+        )}
+        {isAppointmentsEnabled && (
+          <>
+            <HeadingSection
               title={intl.formatMessage({
-                id: 'health.overview.vaccinations',
+                id: 'health.appointments.screenTitle',
               })}
-              isOutlined
-              isUtilityButton
-              iconStyle={{ tintColor: theme.color.dark300 }}
-              style={buttonStyle}
-              ellipsis
-              onPress={() => navigateTo('/vaccinations', componentId)}
+              showIcon={false}
+              onPress={() => navigateTo('/appointments', componentId)}
             />
-          )}
-          <Button
-            title={intl.formatMessage({
-              id: isPrescriptionsEnabled
-                ? 'health.prescriptionsAndCertificates.screenTitle'
-                : 'health.drugCertificates.title',
-            })}
-            isOutlined
-            isUtilityButton
-            iconStyle={{ tintColor: theme.color.dark300 }}
-            style={buttonStyle}
-            ellipsis
-            onPress={() => navigateTo('/prescriptions', componentId)}
-          />
-          <Button
-            title={intl.formatMessage({ id: 'health.overview.therapy' })}
-            isOutlined
-            isUtilityButton
-            icon={externalLinkIcon}
-            iconStyle={{ tintColor: theme.color.dark300 }}
-            style={buttonStyle}
-            ellipsis
-            onPress={() =>
-              openBrowser(
-                `${origin}/minarsidur/heilsa/thjalfun/sjukrathjalfun`,
-                componentId,
-              )
-            }
-          />
-          <Button
-            title={intl.formatMessage({
-              id: 'health.overview.aidsAndNutrition',
-            })}
-            isOutlined
-            isUtilityButton
-            icon={externalLinkIcon}
-            iconStyle={{ tintColor: theme.color.dark300 }}
-            style={{
-              ...buttonStyle,
-              maxWidth: width * 0.5 - theme.spacing[3],
-            }}
-            ellipsis
-            onPress={() =>
-              openBrowser(
-                `${origin}/minarsidur/heilsa/hjalpartaeki-og-naering`,
-                componentId,
-              )
-            }
-          />
-        </ButtonWrapper>
+            {appointmentsRes.loading && (
+              <AppointmentsContainer>
+                {Array.from({ length: 2 }).map((_, index) => (
+                  <GeneralCardSkeleton height={100} key={index} />
+                ))}
+              </AppointmentsContainer>
+            )}
+            {appointmentsRes.error && !appointmentsRes.data && (
+              <AppointmentsContainer>
+                <Problem error={appointmentsRes.error} size="small" />
+              </AppointmentsContainer>
+            )}
+            {!appointmentsRes.loading &&
+              !appointmentsRes.error &&
+              appointments.length === 0 && (
+                <AppointmentsContainer>
+                  <Problem type="no_data" size="small" />
+                </AppointmentsContainer>
+              )}
+            {!appointmentsRes.loading &&
+              !appointmentsRes.error &&
+              appointments.length > 0 && (
+                <AppointmentsContainer>
+                  {appointments.slice(0, 2).map((appointment) => (
+                    <AppointmentCard
+                      key={appointment.id}
+                      id={appointment.id}
+                      title={appointment.title ?? ''}
+                      practitioners={appointment.practitioners}
+                      date={appointment.date ?? ''}
+                      location={appointment.location?.name ?? ''}
+                      onPress={handleAppointmentPress}
+                    />
+                  ))}
+                </AppointmentsContainer>
+              )}
+          </>
+        )}
         <HeadingSection
           title={intl.formatMessage({
             id: 'health.overview.coPayments',
@@ -769,6 +929,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
         </InputRow>
       </Animated.ScrollView>
       <TopLine scrollY={scrollY} />
+      <BottomTabsIndicator index={3} total={5} />
     </>
   )
 }

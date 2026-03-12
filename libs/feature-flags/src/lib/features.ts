@@ -11,7 +11,6 @@ export enum Features {
   passportApplication = 'isPassportApplicationEnabled',
   passportAnnulmentApplication = 'isPassportAnnulmentApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
-  alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
@@ -53,7 +52,8 @@ export enum Features {
   servicePortalHealthMedicineLandlaeknirPageEnabled = 'isServicePortalHealthMedicineLandlaeknirPageEnabled',
   servicePortalHealthMedicineDelegationPageEnabled = 'isServicePortalHealthMedicineDelegationPageEnabled',
   servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
-  servicePortalMyContractsPageEnabled = 'isPortalMyContractsPageEnabled',
+  isServicePortalMyContractsPageEnabled = 'isServicePortalMyContractsPageEnabled',
+  isServicePortalMyPagesTRBankInformationPageEnabled = 'isServicePortalMyPagesTRBankInformationPageEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
   isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
@@ -69,7 +69,7 @@ export enum Features {
   isNewPermissionsOptionsEnabled = 'isNewPermissionsOptionsEnabled',
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
   isServicePortalHealthAppointmentsPageEnabled = 'isServicePortalHealthAppointmentsPageEnabled',
-
+  isServicePortalHealthPaymentOverviewTotalPageEnabled = 'isServicePortalHealthPaymentOverviewTotalPageEnabled',
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
   pkPassV2 = 'isPkPassV2Enabled',
@@ -131,6 +131,8 @@ export enum Features {
   useIslandisPaymentForApplicationSystem = 'useIslandisPaymentForApplicationSystem',
   isIslandisInvoicePaymentEnabled = 'isIslandisInvoicePaymentEnabled',
   isIslandisInvoicePaymentAllowedForUser = 'isislandisinvoicepaymentsallowedforuser',
+  isIslandisApplePayPaymentEnabled = 'isIslandisApplePayPaymentEnabled',
+  isIslandisApplePayPaymentAllowedForUser = 'isIslandisApplePayPaymentAllowedForUser',
 
   // Should auth api use national registry v3 for checking deceased status
   isNationalRegistryV3DeceasedStatusEnabled = 'isNationalRegistryV3DeceasedStatusEnabled',
@@ -156,6 +158,18 @@ export enum Features {
 
   // Use new delegation system
   useNewDelegationSystem = 'useNewDelegationSystem',
+
+  // Validate Personal representative delegations at syslumenn
+  usePersonalRepresentativesFromSyslumenn = 'usePersonalRepresentativesFromSyslumenn',
+  // SMS Notifications
+  isSmsNotificationEnabled = 'isSmsNotificationEnabled',
+  isSendSmsNotificationsEnabled = 'isSendSmsNotificationsEnabled',
+
+  // Admin portal
+  isFormSystemInAdminPortalEnabled = 'isFormSystemInAdminPortalEnabled',
+
+  // Service portal sidebar grid layout
+  isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
 }
 
 export enum ServerSideFeature {

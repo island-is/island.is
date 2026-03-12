@@ -18,7 +18,10 @@ export const mapToElAnswer = (
       const answerValues = entry.answers.map((a) => a.value)
 
       // Handle multi-select / checkbox (ListReply)
-      if (entry.type === AnswerOptionType.checkbox) {
+      if (
+        entry.type === AnswerOptionType.checkbox ||
+        entry.type === AnswerOptionType.slider
+      ) {
         return {
           questionId,
           values: entry.answers.map((ans) => ({

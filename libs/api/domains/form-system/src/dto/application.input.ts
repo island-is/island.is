@@ -112,8 +112,8 @@ export class ApplicationInput {
   completedSectionInfo?: CompletedSectionInfoInput
 }
 
-@InputType('UpdateFormSystemApplicationDependenciesInput')
-export class UpdateApplicationDependenciesInput {
+@InputType('UpdateFormSystemApplicationSettingsInput')
+export class UpdateApplicationSettingsInput {
   @Field(() => [DependencyInput], { nullable: 'itemsAndList' })
   dependencies?: DependencyInput[]
 
@@ -126,8 +126,8 @@ export class UpdateApplicationInput {
   @Field(() => String, { nullable: true })
   id?: string
 
-  @Field(() => UpdateApplicationDependenciesInput, { nullable: true })
-  updateApplicationDto?: UpdateApplicationDependenciesInput
+  @Field(() => UpdateApplicationSettingsInput, { nullable: true })
+  updateApplicationDto?: UpdateApplicationSettingsInput
 }
 
 @InputType('SaveFormSystemScreenInput')

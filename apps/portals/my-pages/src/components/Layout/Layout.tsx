@@ -32,11 +32,14 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const isDelegation = checkDelegation(user)
 
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
-  const activeParent = navigation?.children?.find((item) => {
-    const currentItemIsActive = item.active
-    const hasActiveChild = item.children?.find((child) => child.active)
-    return currentItemIsActive || hasActiveChild
-  })
+  const activeParent = navigation?.children
+    //filter out custom shortcuts
+    ?.filter((item) => !item.customShortcut)
+    .find((item) => {
+      const currentItemIsActive = item.active
+      const hasActiveChild = item.children?.find((child) => child.active)
+      return currentItemIsActive || hasActiveChild
+    })
   const banners = useAlertBanners()
   const [ref, { height }] = useMeasure()
   const globalBanners = banners.filter((banner) =>

@@ -103,18 +103,18 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
       ? pageData.footerItems
       : organization?.footerItems ?? []
 
-  const { data: webChatData } = useQuery<GetWebChatQuery, QueryGetWebChatArgs>(
-    GET_WEB_CHAT,
-    {
-      skip: !organization?.id,
-      variables: {
-        input: {
-          displayLocationIds: [organization?.id],
-          lang: activeLocale,
-        },
+  const { data: webChatData, loading } = useQuery<
+    GetWebChatQuery,
+    QueryGetWebChatArgs
+  >(GET_WEB_CHAT, {
+    skip: !organization?.id,
+    variables: {
+      input: {
+        displayLocationIds: [organization?.id],
+        lang: activeLocale,
       },
     },
-  )
+  })
 
   return (
     <>
@@ -168,22 +168,24 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
           namespace={namespace}
         />
       </ServiceWebContext.Provider>
-      <WebChat
-        webChat={webChatData?.getWebChat}
-        renderFallback={() => {
-          if (
-            organization?.id &&
-            watsonConfig[activeLocale]?.[organization.id]
-          ) {
-            return (
-              <WatsonChatPanel
-                {...watsonConfig[activeLocale][organization.id]}
-              />
-            )
-          }
-          return null
-        }}
-      />
+      {!loading && (
+        <WebChat
+          webChat={webChatData?.getWebChat}
+          renderFallback={() => {
+            if (
+              organization?.id &&
+              watsonConfig[activeLocale]?.[organization.id]
+            ) {
+              return (
+                <WatsonChatPanel
+                  {...watsonConfig[activeLocale][organization.id]}
+                />
+              )
+            }
+            return null
+          }}
+        />
+      )}
     </>
   )
 }

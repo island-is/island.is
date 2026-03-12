@@ -113,7 +113,7 @@ export const RelevantParties = () => {
 
   return (
     <Stack space={2}>
-      <Text variant="h4">{formatMessage(m.selectIndividuals)}</Text>
+      <Text variant="h3">{formatMessage(m.selectIndividuals)}</Text>
 
       <PartyType
         groupApplicantTypes={applicantTypeGroups.individual}

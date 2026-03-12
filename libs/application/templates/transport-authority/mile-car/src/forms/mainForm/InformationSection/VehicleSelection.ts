@@ -6,13 +6,15 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { selectVehicle as selectVehicleMessages } from '../../../lib/messages'
+import { getVehicleSelectionDescription } from '../../../utils/getVehicleSelectionDescription'
 export const selectVehicleSection = buildSubSection({
   id: 'selectVehicleSection',
+  tabTitle: selectVehicleMessages.general.sectionTitle,
   children: [
     buildMultiField({
       id: 'firstSection',
       title: selectVehicleMessages.general.pageTitle,
-      description: selectVehicleMessages.general.description,
+      description: getVehicleSelectionDescription,
       children: [
         buildCustomField({
           id: 'vehiclesField',

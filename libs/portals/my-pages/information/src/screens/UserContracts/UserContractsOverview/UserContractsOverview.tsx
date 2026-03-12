@@ -11,7 +11,6 @@ import {
   IntroWrapper,
   m,
   HMS_SLUG,
-  LinkButton,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { contractsMessages as cm } from '../../../lib/messages'
@@ -20,7 +19,6 @@ import { mapStatusTypeToTag } from '../../../utils/mapStatusTypeToTag'
 import { InformationPaths } from '../../../lib/paths'
 import { isDefined } from '@island.is/shared/utils'
 import { useState } from 'react'
-import { getApplicationsBaseUrl } from '@island.is/portals/core'
 import { useNavigate } from 'react-router-dom'
 import { HmsRentalAgreementPropertyType } from '@island.is/api/schema'
 
@@ -45,15 +43,6 @@ const UserContractsOverview = () => {
       serviceProviderSlug={HMS_SLUG}
       serviceProviderTooltip={formatMessage(m.rentalAgreementsTooltip)}
       marginBottom={3}
-      buttonGroup={[
-        <LinkButton
-          key={'register-rental-agreement-button'}
-          to={`${getApplicationsBaseUrl()}/leigusamningur`}
-          text={formatMessage(cm.registerRentalAgreement)}
-          icon="document"
-          variant="utility"
-        />,
-      ]}
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (

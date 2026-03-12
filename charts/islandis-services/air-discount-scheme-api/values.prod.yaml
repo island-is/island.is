@@ -61,7 +61,7 @@ ingress:
           - '/api/graphql'
 namespace: 'air-discount-scheme'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

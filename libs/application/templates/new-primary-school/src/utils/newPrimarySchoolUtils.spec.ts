@@ -14,8 +14,9 @@ import {
   hasSpecialEducationSubType,
   needsOtherGuardianApproval,
   needsPayerApproval,
+  shouldShowNewSchoolPage,
   shouldShowPage,
-  shouldShowReasonForApplicationAndNewSchoolPages,
+  shouldShowReasonForApplicationPage,
   showPreferredLanguageFields,
 } from './conditionUtils'
 import {
@@ -183,8 +184,13 @@ describe('showPreferredLanguageFields', () => {
 describe('getApplicationType', () => {
   const currentDate = new Date()
 
-  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade, and child has not enrolled before (no data is found in Frigg)', () => {
+  beforeEach(() => jest.useFakeTimers())
+  afterEach(() => jest.useRealTimers())
+
+  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade, if enrollment is open', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
+
+    jest.setSystemTime(new Date(currentDate.getFullYear(), 1, 1)) // 1 Feb
 
     const answers = {
       childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
@@ -201,8 +207,10 @@ describe('getApplicationType', () => {
     )
   })
 
-  it('should return undefined for child in first grade, if child has enrolled before (data is found in Frigg)', () => {
+  it('should return NEW_PRIMARY_SCHOOL for child in first grade, if enrollment is closed', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
+
+    jest.setSystemTime(new Date(currentDate.getFullYear(), 10, 1)) // 1 Nov
 
     const answers = {
       childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
@@ -215,11 +223,13 @@ describe('getApplicationType', () => {
       },
     } as unknown as ExternalData
 
-    expect(getApplicationType(answers, externalData)).toBe(undefined)
+    expect(getApplicationType(answers, externalData)).toBe(
+      ApplicationType.NEW_PRIMARY_SCHOOL,
+    )
   })
 
   it('should return undefined for child in 2. grade, and data is found in Frigg', () => {
-    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 // 2. grade
 
     const answers = {
       childNationalId: kennitala.generatePerson(new Date(yearBorn, 11, 31)),
@@ -236,7 +246,7 @@ describe('getApplicationType', () => {
   })
 
   it('should return NEW_PRIMARY_SCHOOL for child in 2. grade, if no data is found in Frigg', () => {
-    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 // 2. grade
 
     const answers = {
       childNationalId: kennitala.generatePerson(new Date(yearBorn, 11, 31)),
@@ -973,7 +983,7 @@ describe('hasSpecialEducationSubType', () => {
   })
 })
 
-describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
+describe('shouldShowReasonForApplicationPage', () => {
   it('should return true if application type is NEW_PRIMARY_SCHOOL', () => {
     const answers = {
       applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
@@ -987,9 +997,7 @@ describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
         status: 'success',
       },
     }
-    expect(
-      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
-    ).toBe(true)
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(true)
   })
 
   it('should return false if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is YES', () => {
@@ -1006,9 +1014,9 @@ describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
         status: 'success',
       },
     }
-    expect(
-      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
-    ).toBe(false)
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(
+      false,
+    )
   })
 
   it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is NO', () => {
@@ -1025,12 +1033,10 @@ describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
         status: 'success',
       },
     }
-    expect(
-      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
-    ).toBe(true)
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(true)
   })
 
-  it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and preferredSchool is null', () => {
+  it('should return false if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and preferredSchool is null', () => {
     const answers = {
       applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
     }
@@ -1041,9 +1047,9 @@ describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
         status: 'success',
       },
     }
-    expect(
-      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
-    ).toBe(true)
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(
+      false,
+    )
   })
 
   it('should return false if application type is CONTINUING_ENROLLMENT', () => {
@@ -1059,9 +1065,91 @@ describe('shouldShowReasonForApplicationAndNewSchoolPages', () => {
         status: 'success',
       },
     }
-    expect(
-      shouldShowReasonForApplicationAndNewSchoolPages(answers, externalData),
-    ).toBe(false)
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(
+      false,
+    )
+  })
+})
+
+describe('shouldShowNewSchoolPage', () => {
+  it('should return true if application type is NEW_PRIMARY_SCHOOL', () => {
+    const answers = {
+      applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
+    }
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(true)
+  })
+
+  it('should return false if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is YES', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: { applyForPreferredSchool: YES },
+    }
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(false)
+  })
+
+  it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is NO', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: { applyForPreferredSchool: NO },
+    }
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(true)
+  })
+
+  it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and preferredSchool is null', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+    }
+    const externalData = {
+      preferredSchool: {
+        data: null,
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(true)
+  })
+
+  it('should return false if application type is CONTINUING_ENROLLMENT', () => {
+    const answers = {
+      applicationType: ApplicationType.CONTINUING_ENROLLMENT,
+    }
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(false)
   })
 })
 

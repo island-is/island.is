@@ -13,7 +13,11 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { MessageService } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  Message,
+  MessageService,
+} from '@island.is/judicial-system/message'
 
 import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
@@ -114,9 +118,16 @@ export const createTestingFileModule = async () => {
 
   const sequelize = fileModule.get<Sequelize>(Sequelize)
 
+  const queuedMessages: Message[] = []
+  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
+  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
+    queuedMessages.push(...msgs)
+  })
+
   fileModule.close()
 
   return {
+    queuedMessages,
     sequelize,
     messageService,
     awsS3Service,

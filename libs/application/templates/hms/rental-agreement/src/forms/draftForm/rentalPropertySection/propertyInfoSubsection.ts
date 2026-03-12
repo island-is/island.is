@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
@@ -13,6 +14,7 @@ import {
   getPropertyClassOptions,
   getPropertyTypeOptions,
 } from '../../../utils/options'
+import { shouldShowRoomTypeRoomCountError } from '../../../utils/conditions'
 import * as m from '../../../lib/messages'
 
 export const propertyInfoSubsection = buildSubSection({
@@ -70,6 +72,14 @@ export const propertyInfoSubsection = buildSubSection({
           defaultValue: RentalHousingCategoryTypes.ENTIRE_HOME,
           required: true,
           marginBottom: 5,
+        }),
+        buildAlertMessageField({
+          id: 'propertyInfo.roomTypeRoomCountError',
+          title: '',
+          alertType: 'error',
+          message: m.propertySearch.search.numOfRoomsForRoomTypeError,
+          condition: shouldShowRoomTypeRoomCountError,
+          shouldBlockInSetBeforeSubmitCallback: true,
         }),
         buildDescriptionField({
           id: 'propertyInfo.categoryClassTitle',

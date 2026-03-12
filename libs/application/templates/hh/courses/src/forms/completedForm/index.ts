@@ -10,8 +10,16 @@ export const completedForm = buildForm({
   logo: HeilsugaeslaHofudborgarsvaedisinsLogo,
   children: [
     buildFormConclusionSection({
+      sectionTitle: m.completedForm.sectionTitle,
+      tabTitle: m.completedForm.sectionTitle,
+      multiFieldTitle: m.completedForm.multiFieldTitle,
       alertTitle: m.completedForm.alertTitle,
       alertMessage: m.completedForm.alertMessage,
+      expandableHeader: m.completedForm.expandableHeader,
+      expandableIntro: m.completedForm.expandableIntro,
+      expandableDescription: m.completedForm.expandableDescription,
+      bottomButtonLabel: m.completedForm.bottomButtonLabel,
+      bottomButtonMessage: m.completedForm.bottomButtonMessage,
     }),
   ],
 })

@@ -1,12 +1,6 @@
-import {
-  Box,
-  DatePicker,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, DatePicker, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { m } from '@island.is/portals/my-pages/core'
 import { Dispatch, FC, SetStateAction } from 'react'
 import { messages } from '../../..'
 import { addMonths, addYears, today } from '../../../utils/dates'
@@ -29,51 +23,68 @@ const SecondStep: FC<SecondStepProps> = ({ setFormState, formState }) => {
         {formatMessage(messages.howLongShouldDelegationApply)}
       </Text>
 
-      <Box marginBottom={2}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={['12/12', '8/12', '8/12', '6/12', '5/12']}>
-              <DatePicker
-                backgroundColor="blue"
-                highlightWeekends
-                size="xs"
-                label={formatMessage(messages.period)}
-                handleChange={(startDate, endDate) => {
-                  setFormState({
-                    ...formState,
-                    dateFrom: startDate,
-                    dateTo: endDate,
-                  })
-                }}
-                placeholderText={formatMessage(messages.choosePeriod)}
-                range
-                minDate={today}
-                ranges={[
-                  {
-                    startDate: today,
-                    endDate: addMonths(today, 6),
-                    label: formatMessage(messages.sixMonths),
-                  },
-                  {
-                    startDate: today,
-                    endDate: addYears(today, 1),
-                    label: formatMessage(messages.oneYear),
-                  },
-                  {
-                    startDate: today,
-                    endDate: addYears(today, 2),
-                    label: formatMessage(messages.twoYears),
-                  },
-                  {
-                    startDate: today,
-                    endDate: addYears(today, 3),
-                    label: formatMessage(messages.threeYears),
-                  },
-                ]}
-              />
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
+      <Box width="touchable" style={{ width: '320px' }} marginBottom={3}>
+        <DatePicker
+          backgroundColor="blue"
+          highlightWeekends
+          size="xs"
+          label={formatMessage(messages.period)}
+          handleChange={(startDate, endDate) => {
+            setFormState({
+              ...formState,
+              dateFrom: startDate,
+              dateTo: endDate,
+            })
+          }}
+          placeholderText={formatMessage(messages.choosePeriod)}
+          range
+          displaySelectInput
+          minDate={today}
+          selectedRange={{
+            startDate: formState?.dateFrom ? formState.dateFrom : null,
+            endDate: formState?.dateTo ? formState.dateTo : null,
+          }}
+          ranges={[
+            {
+              startDate: today,
+              endDate: addMonths(today, 6),
+              label: formatMessage(messages.sixMonths),
+            },
+            {
+              startDate: today,
+              endDate: addYears(today, 1),
+              label: formatMessage(messages.oneYear),
+            },
+            {
+              startDate: today,
+              endDate: addYears(today, 2),
+              label: formatMessage(messages.twoYears),
+            },
+            {
+              startDate: today,
+              endDate: addYears(today, 3),
+              label: formatMessage(messages.threeYears),
+            },
+          ]}
+        />
+        {formState?.dateFrom != null || formState?.dateTo != null ? (
+          <Box textAlign="right" marginTop={1}>
+            <Button
+              icon="reload"
+              size="small"
+              variant="text"
+              onClick={() => {
+                setFormState({
+                  ...formState,
+                  dateFrom: undefined,
+                  dateTo: undefined,
+                })
+              }}
+            >
+              {formatMessage(m.clearSelected)}
+            </Button>
+          </Box>
+        ) : null}
       </Box>
     </Box>
   )

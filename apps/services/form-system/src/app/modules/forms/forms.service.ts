@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -13,6 +14,7 @@ import zipObject from 'lodash/zipObject'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
+  FieldTypesEnum,
   FormStatus,
   SectionTypes,
   UpdateFormError,
@@ -20,7 +22,6 @@ import {
   UpdateFormStatusDto,
 } from '@island.is/form-system/shared'
 import { randomUUID } from 'crypto'
-import { jwtDecode } from 'jwt-decode'
 import { Op, UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuidV4 } from 'uuid'
@@ -60,6 +61,8 @@ import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
 import { Form } from './models/form.model'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { Dependency } from '../../dataTypes/dependency.model'
+import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @Injectable()
 export class FormsService {
@@ -86,13 +89,17 @@ export class FormsService {
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
-    const token = jwtDecode<{ name: string; nationalId: string }>(
-      user.authorization,
-    )
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    if (user.nationalId !== nationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to get forms for organization with nationalId '${nationalId}'`,
+      )
+    }
 
     // the loader is not sending the nationalId
     if (nationalId === '0') {
-      nationalId = token.nationalId
+      nationalId = user.nationalId
     }
 
     let organization = await this.organizationModel.findOne({
@@ -122,8 +129,10 @@ export class FormsService {
       'invalidationDate',
       'created',
       'modified',
+      'zendeskInternal',
+      'useValidate',
+      'usePopulate',
       'submissionServiceUrl',
-      'validationServiceUrl',
       'isTranslated',
       'hasPayment',
       'beenPublished',
@@ -177,12 +186,23 @@ export class FormsService {
     return formResponseDto
   }
 
-  async findOne(id: string): Promise<FormResponseDto> {
+  async findOne(user: User, id: string): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const form = await this.findById(id)
 
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
     }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to get form for organization with nationalId '${formOwnerNationalId}'`,
+      )
+    }
+
     const formResponse = await this.buildFormResponse(form)
 
     if (!formResponse) {
@@ -196,6 +216,14 @@ export class FormsService {
     user: User,
     organizationNationalId: string,
   ): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
+    if (user.nationalId !== organizationNationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to create form for organization with nationalId '${organizationNationalId}'`,
+      )
+    }
+
     const organization = await this.organizationModel.findOne({
       where: { nationalId: organizationNationalId },
     })
@@ -240,12 +268,24 @@ export class FormsService {
   }
 
   async update(
+    user: User,
     id: string,
     updateFormDto: UpdateFormDto,
   ): Promise<UpdateFormResponse> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const form = await this.formModel.findByPk(id)
+
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to update form with id '${id}'`,
+      )
     }
 
     const originalHasPayment = form.hasPayment
@@ -291,11 +331,21 @@ export class FormsService {
     return response
   }
 
-  async copy(id: string): Promise<FormResponseDto> {
+  async copy(user: User, id: string): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const form = await this.findById(id)
 
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to copy form with id '${id}'`,
+      )
     }
 
     const copyForm = await this.copyForm(id, false, `${form.slug}-afrit`)
@@ -309,13 +359,24 @@ export class FormsService {
   }
 
   async updateStatus(
+    user: User,
     id: string,
     updateFormStatusDto: UpdateFormStatusDto,
   ): Promise<FormResponseDto> {
+    const isAdmin = user.scope.includes(AdminPortalScope.formSystemAdmin)
+
     const form = await this.formModel.findByPk(id)
 
     if (!form) {
       throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    const formOwnerNationalId = form.organizationNationalId
+
+    if (user.nationalId !== formOwnerNationalId && !isAdmin) {
+      throw new ForbiddenException(
+        `User does not have permission to update status of form with id '${id}'`,
+      )
     }
 
     const { newStatus } = updateFormStatusDto
@@ -327,6 +388,8 @@ export class FormsService {
           return await this.publishFormInDevelopment(id, form)
         } else if (newStatus === FormStatus.ARCHIVED) {
           return await this.deleteForm(id, form)
+        } else if (newStatus === FormStatus.IN_DEVELOPMENT) {
+          return await this.deleteApplications(id)
         }
         break
       case FormStatus.PUBLISHED:
@@ -341,6 +404,8 @@ export class FormsService {
           return await this.publishFormBeingChanged(id, form)
         } else if (newStatus === FormStatus.ARCHIVED) {
           return await this.deleteForm(id, form)
+        } else if (newStatus === FormStatus.PUBLISHED_BEING_CHANGED) {
+          return await this.deleteApplications(id)
         }
         break
     }
@@ -473,6 +538,20 @@ export class FormsService {
     } catch (error) {
       throw new InternalServerErrorException(
         `Unexpected error deleting form '${id}'.`,
+      )
+    }
+
+    return new FormResponseDto()
+  }
+
+  private async deleteApplications(id: string): Promise<FormResponseDto> {
+    try {
+      await this.applicationModel.destroy({
+        where: { formId: id, isTest: true },
+      })
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `Unexpected error deleting applications for form '${id}'.`,
       )
     }
 
@@ -679,8 +758,10 @@ export class FormsService {
       'status',
       'daysUntilApplicationPrune',
       'allowProceedOnValidationFail',
+      'zendeskInternal',
+      'useValidate',
+      'usePopulate',
       'submissionServiceUrl',
-      'validationServiceUrl',
       'hasSummaryScreen',
       'completedSectionInfo',
       'dependencies',
@@ -725,6 +806,7 @@ export class FormsService {
     ]
     const screenKeys = [
       'id',
+      'identifier',
       'sectionId',
       'name',
       'created',
@@ -732,10 +814,12 @@ export class FormsService {
       'displayOrder',
       'isHidden',
       'multiset',
-      'callRuleset',
+      'shouldValidate',
+      'shouldPopulate',
     ]
     const fieldKeys = [
       'id',
+      'identifier',
       'screenId',
       'name',
       'created',
@@ -834,11 +918,33 @@ export class FormsService {
       name: { is: 'Kafli', en: 'Section' },
     } as Section)
 
-    await this.screenModel.create({
+    const inputScreen = await this.screenModel.create({
       sectionId: inputSection.id,
       displayOrder: 0,
-      name: { is: 'innsláttarsíða 1', en: 'Input screen 1' },
+      name: { is: 'Innsláttarskjár', en: 'Input screen' },
     } as Screen)
+
+    await this.fieldModel.create({
+      screenId: inputScreen.id,
+      fieldType: FieldTypesEnum.TEXTBOX,
+      displayOrder: 0,
+      name: { is: 'Textainnsláttur', en: 'Text input' },
+    } as Field)
+  }
+
+  private async updateDependencies(
+    oldId: string,
+    newId: string,
+    deps: Dependency[],
+  ): Promise<Dependency[]> {
+    if (!deps || deps.length === 0) return []
+    for (const dep of deps) {
+      if (dep.parentProp === oldId) {
+        dep.parentProp = newId
+      }
+      dep.childProps = dep.childProps.map((s) => s.replaceAll(oldId, newId))
+    }
+    return deps
   }
 
   private async copyForm(
@@ -857,6 +963,8 @@ export class FormsService {
       )
     }
 
+    let deps = existingForm.dependencies || []
+
     const newForm = existingForm.toJSON()
     newForm.id = uuidV4()
     newForm.status = isDerived
@@ -869,7 +977,6 @@ export class FormsService {
     newForm.identifier = isDerived ? existingForm.identifier : uuidV4()
     newForm.beenPublished = false
     newForm.completedSectionInfo = existingForm.completedSectionInfo
-    newForm.dependencies = []
 
     const sections: Section[] = []
     const screens: Screen[] = []
@@ -880,38 +987,50 @@ export class FormsService {
     for (const section of existingForm.sections) {
       const newSection = section.toJSON()
       newSection.id = uuidV4()
+      newSection.identifier = section.identifier
       newSection.formId = newForm.id
       newSection.created = new Date()
       newSection.modified = new Date()
+      deps = await this.updateDependencies(section.id, newSection.id, deps)
       sections.push(newSection)
       for (const screen of section.screens) {
         const newScreen = screen.toJSON()
         newScreen.id = uuidV4()
+        newScreen.identifier = screen.identifier
         newScreen.sectionId = newSection.id
         newScreen.created = new Date()
         newScreen.modified = new Date()
+        deps = await this.updateDependencies(screen.id, newScreen.id, deps)
         screens.push(newScreen)
         for (const field of screen.fields) {
           const newField = field.toJSON()
           newField.id = uuidV4()
+          newField.identifier = field.identifier
           newField.screenId = newScreen.id
-          newField.identifier = isDerived ? field.identifier : uuidV4()
           newField.created = new Date()
           newField.modified = new Date()
           fields.push(newField)
+          deps = await this.updateDependencies(field.id, newField.id, deps)
           if (field.list) {
             for (const listItem of field.list) {
               const newListItem = listItem.toJSON()
               newListItem.id = uuidV4()
+              newListItem.identifier = listItem.identifier
               newListItem.fieldId = newField.id
               newListItem.created = new Date()
               newListItem.modified = new Date()
+              deps = await this.updateDependencies(
+                listItem.id,
+                newListItem.id,
+                deps,
+              )
               listItems.push(newListItem)
             }
           }
         }
       }
     }
+    newForm.dependencies = deps
 
     if (existingForm.formCertificationTypes) {
       for (const certificationType of existingForm.formCertificationTypes) {

@@ -1,16 +1,20 @@
 import { Response } from 'express'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
+  Body,
   Controller,
   Get,
   Header,
   Inject,
   Param,
+  Post,
   Query,
   Res,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { InjectConnection } from '@nestjs/sequelize'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -47,6 +51,7 @@ import {
   SplitDefendantExistsGuard,
 } from '../defendant'
 import { Case, Defendant, Subpoena } from '../repository'
+import { CreateSubpoenasDto } from './dto/createSubpoenas.dto'
 import { CurrentSubpoena } from './guards/subpoena.decorator'
 import {
   SubpoenaExistsGuard,
@@ -54,7 +59,7 @@ import {
 } from './guards/subpoenaExists.guard'
 import { SubpoenaService } from './subpoena.service'
 
-@Controller('api/case/:caseId/defendant/:defendantId/subpoena')
+@Controller('api/case/:caseId')
 @ApiTags('subpoenas')
 @UseGuards(
   JwtAuthUserGuard,
@@ -67,8 +72,42 @@ export class SubpoenaController {
   constructor(
     private readonly pdfService: PdfService,
     private readonly subpoenaService: SubpoenaService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Post('subpoenas')
+  @ApiCreatedResponse({
+    type: Subpoena,
+    isArray: true,
+    description: 'Creates subpoenas for multiple defendants',
+  })
+  async createSubpoenas(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() createSubpoenasDto: CreateSubpoenasDto,
+    @CurrentHttpUser() user: User,
+  ): Promise<Subpoena[]> {
+    this.logger.debug(
+      `Creating subpoenas for defendants ${createSubpoenasDto.defendantIds.join(
+        ', ',
+      )} in case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.subpoenaService.createSubpoenasForDefendants(
+        createSubpoenasDto,
+        transaction,
+        theCase,
+        user,
+      ),
+    )
+  }
 
   @RolesRules(
     prosecutorRule,
@@ -77,7 +116,7 @@ export class SubpoenaController {
     districtCourtAssistantRule,
     districtCourtRegistrarRule,
   )
-  @Get(':subpoenaId')
+  @Get('defendant/:defendantId/subpoena/:subpoenaId')
   @UseGuards(DefendantExistsGuard, SubpoenaExistsGuard)
   @ApiOkResponse({
     type: Subpoena,
@@ -96,7 +135,15 @@ export class SubpoenaController {
       `Gets subpoena ${subpoenaId} for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.subpoenaService.getSubpoena(theCase, defendant, subpoena, user)
+    return this.sequelize.transaction((transaction) =>
+      this.subpoenaService.getSubpoena(
+        theCase,
+        defendant,
+        subpoena,
+        transaction,
+        user,
+      ),
+    )
   }
 
   @RolesRules(
@@ -107,7 +154,10 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get(['', ':subpoenaId/pdf'])
+  @Get([
+    'defendant/:defendantId/subpoena',
+    'defendant/:defendantId/subpoena/:subpoenaId/pdf',
+  ])
   // Strictly speaking, only district court users need access to
   // split case defendants' subpoenas
   // However, giving prosecution users access does not pose a security risk
@@ -135,13 +185,16 @@ export class SubpoenaController {
       } for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
-    const pdf = await this.pdfService.getSubpoenaPdf(
-      theCase,
-      defendant,
-      subpoena,
-      arraignmentDate,
-      location,
-      subpoenaType,
+    const pdf = await this.sequelize.transaction((transaction) =>
+      this.pdfService.getSubpoenaPdf(
+        theCase,
+        defendant,
+        transaction,
+        subpoena,
+        arraignmentDate,
+        location,
+        subpoenaType,
+      ),
     )
 
     res.end(pdf)
@@ -155,7 +208,7 @@ export class SubpoenaController {
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
   )
-  @Get(':subpoenaId/serviceCertificate')
+  @Get('defendant/:defendantId/subpoena/:subpoenaId/serviceCertificate')
   // Strictly speaking, only district court users need access to
   // split case defendants' subpoena service certificates
   // However, giving prosecution users access does not pose a security risk

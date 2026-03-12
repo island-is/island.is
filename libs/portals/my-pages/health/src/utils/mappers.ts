@@ -60,6 +60,13 @@ export const mapBlockedStatus = (
           messages.prescriptionBlockedMoreRecentExists,
         ),
       }
+    case HealthDirectoratePrescriptionRenewalBlockedReason.SpecialistOnlyPrescription:
+      return {
+        status: formatMessage(messages.notAvailable),
+        description: formatMessage(
+          messages.prescriptionBlockedSpecialistOnlyPrescription,
+        ),
+      }
     case HealthDirectoratePrescriptionRenewalBlockedReason.Unknown:
       return {
         status: formatMessage(messages.notAvailable),

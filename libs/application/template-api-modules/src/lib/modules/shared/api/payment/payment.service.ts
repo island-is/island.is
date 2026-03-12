@@ -19,11 +19,13 @@ import { getConfigValue } from '../../shared.utils'
 import { ConfigService } from '@nestjs/config'
 import { uuid } from 'uuidv4'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { PaymentsApi } from '@island.is/clients/payments'
 
 @Injectable()
 export class PaymentService extends BaseTemplateApiService {
   constructor(
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private paymentsApi: PaymentsApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly paymentModelService: PaymentModelService,
     @Inject(ConfigService)
@@ -40,9 +42,9 @@ export class PaymentService extends BaseTemplateApiService {
     if (!params?.organizationId) {
       throw Error('Missing performing organization ID')
     }
-    const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
-      params.organizationId,
-    )
+    const data = await this.chargeFjsV2ClientService.getCatalogByPerformingOrg({
+      performingOrgID: params.organizationId,
+    })
     return data.item
   }
 
@@ -144,11 +146,7 @@ export class PaymentService extends BaseTemplateApiService {
         'mockuser4',
       )
 
-      await this.paymentModelService.fulfillPayment(
-        result.id,
-        result.reference_id ?? uuid(),
-        application.id,
-      )
+      await this.paymentModelService.fulfillPayment(result.id, application.id)
 
       const slug = getSlugFromType(application.typeId)
 
@@ -240,7 +238,12 @@ export class PaymentService extends BaseTemplateApiService {
 
       if (requestId) {
         this.logger.info('Calling deleteCharge with requestId', requestId)
-        await this.chargeFjsV2ClientService.deleteCharge(requestId)
+        await this.paymentsApi.refundControllerRefund({
+          refundPaymentInput: {
+            paymentFlowId: requestId,
+            reasonForRefund: 'Charge deleted',
+          },
+        })
       } else {
         this.logger.warn('No requestId found, skipping deleteCharge')
       }

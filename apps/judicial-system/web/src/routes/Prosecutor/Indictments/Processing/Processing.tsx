@@ -1,4 +1,4 @@
-import { FC, Fragment, useCallback, useContext, useRef } from 'react'
+import { FC, useCallback, useContext, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -347,18 +347,16 @@ const Processing: FC = () => {
                 heading="h2"
               />
               {workingCase.civilClaimants?.map((civilClaimant, index) => (
-                <Fragment key={civilClaimant.id}>
-                  <Box marginBottom={3}>
-                    <BlueBox>
-                      <CivilClaimantFields
-                        caseId={workingCase.id}
-                        civilClaimant={civilClaimant}
-                        civilClaimantIndex={index}
-                        removeCivilClaimantById={removeCivilClaimantById}
-                      />
-                    </BlueBox>
-                  </Box>
-                </Fragment>
+                <Box marginBottom={3} key={civilClaimant.id}>
+                  <BlueBox>
+                    <CivilClaimantFields
+                      caseId={workingCase.id}
+                      civilClaimant={civilClaimant}
+                      civilClaimantIndex={index}
+                      removeCivilClaimantById={removeCivilClaimantById}
+                    />
+                  </BlueBox>
+                </Box>
               ))}
               <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
                 <Button

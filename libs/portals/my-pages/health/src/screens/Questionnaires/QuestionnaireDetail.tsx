@@ -48,7 +48,7 @@ const QuestionnaireDetail: FC = () => {
   const canSubmit = questionnaire?.canSubmit ?? false
   const canSubmitAgain =
     canSubmit && (questionnaire?.submissions?.length ?? 0) > 0
-  const latestSubmissionId = questionnaire?.lastSubmissionId
+  const latestSubmissionId = questionnaire?.baseInformation.lastSubmissionId
 
   if (!id || !organization) {
     return (

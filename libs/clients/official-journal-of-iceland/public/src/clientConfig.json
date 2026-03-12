@@ -98,6 +98,13 @@
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
+            "name": "mainType",
+            "required": false,
+            "in": "query",
+            "description": "One or more main types (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
             "name": "category",
             "required": false,
             "in": "query",
@@ -124,6 +131,18 @@
             "in": "query",
             "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": { "example": "sortBy", "type": "string" }
+          },
+          {
+            "name": "direction",
+            "required": false,
+            "in": "query",
+            "schema": { "example": "ASC", "type": "string" }
           }
         ],
         "responses": {
@@ -186,6 +205,13 @@
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
+            "name": "mainType",
+            "required": false,
+            "in": "query",
+            "description": "One or more main types (by `slug`) to filter on.",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          },
+          {
             "name": "category",
             "required": false,
             "in": "query",
@@ -212,6 +238,18 @@
             "in": "query",
             "description": "Date to which to filter adverts on, inclusive, takes into account `createdDate`, `updatedDate` and `signatureDate`.",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "sortBy",
+            "required": false,
+            "in": "query",
+            "schema": { "example": "sortBy", "type": "string" }
+          },
+          {
+            "name": "direction",
+            "required": false,
+            "in": "query",
+            "schema": { "example": "ASC", "type": "string" }
           }
         ],
         "responses": {
@@ -1475,6 +1513,10 @@
             "description": "Corrections made to the advert.",
             "type": "array",
             "items": { "$ref": "#/components/schemas/AdvertCorrection" }
+          },
+          "hideSignatureDate": {
+            "type": "boolean",
+            "description": "Hide the display, signature date is not sensitive info."
           }
         },
         "required": [

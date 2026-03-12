@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   Body,
   Controller,
@@ -8,6 +10,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -42,6 +45,7 @@ export class InternalSubpoenaController {
   constructor(
     private readonly subpoenaService: SubpoenaService,
     private readonly auditTrailService: AuditTrailService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -56,18 +60,24 @@ export class InternalSubpoenaController {
       `Updating subpoena by police subpoena id ${policeSubpoenaId}`,
     )
 
-    if (!subpoena.case || !subpoena.defendant) {
+    const theCase = subpoena.case
+    const defendant = subpoena.defendant
+
+    if (!theCase || !defendant) {
       // This should never happen because of the PoliceSubpoenaExistsGuard
       throw new InternalServerErrorException(
         `Cannot update subpoena with police subpoena id ${policeSubpoenaId} because it is not linked to a case and/or a defendant`,
       )
     }
 
-    return this.subpoenaService.update(
-      subpoena.case,
-      subpoena.defendant,
-      subpoena,
-      update,
+    return this.sequelize.transaction((transaction) =>
+      this.subpoenaService.update(
+        theCase,
+        defendant,
+        subpoena,
+        update,
+        transaction,
+      ),
     )
   }
 
@@ -88,7 +98,7 @@ export class InternalSubpoenaController {
     type: DeliverResponse,
     description: 'Delivers a subpoena to the police centralized file service',
   })
-  deliverSubpoenaToNationalCommissionersOffice(
+  async deliverSubpoenaToNationalCommissionersOffice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @Param('subpoenaId') subpoenaId: string,
@@ -101,32 +111,55 @@ export class InternalSubpoenaController {
       `Delivering subpoena ${subpoenaId} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
     )
 
-    // callback function to fetch the updated subpoena fields after delivering subpoena to police
-    const getDeliveredSubpoenaNationalCommissionersOfficeLogDetails = async (
-      results?: DeliverResponse,
-    ) => {
-      const currentSubpoena = await this.subpoenaService.findById(subpoena.id)
-      return {
-        deliveredToPolice: Boolean(results?.delivered),
-        subpoenaId: subpoena.id,
-        subpoenaCreated: subpoena.created,
-        policeSubpoenaId: currentSubpoena.policeSubpoenaId,
-        subpoenaHash: currentSubpoena.hash,
-        subpoenaDeliveredToPolice: new Date(),
-        indictmentHash: theCase.indictmentHash,
-      }
-    }
+    const transaction = await this.sequelize.transaction()
 
-    return this.auditTrailService.runAndAuditRequest({
-      userId: deliverDto.user.id,
-      actionType:
+    try {
+      // callback function to fetch the updated subpoena fields after delivering subpoena to police
+      const getDeliveredSubpoenaNationalCommissionersOfficeLogDetails = async (
+        results: DeliverResponse,
+      ) => {
+        const currentSubpoena = await this.subpoenaService.findById(
+          subpoena.id,
+          transaction,
+        )
+        return {
+          deliveredToPolice: results.delivered,
+          subpoenaId: subpoena.id,
+          subpoenaCreated: subpoena.created,
+          policeSubpoenaId: currentSubpoena.policeSubpoenaId,
+          subpoenaHash: currentSubpoena.hash,
+          subpoenaDeliveredToPolice: new Date(),
+          indictmentHash: theCase.indictmentHash,
+        }
+      }
+
+      const response = await this.auditTrailService.audit(
+        deliverDto.user.id,
         AuditedAction.DELIVER_SUBPOENA_TO_NATIONAL_COMMISSIONERS_OFFICE,
-      action: this.subpoenaService.deliverSubpoenaToNationalCommissionersOffice,
-      actionProps: { theCase, defendant, subpoena, user: deliverDto.user },
-      auditedResult: caseId,
-      getAuditDetails:
+        this.subpoenaService.deliverSubpoenaToNationalCommissionersOffice({
+          theCase,
+          defendant,
+          subpoena,
+          user: deliverDto.user,
+          transaction,
+        }),
+        caseId,
         getDeliveredSubpoenaNationalCommissionersOfficeLogDetails,
-    })
+      )
+
+      await transaction.commit()
+
+      return response
+    } catch (error) {
+      this.logger.error(
+        `Failed to deliver subpoena ${subpoenaId} to national commissioners office for defendant ${defendantId} of case ${caseId}`,
+        { error },
+      )
+
+      await transaction.rollback()
+
+      throw error
+    }
   }
 
   @UseGuards(
@@ -157,11 +190,14 @@ export class InternalSubpoenaController {
       `Delivering subpoena ${subpoenaId} pdf to police for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.subpoenaService.deliverSubpoenaFileToPolice(
-      theCase,
-      defendant,
-      subpoena,
-      deliverDto.user,
+    return this.sequelize.transaction((transaction) =>
+      this.subpoenaService.deliverSubpoenaFileToPolice(
+        theCase,
+        defendant,
+        subpoena,
+        deliverDto.user,
+        transaction,
+      ),
     )
   }
 
@@ -193,11 +229,14 @@ export class InternalSubpoenaController {
       `Delivering subpoena ${subpoenaId} pdf to court for defendant ${defendantId} of case ${caseId}`,
     )
 
-    return this.subpoenaService.deliverSubpoenaToCourt(
-      theCase,
-      defendant,
-      subpoena,
-      deliverDto.user,
+    return this.sequelize.transaction((transaction) =>
+      this.subpoenaService.deliverSubpoenaToCourt(
+        theCase,
+        defendant,
+        subpoena,
+        deliverDto.user,
+        transaction,
+      ),
     )
   }
 

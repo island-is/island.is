@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
@@ -27,6 +28,7 @@ describe('InternalDefendantController - Update defendant', () => {
     ...update,
   }
   let mockDefendantRepositoryService: DefendantRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -34,11 +36,19 @@ describe('InternalDefendantController - Update defendant', () => {
       id: defendantId,
       nationalId: defendantNationalId,
     } as Defendant
-    const { defendantRepositoryService, internalDefendantController } =
-      await createTestingDefendantModule()
+    const {
+      sequelize,
+      defendantRepositoryService,
+      internalDefendantController,
+    } = await createTestingDefendantModule()
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     mockDefendantRepositoryService = defendantRepositoryService
-
     const mockUpdate = mockDefendantRepositoryService.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
 
@@ -74,7 +84,7 @@ describe('InternalDefendantController - Update defendant', () => {
         caseId,
         defendantId,
         { ...update },
-        { transaction: undefined },
+        { transaction },
       )
       expect(then.result).toEqual(updatedDefendant)
     })

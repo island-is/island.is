@@ -60,7 +60,7 @@ export class ApplicationActionService {
     this.logger.info(
       `Performing actions ${apis
         .map((api) => api.action)
-        .join(', ')} on ${JSON.stringify(template.name)}`,
+        .join(', ')} on ${JSON.stringify(template.type)}`,
     )
     const namespaces = await getApplicationTranslationNamespaces(application)
     const intl = await this.intlService.useIntl(namespaces, locale)

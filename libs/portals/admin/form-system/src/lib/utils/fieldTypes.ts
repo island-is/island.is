@@ -13,7 +13,7 @@ enum FieldTypes {
   NATIONAL_ID = 'Kennitala',
   NATIONAL_ID_ALL = 'Kennitala (allt)',
   NATIONAL_ID_ESTATE = 'Kennitala (dánarbú)',
-  TIME_INPUT = 'Klúkkuinnsláttur',
+  TIME_INPUT = 'Klukkuinnsláttur',
   ISK_NUMBERBOX = 'Krónutölubox',
   ISK_SUMBOX = 'Krónutölusumma',
   EMAIL = 'Netfang',

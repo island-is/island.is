@@ -6,6 +6,7 @@ fragment QuestionnaireBaseInfo on QuestionnairesBaseItem {
   sentDate
   status
   lastSubmitted
+  lastSubmissionId
   organization
   department
 }
@@ -106,7 +107,6 @@ query GetQuestionnaire($locale: String!, $input: GetQuestionnaireInput!) {
     }
     expirationDate
     canSubmit
-    lastSubmissionId
     submissions {
       ...QuestionnaireSubmission
     }

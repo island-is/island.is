@@ -99,10 +99,13 @@ export class CourtSessionController {
       `Updating court session ${courtSessionId} of case ${caseId}`,
     )
 
-    return this.courtSessionService.update(
-      caseId,
-      courtSessionId,
-      courtSessionToUpdate,
+    return this.sequelize.transaction(async (transaction) =>
+      this.courtSessionService.update(
+        caseId,
+        courtSessionId,
+        courtSessionToUpdate,
+        transaction,
+      ),
     )
   }
 
@@ -157,7 +160,7 @@ export class CourtSessionController {
     const courtSessions = theCase.courtSessions
     if (
       !courtSessions ||
-      courtSessions.length < 2 ||
+      courtSessions.length === 0 ||
       courtSessionId !== courtSessions[courtSessions.length - 1].id
     ) {
       throw new BadRequestException(

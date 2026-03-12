@@ -5,6 +5,7 @@ fragment Waitlist on HealthDirectorateWaitlist {
   lastUpdated
   organization
   status
+  statusId
 }
 
 query GetWaitlists($locale: String) {

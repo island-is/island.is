@@ -268,7 +268,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
 
       <TopLine scrollY={scrollY} />
 
-      <BottomTabsIndicator index={2} total={3} />
+      <BottomTabsIndicator index={4} total={5} />
     </>
   )
 }

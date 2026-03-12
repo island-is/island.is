@@ -26,7 +26,7 @@ export class EnergyFundImportService {
   }
 
   private async processEnergyGrants() {
-    const grants = await this.clientsRepository.getEnergyGrants(20)
+    const grants = await this.clientsRepository.getEnergyGrants()
 
     if (!grants) {
       logger.warn('No grants to process')
@@ -81,10 +81,17 @@ export class EnergyFundImportService {
     logger.info('entries creation finished')
   }
 
-  private async updateEntries(grants: EnergyGrantCollectionDto): Promise<void> {
-    const existingEntries = await this.cmsRepository.getGenericListItemEntries(
+  private async updateEntries(
+    grants: EnergyGrantCollectionDto,
+    onlyUpdateDraft?: boolean,
+  ): Promise<void> {
+    let existingEntries = await this.cmsRepository.getGenericListItemEntries(
       PREVIOUS_RECIPIENTS_GENERIC_LIST_ID,
     )
+
+    if (onlyUpdateDraft) {
+      existingEntries = existingEntries.filter((entry) => entry.isDraft())
+    }
 
     const entriesToUpdate = grants.grants
       .map((eg) => {

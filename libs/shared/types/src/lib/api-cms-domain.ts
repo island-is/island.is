@@ -13,6 +13,8 @@ export enum CustomPageUniqueIdentifier {
   BloodDonationRestrictions = 'BloodDonationRestrictions',
   CourtAgendas = 'CourtAgendas',
   LandspitaliWebPaymentSuccessful = 'LandspitaliWebPaymentSuccessful',
+  SecondarySchoolStudies = 'SecondarySchoolStudies',
+  SupremeCourtDeterminations = 'SupremeCourtDeterminations',
 }
 
 export interface StatisticSourceValue {

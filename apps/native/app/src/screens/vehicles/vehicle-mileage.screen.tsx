@@ -10,6 +10,7 @@ import {
   Button,
   Divider,
   NavigationBarSheet,
+  Problem,
   TextField,
   Typography,
   useDynamicColor,
@@ -146,7 +147,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
     (value?: string, allowLower?: boolean) => {
       const mileage = Number(String(value ?? '').replace(/\D/g, ''))
 
-      if (mileage <= latestMileage && !allowLower) {
+      if (mileage < latestMileage && !allowLower) {
         Alert.alert(
           intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
           intl.formatMessage({ id: 'vehicle.mileage.errorMileageInputTooLow' }),
@@ -438,6 +439,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
           </View>
         }
         style={{ flex: 1, margin: 16, marginTop: 0 }}
+        ListFooterComponent={res.error && <Problem error={res.error} />}
       />
     </>
   )

@@ -9,10 +9,6 @@ import {
   Space,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  isCompletedCase,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseListEntry,
@@ -36,11 +32,7 @@ const PageTitle: FC<PropsWithChildren<Props>> = (props) => {
   const router = useRouter()
 
   const showRulingDecisionTag =
-    includeTag ||
-    (isIndictmentCase(workingCase.type) &&
-      workingCase.indictmentRulingDecision &&
-      isCompletedCase(workingCase.state) &&
-      workingCase.state !== CaseState.CORRECTING)
+    includeTag && workingCase.state !== CaseState.CORRECTING
 
   return (
     <Box

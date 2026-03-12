@@ -387,6 +387,7 @@ export class CmsResolver {
     return this.cmsContentfulService.getProjectPage(input.slug, input.lang)
   }
 
+  // TODO: Add filtering support for hasALandingPage
   @CacheControl(defaultCache)
   @Query(() => Organizations)
   getOrganizations(

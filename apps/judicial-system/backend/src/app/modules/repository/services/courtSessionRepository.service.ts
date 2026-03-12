@@ -1,4 +1,4 @@
-import { CreateOptions, Transaction, UpdateOptions } from 'sequelize'
+import { Transaction, UpdateOptions } from 'sequelize'
 
 import {
   Inject,
@@ -9,21 +9,29 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { CourtSessionRulingType } from '@island.is/judicial-system/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  CourtSessionRulingType,
+  CourtSessionStringType,
+  EventType,
+} from '@island.is/judicial-system/types'
 
+import { Case } from '../models/case.model'
 import { CourtSession } from '../models/courtSession.model'
+import { CourtSessionString } from '../models/courtSessionString.model'
+import { EventLog } from '../models/eventLog.model'
 import { CourtDocumentRepositoryService } from './courtDocumentRepository.service'
 
 interface CreateCourtSessionOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface UpdateCourtSessionOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface DeleteCourtSessionOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface UpdateCourtSession {
@@ -46,6 +54,10 @@ interface UpdateCourtSession {
 @Injectable()
 export class CourtSessionRepositoryService {
   constructor(
+    @InjectModel(EventLog) private readonly eventLogModel: typeof EventLog,
+    @InjectModel(Case) private readonly caseModel: typeof Case,
+    @InjectModel(CourtSessionString)
+    private readonly courtSessionStringModel: typeof CourtSessionString,
     @InjectModel(CourtSession)
     private readonly courtSessionModel: typeof CourtSession,
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
@@ -54,21 +66,39 @@ export class CourtSessionRepositoryService {
 
   async create(
     caseId: string,
-    options?: CreateCourtSessionOptions,
+    options: CreateCourtSessionOptions,
   ): Promise<CourtSession> {
     try {
       this.logger.debug(`Creating a new court session for case ${caseId}`)
 
-      const createOptions: CreateOptions = {}
-
-      if (options?.transaction) {
-        createOptions.transaction = options.transaction
-      }
-
       const courtSession = await this.courtSessionModel.create(
         { caseId },
-        createOptions,
+        options,
       )
+
+      const transaction = options.transaction
+
+      await this.courtDocumentRepositoryService.fileAllAvailableCourtDocumentsInCourtSession(
+        caseId,
+        courtSession.id,
+        { transaction },
+      )
+
+      // File all unfiled merged documents
+      const mergedCases = await this.caseModel.findAll({
+        where: { mergeCaseId: caseId },
+        order: [['created', 'ASC']],
+        transaction,
+      })
+
+      for (const mergedCase of mergedCases) {
+        await this.addMergedCaseToCourtSession(
+          caseId,
+          courtSession.id,
+          mergedCase,
+          transaction,
+        )
+      }
 
       this.logger.debug(
         `Created a new court session ${courtSession.id} for case ${caseId}`,
@@ -76,7 +106,10 @@ export class CourtSessionRepositoryService {
 
       return courtSession
     } catch (error) {
-      this.logger.error(`Error creating a new court session for case ${caseId}`)
+      this.logger.error(
+        `Error creating a new court session for case ${caseId}`,
+        { error },
+      )
 
       throw error
     }
@@ -86,7 +119,7 @@ export class CourtSessionRepositoryService {
     caseId: string,
     courtSessionId: string,
     data: UpdateCourtSession,
-    options?: UpdateCourtSessionOptions,
+    options: UpdateCourtSessionOptions,
   ): Promise<CourtSession> {
     try {
       this.logger.debug(
@@ -96,10 +129,7 @@ export class CourtSessionRepositoryService {
 
       const updateOptions: UpdateOptions = {
         where: { id: courtSessionId, caseId },
-      }
-
-      if (options?.transaction) {
-        updateOptions.transaction = options.transaction
+        transaction: options.transaction,
       }
 
       const [numberOfAffectedRows, courtSessions] =
@@ -137,24 +167,148 @@ export class CourtSessionRepositoryService {
     }
   }
 
+  async addMergedCaseToLatestCourtSession(
+    caseId: string,
+    mergedCaseId: string,
+    options: UpdateCourtSessionOptions,
+  ) {
+    try {
+      this.logger.debug(
+        `Adding merged case ${mergedCaseId} to latest court session of case ${caseId}`,
+      )
+
+      const transaction = options.transaction
+
+      const latestCourtSession = await this.courtSessionModel.findOne({
+        where: { caseId },
+        order: [['created', 'DESC']],
+        transaction,
+      })
+
+      if (!latestCourtSession || latestCourtSession.isConfirmed) {
+        throw new InternalServerErrorException(
+          `The latest court session of case ${caseId} must not be confirmed when adding merged case ${mergedCaseId}`,
+        )
+      }
+
+      const mergedCase = await this.caseModel.findByPk(mergedCaseId, {
+        transaction,
+      })
+
+      if (!mergedCase) {
+        throw new InternalServerErrorException(
+          `Could not find case ${mergedCaseId} when adding it as a merged case to the latest court session of case ${caseId}`,
+        )
+      }
+
+      await this.addMergedCaseToCourtSession(
+        caseId,
+        latestCourtSession.id,
+        mergedCase,
+        transaction,
+      )
+
+      return latestCourtSession
+    } catch (error) {
+      this.logger.error(
+        `Error adding merged case ${mergedCaseId} to latest court session of case ${caseId}`,
+        { error },
+      )
+
+      throw error
+    }
+  }
+
+  private async addMergedCaseToCourtSession(
+    caseId: string,
+    courtSessionId: string,
+    mergedCase: Case,
+    transaction: Transaction,
+  ) {
+    const added =
+      await this.courtDocumentRepositoryService.updateMergedCourtDocuments({
+        parentCaseId: caseId,
+        parentCaseCourtSessionId: courtSessionId,
+        caseId: mergedCase.id,
+        transaction,
+      })
+
+    if (!added) {
+      return
+    }
+
+    const event = await this.eventLogModel.findOne({
+      where: {
+        caseId: mergedCase.id,
+        eventType: [
+          EventType.CASE_SENT_TO_COURT,
+          EventType.INDICTMENT_CONFIRMED,
+        ],
+      },
+      order: [['created', 'DESC']],
+      transaction,
+    })
+
+    await this.courtSessionStringModel.create(
+      {
+        caseId,
+        courtSessionId,
+        mergedCaseId: mergedCase.id,
+        stringType: CourtSessionStringType.ENTRIES,
+        value: `Mál nr. ${
+          mergedCase.courtCaseNumber
+        } sem var höfðað á hendur ákærða${
+          event
+            ? ` með ákæru útgefinni ${formatDate(event.created, 'PPP')}`
+            : ''
+        }, er nú einnig tekið fyrir og það sameinað þessu máli, sbr. heimild í 1. mgr. 169. gr. laga nr. 88/2008 um meðferð sakamála, og verða þau eftirleiðis rekin undir málsnúmeri þessa máls.`,
+      },
+      { transaction },
+    )
+  }
+
   async delete(
     caseId: string,
     courtSessionId: string,
-    options?: DeleteCourtSessionOptions,
+    options: DeleteCourtSessionOptions,
   ): Promise<void> {
     try {
       this.logger.debug(
         `Deleting court session ${courtSessionId} of case ${caseId}`,
       )
 
-      const transaction = options?.transaction
+      const transaction = options.transaction
+
+      const courtSession = await this.courtSessionModel.findOne({
+        where: { caseId },
+        order: [['created', 'DESC']],
+        transaction,
+      })
+
+      if (!courtSession) {
+        throw new InternalServerErrorException(
+          `Could not find court session ${courtSessionId} of case ${caseId}`,
+        )
+      }
+
+      if (courtSession.id !== courtSessionId) {
+        throw new InternalServerErrorException(
+          `Only the latest court session of case ${caseId} can be deleted`,
+        )
+      }
 
       // First delete all documents in the session
-      await this.courtDocumentRepositoryService.deleteDocumentsInSession(
+      await this.courtDocumentRepositoryService.removeAllCourtDocumentsFromCourtSession(
         caseId,
         courtSessionId,
         transaction,
       )
+
+      // Then delete all strings in the session
+      await this.courtSessionStringModel.destroy({
+        where: { caseId, courtSessionId },
+        transaction,
+      })
 
       // Then delete the session itself
       await this.deleteFromDatabase(caseId, courtSessionId, transaction)
@@ -175,7 +329,7 @@ export class CourtSessionRepositoryService {
   private async deleteFromDatabase(
     caseId: string,
     courtSessionId: string,
-    transaction: Transaction | undefined,
+    transaction: Transaction,
   ) {
     const numberOfDeletedRows = await this.courtSessionModel.destroy({
       where: { id: courtSessionId, caseId },

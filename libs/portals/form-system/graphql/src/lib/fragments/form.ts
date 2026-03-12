@@ -24,8 +24,10 @@ export const FormFragment = gql`
     invalidationDate
     created
     modified
+    zendeskInternal
+    useValidate
+    usePopulate
     submissionServiceUrl
-    validationServiceUrl
     isTranslated
     hasPayment
     beenPublished

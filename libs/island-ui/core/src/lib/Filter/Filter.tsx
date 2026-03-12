@@ -1,4 +1,4 @@
-import React, { createContext, FC, ReactNode, useEffect, useState } from 'react'
+import React, { createContext, FC, ReactNode } from 'react'
 import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 import { usePopoverState, Popover, PopoverDisclosure } from 'reakit/Popover'
 import { Box } from '../Box/Box'
@@ -56,7 +56,7 @@ export interface FilterProps {
   /** Allow popover to flip upwards */
   popoverFlip?: boolean
 
-  /** Mobile title  */
+  /** Mobile title (deprecated - not used by component) */
   title?: string
 
   /** Use the popover disclosure button styling */
@@ -64,6 +64,9 @@ export interface FilterProps {
 
   /** Wrap filter input in a mobile version */
   mobileWrap?: boolean
+
+  /** Remove left margin from filter button */
+  removeLeftMargin?: boolean
 }
 
 /**
@@ -94,9 +97,9 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   onFilterClear,
   reverse,
   children,
-  title,
   popoverFlip = true,
   mobileWrap = true,
+  removeLeftMargin = false,
   usePopoverDiscloureButtonStyling,
 }) => {
   const dialog = useDialogState({ modal: true })
@@ -346,6 +349,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
           ariaLabel={''}
           labelShowResult={labelResult}
           labelClearAll={labelClearAll}
+          labelTitle={labelTitle}
           onFilterClear={onFilterClear}
           disclosure={
             <Box
@@ -353,7 +357,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
               marginTop={'auto'}
               borderRadius="large"
               tabIndex={-1}
-              marginLeft={2}
+              marginLeft={removeLeftMargin ? 0 : 2}
               className={filterCount ? styles.filterCountButton : undefined}
             >
               {filterCount ? (

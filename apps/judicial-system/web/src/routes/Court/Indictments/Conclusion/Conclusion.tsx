@@ -4,6 +4,7 @@ import router from 'next/router'
 
 import {
   Box,
+  Checkbox,
   FileUploadStatus,
   Input,
   InputFileUpload,
@@ -34,16 +35,13 @@ import {
   PageTitle,
   PdfButton,
   SectionHeading,
-  SelectableList,
   useCourtArrangements,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { SelectableItem } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseState,
-  CaseType,
   CourtSessionRulingType,
   CourtSessionType,
   Defendant,
@@ -53,16 +51,21 @@ import {
   formatDateForServer,
   UpdateCase,
   useCase,
+  useDefendants,
   useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { validate } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  isGeneratedIndictmentCourtRecordValid,
+  isNoGeneratedIndictmentCourtRecord,
+  validate,
+} from '@island.is/judicial-system-web/src/utils/validate'
 
-import CourtCaseNumberInput from '../../components/CourtCaseNumber/CourtCaseNumberInput'
-import SelectConnectedCase from './SelectConnectedCase'
+import { CourtCaseNumberInput } from '../../components'
+import SelectCandidateMergeCase from './SelectCandidateMergeCase'
 import { strings } from './Conclusion.strings'
 
 const courtSessionOptions = [
@@ -111,7 +114,6 @@ const Conclusion: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const {
-    createCourtCase,
     isUpdatingCase,
     setAndSendCaseToServer,
     splitDefendantFromCase,
@@ -119,7 +121,8 @@ const Conclusion: FC = () => {
   } = useCase()
   const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
-  const { createVerdicts } = useVerdict()
+  const { createVerdicts, updateDefendantVerdictState } = useVerdict()
+  const { updateDefendantState, updateDefendant } = useDefendants()
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -143,8 +146,6 @@ const Conclusion: FC = () => {
   const [mergeCaseNumber, setMergeCaseNumber] = useState<string>()
   const [mergeCaseNumberErrorMessage, setMergeCaseNumberErrorMessage] =
     useState<string>()
-  const [defendantsWithDefaultJudgments, setDefendantsWithDefaultJudgments] =
-    useState<SelectableItem[]>([])
   const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>(
     null,
   )
@@ -226,21 +227,46 @@ const Conclusion: FC = () => {
 
       if (
         update.indictmentDecision === IndictmentDecision.COMPLETING &&
-        update.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+        update.indictmentRulingDecision &&
+        [
+          CaseIndictmentRulingDecision.RULING,
+          CaseIndictmentRulingDecision.FINE,
+        ].includes(update.indictmentRulingDecision)
       ) {
-        const defendantVerdictsToCreate = defendantsWithDefaultJudgments?.map(
-          (item) => ({
-            defendantId: item.id,
-            isDefaultJudgement: item.checked,
-          }),
+        const promises = []
+
+        if (
+          update.indictmentRulingDecision ===
+          CaseIndictmentRulingDecision.RULING
+        ) {
+          const defendantVerdictsToCreate = workingCase.defendants?.map(
+            (item) => ({
+              defendantId: item.id,
+              isDefaultJudgement: item.verdict?.isDefaultJudgement || false,
+            }),
+          )
+
+          promises.push(
+            createVerdicts({
+              caseId: workingCase.id,
+              verdicts: defendantVerdictsToCreate,
+            }),
+          )
+        }
+
+        promises.push(
+          ...(workingCase.defendants?.map((defendant) =>
+            updateDefendant({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              isDrivingLicenseSuspended: defendant.isDrivingLicenseSuspended,
+            }),
+          ) || []),
         )
 
-        const createSuccess = await createVerdicts({
-          caseId: workingCase.id,
-          verdicts: defendantVerdictsToCreate,
-        })
+        const createSuccess = await Promise.all(promises)
 
-        if (!createSuccess) {
+        if (createSuccess.length === 0) {
           return
         }
       }
@@ -255,7 +281,6 @@ const Conclusion: FC = () => {
       courtDate.date,
       courtDate.location,
       createVerdicts,
-      defendantsWithDefaultJudgments,
       mergeCaseNumber,
       postponementReason,
       selectedAction,
@@ -263,6 +288,7 @@ const Conclusion: FC = () => {
       selectedDecision,
       setAndSendCaseToServer,
       setWorkingCase,
+      updateDefendant,
       workingCase,
     ],
   )
@@ -289,7 +315,6 @@ const Conclusion: FC = () => {
         if (workingCase.indictmentRulingDecision) {
           setSelectedDecision(workingCase.indictmentRulingDecision)
         }
-        setSelectedAction(IndictmentDecision.COMPLETING)
         break
       default:
         return
@@ -302,11 +327,8 @@ const Conclusion: FC = () => {
   ])
 
   useEffect(() => {
-    if (
-      workingCase.indictmentDecision &&
-      workingCase.indictmentDecision !== IndictmentDecision.COMPLETING
-    ) {
-      setSelectedAction(IndictmentDecision.SCHEDULING)
+    if (workingCase.indictmentDecision) {
+      setSelectedAction(workingCase.indictmentDecision)
     }
   }, [workingCase.indictmentDecision])
 
@@ -316,16 +338,6 @@ const Conclusion: FC = () => {
     }
   }, [workingCase.mergeCaseNumber])
 
-  useEffect(() => {
-    setDefendantsWithDefaultJudgments(
-      (workingCase.defendants ?? []).map((d) => ({
-        id: d.id,
-        name: d.name ?? 'Nafn ekki skráð',
-        checked: d.verdict?.isDefaultJudgement ?? false,
-      })),
-    )
-  }, [workingCase.defendants])
-
   const handleMergeCaseNumberBlur = (value: string) => {
     const validation = validate([[value, ['S-case-number']]])
 
@@ -334,19 +346,23 @@ const Conclusion: FC = () => {
     )
   }
 
+  const isValidGeneratedIndictmentCourtRecord =
+    isGeneratedIndictmentCourtRecordValid(workingCase)
+  const isEmptyGeneratedIndictmentCourtRecord =
+    isNoGeneratedIndictmentCourtRecord(workingCase)
+  const isCourtRecordValid = workingCase.withCourtSessions
+    ? isValidGeneratedIndictmentCourtRecord
+    : uploadFiles.some(
+        (file) =>
+          file.category === CaseFileCategory.COURT_RECORD &&
+          file.status === FileUploadStatus.done,
+      )
+
   const stepIsValid = () => {
     // Do not leave any uploads unfinished
     if (!allFilesDoneOrError) {
       return false
     }
-
-    const isCourtRecordValid = (): boolean =>
-      hasGeneratedCourtRecord ||
-      uploadFiles.some(
-        (file) =>
-          file.category === CaseFileCategory.COURT_RECORD &&
-          file.status === FileUploadStatus.done,
-      )
 
     switch (selectedAction) {
       case IndictmentDecision.POSTPONING:
@@ -360,7 +376,7 @@ const Conclusion: FC = () => {
           case CaseIndictmentRulingDecision.RULING:
           case CaseIndictmentRulingDecision.DISMISSAL:
             return (
-              isCourtRecordValid() &&
+              isCourtRecordValid &&
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.RULING &&
@@ -369,10 +385,13 @@ const Conclusion: FC = () => {
             )
           case CaseIndictmentRulingDecision.CANCELLATION:
           case CaseIndictmentRulingDecision.FINE:
-            return isCourtRecordValid()
+            return isCourtRecordValid
           case CaseIndictmentRulingDecision.MERGE:
             return (
-              isCourtRecordValid() &&
+              (workingCase.withCourtSessions
+                ? isValidGeneratedIndictmentCourtRecord ||
+                  isEmptyGeneratedIndictmentCourtRecord
+                : true) &&
               Boolean(
                 workingCase.mergeCase?.id ||
                   validate([[mergeCaseNumber, ['empty', 'S-case-number']]])
@@ -390,18 +409,44 @@ const Conclusion: FC = () => {
     }
   }
 
-  const hasJudgementRuling =
+  const hasJudgementRuling = Boolean(
     workingCase.courtSessions?.some(
       (courtSession) =>
         courtSession.rulingType === CourtSessionRulingType.JUDGEMENT &&
-        Boolean(courtSession.ruling),
-    ) ?? false
+        courtSession.ruling,
+    ),
+  )
 
-  const missingRulingInCourtSessions =
-    !!workingCase.withCourtSessions &&
-    selectedAction === IndictmentDecision.COMPLETING &&
-    selectedDecision === CaseIndictmentRulingDecision.RULING &&
-    !hasJudgementRuling
+  const missingValidGeneratedCourtRecordForCompletion = Boolean(
+    workingCase.withCourtSessions &&
+      !isValidGeneratedIndictmentCourtRecord &&
+      selectedAction === IndictmentDecision.COMPLETING &&
+      (selectedDecision === CaseIndictmentRulingDecision.RULING ||
+        selectedDecision === CaseIndictmentRulingDecision.FINE ||
+        selectedDecision === CaseIndictmentRulingDecision.DISMISSAL ||
+        selectedDecision === CaseIndictmentRulingDecision.CANCELLATION),
+  )
+
+  const missingValidGeneratedCourtRecordForCompletionWithMerge = Boolean(
+    workingCase.withCourtSessions &&
+      !isEmptyGeneratedIndictmentCourtRecord &&
+      !isValidGeneratedIndictmentCourtRecord &&
+      selectedAction === IndictmentDecision.COMPLETING &&
+      selectedDecision === CaseIndictmentRulingDecision.MERGE,
+  )
+
+  const missingValidGeneratedCourtRecordForSplitting = Boolean(
+    workingCase.withCourtSessions &&
+      !isValidGeneratedIndictmentCourtRecord &&
+      selectedAction === IndictmentDecision.SPLITTING,
+  )
+
+  const missingRulingInGeneratedCourtSessions = Boolean(
+    workingCase.withCourtSessions &&
+      selectedAction === IndictmentDecision.COMPLETING &&
+      selectedDecision === CaseIndictmentRulingDecision.RULING &&
+      !hasJudgementRuling,
+  )
 
   return (
     <PageLayout
@@ -427,9 +472,9 @@ const Conclusion: FC = () => {
                 name="conclusion-decision"
                 checked={selectedAction === IndictmentDecision.POSTPONING}
                 disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() => {
+                onChange={() =>
                   setSelectedAction(IndictmentDecision.POSTPONING)
-                }}
+                }
                 large
                 backgroundColor="white"
                 label={formatMessage(strings.postponing)}
@@ -439,9 +484,9 @@ const Conclusion: FC = () => {
                 name="conclusion-decision"
                 checked={selectedAction === IndictmentDecision.SCHEDULING}
                 disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() => {
+                onChange={() =>
                   setSelectedAction(IndictmentDecision.SCHEDULING)
-                }}
+                }
                 large
                 backgroundColor="white"
                 label={formatMessage(strings.scheduling)}
@@ -453,9 +498,9 @@ const Conclusion: FC = () => {
                   selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
                 }
                 disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() => {
+                onChange={() =>
                   setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
-                }}
+                }
                 large
                 backgroundColor="white"
                 label={formatMessage(strings.postponingUntilVerdict)}
@@ -465,9 +510,9 @@ const Conclusion: FC = () => {
                 name="conclusion-decision"
                 checked={selectedAction === IndictmentDecision.COMPLETING}
                 disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() => {
+                onChange={() =>
                   setSelectedAction(IndictmentDecision.COMPLETING)
-                }}
+                }
                 large
                 backgroundColor="white"
                 label={formatMessage(strings.completing)}
@@ -477,9 +522,9 @@ const Conclusion: FC = () => {
                 name="conclusion-redistribute"
                 checked={selectedAction === IndictmentDecision.REDISTRIBUTING}
                 disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() => {
+                onChange={() =>
                   setSelectedAction(IndictmentDecision.REDISTRIBUTING)
-                }}
+                }
                 large
                 backgroundColor="white"
                 label={formatMessage(strings.redistributing)}
@@ -490,9 +535,9 @@ const Conclusion: FC = () => {
                   name="conclusion-splitting"
                   checked={selectedAction === IndictmentDecision.SPLITTING}
                   disabled={workingCase.state === CaseState.CORRECTING}
-                  onChange={() => {
+                  onChange={() =>
                     setSelectedAction(IndictmentDecision.SPLITTING)
-                  }}
+                  }
                   large
                   backgroundColor="white"
                   label="Kljúfa mál"
@@ -644,7 +689,7 @@ const Conclusion: FC = () => {
                     required
                   />
                   <BlueBox className={grid({ gap: 2 })}>
-                    <SelectConnectedCase
+                    <SelectCandidateMergeCase
                       workingCase={workingCase}
                       setWorkingCase={setWorkingCase}
                       mergeCaseNumber={mergeCaseNumber}
@@ -776,18 +821,61 @@ const Conclusion: FC = () => {
               </Box>
             )}
           {selectedAction === IndictmentDecision.COMPLETING &&
-            selectedDecision === CaseIndictmentRulingDecision.RULING &&
+            (selectedDecision === CaseIndictmentRulingDecision.FINE ||
+              selectedDecision === CaseIndictmentRulingDecision.RULING) &&
             workingCase.defendants &&
             workingCase.defendants?.length > 0 && (
-              <Box component="section">
-                <SelectableList
-                  selectAllText="Útivistardómur"
-                  items={defendantsWithDefaultJudgments}
-                  onChange={(selectableItems: SelectableItem[]) => {
-                    setDefendantsWithDefaultJudgments(selectableItems)
-                  }}
-                  isLoading={false}
-                />
+              <Box component="section" className={grid({ gap: 3 })}>
+                {workingCase.defendants.map((defendant) => (
+                  <BlueBox key={defendant.id} className={grid({ gap: 2 })}>
+                    <SectionHeading
+                      title={defendant.name || ''}
+                      variant="h5"
+                      marginBottom={0}
+                    />
+                    {selectedDecision ===
+                      CaseIndictmentRulingDecision.RULING && (
+                      <Checkbox
+                        id={`default-judgment-${defendant.id}`}
+                        label="Útivistardómur"
+                        checked={defendant.verdict?.isDefaultJudgement || false}
+                        onChange={(evt) =>
+                          updateDefendantVerdictState(
+                            {
+                              caseId: workingCase.id,
+                              defendantId: defendant.id,
+                              isDefaultJudgement: evt.target.checked,
+                            },
+                            setWorkingCase,
+                          )
+                        }
+                        disabled={workingCase.state === CaseState.CORRECTING}
+                        backgroundColor="white"
+                        large
+                        filled
+                      />
+                    )}
+                    <Checkbox
+                      id={`driving-license-revocation-${defendant.id}`}
+                      label="Svipting ökuréttar"
+                      checked={defendant.isDrivingLicenseSuspended || false}
+                      onChange={(evt) =>
+                        updateDefendantState(
+                          {
+                            caseId: workingCase.id,
+                            defendantId: defendant.id,
+                            isDrivingLicenseSuspended: evt.target.checked,
+                          },
+                          setWorkingCase,
+                        )
+                      }
+                      disabled={workingCase.state === CaseState.CORRECTING}
+                      backgroundColor="white"
+                      large
+                      filled
+                    />
+                  </BlueBox>
+                ))}
               </Box>
             )}
           {selectedAction && workingCase.withCourtSessions && (
@@ -823,10 +911,21 @@ const Conclusion: FC = () => {
           }
           nextIsDisabled={!stepIsValid()}
           nextIsLoading={isUpdatingCase}
-          hideNextButton={missingRulingInCourtSessions}
+          hideNextButton={
+            missingValidGeneratedCourtRecordForCompletion ||
+            missingValidGeneratedCourtRecordForCompletionWithMerge ||
+            missingRulingInGeneratedCourtSessions ||
+            missingValidGeneratedCourtRecordForSplitting
+          }
           infoBoxText={
-            missingRulingInCourtSessions
+            missingValidGeneratedCourtRecordForCompletion
+              ? 'Til að ljúka máli öðruvísi en með sameiningu þarf að staðfesta þingbók á þingbókarskjá.'
+              : missingValidGeneratedCourtRecordForCompletionWithMerge
+              ? 'Til að ljúka máli með sameiningu þarf að staðfesta þingbók á þingbókarskjá eða þingbók þarf að vera tóm.'
+              : missingRulingInGeneratedCourtSessions
               ? 'Þegar máli lýkur með dómi þarf að skrá dómsorðið á þingbókarskjá.'
+              : missingValidGeneratedCourtRecordForSplitting
+              ? 'Til að kljúfa máli þarf að staðfesta þingbók á þingbókarskjá.'
               : ''
           }
         />
@@ -876,18 +975,11 @@ const Conclusion: FC = () => {
           }}
         >
           <CourtCaseNumberInput
-            workingCase={{
-              id: splitCaseId,
-              state: CaseState.RECEIVED,
-              type: CaseType.INDICTMENT,
-            }}
-            onCreateCourtCase={async () => {
-              const courtCaseNumber = await createCourtCase(splitCaseId)
-              return courtCaseNumber ?? ''
-            }}
-            onChange={(courtCaseNumber) => {
-              setSplitCaseCourtCaseNumber(courtCaseNumber)
-            }}
+            caseId={splitCaseId}
+            isIndictmentCase={true}
+            courtCaseNumber={splitCaseCourtCaseNumber}
+            isDisabled={false}
+            setCourtCaseNumber={setSplitCaseCourtCaseNumber}
           />
         </Modal>
       )}

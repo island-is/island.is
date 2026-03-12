@@ -12,6 +12,8 @@ import React, {
 import { environments } from '../config'
 import { useAuthStore } from '../stores/auth-store'
 import { useEnvironmentStore } from '../stores/environment-store'
+import { Platform } from 'react-native'
+import DeviceInfo from 'react-native-device-info'
 
 interface FeatureFlagUser {
   identifier: string
@@ -90,6 +92,10 @@ export const FeatureFlagProvider: FC<
   }, [client])
 
   const context = useMemo<FeatureFlagClient>(() => {
+    const appVersion = DeviceInfo.getVersion() ?? ''
+    // Convert OS to lowercase to match the feature flag key
+    const os = Platform.OS.toLowerCase()
+
     const userAuth =
       userInfo && userInfo.nationalId
         ? {
@@ -97,6 +103,8 @@ export const FeatureFlagProvider: FC<
             custom: {
               nationalId: userInfo.nationalId,
               name: userInfo.name,
+              appVersion,
+              os,
             },
           }
         : undefined

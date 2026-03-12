@@ -1,4 +1,5 @@
 import { Response } from 'express'
+import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
 import { Logger } from '@island.is/logging'
@@ -37,14 +38,21 @@ type GivenWhenThen = (
 describe('LimitedAccessCaseController - Get court record pdf', () => {
   let mockAwsS3Service: AwsS3Service
   let mockLogger: Logger
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, logger, limitedAccessCaseController } =
+    const { sequelize, awsS3Service, logger, limitedAccessCaseController } =
       await createTestingCaseModule()
 
     mockAwsS3Service = awsS3Service
     mockLogger = logger
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockGetGeneratedRequestCaseObject =
       mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock

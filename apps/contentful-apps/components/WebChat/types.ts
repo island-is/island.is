@@ -2,7 +2,40 @@ export enum WebChatType {
   Zendesk = 'zendesk',
   LiveChat = 'livechat',
   Boost = 'boost',
+  Watson = 'watson',
 }
+
+export type WatsonConfiguration = {
+  type: WebChatType.Watson
+} & Record<
+  string,
+  {
+    [WebChatType.Watson]?: {
+      integrationID?: string
+      region?: string
+      serviceInstanceID?: string
+      showLauncher?: boolean
+      carbonTheme?: string
+      namespaceKey?: string
+      serviceDesk?: {
+        integrationType?: string
+        genesysMessenger?: {
+          scriptURL?: string
+          deploymentID?: string
+          environment?: string
+        }
+        skipConnectAgentCard?: boolean
+      }
+      setupOneScreenWatsonChatBotParams?: {
+        categoryTitle?: string
+        categoryGroup?: string
+      }
+      clearSessionStorageParams?: {
+        categoryGroup?: string
+      }
+    }
+  }
+>
 
 export type ZendeskConfiguration = {
   type: WebChatType.Zendesk
@@ -11,6 +44,7 @@ export type ZendeskConfiguration = {
   {
     [WebChatType.Zendesk]?: {
       snippetUrl?: string
+      urlTrackingTicketId?: string
       chatBubbleVariant?: 'default' | 'circle'
     }
   }
@@ -47,3 +81,4 @@ export type Configuration =
   | ZendeskConfiguration
   | LiveChatConfiguration
   | BoostConfiguration
+  | WatsonConfiguration

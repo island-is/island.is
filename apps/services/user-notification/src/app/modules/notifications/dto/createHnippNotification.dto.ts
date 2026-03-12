@@ -9,11 +9,12 @@ export class HnippNotificationOriginalRecipientDto {
   nationalId!: string
 
   @IsString()
-  @ApiProperty()
-  name!: string
+  @ApiPropertyOptional()
+  @IsOptional()
+  name?: string
 
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsOptional()
   subjectId?: string
 }

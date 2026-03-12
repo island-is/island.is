@@ -17,7 +17,7 @@ interface Props {
 export const NavButtons = ({ id, type }: Props) => {
   const { control, controlDispatch, setOpenComponents } =
     useContext(ControlContext)
-  const { form } = control
+  const { form, isPublished } = control
   const { screens, fields } = form
   const { formatMessage } = useIntl()
 
@@ -86,6 +86,10 @@ export const NavButtons = ({ id, type }: Props) => {
         }))
       }
     }
+  }
+
+  if (isPublished) {
+    return null
   }
 
   return (

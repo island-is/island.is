@@ -4,7 +4,6 @@ import * as styles from './Filter.css'
 import { Box } from '../Box/Box'
 import { Text } from '../Text/Text'
 import { Button } from '../Button/Button'
-import { useLocale } from '@island.is/localization'
 import { useSwipeable } from 'react-swipeable'
 
 type Props = {
@@ -13,8 +12,8 @@ type Props = {
   initialVisibility?: boolean
   labelShowResult?: string
   labelClearAll?: string
+  labelTitle?: string
   onFilterClear: () => void
-  topGap?: number
   children: React.ReactNode
 }
 
@@ -22,13 +21,12 @@ export const FilterDrawerAriakit = ({
   ariaLabel,
   disclosure,
   initialVisibility,
-  labelShowResult,
   labelClearAll,
+  labelShowResult,
+  labelTitle,
   onFilterClear,
-  topGap = 100,
   children,
 }: Props) => {
-  const { lang } = useLocale()
   const store = useDialogStore({
     defaultOpen: !!initialVisibility,
     animated: true,
@@ -93,7 +91,7 @@ export const FilterDrawerAriakit = ({
           paddingY={2}
         >
           <Text variant="h4" as="h3">
-            {lang === 'is' ? 'Sía eftir' : 'Filter by'}
+            {labelTitle ?? 'Sía eftir'}
           </Text>
           <Button
             icon="reload"
@@ -101,7 +99,7 @@ export const FilterDrawerAriakit = ({
             variant="text"
             onClick={onFilterClear}
           >
-            {labelClearAll ?? (lang === 'is' ? 'Hreinsa allt' : 'Clear all')}
+            {labelClearAll ?? 'Hreinsa allt'}
           </Button>
         </Box>
 
@@ -113,8 +111,7 @@ export const FilterDrawerAriakit = ({
         {/* sticky footer */}
         <Box className={styles.footer} paddingX={3} paddingY={2}>
           <Button fluid onClick={close}>
-            {labelShowResult ??
-              (lang === 'is' ? 'Sýna niðurstöður' : 'Show results')}
+            {labelShowResult ?? 'Sýna niðurstöður'}
           </Button>
         </Box>
       </Dialog>

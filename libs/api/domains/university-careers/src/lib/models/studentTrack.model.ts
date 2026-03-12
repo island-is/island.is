@@ -15,7 +15,4 @@ export class StudentTrack {
 
   @Field(() => StudentTrackMetadata)
   metadata!: StudentTrackMetadata
-
-  @Field({ nullable: true })
-  downloadServiceURL?: string
 }

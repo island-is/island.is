@@ -23,6 +23,9 @@ export class AdvertsInput {
   type?: string[]
 
   @Field(() => [String], { nullable: true })
+  mainType?: string[]
+
+  @Field(() => [String], { nullable: true })
   category?: string[]
 
   @Field(() => [String], { nullable: true })
@@ -36,6 +39,12 @@ export class AdvertsInput {
 
   @Field(() => String, { nullable: true })
   year?: string
+
+  @Field(() => String, { nullable: true })
+  sortBy?: string
+
+  @Field(() => String, { nullable: true })
+  direction?: string
 }
 
 @InputType('OfficialJournalOfIcelandTypesInput')

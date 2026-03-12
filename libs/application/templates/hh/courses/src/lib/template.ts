@@ -10,7 +10,10 @@ import {
   ApplicationConfigurations,
   defineTemplateApi,
   HealthCenterApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
+import { buildPaymentState } from '@island.is/application/utils'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
@@ -20,8 +23,14 @@ import {
 import { UserProfileApi, NationalRegistryUserApi } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { dataSchema } from './dataSchema'
+import {
+  HhCoursesSelectedChargeItemApi,
+  HhCoursesParticipantAvailabilityApi,
+} from '../dataProviders'
 
 import { m } from './messages'
+import { getChargeItems } from '../utils/getChargeItems'
+import { hasCourseBeenFullyBooked } from '../utils/hasCourseBeenFullyBooked'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -29,9 +38,22 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID,
-  name: m.general.applicationTitle,
+  name: (application: Application) => {
+    const courseTitle = getValueViaPath<string>(
+      application.externalData,
+      'hhCoursesSelectedChargeItem.data.courseTitle',
+    )
+    return courseTitle
+      ? {
+          name: m.general.applicationTitleWithCourse,
+          value: courseTitle,
+        }
+      : m.general.applicationTitle
+  },
   codeOwner: CodeOwners.Stefna,
   institution: m.general.institutionName,
+  applicationText: m.general.applicationListTitle,
+  newApplicationButtonLabel: m.general.newApplicationButtonLabel,
   translationNamespaces:
     ApplicationConfigurations[
       ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID
@@ -65,7 +87,12 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, NationalRegistryUserApi, HealthCenterApi],
+              api: [
+                UserProfileApi,
+                NationalRegistryUserApi,
+                HealthCenterApi,
+                HhCoursesSelectedChargeItemApi,
+              ],
               delete: true,
             },
           ],
@@ -92,7 +119,7 @@ const template: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: m.overview.submitTitle,
+                  name: m.overview.submitRegistrationTitle,
                   type: 'primary',
                 },
               ],
@@ -102,30 +129,87 @@ const template: ApplicationTemplate<
             },
           ],
           onExit: [
-            defineTemplateApi({
-              action: ApiActions.submitApplication,
-              throwOnError: true,
+            HhCoursesParticipantAvailabilityApi.configure({
+              order: 0,
+            }),
+            HhCoursesSelectedChargeItemApi.configure({
+              order: 1,
             }),
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.PAYMENT,
+              cond: ({ application }) =>
+                getChargeItems(application).length > 0 &&
+                !hasCourseBeenFullyBooked(application),
+            },
+            {
+              target: States.COMPLETED,
+              cond: ({ application }) =>
+                getChargeItems(application).length === 0 &&
+                !hasCourseBeenFullyBooked(application),
+            },
+            {
+              target: States.FULLY_BOOKED,
+              cond: ({ application }) => hasCourseBeenFullyBooked(application),
+            },
+          ],
         },
       },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId:
+          InstitutionNationalIds.HEILSUGAESLA_HOFUDBORDARSVAEDISINS,
+        chargeItems: getChargeItems,
+        submitTarget: States.COMPLETED,
+        lifecycle: {
+          shouldBeListed: true,
+          shouldBePruned: true,
+          whenToPrune: 20 * 60 * 1000, // 20 minutes
+        },
+      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed form',
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: [
+            defineTemplateApi({
+              action: ApiActions.submitApplication,
+              triggerEvent: DefaultEvents.SUBMIT,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
                 import('../forms/completedForm').then((module) =>
                   Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+          ],
+        },
+      },
+      [States.FULLY_BOOKED]: {
+        meta: {
+          name: 'Fully booked form',
+          progress: 1,
+          status: FormModes.COMPLETED,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: true,
+            whenToPrune: 20 * 60 * 1000, // 20 minutes
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/fullyBookedForm').then((module) =>
+                  Promise.resolve(module.fullyBookedForm),
                 ),
               read: 'all',
               delete: true,

@@ -16,6 +16,7 @@ import {
   NationalRegistrySpouseV3,
   NationalRegistryParent,
   ApplicantChildCustodyInformation,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
@@ -135,7 +136,9 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
     auth: User,
   ) {
     for (const id of childrenId) {
-      const individual = await this.getIndividual(id, auth)
+      const individual = await this.getIndividual(id, auth, {
+        skipMaritalTitle: true,
+      })
       if (individual) {
         this.validateIndividual(individual, true, params)
       }
@@ -318,11 +321,7 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      return this.nationalRegistryService.getIndividual(
-        nationalId,
-        auth,
-        params,
-      )
+      return this.nationalRegistryService.getIndividual(nationalId, params)
     }
 
     const person = await this.nationalRegistryV3Api.getIndividual(
@@ -384,7 +383,7 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
       auth,
     )
     if (!shouldUseNationalRegistryV3) {
-      return this.nationalRegistryService.getIndividual(nationalId, auth)
+      return this.nationalRegistryService.getIndividual(nationalId)
     }
     const otherIndividual = await this.nationalRegistryV3Api.getOtherIndividual(
       nationalId,
@@ -589,7 +588,9 @@ export class NationalRegistryV3Service extends BaseTemplateApiService {
 
   async getSpouse({
     auth,
-  }: TemplateApiModuleActionProps): Promise<NationalRegistrySpouseV3 | null> {
+  }: TemplateApiModuleActionProps): Promise<
+    NationalRegistrySpouseV3 | NationalRegistrySpouse | null
+  > {
     const shouldUseNationalRegistryV3 = await this.featureFlagService.getValue(
       Features.shouldApplicationSystemUseNationalRegistryV3,
       false,

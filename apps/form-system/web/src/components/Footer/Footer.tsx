@@ -1,9 +1,11 @@
 import { useMutation } from '@apollo/client'
 import {
+  NOTIFY_EXTERNAL_SERVICE,
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
   SUBMIT_SECTION,
-  UPDATE_APPLICATION_DEPENDENCIES,
+  UPDATE_APPLICATION_SETTINGS,
+  removeTypename,
 } from '@island.is/form-system/graphql'
 import { SectionTypes, m } from '@island.is/form-system/ui'
 import { Box, Button, GridColumn } from '@island.is/island-ui/core'
@@ -11,6 +13,7 @@ import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import * as styles from './Footer.css'
+import { NotificationCommands } from '@island.is/form-system/enums'
 
 interface Props {
   externalDataAgreement: boolean
@@ -25,7 +28,10 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)
-  const updateDependencies = useMutation(UPDATE_APPLICATION_DEPENDENCIES)
+  const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
+  const [notifyExternal, { loading: notifyLoading }] = useMutation(
+    NOTIFY_EXTERNAL_SERVICE,
+  )
 
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,
@@ -92,6 +98,48 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       return
     }
 
+    if (state.currentScreen?.isPopulateError) {
+      return
+    }
+
+    if (
+      !onSubmit &&
+      state.currentScreen?.data?.shouldValidate &&
+      state.application.submissionServiceUrl !== 'zendesk'
+    ) {
+      try {
+        const { data } = await notifyExternal({
+          variables: {
+            input: {
+              applicationId: state.application.id,
+              nationalId: '',
+              slug: state.application.slug,
+              isTest: state.application.isTest,
+              command: NotificationCommands.VALIDATE,
+              screen: state.currentScreen.data,
+            },
+          },
+        })
+
+        const updatedScreen = removeTypename(
+          data?.notifyFormSystemExternalSystem?.screen,
+        )
+
+        if (updatedScreen?.screenError?.hasError) {
+          dispatch({
+            type: 'EXTERNAL_SERVICE_NOTIFICATION',
+            payload: {
+              screen: updatedScreen,
+            },
+          })
+          return
+        }
+      } catch (error) {
+        console.error('Error notifying external service:', error)
+        return
+      }
+    }
+
     if (!onSubmit) {
       dispatch({
         type: 'INCREMENT',
@@ -104,9 +152,19 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       return
     }
     try {
-      await submitApplication({
+      const { data } = await submitApplication({
         variables: { input: { id: state.application.id } },
       })
+      if (data?.submitFormSystemApplication?.submissionFailed) {
+        dispatch({
+          type: 'SUBMITTED',
+          payload: {
+            submitted: false,
+            screenError: data?.submitFormSystemApplication?.validationError,
+          },
+        })
+        return
+      }
       dispatch({
         type: 'INCREMENT',
         payload: {
@@ -115,9 +173,20 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           updateDependencies: updateDependencies,
         },
       })
-      dispatch({ type: 'SUBMITTED', payload: true })
-    } catch {
-      dispatch({ type: 'SUBMITTED', payload: false })
+      dispatch({
+        type: 'SUBMITTED',
+        payload: {
+          submitted: true,
+          screenError: {
+            hasError: false,
+            title: { is: '', en: '' },
+            message: { is: '', en: '' },
+          },
+        },
+      })
+    } catch (error) {
+      console.error('Error submitting application', error)
+      throw new Error('Error submitting application')
     }
   }
 
@@ -148,8 +217,13 @@ export const Footer = ({ externalDataAgreement }: Props) => {
             <Button
               icon="arrowForward"
               onClick={handleIncrement}
-              disabled={!enableContinueButton || submitLoading}
-              loading={submitLoading}
+              disabled={
+                !enableContinueButton ||
+                submitLoading ||
+                notifyLoading ||
+                state.currentScreen?.isPopulateError
+              }
+              loading={submitLoading || notifyLoading}
             >
               {continueButtonText}
             </Button>
@@ -160,7 +234,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
                 preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
-                disabled={submitLoading}
+                disabled={submitLoading || notifyLoading}
               >
                 {formatMessage(m.back)}
               </Button>

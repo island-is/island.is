@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   Body,
   Controller,
@@ -8,6 +10,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -47,6 +50,7 @@ import { IndictmentCountService } from './indictmentCount.service'
 export class IndictmentCountController {
   constructor(
     private readonly indictmentCountService: IndictmentCountService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -78,10 +82,13 @@ export class IndictmentCountController {
       `Updating indictment count ${indictmentCountId} of case ${caseId}`,
     )
 
-    return this.indictmentCountService.update(
-      caseId,
-      indictmentCountId,
-      indictmentCountToUpdate,
+    return this.sequelize.transaction((transaction) =>
+      this.indictmentCountService.update(
+        caseId,
+        indictmentCountId,
+        indictmentCountToUpdate,
+        transaction,
+      ),
     )
   }
 
@@ -97,9 +104,12 @@ export class IndictmentCountController {
       `Deleting indictment count ${indictmentCountId} of case ${caseId}`,
     )
 
-    const deleted = await this.indictmentCountService.delete(
-      caseId,
-      indictmentCountId,
+    const deleted = await this.sequelize.transaction((transaction) =>
+      this.indictmentCountService.delete(
+        caseId,
+        indictmentCountId,
+        transaction,
+      ),
     )
 
     return { deleted }

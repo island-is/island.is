@@ -24,6 +24,13 @@ export class Screen extends Model<Screen> {
   id!: string
 
   @Column({
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  identifier!: string
+
+  @Column({
     type: DataType.JSON,
     allowNull: false,
     defaultValue: () => new LanguageType(),
@@ -62,7 +69,14 @@ export class Screen extends Model<Screen> {
     allowNull: false,
     defaultValue: false,
   })
-  callRuleset!: boolean
+  shouldValidate!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  shouldPopulate!: boolean
 
   @HasMany(() => Field)
   fields!: Field[]

@@ -1,7 +1,7 @@
 import {
-  ApplicantChildCustodyInformation,
+  ApplicantChildCustodyInformationV3,
   ApplicationTypes,
-  NationalRegistrySpouse,
+  NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 import {
   InsurancestatementsApi,
@@ -68,9 +68,9 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
 
     if (status.canApply !== true) {
       const childrenInformation = application.externalData
-        .childrenCustodyInformation.data as ApplicantChildCustodyInformation[]
+        .childrenCustodyInformation.data as ApplicantChildCustodyInformationV3[]
       const spouse = application.externalData.nationalRegistrySpouse
-        .data as NationalRegistrySpouse
+        .data as NationalRegistrySpouseV3
       if (!spouse && childrenInformation.length < 1) {
         throw new TemplateApiError(
           {

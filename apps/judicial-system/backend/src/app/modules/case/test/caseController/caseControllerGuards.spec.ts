@@ -55,10 +55,21 @@ describe('CaseController - Get by id guards', () => {
 })
 
 describe('CaseController - Get connected cases guards', () => {
-  verifyGuards(CaseController, 'getConnectedCases', [
-    RolesGuard,
-    CaseExistsGuard,
-  ])
+  verifyGuards(
+    CaseController,
+    'getConnectedCases',
+    [RolesGuard, CaseExistsGuard, CaseTypeGuard],
+    [{ guard: CaseTypeGuard, prop: { allowedCaseTypes: indictmentCases } }],
+  )
+})
+
+describe('CaseController - Get candidate merge cases guards', () => {
+  verifyGuards(
+    CaseController,
+    'getCandidateMergeCases',
+    [RolesGuard, CaseExistsGuard, CaseTypeGuard],
+    [{ guard: CaseTypeGuard, prop: { allowedCaseTypes: indictmentCases } }],
+  )
 })
 
 describe('CaseController - Get request pdf guards', () => {

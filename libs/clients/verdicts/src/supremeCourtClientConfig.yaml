@@ -5,7 +5,6 @@ info:
   description: API for accessing court verdicts and related data
 servers:
   - url: https://umsysla.haestirettur.is
-    description: Development server
 
 components:
   schemas:
@@ -67,6 +66,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/JuryJudge'
+        resolutionLink:
+          type: string
     Lawyer:
       type: object
       properties:
@@ -167,6 +168,11 @@ components:
       properties:
         lawyer:
           type: string
+        caseTypes:
+          type: array
+          items:
+            type: string
+          description: Filter by case types
         dateFrom:
           type: string
           format: date

@@ -38,6 +38,7 @@ import {
   ActionCardListField,
   TableRepeaterField,
   StaticTableField,
+  PaginatedSearchableTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
   SliderField,
@@ -392,6 +393,40 @@ export const buildCustomField = (
   }
 }
 
+export const buildPaginatedSearchableTableField = (
+  data: Omit<PaginatedSearchableTableField, 'type' | 'component' | 'children'>,
+): PaginatedSearchableTableField => {
+  const {
+    rowIdKey,
+    rows,
+    headers,
+    searchLabel,
+    searchPlaceholder,
+    emptyState,
+    searchKeys,
+    savePropertyNames,
+    pageSize,
+    callbackId,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.PAGINATED_SEARCHABLE_TABLE,
+    component: FieldComponents.PAGINATED_SEARCHABLE_TABLE,
+    rowIdKey,
+    rows,
+    headers,
+    searchLabel,
+    searchPlaceholder,
+    emptyState,
+    searchKeys,
+    savePropertyNames,
+    pageSize,
+    callbackId,
+  }
+}
+
 export const buildFileUploadField = (
   data: Omit<FileUploadField, 'type' | 'component' | 'children'>,
 ): FileUploadField => {
@@ -539,6 +574,8 @@ export const buildSubmitField = (data: {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   refetchApplicationAfterSubmit?: boolean | ((event?: string) => boolean)
+  renderLongErrors?: boolean
+  formatLongErrorMessage?: (message: string) => string
   actions: CallToAction[]
   condition?: Condition
 }): SubmitField => {
@@ -551,6 +588,8 @@ export const buildSubmitField = (data: {
     refetchApplicationAfterSubmit,
     marginTop,
     marginBottom,
+    renderLongErrors = false,
+    formatLongErrorMessage,
   } = data
   return {
     children: undefined,
@@ -564,6 +603,8 @@ export const buildSubmitField = (data: {
       typeof refetchApplicationAfterSubmit !== 'undefined'
         ? refetchApplicationAfterSubmit
         : false,
+    renderLongErrors,
+    formatLongErrorMessage,
     marginTop,
     marginBottom,
     type: FieldTypes.SUBMIT,
@@ -1103,7 +1144,9 @@ export const buildSliderField = (
     marginTop,
     marginBottom,
   } = data
+
   return {
+    ...extractCommonFields(data),
     component: FieldComponents.SLIDER,
     id,
     title,

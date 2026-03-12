@@ -9,6 +9,7 @@ import { application as applicationMessages } from '../../../lib/messages'
 export const preInformation = buildSection({
   id: 'preInformation',
   title: applicationMessages.firstSectionStepperTitle,
+  tabTitle: applicationMessages.actionCardPrerequisites,
   children: [
     buildMultiField({
       id: 'preInformation',

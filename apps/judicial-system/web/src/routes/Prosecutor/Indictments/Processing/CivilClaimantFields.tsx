@@ -11,6 +11,7 @@ import {
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
+  IconButton,
   InputAdvocate,
   InputName,
   InputNationalId,
@@ -45,12 +46,12 @@ export const CivilClaimantFields = ({
 
   const [civilClaimantNationalIdUpdate, setCivilClaimantNationalIdUpdate] =
     useState<{ nationalId: string | null; civilClaimantId: string }>()
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
   const [lookupNationalId, setLookupNationalId] = useState<string | null>(
     civilClaimant.nationalId ?? null,
   )
 
-  const { personData, businessData } = useNationalRegistry(lookupNationalId)
+  const { personData, businessData, notFound } =
+    useNationalRegistry(lookupNationalId)
   const {
     updateCivilClaimant,
     updateCivilClaimantState,
@@ -99,34 +100,35 @@ export const CivilClaimantFields = ({
     } else {
       const cleanNationalId = nationalId ? nationalId.replace('-', '') : ''
       setLookupNationalId(cleanNationalId || null)
-      setCivilClaimantNationalIdUpdate({
-        nationalId: cleanNationalId || null,
-        civilClaimantId,
-      })
+
+      if (cleanNationalId.length === 10) {
+        setCivilClaimantNationalIdUpdate({
+          nationalId: cleanNationalId || null,
+          civilClaimantId,
+        })
+      }
     }
   }
 
   useEffect(() => {
-    if (!civilClaimantNationalIdUpdate) {
+    if (
+      !civilClaimantNationalIdUpdate ||
+      civilClaimantNationalIdUpdate.nationalId?.length !== 10
+    ) {
       return
     }
 
     let name: string | undefined
-    let notFound = false
 
     // Separately handle person and business data in order to populate
     // name correctly for companies as well.
     if (personData) {
       const person = personData.items?.[0]
       name = person?.name
-      notFound = !person || personData.items?.length === 0
     } else if (businessData) {
       const business = businessData.items?.[0]
       name = business?.full_name
-      notFound = !business || businessData.items?.length === 0
     }
-
-    setNationalIdNotFound(notFound)
 
     const update: UpdateCivilClaimant = {
       civilClaimantId: civilClaimantNationalIdUpdate.civilClaimantId || '',
@@ -146,15 +148,12 @@ export const CivilClaimantFields = ({
     <>
       {civilClaimantIndex > 0 && (
         <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
-          <Button
-            variant="text"
-            colorScheme="destructive"
-            onClick={() => {
-              removeCivilClaimantById(civilClaimant.id)
-            }}
-          >
-            {formatMessage(strings.remove)}
-          </Button>
+          <IconButton
+            icon="trash"
+            colorScheme="blue"
+            onClick={() => removeCivilClaimantById(civilClaimant.id)}
+            tooltipText="Eyða kröfuhafa"
+          />
         </Box>
       )}
       <Box marginBottom={2}>
@@ -180,20 +179,11 @@ export const CivilClaimantFields = ({
           value={civilClaimant.nationalId ?? undefined}
           required={Boolean(!civilClaimant.noNationalId)}
           onChange={(val) => {
-            if (val.length < 11) {
-              setNationalIdNotFound(false)
-            } else if (val.length === 11) {
-              handleCivilClaimantNationalIdBlur(
-                val,
-                civilClaimant.noNationalId,
-                civilClaimant.id,
-              )
-            }
-
-            handleUpdateCivilClaimantState({
-              civilClaimantId: civilClaimant.id ?? '',
-              nationalId: val,
-            })
+            handleCivilClaimantNationalIdBlur(
+              val,
+              civilClaimant.noNationalId,
+              civilClaimant.id,
+            )
           }}
           onBlur={(val) =>
             handleCivilClaimantNationalIdBlur(
@@ -203,7 +193,7 @@ export const CivilClaimantFields = ({
             )
           }
         />
-        {civilClaimant.nationalId?.length === 11 && nationalIdNotFound && (
+        {notFound && (
           <Text color="red600" variant="eyebrow" marginTop={1}>
             {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
           </Text>
@@ -221,30 +211,42 @@ export const CivilClaimantFields = ({
         required
       />
       <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-        <Button
-          variant="text"
-          colorScheme={
-            civilClaimant.hasSpokesperson ? 'destructive' : 'default'
-          }
-          onClick={() => {
-            handleSetAndSendCivilClaimantToServer({
-              civilClaimantId: civilClaimant.id,
-              hasSpokesperson: !civilClaimant.hasSpokesperson,
-              spokespersonEmail: null,
-              spokespersonPhoneNumber: null,
-              spokespersonName: null,
-              spokespersonIsLawyer: null,
-              spokespersonNationalId: null,
-              caseFilesSharedWithSpokesperson: null,
-            })
-          }}
-        >
-          {formatMessage(
-            civilClaimant.hasSpokesperson
-              ? strings.removeDefender
-              : strings.addDefender,
-          )}
-        </Button>
+        {civilClaimant.hasSpokesperson ? (
+          <IconButton
+            icon="trash"
+            colorScheme="blue"
+            onClick={() =>
+              handleSetAndSendCivilClaimantToServer({
+                civilClaimantId: civilClaimant.id,
+                hasSpokesperson: false,
+                spokespersonEmail: null,
+                spokespersonPhoneNumber: null,
+                spokespersonName: null,
+                spokespersonIsLawyer: null,
+                spokespersonNationalId: null,
+                caseFilesSharedWithSpokesperson: null,
+              })
+            }
+          />
+        ) : (
+          <Button
+            variant="text"
+            onClick={() =>
+              handleSetAndSendCivilClaimantToServer({
+                civilClaimantId: civilClaimant.id,
+                hasSpokesperson: true,
+                spokespersonEmail: null,
+                spokespersonPhoneNumber: null,
+                spokespersonName: null,
+                spokespersonIsLawyer: null,
+                spokespersonNationalId: null,
+                caseFilesSharedWithSpokesperson: null,
+              })
+            }
+          >
+            {formatMessage(strings.addDefender)}
+          </Button>
+        )}
       </Box>
       {civilClaimant.hasSpokesperson && (
         <>

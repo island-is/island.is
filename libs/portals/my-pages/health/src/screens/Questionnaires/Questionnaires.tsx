@@ -133,6 +133,40 @@ const Questionnaires: FC = () => {
     )
   }, [filterValues, data, showExpired])
 
+  const dataIsEmpty =
+    data?.questionnairesList === null ||
+    data?.questionnairesList?.questionnaires?.length === 0
+
+  const filterIsEmpty =
+    filterValues.searchQuery.length === 0 &&
+    filterValues.status.length === 0 &&
+    filterValues.organization.length === 0
+
+  const noActive = filteredData?.every(
+    (item) => item.status === QuestionnairesStatusEnum.expired,
+  )
+
+  // If no data and no filters = typical empty screen
+  const displayTypicalEmptyState =
+    !loading && !error && dataIsEmpty && filterIsEmpty && !showExpired
+
+  // If filters applied and no data = empty screen with filters
+  const displayFilteredEmptyState =
+    !loading &&
+    !error &&
+    !dataIsEmpty &&
+    filteredData?.length === 0 &&
+    !filterIsEmpty
+
+  // If filters applied and showExpired = true => empty screens with no active questionnaires
+  const displayNoActiveEmptyState =
+    !loading &&
+    !error &&
+    !dataIsEmpty &&
+    !showExpired &&
+    noActive &&
+    filterIsEmpty
+
   return (
     <IntroWrapper
       title={formatMessage(messages.questionnaires)}
@@ -148,6 +182,7 @@ const Questionnaires: FC = () => {
           />
         </Box>
       )}
+      {}
       {!loading && !error && (
         <Filter
           variant="popover"
@@ -251,23 +286,20 @@ const Questionnaires: FC = () => {
           </Box>
         </Filter>
       )}
-      {!loading &&
-        !error &&
-        (data?.questionnairesList === null ||
-          data?.questionnairesList?.questionnaires?.length === 0) && (
-          <Box marginTop={3}>
-            <Problem
-              type="no_data"
-              noBorder={false}
-              imgSrc="./assets/images/nodata.svg"
-              imgAlt=""
-              title={formatMessage(messages.noData)}
-              message={formatMessage(messages.noDataFoundDetail, {
-                arg: formatMessage(messages.questionnairesThgf).toLowerCase(),
-              })}
-            />
-          </Box>
-        )}
+      {displayTypicalEmptyState && (
+        <Box marginTop={3}>
+          <Problem
+            type="no_data"
+            noBorder={false}
+            imgSrc="./assets/images/nodata.svg"
+            imgAlt=""
+            title={formatMessage(messages.noData)}
+            message={formatMessage(messages.noDataFoundDetail, {
+              arg: formatMessage(messages.questionnairesThgf).toLowerCase(),
+            })}
+          />
+        </Box>
+      )}
       <Box marginTop={5}>
         {loading && <CardLoader />}
         {!loading && !error && dataLength > 0 && (
@@ -293,21 +325,16 @@ const Questionnaires: FC = () => {
             />
           </Box>
         )}
-        {dataLength > 0 &&
-          filterValues.searchQuery.length === 0 &&
-          filterValues.status.length === 0 &&
-          filterValues.organization.length === 0 &&
-          filteredData?.length === 0 &&
-          !showExpired && (
-            <Problem
-              type="no_data"
-              noBorder={false}
-              title={formatMessage(messages.noData)}
-              message={formatMessage(messages.noActiveQuestionnairesRegistered)}
-              imgSrc="./assets/images/empty_flower.svg"
-              imgAlt=""
-            />
-          )}
+        {displayNoActiveEmptyState && (
+          <Problem
+            type="no_data"
+            noBorder={false}
+            title={formatMessage(messages.noData)}
+            message={formatMessage(messages.noActiveQuestionnairesRegistered)}
+            imgSrc="./assets/images/empty_flower.svg"
+            imgAlt=""
+          />
+        )}
         <Stack space={3}>
           {filteredData?.map((questionnaire) => {
             const status = questionnaire.status
@@ -363,7 +390,7 @@ const Questionnaires: FC = () => {
             ? value.length > 0
             : value.length > 0,
         ) &&
-        (filteredData === null || filteredData.length === 0) && (
+        displayFilteredEmptyState && (
           <Box marginTop={3}>
             <Problem
               type="no_data"

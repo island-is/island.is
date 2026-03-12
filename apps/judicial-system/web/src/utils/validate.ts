@@ -60,7 +60,7 @@ const getRegexByValidation = (validation: Validation) => {
       }
     case 'national-id':
       return {
-        regex: /^\d{6}(-?\d{4})?$/,
+        regex: /^\d{6}-?\d{4}$/,
         errorMessage: 'Dæmi: 000000-0000',
       }
     case 'date-of-birth':
@@ -547,6 +547,7 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
       return (
         defendant.defenderChoice === DefenderChoice.WAIVE ||
         defendant.defenderChoice === DefenderChoice.DELAY ||
+        defendant.defenderChoice === DefenderChoice.DELEGATE ||
         !defendant.defenderChoice ||
         validate([
           [defendant.defenderName, ['empty']],
@@ -583,30 +584,25 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
   )
 }
 
-export const isIndictmentCourtRecordStepValid = (workingCase: Case) => {
-  if (!workingCase.withCourtSessions) {
-    return true
-  }
-
-  if (
-    !Array.isArray(workingCase.courtSessions) ||
-    workingCase.courtSessions.length === 0
-  ) {
-    return false
-  }
-
-  return workingCase.courtSessions.every(isCourtSessionValid)
+export const isGeneratedIndictmentCourtRecordValid = (workingCase: Case) => {
+  return Boolean(
+    workingCase.courtSessions &&
+      workingCase.courtSessions.length > 0 &&
+      workingCase.courtSessions.every((session) => session.isConfirmed),
+  )
 }
+
+export const isNoGeneratedIndictmentCourtRecord = (workingCase: Case) =>
+  Boolean(!workingCase.courtSessions || workingCase.courtSessions.length === 0)
 
 const isIndictmentRulingDecisionValid = (workingCase: Case) => {
   const isCourtRecordValid = () =>
     Boolean(
-      (workingCase.courtSessions &&
-        workingCase.courtSessions.length > 0 &&
-        workingCase.courtSessions.every((session) => session.endDate)) ||
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.COURT_RECORD,
-        ),
+      workingCase.withCourtSessions
+        ? isGeneratedIndictmentCourtRecordValid(workingCase)
+        : workingCase.caseFiles?.some(
+            (file) => file.category === CaseFileCategory.COURT_RECORD,
+          ),
     )
 
   switch (workingCase.indictmentRulingDecision) {
@@ -623,6 +619,15 @@ const isIndictmentRulingDecisionValid = (workingCase: Case) => {
     case CaseIndictmentRulingDecision.FINE:
     case CaseIndictmentRulingDecision.CANCELLATION:
       return isCourtRecordValid()
+    case CaseIndictmentRulingDecision.MERGE:
+      return Boolean(
+        (isNoGeneratedIndictmentCourtRecord(workingCase) ||
+          isCourtRecordValid()) &&
+          (workingCase.mergeCase?.id ||
+            validate([
+              [workingCase.mergeCaseNumber, ['empty', 'S-case-number']],
+            ]).isValid),
+      )
     default:
       return false
   }

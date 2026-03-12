@@ -14,6 +14,7 @@ import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { getRequestDto } from './utils'
 import { SharedTemplateApiService } from '../../../shared'
+import { prereqMessages } from '@island.is/application/templates/hms/registration-of-new-property-numbers'
 
 @Injectable()
 export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiService {
@@ -61,7 +62,13 @@ export class RegistrationOfNewPropertyNumbersService extends BaseTemplateApiServ
           '[RegistrationOfNewPropertyNumbersService] Failed to fetch properties:',
           e.message,
         )
-        throw e
+        throw new TemplateApiError(
+          {
+            title: prereqMessages.getPropertiesErrorTitle,
+            summary: prereqMessages.getPropertiesErrorSummary,
+          },
+          500,
+        )
       }
     }
 

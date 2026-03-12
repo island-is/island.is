@@ -241,7 +241,7 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
       )}
       {familyRes.error && !familyRes.data && <Problem withContainer />}
       <TopLine scrollY={scrollY} />
-      <BottomTabsIndicator index={2} total={3} />
+      <BottomTabsIndicator index={4} total={5} />
     </>
   )
 }

@@ -11,7 +11,7 @@ import {
   NationalRegistryUserApi,
   ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
-import { LocaleApi, UnemploymentApi, UserProfileApi } from '../../dataProviders'
+import { UnemploymentApi, UserProfileApi } from '../../dataProviders'
 import { externalData } from '../../lib/messages'
 import { DirectorateOfLabourLogo } from '@island.is/application/assets/institution-logos'
 
@@ -51,9 +51,6 @@ export const Prerequisites = buildForm({
             buildDataProviderItem({
               title: externalData.vmst.insuranceTitle,
               subTitle: externalData.vmst.insuranceSubTitle,
-            }),
-            buildDataProviderItem({
-              provider: LocaleApi,
             }),
           ],
           submitField: buildSubmitField({

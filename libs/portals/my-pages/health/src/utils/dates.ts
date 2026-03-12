@@ -11,3 +11,13 @@ export const addYears = (date: Date, years: number) => {
   newDate.setFullYear(newDate.getFullYear() + years)
   return newDate
 }
+
+export const getFirstDayOfPreviousYear = () => {
+  const year = new Date().getFullYear() - 1
+  return new Date(year, 0, 1)
+}
+
+export const getLastDayOfPreviousYear = () => {
+  const year = new Date().getFullYear() - 1
+  return new Date(year, 11, 31)
+}

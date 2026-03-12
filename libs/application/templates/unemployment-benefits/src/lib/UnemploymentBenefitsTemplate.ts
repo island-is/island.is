@@ -21,7 +21,7 @@ import {
   coreHistoryMessages,
 } from '@island.is/application/core'
 import { application as applicationMessages } from './messages'
-import { LocaleApi, UnemploymentApi, UserProfileApi } from '../dataProviders'
+import { UnemploymentApi, UserProfileApi } from '../dataProviders'
 import { ApiActions } from '../shared/constants'
 import { Features } from '@island.is/feature-flags'
 
@@ -76,7 +76,6 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 ChildrenCustodyInformationApi,
                 UnemploymentApi,
-                LocaleApi,
               ],
               delete: true,
             },

@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op, Transaction } from 'sequelize'
 
 import {
   Inject,
@@ -11,7 +11,10 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   CaseState,
   CivilClaimantNotificationType,
@@ -25,32 +28,33 @@ export class CivilClaimantService {
   constructor(
     @InjectModel(CivilClaimant)
     private readonly civilClaimantModel: typeof CivilClaimant,
-    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async create(theCase: Case): Promise<CivilClaimant> {
-    return this.civilClaimantModel.create({
-      caseId: theCase.id,
-    })
+  async create(
+    theCase: Case,
+    transaction: Transaction,
+  ): Promise<CivilClaimant> {
+    return this.civilClaimantModel.create(
+      { caseId: theCase.id },
+      { transaction },
+    )
   }
 
-  private async sendUpdateCivilClaimantMessages(
+  private addMessagesForUpdateCivilClaimantToQueue(
     oldCivilClaimant: CivilClaimant,
     updatedCivilClaimant: CivilClaimant,
-  ): Promise<void> {
+  ): void {
     if (
       updatedCivilClaimant.isSpokespersonConfirmed &&
       !oldCivilClaimant.isSpokespersonConfirmed
     ) {
-      return this.messageService.sendMessagesToQueue([
-        {
-          type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
-          caseId: updatedCivilClaimant.caseId,
-          body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
-          elementId: updatedCivilClaimant.id,
-        },
-      ])
+      addMessagesToQueue({
+        type: MessageType.CIVIL_CLAIMANT_NOTIFICATION,
+        caseId: updatedCivilClaimant.caseId,
+        body: { type: CivilClaimantNotificationType.SPOKESPERSON_ASSIGNED },
+        elementId: updatedCivilClaimant.id,
+      })
     }
   }
 
@@ -61,10 +65,7 @@ export class CivilClaimantService {
   ): Promise<CivilClaimant> {
     const [numberOfAffectedRows, civilClaimants] =
       await this.civilClaimantModel.update(update, {
-        where: {
-          id: civilClaimant.id,
-          caseId,
-        },
+        where: { id: civilClaimant.id, caseId },
         returning: true,
       })
 
@@ -80,7 +81,7 @@ export class CivilClaimantService {
 
     const updatedCivilClaimant = civilClaimants[0]
 
-    await this.sendUpdateCivilClaimantMessages(
+    this.addMessagesForUpdateCivilClaimantToQueue(
       civilClaimant,
       updatedCivilClaimant,
     )
@@ -110,9 +111,10 @@ export class CivilClaimantService {
     return true
   }
 
-  async deleteAll(caseId: string): Promise<void> {
+  async deleteAll(caseId: string, transaction: Transaction): Promise<void> {
     await this.civilClaimantModel.destroy({
       where: { caseId },
+      transaction,
     })
   }
 

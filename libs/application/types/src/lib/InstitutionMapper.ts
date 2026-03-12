@@ -261,11 +261,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.SAMGONGUSTOFA,
     contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
   },
-  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
-    nationalId: InstitutionNationalIds.STAFRAENT_ISLAND,
-    slug: InstitutionTypes.STAFRAENT_ISLAND,
-    contentfulId: InstitutionContentfulIds.STAFRAENT_ISLAND,
-  },
   [ApplicationTypes.OLD_AGE_PENSION]: {
     nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
     slug: InstitutionTypes.TRYGGINGASTOFNUN,
@@ -472,6 +467,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.VINNUMALASTOFNUN,
   },
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
+    nationalId: InstitutionNationalIds.INNHEIMTUMADUR,
+    slug: InstitutionTypes.INNHEIMTUMADUR,
+    contentfulId: InstitutionContentfulIds.INNHEIMTUMADUR,
+  },
+  [ApplicationTypes.CAR_RENTAL_DAYRATE_RETURNS]: {
     nationalId: InstitutionNationalIds.INNHEIMTUMADUR,
     slug: InstitutionTypes.INNHEIMTUMADUR,
     contentfulId: InstitutionContentfulIds.INNHEIMTUMADUR,

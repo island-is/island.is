@@ -180,6 +180,8 @@ import { RentalAgreementModule } from './hms/rental-agreement/rental-agreement.m
 import { RentalAgreementService } from './hms/rental-agreement/rental-agreement.service'
 import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
 import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
+import { CarRentalDayrateReturnsModule } from './car-rental-dayrate-returns/car-rental-dayrate-returns.module'
+import { CarRentalDayrateReturnsService } from './car-rental-dayrate-returns/car-rental-dayrate-returns.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -261,6 +263,7 @@ export const modules = [
   TrainingLicenseOnAWorkMachineTemplateModule,
   UnemploymentBenefitsModule,
   CarRentalFeeCategoryModule,
+  CarRentalDayrateReturnsModule,
   PracticalExamTemplateModule,
   ExampleFolderStructureAndConventionsModule,
   LegalGazetteTemplateModule,
@@ -354,6 +357,7 @@ export const services = [
   TrainingLicenseOnAWorkMachineTemplateService,
   UnemploymentBenefitsService,
   CarRentalFeeCategoryService,
+  CarRentalDayrateReturnsService,
   PracticalExamTemplateService,
   ExampleFolderStructureAndConventionsService,
   LegalGazetteTemplateService,

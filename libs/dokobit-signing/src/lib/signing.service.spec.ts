@@ -27,6 +27,7 @@ const testSignResponse = {
 }
 
 const testStatusUrl = `https://developers.dokobit.com/mobile/sign/status/${testSignResponse.token}.json?access_token=${testAccessToken}`
+const testStatusUrlAudkenni = `https://developers.dokobit.com/audkenniapp/sign/status/${testSignResponse.token}.json?access_token=${testAccessToken}`
 const testSignedDocumentContent = 'Test Signed Document Content'
 const testStatusResponse = {
   status: 'ok',
@@ -62,6 +63,7 @@ const fetchMock = jest.fn(
           },
         }
       case testStatusUrl:
+      case testStatusUrlAudkenni:
         return {
           json: async function () {
             return testStatusResponse
@@ -146,5 +148,19 @@ describe('SigningService', () => {
 
     // Verify sign status
     expect(fetchMock).toHaveBeenCalledWith(testStatusUrl, undefined)
+  }, 5500)
+
+  it('should get a signed document via audkenni', async () => {
+    const res = await signingService.waitForSignature(
+      testDocumentName,
+      testSignResponse.token,
+      'audkenni',
+    )
+
+    // Verify response
+    expect(res).toBe(Base64.atob(testStatusResponse.file.content))
+
+    // Verify sign status
+    expect(fetchMock).toHaveBeenCalledWith(testStatusUrlAudkenni, undefined)
   }, 5500)
 })
