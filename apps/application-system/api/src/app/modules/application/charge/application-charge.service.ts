@@ -89,9 +89,8 @@ export class ApplicationChargeService {
             this.logger.warn(
               `Failed to delete charge for application ${application.id}. Problem: ${errorMessage}. Error was not rethrown.`,
             )
-          } else {
-            throw error
           }
+          throw error
         }
       } else {
         this.logger.warn('No requestId found, skipping deleteCharge')
