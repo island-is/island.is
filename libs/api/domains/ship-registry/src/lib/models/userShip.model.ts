@@ -57,6 +57,9 @@ export class UserShip {
 
   // TODO: Confirm explicit seaworthiness expiry field with ship registry API provider
   // MyShipDetailDto does not currently expose seaWorthyExpiry — must be added by provider
-  @Field({ nullable: true, description: 'Valid-to date of seaworthiness certificate' })
+  @Field({
+    nullable: true,
+    description: 'Valid-to date of seaworthiness certificate',
+  })
   seaworthinessCertificateValidTo?: string
 }

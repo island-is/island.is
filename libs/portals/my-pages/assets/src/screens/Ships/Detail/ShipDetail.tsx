@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { ShipRegistryLocale, ShipRegistryCertificateStatus } from '@island.is/api/schema'
+import {
+  ShipRegistryLocale,
+  ShipRegistryCertificateStatus,
+} from '@island.is/api/schema'
 import {
   CardLoader,
   EmptyState,
@@ -379,11 +382,13 @@ export const ShipDetail = () => {
                       display="flex"
                       justifyContent="flexEnd"
                     >
-                      {cert.status !== ShipRegistryCertificateStatus.Unknown && (
+                      {cert.status !==
+                        ShipRegistryCertificateStatus.Unknown && (
                         <Tag
                           outlined
                           variant={
-                            cert.status === ShipRegistryCertificateStatus.Expired
+                            cert.status ===
+                            ShipRegistryCertificateStatus.Expired
                               ? 'red'
                               : 'mint'
                           }
