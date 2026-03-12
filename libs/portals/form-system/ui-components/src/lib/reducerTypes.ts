@@ -1,5 +1,6 @@
 import type {
   FormSystemApplication,
+  FormSystemField,
   FormSystemScreen,
   FormSystemScreenErrorMessage,
   FormSystemSection,
@@ -16,6 +17,10 @@ export interface ApplicationState {
   currentScreen?: {
     index: number
     data?: FormSystemScreen
+  }
+  payment: {
+    paymentFields: FormSystemField[]
+    paymentQuantityFields: FormSystemField[]
   }
   errors?: string[]
   screenErrors?: FormSystemScreenErrorMessage[]

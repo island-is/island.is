@@ -1,11 +1,13 @@
 import {
   FormSystemApplication,
+  FormSystemField,
   FormSystemScreen,
   FormSystemSection,
 } from '@island.is/api/schema'
 import {
   Action,
   ApplicationState,
+  FieldTypesEnum,
   initializeField,
   SectionTypes,
 } from '@island.is/form-system/ui'
@@ -26,6 +28,10 @@ export const initialState = {
   screens: [],
   currentSection: { data: {} as FormSystemSection, index: 0 },
   currentScreen: undefined,
+  payment: {
+    paymentFields: [],
+    paymentQuantityFields: [],
+  },
   errors: [],
   screenErrors: [],
 }
@@ -63,6 +69,18 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
     })
   }
 
+  const paymentQuantityFields: FormSystemField[] = []
+  const paymentFields: FormSystemField[] = []
+  screens.forEach((screen) => {
+    screen.fields?.forEach((field) => {
+      if (field?.fieldType === FieldTypesEnum.PAYMENT_QUANTITY) {
+        paymentQuantityFields.push(field)
+      } else if (field?.fieldType === FieldTypesEnum.PAYMENT) {
+        paymentFields.push(field)
+      }
+    })
+  })
+
   const { currentSection, currentScreen } = getCurrentSectionAndScreen(sections)
   return {
     ...state,
@@ -70,6 +88,10 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
     screens,
     currentSection,
     currentScreen,
+    payment: {
+      paymentFields,
+      paymentQuantityFields,
+    },
   }
 }
 

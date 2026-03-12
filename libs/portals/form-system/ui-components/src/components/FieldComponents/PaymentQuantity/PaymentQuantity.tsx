@@ -1,8 +1,9 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { GridColumn as Column, Input, Select } from '@island.is/island-ui/core'
+import { Box, Input, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
-import { Action } from '../../../lib'
+import { Controller, useFormContext } from 'react-hook-form'
+import { Action, getValue, m } from '../../../lib'
 
 interface Props {
   item: FormSystemField
@@ -10,7 +11,9 @@ interface Props {
 }
 
 export const PaymentQuantity = ({ item, dispatch }: Props) => {
-  const { lang } = useLocale()
+  const { lang, formatMessage } = useLocale()
+  const { control } = useFormContext()
+
   const { isDropdown, minValue, maxValue } = item.fieldSettings
     ? item.fieldSettings
     : { isDropdown: false }
@@ -23,39 +26,73 @@ export const PaymentQuantity = ({ item, dispatch }: Props) => {
     return options
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    const numValue = Math.max(
-      minValue || 0,
-      Math.min(maxValue || Infinity, Number(value)),
-    )
-    dispatch?.({
-      type: 'UPDATE_FIELD',
-      payload: { id: item.id, value: numValue },
-    })
-  }
-  console.log('PaymentQuantity render', item.fieldSettings)
   return (
-    <Column span="6/12">
-      {isDropdown ? (
-        <Select
-          label={item.name?.[lang] ?? ''}
-          name={`${item.id}.paymentQuantity`}
-          backgroundColor="blue"
-          options={selectOptions()}
-          placeholder="Veldu fjölda"
-        />
-      ) : (
-        <Input
-          label={item.name?.[lang] ?? ''}
-          name={`${item.id}.paymentQuantity`}
-          backgroundColor="blue"
-          type="number"
-          placeholder="Veldu fjölda"
-          min={minValue || 0}
-          max={maxValue || 100}
-        />
-      )}
-    </Column>
+    <Box>
+      <Controller
+        key={item.id}
+        name={`${item.id}.paymentQuantity`}
+        control={control}
+        defaultValue={getValue(item, 'number') ?? ''}
+        rules={{
+          required: {
+            value: !item.isHidden,
+            message: formatMessage(m.required),
+          },
+          min: {
+            value: minValue || 1,
+            message: formatMessage(m.minAmount, { minAmount: minValue || 1 }),
+          },
+          max: {
+            value: maxValue || 100,
+            message: formatMessage(m.maxAmount, { maxAmount: maxValue || 100 }),
+          },
+        }}
+        render={({ field, fieldState }) =>
+          isDropdown ? (
+            <Select
+              {...field}
+              label={item.name?.[lang] ?? ''}
+              backgroundColor="blue"
+              options={selectOptions()}
+              placeholder="Veldu fjölda"
+              errorMessage={fieldState.error?.message}
+              onChange={(e) => {
+                field.onChange(e)
+                if (dispatch) {
+                  dispatch({
+                    type: 'SET_PAYMENT_QUANTITY',
+                    payload: {
+                      id: item.id,
+                      value: Number(e?.value),
+                    },
+                  })
+                }
+              }}
+            />
+          ) : (
+            <Input
+              {...field}
+              label={item.name?.[lang] ?? ''}
+              backgroundColor="blue"
+              type="number"
+              placeholder="Veldu fjölda"
+              errorMessage={fieldState.error?.message}
+              onChange={(e) => {
+                field.onChange(e)
+                if (dispatch) {
+                  dispatch({
+                    type: 'SET_PAYMENT_QUANTITY',
+                    payload: {
+                      id: item.id,
+                      value: Number(e.target.value),
+                    },
+                  })
+                }
+              }}
+            />
+          )
+        }
+      />
+    </Box>
   )
 }

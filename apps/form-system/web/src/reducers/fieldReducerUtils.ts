@@ -271,6 +271,7 @@ export const setFieldValue = (
     }
     return field
   })
+  console.log('Updated fields after setting value:', updatedFields)
 
   const updatedScreen = {
     ...screen,

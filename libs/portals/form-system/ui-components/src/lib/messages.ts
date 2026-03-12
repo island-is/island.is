@@ -1141,4 +1141,14 @@ export const m = defineMessages({
     defaultMessage: 'Umsóknirnar skulu vera merktar internal/private í Zendesk',
     description: 'Applications should be marked as internal/private in Zendesk',
   },
+  minAmount: {
+    id: 'form.system:min-amount',
+    defaultMessage: 'Magn má ekki vera lægra en {minAmount}',
+    description: 'Minimum amount must not be lower than {minAmount}',
+  },
+  maxAmount: {
+    id: 'form.system:max-amount',
+    defaultMessage: 'Magn má ekki vera hærra en {maxAmount}',
+    description: 'Maximum amount must not be higher than {maxAmount}',
+  },
 })
