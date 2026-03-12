@@ -321,6 +321,27 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
           500,
         )
       }
+      // Map the photos to the dto interface
+      const applicationFilesContentDtoArray =
+        mapAnswersToApplicationFilesContentDto(application, files)
+
+      // Send the photos to HMS sequentially to avoid overwhelming
+      // the pod with concurrent uploads of large files
+      const photoResults = []
+      for (const applicationFilesContentDto of applicationFilesContentDtoArray) {
+        const result =
+          await this.hmsApplicationSystemService.apiApplicationUploadPost({
+            applicationFilesContentDto,
+          })
+        photoResults.push(result)
+      }
+
+      if (photoResults.some((result) => result.status !== 200)) {
+        throw new TemplateApiError(
+          'Failed to upload photos, non 200 status',
+          500,
+        )
+      }
 
       // Map the photos to the dto interface
       // const applicationFilesContentDtoArray =
