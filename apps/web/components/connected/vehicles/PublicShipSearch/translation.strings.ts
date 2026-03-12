@@ -86,6 +86,11 @@ export const translation = defineMessages({
     defaultMessage: 'af',
     description: 'Smiðað af',
   },
+  opid: {
+    id: 'web.publicShipSearch:opid',
+    defaultMessage: 'Opið:',
+    description: 'Opið',
+  },
   owners: {
     id: 'web.publicShipSearch:owners',
     defaultMessage: 'Eigendur:',
