@@ -6,7 +6,7 @@ import { useLazyQuery } from './useLazyQuery'
 export const useLazyMachineDetailsByRegno = () => {
   return useLazyQuery<
     {
-      getWorkerMachineDetailsByRegno: MachineForInspectionDto
+      workMachineForInspection: MachineForInspectionDto
     },
     {
       input: { registrationNumber: string }

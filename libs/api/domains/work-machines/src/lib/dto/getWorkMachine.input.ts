@@ -21,7 +21,9 @@ export class GetWorkMachineInput {
   @IsOptional()
   registrationNumber?: string
 
-  @Field()
+  @Field({
+    nullable: true,
+  })
   @IsString()
   @IsOptional()
   locale?: string
