@@ -2,7 +2,13 @@ import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
-import { AlertMessage, Box } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Icon,
+  LinkV2,
+  Text,
+} from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
@@ -39,8 +45,13 @@ import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFil
 import { strings } from './IndictmentCaseFilesList.strings'
 import { grid } from '../../utils/styles/recipes.css'
 
+/** Temporary until we have proper electronic data file types from the API */
+type WorkingCaseWithIdesUrls = Case & {
+  idesUrls?: string[] | null
+}
+
 interface Props {
-  workingCase: Case
+  workingCase: WorkingCaseWithIdesUrls
   displayGeneratedPDFs?: boolean
   displayHeading?: boolean
   connectedCaseParentId?: string
@@ -285,6 +296,15 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
+  // Electronic files: URLs from idesUrls with mock display names until case model has electronic file names
+  const electronicFiles = useMemo(() => {
+    const urls = workingCase.idesUrls ?? []
+    return urls.map((url, index) => ({
+      displayName: `Rafrænt skjal ${index + 1}`,
+      url,
+    }))
+  }, [workingCase.idesUrls])
+
   return (
     <>
       {displayHeading && (
@@ -443,6 +463,49 @@ const IndictmentCaseFilesList: FC<Props> = ({
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCivilClaims}
             />
+            {isDistrictCourtUser(user) && (
+              <Box marginBottom={3}>
+                <SectionHeading
+                  title="Rafræn gögn"
+                  marginBottom={1}
+                  heading="h4"
+                  variant="h4"
+                />
+                <Text marginBottom={2}>
+                  Tenglarnir færa þig yfir á öruggt gagnasvæði lögreglunnar.
+                  Allar heimsóknir á þann vef eru skráðar og rekjanlegar.
+                </Text>
+                {electronicFiles.length > 0 ? (
+                  <Box component="ul" marginBottom={0} paddingLeft={4}>
+                    {electronicFiles.map(({ displayName, url }, index) => (
+                      <Box key={index} component="li" marginBottom={1}>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          component="span"
+                        >
+                          <LinkV2 href={url} newTab>
+                            {displayName}
+                          </LinkV2>
+                          <Box
+                            component="span"
+                            marginLeft={1}
+                            display="inlineFlex"
+                          >
+                            <Icon
+                              icon="open"
+                              type="outline"
+                              size="small"
+                              color="blue400"
+                            />
+                          </Box>
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+                ) : null}
+              </Box>
+            )}
             {(filteredFiles.courtRecords.length > 0 ||
               hasGeneratedCourtRecord ||
               (permissions.canViewRulings &&
