@@ -24,6 +24,7 @@ query GetMachineByRegno($input: WorkMachinesInput!) {
       name
     }
     errorMessage
+    disabled
   }
 }
 `

@@ -261,6 +261,7 @@ export class WorkMachinesService {
       status: data.status || '',
       paymentRequiredForOwnerChange: data.paymentRequiredForOwnerChange ?? true,
       errorMessage: data.errorMessage || '',
+      disabled: data.errorMessage ? true : false,
     }
   }
 

@@ -70,38 +70,35 @@ export const MachineSelectField: FC<
     if (currentMachine.id) {
       getMachineDetailsCallback(currentMachine.registrationNumber || '')
         .then((response) => {
-          setSelectedMachine(response.getWorkerMachineDetailsByRegno)
+          setSelectedMachine(response.workMachineForInspection)
           setValue(
             'machine.regNumber',
-            response.getWorkerMachineDetailsByRegno.registrationNumber,
+            response.workMachineForInspection.registrationNumber,
           )
           setValue(
             'machine.category',
-            response.getWorkerMachineDetailsByRegno.category,
+            response.workMachineForInspection.category,
           )
 
-          setValue(
-            'machine.type',
-            response.getWorkerMachineDetailsByRegno.type || '',
-          )
+          setValue('machine.type', response.workMachineForInspection.type || '')
           setValue(
             'machine.subType',
-            response.getWorkerMachineDetailsByRegno.subType || '',
+            response.workMachineForInspection.subType || '',
           )
           setValue(
             'machine.plate',
-            response.getWorkerMachineDetailsByRegno.licensePlateNumber || '',
+            response.workMachineForInspection.licensePlateNumber || '',
           )
           setValue(
             'machine.ownerNumber',
-            response.getWorkerMachineDetailsByRegno.ownerNumber || '',
+            response.workMachineForInspection.ownerNumber || '',
           )
-          setValue('machine.id', response.getWorkerMachineDetailsByRegno.id)
+          setValue('machine.id', response.workMachineForInspection.id)
           setValue('machine.date', new Date().toISOString())
           setValue('machine.findVehicle', true)
           setValue(
             'machine.isValid',
-            response.getWorkerMachineDetailsByRegno.disabled ? undefined : true,
+            response.workMachineForInspection.disabled ? undefined : true,
           )
           setMachineId(currentMachine?.id || '')
           setIsLoading(false)

@@ -95,6 +95,9 @@ export class WorkMachine {
   @Field({ nullable: true })
   errorMessage?: string
 
+  @Field({ nullable: true })
+  disabled?: boolean
+
   /** DEPRECATION LINE */
 
   @Field({ nullable: true, deprecationReason: 'Use owner property' })
