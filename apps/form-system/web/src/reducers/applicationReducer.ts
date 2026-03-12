@@ -1,6 +1,5 @@
 import {
   FormSystemApplication,
-  FormSystemField,
   FormSystemScreen,
   FormSystemSection,
   FormSystemValueDto,
@@ -9,7 +8,6 @@ import {
   Action,
   ApplicationState,
   FieldTypeMapping,
-  FieldTypesEnum,
   getInitialJsonForField,
   initializeField,
   SectionTypes,
@@ -32,10 +30,6 @@ export const initialState = {
   screens: [],
   currentSection: { data: {} as FormSystemSection, index: 0 },
   currentScreen: undefined,
-  payment: {
-    paymentFields: [],
-    paymentQuantityFields: [],
-  },
   errors: [],
   screenError: {
     hasError: false,
@@ -77,18 +71,6 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
     })
   }
 
-  const paymentQuantityFields: FormSystemField[] = []
-  const paymentFields: FormSystemField[] = []
-  screens.forEach((screen) => {
-    screen.fields?.forEach((field) => {
-      if (field?.fieldType === FieldTypesEnum.PAYMENT_QUANTITY) {
-        paymentQuantityFields.push(field)
-      } else if (field?.fieldType === FieldTypesEnum.PAYMENT) {
-        paymentFields.push(field)
-      }
-    })
-  })
-
   const { currentSection, currentScreen } = getCurrentSectionAndScreen(sections)
   return {
     ...state,
@@ -96,10 +78,6 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
     screens,
     currentSection,
     currentScreen,
-    payment: {
-      paymentFields,
-      paymentQuantityFields,
-    },
   }
 }
 
