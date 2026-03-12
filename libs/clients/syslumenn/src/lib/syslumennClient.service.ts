@@ -5,6 +5,7 @@ import {
   Auth,
   AuthHeaderMiddleware,
   AuthMiddleware,
+  User,
 } from '@island.is/auth-nest-tools'
 import { createEnhancedFetch, handle404 } from '@island.is/clients/middlewares'
 
@@ -766,12 +767,14 @@ export class SyslumennService {
     toNationalId: string,
     fromNationalId: string,
     delegationType: SyslumennDelegationType,
+    user?: User,
   ): Promise<boolean> {
     const { id, api } = await this.createApi()
 
     const useVirkUmbodEndpoint = await this.featureFlagService.getValue(
       Features.usePersonalRepresentativesFromSyslumenn,
       false,
+      user,
     )
 
     const delegations = useVirkUmbodEndpoint

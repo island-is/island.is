@@ -129,6 +129,7 @@ export async function validateDistrictCommissionersDelegations(
         user.nationalId,
         fromNationalId,
         SyslumennDelegationType.LegalRepresentative,
+        user,
       )
       if (valid) {
         validTypes.push(AuthDelegationType.LegalRepresentative)
@@ -163,6 +164,7 @@ export async function validateDistrictCommissionersDelegations(
           user.nationalId,
           fromNationalId,
           SyslumennDelegationType.PersonalRepresentative,
+          user,
         )
         if (valid) {
           validTypes.push(...prTypes)
