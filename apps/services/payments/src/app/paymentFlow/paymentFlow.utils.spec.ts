@@ -19,14 +19,28 @@ describe('paymentFlow.utils', () => {
       expect(paymentMethods).toEqual([PaymentMethod.CARD])
     })
 
-    it('should return an empty array if no payment methods are common to all charges', () => {
+    it('should return both card and invoice when both are common to all charges', () => {
+      const charges = [
+        { paymentOptions: [FjsPaymentMethod.CARD, FjsPaymentMethod.CLAIM] },
+        { paymentOptions: [FjsPaymentMethod.CARD, FjsPaymentMethod.CLAIM] },
+      ] as CatalogItemWithQuantity[]
+
+      const paymentMethods = determinePaymentMethods(charges)
+
+      expect(paymentMethods).toEqual([
+        PaymentMethod.CARD,
+        PaymentMethod.INVOICE,
+      ])
+    })
+
+    it('should return card as fallback when no payment methods are common to all charges', () => {
       const charges = [
         { paymentOptions: [FjsPaymentMethod.CARD] },
         { paymentOptions: [FjsPaymentMethod.CLAIM] },
         { paymentOptions: [FjsPaymentMethod.CLAIM, FjsPaymentMethod.CARD] },
       ] as CatalogItemWithQuantity[]
 
-      expect(determinePaymentMethods(charges)).toEqual([])
+      expect(determinePaymentMethods(charges)).toEqual([PaymentMethod.CARD])
     })
 
     it('should filter out unsupported payment methods', () => {
@@ -45,7 +59,7 @@ describe('paymentFlow.utils', () => {
       expect(paymentMethods).toEqual([PaymentMethod.CARD])
     })
 
-    it('should handle charges with no payment options', () => {
+    it('should return card as fallback when charges have no common payment options', () => {
       const charges = [
         { paymentOptions: [FjsPaymentMethod.CARD] },
         { paymentOptions: undefined },
@@ -53,11 +67,11 @@ describe('paymentFlow.utils', () => {
 
       const paymentMethods = determinePaymentMethods(charges)
 
-      expect(paymentMethods).toEqual([])
+      expect(paymentMethods).toEqual([PaymentMethod.CARD])
     })
 
-    it('should return an empty array for empty charges', () => {
-      expect(determinePaymentMethods([])).toEqual([])
+    it('should return card as fallback for empty charges', () => {
+      expect(determinePaymentMethods([])).toEqual([PaymentMethod.CARD])
     })
   })
 })
