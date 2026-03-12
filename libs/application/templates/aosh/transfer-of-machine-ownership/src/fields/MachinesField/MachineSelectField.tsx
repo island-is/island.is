@@ -57,52 +57,54 @@ export const MachineSelectField: FC<
 
   const onChange = (option: Option) => {
     const currentMachine = currentMachineList[parseInt(option.value, 10)]
+    if (!currentMachine.id) {
+      return
+    }
     setIsLoading(true)
     setSelected(true)
-    if (currentMachine.id) {
-      getMachineDetailsCallback(String(currentMachine.id))
-        .then((response) => {
-          setSelectedMachine(response.getWorkerMachineDetails)
-          setValue(
-            'machine.regNumber',
-            response.getWorkerMachineDetails.regNumber,
-          )
-          setValue(
-            'machine.category',
-            response.getWorkerMachineDetails.category,
-          )
+    getMachineDetailsCallback(String(currentMachine.id))
+      .then((response) => {
+        setSelectedMachine(response.getWorkerMachineDetails)
+        setValue(
+          'machine.regNumber',
+          response.getWorkerMachineDetails.regNumber,
+        )
+        setValue(
+          'machine.category',
+          response.getWorkerMachineDetails.category,
+        )
 
-          setValue('machine.type', response.getWorkerMachineDetails.type || '')
-          setValue(
-            'machine.subType',
-            response.getWorkerMachineDetails.subType || '',
-          )
-          setValue(
-            'machine.plate',
-            response.getWorkerMachineDetails.plate || '',
-          )
-          setValue(
-            'machine.ownerNumber',
-            response.getWorkerMachineDetails.ownerNumber || '',
-          )
-          setValue('machine.id', String(response.getWorkerMachineDetails.id))
-          setValue('machine.date', new Date().toISOString())
-          setValue('machine.findVehicle', true)
-          setValue(
-            'machine.paymentRequiredForOwnerChange',
-            response.getWorkerMachineDetails.paymentRequiredForOwnerChange,
-          )
-          setValue(
-            'machine.isValid',
-            response.getWorkerMachineDetails.disabled ? undefined : true,
-          )
-          setMachineId(
-            currentMachine?.id != null ? String(currentMachine.id) : '',
-          )
-          setIsLoading(false)
-        })
-        .catch((error) => console.error(error))
-    }
+        setValue('machine.type', response.getWorkerMachineDetails.type || '')
+        setValue(
+          'machine.subType',
+          response.getWorkerMachineDetails.subType || '',
+        )
+        setValue(
+          'machine.plate',
+          response.getWorkerMachineDetails.plate || '',
+        )
+        setValue(
+          'machine.ownerNumber',
+          response.getWorkerMachineDetails.ownerNumber || '',
+        )
+        const resolvedId = String(
+          response.getWorkerMachineDetails.id ?? '',
+        )
+        setValue('machine.id', resolvedId)
+        setMachineId(resolvedId)
+        setValue('machine.date', new Date().toISOString())
+        setValue('machine.findVehicle', true)
+        setValue(
+          'machine.paymentRequiredForOwnerChange',
+          response.getWorkerMachineDetails.paymentRequiredForOwnerChange,
+        )
+        setValue(
+          'machine.isValid',
+          response.getWorkerMachineDetails.disabled ? undefined : true,
+        )
+        setIsLoading(false)
+      })
+      .catch((error) => console.error(error))
   }
 
   useEffect(() => {
