@@ -32,6 +32,7 @@ import { EventService } from '../event'
 import { Case } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
+import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
@@ -60,14 +61,34 @@ export class InternalCaseController {
   @UseInterceptors(CaseInterceptor)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
-  async create(@Body() caseToCreate: InternalCreateCaseDto): Promise<Case> {
+  async deprecatedCreate(
+    @Body() caseToCreate: DeprecatedInternalCreateCaseDto,
+  ): Promise<Case> {
     this.logger.debug('Creating a new case')
+
+    const createdCase = await this.sequelize.transaction((transaction) =>
+      this.internalCaseService.deprecatedCreate(caseToCreate, transaction),
+    )
+
+    this.eventService.postEvent('CREATE_XRD', createdCase as Case)
+
+    return createdCase
+  }
+
+  @UseInterceptors(CaseInterceptor)
+  @Post('case/create')
+  @ApiCreatedResponse({
+    type: Case,
+    description: 'Creates a new case (accused fetched separately)',
+  })
+  async create(@Body() caseToCreate: InternalCreateCaseDto): Promise<Case> {
+    this.logger.debug('Creating a new case (v2)')
 
     const createdCase = await this.sequelize.transaction((transaction) =>
       this.internalCaseService.create(caseToCreate, transaction),
     )
 
-    this.eventService.postEvent('CREATE_XRD', createdCase as Case)
+    this.eventService.postEvent('CREATE_XRD', createdCase)
 
     return createdCase
   }
