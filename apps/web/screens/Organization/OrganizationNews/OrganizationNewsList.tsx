@@ -163,8 +163,9 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   )
 
   const hideNewsListOverviewCardImages: boolean | undefined =
-    (organizationNamespace?.hideNewsListOverviewCardImages as boolean) ??
-    undefined
+    typeof organizationNamespace?.hideNewsListOverviewCardImages === 'boolean'
+      ? organizationNamespace.hideNewsListOverviewCardImages
+      : undefined
 
   return (
     <OrganizationWrapper
