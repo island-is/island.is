@@ -38,6 +38,7 @@ import { EstateTypes } from './consts'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
@@ -47,8 +48,25 @@ export class EstateTemplateService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     private readonly s3Service: S3Service,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(ApplicationTypes.ESTATE)
+  }
+
+  async checkReviewFlag({ auth }: TemplateApiModuleActionProps) {
+    const rawValue = await this.featureFlagService.getValue(
+      'isEstateReviewEnabled' as any,
+      false,
+      auth,
+    )
+    const reviewEnabled = !!rawValue
+    this.logger.info('[estate]: checkReviewFlag result', {
+      rawValue,
+      rawValueType: typeof rawValue,
+      reviewEnabled,
+      nationalId: auth.nationalId,
+    })
+    return { reviewEnabled }
   }
 
   async approveByAssignee({ application, auth }: TemplateApiModuleActionProps) {
@@ -222,6 +240,13 @@ export class EstateTemplateService extends BaseTemplateApiService {
   }
 
   async completeApplication({ application }: TemplateApiModuleActionProps) {
+    // Idempotency: if already submitted via the signing state, skip re-submission
+    const existingResult = application.externalData?.completeApplication
+      ?.data as { success?: boolean; id?: string } | undefined
+    if (existingResult?.success && existingResult?.id) {
+      return existingResult
+    }
+
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 

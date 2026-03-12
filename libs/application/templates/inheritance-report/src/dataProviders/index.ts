@@ -20,3 +20,9 @@ export const GetSignatoriesApi = defineTemplateApi({
   shouldPersistToExternalData: true,
   externalDataId: 'getSignatories',
 })
+
+export const CheckReviewFlagApi = defineTemplateApi({
+  action: 'checkReviewFlag',
+  shouldPersistToExternalData: true,
+  externalDataId: 'checkReviewFlag',
+})

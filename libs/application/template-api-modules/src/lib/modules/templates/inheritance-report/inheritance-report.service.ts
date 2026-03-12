@@ -27,6 +27,7 @@ import { S3Service } from '@island.is/nest/aws'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
 import set from 'lodash/set'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -37,8 +38,25 @@ export class InheritanceReportService extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
     private readonly nationalRegistryService: NationalRegistryV3Service,
     private readonly s3Service: S3Service,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(ApplicationTypes.INHERITANCE_REPORT)
+  }
+
+  async checkReviewFlag({ auth }: TemplateApiModuleActionProps) {
+    const rawValue = await this.featureFlagService.getValue(
+      'isInheritanceReportReviewEnabled' as any,
+      false,
+      auth,
+    )
+    const reviewEnabled = !!rawValue
+    this.logger.info('[inheritance-report]: checkReviewFlag result', {
+      rawValue,
+      rawValueType: typeof rawValue,
+      reviewEnabled,
+      nationalId: auth.nationalId,
+    })
+    return { reviewEnabled }
   }
 
   async approveByAssignee({ application, auth }: TemplateApiModuleActionProps) {
@@ -129,7 +147,24 @@ export class InheritanceReportService extends BaseTemplateApiService {
     }
   }
 
+  async completeApplication(props: TemplateApiModuleActionProps) {
+    // Idempotency: if already submitted via the signing state, skip re-submission
+    const existingResult = props.application.externalData?.submitToSyslumenn
+      ?.data as { success?: boolean; id?: string } | undefined
+    if (existingResult?.success && existingResult?.id) {
+      return existingResult
+    }
+    return this.submitToSyslumenn(props)
+  }
+
   async submitToSyslumenn({ application }: TemplateApiModuleActionProps) {
+    // Idempotency: if already submitted, skip re-submission
+    const existingResult = application.externalData?.submitToSyslumenn
+      ?.data as { success?: boolean; id?: string } | undefined
+    if (existingResult?.success && existingResult?.id) {
+      return existingResult
+    }
+
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistryIndividual
 

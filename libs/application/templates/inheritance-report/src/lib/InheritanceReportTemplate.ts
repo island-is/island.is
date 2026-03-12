@@ -43,6 +43,12 @@ import { EstateMember, InheritanceReportExternalData } from '../types'
 const configuration =
   ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
 
+const isReviewEnabled = (context: ApplicationContext) => {
+  const externalData =
+    context.application.externalData as InheritanceReportExternalData
+  return externalData?.checkReviewFlag?.data?.reviewEnabled === true
+}
+
 const InheritanceReportTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<InheritanceReportEvent>,
@@ -122,6 +128,12 @@ const InheritanceReportTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.15,
           lifecycle: pruneAfterDays(60),
+          onEntry: defineTemplateApi({
+            action: ApiActions.checkReviewFlag,
+            shouldPersistToExternalData: true,
+            externalDataId: 'checkReviewFlag',
+            throwOnError: false,
+          }),
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -157,10 +169,16 @@ const InheritanceReportTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: {
-            target: States.inReview,
-            actions: 'setApplicantAsApproved',
-          },
+          SUBMIT: [
+            {
+              target: States.inReview,
+              cond: isReviewEnabled,
+              actions: 'setApplicantAsApproved',
+            },
+            {
+              target: States.done,
+            },
+          ],
         },
       },
       [States.inReview]: {
@@ -404,6 +422,10 @@ const InheritanceReportTemplate: ApplicationTemplate<
           status: 'approved',
           progress: 1,
           lifecycle: pruneAfterDays(60),
+          onEntry: defineTemplateApi({
+            action: ApiActions.completeApplication,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.ESTATE_INHERITANCE_APPLICANT,
@@ -492,28 +514,36 @@ const InheritanceReportTemplate: ApplicationTemplate<
       return Roles.ESTATE_INHERITANCE_APPLICANT
     }
 
-    // Check if user is in assignees (for pending approvals)
-    if (assignees && assignees.includes(nationalId)) {
-      return Roles.ASSIGNEE
-    }
+    // Only assign ASSIGNEE role when review feature flag is enabled
+    const externalData =
+      application.externalData as InheritanceReportExternalData
+    const reviewEnabled =
+      externalData?.checkReviewFlag?.data?.reviewEnabled === true
 
-    // Check if user is a heir in the application (including approved heirs)
-    const heirs = getValueViaPath<EstateMember[]>(
-      application.answers,
-      'heirs.data',
-      [],
-    )
-    const isHeir =
-      heirs &&
-      heirs.some(
-        (heir) =>
-          nationalIdsMatch(heir.nationalId, nationalId) &&
-          heir.enabled !== false &&
-          !nationalIdsMatch(heir.nationalId, applicant),
+    if (reviewEnabled) {
+      // Check if user is in assignees (for pending approvals)
+      if (assignees && assignees.includes(nationalId)) {
+        return Roles.ASSIGNEE
+      }
+
+      // Check if user is a heir in the application (including approved heirs)
+      const heirs = getValueViaPath<EstateMember[]>(
+        application.answers,
+        'heirs.data',
+        [],
       )
+      const isHeir =
+        heirs &&
+        heirs.some(
+          (heir) =>
+            nationalIdsMatch(heir.nationalId, nationalId) &&
+            heir.enabled !== false &&
+            !nationalIdsMatch(heir.nationalId, applicant),
+        )
 
-    if (isHeir) {
-      return Roles.ASSIGNEE
+      if (isHeir) {
+        return Roles.ASSIGNEE
+      }
     }
 
     return undefined

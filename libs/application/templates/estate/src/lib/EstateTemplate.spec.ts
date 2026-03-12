@@ -10,6 +10,7 @@ describe('EstateTemplate', () => {
       selectedEstate?: string,
       estateMembers: EstateMember[] = [],
       assignees: string[] = [],
+      reviewEnabled = false,
     ): Application => {
       return {
         applicant,
@@ -18,6 +19,12 @@ describe('EstateTemplate', () => {
           selectedEstate,
           estate: {
             estateMembers,
+          },
+        },
+        externalData: {
+          checkReviewFlag: {
+            data: { reviewEnabled },
+            date: new Date().toISOString(),
           },
         },
       } as unknown as Application
@@ -74,18 +81,31 @@ describe('EstateTemplate', () => {
     })
 
     describe('assignee role mapping', () => {
-      it('should return ASSIGNEE when user is in assignees list', () => {
+      it('should return ASSIGNEE when user is in assignees list and review is enabled', () => {
         const application = createMockApplication(
           '1234567890',
           EstateTypes.officialDivision,
           [],
           ['9999999999'],
+          true,
         )
         const role = EstateTemplate.mapUserToRole('9999999999', application)
         expect(role).toBe(Roles.ASSIGNEE)
       })
 
-      it('should return ASSIGNEE when user is an enabled estate member', () => {
+      it('should return undefined when user is in assignees list but review is disabled', () => {
+        const application = createMockApplication(
+          '1234567890',
+          EstateTypes.officialDivision,
+          [],
+          ['9999999999'],
+          false,
+        )
+        const role = EstateTemplate.mapUserToRole('9999999999', application)
+        expect(role).toBeUndefined()
+      })
+
+      it('should return ASSIGNEE when user is an enabled estate member and review is enabled', () => {
         const estateMembers: EstateMember[] = [
           {
             name: 'John Doe',
@@ -98,12 +118,14 @@ describe('EstateTemplate', () => {
           '1234567890',
           EstateTypes.officialDivision,
           estateMembers,
+          [],
+          true,
         )
         const role = EstateTemplate.mapUserToRole('9999999999', application)
         expect(role).toBe(Roles.ASSIGNEE)
       })
 
-      it('should return ASSIGNEE when user is an approved estate member', () => {
+      it('should return ASSIGNEE when user is an approved estate member and review is enabled', () => {
         const estateMembers: EstateMember[] = [
           {
             name: 'John Doe',
@@ -117,6 +139,8 @@ describe('EstateTemplate', () => {
           '1234567890',
           EstateTypes.officialDivision,
           estateMembers,
+          [],
+          true,
         )
         const role = EstateTemplate.mapUserToRole('9999999999', application)
         expect(role).toBe(Roles.ASSIGNEE)
@@ -135,6 +159,8 @@ describe('EstateTemplate', () => {
           '1234567890',
           EstateTypes.officialDivision,
           estateMembers,
+          [],
+          true,
         )
         const role = EstateTemplate.mapUserToRole('9999999999', application)
         expect(role).toBeUndefined()
@@ -153,12 +179,14 @@ describe('EstateTemplate', () => {
           '1234567890',
           EstateTypes.officialDivision,
           estateMembers,
+          [],
+          true,
         )
         const role = EstateTemplate.mapUserToRole('1234567890', application)
         expect(role).toBe(Roles.APPLICANT_OFFICIAL_DIVISION)
       })
 
-      it('should handle national IDs with dashes correctly', () => {
+      it('should handle national IDs with dashes correctly when review is enabled', () => {
         const estateMembers: EstateMember[] = [
           {
             name: 'John Doe',
@@ -171,6 +199,8 @@ describe('EstateTemplate', () => {
           '1234567890',
           EstateTypes.officialDivision,
           estateMembers,
+          [],
+          true,
         )
         const role = EstateTemplate.mapUserToRole('9999999999', application)
         expect(role).toBe(Roles.ASSIGNEE)

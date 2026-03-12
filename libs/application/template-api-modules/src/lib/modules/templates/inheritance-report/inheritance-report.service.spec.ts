@@ -7,6 +7,7 @@ import { InheritanceReportService } from './inheritance-report.service'
 import { SyslumennService } from '@island.is/clients/syslumenn'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { S3Service } from '@island.is/nest/aws'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
 
 const mockLogger = {
   info: jest.fn(),
@@ -35,6 +36,7 @@ describe('InheritanceReportService', () => {
         { provide: SyslumennService, useValue: mockSyslumennService },
         { provide: NationalRegistryV3Service, useValue: {} },
         { provide: S3Service, useValue: {} },
+        { provide: FeatureFlagService, useValue: { getValue: jest.fn() } },
       ],
     }).compile()
 
