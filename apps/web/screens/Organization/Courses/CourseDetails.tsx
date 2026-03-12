@@ -177,9 +177,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
             <Text variant="h2" as="h2">
               {n(
                 'courseInstancesLabel',
-                activeLocale === 'is'
-                  ? 'Skráning á næstu námskeið'
-                  : 'Registration for upcoming courses',
+                activeLocale === 'is' ? 'Næstu námskeið' : 'Upcoming courses',
               )}
             </Text>
             <Stack space={3}>
