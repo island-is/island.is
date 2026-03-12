@@ -346,6 +346,13 @@ const InheritanceReportTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
             },
             {
               id: Roles.PREPAID_INHERITANCE_APPLICANT,
@@ -359,6 +366,13 @@ const InheritanceReportTemplate: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
             },
             {
               id: Roles.ASSIGNEE,
@@ -367,6 +381,16 @@ const InheritanceReportTemplate: ApplicationTemplate<
                   Promise.resolve(val.signingForm),
                 ),
               read: 'all',
+              write: {
+                externalData: ['getSignatories'],
+              },
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
             },
           ],
         },

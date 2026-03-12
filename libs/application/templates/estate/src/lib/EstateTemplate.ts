@@ -441,6 +441,16 @@ const EstateTemplate: ApplicationTemplate<
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               read: 'all',
+              write: {
+                externalData: ['getSignatories'],
+              },
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
             },
             {
               id: Roles.APPLICANT_OFFICIAL_DIVISION,
@@ -450,6 +460,16 @@ const EstateTemplate: ApplicationTemplate<
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               read: 'all',
+              write: {
+                externalData: ['getSignatories'],
+              },
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
             },
             {
               id: Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
@@ -459,6 +479,16 @@ const EstateTemplate: ApplicationTemplate<
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               read: 'all',
+              write: {
+                externalData: ['getSignatories'],
+              },
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
             },
             {
               id: Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
@@ -468,6 +498,16 @@ const EstateTemplate: ApplicationTemplate<
                 ),
               actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
               read: 'all',
+              write: {
+                externalData: ['getSignatories'],
+              },
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
             },
             {
               id: Roles.ASSIGNEE,
@@ -476,6 +516,16 @@ const EstateTemplate: ApplicationTemplate<
                   Promise.resolve(val.signingForm),
                 ),
               read: 'all',
+              write: {
+                externalData: ['getSignatories'],
+              },
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
             },
           ],
         },
