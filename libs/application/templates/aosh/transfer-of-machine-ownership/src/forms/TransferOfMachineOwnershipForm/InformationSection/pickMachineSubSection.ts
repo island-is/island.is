@@ -33,9 +33,10 @@ export const pickMachineSubSection = buildSubSection({
           options: (application) => {
             const machineList = application?.externalData.machinesList
               .data as MachinesWithTotalCount
-            return machineList.machines.map((machine) => {
-              return {
-                value: machine.id != null ? String(machine.id) : '',
+            return machineList.machines
+              .filter((machine) => machine.id != null)
+              .map((machine) => ({
+                value: String(machine.id),
                 label: machine?.regNumber || '',
                 subLabel: `${machine.category}: ${machine.type} - ${machine.subType}`,
                 disabled: machine?.disabled || false,
@@ -46,8 +47,7 @@ export const pickMachineSubSection = buildSubSection({
                       outlined: true,
                     }
                   : undefined,
-              }
-            })
+              }))
           },
         }),
         buildCustomField({
