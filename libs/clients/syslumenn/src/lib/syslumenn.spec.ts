@@ -48,6 +48,7 @@ import {
   ConfigModule,
   IdsClientConfig,
 } from '@island.is/nest/config'
+import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
 const YEAR = 2021
 const PERSON = [
@@ -96,7 +97,7 @@ describe('SyslumennService', () => {
         SyslumennClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [config, IdsClientConfig],
+          load: [config, IdsClientConfig, FeatureFlagConfig],
         }),
       ],
       providers: [SyslumennService],
