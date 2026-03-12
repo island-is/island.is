@@ -7,7 +7,6 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { MachinesWithTotalCount } from '@island.is/clients/work-machines'
-import { Application } from '@island.is/application/types'
 
 export const pickMachineSubSection = buildSubSection({
   id: 'pickMachine',

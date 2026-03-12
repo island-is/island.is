@@ -64,39 +64,30 @@ export const MachineSelectField: FC<
     setSelected(true)
     getMachineDetailsCallback(String(currentMachine.id))
       .then((response) => {
-        setSelectedMachine(response.getWorkerMachineDetails)
-        setValue(
-          'machine.regNumber',
-          response.getWorkerMachineDetails.regNumber,
-        )
-        setValue('machine.category', response.getWorkerMachineDetails.category)
-
-        setValue('machine.type', response.getWorkerMachineDetails.type || '')
-        setValue(
-          'machine.subType',
-          response.getWorkerMachineDetails.subType || '',
-        )
-        setValue('machine.plate', response.getWorkerMachineDetails.plate || '')
-        setValue(
-          'machine.ownerNumber',
-          response.getWorkerMachineDetails.ownerNumber || '',
-        )
-        const resolvedId = String(response.getWorkerMachineDetails.id ?? '')
+        const machine = response.getWorkerMachineDetails
+        if (!machine) {
+          return
+        }
+        setSelectedMachine(machine)
+        setValue('machine.regNumber', machine.regNumber || '')
+        setValue('machine.category', machine.category || '')
+        setValue('machine.type', machine.type || '')
+        setValue('machine.subType', machine.subType || '')
+        setValue('machine.plate', machine.plate || '')
+        setValue('machine.ownerNumber', machine.ownerNumber || '')
+        const resolvedId = String(machine.id ?? '')
         setValue('machine.id', resolvedId)
         setMachineId(resolvedId)
         setValue('machine.date', new Date().toISOString())
         setValue('machine.findVehicle', true)
         setValue(
           'machine.paymentRequiredForOwnerChange',
-          response.getWorkerMachineDetails.paymentRequiredForOwnerChange,
+          machine.paymentRequiredForOwnerChange,
         )
-        setValue(
-          'machine.isValid',
-          response.getWorkerMachineDetails.disabled ? undefined : true,
-        )
-        setIsLoading(false)
+        setValue('machine.isValid', machine.disabled ? false : true)
       })
       .catch((error) => console.error(error))
+      .finally(() => setIsLoading(false))
   }
 
   useEffect(() => {
