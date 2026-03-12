@@ -803,6 +803,9 @@ export interface ICourseFields {
   /** Title */
   title: string
 
+  /** Slug */
+  slug?: string | undefined
+
   /** Card Intro */
   cardIntro?: Document | undefined
 
