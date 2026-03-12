@@ -194,7 +194,8 @@ export class WorkMachinesClientService {
       searchQuery: input.regNumber,
     })
 
-    const machineId = result?.value?.[0]?.id ?? undefined
+    const rawId = result?.value?.[0]?.id
+    const machineId = rawId != null ? String(rawId) : undefined
 
     if (!machineId) {
       return null
@@ -249,7 +250,7 @@ export class WorkMachinesClientService {
       machines:
         result?.value?.map((machine) => {
           return {
-            id: machine.id,
+            id: machine.id != null ? String(machine.id) : undefined,
             type: machine.type || '',
             category: machine?.category || '',
             regNumber: machine?.registrationNumber || '',
@@ -277,7 +278,8 @@ export class WorkMachinesClientService {
       ...parameters,
     })
 
-    const machineId = result?.value?.[0]?.id ?? undefined
+    const rawId = result?.value?.[0]?.id
+    const machineId = rawId != null ? String(rawId) : undefined
 
     if (!machineId) {
       return null
@@ -294,7 +296,7 @@ export class WorkMachinesClientService {
     const result = await this.machineApiWithAuth(auth).getMachine({ id })
     const [type, ...subType] = result.type?.split(' ') || ''
     return {
-      id: result.id,
+      id: result.id != null ? String(result.id) : undefined,
       ownerNumber: result?.ownerNumber || '',
       plate: result?.licensePlateNumber || '',
       subType: subType.join(' '),

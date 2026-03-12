@@ -592,6 +592,11 @@ export const getApplicationExternalData = (
   const schools =
     getValueViaPath<Organization[]>(externalData, 'schools.data') ?? []
 
+  const isApplicationBlocked = getValueViaPath<boolean>(
+    externalData,
+    'isApplicationBlocked.data.hasActiveApplications',
+  )
+
   return {
     children,
     applicantName,
@@ -611,6 +616,7 @@ export const getApplicationExternalData = (
     socialProfile,
     preferredSchool,
     schools,
+    isApplicationBlocked,
   }
 }
 
