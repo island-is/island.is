@@ -195,7 +195,7 @@ describe('CaseTableService', () => {
         mockFindAll.mockResolvedValue([buildMockIndictmentCase()])
 
         const result = await service.getCaseTableRows(
-          CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW,
+          CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_IN_REVIEW,
           user,
         )
 
