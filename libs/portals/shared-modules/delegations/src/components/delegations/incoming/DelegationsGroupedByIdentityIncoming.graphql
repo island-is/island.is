@@ -2,6 +2,7 @@ fragment AuthApiScopeIncoming on AuthApiScope {
   name
   displayName
   description
+  allowsWrite
 }
 
 query AuthDelegationsGroupedByIdentityIncoming($lang: String) {

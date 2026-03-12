@@ -8,6 +8,7 @@ query AuthScopeCategories($lang: String!, $direction: AuthDelegationDirection) {
       name
       displayName
       description
+      allowsWrite
       domain {
         name
         displayName
@@ -22,10 +23,60 @@ query AuthScopeTags($lang: String!, $direction: AuthDelegationDirection) {
     id
     title
     description
+    slug
     scopes {
       name
       displayName
       description
+      allowsWrite
+      domain {
+        name
+        displayName
+        organisationLogoUrl
+      }
+    }
+  }
+}
+
+query AuthScopeCategoryBySlug(
+  $slug: String!
+  $lang: String!
+  $direction: AuthDelegationDirection
+) {
+  authScopeCategoryBySlug(slug: $slug, lang: $lang, direction: $direction) {
+    id
+    title
+    description
+    slug
+    scopes {
+      name
+      displayName
+      description
+      allowsWrite
+      domain {
+        name
+        displayName
+        organisationLogoUrl
+      }
+    }
+  }
+}
+
+query AuthScopeTagBySlug(
+  $slug: String!
+  $lang: String!
+  $direction: AuthDelegationDirection
+) {
+  authScopeTagBySlug(slug: $slug, lang: $lang, direction: $direction) {
+    id
+    title
+    description
+    slug
+    scopes {
+      name
+      displayName
+      description
+      allowsWrite
       domain {
         name
         displayName

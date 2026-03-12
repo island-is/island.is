@@ -55,6 +55,12 @@ export class ScopeTagDTO {
   description?: string
 
   @ApiProperty({
+    description: 'URL-friendly slug',
+    example: 'eignir-og-skuldir',
+  })
+  slug!: string
+
+  @ApiProperty({
     description: 'List of scopes tagged with this life event',
     type: [ScopeDTO],
   })

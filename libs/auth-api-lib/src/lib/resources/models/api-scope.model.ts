@@ -42,6 +42,7 @@ interface ModelAttributes {
   automaticDelegationGrant: boolean
   alsoForDelegatedUser: boolean
   isAccessControlled?: boolean
+  allowsWrite: boolean
   userClaims?: ApiScopeUserClaim[]
   order: number
   required: boolean
@@ -65,6 +66,7 @@ type CreationAttributes = Optional<
   | 'allowExplicitDelegationGrant'
   | 'automaticDelegationGrant'
   | 'alsoForDelegatedUser'
+  | 'allowsWrite'
   | 'order'
   | 'required'
   | 'emphasize'

@@ -20,6 +20,9 @@ export class ApiScope {
   @Field(() => Domain, { nullable: true })
   domain?: Domain
 
+  @Field(() => Boolean)
+  allowsWrite!: boolean
+
   constructor(apiScope: ApiScope) {
     Object.assign(this, apiScope)
   }

@@ -126,33 +126,31 @@ export const AccessScopes = () => {
         })
     }
 
-    return (
-      categoriesData?.authScopeCategories
-        ?.flatMap((category) => category.scopes)
-        .filter((scope) => {
-          // Search query filter
-          const displayName = scope.displayName.toLowerCase()
-          const description = scope.description?.toLowerCase()
-          const name = scope.name.toLowerCase()
-          const domain = scope.domain?.displayName?.toLowerCase()
-          const matchesSearch =
-            displayName.includes(searchQueryLower) ||
-            description?.includes(searchQueryLower) ||
-            name.includes(searchQueryLower) ||
-            domain?.includes(searchQueryLower)
+    return (categoriesData?.authScopeCategories
+      ?.flatMap((category) => category.scopes)
+      .filter((scope) => {
+        // Search query filter
+        const displayName = scope.displayName.toLowerCase()
+        const description = scope.description?.toLowerCase()
+        const name = scope.name.toLowerCase()
+        const domain = scope.domain?.displayName?.toLowerCase()
+        const matchesSearch =
+          displayName.includes(searchQueryLower) ||
+          description?.includes(searchQueryLower) ||
+          name.includes(searchQueryLower) ||
+          domain?.includes(searchQueryLower)
 
-          // Tags filter - check if scope name is in selected tags
-          const matchesTags =
-            filter.tags.length === 0 || scopeNamesInSelectedTags.has(scope.name)
+        // Tags filter - check if scope name is in selected tags
+        const matchesTags =
+          filter.tags.length === 0 || scopeNamesInSelectedTags.has(scope.name)
 
-          // Domains filter
-          const matchesDomains =
-            filter.domains.length === 0 ||
-            (scope.domain?.name && filter.domains.includes(scope.domain.name))
+        // Domains filter
+        const matchesDomains =
+          filter.domains.length === 0 ||
+          (scope.domain?.name && filter.domains.includes(scope.domain.name))
 
-          return matchesSearch && matchesTags && matchesDomains
-        }) || []
-    )
+        return matchesSearch && matchesTags && matchesDomains
+      }) || []) as AuthApiScope[]
   }, [categoriesData, searchQuery, filter, tagsData])
 
   return (

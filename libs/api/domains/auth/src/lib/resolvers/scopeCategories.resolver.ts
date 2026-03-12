@@ -73,4 +73,55 @@ export class ScopeCategoriesResolver {
 
     return tags as ScopeTag[]
   }
+
+  @Query(() => ScopeCategory, {
+    name: 'authScopeCategoryBySlug',
+    nullable: true,
+    description:
+      'Get a single scope category by slug from CMS with its associated scopes for portal users',
+  })
+  async getScopeCategoryBySlug(
+    @CurrentUser() user: User,
+    @Args('slug', { type: () => String }) slug: string,
+    @Args('lang', { type: () => String, defaultValue: 'is' }) lang: string,
+    @Args('direction', {
+      type: () => MeDelegationsControllerFindAllDirectionEnum,
+      nullable: true,
+    })
+    direction?: MeDelegationsControllerFindAllDirectionEnum,
+  ): Promise<ScopeCategory | null> {
+    const categories = await this.scopesApiWithAuth(
+      user,
+    ).scopesControllerFindCategories({
+      lang,
+      direction:
+        direction as unknown as ScopesControllerFindCategoriesDirectionEnum,
+    })
+
+    return (categories as ScopeCategory[]).find((c) => c.slug === slug) ?? null
+  }
+
+  @Query(() => ScopeTag, {
+    name: 'authScopeTagBySlug',
+    nullable: true,
+    description:
+      'Get a single scope tag by slug from CMS with its associated scopes for portal users.',
+  })
+  async getScopeTagBySlug(
+    @CurrentUser() user: User,
+    @Args('slug', { type: () => String }) slug: string,
+    @Args('lang', { type: () => String, defaultValue: 'is' }) lang: string,
+    @Args('direction', {
+      type: () => MeDelegationsControllerFindAllDirectionEnum,
+      nullable: true,
+    })
+    direction?: MeDelegationsControllerFindAllDirectionEnum,
+  ): Promise<ScopeTag | null> {
+    const tags = await this.scopesApiWithAuth(user).scopesControllerFindTags({
+      lang,
+      direction: direction as unknown as ScopesControllerFindTagsDirectionEnum,
+    })
+
+    return (tags as ScopeTag[]).find((t) => t.slug === slug) ?? null
+  }
 }

@@ -268,6 +268,7 @@ const DesktopCustomDelegationsPermissionsTable = ({
                               description: scope.apiScope?.description,
                               domain: scope.domain as AuthDomain,
                               delegationId: scope.delegationId ?? undefined,
+                              allowsWrite: scope.apiScope?.allowsWrite ?? false,
                               validTo: scope.validTo
                                 ? new Date(scope.validTo)
                                 : undefined,
@@ -420,6 +421,7 @@ const MobileCustomDelegationsPermissionsTable = ({
                         description: scope.apiScope?.description,
                         domain: scope.domain as AuthDomain,
                         delegationId: scope.delegationId ?? undefined,
+                        allowsWrite: scope.apiScope?.allowsWrite ?? false,
                         validTo: scope.validTo
                           ? new Date(scope.validTo)
                           : undefined,

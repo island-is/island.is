@@ -1,9 +1,9 @@
 import { useQuery } from '@apollo/client'
 import {
-  AuthScopeCategoriesDocument,
-  AuthScopeCategoriesQuery,
-  AuthScopeTagsDocument,
-  AuthScopeTagsQuery,
+  AuthScopeCategoryBySlugDocument,
+  AuthScopeCategoryBySlugQuery,
+  AuthScopeTagBySlugDocument,
+  AuthScopeTagBySlugQuery,
 } from '../ServiceCategories/ServiceCategories.generated'
 import { useLocale } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
@@ -35,28 +35,24 @@ export const CategoryDetails = () => {
     data: categoriesData,
     loading: categoriesLoading,
     error: categoriesError,
-  } = useQuery<AuthScopeCategoriesQuery>(AuthScopeCategoriesDocument, {
-    variables: { lang },
+  } = useQuery<AuthScopeCategoryBySlugQuery>(AuthScopeCategoryBySlugDocument, {
+    variables: { slug: slug ?? '', lang },
+    skip: !slug,
   })
   const {
     data: tagsData,
     loading: tagsLoading,
     error: tagsError,
-  } = useQuery<AuthScopeTagsQuery>(AuthScopeTagsDocument, {
-    variables: { lang },
+  } = useQuery<AuthScopeTagBySlugQuery>(AuthScopeTagBySlugDocument, {
+    variables: { slug: slug ?? '', lang },
+    skip: !slug,
   })
   const { selectedScopes, setSelectedScopes, setIdentities, clearForm } =
     useDelegationForm()
   const defaultDate = add(new Date(), { years: 1 })
 
-  const category = categoriesData?.authScopeCategories?.find(
-    (category) => category.slug === slug,
-  )
-  const tag = tagsData?.authScopeTags?.find(
-    (tag) => tag.title.toLowerCase().replace(/ /g, '-') === slug,
-  )
-
-  const data = category || tag
+  const data =
+    categoriesData?.authScopeCategoryBySlug ?? tagsData?.authScopeTagBySlug
 
   const loading = categoriesLoading || tagsLoading
   const error = categoriesError || tagsError
@@ -133,7 +129,7 @@ export const CategoryDetails = () => {
             <Text variant="h5">{formatMessage(m.delegationsThatSuit)}</Text>
             <Box paddingTop={2} paddingBottom={4}>
               <ScopesTable
-                scopes={data?.scopes ?? []}
+                scopes={data?.scopes as AuthApiScope[]}
                 showCheckbox
                 onSelectScope={onSelectScope}
               />

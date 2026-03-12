@@ -34,7 +34,7 @@ export const DelegationsTable = ({
   }
 }) => {
   const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
+  const isMobile = width < theme.breakpoints.lg
 
   return (
     <Box

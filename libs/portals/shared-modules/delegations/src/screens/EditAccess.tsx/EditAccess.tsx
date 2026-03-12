@@ -95,6 +95,7 @@ const EditAccess = () => {
             : undefined) ?? undefined,
         validTo: scope.validTo ? new Date(scope.validTo) : undefined,
         validFrom: scope.validFrom ? new Date(scope.validFrom) : undefined,
+        allowsWrite: scope.apiScope?.allowsWrite ?? false,
       }))
       setSelectedScopes(scopes)
     }

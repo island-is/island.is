@@ -35,17 +35,13 @@ export const ServiceCategoriesGrid = ({
     categories.length > 0 && (
       <div className={styles.categoriesGrid}>
         {categories.map((category) => {
-          const slug =
-            category.__typename === 'AuthScopeCategory'
-              ? category.slug
-              : category.title.toLowerCase().replace(/ /g, '-')
           return (
             <button
               key={category.id}
               className={styles.categoryCard}
               onClick={(e) => {
                 e.preventDefault()
-                navigate(DelegationPaths.CategoryDetails.replace(':slug', slug))
+                navigate(DelegationPaths.CategoryDetails.replace(':slug', category.slug))
               }}
             >
               <CategoryCard

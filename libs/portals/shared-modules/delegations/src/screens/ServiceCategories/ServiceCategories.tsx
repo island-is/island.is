@@ -1,11 +1,6 @@
 import { useLocale } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
-import {
-  Box,
-  Text,
-  AlertMessage,
-  AccordionCard,
-} from '@island.is/island-ui/core'
+import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { IntroHeader } from '@island.is/portals/core'
 import {
@@ -14,7 +9,7 @@ import {
   AuthScopeCategoriesDocument,
   AuthScopeCategoriesQuery,
 } from './ServiceCategories.generated'
-import { ScopesTable } from '../../components/ScopesTable/ScopesTable'
+
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import { useLoaderData } from 'react-router-dom'
 import { AccessControlLoaderResponse } from '../AccessControl.loader'

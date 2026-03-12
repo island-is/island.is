@@ -40,12 +40,7 @@ export const ScopesCategoriesList = ({
               key={cat.id}
               id={cat.id}
               label={
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  columnGap={1}
-                  zIndex={10}
-                >
+                <Box display="flex" alignItems="center" zIndex={10}>
                   <Checkbox
                     name={`mobile-category-${cat.id}`}
                     checked={
@@ -76,7 +71,7 @@ export const ScopesCategoriesList = ({
                   </Text>
                 ) : (
                   <ScopesTable
-                    scopes={cat.scopes}
+                    scopes={cat.scopes as AuthApiScope[]}
                     showCheckbox
                     onSelectScope={onSelectScope}
                   />

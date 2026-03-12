@@ -17,21 +17,8 @@ import {
 } from '../../context/DelegationFormContext'
 import { m } from '../../lib/messages'
 
-type Scope = {
-  __typename?: 'AuthApiScope'
-  name: string
-  displayName: string
-  description?: string | null
-  domain?: {
-    __typename?: 'AuthDomain'
-    name: string
-    displayName: string
-    organisationLogoUrl?: string | null
-  } | null
-}
-
 type ScopesTableProps = {
-  scopes?: Scope[]
+  scopes?: AuthApiScope[]
   showCheckbox?: boolean
   onSelectScope?: (scope: AuthApiScope) => void
   showDate?: boolean
@@ -63,7 +50,7 @@ export const ScopesTable = ({
     return (
       <Box display="flex" flexDirection="column">
         {scopes.map((scope, index) => {
-          const permissionType = scope.name.includes(':write')
+          const permissionType = scope.allowsWrite
             ? formatMessage(m.readAndWrite)
             : formatMessage(m.read)
 
@@ -209,7 +196,7 @@ export const ScopesTable = ({
       </T.Head>
       <T.Body>
         {scopes.map((scope) => {
-          const permissionType = scope.name.includes(':write')
+          const permissionType = scope.allowsWrite
             ? formatMessage(m.readAndWrite)
             : formatMessage(m.read)
 
@@ -245,7 +232,12 @@ export const ScopesTable = ({
                   </Text>
                 </Box>
               </T.Data>
-              <T.Data style={{ paddingInline: 16 }}>
+              <T.Data
+                style={{
+                  paddingInline: 16,
+                  wordBreak: 'break-word',
+                }}
+              >
                 <Text variant="medium">{scope.displayName}</Text>
               </T.Data>
               <T.Data style={{ paddingInline: 16 }}>

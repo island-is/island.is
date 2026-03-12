@@ -952,6 +952,7 @@ export interface ICustomPageFields {
     | 'Unknown'
     | 'OpenInvoices'
     | 'SupremeCourtDeterminations'
+    | 'SecondarySchoolStudies'
     | undefined
 
   /** Alert Banner */
@@ -1003,6 +1004,9 @@ export interface IDelegationScopeTagFields {
 
   /** Description */
   description?: string | undefined
+
+  /** Slug */
+  slug: string
 }
 
 /** Tags that can be used to filter available delegations */
@@ -2341,6 +2345,12 @@ export interface IHnippTemplateFields {
 
   /** Scope */
   scope?: string | undefined
+
+  /** Sms Delivery */
+  smsDelivery?: 'NEVER' | 'OPT_IN' | 'ALWAYS' | undefined
+
+  /** Sms Payer  */
+  smsPayer?: 'Landlæknir' | undefined
 }
 
 /** push notification templates for island.is */
@@ -3097,6 +3107,9 @@ export interface IMultipleStatistics extends Entry<IMultipleStatisticsFields> {
 }
 
 export interface INamespaceFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
   /** Namespace */
   namespace?: string | undefined
 
@@ -4552,6 +4565,8 @@ export interface ISliceConnectedComponentFields {
     | 'NewKilometerFee'
     | 'LatestVerdicts'
     | 'SupremeCourt/Determinations'
+    | 'KVTH/Rulings'
+    | 'VERAnnouncementCalculator'
     | undefined
 
   /** Localized JSON */

@@ -52,7 +52,14 @@ export class ScopeService {
     language?: string
   }): Promise<ScopeDTO[]> {
     const apiScopes = await this.apiScopeModel.findAll({
-      attributes: ['name', 'displayName', 'description', 'order', 'domainName'],
+      attributes: [
+        'name',
+        'displayName',
+        'description',
+        'order',
+        'domainName',
+        'allowsWrite',
+      ],
       where: {
         name: {
           [Op.in]: requestedScopes,
@@ -96,6 +103,7 @@ export class ScopeService {
         description: r.description,
         order: 0,
         domainName: DEFAULT_DOMAIN,
+        allowsWrite: false,
       })),
     ]
   }
@@ -115,7 +123,14 @@ export class ScopeService {
       user,
       language: lang,
       direction,
-      attributes: ['name', 'displayName', 'description', 'domainName', 'order'],
+      attributes: [
+        'name',
+        'displayName',
+        'description',
+        'domainName',
+        'order',
+        'allowsWrite',
+      ],
       additionalIncludes: [
         {
           model: ApiScopeCategory,
@@ -142,6 +157,7 @@ export class ScopeService {
           description: scope.description || '',
           domainName: scope.domainName,
           order: scope.order || 0,
+          allowsWrite: scope.allowsWrite ?? false,
         } as ScopeDTO)
       }
     }
@@ -176,7 +192,14 @@ export class ScopeService {
       user,
       language: lang,
       direction,
-      attributes: ['name', 'displayName', 'description', 'domainName', 'order'],
+      attributes: [
+        'name',
+        'displayName',
+        'description',
+        'domainName',
+        'order',
+        'allowsWrite',
+      ],
       additionalIncludes: [
         {
           model: ApiScopeTag,
@@ -203,6 +226,7 @@ export class ScopeService {
           description: scope.description || '',
           domainName: scope.domainName,
           order: scope.order || 0,
+          allowsWrite: scope.allowsWrite ?? false,
         } as ScopeDTO)
       }
     }
@@ -214,6 +238,7 @@ export class ScopeService {
           id: tag.id,
           title: tag.title,
           description: tag.description ?? '',
+          slug: tag.slug,
           scopes,
         }
       })

@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   SkeletonLoader,
   Stack,
   Table as T,
@@ -135,6 +134,7 @@ export default function CustomDelegationsTable({
       delegationId: scope.delegationId ?? undefined,
       validTo: scope.validTo ? new Date(scope.validTo) : undefined,
       validFrom: scope.validFrom ? new Date(scope.validFrom) : undefined,
+      allowsWrite: scope.apiScope?.allowsWrite ?? false,
     }))
   }
   const onClickEdit = (person: DelegationsByPerson) => {
