@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { defineMessage } from 'react-intl'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 
 import { AuthDomain } from '@island.is/api/schema'
@@ -20,6 +19,7 @@ import { ConfirmAccessModal } from '../../components/modals/ConfirmAccessModal'
 import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import { AccessControlLoaderResponse } from '../AccessControl.loader'
 import { useIdentityLazyQuery } from '../GrantAccess/GrantAccess.generated'
+import isSameDay from 'date-fns/isSameDay'
 
 const EditAccess = () => {
   useNamespaces(['sp.access-control-delegations'])
@@ -55,23 +55,27 @@ const EditAccess = () => {
     useIdentityLazyQuery()
 
   // if the state gets cleared (for example after a refresh),
-  // we need to fetch users' current delegations for the initial state
+  // we need to fetch users' identity info and current delegations for the initial state
   useEffect(() => {
     if (!identities.length && nationalIdParam) {
       getIdentity({
         variables: { input: { nationalId: nationalIdParam } },
       })
-
-      if (identityData?.identity) {
-        setIdentities([
-          {
-            nationalId: identityData.identity.nationalId,
-            name: identityData.identity.name,
-          },
-        ])
-      }
     }
+  }, [identities.length, nationalIdParam, getIdentity])
 
+  useEffect(() => {
+    if (identityData?.identity && !identities.length) {
+      setIdentities([
+        {
+          nationalId: identityData.identity.nationalId,
+          name: identityData.identity.name,
+        },
+      ])
+    }
+  }, [identityData, identities.length, setIdentities])
+
+  useEffect(() => {
     const allDelegations =
       delegationsData?.authDelegationsGroupedByIdentityOutgoing
 
@@ -100,23 +104,21 @@ const EditAccess = () => {
       setSelectedScopes(scopes)
     }
   }, [
-    delegationsData,
+    delegationsData?.authDelegationsGroupedByIdentityOutgoing,
     nationalIdParam,
     selectedScopes.length,
     setSelectedScopes,
-    navigate,
-    identities,
-    getIdentity,
-    identityData,
-    setIdentities,
   ])
 
   // if all scopes have the same validTo date, then the initial setting of the access period is the same for all scopes
   const initialIsSamePeriod = useMemo(() => {
     return (
       selectedScopes.length > 1 &&
-      selectedScopes.every(
-        (scope) => scope.validTo === selectedScopes[0]?.validTo,
+      selectedScopes.every((scope) =>
+        isSameDay(
+          new Date(scope.validTo ?? ''),
+          new Date(selectedScopes[0]?.validTo ?? ''),
+        ),
       )
     )
   }, [selectedScopes])
@@ -149,7 +151,7 @@ const EditAccess = () => {
       <>
         <IntroHeader
           title={formatMessage(m.grantAccessStepsTitle)}
-          intro={defineMessage(m.grantAccessStepsIntro)}
+          intro={formatMessage(m.grantAccessStepsIntro)}
           marginBottom={4}
         />
         <Box padding={3}>
@@ -163,7 +165,7 @@ const EditAccess = () => {
     <>
       <IntroHeader
         title={formatMessage(m.grantAccessStepsTitle)}
-        intro={defineMessage(m.grantAccessStepsIntro)}
+        intro={formatMessage(m.grantAccessStepsIntro)}
         marginBottom={4}
       />
       <div>

@@ -119,7 +119,7 @@ export const PermissionContent = ({
   // initialize the selected categories and tags
   // in some cases the data is not available yet when the state is initialized, so we need to wait for it to be available
   useEffect(() => {
-    if (tags.length > 0 && categories.length > 0) {
+    if (tags.length > 0 || categories.length > 0) {
       setSelectedCategories(
         (selectedPermission.categoryIds || ([] as string[]))
           .map((id) => {

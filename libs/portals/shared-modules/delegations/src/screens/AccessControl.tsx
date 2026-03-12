@@ -33,7 +33,8 @@ const AccessControl = () => {
         : DelegationPaths.Delegations
 
     // Make sure not to add to history stack the same route twice in a row
-    if (url !== location.pathname) {
+    const absoluteUrl = `${basePath}${url}`
+    if (absoluteUrl !== location.pathname) {
       navigate(url)
     }
   }

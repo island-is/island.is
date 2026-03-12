@@ -74,7 +74,7 @@ export const DetachedCalendar = () => {
           label="Date"
           size="sm"
           placeholderText="Pick a date"
-          detatchedCalendar={true}
+          detachedCalendar={true}
           handleChange={(date: Date) => console.log(date)}
         />
       </div>

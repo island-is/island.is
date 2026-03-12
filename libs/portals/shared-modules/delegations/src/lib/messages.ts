@@ -396,7 +396,7 @@ export const m = defineMessages({
     defaultMessage: 'Velja gildistíma',
   },
   chooseRecipientsButtonLabel: {
-    id: 'sp.access-control-delegations:choose-recipients-label',
+    id: 'sp.access-control-delegations:choose-recipients-button-label',
     defaultMessage: 'Velja umboðsaðila',
   },
   choosePeriodTitle: {

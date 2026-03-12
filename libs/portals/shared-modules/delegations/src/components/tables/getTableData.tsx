@@ -42,9 +42,7 @@ export const getLegalGuardianTableData = (
           iconType="outline"
           size="small"
           colorScheme="default"
-          onClick={() =>
-            switchUser(row.nationalId, 'http://localhost:4200/minarsidur')
-          }
+          onClick={() => switchUser(row.nationalId)}
         >
           {formatMessage(m.switch)}
         </Button>
@@ -75,9 +73,7 @@ export const getLegalGuardianTableData = (
         size="small"
         colorScheme="default"
         fluid
-        onClick={() =>
-          switchUser(row.nationalId, 'http://localhost:4200/minarsidur')
-        }
+        onClick={() => switchUser(row.nationalId)}
       >
         {formatMessage(m.switch)}
       </Button>

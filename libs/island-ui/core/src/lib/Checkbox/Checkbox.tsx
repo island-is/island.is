@@ -85,7 +85,7 @@ export const Checkbox = ({
     if (inputRef.current) {
       inputRef.current.indeterminate = indeterminate
     }
-  }, [indeterminate])
+  }, [indeterminate, checked])
 
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!isCheckedControlled) {

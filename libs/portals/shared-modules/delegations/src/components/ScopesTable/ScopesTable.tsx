@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { AuthApiScope } from '@island.is/api/schema'
 import {
   Box,
@@ -58,9 +59,8 @@ export const ScopesTable = ({
           const validTo = (scope as ScopeSelection).validTo
 
           return (
-            <>
+            <Fragment key={scope.name + index}>
               <Box
-                key={scope.name + index}
                 paddingTop={2}
                 paddingBottom={index < scopes.length - 1 ? 2 : 0}
                 overflow={showDate ? 'visible' : undefined}
@@ -147,7 +147,7 @@ export const ScopesTable = ({
                               placeholderText={formatMessage(
                                 coreMessages.chooseDate,
                               )}
-                              detatchedCalendar={true}
+                              detachedCalendar={true}
                             />
                           ) : (
                             <Text variant="medium">
@@ -163,7 +163,7 @@ export const ScopesTable = ({
                 </Box>
               </Box>
               {index < scopes.length - 1 && <Divider />}
-            </>
+            </Fragment>
           )
         })}
       </Box>
@@ -245,7 +245,7 @@ export const ScopesTable = ({
                 <T.Data style={{ paddingInline: 16 }}>
                   {editableDates ? (
                     <DatePicker
-                      id="validityPeriod"
+                      id={`validityPeriod-${scope.name}`}
                       size="sm"
                       backgroundColor="blue"
                       minDate={new Date()}
@@ -254,7 +254,7 @@ export const ScopesTable = ({
                         onChangeScopeDate(scope as ScopeSelection, date)
                       }
                       placeholderText={formatMessage(coreMessages.chooseDate)}
-                      detatchedCalendar={true}
+                      detachedCalendar={true}
                     />
                   ) : (
                     <Text variant="medium">

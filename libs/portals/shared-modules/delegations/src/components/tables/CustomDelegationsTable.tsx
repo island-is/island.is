@@ -98,7 +98,7 @@ export default function CustomDelegationsTable({
   )
 
   const handleDelete = useCallback(
-    async (person: DelegationsByPerson) => {
+    async (person: DelegationsByPerson): Promise<boolean> => {
       const delegationIds = [
         ...new Set(
           person.scopes
@@ -107,7 +107,7 @@ export default function CustomDelegationsTable({
         ),
       ]
 
-      if (delegationIds.length === 0) return
+      if (delegationIds.length === 0) return true
 
       try {
         await Promise.all(
@@ -118,8 +118,10 @@ export default function CustomDelegationsTable({
           ),
         )
         evictPerson(person)
+        return true
       } catch {
         toast.error(formatMessage(coreMessages.somethingWrong))
+        return false
       }
     },
     [deleteDelegation, evictPerson, formatMessage],
@@ -201,13 +203,13 @@ export default function CustomDelegationsTable({
           setPersonToDelete(null)
           clearForm()
         }}
-        onDelete={() =>
-          personToDelete &&
-          handleDelete(personToDelete).then(() => {
-            setPersonToDelete(null)
-            clearForm()
-          })
-        }
+        onDelete={async () => {
+          if (!personToDelete) return
+          const didDelete = await handleDelete(personToDelete)
+          if (!didDelete) return
+          setPersonToDelete(null)
+          clearForm()
+        }}
         loading={deleteLoading}
         otherIdentity={{
           name: personToDelete?.name ?? '',

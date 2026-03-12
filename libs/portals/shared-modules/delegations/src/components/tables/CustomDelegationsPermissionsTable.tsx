@@ -72,19 +72,20 @@ export const CustomDelegationsPermissionsTable = ({
           },
         },
         update: (cache) => {
-          cache.modify({
-            id: personCacheId,
-            fields: {
-              scopes(existing: readonly Reference[], { readField }) {
-                return existing.map((scopeRef) =>
-                  readField('name', scopeRef) === scope.name &&
-                  readField('delegationId', scopeRef) === delegationId
-                    ? { ...scopeRef, validTo: newDate.toISOString() }
-                    : scopeRef,
-                )
-              },
-            },
+          const scopeId = cache.identify({
+            __typename: 'AuthDelegationScope',
+            id: scope.id,
           })
+          if (scopeId) {
+            cache.modify({
+              id: scopeId,
+              fields: {
+                validTo() {
+                  return newDate.toISOString()
+                },
+              },
+            })
+          }
         },
       })
       toast.success(formatMessage(m.scopeValidityPeriodUpdated))
@@ -245,7 +246,7 @@ const DesktopCustomDelegationsPermissionsTable = ({
                       handleChange={(date) => handleDateChange(scope, date)}
                       size="xs"
                       backgroundColor="blue"
-                      detatchedCalendar={true}
+                      detachedCalendar={true}
                     />
                   )}
                 </T.Data>
@@ -399,7 +400,7 @@ const MobileCustomDelegationsPermissionsTable = ({
                       handleChange={(date) => handleDateChange(scope, date)}
                       size="xs"
                       backgroundColor="blue"
-                      detatchedCalendar={true}
+                      detachedCalendar={true}
                     />
                   )}
                 </Box>

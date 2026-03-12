@@ -52,10 +52,12 @@ export const IdentityLookup = ({
 
   const [getIdentity, { data, loading: queryLoading }] = useIdentityLazyQuery({
     onError: (error) => {
+      setValue(nameField, '')
       setFormError(error)
     },
     onCompleted: (data) => {
       if (!data.identity) {
+        setValue(nameField, '')
         noUserFoundToast()
       }
     },

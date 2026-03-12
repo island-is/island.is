@@ -102,7 +102,6 @@ const ExpandableRow: FC<React.PropsWithChildren<Props>> = ({
               display="flex"
               alignItems="center"
               justifyContent="flexStart"
-              onClick={onExpandButton}
               cursor="pointer"
             >
               <Button

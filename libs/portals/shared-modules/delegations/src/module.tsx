@@ -102,6 +102,7 @@ export const delegationsModule: PortalModule = {
             navHide: true,
             enabled: hasAccess,
             element: <CategoryDetails />,
+            loader: accessControlLoader('umbod/thjonustuflokkar/:slug')(props),
           },
         ],
       },

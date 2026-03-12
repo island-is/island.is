@@ -83,7 +83,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   isClearable = false,
   clearLabel,
   displaySelectInput = false,
-  detatchedCalendar = false,
+  detachedCalendar = false,
 }) => {
   const isValidDate = (d: unknown): d is Date =>
     d instanceof Date && !isNaN((d as Date).getTime())
@@ -142,7 +142,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           [styles.small]: size === 'sm',
           [styles.extraSmall]: size === 'xs',
           [styles.medium]: size === 'md',
-          [styles.detached]: detatchedCalendar,
+          [styles.detached]: detachedCalendar,
         })}
       >
         <ReactDatePicker
@@ -278,7 +278,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               name={inputName}
               label={label}
               fixedFocusState={
-                detatchedCalendar ? false : datePickerState === 'open'
+                detachedCalendar ? false : datePickerState === 'open'
               }
               hasError={hasError}
               placeholderText={placeholderText}
