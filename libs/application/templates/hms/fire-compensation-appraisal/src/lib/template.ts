@@ -173,16 +173,12 @@ const template: ApplicationTemplate<
             formLoader: async () => {
               return PaymentForm
             },
-            write: 'all',
-            delete: true,
           },
           {
             id: Roles.DELEGATE,
             formLoader: async () => {
               return PaymentForm
             },
-            write: 'all',
-            delete: true,
           },
         ],
       }),
