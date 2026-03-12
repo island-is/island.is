@@ -327,60 +327,59 @@ export class PoliceService {
   ) {
     const startTime = nowFactory()
 
-    return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
-    )
-      .then(async (res: Response) => {
-        if (res.ok) {
-          const response: z.infer<typeof this.responseStructure> =
-            await res.json()
+    try {
+      const res = await this.fetchPoliceDocumentApi(
+        `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
+      )
 
-          this.responseStructure.parse(response)
-          return response
-        }
+      if (res.ok) {
+        const response: z.infer<typeof this.responseStructure> =
+          await res.json()
+        this.responseStructure.parse(response)
+        return response
+      }
 
-        const reason = await res.text()
+      const reason = await res.text()
 
-        // The police system does not provide a structured error response.
-        // When a police case does not exist, a stack trace is returned.
-        throw new NotFoundException({
-          message: `Police case for case ${caseId} does not exist`,
-          detail: reason,
-        })
+      // The police system does not provide a structured error response.
+      // When a police case does not exist, a stack trace is returned.
+      throw new NotFoundException({
+        message: `Police case for case ${caseId} does not exist`,
+        detail: reason,
       })
-      .catch((reason) => {
-        if (reason instanceof NotFoundException) {
-          throw reason
-        }
+    } catch (reason) {
+      if (reason instanceof NotFoundException) {
+        throw reason
+      }
 
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the case does not exist
-          throw new NotFoundException({
-            ...reason,
-            message: `Police case for case ${caseId} does not exist`,
-            detail: reason.message,
-          })
-        }
-
-        this.eventService.postErrorEvent(
-          'Failed to get police case files and case units',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            startTime,
-            endTime: nowFactory(),
-            source,
-          },
-          reason,
-        )
-
-        throw new BadGatewayException({
+      if (reason instanceof ServiceUnavailableException) {
+        // Act as if the case does not exist
+        throw new NotFoundException({
           ...reason,
-          message: `Failed to get police case files and case units for case ${caseId}`,
+          message: `Police case for case ${caseId} does not exist`,
           detail: reason.message,
         })
+      }
+
+      this.eventService.postErrorEvent(
+        'Failed to get police case files and case units',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          startTime,
+          endTime: nowFactory(),
+          source,
+        },
+        reason,
+      )
+
+      throw new BadGatewayException({
+        ...reason,
+        message: `Failed to get police case files and case units for case ${caseId}`,
+        detail: reason.message,
       })
+    }
   }
 
   private async getDigitalCaseFiles(
@@ -388,63 +387,67 @@ export class PoliceService {
     user: User,
     source: string,
   ) {
+    if (!this.config.policeDigitalCaseFilesApiAvailable) {
+      return undefined
+    }
+
     const startTime = nowFactory()
 
-    return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/V4/GetRVRafraengogn/${caseId}`,
-    )
-      .then(async (res: Response) => {
-        if (res.ok) {
-          const response: z.infer<typeof this.digitalCaseFilesStructure> =
-            await res.json()
+    try {
+      const res = await this.fetchPoliceDocumentApi(
+        `${this.xRoadPath}/V4/GetRVRafraengogn/${caseId}`,
+      )
 
-          this.digitalCaseFilesStructure.parse(response)
+      if (res.ok) {
+        const response: z.infer<typeof this.digitalCaseFilesStructure> =
+          await res.json()
 
-          return response
-        }
+        this.digitalCaseFilesStructure.parse(response)
 
-        const reason = await res.text()
+        return response
+      }
 
-        // The police system does not provide a structured error response.
-        // When a police case does not exist, a stack trace is returned.
-        throw new NotFoundException({
-          message: `Police case for case ${caseId} does not exist`,
-          detail: reason,
-        })
+      const reason = await res.text()
+
+      // The police system does not provide a structured error response.
+      // When a police case does not exist, a stack trace is returned.
+      throw new NotFoundException({
+        message: `Police case for case ${caseId} does not exist`,
+        detail: reason,
       })
-      .catch((reason) => {
-        if (reason instanceof NotFoundException) {
-          throw reason
-        }
+    } catch (reason) {
+      if (reason instanceof NotFoundException) {
+        throw reason
+      }
 
-        if (reason instanceof ServiceUnavailableException) {
-          // Act as if the case does not exist
-          throw new NotFoundException({
-            ...reason,
-            message: `Police case for case ${caseId} does not exist`,
-            detail: reason.message,
-          })
-        }
-
-        this.eventService.postErrorEvent(
-          'Failed to get police digital case files',
-          {
-            caseId,
-            actor: user.name,
-            institution: user.institution?.name,
-            startTime,
-            endTime: nowFactory(),
-            source,
-          },
-          reason,
-        )
-
-        throw new BadGatewayException({
+      if (reason instanceof ServiceUnavailableException) {
+        // Act as if the case does not exist
+        throw new NotFoundException({
           ...reason,
-          message: `Failed to get police digital case files for case ${caseId}`,
+          message: `Police case for case ${caseId} does not exist`,
           detail: reason.message,
         })
+      }
+
+      this.eventService.postErrorEvent(
+        'Failed to get police digital case files',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          startTime,
+          endTime: nowFactory(),
+          source,
+        },
+        reason,
+      )
+
+      throw new BadGatewayException({
+        ...reason,
+        message: `Failed to get police digital case files for case ${caseId}`,
+        detail: reason.message,
       })
+    }
   }
 
   async getAllPoliceCaseFiles(
