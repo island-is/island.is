@@ -172,7 +172,6 @@ export const ScopesTable = ({
 
   const headers: string[] = [
     ...(showCheckbox ? [''] : []),
-    formatMessage(m.headerName),
     formatMessage(m.headerScopeName),
     formatMessage(m.headerDescription),
     ...(showDate ? [formatMessage(m.headerValidityPeriod)] : []),
@@ -215,30 +214,29 @@ export const ScopesTable = ({
               <T.Data style={{ paddingInline: 16 }}>
                 <Box
                   display="flex"
-                  alignItems="center"
-                  justifyContent="flexStart"
-                  columnGap={3}
+                  flexDirection="column"
+                  style={{ rowGap: 4, minWidth: 160 }}
                 >
-                  {scope.domain?.organisationLogoUrl && (
-                    <img
-                      src={scope.domain.organisationLogoUrl}
-                      width="24"
-                      alt=""
-                      aria-hidden
-                    />
-                  )}
-                  <Text variant="medium">
-                    {scope.domain?.displayName || scope.domain?.name || '-'}
-                  </Text>
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="flexStart"
+                    columnGap={1}
+                  >
+                    {scope.domain?.organisationLogoUrl && (
+                      <img
+                        src={scope.domain.organisationLogoUrl}
+                        width="16"
+                        alt=""
+                        aria-hidden
+                      />
+                    )}
+                    <Text variant="small">
+                      {scope.domain?.displayName || scope.domain?.name || '-'}
+                    </Text>
+                  </Box>
+                  <Text variant="medium">{scope.displayName}</Text>
                 </Box>
-              </T.Data>
-              <T.Data
-                style={{
-                  paddingInline: 16,
-                  wordBreak: 'break-word',
-                }}
-              >
-                <Text variant="medium">{scope.displayName}</Text>
               </T.Data>
               <T.Data style={{ paddingInline: 16 }}>
                 <Text variant="medium">{scope.description || '-'}</Text>
