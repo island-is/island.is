@@ -104,4 +104,32 @@ export class PoliceDigitalCaseFileRepositoryService {
       throw error
     }
   }
+
+  async deleteAllForPoliceCaseNumber(
+    caseId: string,
+    policeCaseNumber: string,
+    options?: DeleteOptions,
+  ): Promise<void> {
+    try {
+      this.logger.debug(
+        `Deleting all police digital case files for case ${caseId} and police case number ${policeCaseNumber}`,
+      )
+
+      await this.model.destroy({
+        where: { caseId, policeCaseNumber },
+        ...options,
+      })
+
+      this.logger.debug(
+        `Deleted all police digital case files for case ${caseId} and police case number ${policeCaseNumber}`,
+      )
+    } catch (error) {
+      this.logger.error(
+        'Error deleting all police digital case files for police case number',
+        { error },
+      )
+
+      throw error
+    }
+  }
 }

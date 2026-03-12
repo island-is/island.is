@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
@@ -102,5 +103,21 @@ export class PoliceDigitalCaseFileService {
     this.logger.debug(`Deleting police digital case file ${id}`)
 
     return this.policeDigitalCaseFileRepositoryService.delete(caseId, id)
+  }
+
+  async deleteAllForPoliceCaseNumber(
+    caseId: string,
+    policeCaseNumber: string,
+    transaction: Transaction,
+  ): Promise<void> {
+    this.logger.debug(
+      `Deleting all police digital case files for case ${caseId} and police case number ${policeCaseNumber}`,
+    )
+
+    return this.policeDigitalCaseFileRepositoryService.deleteAllForPoliceCaseNumber(
+      caseId,
+      policeCaseNumber,
+      { transaction },
+    )
   }
 }
