@@ -69,27 +69,19 @@ export const MachineSelectField: FC<
           'machine.regNumber',
           response.getWorkerMachineDetails.regNumber,
         )
-        setValue(
-          'machine.category',
-          response.getWorkerMachineDetails.category,
-        )
+        setValue('machine.category', response.getWorkerMachineDetails.category)
 
         setValue('machine.type', response.getWorkerMachineDetails.type || '')
         setValue(
           'machine.subType',
           response.getWorkerMachineDetails.subType || '',
         )
-        setValue(
-          'machine.plate',
-          response.getWorkerMachineDetails.plate || '',
-        )
+        setValue('machine.plate', response.getWorkerMachineDetails.plate || '')
         setValue(
           'machine.ownerNumber',
           response.getWorkerMachineDetails.ownerNumber || '',
         )
-        const resolvedId = String(
-          response.getWorkerMachineDetails.id ?? '',
-        )
+        const resolvedId = String(response.getWorkerMachineDetails.id ?? '')
         setValue('machine.id', resolvedId)
         setMachineId(resolvedId)
         setValue('machine.date', new Date().toISOString())
