@@ -3942,12 +3942,12 @@
         y2="263.91"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stopColor="#FF4C84" />
-        <stop offset="0.2268" stopColor="#AC6CBE" />
-        <stop offset="0.4292" stopColor="#6786ED" />
-        <stop offset="0.5234" stopColor="#4C90FF" />
-        <stop offset="0.6795" stopColor="#847BD9" />
-        <stop offset="1" stopColor="#FF4C84" />
+        <stop stop-color="#FF4C84" />
+        <stop offset="0.2268" stop-color="#AC6CBE" />
+        <stop offset="0.4292" stop-color="#6786ED" />
+        <stop offset="0.5234" stop-color="#4C90FF" />
+        <stop offset="0.6795" stop-color="#847BD9" />
+        <stop offset="1" stop-color="#FF4C84" />
       </linearGradient>
     </defs>
   </svg>
