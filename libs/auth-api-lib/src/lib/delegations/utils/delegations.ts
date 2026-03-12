@@ -11,7 +11,6 @@ import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
-  isPersonalRepresentativeDelegationType,
 } from '@island.is/shared/types'
 
 import type { DelegationsIndexService } from '../delegations-index.service'
@@ -116,7 +115,7 @@ export async function validateDistrictCommissionersDelegations(
     AuthDelegationType.LegalRepresentative,
   )
   const hasPersonalRepresentative = delegationTypes.some((type) =>
-    isPersonalRepresentativeDelegationType(String(type)),
+    String(type).startsWith('PersonalRepresentative'),
   )
 
   const validTypes: string[] = []
@@ -154,7 +153,7 @@ export async function validateDistrictCommissionersDelegations(
 
   if (hasPersonalRepresentative) {
     const prTypes = delegationTypes.filter((dt) =>
-      isPersonalRepresentativeDelegationType(String(dt)),
+      String(dt).startsWith('PersonalRepresentative'),
     )
 
     if (validatePersonalRepsAtSyslumenn) {

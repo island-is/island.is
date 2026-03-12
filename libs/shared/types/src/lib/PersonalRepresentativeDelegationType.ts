@@ -1,8 +1,4 @@
-import { AuthDelegationType } from './delegation'
+import { AuthDelegationType } from '..'
 
 export const getPersonalRepresentativeDelegationType = (right: string) =>
   `${AuthDelegationType.PersonalRepresentative}:${right}`
-
-export const isPersonalRepresentativeDelegationType = (type: string): boolean =>
-  type === AuthDelegationType.PersonalRepresentative ||
-  type.startsWith(`${AuthDelegationType.PersonalRepresentative}:`)

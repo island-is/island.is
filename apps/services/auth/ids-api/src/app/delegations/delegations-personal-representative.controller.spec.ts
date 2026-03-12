@@ -116,7 +116,6 @@ describe('Personal Representative DelegationsController', () => {
         beforeAll(async () => {
           app = await setupWithAuth({
             user,
-            features: [], // usePersonalRepresentativesFromSyslumenn = false
           })
           server = request(app.getHttpServer())
 
