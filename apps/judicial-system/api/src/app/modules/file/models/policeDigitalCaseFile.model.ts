@@ -1,7 +1,7 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class CasePoliceDigitalCaseFile {
+export class PoliceDigitalCaseFile {
   @Field(() => ID)
   readonly id!: string
 
@@ -25,4 +25,7 @@ export class CasePoliceDigitalCaseFile {
 
   @Field(() => Int, { nullable: true })
   readonly orderWithinChapter?: number
+
+  @Field(() => Boolean)
+  readonly isDeletable!: boolean
 }

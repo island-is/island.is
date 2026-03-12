@@ -15,9 +15,10 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
-import { CasePoliceDigitalCaseFilesQueryInput } from './dto/casePoliceDigitalCaseFiles.input'
-import { CreatePoliceDigitalCaseFileInput } from './dto/createPoliceDigitalCaseFile.input'
-import { CasePoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
+import { DeletePoliceDigitalCaseFileInput } from './dto/deletePoliceDigitalCaseFile.input'
+import { PoliceDigitalCaseFilesQueryInput } from './dto/policeDigitalCaseFiles.input'
+import { DeleteFileResponse } from './models/deleteFile.response'
+import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
@@ -28,48 +29,45 @@ export class PoliceDigitalCaseFileResolver {
     private readonly logger: Logger,
   ) {}
 
-  @Mutation(() => CasePoliceDigitalCaseFile)
-  createPoliceDigitalCaseFile(
-    @Args('input', { type: () => CreatePoliceDigitalCaseFileInput })
-    input: CreatePoliceDigitalCaseFileInput,
+  @Query(() => [PoliceDigitalCaseFile], { nullable: true })
+  policeDigitalCaseFiles(
+    @Args('input', { type: () => PoliceDigitalCaseFilesQueryInput })
+    input: PoliceDigitalCaseFilesQueryInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
-  ): Promise<CasePoliceDigitalCaseFile> {
-    const { caseId, ...dto } = input
-
+  ): Promise<PoliceDigitalCaseFile[]> {
     this.logger.debug(
-      `Creating police digital case file for case ${caseId}`,
-    )
-
-    return this.auditTrailService.audit(
-      user.id,
-      AuditedAction.CREATE_POLICE_DIGITAL_CASE_FILE,
-      backendService.createPoliceDigitalCaseFile(caseId, dto),
-      (file) => file.id,
-    )
-  }
-
-  @Query(() => [CasePoliceDigitalCaseFile], { nullable: true })
-  casePoliceDigitalCaseFiles(
-    @Args('input', { type: () => CasePoliceDigitalCaseFilesQueryInput })
-    input: CasePoliceDigitalCaseFilesQueryInput,
-    @CurrentGraphQlUser() user: User,
-    @Context('dataSources')
-    { backendService }: { backendService: BackendService },
-  ): Promise<CasePoliceDigitalCaseFile[]> {
-    this.logger.debug(
-      `Getting police digital case files for case ${input.caseId}`,
+      `Syncing and getting police digital case files for case ${input.caseId}`,
     )
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASE_POLICE_DIGITAL_CASE_FILES,
-      backendService.getCasePoliceDigitalCaseFiles(
-        input.caseId,
-        input.policeCaseNumber,
-      ),
+      backendService.getPoliceDigitalCaseFiles(input.caseId),
       input.caseId,
+    )
+  }
+
+  @Mutation(() => DeleteFileResponse)
+  deletePoliceDigitalCaseFile(
+    @Args('input', { type: () => DeletePoliceDigitalCaseFileInput })
+    input: DeletePoliceDigitalCaseFileInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<DeleteFileResponse> {
+    const { caseId, fileId } = input
+
+    this.logger.debug(
+      `Deleting police digital case file ${fileId} for case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.DELETE_POLICE_DIGITAL_CASE_FILE,
+      backendService.deletePoliceDigitalCaseFile(caseId, fileId),
+      fileId,
     )
   }
 }

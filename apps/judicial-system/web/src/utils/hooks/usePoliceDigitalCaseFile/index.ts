@@ -1,51 +1,56 @@
 import { useCallback } from 'react'
 
 import { toast } from '@island.is/island-ui/core'
-import { CreatePoliceDigitalCaseFileInput } from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system/types'
 
-import { useCasePoliceDigitalCaseFilesQuery } from './casePoliceDigitalCaseFiles.generated'
-import { useCreatePoliceDigitalCaseFileMutation } from './createPoliceDigitalCaseFile.generated'
+import { useDeletePoliceDigitalCaseFileMutation } from './deletePoliceDigitalCaseFile.generated'
+import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
 
 const usePoliceDigitalCaseFile = (
   caseId: string,
-  policeCaseNumber?: string,
+  caseOrigin: CaseOrigin | null | undefined,
 ) => {
-  const { data, loading: isLoading, error } = useCasePoliceDigitalCaseFilesQuery(
-    {
-      variables: { input: { caseId, policeCaseNumber } },
-      skip: !caseId,
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-  )
+  const {
+    data,
+    loading: digitalCaseFilesLoading,
+    error: digitalCaseFilesError,
+    refetch,
+  } = usePoliceDigitalCaseFilesQuery({
+    variables: { input: { caseId } },
+    skip: caseOrigin !== CaseOrigin.LOKE,
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
-  const [createMutation, { loading: isCreating }] =
-    useCreatePoliceDigitalCaseFileMutation()
+  const [deleteMutation, { loading: isDeleting }] =
+    useDeletePoliceDigitalCaseFileMutation()
 
-  const createPoliceDigitalCaseFile = useCallback(
-    async (
-      input: Omit<CreatePoliceDigitalCaseFileInput, 'caseId'>,
-    ) => {
+  const deletePoliceDigitalCaseFile = useCallback(
+    async (fileId: string) => {
       try {
-        const { data } = await createMutation({
-          variables: { input: { caseId, ...input } },
+        const { data } = await deleteMutation({
+          variables: { input: { caseId, fileId } },
         })
 
-        return data?.createPoliceDigitalCaseFile ?? null
+        if (data?.deletePoliceDigitalCaseFile) {
+          await refetch()
+        }
+
+        return Boolean(data?.deletePoliceDigitalCaseFile)
       } catch (error) {
-        toast.error('Upp kom villa við að vista hljóð- og myndupptöku')
-        return null
+        toast.error('Upp kom villa við að eyða hljóð- og myndupptöku')
+        return false
       }
     },
-    [caseId, createMutation],
+    [caseId, deleteMutation, refetch],
   )
 
   return {
-    casePoliceDigitalCaseFiles: data?.casePoliceDigitalCaseFiles ?? [],
-    isLoading,
-    isCreating,
-    hasError: Boolean(error),
-    createPoliceDigitalCaseFile,
+    digitalCaseFiles: data?.policeDigitalCaseFiles,
+    digitalCaseFilesLoading,
+    digitalCaseFilesError,
+    isDeleting,
+    deletePoliceDigitalCaseFile,
   }
 }
 

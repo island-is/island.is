@@ -38,8 +38,8 @@ import {
 } from '../defendant'
 import {
   CaseFile,
-  CasePoliceDigitalCaseFile,
   DeleteFileResponse,
+  PoliceDigitalCaseFile,
   PresignedPost,
   SignedUrl,
   UpdateFilesResponse,
@@ -51,7 +51,6 @@ import { Institution } from '../institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
-  PoliceDigitalCaseFile,
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { CaseStatistics } from '../statistics'
@@ -484,25 +483,14 @@ export class BackendService extends DataSource<{ req: Request }> {
   }
 
   getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceDigitalCaseFile[]> {
-    return this.get(`case/${caseId}/policeDigitalFiles`)
+    return this.get(`case/${caseId}/policeDigitalCaseFiles`)
   }
 
-  createPoliceDigitalCaseFile(
+  deletePoliceDigitalCaseFile(
     caseId: string,
-    dto: unknown,
-  ): Promise<CasePoliceDigitalCaseFile> {
-    return this.post(`case/${caseId}/policeDigitalCaseFile`, dto)
-  }
-
-  getCasePoliceDigitalCaseFiles(
-    caseId: string,
-    policeCaseNumber?: string,
-  ): Promise<CasePoliceDigitalCaseFile[]> {
-    const query = policeCaseNumber
-      ? `?policeCaseNumber=${encodeURIComponent(policeCaseNumber)}`
-      : ''
-
-    return this.get(`case/${caseId}/policeDigitalCaseFiles${query}`)
+    fileId: string,
+  ): Promise<DeleteFileResponse> {
+    return this.delete(`case/${caseId}/policeDigitalCaseFile/${fileId}`)
   }
 
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {

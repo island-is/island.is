@@ -17,6 +17,10 @@ interface CreateOptions {
   transaction: Transaction
 }
 
+interface DeleteOptions {
+  transaction?: Transaction
+}
+
 @Injectable()
 export class PoliceDigitalCaseFileRepositoryService {
   constructor(
@@ -69,6 +73,33 @@ export class PoliceDigitalCaseFileRepositoryService {
       return results
     } catch (error) {
       this.logger.error('Error finding police digital case files', { error })
+
+      throw error
+    }
+  }
+
+  async delete(
+    caseId: string,
+    id: string,
+    options?: DeleteOptions,
+  ): Promise<boolean> {
+    try {
+      this.logger.debug(
+        `Deleting police digital case file ${id} from case ${caseId}`,
+      )
+
+      const results = await this.model.destroy({
+        where: { caseId, id },
+        ...options,
+      })
+
+      this.logger.debug(
+        `Deleted police digital case file ${id} from case ${caseId}`,
+      )
+
+      return results > 0
+    } catch (error) {
+      this.logger.error('Error deleting police digital case file', { error })
 
       throw error
     }

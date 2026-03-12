@@ -1,51 +1,106 @@
-import { Transaction } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  PoliceDigitalCaseFile,
-  PoliceDigitalCaseFileRepositoryService,
-} from '../repository'
-import { CreatePoliceDigitalCaseFileDto } from './dto/createPoliceDigitalCaseFile.dto'
+import type { User } from '@island.is/judicial-system/types'
+
+import { PoliceService } from '../police/police.service'
+import { PoliceDigitalCaseFileRepositoryService } from '../repository'
+import { PoliceDigitalCaseFileSyncResult } from './models/policeDigitalCaseFileSyncResult.model'
 
 @Injectable()
 export class PoliceDigitalCaseFileService {
   constructor(
     private readonly policeDigitalCaseFileRepositoryService: PoliceDigitalCaseFileRepositoryService,
+    private readonly policeService: PoliceService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async createPoliceDigitalCaseFile(
+  async syncAndGetPoliceDigitalCaseFiles(
     caseId: string,
-    dto: CreatePoliceDigitalCaseFileDto,
-    transaction: Transaction,
-  ): Promise<PoliceDigitalCaseFile> {
-    this.logger.debug(
-      `Creating police digital case file for case ${caseId}`,
+    policeCaseNumbers: string[],
+    user: User,
+  ): Promise<PoliceDigitalCaseFileSyncResult[]> {
+    this.logger.debug(`Syncing police digital case files for case ${caseId}`)
+
+    const [policeSystemDigitalCaseFiles, currentPoliceDigitalCaseFiles] =
+      await Promise.all([
+        this.policeService.getAllPoliceDigitalCaseFiles(caseId, user),
+        this.policeDigitalCaseFileRepositoryService.findAll({
+          where: { caseId },
+        }),
+      ])
+
+    // Only consider files from the police system whose policeCaseNumber is among the stored ones on the case
+    const relevantDigitalCaseFiles = policeSystemDigitalCaseFiles.filter((f) =>
+      policeCaseNumbers.includes(f.policeCaseNumber),
     )
 
-    return this.policeDigitalCaseFileRepositoryService.create(
-      { caseId, ...dto },
-      { transaction },
+    const policeDigitalCaseFilesPoliceFileIds = new Set(
+      currentPoliceDigitalCaseFiles.map((f) => f.policeDigitalFileId),
     )
-  }
-
-  async getPoliceDigitalCaseFiles(
-    caseId: string,
-    policeCaseNumber?: string,
-  ): Promise<PoliceDigitalCaseFile[]> {
-    this.logger.debug(
-      `Getting police digital case files for case ${caseId}`,
+    const policeSystemDigitalCaseFileIds = new Set(
+      relevantDigitalCaseFiles.map((f) => f.id),
     )
 
-    const where: Record<string, string> = { caseId }
+    // Auto-create DB entries for relevant police digital case files not yet stored from the police system
+    const filesToCreate = relevantDigitalCaseFiles.filter(
+      (f) => !policeDigitalCaseFilesPoliceFileIds.has(f.id),
+    )
 
-    if (policeCaseNumber) {
-      where['policeCaseNumber'] = policeCaseNumber
+    if (filesToCreate.length > 0) {
+      await this.sequelize.transaction(async (transaction) => {
+        await Promise.all(
+          filesToCreate.map((f) =>
+            this.policeDigitalCaseFileRepositoryService.create(
+              {
+                caseId,
+                policeCaseNumber: f.policeCaseNumber,
+                policeDigitalFileId: f.id,
+                policeExternalVendorId: f.policeExternalVendorId,
+                name: f.name,
+                displayDate: f.displayDate,
+              },
+              { transaction },
+            ),
+          ),
+        )
+      })
     }
 
-    return this.policeDigitalCaseFileRepositoryService.findAll({ where })
+    // Re-fetch only if we inserted new records
+    const currentDigitalCaseFiles =
+      filesToCreate.length > 0
+        ? await this.policeDigitalCaseFileRepositoryService.findAll({
+            where: { caseId },
+          })
+        : currentPoliceDigitalCaseFiles
+
+    return currentDigitalCaseFiles
+      .filter((f) => policeCaseNumbers.includes(f.policeCaseNumber)) // sanity step, if police case number is removed, we should clean up relevant digital case files
+      .map((f) => ({
+        id: f.id,
+        caseId: f.caseId,
+        policeCaseNumber: f.policeCaseNumber,
+        policeDigitalFileId: f.policeDigitalFileId,
+        policeExternalVendorId: f.policeExternalVendorId,
+        name: f.name,
+        displayDate: f.displayDate,
+        orderWithinChapter: f.orderWithinChapter,
+        isDeletable: !policeSystemDigitalCaseFileIds.has(f.policeDigitalFileId),
+      }))
+  }
+
+  async deletePoliceDigitalCaseFile(
+    caseId: string,
+    id: string,
+  ): Promise<boolean> {
+    this.logger.debug(`Deleting police digital case file ${id}`)
+
+    return this.policeDigitalCaseFileRepositoryService.delete(caseId, id)
   }
 }

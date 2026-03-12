@@ -11,7 +11,6 @@ import {
   Param,
   Patch,
   Post,
-  Query,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -64,9 +63,8 @@ import {
   CurrentDefendant,
   DefendantExistsGuard,
 } from '../defendant'
-import { Case, CaseFile, Defendant, PoliceDigitalCaseFile } from '../repository'
+import { Case, CaseFile, Defendant } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
-import { CreatePoliceDigitalCaseFileDto } from './dto/createPoliceDigitalCaseFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
@@ -76,6 +74,7 @@ import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.g
 import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
+import { PoliceDigitalCaseFileSyncResult } from './models/policeDigitalCaseFileSyncResult.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
@@ -431,49 +430,49 @@ export class FileController {
     })
   }
 
-  @UseGuards(CaseWriteGuard)
-  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
-  @Post('policeDigitalCaseFile')
-  @ApiCreatedResponse({
-    type: PoliceDigitalCaseFile,
-    description: 'Creates a new police digital case file entry',
-  })
-  createPoliceDigitalCaseFile(
-    @Param('caseId') caseId: string,
-    @Body() dto: CreatePoliceDigitalCaseFileDto,
-  ): Promise<PoliceDigitalCaseFile> {
-    this.logger.debug(
-      `Creating police digital case file for case ${caseId}`,
-    )
-
-    return this.sequelize.transaction((transaction) =>
-      this.policeDigitalCaseFileService.createPoliceDigitalCaseFile(
-        caseId,
-        dto,
-        transaction,
-      ),
-    )
-  }
-
   @UseGuards(CaseReadGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Get('policeDigitalCaseFiles')
   @ApiOkResponse({
-    type: PoliceDigitalCaseFile,
+    type: PoliceDigitalCaseFileSyncResult,
     isArray: true,
-    description: 'Gets all police digital case file entries for a case',
+    description:
+      'Syncs with police digital file system source and returns all police digital case files for a case',
   })
   getPoliceDigitalCaseFiles(
     @Param('caseId') caseId: string,
-    @Query('policeCaseNumber') policeCaseNumber?: string,
-  ): Promise<PoliceDigitalCaseFile[]> {
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<PoliceDigitalCaseFileSyncResult[]> {
     this.logger.debug(
-      `Getting police digital case files for case ${caseId}`,
+      `Syncing and getting police digital case files for case ${caseId}`,
     )
 
-    return this.policeDigitalCaseFileService.getPoliceDigitalCaseFiles(
+    return this.policeDigitalCaseFileService.syncAndGetPoliceDigitalCaseFiles(
       caseId,
-      policeCaseNumber,
+      theCase.policeCaseNumbers,
+      user,
     )
+  }
+
+  @UseGuards(CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Delete('policeDigitalCaseFile/:fileId')
+  @ApiOkResponse({
+    type: DeleteFileResponse,
+    description: 'Deletes a police digital case file entry',
+  })
+  async deletePoliceDigitalCaseFile(
+    @Param('fileId') fileId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeleteFileResponse> {
+    this.logger.debug(`Deleting police digital case file ${fileId}`)
+
+    const success =
+      await this.policeDigitalCaseFileService.deletePoliceDigitalCaseFile(
+        theCase.id,
+        fileId,
+      )
+    return { success }
   }
 }

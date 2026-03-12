@@ -1,5 +1,5 @@
-mutation CreatePoliceDigitalCaseFile($input: CreatePoliceDigitalCaseFileInput!) {
-  createPoliceDigitalCaseFile(input: $input) {
+query PoliceDigitalCaseFiles($input: PoliceDigitalCaseFilesQueryInput!) {
+  policeDigitalCaseFiles(input: $input) {
     id
     caseId
     policeCaseNumber
@@ -8,5 +8,6 @@ mutation CreatePoliceDigitalCaseFile($input: CreatePoliceDigitalCaseFileInput!) 
     name
     displayDate
     orderWithinChapter
+    isDeletable
   }
 }

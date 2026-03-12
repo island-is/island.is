@@ -9,6 +9,7 @@ import {
   CaseModule,
   CourtModule,
   CriminalRecordModule,
+  PoliceModule,
   RepositoryModule,
   UserModule,
 } from '..'
@@ -22,6 +23,7 @@ import { PoliceDigitalCaseFileService } from './policeDigitalCaseFile.service'
   imports: [
     CmsTranslationsModule,
     forwardRef(() => CriminalRecordModule),
+    forwardRef(() => PoliceModule),
     forwardRef(() => RepositoryModule),
     forwardRef(() => UserModule),
     forwardRef(() => CaseModule),

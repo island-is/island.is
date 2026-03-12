@@ -1,8 +1,0 @@
-query PoliceDigitalCaseFiles($input: PoliceDigitalCaseFilesQueryInput!) {
-  policeDigitalCaseFiles(input: $input) {
-    id
-    name
-    policeCaseNumber
-    displayDate
-  }
-}
