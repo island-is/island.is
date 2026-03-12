@@ -558,8 +558,14 @@ export class CardPaymentService {
     if (errorParsed.success) {
       const { responseCode, responseDescription } = errorParsed.data
 
-      await onErrorBeforeThrow?.(errorParsed.data)
-
+      try {
+        await onErrorBeforeThrow?.(errorParsed.data)
+      } catch (cleanupError) {
+        this.logger.error(
+          `${logPrefix}Failed to run payment gateway error cleanup`,
+          cleanupError,
+        )
+      }
       this.logger.error(`${logPrefix}Payment gateway error: ${errorMessage}`, {
         responseCode,
         responseDescription,
