@@ -3,12 +3,11 @@ import {
   buildSection,
   buildMultiField,
   buildDescriptionField,
-  buildStaticTableField,
+  buildCustomField,
   buildDividerField,
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
-import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { EstateExternalData } from '../../types'
 
@@ -28,28 +27,10 @@ export const signingForm: Form = buildForm({
           title: m.signingTitle,
           description: m.signingDescription,
           children: [
-            buildStaticTableField({
+            buildCustomField({
+              id: 'signatoryStatusField',
               title: m.signingTableTitle,
-              marginTop: 3,
-              header: [
-                m.inReviewNameLabel,
-                m.inReviewNationalIdLabel,
-                m.signingStatusLabel,
-              ],
-              rows: (application) => {
-                const externalData =
-                  application.externalData as EstateExternalData
-                const signatories =
-                  externalData?.getSignatories?.data?.signatories || []
-
-                return signatories.map((signatory) => [
-                  signatory.name || '',
-                  formatNationalId(signatory.nationalId || ''),
-                  signatory.signed
-                    ? m.signingStatusSigned.defaultMessage
-                    : m.signingStatusPending.defaultMessage,
-                ])
-              },
+              component: 'SignatoryStatus',
             }),
             buildDividerField({}),
             buildDescriptionField({
