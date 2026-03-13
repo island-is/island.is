@@ -42,12 +42,12 @@ export const assigneeInReviewForm: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.REJECT,
-                  name: m.assigneeReviewReject.defaultMessage,
+                  name: m.assigneeReviewReject,
                   type: 'reject',
                 },
                 {
                   event: DefaultEvents.APPROVE,
-                  name: m.assigneeReviewApprove.defaultMessage,
+                  name: m.assigneeReviewApprove,
                   type: 'primary',
                 },
               ],

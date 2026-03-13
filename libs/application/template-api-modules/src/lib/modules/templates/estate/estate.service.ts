@@ -64,7 +64,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
       rawValue,
       rawValueType: typeof rawValue,
       reviewEnabled,
-      nationalId: auth.nationalId,
     })
     return { reviewEnabled }
   }
@@ -386,7 +385,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     try {
       this.logger.info(
         '[estate]: Calling getSignatories API',
-        { deceasedNationalId, estateType },
+        { estateType },
       )
       const signatories =
         await this.syslumennService.getInheritanceReportSignatories(

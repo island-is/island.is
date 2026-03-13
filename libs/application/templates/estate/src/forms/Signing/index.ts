@@ -12,7 +12,7 @@ import { m } from '../../lib/messages'
 
 export const signingForm: Form = buildForm({
   id: 'signingForm',
-  title: m.signingTitle,
+  title: '',
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

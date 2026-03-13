@@ -67,7 +67,7 @@ export const assigneeInReviewForm: Form = buildForm({
               space: 6,
               marginTop: 7,
               condition: (formValue, externalData, user) => {
-                if (!user?.profile?.nationalId) return true
+                if (!user?.profile?.nationalId) return false
                 const actorNationalId = user.profile.nationalId
                 const estateMembers = getValueViaPath<EstateMember[]>(
                   formValue,
@@ -77,7 +77,8 @@ export const assigneeInReviewForm: Form = buildForm({
                 const currentMember = estateMembers?.find((member) =>
                   nationalIdsMatch(member.nationalId, actorNationalId),
                 )
-                return currentMember?.approved !== true
+                if (!currentMember) return false
+                return currentMember.approved !== true
               },
             }),
             buildSubmitField({
@@ -87,17 +88,17 @@ export const assigneeInReviewForm: Form = buildForm({
               actions: [
                 {
                   event: DefaultEvents.REJECT,
-                  name: m.assigneeReviewReject.defaultMessage,
+                  name: m.assigneeReviewReject,
                   type: 'reject',
                 },
                 {
                   event: DefaultEvents.APPROVE,
-                  name: m.assigneeReviewApprove.defaultMessage,
+                  name: m.assigneeReviewApprove,
                   type: 'primary',
                 },
               ],
               condition: (formValue, externalData, user) => {
-                if (!user?.profile?.nationalId) return true
+                if (!user?.profile?.nationalId) return false
                 const actorNationalId = user.profile.nationalId
                 const estateMembers = getValueViaPath<EstateMember[]>(
                   formValue,
@@ -107,7 +108,8 @@ export const assigneeInReviewForm: Form = buildForm({
                 const currentMember = estateMembers?.find((member) =>
                   nationalIdsMatch(member.nationalId, actorNationalId),
                 )
-                return currentMember?.approved !== true
+                if (!currentMember) return false
+                return currentMember.approved !== true
               },
             }),
           ],

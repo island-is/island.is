@@ -50,6 +50,18 @@ const isReviewEnabled = (context: ApplicationContext) => {
   return externalData?.checkReviewFlag?.data?.reviewEnabled === true
 }
 
+const areAllPartiesApproved = (context: ApplicationContext) => {
+  return allPartiesHaveApproved(context.application.answers)
+}
+
+const haveAllSignatoriesSigned = (context: ApplicationContext) => {
+  const externalData =
+    context.application.externalData as InheritanceReportExternalData
+  const signatories =
+    externalData?.getSignatories?.data?.signatories || []
+  return signatories.length > 0 && signatories.every((s) => s.signed)
+}
+
 const InheritanceReportTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<InheritanceReportEvent>,
@@ -298,6 +310,7 @@ const InheritanceReportTemplate: ApplicationTemplate<
           },
           SUBMIT: {
             target: States.signing,
+            cond: areAllPartiesApproved,
           },
           APPROVE: {
             target: States.inReview,
@@ -359,7 +372,6 @@ const InheritanceReportTemplate: ApplicationTemplate<
                   Promise.resolve(val.signingForm),
                 ),
               actions: [
-                { event: DefaultEvents.EDIT, name: '', type: 'subtle' },
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
@@ -379,7 +391,6 @@ const InheritanceReportTemplate: ApplicationTemplate<
                   Promise.resolve(val.signingForm),
                 ),
               actions: [
-                { event: DefaultEvents.EDIT, name: '', type: 'subtle' },
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
@@ -413,11 +424,9 @@ const InheritanceReportTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          EDIT: {
-            target: States.draft,
-          },
           SUBMIT: {
             target: States.done,
+            cond: haveAllSignatoriesSigned,
           },
         },
       },

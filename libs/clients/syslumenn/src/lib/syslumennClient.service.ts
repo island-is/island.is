@@ -668,7 +668,8 @@ export class SyslumennService {
       if (estateType) queryParams.set('typa', estateType)
       queryParams.set('audkenni', id)
       logger.info('Syslumenn-client: calling getSignatories', {
-        url: `${this.clientConfig.url}/api/v1/AdilarMalsUndirritanir?${queryParams.toString()}`,
+        endpoint: '/api/v1/AdilarMalsUndirritanir',
+        estateType,
       })
 
       const response = await api.adilarMalsUndirritanirGet({
@@ -677,8 +678,8 @@ export class SyslumennService {
         audkenni: id,
       })
 
-      logger.info('Syslumenn-client: getSignatories raw response', {
-        response: JSON.stringify(response),
+      logger.info('Syslumenn-client: getSignatories response received', {
+        signatoryCount: response.length,
       })
 
       // Map the response to InheritanceSignatory format

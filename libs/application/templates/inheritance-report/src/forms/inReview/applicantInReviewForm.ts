@@ -16,7 +16,7 @@ import { getValueViaPath } from '@island.is/application/core'
 
 export const applicantInReviewForm: Form = buildForm({
   id: 'applicantInReviewForm',
-  title: m.inReviewGeneralTitle,
+  title: '',
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,

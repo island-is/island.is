@@ -54,7 +54,6 @@ export class InheritanceReportService extends BaseTemplateApiService {
       rawValue,
       rawValueType: typeof rawValue,
       reviewEnabled,
-      nationalId: auth.nationalId,
     })
     return { reviewEnabled }
   }
@@ -299,7 +298,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
     try {
       this.logger.info(
         '[inheritance-report]: Calling getSignatories API',
-        { deceasedNationalId, estateType },
+        { estateType },
       )
       const signatories =
         await this.syslumennService.getInheritanceReportSignatories(
