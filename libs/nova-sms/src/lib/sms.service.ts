@@ -230,7 +230,7 @@ export class SmsService {
     password: string
   } | null {
     if (payer) {
-      const payerCreds = this.config.payerCredentials[payer]
+      const payerCreds = this.config.payerCredentials?.[payer]
       if (payerCreds?.username && payerCreds?.password) {
         return payerCreds
       }
