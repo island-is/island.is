@@ -3,7 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/assets",
   "projectType": "library",
-  "tags": ["scope:application-system-web"],
+  "tags": ["scope:application-system-web", "lib:application-system"],
   "targets": {
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
