@@ -161,7 +161,7 @@ describe('PoliceController - Get all', () => {
     it('should throw bad gateway exception', () => {
       expect(then.error).toBeInstanceOf(BadGatewayException)
       expect(then.error.message).toBe(
-        `Failed to get police case files for case ${originalAncestorCaseId}`,
+        `Failed to get police case files and case units for case ${originalAncestorCaseId}`,
       )
     })
   })
