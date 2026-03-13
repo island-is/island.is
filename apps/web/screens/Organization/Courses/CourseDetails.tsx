@@ -172,16 +172,24 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
           {course.title}
         </Text>
         <Box>{webRichText(course.description)}</Box>
-        {course.instances.length > 0 && (
-          <Stack space={3}>
-            <Text variant="h2" as="h2">
+        <Stack space={3}>
+          <Text variant="h2" as="h2">
+            {n(
+              'courseInstancesLabel',
+              activeLocale === 'is' ? 'Næstu námskeið' : 'Upcoming courses',
+            )}
+          </Text>
+          {course.instances.length === 0 && (
+            <Text>
               {n(
-                'courseInstancesLabel',
+                'courseInstancesNoUpcomingLabel',
                 activeLocale === 'is'
-                  ? 'Skráning á næstu námskeið'
-                  : 'Registration for upcoming courses',
+                  ? 'Engin námskeið í skráningu eins og er.'
+                  : 'No courses currently available for registration.',
               )}
             </Text>
+          )}
+          {course.instances.length > 0 && (
             <Stack space={3}>
               {instanceCards.map((instance) => (
                 <ActionCategoryCard
@@ -279,8 +287,8 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                 />
               ))}
             </Stack>
-          </Stack>
-        )}
+          )}
+        </Stack>
       </Stack>
     </OrganizationWrapper>
   )

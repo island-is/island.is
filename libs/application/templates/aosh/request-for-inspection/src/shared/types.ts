@@ -1,3 +1,6 @@
+import { z } from 'zod'
+import { contactInformationSchema } from '../lib/dataSchema'
+
 export type Machine = {
   id?: string
   regNumber?: string
@@ -8,3 +11,5 @@ export type Machine = {
   plate?: string
   ownerNumber?: string
 }
+
+export type ContactInAnswers = z.TypeOf<typeof contactInformationSchema>
