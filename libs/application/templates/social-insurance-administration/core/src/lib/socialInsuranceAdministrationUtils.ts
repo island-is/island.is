@@ -90,7 +90,7 @@ export const formatBank = (bankInfo: string) => {
 const normalize = (value?: string) => value?.replace(/\s+/g, '')
 
 // normalize icelandic bank
-const normalizeBank = (bank: string) => bank.replace(/\D/g, ''); 
+const normalizeBank = (bank: string) => bank.replace(/\D/g, '')
 
 // We should only send bank account to TR if applicant is registering
 // new one or changing.
@@ -163,7 +163,10 @@ export const shouldNotUpdateBankAccountV2 = (
   }
 
   // Domestic accounts
-  return !isEmpty(bank) && getBankIsk(bankInfo) === normalizeBank(formatBankAccount(bank))
+  return (
+    !isEmpty(bank) &&
+    getBankIsk(bankInfo) === normalizeBank(formatBankAccount(bank))
+  )
 }
 
 export const getCurrencies = (
