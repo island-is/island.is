@@ -857,7 +857,6 @@ const punishmentType: CaseTableCellGenerator<TagValue> = {
 }
 
 const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
-  attributes: ['isRegisteredInPrisonSystem'],
   includes: {
     defendants: {
       includes: {
@@ -883,7 +882,6 @@ const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
 }
 
 const prisonAdminState: CaseTableCellGenerator<TagValue> = {
-  attributes: ['isRegisteredInPrisonSystem'],
   includes: {
     defendants: {
       includes: {

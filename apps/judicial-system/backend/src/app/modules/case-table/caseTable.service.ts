@@ -1,4 +1,4 @@
-import { Includeable, literal, Op } from 'sequelize'
+import { Includeable, literal, Op, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { Injectable } from '@nestjs/common'
@@ -26,6 +26,7 @@ import {
   isMyCase,
 } from './caseTable.utils'
 import {
+  caseTableDefendantWhereOptions,
   caseTableWhereOptions,
   userAccessWhereOptions,
 } from './caseTable.whereOptions'
@@ -123,18 +124,23 @@ const mergeWhere = (hasNoWhere: boolean, wheres: unknown[]): unknown => {
 const getIncludes = (
   caseTableCellKeys: CaseTableColumnKey[],
   user: TUser,
+  defendantWhereOptions?: WhereOptions,
 ): Includeable[] => {
   const collected = new Map<string, MergedEntry>()
 
   for (const k of caseTableCellKeys) {
     const gen = caseTableCellGenerators[k]
-    if (!gen.includes) continue
+    if (!gen.includes) {
+      continue
+    }
 
     for (const [assocKey, assocVal] of Object.entries(gen.includes) as [
       string,
       CellInclude | undefined,
     ][]) {
-      if (!assocVal) continue
+      if (!assocVal) {
+        continue
+      }
 
       if (!collected.has(assocKey)) {
         collected.set(assocKey, {
@@ -161,7 +167,9 @@ const getIncludes = (
           string,
           { attributes?: string[]; where?: unknown } | undefined,
         ][]) {
-          if (!nestedVal) continue
+          if (!nestedVal) {
+            continue
+          }
 
           if (!entry.nested.has(nestedKey)) {
             entry.nested.set(nestedKey, {
@@ -191,7 +199,13 @@ const getIncludes = (
     if (!schema) continue
 
     const attributes = mergeAttrs(entry.attrSets)
-    const where = mergeWhere(entry.hasNoWhere, entry.wheres)
+    const cellWhere = mergeWhere(entry.hasNoWhere, entry.wheres)
+    const mandatory =
+      assocKey === 'defendants' ? defendantWhereOptions : undefined
+    const where =
+      mandatory && cellWhere
+        ? { [Op.and]: [cellWhere, mandatory] }
+        : mandatory ?? cellWhere
 
     const nestedIncludes: Includeable[] = []
     for (const [nestedKey, nEntry] of entry.nested) {
@@ -204,7 +218,9 @@ const getIncludes = (
             >
           | undefined
       )?.[nestedKey]
-      if (!nestedSchema) continue
+      if (!nestedSchema) {
+        continue
+      }
 
       const nAttributes = mergeAttrs(nEntry.attrSets)
       const nWhere = mergeWhere(nEntry.hasNoWhere, nEntry.wheres)
@@ -248,7 +264,8 @@ export class CaseTableService {
 
     const attributes = getAttributes(caseTableCellKeys, user)
 
-    const include = getIncludes(caseTableCellKeys, user)
+    const defendantWhereOptions = caseTableDefendantWhereOptions[type]
+    const include = getIncludes(caseTableCellKeys, user, defendantWhereOptions)
 
     const cases = await this.caseRepositoryService.findAll({
       attributes,

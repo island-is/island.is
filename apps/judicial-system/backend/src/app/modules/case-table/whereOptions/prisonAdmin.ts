@@ -1,15 +1,13 @@
 import { fn, Op } from 'sequelize'
 
+import { IndictmentCaseReviewDecision } from '@island.is/judicial-system/types'
+
 import {
   prisonAdminIndictmentsAccessWhereOptions,
   prisonAdminRequestCasesAccessWhereOptions,
 } from './access'
-import {
-  buildHasDefendantSentToPrisonAdminNotRegisteredCondition,
-  buildHasDefendantSentToPrisonAdminRegisteredCondition,
-} from './conditions'
 
-// Prison admin restriction cases
+// Prison admin request cases
 
 export const prisonAdminRequestCasesActiveWhereOptions = () => ({
   [Op.and]: [
@@ -27,16 +25,22 @@ export const prisonAdminRequestCasesDoneWhereOptions = () => ({
 
 // Prison admin indictments
 
-export const prisonAdminIndictmentsSentToPrisonAdminWhereOptions = () => ({
-  [Op.and]: [
-    prisonAdminIndictmentsAccessWhereOptions,
-    buildHasDefendantSentToPrisonAdminNotRegisteredCondition(),
-  ],
-})
+export const prisonAdminIndictmentsSentToPrisonAdminWhereOptions = () =>
+  prisonAdminIndictmentsAccessWhereOptions
 
-export const prisonAdminIndictmentsRegisteredRulingWhereOptions = () => ({
-  [Op.and]: [
-    prisonAdminIndictmentsAccessWhereOptions,
-    buildHasDefendantSentToPrisonAdminRegisteredCondition(),
-  ],
-})
+export const prisonAdminIndictmentsRegisteredRulingWhereOptions = () =>
+  prisonAdminIndictmentsAccessWhereOptions
+
+// Prison admin indictments defendant-level filters
+
+export const prisonAdminIndictmentsSentToPrisonAdminDefendantWhereOptions = {
+  isSentToPrisonAdmin: true,
+  indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
+  isRegisteredInPrisonSystem: { [Op.not]: true },
+}
+
+export const prisonAdminIndictmentsRegisteredRulingDefendantWhereOptions = {
+  isSentToPrisonAdmin: true,
+  indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
+  isRegisteredInPrisonSystem: true,
+}

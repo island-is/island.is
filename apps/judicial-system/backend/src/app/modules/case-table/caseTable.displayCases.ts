@@ -7,11 +7,6 @@ import {
 
 import { Case, Defendant } from '../repository'
 
-const isSentToPrisonAdmin = (d: Defendant) => Boolean(d.isSentToPrisonAdmin)
-
-const isRegisteredInPrisonSystem = (d: Defendant, c: Case): boolean =>
-  Boolean(d.isRegisteredInPrisonSystem ?? c.isRegisteredInPrisonSystem)
-
 const isAcquittedByPublicProsecutionOffice = (d: Defendant) =>
   // Only the latest verdict is relevant
   Boolean(d.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
@@ -40,21 +35,8 @@ const expandCaseWithDefendants = (
 
 const genericDisplayCases = (cs: Case[]) => cs.map((c) => c.toJSON())
 
-const prisonAdminNotRegisteredDefendantsDisplayCases = (cs: Case[]) =>
-  cs.flatMap((c) =>
-    expandCaseWithDefendants(
-      c,
-      (d) => isSentToPrisonAdmin(d) && !isRegisteredInPrisonSystem(d, c),
-    ),
-  )
-
-const prisonAdminRegisteredDefendantsDisplayCases = (cs: Case[]) =>
-  cs.flatMap((c) =>
-    expandCaseWithDefendants(
-      c,
-      (d) => isSentToPrisonAdmin(d) && isRegisteredInPrisonSystem(d, c),
-    ),
-  )
+const expandDefendantDisplayCases = (cs: Case[]) =>
+  cs.flatMap((c) => expandCaseWithDefendants(c, () => true))
 
 const publicProsecutionOfficeAcquittedDefendantDisplayCases = (cs: Case[]) =>
   cs.flatMap((c) =>
@@ -98,9 +80,9 @@ export const caseTableDisplayCases: Record<
   [CaseTableType.PRISON_ADMIN_REQUEST_CASES_ACTIVE]: genericDisplayCases,
   [CaseTableType.PRISON_ADMIN_REQUEST_CASES_DONE]: genericDisplayCases,
   [CaseTableType.PRISON_ADMIN_INDICTMENTS_SENT_TO_PRISON_ADMIN]:
-    prisonAdminNotRegisteredDefendantsDisplayCases,
+    expandDefendantDisplayCases,
   [CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING]:
-    prisonAdminRegisteredDefendantsDisplayCases,
+    expandDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW]:
     publicProsecutionOfficeNewOrInReviewDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_IN_REVIEW]:

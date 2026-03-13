@@ -40,7 +40,9 @@ import {
   districtCourtRequestCasesInProgressWhereOptions,
 } from './whereOptions/districtCourt'
 import {
+  prisonAdminIndictmentsRegisteredRulingDefendantWhereOptions,
   prisonAdminIndictmentsRegisteredRulingWhereOptions,
+  prisonAdminIndictmentsSentToPrisonAdminDefendantWhereOptions,
   prisonAdminIndictmentsSentToPrisonAdminWhereOptions,
   prisonAdminRequestCasesActiveWhereOptions,
   prisonAdminRequestCasesDoneWhereOptions,
@@ -182,4 +184,13 @@ export const caseTableWhereOptions: Record<
   [CaseTableType.STATISTICS]: () => {
     throw new NotImplementedException('Case table type not implemented')
   },
+}
+
+export const caseTableDefendantWhereOptions: Partial<
+  Record<CaseTableType, WhereOptions>
+> = {
+  [CaseTableType.PRISON_ADMIN_INDICTMENTS_SENT_TO_PRISON_ADMIN]:
+    prisonAdminIndictmentsSentToPrisonAdminDefendantWhereOptions,
+  [CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING]:
+    prisonAdminIndictmentsRegisteredRulingDefendantWhereOptions,
 }

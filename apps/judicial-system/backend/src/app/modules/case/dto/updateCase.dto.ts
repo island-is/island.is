@@ -544,12 +544,7 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly isCompletedWithoutRuling?: boolean
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly isRegisteredInPrisonSystem?: boolean
-
+  //restart
   @IsOptional()
   @IsString()
   @ApiPropertyOptional({ type: String })
