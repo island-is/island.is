@@ -407,7 +407,6 @@ export class PoliceService {
         return response
       }
 
-
       return undefined
       // TODO - fix when RLS has adjusted this endpoint to return an empty array for a case that exists but has no files
       // const reason = await res.text()
