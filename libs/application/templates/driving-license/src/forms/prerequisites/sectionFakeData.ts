@@ -4,11 +4,9 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
-  getValueViaPath,
   NO,
   YES,
 } from '@island.is/application/core'
-import { DrivingLicenseFakeData } from '../../lib/constants'
 import { allowFakeCondition } from '../../lib/utils'
 
 export const sectionFakeData = buildSubSection({
@@ -59,7 +57,7 @@ export const sectionFakeData = buildSubSection({
           condition: allowFakeCondition(YES),
           options: [
             {
-              value: 'student',
+              value: 'none',
               label: 'Engin',
             },
             {
@@ -96,16 +94,7 @@ export const sectionFakeData = buildSubSection({
           id: 'fakeData.remarks',
           title: 'Heilbrigðis tákntala',
           width: 'half',
-          condition: (answers) => {
-            const fakeData = getValueViaPath<DrivingLicenseFakeData>(
-              answers,
-              'fakeData',
-            )
-            return (
-              fakeData?.currentLicense === 'temp' &&
-              fakeData.useFakeData === YES
-            )
-          },
+          condition: allowFakeCondition(YES),
           options: [
             {
               value: NO,
@@ -114,6 +103,40 @@ export const sectionFakeData = buildSubSection({
             {
               value: YES,
               label: 'Tákntala',
+            },
+          ],
+        }),
+        buildRadioField({
+          id: 'fakeData.glassesCheck',
+          title: 'Gleraugnacheck (glassesCheck)',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          defaultValue: NO,
+          options: [
+            {
+              value: NO,
+              label: 'Nei',
+            },
+            {
+              value: YES,
+              label: 'Já',
+            },
+          ],
+        }),
+        buildRadioField({
+          id: 'fakeData.hasExtendedLicense',
+          title: 'Framlengd réttindi (C/D flokkar)',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          defaultValue: NO,
+          options: [
+            {
+              value: NO,
+              label: 'Nei',
+            },
+            {
+              value: YES,
+              label: 'Já',
             },
           ],
         }),

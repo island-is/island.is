@@ -25,10 +25,18 @@ export const allowFakeCondition =
 export const needsHealthCertificateCondition =
   (result = YES) =>
   (answers: FormValue, externalData: ExternalData) => {
+    const usingFakeData =
+      getValueViaPath(answers, 'fakeData.useFakeData') === YES
+    const fakeGlassesCheck =
+      getValueViaPath(answers, 'fakeData.glassesCheck') === YES
+    const glassesCheckResult = usingFakeData
+      ? fakeGlassesCheck
+      : externalData.glassesCheck?.data === true
+
     return (
       Object.values(answers?.healthDeclaration || {}).includes(result) ||
       answers?.hasHealthRemarks === result ||
-      externalData.glassesCheck?.data === true
+      glassesCheckResult
     )
   }
 
@@ -47,8 +55,7 @@ export const isApplicationForCondition =
   }
 
 export const hasNoDrivingLicenseInOtherCountry = (answers: FormValue) =>
-  getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') ===
-    NO || true
+  getValueViaPath(answers, 'otherCountry.drivingLicenseInOtherCountry') !== YES
 
 export const chooseDistrictCommissionerDescription = ({
   answers,

@@ -516,16 +516,18 @@ export class DrivingLicenseApi {
     input: v5.PostRenewal65AndOver
     auth: string
   }) {
-    return await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post({
+    const postRenewal65AndOver = {
+      ...params.input,
+      renewalDate: new Date(),
+      userId: v5.DRIVING_LICENSE_API_USER_ID,
+    }
+    const result = await this.v5.apiDrivinglicenseV5ApplicationsRenewal65Post({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
       jwttoken: params.auth,
-      postRenewal65AndOver: {
-        ...params.input,
-        renewalDate: new Date(),
-        userId: v5.DRIVING_LICENSE_API_USER_ID,
-      },
+      postRenewal65AndOver,
     })
+    return result
   }
 
   async postApplyForBELicense(params: {
@@ -535,6 +537,9 @@ export class DrivingLicenseApi {
     instructorSSN: string
     phoneNumber: string
     email: string
+    contentList?: v5.RLSApplicationContentModel[] | null
+    photoBiometricsId?: string | null
+    signatureBiometricsId?: string | null
   }): Promise<boolean> {
     const response = await this.applicationV5.apiApplicationsV5ApplyforBePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -546,6 +551,9 @@ export class DrivingLicenseApi {
         instructorSSN: params.instructorSSN,
         primaryPhoneNumber: params.phoneNumber,
         studentEmail: params.email,
+        contentList: params.contentList,
+        photoBiometricsId: params.photoBiometricsId,
+        signatureBiometricsId: params.signatureBiometricsId,
       },
     })
 

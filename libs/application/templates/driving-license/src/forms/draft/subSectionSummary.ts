@@ -29,6 +29,22 @@ import {
 } from '../../lib/utils'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { Pickup } from '../../lib/types'
+import { ExternalData, FormValue } from '@island.is/application/types'
+
+const hasUploadedHealthCertificate = (answers: FormValue) => {
+  const files = getValueViaPath<Array<{ key: string; name: string }>>(
+    answers,
+    'healthCertificate',
+  )
+  return !!files?.length
+}
+
+const needsHealthCertSection = (
+  answers: FormValue,
+  externalData: ExternalData,
+) =>
+  needsHealthCertificateCondition(YES)(answers, externalData) ||
+  answers.applicationFor === B_FULL_RENEWAL_65
 
 export const subSectionSummary = buildSubSection({
   id: 'overview',
@@ -123,14 +139,16 @@ export const subSectionSummary = buildSubSection({
           },
         }),
         buildDividerField({
-          condition: needsHealthCertificateCondition(YES),
+          condition: needsHealthCertSection,
         }),
         buildDescriptionField({
           id: 'bringalong',
           title: m.overviewBringAlongTitle,
           titleVariant: 'h4',
           description: '',
-          condition: needsHealthCertificateCondition(YES),
+          condition: (answers, externalData) =>
+            needsHealthCertSection(answers, externalData) &&
+            !hasUploadedHealthCertificate(answers),
         }),
         buildCheckboxField({
           id: 'certificate',
@@ -143,7 +161,22 @@ export const subSectionSummary = buildSubSection({
               label: m.overviewBringCertificateData,
             },
           ],
-          condition: needsHealthCertificateCondition(YES),
+          condition: (answers, externalData) =>
+            needsHealthCertSection(answers, externalData) &&
+            !hasUploadedHealthCertificate(answers),
+        }),
+        buildKeyValueField({
+          label: m.overviewHealthCertificateUploaded,
+          condition: (answers, externalData) =>
+            needsHealthCertSection(answers, externalData) &&
+            hasUploadedHealthCertificate(answers),
+          value: ({ answers }) => {
+            const files = getValueViaPath<Array<{ key: string; name: string }>>(
+              answers,
+              'healthCertificate',
+            )
+            return (files?.map((f) => f.name).join(', ') ?? '') as StaticText
+          },
         }),
         buildDividerField({}),
         buildKeyValueField({
