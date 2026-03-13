@@ -215,7 +215,6 @@ export class SyslumennResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => Boolean)
-  @BypassAuth()
   async getSyslumennElectronicIDStatus(
     @Args('input') input: GetElectronicIDInput,
   ): Promise<boolean> {
