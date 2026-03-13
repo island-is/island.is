@@ -3,7 +3,7 @@ import {
   QuestionnaireQuestionnairesOrganizationEnum,
 } from '@island.is/api/schema'
 import { Box, LoadingDots, toast } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   GenericQuestionnaire,
   m,
@@ -23,6 +23,7 @@ import {
 } from './questionnaires.generated'
 
 const AnswerQuestionnaire: FC = () => {
+  useNamespaces('sp.health')
   const { id, org } = useParams<{ id?: string; org?: string }>()
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
@@ -44,7 +45,8 @@ const AnswerQuestionnaire: FC = () => {
     variables: {
       input: {
         id: id ?? '',
-        organization: organization,
+        organization:
+          organization ?? QuestionnaireQuestionnairesOrganizationEnum.EL,
         includeQuestions: true,
       },
       locale: lang,
@@ -108,7 +110,9 @@ const AnswerQuestionnaire: FC = () => {
     answers: { [key: string]: QuestionAnswer },
     asDraft?: boolean,
   ) => {
-    if (!organization || !id) {
+    const formId = data?.questionnairesDetail?.baseInformation.formId
+
+    if (!organization || !id || !formId) {
       toast.error(
         formatMessage(messages.errorSendingAnswers, {
           title:
@@ -120,7 +124,7 @@ const AnswerQuestionnaire: FC = () => {
     }
 
     const entries = Object.entries(answers).map(([questionId, answer]) => ({
-      entryID: questionId,
+      entryId: questionId,
       type: answer.type,
       answers: answer.answers.map((a) => ({
         label: a.label,
@@ -132,10 +136,11 @@ const AnswerQuestionnaire: FC = () => {
       variables: {
         input: {
           id,
-          organization: organization,
+          organization:
+            organization ?? QuestionnaireQuestionnairesOrganizationEnum.EL,
           saveAsDraft: asDraft,
           entries: entries,
-          formId: data?.questionnairesDetail?.baseInformation.formId ?? '',
+          formId,
         },
         locale: lang,
       },

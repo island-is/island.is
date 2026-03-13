@@ -10,7 +10,7 @@ import {
   Select,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Answered,
   formatDate,
@@ -29,6 +29,7 @@ import {
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const AnsweredQuestionnaire: FC = () => {
+  useNamespaces('sp.health')
   const { id, org, submissionId } = useParams<{
     id?: string
     org?: string
@@ -41,7 +42,7 @@ const AnsweredQuestionnaire: FC = () => {
   const [currentSubmission, setCurrentSubmission] =
     useState<QuestionnaireSubmissionDetail>()
 
-  const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
+  const organization: QuestionnaireQuestionnairesOrganizationEnum =
     org === 'el'
       ? QuestionnaireQuestionnairesOrganizationEnum.EL
       : org === 'lsh'
