@@ -11,6 +11,11 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
+
+import {
   Case,
   CourtSession,
   CourtSessionRepositoryService,
@@ -29,6 +34,13 @@ export class CourtSessionService {
     private readonly courtSessionStringModel: typeof CourtSessionString,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  private addMessagesForConfirmedCourtRecordToQueue(caseId: string): void {
+    addMessagesToQueue({
+      type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
+      caseId,
+    })
+  }
 
   create(theCase: Case, transaction: Transaction): Promise<CourtSession> {
     return this.courtSessionRepositoryService.create(theCase.id, {
@@ -108,12 +120,25 @@ export class CourtSessionService {
     }
   }
 
-  update(
+  async update(
     caseId: string,
     courtSessionId: string,
     update: UpdateCourtSessionDto,
     transaction: Transaction,
   ): Promise<CourtSession> {
+    const existingCourtSession =
+      await this.courtSessionRepositoryService.findById(caseId, courtSessionId)
+
+    // Only add messages to the queue if the court session is being confirmed for
+    // the first time and not if it's being updated after already being confirmed
+    if (
+      existingCourtSession &&
+      !existingCourtSession.isConfirmed &&
+      update.isConfirmed === true
+    ) {
+      this.addMessagesForConfirmedCourtRecordToQueue(caseId)
+    }
+
     return this.courtSessionRepositoryService.update(
       caseId,
       courtSessionId,
