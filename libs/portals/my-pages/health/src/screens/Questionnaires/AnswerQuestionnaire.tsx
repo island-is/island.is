@@ -44,7 +44,8 @@ const AnswerQuestionnaire: FC = () => {
     variables: {
       input: {
         id: id ?? '',
-        organization: organization ?? QuestionnaireQuestionnairesOrganizationEnum.EL,
+        organization:
+          organization ?? QuestionnaireQuestionnairesOrganizationEnum.EL,
         includeQuestions: true,
       },
       locale: lang,
@@ -134,7 +135,8 @@ const AnswerQuestionnaire: FC = () => {
       variables: {
         input: {
           id,
-          organization: organization ?? QuestionnaireQuestionnairesOrganizationEnum.EL,
+          organization:
+            organization ?? QuestionnaireQuestionnairesOrganizationEnum.EL,
           saveAsDraft: asDraft,
           entries: entries,
           formId,
