@@ -28,6 +28,26 @@ export const GET_DRIVING_LICENSE_BOOK_QUERY = gql`
   }
 `
 
+/**
+ * TODO: Replace with a real unemployment-status query once the service
+ * client is available, e.g.:
+ *
+ *   query GetUnemploymentStatus {
+ *     unemploymentStatus {
+ *       isActive
+ *     }
+ *   }
+ *
+ * When `isActive === true` push `DynamicPaths.UnemploymentStatus` to
+ * `dynamicPathArray` inside the `useDynamicRoutes` effect below.
+ */
+export const GET_UNEMPLOYMENT_STATUS_QUERY = gql`
+  query GetUnemploymentStatus {
+    # placeholder – replace when API is ready
+    __typename
+  }
+`
+
 export const GET_NAMESPACE_QUERY = gql`
   query GetNamespace($input: GetNamespaceInput!) {
     getNamespace(input: $input) {
@@ -47,6 +67,12 @@ export const useDynamicRoutes = () => {
   const { data: licenseBook, loading: licenseBookLoading } = useQuery<Query>(
     GET_DRIVING_LICENSE_BOOK_QUERY,
   )
+
+  /**
+   * TODO: Swap the placeholder query for the real unemployment-status query.
+   * When `unemploymentStatus.isActive` is true, uncomment the push below.
+   */
+  // const { data: unemploymentData } = useQuery<Query>(GET_UNEMPLOYMENT_STATUS_QUERY)
 
   useEffect(() => {
     const dynamicPathArray = []
@@ -79,6 +105,18 @@ export const useDynamicRoutes = () => {
     const licenseBookData = licenseBook?.drivingLicenseBookUserBook
     if (licenseBookData?.book?.id) {
       dynamicPathArray.push(DynamicPaths.EducationDrivingLessons)
+    }
+
+    /**
+     * portals-my-pages/support-maintenance – Unemployment
+     * Show the "Staðan þín" sub-page only when the user has active benefits.
+     *
+     * TODO: Replace the hardcoded `false` with the real API check:
+     *   const isActiveOnUnemployment = !!unemploymentData?.unemploymentStatus?.isActive
+     */
+    const isActiveOnUnemployment = true
+    if (isActiveOnUnemployment) {
+      dynamicPathArray.push(DynamicPaths.UnemploymentStatus)
     }
 
     // Combine routes, no duplicates.

@@ -1828,6 +1828,19 @@ export const m = defineMessages({
     defaultMessage:
       'Einstaklingar geta átt rétt á greiðslum frá Tryggingastofnun (TR) til að bæta afkomu sína og hag. Allar greiðslur frá TR þarf að sækja sérstaklega um.',
   },
+  supportMaintenance: {
+    id: 'service.portal:support-maintenance',
+    defaultMessage: 'Framfærsla',
+  },
+  supportMaintenanceIntro: {
+    id: 'service.portal:support-maintenance-intro',
+    defaultMessage: 'Yfirlit yfir greiðslur og áætlanir',
+  },
+  supportMaintenanceDescription: {
+    id: 'service.portal:support-maintenance-description',
+    defaultMessage:
+      'Hér getur þú séð yfirlit yfir þínar greiðslur og áætlanir.',
+  },
   incomePlan: {
     id: 'service.portal:income-plan',
     defaultMessage: 'Tekjuáætlun',

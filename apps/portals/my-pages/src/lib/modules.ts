@@ -21,7 +21,7 @@ import { indexModule } from '../module'
 import { consentModule } from '@island.is/portals/my-pages/consent'
 import { occupationalLicensesModule } from '@island.is/portals/my-pages/occupational-licenses'
 import { signatureCollectionModule } from '@island.is/portals/my-pages/signature-collection'
-import { socialInsuranceMaintenanceModule } from '@island.is/portals/my-pages/social-insurance-maintenance'
+import { supportMaintenanceModule } from '@island.is/portals/my-pages/support-maintenance'
 import { lawAndOrderModule } from '@island.is/portals/my-pages/law-and-order'
 import { mileageRegistrationModule } from '@island.is/portals/my-pages/mileage-registration'
 
@@ -51,7 +51,7 @@ export const modules: PortalModule[] = [
   occupationalLicensesModule,
   restrictionsModule,
   sessionsModule,
-  socialInsuranceMaintenanceModule,
+  supportMaintenanceModule,
   signatureCollectionModule,
   petitionsModule,
   lawAndOrderModule,

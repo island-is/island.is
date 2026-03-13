@@ -8,4 +8,10 @@ export enum DynamicPaths {
   FinanceTransactionVehicleMileage = '/fjarmal/faerslur/kilometragjald',
 
   EducationDrivingLessons = '/menntun/okunam',
+
+  /**
+   * portals-my-pages/support-maintenance
+   * Shown only when the user has active unemployment benefits.
+   */
+  UnemploymentStatus = '/framfaersla/atvinnuleysisbaetur/stadan',
 }

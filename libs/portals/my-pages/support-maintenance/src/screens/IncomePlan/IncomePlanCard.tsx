@@ -6,7 +6,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import { Status } from './types'
-import { SocialInsuranceMaintenancePaths } from '../../lib/paths'
+import { SupportMaintenancePaths } from '../../lib/paths'
 
 interface Props {
   status: Status
@@ -33,7 +33,7 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
           cta
             ? {
                 label: formatMessage(m.viewIncomePlan),
-                url: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
+                url: SupportMaintenancePaths.SupportMaintenanceIncomePlanDetail,
                 variant: 'text',
               }
             : { label: '' }

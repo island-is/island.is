@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { writeFileSync } from 'fs'
 import { ProgrammesApi } from '../../gen/fetch/apis'
 import {
   ProgrammeFilterOptionsDto,
@@ -11,7 +12,9 @@ export class SecondarySchoolPublicClient {
   constructor(private readonly programmesApi: ProgrammesApi) {}
 
   async getAllProgrammes(): Promise<ProgrammeSimpleReturnDto[]> {
-    return this.programmesApi.v1ProgrammesGet()
+    const result = await this.programmesApi.v1ProgrammesGet()
+    writeFileSync('./programmes.json', JSON.stringify(result, null, 2))
+    return result
   }
 
   async getFilterOptions(): Promise<ProgrammeFilterOptionsDto> {

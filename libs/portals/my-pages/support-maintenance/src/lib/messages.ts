@@ -1,5 +1,81 @@
 import { defineMessages } from 'react-intl'
 
+// ── Module-level messages (new sp.support-maintenance:* namespace) ─────────────
+export const moduleMessages = defineMessages({
+  supportMaintenance: {
+    id: 'sp.support-maintenance:support-maintenance',
+    defaultMessage: 'Framfærsla',
+  },
+  supportMaintenanceRootTitle: {
+    id: 'sp.support-maintenance:support-maintenance-root-title',
+    defaultMessage: 'Þín framfærsla',
+  },
+  supportMaintenanceIntro: {
+    id: 'sp.support-maintenance:support-maintenance-intro',
+    defaultMessage: 'Listi yfir þína helstu framfærsluliði.',
+  },
+  supportMaintenanceDescription: {
+    id: 'sp.support-maintenance:support-maintenance-description',
+    defaultMessage:
+      'Hér getur þú séð yfirlit yfir þínar greiðslur og áætlanir.',
+  },
+  socialInsurance: {
+    id: 'sp.support-maintenance:social-insurance',
+    defaultMessage: 'Almannatryggingar',
+  },
+  socialInsuranceDescription: {
+    id: 'sp.support-maintenance:social-insurance-description',
+    defaultMessage:
+      'Hér getur þú séð yfirlit yfir þínar almannatryggingagreiðslur og áætlanir.',
+  },
+  unemployment: {
+    id: 'sp.support-maintenance:unemployment',
+    defaultMessage: 'Atvinnuleysi',
+  },
+  unemploymentDescription: {
+    id: 'sp.support-maintenance:unemployment-description',
+    defaultMessage: 'Hér getur þú séð yfirlit yfir þínar atvinnuleysisbætur.',
+  },
+  // ── Unemployment overview / dynamic screen ─────────────────────────────────────
+  unemploymentApply: {
+    id: 'sp.support-maintenance:unemployment-apply',
+    defaultMessage: 'Sækja um atvinnuleysisbætur',
+  },
+  unemploymentApplyUrl: {
+    id: 'sp.support-maintenance:unemployment-apply-url',
+    defaultMessage: 'https://island.is/umsokn-um-atvinnuleysisbaetur',
+  },
+  unemploymentActiveTitle: {
+    id: 'sp.support-maintenance:unemployment-active-title',
+    defaultMessage: 'Þú ert á atvinnuleysisbætunum',
+  },
+  unemploymentActiveDescription: {
+    id: 'sp.support-maintenance:unemployment-active-description',
+    defaultMessage:
+      'Hér getur þú séð staðu þína og upplýsingar tengdar atvinnuleysisbætunum.',
+  },
+  unemploymentInactiveTitle: {
+    id: 'sp.support-maintenance:unemployment-inactive-title',
+    defaultMessage: 'Ekki skráð(úr) á atvinnuleysisbætur',
+  },
+  unemploymentInactiveDescription: {
+    id: 'sp.support-maintenance:unemployment-inactive-description',
+    defaultMessage:
+      'Þú ert ekki skráð(úr) til að fá atvinnuleysisbætur. Ef þú hefur nýlega misst vinnuna þína getur þú sótt um hér.',
+  },
+  // ── Unemployment status sub-page (only shown when active) ──────────────────
+  unemploymentStatusTitle: {
+    id: 'sp.support-maintenance:unemployment-status-title',
+    defaultMessage: 'Staðan þín',
+  },
+  unemploymentStatusDescription: {
+    id: 'sp.support-maintenance:unemployment-status-description',
+    defaultMessage:
+      'Yfirlit yfir staðu þína á atvinnuleysisbætur og tengdar upplýsingar.',
+  },
+})
+
+// ── Screen-level messages (preserving original sp.social-insurance-maintenance:* IDs) ─
 export const m = defineMessages({
   maintenance: {
     id: 'sp.social-insurance-maintenance:maintenance',
@@ -34,7 +110,7 @@ export const m = defineMessages({
   incomePlanDetail: {
     id: 'sp.social-insurance-maintenance:income-plan-detail',
     defaultMessage:
-      'Hér fyrir neðan er yfirlit yfir þá tekjuáætlun sem er í gildi. Ef þú óskar eftir því að breyta henni þarftu að velja ‘breyta tekjuáætlun’.',
+      'Hér fyrir neðan er yfirlit yfir þá tekjuáætlun sem er í gildi. Ef þú óskar eftir því að breyta henni þarftu að velja \u2018breyta tekjuáætlun\u2019.',
   },
   modifyIncomePlan: {
     id: 'sp.social-insurance-maintenance:income-plan-modify',
