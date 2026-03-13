@@ -1,9 +1,9 @@
 import { YES } from '@island.is/application/core'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { incomePlanHasOnlyZeroIncome } from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
+import { incomePlanHasOnlyZeroIncome } from '@island.is/application/templates/social-insurance-administration-core/utils/incomePlanUtils'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
-  formatIcelandicBankAccount,
+  formatBankAccount,
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
   getTaxLevelOption,
@@ -53,7 +53,7 @@ export const paymentItems = (answers: FormValue): Array<KeyValueItem> => {
           {
             width: 'full',
             keyText: socialInsuranceAdministrationMessage.payment.bank,
-            valueText: formatIcelandicBankAccount(paymentInfo?.bank),
+            valueText: formatBankAccount(paymentInfo?.bank),
           },
         ]
 

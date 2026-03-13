@@ -7,23 +7,18 @@ import {
   buildTableRepeaterField,
   YES,
 } from '@island.is/application/core'
-import {
-  DIVIDENDS_IN_FOREIGN_BANKS,
-  FOREIGN_BASIC_PENSION,
-  FOREIGN_INCOME,
-  FOREIGN_PENSION,
-  INCOME,
-  INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
-  ISK,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { generateMonthInput } from '@island.is/application/templates/social-insurance-administration-core/lib/generateMonthInput'
+import { ISK } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { generateMonthInput } from '@island.is/application/templates/social-insurance-administration-core/utils/generateMonthInput'
 import {
   equalIncomePerMonthValueModifier,
   incomePerYearValueModifier,
   incomePerYearWatchValues,
   incomePlanHasOnlyZeroIncome,
   incomeTypeValueModifier,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
+  isForeignCurrency,
+  isMonthlyIncome,
+  isMonthlyOrYearlyIncome,
+} from '@island.is/application/templates/social-insurance-administration-core/utils/incomePlanUtils'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   getCategoriesOptions,
@@ -136,15 +131,10 @@ export const incomePlanSubSection = buildSubSection({
                 const { currencies } = getApplicationExternalData(
                   application.externalData,
                 )
-                const hideISKCurrency =
-                  activeField?.incomeType === FOREIGN_BASIC_PENSION ||
-                  activeField?.incomeType === FOREIGN_PENSION ||
-                  activeField?.incomeType === FOREIGN_INCOME ||
-                  activeField?.incomeType ===
-                    INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
-                  activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
-                    ? ISK
-                    : ''
+
+                const hideISKCurrency = isForeignCurrency(activeField)
+                  ? ISK
+                  : ''
 
                 return getCurrencies(currencies, hideISKCurrency)
               },
@@ -220,8 +210,7 @@ export const incomePlanSubSection = buildSubSection({
               },
               suffix: '',
               condition: (_, activeField) =>
-                activeField?.income === RatioType.YEARLY ||
-                activeField?.income === RatioType.MONTHLY,
+                isMonthlyOrYearlyIncome(activeField),
             },
             unevenIncomePerYear: {
               component: 'checkbox',
@@ -240,9 +229,7 @@ export const incomePlanSubSection = buildSubSection({
               ],
               backgroundColor: 'blue',
               displayInTable: false,
-              condition: (_, activeField) =>
-                activeField?.income === RatioType.MONTHLY &&
-                activeField?.incomeCategory === INCOME,
+              condition: (_, activeField) => isMonthlyIncome(activeField),
             },
             january: generateMonthInput(
               socialInsuranceAdministrationMessage.months.january,

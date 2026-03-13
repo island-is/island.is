@@ -28,7 +28,7 @@ import {
   currencyValueModifier,
   equalIncomePerMonthValueModifier,
   incomePerYearValueModifier,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/utils/incomePlanUtils'
 import { getApplicationExternalData } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const incomePlanSubSection = buildSubSection({
