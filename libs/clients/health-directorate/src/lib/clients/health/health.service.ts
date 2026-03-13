@@ -49,6 +49,7 @@ import {
   QuestionnaireDetailDto,
   QuestionnaireSubmissionDetailDto,
   SubmitQuestionnaireDto,
+  SubmitQuestionnaireResponseDto,
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
 
@@ -361,7 +362,7 @@ export class HealthDirectorateHealthService {
     locale: Locale,
     id: string,
     input: SubmitQuestionnaireDto,
-  ): Promise<string | null> {
+  ): Promise<SubmitQuestionnaireResponseDto | null> {
     const submission = await withAuthContext(auth, () =>
       data(
         questionnaireControllerSubmitQuestionnaireV1({

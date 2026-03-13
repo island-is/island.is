@@ -1425,7 +1425,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/SubmitQuestionnaireResponseDto"
                 }
               }
             }
@@ -2249,9 +2249,9 @@
           "specialistOnlyPrescription"
         ]
       },
-      "PrescriptionRenewalStatus": {
-        "type": "number",
-        "enum": [0, 1, 2, 3]
+      "PrescriptionRenewalStatusDisplay": {
+        "type": "string",
+        "enum": ["pending", "approved", "rejected", "dismissed"]
       },
       "RenewalDto": {
         "type": "object",
@@ -2269,7 +2269,7 @@
           "status": {
             "allOf": [
               {
-                "$ref": "#/components/schemas/PrescriptionRenewalStatus"
+                "$ref": "#/components/schemas/PrescriptionRenewalStatusDisplay"
               }
             ]
           },
@@ -2730,6 +2730,10 @@
             "type": "string",
             "nullable": true
           },
+          "sender": {
+            "type": "string",
+            "description": "Name of the sender of the questionnaire"
+          },
           "createdDate": {
             "format": "date-time",
             "type": "string"
@@ -2764,6 +2768,7 @@
         },
         "required": [
           "questionnaireId",
+          "sender",
           "numSubmissionsAllowed",
           "numSubmitted",
           "hasDraft"
@@ -3599,6 +3604,10 @@
             "type": "string",
             "nullable": true
           },
+          "sender": {
+            "type": "string",
+            "description": "Name of the sender of the questionnaire"
+          },
           "createdDate": {
             "format": "date-time",
             "type": "string"
@@ -3706,6 +3715,7 @@
         },
         "required": [
           "questionnaireId",
+          "sender",
           "numSubmissionsAllowed",
           "numSubmitted",
           "hasDraft",
@@ -3922,6 +3932,16 @@
           }
         },
         "required": ["replies", "isDraft"]
+      },
+      "SubmitQuestionnaireResponseDto": {
+        "type": "object",
+        "properties": {
+          "submissionId": {
+            "type": "string",
+            "description": "Id of the questionnaire submission (draft or final)"
+          }
+        },
+        "required": ["submissionId"]
       },
       "InvalidSubmissionDto": {
         "type": "object",

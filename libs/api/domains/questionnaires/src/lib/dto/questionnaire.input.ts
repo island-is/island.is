@@ -46,8 +46,8 @@ export class GetQuestionnaireInput {
   @Field(() => ID)
   id!: string
 
-  @Field(() => QuestionnairesOrganizationEnum, { nullable: true })
-  organization?: QuestionnairesOrganizationEnum
+  @Field(() => QuestionnairesOrganizationEnum)
+  organization!: QuestionnairesOrganizationEnum
 
   @Field({ nullable: true })
   formId?: string

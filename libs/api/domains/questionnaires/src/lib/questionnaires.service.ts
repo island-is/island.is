@@ -202,7 +202,7 @@ export class QuestionnairesService {
       )
       return {
         success: true,
-        message: response?.toString(),
+        message: response?.submissionId,
       }
     } catch (e) {
       return {
