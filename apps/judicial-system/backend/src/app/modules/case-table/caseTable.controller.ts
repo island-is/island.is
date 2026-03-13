@@ -1,4 +1,13 @@
-import { Controller, Get, Inject, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Inject,
+  NotFoundException,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -24,6 +33,7 @@ import {
   publicProsecutorStaffRule,
 } from '../../guards'
 import { CaseTableResponse } from './dto/caseTable.response'
+import { CaseTableMembershipResponse } from './dto/caseTableMembership.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { CaseTableTypeGuard } from './guards/caseTableType.guard'
 import { CaseTableService } from './caseTable.service'
@@ -91,5 +101,45 @@ export class CaseTableController {
     this.logger.debug(`Searching for cases for user ${user.id}`)
 
     return this.caseTableService.searchCases(query, user)
+  }
+
+  @UseGuards(RolesGuard)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+    prisonSystemStaffRule,
+  )
+  @Get('case-table-membership')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({
+    type: CaseTableMembershipResponse,
+    description:
+      'Returns which case tables (for the current user role) the case belongs to. Use for breadcrumbs on the case page.',
+  })
+  @ApiQuery({
+    name: 'caseId',
+    type: String,
+    required: true,
+    description: 'The case id',
+  })
+  async getCaseTableMembership(
+    @CurrentHttpUser() user: User,
+    @Query('caseId') caseId: string,
+  ): Promise<CaseTableMembershipResponse> {
+    const caseTableTypes = await this.caseTableService.getCaseTableMembership(
+      caseId,
+      user,
+    )
+    if (caseTableTypes === null) {
+      throw new NotFoundException('Case not found or access denied')
+    }
+    return { caseTableTypes }
   }
 }
