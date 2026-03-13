@@ -40,4 +40,26 @@ export class WorkMachineResolver {
     }
     return this.workMachinesService.getWorkMachineById(user, input)
   }
+
+  @Scopes(ApiScope.workMachines)
+  @Query(() => WorkMachine, {
+    name: 'workMachineForInspection',
+    nullable: true,
+  })
+  @Audit()
+  async getWorkMachineForInspection(
+    @CurrentUser() user: User,
+    @Args('input', {
+      type: () => GetWorkMachineInput,
+      nullable: true,
+    })
+    input: GetWorkMachineInput,
+  ) {
+    if (!input.id && !input.registrationNumber) {
+      throw new BadRequestException(
+        'Must supply either id or registrationNumber',
+      )
+    }
+    return this.workMachinesService.getMachineDetailsForInspection(user, input)
+  }
 }
