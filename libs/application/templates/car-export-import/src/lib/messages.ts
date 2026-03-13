@@ -1,0 +1,351 @@
+import { defineMessages } from 'react-intl'
+
+export const m = {
+  application: defineMessages({
+    name: {
+      id: 'rsk.cei.application:name',
+      defaultMessage: 'Skráning km stöðu á út/innflutningi',
+      description: 'Application name',
+    },
+    institution: {
+      id: 'rsk.cei.application:institution',
+      defaultMessage: 'Skatturinn',
+      description: 'Application institution',
+    },
+  }),
+
+  prerequisites: defineMessages({
+    title: {
+      id: 'rsk.cei.application:prerequisites.title',
+      defaultMessage: 'Gagnaöflun',
+      description: 'Section title for external data consent',
+    },
+    approvalCheckboxLabel: {
+      id: 'rsk.cei.application:prerequisites.checkbox',
+      defaultMessage:
+        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
+      description: 'Consent checkbox label',
+    },
+    vehiclesTitle: {
+      id: 'rsk.cei.application:prerequisites.vehicles.title',
+      defaultMessage: 'Upplýsingar frá Samgöngustofu',
+      description: 'Transport Authority data provider title',
+    },
+    vehiclesSubTitle: {
+      id: 'rsk.cei.application:prerequisites.vehicles.subtitle',
+      defaultMessage: 'Upplýsingar um ökutæki þín.',
+      description: 'Transport Authority data provider subtitle',
+    },
+    confirmButton: {
+      id: 'rsk.cei.application:prerequisites.confirm',
+      defaultMessage: 'Staðfesta',
+      description: 'Confirm data collection',
+    },
+  }),
+
+  dataSchema: defineMessages({
+    mileageTooLow: {
+      id: 'rsk.cei.application:dataSchema.mileage.too.low',
+      defaultMessage: 'Km staða má ekki vera lægri en síðasta skráða km staða',
+      description: 'Mileage too low error message',
+    },
+  }),
+
+  registrationType: defineMessages({
+    title: {
+      id: 'rsk.cei.application:registration.type.title',
+      defaultMessage: 'Tegund skráningar',
+      description: 'Registration type title',
+    },
+    description: {
+      id: 'rsk.cei.application:registration.type.description',
+      defaultMessage: 'Smelltu á viðeigandi valkost',
+      description: 'Registration type description',
+    },
+    optionExport: {
+      id: 'rsk.cei.application:registration.type.option.export',
+      defaultMessage: 'Skrá brottför ökutækis úr landi',
+      description: 'Export vehicles option',
+    },
+    optionImport: {
+      id: 'rsk.cei.application:registration.type.option.import',
+      defaultMessage: 'Skrá komu ökutækis til landsins',
+      description: 'Import vehicles option',
+    },
+  }),
+
+  commonVehicleMessages: defineMessages({
+    vehicleCheckboxLabel: {
+      id: 'rsk.cei.application:common.vehicle.checkbox.label',
+      defaultMessage: '**{permno}** {type}',
+      description: 'Vehicle checkbox label with bold permno and vehicle type',
+    },
+    vehicleCheckboxSubLabel: {
+      id: 'rsk.cei.application:common.vehicle.checkbox.subLabel',
+      defaultMessage: 'Síðasta km staða: {mileage} km',
+      description: 'Vehicle checkbox sub-label showing last recorded mileage',
+    },
+  }),
+
+  exportVehicles: defineMessages({
+    title: {
+      id: 'rsk.cei.application:exportVehicles.title',
+      defaultMessage: 'Ökutæki',
+      description: 'Export vehicles title',
+    },
+    description: {
+      id: 'rsk.cei.application:exportVehicles.description',
+      defaultMessage:
+        'Veldu ökutæki sem þú ætlar að flytja tímabundið úr landi. Þú getur valið fleiri en eitt ökutæki.',
+      description: 'Export vehicles description',
+    },
+    alertMessage: {
+      id: 'rsk.cei.application:exportVehicles.alert.message',
+      defaultMessage:
+        'Til að koma í veg fyrir greiðslu kílómetragjalds vegna aksturs erlendis, þegar ökutæki er flutt tímabundið úr landi, þarf að skrá stöðu akstursmælis við brottför og komu, senda inn staðfestingu á flutningi ökutækisins og sækja um lækkun gjaldsins til Skattsins.',
+      description: 'Export vehicles info alert message',
+    },
+    alertTitle: {
+      id: 'rsk.cei.application:exportVehicles.alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Export vehicles alert title',
+    },
+    checkboxLabel: {
+      id: 'rsk.cei.application:exportVehicles.checkbox.label',
+      defaultMessage: 'Ökutæki skráð á þig',
+      description: 'Export vehicles checkbox group label',
+    },
+    selectedCount: {
+      id: 'rsk.cei.application:exportVehicles.selected.count',
+      defaultMessage: 'Ökutæki valin',
+      description: 'Export vehicles selected count label',
+    },
+    tableHeaderPermno: {
+      id: 'rsk.cei.application:exportVehicles.table.header.permno',
+      defaultMessage: 'Skráningarnúmer',
+      description: 'Export vehicles table header for registration number',
+    },
+    tableHeaderType: {
+      id: 'rsk.cei.application:exportVehicles.table.header.type',
+      defaultMessage: 'Tegund',
+      description: 'Export vehicles table header for vehicle type',
+    },
+    tableHeaderMileage: {
+      id: 'rsk.cei.application:exportVehicles.table.header.mileage',
+      defaultMessage: 'Síðasta akstursstaða',
+      description: 'Export vehicles table header for last recorded mileage',
+    },
+    searchLabel: {
+      id: 'rsk.cei.application:exportVehicles.search.label',
+      defaultMessage: 'Leita að ökutæki',
+      description: 'Export vehicles search input label',
+    },
+    searchPlaceholder: {
+      id: 'rsk.cei.application:exportVehicles.search.placeholder',
+      defaultMessage: 'Leita eftir skráningarnúmeri',
+      description: 'Export vehicles search input placeholder',
+    },
+    emptyState: {
+      id: 'rsk.cei.application:exportVehicles.empty.state',
+      defaultMessage: 'Ekkert ökutæki fannst',
+      description: 'Export vehicles table empty state message',
+    },
+  }),
+
+  importVehicles: defineMessages({
+    title: {
+      id: 'rsk.cei.application:importVehicles.title',
+      defaultMessage: 'Ökutæki',
+      description: 'Import vehicles title',
+    },
+    description: {
+      id: 'rsk.cei.application:importVehicles.description',
+      defaultMessage:
+        'Veldu ökutæki sem þú ert að flytja aftur inn í landið. Þú getur valið fleiri en eitt ökutæki.',
+      description: 'Import vehicles description',
+    },
+    checkboxLabel: {
+      id: 'rsk.cei.application:importVehicles.checkbox.label',
+      defaultMessage: 'Ökutæki skráð á þig',
+      description: 'Import vehicles checkbox group label',
+    },
+    selectedCount: {
+      id: 'rsk.cei.application:importVehicles.selected.count',
+      defaultMessage: 'Ökutæki valin',
+      description: 'Import vehicles selected count label',
+    },
+    tableHeaderPermno: {
+      id: 'rsk.cei.application:importVehicles.table.header.permno',
+      defaultMessage: 'Skráningarnúmer',
+      description: 'Import vehicles table header for registration number',
+    },
+    tableHeaderType: {
+      id: 'rsk.cei.application:importVehicles.table.header.type',
+      defaultMessage: 'Tegund',
+      description: 'Import vehicles table header for vehicle type',
+    },
+    tableHeaderMileage: {
+      id: 'rsk.cei.application:importVehicles.table.header.mileage',
+      defaultMessage: 'Síðasta akstursstaða',
+      description: 'Import vehicles table header for last recorded mileage',
+    },
+    searchLabel: {
+      id: 'rsk.cei.application:importVehicles.search.label',
+      defaultMessage: 'Leita að ökutæki',
+      description: 'Import vehicles search input label',
+    },
+    searchPlaceholder: {
+      id: 'rsk.cei.application:importVehicles.search.placeholder',
+      defaultMessage: 'Leita eftir skráningarnúmeri',
+      description: 'Import vehicles search input placeholder',
+    },
+    emptyState: {
+      id: 'rsk.cei.application:importVehicles.empty.state',
+      defaultMessage: 'Ekkert ökutæki fannst',
+      description: 'Import vehicles table empty state message',
+    },
+  }),
+
+  commonDatesAndMileageMessages: defineMessages({
+    sectionTitle: {
+      id: 'rsk.cei.application:dates.mileage.section.title',
+      defaultMessage: 'Dagsetning og akstursstaða',
+      description: 'Common dates and mileage section title',
+    },
+    title: {
+      id: 'rsk.cei.application:dates.mileage.title',
+      defaultMessage: 'Dagsetningar og km staða',
+      description: 'Common dates and mileage title',
+    },
+    lastRecordedMileage: {
+      id: 'rsk.cei.application:dates.mileage.last.recorded',
+      defaultMessage: '{permno} — Síðasta skráða km staða: {mileage} km',
+      description:
+        'Vehicle title with last recorded mileage, e.g. AB123 — Síðasta skráða km staða: 10.000 km',
+    },
+  }),
+
+  importDatesAndMileage: defineMessages({
+    description: {
+      id: 'rsk.cei.application:importDates.mileage.description',
+      defaultMessage:
+        'Skráðu dagsetningar ferðar og km stöðu hvers ökutækis við komu inn í landið.',
+      description: 'Dates and mileage description',
+    },
+    returnDateLabel: {
+      id: 'rsk.cei.application:importDates.mileage.return.date',
+      defaultMessage: 'Áætlaður heimkomudagur',
+      description: 'Return date label',
+    },
+    mileageLabel: {
+      id: 'rsk.cei.application:importDates.mileage.mileage.label',
+      defaultMessage: 'Km staða við heimkomu',
+      description: 'Mileage at arrival label',
+    },
+    mileageFileLabel: {
+      id: 'rsk.cei.application:importDates.mileage.file.label',
+      defaultMessage: 'Staðfesting á heimkomu',
+      description: 'Mileage file label',
+    },
+    uploadDocsHeader: {
+      id: 'rsk.cei.application:importDates.mileage.upload.docs.header',
+      defaultMessage: 'Hlaða upp skjölum fyrir staðfestingu á heimkomu.',
+      description: 'Upload docs header',
+    },
+    uploadDocsDescription: {
+      id: 'rsk.cei.application:importDates.mileage.upload.docs.description',
+      defaultMessage: 'Samþykktar skráartegundir eru .pdf,',
+      description: 'Upload docs description',
+    },
+  }),
+
+  exportDatesAndMileage: defineMessages({
+    description: {
+      id: 'rsk.cei.application:exportDates.mileage.description',
+      defaultMessage:
+        'Skráðu dagsetningu ferðar og km stöðu hvers ökutækis við brottför.',
+      description: 'Dates and mileage description',
+    },
+    returnDateLabel: {
+      id: 'rsk.cei.application:exportDates.mileage.return.date',
+      defaultMessage: 'Áætlaður brottfaradagur',
+      description: 'Departure date label',
+    },
+    mileageLabel: {
+      id: 'rsk.cei.application:exportDates.mileage.mileage.label',
+      defaultMessage: 'Km staða við brottför',
+      description: 'Mileage at departure label',
+    },
+  }),
+
+  overview: defineMessages({
+    sectionTitle: {
+      id: 'rsk.cei.application:overview.section.title',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview section title',
+    },
+    title: {
+      id: 'rsk.cei.application:overview.title',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview title',
+    },
+    datesHeader: {
+      id: 'rsk.cei.application:overview.dates.header',
+      defaultMessage: 'Dagsetningar:',
+      description: 'Overview dates section header',
+    },
+    departureDateLabel: {
+      id: 'rsk.cei.application:overview.departure.date',
+      defaultMessage: 'Brottfarardagur:',
+      description: 'Overview departure date label',
+    },
+    returnDateLabel: {
+      id: 'rsk.cei.application:overview.return.date',
+      defaultMessage: 'Áætlaður heimkomudagur',
+      description: 'Overview return date label',
+    },
+    vehiclesHeader: {
+      id: 'rsk.cei.application:overview.vehicles.header',
+      defaultMessage: 'Ökutæki og km staða',
+      description: 'Overview vehicles section header',
+    },
+    mileageAtDeparture: {
+      id: 'rsk.cei.application:overview.mileage.at.departure',
+      defaultMessage: 'Km staða við brottför',
+      description: 'Mileage at departure label in overview',
+    },
+    mileageAtArrival: {
+      id: 'rsk.cei.application:overview.mileage.at.arrival',
+      defaultMessage: 'Km staða við heimkomu',
+      description: 'Mileage at arrival label in overview',
+    },
+    exportVehiclesHeader: {
+      id: 'rsk.cei.application:overview.export.vehicles.header',
+      defaultMessage: 'Útflutt ökutæki og akstursstaða',
+      description: 'Overview export vehicles section header',
+    },
+    importVehiclesHeader: {
+      id: 'rsk.cei.application:overview.import.vehicles.header',
+      defaultMessage: 'Innflutt ökutæki og akstursstaða',
+      description: 'Overview import vehicles section header',
+    },
+    submitButton: {
+      id: 'rsk.cei.application:overview.submit',
+      defaultMessage: 'Senda inn',
+      description: 'Submit button label',
+    },
+  }),
+
+  completed: defineMessages({
+    alertTitle: {
+      id: 'rsk.cei.application:completed.alert.title',
+      defaultMessage: 'Umsókn hefur verið skilað',
+      description: 'Completed alert title',
+    },
+    alertMessage: {
+      id: 'rsk.cei.application:completed.alert.message',
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Completed alert message',
+    },
+  }),
+}
