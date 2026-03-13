@@ -1,22 +1,11 @@
 import { useContext, useEffect } from 'react'
 
 import { FormContext } from '@island.is/judicial-system-web/src/components'
-import {
-  CaseOrigin,
-  Gender,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
+import { mapStringToGender } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { usePoliceDefendantsQuery } from './policeDefendants.generated'
-
-const mapPoliceGenderToGender = (gender?: string | null): Gender | undefined =>
-  gender?.toLowerCase() === 'male'
-    ? Gender.MALE
-    : gender?.toLowerCase() === 'female'
-    ? Gender.FEMALE
-    : gender?.toLowerCase() === 'other'
-    ? Gender.OTHER
-    : undefined
 
 /**
  * Fetches defendants from the police API (LOKE) and syncs by nationalId:
@@ -43,8 +32,8 @@ export const useSyncDefendantsFromPolice = () => {
     if (!workingCase.id) {
       return
     }
-    const payload = policeDefendantsData?.policeDefendants
-    if (!payload?.length) {
+    const policeDefendants = policeDefendantsData?.policeDefendants
+    if (!policeDefendants?.length) {
       return
     }
 
@@ -54,7 +43,7 @@ export const useSyncDefendantsFromPolice = () => {
         .filter((id): id is string => Boolean(id)),
     )
 
-    const toAdd = payload.filter(
+    const toAdd = policeDefendants.filter(
       (p) => p.nationalId && !existingNationalIds.has(p.nationalId),
     )
     if (toAdd.length === 0) {
@@ -67,7 +56,7 @@ export const useSyncDefendantsFromPolice = () => {
           caseId: workingCase.id,
           nationalId: p.nationalId ?? undefined,
           name: p.name ?? undefined,
-          gender: mapPoliceGenderToGender(p.gender),
+          gender: mapStringToGender(p.gender),
           address: p.address ?? undefined,
           citizenship: p.citizenship ?? undefined,
         })
@@ -75,14 +64,14 @@ export const useSyncDefendantsFromPolice = () => {
       })
       const results = await Promise.all(defendantPromises)
       const newDefendants = results
-        .filter((r): r is { defendantId: string; p: typeof toAdd[number] } =>
-          Boolean(r),
+        .filter((p): p is { defendantId: string; p: typeof toAdd[number] } =>
+          Boolean(p),
         )
         .map(({ defendantId, p }) => ({
           id: defendantId,
           nationalId: p.nationalId,
           name: p.name,
-          gender: mapPoliceGenderToGender(p.gender),
+          gender: mapStringToGender(p.gender),
           address: p.address,
           citizenship: p.citizenship,
         }))

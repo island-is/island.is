@@ -30,7 +30,10 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
+import {
+  isBusiness,
+  mapStringToGender,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 interface Props {
   defendant: Defendant
@@ -72,14 +75,6 @@ const DefendantInfo: FC<Props> = (props) => {
       !!defendant.nationalId && isBusiness(defendant.nationalId),
     )
 
-  const mapNationalRegistryGenderToGender = (gender: string) => {
-    return gender === 'male'
-      ? Gender.MALE
-      : gender === 'female'
-      ? Gender.FEMALE
-      : Gender.OTHER
-  }
-
   useEffect(() => {
     if (!isBusiness(defendant.nationalId) && (error || notFound)) {
       return
@@ -93,7 +88,7 @@ const DefendantInfo: FC<Props> = (props) => {
         caseId: workingCase.id,
         defendantId: defendant.id,
         name: personData.items[0].name,
-        gender: mapNationalRegistryGenderToGender(personData.items[0].gender),
+        gender: mapStringToGender(personData.items[0].gender),
         address: personData.items[0].permanent_address.street?.nominative,
       })
     }

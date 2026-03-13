@@ -23,6 +23,7 @@ import {
   Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { isNonEmptyArray } from './arrayHelpers'
 import { isBusiness } from './utils'
 
 export type Validation =
@@ -551,7 +552,7 @@ export const isSubpoenaStepValid = (
 }
 
 export const isDefenderStepValid = (workingCase: Case): boolean => {
-  const hasAtLeastOneDefendant = (workingCase.defendants?.length ?? 0) > 0
+  const hasAtLeastOneDefendant = isNonEmptyArray(workingCase.defendants)
   const defendantsAreValid = () =>
     hasAtLeastOneDefendant &&
     (workingCase.defendants?.every((defendant) => {

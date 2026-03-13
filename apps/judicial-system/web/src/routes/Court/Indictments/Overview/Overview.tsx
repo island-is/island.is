@@ -27,6 +27,7 @@ import {
   CaseState,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
@@ -184,17 +185,16 @@ const IndictmentOverview = () => {
     useContext(FormContext)
   const { updateDefendant } = useDefendants()
 
-  const hasDefendants = Boolean(
-    workingCase.defendants && workingCase.defendants.length > 0,
-  )
+  const defendants = workingCase.defendants
+  const hasDefendants = isNonEmptyArray(defendants)
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
-      if (!workingCase.defendants || workingCase.defendants.length === 0) {
+      if (!isNonEmptyArray(defendants)) {
         return
       }
 
-      const promises = workingCase.defendants.map((defendant) =>
+      const promises = defendants.map((defendant) =>
         updateDefendant({
           caseId: workingCase.id,
           defendantId: defendant.id,
@@ -210,7 +210,7 @@ const IndictmentOverview = () => {
 
       router.push(`${destination}/${workingCase.id}`)
     },
-    [router, updateDefendant, workingCase.defendants, workingCase.id],
+    [defendants, router, updateDefendant, workingCase.id],
   )
 
   return (
