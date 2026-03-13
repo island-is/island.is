@@ -138,6 +138,19 @@ export const companyUser: MockUserProfileDto = {
   smsNotifications: true,
 }
 
+export const deceasedUser: MockUserProfileDto = {
+  name: 'deceasedUser',
+  nationalId: createNationalId('person'),
+  mobilePhoneNumber: '1234567',
+  email: 'deceased@email.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: true,
+}
+
 export const mockTemplateId = 'HNIPP.DEMO.ID'
 
 export const getMockHnippTemplate = ({
@@ -292,19 +305,6 @@ export class MockFeatureFlagService {
 
     return true
   }
-}
-
-export const deceasedUser: MockUserProfileDto = {
-  name: 'deceasedUser',
-  nationalId: createNationalId('person'),
-  mobilePhoneNumber: '1234567',
-  email: 'deceased@email.com',
-  emailVerified: true,
-  mobilePhoneNumberVerified: true,
-  documentNotifications: true,
-  emailNotifications: true,
-  isRestricted: false,
-  smsNotifications: true,
 }
 
 export class MockNationalRegistryV3ClientService {
