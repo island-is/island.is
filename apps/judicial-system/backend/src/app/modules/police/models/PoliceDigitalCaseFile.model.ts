@@ -12,7 +12,7 @@ export class PoliceDigitalCaseFile {
   policeCaseNumber!: string
 
   @ApiProperty({ type: String })
-  policeDigitalSystemRecordingId!: string
+  policeExternalVendorId!: string
 
   // This is the date the record was registered in the police digital software.
   // It can represent the actual recording date if the record was recorded directly with the digital software, but for uploaded

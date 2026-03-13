@@ -499,7 +499,7 @@ export class PoliceService {
           id: file.rvMalID.toString(),
           name: file.externalVendorFileName,
           policeCaseNumber: filesPerCaseNumber.malsnumer,
-          policeDigitalSystemRecordingId: file.externalVendorID,
+          policeExternalVendorId: file.externalVendorID,
           displayDate: file.registeredAt
             ? new Date(file.registeredAt)
             : undefined,

@@ -9,6 +9,7 @@ import {
   CaseModule,
   CourtModule,
   CriminalRecordModule,
+  PoliceModule,
   RepositoryModule,
   UserModule,
 } from '..'
@@ -16,11 +17,13 @@ import { FileController } from './file.controller'
 import { FileService } from './file.service'
 import { InternalFileController } from './internalFile.controller'
 import { LimitedAccessFileController } from './limitedAccessFile.controller'
+import { PoliceDigitalCaseFileService } from './policeDigitalCaseFile.service'
 
 @Module({
   imports: [
     CmsTranslationsModule,
     forwardRef(() => CriminalRecordModule),
+    forwardRef(() => PoliceModule),
     forwardRef(() => RepositoryModule),
     forwardRef(() => UserModule),
     forwardRef(() => CaseModule),
@@ -33,7 +36,7 @@ import { LimitedAccessFileController } from './limitedAccessFile.controller'
     InternalFileController,
     LimitedAccessFileController,
   ],
-  providers: [FileService],
-  exports: [FileService],
+  providers: [FileService, PoliceDigitalCaseFileService],
+  exports: [FileService, PoliceDigitalCaseFileService],
 })
 export class FileModule {}
