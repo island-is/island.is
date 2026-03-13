@@ -541,7 +541,7 @@ export class CardPaymentService {
     if (!response.ok) {
       const responseBody = await response.text()
 
-      this.logger.error(`${logPrefix}${errorMessage}`, {
+      this.logger.error(errorMessage, {
         statusText: response.statusText,
         responseBody,
       })
@@ -550,6 +550,12 @@ export class CardPaymentService {
     }
 
     const rawData = await response.json()
+
+    const successParsed = schema.safeParse(rawData)
+
+    if (successParsed.success) {
+      return successParsed.data
+    }
 
     const errorParsed = errorSchema.safeParse(rawData)
 
@@ -565,31 +571,23 @@ export class CardPaymentService {
         )
       }
       this.logger.error(`${logPrefix}Payment gateway error: ${errorMessage}`, {
-        paymentGatewayErrorCode: responseCode,
         responseCode,
         responseDescription,
+        timestamp: new Date().toISOString(),
       })
       throw new BadRequestException(mapToCardErrorCode(responseCode))
     }
 
-    const successParsed = schema.safeParse(rawData)
-
-    if (successParsed.success) {
-      return successParsed.data
-    }
-
-    // fallback to raw data if schema parsing fails to get the payment gateway error code
-    const rawResponseCode =
-      typeof rawData === 'object' &&
-      rawData !== null &&
-      'responseCode' in rawData
-        ? String((rawData as { responseCode: unknown }).responseCode)
-        : undefined
+    // if zod schema parsing fails, log the error
+    const raw = rawData as Record<string, unknown>
+    const responseCode = raw?.responseCode
+    const responseDescription = raw?.responseDescription
 
     this.logger.error(`${logPrefix}Failed to parse payment gateway response`, {
-      paymentGatewayErrorCode: rawResponseCode,
+      responseCode,
+      responseDescription,
+      timestamp: new Date().toISOString(),
       parseError: successParsed.error,
-      rawResponse: rawData,
     })
 
     throw new BadRequestException('Failed to parse payment gateway response')
