@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactNode, useContext, useEffect, useRef } from 'react'
+import { FC, PropsWithChildren, ReactNode, useContext, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -31,7 +31,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
-import { useCaseTableMembershipQuery } from '@island.is/judicial-system-web/src/utils/hooks/useCaseTableMembership/caseTableMembership.generated'
 
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
@@ -210,17 +209,6 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
 }) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-
-  const { data: caseTableMembershipData } = useCaseTableMembershipQuery({
-    variables: { caseId: workingCase?.id ?? '' },
-    skip: isLoading || notFound || !workingCase?.id,
-  })
-
-  useEffect(() => {
-    if (caseTableMembershipData?.caseTableMembership) {
-      console.log('[PageLayout] case table membership:', caseTableMembershipData.caseTableMembership)
-    }
-  }, [caseTableMembershipData])
 
   return isLoading ? (
     <Skeleton />
