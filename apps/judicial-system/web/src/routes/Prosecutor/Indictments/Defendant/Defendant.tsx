@@ -39,7 +39,6 @@ const Defendant = () => {
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (workingCase.id) {
-        // Defence in depth: do not navigate past Defendant step with 0 defendants (LÖKE/create flow)
         if (!workingCase.defendants || workingCase.defendants.length === 0) {
           return
         }
