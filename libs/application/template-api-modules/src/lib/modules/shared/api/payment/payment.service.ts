@@ -19,11 +19,15 @@ import { getConfigValue } from '../../shared.utils'
 import { ConfigService } from '@nestjs/config'
 import { uuid } from 'uuidv4'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { PaymentsApi } from '@island.is/clients/payments'
+import { FetchError } from '@island.is/clients/middlewares'
+import { PaymentServiceCode } from '@island.is/shared/constants'
 
 @Injectable()
 export class PaymentService extends BaseTemplateApiService {
   constructor(
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private paymentsApi: PaymentsApi,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly paymentModelService: PaymentModelService,
     @Inject(ConfigService)
@@ -236,7 +240,30 @@ export class PaymentService extends BaseTemplateApiService {
 
       if (requestId) {
         this.logger.info('Calling deleteCharge with requestId', requestId)
-        await this.chargeFjsV2ClientService.deleteCharge(requestId)
+        try {
+          await this.paymentsApi.refundControllerRefund({
+            refundPaymentInput: {
+              paymentFlowId: requestId,
+              reasonForRefund: 'Charge deleted',
+            },
+          })
+        } catch (error) {
+          let errorMessage = error.message
+          if (error instanceof FetchError && error.problem) {
+            errorMessage = error.problem?.detail
+          }
+          if (
+            errorMessage ===
+            PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded
+          ) {
+            // Not rethrowing so that the payment model still gets deleted
+            this.logger.warn(
+              `Failed to delete payment for application ${application.id}. Problem: ${errorMessage}. Error was not rethrown.`,
+            )
+          } else {
+            throw error
+          }
+        }
       } else {
         this.logger.warn('No requestId found, skipping deleteCharge')
       }

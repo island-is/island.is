@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -43,7 +43,6 @@ import {
 } from '../../components/utils'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
-import * as styles from './Overview.css'
 
 export const Overview = () => {
   const { user } = useContext(UserContext)
@@ -106,6 +105,54 @@ export const Overview = () => {
       originalReviewDecisions[defendant.id],
   )
 
+  const { verdictStatusAlerts, verdictTimelineCards } = useMemo(() => {
+    return (workingCase.defendants || []).reduce<{
+      verdictStatusAlerts: JSX.Element[]
+      verdictTimelineCards: JSX.Element[]
+    }>(
+      (acc, defendant) => {
+        const { verdict } = defendant
+
+        const isServiceRequired =
+          verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+
+        const isServiceNotApplicable =
+          verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+
+        const canDefendantAppealVerdict = !!(
+          verdict &&
+          !verdict.isDefaultJudgement &&
+          (isServiceNotApplicable ||
+            (isServiceRequired && !!verdict.serviceDate))
+        )
+
+        if (verdict) {
+          acc.verdictStatusAlerts.push(
+            <VerdictStatusAlert
+              key={`${defendant.id}_verdict_status_alert`}
+              verdict={verdict}
+              defendant={defendant}
+            />,
+          )
+        }
+
+        acc.verdictTimelineCards.push(
+          <VerdictTimelineCard
+            key={`${defendant.id}_verdict_timeline_card`}
+            defendant={defendant}
+            canDefendantAppealVerdict={canDefendantAppealVerdict}
+          />,
+        )
+
+        return acc
+      },
+      {
+        verdictStatusAlerts: [],
+        verdictTimelineCards: [],
+      },
+    )
+  }, [workingCase.defendants])
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -122,56 +169,23 @@ export const Overview = () => {
       <FormContentContainer>
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {workingCase.rulingModifiedHistory && (
-          <Box marginBottom={5}>
-            <AlertMessage
-              type="info"
-              title="Mál leiðrétt"
-              message={
-                <MarkdownWrapper
-                  markdown={workingCase.rulingModifiedHistory}
-                  textProps={{ variant: 'small' }}
-                />
-              }
-            />
-          </Box>
-        )}
         <div className={grid({ gap: 5, marginBottom: 10 })}>
-          {workingCase.defendants?.map((defendant) => {
-            const { verdict } = defendant
-
-            const isServiceRequired =
-              verdict?.serviceRequirement === ServiceRequirement.REQUIRED
-
-            const isServiceNotApplicable =
-              verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-
-            const canDefendantAppealVerdict = !!(
-              verdict &&
-              !verdict.isDefaultJudgement &&
-              (isServiceNotApplicable ||
-                (isServiceRequired && !!verdict.serviceDate))
-            )
-
-            return (
-              <Fragment key={defendant.id}>
-                <Box className={styles.container}>
-                  {verdict && (
-                    <VerdictStatusAlert
-                      verdict={verdict}
-                      defendant={defendant}
-                    />
-                  )}
-                  <Box component="section">
-                    <VerdictTimelineCard
-                      defendant={defendant}
-                      canDefendantAppealVerdict={canDefendantAppealVerdict}
-                    />
-                  </Box>
-                </Box>
-              </Fragment>
-            )
-          })}
+          <div className={grid({ gap: 2 })}>
+            {workingCase.rulingModifiedHistory && (
+              <AlertMessage
+                type="info"
+                title="Mál leiðrétt"
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.rulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            )}
+            {verdictStatusAlerts}
+          </div>
+          {verdictTimelineCards}
           <Box component="section">
             <InfoCardClosedIndictment displaySentToPrisonAdminDate={false} />
           </Box>

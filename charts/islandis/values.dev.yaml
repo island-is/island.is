@@ -687,7 +687,7 @@ application-system-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=1382 --enable-source-maps -r dd-trace/init'
     NOVA_SENDER_NAME: 'Island Dev'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
@@ -855,10 +855,10 @@ application-system-api:
   resources:
     limits:
       cpu: '600m'
-      memory: '1024Mi'
+      memory: '1536Mi'
     requests:
       cpu: '200m'
-      memory: '512Mi'
+      memory: '768Mi'
   secrets:
     ALTHINGI_OMBUDSMAN_XROAD_PASSWORD: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'
     ALTHINGI_OMBUDSMAN_XROAD_USERNAME: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME'
@@ -1285,8 +1285,9 @@ consultation-portal:
     NEXTAUTH_URL: 'https://beta.dev01.devland.is/samradsgatt/api/auth'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -1355,8 +1356,9 @@ contentful-apps:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     PUBLIC_API_URL: 'https://beta.dev01.devland.is'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -1419,8 +1421,9 @@ contentful-entry-tagger-service:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -2163,6 +2166,7 @@ payments:
     APP_EXTERNAL_BASEPATH: 'https://beta.dev01.devland.is'
     BASEPATH: '/greida'
     LOG_LEVEL: 'info'
+    NEXT_PUBLIC_ALLOW_APPLE_PAY: 'true'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2427,8 +2431,9 @@ search-indexer-service:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=3686 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -4151,7 +4156,9 @@ user-notification:
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
     EMAIL_FROM_ADDRESS: 'development@island.is'
+    EMAIL_QUEUE_NAME: 'user-notification-email'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
@@ -4162,12 +4169,16 @@ user-notification:
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
+    PUSH_DEAD_LETTER_QUEUE_NAME: 'user-notification-push-failure'
+    PUSH_QUEUE_NAME: 'user-notification-push'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BFF_LOGIN_URL: 'https://beta.dev01.devland.is/bff/login'
     SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
+    SMS_DEAD_LETTER_QUEUE_NAME: 'user-notification-sms-failure'
+    SMS_QUEUE_NAME: 'user-notification-sms'
     USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -4272,7 +4283,9 @@ user-notification-birthday-worker:
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
     EMAIL_FROM_ADDRESS: 'development@island.is'
+    EMAIL_QUEUE_NAME: 'user-notification-email'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
@@ -4283,12 +4296,16 @@ user-notification-birthday-worker:
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
+    PUSH_DEAD_LETTER_QUEUE_NAME: 'user-notification-push-failure'
+    PUSH_QUEUE_NAME: 'user-notification-push'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BFF_LOGIN_URL: 'https://beta.dev01.devland.is/bff/login'
     SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
+    SMS_DEAD_LETTER_QUEUE_NAME: 'user-notification-sms-failure'
+    SMS_QUEUE_NAME: 'user-notification-sms'
     USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -4470,7 +4487,9 @@ user-notification-worker:
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
     EMAIL_FROM_ADDRESS: 'development@island.is'
+    EMAIL_QUEUE_NAME: 'user-notification-email'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
@@ -4482,12 +4501,16 @@ user-notification-worker:
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
+    PUSH_DEAD_LETTER_QUEUE_NAME: 'user-notification-push-failure'
+    PUSH_QUEUE_NAME: 'user-notification-push'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BFF_LOGIN_URL: 'https://beta.dev01.devland.is/bff/login'
     SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
+    SMS_DEAD_LETTER_QUEUE_NAME: 'user-notification-sms-failure'
+    SMS_QUEUE_NAME: 'user-notification-sms'
     USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
