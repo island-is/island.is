@@ -117,9 +117,6 @@ export class CaseTableService {
     private readonly caseRepositoryService: CaseRepositoryService,
   ) {}
 
-  /**
-   * Returns which case table types (for the given user's role) the case belongs to.
-   */
   async getCaseTableMembership(
     caseId: string,
     user: TUser,
@@ -137,10 +134,6 @@ export class CaseTableService {
     return map.get(caseId) ?? []
   }
 
-  /**
-   * Returns which case table types (for the given user's role) each case belongs to.
-   * Runs one query per user-visible table type in parallel; efficient for small caseId lists (e.g. search results or single case).
-   */
   async getCaseTableTypesForCases(
     caseIds: string[],
     user: TUser,

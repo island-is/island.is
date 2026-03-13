@@ -316,10 +316,7 @@ describe('CaseTableService', () => {
       )
 
       expect(result.get('case-1')).toEqual(
-        expect.arrayContaining([
-          expect.any(String),
-          expect.any(String),
-        ]),
+        expect.arrayContaining([expect.any(String), expect.any(String)]),
       )
       expect(result.get('case-2')).toEqual([expect.any(String)])
     })
@@ -340,7 +337,9 @@ describe('CaseTableService', () => {
 
     it('returns case table types when user has access', async () => {
       mockFindOne.mockResolvedValue({ id: 'case-1' })
-      mockFindAll.mockResolvedValueOnce([{ id: 'case-1' }]).mockResolvedValue([])
+      mockFindAll
+        .mockResolvedValueOnce([{ id: 'case-1' }])
+        .mockResolvedValue([])
 
       const result = await service.getCaseTableMembership(
         'case-1',
