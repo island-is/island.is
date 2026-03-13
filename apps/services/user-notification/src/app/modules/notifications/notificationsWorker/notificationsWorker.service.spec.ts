@@ -14,10 +14,15 @@ import {
   CompanyExtendedInfo,
   CompanyRegistryClientService,
 } from '@island.is/clients/rsk/company-registry'
-import { UserProfileDto, V2UsersApi } from '@island.is/clients/user-profile'
+import {
+  ActorProfileDto,
+  UserProfileDto,
+  V2UsersApi,
+} from '@island.is/clients/user-profile'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { EmailService } from '@island.is/email-service'
+import { SmsService } from '@island.is/nova-sms'
 import { QueueService, getQueueServiceToken } from '@island.is/message-queue'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { testServer, truncate, useDatabase } from '@island.is/testing/nest'
@@ -28,6 +33,10 @@ import { AppModule } from '../../../app.module'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { Notification } from '../notification.model'
 import { ActorNotification } from '../actor-notification.model'
+import {
+  NotificationDelivery,
+  NotificationChannel,
+} from '../notification-delivery.model'
 import { NotificationDispatchService } from '../notificationDispatch.service'
 import { NotificationsService } from '../notifications.service'
 import { InternalCreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
@@ -53,6 +62,9 @@ import {
   userWithSendToDelegationsFeatureFlagDisabled,
 } from './mocks'
 import { NotificationsWorkerService } from './notificationsWorker.service'
+import { EmailWorkerService, EmailQueueMessage } from './emailWorker.service'
+import { SmsWorkerService, SmsQueueMessage } from './smsWorker.service'
+import { PushWorkerService, PushQueueMessage } from './pushWorker.service'
 
 const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
@@ -95,6 +107,8 @@ describe('NotificationsWorkerService', () => {
   let userProfileApi: V2UsersApi
   let nationalRegistryService: NationalRegistryV3ClientService
   let companyRegistryService: CompanyRegistryClientService
+  let smsService: SmsService
+  let notificationDeliveryModel: typeof NotificationDelivery
 
   beforeAll(async () => {
     app = await testServer({
@@ -126,13 +140,22 @@ describe('NotificationsWorkerService', () => {
     queue = app.get(getQueueServiceToken('notifications'))
     notificationModel = app.get(getModelToken(Notification))
     actorNotificationModel = app.get(getModelToken(ActorNotification))
+    notificationDeliveryModel = app.get(getModelToken(NotificationDelivery))
     notificationsService = app.get(NotificationsService)
     userProfileApi = app.get(V2UsersApi)
     nationalRegistryService = app.get(NationalRegistryV3ClientService)
     companyRegistryService = app.get(CompanyRegistryClientService)
+    smsService = app.get(SmsService)
 
     notificationsWorkerService = await app.resolve(NotificationsWorkerService)
+    const emailWorkerService = await app.resolve(EmailWorkerService)
+    const smsWorkerService = await app.resolve(SmsWorkerService)
+    const pushWorkerService = await app.resolve(PushWorkerService)
+
     notificationsWorkerService.run()
+    emailWorkerService.run()
+    smsWorkerService.run()
+    pushWorkerService.run()
   })
 
   beforeEach(async () => {
@@ -153,9 +176,12 @@ describe('NotificationsWorkerService', () => {
       .mockReturnValue(Promise.resolve())
 
     jest
+      .spyOn(smsService, 'sendSms')
+      .mockReturnValue(Promise.resolve({ Code: 1, Message: 'OK' }))
+
+    jest
       .spyOn(notificationsService, 'getTemplate')
       .mockReturnValue(Promise.resolve(getMockHnippTemplate({})))
-    jest.spyOn(notificationsWorkerService, 'createEmail')
 
     jest.spyOn(nationalRegistryService, 'getName')
 
@@ -249,7 +275,7 @@ describe('NotificationsWorkerService', () => {
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         nationalId: userWithDelegations.nationalId,
-        notificationId: recipientMessage?.id,
+        userNotificationId: recipientMessage?.id,
       }),
     )
 
@@ -403,7 +429,6 @@ describe('NotificationsWorkerService', () => {
   it('should not send email or push notification if no profile is found for recipient', async () => {
     await addToQueue('1234567890')
 
-    expect(notificationsWorkerService.createEmail).not.toHaveBeenCalled()
     expect(emailService.sendEmail).not.toHaveBeenCalled()
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
   })
@@ -433,7 +458,6 @@ describe('NotificationsWorkerService', () => {
   it('should not send email if user has no email registered', async () => {
     await addToQueue(userWithNoEmail.nationalId)
 
-    expect(notificationsWorkerService.createEmail).not.toHaveBeenCalled()
     expect(emailService.sendEmail).not.toHaveBeenCalled()
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
   })
@@ -455,7 +479,10 @@ describe('NotificationsWorkerService', () => {
   it('should call national registry for persons', async () => {
     await addToQueue(userWithNoDelegations.nationalId)
 
-    expect(nationalRegistryService.getName).toHaveBeenCalledTimes(1)
+    expect(nationalRegistryService.getName).toHaveBeenCalled()
+    expect(nationalRegistryService.getName).toHaveBeenCalledWith(
+      userWithNoDelegations.nationalId,
+    )
     expect(companyRegistryService.getCompany).not.toHaveBeenCalled()
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).toHaveBeenCalledTimes(1)
@@ -465,7 +492,10 @@ describe('NotificationsWorkerService', () => {
     await addToQueue(companyUser.nationalId)
 
     expect(nationalRegistryService.getName).not.toHaveBeenCalled()
-    expect(companyRegistryService.getCompany).toHaveBeenCalledTimes(1)
+    expect(companyRegistryService.getCompany).toHaveBeenCalled()
+    expect(companyRegistryService.getCompany).toHaveBeenCalledWith(
+      companyUser.nationalId,
+    )
     expect(emailService.sendEmail).toHaveBeenCalledTimes(1)
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
   })
@@ -806,6 +836,7 @@ describe('NotificationsWorkerService', () => {
                   toNationalId: actorWithDocumentsScope,
                   subjectId: null,
                   type: AuthDelegationType.ProcurationHolder,
+                  customDelegationScopes: null,
                 },
               ])
             } else if (scope === '@island.is/other-scope') {
@@ -815,6 +846,7 @@ describe('NotificationsWorkerService', () => {
                   toNationalId: actorWithOtherScope,
                   subjectId: null,
                   type: AuthDelegationType.ProcurationHolder,
+                  customDelegationScopes: null,
                 },
               ])
             }
@@ -823,12 +855,12 @@ describe('NotificationsWorkerService', () => {
           }
 
           // For other users, delegate to original mock implementation
-          // This calls the MockDelegationsService
           const mockService = new MockDelegationsService()
-          return mockService.delegationsControllerGetDelegationRecords({
+          const result = mockService.delegationsControllerGetDelegationRecords({
             xQueryNationalId,
             scopes,
           })
+          return createDelegationResponse(result.data)
         })
 
       // Mock user profile for test user
@@ -845,7 +877,7 @@ describe('NotificationsWorkerService', () => {
         )
 
       // Mock actor profiles
-      jest
+      const actorProfileSpy = jest
         .spyOn(userProfileApi, 'userProfileControllerGetActorProfile')
         .mockImplementation(async ({ xParamToNationalId }) => {
           if (
@@ -853,15 +885,14 @@ describe('NotificationsWorkerService', () => {
             xParamToNationalId === actorWithOtherScope
           ) {
             return {
-              nationalId: xParamToNationalId,
+              fromNationalId: testUserNationalId,
               email: `${xParamToNationalId}@test.com`,
               emailVerified: true,
               documentNotifications: true,
               emailNotifications: true,
-              locale: 'is',
-            } as UserProfileDto
+            } as ActorProfileDto
           }
-          return undefined
+          return undefined as unknown as ActorProfileDto
         })
 
       // Spy on queue.add to verify actor notifications
@@ -937,11 +968,29 @@ describe('NotificationsWorkerService', () => {
       // Clean up
       getDelegationRecordsSpy.mockRestore()
       queueAddSpy.mockRestore()
+      actorProfileSpy.mockRestore()
     })
 
     it('should create both user notification and actor notification and send email only to actor when onBehalfOf and rootMessageId are provided', async () => {
       // Clear email calls to isolate this test
       jest.clearAllMocks()
+
+      // Re-setup actor profile mock with default implementation, since test 6 sets a custom
+      // mockImplementation that may persist on the original jest.fn() after mockRestore()
+      jest
+        .spyOn(userProfileApi, 'userProfileControllerGetActorProfile')
+        .mockImplementation(({ xParamToNationalId }) => {
+          const profile = userProfiles.find(
+            (u) => u.nationalId === xParamToNationalId,
+          )
+          return Promise.resolve({
+            fromNationalId: profile?.nationalId ?? '',
+            emailNotifications: profile?.emailNotifications ?? false,
+            email: profile?.email,
+            emailVerified: profile?.emailVerified ?? false,
+            documentNotifications: profile?.documentNotifications ?? false,
+          } as ActorProfileDto)
+        })
 
       // First, create the root user notification (this would have been created by the original message)
       const rootUserNotification = await notificationModel.create({
@@ -1037,6 +1086,161 @@ describe('NotificationsWorkerService', () => {
         (call) => call[0].nationalId === userWithNoDelegations.nationalId,
       )
       expect(actorPushNotificationCall).toBeUndefined()
+    })
+  })
+
+  describe('Sub-queue workers', () => {
+    let emailSubQueue: QueueService
+    let smsSubQueue: QueueService
+    let pushSubQueue: QueueService
+
+    beforeAll(() => {
+      emailSubQueue = app.get(getQueueServiceToken('notifications-email'))
+      smsSubQueue = app.get(getQueueServiceToken('notifications-sms'))
+      pushSubQueue = app.get(getQueueServiceToken('notifications-push'))
+    })
+
+    it('should write an email delivery record to the database after sending email', async () => {
+      const messageId = randomUUID()
+
+      const notification = await notificationModel.create({
+        messageId,
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [],
+        scope: '@island.is/documents',
+      })
+
+      await emailSubQueue.add({
+        messageId,
+        userNotificationId: notification.id,
+        recipientEmail: userWithNoDelegations.email ?? '',
+        fullName: userWithNoDelegations.name,
+        isEnglish: false,
+        formattedTemplate: getMockHnippTemplate({}),
+      } as EmailQueueMessage)
+
+      await wait(2)
+
+      const record = await notificationDeliveryModel.findOne({
+        where: {
+          userNotificationId: notification.id,
+          channel: NotificationChannel.Email,
+        },
+      })
+      expect(record).not.toBeNull()
+      expect(record?.channel).toBe(NotificationChannel.Email)
+      expect(record?.userNotificationId).toBe(notification.id)
+      expect(record?.sentTo).toBe(userWithNoDelegations.email)
+      expect(emailService.sendEmail).toHaveBeenCalled()
+    })
+
+    it('should write an SMS delivery record to the database after sending SMS', async () => {
+      const messageId = randomUUID()
+
+      const notification = await notificationModel.create({
+        messageId,
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [],
+        scope: '@island.is/documents',
+      })
+
+      await smsSubQueue.add({
+        messageId,
+        userNotificationId: notification.id,
+        mobilePhoneNumber: userWithNoDelegations.mobilePhoneNumber ?? '',
+        smsContent: 'Test SMS content',
+      } as SmsQueueMessage)
+
+      await wait(2)
+
+      const record = await notificationDeliveryModel.findOne({
+        where: {
+          userNotificationId: notification.id,
+          channel: NotificationChannel.Sms,
+        },
+      })
+      expect(record).not.toBeNull()
+      expect(record?.channel).toBe(NotificationChannel.Sms)
+      expect(record?.userNotificationId).toBe(notification.id)
+      expect(record?.sentTo).toBe(userWithNoDelegations.mobilePhoneNumber)
+      expect(smsService.sendSms).toHaveBeenCalledWith(
+        userWithNoDelegations.mobilePhoneNumber,
+        'Test SMS content',
+      )
+    })
+
+    it('should call sendPushNotification with correct args including userNotificationId', async () => {
+      const messageId = randomUUID()
+
+      const notification = await notificationModel.create({
+        messageId,
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [],
+        scope: '@island.is/documents',
+      })
+
+      await pushSubQueue.add({
+        messageId,
+        userNotificationId: notification.id,
+        nationalId: userWithNoDelegations.nationalId,
+        notification: {
+          title: 'Test title',
+          externalBody: 'Test body',
+          clickActionUrl: 'https://island.is',
+        },
+      } as PushQueueMessage)
+
+      await wait(2)
+
+      expect(notificationDispatch.sendPushNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          nationalId: userWithNoDelegations.nationalId,
+          userNotificationId: notification.id,
+          messageId,
+        }),
+      )
+    })
+
+    it('should still send the notification even when the delivery record DB write fails', async () => {
+      jest
+        .spyOn(notificationDeliveryModel, 'create')
+        .mockRejectedValueOnce(new Error('DB write error'))
+
+      const messageId = randomUUID()
+
+      const notification = await notificationModel.create({
+        messageId,
+        recipient: userWithNoDelegations.nationalId,
+        templateId: mockTemplateId,
+        args: [],
+        scope: '@island.is/documents',
+      })
+
+      await emailSubQueue.add({
+        messageId,
+        userNotificationId: notification.id,
+        recipientEmail: userWithNoDelegations.email ?? '',
+        fullName: userWithNoDelegations.name,
+        isEnglish: false,
+        formattedTemplate: getMockHnippTemplate({}),
+      } as EmailQueueMessage)
+
+      await wait(2)
+
+      // The email was still sent despite the DB failure
+      expect(emailService.sendEmail).toHaveBeenCalled()
+
+      // No delivery record was written due to the DB error
+      const record = await notificationDeliveryModel.findOne({
+        where: {
+          userNotificationId: notification.id,
+          channel: NotificationChannel.Email,
+        },
+      })
+      expect(record).toBeNull()
     })
   })
 })

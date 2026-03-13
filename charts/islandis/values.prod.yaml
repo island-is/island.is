@@ -674,7 +674,7 @@ application-system-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=1382 --enable-source-maps -r dd-trace/init'
     NOVA_SENDER_NAME: 'Island.is'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
@@ -842,10 +842,10 @@ application-system-api:
   resources:
     limits:
       cpu: '600m'
-      memory: '1024Mi'
+      memory: '1536Mi'
     requests:
       cpu: '200m'
-      memory: '512Mi'
+      memory: '768Mi'
   secrets:
     ALTHINGI_OMBUDSMAN_XROAD_PASSWORD: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'
     ALTHINGI_OMBUDSMAN_XROAD_USERNAME: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME'
@@ -1275,8 +1275,9 @@ consultation-portal:
     NEXTAUTH_URL: 'https://island.is/samradsgatt/api/auth'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -1348,8 +1349,9 @@ contentful-apps:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     PUBLIC_API_URL: 'https://island.is'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -1412,8 +1414,9 @@ contentful-entry-tagger-service:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -2085,6 +2088,7 @@ payments:
     APP_EXTERNAL_BASEPATH: 'https://island.is'
     BASEPATH: '/greida'
     LOG_LEVEL: 'info'
+    NEXT_PUBLIC_ALLOW_APPLE_PAY: 'true'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
@@ -2354,8 +2358,9 @@ search-indexer-service:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=3686 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -3345,6 +3350,97 @@ services-payments:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-payments'
     create: true
     name: 'services-payments'
+services-payments-worker:
+  args:
+    - 'main.cjs'
+    - '--job'
+    - 'worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    CODE_OWNER: 'aranja'
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'services_payments'
+    DB_REPLICAS_HOST: 'postgres-applications.internal'
+    DB_USER: 'services_payments'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/payments'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    PAYMENTS_APPLE_PAY_DISPLAY_NAME: 'island.is'
+    PAYMENTS_APPLE_PAY_DOMAIN: 'island.is'
+    PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5'
+    PAYMENTS_WEB_URL: 'https://island.is/greida'
+    SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    XROAD_BASE_PATH: 'http://securityserver.island.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
+    XROAD_CHARGE_FJS_V2_PATH: 'IS/GOV/5402697509/FJS-Public/chargeFJS_v2'
+    XROAD_CLIENT_ID: 'IS/GOV/5501692829/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
+  grantNamespaces:
+    - 'application-system'
+    - 'nginx-ingress-internal'
+    - 'islandis'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 10
+        min: 3
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
+  namespace: 'services-payments'
+  podDisruptionBudget:
+    minAvailable: '50%'
+    unhealthyPodEvictionPolicy: 'IfHealthyBudget'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 3
+    max: 10
+    min: 3
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '256Mi'
+    requests:
+      cpu: '100m'
+      memory: '128Mi'
+  schedule: '*/5 * * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/services-payments/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-payments/IDENTITY_SERVER_CLIENT_SECRET'
+    PAYMENTS_JWT_SIGNING_KEY_ID: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_KEY_ID'
+    PAYMENTS_JWT_SIGNING_PRIVATE_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PRIVATE_KEY'
+    PAYMENTS_JWT_SIGNING_PUBLIC_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PUBLIC_KEY'
+    PAYMENTS_PREVIOUS_KEY_ID: '/k8s/services-payments/PAYMENTS_PREVIOUS_KEY_ID'
+    PAYMENTS_PREVIOUS_PUBLIC_KEY: '/k8s/services-payments/PAYMENTS_PREVIOUS_PUBLIC_KEY'
+    PAYMENTS_TOKEN_SIGNING_ALGORITHM: '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_ALGORITHM'
+    PAYMENTS_TOKEN_SIGNING_SECRET: '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_SECRET'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-payments'
+    create: true
+    name: 'services-payments'
 services-sessions:
   enabled: true
   env:
@@ -3999,7 +4095,9 @@ user-notification:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
     EMAIL_FROM_ADDRESS: 'noreply@island.is'
+    EMAIL_QUEUE_NAME: 'user-notification-email'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
@@ -4010,12 +4108,16 @@ user-notification:
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
+    PUSH_DEAD_LETTER_QUEUE_NAME: 'user-notification-push-failure'
+    PUSH_QUEUE_NAME: 'user-notification-push'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BFF_LOGIN_URL: 'https://island.is/bff/login'
     SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
+    SMS_DEAD_LETTER_QUEUE_NAME: 'user-notification-sms-failure'
+    SMS_QUEUE_NAME: 'user-notification-sms'
     USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
@@ -4120,7 +4222,9 @@ user-notification-birthday-worker:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
     EMAIL_FROM_ADDRESS: 'noreply@island.is'
+    EMAIL_QUEUE_NAME: 'user-notification-email'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     MAIN_QUEUE_NAME: 'user-notification'
@@ -4131,12 +4235,16 @@ user-notification-birthday-worker:
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
+    PUSH_DEAD_LETTER_QUEUE_NAME: 'user-notification-push-failure'
+    PUSH_QUEUE_NAME: 'user-notification-push'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BFF_LOGIN_URL: 'https://island.is/bff/login'
     SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
+    SMS_DEAD_LETTER_QUEUE_NAME: 'user-notification-sms-failure'
+    SMS_QUEUE_NAME: 'user-notification-sms'
     USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
@@ -4318,7 +4426,9 @@ user-notification-worker:
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    EMAIL_DEAD_LETTER_QUEUE_NAME: 'user-notification-email-failure'
     EMAIL_FROM_ADDRESS: 'noreply@island.is'
+    EMAIL_QUEUE_NAME: 'user-notification-email'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
@@ -4330,12 +4440,16 @@ user-notification-worker:
     NATIONAL_REGISTRY_B2C_PATH: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
+    PUSH_DEAD_LETTER_QUEUE_NAME: 'user-notification-push-failure'
+    PUSH_QUEUE_NAME: 'user-notification-push'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_PORTAL_BFF_LOGIN_URL: 'https://island.is/bff/login'
     SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur'
+    SMS_DEAD_LETTER_QUEUE_NAME: 'user-notification-sms-failure'
+    SMS_QUEUE_NAME: 'user-notification-sms'
     USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'

@@ -103,7 +103,7 @@ describe('answerValidators', () => {
   })
 
   describe('requestRights', () => {
-    it('should return error if not using all "common" days from multipleBirths and request more days', () => {
+    it('should return error if multipleBirthsRequestDays exceeds maximum', () => {
       const newAnswer = {
         isRequestingRights: YES,
         requestDays: 14,
@@ -111,7 +111,7 @@ describe('answerValidators', () => {
 
       const appAnswers = {
         ...application.answers,
-        multipleBirthsRequestDays: 30,
+        multipleBirthsRequestDays: 200,
         multipleBirths: {
           hasMultipleBirths: YES,
           multipleBirths: 2,
@@ -130,6 +130,31 @@ describe('answerValidators', () => {
         path: 'transferRights',
         values: undefined,
       })
+    })
+
+    it('should not return error if multipleBirthsRequestDays is below maximum (backwards-compatible)', () => {
+      const newAnswer = {
+        isRequestingRights: YES,
+        requestDays: 14,
+      }
+
+      const appAnswers = {
+        ...application.answers,
+        multipleBirthsRequestDays: 90,
+        multipleBirths: {
+          hasMultipleBirths: YES,
+          multipleBirths: 2,
+        },
+      }
+
+      const newApplication = {
+        ...application,
+        answers: appAnswers,
+      }
+
+      expect(
+        answerValidators['requestRights'](newAnswer, newApplication),
+      ).toStrictEqual(undefined)
     })
 
     it('should return not error if using all "common" days from multipleBirths and request more days', () => {

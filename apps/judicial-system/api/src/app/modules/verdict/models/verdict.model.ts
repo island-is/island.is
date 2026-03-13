@@ -67,4 +67,7 @@ export class Verdict {
 
   @Field(() => Boolean, { nullable: true })
   isAcquittedByPublicProsecutionOffice?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  defendantHasRequestedAppeal?: boolean
 }
