@@ -111,7 +111,7 @@ export const CardVerificationSuccessSchema = PaymentGatewaySuccessSchema.extend(
     verificationFields: z.array(FieldSchema),
     additionalFields: z.array(FieldSchema),
     scriptPath: z.string().optional(),
-    cardInformation: CardInformationSchema,
+    cardInformation: CardInformationSchema.optional(),
     threeDSMessageVersion: z.string().optional(),
   },
 )

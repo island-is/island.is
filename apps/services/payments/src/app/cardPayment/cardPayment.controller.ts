@@ -98,8 +98,10 @@ export class CardPaymentController {
         message: `Card verification started`,
       })
 
-      // All required data to build the 3DS screen
-      return { ...verification, correlationId: verification.correlationID }
+      return {
+        ...verification,
+        correlationId: verification.correlationID,
+      } as VerifyCardResponse
     } catch (e) {
       try {
         await this.paymentFlowService.logPaymentFlowUpdate({
