@@ -121,10 +121,7 @@ export class CardPaymentService {
       errorMessage: `Failed to verify card (${paymentFlowId})`,
     })
 
-    if (
-      !data.cardInformation?.cardScheme ||
-      !data.cardInformation?.cardUsage
-    ) {
+    if (!data.cardInformation?.cardScheme || !data.cardInformation?.cardUsage) {
       throw new BadRequestException(CardErrorCode.VerificationFailed)
     }
 
@@ -554,7 +551,6 @@ export class CardPaymentService {
 
     const rawData = await response.json()
 
-    // Try error schema first so gateway errors are surfaced instead of parse errors
     const errorParsed = errorSchema.safeParse(rawData)
 
     if (errorParsed.success) {
@@ -569,6 +565,7 @@ export class CardPaymentService {
         )
       }
       this.logger.error(`${logPrefix}Payment gateway error: ${errorMessage}`, {
+        paymentGatewayErrorCode: responseCode,
         responseCode,
         responseDescription,
       })
@@ -581,8 +578,18 @@ export class CardPaymentService {
       return successParsed.data
     }
 
+    // fallback to raw data if schema parsing fails to get the payment gateway error code
+    const rawResponseCode =
+      typeof rawData === 'object' &&
+      rawData !== null &&
+      'responseCode' in rawData
+        ? String((rawData as { responseCode: unknown }).responseCode)
+        : undefined
+
     this.logger.error(`${logPrefix}Failed to parse payment gateway response`, {
-      error: successParsed.error,
+      paymentGatewayErrorCode: rawResponseCode,
+      parseError: successParsed.error,
+      rawResponse: rawData,
     })
 
     throw new BadRequestException('Failed to parse payment gateway response')
