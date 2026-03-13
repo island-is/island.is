@@ -1,6 +1,11 @@
 import { Transaction } from 'sequelize'
 import { v4 as uuid } from 'uuid'
 
+import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
+
 import { createTestingCourtSessionModule } from '../createTestingCourtSessionModule'
 
 import {
@@ -8,6 +13,11 @@ import {
   CourtSessionRepositoryService,
 } from '../../../repository'
 import { UpdateCourtSessionDto } from '../../dto/updateCourtSession.dto'
+
+jest.mock('@island.is/judicial-system/message', () => ({
+  ...jest.requireActual('@island.is/judicial-system/message'),
+  addMessagesToQueue: jest.fn(),
+}))
 
 interface Then {
   result: CourtSession | null
@@ -42,6 +52,8 @@ describe('CourtSessionController - Update', () => {
     )
 
     mockCourtSessionRepositoryService = courtSessionRepositoryService
+    const mockFindById = mockCourtSessionRepositoryService.findById as jest.Mock
+    mockFindById.mockResolvedValue({ isConfirmed: undefined })
     const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Failed to updaet court session'))
 
@@ -64,6 +76,10 @@ describe('CourtSessionController - Update', () => {
 
       return then
     }
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
   })
 
   describe('court session updated', () => {
@@ -103,6 +119,70 @@ describe('CourtSessionController - Update', () => {
     it('should throw Error', () => {
       expect(then.error).toBeInstanceOf(Error)
       expect(then.error.message).toBe('Failed to updaet court session')
+    })
+  })
+
+  describe('court session is confirmed for the first time', () => {
+    const confirmationUpdate = {
+      ...courtSessionToUpdate,
+      isConfirmed: true,
+    }
+
+    beforeEach(async () => {
+      const mockFindById =
+        mockCourtSessionRepositoryService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce({ isConfirmed: undefined })
+
+      const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce({ id: courtSessionId, caseId })
+
+      await givenWhenThen(caseId, courtSessionId, confirmationUpdate)
+    })
+
+    it('should add a working document delivery message to the queue', () => {
+      expect(addMessagesToQueue).toHaveBeenCalledWith({
+        type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
+        caseId,
+      })
+    })
+  })
+
+  describe('court session was already confirmed', () => {
+    const confirmationUpdate = {
+      ...courtSessionToUpdate,
+      isConfirmed: true,
+    }
+
+    beforeEach(async () => {
+      const mockFindById =
+        mockCourtSessionRepositoryService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce({ isConfirmed: true })
+
+      const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce({ id: courtSessionId, caseId })
+
+      await givenWhenThen(caseId, courtSessionId, confirmationUpdate)
+    })
+
+    it('should not add a message to the queue', () => {
+      expect(addMessagesToQueue).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('court session update does not include confirmation', () => {
+    beforeEach(async () => {
+      const mockFindById =
+        mockCourtSessionRepositoryService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce({ isConfirmed: undefined })
+
+      const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce({ id: courtSessionId, caseId })
+
+      await givenWhenThen(caseId, courtSessionId, courtSessionToUpdate)
+    })
+
+    it('should not add a message to the queue', () => {
+      expect(addMessagesToQueue).not.toHaveBeenCalled()
     })
   })
 })
