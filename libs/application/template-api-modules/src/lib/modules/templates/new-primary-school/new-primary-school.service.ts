@@ -308,4 +308,18 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
       getSlugFromType(application.typeId) as string
     }/${application.id}` as string
   }
+
+  async getIsApplicationBlocked({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { childNationalId } = getApplicationAnswers(application.answers)
+
+    if (!childNationalId) return undefined
+
+    return await this.friggClientService.getIsApplicationBlocked(
+      auth,
+      childNationalId,
+    )
+  }
 }

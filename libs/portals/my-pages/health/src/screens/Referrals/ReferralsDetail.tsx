@@ -11,6 +11,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { useGetReferralsDetailQuery } from './Referrals.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 type UseParams = {
   id: string
@@ -20,6 +21,7 @@ const ReferralsDetail: React.FC = () => {
   useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
+  useHealthPlausibleSwap()
 
   const { data, loading, error } = useGetReferralsDetailQuery({
     variables: { input: { id }, locale: lang },
