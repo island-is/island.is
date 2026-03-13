@@ -157,7 +157,6 @@ export class SyslumennResolver {
 
   @Directive(cacheControlDirective())
   @Query(() => RegistryPerson)
-  @BypassAuth()
   syslumennGetRegistryPerson(
     @Args('input') input: GetRegistryPersonInput,
   ): Promise<RegistryPerson> {
