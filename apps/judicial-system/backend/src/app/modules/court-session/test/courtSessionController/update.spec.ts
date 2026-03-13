@@ -147,6 +147,31 @@ describe('CourtSessionController - Update', () => {
     })
   })
 
+  describe('court session is updated', () => {
+    const confirmationUpdate = {
+      ...courtSessionToUpdate,
+      isConfirmed: true,
+    }
+
+    beforeEach(async () => {
+      const mockFindById =
+        mockCourtSessionRepositoryService.findById as jest.Mock
+      mockFindById.mockResolvedValueOnce({ isConfirmed: false })
+
+      const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce({ id: courtSessionId, caseId })
+
+      await givenWhenThen(caseId, courtSessionId, confirmationUpdate)
+    })
+
+    it('should add a working document delivery message to the queue', () => {
+      expect(addMessagesToQueue).toHaveBeenCalledWith({
+        type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
+        caseId,
+      })
+    })
+  })
+
   describe('court session was already confirmed', () => {
     const confirmationUpdate = {
       ...courtSessionToUpdate,

@@ -133,7 +133,7 @@ export class CourtSessionService {
     // the first time and not if it's being updated after already being confirmed
     if (
       existingCourtSession &&
-      existingCourtSession.isConfirmed === undefined &&
+      !existingCourtSession.isConfirmed &&
       update.isConfirmed === true
     ) {
       this.addMessagesForConfirmedCourtRecordToQueue(caseId)
