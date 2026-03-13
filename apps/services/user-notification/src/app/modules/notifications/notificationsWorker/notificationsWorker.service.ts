@@ -38,6 +38,7 @@ import { mapToLocale, SmsDelivery } from '../utils'
 import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
+import { DECEASED_STATUS } from './helpers'
 
 const getOnBehalfOfLabel = (
   onBehalfOf: string,
@@ -726,7 +727,7 @@ export class NotificationsWorkerService {
     try {
       const individual =
         await this.nationalRegistryService.getAllDataIndividual(nationalId)
-      return individual?.afdrif === 'LÉST'
+      return individual?.afdrif === DECEASED_STATUS
     } catch (error) {
       this.logger.warn(
         'Failed to check deceased status from national registry, proceeding with notification',

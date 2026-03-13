@@ -10,6 +10,7 @@ import { createNationalId } from '@island.is/testing/fixtures'
 
 import { UserNotificationsConfig } from '../../../../config'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
+import { DECEASED_STATUS } from './helpers'
 
 import type { User } from '@island.is/auth-nest-tools'
 import type { ConfigType } from '@island.is/nest/config'
@@ -319,7 +320,7 @@ export class MockNationalRegistryV3ClientService {
 
   getAllDataIndividual(nationalId: string) {
     if (nationalId === deceasedUser.nationalId) {
-      return Promise.resolve({ afdrif: 'LÉST' })
+      return Promise.resolve({ afdrif: DECEASED_STATUS })
     }
     return Promise.resolve(null)
   }
