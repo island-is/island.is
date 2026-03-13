@@ -282,11 +282,14 @@ export class WorkMachinesClientService {
     return {
       machines:
         result?.value?.map((machine) => {
+          const [type, subType] = machine.type?.split('-') || ''
+
           return {
             id: machine.id,
             ownerNumber: machine?.ownerNumber || '',
             licensePlateNumber: machine?.licensePlateNumber || '',
-            type: machine.type || '',
+            type: type,
+            subType: subType,
             category: machine?.category || '',
             registrationNumber: machine?.registrationNumber || '',
             status: machine?.status || '',
@@ -310,14 +313,14 @@ export class WorkMachinesClientService {
       ...parameters,
     })
 
-    const [type, ...subType] = result.type?.split(' ') || ''
+    const [type, subType] = result.type?.split('-') || ''
 
     return {
       id: result.id,
-      ownerNumber: result?.ownerNumber || '',
+      owner: { number: result?.ownerNumber || '', name: result?.owner || '' },
       licensePlateNumber: result?.licensePlateNumber || '',
       type: type,
-      subType: subType.join(' '),
+      subType: subType,
       category: result?.category || '',
       registrationNumber: result?.registrationNumber || '',
       status: result?.status || '',
