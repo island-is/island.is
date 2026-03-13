@@ -83,6 +83,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   isClearable = false,
   clearLabel,
   displaySelectInput = false,
+  detachedCalendar = false,
 }) => {
   const isValidDate = (d: unknown): d is Date =>
     d instanceof Date && !isNaN((d as Date).getTime())
@@ -95,11 +96,13 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
     normalizeDate(range ? selectedRange?.endDate : null) ?? null,
   )
   const datePickerRef = useRef<ReactDatePicker>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
   const [isOpen, setIsOpen] = useState(false)
+  const [shouldAlignEnd, setShouldAlignEnd] = useState(false)
 
   const currentLanguage = languageConfig[locale]
   const errorId = `${id}-error`
@@ -129,11 +132,17 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   }, [selected, selectedRange])
 
   return (
-    <div className={coreStyles.root} data-testid="datepicker">
+    <div
+      ref={containerRef}
+      className={coreStyles.root}
+      data-testid="datepicker"
+    >
       <div
         className={cn(styles.root, 'island-ui-datepicker', {
           [styles.small]: size === 'sm',
           [styles.extraSmall]: size === 'xs',
+          [styles.medium]: size === 'md',
+          [styles.detached]: detachedCalendar,
         })}
       >
         <ReactDatePicker
@@ -144,6 +153,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             [styles.popperSmall]: size === 'sm',
             [styles.popperSmallWithoutLabel]: size === 'sm' && !label,
             [styles.popperWithoutLabel]: size === 'md' && !label,
+            [styles.popperAlignEnd]: shouldAlignEnd,
           })}
           id={id}
           name={name}
@@ -170,6 +180,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             onInputClick && onInputClick()
           }}
           onCalendarOpen={() => {
+            if (containerRef.current) {
+              const rect = containerRef.current.getBoundingClientRect()
+              const calendarWidth = 310
+              setShouldAlignEnd(rect.left + calendarWidth > window.innerWidth)
+            }
             setDatePickerState('open')
             setIsOpen(true)
             handleOpenCalendar && handleOpenCalendar()
@@ -262,7 +277,9 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             <CustomInput
               name={inputName}
               label={label}
-              fixedFocusState={datePickerState === 'open'}
+              fixedFocusState={
+                detachedCalendar ? false : datePickerState === 'open'
+              }
               hasError={hasError}
               placeholderText={placeholderText}
               onInputClick={onInputClick}

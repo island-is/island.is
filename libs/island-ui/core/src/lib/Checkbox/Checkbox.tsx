@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 import { Text } from '../Text/Text'
 import { Icon } from '../IconRC/Icon'
@@ -14,6 +14,7 @@ export interface CheckboxProps {
   label?: React.ReactNode
   ariaLabel?: string
   checked?: boolean
+  indeterminate?: boolean
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   tooltip?: React.ReactNode
@@ -44,6 +45,7 @@ export const Checkbox = ({
   name,
   id = name,
   disabled,
+  indeterminate = false,
   onChange,
   tooltip,
   hasError,
@@ -58,6 +60,7 @@ export const Checkbox = ({
   filled = false,
   rightContent,
 }: CheckboxProps & TestSupport) => {
+  const inputRef = useRef<HTMLInputElement>(null)
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
@@ -78,6 +81,12 @@ export const Checkbox = ({
   const isCheckedControlled = checkedFromProps !== undefined
   const checked = isCheckedControlled ? checkedFromProps : internalChecked
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.indeterminate = indeterminate
+    }
+  }, [indeterminate, checked])
+
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!isCheckedControlled) {
       // If the component is not controlled, we need to update its internal state.
@@ -96,6 +105,7 @@ export const Checkbox = ({
       background={background}
     >
       <input
+        ref={inputRef}
         className={cn(styles.input, { [styles.inputLarge]: large })}
         type="checkbox"
         name={name}
@@ -117,21 +127,26 @@ export const Checkbox = ({
       >
         <div
           className={cn(styles.checkbox, {
-            [styles.checkboxChecked]: checked,
+            [styles.checkboxChecked]: checked || indeterminate,
             [styles.checkboxError]: hasError,
             [styles.checkboxDisabled]: disabled,
           })}
         >
-          <Icon
-            icon="checkmark"
-            color={checked ? 'white' : 'transparent'}
-            ariaHidden
-          />
+          {indeterminate ? (
+            <span className={styles.indeterminateLine} />
+          ) : (
+            <Icon
+              icon="checkmark"
+              color={checked ? 'white' : 'transparent'}
+              ariaHidden
+            />
+          )}
         </div>
         <span className={styles.labelText}>
           <div
             className={cn({
-              [styles.labelChildrenFontWeightToggle]: checked || strong,
+              [styles.labelChildrenFontWeightToggle]:
+                checked || indeterminate || strong,
             })}
           >
             <Text as="span" variant={labelVariant}>

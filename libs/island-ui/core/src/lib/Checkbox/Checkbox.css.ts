@@ -95,6 +95,13 @@ export const checkboxChecked = style({
   },
 })
 
+export const indeterminateLine = style({
+  width: 10,
+  height: 2,
+  backgroundColor: theme.color.white,
+  borderRadius: 1,
+})
+
 export const checkboxLabelDisabled = style({
   color: theme.color.dark300,
 })
