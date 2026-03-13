@@ -86,6 +86,7 @@ export class S3Service {
       ContentType?: string
       ContentDisposition?: string
       ContentEncoding?: string
+      ACL?: PutObjectCommandInput['ACL']
     },
   ): Promise<string> {
     const { bucket, key } = this.getBucketKey(BucketKeyPairOrFilename)
