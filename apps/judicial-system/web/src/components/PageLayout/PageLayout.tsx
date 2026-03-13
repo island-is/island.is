@@ -1,4 +1,11 @@
-import { FC, PropsWithChildren, ReactNode, useContext, useEffect, useRef } from 'react'
+import {
+  FC,
+  PropsWithChildren,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+} from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -218,7 +225,10 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
 
   useEffect(() => {
     if (caseTableMembershipData?.caseTableMembership) {
-      console.log('[PageLayout] case table membership:', caseTableMembershipData.caseTableMembership)
+      console.log(
+        '[PageLayout] case table membership:',
+        caseTableMembershipData.caseTableMembership,
+      )
     }
   }, [caseTableMembershipData])
 

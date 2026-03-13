@@ -77,11 +77,13 @@ export class CaseTableResolver {
   ): Promise<CaseTableMembershipResponse | null> {
     this.logger.debug(`Getting case table membership for case ${caseId}`)
 
-    return backendService.getCaseTableMembership(caseId).catch((error: unknown) => {
-      const status =
-        (error as { status?: number })?.status ??
-        (error as { statusCode?: number })?.statusCode
-      return status === 404 ? null : Promise.reject(error)
-    })
+    return backendService
+      .getCaseTableMembership(caseId)
+      .catch((error: unknown) => {
+        const status =
+          (error as { status?: number })?.status ??
+          (error as { statusCode?: number })?.statusCode
+        return status === 404 ? null : Promise.reject(error)
+      })
   }
 }
