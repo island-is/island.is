@@ -5,6 +5,19 @@ import { booleanCheckbox } from '../../utils/forms'
 import { defaultEnvironmentSchema } from '../../utils/schemas'
 import { zfd } from 'zod-form-data'
 
+const safeParseStringArray = (val: string | undefined): string[] => {
+  if (!val) return []
+  try {
+    const parsed = JSON.parse(val)
+    if (Array.isArray(parsed) && parsed.every((x) => typeof x === 'string')) {
+      return parsed
+    }
+    return []
+  } catch {
+    return []
+  }
+}
+
 export enum PermissionFormTypes {
   CONTENT = 'CONTENT',
   SECURITY_AND_CAPABILITIES = 'SECURITY_AND_CAPABILITIES',
@@ -19,22 +32,10 @@ const contentSchema = z
     is_description: z.string().nonempty('errorDescription'),
     en_displayName: z.optional(z.string()),
     en_description: z.optional(z.string()),
-    categoryIds: z
-      .string()
-      .optional()
-      .transform((val) => (val ? JSON.parse(val) : [])),
-    tagIds: z
-      .string()
-      .optional()
-      .transform((val) => (val ? JSON.parse(val) : [])),
-    originalCategoryIds: z
-      .string()
-      .optional()
-      .transform((val) => (val ? JSON.parse(val) : [])),
-    originalTagIds: z
-      .string()
-      .optional()
-      .transform((val) => (val ? JSON.parse(val) : [])),
+    categoryIds: z.string().optional().transform(safeParseStringArray),
+    tagIds: z.string().optional().transform(safeParseStringArray),
+    originalCategoryIds: z.string().optional().transform(safeParseStringArray),
+    originalTagIds: z.string().optional().transform(safeParseStringArray),
   })
   .merge(defaultEnvironmentSchema)
   .transform(
@@ -118,22 +119,10 @@ const delegationsSchema = z
 
 const categoriesAndTagsSchema = z
   .object({
-    categoryIds: z
-      .string()
-      .optional()
-      .transform((val) => (val ? JSON.parse(val) : [])),
-    tagIds: z
-      .string()
-      .optional()
-      .transform((val) => (val ? JSON.parse(val) : [])),
-    originalCategoryIds: z
-      .string()
-      .optional()
-      .transform((val) => (val ? JSON.parse(val) : [])),
-    originalTagIds: z
-      .string()
-      .optional()
-      .transform((val) => (val ? JSON.parse(val) : [])),
+    categoryIds: z.string().optional().transform(safeParseStringArray),
+    tagIds: z.string().optional().transform(safeParseStringArray),
+    originalCategoryIds: z.string().optional().transform(safeParseStringArray),
+    originalTagIds: z.string().optional().transform(safeParseStringArray),
   })
   .merge(defaultEnvironmentSchema)
   .transform(

@@ -1,5 +1,11 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { IsArray, IsBoolean, IsOptional, ValidateNested } from 'class-validator'
+import {
+  IsArray,
+  IsBoolean,
+  IsOptional,
+  ValidateNested,
+  IsString,
+} from 'class-validator'
 import { Type } from 'class-transformer'
 
 import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
@@ -115,6 +121,7 @@ export class AdminPatchScopeDto {
 
   @IsArray()
   @IsOptional()
+  @IsString({ each: true })
   @ApiPropertyOptional({
     type: [String],
     example: ['4vQ4htPOAZvzcXBcjx06SH'],
@@ -124,6 +131,7 @@ export class AdminPatchScopeDto {
 
   @IsArray()
   @IsOptional()
+  @IsString({ each: true })
   @ApiPropertyOptional({
     type: [String],
     example: ['4vQ4htPOAZvzcXBcjx06SH'],
@@ -133,6 +141,7 @@ export class AdminPatchScopeDto {
 
   @IsArray()
   @IsOptional()
+  @IsString({ each: true })
   @ApiPropertyOptional({
     type: [String],
     example: ['2eGxK9pLm3'],
@@ -142,6 +151,7 @@ export class AdminPatchScopeDto {
 
   @IsArray()
   @IsOptional()
+  @IsString({ each: true })
   @ApiPropertyOptional({
     type: [String],
     example: ['2eGxK9pLm3'],

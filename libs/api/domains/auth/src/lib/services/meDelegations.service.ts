@@ -232,12 +232,12 @@ export class MeDelegationsService {
       direction: MeDelegationsControllerFindAllDirectionEnum
     },
   ): Promise<DelegationsGroupedByIdentity[]> {
-    const allDelegations = await this.delegationsApiWithAuth(
-      user,
-    ).meDelegationsControllerFindAll({
-      direction: input.direction,
-      validity: MeDelegationsControllerFindAllValidityEnum.includeFuture,
-    })
+    const allDelegations = (
+      await this.delegationsApiWithAuth(user).meDelegationsControllerFindAll({
+        direction: input.direction,
+        validity: MeDelegationsControllerFindAllValidityEnum.includeFuture,
+      })
+    ).map((delegation) => this.includeDomainNameInScopes(delegation))
 
     const isOutgoing =
       input.direction === MeDelegationsControllerFindAllDirectionEnum.outgoing

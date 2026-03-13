@@ -214,7 +214,6 @@ export const BffProvider = ({
           ? { login_hint: nationalId }
           : { prompt: 'select_account' }),
       })
-      console.log('window.location.href', window.location.href)
     },
     [bffUrlGenerator, getLoginQueryParams],
   )
