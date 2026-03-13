@@ -49,6 +49,12 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       title: 'Sýknudómar',
       description: 'Yfirlesnir sýknudómar.',
     },
+    {
+      type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL,
+      route: 'afryjunarleyfi',
+      title: 'Áfrýjunarleyfi',
+      description: 'Yfirlesnir dómar á áfrýjunarleyfi.',
+    },
   ],
 }
 

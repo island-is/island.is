@@ -69,6 +69,7 @@ import {
   publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions,
   publicProsecutionOfficeIndictmentsInReviewWhereOptions,
   publicProsecutionOfficeIndictmentsNewWhereOptions,
+  publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions,
   publicProsecutionOfficeIndictmentsReviewedWhereOptions,
   publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions,
 } from './whereOptions/publicProsecutionOffice'
@@ -159,6 +160,8 @@ export const caseTableWhereOptions: Record<
     publicProsecutionOfficeIndictmentsAppealedWhereOptions,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS]:
     publicProsecutionOfficeAcquittedIndictmentsWhereOptions,
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL]:
+    publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions,
   [CaseTableType.PROSECUTION_REQUEST_CASES_IN_PROGRESS]:
     prosecutionRequestCasesInProgressWhereOptions,
   [CaseTableType.PROSECUTION_REQUEST_CASES_ACTIVE]:
