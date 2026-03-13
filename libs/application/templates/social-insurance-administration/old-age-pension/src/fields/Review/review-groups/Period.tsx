@@ -8,7 +8,7 @@ import { MONTHS } from '@island.is/application/templates/social-insurance-admini
 import {
   getApplicationAnswers,
   isMoreThan2Year,
-} from '../../../lib/oldAgePensionUtils'
+} from '../../../utils/oldAgePensionUtils'
 
 export const Period = ({
   application,
@@ -28,7 +28,7 @@ export const Period = ({
       editAction={() => goToScreen?.('periodField')}
     >
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridColumn span="12/12">
           <DataValue
             label={formatMessage(
               socialInsuranceAdministrationMessage.period.title,

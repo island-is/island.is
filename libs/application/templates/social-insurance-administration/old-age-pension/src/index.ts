@@ -5,7 +5,7 @@ export const getFields = () => import('./fields')
 
 export default template
 
-export * from './lib/oldAgePensionUtils'
+export * from './utils/oldAgePensionUtils'
 export * from './lib/messages'
-export * from './lib/constants'
-export * from './types'
+export * from './utils/constants'
+export * from './utils/types'
