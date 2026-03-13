@@ -178,6 +178,7 @@ const OJOITemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.DRAFT_RETRY]: {
+        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'inprogress',
@@ -232,12 +233,19 @@ const OJOITemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(90),
-          onEntry: defineTemplateApi({
-            action: TemplateApiActions.postApplication,
-            shouldPersistToExternalData: true,
-            externalDataId: 'successfullyPosted',
-            throwOnError: false,
-          }),
+          onEntry: [
+            defineTemplateApi({
+              action: TemplateApiActions.postApplication,
+              shouldPersistToExternalData: true,
+              externalDataId: 'successfullyPosted',
+              throwOnError: false,
+            }),
+            defineTemplateApi({
+              action: TemplateApiActions.syncRegulationDraft,
+              shouldPersistToExternalData: false,
+              throwOnError: false,
+            }),
+          ],
           actionCard: {
             tag: {
               label: general.submittedStatusLabel,

@@ -6,6 +6,9 @@ export const InputFields = {
   [Routes.REQUIREMENTS]: {
     approveExternalData: 'requirements.approveExternalData',
   },
+  [Routes.TYPE_SELECTION]: {
+    applicationType: 'applicationType',
+  },
   [Routes.ADVERT]: {
     department: 'advert.department',
     mainType: 'advert.mainType',
@@ -32,6 +35,14 @@ export const InputFields = {
     mainTextAsFile: 'misc.mainTextAsFile',
     mainTextFilename: 'misc.mainTextFilename',
   },
+  regulation: {
+    draftId: 'regulation.draftId',
+    effectiveDate: 'regulation.effectiveDate',
+    fastTrack: 'regulation.fastTrack',
+    lawChapters: 'regulation.lawChapters',
+    draftingNotes: 'regulation.draftingNotes',
+    impacts: 'regulation.impacts',
+  },
 }
 
 export const RequiredInputFieldsNames = {
@@ -43,13 +54,27 @@ export const RequiredInputFieldsNames = {
     requestedDate: 'Útgáfudagur',
     categories: 'Efnisflokkar',
   },
+  regulation: {
+    title: 'Titill',
+    html: 'Texti reglugerðar',
+    effectiveDate: 'Gildistökudagur',
+    lawChapters: 'Lagakaflar',
+  },
 }
 
 export enum TemplateApiActions {
   departments = 'getDepartments',
   types = 'getAdvertTypes',
   postApplication = 'postApplication',
+  syncRegulationDraft = 'syncRegulationDraft',
 }
+
+export const isAdApplication = (answers: partialSchema | undefined) =>
+  !answers?.applicationType || answers.applicationType === 'ad'
+
+export const isRegulationApplication = (answers: partialSchema | undefined) =>
+  answers?.applicationType === 'base_regulation' ||
+  answers?.applicationType === 'amending_regulation'
 
 export type NestedType<T> = {
   [K in keyof T]: T[K] extends Record<string, unknown>

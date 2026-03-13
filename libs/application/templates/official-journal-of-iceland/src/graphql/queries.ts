@@ -426,3 +426,79 @@ export const POST_APPLICATION_MUTATION = gql`
     OJOIAPostApplication(input: $input)
   }
 `
+
+// ---- Regulation-related queries ----
+
+export const REGULATION_OPTION_SEARCH_QUERY = gql`
+  query OJOIAGetRegulationsOptionSearch(
+    $input: OJOIAGetRegulationsSearchInput!
+  ) {
+    OJOIAGetRegulationsOptionSearch(input: $input)
+  }
+`
+
+export const REGULATION_FROM_API_QUERY = gql`
+  query OJOIAGetRegulationFromApi($input: OJOIAGetRegulationFromApiInput!) {
+    OJOIAGetRegulationFromApi(input: $input)
+  }
+`
+
+export const REGULATION_IMPACTS_QUERY = gql`
+  query OJOIAGetRegulationImpactsByName(
+    $input: OJOIAGetRegulationImpactsInput!
+  ) {
+    OJOIAGetRegulationImpactsByName(input: $input)
+  }
+`
+
+export const LAW_CHAPTERS_QUERY = gql`
+  query OJOIAGetLawChapters {
+    OJOIAGetLawChapters
+  }
+`
+
+export const MINISTRIES_QUERY = gql`
+  query OJOIAGetMinistries {
+    OJOIAGetMinistries
+  }
+`
+
+export const CREATE_DRAFT_REGULATION_MUTATION = gql`
+  mutation OJOIACreateDraftRegulation(
+    $input: OJOIACreateDraftRegulationInput!
+  ) {
+    OJOIACreateDraftRegulation(input: $input)
+  }
+`
+
+export const GET_DRAFT_REGULATION_QUERY = gql`
+  query OJOIAGetDraftRegulation($input: OJOIAGetDraftRegulationInput!) {
+    OJOIAGetDraftRegulation(input: $input)
+  }
+`
+
+export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
+  mutation OJOIAUpdateDraftRegulation(
+    $input: OJOIAUpdateDraftRegulationInput!
+  ) {
+    OJOIAUpdateDraftRegulation(input: $input)
+  }
+`
+
+export const CREATE_DRAFT_IMPACT_MUTATION = gql`
+  mutation OJOIACreateDraftImpact($input: OJOIACreateDraftImpactInput!) {
+    OJOIACreateDraftImpact(input: $input)
+  }
+`
+
+export const UPDATE_DRAFT_IMPACT_MUTATION = gql`
+  mutation OJOIAUpdateDraftImpact($input: OJOIAUpdateDraftImpactInput!) {
+    OJOIAUpdateDraftImpact(input: $input)
+  }
+`
+
+export const DELETE_DRAFT_IMPACT_MUTATION = gql`
+  mutation OJOIADeleteDraftImpact($input: OJOIADeleteDraftImpactInput!) {
+    OJOIADeleteDraftImpact(input: $input)
+  }
+`

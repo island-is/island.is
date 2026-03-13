@@ -152,6 +152,10 @@ export const classes: EditorClasses = {
       [`${containerDisabled} &`]: {
         cursor: 'default',
       },
+      [`${isImpact} &`]: {
+        maxHeight: 'none',
+        overflowY: 'visible',
+      },
     },
   }),
 
