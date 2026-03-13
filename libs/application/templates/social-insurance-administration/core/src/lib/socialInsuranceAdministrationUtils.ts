@@ -86,6 +86,12 @@ export const formatBank = (bankInfo: string) => {
   return bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
 }
 
+// normalize IBAN/Swift
+const normalize = (value?: string) => value?.replace(/\s+/g, '')
+
+// normalize icelandic bank
+const normalizeBank = (bank: string) => bank.replace(/\D/g, ''); 
+
 // We should only send bank account to TR if applicant is registering
 // new one or changing.
 export const shouldNotUpdateBankAccount = (
@@ -109,23 +115,26 @@ export const shouldNotUpdateBankAccount = (
   if (bankAccountType === BankAccountType.FOREIGN) {
     return (
       !isEmpty(bankInfo) &&
-      bankInfo.iban === iban?.replace(/[\s]+/g, '') &&
-      bankInfo.swift === swift?.replace(/[\s]+/g, '') &&
+      bankInfo.iban === normalize(iban) &&
+      bankInfo.swift === normalize(swift) &&
       bankInfo.foreignBankName === bankName &&
       bankInfo.foreignBankAddress === bankAddress &&
       bankInfo.currency === currency
     )
-  } else {
-    // used in BankAccountFormField
-    if (bankNumber) {
-      return getBankIsk(bankInfo) === getBankIsk(paymentInfo)
-    }
-
-    return getBankIsk(bankInfo) === bank
   }
+
+  // Domestic accounts
+  // used in BankAccountFormField
+  if (bankNumber) {
+    return getBankIsk(bankInfo) === getBankIsk(paymentInfo)
+  }
+
+  return getBankIsk(bankInfo) === bank
 }
 
-export const shouldNotUpdateBankAccountNew = (
+// Determines if the bank account should NOT be updated
+// used for flows that uses BankAccountFormField.
+export const shouldNotUpdateBankAccountV2 = (
   bankInfo?: BankInfo,
   paymentInfo?: PaymentInfoV2,
 ) => {
@@ -145,15 +154,16 @@ export const shouldNotUpdateBankAccountNew = (
   if (bankAccountType === BankAccountType.FOREIGN) {
     return (
       !isEmpty(bankInfo) &&
-      bankInfo.iban === iban?.replace(/[\s]+/g, '') &&
-      bankInfo.swift === swift?.replace(/[\s]+/g, '') &&
+      bankInfo.iban === normalize(iban) &&
+      bankInfo.swift === normalize(swift) &&
       bankInfo.foreignBankName === bankName &&
       bankInfo.foreignBankAddress === bankAddress &&
       bankInfo.currency === currency
     )
-  } else {
-    return getBankIsk(bankInfo) === (!isEmpty(bank) && formatBankAccount(bank))
   }
+
+  // Domestic accounts
+  return !isEmpty(bank) && getBankIsk(bankInfo) === normalizeBank(formatBankAccount(bank))
 }
 
 export const getCurrencies = (

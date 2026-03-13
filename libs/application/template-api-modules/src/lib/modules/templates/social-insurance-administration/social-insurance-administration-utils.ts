@@ -8,7 +8,7 @@ import {
   formatBankAccount,
   getBankIsk,
   shouldNotUpdateBankAccount,
-  shouldNotUpdateBankAccountNew,
+  shouldNotUpdateBankAccountV2,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   CategorizedIncomeTypes,
@@ -112,7 +112,7 @@ export const transformApplicationToOldAgePensionDTO = (
     },
     comment: comment,
     applicationId: application.id,
-    ...(!shouldNotUpdateBankAccountNew(bankInfo, paymentInfo) && {
+    ...(!shouldNotUpdateBankAccountV2(bankInfo, paymentInfo) && {
       ...(paymentInfo &&
         (paymentInfo.bankAccountType === undefined ||
           paymentInfo.bankAccountType === BankAccountType.ICELANDIC) &&
