@@ -1,4 +1,7 @@
-import { HealthDirectoratePrescription } from '@island.is/api/schema'
+import {
+  HealthDirectoratePrescription,
+  HealthDirectoratePrescriptionRenewalStatus,
+} from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -126,7 +129,23 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                 formatDate(item?.expiryDate) ?? ''
               ),
               status: undefined,
-              lastNode: item?.isRenewable
+              lastNode: item?.renewalStatus
+                ? {
+                    type: 'text' as const,
+                    label:
+                      item.renewalStatus ===
+                      HealthDirectoratePrescriptionRenewalStatus.Approved
+                        ? formatMessage(messages.renewalStatusApproved)
+                        : item.renewalStatus ===
+                          HealthDirectoratePrescriptionRenewalStatus.Rejected
+                        ? formatMessage(messages.vaccineDeclined)
+                        : item.renewalStatus ===
+                          HealthDirectoratePrescriptionRenewalStatus.Dismissed
+                        ? formatMessage(messages.renewalStatusDismissed)
+                        : formatMessage(messages.medicineIsProcessedCertificate),
+                    text: item.renewResponseMessage ?? undefined,
+                  }
+                : item?.isRenewable
                 ? {
                     type: 'action' as const,
                     label: formatMessage(messages.renew),

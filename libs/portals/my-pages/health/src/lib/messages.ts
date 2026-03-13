@@ -2537,6 +2537,14 @@ export const messages = defineMessages({
     defaultMessage: 'Endurnýjun ekki í boði vegna óþekktrar ástæðu',
     id: 'sp.health:prescription-blocked-other',
   },
+  renewalStatusApproved: {
+    defaultMessage: 'Samþykkt',
+    id: 'sp.health:renewal-status-approved',
+  },
+  renewalStatusDismissed: {
+    defaultMessage: 'Vísað frá',
+    id: 'sp.health:renewal-status-dismissed',
+  },
   weekdayMondayAcc: {
     defaultMessage: 'Mánudaginn',
     id: 'sp.health:weekday-monday-acc',

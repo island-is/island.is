@@ -17,7 +17,7 @@ export {
   DiseaseVaccinationDtoVaccinationStatusEnum,
   PrescribedItemCategory,
   PrescriptionRenewalBlockedReason,
-  PrescriptionRenewalStatus,
+  PrescriptionRenewalStatusDisplay,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
   QuestionType,

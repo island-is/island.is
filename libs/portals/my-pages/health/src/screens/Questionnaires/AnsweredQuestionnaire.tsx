@@ -39,7 +39,7 @@ const AnsweredQuestionnaire: FC = () => {
   const [currentSubmission, setCurrentSubmission] =
     useState<QuestionnaireSubmissionDetail>()
 
-  const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
+  const organization: QuestionnaireQuestionnairesOrganizationEnum =
     org === 'el'
       ? QuestionnaireQuestionnairesOrganizationEnum.EL
       : org === 'lsh'
