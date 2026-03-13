@@ -683,7 +683,7 @@ application-system-api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=1382 --enable-source-maps -r dd-trace/init'
     NOVA_SENDER_NAME: 'Island Staging'
     PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
     PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
@@ -851,10 +851,10 @@ application-system-api:
   resources:
     limits:
       cpu: '600m'
-      memory: '1024Mi'
+      memory: '1536Mi'
     requests:
       cpu: '200m'
-      memory: '512Mi'
+      memory: '768Mi'
   secrets:
     ALTHINGI_OMBUDSMAN_XROAD_PASSWORD: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'
     ALTHINGI_OMBUDSMAN_XROAD_USERNAME: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME'
@@ -1953,6 +1953,7 @@ payments:
     APP_EXTERNAL_BASEPATH: 'https://beta.staging01.devland.is'
     BASEPATH: '/greida'
     LOG_LEVEL: 'info'
+    NEXT_PUBLIC_ALLOW_APPLE_PAY: 'true'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
