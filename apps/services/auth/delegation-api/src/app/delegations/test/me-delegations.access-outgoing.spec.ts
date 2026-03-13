@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common'
 import { getModelToken } from '@nestjs/sequelize'
 import assert from 'assert'
 import addYears from 'date-fns/addYears'
@@ -40,6 +41,7 @@ describe.each(Object.keys(accessOutgoingTestCases))(
     let factory: FixtureFactory
     let domains: Domain[]
     let delegations: Delegation[]
+    let validateRecipientSpy: jest.SpyInstance
 
     beforeAll(async () => {
       // Arrange
@@ -59,6 +61,9 @@ describe.each(Object.keys(accessOutgoingTestCases))(
 
       jest
         .spyOn(namesService, 'getPersonName')
+        .mockResolvedValue(faker.name.findName())
+      validateRecipientSpy = jest
+        .spyOn(namesService, 'validateRecipientNotDeceased')
         .mockResolvedValue(faker.name.findName())
       jest
         .spyOn(namesService, 'getUserName')
@@ -216,6 +221,38 @@ describe.each(Object.keys(accessOutgoingTestCases))(
               scopeName: scope.name,
               validTo: scope.validTo.toISOString(),
             })),
+          })
+        },
+      )
+
+      it.each(accessible)(
+        'POST /v1/me/delegations returns 400 when recipient is deceased',
+        async (domain) => {
+          // Arrange
+          validateRecipientSpy.mockRejectedValueOnce(
+            new BadRequestException(
+              'Cannot create a delegation to a deceased individual',
+            ),
+          )
+          const delegationDto: CreateDelegationDTO = {
+            toNationalId: createNationalId('person'),
+            domainName: domain.name,
+            scopes: domain.scopes.map(({ name }) => ({
+              name,
+              validTo: startOfDay(addYears(new Date(), 1)),
+            })),
+          }
+
+          // Act
+          const res = await server
+            .post('/v1/me/delegations')
+            .send(delegationDto)
+
+          // Assert
+          expect(res.status).toEqual(400)
+          expect(res.body).toMatchObject({
+            detail: 'Cannot create a delegation to a deceased individual',
+            status: 400,
           })
         },
       )
