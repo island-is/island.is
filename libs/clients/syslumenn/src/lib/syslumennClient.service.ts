@@ -691,7 +691,6 @@ export class SyslumennService {
     } catch (error) {
       logger.warn('Failed to get inheritance report signatories', {
         error,
-        deceasedNationalId,
         estateType,
       })
       throw error

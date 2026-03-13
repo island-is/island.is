@@ -28,6 +28,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
 import set from 'lodash/set'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { Features } from '@island.is/feature-flags'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -45,7 +46,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
 
   async checkReviewFlag({ auth }: TemplateApiModuleActionProps) {
     const rawValue = await this.featureFlagService.getValue(
-      'isInheritanceReportReviewEnabled' as any,
+      Features.inheritanceReportReviewEnabled,
       false,
       auth,
     )

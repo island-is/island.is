@@ -39,6 +39,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { Features } from '@island.is/feature-flags'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
@@ -55,7 +56,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
 
   async checkReviewFlag({ auth }: TemplateApiModuleActionProps) {
     const rawValue = await this.featureFlagService.getValue(
-      'isEstateReviewEnabled' as any,
+      Features.estateReviewEnabled,
       false,
       auth,
     )
