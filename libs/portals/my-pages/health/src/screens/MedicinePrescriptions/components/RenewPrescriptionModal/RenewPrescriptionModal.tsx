@@ -1,4 +1,3 @@
-import { HealthDirectoratePrescription } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -21,7 +20,7 @@ import * as styles from './RenewPrescriptionModal.css'
 
 interface Props {
   id: string
-  activePrescription: HealthDirectoratePrescription
+  activePrescription: PrescriptionItem
   toggleClose?: boolean
   isVisible: boolean
   setVisible: (isVisible: boolean) => void
@@ -82,10 +81,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
 
   const submitForm = async () => {
     // TODO: Improve form submission when service is ready
-    if (
-      activePrescription.category === undefined ||
-      activePrescription.id === undefined
-    ) {
+    if (activePrescription.prescriptionId == null) {
       setError('Please select a valid prescription.')
       return
     }
@@ -94,10 +90,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       const data = await postRenewal({
         variables: {
           input: {
-            id: activePrescription.id,
-            medCardDrugCategory: activePrescription.category ?? '',
-            medCardDrugId: activePrescription.medCardDrugId ?? '',
-            prescribedItemId: activePrescription.id,
+            id: activePrescription.prescriptionId as string,
           },
         },
       })
