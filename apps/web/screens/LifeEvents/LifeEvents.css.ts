@@ -16,3 +16,13 @@ export const organizationColumn = style({
     },
   }),
 })
+
+export const heading = style({
+  fontSize: 32,
+  paddingTop: 16,
+})
+
+export const description = style({
+  fontSize: 18,
+  maxWidth: 774,
+})

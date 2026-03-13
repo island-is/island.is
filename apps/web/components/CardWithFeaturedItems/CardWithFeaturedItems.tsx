@@ -14,6 +14,7 @@ type CardWithFeaturedItemsProps = {
   dataTestId?: string
   buttonTitle?: string
   featuredItems: Featured[]
+  white?: boolean
 }
 
 export const FeaturedItemsLinks = ({
@@ -25,7 +26,7 @@ export const FeaturedItemsLinks = ({
 
   return (
     <Hidden below="sm">
-      <Box marginY={2}>
+      <Box marginY={2} className={styles.purpleTags}>
         {featuredItems.map((item: Featured, index: number) => {
           const cardUrl = linkResolver(item.thing?.type as LinkType, [
             item.thing?.slug ?? '',
@@ -49,7 +50,6 @@ export const FeaturedItemsLinks = ({
                     }
                   : { href: cardUrl.href })}
                 variant="purple"
-                whiteBackground
               >
                 {item.title}
               </Tag>
@@ -69,12 +69,13 @@ export const CardWithFeaturedItems = ({
   dataTestId,
   featuredItems,
   buttonTitle,
+  white,
 }: CardWithFeaturedItemsProps) => {
   const limitedFeaturedItems = featuredItems.slice(0, 3)
 
   return (
     <Box
-      background="purple100"
+      background={white ? 'white' : 'purple100'}
       borderRadius="large"
       color="purple"
       data-testid={dataTestId}
