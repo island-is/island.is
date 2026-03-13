@@ -1,0 +1,14 @@
+# TODO: GraphQL query for LandRegistry
+# This file is postfixed with .txt until the API is ready
+
+query GetFarmerLandRegistry($landId: String!) {
+  farmerLandRegistry(landId: $landId) {
+    data {
+      id
+      registryNumber
+      area
+      landUse
+      municipality
+    }
+  }
+}
