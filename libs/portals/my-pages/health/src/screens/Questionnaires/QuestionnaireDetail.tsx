@@ -32,7 +32,11 @@ const QuestionnaireDetail: FC = () => {
 
   const { data, loading, error } = useGetQuestionnaireQuery({
     variables: {
-      input: { id: id ?? '', organization: organization ?? QuestionnaireQuestionnairesOrganizationEnum.EL },
+      input: {
+        id: id ?? '',
+        organization:
+          organization ?? QuestionnaireQuestionnairesOrganizationEnum.EL,
+      },
       locale: lang,
     },
     skip: !id || !organization,
