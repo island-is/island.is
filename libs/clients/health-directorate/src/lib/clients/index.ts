@@ -12,7 +12,6 @@ export {
   PrescribedItemCategory,
   PrescriptionRenewalBlockedReason,
   PrescriptionRenewalStatus,
-  PrescriptionRenewalRequestDto,
   QuestionnaireBaseDto,
   QuestionnaireDetailDto,
   QuestionType,
