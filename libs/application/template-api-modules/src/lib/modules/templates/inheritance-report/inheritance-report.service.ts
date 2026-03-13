@@ -4,6 +4,7 @@ import {
   DataUploadResponse,
   Person,
   PersonType,
+  SignatoryEstateTypes,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
 import { getFakeData, roundMonetaryFieldsDeep, stringifyObject } from './utils'
@@ -15,13 +16,19 @@ import {
 } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { infer as zinfer } from 'zod'
-import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
+import {
+  inheritanceReportSchema,
+  nationalIdsMatch,
+} from '@island.is/application/templates/inheritance-report'
 import type { Logger } from '@island.is/logging'
 import { expandAnswers } from './utils/mappers'
 import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { S3Service } from '@island.is/nest/aws'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
+import set from 'lodash/set'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { Features } from '@island.is/feature-flags'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -32,8 +39,59 @@ export class InheritanceReportService extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
     private readonly nationalRegistryService: NationalRegistryV3Service,
     private readonly s3Service: S3Service,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(ApplicationTypes.INHERITANCE_REPORT)
+  }
+
+  async checkReviewFlag({ auth }: TemplateApiModuleActionProps) {
+    const rawValue = await this.featureFlagService.getValue(
+      Features.inheritanceReportReviewEnabled,
+      false,
+      auth,
+    )
+    const reviewEnabled = !!rawValue
+    this.logger.info('[inheritance-report]: checkReviewFlag result', {
+      rawValue,
+      rawValueType: typeof rawValue,
+      reviewEnabled,
+    })
+    return { reviewEnabled }
+  }
+
+  async approveByAssignee({ application, auth }: TemplateApiModuleActionProps) {
+    const actorNationalId = auth.actor?.nationalId ?? auth.nationalId
+    const answers = application.answers as InheritanceSchema
+
+    const heirs = answers?.heirs?.data ?? []
+    const updatedHeirs = heirs.map((heir) => {
+      if (!nationalIdsMatch(heir?.nationalId, actorNationalId)) {
+        return heir
+      }
+
+      return {
+        ...heir,
+        approved: true,
+        approvedDate: new Date().toISOString(),
+      }
+    })
+
+    const didUpdate = heirs.some((heir) =>
+      nationalIdsMatch(heir?.nationalId, actorNationalId),
+    )
+    if (!didUpdate) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Approving user is not a listed heir on this application.',
+        },
+        400,
+      )
+    }
+
+    set(application.answers, 'heirs.data', updatedHeirs)
+
+    return { success: true }
   }
 
   async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
@@ -89,7 +147,24 @@ export class InheritanceReportService extends BaseTemplateApiService {
     }
   }
 
-  async completeApplication({ application }: TemplateApiModuleActionProps) {
+  async completeApplication(props: TemplateApiModuleActionProps) {
+    // Idempotency: if already submitted via the signing state, skip re-submission
+    const existingResult = props.application.externalData?.submitToSyslumenn
+      ?.data as { success?: boolean; id?: string } | undefined
+    if (existingResult?.success && existingResult?.id) {
+      return existingResult
+    }
+    return this.submitToSyslumenn(props)
+  }
+
+  async submitToSyslumenn({ application }: TemplateApiModuleActionProps) {
+    // Idempotency: if already submitted, skip re-submission
+    const existingResult = application.externalData?.submitToSyslumenn
+      ?.data as { success?: boolean; id?: string } | undefined
+    if (existingResult?.success && existingResult?.id) {
+      return existingResult
+    }
+
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistryIndividual
 
@@ -181,6 +256,74 @@ export class InheritanceReportService extends BaseTemplateApiService {
       )
     }
     return { success: result.success, id: result.caseNumber }
+  }
+
+  async getSignatories(_props: TemplateApiModuleActionProps) {
+    const { application } = _props
+    const answers = application.answers as InheritanceSchema
+
+    // Get the deceased national ID from the selected estate
+    const estateInfoSelection = answers?.estateInfoSelection
+    const syslumennData = application.externalData
+      ?.syslumennOnEntry as unknown as
+      | {
+          data: {
+            inheritanceReportInfos: Array<{ caseNumber?: string; nationalId?: string }>
+          }
+          date: Date
+        }
+      | undefined
+    const inheritanceReportInfos =
+      syslumennData?.data?.inheritanceReportInfos || []
+
+    const selectedEstate = inheritanceReportInfos.find(
+      (estate) => estate.caseNumber === estateInfoSelection,
+    )
+    const deceasedNationalId = selectedEstate?.nationalId || ''
+
+    if (!deceasedNationalId) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Deceased national ID not found in application data.',
+        },
+        400,
+      )
+    }
+
+    const estateType =
+      answers?.applicationFor === 'prepaidInheritance'
+        ? SignatoryEstateTypes.FyrirFramGreiddur
+        : SignatoryEstateTypes.ErfdafjarSkyrsla
+
+    try {
+      this.logger.info(
+        '[inheritance-report]: Calling getSignatories API',
+        { estateType },
+      )
+      const signatories =
+        await this.syslumennService.getInheritanceReportSignatories(
+          deceasedNationalId,
+          estateType,
+        )
+
+      return {
+        success: true,
+        signatories,
+      }
+    } catch (error) {
+      this.logger.error(
+        '[inheritance-report]: Failed to get signatories',
+        error,
+      )
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Failed to retrieve signatories from Syslumenn service.',
+        },
+        500,
+      )
+    }
   }
 
   async maritalStatus(props: TemplateApiModuleActionProps) {

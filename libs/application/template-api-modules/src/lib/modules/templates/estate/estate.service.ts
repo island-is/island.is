@@ -8,10 +8,14 @@ import {
   EstateInfo,
   Person,
   PersonType,
+  SignatoryEstateTypes,
   SyslumennService,
 } from '@island.is/clients/syslumenn'
 import { infer as zinfer } from 'zod'
-import { estateSchema } from '@island.is/application/templates/estate'
+import {
+  estateSchema,
+  nationalIdsMatch,
+} from '@island.is/application/templates/estate'
 import {
   estateTransformer,
   generateRawUploadData,
@@ -23,6 +27,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import set from 'lodash/set'
 import {
   ApplicationAttachments,
   AttachmentPaths,
@@ -33,6 +38,8 @@ import { EstateTypes } from './consts'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
+import { FeatureFlagService } from '@island.is/nest/feature-flags'
+import { Features } from '@island.is/feature-flags'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
@@ -42,8 +49,59 @@ export class EstateTemplateService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     private readonly s3Service: S3Service,
+    private readonly featureFlagService: FeatureFlagService,
   ) {
     super(ApplicationTypes.ESTATE)
+  }
+
+  async checkReviewFlag({ auth }: TemplateApiModuleActionProps) {
+    const rawValue = await this.featureFlagService.getValue(
+      Features.estateReviewEnabled,
+      false,
+      auth,
+    )
+    const reviewEnabled = !!rawValue
+    this.logger.info('[estate]: checkReviewFlag result', {
+      rawValue,
+      rawValueType: typeof rawValue,
+      reviewEnabled,
+    })
+    return { reviewEnabled }
+  }
+
+  async approveByAssignee({ application, auth }: TemplateApiModuleActionProps) {
+    const actorNationalId = auth.actor?.nationalId ?? auth.nationalId
+    const answers = application.answers as unknown as EstateSchema
+
+    const estateMembers = answers?.estate?.estateMembers ?? []
+    const updatedMembers = estateMembers.map((member) => {
+      if (!nationalIdsMatch(member?.nationalId, actorNationalId)) {
+        return member
+      }
+
+      return {
+        ...member,
+        approved: true,
+        approvedDate: new Date().toISOString(),
+      }
+    })
+
+    const didUpdate = estateMembers.some((member) =>
+      nationalIdsMatch(member?.nationalId, actorNationalId),
+    )
+    if (!didUpdate) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Approving user is not a listed estate member on this application.',
+        },
+        400,
+      )
+    }
+
+    set(application.answers, 'estate.estateMembers', updatedMembers)
+
+    return { success: true }
   }
 
   async estateProvider({
@@ -170,6 +228,13 @@ export class EstateTemplateService extends BaseTemplateApiService {
   }
 
   async completeApplication({ application }: TemplateApiModuleActionProps) {
+    // Idempotency: if already submitted via the signing state, skip re-submission
+    const existingResult = application.externalData?.completeApplication
+      ?.data as { success?: boolean; id?: string } | undefined
+    if (existingResult?.success && existingResult?.id) {
+      return existingResult
+    }
+
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistry
 
@@ -268,7 +333,81 @@ export class EstateTemplateService extends BaseTemplateApiService {
       this.logger.error('[estate]: Failed to upload data - ', result.message)
       throw new Error('Application submission failed on syslumadur upload data')
     }
-    return { sucess: result.success, id: result.caseNumber }
+    this.logger.info(
+      '[estate]: completeApplication received caseNumber from uploadData',
+      { caseNumber: result.caseNumber },
+    )
+    return { success: result.success, id: result.caseNumber }
+  }
+
+  async getSignatories({ application }: TemplateApiModuleActionProps) {
+    const answers = application.answers as unknown as EstateSchema
+
+    const estateData = (
+      application.externalData?.syslumennOnEntry?.data as {
+        estates: Array<EstateInfo>
+      }
+    ).estates
+
+    const selectedEstateData = estateData?.find(
+      (estate) => estate.caseNumber === answers.estateInfoSelection,
+    )
+    const deceasedNationalId = selectedEstateData?.nationalIdOfDeceased || ''
+
+    if (!deceasedNationalId) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Deceased national ID not found in application data.',
+        },
+        400,
+      )
+    }
+
+    const selectedEstate = answers.selectedEstate
+    const estateTypeMap: Record<string, SignatoryEstateTypes> = {
+      [EstateTypes.divisionOfEstateByHeirs]: SignatoryEstateTypes.Einkaskipti,
+      [EstateTypes.permitForUndividedEstate]: SignatoryEstateTypes.OskiptBu,
+      [EstateTypes.officialDivision]: SignatoryEstateTypes.OpinberSkipti,
+      [EstateTypes.estateWithoutAssets]: SignatoryEstateTypes.Eignaleysi,
+    }
+
+    const estateType = estateTypeMap[selectedEstate]
+    if (!estateType) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: `Unknown estate type: ${selectedEstate}`,
+        },
+        400,
+      )
+    }
+
+    try {
+      this.logger.info(
+        '[estate]: Calling getSignatories API',
+        { estateType },
+      )
+      const signatories =
+        await this.syslumennService.getInheritanceReportSignatories(
+          deceasedNationalId,
+          estateType,
+        )
+
+      return {
+        success: true,
+        signatories,
+      }
+    } catch (error) {
+      this.logger.error('[estate]: Failed to get signatories', error)
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Failed to retrieve signatories from Syslumenn service.',
+        },
+        500,
+      )
+    }
   }
 
   private async getFileContentBase64(fileName: string): Promise<string> {

@@ -3,6 +3,8 @@ import {
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
+import { assign } from 'xstate'
+import set from 'lodash/set'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -41,8 +43,21 @@ import {
 import { CodeOwners } from '@island.is/shared/constants'
 import { getChargeItems } from '../utils/getChargeItems'
 import { getEstateDataFromApplication, isEstateInfo } from './utils'
+import { getAssigneesNationalIdList } from './utils/getAssigneesNationalIdList'
+import { allPartiesHaveApproved } from './utils/allPartiesHaveApproved'
+import { nationalIdsMatch } from './utils/helpers'
+import { EstateMember, EstateExternalData } from '../types'
 
 const configuration = ApplicationConfigurations[ApplicationTypes.ESTATE]
+
+const isReviewEnabled = (context: ApplicationContext) => {
+  const externalData = context.application.externalData as EstateExternalData
+  return externalData?.checkReviewFlag?.data?.reviewEnabled === true
+}
+
+const areAllPartiesApproved = (context: ApplicationContext) => {
+  return allPartiesHaveApproved(context.application.answers)
+}
 
 const EstateTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -132,6 +147,12 @@ const EstateTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.25,
           lifecycle: pruneAfterDays(60),
+          onEntry: defineTemplateApi({
+            action: ApiActions.checkReviewFlag,
+            shouldPersistToExternalData: true,
+            externalDataId: 'checkReviewFlag',
+            throwOnError: false,
+          }),
           roles: [
             {
               id: Roles.APPLICANT_NO_ASSETS,
@@ -206,18 +227,194 @@ const EstateTemplate: ApplicationTemplate<
           },
         },
         on: {
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.inReview,
+              cond: isReviewEnabled,
+              actions: 'setApplicantAsApproved',
+            },
+            {
+              target: States.done,
+            },
+          ],
+          [DefaultEvents.PAYMENT]: [
+            {
+              target: States.inReview,
+              cond: isReviewEnabled,
+              actions: 'setApplicantAsApproved',
+            },
+            {
+              target: States.payment,
+            },
+          ],
+        },
+      },
+      [States.inReview]: {
+        entry: 'assignEstateMembers',
+        exit: 'clearAssignees',
+        meta: {
+          name: 'InReview',
+          status: 'inprogress',
+          progress: 0.6,
+          lifecycle: pruneAfterDays(30),
+          onExit: defineTemplateApi({
+            action: ApiActions.approveByAssignee,
+            shouldPersistToExternalData: false,
+            throwOnError: true,
+            triggerEvent: DefaultEvents.APPROVE,
+          }),
+          actionCard: {
+            pendingAction: (application, role, nationalId) => {
+              if (role === Roles.ASSIGNEE) {
+                const estateMembers = getValueViaPath<EstateMember[]>(
+                  application.answers,
+                  'estate.estateMembers',
+                  [],
+                )
+                const currentUserMember = estateMembers?.find((member) =>
+                  nationalIdsMatch(member.nationalId, nationalId),
+                )
+
+                if (currentUserMember?.approved) {
+                  return {
+                    title: m.assigneeApprovedTitle,
+                    content: m.assigneeApprovedDescription,
+                    displayStatus: 'success',
+                  }
+                }
+
+                return {
+                  title: m.assigneeInReviewInfoTitle,
+                  content: m.assigneeInReviewDescription,
+                  displayStatus: 'warning',
+                }
+              }
+              // Check if all parties have approved
+              const allApproved = allPartiesHaveApproved(application.answers)
+
+              if (allApproved) {
+                return {
+                  title: m.applicantInReviewTitleAllApproved,
+                  content: m.applicantInReviewDescriptionAllApproved,
+                  displayStatus: 'success',
+                }
+              }
+
+              return {
+                title: m.applicantInReviewTitle,
+                content: m.applicantInReviewDescription,
+                displayStatus: 'info',
+              }
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationSent,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT_NO_ASSETS,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.applicantInReviewForm),
+                ),
+              actions: [
+                { event: DefaultEvents.EDIT, name: '', type: 'subtle' },
+                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
+              ],
+              write: 'all',
+              read: 'all',
+            },
+            {
+              id: Roles.APPLICANT_OFFICIAL_DIVISION,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.applicantInReviewForm),
+                ),
+              actions: [
+                { event: DefaultEvents.EDIT, name: '', type: 'subtle' },
+                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
+              ],
+              write: 'all',
+              read: 'all',
+            },
+            {
+              id: Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.applicantInReviewForm),
+                ),
+              actions: [
+                { event: DefaultEvents.EDIT, name: '', type: 'subtle' },
+                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
+                { event: DefaultEvents.PAYMENT, name: '', type: 'primary' },
+              ],
+              write: 'all',
+              read: 'all',
+            },
+            {
+              id: Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.applicantInReviewForm),
+                ),
+              actions: [
+                { event: DefaultEvents.EDIT, name: '', type: 'subtle' },
+                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
+                { event: DefaultEvents.PAYMENT, name: '', type: 'primary' },
+              ],
+              write: 'all',
+              read: 'all',
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.assigneeInReviewForm),
+                ),
+              actions: [
+                { event: DefaultEvents.APPROVE, name: '', type: 'primary' },
+                { event: DefaultEvents.REJECT, name: '', type: 'reject' },
+              ],
+              write: 'all',
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: {
+            target: States.draft,
+          },
           [DefaultEvents.SUBMIT]: {
-            target: States.done,
+            target: States.signing,
+            cond: areAllPartiesApproved,
           },
           [DefaultEvents.PAYMENT]: {
             target: States.payment,
+            cond: areAllPartiesApproved,
+          },
+          [DefaultEvents.APPROVE]: {
+            target: States.inReview,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.draft,
           },
         },
       },
       [States.payment]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItems: getChargeItems,
-        submitTarget: States.done,
+        submitTarget: [
+          {
+            target: States.signing,
+            cond: isReviewEnabled,
+          },
+          {
+            target: States.done,
+          },
+        ],
         abortTarget: States.draft,
         lifecycle: {
           shouldBeListed: true,
@@ -233,6 +430,148 @@ const EstateTemplate: ApplicationTemplate<
           return application.applicant
         },
       }),
+      [States.signing]: {
+        meta: {
+          name: 'Signing',
+          status: 'inprogress',
+          progress: 0.85,
+          lifecycle: pruneAfterDays(30),
+          onEntry: [
+            defineTemplateApi({
+              action: ApiActions.completeApplication,
+              throwOnError: true,
+              order: 0,
+            }),
+          ],
+          actionCard: {
+            pendingAction: (application) => {
+              const externalData =
+                application.externalData as EstateExternalData
+              const signatories =
+                externalData?.getSignatories?.data?.signatories || []
+
+              const allSigned =
+                signatories.length > 0 &&
+                signatories.every((s) => s.signed)
+
+              if (allSigned) {
+                return {
+                  title: m.signingCompleteTitle,
+                  content: m.signingCompleteDescription,
+                  displayStatus: 'success',
+                }
+              }
+
+              return {
+                title: m.signingPendingTitle,
+                content: m.signingPendingDescription,
+                displayStatus: 'info',
+              }
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT_NO_ASSETS,
+              formLoader: () =>
+                import('../forms/Signing').then((val) =>
+                  Promise.resolve(val.signingForm),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              read: 'all',
+              write: {
+                externalData: ['getSignatories'],
+              },
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
+            },
+            {
+              id: Roles.APPLICANT_OFFICIAL_DIVISION,
+              formLoader: () =>
+                import('../forms/Signing').then((val) =>
+                  Promise.resolve(val.signingForm),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              read: 'all',
+              write: {
+                externalData: ['getSignatories'],
+              },
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
+            },
+            {
+              id: Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
+              formLoader: () =>
+                import('../forms/Signing').then((val) =>
+                  Promise.resolve(val.signingForm),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              read: 'all',
+              write: {
+                externalData: ['getSignatories'],
+              },
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
+            },
+            {
+              id: Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
+              formLoader: () =>
+                import('../forms/Signing').then((val) =>
+                  Promise.resolve(val.signingForm),
+                ),
+              actions: [{ event: 'SUBMIT', name: '', type: 'primary' }],
+              read: 'all',
+              write: {
+                externalData: ['getSignatories'],
+              },
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
+            },
+            {
+              id: Roles.ASSIGNEE,
+              formLoader: () =>
+                import('../forms/Signing').then((val) =>
+                  Promise.resolve(val.signingForm),
+                ),
+              read: 'all',
+              write: {
+                externalData: ['getSignatories'],
+              },
+              api: [
+                defineTemplateApi({
+                  action: ApiActions.getSignatories,
+                  shouldPersistToExternalData: true,
+                  externalDataId: 'getSignatories',
+                }),
+              ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.done,
+          },
+        },
+      },
       [States.done]: {
         meta: {
           name: 'Approved',
@@ -281,11 +620,66 @@ const EstateTemplate: ApplicationTemplate<
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      assignEstateMembers: assign((context) => {
+        const { application } = context
+        const assigneesNationalIds = getAssigneesNationalIdList(application)
+
+        if (assigneesNationalIds && assigneesNationalIds.length > 0) {
+          set(application, 'assignees', assigneesNationalIds)
+        }
+
+        return context
+      }),
+      clearAssignees: assign((context, event) => {
+        // Only clear assignees when going back to draft (EDIT or REJECT events)
+        // Keep assignees when progressing forward (SUBMIT/PAYMENT) or staying in review (APPROVE)
+        const shouldClearAssignees =
+          event.type === DefaultEvents.EDIT ||
+          event.type === DefaultEvents.REJECT
+
+        if (!shouldClearAssignees) {
+          return context
+        }
+
+        const { application } = context
+        set(application, 'assignees', [])
+        return context
+      }),
+      setApplicantAsApproved: assign((context) => {
+        const { application } = context
+        const estateMembers = getValueViaPath<EstateMember[]>(
+          application.answers,
+          'estate.estateMembers',
+          [],
+        )
+        const applicantNationalId = application.applicant
+
+        if (estateMembers && estateMembers.length > 0) {
+          const updatedMembers = estateMembers.map((member) => {
+            if (nationalIdsMatch(member.nationalId, applicantNationalId)) {
+              return {
+                ...member,
+                approved: true,
+                approvedDate: new Date().toISOString(),
+              }
+            }
+            return member
+          })
+          set(application.answers, 'estate.estateMembers', updatedMembers)
+        }
+        return context
+      }),
+    },
+  },
   mapUserToRole(
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.applicant === nationalId) {
+    const { applicant, assignees } = application
+
+    if (applicant === nationalId) {
       const selectedEstate = getValueViaPath<string>(
         application.answers,
         'selectedEstate',
@@ -300,6 +694,39 @@ const EstateTemplate: ApplicationTemplate<
         return Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS
       } else return Roles.APPLICANT
     }
+
+    // Only assign ASSIGNEE role when review feature flag is enabled
+    const externalData = application.externalData as EstateExternalData
+    const reviewEnabled =
+      externalData?.checkReviewFlag?.data?.reviewEnabled === true
+
+    if (reviewEnabled) {
+      // Check if user is in assignees (for pending approvals)
+      if (assignees && assignees.includes(nationalId)) {
+        return Roles.ASSIGNEE
+      }
+
+      // Check if user is an estate member in the application (including approved members)
+      const estateMembers = getValueViaPath<EstateMember[]>(
+        application.answers,
+        'estate.estateMembers',
+        [],
+      )
+      const isMember =
+        estateMembers &&
+        estateMembers.some(
+          (member) =>
+            nationalIdsMatch(member.nationalId, nationalId) &&
+            member.enabled !== false &&
+            !nationalIdsMatch(member.nationalId, applicant),
+        )
+
+      if (isMember) {
+        return Roles.ASSIGNEE
+      }
+    }
+
+    return undefined
   },
 }
 
