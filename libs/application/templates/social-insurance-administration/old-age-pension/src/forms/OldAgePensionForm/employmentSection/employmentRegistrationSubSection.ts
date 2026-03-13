@@ -8,7 +8,10 @@ import {
 } from '@island.is/application/core'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { Employment, RatioType } from '../../../utils/constants'
-import { getApplicationAnswers } from '../../../utils/oldAgePensionUtils'
+import {
+  getApplicationAnswers,
+  isRatioType,
+} from '../../../utils/oldAgePensionUtils'
 
 export const employmentRegistrationSubSection = buildSubSection({
   id: 'employmentRegistrationSubSection',
@@ -60,12 +63,7 @@ export const employmentRegistrationSubSection = buildSubSection({
               id: 'ratioYearly',
               title: oldAgePensionFormMessage.employer.ratio,
               suffix: '%',
-              condition: (answers) => {
-                const { rawEmployers } = getApplicationAnswers(answers)
-                const currentEmployer = rawEmployers[rawEmployers.length - 1]
-
-                return currentEmployer?.ratioType === RatioType.YEARLY
-              },
+              condition: (answers) => isRatioType(answers, RatioType.YEARLY),
               placeholder: '1-50%',
               variant: 'number',
               width: 'full',
@@ -73,12 +71,7 @@ export const employmentRegistrationSubSection = buildSubSection({
             buildCustomField({
               id: 'ratioMonthly',
               component: 'EmployersRatioMonthly',
-              condition: (answers) => {
-                const { rawEmployers } = getApplicationAnswers(answers)
-                const currentEmployer = rawEmployers[rawEmployers.length - 1]
-
-                return currentEmployer?.ratioType === RatioType.MONTHLY
-              },
+              condition: (answers) => isRatioType(answers, RatioType.MONTHLY),
             }),
           ],
         }),

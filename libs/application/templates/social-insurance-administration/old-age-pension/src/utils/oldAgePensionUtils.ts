@@ -1,5 +1,7 @@
 import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import {
+  BankAccountType,
+  IS,
   MONTHS,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -11,11 +13,10 @@ import {
   IncomePlanConditions,
   IncomePlanRow,
   LatestIncomePlan,
-  PaymentInfoNew,
+  PaymentInfoV2,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
   Application,
-  FormValue,
   NationalRegistryResidenceHistory,
   NationalRegistrySpouse,
 } from '@island.is/application/types'
@@ -37,8 +38,16 @@ import {
   earlyRetirementMinAge,
   Employment,
   oldAgePensionAge,
+  RatioType,
 } from './constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
+import {
+  friendlyFormatIBAN,
+  friendlyFormatSWIFT,
+  typeOfBankInfo,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import isEmpty from 'lodash/isEmpty'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const pensionFundQuestion = getValueViaPath<YesOrNo>(
@@ -125,7 +134,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'tempAnswers',
   )
 
-  const paymentInfo = getValueViaPath<PaymentInfoNew>(answers, 'paymentInfo')
+  const paymentInfo = getValueViaPath<PaymentInfoV2>(answers, 'paymentInfo')
 
   const incomePlan =
     getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
@@ -570,4 +579,101 @@ export const determineNameFromApplicationAnswers = (
     : applicationType === ApplicationType.SAILOR_PENSION
     ? oldAgePensionFormMessage.pre.fishermenApplicationTitle
     : oldAgePensionFormMessage.shared.applicationTitle
+}
+
+export const isResidenceHistory = (
+  externalData: Application['externalData'],
+) => {
+  const { residenceHistory } = getApplicationExternalData(externalData)
+  // if no residence history returned, don't show the table
+  if (residenceHistory.length === 0) return false
+  return true
+}
+
+export const isResidenceHistoryOrOnlyIcelandic = (
+  externalData: Application['externalData'],
+) => {
+  const { residenceHistory } = getApplicationExternalData(externalData)
+  // if no residence history returned or if residence history is only iceland, show the question
+  if (residenceHistory.length === 0) return true
+  return residenceHistory.every((residence) => residence.country === IS)
+}
+
+export const isRatioType = (
+  answers: Application['answers'],
+  ratioType: RatioType,
+) => {
+  const { rawEmployers } = getApplicationAnswers(answers)
+  const currentEmployer = rawEmployers[rawEmployers.length - 1]
+
+  return currentEmployer?.ratioType === ratioType
+}
+
+export const getPaymentAlertMessage = (application: Application) => {
+  const { paymentInfo } = getApplicationAnswers(application.answers)
+  const { bankInfo } = getApplicationExternalData(application.externalData)
+
+  const type =
+    paymentInfo?.bankAccountType ??
+    typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
+
+  return type === BankAccountType.ICELANDIC
+    ? socialInsuranceAdministrationMessage.payment.alertMessage
+    : socialInsuranceAdministrationMessage.payment.alertMessageForeign
+}
+
+export const getDefaultBankAccountType = (application: Application) => {
+  const { paymentInfo } = getApplicationAnswers(application.answers)
+  const { bankInfo } = getApplicationExternalData(application.externalData)
+
+  return typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
+}
+
+export const isBankAccountType = (
+  answers: Application['answers'],
+  externalData: Application['externalData'],
+  bankAccountType: BankAccountType,
+) => {
+  const { paymentInfo } = getApplicationAnswers(answers)
+  const { bankInfo } = getApplicationExternalData(externalData)
+
+  const radio =
+    paymentInfo?.bankAccountType ??
+    typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
+  return radio === bankAccountType
+}
+
+const getBankInfo = (application: Application) =>
+  getApplicationExternalData(application.externalData).bankInfo
+
+export const getDefaultBank = (application: Application) => {
+  const bankInfo = getBankInfo(application)
+  return { ...bankInfo, bankNumber: bankInfo?.bank }
+}
+
+export const getDefaultIban = (application: Application) =>
+  friendlyFormatIBAN(getBankInfo(application).iban)
+
+export const getDefaultSwift = (application: Application) =>
+  friendlyFormatSWIFT(getBankInfo(application).swift)
+
+export const getDefaultCurrency = (application: Application) => {
+  const bankInfo = getBankInfo(application)
+  return !isEmpty(bankInfo) ? bankInfo.currency : ''
+}
+
+export const getDefaultBankName = (application: Application) => {
+  const bankInfo = getBankInfo(application)
+  return !isEmpty(bankInfo) ? bankInfo.foreignBankName : ''
+}
+
+export const getDefaultBankAddress = (application: Application) => {
+  const bankInfo = getBankInfo(application)
+  return !isEmpty(bankInfo) ? bankInfo.foreignBankAddress : ''
+}
+
+export const hasSpouse = (externalData: Application['externalData']) => {
+  const { hasSpouse } = getApplicationExternalData(externalData)
+  if (hasSpouse) return true
+  return false
 }

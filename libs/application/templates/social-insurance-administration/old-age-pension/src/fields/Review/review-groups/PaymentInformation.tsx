@@ -8,7 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
 import {
-  formatIcelandicBankAccount,
+  formatBankAccount,
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
   getTaxLevelOption,
@@ -22,12 +22,8 @@ export const PaymentInformation = ({
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const {
-    taxLevel,
-    personalAllowance,
-    personalAllowanceUsage,
-    paymentInfo,
-  } = getApplicationAnswers(application.answers)
+  const { taxLevel, personalAllowance, personalAllowanceUsage, paymentInfo } =
+    getApplicationAnswers(application.answers)
 
   const { formatMessage } = useLocale()
 
@@ -107,7 +103,7 @@ export const PaymentInformation = ({
                 label={formatMessage(
                   socialInsuranceAdministrationMessage.payment.bank,
                 )}
-                value={formatIcelandicBankAccount(paymentInfo.bank)}
+                value={formatBankAccount(paymentInfo.bank)}
               />
             </GridColumn>
           </GridRow>

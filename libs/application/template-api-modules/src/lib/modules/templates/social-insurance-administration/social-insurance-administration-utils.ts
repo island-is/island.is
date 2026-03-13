@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBank,
-  formatIcelandicBankAccount,
+  formatBankAccount,
   getBankIsk,
   shouldNotUpdateBankAccount,
   shouldNotUpdateBankAccountNew,
@@ -69,7 +69,7 @@ import {
   Employer as TrWebEmployer,
 } from '@island.is/clients/social-insurance-administration'
 import parse from 'date-fns/parse'
-import { incomePlanHasOnlyZeroIncome } from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
+import { incomePlanHasOnlyZeroIncome } from '@island.is/application/templates/social-insurance-administration-core/utils/incomePlanUtils'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -118,7 +118,7 @@ export const transformApplicationToOldAgePensionDTO = (
           paymentInfo.bankAccountType === BankAccountType.ICELANDIC) &&
         paymentInfo.bank && {
           domesticBankInfo: {
-            bank: formatIcelandicBankAccount(paymentInfo.bank),
+            bank: formatBankAccount(paymentInfo.bank),
           },
         }),
       ...(paymentInfo &&
@@ -146,9 +146,7 @@ export const transformApplicationToOldAgePensionDTO = (
     taxInfo: {
       personalAllowance: personalAllowance === YES,
       personalAllowanceUsage:
-        personalAllowance === YES
-          ? Number.parseInt(personalAllowanceUsage)
-          : 0,
+        personalAllowance === YES ? Number.parseInt(personalAllowanceUsage) : 0,
       taxLevel: +taxLevel,
     },
     applicantInfo: {

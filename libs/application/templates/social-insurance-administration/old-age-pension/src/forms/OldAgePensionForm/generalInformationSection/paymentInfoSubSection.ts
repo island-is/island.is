@@ -14,18 +14,24 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
-  friendlyFormatIBAN,
-  friendlyFormatSWIFT,
   getCurrencies,
   getTaxOptions,
   getYesNoOptions,
-  typeOfBankInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { Application } from '@island.is/application/types'
-import isEmpty from 'lodash/isEmpty'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getDefaultBank,
+  getDefaultBankAccountType,
+  getDefaultBankAddress,
+  getDefaultBankName,
+  getDefaultCurrency,
+  getDefaultIban,
+  getDefaultSwift,
+  getPaymentAlertMessage,
+  hasSpouse,
+  isBankAccountType,
 } from '../../../utils/oldAgePensionUtils'
 
 export const paymentInfoSubSection = buildSubSection({
@@ -40,33 +46,13 @@ export const paymentInfoSubSection = buildSubSection({
         buildAlertMessageField({
           id: 'paymentInfo.alertMessage',
           title: socialInsuranceAdministrationMessage.shared.alertTitle,
-          message: (application: Application) => {
-            const { paymentInfo } = getApplicationAnswers(application.answers)
-            const { bankInfo } = getApplicationExternalData(
-              application.externalData,
-            )
-
-            const type =
-              paymentInfo?.bankAccountType ??
-              typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
-
-            return type === BankAccountType.ICELANDIC
-              ? socialInsuranceAdministrationMessage.payment.alertMessage
-              : socialInsuranceAdministrationMessage.payment.alertMessageForeign
-          },
+          message: getPaymentAlertMessage,
           doesNotRequireAnswer: true,
           alertType: 'info',
         }),
         buildRadioField({
           id: 'paymentInfo.bankAccountType',
-          defaultValue: (application: Application) => {
-            const { paymentInfo } = getApplicationAnswers(application.answers)
-            const { bankInfo } = getApplicationExternalData(
-              application.externalData,
-            )
-
-            return typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
-          },
+          defaultValue: getDefaultBankAccountType,
           options: [
             {
               label:
@@ -85,63 +71,27 @@ export const paymentInfoSubSection = buildSubSection({
         }),
         buildBankAccountField({
           id: 'paymentInfo.bank',
-          defaultValue: (application: Application) => {
-            const { bankInfo } = getApplicationExternalData(
-              application.externalData,
-            )
-            return { ...bankInfo, bankNumber: bankInfo?.bank }
-          },
-          condition: (answers, externalData) => {
-            const { paymentInfo } = getApplicationAnswers(answers)
-            const { bankInfo } = getApplicationExternalData(externalData)
-
-            const radio =
-              paymentInfo?.bankAccountType ??
-              typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
-            return radio === BankAccountType.ICELANDIC
-          },
+          defaultValue: getDefaultBank,
+          condition: (answers, externalData) =>
+            isBankAccountType(answers, externalData, BankAccountType.ICELANDIC),
           marginTop: 2,
         }),
         buildTextField({
           id: 'paymentInfo.iban',
           title: socialInsuranceAdministrationMessage.payment.iban,
           placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
-          defaultValue: (application: Application) => {
-            const { bankInfo } = getApplicationExternalData(
-              application.externalData,
-            )
-            return friendlyFormatIBAN(bankInfo.iban)
-          },
-          condition: (answers, externalData) => {
-            const { paymentInfo } = getApplicationAnswers(answers)
-            const { bankInfo } = getApplicationExternalData(externalData)
-
-            const radio =
-              paymentInfo?.bankAccountType ??
-              typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
-            return radio === BankAccountType.FOREIGN
-          },
+          defaultValue: getDefaultIban,
+          condition: (answers, externalData) =>
+            isBankAccountType(answers, externalData, BankAccountType.FOREIGN),
         }),
         buildTextField({
           id: 'paymentInfo.swift',
           title: socialInsuranceAdministrationMessage.payment.swift,
           placeholder: 'AAAA BB CC XXX',
           width: 'half',
-          defaultValue: (application: Application) => {
-            const { bankInfo } = getApplicationExternalData(
-              application.externalData,
-            )
-            return friendlyFormatSWIFT(bankInfo.swift)
-          },
-          condition: (answers, externalData) => {
-            const { paymentInfo } = getApplicationAnswers(answers)
-            const { bankInfo } = getApplicationExternalData(externalData)
-
-            const radio =
-              paymentInfo?.bankAccountType ??
-              typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
-            return radio === BankAccountType.FOREIGN
-          },
+          defaultValue: getDefaultSwift,
+          condition: (answers, externalData) =>
+            isBankAccountType(answers, externalData, BankAccountType.FOREIGN),
         }),
         buildSelectField({
           id: 'paymentInfo.currency',
@@ -153,61 +103,25 @@ export const paymentInfoSubSection = buildSubSection({
             const { currencies } = getApplicationExternalData(externalData)
             return getCurrencies(currencies)
           },
-          defaultValue: (application: Application) => {
-            const { bankInfo } = getApplicationExternalData(
-              application.externalData,
-            )
-            return !isEmpty(bankInfo) ? bankInfo.currency : ''
-          },
-          condition: (answers, externalData) => {
-            const { paymentInfo } = getApplicationAnswers(answers)
-            const { bankInfo } = getApplicationExternalData(externalData)
-
-            const radio =
-              paymentInfo?.bankAccountType ??
-              typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
-            return radio === BankAccountType.FOREIGN
-          },
+          defaultValue: getDefaultCurrency,
+          condition: (answers, externalData) =>
+            isBankAccountType(answers, externalData, BankAccountType.FOREIGN),
         }),
         buildTextField({
           id: 'paymentInfo.bankName',
           title: socialInsuranceAdministrationMessage.payment.bankName,
           width: 'half',
-          defaultValue: (application: Application) => {
-            const { bankInfo } = getApplicationExternalData(
-              application.externalData,
-            )
-            return !isEmpty(bankInfo) ? bankInfo.foreignBankName : ''
-          },
-          condition: (answers, externalData) => {
-            const { paymentInfo } = getApplicationAnswers(answers)
-            const { bankInfo } = getApplicationExternalData(externalData)
-
-            const radio =
-              paymentInfo?.bankAccountType ??
-              typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
-            return radio === BankAccountType.FOREIGN
-          },
+          defaultValue: getDefaultBankName,
+          condition: (answers, externalData) =>
+            isBankAccountType(answers, externalData, BankAccountType.FOREIGN),
         }),
         buildTextField({
           id: 'paymentInfo.bankAddress',
           title: socialInsuranceAdministrationMessage.payment.bankAddress,
           width: 'half',
-          defaultValue: (application: Application) => {
-            const { bankInfo } = getApplicationExternalData(
-              application.externalData,
-            )
-            return !isEmpty(bankInfo) ? bankInfo.foreignBankAddress : ''
-          },
-          condition: (answers, externalData) => {
-            const { paymentInfo } = getApplicationAnswers(answers)
-            const { bankInfo } = getApplicationExternalData(externalData)
-
-            const radio =
-              paymentInfo?.bankAccountType ??
-              typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
-            return radio === BankAccountType.FOREIGN
-          },
+          defaultValue: getDefaultBankAddress,
+          condition: (answers, externalData) =>
+            isBankAccountType(answers, externalData, BankAccountType.FOREIGN),
         }),
         buildRadioField({
           id: 'paymentInfo.personalAllowance',
@@ -242,11 +156,7 @@ export const paymentInfoSubSection = buildSubSection({
             socialInsuranceAdministrationMessage.payment.alertSpouseAllowance,
           doesNotRequireAnswer: true,
           alertType: 'info',
-          condition: (_, externalData) => {
-            const { hasSpouse } = getApplicationExternalData(externalData)
-            if (hasSpouse) return true
-            return false
-          },
+          condition: (_, externalData) => hasSpouse(externalData),
         }),
         buildRadioField({
           id: 'paymentInfo.taxLevel',

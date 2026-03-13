@@ -6,7 +6,7 @@ import {
   BankInfo,
   CategorizedIncomeTypes,
   PaymentInfo,
-  PaymentInfoNew,
+  PaymentInfoV2,
 } from '../types'
 import {
   BankAccountType,
@@ -26,7 +26,7 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const formatBankAccount = (bankInfo?: PaymentInfo) => {
+export const formatBankAccount = (bankInfo?: PaymentInfo | Bank) => {
   return !isEmpty(bankInfo)
     ? `${bankInfo.bankNumber ?? ''}-${bankInfo.ledger ?? ''}-${
         bankInfo.accountNumber ?? ''
@@ -86,14 +86,6 @@ export const formatBank = (bankInfo: string) => {
   return bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
 }
 
-export const formatIcelandicBankAccount = (bank?: Bank) => {
-  const bankNumber = bank?.bankNumber ?? ''
-  const ledger = bank?.ledger ?? ''
-  const accountNumber = bank?.accountNumber ?? ''
-
-  return `${bankNumber}-${ledger}-${accountNumber}`
-}
-
 // We should only send bank account to TR if applicant is registering
 // new one or changing.
 export const shouldNotUpdateBankAccount = (
@@ -135,7 +127,7 @@ export const shouldNotUpdateBankAccount = (
 
 export const shouldNotUpdateBankAccountNew = (
   bankInfo?: BankInfo,
-  paymentInfo?: PaymentInfoNew,
+  paymentInfo?: PaymentInfoV2,
 ) => {
   if (!paymentInfo) {
     return false
@@ -160,10 +152,7 @@ export const shouldNotUpdateBankAccountNew = (
       bankInfo.currency === currency
     )
   } else {
-    return (
-      getBankIsk(bankInfo) ===
-      (!isEmpty(bank) && formatIcelandicBankAccount(bank))
-    )
+    return getBankIsk(bankInfo) === (!isEmpty(bank) && formatBankAccount(bank))
   }
 }
 

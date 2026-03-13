@@ -10,7 +10,7 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { StaticTableFormField } from '@island.is/application/ui-fields'
 import { FieldComponents, FieldTypes } from '@island.is/application/types'
-import { incomePlanHasOnlyZeroIncome } from '@island.is/application/templates/social-insurance-administration-core/lib/incomePlanUtils'
+import { incomePlanHasOnlyZeroIncome } from '@island.is/application/templates/social-insurance-administration-core/utils/incomePlanUtils'
 
 export const IncomePlan = ({
   application,
@@ -18,7 +18,9 @@ export const IncomePlan = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { incomePlan, noOtherIncomeConfirmation } = getApplicationAnswers(application.answers)
+  const { incomePlan, noOtherIncomeConfirmation } = getApplicationAnswers(
+    application.answers,
+  )
 
   return (
     <ReviewGroup

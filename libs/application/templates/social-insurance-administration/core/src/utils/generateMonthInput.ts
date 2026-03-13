@@ -1,6 +1,6 @@
 import { RepeaterItem } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
-import { shouldShowIncomePlanMonths } from './socialInsuranceAdministrationUtils'
+import { shouldShowIncomePlanMonths } from '../lib/socialInsuranceAdministrationUtils'
 
 export const generateMonthInput = (label: MessageDescriptor): RepeaterItem => {
   return {

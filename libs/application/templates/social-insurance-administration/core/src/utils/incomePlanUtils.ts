@@ -10,11 +10,11 @@ import {
   ISK,
   MONTH_NAMES,
   RatioType,
-} from './constants'
+} from '../lib/constants'
 import {
   getTypesOptions,
   shouldShowEqualIncomePerMonth,
-} from './socialInsuranceAdministrationUtils'
+} from '../lib/socialInsuranceAdministrationUtils'
 
 export const equalIncomePerMonthValueModifier = (
   isForeign: boolean,
@@ -125,5 +125,31 @@ export const incomePlanHasOnlyZeroIncome = (
   return (
     incomePlan.length > 0 &&
     incomePlan.every((income) => Number(income.incomePerYear) === 0)
+  )
+}
+
+export const isForeignCurrency = (activeField?: Record<string, string>) => {
+  return (
+    activeField?.incomeType === FOREIGN_BASIC_PENSION ||
+    activeField?.incomeType === FOREIGN_PENSION ||
+    activeField?.incomeType === FOREIGN_INCOME ||
+    activeField?.incomeType === INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
+    activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
+  )
+}
+
+export const isMonthlyOrYearlyIncome = (
+  activeField?: Record<string, string>,
+) => {
+  return (
+    activeField?.income === RatioType.YEARLY ||
+    activeField?.income === RatioType.MONTHLY
+  )
+}
+
+export const isMonthlyIncome = (activeField?: Record<string, string>) => {
+  return (
+    activeField?.income === RatioType.MONTHLY &&
+    activeField?.incomeCategory === INCOME
   )
 }
