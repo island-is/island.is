@@ -7,6 +7,7 @@ import {
   ApiMachineModelsGetRequest,
   ApiMachineOwnerChangeOwnerchangeIdDeleteRequest,
   ApiMachineParentCategoriesTypeModelGetRequest,
+  ApiMachineRequestInspectionRegistrationNumberGetRequest,
   ApiMachineStatusChangePostRequest,
   ApiMachineSubCategoriesGetRequest,
   ApiMachineTypesTypeByRegistrationNumberGetRequest,
@@ -44,6 +45,8 @@ import {
   ConfirmOwnerChange,
   SupervisorChange,
   MachinesWithTotalCount,
+  MachineForInspectionTotalCount,
+  MachineForInspectionDto,
 } from './workMachines.types'
 import {
   apiChangeMachineOwnerToApiRequest,
@@ -260,6 +263,70 @@ export class WorkMachinesClientService {
           }
         }) || [],
       totalCount: result?.pagination?.totalCount || 0,
+    }
+  }
+
+  async getMachinesForInspection(
+    auth: User,
+    parameters?: ApiMachinesGetRequest,
+  ): Promise<MachineForInspectionTotalCount> {
+    const defaultOptions = {
+      pageSize: 20,
+      pageNumber: 1,
+    }
+    const result = await this.machineRequestInspectionApiWithAuth(
+      auth,
+    ).apiMachineRequestInspectionGet({
+      ...defaultOptions,
+      ...parameters,
+    })
+    return {
+      machines:
+        result?.value?.map((machine) => {
+          return {
+            id: machine.id,
+            ownerNumber: machine?.ownerNumber || '',
+            licensePlateNumber: machine?.licensePlateNumber || '',
+            type: machine.type || '',
+            category: machine?.category || '',
+            registrationNumber: machine?.registrationNumber || '',
+            status: machine?.status || '',
+            paymentRequiredForOwnerChange:
+              machine?.paymentRequiredForOwnerChange ?? true,
+            errorMessage: machine?.errorMessage,
+            supervisor: machine?.supervisor || '',
+          }
+        }) || [],
+      totalCount: result?.pagination?.totalCount || 0,
+    }
+  }
+
+  async getMachineDetailsForInspection(
+    auth: User,
+    parameters: ApiMachineRequestInspectionRegistrationNumberGetRequest,
+  ): Promise<MachineForInspectionDto> {
+    const result = await this.machineRequestInspectionApiWithAuth(
+      auth,
+    ).apiMachineRequestInspectionRegistrationNumberGet({
+      ...parameters,
+    })
+
+    const [type, ...subType] = result.type?.split(' ') || ''
+
+    return {
+      id: result.id,
+      ownerNumber: result?.ownerNumber || '',
+      licensePlateNumber: result?.licensePlateNumber || '',
+      type: type,
+      subType: subType.join(' '),
+      category: result?.category || '',
+      registrationNumber: result?.registrationNumber || '',
+      status: result?.status || '',
+      paymentRequiredForOwnerChange:
+        result?.paymentRequiredForOwnerChange ?? true,
+      errorMessage: result?.errorMessage,
+      supervisor: result?.supervisor || '',
+      disabled: result.errorMessage ? true : false,
     }
   }
 
