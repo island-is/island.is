@@ -701,10 +701,10 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
       selectedCourtLevel === 'districtCourt'
         ? props.scheduleTypes.districtCourt.items
         : selectedCourtLevel === 'courtOfAppeal'
-          ? props.scheduleTypes.courtOfAppeal.items
-          : selectedCourtLevel === 'supremeCourt'
-            ? props.scheduleTypes.supremeCourt.items
-            : props.scheduleTypes.all.items
+        ? props.scheduleTypes.courtOfAppeal.items
+        : selectedCourtLevel === 'supremeCourt'
+        ? props.scheduleTypes.supremeCourt.items
+        : props.scheduleTypes.all.items
 
     return optionsPerCourt.map((option) => ({
       label: option.label,
@@ -717,10 +717,10 @@ const CourtAgendas: CustomScreen<CourtAgendasProps> = (props) => {
       selectedCourtLevel === 'districtCourt'
         ? props.caseTypes.districtCourt.options
         : selectedCourtLevel === 'courtOfAppeal'
-          ? props.caseTypes.courtOfAppeal.options
-          : selectedCourtLevel === 'supremeCourt'
-            ? props.caseTypes.supremeCourt.options
-            : props.caseTypes.all.options
+        ? props.caseTypes.courtOfAppeal.options
+        : selectedCourtLevel === 'supremeCourt'
+        ? props.caseTypes.supremeCourt.options
+        : props.caseTypes.all.options
 
     return options.map((option) => ({
       label: option.label,
