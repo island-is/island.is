@@ -37,7 +37,7 @@ export const information = {
         description: 'Pick machine info title',
       },
       infoMessage: {
-        id: 'aosh.rifm.application:information.labels.pickMachine.infoMessage',
+        id: 'aosh.rifm.application:information.labels.pickMachine.infoMessage#markdown',
         defaultMessage:
           '•	árlega eða annað hvert á - sjá skoðunarmiða á vél \n\n' +
           '•	fyrir og eftir verulegar viðgerðir og breytingar á burðarvirkjum véla \n\n' +

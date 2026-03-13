@@ -57,7 +57,7 @@ export type MachinesWithTotalCount = {
 
 export type MachineForInspectionDto = {
   id?: string
-  ownerNumber?: string
+  owner?: { number?: string; name: string }
   licensePlateNumber?: string
   type?: string
   subType?: string

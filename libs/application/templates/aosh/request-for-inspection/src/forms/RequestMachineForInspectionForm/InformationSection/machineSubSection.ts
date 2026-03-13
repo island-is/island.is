@@ -2,13 +2,12 @@ import { Application } from '@island.is/api/schema'
 import {
   buildMultiField,
   buildTextField,
-  buildDateField,
   buildSubSection,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { getSelectedMachine } from '../../../utils/getSelectedMachine'
-import { Machine } from '../../../shared/types'
 import { ExternalData, FormValue } from '@island.is/application/types'
+import { MachineForInspectionDto } from '@island.is/clients/work-machines'
 
 export const machineSubSection = buildSubSection({
   id: 'machine',
@@ -25,13 +24,6 @@ export const machineSubSection = buildSubSection({
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) => {
-            const machine = getSelectedMachine(
-              application.externalData,
-              application.answers,
-            ) as Machine
-            return machine?.regNumber
-          },
         }),
         buildTextField({
           id: 'machine.category',
@@ -43,7 +35,7 @@ export const machineSubSection = buildSubSection({
             const machine = getSelectedMachine(
               application.externalData,
               application.answers,
-            ) as Machine
+            ) as MachineForInspectionDto
             return machine?.category
           },
         }),
@@ -57,7 +49,7 @@ export const machineSubSection = buildSubSection({
             const machine = getSelectedMachine(
               application.externalData,
               application.answers,
-            ) as Machine
+            ) as MachineForInspectionDto
             return machine?.type || ''
           },
         }),
@@ -68,14 +60,17 @@ export const machineSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           condition: (answers: FormValue, externalData: ExternalData) => {
-            const machine = getSelectedMachine(externalData, answers) as Machine
+            const machine = getSelectedMachine(
+              externalData,
+              answers,
+            ) as MachineForInspectionDto
             return !!machine?.subType
           },
           defaultValue: (application: Application) => {
             const machine = getSelectedMachine(
               application.externalData,
               application.answers,
-            ) as Machine
+            ) as MachineForInspectionDto
             return machine?.subType || ''
           },
         }),
@@ -86,15 +81,15 @@ export const machineSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           condition: (answers: FormValue, externalData: ExternalData) => {
-            const machine = getSelectedMachine(externalData, answers) as Machine
-            return !!machine?.ownerNumber
+            const machine = getSelectedMachine(externalData, answers)
+            return !!machine?.owner
           },
           defaultValue: (application: Application) => {
             const machine = getSelectedMachine(
               application.externalData,
               application.answers,
-            ) as Machine
-            return machine?.ownerNumber || ''
+            )
+            return machine?.owner || ''
           },
         }),
         buildTextField({
@@ -104,15 +99,15 @@ export const machineSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           condition: (answers: FormValue, externalData: ExternalData) => {
-            const machine = getSelectedMachine(externalData, answers) as Machine
-            return !!machine?.plate
+            const machine = getSelectedMachine(externalData, answers)
+            return !!machine?.licensePlateNumber
           },
           defaultValue: (application: Application) => {
             const machine = getSelectedMachine(
               application.externalData,
               application.answers,
-            ) as Machine
-            return machine?.plate || ''
+            )
+            return machine?.licensePlateNumber || ''
           },
         }),
       ],
