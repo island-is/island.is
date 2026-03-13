@@ -98,9 +98,10 @@ export class CardPaymentController {
         message: `Card verification started`,
       })
 
+      const { correlationID, ...rest } = verification
       return {
-        ...verification,
-        correlationId: verification.correlationID,
+        ...rest,
+        correlationId: correlationID,
       } as VerifyCardResponse
     } catch (e) {
       try {
