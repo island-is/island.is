@@ -23,7 +23,11 @@ import { MachineAnswersSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
-import { IdentityApi, UserProfileApi, MachinesApi } from '../dataProviders'
+import {
+  NationalRegistryUserApi,
+  UserProfileApi,
+  MachinesApi,
+} from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
 import { CodeOwners } from '@island.is/shared/constants'
 
@@ -98,7 +102,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [IdentityApi, UserProfileApi, MachinesApi],
+              api: [NationalRegistryUserApi, UserProfileApi, MachinesApi],
             },
           ],
         },

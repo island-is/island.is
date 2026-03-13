@@ -131,7 +131,7 @@ export const m = defineMessages({
   editNationalRegistryData: {
     id: 'hi.application:nationalRegistryData.edit#markdown',
     defaultMessage:
-      'Tilkynna [flutning lögheimilis](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/).',
+      'Ef heimilisfang er ekki rétt þarf að tilkynna [flutning lögheimilis](https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/).',
     description:
       'Need to update your address? Go to <a href="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/" target="_blank" style="color:#0061ff">Change of Address</a>',
   },
@@ -640,5 +640,20 @@ export const m = defineMessages({
     id: 'hi.application:unexpectedError',
     defaultMessage: 'Villa kom upp',
     description: 'Unexpected error',
+  },
+  explanation: {
+    id: 'hi.application:explanation',
+    defaultMessage: 'Skýring',
+    description: 'Explanation',
+  },
+  extraInformationSectionTitle: {
+    id: 'hi.application:extraInformationSectionTitle',
+    defaultMessage: 'Viðbótarupplýsingar',
+    description: 'Additional information',
+  },
+  extraInformationSectionDescription: {
+    id: 'hi.application:extraInformationSectionDescription',
+    defaultMessage: 'Hér getur þú bætt við frekari upplýsingum',
+    description: 'Here you car add additional information or remarks',
   },
 })

@@ -74,5 +74,6 @@ export const serviceSetup = (services: {
         paths: ['/samradsgatt'],
       },
     })
+    .grantNamespaces('nginx-ingress-external')
   return consultationService
 }

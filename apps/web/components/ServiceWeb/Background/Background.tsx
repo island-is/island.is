@@ -90,7 +90,7 @@ export const Background = ({
         setComponent(<TransportAuthority namespace={namespace} />)
         break
       case 'hms':
-        setComponent(<Hms namespace={namespace} />)
+        setComponent(<Hms />)
         break
       case 'tryggingastofnun':
       case 'social-insurance-administration':

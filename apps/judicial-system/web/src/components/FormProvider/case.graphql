@@ -112,6 +112,8 @@ query Case($input: CaseQueryInput!) {
         deliveredToDefenderNationalId
         servedBy
         isDefaultJudgement
+        isAcquittedByPublicProsecutionOffice
+        defendantHasRequestedAppeal
       }
     }
     defenderName
