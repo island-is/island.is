@@ -37,6 +37,11 @@ export const serviceSetup = (services: {
         staging: 'https://beta.staging01.devland.is',
         prod: 'https://island.is',
       },
+      NEXT_PUBLIC_ALLOW_APPLE_PAY: {
+        dev: 'true',
+        staging: 'true',
+        prod: 'true',
+      },
     })
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',

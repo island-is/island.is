@@ -2166,6 +2166,7 @@ payments:
     APP_EXTERNAL_BASEPATH: 'https://beta.dev01.devland.is'
     BASEPATH: '/greida'
     LOG_LEVEL: 'info'
+    NEXT_PUBLIC_ALLOW_APPLE_PAY: 'true'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
