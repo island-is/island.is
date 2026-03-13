@@ -826,6 +826,9 @@
         "libs/clients/license-client/src/index.ts"
       ],
       "@island.is/clients/lsh": ["libs/clients/lsh/src/index.ts"],
+      "@island.is/clients/lyfjastofnun-pharmacies": [
+        "libs/clients/lyfjastofnun-pharmacies/src/index.ts"
+      ],
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
@@ -1307,6 +1310,9 @@
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"],
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
+      ],
+      "@island.is/api/domains/icelandic-medicines-agency": [
+        "libs/api/domains/icelandic-medicines-agency/src/index.ts"
       ],
       "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },

@@ -4457,6 +4457,7 @@ export interface ISliceConnectedComponentFields {
     | 'Personuvernd/SearchInput'
     | 'Syslumenn/DrivingInstructorList'
     | 'FSRE/EmployeeList'
+    | 'Lyfjastofnun/Pharmacies'
     | 'NewKilometerFee'
     | 'LatestVerdicts'
     | undefined

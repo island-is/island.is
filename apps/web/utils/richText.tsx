@@ -111,6 +111,7 @@ import { GrantCardsList } from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 import { FeaturedGenericListItemsSlice } from '../components/Organization/Slice/FeaturedGenericListItemsSlice/FeaturedGenericListItemsSlice'
 import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
+import PharmaciesAccordion from '../components/connected/lyfjastofnun/PharmaciesAccordion'
 
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
@@ -252,6 +253,9 @@ export const webRenderConnectedComponent = (
       break
     case 'VERAnnouncementCalculator':
       connectedComponent = <VerAnnouncementCalculator />
+      break
+    case 'Lyfjastofnun/Pharmacies':
+      connectedComponent = <PharmaciesAccordion slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
