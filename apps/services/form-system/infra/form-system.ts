@@ -66,7 +66,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     })
     .xroad(Base, Client, NationalRegistryB2C)
     .ingress({
-      primary: {
+      internal: {
         host: {
           dev: serviceName,
           staging: serviceName,
