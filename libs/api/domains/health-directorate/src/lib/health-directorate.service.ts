@@ -283,7 +283,6 @@ export class HealthDirectorateService {
         return {
           id: item.prescriptionId,
           productId: item.product.id,
-          prescriptionId: item.prescriptionId,
           name: item.product.name,
           type: item.product.type,
           form: item.product.form,

@@ -138,7 +138,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
                         ? formatMessage(messages.renewalStatusApproved)
                         : item.renewalStatus ===
                           HealthDirectoratePrescriptionRenewalStatus.Rejected
-                        ? formatMessage(messages.vaccineDeclined)
+                        ? formatMessage(messages.renewalStatusRejected)
                         : item.renewalStatus ===
                           HealthDirectoratePrescriptionRenewalStatus.Dismissed
                         ? formatMessage(messages.renewalStatusDismissed)

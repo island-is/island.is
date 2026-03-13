@@ -14,7 +14,7 @@ export class QuestionnaireLabelValue {
 @InputType()
 export class QuestionnaireEntryInput {
   @Field()
-  entryID!: string
+  entryId!: string
 
   @Field(() => [QuestionnaireLabelValue])
   answers!: QuestionnaireLabelValue[]

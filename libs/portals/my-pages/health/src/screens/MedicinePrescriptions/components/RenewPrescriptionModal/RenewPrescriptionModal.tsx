@@ -80,9 +80,8 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   }
 
   const submitForm = async () => {
-    // TODO: Improve form submission when service is ready
-    if (activePrescription.prescriptionId == null) {
-      setError('Please select a valid prescription.')
+    if (activePrescription.id == null) {
+      setError(formatMessage(messages.renewalInvalidPrescription))
       return
     }
 
@@ -90,24 +89,19 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       const data = await postRenewal({
         variables: {
           input: {
-            id: activePrescription.prescriptionId as string,
+            id: activePrescription.id,
           },
         },
       })
       if (data) {
         setError('')
         closeModal()
-        toast.success(
-          'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
-        )
+        toast.success(formatMessage(messages.renewalRequestSent))
       }
     } catch (error) {
-      setError(
-        'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
-      )
-      toast.error(
-        'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
-      )
+      const errorMessage = formatMessage(messages.renewalRequestError)
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 

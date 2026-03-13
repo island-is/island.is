@@ -3,7 +3,6 @@ query GetMedicinePrescriptions($locale: String) {
     prescriptions {
       id
       productId
-      prescriptionId
       name
       strength
       type

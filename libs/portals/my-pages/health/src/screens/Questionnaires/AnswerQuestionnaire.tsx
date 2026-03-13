@@ -3,7 +3,7 @@ import {
   QuestionnaireQuestionnairesOrganizationEnum,
 } from '@island.is/api/schema'
 import { Box, LoadingDots, toast } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   GenericQuestionnaire,
   m,
@@ -23,6 +23,7 @@ import {
 } from './questionnaires.generated'
 
 const AnswerQuestionnaire: FC = () => {
+  useNamespaces('sp.health')
   const { id, org } = useParams<{ id?: string; org?: string }>()
   const navigate = useNavigate()
   const { formatMessage, lang } = useLocale()
@@ -123,7 +124,7 @@ const AnswerQuestionnaire: FC = () => {
     }
 
     const entries = Object.entries(answers).map(([questionId, answer]) => ({
-      entryID: questionId,
+      entryId: questionId,
       type: answer.type,
       answers: answer.answers.map((a) => ({
         label: a.label,

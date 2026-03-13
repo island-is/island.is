@@ -3,7 +3,7 @@ import {
   QuestionnaireQuestionnairesStatusEnum,
 } from '@island.is/api/schema'
 import { Box, Button, Tag, TagVariant } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatDate,
   InfoLine,
@@ -19,6 +19,7 @@ import * as styles from './Questionnaires.css'
 import { useGetQuestionnaireQuery } from './questionnaires.generated'
 
 const QuestionnaireDetail: FC = () => {
+  useNamespaces('sp.health')
   const { id, org } = useParams<{ id?: string; org?: string }>()
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()

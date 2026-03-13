@@ -15,9 +15,6 @@ export class Prescription {
   productId!: string
 
   @Field({ nullable: true })
-  prescriptionId?: string
-
-  @Field({ nullable: true })
   name?: string
 
   @Field({ nullable: true })

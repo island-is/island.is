@@ -10,7 +10,7 @@ import {
   Select,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Answered,
   formatDate,
@@ -28,6 +28,7 @@ import {
 } from './questionnaires.generated'
 
 const AnsweredQuestionnaire: FC = () => {
+  useNamespaces('sp.health')
   const { id, org, submissionId } = useParams<{
     id?: string
     org?: string

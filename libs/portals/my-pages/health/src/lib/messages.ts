@@ -2549,6 +2549,24 @@ export const messages = defineMessages({
     defaultMessage: 'Vísað frá',
     id: 'sp.health:renewal-status-dismissed',
   },
+  renewalStatusRejected: {
+    defaultMessage: 'Hafnað',
+    id: 'sp.health:renewal-status-rejected',
+  },
+  renewalRequestSent: {
+    defaultMessage:
+      'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
+    id: 'sp.health:renewal-request-sent',
+  },
+  renewalRequestError: {
+    defaultMessage:
+      'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
+    id: 'sp.health:renewal-request-error',
+  },
+  renewalInvalidPrescription: {
+    defaultMessage: 'Vinsamlegast veljið gilt lyfseðilsnúmer.',
+    id: 'sp.health:renewal-invalid-prescription',
+  },
   weekdayMondayAcc: {
     defaultMessage: 'Mánudaginn',
     id: 'sp.health:weekday-monday-acc',
