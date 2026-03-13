@@ -1943,6 +1943,10 @@ export const messages = defineMessages({
     defaultMessage: 'Gildir til',
     id: 'sp.health:questionnaire-expiration',
   },
+  questionnaireSender: {
+    defaultMessage: 'Sent af',
+    id: 'sp.health:questionnaire-sender',
+  },
   expiredQuestionnaire: {
     defaultMessage: 'Útrunnið',
     id: 'sp.health:expired-questionnaire',

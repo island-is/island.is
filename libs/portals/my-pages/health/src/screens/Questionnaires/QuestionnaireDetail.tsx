@@ -203,6 +203,14 @@ const QuestionnaireDetail: FC = () => {
                 : formatMessage(messages.unknown)
             }
           />
+          {questionnaire?.sender && (
+            <InfoLine
+              loading={loading}
+              key="questionnaire-sender"
+              label={formatMessage(messages.questionnaireSender)}
+              content={questionnaire.sender}
+            />
+          )}
           {questionnaire?.expirationDate && (
             <InfoLine
               loading={loading}

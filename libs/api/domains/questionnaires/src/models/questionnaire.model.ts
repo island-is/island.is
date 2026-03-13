@@ -64,6 +64,9 @@ export class Questionnaire {
   @Field(() => QuestionnairesBaseItem)
   baseInformation!: QuestionnairesBaseItem
 
+  @Field(() => String, { nullable: true })
+  sender?: string
+
   @Field(() => Date, { nullable: true })
   expirationDate?: Date
 

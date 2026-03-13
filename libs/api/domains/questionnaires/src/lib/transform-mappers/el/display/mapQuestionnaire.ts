@@ -43,6 +43,7 @@ export const mapElQuestionnaireOverview = (
   formatMessage: FormatMessage,
 ): Questionnaire => ({
   baseInformation: mapBaseInformation(q, formatMessage),
+  sender: q.sender ?? undefined,
   expirationDate: q.expiryDate ?? undefined,
   canSubmit: q.canSubmit,
   submissions: q.submissions?.map((sub) => ({
@@ -67,6 +68,7 @@ export const mapElQuestionnaireForm = (
 
   return {
     baseInformation: mapBaseInformation(q, formatMessage),
+    sender: q.sender ?? undefined,
     expirationDate: q.expiryDate ?? undefined,
     canSubmit: q.canSubmit,
     submissions: q.submissions?.map((sub) => ({
