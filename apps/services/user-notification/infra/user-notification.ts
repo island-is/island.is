@@ -230,6 +230,11 @@ export const userNotificationWorkerSetup = (services: {
       CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      NOVA_USERNAME: `/k8s/${serviceName}/NOVA_USERNAME`,
+      NOVA_PASSWORD: `/k8s/${serviceName}/NOVA_PASSWORD`,
+      NOVA_URL: `/k8s/${serviceName}/NOVA_URL`,
+      NOVA_LANDLAEKNIR_USERNAME: `/k8s/${serviceName}/NOVA_LANDLAEKNIR_USERNAME`,
+      NOVA_LANDLAEKNIR_PASSWORD: `/k8s/${serviceName}/NOVA_LANDLAEKNIR_PASSWORD`,
     })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .liveness('/liveness')

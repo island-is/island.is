@@ -143,4 +143,8 @@ export interface SendSmsOptions {
    * @default 'Island.is'
    */
   from?: string
+  /**
+   * SMS payer identifier — used to look up payer-specific Nova credentials
+   */
+  payer?: string
 }
