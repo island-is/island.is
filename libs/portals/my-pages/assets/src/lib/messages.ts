@@ -1630,10 +1630,6 @@ export const shipsMessages = defineMessages({
     defaultMessage:
       'Hér finnur þú upplýsingar um þín skip úr skipaskrá Samgöngustofu',
   },
-  tooltip: {
-    id: 'sp.ships:tooltip',
-    defaultMessage: 'todo',
-  },
   notFound: {
     id: 'sp.ships:not-found',
     defaultMessage: 'Skip fannst ekki',
@@ -1654,9 +1650,9 @@ export const shipsMessages = defineMessages({
     id: 'sp.ships:valid-tag',
     defaultMessage: 'Í gildi',
   },
-  expiredTag: {
+  invalidTag: {
     id: 'sp.ships:expired-tag',
-    defaultMessage: 'Útrunnið',
+    defaultMessage: 'Ógilt',
   },
   registrationTab: {
     id: 'sp.ships:registration-tab',

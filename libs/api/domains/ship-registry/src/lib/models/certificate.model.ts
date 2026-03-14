@@ -1,5 +1,5 @@
-import { Field, ObjectType } from '@nestjs/graphql'
-import { ShipRegistryCertificateStatus } from '../dto/certificate-status.enum'
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
+import { ShipRegistryCertificateStatus } from './enums'
 
 @ObjectType('ShipRegistryCertificate')
 export class ShipRegistryCertificate {
@@ -9,12 +9,12 @@ export class ShipRegistryCertificate {
   @Field(() => ShipRegistryCertificateStatus)
   status!: ShipRegistryCertificateStatus
 
-  @Field()
-  issueDate!: string
+  @Field(() => GraphQLISODateTime)
+  issueDate!: Date
 
-  @Field()
-  validToDate!: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  validToDate?: Date
 
-  @Field({ nullable: true })
-  extensionDate?: string
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  extensionDate?: Date
 }

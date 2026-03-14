@@ -1,10 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('ShipRegistrySeaworthiness')
 export class ShipRegistrySeaworthiness {
   @Field()
   isValid!: boolean
 
-  @Field()
-  validTo!: string
+  @Field(() => GraphQLISODateTime)
+  validTo!: Date
 }

@@ -1,10 +1,10 @@
 import { registerEnumType } from '@nestjs/graphql'
 
-// TODO: Confirm exact status string values from ship registry API provider
-// and update mapCertificateStatus() in mapper.ts accordingly
 export enum ShipRegistryCertificateStatus {
   Valid = 'VALID',
-  Expired = 'EXPIRED',
+  Invalid = 'INVALID',
+  ReinspectionNeeded = 'REINSPECTION_NEEDED',
+  InInspectionWindow = 'IN_INSPECTION_WINDOW',
   Unknown = 'UNKNOWN',
 }
 

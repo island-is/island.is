@@ -6,4 +6,5 @@ export {
   ShipBaseInfoDto,
   ValueMessageDto,
   ValueUnitMessageDto,
+  ShipCertificateDetailDto,
 } from '../gen/fetch'

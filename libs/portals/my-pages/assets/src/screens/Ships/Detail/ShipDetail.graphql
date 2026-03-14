@@ -33,6 +33,10 @@ query ShipDetail($input: ShipRegistryUserShipInput!) {
     phoneOnBoard {
       ...LocalizedValue
     }
+    isSeaworthy
+    seaworthinessCertificateValidTo {
+      ...LocalizedValue
+    }
     measurements {
       length {
         ...LocalizedValue
@@ -63,9 +67,6 @@ query ShipDetail($input: ShipRegistryUserShipInput!) {
       municipality {
         ...LocalizedValue
       }
-      phoneNo {
-        ...LocalizedValue
-      }
     }
     engines {
       name {
@@ -85,6 +86,5 @@ query ShipDetail($input: ShipRegistryUserShipInput!) {
       validToDate
       extensionDate
     }
-    seaworthinessCertificateValidTo
   }
 }

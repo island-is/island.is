@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { ShipRegistryClientV2Service } from '@island.is/clients/ship-registry-v2'
 import { UserShipsCollection } from '../models/userShipsCollection.model'
 import { mapToUserShipCollection, mapToUserShipFromDetails } from '../mapper'
 import { UserShip } from '../models/userShip.model'
 import { LocaleEnum } from '../dto/locale.enum'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class UserShipsService {
   constructor(
     private readonly shipRegistryClientV2Service: ShipRegistryClientV2Service,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async getUserShips(user: User): Promise<UserShipsCollection> {

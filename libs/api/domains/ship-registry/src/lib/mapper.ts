@@ -1,6 +1,7 @@
 import {
   MyShipDetailDto,
   ShipBaseInfoDto,
+  ShipCertificateDetailDto,
   ValueMessageDto,
   ValueUnitMessageDto,
 } from '@island.is/clients/ship-registry-v2'
@@ -9,13 +10,25 @@ import { UserShipCollectionItem } from './models/userShipCollectionItem.model'
 import { UserShip } from './models/userShip.model'
 import { ShipRegistryLocalizedValue } from './models/localizedValue.model'
 import { LocaleEnum } from './dto/locale.enum'
-import { ShipRegistryCertificateStatus } from './dto/certificate-status.enum'
+import { ShipRegistryCertificateStatus } from './models/enums'
+import { parseDate } from './utils'
+import format from 'date-fns/format'
 
-// TODO: Map raw API status strings once exact values are confirmed with provider
 const mapCertificateStatus = (
-  raw: string | undefined,
+  raw: ShipCertificateDetailDto['certificateIssueStatusEnum'] | undefined,
 ): ShipRegistryCertificateStatus => {
-  return ShipRegistryCertificateStatus.Unknown
+  switch (raw) {
+    case 'VALID':
+      return ShipRegistryCertificateStatus.Valid
+    case 'INVALID':
+      return ShipRegistryCertificateStatus.Invalid
+    case 'NEEDS_REINSPECTION':
+      return ShipRegistryCertificateStatus.ReinspectionNeeded
+    case 'IN_INSPECTION_WINDOW':
+      return ShipRegistryCertificateStatus.InInspectionWindow
+    default:
+      return ShipRegistryCertificateStatus.Unknown
+  }
 }
 
 const toLocalizedValue = (
@@ -25,8 +38,8 @@ const toLocalizedValue = (
   if (!dto) return undefined
   return {
     label: locale === LocaleEnum.En ? dto.translation.en : dto.translation.is,
-    value: dto.value || undefined,
-    unit: 'unit' in dto ? dto.unit || undefined : undefined,
+    value: dto.value ?? undefined,
+    unit: 'unit' in dto ? dto.unit ?? undefined : undefined,
   }
 }
 
@@ -43,14 +56,18 @@ export const mapToUserShipCollectionItem = (
     return undefined
   }
 
+  const validTo = ship.seaWorthyExpiry
+    ? new Date(ship.seaWorthyExpiry)
+    : undefined
+
   return {
     id: ship.shipRegistrationNumber,
     name: ship.shipName,
-    regionAcronym: ship.regionalAcronym || undefined,
-    seaworthiness: ship.seaWorthyExpiry
+    regionAcronym: ship.regionalAcronym ?? undefined,
+    seaworthiness: validTo
       ? {
-          isValid: new Date(ship.seaWorthyExpiry) >= new Date(),
-          validTo: ship.seaWorthyExpiry.toString(),
+          isValid: validTo >= new Date(),
+          validTo,
         }
       : undefined,
   }
@@ -69,8 +86,13 @@ export const mapToUserShipFromDetails = (
 
   const registrationNumber = Number(info.shipRegistrationNumber.value)
 
+  const seaworthinessDate =
+    info.seaworthyExpiryDate?.value && info.seaworthyExpiryDate?.value !== '-'
+      ? new Date(info.seaworthyExpiryDate.value)
+      : undefined
+
   return {
-    id: `${registrationNumber}_${locale}`,
+    id: `${registrationNumber}`,
     registrationNumber,
     name: info.shipName.value,
     region: toLocalizedValue(info.regionString, locale),
@@ -81,6 +103,16 @@ export const mapToUserShipFromDetails = (
     hullMaterial: toLocalizedValue(info.hullMaterial, locale),
     classificationSociety: toLocalizedValue(info.classificationSociety, locale),
     phoneOnBoard: toLocalizedValue(info.phoneOnBoardShip, locale),
+    isSeaworthy: info.seaworthyExpiryDate?.value !== '-',
+    seaworthinessCertificateValidTo: toLocalizedValue(
+      seaworthinessDate
+        ? {
+            translation: info.seaworthyExpiryDate.translation,
+            value: format(seaworthinessDate, 'dd.MM.yyyy'),
+          }
+        : undefined,
+      locale,
+    ),
     measurements: spec
       ? {
           length: toLocalizedValue(spec.length, locale),
@@ -96,7 +128,7 @@ export const mapToUserShipFromDetails = (
           name: toLocalizedValue(info.fishery, locale),
           address: toLocalizedValue(info.fisheryAddress, locale),
           municipality: toLocalizedValue(info.fisheryMunicipality, locale),
-          phoneNo: toLocalizedValue(info.fisheryPhoneNo, locale),
+          phoneNumber: toLocalizedValue(info.fisheryPhoneNo, locale),
         }
       : undefined,
     engines: ship.mainEngines?.map((engine) => ({
@@ -104,17 +136,20 @@ export const mapToUserShipFromDetails = (
       year: toLocalizedValue(engine.engineYear, locale),
       power: toLocalizedValue(engine.enginePower, locale),
     })),
-    certificates: ship.shipCertificateDetails?.map((cert) => ({
-      name: cert.certificateTypeName,
-      status: mapCertificateStatus(
-        locale === LocaleEnum.En
-          ? cert.certificateIssueStatus?.en
-          : cert.certificateIssueStatus?.is,
-      ),
-      issueDate: cert.issueDate ?? '',
-      validToDate: cert.validToDate ?? '',
-      extensionDate: cert.extensionDate || undefined,
-    })),
-    seaworthinessCertificateValidTo: undefined, // TODO: map from explicit API field
+    certificates: ship.shipCertificateDetails
+      ?.map((cert) => {
+        if (!cert.issueDate) return undefined
+        return {
+          name: cert.certificateTypeName,
+          status: mapCertificateStatus(cert.certificateIssueStatusEnum),
+          issueDate: parseDate(cert.issueDate),
+          validToDate:
+            cert.validToDate !== '' ? parseDate(cert.validToDate) : undefined,
+          extensionDate: cert.extensionDate
+            ? parseDate(cert.extensionDate)
+            : undefined,
+        }
+      })
+      .filter(isDefined),
   }
 }

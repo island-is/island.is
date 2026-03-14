@@ -13,5 +13,5 @@ export class ShipRegistryFishery {
   municipality?: ShipRegistryLocalizedValue
 
   @Field(() => ShipRegistryLocalizedValue, { nullable: true })
-  phoneNo?: ShipRegistryLocalizedValue
+  phoneNumber?: ShipRegistryLocalizedValue
 }

@@ -6,6 +6,7 @@ import {
   EmptyState,
   IntroWrapperV2,
   SAMGONGUSTOFA_SLUG,
+  m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { shipsMessages } from '../../../lib/messages'
@@ -27,7 +28,7 @@ export const ShipsOverview = () => {
       intro={formatMessage(shipsMessages.intro)}
       serviceProvider={{
         slug: SAMGONGUSTOFA_SLUG,
-        tooltip: formatMessage(shipsMessages.tooltip),
+        tooltip: formatMessage(coreMessages.shipsTooltip),
       }}
     >
       {loading && <CardLoader />}
@@ -51,7 +52,7 @@ export const ShipsOverview = () => {
                       outlined: true,
                       label: ship.seaworthiness.isValid
                         ? formatMessage(shipsMessages.validTag)
-                        : formatMessage(shipsMessages.expiredTag),
+                        : formatMessage(shipsMessages.invalidTag),
                     }
                   : undefined
               }
