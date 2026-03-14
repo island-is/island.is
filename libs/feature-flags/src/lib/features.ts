@@ -78,6 +78,9 @@ export enum Features {
   //Is vehicle bulk mileage graph enabled?
   isServicePortalVehicleBulkMileageSubdataPageEnabled = 'isServicePortalVehicleBulkMileageSubdataPageEnabled',
 
+  //Enable user ships page
+  isServicePortalUserShipsPageEnabled = 'isServicePortalUserShipsPageEnabled',
+
   //Possible universities
   isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
   isAgriculturalUniversityOfIcelandEnabled = 'isAgriculturalUniversityOfIcelandEnabled',
