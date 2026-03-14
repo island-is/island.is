@@ -81,4 +81,5 @@ interface Verdict {
   appealDate?: Date
   isDefaultJudgement?: boolean
   isAcquittedByPublicProsecutionOffice?: boolean
+  defendantHasRequestedAppeal?: boolean
 }

@@ -19,6 +19,7 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
       SAMGONGUSTOFA_SOAP_USER: '/k8s/skilavottord/SAMGONGUSTOFA_SOAP_USER',
       SAMGONGUSTOFA_REST_USER: '/k8s/skilavottord/SAMGONGUSTOFA_REST_USER',
       FJARSYSLA_REST_USER: '/k8s/skilavottord/FJARSYSLA_REST_USER',
+      NEXTAUTH_SECRET: '/k8s/skilavottord/web/NEXTAUTH_SECRET',
     })
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
