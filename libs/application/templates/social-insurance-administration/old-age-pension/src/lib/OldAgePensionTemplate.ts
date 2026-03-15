@@ -54,6 +54,7 @@ import {
   defaultIncomeTypes,
   Events,
   INCOME,
+  MONTH_NAMES,
   RatioType,
   Roles,
   States,
@@ -581,7 +582,11 @@ const OldAgePensionTemplate: ApplicationTemplate<
 
         return context
       }),
-      unsetIncomePlan: assign((context) => {
+      unsetIncomePlan: assign((context, event) => {
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+
         const { application } = context
         const { answers } = application
         const { incomePlan } = getApplicationAnswers(answers)
@@ -610,18 +615,9 @@ const OldAgePensionTemplate: ApplicationTemplate<
             income.income === RatioType.YEARLY ||
             income.incomeCategory !== INCOME
           ) {
-            unset(application.answers, `incomePlanTable[${index}].january`)
-            unset(application.answers, `incomePlanTable[${index}].february`)
-            unset(application.answers, `incomePlanTable[${index}].march`)
-            unset(application.answers, `incomePlanTable[${index}].april`)
-            unset(application.answers, `incomePlanTable[${index}].may`)
-            unset(application.answers, `incomePlanTable[${index}].june`)
-            unset(application.answers, `incomePlanTable[${index}].july`)
-            unset(application.answers, `incomePlanTable[${index}].august`)
-            unset(application.answers, `incomePlanTable[${index}].september`)
-            unset(application.answers, `incomePlanTable[${index}].october`)
-            unset(application.answers, `incomePlanTable[${index}].november`)
-            unset(application.answers, `incomePlanTable[${index}].december`)
+            MONTH_NAMES.forEach((month) =>
+              unset(application.answers, `incomePlanTable[${index}].${month}`),
+            )
           }
 
           if (

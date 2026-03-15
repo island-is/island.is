@@ -5,7 +5,7 @@ import {
   MONTHS,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import {
+import type {
   Attachments,
   BankInfo,
   CategorizedIncomeTypes,
@@ -15,7 +15,7 @@ import {
   LatestIncomePlan,
   PaymentInfoV2,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import {
+import type {
   Application,
   NationalRegistryResidenceHistory,
   NationalRegistrySpouse,
@@ -23,7 +23,7 @@ import {
 import addMonths from 'date-fns/addMonths'
 import addYears from 'date-fns/addYears'
 import * as kennitala from 'kennitala'
-import {
+import type {
   CombinedResidenceHistory,
   Employer,
   FileUpload,
@@ -180,7 +180,6 @@ export const getApplicationExternalData = (
     getValueViaPath<NationalRegistryResidenceHistory[]>(
       externalData,
       'nationalRegistryResidenceHistory.data',
-      [],
     ) ?? []
 
   const applicantName =
@@ -651,11 +650,15 @@ export const getDefaultBank = (application: Application) => {
   return { ...bankInfo, bankNumber: bankInfo?.bank }
 }
 
-export const getDefaultIban = (application: Application) =>
-  friendlyFormatIBAN(getBankInfo(application).iban)
+export const getDefaultIban = (application: Application) => {
+  const bankInfo = getBankInfo(application)
+  return !isEmpty(bankInfo) ? friendlyFormatIBAN(bankInfo.iban) : ''
+}
 
-export const getDefaultSwift = (application: Application) =>
-  friendlyFormatSWIFT(getBankInfo(application).swift)
+export const getDefaultSwift = (application: Application) => {
+  const bankInfo = getBankInfo(application)
+  return !isEmpty(bankInfo) ? friendlyFormatSWIFT(bankInfo.swift) : ''
+}
 
 export const getDefaultCurrency = (application: Application) => {
   const bankInfo = getBankInfo(application)
