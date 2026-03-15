@@ -195,17 +195,19 @@ export const getApplicationExternalData = (
     'nationalRegistry.data.address.streetAddress',
   )
 
-  const applicantPostalCode = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.address.postalCode',
-  )
+  const applicantPostalCode =
+    getValueViaPath<string>(
+      externalData,
+      'nationalRegistry.data.address.postalCode',
+    ) ?? ''
 
-  const applicantLocality = getValueViaPath<string>(
-    externalData,
-    'nationalRegistry.data.address.locality',
-  )
+  const applicantLocality =
+    getValueViaPath<string>(
+      externalData,
+      'nationalRegistry.data.address.locality',
+    ) ?? ''
 
-  const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
+  const applicantMunicipality = `${applicantPostalCode}, ${applicantLocality}`
 
   const hasSpouse = getValueViaPath<NationalRegistrySpouse>(
     externalData,

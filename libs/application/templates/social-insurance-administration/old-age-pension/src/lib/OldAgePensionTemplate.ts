@@ -508,7 +508,10 @@ const OldAgePensionTemplate: ApplicationTemplate<
 
         return context
       }),
-      clearNoOtherIncomeConfirmation: assign((context) => {
+      clearNoOtherIncomeConfirmation: assign((context, event) => {
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
         const { application } = context
         const { incomePlan } = getApplicationAnswers(application.answers)
 
@@ -615,9 +618,9 @@ const OldAgePensionTemplate: ApplicationTemplate<
             income.income === RatioType.YEARLY ||
             income.incomeCategory !== INCOME
           ) {
-            MONTH_NAMES.forEach((month) =>
-              unset(application.answers, `incomePlanTable[${index}].${month}`),
-            )
+            MONTH_NAMES.forEach((month) => {
+              unset(application.answers, `incomePlanTable[${index}].${month}`)
+            })
           }
 
           if (
