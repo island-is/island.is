@@ -128,6 +128,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           'clearTemp',
           'restoreAnswersFromTemp',
           'unsetIncomePlan',
+          'clearNoOtherIncomeConfirmation',
         ],
         meta: {
           name: States.DRAFT,
@@ -511,7 +512,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         const { incomePlan } = getApplicationAnswers(application.answers)
 
         if (!incomePlanHasOnlyZeroIncome(incomePlan)) {
-          unset(application.answers, 'incomePlan.noOtherIncomeConfirmation')
+          unset(application.answers, 'incomePlan') // clear all the object, it inclues shouldShow and noOtherIncomeConfirmation
         }
 
         return context

@@ -673,7 +673,6 @@ export const getDefaultBankAddress = (application: Application) => {
 }
 
 export const hasSpouse = (externalData: Application['externalData']) => {
-  const { hasSpouse } = getApplicationExternalData(externalData)
-  if (hasSpouse) return true
-  return false
+  const { hasSpouse: spouseData } = getApplicationExternalData(externalData)
+  return !!spouseData
 }

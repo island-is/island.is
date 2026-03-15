@@ -122,10 +122,7 @@ export const incomePerYearWatchValues = (
 export const incomePlanHasOnlyZeroIncome = (
   incomePlan: IncomePlanRow[],
 ): boolean => {
-  return (
-    incomePlan.length > 0 &&
-    incomePlan.every((income) => Number(income.incomePerYear) === 0)
-  )
+  return incomePlan.every((income) => Number(income.incomePerYear) === 0)
 }
 
 export const isForeignCurrency = (activeField?: Record<string, string>) => {
