@@ -266,6 +266,8 @@ export const VehicleBulkMileageRow = ({
     }
   }, [mileageData?.vehicleMileageDetails, vehicle.vehicleId, localInternalId])
 
+  const unit = vehicle.hasMilesOdometer ? 'mi' : 'km'
+
   const nestedTable = useMemo(() => {
     if (!data?.vehiclesMileageRegistrationHistory) {
       return [[]]
@@ -278,13 +280,13 @@ export const VehicleBulkMileageRow = ({
           formatDate(mileageRegistration.date),
           mileageRegistration.originCode,
           //'-',
-          displayWithUnit(mileageRegistration.mileage, 'km', true),
+          displayWithUnit(mileageRegistration.mileage, unit, true),
         ])
       }
     }
 
     return tableData
-  }, [data?.vehiclesMileageRegistrationHistory])
+  }, [data?.vehiclesMileageRegistrationHistory, unit])
 
   const displayDate = localDate ?? vehicle.lastMileageRegistration?.date
   const displayMileage =
@@ -311,7 +313,7 @@ export const VehicleBulkMileageRow = ({
         },
         {
           value: displayMileage
-            ? displayWithUnit(displayMileage, 'km', true)
+            ? displayWithUnit(displayMileage, unit, true)
             : '-',
         },
         {
@@ -322,9 +324,9 @@ export const VehicleBulkMileageRow = ({
                 id={vehicle.vehicleId}
                 name={vehicle.vehicleId}
                 backgroundColor="blue"
-                placeholder="km"
+                placeholder={unit}
                 type="number"
-                suffix=" km"
+                suffix={' ' + unit}
                 thousandSeparator
                 decimalScale={0}
                 size="xs"

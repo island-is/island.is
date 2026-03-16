@@ -18,19 +18,26 @@ export const mapVehicleDataToNestedArray = (
     bilnumer: 0,
     'seinasta skraning': 1,
     'seinasta skrada stada': 2,
-    kilometrastada: 3,
+    uppruni: 3,
+    'kilometrastada/miluastada': 4,
   }
 
   const header = Object.keys(indexes)
   const rows: Array<Array<unknown>> = []
 
-  data.data?.forEach(({ permno, latestMileageReadDate, latestMileage }) => {
+  data.data?.forEach(({
+    permno,
+    latestMileageReadDate,
+    latestMileage,
+    latestOriginCode,
+  }) => {
     const dataRow = [
       permno,
       latestMileageReadDate
         ? format(latestMileageReadDate, 'dd.MM.yyyy - HH:mm')
         : '',
       latestMileage ?? 0,
+      latestOriginCode ?? '',
       undefined,
     ]
     rows.push(dataRow)

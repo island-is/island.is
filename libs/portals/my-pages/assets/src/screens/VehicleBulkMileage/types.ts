@@ -17,6 +17,7 @@ export interface TableData {
 }
 
 export interface VehicleType extends VehicleProps {
+  hasMilesOdometer?: boolean
   mileageUploadedFromFile?: number
   isCurrentlyEditing?: boolean
   lastMileageRegistration?: {

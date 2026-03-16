@@ -53,7 +53,7 @@ const VehicleBulkMileageTable = ({
                 { value: formatMessage(vehicleMessage.type) },
                 { value: formatMessage(vehicleMessage.lastRegistered) },
                 { value: formatMessage(vehicleMessage.lastStatus) },
-                { value: formatMessage(vehicleMessage.odometer) },
+                { value: formatMessage(vehicleMessage.odometerBulkColumn) },
                 { value: '', printHidden: true },
               ]}
             />

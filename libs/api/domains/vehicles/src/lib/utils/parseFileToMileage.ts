@@ -22,7 +22,12 @@ const vehicleIndexTitle = [
   'okutaeki',
   'fastanumer',
 ]
-const mileageIndexTitle = ['kilometrastada', 'mileage', 'odometer']
+const mileageIndexTitle = [
+  'kilometrastada',
+  'kilometrastada/miluastada',
+  'mileage',
+  'odometer',
+]
 
 export const errorMap: Record<number, MessageDescriptor> = {
   1: m.invalidVehicleColumnHeader,

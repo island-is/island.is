@@ -992,6 +992,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:odometer',
     defaultMessage: 'Kílómetrastaða',
   },
+  odometerBulkColumn: {
+    id: 'sp.vehicles:odometer-bulk-column',
+    defaultMessage: 'Kílómetra/mílustaða',
+  },
   lastKnownOdometerStatus: {
     id: 'sp.vehicles:last-known-odometer-status',
     defaultMessage: 'Síðasta kílómetrastaða',
