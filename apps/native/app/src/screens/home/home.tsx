@@ -36,6 +36,12 @@ import {
   validateAirDiscountInitialData,
 } from './air-discount-module'
 import {
+  AppointmentsModule,
+  useGetAppointmentsQuery,
+  validateAppointmentsInitialData,
+} from './appointments-module'
+import { BaseAppointmentStatuses } from '../../constants/base-appointment-statuses'
+import {
   ApplicationsModule,
   useListApplicationsQuery,
   validateApplicationsInitialData,
@@ -156,6 +162,9 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
   const airDiscountWidgetEnabled = usePreferencesStore(
     ({ airDiscountWidgetEnabled }) => airDiscountWidgetEnabled,
   )
+  const appointmentsWidgetEnabled = usePreferencesStore(
+    ({ appointmentsWidgetEnabled }) => appointmentsWidgetEnabled,
+  )
   const widgetsInitialised = usePreferencesStore(
     ({ widgetsInitialised }) => widgetsInitialised,
   )
@@ -205,6 +214,13 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
     skip: !vehiclesWidgetEnabled,
   })
 
+  const appointmentsFrom = useRef(new Date()).current
+  const appointmentsRes = useGetAppointmentsQuery({
+    variables: { from: appointmentsFrom, status: BaseAppointmentStatuses },
+    fetchPolicy: 'network-only',
+    skip: !appointmentsWidgetEnabled,
+  })
+
   useEffect(() => {
     // If widgets have not been initialized, validate data and set state accordingly
     if (!widgetsInitialised) {
@@ -226,12 +242,17 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
         ...airDiscountRes,
       })
 
+      const shouldShowAppointmentsWidget = validateAppointmentsInitialData({
+        ...appointmentsRes,
+      })
+
       preferencesStore.setState({
         inboxWidgetEnabled: shouldShowInboxWidget,
         licensesWidgetEnabled: shouldShowLicensesWidget,
         applicationsWidgetEnabled: shouldShowApplicationsWidget,
         vehiclesWidgetEnabled: shouldShowVehiclesWidget,
         airDiscountWidgetEnabled: shouldShowAirDiscountWidget,
+        appointmentsWidgetEnabled: shouldShowAppointmentsWidget,
       })
 
       // Don't set initialized state if any of the queries are still loading
@@ -240,20 +261,15 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
         applicationsRes.loading ||
         inboxRes.loading ||
         airDiscountRes.loading ||
-        vehiclesRes.loading
+        vehiclesRes.loading ||
+        appointmentsRes.loading
       ) {
         return
       }
 
       preferencesStore.setState({ widgetsInitialised: true })
     }
-  }, [
-    licensesRes.loading,
-    applicationsRes.loading,
-    inboxRes.loading,
-    airDiscountRes.loading,
-    vehiclesRes.loading,
-  ])
+  }, [licensesRes.loading, applicationsRes.loading, inboxRes.loading, airDiscountRes.loading, vehiclesRes.loading, appointmentsRes.loading, widgetsInitialised, inboxRes, licensesRes, applicationsRes, vehiclesRes, airDiscountRes, appointmentsRes])
 
   useConnectivityIndicator({
     componentId,
@@ -264,6 +280,7 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
       licensesRes,
       airDiscountRes,
       vehiclesRes,
+      appointmentsRes,
     ],
     refetching,
   })
@@ -308,6 +325,7 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
         licensesWidgetEnabled && licensesRes.refetch(),
         airDiscountWidgetEnabled && airDiscountRes.refetch(),
         vehiclesWidgetEnabled && vehiclesRes.refetch(),
+        appointmentsWidgetEnabled && appointmentsRes.refetch(),
       ].filter(Boolean)
 
       await Promise.all(promises)
@@ -322,11 +340,13 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
     licensesRes,
     airDiscountRes,
     vehiclesRes,
+    appointmentsRes,
     vehiclesWidgetEnabled,
     airDiscountWidgetEnabled,
     applicationsWidgetEnabled,
     licensesWidgetEnabled,
     inboxWidgetEnabled,
+    appointmentsWidgetEnabled,
   ])
 
   const data = [
@@ -338,10 +358,15 @@ export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
       id: 'onboarding',
       component: <OnboardingModule />,
     },
-
     {
       id: 'inbox',
       component: inboxWidgetEnabled ? <InboxModule {...inboxRes} /> : null,
+    },
+    {
+      id: 'appointments',
+      component: appointmentsWidgetEnabled ? (
+        <AppointmentsModule {...appointmentsRes} />
+      ) : null,
     },
     {
       id: 'licenses',

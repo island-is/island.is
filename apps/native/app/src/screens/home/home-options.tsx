@@ -37,6 +37,9 @@ export const HomeOptionsScreen: NavigationFunctionComponent = ({
   const inboxWidgetEnabled = usePreferencesStore(
     ({ inboxWidgetEnabled }) => inboxWidgetEnabled,
   )
+  const appointmentsWidgetEnabled = usePreferencesStore(
+    ({ appointmentsWidgetEnabled }) => appointmentsWidgetEnabled,
+  )
   const licensesWidgetEnabled = usePreferencesStore(
     ({ licensesWidgetEnabled }) => licensesWidgetEnabled,
   )
@@ -102,6 +105,26 @@ export const HomeOptionsScreen: NavigationFunctionComponent = ({
               })
             }}
             value={inboxWidgetEnabled}
+            thumbColor={Platform.select({ android: theme.color.dark100 })}
+            trackColor={{
+              false: theme.color.dark200,
+              true: theme.color.blue400,
+            }}
+          />
+        }
+      />
+      <TableViewCell
+        title={intl.formatMessage({
+          id: 'homeOptions.appointments',
+        })}
+        accessory={
+          <Switch
+            onValueChange={(value) => {
+              preferencesStore.setState({
+                appointmentsWidgetEnabled: value,
+              })
+            }}
+            value={appointmentsWidgetEnabled}
             thumbColor={Platform.select({ android: theme.color.dark100 })}
             trackColor={{
               false: theme.color.dark200,
