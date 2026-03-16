@@ -27,6 +27,11 @@ globalStyle(`${problemContainer} > div`, {
   }),
 })
 
+globalStyle(`${problemContainer} a`, {
+  color: theme.color.blue400,
+  textDecoration: 'underline',
+})
+
 export const problemImg = style({
   width: 150,
   aspectRatio: '0.8',

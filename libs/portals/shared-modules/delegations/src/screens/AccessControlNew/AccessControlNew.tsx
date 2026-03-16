@@ -258,7 +258,8 @@ const AccessControlNew = () => {
           />
         )}
 
-      {!incomingLoading &&
+      {!onlyOutgoingDelegations &&
+        !incomingLoading &&
         incomingDelegations &&
         incomingDelegations.length > 0 && (
           <Box
@@ -290,35 +291,40 @@ const AccessControlNew = () => {
         )}
 
       {/* Legal guardian delegations table */}
-      {legalGuardianDelegations && legalGuardianDelegations.length > 0 && (
-        <DelegationsTable
-          title={formatMessage(m.legalGuardianTableTitle)}
-          data={getLegalGuardianTableData(
-            legalGuardianDelegations,
-            onSwitchUser,
-            formatMessage,
-          )}
-          loading={incomingLoading || false}
-          error={incomingError}
-        />
-      )}
+      {!onlyOutgoingDelegations &&
+        legalGuardianDelegations &&
+        legalGuardianDelegations.length > 0 && (
+          <DelegationsTable
+            title={formatMessage(m.legalGuardianTableTitle)}
+            data={getLegalGuardianTableData(
+              legalGuardianDelegations,
+              onSwitchUser,
+              formatMessage,
+            )}
+            loading={incomingLoading || false}
+            error={incomingError}
+          />
+        )}
 
       {/* Procuring holder delegations table */}
-      {procuringHolderDelegations && procuringHolderDelegations.length > 0 && (
-        <DelegationsTable
-          title={formatMessage(m.procurationHolderTableTitle)}
-          data={getProcuringHolderTableData(
-            procuringHolderDelegations,
-            onSwitchUser,
-            formatMessage,
-          )}
-          loading={incomingLoading || false}
-          error={incomingError}
-        />
-      )}
+      {!onlyOutgoingDelegations &&
+        procuringHolderDelegations &&
+        procuringHolderDelegations.length > 0 && (
+          <DelegationsTable
+            title={formatMessage(m.procurationHolderTableTitle)}
+            data={getProcuringHolderTableData(
+              procuringHolderDelegations,
+              onSwitchUser,
+              formatMessage,
+            )}
+            loading={incomingLoading || false}
+            error={incomingError}
+          />
+        )}
 
       {/* Incoming general mandate delegations table */}
-      {incomingGeneralMandateDelegations &&
+      {!onlyOutgoingDelegations &&
+        incomingGeneralMandateDelegations &&
         incomingGeneralMandateDelegations.length > 0 && (
           <DelegationsTable
             title={formatMessage(m.delegationTypeGeneralMandate)}
