@@ -1,4 +1,5 @@
 import React, { type ReactNode } from 'react'
+import cn from 'classnames'
 import { Controller, useForm } from 'react-hook-form'
 
 import {
@@ -22,12 +23,14 @@ export interface EmbedDisclaimerProps {
   }
   onAnswer: (acceptsTerms: boolean) => void
   localStorageKey: string
+  variant?: 'floating' | 'inline'
 }
 
 export const EmbedDisclaimer = ({
   texts,
   onAnswer,
   localStorageKey,
+  variant = 'floating',
 }: EmbedDisclaimerProps) => {
   const methods = useForm()
 
@@ -35,7 +38,9 @@ export const EmbedDisclaimer = ({
 
   return (
     <Box
-      className={styles.modal}
+      className={cn(styles.modal, {
+        [styles.inlineModal]: variant === 'inline',
+      })}
       background="blue100"
       borderRadius="large"
       padding="gutter"
