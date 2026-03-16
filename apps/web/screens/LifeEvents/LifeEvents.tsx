@@ -12,7 +12,6 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import { LifeEventCard } from './LifeEventCard'
 import {
   ContentLanguage,
   type GetLifeEventsForOverviewQuery,
@@ -32,6 +31,7 @@ import {
   GET_LIFE_EVENTS_FOR_OVERVIEW_QUERY,
   GET_NAMESPACE_QUERY,
 } from '../queries'
+import { LifeEventCard } from './LifeEventCard'
 import { ApplicationsTexts } from './LifeEvents.types'
 import * as styles from './LifeEvents.css'
 
