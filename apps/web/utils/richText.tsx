@@ -98,6 +98,7 @@ import HousingBenefitCalculator from '../components/connected/HousingBenefitCalc
 import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
 import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
 import { LatestVerdicts } from '../components/connected/LatestVerdicts'
+import PharmaciesAccordion from '../components/connected/lyfjastofnun/PharmaciesAccordion'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
@@ -111,7 +112,6 @@ import { GrantCardsList } from '../components/GrantCardsList'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 import { FeaturedGenericListItemsSlice } from '../components/Organization/Slice/FeaturedGenericListItemsSlice/FeaturedGenericListItemsSlice'
 import { OrganizationParentSubpageListSlice } from '../components/Organization/Slice/OrganizationParentSubpageListSlice/OrganizationParentSubpageListSlice'
-import PharmaciesAccordion from '../components/connected/lyfjastofnun/PharmaciesAccordion'
 
 interface TranslationNamespaceProviderProps {
   messages: IntlConfig['messages']
