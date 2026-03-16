@@ -18,6 +18,7 @@ query GetMachineByRegno($input: WorkMachinesInput!) {
     category
     owner {
       name
+      number
     }
     licensePlateNumber
     supervisor {

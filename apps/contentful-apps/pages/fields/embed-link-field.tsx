@@ -11,6 +11,17 @@ const ALLOWED_EMBED_URLS = [
   'https://www.facebook.com',
 ]
 
+const getIframeSrc = (iframe: string) => {
+  const srcPrefix = 'src="'
+  const srcIndex = iframe.indexOf(srcPrefix)
+  if (srcIndex >= 0) {
+    const srcEndIndex = iframe.indexOf('"', srcIndex + srcPrefix.length)
+    if (srcEndIndex >= 0)
+      return iframe.substring(srcIndex + srcPrefix.length, srcEndIndex)
+  }
+  return iframe
+}
+
 const EmbedLinkField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const [value, setValue] = useState(sdk.field.getValue() ?? '')
@@ -23,7 +34,9 @@ const EmbedLinkField = () => {
       <TextInput
         value={value}
         onChange={(ev) => {
-          const newValue = ev.target.value
+          let newValue = ev.target.value
+          if (newValue.startsWith('<iframe')) newValue = getIframeSrc(newValue)
+
           const isValidState =
             ALLOWED_EMBED_URLS.some((url) => newValue.startsWith(url)) &&
             isUrl(newValue)
