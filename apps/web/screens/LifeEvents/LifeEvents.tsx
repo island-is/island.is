@@ -179,7 +179,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
           mobileItemsRows={5}
           insideGridContainer
           paddingTop={5}
-          paddingBottom={2}
+          paddingBottom={8}
           third
         >
           {filteredLifeEvents?.map(
