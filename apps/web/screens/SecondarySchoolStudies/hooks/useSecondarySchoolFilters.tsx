@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import {
   parseAsArrayOf,
@@ -7,6 +7,7 @@ import {
   useQueryStates,
 } from 'next-usequerystate'
 
+import { Box, Text } from '@island.is/island-ui/core'
 import { SecondarySchoolProgrammeFilterOptionsQuery } from '@island.is/web/graphql/schema'
 
 import { m } from '../messages/messages'
@@ -31,7 +32,7 @@ interface UseSecondarySchoolFiltersReturn {
     id: string
     label: string
     selected: string[]
-    filters: Array<{ value: string; label: string }>
+    filters: Array<{ value: string; label: React.ReactNode }>
   }>
 }
 
@@ -105,9 +106,14 @@ export const useSecondarySchoolFilters = (
           (l): l is typeof l & { id: number } =>
             l.id != null && Boolean(l.shortDescription || l.name),
         )
-        .map((l) => ({
+        .map((l, index) => ({
           value: String(l.id),
-          label: l.shortDescription ?? l.name ?? '',
+          label: (
+            <Box>
+              <Text>{`${formatMessage(m.filters.haefnisþrep)} ${index + 1}`}</Text>
+              <Text variant="small">{l.shortDescription ?? l.name ?? ''}</Text>
+            </Box>
+          ),
         })) ?? []
 
     return [
