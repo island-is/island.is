@@ -4,7 +4,6 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
-  buildSubmitField,
 } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { Form, FormModes } from '@island.is/application/types'
@@ -45,11 +44,6 @@ export const PrerequisitesForm: Form = buildForm({
             buildDescriptionField({
               id: 'isNotEligible',
               description: getEligibleDesc,
-            }),
-            // Empty submit field to hide all buttons in the footer
-            buildSubmitField({
-              id: '',
-              actions: [],
             }),
           ],
         }),

@@ -6,7 +6,6 @@ import {
   TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
   TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
 } from '../../../../gen/fetch/v1'
-import { ApplicationApi as ApplicationWriteApiV2 } from '../../../../gen/fetch/v2'
 import { MEDICAL_AND_REHABILITATION_PAYMENTS_SLUG } from '../../constants'
 import { SocialInsuranceAdministrationGeneralApplicationService } from './generalApplication.service'
 import { MedicalAndRehabilitationPaymentsDTO } from '../../dto/medicalAndRehabilitationPayments.dto'

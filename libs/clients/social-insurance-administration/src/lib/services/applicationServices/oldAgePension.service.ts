@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
-import {
-  OldAgePensionDTO,
-  SocialInsuranceAdministrationGeneralApplicationService,
-} from '../../..'
+import { SocialInsuranceAdministrationGeneralApplicationService } from './generalApplication.service'
 import { OldAgePensionApplicationType } from '../../types'
 import { OAP_APPLICATION_TYPES } from '../../constants'
+import { OldAgePensionDTO } from '../../dto/oldAgePension.dto'
 
 @Injectable()
 export class SocialInsuranceAdministrationOldAgePensionService {

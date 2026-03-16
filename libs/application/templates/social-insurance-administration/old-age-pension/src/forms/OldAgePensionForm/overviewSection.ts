@@ -14,12 +14,10 @@ export const overviewSection = buildSection({
   children: [
     buildMultiField({
       id: 'confirm',
-      description: '',
       children: [
         buildCustomField(
           {
             id: 'confirmScreen',
-            title: '',
             component: 'Review',
           },
           {
