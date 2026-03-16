@@ -7,11 +7,18 @@ import { ApplicationService } from '@island.is/application/api/core'
 import { sharedModuleConfig } from '../shared.config'
 import { ConfigType } from '@nestjs/config'
 import { uuid } from 'uuidv4'
+import { Readable } from 'stream'
 
 export interface AttachmentData {
   key: string
   answerKey: string
   fileContent: string
+  fileName: string
+}
+export interface StreamingAttachmentData {
+  key: string
+  answerKey: string
+  fileStream?: Readable
   fileName: string
 }
 
@@ -42,6 +49,32 @@ export class AttachmentS3Service {
     return attachments
   }
 
+  public async *getFilesStream(
+    application: ApplicationWithAttachments,
+    attachmentAnswerKey: string,
+  ): AsyncGenerator<StreamingAttachmentData, void, unknown> {
+    const answers = getValueViaPath(
+      application.answers,
+      attachmentAnswerKey,
+    ) as Array<{
+      key: string
+      name: string
+    }>
+
+    if (!answers) return
+
+    // Ensure uniqueness in the answers array based on the 'key'
+    const uniqueAnswers = Array.from(
+      new Map(answers.map((answer) => [answer.key, answer])).values(),
+    )
+
+    yield* this.streamDocumentData(
+      uniqueAnswers,
+      attachmentAnswerKey,
+      application,
+    )
+  }
+
   private async toDocumentDataList(
     answers: Array<{
       key: string
@@ -68,6 +101,38 @@ export class AttachmentS3Service {
         return { key, fileContent, answerKey, fileName: name }
       }),
     )
+  }
+
+  /**
+   * Streams the document data from the S3 bucket for huge attachments
+   * @param answers - The answers to the document data
+   * @param answerKey - The answer key to the document data
+   * @param application - The application
+   * @returns A generator of streaming attachment data
+   */
+  private async *streamDocumentData(
+    answers: Array<{
+      key: string
+      name: string
+    }>,
+    answerKey: string,
+    application: ApplicationWithAttachments,
+  ): AsyncGenerator<StreamingAttachmentData, void, unknown> {
+    for (const { key, name } of answers) {
+      const url = (
+        application.attachments as {
+          [key: string]: string
+        }
+      )[key]
+      if (!url) {
+        logger.info('Failed to get url from application state')
+        yield { key: '', answerKey, fileName: '' }
+        continue
+      }
+      const fileResponse = await this.s3Service.getFile(url)
+      const fileStream = fileResponse?.Body as Readable | undefined
+      yield { key, fileStream, answerKey, fileName: name }
+    }
   }
 
   async addAttachment(

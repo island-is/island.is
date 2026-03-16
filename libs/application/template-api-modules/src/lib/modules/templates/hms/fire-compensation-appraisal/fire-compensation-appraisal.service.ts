@@ -20,13 +20,14 @@ import {
 import {
   getApplicant,
   mapAnswersToApplicationDto,
-  mapAnswersToApplicationFilesContentDto,
+  // mapAnswersToApplicationFilesContentDto,
+  mapStreamedAnswersToApplicationFilesContentDtoGenerator,
   paymentForAppraisal,
 } from './utils'
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
-import uniqBy from 'lodash/uniqBy'
+// import uniqBy from 'lodash/uniqBy'
 import { prereqMessages } from '@island.is/application/templates/hms/fire-compensation-appraisal'
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
@@ -278,30 +279,8 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
-      // get content of files from S3
-      const fetchedFiles = await this.attachmentService.getFiles(application, [
-        'photos',
-      ])
-
-      const files = uniqBy(fetchedFiles, 'key')
-
-      const missingFiles = files.filter(
-        (file) => !file.fileContent || file.fileContent.trim().length === 0,
-      )
-
-      if (missingFiles.length > 0) {
-        this.logger.error('Missing file content for attachments', {
-          missingKeys: missingFiles.map((file) => file.key),
-        })
-        throw new TemplateApiError(
-          'Failed to submit application, missing file content',
-          500,
-        )
-      }
-
       // Map the application to the dto interface
-      const applicationDto = mapAnswersToApplicationDto(application, files)
-
+      const applicationDto = mapAnswersToApplicationDto(application)
       // Send the application to HMS
       const res = await this.hmsApplicationSystemService.apiApplicationPost({
         applicationDto,
@@ -313,26 +292,69 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
           500,
         )
       }
-      // Map the photos to the dto interface
-      const applicationFilesContentDtoArray =
-        mapAnswersToApplicationFilesContentDto(application, files)
+
+      // get content of files from S3
+      // const fetchedFiles = uniqBy(
+      //   await this.attachmentService.getFiles(application, ['photos']),
+      //   'key',
+      // )
+
+      // const missingFiles = fetchedFiles.filter(
+      //   (file) => !file.fileContent || file.fileContent.trim().length === 0,
+      // )
+
+      // if (missingFiles.length > 0) {
+      //   this.logger.error('Missing file content for attachments', {
+      //     missingKeys: missingFiles.map((file) => file.key),
+      //   })
+      //   throw new TemplateApiError(
+      //     'Failed to submit application, missing file content',
+      //     500,
+      //   )
+      // }
+
+      // // Map the photos to the dto interface
+      // const applicationFilesContentDtoArray =
+      //   mapAnswersToApplicationFilesContentDto(application, fetchedFiles)
 
       // Send the photos to HMS sequentially to avoid overwhelming
       // the pod with concurrent uploads of large files
-      const photoResults = []
-      for (const applicationFilesContentDto of applicationFilesContentDtoArray) {
-        const result =
-          await this.hmsApplicationSystemService.apiApplicationUploadPost({
-            applicationFilesContentDto,
-          })
-        photoResults.push(result)
-      }
+      // const photoResults = []
+      // for (const applicationFilesContentDto of applicationFilesContentDtoArray) {
+      //   const result =
+      //     await this.hmsApplicationSystemService.apiApplicationUploadPost({
+      //       applicationFilesContentDto,
+      //     })
+      //   photoResults.push(result)
+      // }
 
-      if (photoResults.some((result) => result.status !== 200)) {
-        throw new TemplateApiError(
-          'Failed to upload photos, non 200 status',
-          500,
+      // if (photoResults.some((result) => result.status !== 200)) {
+      //   throw new TemplateApiError(
+      //     'Failed to upload photos, non 200 status',
+      //     500,
+      //   )
+      // }
+
+      // 1. Get the stream generator from your attachment service
+      const fileStreamGenerator = this.attachmentService.getFilesStream(
+        application,
+        'photos',
+      )
+
+      // 2. Wrap it with your DTO mapper generator
+      const applicationFilesContentDtoGenerator =
+        mapStreamedAnswersToApplicationFilesContentDtoGenerator(
+          application,
+          fileStreamGenerator,
+          this.logger,
         )
+
+      // 3. Iterate asynchronously over the mapped DTOs
+      for await (const applicationFilesContentDto of applicationFilesContentDtoGenerator) {
+        // Upload the file as soon as it's ready, one by one
+        await this.hmsApplicationSystemService.apiApplicationUploadPost({
+          applicationFilesContentDto,
+        })
       }
 
       return res

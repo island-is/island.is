@@ -5,9 +5,15 @@ import {
   ApplicationFilesContentDto,
 } from '@island.is/clients/hms-application-system'
 import { Fasteign } from '@island.is/clients/assets'
-import { AttachmentData } from '../../../shared/services/attachment-s3.service'
+import {
+  AttachmentData,
+  StreamingAttachmentData,
+} from '../../../shared/services/attachment-s3.service'
 import crypto from 'crypto'
 import * as kennitala from 'kennitala'
+import { Readable } from 'stream'
+import type { Logger } from '@island.is/logging'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 // The payment structure is as follows:
 // 1. If the current appraisal is less than 25 million, the payment is 6.000kr
@@ -59,9 +65,115 @@ export const mapAnswersToApplicationFilesContentDto = (
   )
 }
 
+/**
+ * Peeks at the first byte of a Readable stream to verify it contains data.
+ * The byte is unshifted back into the stream so the data remains fully intact for the next consumer.
+ *
+ * @param stream The Node.js Readable stream to check
+ * @returns Promise<boolean> True if the stream has data, false if it's empty or errors
+ */
+export const isStreamNotEmpty = async (stream: Readable): Promise<boolean> => {
+  return new Promise<boolean>((resolve) => {
+    const onReadable = () => {
+      const chunk = stream.read(1) // Try to read 1 byte
+      if (chunk !== null) {
+        stream.unshift(chunk) // Put the byte back
+        cleanup()
+        resolve(true)
+      }
+    }
+    const onEnd = () => {
+      cleanup()
+      resolve(false)
+    }
+    const onError = () => {
+      cleanup()
+      resolve(false)
+    }
+    const cleanup = () => {
+      stream.removeListener('readable', onReadable)
+      stream.removeListener('end', onEnd)
+      stream.removeListener('error', onError)
+    }
+    stream.on('readable', onReadable)
+    stream.on('end', onEnd)
+    stream.on('error', onError)
+  })
+}
+
+/**
+ * Consumes a readable stream entirely and returns its contents as a base64 string.
+ */
+const streamToBase64 = async (stream: Readable): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = []
+    stream.on('data', (chunk) => {
+      chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
+    })
+    stream.on('end', () => {
+      resolve(Buffer.concat(chunks as Uint8Array[]).toString('base64'))
+    })
+    stream.on('error', (err) => {
+      reject(err)
+    })
+  })
+}
+/**
+ * An async generator that consumes streaming attachments one by one,
+ * buffers the stream into a base64 string, and yields the corresponding DTO.
+ */
+export async function* mapStreamedAnswersToApplicationFilesContentDtoGenerator(
+  application: Application,
+  filesGenerator: AsyncIterable<StreamingAttachmentData>,
+  logger: Logger,
+): AsyncGenerator<ApplicationFilesContentDto, void, unknown> {
+  const processedKeys = new Set<string>()
+  for await (const file of filesGenerator) {
+    if (!file.fileStream || !(await isStreamNotEmpty(file.fileStream))) {
+      logger.error('Missing file content for attachments', {
+        missingKey: file.key,
+      })
+      throw new TemplateApiError(
+        'Failed to submit application, missing file content',
+        500,
+      )
+    }
+
+    // 1. Check for duplicates
+    if (processedKeys.has(file.key)) {
+      logger.info('Skipping duplicate attachment', { key: file.key })
+      // Drain and discard the stream to free up resources and close the connection
+      if (file.fileStream) {
+        file.fileStream.on('data', () => {
+          // just read and discard the chunks
+        })
+        file.fileStream.resume() // Start flowing data so it ends quickly
+      }
+      continue
+    }
+    // 2. Process unique keys
+    processedKeys.add(file.key)
+
+    let content = ''
+    if (file.fileStream) {
+      try {
+        content = await streamToBase64(file.fileStream)
+      } catch (error) {
+        // Handle stream reading errors gracefully or rethrow depending on your policy
+        throw new Error(`Failed to read stream for file: ${file.key}`)
+      }
+    }
+    yield {
+      fileID: hashToLength20(file.key.split('_')[0]),
+      applicationID: application.id,
+      content,
+      applicationType: APPLICATION_TYPE,
+    }
+  }
+}
+
 export const mapAnswersToApplicationDto = (
   application: Application,
-  files: Array<AttachmentData>,
 ): ApplicationDto => {
   const { answers, externalData } = application
   const applicant = getApplicant(answers)
@@ -80,7 +192,11 @@ export const mapAnswersToApplicationDto = (
   const selectedRealEstate = realEstates?.find(
     (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
   )
-  const parsedFiles = files?.map((file) => {
+  const fileAnswers = getValueViaPath(application.answers, 'photos') as Array<{
+    key: string
+    name: string
+  }>
+  const parsedFiles = fileAnswers?.map((file) => {
     const parts = file.key.split('.')
     const ending = (parts.length > 1 ? parts.pop() ?? '' : '').toLowerCase()
     const heiti = parts.join('.').replace(/^[^_]*_/, '')
