@@ -119,8 +119,8 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
         <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
           <GridContainer className={styles.listContainer}>
             <Box
-              paddingTop={[3, 3, 6]}
-              paddingBottom={3}
+              paddingTop={[4, 4, 8]}
+              paddingBottom={[5, 5, 8]}
               display="flex"
               flexDirection={['column', 'column', 'column', 'row', 'row']}
               justifyContent={[
