@@ -104,6 +104,7 @@ export const contactInformationSubSection = buildSubSection({
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
+          refetchApplicationAfterSubmit: true,
           title: contactInformation.labels.approveButton,
           actions: [
             {
