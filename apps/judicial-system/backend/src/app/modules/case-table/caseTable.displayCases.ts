@@ -13,18 +13,25 @@ const isRegisteredInPrisonSystem = (d: Defendant, c: Case): boolean =>
   Boolean(d.isRegisteredInPrisonSystem ?? c.isRegisteredInPrisonSystem)
 
 const isAcquittedByPublicProsecutionOffice = (d: Defendant) =>
-  // Only the latest verdict is relevant
   Boolean(d.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
 
 const isNotAcquittedByPublicProsecutionOffice = (d: Defendant) =>
   !isAcquittedByPublicProsecutionOffice(d)
 
+const isAppealRequestLatestVerdict = (defendant: Defendant) =>
+  Boolean(defendant.verdicts?.[0]?.defendantHasRequestedAppeal)
+
+const isNotAppealRequestLatestVerdict = (defendant: Defendant) =>
+  !isAppealRequestLatestVerdict(defendant)
+
 const isAcceptedIndictmentReviewDecision = (d: Defendant) =>
   isNotAcquittedByPublicProsecutionOffice(d) &&
+  isNotAppealRequestLatestVerdict(d) &&
   d.indictmentReviewDecision === IndictmentCaseReviewDecision.ACCEPT
 
 const isAppealedIndictmentReviewDecision = (d: Defendant) =>
   isNotAcquittedByPublicProsecutionOffice(d) &&
+  isNotAppealRequestLatestVerdict(d) &&
   d.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL
 
 const expandCaseWithDefendants = (
@@ -56,16 +63,16 @@ const prisonAdminRegisteredDefendantsDisplayCases = (cs: Case[]) =>
     ),
   )
 
-const publicProsecutionOfficeAcquittedDefendantDisplayCases = (cs: Case[]) =>
-  cs.flatMap((c) =>
-    expandCaseWithDefendants(c, isAcquittedByPublicProsecutionOffice),
-  )
-
 const publicProsecutionOfficeNewOrInReviewDefendantDisplayCases = (
   cs: Case[],
 ) =>
   cs.flatMap((c) =>
-    expandCaseWithDefendants(c, isNotAcquittedByPublicProsecutionOffice),
+    expandCaseWithDefendants(
+      c,
+      (d) =>
+        isNotAcquittedByPublicProsecutionOffice(d) &&
+        isNotAppealRequestLatestVerdict(d),
+    ),
   )
 
 const publicProsecutionOfficeAcceptedDefendantDisplayCases = (cs: Case[]) =>
@@ -77,6 +84,16 @@ const publicProsecutionOfficeAppealedDefendantDisplayCases = (cs: Case[]) =>
   cs.flatMap((c) =>
     expandCaseWithDefendants(c, isAppealedIndictmentReviewDecision),
   )
+
+const publicProsecutionOfficeAcquittedDefendantDisplayCases = (cs: Case[]) =>
+  cs.flatMap((c) =>
+    expandCaseWithDefendants(c, isAcquittedByPublicProsecutionOffice),
+  )
+
+const publicProsecutionOfficeRequestedAppealDefendantDisplayCases = (
+  cs: Case[],
+) =>
+  cs.flatMap((c) => expandCaseWithDefendants(c, isAppealRequestLatestVerdict))
 
 export const caseTableDisplayCases: Record<
   CaseTableType,
@@ -115,6 +132,8 @@ export const caseTableDisplayCases: Record<
     publicProsecutionOfficeAppealedDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS]:
     publicProsecutionOfficeAcquittedDefendantDisplayCases,
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL]:
+    publicProsecutionOfficeRequestedAppealDefendantDisplayCases,
   [CaseTableType.PROSECUTION_REQUEST_CASES_IN_PROGRESS]: genericDisplayCases,
   [CaseTableType.PROSECUTION_REQUEST_CASES_ACTIVE]: genericDisplayCases,
   [CaseTableType.PROSECUTION_REQUEST_CASES_APPEALED]: genericDisplayCases,
