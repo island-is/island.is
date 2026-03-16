@@ -25,7 +25,7 @@ export const externalDataSection = buildSection({
           subTitle: m.prereqMessages.userProfileSubtitle,
         }),
         buildDataProviderItem({
-          provider: NationalRegistryApi,
+          // provider: NationalRegistryApi,
           title: m.prereqMessages.nationalRegistryTitle,
           subTitle: m.prereqMessages.nationalRegistrySubtitle,
         }),

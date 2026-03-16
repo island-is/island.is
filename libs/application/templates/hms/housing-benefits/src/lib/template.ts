@@ -19,6 +19,7 @@ import {
 } from '@island.is/application/core'
 import * as m from './messages'
 import { NationalRegistryApi, RentalAgreementsApi } from '../dataProviders'
+import { hasRentalAgreements } from '../utils/rentalAgreementUtils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -58,9 +59,37 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.DRAFT,
+              cond: ({ application }: ApplicationContext) =>
+                hasRentalAgreements(application),
+            },
+            {
+              target: States.NO_RENTAL_AGREEMENT,
+              cond: ({ application }: ApplicationContext) =>
+                !hasRentalAgreements(application),
+            },
+          ],
+        },
+      },
+      [States.NO_RENTAL_AGREEMENT]: {
+        meta: {
+          name: 'Enginn leigusamningur',
+          progress: 0.2,
+          status: FormModes.DRAFT,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/noRentalAgreementForm').then((module) =>
+                  Promise.resolve(module.NoRentalAgreementForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+          ],
         },
       },
       [States.DRAFT]: {

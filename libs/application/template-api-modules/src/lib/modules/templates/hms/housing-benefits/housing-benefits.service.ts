@@ -7,12 +7,12 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { TemplateApiModuleActionProps } from '../../../..'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { HomeApi } from '@island.is/clients/hms-rental-agreement'
+import { Contract, HomeApi } from '@island.is/clients/hms-rental-agreement'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { ContractStatus } from './types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { mockGetRentalAgreements } from '../terminate-rental-agreement/mockedRentalAgreements'
-import { coreErrorMessages } from '@island.is/application/core'
+import { filterContractsForHousingBenefits } from './utils'
 
 @Injectable()
 export class HousingBenefitsService extends BaseTemplateApiService {
@@ -30,8 +30,11 @@ export class HousingBenefitsService extends BaseTemplateApiService {
   }
 
   async getRentalAgreements({ auth }: TemplateApiModuleActionProps) {
+    console.log(
+      '-------------------------------- Template api module --------------------------------',
+    )
     try {
-      const contracts = await this.homeApiWithAuth(auth)
+      let contracts = await this.homeApiWithAuth(auth)
         .contractKtKtGet({
           kt: auth.nationalId,
         })
@@ -42,7 +45,7 @@ export class HousingBenefitsService extends BaseTemplateApiService {
                 return contract
               }
             })
-            .filter((contract) => contract !== undefined)
+            .filter((contract): contract is Contract => contract !== undefined)
         })
 
       if (
@@ -50,20 +53,22 @@ export class HousingBenefitsService extends BaseTemplateApiService {
         contracts.length === 0
       ) {
         this.logger.debug('Mocking rental agreements')
-        return mockGetRentalAgreements()
+        contracts = mockGetRentalAgreements()
       }
 
-      if (contracts.length === 0) {
-        throw new TemplateApiError(
-          {
-            title: coreErrorMessages.noContractFoundTitle,
-            summary: coreErrorMessages.noContractFoundSummary,
-          },
-          400,
-        )
-      }
+      console.log(
+        '-------------------------------- contracts --------------------------------',
+      )
+      console.dir(contracts, { depth: null })
 
-      return contracts
+      console.log(
+        '-------------------------------- filtered contracts --------------------------------',
+      )
+      console.dir(
+        filterContractsForHousingBenefits(contracts, auth.nationalId),
+        { depth: null },
+      )
+      return filterContractsForHousingBenefits(contracts, auth.nationalId)
     } catch (e) {
       if (e instanceof TemplateApiError) {
         // If it's already a TemplateApiError, throw it

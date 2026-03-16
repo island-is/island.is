@@ -6,6 +6,7 @@ export type Events = {
 
 export enum States {
   PREREQUISITES = 'prerequisites',
+  NO_RENTAL_AGREEMENT = 'noRentalAgreement',
   DRAFT = 'draft',
   COMPLETED = 'completed',
   PAYMENT = 'payment',
