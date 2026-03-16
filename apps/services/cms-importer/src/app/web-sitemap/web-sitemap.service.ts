@@ -16,12 +16,13 @@ export class WebSitemapService {
 
   public async run() {
     this.logger.info('Web sitemap worker starting...')
+    const lastModified = new Date().toISOString()
 
     const sitemapContent = Buffer.from(`<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       <url>
         <loc>https://island.is</loc>
-        <lastmod>2024-01-01</lastmod>
+        <lastmod>${lastModified}</lastmod>
       </url>
     </urlset>`)
 
