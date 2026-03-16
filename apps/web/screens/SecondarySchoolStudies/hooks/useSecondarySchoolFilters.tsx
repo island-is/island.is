@@ -110,7 +110,9 @@ export const useSecondarySchoolFilters = (
           value: String(l.id),
           label: (
             <Box>
-              <Text>{`${formatMessage(m.filters.haefnisþrep)} ${index + 1}`}</Text>
+              <Text>{`${formatMessage(m.filters.haefnisþrep)} ${
+                index + 1
+              }`}</Text>
               <Text variant="small">{l.shortDescription ?? l.name ?? ''}</Text>
             </Box>
           ),
