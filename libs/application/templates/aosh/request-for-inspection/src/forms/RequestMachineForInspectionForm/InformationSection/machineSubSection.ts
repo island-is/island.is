@@ -89,7 +89,7 @@ export const machineSubSection = buildSubSection({
               application.externalData,
               application.answers,
             )
-            return machine?.owner || ''
+            return machine?.owner?.number || ''
           },
         }),
         buildTextField({
