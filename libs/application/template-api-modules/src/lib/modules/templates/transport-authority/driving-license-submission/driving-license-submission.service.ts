@@ -228,7 +228,11 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         if (firstFile) {
           healtCertificate = firstFile.fileContent
         } else {
-          this.log('error', 'Health certificate uploaded but content is empty for 65+', {})
+          this.log(
+            'error',
+            'Health certificate uploaded but content is empty for 65+',
+            {},
+          )
           throw new Error(
             'Failed to retrieve health certificate content for 65+ renewal',
           )
@@ -357,7 +361,11 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
             })
 
           if (!contentList.length) {
-            this.log('error', 'Health certificate uploaded but content is empty for BE', {})
+            this.log(
+              'error',
+              'Health certificate uploaded but content is empty for BE',
+              {},
+            )
             throw new Error(
               'Failed to retrieve health certificate content for BE',
             )
