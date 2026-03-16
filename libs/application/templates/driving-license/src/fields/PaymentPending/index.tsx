@@ -9,7 +9,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useSubmitApplication, usePaymentStatus } from './hooks'
 import { getRedirectUrl, isComingFromRedirect } from './util'
-import { Company } from '../../assets'
+import { PersonsOnComputers } from '@island.is/application/assets/graphics'
 import { useLocale } from '@island.is/localization'
 
 export interface Props extends FieldBaseProps {
@@ -114,7 +114,7 @@ const PollingForPayment: FC<Props> = ({ error, application, refetch }) => {
       {error && { error }}
       <Box>
         <Text variant="h3">{formatMessage(m.paymentPendingDescription)}</Text>
-        <Company />
+        <PersonsOnComputers />
       </Box>
     </>
   )
