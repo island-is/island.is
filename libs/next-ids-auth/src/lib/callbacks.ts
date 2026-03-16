@@ -1,23 +1,13 @@
 import { decode } from 'jsonwebtoken'
 
-import { AuthSession, AuthUser } from './types'
+import { AuthSession } from './types'
 import { checkExpiry, refreshAccessToken } from './utils'
 
 export const signIn = (
-  user: AuthUser,
   account: Record<string, unknown>,
-  profile: Record<string, unknown>,
   identityServerId: string,
 ) => {
-  if (account.provider === identityServerId) {
-    user.nationalId = profile.nationalId as string
-    user.accessToken = account.accessToken as string
-    user.refreshToken = account.refreshToken as string
-    user.idToken = account.idToken as string
-    return true
-  }
-
-  return false
+  return account.provider === identityServerId
 }
 
 export const jwt = async (
@@ -55,10 +45,26 @@ export const jwt = async (
   return token
 }
 
-export const session = (session: AuthSession, user: AuthUser) => {
-  session.accessToken = user.accessToken
-  session.idToken = user.idToken
-  const decoded = decode(user.accessToken)
+export const session = (
+  session: AuthSession,
+  token: Record<string, unknown>,
+) => {
+  if (
+    typeof token.accessToken !== 'string' ||
+    typeof token.idToken !== 'string'
+  ) {
+    return {
+      ...session,
+      accessToken: '',
+      idToken: '',
+      scope: session.scope ?? [],
+    }
+  }
+
+  session.accessToken = token.accessToken
+  session.idToken = token.idToken
+  session.scope = session.scope ?? []
+  const decoded = decode(token.accessToken)
 
   if (
     decoded &&
@@ -66,8 +72,12 @@ export const session = (session: AuthSession, user: AuthUser) => {
     decoded['exp'] &&
     decoded['scope']
   ) {
-    session.expires = JSON.stringify(new Date(decoded.exp * 1000))
-    session.scope = decoded.scope
+    session.expires = new Date(decoded.exp * 1000).toISOString()
+    session.scope = Array.isArray(decoded.scope)
+      ? decoded.scope
+      : typeof decoded.scope === 'string'
+      ? decoded.scope.split(' ')
+      : []
   }
 
   return session

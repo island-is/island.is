@@ -1,26 +1,20 @@
 import { QueryConsultationPortalGetCasesArgs } from '@island.is/api/schema'
+import { getSession } from 'next-auth/react'
+import { Error500 } from '../../components'
 import initApollo from '../../graphql/client'
+import { SUB_GET_CASES, SUB_GET_TYPES } from '../../graphql/queries.graphql'
+import {
+  SubGetCasesQuery,
+  SubGetTypesQuery,
+} from '../../graphql/queries.graphql.generated'
+import { withApollo } from '../../graphql/withApollo'
+import { useLogIn } from '../../hooks'
+import UserSubscriptions from '../../screens/Subscriptions/UserSubscriptions'
 import {
   ArrOfTypesForSubscriptions,
   CaseForSubscriptions,
 } from '../../types/interfaces'
-import {
-  SUB_GET_CASES,
-  SUB_GET_EMAIL,
-  SUB_GET_TYPES,
-} from '../../graphql/queries.graphql'
-import {
-  SubGetCasesQuery,
-  SubGetEmailQuery,
-  SubGetTypesQuery,
-} from '../../graphql/queries.graphql.generated'
-import UserSubscriptions from '../../screens/Subscriptions/UserSubscriptions'
 import { SUB_PAGE_SIZE, SUB_STATUSES_TO_FETCH } from '../../utils/consts/consts'
-import { withApollo } from '../../graphql/withApollo'
-import { Error500 } from '../../components'
-import { useLogIn } from '../../hooks'
-import { getSession } from 'next-auth/client'
-import { setContext } from '@apollo/client/link/context'
 
 interface SubProps {
   cases: CaseForSubscriptions[]

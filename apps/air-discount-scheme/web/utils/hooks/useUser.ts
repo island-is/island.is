@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { CurrentUserQuery } from '@island.is/air-discount-scheme-web/graphql/gqlQueries'
-import { useSession } from 'next-auth/client'
+import { useSession } from 'next-auth/react'
 import { User } from '@island.is/air-discount-scheme-web/graphql/schema'
 
 const useUser = () => {
   const [user, setUser] = useState<User>()
-  const [session, loading] = useSession()
+  const { data: session } = useSession()
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(session?.user),
