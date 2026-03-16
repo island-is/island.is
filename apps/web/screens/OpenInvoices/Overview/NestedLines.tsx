@@ -42,7 +42,13 @@ export const NestedLines = ({
   )
 
   if (error) {
-    return <p>oh no error</p>
+    return (
+      <T.Row>
+        <T.Data box={{ background: 'blue100' }} colSpan={4}>
+          <EmptyTable message={formatMessage(m.overview.errorLoading)} />
+        </T.Data>
+      </T.Row>
+    )
   }
 
   const invoices =

@@ -101,6 +101,7 @@ export const GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS = gql`
       pageInfo {
         __typename
         hasNextPage
+        endCursor
       }
     }
   }

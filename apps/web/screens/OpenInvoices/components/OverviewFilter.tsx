@@ -1,3 +1,4 @@
+import React from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -115,7 +116,7 @@ export const OverviewFilter = ({
             if (category.type === 'checkbox') {
               const searchStateValue = searchState?.[category.id]?.[0]
               return (
-                <>
+                <React.Fragment key={category.id}>
                   {divider}
                   <Box
                     paddingX={3}
@@ -124,7 +125,6 @@ export const OverviewFilter = ({
                     background="white"
                   >
                     <Checkbox
-                      key={category.id}
                       name={category.id}
                       label={category.label}
                       checked={searchStateValue === 'true'}
@@ -136,12 +136,12 @@ export const OverviewFilter = ({
                       }
                     />
                   </Box>
-                </>
+                </React.Fragment>
               )
             }
             if (category.type === 'date') {
               return (
-                <>
+                <React.Fragment key={category.id}>
                   {divider}
                   <FilterDateAccordion
                     title={formatMessage(m.search.range)}
@@ -163,16 +163,15 @@ export const OverviewFilter = ({
                       )
                     }}
                   />
-                </>
+                </React.Fragment>
               )
             }
 
             if (category.type === 'select') {
               return (
-                <>
+                <React.Fragment key={category.id}>
                   {divider}
                   <FilterSearchAccordion
-                    key={category.id}
                     id={category.id}
                     title={category.label}
                     items={category.items}
@@ -188,22 +187,21 @@ export const OverviewFilter = ({
                       )
                     }
                   />
-                </>
+                </React.Fragment>
               )
             }
 
             return (
-              <>
+              <React.Fragment key={index}>
                 {divider}
                 {category.sections.map((section, sectionIndex) => (
-                  <>
+                  <React.Fragment key={section.id}>
                     {sectionIndex > 0 && (
                       <Box paddingX={3}>
                         <Divider />
                       </Box>
                     )}
                     <FilterSearchAccordion
-                      key={section.id}
                       id={section.id}
                       title={section.label}
                       items={section.items}
@@ -218,9 +216,9 @@ export const OverviewFilter = ({
                         )
                       }
                     />
-                  </>
+                  </React.Fragment>
                 ))}
-              </>
+              </React.Fragment>
             )
           })}
         </Box>

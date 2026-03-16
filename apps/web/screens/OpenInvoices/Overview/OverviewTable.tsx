@@ -9,6 +9,7 @@ import { formatCurrency } from '@island.is/shared/utils'
 
 import { EmptyTable } from '../components/EmptyTable/EmptyTable'
 import { m } from '../messages'
+import * as styles from './Overview.css'
 import { NestedLines } from './NestedLines'
 
 interface Props {
@@ -64,23 +65,24 @@ export const OverviewTable = ({
         },
       },
       {
-        Header: 'Seljandi',
+        Header: formatMessage(m.overview.supplier),
         accessor: (row) => row.supplier.name,
         sortType: 'basic',
       },
       {
-        Header: 'Kaupandi',
+        Header: formatMessage(m.overview.customer),
         accessor: (row) => row.customer.name,
         sortType: 'basic',
       },
       {
-        Header: 'Upphæð',
+        Header: formatMessage(m.overview.amount),
         accessor: 'totalSum',
         sortType: 'alphanumeric',
         Cell: ({ value }) => formatCurrency(value),
       },
     ],
-    [],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [formatMessage],
   )
 
   const tableInstance = useTable({ columns, data }, useSortBy, useExpanded)
@@ -88,13 +90,21 @@ export const OverviewTable = ({
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     tableInstance
 
-  if (!data.length || loading) {
+  if (error) {
+    return <EmptyTable message={formatMessage(m.overview.errorLoading)} />
+  }
+
+  if (loading && !data.length) {
     return (
       <EmptyTable
         loading={loading}
         message={formatMessage(m.overview.noResults)}
       />
     )
+  }
+
+  if (!data.length) {
+    return <EmptyTable message={formatMessage(m.overview.noResults)} />
   }
 
   return (
@@ -108,7 +118,7 @@ export const OverviewTable = ({
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   (column as any).getSortByToggleProps(),
                 )}
-                style={{ cursor: 'pointer' }}
+                box={{ className: styles.sortableHeadCell }}
               >
                 <Box display="flex" flexDirection="row" alignItems="center">
                   {column.render('Header')}

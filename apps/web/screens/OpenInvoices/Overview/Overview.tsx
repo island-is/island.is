@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
@@ -11,12 +11,13 @@ import {
 } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
-import { Box, Pagination, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
 import { CustomPageUniqueIdentifier, Locale } from '@island.is/shared/types'
 import { formatCurrency, isDefined } from '@island.is/shared/utils'
 import { MarkdownText } from '@island.is/web/components'
 import {
+  IcelandicGovernmentInstitutionsInvoiceGroup,
   IcelandicGovernmentInstitutionsInvoiceGroups,
   Organization,
   Query,
@@ -33,7 +34,7 @@ import SidebarLayout from '../../Layouts/SidebarLayout'
 import { GET_ORGANIZATION_QUERY } from '../../queries'
 import { OpenInvoicesWrapper } from '../components/OpenInvoicesWrapper'
 import { OverviewFilter } from '../components/OverviewFilter'
-import { ORGANIZATION_SLUG } from '../contants'
+import { ORGANIZATION_SLUG } from '../constants'
 import { m } from '../messages'
 import { OverviewFilters } from '../types'
 import {
@@ -50,6 +51,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   initialInvoiceGroups,
   customPageData,
   organization,
+  today,
 }) => {
   useLocalLinkTypeResolver()
   useContentfulId(customPageData?.id)
@@ -85,13 +87,23 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
   ]
 
   const initialDates = useMemo(() => {
-    const dateTo = new Date()
+    const dateTo = new Date(today)
     return { dateTo, dateFrom: addMonths(dateTo, -1) }
-  }, [])
+  }, [today])
 
   const [initialRender, setInitialRender] = useState<boolean>(true)
+  const isLoadingMoreRef = useRef(false)
 
-  const [page, setPage] = useQueryState('page', parseAsInteger.withDefault(1))
+  const [displayGroups, setDisplayGroups] = useState<
+    IcelandicGovernmentInstitutionsInvoiceGroup[]
+  >(initialInvoiceGroups?.data ?? [])
+  const [endCursor, setEndCursor] = useState<string | null>(
+    initialInvoiceGroups?.pageInfo?.endCursor ?? null,
+  )
+  const [hasNextPage, setHasNextPage] = useState<boolean>(
+    initialInvoiceGroups?.pageInfo?.hasNextPage ?? false,
+  )
+
   const [dateRangeEnd, setDateRangeEnd] = useQueryState(
     'dateRangeEnd',
     parseAsIsoDateTime.withDefault(initialDates.dateTo),
@@ -125,17 +137,11 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups?.totalCount,
   ])
 
-  const totalPages = useMemo(() => {
-    return totalHits > PAGE_SIZE ? Math.ceil(totalHits / PAGE_SIZE) : 1
-  }, [totalHits])
-
   const fetchInvoiceGroups = useCallback(() => {
     if (initialRender) {
       setInitialRender(false)
       return
     }
-
-    const today = new Date()
 
     getInvoiceGroups({
       variables: {
@@ -143,8 +149,8 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           customers,
           suppliers,
           types: invoicePaymentTypes,
-          dateFrom: dateRangeStart ?? addMonths(today, -1),
-          dateTo: dateRangeEnd ?? today,
+          dateFrom: dateRangeStart ?? initialDates.dateFrom,
+          dateTo: dateRangeEnd ?? initialDates.dateTo,
           limit: PAGE_SIZE,
         },
       },
@@ -171,8 +177,39 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     dateRangeEnd,
   ])
 
+  useEffect(() => {
+    if (!invoiceGroupsData) return
+    const result =
+      invoiceGroupsData.icelandicGovernmentInstitutionsInvoiceGroups
+    if (isLoadingMoreRef.current) {
+      setDisplayGroups((prev) => [...prev, ...(result?.data ?? [])])
+    } else {
+      setDisplayGroups(result?.data ?? [])
+    }
+    isLoadingMoreRef.current = false
+    setEndCursor(result?.pageInfo?.endCursor ?? null)
+    setHasNextPage(result?.pageInfo?.hasNextPage ?? false)
+  }, [invoiceGroupsData])
+
+  const handleLoadMore = () => {
+    if (!endCursor) return
+    isLoadingMoreRef.current = true
+    getInvoiceGroups({
+      variables: {
+        input: {
+          customers,
+          suppliers,
+          types: invoicePaymentTypes,
+          dateFrom: dateRangeStart ?? initialDates.dateFrom,
+          dateTo: dateRangeEnd ?? initialDates.dateTo,
+          limit: PAGE_SIZE,
+          after: endCursor,
+        },
+      },
+    })
+  }
+
   const onResetFilter = () => {
-    setPage(null)
     setDateRangeStart(null)
     setDateRangeEnd(null)
     setInvoiceTypes(null)
@@ -186,13 +223,10 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     }
     const dateRangeStartArg = format(dateRangeStart, dateFormat.is)
     const dateRangeEndArg = format(dateRangeEnd, dateFormat.is)
-    const sumArg = invoiceGroupsData
-      ?.icelandicGovernmentInstitutionsInvoiceGroups?.totalPaymentsSum
-      ? formatCurrency(
-          invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
-            ?.totalPaymentsSum,
-        )
-      : 0
+    const totalPaymentsSum =
+      invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
+        ?.totalPaymentsSum ?? initialInvoiceGroups?.totalPaymentsSum
+    const sumArg = totalPaymentsSum ? formatCurrency(totalPaymentsSum) : 0
 
     if (totalHits === 1) {
       return formatMessage(m.search.resultFound, {
@@ -211,6 +245,7 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
     dateRangeEnd,
     dateRangeStart,
     formatMessage,
+    initialInvoiceGroups?.totalPaymentsSum,
     invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
       ?.totalPaymentsSum,
     totalHits,
@@ -242,7 +277,6 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
         break
       }
     }
-    setPage(null)
   }
 
   return (
@@ -355,39 +389,31 @@ const OpenInvoicesOverviewPage: CustomScreen<OpenInvoicesOverviewProps> = ({
           <MarkdownText>{hitsMessage ?? ''}</MarkdownText>
           <Box marginLeft={2} background="white">
             <OverviewTable
-              invoiceGroups={
-                invoiceGroupsData?.icelandicGovernmentInstitutionsInvoiceGroups
-                  ?.data ??
-                initialInvoiceGroups?.data ??
-                []
-              }
+              invoiceGroups={displayGroups}
               dateFrom={dateRangeStart}
               dateTo={dateRangeEnd}
-              loading={invoiceGroupsLoading}
+              loading={invoiceGroupsLoading && !isLoadingMoreRef.current}
               error={invoiceGroupsError}
             />
           </Box>
 
-          <Box marginTop={2} marginBottom={0} hidden={(totalPages ?? 0) <= 1}>
-            <Pagination
-              variant="purple"
-              page={page}
-              itemsPerPage={PAGE_SIZE}
-              totalItems={totalHits}
-              totalPages={totalPages}
-              renderLink={(page, className, children) => (
-                <Box
-                  cursor="pointer"
-                  className={className}
-                  onClick={() => {
-                    setPage(page)
-                  }}
-                >
-                  {children}
-                </Box>
-              )}
-            />
-          </Box>
+          {hasNextPage && (
+            <Box
+              display="flex"
+              justifyContent="center"
+              marginTop={2}
+              marginBottom={0}
+            >
+              <Button
+                onClick={handleLoadMore}
+                loading={invoiceGroupsLoading}
+                disabled={invoiceGroupsLoading}
+                variant="ghost"
+              >
+                {formatMessage(m.search.loadMore)}
+              </Button>
+            </Box>
+          )}
         </SidebarLayout>
       </Box>
     </OpenInvoicesWrapper>
@@ -399,28 +425,12 @@ interface OpenInvoicesOverviewProps {
   locale: Locale
   filters?: OverviewFilters
   initialInvoiceGroups?: IcelandicGovernmentInstitutionsInvoiceGroups
+  today: string
 }
 
-const OpenInvoicesOverview: CustomScreen<OpenInvoicesOverviewProps> = ({
-  organization,
-  locale,
-  filters,
-  initialInvoiceGroups,
-  customPageData,
-}) => {
-  return (
-    <OpenInvoicesOverviewPage
-      organization={organization}
-      locale={locale}
-      customPageData={customPageData}
-      filters={filters}
-      initialInvoiceGroups={initialInvoiceGroups}
-    />
-  )
-}
-
-OpenInvoicesOverview.getProps = async ({ apolloClient, locale, query }) => {
+OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
   const today = new Date()
+  const todayIso = today.toISOString()
 
   const [
     {
@@ -505,7 +515,7 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale, query }) => {
 
   const {
     data: { icelandicGovernmentInstitutionsInvoiceGroups },
-  } = await apolloClient.query<Query>({
+  } = await apolloClient.query<Query, QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs>({
     query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
     variables: {
       input: {
@@ -524,12 +534,13 @@ OpenInvoicesOverview.getProps = async ({ apolloClient, locale, query }) => {
     initialInvoiceGroups:
       icelandicGovernmentInstitutionsInvoiceGroups ?? undefined,
     organization: getOrganization ?? undefined,
+    today: todayIso,
   }
 }
 
 export default withMainLayout(
   withCustomPageWrapper(
     CustomPageUniqueIdentifier.OpenInvoices,
-    OpenInvoicesOverview,
+    OpenInvoicesOverviewPage,
   ),
 )
