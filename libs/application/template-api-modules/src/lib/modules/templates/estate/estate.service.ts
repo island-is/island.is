@@ -361,7 +361,19 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const selectedEstateData = estateData?.find(
       (estate) => estate.caseNumber === answers.estateInfoSelection,
     )
-    const deceasedNationalId = selectedEstateData?.nationalIdOfDeceased || ''
+
+    if (!selectedEstateData) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary:
+            'Selected estate not found for provided estateInfoSelection.',
+        },
+        400,
+      )
+    }
+
+    const deceasedNationalId = selectedEstateData.nationalIdOfDeceased || ''
 
     if (!deceasedNationalId) {
       throw new TemplateApiError(

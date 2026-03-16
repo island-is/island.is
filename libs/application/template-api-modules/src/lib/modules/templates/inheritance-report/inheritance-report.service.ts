@@ -32,6 +32,29 @@ import { Features } from '@island.is/feature-flags'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
+interface SyslumennOnEntryData {
+  inheritanceReportInfos: Array<{
+    caseNumber?: string
+    nationalId?: string
+  }>
+}
+
+function getSyslumennData(
+  externalData: Record<string, unknown>,
+): SyslumennOnEntryData | undefined {
+  const entry = externalData?.syslumennOnEntry as
+    | { data?: SyslumennOnEntryData }
+    | undefined
+  if (
+    entry?.data &&
+    typeof entry.data === 'object' &&
+    Array.isArray(entry.data.inheritanceReportInfos)
+  ) {
+    return entry.data
+  }
+  return undefined
+}
+
 @Injectable()
 export class InheritanceReportService extends BaseTemplateApiService {
   constructor(
@@ -148,15 +171,13 @@ export class InheritanceReportService extends BaseTemplateApiService {
   }
 
   async completeApplication(props: TemplateApiModuleActionProps) {
-    // Idempotency: if already submitted via the signing state, skip re-submission
-    const existingResult = props.application.externalData?.submitToSyslumenn
-      ?.data as { success?: boolean; id?: string } | undefined
-    if (existingResult?.success && existingResult?.id) {
-      return existingResult
-    }
     return this.submitToSyslumenn(props)
   }
 
+  /**
+   * Submits the inheritance report to Syslumenn.
+   * Handles idempotency: if already submitted, returns the existing result.
+   */
   async submitToSyslumenn({ application }: TemplateApiModuleActionProps) {
     // Idempotency: if already submitted, skip re-submission
     const existingResult = application.externalData?.submitToSyslumenn
@@ -264,17 +285,11 @@ export class InheritanceReportService extends BaseTemplateApiService {
 
     // Get the deceased national ID from the selected estate
     const estateInfoSelection = answers?.estateInfoSelection
-    const syslumennData = application.externalData
-      ?.syslumennOnEntry as unknown as
-      | {
-          data: {
-            inheritanceReportInfos: Array<{ caseNumber?: string; nationalId?: string }>
-          }
-          date: Date
-        }
-      | undefined
+    const syslumennData = getSyslumennData(
+      application.externalData as Record<string, unknown>,
+    )
     const inheritanceReportInfos =
-      syslumennData?.data?.inheritanceReportInfos || []
+      syslumennData?.inheritanceReportInfos ?? []
 
     const selectedEstate = inheritanceReportInfos.find(
       (estate) => estate.caseNumber === estateInfoSelection,
