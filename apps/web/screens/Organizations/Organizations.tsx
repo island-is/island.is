@@ -243,7 +243,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
             id="organizations-list"
             className={styles.listContainer}
           >
-            <Box marginY={[3, 3, 6]}>
+            <Box paddingTop={[4, 4, 8]} paddingBottom={[5, 5, 8]}>
               <Box className={styles.filterBar}>
                 <Box className={styles.searchContainer}>
                   <FilterInput

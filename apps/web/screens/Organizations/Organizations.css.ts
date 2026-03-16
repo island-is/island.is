@@ -8,7 +8,7 @@ export const filterBar = style({
   display: 'flex',
   alignItems: 'center',
   flexWrap: 'wrap',
-  rowGap: 16,
+  rowGap: 24,
   columnGap: 16,
 })
 
