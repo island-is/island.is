@@ -28,7 +28,6 @@ export const transformProgrammeToCard = (
 ): ProgrammeCardProps => {
   const school = programme.school
   const detailLines: ProgrammeCardProps['detailLines'] = []
-
   if (programme.studyTrack?.name) {
     detailLines.push({
       icon: 'grid',
@@ -55,7 +54,7 @@ export const transformProgrammeToCard = (
   const schoolData = getSchoolData(school?.abbreviation)
 
   return {
-    id: `${programme.id}-${school?.id || ''}`,
+    id: `${programme.programmeId}-${school?.id || ''}`,
     schoolName: school?.name || '',
     schoolIcon: (
       <img
@@ -66,6 +65,6 @@ export const transformProgrammeToCard = (
     title: programme.title || '',
     description: programme.description || undefined,
     detailLines,
-    href: `/framhaldsskolanam/${programme.id}`,
+    href: `/framhaldsskolanam/${programme.programmeId}`,
   }
 }
