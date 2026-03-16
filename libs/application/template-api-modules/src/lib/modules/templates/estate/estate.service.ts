@@ -343,11 +343,20 @@ export class EstateTemplateService extends BaseTemplateApiService {
   async getSignatories({ application }: TemplateApiModuleActionProps) {
     const answers = application.answers as unknown as EstateSchema
 
-    const estateData = (
-      application.externalData?.syslumennOnEntry?.data as {
-        estates: Array<EstateInfo>
-      }
-    ).estates
+    const syslumennData = application.externalData?.syslumennOnEntry
+      ?.data as { estates: Array<EstateInfo> } | undefined
+
+    if (!syslumennData?.estates) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: 'Estate data not found in application data.',
+        },
+        400,
+      )
+    }
+
+    const estateData = syslumennData.estates
 
     const selectedEstateData = estateData?.find(
       (estate) => estate.caseNumber === answers.estateInfoSelection,

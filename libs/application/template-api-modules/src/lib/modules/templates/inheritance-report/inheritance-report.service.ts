@@ -291,10 +291,21 @@ export class InheritanceReportService extends BaseTemplateApiService {
       )
     }
 
-    const estateType =
-      answers?.applicationFor === 'prepaidInheritance'
-        ? SignatoryEstateTypes.FyrirFramGreiddur
-        : SignatoryEstateTypes.ErfdafjarSkyrsla
+    const applicationFor = answers?.applicationFor
+    let estateType: SignatoryEstateTypes
+    if (applicationFor === 'prepaidInheritance') {
+      estateType = SignatoryEstateTypes.FyrirFramGreiddur
+    } else if (applicationFor === 'estateInheritance') {
+      estateType = SignatoryEstateTypes.ErfdafjarSkyrsla
+    } else {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.failedDataProviderSubmit,
+          summary: `Invalid or missing applicationFor value: '${applicationFor}'.`,
+        },
+        400,
+      )
+    }
 
     try {
       this.logger.info(
