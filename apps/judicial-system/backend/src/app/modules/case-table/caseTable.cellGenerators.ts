@@ -547,7 +547,10 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
       includes: {
         verdicts: {
           model: Verdict,
-          attributes: ['isAcquittedByPublicProsecutionOffice'],
+          attributes: [
+            'isAcquittedByPublicProsecutionOffice',
+            'defendantHasRequestedAppeal',
+          ],
           order: [['created', 'DESC']],
           separate: true,
         },
