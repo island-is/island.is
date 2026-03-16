@@ -30,6 +30,25 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
   })
   const { formatMessage } = useIntl()
 
+  const hasLevel4 = programme.programmeStructure
+    ? [
+        ...(programme.programmeStructure.coreSubjectGroups?.flatMap(
+          (g) => g.subjects ?? [],
+        ) ?? []),
+        ...(programme.programmeStructure.packageChoices?.flatMap((c) =>
+          (c.packages ?? []).flatMap((p) => p.subjects ?? []),
+        ) ?? []),
+        ...(programme.programmeStructure.subjectChoiceGroups?.flatMap(
+          (g) => g.subjects ?? [],
+        ) ?? []),
+      ].some((s) => s.level4)
+    : false
+
+  // Total visible columns and the colSpan used for title/label rows that
+  // span all columns except the last "units" column.
+  const totalCols = hasLevel4 ? 6 : 5
+  const titleColSpan = totalCols - 1
+
   const toggleIsOpen = (key: keyof typeof isOpen) => {
     setIsOpen((prev) => ({ ...prev, [key]: !prev[key] }))
   }
@@ -153,7 +172,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                     <T.HeadData>
                       {formatMessage(m.details.subjectName)}
                     </T.HeadData>
-                    <T.HeadData style={{ textAlign: 'right' }}>
+                    <T.HeadData style={{ textAlign: 'left' }}>
                       <Box display={['none', 'none', 'block']}>
                         {formatMessage(m.details.level1)}
                       </Box>
@@ -161,7 +180,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                         {formatMessage(m.details.level1Mobile)}
                       </Box>
                     </T.HeadData>
-                    <T.HeadData style={{ textAlign: 'right' }}>
+                    <T.HeadData style={{ textAlign: 'left' }}>
                       <Box display={['none', 'none', 'block']}>
                         {formatMessage(m.details.level2)}
                       </Box>
@@ -169,7 +188,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                         {formatMessage(m.details.level2Mobile)}
                       </Box>
                     </T.HeadData>
-                    <T.HeadData style={{ textAlign: 'right' }}>
+                    <T.HeadData style={{ textAlign: 'left' }}>
                       <Box display={['none', 'none', 'block']}>
                         {formatMessage(m.details.level3)}
                       </Box>
@@ -177,15 +196,17 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                         {formatMessage(m.details.level3Mobile)}
                       </Box>
                     </T.HeadData>
-                    <T.HeadData style={{ textAlign: 'right' }}>
-                      <Box display={['none', 'none', 'block']}>
-                        {formatMessage(m.details.level4)}
-                      </Box>
-                      <Box display={['block', 'block', 'none']}>
-                        {formatMessage(m.details.level4Mobile)}
-                      </Box>
-                    </T.HeadData>
-                    <T.HeadData style={{ textAlign: 'right' }}>
+                    {hasLevel4 && (
+                      <T.HeadData style={{ textAlign: 'left' }}>
+                        <Box display={['none', 'none', 'block']}>
+                          {formatMessage(m.details.level4)}
+                        </Box>
+                        <Box display={['block', 'block', 'none']}>
+                          {formatMessage(m.details.level4Mobile)}
+                        </Box>
+                      </T.HeadData>
+                    )}
+                    <T.HeadData style={{ textAlign: 'left' }}>
                       {formatMessage(m.details.units)}
                     </T.HeadData>
                   </T.Row>
@@ -203,7 +224,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                       return (
                         <Fragment key={`core-fragment-${groupIndex}`}>
                           <T.Row key={`core-group-${groupIndex}`}>
-                            <T.Data colSpan={5}>
+                            <T.Data colSpan={titleColSpan}>
                               <Text variant="small" color="dark300">
                                 {group.title
                                   ? group.title
@@ -233,27 +254,32 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                                   <Text variant="eyebrow">{subject.name}</Text>
                                 </T.Data>
                                 <T.Data
-                                  style={{ textAlign: 'right', ...borderStyle }}
+                                  style={{ textAlign: 'left', ...borderStyle }}
                                 >
                                   {subject.level1 || '-'}
                                 </T.Data>
                                 <T.Data
-                                  style={{ textAlign: 'right', ...borderStyle }}
+                                  style={{ textAlign: 'left', ...borderStyle }}
                                 >
                                   {subject.level2 || '-'}
                                 </T.Data>
                                 <T.Data
-                                  style={{ textAlign: 'right', ...borderStyle }}
+                                  style={{ textAlign: 'left', ...borderStyle }}
                                 >
                                   {subject.level3 || '-'}
                                 </T.Data>
+                                {hasLevel4 && (
+                                  <T.Data
+                                    style={{
+                                      textAlign: 'left',
+                                      ...borderStyle,
+                                    }}
+                                  >
+                                    {subject.level4 || '-'}
+                                  </T.Data>
+                                )}
                                 <T.Data
-                                  style={{ textAlign: 'right', ...borderStyle }}
-                                >
-                                  {subject.level4 || '-'}
-                                </T.Data>
-                                <T.Data
-                                  style={{ textAlign: 'right', ...borderStyle }}
+                                  style={{ textAlign: 'left', ...borderStyle }}
                                 >
                                   {subject.credits || '-'}
                                 </T.Data>
@@ -275,7 +301,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                             choice.packages &&
                             choice.packages.length > 1 && (
                               <T.Row key={`package-choice-${choiceIndex}`}>
-                                <T.Data colSpan={6}>
+                                <T.Data colSpan={totalCols}>
                                   <Text variant="small" color="dark300">
                                     {formatMessage(m.details.chooseXofY, {
                                       required: choice.requiredPackages,
@@ -302,7 +328,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                                     key={`package-${choiceIndex}-${pkgIndex}`}
                                   >
                                     <T.Data
-                                      colSpan={5}
+                                      colSpan={titleColSpan}
                                       style={{ paddingLeft: '24px' }}
                                     >
                                       <Text variant="small" color="dark300">
@@ -344,7 +370,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                                       </T.Data>
                                       <T.Data
                                         style={{
-                                          textAlign: 'right',
+                                          textAlign: 'left',
                                           ...borderStyle,
                                         }}
                                       >
@@ -352,7 +378,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                                       </T.Data>
                                       <T.Data
                                         style={{
-                                          textAlign: 'right',
+                                          textAlign: 'left',
                                           ...borderStyle,
                                         }}
                                       >
@@ -360,23 +386,25 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                                       </T.Data>
                                       <T.Data
                                         style={{
-                                          textAlign: 'right',
+                                          textAlign: 'left',
                                           ...borderStyle,
                                         }}
                                       >
                                         {subject.level3 || '-'}
                                       </T.Data>
+                                      {hasLevel4 && (
+                                        <T.Data
+                                          style={{
+                                            textAlign: 'left',
+                                            ...borderStyle,
+                                          }}
+                                        >
+                                          {subject.level4 || '-'}
+                                        </T.Data>
+                                      )}
                                       <T.Data
                                         style={{
-                                          textAlign: 'right',
-                                          ...borderStyle,
-                                        }}
-                                      >
-                                        {subject.level4 || '-'}
-                                      </T.Data>
-                                      <T.Data
-                                        style={{
-                                          textAlign: 'right',
+                                          textAlign: 'left',
                                           ...borderStyle,
                                         }}
                                       >
@@ -406,7 +434,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                         <Fragment key={`subject-choice-fragment-${groupIndex}`}>
                           {group.requiredCredits !== undefined && (
                             <T.Row key={`choice-group-${groupIndex}`}>
-                              <T.Data colSpan={5}>
+                              <T.Data colSpan={titleColSpan}>
                                 <Text variant="small" color="dark300">
                                   {formatMessage(
                                     m.details.subjectChoiceGroupsSubtitle,
@@ -440,27 +468,32 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                                   <Text variant="eyebrow">{subject.name}</Text>
                                 </T.Data>
                                 <T.Data
-                                  style={{ textAlign: 'right', ...borderStyle }}
+                                  style={{ textAlign: 'left', ...borderStyle }}
                                 >
                                   {subject.level1 || '-'}
                                 </T.Data>
                                 <T.Data
-                                  style={{ textAlign: 'right', ...borderStyle }}
+                                  style={{ textAlign: 'left', ...borderStyle }}
                                 >
                                   {subject.level2 || '-'}
                                 </T.Data>
                                 <T.Data
-                                  style={{ textAlign: 'right', ...borderStyle }}
+                                  style={{ textAlign: 'left', ...borderStyle }}
                                 >
                                   {subject.level3 || '-'}
                                 </T.Data>
+                                {hasLevel4 && (
+                                  <T.Data
+                                    style={{
+                                      textAlign: 'left',
+                                      ...borderStyle,
+                                    }}
+                                  >
+                                    {subject.level4 || '-'}
+                                  </T.Data>
+                                )}
                                 <T.Data
-                                  style={{ textAlign: 'right', ...borderStyle }}
-                                >
-                                  {subject.level4 || '-'}
-                                </T.Data>
-                                <T.Data
-                                  style={{ textAlign: 'right', ...borderStyle }}
+                                  style={{ textAlign: 'left', ...borderStyle }}
                                 >
                                   {subject.credits || '-'}
                                 </T.Data>
@@ -475,7 +508,7 @@ export const DetailContent = ({ programme }: DetailContentProps) => {
                   {/* Free Choice */}
                   {programme.freeChoiceDescription && (
                     <T.Row key="free-choice">
-                      <T.Data colSpan={5}>
+                      <T.Data colSpan={totalCols}>
                         <Box>
                           <Text
                             variant="small"

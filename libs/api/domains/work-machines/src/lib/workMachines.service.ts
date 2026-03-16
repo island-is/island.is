@@ -1,5 +1,5 @@
 import {
-  MachineFriendlyDto,
+  MachineForInspectionDto,
   MachineSubCategoryDto,
   MachineTypeDto,
   WorkMachinesClientService,
@@ -233,7 +233,7 @@ export class WorkMachinesService {
     auth: User,
     input: GetWorkMachineInput,
   ): Promise<WorkMachine | null> {
-    let data: MachineFriendlyDto | null
+    let data: MachineForInspectionDto | null
     const { id, registrationNumber } = input
     if (registrationNumber) {
       data = await this.machineService.getMachineDetailsForInspection(auth, {
@@ -251,7 +251,7 @@ export class WorkMachinesService {
 
     return {
       id: data.id || '',
-      ownerNumber: data.ownerNumber || '',
+      owner: data.owner,
       licensePlateNumber: data.licensePlateNumber || '',
       subType: subType.join(' '),
       type: type,
