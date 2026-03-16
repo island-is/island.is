@@ -4,8 +4,13 @@ import { SharedTemplateAPIModule } from '../../../shared'
 
 import { HousingBenefitsService } from './housing-benefits.service'
 import { ApplicationsNotificationsModule } from '../../../../notification/notifications.module'
+import { HmsRentalAgreementClientModule } from '@island.is/clients/hms-rental-agreement'
 @Module({
-  imports: [SharedTemplateAPIModule, ApplicationsNotificationsModule],
+  imports: [
+    SharedTemplateAPIModule,
+    ApplicationsNotificationsModule,
+    HmsRentalAgreementClientModule,
+  ],
   providers: [HousingBenefitsService],
   exports: [HousingBenefitsService],
 })

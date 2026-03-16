@@ -1,1 +1,15 @@
-// Populate this file with the data providers you need
+import {
+  defineTemplateApi,
+  NationalRegistryV3UserApi,
+} from '@island.is/application/types'
+
+export { IdentityApi } from '@island.is/application/types'
+
+export const NationalRegistryApi = NationalRegistryV3UserApi.configure({
+  order: 1,
+})
+
+export const RentalAgreementsApi = defineTemplateApi({
+  action: 'getRentalAgreements',
+  order: 2,
+})

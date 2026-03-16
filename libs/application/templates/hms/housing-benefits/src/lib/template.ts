@@ -17,31 +17,20 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
+import * as m from './messages'
+import { NationalRegistryApi, RentalAgreementsApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.HOUSING_BENEFITS, // TODO: Change to the correct type
-  name: 'housing-benefits template',
-  codeOwner: CodeOwners.NordaApplications, // TODO: Change to the correct code owner
-  institution: 'Stafrænt Ísland', // TODO: Change to the correct institution
-  translationNamespaces: [
-    ApplicationConfigurations.HousingBenefits.translation,
-  ], // TODO: Change to the correct translation namespace
+  type: ApplicationTypes.HOUSING_BENEFITS,
+  name: m.miscMessages.applicationName,
+  codeOwner: CodeOwners.NordaApplications,
+  institution: m.miscMessages.institutionName,
+  translationNamespaces: ApplicationConfigurations.HousingBenefits.translation,
   dataSchema,
-  // Note: only use this if any data should remain after pruning for better visibility in the admin portal
-  adminDataConfig: {
-    // whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
-    answers: [
-      {
-        key: 'pickVehicle.plate',
-        isListed: true,
-        label: 'Bílnúmer',
-      },
-    ],
-  },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -63,7 +52,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi],
+              api: [UserProfileApi, NationalRegistryApi, RentalAgreementsApi],
               delete: true,
             },
           ],

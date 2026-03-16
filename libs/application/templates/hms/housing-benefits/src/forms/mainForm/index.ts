@@ -1,12 +1,13 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
-import { firstSection } from '../mainForm/firstSection'
-import { secondSection } from '../mainForm/secondSection'
+import { personalInformationSection } from './personalInformationSection'
 import { overviewSection } from './overview'
+import { HmsLogo } from '@island.is/application/assets/institution-logos'
 
 export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  children: [firstSection, secondSection, overviewSection],
+  logo: HmsLogo,
+  children: [personalInformationSection, overviewSection],
 })

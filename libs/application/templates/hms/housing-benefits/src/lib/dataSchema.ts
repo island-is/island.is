@@ -1,11 +1,15 @@
+import { YES } from '@island.is/application/core'
 import { z } from 'zod'
 
-const dummySchema = z.object({
-  dummyTextField: z.string(),
+const confirmReadSchema = z.object({
+  privacyPolicy: z.array(z.literal(YES)).length(1),
+  housingBenefitsInfo: z.array(z.literal(YES)).length(1),
 })
 
 export const dataSchema = z.object({
-  dummy: dummySchema,
+  confirmRead: confirmReadSchema,
+  confirmMunicipality: z.array(z.literal(YES)).length(1),
+  approveExternalData: z.boolean().refine((v) => v),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
