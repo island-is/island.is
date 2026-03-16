@@ -12,7 +12,7 @@ import {
   RadioButton,
   Text,
 } from '@island.is/island-ui/core'
-import { CardWithFeaturedItems, GridItems } from '@island.is/web/components'
+import { LifeEventCard } from './LifeEventCard'
 import {
   ContentLanguage,
   type GetLifeEventsForOverviewQuery,
@@ -174,44 +174,45 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
             </Box>
           </Box>
         </Box>
-        <GridItems
-          mobileItemWidth={215}
-          mobileItemsRows={5}
-          insideGridContainer
-          paddingTop={[2, 2, 2, 5]}
-          paddingBottom={8}
-          third
-        >
-          {filteredLifeEvents?.map(
-            ({
-              __typename: typename,
-              shortTitle,
-              title,
-              slug,
-              tinyThumbnail,
-              featured,
-              seeMoreText,
-              id,
-            }) => {
-              return (
-                <CardWithFeaturedItems
-                  key={id}
-                  heading={shortTitle ?? title}
-                  imgSrc={tinyThumbnail?.url ?? ''}
-                  dataTestId={'lifeevent-card-with-featured-items'}
-                  href={linkResolver(typename as LinkType, [slug]).href}
-                  featuredItems={featured ?? []}
-                  white
-                  buttonTitle={
-                    seeMoreText && seeMoreText !== ''
-                      ? seeMoreText
-                      : n('cardsButtonTitle', 'Skoða lífsviðburð')
-                  }
-                />
-              )
-            },
-          )}
-        </GridItems>
+        <Box paddingTop={[2, 2, 2, 5]} paddingBottom={8}>
+          <GridContainer>
+            <GridRow>
+              {filteredLifeEvents?.map(
+                ({
+                  __typename: typename,
+                  shortTitle,
+                  title,
+                  slug,
+                  tinyThumbnail,
+                  featured,
+                  seeMoreText,
+                  id,
+                }) => {
+                  return (
+                    <GridColumn
+                      key={id}
+                      span={['12/12', '6/12', '6/12', '4/12']}
+                      paddingBottom={3}
+                    >
+                      <LifeEventCard
+                        heading={shortTitle ?? title}
+                        imgSrc={tinyThumbnail?.url ?? ''}
+                        dataTestId={'lifeevent-card-with-featured-items'}
+                        href={linkResolver(typename as LinkType, [slug]).href}
+                        featuredItems={featured ?? []}
+                        buttonTitle={
+                          seeMoreText && seeMoreText !== ''
+                            ? seeMoreText
+                            : n('cardsButtonTitle', 'Skoða lífsviðburð')
+                        }
+                      />
+                    </GridColumn>
+                  )
+                },
+              )}
+            </GridRow>
+          </GridContainer>
+        </Box>
       </Box>
     </>
   )
