@@ -86,6 +86,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:digital-delegations',
     defaultMessage: 'Rafræn umboð',
   },
+  myDelegations: {
+    id: 'sp.access-control-delegations:my-delegations',
+    defaultMessage: 'Mín umboð',
+  },
   serviceCategories: {
     id: 'sp.access-control-delegations:serviceCategories',
     defaultMessage: 'Þjónustuflokkar',
@@ -93,6 +97,10 @@ export const m = defineMessages({
   categoryDetails: {
     id: 'sp.access-control-delegations:categoryDetails',
     defaultMessage: 'Þjónustuflokkur',
+  },
+  faq: {
+    id: 'sp.access-control-delegations:faq',
+    defaultMessage: 'Algengar spurningar og svör',
   },
   serviceCategoriesDescription: {
     id: 'sp.access-control-delegations:serviceCategoriesDescription',

@@ -9,6 +9,7 @@ import { DelegationPaths } from './lib/paths'
 import { m } from './lib/messages'
 import { accessControlLoader } from './screens/AccessControl.loader'
 import { Features } from '@island.is/react/feature-flags'
+import { isCompany } from '@island.is/shared/utils'
 import EditAccess from './screens/EditAccess.tsx/EditAccess'
 import { CategoryDetails } from './screens/CategoryDetails/CategoryDetails'
 
@@ -28,6 +29,7 @@ const AccessOutgoing = lazy(() =>
 const ServiceCategories = lazy(() =>
   import('./screens/ServiceCategories/ServiceCategories'),
 )
+const Faq = lazy(() => import('./screens/Faq/Faq'))
 
 export const delegationsModule: PortalModule = {
   name: coreMessages.accessControl,
@@ -103,6 +105,16 @@ export const delegationsModule: PortalModule = {
             enabled: hasAccess,
             element: <CategoryDetails />,
             loader: accessControlLoader('umbod/thjonustuflokkar/:slug')(props),
+          },
+          {
+            name: m.faq,
+            path: DelegationPaths.Faq,
+            navHide: true,
+            enabled: hasAccess,
+            element: <Faq />,
+            loader: accessControlLoader(
+              isCompany(userInfo) ? 'umbod/faq-company' : 'umbod/faq',
+            )(props),
           },
         ],
       },

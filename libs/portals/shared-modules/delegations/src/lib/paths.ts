@@ -10,4 +10,5 @@ export enum DelegationPaths {
   DelegationsEdit = '/umbod/breyta', // New delegation edit flow
   ServiceCategories = '/umbod/thjonustuflokkar', // Service categories with permissions
   CategoryDetails = '/umbod/thjonustuflokkar/:slug', // Category details
+  Faq = '/umbod/faq', // FAQ page
 }
