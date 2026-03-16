@@ -143,6 +143,11 @@ export const information = {
         defaultMessage: 'Eigandanúmer',
         description: 'Owner number label',
       },
+      ownerName: {
+        id: 'aosh.rifm.application:information.labels.machine.ownerName',
+        defaultMessage: 'Nafn eiganda',
+        description: 'Owner name label',
+      },
       subType: {
         id: 'aosh.rifm.application:information.labels.machine.subType',
         defaultMessage: 'Gerð',
