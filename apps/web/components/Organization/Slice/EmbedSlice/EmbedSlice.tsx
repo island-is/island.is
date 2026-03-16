@@ -5,7 +5,6 @@ import type { Embed as EmbedSchema } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
 import { EmbedDisclaimer } from '../../../ChatPanel/ChatBubble/EmbedDisclaimer/EmbedDisclaimer'
-
 import * as styles from './EmbedSlice.css'
 
 const calculatePaddingBottom = (aspectRatio: string) => {
@@ -39,14 +38,14 @@ const getEmbedConsentKey = (embedUrl?: string | null) => {
 }
 
 const texts = (hostname?: string | null) => {
-  const domainSuffix = hostname ? ` (${hostname})` : ''
+  const domainSuffix = hostname ? hostname : ''
 
   return {
     is: {
       message: (
         <Text variant="default">
-          Þetta efni{domainSuffix} er hýst af þriðja aðila. Með því að birta efnið
-          samþykkir þú skilmála þeirra.
+          Þetta efni{`${domainSuffix ? ` frá ${domainSuffix} ` : ' '}`}er hýst
+          af þriðja aðila. Með því að birta efnið samþykkir þú skilmála þeirra.
         </Text>
       ),
       remember: 'Muna þessa stillingu.',
@@ -57,8 +56,8 @@ const texts = (hostname?: string | null) => {
     en: {
       message: (
         <Text variant="default">
-          This content{domainSuffix} is hosted by a third party. By viewing it you
-          accept their terms and conditions.
+          This content{domainSuffix} is hosted by a third party. By viewing it
+          you accept their terms and conditions.
         </Text>
       ),
       remember: 'Remember this choice.',
@@ -74,8 +73,14 @@ export const EmbedSlice = ({ slice }: EmbedSliceProps) => {
   const [allowed, setAllowed] = useState(false)
   const [showDisclaimer, setShowDisclaimer] = useState(false)
 
-  const consentKey = useMemo(() => getEmbedConsentKey(slice.embedUrl), [slice.embedUrl])
-  const hostname = useMemo(() => getEmbedHostname(slice.embedUrl), [slice.embedUrl])
+  const consentKey = useMemo(
+    () => getEmbedConsentKey(slice.embedUrl),
+    [slice.embedUrl],
+  )
+  const hostname = useMemo(
+    () => getEmbedHostname(slice.embedUrl),
+    [slice.embedUrl],
+  )
 
   const copy = texts(hostname)
   const localizedTexts = copy[activeLocale] ?? copy.is
