@@ -944,8 +944,10 @@ export const is = {
   'health.prescriptions.description':
     'Hér má finna yfirlit yfir þínar lyfjaávísanir og lyfjaskírteini.',
   'health.prescriptions.drug': 'Lyf',
+  'health.prescriptions.strength': 'Styrkur',
+  'health.prescriptions.indication': 'Notað við',
   'health.prescriptions.type': 'Tegund',
-  'health.prescriptions.indication': 'Lyf er notað við',
+  'health.prescriptions.form': 'Form',
   'health.prescriptions.quantity': 'Ávísað magn',
   'health.prescriptions.dosageInstructions': 'Notkunarleiðbeiningar',
   'health.prescriptions.issueDate': 'Útgáfudagur',

@@ -950,8 +950,10 @@ export const en: TranslatedMessages = {
   'health.prescriptions.description':
     'Here you can find an overview of your prescriptions and medication certificates.',
   'health.prescriptions.drug': 'Medication',
+  'health.prescriptions.strength': 'Strength',
+  'health.prescriptions.indication': 'Used for',
   'health.prescriptions.type': 'Type',
-  'health.prescriptions.indication': 'Medication used for',
+  'health.prescriptions.form': 'Form',
   'health.prescriptions.quantity': 'Prescribed amount',
   'health.prescriptions.dosageInstructions': 'Dosage instructions',
   'health.prescriptions.issueDate': 'Issue date',
