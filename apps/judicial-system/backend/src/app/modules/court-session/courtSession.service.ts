@@ -129,8 +129,6 @@ export class CourtSessionService {
     const existingCourtSession =
       await this.courtSessionRepositoryService.findById(caseId, courtSessionId)
 
-    // Only add messages to the queue if the court session is being confirmed for
-    // the first time and not if it's being updated after already being confirmed
     if (
       existingCourtSession &&
       !existingCourtSession.isConfirmed &&
