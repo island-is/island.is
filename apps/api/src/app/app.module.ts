@@ -251,7 +251,7 @@ import {
 } from '@island.is/api/domains/landspitali'
 
 const environment = getConfig
-
+// TODO: Remove this comment
 @Module({
   controllers: [HealthController],
   providers: [
