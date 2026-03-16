@@ -1,4 +1,4 @@
-import { RefObject } from 'react'
+import { ReactNode, RefObject } from 'react'
 
 import { Box, Button, Icon, Input, Tag, Text } from '@island.is/island-ui/core'
 
@@ -13,7 +13,7 @@ interface SearchSectionProps {
   formatFilterLabel: (
     categoryId: keyof SelectedFilters,
     value: string,
-  ) => string
+  ) => ReactNode
   handleRemoveFilter: (categoryId: keyof SelectedFilters, value: string) => void
   handleClearAll: () => void
   formatMessage: (descriptor: { id: string; defaultMessage: string }) => string
