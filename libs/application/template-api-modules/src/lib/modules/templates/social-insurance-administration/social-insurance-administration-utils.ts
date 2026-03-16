@@ -66,6 +66,7 @@ import {
   TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
   IncomeTypes,
   MedicalAndRehabilitationPaymentsDTO,
+  OldAgePensionDTO,
   Employer as TrWebEmployer,
 } from '@island.is/clients/social-insurance-administration'
 import parse from 'date-fns/parse'
@@ -74,7 +75,7 @@ import { incomePlanHasOnlyZeroIncome } from '@island.is/application/templates/so
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
   uploads: Attachment[],
-): ApplicationDTO => {
+): OldAgePensionDTO => {
   const {
     applicationType,
     selectedYear,
@@ -105,7 +106,7 @@ export const transformApplicationToOldAgePensionDTO = (
     YES,
   ) as YesOrNo
 
-  const oldAgePensionDTO: ApplicationDTO = {
+  const oldAgePensionDTO: OldAgePensionDTO = {
     period: {
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
@@ -854,7 +855,9 @@ export const getMonthNumber = (monthName: string): number => {
   return monthNumber.getMonth() + 1
 }
 
-export const getApplicationType = (application: Application): string => {
+export const getOAPApplicationType = (
+  application: Application,
+): ApplicationType.OLD_AGE_PENSION | ApplicationType.HALF_OLD_AGE_PENSION => {
   const { applicationType } = getOAPApplicationAnswers(application.answers)
 
   if (applicationType === ApplicationType.HALF_OLD_AGE_PENSION) {
