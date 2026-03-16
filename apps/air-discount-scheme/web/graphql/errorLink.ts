@@ -1,9 +1,9 @@
 import { ApolloError, ServerError } from '@apollo/client'
-import { onError, ErrorResponse } from '@apollo/client/link/error'
-import { signIn } from 'next-auth/client'
+import { ErrorResponse, onError } from '@apollo/client/link/error'
 import { identityServerId } from '@island.is/air-discount-scheme-web/lib'
+import { signIn } from 'next-auth/react'
 
-import { NotificationService, api } from '../services'
+import { NotificationService } from '../services'
 
 export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
   if (networkError) {

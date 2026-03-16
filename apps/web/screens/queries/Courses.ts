@@ -9,6 +9,7 @@ export const GET_ORGANIZATION_COURSES_QUERY = gql`
       items {
         id
         title
+        slug
         cardIntro {
           ...HtmlFields
         }

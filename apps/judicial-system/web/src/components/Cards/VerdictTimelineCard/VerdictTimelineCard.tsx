@@ -340,7 +340,10 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                 },
               ]
             : []),
-          ...(Boolean(verdict) && !isFine && !defendant.isSentToPrisonAdmin
+          ...(Boolean(verdict) &&
+          !isFine &&
+          !defendant.isSentToPrisonAdmin &&
+          !verdict?.defendantHasRequestedAppeal
             ? [
                 {
                   title: `${
@@ -355,6 +358,26 @@ const VerdictTimelineCard: FC<Props> = (props) => {
                         defendantId: defendant.id,
                         isAcquittedByPublicProsecutionOffice:
                           !verdict?.isAcquittedByPublicProsecutionOffice,
+                      },
+                      setWorkingCase,
+                    )
+                  },
+                },
+              ]
+            : []),
+          ...(Boolean(verdict) && !verdict?.isAcquittedByPublicProsecutionOffice
+            ? [
+                {
+                  title: `${
+                    verdict?.defendantHasRequestedAppeal ? 'Afskrá' : 'Skrá'
+                  } áfrýjunarleyfi`,
+                  onClick: () => {
+                    setAndSendVerdictToServer(
+                      {
+                        caseId: workingCase.id,
+                        defendantId: defendant.id,
+                        defendantHasRequestedAppeal:
+                          !verdict?.defendantHasRequestedAppeal,
                       },
                       setWorkingCase,
                     )

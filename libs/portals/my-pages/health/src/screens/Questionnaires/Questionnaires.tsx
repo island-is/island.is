@@ -30,6 +30,7 @@ import { HealthPaths } from '../../lib/paths'
 import { useGetQuestionnairesQuery } from './questionnaires.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import * as styles from './Questionnaires.css'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -47,6 +48,7 @@ type FilterValues = {
 
 const Questionnaires: FC = () => {
   const { formatMessage, lang } = useLocale()
+  useHealthPlausibleSwap()
   const navigate = useNavigate()
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
