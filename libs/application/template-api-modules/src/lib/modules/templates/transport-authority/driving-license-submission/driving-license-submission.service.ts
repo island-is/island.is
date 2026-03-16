@@ -299,9 +299,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         selectedPhoto !== 'qualityPhoto' &&
         selectedPhoto !== 'fakePhoto' &&
         selectedPhoto !== 'bringNewPhoto' &&
-        allThjodskraPhotos?.some(
-          (p) => p.biometricId === selectedPhoto,
-        )
+        allThjodskraPhotos?.some((p) => p.biometricId === selectedPhoto)
 
       const imageBiometricsId = isValidThjodskraPhoto ? selectedPhoto : null
 
