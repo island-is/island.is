@@ -84,6 +84,7 @@ resources:
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   IDENTITYSERVER_SECRET: '/k8s/auth-admin-web/IDENTITYSERVER_SECRET'
+  NEXTAUTH_SECRET: '/k8s/auth-admin-web/NEXTAUTH_SECRET'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

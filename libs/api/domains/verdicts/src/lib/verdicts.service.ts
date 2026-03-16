@@ -30,6 +30,7 @@ export class VerdictsService {
       dateTo: input.dateTo,
       laws: input.laws,
       caseContact: input.caseContact,
+      pageSize: input.pageSize,
     })
     return {
       items: response.items,

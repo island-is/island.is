@@ -24,6 +24,7 @@ import { ApplicationAdminResponseDto } from './models/dto/admin/applicationAdmin
 import { ApplicationStatisticsDto } from './models/dto/admin/applicationStatistics.dto'
 import {
   ApplicationAdminSerializer,
+  ApplicationStatisticsSerializer,
   InstitutionSerializer,
 } from './tools/applicationAdmin.serializer'
 import type { Locale } from '@island.is/shared/types'
@@ -262,6 +263,7 @@ export class AdminController {
 
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @Get('super-admin/applications/statistics')
+  @UseInterceptors(ApplicationStatisticsSerializer)
   @Documentation({
     description:
       'Get applications statistics for the entire application system (as super admin)',
@@ -298,6 +300,7 @@ export class AdminController {
 
   @Scopes(AdminPortalScope.applicationSystemInstitution)
   @Get('institution-admin/applications/statistics')
+  @UseInterceptors(ApplicationStatisticsSerializer)
   @Documentation({
     description: 'Get applications statistics for a specific institution',
     response: {

@@ -126,6 +126,7 @@ export const mapFormSystemStatisticsAdmin = (
   statistics: ApplicationStatisticsDto,
 ): ApplicationStatistics => {
   return {
+    ...statistics,
     typeid: statistics.formId,
     name: statistics.formName ?? '',
     count: statistics.totalCount,
