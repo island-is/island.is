@@ -317,12 +317,25 @@ export const m = defineMessages({
   },
   spouseDeceasedTaxCredit: {
     id: 'sp.social-insurance-maintenance:spouse-deceased-tax-credit',
+    defaultMessage: 'Ég óska eftir að nýta persónuafslátt vegna andláts maka.',
+  },
+  spouseDeceasedInfo: {
+    id: 'sp.social-insurance-maintenance:spouse-deceased-info',
     defaultMessage:
-      'Ég óska eftir að nýta persónuafslátt vegna andláts maka.',
+      'Ath. skattkort vegna andláts maka má vera skráð frá og með 1. næsta mánaðar eftir andlát og verður nýtt næstu 8 mánuði á eftir.',
+  },
+  spouseNationalId: {
+    id: 'sp.social-insurance-maintenance:spouse-national-id',
+    defaultMessage: 'kt.',
   },
   grantSpouseTaxCredit: {
     id: 'sp.social-insurance-maintenance:grant-spouse-tax-credit',
     defaultMessage: 'Ég veiti maka leyfi til að nota persónuafslátt minn.',
+  },
+  grantSpouseTaxCreditInfo: {
+    id: 'sp.social-insurance-maintenance:grant-spouse-tax-credit-info',
+    defaultMessage:
+      'Bæði þú og maki getið ekki nýtt persónuafsláttinn á sama tíma.',
   },
   taxBracket: {
     id: 'sp.social-insurance-maintenance:tax-bracket',
@@ -346,7 +359,7 @@ export const m = defineMessages({
   taxBracketInfo: {
     id: 'sp.social-insurance-maintenance:tax-bracket-info',
     defaultMessage:
-      'Skatthlutfall í staðgreiðslu samanstendur annarsvegar af tekjuskatti og hinsvegar meðaútsvari(14,95%). Skatthlutfallið er\n\n• 31,49% af tekjum 0-472.005 kr. (þar af 16,55% tekjuskattur)\n• 37,99% af tekjum 472.006 - 1.325.127 kr. (þar af 23,05% tekjuskattur)\n• 46,29% af tekjum yfir 1.325.127 kr. (þar af 31,35% tekjuskattur)\n\nPersónuafslattur er 68.691 kr. á mánuði á árinu 2025.',
+      'Skatthlutfall í staðgreiðslu samanstendur annarsvegar af tekjuskatti og hinsvegar meðaútsvari(14,95%). Skatthlutfallið er\n\n• 31,49% af tekjum 0-472.005 kr. (þar af 16,55% tekjuskattur)\n• 37,99% af tekjum 472.006 - 1.325.127 kr. (þar af 23,05% tekjuskattur)\n• 46,29% af tekjum yfir 1.325.127 kr. (þar af 31,35% tekjuskattur)\n\nPersónuafsláttur er 68.691 kr. á mánuði á árinu 2025.',
   },
   personalTaxCreditSaveSuccess: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-save-success',
@@ -355,5 +368,33 @@ export const m = defineMessages({
   personalTaxCreditSaveError: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-save-error',
     defaultMessage: 'Ekki tókst að vista persónuafsláttinn',
+  },
+  month: {
+    id: 'sp.social-insurance-maintenance:month',
+    defaultMessage: 'Mánuður',
+  },
+  theYear: {
+    id: 'sp.social-insurance-maintenance:the-year',
+    defaultMessage: 'Ár',
+  },
+  fromWhatTime: {
+    id: 'sp.social-insurance-maintenance:from-what-time',
+    defaultMessage: 'Frá hvaða tíma',
+  },
+  percentageFromNextMonth: {
+    id: 'sp.social-insurance-maintenance:percentage-from-next-month',
+    defaultMessage: 'Hlutfall afsláttar frá næstu mánaðarmótum',
+  },
+  dateFrom: {
+    id: 'sp.social-insurance-maintenance:date-from',
+    defaultMessage: 'Dagsetning frá',
+  },
+  dateTo: {
+    id: 'sp.social-insurance-maintenance:date-to',
+    defaultMessage: 'Dagsetning til',
+  },
+  percentage: {
+    id: 'sp.social-insurance-maintenance:percentage',
+    defaultMessage: 'Prósenta',
   },
 })

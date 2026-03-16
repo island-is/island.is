@@ -12,6 +12,10 @@ query getPersonalTaxCredit {
     }
     canRegisterPersonalAllowance
   }
+  socialInsuranceTaxCardMonthsAndYears {
+    months
+    years
+  }
   socialInsuranceSpouseDeceasedTaxAllowanceEligibility {
     canApply
     reasonNotAllowed
