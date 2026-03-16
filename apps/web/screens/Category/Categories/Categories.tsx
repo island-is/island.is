@@ -132,7 +132,7 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
               ]}
               alignItems={['stretch', 'stretch', 'stretch', 'center', 'center']}
               flexWrap="wrap"
-              rowGap={2}
+              rowGap={3}
             >
               <Box>
                 <FilterInput
