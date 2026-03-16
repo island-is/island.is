@@ -808,7 +808,7 @@ export const m = defineMessages({
   },
   categories: {
     id: 'ap.ids-admin:categories',
-    defaultMessage: 'Þjónustuflokkar (Categories)',
+    defaultMessage: 'Service categories',
   },
   categoriesDescription: {
     id: 'ap.ids-admin:categories-description',
@@ -817,12 +817,12 @@ export const m = defineMessages({
   },
   tags: {
     id: 'ap.ids-admin:tags',
-    defaultMessage: 'Lífsviðburðir (Life Events)',
+    defaultMessage: 'Tags',
   },
   tagsDescription: {
     id: 'ap.ids-admin:tags-description',
     defaultMessage:
-      'Select which life events this permission is relevant for. This helps users understand when they might need this permission.',
+      'Select which tags this permission is relevant for. This helps users understand when they might need this permission.',
   },
   noCategories: {
     id: 'ap.ids-admin:no-categories',
@@ -830,7 +830,7 @@ export const m = defineMessages({
   },
   selectCategoriesPlaceholder: {
     id: 'ap.ids-admin:select-categories-placeholder',
-    defaultMessage: 'Veldu þjónustuflokk',
+    defaultMessage: 'Select categories',
   },
   noTags: {
     id: 'ap.ids-admin:no-tags',
@@ -838,7 +838,7 @@ export const m = defineMessages({
   },
   selectTagsPlaceholder: {
     id: 'ap.ids-admin:select-tags-placeholder',
-    defaultMessage: 'Veldu lífsviðburð',
+    defaultMessage: 'Select tags',
   },
   loading: {
     id: 'ap.ids-admin:loading',

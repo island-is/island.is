@@ -114,8 +114,43 @@ const delegationsSchema = z
   .object({
     removedDelegationTypes: zfd.repeatable(z.optional(z.array(z.string()))),
     addedDelegationTypes: zfd.repeatable(z.optional(z.array(z.string()))),
+    categoryIds: z.string().optional().transform(safeParseStringArray),
+    tagIds: z.string().optional().transform(safeParseStringArray),
+    originalCategoryIds: z.string().optional().transform(safeParseStringArray),
+    originalTagIds: z.string().optional().transform(safeParseStringArray),
   })
   .merge(defaultEnvironmentSchema)
+  .transform(
+    ({
+      categoryIds = [],
+      tagIds = [],
+      originalCategoryIds = [],
+      originalTagIds = [],
+      ...rest
+    }) => {
+      const addedCategoryIds = categoryIds.filter(
+        (id: string) => !originalCategoryIds.includes(id),
+      )
+      const removedCategoryIds = originalCategoryIds.filter(
+        (id: string) => !categoryIds.includes(id),
+      )
+      const addedTagIds = tagIds.filter(
+        (id: string) => !originalTagIds.includes(id),
+      )
+      const removedTagIds = originalTagIds.filter(
+        (id: string) => !tagIds.includes(id),
+      )
+      return {
+        ...rest,
+        addedCategoryIds:
+          addedCategoryIds.length > 0 ? addedCategoryIds : undefined,
+        removedCategoryIds:
+          removedCategoryIds.length > 0 ? removedCategoryIds : undefined,
+        addedTagIds: addedTagIds.length > 0 ? addedTagIds : undefined,
+        removedTagIds: removedTagIds.length > 0 ? removedTagIds : undefined,
+      }
+    },
+  )
 
 const categoriesAndTagsSchema = z
   .object({
