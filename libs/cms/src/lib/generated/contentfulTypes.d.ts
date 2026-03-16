@@ -819,6 +819,9 @@ export interface ICourseFields {
   /** Title */
   title: string
 
+  /** Slug */
+  slug?: string | undefined
+
   /** Card Intro */
   cardIntro?: Document | undefined
 
@@ -4384,6 +4387,9 @@ export interface IServicePortalPageFields {
 
   /** FAQ List */
   faqList?: IFaqList | undefined
+
+  /** Empty State Message */
+  emptyStateMessage?: Document | undefined
 }
 
 export interface IServicePortalPage extends Entry<IServicePortalPageFields> {
@@ -4567,6 +4573,7 @@ export interface ISliceConnectedComponentFields {
     | 'SupremeCourt/Determinations'
     | 'KVTH/Rulings'
     | 'VERAnnouncementCalculator'
+    | 'Lyfjastofnun/Pharmacies'
     | undefined
 
   /** Localized JSON */

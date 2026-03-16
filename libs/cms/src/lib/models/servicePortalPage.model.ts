@@ -2,6 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IServicePortalPage } from '../generated/contentfulTypes'
 import { FaqList, mapFaqList } from './faqList.model'
 import { CacheField } from '@island.is/nest/graphql'
+import { Html, mapHtml } from './html.model'
 
 @ObjectType()
 export class ServicePortalPage {
@@ -10,6 +11,9 @@ export class ServicePortalPage {
 
   @Field()
   slug!: string
+
+  @CacheField(() => Html, { nullable: true })
+  emptyStateMessage!: Html | null
 
   @CacheField(() => FaqList)
   faqList!: FaqList | null
@@ -22,5 +26,8 @@ export const mapServicePortalPage = (
     id: page.sys.id,
     slug: page.fields.slug,
     faqList: page.fields.faqList ? mapFaqList(page.fields.faqList) : null,
+    emptyStateMessage: page.fields.emptyStateMessage
+      ? mapHtml(page.fields.emptyStateMessage, page.sys.id)
+      : null,
   }
 }

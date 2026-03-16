@@ -2,6 +2,11 @@ query GetServicePortalPage($input: GetServicePortalPageInput!) {
   getServicePortalPage(input: $input) {
     id
     slug
+    emptyStateMessage {
+      __typename
+      id
+      document
+    }
     faqList {
       id
       title

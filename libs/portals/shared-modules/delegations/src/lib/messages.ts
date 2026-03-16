@@ -365,7 +365,7 @@ export const m = defineMessages({
   // New delegation grant flow
   grantAccessNewTitle: {
     id: 'sp.access-control-delegations:grant-access-new-title',
-    defaultMessage: 'Beiðni um nýtt umboð',
+    defaultMessage: 'Veita umboð',
   },
   editAccessTitle: {
     id: 'sp.access-control-delegations:edit-access-title',
