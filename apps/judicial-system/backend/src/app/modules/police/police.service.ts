@@ -452,6 +452,75 @@ export class PoliceService {
     }
   }
 
+  async getTokenUrl(
+    rvgCaseId: string,
+    userParam: string,
+    rafraennGagnId: string,
+    user: User,
+    source: string,
+  ): Promise<string> {
+    if (!this.config.policeDigitalCaseFilesApiAvailable) {
+      throw new ServiceUnavailableException(
+        'Police digital case files API not available',
+      )
+    }
+
+    const startTime = nowFactory()
+    const query = new URLSearchParams({
+      rvgCaseId,
+      user: userParam,
+      rafraennGagnId,
+    }).toString()
+    const url = `${this.xRoadPath}/V4/GetTokenUrl?${query}`
+
+    try {
+      const res = await this.fetchPoliceDocumentApi(url)
+
+      if (res.ok) {
+        return await res.text()
+      }
+
+      const reason = await res.text()
+
+      throw new NotFoundException({
+        message: `Token URL for digital case file ${rafraennGagnId} not found`,
+        detail: reason,
+      })
+    } catch (reason) {
+      if (reason instanceof NotFoundException) {
+        throw reason
+      }
+
+      if (reason instanceof ServiceUnavailableException) {
+        throw new NotFoundException({
+          ...reason,
+          message: `Token URL for digital case file ${rafraennGagnId} not found`,
+          detail: reason.message,
+        })
+      }
+
+      this.eventService.postErrorEvent(
+        'Failed to get token URL for digital case file',
+        {
+          rvgCaseId,
+          rafraennGagnId,
+          actor: user.name,
+          institution: user.institution?.name,
+          startTime,
+          endTime: nowFactory(),
+          source,
+        },
+        reason,
+      )
+
+      throw new BadGatewayException({
+        ...reason,
+        message: `Failed to get token URL for digital case file ${rafraennGagnId}`,
+        detail: reason.message,
+      })
+    }
+  }
+
   async getAllPoliceCaseFiles(
     caseId: string,
     user: User,

@@ -2,13 +2,7 @@ import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'motion/react'
 
-import {
-  AlertMessage,
-  Box,
-  Icon,
-  LinkV2,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Icon, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   hasGeneratedCourtRecordPdf,
@@ -293,19 +287,8 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
-  const { digitalCaseFiles } = usePoliceDigitalCaseFile(
-    workingCase.id,
-    workingCase.origin,
-  )
-  // Electronic files: names from digital case files table; URLs to be implemented separately
-  const electronicFiles = useMemo(
-    () =>
-      (digitalCaseFiles ?? []).map((file) => ({
-        displayName: file.name,
-        url: 'temp',
-      })),
-    [digitalCaseFiles],
-  )
+  const { digitalCaseFiles, openDigitalCaseFileUrl, tokenUrlLoading } =
+    usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
   return (
     <>
@@ -477,31 +460,38 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   Tenglarnir færa þig yfir á öruggt gagnasvæði lögreglunnar.
                   Allar heimsóknir á þann vef eru skráðar og rekjanlegar.
                 </Text>
-                {electronicFiles.length > 0 ? (
+                {(digitalCaseFiles?.length ?? 0) > 0 ? (
                   <>
-                    {electronicFiles.map(({ displayName, url }, index) => (
-                      <LinkV2
-                        key={index}
-                        href={url}
-                        newTab
-                        color="blue400"
-                        className={styles.electronicFileRow}
-                      >
-                        <Text
-                          as="span"
-                          color="blue400"
-                          variant="h4"
-                          className={styles.electronicFileLinkContainer}
+                    {(digitalCaseFiles ?? []).map((file, index) => (
+                        <Box
+                          key={index}
+                          component="button"
+                          type="button"
+                          className={styles.electronicFileRow}
+                          onClick={() =>
+                            openDigitalCaseFileUrl(file.policeDigitalFileId)
+                          }
+                          disabled={tokenUrlLoading}
+                          cursor="pointer"
+                          background="transparent"
+                          width="full"
+                          textAlign="left"
                         >
-                          {displayName}
-                        </Text>
-                        <Icon
-                          icon="open"
-                          type="outline"
-                          size="small"
-                          color="blue400"
-                        />
-                      </LinkV2>
+                          <Text
+                            as="span"
+                            color="blue400"
+                            variant="h4"
+                            className={styles.electronicFileLinkContainer}
+                          >
+                            {file.name}
+                          </Text>
+                          <Icon
+                            icon="open"
+                            type="outline"
+                            size="small"
+                            color="blue400"
+                          />
+                        </Box>
                     ))}
                   </>
                 ) : null}

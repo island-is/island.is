@@ -96,6 +96,20 @@ export class PoliceDigitalCaseFileService {
       }))
   }
 
+  async getTokenUrl(
+    caseId: string,
+    user: User,
+    rafraennGagnId: string,
+  ): Promise<string> {
+    return this.policeService.getTokenUrl(
+      caseId,
+      user.nationalId,
+      rafraennGagnId,
+      user,
+      'getPoliceDigitalCaseFileTokenUrl',
+    )
+  }
+
   async deletePoliceDigitalCaseFile(
     caseId: string,
     id: string,
