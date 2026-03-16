@@ -7,6 +7,7 @@ import {
   TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
 } from '../../../../gen/fetch/v1'
 import { ApplicationApi as ApplicationWriteApiV2 } from '../../../../gen/fetch/v2'
+import { MEDICAL_AND_REHABILITATION_PAYMENTS_SLUG } from '../../constants'
 
 @Injectable()
 export class SocialInsuranceAdministrationMedicalAndRehabilitationService {
@@ -28,12 +29,11 @@ export class SocialInsuranceAdministrationMedicalAndRehabilitationService {
   async sendMedicalAndRehabilitationPaymentsApplication(
     user: User,
     applicationDTO: object,
-    applicationType: string,
   ): Promise<void> {
     return this.applicationWriteApiV2WithAuth(
       user,
     ).apiProtectedV2ApplicationApplicationTypePost({
-      applicationType,
+      applicationType: MEDICAL_AND_REHABILITATION_PAYMENTS_SLUG,
       body: applicationDTO,
     })
   }
