@@ -38,20 +38,17 @@ import {
 import {
   useFiledCourtDocuments,
   useFileList,
+  usePoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
 import { grid } from '../../utils/styles/recipes.css'
-
-/** Temporary until we have proper electronic data file types from the API */
-type WorkingCaseWithIdesUrls = Case & {
-  idesUrls?: string[] | null
-}
+import * as styles from './IndictmentCaseFilesList.css'
 
 interface Props {
-  workingCase: WorkingCaseWithIdesUrls
+  workingCase: Case
   displayGeneratedPDFs?: boolean
   displayHeading?: boolean
   connectedCaseParentId?: string
@@ -296,14 +293,19 @@ const IndictmentCaseFilesList: FC<Props> = ({
 
   const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
-  // Electronic files: URLs from idesUrls with mock display names until case model has electronic file names
-  const electronicFiles = useMemo(() => {
-    const urls = workingCase.idesUrls ?? []
-    return urls.map((url, index) => ({
-      displayName: `Rafrænt skjal ${index + 1}`,
-      url,
-    }))
-  }, [workingCase.idesUrls])
+  const { digitalCaseFiles } = usePoliceDigitalCaseFile(
+    workingCase.id,
+    workingCase.origin,
+  )
+  // Electronic files: names from digital case files table; URLs to be implemented separately
+  const electronicFiles = useMemo(
+    () =>
+      (digitalCaseFiles ?? []).map((file) => ({
+        displayName: file.name,
+        url: 'temp',
+      })),
+    [digitalCaseFiles],
+  )
 
   return (
     <>
@@ -476,33 +478,32 @@ const IndictmentCaseFilesList: FC<Props> = ({
                   Allar heimsóknir á þann vef eru skráðar og rekjanlegar.
                 </Text>
                 {electronicFiles.length > 0 ? (
-                  <Box component="ul" marginBottom={0} paddingLeft={4}>
+                  <>
                     {electronicFiles.map(({ displayName, url }, index) => (
-                      <Box key={index} component="li" marginBottom={1}>
-                        <Box
-                          display="flex"
-                          alignItems="center"
-                          component="span"
+                      <LinkV2
+                        key={index}
+                        href={url}
+                        newTab
+                        color="blue400"
+                        className={styles.electronicFileRow}
+                      >
+                        <Text
+                          as="span"
+                          color="blue400"
+                          variant="h4"
+                          className={styles.electronicFileLinkContainer}
                         >
-                          <LinkV2 href={url} newTab>
-                            {displayName}
-                          </LinkV2>
-                          <Box
-                            component="span"
-                            marginLeft={1}
-                            display="inlineFlex"
-                          >
-                            <Icon
-                              icon="open"
-                              type="outline"
-                              size="small"
-                              color="blue400"
-                            />
-                          </Box>
-                        </Box>
-                      </Box>
+                          {displayName}
+                        </Text>
+                        <Icon
+                          icon="open"
+                          type="outline"
+                          size="small"
+                          color="blue400"
+                        />
+                      </LinkV2>
                     ))}
-                  </Box>
+                  </>
                 ) : null}
               </Box>
             )}
