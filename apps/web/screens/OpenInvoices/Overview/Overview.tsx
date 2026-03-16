@@ -515,7 +515,10 @@ OpenInvoicesOverviewPage.getProps = async ({ apolloClient, locale, query }) => {
 
   const {
     data: { icelandicGovernmentInstitutionsInvoiceGroups },
-  } = await apolloClient.query<Query, QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs>({
+  } = await apolloClient.query<
+    Query,
+    QueryIcelandicGovernmentInstitutionsInvoiceGroupsArgs
+  >({
     query: GET_ICELANDIC_GOVERNMENT_INSTITUTIONS_INVOICE_GROUPS,
     variables: {
       input: {
