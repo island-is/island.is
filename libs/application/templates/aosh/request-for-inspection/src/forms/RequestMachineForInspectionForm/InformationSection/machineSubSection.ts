@@ -75,6 +75,24 @@ export const machineSubSection = buildSubSection({
           },
         }),
         buildTextField({
+          id: 'machine.ownerName',
+          title: information.labels.machine.ownerName,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          condition: (answers: FormValue, externalData: ExternalData) => {
+            const machine = getSelectedMachine(externalData, answers)
+            return !!machine?.owner?.name
+          },
+          defaultValue: (application: Application) => {
+            const machine = getSelectedMachine(
+              application.externalData,
+              application.answers,
+            )
+            return machine?.owner?.name || ''
+          },
+        }),
+        buildTextField({
           id: 'machine.ownerNumber',
           title: information.labels.machine.ownerNumber,
           backgroundColor: 'white',
@@ -82,7 +100,7 @@ export const machineSubSection = buildSubSection({
           readOnly: true,
           condition: (answers: FormValue, externalData: ExternalData) => {
             const machine = getSelectedMachine(externalData, answers)
-            return !!machine?.owner
+            return !!machine?.owner?.number
           },
           defaultValue: (application: Application) => {
             const machine = getSelectedMachine(

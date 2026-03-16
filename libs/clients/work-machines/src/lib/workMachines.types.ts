@@ -58,16 +58,16 @@ export type MachinesWithTotalCount = {
 export type MachineForInspectionDto = {
   id?: string
   owner?: { number?: string; name: string }
-  licensePlateNumber?: string
-  type?: string
-  subType?: string
-  category?: string
-  registrationNumber?: string
-  supervisor?: string
-  status?: string
-  paymentRequiredForOwnerChange?: boolean
+  licensePlateNumber?: string | null
+  type?: string | null
+  subType?: string | null
+  category?: string | null
+  registrationNumber?: string | null
+  supervisor?: string | null
+  status?: string | null
+  paymentRequiredForOwnerChange?: boolean | null
   errorMessage?: string | null
-  disabled?: boolean
+  disabled?: boolean | null
 }
 
 export type MachineForInspectionTotalCount = {
