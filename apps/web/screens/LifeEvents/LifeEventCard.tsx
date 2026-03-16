@@ -44,7 +44,12 @@ export const LifeEventCard = ({
         {heading}
       </Text>
       <Box display="flex" flexDirection="row" style={{ height: 140 }}>
-        <Box display="flex" flexDirection="column" justifyContent="flexEnd" style={{ flex: 1, minWidth: 0 }}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="flexEnd"
+          style={{ flex: 1, minWidth: 0 }}
+        >
           {limitedFeaturedItems.length > 0 && (
             <Box marginY={2} className={styles.purpleTags}>
               {limitedFeaturedItems.map((item: Featured, index: number) => {
@@ -79,7 +84,12 @@ export const LifeEventCard = ({
             </Box>
           )}
         </Box>
-        <Box display="flex" justifyContent="center" alignItems="center" style={{ flex: 1 }}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          style={{ flex: 1 }}
+        >
           <img src={imgSrc} alt={imgAlt} className={styles.image} />
         </Box>
       </Box>
