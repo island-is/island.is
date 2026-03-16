@@ -9,8 +9,8 @@ import { formatCurrency } from '@island.is/shared/utils'
 
 import { EmptyTable } from '../components/EmptyTable/EmptyTable'
 import { m } from '../messages'
-import * as styles from './Overview.css'
 import { NestedLines } from './NestedLines'
+import * as styles from './Overview.css'
 
 interface Props {
   dateTo?: Date
