@@ -4,6 +4,8 @@ import { ApolloError } from '@apollo/client'
 import { CardErrorCode } from '@island.is/shared/constants'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
+import getConfig from 'next/config'
+
 import { useChargeApplePayMutation } from '../graphql/mutations.graphql.generated'
 import {
   GetPaymentFlowQuery,
@@ -59,11 +61,9 @@ export const useApplePay = ({
 
   // check if apple pay is available
   useEffect(() => {
+    const { publicRuntimeConfig } = getConfig()
     // if apple pay is not enabled or if apple pay is not allowed, set supports apple pay to false
-    if (
-      process.env.NEXT_PUBLIC_ALLOW_APPLE_PAY === 'false' ||
-      !isEnabledForUser
-    ) {
+    if (publicRuntimeConfig.allowApplePay === 'false' || !isEnabledForUser) {
       setSupportsApplePay(false)
       return
     }
