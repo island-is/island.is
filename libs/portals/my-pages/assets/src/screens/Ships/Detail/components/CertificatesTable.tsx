@@ -5,13 +5,7 @@ import {
   ShipRegistryCertificate,
   ShipRegistryCertificateStatus,
 } from '@island.is/api/schema'
-import {
-  Box,
-  Button,
-  Input,
-  Table as T,
-  Tag,
-} from '@island.is/island-ui/core'
+import { Box, Button, Input, Table as T, Tag } from '@island.is/island-ui/core'
 import { EmptyTable, formatDate } from '@island.is/portals/my-pages/core'
 import { useLocale } from '@island.is/localization'
 import { shipsMessages } from '../../../../lib/messages'
@@ -158,7 +152,9 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
                                 })
                               }
                               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              ;(row as any).getToggleRowExpandedProps().onClick(e)
+                              ;(row as any)
+                                .getToggleRowExpandedProps()
+                                .onClick(e)
                             }}
                             display="flex"
                             alignItems="center"
