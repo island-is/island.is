@@ -17,7 +17,6 @@ import {
 import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
 import { createMockApiResponse } from '../../../test/utils'
-import { ScopeResolver } from './scope.resolver'
 import { ScopeService } from './scope.service'
 import { AdminScopeDTO, AdminCreateScopeDto } from '@island.is/auth-api-lib'
 import { ScopesPayload } from './dto/scopes.payload'
@@ -120,7 +119,7 @@ const mockAdminProdApi = createMockAdminApi(
       load: [AuthAdminApiClientConfig],
     }),
   ],
-  providers: [ScopeResolver, ScopeService],
+  providers: [ScopeService],
 })
 class TestModule {}
 
@@ -167,7 +166,9 @@ describe('ScopeService', () => {
     })
 
     afterAll(async () => {
-      await app.cleanUp()
+      if (app) {
+        await app.cleanUp()
+      }
     })
 
     it('should create scope for specific tenant for all environments', async () => {
@@ -236,6 +237,8 @@ describe('ScopeService', () => {
           environments: scopes.map((scope) => ({
             ...scope,
             isAccessControlled: false,
+            categoryIds: [],
+            tagIds: [],
           })),
         }),
       )
@@ -278,6 +281,7 @@ describe('ScopeService', () => {
       const environments = Object.entries(groupedScopes)
         .map(([_, scopes]) => scopes)
         .flat()
+          .map((env) => ({ ...env, categoryIds: [], tagIds: [] }))
 
       // Act
       const scopeResponses = await scopeService.getScope(currentUser, {
