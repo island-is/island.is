@@ -8,17 +8,16 @@ import {
 } from '../../../../gen/fetch/v1'
 import { ApplicationApi as ApplicationWriteApiV2 } from '../../../../gen/fetch/v2'
 import { MEDICAL_AND_REHABILITATION_PAYMENTS_SLUG } from '../../constants'
+import { SocialInsuranceAdministrationGeneralApplicationService } from './generalApplication.service'
+import { MedicalAndRehabilitationPaymentsDTO } from '../../dto/medicalAndRehabilitationPayments.dto'
 
 @Injectable()
 export class SocialInsuranceAdministrationMedicalAndRehabilitationService {
   constructor(
     private readonly applicantApi: ApplicantApi,
     private readonly questionnairesApi: QuestionnairesApi,
-    private readonly applicationWriteApiV2: ApplicationWriteApiV2,
+    private readonly applicationService: SocialInsuranceAdministrationGeneralApplicationService,
   ) {}
-
-  private applicationWriteApiV2WithAuth = (user: User) =>
-    this.applicationWriteApiV2.withMiddleware(new AuthMiddleware(user as Auth))
 
   private applicantApiWithAuth = (user: User) =>
     this.applicantApi.withMiddleware(new AuthMiddleware(user as Auth))
@@ -28,14 +27,13 @@ export class SocialInsuranceAdministrationMedicalAndRehabilitationService {
 
   async sendMedicalAndRehabilitationPaymentsApplication(
     user: User,
-    applicationDTO: object,
+    applicationDTO: MedicalAndRehabilitationPaymentsDTO,
   ): Promise<void> {
-    return this.applicationWriteApiV2WithAuth(
+    return this.applicationService.sendApplicationV2(
       user,
-    ).apiProtectedV2ApplicationApplicationTypePost({
-      applicationType: MEDICAL_AND_REHABILITATION_PAYMENTS_SLUG,
-      body: applicationDTO,
-    })
+      applicationDTO,
+      MEDICAL_AND_REHABILITATION_PAYMENTS_SLUG,
+    )
   }
 
   async getMedicalAndRehabilitationApplicationType(

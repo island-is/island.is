@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { ApplicationApi as ApplicationWriteApiV2 } from '../../../../gen/fetch/v2'
-import { OldAgePensionDTO } from '../../..'
+import { User } from '@island.is/auth-nest-tools'
+import {
+  OldAgePensionDTO,
+  SocialInsuranceAdministrationGeneralApplicationService,
+} from '../../..'
 import { OldAgePensionApplicationType } from '../../types'
 import { OAP_APPLICATION_TYPES } from '../../constants'
 
 @Injectable()
 export class SocialInsuranceAdministrationOldAgePensionService {
-  constructor(private readonly applicationWriteApiV2: ApplicationWriteApiV2) {}
-
-  private applicationWriteApiV2WithAuth = (user: User) =>
-    this.applicationWriteApiV2.withMiddleware(new AuthMiddleware(user as Auth))
+  constructor(
+    private readonly applicationService: SocialInsuranceAdministrationGeneralApplicationService,
+  ) {}
 
   async sendOldAgePensionApplication(
     user: User,
     input: OldAgePensionDTO,
     pensionType: OldAgePensionApplicationType,
   ): Promise<void> {
-    return this.applicationWriteApiV2WithAuth(
+    return this.applicationService.sendApplicationV2(
       user,
-    ).apiProtectedV2ApplicationApplicationTypePost({
-      applicationType: OAP_APPLICATION_TYPES[pensionType],
-      body: input,
-    })
+      input,
+      OAP_APPLICATION_TYPES[pensionType],
+    )
   }
 }
