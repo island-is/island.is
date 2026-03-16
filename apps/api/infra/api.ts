@@ -66,6 +66,8 @@ import {
   GoProVerdicts,
 } from '../../../infra/src/dsl/xroad'
 
+// TODO: Remove this comment
+
 export const serviceSetup = (services: {
   appSystemApi: ServiceBuilder<'application-system-api'>
   servicePortalApi: ServiceBuilder<'service-portal-api'>
