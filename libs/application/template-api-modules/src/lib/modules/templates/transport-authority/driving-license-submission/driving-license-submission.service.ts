@@ -290,17 +290,20 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       const bePhone = getValueViaPath<string>(answers, 'phone')
 
       // Determine biometric IDs from photo selection
-      const imageBiometricsId =
-        !selectedPhoto ||
-        selectedPhoto === 'qualityPhoto' ||
-        selectedPhoto === 'fakePhoto' ||
-        selectedPhoto === 'bringNewPhoto'
-          ? null
-          : selectedPhoto
-
       const allThjodskraPhotos = getValueViaPath<
         { biometricId: string; contentSpecification: string }[]
       >(application.externalData, 'allPhotosFromThjodskra.data.images', [])
+
+      const isValidThjodskraPhoto =
+        !!selectedPhoto &&
+        selectedPhoto !== 'qualityPhoto' &&
+        selectedPhoto !== 'fakePhoto' &&
+        selectedPhoto !== 'bringNewPhoto' &&
+        allThjodskraPhotos?.some(
+          (p) => p.biometricId === selectedPhoto,
+        )
+
+      const imageBiometricsId = isValidThjodskraPhoto ? selectedPhoto : null
 
       const signatureBiometricsId = imageBiometricsId
         ? allThjodskraPhotos?.find(
