@@ -98,6 +98,10 @@ export const m = {
       id: 'web.secondarySchoolStudies:filters.levels',
       defaultMessage: 'Námsstig',
     },
+    haefnisþrep: {
+      id: 'web.secondarySchoolStudies:filters.haefnisþrep',
+      defaultMessage: 'Hæfniþrep',
+    },
   }),
   home: defineMessages({
     title: {
