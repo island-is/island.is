@@ -25,6 +25,14 @@ export const generateComplaintPdf = async (application: Application) => {
 
   addHeader('Kvörtun til umboðsmanns Alþingis', doc)
 
+  addSubheader('Dagsetning kvörtunar', doc)
+  addValue(
+    application.created.toISOString().substring(0, 10),
+    doc,
+    PdfConstants.NORMAL_FONT,
+    PdfConstants.NORMAL_LINE_GAP,
+  )
+
   addValue(
     `${answers.applicant.name}, ${formatNationalId(
       answers.applicant.nationalId,
@@ -128,7 +136,12 @@ export const generateComplaintPdf = async (application: Application) => {
   )
 
   if (answers.complaintDescription.decisionDate) {
-    addSubheader('Dagsetning', doc)
+    addSubheader(
+      answers.complaintType === OmbudsmanComplaintTypeEnum.DECISION
+        ? 'Dagsetning ákvörðunar'
+        : 'Dagsetning athafnar',
+      doc,
+    )
     addValue(
       answers.complaintDescription.decisionDate ?? '',
       doc,
