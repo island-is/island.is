@@ -8,9 +8,7 @@
   "paths": {
     "/v1/islandisassessments/{studentId}/subjects": {
       "get": {
-        "tags": [
-          "IslandIsAssessments"
-        ],
+        "tags": ["IslandIsAssessments"],
         "summary": "Gets all assessment subjects that have completed assignment results for the specified student.",
         "parameters": [
           {
@@ -64,16 +62,14 @@
         },
         "security": [
           {
-            "Bearer": [ ]
+            "Bearer": []
           }
         ]
       }
     },
     "/v1/islandisassessments/{studentId}/subject/{assessmentSubjectId}/types": {
       "get": {
-        "tags": [
-          "IslandIsAssessments"
-        ],
+        "tags": ["IslandIsAssessments"],
         "summary": "Gets all assessment types for a specific subject that have completed assignment results for the specified student.",
         "parameters": [
           {
@@ -137,16 +133,14 @@
         },
         "security": [
           {
-            "Bearer": [ ]
+            "Bearer": []
           }
         ]
       }
     },
     "/v1/islandisassignmentresults/{studentId}/assessment-type/{assessmentTypeId}": {
       "get": {
-        "tags": [
-          "IslandIsAssignmentResults"
-        ],
+        "tags": ["IslandIsAssignmentResults"],
         "summary": "Gets all assignment results for a specific student and assessment type.",
         "parameters": [
           {
@@ -200,16 +194,14 @@
         },
         "security": [
           {
-            "Bearer": [ ]
+            "Bearer": []
           }
         ]
       }
     },
     "/v1/islandisassignmentresults/{studentId}/result/{assignmentResultId}/pdf": {
       "get": {
-        "tags": [
-          "IslandIsAssignmentResults"
-        ],
+        "tags": ["IslandIsAssignmentResults"],
         "summary": "Gets the assignment result PDF for a specific student, assessment type and assignment result.",
         "parameters": [
           {
@@ -261,16 +253,14 @@
         },
         "security": [
           {
-            "Bearer": [ ]
+            "Bearer": []
           }
         ]
       }
     },
     "/v1/islandisstudents": {
       "get": {
-        "tags": [
-          "IslandIsStudents"
-        ],
+        "tags": ["IslandIsStudents"],
         "summary": "Gets a batch of students that the calling user has access to based on their national ID.",
         "responses": {
           "200": {
@@ -312,7 +302,7 @@
         },
         "security": [
           {
-            "Bearer": [ ]
+            "Bearer": []
           }
         ]
       }
@@ -554,13 +544,10 @@
             "nullable": true
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       },
       "TestType": {
-        "enum": [
-          "SupportTest",
-          "StatusAndProgressTest"
-        ],
+        "enum": ["SupportTest", "StatusAndProgressTest"],
         "type": "string"
       }
     },
