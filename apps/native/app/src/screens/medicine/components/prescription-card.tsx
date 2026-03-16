@@ -65,7 +65,7 @@ export const PrescriptionCard = ({ prescription }: PrescriptionCardProps) => {
       label: 'health.prescriptions.strength',
     },
     {
-      data: prescription.indication,
+      data: prescription.indication || undefined,
       label: 'health.prescriptions.indication',
     },
     {
