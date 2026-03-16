@@ -50,7 +50,7 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
           staging: 'regulations-admin-backend-xrd',
           prod: 'regulations-admin-backend-xrd',
         },
-        paths: ['/api'],
+        paths: ['/'],
         public: false,
       },
     })
