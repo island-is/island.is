@@ -2019,7 +2019,8 @@ export const m = defineMessages({
     id: 'ir.application:applicantInReview.descriptionAllApproved',
     defaultMessage:
       'Allir erfingjar hafa samþykkt gögnin. Þú getur nú sent umsóknina til sýslumanns til undirritunar.',
-    description: 'Applicant in review description when all parties have approved',
+    description:
+      'Applicant in review description when all parties have approved',
   },
   applicantInReviewTableTitle: {
     id: 'ir.application:applicantInReview.tableTitle',

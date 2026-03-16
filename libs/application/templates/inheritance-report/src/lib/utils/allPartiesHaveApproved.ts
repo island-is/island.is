@@ -10,9 +10,7 @@ export const allPartiesHaveApproved = (
 ): boolean => {
   const members = getValueViaPath<EstateMember[]>(answers, membersPath, [])
 
-  const enabledMembers = members?.filter(
-    (member) => member.enabled !== false,
-  )
+  const enabledMembers = members?.filter((member) => member.enabled !== false)
 
   if (!enabledMembers || enabledMembers.length === 0) {
     return true

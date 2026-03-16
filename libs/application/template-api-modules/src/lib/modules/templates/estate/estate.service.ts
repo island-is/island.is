@@ -93,7 +93,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.failedDataProviderSubmit,
-          summary: 'Approving user is not a listed estate member on this application.',
+          summary:
+            'Approving user is not a listed estate member on this application.',
         },
         400,
       )
@@ -343,8 +344,9 @@ export class EstateTemplateService extends BaseTemplateApiService {
   async getSignatories({ application }: TemplateApiModuleActionProps) {
     const answers = application.answers as unknown as EstateSchema
 
-    const syslumennData = application.externalData?.syslumennOnEntry
-      ?.data as { estates: Array<EstateInfo> } | undefined
+    const syslumennData = application.externalData?.syslumennOnEntry?.data as
+      | { estates: Array<EstateInfo> }
+      | undefined
 
     if (!syslumennData?.estates) {
       throw new TemplateApiError(
@@ -405,10 +407,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
 
     try {
-      this.logger.info(
-        '[estate]: Calling getSignatories API',
-        { estateType },
-      )
+      this.logger.info('[estate]: Calling getSignatories API', { estateType })
       const signatories =
         await this.syslumennService.getInheritanceReportSignatories(
           deceasedNationalId,

@@ -232,15 +232,21 @@ describe('EstateTemplate', () => {
 
   describe('stateMachineOptions', () => {
     it('should have assignEstateMembers action defined', () => {
-      expect(EstateTemplate.stateMachineOptions?.actions?.assignEstateMembers).toBeDefined()
+      expect(
+        EstateTemplate.stateMachineOptions?.actions?.assignEstateMembers,
+      ).toBeDefined()
     })
 
     it('should have setApplicantAsApproved action defined', () => {
-      expect(EstateTemplate.stateMachineOptions?.actions?.setApplicantAsApproved).toBeDefined()
+      expect(
+        EstateTemplate.stateMachineOptions?.actions?.setApplicantAsApproved,
+      ).toBeDefined()
     })
 
     it('should have clearAssignees action defined', () => {
-      expect(EstateTemplate.stateMachineOptions?.actions?.clearAssignees).toBeDefined()
+      expect(
+        EstateTemplate.stateMachineOptions?.actions?.clearAssignees,
+      ).toBeDefined()
     })
   })
 

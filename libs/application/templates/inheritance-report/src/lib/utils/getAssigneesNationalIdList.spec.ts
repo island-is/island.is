@@ -247,4 +247,3 @@ describe('getAssigneesNationalIdList', () => {
     expect(result).toEqual(['0101302399', '0101302599'])
   })
 })
-

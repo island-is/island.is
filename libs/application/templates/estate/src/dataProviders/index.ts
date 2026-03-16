@@ -4,7 +4,12 @@ import {
   PaymentCatalogApi,
 } from '@island.is/application/types'
 
-export { EstateApi, EstateOnEntryApi, GetSignatoriesApi, CheckReviewFlagApi } from './EstateNoticeProvider'
+export {
+  EstateApi,
+  EstateOnEntryApi,
+  GetSignatoriesApi,
+  CheckReviewFlagApi,
+} from './EstateNoticeProvider'
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {

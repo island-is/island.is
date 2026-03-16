@@ -451,8 +451,7 @@ const EstateTemplate: ApplicationTemplate<
                 externalData?.getSignatories?.data?.signatories || []
 
               const allSigned =
-                signatories.length > 0 &&
-                signatories.every((s) => s.signed)
+                signatories.length > 0 && signatories.every((s) => s.signed)
 
               if (allSigned) {
                 return {
