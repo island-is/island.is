@@ -2,8 +2,6 @@
 
 This library was generated with [Nx](https://nx.dev).
 
-There is a backwards compability hack in the types. DO NOT USE unless absolutely necessary
-
 ## Architecture
 
 The client is organised into focused, injectable services. Import `SocialInsuranceAdministrationClientModule` to get access to all of them.
