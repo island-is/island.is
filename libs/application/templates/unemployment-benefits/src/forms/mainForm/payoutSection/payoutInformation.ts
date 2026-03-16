@@ -109,7 +109,7 @@ export const payoutInformationSubSection = buildSubSection({
                 [],
               ) || []
             return pensionFundOptions
-              .filter((x) => x.visibleInPremiums)
+              .filter((x) => x.visibleOnWeb)
               .map((option) => ({
                 label: option.name || '',
                 value: option.id || '',
@@ -151,7 +151,7 @@ export const payoutInformationSubSection = buildSubSection({
                 [],
               ) || []
             return pensionFundOptions
-              .filter((x) => x.visibleInPremiums)
+              .filter((x) => x.visibleOnWeb)
               .map((option) => ({
                 label: option.name || '',
                 value: option.id || '',
