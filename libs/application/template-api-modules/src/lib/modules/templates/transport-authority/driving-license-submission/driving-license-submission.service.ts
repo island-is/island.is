@@ -209,21 +209,28 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       >(answers, 'healthCertificate')
 
       if (healthCertFiles?.length) {
+        let files
         try {
-          const files = await this.attachmentS3Service.getFiles(
+          files = await this.attachmentS3Service.getFiles(
             application as ApplicationWithAttachments,
             ['healthCertificate'],
           )
-          const firstFile = files.find((f) => f.fileContent)
-          if (firstFile) {
-            healtCertificate = firstFile.fileContent
-          }
         } catch (e) {
           this.log('error', 'Failed to read health certificate files for 65+', {
             e,
           })
           throw new Error(
             'Failed to read health certificate files for 65+ renewal',
+          )
+        }
+
+        const firstFile = files.find((f) => f.fileContent)
+        if (firstFile) {
+          healtCertificate = firstFile.fileContent
+        } else {
+          this.log('error', 'Health certificate uploaded but content is empty for 65+', {})
+          throw new Error(
+            'Failed to retrieve health certificate content for 65+ renewal',
           )
         }
       }
@@ -317,35 +324,43 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         >(answers, 'healthCertificate')
 
         if (healthCertFiles?.length) {
+          let files
           try {
-            const files = await this.attachmentS3Service.getFiles(
+            files = await this.attachmentS3Service.getFiles(
               application as ApplicationWithAttachments,
               ['healthCertificate'],
             )
-
-            contentList = files
-              .filter((f) => f.fileContent)
-              .map((f) => {
-                const ext = (f.fileName.split('.').pop() ?? '').toLowerCase()
-                const contentType =
-                  ext === 'pdf'
-                    ? 'application/pdf'
-                    : ext === 'jpg' || ext === 'jpeg'
-                    ? 'image/jpeg'
-                    : ext
-                    ? `image/${ext}`
-                    : undefined
-                return {
-                  fileName: f.fileName,
-                  fileExtension: ext,
-                  contentType,
-                  content: f.fileContent,
-                  description: 'Læknisvottorð',
-                }
-              })
           } catch (e) {
             this.log('error', 'Failed to read health certificate files', { e })
             throw new Error('Failed to read health certificate files')
+          }
+
+          contentList = files
+            .filter((f) => f.fileContent)
+            .map((f) => {
+              const ext = (f.fileName.split('.').pop() ?? '').toLowerCase()
+              const contentType =
+                ext === 'pdf'
+                  ? 'application/pdf'
+                  : ext === 'jpg' || ext === 'jpeg'
+                  ? 'image/jpeg'
+                  : ext
+                  ? `image/${ext}`
+                  : undefined
+              return {
+                fileName: f.fileName,
+                fileExtension: ext,
+                contentType,
+                content: f.fileContent,
+                description: 'Læknisvottorð',
+              }
+            })
+
+          if (!contentList.length) {
+            this.log('error', 'Health certificate uploaded but content is empty for BE', {})
+            throw new Error(
+              'Failed to retrieve health certificate content for BE',
+            )
           }
         }
       }
