@@ -63,7 +63,7 @@ export const useApplePay = ({
   useEffect(() => {
     const { publicRuntimeConfig } = getConfig()
     // if apple pay is not enabled or if apple pay is not allowed, set supports apple pay to false
-    if (publicRuntimeConfig.allowApplePay === 'false' || !isEnabledForUser) {
+    if (publicRuntimeConfig.allowApplePay !== 'true' || !isEnabledForUser) {
       setSupportsApplePay(false)
       return
     }
