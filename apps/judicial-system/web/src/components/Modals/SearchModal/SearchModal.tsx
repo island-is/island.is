@@ -108,9 +108,11 @@ const SearchModal: FC<Props> = ({ onClose }) => {
   const tableTypeToTitle = useMemo(() => {
     const groups = getCaseTableGroups(user)
     const map = new Map<CaseTableType, string>()
-    groups.forEach((g) =>
-      g.tables.forEach((t) => map.set(t.type as CaseTableType, t.title)),
-    )
+    groups.forEach((g) => {
+      g.tables.forEach((t) => {
+        map.set(t.type as CaseTableType, t.title)
+      })
+    })
     return map
   }, [user])
 
