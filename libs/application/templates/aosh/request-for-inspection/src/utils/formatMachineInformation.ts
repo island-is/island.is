@@ -1,4 +1,4 @@
-import { MachineDetails, WorkMachine } from '@island.is/api/schema'
+import { MachineDetails } from '@island.is/api/schema'
 import { MachineForInspectionDto } from '@island.is/clients/work-machines'
 
 export const formatMachineInformation: (
@@ -16,6 +16,7 @@ export const formatMachineInformation: (
     plate: machine.licensePlateNumber,
     disabled: machine.disabled,
     supervisorName: machine.supervisor,
+    ownerNumber: machine.owner?.number,
     errorMessage: machine.errorMessage,
     __typename: 'MachineDetails',
   }

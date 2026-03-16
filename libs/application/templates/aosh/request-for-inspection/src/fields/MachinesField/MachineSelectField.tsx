@@ -1,6 +1,6 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import {
   AlertMessage,
   Box,
@@ -12,7 +12,6 @@ import {
 } from '@island.is/island-ui/core'
 import { information, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
-import { useLazyMachineDetailsByRegno } from '../../hooks/useLazyMachineDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { MachineForInspectionDto } from '@island.is/clients/work-machines'
@@ -52,59 +51,25 @@ export const MachineSelectField: FC<
     getValueViaPath<string>(application.answers, 'machine.id', '') || '',
   )
 
-  const getMachineDetails = useLazyMachineDetailsByRegno()
-  const getMachineDetailsCallback = useCallback(
-    async (registrationNumber: string) => {
-      const { data } = await getMachineDetails({
-        input: { registrationNumber: registrationNumber },
-      })
-      return data
-    },
-    [getMachineDetails],
-  )
-
   const onChange = (option: Option) => {
     const currentMachine = currentMachineList[parseInt(option.value, 10)]
     setIsLoading(true)
     setSelected(true)
     if (currentMachine.id) {
-      getMachineDetailsCallback(currentMachine.registrationNumber || '')
-        .then((response) => {
-          setSelectedMachine(response.workMachineForInspection)
-          setValue(
-            'machine.regNumber',
-            response.workMachineForInspection.registrationNumber,
-          )
-          setValue(
-            'machine.category',
-            response.workMachineForInspection.category,
-          )
+      setSelectedMachine(currentMachine)
+      setValue('machine.regNumber', currentMachine.registrationNumber)
+      setValue('machine.category', currentMachine.category)
 
-          setValue('machine.type', response.workMachineForInspection.type || '')
-          setValue(
-            'machine.subType',
-            response.workMachineForInspection.subType || '',
-          )
-          setValue(
-            'machine.plate',
-            response.workMachineForInspection.licensePlateNumber || '',
-          )
-          setValue(
-            'machine.ownerNumber',
-            response.workMachineForInspection.ownerNumber || '',
-          )
-          setValue('machine.id', response.workMachineForInspection.id)
-          setValue('machine.date', new Date().toISOString())
-          setValue('machine.findVehicle', true)
-          setValue(
-            'machine.isValid',
-            response.workMachineForInspection.disabled ? undefined : true,
-          )
-          setMachineId(currentMachine?.id || '')
-          setIsLoading(false)
-          setSubmitButtonDisabled?.(false)
-        })
-        .catch((error) => console.error(error))
+      setValue('machine.type', currentMachine.type || '')
+      setValue('machine.subType', currentMachine.subType || '')
+      setValue('machine.plate', currentMachine.licensePlateNumber || '')
+      setValue('machine.ownerNumber', currentMachine.owner?.number || '')
+      setValue('machine.id', currentMachine.id)
+      setValue('machine.findVehicle', true)
+      setValue('machine.isValid', currentMachine.disabled ? undefined : true)
+      setMachineId(currentMachine?.id || '')
+      setIsLoading(false)
+      setSubmitButtonDisabled?.(false)
     }
   }
 
