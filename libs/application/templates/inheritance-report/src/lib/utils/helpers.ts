@@ -1,8 +1,6 @@
-import { NationalRegistrySpouse } from '@island.is/api/schema'
 import { EMAIL_REGEX, YES, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
-  ExternalData,
   FormValue,
 } from '@island.is/application/types'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
@@ -77,16 +75,6 @@ export const parseDebtType = (debtType: ClientDebtType) => {
     default:
       return DebtTypes.OtherDebts
   }
-}
-
-export const getSpouseFromExternalData = (
-  externalData: ExternalData,
-): NationalRegistrySpouse | undefined => {
-  const spouse = getValueViaPath(externalData, 'maritalStatus.data', {}) as
-    | NationalRegistrySpouse
-    | undefined
-
-  return spouse
 }
 
 export const getPrePaidOverviewSectionsToDisplay = (
