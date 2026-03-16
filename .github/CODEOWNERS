@@ -230,7 +230,7 @@ codemagic.yaml                                                                  
 /libs/clients/legal-gazette/                                                                                                 @island-is/hugsmidjan
 /libs/clients/hms-housing-benefits/                                                                                          @island-is/hugsmidjan
 /apps/services/license-api/                                                                                                  @island-is/hugsmidjan
-/apps/services/cms-importer/                                                                                                 @island-is/hugsmidjan
+/apps/services/cms-importer/                                                                                                 @island-is/hugsmidjan @island-is/stefna
 /libs/regulations/                                                                                                           @island-is/hugsmidjan
 /libs/portals/admin/regulations-admin/                                                                                       @island-is/hugsmidjan
 /libs/portals/admin/document-provider/                                                                                       @island-is/hugsmidjan @island-is/core

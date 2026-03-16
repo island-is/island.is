@@ -15,8 +15,8 @@ const applicantInformationSchema = z.object({
   address: z.string().optional(),
   city: z.string().optional(),
   postalCode: z.string().optional(),
-  email: z.string(),
-  phoneNumber: z.string(),
+  email: z.string().min(1),
+  phoneNumber: z.string().min(1),
 })
 
 export const contactInformationSchema = z

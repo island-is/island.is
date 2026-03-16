@@ -8,7 +8,7 @@ import {
 import { externalData } from '../../lib/messages'
 import {
   NationalRegistryUserApi,
-  UserProfileApi,
+  InspectionUserProfileApi,
   MachinesApi,
 } from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
@@ -41,7 +41,7 @@ export const prerequisitesSection = buildSection({
           subTitle: externalData.nationalRegistry.subTitle,
         }),
         buildDataProviderItem({
-          provider: UserProfileApi,
+          provider: InspectionUserProfileApi,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.subTitle,
         }),
