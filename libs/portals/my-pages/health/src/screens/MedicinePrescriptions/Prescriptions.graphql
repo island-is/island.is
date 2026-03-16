@@ -2,6 +2,8 @@ query GetMedicinePrescriptions($locale: String) {
   healthDirectoratePrescriptions(locale: $locale) {
     prescriptions {
       id
+      productId
+      prescriptionId
       name
       strength
       type
@@ -21,6 +23,7 @@ query GetMedicinePrescriptions($locale: String) {
       renewResponseMessage
       amountRemaining
       medCardDrugId
+      medCardDrugCategory
       dispensations {
         id
         pharmacy
