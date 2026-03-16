@@ -1,4 +1,7 @@
-import { Lyfjabud, LyfjaUtibu } from '@island.is/clients/lyfjastofnun-pharmacies'
+import {
+  Lyfjabud,
+  LyfjaUtibu,
+} from '@island.is/clients/lyfjastofnun-pharmacies'
 
 import { IcelandicMedicinesAgencyPharmacy } from './models/pharmacy.model'
 import { IcelandicMedicinesAgencyPharmacyBranch } from './models/pharmacyBranch.model'
@@ -51,6 +54,8 @@ export const mapToPharmacy = (
       : undefined,
     branches: (dto.utibu ?? [])
       .map(mapToPharmacyBranch)
-      .filter((b): b is IcelandicMedicinesAgencyPharmacyBranch => b !== undefined),
+      .filter(
+        (b): b is IcelandicMedicinesAgencyPharmacyBranch => b !== undefined,
+      ),
   }
 }

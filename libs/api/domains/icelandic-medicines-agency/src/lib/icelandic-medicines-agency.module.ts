@@ -7,7 +7,10 @@ import { IcelandicMedicinesAgencyService } from './icelandic-medicines-agency.se
 
 @Module({
   imports: [LyfjastofnunPharmaciesClientModule],
-  providers: [IcelandicMedicinesAgencyResolver, IcelandicMedicinesAgencyService],
+  providers: [
+    IcelandicMedicinesAgencyResolver,
+    IcelandicMedicinesAgencyService,
+  ],
   exports: [IcelandicMedicinesAgencyService],
 })
 export class IcelandicMedicinesAgencyModule {}

@@ -13,8 +13,7 @@ export class IcelandicMedicinesAgencyService {
   ) {}
 
   async getPharmacies(): Promise<IcelandicMedicinesAgencyPharmaciesCollection> {
-    const data =
-      await this.lyfjastofnunPharmaciesClientService.getPharmacies()
+    const data = await this.lyfjastofnunPharmaciesClientService.getPharmacies()
     const pharmacies = data.map(mapToPharmacy).filter(isDefined)
 
     return {
