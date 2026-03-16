@@ -1,3 +1,6 @@
+
+import { HousingBenefitsModule } from './hms/housing-benefits/housing-benefits.module'
+import { HousingBenefitsService } from './hms/housing-benefits/housing-benefits.service'
 import { MileCarModule } from './transport-authority/mile-car/mile-car.module'
 import { MileCarService } from './transport-authority/mile-car/mile-car.service'
 import { CoursesModule } from './hh/courses/courses.module'
@@ -276,7 +279,8 @@ export const modules = [
   RegistrationOfNewPropertyNumbersModule,
   MileCarModule,
   CoursesModule,
-]
+  HousingBenefitsModule,
+            ]
 
 export const services = [
   ExampleCommonActionsService,
@@ -370,4 +374,5 @@ export const services = [
   RegistrationOfNewPropertyNumbersService,
   MileCarService,
   CoursesService,
-]
+  HousingBenefitsService,
+            ]
