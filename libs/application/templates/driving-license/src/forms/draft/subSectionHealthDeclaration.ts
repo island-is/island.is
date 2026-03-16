@@ -176,10 +176,6 @@ export const subSectionHealthDeclaration = buildSubSection({
       description: m.healthDeclarationMultiField65Description,
       condition: (answers) => answers.applicationFor === B_FULL_RENEWAL_65,
       children: [
-        buildDescriptionField({
-          id: 'healthDeclarationDescription65',
-          description: m.healthDeclarationMultiField65Description,
-        }),
         buildFileUploadField({
           id: 'healthCertificate',
           title: m.healthCertificateTitle,
