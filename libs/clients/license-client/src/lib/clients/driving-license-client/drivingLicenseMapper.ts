@@ -31,7 +31,7 @@ const mapRemarks = (
 }
 
 const mapCategoryToRight = (
-  category: CategoryDto,
+  category: Partial<CategoryDto>,
   remarks?: Array<RemarkCode> | null,
 ) => {
   let right = `Réttindaflokkur ${category.nr}, ${
@@ -51,7 +51,7 @@ const mapCategoryToRight = (
 }
 
 const formatRights = (
-  categories: Array<CategoryDto> | null,
+  categories: Array<Partial<CategoryDto>> | null,
   remarks?: Array<RemarkCode> | null,
 ) => {
   if (!categories) {
