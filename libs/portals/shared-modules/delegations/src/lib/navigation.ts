@@ -61,7 +61,7 @@ export const delegationsNavigationChildrenNew: PortalNavigationItem[] = [
 ]
 
 export const delegationsNavigation: PortalNavigationItem = {
-  name: coreMessages.digitalDelegations,
+  name: coreMessages.accessControl,
   path: DelegationPaths.Delegations,
   icon: {
     icon: 'lockClosed',

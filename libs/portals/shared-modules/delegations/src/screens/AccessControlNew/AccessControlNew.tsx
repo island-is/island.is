@@ -36,6 +36,8 @@ import { FaqList, FaqListProps } from '@island.is/island-ui/contentful'
 import { AccessControlLoaderResponse } from '../AccessControl.loader'
 import * as styles from './AccessControlNew.css'
 import { theme } from '@island.is/island-ui/theme'
+import { Problem } from '@island.is/react-spa/shared'
+import { renderHtml } from '@island.is/island-ui/contentful'
 
 const filterDelegations = (
   searchValue: string,
@@ -99,16 +101,16 @@ const AccessControlNew = () => {
 
   // Incoming
   const {
-    data: incomingPersonData,
-    loading: incomingPersonLoading,
-    error: incomingPersonError,
+    data: incomingData,
+    loading: incomingLoading,
+    error: incomingError,
   } = useAuthDelegationsGroupedByIdentityIncomingQuery({
     variables: { lang },
     fetchPolicy: 'cache-and-network',
     errorPolicy: 'all',
   })
   const incomingDelegations =
-    incomingPersonData?.authDelegationsGroupedByIdentityIncoming
+    incomingData?.authDelegationsGroupedByIdentityIncoming
 
   const filteredIncomingDelegations = useMemo(
     () => filterDelegations(searchValue, incomingDelegations),
@@ -144,7 +146,7 @@ const AccessControlNew = () => {
   return (
     <>
       <IntroHeader
-        title={formatMessage(m.accessControl)}
+        title={formatMessage(m.digitalDelegations)}
         intro={
           onlyOutgoingDelegations
             ? formatMessage(m.accessControlIntroOnlyOutgoing)
@@ -183,6 +185,24 @@ const AccessControlNew = () => {
           />
         </div>
       </IntroHeader>
+
+      {/* Empty state */}
+      {!incomingDelegations?.length && !outgoingDelegations?.length && (
+        <div className={styles.problemContainer}>
+          <Problem
+            type="no_data"
+            title="Engin rafræn umboð fundust"
+            titleSize="h4"
+            size="large"
+            imgSrc="./assets/images/jobsGrid.svg"
+            imgClassName={styles.problemImg}
+            message={
+              contentfulData?.emptyStateMessage?.document &&
+              renderHtml(contentfulData.emptyStateMessage.document)
+            }
+          />
+        </div>
+      )}
 
       {!outgoingLoading &&
         outgoingDelegations &&
@@ -238,7 +258,8 @@ const AccessControlNew = () => {
           />
         )}
 
-      {!incomingPersonLoading &&
+      {!onlyOutgoingDelegations &&
+        !incomingLoading &&
         incomingDelegations &&
         incomingDelegations.length > 0 && (
           <Box
@@ -270,35 +291,40 @@ const AccessControlNew = () => {
         )}
 
       {/* Legal guardian delegations table */}
-      {legalGuardianDelegations && legalGuardianDelegations.length > 0 && (
-        <DelegationsTable
-          title={formatMessage(m.legalGuardianTableTitle)}
-          data={getLegalGuardianTableData(
-            legalGuardianDelegations,
-            onSwitchUser,
-            formatMessage,
-          )}
-          loading={incomingPersonLoading || false}
-          error={incomingPersonError}
-        />
-      )}
+      {!onlyOutgoingDelegations &&
+        legalGuardianDelegations &&
+        legalGuardianDelegations.length > 0 && (
+          <DelegationsTable
+            title={formatMessage(m.legalGuardianTableTitle)}
+            data={getLegalGuardianTableData(
+              legalGuardianDelegations,
+              onSwitchUser,
+              formatMessage,
+            )}
+            loading={incomingLoading || false}
+            error={incomingError}
+          />
+        )}
 
       {/* Procuring holder delegations table */}
-      {procuringHolderDelegations && procuringHolderDelegations.length > 0 && (
-        <DelegationsTable
-          title={formatMessage(m.procurationHolderTableTitle)}
-          data={getProcuringHolderTableData(
-            procuringHolderDelegations,
-            onSwitchUser,
-            formatMessage,
-          )}
-          loading={incomingPersonLoading || false}
-          error={incomingPersonError}
-        />
-      )}
+      {!onlyOutgoingDelegations &&
+        procuringHolderDelegations &&
+        procuringHolderDelegations.length > 0 && (
+          <DelegationsTable
+            title={formatMessage(m.procurationHolderTableTitle)}
+            data={getProcuringHolderTableData(
+              procuringHolderDelegations,
+              onSwitchUser,
+              formatMessage,
+            )}
+            loading={incomingLoading || false}
+            error={incomingError}
+          />
+        )}
 
       {/* Incoming general mandate delegations table */}
-      {incomingGeneralMandateDelegations &&
+      {!onlyOutgoingDelegations &&
+        incomingGeneralMandateDelegations &&
         incomingGeneralMandateDelegations.length > 0 && (
           <DelegationsTable
             title={formatMessage(m.delegationTypeGeneralMandate)}
@@ -307,8 +333,8 @@ const AccessControlNew = () => {
               formatMessage,
               onSwitchUser,
             )}
-            loading={incomingPersonLoading || false}
-            error={incomingPersonError}
+            loading={incomingLoading || false}
+            error={incomingError}
           />
         )}
 
@@ -319,8 +345,8 @@ const AccessControlNew = () => {
           <CustomDelegationsTable
             title={formatMessage(m.incomingCustomDelegationsTitle)}
             data={incomingCustomDelegations}
-            loading={incomingPersonLoading || false}
-            error={incomingPersonError}
+            loading={incomingLoading || false}
+            error={incomingError}
             direction="incoming"
           />
         )}
