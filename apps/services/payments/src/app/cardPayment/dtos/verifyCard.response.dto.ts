@@ -6,6 +6,7 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator'
+import { CardInformation } from './CardInformation.dto'
 
 class VerificationField {
   @ApiProperty({ description: 'Field name', type: String })
@@ -15,31 +16,6 @@ class VerificationField {
   @ApiProperty({ description: 'Field value', type: String })
   @IsString()
   value!: string
-}
-
-class CardInformation {
-  @ApiProperty({
-    description: 'Card scheme (for example Visa or MasterCard)',
-    type: String,
-  })
-  @IsString()
-  cardScheme!: string
-
-  @ApiProperty({ description: 'Issuing country of the card', type: String })
-  @IsString()
-  issuingCountry!: string
-
-  @ApiProperty({ description: 'Card usage description', type: String })
-  @IsString()
-  cardUsage!: string
-
-  @ApiProperty({ description: 'Card category', type: String })
-  @IsString()
-  cardCategory!: string
-
-  @ApiProperty({ description: 'Out-of-SCA scope status', type: Boolean })
-  @IsBoolean()
-  outOfScaScope!: boolean
 }
 
 export class VerifyCardResponse {
