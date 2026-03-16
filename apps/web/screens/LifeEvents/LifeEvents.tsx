@@ -128,7 +128,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
           style={{ maxWidth: 1440, margin: '0 auto' }}
         >
           <Box
-            paddingTop={8}
+            paddingTop={[4, 4, 4, 8]}
             paddingBottom={3}
             display="flex"
             flexDirection={['column', 'column', 'column', 'row', 'row']}
@@ -178,7 +178,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
           mobileItemWidth={215}
           mobileItemsRows={5}
           insideGridContainer
-          paddingTop={5}
+          paddingTop={[2, 2, 2, 5]}
           paddingBottom={8}
           third
         >
