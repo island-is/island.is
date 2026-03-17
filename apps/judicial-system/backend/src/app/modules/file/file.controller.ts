@@ -482,12 +482,11 @@ export class FileController {
     if (!rafraennGagnId) {
       throw new BadRequestException('rafraennGagnId is required')
     }
-    const url =
-      await this.policeDigitalCaseFileService.getTokenUrl(
-        theCase.id,
-        user,
-        rafraennGagnId,
-      )
+    const url = await this.policeDigitalCaseFileService.getTokenUrl(
+      theCase.id,
+      user,
+      rafraennGagnId,
+    )
     return { url }
   }
 
