@@ -209,7 +209,9 @@ export const LanguageToggler = ({
       ).toString()
 
       return goToOtherLanguagePage(
-        `${pagePath}${queryParamsString.length > 0 ? '?' : ''}${queryParamsString}`,
+        `${pagePath}${
+          queryParamsString.length > 0 ? '?' : ''
+        }${queryParamsString}`,
       )
     }
 
