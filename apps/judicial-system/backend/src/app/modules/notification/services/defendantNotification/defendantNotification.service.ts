@@ -370,25 +370,24 @@ export class DefendantNotificationService extends BaseNotificationService {
         DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
       )
 
-    // We want to send separate emails to each recipient
-    const to = `${this.config.email.prisonAdminIndictmentEmails}${
-      institutionContact ? `,${institutionContact}` : ''
-    }`
-      .split(',')
-      .map((email) => email.trim())
-      .map((email) => {
-        return {
-          name: 'Fangelsismálastofnun',
-          email,
-        }
-      })
+    if (!institutionContact) {
+      this.logger.error(
+        `No institution contact found for prison admin with id ${this.config.prisonAdminId}`,
+      )
+      return
+    }
 
     return this.sendEmails(
       theCase,
       DefendantNotificationType.INDICTMENT_SENT_TO_PRISON_ADMIN,
       formattedSubject,
       formattedBody,
-      to,
+      [
+        {
+          name: 'Fangelsismálastofnun',
+          email: institutionContact,
+        },
+      ],
     )
   }
 
