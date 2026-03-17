@@ -201,21 +201,20 @@ export const Overview = () => {
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
-        {isReviewMissing && (
-          <FormFooter
-            nextButtonIcon="arrowForward"
-            previousUrl={getStandardUserDashboardRoute(user)}
-            nextIsLoading={isLoadingWorkingCase}
-            nextIsDisabled={
-              !selectedIndictmentReviewer ||
-              selectedIndictmentReviewer.value ===
-                workingCase.indictmentReviewer?.id ||
-              isLoadingWorkingCase
-            }
-            onNextButtonClick={assignReviewer}
-            nextButtonText={fm(core.continue)}
-          />
-        )}
+        <FormFooter
+          nextButtonIcon="arrowForward"
+          previousUrl={getStandardUserDashboardRoute(user)}
+          hideNextButton={!isReviewMissing}
+          nextIsLoading={isLoadingWorkingCase}
+          nextIsDisabled={
+            !selectedIndictmentReviewer ||
+            selectedIndictmentReviewer.value ===
+              workingCase.indictmentReviewer?.id ||
+            isLoadingWorkingCase
+          }
+          onNextButtonClick={assignReviewer}
+          nextButtonText={fm(core.continue)}
+        />
       </FormContentContainer>
       {isReviewerAssignedModal(confirmationModal) && (
         <Modal
