@@ -2360,7 +2360,7 @@ regulations-admin-backend:
       hosts:
         - host: 'regulations-admin-backend-xrd.internal.island.is'
           paths:
-            - '/api'
+            - '/'
   initContainer:
     containers:
       - args:
