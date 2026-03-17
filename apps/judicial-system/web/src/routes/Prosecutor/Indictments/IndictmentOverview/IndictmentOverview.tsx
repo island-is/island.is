@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -36,6 +36,7 @@ import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/Ve
 import {
   CaseIndictmentRulingDecision,
   CaseState,
+  IndictmentCaseReviewDecision,
   IndictmentDecision,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -58,10 +59,6 @@ const IndictmentOverview: FC = () => {
   const router = useRouter()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
-  const [modalVisible, setModalVisible] = useState<
-    ConfirmationModal | undefined
-  >()
-
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const caseIsClosed = isCompletedCase(workingCase.state)
@@ -82,6 +79,35 @@ const IndictmentOverview: FC = () => {
 
   const isReviewMissing = workingCase.defendants?.some(
     (defendant) => !defendant.indictmentReviewDecision,
+  )
+
+  const [modalVisible, setModalVisible] = useState<
+    ConfirmationModal | undefined
+  >()
+
+  const [originalReviewDecisions, setOriginalReviewDecisions] = useState<
+    Record<string, IndictmentCaseReviewDecision | null | undefined>
+  >({})
+
+  // Store original review decisions when workingCase loads to see if they change
+  useEffect(() => {
+    if (
+      workingCase.defendants?.length &&
+      workingCase.defendants.every((d) => d.id) &&
+      !Object.keys(originalReviewDecisions).length
+    ) {
+      const decisions = workingCase.defendants.reduce((acc, defendant) => {
+        acc[defendant.id] = defendant.indictmentReviewDecision
+        return acc
+      }, {} as Record<string, IndictmentCaseReviewDecision | null | undefined>)
+      setOriginalReviewDecisions(decisions)
+    }
+  }, [workingCase.defendants, originalReviewDecisions])
+
+  const hasReviewDecisionChanged = workingCase.defendants?.some(
+    (defendant) =>
+      defendant.indictmentReviewDecision !==
+      originalReviewDecisions[defendant.id],
   )
 
   const handleNavigationTo = useCallback(
@@ -217,6 +243,9 @@ const IndictmentOverview: FC = () => {
               displayGeneratedPDFs={displayGeneratedPDFs}
             />
           </Box>
+          <Box component="section">
+            <InputPenalties />
+          </Box>
           {shouldDisplayReviewDecision && (
             <section>
               <SectionHeading
@@ -257,18 +286,19 @@ const IndictmentOverview: FC = () => {
               )}
             </section>
           )}
-          <Box component="section">
-            <InputPenalties />
-          </Box>
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={getStandardUserDashboardRoute(user)}
           hideNextButton={!shouldDisplayReviewDecision}
-          nextButtonText={formatMessage(strings.completeReview)}
+          nextIsDisabled={isReviewMissing || !hasReviewDecisionChanged}
+          nextButtonText={
+            workingCase.indictmentReviewedDate
+              ? 'Breyta ákvörðun'
+              : 'Ljúka yfirlestri'
+          }
           onNextButtonClick={() => setModalVisible(CONFIRM_PROSECUTOR_DECISION)}
-          nextIsDisabled={isReviewMissing}
         />
       </FormContentContainer>
     </PageLayout>
