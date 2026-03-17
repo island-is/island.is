@@ -15,7 +15,7 @@ export const incomePlanInstructionsSubSection = buildSubSection({
       title: socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
       description:
         socialInsuranceAdministrationMessage.incomePlanInstructions
-          .titleAndDescription,
+          .descriptionInstructions,
     }),
   ],
 })
