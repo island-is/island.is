@@ -185,8 +185,18 @@ describe('ScopesController', () => {
     const categoryId = 'cat-cms-id-1'
     const categoryId2 = 'cat-cms-id-2'
     const mockCategories = [
-      { id: categoryId, title: 'Finance', slug: 'finance', description: 'Financial services' },
-      { id: categoryId2, title: 'Health', slug: 'health', description: 'Health services' },
+      {
+        id: categoryId,
+        title: 'Finance',
+        slug: 'finance',
+        description: 'Financial services',
+      },
+      {
+        id: categoryId2,
+        title: 'Health',
+        slug: 'health',
+        description: 'Health services',
+      },
     ]
     const mockCmsContentfulService = {
       getArticleCategories: jest.fn().mockResolvedValue(mockCategories),
@@ -244,8 +254,12 @@ describe('ScopesController', () => {
         slug: 'finance',
       })
       expect(financeCategory.scopes).toHaveLength(2)
-      expect(financeCategory.scopes.map((s: { name: string }) => s.name)).toContain('cat-scope-1')
-      expect(financeCategory.scopes.map((s: { name: string }) => s.name)).toContain('cat-scope-2')
+      expect(
+        financeCategory.scopes.map((s: { name: string }) => s.name),
+      ).toContain('cat-scope-1')
+      expect(
+        financeCategory.scopes.map((s: { name: string }) => s.name),
+      ).toContain('cat-scope-2')
     })
 
     it('filters scopes by OUTGOING direction', async () => {
@@ -285,8 +299,18 @@ describe('ScopesController', () => {
     const tagId = 'tag-cms-id-1'
     const tagId2 = 'tag-cms-id-2'
     const mockTags = [
-      { id: tagId, title: 'Assets', slug: 'assets', description: 'Asset management' },
-      { id: tagId2, title: 'Benefits', slug: 'benefits', description: 'Social benefits' },
+      {
+        id: tagId,
+        title: 'Assets',
+        slug: 'assets',
+        description: 'Asset management',
+      },
+      {
+        id: tagId2,
+        title: 'Benefits',
+        slug: 'benefits',
+        description: 'Social benefits',
+      },
     ]
     const mockCmsContentfulService = {
       getArticleCategories: jest.fn().mockResolvedValue([]),
@@ -341,8 +365,12 @@ describe('ScopesController', () => {
         slug: 'assets',
       })
       expect(assetsTag.scopes).toHaveLength(2)
-      expect(assetsTag.scopes.map((s: { name: string }) => s.name)).toContain('tag-scope-1')
-      expect(assetsTag.scopes.map((s: { name: string }) => s.name)).toContain('tag-scope-2')
+      expect(assetsTag.scopes.map((s: { name: string }) => s.name)).toContain(
+        'tag-scope-1',
+      )
+      expect(assetsTag.scopes.map((s: { name: string }) => s.name)).toContain(
+        'tag-scope-2',
+      )
     })
 
     it('filters scopes by OUTGOING direction', async () => {

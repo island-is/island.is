@@ -33,7 +33,9 @@ const tomorrow = addDays(startOfDay(new Date()), 1)
 const nextWeek = addDays(startOfDay(new Date()), 7)
 const nextMonth = addDays(startOfDay(new Date()), 30)
 
-const makeDelegation = (overrides: Partial<DelegationDTO> = {}): DelegationDTO =>
+const makeDelegation = (
+  overrides: Partial<DelegationDTO> = {},
+): DelegationDTO =>
   ({
     id: 'del-1',
     fromNationalId: '0101302399',
@@ -80,14 +82,30 @@ describe('MeDelegationsService', () => {
         toNationalIds: [toNationalId1, toNationalId2],
         scopes: [
           { name: '@test.is/read', domainName: '@test.is', validTo: nextWeek },
-          { name: '@other.is/write', domainName: '@other.is', validTo: nextMonth },
+          {
+            name: '@other.is/write',
+            domainName: '@other.is',
+            validTo: nextMonth,
+          },
         ],
       }
 
-      const delegation1 = makeDelegation({ toNationalId: toNationalId1, domainName: '@test.is' })
-      const delegation2 = makeDelegation({ toNationalId: toNationalId1, domainName: '@other.is' })
-      const delegation3 = makeDelegation({ toNationalId: toNationalId2, domainName: '@test.is' })
-      const delegation4 = makeDelegation({ toNationalId: toNationalId2, domainName: '@other.is' })
+      const delegation1 = makeDelegation({
+        toNationalId: toNationalId1,
+        domainName: '@test.is',
+      })
+      const delegation2 = makeDelegation({
+        toNationalId: toNationalId1,
+        domainName: '@other.is',
+      })
+      const delegation3 = makeDelegation({
+        toNationalId: toNationalId2,
+        domainName: '@test.is',
+      })
+      const delegation4 = makeDelegation({
+        toNationalId: toNationalId2,
+        domainName: '@other.is',
+      })
 
       // No existing delegations, so all will be created
       mockDelegationsApi.meDelegationsControllerFindAll.mockResolvedValue([])
@@ -101,7 +119,9 @@ describe('MeDelegationsService', () => {
       const result = await service.createOrUpdateDelegations(mockUser, input)
 
       // Assert: one create call per (toNationalId, domain) pair = 2 * 2 = 4
-      expect(mockDelegationsApi.meDelegationsControllerCreate).toHaveBeenCalledTimes(4)
+      expect(
+        mockDelegationsApi.meDelegationsControllerCreate,
+      ).toHaveBeenCalledTimes(4)
       expect(result).toHaveLength(4)
     })
 
@@ -125,12 +145,18 @@ describe('MeDelegationsService', () => {
       const input: CreateDelegationsInput = {
         toNationalIds: [toNationalId],
         scopes: [
-          { name: '@test.is/write', domainName: '@test.is', validTo: nextMonth },
+          {
+            name: '@test.is/write',
+            domainName: '@test.is',
+            validTo: nextMonth,
+          },
         ],
       }
 
       // getDelegationByOtherUser resolves with existing delegation
-      mockDelegationsApi.meDelegationsControllerFindAll.mockResolvedValue([existingDelegation])
+      mockDelegationsApi.meDelegationsControllerFindAll.mockResolvedValue([
+        existingDelegation,
+      ])
 
       // getDelegationById (called inside updateDelegation) resolves via FindOneRaw
       mockDelegationsApi.meDelegationsControllerFindOneRaw.mockResolvedValue({
@@ -138,15 +164,24 @@ describe('MeDelegationsService', () => {
         value: jest.fn().mockResolvedValue(existingDelegation),
       })
 
-      const patchedDelegation = makeDelegation({ id: 'existing-del', toNationalId })
-      mockDelegationsApi.meDelegationsControllerPatch.mockResolvedValue(patchedDelegation)
+      const patchedDelegation = makeDelegation({
+        id: 'existing-del',
+        toNationalId,
+      })
+      mockDelegationsApi.meDelegationsControllerPatch.mockResolvedValue(
+        patchedDelegation,
+      )
 
       // Act
       const result = await service.createOrUpdateDelegations(mockUser, input)
 
       // Assert: patch called instead of create
-      expect(mockDelegationsApi.meDelegationsControllerCreate).not.toHaveBeenCalled()
-      expect(mockDelegationsApi.meDelegationsControllerPatch).toHaveBeenCalledTimes(1)
+      expect(
+        mockDelegationsApi.meDelegationsControllerCreate,
+      ).not.toHaveBeenCalled()
+      expect(
+        mockDelegationsApi.meDelegationsControllerPatch,
+      ).toHaveBeenCalledTimes(1)
       expect(result).toHaveLength(1)
     })
   })
@@ -210,7 +245,9 @@ describe('MeDelegationsService', () => {
         }),
       ]
 
-      mockDelegationsApi.meDelegationsControllerFindAll.mockResolvedValue(delegations)
+      mockDelegationsApi.meDelegationsControllerFindAll.mockResolvedValue(
+        delegations,
+      )
 
       // Act
       const result = await service.getDelegationsGroupedByIdentity(mockUser, {
@@ -219,7 +256,9 @@ describe('MeDelegationsService', () => {
 
       // Assert
       expect(result).toHaveLength(2)
-      expect(mockDelegationsApi.meDelegationsControllerFindAll).toHaveBeenCalledWith({
+      expect(
+        mockDelegationsApi.meDelegationsControllerFindAll,
+      ).toHaveBeenCalledWith({
         direction: MeDelegationsControllerFindAllDirectionEnum.outgoing,
         validity: MeDelegationsControllerFindAllValidityEnum.includeFuture,
       })
@@ -261,7 +300,9 @@ describe('MeDelegationsService', () => {
         ],
       })
 
-      mockDelegationsApi.meDelegationsControllerFindAll.mockResolvedValue([delegation])
+      mockDelegationsApi.meDelegationsControllerFindAll.mockResolvedValue([
+        delegation,
+      ])
 
       // Act
       const result = await service.getDelegationsGroupedByIdentity(mockUser, {
@@ -306,7 +347,9 @@ describe('MeDelegationsService', () => {
         ],
       })
 
-      mockDelegationsApi.meDelegationsControllerFindAll.mockResolvedValue([delegation])
+      mockDelegationsApi.meDelegationsControllerFindAll.mockResolvedValue([
+        delegation,
+      ])
 
       const result = await service.getDelegationsGroupedByIdentity(mockUser, {
         direction: MeDelegationsControllerFindAllDirectionEnum.outgoing,
