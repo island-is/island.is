@@ -34,19 +34,16 @@ const AnswerQuestionnaire: FC = () => {
       awaitRefetchQueries: true,
     })
 
-  const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
-    org === 'el'
-      ? QuestionnaireQuestionnairesOrganizationEnum.EL
-      : org === 'lsh'
+  const organization: QuestionnaireQuestionnairesOrganizationEnum =
+    org === 'lsh'
       ? QuestionnaireQuestionnairesOrganizationEnum.LSH
-      : undefined
+      : QuestionnaireQuestionnairesOrganizationEnum.EL
 
   const { data, loading, error } = useGetQuestionnaireWithQuestionsQuery({
     variables: {
       input: {
         id: id ?? '',
-        organization:
-          organization ?? QuestionnaireQuestionnairesOrganizationEnum.EL,
+        organization,
         includeQuestions: true,
       },
       locale: lang,
@@ -112,7 +109,7 @@ const AnswerQuestionnaire: FC = () => {
   ) => {
     const formId = data?.questionnairesDetail?.baseInformation.formId
 
-    if (!organization || !id || !formId) {
+    if (!id || !formId) {
       toast.error(
         formatMessage(messages.errorSendingAnswers, {
           title:
@@ -136,8 +133,7 @@ const AnswerQuestionnaire: FC = () => {
       variables: {
         input: {
           id,
-          organization:
-            organization ?? QuestionnaireQuestionnairesOrganizationEnum.EL,
+          organization,
           saveAsDraft: asDraft,
           entries: entries,
           formId,
