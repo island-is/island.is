@@ -38,9 +38,7 @@ export const judgeAmendsCase = async (page: Page, caseId: string) => {
   const courtLegalArgumentsField = page.locator(
     'textarea[id=courtLegalArguments]',
   )
-  await courtLegalArgumentsField.fill(
-    'Dómari hefur ákveðið að breyta úrskurði',
-  )
+  await courtLegalArgumentsField.fill('Dómari hefur ákveðið að breyta úrskurði')
   // Form uses useDebouncedInput(500ms); wait for UpdateCase so the value is persisted before continuing.
   await page.waitForResponse(
     (resp) =>
@@ -106,11 +104,17 @@ export const judgeAmendsCase = async (page: Page, caseId: string) => {
   await expect(page.getByText('Dómari breytti úrskurði')).toBeVisible()
 
   // Expand ruling accordion and verify amended ruling text (court legal arguments).
-  const rulingButton = page.getByRole('button', { name: 'Úrskurður héraðsdóms' })
+  const rulingButton = page.getByRole('button', {
+    name: 'Úrskurður héraðsdóms',
+  })
   await expect(rulingButton).toBeVisible()
   await rulingButton.click()
-  await expect(page.locator('#rulingAccordionItem')).toBeVisible({ timeout: 5000 })
+  await expect(page.locator('#rulingAccordionItem')).toBeVisible({
+    timeout: 5000,
+  })
   await expect(
-    page.locator('#rulingAccordionItem').getByText('Dómari hefur ákveðið að breyta úrskurði'),
+    page
+      .locator('#rulingAccordionItem')
+      .getByText('Dómari hefur ákveðið að breyta úrskurði'),
   ).toBeVisible({ timeout: 10000 })
 }
