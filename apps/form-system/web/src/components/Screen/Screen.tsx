@@ -4,6 +4,7 @@ import {
   AlertMessage,
   Box,
   Button,
+  Divider,
   GridColumn,
   Text,
 } from '@island.is/island-ui/core'
@@ -16,7 +17,10 @@ import { Completed } from './components/Completed/Completed'
 import { ExternalData } from './components/ExternalData/ExternalData'
 import { Field } from './components/Field/Field'
 import { Summary } from './components/Summary/Summary'
-import { NotificationCommands } from '@island.is/form-system/enums'
+import {
+  NotificationCommands,
+  FieldTypesEnum,
+} from '@island.is/form-system/enums'
 import { useMutation } from '@apollo/client'
 import {
   NOTIFY_EXTERNAL_SERVICE,
@@ -54,6 +58,25 @@ export const Screen = () => {
       setNumberOfItems(1)
     }
   }, [currentScreen?.data?.id, currentScreen?.data?.fields, isMulti, multiMax])
+
+  const shouldMoveCurrencySumBox =
+    numberOfItems > 1 &&
+    isMulti &&
+    multiMax > 1 &&
+    visibleFields.some(
+      (f) =>
+        f.fieldType === FieldTypesEnum.ISK_NUMBERBOX &&
+        f.isPartOfMultiset !== false,
+    )
+
+  const currencySumField = shouldMoveCurrencySumBox
+    ? visibleFields.find((f) => f.fieldType === FieldTypesEnum.ISK_SUMBOX)
+    : undefined
+
+  const fieldsForMultisetLoop =
+    shouldMoveCurrencySumBox && currencySumField
+      ? visibleFields.filter((f) => f.fieldType !== FieldTypesEnum.ISK_SUMBOX)
+      : visibleFields
 
   const screenTitle =
     currentScreen?.data?.name?.[lang] ??
@@ -182,7 +205,14 @@ export const Screen = () => {
         {currentScreen &&
           Array.from({ length: numberOfItems }).map((_, itemIndex) => (
             <Box key={`multiset-item-${itemIndex}`} marginBottom={4}>
-              {visibleFields
+              {itemIndex > 0 && (
+                <Box marginBottom={2} marginTop={6}>
+                  <Text variant="h2">{itemIndex + 1}.</Text>
+                  <Divider />
+                </Box>
+              )}
+
+              {fieldsForMultisetLoop
                 .filter(
                   (field) =>
                     field.isPartOfMultiset !== false || itemIndex === 0,
@@ -198,7 +228,13 @@ export const Screen = () => {
                 ))}
             </Box>
           ))}
-
+        {shouldMoveCurrencySumBox && currencySumField && (
+          <Field
+            field={currencySumField}
+            valueIndex={0}
+            key={`${currencySumField.id ?? 'currency-sum'}-sum`}
+          />
+        )}
         {isMulti && multiMax > 1 && (
           <Box display="flex" justifyContent="flexEnd" paddingTop={6}>
             <Box marginRight={2}>

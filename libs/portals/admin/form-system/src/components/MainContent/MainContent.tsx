@@ -169,20 +169,14 @@ export const MainContent = () => {
                           const n = i + 2
                           return { label: String(n), value: String(n) }
                         })}
-                        defaultValue={
-                          (activeItem.data as FormSystemScreen).multiMax
-                            ? {
-                                label: String(
-                                  (activeItem.data as FormSystemScreen)
-                                    .multiMax,
-                                ),
-                                value: String(
-                                  (activeItem.data as FormSystemScreen)
-                                    .multiMax,
-                                ),
-                              }
-                            : { label: '2', value: '2' }
-                        }
+                        value={{
+                          label: String(
+                            (activeItem.data as FormSystemScreen).multiMax ?? 2,
+                          ),
+                          value: String(
+                            (activeItem.data as FormSystemScreen).multiMax ?? 2,
+                          ),
+                        }}
                         onChange={(e) => {
                           controlDispatch({
                             type: 'CHANGE_MULTI_MAX',

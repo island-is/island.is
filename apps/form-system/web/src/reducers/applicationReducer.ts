@@ -212,7 +212,6 @@ export const applicationReducer = (
           const fieldType = field.fieldType
           const values = field.values ? field.values : []
           const currentLength = values.length
-
           const prev = values[currentLength - 1]
           const maxOrder = values.length
             ? Math.max(
@@ -232,7 +231,6 @@ export const applicationReducer = (
           } catch {
             valueJson = {}
           }
-
           const newValue: FormSystemValueDto = {
             ...(prev ?? ({} as FormSystemValueDto)),
             order: nextOrder,
@@ -257,6 +255,14 @@ export const applicationReducer = (
         }),
       )
 
+      const updatedCurrentSection =
+        state.currentSection?.index >= 0
+          ? {
+              ...state.currentSection,
+              data: updatedSections[state.currentSection.index],
+            }
+          : state.currentSection
+
       const updatedScreens = updatedSections
         .flatMap((section) => section.screens ?? [])
         .filter(Boolean) as FormSystemScreen[]
@@ -269,6 +275,7 @@ export const applicationReducer = (
           ...state.application,
           sections: updatedSections,
         },
+        currentSection: updatedCurrentSection,
         currentScreen: state.currentScreen
           ? { ...state.currentScreen, data: updatedScreen }
           : state.currentScreen,
@@ -307,6 +314,18 @@ export const applicationReducer = (
         }),
       )
 
+      const updatedCurrentSection =
+        state.currentSection?.index >= 0
+          ? {
+              ...state.currentSection,
+              data: updatedSections[state.currentSection.index],
+            }
+          : state.currentSection
+
+      console.log(
+        'Updated sections after removing multiset item:',
+        updatedCurrentSection,
+      )
       const updatedScreens = updatedSections
         .flatMap((section) => section.screens ?? [])
         .filter(Boolean) as FormSystemScreen[]
@@ -319,6 +338,7 @@ export const applicationReducer = (
           ...state.application,
           sections: updatedSections,
         },
+        currentSection: updatedCurrentSection,
         currentScreen: state.currentScreen
           ? { ...state.currentScreen, data: updatedScreen }
           : state.currentScreen,

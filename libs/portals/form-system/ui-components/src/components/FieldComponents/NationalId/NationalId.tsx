@@ -17,6 +17,7 @@ import { useIntl } from 'react-intl'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   item: FormSystemField
@@ -48,6 +49,7 @@ export const NationalId = ({
   valueIndex = 0,
 }: Props) => {
   const { formatMessage } = useIntl()
+  const { lang } = useLocale()
   const { control, setValue } = useFormContext()
 
   const watchedValue = useWatch({
@@ -156,7 +158,7 @@ export const NationalId = ({
             }}
             render={({ field, fieldState }) => (
               <Input
-                label={formatMessage(m.nationalId)}
+                label={item.name[lang] ?? formatMessage(m.nationalId)}
                 name="kennitala"
                 required={item?.isRequired ?? false}
                 backgroundColor="blue"

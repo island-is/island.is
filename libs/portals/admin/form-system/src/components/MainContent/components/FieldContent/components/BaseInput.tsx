@@ -216,7 +216,7 @@ export const BaseInput = () => {
           </Row>
         </>
       )}
-      {screen?.isMulti && (
+      {screen?.isMulti && currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX && (
         <Row>
           <Column span="5/10">
             <Checkbox
