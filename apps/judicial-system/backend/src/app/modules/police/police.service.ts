@@ -83,6 +83,8 @@ interface CreateDocumentResponse {
   externalPoliceDocumentId: string
 }
 
+const getTokenUrlResponseSchema = z.object({ url: z.string().min(1) })
+
 const getChapter = (category?: string): number | undefined => {
   if (!category) {
     return undefined
@@ -477,7 +479,15 @@ export class PoliceService {
       const res = await this.fetchPoliceDocumentApi(url)
 
       if (res.ok) {
-        return await res.text()
+        const json = await res.json()
+        const parsed = getTokenUrlResponseSchema.safeParse(json)
+        if (parsed.success) {
+          return parsed.data.url
+        }
+        throw new NotFoundException({
+          message: `Token URL for digital case file ${rafraennGagnId} not found`,
+          detail: 'Invalid response format',
+        })
       }
 
       const reason = await res.text()
