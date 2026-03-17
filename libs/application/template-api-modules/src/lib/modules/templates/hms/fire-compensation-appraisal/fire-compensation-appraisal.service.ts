@@ -304,7 +304,8 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       // Start fetching the FIRST file from S3
       let nextFilePromise = fileGenerator.next()
 
-      while (true) {
+      let run = true
+      while (run) {
         // Wait for the CURRENT file to finish downloading from S3
         const { value: file, done } = await nextFilePromise
         console.timeLog(
@@ -312,7 +313,10 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
           'file downloaded from S3',
           file?.fileName,
         )
-        if (done) break
+        if (done) {
+          run = false
+          break
+        }
 
         // START downloading the NEXT file from S3 immediately in the background
         nextFilePromise = fileGenerator.next()
