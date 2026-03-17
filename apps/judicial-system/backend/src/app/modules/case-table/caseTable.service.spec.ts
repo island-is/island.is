@@ -385,20 +385,7 @@ describe('CaseTableService', () => {
   })
 
   describe('getCaseTableMembership', () => {
-    it('returns null when user has no access to case', async () => {
-      mockFindOne.mockResolvedValue(null)
-
-      const result = await service.getCaseTableMembership(
-        'case-1',
-        prosecutionUser('user-1'),
-      )
-
-      expect(result).toBeNull()
-      expect(mockFindAll).not.toHaveBeenCalled()
-    })
-
-    it('returns case table types when user has access', async () => {
-      mockFindOne.mockResolvedValue({ id: 'case-1' })
+    it('returns case table types for case (access enforced by controller guards)', async () => {
       mockFindAll
         .mockResolvedValueOnce([{ id: 'case-1' }])
         .mockResolvedValue([])

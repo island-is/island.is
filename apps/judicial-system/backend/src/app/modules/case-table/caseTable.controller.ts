@@ -4,7 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Inject,
-  NotFoundException,
+  Param,
   Query,
   UseGuards,
 } from '@nestjs/common'
@@ -32,6 +32,8 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { CaseExistsGuard, CaseReadGuard, CurrentCase } from '../case'
+import { Case } from '../repository'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { CaseTableMembershipResponse } from './dto/caseTableMembership.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
@@ -103,7 +105,7 @@ export class CaseTableController {
     return this.caseTableService.searchCases(query, user)
   }
 
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, CaseExistsGuard, CaseReadGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -116,30 +118,22 @@ export class CaseTableController {
     courtOfAppealsAssistantRule,
     prisonSystemStaffRule,
   )
-  @Get('case-table-membership')
+  @Get('case/:caseId/case-table-membership')
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({
     type: CaseTableMembershipResponse,
     description:
       'Returns which case tables (for the current user role) the case belongs to. Use for breadcrumbs on the case page.',
   })
-  @ApiQuery({
-    name: 'caseId',
-    type: String,
-    required: true,
-    description: 'The case id',
-  })
   async getCaseTableMembership(
     @CurrentHttpUser() user: User,
-    @Query('caseId') caseId: string,
+    @Param('caseId') caseId: string,
+    @CurrentCase() _theCase: Case,
   ): Promise<CaseTableMembershipResponse> {
     const caseTableTypes = await this.caseTableService.getCaseTableMembership(
       caseId,
       user,
     )
-    if (caseTableTypes === null) {
-      throw new NotFoundException('Case not found or access denied')
-    }
     return { caseTableTypes }
   }
 }

@@ -119,20 +119,12 @@ export class CaseTableService {
 
   /**
    * Returns which case table types (for the given user's role) the case belongs to.
+   * Caller must ensure the case exists and the user has access (e.g. via CaseExistsGuard + CaseReadGuard).
    */
   async getCaseTableMembership(
     caseId: string,
     user: TUser,
-  ): Promise<CaseTableType[] | null> {
-    const hasAccess = await this.caseRepositoryService.findOne({
-      attributes: ['id'],
-      where: {
-        [Op.and]: [{ id: caseId }, userAccessWhereOptions(user)],
-      },
-    })
-    if (!hasAccess) {
-      return null
-    }
+  ): Promise<CaseTableType[]> {
     const map = await this.getCaseTableTypesForCases([caseId], user)
     return map.get(caseId) ?? []
   }

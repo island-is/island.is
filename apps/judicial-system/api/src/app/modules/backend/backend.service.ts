@@ -238,10 +238,7 @@ export class BackendService extends DataSource<{ req: Request }> {
   }
 
   getCaseTableMembership(caseId: string): Promise<CaseTableMembershipResponse> {
-    const params = new URLSearchParams()
-    params.append('caseId', caseId)
-
-    return this.get(`case-table-membership?${params.toString()}`)
+    return this.get(`case/${caseId}/case-table-membership`)
   }
 
   getCaseStatistics(
