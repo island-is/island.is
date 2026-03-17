@@ -374,7 +374,8 @@ export class DefendantNotificationService extends BaseNotificationService {
       this.logger.error(
         `No institution contact found for prison admin with id ${this.config.prisonAdminId}`,
       )
-      return
+
+      return { delivered: false }
     }
 
     return this.sendEmails(
