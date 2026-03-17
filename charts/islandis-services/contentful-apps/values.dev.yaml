@@ -24,8 +24,9 @@ env:
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   PUBLIC_API_URL: 'https://beta.dev01.devland.is'
   SERVERSIDE_FEATURES_ON: ''
-grantNamespaces: []
-grantNamespacesEnabled: false
+grantNamespaces:
+  - 'nginx-ingress-external'
+grantNamespacesEnabled: true
 healthCheck:
   liveness:
     initialDelaySeconds: 3
@@ -56,7 +57,7 @@ ingress:
           - '/'
 namespace: 'contentful-apps'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

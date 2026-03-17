@@ -24,6 +24,7 @@ import {
   useGetPaginatedDentistsQuery,
   useRegisterDentistMutation,
 } from './DentistRegistration.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const DEFAULT_PAGE_SIZE = 12
 const DEFAULT_PAGE_NUMBER = 1
@@ -32,6 +33,7 @@ type SelectedDentist = Pick<RightsPortalDentist, 'id' | 'name'>
 
 export const DentistRegistration = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const [page, setPage] = useState(DEFAULT_PAGE_NUMBER)

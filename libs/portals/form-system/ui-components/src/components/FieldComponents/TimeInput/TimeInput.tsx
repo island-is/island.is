@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const TimeInput = ({ item, dispatch }: Props) => {
-  const { control, setValue, watch } = useFormContext()
+  const { control, setValue, watch, trigger } = useFormContext()
   const { formatMessage } = useIntl()
   // If value from backend is a string like "13:45", split and set fields
   useEffect(() => {
@@ -110,9 +110,14 @@ export const TimeInput = ({ item, dispatch }: Props) => {
                 value: t,
               }))}
               size="xs"
+              required={item?.isRequired ?? false}
               backgroundColor="blue"
-              onChange={field.onChange}
+              onChange={(opt) => {
+                field.onChange(opt)
+                trigger(field.name)
+              }}
               onBlur={field.onBlur}
+              hasError={!!fieldState.error}
               errorMessage={fieldState.error?.message}
             />
           )}
@@ -140,11 +145,16 @@ export const TimeInput = ({ item, dispatch }: Props) => {
               value={field.value}
               options={chosenMinuteList()}
               size="xs"
+              required={item?.isRequired ?? false}
               isSearchable
               isDisabled={item?.fieldSettings?.timeInterval === '1'}
               backgroundColor="blue"
-              onChange={field.onChange}
+              onChange={(opt) => {
+                field.onChange(opt)
+                trigger(field.name)
+              }}
               onBlur={field.onBlur}
+              hasError={!!fieldState.error}
               errorMessage={fieldState.error?.message}
             />
           )}

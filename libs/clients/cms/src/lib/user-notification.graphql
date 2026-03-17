@@ -8,6 +8,8 @@ query GetTemplateByTemplateId($templateId: String!, $locale: String!) {
       clickActionUrl
       scope
       args
+      smsPayer
+      smsDelivery
     }
   }
 }
@@ -22,6 +24,8 @@ query GetTemplates($locale: String!) {
       clickActionUrl
       scope
       args
+      smsPayer
+      smsDelivery
     }
   }
 }

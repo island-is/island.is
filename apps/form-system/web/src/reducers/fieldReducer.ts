@@ -39,9 +39,13 @@ export const fieldReducer = (
       const { value, id } = action.payload
       return setFieldValue(state, 'text', id, value)
     }
+    case 'SET_NUMBER': {
+      const { value, id } = action.payload
+      return setFieldValue(state, 'number', id, value)
+    }
     case 'SET_DATE': {
       const { value, id } = action.payload
-      return setFieldValue(state, 'date', id, new Date(value))
+      return setFieldValue(state, 'date', id, value ? new Date(value) : null)
     }
     case 'SET_PROPERTY_NUMBER': {
       const { value, id } = action.payload

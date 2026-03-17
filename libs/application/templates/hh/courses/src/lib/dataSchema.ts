@@ -3,7 +3,6 @@ import * as kennitala from 'kennitala'
 import { isValidPhoneNumber } from '../utils/isValidPhoneNumber'
 import { YesOrNoEnum } from '@island.is/application/core'
 import { m } from './messages'
-import { COURSE_HAS_CHARGE_ITEM_CODE } from '../utils/constants'
 
 const paymentSchema = z
   .object({
@@ -72,7 +71,6 @@ export const dataSchema = z.object({
   participantList: z.array(participantSchema).min(1),
   courseSelect: z.string().min(1),
   dateSelect: z.string().min(1),
-  [COURSE_HAS_CHARGE_ITEM_CODE]: z.boolean().optional(),
   payment: paymentSchema.optional(),
   userInformation: userInformationSchema,
 })

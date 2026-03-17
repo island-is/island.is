@@ -58,6 +58,7 @@ import {
   TeamListSlice,
   TemporaryEventLicencesList,
   TwoColumnTextSlice,
+  VerAnnouncementCalculator,
 } from '@island.is/web/components'
 import {
   AccordionSlice as AccordionSliceSchema,
@@ -252,6 +253,8 @@ export const webRenderConnectedComponent = (
       break
     case 'KVTH/Rulings':
       connectedComponent = <ComplaintsCommitteeRulings slice={slice} />
+    case 'VERAnnouncementCalculator':
+      connectedComponent = <VerAnnouncementCalculator />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)

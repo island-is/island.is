@@ -117,7 +117,7 @@ initContainer:
     DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
 namespace: 'services-university-gateway'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

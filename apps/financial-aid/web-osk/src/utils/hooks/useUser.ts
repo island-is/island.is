@@ -4,11 +4,11 @@ import { useQuery } from '@apollo/client'
 import { CurrentUserQuery } from '@island.is/financial-aid-web/osk/graphql/sharedGql'
 
 import { User } from '@island.is/financial-aid/shared/lib'
-import { useSession } from 'next-auth/client'
+import { useSession } from 'next-auth/react'
 
 const useUser = () => {
   const [user, setUser] = useState<User>()
-  const [session] = useSession()
+  const { data: session } = useSession()
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     Boolean(session?.user),

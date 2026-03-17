@@ -31,7 +31,11 @@ const GOPRO_ID_PREFIX = 'g-'
 const SUPREME_COURT_ID_PREFIX = 's-'
 
 const convertHtmlToContentfulRichText = async (html: string, id: string) => {
-  const sanitizedHtml = sanitizeHtml(html)
+  const sanitizedHtml = sanitizeHtml(html, {
+    exclusiveFilter(frame) {
+      return frame.tag === 'table'
+    },
+  })
   const markdown = NodeHtmlMarkdown.translate(sanitizedHtml)
   const richText = await richTextFromMarkdown(markdown)
   return {
@@ -105,17 +109,25 @@ export class VerdictsClientService {
     dateFrom?: string
     dateTo?: string
     caseContact?: string
+    pageSize?: number
   }) {
     const onlyFetchSupremeCourtVerdicts = input.courtLevel === SUPREME_COURT
 
     const { goproVerdictApi } = await this.getAuthenticatedGoproApis()
+
+    const itemsPerPage =
+      typeof input.pageSize === 'number' &&
+      input.pageSize > 0 &&
+      input.pageSize < ITEMS_PER_PAGE
+        ? input.pageSize
+        : ITEMS_PER_PAGE
 
     const [goproResponse, supremeCourtResponse] = await Promise.allSettled([
       !onlyFetchSupremeCourtVerdicts
         ? goproVerdictApi.getVerdictsV2({
             requestData: {
               orderBy: 'verdictDate desc',
-              itemsPerPage: ITEMS_PER_PAGE,
+              itemsPerPage,
               pageNumber: input.pageNumber,
               searchTerm: input.searchTerm,
               courts: input.courtLevel ? input.courtLevel.split(',') : [],
@@ -135,7 +147,7 @@ export class VerdictsClientService {
         ? this.supremeCourtApi.apiV2VerdictGetVerdictsPost({
             verdictSearchRequest: {
               page: input.pageNumber,
-              limit: ITEMS_PER_PAGE,
+              limit: itemsPerPage,
               orderBy: 'publishDate DESC',
               searchTerm: input.searchTerm,
               keywords: input.keywords,
@@ -164,23 +176,23 @@ export class VerdictsClientService {
       court: string
       caseNumber: string
       verdictDate?: Date | null
-      presidentJudge?: { name?: string; title?: string }
+      verdictJudges?: { name?: string; title?: string }[]
       keywords: string[]
       presentings: string
     }[] = []
 
     if (goproResponse.status === 'fulfilled') {
       for (const goproItem of goproResponse.value.items ?? []) {
-        const judges = goproItem.judges ?? []
-        let presidentJudge = judges.find((judge) => Boolean(judge?.isPresident))
-        if (judges.length === 1) presidentJudge = judges[0]
         items.push({
           id: goproItem.id ? `${GOPRO_ID_PREFIX}${goproItem.id}` : '',
           title: goproItem.title ?? '',
           court: goproItem.court?.name ?? '',
           caseNumber: goproItem.caseNumber ?? '',
           verdictDate: goproItem.verdictDate,
-          presidentJudge,
+          verdictJudges:
+            goproItem.court?.code !== 'landsrettur'
+              ? goproItem.judges ?? []
+              : [],
           keywords: goproItem.keywords ?? [],
           presentings: goproItem.presentings ?? '',
         })
@@ -189,9 +201,6 @@ export class VerdictsClientService {
 
     if (supremeCourtResponse.status === 'fulfilled') {
       for (const supremeCourtItem of supremeCourtResponse.value.items ?? []) {
-        const judges = supremeCourtItem.judges ?? []
-        let presidentJudge = judges.find((judge) => Boolean(judge?.isPresident))
-        if (judges.length === 1) presidentJudge = judges[0]
         items.push({
           id: supremeCourtItem.id
             ? `${SUPREME_COURT_ID_PREFIX}${supremeCourtItem.id}`
@@ -200,7 +209,7 @@ export class VerdictsClientService {
           court: supremeCourtItem.court ?? '',
           caseNumber: supremeCourtItem.caseNumber ?? '',
           verdictDate: supremeCourtItem.publishDate,
-          presidentJudge,
+          verdictJudges: [],
           keywords: supremeCourtItem.keywords ?? [],
           presentings: supremeCourtItem.presentings ?? '',
         })
@@ -655,6 +664,12 @@ export class VerdictsClientService {
           response.item?.verdictHtml ?? '',
           'verdictHtml',
         ),
+        resolutionLink:
+          response.item.resolutionLink &&
+          isUrl(response.item.resolutionLink) &&
+          response.item.resolutionLink.toLowerCase().startsWith('http')
+            ? response.item.resolutionLink
+            : '',
       },
     }
   }

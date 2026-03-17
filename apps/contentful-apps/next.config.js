@@ -14,6 +14,14 @@ const {
  * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
  **/
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: graphqlPath,
+        destination: `${PUBLIC_API_URL}${graphqlPath}`,
+      },
+    ]
+  },
   nx: {
     // Set this to true if you would like to to use SVGR
     // See: https://github.com/gregberge/svgr
@@ -31,7 +39,7 @@ const nextConfig = {
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
-    graphqlEndpoint: `${PUBLIC_API_URL}${graphqlPath}`,
+    graphqlEndpoint: graphqlPath,
   },
 }
 
