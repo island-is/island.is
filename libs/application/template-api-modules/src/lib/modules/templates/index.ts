@@ -1,3 +1,6 @@
+
+import { EditUnemploymentInformationModule } from './vmst-actions/edit-unemployment-information/edit-unemployment-information.module'
+import { EditUnemploymentInformationService } from './vmst-actions/edit-unemployment-information/edit-unemployment-information.service'
 import { MileCarModule } from './transport-authority/mile-car/mile-car.module'
 import { MileCarService } from './transport-authority/mile-car/mile-car.service'
 import { CoursesModule } from './hh/courses/courses.module'
@@ -276,7 +279,8 @@ export const modules = [
   RegistrationOfNewPropertyNumbersModule,
   MileCarModule,
   CoursesModule,
-]
+  EditUnemploymentInformationModule,
+            ]
 
 export const services = [
   ExampleCommonActionsService,
@@ -370,4 +374,5 @@ export const services = [
   RegistrationOfNewPropertyNumbersService,
   MileCarService,
   CoursesService,
-]
+  EditUnemploymentInformationService,
+            ]

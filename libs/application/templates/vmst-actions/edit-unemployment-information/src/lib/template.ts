@@ -25,21 +25,22 @@ const template: ApplicationTemplate<
 > = {
   type: ApplicationTypes.EDIT_UNEMPLOYMENT_INFORMATION, // TODO: Change to the correct type
   name: 'edit-unemployment-information template',
-  codeOwner: CodeOwners.NordaApplications, // TODO: Change to the correct code owner
-  institution: 'Stafrænt Ísland', // TODO: Change to the correct institution
-  translationNamespaces: [ApplicationConfigurations.EditUnemploymentInformation.translation], // TODO: Change to the correct translation namespace
+  codeOwner: CodeOwners.Origo, // TODO: Change to the correct code owner
+  institution: 'VMST', // TODO
+  translationNamespaces:
+    ApplicationConfigurations.EditUnemploymentInformation.translation, // TODO: Change to the correct translation namespace
   dataSchema,
   // Note: only use this if any data should remain after pruning for better visibility in the admin portal
-  adminDataConfig: {
-    whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
-    answers: [
-      {
-        key: 'pickVehicle.plate',
-        isListed: true,
-        label: 'Bílnúmer',
-      },
-    ],
-  },
+  // adminDataConfig: {
+  //   whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
+  //   answers: [
+  //     {
+  //       key: 'pickVehicle.plate',
+  //       isListed: true,
+  //       label: 'Bílnúmer',
+  //     },
+  //   ],
+  // },
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
