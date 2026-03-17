@@ -30,13 +30,13 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                 title:
                   ship.fishery.name?.label ??
                   formatMessage(shipsMessages.operatorName),
-                value: ship.fishery.name?.value ?? '',
+                value: ship.fishery.name?.value ?? '-',
               },
               {
                 title:
                   ship.fishery.address?.label ??
                   formatMessage(shipsMessages.operatorAddress),
-                value: ship.fishery.address?.value ?? '',
+                value: ship.fishery.address?.value ?? '-',
               },
             ],
             [
@@ -44,7 +44,7 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                 title:
                   ship.fishery.municipality?.label ??
                   formatMessage(shipsMessages.operatorLocation),
-                value: ship.fishery.municipality?.value ?? '',
+                value: ship.fishery.municipality?.value ?? '-',
               },
             ],
           ]}
@@ -60,13 +60,13 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
               title:
                 ship?.constructionStation?.label ??
                 formatMessage(shipsMessages.constructionYard),
-              value: ship?.constructionStation?.value ?? '',
+              value: ship?.constructionStation?.value ?? '-',
             },
             {
               title:
                 ship?.constructionYear?.label ??
                 formatMessage(shipsMessages.constructionYear),
-              value: ship?.constructionYear?.value ?? '',
+              value: ship?.constructionYear?.value ?? '-',
             },
           ],
           [
@@ -74,13 +74,13 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
               title:
                 ship?.hullMaterial?.label ??
                 formatMessage(shipsMessages.hullMaterial),
-              value: ship?.hullMaterial?.value ?? '',
+              value: ship?.hullMaterial?.value ?? '-',
             },
             {
               title:
                 ship?.classificationSociety?.label ??
                 formatMessage(shipsMessages.classification),
-              value: ship?.classificationSociety?.value ?? '',
+              value: ship?.classificationSociety?.value ?? '-',
             },
           ],
         ]}
@@ -100,7 +100,7 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                   formatMeasurement(
                     ship.measurements.length?.value,
                     ship.measurements.length?.unit,
-                  ) ?? '',
+                  ) ?? '-',
               },
               {
                 title:
@@ -110,7 +110,7 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                   formatMeasurement(
                     ship.measurements.maxLength?.value,
                     ship.measurements.maxLength?.unit,
-                  ) ?? '',
+                  ) ?? '-',
               },
             ],
             [
@@ -122,7 +122,7 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                   formatMeasurement(
                     ship.measurements.width?.value,
                     ship.measurements.width?.unit,
-                  ) ?? '',
+                  ) ?? '-',
               },
               {
                 title:
@@ -132,7 +132,7 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                   formatMeasurement(
                     ship.measurements.bruttoGrossTonnage?.value,
                     ship.measurements.bruttoGrossTonnage?.unit,
-                  ) ?? '',
+                  ) ?? '-',
               },
             ],
             [
@@ -144,7 +144,7 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                   formatMeasurement(
                     ship.measurements.bruttoWeight?.value,
                     ship.measurements.bruttoWeight?.unit,
-                  ) ?? '',
+                  ) ?? '-',
               },
               {
                 title:
@@ -154,7 +154,7 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                   formatMeasurement(
                     ship.measurements.depth?.value,
                     ship.measurements.depth?.unit,
-                  ) ?? '',
+                  ) ?? '-',
               },
             ],
           ]}
@@ -182,13 +182,13 @@ export const RegistrationTab = ({ ship, loading }: Props) => {
                               formatMeasurement(
                                 engine.power?.value,
                                 engine.power?.unit,
-                              ) ?? '',
+                              ) ?? '-',
                           },
                           {
                             title:
                               engine.year?.label ??
                               formatMessage(shipsMessages.engineYear),
-                            value: engine.year?.value ?? '',
+                            value: engine.year?.value ?? '-',
                           },
                         ],
                       ]}

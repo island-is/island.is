@@ -69,7 +69,7 @@ export const ShipDetail = () => {
             <InfoLine
               loading={loading}
               label={formatMessage(shipsMessages.registrationNumber)}
-              content={ship?.registrationNumber?.toString()}
+              content={ship?.registrationNumber?.toString() ?? '-'}
             />
             <InfoLine
               loading={loading}
