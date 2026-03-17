@@ -20,6 +20,7 @@ interface Props {
   data: VehiclesMileageRegistrationHistory
   loading?: boolean
   co2?: string
+  unit: 'km' | 'mi'
 }
 
 interface ChartProps {
@@ -64,6 +65,7 @@ export const VehicleBulkMileageSubData = ({
   loading,
   data,
   co2,
+  unit,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -82,13 +84,13 @@ export const VehicleBulkMileageSubData = ({
         tableData.push([
           formatDate(mileageRegistration.date),
           mileageRegistration.originCode,
-          displayWithUnit(mileageRegistration.mileage, 'km', true),
+          displayWithUnit(mileageRegistration.mileage, unit, true),
         ])
       }
     }
 
     return tableData
-  }, [data])
+  }, [data, unit])
 
   return (
     <Box paddingX={3} paddingY={2} background="blue100">
@@ -115,7 +117,7 @@ export const VehicleBulkMileageSubData = ({
           headerArray={[
             formatMessage(vehicleMessage.date),
             formatMessage(vehicleMessage.registration),
-            formatMessage(vehicleMessage.odometer),
+            formatMessage(vehicleMessage.odometerStatus),
           ]}
           loading={loading}
           emptyMessage={formatMessage(vehicleMessage.mileageHistoryNotFound)}
@@ -141,7 +143,7 @@ export const VehicleBulkMileageSubData = ({
             labels: {
               mileage: formatMessage(vehicleMessage.odometer),
             },
-            valueFormat: (arg: number) => `${numberFormat(arg)} km`,
+            valueFormat: (arg: number) => `${numberFormat(arg)} ${unit}`,
           }}
         />
       ) : undefined}

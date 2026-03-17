@@ -396,6 +396,7 @@ export const VehicleBulkMileageRow = ({
             data={data?.vehiclesMileageRegistrationHistory}
             co2={vehicle.co2}
             loading={loading}
+            unit={unit}
           />
         ) : (
           <EmptyTable

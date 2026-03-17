@@ -24,7 +24,7 @@ const vehicleIndexTitle = [
 ]
 const mileageIndexTitle = [
   'kilometrastada',
-  'kilometrastada/miluastada',
+  'skra stodu',
   'mileage',
   'odometer',
 ]

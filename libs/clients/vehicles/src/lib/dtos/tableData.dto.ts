@@ -18,8 +18,8 @@ export const mapVehicleDataToNestedArray = (
     bilnumer: 0,
     'seinasta skraning': 1,
     'seinasta skrada stada': 2,
-    uppruni: 3,
-    'kilometrastada/miluastada': 4,
+    'seinasti skraningarstadur': 3,
+    'skra stodu': 4,
   }
 
   const header = Object.keys(indexes)
