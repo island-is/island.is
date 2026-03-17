@@ -7,6 +7,13 @@ export default defineConfig({
     format: 'prettier',
     lint: 'eslint',
   },
+  parser: {
+    filters: {
+      operations: {
+        include: ['GET /api/v1/Eftirlit/lyfjabudir'],
+      },
+    },
+  },
   plugins: [
     '@hey-api/client-fetch',
     {
