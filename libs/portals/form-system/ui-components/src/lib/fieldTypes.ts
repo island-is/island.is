@@ -139,7 +139,7 @@ export const initializeField = (field: FormSystemField): FormSystemField => {
     (v): v is NonNullable<typeof v> => v != null,
   )
 
-  const baseValues = existingValues.length ? existingValues : ([{}] as any[])
+  const baseValues = existingValues.length ? existingValues : [{}]
 
   const updatedValues = baseValues.map((value) => {
     const cleanedJson = removeNullProperties(value.json || {})

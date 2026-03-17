@@ -1,7 +1,6 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
 
 interface Props {
@@ -9,8 +8,6 @@ interface Props {
 }
 
 export const NationalIdDisplay = ({ item }: Props) => {
-  const nationalId = getValue(item, 'nationalId') as string | undefined
-  const name = getValue(item, 'name') as string | undefined
   const { lang, formatMessage } = useLocale()
 
   const values = (item.values ?? []).filter((v): v is NonNullable<typeof v> =>

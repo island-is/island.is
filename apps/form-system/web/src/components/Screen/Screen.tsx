@@ -236,7 +236,7 @@ export const Screen = () => {
           />
         )}
         {isMulti && multiMax > 1 && (
-          <Box display="flex" justifyContent="flexEnd" paddingTop={6}>
+          <Box display="flex" justifyContent="flexEnd" paddingTop={0}>
             <Box marginRight={2}>
               {numberOfItems > 1 && (
                 <Button
