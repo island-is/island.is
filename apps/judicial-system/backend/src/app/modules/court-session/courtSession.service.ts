@@ -129,20 +129,22 @@ export class CourtSessionService {
     const existingCourtSession =
       await this.courtSessionRepositoryService.findById(caseId, courtSessionId)
 
-    if (
-      existingCourtSession &&
-      !existingCourtSession.isConfirmed &&
-      update.isConfirmed === true
-    ) {
-      this.addMessagesForConfirmedCourtRecordToQueue(caseId)
-    }
-
-    return this.courtSessionRepositoryService.update(
+    const updatedCourtSession = await this.courtSessionRepositoryService.update(
       caseId,
       courtSessionId,
       update,
       { transaction },
     )
+
+    if (
+      existingCourtSession &&
+      !existingCourtSession.isConfirmed &&
+      updatedCourtSession.isConfirmed === true
+    ) {
+      this.addMessagesForConfirmedCourtRecordToQueue(caseId)
+    }
+
+    return updatedCourtSession
   }
 
   async delete(
