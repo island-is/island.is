@@ -53,7 +53,7 @@ export class ArticleRepository implements SitemapUrlFetcher {
       }
     })
 
-    do {
+    while (subArticleIds.length > 0) {
       const ids = subArticleIds.splice(0, 10)
       const subArticleResponse = await this.managementClient.getEntries({
         content_type: 'subArticle',
@@ -89,11 +89,14 @@ export class ArticleRepository implements SitemapUrlFetcher {
           lastmod: entry.sys.publishedAt,
         })
       }
-    } while (subArticleIds.length > 0)
+    }
 
     return {
       urls,
-      nextPageIndex: pageIndex + 1,
+      nextPageIndex:
+        articlesResponse.data.total > (pageIndex + 1) * itemsPerPage
+          ? pageIndex + 1
+          : -1,
     }
   }
 }
