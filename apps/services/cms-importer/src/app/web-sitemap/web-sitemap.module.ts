@@ -6,6 +6,9 @@ import { ManagementClientConfig } from '../repositories/cms/managementClient/man
 import { WebSitemapService } from './web-sitemap.service'
 import { WebSitemapConfig } from './web-sitemap.config'
 import { CmsRepositoryModule } from '../repositories/cms/cms.module'
+import { WebSitemapRepository } from '../repositories/web-sitemap/web-sitemap.repository'
+import { FrontpageRepository } from '../repositories/web-sitemap/content-types/frontpage.repository'
+import { ArticleRepository } from '../repositories/web-sitemap/content-types/article.repository'
 
 @Module({
   imports: [
@@ -17,6 +20,11 @@ import { CmsRepositoryModule } from '../repositories/cms/cms.module'
       load: [ManagementClientConfig, WebSitemapConfig],
     }),
   ],
-  providers: [WebSitemapService],
+  providers: [
+    WebSitemapService,
+    WebSitemapRepository,
+    FrontpageRepository,
+    ArticleRepository,
+  ],
 })
 export class WebSitemapModule {}
