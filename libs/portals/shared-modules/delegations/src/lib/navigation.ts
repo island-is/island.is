@@ -41,7 +41,7 @@ export const delegationsNavigationChildren: PortalNavigationItem[] = [
 
 export const delegationsNavigationChildrenNew: PortalNavigationItem[] = [
   {
-    name: m.digitalDelegations,
+    name: m.myDelegations,
     path: DelegationPaths.DelegationsNew,
     navHide: false,
     breadcrumbHide: true,
@@ -55,6 +55,12 @@ export const delegationsNavigationChildrenNew: PortalNavigationItem[] = [
   {
     name: m.whichDelegationsSuit,
     path: DelegationPaths.ServiceCategories,
+    navHide: false,
+    breadcrumbHide: false,
+  },
+  {
+    name: m.faq,
+    path: DelegationPaths.Faq,
     navHide: false,
     breadcrumbHide: false,
   },

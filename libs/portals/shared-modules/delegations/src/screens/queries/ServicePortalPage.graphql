@@ -10,6 +10,7 @@ query GetServicePortalPage($input: GetServicePortalPageInput!) {
     faqList {
       id
       title
+      showTitle
       questions {
         id
         question

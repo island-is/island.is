@@ -60,6 +60,7 @@ const AccessControlNew = () => {
 
   const { formatMessage, lang = 'is' } = useLocale()
   const userInfo = useUserInfo()
+
   const navigate = useNavigate()
   const location = useLocation()
   const { switchUser } = useAuth()
@@ -143,6 +144,8 @@ const AccessControlNew = () => {
     switchUser(nationalId, `${location.origin}/minarsidur`)
   }
 
+  const loading = outgoingLoading || incomingLoading
+
   return (
     <>
       <IntroHeader
@@ -187,22 +190,24 @@ const AccessControlNew = () => {
       </IntroHeader>
 
       {/* Empty state */}
-      {!incomingDelegations?.length && !outgoingDelegations?.length && (
-        <div className={styles.problemContainer}>
-          <Problem
-            type="no_data"
-            title="Engin rafræn umboð fundust"
-            titleSize="h4"
-            size="large"
-            imgSrc="./assets/images/jobsGrid.svg"
-            imgClassName={styles.problemImg}
-            message={
-              contentfulData?.emptyStateMessage?.document &&
-              renderHtml(contentfulData.emptyStateMessage.document)
-            }
-          />
-        </div>
-      )}
+      {!incomingDelegations?.length &&
+        !outgoingDelegations?.length &&
+        !loading && (
+          <div className={styles.problemContainer}>
+            <Problem
+              type="no_data"
+              title="Engin rafræn umboð fundust"
+              titleSize="h4"
+              size="large"
+              imgSrc="./assets/images/jobsGrid.svg"
+              imgClassName={styles.problemImg}
+              message={
+                contentfulData?.emptyStateMessage?.document &&
+                renderHtml(contentfulData.emptyStateMessage.document)
+              }
+            />
+          </div>
+        )}
 
       {!outgoingLoading &&
         outgoingDelegations &&
