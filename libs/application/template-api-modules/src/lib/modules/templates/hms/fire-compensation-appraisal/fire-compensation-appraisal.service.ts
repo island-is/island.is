@@ -20,8 +20,7 @@ import {
 import {
   getApplicant,
   mapAnswersToApplicationDto,
-  // mapAnswersToApplicationFilesContentDto,
-  mapStreamedAnswersToApplicationFilesContentDtoGenerator,
+  mapAnswersToApplicationFilesContentDto,
   paymentForAppraisal,
 } from './utils'
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
@@ -293,74 +292,58 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         )
       }
 
-      // get content of files from S3
-      // const fetchedFiles = uniqBy(
-      //   await this.attachmentService.getFiles(application, ['photos']),
-      //   'key',
-      // )
+      console.time('submitApplication')
 
-      // const missingFiles = fetchedFiles.filter(
-      //   (file) => !file.fileContent || file.fileContent.trim().length === 0,
-      // )
-
-      // if (missingFiles.length > 0) {
-      //   this.logger.error('Missing file content for attachments', {
-      //     missingKeys: missingFiles.map((file) => file.key),
-      //   })
-      //   throw new TemplateApiError(
-      //     'Failed to submit application, missing file content',
-      //     500,
-      //   )
-      // }
-
-      // // Map the photos to the dto interface
-      // const applicationFilesContentDtoArray =
-      //   mapAnswersToApplicationFilesContentDto(application, fetchedFiles)
-
-      // Send the photos to HMS sequentially to avoid overwhelming
-      // the pod with concurrent uploads of large files
-      // const photoResults = []
-      // for (const applicationFilesContentDto of applicationFilesContentDtoArray) {
-      //   const result =
-      //     await this.hmsApplicationSystemService.apiApplicationUploadPost({
-      //       applicationFilesContentDto,
-      //     })
-      //   photoResults.push(result)
-      // }
-
-      // if (photoResults.some((result) => result.status !== 200)) {
-      //   throw new TemplateApiError(
-      //     'Failed to upload photos, non 200 status',
-      //     500,
-      //   )
-      // }
-
-      // 1. Get the stream generator from your attachment service
-      const fileStreamGenerator = this.attachmentService.getFilesStream(
+      // Get the generator
+      const fileGenerator = this.attachmentService.getFilesGenerator(
         application,
-        'photos',
+        ['photos'],
       )
 
-      // 2. Wrap it with your DTO mapper generator
-      const applicationFilesContentDtoGenerator =
-        mapStreamedAnswersToApplicationFilesContentDtoGenerator(
-          application,
-          fileStreamGenerator,
-          this.logger,
-        )
+      console.timeLog('submitApplication', 'start fetching files from S3')
+      // Start fetching the FIRST file from S3
+      let nextFilePromise = fileGenerator.next()
 
-      // 3. Iterate asynchronously over the mapped DTOs
-      for await (const applicationFilesContentDto of applicationFilesContentDtoGenerator) {
-        // Upload the file as soon as it's ready, one by one
+      while (true) {
+        // Wait for the CURRENT file to finish downloading from S3
+        const { value: file, done } = await nextFilePromise
+        console.timeLog(
+          'submitApplication',
+          'file downloaded from S3',
+          file?.fileName,
+        )
+        if (done) break
+
+        // START downloading the NEXT file from S3 immediately in the background
+        nextFilePromise = fileGenerator.next()
+
+        // Process and upload the CURRENT file
+        if (!file.fileContent) {
+          this.logger.error('Missing file content for attachments', {
+            missingKey: file.key,
+          })
+          throw new TemplateApiError(
+            'Failed to submit application, missing file content',
+            500,
+          )
+        }
+
+        const [applicationFilesContentDto] =
+          mapAnswersToApplicationFilesContentDto(application, [file])
+
+        console.timeLog('submitApplication', 'start uploading file to HMS')
+        // Upload to HMS while the next S3 download is happening in the background!
         await this.hmsApplicationSystemService.apiApplicationUploadPost({
           applicationFilesContentDto,
         })
+        console.timeLog('submitApplication', 'file uploaded to HMS')
       }
-
       return res
     } catch (e) {
       this.logger.error('Failed to submit application:', e.message)
       throw new TemplateApiError(e, 500)
+    } finally {
+      console.timeEnd('submitApplication')
     }
   }
 }

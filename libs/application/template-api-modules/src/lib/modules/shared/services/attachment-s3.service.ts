@@ -75,6 +75,44 @@ export class AttachmentS3Service {
     )
   }
 
+  public async *getFilesGenerator(
+    application: ApplicationWithAttachments,
+    attachmentAnswerKeys: string[],
+  ): AsyncGenerator<AttachmentData, void, unknown> {
+    for (const answerKey of attachmentAnswerKeys) {
+      const answers = getValueViaPath(application.answers, answerKey) as Array<{
+        key: string
+        name: string
+      }>
+
+      if (!answers) continue
+
+      // Ensure uniqueness in the answers array based on the 'key'
+      const uniqueAnswers = Array.from(
+        new Map(answers.map((answer) => [answer.key, answer])).values(),
+      )
+
+      for (const { key, name } of uniqueAnswers) {
+        const url = (
+          application.attachments as {
+            [key: string]: string
+          }
+        )[key]
+
+        if (!url) {
+          logger.info('Failed to get url from application state')
+          yield { key: '', fileContent: '', answerKey, fileName: '' }
+          continue
+        }
+
+        const fileContent =
+          (await this.s3Service.getFileContent(url, 'base64')) ?? ''
+
+        yield { key, fileContent, answerKey, fileName: name }
+      }
+    }
+  }
+
   private async toDocumentDataList(
     answers: Array<{
       key: string
