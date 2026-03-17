@@ -14,11 +14,13 @@ export const publicProsecutionIndictmentsInReviewWhereOptions = (
   const baseWhereOptions = publicProsecutionIndictmentsAccessWhereOptions(user)
 
   return {
-    ...baseWhereOptions,
-    [Op.and]: [
-      ...(baseWhereOptions[Op.and] ?? []),
-      buildHasDefendantWithNullReviewDecisionCondition(true),
-    ],
+    where: {
+      ...baseWhereOptions,
+      [Op.and]: [
+        ...(baseWhereOptions[Op.and] ?? []),
+        buildHasDefendantWithNullReviewDecisionCondition(true),
+      ],
+    },
   }
 }
 
@@ -28,14 +30,12 @@ export const publicProsecutionIndictmentsReviewedWhereOptions = (
   const baseWhereOptions = publicProsecutionIndictmentsAccessWhereOptions(user)
 
   return {
-    ...baseWhereOptions,
-    [Op.and]: [
-      ...(baseWhereOptions[Op.and] ?? []),
-      buildHasDefendantWithNullReviewDecisionCondition(false),
-    ],
+    where: {
+      ...baseWhereOptions,
+      [Op.and]: [
+        ...(baseWhereOptions[Op.and] ?? []),
+        buildHasDefendantWithNullReviewDecisionCondition(false),
+      ],
+    },
   }
 }
-
-// Public prosecution cases access
-export const publicProsecutorCasesAccessWhereOptions = (user: User) =>
-  publicProsecutionIndictmentsAccessWhereOptions(user)

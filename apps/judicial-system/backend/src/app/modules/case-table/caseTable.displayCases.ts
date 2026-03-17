@@ -12,17 +12,16 @@ const isSentToPrisonAdmin = (d: Defendant) => Boolean(d.isSentToPrisonAdmin)
 const isRegisteredInPrisonSystem = (d: Defendant, c: Case): boolean =>
   Boolean(d.isRegisteredInPrisonSystem ?? c.isRegisteredInPrisonSystem)
 
+const isAppealRequestLatestVerdict = (defendant: Defendant) =>
+  Boolean(defendant.verdicts?.[0]?.defendantHasRequestedAppeal)
+const isNotAppealRequestLatestVerdict = (defendant: Defendant) =>
+  !isAppealRequestLatestVerdict(defendant)
+
 const isAcquittedByPublicProsecutionOffice = (d: Defendant) =>
   Boolean(d.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice)
 
 const isNotAcquittedByPublicProsecutionOffice = (d: Defendant) =>
   !isAcquittedByPublicProsecutionOffice(d)
-
-const isAppealRequestLatestVerdict = (defendant: Defendant) =>
-  Boolean(defendant.verdicts?.[0]?.defendantHasRequestedAppeal)
-
-const isNotAppealRequestLatestVerdict = (defendant: Defendant) =>
-  !isAppealRequestLatestVerdict(defendant)
 
 const isAcceptedIndictmentReviewDecision = (d: Defendant) =>
   isNotAcquittedByPublicProsecutionOffice(d) &&
@@ -47,6 +46,9 @@ const expandCaseWithDefendants = (
 
 const genericDisplayCases = (cs: Case[]) => cs.map((c) => c.toJSON())
 
+const expandCasesWithAllDefendants = (cs: Case[]) =>
+  cs.flatMap((c) => expandCaseWithDefendants(c, () => true))
+
 const prisonAdminNotRegisteredDefendantsDisplayCases = (cs: Case[]) =>
   cs.flatMap((c) =>
     expandCaseWithDefendants(
@@ -63,16 +65,9 @@ const prisonAdminRegisteredDefendantsDisplayCases = (cs: Case[]) =>
     ),
   )
 
-const publicProsecutionOfficeNewOrInReviewDefendantDisplayCases = (
-  cs: Case[],
-) =>
+const publicProsecutionOfficeReviewedDefendantDisplayCases = (cs: Case[]) =>
   cs.flatMap((c) =>
-    expandCaseWithDefendants(
-      c,
-      (d) =>
-        isNotAcquittedByPublicProsecutionOffice(d) &&
-        isNotAppealRequestLatestVerdict(d),
-    ),
+    expandCaseWithDefendants(c, isAcceptedIndictmentReviewDecision),
   )
 
 const publicProsecutionOfficeAcceptedDefendantDisplayCases = (cs: Case[]) =>
@@ -119,18 +114,18 @@ export const caseTableDisplayCases: Record<
   [CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING]:
     prisonAdminRegisteredDefendantsDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW]:
-    publicProsecutionOfficeNewOrInReviewDefendantDisplayCases,
+    expandCasesWithAllDefendants,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_IN_REVIEW]:
-    publicProsecutionOfficeNewOrInReviewDefendantDisplayCases,
+    expandCasesWithAllDefendants,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED]:
-    publicProsecutionOfficeAcceptedDefendantDisplayCases,
+    publicProsecutionOfficeReviewedDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED]:
     publicProsecutionOfficeAcceptedDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_SENT_TO_PRISON_ADMIN]:
     publicProsecutionOfficeAcceptedDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED]:
-    publicProsecutionOfficeAppealedDefendantDisplayCases,
-  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS]:
+    expandCasesWithAllDefendants,
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_ACQUITTED]:
     publicProsecutionOfficeAcquittedDefendantDisplayCases,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL]:
     publicProsecutionOfficeRequestedAppealDefendantDisplayCases,

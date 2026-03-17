@@ -12,31 +12,39 @@ import {
 // Prison admin restriction cases
 
 export const prisonAdminRequestCasesActiveWhereOptions = () => ({
-  [Op.and]: [
-    prisonAdminRequestCasesAccessWhereOptions,
-    { valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] } },
-  ],
+  where: {
+    [Op.and]: [
+      prisonAdminRequestCasesAccessWhereOptions,
+      { valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] } },
+    ],
+  },
 })
 
 export const prisonAdminRequestCasesDoneWhereOptions = () => ({
-  [Op.and]: [
-    prisonAdminRequestCasesAccessWhereOptions,
-    { valid_to_date: { [Op.lt]: fn('NOW') } },
-  ],
+  where: {
+    [Op.and]: [
+      prisonAdminRequestCasesAccessWhereOptions,
+      { valid_to_date: { [Op.lt]: fn('NOW') } },
+    ],
+  },
 })
 
 // Prison admin indictments
 
 export const prisonAdminIndictmentsSentToPrisonAdminWhereOptions = () => ({
-  [Op.and]: [
-    prisonAdminIndictmentsAccessWhereOptions,
-    buildHasDefendantSentToPrisonAdminNotRegisteredCondition(),
-  ],
+  where: {
+    [Op.and]: [
+      prisonAdminIndictmentsAccessWhereOptions,
+      buildHasDefendantSentToPrisonAdminNotRegisteredCondition(),
+    ],
+  },
 })
 
 export const prisonAdminIndictmentsRegisteredRulingWhereOptions = () => ({
-  [Op.and]: [
-    prisonAdminIndictmentsAccessWhereOptions,
-    buildHasDefendantSentToPrisonAdminRegisteredCondition(),
-  ],
+  where: {
+    [Op.and]: [
+      prisonAdminIndictmentsAccessWhereOptions,
+      buildHasDefendantSentToPrisonAdminRegisteredCondition(),
+    ],
+  },
 })

@@ -6,58 +6,66 @@ import {
   ServiceRequirement,
 } from '@island.is/judicial-system/types'
 
+import { CaseWhereOptions } from '../caseTable.types'
 import { publicProsecutionOfficeIndictmentsAccessWhereOptions } from './access'
-import {
-  buildHasDefendantWithNullReviewDecisionCondition,
-  buildIsSentToPrisonExistsCondition,
-} from './conditions'
+import { buildIsSentToPrisonAdminExistsCondition } from './conditions'
 
 // Public prosecution office indictments
 
-export const publicProsecutionOfficeIndictmentsNewWhereOptions = () => ({
-  [Op.and]: [
-    publicProsecutionOfficeIndictmentsAccessWhereOptions,
-    { indictment_reviewer_id: null },
-  ],
-})
-
-export const publicProsecutionOfficeIndictmentsInReviewWhereOptions = () => ({
-  [Op.and]: [
-    publicProsecutionOfficeIndictmentsAccessWhereOptions,
-    {
-      indictment_reviewer_id: { [Op.not]: null },
+export const publicProsecutionOfficeIndictmentsNewWhereOptions =
+  (): CaseWhereOptions => ({
+    where: {
+      [Op.and]: [
+        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        { indictment_reviewer_id: null },
+      ],
     },
-    buildHasDefendantWithNullReviewDecisionCondition(true),
-  ],
-})
+  })
 
-export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
-  [Op.and]: [
-    publicProsecutionOfficeIndictmentsAccessWhereOptions,
-    {
-      indictment_reviewer_id: { [Op.not]: null },
-      [Op.or]: [
+export const publicProsecutionOfficeIndictmentsInReviewWhereOptions =
+  (): CaseWhereOptions => ({
+    includes: { defendants: { attributes: [] } },
+    where: {
+      [Op.and]: [
+        publicProsecutionOfficeIndictmentsAccessWhereOptions,
         {
-          indictment_ruling_decision: CaseIndictmentRulingDecision.FINE,
-          [Op.and]: [
-            literal(`EXISTS (
+          indictment_reviewer_id: { [Op.not]: null },
+          '$defendants.indictment_review_decision$': null,
+        },
+      ],
+    },
+  })
+
+export const publicProsecutionOfficeIndictmentsReviewedWhereOptions =
+  (): CaseWhereOptions => ({
+    where: {
+      [Op.and]: [
+        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        {
+          indictment_reviewer_id: { [Op.not]: null },
+          [Op.or]: [
+            {
+              indictment_ruling_decision: CaseIndictmentRulingDecision.FINE,
+              [Op.and]: [
+                literal(`EXISTS (
               SELECT 1 FROM defendant
               WHERE defendant.case_id = "Case".id
                 AND defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
                 AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
             )`),
-          ],
-        },
-        {
-          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
-          [Op.and]: [
-            literal(`EXISTS (
+              ],
+            },
+            {
+              indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+              [Op.and]: [
+                literal(`EXISTS (
               SELECT 1 FROM defendant
               JOIN verdict ON defendant.id = verdict.defendant_id
               WHERE defendant.case_id = "Case".id
-                AND verdict.appeal_date IS NULL
-                AND (defendant.is_sent_to_prison_admin IS NULL or defendant.is_sent_to_prison_admin = false)
                 AND defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
+                AND (defendant.is_sent_to_prison_admin IS NULL OR defendant.is_sent_to_prison_admin = false)
+                AND verdict.is_acquitted_by_public_prosecution_office = true
+                AND verdict.appeal_date IS NULL
                 AND verdict.service_requirement = '${ServiceRequirement.NOT_REQUIRED}'
                 AND verdict.created = (
                     SELECT MAX(v2.created)
@@ -65,17 +73,17 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
                     WHERE v2.defendant_id = defendant.id
                 )
             )`),
-            where(
-              literal(`"ruling_date"::date + INTERVAL '29 days'`),
-              Op.gt,
-              fn('NOW'),
-            ),
-          ],
-        },
-        {
-          indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
-          [Op.and]: [
-            literal(`EXISTS (
+                where(
+                  literal(`"ruling_date"::date + INTERVAL '29 days'`),
+                  Op.gt,
+                  fn('NOW'),
+                ),
+              ],
+            },
+            {
+              indictment_ruling_decision: CaseIndictmentRulingDecision.RULING,
+              [Op.and]: [
+                literal(`EXISTS (
               SELECT 1 FROM defendant
               JOIN verdict ON defendant.id = verdict.defendant_id
               WHERE defendant.case_id = "Case".id
@@ -93,25 +101,27 @@ export const publicProsecutionOfficeIndictmentsReviewedWhereOptions = () => ({
                     WHERE v2.defendant_id = defendant.id
                 )
             )`),
+              ],
+            },
           ],
         },
       ],
     },
-  ],
-})
+  })
 
 export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
-  () => ({
-    [Op.and]: [
-      publicProsecutionOfficeIndictmentsAccessWhereOptions,
-      {
-        indictment_reviewer_id: { [Op.not]: null },
-        [Op.and]: [
-          { indictment_ruling_decision: CaseIndictmentRulingDecision.RULING },
-          {
-            [Op.not]: {
-              [Op.and]: [
-                literal(`EXISTS (
+  (): CaseWhereOptions => ({
+    where: {
+      [Op.and]: [
+        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        {
+          indictment_reviewer_id: { [Op.not]: null },
+          [Op.and]: [
+            { indictment_ruling_decision: CaseIndictmentRulingDecision.RULING },
+            {
+              [Op.not]: {
+                [Op.and]: [
+                  literal(`EXISTS (
                   SELECT 1 FROM defendant
                   JOIN verdict ON defendant.id = verdict.defendant_id
                   WHERE defendant.case_id = "Case".id
@@ -125,18 +135,18 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                         WHERE v2.defendant_id = defendant.id
                     )
                 )`),
-                where(
-                  literal(`"ruling_date"::date + INTERVAL '29 days'`),
-                  Op.gt,
-                  fn('NOW'),
-                ),
-              ],
+                  where(
+                    literal(`"ruling_date"::date + INTERVAL '29 days'`),
+                    Op.gt,
+                    fn('NOW'),
+                  ),
+                ],
+              },
             },
-          },
-          {
-            [Op.not]: {
-              [Op.and]: [
-                literal(`EXISTS (
+            {
+              [Op.not]: {
+                [Op.and]: [
+                  literal(`EXISTS (
                   SELECT 1 FROM defendant
                   JOIN verdict ON defendant.id = verdict.defendant_id
                   WHERE defendant.case_id = "Case".id
@@ -154,12 +164,12 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                         WHERE v2.defendant_id = defendant.id
                     )
                 )`),
-              ],
+                ],
+              },
             },
-          },
-          {
-            [Op.and]: [
-              literal(`EXISTS (
+            {
+              [Op.and]: [
+                literal(`EXISTS (
                 SELECT 1 FROM defendant
                 JOIN verdict ON defendant.id = verdict.defendant_id
                 WHERE defendant.case_id = "Case".id
@@ -172,54 +182,96 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                       WHERE v2.defendant_id = defendant.id
                   )
               )`),
-            ],
-          },
-        ],
-      },
-    ],
+              ],
+            },
+          ],
+        },
+      ],
+    },
   })
 
 export const publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions =
-  () => ({
-    [Op.and]: [
-      publicProsecutionOfficeIndictmentsAccessWhereOptions,
-      {
-        indictment_reviewer_id: { [Op.not]: null },
-        [Op.and]: [buildIsSentToPrisonExistsCondition(true)],
-      },
-    ],
-  })
-
-export const publicProsecutionOfficeIndictmentsAppealedWhereOptions = () => ({
-  [Op.and]: [
-    publicProsecutionOfficeIndictmentsAccessWhereOptions,
-    {
-      indictment_reviewer_id: { [Op.not]: null },
+  (): CaseWhereOptions => ({
+    where: {
       [Op.and]: [
-        literal(`EXISTS (
-              SELECT 1 
-              FROM defendant
-              JOIN verdict ON defendant.id = verdict.defendant_id
-              WHERE verdict.case_id = "Case".id
-                AND (verdict.appeal_date IS NOT NULL 
-                OR defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.APPEAL}')
-                AND verdict.created = (
-                    SELECT MAX(v2.created)
-                    FROM verdict v2
-                    WHERE v2.defendant_id = defendant.id
-                )
-          )`),
+        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        {
+          indictment_reviewer_id: { [Op.not]: null },
+          [Op.and]: [buildIsSentToPrisonAdminExistsCondition(true)],
+        },
       ],
     },
-  ],
-})
+  })
 
-export const publicProsecutionOfficeAcquittedIndictmentsWhereOptions = () => ({
-  [Op.and]: [
-    publicProsecutionOfficeIndictmentsAccessWhereOptions,
-    {
+export const publicProsecutionOfficeIndictmentsAppealedWhereOptions =
+  (): CaseWhereOptions => ({
+    includes: {
+      defendants: {
+        attributes: [],
+        required: true,
+        where: {
+          [Op.or]: [
+            { indictment_review_decision: IndictmentCaseReviewDecision.APPEAL },
+            literal(`EXISTS (
+              SELECT 1
+              FROM verdict
+              WHERE verdict.defendant_id = "defendants".id
+                AND verdict.appeal_date IS NOT NULL
+                AND verdict.created = (
+                  SELECT MAX(v2.created)
+                  FROM verdict v2
+                  WHERE v2.defendant_id = "defendants".id
+                )
+            )`),
+          ],
+        },
+        includes: { verdicts: { attributes: [] } },
+      },
+    },
+    where: {
       [Op.and]: [
-        literal(`EXISTS (
+        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        { indictment_reviewer_id: { [Op.not]: null } },
+      ],
+    },
+  })
+
+// export const publicProsecutionOfficeIndictmentsAppealedWhereOptions =
+//   (): CaseWhereOptions => ({
+//     includes: { defendants: { attributes: [] } },
+//     where: {
+//       [Op.and]: [
+//         publicProsecutionOfficeIndictmentsAccessWhereOptions,
+//         {
+//           indictment_reviewer_id: { [Op.not]: null },
+//           [Op.and]: [
+//             literal(`EXISTS (
+//               SELECT 1
+//               FROM defendant
+//               JOIN verdict ON defendant.id = verdict.defendant_id
+//               WHERE verdict.case_id = "Case".id
+//                 AND (verdict.appeal_date IS NOT NULL
+//                 OR defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.APPEAL}')
+//                 AND verdict.created = (
+//                     SELECT MAX(v2.created)
+//                     FROM verdict v2
+//                     WHERE v2.defendant_id = defendant.id
+//                 )
+//           )`),
+//           ],
+//         },
+//       ],
+//     },
+//   })
+
+export const publicProsecutionOfficeIndictmentsAcquittedWhereOptions =
+  (): CaseWhereOptions => ({
+    where: {
+      [Op.and]: [
+        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        {
+          [Op.and]: [
+            literal(`EXISTS (
               SELECT 1 
               FROM verdict
               JOIN defendant ON verdict.defendant_id = defendant.id
@@ -231,18 +283,20 @@ export const publicProsecutionOfficeAcquittedIndictmentsWhereOptions = () => ({
                     WHERE v2.defendant_id = defendant.id
                 )
           )`),
+          ],
+        },
       ],
     },
-  ],
-})
+  })
 
 export const publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions =
-  () => ({
-    [Op.and]: [
-      publicProsecutionOfficeIndictmentsAccessWhereOptions,
-      {
-        [Op.and]: [
-          literal(`EXISTS (
+  (): CaseWhereOptions => ({
+    where: {
+      [Op.and]: [
+        publicProsecutionOfficeIndictmentsAccessWhereOptions,
+        {
+          [Op.and]: [
+            literal(`EXISTS (
               SELECT 1 
               FROM verdict
               JOIN defendant ON verdict.defendant_id = defendant.id
@@ -254,7 +308,8 @@ export const publicProsecutionOfficeIndictmentsRequestedAppealWhereOptions =
                     WHERE v2.defendant_id = defendant.id
                 )
           )`),
-        ],
-      },
-    ],
+          ],
+        },
+      ],
+    },
   })
