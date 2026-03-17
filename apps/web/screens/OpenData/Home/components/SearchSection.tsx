@@ -143,7 +143,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           <Filter
             resultCount={totalCount}
             variant="dialog"
-           labelClear={n('clear', 'Hreinsa')}
+            labelClear={n('clear', 'Hreinsa')}
             labelClearAll={n('clearAllFilters', 'Hreinsa allar síur')}
             labelOpen={n('open', 'Opna')}
             labelClose={n('close', 'Loka')}

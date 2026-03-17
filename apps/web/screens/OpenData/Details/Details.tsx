@@ -474,10 +474,7 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                               </Link>
                             ) : (
                               <Text variant="small" color="dark300">
-                                {n(
-                                  'invalidDownloadUrl',
-                                  'Ógild slóð',
-                                )}
+                                {n('invalidDownloadUrl', 'Ógild slóð')}
                               </Text>
                             )}
                           </T.Data>
@@ -643,7 +640,9 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                       'feedbackSubject',
                       'Ábending um gagnasafn',
                     )}: ${dataset.title}`
-                    window.location.href = `mailto:${dataset.maintainerEmail}?subject=${encodeURIComponent(subject)}`
+                    window.location.href = `mailto:${
+                      dataset.maintainerEmail
+                    }?subject=${encodeURIComponent(subject)}`
                   }}
                 >
                   {n('sendFeedback', 'Senda ábendingu')}

@@ -97,183 +97,177 @@ export class OpenDataClientService {
 
     try {
       const queryParams: Record<string, string | number> = {
-          rows: limit,
-          start: (page - 1) * limit,
+        rows: limit,
+        start: (page - 1) * limit,
+      }
+
+      if (input.searchQuery) {
+        // Use trailing wildcard for partial matching (e.g., "stud" matches "students")
+        // Trailing wildcards are supported by Solr, leading wildcards are not
+        const searchTerm = this.escapeSolrValue(input.searchQuery.trim())
+        queryParams.q = `${searchTerm}*`
+      }
+
+      // Build CKAN filter query (fq) for server-side filtering
+      const fqParts: string[] = []
+
+      if (input.publishers && input.publishers.length > 0) {
+        // CKAN uses organization name (slug) for filtering
+        const orgFilter = input.publishers
+          .map((p) => `organization:${this.escapeSolrValue(p)}`)
+          .join(' OR ')
+        fqParts.push(`(${orgFilter})`)
+      }
+
+      if (input.formats && input.formats.length > 0) {
+        const formatFilter = input.formats
+          .map((f) => `res_format:${this.escapeSolrValue(f)}`)
+          .join(' OR ')
+        fqParts.push(`(${formatFilter})`)
+      }
+
+      if (input.categories && input.categories.length > 0) {
+        // Categories are typically stored as tags in CKAN
+        const tagFilter = input.categories
+          .map((c) => `tags:${this.escapeSolrValue(c)}`)
+          .join(' OR ')
+        fqParts.push(`(${tagFilter})`)
+      }
+
+      if (input.status && input.status.length > 0) {
+        const statusFilter = input.status
+          .map((s) => `state:${this.escapeSolrValue(s)}`)
+          .join(' OR ')
+        fqParts.push(`(${statusFilter})`)
+      }
+
+      if (input.license && input.license.length > 0) {
+        const licenseFilter = input.license
+          .map((l) => `license_id:${this.escapeSolrValue(l)}`)
+          .join(' OR ')
+        fqParts.push(`(${licenseFilter})`)
+      }
+
+      if (input.groups && input.groups.length > 0) {
+        const groupFilter = input.groups
+          .map((g) => `groups:${this.escapeSolrValue(g)}`)
+          .join(' OR ')
+        fqParts.push(`(${groupFilter})`)
+      }
+
+      if (input.lastUpdated) {
+        const now = new Date()
+        let fromDate: Date | undefined
+        switch (input.lastUpdated) {
+          case 'week':
+            fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+            break
+          case 'month':
+            fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+            break
+          case 'quarter':
+            fromDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
+            break
+          case 'year':
+            fromDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
+            break
         }
-
-        if (input.searchQuery) {
-          // Use trailing wildcard for partial matching (e.g., "stud" matches "students")
-          // Trailing wildcards are supported by Solr, leading wildcards are not
-          const searchTerm = this.escapeSolrValue(input.searchQuery.trim())
-          queryParams.q = `${searchTerm}*`
+        if (fromDate) {
+          fqParts.push(`metadata_modified:[${fromDate.toISOString()} TO NOW]`)
         }
+      }
 
-        // Build CKAN filter query (fq) for server-side filtering
-        const fqParts: string[] = []
-
-        if (input.publishers && input.publishers.length > 0) {
-          // CKAN uses organization name (slug) for filtering
-          const orgFilter = input.publishers
-            .map((p) => `organization:${this.escapeSolrValue(p)}`)
-            .join(' OR ')
-          fqParts.push(`(${orgFilter})`)
-        }
-
-        if (input.formats && input.formats.length > 0) {
-          const formatFilter = input.formats
-            .map((f) => `res_format:${this.escapeSolrValue(f)}`)
-            .join(' OR ')
-          fqParts.push(`(${formatFilter})`)
-        }
-
-        if (input.categories && input.categories.length > 0) {
-          // Categories are typically stored as tags in CKAN
-          const tagFilter = input.categories
-            .map((c) => `tags:${this.escapeSolrValue(c)}`)
-            .join(' OR ')
-          fqParts.push(`(${tagFilter})`)
-        }
-
-        if (input.status && input.status.length > 0) {
-          const statusFilter = input.status
-            .map((s) => `state:${this.escapeSolrValue(s)}`)
-            .join(' OR ')
-          fqParts.push(`(${statusFilter})`)
-        }
-
-        if (input.license && input.license.length > 0) {
-          const licenseFilter = input.license
-            .map((l) => `license_id:${this.escapeSolrValue(l)}`)
-            .join(' OR ')
-          fqParts.push(`(${licenseFilter})`)
-        }
-
-        if (input.groups && input.groups.length > 0) {
-          const groupFilter = input.groups
-            .map((g) => `groups:${this.escapeSolrValue(g)}`)
-            .join(' OR ')
-          fqParts.push(`(${groupFilter})`)
-        }
-
-        if (input.lastUpdated) {
-          const now = new Date()
-          let fromDate: Date | undefined
-          switch (input.lastUpdated) {
-            case 'week':
-              fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-              break
-            case 'month':
-              fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-              break
-            case 'quarter':
-              fromDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
-              break
-            case 'year':
-              fromDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
-              break
+      if (input.timePeriod && input.timePeriod.length > 0) {
+        const timeParts = input.timePeriod.map((tp) => {
+          if (tp === 'older') {
+            return `metadata_modified:[* TO 2021-01-01T00:00:00Z]`
           }
-          if (fromDate) {
-            fqParts.push(
-              `metadata_modified:[${fromDate.toISOString()} TO NOW]`,
-            )
-          }
-        }
+          return `metadata_modified:[${tp}-01-01T00:00:00Z TO ${tp}-12-31T23:59:59Z]`
+        })
+        fqParts.push(`(${timeParts.join(' OR ')})`)
+      }
 
-        if (input.timePeriod && input.timePeriod.length > 0) {
-          const timeParts = input.timePeriod.map((tp) => {
-            if (tp === 'older') {
-              return `metadata_modified:[* TO 2021-01-01T00:00:00Z]`
-            }
-            return `metadata_modified:[${tp}-01-01T00:00:00Z TO ${tp}-12-31T23:59:59Z]`
-          })
-          fqParts.push(`(${timeParts.join(' OR ')})`)
-        }
+      if (fqParts.length > 0) {
+        queryParams.fq = fqParts.join(' AND ')
+      }
 
-        if (fqParts.length > 0) {
-          queryParams.fq = fqParts.join(' AND ')
-        }
+      this.logger.info('Fetching from CKAN API', {
+        url: this.config.basePath,
+        params: queryParams,
+      })
 
-        this.logger.info('Fetching from CKAN API', {
-          url: this.config.basePath,
+      // Debug: Log the full URL being requested
+      this.logger.info('=== CKAN QUERY DEBUG ===')
+      this.logger.info(`Search query (q): ${queryParams.q}`)
+      this.logger.info(`Input searchQuery: ${input.searchQuery}`)
+      this.logger.info(`Input publishers: ${JSON.stringify(input.publishers)}`)
+      this.logger.info(`Input categories: ${JSON.stringify(input.categories)}`)
+      this.logger.info(`Input formats: ${JSON.stringify(input.formats)}`)
+      this.logger.info(`fq query: ${queryParams.fq}`)
+
+      const response = await firstValueFrom(
+        this.httpService.get(`${this.config.basePath}/package_search`, {
           params: queryParams,
-        })
+          timeout: 10000,
+          headers: {
+            Accept: 'application/json',
+          },
+          httpsAgent: this.httpsAgent,
+        }),
+      )
 
-        // Debug: Log the full URL being requested
-        this.logger.info('=== CKAN QUERY DEBUG ===')
-        this.logger.info(`Search query (q): ${queryParams.q}`)
-        this.logger.info(`Input searchQuery: ${input.searchQuery}`)
+      this.logger.info('CKAN API response received', {
+        success: response.data.success,
+        count: response.data.result?.count,
+        fq: queryParams.fq,
+      })
+
+      // Debug: Print organization names from actual datasets
+      this.logger.info('=== CKAN RESPONSE DEBUG ===')
+      this.logger.info(`Success: ${response.data.success}`)
+      this.logger.info(`Count: ${response.data.result?.count}`)
+      this.logger.info(
+        `Results count: ${response.data.result?.results?.length}`,
+      )
+      if (response.data.result?.results?.length > 0) {
         this.logger.info(
-          `Input publishers: ${JSON.stringify(input.publishers)}`,
+          `First result org name: ${response.data.result.results[0]?.organization?.name}`,
         )
         this.logger.info(
-          `Input categories: ${JSON.stringify(input.categories)}`,
+          `First result org title: ${response.data.result.results[0]?.organization?.title}`,
         )
-        this.logger.info(`Input formats: ${JSON.stringify(input.formats)}`)
-        this.logger.info(`fq query: ${queryParams.fq}`)
-
-        const response = await firstValueFrom(
-          this.httpService.get(`${this.config.basePath}/package_search`, {
-            params: queryParams,
-            timeout: 10000,
-            headers: {
-              Accept: 'application/json',
-            },
-            httpsAgent: this.httpsAgent,
-          }),
+        const orgNames = response.data.result.results.map(
+          (r: CKANPackage) => r.organization?.name,
         )
-
-        this.logger.info('CKAN API response received', {
-          success: response.data.success,
-          count: response.data.result?.count,
-          fq: queryParams.fq,
-        })
-
-        // Debug: Print organization names from actual datasets
-        this.logger.info('=== CKAN RESPONSE DEBUG ===')
-        this.logger.info(`Success: ${response.data.success}`)
-        this.logger.info(`Count: ${response.data.result?.count}`)
         this.logger.info(
-          `Results count: ${response.data.result?.results?.length}`,
+          `All org names in results: ${JSON.stringify(orgNames)}`,
         )
-        if (response.data.result?.results?.length > 0) {
-          this.logger.info(
-            `First result org name: ${response.data.result.results[0]?.organization?.name}`,
-          )
-          this.logger.info(
-            `First result org title: ${response.data.result.results[0]?.organization?.title}`,
-          )
-          const orgNames = response.data.result.results.map(
-            (r: CKANPackage) => r.organization?.name,
-          )
-          this.logger.info(
-            `All org names in results: ${JSON.stringify(orgNames)}`,
-          )
-        }
+      }
 
-        if (response.data.success && response.data.result) {
-          const datasets = response.data.result.results.map(
-            (pkg: CKANPackage) => this.mapCKANToDataset(pkg),
-          )
+      if (response.data.success && response.data.result) {
+        const datasets = response.data.result.results.map((pkg: CKANPackage) =>
+          this.mapCKANToDataset(pkg),
+        )
 
-          // Server-side filtering is now done via fq parameter
-          // Only keep client-side filtering as fallback for edge cases
-          return {
-            datasets: datasets,
-            total: response.data.result.count,
-            page,
-            limit,
-            hasMore:
-              (page - 1) * limit + datasets.length < response.data.result.count,
-          }
-        }
-
+        // Server-side filtering is now done via fq parameter
+        // Only keep client-side filtering as fallback for edge cases
         return {
-          datasets: [],
-          total: 0,
+          datasets: datasets,
+          total: response.data.result.count,
           page,
           limit,
-          hasMore: false,
+          hasMore:
+            (page - 1) * limit + datasets.length < response.data.result.count,
         }
+      }
+
+      return {
+        datasets: [],
+        total: 0,
+        page,
+        limit,
+        hasMore: false,
+      }
     } catch (error) {
       this.logger.error('Failed to fetch from CKAN API', {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -315,206 +309,201 @@ export class OpenDataClientService {
   async getFilters(): Promise<DatasetFilter[]> {
     try {
       // Fetch organizations, tags, licenses, and groups from CKAN
-        const [orgsResponse, tagsResponse, licensesResponse, groupsResponse] =
-          await Promise.all([
-            firstValueFrom(
-              this.httpService.get(
-                `${this.config.basePath}/organization_list`,
-                {
-                  params: { all_fields: true },
-                  timeout: 10000,
-                  headers: { Accept: 'application/json' },
-                  httpsAgent: this.httpsAgent,
-                },
-              ),
-            ),
-            firstValueFrom(
-              this.httpService.get(`${this.config.basePath}/tag_list`, {
-                params: { all_fields: true },
-                timeout: 10000,
-                headers: { Accept: 'application/json' },
-                httpsAgent: this.httpsAgent,
-              }),
-            ),
-            firstValueFrom(
-              this.httpService.get(`${this.config.basePath}/license_list`, {
-                timeout: 10000,
-                headers: { Accept: 'application/json' },
-                httpsAgent: this.httpsAgent,
-              }),
-            ),
-            firstValueFrom(
-              this.httpService.get(`${this.config.basePath}/group_list`, {
-                params: { all_fields: true },
-                timeout: 10000,
-                headers: { Accept: 'application/json' },
-                httpsAgent: this.httpsAgent,
-              }),
-            ),
-          ])
+      const [orgsResponse, tagsResponse, licensesResponse, groupsResponse] =
+        await Promise.all([
+          firstValueFrom(
+            this.httpService.get(`${this.config.basePath}/organization_list`, {
+              params: { all_fields: true },
+              timeout: 10000,
+              headers: { Accept: 'application/json' },
+              httpsAgent: this.httpsAgent,
+            }),
+          ),
+          firstValueFrom(
+            this.httpService.get(`${this.config.basePath}/tag_list`, {
+              params: { all_fields: true },
+              timeout: 10000,
+              headers: { Accept: 'application/json' },
+              httpsAgent: this.httpsAgent,
+            }),
+          ),
+          firstValueFrom(
+            this.httpService.get(`${this.config.basePath}/license_list`, {
+              timeout: 10000,
+              headers: { Accept: 'application/json' },
+              httpsAgent: this.httpsAgent,
+            }),
+          ),
+          firstValueFrom(
+            this.httpService.get(`${this.config.basePath}/group_list`, {
+              params: { all_fields: true },
+              timeout: 10000,
+              headers: { Accept: 'application/json' },
+              httpsAgent: this.httpsAgent,
+            }),
+          ),
+        ])
 
-        // Get formats from a sample of datasets
-        const datasetsResponse = await firstValueFrom(
-          this.httpService.get(`${this.config.basePath}/package_search`, {
-            params: { rows: 100 },
-            timeout: 10000,
-            headers: { Accept: 'application/json' },
-            httpsAgent: this.httpsAgent,
-          }),
-        )
+      // Get formats from a sample of datasets
+      const datasetsResponse = await firstValueFrom(
+        this.httpService.get(`${this.config.basePath}/package_search`, {
+          params: { rows: 100 },
+          timeout: 10000,
+          headers: { Accept: 'application/json' },
+          httpsAgent: this.httpsAgent,
+        }),
+      )
 
-        const filters: DatasetFilter[] = []
+      const filters: DatasetFilter[] = []
 
-        // Organizations (Stofnun / Ráðuneyti) - only include orgs with datasets
-        if (orgsResponse.data.success && orgsResponse.data.result) {
-          const orgs = orgsResponse.data.result.filter(
-            (org: CKANOrganization) => (org.package_count || 0) > 0,
-          ) // Only orgs with datasets
+      // Organizations (Stofnun / Ráðuneyti) - only include orgs with datasets
+      if (orgsResponse.data.success && orgsResponse.data.result) {
+        const orgs = orgsResponse.data.result.filter(
+          (org: CKANOrganization) => (org.package_count || 0) > 0,
+        ) // Only orgs with datasets
+        filters.push({
+          id: 'organization',
+          field: 'publisher',
+          label: 'Stofnun / Ráðuneyti',
+          options: orgs.map((org: CKANOrganization) => ({
+            value: org.name, // Use org name (slug) for CKAN filtering
+            label: org.title || org.name,
+            count: org.package_count || 0,
+          })),
+        })
+      }
+
+      // Categories/Tags (Efnisflokkur)
+      if (tagsResponse.data.success && tagsResponse.data.result) {
+        const tags = tagsResponse.data.result
+        filters.push({
+          id: 'category',
+          field: 'category',
+          label: 'Efnisflokkur',
+          options: Array.isArray(tags)
+            ? tags.slice(0, 20).map((tag: CKANTag | string) => ({
+                value: typeof tag === 'string' ? tag : tag.name,
+                label:
+                  typeof tag === 'string' ? tag : tag.display_name || tag.name,
+              }))
+            : [],
+        })
+      }
+
+      // Formats (Gagnsnið)
+      if (datasetsResponse.data.success && datasetsResponse.data.result) {
+        const formats = new Set<string>()
+        datasetsResponse.data.result.results.forEach((pkg: CKANPackage) => {
+          pkg.resources?.forEach((resource: CKANResource) => {
+            if (resource.format) {
+              formats.add(resource.format.toUpperCase())
+            }
+          })
+        })
+        filters.push({
+          id: 'format',
+          field: 'format',
+          label: 'Gagnsnið',
+          options: Array.from(formats)
+            .sort()
+            .map((f) => ({
+              value: f,
+              label: f,
+            })),
+        })
+      }
+
+      // Dataset status (Staða gagnasetts) - derived from metadata
+      filters.push({
+        id: 'status',
+        field: 'status',
+        label: 'Staða gagnasetts',
+        options: [
+          { value: 'active', label: 'Virkt' },
+          { value: 'inactive', label: 'Óvirkt' },
+          { value: 'draft', label: 'Drög' },
+        ],
+      })
+
+      // Last updated (Síðast uppfært) - time ranges
+      filters.push({
+        id: 'lastUpdated',
+        field: 'lastUpdated',
+        label: 'Síðast uppfært',
+        options: [
+          { value: 'week', label: 'Síðustu 7 daga' },
+          { value: 'month', label: 'Síðasta mánuð' },
+          { value: 'quarter', label: 'Síðustu 3 mánuði' },
+          { value: 'year', label: 'Síðasta ár' },
+        ],
+      })
+
+      // Update frequency (Uppfærslutíðni)
+      filters.push({
+        id: 'updateFrequency',
+        field: 'updateFrequency',
+        label: 'Uppfærslutíðni',
+        options: [
+          { value: 'daily', label: 'Daglega' },
+          { value: 'weekly', label: 'Vikulega' },
+          { value: 'monthly', label: 'Mánaðarlega' },
+          { value: 'quarterly', label: 'Ársfjórðungslega' },
+          { value: 'annually', label: 'Árlega' },
+          { value: 'irregular', label: 'Óreglulega' },
+        ],
+      })
+
+      // Data time period (Tímabil gagna)
+      filters.push({
+        id: 'timePeriod',
+        field: 'timePeriod',
+        label: 'Tímabil gagna',
+        options: [
+          { value: '2025', label: '2025' },
+          { value: '2024', label: '2024' },
+          { value: '2023', label: '2023' },
+          { value: '2022', label: '2022' },
+          { value: '2021', label: '2021' },
+          { value: 'older', label: 'Eldra' },
+        ],
+      })
+
+      // License (Noktunarleyfi)
+      if (licensesResponse.data.success && licensesResponse.data.result) {
+        const licenses = licensesResponse.data.result
+        filters.push({
+          id: 'license',
+          field: 'license',
+          label: 'Noktunarleyfi',
+          options: licenses.map((license: CKANLicense) => ({
+            value: license.id || license.name,
+            label: license.title || license.name || license.id,
+          })),
+        })
+      }
+
+      // Groups (Flokkun) - if available
+      if (groupsResponse.data.success && groupsResponse.data.result) {
+        const groups = groupsResponse.data.result
+        if (groups.length > 0) {
           filters.push({
-            id: 'organization',
-            field: 'publisher',
-            label: 'Stofnun / Ráðuneyti',
-            options: orgs.map((org: CKANOrganization) => ({
-              value: org.name, // Use org name (slug) for CKAN filtering
-              label: org.title || org.name,
-              count: org.package_count || 0,
+            id: 'group',
+            field: 'group',
+            label: 'Flokkun',
+            options: groups.map((group: CKANGroup) => ({
+              value: group.name,
+              label: group.title || group.display_name || group.name,
+              count: group.package_count || 0,
             })),
           })
         }
+      }
 
-        // Categories/Tags (Efnisflokkur)
-        if (tagsResponse.data.success && tagsResponse.data.result) {
-          const tags = tagsResponse.data.result
-          filters.push({
-            id: 'category',
-            field: 'category',
-            label: 'Efnisflokkur',
-            options: Array.isArray(tags)
-              ? tags.slice(0, 20).map((tag: CKANTag | string) => ({
-                  value: typeof tag === 'string' ? tag : tag.name,
-                  label:
-                    typeof tag === 'string'
-                      ? tag
-                      : tag.display_name || tag.name,
-                }))
-              : [],
-          })
-        }
+      this.logger.info('CKAN filters fetched successfully', {
+        filterCount: filters.length,
+      })
 
-        // Formats (Gagnsnið)
-        if (datasetsResponse.data.success && datasetsResponse.data.result) {
-          const formats = new Set<string>()
-          datasetsResponse.data.result.results.forEach((pkg: CKANPackage) => {
-            pkg.resources?.forEach((resource: CKANResource) => {
-              if (resource.format) {
-                formats.add(resource.format.toUpperCase())
-              }
-            })
-          })
-          filters.push({
-            id: 'format',
-            field: 'format',
-            label: 'Gagnsnið',
-            options: Array.from(formats)
-              .sort()
-              .map((f) => ({
-                value: f,
-                label: f,
-              })),
-          })
-        }
-
-        // Dataset status (Staða gagnasetts) - derived from metadata
-        filters.push({
-          id: 'status',
-          field: 'status',
-          label: 'Staða gagnasetts',
-          options: [
-            { value: 'active', label: 'Virkt' },
-            { value: 'inactive', label: 'Óvirkt' },
-            { value: 'draft', label: 'Drög' },
-          ],
-        })
-
-        // Last updated (Síðast uppfært) - time ranges
-        filters.push({
-          id: 'lastUpdated',
-          field: 'lastUpdated',
-          label: 'Síðast uppfært',
-          options: [
-            { value: 'week', label: 'Síðustu 7 daga' },
-            { value: 'month', label: 'Síðasta mánuð' },
-            { value: 'quarter', label: 'Síðustu 3 mánuði' },
-            { value: 'year', label: 'Síðasta ár' },
-          ],
-        })
-
-        // Update frequency (Uppfærslutíðni)
-        filters.push({
-          id: 'updateFrequency',
-          field: 'updateFrequency',
-          label: 'Uppfærslutíðni',
-          options: [
-            { value: 'daily', label: 'Daglega' },
-            { value: 'weekly', label: 'Vikulega' },
-            { value: 'monthly', label: 'Mánaðarlega' },
-            { value: 'quarterly', label: 'Ársfjórðungslega' },
-            { value: 'annually', label: 'Árlega' },
-            { value: 'irregular', label: 'Óreglulega' },
-          ],
-        })
-
-        // Data time period (Tímabil gagna)
-        filters.push({
-          id: 'timePeriod',
-          field: 'timePeriod',
-          label: 'Tímabil gagna',
-          options: [
-            { value: '2025', label: '2025' },
-            { value: '2024', label: '2024' },
-            { value: '2023', label: '2023' },
-            { value: '2022', label: '2022' },
-            { value: '2021', label: '2021' },
-            { value: 'older', label: 'Eldra' },
-          ],
-        })
-
-        // License (Noktunarleyfi)
-        if (licensesResponse.data.success && licensesResponse.data.result) {
-          const licenses = licensesResponse.data.result
-          filters.push({
-            id: 'license',
-            field: 'license',
-            label: 'Noktunarleyfi',
-            options: licenses.map((license: CKANLicense) => ({
-              value: license.id || license.name,
-              label: license.title || license.name || license.id,
-            })),
-          })
-        }
-
-        // Groups (Flokkun) - if available
-        if (groupsResponse.data.success && groupsResponse.data.result) {
-          const groups = groupsResponse.data.result
-          if (groups.length > 0) {
-            filters.push({
-              id: 'group',
-              field: 'group',
-              label: 'Flokkun',
-              options: groups.map((group: CKANGroup) => ({
-                value: group.name,
-                label: group.title || group.display_name || group.name,
-                count: group.package_count || 0,
-              })),
-            })
-          }
-        }
-
-        this.logger.info('CKAN filters fetched successfully', {
-          filterCount: filters.length,
-        })
-
-        return filters
+      return filters
     } catch (error) {
       this.logger.error('Failed to fetch filters from CKAN API', {
         error: error instanceof Error ? error.message : 'Unknown error',
