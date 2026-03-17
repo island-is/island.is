@@ -253,6 +253,7 @@ export const webRenderConnectedComponent = (
       break
     case 'KVTH/Rulings':
       connectedComponent = <ComplaintsCommitteeRulings slice={slice} />
+      break
     case 'VERAnnouncementCalculator':
       connectedComponent = <VerAnnouncementCalculator />
       break
