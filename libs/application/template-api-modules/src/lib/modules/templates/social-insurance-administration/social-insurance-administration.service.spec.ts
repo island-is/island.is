@@ -1,5 +1,9 @@
 import { createApplication } from '@island.is/application/testing'
-import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationClientService,
+  SocialInsuranceAdministrationMedicalAndRehabilitationService,
+  SocialInsuranceAdministrationOldAgePensionService,
+} from '@island.is/clients/social-insurance-administration'
 import { Test, TestingModule } from '@nestjs/testing'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -47,7 +51,21 @@ describe('SocialInsuranceAdministrationService', () => {
               Promise.resolve({
                 applicationLineId: '123',
               }),
-            sendApplicationV2: () =>
+          })),
+        },
+        {
+          provide: SocialInsuranceAdministrationOldAgePensionService,
+          useClass: jest.fn(() => ({
+            sendOldAgePensionApplication: () =>
+              Promise.resolve({
+                applicationLineId: '0',
+              }),
+          })),
+        },
+        {
+          provide: SocialInsuranceAdministrationMedicalAndRehabilitationService,
+          useClass: jest.fn(() => ({
+            sendMedicalAndRehabilitationPaymentsApplication: () =>
               Promise.resolve({
                 applicationLineId: '0',
               }),
