@@ -25,7 +25,7 @@ export const generateComplaintPdf = async (application: Application) => {
 
   addHeader('Kvörtun til umboðsmanns Alþingis', doc)
 
-  addSubheader('Dagsetning kvörtunar', doc)
+  addSubheader('Kvörtun móttekin', doc)
   addValue(
     application.created.toISOString().substring(0, 10),
     doc,
