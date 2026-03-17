@@ -55,6 +55,9 @@ export const Overview = () => {
   >()
 
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
+  const isReviewMissing = workingCase.defendants?.some(
+    (defendant) => !defendant.indictmentReviewDecision,
+  )
 
   const assignReviewer = async () => {
     if (!selectedIndictmentReviewer) {
@@ -187,9 +190,7 @@ export const Overview = () => {
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
           <Box component="section">
-            {workingCase.defendants?.some(
-              (defendant) => !defendant.indictmentReviewDecision,
-            ) && (
+            {isReviewMissing && (
               <IndictmentReviewerSelector
                 workingCase={workingCase}
                 selectedIndictmentReviewer={selectedIndictmentReviewer}
@@ -200,9 +201,7 @@ export const Overview = () => {
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
-        {workingCase.defendants?.some(
-          (defendant) => !defendant.indictmentReviewDecision,
-        ) && (
+        {isReviewMissing && (
           <FormFooter
             nextButtonIcon="arrowForward"
             previousUrl={getStandardUserDashboardRoute(user)}
