@@ -1654,6 +1654,10 @@ export const shipsMessages = defineMessages({
     id: 'sp.ships:expired-tag',
     defaultMessage: 'Ógilt',
   },
+  reinspectionNeededTag: {
+    id: 'sp.ships:reinspection-needed-tag',
+    defaultMessage: 'Þarfnast endurskoðunar',
+  },
   registrationTab: {
     id: 'sp.ships:registration-tab',
     defaultMessage: 'Skráning',

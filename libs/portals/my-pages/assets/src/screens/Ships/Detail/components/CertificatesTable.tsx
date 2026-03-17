@@ -48,11 +48,15 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
               variant={
                 value === ShipRegistryCertificateStatus.Invalid
                   ? 'red'
-                  : 'darkerBlue'
+                  : value === ShipRegistryCertificateStatus.ReinspectionNeeded
+                  ? 'yellow'
+                  : 'mint'
               }
             >
               {value === ShipRegistryCertificateStatus.Invalid
                 ? formatMessage(shipsMessages.invalidTag)
+                : value === ShipRegistryCertificateStatus.ReinspectionNeeded
+                ? formatMessage(shipsMessages.reinspectionNeededTag)
                 : formatMessage(shipsMessages.validTag)}
             </Tag>
           ) : null,
@@ -62,32 +66,32 @@ export const CertificatesTable = ({ certificates, loading }: Props) => {
     [],
   )
 
+  const filteredCertificates = useMemo(
+    () =>
+      search
+        ? certificates.filter((c) =>
+            c.name?.toLowerCase().includes(search.toLowerCase()),
+          )
+        : certificates,
+    [certificates, search],
+  )
+
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data: certificates }, useExpanded)
+    useTable({ columns, data: filteredCertificates }, useExpanded)
 
   return (
     <Box marginTop={4}>
-      <Box display="flex" alignItems="center" columnGap={2} marginBottom={3}>
-        <Box flexGrow={1} style={{ maxWidth: 318 }}>
-          <Input
-            name="cert-search"
-            placeholder={formatMessage(
-              shipsMessages.certificatesSearchPlaceholder,
-            )}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            size="sm"
-            backgroundColor="blue"
-          />
-        </Box>
-        <Button
-          variant="utility"
-          icon="download"
-          iconType="outline"
-          size="small"
-        >
-          {formatMessage(shipsMessages.certificatesDownload)}
-        </Button>
+      <Box marginBottom={3} style={{ maxWidth: 318 }}>
+        <Input
+          name="cert-search"
+          placeholder={formatMessage(
+            shipsMessages.certificatesSearchPlaceholder,
+          )}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          size="sm"
+          backgroundColor="blue"
+        />
       </Box>
 
       {loading ? (
