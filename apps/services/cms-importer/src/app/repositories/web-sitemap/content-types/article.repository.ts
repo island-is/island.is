@@ -57,7 +57,7 @@ export class ArticleRepository implements SitemapUrlFetcher {
       const ids = subArticleIds.splice(0, 10)
       const subArticleResponse = await this.managementClient.getEntries({
         content_type: 'subArticle',
-        select: 'sys,fields.url',
+        select: 'sys,fields.url,fields.title',
         'sys.id[in]': ids.join(','),
         'sys.publishedAt[exists]': true,
         'fields.url[exists]': true,
@@ -73,12 +73,14 @@ export class ArticleRepository implements SitemapUrlFetcher {
         const enParentArticleSlug = subArticleMap.get(entry.sys.id)
           ?.parentArticleSlug?.[EN_LOCALE]
         if (!parentArticleSlug && !enParentArticleSlug) continue
-        const url = parentArticleSlug
-          ? `https://island.is/${parentArticleSlug}/${slug}`
-          : ''
-        const enUrl = enParentArticleSlug
-          ? `https://island.is/en/${enParentArticleSlug}/${enSlug}`
-          : ''
+        const url =
+          parentArticleSlug && entry.fields.title?.[LOCALE]
+            ? `https://island.is/${parentArticleSlug}/${slug}`
+            : ''
+        const enUrl =
+          enParentArticleSlug && entry.fields.title?.[EN_LOCALE]
+            ? `https://island.is/en/${enParentArticleSlug}/${enSlug}`
+            : ''
         urls.push({
           loc: {
             [LOCALE]: url,
