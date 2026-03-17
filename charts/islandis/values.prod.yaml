@@ -494,7 +494,7 @@ api:
     min: 3
   resources:
     limits:
-      cpu: '1200m'
+      cpu: '3000m'
       memory: '2500Mi'
     requests:
       cpu: '900m'
@@ -4589,7 +4589,7 @@ web:
     min: 3
   resources:
     limits:
-      cpu: '1800m'
+      cpu: '3000m'
       memory: '1500Mi'
     requests:
       cpu: '1200m'
