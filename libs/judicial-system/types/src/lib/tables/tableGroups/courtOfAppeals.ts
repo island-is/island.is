@@ -1,13 +1,13 @@
 import { CaseTableGroup, CaseTableType } from '../caseTableTypes'
 
 const courtOfAppealsRequestCasesTableGroup = {
-  title: 'Rannsóknarmál',
+  title: 'Kærð sakamál',
   tables: [
     {
       type: CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_IN_PROGRESS,
       route: 'rannsoknarmal-i-vinnslu',
-      title: 'Rannsóknarmál í vinnslu',
-      description: 'Kærð sakamál sem eru til meðferðar.',
+      title: 'Mál í vinnslu',
+      description: 'Kærðir úrskurðir í R-málum og S-málum.',
       includeCounter: true,
     },
     {
