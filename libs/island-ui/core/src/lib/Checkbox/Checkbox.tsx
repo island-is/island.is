@@ -30,6 +30,8 @@ export interface CheckboxProps {
   /** subLabel and rightContent can only be used if the 'large' prop set to true */
   subLabel?: React.ReactNode
   rightContent?: React.ReactNode
+  /** Optional content rendered below the checkbox, inside the same container (e.g. nested form fields) */
+  children?: React.ReactNode
 }
 
 interface AriaError {
@@ -59,6 +61,7 @@ export const Checkbox = ({
   dataTestId,
   filled = false,
   rightContent,
+  children,
 }: CheckboxProps & TestSupport) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const errorId = `${id}-error`
@@ -192,6 +195,11 @@ export const Checkbox = ({
           </div>
         )}
       </label>
+      {children != null && (
+        <Box className={styles.childrenContainerWrapper}>
+          <Box className={styles.childrenContainer}>{children}</Box>
+        </Box>
+      )}
     </Box>
   )
 }

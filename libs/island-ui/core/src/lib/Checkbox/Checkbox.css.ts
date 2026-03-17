@@ -63,6 +63,29 @@ export const largeLabel = style({
   },
 })
 
+/** Wrapper that provides space around the bordered box, matching largeLabel padding */
+export const childrenContainerWrapper = style({
+  padding: `0 ${theme.spacing[2]}px ${theme.spacing[3]}px`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      padding: theme.spacing[3],
+      paddingTop: 0,
+    },
+  },
+})
+
+export const childrenContainer = style({
+  border: `1px solid ${theme.color.blue200}`,
+  borderRadius: theme.border.radius.large,
+  background: theme.color.blue100,
+  padding: `${theme.spacing[3]}px ${theme.spacing[2]}px`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      padding: theme.spacing[3],
+    },
+  },
+})
+
 export const checkbox = style({
   alignItems: 'center',
   alignSelf: 'center',

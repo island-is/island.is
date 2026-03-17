@@ -41,13 +41,13 @@ export const EditPermission = () => {
     >
       <Box display="flex" flexDirection="column" rowGap={5}>
         <PermissionBasicInfo />
-        <PermissionContent
-          isNewPermissionsOptionsEnabled={isNewPermissionsOptionsEnabled}
-        />
+        <PermissionContent />
         {isNewPermissionsOptionsEnabled && (
           <PermissionSecurityAndCapabilities />
         )}
-        <PermissionDelegations />
+        <PermissionDelegations
+          isNewPermissionsOptionsEnabled={isNewPermissionsOptionsEnabled}
+        />
         <PermissionAccessControl />
         <PublishPermission />
       </Box>
