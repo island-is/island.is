@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -26,14 +26,12 @@ import {
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseIndictmentRulingDecision,
-  IndictmentCaseReviewDecision,
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import {
-  CONFIRM_PROSECUTOR_DECISION,
   ConfirmationModal,
   isReviewerAssignedModal,
   REVIEWER_ASSIGNED,
@@ -75,31 +73,6 @@ export const Overview = () => {
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [router, workingCase.id],
-  )
-
-  const [originalReviewDecisions, setOriginalReviewDecisions] = useState<
-    Record<string, IndictmentCaseReviewDecision | null | undefined>
-  >({})
-
-  // Store original review decisions when workingCase loads to see if they change
-  useEffect(() => {
-    if (
-      workingCase.defendants?.length &&
-      workingCase.defendants.every((d) => d.id) &&
-      !Object.keys(originalReviewDecisions).length
-    ) {
-      const decisions = workingCase.defendants.reduce((acc, defendant) => {
-        acc[defendant.id] = defendant.indictmentReviewDecision
-        return acc
-      }, {} as Record<string, IndictmentCaseReviewDecision | null | undefined>)
-      setOriginalReviewDecisions(decisions)
-    }
-  }, [workingCase.defendants, originalReviewDecisions])
-
-  const hasReviewDecisionChanged = workingCase.defendants?.some(
-    (defendant) =>
-      defendant.indictmentReviewDecision !==
-      originalReviewDecisions[defendant.id],
   )
 
   const { verdictStatusAlerts, verdictTimelineCards } = useMemo(() => {
@@ -229,7 +202,7 @@ export const Overview = () => {
       <FormContentContainer isFooter>
         {workingCase.defendants?.some(
           (defendant) => !defendant.indictmentReviewDecision,
-        ) ? (
+        ) && (
           <FormFooter
             nextButtonIcon="arrowForward"
             previousUrl={getStandardUserDashboardRoute(user)}
@@ -242,16 +215,6 @@ export const Overview = () => {
             }
             onNextButtonClick={assignReviewer}
             nextButtonText={fm(core.continue)}
-          />
-        ) : (
-          <FormFooter
-            previousUrl={getStandardUserDashboardRoute(user)}
-            nextIsLoading={isLoadingWorkingCase}
-            nextIsDisabled={!hasReviewDecisionChanged}
-            onNextButtonClick={() =>
-              setConfirmationModal(CONFIRM_PROSECUTOR_DECISION)
-            }
-            nextButtonText={fm(strings.changeReviewedDecisionButtonText)}
           />
         )}
       </FormContentContainer>
