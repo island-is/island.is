@@ -48,6 +48,7 @@ import {
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
+  getApplicationExternalData,
   getApplicationType,
   getOtherGuardian,
   otherGuardianApprovalStatePendingAction,
@@ -108,6 +109,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               externalDataId: 'preferredSchool',
               throwOnError: true,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.getIsApplicationBlocked,
+              externalDataId: 'isApplicationBlocked',
+              throwOnError: true,
+            }),
           ],
           roles: [
             {
@@ -136,10 +142,38 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
-            actions: 'setApplicationType',
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.DRAFT,
+              actions: 'setApplicationType',
+              cond: (application) => {
+                const { isApplicationBlocked } = getApplicationExternalData(
+                  application?.application?.externalData,
+                )
+                return !isApplicationBlocked
+              },
+            },
+            {
+              target: States.APPLICATION_BLOCKED,
+            },
+          ],
+        },
+      },
+      [States.APPLICATION_BLOCKED]: {
+        meta: {
+          name: States.APPLICATION_BLOCKED,
+          status: FormModes.DRAFT,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ApplicationBlocked').then((module) =>
+                  Promise.resolve(module.ApplicationBlocked),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
       [States.DRAFT]: {

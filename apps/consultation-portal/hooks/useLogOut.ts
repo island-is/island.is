@@ -1,9 +1,11 @@
-import { signOut } from 'next-auth/client'
+import { signOut, useSession } from 'next-auth/react'
 import useUser from './useUser'
+import { AuthSession } from '@island.is/next-ids-auth'
 import { signOutUrl } from '../lib/idsConfig'
 
 export const useLogOut = () => {
   const { setUser, setIsAuthenticated } = useUser()
+  const { data: session } = useSession() as { data: AuthSession | null }
 
   const logOut = () => {
     setUser && setUser(undefined)
@@ -11,7 +13,7 @@ export const useLogOut = () => {
     sessionStorage.clear()
 
     signOut({
-      callbackUrl: signOutUrl(window),
+      callbackUrl: signOutUrl(window, session?.idToken),
     })
   }
 
