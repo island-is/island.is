@@ -26,23 +26,6 @@ export const mapStringToGender = (gender?: string | null): Gender | undefined =>
     ? Gender.OTHER
     : undefined
 
-export const getShortGender = (gender?: Gender): string => {
-  switch (gender) {
-    case Gender.MALE: {
-      return 'kk'
-    }
-    case Gender.FEMALE: {
-      return 'kvk'
-    }
-    case Gender.OTHER: {
-      return 'annað'
-    }
-    default: {
-      return ''
-    }
-  }
-}
-
 export const getRestrictionTagVariant = (
   restriction: CaseCustodyRestrictions,
 ): TagVariant => {
