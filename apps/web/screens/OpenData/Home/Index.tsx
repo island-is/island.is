@@ -102,6 +102,16 @@ const OpenDataPage: Screen<OpenDataProps> = ({ namespace }) => {
         publishers:
           filters.publisher?.length > 0 ? filters.publisher : undefined,
         formats: filters.format?.length > 0 ? filters.format : undefined,
+        status: filters.status?.length > 0 ? filters.status : undefined,
+        license: filters.license?.length > 0 ? filters.license : undefined,
+        groups: filters.group?.length > 0 ? filters.group : undefined,
+        lastUpdated: filters.lastUpdated?.[0] || undefined,
+        updateFrequency:
+          filters.updateFrequency?.length > 0
+            ? filters.updateFrequency
+            : undefined,
+        timePeriod:
+          filters.timePeriod?.length > 0 ? filters.timePeriod : undefined,
         page: selectedPage,
         limit: ITEMS_PER_PAGE,
       },

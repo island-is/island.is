@@ -166,7 +166,6 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
     }
   }, [])
 
-  const { id } = router.query
   const datasetId = Array.isArray(id) ? id[0] : id
   const { data, loading, error } = useQuery(GET_OPEN_DATA_DATASET, {
     variables: { id: datasetId as string },
@@ -346,12 +345,6 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                         {n('status', 'Staða')}
                       </Text>
                       <Text>{n('active', 'Virkt')}</Text>
-                    </Box>
-                    <Box>
-                      <Text variant="small" color="dark300">
-                        {n('access', 'Aðgangur')}
-                      </Text>
-                      <Text>{n('open', 'Opinn')}</Text>
                     </Box>
                     <Box>
                       <Text variant="small" color="dark300">
@@ -691,9 +684,14 @@ OpenDataDetailsPage.getProps = async ({ apolloClient, query, locale }) => {
     }),
   ])
 
-  const namespace = JSON.parse(
-    namespaceResponse?.data?.getNamespace?.fields || '{}',
-  ) as Record<string, string>
+  let namespace: Record<string, string> = {}
+  try {
+    namespace = JSON.parse(
+      namespaceResponse?.data?.getNamespace?.fields || '{}',
+    )
+  } catch (e) {
+    console.error('Failed to parse namespace fields:', e)
+  }
 
   return {
     namespace,

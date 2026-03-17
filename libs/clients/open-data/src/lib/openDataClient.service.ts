@@ -31,9 +31,8 @@ export class OpenDataClientService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {
-    // Create HTTPS agent that ignores self-signed certificates for local development
     this.httpsAgent = new https.Agent({
-      rejectUnauthorized: false,
+      rejectUnauthorized: this.config.rejectUnauthorized,
     })
   }
 
@@ -133,6 +132,61 @@ export class OpenDataClientService {
             .map((c) => `tags:${this.escapeSolrValue(c)}`)
             .join(' OR ')
           fqParts.push(`(${tagFilter})`)
+        }
+
+        if (input.status && input.status.length > 0) {
+          const statusFilter = input.status
+            .map((s) => `state:${this.escapeSolrValue(s)}`)
+            .join(' OR ')
+          fqParts.push(`(${statusFilter})`)
+        }
+
+        if (input.license && input.license.length > 0) {
+          const licenseFilter = input.license
+            .map((l) => `license_id:${this.escapeSolrValue(l)}`)
+            .join(' OR ')
+          fqParts.push(`(${licenseFilter})`)
+        }
+
+        if (input.groups && input.groups.length > 0) {
+          const groupFilter = input.groups
+            .map((g) => `groups:${this.escapeSolrValue(g)}`)
+            .join(' OR ')
+          fqParts.push(`(${groupFilter})`)
+        }
+
+        if (input.lastUpdated) {
+          const now = new Date()
+          let fromDate: Date | undefined
+          switch (input.lastUpdated) {
+            case 'week':
+              fromDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+              break
+            case 'month':
+              fromDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+              break
+            case 'quarter':
+              fromDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
+              break
+            case 'year':
+              fromDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
+              break
+          }
+          if (fromDate) {
+            fqParts.push(
+              `metadata_modified:[${fromDate.toISOString()} TO NOW]`,
+            )
+          }
+        }
+
+        if (input.timePeriod && input.timePeriod.length > 0) {
+          const timeParts = input.timePeriod.map((tp) => {
+            if (tp === 'older') {
+              return `metadata_modified:[* TO 2021-01-01T00:00:00Z]`
+            }
+            return `metadata_modified:[${tp}-01-01T00:00:00Z TO ${tp}-12-31T23:59:59Z]`
+          })
+          fqParts.push(`(${timeParts.join(' OR ')})`)
         }
 
         if (fqParts.length > 0) {

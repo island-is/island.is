@@ -53,6 +53,12 @@ export interface GetDatasetsInput {
   categories?: string[]
   publishers?: string[]
   formats?: string[]
+  status?: string[]
+  license?: string[]
+  groups?: string[]
+  lastUpdated?: string
+  updateFrequency?: string[]
+  timePeriod?: string[]
   page?: number
   limit?: number
 }
@@ -117,6 +123,7 @@ export interface CKANPackage {
   title?: string
   notes?: string
   organization?: CKANOrganization
+  state?: string
   metadata_created?: string
   metadata_modified?: string
   tags?: CKANTag[]

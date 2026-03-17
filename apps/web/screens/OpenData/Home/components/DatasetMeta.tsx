@@ -31,7 +31,8 @@ export const DatasetMetaItem: React.FC<MetaItemProps> = ({
 }
 
 interface DatasetMetaProps {
-  lastUpdated: string
+  lastUpdatedLabel: string
+  lastUpdatedValue: string
   accessLabel: string
   accessValue: string
   formatLabel: string
@@ -41,7 +42,8 @@ interface DatasetMetaProps {
 }
 
 export const DatasetMeta: React.FC<DatasetMetaProps> = ({
-  lastUpdated,
+  lastUpdatedLabel,
+  lastUpdatedValue,
   accessLabel,
   accessValue,
   formatLabel,
@@ -62,8 +64,8 @@ export const DatasetMeta: React.FC<DatasetMetaProps> = ({
       <Box marginBottom={isHorizontal ? 0 : 1}>
         <DatasetMetaItem
           icon="calendar"
-          label={lastUpdated.split(':')[0]}
-          value={lastUpdated.split(': ')[1] || lastUpdated}
+          label={lastUpdatedLabel}
+          value={lastUpdatedValue}
           size={size}
         />
       </Box>

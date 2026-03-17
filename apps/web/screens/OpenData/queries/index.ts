@@ -15,6 +15,7 @@ export const GET_OPEN_DATA_DATASETS = gql`
         format
         tags
         downloadUrl
+        license
         metadata {
           size
           recordCount

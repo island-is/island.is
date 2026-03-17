@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { ComplaintsCommitteeRulingsClientService } from '@island.is/clients/one-systems-complaints-committee-rulings'
+import { RulingsApi } from '@island.is/clients/one-systems-complaints-committee-rulings'
 import {
   OneSystemsRulingsResponse,
   OneSystemsRulingPdfResponse,
@@ -8,14 +8,12 @@ import { GetOneSystemsRulingsInput } from './graphql/dto'
 
 @Injectable()
 export class OneSystemsRulingsService {
-  constructor(
-    private readonly rulingsClient: ComplaintsCommitteeRulingsClientService,
-  ) {}
+  constructor(private readonly rulingsApi: RulingsApi) {}
 
   async getRulings(
     input: GetOneSystemsRulingsInput,
   ): Promise<OneSystemsRulingsResponse> {
-    const response = await this.rulingsClient.getRulings({
+    const response = await this.rulingsApi.getRulings({
       year: input.year,
       limit: input.limit,
       offset: input.offset,
@@ -23,19 +21,18 @@ export class OneSystemsRulingsService {
 
     return {
       rulings: (response.rulings ?? []).map((ruling) => ({
-        id: ruling.id,
-        title: ruling.title,
-        description: ruling.description,
-        publishedDate: ruling.publishedDate,
+        id: ruling.id ?? '',
+        title: ruling.title ?? '',
+        description: ruling.description ?? '',
+        publishedDate: ruling.publishedDate ?? null,
       })),
-      totalCount: response.totalCount,
+      totalCount: response.totalCount ?? 0,
     }
   }
 
   async getRulingPdf(id: string): Promise<OneSystemsRulingPdfResponse> {
-    const pdfData = await this.rulingsClient.getRulingPdf(id)
+    const pdfData = await this.rulingsApi.getRulingPdf({ id })
 
-    // The API returns the PDF as a base64 string or raw data
     return {
       base64: pdfData,
       contentType: 'application/pdf',

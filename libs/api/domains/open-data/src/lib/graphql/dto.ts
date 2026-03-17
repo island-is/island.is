@@ -14,6 +14,24 @@ export class GetOpenDataDatasetsInput {
   @Field(() => [String], { nullable: true })
   formats?: string[]
 
+  @Field(() => [String], { nullable: true })
+  status?: string[]
+
+  @Field(() => [String], { nullable: true })
+  license?: string[]
+
+  @Field(() => [String], { nullable: true })
+  groups?: string[]
+
+  @Field({ nullable: true })
+  lastUpdated?: string
+
+  @Field(() => [String], { nullable: true })
+  updateFrequency?: string[]
+
+  @Field(() => [String], { nullable: true })
+  timePeriod?: string[]
+
   @Field(() => Int, { nullable: true })
   page?: number
 

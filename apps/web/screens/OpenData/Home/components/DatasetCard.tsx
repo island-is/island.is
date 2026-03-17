@@ -16,6 +16,7 @@ export interface DataItem {
   format: string
   tags: string[]
   downloadUrl?: string
+  license?: string
 }
 
 interface TranslationFn {
@@ -113,8 +114,8 @@ const MetaInfo: React.FC<{
     },
     {
       icon: isGrid ? ('person' as const) : ('lockOpened' as const),
-      label: n('access', 'Aðgangur'),
-      value: n('open', 'Opinn'),
+      label: n('license', 'Notkunarleyfi'),
+      value: item.license || 'CC-BY (4.0)',
     },
     {
       icon: 'document' as const,
