@@ -7,7 +7,6 @@ import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts
 import { isRulingOrDismissalCase } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
-  BlueBox,
   Conclusion,
   CourtCaseInfo,
   FormContentContainer,
@@ -21,7 +20,6 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
-  SectionHeading,
   UserContext,
   VerdictTimelineCard,
 } from '@island.is/judicial-system-web/src/components'
@@ -34,7 +32,6 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
-import { ReviewDecision } from '../../components/ReviewDecision/ReviewDecision'
 import {
   CONFIRM_PROSECUTOR_DECISION,
   ConfirmationModal,
@@ -219,38 +216,12 @@ export const Overview = () => {
           <Box component="section">
             {workingCase.defendants?.some(
               (defendant) => !defendant.indictmentReviewDecision,
-            ) ? (
+            ) && (
               <IndictmentReviewerSelector
                 workingCase={workingCase}
                 selectedIndictmentReviewer={selectedIndictmentReviewer}
                 setSelectedIndictmentReviewer={setSelectedIndictmentReviewer}
               />
-            ) : (
-              workingCase.defendants && (
-                <div className={grid({ gap: 3 })}>
-                  {workingCase.defendants.map((defendant) => (
-                    <BlueBox key={`${defendant.id}_review_decision`}>
-                      <SectionHeading
-                        title={defendant.name ?? ''}
-                        variant="h4"
-                        heading="h4"
-                        marginBottom={2}
-                        required
-                      />
-                      <ReviewDecision
-                        caseId={workingCase.id}
-                        defendant={defendant}
-                        modalVisible={confirmationModal}
-                        setModalVisible={setConfirmationModal}
-                        isFine={
-                          workingCase.indictmentRulingDecision ===
-                          CaseIndictmentRulingDecision.FINE
-                        }
-                      />
-                    </BlueBox>
-                  ))}
-                </div>
-              )
             )}
           </Box>
         </div>
