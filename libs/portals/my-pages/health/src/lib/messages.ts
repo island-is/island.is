@@ -2079,6 +2079,21 @@ export const messages = defineMessages({
     defaultMessage: 'Veldu gögn sem þú vilt veita heimild til birtingar',
     id: 'sp.health:choose-data-to-share',
   },
+  permitApprovalTitle: {
+    id: 'sp.health:permit-approval-title',
+    defaultMessage:
+      'Upplýst samþykki fyrir miðlun sjúkraskrárupplýsinga milli Evrópulanda',
+  },
+  permitApprovalTopText: {
+    id: 'sp.health:permit-approval-top-text',
+    defaultMessage:
+      'Heimildin leyfir birtingu upplýsinga úr sjúkraskrá þinni til heilbrigðisstofnunar í öðru Evrópulandi, í þeim tilgangi að tryggja örugga og samfellda heilbrigðisþjónustu. Lykilheilsufarsupplýsingar fela í sér eftirfarandi upplýsingar:',
+  },
+  permitApprovalBottomText: {
+    id: 'sp.health:permit-approval-bottom-text',
+    defaultMessage:
+      'Upplýsingarnar eru viðkvæmar og verða meðhöndlaðar í samræmi við lög um persónuvernd og trúnað. Lög nr. 55/2009 og EU reglugerð nr. 2025/327. Hægt er að afturkalla samþykki hvenær sem er, nema í bráðatilvikum þar sem þú ert ófær um að veita samþykki.',
+  },
   permitApprovalDescription: {
     id: 'sp.health:permit-approval-description',
     defaultMessage:

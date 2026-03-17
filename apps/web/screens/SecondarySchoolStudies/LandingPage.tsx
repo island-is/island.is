@@ -103,10 +103,10 @@ const SecondarySchoolStudiesLandingPage: Screen<
       })
       .sort((left, right) => {
         const leftWeight = getDeterministicWeight(
-          `${hourlySeed}:${left.item.id ?? left.refIndex}`,
+          `${hourlySeed}:${left.item.programmeId ?? left.refIndex}`,
         )
         const rightWeight = getDeterministicWeight(
-          `${hourlySeed}:${right.item.id ?? right.refIndex}`,
+          `${hourlySeed}:${right.item.programmeId ?? right.refIndex}`,
         )
 
         if (leftWeight === rightWeight) {
@@ -145,6 +145,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
     includeScore: true,
     ignoreLocation: true,
     minMatchCharLength: 3,
+    useExtendedSearch: true,
     keys: [
       { name: 'title', weight: 2 },
       { name: 'specialization.title', weight: 1 },
@@ -176,7 +177,6 @@ const SecondarySchoolStudiesLandingPage: Screen<
 
     // Reset to page 1 when filters or search changes
     setSelectedPage(1)
-
     // If no filters and no search term, show all results
     if (searchTerm === '' && activeFiltersFound.length === 0) {
       setFilteredResults(originalSortedResults)
@@ -200,7 +200,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
 
     return paginatedResults.map((result) => ({
       ...transformProgrammeToCard(result.item, formatMessage),
-      uniqueKey: `${result.refIndex}-${result.item.id}`,
+      uniqueKey: `${result.refIndex}-${result.item.programmeId}`,
     }))
   }
 

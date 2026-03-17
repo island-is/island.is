@@ -28,6 +28,7 @@ export const serviceSetup =
           public: false,
         },
       })
+      .grantNamespaces('nginx-ingress-internal')
       .readiness('/health/check')
       .liveness('/liveness')
       .resources({

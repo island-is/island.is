@@ -55,6 +55,7 @@ export const filterNavigationTree = ({
 
   // Maps the enabled status to the nav item if provided
   item.enabled = routeItem?.enabled
+  item.disabledReason = routeItem?.disabledReason
 
   // Makes dynamic item visible in navigation after dynamicArray hook is run
   if (routeItem?.dynamic) {

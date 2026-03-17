@@ -37,7 +37,7 @@ const districtCourtRequestCasesCompletedColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
-  'caseSentToCourtDate',
+  'rulingDate',
   'requestCaseState',
   'appealCaseState',
   'validFromTo',
@@ -99,7 +99,7 @@ const districtCourtIndictmentsFinalizingColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
-  'caseSentToCourtDate',
+  'rulingDate',
   'indictmentRulingDecision',
 ]
 
@@ -114,7 +114,7 @@ const districtCourtIndictmentsCompletedColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
-  'caseSentToCourtDate',
+  'rulingDate',
   'indictmentRulingDecision',
 ]
 

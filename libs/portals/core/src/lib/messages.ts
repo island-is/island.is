@@ -128,4 +128,19 @@ export const m = defineMessages({
     id: 'portals:accessControlAccess',
     defaultMessage: 'Aðgangur',
   },
+  disabledReasonDefault: {
+    id: 'portals:disabledReasonDefault',
+    defaultMessage:
+      'Þú hefur ekki aðgang að upplýsingum um {moduleName}. Til að fá aðgang þarftu að biðja viðkomandi um rafrænt umboð.',
+  },
+  disabledReasonNotAvailableForActors: {
+    id: 'portals:disabledReasonNotAvailableForActors',
+    defaultMessage:
+      '{moduleName} er ekki í boði með rafrænu umboði. Ef þig vantar upplýsingar, hafðu samband við viðeigandi stofnun.',
+  },
+  disabledReasonNotMinor: {
+    id: 'portals:disabledReasonNotMinor',
+    defaultMessage:
+      '{moduleName} er ekki lengur aðgengileg forsjáraðilum 16 ára barna og eldri. Barnið getur veitt þér rafrænt umboð. Sjá nánar um takmarkaðan aðgang forsjáraðila við 16 ára aldur.',
+  },
 })
