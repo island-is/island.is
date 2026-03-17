@@ -1,61 +1,22 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import {
-  Appearance,
-  DynamicColorIOS,
-  Platform,
-  StatusBar,
-  useColorScheme,
-} from 'react-native'
-import { ThemeProvider as StyledThemeProvider } from 'styled-components'
-import { usePreferencesStore } from '@/stores/preferences-store'
-import { uiStore } from '@/stores/ui-store'
 import { getThemeWithPreferences } from '@/utils/get-theme-with-preferences'
 import {
-  DefaultTheme,
-  ThemeProvider as NavigationThemeProvider,
+  ThemeProvider as NavigationThemeProvider
 } from '@react-navigation/native'
+import React, { useEffect, useMemo } from 'react'
+import {
+  DynamicColorIOS,
+  Platform,
+  StatusBar
+} from 'react-native'
+import { ThemeProvider as StyledThemeProvider } from 'styled-components'
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const brokenSystemScheme = useColorScheme()
-  const [systemScheme, setSystemScheme] = useState(brokenSystemScheme)
-  const preferences = usePreferencesStore()
-  const selectedTheme = getThemeWithPreferences(preferences, systemScheme)
-  const [prevColorScheme, setPrevColorScheme] = useState(
-    selectedTheme.colorScheme,
-  )
+  const appearanceMode = 'light' as const
+  const selectedTheme = useMemo(() => getThemeWithPreferences({ appearanceMode }, appearanceMode), [appearanceMode]);
 
   useEffect(() => {
-    if (brokenSystemScheme !== 'unspecified') {
-      setSystemScheme(brokenSystemScheme)
-    }
-  }, [brokenSystemScheme]);
-
-  useEffect(() => {
-    if (prevColorScheme !== selectedTheme.colorScheme) {
-      setPrevColorScheme(selectedTheme.colorScheme)
-    }
-    uiStore.setState({ theme: selectedTheme })
-    if (Platform.OS === 'ios' && preferences.appearanceMode === 'automatic') {
-      StatusBar.setBarStyle('default', true)
-    } else {
-      StatusBar.setBarStyle(
-        selectedTheme.isDark ? 'light-content' : 'dark-content',
-        true,
-      )
-    }
-  }, [selectedTheme])
-
-  // @todo migration - This is uncessecery if we dont allow changing the theme.
-  // Also its buggy.
-  // useEffect(() => {
-  //   Appearance.setColorScheme(
-  //     preferences.appearanceMode === 'automatic'
-  //       ? 'unspecified' // default to light, change back to 'automatic' when dark mode is ready
-  //       : selectedTheme.isDark
-  //       ? 'dark'
-  //       : 'light',
-  //   )
-  // }, [preferences.appearanceMode])
+    StatusBar.setBarStyle('dark-content', true);
+  }, []);
 
   const navigationTheme = useMemo(() => {
     return {
@@ -97,7 +58,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return (
     <NavigationThemeProvider value={navigationTheme}>
       <StyledThemeProvider
-        theme={{ ...selectedTheme, appearanceMode: preferences.appearanceMode }}
+        theme={{ ...selectedTheme, appearanceMode }}
       >
         {children}
       </StyledThemeProvider>

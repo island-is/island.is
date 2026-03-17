@@ -61,10 +61,6 @@ export default ({ config }) => {
         {
           backgroundColor: '#ffffff',
           image: `${getIconFolder()}/splashscreen.png`,
-          dark: {
-            image: `${getIconFolder()}/splashscreen.png`,
-            backgroundColor: '#000000',
-          },
           imageWidth: 200,
         },
       ],

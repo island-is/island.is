@@ -1,7 +1,7 @@
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Reanimated, {
   Extrapolation,
   interpolate,
@@ -26,7 +26,7 @@ import styled from 'styled-components/native'
 import * as Device from 'expo-device'
 import { router, Stack, useFocusEffect } from 'expo-router'
 
-import { Bubble, Button, theme } from '@/ui'
+import { Bubble, Button, theme, Typography } from '@/ui'
 import flashligth from '@/assets/icons/flashlight.png'
 import {
   useVerifyLicenseBarcodeMutation,
@@ -36,11 +36,16 @@ import { isIos } from '@/utils/devices'
 import { isJWT } from '@/utils/token'
 import { authStore, suppressLockScreen } from '@/stores/auth-store'
 import { setScanResult } from '../../../../../stores/scan-result-store'
+import { StackScreen } from '../../../../../components/stack-screen'
+import { showPrompt } from '../../../../../lib/show-picker'
 
 const BottomRight = styled.View`
   position: absolute;
   right: 32px;
   bottom: 32px;
+  left: 32px;
+  flex-direction: row;
+  gap: 16px;
 `
 
 const FlashLight = styled.View`
@@ -58,9 +63,10 @@ const FlashImg = styled.Image`
   width: 32px;
 `
 
-const BubbleWrapper = styled.View`
+const BubbleWrapper = styled.SafeAreaView`
   position: absolute;
-  top: 64px;
+  top: 32px;
+  padding-top: 16px;
   left: 0;
   right: 0;
   align-items: center;
@@ -79,7 +85,7 @@ Reanimated.addWhitelistedNativeProps({
 })
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera)
 
-const isSimulator = isIos && Device.isDevice === false
+const isSimulator = Device.isDevice === false
 
 export default function LicenseScannerScreen() {
   const intl = useIntl()
@@ -218,49 +224,13 @@ export default function LicenseScannerScreen() {
     </BubbleWrapper>
   )
 
-  if (isSimulator) {
-    return (
-      <>
-        <Stack.Screen
-          options={{
-            title: intl.formatMessage({ id: 'licenseScanner.title' }),
-          }}
-        />
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: theme.color.blue200,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Button
-            title="Paste barcode"
-            onPress={() => {
-              Alert.prompt('Paste barcode', '', (text) => {
-                void onCodeScanned(
-                  [
-                    {
-                      type: PDF_417,
-                      value: text,
-                    },
-                  ],
-                  {} as Frame,
-                )
-              })
-            }}
-          />
-          {renderBubble()}
-        </View>
-      </>
-    )
-  }
-
   return (
     <>
-      <Stack.Screen
+      <StackScreen
+        closeable
         options={{
           title: intl.formatMessage({ id: 'licenseScanner.title' }),
+          headerTransparent: false,
         }}
       />
       <GestureHandlerRootView style={{ flex: 1 }}>
@@ -278,7 +248,43 @@ export default function LicenseScannerScreen() {
             </GestureDetector>
           )}
           {renderBubble()}
-          <BottomRight>
+          <BottomRight
+            style={{
+              justifyContent: 'space-between',
+              // alignContent: 'space-between'
+              // flex: 1,
+              flex: 1,
+            }}
+          >
+            {isSimulator ? (
+              <TouchableOpacity
+                onPress={() => {
+                  showPrompt({
+                    title: 'Paste barcode',
+                    message: 'Paste the barcode data as text',
+                    placeholder: 'Barcode data',
+                  }).then((action) => {
+                    if (action) {
+                      onCodeScanned(
+                        [
+                          {
+                            type: PDF_417,
+                            value: action.text,
+                          },
+                        ],
+                        {} as Frame,
+                      )
+                    }
+                  })
+                }}
+              >
+                <FlashLight>
+                  <Typography color="white">Paste</Typography>
+                </FlashLight>
+              </TouchableOpacity>
+            ) : (
+              <View style={{ flex: 1 }} />
+            )}
             <TouchableOpacity onPress={onFlashlightPress}>
               <FlashLight>
                 <FlashImg source={flashligth} resizeMode="contain" />

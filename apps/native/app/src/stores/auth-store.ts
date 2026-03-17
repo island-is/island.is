@@ -69,10 +69,15 @@ interface AuthStore {
 const getAppAuthConfig = () => {
   const config = getConfig()
   const android = isAndroid ? '.auth' : ''
+  const clientId =
+    config.isTestingApp && config.id === 'prod'
+      // Use this custom client ID for testing on prod.
+      ? '@island.is/island.dev-appid'
+      : config.idsClientId
 
   return {
     issuer: config.idsIssuer,
-    clientId: config.idsClientId,
+    clientId,
     redirectUrl: `${config.bundleId}${android}://oauth`,
     scopes: config.idsScopes,
   }
@@ -267,7 +272,7 @@ export const authStore = create<AuthStore>((set, get) => ({
 
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const tokenToRevoke = get().authorizeResult?.accessToken;
+    const tokenToRevoke = get().authorizeResult?.accessToken
     try {
       if (tokenToRevoke) {
         await revoke(appAuthConfig, {

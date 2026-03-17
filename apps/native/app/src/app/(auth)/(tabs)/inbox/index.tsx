@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from 'react-intl'
 import {
   ActivityIndicator,
   Alert,
@@ -8,12 +8,15 @@ import {
   Image,
   ListRenderItemInfo,
   Platform,
+  Pressable,
   RefreshControl,
+  ToastAndroid,
   TouchableNativeFeedback,
+  useWindowDimensions,
   View,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-
+import starIcon from '@/assets/icons/star.png'
 import { useApolloClient } from '@apollo/client'
 import filterIcon from '@/assets/icons/filter-icon.png'
 import inboxReadIcon from '@/assets/icons/inbox-read.png'
@@ -33,6 +36,7 @@ import {
   useInboxFilterStore,
 } from '@/stores/inbox-filter-store'
 import {
+  blue400,
   Button,
   EmptyList,
   fontByWeight,
@@ -50,6 +54,9 @@ import { Toast, ToastVariant } from '../../../../components/toast'
 import { normalizesFilters } from '../../../../utils/inbox-filters'
 import { Text } from 'react-native'
 import { StackScreen } from '../../../../components/stack-screen'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { uiStore } from '../../../../stores/ui-store'
+import * as Burnt from 'burnt'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
@@ -79,11 +86,49 @@ const TagsWrapper = styled.View`
   flex-wrap: wrap;
 `
 
+const Action = ({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: number
+  label: string
+  onPress: () => void
+}) => {
+  const { width } = useWindowDimensions()
+  const { left, right } = useSafeAreaInsets()
+  const itemWidth = (width - left - right) / 3 - 32
+  return (
+    <Pressable
+      onPress={onPress}
+      style={{
+        width: itemWidth,
+        height: 22,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 8,
+      }}
+    >
+      <Image
+        source={icon}
+        style={{
+          width: 16,
+          height: 16,
+          tintColor: blue400,
+        }}
+        resizeMode="contain"
+      />
+      <Typography size={13} weight="500">
+        {label}
+      </Typography>
+    </Pressable>
+  )
+}
+
 export default function InboxScreen() {
   const intl = useIntl()
   const theme = useTheme()
-  const scrollY = useRef(new Animated.Value(0)).current
-  const flatListRef = useRef<FlatList>(null)
   const client = useApolloClient()
   const [query, setQuery] = useState('')
   const [loadingMore, setLoadingMore] = useState(false)
@@ -288,30 +333,35 @@ export default function InboxScreen() {
   ) => {
     showToastForBulkSelectAction({
       variant: 'error',
-      title: intl.formatMessage({
+      title: `${intl.formatMessage({
         id: `inbox.bulkSelect.${actionType}Error`,
-      }),
-      message: intl.formatMessage({
+      })}: ${intl.formatMessage({
         id: 'inbox.bulkSelect.pleaseTryAgain',
-      }),
+      })}`,
     })
   }
 
   const showToastForBulkSelectAction = ({
     variant,
     title,
-    message,
   }: {
     variant: ToastVariant
     title: string
-    message?: string
   }) => {
-    setToastInfo({
-      variant: variant,
-      title: title,
-      message: message ?? undefined,
-    })
-    setToastVisible(true)
+    if (Platform.OS === 'android') {
+      ToastAndroid.show(title, ToastAndroid.SHORT)
+    } else {
+      Burnt.toast({
+        title,
+        preset:
+          variant === 'success'
+            ? 'done'
+            : variant === 'error'
+            ? 'error'
+            : 'none',
+        from: 'bottom',
+      })
+    }
   }
 
   const renderItem = useCallback(
@@ -383,7 +433,7 @@ export default function InboxScreen() {
     return items
   }, [res.loading, res.data, items]) as ListItem[]
 
-  const onPressMarkAllAsRead = useCallback(() => {
+  const onMarkAllAsReadPress = useCallback(() => {
     Alert.alert(
       intl.formatMessage({
         id: 'inbox.markAllAsReadPromptTitle',
@@ -410,6 +460,87 @@ export default function InboxScreen() {
       ],
     )
   }, [markAllAsRead, intl])
+
+  const onStarPress = useCallback(async () => {
+    const result = await bulkSelectActionMutation({
+      variables: {
+        input: { action: 'bookmark', documentIds: selectedItems },
+      },
+    })
+
+    if (result.data?.postMailActionV2?.success) {
+      // If success, update selected documents to be starred in the cache
+      selectedItems.forEach((id) => {
+        client.cache.modify({
+          id: client.cache.identify({ __typename: 'DocumentV2', id }),
+          fields: {
+            bookmarked: () => true,
+          },
+        })
+      })
+      resetSelectState()
+      showToastForBulkSelectAction({
+        variant: 'success',
+        title: intl.formatMessage({
+          id: 'inbox.bulkSelect.starSuccess',
+        }),
+      })
+    } else {
+      handleBulkActionError('star')
+    }
+  }, [selectedItems, bulkSelectActionMutation, client, intl])
+
+  const onArchivePress = useCallback(async () => {
+    const result = await bulkSelectActionMutation({
+      variables: {
+        input: { action: 'archive', documentIds: selectedItems },
+      },
+    })
+    if (result.data?.postMailActionV2?.success) {
+      resetSelectState()
+      res.refetch()
+      showToastForBulkSelectAction({
+        variant: 'success',
+        title: intl.formatMessage({
+          id: 'inbox.bulkSelect.archiveSuccess',
+        }),
+      })
+    } else {
+      handleBulkActionError('archive')
+    }
+  }, [selectedItems, bulkSelectActionMutation, res, intl])
+
+  const onMarkAsReadPress = useCallback(async () => {
+    const result = await bulkSelectActionMutation({
+      variables: {
+        input: { action: 'read', documentIds: selectedItems },
+      },
+    })
+    if (result.data?.postMailActionV2?.success) {
+      // If success, update selected documents to be marked as read in the cache
+      selectedItems.forEach((id) => {
+        client.cache.modify({
+          id: client.cache.identify({ __typename: 'DocumentV2', id }),
+          fields: {
+            opened: () => true,
+          },
+        })
+      })
+      resetSelectState()
+      showToastForBulkSelectAction({
+        variant: 'success',
+        title: intl.formatMessage({
+          id: 'inbox.bulkSelect.markAsReadSuccess',
+        }),
+      })
+    } else {
+      handleBulkActionError('markAsRead')
+    }
+  }, [selectedItems, bulkSelectActionMutation, client, intl])
+
+  useEffect(() => {
+    uiStore.setState({ tabsHidden: selectState && !!selectedItems.length })
+  }, [selectState, selectedItems.length])
 
   return (
     <>
@@ -447,11 +578,11 @@ export default function InboxScreen() {
                   label: intl.formatMessage({
                     id: 'inbox.bulkSelectButton',
                   }),
-                labelStyle: {
-                  fontSize: 15,
-                  fontWeight: '400',
-                  fontFamily: fontByWeight('400'),
-                },
+                  labelStyle: {
+                    fontSize: 15,
+                    fontWeight: '400',
+                    fontFamily: fontByWeight('400'),
+                  },
                   onPress() {
                     setSelectedState((v) => !v)
                   },
@@ -464,11 +595,11 @@ export default function InboxScreen() {
                   label: intl.formatMessage({
                     id: 'inbox.bulkSelectCancelButton',
                   }),
-                labelStyle: {
-                  fontSize: 15,
-                  fontWeight: '400',
-                  fontFamily: fontByWeight('400'),
-                },
+                  labelStyle: {
+                    fontSize: 15,
+                    fontWeight: '400',
+                    fontFamily: fontByWeight('400'),
+                  },
                   onPress() {
                     resetSelectState()
                   },
@@ -478,10 +609,42 @@ export default function InboxScreen() {
             : [],
         }}
       />
+      {selectState && selectedItems.length ? (
+        <Stack.Toolbar placement="bottom">
+          <Stack.Toolbar.View separateBackground>
+            <Action
+              icon={require('@/assets/icons/star.png')}
+              label={intl.formatMessage({
+                id: 'inbox.bulkSelectActionStar',
+                defaultMessage: 'Stjörnumerkja',
+              })}
+              onPress={onStarPress}
+            />
+          </Stack.Toolbar.View>
+          <Stack.Toolbar.View separateBackground>
+            <Action
+              icon={require('@/assets/icons/tray.png')}
+              label={intl.formatMessage({
+                id: 'inbox.bulkSelectActionArchive',
+                defaultMessage: 'Geymsla',
+              })}
+              onPress={onArchivePress}
+            />
+          </Stack.Toolbar.View>
+          <Stack.Toolbar.View separateBackground>
+            <Action
+              icon={require('@/assets/icons/inbox-read.png')}
+              label={intl.formatMessage({
+                id: 'inbox.bulkSelectActionRead',
+                defaultMessage: 'Merkja lesið',
+              })}
+              onPress={onMarkAsReadPress}
+            />
+          </Stack.Toolbar.View>
+        </Stack.Toolbar>
+      ) : null}
       <Animated.FlatList
-        ref={flatListRef}
         testID={testIDs.SCREEN_HOME}
-        scrollEventThrottle={16}
         scrollToOverflowEnabled
         onEndReachedThreshold={0.5}
         style={{ flex: 1 }}
@@ -532,7 +695,7 @@ export default function InboxScreen() {
                   paddingRight: 12,
                   minWidth: 40,
                 }}
-                onPress={onPressMarkAllAsRead}
+                onPress={onMarkAllAsReadPress}
               />
             </ListHeaderWrapper>
             {isFilterApplied ? (
@@ -637,9 +800,7 @@ export default function InboxScreen() {
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
-        onEndReached={() => {
-          loadMore()
-        }}
+        onEndReached={() => loadMore()}
         ListFooterComponent={
           loadingMore && !res.error ? (
             <LoadingWrapper>
@@ -652,91 +813,14 @@ export default function InboxScreen() {
           ) : null
         }
       />
-      {selectState && selectedItems.length ? (
+      {selectState && selectedItems.length && Platform.OS === 'android' ? (
         <ActionBar
           loading={bulkSelectActionLoading}
-          onClickStar={async () => {
-            const result = await bulkSelectActionMutation({
-              variables: {
-                input: { action: 'bookmark', documentIds: selectedItems },
-              },
-            })
-
-            if (result.data?.postMailActionV2?.success) {
-              // If success, update selected documents to be starred in the cache
-              selectedItems.forEach((id) => {
-                client.cache.modify({
-                  id: client.cache.identify({ __typename: 'DocumentV2', id }),
-                  fields: {
-                    bookmarked: () => true,
-                  },
-                })
-              })
-              resetSelectState()
-              showToastForBulkSelectAction({
-                variant: 'success',
-                title: intl.formatMessage({
-                  id: 'inbox.bulkSelect.starSuccess',
-                }),
-              })
-            } else {
-              handleBulkActionError('star')
-            }
-          }}
-          onClickArchive={async () => {
-            const result = await bulkSelectActionMutation({
-              variables: {
-                input: { action: 'archive', documentIds: selectedItems },
-              },
-            })
-            if (result.data?.postMailActionV2?.success) {
-              resetSelectState()
-              res.refetch()
-              showToastForBulkSelectAction({
-                variant: 'success',
-                title: intl.formatMessage({
-                  id: 'inbox.bulkSelect.archiveSuccess',
-                }),
-              })
-            } else {
-              handleBulkActionError('archive')
-            }
-          }}
-          onClickMarkAsRead={async () => {
-            const result = await bulkSelectActionMutation({
-              variables: {
-                input: { action: 'read', documentIds: selectedItems },
-              },
-            })
-            if (result.data?.postMailActionV2?.success) {
-              // If success, update selected documents to be marked as read in the cache
-              selectedItems.forEach((id) => {
-                client.cache.modify({
-                  id: client.cache.identify({ __typename: 'DocumentV2', id }),
-                  fields: {
-                    opened: () => true,
-                  },
-                })
-              })
-              resetSelectState()
-              showToastForBulkSelectAction({
-                variant: 'success',
-                title: intl.formatMessage({
-                  id: 'inbox.bulkSelect.markAsReadSuccess',
-                }),
-              })
-            } else {
-              handleBulkActionError('markAsRead')
-            }
-          }}
+          onClickStar={onStarPress}
+          onClickArchive={onArchivePress}
+          onClickMarkAsRead={onMarkAsReadPress}
         />
       ) : null}
-      <Toast
-        {...toastInfo}
-        visible={toastVisible}
-        onHide={() => setToastVisible(false)}
-      />
-      {!isSearch && <TopLine scrollY={scrollY} />}
     </>
   )
 }

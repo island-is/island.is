@@ -101,6 +101,13 @@ export default function AuthLayout() {
         }}
       />
       <Stack.Screen
+        name="(modals)/edit-confirm"
+        options={{
+          ...modalScreenOptions,
+          headerTitle: intl.formatMessage({ id: 'edit.confirm.screenTitle' }),
+        }}
+      />
+      <Stack.Screen
         name="(modals)/edit-email"
         options={{
           ...modalScreenOptions,
@@ -130,6 +137,13 @@ export default function AuthLayout() {
           presentation: 'formSheet',
           sheetAllowedDetents: 'fitToContents',
           headerTitle: intl.formatMessage({ id: 'homeOptions.screenTitle' }),
+        }}
+      />
+      <Stack.Screen
+        name="(modals)/passkey"
+        options={{
+          ...modalScreenOptions,
+          headerTitle: '',
         }}
       />
       <Stack.Screen

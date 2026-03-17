@@ -21,7 +21,7 @@ import { MoreInfoContiner } from '@/components/more-info-container/more-info-con
 import { formatNationalId } from '@/lib/format-national-id'
 import { useMyPagesLinks } from '@/lib/my-pages-links'
 import { useAuthStore } from '@/stores/auth-store'
-import { FamilyMemberCard, MoreCard, TopLine } from '@/ui'
+import { blue400, FamilyMemberCard, MoreCard, TopLine } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
 import { StackScreen } from '../../../../components/stack-screen'
 
@@ -79,6 +79,7 @@ export default function MoreScreen() {
                 source: require('@/assets/icons/settings.png'),
               },
               onPress: () => router.navigate('/settings'),
+              tintColor: blue400
             },
           ],
         }}

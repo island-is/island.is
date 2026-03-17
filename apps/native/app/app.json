@@ -4,10 +4,10 @@
     "displayName": "Ísland.is",
     "slug": "island-app",
     "version": "1.41.2",
-    "orientation": "default",
+    "orientation": "portrait",
     "icon": "./assets/images/island_is/icon.png",
     "scheme": "is.island.app",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/island_is/splashscreen.png",
       "resizeMode": "contain",

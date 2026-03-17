@@ -61,7 +61,6 @@ export async function getNextOnboardingStep(): Promise<
  */
 export async function nextOnboardingStep() {
   const step = await getNextOnboardingStep()
-
   if (step === null) {
     // All onboarding complete — go to main tabs
     router.replace('/(auth)/(tabs)')

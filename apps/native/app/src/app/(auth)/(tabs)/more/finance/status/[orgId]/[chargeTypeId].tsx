@@ -14,14 +14,15 @@ export default function FinanceStatusDetailScreen() {
     index: string
   }>()
   const intl = useIntl()
-  const { loading, networkStatus, ...financeStatusDetails } = useGetFinanceStatusDetailsQuery({
-    variables: {
-      input: {
-        orgID: orgId,
-        chargeTypeID: chargeTypeId,
+  const { loading, networkStatus, ...financeStatusDetails } =
+    useGetFinanceStatusDetailsQuery({
+      variables: {
+        input: {
+          orgID: orgId,
+          chargeTypeID: chargeTypeId,
+        },
       },
-    },
-  })
+    })
   const error = !!financeStatusDetails.error
   const item =
     financeStatusDetails.data?.getFinanceStatusDetails.chargeItemSubjects[
@@ -33,82 +34,84 @@ export default function FinanceStatusDetailScreen() {
   }
 
   return (
-    <>
-      <StackScreen options={{ headerShown: false }} networkStatus={networkStatus} />
-      <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_FINANCE_DETAIL} stickyHeaderIndices={[0]}>
-        <NavigationBarSheet
-          title={intl.formatMessage({ id: 'financeDetail.title' })}
-          onClosePress={() => router.back()}
-          style={{ marginHorizontal: 16 }}
-          showLoading={loading}
-        />
-        <View>
-          <InputRow>
-            <Input
-              loading={loading}
-              error={error}
-              label={intl.formatMessage({ id: 'financeDetail.paymentBase' })}
-              value={item.chargeItemSubject}
-            />
-            <Input
-              loading={loading}
-              error={error}
-              label={intl.formatMessage({ id: 'financeDetail.yearAndPeriod' })}
-              value={item.timePeriod}
-            />
-          </InputRow>
-          <InputRow>
-            <Input
-              loading={loading}
-              error={error}
-              label={intl.formatMessage({ id: 'financeDetail.dueDate' })}
-              value={item.dueDate}
-            />
-            <Input
-              loading={loading}
-              error={error}
-              label={intl.formatMessage({ id: 'financeDetail.finalDueDate' })}
-              value={item.finalDueDate}
-            />
-          </InputRow>
-          <InputRow>
-            <Input
-              loading={loading}
-              error={error}
-              label={intl.formatMessage({ id: 'financeDetail.principal' })}
-              value={`${intl.formatNumber(item.principal)} kr.`}
-            />
-            <Input
-              loading={loading}
-              error={error}
-              label={intl.formatMessage({ id: 'financeDetail.interest' })}
-              value={`${intl.formatNumber(item.interest)} kr.`}
-            />
-          </InputRow>
-          <InputRow>
-            <Input
-              loading={loading}
-              error={error}
-              label={intl.formatMessage({ id: 'financeDetail.costs' })}
-              value={`${intl.formatNumber(item.cost)} kr.`}
-            />
-            <Input
-              loading={loading}
-              error={error}
-              label={intl.formatMessage({ id: 'financeDetail.payments' })}
-              value={`${intl.formatNumber(item.paid)} kr.`}
-            />
-          </InputRow>
-          <InputRow>
-            <Input
-              loading={loading}
-              error={error}
-              label={intl.formatMessage({ id: 'financeDetail.status' })}
-              value={`${intl.formatNumber(item.totals)} kr.`}
-            />
-          </InputRow>
-        </View>
-      </ScrollView>
-    </>
+    <ScrollView
+      style={{ flex: 1 }}
+      testID={testIDs.SCREEN_FINANCE_DETAIL}
+      stickyHeaderIndices={[0]}
+    >
+      <StackScreen
+        options={{
+          title: intl.formatMessage({ id: 'financeDetail.title' }),
+        }}
+        networkStatus={networkStatus}
+        closeable
+      />
+      <View>
+        <InputRow>
+          <Input
+            loading={loading}
+            error={error}
+            label={intl.formatMessage({ id: 'financeDetail.paymentBase' })}
+            value={item.chargeItemSubject}
+          />
+          <Input
+            loading={loading}
+            error={error}
+            label={intl.formatMessage({ id: 'financeDetail.yearAndPeriod' })}
+            value={item.timePeriod}
+          />
+        </InputRow>
+        <InputRow>
+          <Input
+            loading={loading}
+            error={error}
+            label={intl.formatMessage({ id: 'financeDetail.dueDate' })}
+            value={item.dueDate}
+          />
+          <Input
+            loading={loading}
+            error={error}
+            label={intl.formatMessage({ id: 'financeDetail.finalDueDate' })}
+            value={item.finalDueDate}
+          />
+        </InputRow>
+        <InputRow>
+          <Input
+            loading={loading}
+            error={error}
+            label={intl.formatMessage({ id: 'financeDetail.principal' })}
+            value={`${intl.formatNumber(item.principal)} kr.`}
+          />
+          <Input
+            loading={loading}
+            error={error}
+            label={intl.formatMessage({ id: 'financeDetail.interest' })}
+            value={`${intl.formatNumber(item.interest)} kr.`}
+          />
+        </InputRow>
+        <InputRow>
+          <Input
+            loading={loading}
+            error={error}
+            label={intl.formatMessage({ id: 'financeDetail.costs' })}
+            value={`${intl.formatNumber(item.cost)} kr.`}
+          />
+          <Input
+            loading={loading}
+            error={error}
+            label={intl.formatMessage({ id: 'financeDetail.payments' })}
+            value={`${intl.formatNumber(item.paid)} kr.`}
+          />
+        </InputRow>
+        <InputRow>
+          <Input
+            loading={loading}
+            error={error}
+            label={intl.formatMessage({ id: 'financeDetail.status' })}
+            value={`${intl.formatNumber(item.totals)} kr.`}
+          />
+        </InputRow>
+      </View>
+    </ScrollView>
   )
 }

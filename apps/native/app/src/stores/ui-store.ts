@@ -12,6 +12,7 @@ export interface UIStore {
   selectedTab: number
   unselectedTab: number
   modalsOpen: number
+  tabsHidden: boolean
   inboxQuery: string
   applicationQuery: string
   authenticationTypes: AuthenticationType[]
@@ -25,6 +26,7 @@ export const uiStore = create<UIStore>((set) => ({
   selectedTab: 2,
   unselectedTab: 2,
   modalsOpen: 0,
+  tabsHidden: false,
   inboxQuery: '',
   applicationQuery: '',
   authenticationTypes: [],

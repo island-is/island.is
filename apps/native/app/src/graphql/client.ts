@@ -4,6 +4,7 @@ import {
   defaultDataIdFromObject,
   HttpLink,
   InMemoryCache,
+  ServerParseError,
 } from '@apollo/client'
 import * as WebBrowser from 'expo-web-browser'
 import { setContext } from '@apollo/client/link/context'
@@ -15,7 +16,6 @@ import { setInitializer } from './client-instance'
 import { getAuthStoreRef } from '../stores/auth-store-ref'
 import { environmentStore } from '../stores/environment-store'
 import { createMMKVStorage } from '../stores/mmkv'
-import { offlineStore } from '../stores/offline-store'
 import { getCustomUserAgent } from '../utils/user-agent'
 import { GenericUserLicense } from './types/schema'
 import { createNetworkStatusNotifier } from 'react-apollo-network-status'
@@ -69,25 +69,29 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
   }
 
   if (networkError) {
-    console.log(`[Network error]: ${networkError}`)
-
     // Detect possible OAuth needed
     if (networkError.name === 'ServerParseError') {
-      const redirectUrl = (networkError as { response?: { url: string } })
-        .response?.url
-      if (
-        redirectUrl &&
-        redirectUrl.indexOf('cognito.shared.devland.is') >= 0
-      ) {
+      const parseError = networkError as ServerParseError
+      const isCognitoLogin = parseError.bodyText.includes('cognito-login.css')
+      const isCognitoRedirect = parseError?.response?.url?.includes('cognito');
+      const redirectUrl = isCognitoRedirect ? parseError.response.url : cognitoAuthUrl()
+      console.log({ isCognitoLogin, isCognitoRedirect, redirectUrl }, 'Cognito login detected in network error')
+      if (isCognitoLogin || isCognitoRedirect) {
         getAuthStoreRef().setState({ cognitoAuthUrl: redirectUrl })
-        if (config.isTestingApp && getAuthStoreRef().getState().authorizeResult && !cognitoBrowserOpen) {
+        if (
+          config.isTestingApp &&
+          getAuthStoreRef().getState().authorizeResult &&
+          !cognitoBrowserOpen
+        ) {
           cognitoBrowserOpen = true
-          WebBrowser.openBrowserAsync(cognitoAuthUrl()).finally(() => {
+          WebBrowser.openBrowserAsync(redirectUrl).finally(() => {
             cognitoBrowserOpen = false
           })
         }
+        return;
       }
     }
+    console.log(`[Network error]: ${networkError}`)
   }
 })
 
@@ -106,7 +110,7 @@ const getAndRefreshToken = async () => {
     authorizeResult = getAuthStoreRef().getState().authorizeResult
   } else if (isTokenCloseToExpiring) {
     // expires in less than 60 seconds, so refresh in the background
-    refresh().catch((err) => {
+    refresh().catch((err: Error) => {
       console.error('Failed to refresh token in the background', err)
     })
   }
@@ -227,12 +231,7 @@ const initializeApolloClient = async () => {
   })
 
   return new ApolloClient({
-    link: ApolloLink.from([
-      retryLink,
-      errorLink,
-      authLink,
-      NetworkStatusNotifier.link.concat(httpLink),
-    ]),
+    link: ApolloLink.from([retryLink, errorLink, authLink, httpLink]),
     defaultOptions: {
       watchQuery: {
         fetchPolicy: 'cache-and-network',

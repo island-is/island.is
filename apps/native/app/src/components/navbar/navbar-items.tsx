@@ -21,6 +21,14 @@ export function navbarCloseItem(): NativeStackHeaderItem {
   }
 }
 
+export function spacingItem(): NativeStackHeaderItem {
+  return {
+    type: 'custom',
+    element: <View style={{ width: 128 }} />,
+    hidesSharedBackground: true,
+  }
+}
+
 export function navbarAndroidOfflineItem() {
   return (<OfflineIcon />);
 }

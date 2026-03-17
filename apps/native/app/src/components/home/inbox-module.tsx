@@ -131,7 +131,7 @@ const InboxModule = React.memo(({ data, loading, error }: InboxModuleProps) => {
               isUrgent={item.isUrgent}
               onPress={() =>
                 router.navigate({
-                  pathname: '/inbox/:id',
+                  pathname: '/inbox/[id]',
                   params: {
                     id: item.id,
                     title: item.sender.name,

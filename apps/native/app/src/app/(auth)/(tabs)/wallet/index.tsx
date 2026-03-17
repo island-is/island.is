@@ -9,8 +9,9 @@ import {
   TouchableNativeFeedback,
   View,
 } from 'react-native'
-import ExpoCoreSpotlight, { CoreSpotlightItem } from 'expo-core-spotlight';
+import ExpoCoreSpotlight, { CoreSpotlightItem } from 'expo-core-spotlight'
 import styled, { useTheme } from 'styled-components/native'
+import SegmentedControl from '@react-native-segmented-control/segmented-control'
 
 import refreshIcon from '@/assets/icons/refresh.png'
 import illustrationSrc from '@/assets/illustrations/le-retirement-s3.png'
@@ -26,6 +27,9 @@ import { syncLicenseWidgetData } from '@/lib/widget-sync'
 import { INCLUDED_LICENSE_TYPES } from '@/constants/wallet.constants'
 import { WalletItem } from '../../../../components/wallet-item'
 import {
+  blue100,
+  blue200,
+  blue400,
   Button,
   EmptyList,
   GeneralCardSkeleton,
@@ -155,11 +159,6 @@ export default function WalletScreen() {
     }
   }, [refetch])
 
-  const programmaticScrollWhenRefreshing = () => {
-    flatListRef.current?.scrollToOffset({ offset: 0, animated: true })
-    onRefresh()
-  }
-
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<FlatListItem>) => {
       if (item.__typename === 'Skeleton') {
@@ -222,6 +221,7 @@ export default function WalletScreen() {
                 source: require('@/assets/icons/barcode-scan.png'),
               },
               onPress: () => router.navigate('/wallet/scanner'),
+              tintColor: theme.color.blue400,
             },
           ],
         }}
@@ -246,26 +246,24 @@ export default function WalletScreen() {
         ListHeaderComponent={
           hasChildLicenses ? (
             <View style={{ marginBottom: 16 }}>
-              {hasChildLicenses && (
-                <Tabs>
-                  <TabButtons
-                    buttons={[
-                      {
-                        title: intl.formatMessage({
-                          id: 'wallet.yourLicenses',
-                        }),
-                      },
-                      {
-                        title: intl.formatMessage({
-                          id: 'wallet.childLicenses',
-                        }),
-                      },
-                    ]}
-                    selectedTab={selectedTab}
-                    setSelectedTab={setSelectedTab}
-                  />
-                </Tabs>
-              )}
+              <Tabs>
+                <TabButtons
+                  buttons={[
+                    {
+                      title: intl.formatMessage({
+                        id: 'wallet.yourLicenses',
+                      }),
+                    },
+                    {
+                      title: intl.formatMessage({
+                        id: 'wallet.childLicenses',
+                      }),
+                    },
+                  ]}
+                  selectedTab={selectedTab}
+                  setSelectedTab={setSelectedTab}
+                />
+              </Tabs>
             </View>
           ) : null
         }
@@ -303,9 +301,7 @@ export default function WalletScreen() {
               </Typography>
             )}
             <Button
-              onPress={() =>
-                isIos ? programmaticScrollWhenRefreshing() : onRefresh()
-              }
+              onPress={() => onRefresh()}
               title={intl.formatMessage({ id: 'wallet.update' })}
               isTransparent={true}
               icon={refreshIcon}

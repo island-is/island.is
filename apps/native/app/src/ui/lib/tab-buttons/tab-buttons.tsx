@@ -1,6 +1,11 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
-import { Animated, useWindowDimensions } from 'react-native'
+import {
+  Animated,
+  Dimensions,
+  LayoutChangeEvent,
+  useWindowDimensions,
+} from 'react-native'
 import { Typography } from '../typography/typography'
 
 const Host = styled.View`
@@ -50,32 +55,44 @@ interface TabButtonProps {
   setSelectedTab: (index: number) => void
 }
 
+function getButtonWidth(
+  numButtons: number,
+  containerWidth: number,
+  spacing = 32,
+) {
+  return (containerWidth) / numButtons
+}
+
 export const TabButtons = ({
   buttons,
   selectedTab,
   setSelectedTab,
 }: TabButtonProps) => {
-  const theme = useTheme()
-  const { width } = useWindowDimensions()
-
-  const buttonWidth = (width - theme.spacing[4]) / buttons.length
+  const [buttonWidth, setButtonWidth] = useState(
+    getButtonWidth(buttons.length, Dimensions.get('window').width),
+  )
 
   const translateX = useRef(new Animated.Value(0)).current
 
   const onTabPress = useCallback(
     (index: number) => {
-      Animated.timing(translateX, {
+      Animated.spring(translateX, {
         toValue: index * buttonWidth,
-        duration: 200,
         useNativeDriver: true,
+        overshootClamping: true,
+        mass: 1,
       }).start()
       setSelectedTab(index)
     },
     [buttonWidth, translateX, setSelectedTab],
   )
 
+  const onLayout = useCallback((e: LayoutChangeEvent) => {
+    setButtonWidth(getButtonWidth(buttons.length, e.nativeEvent.layout.width))
+  }, [])
+
   return (
-    <Host accessibilityRole="tablist">
+    <Host accessibilityRole="tablist" onLayout={onLayout}>
       <ActiveBackground
         buttonWidth={buttonWidth}
         style={{ transform: [{ translateX: translateX }] }}

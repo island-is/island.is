@@ -11077,10 +11077,12 @@ __metadata:
     "@react-native-firebase/app": "npm:23.8.6"
     "@react-native-firebase/messaging": "npm:23.8.6"
     "@react-native-firebase/perf": "npm:23.8.6"
+    "@react-native-segmented-control/segmented-control": "npm:2.5.7"
     "@react-navigation/native": "npm:^7.1.28"
     "@types/lodash": "npm:^4"
     "@types/react": "npm:~19.2.2"
     apollo3-cache-persist: "npm:0.15.0"
+    burnt: "npm:0.13.0"
     compare-versions: "npm:6.1.1"
     configcat-js: "npm:9.5.0"
     dynamic-color: "npm:0.3.6"
@@ -15031,6 +15033,16 @@ __metadata:
     expo:
       optional: true
   checksum: 10/2769e1eefb2541183be6d99afe9396cb36695e20fbb813024d12d9011c63b7cf7cf8c26e40736e16857eeb8423ac198a1d72beac9c5d561a5bcb55f3dc22b48f
+  languageName: node
+  linkType: hard
+
+"@react-native-segmented-control/segmented-control@npm:2.5.7":
+  version: 2.5.7
+  resolution: "@react-native-segmented-control/segmented-control@npm:2.5.7"
+  peerDependencies:
+    react: ">=16.0"
+    react-native: ">=0.62"
+  checksum: 10/d91313487a8d4789ff6c6b7f62d11be748dc95159667ce3d8d76691419c18af566d292fc4d4f2520ec8844a745055142d26b21bad1043b20fecf427ee6ce4449
   languageName: node
   linkType: hard
 
@@ -24266,6 +24278,20 @@ __metadata:
   dependencies:
     run-applescript: "npm:^7.0.0"
   checksum: 10/1d966c8d2dbf4d9d394e53b724ac756c2414c45c01340b37743621f59cc565a435024b394ddcb62b9b335d1c9a31f4640eb648c3fec7f97ee74dc0694c9beb6c
+  languageName: node
+  linkType: hard
+
+"burnt@npm:0.13.0":
+  version: 0.13.0
+  resolution: "burnt@npm:0.13.0"
+  dependencies:
+    sf-symbols-typescript: "npm:^1.0.0"
+    sonner: "npm:^2.0.1"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+  checksum: 10/19c9cab5b48655c0737b68fae69a73d5f8ec18323a23d6f2e0d9336d0aa9e38d0c5fe08716767b9371550f0dd10a8bdb1e707b0e06959289d1c4ad0486f82cbd
   languageName: node
   linkType: hard
 
@@ -48788,6 +48814,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sf-symbols-typescript@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "sf-symbols-typescript@npm:1.0.0"
+  checksum: 10/008ddfcadceb33ec29fb182104516234cc3f771254619696918481744bc28be51070f226859e4dfc2faf5f094dd8ca13e0364b2bb3d22e8cf044ce37f749df0b
+  languageName: node
+  linkType: hard
+
 "sf-symbols-typescript@npm:^2.0.0, sf-symbols-typescript@npm:^2.1.0, sf-symbols-typescript@npm:^2.2.0":
   version: 2.2.0
   resolution: "sf-symbols-typescript@npm:2.2.0"
@@ -49397,6 +49430,16 @@ __metadata:
     ip-address: "npm:^9.0.5"
     smart-buffer: "npm:^4.2.0"
   checksum: 10/0109090ec2bcb8d12d3875a987e85539ed08697500ad971a603c3057e4c266b4bf6a603e07af6d19218c422dd9b72d923aaa6c1f20abae275510bba458e4ccc9
+  languageName: node
+  linkType: hard
+
+"sonner@npm:^2.0.1":
+  version: 2.0.7
+  resolution: "sonner@npm:2.0.7"
+  peerDependencies:
+    react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+    react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+  checksum: 10/c80321646f7fe06f92f4c16da9d72a27aec34abbf41438f8d8e8292ba8546d6bb620c54a113928f049948db1ad29d0b2ad3e9cb29dd5802c30951b41c99f12c4
   languageName: node
   linkType: hard
 

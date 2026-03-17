@@ -46,6 +46,7 @@ import chevronForward from '@/ui/assets/icons/chevron-forward.png'
 import editIcon from '@/assets/icons/edit.png'
 import { StackScreen } from '../../../components/stack-screen'
 import { SelectionMenu } from 'react-native-platform-components'
+import { openBrowserAsync } from 'expo-web-browser'
 
 export default function SettingsScreen() {
   const router = useRouter()
@@ -363,7 +364,7 @@ export default function SettingsScreen() {
       <TableViewGroup
         header={intl.formatMessage({ id: 'settings.security.groupTitle' })}
       >
-        <PressableHighlight onPress={() => router.navigate('/onboarding/pin')}>
+        <PressableHighlight onPress={() => router.navigate('/onboarding/pin?from=settings')}>
           <TableViewCell
             title={intl.formatMessage({
               id: 'settings.security.changePinLabel',
@@ -526,11 +527,7 @@ export default function SettingsScreen() {
           />
         </PressableHighlight>
         <PressableHighlight
-          onPress={() =>
-            Linking.openURL(
-              'https://island.is/personuverndarstefna-stafraent-islands',
-            )
-          }
+          onPress={() => openBrowserAsync('https://island.is/personuverndarstefna-stafraent-islands')}
         >
           <TableViewCell
             title={intl.formatMessage({

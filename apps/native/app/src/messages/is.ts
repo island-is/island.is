@@ -60,6 +60,7 @@ export const is = {
     'Nota fingrafarsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlitsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
+  'pinCode.updated': 'PIN-númeri breytt',
 
   // personal info screen
   'personalInfo.screenTitle': 'Persónuupplýsingar',

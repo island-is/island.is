@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { Image, SafeAreaView, View } from 'react-native'
-import { router, useLocalSearchParams } from 'expo-router'
+import { Image, Platform, SafeAreaView, ToastAndroid, View } from 'react-native'
+import { router, useLocalSearchParams, useRouter } from 'expo-router'
 import Keychain from 'react-native-keychain'
 import styled from 'styled-components/native'
+import * as Burnt from 'burnt'
 
 import { dynamicColor, font } from '@/ui'
 import { CancelButton } from '@/ui/lib/button/cancel-button'
@@ -44,6 +45,7 @@ const Center = styled.View`
 `
 
 export default function ConfirmPinScreen() {
+  const params = useLocalSearchParams()
   const intl = useIntl()
   const { confirmPin } = useLocalSearchParams<{ confirmPin: string }>()
   const [code, setCode] = useState('')
@@ -69,7 +71,24 @@ export default function ConfirmPinScreen() {
           service: 'PIN_CODE',
         }).then(() => {
           preferencesStore.setState({ hasOnboardedPinCode: true })
-          nextOnboardingStep()
+          if (params.from === 'settings') {
+            router.dismissTo('/(auth)/(modals)/settings')
+            if (Platform.OS === 'android') {
+              ToastAndroid.show(
+                intl.formatMessage({ id: 'pinCode.updated' }),
+                ToastAndroid.SHORT,
+              )
+            } else {
+              Burnt.toast({
+                title: intl.formatMessage({ id: 'pinCode.updated' }),
+                preset: 'done',
+                duration: 1.2,
+                shouldDismissByDrag: true,
+              });
+            }
+          } else {
+            nextOnboardingStep()
+          }
         })
       } else {
         setInvalid(true)
@@ -129,7 +148,9 @@ export default function ConfirmPinScreen() {
             }}
           >
             <CancelButton
-              title={<FormattedMessage id="onboarding.pinCode.goBackButtonText" />}
+              title={
+                <FormattedMessage id="onboarding.pinCode.goBackButtonText" />
+              }
               arrowBack={true}
               onPress={onCancelPress}
             />

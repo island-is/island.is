@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Image, SafeAreaView, View } from 'react-native'
-import { router } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import styled from 'styled-components/native'
 
 import { dynamicColor, font } from '@/ui'
@@ -40,6 +40,7 @@ const Center = styled.View`
 `
 
 export default function PinScreen() {
+  const params = useLocalSearchParams()
   const [code, setCode] = useState('')
 
   const onPinInput = (char: string) => {
@@ -56,7 +57,7 @@ export default function PinScreen() {
         setCode('')
         router.navigate({
           pathname: '/onboarding/confirm-pin',
-          params: { confirmPin: code },
+          params: { confirmPin: code, from: params.from ?? 'onboarding' },
         })
       }, 110)
     }

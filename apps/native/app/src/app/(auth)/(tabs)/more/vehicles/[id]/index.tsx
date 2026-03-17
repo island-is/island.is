@@ -90,8 +90,6 @@ export default function VehicleDetailScreen() {
     mainInfo?.requiresMileageRegistration ||
     mainInfo?.availableMileageRegistration
 
-    console.log('show context', { showContext, dropdownItems })
-
   return (
     <>
       <ScrollView

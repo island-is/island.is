@@ -75,8 +75,6 @@ export default function FamilyDetailScreen() {
     bioChildRes.loading || custodyChildRes.loading || spouseRes.loading
   const error = bioChildRes.error || custodyChildRes.error || spouseRes.error
 
-  if (!person) return null
-
   return (
     <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_FAMILY_DETAIL}>
       <StackScreen
@@ -85,116 +83,115 @@ export default function FamilyDetailScreen() {
           custodyChildRes.networkStatus,
           spouseRes.networkStatus,
         ]}
-        options={{ headerShown: false }}
+        options={{
+          title: intl.formatMessage({ id: 'familyDetail.title' }),
+        }}
+        closeable
       />
-      <SafeAreaView>
-        <View
-          style={{
-            paddingBottom: theme.spacing[1],
-            paddingTop: theme.spacing[2],
-            paddingHorizontal: theme.spacing[2],
-          }}
-        >
-          <Typography>
-            {intl.formatMessage({ id: 'familyDetail.description' })}
-          </Typography>
-        </View>
-        <InputRow>
+      <View
+        style={{
+          paddingBottom: theme.spacing[1],
+          paddingTop: theme.spacing[2],
+          paddingHorizontal: theme.spacing[2],
+        }}
+      >
+        <Typography>
+          {intl.formatMessage({ id: 'familyDetail.description' })}
+        </Typography>
+      </View>
+      <InputRow>
+        <Input
+          label={intl.formatMessage({
+            id: 'familyDetail.natreg.displayName',
+          })}
+          value={person?.fullName}
+          loading={loading}
+          error={!!error}
+          size="big"
+        />
+      </InputRow>
+      <InputRow>
+        <Input
+          label={intl.formatMessage({
+            id: 'familyDetail.natreg.familyRelation',
+          })}
+          value={intl.formatMessage(
+            { id: 'familyDetail.natreg.familyRelationValue' },
+            {
+              type:
+                type === 'bioChild' || type === 'custodyChild' ? 'child' : type,
+            },
+          )}
+          loading={loading}
+          error={!!error}
+        />
+      </InputRow>
+      <InputRow>
+        <Input
+          label={intl.formatMessage({
+            id: 'familyDetail.natreg.nationalId',
+          })}
+          value={formatNationalId(person?.nationalId)}
+          loading={loading}
+          error={!!error}
+        />
+        {person && 'citizenship' in person && person?.citizenship ? (
           <Input
             label={intl.formatMessage({
-              id: 'familyDetail.natreg.displayName',
+              id: 'familyDetail.natreg.citizenship',
             })}
-            value={person?.fullName}
+            value={person?.citizenship?.name}
             loading={loading}
             error={!!error}
-            size="big"
           />
-        </InputRow>
+        ) : null}
+      </InputRow>
+      {person && 'housing' in person &&
+      person?.housing &&
+      'address' in person.housing &&
+      person.housing.address ? (
         <InputRow>
           <Input
             label={intl.formatMessage({
-              id: 'familyDetail.natreg.familyRelation',
+              id: 'familyDetail.natreg.legalResidence',
+            })}
+            value={
+              'postalCode' in person.housing.address &&
+              'city' in person.housing.address
+                ? `${person?.housing.address?.streetAddress}, ${person?.housing.address?.postalCode} ${person?.housing.address?.city}`
+                : person?.housing.address?.streetAddress
+            }
+            loading={loading}
+            error={!!error}
+          />
+        </InputRow>
+      ) : null}
+
+      <InputRow>
+        {person && 'gender' in person && person.gender ? (
+          <Input
+            label={intl.formatMessage({
+              id: 'familyDetail.natreg.gender',
             })}
             value={intl.formatMessage(
-              { id: 'familyDetail.natreg.familyRelationValue' },
-              {
-                type:
-                  type === 'bioChild' || type === 'custodyChild'
-                    ? 'child'
-                    : type,
-              },
+              { id: 'user.natreg.genderValue' },
+              { gender: person.gender },
             )}
             loading={loading}
             error={!!error}
           />
-        </InputRow>
-        <InputRow>
+        ) : null}
+        {person && 'birthplace' in person && person?.birthplace ? (
           <Input
             label={intl.formatMessage({
-              id: 'familyDetail.natreg.nationalId',
+              id: 'familyDetail.natreg.birthPlace',
             })}
-            value={formatNationalId(person?.nationalId)}
+            value={person?.birthplace?.location}
             loading={loading}
             error={!!error}
           />
-          {'citizenship' in person && person?.citizenship ? (
-            <Input
-              label={intl.formatMessage({
-                id: 'familyDetail.natreg.citizenship',
-              })}
-              value={person?.citizenship?.name}
-              loading={loading}
-              error={!!error}
-            />
-          ) : null}
-        </InputRow>
-        {'housing' in person &&
-        person?.housing &&
-        'address' in person.housing &&
-        person.housing.address ? (
-          <InputRow>
-            <Input
-              label={intl.formatMessage({
-                id: 'familyDetail.natreg.legalResidence',
-              })}
-              value={
-                'postalCode' in person.housing.address &&
-                'city' in person.housing.address
-                  ? `${person?.housing.address?.streetAddress}, ${person?.housing.address?.postalCode} ${person?.housing.address?.city}`
-                  : person?.housing.address?.streetAddress
-              }
-              loading={loading}
-              error={!!error}
-            />
-          </InputRow>
         ) : null}
-
-        <InputRow>
-          {'gender' in person && person.gender ? (
-            <Input
-              label={intl.formatMessage({
-                id: 'familyDetail.natreg.gender',
-              })}
-              value={intl.formatMessage(
-                { id: 'user.natreg.genderValue' },
-                { gender: person.gender },
-              )}
-              loading={loading}
-              error={!!error}
-            />
-          ) : null}
-          {'birthplace' in person && person?.birthplace ? (
-            <Input
-              label={intl.formatMessage({
-                id: 'familyDetail.natreg.birthPlace',
-              })}
-              value={person?.birthplace?.location}
-              loading={loading}
-              error={!!error}
-            />
-          ) : null}
-        </InputRow>
-      </SafeAreaView>
+      </InputRow>
     </ScrollView>
   )
 }

@@ -8,10 +8,12 @@ import { blue100, blue400 } from '../../../ui'
 import { Image, Platform, StyleSheet, View } from 'react-native'
 import { useTheme } from 'styled-components'
 import { useIntl } from 'react-intl'
+import { useUiStore } from '../../../stores/ui-store'
 
 export default function TabLayout() {
   const intl = useIntl()
   const theme = useTheme()
+  const tabsHidden = useUiStore((s) => s.tabsHidden);
   const hasOnboardedPinCode = usePreferencesStore((s) => s.hasOnboardedPinCode)
   const hasOnboardedBiometrics = usePreferencesStore(
     (s) => s.hasOnboardedBiometrics,
@@ -46,6 +48,7 @@ export default function TabLayout() {
           },
         }}
         iconColor={blue400}
+        hidden={tabsHidden && Platform.OS === 'ios'}
       >
         <NativeTabs.Trigger name="inbox">
           <NativeTabs.Trigger.Label>

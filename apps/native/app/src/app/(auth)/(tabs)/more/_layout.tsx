@@ -33,8 +33,8 @@ export default function MoreLayout() {
       <Stack.Screen
         name="family/[type]/[nationalId]"
         options={{
-          presentation: 'formSheet',
-          headerShown: false,
+          ...modalScreenOptions,
+          title: intl.formatMessage({ id: 'familyDetail.title' }),
         }}
       />
       <Stack.Screen
@@ -46,8 +46,8 @@ export default function MoreLayout() {
       <Stack.Screen
         name="assets/[id]"
         options={{
-          presentation: 'formSheet',
-          headerShown: false,
+          ...modalScreenOptions,
+          title: intl.formatMessage({ id: 'familyDetail.title' }),
         }}
       />
       <Stack.Screen

@@ -12,6 +12,7 @@ import {
   Typography,
 } from '@/ui'
 import { testIDs } from '@/utils/test-ids'
+import { StackScreen } from '../../../components/stack-screen'
 
 export default function EditConfirmScreen() {
   const intl = useIntl()
@@ -56,12 +57,18 @@ export default function EditConfirmScreen() {
       testID={testIDs.SCREEN_EDIT_CONFIRM}
       stickyHeaderIndices={[0]}
     >
-      <NavigationBarSheet
+      <StackScreen
+        closeable
+        options={{
+          title: intl.formatMessage({ id: 'edit.confirm.screenTitle' }),
+        }}
+      />
+      {/* <NavigationBarSheet
         componentId="edit-confirm"
         title={intl.formatMessage({ id: 'edit.confirm.screenTitle' })}
         onClosePress={() => router.back()}
         style={{ marginHorizontal: 16 }}
-      />
+      /> */}
       <View style={{ paddingHorizontal: 16 }}>
         <View style={{ marginBottom: 32, marginTop: 8 }}>
           <Typography>

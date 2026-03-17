@@ -62,6 +62,7 @@ export const en: TranslatedMessages = {
   'onboarding.pinKeypad.accessibilityLabel.iris': 'Use Iris',
   'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Delete character',
+  'pinCode.updated': 'PIN code updated',
 
   // personal info screen
   'personalInfo.screenTitle': 'Personal info',

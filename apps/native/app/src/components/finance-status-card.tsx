@@ -98,7 +98,7 @@ const AboutItem = styled.View`
   flex: 1;
 `
 
-const TouchableRow = styled.TouchableHighlight`
+const TouchableRow = styled.Pressable`
   flex-direction: row;
   flex-wrap: wrap;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
@@ -274,11 +274,13 @@ export function FinanceStatusCard({
                 <TouchableRow
                   testID={testIDs.FINANCE_ITEM_ROW}
                   key={index}
-                  underlayColor="rgba(128,128,128,0.1)"
-                  style={{
-                    backgroundColor:
-                      index % 2 === 0 ? theme.color.blue100 : theme.color.white,
-                  }}
+                  style={(p) => ({
+                    backgroundColor: p.pressed
+                      ? 'rgba(128,128,128,0.1)'
+                      : index % 2 === 0
+                      ? theme.color.blue100
+                      : theme.color.white,
+                  })}
                   onPress={() => {
                     router.navigate({
                       pathname: '/more/finance/status/[orgId]/[chargeTypeId]',
@@ -290,28 +292,23 @@ export function FinanceStatusCard({
                     })
                   }}
                 >
-                  <>
-                    <RowItem>
-                      <Typography variant="body3">
-                        {charge.finalDueDate}
-                      </Typography>
-                    </RowItem>
-                    <RowItem>
-                      <Typography
-                        variant="body3"
-                        style={{ textAlign: 'right' }}
-                      >
-                        {intl.formatNumber(charge.totals)} kr.
-                      </Typography>
-                    </RowItem>
-                    <Image
-                      source={chevronDown}
-                      style={{
-                        tintColor: theme.color.dark300,
-                        transform: [{ rotate: '-90deg' }],
-                      }}
-                    />
-                  </>
+                  <RowItem>
+                    <Typography variant="body3">
+                      {charge.finalDueDate}
+                    </Typography>
+                  </RowItem>
+                  <RowItem>
+                    <Typography variant="body3" style={{ textAlign: 'right' }}>
+                      {intl.formatNumber(charge.totals)} kr.
+                    </Typography>
+                  </RowItem>
+                  <Image
+                    source={chevronDown}
+                    style={{
+                      tintColor: theme.color.dark300,
+                      transform: [{ rotate: '-90deg' }],
+                    }}
+                  />
                 </TouchableRow>
               )
             })}

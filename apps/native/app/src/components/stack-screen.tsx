@@ -6,7 +6,7 @@ import {
 } from '@react-navigation/native-stack'
 import { Stack } from 'expo-router'
 import { cloneElement, useCallback, useMemo } from 'react'
-import { Image, Platform, Text, TouchableNativeFeedback } from 'react-native'
+import { Image, Platform, Text, TouchableNativeFeedback, View } from 'react-native'
 import { navbarCloseItem, navbarOfflineItem } from './navbar/navbar-items'
 
 export type StackScreenOptions = Omit<
@@ -83,6 +83,13 @@ export function StackScreen({
   options,
   closeable,
 }: StackScreenProps) {
+  const leftAlignSpacing = useMemo(() => {
+    const title = options?.title
+    if (typeof title === 'string') {
+      return title.length < 24;
+    }
+    return false;
+  }, [options?.title]);
   const headerLeftItems = useCallback(
     (props?: NativeStackHeaderItemProps) => {
       const currentLeftItems =
@@ -98,6 +105,7 @@ export function StackScreen({
         callbackOrValue(options?.headerRightItems, props) || []
 
       const result = [
+        leftAlignSpacing ? { type: 'custom', element: <View style={{ width: 30 }} />, hidesSharedBackground: true } : undefined,
         navbarOfflineItem(networkStatus),
         ...currentRightItems,
         closeable && Platform.OS === 'ios' ? navbarCloseItem() : undefined,
@@ -105,7 +113,7 @@ export function StackScreen({
 
       return result
     },
-    [options?.headerRightItems, networkStatus, closeable],
+    [options?.headerRightItems, networkStatus, closeable, leftAlignSpacing],
   )
 
   // Android doesn't support dynamic header items, so we need to compute them here.

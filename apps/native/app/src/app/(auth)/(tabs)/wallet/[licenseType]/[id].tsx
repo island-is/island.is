@@ -187,7 +187,6 @@ export default function WalletPassScreen() {
     },
     returnPartialData: true,
   })
-  console.log('licenseFromCache', licenseFromCache)
 
   const data = res.data?.genericLicense ?? licenseFromCache?.data
   const isExpired = data?.payload?.metadata?.expired

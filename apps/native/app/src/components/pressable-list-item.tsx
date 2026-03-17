@@ -55,16 +55,15 @@ export const PressableListItem = memo(
               ? setSelectedItems(selectedItems.filter((id) => id !== item.id))
               : setSelectedItems([...selectedItems, item.id])
             : router.navigate({
-                pathname: '/inbox/:id',
-              params: {
+                pathname: '/inbox/[id]',
+                params: {
                   id: item.id,
                   title: item.sender.name,
                   isUrgent: String(item.isUrgent),
                   listParams: JSON.stringify(listParams),
                 },
-              });
-        }
-        }
+              })
+        }}
       />
     )
   },
