@@ -448,55 +448,52 @@ const IndictmentCaseFilesList: FC<Props> = ({
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCivilClaims}
             />
-            {isDistrictCourtUser(user) && (
-              <Box marginBottom={3}>
-                <SectionHeading
-                  title="Rafræn gögn"
-                  marginBottom={1}
-                  heading="h4"
-                  variant="h4"
-                />
-                <Text marginBottom={2}>
-                  Tenglarnir færa þig yfir á öruggt gagnasvæði lögreglunnar.
-                  Allar heimsóknir á þann vef eru skráðar og rekjanlegar.
-                </Text>
-                {(digitalCaseFiles?.length ?? 0) > 0 ? (
-                  <>
-                    {(digitalCaseFiles ?? []).map((file, index) => (
-                        <Box
-                          key={index}
-                          component="button"
-                          type="button"
-                          className={styles.electronicFileRow}
-                          onClick={() =>
-                            openDigitalCaseFileUrl(file.policeDigitalFileId)
-                          }
-                          disabled={tokenUrlLoading}
-                          cursor="pointer"
-                          background="transparent"
-                          width="full"
-                          textAlign="left"
-                        >
-                          <Text
-                            as="span"
-                            color="blue400"
-                            variant="h4"
-                            className={styles.electronicFileLinkContainer}
-                          >
-                            {file.name}
-                          </Text>
-                          <Icon
-                            icon="open"
-                            type="outline"
-                            size="small"
-                            color="blue400"
-                          />
-                        </Box>
-                    ))}
-                  </>
-                ) : null}
-              </Box>
-            )}
+            {isDistrictCourtUser(user) &&
+              (digitalCaseFiles?.length ?? 0) > 0 && (
+                <Box marginBottom={3}>
+                  <SectionHeading
+                    title="Rafræn gögn"
+                    marginBottom={1}
+                    heading="h4"
+                    variant="h4"
+                  />
+                  <Text marginBottom={2}>
+                    Tenglarnir færa þig yfir á öruggt gagnasvæði lögreglunnar.
+                    Allar heimsóknir á þann vef eru skráðar og rekjanlegar.
+                  </Text>
+                  {digitalCaseFiles?.map((file, index) => (
+                    <Box
+                      key={index}
+                      component="button"
+                      type="button"
+                      className={styles.electronicFileRow}
+                      onClick={() =>
+                        openDigitalCaseFileUrl(file.policeDigitalFileId)
+                      }
+                      disabled={tokenUrlLoading}
+                      cursor="pointer"
+                      background="transparent"
+                      width="full"
+                      textAlign="left"
+                    >
+                      <Text
+                        as="span"
+                        color="blue400"
+                        variant="h4"
+                        className={styles.electronicFileLinkContainer}
+                      >
+                        {file.name}
+                      </Text>
+                      <Icon
+                        icon="open"
+                        type="outline"
+                        size="small"
+                        color="blue400"
+                      />
+                    </Box>
+                  ))}
+                </Box>
+              )}
             {(filteredFiles.courtRecords.length > 0 ||
               hasGeneratedCourtRecord ||
               (permissions.canViewRulings &&
