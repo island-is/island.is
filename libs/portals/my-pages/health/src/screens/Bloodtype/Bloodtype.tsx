@@ -11,9 +11,11 @@ import { Problem } from '@island.is/react-spa/shared'
 import React from 'react'
 import { messages } from '../../lib/messages'
 import { useBloodTypeQuery } from './Bloodtype.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const Bloodtype: React.FC = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
 
   const { data, loading, error } = useBloodTypeQuery({

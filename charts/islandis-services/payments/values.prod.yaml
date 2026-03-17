@@ -19,6 +19,7 @@ global:
 name: 'payments'
 enabled: true
 env:
+  ALLOW_APPLE_PAY: 'true'
   API_EXTERNAL_BASEPATH: 'https://island.is'
   API_INTERNAL_BASEPATH: 'http://api.islandis.svc.cluster.local'
   APP_EXTERNAL_BASEPATH: 'https://island.is'
