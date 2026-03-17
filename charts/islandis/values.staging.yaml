@@ -2220,7 +2220,7 @@ regulations-admin-backend:
       hosts:
         - host: 'regulations-admin-backend-xrd.internal.staging01.devland.is'
           paths:
-            - '/'
+            - '/api'
   initContainer:
     containers:
       - args:
