@@ -17,15 +17,4 @@ export const strings = defineMessages({
     defaultMessage: 'Ljúka yfirlestri',
     description: 'Notaður sem texti á takka til að loka yfirliti ákæru.',
   },
-  addDocumentsButtonText: {
-    id: 'judicial.system.indictments:overview.add_documents_button_text',
-    defaultMessage: 'Bæta við gögnum',
-    description:
-      'Texti á takka til að bæta við skjölum á Yfirlit ákæru skefi í ákærum.',
-  },
-  servedToElectronically: {
-    id: 'judicial.system.core:overview.served_electronically',
-    defaultMessage: 'Rafrænt pósthólf island.is',
-    description: 'Notaður sem texti þegar birt var í pósthólfi.',
-  },
 })
