@@ -10,6 +10,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
+import NumberFormat from 'react-number-format'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -73,7 +74,7 @@ const PersonalTaxCredit = () => {
     useSetSocialInsuranceSpouseTaxCardDueToDeathMutation()
 
   const taxCards = data?.socialInsuranceTaxCards
-  const canRegister = taxCards?.canEditPersonalAllowance ?? false
+  const isAlreadyRegistered = taxCards?.canEditPersonalAllowance ?? false
   const spouseEligibility =
     data?.socialInsuranceSpouseDeceasedTaxAllowanceEligibility
   const monthsAndYears = data?.socialInsuranceTaxCardMonthsAndYears
@@ -180,7 +181,17 @@ const PersonalTaxCredit = () => {
   const handleSaveSpouse = async () => {
     try {
       if (spouseDeceased) {
-        await setSpouseTaxCardDueToDeath({ variables: { input: {} } })
+        await setSpouseTaxCardDueToDeath({
+          variables: {
+            input: {
+              year: spouseDeceasedYear ?? undefined,
+              month: spouseDeceasedMonth ?? undefined,
+              percentage: spouseDeceasedPercentage
+                ? Number(spouseDeceasedPercentage)
+                : undefined,
+            },
+          },
+        })
       }
       if (grantSpouse) {
         await setSpouseTaxCard({ variables: { input: {} } })
@@ -201,27 +212,22 @@ const PersonalTaxCredit = () => {
 
   if (loading) {
     return (
-      <Box>
-        <IntroWrapper {...introProps}>
-          <CardLoader />
-        </IntroWrapper>
-      </Box>
+      <IntroWrapper {...introProps}>
+        <CardLoader />
+      </IntroWrapper>
     )
   }
 
   if (error) {
     return (
-      <Box>
-        <IntroWrapper {...introProps}>
-          <Problem error={error} noBorder={false} />
-        </IntroWrapper>
-      </Box>
+      <IntroWrapper {...introProps}>
+        <Problem error={error} noBorder={false} />
+      </IntroWrapper>
     )
   }
 
   return (
-    <Box>
-      <IntroWrapper {...introProps}>
+    <IntroWrapper {...introProps}>
         <Stack space={6}>
           {/* Tax cards table */}
           {!!taxCards?.taxCards?.length && (
@@ -301,7 +307,7 @@ const PersonalTaxCredit = () => {
                 id="register-personal-tax-credit"
                 label={formatMessage(m.registerPersonalTaxCredit)}
                 checked={myAction === 'register'}
-                disabled={canRegister}
+                disabled={isAlreadyRegistered}
                 onChange={(e) =>
                   setMyAction(e.target.checked ? 'register' : null)
                 }
@@ -359,26 +365,24 @@ const PersonalTaxCredit = () => {
                           />
                         </Box>
                       </Box>
-                      <Input
+                      <NumberFormat
+                        customInput={Input}
                         id="register-percentage"
                         name="register-percentage"
                         label={formatMessage(m.percentageFromNextMonth)}
                         placeholder="100%"
                         size="xs"
                         backgroundColor="blue"
-                        value={
-                          registerPercentage ? `${registerPercentage}%` : ''
+                        suffix="%"
+                        allowNegative={false}
+                        isAllowed={({ floatValue }) =>
+                          floatValue === undefined ||
+                          (floatValue >= 0 && floatValue <= 100)
                         }
-                        onChange={(e) => {
-                          const val = e.target.value.replace('%', '').trim()
-                          const num = Number(val)
-                          if (
-                            val === '' ||
-                            (!isNaN(num) && num >= 0 && num <= 100)
-                          ) {
-                            setRegisterPercentage(val)
-                          }
-                        }}
+                        value={registerPercentage}
+                        onValueChange={({ value }) =>
+                          setRegisterPercentage(value)
+                        }
                         required
                       />
                     </Stack>
@@ -390,31 +394,29 @@ const PersonalTaxCredit = () => {
                 id="edit-personal-tax-credit"
                 label={formatMessage(m.editPersonalTaxCredit)}
                 checked={myAction === 'edit'}
-                disabled={!canRegister}
+                disabled={!isAlreadyRegistered}
                 onChange={(e) => setMyAction(e.target.checked ? 'edit' : null)}
               />
               {myAction === 'edit' && (
                 <Box paddingLeft={7}>
                   <Box style={{ maxWidth: 480 }}>
-                    <Input
+                    <NumberFormat
+                      customInput={Input}
                       id="edit-percentage"
                       name="edit-percentage"
                       label={formatMessage(m.percentageFromNextMonth)}
                       placeholder="100%"
                       size="xs"
                       backgroundColor="blue"
-                      value={editPercentage ? `${editPercentage}%` : ''}
-                      onChange={(e) => {
-                        const val = e.target.value.replace('%', '').trim()
-                        const num = Number(val)
-                        if (
-                          val === '' ||
-                          (!isNaN(num) && num >= 0 && num <= 100)
-                        ) {
-                          setEditPercentage(val)
-                        }
-                      }}
-                      disabled={!canRegister}
+                      suffix="%"
+                      allowNegative={false}
+                      isAllowed={({ floatValue }) =>
+                        floatValue === undefined ||
+                        (floatValue >= 0 && floatValue <= 100)
+                      }
+                      value={editPercentage}
+                      onValueChange={({ value }) => setEditPercentage(value)}
+                      disabled={!isAlreadyRegistered}
                     />
                   </Box>
                 </Box>
@@ -424,7 +426,7 @@ const PersonalTaxCredit = () => {
                 id="discontinue-personal-tax-credit"
                 label={formatMessage(m.discontinuePersonalTaxCredit)}
                 checked={myAction === 'discontinue'}
-                disabled={!canRegister}
+                disabled={!isAlreadyRegistered}
                 onChange={(e) =>
                   setMyAction(e.target.checked ? 'discontinue' : null)
                 }
@@ -454,7 +456,7 @@ const PersonalTaxCredit = () => {
                             )
                             setDiscontinueMonth(null)
                           }}
-                          isDisabled={!canRegister}
+                          isDisabled={!isAlreadyRegistered}
                         />
                       </Box>
                       <Box style={{ flex: 1 }}>
@@ -477,7 +479,7 @@ const PersonalTaxCredit = () => {
                               opt ? (opt.value as number) : null,
                             )
                           }
-                          isDisabled={!canRegister || discontinueYear == null}
+                          isDisabled={!isAlreadyRegistered || discontinueYear == null}
                         />
                       </Box>
                     </Box>
@@ -492,8 +494,8 @@ const PersonalTaxCredit = () => {
                 disabled={
                   !myAction ||
                   isSavingMyTaxCredit ||
-                  (myAction === 'register' && canRegister) ||
-                  (myAction !== 'register' && !canRegister)
+                  (myAction === 'register' && isAlreadyRegistered) ||
+                  (myAction !== 'register' && !isAlreadyRegistered)
                 }
                 loading={isSavingMyTaxCredit}
                 size="small"
@@ -521,15 +523,6 @@ const PersonalTaxCredit = () => {
                   <Box style={{ maxWidth: 480 }}>
                     <Stack space={3}>
                       <Text>{formatMessage(m.spouseDeceasedInfo)}</Text>
-                      {/* TODO: replace with backend data */}
-                      <Box>
-                        <Text fontWeight="semiBold">
-                          Gunnar Jón Hólmgeirsson
-                        </Text>
-                        <Text>
-                          {formatMessage(m.spouseNationalId)} 190891-2620
-                        </Text>
-                      </Box>
                       {spouseEligibility?.reasonNotAllowed ? (
                         <AlertMessage
                           type="warning"
@@ -593,28 +586,24 @@ const PersonalTaxCredit = () => {
                               />
                             </Box>
                           </Box>
-                          <Input
+                          <NumberFormat
+                            customInput={Input}
                             id="spouse-deceased-percentage"
                             name="spouse-deceased-percentage"
                             label={formatMessage(m.percentageFromNextMonth)}
                             placeholder="100%"
                             size="xs"
                             backgroundColor="blue"
-                            value={
-                              spouseDeceasedPercentage
-                                ? `${spouseDeceasedPercentage}%`
-                                : ''
+                            suffix="%"
+                            allowNegative={false}
+                            isAllowed={({ floatValue }) =>
+                              floatValue === undefined ||
+                              (floatValue >= 0 && floatValue <= 100)
                             }
-                            onChange={(e) => {
-                              const val = e.target.value.replace('%', '').trim()
-                              const num = Number(val)
-                              if (
-                                val === '' ||
-                                (!isNaN(num) && num >= 0 && num <= 100)
-                              ) {
-                                setSpouseDeceasedPercentage(val)
-                              }
-                            }}
+                            value={spouseDeceasedPercentage}
+                            onValueChange={({ value }) =>
+                              setSpouseDeceasedPercentage(value)
+                            }
                             disabled={!spouseEligibility?.canApply}
                           />
                         </>
@@ -662,7 +651,6 @@ const PersonalTaxCredit = () => {
           />
         </Stack>
       </IntroWrapper>
-    </Box>
   )
 }
 

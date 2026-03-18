@@ -1,6 +1,5 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
-import { m as localMessages } from './messages'
 import { SocialInsuranceMaintenancePaths } from './paths'
 
 export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
@@ -42,8 +41,8 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: localMessages.personalTaxCredit,
-      description: localMessages.personalTaxCreditDescription,
+      name: m.personalTaxCredit,
+      description: m.personalTaxCreditDescription,
       path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePersonalTaxCredit,
     },
   ],

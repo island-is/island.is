@@ -1845,6 +1845,14 @@ export const m = defineMessages({
     id: 'service.portal:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
   },
+  personalTaxCredit: {
+    id: 'service.portal:personal-tax-credit',
+    defaultMessage: 'Persónuafsláttur',
+  },
+  personalTaxCreditDescription: {
+    id: 'service.portal:personal-tax-credit-description',
+    defaultMessage: 'Persónuafsláttur er 68.691 kr. á mánuði á árinu 2025.',
+  },
   paymentsReasoning: {
     id: 'service.portal:payments-reasoning',
     defaultMessage: 'Forsenda greiðslna',
