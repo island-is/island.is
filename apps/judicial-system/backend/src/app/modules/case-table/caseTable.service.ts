@@ -8,6 +8,7 @@ import {
   caseTables,
   CaseTableType,
   CaseType,
+  getCaseTableGroups,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -34,6 +35,62 @@ export class CaseTableService {
     @InjectConnection() private readonly sequelize: Sequelize,
     private readonly caseRepositoryService: CaseRepositoryService,
   ) {}
+
+  /**
+   * Returns which case table types (for the given user's role) the case belongs to.
+   * Caller must ensure the case exists and the user has access (e.g. via CaseExistsGuard + CaseReadGuard).
+   */
+  async getCaseTableMembership(
+    caseId: string,
+    user: User,
+  ): Promise<CaseTableType[]> {
+    const map = await this.getCaseTableTypesForCases([caseId], user)
+    return map.get(caseId) ?? []
+  }
+
+  /**
+   * Returns which case table types (for the given user's role) each case belongs to.
+   * Runs one query per user-visible table type in parallel; efficient for small caseId lists (e.g. search results or single case).
+   */
+  async getCaseTableTypesForCases(
+    caseIds: string[],
+    user: User,
+  ): Promise<Map<string, CaseTableType[]>> {
+    if (caseIds.length === 0) {
+      return new Map()
+    }
+
+    const tableGroups = getCaseTableGroups(user)
+    const tableTypes = tableGroups.flatMap((g) =>
+      g.tables.map((t) => t.type).filter((t) => t !== CaseTableType.STATISTICS),
+    )
+
+    const whereOptionsByType = tableTypes.map((type) => ({
+      type,
+      where: caseTableWhereOptions[type](user),
+    }))
+
+    const results = await Promise.all(
+      whereOptionsByType.map(async ({ type, where }) => {
+        const cases = await this.caseRepositoryService.findAll({
+          attributes: ['id'],
+          where: {
+            [Op.and]: [{ id: { [Op.in]: caseIds } }, where],
+          },
+        })
+        return { type, ids: cases.map((c) => c.id) }
+      }),
+    )
+
+    const map = new Map<string, CaseTableType[]>()
+    for (const caseId of caseIds) {
+      map.set(
+        caseId,
+        results.filter((r) => r.ids.includes(caseId)).map((r) => r.type),
+      )
+    }
+    return map
+  }
 
   async getCaseTableRows(
     type: CaseTableType,
@@ -180,6 +237,12 @@ export class CaseTableService {
       limit: 10,
     })
 
+    const uniqueCaseIds = [...new Set(cases.map((c) => c.id))]
+    const caseTableTypesMap = await this.getCaseTableTypesForCases(
+      uniqueCaseIds,
+      user,
+    )
+
     const rows = cases.flatMap((c) => {
       const caseMatchedValue = (c.get('matchedValue') as string) ?? ''
       const caseMatchedField =
@@ -191,6 +254,8 @@ export class CaseTableService {
       const isDefendantLevelMatch =
         caseMatchedField === 'defendantName' ||
         caseMatchedField === 'defendantNationalId'
+
+      const caseTableTypes = caseTableTypesMap.get(c.id) ?? []
 
       if (defendants.length === 0) {
         return [
@@ -204,6 +269,7 @@ export class CaseTableService {
             appealCaseNumber: c.appealCaseNumber ?? null,
             defendantNationalId: null,
             defendantName: null,
+            caseTableTypes,
           },
         ]
       }
@@ -232,6 +298,7 @@ export class CaseTableService {
           appealCaseNumber: c.appealCaseNumber ?? null,
           defendantNationalId: d.nationalId ?? null,
           defendantName: d.name ?? null,
+          caseTableTypes,
         }
       })
     })
