@@ -39,6 +39,7 @@ export enum CourtDocumentFolder {
   COURT_DOCUMENTS = 'Dómar, úrskurðir og Þingbók',
   APPEAL_DOCUMENTS = 'Kæra til Landsréttar',
   SUBPOENA_DOCUMENTS = 'Boðanir',
+  WORKING_DOCUMENTS = 'Vinnugögn',
 }
 
 enum RobotEmailType {

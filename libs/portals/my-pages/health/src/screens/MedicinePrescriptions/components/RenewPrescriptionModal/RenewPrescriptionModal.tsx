@@ -1,4 +1,3 @@
-import { HealthDirectoratePrescription } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -21,7 +20,7 @@ import * as styles from './RenewPrescriptionModal.css'
 
 interface Props {
   id: string
-  activePrescription: HealthDirectoratePrescription
+  activePrescription: PrescriptionItem
   toggleClose?: boolean
   isVisible: boolean
   setVisible: (isVisible: boolean) => void
@@ -49,7 +48,9 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   }, [isVisible])
 
   const [postRenewal, { data: renewalData, error: renewalError, loading }] =
-    usePostPrescriptionRenewalMutation()
+    usePostPrescriptionRenewalMutation({
+      refetchQueries: ['GetMedicinePrescriptions'],
+    })
 
   const data = [
     {
@@ -81,12 +82,8 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   }
 
   const submitForm = async () => {
-    // TODO: Improve form submission when service is ready
-    if (
-      activePrescription.category === undefined ||
-      activePrescription.id === undefined
-    ) {
-      setError('Please select a valid prescription.')
+    if (activePrescription.id == null) {
+      setError(formatMessage(messages.renewalInvalidPrescription))
       return
     }
 
@@ -95,26 +92,18 @@ const RenewPrescriptionModal: React.FC<Props> = ({
         variables: {
           input: {
             id: activePrescription.id,
-            medCardDrugCategory: activePrescription.category ?? '',
-            medCardDrugId: activePrescription.medCardDrugId ?? '',
-            prescribedItemId: activePrescription.id,
           },
         },
       })
       if (data) {
         setError('')
         closeModal()
-        toast.success(
-          'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
-        )
+        toast.success(formatMessage(messages.renewalRequestSent))
       }
     } catch (error) {
-      setError(
-        'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
-      )
-      toast.error(
-        'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
-      )
+      const errorMessage = formatMessage(messages.renewalRequestError)
+      setError(errorMessage)
+      toast.error(errorMessage)
     }
   }
 

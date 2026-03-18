@@ -24,7 +24,6 @@ export const MessageWithLink = ({ item }: Props) => {
     <Box
       flexDirection="row"
       display="flex"
-      padding={4}
       background="white"
       alignItems="center"
     >
