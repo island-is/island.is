@@ -40,15 +40,15 @@ export class PoliceDigitalCaseFile extends Model {
   caseId!: string
 
   @Column({ type: DataType.STRING, allowNull: false })
-  @ApiPropertyOptional({ type: String })
+  @ApiProperty({ type: String })
   policeCaseNumber!: string
 
   @Column({ type: DataType.STRING, allowNull: false })
-  @ApiPropertyOptional({ type: String })
+  @ApiProperty({ type: String })
   policeDigitalFileId!: string
 
   @Column({ type: DataType.STRING, allowNull: false })
-  @ApiPropertyOptional({ type: String })
+  @ApiProperty({ type: String })
   policeExternalVendorId!: string
 
   @Column({ type: DataType.STRING, allowNull: false })
