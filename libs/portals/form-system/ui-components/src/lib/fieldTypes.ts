@@ -87,7 +87,7 @@ export const getInitialJsonForField = <T extends keyof FieldTypeMapping>(
     case FieldTypesEnum.DATE_PICKER:
       return { date: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.CHECKBOX:
-      return { checkboxValue: undefined } as FieldTypeMapping[T]
+      return { checkboxValue: null } as FieldTypeMapping[T]
     case FieldTypesEnum.RADIO_BUTTONS:
       return { listValue: undefined } as FieldTypeMapping[T]
     case FieldTypesEnum.DROPDOWN_LIST:

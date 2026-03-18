@@ -216,25 +216,27 @@ export const BaseInput = () => {
           </Row>
         </>
       )}
-      {screen?.isMulti && currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX && (
-        <Row>
-          <Column span="5/10">
-            <Checkbox
-              label={formatMessage(m.isPartOfMulti)}
-              checked={currentItem.isPartOfMultiset ?? false}
-              disabled={isPublished}
-              onChange={() =>
-                controlDispatch({
-                  type: 'CHANGE_IS_PART_OF_MULTI',
-                  payload: {
-                    update: updateActiveItem,
-                  },
-                })
-              }
-            />
-          </Column>
-        </Row>
-      )}
+      {screen?.isMulti &&
+        currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX &&
+        currentItem.fieldType !== FieldTypesEnum.FILE && (
+          <Row>
+            <Column span="5/10">
+              <Checkbox
+                label={formatMessage(m.isPartOfMulti)}
+                checked={currentItem.isPartOfMultiset ?? false}
+                disabled={isPublished}
+                onChange={() =>
+                  controlDispatch({
+                    type: 'CHANGE_IS_PART_OF_MULTI',
+                    payload: {
+                      update: updateActiveItem,
+                    },
+                  })
+                }
+              />
+            </Column>
+          </Row>
+        )}
       {currentItem.fieldType !== FieldTypesEnum.ISK_SUMBOX && (
         <Row>
           <Column span="5/10">

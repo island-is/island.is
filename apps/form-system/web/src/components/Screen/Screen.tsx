@@ -229,14 +229,16 @@ export const Screen = () => {
             </Box>
           ))}
         {shouldMoveCurrencySumBox && currencySumField && (
-          <Field
-            field={currencySumField}
-            valueIndex={0}
-            key={`${currencySumField.id ?? 'currency-sum'}-sum`}
-          />
+          <Box marginBottom={4}>
+            <Field
+              field={currencySumField}
+              valueIndex={0}
+              key={`${currencySumField.id ?? 'currency-sum'}-sum`}
+            />
+          </Box>
         )}
         {isMulti && multiMax > 1 && (
-          <Box display="flex" justifyContent="flexEnd" paddingTop={0}>
+          <Box display="flex" justifyContent="flexEnd">
             <Box marginRight={2}>
               {numberOfItems > 1 && (
                 <Button
