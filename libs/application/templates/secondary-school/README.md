@@ -45,7 +45,7 @@ Users fill in personal information, school selection and additional information.
 
 * Freshmen need to select at least 2 schools and can also add a third. For each school they must select a track (braut) they want to apply for as well as a backup track (braut til vara).
   * The only exception to this is if the user selects a specialNeeds track (starfsbraut), this info is fetched via dynamic query to GetSecondarySchoolProgramsBySchoolId, if the user selects a specialNeeds track any further school and track selection is optional.
-* General applicants need to select at least 1 school with an option to select a second school. For each shool they must select a track, there is no option of a backup track.
+* General applicants need to select at least 1 school with an option to select a second school. For each school they must select a track, there is no option of a backup track.
 * If a user selects a specialNeeds track they get an alertMessage informing them that a track they've chosen is intended for students who require special assistance in their studies. This is to ensure that applicants are aware of the special needs track and don't accidentally select it without understanding the implications, as this could lead to their application being rejected by MMS.
 * Some tracks have a programApplicationMessage, if this is present it will be shown in an alertMessage under the track selection dropdown.
   * This *should* only be used for tracks that require special extra information such as athletic or music tracks that require information about applicants' extracurricular activities in those areas.
