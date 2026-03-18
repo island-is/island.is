@@ -126,9 +126,12 @@ export const AccessScopes = () => {
         })
     }
 
+    const seen = new Set<string>()
     return (categoriesData?.authScopeCategories
       ?.flatMap((category) => category.scopes)
       .filter((scope) => {
+        if (seen.has(scope.name)) return false
+
         // Search query filter
         const displayName = scope.displayName.toLowerCase()
         const description = scope.description?.toLowerCase()
@@ -149,7 +152,9 @@ export const AccessScopes = () => {
           filter.domains.length === 0 ||
           (scope.domain?.name && filter.domains.includes(scope.domain.name))
 
-        return matchesSearch && matchesTags && matchesDomains
+        const matches = matchesSearch && matchesTags && matchesDomains
+        if (matches) seen.add(scope.name)
+        return matches
       }) || []) as AuthApiScope[]
   }, [categoriesData, searchQuery, filter, tagsData])
 

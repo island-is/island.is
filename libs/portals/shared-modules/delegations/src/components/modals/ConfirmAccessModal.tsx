@@ -65,7 +65,8 @@ export const ConfirmAccessModal = ({
           navigate(DelegationPaths.DelegationsNew)
         })
         .catch(() => {
-          toast.error(formatMessage(coreMessages.somethingWrong))
+          toast.error(formatMessage(m.confirmError))
+          navigate(DelegationPaths.DelegationsNew)
         })
     }
   }
