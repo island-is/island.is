@@ -27,9 +27,7 @@ export const mapVehicleDataToNestedArray = (
   data.data?.forEach(({ permno, latestMileageReadDate, latestMileage }) => {
     const dataRow = [
       permno,
-      latestMileageReadDate
-        ? format(latestMileageReadDate, 'dd.MM.yyyy - HH:mm')
-        : '',
+      latestMileageReadDate ? format(latestMileageReadDate, 'dd.MM.yyyy') : '',
       latestMileage ?? 0,
       undefined,
     ]
