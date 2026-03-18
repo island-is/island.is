@@ -1,14 +1,10 @@
 import { ApiScope } from '@island.is/auth/scopes'
-import {
-  PortalModule,
-  PortalRouteDisabledReason,
-} from '@island.is/portals/core'
+import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 import { messages as hm } from './lib/messages'
 import { HealthPaths } from './lib/paths'
-import { BffUser } from '@island.is/shared/types'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
@@ -148,17 +144,11 @@ const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
 
-const getDisabledReason = (
-  userInfo: BffUser,
-  path: string,
-): PortalRouteDisabledReason => {
-  return 'default'
-}
 
 export const healthModule: PortalModule = {
   name: 'Heilsa',
   enabled: ({ isCompany }) => !isCompany,
-  routes: ({ userInfo }) => [
+  routes: ({ userInfo }): PortalRoute[] => [
     {
       name: m.health,
       path: HealthPaths.HealthRoot,
@@ -173,94 +163,65 @@ export const healthModule: PortalModule = {
         ApiScope.healthRightsStatus,
       ].some((scope) => userInfo.scopes.includes(scope)),
       element: <Navigate to={HealthPaths.HealthOverview} replace />,
-      disabledReason: getDisabledReason(userInfo, HealthPaths.HealthBasicOld),
     },
     {
       name: hm.basicInformation,
       path: HealthPaths.HealthBasicOld,
       element: <Navigate to={HealthPaths.HealthOverview} replace />,
-      disabledReason: getDisabledReason(userInfo, HealthPaths.HealthBasicOld),
     },
     {
       name: hm.overviewTitle,
       path: HealthPaths.HealthOverview,
       enabled: userInfo.scopes.includes(ApiScope.healthRightsStatus),
       element: <HealthOverview />,
-      disabledReason: getDisabledReason(userInfo, HealthPaths.HealthOverview),
     },
     {
       name: hm.therapyTitle,
       path: HealthPaths.HealthTherapies,
       enabled: userInfo.scopes.includes(ApiScope.healthTherapies),
       element: <Navigate to={HealthPaths.HealthTherapiesPhysical} replace />,
-      disabledReason: getDisabledReason(userInfo, HealthPaths.HealthTherapies),
     },
     {
       name: hm.physicalTherapy,
       path: HealthPaths.HealthTherapiesPhysical,
       enabled: userInfo.scopes.includes(ApiScope.healthTherapies),
       element: <TherapiesPhysical />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthTherapiesPhysical,
-      ),
     },
     {
       name: hm.speechTherapy,
       path: HealthPaths.HealthTherapiesSpeech,
       enabled: userInfo.scopes.includes(ApiScope.healthTherapies),
       element: <TherapiesSpeech />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthTherapiesSpeech,
-      ),
     },
     {
       name: hm.occupationalTherapy,
       path: HealthPaths.HealthTherapiesOccupational,
       enabled: userInfo.scopes.includes(ApiScope.healthTherapies),
       element: <TherapiesOccupational />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthTherapiesOccupational,
-      ),
     },
     {
       name: hm.aidsAndNutritionTitle,
       path: HealthPaths.HealthAidsAndNutrition,
       enabled: userInfo.scopes.includes(ApiScope.healthAssistiveAndNutrition),
       element: <AidsAndNutrition />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthAidsAndNutrition,
-      ),
     },
     {
       name: hm.payments,
       path: HealthPaths.HealthPayments,
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <Navigate to={HealthPaths.HealthPaymentParticipation} replace />,
-      disabledReason: getDisabledReason(userInfo, HealthPaths.HealthPayments),
     },
     {
       name: hm.paymentParticipation,
       path: HealthPaths.HealthPaymentParticipation,
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <PaymentParticipation />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthPaymentParticipation,
-      ),
     },
     {
       name: hm.paymentOverview,
       path: HealthPaths.HealthPaymentOverview,
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <PaymentOverview />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthPaymentOverview,
-      ),
     },
     {
       name: hm.paymentOverview,
@@ -268,10 +229,6 @@ export const healthModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <PaymentOverview />,
       key: 'HealthPaymentOverviewTotal',
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthPaymentOverviewInvoices,
-      ),
     },
     {
       name: hm.paymentOverviewTotals,
@@ -279,51 +236,36 @@ export const healthModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <PaymentOverviewTotals />,
       key: 'HealthPaymentOverviewTotal',
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthPaymentOverviewTotals,
-      ),
     },
     {
       name: hm.rights,
       path: HealthPaths.HealthPaymentRights,
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <Rights />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthPaymentRights,
-      ),
     },
     {
       name: hm.dentistsTitle,
       path: HealthPaths.HealthDentists,
       enabled: userInfo.scopes.includes(ApiScope.healthDentists),
       element: <Dentists />,
-      disabledReason: getDisabledReason(userInfo, HealthPaths.HealthDentists),
     },
     {
       name: hm.dentistsTitle,
       path: HealthPaths.HealthDentistsOld,
       enabled: userInfo.scopes.includes(ApiScope.healthDentists),
       element: <Navigate to={HealthPaths.HealthDentists} replace />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthDentistsOld,
-      ),
     },
     {
       name: hm.healthCenterTitle,
       path: HealthPaths.HealthCenter,
       enabled: userInfo.scopes.includes(ApiScope.healthHealthcare),
       element: <HealthCenter />,
-      disabledReason: getDisabledReason(userInfo, HealthPaths.HealthCenter),
     },
     {
       name: hm.healthCenterTitle,
       path: HealthPaths.HealthCenterOld,
       enabled: userInfo.scopes.includes(ApiScope.healthHealthcare),
       element: <Navigate to={HealthPaths.HealthCenter} replace />,
-      disabledReason: getDisabledReason(userInfo, HealthPaths.HealthCenterOld),
     },
     {
       name: hm.medicineTitle,
@@ -332,7 +274,6 @@ export const healthModule: PortalModule = {
       element: (
         <Navigate to={HealthPaths.HealthMedicinePaymentParticipation} replace />
       ),
-      disabledReason: getDisabledReason(userInfo, HealthPaths.HealthMedicine),
     },
     {
       name: hm.medicinePrescriptions,
@@ -340,10 +281,6 @@ export const healthModule: PortalModule = {
       key: MEDICINE_LANDLAEKNIR_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePrescriptions />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthMedicinePrescription,
-      ),
     },
     {
       name: hm.medicinePrescriptionHistory,
@@ -351,10 +288,6 @@ export const healthModule: PortalModule = {
       key: MEDICINE_LANDLAEKNIR_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePrescriptionHistory />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthMedicinePrescriptionHistory,
-      ),
     },
     {
       name: hm.medicineDelegation,
@@ -362,10 +295,6 @@ export const healthModule: PortalModule = {
       key: MEDICINE_DELEGATION_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <MedicineDelegation />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthMedicineDelegation,
-      ),
     },
     {
       name: hm.medicineDelegation,
@@ -373,10 +302,6 @@ export const healthModule: PortalModule = {
       key: MEDICINE_DELEGATION_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <MedicineDelegationDetail />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthMedicineDelegationDetail,
-      ),
     },
     {
       name: hm.medicineDelegation,
@@ -384,141 +309,89 @@ export const healthModule: PortalModule = {
       key: MEDICINE_DELEGATION_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <NewMedicineDelegation />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthMedicineDelegationAdd,
-      ),
     },
     {
       name: hm.medicinePaymentParticipation,
       path: HealthPaths.HealthMedicinePaymentParticipation,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePurchase />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthMedicinePaymentParticipation,
-      ),
     },
     {
       name: hm.medicinePurchaseTitle,
       path: HealthPaths.HealthMedicinePurchase,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicinePurchase />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthMedicinePurchase,
-      ),
     },
     {
       name: hm.medicineCalculatorTitle,
       path: HealthPaths.HealthMedicineCalculator,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicineCalculator />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthMedicineCalculator,
-      ),
     },
     {
       name: hm.medicineLicenseTitle,
       path: HealthPaths.HealthMedicineCertificates,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicineLicence />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthMedicineCertificates,
-      ),
     },
     {
       name: hm.medicineLicenseTitle,
       path: HealthPaths.HealthMedicineCertificate,
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicineCertificate />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthMedicineCertificate,
-      ),
     },
     {
       name: hm.healthCenterRegistrationTitle,
       path: HealthPaths.HealthCenterRegistration,
       enabled: userInfo.scopes.includes(ApiScope.healthHealthcare),
       element: <HealthCenterRegistration />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthCenterRegistration,
-      ),
     },
     {
       name: hm.healthCenterRegistrationTitle,
       path: HealthPaths.HealthCenterRegistrationOld,
       enabled: userInfo.scopes.includes(ApiScope.healthHealthcare),
       element: <Navigate to={HealthPaths.HealthCenterRegistration} replace />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthCenterRegistrationOld,
-      ),
     },
     {
       name: hm.dentistRegisterationPageTitle,
       path: HealthPaths.HealthDentistRegistration,
       enabled: userInfo.scopes.includes(ApiScope.healthDentists),
       element: <DentistRegistration />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthDentistRegistration,
-      ),
     },
     {
       name: hm.dentistRegisterationPageTitle,
       path: HealthPaths.HealthDentistRegistrationOld,
       enabled: userInfo.scopes.includes(ApiScope.healthDentists),
       element: <Navigate to={HealthPaths.HealthDentistRegistration} replace />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthDentistRegistrationOld,
-      ),
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonation,
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      notAvailableForActors: true,
       element: <OrganDonation />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthOrganDonation,
-      ),
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationOld,
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      notAvailableForActors: true,
       element: <Navigate to={HealthPaths.HealthOrganDonation} replace />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthOrganDonationOld,
-      ),
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistration,
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      notAvailableForActors: true,
       element: <OrganDonationRegistration />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthOrganDonationRegistration,
-      ),
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistrationOld,
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      notAvailableForActors: true,
       element: (
         <Navigate to={HealthPaths.HealthOrganDonationRegistration} replace />
-      ),
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthOrganDonationRegistrationOld,
       ),
     },
     {
@@ -526,10 +399,6 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthVaccinations,
       enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <Vaccinations />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthVaccinations,
-      ),
     },
 
     {
@@ -537,7 +406,6 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthBloodtype,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Bloodtype />,
-      disabledReason: getDisabledReason(userInfo, HealthPaths.HealthBloodtype),
     },
     {
       name: hm.referrals,
@@ -545,7 +413,6 @@ export const healthModule: PortalModule = {
       key: 'Referrals',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Referrals />,
-      disabledReason: getDisabledReason(userInfo, HealthPaths.HealthReferrals),
     },
     {
       name: hm.referrals,
@@ -553,10 +420,6 @@ export const healthModule: PortalModule = {
       key: 'Referrals',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <ReferralsDetail />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthReferralsDetail,
-      ),
     },
     {
       name: hm.waitlists,
@@ -564,7 +427,6 @@ export const healthModule: PortalModule = {
       key: 'HealthWaitlists',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Waitlist />,
-      disabledReason: getDisabledReason(userInfo, HealthPaths.HealthWaitlists),
     },
     {
       name: hm.waitlists,
@@ -572,10 +434,6 @@ export const healthModule: PortalModule = {
       key: 'HealthWaitlists',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <WaitlistDetail />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthWaitlistsDetail,
-      ),
     },
     {
       name: hm.questionnaires,
@@ -583,10 +441,6 @@ export const healthModule: PortalModule = {
       key: 'HealthQuestionnaires',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Questionnaires />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthQuestionnaires,
-      ),
     },
     {
       name: hm.questionnaires,
@@ -594,10 +448,6 @@ export const healthModule: PortalModule = {
       key: 'HealthQuestionnaires',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <QuestionnairesDetail />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthQuestionnairesDetail,
-      ),
     },
     {
       name: hm.questionnaire,
@@ -605,10 +455,6 @@ export const healthModule: PortalModule = {
       key: 'HealthQuestionnaires',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <QuestionnairesAnswer />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthQuestionnairesAnswer,
-      ),
     },
     {
       name: hm.questionnaire,
@@ -616,10 +462,6 @@ export const healthModule: PortalModule = {
       key: 'HealthQuestionnaires',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <QuestionnairesAnswered />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthQuestionnairesAnswered,
-      ),
     },
     {
       name: hm.patientData,
@@ -629,10 +471,6 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <Navigate to={HealthPaths.HealthPatientDataOverview} replace />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthPatientData,
-      ),
     },
     {
       name: hm.patientData,
@@ -642,10 +480,6 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <PatientData />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthPatientDataOverview,
-      ),
     },
     {
       name: hm.patientDataPermit,
@@ -655,10 +489,6 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <PatientDataPermits />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthPatientDataPermits,
-      ),
     },
     {
       name: hm.permit,
@@ -668,10 +498,6 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <PatientDataPermitsDetail />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthPatientDataPermitsDetail,
-      ),
     },
     {
       name: hm.addPermit,
@@ -681,10 +507,6 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <PatientDataNewPermit />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthPatientDataPermitsAdd,
-      ),
     },
     {
       name: hm.appointments,
@@ -694,10 +516,6 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <Appointments />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthAppointments,
-      ),
     },
     {
       name: hm.appointmentDetail,
@@ -707,10 +525,6 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.internal) ||
         userInfo.scopes.includes(ApiScope.health),
       element: <AppointmentDetail />,
-      disabledReason: getDisabledReason(
-        userInfo,
-        HealthPaths.HealthAppointmentDetail,
-      ),
     },
   ],
 }

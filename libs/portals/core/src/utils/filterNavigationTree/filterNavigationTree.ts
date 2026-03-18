@@ -1,5 +1,31 @@
-import { PortalNavigationItem, PortalRoute } from '../../types/portalCore'
+import {
+  PortalNavigationItem,
+  PortalRoute,
+  PortalRouteDisabledReason,
+} from '../../types/portalCore'
 import { matchPath } from 'react-router-dom'
+import { AuthDelegationType, BffUser } from '@island.is/shared/types'
+
+const computeDisabledReason = (
+  userInfo: BffUser,
+  route: PortalRoute,
+): PortalRouteDisabledReason => {
+  const delegationTypes = userInfo.profile.delegationType ?? []
+  const isActingAsDelegate = !!userInfo.profile.actor
+
+  if (isActingAsDelegate && route.notAvailableForActors) {
+    return 'notAvailableForActors'
+  }
+
+  if (
+    delegationTypes.includes(AuthDelegationType.LegalGuardian) &&
+    !delegationTypes.includes(AuthDelegationType.LegalGuardianMinor)
+  ) {
+    return 'notMinor'
+  }
+
+  return 'default'
+}
 
 type FilterNavigationTree = {
   item: PortalNavigationItem
@@ -9,6 +35,7 @@ type FilterNavigationTree = {
    * The current location path
    */
   currentLocationPath: string
+  userInfo?: BffUser
 }
 
 const findRoute = (route: PortalRoute, item: PortalNavigationItem) => {
@@ -29,6 +56,7 @@ export const filterNavigationTree = ({
   routes,
   dynamicRouteArray,
   currentLocationPath,
+  userInfo,
 }: FilterNavigationTree): boolean => {
   const routeItem = routes.find((route) => findRoute(route, item))
 
@@ -41,6 +69,7 @@ export const filterNavigationTree = ({
       routes,
       dynamicRouteArray,
       currentLocationPath,
+      userInfo,
     })
   })
 
@@ -55,7 +84,11 @@ export const filterNavigationTree = ({
 
   // Maps the enabled status to the nav item if provided
   item.enabled = routeItem?.enabled
-  item.disabledReason = routeItem?.disabledReason
+  item.disabledReason =
+    routeItem?.disabledReason ??
+    (routeItem?.enabled === false && userInfo
+      ? computeDisabledReason(userInfo, routeItem)
+      : undefined)
 
   // Makes dynamic item visible in navigation after dynamicArray hook is run
   if (routeItem?.dynamic) {

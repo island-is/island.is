@@ -143,9 +143,16 @@ export type PortalRoute = Omit<RouteObject, 'children'> & {
    */
   enabled?: boolean
   /**
-   * Reason why the route is disabled, when enabled is false
+   * Reason why the route is disabled, when enabled is false.
+   * If omitted, the reason is computed automatically from the user's delegation context.
    */
   disabledReason?: PortalRouteDisabledReason
+  /**
+   * Mark this route as never accessible in any delegated context (electronic delegation / umboð).
+   * When set to true and the user is acting as a delegate, disabledReason will be
+   * automatically set to 'notAvailableForActors'.
+   */
+  notAvailableForActors?: boolean
   /**
    * Hides navigation item from navigation
    */
