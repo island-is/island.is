@@ -8,9 +8,10 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import type { User } from '@island.is/judicial-system/types'
 
-import { PoliceService } from '../police/police.service'
-import { PoliceDigitalCaseFileRepositoryService } from '../repository'
-import { PoliceDigitalCaseFileSyncResult } from './models/policeDigitalCaseFileSyncResult.model'
+import { PoliceService } from '../../police/police.service'
+import { PoliceDigitalCaseFileRepositoryService } from '../../repository'
+import { PoliceDigitalCaseFileSyncResult } from '../models/policeDigitalCaseFileSyncResult.model'
+import { getFilesToCreate } from './getFilesToCreate'
 
 @Injectable()
 export class PoliceDigitalCaseFileService {
@@ -41,16 +42,15 @@ export class PoliceDigitalCaseFileService {
       policeCaseNumbers.includes(f.policeCaseNumber),
     )
 
-    const policeDigitalCaseFilesPoliceFileIds = new Set(
-      currentPoliceDigitalCaseFiles.map((f) => f.policeDigitalFileId),
-    )
     const policeSystemDigitalCaseFileIds = new Set(
       relevantDigitalCaseFiles.map((f) => f.id),
     )
 
     // Auto-create DB entries for relevant police digital case files not yet stored from the police system
-    const filesToCreate = relevantDigitalCaseFiles.filter(
-      (f) => !policeDigitalCaseFilesPoliceFileIds.has(f.id),
+    const filesToCreate = getFilesToCreate(
+      policeSystemDigitalCaseFiles,
+      currentPoliceDigitalCaseFiles,
+      policeCaseNumbers,
     )
 
     if (filesToCreate.length > 0) {

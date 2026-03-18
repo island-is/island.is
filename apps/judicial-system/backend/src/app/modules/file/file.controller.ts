@@ -79,9 +79,9 @@ import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { PoliceDigitalCaseFileService } from './policeDigitalCaseFiles/policeDigitalCaseFile.service'
 import { CriminalRecordService } from './criminalRecord.service'
 import { FileService } from './file.service'
-import { PoliceDigitalCaseFileService } from './policeDigitalCaseFile.service'
 
 @Controller('api/case/:caseId')
 @ApiTags('files')

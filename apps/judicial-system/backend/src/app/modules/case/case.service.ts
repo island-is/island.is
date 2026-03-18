@@ -73,8 +73,7 @@ import { CourtService } from '../court'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
-import { FileService } from '../file'
-import { PoliceDigitalCaseFileService } from '../file/policeDigitalCaseFile.service'
+import { FileService, PoliceDigitalCaseFileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import {
   Case,
