@@ -172,7 +172,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
       <Box className={grid({ gap: 4 })}>
         {policeCaseNumbers?.map((policeCaseNumber, index) => {
           const currentDigitalCaseFiles =
-            policeDigitalCaseFileData?.files?.filter(
+            digitalCaseFiles?.filter(
               (file) => file.policeCaseNumber === policeCaseNumber,
             ) ?? []
 
@@ -216,11 +216,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
               />
               {showDigitalCaseFiles && (
                 <PoliceDigitalCaseFilesList
-                  digitalCaseFiles={
-                    digitalCaseFiles?.filter(
-                      (file) => file.policeCaseNumber === policeCaseNumber,
-                    ) ?? []
-                  }
+                  digitalCaseFiles={currentDigitalCaseFiles}
                   onRemove={(file: PoliceDigitalCaseFile) => {
                     deletePoliceDigitalCaseFile(file.id)
                   }}
