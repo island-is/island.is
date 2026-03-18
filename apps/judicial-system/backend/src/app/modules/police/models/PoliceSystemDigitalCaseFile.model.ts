@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-export class PoliceDigitalCaseFile {
+export class PoliceSystemDigitalCaseFile {
   // digital file id in the police system
   @ApiProperty({ type: String })
   id!: string

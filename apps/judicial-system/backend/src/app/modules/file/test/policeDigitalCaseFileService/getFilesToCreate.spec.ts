@@ -1,4 +1,4 @@
-import { PoliceDigitalCaseFile as PoliceSystemDigitalCaseFile } from '../../../police/models/PoliceDigitalCaseFile.model'
+import { PoliceSystemDigitalCaseFile } from '../../../police/models/PoliceSystemDigitalCaseFile.model'
 import { PoliceDigitalCaseFile } from '../../../repository/models/policeDigitalCaseFile.model'
 import { getFilesToCreate } from '../../policeDigitalCaseFiles/getFilesToCreate'
 

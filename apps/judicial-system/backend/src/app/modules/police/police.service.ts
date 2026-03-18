@@ -47,7 +47,7 @@ import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
-import { PoliceDigitalCaseFile } from './models/PoliceDigitalCaseFile.model'
+import { PoliceSystemDigitalCaseFile } from './models/PoliceSystemDigitalCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
 
@@ -481,17 +481,17 @@ export class PoliceService {
     return files
   }
 
-  async getAllPoliceDigitalCaseFiles(
+  async getAllPoliceSystemDigitalCaseFiles(
     caseId: string,
     user: User,
-  ): Promise<PoliceDigitalCaseFile[]> {
+  ): Promise<PoliceSystemDigitalCaseFile[]> {
     const caseFiles = await this.getDigitalCaseFiles(
       caseId,
       user,
-      'getAllPoliceDigitalCaseFiles',
+      'getAllPoliceSystemDigitalCaseFiles',
     )
 
-    const files: PoliceDigitalCaseFile[] = []
+    const files: PoliceSystemDigitalCaseFile[] = []
 
     caseFiles?.forEach((filesPerCaseNumber) => {
       filesPerCaseNumber.gogn?.forEach((file) => {
