@@ -52,7 +52,7 @@ export class CaseTableService {
    * Returns which case table types (for the given user's role) each case belongs to.
    * Runs one query per user-visible table type in parallel; efficient for small caseId lists (e.g. search results or single case).
    */
-  async getCaseTableTypesForCases(
+  private async getCaseTableTypesForCases(
     caseIds: string[],
     user: User,
   ): Promise<Map<string, CaseTableType[]>> {
@@ -67,17 +67,26 @@ export class CaseTableService {
 
     const whereOptionsByType = tableTypes.map((type) => ({
       type,
-      where: caseTableWhereOptions[type](user),
+      whereOptions: caseTableWhereOptions[type](user),
     }))
 
     const results = await Promise.all(
-      whereOptionsByType.map(async ({ type, where }) => {
+      whereOptionsByType.map(async ({ type, whereOptions }) => {
+        const [include, globalOrder] = getIncludes(
+          whereOptions.includes ?? {},
+          [],
+          user,
+        )
+
         const cases = await this.caseRepositoryService.findAll({
           attributes: ['id'],
+          include,
           where: {
-            [Op.and]: [{ id: { [Op.in]: caseIds } }, where],
+            [Op.and]: [{ id: { [Op.in]: caseIds } }, whereOptions.where],
           },
+          order: globalOrder,
         })
+
         return { type, ids: cases.map((c) => c.id) }
       }),
     )
@@ -89,6 +98,7 @@ export class CaseTableService {
         results.filter((r) => r.ids.includes(caseId)).map((r) => r.type),
       )
     }
+
     return map
   }
 
