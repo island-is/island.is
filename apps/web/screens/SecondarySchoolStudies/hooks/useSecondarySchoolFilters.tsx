@@ -32,7 +32,11 @@ interface UseSecondarySchoolFiltersReturn {
     id: string
     label: string
     selected: string[]
-    filters: Array<{ value: string; label: React.ReactNode }>
+    filters: Array<{
+      value: string
+      label: React.ReactNode
+      tagLabel?: React.ReactNode
+    }>
   }>
 }
 
@@ -116,6 +120,7 @@ export const useSecondarySchoolFilters = (
               <Text variant="small">{l.shortDescription ?? l.name ?? ''}</Text>
             </Box>
           ),
+          tagLabel: `${formatMessage(m.filters.haefnisþrep)} ${index + 1}`,
         })) ?? []
 
     return [

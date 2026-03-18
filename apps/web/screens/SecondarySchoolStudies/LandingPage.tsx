@@ -235,7 +235,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
   ) => {
     const category = filterCategories.find((cat) => cat.id === categoryId)
     const filter = category?.filters.find((f) => f.value === value)
-    return filter?.label || value
+    return filter?.tagLabel ?? filter?.label ?? value
   }
 
   return (
