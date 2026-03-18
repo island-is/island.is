@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import { FarmersClientService } from '@island.is/clients/farmers'
+import { isDefined } from '@island.is/shared/utils'
 import {
   mapToFarmerLand,
   mapToFarmerLandCollection,
+  mapToFarmerLandSubsidy,
   mapToLandBeneficiary,
+  mapToLandRegistryEntry,
 } from './mapper'
 import { FarmerLand } from './models/farmerLand.model'
+import { FarmerLandSubsidiesCollection } from './models/farmerLandSubsidiesCollection.model'
 import { LandBeneficiary } from './models/landBeneficiary.model'
 import { LandRegistryEntry } from './models/landRegistryEntry.model'
 import { LandsCollection } from './models/farmerLandsCollection.model'
@@ -40,7 +44,7 @@ export class FarmersService {
       user,
       farmId,
     )
-    return data.map(mapToLandBeneficiary)
+    return data.map(mapToLandBeneficiary).filter(isDefined)
   }
 
   async getLandRegistry(
@@ -48,14 +52,28 @@ export class FarmersService {
     farmId: string,
   ): Promise<LandRegistryEntry[]> {
     const data = await this.farmersClientService.getFarmAssets(user, farmId)
-    return data.map((owner) => ({
-      id: owner.details?.farmId?.toString() ?? '',
-      name: owner.details?.farmName ?? '',
-      properties: (owner.list ?? []).map((a) => ({
-        ownershipType: a.ownerType ?? '',
-        usage: a.usage ?? '',
-        share: a.share ? parseFloat(a.share) : undefined,
-      })),
-    }))
+    return data.map(mapToLandRegistryEntry).filter(isDefined)
+  }
+
+  async getSubsidies(
+    user: User,
+    farmId: string,
+    cursor?: string,
+  ): Promise<FarmerLandSubsidiesCollection> {
+    const response = await this.farmersClientService.getFarmPayments(
+      user,
+      farmId,
+      cursor,
+    )
+    return {
+      data: (response?.data ?? []).map((p) => mapToFarmerLandSubsidy(p, farmId)),
+      totalCount: response?.total ?? 0,
+      pageInfo: {
+        hasNextPage: !!response?.next,
+        hasPreviousPage: !!response?.previous,
+        startCursor: response?.previous ?? undefined,
+        endCursor: response?.next ?? undefined,
+      },
+    }
   }
 }

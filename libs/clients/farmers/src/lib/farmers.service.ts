@@ -5,9 +5,11 @@ import {
   AssetOwner,
   BeneficiaryWrapper,
   Farm,
+  PaginatedPayments,
   listAssets,
   listBeneficiaries,
   listFarms,
+  searchPayments,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -43,6 +45,25 @@ export class FarmersClientService {
     }
 
     return response.data
+  }
+
+  /**
+   * Get a single page of payments for a specific farm
+   */
+  public getFarmPayments = async (
+    user: User,
+    farmId: string,
+    cursor?: string,
+  ): Promise<PaginatedPayments | null> => {
+    const response = await withAuthContext(user, () =>
+      dataOr404Null(
+        searchPayments({
+          path: { farmId },
+          query: cursor ? { next: cursor } : {},
+        }),
+      ),
+    )
+    return response ?? null
   }
 
   /**

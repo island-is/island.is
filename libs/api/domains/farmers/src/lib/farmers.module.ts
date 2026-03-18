@@ -7,6 +7,5 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 @Module({
   imports: [FarmersClientModule, FeatureFlagModule],
   providers: [FarmersResolver, FarmersService],
-  exports: [FarmersService],
 })
 export class FarmersModule {}

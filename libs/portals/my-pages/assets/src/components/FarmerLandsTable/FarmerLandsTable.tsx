@@ -1,15 +1,18 @@
-import { useMemo } from 'react'
+import { Fragment, useMemo, useState } from 'react'
+import { ApolloError } from '@apollo/client'
 import { Column, Row, useExpanded, useSortBy, useTable } from 'react-table'
+import AnimateHeight from 'react-animate-height'
 import { Box, Button, Table as T, Text } from '@island.is/island-ui/core'
 import { EmptyTable } from '@island.is/portals/my-pages/core'
+import { Problem } from '@island.is/react-spa/shared'
+import * as styles from './FarmerLandsTable.css'
 
 interface FarmerLandsTableProps<T extends object> {
   columns: Column<T>[]
   data: T[]
   loading?: boolean
-  error?: boolean
+  error?: ApolloError
   emptyMessage: string
-  errorMessage: string
   renderExpandedRow?: (row: Row<T>) => React.ReactNode
 }
 
@@ -17,12 +20,12 @@ export const FarmerLandsTable = <T extends object>({
   columns: providedColumns,
   data,
   loading = false,
-  error = false,
+  error,
   emptyMessage,
-  errorMessage,
   renderExpandedRow,
 }: FarmerLandsTableProps<T>) => {
-  // Add expander column if renderExpandedRow is provided
+  const [collapsingRows, setCollapsingRows] = useState<Set<string>>(new Set())
+
   const columns = useMemo<Column<T>[]>(() => {
     if (!renderExpandedRow) {
       return providedColumns
@@ -33,11 +36,17 @@ export const FarmerLandsTable = <T extends object>({
       Header: () => null,
       Cell: ({ row }: { row: Row<T> }) => (
         <Box
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          {...(row as any).getToggleRowExpandedProps()}
           display="flex"
           alignItems="center"
           cursor="pointer"
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onClick={(e: React.MouseEvent) => {
+            if ((row as any).isExpanded) {
+              setCollapsingRows((prev) => new Set(prev).add(row.id))
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ;(row as any).getToggleRowExpandedProps().onClick(e)
+          }}
         >
           <Button
             circle
@@ -65,12 +74,12 @@ export const FarmerLandsTable = <T extends object>({
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     tableInstance
 
-  if (loading) {
-    return <EmptyTable loading />
+  if (error) {
+    return <Problem error={error} noBorder={false} />
   }
 
-  if (error) {
-    return <EmptyTable message={errorMessage} />
+  if (loading) {
+    return <EmptyTable loading />
   }
 
   if (!data.length) {
@@ -88,6 +97,7 @@ export const FarmerLandsTable = <T extends object>({
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   (column as any).getSortByToggleProps?.(),
                 )}
+                text={{ variant: 'medium', fontWeight: 'semiBold' }}
                 style={{
                   cursor: column.id !== 'expander' ? 'pointer' : 'default',
                 }}
@@ -101,39 +111,68 @@ export const FarmerLandsTable = <T extends object>({
       <T.Body {...getTableBodyProps()}>
         {rows.map((row) => {
           prepareRow(row)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const isExpanded = (row as any).isExpanded
+          const isCollapsing = collapsingRows.has(row.id)
+
           return (
-            <>
+            <Fragment key={row.id}>
               <T.Row {...row.getRowProps()}>
-                {row.cells.map((cell) => (
+                {row.cells.map((cell, i) => (
                   <T.Data
                     {...cell.getCellProps()}
                     box={{
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      background: (row as any).isExpanded
-                        ? 'blue100'
-                        : 'transparent',
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      borderBottomWidth: (row as any).isExpanded
-                        ? undefined
-                        : 'standard',
+                      background:
+                        isExpanded || isCollapsing ? 'blue100' : 'transparent',
+                      borderBottomWidth:
+                        isExpanded || isCollapsing ? undefined : 'standard',
+                      ...(i === 0 ? { position: 'relative' } : {}),
                     }}
                   >
-                    <Text variant="small">{cell.render('Cell')}</Text>
+                    {i === 0 && (isExpanded || isCollapsing) && (
+                      <div className={styles.line} />
+                    )}
+                    {cell.column.id === 'expander' ? (
+                      cell.render('Cell')
+                    ) : (
+                      <Text variant="small">{cell.render('Cell')}</Text>
+                    )}
                   </T.Data>
                 ))}
               </T.Row>
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {renderExpandedRow && (row as any).isExpanded && (
+              {renderExpandedRow && (
                 <T.Row>
                   <T.Data
-                    box={{ background: 'blue100' }}
                     colSpan={columns.length}
+                    style={{ padding: 0 }}
+                    box={{ position: 'relative' }}
                   >
-                    <Box padding={3}>{renderExpandedRow(row)}</Box>
+                    <AnimateHeight
+                      duration={300}
+                      height={isExpanded ? 'auto' : 0}
+                      onHeightAnimationEnd={(newHeight) => {
+                        if (newHeight === 0) {
+                          setCollapsingRows((prev) => {
+                            const next = new Set(prev)
+                            next.delete(row.id)
+                            return next
+                          })
+                        }
+                      }}
+                    >
+                      {(isExpanded || isCollapsing) && (
+                        <>
+                          <div className={styles.line} />
+                          <Box background="blue100" padding={3}>
+                            {renderExpandedRow(row)}
+                          </Box>
+                        </>
+                      )}
+                    </AnimateHeight>
                   </T.Data>
                 </T.Row>
               )}
-            </>
+            </Fragment>
           )
         })}
       </T.Body>
