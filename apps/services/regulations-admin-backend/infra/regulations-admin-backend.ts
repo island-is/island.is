@@ -43,6 +43,17 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
       requests: { cpu: '100m', memory: '256Mi' },
     })
     .xroad(Base, Client, NationalRegistryB2C)
+    .ingress({
+      primary: {
+        host: {
+          dev: 'regulations-admin-backend-xrd',
+          staging: 'regulations-admin-backend-xrd',
+          prod: 'regulations-admin-backend-xrd',
+        },
+        paths: ['/api'],
+        public: false,
+      },
+    })
     .readiness('/liveness')
     .liveness('/liveness')
     .grantNamespaces('islandis', 'download-service')

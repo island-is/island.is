@@ -37,7 +37,7 @@ export const contactInformation = {
     },
     approveButton: {
       id: 'aosh.rifm.application:contactInformation.labels.approveButton',
-      defaultMessage: 'Staðfesta',
+      defaultMessage: 'Senda inn umsókn',
       description: 'contactInformation approveButton label',
     },
   }),

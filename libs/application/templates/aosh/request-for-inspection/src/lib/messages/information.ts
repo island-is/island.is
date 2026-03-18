@@ -37,7 +37,7 @@ export const information = {
         description: 'Pick machine info title',
       },
       infoMessage: {
-        id: 'aosh.rifm.application:information.labels.pickMachine.infoMessage',
+        id: 'aosh.rifm.application:information.labels.pickMachine.infoMessage#markdown',
         defaultMessage:
           '•	árlega eða annað hvert á - sjá skoðunarmiða á vél \n\n' +
           '•	fyrir og eftir verulegar viðgerðir og breytingar á burðarvirkjum véla \n\n' +
@@ -142,6 +142,11 @@ export const information = {
         id: 'aosh.rifm.application:information.labels.machine.ownerNumber',
         defaultMessage: 'Eigandanúmer',
         description: 'Owner number label',
+      },
+      ownerName: {
+        id: 'aosh.rifm.application:information.labels.machine.ownerName',
+        defaultMessage: 'Nafn eiganda',
+        description: 'Owner name label',
       },
       subType: {
         id: 'aosh.rifm.application:information.labels.machine.subType',

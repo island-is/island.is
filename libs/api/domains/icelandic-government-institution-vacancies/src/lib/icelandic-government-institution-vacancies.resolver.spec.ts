@@ -109,7 +109,7 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
       expect.objectContaining({
         id: '',
         attributes: expect.objectContaining({
-          ip: '192.168.1.100',
+          ipAddress: '192.168.1.100',
         }),
       }),
     )
@@ -127,7 +127,7 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
       expect.objectContaining({
         id: '',
         attributes: expect.objectContaining({
-          ip: '10.0.0.50',
+          ipAddress: '10.0.0.50',
         }),
       }),
     )
@@ -143,12 +143,12 @@ describe('IcelandicGovernmentInstitutionVacanciesResolver', () => {
       expect.objectContaining({
         id: '',
         attributes: expect.objectContaining({
-          ip: expect.any(String),
+          ipAddress: expect.any(String),
         }),
       }),
     )
-    expect(user.attributes.ip).not.toBe('')
-    expect(user.attributes.ip).not.toContain(',')
+    expect(user.attributes.ipAddress).not.toBe('')
+    expect(user.attributes.ipAddress).not.toContain(',')
   })
 
   it('uses xroad list API when feature flag is disabled', async () => {

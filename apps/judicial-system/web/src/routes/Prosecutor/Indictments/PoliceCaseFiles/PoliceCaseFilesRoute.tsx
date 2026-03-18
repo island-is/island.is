@@ -87,7 +87,6 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
       deletePoliceDigitalCaseFile,
     } = usePoliceDigitalCaseFile(caseId, caseOrigin)
 
-    console.log({ digitalCaseFiles, digitalCaseFilesError })
     const [policeCaseFilesData, setPoliceCaseFiles] =
       useState<PoliceCaseFilesData>()
 
