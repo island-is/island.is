@@ -10,7 +10,7 @@ query getPersonalTaxCredit {
       validTo
       taxCardType
     }
-    canRegisterPersonalAllowance
+    canEditPersonalAllowance
   }
   socialInsuranceTaxCardMonthsAndYears {
     year

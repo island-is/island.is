@@ -21,5 +21,5 @@ export class TaxCards {
   taxCards?: TaxCardSummary[] | null
 
   @Field(() => Boolean, { nullable: true })
-  canRegisterPersonalAllowance?: boolean
+  canEditPersonalAllowance?: boolean
 }

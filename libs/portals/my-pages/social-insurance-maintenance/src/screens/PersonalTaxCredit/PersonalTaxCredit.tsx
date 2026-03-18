@@ -57,7 +57,9 @@ const PersonalTaxCredit = () => {
   const [spouseDeceasedPercentage, setSpouseDeceasedPercentage] =
     useState<string>('100')
 
-  const { data, loading, error } = useGetPersonalTaxCreditQuery()
+  const { data, loading, error, refetch } = useGetPersonalTaxCreditQuery({
+    errorPolicy: 'all',
+  })
 
   const [setAllowance, { loading: settingAllowance }] =
     useSetSocialInsuranceTaxCardAllowanceMutation()
@@ -71,7 +73,7 @@ const PersonalTaxCredit = () => {
     useSetSocialInsuranceSpouseTaxCardDueToDeathMutation()
 
   const taxCards = data?.socialInsuranceTaxCards
-  const canRegister = taxCards?.canRegisterPersonalAllowance ?? false
+  const canRegister = taxCards?.canEditPersonalAllowance ?? false
   const spouseEligibility =
     data?.socialInsuranceSpouseDeceasedTaxAllowanceEligibility
   const monthsAndYears = data?.socialInsuranceTaxCardMonthsAndYears
@@ -169,6 +171,7 @@ const PersonalTaxCredit = () => {
         })
       }
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
+      refetch()
     } catch {
       toast.error(formatMessage(m.personalTaxCreditSaveError))
     }
@@ -183,6 +186,7 @@ const PersonalTaxCredit = () => {
         await setSpouseTaxCard({ variables: { input: {} } })
       }
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
+      refetch()
     } catch {
       toast.error(formatMessage(m.personalTaxCreditSaveError))
     }
@@ -297,7 +301,7 @@ const PersonalTaxCredit = () => {
                 id="register-personal-tax-credit"
                 label={formatMessage(m.registerPersonalTaxCredit)}
                 checked={myAction === 'register'}
-                disabled={!canRegister}
+                disabled={canRegister}
                 onChange={(e) =>
                   setMyAction(e.target.checked ? 'register' : null)
                 }
@@ -328,7 +332,6 @@ const PersonalTaxCredit = () => {
                               )
                               setRegisterMonth(null)
                             }}
-                            isDisabled={!canRegister}
                             required
                           />
                         </Box>
@@ -352,7 +355,7 @@ const PersonalTaxCredit = () => {
                                 opt ? (opt.value as number) : null,
                               )
                             }
-                            isDisabled={!canRegister || registerYear == null}
+                            isDisabled={registerYear == null}
                           />
                         </Box>
                       </Box>
@@ -376,7 +379,6 @@ const PersonalTaxCredit = () => {
                             setRegisterPercentage(val)
                           }
                         }}
-                        disabled={!canRegister}
                         required
                       />
                     </Stack>
@@ -487,7 +489,12 @@ const PersonalTaxCredit = () => {
             <Box marginTop={3}>
               <Button
                 onClick={handleSaveMyTaxCredit}
-                disabled={!canRegister || !myAction || isSavingMyTaxCredit}
+                disabled={
+                  !myAction ||
+                  isSavingMyTaxCredit ||
+                  (myAction === 'register' && canRegister) ||
+                  (myAction !== 'register' && !canRegister)
+                }
                 loading={isSavingMyTaxCredit}
                 size="small"
               >
