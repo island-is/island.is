@@ -33,7 +33,7 @@ export const mapToPharmacy = (
   }
 
   return {
-    id: dto.kennitala,
+    id: dto.nafn,
     name: dto.nafn,
     address: dto.gotuheiti1 ?? undefined,
     postalCode: dto.postnumer ?? undefined,
