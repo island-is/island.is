@@ -8,6 +8,7 @@ import {
   GridColumn,
   GridRow,
   LinkV2,
+  LoadingDots,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -22,11 +23,19 @@ interface Props {
 
 const PharmaciesAccordion = ({ slice }: Props) => {
   const { formatMessage } = useIntl()
-  const { data, error } = useQuery<Query>(GET_PHARMACIES, {
+  const { data, loading, error } = useQuery<Query>(GET_PHARMACIES, {
     onError(error) {
       console.error('Error fetching pharmacies:', error)
     },
   })
+
+  if (loading) {
+    return (
+      <Box display="flex" marginTop={4} justifyContent="center">
+        <LoadingDots />
+      </Box>
+    )
+  }
 
   if (error) {
     return null
