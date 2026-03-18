@@ -21,9 +21,14 @@ import {
   getApplicant,
   mapAnswersToApplicationDto,
   mapAnswersToApplicationFilesContentDto,
+  mapAnswersToSingleApplicationFilesContentDto,
   paymentForAppraisal,
 } from './utils'
-import { ApplicationApi } from '@island.is/clients/hms-application-system'
+import {
+  ApplicationApi,
+  ApplicationFilesContentDto,
+  ApplicationIDResultSetDto,
+} from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
 // import uniqBy from 'lodash/uniqBy'
@@ -301,123 +306,42 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         ['photos'],
       )
 
-      const CONCURRENCY_LIMIT = 3 // Number of simultaneous uploads to HMS
-      const activeUploads: Promise<void>[] = []
-
-      // Start fetching the FIRST file from S3 immediately (Prefetching)
-      let nextFilePromise = fileGenerator.next()
-
-      let work = true
-      while (work) {
-        // Wait for the CURRENT file to finish downloading from S3
-        const { value: file, done } = await nextFilePromise
-
-        if (done) {
-          // Generator is empty
-          work = false
-          break
-        }
-
-        // 1. PREFETCH: Start downloading the NEXT file from S3 in the background immediately
-        nextFilePromise = fileGenerator.next()
-
-        // 2. Process the CURRENT file we just received
-        if (!file.fileContent) {
-          this.logger.error('Missing file content for attachments', {
-            missingKey: file.key,
-          })
-          throw new TemplateApiError(
-            'Failed to submit application, missing file content',
-            500,
-          )
-        }
-
-        const [applicationFilesContentDto] =
-          mapAnswersToApplicationFilesContentDto(application, [file])
-
-        console.log(
-          'Starting upload for fileID:',
-          applicationFilesContentDto.fileID,
+      const attachmentPromises: Promise<ApplicationIDResultSetDto>[] = []
+      const fileIds: string[] = []
+      for await (const file of fileGenerator) {
+        // Process one file at a time to avoid creating intermetiade arrays
+        console.log('Uploading file:', file.key)
+        const attachment = mapAnswersToSingleApplicationFilesContentDto(
+          application,
+          file,
         )
-
-        // 3. BATCHING: Start the HMS upload but DO NOT await it here
-        const uploadPromise = this.hmsApplicationSystemService
-          .apiApplicationUploadPost({
-            applicationFilesContentDto,
-          })
-          .then(() => {
-            // Remove this promise from the active pool when it finishes
-            activeUploads.splice(activeUploads.indexOf(uploadPromise), 1)
-          })
-          .catch((error) => {
-            this.logger.error('Failed to upload file to HMS', {
-              fileId: file.key,
-              error,
-            })
-            throw error
-          })
-
-        // Add the running upload to our pool
-        activeUploads.push(uploadPromise)
-
-        // 4. THROTTLE: If we have reached our concurrency limit, wait for at least
-        // one upload to finish before the loop continues and consumes the prefetched file
-        if (activeUploads.length >= CONCURRENCY_LIMIT) {
-          await Promise.race(activeUploads)
-        }
+        // Kick off each upload as soon as the attachment has been downloaded and mapped
+        attachmentPromises.push(
+          this.hmsApplicationSystemService.apiApplicationUploadPost({
+            applicationFilesContentDto: attachment,
+          }),
+        )
+        fileIds.push(attachment?.fileID ?? '')
       }
 
-      // 5. CLEANUP: After the generator is empty, wait for any remaining uploads to finish
-      if (activeUploads.length > 0) {
-        console.log(
-          `Waiting for final ${activeUploads.length} uploads to finish...`,
+      // Wait for all uploads to complete
+      const results = await Promise.allSettled(attachmentPromises)
+
+      const failedFileIds = results.reduce<string[]>((acc, result, i) => {
+        if (result.status === 'rejected' && fileIds[i]) {
+          acc.push(fileIds[i])
+        }
+        return acc
+      }, [])
+
+      if (failedFileIds.length > 0) {
+        this.logger.error(
+          `Failed to upload ${
+            failedFileIds.length
+          } attachments: ${failedFileIds.join(', ')}`,
         )
-        await Promise.all(activeUploads)
       }
 
-      console.timeEnd('Attachment uploads complete')
-
-      // Start fetching the FIRST file from S3
-      // let nextFilePromise = fileGenerator.next()
-
-      // let run = true
-      // while (run) {
-      //   // Wait for the CURRENT file to finish downloading from S3
-      //   const { value: file, done } = await nextFilePromise
-      //   console.timeLog(
-      //     'submitApplication',
-      //     'file downloaded from S3',
-      //     file?.fileName,
-      //   )
-      //   if (done) {
-      //     run = false
-      //     break
-      //   }
-
-      //   // START downloading the NEXT file from S3 immediately in the background
-      //   nextFilePromise = fileGenerator.next()
-
-      //   // Process and upload the CURRENT file
-      //   if (!file.fileContent) {
-      //     this.logger.error('Missing file content for attachments', {
-      //       missingKey: file.key,
-      //     })
-      //     throw new TemplateApiError(
-      //       'Failed to submit application, missing file content',
-      //       500,
-      //     )
-      //   }
-
-      //   const [applicationFilesContentDto] =
-      //     mapAnswersToApplicationFilesContentDto(application, [file])
-
-      //   console.timeLog('submitApplication', 'start uploading file to HMS')
-      //   // Upload to HMS while the next S3 download is happening in the background!
-      //   await this.hmsApplicationSystemService.apiApplicationUploadPost({
-      //     applicationFilesContentDto,
-      //   })
-      //   console.timeLog('submitApplication', 'file uploaded to HMS')
-      // }
       return res
     } catch (e) {
       this.logger.error('Failed to submit application:', e.message)

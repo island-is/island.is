@@ -65,6 +65,24 @@ export const mapAnswersToApplicationFilesContentDto = (
   )
 }
 
+export const mapAnswersToSingleApplicationFilesContentDto = (
+  application: Application,
+  file: AttachmentData,
+): ApplicationFilesContentDto => {
+  if (!file.fileContent) {
+    throw new TemplateApiError(
+      'Failed to submit application, missing file content',
+      500,
+    )
+  }
+  return {
+    fileID: hashToLength20(file.key.split('_')[0]),
+    applicationID: application.id,
+    content: file.fileContent,
+    applicationType: APPLICATION_TYPE,
+  }
+}
+
 /**
  * Peeks at the first byte of a Readable stream to verify it contains data.
  * The byte is unshifted back into the stream so the data remains fully intact for the next consumer.
