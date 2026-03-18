@@ -43,7 +43,9 @@ export const mapToFarmerLandSubsidy = (
   farmId: string,
 ): FarmerLandSubsidy => ({
   // TODO: Replace with a stable ID from the API when available — currently a deterministic hash
-  id: `${farmId}-${p.paymentDate?.toISOString() ?? ''}-${p.contractId ?? ''}-${p.paymentCategoryId ?? ''}`,
+  id: `${farmId}-${p.paymentDate?.toISOString() ?? ''}-${p.contractId ?? ''}-${
+    p.paymentCategoryId ?? ''
+  }`,
   paymentDate: p.paymentDate ?? undefined,
   nationalId: p.nationalId ?? undefined,
   name: p.name ?? undefined,

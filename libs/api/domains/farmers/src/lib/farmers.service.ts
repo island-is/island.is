@@ -66,7 +66,9 @@ export class FarmersService {
       cursor,
     )
     return {
-      data: (response?.data ?? []).map((p) => mapToFarmerLandSubsidy(p, farmId)),
+      data: (response?.data ?? []).map((p) =>
+        mapToFarmerLandSubsidy(p, farmId),
+      ),
       totalCount: response?.total ?? 0,
       pageInfo: {
         hasNextPage: !!response?.next,
