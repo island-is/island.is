@@ -135,10 +135,12 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: defendantNotificationDTO.type,
-        recipients: ['extra@omnitrix.is'].map((email) => ({
-          address: email,
-          success: true,
-        })),
+        recipients: [
+          {
+            address: 'extra@omnitrix.is',
+            success: true,
+          },
+        ],
       })
     })
   })
