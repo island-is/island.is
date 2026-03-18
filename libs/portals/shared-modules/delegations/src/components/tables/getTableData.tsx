@@ -4,6 +4,7 @@ import { IdentityInfo } from './IdentityInfo/IdentityInfo'
 import { Box, Button, IconProps, Text } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { FormatMessage } from '@island.is/localization'
+import format from 'date-fns/format'
 
 export type MobileRowData = {
   identity: { nationalId: string; name: string }
@@ -126,7 +127,6 @@ export const getProcuringHolderTableData = (
         label: formatMessage(m.headerDelegationType),
         content: formatMessage(m.procurationHolder),
       },
-
       {
         label: formatMessage(m.headerDomain),
         content: formatMessage(m.registry),
@@ -170,7 +170,9 @@ export const getGeneralMandateTableData = (
       <Text variant="medium">
         {formatMessage(m.delegationTypeGeneralMandate)}
       </Text>,
-      <Text variant="medium">TODO</Text>, // Todo: check if starting date is available
+      <Text variant="medium">
+        {row.createdAt ? format(new Date(row.createdAt), 'dd.MM.yyyy') : '-'}
+      </Text>,
       ...(switchUser
         ? [
             <Box flexShrink={0}>
@@ -199,7 +201,9 @@ export const getGeneralMandateTableData = (
       },
       {
         label: formatMessage(m.headerRegisteredDate),
-        content: 'TODO', // Todo: check if starting date is available
+        content: row.createdAt
+          ? format(new Date(row.createdAt), 'dd.MM.yyyy')
+          : '-',
       },
     ],
     action: switchUser ? (

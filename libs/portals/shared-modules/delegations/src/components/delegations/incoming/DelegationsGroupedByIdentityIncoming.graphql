@@ -27,6 +27,7 @@ query AuthDelegationsGroupedByIdentityIncoming($lang: String) {
         ...AuthApiScopeIncoming
       }
     }
+    createdAt
     earliestValidFrom
     latestValidTo
   }

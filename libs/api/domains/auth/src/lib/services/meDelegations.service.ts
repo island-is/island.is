@@ -287,6 +287,7 @@ export class MeDelegationsService {
         type: firstDelegation.type,
         totalScopeCount: allScopes.length,
         scopes: allScopes,
+        createdAt: firstDelegation.createdAt ?? null,
         earliestValidFrom:
           validFromDates.length > 0 ? min(validFromDates) : null,
         latestValidTo: validToDates.length > 0 ? max(validToDates) : null,

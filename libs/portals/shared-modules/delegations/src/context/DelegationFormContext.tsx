@@ -8,6 +8,7 @@ import {
   useContext,
   useRef,
   useState,
+  useMemo,
 } from 'react'
 
 export type ScopeSelection = AuthApiScope & {
@@ -54,11 +55,7 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
 }) => {
   const [identities, setIdentities] = useState<Identity[]>([])
   const [selectedScopes, setSelectedScopes] = useState<ScopeSelection[]>([])
-  const originalScopesRef = useRef<ScopeSelection[]>([])
-
-  const setOriginalScopes = useCallback((scopes: ScopeSelection[]) => {
-    originalScopesRef.current = scopes
-  }, [])
+  const [originalScopes, setOriginalScopes] = useState<ScopeSelection[]>([])
 
   const skipClearRef = useRef(false)
 
@@ -73,22 +70,25 @@ export const DelegationFormProvider: FC<React.PropsWithChildren<unknown>> = ({
     }
     setIdentities([])
     setSelectedScopes([])
-    originalScopesRef.current = []
+    setOriginalScopes([])
   }, [])
 
+  const value = useMemo(
+    () => ({
+      identities,
+      setIdentities,
+      selectedScopes,
+      setSelectedScopes,
+      originalScopes,
+      setOriginalScopes,
+      clearForm,
+      skipNextClear,
+    }),
+    [identities, selectedScopes, originalScopes, clearForm, skipNextClear],
+  )
+
   return (
-    <DelegationFormContext.Provider
-      value={{
-        identities,
-        setIdentities,
-        selectedScopes,
-        setSelectedScopes,
-        originalScopes: originalScopesRef.current,
-        setOriginalScopes,
-        clearForm,
-        skipNextClear,
-      }}
-    >
+    <DelegationFormContext.Provider value={value}>
       {children}
     </DelegationFormContext.Provider>
   )

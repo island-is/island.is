@@ -50,8 +50,13 @@ const filterDelegations = (
     const searchValueLower = searchValue.toLowerCase()
     const name = person?.name?.toLowerCase()
     const nationalId = person?.nationalId?.toLowerCase()
+    const normalizedSearch = searchValueLower.replace(/-/g, '')
+    const normalizedNationalId = nationalId?.replace(/-/g, '')
 
-    return name?.includes(searchValueLower) || nationalId?.includes(searchValue)
+    return (
+      name?.includes(searchValueLower) ||
+      normalizedNationalId?.includes(normalizedSearch)
+    )
   })
 }
 
@@ -196,7 +201,7 @@ const AccessControlNew = () => {
           <div className={styles.problemContainer}>
             <Problem
               type="no_data"
-              title="Engin rafræn umboð fundust"
+              title={formatMessage(m.noDelegationsFound)}
               titleSize="h4"
               size="large"
               imgSrc="./assets/images/jobsGrid.svg"
