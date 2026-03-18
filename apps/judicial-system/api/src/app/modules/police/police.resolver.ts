@@ -18,10 +18,12 @@ import { BackendService } from '../backend'
 import { PoliceCaseFilesQueryInput } from './dto/policeCaseFiles.input'
 import { PoliceCaseInfoQueryInput } from './dto/policeCaseInfo.input'
 import { PoliceDefendantsQueryInput } from './dto/policeDefendants.input'
+import { PoliceDigitalCaseFilesQueryInput } from './dto/policeDigitalCaseFiles.input'
 import { UploadPoliceCaseFileInput } from './dto/uploadPoliceCaseFile.input'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { PoliceDefendant } from './models/policeDefendant.model'
+import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -67,6 +69,26 @@ export class PoliceResolver {
       user.id,
       AuditedAction.GET_POLICE_DEFENDANTS,
       backendService.getPoliceDefendants(input.caseId),
+      input.caseId,
+    )
+  }
+
+  @Query(() => [PoliceDigitalCaseFile], { nullable: true })
+  policeDigitalCaseFiles(
+    @Args('input', { type: () => PoliceDigitalCaseFilesQueryInput })
+    input: PoliceDigitalCaseFilesQueryInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<PoliceDigitalCaseFile[]> {
+    this.logger.debug(
+      `Getting all police digital case files for case ${input.caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_POLICE_DIGITAL_CASE_FILES,
+      backendService.getPoliceDigitalCaseFiles(input.caseId),
       input.caseId,
     )
   }
