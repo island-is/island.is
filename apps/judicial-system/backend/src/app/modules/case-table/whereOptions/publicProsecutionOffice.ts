@@ -24,14 +24,17 @@ export const publicProsecutionOfficeIndictmentsNewWhereOptions =
 
 export const publicProsecutionOfficeIndictmentsInReviewWhereOptions =
   (): CaseWhereOptions => ({
-    includes: { defendants: { attributes: [] } },
+    includes: {
+      defendants: {
+        attributes: [],
+        required: true,
+        where: { indictment_review_decision: null },
+      },
+    },
     where: {
       [Op.and]: [
         publicProsecutionOfficeIndictmentsAccessWhereOptions,
-        {
-          indictment_reviewer_id: { [Op.not]: null },
-          '$defendants.indictment_review_decision$': null,
-        },
+        { indictment_reviewer_id: { [Op.not]: null } },
       ],
     },
   })
@@ -225,7 +228,6 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions =
             )`),
           ],
         },
-        includes: { verdicts: { attributes: [] } },
       },
     },
     where: {
@@ -235,34 +237,6 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions =
       ],
     },
   })
-
-// export const publicProsecutionOfficeIndictmentsAppealedWhereOptions =
-//   (): CaseWhereOptions => ({
-//     includes: { defendants: { attributes: [] } },
-//     where: {
-//       [Op.and]: [
-//         publicProsecutionOfficeIndictmentsAccessWhereOptions,
-//         {
-//           indictment_reviewer_id: { [Op.not]: null },
-//           [Op.and]: [
-//             literal(`EXISTS (
-//               SELECT 1
-//               FROM defendant
-//               JOIN verdict ON defendant.id = verdict.defendant_id
-//               WHERE verdict.case_id = "Case".id
-//                 AND (verdict.appeal_date IS NOT NULL
-//                 OR defendant.indictment_review_decision = '${IndictmentCaseReviewDecision.APPEAL}')
-//                 AND verdict.created = (
-//                     SELECT MAX(v2.created)
-//                     FROM verdict v2
-//                     WHERE v2.defendant_id = defendant.id
-//                 )
-//           )`),
-//           ],
-//         },
-//       ],
-//     },
-//   })
 
 export const publicProsecutionOfficeIndictmentsAcquittedWhereOptions =
   (): CaseWhereOptions => ({

@@ -95,10 +95,6 @@ export const buildHasDefendantSentToPrisonAdminNotRegisteredCondition = () =>
         AND d.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
         AND (
           d.is_registered_in_prison_system IS NOT TRUE
-          OR (
-            d.is_registered_in_prison_system IS NULL
-            AND c.is_registered_in_prison_system IS NOT TRUE
-          )
         )
     )
   `)
@@ -114,10 +110,6 @@ export const buildHasDefendantSentToPrisonAdminRegisteredCondition = () =>
         AND d.indictment_review_decision = '${IndictmentCaseReviewDecision.ACCEPT}'
         AND (
           d.is_registered_in_prison_system = true
-          OR (
-            d.is_registered_in_prison_system IS NULL
-            AND c.is_registered_in_prison_system = true
-          )
         )
     )
   `)

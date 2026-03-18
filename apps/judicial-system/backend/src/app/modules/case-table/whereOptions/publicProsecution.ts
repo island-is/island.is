@@ -2,6 +2,7 @@ import { Op } from 'sequelize'
 
 import { type User } from '@island.is/judicial-system/types'
 
+import { CaseWhereOptions } from '../caseTable.types'
 import { publicProsecutionIndictmentsAccessWhereOptions } from './access'
 import { buildHasDefendantWithNullReviewDecisionCondition } from './conditions'
 
@@ -10,32 +11,22 @@ import { buildHasDefendantWithNullReviewDecisionCondition } from './conditions'
 
 export const publicProsecutionIndictmentsInReviewWhereOptions = (
   user: User,
-) => {
-  const baseWhereOptions = publicProsecutionIndictmentsAccessWhereOptions(user)
-
-  return {
-    where: {
-      ...baseWhereOptions,
-      [Op.and]: [
-        ...(baseWhereOptions[Op.and] ?? []),
-        buildHasDefendantWithNullReviewDecisionCondition(true),
-      ],
-    },
-  }
-}
+): CaseWhereOptions => ({
+  where: {
+    [Op.and]: [
+      publicProsecutionIndictmentsAccessWhereOptions(user),
+      buildHasDefendantWithNullReviewDecisionCondition(true),
+    ],
+  },
+})
 
 export const publicProsecutionIndictmentsReviewedWhereOptions = (
   user: User,
-) => {
-  const baseWhereOptions = publicProsecutionIndictmentsAccessWhereOptions(user)
-
-  return {
-    where: {
-      ...baseWhereOptions,
-      [Op.and]: [
-        ...(baseWhereOptions[Op.and] ?? []),
-        buildHasDefendantWithNullReviewDecisionCondition(false),
-      ],
-    },
-  }
-}
+): CaseWhereOptions => ({
+  where: {
+    [Op.and]: [
+      publicProsecutionIndictmentsAccessWhereOptions(user),
+      buildHasDefendantWithNullReviewDecisionCondition(false),
+    ],
+  },
+})

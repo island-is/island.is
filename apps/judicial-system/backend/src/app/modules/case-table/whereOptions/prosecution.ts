@@ -9,6 +9,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
+import { CaseWhereOptions } from '../caseTable.types'
 import {
   prosecutionIndictmentsAccessWhereOptions,
   prosecutionRequestCasesAccessWhereOptions,
@@ -16,7 +17,9 @@ import {
 
 // Prosecution request cases
 
-export const prosecutionRequestCasesInProgressWhereOptions = (user: User) => ({
+export const prosecutionRequestCasesInProgressWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     ...prosecutionRequestCasesAccessWhereOptions(user),
     state: [
@@ -28,7 +31,9 @@ export const prosecutionRequestCasesInProgressWhereOptions = (user: User) => ({
   },
 })
 
-export const prosecutionRequestCasesActiveWhereOptions = (user: User) => ({
+export const prosecutionRequestCasesActiveWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     ...prosecutionRequestCasesAccessWhereOptions(user),
     type: restrictionCases,
@@ -37,7 +42,9 @@ export const prosecutionRequestCasesActiveWhereOptions = (user: User) => ({
   },
 })
 
-export const prosecutionRequestCasesAppealedWhereOptions = (user: User) => ({
+export const prosecutionRequestCasesAppealedWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     ...prosecutionRequestCasesAccessWhereOptions(user),
     state: completedRequestCaseStates,
@@ -45,7 +52,9 @@ export const prosecutionRequestCasesAppealedWhereOptions = (user: User) => ({
   },
 })
 
-export const prosecutionRequestCasesCompletedWhereOptions = (user: User) => ({
+export const prosecutionRequestCasesCompletedWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     ...prosecutionRequestCasesAccessWhereOptions(user),
     state: completedRequestCaseStates,
@@ -62,7 +71,9 @@ export const prosecutionRequestCasesCompletedWhereOptions = (user: User) => ({
 
 // Prosecution indictments
 
-export const prosecutionIndictmentsInDraftWhereOptions = (user: User) => ({
+export const prosecutionIndictmentsInDraftWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     ...prosecutionIndictmentsAccessWhereOptions(user),
     state: CaseState.DRAFT,
@@ -71,21 +82,25 @@ export const prosecutionIndictmentsInDraftWhereOptions = (user: User) => ({
 
 export const prosecutionIndictmentsWaitingForConfirmationWhereOptions = (
   user: User,
-) => ({
+): CaseWhereOptions => ({
   where: {
     ...prosecutionIndictmentsAccessWhereOptions(user),
     state: CaseState.WAITING_FOR_CONFIRMATION,
   },
 })
 
-export const prosecutionIndictmentsInProgressWhereOptions = (user: User) => ({
+export const prosecutionIndictmentsInProgressWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     ...prosecutionIndictmentsAccessWhereOptions(user),
     state: [CaseState.SUBMITTED, CaseState.RECEIVED],
   },
 })
 
-export const prosecutionIndictmentsCompletedWhereOptions = (user: User) => ({
+export const prosecutionIndictmentsCompletedWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     ...prosecutionIndictmentsAccessWhereOptions(user),
     state: [

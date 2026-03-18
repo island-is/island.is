@@ -10,6 +10,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
+import { CaseWhereOptions } from '../caseTable.types'
 import {
   districtCourtIndictmentsAccessWhereOptions,
   districtCourtRequestCasesAccessWhereOptions,
@@ -24,7 +25,7 @@ import {
 
 export const districtCourtRequestCasesInProgressWhereOptions = (
   user: User,
-) => ({
+): CaseWhereOptions => ({
   where: {
     [Op.and]: [
       districtCourtRequestCasesAccessWhereOptions(user),
@@ -42,7 +43,9 @@ export const districtCourtRequestCasesInProgressWhereOptions = (
   },
 })
 
-export const districtCourtRequestCasesAppealedWhereOptions = (user: User) => ({
+export const districtCourtRequestCasesAppealedWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     [Op.and]: [
       districtCourtRequestCasesAccessWhereOptions(user),
@@ -71,7 +74,9 @@ export const districtCourtRequestCasesCompletedWhereOptions = (user: User) => ({
 
 // District court indictments
 
-export const districtCourtIndictmentsNewWhereOptions = (user: User) => ({
+export const districtCourtIndictmentsNewWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     [Op.and]: [
       districtCourtIndictmentsAccessWhereOptions(user),
@@ -83,7 +88,9 @@ export const districtCourtIndictmentsNewWhereOptions = (user: User) => ({
   },
 })
 
-export const districtCourtIndictmentsReceivedWhereOptions = (user: User) => ({
+export const districtCourtIndictmentsReceivedWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     [Op.and]: [
       districtCourtIndictmentsAccessWhereOptions(user),
@@ -99,7 +106,9 @@ export const districtCourtIndictmentsReceivedWhereOptions = (user: User) => ({
   },
 })
 
-export const districtCourtIndictmentsInProgressWhereOptions = (user: User) => ({
+export const districtCourtIndictmentsInProgressWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     [Op.and]: [
       districtCourtIndictmentsAccessWhereOptions(user),
@@ -119,7 +128,9 @@ export const districtCourtIndictmentsInProgressWhereOptions = (user: User) => ({
   },
 })
 
-export const districtCourtIndictmentsFinalizingWhereOptions = (user: User) => ({
+export const districtCourtIndictmentsFinalizingWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     [Op.and]: [
       districtCourtIndictmentsAccessWhereOptions(user),
@@ -141,7 +152,9 @@ export const districtCourtIndictmentsFinalizingWhereOptions = (user: User) => ({
   },
 })
 
-export const districtCourtIndictmentsCompletedWhereOptions = (user: User) => ({
+export const districtCourtIndictmentsCompletedWhereOptions = (
+  user: User,
+): CaseWhereOptions => ({
   where: {
     [Op.and]: [
       districtCourtIndictmentsAccessWhereOptions(user),
