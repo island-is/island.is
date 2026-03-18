@@ -9,7 +9,6 @@ import {
 import { BankAccountField, FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { digitsOnly } from '@island.is/shared/utils'
 import { InputController } from '@island.is/shared/form-fields'
 import { getDefaultValue } from '../../getDefaultValue'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
@@ -96,6 +95,8 @@ export const BankAccountFormField = ({
   const LEDGER_LEN = 2
   const ACCOUNT_LEN = 6
 
+  const digits = (s: string) => s.replace(/\D/g, '')
+
   const selectIfHasValue = (
     ref: HTMLInputElement | HTMLTextAreaElement | null,
   ) => {
@@ -125,7 +126,7 @@ export const BankAccountFormField = ({
       (requiredLen: number, setErr: (v: string | undefined) => void) =>
       (e: Event) => {
         const target = e.target as HTMLInputElement | HTMLTextAreaElement
-        const len = digitsOnly(target?.value || '').length
+        const len = digits(target?.value || '').length
         // Only show error if something was entered but length is wrong
         setErr(len === 0 || len === requiredLen ? undefined : errMsg)
       }
@@ -153,7 +154,7 @@ export const BankAccountFormField = ({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setLocalBankError(undefined)
-    if (digitsOnly(e.target.value).length >= BANK_LEN) {
+    if (digits(e.target.value).length >= BANK_LEN) {
       ledgerRef.current?.focus()
       selectIfHasValue(ledgerRef.current)
     }
@@ -162,7 +163,7 @@ export const BankAccountFormField = ({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setLocalLedgerError(undefined)
-    if (digitsOnly(e.target.value).length >= LEDGER_LEN) {
+    if (digits(e.target.value).length >= LEDGER_LEN) {
       accountRef.current?.focus()
       selectIfHasValue(accountRef.current)
     }
