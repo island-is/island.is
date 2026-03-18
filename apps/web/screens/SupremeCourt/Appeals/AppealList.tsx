@@ -25,7 +25,6 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -38,7 +37,6 @@ import { getSubpageNavList } from '../../Organization/SubPage'
 import { GET_NAMESPACE_QUERY } from '../../queries/Namespace'
 import { GET_ORGANIZATION_PAGE_QUERY } from '../../queries/Organization'
 import { GET_SUPREME_COURT_APPEALS_QUERY } from '../../queries/SupremeCourtAppeals'
-import { InfoCardGrid } from '../../Verdicts/components/InfoCardGrid'
 import { m } from './translations.strings'
 
 interface AppealsProps {
@@ -53,7 +51,6 @@ const Appeals: CustomScreen<AppealsProps> = ({
   namespace,
   customPageData,
 }) => {
-  const { format } = useDateUtils()
   const [_page, setPage] = useQueryState(
     'page',
     parseAsInteger.withOptions({
@@ -155,25 +152,23 @@ const Appeals: CustomScreen<AppealsProps> = ({
           {appeals && (
             <Stack space={3}>
               <Stack space={3}>
-                <InfoCardGrid
-                  cards={appeals.items.map((item) => {
-                    return {
-                      description: item.title,
-                      eyebrow: '',
-                      id: item.id,
-                      link: {
-                        href: '/s/haestirettur/afryjud-mal',
-                        label: '',
-                      },
-                      title: item.caseNumber,
-                      subDescription: item.keywords.join(', '),
-                      borderColor: 'blue200',
-                      detailLines: [],
-                    }
-                  })}
-                  variant="detailed"
-                  columns={1}
-                />
+                {appeals.items.map((item) => (
+                  <Box
+                    key={item.id}
+                    background="white"
+                    borderColor="blue200"
+                    borderWidth="standard"
+                    borderRadius="large"
+                    padding={2}
+                  >
+                    <Stack space={2}>
+                      <Text variant="h3">{item.caseNumber}</Text>
+                      <Text variant="medium" fontWeight="light">
+                        {item.title}
+                      </Text>
+                    </Stack>
+                  </Box>
+                ))}
               </Stack>
               <Pagination
                 page={page}

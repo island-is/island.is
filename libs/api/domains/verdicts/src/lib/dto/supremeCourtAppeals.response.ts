@@ -12,9 +12,6 @@ class Item {
 
   @Field(() => String)
   caseNumber!: string
-
-  @CacheField(() => [String])
-  keywords!: string[]
 }
 
 @ObjectType('WebSupremeCourtAppealsResponse')

@@ -742,7 +742,6 @@ export class VerdictsClientService {
           id: item.id as string,
           title: item.title as string,
           caseNumber: item.caseNumber as string,
-          keywords: item.keywords ?? [],
         })),
       input,
     }

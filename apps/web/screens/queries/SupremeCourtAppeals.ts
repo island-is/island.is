@@ -7,7 +7,6 @@ export const GET_SUPREME_COURT_APPEALS_QUERY = gql`
         id
         title
         caseNumber
-        keywords
       }
       total
       input {
