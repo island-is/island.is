@@ -2128,6 +2128,7 @@ regulations-admin-backend:
   grantNamespaces:
     - 'islandis'
     - 'download-service'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2835,6 +2836,7 @@ services-form-system-api:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2950,6 +2952,7 @@ services-form-system-api-worker:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3014,6 +3017,7 @@ services-payment-flow-update-handler:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'services-payments'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
