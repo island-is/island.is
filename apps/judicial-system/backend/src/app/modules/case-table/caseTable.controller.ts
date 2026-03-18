@@ -32,8 +32,7 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
-import { CaseExistsGuard, CaseReadGuard, CurrentCase } from '../case'
-import { Case } from '../repository'
+import { CaseExistsGuard, CaseReadGuard } from '../case'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { CaseTableMembershipResponse } from './dto/caseTableMembership.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
@@ -128,7 +127,6 @@ export class CaseTableController {
   async getCaseTableMembership(
     @CurrentHttpUser() user: User,
     @Param('caseId') caseId: string,
-    @CurrentCase() _theCase: Case,
   ): Promise<CaseTableMembershipResponse> {
     const caseTableTypes = await this.caseTableService.getCaseTableMembership(
       caseId,
