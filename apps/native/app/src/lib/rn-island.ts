@@ -28,6 +28,7 @@ export async function openNativeBrowser(url: string, componentId?: string) {
       showTitle: true,
       enableDefaultShare: true,
       forceCloseOnRedirection: true,
+      showInRecents: true,
       headers: {
         Authorization: `Bearer ${
           authStore.getState().authorizeResult?.accessToken
