@@ -8,7 +8,8 @@ import {
 import {
   checkIsFreshman,
   getSchoolsData,
-  getTranslatedProgram, getTranslatedString,
+  getTranslatedProgram,
+  getTranslatedString,
   LANGUAGE_CODE_DANISH,
   Program,
   SecondarySchool,
@@ -544,6 +545,5 @@ export const getConditionProgramApplicationMessage = (
   index?: number,
   lang?: Locale,
 ) => {
-
   return !!getProgramApplicationMessage(programField, answers, index, lang)
 }

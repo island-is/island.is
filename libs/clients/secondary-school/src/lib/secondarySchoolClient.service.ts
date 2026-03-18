@@ -101,7 +101,8 @@ export class SecondarySchoolClient {
       registrationEndDate: program.registryEndDate || new Date(),
       isSpecialNeedsProgram: program.isSpecialNeedsProgramme || false,
       programApplicationMessageIs: program.programmeApplicationMessage || '',
-      programApplicationMessageEn: program.programmeApplicationMessageEnglish || '',
+      programApplicationMessageEn:
+        program.programmeApplicationMessageEnglish || '',
     }))
   }
 
