@@ -8,3 +8,12 @@ export class PaymentStatusResponse {
   @Field(() => String)
   paymentUrl!: string
 }
+
+@ObjectType('CreatePaymentResponse')
+export class CreatePaymentResponse {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => String)
+  paymentUrl!: string
+}

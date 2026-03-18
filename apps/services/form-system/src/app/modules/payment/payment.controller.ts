@@ -1,12 +1,20 @@
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+  User,
+} from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
+  Body,
   Controller,
   Get,
   Param,
   ParseUUIDPipe,
+  Post,
   UseGuards,
 } from '@nestjs/common'
 import {
@@ -16,7 +24,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
-import { PaymentStatusResponseDto } from './dto'
+import { CreateChargeRequestDto, PaymentStatusResponseDto } from './dto'
 import { PaymentService } from './payment.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -44,5 +52,23 @@ export class PaymentController {
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
   ): Promise<PaymentStatusResponseDto> {
     return await this.paymentService.getStatus(applicationId)
+  }
+
+  @Scopes(ApplicationScope.write)
+  @Post('form/:applicationId/create-payment')
+  async createPayment(
+    @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
+    @Body() body: CreateChargeRequestDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.paymentService.createCharge(
+      user,
+      body.performingOrganizationID,
+      body.chargeItems,
+      applicationId,
+      undefined,
+      body.locale,
+      body.payerNationalId,
+    )
   }
 }

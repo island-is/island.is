@@ -3,17 +3,22 @@ import {
   PaymentCallbackApi,
   PaymentCallbackControllerApiClientPaymentCallbackRequest,
   PaymentCallbackControllerPaymentApprovedRequest,
+  PaymentControllerCreatePaymentRequest,
   PaymentControllerGetPaymentStatusRequest,
   PaymentsApi,
 } from '@island.is/clients/form-system'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  CreatePaymentRequestInput,
   PaymentApprovedInput,
   PaymentCallbackInput,
   PaymentStatusInput,
 } from '../../dto/payment.input'
-import { PaymentStatusResponse } from '../../models/payment.model'
+import {
+  CreatePaymentResponse,
+  PaymentStatusResponse,
+} from '../../models/payment.model'
 
 @Injectable()
 export class PaymentsService {
@@ -62,6 +67,15 @@ export class PaymentsService {
       auth,
     ).paymentCallbackControllerPaymentApproved(
       input as PaymentCallbackControllerPaymentApprovedRequest,
+    )
+  }
+
+  async createPayment(
+    auth: User,
+    input: CreatePaymentRequestInput,
+  ): Promise<CreatePaymentResponse> {
+    return await this.paymentsApiWithAuth(auth).paymentControllerCreatePayment(
+      input as PaymentControllerCreatePaymentRequest,
     )
   }
 }

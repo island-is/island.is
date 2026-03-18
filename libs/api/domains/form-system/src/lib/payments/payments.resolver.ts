@@ -8,11 +8,15 @@ import { CodeOwners } from '@island.is/shared/constants'
 import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import {
+  CreatePaymentRequestInput,
   PaymentApprovedInput,
   PaymentCallbackInput,
   PaymentStatusInput,
 } from '../../dto/payment.input'
-import { PaymentStatusResponse } from '../../models/payment.model'
+import {
+  CreatePaymentResponse,
+  PaymentStatusResponse,
+} from '../../models/payment.model'
 import { PaymentsService } from './payments.service'
 
 @Resolver()
@@ -52,5 +56,16 @@ export class PaymentsResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.paymentsService.paymentApprovedCallback(user, input)
+  }
+
+  @Mutation(() => CreatePaymentResponse, {
+    name: 'createFormSystemPayment',
+  })
+  async createPayment(
+    @Args('input', { type: () => CreatePaymentRequestInput })
+    input: CreatePaymentRequestInput,
+    @CurrentUser() user: User,
+  ): Promise<CreatePaymentResponse> {
+    return this.paymentsService.createPayment(user, input)
   }
 }

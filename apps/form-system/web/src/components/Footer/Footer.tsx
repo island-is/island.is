@@ -5,7 +5,7 @@ import {
   SUBMIT_SECTION,
   UPDATE_APPLICATION_SETTINGS,
 } from '@island.is/form-system/graphql'
-import { SectionTypes, m } from '@island.is/form-system/ui'
+import { FieldTypesEnum, SectionTypes, m } from '@island.is/form-system/ui'
 import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
@@ -39,6 +39,21 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const lastScreenDisplayOrder = state.application.sections
     ?.at(-1)
     ?.screens?.at(-1)?.displayOrder
+
+  const hasVisiblePaymentField = state.sections?.some((section) =>
+    section?.screens?.some((screen) =>
+      screen?.fields?.some(
+        (field) =>
+          field?.fieldType === FieldTypesEnum.PAYMENT &&
+          field?.isHidden === false,
+      ),
+    ),
+  )
+
+  const shouldShowPay =
+    currentSection?.data.sectionType === SectionTypes.PAYMENT ||
+    (currentSection?.data.sectionType === SectionTypes.SUMMARY &&
+      hasVisiblePaymentField)
 
   const onSubmit =
     currentSectionType === SectionTypes.PAYMENT ||
@@ -179,7 +194,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               disabled={!enableContinueButton || submitLoading}
               loading={submitLoading}
             >
-              {continueButtonText}
+              {shouldShowPay ? formatMessage(m.pay) : continueButtonText}
             </Button>
           </Box>
           {showBackButton && (

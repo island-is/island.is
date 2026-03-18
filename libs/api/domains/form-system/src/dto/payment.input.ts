@@ -200,3 +200,42 @@ export class PaymentApprovedInput {
   @Field(() => PaymentApprovedCallbackInput)
   callback!: PaymentApprovedCallbackInput
 }
+
+@InputType('ChargeItemFormSystemInput')
+export class ChargeItemInput {
+  @Field(() => String)
+  code!: string
+
+  @Field(() => Number, { nullable: true })
+  quantity?: number
+
+  @Field(() => Number, { nullable: true })
+  amount?: number
+}
+
+@InputType('CreateFormSystemPaymentInput')
+export class CreatePaymentInput {
+  @Field(() => String)
+  performingOrganizationID!: string
+
+  @Field(() => [ChargeItemInput])
+  chargeItems!: ChargeItemInput[]
+
+  @Field(() => String, { nullable: true })
+  locale?: string
+
+  @Field(() => String, { nullable: true })
+  payerNationalId?: string
+}
+
+@InputType('CreateFormSystemPaymentRequestInput')
+export class CreatePaymentRequestInput {
+  @Field(() => String)
+  applicationId!: string
+
+  @Field(() => CreatePaymentInput)
+  createChargeRequestDto!: CreatePaymentInput
+
+  @Field(() => String, { nullable: true })
+  locale?: string
+}

@@ -6,6 +6,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Inline,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -47,6 +48,61 @@ export const Payment = () => {
     return sum + price * quantity
   }, 0)
 
+  // Keep for demonstration purposes
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const QuantityInline = ({
+    field,
+    index,
+  }: {
+    field: FormSystemField
+    index: number
+  }) => {
+    const quantity = getQuantity(field)
+    const priceString =
+      quantity > 1
+        ? `${quantity} x ${convertToPaymentNumber(
+            Number(field?.fieldSettings?.priceAmount ?? 0),
+          )} kr.`
+        : `${convertToPaymentNumber(
+            Number(field?.fieldSettings?.priceAmount ?? 0),
+          )} kr.`
+
+    return (
+      <Box key={index} display="flex" justifyContent="spaceBetween">
+        <Text>{field?.fieldSettings?.chargeItemName ?? ''}</Text>
+        <Text>{priceString}</Text>
+      </Box>
+    )
+  }
+
+  const QuantityStack = ({
+    field,
+    index,
+  }: {
+    field: FormSystemField
+    index: number
+  }) => {
+    const quantity = getQuantity(field)
+    return (
+      <Stack key={index} space={1}>
+        <Text variant="h5">{field?.fieldSettings?.chargeItemName ?? ''}</Text>
+        <Inline justifyContent="spaceBetween">
+          <Text>{formatMessage(m.price)}</Text>
+          <Text>
+            {convertToPaymentNumber(
+              Number(field?.fieldSettings?.priceAmount ?? 0),
+            )}{' '}
+            kr.
+          </Text>
+        </Inline>
+        <Inline justifyContent="spaceBetween">
+          <Text>{formatMessage(m.quantity)}</Text>
+          <Text>{quantity}</Text>
+        </Inline>
+      </Stack>
+    )
+  }
+
   return (
     <GridContainer>
       <Divider />
@@ -64,17 +120,8 @@ export const Payment = () => {
               </Text>
 
               {paymentFields.map((field, index) => {
-                const quantity = getQuantity(field)
-                const priceString = `${quantity} x ${convertToPaymentNumber(
-                  Number(field?.fieldSettings?.priceAmount ?? 0),
-                )} kr.`
-
-                return (
-                  <Box key={index} display="flex" justifyContent="spaceBetween">
-                    <Text>{field?.fieldSettings?.chargeItemName ?? ''}</Text>
-                    <Text>{priceString}</Text>
-                  </Box>
-                )
+                if (!field) return null
+                return <QuantityStack field={field} index={index} key={index} />
               })}
               <Divider />
               <Box display="flex" justifyContent="spaceBetween">
