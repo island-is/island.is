@@ -37,7 +37,7 @@ export const serviceSetup = (services: {
         staging: 'https://beta.staging01.devland.is',
         prod: 'https://island.is',
       },
-      NEXT_PUBLIC_ALLOW_APPLE_PAY: {
+      ALLOW_APPLE_PAY: {
         dev: 'true',
         staging: 'true',
         prod: 'true',

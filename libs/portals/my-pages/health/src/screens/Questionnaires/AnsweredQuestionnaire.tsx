@@ -26,6 +26,7 @@ import {
   useGetAnsweredQuestionnaireQuery,
   useGetQuestionnaireLazyQuery,
 } from './questionnaires.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const AnsweredQuestionnaire: FC = () => {
   useNamespaces('sp.health')
@@ -35,6 +36,7 @@ const AnsweredQuestionnaire: FC = () => {
     submissionId?: string
   }>()
   const navigate = useNavigate()
+  useHealthPlausibleSwap()
 
   const { formatMessage, lang } = useLocale()
   const [currentSubmission, setCurrentSubmission] =
