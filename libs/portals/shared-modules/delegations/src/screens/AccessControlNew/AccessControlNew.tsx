@@ -51,7 +51,9 @@ const filterDelegations = (
     const name = person?.name?.toLowerCase()
     const nationalId = person?.nationalId?.toLowerCase()
 
-    return name?.includes(searchValueLower) || nationalId?.includes(searchValueLower)
+    return (
+      name?.includes(searchValueLower) || nationalId?.includes(searchValueLower)
+    )
   })
 }
 
