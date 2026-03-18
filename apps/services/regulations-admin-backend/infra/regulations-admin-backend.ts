@@ -45,4 +45,4 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
     .xroad(Base, Client, NationalRegistryB2C)
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces('islandis', 'download-service')
+    .grantNamespaces('islandis', 'download-service', 'nginx-ingress-internal')
