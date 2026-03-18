@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { VehicleSearchApi } from '@island.is/clients/vehicles'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { Auth } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   RskRentalDayRateClient,
@@ -28,16 +27,11 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 @Injectable()
 export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   constructor(
-    private readonly vehiclesApi: VehicleSearchApi,
     private readonly rentalDayRateClient: RskRentalDayRateClient,
     private readonly attachmentService: AttachmentS3Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {
     super(ApplicationTypes.CAR_RENTAL_FEE_CATEGORY)
-  }
-
-  private vehiclesApiWithAuth(auth: Auth) {
-    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private rentalsApiWithAuth(auth: Auth) {
