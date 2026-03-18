@@ -134,7 +134,11 @@ describe('CourtSessionController - Update', () => {
       mockFindById.mockResolvedValueOnce({ isConfirmed: undefined })
 
       const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce({ id: courtSessionId, caseId })
+      mockUpdate.mockResolvedValueOnce({
+        id: courtSessionId,
+        isConfirmed: true,
+        caseId,
+      })
 
       await givenWhenThen(caseId, courtSessionId, confirmationUpdate)
     })
@@ -159,7 +163,11 @@ describe('CourtSessionController - Update', () => {
       mockFindById.mockResolvedValueOnce({ isConfirmed: false })
 
       const mockUpdate = mockCourtSessionRepositoryService.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce({ id: courtSessionId, caseId })
+      mockUpdate.mockResolvedValueOnce({
+        id: courtSessionId,
+        isConfirmed: true,
+        caseId,
+      })
 
       await givenWhenThen(caseId, courtSessionId, confirmationUpdate)
     })
