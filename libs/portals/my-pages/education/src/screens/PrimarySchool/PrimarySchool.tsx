@@ -46,9 +46,9 @@ export const PrimarySchool = () => {
             heading={student.name ?? ''}
             text={student.nationalId ?? ''}
             tag={
-              student.relationType
+              student.contactType
                 ? {
-                    label: student.relationType,
+                    label: student.contactType,
                     variant: 'blue',
                     outlined: true,
                   }
@@ -59,7 +59,7 @@ export const PrimarySchool = () => {
               label: formatMessage(psm.studentListCta),
               variant: 'text',
               url: generatePath(EducationPaths.PrimarySchoolStudent, {
-                studentId: student.id,
+                studentId: student.id ?? null,
               }),
             }}
           />

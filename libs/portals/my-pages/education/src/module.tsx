@@ -10,37 +10,39 @@ const EducationCareer = lazy(() =>
 )
 
 const UniversityGraduation = lazy(() =>
-  import('./screens/UniversityGraduation/UniversityGraduation'),
+  import('./screens/University/UniversityGraduation/UniversityGraduation'),
 )
 
 const UniversityGraduationDetail = lazy(() =>
-  import('./screens/UniversityGraduationDetail/UniversityGraduationDetail'),
+  import(
+    './screens/University/UniversityGraduationDetail/UniversityGraduationDetail'
+  ),
 )
 
 const SecondarySchoolCareer = lazy(() =>
-  import('./screens/SecondarySchoolCareer/SecondarySchoolCareer'),
+  import('./screens/SecondarySchool/SecondarySchoolCareer/SecondarySchoolCareer'),
 )
 
 const SecondarySchoolGraduationOverview = lazy(() =>
   import(
-    './screens/SecondarySchoolGraduationOverview/SecondarySchoolGraduationOverview'
+    './screens/SecondarySchool/SecondarySchoolGraduationOverview/SecondarySchoolGraduationOverview'
   ),
 )
 
 const SecondarySchoolGraduationSingle = lazy(() =>
   import(
-    './screens/SecondarySchoolGraduationSingle/SecondarySchoolGraduationSingle'
+    './screens/SecondarySchool/SecondarySchoolGraduationSingle/SecondarySchoolGraduationSingle'
   ),
 )
 
 const SecondarySchoolGraduationDetail = lazy(() =>
   import(
-    './screens/SecondarySchoolGraduationDetail/SecondarySchoolGraduationDetail'
+    './screens/SecondarySchool/SecondarySchoolGraduationDetail/SecondarySchoolGraduationDetail'
   ),
 )
 
 const DrivingLessonsBook = lazy(() =>
-  import('./screens/DrivingLessonsBook/DrivingLessonsBook'),
+  import('./screens/DrivingLessons/DrivingLessonsBook/DrivingLessonsBook'),
 )
 
 const PrimarySchool = lazy(() =>
@@ -48,20 +50,22 @@ const PrimarySchool = lazy(() =>
 )
 
 const PrimarySchoolStudent = lazy(() =>
-  import('./screens/PrimarySchoolStudent/PrimarySchoolStudent'),
+  import('./screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudent'),
 )
 
 const PrimarySchoolOverview = lazy(() =>
-  import('./screens/PrimarySchoolOverview/PrimarySchoolOverview'),
+  import('./screens/PrimarySchool/PrimarySchoolOverview/PrimarySchoolOverview'),
 )
 
 const PrimarySchoolAssessment = lazy(() =>
-  import('./screens/PrimarySchoolAssessment/PrimarySchoolAssessment'),
+  import(
+    './screens/PrimarySchool/PrimarySchoolAssessment/PrimarySchoolAssessment'
+  ),
 )
 
 const PrimarySchoolStudentPermission = lazy(() =>
   import(
-    './screens/PrimarySchoolStudentPermission/PrimarySchoolStudentPermission'
+    './screens/PrimarySchool/PrimarySchoolStudentPermission/PrimarySchoolStudentPermission'
   ),
 )
 

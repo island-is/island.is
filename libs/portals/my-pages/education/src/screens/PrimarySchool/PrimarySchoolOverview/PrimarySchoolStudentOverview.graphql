@@ -1,0 +1,9 @@
+query PrimarySchoolStudentOverview {
+  primarySchoolStudents {
+    id
+    name
+    schoolName
+    contactTeacherName
+    homeRoomName
+  }
+}

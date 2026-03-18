@@ -1,0 +1,6 @@
+export { PrimarySchoolAssessmentSubject } from './primarySchoolAssessmentSubject.model'
+export { PrimarySchoolAssessmentType } from './primarySchoolAssessmentType.model'
+export { PrimarySchoolAssignmentResult } from './primarySchoolAssignmentResult.model'
+export { PrimarySchoolStudent } from './primarySchoolStudent.model'
+export { PrimarySchoolStudentResults } from './primarySchoolStudentResults.model'
+export { mapStudentResults } from './primarySchool.mapper'

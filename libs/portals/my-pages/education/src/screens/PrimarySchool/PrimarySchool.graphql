@@ -3,6 +3,6 @@ query PrimarySchoolStudents {
     id
     name
     nationalId
-    relationType
+    contactType
   }
 }

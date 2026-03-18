@@ -24,10 +24,10 @@ import { useParams } from 'react-router-dom'
 import {
   mapSlugToContentfulSlug,
   mapSlugToUniversity,
-} from '../../utils/mapUniversitySlug'
+} from '../../../utils/mapUniversitySlug'
 import { useStudentTrackQuery } from './UniversityGraduationDetail.generated'
 import { isDefined } from '@island.is/shared/utils'
-import { uniMessages } from '../../lib/messages'
+import { uniMessages } from '../../../lib/messages'
 
 type UseParams = {
   id: string

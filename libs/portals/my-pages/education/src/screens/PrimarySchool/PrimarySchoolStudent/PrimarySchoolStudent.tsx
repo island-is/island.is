@@ -6,8 +6,8 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Stack } from '@island.is/island-ui/core'
 import { generatePath, useParams } from 'react-router-dom'
-import { EducationPaths } from '../../lib/paths'
-import { primarySchoolMessages as psm } from '../../lib/messages'
+import { EducationPaths } from '../../../lib/paths'
+import { primarySchoolMessages as psm } from '../../../lib/messages'
 
 export const PrimarySchoolStudent = () => {
   useNamespaces('sp.education-primary-school')

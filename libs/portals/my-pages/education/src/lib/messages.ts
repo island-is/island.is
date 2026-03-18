@@ -89,7 +89,7 @@ export const primarySchoolMessages = defineMessages({
   },
   studentHubIntro: {
     id: 'sp.education-primary-school:student-hub-intro',
-    defaultMessage: 'Hér getur þú fundið yfirlit yfir námsmat',
+    defaultMessage: 'Hér getur þú fundið yfirlit, námsmat og heimildir',
   },
   overviewTitle: {
     id: 'sp.education-primary-school:overview-title',
@@ -105,7 +105,7 @@ export const primarySchoolMessages = defineMessages({
   },
   assessmentIntro: {
     id: 'sp.education-primary-school:assessment-intro',
-    defaultMessage: 'Hér getur þú fundið yfirlit yfir námsmat',
+    defaultMessage: 'Hér getur þú fundið yfirlit yfir námsmat barns þíns.',
   },
   permissionTitle: {
     id: 'sp.education-primary-school:permission-title',
@@ -147,6 +147,65 @@ export const primarySchoolMessages = defineMessages({
   mmsEyebrow: {
     id: 'sp.education-primary-school:mms-eyebrow',
     defaultMessage: 'Miðstöð menntunar og skólaþjónustu',
+  },
+  // Overview screen
+  basicInfo: {
+    id: 'sp.education-primary-school:basic-info',
+    defaultMessage: 'Grunnupplýsingar',
+  },
+  studentLabel: {
+    id: 'sp.education-primary-school:student-label',
+    defaultMessage: 'Nemandi',
+  },
+  schoolLabel: {
+    id: 'sp.education-primary-school:school-label',
+    defaultMessage: 'Grunnskóli',
+  },
+  contactTeacher: {
+    id: 'sp.education-primary-school:contact-teacher',
+    defaultMessage: 'Umsjónarkennari',
+  },
+  homeRoom: {
+    id: 'sp.education-primary-school:home-room',
+    defaultMessage: 'Umsjónarbekkur',
+  },
+  unansweredPermissions: {
+    id: 'sp.education-primary-school:unanswered-permissions',
+    defaultMessage: 'Ósvaraðar heimildir',
+  },
+  viewAll: {
+    id: 'sp.education-primary-school:view-all',
+    defaultMessage: 'Sjá allt',
+  },
+  // Assessment screen
+  schoolYear: {
+    id: 'sp.education-primary-school:school-year',
+    defaultMessage: 'Skólaár',
+  },
+  gradeLevel: {
+    id: 'sp.education-primary-school:grade-level',
+    defaultMessage: 'Bekkur',
+  },
+  examSitting: {
+    id: 'sp.education-primary-school:exam-sitting',
+    defaultMessage: 'Fyrirlögn',
+  },
+  downloadResults: {
+    id: 'sp.education-primary-school:download-results',
+    defaultMessage: 'Sækja niðurstöður',
+  },
+  // Permissions screen
+  filterByKeyword: {
+    id: 'sp.education-primary-school:filter-by-keyword',
+    defaultMessage: 'Sía eftir leitarorði',
+  },
+  answer: {
+    id: 'sp.education-primary-school:answer',
+    defaultMessage: 'Svara',
+  },
+  unanswered: {
+    id: 'sp.education-primary-school:unanswered',
+    defaultMessage: 'Ósvarað',
   },
 })
 

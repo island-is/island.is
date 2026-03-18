@@ -1,0 +1,24 @@
+query PrimarySchoolAssessmentData($studentId: String!) {
+  primarySchoolStudent(studentId: $studentId) {
+    assessmentSubjects {
+      id
+      name
+      description
+      assessmentTypes {
+        id
+        name
+        identifier
+        testType
+        results {
+          schoolYear
+          gradeLevel
+          assignmentResults {
+            id
+            batchNumber
+            schedule
+          }
+        }
+      }
+    }
+  }
+}
