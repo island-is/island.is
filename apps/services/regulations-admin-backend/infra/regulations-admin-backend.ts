@@ -56,4 +56,4 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
     })
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces('islandis', 'download-service')
+    .grantNamespaces('islandis', 'download-service', 'nginx-ingress-internal')

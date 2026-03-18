@@ -11,6 +11,11 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
+
+import {
   Case,
   CourtSession,
   CourtSessionRepositoryService,
@@ -29,6 +34,13 @@ export class CourtSessionService {
     private readonly courtSessionStringModel: typeof CourtSessionString,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  private addMessagesForConfirmedCourtRecordToQueue(caseId: string): void {
+    addMessagesToQueue({
+      type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
+      caseId,
+    })
+  }
 
   create(theCase: Case, transaction: Transaction): Promise<CourtSession> {
     return this.courtSessionRepositoryService.create(theCase.id, {
@@ -108,18 +120,31 @@ export class CourtSessionService {
     }
   }
 
-  update(
+  async update(
     caseId: string,
     courtSessionId: string,
     update: UpdateCourtSessionDto,
     transaction: Transaction,
   ): Promise<CourtSession> {
-    return this.courtSessionRepositoryService.update(
+    const existingCourtSession =
+      await this.courtSessionRepositoryService.findById(caseId, courtSessionId)
+
+    const updatedCourtSession = await this.courtSessionRepositoryService.update(
       caseId,
       courtSessionId,
       update,
       { transaction },
     )
+
+    if (
+      existingCourtSession &&
+      !existingCourtSession.isConfirmed &&
+      updatedCourtSession.isConfirmed === true
+    ) {
+      this.addMessagesForConfirmedCourtRecordToQueue(caseId)
+    }
+
+    return updatedCourtSession
   }
 
   async delete(

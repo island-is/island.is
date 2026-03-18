@@ -45,8 +45,8 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
       SQS_REGION: 'eu-west-1',
       BLOCKED_API_INTEGRATION: {
         dev: '',
-        staging: 'COURT,POLICE_CASE',
-        prod: '',
+        staging: 'COURT,POLICE_CASE, POLICE_DIGITAL_CASE_FILES',
+        prod: 'POLICE_DIGITAL_CASE_FILES',
       },
       USE_MICROSOFT_GRAPH_API_FOR_COURT_ROBOT: {
         dev: 'false',
