@@ -36,7 +36,7 @@ export const BaseSettings = () => {
             placeholder={formatMessage(m.organizationName)}
             name="organizationName"
             value={form?.organizationTitle ?? ''}
-            disabled={true}
+            readOnly={true}
           />
         </Column>
         <Column span="5/10">
@@ -45,7 +45,7 @@ export const BaseSettings = () => {
             placeholder={formatMessage(m.organizationNameEn)}
             name="organizationNameEn"
             value={form?.organizationTitleEn ?? ''}
-            disabled={true}
+            readOnly={true}
           />
         </Column>
       </Row>
