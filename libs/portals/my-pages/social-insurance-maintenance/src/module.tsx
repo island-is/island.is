@@ -17,10 +17,6 @@ const SocialInsuranceMaintenanceIncomePlanDetail = lazy(() =>
   import('./screens/IncomePlanDetail/IncomePlanDetail'),
 )
 
-const SocialInsuranceMaintenanceBankAccount = lazy(() =>
-  import('./screens/BankAccount/BankAccount'),
-)
-
 const SocialInsuranceMaintenancePersonalTaxCredit = lazy(() =>
   import('./screens/PersonalTaxCredit/PersonalTaxCredit'),
 )
@@ -63,26 +59,6 @@ export const socialInsuranceMaintenanceModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
       key: 'SocialInsuranceIncomePlan',
       element: <SocialInsuranceMaintenanceIncomePlanDetail />,
-    },
-    {
-      name: m.accountingInformation,
-      path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceAccountingInformation,
-      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
-      element: (
-        <Navigate
-          to={
-            SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceBankAccount
-          }
-          replace
-        />
-      ),
-    },
-    {
-      name: m.bankAccount,
-      path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceBankAccount,
-      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
-      key: 'MyPagesTRBankInformation',
-      element: <SocialInsuranceMaintenanceBankAccount />,
     },
     {
       name: m.personalTaxCredit,

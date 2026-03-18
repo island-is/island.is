@@ -42,19 +42,9 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: localMessages.accountingInformation,
-      description: localMessages.bankAccountDescription,
-      path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceAccountingInformation,
-      children: [
-        {
-          name: localMessages.bankAccount,
-          path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceBankAccount,
-        },
-        {
-          name: localMessages.personalTaxCredit,
-          path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePersonalTaxCredit,
-        },
-      ],
+      name: localMessages.personalTaxCredit,
+      description: localMessages.personalTaxCreditDescription,
+      path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePersonalTaxCredit,
     },
   ],
 }
