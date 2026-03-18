@@ -5,6 +5,7 @@ import {
   getV1IslandisassessmentsByStudentIdSubjectByAssessmentSubjectIdTypes,
   getV1IslandisassessmentsByStudentIdSubjects,
   getV1IslandisassignmentresultsByStudentIdAssessmentTypeByAssessmentTypeId,
+  getV1IslandisassignmentresultsByStudentIdAssessmentTypeByAssessmentTypeIdSimple,
   getV1IslandisassignmentresultsByStudentIdResultByAssignmentResultIdPdf,
   getV1Islandisstudents,
   IslandIsStudentResultsDto,
@@ -30,6 +31,23 @@ export class PrimarySchoolClientService {
     const response = await withAuthContext(user, () =>
       dataOr404Null(
         getV1IslandisassignmentresultsByStudentIdAssessmentTypeByAssessmentTypeId(
+          {
+            path: { studentId, assessmentTypeId },
+          },
+        ),
+      ),
+    )
+    return response ?? []
+  }
+
+  async getAssignmentResultsSimple(
+    user: User,
+    studentId: string,
+    assessmentTypeId: string,
+  ): Promise<IslandIsStudentResultsDto[]> {
+    const response = await withAuthContext(user, () =>
+      dataOr404Null(
+        getV1IslandisassignmentresultsByStudentIdAssessmentTypeByAssessmentTypeIdSimple(
           {
             path: { studentId, assessmentTypeId },
           },

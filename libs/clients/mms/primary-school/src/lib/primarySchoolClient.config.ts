@@ -12,7 +12,7 @@ export const PrimarySchoolClientConfig = defineConfig<z.infer<typeof schema>>({
     return {
       xRoadServicePath: env.required(
         'XROAD_MMS_PRIMARY_SCHOOL_SERVICE_ID',
-        'IS-DEV/GOV/10066/MMS-Protected/primary-school-api-v1',
+        'IS-DEV/GOV/10066/MMS-Protected/data-gateway-backend-internal',
       ),
     }
   },

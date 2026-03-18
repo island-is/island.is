@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.4",
   "info": {
-    "title": "MMS Island.is application API",
-    "description": "API for Island.is",
+    "title": "Gagnamidlunargatt MMS - Island.is API",
+    "description": "Gagnamidlunargatt MMS - API for Island.is",
     "version": "1.0"
   },
   "paths": {
@@ -16,10 +16,7 @@
             "in": "path",
             "description": "The unique identifier of the student.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "responses": {
@@ -40,9 +37,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -50,21 +45,13 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     },
     "/v1/islandisassessments/{studentId}/subject/{assessmentSubjectId}/types": {
@@ -77,20 +64,14 @@
             "in": "path",
             "description": "The unique identifier of the student.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "assessmentSubjectId",
             "in": "path",
             "description": "The unique identifier of the assessment subject.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "responses": {
@@ -111,9 +92,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -121,21 +100,13 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     },
     "/v1/islandisassignmentresults/{studentId}/assessment-type/{assessmentTypeId}": {
@@ -148,20 +119,14 @@
             "in": "path",
             "description": "The unique identifier of the student.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "assessmentTypeId",
             "in": "path",
             "description": "The unique identifier of the assessment type.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "responses": {
@@ -182,21 +147,60 @@
             "description": "Not Found",
             "content": {
               "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Internal Server Error" }
+        },
+        "security": [{ "Bearer": [] }]
+      }
+    },
+    "/v1/islandisassignmentresults/{studentId}/assessment-type/{assessmentTypeId}/simple": {
+      "get": {
+        "tags": ["IslandIsAssignmentResults"],
+        "summary": "Gets all assignment results for a specific student and assessment type.",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "description": "The unique identifier of the student.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "assessmentTypeId",
+            "in": "path",
+            "description": "The unique identifier of the assessment type.",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/IslandIsStudentResultsDto"
+                  }
                 }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Internal Server Error" }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     },
     "/v1/islandisassignmentresults/{studentId}/result/{assignmentResultId}/pdf": {
@@ -209,20 +213,14 @@
             "in": "path",
             "description": "The unique identifier of the student.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "assignmentResultId",
             "in": "path",
             "description": "The unique identifier of the assignment result.",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           }
         ],
         "responses": {
@@ -230,10 +228,7 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
+                "schema": { "type": "string", "format": "binary" }
               }
             }
           },
@@ -241,21 +236,13 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     },
     "/v1/islandisstudents": {
@@ -269,9 +256,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/IslandIsStudentDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/IslandIsStudentDto" }
                 }
               }
             }
@@ -280,9 +265,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -290,21 +273,13 @@
             "description": "Not Found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
-          "500": {
-            "description": "Internal Server Error"
-          }
+          "500": { "description": "Internal Server Error" }
         },
-        "security": [
-          {
-            "Bearer": []
-          }
-        ]
+        "security": [{ "Bearer": [] }]
       }
     }
   },
@@ -378,9 +353,7 @@
             "description": "Description of the assessment type, providing additional context or details.",
             "nullable": true
           },
-          "testType": {
-            "$ref": "#/components/schemas/TestType"
-          },
+          "testType": { "$ref": "#/components/schemas/TestType" },
           "assessmentSubject": {
             "$ref": "#/components/schemas/IslandIsAssessmentSubjectDto"
           }
@@ -402,7 +375,7 @@
           },
           "batchNumber": {
             "type": "integer",
-            "description": "The batch number of assignment ie, for reading ability batch number 1 is in september, 2 is in january and 3 is in may \r\nthey each have their own mapping so we need to include the batch number when creating the map",
+            "description": "The batch number of assignment ie, for reading ability batch number 1 is in september, 2 is in january and 3 is in may \nthey each have their own mapping so we need to include the batch number when creating the map",
             "format": "int32"
           },
           "scheduleStart": {
@@ -435,7 +408,7 @@
           },
           "score": {
             "type": "number",
-            "description": "Result score relative to the assignment, ie. words per minute for reading ability, number of correct answers for math etc. \r\nThis is the score that is shown to the user in island.is and is the score that is used for the mapping to a final result (mælitala)",
+            "description": "Result score relative to the assignment, ie. words per minute for reading ability, number of correct answers for math etc. \nThis is the score that is shown to the user in island.is and is the score that is used for the mapping to a final result (mælitala)",
             "format": "double",
             "nullable": true
           },
@@ -480,9 +453,7 @@
             "description": "The name of the homeroom associated with the student.",
             "nullable": true
           },
-          "relationType": {
-            "$ref": "#/components/schemas/AgentType"
-          }
+          "relationType": { "$ref": "#/components/schemas/AgentType" }
         },
         "additionalProperties": false,
         "description": "Represents a student returned by the Island.is student list API."
@@ -522,27 +493,11 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
         "additionalProperties": {}
       },
@@ -561,14 +516,8 @@
     }
   },
   "tags": [
-    {
-      "name": "IslandIsAssessments"
-    },
-    {
-      "name": "IslandIsAssignmentResults"
-    },
-    {
-      "name": "IslandIsStudents"
-    }
+    { "name": "IslandIsAssessments" },
+    { "name": "IslandIsAssignmentResults" },
+    { "name": "IslandIsStudents" }
   ]
 }
