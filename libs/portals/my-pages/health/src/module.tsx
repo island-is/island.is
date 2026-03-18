@@ -144,7 +144,6 @@ const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
 const MEDICINE_DELEGATION_FLAG = 'HealthMedicineDelegation'
 
-
 export const healthModule: PortalModule = {
   name: 'Heilsa',
   enabled: ({ isCompany }) => !isCompany,
