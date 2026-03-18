@@ -13,13 +13,15 @@ import {
   getAlertMessageConditionAddThirdSelection,
   getAlertMessageConditionSpecialNeedsProgram,
   getAlertMessageSpecialNeedsProgram,
-  getConditionNordicLanguage, getConditionProgramApplicationMessage,
+  getConditionNordicLanguage,
+  getConditionProgramApplicationMessage,
   getConditionRequestDormitory,
   getConditionSecondProgram,
   getConditionThirdLanguage,
   getFormTitle,
   getIsClearableSecondProgram,
-  getNordicLanguageOptions, getProgramApplicationMessage,
+  getNordicLanguageOptions,
+  getProgramApplicationMessage,
   getRequestDormitoryOptions,
   getRequireSecondProgram,
   getRequireThirdLanguage,
@@ -103,8 +105,20 @@ export const schoolSection = buildSection({
             firstProgramAlert: {
               component: 'alertMessage',
               alertType: 'info',
-              message: (application, _activeField, index, locale) => getProgramApplicationMessage('firstProgram', application.answers, index, locale),
-              condition: (application, _activeField, index, locale) => getConditionProgramApplicationMessage('firstProgram', application.answers, index, locale),
+              message: (application, _activeField, index, locale) =>
+                getProgramApplicationMessage(
+                  'firstProgram',
+                  application.answers,
+                  index,
+                  locale,
+                ),
+              condition: (application, _activeField, index, locale) =>
+                getConditionProgramApplicationMessage(
+                  'firstProgram',
+                  application.answers,
+                  index,
+                  locale,
+                ),
             },
             'secondProgram.id': {
               component: 'selectAsync',
@@ -136,8 +150,20 @@ export const schoolSection = buildSection({
             secondProgramAlert: {
               component: 'alertMessage',
               alertType: 'info',
-              message: (application, _, index, locale) => getProgramApplicationMessage('secondProgram', application.answers, index, locale),
-              condition: (application, _, index, locale) => getConditionProgramApplicationMessage('secondProgram', application.answers, index, locale),
+              message: (application, _, index, locale) =>
+                getProgramApplicationMessage(
+                  'secondProgram',
+                  application.answers,
+                  index,
+                  locale,
+                ),
+              condition: (application, _, index, locale) =>
+                getConditionProgramApplicationMessage(
+                  'secondProgram',
+                  application.answers,
+                  index,
+                  locale,
+                ),
             },
             'thirdLanguage.code': {
               component: 'select',
