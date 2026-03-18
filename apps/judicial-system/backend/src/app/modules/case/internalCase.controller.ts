@@ -408,6 +408,44 @@ export class InternalCaseController {
 
   @UseGuards(
     CaseExistsGuard,
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
+    CaseCompletedGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[
+        MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT
+      ]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a court record working document to court',
+  })
+  deliverCourtRecordWorkingDocumentToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the court record working document for case ${caseId} to court`,
+    )
+
+    return this.sequelize.transaction(async (transaction) =>
+      this.internalCaseService.deliverCourtRecordWorkingDocumentToCourt(
+        theCase,
+        deliverDto.user,
+        transaction,
+      ),
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseCompletedGuard,
   )

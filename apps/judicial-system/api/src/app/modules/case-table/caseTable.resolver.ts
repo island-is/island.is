@@ -16,6 +16,7 @@ import { type User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { CaseTableQueryInput } from './dto/caseTable.input'
 import { CaseTableResponse } from './dto/caseTable.response'
+import { CaseTableMembershipResponse } from './dto/caseTableMembership.response'
 import { SearchCasesQueryInput } from './dto/searchCases.input'
 import { SearchCasesResponse } from './dto/searchCases.response'
 
@@ -62,5 +63,27 @@ export class CaseTableResolver {
       backendService.searchCases(input.query),
       (response) => response.rows.map((row) => row.caseId),
     )
+  }
+
+  @Query(() => CaseTableMembershipResponse, {
+    nullable: true,
+    description:
+      'Returns which case tables (for the current user role) the case belongs to. Use for breadcrumbs on the case page.',
+  })
+  caseTableMembership(
+    @Args('caseId', { type: () => String }) caseId: string,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<CaseTableMembershipResponse | null> {
+    this.logger.debug(`Getting case table membership for case ${caseId}`)
+
+    return backendService
+      .getCaseTableMembership(caseId)
+      .catch((error: unknown) => {
+        const status =
+          (error as { status?: number })?.status ??
+          (error as { statusCode?: number })?.statusCode
+        return status === 404 ? null : Promise.reject(error)
+      })
   }
 }
