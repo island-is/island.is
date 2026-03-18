@@ -68,13 +68,14 @@ export const SearchProgrammes = ({
     filter.value.forEach((searchParam) => {
       // Handle nested fields for different filter types
       if (filter.key === 'schools') {
-        orFilters.push({ 'school.id': searchParam })
+        orFilters.push({ 'school.id': `=${searchParam}` })
       } else if (filter.key === 'countryAreas') {
-        orFilters.push({ 'school.countryArea.id': searchParam })
+        orFilters.push({ 'school.countryArea.id': `=${searchParam}` })
       } else if (filter.key === 'levels') {
-        orFilters.push({ 'qualification.level.id': searchParam })
+        orFilters.push({ 'qualification.level.id': `=${searchParam}` })
       }
     })
+
     if (orFilters.length > 0) {
       queryMaker.$and.push({ $or: orFilters })
     }

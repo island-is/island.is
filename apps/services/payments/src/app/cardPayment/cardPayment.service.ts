@@ -11,16 +11,20 @@ import { CardErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 
 import { PaymentStatus } from '../../types'
 import {
-  ApplePaySessionResponseSchema,
+  ApplePaySessionErrorSchema,
+  ApplePaySessionSuccessSchema,
   CachePaymentFlowStatus,
-  CardPaymentResponseSchema,
+  CardPaymentErrorSchema,
   CardPaymentSuccessResponse,
-  CardVerificationResponseSchema,
+  CardPaymentSuccessSchema,
+  CardVerificationErrorSchema,
   CardVerificationSuccessResponse,
+  CardVerificationSuccessSchema,
   MdNormalised,
   PaymentTrackingData,
-  RefundResponseSchema,
+  RefundErrorSchema,
   RefundSuccessResponse,
+  RefundSuccessSchema,
   SavedVerificationCompleteData,
   SavedVerificationPendingData,
 } from '../../types/cardPayment'
@@ -110,13 +114,18 @@ export class CardPaymentService {
     )
 
     const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+      paymentFlowId,
       response,
-      schema: CardVerificationResponseSchema,
+      schema: CardVerificationSuccessSchema,
+      errorSchema: CardVerificationErrorSchema,
       errorMessage: `Failed to verify card (${paymentFlowId})`,
     })
 
-    // Parser accepts success | error; we throw on !isSuccess, so this is always success shape
-    return data as CardVerificationSuccessResponse
+    if (!data.cardInformation?.cardScheme || !data.cardInformation?.cardUsage) {
+      throw new BadRequestException(CardErrorCode.VerificationFailed)
+    }
+
+    return data
   }
 
   getMdPayload(md: string): MdNormalised {
@@ -303,7 +312,8 @@ export class CardPaymentService {
 
     const data = await this.parsePaymentGatewayResponseAndHandleErrors({
       response,
-      schema: ApplePaySessionResponseSchema,
+      schema: ApplePaySessionSuccessSchema,
+      errorSchema: ApplePaySessionErrorSchema,
       errorMessage: 'Failed to get Apple Pay session',
     })
 
@@ -372,8 +382,10 @@ export class CardPaymentService {
     )
 
     const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+      paymentFlowId: chargeCardInput.paymentFlowId,
       response,
-      schema: CardPaymentResponseSchema,
+      schema: CardPaymentSuccessSchema,
+      errorSchema: CardPaymentErrorSchema,
       errorMessage: 'Failed to charge card',
     })
 
@@ -408,16 +420,19 @@ export class CardPaymentService {
     )
 
     const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+      paymentFlowId: input.paymentFlowId,
       response,
-      schema: CardPaymentResponseSchema,
+      schema: CardPaymentSuccessSchema,
+      errorSchema: CardPaymentErrorSchema,
       errorMessage: 'Failed to charge Apple Pay payment',
     })
 
-    return data as CardPaymentSuccessResponse
+    return data
   }
 
   // REFUND METHODS ------------------------------------------------------------------------------------------------
 
+  // Used when refunding a card payment during Saga rollback
   async refund({
     paymentFlowId,
     cardNumber,
@@ -447,8 +462,10 @@ export class CardPaymentService {
       )
 
       const data = await this.parsePaymentGatewayResponseAndHandleErrors({
+        paymentFlowId,
         response,
-        schema: RefundResponseSchema,
+        schema: RefundSuccessSchema,
+        errorSchema: RefundErrorSchema,
         errorMessage: `[${paymentFlowId}] Failed to refund payment`,
         onErrorBeforeThrow: async (data) => {
           if (
@@ -497,19 +514,30 @@ export class CardPaymentService {
   // PRIVATE HELPER METHODS ------------------------------------------------------------------------------------------------
 
   private async parsePaymentGatewayResponseAndHandleErrors<
-    T extends z.ZodTypeAny,
+    TOut extends { isSuccess: true },
+    TErrOut extends {
+      isSuccess: false
+      responseCode: string
+      responseDescription?: string
+    },
   >({
     response,
     schema,
+    errorSchema,
+    paymentFlowId,
     errorMessage,
     onErrorBeforeThrow,
   }: {
     response: Response
-    schema: T
+    schema: z.ZodType<TOut>
+    errorSchema: z.ZodType<TErrOut>
     errorMessage: string
+    paymentFlowId?: string
     /** Called when !isSuccess, before throwing. Used for refund's INVALID_3D_SECURE_DATA cache cleanup. */
-    onErrorBeforeThrow?: (data: z.infer<T>) => void | Promise<void>
-  }): Promise<z.infer<T>> {
+    onErrorBeforeThrow?: (data: TErrOut) => void | Promise<void>
+  }): Promise<TOut> {
+    const logPrefix = paymentFlowId ? `[${paymentFlowId}] ` : ''
+
     if (!response.ok) {
       const responseBody = await response.text()
 
@@ -521,28 +549,47 @@ export class CardPaymentService {
       throw new BadRequestException(response.statusText)
     }
 
-    const data = await response.json()
+    const rawData = await response.json()
 
-    const parsedData = schema.safeParse(data)
+    const successParsed = schema.safeParse(rawData)
 
-    if (!parsedData.success) {
-      this.logger.error('Failed to parse payment gateway response', {
-        error: parsedData.error,
-      })
-      throw new BadRequestException(parsedData.error.message)
+    if (successParsed.success) {
+      return successParsed.data
     }
 
-    const { isSuccess, responseCode, responseDescription } = parsedData.data
+    const errorParsed = errorSchema.safeParse(rawData)
 
-    if (!isSuccess) {
-      await onErrorBeforeThrow?.(parsedData.data)
-      this.logger.error(`Payment gateway error: ${errorMessage}`, {
+    if (errorParsed.success) {
+      const { responseCode, responseDescription } = errorParsed.data
+
+      try {
+        await onErrorBeforeThrow?.(errorParsed.data)
+      } catch (cleanupError) {
+        this.logger.error(
+          `${logPrefix}Failed to run payment gateway error cleanup`,
+          cleanupError,
+        )
+      }
+      this.logger.error(`${logPrefix}Payment gateway error: ${errorMessage}`, {
         responseCode,
         responseDescription,
+        timestamp: new Date().toISOString(),
       })
       throw new BadRequestException(mapToCardErrorCode(responseCode))
     }
 
-    return parsedData.data
+    // if zod schema parsing fails, log the error
+    const raw = rawData as Record<string, unknown>
+    const responseCode = raw?.responseCode
+    const responseDescription = raw?.responseDescription
+
+    this.logger.error(`${logPrefix}Failed to parse payment gateway response`, {
+      responseCode,
+      responseDescription,
+      timestamp: new Date().toISOString(),
+      parseError: successParsed.error,
+    })
+
+    throw new BadRequestException('Failed to parse payment gateway response')
   }
 }

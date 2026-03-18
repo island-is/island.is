@@ -53,7 +53,7 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REQUESTED_APPEAL,
       route: 'afryjunarleyfi',
       title: 'Áfrýjunarleyfi',
-      description: 'Yfirlesnir dómar á áfrýjunarleyfi.',
+      description: 'Yfirlesnir dómar með beiðni um áfrýjunarleyfi.',
     },
   ],
 }
