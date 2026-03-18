@@ -312,9 +312,10 @@ export const VehicleBulkMileageRow = ({
           value: displayDate ? format(displayDate, 'dd.MM.yyyy') : '-',
         },
         {
-          value: displayMileage
-            ? displayWithUnit(displayMileage, unit, true)
-            : '-',
+          value:
+            displayMileage !== null && displayMileage !== undefined
+              ? displayWithUnit(displayMileage, unit, true)
+              : '-',
         },
         {
           value: (

@@ -14,13 +14,14 @@ import VehicleCO2 from '../../components/VehicleCO2'
 import { vehicleMessage } from '../../lib/messages'
 import { AssetsPaths } from '../../lib/paths'
 import { displayWithUnit } from '../../utils/displayWithUnit'
+import { OdometerUnit } from './types'
 
 interface Props {
   vehicleId: string
   data: VehiclesMileageRegistrationHistory
   loading?: boolean
   co2?: string
-  unit: 'km' | 'mi'
+  unit: OdometerUnit
 }
 
 interface ChartProps {

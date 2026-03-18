@@ -4,7 +4,7 @@ import { EmptyTable, ExpandHeader } from '@island.is/portals/my-pages/core'
 import { useMemo } from 'react'
 import { vehicleMessage } from '../../lib/messages'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import { VehicleType } from './types'
+import { OdometerUnit, VehicleType } from './types'
 import { VehicleBulkMileageRow } from './VehicleBulkMileageRow'
 
 interface Props {
@@ -42,6 +42,14 @@ const VehicleBulkMileageTable = ({
     )
   }, [vehicles])
 
+  const totalUnit = useMemo((): OdometerUnit | undefined => {
+    const units = new Set(
+      vehicles.map((v) => (v.hasMilesOdometer ? 'mi' : 'km')),
+    )
+    if (units.size !== 1) return undefined
+    return units.has('mi') ? 'mi' : 'km'
+  }, [vehicles])
+
   return (
     <Box>
       <form>
@@ -73,7 +81,9 @@ const VehicleBulkMileageTable = ({
                   <td>
                     <Box padding={2}>
                       <Text variant="medium" fontWeight="semiBold">
-                        {displayWithUnit(totalLastMileage, 'km', true)}
+                        {totalUnit
+                          ? displayWithUnit(totalLastMileage, totalUnit, true)
+                          : '-'}
                       </Text>
                     </Box>
                   </td>
