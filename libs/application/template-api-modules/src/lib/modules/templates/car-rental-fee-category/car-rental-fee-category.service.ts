@@ -4,7 +4,10 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { RskRentalDayRateClient } from '@island.is/clients-rental-day-rate'
+import {
+  RskRentalDayRateClient,
+  ValidVehicle,
+} from '@island.is/clients-rental-day-rate'
 import { EntryModel } from '@island.is/clients-rental-day-rate'
 import { getValueViaPath } from '@island.is/application/core'
 import { AttachmentS3Service } from '../../shared/services'
@@ -43,88 +46,16 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
 
   async getCurrentVehicles({
     auth,
-  }: TemplateApiModuleActionProps): Promise<CurrentVehicleWithMilage[]> {
+  }: TemplateApiModuleActionProps): Promise<ValidVehicle[]> {
     try {
-      const pageSize = 500
-      const concurrency = 3
-
-      const carsWithMilageData: Array<{
-        permno?: string | null
-        latestMileage?: number | null
-      }> = []
-
-      const fetchPage = (page: number) =>
-        this.vehiclesApiWithAuth(auth).currentvehicleswithmileageandinspGet({
-          showOwned: true,
-          showCoowned: true,
-          showOperated: true,
-          page,
-          pageSize,
-          onlyMileageRequiredVehicles: false,
-          onlyMileageRegisterableVehicles: false,
-        })
-
-      const firstResponse = await fetchPage(1)
-      const firstPageData = firstResponse.data ?? []
-      carsWithMilageData.push(...firstPageData)
-
-      const totalPages = Math.max(1, firstResponse.totalPages ?? 1)
-      const startPage = firstResponse.pageNumber ?? 1
-
-      if (totalPages > startPage) {
-        const remainingPages = Array.from(
-          { length: totalPages - startPage },
-          (_, index) => startPage + 1 + index,
-        )
-
-        for (let i = 0; i < remainingPages.length; i += concurrency) {
-          const batch = remainingPages.slice(i, i + concurrency)
-          const responses = await Promise.all(batch.map(fetchPage))
-
-          for (const response of responses) {
-            const pageData = response.data ?? []
-            if (pageData.length === 0) {
-              continue
-            }
-            carsWithMilageData.push(...pageData)
-          }
-        }
-      }
-
-      const carsWithStatuses = await this.vehiclesApiWithAuth(
+      return await this.rentalsApiWithAuth(
         auth,
-      ).currentVehiclesGet({
-        persidNo: auth.nationalId,
-        showOwned: true,
-        showCoowned: true,
-        showOperated: true,
+      ).apiDayRateEntriesEntityIdEligibleVehiclesGet({
+        entityId: auth.nationalId,
       })
-
-      const carIsOutOfUseDict = carsWithStatuses.reduce((acc, vehicle) => {
-        if (vehicle.permno) {
-          acc[vehicle.permno] = vehicle.outOfUse ?? false
-        }
-        return acc
-      }, {} as Record<string, boolean>)
-
-      return (
-        carsWithMilageData
-          ?.filter(
-            (vehicle) =>
-              vehicle.permno &&
-              typeof vehicle.latestMileage === 'number' &&
-              vehicle.latestMileage >= 0 &&
-              vehicle.permno in carIsOutOfUseDict &&
-              !carIsOutOfUseDict[vehicle.permno],
-          )
-          .map((vehicle) => ({
-            permno: vehicle.permno ?? null,
-            milage: vehicle.latestMileage ?? null,
-          })) || []
-      )
     } catch (error) {
       this.logger.error(
-        'Error getting vehicles with milage and statuses',
+        'Error getting vehicles with milage from Skatturinn',
         error,
       )
       throw error

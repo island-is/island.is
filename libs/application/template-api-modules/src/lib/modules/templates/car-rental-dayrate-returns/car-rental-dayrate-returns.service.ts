@@ -205,6 +205,8 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           permno: record.vehicleId,
           numberOfDays: record.prevPeriodUsage,
           dayRateEntryId,
+          month: lastMonthIndex + 1,
+          year: lastMonthDate.getFullYear(),
         }
       })
 
@@ -232,8 +234,6 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         .apiRentalDaysEntityIdPost({
           entityId: auth.nationalId,
           rentalDayRegistrationModel: {
-            year: lastMonthDate.getFullYear(),
-            month: lastMonthIndex + 1, // Date is 0-11 based, but Skatturinn expects 1-12
             entries,
           },
         })
