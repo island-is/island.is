@@ -48,7 +48,9 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   }, [isVisible])
 
   const [postRenewal, { data: renewalData, error: renewalError, loading }] =
-    usePostPrescriptionRenewalMutation()
+    usePostPrescriptionRenewalMutation({
+      refetchQueries: ['GetMedicinePrescriptions'],
+    })
 
   const data = [
     {
