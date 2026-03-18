@@ -71,7 +71,7 @@ export const schoolSection = buildSection({
               options: (application) => getSchoolOptions(application),
               filterOptions: (options, answers, index) =>
                 filterSchoolOptions(options, answers, index),
-              clearOnChange: (index) => clearOnChangeSchool(index),
+              clearOnChange: (_) => clearOnChangeSchool(),
               setOnChange: async (option, application, index) =>
                 setOnChangeSchool(option, application, index),
             },

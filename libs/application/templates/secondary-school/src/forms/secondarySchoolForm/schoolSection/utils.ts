@@ -141,13 +141,8 @@ export const filterSchoolOptions = (
   return options.filter((x) => !otherSchoolIds.includes(x.value))
 }
 
-export const clearOnChangeSchool = (index: number) => {
-  return [
-    `selection[${index}].firstProgram`,
-    `selection[${index}].secondProgram`,
-    `selection[${index}].thirdLanguage`,
-    `selection[${index}].nordicLanguage`,
-  ]
+export const clearOnChangeSchool = () => {
+  return [] as string[]
 }
 
 export const setOnChangeSchool = (
@@ -165,11 +160,27 @@ export const setOnChangeSchool = (
       value: selectedSchool?.name,
     },
     {
-      key: `selection[${index}].secondProgram.require`,
+      key: `selection[${index}].firstProgram`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].secondProgram`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].thirdLanguage`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].nordicLanguage`,
+      value: undefined,
+    },
+    {
+      key: `selection[${index}].secondProgramRequire`,
       value: checkIsFreshman(application.answers),
     },
     {
-      key: `selection[${index}].thirdLanguage.require`,
+      key: `selection[${index}].thirdLanguageRequire`,
       value: selectedSchool?.requireThirdLanguage,
     },
     { key: `selection[${index}].requestDormitory`, value: [] }, // clear answer
@@ -220,7 +231,7 @@ export const loadProgramOptions = async (
     const programs = data?.secondarySchoolProgramsBySchoolId || []
 
     setValueAtIndex?.('programOptions', programs)
-    setValueAtIndex?.('secondProgram.include', programs.length > 1)
+    setValueAtIndex?.('secondProgramInclude', programs.length > 1)
 
     return programs
       .map((program) => ({
@@ -273,7 +284,7 @@ export const setOnChangeFirstProgram = (
       value: programInfo?.programApplicationMessageEn,
     },
     {
-      key: `selection[${index}].secondProgram.require`,
+      key: `selection[${index}].secondProgramRequire`,
       value:
         checkIsFreshman(application.answers) &&
         !programInfo?.isSpecialNeedsProgram,
@@ -286,7 +297,7 @@ export const getRequireSecondProgram = (
 ): boolean => {
   const secondProgramRequire =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'secondProgram.require')) ||
+      getValueViaPath<boolean>(activeField, 'secondProgramRequire')) ||
     false
   return secondProgramRequire
 }
@@ -296,7 +307,7 @@ export const getIsClearableSecondProgram = (
 ): boolean => {
   const secondProgramRequire =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'secondProgram.require')) ||
+      getValueViaPath<boolean>(activeField, 'secondProgramRequire')) ||
     false
   return !secondProgramRequire
 }
@@ -306,7 +317,7 @@ export const getConditionSecondProgram = (
 ): boolean => {
   const secondProgramInclude =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'secondProgram.include')) ||
+      getValueViaPath<boolean>(activeField, 'secondProgramInclude')) ||
     false
   return secondProgramInclude
 }
@@ -360,7 +371,7 @@ export const getRequireThirdLanguage = (
 ): boolean => {
   const thirdLanguageRequire =
     (activeField &&
-      getValueViaPath<boolean>(activeField, 'thirdLanguage.require')) ||
+      getValueViaPath<boolean>(activeField, 'thirdLanguageRequire')) ||
     false
   return thirdLanguageRequire
 }
