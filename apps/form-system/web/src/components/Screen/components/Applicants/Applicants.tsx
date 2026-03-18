@@ -153,7 +153,6 @@ export const Applicants = ({ applicantField }: Props) => {
           </Text>
           <Stack space={2}>
             <NationalIdField
-              legalEntity
               nationalId={nationalId}
               name={getValue(applicantField, 'name')}
             />
