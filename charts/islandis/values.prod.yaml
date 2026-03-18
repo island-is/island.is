@@ -497,7 +497,7 @@ api:
     min: 3
   resources:
     limits:
-      cpu: '1200m'
+      cpu: '3000m'
       memory: '2500Mi'
     requests:
       cpu: '900m'
@@ -2360,7 +2360,7 @@ regulations-admin-backend:
       hosts:
         - host: 'regulations-admin-backend-xrd.internal.island.is'
           paths:
-            - '/'
+            - '/api'
   initContainer:
     containers:
       - args:
@@ -4686,7 +4686,7 @@ web:
     min: 3
   resources:
     limits:
-      cpu: '1800m'
+      cpu: '3000m'
       memory: '1500Mi'
     requests:
       cpu: '1200m'
