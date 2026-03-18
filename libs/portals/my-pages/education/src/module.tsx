@@ -20,7 +20,9 @@ const UniversityGraduationDetail = lazy(() =>
 )
 
 const SecondarySchoolCareer = lazy(() =>
-  import('./screens/SecondarySchool/SecondarySchoolCareer/SecondarySchoolCareer'),
+  import(
+    './screens/SecondarySchool/SecondarySchoolCareer/SecondarySchoolCareer'
+  ),
 )
 
 const SecondarySchoolGraduationOverview = lazy(() =>

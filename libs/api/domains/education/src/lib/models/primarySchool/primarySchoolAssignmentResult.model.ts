@@ -1,4 +1,11 @@
-import { Field, Float, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
+import {
+  Field,
+  Float,
+  GraphQLISODateTime,
+  ID,
+  Int,
+  ObjectType,
+} from '@nestjs/graphql'
 
 @ObjectType('EducationPrimarySchoolAssignmentResult')
 export class PrimarySchoolAssignmentResult {

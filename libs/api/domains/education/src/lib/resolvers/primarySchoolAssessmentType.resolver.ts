@@ -11,9 +11,7 @@ import {
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
 import { PrimarySchoolAssessmentType } from '../models/primarySchool/primarySchoolAssessmentType.model'
 import { PrimarySchoolStudentResults } from '../models/primarySchool/primarySchoolStudentResults.model'
-import {
-  mapStudentResults,
-} from '../models/primarySchool/primarySchool.mapper'
+import { mapStudentResults } from '../models/primarySchool/primarySchool.mapper'
 import type { PrimarySchoolAssessmentTypeWithContext } from '../shared/types'
 
 @UseGuards(IdsUserGuard, ScopesGuard)

@@ -20,9 +20,15 @@ registerEnumType(AgentType, {
 
 registerEnumType(TestType, {
   name: 'EducationPrimarySchoolTestType',
-  description: 'Category of assessment — whether it is a support test or a standard status and progress test',
+  description:
+    'Category of assessment — whether it is a support test or a standard status and progress test',
   valuesMap: {
-    SUPPORT_TEST: { description: 'Assessment designed to identify students who need additional support' },
-    STATUS_AND_PROGRESS_TEST: { description: 'Standard assessment tracking status and progress over time' },
+    SUPPORT_TEST: {
+      description:
+        'Assessment designed to identify students who need additional support',
+    },
+    STATUS_AND_PROGRESS_TEST: {
+      description: 'Standard assessment tracking status and progress over time',
+    },
   },
 })

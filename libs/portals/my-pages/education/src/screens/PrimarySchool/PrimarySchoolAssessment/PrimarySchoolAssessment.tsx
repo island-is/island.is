@@ -5,7 +5,13 @@ import {
   MMS_SLUG,
 } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Accordion, AccordionItem, Box, Table, Text } from '@island.is/island-ui/core'
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Table,
+  Text,
+} from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useParams } from 'react-router-dom'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
@@ -50,7 +56,8 @@ export const PrimarySchoolAssessment = () => {
               id={subject?.id ?? subject?.name ?? ''}
               label={subject?.name ?? subject?.id ?? ''}
             >
-              {subject?.assessmentTypes && subject.assessmentTypes.length > 0 ? (
+              {subject?.assessmentTypes &&
+              subject.assessmentTypes.length > 0 ? (
                 subject.assessmentTypes.map((assessmentType) => {
                   const results = assessmentType?.results ?? []
                   const rows = results.flatMap((r, rIdx) =>
@@ -61,10 +68,15 @@ export const PrimarySchoolAssessment = () => {
                       batchNumber: ar?.batchNumber,
                     })),
                   )
-                  const hasFyrilögn = rows.some((row) => row.batchNumber != null)
+                  const hasFyrilögn = rows.some(
+                    (row) => row.batchNumber != null,
+                  )
 
                   return (
-                    <Box key={assessmentType?.id ?? assessmentType?.name} marginBottom={3}>
+                    <Box
+                      key={assessmentType?.id ?? assessmentType?.name}
+                      marginBottom={3}
+                    >
                       <Box marginBottom={2}>
                         <Text variant="h5">{assessmentType?.name}</Text>
                       </Box>
@@ -81,10 +93,16 @@ export const PrimarySchoolAssessment = () => {
                         <Table.Table>
                           <Table.Head>
                             <Table.Row>
-                              <Table.HeadData>{formatMessage(psm.schoolYear)}</Table.HeadData>
-                              <Table.HeadData>{formatMessage(psm.gradeLevel)}</Table.HeadData>
+                              <Table.HeadData>
+                                {formatMessage(psm.schoolYear)}
+                              </Table.HeadData>
+                              <Table.HeadData>
+                                {formatMessage(psm.gradeLevel)}
+                              </Table.HeadData>
                               {hasFyrilögn && (
-                                <Table.HeadData>{formatMessage(psm.examSitting)}</Table.HeadData>
+                                <Table.HeadData>
+                                  {formatMessage(psm.examSitting)}
+                                </Table.HeadData>
                               )}
                             </Table.Row>
                           </Table.Head>
@@ -93,10 +111,14 @@ export const PrimarySchoolAssessment = () => {
                               <Table.Row key={row.key}>
                                 <Table.Data>{row.schoolYear ?? ''}</Table.Data>
                                 <Table.Data>
-                                  {row.gradeLevel != null ? `${row.gradeLevel}.` : ''}
+                                  {row.gradeLevel != null
+                                    ? `${row.gradeLevel}.`
+                                    : ''}
                                 </Table.Data>
                                 {hasFyrilögn && (
-                                  <Table.Data>{row.batchNumber ?? ''}</Table.Data>
+                                  <Table.Data>
+                                    {row.batchNumber ?? ''}
+                                  </Table.Data>
                                 )}
                               </Table.Row>
                             ))}
