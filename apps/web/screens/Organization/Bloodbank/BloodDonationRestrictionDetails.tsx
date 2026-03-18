@@ -218,8 +218,8 @@ BloodDonationRestrictionDetails.getProps = async ({
     namespace,
     organizationPage: organizationPageResponse.data.getOrganizationPage,
     languageToggleHrefOverride: {
-      is: `/s/${organizationPageSlug}/${subpageSlug}/${id}`,
-      en: `/en/o/${organizationPageSlug}/${subpageSlug}/${id}`,
+      is: `/s/blodbankinn/ahrif-a-blodgjof/${id}`,
+      en: `/en/o/icelandic-blood-bank/affecting-factors/${id}`,
     },
   }
 }
