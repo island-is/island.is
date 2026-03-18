@@ -10,7 +10,7 @@ import { Case, Defendant } from '../repository'
 const isSentToPrisonAdmin = (d: Defendant) => Boolean(d.isSentToPrisonAdmin)
 
 const isRegisteredInPrisonSystem = (d: Defendant, c: Case): boolean =>
-  Boolean(d.isRegisteredInPrisonSystem ?? c.isRegisteredInPrisonSystem)
+  Boolean(d.isRegisteredInPrisonSystem)
 
 const isAppealRequestLatestVerdict = (defendant: Defendant) =>
   Boolean(defendant.verdicts?.[0]?.defendantHasRequestedAppeal)
