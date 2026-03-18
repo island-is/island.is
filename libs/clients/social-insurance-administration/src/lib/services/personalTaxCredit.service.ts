@@ -5,7 +5,7 @@ import {
   TrWebApiServicesCommonClientsEnumsPersonalTaxAllowanceAction,
   TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
   TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
-  TrWebApiServicesCommonClientsModelsGetMonthsAndYearsReturn,
+  TrWebApiServicesCommonClientsModelsYearWithMonthsDto,
   TrWebApiServicesCommonClientsModelsGetTaxCardsReturn,
   TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
   TrWebApiServicesCommonClientsModelsSpousalTaxCardUsageYearMonthResult,
@@ -50,7 +50,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
 
   async getTaxCardMonthsAndYears(
     user: User,
-  ): Promise<TrWebApiServicesCommonClientsModelsGetMonthsAndYearsReturn | null> {
+  ): Promise<TrWebApiServicesCommonClientsModelsYearWithMonthsDto[] | null> {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditTaxCardMonthsAndYearsGet()
       .catch((error) => {
@@ -65,7 +65,7 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
     return this.personalTaxCreditApiWithAuth(user)
       .apiProtectedV1PersonalTaxCreditSpouseDeceasedTaxAllowanceValidMonthsAndYearsGet()
       .catch((error) => {
-        if (error?.status === 404) return null
+        if (error?.status === 404 || error?.status === 400) return null
         throw error
       })
   }

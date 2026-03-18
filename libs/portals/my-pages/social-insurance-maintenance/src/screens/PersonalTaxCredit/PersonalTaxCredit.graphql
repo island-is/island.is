@@ -13,8 +13,11 @@ query getPersonalTaxCredit {
     canRegisterPersonalAllowance
   }
   socialInsuranceTaxCardMonthsAndYears {
-    months
-    years
+    year
+    months {
+      month
+      selectable
+    }
   }
   socialInsuranceSpouseDeceasedTaxAllowanceEligibility {
     canApply

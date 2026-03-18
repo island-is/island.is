@@ -31,8 +31,6 @@
           "cat <<< $(jq '.components.schemas.\"TrWeb.Api.Services.Domain.ApplicationUpdates.Models.ApplicationsUpdateInput\".properties.answers = {\"type\": \"object\", \"nullable\": true}' src/lib/config/clientConfig.json) > src/lib/config/clientConfig.json",
           "cat <<< $(jq '.components.schemas.\"TrWeb.Contracts.External.ServicePortal.GenericDocumentResponse\".properties.contentAsObject = {\"type\": \"object\", \"nullable\": true}' src/lib/config/clientConfig.json) > src/lib/config/clientConfig.json",
           "cat <<< $(jq '.paths.\"/api/v1/DigitalMailbox/DocumentIndexes\".post.requestBody += {\"required\": true}' src/lib/config/clientConfig.json) > src/lib/config/clientConfig.json",
-          "cat <<< $(jq '.paths.\"/api/v1/DigitalMailbox/DocumentIndexes/Read\".post.requestBody += {\"required\": true}' src/lib/config/clientConfig.json) > src/lib/config/clientConfig.json",
-          "cat <<< $(jq '.paths.\"/api/v1/DigitalMailbox/DocumentIndexes/Withdraw\".post.requestBody += {\"required\": true}' src/lib/config/clientConfig.json) > src/lib/config/clientConfig.json",
           "cat <<< $(jq '.paths.\"/api/protected/v2/Application/{applicationType}\".post.requestBody.content[].schema = {\"type\": \"object\"}' src/lib/config/clientConfig-v2.json) > src/lib/config/clientConfig-v2.json",
 
           "prettier --write src/lib/config/clientConfig.json",

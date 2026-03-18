@@ -33,25 +33,25 @@ type MyTaxCreditAction = 'register' | 'edit' | 'discontinue' | null
 
 const PersonalTaxCredit = () => {
   useNamespaces('sp.social-insurance-maintenance')
-  const { formatMessage, formatDate } = useLocale()
+  const { formatMessage, formatDate, lang } = useLocale()
 
   const [myAction, setMyAction] = useState<MyTaxCreditAction>(null)
   const [spouseDeceased, setSpouseDeceased] = useState(false)
   const [grantSpouse, setGrantSpouse] = useState(false)
 
   const [registerYear, setRegisterYear] = useState<number | null>(null)
-  const [registerMonth, setRegisterMonth] = useState<string | null>(null)
+  const [registerMonth, setRegisterMonth] = useState<number | null>(null)
   const [registerPercentage, setRegisterPercentage] = useState<string>('')
 
   const [editPercentage, setEditPercentage] = useState<string>('')
 
   const [discontinueYear, setDiscontinueYear] = useState<number | null>(null)
-  const [discontinueMonth, setDiscontinueMonth] = useState<string | null>(null)
+  const [discontinueMonth, setDiscontinueMonth] = useState<number | null>(null)
 
   const [spouseDeceasedYear, setSpouseDeceasedYear] = useState<number | null>(
     null,
   )
-  const [spouseDeceasedMonth, setSpouseDeceasedMonth] = useState<string | null>(
+  const [spouseDeceasedMonth, setSpouseDeceasedMonth] = useState<number | null>(
     null,
   )
   const [spouseDeceasedPercentage, setSpouseDeceasedPercentage] =
@@ -82,21 +82,59 @@ const PersonalTaxCredit = () => {
 
   const yearOptions = useMemo(
     () =>
-      (monthsAndYears?.years ?? []).map((y) => ({
-        label: String(y),
-        value: y,
+      (monthsAndYears ?? []).map((ym) => ({
+        label: String(ym.year),
+        value: ym.year as number,
       })),
     [monthsAndYears],
   )
 
-  const monthOptions = useMemo(
-    () =>
-      (monthsAndYears?.months ?? []).map((name, idx) => ({
-        label: name,
-        value: idx + 1,
-      })),
-    [monthsAndYears],
+  const getMonthOptionsForYear = (year: number | null) => {
+    const yearMonths = (monthsAndYears ?? []).find((ym) => ym.year === year)
+    return (yearMonths?.months ?? [])
+      .filter((mo) => mo.selectable)
+      .map((mo) => ({
+        label: new Intl.DateTimeFormat(lang, { month: 'long' }).format(
+          new Date(2000, (mo.month ?? 1) - 1),
+        ),
+        value: mo.month as number,
+      }))
+  }
+
+  const registerMonthOptions = useMemo(
+    () => getMonthOptionsForYear(registerYear),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [monthsAndYears, registerYear, lang],
   )
+
+  const discontinueMonthOptions = useMemo(
+    () => getMonthOptionsForYear(discontinueYear),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [monthsAndYears, discontinueYear, lang],
+  )
+
+  const spouseYearOptions = useMemo(
+    () =>
+      (spouseEligibility?.allowedYearMonths ?? []).map((ym) => ({
+        label: String(ym.year),
+        value: ym.year as number,
+      })),
+    [spouseEligibility],
+  )
+
+  const spouseMonthOptions = useMemo(() => {
+    const yearMonths = spouseEligibility?.allowedYearMonths?.find(
+      (ym) => ym.year === spouseDeceasedYear,
+    )
+    return (yearMonths?.months ?? [])
+      .filter((mo) => mo.selectable)
+      .map((mo) => ({
+        label: new Intl.DateTimeFormat(lang, { month: 'long' }).format(
+          new Date(2000, (mo.month ?? 1) - 1),
+        ),
+        value: mo.month as number,
+      }))
+  }, [spouseEligibility, spouseDeceasedYear, lang])
 
   const handleSaveMyTaxCredit = async () => {
     try {
@@ -105,7 +143,7 @@ const PersonalTaxCredit = () => {
           variables: {
             input: {
               year: registerYear ?? undefined,
-              month: monthOptions.find((o) => o.label === registerMonth)?.value,
+              month: registerMonth ?? undefined,
               percentage: registerPercentage
                 ? Number(registerPercentage)
                 : undefined,
@@ -125,8 +163,7 @@ const PersonalTaxCredit = () => {
           variables: {
             input: {
               year: discontinueYear ?? undefined,
-              month: monthOptions.find((o) => o.label === discontinueMonth)
-                ?.value,
+              month: discontinueMonth ?? undefined,
             },
           },
         })
@@ -251,7 +288,7 @@ const PersonalTaxCredit = () => {
 
           {/* My personal tax credit */}
           <Box>
-            <Text variant="h3" marginBottom={3}>
+            <Text variant="h4" marginBottom={3}>
               {formatMessage(m.myPersonalTaxCredit)}
             </Text>
 
@@ -285,11 +322,12 @@ const PersonalTaxCredit = () => {
                                   )
                                 : null
                             }
-                            onChange={(opt) =>
+                            onChange={(opt) => {
                               setRegisterYear(
                                 opt ? (opt.value as number) : null,
                               )
-                            }
+                              setRegisterMonth(null)
+                            }}
                             isDisabled={!canRegister}
                             required
                           />
@@ -301,21 +339,20 @@ const PersonalTaxCredit = () => {
                             placeholder={formatMessage(m.month)}
                             size="xs"
                             backgroundColor="blue"
-                            options={monthOptions.map((o) => ({
-                              label: o.label,
-                              value: o.label,
-                            }))}
+                            options={registerMonthOptions}
                             value={
                               registerMonth != null
-                                ? { label: registerMonth, value: registerMonth }
+                                ? registerMonthOptions.find(
+                                    (o) => o.value === registerMonth,
+                                  )
                                 : null
                             }
                             onChange={(opt) =>
                               setRegisterMonth(
-                                opt ? (opt.value as string) : null,
+                                opt ? (opt.value as number) : null,
                               )
                             }
-                            isDisabled={!canRegister}
+                            isDisabled={!canRegister || registerYear == null}
                           />
                         </Box>
                       </Box>
@@ -329,11 +366,16 @@ const PersonalTaxCredit = () => {
                         value={
                           registerPercentage ? `${registerPercentage}%` : ''
                         }
-                        onChange={(e) =>
-                          setRegisterPercentage(
-                            e.target.value.replace('%', '').trim(),
-                          )
-                        }
+                        onChange={(e) => {
+                          const val = e.target.value.replace('%', '').trim()
+                          const num = Number(val)
+                          if (
+                            val === '' ||
+                            (!isNaN(num) && num >= 0 && num <= 100)
+                          ) {
+                            setRegisterPercentage(val)
+                          }
+                        }}
                         disabled={!canRegister}
                         required
                       />
@@ -356,14 +398,20 @@ const PersonalTaxCredit = () => {
                       id="edit-percentage"
                       name="edit-percentage"
                       label={formatMessage(m.percentageFromNextMonth)}
+                      placeholder="100%"
                       size="xs"
                       backgroundColor="blue"
                       value={editPercentage ? `${editPercentage}%` : ''}
-                      onChange={(e) =>
-                        setEditPercentage(
-                          e.target.value.replace('%', '').trim(),
-                        )
-                      }
+                      onChange={(e) => {
+                        const val = e.target.value.replace('%', '').trim()
+                        const num = Number(val)
+                        if (
+                          val === '' ||
+                          (!isNaN(num) && num >= 0 && num <= 100)
+                        ) {
+                          setEditPercentage(val)
+                        }
+                      }}
                       disabled={!canRegister}
                     />
                   </Box>
@@ -398,11 +446,12 @@ const PersonalTaxCredit = () => {
                                 )
                               : null
                           }
-                          onChange={(opt) =>
+                          onChange={(opt) => {
                             setDiscontinueYear(
                               opt ? (opt.value as number) : null,
                             )
-                          }
+                            setDiscontinueMonth(null)
+                          }}
                           isDisabled={!canRegister}
                         />
                       </Box>
@@ -413,24 +462,20 @@ const PersonalTaxCredit = () => {
                           placeholder={formatMessage(m.month)}
                           size="xs"
                           backgroundColor="blue"
-                          options={monthOptions.map((o) => ({
-                            label: o.label,
-                            value: o.label,
-                          }))}
+                          options={discontinueMonthOptions}
                           value={
                             discontinueMonth != null
-                              ? {
-                                  label: discontinueMonth,
-                                  value: discontinueMonth,
-                                }
+                              ? discontinueMonthOptions.find(
+                                  (o) => o.value === discontinueMonth,
+                                )
                               : null
                           }
                           onChange={(opt) =>
                             setDiscontinueMonth(
-                              opt ? (opt.value as string) : null,
+                              opt ? (opt.value as number) : null,
                             )
                           }
-                          isDisabled={!canRegister}
+                          isDisabled={!canRegister || discontinueYear == null}
                         />
                       </Box>
                     </Box>
@@ -453,7 +498,7 @@ const PersonalTaxCredit = () => {
 
           {/* Spouse personal tax credit */}
           <Box>
-            <Text variant="h3" marginBottom={3}>
+            <Text variant="h4" marginBottom={3}>
               {formatMessage(m.spousePersonalTaxCredit)}
             </Text>
             <Stack space={2}>
@@ -461,7 +506,7 @@ const PersonalTaxCredit = () => {
                 id="spouse-deceased-tax-credit"
                 label={formatMessage(m.spouseDeceasedTaxCredit)}
                 checked={spouseDeceased}
-                //disabled={!spouseEligibility?.canApply}
+                disabled={!spouseEligibility?.canApply}
                 onChange={(e) => setSpouseDeceased(e.target.checked)}
               />
               {spouseDeceased && (
@@ -484,83 +529,88 @@ const PersonalTaxCredit = () => {
                           message={spouseEligibility.reasonNotAllowed}
                         />
                       ) : (
-                      <>
-                      <Box
-                        display="flex"
-                        columnGap={3}
-                        alignItems="flexEnd"
-                      >
-                        <Box style={{ flex: 1 }}>
-                          <Select
-                            name="spouse-deceased-year"
-                            label={formatMessage(m.fromWhatTime)}
-                            placeholder={formatMessage(m.theYear)}
-                            size="xs"
-                            backgroundColor="blue"
-                            options={yearOptions}
-                            value={
-                              spouseDeceasedYear != null
-                                ? yearOptions.find(
-                                    (o) => o.value === spouseDeceasedYear,
+                        <>
+                          <Box
+                            display="flex"
+                            columnGap={3}
+                            alignItems="flexEnd"
+                          >
+                            <Box style={{ flex: 1 }}>
+                              <Select
+                                name="spouse-deceased-year"
+                                label={formatMessage(m.fromWhatTime)}
+                                placeholder={formatMessage(m.theYear)}
+                                size="xs"
+                                backgroundColor="blue"
+                                options={spouseYearOptions}
+                                value={
+                                  spouseDeceasedYear != null
+                                    ? spouseYearOptions.find(
+                                        (o) => o.value === spouseDeceasedYear,
+                                      )
+                                    : null
+                                }
+                                onChange={(opt) => {
+                                  setSpouseDeceasedYear(
+                                    opt ? (opt.value as number) : null,
                                   )
-                                : null
-                            }
-                            onChange={(opt) =>
-                              setSpouseDeceasedYear(
-                                opt ? (opt.value as number) : null,
-                              )
-                            }
-                            isDisabled={!spouseEligibility?.canApply}
-                          />
-                        </Box>
-                        <Box style={{ flex: 1 }}>
-                          <Select
-                            name="spouse-deceased-month"
-                            label=""
-                            placeholder={formatMessage(m.month)}
+                                  setSpouseDeceasedMonth(null)
+                                }}
+                                isDisabled={!spouseEligibility?.canApply}
+                              />
+                            </Box>
+                            <Box style={{ flex: 1 }}>
+                              <Select
+                                name="spouse-deceased-month"
+                                label=""
+                                placeholder={formatMessage(m.month)}
+                                size="xs"
+                                backgroundColor="blue"
+                                options={spouseMonthOptions}
+                                value={
+                                  spouseDeceasedMonth != null
+                                    ? spouseMonthOptions.find(
+                                        (o) => o.value === spouseDeceasedMonth,
+                                      )
+                                    : null
+                                }
+                                onChange={(opt) =>
+                                  setSpouseDeceasedMonth(
+                                    opt ? (opt.value as number) : null,
+                                  )
+                                }
+                                isDisabled={
+                                  !spouseEligibility?.canApply ||
+                                  spouseDeceasedYear == null
+                                }
+                              />
+                            </Box>
+                          </Box>
+                          <Input
+                            id="spouse-deceased-percentage"
+                            name="spouse-deceased-percentage"
+                            label={formatMessage(m.percentageFromNextMonth)}
+                            placeholder="100%"
                             size="xs"
                             backgroundColor="blue"
-                            options={monthOptions.map((o) => ({
-                              label: o.label,
-                              value: o.label,
-                            }))}
                             value={
-                              spouseDeceasedMonth != null
-                                ? {
-                                    label: spouseDeceasedMonth,
-                                    value: spouseDeceasedMonth,
-                                  }
-                                : null
+                              spouseDeceasedPercentage
+                                ? `${spouseDeceasedPercentage}%`
+                                : ''
                             }
-                            onChange={(opt) =>
-                              setSpouseDeceasedMonth(
-                                opt ? (opt.value as string) : null,
-                              )
-                            }
-                            isDisabled={!spouseEligibility?.canApply}
+                            onChange={(e) => {
+                              const val = e.target.value.replace('%', '').trim()
+                              const num = Number(val)
+                              if (
+                                val === '' ||
+                                (!isNaN(num) && num >= 0 && num <= 100)
+                              ) {
+                                setSpouseDeceasedPercentage(val)
+                              }
+                            }}
+                            disabled={!spouseEligibility?.canApply}
                           />
-                        </Box>
-                      </Box>
-                      <Input
-                        id="spouse-deceased-percentage"
-                        name="spouse-deceased-percentage"
-                        label={formatMessage(m.percentageFromNextMonth)}
-                        placeholder="100%"
-                        size="xs"
-                        backgroundColor="blue"
-                        value={
-                          spouseDeceasedPercentage
-                            ? `${spouseDeceasedPercentage}%`
-                            : ''
-                        }
-                        onChange={(e) =>
-                          setSpouseDeceasedPercentage(
-                            e.target.value.replace('%', '').trim(),
-                          )
-                        }
-                        disabled={!spouseEligibility?.canApply}
-                      />
-                      </>
+                        </>
                       )}
                     </Stack>
                   </Box>

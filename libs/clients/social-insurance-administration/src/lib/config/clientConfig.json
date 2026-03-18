@@ -1,9 +1,6 @@
 {
   "openapi": "3.0.4",
-  "info": {
-    "title": "TR Portal API",
-    "version": "v1"
-  },
+  "info": { "title": "TR Portal API", "version": "v1" },
   "paths": {
     "/api/protected/v1/Applicant/{applicationType}/eligible": {
       "get": {
@@ -15,18 +12,13 @@
             "in": "path",
             "description": "The type of application (e.g. old age pension) to check for eligibility",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "lightweightValidation",
             "in": "query",
             "description": "Whether to skip non-essential validation steps. Used for debugging/testing purposes.",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
+            "schema": { "type": "boolean", "default": false }
           }
         ],
         "responses": {
@@ -476,22 +468,13 @@
             "description": "OK",
             "content": {
               "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "application/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               },
               "text/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
+                "schema": { "type": "integer", "format": "int32" }
               }
             }
           }
@@ -852,37 +835,24 @@
             "in": "path",
             "description": "The application type, e.g. \"oldagepension\"",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "lightweightValidation",
             "in": "query",
             "description": "Whether to skip non-essential validation steps. Used for debugging/testing purposes.",
-            "schema": {
-              "type": "boolean",
-              "default": false
-            }
+            "schema": { "type": "boolean", "default": false }
           }
         ],
         "requestBody": {
           "description": "Input for application, varies by type",
           "content": {
             "application/json; x-api-version=1.0": {
-              "schema": {
-                "type": "object"
-              }
+              "schema": { "type": "object" }
             },
-            "text/json; x-api-version=1.0": {
-              "schema": {
-                "type": "object"
-              }
-            },
+            "text/json; x-api-version=1.0": { "schema": { "type": "object" } },
             "application/*+json; x-api-version=1.0": {
-              "schema": {
-                "type": "object"
-              }
+              "schema": { "type": "object" }
             }
           }
         },
@@ -999,9 +969,7 @@
             "name": "applicationType",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -1089,20 +1057,12 @@
             "description": "OK",
             "content": {
               "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": { "type": "string" }
               },
               "application/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": { "type": "string" }
               },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/json; x-api-version=1.0": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1118,9 +1078,7 @@
             "in": "path",
             "description": "The application GUID for the application in Island.is",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -1234,9 +1192,7 @@
               }
             }
           },
-          "204": {
-            "description": "No Content"
-          }
+          "204": { "description": "No Content" }
         }
       }
     },
@@ -1250,16 +1206,12 @@
             "in": "path",
             "description": "The application GUID (from island.is)",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -1367,20 +1319,12 @@
             "description": "OK",
             "content": {
               "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": { "type": "string" }
               },
               "application/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": { "type": "string" }
               },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/json; x-api-version=1.0": { "schema": { "type": "string" } }
             }
           }
         }
@@ -1599,9 +1543,7 @@
               }
             }
           },
-          "201": {
-            "description": "Created"
-          }
+          "201": { "description": "Created" }
         }
       }
     },
@@ -1712,256 +1654,6 @@
         }
       }
     },
-    "/api/v1/DigitalMailbox/DocumentIndexes/Categories": {
-      "get": {
-        "tags": ["DigitalMailbox"],
-        "parameters": [
-          {
-            "name": "x-api-version",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/DigitalMailbox/DocumentIndexes/Types": {
-      "get": {
-        "tags": ["DigitalMailbox"],
-        "parameters": [
-          {
-            "name": "x-api-version",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "application/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/DigitalMailbox/DocumentIndexes": {
       "post": {
         "tags": ["DigitalMailbox"],
@@ -1969,9 +1661,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -2107,47 +1797,16 @@
         }
       }
     },
-    "/api/v1/DigitalMailbox/DocumentIndexes/Withdraw": {
-      "post": {
+    "/api/v1/DigitalMailbox/DocumentCategories": {
+      "get": {
         "tags": ["DigitalMailbox"],
         "parameters": [
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json; x-api-version=1.0": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.DocumentIndexWithdraw"
-                }
-              }
-            },
-            "text/json; x-api-version=1.0": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.DocumentIndexWithdraw"
-                }
-              }
-            },
-            "application/*+json; x-api-version=1.0": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.DocumentIndexWithdraw"
-                }
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -2233,66 +1892,29 @@
             "description": "OK",
             "content": {
               "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.MailboxResponse"
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               },
               "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.MailboxResponse"
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               },
               "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.MailboxResponse"
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               }
             }
           }
         }
       }
     },
-    "/api/v1/DigitalMailbox/DocumentIndexes/Read": {
-      "post": {
+    "/api/v1/DigitalMailbox/DocumentTypes": {
+      "get": {
         "tags": ["DigitalMailbox"],
         "parameters": [
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json; x-api-version=1.0": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.DocumentRead"
-                }
-              }
-            },
-            "text/json; x-api-version=1.0": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.DocumentRead"
-                }
-              }
-            },
-            "application/*+json; x-api-version=1.0": {
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.DocumentRead"
-                }
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -2378,43 +2000,49 @@
             "description": "OK",
             "content": {
               "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.MailboxResponse"
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               },
               "application/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.MailboxResponse"
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               },
               "text/json; x-api-version=1.0": {
-                "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.MailboxResponse"
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               }
             }
           }
         }
       }
     },
-    "/api/protected/v1/Documents/documents/{documentId}": {
+    "/api/protected/v1/Documents/{nationalId}/documents/{documentId}": {
       "get": {
         "tags": ["Documents"],
+        "summary": "Retrieves document content on request from Digital Mailbox (ísl. Stafrænt Pósthólf)",
         "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "The national id of the requesting user",
+            "required": true,
+            "schema": { "type": "string" }
+          },
           {
             "name": "documentId",
             "in": "path",
+            "description": "A unique identifier of the document",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "authenticationType",
             "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "description": "Determines strength of authentication.\n LOW = User/pass\n SUBSTANTIAL = Two factor authentication\n HIGH = Client Certificate",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "includeDocument",
+            "in": "query",
+            "description": "If the actual document should be returned or only the metadata",
+            "schema": { "type": "boolean" }
           }
         ],
         "responses": {
@@ -2503,17 +2131,17 @@
             "content": {
               "text/plain; x-api-version=1.0": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.DigitalMailbox.Models.Document"
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalMailbox.Document"
                 }
               },
               "application/json; x-api-version=1.0": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.DigitalMailbox.Models.Document"
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalMailbox.Document"
                 }
               },
               "text/json; x-api-version=1.0": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.DigitalMailbox.Models.Document"
+                  "$ref": "#/components/schemas/TrWeb.Contracts.External.DigitalMailbox.Document"
                 }
               }
             }
@@ -2844,28 +2472,13 @@
             "description": "OK",
             "content": {
               "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               },
               "application/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               },
               "text/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+                "schema": { "type": "array", "items": { "type": "string" } }
               }
             }
           }
@@ -3233,9 +2846,7 @@
             "in": "path",
             "description": "The application type associated with the education levels",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -3940,34 +3551,21 @@
       "get": {
         "tags": ["HMS"],
         "parameters": [
-          {
-            "name": "address",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "address", "in": "query", "schema": { "type": "string" } },
           {
             "name": "postalCode",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "apartmentNumber",
             "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -4058,34 +3656,21 @@
       "get": {
         "tags": ["HMS"],
         "parameters": [
-          {
-            "name": "address",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "address", "in": "query", "schema": { "type": "string" } },
           {
             "name": "postalCode",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "apartmentNumber",
             "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -4176,34 +3761,21 @@
       "get": {
         "tags": ["HMS"],
         "parameters": [
-          {
-            "name": "address",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "address", "in": "query", "schema": { "type": "string" } },
           {
             "name": "postalCode",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           },
           {
             "name": "apartmentNumber",
             "in": "query",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -4532,10 +4104,7 @@
           {
             "name": "year",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "schema": { "type": "integer", "format": "int32" }
           }
         ],
         "responses": {
@@ -4996,16 +4565,12 @@
             "in": "path",
             "description": "The national id of the individual",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -5876,21 +5441,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
+              "text/plain": { "schema": { "type": "boolean" } },
+              "application/json": { "schema": { "type": "boolean" } },
+              "text/json": { "schema": { "type": "boolean" } }
             }
           }
         }
@@ -6408,9 +5961,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -6554,9 +6105,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -6640,9 +6189,7 @@
               }
             }
           },
-          "200": {
-            "description": "OK"
-          }
+          "200": { "description": "OK" }
         }
       }
     },
@@ -6844,17 +6391,26 @@
             "content": {
               "text/plain; x-api-version=1.0": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetMonthsAndYearsReturn"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.YearWithMonthsDto"
+                  }
                 }
               },
               "application/json; x-api-version=1.0": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetMonthsAndYearsReturn"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.YearWithMonthsDto"
+                  }
                 }
               },
               "text/json; x-api-version=1.0": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetMonthsAndYearsReturn"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.YearWithMonthsDto"
+                  }
                 }
               }
             }
@@ -7074,9 +6630,7 @@
               }
             }
           },
-          "201": {
-            "description": "Created"
-          }
+          "201": { "description": "Created" }
         }
       }
     },
@@ -7184,9 +6738,7 @@
               }
             }
           },
-          "200": {
-            "description": "OK"
-          }
+          "200": { "description": "OK" }
         }
       }
     },
@@ -7294,9 +6846,7 @@
               }
             }
           },
-          "201": {
-            "description": "Created"
-          }
+          "201": { "description": "Created" }
         }
       }
     },
@@ -7404,9 +6954,7 @@
               }
             }
           },
-          "201": {
-            "description": "Created"
-          }
+          "201": { "description": "Created" }
         }
       }
     },
@@ -7514,9 +7062,7 @@
               }
             }
           },
-          "201": {
-            "description": "Created"
-          }
+          "201": { "description": "Created" }
         }
       }
     },
@@ -7638,18 +7184,13 @@
             "in": "path",
             "description": "The code that uniquely identifies the questionnaire.",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "language",
             "in": "query",
             "description": "The language in which to return the questionnaire. Defaults to Icelandic (IS).",
-            "schema": {
-              "type": "string",
-              "default": "IS"
-            }
+            "schema": { "type": "string", "default": "IS" }
           }
         ],
         "responses": {
@@ -7764,12 +7305,7 @@
           {
             "name": "languages",
             "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "schema": { "type": "array", "items": { "type": "string" } }
           }
         ],
         "responses": {
@@ -7893,12 +7429,7 @@
           {
             "name": "languages",
             "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
+            "schema": { "type": "array", "items": { "type": "string" } }
           }
         ],
         "responses": {
@@ -8023,24 +7554,18 @@
             "name": "applicationId",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -8147,20 +7672,12 @@
             "description": "OK",
             "content": {
               "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": { "type": "string" }
               },
               "application/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": { "type": "string" }
               },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/json; x-api-version=1.0": { "schema": { "type": "string" } }
             }
           }
         }
@@ -8175,25 +7692,18 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "documentId",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -8310,16 +7820,12 @@
             "in": "path",
             "description": "The national id of the customer",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -8436,16 +7942,12 @@
             "in": "path",
             "description": "The national id for which to retrieve the base certificate",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -8562,16 +8064,12 @@
             "in": "path",
             "description": "The national id for which to retrieve the disability pension certificate",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -8688,35 +8186,26 @@
             "in": "path",
             "description": "The document id for which to retrieve the service portal document",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "documentType",
             "in": "path",
             "description": "The document type for which to retrieve the service portal document",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "nationalId",
             "in": "path",
             "description": "The national id for which to retrieve the service portal document",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -8833,25 +8322,18 @@
             "in": "path",
             "description": "The national id of the associated client",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "fromDate",
             "in": "query",
             "description": "The reference date for creation of assessments",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -8977,25 +8459,18 @@
             "in": "path",
             "description": "The national id of the associated client",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "fromDate",
             "in": "query",
             "description": "The reference date for creation of assessments",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -9121,16 +8596,12 @@
             "in": "path",
             "description": "The national id for which to retrieve the rehabilitation plan",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -9247,16 +8718,12 @@
             "in": "path",
             "description": "The national id for which to retrieve the confirmed treatment",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -9373,16 +8840,12 @@
             "in": "path",
             "description": "The national id for which to retrieve the confirmation of ill health",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -9499,16 +8962,12 @@
             "in": "path",
             "description": "The national id for which to retrieve the confirmation of pending resolution",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -9625,16 +9084,12 @@
             "in": "path",
             "description": "The national id for which to retrieve the confirmation of job search",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -9750,16 +9205,12 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -9875,16 +9326,12 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -10009,16 +9456,12 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -10144,16 +9587,12 @@
             "in": "path",
             "description": "The national id of the customer",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -10257,9 +9696,7 @@
               }
             }
           },
-          "204": {
-            "description": "No Content"
-          }
+          "204": { "description": "No Content" }
         }
       }
     },
@@ -10273,16 +9710,12 @@
             "in": "path",
             "description": "The national id of the associated customer",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -10370,22 +9803,13 @@
             "description": "OK",
             "content": {
               "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
               "application/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
               "text/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               }
             }
           }
@@ -10402,16 +9826,12 @@
             "in": "path",
             "description": "The national id of the associated customer",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -10499,22 +9919,13 @@
             "description": "OK",
             "content": {
               "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
               "application/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               },
               "text/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string",
-                  "format": "uuid"
-                }
+                "schema": { "type": "string", "format": "uuid" }
               }
             }
           }
@@ -10531,16 +9942,12 @@
             "in": "path",
             "description": "The national id of the client associated with the document",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -10648,20 +10055,12 @@
             "description": "OK",
             "content": {
               "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": { "type": "string" }
               },
               "application/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": { "type": "string" }
               },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/json; x-api-version=1.0": { "schema": { "type": "string" } }
             }
           }
         }
@@ -10676,16 +10075,12 @@
             "name": "nationalId",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -10819,9 +10214,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -10945,34 +10338,18 @@
           {
             "name": "page",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 1
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
           },
           {
             "name": "pageSize",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 25
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 25 }
           },
-          {
-            "name": "search",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -11068,17 +10445,12 @@
             "name": "id",
             "in": "query",
             "description": "The id of the service provider",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -11171,9 +10543,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -11286,9 +10656,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -11403,9 +10771,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -11500,28 +10866,18 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
           "description": "The service provider id",
           "content": {
             "application/json; x-api-version=1.0": {
-              "schema": {
-                "type": "string"
-              }
+              "schema": { "type": "string" }
             },
-            "text/json; x-api-version=1.0": {
-              "schema": {
-                "type": "string"
-              }
-            },
+            "text/json; x-api-version=1.0": { "schema": { "type": "string" } },
             "application/*+json; x-api-version=1.0": {
-              "schema": {
-                "type": "string"
-              }
+              "schema": { "type": "string" }
             }
           }
         },
@@ -11619,17 +10975,12 @@
             "in": "path",
             "description": "The service provider group id",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -11726,17 +11077,12 @@
             "in": "path",
             "description": "The service provider group id",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -11833,17 +11179,12 @@
             "in": "path",
             "description": "The client id that is connected to the SPG. The permissions are under a specific client that belongs to a SPG",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -11938,9 +11279,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -12056,17 +11395,12 @@
             "name": "id",
             "in": "query",
             "description": "The contact id",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
+            "schema": { "type": "string", "format": "uuid" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -12159,9 +11493,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -12274,9 +11606,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -12391,9 +11721,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -12509,17 +11837,12 @@
             "name": "folderPath",
             "in": "query",
             "description": "Optional path to the folder that should be browsed; defaults to the root.",
-            "schema": {
-              "type": "string",
-              "default": ""
-            }
+            "schema": { "type": "string", "default": "" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -12623,9 +11946,7 @@
               }
             }
           },
-          "304": {
-            "description": "Not Modified"
-          }
+          "304": { "description": "Not Modified" }
         }
       }
     },
@@ -12637,9 +11958,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -12755,25 +12074,18 @@
             "name": "folderName",
             "in": "query",
             "description": "Name of the folder to create.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "parentFolderPath",
             "in": "query",
             "description": "Optional path to the parent folder that will contain the new folder.",
-            "schema": {
-              "type": "string",
-              "default": ""
-            }
+            "schema": { "type": "string", "default": "" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -12857,9 +12169,7 @@
               }
             }
           },
-          "200": {
-            "description": "OK"
-          },
+          "200": { "description": "OK" },
           "409": {
             "description": "Conflict",
             "content": {
@@ -12893,25 +12203,18 @@
             "in": "path",
             "description": "Template filename to look up.",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "folderPath",
             "in": "query",
             "description": "Optional folder path that scopes the search.",
-            "schema": {
-              "type": "string",
-              "default": ""
-            }
+            "schema": { "type": "string", "default": "" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -13027,25 +12330,18 @@
             "name": "fileName",
             "in": "query",
             "description": "Name of the template to create.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "folderPath",
             "in": "query",
             "description": "Optional folder path where the template should reside.",
-            "schema": {
-              "type": "string",
-              "default": ""
-            }
+            "schema": { "type": "string", "default": "" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -13182,25 +12478,18 @@
             "in": "path",
             "description": "The name of the template file to download.",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "folderPath",
             "in": "query",
             "description": "Optional folder path to restrict search.",
-            "schema": {
-              "type": "string",
-              "default": ""
-            }
+            "schema": { "type": "string", "default": "" }
           },
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -13284,9 +12573,7 @@
               }
             }
           },
-          "200": {
-            "description": "Returns the template file."
-          },
+          "200": { "description": "Returns the template file." },
           "304": {
             "description": "If the provided ETag matches the current file version."
           }
@@ -13301,9 +12588,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -13438,9 +12723,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -13574,9 +12857,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -13752,20 +13033,12 @@
             "description": "OK",
             "content": {
               "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": { "type": "string" }
               },
               "application/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": { "type": "string" }
               },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/json; x-api-version=1.0": { "schema": { "type": "string" } }
             }
           }
         }
@@ -13860,20 +13133,12 @@
             "description": "OK",
             "content": {
               "text/plain; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": { "type": "string" }
               },
               "application/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
+                "schema": { "type": "string" }
               },
-              "text/json; x-api-version=1.0": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+              "text/json; x-api-version=1.0": { "schema": { "type": "string" } }
             }
           }
         }
@@ -13993,9 +13258,7 @@
           {
             "name": "x-api-version",
             "in": "header",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -14088,41 +13351,19 @@
       "Microsoft.AspNetCore.Mvc.ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.External.SharePointIntegration.Models.SharePointBrowseResponse": {
         "type": "object",
         "properties": {
-          "folderPath": {
-            "type": "string",
-            "nullable": true
-          },
-          "folderWebUrl": {
-            "type": "string",
-            "nullable": true
-          },
+          "folderPath": { "type": "string", "nullable": true },
+          "folderWebUrl": { "type": "string", "nullable": true },
           "items": {
             "type": "array",
             "items": {
@@ -14130,54 +13371,27 @@
             },
             "nullable": true
           },
-          "count": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          }
+          "count": { "type": "integer", "format": "int32" },
+          "message": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.External.SharePointIntegration.Models.SharePointCreateTemplateResponse": {
         "type": "object",
         "properties": {
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "fileName": {
-            "type": "string",
-            "nullable": true
-          },
-          "editUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "folderPath": {
-            "type": "string",
-            "nullable": true
-          }
+          "message": { "type": "string", "nullable": true },
+          "fileName": { "type": "string", "nullable": true },
+          "editUrl": { "type": "string", "nullable": true },
+          "folderPath": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.External.SharePointIntegration.Models.SharePointFolder": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "path": {
-            "type": "string",
-            "nullable": true
-          },
+          "id": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "path": { "type": "string", "nullable": true },
           "subfolders": {
             "type": "array",
             "items": {
@@ -14198,150 +13412,76 @@
             },
             "nullable": true
           },
-          "count": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          }
+          "count": { "type": "integer", "format": "int32" },
+          "message": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.External.SharePointIntegration.Models.SharePointHealthResponse": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "string",
-            "nullable": true
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "status": { "type": "string", "nullable": true },
+          "timestamp": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.External.SharePointIntegration.Models.SharePointItem": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "path": {
-            "type": "string",
-            "nullable": true
-          },
-          "isFolder": {
-            "type": "boolean"
-          },
-          "size": {
-            "type": "integer",
-            "format": "int64",
-            "nullable": true
-          },
+          "id": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "path": { "type": "string", "nullable": true },
+          "isFolder": { "type": "boolean" },
+          "size": { "type": "integer", "format": "int64", "nullable": true },
           "lastModified": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "webUrl": {
-            "type": "string",
-            "nullable": true
-          },
-          "fileExtension": {
-            "type": "string",
-            "nullable": true
-          }
+          "webUrl": { "type": "string", "nullable": true },
+          "fileExtension": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.External.SharePointIntegration.Models.SharePointPdfConversionRequest": {
         "type": "object",
         "properties": {
-          "fileName": {
-            "type": "string",
-            "nullable": true
-          },
-          "content": {
-            "type": "string",
-            "format": "byte",
-            "nullable": true
-          }
+          "fileName": { "type": "string", "nullable": true },
+          "content": { "type": "string", "format": "byte", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.External.SharePointIntegration.Models.SharePointPdfResponse": {
         "type": "object",
         "properties": {
-          "fileName": {
-            "type": "string",
-            "nullable": true
-          },
-          "contentType": {
-            "type": "string",
-            "nullable": true
-          },
-          "content": {
-            "type": "string",
-            "format": "byte",
-            "nullable": true
-          }
+          "fileName": { "type": "string", "nullable": true },
+          "contentType": { "type": "string", "nullable": true },
+          "content": { "type": "string", "format": "byte", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.External.SharePointIntegration.Models.SharePointTemplateExistsResponse": {
         "type": "object",
-        "properties": {
-          "exists": {
-            "type": "boolean"
-          }
-        },
+        "properties": { "exists": { "type": "boolean" } },
         "additionalProperties": false
       },
       "TrWeb.Api.External.SharePointIntegration.Models.SharePointUploadRequest": {
         "required": ["content", "fileName"],
         "type": "object",
         "properties": {
-          "fileName": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "folderPath": {
-            "type": "string",
-            "nullable": true
-          },
-          "content": {
-            "type": "string",
-            "format": "byte"
-          }
+          "fileName": { "minLength": 1, "type": "string" },
+          "folderPath": { "type": "string", "nullable": true },
+          "content": { "type": "string", "format": "byte" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.External.SharePointIntegration.Models.SharePointUploadResponse": {
         "type": "object",
         "properties": {
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "fileName": {
-            "type": "string",
-            "nullable": true
-          },
-          "fileId": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean"
-          }
+          "message": { "type": "string", "nullable": true },
+          "fileName": { "type": "string", "nullable": true },
+          "fileId": { "type": "string", "nullable": true },
+          "success": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -14353,142 +13493,46 @@
       "TrWeb.Api.Services.Common.Clients.Models.BankInformationInputModel": {
         "type": "object",
         "properties": {
-          "bank": {
-            "type": "string",
-            "nullable": true
-          },
-          "ledger": {
-            "type": "string",
-            "nullable": true
-          },
-          "accountNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "iban": {
-            "type": "string",
-            "nullable": true
-          },
-          "swift": {
-            "type": "string",
-            "nullable": true
-          },
-          "foreignBankName": {
-            "type": "string",
-            "nullable": true
-          },
-          "foreignBankAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "foreignCurrency": {
-            "type": "string",
-            "nullable": true
-          }
+          "bank": { "type": "string", "nullable": true },
+          "ledger": { "type": "string", "nullable": true },
+          "accountNumber": { "type": "string", "nullable": true },
+          "iban": { "type": "string", "nullable": true },
+          "swift": { "type": "string", "nullable": true },
+          "foreignBankName": { "type": "string", "nullable": true },
+          "foreignBankAddress": { "type": "string", "nullable": true },
+          "foreignCurrency": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Common.Clients.Models.DiscontinuePersonalTaxUsageInput": {
         "type": "object",
         "properties": {
-          "webUser": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "month": { "type": "integer", "format": "int32" },
+          "year": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Common.Clients.Models.EditPersonalTaxAllowanceInput": {
         "type": "object",
         "properties": {
-          "webUser": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "percentage": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "percentage": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Common.Clients.Models.GetBankInformationReturn": {
         "type": "object",
         "properties": {
-          "bank": {
-            "type": "string",
-            "nullable": true
-          },
-          "ledger": {
-            "type": "string",
-            "nullable": true
-          },
-          "accountNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "iban": {
-            "type": "string",
-            "nullable": true
-          },
-          "swift": {
-            "type": "string",
-            "nullable": true
-          },
-          "foreignBankName": {
-            "type": "string",
-            "nullable": true
-          },
-          "foreignBankAddress": {
-            "type": "string",
-            "nullable": true
-          },
-          "currency": {
-            "type": "string",
-            "nullable": true
-          },
+          "bank": { "type": "string", "nullable": true },
+          "ledger": { "type": "string", "nullable": true },
+          "accountNumber": { "type": "string", "nullable": true },
+          "iban": { "type": "string", "nullable": true },
+          "swift": { "type": "string", "nullable": true },
+          "foreignBankName": { "type": "string", "nullable": true },
+          "foreignBankAddress": { "type": "string", "nullable": true },
+          "currency": { "type": "string", "nullable": true },
           "currencies": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Common.Clients.Models.GetMonthsAndYearsReturn": {
-        "type": "object",
-        "properties": {
-          "months": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "years": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int32"
-            },
+            "items": { "type": "string" },
             "nullable": true
           }
         },
@@ -14504,61 +13548,32 @@
             },
             "nullable": true
           },
-          "canRegisterPersonalAllowance": {
-            "type": "boolean"
-          }
+          "canEditPersonalAllowance": { "type": "boolean" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Common.Clients.Models.MonthOptionDto": {
         "type": "object",
         "properties": {
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "selectable": {
-            "type": "boolean"
-          }
+          "month": { "type": "integer", "format": "int32" },
+          "selectable": { "type": "boolean" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Common.Clients.Models.SetPersonalTaxAllowanceInput": {
         "type": "object",
         "properties": {
-          "webUser": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "percentage": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "month": { "type": "integer", "format": "int32" },
+          "year": { "type": "integer", "format": "int32" },
+          "percentage": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Common.Clients.Models.SpousalTaxCardUsageYearMonthResult": {
         "type": "object",
         "properties": {
-          "canApply": {
-            "type": "boolean"
-          },
-          "reasonNotAllowed": {
-            "type": "string",
-            "nullable": true
-          },
+          "canApply": { "type": "boolean" },
+          "reasonNotAllowed": { "type": "string", "nullable": true },
           "allowedYearMonths": {
             "type": "array",
             "items": {
@@ -14572,85 +13587,39 @@
       "TrWeb.Api.Services.Common.Clients.Models.SpouseTaxCardUsageDueToDeathInput": {
         "type": "object",
         "properties": {
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "percentage": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "webUser": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          }
+          "month": { "type": "integer", "format": "int32" },
+          "year": { "type": "integer", "format": "int32" },
+          "percentage": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Common.Clients.Models.SpouseTaxCardUsageInput": {
         "type": "object",
         "properties": {
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "percentage": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "webUser": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          }
+          "month": { "type": "integer", "format": "int32" },
+          "year": { "type": "integer", "format": "int32" },
+          "percentage": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Common.Clients.Models.TaxCardSummaryDto": {
         "type": "object",
         "properties": {
-          "percentage": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "validFrom": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "percentage": { "type": "integer", "format": "int32" },
+          "validFrom": { "type": "string", "format": "date-time" },
           "validTo": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "taxCardType": {
-            "type": "string",
-            "nullable": true
-          }
+          "taxCardType": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Common.Clients.Models.YearWithMonthsDto": {
         "type": "object",
         "properties": {
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
+          "year": { "type": "integer", "format": "int32" },
           "months": {
             "type": "array",
             "items": {
@@ -14664,185 +13633,93 @@
       "TrWeb.Api.Services.Common.Countries.Models.CountryDto": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "nameIcelandic": {
-            "type": "string",
-            "nullable": true
-          },
-          "isPartOfEes": {
-            "type": "boolean"
-          },
-          "isScandinavic": {
-            "type": "boolean"
-          }
+          "code": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "nameIcelandic": { "type": "string", "nullable": true },
+          "isPartOfEes": { "type": "boolean" },
+          "isScandinavic": { "type": "boolean" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Common.Countries.Models.LanguageDto": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "nameIs": {
-            "type": "string",
-            "nullable": true
-          },
-          "nameEn": {
-            "type": "string",
-            "nullable": true
-          }
+          "code": { "type": "string", "nullable": true },
+          "nameIs": { "type": "string", "nullable": true },
+          "nameEn": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.ApplicationUpdates.Models.ApplicationsUpdateInput": {
         "type": "object",
         "properties": {
-          "event": {
-            "type": "string",
-            "nullable": true
-          },
-          "answers": {
-            "type": "object",
-            "nullable": true
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          }
+          "event": { "type": "string", "nullable": true },
+          "answers": { "type": "object", "nullable": true },
+          "message": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Applications.Models.ApplicationTypeDto": {
         "type": "object",
         "properties": {
-          "applicationType": {
-            "type": "string",
-            "nullable": true
-          },
-          "confirmationType": {
-            "type": "string",
-            "nullable": true
-          }
+          "applicationType": { "type": "string", "nullable": true },
+          "confirmationType": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Applications.Models.CreateApplicationFromPaperReturn": {
         "type": "object",
         "properties": {
-          "applicationLineId": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "applicationLineId": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Applications.Models.IsEligibleForApplicationReturn": {
         "type": "object",
         "properties": {
-          "isEligible": {
-            "type": "boolean"
-          },
-          "reason": {
-            "type": "string",
-            "nullable": true
-          },
-          "reasonCode": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.DigitalMailbox.Models.Document": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "content": {
-            "type": "string",
-            "nullable": true
-          }
+          "isEligible": { "type": "boolean" },
+          "reason": { "type": "string", "nullable": true },
+          "reasonCode": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EctsUnitDto": {
         "type": "object",
         "properties": {
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "value": {
-            "type": "string",
-            "nullable": true
-          }
+          "description": { "type": "string", "nullable": true },
+          "value": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EducationLevelDto": {
         "type": "object",
         "properties": {
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "code": {
-            "type": "string",
-            "nullable": true
-          }
+          "description": { "type": "string", "nullable": true },
+          "code": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EducationalInstitutionsDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          }
+          "name": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Employers.Models.EmploymentStatusDto": {
         "type": "object",
         "properties": {
-          "displayName": {
-            "type": "string",
-            "nullable": true
-          },
-          "value": {
-            "type": "string",
-            "nullable": true
-          }
+          "displayName": { "type": "string", "nullable": true },
+          "value": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto": {
         "type": "object",
         "properties": {
-          "incomeYear": {
-            "type": "integer",
-            "format": "int32"
-          },
+          "incomeYear": { "type": "integer", "format": "int32" },
           "incomeTypes": {
             "type": "array",
             "items": {
@@ -14850,44 +13727,20 @@
             },
             "nullable": true
           },
-          "distributeIncomeByMonth": {
-            "type": "boolean",
-            "nullable": true
-          }
+          "distributeIncomeByMonth": { "type": "boolean", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomeTypeDto": {
         "type": "object",
         "properties": {
-          "incomeTypeNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "incomeTypeCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "incomeTypeName": {
-            "type": "string",
-            "nullable": true
-          },
-          "currencyCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "incomeCategoryNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "incomeCategoryCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "incomeCategoryName": {
-            "type": "string",
-            "nullable": true
-          },
+          "incomeTypeNumber": { "type": "integer", "format": "int32" },
+          "incomeTypeCode": { "type": "string", "nullable": true },
+          "incomeTypeName": { "type": "string", "nullable": true },
+          "currencyCode": { "type": "string", "nullable": true },
+          "incomeCategoryNumber": { "type": "integer", "format": "int32" },
+          "incomeCategoryCode": { "type": "string", "nullable": true },
+          "incomeCategoryName": { "type": "string", "nullable": true },
           "amountJan": {
             "type": "number",
             "format": "double",
@@ -14954,96 +13807,46 @@
       "TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto": {
         "type": "object",
         "properties": {
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amount": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          }
+          "month": { "type": "integer", "format": "int32" },
+          "amount": { "type": "number", "format": "double", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Professions.Models.ActivityOfProfessionDto": {
         "type": "object",
         "properties": {
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "value": {
-            "type": "string",
-            "nullable": true
-          }
+          "description": { "type": "string", "nullable": true },
+          "value": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Professions.Models.ProfessionDto": {
         "type": "object",
         "properties": {
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "value": {
-            "type": "string",
-            "nullable": true
-          }
+          "description": { "type": "string", "nullable": true },
+          "value": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionDto": {
         "type": "object",
         "properties": {
-          "questionCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "questionTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "questionSubcategory": {
-            "type": "string",
-            "nullable": true
-          },
-          "explanationText": {
-            "type": "string",
-            "nullable": true
-          },
-          "question": {
-            "type": "string",
-            "nullable": true
-          },
-          "icfCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "order": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
+          "questionCode": { "type": "string", "nullable": true },
+          "questionTitle": { "type": "string", "nullable": true },
+          "questionSubcategory": { "type": "string", "nullable": true },
+          "explanationText": { "type": "string", "nullable": true },
+          "question": { "type": "string", "nullable": true },
+          "icfCode": { "type": "string", "nullable": true },
+          "order": { "type": "integer", "format": "int32", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto": {
         "type": "object",
         "properties": {
-          "questionnaireName": {
-            "type": "string",
-            "nullable": true
-          },
-          "questionnaireCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "versionNumber": {
-            "type": "string",
-            "nullable": true
-          },
+          "questionnaireName": { "type": "string", "nullable": true },
+          "questionnaireCode": { "type": "string", "nullable": true },
+          "versionNumber": { "type": "string", "nullable": true },
           "scale": {
             "type": "array",
             "items": {
@@ -15058,100 +13861,56 @@
             },
             "nullable": true
           },
-          "language": {
-            "type": "string",
-            "nullable": true
-          }
+          "language": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Questionnaires.Models.ScaleOptionDto": {
         "type": "object",
         "properties": {
-          "value": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "display": {
-            "type": "string",
-            "nullable": true
-          },
-          "order": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "value": { "type": "integer", "format": "int32" },
+          "display": { "type": "string", "nullable": true },
+          "order": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.Domain.Unions.Models.UnionDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "contact": {
-            "type": "string",
-            "nullable": true
-          },
-          "website": {
-            "type": "string",
-            "nullable": true
-          }
+          "name": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true },
+          "contact": { "type": "string", "nullable": true },
+          "website": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.UseCase.DeathBenefits.Models.ExternalSpousalInfo": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
+          "name": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true },
           "dateOfDeath": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "cohabitadedLongerThan1Year": {
-            "type": "boolean"
-          }
+          "cohabitadedLongerThan1Year": { "type": "boolean" }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.UseCase.DisabilityPension.Models.HousingTypesStatusDto": {
         "type": "object",
         "properties": {
-          "value": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "label": {
-            "type": "string",
-            "nullable": true
-          }
+          "value": { "type": "integer", "format": "int32" },
+          "label": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Api.Services.UseCase.DisabilityPension.Models.MaritalStatusDto": {
         "type": "object",
         "properties": {
-          "value": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "label": {
-            "type": "string",
-            "nullable": true
-          }
+          "value": { "type": "integer", "format": "int32" },
+          "label": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -15296,102 +14055,32 @@
         ],
         "type": "object",
         "properties": {
-          "kennitala": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "documentId": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "caseId": {
-            "type": "string",
-            "nullable": true
-          },
-          "category": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "type": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "subType": {
-            "type": "string",
-            "nullable": true
-          },
-          "subject": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "documentDate": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "kennitala": { "minLength": 1, "type": "string" },
+          "documentId": { "minLength": 1, "type": "string" },
+          "caseId": { "type": "string", "nullable": true },
+          "category": { "minLength": 1, "type": "string" },
+          "type": { "minLength": 1, "type": "string" },
+          "subType": { "type": "string", "nullable": true },
+          "subject": { "minLength": 1, "type": "string" },
+          "documentDate": { "type": "string", "format": "date-time" },
           "publicationDate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "notifyOwner": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.DocumentIndexWithdraw": {
-        "required": ["documentId", "kennitala", "reason"],
-        "type": "object",
-        "properties": {
-          "kennitala": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "documentId": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "reason": {
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.DocumentRead": {
-        "required": ["documentId", "kennitala"],
-        "type": "object",
-        "properties": {
-          "kennitala": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "documentId": {
-            "minLength": 1,
-            "type": "string"
-          }
+          "notifyOwner": { "type": "boolean" }
         },
         "additionalProperties": false
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.DigitalMailbox.MailboxResponse": {
         "type": "object",
         "properties": {
-          "kennitala": {
-            "type": "string",
-            "nullable": true
-          },
-          "documentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "success": {
-            "type": "boolean"
-          },
+          "kennitala": { "type": "string", "nullable": true },
+          "documentId": { "type": "string", "nullable": true },
+          "success": { "type": "boolean" },
           "errors": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
+            "items": { "type": "string" },
             "nullable": true
           }
         },
@@ -15415,10 +14104,7 @@
             "description": "Identity for application type",
             "nullable": true
           },
-          "applicationName": {
-            "type": "string",
-            "nullable": true
-          },
+          "applicationName": { "type": "string", "nullable": true },
           "Dagssetning": {
             "type": "string",
             "description": "Date when application was last changed",
@@ -15460,42 +14146,15 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.AssociatedUser": {
         "type": "object",
         "properties": {
-          "kennitala": {
-            "type": "string",
-            "nullable": true
-          },
-          "heiti": {
-            "type": "string",
-            "nullable": true
-          },
-          "heimili": {
-            "type": "string",
-            "nullable": true
-          },
-          "stadur": {
-            "type": "string",
-            "nullable": true
-          },
-          "postnumer": {
-            "type": "string",
-            "nullable": true
-          },
-          "tegund": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hlutverk": {
-            "type": "string",
-            "nullable": true
-          },
-          "netfang": {
-            "type": "string",
-            "nullable": true
-          },
-          "simi": {
-            "type": "string",
-            "nullable": true
-          }
+          "kennitala": { "type": "string", "nullable": true },
+          "heiti": { "type": "string", "nullable": true },
+          "heimili": { "type": "string", "nullable": true },
+          "stadur": { "type": "string", "nullable": true },
+          "postnumer": { "type": "string", "nullable": true },
+          "tegund": { "type": "integer", "format": "int32" },
+          "hlutverk": { "type": "string", "nullable": true },
+          "netfang": { "type": "string", "nullable": true },
+          "simi": { "type": "string", "nullable": true }
         },
         "additionalProperties": false,
         "description": "The associated user (Adilar)"
@@ -15552,10 +14211,7 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.InputData": {
         "type": "object",
         "properties": {
-          "guid": {
-            "type": "string",
-            "nullable": true
-          },
+          "guid": { "type": "string", "nullable": true },
           "flokkur": {
             "type": "string",
             "description": "Group name",
@@ -15798,10 +14454,7 @@
             "description": "Ellilífeyrir 1\nEllilífeyrir sjómanna 2\nÖrorkulífeyrir 3\nEndurhæfingarlífeyrir 4\nHálfur ellilífeyrir 5",
             "format": "int32"
           },
-          "hasSpouse": {
-            "type": "boolean",
-            "description": "Hjúskaparstaða"
-          },
+          "hasSpouse": { "type": "boolean", "description": "Hjúskaparstaða" },
           "livingCondition": {
             "type": "integer",
             "description": "Heimilisaðstæður, býr ein(n) ?\nBýr ein(n) = 1\nBýr ekki ein(n) = 2",
@@ -15891,10 +14544,7 @@
             "description": "Séreignarlífeyrisgreiðslur",
             "format": "int32"
           },
-          "otherIncome": {
-            "type": "integer",
-            "format": "int32"
-          },
+          "otherIncome": { "type": "integer", "format": "int32" },
           "capitalIncome": {
             "type": "integer",
             "description": "Fjármagnstekjur",
@@ -15952,15 +14602,8 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.ServicePortalManagement.ClientPermissionsResponse": {
         "type": "object",
         "properties": {
-          "clientId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "clientName": {
-            "type": "string",
-            "nullable": true
-          },
+          "clientId": { "type": "string", "format": "uuid", "nullable": true },
+          "clientName": { "type": "string", "nullable": true },
           "permissions": {
             "type": "array",
             "items": {
@@ -15974,28 +14617,15 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.ServicePortalManagement.ContactDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
+          "id": { "type": "string", "format": "uuid", "nullable": true },
           "created": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          },
+          "name": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
           "serviceProviderId": {
             "type": "string",
             "format": "uuid",
@@ -16007,96 +14637,46 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.ServicePortalManagement.CreateContactDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "phone": {
-            "type": "string",
-            "nullable": true
-          },
-          "serviceProviderId": {
-            "type": "string",
-            "format": "uuid"
-          }
+          "name": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "phone": { "type": "string", "nullable": true },
+          "serviceProviderId": { "type": "string", "format": "uuid" }
         },
         "additionalProperties": false
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.ServicePortalManagement.CreateServiceProviderDto": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "serviceProviderGroupId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "regNo": {
-            "type": "string",
-            "nullable": true
-          }
+          "name": { "type": "string", "nullable": true },
+          "serviceProviderGroupId": { "type": "string", "format": "uuid" },
+          "regNo": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.ServicePortalManagement.PermissionDto": {
         "type": "object",
         "properties": {
-          "permissionName": {
-            "type": "string",
-            "nullable": true
-          },
-          "readId": {
-            "type": "string",
-            "nullable": true
-          },
-          "writeId": {
-            "type": "string",
-            "nullable": true
-          },
-          "read": {
-            "type": "boolean"
-          },
-          "write": {
-            "type": "boolean"
-          }
+          "permissionName": { "type": "string", "nullable": true },
+          "readId": { "type": "string", "nullable": true },
+          "writeId": { "type": "string", "nullable": true },
+          "read": { "type": "boolean" },
+          "write": { "type": "boolean" }
         },
         "additionalProperties": false
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.ServicePortalManagement.ServiceProviderDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
+          "id": { "type": "string", "format": "uuid", "nullable": true },
           "created": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "serviceProviderGroupId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "serviceProviderGroupName": {
-            "type": "string",
-            "nullable": true
-          },
-          "regNo": {
-            "type": "string",
-            "nullable": true
-          },
+          "name": { "type": "string", "nullable": true },
+          "serviceProviderGroupId": { "type": "string", "format": "uuid" },
+          "serviceProviderGroupName": { "type": "string", "nullable": true },
+          "regNo": { "type": "string", "nullable": true },
           "clientPermissions": {
             "type": "array",
             "items": {
@@ -16117,16 +14697,10 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.ServicePortalManagement.UpdatePermissionDto": {
         "type": "object",
         "properties": {
-          "clientId": {
-            "type": "string",
-            "nullable": true
-          },
+          "clientId": { "type": "string", "nullable": true },
           "permissionIds": {
             "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            },
+            "items": { "type": "string", "format": "uuid" },
             "nullable": true
           }
         },
@@ -16135,85 +14709,43 @@
       "TrWeb.Contracts.External.DigitalIceland.Documents.Document": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "file": {
-            "type": "string",
-            "nullable": true
-          }
+          "name": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "file": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.DigitalIceland.IncomePlan.ExternalIncomeTypeDto": {
         "type": "object",
         "properties": {
-          "categoryNumber": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "categoryName": {
-            "type": "string",
-            "nullable": true
-          },
-          "categoryCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "incomeTypeNumber": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "incomeTypeName": {
-            "type": "string",
-            "nullable": true
-          },
-          "incomeTypeCode": {
-            "type": "string",
-            "nullable": true
-          }
+          "categoryNumber": { "type": "integer", "format": "int64" },
+          "categoryName": { "type": "string", "nullable": true },
+          "categoryCode": { "type": "string", "nullable": true },
+          "incomeTypeNumber": { "type": "integer", "format": "int64" },
+          "incomeTypeName": { "type": "string", "nullable": true },
+          "incomeTypeCode": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.DigitalIceland.IncomePlan.IncomePlanConditionsDto": {
         "type": "object",
         "properties": {
-          "incomePlanYear": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "showTemporaryCalculations": {
-            "type": "boolean"
-          }
+          "incomePlanYear": { "type": "integer", "format": "int32" },
+          "showTemporaryCalculations": { "type": "boolean" }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.DigitalIceland.IncomePlan.IncomePlanDto": {
         "type": "object",
         "properties": {
-          "year": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
+          "year": { "type": "integer", "format": "int32", "nullable": true },
           "registrationDate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "status": {
-            "type": "string",
-            "nullable": true
-          },
-          "origin": {
-            "type": "string",
-            "nullable": true
-          },
+          "status": { "type": "string", "nullable": true },
+          "origin": { "type": "string", "nullable": true },
           "incomeTypeLines": {
             "type": "array",
             "items": {
@@ -16227,96 +14759,33 @@
       "TrWeb.Contracts.External.DigitalIceland.IncomePlan.IncomeTypeLine": {
         "type": "object",
         "properties": {
-          "incomeCategoryNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "incomeCategoryName": {
-            "type": "string",
-            "nullable": true
-          },
-          "incomeCategoryCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "incomeTypeNumber": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "incomeTypeName": {
-            "type": "string",
-            "nullable": true
-          },
-          "incomeTypeCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "amountJan": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amountFeb": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amountMar": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amountApr": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amountMay": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amountJun": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amountJul": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amountAug": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amountSep": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amountOct": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amountNov": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "amountDec": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "totalSum": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "currency": {
-            "type": "string",
-            "nullable": true
-          }
+          "incomeCategoryNumber": { "type": "integer", "format": "int32" },
+          "incomeCategoryName": { "type": "string", "nullable": true },
+          "incomeCategoryCode": { "type": "string", "nullable": true },
+          "incomeTypeNumber": { "type": "integer", "format": "int32" },
+          "incomeTypeName": { "type": "string", "nullable": true },
+          "incomeTypeCode": { "type": "string", "nullable": true },
+          "amountJan": { "type": "integer", "format": "int32" },
+          "amountFeb": { "type": "integer", "format": "int32" },
+          "amountMar": { "type": "integer", "format": "int32" },
+          "amountApr": { "type": "integer", "format": "int32" },
+          "amountMay": { "type": "integer", "format": "int32" },
+          "amountJun": { "type": "integer", "format": "int32" },
+          "amountJul": { "type": "integer", "format": "int32" },
+          "amountAug": { "type": "integer", "format": "int32" },
+          "amountSep": { "type": "integer", "format": "int32" },
+          "amountOct": { "type": "integer", "format": "int32" },
+          "amountNov": { "type": "integer", "format": "int32" },
+          "amountDec": { "type": "integer", "format": "int32" },
+          "totalSum": { "type": "integer", "format": "int32" },
+          "currency": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.DigitalIceland.IncomePlan.WithholdingTaxDto": {
         "type": "object",
         "properties": {
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
+          "year": { "type": "integer", "format": "int32" },
           "incometypes": {
             "type": "array",
             "items": {
@@ -16330,80 +14799,30 @@
       "TrWeb.Contracts.External.DigitalIceland.IncomePlan.WithholdingTaxIncomeTypeDto": {
         "type": "object",
         "properties": {
-          "incometypenumber": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "incometype": {
-            "type": "string",
-            "nullable": true
-          },
-          "incometypecode": {
-            "type": "string",
-            "nullable": true
-          },
-          "categorynumber": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "categoryname": {
-            "type": "string",
-            "nullable": true
-          },
-          "categorycode": {
-            "type": "string",
-            "nullable": true
-          },
-          "january": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
+          "incometypenumber": { "type": "integer", "format": "int64" },
+          "incometype": { "type": "string", "nullable": true },
+          "incometypecode": { "type": "string", "nullable": true },
+          "categorynumber": { "type": "integer", "format": "int64" },
+          "categoryname": { "type": "string", "nullable": true },
+          "categorycode": { "type": "string", "nullable": true },
+          "january": { "type": "number", "format": "double", "nullable": true },
           "february": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "march": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "april": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "may": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "june": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "july": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "august": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
+          "march": { "type": "number", "format": "double", "nullable": true },
+          "april": { "type": "number", "format": "double", "nullable": true },
+          "may": { "type": "number", "format": "double", "nullable": true },
+          "june": { "type": "number", "format": "double", "nullable": true },
+          "july": { "type": "number", "format": "double", "nullable": true },
+          "august": { "type": "number", "format": "double", "nullable": true },
           "september": {
             "type": "number",
             "format": "double",
             "nullable": true
           },
-          "october": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
+          "october": { "type": "number", "format": "double", "nullable": true },
           "november": {
             "type": "number",
             "format": "double",
@@ -16414,11 +14833,15 @@
             "format": "double",
             "nullable": true
           },
-          "total": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          }
+          "total": { "type": "number", "format": "double", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Contracts.External.DigitalMailbox.Document": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "nullable": true },
+          "content": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -16430,16 +14853,11 @@
         "required": ["nationalId"],
         "type": "object",
         "properties": {
-          "nationalId": {
-            "minLength": 10,
-            "type": "string"
-          },
+          "nationalId": { "minLength": 10, "type": "string" },
           "pensionType": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.PensionFunds.PensionTypeEnum"
           },
-          "fundsWithRightsOnly": {
-            "type": "boolean"
-          }
+          "fundsWithRightsOnly": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -16455,32 +14873,15 @@
         ],
         "type": "object",
         "properties": {
-          "pensionFundNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "pensionFundName": {
-            "type": "string",
-            "nullable": true
-          },
+          "pensionFundNumber": { "type": "string", "nullable": true },
+          "pensionFundName": { "type": "string", "nullable": true },
           "earnedRightType": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.PensionFunds.EarnedRightEnum"
           },
-          "applicantNationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "hasEarnedRights": {
-            "type": "boolean"
-          },
-          "hasApplied": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "applicationAccepted": {
-            "type": "boolean",
-            "nullable": true
-          },
+          "applicantNationalId": { "type": "string", "nullable": true },
+          "hasEarnedRights": { "type": "boolean" },
+          "hasApplied": { "type": "boolean", "nullable": true },
+          "applicationAccepted": { "type": "boolean", "nullable": true },
           "firstPaymentDate": {
             "type": "string",
             "format": "date-time",
@@ -16489,10 +14890,7 @@
           "appliedPensionType": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.PensionFunds.AppliedPensionTypeEnum"
           },
-          "forwardedApplication": {
-            "type": "boolean",
-            "nullable": true
-          }
+          "forwardedApplication": { "type": "boolean", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -16503,30 +14901,15 @@
       "TrWeb.Contracts.External.ServicePortal.AbilityAssessment": {
         "type": "object",
         "properties": {
-          "abilityAssessmentTypeCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "referenceId": {
-            "type": "string",
-            "nullable": true
-          },
-          "documentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "serviceProviderName": {
-            "type": "string",
-            "nullable": true
-          },
+          "abilityAssessmentTypeCode": { "type": "string", "nullable": true },
+          "referenceId": { "type": "string", "nullable": true },
+          "documentId": { "type": "string", "nullable": true },
+          "serviceProviderName": { "type": "string", "nullable": true },
           "serviceProviderRegistrationNumber": {
             "type": "string",
             "nullable": true
           },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "created": { "type": "string", "format": "date-time" },
           "individual": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.Individual"
           },
@@ -16554,136 +14937,73 @@
         "required": ["code"],
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "score": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "code": { "type": "string", "nullable": true },
+          "score": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.Application": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "customerNationalId": {
-            "type": "string",
-            "nullable": true
-          },
+          "id": { "type": "string", "format": "uuid" },
+          "created": { "type": "string", "format": "date-time" },
+          "customerNationalId": { "type": "string", "nullable": true },
           "status": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.ApplicationStatus"
           },
           "type": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.ApplicationType"
           },
-          "applicationDate": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "applicationDate": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.ApplicationStatus": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "created": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.ApplicationType": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "created": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.ApplicationUpdateInputModel": {
         "type": "object",
         "properties": {
-          "applicationStatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "applicationId": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "applicationStatus": { "type": "string", "nullable": true },
+          "applicationId": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.BaseCertificate": {
         "type": "object",
         "properties": {
-          "referenceId": {
-            "type": "string",
-            "nullable": true
-          },
-          "documentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "serviceProviderName": {
-            "type": "string",
-            "nullable": true
-          },
+          "referenceId": { "type": "string", "nullable": true },
+          "documentId": { "type": "string", "nullable": true },
+          "serviceProviderName": { "type": "string", "nullable": true },
           "serviceProviderRegistrationNumber": {
             "type": "string",
             "nullable": true
           },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "created": { "type": "string", "format": "date-time" },
           "individual": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.Individual"
           },
           "doctor": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.Doctor"
           },
-          "supervisionPeriod": {
-            "type": "string",
-            "nullable": true
-          },
+          "supervisionPeriod": { "type": "string", "nullable": true },
           "lastExaminationDate": {
             "type": "string",
             "format": "date-time",
@@ -16702,14 +15022,8 @@
           "diagnoses": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.Diagnosis"
           },
-          "previousHealthHistory": {
-            "type": "string",
-            "nullable": true
-          },
-          "currentStatus": {
-            "type": "string",
-            "nullable": true
-          },
+          "previousHealthHistory": { "type": "string", "nullable": true },
+          "currentStatus": { "type": "string", "nullable": true },
           "physicalDifficulty": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.Difficulty"
           },
@@ -16719,14 +15033,8 @@
           "activityParticipationDifficulty": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.Difficulty"
           },
-          "other": {
-            "type": "string",
-            "nullable": true
-          },
-          "origin": {
-            "type": "string",
-            "nullable": true
-          }
+          "other": { "type": "string", "nullable": true },
+          "origin": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -16754,10 +15062,7 @@
             "format": "int32",
             "nullable": true
           },
-          "generalTasksAndDemandsName": {
-            "type": "string",
-            "nullable": true
-          },
+          "generalTasksAndDemandsName": { "type": "string", "nullable": true },
           "communicationAndRelationships": {
             "type": "integer",
             "format": "int32",
@@ -16772,73 +15077,46 @@
             "format": "int32",
             "nullable": true
           },
-          "mobilityName": {
-            "type": "string",
-            "nullable": true
-          },
+          "mobilityName": { "type": "string", "nullable": true },
           "selfCare": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "selfCareName": {
-            "type": "string",
-            "nullable": true
-          },
+          "selfCareName": { "type": "string", "nullable": true },
           "domesticLife": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "domesticLifeName": {
-            "type": "string",
-            "nullable": true
-          },
+          "domesticLifeName": { "type": "string", "nullable": true },
           "mainDailyLifeAreas": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "mainDailyLifeAreasName": {
-            "type": "string",
-            "nullable": true
-          },
+          "mainDailyLifeAreasName": { "type": "string", "nullable": true },
           "leisureAndHobbies": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "leisureAndHobbiesName": {
-            "type": "string",
-            "nullable": true
-          },
+          "leisureAndHobbiesName": { "type": "string", "nullable": true },
           "expression": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "expressionName": {
-            "type": "string",
-            "nullable": true
-          }
+          "expressionName": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.ConfirmationOfIllHealth": {
         "type": "object",
         "properties": {
-          "referenceId": {
-            "type": "string",
-            "nullable": true
-          },
-          "documentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "serviceProviderName": {
-            "type": "string",
-            "nullable": true
-          },
+          "referenceId": { "type": "string", "nullable": true },
+          "documentId": { "type": "string", "nullable": true },
+          "serviceProviderName": { "type": "string", "nullable": true },
           "serviceProviderRegistrationNumber": {
             "type": "string",
             "nullable": true
@@ -16854,38 +15132,23 @@
           "serviceProvider": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.ServiceProvider"
           },
-          "currentMedicalStatus": {
-            "type": "string",
-            "nullable": true
-          },
+          "currentMedicalStatus": { "type": "string", "nullable": true },
           "previousApplication": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.PreviousApplication"
           },
           "requestedPeriod": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.RequestedPeriod"
           },
-          "typeAppliedFor": {
-            "type": "string",
-            "nullable": true
-          }
+          "typeAppliedFor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.ConfirmationOfJobSearch": {
         "type": "object",
         "properties": {
-          "referenceId": {
-            "type": "string",
-            "nullable": true
-          },
-          "documentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "serviceProviderName": {
-            "type": "string",
-            "nullable": true
-          },
+          "referenceId": { "type": "string", "nullable": true },
+          "documentId": { "type": "string", "nullable": true },
+          "serviceProviderName": { "type": "string", "nullable": true },
           "serviceProviderRegistrationNumber": {
             "type": "string",
             "nullable": true
@@ -16904,28 +15167,16 @@
           "requestedPeriod": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.RequestedPeriod"
           },
-          "typeAppliedFor": {
-            "type": "string",
-            "nullable": true
-          }
+          "typeAppliedFor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.ConfirmationOfPendingResolution": {
         "type": "object",
         "properties": {
-          "referenceId": {
-            "type": "string",
-            "nullable": true
-          },
-          "documentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "serviceProviderName": {
-            "type": "string",
-            "nullable": true
-          },
+          "referenceId": { "type": "string", "nullable": true },
+          "documentId": { "type": "string", "nullable": true },
+          "serviceProviderName": { "type": "string", "nullable": true },
           "serviceProviderRegistrationNumber": {
             "type": "string",
             "nullable": true
@@ -16944,38 +15195,23 @@
           "requestedTreatment": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.RequestedTreatment"
           },
-          "treatmentExplanation": {
-            "type": "string",
-            "nullable": true
-          },
+          "treatmentExplanation": { "type": "string", "nullable": true },
           "previousApplication": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.PreviousApplication"
           },
           "requestedPeriod": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.RequestedPeriod"
           },
-          "typeAppliedFor": {
-            "type": "string",
-            "nullable": true
-          }
+          "typeAppliedFor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.ConfirmedTreatment": {
         "type": "object",
         "properties": {
-          "referenceId": {
-            "type": "string",
-            "nullable": true
-          },
-          "documentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "serviceProviderName": {
-            "type": "string",
-            "nullable": true
-          },
+          "referenceId": { "type": "string", "nullable": true },
+          "documentId": { "type": "string", "nullable": true },
+          "serviceProviderName": { "type": "string", "nullable": true },
           "serviceProviderRegistrationNumber": {
             "type": "string",
             "nullable": true
@@ -17000,38 +15236,22 @@
           "requestedPeriod": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.RequestedPeriod"
           },
-          "typeAppliedFor": {
-            "type": "string",
-            "nullable": true
-          }
+          "typeAppliedFor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.ConnectedServiceProvider": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
+          "id": { "type": "string", "format": "uuid" },
           "created": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "regNo": {
-            "type": "string",
-            "nullable": true
-          },
-          "groupId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          }
+          "name": { "type": "string", "nullable": true },
+          "regNo": { "type": "string", "nullable": true },
+          "groupId": { "type": "string", "format": "uuid", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -17039,18 +15259,9 @@
         "required": ["nationalId"],
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
+          "id": { "type": "string", "format": "uuid" },
+          "created": { "type": "string", "format": "date-time" },
+          "nationalId": { "type": "string", "nullable": true },
           "status": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.CustomerStatus"
           },
@@ -17067,14 +15278,8 @@
       "TrWeb.Contracts.External.ServicePortal.CustomerHistory": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "id": { "type": "string", "format": "uuid" },
+          "created": { "type": "string", "format": "date-time" },
           "fromProvider": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.ConnectedServiceProvider"
           },
@@ -17113,18 +15318,9 @@
       "TrWeb.Contracts.External.ServicePortal.CustomerStatus": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          }
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -17151,51 +15347,26 @@
       "TrWeb.Contracts.External.ServicePortal.Difficulty": {
         "type": "object",
         "properties": {
-          "value": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "displayValue": {
-            "type": "string",
-            "nullable": true
-          },
-          "explanation": {
-            "type": "string",
-            "nullable": true
-          }
+          "value": { "type": "integer", "format": "int32", "nullable": true },
+          "displayValue": { "type": "string", "nullable": true },
+          "explanation": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.DisabilityDiagnosis": {
         "type": "object",
         "properties": {
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "code": {
-            "type": "string",
-            "nullable": true
-          }
+          "description": { "type": "string", "nullable": true },
+          "code": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.DisabilityPensionCertificate": {
         "type": "object",
         "properties": {
-          "documentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "referenceId": {
-            "type": "string",
-            "nullable": true
-          },
-          "serviceProviderName": {
-            "type": "string",
-            "nullable": true
-          },
+          "documentId": { "type": "string", "nullable": true },
+          "referenceId": { "type": "string", "nullable": true },
+          "serviceProviderName": { "type": "string", "nullable": true },
           "serviceProviderRegistrationNumber": {
             "type": "string",
             "nullable": true
@@ -17240,10 +15411,7 @@
             },
             "nullable": true
           },
-          "healthHistorySummary": {
-            "type": "string",
-            "nullable": true
-          },
+          "healthHistorySummary": { "type": "string", "nullable": true },
           "healthImpact": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.HealthImpact"
           },
@@ -17253,31 +15421,16 @@
           "abilityChangePotential": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.EnumType"
           },
-          "noMedicationAndSupportUsed": {
-            "type": "string",
-            "nullable": true
-          },
-          "medicationUsed": {
-            "type": "string",
-            "nullable": true
-          },
-          "assessmentToolsUsed": {
-            "type": "string",
-            "nullable": true
-          },
-          "interventionUsed": {
-            "type": "string",
-            "nullable": true
-          },
+          "noMedicationAndSupportUsed": { "type": "string", "nullable": true },
+          "medicationUsed": { "type": "string", "nullable": true },
+          "assessmentToolsUsed": { "type": "string", "nullable": true },
+          "interventionUsed": { "type": "string", "nullable": true },
           "capacityForWork": {
             "type": "integer",
             "format": "int32",
             "nullable": true
           },
-          "previousRehabilitation": {
-            "type": "string",
-            "nullable": true
-          },
+          "previousRehabilitation": { "type": "string", "nullable": true },
           "abilityRatings": {
             "type": "array",
             "items": {
@@ -17298,36 +15451,18 @@
       "TrWeb.Contracts.External.ServicePortal.Doctor": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "doctorNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "residence": {
-            "type": "string",
-            "nullable": true
-          }
+          "name": { "type": "string", "nullable": true },
+          "doctorNumber": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "residence": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.DocumentInputModel": {
         "type": "object",
         "properties": {
-          "documentTypeCode": {
-            "type": "string",
-            "nullable": true
-          },
+          "documentTypeCode": { "type": "string", "nullable": true },
           "validFrom": {
             "type": "string",
             "format": "date-time",
@@ -17338,21 +15473,10 @@
             "format": "date-time",
             "nullable": true
           },
-          "issued": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "allocate": {
-            "type": "boolean"
-          },
-          "customerStatusTypeCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "notRetrievable": {
-            "type": "boolean",
-            "nullable": true
-          }
+          "issued": { "type": "string", "format": "date-time" },
+          "allocate": { "type": "boolean" },
+          "customerStatusTypeCode": { "type": "string", "nullable": true },
+          "notRetrievable": { "type": "boolean", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -17360,58 +15484,28 @@
         "required": ["description", "endpoint", "name"],
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "endpoint": {
-            "type": "string",
-            "nullable": true
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "endpoint": { "type": "string", "nullable": true },
+          "created": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.EnumType": {
         "type": "object",
         "properties": {
-          "value": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "display": {
-            "type": "string",
-            "nullable": true
-          }
+          "value": { "type": "integer", "format": "int32" },
+          "name": { "type": "string", "nullable": true },
+          "display": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.FirstEvaluation": {
         "type": "object",
         "properties": {
-          "applicantStatus": {
-            "type": "string",
-            "nullable": true
-          },
-          "previousMedicalOrRehab": {
-            "type": "string",
-            "nullable": true
-          },
+          "applicantStatus": { "type": "string", "nullable": true },
+          "previousMedicalOrRehab": { "type": "string", "nullable": true },
           "attitudeTowardsWork": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.EnumType"
           }
@@ -17455,37 +15549,20 @@
       "TrWeb.Contracts.External.ServicePortal.GenericDocumentResponse": {
         "type": "object",
         "properties": {
-          "documentType": {
-            "type": "string",
-            "nullable": true
-          },
-          "content": {
-            "type": "string",
-            "nullable": true
-          },
-          "contentAsObject": {
-            "type": "object",
-            "nullable": true
-          }
+          "documentType": { "type": "string", "nullable": true },
+          "content": { "type": "string", "nullable": true },
+          "contentAsObject": { "type": "object", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.HealthGoals": {
         "type": "object",
         "properties": {
-          "goalDescription": {
-            "type": "string",
-            "nullable": true
-          },
-          "doesNotApply": {
-            "type": "boolean",
-            "nullable": true
-          },
+          "goalDescription": { "type": "string", "nullable": true },
+          "doesNotApply": { "type": "boolean", "nullable": true },
           "measures": {
             "type": "array",
-            "items": {
-              "type": "string"
-            },
+            "items": { "type": "string" },
             "nullable": true
           }
         },
@@ -17494,10 +15571,7 @@
       "TrWeb.Contracts.External.ServicePortal.HealthImpact": {
         "type": "object",
         "properties": {
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
+          "description": { "type": "string", "nullable": true },
           "impactLevel": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.EnumType"
           }
@@ -17507,118 +15581,52 @@
       "TrWeb.Contracts.External.ServicePortal.IcdCode": {
         "type": "object",
         "properties": {
-          "code": {
-            "type": "string",
-            "nullable": true
-          },
-          "displayValue": {
-            "type": "string",
-            "nullable": true
-          },
-          "category": {
-            "type": "string",
-            "nullable": true
-          }
+          "code": { "type": "string", "nullable": true },
+          "displayValue": { "type": "string", "nullable": true },
+          "category": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.Individual": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "postalCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "city": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          }
+          "name": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true },
+          "address": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "city": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.InternalServiceProvider": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "serviceProviderGroupId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "serviceProviderGroupName": {
-            "type": "string",
-            "nullable": true
-          },
-          "regNo": {
-            "type": "string",
-            "nullable": true
-          }
+          "id": { "type": "string", "format": "uuid" },
+          "created": { "type": "string", "format": "date-time" },
+          "name": { "type": "string", "nullable": true },
+          "serviceProviderGroupId": { "type": "string", "format": "uuid" },
+          "serviceProviderGroupName": { "type": "string", "nullable": true },
+          "regNo": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.NationalRegistryAddress": {
         "type": "object",
         "properties": {
-          "address": {
-            "type": "string",
-            "nullable": true
-          },
-          "municipality": {
-            "type": "string",
-            "nullable": true
-          },
-          "postalCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "apartmentNumber": {
-            "type": "string",
-            "nullable": true
-          }
+          "address": { "type": "string", "nullable": true },
+          "municipality": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "apartmentNumber": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.NationalRegistryEntry": {
         "type": "object",
         "properties": {
-          "fullName": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
+          "fullName": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true },
           "address": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.NationalRegistryAddress"
           },
@@ -17627,101 +15635,48 @@
             "format": "date-time",
             "nullable": true
           },
-          "citizenship": {
-            "type": "string",
-            "nullable": true
-          }
+          "citizenship": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.PreviousApplication": {
         "type": "object",
         "properties": {
-          "hasPreviousApproval": {
-            "type": "boolean"
-          },
-          "additionalDetails": {
-            "type": "string",
-            "nullable": true
-          }
+          "hasPreviousApproval": { "type": "boolean" },
+          "additionalDetails": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.QuestionAnswer": {
         "type": "object",
         "properties": {
-          "questionCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "questionTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "question": {
-            "type": "string",
-            "nullable": true
-          },
-          "answer": {
-            "type": "string",
-            "nullable": true
-          },
-          "explanationText": {
-            "type": "string",
-            "nullable": true
-          }
+          "questionCode": { "type": "string", "nullable": true },
+          "questionTitle": { "type": "string", "nullable": true },
+          "question": { "type": "string", "nullable": true },
+          "answer": { "type": "string", "nullable": true },
+          "explanationText": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.QuestionnaireAnswer": {
         "type": "object",
         "properties": {
-          "questionCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "questionTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "questionSubcategory": {
-            "type": "string",
-            "nullable": true
-          },
-          "question": {
-            "type": "string",
-            "nullable": true
-          },
-          "answer": {
-            "type": "string",
-            "nullable": true
-          },
-          "explanationText": {
-            "type": "string",
-            "nullable": true
-          },
-          "icfCode": {
-            "type": "string",
-            "nullable": true
-          }
+          "questionCode": { "type": "string", "nullable": true },
+          "questionTitle": { "type": "string", "nullable": true },
+          "questionSubcategory": { "type": "string", "nullable": true },
+          "question": { "type": "string", "nullable": true },
+          "answer": { "type": "string", "nullable": true },
+          "explanationText": { "type": "string", "nullable": true },
+          "icfCode": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.QuestionnaireAnswers": {
         "type": "object",
         "properties": {
-          "questionnaireCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "questionnaireTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "versionNumber": {
-            "type": "string",
-            "nullable": true
-          },
+          "questionnaireCode": { "type": "string", "nullable": true },
+          "questionnaireTitle": { "type": "string", "nullable": true },
+          "versionNumber": { "type": "string", "nullable": true },
           "answers": {
             "type": "array",
             "items": {
@@ -17729,10 +15684,7 @@
             },
             "nullable": true
           },
-          "hadAssistance": {
-            "type": "boolean",
-            "nullable": true
-          },
+          "hadAssistance": { "type": "boolean", "nullable": true },
           "scale": {
             "type": "array",
             "items": {
@@ -17746,18 +15698,9 @@
       "TrWeb.Contracts.External.ServicePortal.QuestionnaireResult": {
         "type": "object",
         "properties": {
-          "questionnaireCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "questionnaireTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "versionNumber": {
-            "type": "string",
-            "nullable": true
-          },
+          "questionnaireCode": { "type": "string", "nullable": true },
+          "questionnaireTitle": { "type": "string", "nullable": true },
+          "versionNumber": { "type": "string", "nullable": true },
           "answers": {
             "type": "array",
             "items": {
@@ -17765,10 +15708,7 @@
             },
             "nullable": true
           },
-          "hadAssistance": {
-            "type": "boolean",
-            "nullable": true
-          },
+          "hadAssistance": { "type": "boolean", "nullable": true },
           "scale": {
             "type": "array",
             "items": {
@@ -17782,36 +15722,18 @@
       "TrWeb.Contracts.External.ServicePortal.QuestionnaireScaleOption": {
         "type": "object",
         "properties": {
-          "value": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "display": {
-            "type": "string",
-            "nullable": true
-          },
-          "order": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "value": { "type": "integer", "format": "int32" },
+          "display": { "type": "string", "nullable": true },
+          "order": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.RehabilitationPlan": {
         "type": "object",
         "properties": {
-          "documentId": {
-            "type": "string",
-            "nullable": true
-          },
-          "referenceId": {
-            "type": "string",
-            "nullable": true
-          },
-          "serviceProviderName": {
-            "type": "string",
-            "nullable": true
-          },
+          "documentId": { "type": "string", "nullable": true },
+          "referenceId": { "type": "string", "nullable": true },
+          "serviceProviderName": { "type": "string", "nullable": true },
           "serviceProviderRegistrationNumber": {
             "type": "string",
             "nullable": true
@@ -17857,10 +15779,7 @@
           "activityAndParticipationGoals": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.HealthGoals"
           },
-          "followupEvaluationExists": {
-            "type": "boolean",
-            "nullable": true
-          },
+          "followupEvaluationExists": { "type": "boolean", "nullable": true },
           "startDate": {
             "type": "string",
             "format": "date-time",
@@ -17871,10 +15790,7 @@
             "format": "date-time",
             "nullable": true
           },
-          "typeAppliedFor": {
-            "type": "string",
-            "nullable": true
-          }
+          "typeAppliedFor": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -17909,28 +15825,16 @@
             },
             "nullable": true
           },
-          "otherTreatmentDescription": {
-            "type": "string",
-            "nullable": true
-          }
+          "otherTreatmentDescription": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.ScaleOption": {
         "type": "object",
         "properties": {
-          "value": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "display": {
-            "type": "string",
-            "nullable": true
-          },
-          "order": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "value": { "type": "integer", "format": "int32" },
+          "display": { "type": "string", "nullable": true },
+          "order": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
@@ -17938,40 +15842,19 @@
         "required": ["nationalId", "referenceId"],
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "id": { "type": "string", "format": "uuid" },
+          "created": { "type": "string", "format": "date-time" },
           "serviceProvider": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.InternalServiceProvider"
           },
-          "documentTypeId": {
-            "type": "string",
-            "format": "uuid"
-          },
+          "documentTypeId": { "type": "string", "format": "uuid" },
           "documentType": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.DocumentType"
           },
-          "internalDocumentTypeCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "referenceId": {
-            "type": "string",
-            "nullable": true
-          },
-          "validFrom": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "internalDocumentTypeCode": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true },
+          "referenceId": { "type": "string", "nullable": true },
+          "validFrom": { "type": "string", "format": "date-time" },
           "validTo": {
             "type": "string",
             "format": "date-time",
@@ -17993,77 +15876,32 @@
       "TrWeb.Contracts.External.ServicePortal.ServiceProvider": {
         "type": "object",
         "properties": {
-          "serviceProviderName": {
-            "type": "string",
-            "nullable": true
-          },
-          "coordinatorName": {
-            "type": "string",
-            "nullable": true
-          },
-          "coordinatorNationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "coordinatorTitle": {
-            "type": "string",
-            "nullable": true
-          },
-          "workplace": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "registrationNumber": {
-            "type": "string",
-            "nullable": true
-          }
+          "serviceProviderName": { "type": "string", "nullable": true },
+          "coordinatorName": { "type": "string", "nullable": true },
+          "coordinatorNationalId": { "type": "string", "nullable": true },
+          "coordinatorTitle": { "type": "string", "nullable": true },
+          "workplace": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "registrationNumber": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
       "TrWeb.Contracts.External.ServicePortal.SupportEntry": {
         "type": "object",
         "properties": {
-          "nationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "payer": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "startDate": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "nationalId": { "type": "string", "nullable": true },
+          "payer": { "type": "string", "nullable": true },
+          "type": { "type": "integer", "format": "int32" },
+          "startDate": { "type": "string", "format": "date-time" },
           "endDate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "created": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "description": { "type": "string", "nullable": true },
+          "id": { "type": "string", "nullable": true },
+          "created": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
       },
@@ -18073,18 +15911,9 @@
           "type": {
             "$ref": "#/components/schemas/TrWeb.Contracts.External.ServicePortal.SupportEntryTypeEnum"
           },
-          "startDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "endDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          }
+          "startDate": { "type": "string", "format": "date-time" },
+          "endDate": { "type": "string", "format": "date-time" },
+          "description": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -18094,11 +15923,7 @@
         "format": "int32"
       },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset": {
-        "properties": {
-          "gildi": {
-            "type": "string"
-          }
-        }
+        "properties": { "gildi": { "type": "string" } }
       }
     },
     "securitySchemes": {
@@ -18109,80 +15934,30 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ],
+  "security": [{ "Bearer": [] }],
   "tags": [
-    {
-      "name": "Applicant"
-    },
-    {
-      "name": "Application"
-    },
-    {
-      "name": "ApplicationsUpdates"
-    },
-    {
-      "name": "BankInformation"
-    },
-    {
-      "name": "DeathBenefits"
-    },
-    {
-      "name": "DigitalMailbox"
-    },
-    {
-      "name": "Documents"
-    },
-    {
-      "name": "General"
-    },
-    {
-      "name": "HMS"
-    },
-    {
-      "name": "IncomePlan"
-    },
-    {
-      "name": "Individuals"
-    },
-    {
-      "name": "MedicalDocuments"
-    },
-    {
-      "name": "Monitoring"
-    },
-    {
-      "name": "PaymentPlan"
-    },
-    {
-      "name": "PensionCalculator"
-    },
-    {
-      "name": "PensionFund"
-    },
-    {
-      "name": "PersonalTaxCredit"
-    },
-    {
-      "name": "Questionnaires"
-    },
-    {
-      "name": "ServicePortal"
-    },
-    {
-      "name": "ServicePortalManagement"
-    },
-    {
-      "name": "SharePoint"
-    },
-    {
-      "name": "Syslumenn"
-    },
-    {
-      "name": "Test"
-    }
+    { "name": "Applicant" },
+    { "name": "Application" },
+    { "name": "ApplicationsUpdates" },
+    { "name": "BankInformation" },
+    { "name": "DeathBenefits" },
+    { "name": "DigitalMailbox" },
+    { "name": "Documents" },
+    { "name": "General" },
+    { "name": "HMS" },
+    { "name": "IncomePlan" },
+    { "name": "Individuals" },
+    { "name": "MedicalDocuments" },
+    { "name": "Monitoring" },
+    { "name": "PaymentPlan" },
+    { "name": "PensionCalculator" },
+    { "name": "PensionFund" },
+    { "name": "PersonalTaxCredit" },
+    { "name": "Questionnaires" },
+    { "name": "ServicePortal" },
+    { "name": "ServicePortalManagement" },
+    { "name": "SharePoint" },
+    { "name": "Syslumenn" },
+    { "name": "Test" }
   ]
 }

@@ -17,7 +17,7 @@ import {
 import { SocialInsuranceAdministrationPersonalTaxCreditService } from '@island.is/clients/social-insurance-administration'
 import { TaxAllowanceAction } from '../models/personalTaxCredit/taxAllowanceAction.model'
 import { TaxCards } from '../models/personalTaxCredit/taxCard.model'
-import { TaxCardMonthsAndYears } from '../models/personalTaxCredit/taxCardMonthsAndYears.model'
+import { YearWithMonths } from '../models/personalTaxCredit/taxCardMonthsAndYears.model'
 import { SpousalTaxCardEligibility } from '../models/personalTaxCredit/spousalTaxCardEligibility.model'
 import {
   SetTaxCardAllowanceInput,
@@ -53,7 +53,7 @@ export class PersonalTaxCreditResolver {
     return this.personalTaxCreditService.getTaxCards(user)
   }
 
-  @Query(() => TaxCardMonthsAndYears, {
+  @Query(() => [YearWithMonths], {
     name: 'socialInsuranceTaxCardMonthsAndYears',
     nullable: true,
   })
