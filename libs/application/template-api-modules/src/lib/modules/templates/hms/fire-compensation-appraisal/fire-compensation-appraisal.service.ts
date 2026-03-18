@@ -283,7 +283,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
-      console.time('Submitting application to HMS')
+      console.log('Submitting application to HMS')
       // Map the application to the dto interface
       const applicationDto = mapAnswersToApplicationDto(application)
       // Send the application to HMS
@@ -308,8 +308,15 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
       const attachmentPromises: Promise<ApplicationIDResultSetDto>[] = []
       const fileIds: string[] = []
+      const uniqueFileKeys = new Set<string>()
+
+      // Process one file at a time to avoid creating intermetiate arrays
       for await (const file of fileGenerator) {
-        // Process one file at a time to avoid creating intermetiade arrays
+        // Skip if the file has already been processed
+        if (uniqueFileKeys.has(file.key)) {
+          continue
+        }
+        uniqueFileKeys.add(file.key)
         console.log('Uploading file:', file.key)
         const attachment = mapAnswersToSingleApplicationFilesContentDto(
           application,
@@ -321,7 +328,6 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
             applicationFilesContentDto: attachment,
           }),
         )
-        fileIds.push(attachment?.fileID ?? '')
       }
 
       // Wait for all uploads to complete

@@ -14,6 +14,7 @@ export const ApiConfiguration = {
       fetchApi: createEnhancedFetch({
         name: 'clients-hms-application-system',
         organizationSlug: 'hms',
+        timeout: 60000,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.servicePath}`,
       headers: {
