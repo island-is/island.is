@@ -150,7 +150,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
           <Box
             display="flex"
             alignItems="center"
-            justifyContent="spaceBetween"
+            justifyContent={footerCheckbox ? 'spaceBetween' : 'flexEnd'}
             columnGap={2}
             paddingBottom={6}
             paddingTop={2}
