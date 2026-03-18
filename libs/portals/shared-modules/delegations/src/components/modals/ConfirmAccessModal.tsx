@@ -2,7 +2,7 @@ import { Modal } from '@island.is/react/components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Text, toast } from '@island.is/island-ui/core'
 import { m as coreMessages } from '@island.is/portals/core'
 import { useDelegationForm } from '../../context'
 import { ScopesTable } from '../ScopesTable/ScopesTable'
@@ -38,18 +38,20 @@ export const ConfirmAccessModal = ({
     if (onConfirm) {
       onConfirm()
     } else {
-      const scopes = selectedScopes
-        .map((scope) => {
-          if (!scope.domain?.name || !scope.validTo) {
-            return null
-          }
-          return {
-            name: scope.name,
-            validTo: scope.validTo,
-            domainName: scope.domain.name,
-          }
-        })
-        .filter((scope) => scope !== null)
+      const invalidScopes = selectedScopes.filter(
+        (scope) => !scope.domain?.name || !scope.validTo,
+      )
+
+      if (invalidScopes.length > 0) {
+        toast.error(formatMessage(coreMessages.somethingWrong))
+        return
+      }
+
+      const scopes = selectedScopes.map((scope) => ({
+        name: scope.name,
+        validTo: scope.validTo as Date,
+        domainName: scope.domain!.name,
+      }))
 
       createAuthDelegations({
         variables: {
@@ -58,9 +60,13 @@ export const ConfirmAccessModal = ({
             scopes,
           },
         },
-      }).then(() => {
-        navigate(DelegationPaths.DelegationsNew)
       })
+        .then(() => {
+          navigate(DelegationPaths.DelegationsNew)
+        })
+        .catch(() => {
+          toast.error(formatMessage(coreMessages.somethingWrong))
+        })
     }
   }
 
