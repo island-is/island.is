@@ -430,7 +430,7 @@ export class FileController {
     })
   }
 
-  @UseGuards(CaseReadGuard)
+  @UseGuards(CaseWriteGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Get('policeDigitalCaseFiles')
   @ApiOkResponse({
