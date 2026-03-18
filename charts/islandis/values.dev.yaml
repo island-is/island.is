@@ -3582,9 +3582,9 @@ services-payments-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-payments'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-payments-worker'
     create: true
-    name: 'services-payments'
+    name: 'services-payments-worker'
 services-sessions:
   enabled: true
   env:
