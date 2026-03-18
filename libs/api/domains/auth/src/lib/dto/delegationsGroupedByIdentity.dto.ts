@@ -19,6 +19,9 @@ export class DelegationsGroupedByIdentity {
   scopes!: DelegationScope[]
 
   @Field(() => Date, { nullable: true })
+  createdAt?: Date | null
+
+  @Field(() => Date, { nullable: true })
   earliestValidFrom?: Date | null
 
   @Field(() => Date, { nullable: true })

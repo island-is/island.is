@@ -32,6 +32,7 @@ query AuthDelegationsGroupedByIdentityOutgoing($lang: String) {
         }
       }
     }
+    createdAt
     earliestValidFrom
     latestValidTo
   }
