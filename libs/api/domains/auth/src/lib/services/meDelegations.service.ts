@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import differenceWith from 'lodash/differenceWith'
 import groupBy from 'lodash/groupBy'
 import min from 'lodash/min'
@@ -113,7 +117,10 @@ export class MeDelegationsService {
             this.createOrUpdateDelegation(user, {
               toNationalId,
               domainName,
-              scopes: domainScopes.map(({ name, validTo }) => ({ name, validTo })),
+              scopes: domainScopes.map(({ name, validTo }) => ({
+                name,
+                validTo,
+              })),
             }),
           ),
         ),
