@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import styled, { useTheme } from 'styled-components/native'
 import {
   Animated,
@@ -55,12 +55,8 @@ interface TabButtonProps {
   setSelectedTab: (index: number) => void
 }
 
-function getButtonWidth(
-  numButtons: number,
-  containerWidth: number,
-  spacing = 32,
-) {
-  return (containerWidth) / numButtons
+function getButtonWidth(numButtons: number, containerWidth: number) {
+  return containerWidth / numButtons
 }
 
 export const TabButtons = ({
@@ -68,28 +64,40 @@ export const TabButtons = ({
   selectedTab,
   setSelectedTab,
 }: TabButtonProps) => {
+  const [containerWidth, setContainerWidth] = useState(
+    Dimensions.get('window').width,
+  )
   const [buttonWidth, setButtonWidth] = useState(
-    getButtonWidth(buttons.length, Dimensions.get('window').width),
+    getButtonWidth(buttons.length, containerWidth),
   )
 
   const translateX = useRef(new Animated.Value(0)).current
 
   const onTabPress = useCallback(
     (index: number) => {
-      Animated.spring(translateX, {
-        toValue: index * buttonWidth,
-        useNativeDriver: true,
-        overshootClamping: true,
-        mass: 1,
-      }).start()
       setSelectedTab(index)
     },
     [buttonWidth, translateX, setSelectedTab],
   )
 
-  const onLayout = useCallback((e: LayoutChangeEvent) => {
-    setButtonWidth(getButtonWidth(buttons.length, e.nativeEvent.layout.width))
-  }, [])
+  useEffect(() => {
+    Animated.spring(translateX, {
+      toValue: selectedTab * buttonWidth,
+      useNativeDriver: true,
+      overshootClamping: true,
+      mass: 1,
+    }).start()
+  }, [selectedTab, buttonWidth])
+
+  useEffect(
+    () => setButtonWidth(getButtonWidth(buttons.length, containerWidth)),
+    [buttons.length, containerWidth],
+  )
+
+  const onLayout = useCallback(
+    (e: LayoutChangeEvent) => setContainerWidth(e.nativeEvent.layout.width),
+    [buttons],
+  )
 
   return (
     <Host accessibilityRole="tablist" onLayout={onLayout}>

@@ -24,7 +24,7 @@ export function cognitoAuthUrl() {
   const url = `https://cognito.shared.devland.is/login`
   const params = {
     approval_prompt: 'prompt',
-    client_id: 'bre6r7d5e7imkcgbt7et1kqlc',
+    client_id: config.cognitoClientId,
     redirect_uri: `${config.bundleId}://cognito`,
     response_type: 'token',
     scope: 'openid',
@@ -74,8 +74,7 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
       const parseError = networkError as ServerParseError
       const isCognitoLogin = parseError.bodyText.includes('cognito-login.css')
       const isCognitoRedirect = parseError?.response?.url?.includes('cognito');
-      const redirectUrl = isCognitoRedirect ? parseError.response.url : cognitoAuthUrl()
-      console.log({ isCognitoLogin, isCognitoRedirect, redirectUrl }, 'Cognito login detected in network error')
+      const redirectUrl = cognitoAuthUrl()
       if (isCognitoLogin || isCognitoRedirect) {
         getAuthStoreRef().setState({ cognitoAuthUrl: redirectUrl })
         if (
