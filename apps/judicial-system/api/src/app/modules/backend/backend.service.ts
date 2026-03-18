@@ -22,7 +22,11 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry } from '../case-list'
-import { CaseTableResponse, SearchCasesResponse } from '../case-table'
+import {
+  CaseTableMembershipResponse,
+  CaseTableResponse,
+  SearchCasesResponse,
+} from '../case-table'
 import {
   CourtDocumentResponse,
   CourtSessionResponse,
@@ -50,6 +54,7 @@ import { Institution } from '../institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
+  PoliceDigitalCaseFile,
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { CaseDataExportInput, CaseStatistics } from '../statistics'
@@ -222,6 +227,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     params.append('query', query)
 
     return this.get(`search-cases?${params.toString()}`)
+  }
+
+  getCaseTableMembership(caseId: string): Promise<CaseTableMembershipResponse> {
+    return this.get(`case/${caseId}/case-table-membership`)
   }
 
   getCaseStatistics(
@@ -449,6 +458,10 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
     return this.get(`case/${caseId}/policeFiles`)
+  }
+
+  getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceDigitalCaseFile[]> {
+    return this.get(`case/${caseId}/policeDigitalFiles`)
   }
 
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
