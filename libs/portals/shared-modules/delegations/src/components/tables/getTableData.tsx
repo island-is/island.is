@@ -91,7 +91,6 @@ export const getProcuringHolderTableData = (
   const headerArray = [
     formatMessage(m.headerName),
     formatMessage(m.headerDelegationType),
-    formatMessage(m.headerRegisteredDate),
     formatMessage(m.headerDomain),
     '',
   ]
@@ -103,8 +102,7 @@ export const getProcuringHolderTableData = (
         icon="briefcase"
       />,
       <Text variant="medium">{formatMessage(m.procurationHolder)}</Text>,
-      <Text variant="medium">TODO</Text>, // Todo: check if starting date is available
-      <Text variant="medium">{formatMessage(m.registry)}</Text>, // Todo: get domain from data
+      <Text variant="medium">{formatMessage(m.revenueAndCustoms)}</Text>, // Todo: get domain from data
       <Box flexShrink={0}>
         <Button
           variant="text"
@@ -128,10 +126,7 @@ export const getProcuringHolderTableData = (
         label: formatMessage(m.headerDelegationType),
         content: formatMessage(m.procurationHolder),
       },
-      {
-        label: formatMessage(m.headerRegisteredDate),
-        content: 'TODO', // Todo: check if starting date is available
-      },
+
       {
         label: formatMessage(m.headerDomain),
         content: formatMessage(m.registry),

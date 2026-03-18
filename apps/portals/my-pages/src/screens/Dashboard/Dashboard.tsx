@@ -87,7 +87,9 @@ export const Dashboard = () => {
           moduleName,
         })
       default:
-        return ''
+        return formatMessage(coreMessages.disabledReasonDefault, {
+          moduleName,
+        })
     }
   }
 
