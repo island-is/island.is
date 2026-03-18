@@ -26,3 +26,4 @@ export { SocialInsuranceAdministrationDeathBenefitsService } from './lib/service
 export { SocialInsuranceAdministrationMedicalDocumentsService } from './lib/services/medicalDocuments.service'
 export { SocialInsuranceAdministrationDisabilityPensionService } from './lib/services/applicationServices/disabilityPension.service'
 export { SocialInsuranceAdministrationMedicalAndRehabilitationService } from './lib/services/applicationServices/medicalAndRehabilitation.service'
+export { SocialInsuranceAdministrationPersonalTaxCreditService } from './lib/services/personalTaxCredit.service'

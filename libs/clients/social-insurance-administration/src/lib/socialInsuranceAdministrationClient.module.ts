@@ -15,6 +15,7 @@ import { SocialInsuranceAdministrationEducationService } from './services/educat
 import { SocialInsuranceAdministrationPensionCalculatorService } from './services/pensionCalculator.service'
 import { SocialInsuranceAdministrationDeathBenefitsService } from './services/deathBenefits.service'
 import { SocialInsuranceAdministrationMedicalDocumentsService } from './services/medicalDocuments.service'
+import { SocialInsuranceAdministrationPersonalTaxCreditService } from './services/personalTaxCredit.service'
 
 @Module({
   imports: [FeatureFlagModule],
@@ -35,6 +36,7 @@ import { SocialInsuranceAdministrationMedicalDocumentsService } from './services
     SocialInsuranceAdministrationMedicalDocumentsService,
     SocialInsuranceAdministrationDisabilityPensionService,
     SocialInsuranceAdministrationMedicalAndRehabilitationService,
+    SocialInsuranceAdministrationPersonalTaxCreditService,
   ],
   exports: [
     SocialInsuranceAdministrationClientService,
@@ -51,6 +53,7 @@ import { SocialInsuranceAdministrationMedicalDocumentsService } from './services
     SocialInsuranceAdministrationMedicalDocumentsService,
     SocialInsuranceAdministrationMedicalAndRehabilitationService,
     SocialInsuranceAdministrationDisabilityPensionService,
+    SocialInsuranceAdministrationPersonalTaxCreditService,
   ],
 })
 export class SocialInsuranceAdministrationClientModule {}

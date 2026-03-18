@@ -17,6 +17,10 @@ const SocialInsuranceMaintenanceIncomePlanDetail = lazy(() =>
   import('./screens/IncomePlanDetail/IncomePlanDetail'),
 )
 
+const SocialInsuranceMaintenancePersonalTaxCredit = lazy(() =>
+  import('./screens/PersonalTaxCredit/PersonalTaxCredit'),
+)
+
 export const socialInsuranceMaintenanceModule: PortalModule = {
   name: 'Framfærsla',
   enabled: ({ isCompany }) => !isCompany,
@@ -55,6 +59,13 @@ export const socialInsuranceMaintenanceModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
       key: 'SocialInsuranceIncomePlan',
       element: <SocialInsuranceMaintenanceIncomePlanDetail />,
+    },
+    {
+      name: m.personalTaxCredit,
+      path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePersonalTaxCredit,
+      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
+      key: 'MyPagesTRPersonalTaxCredit',
+      element: <SocialInsuranceMaintenancePersonalTaxCredit />,
     },
   ],
 }
