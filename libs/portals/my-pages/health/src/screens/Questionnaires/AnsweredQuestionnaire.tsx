@@ -120,7 +120,7 @@ const AnsweredQuestionnaire: FC = () => {
 
   return (
     <IntroWrapper
-      title={data?.getAnsweredQuestionnaire?.data[0]?.title ?? ''}
+      title={data?.getAnsweredQuestionnaire?.data[0]?.title ?? formatMessage(messages.questionnaire)}
       intro={formatMessage(messages.answeredQuestionnaireAnswered)}
       loading={loading}
       buttonGroupAlignment="spaceBetween"
