@@ -125,14 +125,14 @@ export const assetsModule: PortalModule = {
         element: <WorkMachinesDetail />,
       },
       {
-        name: 'FarmerLands',
+        name: m.farmerLands,
         path: AssetsPaths.AssetsFarmerLands,
         key: FARMERS_LANDS_FLAG,
         enabled: userInfo.scopes.includes(ApiScope.internal),
         element: <FarmerLandsOverview />,
       },
       {
-        name: 'FarmerLandDetail',
+        name: m.farmerLands,
         path: AssetsPaths.AssetsFarmerLandDetail,
         key: FARMERS_LANDS_FLAG,
         enabled: userInfo.scopes.includes(ApiScope.internal),

@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
+import { ApolloError } from '@apollo/client'
 import { Column, Row } from 'react-table'
-import { Table as T, Text } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '@island.is/portals/my-pages/core'
+import { Box, Table as T, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m, formatNationalId, EmptyTable } from '@island.is/portals/my-pages/core'
 import FarmerLandsTable from '../../../../components/FarmerLandsTable/FarmerLandsTable'
 import {
   FarmerLandBeneficiary,
@@ -13,7 +14,7 @@ import { farmerLandsMessages as fm } from '../../../../lib/messages'
 interface Props {
   beneficiaries: FarmerLandBeneficiary[]
   loading: boolean
-  error: boolean
+  error?: ApolloError
 }
 
 const formatDateRange = (from?: string | null, to?: string | null): string => {
@@ -23,7 +24,6 @@ const formatDateRange = (from?: string | null, to?: string | null): string => {
 }
 
 export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
-  useNamespaces('sp.farmer-lands')
   const { formatMessage } = useLocale()
 
   const columns = useMemo<Column<FarmerLandBeneficiary>[]>(
@@ -37,6 +37,7 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
         Header: formatMessage(fm.nationalId),
         accessor: 'nationalId',
         sortType: 'basic',
+        Cell: ({ value }: { value: string | null | undefined }) => formatNationalId(value ?? ''),
       },
       {
         Header: formatMessage(fm.bankInfo),
@@ -57,20 +58,22 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
     [formatMessage],
   )
 
-  const renderExpandedRow = (row: Row<FarmerLandBeneficiary>) => (
-    <T.Table>
-      <T.Head>
-        <T.Row>
-          <T.HeadData>{formatMessage(fm.paymentType)}</T.HeadData>
-          <T.HeadData>{formatMessage(fm.share)}</T.HeadData>
-          <T.HeadData>{formatMessage(fm.pendingPayments)}</T.HeadData>
-          <T.HeadData>{formatMessage(fm.operation)}</T.HeadData>
-          <T.HeadData>{formatMessage(m.date)}</T.HeadData>
-        </T.Row>
-      </T.Head>
-      <T.Body>
-        {(row.original.payments ?? []).map(
-          (p: FarmerLandBeneficiaryPayment) => (
+  const renderExpandedRow = (row: Row<FarmerLandBeneficiary>) => {
+    const payments = row.original.payments ?? []
+    if (!payments.length) return <EmptyTable message={formatMessage(m.noData)} />
+    return (
+      <T.Table>
+        <T.Head>
+          <T.Row>
+            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>{formatMessage(fm.paymentType)}</T.HeadData>
+            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>{formatMessage(fm.share)}</T.HeadData>
+            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>{formatMessage(fm.pendingPayments)}</T.HeadData>
+            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>{formatMessage(fm.operation)}</T.HeadData>
+            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>{formatMessage(m.date)}</T.HeadData>
+          </T.Row>
+        </T.Head>
+        <T.Body>
+          {payments.map((p: FarmerLandBeneficiaryPayment) => (
             <T.Row key={p.categoryId}>
               <T.Data box={{ background: 'white' }}>
                 <Text variant="small">{p.category}</Text>
@@ -98,22 +101,23 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
                 </Text>
               </T.Data>
             </T.Row>
-          ),
-        )}
-      </T.Body>
-    </T.Table>
-  )
+          ))}
+        </T.Body>
+      </T.Table>
+    )
+  }
 
   return (
-    <FarmerLandsTable
-      columns={columns}
-      data={beneficiaries}
-      loading={loading}
-      error={error}
-      emptyMessage={formatMessage(m.noData)}
-      errorMessage={formatMessage(m.errorFetch)}
-      renderExpandedRow={renderExpandedRow}
-    />
+    <Box marginTop={4}>
+      <FarmerLandsTable
+        columns={columns}
+        data={beneficiaries}
+        loading={loading}
+        error={error}
+        emptyMessage={formatMessage(m.noData)}
+        renderExpandedRow={renderExpandedRow}
+      />
+    </Box>
   )
 }
 

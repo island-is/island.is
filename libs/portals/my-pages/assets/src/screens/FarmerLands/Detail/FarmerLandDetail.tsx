@@ -2,14 +2,16 @@ import { Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
+  EmptyState,
   IntroWrapperV2,
   ATVINNUVEGARADUNEYTID_SLUG,
+  m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { farmerLandsMessages as fm } from '../../../lib/messages'
 import { useParams } from 'react-router-dom'
 import { useFarmerLandDetailQuery } from './FarmerLandDetail.generated'
-import RightsHolders from './RightsHolders/RightHolders'
+import RightsHolders from './RightsHolders/RightsHolders'
 import LandRegistry from './LandRegistry/LandRegistry'
 import Subsidies from './Subsidies/Subsidies'
 
@@ -32,7 +34,7 @@ export const FarmerLandDetail = () => {
         <RightsHolders
           beneficiaries={land?.beneficiaries ?? []}
           loading={loading}
-          error={!!error}
+          error={error}
         />
       ),
     },
@@ -42,25 +44,28 @@ export const FarmerLandDetail = () => {
         <LandRegistry
           landRegistry={land?.landRegistry ?? []}
           loading={loading}
-          error={!!error}
+          error={error}
         />
       ),
     },
     {
       label: formatMessage(fm.tabSubsidies),
-      content: <Subsidies />,
+      content: <Subsidies farmId={id ?? ''} />,
     },
   ]
 
   return (
     <IntroWrapperV2
-      title={land?.name ? { defaultMessage: land.name } : fm.title}
+      title={land?.name ?? formatMessage(fm.title)}
       intro={fm.description}
       serviceProvider={{ slug: ATVINNUVEGARADUNEYTID_SLUG }}
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
-      {!loading && !error && (
+      {!loading && !error && data && !data.farmerLand && (
+        <EmptyState description={m.noData} />
+      )}
+      {!loading && data?.farmerLand && (
         <Tabs
           label={formatMessage(fm.selectTab)}
           tabs={tabs}

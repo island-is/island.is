@@ -14,7 +14,6 @@ import {
   GridColumn,
   GridRow,
   Input,
-  Pagination,
   Stack,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
@@ -27,12 +26,14 @@ export const FarmerLandsOverview = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const [search, setSearch] = useState<string>()
-  const [page, setPage] = useState<number>(1)
-  const [totalPages, setTotalPages] = useState<number>(1)
 
   const { data, loading, error } = useFarmerLandsOverviewQuery()
 
-  const farmerLands = data?.farmerLands?.data ?? []
+  const farmerLands = (data?.farmerLands?.data ?? []).filter((land) =>
+    search
+      ? land.name?.toLowerCase().includes(search.toLowerCase())
+      : true,
+  )
 
   return (
     <IntroWrapperV2
@@ -49,9 +50,6 @@ export const FarmerLandsOverview = () => {
               size="xs"
               value={search ?? ''}
               onChange={(search) => {
-                if (page !== 1) {
-                  setPage(1)
-                }
                 setSearch(search.target.value)
               }}
               name={formatMessage(m.searchLabel)}
@@ -69,13 +67,13 @@ export const FarmerLandsOverview = () => {
 
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!loading && !error && farmerLands.length === 0 && (
-        <EmptyState title={m.noData} />
+        <EmptyState title={m.noData} description={fm.noFarmerLands} />
       )}
       <Stack space={4}>
         {!error &&
           farmerLands.map((land) => (
             <ActionCard
-              heading={land.name}
+              heading={land.name ?? ''}
               headingVariant="h4"
               text={formatMessage(fm.farmNumber, {
                 arg: land.id,
@@ -93,22 +91,6 @@ export const FarmerLandsOverview = () => {
               }}
             />
           ))}
-        {totalPages > 1 && (
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            renderLink={(page, className, children) => (
-              <button
-                aria-label={formatMessage(m.goToPage)}
-                onClick={() => {
-                  setPage(page)
-                }}
-              >
-                <span className={className}>{children}</span>
-              </button>
-            )}
-          />
-        )}
       </Stack>
     </IntroWrapperV2>
   )

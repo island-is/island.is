@@ -3,8 +3,8 @@ import { LandBeneficiaryPayment } from './landBeneficiaryPayment.model'
 
 @ObjectType('FarmerLandBeneficiary')
 export class LandBeneficiary {
-  @Field({ nullable: true })
-  name?: string
+  @Field()
+  name!: string
 
   @Field({ nullable: true })
   nationalId?: string

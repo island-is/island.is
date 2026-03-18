@@ -1,274 +1,173 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { Column, Row } from 'react-table'
-import { Box, Button, Table as T, Text } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
+import { m, formatNationalId } from '@island.is/portals/my-pages/core'
 import FarmerLandsTable from '../../../../components/FarmerLandsTable/FarmerLandsTable'
+import { farmerLandsMessages as fm } from '../../../../lib/messages'
+import { FarmerLandSubsidy } from '@island.is/api/schema'
+import { useFarmerLandSubsidiesQuery } from './FarmerLandSubsidies.generated'
 
-interface SubsidyDetail {
-  id: string
-  name: string
-  type: string
-  nationalId: string
-  units: string
-  unitPrice: string
+interface Props {
+  farmId: string
 }
 
-interface Subsidy {
-  id: string
-  date: string
-  taxYear: string
-  agreement: string
-  amount: number
-  deduction: number
-  paidOut: number
-  subsidyDetails: SubsidyDetail[]
-}
-
-// Mock data - TODO: Replace with GraphQL query when API is ready
-const mockSubsidies: Subsidy[] = [
-  {
-    id: '1',
-    date: '29.01.2023',
-    taxYear: '2023',
-    agreement: 'Nautgriparækt',
-    amount: 310826,
-    deduction: 0,
-    paidOut: 310826,
-    subsidyDetails: [
-      {
-        id: '1-1',
-        name: 'Keldurdalur ehf.',
-        type: 'Jarðræktarstyrkur - Sprettgreiðslur',
-        nationalId: '570196-2359',
-        units: '28,8',
-        unitPrice: '22.080',
-      },
-      {
-        id: '1-2',
-        name: 'Keldurdalur ehf.',
-        type: 'Framleiðslustyrkur',
-        nationalId: '570196-2359',
-        units: '150',
-        unitPrice: '1.250',
-      },
-      {
-        id: '1-3',
-        name: 'Keldurdalur ehf.',
-        type: 'Gæðastýring',
-        nationalId: '570196-2359',
-        units: '12',
-        unitPrice: '4.500',
-      },
-    ],
-  },
-  {
-    id: '2',
-    date: '15.03.2023',
-    taxYear: '2023',
-    agreement: 'Sauðfé',
-    amount: 245000,
-    deduction: -12500,
-    paidOut: 232500,
-    subsidyDetails: [
-      {
-        id: '2-1',
-        name: 'Jón Jónsson',
-        type: 'Sauðfjárstyrkur',
-        nationalId: '040393-2359',
-        units: '200',
-        unitPrice: '1.000',
-      },
-      {
-        id: '2-2',
-        name: 'Jón Jónsson',
-        type: 'Beitarstyrkur',
-        nationalId: '040393-2359',
-        units: '45',
-        unitPrice: '1.000',
-      },
-    ],
-  },
-  {
-    id: '3',
-    date: '20.06.2022',
-    taxYear: '2022',
-    agreement: 'Nautgriparækt',
-    amount: 289450,
-    deduction: 0,
-    paidOut: 289450,
-    subsidyDetails: [
-      {
-        id: '3-1',
-        name: 'Keldurdalur ehf.',
-        type: 'Framleiðslustyrkur',
-        nationalId: '570196-2359',
-        units: '140',
-        unitPrice: '1.200',
-      },
-      {
-        id: '3-2',
-        name: 'Keldurdalur ehf.',
-        type: 'Umhverfisstyrkur',
-        nationalId: '570196-2359',
-        units: '80',
-        unitPrice: '1.500',
-      },
-    ],
-  },
-  {
-    id: '4',
-    date: '10.02.2022',
-    taxYear: '2022',
-    agreement: 'Umhverfisstyrkur',
-    amount: 150000,
-    deduction: -7500,
-    paidOut: 142500,
-    subsidyDetails: [
-      {
-        id: '4-1',
-        name: 'Jón Jónsson',
-        type: 'Kolefnisjöfnun',
-        nationalId: '040393-2359',
-        units: '100',
-        unitPrice: '1.500',
-      },
-    ],
-  },
-  {
-    id: '5',
-    date: '05.12.2021',
-    taxYear: '2021',
-    agreement: 'Gæðastýring',
-    amount: 180000,
-    deduction: 0,
-    paidOut: 180000,
-    subsidyDetails: [
-      {
-        id: '5-1',
-        name: 'Keldurdalur ehf.',
-        type: 'Gæðastýring í mjólkurframleiðslu',
-        nationalId: '570196-2359',
-        units: '120',
-        unitPrice: '1.500',
-      },
-    ],
-  },
-]
-
-const formatNumber = (value: number): string => {
+const formatISK = (value?: number | null): string => {
+  if (value == null) return ''
   return new Intl.NumberFormat('is-IS').format(value)
 }
 
-export const Subsidies = () => {
-  useNamespaces('sp.farmer-lands')
+const DetailCell = ({
+  children,
+  label,
+  white,
+  gap,
+  span = 1,
+}: {
+  children?: React.ReactNode
+  label?: boolean
+  white?: boolean
+  gap?: boolean
+  span?: number
+}) => (
+  <Box
+    style={{ gridColumn: `span ${span}`, marginLeft: gap ? 16 : undefined }}
+    background={white ? 'white' : undefined}
+    paddingX={3}
+    paddingY={2}
+  >
+    {children && (
+      <Text variant="small" fontWeight={label ? 'semiBold' : 'regular'}>
+        {children}
+      </Text>
+    )}
+  </Box>
+)
+
+const DetailRow = ({ children }: { children: React.ReactNode }) => (
+  <Box style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr' }}>
+    {children}
+  </Box>
+)
+
+export const Subsidies = ({ farmId }: Props) => {
   const { formatMessage } = useLocale()
+  const [cursor, setCursor] = useState<string | undefined>(undefined)
 
-  // TODO: Replace with actual query when API is ready
-  // const { data, loading, error } = useSubsidiesQuery()
-  const loading = false
-  const error = null
+  const { data, loading, error } = useFarmerLandSubsidiesQuery({
+    variables: { input: { farmId, after: cursor } },
+  })
 
-  const tableData = useMemo(() => mockSubsidies, [])
+  const pageInfo = data?.farmerLandSubsidies?.pageInfo
+  const subsidies = useMemo(() => data?.farmerLandSubsidies?.data ?? [], [data])
 
-  const columns = useMemo<Column<Subsidy>[]>(
+  const columns = useMemo<Column<FarmerLandSubsidy>[]>(
     () => [
       {
-        Header: 'Dagsetning',
-        accessor: 'date',
+        Header: formatMessage(fm.subsidyDate),
+        accessor: 'paymentDate',
+        sortType: 'basic',
+        Cell: ({ value }) =>
+          value ? new Date(value).toLocaleDateString('is-IS') : '',
+      },
+      {
+        Header: formatMessage(fm.subsidyContract),
+        accessor: 'contract',
         sortType: 'basic',
       },
       {
-        Header: 'Skattár',
-        accessor: 'taxYear',
-        sortType: 'basic',
-      },
-      {
-        Header: 'Samningur',
-        accessor: 'agreement',
-        sortType: 'basic',
-      },
-      {
-        Header: 'Upphæð',
-        accessor: 'amount',
+        Header: formatMessage(fm.subsidyGrossAmount),
+        accessor: 'grossAmount',
         sortType: 'alphanumeric',
-        Cell: ({ value }) => formatNumber(value),
+        Cell: ({ value }) => formatISK(value),
       },
       {
-        Header: 'Skuldajöf.',
-        accessor: 'deduction',
+        Header: formatMessage(fm.subsidyOffset),
+        accessor: 'offset',
         sortType: 'alphanumeric',
-        Cell: ({ value }) => (value !== 0 ? formatNumber(value) : '0'),
+        Cell: ({ value }) => formatISK(value ?? 0),
       },
       {
-        Header: 'Útborgað',
-        accessor: 'paidOut',
+        Header: formatMessage(fm.subsidyNetPaid),
+        accessor: 'netPaid',
         sortType: 'alphanumeric',
-        Cell: ({ value }) => formatNumber(value),
+        Cell: ({ value }) => formatISK(value),
       },
     ],
-    [],
+    [formatMessage],
   )
 
-  const renderExpandedRow = (row: Row<Subsidy>) => {
-    return (
-      <T.Table>
-        <T.Head>
-          <T.Row>
-            <T.HeadData>Nafn</T.HeadData>
-            <T.HeadData>Tegund</T.HeadData>
-            <T.HeadData>Kennitala</T.HeadData>
-            <T.HeadData>Eining</T.HeadData>
-            <T.HeadData>Einingaverð</T.HeadData>
-          </T.Row>
-        </T.Head>
-        <T.Body>
-          {row.original.subsidyDetails.map((detail) => (
-            <T.Row key={detail.id}>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">{detail.name}</Text>
-              </T.Data>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">{detail.type}</Text>
-              </T.Data>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">{detail.nationalId}</Text>
-              </T.Data>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">{detail.units}</Text>
-              </T.Data>
-              <T.Data box={{ background: 'white' }}>
-                <Text variant="small">{detail.unitPrice}</Text>
-              </T.Data>
-            </T.Row>
-          ))}
-        </T.Body>
-      </T.Table>
-    )
-  }
+  const renderExpandedRow = (row: Row<FarmerLandSubsidy>) => (
+    <>
+      <DetailRow>
+        <DetailCell label white>
+          {formatMessage(fm.subsidyName)}
+        </DetailCell>
+        <DetailCell white>{row.original.name}</DetailCell>
+        <DetailCell label white gap>
+          {formatMessage(fm.subsidyNationalId)}
+        </DetailCell>
+        <DetailCell white>
+          {formatNationalId(row.original.nationalId ?? '')}
+        </DetailCell>
+      </DetailRow>
+      <DetailRow>
+        <DetailCell label>{formatMessage(fm.subsidyUnits)}</DetailCell>
+        <DetailCell>
+          {row.original.units != null ? String(row.original.units) : ''}
+        </DetailCell>
+        <DetailCell label gap>
+          {formatMessage(fm.subsidyUnitPrice)}
+        </DetailCell>
+        <DetailCell>
+          {row.original.unitPrice != null
+            ? `${formatISK(row.original.unitPrice)} kr.`
+            : ''}
+        </DetailCell>
+      </DetailRow>
+      <DetailRow>
+        <DetailCell label white>
+          {formatMessage(fm.subsidyCategory)}
+        </DetailCell>
+        <DetailCell white span={3}>
+          {row.original.paymentCategory}
+        </DetailCell>
+      </DetailRow>
+    </>
+  )
 
   return (
-    <Box width="full" rowGap={3} marginTop={6}>
-      <Box display="flex" alignItems="flexEnd" marginBottom={3}>
-        <Button
-          size="small"
-          variant="utility"
-          name="Sækja"
-          title="Sækja"
-          icon="download"
-          iconType="outline"
-        >
-          Sækja
-        </Button>
-      </Box>
+    <Box marginTop={4}>
       <FarmerLandsTable
         columns={columns}
-        data={tableData}
+        data={subsidies}
         loading={loading}
-        error={!!error}
-        emptyMessage="Engir styrkir fundust"
-        errorMessage="Villa kom upp við að sækja styrki"
+        error={error}
+        emptyMessage={formatMessage(m.noData)}
         renderExpandedRow={renderExpandedRow}
       />
+      {(pageInfo?.hasPreviousPage || pageInfo?.hasNextPage) && (
+        <Box display="flex" justifyContent="spaceBetween" marginTop={3}>
+          <Button
+            variant="utility"
+            icon="arrowBack"
+            iconType="outline"
+            disabled={!pageInfo?.hasPreviousPage}
+            onClick={() => setCursor(pageInfo?.startCursor ?? undefined)}
+          >
+            {formatMessage(fm.subsidyPrevPage)}
+          </Button>
+          <Button
+            variant="utility"
+            icon="arrowForward"
+            iconType="outline"
+            disabled={!pageInfo?.hasNextPage}
+            onClick={() => setCursor(pageInfo?.endCursor ?? undefined)}
+          >
+            {formatMessage(fm.subsidyNextPage)}
+          </Button>
+        </Box>
+      )}
     </Box>
   )
 }

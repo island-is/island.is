@@ -1591,6 +1591,15 @@ export const m = defineMessages({
     defaultMessage:
       'Íslendingar eru sjálfkrafa skráðir líffæragjafar. Þau sem vilja geta breytt afstöðu sinni.',
   },
+  farmerLands: {
+    id: 'service.portal:farmer-lands',
+    defaultMessage: 'Jarðabók',
+  },
+  farmerLandsIntro: {
+    id: 'service.portal:farmer-lands-intro',
+    defaultMessage:
+      'Hér getur þú skoðað yfirlit yfir bújarðir þínar og tengdar upplýsingar.',
+  },
   workMachines: {
     id: 'service.portal:work-machines',
     defaultMessage: 'Vinnuvélar',

@@ -6,6 +6,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql'
+import { FarmerLandSubsidiesInput } from './models/farmerLandSubsidiesInput.model'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
   IdsUserGuard,
@@ -23,6 +24,7 @@ import {
 } from '@island.is/nest/feature-flags'
 
 import { FarmerLand } from './models/farmerLand.model'
+import { FarmerLandSubsidiesCollection } from './models/farmerLandSubsidiesCollection.model'
 import { LandsCollection } from './models/farmerLandsCollection.model'
 import { LandBeneficiary } from './models/landBeneficiary.model'
 import { LandRegistryEntry } from './models/landRegistryEntry.model'
@@ -47,6 +49,18 @@ export class FarmersResolver {
     @Args('id', { type: () => ID }) id: string,
   ): Promise<FarmerLand | null> {
     return this.farmersService.getLand(user, id)
+  }
+
+  @Query(() => FarmerLandSubsidiesCollection, {
+    name: 'farmerLandSubsidies',
+    nullable: true,
+  })
+  async getFarmerLandSubsidies(
+    @CurrentUser() user: User,
+    @Args('input', { type: () => FarmerLandSubsidiesInput })
+    input: FarmerLandSubsidiesInput,
+  ): Promise<FarmerLandSubsidiesCollection> {
+    return this.farmersService.getSubsidies(user, input.farmId, input.after)
   }
 
   @ResolveField('beneficiaries', () => [LandBeneficiary], { nullable: true })

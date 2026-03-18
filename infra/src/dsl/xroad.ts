@@ -238,7 +238,7 @@ export const Finance = new XroadConf({
 export const Farmers = new XroadConf({
   env: {
     XROAD_FARMERS_PATH: {
-      dev: 'IS-DEV/GOV/10000/Farmers-Protected/FarmersApi-v1',
+      dev: 'IS-DEV/GOV/10094/Afurd-Private/baendur-v1',
       staging: 'TODO',
       prod: 'TODO',
     },

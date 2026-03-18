@@ -41,7 +41,7 @@ async getFarms(user: User) {
 
 The client requires the following environment variables:
 
-- `XROAD_FARMERS_PATH`: X-Road service path (default: `IS-DEV/GOV/10000/Farmers-Protected/FarmersApi-v1`)
+- `XROAD_FARMERS_PATH`: X-Road service path (default: `IS-DEV/GOV/10094/Afurd-Private/baendur-v1`)
 
 ## Running unit tests
 

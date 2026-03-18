@@ -182,7 +182,7 @@ export const farmerLandsMessages = defineMessages({
   description: {
     id: 'sp.farmer-lands:description',
     defaultMessage:
-      'Lorem ipsum dolor sit amet consectetur. Arcu accumsan elit quis consequat ac leo mauris urna vitae.',
+      'Hér getur þú skoðað yfirlit yfir bújarðir þínar og tengdar upplýsingar.',
   },
   farmNumber: {
     id: 'sp.farmer-lands:farm-number',
@@ -256,6 +256,10 @@ export const farmerLandsMessages = defineMessages({
     id: 'sp.farmer-lands:land-registry-entry',
     defaultMessage: 'Jarðaskrá',
   },
+  landRegistryNationalId: {
+    id: 'sp.farmer-lands:land-registry-national-id',
+    defaultMessage: 'Kennitala',
+  },
   ownershipType: {
     id: 'sp.farmer-lands:ownership-type',
     defaultMessage: 'Tegund eignar',
@@ -263,6 +267,60 @@ export const farmerLandsMessages = defineMessages({
   usage: {
     id: 'sp.farmer-lands:usage',
     defaultMessage: 'Notkun matshluta',
+  },
+  // Subsidies pagination
+  subsidyPrevPage: {
+    id: 'sp.farmer-lands:subsidy-prev-page',
+    defaultMessage: 'Fyrri síða',
+  },
+  subsidyNextPage: {
+    id: 'sp.farmer-lands:subsidy-next-page',
+    defaultMessage: 'Næsta síða',
+  },
+  // Subsidies columns
+  subsidyDate: {
+    id: 'sp.farmer-lands:subsidy-date',
+    defaultMessage: 'Dagsetning',
+  },
+  subsidyContract: {
+    id: 'sp.farmer-lands:subsidy-contract',
+    defaultMessage: 'Samningur',
+  },
+  subsidyCategory: {
+    id: 'sp.farmer-lands:subsidy-category',
+    defaultMessage: 'Tegund',
+  },
+  subsidyGrossAmount: {
+    id: 'sp.farmer-lands:subsidy-gross-amount',
+    defaultMessage: 'Upphæð',
+  },
+  subsidyOffset: {
+    id: 'sp.farmer-lands:subsidy-offset',
+    defaultMessage: 'Skuldajöf.',
+  },
+  subsidyNetPaid: {
+    id: 'sp.farmer-lands:subsidy-net-paid',
+    defaultMessage: 'Útborgað',
+  },
+  subsidyName: {
+    id: 'sp.farmer-lands:subsidy-name',
+    defaultMessage: 'Nafn',
+  },
+  subsidyNationalId: {
+    id: 'sp.farmer-lands:subsidy-national-id',
+    defaultMessage: 'Kennitala',
+  },
+  subsidyUnits: {
+    id: 'sp.farmer-lands:subsidy-units',
+    defaultMessage: 'Eining',
+  },
+  subsidyUnitPrice: {
+    id: 'sp.farmer-lands:subsidy-unit-price',
+    defaultMessage: 'Einingaverð',
+  },
+  noFarmerLands: {
+    id: 'sp.farmer-lands:no-farmer-lands',
+    defaultMessage: 'Engar jarðir fundust',
   },
 })
 

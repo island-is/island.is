@@ -1,7 +1,6 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m, searchTagsMessages as s } from '@island.is/portals/my-pages/core'
 import { AssetsPaths } from './paths'
-import { farmerLandsMessages } from './messages'
 
 export const assetsNavigation: PortalNavigationItem = {
   name: m.assets,
@@ -124,8 +123,8 @@ export const assetsNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: farmerLandsMessages.title,
-      description: farmerLandsMessages.description,
+      name: m.farmerLands,
+      description: m.farmerLandsIntro,
       path: AssetsPaths.AssetsFarmerLands,
       children: [
         {
