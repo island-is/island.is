@@ -510,7 +510,7 @@ api:
     min: 1
   resources:
     limits:
-      cpu: '1200m'
+      cpu: '3000m'
       memory: '2500Mi'
     requests:
       cpu: '900m'
@@ -2405,6 +2405,7 @@ regulations-admin-backend:
   grantNamespaces:
     - 'islandis'
     - 'download-service'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2433,7 +2434,7 @@ regulations-admin-backend:
       hosts:
         - host: 'regulations-admin-backend-xrd.internal.dev01.devland.is'
           paths:
-            - '/'
+            - '/api'
   initContainer:
     containers:
       - args:
@@ -3582,9 +3583,9 @@ services-payments-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-payments'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-payments-worker'
     create: true
-    name: 'services-payments'
+    name: 'services-payments-worker'
 services-sessions:
   enabled: true
   env:
@@ -4744,7 +4745,7 @@ web:
     min: 1
   resources:
     limits:
-      cpu: '1800m'
+      cpu: '3000m'
       memory: '1500Mi'
     requests:
       cpu: '1200m'

@@ -60,7 +60,7 @@ const LandingPage = ({ organization, namespace }: LandingPageProps) => {
 
   const o = useNamespace(organizationNamespace)
   useContentfulId(organization?.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('organizationpage')
 
   const { linkResolver } = useLinkResolver()
 
