@@ -16,7 +16,7 @@ import { useLocale } from '@/hooks/use-locale'
 import { VaccinationsCard } from '../../../../components/vaccination-card'
 import { testIDs } from '@/utils/test-ids'
 
-const Host = styled(SafeAreaView)`
+const Host = styled.View`
   margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
   margin-bottom: ${({ theme }) => theme.spacing[4]}px;
 `
@@ -65,27 +65,20 @@ export default function VaccinationsScreen() {
   }, [vaccinationsRes])
 
   return (
-    <View style={{ flex: 1 }} testID={testIDs.SCREEN_VACCINATIONS}>
+    <ScrollView
+      testID={testIDs.SCREEN_VACCINATIONS}
+      refreshControl={
+        <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+      }
+      style={{ flex: 1 }}
+    >
       <StackScreen
         networkStatus={vaccinationsRes.networkStatus}
         options={{
           title: intl.formatMessage({ id: 'health.vaccinations.screenTitle' }),
         }}
       />
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
-        }
-        style={{ flex: 1 }}
-      >
-        <Host>
-          <SafeAreaView style={{ marginHorizontal: 16}}>
-          <Heading>
-            <FormattedMessage
-              id="health.vaccinations.title"
-              defaultMessage="Bólusetningar"
-            />
-          </Heading>
+      <Host>
           <Typography>
             <FormattedMessage
               id="health.vaccinations.description"
@@ -112,30 +105,28 @@ export default function VaccinationsScreen() {
               />
             </Tabs>
           )}
-          </SafeAreaView>
-          {!vaccinationsRes.error && (
-            <Vaccinations>
-              {vaccinationsRes.loading && !vaccinationsRes.data
-                ? Array.from({ length: 5 }).map((_, index) => (
-                    <GeneralCardSkeleton height={90} key={index} />
-                  ))
-                : vaccinations.map((vaccination, index) => (
-                    <VaccinationsCard
-                      key={`${vaccination?.id}-${index}`}
-                      vaccination={vaccination}
-                      loading={vaccinationsRes.loading && !vaccinationsRes.data}
-                      componentId="vaccinations"
-                    />
-                  ))}
-            </Vaccinations>
-          )}
-          {vaccinationsRes.error && !vaccinationsRes.data && (
-            <ErrorWrapper>
-              <Problem />
-            </ErrorWrapper>
-          )}
-        </Host>
-      </ScrollView>
-    </View>
+        {!vaccinationsRes.error && (
+          <Vaccinations>
+            {vaccinationsRes.loading && !vaccinationsRes.data
+              ? Array.from({ length: 5 }).map((_, index) => (
+                  <GeneralCardSkeleton height={90} key={index} />
+                ))
+              : vaccinations.map((vaccination, index) => (
+                  <VaccinationsCard
+                    key={`${vaccination?.id}-${index}`}
+                    vaccination={vaccination}
+                    loading={vaccinationsRes.loading && !vaccinationsRes.data}
+                    componentId="vaccinations"
+                  />
+                ))}
+          </Vaccinations>
+        )}
+        {vaccinationsRes.error && !vaccinationsRes.data && (
+          <ErrorWrapper>
+            <Problem />
+          </ErrorWrapper>
+        )}
+      </Host>
+    </ScrollView>
   )
 }

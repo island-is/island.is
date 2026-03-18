@@ -47,6 +47,7 @@ import {
 import { AppointmentCard } from '../../../../components/appointment-card'
 import { StackScreen } from '../../../../components/stack-screen'
 import { testIDs } from '@/utils/test-ids'
+import { MedicineHistoryCard } from '../../../../components/medicine-history-card'
 
 const Row = styled.View`
   margin-vertical: ${({ theme }) => theme.spacing.smallGutter}px;
@@ -221,17 +222,24 @@ export default function HealthOverviewScreen() {
 
   const now = useMemo(() => new Date().toISOString(), [])
 
+  const isMedicineEnabled =
+    isPrescriptionsEnabled || isMedicineDelegationEnabled
+
   const healthCardRows = useMemo(() => {
     const allHealthCards: HealthCard[] = [
       {
-        id: 'medicine',
-        titleId:
-          !isPrescriptionsEnabled && !isMedicineDelegationEnabled
-            ? 'health.drugCertificates.title'
-            : 'health.overview.medicine',
+        id: 'prescriptions',
+        titleId: 'health.prescriptions.title',
         icon: medicineIcon,
         route: '/health/medicine/prescriptions',
-        enabled: true,
+        enabled: !isMedicineEnabled,
+      },
+      {
+        id: 'medicine',
+        titleId: 'health.overview.medicine',
+        icon: medicineIcon,
+        route: '/health/medicine',
+        enabled: !!isMedicineEnabled,
       },
       {
         id: 'questionnaires',
@@ -444,7 +452,9 @@ export default function HealthOverviewScreen() {
                   small
                   filled={card.filled}
                   style={{ flex: 0, width: cardWidth }}
-                  {...(card.id === 'vaccinations' ? { testID: testIDs.BUTTON_VACCINATIONS } : {})}
+                  {...(card.id === 'vaccinations'
+                    ? { testID: testIDs.BUTTON_VACCINATIONS }
+                    : {})}
                 />
               ))}
             </Row>

@@ -49,8 +49,8 @@ export function MedicineHistoryCard({ medicine }: MedicineHistoryCardProps) {
   const intl = useIntl()
   const handlePress = useCallback(() => {
     router.navigate({
-      pathname: '/prescriptions/medicine-history',
-      params: { medicine },
+      pathname: 'health/medicine/prescriptions/history/[id]',
+      params: { id: medicine.atcCode },
     } as any)
   }, [medicine])
 

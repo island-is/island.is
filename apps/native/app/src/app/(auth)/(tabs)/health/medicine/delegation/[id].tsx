@@ -7,15 +7,12 @@ import trashIcon from '@/assets/icons/trash.png'
 
 import { Button, NavigationBarSheet, Typography } from '@/ui'
 import { useDeleteMedicineDelegationMutation } from '@/graphql/types/schema'
-
-const Host = styled(SafeAreaView)`
-  flex: 1;
-  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
-  padding-bottom: ${({ theme }) => theme.spacing[4]}px;
-`
+import { StackScreen } from '../../../../../../components/stack-screen'
 
 const Content = styled(ScrollView)`
   flex: 1;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[4]}px;
 `
 
 const Row = styled.View`
@@ -187,43 +184,44 @@ export default function MedicineDelegationDetailScreen() {
   ]
 
   return (
-    <Host>
-      <Stack.Screen options={{ headerShown: false }} />
-      <Content>
-        <NavigationBarSheet
-          componentId="delegation-detail"
-          title={delegation?.name}
-          onClosePress={close}
-          style={{ marginBottom: 16 }}
-        />
-        <Button
-          loading={loadingRevokeMedicineDelegation}
-          title={intl.formatMessage({
-            id: 'health.medicineDelegation.detail.revoke',
-          })}
-          onPress={confirmRevoke}
-          isUtilityButton
-          isOutlined
-          icon={trashIcon}
-          style={{ alignSelf: 'flex-start' }}
-          disabled={loadingRevokeMedicineDelegation}
-        />
+    <Content>
+      <StackScreen
+        options={{
+          title:
+            delegation?.name ??
+            intl.formatMessage({
+              id: 'health.medicineDelegation.screenTitle',
+            }),
+        }}
+        closeable
+      />
+      <Button
+        loading={loadingRevokeMedicineDelegation}
+        title={intl.formatMessage({
+          id: 'health.medicineDelegation.detail.revoke',
+        })}
+        onPress={confirmRevoke}
+        isUtilityButton
+        isOutlined
+        icon={trashIcon}
+        style={{ alignSelf: 'flex-start' }}
+        disabled={loadingRevokeMedicineDelegation}
+      />
 
-        {revokeError && (
-          <ErrorMessage variant="body3">{revokeError}</ErrorMessage>
-        )}
+      {revokeError && (
+        <ErrorMessage variant="body3">{revokeError}</ErrorMessage>
+      )}
 
-        {data.map((item) => (
-          <Row key={item.label}>
-            <RowContent>
-              <Typography variant="body3" style={{ marginBottom: 4 }}>
-                {item.label}
-              </Typography>
-              <Typography variant="heading5">{item.value}</Typography>
-            </RowContent>
-          </Row>
-        ))}
-      </Content>
-    </Host>
+      {data.map((item) => (
+        <Row key={item.label}>
+          <RowContent>
+            <Typography variant="body3" style={{ marginBottom: 4 }}>
+              {item.label}
+            </Typography>
+            <Typography variant="heading5">{item.value}</Typography>
+          </RowContent>
+        </Row>
+      ))}
+    </Content>
   )
 }

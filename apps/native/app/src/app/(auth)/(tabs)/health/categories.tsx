@@ -13,10 +13,6 @@ import { getConfig } from '@/config'
 import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { Href } from 'expo-router'
 
-const Container = styled.View`
-  flex: 1;
-`
-
 const ContentContainer = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-bottom: ${({ theme }) => theme.spacing[4]}px;
@@ -79,22 +75,22 @@ export default function HealthCategoriesScreen() {
         isPrescriptionsEnabled && {
           id: 'prescriptions',
           titleId: 'health.prescriptions.title',
-          route: '/health/medicine/prescriptions',
+          route: '/health/medicine/?tab=prescriptions',
         },
         isMedicineDelegationEnabled && {
           id: 'medicineDelegation',
           titleId: 'health.medicineDelegation.screenTitle',
-          route: '/health/medicine/delegation',
+          route: '/health/medicine/?tab=medicineDelegation',
         },
         {
           id: 'drugCertificates',
           titleId: 'health.drugCertificates.title',
-          route: '/health/medicine/prescriptions',
+          route: '/health/medicine/?tab=drugCertificates',
         },
         isPrescriptionsEnabled && {
           id: 'medicineHistory',
           titleId: 'health.medicineHistory.title',
-          route: '/health/medicine/prescriptions/history',
+          route: '/health/medicine/?tab=medicineHistory',
         },
       ] as (Sublink | boolean)[]
     ).filter((v): v is Sublink => !!v)
@@ -106,14 +102,19 @@ export default function HealthCategoriesScreen() {
     return (
       [
         {
-          id: 'medicine',
-          titleId: !isMedicineEnabled
-            ? 'health.drugCertificates.title'
-            : 'health.overview.medicine',
+          id: 'prescriptions',
+          titleId: 'health.drugCertificates.title',
           icon: medicineIcon,
           route: '/health/medicine/prescriptions',
-          enabled: true,
-          subLinks: isMedicineEnabled ? medicineSubLinks : [],
+          enabled: !isMedicineEnabled,
+        },
+        {
+          id: 'medicine',
+          titleId: 'health.overview.medicine',
+          icon: medicineIcon,
+          route: '/health/medicine',
+          enabled: !!isMedicineEnabled,
+          subLinks: medicineSubLinks,
         },
         {
           id: 'appointments',
@@ -175,7 +176,7 @@ export default function HealthCategoriesScreen() {
   ]
 
   return (
-    <ScrollView style={{flex: 1}}>
+    <ScrollView style={{ flex: 1 }}>
       <ContentContainer>
         <CategoriesContainer>
           {healthCardRows.map((hc) => (

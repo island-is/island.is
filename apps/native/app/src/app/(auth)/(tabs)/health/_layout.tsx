@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router'
 import { useIntl } from 'react-intl'
-import { tabScreenOptions } from '@/constants/screen-options'
+import { modalScreenOptions, tabScreenOptions } from '@/constants/screen-options'
 
 export default function HealthLayout() {
   const intl = useIntl()
@@ -60,14 +60,21 @@ export default function HealthLayout() {
         }}
       />
       <Stack.Screen
+        name="medicine/index"
+        options={{
+          title: intl.formatMessage({ id: 'health.prescriptionsAndCertificates.screenTitle' }),
+        }}
+      />
+      <Stack.Screen
         name="medicine/prescriptions/index"
         options={{
           title: intl.formatMessage({ id: 'health.drugCertificates.title' }),
         }}
       />
       <Stack.Screen
-        name="medicine/prescriptions/history"
+        name="medicine/prescriptions/history/[id]"
         options={{
+          ...modalScreenOptions,
           title: intl.formatMessage({ id: 'health.medicineHistory.title' }),
         }}
       />
@@ -82,19 +89,19 @@ export default function HealthLayout() {
       <Stack.Screen
         name="medicine/delegation/add"
         options={{
+          ...modalScreenOptions,
           title: intl.formatMessage({
             id: 'health.medicineDelegation.form.title',
           }),
-          presentation: 'formSheet',
         }}
       />
       <Stack.Screen
         name="medicine/delegation/[id]"
         options={{
+          ...modalScreenOptions,
           title: intl.formatMessage({
             id: 'health.medicineDelegation.screenTitle',
           }),
-          presentation: 'formSheet',
         }}
       />
     </Stack>

@@ -73,7 +73,7 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
     if (networkError.name === 'ServerParseError') {
       const parseError = networkError as ServerParseError
       const isCognitoLogin = parseError.bodyText.includes('cognito-login.css')
-      const isCognitoRedirect = parseError?.response?.url?.includes('cognito');
+      const isCognitoRedirect = parseError?.response?.url?.includes('cognito')
       const redirectUrl = cognitoAuthUrl()
       if (isCognitoLogin || isCognitoRedirect) {
         getAuthStoreRef().setState({ cognitoAuthUrl: redirectUrl })
@@ -83,11 +83,13 @@ const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
           !cognitoBrowserOpen
         ) {
           cognitoBrowserOpen = true
-          WebBrowser.openBrowserAsync(redirectUrl).finally(() => {
-            cognitoBrowserOpen = false
-          })
+          WebBrowser.openBrowserAsync(redirectUrl)
+            .finally(() => {
+              cognitoBrowserOpen = false
+            })
+            .catch(() => void 0)
         }
-        return;
+        return
       }
     }
     console.log(`[Network error]: ${networkError}`)

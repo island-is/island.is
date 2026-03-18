@@ -47,8 +47,12 @@ const routes: Record<
   '/minarsidur/heilsa/grunnupplysingar/yfirlit': '/health',
   '/minarsidur/heilsa/bolusetningar': '/health/vaccinations',
   '/minarsidur/heilsa/spurningalistar': '/health/questionnaires',
+  '/minarsidur/heilsa/lyf': '/health/medicine',
   '/minarsidur/heilsa/lyf/lyfjaskirteini': '/health/medicine/prescriptions',
-  '/minarsidur/heilsa/lyf/lyfjasaga': '/health/medicine/prescriptions/history',
+  '/minarsidur/heilsa/lyf/lyfjasaga/:id': ({ id }) => ({
+    pathname: '/health/medicine/prescriptions/history/[id]',
+    params: { id: id as string },
+  }),
   '/minarsidur/heilsa/lyf/lyfjaumbod': '/health/medicine/delegation',
   '/minarsidur/heilsa/lyf/lyfjaumbod/nytt-lyfjaumbod':
     '/health/medicine/delegation/new',
@@ -152,10 +156,12 @@ export async function navigateToUniversalLink({
 
   // No matching native route — open in browser
   try {
-    await WebBrowser.openBrowserAsync(link, {
-      presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
-    })
+    if (link.startsWith('http')) {
+      await WebBrowser.openBrowserAsync(link, {
+        presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
+      })
+    }
   } catch (error) {
-    console.log('Failed to open link in browser', error)
+    console.log('Failed to open link in browser', { link, error })
   }
 }

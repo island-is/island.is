@@ -1,7 +1,7 @@
 import * as kennitala from 'kennitala'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView, View } from 'react-native'
+import { SafeAreaView, ScrollView, View } from 'react-native'
 import { router, Stack } from 'expo-router'
 import styled from 'styled-components/native'
 
@@ -20,6 +20,7 @@ import {
   TextField,
   Typography,
 } from '@/ui'
+import { StackScreen } from '../../../../../../components/stack-screen'
 
 const Host = styled(View)`
   flex: 1;
@@ -222,125 +223,122 @@ export default function MedicineDelegationFormScreen() {
   }
 
   return (
-    <Host>
-      <Stack.Screen options={{ headerShown: false }} />
-      <NavigationBarWrapper>
-        <NavigationBarSheet
-          componentId="delegation-add"
-          title={intl.formatMessage({
-            id: 'health.medicineDelegation.form.title',
-          })}
-          onClosePress={close}
-        />
-      </NavigationBarWrapper>
-      <Content
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{
-          justifyContent: 'space-between',
-          flex: 1,
+    <Content
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={{
+        justifyContent: 'space-between',
+        flex: 1,
+      }}
+      style={{ flex: 1 }}
+    >
+      <StackScreen
+        options={{
+          title: intl.formatMessage({
+            id: 'health.medicineDelegation.screenTitle',
+          }),
         }}
-      >
-        <FormContainer>
-          <View>
-            <Header>
-              <Typography variant="heading5">
-                {intl.formatMessage({
-                  id: 'health.medicineDelegation.form.subtitle',
-                })}
-              </Typography>
-            </Header>
-            <Fields>
-              <TextField
-                label={intl.formatMessage({
-                  id: 'health.medicineDelegation.form.nationalIdLabel',
-                })}
-                value={nationalId}
-                onChange={changeNationalId}
-                keyboardType="number-pad"
-                maxLength={10}
-                inputMode="numeric"
-                loading={loadingNames}
-                errorMessage={nameError}
-              />
-              <NameField
-                readOnly={true}
-                label={intl.formatMessage({
-                  id: 'health.medicineDelegation.form.nameLabel',
-                })}
-                value={name}
-                editable={false}
-              />
-            </Fields>
-            <Checkbox
-              label={intl.formatMessage({
-                id: 'health.medicineDelegation.form.lookupLabel',
-              })}
-              checked={lookup}
-              onPress={() => setLookup((prev) => !prev)}
-              borderBottom={false}
-            />
-            <ValidityHeading variant="heading5">
+        closeable
+      />
+      <FormContainer>
+        <View>
+          <Header>
+            <Typography variant="heading5">
               {intl.formatMessage({
-                id: 'health.medicineDelegation.form.validityLabel',
+                id: 'health.medicineDelegation.form.subtitle',
               })}
-            </ValidityHeading>
-            <Fields>
-              <QuickLabelsContainer>
-                {quickLabels.map((label) => (
-                  <QuickLabel key={label.value}>
-                    <Tag
-                      title={getQuickLabels(label.value, label.type)}
-                      onPress={() => {
-                        setDateTo(getQuickSelectDate(label.value, label.type))
-                      }}
-                      active={
-                        dateTo?.getTime() ===
-                        getQuickSelectDate(label.value, label.type)?.getTime()
-                      }
-                    />
-                  </QuickLabel>
-                ))}
-              </QuickLabelsContainer>
-              <DatePickerInput
-                label={intl.formatMessage({
-                  id: 'health.medicineDelegation.form.dateFromLabel',
-                })}
-                placeholder={intl.formatMessage({
-                  id: 'health.medicineDelegation.form.dateFromPlaceholder',
-                })}
-                minimumDate={new Date()}
-                selectedDate={dateFrom}
-                onSelectDate={setDateFrom}
-              />
-              <DatePickerInput
-                label={intl.formatMessage({
-                  id: 'health.medicineDelegation.form.dateToLabel',
-                })}
-                placeholder={intl.formatMessage({
-                  id: 'health.medicineDelegation.form.dateToPlaceholder',
-                })}
-                minimumDate={dateFrom ?? new Date()}
-                selectedDate={dateTo}
-                onSelectDate={setDateTo}
-              />
-            </Fields>
-            {delegateError && (
-              <ErrorMessage variant="body3">{delegateError}</ErrorMessage>
-            )}
-          </View>
-
-          <Actions>
-            <Button
-              title={intl.formatMessage({
-                id: 'health.medicineDelegation.form.submit',
+            </Typography>
+          </Header>
+          <Fields>
+            <TextField
+              label={intl.formatMessage({
+                id: 'health.medicineDelegation.form.nationalIdLabel',
               })}
-              onPress={createMedicineDelegation}
-              disabled={!isValid || loadingDelegateMedicineDelegation}
-              loading={loadingDelegateMedicineDelegation}
+              value={nationalId}
+              onChange={changeNationalId}
+              keyboardType="number-pad"
+              maxLength={10}
+              inputMode="numeric"
+              loading={loadingNames}
+              errorMessage={nameError}
             />
-          </Actions>
-        </FormContainer>
-      </Content>
-    </Host>
+            <NameField
+              readOnly={true}
+              label={intl.formatMessage({
+                id: 'health.medicineDelegation.form.nameLabel',
+              })}
+              value={name}
+              editable={false}
+            />
+          </Fields>
+          <Checkbox
+            label={intl.formatMessage({
+              id: 'health.medicineDelegation.form.lookupLabel',
+            })}
+            checked={lookup}
+            onPress={() => setLookup((prev) => !prev)}
+            borderBottom={false}
+          />
+          <ValidityHeading variant="heading5">
+            {intl.formatMessage({
+              id: 'health.medicineDelegation.form.validityLabel',
+            })}
+          </ValidityHeading>
+          <Fields>
+            <QuickLabelsContainer>
+              {quickLabels.map((label) => (
+                <QuickLabel key={label.value}>
+                  <Tag
+                    title={getQuickLabels(label.value, label.type)}
+                    onPress={() => {
+                      setDateTo(getQuickSelectDate(label.value, label.type))
+                    }}
+                    active={
+                      dateTo?.getTime() ===
+                      getQuickSelectDate(label.value, label.type)?.getTime()
+                    }
+                  />
+                </QuickLabel>
+              ))}
+            </QuickLabelsContainer>
+            <DatePickerInput
+              label={intl.formatMessage({
+                id: 'health.medicineDelegation.form.dateFromLabel',
+              })}
+              placeholder={intl.formatMessage({
+                id: 'health.medicineDelegation.form.dateFromPlaceholder',
+              })}
+              minimumDate={new Date()}
+              selectedDate={dateFrom}
+              onSelectDate={setDateFrom}
+            />
+            <DatePickerInput
+              label={intl.formatMessage({
+                id: 'health.medicineDelegation.form.dateToLabel',
+              })}
+              placeholder={intl.formatMessage({
+                id: 'health.medicineDelegation.form.dateToPlaceholder',
+              })}
+              minimumDate={dateFrom ?? new Date()}
+              selectedDate={dateTo}
+              onSelectDate={setDateTo}
+            />
+          </Fields>
+          {delegateError && (
+            <ErrorMessage variant="body3">{delegateError}</ErrorMessage>
+          )}
+        </View>
+
+        <Actions>
+          <Button
+            title={intl.formatMessage({
+              id: 'health.medicineDelegation.form.submit',
+            })}
+            onPress={createMedicineDelegation}
+            disabled={!isValid || loadingDelegateMedicineDelegation}
+            loading={loadingDelegateMedicineDelegation}
+          />
+        </Actions>
+      </FormContainer>
+    </Content>
   )
 }

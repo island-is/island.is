@@ -12,6 +12,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import cloudOfflineIcon from '../../assets/icons/cloud-offline-outline.png'
 import { LoadingIcon } from '../nav-loading-spinner/loading-icon'
 import { Pressable } from '../pressable/pressable'
+import { offlineStore } from '../../stores/offline-store'
 
 export const OfflineIcon = ({
   networkStatus,
@@ -31,6 +32,7 @@ export const OfflineIcon = ({
   );
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const loadingStartRef = useRef<number | null>(null)
   const [isLoading, setIsLoading] = useState(loading)
   const [showDebugMenu, setShowDebugMenu] = useState(false)
 
@@ -39,6 +41,8 @@ export const OfflineIcon = ({
   );
 
   const onOfflinePress = useCallback(() => {
+    // Show the offline modal
+    offlineStore.setState({ bannerVisible: true });
     void 0
   }, [])
 
@@ -46,12 +50,16 @@ export const OfflineIcon = ({
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
     }
-    if (isLoading && !loading) {
+    if (loading && !isLoading) {
+      loadingStartRef.current = Date.now()
+      setIsLoading(true)
+    } else if (isLoading && !loading) {
+      const elapsed = Date.now() - (loadingStartRef.current ?? 0)
+      const remaining = Math.max(0, 660 - elapsed)
       timeoutRef.current = setTimeout(() => {
         setIsLoading(false)
-      }, 1400)
-    } else {
-      setIsLoading(loading)
+        loadingStartRef.current = null
+      }, remaining)
     }
   }, [loading, isLoading])
 
