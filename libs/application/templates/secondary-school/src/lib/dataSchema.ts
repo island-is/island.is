@@ -110,6 +110,8 @@ const SelectionSchema = z
         nameEn: z.string().optional(),
         registrationEndDate: z.string().optional(),
         isSpecialNeedsProgram: z.boolean().optional(),
+        programApplicationMessageIs: z.string().optional(),
+        programApplicationMessageEn: z.string().optional(),
       })
       .optional(),
     secondProgram: z
@@ -123,6 +125,8 @@ const SelectionSchema = z
         nameEn: z.string().optional(),
         registrationEndDate: z.string().optional(),
         isSpecialNeedsProgram: z.boolean().optional(),
+        programApplicationMessageIs: z.string().optional(),
+        programApplicationMessageEn: z.string().optional(),
       })
       .optional(),
     thirdLanguage: z

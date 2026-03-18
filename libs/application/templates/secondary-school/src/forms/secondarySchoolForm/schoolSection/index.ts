@@ -13,13 +13,13 @@ import {
   getAlertMessageConditionAddThirdSelection,
   getAlertMessageConditionSpecialNeedsProgram,
   getAlertMessageSpecialNeedsProgram,
-  getConditionNordicLanguage,
+  getConditionNordicLanguage, getConditionProgramApplicationMessage,
   getConditionRequestDormitory,
   getConditionSecondProgram,
   getConditionThirdLanguage,
   getFormTitle,
   getIsClearableSecondProgram,
-  getNordicLanguageOptions,
+  getNordicLanguageOptions, getProgramApplicationMessage,
   getRequestDormitoryOptions,
   getRequireSecondProgram,
   getRequireThirdLanguage,
@@ -100,6 +100,12 @@ export const schoolSection = buildSection({
                   activeField,
                 ),
             },
+            firstProgramAlert: {
+              component: 'alertMessage',
+              alertType: 'info',
+              message: (application, _activeField, index, locale) => getProgramApplicationMessage('firstProgram', application.answers, index, locale),
+              condition: (application, _activeField, index, locale) => getConditionProgramApplicationMessage('firstProgram', application.answers, index, locale),
+            },
             'secondProgram.id': {
               component: 'selectAsync',
               label: school.selection.secondProgramLabel,
@@ -126,6 +132,12 @@ export const schoolSection = buildSection({
                 ),
               setOnChange: async (option, _, index, activeField) =>
                 setOnChangeSecondProgram(option, index, activeField),
+            },
+            secondProgramAlert: {
+              component: 'alertMessage',
+              alertType: 'info',
+              message: (application, _, index, locale) => getProgramApplicationMessage('secondProgram', application.answers, index, locale),
+              condition: (application, _, index, locale) => getConditionProgramApplicationMessage('secondProgram', application.answers, index, locale),
             },
             'thirdLanguage.code': {
               component: 'select',

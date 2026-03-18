@@ -8,7 +8,7 @@ import {
 import {
   checkIsFreshman,
   getSchoolsData,
-  getTranslatedProgram,
+  getTranslatedProgram, getTranslatedString,
   LANGUAGE_CODE_DANISH,
   Program,
   SecondarySchool,
@@ -142,10 +142,10 @@ export const filterSchoolOptions = (
 
 export const clearOnChangeSchool = (index: number) => {
   return [
-    `selection[${index}].firstProgram.id`,
-    `selection[${index}].secondProgram.id`,
-    `selection[${index}].thirdLanguage.code`,
-    `selection[${index}].nordicLanguage.code`,
+    `selection[${index}].firstProgram`,
+    `selection[${index}].secondProgram`,
+    `selection[${index}].thirdLanguage`,
+    `selection[${index}].nordicLanguage`,
   ]
 }
 
@@ -264,6 +264,14 @@ export const setOnChangeFirstProgram = (
       value: programInfo?.isSpecialNeedsProgram,
     },
     {
+      key: `selection[${index}].firstProgram.programApplicationMessageIs`,
+      value: programInfo?.programApplicationMessageIs,
+    },
+    {
+      key: `selection[${index}].firstProgram.programApplicationMessageEn`,
+      value: programInfo?.programApplicationMessageEn,
+    },
+    {
       key: `selection[${index}].secondProgram.require`,
       value:
         checkIsFreshman(application.answers) &&
@@ -334,6 +342,14 @@ export const setOnChangeSecondProgram = (
     {
       key: `selection[${index}].secondProgram.isSpecialNeedsProgram`,
       value: programInfo?.isSpecialNeedsProgram,
+    },
+    {
+      key: `selection[${index}].secondProgram.programApplicationMessageIs`,
+      value: programInfo?.programApplicationMessageIs,
+    },
+    {
+      key: `selection[${index}].secondProgram.programApplicationMessageEn`,
+      value: programInfo?.programApplicationMessageEn,
     },
   ]
 }
@@ -496,4 +512,38 @@ export const getAlertMessageSpecialNeedsProgram = (
       programNameList: programNames.join(', '),
     },
   }
+}
+
+export const getProgramApplicationMessage = (
+  programField: 'firstProgram' | 'secondProgram',
+  answers: FormValue,
+  index?: number,
+  lang?: Locale,
+) => {
+  if (index === undefined || lang === undefined) {
+    return ''
+  }
+
+  const selection = getValueViaPath<SecondarySchoolAnswers['selection']>(
+    answers,
+    'selection',
+  )
+
+  const program = selection?.[index]?.[programField]
+
+  return getTranslatedString(
+    lang,
+    program?.programApplicationMessageIs,
+    program?.programApplicationMessageEn,
+  )
+}
+
+export const getConditionProgramApplicationMessage = (
+  programField: 'firstProgram' | 'secondProgram',
+  answers: FormValue,
+  index?: number,
+  lang?: Locale,
+) => {
+
+  return !!getProgramApplicationMessage(programField, answers, index, lang)
 }
