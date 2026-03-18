@@ -1,4 +1,11 @@
-import { Field, Float, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
+import {
+  Field,
+  Float,
+  GraphQLISODateTime,
+  ID,
+  Int,
+  ObjectType,
+} from '@nestjs/graphql'
 
 @ObjectType()
 export class FarmerLandSubsidy {
@@ -9,7 +16,10 @@ export class FarmerLandSubsidy {
   @Field(() => GraphQLISODateTime, { nullable: true })
   paymentDate?: Date
 
-  @Field({ nullable: true, description: 'National ID of the payment recipient' })
+  @Field({
+    nullable: true,
+    description: 'National ID of the payment recipient',
+  })
   nationalId?: string
 
   @Field({ nullable: true })
@@ -33,12 +43,21 @@ export class FarmerLandSubsidy {
   @Field(() => Float, { nullable: true, description: 'Number of units' })
   units?: number
 
-  @Field(() => Float, { nullable: true, description: 'Gross amount before debt settlement' })
+  @Field(() => Float, {
+    nullable: true,
+    description: 'Gross amount before debt settlement',
+  })
   grossAmount?: number
 
-  @Field(() => Float, { nullable: true, description: 'Net amount paid out after offsets' })
+  @Field(() => Float, {
+    nullable: true,
+    description: 'Net amount paid out after offsets',
+  })
   netPaid?: number
 
-  @Field(() => Float, { nullable: true, description: 'Debt settlement offset applied to gross amount' })
+  @Field(() => Float, {
+    nullable: true,
+    description: 'Debt settlement offset applied to gross amount',
+  })
   offset?: number
 }

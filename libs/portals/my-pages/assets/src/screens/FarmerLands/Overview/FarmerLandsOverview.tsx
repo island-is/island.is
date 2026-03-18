@@ -30,9 +30,7 @@ export const FarmerLandsOverview = () => {
   const { data, loading, error } = useFarmerLandsOverviewQuery()
 
   const farmerLands = (data?.farmerLands?.data ?? []).filter((land) =>
-    search
-      ? land.name?.toLowerCase().includes(search.toLowerCase())
-      : true,
+    search ? land.name?.toLowerCase().includes(search.toLowerCase()) : true,
   )
 
   return (

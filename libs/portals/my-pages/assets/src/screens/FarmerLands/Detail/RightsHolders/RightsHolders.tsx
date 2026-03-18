@@ -3,7 +3,11 @@ import { ApolloError } from '@apollo/client'
 import { Column, Row } from 'react-table'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m, formatNationalId, EmptyTable } from '@island.is/portals/my-pages/core'
+import {
+  m,
+  formatNationalId,
+  EmptyTable,
+} from '@island.is/portals/my-pages/core'
 import FarmerLandsTable from '../../../../components/FarmerLandsTable/FarmerLandsTable'
 import {
   FarmerLandBeneficiary,
@@ -37,7 +41,8 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
         Header: formatMessage(fm.nationalId),
         accessor: 'nationalId',
         sortType: 'basic',
-        Cell: ({ value }: { value: string | null | undefined }) => formatNationalId(value ?? ''),
+        Cell: ({ value }: { value: string | null | undefined }) =>
+          formatNationalId(value ?? ''),
       },
       {
         Header: formatMessage(fm.bankInfo),
@@ -60,16 +65,27 @@ export const RightsHolders = ({ beneficiaries, loading, error }: Props) => {
 
   const renderExpandedRow = (row: Row<FarmerLandBeneficiary>) => {
     const payments = row.original.payments ?? []
-    if (!payments.length) return <EmptyTable message={formatMessage(m.noData)} />
+    if (!payments.length)
+      return <EmptyTable message={formatMessage(m.noData)} />
     return (
       <T.Table>
         <T.Head>
           <T.Row>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>{formatMessage(fm.paymentType)}</T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>{formatMessage(fm.share)}</T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>{formatMessage(fm.pendingPayments)}</T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>{formatMessage(fm.operation)}</T.HeadData>
-            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>{formatMessage(m.date)}</T.HeadData>
+            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+              {formatMessage(fm.paymentType)}
+            </T.HeadData>
+            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+              {formatMessage(fm.share)}
+            </T.HeadData>
+            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+              {formatMessage(fm.pendingPayments)}
+            </T.HeadData>
+            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+              {formatMessage(fm.operation)}
+            </T.HeadData>
+            <T.HeadData text={{ variant: 'small', fontWeight: 'semiBold' }}>
+              {formatMessage(m.date)}
+            </T.HeadData>
           </T.Row>
         </T.Head>
         <T.Body>
