@@ -22,7 +22,11 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry } from '../case-list'
-import { CaseTableResponse, SearchCasesResponse } from '../case-table'
+import {
+  CaseTableMembershipResponse,
+  CaseTableResponse,
+  SearchCasesResponse,
+} from '../case-table'
 import {
   CourtDocumentResponse,
   CourtSessionResponse,
@@ -223,6 +227,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     params.append('query', query)
 
     return this.get(`search-cases?${params.toString()}`)
+  }
+
+  getCaseTableMembership(caseId: string): Promise<CaseTableMembershipResponse> {
+    return this.get(`case/${caseId}/case-table-membership`)
   }
 
   getCaseStatistics(

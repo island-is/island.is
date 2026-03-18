@@ -531,6 +531,10 @@ export const m = defineMessages({
     id: 'sp.access-control-delegations:registry',
     defaultMessage: 'Þjóðskrá',
   },
+  revenueAndCustoms: {
+    id: 'sp.access-control-delegations:revenue-and-customs',
+    defaultMessage: 'Skatturinn',
+  },
   read: {
     id: 'sp.access-control-delegations:read',
     defaultMessage: 'Skoða',
