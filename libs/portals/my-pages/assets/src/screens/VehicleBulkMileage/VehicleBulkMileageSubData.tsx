@@ -137,7 +137,7 @@ export const VehicleBulkMileageSubData = ({
           }}
           yAxis={{
             datakey: 'mileage',
-            label: 'Km.',
+            label: unit === 'mi' ? 'Mi.' : 'Km.',
           }}
           tooltip={{
             labels: {
