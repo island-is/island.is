@@ -8,10 +8,30 @@ interface Props {
 }
 
 export const DateDisplay = ({ item, lang = 'is' }: Props) => {
-  const date = (item?.values?.[0]?.json as Record<string, unknown>)?.[
-    'date'
-  ] as Date
   const { formatDate } = useLocale()
+
+  const values = (item.values ?? []).filter((v): v is NonNullable<typeof v> =>
+    Boolean(v),
+  )
+  const showIndex = values.length > 1
+
+  const formatDateValue = (raw: unknown) => {
+    if (raw == null) return ''
+
+    const asDate =
+      raw instanceof Date
+        ? raw
+        : new Date(typeof raw === 'string' ? raw : String(raw))
+
+    if (Number.isNaN(asDate.getTime())) return ''
+
+    return formatDate(asDate, {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+  }
+
   return (
     <Box
       component="form"
@@ -20,18 +40,35 @@ export const DateDisplay = ({ item, lang = 'is' }: Props) => {
       justifyContent="spaceBetween"
       height="full"
     >
-      <Stack space={1}>
+      <Stack space={0}>
         <Text as="p" fontWeight="semiBold">
           {item.name?.[lang]}
         </Text>
-        <Text fontWeight="light">
-          {' '}
-          {formatDate(date, {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-          })}
-        </Text>
+
+        {values.map((valueDto, index) => {
+          const json = valueDto.json as
+            | Record<string, unknown>
+            | null
+            | undefined
+          const rawDate = json?.date
+
+          return (
+            <Box key={`${valueDto.id ?? item.id}-${index}`} marginLeft={2}>
+              {showIndex && (
+                <Text fontWeight="medium">
+                  {`${index + 1}:`}
+                  {'\u00A0\u00A0\u00A0'}
+                  <Text as="span" fontWeight="light">
+                    {formatDateValue(rawDate)}
+                  </Text>
+                </Text>
+              )}
+              {!showIndex && (
+                <Text fontWeight="light">{formatDateValue(rawDate)}</Text>
+              )}
+            </Box>
+          )
+        })}
       </Stack>
     </Box>
   )

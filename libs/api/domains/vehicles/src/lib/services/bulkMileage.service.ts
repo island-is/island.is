@@ -82,6 +82,7 @@ export class BulkMileageService {
 
       return {
         requestId: res.guid,
+        origin: { code: input.originCode },
       }
     } catch (e) {
       const error: Error = e
