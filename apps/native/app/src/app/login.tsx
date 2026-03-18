@@ -20,7 +20,6 @@ import { preferencesStore } from '@/stores/preferences-store'
 import { Button, dynamicColor, font, Illustration } from '@/ui'
 import { nextOnboardingStep } from '@/utils/onboarding'
 import { testIDs } from '@/utils/test-ids'
-import * as WebBrowser from 'expo-web-browser'
 
 const Host = styled.View`
   flex: 1;

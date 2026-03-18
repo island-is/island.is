@@ -12,6 +12,7 @@ import {
 } from '@/stores/environment-store'
 import { Button, dynamicColor } from '@/ui'
 import { SelectionMenu } from 'react-native-platform-components'
+import { cognitoAuthUrl } from '../../graphql/client'
 
 const DebugHost = styled.SafeAreaView`
   background-color: ${dynamicColor((props) => ({
@@ -107,15 +108,8 @@ export function DebugInfo() {
   )
 
   const onCognitoLoginPress = () => {
-    const params = new URLSearchParams({
-      approval_prompt: 'prompt',
-      client_id: cfg.cognitoClientId,
-      redirect_uri: `${cfg.bundleId}://cognito`,
-      response_type: 'token',
-      scope: 'openid',
-      state: 'state',
-    })
-    WebBrowser.openBrowserAsync(`${cfg.cognitoUrl}?${params}`, {
+    const url = cognitoAuthUrl()
+    WebBrowser.openBrowserAsync(url, {
       presentationStyle: WebBrowser.WebBrowserPresentationStyle.FORM_SHEET,
     })
   }
@@ -130,7 +124,7 @@ export function DebugInfo() {
       .getState()
       .actions.loadEnvironments()
       .then((res) => {
-        setEnvs(res);
+        setEnvs(res)
         setShowEnvPicker(true)
       })
   }
@@ -154,7 +148,7 @@ export function DebugInfo() {
         selected={environment?.id ?? null}
         onSelect={(data) => {
           setShowEnvPicker(false)
-          console.log('emvs', envs);
+          console.log('emvs', envs)
           const selectedEnv = envs.find((env) => env.id === data)
           if (!selectedEnv) return
 
