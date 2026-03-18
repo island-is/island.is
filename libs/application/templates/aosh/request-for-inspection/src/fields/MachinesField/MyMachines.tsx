@@ -33,12 +33,12 @@ export const MyMachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
       `${field.id}.paymentRequiredForOwnerChange`,
       machineDetails?.paymentRequiredForOwnerChange,
     )
-    setValue(`${field.id}.regNumber`, machineDetails?.regNumber)
+    setValue(`${field.id}.regNumber`, machineDetails?.registrationNumber)
     setValue(`${field.id}.category`, machineDetails?.category)
     setValue(`${field.id}.type`, machineDetails?.type || '')
     setValue(`${field.id}.subType`, machineDetails?.subType || '')
-    setValue(`${field.id}.plate`, machineDetails?.plate || '')
-    setValue(`${field.id}.ownerNumber`, machineDetails?.ownerNumber || '')
+    setValue(`${field.id}.plate`, machineDetails?.licensePlateNumber || '')
+    setValue(`${field.id}.ownerNumber`, machineDetails?.owner?.number || '')
     setValue(`${field.id}.id`, machineDetails?.id)
     setValue(`${field.id}.isValid`, machineDisabled ? undefined : true)
 
