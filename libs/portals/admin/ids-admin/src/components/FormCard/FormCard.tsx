@@ -140,12 +140,14 @@ export const FormCard = <Intent extends string>({
     }
   }, [actionData, intent])
 
-  // On mount, set the original form data
+  // On mount or environment change, reset the baseline form data and dirty state
   useEffect(() => {
     if (formRef.current) {
       prevFormData.current = new FormData(formRef.current)
+      setDirty(false)
     }
-  }, [formRef])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedEnvironment])
 
   useEffect(() => {
     // Reset dirty state if form is not submitting, prev and current form data are the same and if form is already dirty

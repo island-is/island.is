@@ -42,7 +42,7 @@ const Root = () => {
         message: '',
       })
     }
-  }, [actionData])
+  }, [actionData, formatMessage])
 
   const onFocus = () => setFocused(true)
   const onBlur = () => setFocused(false)
@@ -83,10 +83,19 @@ const Root = () => {
                 name: 'nationalId',
                 value: searchInput,
                 inputSize: 'medium',
+                type: 'tel',
+                format: (inputValue: string) => {
+                  const digits = (inputValue || '')
+                    .replace(/\D/g, '')
+                    .slice(0, 10)
+                  return digits.length <= 6
+                    ? digits
+                    : `${digits.slice(0, 6)}-${digits.slice(6)}`
+                },
                 onChange: (event) => setSearchInput(event.target.value),
                 onBlur,
                 onFocus,
-                placeholder: formatMessage(formatMessage(m.search)),
+                placeholder: formatMessage(m.search),
                 colored: true,
               }}
               buttonProps={{

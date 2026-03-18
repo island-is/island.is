@@ -24,6 +24,7 @@ export const serviceSetup = (services: {
         paths: ['/'],
       },
     })
+    .grantNamespaces('nginx-ingress-external')
     .replicaCount({
       default: 2,
       min: 2,

@@ -17,9 +17,12 @@ import { messages } from '../..'
 import { HealthPaths } from '../../lib/paths'
 import * as styles from './Questionnaires.css'
 import { useGetQuestionnaireQuery } from './questionnaires.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const QuestionnaireDetail: FC = () => {
   const { id, org } = useParams<{ id?: string; org?: string }>()
+
+  useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
 

@@ -15,6 +15,8 @@ import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegatio
 import { CmsConfig } from '@island.is/clients/cms'
 import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { emailModuleConfig } from '@island.is/email-service'
+import { LoggingModule } from '@island.is/logging'
+import { smsModuleConfig } from '@island.is/nova-sms'
 
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments/environment'
@@ -42,8 +44,10 @@ import { UserNotificationsConfig } from '../config'
         CmsConfig,
         emailModuleConfig,
         CompanyRegistryConfig,
+        smsModuleConfig,
       ],
     }),
+    LoggingModule,
     NotificationsModule,
   ],
 })

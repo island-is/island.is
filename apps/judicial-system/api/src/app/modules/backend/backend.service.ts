@@ -22,7 +22,11 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry } from '../case-list'
-import { CaseTableResponse, SearchCasesResponse } from '../case-table'
+import {
+  CaseTableMembershipResponse,
+  CaseTableResponse,
+  SearchCasesResponse,
+} from '../case-table'
 import {
   CourtDocumentResponse,
   CourtSessionResponse,
@@ -50,18 +54,10 @@ import { Institution } from '../institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
+  PoliceDigitalCaseFile,
   UploadPoliceCaseFileResponse,
 } from '../police'
-import { CaseStatistics } from '../statistics'
-import {
-  CaseDataExportInput,
-  IndictmentCaseStatistics,
-  IndictmentStatisticsInput,
-  RequestCaseStatistics,
-  RequestStatisticsInput,
-  SubpoenaStatistics,
-  SubpoenaStatisticsInput,
-} from '../statistics'
+import { CaseDataExportInput, CaseStatistics } from '../statistics'
 import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
@@ -233,6 +229,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`search-cases?${params.toString()}`)
   }
 
+  getCaseTableMembership(caseId: string): Promise<CaseTableMembershipResponse> {
+    return this.get(`case/${caseId}/case-table-membership`)
+  }
+
   getCaseStatistics(
     fromDate?: Date,
     toDate?: Date,
@@ -245,13 +245,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     if (institutionId) params.append('institutionId', institutionId)
 
     return this.get(`cases/statistics?${params.toString()}`)
-  }
-
-  getIndictmentCaseStatistics(
-    query: IndictmentStatisticsInput,
-  ): Promise<IndictmentCaseStatistics> {
-    const searchParams = this.serializeNestedObject(query)
-    return this.get(`cases/indictments/statistics?${searchParams.toString()}`)
   }
 
   private serializeNestedObject<T extends object>(
@@ -279,20 +272,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     })
 
     return params.toString()
-  }
-
-  getRequestCaseStatistics(
-    query: RequestStatisticsInput,
-  ): Promise<RequestCaseStatistics> {
-    const searchParams = this.serializeNestedObject(query)
-    return this.get(`cases/requests/statistics?${searchParams}`)
-  }
-
-  getSubpoenaStatistics(
-    query: SubpoenaStatisticsInput,
-  ): Promise<SubpoenaStatistics> {
-    const searchParams = this.serializeNestedObject(query)
-    return this.get(`cases/subpoenas/statistics?${searchParams}`)
   }
 
   getPreprocessedDataCsvSignedUrl(
@@ -479,6 +458,10 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
     return this.get(`case/${caseId}/policeFiles`)
+  }
+
+  getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceDigitalCaseFile[]> {
+    return this.get(`case/${caseId}/policeDigitalFiles`)
   }
 
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {

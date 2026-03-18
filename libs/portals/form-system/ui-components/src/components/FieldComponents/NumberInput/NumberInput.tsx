@@ -10,16 +10,17 @@ import { m } from '../../../lib/messages'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  valueIndex?: number
 }
 
-export const NumberInput = ({ item, dispatch }: Props) => {
+export const NumberInput = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const { fieldSettings } = item
   const { control, trigger } = useFormContext()
   const { lang, formatMessage } = useLocale()
   const { hasDescription } = fieldSettings || {}
 
   const defaultNumberValue = (() => {
-    const v = getValue(item, 'number')
+    const v = getValue(item, 'number', valueIndex)
     if (v === null || v === undefined || v === '') return ''
     const n = typeof v === 'number' ? v : Number(v)
     return Number.isFinite(n) ? n : ''
@@ -28,8 +29,8 @@ export const NumberInput = ({ item, dispatch }: Props) => {
   return (
     <Box>
       <Controller
-        key={item.id}
-        name={item.id}
+        key={`${item.id}-${valueIndex}`}
+        name={`${item.id}.${valueIndex}`}
         control={control}
         defaultValue={defaultNumberValue}
         rules={{
@@ -65,6 +66,7 @@ export const NumberInput = ({ item, dispatch }: Props) => {
                   payload: {
                     id: item.id,
                     value: nextValue === '' ? null : nextValue,
+                    valueIndex,
                   },
                 })
               }
