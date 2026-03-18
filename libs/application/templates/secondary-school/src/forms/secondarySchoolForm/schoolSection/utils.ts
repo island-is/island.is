@@ -521,7 +521,7 @@ export const getProgramApplicationMessage = (
   index?: number,
   lang?: Locale,
 ) => {
-  if (index === undefined || lang === undefined) {
+  if (index === undefined) {
     return ''
   }
 
