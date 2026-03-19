@@ -11,6 +11,7 @@ type SortKey =
   | 'institution'
   | 'name'
   | 'inprogress'
+  | 'draft'
   | 'completed'
   | 'rejected'
   | 'approved'
@@ -80,6 +81,8 @@ export default function StatisticsTable({
         return dir * (a.name || a.typeid).localeCompare(b.name || b.typeid)
       case 'inprogress':
         return dir * (a.inprogress - b.inprogress)
+      case 'draft':
+        return dir * (a.draft - b.draft)
       case 'completed':
         return dir * (a.completed - b.completed)
       case 'rejected':
@@ -100,7 +103,6 @@ export default function StatisticsTable({
       </Box>
     )
   }
-
   return (
     <Box marginTop={[3, 3, 6]}>
       <T.Table>
@@ -142,6 +144,19 @@ export default function StatisticsTable({
                 {formatMessage(m.tableHeaderInProgress)}
                 <SortIcon
                   colKey="inprogress"
+                  sortKey={sortKey}
+                  sortDirection={sortDirection}
+                />
+              </Box>
+            </T.HeadData>
+            <T.HeadData
+              style={sortableHeaderStyle}
+              onClick={() => handleSort('draft')}
+            >
+              <Box display="flex" alignItems="center">
+                {formatMessage(m.tableHeaderDraft)}
+                <SortIcon
+                  colKey="draft"
                   sortKey={sortKey}
                   sortDirection={sortDirection}
                 />
@@ -226,6 +241,7 @@ export default function StatisticsTable({
                 )}
                 <T.Data>{row.name || row.typeid}</T.Data>
                 <T.Data>{row.inprogress}</T.Data>
+                <T.Data>{row.draft}</T.Data>
                 <T.Data>{row.completed}</T.Data>
                 <T.Data>{row.rejected}</T.Data>
                 <T.Data>{row.approved}</T.Data>
