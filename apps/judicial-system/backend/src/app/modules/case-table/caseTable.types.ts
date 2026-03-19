@@ -58,7 +58,9 @@ export const modelMap: {
   court: ModelDef<typeof Institution>
   eventLogs: ModelDef<typeof EventLog>
   indictmentReviewer: ModelDef<typeof User>
+  judge: ModelDef<typeof User>
   prosecutor: ModelDef<typeof User>
+  registrar: ModelDef<typeof User>
 } = {
   appealJudge1: { model: User, separate: false },
   dateLogs: { model: DateLog, separate: true, order: [['created', 'DESC']] },
@@ -70,7 +72,9 @@ export const modelMap: {
   court: { model: Institution, separate: false },
   eventLogs: { model: EventLog, separate: true },
   indictmentReviewer: { model: User, separate: false },
+  judge: { model: User, separate: false },
   prosecutor: { model: User, separate: false },
+  registrar: { model: User, separate: false },
 }
 
 export const subModelMap: {

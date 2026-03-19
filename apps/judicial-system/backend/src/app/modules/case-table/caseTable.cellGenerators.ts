@@ -971,13 +971,13 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
     },
   },
   generate: (c: Case): CaseTableCell<TagPairValue> => {
-    const hasIndictmenReviewDecision = c.defendants?.some(
+    const hasIndictmentReviewDecision = c.defendants?.some(
       (d) => d.indictmentReviewDecision,
     )
 
     const firstTag = {
       color: 'darkerBlue',
-      text: hasIndictmenReviewDecision
+      text: hasIndictmentReviewDecision
         ? c.defendants?.some(
             (d) =>
               d.indictmentReviewDecision ===
