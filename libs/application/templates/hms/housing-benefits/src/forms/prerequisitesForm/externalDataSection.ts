@@ -25,7 +25,7 @@ export const externalDataSection = buildSection({
           subTitle: m.prereqMessages.userProfileSubtitle,
         }),
         buildDataProviderItem({
-          // provider: NationalRegistryApi,
+          provider: NationalRegistryApi,
           title: m.prereqMessages.nationalRegistryTitle,
           subTitle: m.prereqMessages.nationalRegistrySubtitle,
         }),
@@ -34,6 +34,12 @@ export const externalDataSection = buildSection({
           title: m.prereqMessages.hmsTitle,
           subTitle: m.prereqMessages.hmsSubtitle,
         }),
+        // Add in when I have test data
+        // buildDataProviderItem({
+        //   provider: HouseholdMembersApi,
+        //   title: 'Þjóðskrá Íslands',
+        //   subTitle: 'Upplýsingar einstaklinga með sama lögheimili',
+        // }),
         buildDataProviderItem({
           title: m.prereqMessages.taxTitle,
           subTitle: m.prereqMessages.taxSubtitle,

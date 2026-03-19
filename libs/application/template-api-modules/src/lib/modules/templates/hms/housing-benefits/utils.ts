@@ -1,5 +1,22 @@
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 
+const normalizeForAddressComparison = (
+  val: string | number | null | undefined,
+): string =>
+  String(val ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+
+export const getContractAddressKey = (contract: Contract): string => {
+  const prop = contract.contractProperty?.[0]
+  if (!prop) return ''
+  return [
+    normalizeForAddressComparison(prop.streetAndHouseNumber),
+    normalizeForAddressComparison(prop.postalCode),
+  ].join('|')
+}
+
 export const normalizeNationalId = (nationalId: string): string =>
   nationalId.replace(/\D/g, '').slice(-10)
 

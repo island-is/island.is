@@ -13,3 +13,8 @@ export const RentalAgreementsApi = defineTemplateApi({
   action: 'getRentalAgreements',
   order: 2,
 })
+
+export const HouseholdMembersApi = defineTemplateApi({
+  action: 'getHouseholdMembers',
+  order: 3,
+})

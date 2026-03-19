@@ -14,8 +14,14 @@ export const noRentalAgreementMessages = defineMessages({
   description: {
     id: 'hb.application:noRentalAgreement.description#markdown',
     defaultMessage:
-      'Við fundum engan virkan leigusamning sem hægt er að sækja um húsnæðisbætur fyrir. Til að sækja um húsnæðisbætur þarf að: \n\n * Hafa gildan leigusamning til staðar.\n\n * Þú þarft að vera skráð/ur sem leigjandi á leigusamningnum.\n\n * Hafa leigusamning sem er ótímabundinn.\n\n * Hafa leigusamning sem gildir að minnsta kosti 3 mánuði fram í tímann.',
+      'Við fundum engan virkan leigusamning sem hægt er að sækja um húsnæðisbætur fyrir.',
     description: 'No rental agreement screen description',
+  },
+  descriptionMarkdown: {
+    id: 'hb.application:noRentalAgreement.description#markdown',
+    defaultMessage:
+      'Til að sækja um húsnæðisbætur þarf að: \n\n \n\n * Hafa gildan leigusamning til staðar.\n\n * Þú þarft að vera skráð/ur sem leigjandi á leigusamningnum.\n\n * Hafa leigusamning sem er ótímabundinn eða samning sem gildir að minnsta kosti 3 mánuði fram í tímann.',
+    description: 'No rental agreement screen description markdown',
   },
   description2: {
     id: 'hb.application:noRentalAgreement.description2#markdown',

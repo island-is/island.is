@@ -18,7 +18,11 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import * as m from './messages'
-import { NationalRegistryApi, RentalAgreementsApi } from '../dataProviders'
+import {
+  HouseholdMembersApi,
+  NationalRegistryApi,
+  RentalAgreementsApi,
+} from '../dataProviders'
 import { hasRentalAgreements } from '../utils/rentalAgreementUtils'
 
 const template: ApplicationTemplate<
@@ -53,7 +57,12 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, NationalRegistryApi, RentalAgreementsApi],
+              api: [
+                UserProfileApi,
+                NationalRegistryApi,
+                RentalAgreementsApi,
+                HouseholdMembersApi,
+              ],
               delete: true,
             },
           ],

@@ -204,6 +204,7 @@ export const buildRadioField = (
     required,
     widthWithIllustration,
     hasIllustration,
+    titleVariant,
   } = data
 
   return {
@@ -216,6 +217,7 @@ export const buildRadioField = (
     required,
     widthWithIllustration,
     hasIllustration,
+    titleVariant,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
