@@ -45,7 +45,6 @@ import {
   CaseTransition,
   CaseType,
   CourtDocumentType,
-  CourtSessionStringType,
   DateType,
   dateTypes,
   defendantEventTypes,
@@ -74,7 +73,7 @@ import { CourtService } from '../court'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
-import { FileService } from '../file'
+import { FileService, PoliceDigitalCaseFileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import {
   Case,
@@ -218,6 +217,7 @@ export class CaseService {
     @Inject(forwardRef(() => VerdictService))
     private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
+    private readonly policeDigitalCaseFileService: PoliceDigitalCaseFileService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
@@ -429,6 +429,15 @@ export class CaseService {
           transaction,
         )
       }
+    }
+
+    // Delete police digital case files connected to removed police case numbers
+    for (const policeCaseNumber of removedPoliceCaseNumbers) {
+      await this.policeDigitalCaseFileService.deleteAllForPoliceCaseNumber(
+        theCase.id,
+        policeCaseNumber,
+        transaction,
+      )
     }
 
     // Add a single indictment count for each added police case numbers
@@ -1600,27 +1609,22 @@ export class CaseService {
       if (updateCaseString !== undefined) {
         const stringType = caseStringTypes[caseStringKey]
 
-        const caseString = await this.caseStringModel.findOne({
-          where: { caseId: theCase.id, stringType },
-          transaction,
-        })
-
-        if (caseString) {
-          if (updateCaseString === null) {
-            await this.caseStringModel.destroy({
-              where: { caseId: theCase.id, stringType },
+        if (updateCaseString === null) {
+          await this.caseStringModel.destroy({
+            where: { caseId: theCase.id, stringType },
+            transaction,
+          })
+        } else {
+          await this.caseStringModel.upsert(
+            {
+              caseId: theCase.id,
+              stringType,
+              value: updateCaseString,
+            },
+            {
+              conflictFields: ['case_id', 'string_type'],
               transaction,
-            })
-          } else {
-            await this.caseStringModel.update(
-              { value: updateCaseString },
-              { where: { caseId: theCase.id, stringType }, transaction },
-            )
-          }
-        } else if (updateCaseString !== null) {
-          await this.caseStringModel.create(
-            { caseId: theCase.id, stringType, value: updateCaseString },
-            { transaction },
+            },
           )
         }
 
@@ -1994,7 +1998,7 @@ export class CaseService {
     }
 
     // Handle court document creation on submitting an indictment case to court
-    if (shouldCreateCourtDocuments && theCase.withCourtSessions) {
+    if (shouldCreateCourtDocuments) {
       await this.handleInitialCourtDocumentCreation(theCase, transaction)
     }
 

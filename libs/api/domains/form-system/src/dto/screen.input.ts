@@ -23,11 +23,11 @@ export class UpdateSectionDtoInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 
-  @Field(() => String, { nullable: true })
-  identifier?: string
-
   @Field(() => Int, { nullable: true })
-  multiset?: number
+  multiMax?: number
+
+  @Field(() => Boolean, { nullable: true })
+  isMulti?: boolean
 
   @Field(() => Boolean, { nullable: true })
   shouldValidate?: boolean
@@ -96,7 +96,10 @@ export class ScreenInput {
   isCompleted?: boolean
 
   @Field(() => Int, { nullable: true })
-  multiset?: number
+  multiMax?: number
+
+  @Field(() => Boolean, { nullable: true })
+  isMulti?: boolean
 
   @Field(() => Boolean, { nullable: true })
   shouldValidate?: boolean

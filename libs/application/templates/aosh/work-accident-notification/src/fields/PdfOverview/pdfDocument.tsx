@@ -16,7 +16,7 @@ import {
 import { FC } from 'react'
 import { getEmployeeInformationForOverview } from '../../utils/getEmployeeInformationForOverview'
 import { getCauseAndConsequencesForOverview } from '../../utils/getCauseAndConsequencesForOverview'
-import { Vinnueftirlitid } from '../../assets/vinnueftirlitid'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 
 interface PdfDocumentProps {
   formatMessage: FormatMessage
@@ -44,7 +44,7 @@ export const PdfDocument: FC<
       <Page size="A4" style={pdfStyles.body}>
         {/* Header */}
         <View style={pdfStyles.row}>
-          <Vinnueftirlitid />
+          <AoshLogo />
           <Text style={pdfStyles.headerTitle}>
             {formatMessage(shared.application.name)}
           </Text>

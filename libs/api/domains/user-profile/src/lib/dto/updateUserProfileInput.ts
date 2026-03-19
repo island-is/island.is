@@ -33,6 +33,11 @@ export class UpdateUserProfileInput {
   @IsBoolean()
   documentNotifications?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  smsNotifications?: boolean
+
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()

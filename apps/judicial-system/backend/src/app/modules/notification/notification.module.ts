@@ -5,7 +5,11 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { EmailModule } from '@island.is/email-service'
 import { SmsModule } from '@island.is/nova-sms'
 
-import { InstitutionContact, Notification } from '../repository'
+import {
+  InstitutionContact,
+  InstitutionContactRepositoryService,
+  Notification,
+} from '../repository'
 import {
   CaseModule,
   CourtModule,
@@ -50,6 +54,7 @@ import { NotificationDispatchService } from './notificationDispatch.service'
     NotificationService,
     NotificationDispatchService,
     SubpoenaNotificationService,
+    InstitutionContactRepositoryService,
   ],
 })
 export class NotificationModule {}

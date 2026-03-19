@@ -69,6 +69,10 @@ type FieldActions =
       type: 'CHANGE_IS_REQUIRED'
       payload: { update: (updatedActiveItem?: ActiveItem) => void }
     }
+  | {
+      type: 'CHANGE_IS_PART_OF_MULTI'
+      payload: { update: (updatedActiveItem?: ActiveItem) => void }
+    }
 
 type SectionActions =
   | { type: 'ADD_SECTION'; payload: { section: FormSystemSection } }
@@ -160,9 +164,16 @@ type ChangeActions =
       }
     }
   | {
-      type: 'TOGGLE_MULTI_SET'
+      type: 'TOGGLE_IS_MULTI'
       payload: {
         checked: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'CHANGE_MULTI_MAX'
+      payload: {
+        value: number
         update: (updatedActiveItem?: ActiveItem) => void
       }
     }
@@ -333,6 +344,7 @@ export interface ControlState {
   activeListItem: FormSystemListItem | null
   form: FormSystemForm
   organizationNationalId: string | null
+  isPublished: boolean
 }
 
 export const controlReducer = (
@@ -558,6 +570,28 @@ export const controlReducer = (
         data: {
           ...currentData,
           isRequired: !currentData?.isRequired,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          fields: fields?.map((i) =>
+            i?.id === currentData?.id ? newActive.data : i,
+          ),
+        },
+      }
+    }
+
+    case 'CHANGE_IS_PART_OF_MULTI': {
+      const currentData = activeItem.data as FormSystemField
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          isPartOfMultiset: !currentData?.isPartOfMultiset,
         },
       }
       action.payload.update(newActive)
@@ -867,13 +901,36 @@ export const controlReducer = (
       }
     }
 
-    case 'TOGGLE_MULTI_SET': {
+    case 'TOGGLE_IS_MULTI': {
+      const currentData = activeItem.data as FormSystemScreen
+
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          isMulti: action.payload.checked,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          screens: screens?.map((g) =>
+            g?.id === currentData?.id ? newActive.data : g,
+          ),
+        },
+      }
+    }
+
+    case 'CHANGE_MULTI_MAX': {
       const currentData = activeItem.data as FormSystemScreen
       const newActive = {
         ...activeItem,
         data: {
           ...currentData,
-          multiset: action.payload.checked ? 1 : 0,
+          multiMax: action.payload.value,
         },
       }
       action.payload.update(newActive)

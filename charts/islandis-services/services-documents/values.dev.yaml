@@ -75,7 +75,7 @@ initContainer:
     DB_PASS: '/k8s/services-documents/DB_PASSWORD'
 namespace: 'services-documents'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

@@ -19,12 +19,14 @@ import {
   DefendantNotificationType,
   DefenderChoice,
   isIndictmentCase,
+  isPrisonAdminUser,
 } from '@island.is/judicial-system/types'
 
 import { CourtService } from '../court'
 import {
   Case,
   Defendant,
+  DefendantEventLog,
   DefendantEventLogRepositoryService,
   DefendantRepositoryService,
 } from '../repository'
@@ -324,6 +326,28 @@ export class DefendantService {
       user,
       transaction,
     )
+
+    if (
+      update.punishmentType !== undefined &&
+      update.punishmentType !== null &&
+      isPrisonAdminUser(user)
+    ) {
+      const eventLogs = defendant.eventLogs ?? []
+      if (
+        defendant.isSentToPrisonAdmin &&
+        !DefendantEventLog.hasValidOpenByPrisonAdminEvent(eventLogs)
+      ) {
+        await this.createDefendantEvent(
+          {
+            caseId: theCase.id,
+            defendantId: defendant.id,
+            eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
+            user,
+          },
+          transaction,
+        )
+      }
+    }
 
     return updatedDefendant
   }

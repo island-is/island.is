@@ -89,6 +89,15 @@ export class WorkMachine {
   })
   labels?: Array<Label>
 
+  @Field({ nullable: true })
+  subType?: string
+
+  @Field({ nullable: true })
+  errorMessage?: string
+
+  @Field({ nullable: true })
+  disabled?: boolean
+
   /** DEPRECATION LINE */
 
   @Field({ nullable: true, deprecationReason: 'Use owner property' })

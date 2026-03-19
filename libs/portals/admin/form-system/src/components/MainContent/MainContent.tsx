@@ -8,6 +8,7 @@ import {
   GridColumn as Column,
   Input,
   GridRow as Row,
+  Select,
   Stack,
 } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
@@ -30,7 +31,7 @@ export const MainContent = () => {
     focus,
     getTranslation,
   } = useContext(ControlContext)
-  const { activeItem, form } = control
+  const { activeItem, form, isPublished } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
 
@@ -71,6 +72,7 @@ export const MainContent = () => {
                 name="name"
                 value={activeItem?.data?.name?.is ?? ''}
                 backgroundColor="blue"
+                readOnly={isPublished}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_NAME',
@@ -92,6 +94,7 @@ export const MainContent = () => {
                 name="nameEn"
                 value={activeItem?.data?.name?.en ?? ''}
                 backgroundColor="blue"
+                readOnly={isPublished}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_NAME',
@@ -124,88 +127,136 @@ export const MainContent = () => {
             </Column>
           </Row>
           {activeItem.type === 'Screen' && (
-            <Row>
-              <Column span="12/12">
-                {/* <Checkbox
-                  name="multi"
-                  label={formatMessage(m.allowMultiple)}
-                  checked={
-                    (activeItem.data as FormSystemScreen).multiset !== 0 &&
-                    (activeItem.data as FormSystemScreen).multiset !== null
-                  }
-                  onChange={(e) =>
-                    controlDispatch({
-                      type: 'TOGGLE_MULTI_SET',
-                      payload: {
-                        checked: e.target.checked,
-                        update: updateActiveItem,
-                      },
-                    })
-                  }
-                /> */}
-                {form.submissionServiceUrl !== 'zendesk' && (
-                  <>
-                    {form.useValidate && (
-                      <Box marginTop={2}>
-                        <Checkbox
-                          name="validate"
-                          label={formatMessage(m.screenValidate)}
-                          checked={
-                            (activeItem.data as FormSystemScreen)
-                              .shouldValidate ?? false
-                          }
-                          onChange={(e) =>
-                            controlDispatch({
-                              type: 'TOGGLE_SHOULD_VALIDATE',
-                              payload: {
-                                checked: e.target.checked,
-                                update: updateActiveItem,
-                              },
-                            })
-                          }
-                        />
-                      </Box>
-                    )}
-                    {form.usePopulate && (
-                      <Box marginTop={2}>
-                        <Checkbox
-                          name="populate"
-                          label={formatMessage(m.screenPopulate)}
-                          checked={
-                            (activeItem.data as FormSystemScreen)
-                              .shouldPopulate ?? false
-                          }
-                          onChange={(e) =>
-                            controlDispatch({
-                              type: 'TOGGLE_SHOULD_POPULATE',
-                              payload: {
-                                checked: e.target.checked,
-                                update: updateActiveItem,
-                              },
-                            })
-                          }
-                        />
-                      </Box>
-                    )}
-                    {showIdentifier && (
-                      <Box marginTop={4}>
-                        <Input
-                          label="identifier"
-                          name="identifier"
-                          value={
-                            (activeItem.data as FormSystemScreen).identifier ??
-                            ''
-                          }
-                          backgroundColor="blue"
-                          onFocus={(e) => setFocus(e.target.value)}
-                          readOnly
-                        />
-                      </Box>
-                    )}
-                  </>
-                )}
-              </Column>
-            </Row>
+            <>
+              <Row>
+                <Column span="12/12">
+                  <Checkbox
+                    name="multi"
+                    label={formatMessage(m.allowMultiple)}
+                    checked={
+                      (activeItem.data as FormSystemScreen).isMulti ?? false
+                    }
+                    onChange={(e) => {
+                      controlDispatch({
+                        type: 'TOGGLE_IS_MULTI',
+                        payload: {
+                          checked: e.target.checked,
+                          update: () => undefined,
+                        },
+                      })
+                      const val = e.target.checked ? 2 : 0
+                      controlDispatch({
+                        type: 'CHANGE_MULTI_MAX',
+                        payload: {
+                          value: val,
+                          update: updateActiveItem,
+                        },
+                      })
+                    }}
+                  />
+                </Column>
+              </Row>
+              <Row>
+                <Column span="6/12">
+                  {(activeItem.data as FormSystemScreen).isMulti && (
+                    <Box marginTop={2}>
+                      <Select
+                        name="multiMax"
+                        label={formatMessage(m.multiMax)}
+                        isDisabled={isPublished}
+                        backgroundColor="blue"
+                        options={Array.from({ length: 35 - 2 + 1 }, (_, i) => {
+                          const n = i + 2
+                          return { label: String(n), value: String(n) }
+                        })}
+                        value={{
+                          label: String(
+                            (activeItem.data as FormSystemScreen).multiMax ?? 2,
+                          ),
+                          value: String(
+                            (activeItem.data as FormSystemScreen).multiMax ?? 2,
+                          ),
+                        }}
+                        onChange={(e) => {
+                          controlDispatch({
+                            type: 'CHANGE_MULTI_MAX',
+                            payload: {
+                              value: Number(e?.value),
+                              update: updateActiveItem,
+                            },
+                          })
+                        }}
+                      />
+                    </Box>
+                  )}
+                </Column>
+              </Row>
+              <Row>
+                <Column span="12/12">
+                  {form.submissionServiceUrl !== 'zendesk' && (
+                    <>
+                      {form.useValidate && (
+                        <Box marginTop={2}>
+                          <Checkbox
+                            name="validate"
+                            label={formatMessage(m.screenValidate)}
+                            checked={
+                              (activeItem.data as FormSystemScreen)
+                                .shouldValidate ?? false
+                            }
+                            onChange={(e) =>
+                              controlDispatch({
+                                type: 'TOGGLE_SHOULD_VALIDATE',
+                                payload: {
+                                  checked: e.target.checked,
+                                  update: updateActiveItem,
+                                },
+                              })
+                            }
+                          />
+                        </Box>
+                      )}
+                      {form.usePopulate && (
+                        <Box marginTop={2}>
+                          <Checkbox
+                            name="populate"
+                            label={formatMessage(m.screenPopulate)}
+                            checked={
+                              (activeItem.data as FormSystemScreen)
+                                .shouldPopulate ?? false
+                            }
+                            onChange={(e) =>
+                              controlDispatch({
+                                type: 'TOGGLE_SHOULD_POPULATE',
+                                payload: {
+                                  checked: e.target.checked,
+                                  update: updateActiveItem,
+                                },
+                              })
+                            }
+                          />
+                        </Box>
+                      )}
+                      {showIdentifier && (
+                        <Box marginTop={4}>
+                          <Input
+                            label="identifier"
+                            name="identifier"
+                            value={
+                              (activeItem.data as FormSystemScreen)
+                                .identifier ?? ''
+                            }
+                            backgroundColor="blue"
+                            onFocus={(e) => setFocus(e.target.value)}
+                            readOnly
+                          />
+                        </Box>
+                      )}
+                    </>
+                  )}
+                </Column>
+              </Row>
+            </>
           )}
           <Row>
             <Column>

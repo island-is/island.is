@@ -23,9 +23,11 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import BillsTable from './BillsTable'
 import { useGetDentistsQuery } from './Dentists.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const Dentists = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage, lang } = useLocale()
   const location = useLocation()
   // Check if the user was transfered from another health center

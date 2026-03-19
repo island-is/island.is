@@ -14,7 +14,7 @@ import { ToggleConnection } from './ToggleConnection'
 export const CheckboxSettings = () => {
   const { control, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
-  const { activeItem } = control
+  const { activeItem, isPublished } = control
   const currentItem = activeItem.data as FormSystemField
   const { fieldSettings } = currentItem
   const { formatMessage } = useLocale()
@@ -25,6 +25,7 @@ export const CheckboxSettings = () => {
           <Checkbox
             checked={fieldSettings?.isLarge ?? false}
             label={formatMessage(m.largeCheckbox)}
+            disabled={isPublished}
             onChange={(e) => {
               controlDispatch({
                 type: 'SET_FIELD_SETTINGS',
@@ -54,6 +55,7 @@ export const CheckboxSettings = () => {
             <Checkbox
               checked={fieldSettings?.hasDescription ?? false}
               label={formatMessage(m.hasSublabel)}
+              disabled={isPublished}
               onChange={(e) =>
                 controlDispatch({
                   type: 'SET_FIELD_SETTINGS',

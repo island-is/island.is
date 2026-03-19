@@ -48,9 +48,6 @@ export class UpdateFieldDtoInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
 
-  @Field(() => String, { nullable: true })
-  identifier?: string
-
   @Field(() => LanguageTypeInput, { nullable: true })
   description?: LanguageTypeInput
 

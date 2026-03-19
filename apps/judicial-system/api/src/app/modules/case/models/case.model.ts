@@ -507,9 +507,6 @@ export class Case {
   readonly caseRepresentatives?: CaseRepresentative[]
 
   @Field(() => Boolean, { nullable: true })
-  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
-
-  @Field(() => Boolean, { nullable: true })
   readonly isRegisteredInPrisonSystem?: boolean
 
   @Field(() => String, { nullable: true })

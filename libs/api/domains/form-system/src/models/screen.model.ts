@@ -8,8 +8,8 @@ export class Screen {
   @Field(() => String)
   id!: string
 
-  @Field(() => String)
-  identifier!: string
+  @Field(() => String, { nullable: true })
+  identifier?: string
 
   @Field(() => String)
   sectionId!: string
@@ -27,7 +27,10 @@ export class Screen {
   isCompleted?: boolean
 
   @Field(() => Int, { nullable: true })
-  multiset?: number
+  multiMax?: number
+
+  @Field(() => Boolean, { nullable: true })
+  isMulti?: boolean
 
   @Field(() => Boolean, { nullable: true })
   shouldValidate?: boolean

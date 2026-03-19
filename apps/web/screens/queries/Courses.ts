@@ -9,6 +9,7 @@ export const GET_ORGANIZATION_COURSES_QUERY = gql`
       items {
         id
         title
+        slug
         cardIntro {
           ...HtmlFields
         }
@@ -87,6 +88,17 @@ export const GET_CHARGE_ITEM_CODES_BY_COURSE_ID_QUERY = gql`
         code
         name
         priceAmount
+      }
+    }
+  }
+`
+
+export const GET_COURSE_AVAILABILITY_QUERY = gql`
+  query GetCourseAvailability($input: GetCourseAvailabilityInput!) {
+    getCourseAvailability(input: $input) {
+      instances {
+        id
+        isFullyBooked
       }
     }
   }
