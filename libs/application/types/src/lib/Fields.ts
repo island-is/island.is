@@ -160,7 +160,7 @@ export type RepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
   required?: MaybeWithApplicationAndActiveField<boolean>
-  condition?: MaybeWithApplicationAndActiveFieldAndIndex<boolean>
+  condition?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<boolean>
   dataTestId?: string
   showPhoneField?: boolean
   phoneRequired?: boolean
@@ -268,7 +268,7 @@ export type RepeaterItem = {
   | {
       component: 'alertMessage'
       title?: MaybeWithApplicationAndActiveField<StaticText>
-      message?: MaybeWithApplicationAndActiveField<StaticText>
+      message?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<StaticText>
       alertType?: AlertType
       marginBottom?: BoxProps['marginBottom']
       marginTop?: BoxProps['marginTop']

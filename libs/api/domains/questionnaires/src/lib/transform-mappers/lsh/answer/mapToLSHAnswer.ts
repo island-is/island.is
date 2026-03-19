@@ -42,7 +42,7 @@ export const mapToLshAnswer = (
 ): QuestionnaireAnswers => {
   return {
     answers: input.entries.map((entry) => ({
-      entryID: entry.entryID,
+      entryID: entry.entryId,
       type: typeMapper(entry.type),
       values: entry.answers.map((a) => a.value),
     })),
