@@ -18,13 +18,6 @@ export class WebSitemapService {
   ) {}
 
   private async uploadXmlFile(fileContent: string, fileName: string) {
-    if (process.env.NODE_ENV === 'development') {
-      // TODO: Remove this when we're done testing
-      const fs = await import('fs')
-      fs.default.writeFileSync(fileName, fileContent)
-      return fileName
-    }
-
     return this.s3Service.uploadFile(
       Buffer.from(fileContent),
       { bucket: this.config.s3Bucket, key: fileName },
