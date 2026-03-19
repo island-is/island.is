@@ -1,6 +1,6 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { getValues } from '../../../lib/getValue'
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
 interface Props {
@@ -62,10 +62,14 @@ export const ApplicantDisplay = ({ item }: Props) => {
         const value = rawValues[key]
         if (typeof value === 'undefined' || value === null) return null
         return (
-          <Box key={key} marginBottom={2}>
-            <Text variant="h4">{valueTranslations[key][lang]}</Text>
-            <Text>{String(value)}</Text>
-          </Box>
+          <Stack key={key} space={0}>
+            <Text as="p" fontWeight="semiBold">
+              {valueTranslations[key][lang]}
+            </Text>
+            <Box marginLeft={2}>
+              <Text fontWeight="light">{String(value)}</Text>
+            </Box>
+          </Stack>
         )
       })}
     </Box>

@@ -203,6 +203,7 @@ grantNamespaces:
   - 'portals-my-pages'
   - 'services-payments'
   - 'payments'
+  - 'contentful-apps'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

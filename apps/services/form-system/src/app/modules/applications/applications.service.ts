@@ -935,6 +935,7 @@ export class ApplicationsService {
         )
 
         const filteredScreenDto = { ...currentScreen, fields: filteredFields }
+
         await Promise.all(
           (filteredScreenDto.fields ?? []).map(async (field) => {
             if (field.isPartOfMultiset) {

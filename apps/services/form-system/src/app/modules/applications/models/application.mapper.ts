@@ -76,7 +76,8 @@ export class ApplicationMapper {
               sectionId: screen.sectionId,
               name: screen.name,
               displayOrder: screen.displayOrder,
-              multiset: screen.multiset,
+              multiMax: screen.multiMax,
+              isMulti: screen.isMulti,
               shouldValidate: form.useValidate && screen.shouldValidate,
               shouldPopulate: form.usePopulate && screen.shouldPopulate,
               screenError: {
