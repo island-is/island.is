@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from 'react'
 import { GraphQLError } from 'graphql'
-import { ZodObject } from 'zod'
+import { ZodObject, ZodEffects } from 'zod'
 import { MessageDescriptor } from 'react-intl'
 import type { BoxProps } from '@island.is/island-ui/core/types'
 import { Field, RecordObject, SubmitField } from './Fields'
@@ -88,7 +88,7 @@ export enum FormItemTypes {
 }
 
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Schema = ZodObject<any>
+export type Schema = ZodObject<any> | ZodEffects<any, any, any>
 
 export enum FormModes {
   NOT_STARTED = 'notstarted',

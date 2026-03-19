@@ -45,6 +45,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     marginBottom,
     clearOnChange,
     clearOnChangeDefaultValue,
+    titleVariant = 'h4',
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -64,7 +65,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
       aria-labelledby={id + 'title'}
     >
       {showFieldName && (
-        <Text variant="h4" as="h4" id={id + 'title'}>
+        <Text variant={titleVariant} as={titleVariant} id={id + 'title'}>
           {formatTextWithLocale(
             title,
             application,

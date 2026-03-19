@@ -1,22 +1,21 @@
 import {
-  buildDataProviderItem,
   buildExternalDataProvider,
-  buildSection,
+  buildDataProviderItem,
   buildSubmitField,
   coreMessages,
+  buildSection,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
-import { UserProfileApi } from '@island.is/application/types'
-import { NationalRegistryApi, propertiesApi } from '../../dataProviders'
+import { DefaultEvents, UserProfileApi } from '@island.is/application/types'
+import { NationalRegistryApi, RentalAgreementsApi } from '../../dataProviders'
 import * as m from '../../lib/messages'
 
 export const externalDataSection = buildSection({
   id: 'conditions',
-  tabTitle: m.prereqMessages.tabTitle,
+  title: 'Forkröfur',
   children: [
     buildExternalDataProvider({
       id: 'approveExternalData',
-      title: m.prereqMessages.prereqTitle,
+      title: m.prereqMessages.externalDataTitle,
       subTitle: m.prereqMessages.subTitle,
       checkboxLabel: m.prereqMessages.checkboxLabel,
       dataProviders: [
@@ -26,14 +25,24 @@ export const externalDataSection = buildSection({
           subTitle: m.prereqMessages.userProfileSubtitle,
         }),
         buildDataProviderItem({
-          // provider: NationalRegistryApi,
+          provider: NationalRegistryApi,
           title: m.prereqMessages.nationalRegistryTitle,
           subTitle: m.prereqMessages.nationalRegistrySubtitle,
         }),
         buildDataProviderItem({
-          provider: propertiesApi,
-          title: m.prereqMessages.propertiesTitle,
-          subTitle: m.prereqMessages.propertiesSubtitle,
+          provider: RentalAgreementsApi,
+          title: m.prereqMessages.hmsTitle,
+          subTitle: m.prereqMessages.hmsSubtitle,
+        }),
+        // Add in when I have test data
+        // buildDataProviderItem({
+        //   provider: HouseholdMembersApi,
+        //   title: 'Þjóðskrá Íslands',
+        //   subTitle: 'Upplýsingar einstaklinga með sama lögheimili',
+        // }),
+        buildDataProviderItem({
+          title: m.prereqMessages.taxTitle,
+          subTitle: m.prereqMessages.taxSubtitle,
         }),
       ],
       submitField: buildSubmitField({

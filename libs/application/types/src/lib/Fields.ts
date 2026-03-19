@@ -511,6 +511,7 @@ export interface RadioField extends InputField {
   space?: BoxProps['paddingTop']
   hasIllustration?: boolean
   widthWithIllustration?: '1/1' | '1/2' | '1/3'
+  titleVariant?: TitleVariants
   onSelect?(s: string): void
 }
 
@@ -586,6 +587,7 @@ export interface PhoneField extends InputField {
 export interface FileUploadField extends BaseField {
   readonly type: FieldTypes.FILEUPLOAD
   component: FieldComponents.FILEUPLOAD
+  readonly titleVariant?: TitleVariants
   readonly introduction?: FormText
   readonly uploadHeader?: FormText
   readonly uploadDescription?: FormText
@@ -837,14 +839,20 @@ export type TableRepeaterField = BaseField & {
   table?: {
     /**
      * List of strings to render,
-     * if not provided it will be auto generated from the fields
+     * or a function (answers, externalData) => StaticText[] for dynamic headers.
+     * If not provided it will be auto generated from the fields.
      */
-    header?: StaticText[]
+    header?:
+      | StaticText[]
+      | ((answers: FormValue, externalData: ExternalData) => StaticText[])
     /**
      * List of field id's to render,
-     * if not provided it will be auto generated from the fields
+     * or a function (answers, externalData) => string[] for dynamic rows.
+     * If not provided it will be auto generated from the fields.
      */
-    rows?: string[]
+    rows?:
+      | string[]
+      | ((answers: FormValue, externalData: ExternalData) => string[])
     format?: Record<
       string,
       (
