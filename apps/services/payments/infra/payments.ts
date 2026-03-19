@@ -144,20 +144,21 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
     .grantNamespaces('application-system', 'nginx-ingress-internal', 'islandis')
 
 // worker setup
-export const serviceSetupForWorker = (): ServiceBuilder<typeof workerName> =>
-  service(workerName)
-    .namespace(namespace)
-    .image(imageName)
-    .serviceAccount(serviceName)
-    .db(db)
-    .codeOwner(CodeOwners.Aranja)
-    .env(env)
-    .secrets(secrets)
-    .xroad(Base, Client, ChargeFjsV2)
-    .command('node')
-    .args('main.cjs', '--job', 'worker')
-    .extraAttributes({
-      dev: { schedule: '*/5 * * * *' },
-      staging: { schedule: '*/5 * * * *' },
-      prod: { schedule: '*/5 * * * *' },
-    })
+export const serviceSetupForWorker =
+  (): ServiceBuilder<'services-payments-worker'> =>
+    service(workerName)
+      .namespace(namespace)
+      .image(imageName)
+      .serviceAccount(workerName)
+      .db(db)
+      .codeOwner(CodeOwners.Aranja)
+      .env(env)
+      .secrets(secrets)
+      .xroad(Base, Client, ChargeFjsV2)
+      .command('node')
+      .args('main.cjs', '--job', 'worker')
+      .extraAttributes({
+        dev: { schedule: '*/5 * * * *' },
+        staging: { schedule: '*/5 * * * *' },
+        prod: { schedule: '*/5 * * * *' },
+      })

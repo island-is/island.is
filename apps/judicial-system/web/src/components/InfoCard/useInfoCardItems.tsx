@@ -1,4 +1,4 @@
-import { Fragment, useContext } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -81,7 +81,7 @@ const useInfoCardItems = () => {
             <div key="defendants-grid" className={grid({ gap: 3 })}>
               {defendants.map((defendant, index) => (
                 <div
-                  key={defendant.id}
+                  key={`defendants-grid-${defendant.id}`}
                   className={cn({
                     [styles.renderDividerFull]: index !== defendants.length - 1,
                   })}
@@ -278,22 +278,32 @@ const useInfoCardItems = () => {
     values: [mergedCase.court?.name],
   })
 
+  const splitCaseEntries =
+    workingCase.splitCases?.flatMap(
+      (splitCase) =>
+        splitCase.defendants?.map((defendant) => ({ defendant, splitCase })) ??
+        [],
+    ) ?? []
+
   const splitCases: Item = {
     id: 'split-cases-item',
     title: 'Klofinn frá',
-    values:
-      workingCase.splitCases?.flatMap((splitCase) =>
-        splitCase.defendants?.map((defendant) => (
-          <Fragment key={defendant.id}>
-            <Text>{defendant.name}</Text>
-            <LinkComponent
-              href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
-            >
-              {splitCase.courtCaseNumber}
-            </LinkComponent>
-          </Fragment>
-        )),
-      ) || [],
+    values: isNonEmptyArray(splitCaseEntries)
+      ? [
+          <div key="split-cases-grid" className={grid({ gap: 2 })}>
+            {splitCaseEntries.map(({ defendant, splitCase }) => (
+              <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
+                <Text>{defendant.name}</Text>
+                <LinkComponent
+                  href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
+                >
+                  {splitCase.courtCaseNumber}
+                </LinkComponent>
+              </div>
+            ))}
+          </div>,
+        ]
+      : [],
   }
 
   const splitCase: Item = {
@@ -352,7 +362,7 @@ const useInfoCardItems = () => {
   const indictmentReviewDecision: Item = {
     id: 'indictment-review-decision-item',
     title: formatMessage(strings.indictmentReviewDecision),
-    values: workingCase.defendants
+    values: isNonEmptyArray(workingCase.defendants)
       ? workingCase.defendants
           .filter((defendant) => defendant.indictmentReviewDecision)
           .map((defendant) => (
@@ -407,13 +417,14 @@ const useInfoCardItems = () => {
     title: (
       <Text variant="h4" as="h4" marginBottom={2}>
         {capitalize(
-          workingCase.civilClaimants && workingCase.civilClaimants.length > 1
+          isNonEmptyArray(workingCase.civilClaimants) &&
+            workingCase.civilClaimants.length > 1
             ? formatMessage(strings.civilClaimants)
             : formatMessage(strings.civilClaimant),
         )}
       </Text>
     ),
-    values: workingCase.civilClaimants
+    values: isNonEmptyArray(workingCase.civilClaimants)
       ? [
           <div key="civil-claimants-grid" className={grid({ gap: 3 })}>
             {workingCase.civilClaimants.map((civilClaimant, index) => (
@@ -421,7 +432,7 @@ const useInfoCardItems = () => {
                 key={civilClaimant.id}
                 className={cn({
                   [styles.renderDividerFull]:
-                    workingCase.civilClaimants &&
+                    isNonEmptyArray(workingCase.civilClaimants) &&
                     index !== workingCase.civilClaimants.length - 1,
                 })}
               >
@@ -442,7 +453,7 @@ const useInfoCardItems = () => {
           : 'Brotaþoli'}
       </Text>
     ),
-    values: workingCase.victims
+    values: isNonEmptyArray(workingCase.victims)
       ? [
           <div key="victims-grid" className={grid({ gap: 3 })}>
             {workingCase.victims.map((victim, index) => (
@@ -450,7 +461,7 @@ const useInfoCardItems = () => {
                 key={victim.id}
                 className={cn(grid({ gap: 1 }), {
                   [styles.renderDividerFull]:
-                    workingCase.victims &&
+                    isNonEmptyArray(workingCase.victims) &&
                     index !== workingCase.victims.length - 1,
                 })}
               >

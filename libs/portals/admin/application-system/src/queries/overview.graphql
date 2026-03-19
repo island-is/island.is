@@ -151,6 +151,8 @@ query getApplicationV2ApplicationStatisticsSuperAdmin(
     rejected
     approved
     name
+    institutionName
+    institutionContentfulSlug
   }
 }
 
@@ -166,12 +168,15 @@ query getApplicationV2ApplicationStatisticsInstitutionAdmin(
     rejected
     approved
     name
+    institutionName
+    institutionContentfulSlug
   }
 }
 
 query getApplicationV2InstitutionsSuperAdmin {
   applicationV2InstitutionsSuperAdmin {
     nationalId
+    name
     contentfulSlug
   }
 }

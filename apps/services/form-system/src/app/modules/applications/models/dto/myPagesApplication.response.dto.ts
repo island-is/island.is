@@ -101,6 +101,11 @@ class ActionCardMetaData {
   @Expose()
   @IsString()
   historyButton?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsBoolean()
+  displayPruneAt?: boolean
 }
 
 export class MyPagesApplicationResponseDto {
@@ -118,6 +123,11 @@ export class MyPagesApplicationResponseDto {
   @Expose()
   @IsDate()
   modified!: Date
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsDate()
+  pruneAt?: Date
 
   @ApiProperty()
   @Expose()

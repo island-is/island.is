@@ -39,6 +39,11 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         staging: 'island-is-staging-form-system-presign-bucket',
         prod: 'island-is-prod-form-system-presign-bucket',
       },
+      COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+        dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+        staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+        prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+      },
     })
     .secrets({
       FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX:
@@ -73,7 +78,11 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     })
     .liveness('/liveness')
     .readiness('/liveness')
-    .grantNamespaces('islandis', 'nginx-ingress-external')
+    .grantNamespaces(
+      'islandis',
+      'nginx-ingress-external',
+      'nginx-ingress-internal',
+    )
 
 export const workerSetup = (): ServiceBuilder<typeof workerName> =>
   service(workerName)

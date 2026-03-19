@@ -27,7 +27,7 @@ env:
   ENVIRONMENT: 'prod'
   LOG_LEVEL: 'info'
   MATOMO_DOMAIN: 'https://matomo.island.is'
-  MATOMO_ENABLED: 'false'
+  MATOMO_ENABLED: 'true'
   MATOMO_SITE_ID: '2'
   NODE_OPTIONS: '--max-old-space-size=1350 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
@@ -85,7 +85,7 @@ replicaCount:
   min: 3
 resources:
   limits:
-    cpu: '1800m'
+    cpu: '3000m'
     memory: '1500Mi'
   requests:
     cpu: '1200m'

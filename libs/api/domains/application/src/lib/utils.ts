@@ -41,6 +41,7 @@ export const mapAppSystemCards = (
     orgContentfulId: institutionMapper[application.typeId]?.contentfulId,
     nationalId: institutionMapper[application.typeId]?.nationalId,
     actionCard: application.actionCard,
+    pruneAt: application.pruneAt,
   }
 }
 
@@ -61,6 +62,7 @@ export const mapFormSystemCards = (
     orgContentfulId: application.formSystemOrgContentfulId,
     nationalId: undefined, // TODO: add nationalId if possible
     actionCard: application.actionCard,
+    pruneAt: application.pruneAt,
   }
 }
 
@@ -71,13 +73,13 @@ export const cardSortByModified = (
   return b.modified.getTime() - a.modified.getTime()
 }
 
-export const applicationAdminSortByCreated = (
+export const applicationAdminSortByModified = (
   a: ApplicationAdmin,
   b: ApplicationAdmin,
 ): number => {
-  const createdDiff = b.created.getTime() - a.created.getTime()
-  if (createdDiff !== 0) {
-    return createdDiff
+  const modifiedDiff = b.modified.getTime() - a.modified.getTime()
+  if (modifiedDiff !== 0) {
+    return modifiedDiff
   }
 
   return a.id.localeCompare(b.id)
@@ -116,6 +118,7 @@ export const mapFormSystemInstitutionAdmin = (
 ): ApplicationInstitution => {
   return {
     nationalId: institution.nationalId,
+    name: institution.name,
     contentfulSlug: institution.contentfulSlug ?? '',
   }
 }
@@ -124,6 +127,7 @@ export const mapFormSystemStatisticsAdmin = (
   statistics: ApplicationStatisticsDto,
 ): ApplicationStatistics => {
   return {
+    ...statistics,
     typeid: statistics.formId,
     name: statistics.formName ?? '',
     count: statistics.totalCount,

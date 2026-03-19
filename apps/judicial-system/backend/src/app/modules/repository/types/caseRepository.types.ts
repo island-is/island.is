@@ -1,4 +1,4 @@
-import { Includeable, Op } from 'sequelize'
+import { col, Includeable, Op } from 'sequelize'
 
 import {
   CaseFileCategory,
@@ -368,17 +368,32 @@ export const caseInclude: Includeable[] = [
             as: 'subpoenas',
             required: false,
             order: [['created', 'DESC']],
-            separate: true,
+            where: { created: { [Op.lt]: col('Case.created') } },
           },
         ],
-        separate: true,
       },
       {
         model: CaseFile,
         as: 'caseFiles',
         required: false,
-        where: { state: { [Op.not]: CaseFileState.DELETED } },
-        separate: true,
+        where: {
+          state: { [Op.not]: CaseFileState.DELETED },
+          defendantId: { [Op.not]: null },
+          category: {
+            [Op.in]: [
+              CaseFileCategory.CRIMINAL_RECORD,
+              CaseFileCategory.COST_BREAKDOWN,
+              CaseFileCategory.CASE_FILE,
+              CaseFileCategory.PROSECUTOR_CASE_FILE,
+              CaseFileCategory.DEFENDANT_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIM,
+              CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE,
+              CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE,
+            ],
+          },
+          created: { [Op.lt]: col('Case.created') },
+        },
       },
     ],
     separate: true,

@@ -73,11 +73,11 @@ export const Agent = ({ applicant, nationalId }: Props) => {
           <ApplicationLoading />
         ) : (
           <>
-            <NationalIdField disabled nationalId={nationalId} name={name} />
+            <NationalIdField nationalId={nationalId} name={name} />
 
             <Input
               label={formatMessage(m.address)}
-              disabled
+              readOnly
               name="address"
               placeholder={formatMessage(m.address)}
               backgroundColor="white"
@@ -86,7 +86,7 @@ export const Agent = ({ applicant, nationalId }: Props) => {
 
             <Input
               label={formatMessage(m.postalCode)}
-              disabled
+              readOnly
               name="postalCode"
               placeholder={formatMessage(m.postalCode)}
               backgroundColor="white"

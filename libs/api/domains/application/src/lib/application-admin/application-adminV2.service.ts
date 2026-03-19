@@ -11,7 +11,7 @@ import {
   ApplicationTypesAdminInput,
 } from '../application-admin/dto/applications-admin-inputs'
 import {
-  applicationAdminSortByCreated,
+  applicationAdminSortByModified,
   deduplicateInstitutions,
   mapFormSystemApplicationAdmin,
   mapFormSystemApplicationTypeAdmin,
@@ -24,14 +24,12 @@ import {
   ApplicationInstitution,
   ApplicationStatistics,
 } from '../application.model'
-import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 @Injectable()
 export class ApplicationAdminV2Service {
   constructor(
     private readonly appSystemApplicationApi: ApplicationsApi,
     private readonly formSystemAdminApi: FormSystemAdminApi,
-    private readonly featureFlagService: FeatureFlagService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
@@ -44,21 +42,11 @@ export class ApplicationAdminV2Service {
     return this.formSystemAdminApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private async getIncludeFormSystem(user: User): Promise<boolean> {
-    return this.featureFlagService.getValue(
-      Features.isFormSystemInAdminPortalEnabled,
-      false,
-      user,
-    )
-  }
-
   async findAllApplicationsForSuperAdmin(
     user: User,
     locale: Locale,
     filters: ApplicationsSuperAdminFilters,
   ): Promise<ApplicationAdminPaginatedResponse> {
-    const includeFormSystem = await this.getIncludeFormSystem(user)
-
     // Fetch enough items from each source to cover the requested page
     const fetchCount = filters.page * filters.count
 
@@ -77,21 +65,19 @@ export class ApplicationAdminV2Service {
       institutionNationalId: filters.institutionNationalId,
     })
 
-    const formSystemPromise = includeFormSystem
-      ? this.formSystemAdminApiWithAuth(
-          user,
-        ).adminControllerGetOverviewForSuperAdmin({
-          count: fetchCount,
-          page: 1,
-          applicantNationalId: filters.applicantNationalId,
-          locale,
-          from: filters.from,
-          to: filters.to,
-          formId: filters.typeIdValue,
-          searchStr: filters.searchStr,
-          institutionNationalId: filters.institutionNationalId,
-        })
-      : Promise.resolve({ rows: [], count: 0 })
+    const formSystemPromise = this.formSystemAdminApiWithAuth(
+      user,
+    ).adminControllerGetOverviewForSuperAdmin({
+      count: fetchCount,
+      page: 1,
+      applicantNationalId: filters.applicantNationalId,
+      locale,
+      from: filters.from,
+      to: filters.to,
+      formId: filters.typeIdValue,
+      searchStr: filters.searchStr,
+      institutionNationalId: filters.institutionNationalId,
+    })
 
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
       appSystemPromise,
@@ -125,7 +111,7 @@ export class ApplicationAdminV2Service {
     // Merge, sort, and slice to correct page offset
     const offset = (filters.page - 1) * filters.count
     const mergedRows = [...appSystemRows, ...formSystemRows]
-      .sort(applicationAdminSortByCreated)
+      .sort(applicationAdminSortByModified)
       .slice(offset, offset + filters.count)
 
     return {
@@ -139,8 +125,6 @@ export class ApplicationAdminV2Service {
     locale: Locale,
     filters: ApplicationsAdminFilters,
   ): Promise<ApplicationAdminPaginatedResponse> {
-    const includeFormSystem = await this.getIncludeFormSystem(user)
-
     // Fetch enough items from each source to cover the requested page
     const fetchCount = filters.page * filters.count
 
@@ -158,20 +142,18 @@ export class ApplicationAdminV2Service {
       searchStr: filters.searchStr,
     })
 
-    const formSystemPromise = includeFormSystem
-      ? this.formSystemAdminApiWithAuth(
-          user,
-        ).adminControllerGetOverviewForInstitutionAdmin({
-          count: fetchCount,
-          page: 1,
-          applicantNationalId: filters.applicantNationalId,
-          locale,
-          from: filters.from,
-          to: filters.to,
-          formId: filters.typeIdValue,
-          searchStr: filters.searchStr,
-        })
-      : Promise.resolve({ rows: [], count: 0 })
+    const formSystemPromise = this.formSystemAdminApiWithAuth(
+      user,
+    ).adminControllerGetOverviewForInstitutionAdmin({
+      count: fetchCount,
+      page: 1,
+      applicantNationalId: filters.applicantNationalId,
+      locale,
+      from: filters.from,
+      to: filters.to,
+      formId: filters.typeIdValue,
+      searchStr: filters.searchStr,
+    })
 
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
       appSystemPromise,
@@ -205,7 +187,7 @@ export class ApplicationAdminV2Service {
     // Merge, sort, and slice to correct page offset
     const offset = (filters.page - 1) * filters.count
     const mergedRows = [...appSystemRows, ...formSystemRows]
-      .sort(applicationAdminSortByCreated)
+      .sort(applicationAdminSortByModified)
       .slice(offset, offset + filters.count)
 
     return {
@@ -219,8 +201,6 @@ export class ApplicationAdminV2Service {
     locale: Locale,
     input: ApplicationTypesAdminInput,
   ): Promise<ApplicationTypeAdmin[]> {
-    const includeFormSystem = await this.getIncludeFormSystem(user)
-
     const appSystemPromise = this.appSystemApplicationApiWithAuth(
       user,
     ).adminControllerGetApplicationTypesSuperAdmin({
@@ -228,14 +208,12 @@ export class ApplicationAdminV2Service {
       locale,
     })
 
-    const formSystemPromise = includeFormSystem
-      ? this.formSystemAdminApiWithAuth(
-          user,
-        ).adminControllerGetApplicationTypesForSuperAdmin({
-          nationalId: input.nationalId,
-          locale,
-        })
-      : Promise.resolve([])
+    const formSystemPromise = this.formSystemAdminApiWithAuth(
+      user,
+    ).adminControllerGetApplicationTypesForSuperAdmin({
+      nationalId: input.nationalId,
+      locale,
+    })
 
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
       appSystemPromise,
@@ -270,21 +248,17 @@ export class ApplicationAdminV2Service {
     user: User,
     locale: Locale,
   ): Promise<ApplicationTypeAdmin[]> {
-    const includeFormSystem = await this.getIncludeFormSystem(user)
-
     const appSystemPromise = this.appSystemApplicationApiWithAuth(
       user,
     ).adminControllerGetApplicationTypesInstitutionAdmin({
       locale,
     })
 
-    const formSystemPromise = includeFormSystem
-      ? this.formSystemAdminApiWithAuth(
-          user,
-        ).adminControllerGetApplicationTypesForInstitutionAdmin({
-          locale,
-        })
-      : Promise.resolve([])
+    const formSystemPromise = this.formSystemAdminApiWithAuth(
+      user,
+    ).adminControllerGetApplicationTypesForInstitutionAdmin({
+      locale,
+    })
 
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
       appSystemPromise,
@@ -318,15 +292,13 @@ export class ApplicationAdminV2Service {
   async findAllInstitutionsForSuperAdmin(
     user: User,
   ): Promise<ApplicationInstitution[]> {
-    const includeFormSystem = await this.getIncludeFormSystem(user)
-
     const appSystemPromise = this.appSystemApplicationApiWithAuth(
       user,
     ).adminControllerGetInstitutionsSuperAdmin({})
 
-    const formSystemPromise = includeFormSystem
-      ? this.formSystemAdminApiWithAuth(user).adminControllerGetInstitutions({})
-      : Promise.resolve([])
+    const formSystemPromise = this.formSystemAdminApiWithAuth(
+      user,
+    ).adminControllerGetInstitutions({})
 
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
       appSystemPromise,
@@ -365,22 +337,18 @@ export class ApplicationAdminV2Service {
     locale: Locale,
     input: ApplicationsAdminStatisticsInput,
   ): Promise<ApplicationStatistics[]> {
-    const includeFormSystem = await this.getIncludeFormSystem(user)
-
     const appSystemPromise =
       this.appSystemApplicationApiWithAuth(
         user,
       ).adminControllerGetSuperAdminCountByTypeIdAndStatus(input)
 
-    const formSystemPromise = includeFormSystem
-      ? this.formSystemAdminApiWithAuth(
-          user,
-        ).adminControllerGetStatisticsForSuperAdmin({
-          startDate: input.startDate,
-          endDate: input.endDate,
-          locale,
-        })
-      : Promise.resolve([])
+    const formSystemPromise = this.formSystemAdminApiWithAuth(
+      user,
+    ).adminControllerGetStatisticsForSuperAdmin({
+      startDate: input.startDate,
+      endDate: input.endDate,
+      locale,
+    })
 
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
       appSystemPromise,
@@ -416,22 +384,18 @@ export class ApplicationAdminV2Service {
     locale: Locale,
     input: ApplicationsAdminStatisticsInput,
   ): Promise<ApplicationStatistics[]> {
-    const includeFormSystem = await this.getIncludeFormSystem(user)
-
     const appSystemPromise =
       this.appSystemApplicationApiWithAuth(
         user,
       ).adminControllerGetInstitutionCountByTypeIdAndStatus(input)
 
-    const formSystemPromise = includeFormSystem
-      ? this.formSystemAdminApiWithAuth(
-          user,
-        ).adminControllerGetStatisticsForInstitutionAdmin({
-          startDate: input.startDate,
-          endDate: input.endDate,
-          locale,
-        })
-      : Promise.resolve([])
+    const formSystemPromise = this.formSystemAdminApiWithAuth(
+      user,
+    ).adminControllerGetStatisticsForInstitutionAdmin({
+      startDate: input.startDate,
+      endDate: input.endDate,
+      locale,
+    })
 
     const [appSystemSettled, formSystemSettled] = await Promise.allSettled([
       appSystemPromise,

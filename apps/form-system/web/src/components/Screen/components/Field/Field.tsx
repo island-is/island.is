@@ -3,6 +3,7 @@ import {
   Banknumber,
   Checkbox,
   CurrencyField,
+  CurrencySumField,
   DatePicker,
   Email,
   FieldTypesEnum,
@@ -23,12 +24,14 @@ import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 interface Props {
   field: FormSystemField
+  valueIndex?: number
 }
 
 const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.BANK_ACCOUNT]: Banknumber,
   [FieldTypesEnum.CHECKBOX]: Checkbox,
   [FieldTypesEnum.ISK_NUMBERBOX]: CurrencyField,
+  [FieldTypesEnum.ISK_SUMBOX]: CurrencySumField,
   [FieldTypesEnum.EMAIL]: Email,
   [FieldTypesEnum.FILE]: FileUpload,
   [FieldTypesEnum.NATIONAL_ID]: NationalId,
@@ -43,14 +46,16 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.NUMBERBOX]: NumberInput,
 } as const
 
-export const Field = ({ field }: Props) => {
-  const { dispatch } = useApplicationContext()
+export const Field = ({ field, valueIndex = 0 }: Props) => {
+  const { dispatch, state } = useApplicationContext()
   const { control } = useFormContext()
 
   const fieldItems = {
     item: field,
+    valueIndex,
     control,
     dispatch,
+    ...(field.fieldType === FieldTypesEnum.ISK_SUMBOX && { state }),
   }
 
   const FieldComponent =
