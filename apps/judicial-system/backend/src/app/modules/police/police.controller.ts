@@ -34,7 +34,7 @@ import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { PoliceDefendant } from './models/policeDefendant.model'
-import { PoliceDigitalCaseFile } from './models/PoliceDigitalCaseFile.model'
+import { PoliceSystemDigitalCaseFile } from './models/PoliceSystemDigitalCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { PoliceService } from './police.service'
 
@@ -93,7 +93,7 @@ export class PoliceController {
   @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Get('policeDigitalFiles')
   @ApiOkResponse({
-    type: PoliceDigitalCaseFile,
+    type: PoliceSystemDigitalCaseFile,
     isArray: true,
     description: 'Gets all police digital files for a case',
   })
@@ -101,10 +101,13 @@ export class PoliceController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-  ): Promise<PoliceDigitalCaseFile[]> {
+  ): Promise<PoliceSystemDigitalCaseFile[]> {
     this.logger.debug(`Getting all police digital files for case ${caseId}`)
 
-    return this.policeService.getAllPoliceDigitalCaseFiles(theCase.id, user)
+    return this.policeService.getAllPoliceSystemDigitalCaseFiles(
+      theCase.id,
+      user,
+    )
   }
 
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
