@@ -53,8 +53,11 @@ export class HousingBenefitsService extends BaseTemplateApiService {
 
       if (useMock) {
         this.logger.debug('Using mock rental agreements (checkbox checked)')
-        // Skip filtering when using mock - allows testing with any user
-        return mockGetRentalAgreements()
+        const mockAgreements = mockGetRentalAgreements()
+        return filterContractsForHousingBenefits(
+          mockAgreements,
+          auth.nationalId,
+        )
       }
 
       contracts = await this.homeApiWithAuth(auth)

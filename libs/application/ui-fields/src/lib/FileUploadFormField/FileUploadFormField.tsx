@@ -21,6 +21,8 @@ export const FileUploadFormField = ({
   const {
     id,
     title,
+    titleVariant = 'h4',
+    description,
     introduction,
     uploadDescription,
     uploadHeader,
@@ -57,15 +59,25 @@ export const FileUploadFormField = ({
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {title && (
-        <Text variant="h4" marginBottom={2}>
+        <Text variant={titleVariant} as={titleVariant} marginBottom={2}>
           {formatTextWithLocale(title, application, locale as Locale, formatMessage)}
         </Text>
       )}
-      {introduction && (
-        <FieldDescription
-          description={formatText(introduction, application, formatMessage)}
-        />
-      )}
+      {(() => {
+        const descSource = description ?? introduction
+        if (!descSource) return null
+        const formatted = formatTextWithLocale(
+          descSource,
+          application,
+          locale as Locale,
+          formatMessage,
+        )
+        return (
+          <FieldDescription
+            description={Array.isArray(formatted) ? formatted.join(' ') : String(formatted ?? '')}
+          />
+        )
+      })()}
 
       <Box paddingTop={2}>
         <FileUploadController

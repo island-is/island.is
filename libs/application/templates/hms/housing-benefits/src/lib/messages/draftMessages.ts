@@ -203,22 +203,55 @@ export const draftMessages = {
       description:
         'Custody agreement upload description - required for household members under 18',
     },
+    validationAtLeastOneMember: {
+      id: 'hb.application:draft.householdMembersSection.validationAtLeastOneMember',
+      defaultMessage: 'Vinsamlegast bættu við að minnsta kosti einum heimilismanni',
+      description: 'At least one household member required',
+    },
+    validationNationalIdRequired: {
+      id: 'hb.application:draft.householdMembersSection.validationNationalIdRequired',
+      defaultMessage: 'Gild kennitala er nauðsynleg',
+      description: 'Valid national ID required for household member',
+    },
   }),
   incomeSection: defineMessages({
     title: {
       id: 'hb.application:draft.incomeSection.title',
-      defaultMessage: 'Inntekt',
+      defaultMessage: 'Tekjur',
       description: 'Income section title',
     },
     multiFieldTitle: {
       id: 'hb.application:draft.incomeSection.multiFieldTitle',
-      defaultMessage: 'Inntekt',
+      defaultMessage: 'Upplýsingar um tekjur',
       description: 'Income multi field title',
     },
-    radioTitle: {
-      id: 'hb.application:draft.incomeSection.radioTitle',
-      defaultMessage: 'Inntekt',
-      description: 'Income radio title',
+    multiFieldDescription: {
+      id: 'hb.application:draft.incomeSection.multiFieldDescription',
+      defaultMessage:
+        'Við ákvörðun bóta eru allar tekjur heimilismanna teknar saman til að ákvarða upphæð til útgreiðslu. Heimilismenn þurfa að samþykkja að upplýsingar um þá séu sóttar til þess að HMS geti ákvarðað rétta upphæð til útgreiðslu.',
+      description: 'Income multi field description',
+    },
+    description: {
+      id: 'hb.application:draft.incomeSection.description',
+      defaultMessage:
+        'Samkvæmt upplýsingum frá RSK þá eru þetta meðaltekjur þínar síðustu 12 mánuði, fyrir skatt:',
+      description: 'Income description',
+    },
+    displayFieldTitle: {
+      id: 'hb.application:draft.incomeSection.displayFieldTitle',
+      defaultMessage: 'Meðaltekjur fyrir skatt',
+      description: 'Income display field title',
+    },
+    fileUploadTitle: {
+      id: 'hb.application:draft.incomeSection.fileUploadTitle',
+      defaultMessage: 'Viðbótargögn',
+      description: 'Income file upload title',
+    },
+    fileUploadDescription: {
+      id: 'hb.application:draft.incomeSection.fileUploadDescription',
+      defaultMessage:
+        'Ef aðstæður þínar hafa breyst frá meðaltali síðustu 12 mánaða, þá getur þú hér bætt við skjölum sem sýna breytta stöðu. Þetta gætu til dæmis verið launaseðlar, uppsagnabréf eða veikindavottorð.',
+      description: 'Income file upload description',
     },
   }),
 
@@ -269,6 +302,26 @@ export const draftMessages = {
       id: 'hb.application:draft.paymentSection.landlordBankAccountTitle',
       defaultMessage: 'Bankareikningur leigusala',
       description: 'Landlord bank account field title',
+    },
+    validationPaymentRecipientRequired: {
+      id: 'hb.application:draft.paymentSection.validationPaymentRecipientRequired',
+      defaultMessage: 'Vinsamlegast veldu hvort húsnæðisbætur eigi að greiðast þér eða leigusala',
+      description: 'Payment recipient selection required',
+    },
+    validationBankAccountRequired: {
+      id: 'hb.application:draft.paymentSection.validationBankAccountRequired',
+      defaultMessage: 'Vinsamlegast fylltu inn réttar upplýsingar um bankareikning',
+      description: 'Bank account required when paying to self',
+    },
+    validationLandlordSelectionRequired: {
+      id: 'hb.application:draft.paymentSection.validationLandlordSelectionRequired',
+      defaultMessage: 'Vinsamlegast veldu leigusala',
+      description: 'Landlord selection required when paying to landlord',
+    },
+    validationLandlordBankAccountRequired: {
+      id: 'hb.application:draft.paymentSection.validationLandlordBankAccountRequired',
+      defaultMessage: 'Vinsamlegast fylltu inn bankareikning leigusala',
+      description: 'Landlord bank account required',
     },
   }),
   overviewSection: defineMessages({

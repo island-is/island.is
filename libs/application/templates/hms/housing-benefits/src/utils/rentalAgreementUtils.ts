@@ -64,11 +64,6 @@ export const doesAddressMatchRentalContract = (
   )
   const contractPostalCode = normalizeForComparison(contractProperty.postalCode)
 
-  console.log('registryStreet', registryStreet)
-  console.log('contractStreet', contractStreet)
-  console.log('registryPostalCode', registryPostalCode)
-  console.log('contractPostalCode', contractPostalCode)
-
   return (
     registryStreet === contractStreet &&
     registryPostalCode === contractPostalCode

@@ -47,6 +47,12 @@ export const exemptionSection = buildSection({
           id: 'exemptionReason',
           title: m.draftMessages.exemptionSection.checkboxTitle,
           marginBottom: 4,
+          clearOnChange: [
+            'exemptionDocuments.studies',
+            'exemptionDocuments.health',
+            'exemptionDocuments.housing',
+            'exemptionDocuments.work',
+          ],
           options: [
             {
               value: 'studies',

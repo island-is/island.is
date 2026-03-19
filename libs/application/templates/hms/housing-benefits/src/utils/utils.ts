@@ -33,7 +33,7 @@ export const isFileUploaded = (answers: FormValue): boolean => {
 }
 
 export const isLandlordSelected = (answers: FormValue) =>
-  getValueViaPath<string>(answers, 'paymentRadio') === 'landlord'
+  getValueViaPath<string>(answers, 'payment.paymentRadio') === 'landlord'
 
 export const shouldShowLandlordSelection = (
   answers: FormValue,
@@ -46,7 +46,7 @@ export const shouldShowLandlordSelection = (
   } as Application).length > 1
 
 export const isMeSelected = (answers: FormValue) =>
-  getValueViaPath<string>(answers, 'paymentRadio') === 'me'
+  getValueViaPath<string>(answers, 'payment.paymentRadio') === 'me'
 
 export const isExemptionRequested = (answers: FormValue) => {
   const exemptionCheckbox = getValueViaPath<string[]>(

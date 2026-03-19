@@ -444,11 +444,13 @@ export const buildFileUploadField = (
     totalMaxSize,
     maxFileCount,
     forImageUpload,
+    titleVariant,
   } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     introduction: introduction,
+    titleVariant,
     uploadHeader:
       uploadHeader || coreDefaultFieldMessages.defaultFileUploadHeader,
     uploadDescription:

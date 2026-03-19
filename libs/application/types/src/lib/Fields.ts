@@ -587,6 +587,7 @@ export interface PhoneField extends InputField {
 export interface FileUploadField extends BaseField {
   readonly type: FieldTypes.FILEUPLOAD
   component: FieldComponents.FILEUPLOAD
+  readonly titleVariant?: TitleVariants
   readonly introduction?: FormText
   readonly uploadHeader?: FormText
   readonly uploadDescription?: FormText

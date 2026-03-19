@@ -13,6 +13,8 @@ import {
   exemptionSectionOverviewAttachments,
   householdMembersOverviewItems,
   householdMembersOverviewAttachments,
+  incomeSectionOverviewItems,
+  incomeSectionOverviewAttachments,
   paymentSectionOverviewItems,
 } from '../../utils/getOverviewItems'
 import { doesAddressMatchRentalContract } from '../../utils/rentalAgreementUtils'
@@ -53,6 +55,13 @@ export const overviewSection = buildSection({
           backId: 'householdMembersMultiField',
           items: householdMembersOverviewItems,
           attachments: householdMembersOverviewAttachments,
+        }),
+        buildOverviewField({
+          id: 'incomeSectionOverview',
+          title: m.draftMessages.incomeSection.title,
+          backId: 'incomeMultiField',
+          items: incomeSectionOverviewItems,
+          attachments: incomeSectionOverviewAttachments,
         }),
         buildOverviewField({
           id: 'paymentSectionOverview',

@@ -16,6 +16,7 @@ export const NoRentalAgreementForm = buildForm({
   id: 'NoRentalAgreementForm',
   mode: FormModes.DRAFT,
   logo: HmsLogo,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'noRentalAgreement',
