@@ -10,6 +10,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
+import NumberFormat from 'react-number-format'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
@@ -73,7 +74,7 @@ const PersonalTaxCredit = () => {
     useSetSocialInsuranceSpouseTaxCardDueToDeathMutation()
 
   const taxCards = data?.socialInsuranceTaxCards
-  const canRegister = taxCards?.canEditPersonalAllowance ?? false
+  const isAlreadyRegistered = taxCards?.canEditPersonalAllowance ?? false
   const spouseEligibility =
     data?.socialInsuranceSpouseDeceasedTaxAllowanceEligibility
   const monthsAndYears = data?.socialInsuranceTaxCardMonthsAndYears
@@ -180,7 +181,17 @@ const PersonalTaxCredit = () => {
   const handleSaveSpouse = async () => {
     try {
       if (spouseDeceased) {
-        await setSpouseTaxCardDueToDeath({ variables: { input: {} } })
+        await setSpouseTaxCardDueToDeath({
+          variables: {
+            input: {
+              year: spouseDeceasedYear ?? undefined,
+              month: spouseDeceasedMonth ?? undefined,
+              percentage: spouseDeceasedPercentage
+                ? Number(spouseDeceasedPercentage)
+                : undefined,
+            },
+          },
+        })
       }
       if (grantSpouse) {
         await setSpouseTaxCard({ variables: { input: {} } })
@@ -201,468 +212,437 @@ const PersonalTaxCredit = () => {
 
   if (loading) {
     return (
-      <Box>
-        <IntroWrapper {...introProps}>
-          <CardLoader />
-        </IntroWrapper>
-      </Box>
+      <IntroWrapper {...introProps}>
+        <CardLoader />
+      </IntroWrapper>
     )
   }
 
   if (error) {
     return (
-      <Box>
-        <IntroWrapper {...introProps}>
-          <Problem error={error} noBorder={false} />
-        </IntroWrapper>
-      </Box>
+      <IntroWrapper {...introProps}>
+        <Problem error={error} noBorder={false} />
+      </IntroWrapper>
     )
   }
 
   return (
-    <Box>
-      <IntroWrapper {...introProps}>
-        <Stack space={6}>
-          {/* Tax cards table */}
-          {!!taxCards?.taxCards?.length && (
-            <Box>
-              <T.Table>
-                <T.Head>
-                  <T.Row>
-                    <T.HeadData box={{ background: 'blue100' }} scope="col">
-                      <Text variant="medium" fontWeight="medium">
-                        {formatMessage(m.type)}
-                      </Text>
-                    </T.HeadData>
-                    <T.HeadData box={{ background: 'blue100' }} scope="col">
-                      <Text variant="medium" fontWeight="medium">
-                        {formatMessage(m.dateFrom)}
-                      </Text>
-                    </T.HeadData>
-                    <T.HeadData box={{ background: 'blue100' }} scope="col">
-                      <Text variant="medium" fontWeight="medium">
-                        {formatMessage(m.dateTo)}
-                      </Text>
-                    </T.HeadData>
-                    <T.HeadData box={{ background: 'blue100' }} scope="col">
-                      <Text variant="medium" fontWeight="medium">
-                        {formatMessage(m.percentage)}
-                      </Text>
-                    </T.HeadData>
-                  </T.Row>
-                </T.Head>
-                <T.Body>
-                  {taxCards.taxCards.map((card, idx) => (
-                    <T.Row key={idx}>
-                      <T.Data>{card.taxCardType ?? '-'}</T.Data>
-                      <T.Data>
-                        {card.validFrom
-                          ? formatDate(card.validFrom, {
-                              year: 'numeric',
-                              month: '2-digit',
-                              day: '2-digit',
-                            })
-                          : '-'}
-                      </T.Data>
-                      <T.Data>
-                        {card.validTo
-                          ? formatDate(card.validTo, {
-                              year: 'numeric',
-                              month: '2-digit',
-                              day: '2-digit',
-                            })
-                          : '-'}
-                      </T.Data>
-                      <T.Data>
-                        {card.percentage != null ? `${card.percentage}%` : '-'}
-                      </T.Data>
-                    </T.Row>
-                  ))}
-                </T.Body>
-              </T.Table>
-            </Box>
-          )}
-
-          {!taxCards?.taxCards?.length && (
-            <AlertMessage
-              type="info"
-              message={formatMessage(m.personalTaxCreditNotRegistered)}
-            />
-          )}
-
-          {/* My personal tax credit */}
+    <IntroWrapper {...introProps}>
+      <Stack space={6}>
+        {/* Tax cards table */}
+        {!!taxCards?.taxCards?.length && (
           <Box>
-            <Text variant="h4" marginBottom={3}>
-              {formatMessage(m.myPersonalTaxCredit)}
-            </Text>
+            <T.Table>
+              <T.Head>
+                <T.Row>
+                  <T.HeadData box={{ background: 'blue100' }} scope="col">
+                    <Text variant="medium" fontWeight="medium">
+                      {formatMessage(m.type)}
+                    </Text>
+                  </T.HeadData>
+                  <T.HeadData box={{ background: 'blue100' }} scope="col">
+                    <Text variant="medium" fontWeight="medium">
+                      {formatMessage(m.dateFrom)}
+                    </Text>
+                  </T.HeadData>
+                  <T.HeadData box={{ background: 'blue100' }} scope="col">
+                    <Text variant="medium" fontWeight="medium">
+                      {formatMessage(m.dateTo)}
+                    </Text>
+                  </T.HeadData>
+                  <T.HeadData box={{ background: 'blue100' }} scope="col">
+                    <Text variant="medium" fontWeight="medium">
+                      {formatMessage(m.percentage)}
+                    </Text>
+                  </T.HeadData>
+                </T.Row>
+              </T.Head>
+              <T.Body>
+                {taxCards.taxCards.map((card, idx) => (
+                  <T.Row key={idx}>
+                    <T.Data>{card.taxCardType ?? '-'}</T.Data>
+                    <T.Data>
+                      {card.validFrom
+                        ? formatDate(card.validFrom, {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                          })
+                        : '-'}
+                    </T.Data>
+                    <T.Data>
+                      {card.validTo
+                        ? formatDate(card.validTo, {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                          })
+                        : '-'}
+                    </T.Data>
+                    <T.Data>
+                      {card.percentage != null ? `${card.percentage}%` : '-'}
+                    </T.Data>
+                  </T.Row>
+                ))}
+              </T.Body>
+            </T.Table>
+          </Box>
+        )}
 
-            <Stack space={3}>
-              <Checkbox
-                id="register-personal-tax-credit"
-                label={formatMessage(m.registerPersonalTaxCredit)}
-                checked={myAction === 'register'}
-                disabled={canRegister}
-                onChange={(e) =>
-                  setMyAction(e.target.checked ? 'register' : null)
-                }
-              />
-              {myAction === 'register' && (
-                <Box paddingLeft={7}>
-                  <Box style={{ maxWidth: 480 }}>
-                    <Stack space={3}>
-                      <Box display="flex" columnGap={3} alignItems="flexEnd">
-                        <Box style={{ flex: 1 }}>
-                          <Select
-                            name="register-year"
-                            label={formatMessage(m.fromWhatTime)}
-                            placeholder={formatMessage(m.theYear)}
-                            size="xs"
-                            backgroundColor="blue"
-                            options={yearOptions}
-                            value={
-                              registerYear != null
-                                ? yearOptions.find(
-                                    (o) => o.value === registerYear,
-                                  )
-                                : null
-                            }
-                            onChange={(opt) => {
-                              setRegisterYear(
-                                opt ? (opt.value as number) : null,
-                              )
-                              setRegisterMonth(null)
-                            }}
-                            required
-                          />
-                        </Box>
-                        <Box style={{ flex: 1 }}>
-                          <Select
-                            name="register-month"
-                            label=""
-                            placeholder={formatMessage(m.month)}
-                            size="xs"
-                            backgroundColor="blue"
-                            options={registerMonthOptions}
-                            value={
-                              registerMonth != null
-                                ? registerMonthOptions.find(
-                                    (o) => o.value === registerMonth,
-                                  )
-                                : null
-                            }
-                            onChange={(opt) =>
-                              setRegisterMonth(
-                                opt ? (opt.value as number) : null,
-                              )
-                            }
-                            isDisabled={registerYear == null}
-                          />
-                        </Box>
-                      </Box>
-                      <Input
-                        id="register-percentage"
-                        name="register-percentage"
-                        label={formatMessage(m.percentageFromNextMonth)}
-                        placeholder="100%"
-                        size="xs"
-                        backgroundColor="blue"
-                        value={
-                          registerPercentage ? `${registerPercentage}%` : ''
-                        }
-                        onChange={(e) => {
-                          const val = e.target.value.replace('%', '').trim()
-                          const num = Number(val)
-                          if (
-                            val === '' ||
-                            (!isNaN(num) && num >= 0 && num <= 100)
-                          ) {
-                            setRegisterPercentage(val)
-                          }
-                        }}
-                        required
-                      />
-                    </Stack>
-                  </Box>
-                </Box>
-              )}
+        {!taxCards?.taxCards?.length && (
+          <AlertMessage
+            type="info"
+            message={formatMessage(m.personalTaxCreditNotRegistered)}
+          />
+        )}
 
-              <Checkbox
-                id="edit-personal-tax-credit"
-                label={formatMessage(m.editPersonalTaxCredit)}
-                checked={myAction === 'edit'}
-                disabled={!canRegister}
-                onChange={(e) => setMyAction(e.target.checked ? 'edit' : null)}
-              />
-              {myAction === 'edit' && (
-                <Box paddingLeft={7}>
-                  <Box style={{ maxWidth: 480 }}>
-                    <Input
-                      id="edit-percentage"
-                      name="edit-percentage"
-                      label={formatMessage(m.percentageFromNextMonth)}
-                      placeholder="100%"
-                      size="xs"
-                      backgroundColor="blue"
-                      value={editPercentage ? `${editPercentage}%` : ''}
-                      onChange={(e) => {
-                        const val = e.target.value.replace('%', '').trim()
-                        const num = Number(val)
-                        if (
-                          val === '' ||
-                          (!isNaN(num) && num >= 0 && num <= 100)
-                        ) {
-                          setEditPercentage(val)
-                        }
-                      }}
-                      disabled={!canRegister}
-                    />
-                  </Box>
-                </Box>
-              )}
+        {/* My personal tax credit */}
+        <Box>
+          <Text variant="h4" marginBottom={3}>
+            {formatMessage(m.myPersonalTaxCredit)}
+          </Text>
 
-              <Checkbox
-                id="discontinue-personal-tax-credit"
-                label={formatMessage(m.discontinuePersonalTaxCredit)}
-                checked={myAction === 'discontinue'}
-                disabled={!canRegister}
-                onChange={(e) =>
-                  setMyAction(e.target.checked ? 'discontinue' : null)
-                }
-              />
-              {myAction === 'discontinue' && (
-                <Box paddingLeft={7}>
-                  <Box style={{ maxWidth: 480 }}>
+          <Stack space={3}>
+            <Checkbox
+              id="register-personal-tax-credit"
+              label={formatMessage(m.registerPersonalTaxCredit)}
+              checked={myAction === 'register'}
+              disabled={isAlreadyRegistered}
+              onChange={(e) =>
+                setMyAction(e.target.checked ? 'register' : null)
+              }
+            />
+            {myAction === 'register' && (
+              <Box paddingLeft={7}>
+                <Box style={{ maxWidth: 480 }}>
+                  <Stack space={3}>
                     <Box display="flex" columnGap={3} alignItems="flexEnd">
                       <Box style={{ flex: 1 }}>
                         <Select
-                          name="discontinue-year"
+                          name="register-year"
                           label={formatMessage(m.fromWhatTime)}
                           placeholder={formatMessage(m.theYear)}
                           size="xs"
                           backgroundColor="blue"
                           options={yearOptions}
                           value={
-                            discontinueYear != null
+                            registerYear != null
                               ? yearOptions.find(
-                                  (o) => o.value === discontinueYear,
+                                  (o) => o.value === registerYear,
                                 )
                               : null
                           }
                           onChange={(opt) => {
-                            setDiscontinueYear(
-                              opt ? (opt.value as number) : null,
-                            )
-                            setDiscontinueMonth(null)
+                            setRegisterYear(opt ? (opt.value as number) : null)
+                            setRegisterMonth(null)
                           }}
-                          isDisabled={!canRegister}
+                          required
                         />
                       </Box>
                       <Box style={{ flex: 1 }}>
                         <Select
-                          name="discontinue-month"
+                          name="register-month"
                           label=""
                           placeholder={formatMessage(m.month)}
                           size="xs"
                           backgroundColor="blue"
-                          options={discontinueMonthOptions}
+                          options={registerMonthOptions}
                           value={
-                            discontinueMonth != null
-                              ? discontinueMonthOptions.find(
-                                  (o) => o.value === discontinueMonth,
+                            registerMonth != null
+                              ? registerMonthOptions.find(
+                                  (o) => o.value === registerMonth,
                                 )
                               : null
                           }
                           onChange={(opt) =>
-                            setDiscontinueMonth(
-                              opt ? (opt.value as number) : null,
-                            )
+                            setRegisterMonth(opt ? (opt.value as number) : null)
                           }
-                          isDisabled={!canRegister || discontinueYear == null}
+                          isDisabled={registerYear == null}
                         />
                       </Box>
                     </Box>
-                  </Box>
-                </Box>
-              )}
-            </Stack>
-
-            <Box marginTop={3}>
-              <Button
-                onClick={handleSaveMyTaxCredit}
-                disabled={
-                  !myAction ||
-                  isSavingMyTaxCredit ||
-                  (myAction === 'register' && canRegister) ||
-                  (myAction !== 'register' && !canRegister)
-                }
-                loading={isSavingMyTaxCredit}
-                size="small"
-              >
-                {formatMessage(coreMessages.save)}
-              </Button>
-            </Box>
-          </Box>
-
-          {/* Spouse personal tax credit */}
-          <Box>
-            <Text variant="h4" marginBottom={3}>
-              {formatMessage(m.spousePersonalTaxCredit)}
-            </Text>
-            <Stack space={2}>
-              <Checkbox
-                id="spouse-deceased-tax-credit"
-                label={formatMessage(m.spouseDeceasedTaxCredit)}
-                checked={spouseDeceased}
-                disabled={!spouseEligibility?.canApply}
-                onChange={(e) => setSpouseDeceased(e.target.checked)}
-              />
-              {spouseDeceased && (
-                <Box paddingLeft={7}>
-                  <Box style={{ maxWidth: 480 }}>
-                    <Stack space={3}>
-                      <Text>{formatMessage(m.spouseDeceasedInfo)}</Text>
-                      {/* TODO: replace with backend data */}
-                      <Box>
-                        <Text fontWeight="semiBold">
-                          Gunnar Jón Hólmgeirsson
-                        </Text>
-                        <Text>
-                          {formatMessage(m.spouseNationalId)} 190891-2620
-                        </Text>
-                      </Box>
-                      {spouseEligibility?.reasonNotAllowed ? (
-                        <AlertMessage
-                          type="warning"
-                          message={spouseEligibility.reasonNotAllowed}
-                        />
-                      ) : (
-                        <>
-                          <Box
-                            display="flex"
-                            columnGap={3}
-                            alignItems="flexEnd"
-                          >
-                            <Box style={{ flex: 1 }}>
-                              <Select
-                                name="spouse-deceased-year"
-                                label={formatMessage(m.fromWhatTime)}
-                                placeholder={formatMessage(m.theYear)}
-                                size="xs"
-                                backgroundColor="blue"
-                                options={spouseYearOptions}
-                                value={
-                                  spouseDeceasedYear != null
-                                    ? spouseYearOptions.find(
-                                        (o) => o.value === spouseDeceasedYear,
-                                      )
-                                    : null
-                                }
-                                onChange={(opt) => {
-                                  setSpouseDeceasedYear(
-                                    opt ? (opt.value as number) : null,
-                                  )
-                                  setSpouseDeceasedMonth(null)
-                                }}
-                                isDisabled={!spouseEligibility?.canApply}
-                              />
-                            </Box>
-                            <Box style={{ flex: 1 }}>
-                              <Select
-                                name="spouse-deceased-month"
-                                label=""
-                                placeholder={formatMessage(m.month)}
-                                size="xs"
-                                backgroundColor="blue"
-                                options={spouseMonthOptions}
-                                value={
-                                  spouseDeceasedMonth != null
-                                    ? spouseMonthOptions.find(
-                                        (o) => o.value === spouseDeceasedMonth,
-                                      )
-                                    : null
-                                }
-                                onChange={(opt) =>
-                                  setSpouseDeceasedMonth(
-                                    opt ? (opt.value as number) : null,
-                                  )
-                                }
-                                isDisabled={
-                                  !spouseEligibility?.canApply ||
-                                  spouseDeceasedYear == null
-                                }
-                              />
-                            </Box>
-                          </Box>
-                          <Input
-                            id="spouse-deceased-percentage"
-                            name="spouse-deceased-percentage"
-                            label={formatMessage(m.percentageFromNextMonth)}
-                            placeholder="100%"
-                            size="xs"
-                            backgroundColor="blue"
-                            value={
-                              spouseDeceasedPercentage
-                                ? `${spouseDeceasedPercentage}%`
-                                : ''
-                            }
-                            onChange={(e) => {
-                              const val = e.target.value.replace('%', '').trim()
-                              const num = Number(val)
-                              if (
-                                val === '' ||
-                                (!isNaN(num) && num >= 0 && num <= 100)
-                              ) {
-                                setSpouseDeceasedPercentage(val)
-                              }
-                            }}
-                            disabled={!spouseEligibility?.canApply}
-                          />
-                        </>
-                      )}
-                    </Stack>
-                  </Box>
-                </Box>
-              )}
-              <Checkbox
-                id="grant-spouse-tax-credit"
-                label={
-                  <>
-                    {formatMessage(m.grantSpouseTaxCredit)}{' '}
-                    <Tooltip
-                      text={formatMessage(m.grantSpouseTaxCreditInfo)}
-                      variant="light"
-                      placement="right"
+                    <NumberFormat
+                      customInput={Input}
+                      id="register-percentage"
+                      name="register-percentage"
+                      label={formatMessage(m.percentageFromNextMonth)}
+                      placeholder="100%"
+                      size="xs"
+                      backgroundColor="blue"
+                      suffix="%"
+                      allowNegative={false}
+                      isAllowed={({ floatValue }) =>
+                        floatValue === undefined ||
+                        (floatValue >= 0 && floatValue <= 100)
+                      }
+                      value={registerPercentage}
+                      onValueChange={({ value }) =>
+                        setRegisterPercentage(value)
+                      }
+                      required
                     />
-                  </>
-                }
-                checked={grantSpouse}
-                onChange={(e) => setGrantSpouse(e.target.checked)}
-              />
-            </Stack>
-            <Box marginTop={3}>
-              <Button
-                onClick={handleSaveSpouse}
-                disabled={(!spouseDeceased && !grantSpouse) || isSavingSpouse}
-                loading={isSavingSpouse}
-                size="small"
-              >
-                {formatMessage(coreMessages.save)}
-              </Button>
-            </Box>
-          </Box>
+                  </Stack>
+                </Box>
+              </Box>
+            )}
 
-          {/* Tax bracket info */}
-          <AlertMessage
-            type="info"
-            message={
-              <Text as="span" variant="small" whiteSpace="preLine">
-                {formatMessage(m.taxBracketInfo)}
-              </Text>
-            }
-          />
-        </Stack>
-      </IntroWrapper>
-    </Box>
+            <Checkbox
+              id="edit-personal-tax-credit"
+              label={formatMessage(m.editPersonalTaxCredit)}
+              checked={myAction === 'edit'}
+              disabled={!isAlreadyRegistered}
+              onChange={(e) => setMyAction(e.target.checked ? 'edit' : null)}
+            />
+            {myAction === 'edit' && (
+              <Box paddingLeft={7}>
+                <Box style={{ maxWidth: 480 }}>
+                  <NumberFormat
+                    customInput={Input}
+                    id="edit-percentage"
+                    name="edit-percentage"
+                    label={formatMessage(m.percentageFromNextMonth)}
+                    placeholder="100%"
+                    size="xs"
+                    backgroundColor="blue"
+                    suffix="%"
+                    allowNegative={false}
+                    isAllowed={({ floatValue }) =>
+                      floatValue === undefined ||
+                      (floatValue >= 0 && floatValue <= 100)
+                    }
+                    value={editPercentage}
+                    onValueChange={({ value }) => setEditPercentage(value)}
+                    disabled={!isAlreadyRegistered}
+                  />
+                </Box>
+              </Box>
+            )}
+
+            <Checkbox
+              id="discontinue-personal-tax-credit"
+              label={formatMessage(m.discontinuePersonalTaxCredit)}
+              checked={myAction === 'discontinue'}
+              disabled={!isAlreadyRegistered}
+              onChange={(e) =>
+                setMyAction(e.target.checked ? 'discontinue' : null)
+              }
+            />
+            {myAction === 'discontinue' && (
+              <Box paddingLeft={7}>
+                <Box style={{ maxWidth: 480 }}>
+                  <Box display="flex" columnGap={3} alignItems="flexEnd">
+                    <Box style={{ flex: 1 }}>
+                      <Select
+                        name="discontinue-year"
+                        label={formatMessage(m.fromWhatTime)}
+                        placeholder={formatMessage(m.theYear)}
+                        size="xs"
+                        backgroundColor="blue"
+                        options={yearOptions}
+                        value={
+                          discontinueYear != null
+                            ? yearOptions.find(
+                                (o) => o.value === discontinueYear,
+                              )
+                            : null
+                        }
+                        onChange={(opt) => {
+                          setDiscontinueYear(opt ? (opt.value as number) : null)
+                          setDiscontinueMonth(null)
+                        }}
+                        isDisabled={!isAlreadyRegistered}
+                      />
+                    </Box>
+                    <Box style={{ flex: 1 }}>
+                      <Select
+                        name="discontinue-month"
+                        label=""
+                        placeholder={formatMessage(m.month)}
+                        size="xs"
+                        backgroundColor="blue"
+                        options={discontinueMonthOptions}
+                        value={
+                          discontinueMonth != null
+                            ? discontinueMonthOptions.find(
+                                (o) => o.value === discontinueMonth,
+                              )
+                            : null
+                        }
+                        onChange={(opt) =>
+                          setDiscontinueMonth(
+                            opt ? (opt.value as number) : null,
+                          )
+                        }
+                        isDisabled={
+                          !isAlreadyRegistered || discontinueYear == null
+                        }
+                      />
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+            )}
+          </Stack>
+
+          <Box marginTop={3}>
+            <Button
+              onClick={handleSaveMyTaxCredit}
+              disabled={
+                !myAction ||
+                isSavingMyTaxCredit ||
+                (myAction === 'register' && isAlreadyRegistered) ||
+                (myAction !== 'register' && !isAlreadyRegistered)
+              }
+              loading={isSavingMyTaxCredit}
+              size="small"
+            >
+              {formatMessage(coreMessages.save)}
+            </Button>
+          </Box>
+        </Box>
+
+        {/* Spouse personal tax credit */}
+        <Box>
+          <Text variant="h4" marginBottom={3}>
+            {formatMessage(m.spousePersonalTaxCredit)}
+          </Text>
+          <Stack space={2}>
+            <Checkbox
+              id="spouse-deceased-tax-credit"
+              label={formatMessage(m.spouseDeceasedTaxCredit)}
+              checked={spouseDeceased}
+              disabled={!spouseEligibility?.canApply}
+              onChange={(e) => setSpouseDeceased(e.target.checked)}
+            />
+            {spouseDeceased && (
+              <Box paddingLeft={7}>
+                <Box style={{ maxWidth: 480 }}>
+                  <Stack space={3}>
+                    <Text>{formatMessage(m.spouseDeceasedInfo)}</Text>
+                    {spouseEligibility?.reasonNotAllowed ? (
+                      <AlertMessage
+                        type="warning"
+                        message={spouseEligibility.reasonNotAllowed}
+                      />
+                    ) : (
+                      <>
+                        <Box display="flex" columnGap={3} alignItems="flexEnd">
+                          <Box style={{ flex: 1 }}>
+                            <Select
+                              name="spouse-deceased-year"
+                              label={formatMessage(m.fromWhatTime)}
+                              placeholder={formatMessage(m.theYear)}
+                              size="xs"
+                              backgroundColor="blue"
+                              options={spouseYearOptions}
+                              value={
+                                spouseDeceasedYear != null
+                                  ? spouseYearOptions.find(
+                                      (o) => o.value === spouseDeceasedYear,
+                                    )
+                                  : null
+                              }
+                              onChange={(opt) => {
+                                setSpouseDeceasedYear(
+                                  opt ? (opt.value as number) : null,
+                                )
+                                setSpouseDeceasedMonth(null)
+                              }}
+                              isDisabled={!spouseEligibility?.canApply}
+                            />
+                          </Box>
+                          <Box style={{ flex: 1 }}>
+                            <Select
+                              name="spouse-deceased-month"
+                              label=""
+                              placeholder={formatMessage(m.month)}
+                              size="xs"
+                              backgroundColor="blue"
+                              options={spouseMonthOptions}
+                              value={
+                                spouseDeceasedMonth != null
+                                  ? spouseMonthOptions.find(
+                                      (o) => o.value === spouseDeceasedMonth,
+                                    )
+                                  : null
+                              }
+                              onChange={(opt) =>
+                                setSpouseDeceasedMonth(
+                                  opt ? (opt.value as number) : null,
+                                )
+                              }
+                              isDisabled={
+                                !spouseEligibility?.canApply ||
+                                spouseDeceasedYear == null
+                              }
+                            />
+                          </Box>
+                        </Box>
+                        <NumberFormat
+                          customInput={Input}
+                          id="spouse-deceased-percentage"
+                          name="spouse-deceased-percentage"
+                          label={formatMessage(m.percentageFromNextMonth)}
+                          placeholder="100%"
+                          size="xs"
+                          backgroundColor="blue"
+                          suffix="%"
+                          allowNegative={false}
+                          isAllowed={({ floatValue }) =>
+                            floatValue === undefined ||
+                            (floatValue >= 0 && floatValue <= 100)
+                          }
+                          value={spouseDeceasedPercentage}
+                          onValueChange={({ value }) =>
+                            setSpouseDeceasedPercentage(value)
+                          }
+                          disabled={!spouseEligibility?.canApply}
+                        />
+                      </>
+                    )}
+                  </Stack>
+                </Box>
+              </Box>
+            )}
+            <Checkbox
+              id="grant-spouse-tax-credit"
+              label={
+                <>
+                  {formatMessage(m.grantSpouseTaxCredit)}{' '}
+                  <Tooltip
+                    text={formatMessage(m.grantSpouseTaxCreditInfo)}
+                    variant="light"
+                    placement="right"
+                  />
+                </>
+              }
+              checked={grantSpouse}
+              onChange={(e) => setGrantSpouse(e.target.checked)}
+            />
+          </Stack>
+          <Box marginTop={3}>
+            <Button
+              onClick={handleSaveSpouse}
+              disabled={(!spouseDeceased && !grantSpouse) || isSavingSpouse}
+              loading={isSavingSpouse}
+              size="small"
+            >
+              {formatMessage(coreMessages.save)}
+            </Button>
+          </Box>
+        </Box>
+
+        {/* Tax bracket info */}
+        <AlertMessage
+          type="info"
+          message={
+            <Text as="span" variant="small" whiteSpace="preLine">
+              {formatMessage(m.taxBracketInfo)}
+            </Text>
+          }
+        />
+      </Stack>
+    </IntroWrapper>
   )
 }
 

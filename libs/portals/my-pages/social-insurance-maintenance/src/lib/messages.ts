@@ -166,12 +166,11 @@ export const m = defineMessages({
   },
   personalTaxCredit: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit',
-    defaultMessage: 'Persónuafslátttur',
+    defaultMessage: 'Persónuafsláttur',
   },
   personalTaxCreditDescription: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-description',
-    defaultMessage:
-      'Persónuafslátttur er 68.691 kr. á mánuði á árinu 2025. Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    defaultMessage: 'Persónuafsláttur er 68.691 kr. á mánuði á árinu 2025.',
   },
   personalTaxCreditNotRegistered: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-not-registered',
@@ -207,10 +206,6 @@ export const m = defineMessages({
     defaultMessage:
       'Ath. skattkort vegna andláts maka má vera skráð frá og með 1. næsta mánaðar eftir andlát og verður nýtt næstu 8 mánuði á eftir.',
   },
-  spouseNationalId: {
-    id: 'sp.social-insurance-maintenance:spouse-national-id',
-    defaultMessage: 'kt.',
-  },
   grantSpouseTaxCredit: {
     id: 'sp.social-insurance-maintenance:grant-spouse-tax-credit',
     defaultMessage: 'Ég veiti maka leyfi til að nota persónuafslátt minn.',
@@ -220,25 +215,6 @@ export const m = defineMessages({
     defaultMessage:
       'Bæði þú og maki getið ekki nýtt persónuafsláttinn á sama tíma.',
   },
-  taxBracket: {
-    id: 'sp.social-insurance-maintenance:tax-bracket',
-    defaultMessage: 'Skattþrep',
-  },
-  taxBracketFromIncomePlan: {
-    id: 'sp.social-insurance-maintenance:tax-bracket-from-income-plan',
-    defaultMessage:
-      'Ég vil að staðgreiðsla sé reiknuð út frá tekjuáætlun minni',
-  },
-  taxBracket1: {
-    id: 'sp.social-insurance-maintenance:tax-bracket-1',
-    defaultMessage:
-      'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,49% af tekjum 0-472.005 kr.).',
-  },
-  taxBracket2: {
-    id: 'sp.social-insurance-maintenance:tax-bracket-2',
-    defaultMessage:
-      'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,99% af tekjum 472.006 - 1.325.127 kr.).',
-  },
   taxBracketInfo: {
     id: 'sp.social-insurance-maintenance:tax-bracket-info',
     defaultMessage:
@@ -246,7 +222,7 @@ export const m = defineMessages({
   },
   personalTaxCreditSaveSuccess: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-save-success',
-    defaultMessage: 'Persónuafslátttur hefur verið vistaður',
+    defaultMessage: 'Persónuafsláttur hefur verið vistaður',
   },
   personalTaxCreditSaveError: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-save-error',

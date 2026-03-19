@@ -45,8 +45,13 @@ export const mapQuestion = (q: QuestionType): Question => {
   // Merge and de-duplicate all dependencies into a single list
   const allDeps = [...new Set([...visibilityDeps, ...explicitDeps])]
 
+  const id = q.entryID ?? q.question
+  if (!id) {
+    throw new Error(`LSH question is missing both entryID and question text`)
+  }
+
   return {
-    id: q.entryID ?? q.question ?? 'undefined-id',
+    id,
     label: q.question ?? '',
     sublabel:
       [q.description?.trim(), q.instructions?.trim()]

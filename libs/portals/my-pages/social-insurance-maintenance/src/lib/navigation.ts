@@ -42,8 +42,8 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: localMessages.personalTaxCredit,
-      description: localMessages.personalTaxCreditDescription,
+      name: m.personalTaxCredit,
+      description: m.personalTaxCreditDescription,
       path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePersonalTaxCredit,
     },
   ],
