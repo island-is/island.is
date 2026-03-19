@@ -5,14 +5,9 @@ import {
   ApplicationFilesContentDto,
 } from '@island.is/clients/hms-application-system'
 import { Fasteign } from '@island.is/clients/assets'
-import {
-  AttachmentData,
-  StreamingAttachmentData,
-} from '../../../shared/services/attachment-s3.service'
+import { AttachmentData } from '../../../shared/services/attachment-s3.service'
 import crypto from 'crypto'
 import * as kennitala from 'kennitala'
-import { Readable } from 'stream'
-import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 
 // The payment structure is as follows:
