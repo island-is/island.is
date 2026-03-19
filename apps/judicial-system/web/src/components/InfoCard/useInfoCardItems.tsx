@@ -417,7 +417,8 @@ const useInfoCardItems = () => {
     title: (
       <Text variant="h4" as="h4" marginBottom={2}>
         {capitalize(
-          isNonEmptyArray(workingCase.civilClaimants)
+          isNonEmptyArray(workingCase.civilClaimants) &&
+            workingCase.civilClaimants.length > 1
             ? formatMessage(strings.civilClaimants)
             : formatMessage(strings.civilClaimant),
         )}
