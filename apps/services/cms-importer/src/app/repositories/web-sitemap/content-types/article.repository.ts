@@ -74,11 +74,11 @@ export class ArticleRepository implements SitemapUrlFetcher {
           ?.parentArticleSlug?.[EN_LOCALE]
         if (!parentArticleSlug && !enParentArticleSlug) continue
         const url =
-          parentArticleSlug && entry.fields.title?.[LOCALE]
+          slug && parentArticleSlug && entry.fields.title?.[LOCALE]
             ? `https://island.is/${parentArticleSlug}/${slug}`
             : ''
         const enUrl =
-          enParentArticleSlug && entry.fields.title?.[EN_LOCALE]
+          enSlug && enParentArticleSlug && entry.fields.title?.[EN_LOCALE]
             ? `https://island.is/en/${enParentArticleSlug}/${enSlug}`
             : ''
         urls.push({

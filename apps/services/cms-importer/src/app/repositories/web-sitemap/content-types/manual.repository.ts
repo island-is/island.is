@@ -19,7 +19,6 @@ export class ManualRepository implements SitemapUrlFetcher {
       'fields.slug[exists]': true,
       'fields.title[exists]': true,
       'sys.publishedAt[exists]': true,
-      'fields.chapters[exists]': true,
     })
     if (!manualResponse.ok) throw manualResponse.error
 
