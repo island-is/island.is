@@ -70,8 +70,8 @@ export class WebSitemapService {
   public async run() {
     this.logger.info('Web sitemap worker starting...')
 
-    const itemsPerPage = 10
-    const maxUrlsPerFile = 10
+    const itemsPerPage = 100
+    const maxUrlsPerFile = 2000
 
     const s3FileUrls: string[] = []
     const urls: SitemapUrl[] = []
@@ -98,8 +98,8 @@ export class WebSitemapService {
         urls.push(...response.urls)
         if (urls.length >= maxUrlsPerFile) await flushSitemapUrlsToFile()
       }
-      if (urls.length >= maxUrlsPerFile) await flushSitemapUrlsToFile()
     }
+
     if (urls.length > 0) await flushSitemapUrlsToFile()
 
     const timestamp = new Date().toISOString()
