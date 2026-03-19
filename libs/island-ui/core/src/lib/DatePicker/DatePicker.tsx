@@ -83,6 +83,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   isClearable = false,
   clearLabel,
   displaySelectInput = false,
+  fixedHeight = false,
 }) => {
   const isValidDate = (d: unknown): d is Date =>
     d instanceof Date && !isNaN((d as Date).getTime())
@@ -162,6 +163,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               ? currentLanguage.formatWithTime
               : currentLanguage.format
           }
+          fixedHeight={fixedHeight}
           showPopperArrow={false}
           popperPlacement="bottom-start"
           open={isOpen}
