@@ -93,7 +93,6 @@ export class WebSitemapService {
     for (const fetcher of this.fetchers) {
       let pageIndex = 0
       while (pageIndex >= 0) {
-        console.log(pageIndex)
         const response = await fetcher.getSitemapUrls(itemsPerPage, pageIndex)
         pageIndex = response.nextPageIndex
         urls.push(...response.urls)
