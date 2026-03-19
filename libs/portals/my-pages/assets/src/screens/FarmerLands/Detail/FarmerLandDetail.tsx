@@ -2,10 +2,9 @@ import { Tabs } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  EmptyState,
   IntroWrapperV2,
   ATVINNUVEGARADUNEYTID_SLUG,
-  m,
+  m as cm,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { farmerLandsMessages as fm } from '../../../lib/messages'
@@ -63,7 +62,12 @@ export const FarmerLandDetail = () => {
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}
       {!loading && !error && data && !data.farmerLand && (
-        <EmptyState description={m.noData} />
+        <Problem
+          type="no_data"
+          title={formatMessage(fm.noFarmerLandFound)}
+          message={formatMessage(cm.noDataFoundDetail)}
+          noBorder={false}
+        />
       )}
       {!loading && data?.farmerLand && (
         <Tabs

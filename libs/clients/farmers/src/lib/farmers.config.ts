@@ -11,7 +11,7 @@ export const FarmersClientConfig = defineConfig<z.infer<typeof schema>>({
   load: (env) => ({
     xRoadServicePath: env.required(
       'XROAD_FARMERS_PATH',
-      'IS-DEV/GOV/10094/Afurd-Private/baendur-v1',
+      'IS-DEV/GOV/10094/Afurd-Private/baendur',
     ),
   }),
 })
