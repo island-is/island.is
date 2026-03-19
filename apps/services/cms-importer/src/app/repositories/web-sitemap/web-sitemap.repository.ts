@@ -54,24 +54,29 @@ export class WebSitemapRepository {
       return { urls: [], nextFetcherIndex: -1, nextPageIndex: -1 }
 
     const itemsPerPage = 100
-    const maxUrls = 100
+    const maxUrls = 200
 
     let total = 0
     const resultUrls: SitemapUrl[] = []
 
     for (let i = fetcherIndex; i < this.fetchers.length; i += 1) {
+      const currentPageIndex = i === fetcherIndex ? pageIndex : 0
       if (total >= maxUrls)
         return {
           urls: resultUrls,
           nextFetcherIndex: i,
-          nextPageIndex: i === fetcherIndex ? pageIndex : 0,
+          nextPageIndex: currentPageIndex,
         }
 
       const fetcher = this.fetchers[i]
-      let response: Awaited<ReturnType<typeof fetcher.getSitemapUrls>>
+      let response: Awaited<ReturnType<typeof fetcher.getSitemapUrls>> | null =
+        null
 
       do {
-        response = await fetcher.getSitemapUrls(itemsPerPage, pageIndex)
+        response = await fetcher.getSitemapUrls(
+          itemsPerPage,
+          response?.nextPageIndex ?? currentPageIndex,
+        )
         total += response.urls.length
         resultUrls.push(...response.urls)
         if (total >= maxUrls)

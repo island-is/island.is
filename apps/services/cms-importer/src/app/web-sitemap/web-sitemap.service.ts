@@ -41,7 +41,7 @@ export class WebSitemapService {
         response?.nextPageIndex ?? 0,
       )
       if (response.urls.length === 0) break
-      const fileName = `sitemap-${sitemapFiles.length + 1}.xml`
+      const fileName = `${sitemapFiles.length + 1}.xml`
       await this.uploadXmlFile(
         `<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
