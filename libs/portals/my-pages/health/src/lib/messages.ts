@@ -1939,6 +1939,14 @@ export const messages = defineMessages({
     defaultMessage: 'Spurningalisti',
     id: 'sp.health:questionnaire',
   },
+  questionnaireExpiration: {
+    defaultMessage: 'Gildir til',
+    id: 'sp.health:questionnaire-expiration',
+  },
+  questionnaireSender: {
+    defaultMessage: 'Sent af',
+    id: 'sp.health:questionnaire-sender',
+  },
   expiredQuestionnaire: {
     defaultMessage: 'Útrunnið',
     id: 'sp.health:expired-questionnaire',
@@ -2547,6 +2555,32 @@ export const messages = defineMessages({
   prescriptionBlockedOther: {
     defaultMessage: 'Endurnýjun ekki í boði vegna óþekktrar ástæðu',
     id: 'sp.health:prescription-blocked-other',
+  },
+  renewalStatusApproved: {
+    defaultMessage: 'Samþykkt',
+    id: 'sp.health:renewal-status-approved',
+  },
+  renewalStatusDismissed: {
+    defaultMessage: 'Vísað frá',
+    id: 'sp.health:renewal-status-dismissed',
+  },
+  renewalStatusRejected: {
+    defaultMessage: 'Hafnað',
+    id: 'sp.health:renewal-status-rejected',
+  },
+  renewalRequestSent: {
+    defaultMessage:
+      'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
+    id: 'sp.health:renewal-request-sent',
+  },
+  renewalRequestError: {
+    defaultMessage:
+      'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
+    id: 'sp.health:renewal-request-error',
+  },
+  renewalInvalidPrescription: {
+    defaultMessage: 'Vinsamlegast veljið gilt lyfseðilsnúmer.',
+    id: 'sp.health:renewal-invalid-prescription',
   },
   weekdayMondayAcc: {
     defaultMessage: 'Mánudaginn',

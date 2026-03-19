@@ -813,7 +813,8 @@ export class FormsService {
       'modified',
       'displayOrder',
       'isHidden',
-      'multiset',
+      'multiMax',
+      'isMulti',
       'shouldValidate',
       'shouldPopulate',
     ]
