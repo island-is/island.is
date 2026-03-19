@@ -842,13 +842,17 @@ export type TableRepeaterField = BaseField & {
      * or a function (answers, externalData) => StaticText[] for dynamic headers.
      * If not provided it will be auto generated from the fields.
      */
-    header?: StaticText[] | ((answers: FormValue, externalData: ExternalData) => StaticText[])
+    header?:
+      | StaticText[]
+      | ((answers: FormValue, externalData: ExternalData) => StaticText[])
     /**
      * List of field id's to render,
      * or a function (answers, externalData) => string[] for dynamic rows.
      * If not provided it will be auto generated from the fields.
      */
-    rows?: string[] | ((answers: FormValue, externalData: ExternalData) => string[])
+    rows?:
+      | string[]
+      | ((answers: FormValue, externalData: ExternalData) => string[])
     format?: Record<
       string,
       (

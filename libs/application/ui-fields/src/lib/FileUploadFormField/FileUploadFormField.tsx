@@ -60,7 +60,12 @@ export const FileUploadFormField = ({
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {title && (
         <Text variant={titleVariant} as={titleVariant} marginBottom={2}>
-          {formatTextWithLocale(title, application, locale as Locale, formatMessage)}
+          {formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         </Text>
       )}
       {(() => {
@@ -74,7 +79,11 @@ export const FileUploadFormField = ({
         )
         return (
           <FieldDescription
-            description={Array.isArray(formatted) ? formatted.join(' ') : String(formatted ?? '')}
+            description={
+              Array.isArray(formatted)
+                ? formatted.join(' ')
+                : String(formatted ?? '')
+            }
           />
         )
       })()}
