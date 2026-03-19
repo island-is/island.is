@@ -213,7 +213,7 @@ export const BaseSettings = () => {
       <Row>
         <Column span="5/10">
           <Input
-            label={formatMessage(m.daysUntilExpiration)}
+            label={formatMessage(m.lifetimeWhileInDraft)}
             placeholder={formatMessage(m.max30Days)}
             name="applicationsDaysToRemove"
             value={
