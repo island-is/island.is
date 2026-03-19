@@ -406,15 +406,7 @@ export class InternalCaseController {
     )
   }
 
-  @UseGuards(
-    CaseExistsGuard,
-    new CaseTypeGuard([
-      ...restrictionCases,
-      ...investigationCases,
-      ...indictmentCases,
-    ]),
-    CaseCompletedGuard,
-  )
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
   @Post(
     `case/:caseId/${
       messageEndpoint[
@@ -434,6 +426,8 @@ export class InternalCaseController {
     this.logger.debug(
       `Delivering the court record working document for case ${caseId} to court`,
     )
+
+    console.log({ a: deliverDto.user }, '!!!!!!!!!!!')
 
     return this.sequelize.transaction(async (transaction) =>
       this.internalCaseService.deliverCourtRecordWorkingDocumentToCourt(
