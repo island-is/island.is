@@ -18,7 +18,6 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
       skip: pageIndex * itemsPerPage,
       select: 'fields.slug,fields.title,sys,fields.projectSubpages',
       'fields.slug[exists]': true,
-      'fields.projectSubpages[exists]': true,
       'sys.publishedAt[exists]': true,
     })
     if (!projectPageResponse.ok) throw projectPageResponse.error
