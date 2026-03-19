@@ -1,12 +1,26 @@
-import { mapLshQuestionnaire } from './lsh/display/mapQuestionnaire'
-import { mapELQuestionnaire } from './el/display/mapQuestionnaire'
+import {
+  mapLshQuestionnaireForm,
+  mapLshQuestionnaireOverview,
+  mapLshQuestionnaireListItem,
+} from './lsh/display/mapQuestionnaire'
+import {
+  mapElQuestionnaireForm,
+  mapElQuestionnaireListItem,
+  mapElQuestionnaireOverview,
+} from './el/display/mapQuestionnaire'
 import { AnswerOptionType } from '../../models/question.model'
 import {
   QuestionnairesOrganizationEnum,
   QuestionnairesStatusEnum,
 } from '../../models/questionnaires.model'
-import type { QuestionnaireBody } from '@island.is/clients/lsh'
-import type { QuestionnaireDetailDto } from '@island.is/clients/health-directorate'
+import type {
+  Questionnaire as LshQuestionnaireType,
+  QuestionnaireBody,
+} from '@island.is/clients/lsh'
+import type {
+  QuestionnaireBaseDto,
+  QuestionnaireDetailDto,
+} from '@island.is/clients/health-directorate'
 import type { MessageDescriptor } from '@formatjs/intl'
 
 // Mock formatMessage function
@@ -67,7 +81,7 @@ describe('display mappers', () => {
         ],
       } as unknown as QuestionnaireBody
 
-      const mapped = mapLshQuestionnaire(lshForm)
+      const mapped = mapLshQuestionnaireForm(lshForm, formatMessage)
 
       expect(mapped.baseInformation.id).toBe('lsh-guid-1')
       expect(mapped.baseInformation.formId).toBe('lsh-form-1')
@@ -140,7 +154,7 @@ describe('display mappers', () => {
         ],
       } as unknown as QuestionnaireBody
 
-      const mapped = mapLshQuestionnaire(lshForm)
+      const mapped = mapLshQuestionnaireForm(lshForm, formatMessage)
 
       const section = mapped.sections?.[0]
       const dependentQuestion = section?.questions?.find((q) => q.id === 'Q2')
@@ -215,7 +229,7 @@ describe('display mappers', () => {
         ],
       } as unknown as QuestionnaireBody
 
-      const mapped = mapLshQuestionnaire(lshForm)
+      const mapped = mapLshQuestionnaireForm(lshForm, formatMessage)
 
       const section = mapped.sections?.[0]
       const dependentQuestion = section?.questions?.find((q) => q.id === 'Q3')
@@ -223,6 +237,72 @@ describe('display mappers', () => {
       expect(dependentQuestion?.visibilityConditions?.[0].questionId).toBe('Q1')
       // dependsOn should contain both Q1 (from visibility + explicit) and Q2 (explicit only), without duplicates
       expect(dependentQuestion?.dependsOn?.sort()).toEqual(['Q1', 'Q2'])
+    })
+  })
+
+  describe('LSH questionnaire overview mapping', () => {
+    const baseLshItem = {
+      gUID: 'lsh-guid-h1',
+      caption: 'LSH Header',
+      description: 'LSH description',
+      validFromDateTime: new Date('2024-01-01T00:00:00.000Z'),
+      validToDateTime: new Date('2099-01-01T00:00:00.000Z'),
+      answerDateTime: null,
+      department: 'Cardiology',
+    } as unknown as LshQuestionnaireType
+
+    it('maps an LSH list item to a Questionnaire overview', () => {
+      const mapped = mapLshQuestionnaireOverview(baseLshItem, formatMessage)
+
+      expect(mapped.baseInformation.id).toBe('lsh-guid-h1')
+      expect(mapped.baseInformation.title).toBe('LSH Header')
+      expect(mapped.baseInformation.status).toBe(
+        QuestionnairesStatusEnum.notAnswered,
+      )
+      expect(mapped.baseInformation.department).toBe('Cardiology')
+      expect(mapped.canSubmit).toBe(true)
+      expect(mapped.expirationDate).toEqual(
+        new Date('2099-01-01T00:00:00.000Z'),
+      )
+    })
+
+    it('maps an LSH list item to a QuestionnairesBaseItem for the list', () => {
+      const mapped = mapLshQuestionnaireListItem(baseLshItem, formatMessage)
+
+      expect(mapped.id).toBe('lsh-guid-h1')
+      expect(mapped.title).toBe('LSH Header')
+      expect(mapped.status).toBe(QuestionnairesStatusEnum.notAnswered)
+      expect(mapped.department).toBe('Cardiology')
+    })
+
+    it('sets expired status when validToDateTime is in the past', () => {
+      const expired = {
+        ...baseLshItem,
+        validToDateTime: new Date('2000-01-01T00:00:00.000Z'),
+      } as unknown as LshQuestionnaireType
+
+      expect(
+        mapLshQuestionnaireOverview(expired, formatMessage).baseInformation
+          .status,
+      ).toBe(QuestionnairesStatusEnum.expired)
+      expect(mapLshQuestionnaireListItem(expired, formatMessage).status).toBe(
+        QuestionnairesStatusEnum.expired,
+      )
+    })
+
+    it('sets notAnswered status when validToDateTime is null', () => {
+      const noExpiry = {
+        ...baseLshItem,
+        validToDateTime: null,
+      } as unknown as LshQuestionnaireType
+
+      expect(
+        mapLshQuestionnaireOverview(noExpiry, formatMessage).baseInformation
+          .status,
+      ).toBe(QuestionnairesStatusEnum.notAnswered)
+      expect(mapLshQuestionnaireListItem(noExpiry, formatMessage).status).toBe(
+        QuestionnairesStatusEnum.notAnswered,
+      )
     })
   })
 
@@ -258,7 +338,7 @@ describe('display mappers', () => {
         expiryDate,
       } as unknown as QuestionnaireDetailDto
 
-      const mapped = mapELQuestionnaire(elDetail, formatMessage)
+      const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
 
       expect(mapped.baseInformation.id).toBe('el-q-1')
       expect(mapped.baseInformation.formId).toBe('el-q-1')
@@ -291,6 +371,51 @@ describe('display mappers', () => {
         { id: 'true', value: 'true', label: 'Já' },
         { id: 'false', value: 'false', label: 'Nei' },
       ])
+    })
+
+    it('maps a detailed EL questionnaire overview without questions', () => {
+      const elDetail = {
+        questionnaireId: 'el-q-3',
+        title: 'EL Title',
+        message: 'EL description',
+        groups: [{ id: 'group-1', title: 'Group 1', items: [] }],
+        triggers: {},
+        submissions: [],
+        replies: [],
+        canSubmit: true,
+        hasDraft: false,
+        expiryDate: null,
+      } as unknown as QuestionnaireDetailDto
+
+      const mapped = mapElQuestionnaireOverview(elDetail, formatMessage)
+
+      expect(mapped.baseInformation.id).toBe('el-q-3')
+      expect(mapped.sections).toBeUndefined()
+      expect(mapped.draftAnswers).toBeUndefined()
+      expect(mapped.baseInformation.status).toBe(
+        QuestionnairesStatusEnum.notAnswered,
+      )
+    })
+
+    it('maps an EL questionnaire list item from a base DTO', () => {
+      const baseDto = {
+        questionnaireId: 'el-q-4',
+        title: 'Base Title',
+        message: 'Base description',
+        createdDate: new Date('2024-01-01T00:00:00.000Z'),
+        lastCreatedSubmissionId: 'sub-1',
+        numSubmitted: 0,
+        hasDraft: true,
+        lastSubmitted: null,
+      } as unknown as QuestionnaireBaseDto
+
+      const mapped = mapElQuestionnaireListItem(baseDto, formatMessage)
+
+      expect(mapped.id).toBe('el-q-4')
+      expect(mapped.title).toBe('Base Title')
+      expect(mapped.sentDate).toBe('2024-01-01T00:00:00.000Z')
+      expect(mapped.status).toBe(QuestionnairesStatusEnum.draft)
+      expect(mapped.lastSubmissionId).toBe('sub-1')
     })
 
     it('sets dependsOn and visibilityConditions for EL question triggers', () => {
@@ -339,7 +464,7 @@ describe('display mappers', () => {
         expiryDate: null,
       } as unknown as QuestionnaireDetailDto
 
-      const mapped = mapELQuestionnaire(elDetail, formatMessage)
+      const mapped = mapElQuestionnaireForm(elDetail, formatMessage)
 
       const section = mapped.sections?.[0]
       const dependentQuestion = section?.questions?.find(

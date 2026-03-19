@@ -149,7 +149,7 @@ export const serviceSetupForWorker =
     service(workerName)
       .namespace(namespace)
       .image(imageName)
-      .serviceAccount(serviceName)
+      .serviceAccount(workerName)
       .db(db)
       .codeOwner(CodeOwners.Aranja)
       .env(env)

@@ -453,6 +453,7 @@ api:
     - 'portals-my-pages'
     - 'services-payments'
     - 'payments'
+    - 'contentful-apps'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -498,7 +499,7 @@ api:
     min: 3
   resources:
     limits:
-      cpu: '1200m'
+      cpu: '3000m'
       memory: '2500Mi'
     requests:
       cpu: '900m'
@@ -2333,6 +2334,7 @@ regulations-admin-backend:
   grantNamespaces:
     - 'islandis'
     - 'download-service'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3055,6 +3057,7 @@ services-form-system-api:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3170,6 +3173,7 @@ services-form-system-api-worker:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3234,6 +3238,7 @@ services-payment-flow-update-handler:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'services-payments'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3516,9 +3521,9 @@ services-payments-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-payments'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/services-payments-worker'
     create: true
-    name: 'services-payments'
+    name: 'services-payments-worker'
 services-sessions:
   enabled: true
   env:
@@ -4274,6 +4279,9 @@ user-notification:
     IDENTITY_SERVER_CLIENT_ID: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'
+    NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
+    NOVA_URL: '/k8s/NOVA_URL_V1'
+    NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -4687,7 +4695,7 @@ web:
     min: 3
   resources:
     limits:
-      cpu: '1800m'
+      cpu: '3000m'
       memory: '1500Mi'
     requests:
       cpu: '1200m'

@@ -1,5 +1,5 @@
 import { toast } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
 import React, { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -50,6 +50,7 @@ const buildInitialFormState = (state: unknown): PermitInput | undefined => {
 }
 
 const NewPermit: React.FC = () => {
+  useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
   useHealthPlausibleSwap()

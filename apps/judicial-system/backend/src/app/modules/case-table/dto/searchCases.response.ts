@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseTableType, CaseType } from '@island.is/judicial-system/types'
 
 class SearchCasesRow {
   @ApiProperty({ type: String, description: 'The case id' })
@@ -33,6 +33,14 @@ class SearchCasesRow {
 
   @ApiProperty({ type: String, description: 'The defendant name' })
   readonly defendantName!: string | null
+
+  @ApiProperty({
+    enum: CaseTableType,
+    isArray: true,
+    description:
+      'Case table types (for the current user role) that this case belongs to',
+  })
+  readonly caseTableTypes!: CaseTableType[]
 }
 
 export class SearchCasesResponse {

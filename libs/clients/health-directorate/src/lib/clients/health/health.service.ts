@@ -10,7 +10,6 @@ import {
   OrganDonorDto,
   OrganDto,
   PrescribedItemDto,
-  PrescriptionRenewalRequestDto,
   ProductDocumentDto,
   ReferralDto,
   UpdateOrganDonorDto,
@@ -41,7 +40,6 @@ import {
 import {
   AppointmentDto,
   ConsentCountryDto,
-  ConsentHistoryEntryDto,
   CreateEuPatientConsentDto,
   CreateOrUpdatePrescriptionCommissionDto,
   EuPatientConsentResponseDto,
@@ -51,6 +49,7 @@ import {
   QuestionnaireDetailDto,
   QuestionnaireSubmissionDetailDto,
   SubmitQuestionnaireDto,
+  SubmitQuestionnaireResponseDto,
   UserVisibleAppointmentStatuses,
 } from './gen/fetch/types.gen'
 
@@ -134,18 +133,13 @@ export class HealthDirectorateHealthService {
   }
 
   /* Endurnýjun lyfseðils */
-  public async postRenewalPrescription(
-    auth: Auth,
-    id: string,
-    input: PrescriptionRenewalRequestDto,
-  ) {
+  public async postRenewalPrescription(auth: Auth, id: string) {
     return await withAuthContext(auth, () =>
       data(
         mePrescriptionControllerRenewPrescriptionV1({
           path: {
             id,
           },
-          body: input,
         }),
       ),
     )
@@ -368,7 +362,7 @@ export class HealthDirectorateHealthService {
     locale: Locale,
     id: string,
     input: SubmitQuestionnaireDto,
-  ): Promise<string | null> {
+  ): Promise<SubmitQuestionnaireResponseDto | null> {
     const submission = await withAuthContext(auth, () =>
       data(
         questionnaireControllerSubmitQuestionnaireV1({

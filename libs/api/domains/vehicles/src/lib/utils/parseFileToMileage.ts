@@ -22,7 +22,12 @@ const vehicleIndexTitle = [
   'okutaeki',
   'fastanumer',
 ]
-const mileageIndexTitle = ['kilometrastada', 'mileage', 'odometer']
+const mileageIndexTitle = [
+  'kilometrastada',
+  'skra stodu',
+  'mileage',
+  'odometer',
+]
 
 export const errorMap: Record<number, MessageDescriptor> = {
   1: m.invalidVehicleColumnHeader,
@@ -40,13 +45,8 @@ export const parseBufferToMileageRecord = async (
 
   const [rawHeader, ...values] = parsedLines
 
-  // strip BOM, trim, and lowercase each header cell
-  const header = rawHeader.map((h) =>
-    h
-      .replace(/^\uFEFF/, '')
-      .trim()
-      .toLowerCase(),
-  )
+  // strip BOM, trim, lowercase, and normalize Icelandic/accented chars each header cell
+  const header = rawHeader.map((h) => normalizeHeader(h))
 
   const vehicleIndex = header.findIndex((h) => vehicleIndexTitle.includes(h))
 
@@ -151,6 +151,18 @@ const parseCsvString = (chunk: string): Promise<string[][]> => {
     parser.end()
   })
 }
+
+// Normalize accented header strings to plain ASCII so any permutation of
+// accented/unaccented chars matches the lookup arrays. ð is handled explicitly
+// before NFD since it has no canonical decomposition.
+const normalizeHeader = (h: string): string =>
+  h
+    .replace(/^\uFEFF/, '')
+    .trim()
+    .toLowerCase()
+    .replace(/ð/g, 'd')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
 
 const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
 
