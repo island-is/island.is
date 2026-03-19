@@ -205,7 +205,8 @@ export const draftMessages = {
     },
     validationAtLeastOneMember: {
       id: 'hb.application:draft.householdMembersSection.validationAtLeastOneMember',
-      defaultMessage: 'Vinsamlegast bættu við að minnsta kosti einum heimilismanni',
+      defaultMessage:
+        'Vinsamlegast bættu við að minnsta kosti einum heimilismanni',
       description: 'At least one household member required',
     },
     validationNationalIdRequired: {
@@ -305,12 +306,14 @@ export const draftMessages = {
     },
     validationPaymentRecipientRequired: {
       id: 'hb.application:draft.paymentSection.validationPaymentRecipientRequired',
-      defaultMessage: 'Vinsamlegast veldu hvort húsnæðisbætur eigi að greiðast þér eða leigusala',
+      defaultMessage:
+        'Vinsamlegast veldu hvort húsnæðisbætur eigi að greiðast þér eða leigusala',
       description: 'Payment recipient selection required',
     },
     validationBankAccountRequired: {
       id: 'hb.application:draft.paymentSection.validationBankAccountRequired',
-      defaultMessage: 'Vinsamlegast fylltu inn réttar upplýsingar um bankareikning',
+      defaultMessage:
+        'Vinsamlegast fylltu inn réttar upplýsingar um bankareikning',
       description: 'Bank account required when paying to self',
     },
     validationLandlordSelectionRequired: {
