@@ -483,20 +483,22 @@ export class FileController {
   @ApiOkResponse({
     description: 'Updates order of police digital case files',
   })
-  updatePoliceDigitalCaseFiles(
+  async updatePoliceDigitalCaseFiles(
     @Param('caseId') caseId: string,
     @Body() updateDto: UpdatePoliceDigitalCaseFilesDto,
-  ): Promise<void> {
+  ): Promise<object> {
     this.logger.debug(
       `Updating police digital case file orders for case ${caseId}`,
     )
 
-    return this.sequelize.transaction((transaction) =>
+    await this.sequelize.transaction((transaction) =>
       this.policeDigitalCaseFileService.updatePoliceDigitalCaseFileOrders(
         caseId,
         updateDto.files,
         transaction,
       ),
     )
+
+    return {}
   }
 }
