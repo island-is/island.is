@@ -478,23 +478,9 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
 const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
-      attributes: [
-        'id',
-        'noNationalId',
-        'nationalId',
-        'name',
-        'indictmentReviewDecision',
-        'isSentToPrisonAdmin',
-        'isRegisteredInPrisonSystem',
-      ],
-      includes: {
-        verdicts: {
-          attributes: [
-            'isAcquittedByPublicProsecutionOffice',
-            'defendantHasRequestedAppeal',
-          ],
-        },
-      },
+      // TODO: find a better place for id - it is not used in this cell generator
+      // and there is no guarantee that this column will be included in all tables
+      attributes: ['id', 'noNationalId', 'nationalId', 'name'],
     },
   },
   generate: (c: Case): CaseTableCell<StringGroupValue> => {
@@ -553,16 +539,8 @@ const appealState: CaseTableCellGenerator<TagValue> = {
 const appealCaseState = appealState
 
 const requestCaseState: CaseTableCellGenerator<TagValue> = {
+  attributes: ['state', 'validToDate', 'type'],
   includes: { dateLogs: { attributes: ['date', 'dateType'] } },
-  attributes: [
-    'state',
-    'validToDate',
-    'type',
-    'appealState',
-    'appealRulingDecision',
-    'appealCaseNumber',
-    'appealReceivedByCourtDate',
-  ],
   generate: (c: Case, user: TUser): CaseTableCell<TagValue> =>
     generateRequestCaseStateTag(c, user),
 }
@@ -571,7 +549,7 @@ const indictmentCaseState: CaseTableCellGenerator<TagValue | TagPairValue> = {
   attributes: ['state', 'indictmentDecision', 'indictmentRulingDecision'],
   includes: {
     defendants: {
-      attributes: ['id', 'isAlternativeService'],
+      attributes: ['isAlternativeService'],
       includes: {
         subpoenas: { attributes: ['serviceStatus'] },
         verdicts: { attributes: ['isDefaultJudgement'] },
@@ -785,16 +763,7 @@ const rulingType: CaseTableCellGenerator<TagValue> = {
 }
 
 const punishmentType: CaseTableCellGenerator<TagValue> = {
-  includes: {
-    defendants: {
-      attributes: [
-        'id',
-        'punishmentType',
-        'isSentToPrisonAdmin',
-        'isRegisteredInPrisonSystem',
-      ],
-    },
-  },
+  includes: { defendants: { attributes: ['punishmentType'] } },
   generate: (c: Case): CaseTableCell<TagValue> => {
     if (
       !c.defendants ||
@@ -879,7 +848,6 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
 
 const indictmentAppealDeadline: CaseTableCellGenerator<StringValue> = {
   attributes: ['rulingDate', 'indictmentRulingDecision'],
-  includes: { defendants: { attributes: [] } },
   generate: (c: Case): CaseTableCell<StringValue> => {
     if (!c.rulingDate) {
       return generateCell()
@@ -995,6 +963,7 @@ const indictmentRulingDecision: CaseTableCellGenerator<
 }
 
 const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
+  attributes: ['indictmentRulingDecision'],
   includes: {
     defendants: {
       attributes: ['indictmentReviewDecision'],
