@@ -7,12 +7,14 @@ export const rentalContractOptions = (application: Application) => {
   const contracts = getRentalAgreementsForHousingBenefits(application)
 
   return contracts.map((contract) => {
-    const renters = contract.contractParty
-      ?.filter((party) => party.partyTypeUseCode === 'TENANT')
-      .map((party) => party.name) ?? []
-    const landlords = contract.contractParty
-      ?.filter((party) => party.partyTypeUseCode === 'OWNER')
-      .map((party) => party.name) ?? []
+    const renters =
+      contract.contractParty
+        ?.filter((party) => party.partyTypeUseCode === 'TENANT')
+        .map((party) => party.name) ?? []
+    const landlords =
+      contract.contractParty
+        ?.filter((party) => party.partyTypeUseCode === 'OWNER')
+        .map((party) => party.name) ?? []
     return {
       value: contract.contractId?.toString() ?? '',
       label: {
