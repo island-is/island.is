@@ -3,21 +3,61 @@ import { ConfigType } from '@nestjs/config'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { S3Service } from '@island.is/nest/aws'
 import { WebSitemapConfig } from './web-sitemap.config'
-import { WebSitemapRepository } from '../repositories/web-sitemap/web-sitemap.repository'
-import { generateSitemapUrlString } from './utils'
+import {
+  generateSitemapUrlString,
+  SitemapUrl,
+  type SitemapUrlFetcher,
+} from './utils'
+import { FrontpageRepository } from '../repositories/web-sitemap/content-types/frontpage.repository'
+import { ArticleRepository } from '../repositories/web-sitemap/content-types/article.repository'
+import { OrganizationPageRepository } from '../repositories/web-sitemap/content-types/organizationPage.repository'
+import { OrganizationSubpageRepository } from '../repositories/web-sitemap/content-types/organizationSubpage.repository'
+import { OrganizationParentSubpageRepository } from '../repositories/web-sitemap/content-types/organizationParentSubpage.repository'
+import { ProjectPageRepository } from '../repositories/web-sitemap/content-types/projectPage.repository'
+import { ManualRepository } from '../repositories/web-sitemap/content-types/manual.repository'
+import { ArticleCategoryRepository } from '../repositories/web-sitemap/content-types/articleCategory.repository'
+import { LifeEventRepository } from '../repositories/web-sitemap/content-types/lifeEvent.repository'
 
 @Injectable()
 export class WebSitemapService {
+  private readonly fetchers: SitemapUrlFetcher[]
+
   constructor(
     @Inject(WebSitemapConfig.KEY)
     private readonly config: ConfigType<typeof WebSitemapConfig>,
     private readonly s3Service: S3Service,
-    private readonly webSitemapRepository: WebSitemapRepository,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-  ) {}
+    // Fetchers
+    private readonly frontpageRepository: FrontpageRepository,
+    private readonly articleRepository: ArticleRepository,
+    private readonly organizationPageRepository: OrganizationPageRepository,
+    private readonly organizationSubpageRepository: OrganizationSubpageRepository,
+    private readonly organizationParentSubpageRepository: OrganizationParentSubpageRepository,
+    private readonly projectPageRepository: ProjectPageRepository,
+    private readonly manualRepository: ManualRepository,
+    private readonly articleCategoryRepository: ArticleCategoryRepository,
+    private readonly lifeEventRepository: LifeEventRepository,
+  ) {
+    this.fetchers = [
+      this.frontpageRepository,
+      this.articleRepository,
+      this.organizationPageRepository,
+      this.organizationSubpageRepository,
+      this.organizationParentSubpageRepository,
+      this.projectPageRepository,
+      this.manualRepository,
+      this.articleCategoryRepository,
+      this.lifeEventRepository,
+    ]
+  }
 
   private async uploadXmlFile(fileContent: string, fileName: string) {
+    if (process.env.NODE_ENV === 'development') {
+      const { writeFileSync } = await import('fs')
+      writeFileSync(`${fileName}`, fileContent)
+      return fileName
+    }
     return this.s3Service.uploadFile(
       Buffer.from(fileContent),
       { bucket: this.config.s3Bucket, key: fileName },
@@ -30,39 +70,47 @@ export class WebSitemapService {
   public async run() {
     this.logger.info('Web sitemap worker starting...')
 
-    const sitemapFiles: { fileUrl: string }[] = []
+    const itemsPerPage = 10
+    const maxUrlsPerFile = 10
 
-    let response: Awaited<
-      ReturnType<typeof this.webSitemapRepository.getSitemapUrls>
-    > | null = null
-    do {
-      response = await this.webSitemapRepository.getSitemapUrls(
-        response?.nextFetcherIndex ?? 0,
-        response?.nextPageIndex ?? 0,
-      )
-      if (response.urls.length === 0) break
-      const fileName = `${sitemapFiles.length + 1}.xml`
+    const s3FileUrls: string[] = []
+    const urls: SitemapUrl[] = []
+
+    const flushSitemapUrlsToFile = async () => {
+      const fileName = `${s3FileUrls.length + 1}.xml`
       await this.uploadXmlFile(
         `<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-          ${response.urls.map(generateSitemapUrlString).join('')}
+          ${urls.map(generateSitemapUrlString).join('')}
         </urlset>`,
         fileName,
       )
       this.logger.info(`${fileName} uploaded`)
-      sitemapFiles.push({
-        fileUrl: `https://island.is/sitemap/${fileName}`,
-      })
-    } while (response.nextFetcherIndex >= 0)
+      s3FileUrls.push(`https://island.is/sitemap/${fileName}`)
+      urls.length = 0
+    }
+
+    for (const fetcher of this.fetchers) {
+      let pageIndex = 0
+      while (pageIndex >= 0) {
+        console.log(pageIndex)
+        const response = await fetcher.getSitemapUrls(itemsPerPage, pageIndex)
+        pageIndex = response.nextPageIndex
+        urls.push(...response.urls)
+        if (urls.length >= maxUrlsPerFile) await flushSitemapUrlsToFile()
+      }
+      if (urls.length >= maxUrlsPerFile) await flushSitemapUrlsToFile()
+    }
+    if (urls.length > 0) await flushSitemapUrlsToFile()
 
     const timestamp = new Date().toISOString()
 
     await this.uploadXmlFile(
       `<?xml version="1.0" encoding="UTF-8"?>
       <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        ${sitemapFiles
+        ${s3FileUrls
           .map(
-            ({ fileUrl }) =>
+            (fileUrl) =>
               `<sitemap><loc>${fileUrl}</loc><lastmod>${timestamp}</lastmod></sitemap>`,
           )
           .join('')}
