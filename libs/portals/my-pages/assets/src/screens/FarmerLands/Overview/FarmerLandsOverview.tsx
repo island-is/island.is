@@ -1,11 +1,11 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
-  EmptyState,
   m,
   IntroWrapperV2,
+  ATVINNUVEGARADUNEYTID_SLUG,
+  m as cm,
 } from '@island.is/portals/my-pages/core'
-import { ATVINNUVEGARADUNEYTID_SLUG } from '@island.is/portals/my-pages/core'
 import { farmerLandsMessages as fm } from '../../../lib/messages'
 import { useFarmerLandsOverviewQuery } from './FarmerLandsOverview.generated'
 import {
@@ -65,7 +65,14 @@ export const FarmerLandsOverview = () => {
 
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!loading && !error && farmerLands.length === 0 && (
-        <EmptyState title={m.noData} description={fm.noFarmerLands} />
+        <Problem
+          type="no_data"
+          title={formatMessage(fm.noFarmerLandsTitle)}
+          message={formatMessage(cm.noDataFoundDetail)}
+          imgSrc="./assets/images/coffee.svg"
+          titleSize="h3"
+          noBorder={false}
+        />
       )}
       <Stack space={4}>
         {!error &&

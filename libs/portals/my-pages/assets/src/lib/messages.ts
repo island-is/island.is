@@ -320,7 +320,19 @@ export const farmerLandsMessages = defineMessages({
   },
   noFarmerLands: {
     id: 'sp.farmer-lands:no-farmer-lands',
-    defaultMessage: 'Engar jarðir fundust',
+    defaultMessage: 'Engar jarðir eru skráðar á þig.',
+  },
+  noFarmerLandsTitle: {
+    id: 'sp.farmer-lands:no-farmer-lands-title',
+    defaultMessage: 'Engar jarðir skráðar',
+  },
+  noFarmerLandFound: {
+    id: 'sp.farmer-lands:no-farmer-land-found',
+    defaultMessage: 'Jörð finnst ekki',
+  },
+  noFarmerLandFoundDetail: {
+    id: 'sp.farmer-lands:no-farmer-land-found-detail',
+    defaultMessage: 'Ekki tókst að finna upplýsingar um þessa jörð.',
   },
 })
 
