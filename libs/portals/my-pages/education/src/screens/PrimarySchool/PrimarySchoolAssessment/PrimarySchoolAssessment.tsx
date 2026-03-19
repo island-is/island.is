@@ -1,6 +1,6 @@
 import {
   CardLoader,
-  IntroWrapper,
+  IntroWrapperV2,
   m,
   MMS_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -30,10 +30,10 @@ export const PrimarySchoolAssessment = () => {
   const subjects = data?.primarySchoolStudent?.assessmentSubjects ?? []
 
   return (
-    <IntroWrapper
+    <IntroWrapperV2
       title={psm.assessmentTitle}
       intro={psm.assessmentIntro}
-      serviceProviderSlug={MMS_SLUG}
+      serviceProvider={{ slug: MMS_SLUG, tooltip: formatMessage(m.mmsTooltip) }}
     >
       {loading && !error && <CardLoader />}
       {error && !loading && <Problem error={error} noBorder={false} />}
@@ -142,7 +142,7 @@ export const PrimarySchoolAssessment = () => {
           ))}
         </Accordion>
       )}
-    </IntroWrapper>
+    </IntroWrapperV2>
   )
 }
 

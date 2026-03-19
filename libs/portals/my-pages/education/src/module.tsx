@@ -1,102 +1,110 @@
-import { lazy, useEffect, useState } from 'react'
+import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { EducationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { primarySchoolStudentLoader } from './screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudent.loader'
 
-const EducationCareer = lazy(() =>
-  import('../../education-career/src/screens/EducationCareer/EducationCareer'),
+const EducationCareer = lazy(
+  () =>
+    import(
+      '../../education-career/src/screens/EducationCareer/EducationCareer'
+    ),
 )
 
-const UniversityGraduation = lazy(() =>
-  import('./screens/University/UniversityGraduation/UniversityGraduation'),
+const UniversityGraduation = lazy(
+  () =>
+    import('./screens/University/UniversityGraduation/UniversityGraduation'),
 )
 
-const UniversityGraduationDetail = lazy(() =>
-  import(
-    './screens/University/UniversityGraduationDetail/UniversityGraduationDetail'
-  ),
+const UniversityGraduationDetail = lazy(
+  () =>
+    import(
+      './screens/University/UniversityGraduationDetail/UniversityGraduationDetail'
+    ),
 )
 
-const SecondarySchoolCareer = lazy(() =>
-  import(
-    './screens/SecondarySchool/SecondarySchoolCareer/SecondarySchoolCareer'
-  ),
+const SecondarySchoolCareer = lazy(
+  () =>
+    import(
+      './screens/SecondarySchool/SecondarySchoolCareer/SecondarySchoolCareer'
+    ),
 )
 
-const SecondarySchoolGraduationOverview = lazy(() =>
-  import(
-    './screens/SecondarySchool/SecondarySchoolGraduationOverview/SecondarySchoolGraduationOverview'
-  ),
+const SecondarySchoolGraduationOverview = lazy(
+  () =>
+    import(
+      './screens/SecondarySchool/SecondarySchoolGraduationOverview/SecondarySchoolGraduationOverview'
+    ),
 )
 
-const SecondarySchoolGraduationSingle = lazy(() =>
-  import(
-    './screens/SecondarySchool/SecondarySchoolGraduationSingle/SecondarySchoolGraduationSingle'
-  ),
+const SecondarySchoolGraduationSingle = lazy(
+  () =>
+    import(
+      './screens/SecondarySchool/SecondarySchoolGraduationSingle/SecondarySchoolGraduationSingle'
+    ),
 )
 
-const SecondarySchoolGraduationDetail = lazy(() =>
-  import(
-    './screens/SecondarySchool/SecondarySchoolGraduationDetail/SecondarySchoolGraduationDetail'
-  ),
+const SecondarySchoolGraduationDetail = lazy(
+  () =>
+    import(
+      './screens/SecondarySchool/SecondarySchoolGraduationDetail/SecondarySchoolGraduationDetail'
+    ),
 )
 
-const DrivingLessonsBook = lazy(() =>
-  import('./screens/DrivingLessons/DrivingLessonsBook/DrivingLessonsBook'),
+const DrivingLessonsBook = lazy(
+  () =>
+    import('./screens/DrivingLessons/DrivingLessonsBook/DrivingLessonsBook'),
 )
 
-const PrimarySchool = lazy(() =>
-  import('./screens/PrimarySchool/PrimarySchool'),
+const PrimarySchool = lazy(
+  () => import('./screens/PrimarySchool/PrimarySchool/PrimarySchool'),
 )
 
-const PrimarySchoolStudent = lazy(() =>
-  import('./screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudent'),
+const PrimarySchoolOverviewWrapper = lazy(
+  () =>
+    import(
+      './screens/PrimarySchool/PrimarySchoolOverview/PrimarySchoolOverviewWrapper'
+    ),
 )
 
-const PrimarySchoolOverview = lazy(() =>
-  import('./screens/PrimarySchool/PrimarySchoolOverview/PrimarySchoolOverview'),
+const PrimarySchoolStudent = lazy(
+  () =>
+    import('./screens/PrimarySchool/PrimarySchoolStudent/PrimarySchoolStudent'),
 )
 
-const PrimarySchoolAssessment = lazy(() =>
-  import(
-    './screens/PrimarySchool/PrimarySchoolAssessment/PrimarySchoolAssessment'
-  ),
+const PrimarySchoolOverview = lazy(
+  () =>
+    import(
+      './screens/PrimarySchool/PrimarySchoolOverview/PrimarySchoolOverview'
+    ),
 )
 
-const PrimarySchoolStudentPermission = lazy(() =>
-  import(
-    './screens/PrimarySchool/PrimarySchoolStudentPermission/PrimarySchoolStudentPermission'
-  ),
+const PrimarySchoolAssessment = lazy(
+  () =>
+    import(
+      './screens/PrimarySchool/PrimarySchoolAssessment/PrimarySchoolAssessment'
+    ),
+)
+
+const PrimarySchoolStudentPermission = lazy(
+  () =>
+    import(
+      './screens/PrimarySchool/PrimarySchoolStudentPermission/PrimarySchoolStudentPermission'
+    ),
 )
 
 const PRIMARY_SCHOOL_FLAG = 'PrimarySchool'
 
-const GrunnskoliRoute = () => {
-  const featureFlagClient = useFeatureFlagClient()
-  const [enabled, setEnabled] = useState<boolean | null>(null)
-
-  useEffect(() => {
-    featureFlagClient
-      .getValue(Features.isServicePortalPrimarySchoolPageEnabled, false)
-      .then(setEnabled)
-  }, [featureFlagClient])
-
-  if (enabled === null) return null
-  if (enabled) return <PrimarySchool />
-  return <Navigate to={EducationPaths.EducationAssessment} replace />
-}
-
 export const educationModule: PortalModule = {
   name: 'Menntun',
   enabled: ({ isCompany }) => !isCompany,
-  routes: ({ userInfo }) => [
+  routes: ({ userInfo, ...rest }) => [
     {
       name: 'Menntun',
       path: EducationPaths.EducationRoot,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <Navigate to={EducationPaths.EducationAssessment} replace />,
+      element: <Navigate to={EducationPaths.EducationGrunnskoli} replace />,
     },
 
     // Grunnskóli - Elementary
@@ -104,7 +112,7 @@ export const educationModule: PortalModule = {
       name: 'Grunnskóli',
       path: EducationPaths.EducationGrunnskoli,
       enabled: userInfo.scopes.includes(ApiScope.education),
-      element: <GrunnskoliRoute />,
+      element: <PrimarySchoolOverviewWrapper />,
     },
     {
       name: 'Námsmat',
@@ -126,6 +134,7 @@ export const educationModule: PortalModule = {
       path: EducationPaths.PrimarySchoolStudent,
       key: PRIMARY_SCHOOL_FLAG,
       enabled: userInfo.scopes.includes(ApiScope.education),
+      loader: primarySchoolStudentLoader({ userInfo, ...rest }),
       element: <PrimarySchoolStudent />,
     },
     {

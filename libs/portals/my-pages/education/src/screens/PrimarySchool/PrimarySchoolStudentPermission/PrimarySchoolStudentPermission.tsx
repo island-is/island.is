@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { IntroWrapper, m, MMS_SLUG } from '@island.is/portals/my-pages/core'
+import { IntroWrapperV2, m, MMS_SLUG } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Input } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
@@ -11,10 +11,10 @@ export const PrimarySchoolStudentPermission = () => {
   const [searchValue, setSearchValue] = useState('')
 
   return (
-    <IntroWrapper
+    <IntroWrapperV2
       title={psm.permissionTitle}
       intro={psm.permissionIntro}
-      serviceProviderSlug={MMS_SLUG}
+      serviceProvider={{ slug: MMS_SLUG, tooltip: formatMessage(m.mmsTooltip) }}
     >
       <Box marginBottom={3}>
         <Input
@@ -34,7 +34,7 @@ export const PrimarySchoolStudentPermission = () => {
           imgSrc="./assets/images/sofa.svg"
         />
       </Box>
-    </IntroWrapper>
+    </IntroWrapperV2>
   )
 }
 
