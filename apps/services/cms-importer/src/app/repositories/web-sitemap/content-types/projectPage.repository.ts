@@ -3,7 +3,6 @@ import { getProjectPageUrlPrefix } from '@island.is/shared/utils'
 import type { SitemapUrl, SitemapUrlFetcher } from '../../../web-sitemap/utils'
 import { ManagementClientService } from '../../cms/managementClient/managementClient.service'
 import { EN_LOCALE, LOCALE } from '../../../constants'
-import { writeFileSync } from 'fs'
 
 @Injectable()
 export class ProjectPageRepository implements SitemapUrlFetcher {
@@ -23,11 +22,6 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
       'sys.publishedAt[exists]': true,
     })
     if (!projectPageResponse.ok) throw projectPageResponse.error
-
-    writeFileSync(
-      'projectPageResponse.json',
-      JSON.stringify(projectPageResponse.data.items, null, 2),
-    )
 
     const projectSubpageIds: string[] = []
     for (const projectPage of projectPageResponse.data.items)
