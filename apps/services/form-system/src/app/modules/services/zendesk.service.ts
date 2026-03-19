@@ -268,6 +268,7 @@ export class ZendeskService {
 
           for (const field of screen.fields ?? []) {
             if (field.isHidden) continue
+            if (field.fieldType === FieldTypesEnum.MESSAGE) continue
 
             const requiredMark = field.isRequired ? '*' : ''
             parts.push(
@@ -314,6 +315,10 @@ export class ZendeskService {
                 }
 
                 const val = this.formatValue(raw, field.fieldType)
+                const valHtml = this.escapeHtml(val).replace(
+                  /\r\n|\n|\r/g,
+                  '<br />',
+                )
 
                 if (isMultiAttribute) {
                   const attribute = getLanguageTypeForValueTypeAttribute(key)
@@ -327,17 +332,13 @@ export class ZendeskService {
                         attrIndent,
                       )};margin-right:4px`,
                     ),
-                    `<p style="display:inline-block;margin:0">${this.escapeHtml(
-                      val,
-                    )}</p><br />`,
+                    `<p style="display:inline-block;margin:0">${valHtml}</p><br />`,
                   )
                 } else {
                   const prefixHtml = isMulti
                     ? `<strong>${itemNo}.</strong> `
                     : ''
-                  parts.push(
-                    p0(`${prefixHtml}${this.escapeHtml(val)}`, indent(30)),
-                  )
+                  parts.push(p0(`${prefixHtml}${valHtml}`, indent(30)))
                 }
               }
             }
