@@ -64,7 +64,9 @@ export const PrimarySchool = () => {
             heading={student.name ?? ''}
             text={
               student.nationalId
-                ? `${formatMessage(m.natreg)}: ${formatNationalId(student.nationalId)}`
+                ? `${formatMessage(m.natreg)}: ${formatNationalId(
+                    student.nationalId,
+                  )}`
                 : undefined
             }
             avatar
