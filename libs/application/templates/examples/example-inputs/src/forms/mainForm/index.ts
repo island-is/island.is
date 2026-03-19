@@ -6,10 +6,12 @@ import { tablesAndRepeatersSection } from './tablesAndRepeatersSection'
 import { customSection } from './customSection/customSection'
 import { overviewSection } from './overviewSection/overviewSection'
 import { introSection } from './introSection/introSection'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 
 export const MainForm: Form = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
+  logo: AoshLogo,
   renderLastScreenButton: true,
   children: [
     introSection,

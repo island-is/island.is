@@ -1162,4 +1162,24 @@ export const m = defineMessages({
     defaultMessage: 'Skilaboð á lokasíðu',
     description: 'Message on completed page',
   },
+  isPartOfMulti: {
+    id: 'form.system:is-part-of-multi',
+    defaultMessage: 'Hluti af fjölmengi',
+    description: 'Part of multiset',
+  },
+  multiMax: {
+    id: 'form.system:multi-max',
+    defaultMessage: 'Hámarksfjöldi lína í fjölmengi',
+    description: 'Maximum number of lines in multiset',
+  },
+  addMulti: {
+    id: 'form.system:add-multi',
+    defaultMessage: 'Bæta við línu',
+    description: 'Add line',
+  },
+  removeMulti: {
+    id: 'form.system:remove-multi',
+    defaultMessage: 'Fjarlægja',
+    description: 'Remove',
+  },
 })

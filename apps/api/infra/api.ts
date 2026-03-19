@@ -580,7 +580,7 @@ export const serviceSetup = (services: {
       timeoutSeconds: 5,
     })
     .resources({
-      limits: { cpu: '1200m', memory: '2500Mi' },
+      limits: { cpu: '3000m', memory: '2500Mi' },
       requests: { cpu: '900m', memory: '2000Mi' },
     })
     .replicaCount({
