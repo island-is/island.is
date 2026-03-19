@@ -2,6 +2,11 @@ import { Injectable } from '@nestjs/common'
 import type { SitemapUrl, SitemapUrlFetcher } from '../../web-sitemap/utils'
 import { FrontpageRepository } from './content-types/frontpage.repository'
 import { ArticleRepository } from './content-types/article.repository'
+import { OrganizationPageRepository } from './content-types/organizationPage.repository'
+import { OrganizationSubpageRepository } from './content-types/organizationSubpage.repository'
+import { OrganizationParentSubpageRepository } from './content-types/organizationParentSubpage.repository'
+import { ProjectPageRepository } from './content-types/projectPage.repository'
+import { ManualRepository } from './content-types/manual.repository'
 
 @Injectable()
 export class WebSitemapRepository {
@@ -10,8 +15,21 @@ export class WebSitemapRepository {
   constructor(
     private readonly frontpageRepository: FrontpageRepository,
     private readonly articleRepository: ArticleRepository,
+    private readonly organizationPageRepository: OrganizationPageRepository,
+    private readonly organizationSubpageRepository: OrganizationSubpageRepository,
+    private readonly organizationParentSubpageRepository: OrganizationParentSubpageRepository,
+    private readonly projectPageRepository: ProjectPageRepository,
+    private readonly manualRepository: ManualRepository,
   ) {
-    this.fetchers = [this.frontpageRepository, this.articleRepository]
+    this.fetchers = [
+      this.frontpageRepository,
+      this.articleRepository,
+      this.organizationPageRepository,
+      this.organizationSubpageRepository,
+      this.organizationParentSubpageRepository,
+      this.projectPageRepository,
+      this.manualRepository,
+    ]
   }
 
   async getSitemapUrls(
