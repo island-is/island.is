@@ -119,6 +119,21 @@ const mapCourtToTopLevelCourt = (
   return 'all'
 }
 
+const shouldResetCaseFiltersOnCourtChange = (
+  previousCourt: string,
+  nextCourt: string,
+  retrialCourtOptionValue: string,
+) => {
+  const topLevel = mapCourtToTopLevelCourt(nextCourt)
+  const previousTopLevel = mapCourtToTopLevelCourt(previousCourt)
+
+  return (
+    (topLevel !== previousTopLevel && topLevel !== 'all') ||
+    nextCourt === retrialCourtOptionValue ||
+    previousCourt === retrialCourtOptionValue
+  )
+}
+
 enum QueryParam {
   SEARCH_TERM = 'q',
   COURT = 'court',
@@ -1089,13 +1104,12 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     label={formatMessage(m.listPage.courtSelectLabel)}
                     onChange={(option) => {
                       if (option) {
-                        const topLevel = mapCourtToTopLevelCourt(option.value)
-                        const previousTopLevel = mapCourtToTopLevelCourt(
-                          queryState[QueryParam.COURT],
-                        )
                         if (
-                          topLevel !== previousTopLevel &&
-                          topLevel !== 'all'
+                          shouldResetCaseFiltersOnCourtChange(
+                            queryState[QueryParam.COURT],
+                            option.value,
+                            retrialCourtOptionValue,
+                          )
                         ) {
                           updateQueryState(QueryParam.CASE_CATEGORIES, null)
                           updateQueryState(QueryParam.CASE_TYPES, null)
@@ -1128,13 +1142,12 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                           key={tag.value}
                           active={isActive}
                           onClick={() => {
-                            const topLevel = mapCourtToTopLevelCourt(tag.value)
-                            const previousTopLevel = mapCourtToTopLevelCourt(
-                              queryState[QueryParam.COURT],
-                            )
                             if (
-                              topLevel !== previousTopLevel &&
-                              topLevel !== 'all'
+                              shouldResetCaseFiltersOnCourtChange(
+                                queryState[QueryParam.COURT],
+                                tag.value,
+                                retrialCourtOptionValue,
+                              )
                             ) {
                               updateQueryState(QueryParam.CASE_CATEGORIES, null)
                               updateQueryState(QueryParam.CASE_TYPES, null)
