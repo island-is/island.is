@@ -473,6 +473,16 @@
           }
         },
         "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
           "204": {
             "description": "No Content"
           },
@@ -488,6 +498,143 @@
           },
           "422": {
             "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["MachineRequestInspection"],
+        "summary": "Get a list of machines owned or supervised by the logged in user.",
+        "parameters": [
+          {
+            "name": "totalCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "currentPage",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "totalPages",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Pagination": {
+                "description": "Paging info",
+                "schema": {
+                  "type": "string",
+                  "description": "Paging info",
+                  "format": "{\"totalCount\":6,\"pageSize\":10,\"currentPage\":1,\"totalPages\":1}"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineFriendlyDtoIEnumerableListReturnValueDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MachineRequestInspection/{registrationNumber}": {
+      "get": {
+        "tags": ["MachineRequestInspection"],
+        "summary": "Get a machine specified by the registration number. If the logged in user is not the supervisor or owner\r\nof the machine, the owner and supervisor properties are returned empty.",
+        "parameters": [
+          {
+            "name": "registrationNumber",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Correlation-ID",
+            "in": "header",
+            "description": "Unique identifier associated with the request",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineFriendlyDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
             "content": {
               "application/json": {
                 "schema": {
@@ -1955,6 +2102,26 @@
           },
           "mayStreetRegister": {
             "type": "boolean"
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineFriendlyDtoIEnumerableListReturnValueDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MachineFriendlyDto"
+            },
+            "nullable": true
+          },
+          "_pagination": {
+            "$ref": "#/components/schemas/PaginationDto"
           }
         },
         "additionalProperties": false
@@ -2080,10 +2247,6 @@
           "machineId": {
             "type": "string",
             "format": "uuid"
-          },
-          "ownerNationalId": {
-            "type": "string",
-            "nullable": true
           },
           "delegateNationalId": {
             "type": "string",

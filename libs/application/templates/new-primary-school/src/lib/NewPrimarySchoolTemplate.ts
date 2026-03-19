@@ -23,6 +23,7 @@ import {
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
@@ -150,6 +151,14 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 const { isApplicationBlocked } = getApplicationExternalData(
                   application?.application?.externalData,
                 )
+
+                if (
+                  isRunningOnEnvironment('local') ||
+                  isRunningOnEnvironment('dev')
+                ) {
+                  return true
+                }
+
                 return !isApplicationBlocked
               },
             },

@@ -349,4 +349,13 @@ export class CourtSessionRepositoryService {
       )
     }
   }
+
+  async findById(
+    caseId: string,
+    courtSessionId: string,
+  ): Promise<CourtSession | null> {
+    return this.courtSessionModel.findOne({
+      where: { id: courtSessionId, caseId },
+    })
+  }
 }

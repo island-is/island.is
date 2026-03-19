@@ -16,17 +16,25 @@ class CardInformation {
   })
   cardScheme!: string
 
-  @Field(() => String, { description: 'Issuing country of the card' })
-  issuingCountry!: string
+  @Field(() => String, {
+    description: 'Issuing country of the card',
+    nullable: true,
+  })
+  issuingCountry?: string | null = null
 
-  @Field(() => String, { description: 'Card usage description' })
+  @Field(() => String, {
+    description: 'Card usage description',
+  })
   cardUsage!: string
 
-  @Field(() => String, { description: 'Card category' })
-  cardCategory!: string
+  @Field(() => String, { description: 'Card category', nullable: true })
+  cardCategory?: string | null = null
 
-  @Field(() => Boolean, { description: 'Out-of-SCA scope status' })
-  outOfScaScope!: boolean
+  @Field(() => Boolean, {
+    description: 'Out-of-SCA scope status',
+    nullable: true,
+  })
+  outOfScaScope?: boolean | null = null
 }
 
 @ObjectType('PaymentsVerifyCardResponse')

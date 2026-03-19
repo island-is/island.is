@@ -3,7 +3,7 @@ import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { CopyLink } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
-import Illustration from '../../assets/Illustration'
+import { GuitarAndWheelchair } from '@island.is/application/assets/graphics'
 import { getValueViaPath } from '@island.is/application/core'
 
 const ListCreated = ({ application }: { application: Application }) => {
@@ -31,7 +31,7 @@ const ListCreated = ({ application }: { application: Application }) => {
         />
       </Box>
       <Box marginTop={5} display="flex" justifyContent="center">
-        <Illustration />
+        <GuitarAndWheelchair />
       </Box>
     </Stack>
   )
