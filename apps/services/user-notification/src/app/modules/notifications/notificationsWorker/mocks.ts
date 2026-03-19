@@ -10,7 +10,7 @@ import { createNationalId } from '@island.is/testing/fixtures'
 
 import { UserNotificationsConfig } from '../../../../config'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
-import { DECEASED_STATUS } from './helpers'
+import { DECEASED_STATUS, INACTIVE_COMPANY_STATUSES } from './helpers'
 
 import type { User } from '@island.is/auth-nest-tools'
 import type { ConfigType } from '@island.is/nest/config'
@@ -126,6 +126,21 @@ export const userWithSendToDelegationsFeatureFlagDisabled: MockUserProfileDto =
     smsNotifications: true,
   }
 
+export const inactiveCompanyUser: MockUserProfileDto = {
+  name: 'inactiveCompanyUser',
+  nationalId: createNationalId('company'),
+  mobilePhoneNumber: '1234567',
+  email: 'email@inactivecompany.com',
+  emailVerified: true,
+  mobilePhoneNumberVerified: true,
+  documentNotifications: true,
+  emailNotifications: true,
+  isRestricted: false,
+  smsNotifications: true,
+}
+
+export const inactiveCompanyStatus = INACTIVE_COMPANY_STATUSES[0]
+
 export const companyUser: MockUserProfileDto = {
   name: 'companyUser',
   nationalId: createNationalId('company'),
@@ -186,6 +201,7 @@ export const userProfiles = [
   userWithSendToDelegationsFeatureFlagDisabled,
   userWithNoEmail,
   companyUser,
+  inactiveCompanyUser,
   deceasedUser,
 ]
 

@@ -38,7 +38,7 @@ import { mapToLocale, SmsDelivery } from '../utils'
 import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
-import { DECEASED_STATUS } from './helpers'
+import { DECEASED_STATUS, INACTIVE_COMPANY_STATUSES } from './helpers'
 
 const getOnBehalfOfLabel = (
   onBehalfOf: string,
@@ -347,6 +347,13 @@ export class NotificationsWorkerService {
 
       locale = userProfile.locale ? mapToLocale(userProfile.locale) : 'is'
     } else {
+      if (await this.isCompanyInactive(nationalId, messageId)) {
+        this.logger.info('Company is inactive, skipping notification', {
+          messageId,
+        })
+        return
+      }
+
       const allowCompanyEmails = await this.featureFlagService.getValue(
         Features.shouldSendEmailNotificationsToCompanyUserProfiles,
         false,
@@ -731,6 +738,25 @@ export class NotificationsWorkerService {
     } catch (error) {
       this.logger.warn(
         'Failed to check deceased status from national registry, proceeding with notification',
+        { messageId, error },
+      )
+      return false
+    }
+  }
+
+  private async isCompanyInactive(
+    nationalId: string,
+    messageId: string,
+  ): Promise<boolean> {
+    try {
+      const company = await this.companyRegistryService.getCompany(nationalId)
+      return (
+        company !== null &&
+        (INACTIVE_COMPANY_STATUSES as readonly string[]).includes(company.status)
+      )
+    } catch (error) {
+      this.logger.warn(
+        'Failed to check company status from company registry, proceeding with notification',
         { messageId, error },
       )
       return false

@@ -50,6 +50,8 @@ import {
   deceasedUser,
   delegationSubjectId,
   getMockHnippTemplate,
+  inactiveCompanyStatus,
+  inactiveCompanyUser,
   mockTemplateId,
   userProfiles,
   userWithDelegations,
@@ -436,7 +438,25 @@ describe('NotificationsWorkerService', () => {
   it('should not send email or push notification if recipient is deceased', async () => {
     await addToQueue(deceasedUser.nationalId)
 
-    expect(notificationsWorkerService.createEmail).not.toHaveBeenCalled()
+    expect(emailService.sendEmail).not.toHaveBeenCalled()
+    expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
+  })
+
+  it('should not send notification if company is inactive', async () => {
+    jest.spyOn(companyRegistryService, 'getCompany').mockReturnValue(
+      Promise.resolve<CompanyExtendedInfo>({
+        nationalId: inactiveCompanyUser.nationalId,
+        name: 'Inactive Company',
+        formOfOperation: [],
+        addresses: [],
+        relatedParty: [],
+        vat: [],
+        status: inactiveCompanyStatus,
+      }),
+    )
+
+    await addToQueue(inactiveCompanyUser.nationalId)
+
     expect(emailService.sendEmail).not.toHaveBeenCalled()
     expect(notificationDispatch.sendPushNotification).not.toHaveBeenCalled()
   })
