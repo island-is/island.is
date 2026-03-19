@@ -555,7 +555,7 @@ const indictmentCaseState: CaseTableCellGenerator<TagValue | TagPairValue> = {
         verdicts: { attributes: ['isDefaultJudgement'] },
       },
     },
-    dateLogs: { attributes: ['date'] },
+    dateLogs: { attributes: ['date', 'dateType'] },
   },
   generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagPairValue> =>
     generateIndictmentCaseStateTag(c, user),
