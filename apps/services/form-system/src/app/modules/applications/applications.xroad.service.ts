@@ -37,6 +37,7 @@ export class ApplicationsXRoadService {
 
   async getFile(id: string): Promise<FileResponseDto> {
     const file = new FileResponseDto()
+    file.id = id
     file.file = 'This is a placeholder file content for file with id: ' + id
     file.filename = 'placeholder.txt'
     file.mimetype = 'text/plain'

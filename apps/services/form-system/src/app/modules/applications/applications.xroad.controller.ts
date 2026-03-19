@@ -23,7 +23,7 @@ export class ApplicationsXRoadController {
     description: 'X-Road client identifier',
     required: true,
   })
-  @Get(':application/:id')
+  @Get('application/:id')
   async getApplication(@Param('id') id: string): Promise<ApplicationDto> {
     return await this.applicationsXRoadService.getApplication(id)
   }
@@ -36,7 +36,7 @@ export class ApplicationsXRoadController {
     description: 'X-Road client identifier',
     required: true,
   })
-  @Get(':file/:id')
+  @Get('file/:id')
   async getFile(@Param('id') id: string): Promise<FileResponseDto> {
     return await this.applicationsXRoadService.getFile(id)
   }
