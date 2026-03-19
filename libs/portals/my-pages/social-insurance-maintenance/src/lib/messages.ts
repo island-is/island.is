@@ -178,7 +178,7 @@ export const m = defineMessages({
   },
   myPersonalTaxCredit: {
     id: 'sp.social-insurance-maintenance:my-personal-tax-credit',
-    defaultMessage: 'Persónuafslatturinn minn',
+    defaultMessage: 'persónuafslátturinn minn',
   },
   registerPersonalTaxCredit: {
     id: 'sp.social-insurance-maintenance:register-personal-tax-credit',
@@ -187,7 +187,7 @@ export const m = defineMessages({
   editPersonalTaxCredit: {
     id: 'sp.social-insurance-maintenance:edit-personal-tax-credit',
     defaultMessage:
-      'Ég vil breyta núverandi hlutfalli persónuafsláttár sem skráð er hjá TR (breytist við næstu greiðslukeyrslu TR).',
+      'Ég vil breyta núverandi hlutfalli persónuafsláttar sem skráð er hjá TR (breytist við næstu greiðslukeyrslu TR).',
   },
   discontinuePersonalTaxCredit: {
     id: 'sp.social-insurance-maintenance:discontinue-personal-tax-credit',
@@ -195,7 +195,7 @@ export const m = defineMessages({
   },
   spousePersonalTaxCredit: {
     id: 'sp.social-insurance-maintenance:spouse-personal-tax-credit',
-    defaultMessage: 'Persónuafslattur maka',
+    defaultMessage: 'Persónuafsláttur maka',
   },
   spouseDeceasedTaxCredit: {
     id: 'sp.social-insurance-maintenance:spouse-deceased-tax-credit',
