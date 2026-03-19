@@ -1,5 +1,5 @@
 import { Box, Icon, Tag, TagProps, Text } from '@island.is/island-ui/core'
-import { PopoverDisclosure, usePopoverState } from 'reakit'
+import { PopoverDisclosure, PopoverProvider, usePopoverStore } from '@ariakit/react'
 import { EmailCardPopover } from '../EmailCardPopover'
 import * as styles from './EmailCard.css'
 import { useIntl } from 'react-intl'
@@ -24,7 +24,7 @@ type EmailCardProps = {
 }
 
 export const EmailCard = ({ title, ctaList, tags }: EmailCardProps) => {
-  const popover = usePopoverState()
+  const popover = usePopoverStore()
   const { formatMessage } = useIntl()
 
   const getTagProps = (tag: EmailCardTag): TagProps => {
@@ -80,13 +80,13 @@ export const EmailCard = ({ title, ctaList, tags }: EmailCardProps) => {
           )}
         </Box>
         {ctaList && (
-          <>
-            <PopoverDisclosure {...popover}>
+          <PopoverProvider store={popover}>
+            <PopoverDisclosure>
               <span className={styles.icon}>
                 <Icon icon="ellipsisHorizontal" color="blue400" />
               </span>
             </PopoverDisclosure>
-            <EmailCardPopover {...popover}>
+            <EmailCardPopover>
               {ctaList.map((cta, index) => (
                 <Box
                   as="button"
@@ -127,7 +127,7 @@ export const EmailCard = ({ title, ctaList, tags }: EmailCardProps) => {
                 </Box>
               ))}
             </EmailCardPopover>
-          </>
+          </PopoverProvider>
         )}
       </Box>
     </Box>

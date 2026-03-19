@@ -16,11 +16,10 @@ import React, {
   ReactElement,
   ReactNode,
   useEffect,
-  useRef,
   useState,
 } from 'react'
 import AnimateHeight from 'react-animate-height'
-import { Menu, MenuButton, MenuStateReturn, useMenuState } from 'reakit/Menu'
+import { useMenuStore, type MenuStore } from '@ariakit/react'
 
 import * as styles from './Navigation.css'
 import { useScrolledPassed } from '../../hooks/useScrolledPassed/useScrolledPassed'
@@ -84,7 +83,7 @@ interface MobileNavigationDialogProps {
   asSpan?: NavigationTreeProps['asSpan']
   isVisible: boolean
   onClick: () => void
-  menuState: MenuStateReturn
+  menuState: MenuStore
   mobileNavigationButtonCloseLabel?: string
 }
 
@@ -94,7 +93,7 @@ interface NavigationTreeProps {
   colorScheme?: keyof typeof styles.colorScheme
   expand?: boolean
   renderLink?: (link: ReactElement, item?: NavigationItem) => ReactNode
-  menuState: MenuStateReturn
+  menuState: MenuStore
   linkOnClick?: () => void
   id?: string
   labelId?: string
@@ -165,8 +164,6 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   mobileNavigationButtonOpenLabel = 'Open',
   mobileNavigationButtonCloseLabel = 'Close',
 }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
   const [activeAccordions, setActiveAccordions] = useState<Array<string>>(
     () => {
       const initialActivePathIndex = items?.findIndex(
@@ -194,15 +191,12 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   const backgroundColor = colorSchemeColors[colorScheme]['backgroundColor']
   const dividerColor = colorSchemeColors[colorScheme]['dividerColor']
 
-  const menu = useMenuState({
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const menu = useMenuStore({
     animated: true,
-    baseId,
-    visible: false,
+    open: mobileMenuOpen,
+    setOpen: setMobileMenuOpen,
   })
-
-  useEffect(() => {
-    setMobileMenuOpen(menu.visible)
-  }, [menu.visible])
 
   const titleLinkProps = titleLink
     ? {
@@ -297,37 +291,33 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
           })}
           id={mobileId}
         >
-          <MenuButton
-            {...menu}
+          <Box
+            component="button"
             className={styles.menuBtn}
-            onClick={() => menu.show}
+            onClick={() => setMobileMenuOpen(true)}
             aria-label={title}
+            aria-expanded={mobileMenuOpen}
           >
             <MobileButton
               title={activeItemTitle ?? title}
               titleIcon={titleIcon}
               colorScheme={colorScheme}
-              aria-expanded={!mobileMenuOpen}
               mobileNavigationButtonOpenLabel={mobileNavigationButtonOpenLabel}
             />
-          </MenuButton>
-          <Menu {...menu} className={cn(styles.transition)}>
-            <MobileNavigationDialog
-              Title={Title}
-              colorScheme={colorScheme}
-              items={items}
-              renderLink={renderLink}
-              asSpan={asSpan}
-              isVisible={mobileMenuOpen}
-              menuState={menu}
-              mobileNavigationButtonCloseLabel={
-                mobileNavigationButtonCloseLabel
-              }
-              onClick={() => {
-                menu.hide()
-              }}
-            />
-          </Menu>
+          </Box>
+          <MobileNavigationDialog
+            Title={Title}
+            colorScheme={colorScheme}
+            items={items}
+            renderLink={renderLink}
+            asSpan={asSpan}
+            isVisible={mobileMenuOpen}
+            menuState={menu}
+            mobileNavigationButtonCloseLabel={mobileNavigationButtonCloseLabel}
+            onClick={() => {
+              menu.hide()
+            }}
+          />
         </Box>
       ) : (
         <Box
@@ -363,6 +353,7 @@ const MobileNavigationDialog = ({
   items,
   renderLink,
   onClick,
+  isVisible,
   menuState,
   asSpan,
   mobileNavigationButtonCloseLabel,
@@ -370,7 +361,7 @@ const MobileNavigationDialog = ({
   return (
     <ModalBase
       baseId={'mobile-nav'}
-      isVisible={menuState.visible ?? false}
+      isVisible={isVisible}
       preventBodyScroll
       className={styles.mobileNav}
     >
