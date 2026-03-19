@@ -4,6 +4,7 @@ import { Application } from './models/application.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { ApplicationDto } from './models/dto/application.dto'
 import { ApplicationsService } from './applications.service'
+import { FileResponseDto } from './models/dto/file.response.dto'
 
 @Injectable()
 export class ApplicationsXRoadService {
@@ -32,5 +33,13 @@ export class ApplicationsXRoadService {
     }
 
     return this.applicationMapper.mapFormToApplicationDto(form, application)
+  }
+
+  async getFile(id: string): Promise<FileResponseDto> {
+    const file = new FileResponseDto()
+    file.file = 'This is a placeholder file content for file with id: ' + id
+    file.filename = 'placeholder.txt'
+    file.mimetype = 'text/plain'
+    return file
   }
 }
