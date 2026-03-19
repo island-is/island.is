@@ -131,6 +131,9 @@ export const userNotificationServiceSetup = (services: {
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+      NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1',
+      NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1',
+      NOVA_URL: '/k8s/NOVA_URL_V1',
     })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .liveness('/liveness')
