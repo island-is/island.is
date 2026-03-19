@@ -58,7 +58,7 @@ export class NotifyService {
       ...(audkenni ? { audkenni } : {}),
     }
 
-    const xRoadPath = `${this.xroadBase}/r1/${url}`
+    const xRoadPath = `${this.xroadBase}${url}`
 
     try {
       const response = await this.enhancedFetch(xRoadPath, {
@@ -108,7 +108,7 @@ export class NotifyService {
       )
     }
 
-    const loginUrl = `${this.xroadBase}/r1/${env}/Syslumenn-Protected/StarfsKerfi/v1/Innskraning`
+    const loginUrl = `${this.xroadBase}${env}/Syslumenn-Protected/StarfsKerfi/v1/Innskraning`
 
     try {
       const response = await this.enhancedFetch(loginUrl, {
@@ -157,9 +157,9 @@ export class NotifyService {
     const isStaging = this.xroadBase.includes('staging01')
 
     if (org === 'syslumenn-protected') {
-      if (isDev) return 'IS-DEV/GOV/10016'
-      if (isStaging) return 'IS-TEST/GOV/10016'
-      return 'IS/GOV/5512201410'
+      if (isDev) return '/r1/IS-DEV/GOV/10016'
+      if (isStaging) return '/r1/IS-TEST/GOV/10016'
+      return '/r1/IS/GOV/5512201410'
     }
 
     return ''
