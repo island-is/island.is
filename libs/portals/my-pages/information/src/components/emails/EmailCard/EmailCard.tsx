@@ -1,5 +1,9 @@
 import { Box, Icon, Tag, TagProps, Text } from '@island.is/island-ui/core'
-import { PopoverDisclosure, PopoverProvider, usePopoverStore } from '@ariakit/react'
+import {
+  PopoverDisclosure,
+  PopoverProvider,
+  usePopoverStore,
+} from '@ariakit/react'
 import { EmailCardPopover } from '../EmailCardPopover'
 import * as styles from './EmailCard.css'
 import { useIntl } from 'react-intl'
