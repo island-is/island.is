@@ -20,7 +20,7 @@ import {
   LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
-import { m as messages } from '../../lib/messages'
+import { m as messages } from '../../../lib/messages'
 
 import { NetworkStatus } from '@apollo/client'
 import format from 'date-fns/format'
@@ -28,19 +28,19 @@ import sub from 'date-fns/sub'
 import { useEffect, useMemo, useState } from 'react'
 
 import { Problem } from '@island.is/react-spa/shared'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
-import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
-import { transactionFilter } from '../../utils/simpleFilter'
-import * as styles from '../Finance.css'
+import DropdownExport from '../../../components/DropdownExport/DropdownExport'
+import FinanceTransactionsTable from '../../../components/FinanceTransactionsTable/FinanceTransactionsTable'
+import { exportHreyfingarFile } from '../../../utils/filesHreyfingar'
+import { transactionFilter } from '../../../utils/simpleFilter'
+import * as styles from '../../Finance.css'
 import * as extraStyles from './FinanceTransactionsVehicleMileage.css'
 
-import { useFinanceSwapHook } from '../../utils/financeSwapHook'
+import { useFinanceSwapHook } from '../../../utils/financeSwapHook'
 import {
   GetCustomerRecordsPagedQuery,
   useGetCustomerRecordsPagedLazyQuery,
 } from './FinanceTransactionsVehicleMileage.generated'
-import { FinancePaths } from '../../lib/paths'
+import { FinancePaths } from '../../../lib/paths'
 
 const VEHICLE_MILEAGE_CHARGE_TYPE = 'BM'
 

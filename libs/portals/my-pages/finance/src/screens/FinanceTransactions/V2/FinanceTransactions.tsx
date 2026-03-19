@@ -22,22 +22,20 @@ import {
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import { useEffect, useState } from 'react'
-import { m as messages } from '../../lib/messages'
+import { m as messages } from '../../../lib/messages'
 
 import { Problem } from '@island.is/react-spa/shared'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
-import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
-import { transactionFilter } from '../../utils/simpleFilter'
-import * as styles from '../Finance.css'
-import { NetworkStatus } from '@apollo/client'
+import DropdownExport from '../../../components/DropdownExport/DropdownExport'
+import FinanceTransactionsTable from '../../../components/FinanceTransactionsTable/FinanceTransactionsTable'
+import { exportHreyfingarFile } from '../../../utils/filesHreyfingar'
+import { transactionFilter } from '../../../utils/simpleFilter'
+import * as styles from '../../Finance.css'
 import {
-  GetCustomerRecordsPagedQuery,
   useGetCustomerChargeTypeQuery,
-  useGetCustomerRecordsPagedLazyQuery,
+  useGetCustomerRecordsLazyQuery,
 } from './FinanceTransactions.generated'
-import { useFinanceSwapHook } from '../../utils/financeSwapHook'
-import { CustomerChargeType } from '../../lib/types'
+import { useFinanceSwapHook } from '../../../utils/financeSwapHook'
+import { CustomerChargeType, CustomerRecords } from '../../../lib/types'
 
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
@@ -46,7 +44,6 @@ const FinanceTransactions = () => {
   const backInTheDay = sub(new Date(), {
     months: 3,
   })
-  const oneYearAgo = sub(new Date(), { years: 1 })
   const [fromDate, setFromDate] = useState<Date>()
   const [toDate, setToDate] = useState<Date>()
   const [q, setQ] = useState<string>('')
@@ -70,17 +67,8 @@ const FinanceTransactions = () => {
   const chargeTypeData: CustomerChargeType =
     customerChartypeData?.getCustomerChargeType || {}
 
-  const [
-    loadCustomerRecords,
-    { data, loading, called, error, fetchMore, networkStatus },
-  ] = useGetCustomerRecordsPagedLazyQuery({ notifyOnNetworkStatusChange: true })
-
-  const isFetchingMore = networkStatus === NetworkStatus.fetchMore
-  const isInitialLoading = loading && !isFetchingMore
-
-  const hasNextPage =
-    data?.getCustomerRecordsPaged?.pageInfo?.hasNextPage ?? false
-  const nextKey = data?.getCustomerRecordsPaged?.pageInfo?.startCursor
+  const [loadCustomerRecords, { data, loading, called, error }] =
+    useGetCustomerRecordsLazyQuery()
 
   useEffect(() => {
     if (toDate && fromDate && dropdownSelect) {
@@ -122,43 +110,9 @@ const FinanceTransactions = () => {
     setQ('')
   }
 
-  const handleLoadMore = () => {
-    if (!nextKey) return
-    fetchMore({
-      variables: {
-        input: {
-          chargeTypeID:
-            dropdownSelect && dropdownSelect.length === 0
-              ? getAllChargeTypes()
-              : dropdownSelect ?? [],
-          dayFrom: format(fromDate ?? oneYearAgo, 'yyyy-MM-dd'),
-          dayTo: format(toDate ?? new Date(), 'yyyy-MM-dd'),
-          nextKey,
-        },
-      },
-      updateQuery(
-        previousData,
-        { fetchMoreResult },
-      ): GetCustomerRecordsPagedQuery {
-        if (!fetchMoreResult?.getCustomerRecordsPaged) return previousData
-        return {
-          ...fetchMoreResult,
-          getCustomerRecordsPaged: {
-            ...fetchMoreResult.getCustomerRecordsPaged,
-            data: [
-              ...(previousData.getCustomerRecordsPaged?.data ?? []),
-              ...fetchMoreResult.getCustomerRecordsPaged.data,
-            ],
-          },
-        }
-      },
-    })
-  }
-
-  const recordsDataArray = transactionFilter(
-    data?.getCustomerRecordsPaged?.data ?? [],
-    q,
-  )
+  const recordsData = (data?.getCustomerRecords || {}) as CustomerRecords
+  const recordsDataArray =
+    (recordsData?.records && transactionFilter(recordsData?.records, q)) || []
   const chargeTypeSelect = (chargeTypeData?.chargeType || []).map((item) => ({
     label: item.name,
     value: item.id,
@@ -308,7 +262,7 @@ const FinanceTransactions = () => {
             {(error || chargeTypeDataError) && (
               <Problem error={error || chargeTypeDataError} noBorder={false} />
             )}
-            {(isInitialLoading || chargeTypeDataLoading || !called) &&
+            {(loading || chargeTypeDataLoading || !called) &&
               !chargeTypesEmpty &&
               !chargeTypeDataError &&
               !error && (
@@ -331,19 +285,6 @@ const FinanceTransactions = () => {
               <FinanceTransactionsTable recordsArray={recordsDataArray} />
             ) : null}
           </Box>
-          {hasNextPage && (
-            <Box display="flex" justifyContent="center" marginTop={3}>
-              <Button
-                onClick={handleLoadMore}
-                loading={loading}
-                disabled={loading}
-                variant="ghost"
-                size="default"
-              >
-                {formatMessage(messages.loadMore)}
-              </Button>
-            </Box>
-          )}
         </Stack>
       </Box>
       <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />

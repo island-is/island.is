@@ -1,0 +1,23 @@
+query GetCustomerRecords($input: GetCustomerRecordsInput!) {
+  getCustomerRecords(input: $input) {
+    records {
+      createDate
+      createTime
+      valueDate
+      performingOrganization
+      collectingOrganization
+      chargeType
+      itemCode
+      chargeItemSubject
+      periodType
+      period
+      amount
+      category
+      subCategory
+      actionCategory
+      reference
+      referenceToLevy
+      accountReference
+    }
+  }
+}
