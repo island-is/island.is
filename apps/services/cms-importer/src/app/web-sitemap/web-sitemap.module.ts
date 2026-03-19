@@ -14,6 +14,7 @@ import { OrganizationSubpageRepository } from '../repositories/web-sitemap/conte
 import { OrganizationParentSubpageRepository } from '../repositories/web-sitemap/content-types/organizationParentSubpage.repository'
 import { ProjectPageRepository } from '../repositories/web-sitemap/content-types/projectPage.repository'
 import { ManualRepository } from '../repositories/web-sitemap/content-types/manual.repository'
+import { ArticleCategoryRepository } from '../repositories/web-sitemap/content-types/articleCategory.repository'
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ManualRepository } from '../repositories/web-sitemap/content-types/manu
     OrganizationParentSubpageRepository,
     ProjectPageRepository,
     ManualRepository,
+    ArticleCategoryRepository,
   ],
 })
 export class WebSitemapModule {}

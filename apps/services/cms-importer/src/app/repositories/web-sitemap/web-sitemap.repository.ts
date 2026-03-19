@@ -7,6 +7,7 @@ import { OrganizationSubpageRepository } from './content-types/organizationSubpa
 import { OrganizationParentSubpageRepository } from './content-types/organizationParentSubpage.repository'
 import { ProjectPageRepository } from './content-types/projectPage.repository'
 import { ManualRepository } from './content-types/manual.repository'
+import { ArticleCategoryRepository } from './content-types/articleCategory.repository'
 
 @Injectable()
 export class WebSitemapRepository {
@@ -20,6 +21,7 @@ export class WebSitemapRepository {
     private readonly organizationParentSubpageRepository: OrganizationParentSubpageRepository,
     private readonly projectPageRepository: ProjectPageRepository,
     private readonly manualRepository: ManualRepository,
+    private readonly articleCategoryRepository: ArticleCategoryRepository,
   ) {
     this.fetchers = [
       this.frontpageRepository,
@@ -29,6 +31,7 @@ export class WebSitemapRepository {
       this.organizationParentSubpageRepository,
       this.projectPageRepository,
       this.manualRepository,
+      this.articleCategoryRepository,
     ]
   }
 
