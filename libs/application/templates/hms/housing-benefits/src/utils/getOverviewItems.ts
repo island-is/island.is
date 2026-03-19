@@ -133,7 +133,10 @@ export const exemptionSectionOverviewItems = (
     ]
   }
 
-  const reasonLabels: Record<string, (typeof m.draftMessages.exemptionSection)['checkboxLabelStudies']> = {
+  const reasonLabels: Record<
+    string,
+    typeof m.draftMessages.exemptionSection['checkboxLabelStudies']
+  > = {
     studies: m.draftMessages.exemptionSection.checkboxLabelStudies,
     health: m.draftMessages.exemptionSection.checkboxLabelHealth,
     housing: m.draftMessages.exemptionSection.checkboxLabelHousing,
@@ -273,9 +276,7 @@ export const householdMembersOverviewItems = (
       {
         width: 'half',
         keyText: m.draftMessages.overviewSection.nationalId,
-        valueText: displayNationalId
-          ? formatKennitala(displayNationalId)
-          : '',
+        valueText: displayNationalId ? formatKennitala(displayNationalId) : '',
       },
     ]
     if (
@@ -285,8 +286,8 @@ export const householdMembersOverviewItems = (
     ) {
       items.push({
         width: 'full',
-        keyText: m.draftMessages.householdMembersSection
-          .custodyAgreementUploadTitle,
+        keyText:
+          m.draftMessages.householdMembersSection.custodyAgreementUploadTitle,
         valueText: answerRow.file.map((f) => f.name).join(', '),
       })
     }
@@ -317,7 +318,9 @@ export const householdMembersOverviewAttachments = (
 }
 
 const formatBankAccount = (
-  bankAccount: { bankNumber?: string; ledger?: string; accountNumber?: string } | undefined,
+  bankAccount:
+    | { bankNumber?: string; ledger?: string; accountNumber?: string }
+    | undefined,
 ): string => {
   if (!bankAccount) return ''
   const combined =
@@ -337,14 +340,16 @@ export const paymentSectionOverviewItems = (
   const isLandlord = paymentRadio === 'landlord'
 
   const bankAccount = isLandlord
-    ? getValueViaPath<{ bankNumber?: string; ledger?: string; accountNumber?: string }>(
-        answers,
-        'payment.landlordBankAccount',
-      )
-    : getValueViaPath<{ bankNumber?: string; ledger?: string; accountNumber?: string }>(
-        answers,
-        'payment.bankAccount',
-      )
+    ? getValueViaPath<{
+        bankNumber?: string
+        ledger?: string
+        accountNumber?: string
+      }>(answers, 'payment.landlordBankAccount')
+    : getValueViaPath<{
+        bankNumber?: string
+        ledger?: string
+        accountNumber?: string
+      }>(answers, 'payment.bankAccount')
 
   if (isLandlord) {
     const landlord = getSelectedLandlordForPayment(answers, externalData)

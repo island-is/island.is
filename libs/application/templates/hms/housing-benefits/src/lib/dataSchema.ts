@@ -49,7 +49,10 @@ export const dataSchema = baseSchema.superRefine((data, ctx) => {
     return
   }
 
-  if (!data.exemptionReason || !exemptionReasons.includes(data.exemptionReason)) {
+  if (
+    !data.exemptionReason ||
+    !exemptionReasons.includes(data.exemptionReason)
+  ) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ['exemptionReason'],

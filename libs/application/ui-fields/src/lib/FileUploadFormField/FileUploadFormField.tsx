@@ -58,7 +58,12 @@ export const FileUploadFormField = ({
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {title && (
         <Text variant="h4" marginBottom={2}>
-          {formatTextWithLocale(title, application, locale as Locale, formatMessage)}
+          {formatTextWithLocale(
+            title,
+            application,
+            locale as Locale,
+            formatMessage,
+          )}
         </Text>
       )}
       {introduction && (
