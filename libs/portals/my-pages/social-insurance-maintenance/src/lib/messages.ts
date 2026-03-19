@@ -178,7 +178,7 @@ export const m = defineMessages({
   },
   myPersonalTaxCredit: {
     id: 'sp.social-insurance-maintenance:my-personal-tax-credit',
-    defaultMessage: 'persónuafslátturinn minn',
+    defaultMessage: 'Persónuafslátturinn minn',
   },
   registerPersonalTaxCredit: {
     id: 'sp.social-insurance-maintenance:register-personal-tax-credit',
