@@ -1609,31 +1609,29 @@ export class CmsElasticsearchService {
     ]
 
     if (!!input.categoryKeys && input.categoryKeys.length > 0) {
-      must.push({
-        nested: {
-          path: 'tags',
-          query: {
-            bool: {
-              should: input.categoryKeys.map((key) => ({
-                bool: {
-                  must: [
-                    {
-                      term: {
-                        'tags.key': key,
-                      },
+      must.push(
+        ...input.categoryKeys.map((key) => ({
+          nested: {
+            path: 'tags',
+            query: {
+              bool: {
+                must: [
+                  {
+                    term: {
+                      'tags.key': key,
                     },
-                    {
-                      term: {
-                        'tags.type': 'genericTag',
-                      },
+                  },
+                  {
+                    term: {
+                      'tags.type': 'genericTag',
                     },
-                  ],
-                },
-              })),
+                  },
+                ],
+              },
             },
           },
-        },
-      })
+        })),
+      )
     }
 
     if (!!input.organizationSlug && input.organizationSlug.length > 0) {

@@ -3055,6 +3055,7 @@ services-form-system-api:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3170,6 +3171,7 @@ services-form-system-api-worker:
   grantNamespaces:
     - 'islandis'
     - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3234,6 +3236,7 @@ services-payment-flow-update-handler:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'services-payments'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

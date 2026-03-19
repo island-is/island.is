@@ -45,7 +45,7 @@ const calculatePdfScale = (width: number) => {
   return 0.63
 }
 
-const downloadPdf = (base64String: string, filename = 'download.pdf') => {
+const getPdfBlob = (base64String: string) => {
   // Convert Base64 to binary data
   const byteCharacters = atob(base64String)
   const byteNumbers = new Array(byteCharacters.length)
@@ -55,7 +55,12 @@ const downloadPdf = (base64String: string, filename = 'download.pdf') => {
   }
 
   const byteArray = new Uint8Array(byteNumbers)
-  const blob = new Blob([byteArray], { type: 'application/pdf' })
+
+  return new Blob([byteArray], { type: 'application/pdf' })
+}
+
+const downloadPdf = (base64String: string, filename = 'download.pdf') => {
+  const blob = getPdfBlob(base64String)
 
   // Create a download link
   const link = document.createElement('a')
@@ -69,6 +74,36 @@ const downloadPdf = (base64String: string, filename = 'download.pdf') => {
   // Cleanup
   document.body.removeChild(link)
   URL.revokeObjectURL(link.href)
+}
+
+const printPdf = (base64String: string) => {
+  const blob = getPdfBlob(base64String)
+  const objectUrl = URL.createObjectURL(blob)
+  const printFrame = document.createElement('iframe')
+
+  printFrame.style.position = 'fixed'
+  printFrame.style.right = '0'
+  printFrame.style.bottom = '0'
+  printFrame.style.width = '0'
+  printFrame.style.height = '0'
+  printFrame.style.border = '0'
+  printFrame.src = objectUrl
+
+  const cleanup = () => {
+    URL.revokeObjectURL(objectUrl)
+    if (printFrame.parentNode) {
+      printFrame.parentNode.removeChild(printFrame)
+    }
+  }
+
+  printFrame.onload = () => {
+    printFrame.contentWindow?.focus()
+    printFrame.contentWindow?.print()
+
+    window.setTimeout(cleanup, 1000)
+  }
+
+  document.body.appendChild(printFrame)
 }
 
 interface VerdictDetailsProps {
@@ -112,16 +147,28 @@ const PdfView = ({ item }: VerdictDetailsProps) => {
                 <Webreader readClass="rs_read" marginBottom={0} marginTop={2} />
                 {Boolean(item.pdfString) && (
                   <Hidden print={true}>
-                    <Button
-                      icon="attach"
-                      iconType="outline"
-                      size="small"
-                      onClick={() => {
-                        downloadPdf(item.pdfString as string)
-                      }}
-                    >
-                      .PDF
-                    </Button>
+                    <Inline alignY="center" space={2}>
+                      <Button
+                        icon="attach"
+                        iconType="outline"
+                        size="small"
+                        onClick={() => {
+                          downloadPdf(item.pdfString as string)
+                        }}
+                      >
+                        PDF
+                      </Button>
+                      <Button
+                        icon="print"
+                        iconType="outline"
+                        size="small"
+                        onClick={() => {
+                          printPdf(item.pdfString as string)
+                        }}
+                      >
+                        {formatMessage(m.verdictPage.print)}
+                      </Button>
+                    </Inline>
                   </Hidden>
                 )}
               </Inline>

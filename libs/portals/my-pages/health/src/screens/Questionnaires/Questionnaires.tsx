@@ -14,7 +14,7 @@ import {
   ActionCard,
   ToggleSwitchButton,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   formatDate,
@@ -47,6 +47,7 @@ type FilterValues = {
 }
 
 const Questionnaires: FC = () => {
+  useNamespaces('sp.health')
   const { formatMessage, lang } = useLocale()
   useHealthPlausibleSwap()
   const navigate = useNavigate()

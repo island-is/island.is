@@ -1,5 +1,15 @@
 type VideoEmbedType = 'VIMEO' | 'YOUTUBE'
 
+const getYoutubeStartSeconds = (item: URL) => {
+  const startParam = item.searchParams.get('start')
+  if (startParam) return startParam
+
+  const timestampParam = item.searchParams.get('t')
+  if (timestampParam) return timestampParam
+
+  return null
+}
+
 export const getVideoEmbedProperties = (
   url: string,
 ): {
@@ -67,9 +77,13 @@ export const getVideoEmbedProperties = (
     }
 
     if (youtubeId) {
+      const startSeconds = getYoutubeStartSeconds(item)
+
       return {
         id: youtubeId,
-        embedUrl: `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1`,
+        embedUrl: `https://www.youtube-nocookie.com/embed/${youtubeId}?autoplay=1${
+          startSeconds ? `&start=${startSeconds}` : ''
+        }`,
         termsUrl: 'https://www.youtube.com/t/terms',
         type: 'YOUTUBE',
       }

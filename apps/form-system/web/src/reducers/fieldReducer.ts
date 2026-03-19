@@ -8,60 +8,66 @@ export const fieldReducer = (
 ): ApplicationState => {
   switch (action.type) {
     case 'SET_LIST_VALUE': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'listValue', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'listValue', id, value, valueIndex)
     }
     case 'SET_CHECKBOX_VALUE': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'checkboxValue', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'checkboxValue', id, value, valueIndex)
     }
     case 'SET_BANK_ACCOUNT': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'bankAccount', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'bankAccount', id, value, valueIndex)
     }
     case 'SET_CURRENCY': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'iskNumber', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'iskNumber', id, value, valueIndex)
     }
     case 'SET_EMAIL': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'email', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'email', id, value, valueIndex)
     }
     case 'SET_NATIONAL_ID': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'nationalId', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'nationalId', id, value, valueIndex)
     }
     case 'SET_PHONE_NUMBER': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'phoneNumber', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'phoneNumber', id, value, valueIndex)
     }
     case 'SET_TEXT': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'text', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'text', id, value, valueIndex)
     }
     case 'SET_NUMBER': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'number', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'number', id, value, valueIndex)
     }
     case 'SET_DATE': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'date', id, value ? new Date(value) : null)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(
+        state,
+        'date',
+        id,
+        value ? new Date(value) : null,
+        valueIndex,
+      )
     }
-    case 'SET_PROPERTY_NUMBER': {
-      const { value, id } = action.payload
-      return setMultipleFieldValues(state, id, value)
-    }
+    // case 'SET_PROPERTY_NUMBER': {
+    //   const { value, id } = action.payload
+    //   return setMultipleFieldValues(state, id, value)
+    // }
     case 'SET_TIME': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'time', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'time', id, value, valueIndex)
     }
     case 'SET_FIELD_ERROR': {
       const { fieldId, hasError } = action.payload
       return setError(state, fieldId, hasError)
     }
     case 'SET_NAME': {
-      const { value, id } = action.payload
-      return setFieldValue(state, 'name', id, value)
+      const { value, id, valueIndex } = action.payload
+      return setFieldValue(state, 'name', id, value, valueIndex)
     }
     case 'SET_ADDRESS': {
       const { address, postalCode, id } = action.payload
