@@ -64,7 +64,7 @@ export class WebSitemapRepository {
         return {
           urls: resultUrls,
           nextFetcherIndex: i,
-          nextPageIndex: pageIndex,
+          nextPageIndex: i === fetcherIndex ? pageIndex : 0,
         }
 
       const fetcher = this.fetchers[i]
