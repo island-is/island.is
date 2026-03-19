@@ -71,13 +71,17 @@ export class OrganizationSubpageRepository implements SitemapUrlFetcher {
       const enSlug = subpage.fields.slug?.[EN_LOCALE]
       if (!slug && !enSlug) continue
       const url =
-        organizationPage.slug?.[LOCALE] && subpage.fields.title?.[LOCALE]
+        slug &&
+        organizationPage.slug?.[LOCALE] &&
+        subpage.fields.title?.[LOCALE]
           ? `https://island.is/${getOrganizationPageUrlPrefix(LOCALE)}/${
               organizationPage.slug[LOCALE]
             }/${slug}`
           : ''
       const enUrl =
-        organizationPage.slug?.[EN_LOCALE] && subpage.fields.title?.[EN_LOCALE]
+        enSlug &&
+        organizationPage.slug?.[EN_LOCALE] &&
+        subpage.fields.title?.[EN_LOCALE]
           ? `https://island.is/${getOrganizationPageUrlPrefix(EN_LOCALE)}/${
               organizationPage.slug[EN_LOCALE]
             }/${enSlug}`
