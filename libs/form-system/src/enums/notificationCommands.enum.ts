@@ -2,4 +2,5 @@ export const NotificationCommands = {
   SUBMIT: 'SUBMIT',
   VALIDATE: 'VALIDATE',
   POPULATE: 'POPULATE',
+  VALIDATE_PREMISES: 'VALIDATE_PREMISES',
 }

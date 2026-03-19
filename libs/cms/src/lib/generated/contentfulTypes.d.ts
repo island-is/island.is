@@ -833,6 +833,9 @@ export interface ICourseFields {
 
   /** Instances */
   instances?: ICourseInstance[] | undefined
+
+  /** Show placeholder text if no instances */
+  showPlaceholderTextIfNoCourseInstances?: boolean | undefined
 }
 
 export interface ICourse extends Entry<ICourseFields> {
