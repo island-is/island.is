@@ -18,6 +18,7 @@ export class LifeEventRepository implements SitemapUrlFetcher {
       select: 'sys,fields.slug,fields.title',
       'fields.slug[exists]': true,
       'fields.category[exists]': true,
+      'sys.publishedAt[exists]': true,
     })
     if (!lifeEventsResponse.ok) throw lifeEventsResponse.error
 
