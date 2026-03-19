@@ -17,7 +17,6 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
       limit: itemsPerPage,
       skip: pageIndex * itemsPerPage,
       select: 'fields.slug,fields.title,sys,fields.projectSubpages',
-      'fields.slug[exists]': true,
       'sys.publishedAt[exists]': true,
     })
     if (!projectPageResponse.ok) throw projectPageResponse.error
@@ -42,8 +41,6 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
         select: 'fields.slug,fields.title,sys',
         'sys.id[in]': ids.join(','),
         'sys.publishedAt[exists]': true,
-        'fields.title[exists]': true,
-        'fields.slug[exists]': true,
       })
       if (!projectSubpageResponse.ok) throw projectSubpageResponse.error
       for (const projectSubpage of projectSubpageResponse.data.items)

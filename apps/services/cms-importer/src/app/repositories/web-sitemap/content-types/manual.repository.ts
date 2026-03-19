@@ -16,8 +16,6 @@ export class ManualRepository implements SitemapUrlFetcher {
       limit: itemsPerPage,
       skip: pageIndex * itemsPerPage,
       select: 'fields.slug,fields.title,sys,fields.chapters',
-      'fields.slug[exists]': true,
-      'fields.title[exists]': true,
       'sys.publishedAt[exists]': true,
     })
     if (!manualResponse.ok) throw manualResponse.error
@@ -41,8 +39,6 @@ export class ManualRepository implements SitemapUrlFetcher {
         select: 'fields.slug,fields.title,sys',
         'sys.id[in]': ids.join(','),
         'sys.publishedAt[exists]': true,
-        'fields.title[exists]': true,
-        'fields.slug[exists]': true,
       })
       if (!manualChapterResponse.ok) throw manualChapterResponse.error
       for (const manualChapter of manualChapterResponse.data.items)

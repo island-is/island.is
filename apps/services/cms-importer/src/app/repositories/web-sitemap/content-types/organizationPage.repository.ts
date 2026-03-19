@@ -20,7 +20,6 @@ export class OrganizationPageRepository implements SitemapUrlFetcher {
       limit: itemsPerPage,
       skip: pageIndex * itemsPerPage,
       select: 'fields.slug,fields.title,sys',
-      'fields.slug[exists]': true,
       'sys.publishedAt[exists]': true,
     })
     if (!organizationPageResponse.ok) throw organizationPageResponse.error

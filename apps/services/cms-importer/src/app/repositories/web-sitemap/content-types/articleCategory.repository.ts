@@ -17,6 +17,7 @@ export class ArticleCategoryRepository implements SitemapUrlFetcher {
       skip: pageIndex * itemsPerPage,
       select: 'sys,fields.slug,fields.title',
       'fields.slug[exists]': true,
+      'sys.publishedAt[exists]': true,
     })
     if (!articleCategoriesResponse.ok) throw articleCategoriesResponse.error
 

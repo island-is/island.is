@@ -22,8 +22,6 @@ export class OrganizationParentSubpageRepository implements SitemapUrlFetcher {
       select:
         'fields.slug,fields.title,fields.pages,fields.organizationPage,sys',
       'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
-      'fields.organizationPage.fields.slug[exists]': true,
-      'fields.slug[exists]': true,
       'fields.pages[exists]': true,
       'sys.publishedAt[exists]': true,
     })

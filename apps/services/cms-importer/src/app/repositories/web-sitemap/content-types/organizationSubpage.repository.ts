@@ -21,8 +21,6 @@ export class OrganizationSubpageRepository implements SitemapUrlFetcher {
       skip: pageIndex * itemsPerPage,
       select: 'fields.slug,fields.title,fields.organizationPage,sys',
       'fields.organizationPage.sys.contentType.sys.id': 'organizationPage',
-      'fields.organizationPage.fields.slug[exists]': true,
-      'fields.slug[exists]': true,
       'fields.organizationParentSubpage[exists]': false,
       'sys.publishedAt[exists]': true,
     })
