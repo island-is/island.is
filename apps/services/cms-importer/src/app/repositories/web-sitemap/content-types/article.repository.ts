@@ -16,9 +16,7 @@ export class ArticleRepository implements SitemapUrlFetcher {
       limit: itemsPerPage,
       select: 'sys,fields.slug,fields.subArticles,fields.title',
       skip: pageIndex * itemsPerPage,
-      'fields.slug[exists]': true,
       'sys.publishedAt[exists]': true,
-      'fields.category[exists]': true,
     })
     if (!articlesResponse.ok) throw articlesResponse.error
 
@@ -28,30 +26,32 @@ export class ArticleRepository implements SitemapUrlFetcher {
     >()
     const subArticleIds: string[] = []
 
-    const urls: SitemapUrl[] = articlesResponse.data.items.map((article) => {
-      for (const subArticle of article.fields.subArticles?.[LOCALE] ?? []) {
-        subArticleMap.set(subArticle.sys.id, {
-          parentArticleSlug: article.fields.slug,
-        })
-        subArticleIds.push(subArticle.sys.id)
-      }
-
-      const slug = article.fields.slug?.[LOCALE]
-      const enSlug = article.fields.slug?.[EN_LOCALE]
-      return {
-        loc: {
-          [LOCALE]:
-            slug && article.fields.title?.[LOCALE]
-              ? `https://island.is/${article.fields.slug[LOCALE]}`
-              : '',
-          [EN_LOCALE]:
-            enSlug && article.fields.title?.[EN_LOCALE]
-              ? `https://island.is/en/${article.fields.slug[EN_LOCALE]}`
-              : '',
-        },
-        lastmod: article.sys.publishedAt,
-      }
-    })
+    const urls: SitemapUrl[] = articlesResponse.data.items
+      .map((article) => {
+        for (const subArticle of article.fields.subArticles?.[LOCALE] ?? []) {
+          subArticleMap.set(subArticle.sys.id, {
+            parentArticleSlug: article.fields.slug,
+          })
+          subArticleIds.push(subArticle.sys.id)
+        }
+        const slug = article.fields.slug?.[LOCALE]
+        const enSlug = article.fields.slug?.[EN_LOCALE]
+        if (!slug && !enSlug) return null
+        return {
+          loc: {
+            [LOCALE]:
+              slug && article.fields.title?.[LOCALE]
+                ? `https://island.is/${article.fields.slug[LOCALE]}`
+                : '',
+            [EN_LOCALE]:
+              enSlug && article.fields.title?.[EN_LOCALE]
+                ? `https://island.is/en/${article.fields.slug[EN_LOCALE]}`
+                : '',
+          },
+          lastmod: article.sys.publishedAt,
+        }
+      })
+      .filter((url) => url !== null)
 
     while (subArticleIds.length > 0) {
       const ids = subArticleIds.splice(0, 10)
@@ -63,6 +63,7 @@ export class ArticleRepository implements SitemapUrlFetcher {
         'fields.url[exists]': true,
       })
       if (!subArticleResponse.ok) throw subArticleResponse.error
+
       for (const entry of subArticleResponse.data.items) {
         const slug = entry.fields?.url?.[LOCALE]?.split('/')?.pop() ?? ''
         const enSlug = entry.fields?.url?.[EN_LOCALE]?.split('/')?.pop() ?? ''
