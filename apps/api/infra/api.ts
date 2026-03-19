@@ -599,5 +599,6 @@ export const serviceSetup = (services: {
       'portals-my-pages',
       'services-payments',
       'payments',
+      'contentful-apps',
     )
 }
