@@ -51,7 +51,7 @@ export class CaseTableService {
    * Returns which case table types (for the given user's role) each case belongs to.
    * Runs one query per user-visible table type in parallel; efficient for small caseId lists (e.g. search results or single case).
    */
-  private async getCaseTableTypesForCases(
+  async getCaseTableTypesForCases(
     caseIds: string[],
     user: User,
   ): Promise<Map<string, CaseTableType[]>> {
