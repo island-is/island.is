@@ -67,6 +67,7 @@ import { Case, CaseFile, Defendant } from '../repository'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFilesDto } from './dto/updateFile.dto'
+import { UpdatePoliceDigitalCaseFilesDto } from './dto/updatePoliceDigitalCaseFiles.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
@@ -474,5 +475,28 @@ export class FileController {
         fileId,
       )
     return { success }
+  }
+
+  @UseGuards(new CaseTypeGuard(indictmentCases), CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Patch('policeDigitalCaseFiles')
+  @ApiOkResponse({
+    description: 'Updates order of police digital case files',
+  })
+  updatePoliceDigitalCaseFiles(
+    @Param('caseId') caseId: string,
+    @Body() updateDto: UpdatePoliceDigitalCaseFilesDto,
+  ): Promise<void> {
+    this.logger.debug(
+      `Updating police digital case file orders for case ${caseId}`,
+    )
+
+    return this.sequelize.transaction((transaction) =>
+      this.policeDigitalCaseFileService.updatePoliceDigitalCaseFileOrders(
+        caseId,
+        updateDto.files,
+        transaction,
+      ),
+    )
   }
 }
