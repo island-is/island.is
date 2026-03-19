@@ -36,7 +36,7 @@ export const Lifetime = () => {
             <GridColumn span="5/10">
               <Input
                 label={formatMessage(m.lifetimeWhileInDraft)}
-                placeholder={formatMessage(m.max30Days)}
+                placeholder={formatMessage(m.max60Days)}
                 name="draftDaysToLive"
                 value={
                   form.draftDaysToLive === 0 ? '' : form.draftDaysToLive ?? ''
@@ -44,7 +44,7 @@ export const Lifetime = () => {
                 backgroundColor="blue"
                 readOnly={isPublished}
                 type="number"
-                max={30}
+                max={60}
                 min={1}
                 onFocus={(e) => setFocus(e.target.value)}
                 onBlur={(e) => {
@@ -63,7 +63,7 @@ export const Lifetime = () => {
                 }}
                 onChange={(e) => {
                   const value = Number(e.target.value)
-                  if (value <= 30) {
+                  if (value <= 60) {
                     controlDispatch({
                       type: 'CHANGE_DRAFT_DAYS_TO_LIVE',
                       payload: { value: parseInt(e.target.value) },
@@ -77,7 +77,7 @@ export const Lifetime = () => {
             <GridColumn span="5/10">
               <Input
                 label={formatMessage(m.lifetimeAfterSubmission)}
-                placeholder={formatMessage(m.max60Days)}
+                placeholder={formatMessage(m.max30Days)}
                 name="submissionDaysToLive"
                 value={
                   form.submissionDaysToLive === 0
@@ -87,7 +87,7 @@ export const Lifetime = () => {
                 backgroundColor="blue"
                 readOnly={isPublished}
                 type="number"
-                max={60}
+                max={30}
                 min={1}
                 onFocus={(e) => setFocus(e.target.value)}
                 onBlur={(e) => {
@@ -106,7 +106,7 @@ export const Lifetime = () => {
                 }}
                 onChange={(e) => {
                   const value = Number(e.target.value)
-                  if (value <= 60) {
+                  if (value <= 30) {
                     controlDispatch({
                       type: 'CHANGE_SUBMISSION_DAYS_TO_LIVE',
                       payload: { value: parseInt(e.target.value) },

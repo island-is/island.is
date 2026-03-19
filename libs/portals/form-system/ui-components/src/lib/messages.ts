@@ -122,13 +122,13 @@ export const m = defineMessages({
   },
   lifetimeWhileInDraft: {
     id: 'form.system:lifetime-while-in-draft',
-    defaultMessage: 'Líftími umsókna í drögum (hámark 30 dagar)',
-    description: 'Application lifetime in drafts (max 30 days)',
+    defaultMessage: 'Líftími umsókna í drögum (allt að 60 dagar)',
+    description: 'Application lifetime in drafts (max 60 days)',
   },
   lifetimeAfterSubmission: {
     id: 'form.system:lifetime-after-submission',
-    defaultMessage: 'Líftími umsókna eftir skil (hámark 60 dagar)',
-    description: 'Application lifetime after submission (max 60 days)',
+    defaultMessage: 'Líftími umsókna eftir skil (allt að 30 dagar)',
+    description: 'Application lifetime after submission (max 30 days)',
   },
   deadline: {
     id: 'form.system:deadline',
