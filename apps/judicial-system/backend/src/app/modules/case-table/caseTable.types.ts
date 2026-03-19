@@ -1,5 +1,4 @@
 import { WhereOptions } from 'sequelize'
-import { ModelStatic } from 'sequelize-typescript'
 
 import {
   Case,
@@ -87,4 +86,12 @@ export const subModelMap: {
 export type CaseWhereOptions = {
   includes?: CaseIncludes
   where: WhereOptions
+  displayCases?: (cases: Case[]) => Case[]
 }
+
+export const expandCasesWithDefendants = (cs: Case[]) =>
+  cs.flatMap((c) => {
+    const jsonCase = c.toJSON()
+
+    return (c.defendants ?? []).map((d) => ({ ...jsonCase, defendants: [d] }))
+  })

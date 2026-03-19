@@ -16,7 +16,6 @@ import { CaseRepositoryService, Defendant } from '../repository'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
-import { caseTableDisplayCases } from './caseTable.displayCases'
 import {
   getActionOnRowClick,
   getAttributes,
@@ -123,15 +122,11 @@ export class CaseTableService {
       where: whereOptions.where,
       order: globalOrder,
     })
-    console.log(
-      `Fetched ${cases.length} cases for case table type ${type} and user ${
-        user.id
-      } ${JSON.stringify(cases)}`,
-    )
-    const displayCases = caseTableDisplayCases[type](cases)
-    console.log(
-      `After processing, ${displayCases.length} cases are displayed in the case table type ${type} for user ${user.id}`,
-    )
+
+    const displayCases = whereOptions.displayCases
+      ? whereOptions.displayCases(cases)
+      : cases
+
     return {
       rowCount: displayCases.length,
       rows: displayCases.map((c) => ({

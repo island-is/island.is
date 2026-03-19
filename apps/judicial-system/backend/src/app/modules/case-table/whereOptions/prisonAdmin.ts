@@ -1,6 +1,8 @@
 import { fn, Op } from 'sequelize'
 
-import { CaseWhereOptions } from '../caseTable.types'
+import { IndictmentCaseReviewDecision } from '@island.is/judicial-system/types'
+
+import { CaseWhereOptions, expandCasesWithDefendants } from '../caseTable.types'
 import {
   prisonAdminIndictmentsAccessWhereOptions,
   prisonAdminRequestCasesAccessWhereOptions,
@@ -37,13 +39,14 @@ export const prisonAdminIndictmentsSentToPrisonAdminWhereOptions =
         attributes: [],
         required: true,
         where: {
+          indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
           is_sent_to_prison_admin: true,
-          indictment_review_decision: 'ACCEPT',
           is_registered_in_prison_system: { [Op.not]: true },
         },
       },
     },
     where: prisonAdminIndictmentsAccessWhereOptions,
+    displayCases: expandCasesWithDefendants,
   })
 
 export const prisonAdminIndictmentsRegisteredRulingWhereOptions =
@@ -53,11 +56,12 @@ export const prisonAdminIndictmentsRegisteredRulingWhereOptions =
         attributes: [],
         required: true,
         where: {
+          indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
           is_sent_to_prison_admin: true,
-          indictment_review_decision: 'ACCEPT',
           is_registered_in_prison_system: true,
         },
       },
     },
     where: prisonAdminIndictmentsAccessWhereOptions,
+    displayCases: expandCasesWithDefendants,
   })
