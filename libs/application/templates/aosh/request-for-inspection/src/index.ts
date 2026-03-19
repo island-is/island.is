@@ -9,4 +9,5 @@ export type RequestInspectionAnswers = MachineAnswers
 export * from './utils'
 export * from './lib/messages/externalData'
 export * from './lib/messages/applicationCheck'
+export * from './shared'
 export default template

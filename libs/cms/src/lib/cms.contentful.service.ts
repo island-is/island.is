@@ -1639,52 +1639,74 @@ export class CmsContentfulService {
   async getCourseById(
     input: GetCourseByIdInput,
   ): Promise<CourseDetails | null> {
-    const params = {
+    let id = input.id
+
+    const slugResponse =
+      await this.contentfulRepository.getLocalizedEntries<types.ICourseFields>(
+        input.lang,
+        {
+          content_type: 'course',
+          limit: 1,
+          include: 0,
+          'fields.slug': input.id,
+          select: 'sys',
+        },
+        0,
+      )
+    const potentialId = slugResponse?.items?.[0]?.sys?.id
+    if (potentialId) id = potentialId
+
+    const idParams = {
       content_type: 'course',
       limit: 1,
       include: 4,
     }
 
-    const [isResponse, enResponse] = await Promise.all([
-      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
-        input.id,
-        'is',
-        { ...params, include: input.lang === 'is' ? 4 : 0 },
-      ),
-      this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
-        input.id,
-        'en',
-        { ...params, include: input.lang === 'en' ? 4 : 0 },
-      ),
-    ])
+    try {
+      const [isResponse, enResponse] = await Promise.all([
+        this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+          id,
+          'is',
+          { ...idParams, include: input.lang === 'is' ? 4 : 0 },
+        ),
+        this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+          id,
+          'en',
+          { ...idParams, include: input.lang === 'en' ? 4 : 0 },
+        ),
+      ])
 
-    const response = input.lang === 'is' ? isResponse : enResponse
+      const response = input.lang === 'is' ? isResponse : enResponse
 
-    if (response?.sys?.contentType?.sys?.id !== 'course') {
-      return null
-    }
+      if (response?.sys?.contentType?.sys?.id !== 'course') {
+        return null
+      }
 
-    const mappedCourse = mapCourse(response as types.ICourse)
+      const mappedCourse = mapCourse(response as types.ICourse)
 
-    // Filter out instances that are in the past
-    const today = new Date()
-    mappedCourse.instances = mappedCourse.instances.filter(
-      (instance) =>
-        Boolean(instance.startDate) && new Date(instance.startDate) > today,
-    )
+      // Filter out instances that are in the past
+      const today = new Date()
+      mappedCourse.instances = mappedCourse.instances.filter(
+        (instance) =>
+          Boolean(instance.startDate) && new Date(instance.startDate) > today,
+      )
 
-    // Sort instances in ascending start date order
-    mappedCourse.instances.sort(
-      (a, b) =>
-        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
-    )
+      // Sort instances in ascending start date order
+      mappedCourse.instances.sort(
+        (a, b) =>
+          new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      )
 
-    return {
-      course: mappedCourse,
-      activeLocales: {
-        is: Boolean(isResponse?.fields?.title),
-        en: Boolean(enResponse?.fields?.title),
-      },
+      return {
+        course: mappedCourse,
+        activeLocales: {
+          is: Boolean(isResponse?.fields?.title),
+          en: Boolean(enResponse?.fields?.title),
+        },
+      }
+    } catch (error) {
+      if (error?.sys?.id === 'NotFound') return null
+      throw error
     }
   }
 

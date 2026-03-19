@@ -10,16 +10,17 @@ import {
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import '@island.is/financial-aid-web/veita/src/styles.css'
-import { Provider } from 'next-auth/client'
+import { SessionProvider } from 'next-auth/react'
 
 class FinancialAidApplication extends App<AppProps> {
   render() {
     const { Component, pageProps } = this.props
 
     return (
-      <Provider
+      <SessionProvider
         session={pageProps.session}
-        options={{ clientMaxAge: 120, basePath: `/api/auth` }}
+        basePath="/api/auth"
+        refetchInterval={120}
       >
         <ApolloProvider client={client}>
           <AdminProvider>
@@ -91,7 +92,7 @@ class FinancialAidApplication extends App<AppProps> {
             </ApplicationFiltersProvider>
           </AdminProvider>
         </ApolloProvider>
-      </Provider>
+      </SessionProvider>
     )
   }
 }

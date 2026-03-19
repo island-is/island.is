@@ -39,6 +39,7 @@ import {
   HealthCenterDoctorOption,
   SelectedHealthCenter,
 } from '../../utils/types'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 export interface Dictionary<T> {
   [index: string]: T
@@ -46,6 +47,7 @@ export interface Dictionary<T> {
 
 const HealthCenterRegistration = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { data, loading, error } = useGetHealthCenterQuery()

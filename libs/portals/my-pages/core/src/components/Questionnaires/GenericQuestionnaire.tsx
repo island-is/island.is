@@ -16,7 +16,7 @@ import {
 } from './utils/visibilityUtils'
 
 import {
-  Questionnaire,
+  QuestionnaireDetail,
   QuestionnaireAnswerOptionType,
   QuestionnaireQuestion,
   QuestionnaireQuestionnairesOrganizationEnum,
@@ -30,7 +30,7 @@ import { Review } from './Review'
 import { calculateFormula } from './utils/calculations'
 
 interface GenericQuestionnaireProps {
-  questionnaire: Questionnaire
+  questionnaire: QuestionnaireDetail
   onSubmit: (
     answers: { [key: string]: QuestionAnswer },
     asDraft?: boolean,
