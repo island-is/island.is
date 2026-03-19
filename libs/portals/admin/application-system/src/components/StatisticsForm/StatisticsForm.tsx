@@ -33,39 +33,40 @@ export const StatisticsForm = ({
   return (
     <Box
       display="flex"
-      alignItems="center"
-      flexDirection={['column', 'column', 'column', 'row']}
+      flexDirection={['column', 'column', 'row']}
+      alignItems={['stretch', 'stretch', 'flexEnd']}
     >
+      {organizations !== undefined && (
+        <Box flexGrow={1} marginRight={[0, 0, 2]} marginBottom={[2, 2, 0]}>
+          <Select
+            id="statisticsInstitution"
+            label={formatMessage(m.institution)}
+            backgroundColor="blue"
+            size="xs"
+            placeholder={formatMessage(m.institutionDropdownPlaceholder)}
+            isDisabled={sortedOrganizations.length === 0}
+            value={
+              selectedOption
+                ? { value: selectedOption.slug, label: selectedOption.title }
+                : null
+            }
+            onChange={(v) => onInstitutionChange?.(v?.value ?? '')}
+            options={sortedOrganizations.map((o) => ({
+              value: o.slug,
+              label: o.title,
+            }))}
+            isClearable
+          />
+        </Box>
+      )}
       <Box
         display="flex"
-        flexDirection={['column', 'column', 'row']}
+        flexWrap="wrap"
+        flexGrow={1}
         alignItems="flexEnd"
-        width="full"
+        style={{ gap: '8px' }}
       >
-        {organizations !== undefined && (
-          <Box flexGrow={1} marginRight={[0, 0, 2]} marginBottom={[2, 2, 0]}>
-            <Select
-              id="statisticsInstitution"
-              label={formatMessage(m.institution)}
-              backgroundColor="blue"
-              size="xs"
-              placeholder={formatMessage(m.institutionDropdownPlaceholder)}
-              isDisabled={sortedOrganizations.length === 0}
-              value={
-                selectedOption
-                  ? { value: selectedOption.slug, label: selectedOption.title }
-                  : null
-              }
-              onChange={(v) => onInstitutionChange?.(v?.value ?? '')}
-              options={sortedOrganizations.map((o) => ({
-                value: o.slug,
-                label: o.title,
-              }))}
-              isClearable
-            />
-          </Box>
-        )}
-        <Box marginBottom={[2, 2, 0]}>
+        <Box style={{ flex: '1 1 160px' }}>
           <DatePicker
             id="periodFrom"
             label={formatMessage(m.filterFrom)}
@@ -77,7 +78,7 @@ export const StatisticsForm = ({
             locale="is"
           />
         </Box>
-        <Box marginX={[0, 0, 2]} marginY={[2, 2, 0]}>
+        <Box style={{ flex: '1 1 160px' }}>
           <DatePicker
             id="periodTo"
             label={formatMessage(m.filterTo)}
