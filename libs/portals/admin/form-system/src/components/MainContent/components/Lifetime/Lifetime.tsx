@@ -37,11 +37,9 @@ export const Lifetime = () => {
               <Input
                 label={formatMessage(m.lifetimeWhileInDraft)}
                 placeholder={formatMessage(m.max30Days)}
-                name="applicationsDaysToRemove"
+                name="draftDaysToLive"
                 value={
-                  form.daysUntilApplicationPrune === 0
-                    ? ''
-                    : form.daysUntilApplicationPrune ?? ''
+                  form.draftDaysToLive === 0 ? '' : form.draftDaysToLive ?? ''
                 }
                 backgroundColor="blue"
                 readOnly={isPublished}
@@ -54,10 +52,10 @@ export const Lifetime = () => {
                     if (e.target.value === '' || Number(e.target.value) < 1) {
                       e.target.value = '1'
                       controlDispatch({
-                        type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
+                        type: 'CHANGE_DRAFT_DAYS_TO_LIVE',
                         payload: { value: 1 },
                       })
-                      formUpdate({ ...form, daysUntilApplicationPrune: 1 })
+                      formUpdate({ ...form, draftDaysToLive: 1 })
                     } else {
                       formUpdate()
                     }
@@ -67,7 +65,7 @@ export const Lifetime = () => {
                   const value = Number(e.target.value)
                   if (value <= 30) {
                     controlDispatch({
-                      type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
+                      type: 'CHANGE_DRAFT_DAYS_TO_LIVE',
                       payload: { value: parseInt(e.target.value) },
                     })
                   }
@@ -76,15 +74,15 @@ export const Lifetime = () => {
             </GridColumn>
           </GridRow>
           <GridRow>
-            <GridColumn span="10/10">
+            <GridColumn span="5/10">
               <Input
                 label={formatMessage(m.lifetimeAfterSubmission)}
                 placeholder={formatMessage(m.max60Days)}
-                name="applicationsDaysToRemove"
+                name="submissionDaysToLive"
                 value={
-                  form.daysUntilApplicationPrune === 0
+                  form.submissionDaysToLive === 0
                     ? ''
-                    : form.daysUntilApplicationPrune ?? ''
+                    : form.submissionDaysToLive ?? ''
                 }
                 backgroundColor="blue"
                 readOnly={isPublished}
@@ -97,10 +95,10 @@ export const Lifetime = () => {
                     if (e.target.value === '' || Number(e.target.value) < 1) {
                       e.target.value = '1'
                       controlDispatch({
-                        type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
+                        type: 'CHANGE_SUBMISSION_DAYS_TO_LIVE',
                         payload: { value: 1 },
                       })
-                      formUpdate({ ...form, daysUntilApplicationPrune: 1 })
+                      formUpdate({ ...form, submissionDaysToLive: 1 })
                     } else {
                       formUpdate()
                     }
@@ -110,7 +108,7 @@ export const Lifetime = () => {
                   const value = Number(e.target.value)
                   if (value <= 60) {
                     controlDispatch({
-                      type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
+                      type: 'CHANGE_SUBMISSION_DAYS_TO_LIVE',
                       payload: { value: parseInt(e.target.value) },
                     })
                   }

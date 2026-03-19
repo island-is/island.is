@@ -79,7 +79,12 @@ export class UpdateFormDto {
   @IsNumber()
   @IsOptional()
   @ApiPropertyOptional()
-  daysUntilApplicationPrune?: number
+  draftDaysToLive?: number
+
+  @IsNumber()
+  @IsOptional()
+  @ApiPropertyOptional()
+  submissionDaysToLive?: number
 
   @IsBoolean()
   @IsOptional()
