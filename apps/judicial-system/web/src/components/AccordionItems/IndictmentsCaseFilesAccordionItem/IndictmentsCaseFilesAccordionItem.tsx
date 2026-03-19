@@ -34,7 +34,10 @@ import {
   FileNotFoundModal,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFile as TCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFile as TCaseFile,
+  PoliceDigitalCaseFile as TPoliceDigitalCaseFile,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
   useFileList,
@@ -45,17 +48,24 @@ import EditableCaseFile, {
   TEditableCaseFile,
 } from '../../EditableCaseFile/EditableCaseFile'
 import { useUpdateFilesMutation } from './updateFiles.generated'
+import { useUpdatePoliceDigitalCaseFilesMutation } from './updatePoliceDigitalCaseFiles.generated'
 import { strings } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
 interface Props {
   policeCaseNumber: string
   caseFiles: TCaseFile[]
+  policeDigitalCaseFiles: TPoliceDigitalCaseFile[]
   caseId: string
   shouldStartExpanded: boolean
   subtypes?: IndictmentSubtypeMap
   crimeScenes?: CrimeSceneMap
   setEditCount: Dispatch<SetStateAction<number>>
+}
+
+interface PoliceDigitalCaseFileItemProps {
+  file: TPoliceDigitalCaseFile
+  onReorder: (id: string) => void
 }
 
 interface CaseFileProps {
@@ -271,10 +281,63 @@ const CaseFile: FC<CaseFileProps> = (props) => {
   )
 }
 
+const PoliceDigitalCaseFileItem: FC<PoliceDigitalCaseFileItemProps> = ({
+  file,
+  onReorder,
+}) => {
+  const y = useMotionValue(0)
+  const boxShadow = useRaisedShadow(y)
+  const controls = useDragControls()
+  const [isDragging, setIsDragging] = useState<boolean>(false)
+
+  const handlePointerDown = (evt: PointerEvent) => {
+    const target = evt.target as HTMLElement
+    if (target.tagName.toLowerCase() !== 'input') {
+      evt.preventDefault()
+    }
+    setIsDragging(true)
+    controls.start(evt)
+  }
+
+  const handlePointerUp = () => {
+    if (isDragging) {
+      onReorder(file.id)
+    }
+    setIsDragging(false)
+  }
+
+  return (
+    <Reorder.Item
+      value={file}
+      id={file.id}
+      style={{ y, boxShadow, cursor: isDragging ? 'grabbing' : 'grab' }}
+      className={styles.reorderItem}
+      dragListener={false}
+      dragControls={controls}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      drag
+    >
+      <EditableCaseFile
+        caseFile={{
+          id: file.id,
+          displayText: file.name,
+          displayDate: file.displayDate,
+          canOpen: false,
+          canEdit: [],
+        }}
+        enableDrag
+        onRename={() => undefined}
+      />
+    </Reorder.Item>
+  )
+}
+
 const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
   const {
     policeCaseNumber,
     caseFiles,
+    policeDigitalCaseFiles,
     caseId,
     shouldStartExpanded,
     subtypes,
@@ -283,6 +346,8 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const [updateFilesMutation] = useUpdateFilesMutation()
+  const [updatePoliceDigitalCaseFilesMutation] =
+    useUpdatePoliceDigitalCaseFilesMutation()
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId,
   })
@@ -290,6 +355,9 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
     [],
   )
+  const [reorderableDigitalFiles, setReorderableDigitalFiles] = useState<
+    TPoliceDigitalCaseFile[]
+  >([])
 
   useEffect(() => {
     setReorderableItems([
@@ -365,6 +433,14 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
         }),
     ])
   }, [caseFiles, formatMessage])
+
+  useEffect(() => {
+    setReorderableDigitalFiles(
+      [...policeDigitalCaseFiles].sort(
+        (a, b) => (a.orderWithinChapter ?? 0) - (b.orderWithinChapter ?? 0),
+      ),
+    )
+  }, [policeDigitalCaseFiles])
 
   const handleReorder = async (fileId?: string) => {
     if (!fileId) {
@@ -450,6 +526,28 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     )
   }
 
+  const handleDigitalReorder = async (fileId: string) => {
+    if (!fileId) {
+      return
+    }
+
+    const { errors } = await updatePoliceDigitalCaseFilesMutation({
+      variables: {
+        input: {
+          caseId,
+          files: reorderableDigitalFiles.map((file, index) => ({
+            id: file.id,
+            orderWithinChapter: index,
+          })),
+        },
+      },
+    })
+
+    if (errors) {
+      toast.error(formatMessage(strings.reorderFailedErrorMessage))
+    }
+  }
+
   return (
     <>
       <AccordionItem
@@ -501,6 +599,23 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
             )
           })}
         </Reorder.Group>
+        {reorderableDigitalFiles.length > 0 && (
+          <Reorder.Group
+            axis="y"
+            values={reorderableDigitalFiles}
+            onReorder={setReorderableDigitalFiles}
+            className={styles.reorderGroup}
+          >
+            {reorderableDigitalFiles.map((file) => (
+              <Box key={file.id} marginBottom={2}>
+                <PoliceDigitalCaseFileItem
+                  file={file}
+                  onReorder={handleDigitalReorder}
+                />
+              </Box>
+            ))}
+          </Reorder.Group>
+        )}
         <AnimatePresence>
           {reorderableItems.length > 0 &&
             reorderableItems[reorderableItems.length - 1].isDivider && (
