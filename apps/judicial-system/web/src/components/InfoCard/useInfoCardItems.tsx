@@ -292,7 +292,7 @@ const useInfoCardItems = () => {
       ? [
           <div key="split-cases-grid" className={grid({ gap: 2 })}>
             {splitCaseEntries.map(({ defendant, splitCase }) => (
-              <div key={`split-cases-grid-${defendant.id}`}>
+              <div key={`split-cases-grid-${splitCase.id}-${defendant.id}`}>
                 <Text>{defendant.name}</Text>
                 <LinkComponent
                   href={`/${constants.ROUTE_HANDLER_ROUTE}/${splitCase.id}`}
