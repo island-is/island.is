@@ -70,9 +70,7 @@ export class PoliceDigitalCaseFileResolver {
       AuditedAction.UPDATE_POLICE_DIGITAL_CASE_FILES,
       backendService
         .updatePoliceDigitalCaseFiles(caseId, files)
-        .then(() =>
-          backendService.getPoliceDigitalCaseFiles(caseId),
-        )
+        .then(() => backendService.getPoliceDigitalCaseFiles(caseId))
         .then((policeDigitalCaseFiles) => ({ policeDigitalCaseFiles })),
       caseId,
     )
