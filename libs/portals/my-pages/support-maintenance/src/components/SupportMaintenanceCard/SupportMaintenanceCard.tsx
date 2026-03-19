@@ -21,9 +21,45 @@ export interface SupportMaintenanceCardProps {
   logoAlt?: string
   heading: string
   text?: string
+  /**
+   * Single tag shown top-right. Used in the default `'side'` variant.
+   * In the `'bottom'` variant prefer `tags` for multiple tags, but `tag`
+   * will be treated as a single-element array if `tags` is not provided.
+   */
   tag?: SupportMaintenanceCardTag
+  /**
+   * Multiple tags. In the `'bottom'` variant these appear bottom-left,
+   * horizontally inline with the CTA button.
+   */
+  tags?: SupportMaintenanceCardTag[]
   cta?: SupportMaintenanceCardCta
+  /**
+   * `'side'`   – tag top-right, CTA below it (default, original layout).
+   * `'bottom'` – tags bottom-left, CTA bottom-right on the same row.
+   */
+  variant?: 'side' | 'bottom'
 }
+
+const Cta = ({ cta }: { cta: SupportMaintenanceCardCta }) =>
+  cta.href ? (
+    <LinkButton
+      to={cta.href}
+      text={cta.label}
+      variant="text"
+      icon="arrowForward"
+      size="small"
+    />
+  ) : (
+    <Button
+      variant="text"
+      size="small"
+      icon="arrowForward"
+      iconType="filled"
+      onClick={cta.onClick}
+    >
+      {cta.label}
+    </Button>
+  )
 
 export const SupportMaintenanceCard = ({
   logo,
@@ -31,8 +67,75 @@ export const SupportMaintenanceCard = ({
   heading,
   text,
   tag,
+  tags,
   cta,
+  variant = 'side',
 }: SupportMaintenanceCardProps) => {
+  const resolvedTags: SupportMaintenanceCardTag[] = tags ?? (tag ? [tag] : [])
+
+  const logoAndHeading = (
+    <Box display="flex" flexDirection="row" alignItems="center" columnGap={1}>
+      {logo && (
+        <img
+          src={logo}
+          alt={logoAlt}
+          className={styles.logo}
+          aria-hidden={!logoAlt}
+        />
+      )}
+      <Text variant="h3" as="h2">
+        {heading}
+      </Text>
+    </Box>
+  )
+
+  if (variant === 'bottom') {
+    return (
+      <Box
+        display="flex"
+        flexDirection="column"
+        borderColor="blue200"
+        borderRadius="large"
+        borderWidth="standard"
+        paddingX={[3, 3, 4]}
+        paddingY={3}
+        background="white"
+        rowGap={1}
+      >
+        {logoAndHeading}
+        {text && <Text>{text}</Text>}
+        {(resolvedTags.length > 0 || cta) && (
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            paddingTop={1}
+          >
+            <Box
+              display="flex"
+              flexDirection="row"
+              flexWrap="wrap"
+              style={{ gap: '0.5rem' }}
+            >
+              {resolvedTags.map((t) => (
+                <Tag key={t.label} variant={t.variant ?? 'blue'} disabled>
+                  {t.label}
+                </Tag>
+              ))}
+            </Box>
+            {cta && (
+              <Box flexShrink={0} marginLeft={3}>
+                <Cta cta={cta} />
+              </Box>
+            )}
+          </Box>
+        )}
+      </Box>
+    )
+  }
+
+  // variant === 'side' (original layout)
   return (
     <Box
       display="flex"
@@ -48,24 +151,7 @@ export const SupportMaintenanceCard = ({
     >
       {/* Left content */}
       <Box>
-        <Box
-          display="flex"
-          flexDirection="row"
-          alignItems="center"
-          columnGap={1}
-        >
-          {logo && (
-            <img
-              src={logo}
-              alt={logoAlt}
-              className={styles.logo}
-              aria-hidden={!logoAlt}
-            />
-          )}
-          <Text variant="h3" as="h2">
-            {heading}
-          </Text>
-        </Box>
+        {logoAndHeading}
         {text && <Text paddingTop={1}>{text}</Text>}
       </Box>
 
@@ -86,25 +172,7 @@ export const SupportMaintenanceCard = ({
         )}
         {cta && (
           <Box marginTop={tag ? 2 : 0}>
-            {cta.href ? (
-              <LinkButton
-                to={cta.href}
-                text={cta.label}
-                variant="text"
-                icon="arrowForward"
-                size="small"
-              />
-            ) : (
-              <Button
-                variant="text"
-                size="small"
-                icon="arrowForward"
-                iconType="filled"
-                onClick={cta.onClick}
-              >
-                {cta.label}
-              </Button>
-            )}
+            <Cta cta={cta} />
           </Box>
         )}
       </Box>

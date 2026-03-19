@@ -70,8 +70,37 @@ export const moduleMessages = defineMessages({
   },
   unemploymentStatusDescription: {
     id: 'sp.support-maintenance:unemployment-status-description',
-    defaultMessage:
-      'Yfirlit yfir staðu þína á atvinnuleysisbætur og tengdar upplýsingar.',
+    defaultMessage: 'Yfirlit yfir þína umsókn um atvinnuleysisbætur',
+  },
+  // ── Unemployment status action buttons ─────────────────────────────────────
+  unemploymentStatusContactUs: {
+    id: 'sp.support-maintenance:unemployment-status-contact-us',
+    defaultMessage: 'Hafa samband',
+  },
+  unemploymentStatusSubmitDocuments: {
+    id: 'sp.support-maintenance:unemployment-status-submit-documents',
+    defaultMessage: 'Skila gögnum',
+  },
+  unemploymentStatusReportIncome: {
+    id: 'sp.support-maintenance:unemployment-status-report-income',
+    defaultMessage: 'Tilkynna tekjur/vinnu',
+  },
+  unemploymentStatusReportTravel: {
+    id: 'sp.support-maintenance:unemployment-status-report-travel',
+    defaultMessage: 'Tilkynna utanlandsferð',
+  },
+  unemploymentStatusUnsubscribe: {
+    id: 'sp.support-maintenance:unemployment-status-unsubscribe',
+    defaultMessage: 'Afskrá af bótum',
+  },
+  // ── Unemployment status tabs ────────────────────────────────────────────────
+  unemploymentStatusTabApplication: {
+    id: 'sp.support-maintenance:unemployment-status-tab-application',
+    defaultMessage: 'Yfirlit yfir stöðu umsóknar',
+  },
+  unemploymentStatusTabApplicant: {
+    id: 'sp.support-maintenance:unemployment-status-tab-applicant',
+    defaultMessage: 'Upplýsingar um umsækjanda',
   },
 })
 

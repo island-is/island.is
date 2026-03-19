@@ -8,7 +8,9 @@
   "paths": {
     "/ping": {
       "get": {
-        "tags": ["Diagnostic"],
+        "tags": [
+          "Diagnostic"
+        ],
         "operationId": "Diagnostic_Ping",
         "responses": {
           "200": {
@@ -26,7 +28,9 @@
     },
     "/status": {
       "get": {
-        "tags": ["Diagnostic"],
+        "tags": [
+          "Diagnostic"
+        ],
         "operationId": "Diagnostic_Status",
         "responses": {
           "200": {
@@ -44,7 +48,9 @@
     },
     "/OpenApi": {
       "get": {
-        "tags": ["OpenApi"],
+        "tags": [
+          "OpenApi"
+        ],
         "operationId": "OpenApi_Get",
         "responses": {
           "200": {
@@ -63,7 +69,9 @@
     },
     "/api/ActivationGrant": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_CreateActivationGrant",
         "requestBody": {
           "x-name": "command",
@@ -98,7 +106,9 @@
     },
     "/api/ActivationGrant/{applicationId}": {
       "get": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_GetSingleActivationGrant",
         "parameters": [
           {
@@ -133,7 +143,9 @@
     },
     "/api/ActivationGrant/empty": {
       "get": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_GetEmptyActivationGrant",
         "responses": {
           "200": {
@@ -156,7 +168,9 @@
     },
     "/api/ActivationGrant/emptywithprofile/{applicantSSN}": {
       "get": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_GetEmptyActivationGrantWithProfile",
         "parameters": [
           {
@@ -190,7 +204,9 @@
     },
     "/api/ActivationGrant/latestbyapplicant/{applicantSSN}": {
       "get": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_GetLatestApplicationByApplicant",
         "parameters": [
           {
@@ -233,7 +249,9 @@
     },
     "/api/ActivationGrant/canapply/{applicantSSN}": {
       "get": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_CanApply",
         "parameters": [
           {
@@ -267,7 +285,9 @@
     },
     "/api/ActivationGrant/validate": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_ValidateApplication",
         "requestBody": {
           "x-name": "command",
@@ -302,7 +322,9 @@
     },
     "/api/ActivationGrant/validatebankinformation": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_ValidateBankInformation",
         "requestBody": {
           "x-name": "command",
@@ -337,7 +359,9 @@
     },
     "/api/ActivationGrant/validateincomepage": {
       "post": {
-        "tags": ["ActivationGrant"],
+        "tags": [
+          "ActivationGrant"
+        ],
         "operationId": "ActivationGrant_ValidateIncomePage",
         "requestBody": {
           "x-name": "incomeForm",
@@ -372,7 +396,9 @@
     },
     "/api/ApplicantInfo/getApplicantInfoForRVK/{ssn}": {
       "get": {
-        "tags": ["ApplicantInfo"],
+        "tags": [
+          "ApplicantInfo"
+        ],
         "operationId": "ApplicantInfo_GetApplicantInfoForRSK",
         "parameters": [
           {
@@ -407,7 +433,9 @@
     },
     "/api/ApplicantInfo/getApplicantInfoForSI/{ssn}": {
       "get": {
-        "tags": ["ApplicantInfo"],
+        "tags": [
+          "ApplicantInfo"
+        ],
         "operationId": "ApplicantInfo_GetApplicantInfoForSI",
         "parameters": [
           {
@@ -440,9 +468,56 @@
         ]
       }
     },
+    "/api/ApplicantInfo/getApplicantStatusForSI/{ssn}": {
+      "get": {
+        "tags": [
+          "ApplicantInfo"
+        ],
+        "operationId": "ApplicantInfo_GetApplicantStatusForSI",
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/Attachment": {
       "post": {
-        "tags": ["Attachment"],
+        "tags": [
+          "Attachment"
+        ],
         "operationId": "Attachment_CreateAttachment",
         "requestBody": {
           "x-name": "request",
@@ -477,7 +552,9 @@
     },
     "/api/Attachment/{id}": {
       "get": {
-        "tags": ["Attachment"],
+        "tags": [
+          "Attachment"
+        ],
         "operationId": "Attachment_GetAttachment",
         "parameters": [
           {
@@ -521,7 +598,9 @@
     },
     "/api/Attachment/attachmenttypes": {
       "get": {
-        "tags": ["Attachment"],
+        "tags": [
+          "Attachment"
+        ],
         "operationId": "Attachment_AttachmentTypes",
         "parameters": [
           {
@@ -555,7 +634,9 @@
     },
     "/api/Auth/login": {
       "post": {
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "operationId": "Auth_Login",
         "requestBody": {
           "x-name": "credentials",
@@ -585,7 +666,9 @@
     },
     "/api/jobadvertisements/{id}": {
       "get": {
-        "tags": ["JobAdvertisement"],
+        "tags": [
+          "JobAdvertisement"
+        ],
         "operationId": "JobAdvertisement_GetSingleJobAdvertisement",
         "parameters": [
           {
@@ -629,7 +712,9 @@
     },
     "/api/jobadvertisements": {
       "get": {
-        "tags": ["JobAdvertisement"],
+        "tags": [
+          "JobAdvertisement"
+        ],
         "operationId": "JobAdvertisement_GetAllJobAdvertisements",
         "parameters": [
           {
@@ -801,7 +886,9 @@
     },
     "/api/UnemploymentApplication": {
       "post": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_CreateUnemploymentApplication",
         "requestBody": {
           "x-name": "command",
@@ -836,7 +923,9 @@
     },
     "/api/UnemploymentApplication/{applicationId}": {
       "get": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_GetSingleUnemploymentApplication",
         "parameters": [
           {
@@ -871,7 +960,9 @@
     },
     "/api/UnemploymentApplication/emptywithprofile/{applicantSSN}": {
       "get": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_GetEmptyUnemploymentApplicationWithProfile",
         "parameters": [
           {
@@ -905,7 +996,9 @@
     },
     "/api/UnemploymentApplication/latestbyapplicant/{applicantSSN}": {
       "get": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_GetLatestApplicationByApplicant",
         "parameters": [
           {
@@ -948,7 +1041,9 @@
     },
     "/api/UnemploymentApplication/deleteAttachment": {
       "delete": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_DeleteAttachment",
         "requestBody": {
           "x-name": "command",
@@ -984,7 +1079,9 @@
     },
     "/api/UnemploymentApplication/validatepaymentpage": {
       "post": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_ValidatePaymentPage",
         "requestBody": {
           "x-name": "command",
@@ -1019,7 +1116,9 @@
     },
     "/api/UnemploymentApplication/validateunpaidvacation": {
       "post": {
-        "tags": ["UnemploymentApplication"],
+        "tags": [
+          "UnemploymentApplication"
+        ],
         "operationId": "UnemploymentApplication_ValidatePaymentPage2",
         "requestBody": {
           "x-name": "command",
@@ -2072,7 +2171,12 @@
           "JobAdvertisement",
           "DontKnow"
         ],
-        "enum": [0, 1, 2, 3]
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
       },
       "Galdur_Domain_Models_Settings_AttachmentStatus_AttachmentStatusDTO": {
         "allOf": [
@@ -2319,8 +2423,18 @@
       "Galdur_Domain_Enumerations_EWSApplicantCurrentStatus": {
         "type": "integer",
         "description": "",
-        "x-enumNames": ["HasNoJob", "HasJob", "IsInSchool", "Other"],
-        "enum": [0, 1, 2, 3]
+        "x-enumNames": [
+          "HasNoJob",
+          "HasJob",
+          "IsInSchool",
+          "Other"
+        ],
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ]
       },
       "Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_OtherInformationDTO": {
         "type": "object",
@@ -3057,8 +3171,14 @@
       "Galdur_Domain_Enumerations_PensionType": {
         "type": "integer",
         "description": "",
-        "x-enumNames": ["PensionFund", "PrivatePensionFund"],
-        "enum": [0, 1]
+        "x-enumNames": [
+          "PensionFund",
+          "PrivatePensionFund"
+        ],
+        "enum": [
+          0,
+          1
+        ]
       },
       "Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_Union": {
         "type": "object",
@@ -4009,7 +4129,16 @@
           "Suðurland",
           "Suðurnes"
         ],
-        "enum": [0, 1, 2, 3, 4, 5, 6, 7]
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
       },
       "Galdur_Domain_Enumerations_PostcodeDistrict": {
         "type": "integer",
@@ -4023,7 +4152,15 @@
           "Hafnarfjörður",
           "Mosfellsbær"
         ],
-        "enum": [0, 1, 2, 3, 4, 5, 6]
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
       },
       "Galdur_Domain_Models_Settings_ApplicationStatus_ApplicationStatusDTO": {
         "allOf": [
@@ -4257,10 +4394,115 @@
               },
               "isInTheEUAndOrEEA": {
                 "type": "boolean"
+              },
+              "riskGroupTypeId": {
+                "type": "string",
+                "format": "guid",
+                "nullable": true
+              },
+              "riskGroupType": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Galdur_Domain_Entities_SupportEntities_NationalityRiskGroupType"
+                  }
+                ]
               }
             }
           }
         ]
+      },
+      "Galdur_Domain_Entities_SupportEntities_NationalityRiskGroupType": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Entities_SupportEntities_SupportEntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "point": {
+                "type": "number",
+                "format": "decimal"
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_Domain_Entities_SupportEntities_SupportEntityBase": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Entities_EntityBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "orderNumber": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "hiddenOnMyPages": {
+                "type": "boolean"
+              },
+              "english": {
+                "type": "string",
+                "nullable": true
+              },
+              "polish": {
+                "type": "string",
+                "nullable": true
+              },
+              "otherId": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_Domain_Entities_EntityBase": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "createdBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "created": {
+            "type": "string",
+            "format": ""
+          },
+          "changedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "changed": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          },
+          "deletedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "deletedWhen": {
+            "type": "string",
+            "format": "",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean"
+          }
+        }
       },
       "Galdur_Domain_Models_Settings_IntroductoryMeetingLanguage_IntroductoryMeetingLanguageDTO": {
         "type": "object",
@@ -4669,6 +4911,13 @@
             "nullable": true,
             "items": {
               "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_ApplicationStatus_ApplicationStatusDTO"
+            }
+          },
+          "attachmentTypeCategories": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_AttachmentTypeCategories_AttachmentTypeCategoryDTO"
             }
           }
         }
@@ -5432,8 +5681,14 @@
       "Galdur_Domain_Enumerations_SkillType": {
         "type": "integer",
         "description": "",
-        "x-enumNames": ["Driving", "HeavyMachinery"],
-        "enum": [0, 1]
+        "x-enumNames": [
+          "Driving",
+          "HeavyMachinery"
+        ],
+        "enum": [
+          0,
+          1
+        ]
       },
       "Galdur_Domain_Models_JobAdvertisements_JobAdvertisementJobSkillDTO": {
         "type": "object",
@@ -7273,6 +7528,10 @@
           "unionSSN": {
             "type": "string",
             "description": "UnionSSN",
+            "nullable": true
+          },
+          "periodString": {
+            "type": "string",
             "nullable": true
           }
         }
