@@ -19,7 +19,7 @@ import React, {
   useState,
 } from 'react'
 import AnimateHeight from 'react-animate-height'
-import { useMenuStore, type MenuStore } from '@ariakit/react'
+import { useMenuStore } from '@ariakit/react'
 
 import * as styles from './Navigation.css'
 import { useScrolledPassed } from '../../hooks/useScrolledPassed/useScrolledPassed'
@@ -83,7 +83,6 @@ interface MobileNavigationDialogProps {
   asSpan?: NavigationTreeProps['asSpan']
   isVisible: boolean
   onClick: () => void
-  menuState: MenuStore
   mobileNavigationButtonCloseLabel?: string
 }
 
@@ -93,7 +92,6 @@ interface NavigationTreeProps {
   colorScheme?: keyof typeof styles.colorScheme
   expand?: boolean
   renderLink?: (link: ReactElement, item?: NavigationItem) => ReactNode
-  menuState: MenuStore
   linkOnClick?: () => void
   id?: string
   labelId?: string
@@ -313,7 +311,6 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
             renderLink={renderLink}
             asSpan={asSpan}
             isVisible={mobileMenuOpen}
-            menuState={menu}
             mobileNavigationButtonCloseLabel={mobileNavigationButtonCloseLabel}
             onClick={() => {
               menu.hide()
@@ -339,7 +336,6 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
             asSpan={asSpan}
             colorScheme={colorScheme}
             renderLink={renderLink}
-            menuState={menu}
             expand={expand}
           />
         </Box>
@@ -355,7 +351,6 @@ const MobileNavigationDialog = ({
   renderLink,
   onClick,
   isVisible,
-  menuState,
   asSpan,
   mobileNavigationButtonCloseLabel,
 }: MobileNavigationDialogProps) => {
@@ -404,7 +399,6 @@ const MobileNavigationDialog = ({
           asSpan={asSpan}
           colorScheme={colorScheme}
           renderLink={renderLink}
-          menuState={menuState}
           linkOnClick={onClick}
         />
       </Box>
@@ -487,7 +481,6 @@ export const NavigationTree: FC<
   colorScheme = 'blue',
   expand = false,
   renderLink = defaultLinkRender,
-  menuState,
   linkOnClick,
   id = '',
   labelId = '',
@@ -537,7 +530,6 @@ export const NavigationTree: FC<
                 colorScheme={colorScheme}
                 expand={expand}
                 renderLink={renderLink}
-                menuState={menuState}
                 linkOnClick={linkOnClick}
               />
             )
