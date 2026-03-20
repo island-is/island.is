@@ -85,7 +85,7 @@ replicaCount:
   min: 3
 resources:
   limits:
-    cpu: '1800m'
+    cpu: '3000m'
     memory: '1500Mi'
   requests:
     cpu: '1200m'

@@ -82,6 +82,12 @@ export class Course {
 
   @Field(() => String, { nullable: true })
   courseListPageId?: string | null
+
+  @Field(() => String, { nullable: true })
+  slug?: string | null
+
+  @Field(() => Boolean, { nullable: true })
+  showPlaceholderTextIfNoCourseInstances?: boolean | null
 }
 
 @ObjectType()
@@ -115,6 +121,9 @@ export const mapCourse = ({ fields, sys }: ICourse): Course => {
     categories: fields.categories ? fields.categories.map(mapGenericTag) : [],
     instances: fields.instances ? fields.instances.map(mapCourseInstance) : [],
     courseListPageId: fields.courseListPage?.sys?.id ?? null,
+    slug: fields.slug?.trim() ?? null,
+    showPlaceholderTextIfNoCourseInstances:
+      fields.showPlaceholderTextIfNoCourseInstances ?? true,
   }
 }
 
