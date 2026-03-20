@@ -401,7 +401,6 @@ export default function InboxScreen() {
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems}
           setSelectedState={setSelectedState}
-          isFeature2WayMailboxEnabled={isFeature2WayMailboxEnabled}
           listParams={{
             ...filters,
             category,

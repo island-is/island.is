@@ -49,26 +49,40 @@ export const lineHeightByFontSize = (fontSize: number) => {
 export const fontByWeight = (weight: TextStyle['fontWeight']): FontFamily => {
   switch (weight) {
     case '900':
+    case 900:
     case '800':
+    case 800:
     case '700':
+    case 700:
     case 'bold':
       return 'IBMPlexSans_700Bold'
     case '600':
+    case 600:
       return 'IBMPlexSans_600SemiBold'
     case '500':
+    case 500:
       return 'IBMPlexSans_500Medium'
+    default:
     case 'normal':
     case '400':
+    case 400:
       return 'IBMPlexSans_400Regular'
     case '300':
+    case 300:
       return 'IBMPlexSans_300Light'
     case '200':
+    case 200:
       return 'IBMPlexSans_200ExtraLight'
     case '100':
+    case 100:
       return 'IBMPlexSans_100Thin'
   }
+}
 
-  return 'IBMPlexSans_400Regular'
+export const fontByWeightItalic = (
+  weight: TextStyle['fontWeight'],
+): FontFamily => {
+  return (fontByWeight(weight) + '_Italic') as FontFamily
 }
 
 const propOrValue = (props: ThemeProps) => (value: any) => {

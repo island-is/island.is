@@ -1,10 +1,12 @@
-import React, { memo } from 'react'
+import React, { memo, useCallback, useMemo } from 'react'
 
 import { DocumentCategory, DocumentV2 } from '@/graphql/types/schema'
 import { useOrganizationsStore } from '@/stores/organizations-store'
-import { InboxCard } from '@/ui'
+import { InboxCard, ListItem, theme } from '@/ui'
 import { Filters } from '../utils/inbox-filters'
 import { router } from 'expo-router'
+import { PressableHighlight } from './pressable-highlight/pressable-highlight'
+import { testIDs } from '../utils/test-ids'
 
 export type ListParams = Filters & { category?: DocumentCategory }
 
@@ -15,7 +17,6 @@ type PressableListItemProps = {
   selectedItems: string[]
   setSelectedItems: React.Dispatch<React.SetStateAction<string[]>>
   setSelectedState: React.Dispatch<React.SetStateAction<boolean>>
-  isFeature2WayMailboxEnabled: boolean
 }
 
 export const PressableListItem = memo(
@@ -26,45 +27,75 @@ export const PressableListItem = memo(
     selectedItems,
     setSelectedItems,
     setSelectedState,
-    isFeature2WayMailboxEnabled,
   }: PressableListItemProps) => {
     const { getOrganizationLogoUrl } = useOrganizationsStore()
-    const isSelected = selectable && selectedItems.includes(item.id)
+    const isSelected = useMemo(() => selectable && selectedItems.includes(item.id), [selectable, selectedItems, item.id])
+    const icon = useMemo(
+      () =>
+        item.sender.name
+          ? getOrganizationLogoUrl(item.sender.name, 75)
+          : undefined,
+      [item.sender.name, getOrganizationLogoUrl],
+    )
+
+    const toggleSelectItem = useCallback(() => {
+      if (isSelected) {
+        setSelectedItems((prev) => prev.filter((id) => id !== item.id))
+      } else {
+        setSelectedItems((prev) => [...prev, item.id])
+      }
+    }, [isSelected, setSelectedItems, item.id])
+
+    const onPress = useCallback(() => {
+      if (selectable) {
+        toggleSelectItem();
+      } else {
+        router.navigate({
+          pathname: '/inbox/[id]',
+          params: {
+            id: item.id,
+            title: item.sender.name,
+            isUrgent: String(item.isUrgent),
+            listParams: JSON.stringify(listParams),
+          },
+        })
+      }
+    }, [
+      selectable,
+      toggleSelectItem,
+      listParams,
+      item.id,
+      item.sender.name,
+      item.isUrgent,
+    ])
+
+    const onPressIcon = useCallback(() => {
+      setSelectedState(true);
+      toggleSelectItem();
+    }, [toggleSelectItem, setSelectedState])
 
     return (
-      <InboxCard
-        key={item.id}
-        subject={item.subject}
-        publicationDate={item.publicationDate}
-        id={item.id}
-        unread={!item.opened}
-        senderName={item.sender.name}
-        icon={item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)}
-        isUrgent={item.isUrgent}
-        replyable={isFeature2WayMailboxEnabled ? item.replyable : false}
-        bookmarked={item.bookmarked}
-        selectable={selectable}
-        selected={isSelected}
-        onPressIcon={() => {
-          setSelectedState((prev) => !prev)
-          setSelectedItems([...selectedItems, item.id])
-        }}
-        onPress={() => {
-          return selectable
-            ? isSelected
-              ? setSelectedItems(selectedItems.filter((id) => id !== item.id))
-              : setSelectedItems([...selectedItems, item.id])
-            : router.navigate({
-                pathname: '/inbox/[id]',
-                params: {
-                  id: item.id,
-                  title: item.sender.name,
-                  isUrgent: String(item.isUrgent),
-                  listParams: JSON.stringify(listParams),
-                },
-              })
-        }}
-      />
+      <PressableHighlight
+        highlightColor={theme.shade.shade100}
+        onPress={onPress}
+        testID={`${testIDs.INBOX_ITEM}_${item.id}`}
+      >
+        <ListItem
+          title={item.sender.name ?? ''}
+          subtitle={item.subject}
+          date={
+            item.publicationDate ? new Date(item.publicationDate) : undefined
+          }
+          unread={!item.opened}
+          urgent={!!item.isUrgent}
+          replyable={!!item.replyable}
+          starred={!!item.bookmarked}
+          icon={!selectable ? icon : null}
+          selectable={selectable}
+          selected={isSelected}
+          onPressIcon={onPressIcon}
+        />
+      </PressableHighlight>
     )
   },
 )
