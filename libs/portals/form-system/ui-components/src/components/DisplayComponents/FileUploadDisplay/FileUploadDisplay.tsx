@@ -7,9 +7,9 @@ interface Props {
 }
 
 export const FileUploadDisplay = ({ item, lang = 'is' }: Props) => {
-  const s3Keys = Array.isArray((item?.values?.[0]?.json as any)?.s3Key)
-    ? ((item?.values?.[0]?.json as any).s3Key as string[])
-    : []
+  const s3Keys = (item.values?.[0]?.json?.s3Key ?? []).filter(
+    (k): k is string => typeof k === 'string',
+  )
 
   return (
     <Box

@@ -62,9 +62,8 @@ export class FileService {
               return
             }
 
-            const currentKeys = Array.isArray(value.json?.s3Key)
-              ? value.json!.s3Key
-              : []
+            const existingKeys = value.json?.s3Key
+            const currentKeys = Array.isArray(existingKeys) ? existingKeys : []
 
             // avoid duplicates on retries
             const updatedKeys = currentKeys.includes(key)

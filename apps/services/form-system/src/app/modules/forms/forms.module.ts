@@ -10,7 +10,6 @@ import { ListItem } from '../listItems/models/listItem.model'
 import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { Application } from '../applications/models/application.model'
-import { FileService } from '../file/file.service'
 import { FileModule } from '../file/file.module'
 
 @Module({

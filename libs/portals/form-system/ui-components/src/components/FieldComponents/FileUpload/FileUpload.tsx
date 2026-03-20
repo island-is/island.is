@@ -133,7 +133,16 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
         })
       }
     },
-    [createUploadUrl, uploadFile, item, dispatch, updateFile, formatMessage],
+    [
+      createUploadUrl,
+      uploadFile,
+      item,
+      dispatch,
+      updateFile,
+      formatMessage,
+      setValue,
+      trigger,
+    ],
   )
 
   const onChange = useCallback(
@@ -221,7 +230,7 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
       setValue(item.id, newKeys, { shouldDirty: true, shouldValidate: true })
       trigger(item.id)
     },
-    [deleteFile, dispatch, files, item.id, item.values],
+    [deleteFile, dispatch, files, item.id, item.values, setValue, trigger],
   )
 
   const title = item.isRequired
@@ -240,7 +249,7 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
           (Array.isArray(v) && v.length > 0) ||
           formatMessage(m.required),
       }}
-      render={({ field, fieldState }) => (
+      render={({ fieldState }) => (
         <InputFileUpload
           name={`fileUpload-${item.id}`}
           files={files}
