@@ -263,14 +263,17 @@ export const Filters = ({
               >
                 {useAdvancedSearch ? (
                   <FilterInput
+                    label={formatMessage(m.searchStr)}
                     placeholder={formatMessage(m.searchStrPlaceholder)}
                     name="admin-applications-search-str"
                     value={searchStr}
                     onChange={setSearchStr}
                     backgroundColor="blue"
+                    size="sm"
                   />
                 ) : (
                   <FilterInput
+                    label={formatMessage(m.nationalId)}
                     placeholder={formatMessage(m.searchPlaceholder)}
                     name="admin-applications-nationalId"
                     value={
@@ -280,6 +283,7 @@ export const Filters = ({
                     }
                     onChange={setNationalId}
                     backgroundColor="blue"
+                    size="sm"
                   />
                 )}
               </Box>
@@ -291,13 +295,13 @@ export const Filters = ({
                 <Box width="half">
                   <DatePicker
                     id="periodFrom"
-                    label=""
+                    label={formatMessage(m.filterFrom)}
                     backgroundColor="blue"
                     maxDate={filters.period.to}
                     selected={filters.period.from}
-                    placeholderText={formatMessage(m.filterFrom)}
+                    placeholderText={formatMessage(m.datePlaceholder)}
                     handleChange={(from) => onDateChange({ from })}
-                    size="xs"
+                    size="sm"
                     locale="is"
                     isClearable={true}
                     handleClear={() => onDateChange({ from: undefined })}
@@ -306,13 +310,13 @@ export const Filters = ({
                 <Box paddingLeft={3} width="half">
                   <DatePicker
                     id="periodTo"
-                    label=""
+                    label={formatMessage(m.filterTo)}
                     backgroundColor="blue"
                     minDate={filters.period.from}
                     selected={filters.period.to}
-                    placeholderText={formatMessage(m.filterTo)}
+                    placeholderText={formatMessage(m.datePlaceholder)}
                     handleChange={(to) => onDateChange({ to })}
-                    size="xs"
+                    size="sm"
                     locale="is"
                     isClearable={true}
                     handleClear={() => onDateChange({ to: undefined })}

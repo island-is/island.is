@@ -86,7 +86,7 @@ export class ApplicationService {
         COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,
         COUNT(*) FILTER (WHERE status = 'approved') AS approved
       FROM public.application
-      WHERE modified BETWEEN :startDate AND :endDate
+      WHERE modified >= :startDate AND modified <= :endDate
       ${
         applicationTypeIds?.length ? `AND type_id IN (:applicationTypeIds)` : ''
       }
@@ -180,7 +180,7 @@ export class ApplicationService {
       ? new Date(new Date(from).setHours(0, 0, 0, 0))
       : undefined
     const toDate = to
-      ? // Set to end of day to include applications created on the "to" date as well
+      ? // Set to end of day to include applications modified on the "to" date as well
         new Date(new Date(to).setHours(23, 59, 59, 999))
       : undefined
 
@@ -203,8 +203,8 @@ export class ApplicationService {
           applicationTypeIds?.length
             ? { typeId: { [Op.in]: applicationTypeIds } }
             : {},
-          fromDate ? { created: { [Op.gte]: fromDate } } : {},
-          toDate ? { created: { [Op.lte]: toDate } } : {},
+          fromDate ? { modified: { [Op.gte]: fromDate } } : {},
+          toDate ? { modified: { [Op.lte]: toDate } } : {},
           applicantNationalId
             ? { applicant: { [Op.eq]: applicantNationalId } }
             : {},

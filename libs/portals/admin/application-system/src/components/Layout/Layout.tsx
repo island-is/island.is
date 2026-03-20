@@ -14,9 +14,11 @@ import { ApplicationSystemPaths } from '../../lib/paths'
 import { m } from '../../lib/messages'
 import Statistics from '../../screens/Statistics/Statistics'
 import {
-  GetOrganizationsQuery,
   useGetOrganizationsQuery,
+  useGetApplicationV2InstitutionsSuperAdminQuery,
 } from '../../queries/overview.generated'
+import { useMemo } from 'react'
+import { Organization } from '@island.is/shared/types'
 
 interface LayoutProps {
   isSuperAdmin: boolean
@@ -33,8 +35,50 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
       ssr: false,
     })
 
-  const organizationListFromContentful: GetOrganizationsQuery['getOrganizations']['items'] =
-    contentfulOrgData?.getOrganizations?.items ?? []
+  const contentfulOrganizations = contentfulOrgData?.getOrganizations?.items
+
+  // Institutions that have active application types (enriched with Contentful data)
+  const { data: institutionsData, loading: institutionsLoading } =
+    useGetApplicationV2InstitutionsSuperAdminQuery({
+      ssr: false,
+      skip: !isSuperAdmin,
+    })
+
+  const availableOrganizations = useMemo<Organization[]>(
+    () =>
+      (institutionsData?.applicationV2InstitutionsSuperAdmin ?? []).flatMap(
+        (inst) => {
+          const contentfulOrg = contentfulOrganizations?.find(
+            (x) => x.slug === inst.contentfulSlug,
+          )
+
+          if (!contentfulOrg) {
+            if (!inst.nationalId) {
+              return []
+            }
+            return [
+              {
+                id: '',
+                title: inst.name ?? inst.nationalId ?? '',
+                slug: '',
+                nationalId: inst.nationalId,
+                logo: null,
+              },
+            ]
+          }
+
+          return [
+            {
+              ...contentfulOrg,
+              nationalId: inst.nationalId,
+            },
+          ]
+        },
+      ),
+    [institutionsData, contentfulOrganizations],
+  )
+
+  const isLoadingOrganizations = contentfulOrgLoading || institutionsLoading
 
   return (
     <GridContainer>
@@ -64,12 +108,8 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
                   content: (
                     <Overview
                       isSuperAdmin={isSuperAdmin}
-                      organizationListFromContentful={
-                        organizationListFromContentful
-                      }
-                      isLoadingOrganizationsFromContentful={
-                        contentfulOrgLoading
-                      }
+                      availableOrganizations={availableOrganizations}
+                      isLoadingOrganizations={isLoadingOrganizations}
                     />
                   ),
                 },
@@ -79,12 +119,8 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
                   content: (
                     <Statistics
                       isSuperAdmin={isSuperAdmin}
-                      organizationListFromContentful={
-                        organizationListFromContentful
-                      }
-                      isLoadingOrganizationsFromContentful={
-                        contentfulOrgLoading
-                      }
+                      availableOrganizations={availableOrganizations}
+                      isLoadingOrganizations={isLoadingOrganizations}
                     />
                   ),
                 },

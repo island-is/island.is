@@ -1310,8 +1310,8 @@ export class ApplicationsService {
         [Op.and]: [
           formId ? { formId } : {},
           applicantNationalId ? { nationalId: applicantNationalId } : {},
-          fromDate ? { created: { [Op.gte]: fromDate } } : {},
-          toDate ? { created: { [Op.lte]: toDate } } : {},
+          fromDate ? { modified: { [Op.gte]: fromDate } } : {},
+          toDate ? { modified: { [Op.lte]: toDate } } : {},
         ],
       },
       include: [
@@ -1452,7 +1452,7 @@ export class ApplicationsService {
     FROM public.application a
     JOIN public.form f ON f.id = a.form_id
     JOIN public.organization o ON o.id = f.organization_id
-    WHERE a.modified BETWEEN :startDate AND :endDate
+    WHERE a.modified >= :startDate AND a.modified <= :endDate
       AND f.status = '${FormStatus.PUBLISHED}'
     ${institutionFilter}
     GROUP BY a.form_id, ${localeColumn}, o.national_id;
