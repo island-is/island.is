@@ -8,7 +8,8 @@ export const checkUseAnswersCopy = (application: Application): boolean => {
   // (where we got the ping for state change while application was in EDIT state,
   // and resetting answers using copy was not done - action ABORT in EDIT state)
   const state = application.state
-  if (state !== States.IN_REVIEW_FROM_EDIT && state !== States.COMPLETED) return false
+  if (state !== States.IN_REVIEW_FROM_EDIT && state !== States.COMPLETED)
+    return false
 
   // Picking any field in answers, that should not be empty in IN_REVIEW_FROM_EDIT/COMPLETED state
   const applicant = getValueViaPath<SecondarySchoolAnswers['applicant']>(
