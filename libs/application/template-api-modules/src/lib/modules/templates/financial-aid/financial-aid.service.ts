@@ -251,7 +251,15 @@ export class FinancialAidService extends BaseTemplateApiService {
       employmentCustom: answers.employment.custom || 'fakeEmploymentCustom',
       formComment: answers.formComment || 'fakeFormComment',
       state: ApplicationState.NEW,
-      files: files,
+      // files: files,
+      files: [
+        {
+          name: 'test.pdf',
+          key: 'test.pdf',
+          size: 1000,
+          type: FileType.TAXRETURN,
+        },
+      ],
       children: children,
       childrenComment: answers.childrenComment || 'fakeChildrenComment',
       spouseNationalId:
