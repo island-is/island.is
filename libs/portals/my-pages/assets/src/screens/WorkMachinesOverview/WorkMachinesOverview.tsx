@@ -259,7 +259,8 @@ const WorkMachinesOverview = () => {
         })}
       {!loading &&
         !error &&
-        data?.workMachinesPaginatedCollection?.totalCount > DEFAULT_PAGE_SIZE && (
+        data?.workMachinesPaginatedCollection?.totalCount &&
+        data.workMachinesPaginatedCollection.totalCount > DEFAULT_PAGE_SIZE && (
           <Box>
             <Pagination
               page={page}
