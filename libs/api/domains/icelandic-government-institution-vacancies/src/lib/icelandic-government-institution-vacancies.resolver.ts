@@ -134,7 +134,7 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     })
 
     return {
-      id: '',
+      id: String(ip),
       attributes: { ipAddress: String(ip) },
     }
   }

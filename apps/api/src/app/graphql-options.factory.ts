@@ -1,10 +1,14 @@
 import { ApolloServerPluginCacheControl } from 'apollo-server-core'
 import { ApolloServerPlugin } from 'apollo-server-plugin-base'
 import responseCachePlugin from 'apollo-server-plugin-response-cache'
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, Optional } from '@nestjs/common'
 import { GqlOptionsFactory } from '@nestjs/graphql'
 import { createRedisApolloCache } from '@island.is/cache'
 import type { ConfigType } from '@island.is/nest/config'
+import {
+  GRAPHQL_CACHE_KEY_PROVIDERS,
+  GraphqlCacheKeyProvider,
+} from '@island.is/nest/graphql'
 import { getConfig } from './environments'
 import { GraphQLConfig } from './graphql.config'
 import { maskOutFieldsMiddleware } from './graphql.middleware'
@@ -14,6 +18,9 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
   constructor(
     @Inject(GraphQLConfig.KEY)
     private readonly config: ConfigType<typeof GraphQLConfig>,
+    @Optional()
+    @Inject(GRAPHQL_CACHE_KEY_PROVIDERS)
+    private readonly cacheKeyProviders: GraphqlCacheKeyProvider[] = [],
   ) {}
 
   async createGqlOptions() {
@@ -42,6 +49,15 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
       plugins: [
         // Cache responses in Redis.
         responseCachePlugin({
+          extraCacheKeyData: (requestContext) => {
+            const opName = requestContext.request.operationName ?? ''
+            for (const provider of this.cacheKeyProviders) {
+              if (provider.operationNames.includes(opName)) {
+                return provider.getCacheKeyData(requestContext)
+              }
+            }
+            return ''
+          },
           shouldReadFromCache: ({ request: { http } }) => {
             if (!bypassCacheSecret) {
               return true
