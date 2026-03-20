@@ -19,7 +19,6 @@ import React, {
   useState,
 } from 'react'
 import AnimateHeight from 'react-animate-height'
-import { useMenuStore } from '@ariakit/react'
 
 import * as styles from './Navigation.css'
 import { useScrolledPassed } from '../../hooks/useScrolledPassed/useScrolledPassed'
@@ -190,11 +189,6 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   const dividerColor = colorSchemeColors[colorScheme]['dividerColor']
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const menu = useMenuStore({
-    animated: true,
-    open: mobileMenuOpen,
-    setOpen: setMobileMenuOpen,
-  })
 
   const titleLinkProps = titleLink
     ? {
@@ -312,9 +306,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
             asSpan={asSpan}
             isVisible={mobileMenuOpen}
             mobileNavigationButtonCloseLabel={mobileNavigationButtonCloseLabel}
-            onClick={() => {
-              menu.hide()
-            }}
+            onClick={() => setMobileMenuOpen(false)}
           />
         </Box>
       ) : (
@@ -358,6 +350,7 @@ const MobileNavigationDialog = ({
     <ModalBase
       baseId={'mobile-nav'}
       isVisible={isVisible}
+      onVisibilityChange={(isVisible) => { if (!isVisible) onClick() }}
       preventBodyScroll
       className={styles.mobileNav}
     >
