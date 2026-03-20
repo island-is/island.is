@@ -17,6 +17,12 @@ export class VacancyCacheKeyProvider implements GraphqlCacheKeyProvider {
     'GetIcelandicGovernmentInstitutionVacancyDetails',
   ]
 
+  // Match anonymous or renamed queries that resolve vacancy fields.
+  queryPatterns = [
+    /icelandicGovernmentInstitutionVacancies/,
+    /icelandicGovernmentInstitutionVacancyById/,
+  ]
+
   constructor(
     @Inject(FEATURE_FLAG_CLIENT)
     private readonly featureFlagClient: FeatureFlagClient,

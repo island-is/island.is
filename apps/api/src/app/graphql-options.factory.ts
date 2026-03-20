@@ -8,6 +8,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import {
   GRAPHQL_CACHE_KEY_PROVIDERS,
   GraphqlCacheKeyProvider,
+  matchesCacheKeyProvider,
 } from '@island.is/nest/graphql'
 import { getConfig } from './environments'
 import { GraphQLConfig } from './graphql.config'
@@ -51,8 +52,9 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
         responseCachePlugin({
           extraCacheKeyData: async (requestContext) => {
             const opName = requestContext.request.operationName ?? ''
+            const query = requestContext.request.query ?? ''
             for (const provider of this.cacheKeyProviders) {
-              if (provider.operationNames.includes(opName)) {
+              if (matchesCacheKeyProvider(provider, opName, query)) {
                 return await provider.getCacheKeyData(requestContext)
               }
             }
@@ -72,13 +74,15 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
         // cache-control header in the next plugin.
         ApolloServerPluginCacheControl(),
         // Override the default cache-control to use stale-while-revalidate.
-        overrideCacheControlPlugin(),
+        overrideCacheControlPlugin(this.cacheKeyProviders),
       ],
     }
   }
 }
 
-function overrideCacheControlPlugin(): ApolloServerPlugin {
+function overrideCacheControlPlugin(
+  cacheKeyProviders: GraphqlCacheKeyProvider[] = [],
+): ApolloServerPlugin {
   return {
     async requestDidStart() {
       return {
@@ -95,19 +99,36 @@ function overrideCacheControlPlugin(): ApolloServerPlugin {
             !response.errors &&
             response.http
           ) {
+            const opName = requestContext.request.operationName ?? ''
+            const query = requestContext.request.query ?? ''
+            const hasCustomCacheKey = cacheKeyProviders.some((p) =>
+              matchesCacheKeyProvider(p, opName, query),
+            )
+
             // Make sure X-Bypass-Cache gets past browser and CDN caches.
             response.http.headers.set('Vary', 'Accept-Encoding, X-Bypass-Cache')
 
-            // Store the response in CDN cache for 10% of the maxAge after which it'll be revalidated in the
-            // background.
-            response.http.headers.set(
-              'Cache-Control',
-              `s-maxage=${
-                policyIfCacheable.maxAge / 10
-              }, stale-while-revalidate=${
-                policyIfCacheable.maxAge
-              }, ${policyIfCacheable.scope.toLowerCase()}`,
-            )
+            if (hasCustomCacheKey) {
+              // Operations with server-side cache key splits (e.g. feature flags)
+              // must not be cached by CDN/browser, since those caches cannot
+              // distinguish between cohorts. The Redis-level responseCachePlugin
+              // still caches them with the correct split key.
+              response.http.headers.set(
+                'Cache-Control',
+                `private, max-age=${policyIfCacheable.maxAge}`,
+              )
+            } else {
+              // Store the response in CDN cache for 10% of the maxAge after which it'll be revalidated in the
+              // background.
+              response.http.headers.set(
+                'Cache-Control',
+                `s-maxage=${
+                  policyIfCacheable.maxAge / 10
+                }, stale-while-revalidate=${
+                  policyIfCacheable.maxAge
+                }, ${policyIfCacheable.scope.toLowerCase()}`,
+              )
+            }
           }
         },
       }

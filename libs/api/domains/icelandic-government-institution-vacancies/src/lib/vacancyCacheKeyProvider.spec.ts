@@ -146,4 +146,14 @@ describe('VacancyCacheKeyProvider', () => {
       'GetIcelandicGovernmentInstitutionVacancyDetails',
     ])
   })
+
+  it('has queryPatterns that match vacancy GraphQL field names', () => {
+    const list = '{ icelandicGovernmentInstitutionVacancies(input: {}) { vacancies { id } } }'
+    const detail = '{ icelandicGovernmentInstitutionVacancyById(input: { id: "1" }) { vacancy { id } } }'
+    const unrelated = '{ someOtherQuery { id } }'
+
+    expect(provider.queryPatterns!.some((r) => r.test(list))).toBe(true)
+    expect(provider.queryPatterns!.some((r) => r.test(detail))).toBe(true)
+    expect(provider.queryPatterns!.some((r) => r.test(unrelated))).toBe(false)
+  })
 })

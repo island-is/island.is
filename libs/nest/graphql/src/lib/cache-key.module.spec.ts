@@ -8,6 +8,7 @@ import { GraphqlCacheKeyModule } from './cache-key.module'
 import {
   GRAPHQL_CACHE_KEY_PROVIDERS,
   GraphqlCacheKeyProvider,
+  matchesCacheKeyProvider,
 } from './cache-key-provider'
 
 const mockFeatureFlagClient = {
@@ -67,6 +68,51 @@ class ConsumerService {
   providers: [ConsumerService],
 })
 class ConsumingModule {}
+
+describe('matchesCacheKeyProvider', () => {
+  const provider: GraphqlCacheKeyProvider = {
+    operationNames: ['GetItems'],
+    queryPatterns: [/\bitems\b/],
+    getCacheKeyData: async () => 'key',
+  }
+
+  it('matches by operation name', () => {
+    expect(matchesCacheKeyProvider(provider, 'GetItems', '')).toBe(true)
+  })
+
+  it('does not match unrelated operation name', () => {
+    expect(matchesCacheKeyProvider(provider, 'GetUsers', '')).toBe(false)
+  })
+
+  it('matches by query pattern when operation name does not match', () => {
+    expect(
+      matchesCacheKeyProvider(provider, '', '{ items { id } }'),
+    ).toBe(true)
+  })
+
+  it('matches anonymous query by query pattern', () => {
+    expect(
+      matchesCacheKeyProvider(provider, '', '{ items { id name } }'),
+    ).toBe(true)
+  })
+
+  it('does not match when neither operation name nor query pattern matches', () => {
+    expect(
+      matchesCacheKeyProvider(provider, 'Other', '{ users { id } }'),
+    ).toBe(false)
+  })
+
+  it('works when queryPatterns is undefined', () => {
+    const simple: GraphqlCacheKeyProvider = {
+      operationNames: ['Op'],
+      getCacheKeyData: async () => '',
+    }
+    expect(matchesCacheKeyProvider(simple, 'Op', '')).toBe(true)
+    expect(matchesCacheKeyProvider(simple, 'Other', '{ items { id } }')).toBe(
+      false,
+    )
+  })
+})
 
 describe('GraphqlCacheKeyModule', () => {
   it('exports GRAPHQL_CACHE_KEY_PROVIDERS so consuming modules can inject it', async () => {
