@@ -20,18 +20,12 @@ import {
 import {
   getApplicant,
   mapAnswersToApplicationDto,
-  mapAnswersToApplicationFilesContentDto,
   mapAnswersToSingleApplicationFilesContentDto,
   paymentForAppraisal,
 } from './utils'
-import {
-  ApplicationApi,
-  ApplicationFilesContentDto,
-  ApplicationIDResultSetDto,
-} from '@island.is/clients/hms-application-system'
+import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
-// import uniqBy from 'lodash/uniqBy'
 import { prereqMessages } from '@island.is/application/templates/hms/fire-compensation-appraisal'
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
@@ -302,8 +296,6 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         ['photos'],
       )
 
-      const attachmentPromises: Promise<ApplicationIDResultSetDto>[] = []
-      const fileIds: string[] = []
       const uniqueFileKeys = new Set<string>()
 
       // Process one file at a time to avoid creating intermetiate arrays
@@ -318,7 +310,6 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
           file,
         )
         // Kick off each upload as soon as the attachment has been downloaded and mapped
-        // attachmentPromises.push(
         console.log('Uploading attachment:', file.key)
         this.hmsApplicationSystemService // Don't wait for upload to finish, allow them to run asyncronously on the background
           .apiApplicationUploadPost({
@@ -332,27 +323,8 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
             console.dir(e, { depth: null, colors: true })
             // Log the error but don't throw it since we allow the uploads to run asyncronously on the background
             this.logger.error(`Failed to upload attachment: ${e}`)
-          }) //,
-        // )
+          })
       }
-
-      // Wait for all uploads to complete
-      // const results = await Promise.allSettled(attachmentPromises)
-
-      // const failedFileIds = results.reduce<string[]>((acc, result, i) => {
-      //   if (result.status === 'rejected' && fileIds[i]) {
-      //     acc.push(fileIds[i])
-      //   }
-      //   return acc
-      // }, [])
-
-      // if (failedFileIds.length > 0) {
-      //   this.logger.error(
-      //     `Failed to upload ${
-      //       failedFileIds.length
-      //     } attachments: ${failedFileIds.join(', ')}`,
-      //   )
-      // }
 
       return res
     } catch (e) {
