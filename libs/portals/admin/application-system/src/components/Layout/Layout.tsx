@@ -46,8 +46,8 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
 
   const availableOrganizations = useMemo<Organization[]>(
     () =>
-      (institutionsData?.applicationV2InstitutionsSuperAdmin ?? []).flatMap(
-        (inst) => {
+      (institutionsData?.applicationV2InstitutionsSuperAdmin ?? [])
+        .flatMap((inst) => {
           const contentfulOrg = contentfulOrganizations?.find(
             (x) => x.slug === inst.contentfulSlug,
           )
@@ -73,8 +73,8 @@ export const Layout: FC<React.PropsWithChildren<LayoutProps>> = ({
               nationalId: inst.nationalId,
             },
           ]
-        },
-      ),
+        })
+        .sort((a, b) => a.title.localeCompare(b.title)),
     [institutionsData, contentfulOrganizations],
   )
 

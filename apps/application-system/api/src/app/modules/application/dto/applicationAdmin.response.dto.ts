@@ -59,6 +59,11 @@ export class ApplicationListAdminResponseDto extends BaseApplicationResponseDto 
   @ApiPropertyOptional()
   @Expose()
   @IsString()
+  institutionNationalId?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
   institutionContentfulSlug?: string
 
   constructor(partial: Partial<ApplicationListAdminResponseDto>) {
@@ -123,6 +128,10 @@ export class ApplicationStatistics {
   @ApiPropertyOptional()
   @Expose()
   institutionName?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  institutionNationalId?: string
 
   @ApiPropertyOptional()
   @Expose()

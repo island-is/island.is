@@ -7,7 +7,7 @@ import {
   useGetApplicationV2ApplicationStatisticsInstitutionAdminQuery,
   useGetApplicationV2ApplicationStatisticsSuperAdminQuery,
 } from '../../queries/overview.generated'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import StatisticsTable from '../../components/StatisticsTable/StatisticsTable'
 import startOfMonth from 'date-fns/startOfMonth'
 import { Organization } from '@island.is/shared/types'
@@ -102,23 +102,13 @@ const Statistics = ({
     ? superStatisticsData?.applicationV2ApplicationStatisticsSuperAdmin
     : institutionStatisticsData?.applicationV2ApplicationStatisticsInstitutionAdmin
 
-  const statisticsOrganizationOptions = useMemo<Organization[] | undefined>(
-    () =>
-      isSuperAdmin
-        ? availableOrganizations.sort((a, b) => a.title.localeCompare(b.title))
-        : undefined,
-    [availableOrganizations, isSuperAdmin],
-  )
-
-  const selectedOrg = selectedInstitutionNationalId
-    ? availableOrganizations.find(
-        (o) => o.nationalId === selectedInstitutionNationalId,
-      )
+  const statisticsOrganizationOptions = isSuperAdmin
+    ? availableOrganizations
     : undefined
 
-  const filteredDataRows = selectedOrg
+  const filteredDataRows = selectedInstitutionNationalId
     ? (dataRows ?? []).filter(
-        (r) => r.institutionContentfulSlug === selectedOrg.slug,
+        (r) => r.institutionNationalId === selectedInstitutionNationalId,
       )
     : dataRows
 

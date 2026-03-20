@@ -58,10 +58,6 @@ export const Filters = ({
   const [chosenInstitutionNationalId, setChosenInstitutionNationalId] =
     useState<string | undefined>(undefined)
 
-  const sortedOrganizations = organizations.sort((a, b) =>
-    a.title.localeCompare(b.title),
-  )
-
   const {
     data: institutionApplicationTypesData,
     loading: loadingInstitutionApplicationTypes,
@@ -220,7 +216,7 @@ export const Filters = ({
                       )
                       onInstitutionChange(institution?.nationalId || '')
                     }}
-                    options={sortedOrganizations.map((x) => ({
+                    options={organizations.map((x) => ({
                       value: x.nationalId,
                       label: x.title,
                     }))}
