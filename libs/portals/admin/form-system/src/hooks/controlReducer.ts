@@ -140,7 +140,8 @@ type ChangeActions =
       type: 'CHANGE_SLUG'
       payload: { newValue: string }
     }
-  | { type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE'; payload: { value: number } }
+  | { type: 'CHANGE_DRAFT_DAYS_TO_LIVE'; payload: { value: number } }
+  | { type: 'CHANGE_SUBMISSION_DAYS_TO_LIVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
       type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL'
@@ -741,12 +742,21 @@ export const controlReducer = (
         },
       }
     }
-    case 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE': {
+    case 'CHANGE_DRAFT_DAYS_TO_LIVE': {
       return {
         ...state,
         form: {
           ...form,
-          daysUntilApplicationPrune: action.payload.value,
+          draftDaysToLive: action.payload.value,
+        },
+      }
+    }
+    case 'CHANGE_SUBMISSION_DAYS_TO_LIVE': {
+      return {
+        ...state,
+        form: {
+          ...form,
+          submissionDaysToLive: action.payload.value,
         },
       }
     }
