@@ -18,7 +18,7 @@ export const photoSection = buildSection({
           id: 'photos',
           uploadMultiple: true,
           maxSize: 10 * 1000 * 1000, // 10MB
-          totalMaxSize: 150 * 1000 * 1000, // 150MB
+          totalMaxSize: 100 * 1000 * 1000, // 100MB
           maxFileCount: 20,
         }),
       ],
