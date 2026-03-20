@@ -240,7 +240,7 @@ export const DentistRegistration = () => {
             </T.Body>
           </T.Table>
           <Box marginTop={6}>
-            {data?.response?.totalCount && (
+            {data?.response?.totalCount > DEFAULT_PAGE_SIZE && (
               <Pagination
                 totalPages={Math.ceil(
                   data?.response.totalCount / DEFAULT_PAGE_SIZE,
