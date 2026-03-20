@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import styled from 'styled-components/native'
 import DatePicker from 'react-native-date-picker'
+import styled from 'styled-components/native'
 
-import calendarIcon from '../../assets/icons/calendar.png'
-import { Typography } from '../typography/typography'
-import { dynamicColor } from '../../utils/dynamic-color'
 import { useIntl } from 'react-intl'
-import { View, Image } from 'react-native'
-
-const Host = styled.View`
-  padding-vertical: ${({ theme }) => theme.spacing[1]}px;
-  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
-`
+import { Image, View } from 'react-native'
+import calendarIcon from '../../assets/icons/calendar.png'
+import { dynamicColor } from '../../utils/dynamic-color'
+import { Typography } from '../typography/typography'
 
 const DateInput = styled.Pressable`
   flex-direction: row;
@@ -47,7 +42,7 @@ const DateSelected = styled(Typography)<{ empty: boolean }>`
   padding-left: ${({ theme }) => theme.spacing[1]}px;
   padding-top: 0px;
   padding-bottom: 0px;
-  font-weight: ${({ empty }) => (empty ? 400 : 600)};
+  font-weight: ${({ empty }) => (empty ? 300 : 600)};
 `
 
 interface DatePickerProps {
@@ -76,7 +71,7 @@ export const DatePickerInput = ({
   }, [selectedDate])
 
   return (
-    <Host>
+    <View>
       <DateInput onPress={() => setOpenDatePicker(true)}>
         <View>
           <Label variant="eyebrow">{label}</Label>
@@ -105,6 +100,6 @@ export const DatePickerInput = ({
           setOpenDatePicker(false)
         }}
       />
-    </Host>
+    </View>
   )
 }

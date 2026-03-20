@@ -1,4 +1,5 @@
 import { DayRateEntryModel } from '@island.is/clients-rental-day-rate'
+import addDays from 'date-fns/addDays'
 
 export const isDayRateEntryActive = (
   entry: DayRateEntryModel,
@@ -6,8 +7,12 @@ export const isDayRateEntryActive = (
 ): boolean => {
   const validFrom = new Date(entry.validFrom || '')
   const validTo = entry.validTo ? new Date(entry.validTo) : null
-
-  return validFrom <= currentDate && (!validTo || validTo > currentDate)
+  // Dayrate changes active the day after its requested to be set
+  // So we also look 1 day into the future just in case
+  return (
+    (validFrom <= currentDate || validFrom <= addDays(currentDate, 1)) &&
+    (!validTo || validTo > currentDate)
+  )
 }
 
 export const hasActiveDayRate = (
@@ -17,15 +22,15 @@ export const hasActiveDayRate = (
   return entries.some((entry) => isDayRateEntryActive(entry, currentDate))
 }
 
-export const is30DaysOrMoreFromDate = (
+export const is15DaysOrMoreFromDate = (
   date: string | Date,
   currentDate: Date = new Date(),
 ): boolean => {
   const newDate = new Date(date)
   const diffTime = currentDate.getTime() - newDate.getTime()
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) // 30 days
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-  return diffDays >= 30
+  return diffDays >= 15
 }
 
 export const areLessThan7DaysLeftOfMonth = (): boolean => {

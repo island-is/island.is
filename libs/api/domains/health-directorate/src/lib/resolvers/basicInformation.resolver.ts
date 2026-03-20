@@ -39,6 +39,8 @@ import { Referrals } from '.././models/referrals.model'
 import { Vaccinations } from '.././models/vaccinations.model'
 import { WaitlistDetail } from '.././models/waitlist.model'
 import { Waitlists } from '.././models/waitlists.model'
+import { Appointments } from '../models/appointments.model'
+import { HealthDirectorateAppointmentsInput } from '../dto/appointments.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -160,5 +162,19 @@ export class BasicInformationResolver {
     @CurrentUser() user: User,
   ): Promise<ReferralDetail | null> {
     return this.api.getReferral(user, locale, input.id)
+  }
+
+  /* Appointments */
+  @Query(() => Appointments, {
+    name: 'healthDirectorateAppointments',
+  })
+  @Audit()
+  @FeatureFlag(Features.isServicePortalHealthAppointmentsPageEnabled)
+  @Scopes(ApiScope.internal, ApiScope.health)
+  async getAppointments(
+    @Args() input: HealthDirectorateAppointmentsInput,
+    @CurrentUser() user: User,
+  ): Promise<Appointments | null> {
+    return this.api.getAppointments(user, input)
   }
 }

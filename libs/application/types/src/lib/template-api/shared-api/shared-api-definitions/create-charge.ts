@@ -20,6 +20,7 @@ export interface CreateChargeParameters {
   extraData?:
     | ExtraData[]
     | ((application: Application) => ExtraData[] | undefined)
+  payerNationalId?: string | ((application: Application) => string)
 }
 
 export const CreateChargeApi = defineTemplateApi<CreateChargeParameters>({

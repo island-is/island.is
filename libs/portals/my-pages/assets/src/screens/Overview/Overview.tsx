@@ -96,6 +96,7 @@ const VehiclesOverview = () => {
       intro={messages.intro}
       serviceProviderSlug={SAMGONGUSTOFA_SLUG}
       serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+      childrenWidthFull
       buttonGroup={
         (!loading && !error && filteredVehicles.length > 0) || searchLoading
           ? [
@@ -216,7 +217,7 @@ const VehiclesOverview = () => {
             </Stack>
           </Box>
         )}
-        {!loading && !searchLoading && filteredVehicles.length > 0 && (
+        {!loading && !searchLoading && (vehicles?.paging?.totalPages ?? 0) > 1 && (
           <Box>
             <Pagination
               page={vehicles?.paging?.pageNumber ?? 0}

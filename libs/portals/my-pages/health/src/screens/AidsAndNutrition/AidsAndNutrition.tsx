@@ -11,10 +11,12 @@ import { messages } from '../../lib/messages'
 import { CONTENT_GAP_SM } from '../../utils/constants'
 import { useGetAidsAndNutritionQuery } from './AidsAndNutrition.generated'
 import AidsAndNutritionWrapper from './AidsAndNutritionWrapper'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const AidsAndNutrition = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+  useHealthPlausibleSwap()
 
   const { loading, error, data, refetch } = useGetAidsAndNutritionQuery()
 
@@ -59,6 +61,7 @@ const AidsAndNutrition = () => {
       intro={formatMessage(messages.aidsAndNutritionDescription)}
       serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
       serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      childrenWidthFull
     >
       {error && <Problem error={error} noBorder={false} />}
 

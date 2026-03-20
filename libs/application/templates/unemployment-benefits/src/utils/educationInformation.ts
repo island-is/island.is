@@ -138,6 +138,7 @@ export const getCourseOfStudy = (
   application: Application,
   levelOfStudy: string,
   degreeAnswer: string,
+  locale: Locale,
 ) => {
   const education = getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
     application.externalData,
@@ -154,7 +155,9 @@ export const getCourseOfStudy = (
   return (
     chosenDegreeSubjects?.map((subject) => ({
       value: subject.id ?? '',
-      label: subject.name ?? '',
+      label:
+        (locale === 'is' ? subject.name : subject.english ?? subject.name) ||
+        '',
     })) ?? []
   )
 }
@@ -164,4 +167,13 @@ export const lastSemesterGeneralCondition = (answers: FormValue) => {
     (wasStudyingLastSemester(answers) && !sameEducationAsCurrent(answers)) ||
     (!isCurrentlyStudying(answers) && sameEducationAsCurrent(answers))
   )
+}
+
+export const getYearOptions = () => {
+  const currentYear = new Date().getFullYear()
+  const years = Array.from({ length: 51 }, (_, i) => {
+    const year = (currentYear - i).toString()
+    return { value: year, label: year }
+  })
+  return years
 }

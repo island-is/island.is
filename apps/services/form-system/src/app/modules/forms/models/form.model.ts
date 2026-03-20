@@ -9,14 +9,15 @@ import {
   Model,
   Table,
   UpdatedAt,
+  BelongsTo,
 } from 'sequelize-typescript'
 import { CompletedSectionInfo } from '../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
-import { FormUrl } from '../../formUrls/models/formUrl.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { Section } from '../../sections/models/section.model'
+import { Application } from '../../applications/models/application.model'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {
@@ -80,6 +81,34 @@ export class Form extends Model<Form> {
     allowNull: false,
     defaultValue: false,
   })
+  zendeskInternal!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  useValidate!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  usePopulate!: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  submissionServiceUrl!: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
   hasPayment!: boolean
 
   @Column({
@@ -100,7 +129,13 @@ export class Form extends Model<Form> {
     type: DataType.INTEGER,
     defaultValue: 30,
   })
-  daysUntilApplicationPrune!: number
+  draftDaysToLive!: number
+
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 30,
+  })
+  submissionDaysToLive!: number
 
   @Column({
     type: DataType.UUID,
@@ -161,9 +196,6 @@ export class Form extends Model<Form> {
   @HasMany(() => FormCertificationType)
   formCertificationTypes?: FormCertificationType[]
 
-  @HasMany(() => FormUrl)
-  formUrls?: FormUrl[]
-
   @ForeignKey(() => Organization)
   @Column({
     type: DataType.STRING,
@@ -171,4 +203,10 @@ export class Form extends Model<Form> {
     field: 'organization_id',
   })
   organizationId!: string
+
+  @BelongsTo(() => Organization, 'organizationId')
+  organization?: Organization
+
+  @HasMany(() => Application)
+  applications?: Application[]
 }

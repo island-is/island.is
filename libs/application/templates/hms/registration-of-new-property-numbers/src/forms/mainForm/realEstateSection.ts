@@ -1,6 +1,8 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildSection,
   buildSelectField,
@@ -11,6 +13,7 @@ import { Fasteign } from '@island.is/clients/assets'
 import { realEstateMessages } from '../../lib/messages'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { PaymentCatalogItem } from '@island.is/application/types'
+import { hasTwentyOrMoreProperties } from '../../utils/hasTwentyOrMoreProperties'
 
 export const realEstateSection = buildSection({
   id: 'realEstateSection',
@@ -24,6 +27,9 @@ export const realEstateSection = buildSection({
         buildSelectField({
           id: 'realEstate.realEstateName',
           title: realEstateMessages.realEstateLabel,
+          condition: (_, externalData) => {
+            return !hasTwentyOrMoreProperties(externalData)
+          },
           options: (application) => {
             const properties = getValueViaPath<Array<Fasteign>>(
               application.externalData,
@@ -42,6 +48,20 @@ export const realEstateSection = buildSection({
                     value: property.fasteignanumer ?? '',
                   }))
               : []
+          },
+        }),
+        buildCustomField({
+          id: 'realEstate.realEstateName',
+          component: 'RealEstateSearch',
+          condition: (_, externalData) => {
+            return hasTwentyOrMoreProperties(externalData)
+          },
+        }),
+        // This hidden input is used to store information needed or submit when fetching graphql info for large customer with 20+ real estates.
+        buildHiddenInput({
+          id: 'realEstateExtra',
+          condition: (_, externalData) => {
+            return hasTwentyOrMoreProperties(externalData)
           },
         }),
         buildDescriptionField({

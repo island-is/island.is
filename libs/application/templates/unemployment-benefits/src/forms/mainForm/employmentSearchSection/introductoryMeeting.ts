@@ -26,7 +26,7 @@ export const introductoryMeetingSubSection = buildSubSection({
           id: 'introductoryMeeting.language',
           title: employmentSearchMessages.introductoryMeeting.languageLabel,
           required: true,
-          options: (application) => {
+          options: (application, _, locale) => {
             const languages =
               getValueViaPath<
                 Array<GaldurDomainModelsSettingsIntroductoryMeetingLanguageIntroductoryMeetingLanguageDTO>
@@ -36,7 +36,10 @@ export const introductoryMeetingSubSection = buildSubSection({
               ) || []
             return languages.map((language) => ({
               value: language.languageCode || '',
-              label: language.name || '',
+              label:
+                (locale === 'is'
+                  ? language.name
+                  : language.english ?? language.name) || '',
             }))
           },
           placeholder:

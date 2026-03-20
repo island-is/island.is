@@ -59,7 +59,7 @@ ingress:
           - '/app/skilavottord/'
 namespace: 'skilavottord'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -80,6 +80,7 @@ secrets:
   DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN'
   IDENTITY_SERVER_LOGOUT_REDIRECT_URL: '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL'
+  NEXTAUTH_SECRET: '/k8s/skilavottord/web/NEXTAUTH_SECRET'
   NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL'
   SKILAVOTTORD_WEB_IDS_CLIENT_SECRET: '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET'
 securityContext:

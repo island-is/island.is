@@ -8,11 +8,13 @@ import {
   buildMultiField,
   buildSubSection,
   coreErrorMessages,
-  NO,
 } from '@island.is/application/core'
 import { friggOrganizationsByTypeQuery } from '../../../graphql/queries'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { shouldShowAlternativeSpecialEducationDepartment } from '../../../utils/conditionUtils'
+import { primarySchoolMessages, sharedMessages } from '../../../lib/messages'
+import {
+  shouldShowAlternativeSpecialEducationDepartment,
+  shouldShowNewSchoolPage,
+} from '../../../utils/conditionUtils'
 import {
   ApplicationType,
   NU_UNIT_ID,
@@ -23,6 +25,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   getCurrentAndNextGrade,
+  getNewSchoolTitle,
   getSelectedSchoolSubType,
   getSelectedSchoolUnitId,
   getSpecialEducationDepartmentsInMunicipality,
@@ -30,32 +33,40 @@ import {
 
 export const newSchoolSubSection = buildSubSection({
   id: 'newSchoolSubSection',
-  title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
-  condition: (answers) => {
-    const { applyForPreferredSchool, applicationType } =
-      getApplicationAnswers(answers)
-
-    return (
-      applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
-      (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-        applyForPreferredSchool === NO)
-    )
-  },
+  title: (application) => getNewSchoolTitle(application),
+  condition: (answers, externalData) =>
+    shouldShowNewSchoolPage(answers, externalData),
   children: [
     buildMultiField({
       id: 'newSchool',
-      title: newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+      title: (application) => getNewSchoolTitle(application),
+      description: (application) => {
+        const { applicationType } = getApplicationAnswers(application.answers)
+        const { preferredSchool } = getApplicationExternalData(
+          application.externalData,
+        )
+
+        return applicationType ===
+          ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+          preferredSchool === null
+          ? primarySchoolMessages.newSchool.noPreferredSchoolDescription
+          : primarySchoolMessages.newSchool.subSectionMessage
+      },
       children: [
         buildAsyncSelectField({
           id: 'newSchool.municipality',
-          title: newPrimarySchoolMessages.shared.municipality,
-          placeholder: newPrimarySchoolMessages.shared.municipalityPlaceholder,
+          title: sharedMessages.municipality,
+          placeholder: sharedMessages.municipalityPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           setOnChange: [
             // clear answer
             {
               key: 'newSchool.alternativeSpecialEducationDepartment',
               value: [],
+            },
+            {
+              key: 'newSchool.school',
+              value: undefined,
             },
           ],
           defaultValue: (application: Application) => {
@@ -87,8 +98,8 @@ export const newSchoolSubSection = buildSubSection({
         }),
         buildAsyncSelectField({
           id: 'newSchool.school',
-          title: newPrimarySchoolMessages.shared.school,
-          placeholder: newPrimarySchoolMessages.shared.schoolPlaceholder,
+          title: sharedMessages.school,
+          placeholder: sharedMessages.schoolPlaceholder,
           loadingError: coreErrorMessages.failedDataProvider,
           updateOnSelect: ['newSchool.municipality'],
           loadOptions: async ({
@@ -132,8 +143,8 @@ export const newSchoolSubSection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'newSchool.alertMessage',
-          title: newPrimarySchoolMessages.shared.alertTitle,
-          message: newPrimarySchoolMessages.primarySchool.newSchoolAlertMessage,
+          title: sharedMessages.alertTitle,
+          message: primarySchoolMessages.newSchool.alertMessage,
           alertType: 'info',
           doesNotRequireAnswer: true,
           marginTop: 4,
@@ -148,10 +159,10 @@ export const newSchoolSubSection = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'newSchool.specialSchoolOrDepartmentAlertMessage',
-          title: newPrimarySchoolMessages.shared.alertTitle,
+          title: sharedMessages.alertTitle,
           message:
-            newPrimarySchoolMessages.primarySchool
-              .newSchoolSpecialSchoolOrDepartmentAlertMessage,
+            primarySchoolMessages.newSchool
+              .specialSchoolOrDepartmentAlertMessage,
           alertType: 'info',
           doesNotRequireAnswer: true,
           marginTop: 4,
@@ -175,11 +186,11 @@ export const newSchoolSubSection = buildSubSection({
         buildDescriptionField({
           id: 'newSchool.alternativeSpecialEducationDepartment.description',
           title:
-            newPrimarySchoolMessages.primarySchool
+            primarySchoolMessages.newSchool
               .alternativeSpecialEducationDepartmentTitle,
           titleVariant: 'h4',
           description:
-            newPrimarySchoolMessages.primarySchool
+            primarySchoolMessages.newSchool
               .alternativeSpecialEducationDepartmentDescription,
           condition: (answers, externalData) =>
             shouldShowAlternativeSpecialEducationDepartment(
@@ -191,10 +202,10 @@ export const newSchoolSubSection = buildSubSection({
           id: 'newSchool.alternativeSpecialEducationDepartment',
           formTitleNumbering: 'none',
           addItemButtonText:
-            newPrimarySchoolMessages.primarySchool
+            primarySchoolMessages.newSchool
               .addAlternativeSpecialEducationDepartmentButton,
           removeItemButtonText:
-            newPrimarySchoolMessages.primarySchool
+            primarySchoolMessages.newSchool
               .removeAlternativeSpecialEducationDepartmentButton,
           minRows: 1,
           maxRows: (answers, externalData) => {
@@ -223,12 +234,12 @@ export const newSchoolSubSection = buildSubSection({
             department: {
               component: 'select',
               label: (index) => ({
-                ...newPrimarySchoolMessages.primarySchool
+                ...primarySchoolMessages.newSchool
                   .alternativeSpecialEducationDepartment,
                 values: { index: index + 2 },
               }),
               placeholder:
-                newPrimarySchoolMessages.primarySchool
+                primarySchoolMessages.newSchool
                   .alternativeSpecialEducationDepartmentPlaceholder,
               isSearchable: true,
               isClearable: true,

@@ -36,9 +36,7 @@ const CaseTitleInfoAndTags: FC = () => {
         <PageTitle marginBottom={5}>
           {titleForCase(formatMessage, workingCase)}
         </PageTitle>
-
         <CaseNumbers />
-
         {workingCase.rulingDate &&
           (workingCase.isCompletedWithoutRuling ? (
             <DateLabel

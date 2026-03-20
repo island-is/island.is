@@ -220,5 +220,6 @@ export const mockCaseFile = (category?: CaseFileCategory): CaseFile => {
     state: CaseFileState.STORED_IN_RVG,
     type: '??',
     userGeneratedFilename: '',
+    isKeyAccessible: true,
   }
 }

@@ -111,8 +111,9 @@ export class UserService {
   }
 
   async update(userId: string, update: UpdateUserDto): Promise<User> {
-    const [numberOfAffectedRows] = await this.userModel.update(update, {
+    const [numberOfAffectedRows, users] = await this.userModel.update(update, {
       where: { id: userId },
+      returning: true,
     })
 
     if (numberOfAffectedRows > 1) {
@@ -124,7 +125,7 @@ export class UserService {
       throw new NotFoundException(`Could not update user ${userId}`)
     }
 
-    return this.findById(userId)
+    return users[0]
   }
 
   getUsersWhoCanConfirmIndictments(

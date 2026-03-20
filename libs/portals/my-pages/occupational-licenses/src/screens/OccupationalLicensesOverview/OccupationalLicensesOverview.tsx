@@ -110,6 +110,7 @@ const Overview = () => {
                 formatMessage,
               )
 
+              //TODO: Replace with Island UI Card when it supports images
               return (
                 <ActionCard
                   key={license.licenseId}

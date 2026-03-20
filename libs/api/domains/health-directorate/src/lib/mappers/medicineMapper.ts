@@ -3,7 +3,7 @@ import {
   PrescribedItemCategory,
   PrescriptionCommissionStatus,
   PrescriptionRenewalBlockedReason,
-  PrescriptionRenewalStatus,
+  PrescriptionRenewalStatusDisplay,
 } from '@island.is/clients/health-directorate'
 import {
   PermitStatusEnum,
@@ -33,23 +33,27 @@ export const mapPrescriptionRenewalBlockedReason = (
       return PrescribedItemRenewalBlockedReasonEnum.NoMedCard
     case PrescriptionRenewalBlockedReason.NO_PRIMARY_CARE_CLINIC:
       return PrescribedItemRenewalBlockedReasonEnum.NoHealthClinic
+    case PrescriptionRenewalBlockedReason.MORE_RECENT_PRESCRIPTION_EXISTS:
+      return PrescribedItemRenewalBlockedReasonEnum.MoreRecentPrescriptionExists
+    case PrescriptionRenewalBlockedReason.SPECIALIST_ONLY_PRESCRIPTION:
+      return PrescribedItemRenewalBlockedReasonEnum.SpecialistOnlyPrescription
     default:
       return PrescribedItemRenewalBlockedReasonEnum.Unknown
   }
 }
 
 export const mapPrescriptionRenewalStatus = (
-  status: PrescriptionRenewalStatus,
+  status: PrescriptionRenewalStatusDisplay,
 ): PrescribedItemRenewalStatusEnum => {
   switch (status) {
-    case PrescriptionRenewalStatus[0]:
-      return PrescribedItemRenewalStatusEnum.NUMBER_0
-    case PrescriptionRenewalStatus[1]:
-      return PrescribedItemRenewalStatusEnum.NUMBER_1
-    case PrescriptionRenewalStatus[2]:
-      return PrescribedItemRenewalStatusEnum.NUMBER_2
+    case PrescriptionRenewalStatusDisplay.APPROVED:
+      return PrescribedItemRenewalStatusEnum.Approved
+    case PrescriptionRenewalStatusDisplay.REJECTED:
+      return PrescribedItemRenewalStatusEnum.Rejected
+    case PrescriptionRenewalStatusDisplay.DISMISSED:
+      return PrescribedItemRenewalStatusEnum.Dismissed
     default:
-      return PrescribedItemRenewalStatusEnum.NUMBER_0
+      return PrescribedItemRenewalStatusEnum.Pending
   }
 }
 
@@ -91,7 +95,9 @@ export const mapDispensationItem = (
   const quantity = item.product.quantity ?? 0
 
   return {
-    id: item.product.id,
+    id: [item.product.id, item.dispensationDate?.toISOString()]
+      .filter((x) => isDefined(x))
+      .join('-'),
     name: item.product.name,
     quantity: [quantity.toString(), item.product.unit]
       .filter((x) => isDefined(x))
@@ -106,5 +112,6 @@ export const mapDispensationItem = (
     expirationDate: item.expirationDate,
     isExpired: item.isExpired,
     date: item.dispensationDate,
+    strength: item.product.strength ?? '',
   }
 }

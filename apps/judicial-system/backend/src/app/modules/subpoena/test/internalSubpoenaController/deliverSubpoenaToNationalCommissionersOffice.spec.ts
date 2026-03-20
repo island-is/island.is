@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { createTestingSubpoenaModule } from '../createTestingSubpoenaModule'
 
@@ -24,6 +24,7 @@ describe('InternalSubpoenaController - Deliver subpoena to national commissioner
   const theCase = { id: caseId, defendants: [defendant] } as Case
   const user = { id: uuid() }
   const dto = { user } as DeliverDto
+  const transaction = undefined
 
   let mockPdfService: PdfService
   let givenWhenThen: GivenWhenThen
@@ -70,6 +71,7 @@ describe('InternalSubpoenaController - Deliver subpoena to national commissioner
       expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledWith(
         theCase,
         defendant,
+        transaction,
         subpoena,
       )
       // TODO: complete tests when all indictments are generated

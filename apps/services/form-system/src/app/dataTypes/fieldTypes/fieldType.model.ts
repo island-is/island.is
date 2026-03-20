@@ -27,13 +27,13 @@ export class FieldType {
 export const FieldTypes: FieldType[] = [
   {
     id: FieldTypesEnum.TEXTBOX,
-    name: { is: 'Textainnsláttur', en: 'Textbox' },
+    name: { is: 'Textabox', en: 'Textbox' },
     description: { is: 'Notandi slær inn texta', en: 'User enters text' },
     isCommon: true,
   },
   {
     id: FieldTypesEnum.NUMBERBOX,
-    name: { is: 'Tölustafir', en: 'Numbers' },
+    name: { is: 'Tölubox', en: 'Numberbox' },
     description: {
       is: 'Notandi slær inn tölustafi',
       en: 'User enters numbers',
@@ -57,9 +57,9 @@ export const FieldTypes: FieldType[] = [
   },
   {
     id: FieldTypesEnum.DATE_PICKER,
-    name: { is: 'Dagssetning', en: 'Date picker' },
+    name: { is: 'Dagsetning', en: 'Date picker' },
     description: {
-      is: 'Notandi velur dagssetningu úr dagatali',
+      is: 'Notandi velur dagsetningu úr dagatali',
       en: 'User chooses date from calendar',
     },
     isCommon: true,

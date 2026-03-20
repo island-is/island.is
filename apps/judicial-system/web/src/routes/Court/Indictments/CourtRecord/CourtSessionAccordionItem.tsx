@@ -33,7 +33,9 @@ import {
   applyDativeCaseToCourtName,
   formatDOB,
   getRoleTitleFromCaseFileCategory,
+  getWordByGender,
   lowercase,
+  Word,
 } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
@@ -276,9 +278,10 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
         }
         const dob = formatDOB(defendant.nationalId, defendant.noNationalId, '')
         attendees.push(
-          `\n${defendant.name} ákærði${dob ? ', ' : ''}${dob}, ${
-            defendant.address
-          }`,
+          `\n${defendant.name} ${getWordByGender(
+            Word.AKAERDI,
+            defendant.gender,
+          )}${dob ? ', ' : ''}${dob}, ${defendant.address}`,
         )
       })
     }
@@ -702,9 +705,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
     )
   }
 
-  const isLastCourtSession =
-    index >= 1 && index + 1 === workingCase.courtSessions?.length
-  const hasMergedCourtDocuments = courtSession.mergedFiledDocuments?.length
+  const isLastCourtSession = index + 1 === workingCase.courtSessions?.length
 
   useEffect(() => {
     if (isExpanded && !courtSession.isConfirmed) {
@@ -742,10 +743,7 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
           rowGap={5}
           paddingY={3}
         >
-          {/* Note: Disable the option to delete a court session when it contains merged documents. 
-        Currently we don't have the option to assign merged documents to a dedicated court session, they are automatically assigned
-        to a court session on merge */}
-          {isLastCourtSession && !hasMergedCourtDocuments && (
+          {isLastCourtSession && (
             <Button
               variant="text"
               colorScheme="destructive"
@@ -765,9 +763,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 <div className={styles.grid}>
                   <DateTime
                     name="courtStartDate"
-                    datepickerLabel="Dagsetning þingfestingar"
+                    datepickerLabel="Dagsetning þinghalds"
                     timeLabel="Þinghald hófst (kk:mm)"
-                    maxDate={new Date()}
                     selectedDate={
                       courtSession.startDate ??
                       workingCase.courtDate?.date ??
@@ -966,7 +963,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 }}
                 textarea
                 rows={7}
-                autoExpand={{ on: true, maxHeight: 300 }}
                 disabled={courtSession.isConfirmed || false}
               />
               <MultipleValueList
@@ -1422,9 +1418,9 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 <Input
                   data-testid="entries"
                   name="entries"
-                  label="Afstaða varnaraðila, málflutningur og aðrar bókanir"
+                  label="Afstaða ákærða, málflutningur og aðrar bókanir"
                   value={courtSession.entries || ''}
-                  placeholder="Nánari útlistun á afstöðu varnaraðila, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
+                  placeholder="Nánari útlistun á afstöðu ákærða, málflutningsræður og annað sem fram kom í þinghaldi er skráð hér."
                   onChange={(event) => {
                     setEntriesErrorMessage('')
 
@@ -1448,7 +1444,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                   hasError={entriesErrorMessage !== ''}
                   errorMessage={entriesErrorMessage}
                   rows={15}
-                  autoExpand={{ on: true, maxHeight: 300 }}
                   disabled={courtSession.isConfirmed || false}
                   textarea
                   required
@@ -1461,7 +1456,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                 />
                 <BlueBox className={styles.grid}>
                   <RadioButton
-                    name={`result_no-${courtSession.id}`}
+                    name="result_verdict"
+                    id={`result_no-${courtSession.id}`}
                     label="Nei"
                     backgroundColor="white"
                     checked={
@@ -1482,7 +1478,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     large
                   />
                   <RadioButton
-                    name={`result_verdict-${courtSession.id}`}
+                    name="result_verdict"
+                    id={`result_verdict-${courtSession.id}`}
                     label="Dómur kveðinn upp"
                     backgroundColor="white"
                     checked={
@@ -1500,7 +1497,8 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                     large
                   />
                   <RadioButton
-                    name={`result_ruling-${courtSession.id}`}
+                    name="result_verdict"
+                    id={`result_ruling-${courtSession.id}`}
                     label="Úrskurður kveðinn upp"
                     backgroundColor="white"
                     checked={
@@ -1569,7 +1567,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                       hasError={rulingErrorMessage !== ''}
                       errorMessage={rulingErrorMessage}
                       rows={15}
-                      autoExpand={{ on: true, maxHeight: 300 }}
                       disabled={courtSession.isConfirmed || false}
                       textarea
                       required
@@ -1596,7 +1593,6 @@ const CourtSessionAccordionItem: FC<Props> = (props) => {
                         )
                       }
                       rows={15}
-                      autoExpand={{ on: true, maxHeight: 300 }}
                       disabled={courtSession.isConfirmed || false}
                       textarea
                     />

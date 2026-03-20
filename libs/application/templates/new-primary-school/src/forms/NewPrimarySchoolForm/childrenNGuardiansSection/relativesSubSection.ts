@@ -3,17 +3,16 @@ import {
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { childrenNGuardiansMessages } from '../../../lib/messages'
 
 export const relativesSubSection = buildSubSection({
   id: 'relativesSubSection',
-  title: newPrimarySchoolMessages.childrenNGuardians.relativesSubSectionTitle,
+  title: childrenNGuardiansMessages.relatives.subSectionTitle,
   children: [
     buildMultiField({
       id: 'relatives',
-      title: newPrimarySchoolMessages.childrenNGuardians.relativesTitle,
-      description:
-        newPrimarySchoolMessages.childrenNGuardians.relativesDescription,
+      title: childrenNGuardiansMessages.relatives.title,
+      description: childrenNGuardiansMessages.relatives.description,
       children: [
         buildCustomField({
           id: 'relatives',

@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   BadGatewayException,
   Controller,
@@ -10,6 +12,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -29,6 +32,7 @@ export class LawyerRegistryController {
   constructor(
     private readonly lawyerRegistryService: LawyerRegistryService,
     private readonly eventService: EventService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -38,7 +42,9 @@ export class LawyerRegistryController {
     this.logger.debug('Resetting lawyer registry')
 
     try {
-      const lawyers = await this.lawyerRegistryService.populate()
+      const lawyers = await this.sequelize.transaction((transaction) =>
+        this.lawyerRegistryService.populate(transaction),
+      )
 
       this.logger.info('Lawyer registry reset successfully')
       await this.eventService.postDailyLawyerRegistryResetEvent(lawyers.length)

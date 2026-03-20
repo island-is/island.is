@@ -490,6 +490,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:co2',
     defaultMessage: 'Útblástursgildi',
   },
+  co2Fallback: {
+    id: 'sp.vehicles:co2-fallback',
+    defaultMessage: 'Enginn skráður útblástur',
+  },
   co2Label: {
     id: 'sp.vehicles:co2-label',
     defaultMessage: 'Útblástursgildi',
@@ -692,6 +696,90 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:search-intro',
     defaultMessage: `Þú getur flett upp allt að 5 ökutækjum á dag.`,
   },
+  publicSearchInputPlaceholder: {
+    id: 'sp.vehicles:public-search-input-placeholder',
+    defaultMessage: 'Leita í ökutækjaskrá',
+  },
+  publicSearchNoVehicleFound: {
+    id: 'sp.vehicles:public-search-no-vehicle-found',
+    defaultMessage: 'Ekkert ökutæki fannst',
+  },
+  publicSearchErrorTitle: {
+    id: 'sp.vehicles:public-search-error-title',
+    defaultMessage: 'Villa kom upp',
+  },
+  publicSearchErrorMessage: {
+    id: 'sp.vehicles:public-search-error-message',
+    defaultMessage: 'Ekki tókst að sækja ökutæki',
+  },
+  publicSearchTitle: {
+    id: 'sp.vehicles:public-search-title-message',
+    defaultMessage: 'Eftirfarandi upplýsingar fundust um ökutækið',
+  },
+  publicSearchResultHeader: {
+    id: 'sp.vehicles:public-search-result-header',
+    defaultMessage: 'Grunnupplýsingar ökutækis',
+  },
+  publicSearchVehicleType: {
+    id: 'sp.vehicles:public-search-vehicle-type',
+    defaultMessage: 'Tegund:',
+  },
+  publicSearchRegno: {
+    id: 'sp.vehicles:public-search-regno',
+    defaultMessage: 'Skráningarnúmer:',
+  },
+  publicSearchPermno: {
+    id: 'sp.vehicles:public-search-permno',
+    defaultMessage: 'Fastanúmer:',
+  },
+  publicSearchVin: {
+    id: 'sp.vehicles:public-search-vin',
+    defaultMessage: 'Verksmiðjunúmer:',
+  },
+  publicSearchFirstRegDate: {
+    id: 'sp.vehicles:public-search-first-reg-date',
+    defaultMessage: 'Fyrst skráð:',
+  },
+  publicSearchCo2Nedc: {
+    id: 'sp.vehicles:public-search-co2-nedc',
+    defaultMessage: 'CO2-gildi (NEDC):',
+  },
+  publicSearchWeightedCo2Nedc: {
+    id: 'sp.vehicles:public-search-weighted-co2-nedc',
+    defaultMessage: 'Vegið CO2-gildi (NEDC):',
+  },
+  publicSearchCo2Wltp: {
+    id: 'sp.vehicles:public-search-co2-wltp',
+    defaultMessage: 'CO2-gildi (WLTP):',
+  },
+  publicSearchWeightedCo2Wltp: {
+    id: 'sp.vehicles:public-search-weighted-co2-wltp',
+    defaultMessage: 'Vegið CO2-gildi (WLTP):',
+  },
+  publicSearchMass: {
+    id: 'sp.vehicles:public-search-mass',
+    defaultMessage: 'Eigin þyngd:',
+  },
+  publicSearchMassLaden: {
+    id: 'sp.vehicles:public-search-mass-laden',
+    defaultMessage: 'Leyfð heildarþyngd:',
+  },
+  publicSearchVehicleStatus: {
+    id: 'sp.vehicles:public-search-vehicle-status',
+    defaultMessage: 'Staða:',
+  },
+  publicSearchNextInspection: {
+    id: 'sp.vehicles:public-search-next-inspection',
+    defaultMessage: 'Næsta skoðun:',
+  },
+  simpleSearchTab: {
+    id: 'sp.vehicles:simple-search-tab',
+    defaultMessage: 'Einföld leit',
+  },
+  detailedSearchTab: {
+    id: 'sp.vehicles:detailed-search-tab',
+    defaultMessage: 'Ítarleg leit',
+  },
   searchLimitExceeded: {
     id: 'sp.vehicles:search-limit-exceeded',
     defaultMessage: `Þú ert búin(n) að nota öll leitartilvikin fyrir daginn í dag. Vinsamlegast reyndu aftur að sama tíma á morgun.`,
@@ -884,6 +972,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:add-operator',
     defaultMessage: 'Breyta umráðamanni',
   },
+  registerMileCar: {
+    id: 'sp.vehicles:register-mile-car',
+    defaultMessage: 'Skrá ökutæki með mílumæli',
+  },
   renewPrivateRegistration: {
     id: 'sp.vehicles:renew-private-registration',
     defaultMessage: 'Endurnýja einkamerki',
@@ -903,6 +995,14 @@ export const vehicleMessage = defineMessages({
   odometer: {
     id: 'sp.vehicles:odometer',
     defaultMessage: 'Kílómetrastaða',
+  },
+  odometerBulkColumn: {
+    id: 'sp.vehicles:odometer-bulk-column',
+    defaultMessage: 'Skrá stöðu',
+  },
+  odometerStatus: {
+    id: 'sp.vehicles:odometer-status',
+    defaultMessage: 'Staða',
   },
   lastKnownOdometerStatus: {
     id: 'sp.vehicles:last-known-odometer-status',
@@ -1497,6 +1597,10 @@ export const urls = defineMessages({
   operator: {
     id: 'sp.vehicles:url-operator',
     defaultMessage: 'https://island.is/umsoknir/umradamadur-okutaekis',
+  },
+  registerMileCar: {
+    id: 'sp.vehicles:url-milecar',
+    defaultMessage: 'https://island.is/umsoknir/skraning-milubila',
   },
   regNumber: {
     id: 'sp.vehicles:url-registration-number',

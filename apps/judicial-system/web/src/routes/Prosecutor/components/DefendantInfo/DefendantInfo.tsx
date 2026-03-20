@@ -29,9 +29,8 @@ import {
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
-
-import * as strings from './DefendantInfo.strings'
 
 interface Props {
   defendant: Defendant
@@ -43,7 +42,6 @@ interface Props {
     setWorkingCase: Dispatch<SetStateAction<Case>>,
   ) => void
   onDelete?: (defendant: Defendant) => Promise<void>
-  nationalIdImmutable: boolean
 }
 
 const DefendantInfo: FC<Props> = (props) => {
@@ -54,19 +52,17 @@ const DefendantInfo: FC<Props> = (props) => {
     onDelete,
     onChange,
     updateDefendantState,
-    nationalIdImmutable = false,
   } = props
   const { formatMessage } = useIntl()
-  const { personData, businessData, personError, businessError } =
-    useNationalRegistry(defendant.nationalId)
+  const { personData, businessData, error, notFound } = useNationalRegistry(
+    defendant.nationalId,
+  )
 
   const genderOptions: ReactSelectOption[] = [
     { label: formatMessage(core.male), value: Gender.MALE },
     { label: formatMessage(core.female), value: Gender.FEMALE },
     { label: formatMessage(core.otherGender), value: Gender.OTHER },
   ]
-
-  const [nationalIdNotFound, setNationalIdNotFound] = useState<boolean>(false)
 
   const [accusedAddressErrorMessage, setAccusedAddressErrorMessage] =
     useState<string>('')
@@ -85,14 +81,12 @@ const DefendantInfo: FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    if (personError || (personData && personData.items?.length === 0)) {
-      setNationalIdNotFound(true)
+    if (!isBusiness(defendant.nationalId) && (error || notFound)) {
       return
     }
 
     if (personData && personData.items && personData.items.length > 0) {
       setAccusedAddressErrorMessage('')
-      setNationalIdNotFound(false)
       setIsGenderAndCitizenshipDisabled(false)
 
       onChange({
@@ -105,11 +99,10 @@ const DefendantInfo: FC<Props> = (props) => {
     }
     // We only want this to run when a lookup is done in the national registry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [personData, personError])
+  }, [personData, error])
 
   useEffect(() => {
-    if (businessError || (businessData && businessData.items?.length === 0)) {
-      setNationalIdNotFound(true)
+    if (isBusiness(defendant.nationalId) && (error || notFound)) {
       return
     }
 
@@ -128,12 +121,12 @@ const DefendantInfo: FC<Props> = (props) => {
     }
     // We only want this to run when a lookup is done in the national registry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [businessData, businessError])
+  }, [businessData, error])
 
   return (
-    <BlueBox>
+    <BlueBox className={grid({ gap: 2 })}>
       {onDelete && (
-        <Box marginBottom={2} display="flex" justifyContent="flexEnd">
+        <Box display="flex" justifyContent="flexEnd">
           <Button
             onClick={() => onDelete(defendant)}
             colorScheme="destructive"
@@ -141,23 +134,16 @@ const DefendantInfo: FC<Props> = (props) => {
             size="small"
             data-testid="deleteDefendantButton"
           >
-            {formatMessage(strings.defendantInfo.delete)}
+            Eyða
           </Button>
         </Box>
       )}
-      <Box marginBottom={2}>
+      {!isIndictmentCase(workingCase.type) && (
         <Checkbox
           name={`noNationalId-${defendant.id}`}
-          label={formatMessage(
-            strings.defendantInfo.doesNotHaveIcelandicNationalId,
-            {
-              isIndictment: isIndictmentCase(workingCase.type),
-            },
-          )}
+          label="Varnaraðili er ekki með íslenska kennitölu"
           checked={Boolean(defendant.noNationalId)}
           onChange={() => {
-            setNationalIdNotFound(false)
-
             updateDefendantState(
               {
                 caseId: workingCase.id,
@@ -177,10 +163,9 @@ const DefendantInfo: FC<Props> = (props) => {
           }}
           filled
           large
-          disabled={nationalIdImmutable}
         />
-      </Box>
-      <Box marginBottom={2}>
+      )}
+      <div>
         <InputNationalId
           isDateOfBirth={Boolean(defendant.noNationalId)}
           value={defendant.nationalId ?? ''}
@@ -201,84 +186,79 @@ const DefendantInfo: FC<Props> = (props) => {
               setWorkingCase,
             )
           }
-          disabled={nationalIdImmutable}
           required={!defendant.noNationalId}
         />
-        {defendant.nationalId?.length === 11 && nationalIdNotFound && (
+        {defendant.nationalId?.length === 11 && notFound && (
           <Text color="red600" variant="eyebrow" marginTop={1}>
             {formatMessage(core.nationalIdNotFoundInNationalRegistry)}
           </Text>
         )}
-      </Box>
-      <Box marginBottom={2}>
-        <InputName
-          value={defendant.name ?? ''}
-          onBlur={(value) =>
-            onChange({
+      </div>
+      <InputName
+        value={defendant.name ?? ''}
+        onBlur={(value) =>
+          onChange({
+            caseId: workingCase.id,
+            defendantId: defendant.id,
+            name: value.trim(),
+          })
+        }
+        onChange={(value) => {
+          updateDefendantState(
+            {
               caseId: workingCase.id,
               defendantId: defendant.id,
-              name: value.trim(),
-            })
-          }
-          onChange={(value) => {
-            updateDefendantState(
-              {
-                caseId: workingCase.id,
-                defendantId: defendant.id,
-                name: value,
-              },
-              setWorkingCase,
-            )
-          }}
-          required
-        />
-      </Box>
-      <Box marginBottom={2}>
-        <Input
-          data-testid="accusedAddress"
-          name="accusedAddress"
-          autoComplete="off"
-          label={formatMessage(core.addressOrResidence)}
-          placeholder={formatMessage(core.addressOrResidence)}
-          value={defendant.address ?? ''}
-          errorMessage={accusedAddressErrorMessage}
-          hasError={
-            Boolean(accusedAddressErrorMessage) &&
-            accusedAddressErrorMessage !== ''
-          }
-          onChange={(evt) => {
-            removeErrorMessageIfValid(
-              ['empty'],
-              evt.target.value,
-              accusedAddressErrorMessage,
-              setAccusedAddressErrorMessage,
-            )
+              name: value,
+            },
+            setWorkingCase,
+          )
+        }}
+        required
+      />
+      <Input
+        data-testid="accusedAddress"
+        name="accusedAddress"
+        autoComplete="off"
+        label={formatMessage(core.addressOrResidence)}
+        placeholder={formatMessage(core.addressOrResidence)}
+        value={defendant.address ?? ''}
+        errorMessage={accusedAddressErrorMessage}
+        hasError={
+          Boolean(accusedAddressErrorMessage) &&
+          accusedAddressErrorMessage !== ''
+        }
+        onChange={(evt) => {
+          removeErrorMessageIfValid(
+            ['empty'],
+            evt.target.value,
+            accusedAddressErrorMessage,
+            setAccusedAddressErrorMessage,
+          )
 
-            updateDefendantState(
-              {
-                caseId: workingCase.id,
-                defendantId: defendant.id,
-                address: evt.target.value,
-              },
-              setWorkingCase,
-            )
-          }}
-          onBlur={(evt) => {
-            validateAndSetErrorMessage(
-              ['empty'],
-              evt.target.value,
-              setAccusedAddressErrorMessage,
-            )
-
-            onChange({
+          updateDefendantState(
+            {
               caseId: workingCase.id,
               defendantId: defendant.id,
-              address: evt.target.value.trim(),
-            })
-          }}
-          required
-        />
-      </Box>
+              address: evt.target.value,
+            },
+            setWorkingCase,
+          )
+        }}
+        onBlur={(evt) => {
+          validateAndSetErrorMessage(
+            ['empty'],
+            evt.target.value,
+            setAccusedAddressErrorMessage,
+          )
+
+          onChange({
+            caseId: workingCase.id,
+            defendantId: defendant.id,
+            address: evt.target.value.trim(),
+          })
+        }}
+        required
+      />
       <GridContainer>
         <GridRow>
           <GridColumn span="6/12">

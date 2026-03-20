@@ -1,6 +1,8 @@
 import { Request } from 'express'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -13,6 +15,7 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -27,6 +30,8 @@ import {
 import { IDS_ACCESS_TOKEN_NAME } from '@island.is/judicial-system/consts'
 import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseFileCategory,
+  CaseFileState,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -66,12 +71,15 @@ import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
 import { CreateCivilClaimantCaseFileGuard } from './guards/createCivilClaimantCaseFile.guard'
 import { CreateDefendantCaseFileGuard } from './guards/createDefendantCaseFile.guard'
+import { SplitCaseFileExistsGuard } from './guards/splitCaseFileExists.guard'
 import { ViewCaseFileGuard } from './guards/viewCaseFile.guard'
 import { DeleteFileResponse } from './models/deleteFile.response'
+import { PoliceDigitalCaseFileSyncResult } from './models/policeDigitalCaseFileSyncResult.model'
 import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { PoliceDigitalCaseFileService } from './policeDigitalCaseFiles/policeDigitalCaseFile.service'
 import { CriminalRecordService } from './criminalRecord.service'
 import { FileService } from './file.service'
 
@@ -82,6 +90,8 @@ export class FileController {
   constructor(
     private readonly fileService: FileService,
     private readonly criminalRecordService: CriminalRecordService,
+    private readonly policeDigitalCaseFileService: PoliceDigitalCaseFileService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -137,12 +147,18 @@ export class FileController {
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
-    return this.fileService.createCaseFile(theCase, createFile, user)
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.createCaseFile(theCase, createFile, user, transaction),
+    )
   }
 
   // TODO: Add tests for this endpoint
   @UseGuards(CaseWriteGuard, DefendantExistsGuard, CreateDefendantCaseFileGuard)
-  @RolesRules(publicProsecutorStaffRule)
+  @RolesRules(
+    publicProsecutorStaffRule,
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+  )
   @Post('defendant/:defendantId/file')
   @ApiCreatedResponse({
     type: CaseFile,
@@ -159,10 +175,13 @@ export class FileController {
       `Creating a file for case ${caseId} for defendant ${defendantId}`,
     )
 
-    return this.fileService.createCaseFile(
-      theCase,
-      { ...createFile, defendantId },
-      user,
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.createCaseFile(
+        theCase,
+        { ...createFile, defendantId },
+        user,
+        transaction,
+      ),
     )
   }
 
@@ -189,17 +208,24 @@ export class FileController {
       `Creating a file for case ${caseId} for civil claimant ${civilClaimantId}`,
     )
 
-    return this.fileService.createCaseFile(
-      theCase,
-      { ...createFile, civilClaimantId },
-      user,
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.createCaseFile(
+        theCase,
+        { ...createFile, civilClaimantId },
+        user,
+        transaction,
+      ),
     )
   }
 
+  // Strictly speaking, only district court users need access to
+  // split case files
+  // However, giving prosecution and appeals court users access
+  // does not pose a security risk
   @UseGuards(
     CaseReadGuard,
     MergedCaseExistsGuard,
-    CaseFileExistsGuard,
+    SplitCaseFileExistsGuard,
     ViewCaseFileGuard,
   )
   @RolesRules(
@@ -229,6 +255,67 @@ export class FileController {
     )
 
     return this.fileService.getCaseFileSignedUrl(theCase, caseFile)
+  }
+
+  @UseGuards(
+    new CaseTypeGuard(indictmentCases),
+    CaseWriteGuard,
+    CaseFileExistsGuard,
+  )
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Post('file/:fileId/reject')
+  @ApiOkResponse({
+    type: CaseFile,
+    description: 'Rejects a case file',
+  })
+  async rejectCaseFile(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Param('fileId') fileId: string,
+    @CurrentCaseFile() caseFile: CaseFile,
+  ): Promise<CaseFile> {
+    this.logger.debug(`Rejecting file ${fileId} of case ${caseId}`)
+
+    if (caseFile.state === CaseFileState.REJECTED) {
+      throw new BadRequestException('File is already rejected')
+    }
+
+    if (
+      caseFile.category !== CaseFileCategory.PROSECUTOR_CASE_FILE &&
+      caseFile.category !== CaseFileCategory.DEFENDANT_CASE_FILE &&
+      caseFile.category !== CaseFileCategory.INDEPENDENT_DEFENDANT_CASE_FILE &&
+      caseFile.category !==
+        CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE &&
+      caseFile.category !==
+        CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE
+    ) {
+      this.logger.error(
+        `Attempt to reject case file ${fileId} of case ${caseId} with invalid category ${caseFile.category}`,
+      )
+      throw new BadRequestException(
+        'Only uploaded prosecutor, defendant and civil claimant case files can be rejected',
+      )
+    }
+
+    if (
+      theCase.courtSessions?.some(
+        (session) =>
+          session.isConfirmed &&
+          session.filedDocuments?.some((doc) => doc.caseFileId === caseFile.id),
+      )
+    ) {
+      throw new BadRequestException(
+        'Cannot reject a file that has been filed in a court session',
+      )
+    }
+
+    return this.sequelize.transaction(async (transaction) =>
+      this.fileService.rejectCaseFile(theCase, caseFile, transaction),
+    )
   }
 
   @UseGuards(CaseWriteGuard, CaseFileExistsGuard)
@@ -304,7 +391,9 @@ export class FileController {
   ): Promise<CaseFile[]> {
     this.logger.debug(`Updating files of case ${caseId}`, { updateFiles })
 
-    return this.fileService.updateFiles(caseId, updateFiles.files)
+    return this.sequelize.transaction((transaction) =>
+      this.fileService.updateFiles(caseId, updateFiles.files, transaction),
+    )
   }
 
   // TODO: Add tests for this endpoint
@@ -339,5 +428,51 @@ export class FileController {
       defendant,
       user,
     })
+  }
+
+  @UseGuards(CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Get('policeDigitalCaseFiles')
+  @ApiOkResponse({
+    type: PoliceDigitalCaseFileSyncResult,
+    isArray: true,
+    description:
+      'Syncs with police digital file system source and returns all police digital case files for a case',
+  })
+  getPoliceDigitalCaseFiles(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @CurrentCase() theCase: Case,
+  ): Promise<PoliceDigitalCaseFileSyncResult[]> {
+    this.logger.debug(
+      `Syncing and getting police digital case files for case ${caseId}`,
+    )
+
+    return this.policeDigitalCaseFileService.syncAndGetPoliceDigitalCaseFiles(
+      caseId,
+      theCase.policeCaseNumbers,
+      user,
+    )
+  }
+
+  @UseGuards(CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @Delete('policeDigitalCaseFile/:fileId')
+  @ApiOkResponse({
+    type: DeleteFileResponse,
+    description: 'Deletes a police digital case file entry',
+  })
+  async deletePoliceDigitalCaseFile(
+    @Param('fileId') fileId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<DeleteFileResponse> {
+    this.logger.debug(`Deleting police digital case file ${fileId}`)
+
+    const success =
+      await this.policeDigitalCaseFileService.deletePoliceDigitalCaseFile(
+        theCase.id,
+        fileId,
+      )
+    return { success }
   }
 }

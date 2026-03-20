@@ -1,6 +1,7 @@
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -11,7 +12,7 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   ExistingApplicationApi,
   ApplicationConfigurations,
@@ -78,7 +79,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
               delete: true,
               api: [
                 DeathNoticeApi,
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 ExistingApplicationApi.configure({
                   params: {
@@ -114,7 +115,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
           name: 'Draft',
           status: 'draft',
           progress: 0.5,
-          lifecycle: HalfYearLifeCycle,
+          lifecycle: pruneAfterDays(90),
           onExit: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,

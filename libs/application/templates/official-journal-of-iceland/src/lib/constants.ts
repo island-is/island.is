@@ -15,6 +15,7 @@ export enum ApplicationAttachmentType {
   ORIGINAL = 'frumrit',
   ADDITIONS = 'fylgiskjol',
   SUPPORTING = 'fylgigogn',
+  MAINTEXT = 'meginmal',
 }
 
 export const DEFAULT_PAGE = 1

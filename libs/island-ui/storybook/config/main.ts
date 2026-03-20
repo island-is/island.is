@@ -101,6 +101,7 @@ const config: StorybookConfig = {
         '@island.is/feature-flags': rootDir('../../../feature-flags/src'),
         '@island.is/react-spa/shared': rootDir('../../../react-spa/shared/src'),
         '@island.is/react-spa/bff': rootDir('../../../react-spa/bff/src'),
+        '@island.is/auth/scopes': rootDir('../../../auth/scopes/src'),
       },
     }
 

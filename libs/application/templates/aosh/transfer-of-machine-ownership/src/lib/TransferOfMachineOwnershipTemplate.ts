@@ -32,7 +32,7 @@ import {
   MachinesApi,
   MockableVinnueftirlitidPaymentCatalogApi,
 } from '../dataProviders'
-import { getChargeItems, getReviewers, hasReviewerApproved } from '../utils'
+import { getChargeItems, getReviewers } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { getBuyerNationalId } from '../utils/getBuyerNationalid'
@@ -241,8 +241,9 @@ const template: ApplicationTemplate<
             ],
             pendingAction: (application, _role, nationalId) => {
               return getReviewStatePendingAction(
-                hasReviewerApproved(application.answers, nationalId),
+                nationalId,
                 getReviewers(application.answers),
+                true,
               )
             },
           },

@@ -18,6 +18,8 @@ export const HEALTH_DIRECTORATE_SLUG = 'landlaeknir'
 export const HUGVERKASTOFAN_SLUG = 'hugverkastofan'
 export const DOMSMALARADUNEYTID_SLUG = 'domsmalaraduneytid'
 export const LANDLAEKNIR_SLUG = 'landlaeknir'
+export const LANDSPITALI_SLUG = 'landspitali'
+export const LANDSKJORSTJORN_SLUG = 'landskjorstjorn'
 
 export const DOMSMAL_DOC_ID = '12'
 export const MONTHS = [
@@ -34,3 +36,8 @@ export const MONTHS = [
   'november',
   'december',
 ]
+
+export const FALLBACK_ORG_LOGO_URL =
+  'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg?w=60&h=60&fit=pad&bg=none&fm=png'
+
+export const ORG_LOGO_PARAMS = '?w=60&h=60&fit=pad&bg=none&fm=png'

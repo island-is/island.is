@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   Body,
   Controller,
@@ -8,6 +10,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -52,6 +55,7 @@ import { CivilClaimantService } from './civilClaimant.service'
 export class CivilClaimantController {
   constructor(
     private readonly civilClaimantService: CivilClaimantService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -73,7 +77,9 @@ export class CivilClaimantController {
   ): Promise<CivilClaimant> {
     this.logger.debug(`Creating a new civil claimant for case ${caseId}`)
 
-    return this.civilClaimantService.create(theCase)
+    return this.sequelize.transaction((transaction) =>
+      this.civilClaimantService.create(theCase, transaction),
+    )
   }
 
   @UseGuards(CivilClaimantExistsGuard)

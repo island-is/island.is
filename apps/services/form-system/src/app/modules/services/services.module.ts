@@ -1,24 +1,21 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { ServiceManager } from './service.manager'
-import { FormUrl } from '../formUrls/models/formUrl.model'
-import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { ZendeskService } from './zendesk.service'
-import { NudgeService } from './nudge.service'
-import { FileService } from './file.service'
+import { NotifyService } from './notify.service'
 import { ValidationService } from './validation.service'
 import { ApplicationEvent } from '../applications/models/applicationEvent.model'
+import { ConfigModule } from '@nestjs/config'
+import { XRoadConfig } from '@island.is/nest/config'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([FormUrl, OrganizationUrl, ApplicationEvent]),
+    SequelizeModule.forFeature([ApplicationEvent]),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [XRoadConfig],
+    }),
   ],
-  providers: [
-    ServiceManager,
-    ZendeskService,
-    NudgeService,
-    FileService,
-    ValidationService,
-  ],
+  providers: [ServiceManager, ZendeskService, NotifyService, ValidationService],
 })
 export class ServicesModule {}

@@ -1,5 +1,5 @@
-import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { Op, Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseOrigin,
@@ -11,8 +11,12 @@ import {
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { randomEnum } from '../../../../test'
-import { DefendantService } from '../../../defendant'
-import { Case, CaseRepositoryService, Defendant } from '../../../repository'
+import {
+  Case,
+  caseInclude,
+  CaseRepositoryService,
+  Defendant,
+} from '../../../repository'
 
 interface Then {
   result: Case
@@ -27,19 +31,13 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Split defendant from case', () => {
-  let mockDefendantService: DefendantService
   let mockCaseRepositoryService: CaseRepositoryService
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      defendantService,
-      sequelize,
-      caseRepositoryService,
-      caseController,
-    } = await createTestingCaseModule()
-    mockDefendantService = defendantService
+    const { sequelize, caseRepositoryService, caseController } =
+      await createTestingCaseModule()
     mockCaseRepositoryService = caseRepositoryService
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -47,7 +45,9 @@ describe('CaseController - Split defendant from case', () => {
       commit: jest.fn(),
       rollback: jest.fn(),
     } as unknown as Transaction
-    mockTransaction.mockResolvedValueOnce(transaction)
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (
       caseId: string,
@@ -107,40 +107,43 @@ describe('CaseController - Split defendant from case', () => {
       defendants: [defendantToSplit, { id: uuid() } as Defendant],
     } as Case
     const splitCaseId = uuid()
-    const splitCase = { ...theCase, id: splitCaseId } as Case
+    const splitCase = {
+      ...theCase,
+      id: splitCaseId,
+      defendants: undefined,
+    } as Case
+    const fullSplitCase = {
+      ...splitCase,
+      defendants: [defendantToSplit],
+    } as Case
+
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockCaseRepositoryService.create as jest.Mock
-      mockCreate.mockResolvedValueOnce(splitCase)
+      const mockSplit = mockCaseRepositoryService.split as jest.Mock
+      mockSplit.mockResolvedValueOnce(splitCase)
+      const mockFindOne = mockCaseRepositoryService.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(fullSplitCase)
 
       then = await givenWhenThen(caseId, defendantId, theCase, defendantToSplit)
     })
 
     it('should create new case and transfer defendant', () => {
       expect(then.error).toBeUndefined()
-      expect(mockCaseRepositoryService.create).toHaveBeenCalledWith(
-        {
-          origin,
-          type,
-          state: CaseState.DRAFT,
-          withCourtSessions: true,
-          description,
-          policeCaseNumbers,
-          courtId,
-          demands,
-          comments,
-          creatingProsecutorId,
-          prosecutorId,
-          splitCaseId: caseId,
-        },
+      expect(mockCaseRepositoryService.split).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
         { transaction },
       )
-      expect(mockDefendantService.transferDefendantToCase).toHaveBeenCalledWith(
-        splitCase,
-        defendantToSplit,
+      expect(mockCaseRepositoryService.findOne).toHaveBeenCalledWith({
+        include: caseInclude,
+        where: {
+          id: splitCaseId,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+        },
         transaction,
-      )
+      })
       expect(then.result).toBe(splitCase)
     })
   })

@@ -1,6 +1,7 @@
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ActiveApplicationsModel,
   FormSubmitSuccessModel,
   FriggApi,
   GetOrganizationsByTypeRequest,
@@ -61,10 +62,21 @@ export class FriggClientService {
   async getPreferredSchool(
     user: User,
     childNationalId: string,
-  ): Promise<OrganizationModel> {
-    return await this.friggApiWithAuth(user).getPreferredSchools({
-      nationalId: childNationalId,
-    })
+  ): Promise<OrganizationModel | null> {
+    try {
+      return await this.friggApiWithAuth(user).getPreferredSchools({
+        nationalId: childNationalId,
+      })
+    } catch (error) {
+      // If no preferred school for the selected child found in Frigg
+      if (
+        error?.status === 404 &&
+        error?.body?.message === 'Recommended school not found'
+      ) {
+        return null
+      }
+      throw error
+    }
   }
 
   sendApplication(
@@ -73,6 +85,15 @@ export class FriggClientService {
   ): Promise<FormSubmitSuccessModel> {
     return this.friggApiWithAuth(user).submitForm({
       registrationApplicationInput: form,
+    })
+  }
+
+  async getIsApplicationBlocked(
+    user: User,
+    childNationalId: string,
+  ): Promise<ActiveApplicationsModel> {
+    return await this.friggApiWithAuth(user).getApplications({
+      nationalId: childNationalId,
     })
   }
 }

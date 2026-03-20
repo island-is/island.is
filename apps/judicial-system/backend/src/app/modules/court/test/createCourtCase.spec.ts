@@ -1,6 +1,6 @@
 import formatISO from 'date-fns/formatISO'
 import each from 'jest-each'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import {

@@ -120,10 +120,15 @@ export const m = defineMessages({
     defaultMessage: 'slug',
     description: 'slug',
   },
-  daysUntilExpiration: {
-    id: 'form.system:days-until-expiration',
-    defaultMessage: 'Líftími umsóknar',
-    description: 'Days until expiration',
+  lifetimeWhileInDraft: {
+    id: 'form.system:lifetime-while-in-draft',
+    defaultMessage: 'Líftími umsókna í drögum (allt að 60 dagar)',
+    description: 'Application lifetime in drafts (max 60 days)',
+  },
+  lifetimeAfterSubmission: {
+    id: 'form.system:lifetime-after-submission',
+    defaultMessage: 'Líftími umsókna eftir skil (allt að 30 dagar)',
+    description: 'Application lifetime after submission (max 30 days)',
   },
   deadline: {
     id: 'form.system:deadline',
@@ -271,8 +276,8 @@ export const m = defineMessages({
   },
   saveAndContinue: {
     id: 'form.system:save-and-continue',
-    defaultMessage: 'Vista og halda áfram',
-    description: 'Save and continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Continue',
   },
   addSection: {
     id: 'form.system:add-section',
@@ -397,13 +402,8 @@ export const m = defineMessages({
   },
   submitUrls: {
     id: 'form.system:submitUrls',
-    defaultMessage: 'Málakerfi',
-    description: 'Submission URLs',
-  },
-  validationUrls: {
-    id: 'form.system:validationUrls',
-    defaultMessage: 'Reglukerfi',
-    description: 'Validation URLs',
+    defaultMessage: 'Veldu slóð',
+    description: 'Choose URL',
   },
   permissions: {
     id: 'form.system:permissions',
@@ -456,10 +456,15 @@ export const m = defineMessages({
     defaultMessage: 'Tilbúnir fellilistar',
     description: 'Predetermined lists',
   },
-  max120Days: {
-    id: 'form.system:max-120-days',
-    defaultMessage: 'Hámark 120 daga',
-    description: 'Max 120 days',
+  max30Days: {
+    id: 'form.system:max-30-days',
+    defaultMessage: 'Hámark 30 dagar',
+    description: 'Max 30 days',
+  },
+  max60Days: {
+    id: 'form.system:max-60-days',
+    defaultMessage: 'Hámark 60 dagar',
+    description: 'Max 60 days',
   },
   chooseDate: {
     id: 'form.system:choose-date',
@@ -889,17 +894,17 @@ export const m = defineMessages({
   uploadBoxTitle: {
     id: 'form.system:upload-box-title',
     defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
-    description: 'Notaður fyrir titil í Hlaða upp skrám svæði.',
+    description: 'Drag files here to upload',
   },
   uploadBoxButtonLabel: {
     id: 'form.system:upload-box-button-label',
     defaultMessage: 'Velja skjöl til að hlaða upp',
-    description: 'Notaður fyrir titil í takka á Hlaða upp skrám svæði.',
+    description: 'Choose files to upload',
   },
   uploadBoxDescription: {
     id: 'form.system:upload-box-description',
     defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
-    description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
+    description: 'The following file types are accepted: {fileEndings}',
   },
   tagsDraft: {
     id: 'form.system:tags.draft',
@@ -943,8 +948,8 @@ export const m = defineMessages({
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
   },
-  completedAccordionTitle: {
-    id: 'form.system:completed-accordion-title',
+  completedListHeader: {
+    id: 'form.system:completed-list-header',
     defaultMessage: 'Hvað gerist næst?',
     description: 'What happens next?',
   },
@@ -1033,12 +1038,12 @@ export const m = defineMessages({
     description: 'Preview',
   },
   largeCheckbox: {
-    id: 'form.system.large-checkbox',
+    id: 'form.system:large-checkbox',
     defaultMessage: 'Stórt hakbox',
     description: 'Large checkbox',
   },
   hasSublabel: {
-    id: 'form.system.has-sublabel',
+    id: 'form.system:has-sublabel',
     defaultMessage: 'Hefur undirtexta',
     description: 'Has sublabel',
   },
@@ -1101,5 +1106,95 @@ export const m = defineMessages({
     id: 'form.system:check-url-please',
     defaultMessage: 'Vinsamlegast athugaðu hvort slóðin sé rétt.',
     description: 'Please check the URL.',
+  },
+  urlFormatInstruction: {
+    id: 'form.system:url-format-instruction',
+    defaultMessage: 'Slóðin þarf að vera X‑Road slóð sem byrjar á',
+    description: 'The URL must be an X-Road URL starting with',
+  },
+  urlReuseEncouragement: {
+    id: 'form.system:url-reuse-encouragement',
+    defaultMessage:
+      'Vinsamlega reynið að halda fjölda slóða í lágmarki og nýta þær sem fyrir eru eftir því sem unnt er.',
+    description:
+      'Please try to keep the number of URLs to a minimum and reuse existing ones as much as possible.',
+  },
+  addFormUrl: {
+    id: 'form.system:add-form-url',
+    defaultMessage: '+ Bæta við nýrri slóð fyrir þetta form',
+    description: '+ Add new URL for this form',
+  },
+  newFormUrlButton: {
+    id: 'form.system:new-form-url-button',
+    defaultMessage: 'Ný slóð fyrir innsendingar',
+    description: 'New submission URL',
+  },
+  notifications: {
+    id: 'form.system:notifications',
+    defaultMessage: 'Tilkynningar',
+    description: 'Notifications',
+  },
+  draftProgressMeter: {
+    id: 'form.system:draft-progress-meter',
+    defaultMessage:
+      'Þú hefur klárað {draftFinishedSteps} af {draftTotalSteps} skrefum',
+    description:
+      'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
+  },
+  zendeskPrivate: {
+    id: 'form.system:zendesk-private',
+    defaultMessage: 'Umsóknirnar skulu vera merktar internal/private í Zendesk',
+    description: 'Applications should be marked as internal/private in Zendesk',
+  },
+  useValidate: {
+    id: 'form.system:use-validate',
+    defaultMessage: 'Nota þjónustuna til að yfirfara (e. validate) gögnin',
+    description: 'Use the service to validate the data',
+  },
+  usePopulate: {
+    id: 'form.system:use-populate',
+    defaultMessage: 'Nota þjónustuna til að fylla út (e. populate) gögn',
+    description: 'Use the service to populate data',
+  },
+  screenValidate: {
+    id: 'form.system:screen-validate',
+    defaultMessage: 'Senda skjá/umsókn til yfirferðar (e. validation)',
+    description: 'Send the screen for validation',
+  },
+  screenPopulate: {
+    id: 'form.system:screen-populate',
+    defaultMessage:
+      'Senda skjá í sjálfvirka útfyllingu gagna (e. data population)',
+    description: 'Send the screen for automatic data population',
+  },
+  completedMessage: {
+    id: 'form.system:completed-message',
+    defaultMessage: 'Skilaboð á lokasíðu',
+    description: 'Message on completed page',
+  },
+  isPartOfMulti: {
+    id: 'form.system:is-part-of-multi',
+    defaultMessage: 'Hluti af fjölmengi',
+    description: 'Part of multiset',
+  },
+  multiMax: {
+    id: 'form.system:multi-max',
+    defaultMessage: 'Hámarksfjöldi lína í fjölmengi',
+    description: 'Maximum number of lines in multiset',
+  },
+  addMulti: {
+    id: 'form.system:add-multi',
+    defaultMessage: 'Bæta við línu',
+    description: 'Add line',
+  },
+  removeMulti: {
+    id: 'form.system:remove-multi',
+    defaultMessage: 'Fjarlægja',
+    description: 'Remove',
+  },
+  applicationLifetime: {
+    id: 'form.system:application-lifetime',
+    defaultMessage: 'Líftími umsókna',
+    description: 'Application lifetime',
   },
 })

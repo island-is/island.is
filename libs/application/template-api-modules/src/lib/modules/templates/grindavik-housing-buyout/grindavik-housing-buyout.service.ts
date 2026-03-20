@@ -9,9 +9,9 @@ import {
   SyslumennService,
 } from '@island.is/clients/syslumenn'
 import {
-  NationalRegistryClientService,
+  NationalRegistryV3ApplicationsClientService,
   ResidenceEntryDto,
-} from '@island.is/clients/national-registry-v2'
+} from '@island.is/clients/national-registry-v3-applications'
 import {
   getDomicileOnDate,
   formatBankInfo,
@@ -38,7 +38,7 @@ type CheckResidence = {
 export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
   constructor(
     private readonly syslumennService: SyslumennService,
-    private nationalRegistryApi: NationalRegistryClientService,
+    private nationalRegistryApi: NationalRegistryV3ApplicationsClientService,
     private propertiesApi: FasteignirApi,
   ) {
     super(ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT)
@@ -152,10 +152,12 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
   async findResidenceOnDate(
     nationalId: string,
     dateInQuestion: string,
+    auth: User,
   ): Promise<ResidenceEntryDto | null> {
     //First off we check the current residence and check if that is on said date
     const currentResidence = await this.nationalRegistryApi.getCurrentResidence(
       nationalId,
+      auth,
     )
 
     const currentResidenceOnDate = currentResidence
@@ -170,6 +172,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     // The current residence is not at the time or the data is missing. Then we need to get the residence history and check if we have a residence at the time.
     const residenceHistory = await this.nationalRegistryApi.getResidenceHistory(
       nationalId,
+      auth,
     )
 
     const domicileOn10nov = getDomicileOnDate(residenceHistory, dateInQuestion)
@@ -186,6 +189,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     const residenceOnDate = await this.findResidenceOnDate(
       auth.nationalId,
       dateInQuestion,
+      auth,
     )
 
     // gervimaður færeyjar pass through

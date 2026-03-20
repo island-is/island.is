@@ -7,7 +7,11 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { Application, DefaultEvents, Form } from '@island.is/application/types'
-import { newPrimarySchoolMessages, assigneeMessages } from '../lib/messages'
+import {
+  assigneeMessages,
+  overviewMessages,
+  sharedMessages,
+} from '../lib/messages'
 import { States } from '../utils/constants'
 import {
   getApplicationAnswers,
@@ -50,7 +54,7 @@ export const AssigneeApproval: Form = buildForm({
             }),
             buildTextField({
               id: 'assigneeApproval.nationalId',
-              title: newPrimarySchoolMessages.shared.nationalId,
+              title: sharedMessages.nationalId,
               width: 'full',
               format: '######-####',
               disabled: true,
@@ -61,7 +65,7 @@ export const AssigneeApproval: Form = buildForm({
             }),
             buildTextField({
               id: 'assigneeApproval.selectedSchool',
-              title: newPrimarySchoolMessages.overview.selectedSchool,
+              title: overviewMessages.selectedSchool,
               width: 'full',
               disabled: true,
               defaultValue: (application: Application) => {

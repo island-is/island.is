@@ -54,6 +54,8 @@ import {
   incomePlanFormMessage,
   statesMessages,
 } from './messages'
+import { ApiScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -66,6 +68,12 @@ const IncomePlanTemplate: ApplicationTemplate<
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces: ApplicationConfigurations.IncomePlan.translation,
   dataSchema,
+  requiredScopes: [ApiScope.socialInsuranceAdministration],
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
   allowMultipleApplicationsInDraft: false,
   newApplicationButtonLabel: historyMessages.newIncomePlanButtonLabel,
   applicationText: historyMessages.incomePlanPageTitle,

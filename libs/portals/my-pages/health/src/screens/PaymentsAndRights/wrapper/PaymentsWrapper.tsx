@@ -3,7 +3,6 @@ import { useLocale } from '@island.is/localization'
 import {
   downloadLink,
   IntroWrapper,
-  LinkButton,
   SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
 } from '@island.is/portals/my-pages/core'
@@ -11,6 +10,7 @@ import { useEffect, useState } from 'react'
 import { messages } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
 import { useGetInsuranceConfirmationLazyQuery } from '../Payments.generated'
+import { useHealthPlausibleSwap } from '../../../utils/useHealthPlausibleSwap'
 
 type Props = {
   children: React.ReactNode
@@ -19,6 +19,7 @@ type Props = {
 
 export const PaymentsWrapper = ({ children, pathname }: Props) => {
   const { formatMessage } = useLocale()
+  useHealthPlausibleSwap()
   const [displayConfirmationErrorAlert, setDisplayConfirmationErrorAlert] =
     useState(false)
 
@@ -49,6 +50,7 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
       intro={formatMessage(messages.paymentsIntro)}
       serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
       serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      childrenWidthFull
       buttonGroup={[
         <Button
           variant="utility"
@@ -73,7 +75,7 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
         </Box>
       )}
       <TabNavigation
-        label={formatMessage(messages.payments)}
+        label={formatMessage(messages.paymentsAndRights)}
         pathname={pathname}
         items={
           healthNavigation.children?.find(
@@ -84,15 +86,6 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
 
       <Box paddingY={4} background="white">
         {children}
-        <Box marginTop={4}>
-          <LinkButton
-            to={formatMessage(
-              messages.readAboutPaymentParticipationSystemsLink,
-            )}
-            text={formatMessage(messages.readAboutPaymentParticipationSystems)}
-            variant="text"
-          />
-        </Box>
       </Box>
     </IntroWrapper>
   )

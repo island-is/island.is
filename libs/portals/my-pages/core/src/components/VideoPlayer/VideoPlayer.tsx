@@ -182,6 +182,7 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
               className={styles.audioControl}
             >
               <ProgressBar
+                id="progress-bar-video"
                 progress={progress}
                 onClick={setTimeChange}
                 renderProgressBar={isReady}

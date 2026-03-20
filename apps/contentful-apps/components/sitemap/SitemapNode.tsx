@@ -38,10 +38,13 @@ import { EntryContext } from './entryContext'
 import { MoveNodesButton } from './MoveNodesButton'
 import { SitemapNodeContent } from './SitemapNodeContent'
 import {
+  areChildNodesDraggable,
   CATEGORY_DIALOG_MIN_HEIGHT,
+  type ChildNodeOrder,
   type EntryType,
   extractNodeContent,
   findEntryNodePaths,
+  getOrderedChildNodes,
   optionMap,
   Tree,
   TreeNode,
@@ -175,9 +178,7 @@ const PageTooltip = ({
       <Popover.Content>
         <div className={styles.tooltipContent}>
           <Text fontWeight="fontWeightDemiBold">
-            {type === 'showOnlyPrimaryLocation'
-              ? 'This entry points to:'
-              : `${nodePaths.length} other entries point to this entry:`}
+            This entry is duplicated in the sitemap:
           </Text>
           {nodePaths.map((nodePath) => {
             const path = nodePath.path.join(' / ')
@@ -213,6 +214,7 @@ interface SitemapNodeProps {
   status: 'draft' | 'published'
   mode: 'edit' | 'select'
   selectedNodesRef: React.RefObject<TreeNode[]>
+  isDraggable?: boolean
 }
 
 export const SitemapNode = ({
@@ -229,6 +231,7 @@ export const SitemapNode = ({
   status,
   mode,
   selectedNodesRef,
+  isDraggable = true,
 }: SitemapNodeProps) => {
   const sdk = useSDK<FieldExtensionSDK>()
 
@@ -263,6 +266,7 @@ export const SitemapNode = ({
   const { attributes, listeners, setNodeRef, transition, transform } =
     useSortable({
       id: node.id,
+      disabled: !isDraggable,
     })
 
   const style = {
@@ -271,8 +275,13 @@ export const SitemapNode = ({
   }
 
   const sensors = useSensors(useSensor(PointerSensor))
+  const orderedChildNodes = getOrderedChildNodes(node, language, entries)
+  const childRowsAreDraggable =
+    mode === 'edit' && status !== 'published' && areChildNodesDraggable(node)
 
   const handleDragEnd = (event: DragEndEvent) => {
+    if (!childRowsAreDraggable) return
+
     const { active, over } = event
 
     if (over && active.id !== over.id) {
@@ -304,7 +313,7 @@ export const SitemapNode = ({
   return (
     <div className={styles.mainContainer}>
       <div className={styles.nodeContainer} ref={setNodeRef} style={style}>
-        {status !== 'published' && (
+        {status !== 'published' && isDraggable && (
           <DragHandle {...listeners} {...attributes} label="Drag to reorder" />
         )}
         <div className={styles.nodeInnerContainer}>
@@ -375,6 +384,21 @@ export const SitemapNode = ({
                       node.type === TreeNodeType.ENTRY && node.primaryLocation
                     }
                     entryNodeId={node.id}
+                    currentChildNodeOrder={
+                      node.type === TreeNodeType.CATEGORY
+                        ? node.childNodeOrder ?? 'manual'
+                        : undefined
+                    }
+                    onSetChildNodeOrder={
+                      node.type === TreeNodeType.CATEGORY
+                        ? (order: ChildNodeOrder) => {
+                            updateNode(parentNode, {
+                              ...node,
+                              childNodeOrder: order,
+                            })
+                          }
+                        : undefined
+                    }
                     onPublish={
                       (node.type === TreeNodeType.CATEGORY ||
                         node.type === TreeNodeType.URL) &&
@@ -513,7 +537,7 @@ export const SitemapNode = ({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={node.childNodes}
+            items={orderedChildNodes}
             strategy={verticalListSortingStrategy}
           >
             <div
@@ -522,7 +546,7 @@ export const SitemapNode = ({
                 paddingLeft: `${(indent + 1) * 16}px`,
               }}
             >
-              {node.childNodes.map((child) => (
+              {orderedChildNodes.map((child) => (
                 <SitemapNode
                   addNode={addNode}
                   parentNode={node}
@@ -540,6 +564,7 @@ export const SitemapNode = ({
                   mode={mode}
                   selectedNodesRef={selectedNodesRef}
                   moveNodesToBottom={moveNodesToBottom}
+                  isDraggable={childRowsAreDraggable}
                 />
               ))}
               {status !== 'published' && mode === 'edit' && (

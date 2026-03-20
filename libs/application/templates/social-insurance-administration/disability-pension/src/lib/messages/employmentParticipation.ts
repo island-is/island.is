@@ -1,11 +1,6 @@
 import { defineMessages } from 'react-intl'
 
 export const employmentParticipation = defineMessages({
-  title: {
-    id: 'dp.application:employmentParticipation.title',
-    defaultMessage: 'Atvinnuþátttaka',
-    description: 'Employment participation',
-  },
   inPaidWorkTitle: {
     id: 'dp.application:employmentParticipation.inPaidWorkTitle',
     defaultMessage: 'Ertu í launuðu starfi?',
@@ -20,11 +15,6 @@ export const employmentParticipation = defineMessages({
     id: 'dp.application:employmentParticipation.no',
     defaultMessage: 'Nei',
     description: 'No',
-  },
-  dontKnow: {
-    id: 'dp.application:employmentParticipation.dontKnow',
-    defaultMessage: 'Veit ekki',
-    description: "Don't know",
   },
   continuedWorkTitle: {
     id: 'dp.application:employmentParticipation.continuedWorkTitle',

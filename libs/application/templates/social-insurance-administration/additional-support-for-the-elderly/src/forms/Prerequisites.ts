@@ -10,9 +10,9 @@ import {
 import {
   Form,
   FormModes,
-  NationalRegistryUserApi,
   DefaultEvents,
   UserProfileApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
@@ -58,7 +58,7 @@ export const PrerequisitesForm: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title:
                 socialInsuranceAdministrationMessage.pre.skraInformationTitle,
               subTitle:

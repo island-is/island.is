@@ -1,9 +1,4 @@
-import {
-  CreateOptions,
-  FindOptions,
-  Transaction,
-  UpdateOptions,
-} from 'sequelize'
+import { FindOptions, Transaction, UpdateOptions } from 'sequelize'
 
 import {
   Inject,
@@ -39,16 +34,15 @@ interface FindAllOptions {
 }
 
 interface CreateSubpoenaOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface UpdateSubpoenaOptions {
-  transaction?: Transaction
+  transaction: Transaction
   throwOnZeroRows?: boolean
 }
 
 interface UpdateSubpoena {
-  caseId?: string
   hash?: string
   hashAlgorithm?: HashAlgorithm
   serviceStatus?: ServiceStatus
@@ -170,20 +164,14 @@ export class SubpoenaRepositoryService {
 
   async create(
     data: Partial<Subpoena>,
-    options?: CreateSubpoenaOptions,
+    options: CreateSubpoenaOptions,
   ): Promise<Subpoena> {
     try {
       this.logger.debug('Creating a new subpoena with data:', {
         data: Object.keys(data),
       })
 
-      const createOptions: CreateOptions = {}
-
-      if (options?.transaction) {
-        createOptions.transaction = options.transaction
-      }
-
-      const result = await this.subpoenaModel.create(data, createOptions)
+      const result = await this.subpoenaModel.create(data, options)
 
       this.logger.debug(`Created a new subpoena ${result.id}`)
 
@@ -203,7 +191,7 @@ export class SubpoenaRepositoryService {
     defendantId: string,
     subpoenaId: string,
     data: UpdateSubpoena,
-    options?: UpdateSubpoenaOptions,
+    options: UpdateSubpoenaOptions,
   ): Promise<Subpoena> {
     const throwOnZeroRows = options?.throwOnZeroRows ?? true
 
@@ -215,10 +203,7 @@ export class SubpoenaRepositoryService {
 
       const updateOptions: UpdateOptions = {
         where: { id: subpoenaId, caseId, defendantId },
-      }
-
-      if (options?.transaction) {
-        updateOptions.transaction = options.transaction
+        transaction: options.transaction,
       }
 
       const [numberOfAffectedRows, updatedSubpoenas] =
@@ -257,42 +242,6 @@ export class SubpoenaRepositoryService {
         `Error updating subpoena ${subpoenaId} of defendant ${defendantId} and case ${caseId} with data:`,
         { data: Object.keys(data), error },
       )
-
-      throw error
-    }
-  }
-
-  async updateMany(
-    where: FindOptions['where'],
-    data: UpdateSubpoena,
-    options?: UpdateSubpoenaOptions,
-  ): Promise<number> {
-    try {
-      this.logger.debug('Updating multiple subpoenas with data:', {
-        where: Object.keys(where ?? {}),
-        data: Object.keys(data),
-      })
-
-      const updateOptions: UpdateOptions = { where: where ?? {} }
-
-      if (options?.transaction) {
-        updateOptions.transaction = options.transaction
-      }
-
-      const [numberOfAffectedRows] = await this.subpoenaModel.update(
-        data,
-        updateOptions,
-      )
-
-      this.logger.debug(`Updated ${numberOfAffectedRows} subpoena(s)`)
-
-      return numberOfAffectedRows
-    } catch (error) {
-      this.logger.error('Error updating multiple subpoenas with data:', {
-        where: Object.keys(where ?? {}),
-        data: Object.keys(data),
-        error,
-      })
 
       throw error
     }

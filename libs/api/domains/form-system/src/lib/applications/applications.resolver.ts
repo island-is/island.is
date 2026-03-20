@@ -8,17 +8,20 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { ApplicationsService } from './applications.service'
-import { ApplicationResponse } from '../../models/applications.model'
+import {
+  ApplicationResponse,
+  SubmitApplicationResponse,
+} from '../../models/applications.model'
 import {
   ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
   GetApplicationsInput,
   SubmitScreenInput,
-  SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
-import { Screen } from '../../models/screen.model'
+import { NotificationResponse } from '../../models/screen.model'
+import { NotificationInput } from '../../dto/notification.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -35,17 +38,6 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponse> {
     return this.applicationsService.getApplication(user, input)
-  }
-
-  @Query(() => ApplicationResponse, {
-    name: 'formSystemApplications',
-  })
-  async getApplications(
-    @Args('input', { type: () => ApplicationsInput })
-    input: ApplicationsInput,
-    @CurrentUser() user: User,
-  ): Promise<ApplicationResponse> {
-    return this.applicationsService.getApplications(user, input)
   }
 
   @Query(() => ApplicationResponse, {
@@ -71,18 +63,18 @@ export class ApplicationsResolver {
   }
 
   @Mutation(() => Boolean, {
-    name: 'updateFormSystemApplicationDependencies',
+    name: 'updateFormSystemApplicationSettings',
     nullable: true,
   })
-  async updateApplicationDependencies(
+  async updateApplicationSettings(
     @Args('input', { type: () => UpdateApplicationInput })
     input: UpdateApplicationInput,
     @CurrentUser() user: User,
   ): Promise<void> {
-    return this.applicationsService.updateDependencies(user, input)
+    return this.applicationsService.updateSettings(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => SubmitApplicationResponse, {
     name: 'submitFormSystemApplication',
     nullable: true,
   })
@@ -90,7 +82,7 @@ export class ApplicationsResolver {
     @Args('input', { type: () => GetApplicationInput })
     input: GetApplicationInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
+  ): Promise<SubmitApplicationResponse> {
     return this.applicationsService.submitApplication(user, input)
   }
 
@@ -105,27 +97,28 @@ export class ApplicationsResolver {
     return this.applicationsService.updateApplication(user, input)
   }
 
-  @Mutation(() => Screen, {
+  @Mutation(() => Boolean, {
     name: 'saveFormSystemScreen',
+    nullable: true,
   })
   async saveScreen(
     @Args('input', { type: () => SubmitScreenInput })
     input: SubmitScreenInput,
     @CurrentUser() user: User,
-  ): Promise<Screen> {
+  ): Promise<void> {
     return this.applicationsService.saveScreen(user, input)
   }
 
-  @Mutation(() => Boolean, {
-    name: 'submitFormSystemSection',
+  @Mutation(() => NotificationResponse, {
+    name: 'notifyFormSystemExternalSystem',
     nullable: true,
   })
-  async submitSection(
-    @Args('input', { type: () => SubmitSectionInput })
-    input: SubmitSectionInput,
+  async notifyExternalSystem(
+    @Args('input', { type: () => NotificationInput })
+    input: NotificationInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.applicationsService.submitSection(user, input)
+  ): Promise<NotificationResponse> {
+    return this.applicationsService.notifyExternalSystem(user, input)
   }
 
   @Mutation(() => Boolean, {

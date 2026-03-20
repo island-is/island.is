@@ -104,6 +104,7 @@ export const Item = ({
     updateValueObj,
     defaultValue,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
     ...props
   } = item
@@ -375,7 +376,7 @@ export const Item = ({
         : item.title
     const messageVal =
       typeof item.message === 'function'
-        ? item.message(application, activeValues)
+        ? item.message(application, activeValues, index, lang)
         : item.message
 
     alertMessageProps = {
@@ -450,7 +451,7 @@ export const Item = ({
 
   if (
     typeof condition === 'function'
-      ? condition && !condition(application, activeValues, index)
+      ? condition && !condition(application, activeValues, index, lang)
       : condition
   ) {
     return null
@@ -546,6 +547,7 @@ export const Item = ({
             large={true}
             placeholder={formatText(placeholder, application, formatMessage)}
             clearOnChange={clearOnChangeVal}
+            clearOnChangeDefaultValue={clearOnChangeDefaultValue}
             setOnChange={setOnChangeFunc}
             {...props}
             {...(component === 'date'

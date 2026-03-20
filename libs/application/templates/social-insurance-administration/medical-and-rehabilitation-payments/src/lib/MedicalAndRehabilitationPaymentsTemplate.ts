@@ -31,8 +31,8 @@ import {
   defineTemplateApi,
   FormModes,
   InstitutionNationalIds,
-  NationalRegistrySpouseApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3SpouseApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -121,8 +121,8 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               api: [
-                NationalRegistryUserApi,
-                NationalRegistrySpouseApi,
+                NationalRegistryV3UserApi,
+                NationalRegistryV3SpouseApi,
                 UserProfileApi.configure({
                   params: {
                     validateEmail: true,

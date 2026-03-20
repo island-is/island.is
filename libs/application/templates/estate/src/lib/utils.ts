@@ -162,10 +162,20 @@ export const valueToNumber = (value: unknown, delimiter = '.'): number => {
   }
 
   if (typeof value === 'string' && value.length > 0) {
-    const regex = new RegExp(`[^${delimiter}\\d]+`, 'g')
+    // Remove all characters except digits, delimiter, and minus sign
+    const regex = new RegExp(`[^${delimiter}\\d-]+`, 'g')
     const regex2 = new RegExp(`(?<=\\${delimiter}.*)\\${delimiter}`, 'g')
 
-    const parsed = value.replace(regex, '').replace(regex2, '')
+    // Remove non-numeric characters (preserving minus signs)
+    let parsed = value.replace(regex, '').replace(regex2, '')
+
+    // Only preserve minus if it's at the start of the cleaned string
+    const hasLeadingMinus = parsed.startsWith('-')
+    parsed = parsed.replace(/-/g, '')
+    if (hasLeadingMinus && parsed.length > 0) {
+      parsed = '-' + parsed
+    }
+
     return parseFloat(parsed.replace(delimiter, '.'))
   }
 

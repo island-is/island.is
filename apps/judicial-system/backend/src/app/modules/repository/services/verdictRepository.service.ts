@@ -1,9 +1,4 @@
-import {
-  CreateOptions,
-  FindOptions,
-  Transaction,
-  UpdateOptions,
-} from 'sequelize'
+import { FindOptions, Transaction, UpdateOptions } from 'sequelize'
 
 import {
   Inject,
@@ -32,19 +27,18 @@ interface FindOneOptions {
 }
 
 interface CreateVerdictOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface UpdateVerdictOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface DeleteVerdictOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 interface UpdateVerdict {
-  caseId?: string
   externalPoliceDocumentId?: string
   serviceStatus?: VerdictServiceStatus
   serviceRequirement?: ServiceRequirement
@@ -54,6 +48,8 @@ interface UpdateVerdict {
   appealDate?: Date
   serviceInformationForDefendant?: InformationForDefendant[]
   isDefaultJudgement?: boolean
+  isAcquittedByPublicProsecutionOffice?: boolean
+  defendantHasRequestedAppeal?: boolean
   hash?: string
   hashAlgorithm?: HashAlgorithm
   serviceDate?: Date | null
@@ -111,20 +107,14 @@ export class VerdictRepositoryService {
 
   async create(
     data: Partial<Verdict>,
-    options?: CreateVerdictOptions,
+    options: CreateVerdictOptions,
   ): Promise<Verdict> {
     try {
       this.logger.debug('Creating a new verdict with data:', {
         data: Object.keys(data),
       })
 
-      const createOptions: CreateOptions = {}
-
-      if (options?.transaction) {
-        createOptions.transaction = options.transaction
-      }
-
-      const result = await this.verdictModel.create(data, createOptions)
+      const result = await this.verdictModel.create(data, options)
 
       this.logger.debug(`Created a new verdict ${result.id}`)
 
@@ -144,7 +134,7 @@ export class VerdictRepositoryService {
     defendantId: string,
     verdictId: string,
     data: UpdateVerdict,
-    options?: UpdateVerdictOptions,
+    options: UpdateVerdictOptions,
   ): Promise<Verdict> {
     try {
       this.logger.debug(
@@ -154,10 +144,7 @@ export class VerdictRepositoryService {
 
       const updateOptions: UpdateOptions = {
         where: { id: verdictId, caseId, defendantId },
-      }
-
-      if (options?.transaction) {
-        updateOptions.transaction = options.transaction
+        transaction: options.transaction,
       }
 
       const [numberOfAffectedRows, updatedVerdicts] =
@@ -199,24 +186,17 @@ export class VerdictRepositoryService {
     caseId: string,
     defendantId: string,
     verdictId: string,
-    options?: DeleteVerdictOptions,
+    options: DeleteVerdictOptions,
   ): Promise<void> {
     try {
       this.logger.debug(
         `Deleting verdict ${verdictId} of defendant ${defendantId} and case ${caseId}`,
       )
 
-      const updateOptions: UpdateOptions = {
+      const numberOfAffectedRows = await this.verdictModel.destroy({
         where: { id: verdictId, defendantId, caseId },
-      }
-
-      if (options?.transaction) {
-        updateOptions.transaction = options.transaction
-      }
-
-      const numberOfAffectedRows = await this.verdictModel.destroy(
-        updateOptions,
-      )
+        transaction: options.transaction,
+      })
 
       if (numberOfAffectedRows < 1) {
         throw new InternalServerErrorException(

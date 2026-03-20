@@ -56,6 +56,8 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
   const handleUpload = useCallback(
     async (file: UploadFile, id: string) => {
       try {
+        // const sanitizedFilename = file.name.replace(/_/g, '-')
+
         const { data } = await createUploadUrl({
           variables: { filename: file.name },
         })

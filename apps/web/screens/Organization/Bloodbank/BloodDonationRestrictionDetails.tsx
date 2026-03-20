@@ -19,6 +19,7 @@ import {
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
@@ -42,6 +43,7 @@ const BloodDonationRestrictionDetails: CustomScreen<
   BloodDonationRestrictionDetailsProps
 > = ({ item, organizationPage, namespace }) => {
   const { formatMessage } = useIntl()
+  const { format } = useDateUtils()
   const router = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -119,6 +121,12 @@ const BloodDonationRestrictionDetails: CustomScreen<
               {item.keywordsText}
             </Text>
           )}
+          {item.effectiveDate && (
+            <Text variant="small">
+              {formatMessage(m.listPage.effectiveDatePrefix)}
+              {format(new Date(item.effectiveDate), 'd. MMMM yyyy')}
+            </Text>
+          )}
         </Stack>
       </Box>
     </OrganizationWrapper>
@@ -140,6 +148,7 @@ BloodDonationRestrictionDetails.getProps = async ({
 
   const organizationPageSlug =
     locale === 'is' ? 'blodbankinn' : 'icelandic-blood-bank'
+  const subpageSlug = locale === 'is' ? 'ahrif-a-blodgjof' : 'affecting-factors'
 
   const [
     bloodDonationRestrictionDetailsResponse,
@@ -161,9 +170,7 @@ BloodDonationRestrictionDetails.getProps = async ({
         input: {
           slug: organizationPageSlug,
           lang: locale,
-          subpageSlugs: [
-            locale === 'is' ? 'ahrif-a-blodgjof' : 'affecting-factors',
-          ],
+          subpageSlugs: [subpageSlug],
         },
       },
     }),
@@ -201,11 +208,19 @@ BloodDonationRestrictionDetails.getProps = async ({
     )
   }
 
+  const id =
+    bloodDonationRestrictionDetailsResponse.data
+      .getBloodDonationRestrictionDetails.id
+
   return {
     item: bloodDonationRestrictionDetailsResponse.data
       .getBloodDonationRestrictionDetails,
     namespace,
     organizationPage: organizationPageResponse.data.getOrganizationPage,
+    languageToggleHrefOverride: {
+      is: `/s/blodbankinn/ahrif-a-blodgjof/${id}`,
+      en: `/en/o/icelandic-blood-bank/affecting-factors/${id}`,
+    },
   }
 }
 

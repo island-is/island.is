@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 
 import { Box, toast } from '@island.is/island-ui/core'
 import {
@@ -11,6 +11,7 @@ import {
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { CourtCaseNumberInput } from '../../Court/components'
 
@@ -95,17 +96,19 @@ export const useCancelCase = (onComplete: (caseId: string) => void) => {
     setCaseToCancel([undefined, false, undefined])
   }
 
-  const setWorkingCase: Dispatch<SetStateAction<Case>> = (action) =>
-    setCaseToCancel(([cancelCaseId, isCancelCaseLoading, theCase]) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const newCase = typeof action === 'function' ? action(theCase!) : action // We know the case is set at this point
-
-      return [cancelCaseId, isCancelCaseLoading, newCase]
+  const setCourtCaseNumber = (courtCaseNumber: string) =>
+    setCaseToCancel(([cancelCaseId, isCancelCaseLoading, prevCase]) => {
+      return [
+        cancelCaseId,
+        isCancelCaseLoading,
+        // Should have a case, but guarding anyway
+        prevCase && { ...prevCase, courtCaseNumber },
+      ]
     })
 
   const [cancelCaseId, isCancelCaseLoading, theCase] = caseToCancel
 
-  const CancelCaseModal = theCase && (
+  const CancelCaseModal = cancelCaseId && theCase && (
     <Modal
       title="Mál afturkallað"
       text="Ákæruvaldið hefur afturkallað ákæruna. Hægt er að skrá málsnúmer og ljúka málinu hér."
@@ -113,6 +116,11 @@ export const useCancelCase = (onComplete: (caseId: string) => void) => {
         text: 'Ljúka máli',
         onClick: handlePrimaryButtonClick,
         isLoading: isUpdatingCase || isTransitioningCase,
+        isDisabled:
+          !validate([[theCase.courtCaseNumber, ['empty', 'S-case-number']]])
+            .isValid ||
+          isUpdatingCase ||
+          isTransitioningCase,
       }}
       secondaryButton={{
         text: 'Hætta við',
@@ -121,8 +129,11 @@ export const useCancelCase = (onComplete: (caseId: string) => void) => {
     >
       <Box marginBottom={8}>
         <CourtCaseNumberInput
-          workingCase={theCase}
-          setWorkingCase={setWorkingCase}
+          caseId={cancelCaseId}
+          isIndictmentCase={true}
+          courtCaseNumber={theCase.courtCaseNumber}
+          isDisabled={isUpdatingCase || isTransitioningCase}
+          setCourtCaseNumber={setCourtCaseNumber}
         />
       </Box>
     </Modal>

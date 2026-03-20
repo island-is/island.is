@@ -4,6 +4,7 @@ import {
   FormSystemSection,
   Maybe,
 } from '@island.is/api/schema'
+import { SectionTypes } from '@island.is/form-system/enums'
 import { ApplicationState, FieldTypesEnum } from '@island.is/form-system/ui'
 
 const normalizeDependencies = (
@@ -147,6 +148,9 @@ const applyVisibilityToSections = (
   dependencies: Dependency[],
 ): FormSystemSection[] => {
   return sections.map((section) => {
+    if (section.sectionType === SectionTypes.PARTIES) {
+      return section
+    }
     const sectionHidden = isHiddenByDependencies(section.id, dependencies)
 
     const screens = section.screens?.map((screen) => {
@@ -241,6 +245,7 @@ export const setFieldValue = (
   fieldId: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
+  valueIndex?: number,
 ): ApplicationState => {
   const { currentScreen } = state
   if (!currentScreen || !currentScreen.data) {
@@ -248,11 +253,10 @@ export const setFieldValue = (
   }
 
   const screen = currentScreen.data
-
   // 1. Update the field's value on the current screen
   const updatedFields = screen.fields?.map((field) => {
     if (field?.id === fieldId) {
-      let newValue = field?.values?.[0] ?? {}
+      let newValue = field?.values?.[valueIndex ?? 0] ?? {}
       newValue = {
         ...newValue,
         json: {
@@ -260,9 +264,12 @@ export const setFieldValue = (
           [fieldProperty]: value,
         },
       }
+      const idx = valueIndex ?? 0
+      const nextValues = [...(field.values ?? [])]
+      nextValues[idx] = newValue
       return {
         ...field,
-        values: [newValue],
+        values: nextValues,
       }
     }
     return field
@@ -394,6 +401,7 @@ export const setFieldValue = (
     updatedSectionsBeforeDeps,
     depsArray,
   )
+
   const updatedState = {
     ...state,
     application: {

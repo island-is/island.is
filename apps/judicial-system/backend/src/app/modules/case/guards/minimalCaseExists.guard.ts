@@ -1,4 +1,4 @@
-import { isUuid } from 'uuidv4'
+import { validate as isUuid } from 'uuid'
 
 import {
   BadRequestException,

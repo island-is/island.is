@@ -2,7 +2,7 @@ import { useContext, useMemo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import equal from 'fast-deep-equal'
 import { AnimatePresence, motion } from 'motion/react'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { Box, Button } from '@island.is/island-ui/core'
 import {
@@ -420,27 +420,24 @@ export const PoliceCaseList = () => {
       ) {
         subtypes = policeCaseInfo.subtypes
       }
-
-      if (place || date) {
-        updates.push({
-          index: idx,
-          update: {
-            crimeScene: {
-              place: place ?? policeCase.place,
-              date: date ?? policeCase.date,
-            },
-          },
-        })
+      if (!place && !date && !subtypes) {
+        continue
       }
 
-      if (subtypes) {
-        updates.push({
-          index: idx,
-          update: {
-            subtypes,
-          },
-        })
-      }
+      updates.push({
+        index: idx,
+        update: {
+          ...(place || date
+            ? {
+                crimeScene: {
+                  place: place ?? policeCase.place,
+                  date: date ?? policeCase.date,
+                },
+              }
+            : {}),
+          ...(subtypes ? { subtypes } : {}),
+        },
+      })
     }
 
     if (updates.length === 0) {

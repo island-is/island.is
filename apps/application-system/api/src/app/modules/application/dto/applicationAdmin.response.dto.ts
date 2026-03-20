@@ -56,6 +56,11 @@ export class ApplicationListAdminResponseDto extends BaseApplicationResponseDto 
   @Type(() => ApplicationAdminData)
   adminData?: ApplicationAdminData[]
 
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  institutionContentfulSlug?: string
+
   constructor(partial: Partial<ApplicationListAdminResponseDto>) {
     super(partial)
     Object.assign(this, partial)
@@ -114,6 +119,14 @@ export class ApplicationStatistics {
   @Expose()
   @IsString()
   name?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  institutionName?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  institutionContentfulSlug?: string
 }
 
 export class ApplicationTypeAdmin {
@@ -126,4 +139,16 @@ export class ApplicationTypeAdmin {
   @Expose()
   @IsString()
   name?: string
+}
+
+export class ApplicationInstitution {
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  nationalId!: string
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  contentfulSlug!: string
 }

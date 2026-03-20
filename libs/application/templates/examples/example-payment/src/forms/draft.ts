@@ -87,7 +87,7 @@ export const draft: Form = buildForm({
                 return [
                   {
                     chargeItemCode: userSelectedChargeItemCode || '',
-                    chargeItemQuantity: 2,
+                    chargeItemQuantity: 1,
                   },
                 ]
               },

@@ -7,6 +7,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 
 import { ChatBubble } from '../ChatBubble'
+import type { ZendeskChatPanelProps } from '../types'
 import type { ZendeskMessengerAPI } from './types'
 
 /* Documentation: https://developer.zendesk.com/api-reference/widget-messaging/web/core/ */
@@ -19,14 +20,11 @@ declare global {
   }
 }
 
-export interface ZendeskChatPanelProps {
-  snippetUrl: string
-  pushUp?: boolean
-}
-
 export const ZendeskChatPanel = ({
   snippetUrl,
   pushUp = false,
+  chatBubbleVariant = 'circle',
+  urlTrackingTicketId,
 }: ZendeskChatPanelProps) => {
   const [isLoading, setIsLoading] = useState(false)
   const [isChatOpen, setIsChatOpen] = useState(false)
@@ -36,11 +34,21 @@ export const ZendeskChatPanel = ({
     const setup = () => {
       setIsChatOpen(true)
       setIsLoading(false)
+
       window.zE?.(
         'messenger:set',
         'locale',
-        activeLocale === 'en' ? 'en-US' : activeLocale,
+        activeLocale === 'en'
+          ? 'en-US'
+          : activeLocale === 'is'
+          ? 'is-IS'
+          : activeLocale,
       )
+      if (urlTrackingTicketId)
+        window.zE?.('messenger:set', 'conversationFields', [
+          { id: urlTrackingTicketId, value: window.location.href },
+        ])
+
       window.zE?.('messenger', 'show')
       window.zE?.('messenger', 'open')
       window.zE?.('messenger:on', 'close', () => {
@@ -50,21 +58,20 @@ export const ZendeskChatPanel = ({
     }
 
     const existingScript = document.getElementById(SCRIPT_ID)
+    if (existingScript) existingScript.remove()
 
-    if (!existingScript) {
-      setIsLoading(true)
-      const script = document.createElement('script')
-      script.id = SCRIPT_ID
-      script.src = snippetUrl
-      script.async = true
-      document.body.appendChild(script)
-      script.onload = setup
-      script.onerror = (error) => {
-        console.error(error)
-        setIsLoading(false)
-      }
-    } else setup()
-  }, [activeLocale, snippetUrl])
+    setIsLoading(true)
+    const script = document.createElement('script')
+    script.id = SCRIPT_ID
+    script.src = snippetUrl
+    script.async = true
+    document.body.appendChild(script)
+    script.onload = setup
+    script.onerror = (error) => {
+      console.error(error)
+      setIsLoading(false)
+    }
+  }, [activeLocale, snippetUrl, urlTrackingTicketId])
 
   useEffect(
     () => () => {
@@ -94,7 +101,7 @@ export const ZendeskChatPanel = ({
     <ChatBubble
       onClick={loadScript}
       text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
-      variant="circle"
+      variant={chatBubbleVariant}
       pushUp={pushUp}
       loading={isLoading}
       isVisible={!isChatOpen}

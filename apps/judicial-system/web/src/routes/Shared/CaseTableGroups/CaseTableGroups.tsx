@@ -15,6 +15,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import CasesCard from '@island.is/judicial-system-web/src/components/Cards/CasesCard'
 import CasesDashboardLayout from '@island.is/judicial-system-web/src/components/Layouts/CasesDashboardLayout'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { CreateCaseButton } from '../CreateCaseButton/CreateCaseButton'
 import * as styles from './CaseTableGroups.css'
@@ -38,10 +39,8 @@ const CaseTableGroups: FC = () => {
           />
         </div>
       ) : (
-        <>
-          <div className={styles.logoContainer}>
-            <Logo />
-          </div>
+        <div className={grid({ gap: 6 })}>
+          <Logo />
           {groups.map((group, idx) => (
             <CasesDashboardLayout title={group.title} key={idx}>
               {group.tables.map((t, idx) => (
@@ -65,7 +64,7 @@ const CaseTableGroups: FC = () => {
               <CreateCaseButton />
             </div>
           ) : null}
-        </>
+        </div>
       )}
     </CasesLayout>
   )

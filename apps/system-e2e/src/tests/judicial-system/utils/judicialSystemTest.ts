@@ -4,6 +4,8 @@ import {
   JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL,
   JUDICIAL_SYSTEM_DEFENDER_HOME_URL,
   JUDICIAL_SYSTEM_JUDGE_HOME_URL,
+  JUDICIAL_SYSTEM_PUBLIC_PROSECUTOR_HOME_URL,
+  JUDICIAL_SYSTEM_PUBLIC_PROSECUTOR_OFFICE_HOME_URL,
 } from '../../../support/urls'
 
 import { judicialSystemSession } from '../../../support/session'
@@ -13,6 +15,8 @@ export const test = base.extend<{
   judgePage: Page
   coaPage: Page
   defenderPage: Page
+  publicProsecutorOfficePage: Page
+  publicProsecutorPage: Page
 }>({
   prosecutorPage: async ({ browser }, use) => {
     const prosecutorContext = await judicialSystemSession({
@@ -52,5 +56,26 @@ export const test = base.extend<{
     await use(defenderPage)
     await defenderPage.close()
     await defenderContext.close()
+  },
+  publicProsecutorOfficePage: async ({ browser }, use) => {
+    const publicProsecutorOfficeContext = await judicialSystemSession({
+      browser,
+      homeUrl: JUDICIAL_SYSTEM_PUBLIC_PROSECUTOR_OFFICE_HOME_URL,
+    })
+    const publicProsecutorOfficePage =
+      await publicProsecutorOfficeContext.newPage()
+    await use(publicProsecutorOfficePage)
+    await publicProsecutorOfficePage.close()
+    await publicProsecutorOfficeContext.close()
+  },
+  publicProsecutorPage: async ({ browser }, use) => {
+    const publicProsecutorContext = await judicialSystemSession({
+      browser,
+      homeUrl: JUDICIAL_SYSTEM_PUBLIC_PROSECUTOR_HOME_URL,
+    })
+    const publicProsecutorPage = await publicProsecutorContext.newPage()
+    await use(publicProsecutorPage)
+    await publicProsecutorPage.close()
+    await publicProsecutorContext.close()
   },
 })

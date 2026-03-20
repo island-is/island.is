@@ -13,8 +13,7 @@ import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
 import {
-  getBaseUrlForm,
-  getLogo,
+  getLogoFromContentfulSlug,
   getSlugFromType,
   statusMapper,
 } from '../../shared/utils'
@@ -25,6 +24,10 @@ import copyToClipboard from 'copy-to-clipboard'
 import * as styles from './ApplicationsTable.css'
 import { MouseEvent } from 'react'
 import { ApplicationTypes } from '@island.is/application/types'
+import {
+  getApplicationsBaseUrl,
+  getFormSystemApplicationBaseUrl,
+} from '@island.is/portals/core'
 
 interface Props {
   applications: AdminApplication[]
@@ -35,6 +38,7 @@ interface Props {
   shouldShowCardButtons?: boolean
   numberOfItems?: number // Set this if using paginated data from api
   showAdminData?: boolean
+  isSuperAdmin: boolean
 }
 
 export const ApplicationsTable = ({
@@ -46,6 +50,7 @@ export const ApplicationsTable = ({
   shouldShowCardButtons = true,
   numberOfItems,
   showAdminData,
+  isSuperAdmin,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -58,10 +63,19 @@ export const ApplicationsTable = ({
   }
 
   const copyApplicationLink = (application: AdminApplication) => {
-    const typeId = application.typeId as unknown as ApplicationTypes
-    const baseUrl = getBaseUrlForm()
-    const slug = getSlugFromType(typeId)
-    const copied = copyToClipboard(`${baseUrl}/${slug}/${application.id}`)
+    let copied: boolean | undefined
+    if (application.isFormSystem) {
+      const formSlug = application.formSlug
+      const applicationId = application.id
+      const baseUrl = getFormSystemApplicationBaseUrl()
+      copied = copyToClipboard(`${baseUrl}/${formSlug}/${applicationId}`)
+    } else {
+      const typeId = application.typeId as unknown as ApplicationTypes
+      const applicationId = application.id
+      const baseUrl = getApplicationsBaseUrl()
+      const slug = getSlugFromType(typeId)
+      copied = copyToClipboard(`${baseUrl}/${slug}/${applicationId}`)
+    }
 
     if (copied) {
       toast.success(formatMessage(m.copyLinkSuccessful))
@@ -101,8 +115,13 @@ export const ApplicationsTable = ({
                   {formatMessage(x.label) ?? ''}
                 </T.HeadData>
               ))}
-            <T.HeadData>{formatMessage(m.dateModified)}</T.HeadData>
-            {!showAdminData && (
+            <T.HeadData>
+              <Box display="flex" alignItems="center">
+                {formatMessage(m.dateModified)}
+                <Icon icon="chevronDown" ariaHidden />
+              </Box>
+            </T.HeadData>
+            {isSuperAdmin && !showAdminData && (
               <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
             )}
             <T.HeadData>{formatMessage(m.status)}</T.HeadData>
@@ -114,7 +133,10 @@ export const ApplicationsTable = ({
             .slice(pagedDocuments.from, pagedDocuments.to)
             .map((application, index) => {
               const tag = statusMapper[application.status]
-              const logo = getLogo(application.typeId, organizations)
+              const logo = getLogoFromContentfulSlug(
+                organizations,
+                application.institutionContentfulSlug,
+              )
               const cellText = application.pruned ? 'dark300' : 'currentColor'
 
               return (
@@ -160,10 +182,10 @@ export const ApplicationsTable = ({
                       <T.Data text={{ color: cellText }}>
                         {format(new Date(application.modified), 'dd.MM.yyyy')}
                       </T.Data>
-                      {!showAdminData && (
+                      {isSuperAdmin && !showAdminData && (
                         <T.Data>
                           <Box display="flex" alignItems="center">
-                            <Tooltip text={application.institution}>
+                            <Tooltip text={application.institution ?? ''}>
                               <img src={logo} alt="" className={styles.logo} />
                             </Tooltip>
                           </Box>

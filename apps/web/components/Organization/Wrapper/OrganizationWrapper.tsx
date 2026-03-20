@@ -10,6 +10,7 @@ import { IntlConfig, IntlProvider } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 
 import {
   Box,
@@ -31,31 +32,32 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useMatomoTrackOrganization } from '@island.is/matomo'
 import { shouldLinkBeAnAnchorTag } from '@island.is/shared/utils'
 import {
-  BoostChatPanel,
-  boostChatPanelEndpoints,
   DefaultHeaderProps,
   Footer as WebFooter,
   HeadWithSocialSharing,
-  LiveChatIncChatPanel,
   OrganizationSearchInput,
   SearchBox,
   SidebarShipSearchInput,
   Sticky,
+  WatsonChatPanel,
+  WebChat,
   Webreader,
-  ZendeskChatPanel,
 } from '@island.is/web/components'
-import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
+import { DefaultHeader } from '@island.is/web/components'
 import {
   SLICE_SPACING,
   STICKY_NAV_MAX_WIDTH_LG,
 } from '@island.is/web/constants'
 import { GlobalContext } from '@island.is/web/context'
 import {
+  GetWebChatQuery,
   Image,
   Organization,
   OrganizationPage,
+  QueryGetWebChatArgs,
 } from '@island.is/web/graphql/schema'
 import {
   useLinkResolver,
@@ -65,16 +67,13 @@ import {
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { GET_WEB_CHAT } from '@island.is/web/screens/queries/WebChat'
 import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
-import { DigitalIcelandFooter } from './Themes/DigitalIcelandTheme/DigitalIcelandFooter'
 import { FiskistofaDefaultHeader } from './Themes/FiskistofaTheme'
-import { FiskistofaFooter } from './Themes/FiskistofaTheme'
 import { GevFooter } from './Themes/GevTheme'
 import { HeilbrigdisstofnunAusturlandsFooter } from './Themes/HeilbrigdisstofnunAusturlandsTheme'
-import { HeilbrigdisstofnunNordurlandsFooter } from './Themes/HeilbrigdisstofnunNordurlandsTheme'
-import { HeilbrigdisstofnunSudurlandsFooter } from './Themes/HeilbrigdisstofnunSudurlandsTheme'
 import { HljodbokasafnIslandsHeader } from './Themes/HljodbokasafnIslandsTheme'
 import { HveFooter } from './Themes/HveTheme'
 import { IcelandicNaturalDisasterInsuranceFooter } from './Themes/IcelandicNaturalDisasterInsuranceTheme'
@@ -96,7 +95,7 @@ import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
-import { liveChatIncConfig, watsonConfig, zendeskConfig } from './config'
+import { watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -511,15 +510,6 @@ export const OrganizationExternalLinks: React.FC<
               isSjukratryggingar &&
               (link.text.includes('Gagna') || link.text.includes('Data'))
 
-            let variant = undefined
-            if (
-              isSjukratryggingar &&
-              organizationPage.externalLinks &&
-              organizationPage.externalLinks.length === 2
-            ) {
-              variant = index === 0 ? 'primary' : 'ghost'
-            }
-
             return (
               <Link
                 href={link.url}
@@ -527,9 +517,6 @@ export const OrganizationExternalLinks: React.FC<
                 pureChildren={true}
               >
                 <Button
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  variant={variant}
                   unfocusable
                   icon={buttonHasLockIcon ? 'lockClosed' : 'open'}
                   iconType="outline"
@@ -565,11 +552,23 @@ export const OrganizationFooter: React.FC<
     () => JSON.parse(organization?.namespace?.fields || '{}'),
     [],
   )
-  const n = useNamespace(namespace)
 
   let OrganizationFooterComponent = null
 
   const { isServiceWeb } = useContext(GlobalContext)
+
+  if (namespace?.usingDefaultFooter === true) {
+    const footerItems = organization?.footerItems ?? []
+    if (footerItems.length === 0) return null
+    return (
+      <WebFooter
+        heading={organization?.title ?? ''}
+        columns={footerItems}
+        background={organization?.footerConfig?.background}
+        color={organization?.footerConfig?.textColor}
+      />
+    )
+  }
 
   switch (organization?.slug) {
     case 'syslumenn':
@@ -619,32 +618,6 @@ export const OrganizationFooter: React.FC<
     case 'directorate-of-health':
       OrganizationFooterComponent = (
         <LandlaeknirFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'hsn':
-      OrganizationFooterComponent = (
-        <HeilbrigdisstofnunNordurlandsFooter
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'hsu':
-      OrganizationFooterComponent = (
-        <HeilbrigdisstofnunSudurlandsFooter
-          title={organization.title}
-          footerItems={organization.footerItems}
-          namespace={namespace}
-        />
-      )
-      break
-    case 'fiskistofa':
-    case 'directorate-of-fisheries':
-      OrganizationFooterComponent = (
-        <FiskistofaFooter
           footerItems={organization.footerItems}
           namespace={namespace}
         />
@@ -784,20 +757,6 @@ export const OrganizationFooter: React.FC<
         )
       }
       break
-    case 'stafraent-island':
-    case 'digital-iceland':
-      OrganizationFooterComponent = (
-        <GridContainer>
-          <DigitalIcelandFooter
-            illustrationSrc={n(
-              'digitalIcelandFooterIllustrationSrc',
-              'https://images.ctfassets.net/8k0h54kbe6bj/X3D3BSLC0PHyxvOkfhlbt/7d6b3bb0a552af01275b15cac8b16eb9/DigitalIcelandHeaderImage_1__1_.svg',
-            )}
-            links={n('digitalIcelandFooterLinks', [])}
-          />
-        </GridContainer>
-      )
-      break
     default: {
       const footerItems = organization?.footerItems ?? []
       if (footerItems.length === 0) break
@@ -816,64 +775,43 @@ export const OrganizationFooter: React.FC<
 }
 
 export const OrganizationChatPanel = ({
-  organizationIds,
+  organizationId,
 }: {
-  organizationIds: string[]
-  pushUp?: boolean
+  organizationId: string | undefined
 }) => {
+  if (!organizationId) return null
+  return <OrganizationChat organizationId={organizationId} />
+}
+
+const OrganizationChat = ({ organizationId }: { organizationId: string }) => {
   const { activeLocale } = useI18n()
 
-  const organizationIdWithLiveChat = organizationIds.find((id) => {
-    return id in liveChatIncConfig[activeLocale]
-  })
+  const { data, loading } = useQuery<GetWebChatQuery, QueryGetWebChatArgs>(
+    GET_WEB_CHAT,
+    {
+      variables: {
+        input: {
+          displayLocationIds: [organizationId],
+          lang: activeLocale,
+        },
+      },
+    },
+  )
 
-  if (organizationIdWithLiveChat) {
-    return (
-      <LiveChatIncChatPanel
-        {...liveChatIncConfig[activeLocale][organizationIdWithLiveChat]}
-      />
-    )
-  }
+  if (loading) return null
 
-  const organizationIdWithWatson = organizationIds.find((id) => {
-    return id in watsonConfig[activeLocale]
-  })
-
-  if (organizationIdWithWatson) {
-    return (
-      <WatsonChatPanel
-        {...watsonConfig[activeLocale][organizationIdWithWatson]}
-      />
-    )
-  }
-
-  const organizationIdWithBoost = organizationIds.find((id) => {
-    return id in boostChatPanelEndpoints
-  })
-
-  if (organizationIdWithBoost) {
-    return (
-      <BoostChatPanel
-        endpoint={
-          organizationIdWithBoost as keyof typeof boostChatPanelEndpoints
-        }
-      />
-    )
-  }
-
-  const organizationIdWithZendesk = organizationIds.find((id) => {
-    return id in zendeskConfig[activeLocale]
-  })
-
-  if (organizationIdWithZendesk) {
-    return (
-      <ZendeskChatPanel
-        {...zendeskConfig[activeLocale][organizationIdWithZendesk]}
-      />
-    )
-  }
-
-  return null
+  return (
+    <WebChat
+      webChat={data?.getWebChat}
+      renderFallback={() => {
+        if (organizationId in watsonConfig[activeLocale])
+          return (
+            <WatsonChatPanel {...watsonConfig[activeLocale][organizationId]} />
+          )
+        return null
+      }}
+    />
+  )
 }
 
 const SecondaryMenu = ({
@@ -988,6 +926,7 @@ export const OrganizationWrapper: React.FC<
   const router = useRouter()
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | undefined>()
+  useMatomoTrackOrganization(organizationPage.organization?.slug)
   usePlausiblePageview(organizationPage.organization?.trackingDomain)
   useEffect(() => {
     setIsMobile(width < theme.breakpoints.md)
@@ -1358,9 +1297,7 @@ export const OrganizationWrapper: React.FC<
       )}
       {n('enableOrganizationChatPanelForOrgPages', true) && (
         <OrganizationChatPanel
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          organizationIds={[organizationPage?.organization?.id]}
+          organizationId={organizationPage?.organization?.id}
         />
       )}
     </>

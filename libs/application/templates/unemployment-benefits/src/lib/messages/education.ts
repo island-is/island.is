@@ -13,7 +13,7 @@ export const education = {
       description: 'education section page title',
     },
     pageDescription: {
-      id: 'vmst.ub.application:education.general.pageDescription',
+      id: 'vmst.ub.application:education.general.pageDescription#markdown',
       defaultMessage:
         'Einstaklingar í námi eiga yfirleitt ekki rétt á atvinnuleysisbótum. Það eru þó undantekningar á þessu, til dæmis ef nám er 20 einingar eða minna, einstaklingur missir vinnu eftir að önn hefst eða námið er skilgreint sem nám með vinnu.',
       description: 'education section page description',

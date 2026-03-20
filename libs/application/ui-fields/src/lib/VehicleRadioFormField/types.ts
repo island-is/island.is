@@ -12,6 +12,7 @@ export interface VehicleDetails {
   mileageReading?: string | null
   isDebtLess?: boolean | null
   validationErrorMessages?: ValidationErrorMessage[]
+  vehicleHasMilesOdometer?: boolean
 }
 
 export interface PlateOwnership {

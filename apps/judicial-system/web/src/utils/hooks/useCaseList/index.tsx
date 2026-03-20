@@ -28,17 +28,21 @@ import {
 import {
   Case,
   CaseAppealState,
+  CaseState,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { compareArrays } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 
 import { findFirstInvalidStep } from '../../formHelper'
 import useCase from '../useCase'
 
 const useCaseList = () => {
   const timeouts = useMemo<NodeJS.Timeout[]>(() => [], [])
-  // The id of the case that's about to be opened
-  const [clickedCase, setClickedCase] = useState<
-    [id: string | null, showLoading: boolean]
-  >([null, false])
+  // The case and row (defendant ids) that's about to be opened - used for loading state only
+  const [clickedCase, setClickedCase] = useState<{
+    id: string | null
+    defendantIds?: string[] | null
+    showLoading: boolean
+  }>({ id: null, defendantIds: null, showLoading: false })
   const { user, limitedAccess } = useContext(UserContext)
   const { getCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -86,7 +90,11 @@ const useCaseList = () => {
           }
         } else {
           if (isCompletedCase(caseToOpen.state)) {
-            routeTo = constants.INDICTMENTS_COMPLETED_ROUTE
+            if (caseToOpen.state === CaseState.CORRECTING) {
+              routeTo = constants.INDICTMENTS_COURT_OVERVIEW_ROUTE
+            } else {
+              routeTo = constants.INDICTMENTS_COMPLETED_ROUTE
+            }
           } else {
             // Route to Indictment Overview section since it always a valid step and
             // would be skipped if we route to the last valid step
@@ -131,27 +139,46 @@ const useCaseList = () => {
         }
       }
 
+      const url = `${routeTo}/${caseToOpen.id}`
+
+      if (!routeTo) {
+        return
+      }
+
       if (openCaseInNewTab) {
-        window.open(`${routeTo}/${caseToOpen.id}`, '_blank')
-      } else if (routeTo) {
-        router.push(`${routeTo}/${caseToOpen.id}`)
+        window.open(url, '_blank')
+      } else {
+        router.push(url)
       }
     },
     [router, user],
   )
 
   const handleOpenCase = useCallback(
-    async (id: string, openInNewTab?: boolean) => {
+    async (
+      id: string,
+      openInNewTab?: boolean,
+      defendantIds?: string[] | null,
+    ) => {
       const clearTimeouts = () => {
         timeouts.map((timeout) => clearTimeout(timeout))
       }
 
       clearTimeouts()
 
-      if (clickedCase[0] !== id && !openInNewTab) {
-        setClickedCase([id, false])
+      if (
+        (clickedCase.id !== id ||
+          !compareArrays(clickedCase.defendantIds, defendantIds)) &&
+        !openInNewTab
+      ) {
+        setClickedCase({ id, defendantIds, showLoading: false })
 
-        timeouts.push(setTimeout(() => setClickedCase([id, true]), 2000))
+        timeouts.push(
+          setTimeout(
+            () => setClickedCase({ id, defendantIds, showLoading: true }),
+            2000,
+          ),
+        )
       }
 
       const getCaseToOpen = (id: string) => {
@@ -160,10 +187,13 @@ const useCaseList = () => {
           (caseData) => openCase(caseData, openInNewTab),
           () => {
             setClickedCase((prev) => {
-              if (prev[0] === id) {
+              if (
+                prev.id === id &&
+                compareArrays(prev.defendantIds, defendantIds)
+              ) {
                 clearTimeouts()
 
-                return [null, false]
+                return { id: null, defendantIds: null, showLoading: false }
               }
 
               return prev
@@ -176,7 +206,8 @@ const useCaseList = () => {
       if (
         isTransitioningCase ||
         isSendingNotification ||
-        clickedCase[0] === id ||
+        (clickedCase.id === id &&
+          compareArrays(clickedCase.defendantIds, defendantIds)) ||
         limitedAccess === undefined
       ) {
         return
@@ -199,7 +230,7 @@ const useCaseList = () => {
   const LoadingIndicator = () => {
     return (
       <motion.div
-        key={`${clickedCase[0]}-loading`}
+        key={`${clickedCase.id}-${clickedCase.defendantIds}-loading`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -210,8 +241,9 @@ const useCaseList = () => {
   }
 
   return {
-    isOpeningCaseId: clickedCase[0],
-    showLoading: clickedCase[1],
+    isOpeningCaseId: clickedCase.id,
+    isOpeningDefendantIds: clickedCase.defendantIds,
+    showLoading: clickedCase.showLoading,
     handleOpenCase,
     LoadingIndicator,
   }

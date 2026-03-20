@@ -137,8 +137,6 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/transport-authority/driving-license-book-update-instructor'
     ),
-  [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: () =>
-    import('@island.is/application/templates/alcohol-tax-redemption'),
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: () =>
     import(
       '@island.is/application/templates/iceland-health/european-health-insurance-card'
@@ -259,6 +257,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/activation-allowance'),
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: () =>
     import('@island.is/application/templates/car-rental-fee-category'),
+  [ApplicationTypes.CAR_RENTAL_DAYRATE_RETURNS]: () =>
+    import('@island.is/application/templates/car-rental-dayrate-returns'),
   [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: () =>
     import(
       '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
@@ -275,6 +275,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/hms/registration-of-new-property-numbers'
     ),
+  [ApplicationTypes.MILE_CAR]: () =>
+    import('@island.is/application/templates/transport-authority/mile-car'),
+  [ApplicationTypes.HEILSUGAESLA_HOFUDBORDARSVAEDISINS_NAMSKEID]: () =>
+    import('@island.is/application/templates/hh/courses'),
 }
 
 export default templates

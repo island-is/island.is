@@ -1,5 +1,6 @@
 import { CreationOptional } from 'sequelize'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -83,6 +84,13 @@ export class Application extends Model<Application> {
   pruneAt?: Date
 
   @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    defaultValue: null,
+  })
+  prunedAt?: Date
+
+  @Column({
     type: DataType.INTEGER,
     allowNull: false,
     defaultValue: 0,
@@ -125,6 +133,9 @@ export class Application extends Model<Application> {
   })
   formId!: string
 
+  @BelongsTo(() => Form, 'formId')
+  form!: Form
+
   @ForeignKey(() => Organization)
   @Column({
     type: DataType.STRING,
@@ -133,11 +144,13 @@ export class Application extends Model<Application> {
   })
   organizationId!: string
 
+  @BelongsTo(() => Organization, 'organizationId')
+  organization?: Organization
+
   formName?: string
   formSlug?: string
   orgSlug?: string
   orgContentfulId?: string
   tagLabel?: string
   tagVariant?: string
-  completedMessage?: string
 }

@@ -3,17 +3,20 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Op, QueryTypes, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import {
+  ApplicationLifecycle,
+  ApplicationStatus,
   ExternalData,
   FormValue,
-  ApplicationStatus,
-  ApplicationLifecycle,
 } from '@island.is/application/types'
 import {
   Application,
   ApplicationPaginatedResponse,
   ApplicationsStatistics,
 } from './application.model'
-import { getTypeIdsForInstitution } from '@island.is/application/utils'
+import {
+  getInstitutionsWithApplicationTypesIds,
+  getTypeIdsForInstitution,
+} from '@island.is/application/utils'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -64,7 +67,16 @@ export class ApplicationService {
   async getApplicationCountByTypeIdAndStatus(
     startDate: string,
     endDate: string,
+    institutionNationalId?: string,
   ): Promise<ApplicationsStatistics[]> {
+    const { applicationTypeIds, returnEmpty } = this.resolveApplicationTypeIds(
+      institutionNationalId,
+    )
+
+    if (returnEmpty) {
+      return []
+    }
+
     const query = `SELECT
         type_id as typeid,
         COUNT(*) as count,
@@ -75,10 +87,22 @@ export class ApplicationService {
         COUNT(*) FILTER (WHERE status = 'approved') AS approved
       FROM public.application
       WHERE modified BETWEEN :startDate AND :endDate
+      ${
+        applicationTypeIds?.length ? `AND type_id IN (:applicationTypeIds)` : ''
+      }
       GROUP BY typeid;`
 
+    const replacements: Record<string, unknown> = {
+      startDate,
+      endDate,
+    }
+
+    if (applicationTypeIds?.length) {
+      replacements.applicationTypeIds = applicationTypeIds
+    }
+
     return this.sequelize.query<ApplicationsStatistics>(query, {
-      replacements: { startDate, endDate },
+      replacements,
       type: QueryTypes.SELECT,
     })
   }
@@ -152,8 +176,13 @@ export class ApplicationService {
     searchStr?: string,
   ): Promise<ApplicationPaginatedResponse> {
     const statuses = status?.split(',')
-    const toDate = to ? new Date(to) : undefined
-    const fromDate = from ? new Date(from) : undefined
+    const fromDate = from
+      ? new Date(new Date(from).setHours(0, 0, 0, 0))
+      : undefined
+    const toDate = to
+      ? // Set to end of day to include applications created on the "to" date as well
+        new Date(new Date(to).setHours(23, 59, 59, 999))
+      : undefined
 
     const { applicationTypeIds, returnEmpty } = this.resolveApplicationTypeIds(
       institutionNationalId,
@@ -241,36 +270,28 @@ export class ApplicationService {
     return { applicationTypeIds: [typeId], returnEmpty: false }
   }
 
-  async getAllApplicationTypesInstitutionAdmin(
-    nationalId: string,
-  ): Promise<{ id: string }[]> {
-    const typeIds = getTypeIdsForInstitution(nationalId)
+  async getAllApplicationTypes(nationalId?: string): Promise<{ id: string }[]> {
+    let filterByTypeIds: string[] | undefined
 
-    if (!typeIds || typeIds.length === 0) {
-      return []
+    if (nationalId) {
+      filterByTypeIds = getTypeIdsForInstitution(nationalId)
+      if (!filterByTypeIds || filterByTypeIds.length === 0) {
+        return []
+      }
     }
 
     const results = await this.applicationModel.findAll({
       attributes: ['typeId'],
-      where: {
-        typeId: {
-          [Op.in]: typeIds,
+      ...(filterByTypeIds && {
+        where: {
+          typeId: {
+            [Op.in]: filterByTypeIds,
+          },
         },
-      },
+      }),
       group: ['typeId'],
       raw: true,
     })
-
-    return results.map((row) => ({ id: row.typeId }))
-  }
-
-  async getAllApplicationTypesSuperAdmin(): Promise<{ id: string }[]> {
-    const results = await this.applicationModel.findAll({
-      attributes: ['typeId'],
-      group: ['typeId'],
-      raw: true,
-    })
-
     return results.map((row) => ({ id: row.typeId }))
   }
 
@@ -306,6 +327,45 @@ export class ApplicationService {
     })
   }
 
+  async getAllInstitutionsSuperAdmin(): Promise<
+    { nationalId: string; contentfulSlug: string }[]
+  > {
+    const allInstitutions = getInstitutionsWithApplicationTypesIds()
+
+    if (!allInstitutions) return []
+
+    const allTypeIds = Array.from(
+      new Set(
+        allInstitutions.flatMap(
+          (institution) => institution.applicationTypesIds,
+        ),
+      ),
+    )
+
+    if (!allTypeIds.length) return []
+
+    const existingTypeIds = await this.applicationModel.findAll({
+      where: {
+        typeId: {
+          [Op.in]: allTypeIds,
+        },
+      },
+      attributes: ['typeId'],
+      group: ['typeId'],
+      raw: true,
+    })
+
+    const existingTypeIdSet = new Set<string>(
+      existingTypeIds.map((row) => row.typeId),
+    )
+
+    return allInstitutions
+      .filter((inst) =>
+        inst.applicationTypesIds.some((t) => existingTypeIdSet.has(t)),
+      )
+      .map((x) => ({ nationalId: x.nationalId, contentfulSlug: x.slug }))
+  }
+
   async findAllDueToBePruned(): Promise<Application[]> {
     return this.applicationModel.findAll({
       attributes: [
@@ -314,6 +374,7 @@ export class ApplicationService {
         'typeId',
         'state',
         'applicant',
+        'applicantActors',
         'answers',
         'externalData',
       ],

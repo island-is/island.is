@@ -1,5 +1,6 @@
 export { ApplicantDisplay } from './ApplicantDisplay/ApplicantDisplay'
 export { CheckBoxDisplay } from './CheckBoxDisplay/CheckBoxDisplay'
+export { DateDisplay } from './DateDisplay/DateDisplay'
 export { DefaultDisplay } from './DefaultDisplay/DefaultDisplay'
 export { FileUploadDisplay } from './FileUploadDisplay/FileUploadDisplay'
 export { NationalIdDisplay } from './NationalIdDisplay/NationalIdDisplay'

@@ -1,6 +1,5 @@
 import { Base64 } from 'js-base64'
 import { Transaction } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadRequestException,
@@ -8,17 +7,20 @@ import {
   Inject,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectConnection } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import {
+  addMessagesToQueue,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CourtSessionRulingType,
   DefendantEventType,
+  IndictmentCaseNotificationType,
   isVerdictInfoChanged,
   PoliceFileTypeCode,
   type User as TUser,
@@ -52,6 +54,8 @@ type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   | 'appealDate'
   | 'serviceInformationForDefendant'
   | 'isDefaultJudgement'
+  | 'isAcquittedByPublicProsecutionOffice'
+  | 'defendantHasRequestedAppeal'
   | 'hash'
   | 'hashAlgorithm'
 >
@@ -64,7 +68,6 @@ export type VerdictServiceCertificateDelivery = {
 
 export class VerdictService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     private readonly verdictRepositoryService: VerdictRepositoryService,
     private readonly pdfService: PdfService,
     @Inject(forwardRef(() => FileService))
@@ -75,7 +78,6 @@ export class VerdictService {
     private readonly defendantService: DefendantService,
     @Inject(forwardRef(() => InternalCaseService))
     private readonly internalCaseService: InternalCaseService,
-    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -118,6 +120,7 @@ export class VerdictService {
   ): Promise<Verdict> {
     const currentVerdict = await this.verdictRepositoryService.findOne({
       where: { defendantId: verdict.defendantId },
+      transaction,
     })
 
     if (!currentVerdict) {
@@ -134,23 +137,33 @@ export class VerdictService {
   async createVerdicts(
     caseId: string,
     verdicts: CreateVerdictDto[],
-    defendants?: Defendant[],
+    defendants: Defendant[],
+    transaction: Transaction,
   ): Promise<Verdict[]> {
-    return this.sequelize.transaction(async (transaction) => {
-      return await Promise.all(
-        verdicts.map((verdict) => {
-          const currentVerdict = defendants?.find(
-            (defendant) => verdict.defendantId === defendant.id,
-          )?.verdict
-          if (currentVerdict) {
-            const { defendantId, ...update } = verdict
-            return this.updateVerdict(currentVerdict, update, transaction)
-          } else {
-            return this.createVerdict(caseId, verdict, transaction)
-          }
-        }),
-      )
-    })
+    return await Promise.all(
+      verdicts.map((verdict) => {
+        const currentDefendant = defendants.find(
+          (defendant) => verdict.defendantId === defendant.id,
+        )
+
+        // This prevents the creation of verdicts for defendants that do not belong to the case
+        if (!currentDefendant) {
+          throw new BadRequestException(
+            `Defendant ${verdict.defendantId} of case ${caseId} does not exist`,
+          )
+        }
+
+        // Only the latest verdict is relevant
+        const currentVerdict = currentDefendant?.verdicts?.[0]
+
+        if (currentVerdict) {
+          const { defendantId, ...update } = verdict
+          return this.updateVerdict(currentVerdict, update, transaction)
+        } else {
+          return this.createVerdict(caseId, verdict, transaction)
+        }
+      }),
+    )
   }
 
   async deleteVerdict(
@@ -193,7 +206,7 @@ export class VerdictService {
       currentVerdict.serviceDate
     ) {
       throw new BadRequestException(
-        `Cannot update service requirement to ${update.serviceRequirement} - verdict ${verdictId} has already be served`,
+        `Cannot update service requirement to ${update.serviceRequirement} - verdict ${verdictId} has already been served`,
       )
     }
     // in case of repeated update, we ensure that service date is not set for specific service requirements
@@ -208,7 +221,7 @@ export class VerdictService {
   private async updateVerdict(
     verdict: Verdict,
     update: UpdateVerdict,
-    transaction?: Transaction,
+    transaction: Transaction,
   ): Promise<Verdict> {
     return this.verdictRepositoryService.update(
       verdict.caseId,
@@ -222,33 +235,67 @@ export class VerdictService {
   async update(
     verdict: Verdict,
     update: UpdateVerdictDto,
-    rulingDate?: Date,
+    transaction: Transaction,
+    theCase: Case,
+    defendantId: string,
   ): Promise<Verdict> {
-    return this.sequelize.transaction(async (transaction) => {
-      const enhancedUpdate = await this.handleServiceRequirementUpdate(
-        verdict.id,
-        update,
-        transaction,
-        rulingDate,
-      )
+    const enhancedUpdate = await this.handleServiceRequirementUpdate(
+      verdict.id,
+      update,
+      transaction,
+      theCase.rulingDate,
+    )
 
-      return this.updateVerdict(verdict, enhancedUpdate, transaction)
-    })
+    const updatedVerdict = await this.updateVerdict(
+      verdict,
+      enhancedUpdate,
+      transaction,
+    )
+
+    // When prosecution office manually records service date (defendant did not
+    // open ruling on island.is), send driving license suspension notification
+    // so the office can register it in the separate system.
+    const defendant = theCase.defendants?.find((d) => d.id === defendantId)
+    const isVerdictServed = !verdict.serviceDate && update.serviceDate
+    const shouldSendDrivingLicenseSuspensionNotification =
+      isVerdictServed && defendant?.isDrivingLicenseSuspended
+
+    if (shouldSendDrivingLicenseSuspensionNotification) {
+      addMessagesToQueue({
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+        },
+      })
+    }
+
+    return updatedVerdict
   }
 
   async updateRestricted(
     verdict: Verdict,
     update: InternalUpdateVerdictDto,
+    transaction: Transaction,
   ): Promise<Verdict> {
-    const updatedVerdict = await this.updateVerdict(verdict, update)
+    const updatedVerdict = await this.updateVerdict(
+      verdict,
+      update,
+      transaction,
+    )
     return updatedVerdict
   }
 
   async updatePoliceDelivery(
     verdict: Verdict,
     update: PoliceUpdateVerdictDto,
+    transaction: Transaction,
   ): Promise<Verdict> {
-    const updatedVerdict = await this.updateVerdict(verdict, update)
+    const updatedVerdict = await this.updateVerdict(
+      verdict,
+      update,
+      transaction,
+    )
     return updatedVerdict
   }
 
@@ -271,6 +318,7 @@ export class VerdictService {
 
     return [
       { code: 'RVG_CASE_ID', value: theCase.id },
+      { code: 'RVG_VERDICT_ID', value: verdict.id },
       ...(receiverSsn ? [{ code: 'RECEIVER_SSN', value: receiverSsn }] : []),
       ...(theCase.courtCaseNumber
         ? [
@@ -347,16 +395,24 @@ export class VerdictService {
     ]
   }
 
-  async deliverVerdictToNationalCommissionersOffice(
-    theCase: Case,
-    defendant: Defendant,
-    verdict: Verdict,
-    user: TUser,
-  ): Promise<DeliverResponse> {
+  async deliverVerdictToNationalCommissionersOffice({
+    theCase,
+    defendant,
+    verdict,
+    user,
+    transaction,
+  }: {
+    theCase: Case
+    defendant: Defendant
+    verdict: Verdict
+    user: TUser
+    transaction: Transaction
+  }): Promise<DeliverResponse> {
     // check if verdict is already delivered
     if (verdict.externalPoliceDocumentId) {
       return { delivered: true }
     }
+
     // get verdict file
     const verdictFile = theCase.caseFiles?.find(
       (caseFile) => caseFile.category === CaseFileCategory.RULING,
@@ -404,30 +460,38 @@ export class VerdictService {
         verdict,
       ),
     })
+
     if (!createdDocument) {
       return { delivered: false }
     }
 
     // update existing verdict with the external document id returned from the police
-    await this.updateVerdict(verdict, {
-      ...createdDocument,
-      hash: verdictFile.hash,
-      hashAlgorithm: verdictFile.hashAlgorithm,
-    })
+    await this.updateVerdict(
+      verdict,
+      {
+        ...createdDocument,
+        hash: verdictFile.hash,
+        hashAlgorithm: verdictFile.hashAlgorithm,
+      },
+      transaction,
+    )
 
-    await this.defendantService.createDefendantEvent({
-      caseId: theCase.id,
-      defendantId: defendant.id,
-      eventType:
-        DefendantEventType.VERDICT_DELIVERED_TO_NATIONAL_COMMISSIONERS_OFFICE,
-    })
+    await this.defendantService.createDefendantEvent(
+      {
+        caseId: theCase.id,
+        defendantId: defendant.id,
+        eventType:
+          DefendantEventType.VERDICT_DELIVERED_TO_NATIONAL_COMMISSIONERS_OFFICE,
+      },
+      transaction,
+    )
 
     return { delivered: true }
   }
 
-  async deliverVerdictServiceCertificatesToPolice(): Promise<
-    VerdictServiceCertificateDelivery[]
-  > {
+  async deliverVerdictServiceCertificatesToPolice(
+    transaction: Transaction,
+  ): Promise<VerdictServiceCertificateDelivery[]> {
     const defendantsWithCases =
       await this.internalCaseService.getIndictmentCaseDefendantsWithExpiredAppealDeadline()
 
@@ -449,7 +513,10 @@ export class VerdictService {
         continue
       }
 
-      const { verdict } = defendant
+      // Only the latest verdict is relevant
+      const { verdicts } = defendant
+      const verdict = verdicts?.[0]
+
       if (!verdict) {
         this.logger.warn(
           `Failed to upload verdict service certificate pdf to police of defendant ${defendant.id} and case ${theCase.id}`,
@@ -482,12 +549,15 @@ export class VerdictService {
               )
 
             if (isSuccess) {
-              await this.defendantService.createDefendantEvent({
-                caseId: theCase.id,
-                defendantId: defendant.id,
-                eventType:
-                  DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
-              })
+              await this.defendantService.createDefendantEvent(
+                {
+                  caseId: theCase.id,
+                  defendantId: defendant.id,
+                  eventType:
+                    DefendantEventType.VERDICT_SERVICE_CERTIFICATE_DELIVERED_TO_POLICE,
+                },
+                transaction,
+              )
             }
             delivered.push({ ...baseResult, delivered: isSuccess })
           })
@@ -503,7 +573,11 @@ export class VerdictService {
     return delivered
   }
 
-  async getAndSyncVerdict(verdict: Verdict, user?: TUser) {
+  async getAndSyncVerdict(
+    verdict: Verdict,
+    transaction: Transaction,
+    user?: TUser,
+  ) {
     // check specifically a verdict that is delivered and service status hasn't been updated
     if (verdict.externalPoliceDocumentId && !verdict.serviceStatus) {
       const verdictInfo = await this.policeService.getVerdictDocumentStatus(
@@ -512,43 +586,55 @@ export class VerdictService {
       )
 
       if (isVerdictInfoChanged(verdictInfo, verdict)) {
-        return this.updateVerdict(verdict, verdictInfo)
+        return this.updateVerdict(verdict, verdictInfo, transaction)
       }
     }
+
     return verdict
   }
 
-  async addMessagesForCaseVerdictDeliveryToQueue(theCase: Case, user: TUser) {
-    const messages = theCase.defendants
-      ?.filter(
-        (defendant) =>
-          defendant.verdict?.serviceRequirement === ServiceRequirement.REQUIRED,
-      )
-      .map((defendant) => ({
-        type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
-        user,
-        caseId: theCase.id,
-        elementId: [defendant.id],
-      }))
-
-    if (messages && messages.length > 0) {
-      this.messageService.sendMessagesToQueue(messages)
-      return { queued: true }
-    }
-    return { queued: false }
-  }
-
-  transferDefendantVerdictToCase(
-    newCase: Case,
-    verdict: Verdict,
+  async addMessagesForCaseVerdictDeliveryToQueue(
+    theCase: Case,
+    user: TUser,
     transaction: Transaction,
-  ): Promise<Verdict> {
-    return this.verdictRepositoryService.update(
-      verdict.caseId,
-      verdict.defendantId,
-      verdict.id,
-      { caseId: newCase.id },
-      { transaction },
+  ): Promise<{ queued: boolean }> {
+    const defendants = theCase.defendants ?? []
+
+    const queued = await Promise.all(
+      defendants
+        .filter(
+          (defendant) =>
+            defendant.verdicts?.[0]?.serviceRequirement ===
+            ServiceRequirement.REQUIRED,
+        )
+        .map(async (defendant) => {
+          // Only the latest verdict is relevant
+          const verdict = defendant.verdicts?.[0]
+
+          if (verdict?.externalPoliceDocumentId) {
+            // Replace the verdict if an older one has already been sent to police
+            await this.verdictRepositoryService.create(
+              {
+                defendantId: defendant.id,
+                caseId: theCase.id,
+                serviceRequirement: ServiceRequirement.REQUIRED,
+                serviceInformationForDefendant:
+                  verdict.serviceInformationForDefendant,
+                isDefaultJudgement: verdict.isDefaultJudgement,
+              },
+              { transaction },
+            )
+          }
+
+          addMessagesToQueue({
+            type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+            user,
+            caseId: theCase.id,
+            elementId: [defendant.id],
+          })
+        }),
     )
+
+    return { queued: queued.length > 0 }
   }
 }

@@ -82,6 +82,7 @@ export class DelegationIndex extends Model<
       toNationalId: this.toNationalId,
       subjectId: this.subjectId,
       type: this.type as AuthDelegationType,
+      customDelegationScopes: this.customDelegationScopes,
     }
   }
 }

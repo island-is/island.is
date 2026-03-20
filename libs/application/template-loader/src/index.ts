@@ -6,6 +6,7 @@ import {
   ApplicationContext,
   ApplicationStateMeta,
   ApplicationStateSchema,
+  ApplicationConfigurations,
   FieldBaseProps,
   RepeaterProps,
   BasicDataProvider,
@@ -103,7 +104,10 @@ export const getApplicationTranslationNamespaces = async (
   application: Application,
 ): Promise<string[]> => {
   const template = await getApplicationTemplateByTypeId(application.typeId)
+  const translationNamespaces = ([] as string[])
+    .concat(ApplicationConfigurations[application.typeId].translation)
+    .concat(template?.translationNamespaces ?? [])
 
   // We load the core namespace for the application system + the ones defined in the application template
-  return ['application.system', ...(template?.translationNamespaces ?? [])]
+  return [...new Set(['application.system', ...translationNamespaces])] // Remove duplicates
 }

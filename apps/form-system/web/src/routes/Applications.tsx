@@ -34,7 +34,9 @@ export const Applications = () => {
 
   const { formatMessage } = useIntl()
 
-  const [getApplications] = useLazyQuery(GET_ALL_APPLICATIONS)
+  const [getApplications] = useLazyQuery(GET_ALL_APPLICATIONS, {
+    fetchPolicy: 'no-cache',
+  })
 
   const createApplication = useCallback(async () => {
     try {
@@ -42,9 +44,6 @@ export const Applications = () => {
         variables: {
           input: {
             slug: slug,
-            createApplicationDto: {
-              isTest: true,
-            },
           },
         },
       })

@@ -9,7 +9,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Form } from '../../forms/models/form.model'
-import { OrganizationUrl } from '../../organizationUrls/models/organizationUrl.model'
 import { OrganizationPermission } from '../../organizationPermissions/models/organizationPermission.model'
 
 @Table({ tableName: 'organization' })
@@ -32,6 +31,7 @@ export class Organization extends Model<Organization> {
     type: DataType.STRING,
     allowNull: false,
     defaultValue: '',
+    field: 'national_id',
   })
   nationalId!: string
 
@@ -40,7 +40,4 @@ export class Organization extends Model<Organization> {
 
   @HasMany(() => OrganizationPermission)
   organizationPermissions?: OrganizationPermission[]
-
-  @HasMany(() => OrganizationUrl)
-  organizationUrls?: OrganizationUrl[]
 }

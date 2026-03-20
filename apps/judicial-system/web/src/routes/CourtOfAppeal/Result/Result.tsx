@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { AlertBanner, AlertMessage, Box } from '@island.is/island-ui/core'
+import { AlertBanner, AlertMessage } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
@@ -20,6 +20,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import { CaseFilesOverview, CaseOverviewHeader } from '../components'
@@ -70,22 +71,21 @@ const CourtOfAppealResult = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CaseOverviewHeader
-            alerts={
-              workingCase.requestAppealRulingNotToBePublished
-                ? [
-                    {
-                      message: formatMessage(
-                        strings.requestAppealRulingNotToBePublished,
-                      ),
-                    },
-                  ]
-                : undefined
-            }
-          />
-
-          {workingCase.appealRulingModifiedHistory && (
-            <Box marginBottom={5}>
+          <div className={grid({ gap: 5, marginBottom: 10 })}>
+            <CaseOverviewHeader
+              alerts={
+                workingCase.requestAppealRulingNotToBePublished
+                  ? [
+                      {
+                        message: formatMessage(
+                          strings.requestAppealRulingNotToBePublished,
+                        ),
+                      },
+                    ]
+                  : undefined
+              }
+            />
+            {workingCase.appealRulingModifiedHistory && (
               <AlertMessage
                 type="info"
                 title={formatMessage(strings.rulingModifiedTitle)}
@@ -96,14 +96,12 @@ const CourtOfAppealResult = () => {
                   />
                 }
               />
-            </Box>
-          )}
-          <Box marginBottom={5}>
+            )}
             <InfoCard
               sections={[
                 {
                   id: 'defendants-section',
-                  items: [defendants(workingCase.type)],
+                  items: [defendants({ caseType: workingCase.type })],
                 },
                 ...(showItem(victims)
                   ? [
@@ -136,30 +134,24 @@ const CourtOfAppealResult = () => {
                 },
               ]}
             />
-          </Box>
-          {user ? (
-            <Box marginBottom={3}>
+            {user ? (
               <CaseFilesAccordionItem
                 workingCase={workingCase}
                 setWorkingCase={setWorkingCase}
                 user={user}
               />
-            </Box>
-          ) : null}
-          <Box marginBottom={6}>
+            ) : null}
             <Conclusion
               title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
-          </Box>
-          <Box marginBottom={6}>
             <Conclusion
               title={formatMessage(conclusion.appealTitle)}
               conclusionText={workingCase.appealConclusion}
             />
-          </Box>
-          <CaseFilesOverview />
+            <CaseFilesOverview />
+          </div>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter

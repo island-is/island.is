@@ -1,8 +1,8 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Input, Text } from '@island.is/island-ui/core'
+import { Box, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { enumerate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
@@ -18,17 +18,15 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
   useCase,
-  useDeb,
+  useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isPoliceDemandsStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 export const formatInstitutionName = (name?: string | null) => {
@@ -53,12 +51,11 @@ const PoliceDemands = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const { updateCase, setAndSendCaseToServer } = useCase()
-  const [demandsEM, setDemandsEM] = useState<string>('')
-  const [lawsBrokenEM, setLawsBrokenEM] = useState<string>('')
-  const [legalBasisEM, setLegalBasisEM] = useState<string>('')
+  const { setAndSendCaseToServer } = useCase()
 
-  useDeb(workingCase, ['demands', 'lawsBroken', 'legalBasis'])
+  const demandsInput = useDebouncedInput('demands', ['empty'])
+  const lawsBrokenInput = useDebouncedInput('lawsBroken', ['empty'])
+  const legalBasisInput = useDebouncedInput('legalBasis', ['empty'])
 
   const initialize = useCallback(() => {
     const courtClaimPrefill: Partial<
@@ -190,135 +187,74 @@ const PoliceDemands = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(icDemands.heading)}</PageTitle>
-        <Box marginBottom={5}>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
           <ProsecutorCaseInfo workingCase={workingCase} />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(icDemands.sections.demands.heading)}
-            </Text>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(icDemands.sections.demands.heading)}
+            />
+            <Input
+              data-testid="demands"
+              name="demands"
+              label={formatMessage(icDemands.sections.demands.label)}
+              placeholder={formatMessage(
+                icDemands.sections.demands.placeholder,
+              )}
+              value={demandsInput.value}
+              errorMessage={demandsInput.errorMessage}
+              hasError={demandsInput.hasError}
+              onChange={(evt) => demandsInput.onChange(evt.target.value)}
+              onBlur={(evt) => demandsInput.onBlur(evt.target.value)}
+              required
+              textarea
+              rows={7}
+            />
           </Box>
-          <Input
-            data-testid="demands"
-            name="demands"
-            label={formatMessage(icDemands.sections.demands.label)}
-            placeholder={formatMessage(icDemands.sections.demands.placeholder)}
-            value={workingCase.demands || ''}
-            errorMessage={demandsEM}
-            hasError={demandsEM !== ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'demands',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                demandsEM,
-                setDemandsEM,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'demands',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setDemandsEM,
-              )
-            }
-            required
-            textarea
-            rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(icDemands.sections.lawsBroken.heading)}
-            </Text>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(icDemands.sections.lawsBroken.heading)}
+            />
+            <Input
+              data-testid="lawsBroken"
+              name="lawsBroken"
+              label={formatMessage(icDemands.sections.lawsBroken.label, {
+                defendant: 'varnaraðila',
+              })}
+              placeholder={formatMessage(
+                icDemands.sections.lawsBroken.placeholder,
+              )}
+              value={lawsBrokenInput.value}
+              errorMessage={lawsBrokenInput.errorMessage}
+              hasError={lawsBrokenInput.hasError}
+              onChange={(evt) => lawsBrokenInput.onChange(evt.target.value)}
+              onBlur={(evt) => lawsBrokenInput.onBlur(evt.target.value)}
+              required
+              textarea
+              rows={7}
+            />
           </Box>
-          <Input
-            data-testid="lawsBroken"
-            name="lawsBroken"
-            label={formatMessage(icDemands.sections.lawsBroken.label, {
-              defendant: 'varnaraðila',
-            })}
-            placeholder={formatMessage(
-              icDemands.sections.lawsBroken.placeholder,
-            )}
-            value={workingCase.lawsBroken || ''}
-            errorMessage={lawsBrokenEM}
-            hasError={lawsBrokenEM !== ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'lawsBroken',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                lawsBrokenEM,
-                setLawsBrokenEM,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'lawsBroken',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setLawsBrokenEM,
-              )
-            }
-            required
-            textarea
-            rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
-          />
-        </Box>
-        <Box component="section" marginBottom={10}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(icDemands.sections.legalBasis.heading)}
-            </Text>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(icDemands.sections.legalBasis.heading)}
+            />
+            <Input
+              data-testid="legalBasis"
+              name="legalBasis"
+              label={formatMessage(icDemands.sections.legalBasis.label)}
+              placeholder={formatMessage(
+                icDemands.sections.legalBasis.placeholder,
+              )}
+              value={legalBasisInput.value}
+              errorMessage={legalBasisInput.errorMessage}
+              hasError={legalBasisInput.hasError}
+              onChange={(event) => legalBasisInput.onChange(event.target.value)}
+              onBlur={(event) => legalBasisInput.onBlur(event.target.value)}
+              required
+              textarea
+              rows={7}
+            />
           </Box>
-          <Input
-            data-testid="legalBasis"
-            name="legalBasis"
-            label={formatMessage(icDemands.sections.legalBasis.label)}
-            placeholder={formatMessage(
-              icDemands.sections.legalBasis.placeholder,
-            )}
-            value={workingCase.legalBasis || ''}
-            errorMessage={legalBasisEM}
-            hasError={legalBasisEM !== ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'legalBasis',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                legalBasisEM,
-                setLegalBasisEM,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'legalBasis',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setLegalBasisEM,
-              )
-            }
-            required
-            textarea
-            rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
-          />
-        </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

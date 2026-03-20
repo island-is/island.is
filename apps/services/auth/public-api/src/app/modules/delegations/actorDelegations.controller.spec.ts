@@ -921,16 +921,16 @@ describe('ActorDelegationsController', () => {
 
             beforeAll(async () => {
               prTypeModel = app.get<typeof PersonalRepresentativeType>(
-                'PersonalRepresentativeTypeRepository',
+                getModelToken(PersonalRepresentativeType),
               )
               prModel = app.get<typeof PersonalRepresentative>(
-                'PersonalRepresentativeRepository',
+                getModelToken(PersonalRepresentative),
               )
               prRightTypeModel = app.get<
                 typeof PersonalRepresentativeRightType
-              >('PersonalRepresentativeRightTypeRepository')
+              >(getModelToken(PersonalRepresentativeRightType))
               prRightsModel = app.get<typeof PersonalRepresentativeRight>(
-                'PersonalRepresentativeRightRepository',
+                getModelToken(PersonalRepresentativeRight),
               )
               delegationTypeModel = app.get<typeof DelegationTypeModel>(
                 getModelToken(DelegationTypeModel),
@@ -954,6 +954,16 @@ describe('ActorDelegationsController', () => {
                 personalRepresentativeTypeCode: prType.code,
                 contractId: '1',
                 externalUserId: '1',
+              })
+
+              await delegationProviderModel.findOrCreate({
+                where: {
+                  id: AuthDelegationProvider.PersonalRepresentativeRegistry,
+                },
+                defaults: {
+                  name: 'Talsmannagrunnur',
+                  description: 'Talsmannagrunnur',
+                },
               })
 
               const dt = await delegationTypeModel.create({

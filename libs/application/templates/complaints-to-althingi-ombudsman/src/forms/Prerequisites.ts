@@ -9,7 +9,7 @@ import {
 import {
   Form,
   FormModes,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { application, dataProvider, section } from '../lib/messages'
@@ -46,7 +46,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: dataProvider.nationalRegistryTitle,
               subTitle: dataProvider.nationalRegistrySubTitle,
             }),

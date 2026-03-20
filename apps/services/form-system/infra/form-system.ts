@@ -1,28 +1,22 @@
 import {
   CodeOwners,
-  json,
   service,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
-
-const REDIS_NODE_CONFIG = {
-  dev: json([
-    'clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379',
-  ]),
-  staging: json([
-    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-  ]),
-  prod: json([
-    'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
-  ]),
-}
+import {
+  Base,
+  Client,
+  NationalRegistryB2C,
+} from '../../../../infra/src/dsl/xroad'
 
 const serviceName = 'services-form-system-api'
+const workerName = `${serviceName}-worker`
+
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
   service(serviceName)
     .image(serviceName)
     .namespace(serviceName)
-    .serviceAccount(serviceName)
+    .serviceAccount('form-system-api')
     .codeOwner(CodeOwners.Advania)
     .db()
     .migrations()
@@ -41,11 +35,15 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         prod: 'island-is-prod-upload-api',
       },
       FORM_SYSTEM_BUCKET: {
-        dev: 'island-is-dev-storage-form-system',
-        staging: 'island-is-staging-storage-form-system',
-        prod: 'island-is-prod-storage-form-system',
+        dev: 'island-is-dev-form-system-presign-bucket',
+        staging: 'island-is-staging-form-system-presign-bucket',
+        prod: 'island-is-prod-form-system-presign-bucket',
       },
-      REDIS_URL_NODE_01: REDIS_NODE_CONFIG,
+      COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+        dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+        staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+        prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+      },
     })
     .secrets({
       FORM_SYSTEM_ZENDESK_TENANT_ID_SANDBOX:
@@ -56,11 +54,67 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_SANDBOX',
       FORM_SYSTEM_ZENDESK_API_KEY_PROD:
         '/k8s/form-system/FORM_SYSTEM_ZENDESK_API_KEY_PROD',
+      SYSLUMENN_HOST: '/k8s/form-system/SYSLUMENN_HOST',
+      SYSLUMENN_USERNAME: '/k8s/form-system/SYSLUMENN_USERNAME',
+      SYSLUMENN_PASSWORD: '/k8s/form-system/SYSLUMENN_PASSWORD',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
+    .xroad(Base, Client, NationalRegistryB2C)
+    .ingress({
+      primary: {
+        host: {
+          dev: serviceName,
+          staging: serviceName,
+          prod: serviceName,
+        },
+        paths: ['/api'],
+        public: false,
+      },
+    })
     .liveness('/liveness')
     .readiness('/liveness')
-    .grantNamespaces('islandis', 'nginx-ingress-external')
+    .grantNamespaces(
+      'islandis',
+      'nginx-ingress-external',
+      'nginx-ingress-internal',
+    )
+
+export const workerSetup = (): ServiceBuilder<typeof workerName> =>
+  service(workerName)
+    .image(serviceName)
+    .namespace(serviceName)
+    .serviceAccount(workerName)
+    .codeOwner(CodeOwners.Advania)
+    .redis()
+    .db()
+    .env({
+      S3_REGION: 'eu-west-1',
+      S3_TIME_TO_LIVE_POST: '15',
+      S3_TIME_TO_LIVE_GET: '5',
+      FILE_STORAGE_UPLOAD_BUCKET: {
+        dev: 'island-is-dev-upload-api',
+        staging: 'island-is-staging-upload-api',
+        prod: 'island-is-prod-upload-api',
+      },
+      FORM_SYSTEM_BUCKET: {
+        dev: 'island-is-dev-form-system-presign-bucket',
+        staging: 'island-is-staging-form-system-presign-bucket',
+        prod: 'island-is-prod-form-system-presign-bucket',
+      },
+    })
+    .args('main.cjs', '--job', 'worker')
+    .command('node')
+    .extraAttributes({
+      dev: { schedule: '*/30 * * * *' },
+      staging: { schedule: '*/30 * * * *' },
+      prod: { schedule: '*/30 * * * *' },
+    })
+    .resources({
+      limits: { cpu: '400m', memory: '768Mi' },
+      requests: { cpu: '150m', memory: '384Mi' },
+    })

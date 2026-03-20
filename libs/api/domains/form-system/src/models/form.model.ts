@@ -10,7 +10,6 @@ import { FormApplicant } from './formApplicant.model'
 import { LanguageType } from './languageType.model'
 import { ListType } from './listItem.model'
 import { Option } from './option.model'
-import { OrganizationUrl } from './organizationUrl.model'
 import { Screen as ScreenModel } from './screen.model'
 import { Section } from './section.model'
 
@@ -50,6 +49,18 @@ export class Form {
   invalidationDate?: Date
 
   @Field(() => Boolean, { nullable: true })
+  zendeskInternal?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  useValidate?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  usePopulate?: boolean
+
+  @Field(() => String, { nullable: true })
+  submissionServiceUrl?: string
+
+  @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
 
   @Field(() => Boolean, { nullable: true })
@@ -74,16 +85,16 @@ export class Form {
   isTranslated!: boolean
 
   @Field(() => Int)
-  daysUntilApplicationPrune!: number
+  draftDaysToLive!: number
+
+  @Field(() => Int)
+  submissionDaysToLive!: number
 
   @Field(() => Boolean)
   allowProceedOnValidationFail!: boolean
 
   @Field(() => Boolean)
   hasSummaryScreen!: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isZendeskEnabled?: boolean
 
   @Field(() => CompletedSectionInfo, { nullable: true })
   completedSectionInfo?: CompletedSectionInfo
@@ -108,9 +119,6 @@ export class Form {
 
   @Field(() => String)
   status!: string
-
-  @Field(() => [String], { nullable: 'itemsAndList' })
-  urls?: string[]
 }
 
 @ObjectType('FormSystemFormResponse')
@@ -133,11 +141,8 @@ export class FormResponse {
   @Field(() => [Form], { nullable: 'itemsAndList' })
   forms?: Form[]
 
-  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
-  submitUrls?: OrganizationUrl[]
-
-  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
-  validationUrls?: OrganizationUrl[]
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  submissionUrls?: string[]
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]

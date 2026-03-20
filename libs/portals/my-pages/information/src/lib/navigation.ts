@@ -69,8 +69,14 @@ export const informationNavigation: PortalNavigationItem = {
       children: [
         // Municipal
         {
+          customShortcut: {
+            name: m.signatureCollectionMunicipalLists,
+            description:
+              m.signatureCollectionMunicipalListsNavigationDescription,
+          },
           name: m.signatureCollectionMunicipalLists,
           path: SignatureCollectionPaths.SignatureCollectionMunicipalLists,
+          icon: { icon: 'document' },
           children: [
             {
               name: m.viewSignatureList,
@@ -88,18 +94,6 @@ export const informationNavigation: PortalNavigationItem = {
               name: m.viewSignatureList,
               navHide: true,
               path: SignatureCollectionPaths.ViewParliamentaryList,
-            },
-            {
-              name: m.signatureCollectionLists,
-              navHide: true,
-              path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
-              children: [
-                {
-                  name: m.viewSignatureList,
-                  navHide: true,
-                  path: SignatureCollectionPaths.CompanyViewParliamentaryList,
-                },
-              ],
             },
           ],
         },
@@ -135,18 +129,68 @@ export const informationNavigation: PortalNavigationItem = {
       ],
     },
     {
+      name: m.contracts,
+      description: m.contractsDescription,
+      searchTags: [
+        searchTagsMessages.rent,
+        searchTagsMessages.rentalAgreements,
+      ],
+      path: InformationPaths.MyContracts,
+      children: [
+        {
+          name: m.contracts,
+          navHide: true,
+          searchHide: true,
+          path: InformationPaths.MyContractsDetail,
+        },
+      ],
+    },
+    {
       name: m.notifications,
       path: InformationPaths.Notifications,
     },
   ],
 }
 
-export const companyNavigation: PortalNavigationItem = {
-  name: m.companyTitle,
-  searchHide: true,
+export const companyInformationNavigation: PortalNavigationItem = {
+  name: m.companyInfo,
+  description: m.companyDescription,
+  searchTags: [],
   path: InformationPaths.Company,
   icon: {
     icon: 'business',
   },
-  description: m.companyDescription,
+  children: [
+    {
+      name: m.companyData,
+      description: m.companyIntro,
+      path: InformationPaths.Company,
+    },
+    {
+      name: m.companySettings,
+      path: InformationPaths.CompanySettings,
+    },
+    {
+      name: m.notifications,
+      path: InformationPaths.CompanyNotifications,
+    },
+    {
+      name: m.lists,
+      path: InformationPaths.CompanyLists,
+      children: [
+        {
+          name: m.signatureCollectionLists,
+          navHide: true,
+          path: SignatureCollectionPaths.CompanySignatureCollectionParliamentaryLists,
+          children: [
+            {
+              name: m.viewSignatureList,
+              navHide: true,
+              path: SignatureCollectionPaths.CompanyViewParliamentaryList,
+            },
+          ],
+        },
+      ],
+    },
+  ],
 }

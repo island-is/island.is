@@ -1,4 +1,11 @@
-import { FC, useCallback, useContext, useMemo, useState } from 'react'
+import {
+  FC,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
@@ -8,17 +15,34 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useOnceOn } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { useProsecutorSelectionUsersQuery } from './prosecutorSelectionUsers.generated'
 import { strings } from './ProsecutorSelection.strings'
 
 interface Props {
-  onChange: (prosecutorId: string) => void
+  onChange?: (prosecutorId: string) => void
+  placeholder?: string
+  isRequired?: boolean
+  shouldInitializeSelector?: boolean
+  onMenuOpen?: () => void
+  onMenuClose?: () => void
+  onProsecutorsLoaded?: (count: number) => void
 }
 
-const ProsecutorSelection: FC<Props> = ({ onChange }) => {
+const ProsecutorSelection: FC<Props> = ({
+  onChange,
+  placeholder,
+  isRequired = true,
+  shouldInitializeSelector,
+  onMenuOpen,
+  onMenuClose,
+  onProsecutorsLoaded,
+}) => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isCaseUpToDate } =
     useContext(FormContext)
@@ -26,7 +50,10 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
   const [caseLoaded, setCaseLoaded] = useState(false)
 
   const selectedProsecutor = useMemo(() => {
-    if (!workingCase.prosecutor && currentUser?.role !== UserRole.PROSECUTOR) {
+    if (
+      (!workingCase.prosecutor && currentUser?.role !== UserRole.PROSECUTOR) ||
+      shouldInitializeSelector
+    ) {
       return undefined
     }
 
@@ -39,7 +66,13 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
       : currentUser?.id
 
     return { label, value }
-  }, [currentUser, workingCase.prosecutor])
+  }, [
+    currentUser?.id,
+    currentUser?.name,
+    currentUser?.role,
+    shouldInitializeSelector,
+    workingCase.prosecutor,
+  ])
 
   const { data, loading } = useProsecutorSelectionUsersQuery({
     fetchPolicy: 'no-cache',
@@ -73,7 +106,7 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
 
   const handleUpdate = useCallback(
     (prosecutorId: string) => {
-      if (!workingCase.id) {
+      if (!workingCase.id || !onChange) {
         const prosecutor = data?.users?.find((p) => p.id === prosecutorId)
 
         setWorkingCase((prevWorkingCase) => ({
@@ -87,6 +120,14 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
     [data?.users, onChange, setWorkingCase, workingCase.id],
   )
 
+  const handleChange = (value: SingleValue<Option<string | undefined>>) => {
+    const id = value?.value
+
+    if (id && typeof id === 'string') {
+      handleUpdate(id)
+    }
+  }
+
   // Before we can set the default prosecutor we need to make sure
   // that the case has been loaded and that we have the list of users
   useOnceOn(isCaseUpToDate, () => setCaseLoaded(true))
@@ -96,13 +137,11 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
     }
   })
 
-  const handleChange = (value: SingleValue<Option<string | undefined>>) => {
-    const id = value?.value
-
-    if (id && typeof id === 'string') {
-      handleUpdate(id)
+  useEffect(() => {
+    if (eligibleProsecutors.length > 0 && onProsecutorsLoaded) {
+      onProsecutorsLoaded(eligibleProsecutors.length)
     }
-  }
+  }, [eligibleProsecutors, onProsecutorsLoaded])
 
   return (
     <Select
@@ -110,14 +149,19 @@ const ProsecutorSelection: FC<Props> = ({ onChange }) => {
       label={formatMessage(strings.label, {
         isIndictmentCase: isIndictmentCase(workingCase.type),
       })}
-      placeholder={formatMessage(strings.placeholder, {
-        isIndictmentCase: isIndictmentCase(workingCase.type),
-      })}
+      placeholder={
+        placeholder ??
+        formatMessage(strings.placeholder, {
+          isIndictmentCase: isIndictmentCase(workingCase.type),
+        })
+      }
       value={selectedProsecutor}
       options={eligibleProsecutors}
       onChange={handleChange}
-      isDisabled={loading}
-      required
+      isDisabled={loading || workingCase.state === CaseState.CORRECTING}
+      required={isRequired}
+      onMenuOpen={onMenuOpen}
+      onMenuClose={onMenuClose}
     />
   )
 }

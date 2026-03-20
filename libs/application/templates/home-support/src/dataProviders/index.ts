@@ -1,6 +1,6 @@
 export {
-  NationalRegistryUserApi,
-  NationalRegistryCohabitantsApi,
+  NationalRegistryV3UserApi,
+  NationalRegistryV3CohabitantsApi,
   UserProfileApi,
   HealthInsuranceApi,
   HealthCenterApi,

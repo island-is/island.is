@@ -20,6 +20,7 @@ import {
   PageTitle,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import SelectCivilClaimantAdvocate from './SelectCivilClaimantAdvocate'
@@ -59,66 +60,66 @@ const Advocates = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={hasCivilClaimants ? 5 : 10}>
-          <Box
-            display="flex"
-            columnGap={1}
-            alignItems="center"
-            marginBottom={3}
-          >
-            <SectionHeading title="Verjendur varnaraðila" marginBottom={0} />
-            <AnimatePresence>
-              {!allDefendersHaveBeenConfirmed && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{
-                    opacity: 1,
-                    scale: 1,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    scale: 0,
-                  }}
-                >
-                  <TooltipProvider timeout={0}>
-                    <TooltipAnchor
-                      render={
-                        <Box display="flex">
-                          <Icon
-                            icon="warning"
-                            size="large"
-                            color="red300"
-                            type="outline"
-                          />
-                        </Box>
-                      }
-                    />
-                    <Tooltip>
-                      <Box background="dark400" borderRadius="full" padding={1}>
-                        <Text color="white" variant="small">
-                          Ákærunni hefur ekki verið deilt með öllum verjendum
-                        </Text>
+
+        <Box display="flex" columnGap={1} alignItems="center" marginBottom={3}>
+          <SectionHeading title="Verjendur varnaraðila" marginBottom={0} />
+          <AnimatePresence>
+            {!allDefendersHaveBeenConfirmed && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0,
+                }}
+              >
+                <TooltipProvider timeout={0}>
+                  <TooltipAnchor
+                    render={
+                      <Box display="flex">
+                        <Icon
+                          icon="warning"
+                          size="large"
+                          color="red300"
+                          type="outline"
+                        />
                       </Box>
-                    </Tooltip>
-                  </TooltipProvider>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </Box>
-          {workingCase.defendants?.map((defendant, index) => (
-            <SelectDefender defendant={defendant} key={index} />
-          ))}
+                    }
+                  />
+                  <Tooltip>
+                    <Box background="dark400" borderRadius="full" padding={1}>
+                      <Text color="white" variant="small">
+                        Ákærunni hefur ekki verið deilt með öllum verjendum
+                      </Text>
+                    </Box>
+                  </Tooltip>
+                </TooltipProvider>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </Box>
-        {hasCivilClaimants && (
-          <Box component="section" marginBottom={10}>
-            <SectionHeading title={formatMessage(strings.civilClaimants)} />
-            {workingCase.civilClaimants?.map((civilClaimant) => (
-              <Box component="section" marginBottom={5} key={civilClaimant.id}>
-                <SelectCivilClaimantAdvocate civilClaimant={civilClaimant} />
-              </Box>
-            ))}
-          </Box>
-        )}
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          {workingCase.defendants?.map((defendant) => (
+            <SelectDefender defendant={defendant} key={defendant.id} />
+          ))}
+          {hasCivilClaimants && (
+            <Box component="section">
+              <SectionHeading title={formatMessage(strings.civilClaimants)} />
+              <div className={grid({ gap: 5 })}>
+                {workingCase.civilClaimants?.map((civilClaimant) => (
+                  <Box component="section" key={civilClaimant.id}>
+                    <SelectCivilClaimantAdvocate
+                      civilClaimant={civilClaimant}
+                    />
+                  </Box>
+                ))}
+              </div>
+            </Box>
+          )}
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

@@ -288,11 +288,7 @@ export const SubPageBottomSlices = ({
         }
       >
         {subpage?.bottomSlices?.map((slice) => {
-          if (
-            (organizationPage.slug === 'stafraent-island' ||
-              organizationPage.slug === 'digital-iceland') &&
-            slice.__typename === 'LatestNewsSlice'
-          ) {
+          if (slice.__typename === 'LatestNewsSlice') {
             return (
               <Box paddingTop={[5, 5, 8]} paddingBottom={[2, 2, 5]}>
                 <DigitalIcelandLatestNewsSlice

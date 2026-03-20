@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { ExternalData, FormText, FormValue } from '@island.is/application/types'
 import { overview as overviewMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -51,28 +51,30 @@ export const useOtherPaymentsAnswers = (
       payment.pensionFund || '',
       externalData,
     )
+
+    const categoryNameStringValue =
+      (locale === 'is' ? subCategory?.name : subCategory?.english) ??
+      (locale === 'is' ? topCategory?.name : topCategory?.english) ??
+      ''
+    const privatePensionStringValue = privatePensionString
+      ? ` - ${privatePensionString}`
+      : ''
+    const unionStringValue = unionString ? ` - ${unionString}` : ''
+    const pensionFundStringValue = pensionFundString
+      ? ` - ${pensionFundString}`
+      : ''
+    const paymentAmountStringValue = paymentAmount
+      ? `: ${formatCurrency(parseInt(paymentAmount))} ${formatMessage(
+          overviewMessages.labels.payout.paymentPerMonth,
+        )}`
+      : ''
+
     paymentsList.push(
-      `${
-        !subCategory
-          ? locale === 'is'
-            ? `${topCategory?.name}`
-            : `${topCategory?.english || ''} `
-          : ''
-      } ${
-        subCategory
-          ? locale === 'is'
-            ? `${subCategory?.name || ''}`
-            : `${subCategory?.english || ''}`
-          : ''
-      }${privatePensionString ? ` - ${privatePensionString}` : ''}${
-        unionString ? ` - ${unionString}` : ''
-      }${pensionFundString ? ` - ${pensionFundString}` : ''}${
-        paymentAmount
-          ? `: ${formatCurrency(parseInt(paymentAmount))} ${formatMessage(
-              overviewMessages.labels.payout.paymentPerMonth,
-            )}`
-          : ''
-      }`,
+      categoryNameStringValue +
+        privatePensionStringValue +
+        unionStringValue +
+        pensionFundStringValue +
+        paymentAmountStringValue,
     )
   })
 
@@ -81,17 +83,19 @@ export const useOtherPaymentsAnswers = (
     answers,
     'capitalIncome',
   )
-
-  const total = capitalIncome?.capitalIncomeAmount
-    ?.map((x) => parseInt(x?.amount || '0'))
-    .reduce((a, b) => a + b, 0)
+  const capitalIncomeTotalAmount =
+    capitalIncome?.otherIncome === YES
+      ? capitalIncome?.capitalIncomeAmount
+          ?.map((x) => parseInt(x?.amount || '0'))
+          .reduce((a, b) => a + b, 0)
+      : null
 
   return [
     ...paymentsList,
-    total
+    capitalIncomeTotalAmount
       ? `${formatMessage(
           overviewMessages.labels.payout.capitalIncome,
-        )}${`: ${formatCurrency(total)} ${formatMessage(
+        )}${`: ${formatCurrency(capitalIncomeTotalAmount)} ${formatMessage(
           overviewMessages.labels.payout.paymentPerMonth,
         )}`}`
       : '',

@@ -1,6 +1,8 @@
 import { YES } from '@island.is/application/core'
 import {
+  ApplicationFeatureKey,
   ApplicationType,
+  AttachmentOptions,
   getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
@@ -13,10 +15,9 @@ import {
   needsPayerApproval,
   ReasonForApplicationOptions,
   shouldShowExpectedEndDate,
+  shouldShowPage,
   shouldShowAlternativeSpecialEducationDepartment,
   shouldShowReasonForApplicationPage,
-  AttachmentOptions,
-  canHaveAttachments,
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
@@ -26,8 +27,6 @@ import {
   RegistrationApplicationInputApplicationTypeEnum,
   RegistrationApplicationInputFileUploadTypeEnum,
 } from '@island.is/clients/mms/frigg'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { join } from 'path'
 
 export const getSocialProfile = (application: Application) => {
   const {
@@ -207,6 +206,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     selectedSchoolId,
     alternativeSpecialEducationDepartment,
     currentSchoolId,
+    hasCurrentSchool,
     currentNursery,
     applyForPreferredSchool,
     payerName,
@@ -275,7 +275,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         relationTypeId: relative.relation,
       })),
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
-        ? { defaultOrganizationId: primaryOrgId || currentSchoolId }
+        ? {
+            defaultOrganizationId:
+              primaryOrgId ||
+              (hasCurrentSchool === YES ? currentSchoolId : undefined),
+          }
         : applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL && {
             defaultOrganizationId: currentNursery,
           }),
@@ -294,7 +298,19 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         alternativeSpecialEducationDepartmentIds.length > 0 && {
           alternativeOrganizationIds: alternativeSpecialEducationDepartmentIds,
         }),
+      //Business logic override as applicationConfig isn't ready on MMS side
+      //Should be removed when applicationConfig is ready
+
+      // ...(shouldShowPage(
+      //   application.answers,
+      //   application.externalData,
+      //   ApplicationFeatureKey.SOCIAL_INFO,
+      // ) &&
+      //   !isSpecialEducation && {
+      //     requestingMeeting: requestingMeeting === YES,
+      //   }),
       requestingMeeting: requestingMeeting === YES,
+
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && {
         expectedStartDate: expectedStartDate
           ? new Date(expectedStartDate)
@@ -309,7 +325,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
               : undefined,
           }),
       }),
-      ...(shouldShowReasonForApplicationPage(application.answers) && {
+      ...(shouldShowReasonForApplicationPage(
+        application.answers,
+        application.externalData,
+      ) && {
         ...(isSpecialEducation
           ? {
               reasonId: counsellingRegardingApplication,
@@ -332,9 +351,20 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         requestsMedicationAdministration:
           requestsMedicationAdministration === YES,
       },
-      social: isSpecialEducation
-        ? getSpecialEducationSocialProfile(application)
-        : getSocialProfile(application),
+      //Business logic override as applicationConfig isn't ready on MMS side
+      //Should be removed when applicationConfig is ready
+
+      // ...(shouldShowPage(
+      //   application.answers,
+      //   application.externalData,
+      //   ApplicationFeatureKey.SOCIAL_INFO,
+      // ) && {
+      //   social: isSpecialEducation
+      //     ? getSpecialEducationSocialProfile(application)
+      //     : getSocialProfile(application),
+      // }),
+      social: getSocialProfile(application),
+
       language: {
         languageEnvironmentId: languageEnvironmentId,
         signLanguage: signLanguage === YES,
@@ -354,15 +384,31 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           nationalId: payerNationalId || '',
         },
       }),
-      childCircumstances: {
-        fieldInspection: fieldInspection === YES,
-        additionalDataProvisioning: additionalDataProvisioning === YES,
-        outsideSpecialist: outsideSpecialist === YES,
-        childViewOnApplication: childViewOnApplication === YES,
-      },
-      terms: terms === YES,
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.CHILD_CIRCUMSTANCES,
+      ) && {
+        childCircumstances: {
+          fieldInspection: fieldInspection === YES,
+          additionalDataProvisioning: additionalDataProvisioning === YES,
+          outsideSpecialist: outsideSpecialist === YES,
+          childViewOnApplication: childViewOnApplication === YES,
+        },
+      }),
+      ...(shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.TERMS,
+      ) && {
+        terms: terms === YES,
+      }),
     },
-    ...(canHaveAttachments(application.answers, application.externalData) &&
+    ...(shouldShowPage(
+      application.answers,
+      application.externalData,
+      ApplicationFeatureKey.ATTACHMENTS,
+    ) &&
       attachmentsAnswer && {
         files: attachmentFiles,
         fileUploadType: mapAttachmentOptionToFileUploadType(attachmentsAnswer),
@@ -405,15 +451,4 @@ const mapApplicationType = (application: Application) => {
     default:
       return RegistrationApplicationInputApplicationTypeEnum.Enrollment
   }
-}
-
-export const pathToAsset = (file: string) => {
-  if (isRunningOnEnvironment('local')) {
-    return join(
-      __dirname,
-      `../../../../libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/emailGenerators/assets/${file}`,
-    )
-  }
-
-  return join(__dirname, `./new-primary-school-assets/${file}`)
 }

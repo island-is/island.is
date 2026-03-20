@@ -1,52 +1,12 @@
-query getApplicationsSuperAdmin($input: ApplicationsSuperAdminFilters!) {
-  applicationApplicationsAdmin(input: $input) {
+query getApplicationV2ApplicationsSuperAdmin(
+  $input: ApplicationsSuperAdminFilters!
+) {
+  applicationV2ApplicationsSuperAdmin(input: $input) {
     rows {
       id
+      isFormSystem
       typeId
-      applicant
-      state
-      created
-      modified
-      assignees
-      applicantActors
-      name
-      pruned
-      pruneAt
-      institution
-      progress
-      status
-      applicantName
-      paymentStatus
-      actionCard {
-        title
-        description
-        tag {
-          label
-          variant
-        }
-        pendingAction {
-          displayStatus
-          content
-          title
-        }
-        history {
-          log
-          date
-        }
-        deleteButton
-        draftTotalSteps
-        draftFinishedSteps
-      }
-    }
-    count
-  }
-}
-
-query getApplicationsInstitutionAdmin($input: ApplicationsAdminFilters!) {
-  applicationApplicationsInstitutionAdmin(input: $input) {
-    rows {
-      id
-      typeId
+      formSlug
       applicant
       state
       created
@@ -80,28 +40,85 @@ query getApplicationsInstitutionAdmin($input: ApplicationsAdminFilters!) {
         }
         history {
           log
+          subLog
           date
         }
         deleteButton
         draftTotalSteps
         draftFinishedSteps
       }
+      institutionContentfulSlug
     }
     count
   }
 }
 
-query getInstitutionApplicationTypes(
-  $input: ApplicationTypesInstitutionAdminInput!
+query getApplicationV2ApplicationsInstitutionAdmin(
+  $input: ApplicationsAdminFilters!
 ) {
-  applicationTypesInstitutionAdmin(input: $input) {
+  applicationV2ApplicationsInstitutionAdmin(input: $input) {
+    rows {
+      id
+      isFormSystem
+      typeId
+      formSlug
+      applicant
+      state
+      created
+      modified
+      assignees
+      applicantActors
+      name
+      pruned
+      pruneAt
+      institution
+      progress
+      status
+      adminData {
+        key
+        values
+        label
+      }
+      applicantName
+      paymentStatus
+      actionCard {
+        title
+        description
+        tag {
+          label
+          variant
+        }
+        pendingAction {
+          displayStatus
+          content
+          title
+        }
+        history {
+          log
+          subLog
+          date
+        }
+        deleteButton
+        draftTotalSteps
+        draftFinishedSteps
+      }
+      institutionContentfulSlug
+    }
+    count
+  }
+}
+
+query getApplicationV2ApplicationTypesInstitutionAdmin {
+  applicationV2ApplicationTypesInstitutionAdmin {
     id
     name
   }
 }
 
-query getSuperApplicationTypes {
-  applicationTypesSuperAdmin {
+query getApplicationV2ApplicationTypesSuperAdmin(
+  $input: ApplicationTypesAdminInput!
+) {
+  applicationV2ApplicationTypesSuperAdmin(input: $input) {
     id
     name
   }
@@ -122,8 +139,10 @@ query getOrganizations($input: GetOrganizationsInput) {
   }
 }
 
-query getApplicationStatistics($input: ApplicationsAdminStatisticsInput!) {
-  applicationApplicationsAdminStatistics(input: $input) {
+query getApplicationV2ApplicationStatisticsSuperAdmin(
+  $input: ApplicationsAdminStatisticsInput!
+) {
+  applicationV2ApplicationStatisticsSuperAdmin(input: $input) {
     typeid
     count
     draft
@@ -132,5 +151,32 @@ query getApplicationStatistics($input: ApplicationsAdminStatisticsInput!) {
     rejected
     approved
     name
+    institutionName
+    institutionContentfulSlug
+  }
+}
+
+query getApplicationV2ApplicationStatisticsInstitutionAdmin(
+  $input: ApplicationsAdminStatisticsInput!
+) {
+  applicationV2ApplicationStatisticsInstitutionAdmin(input: $input) {
+    typeid
+    count
+    draft
+    inprogress
+    completed
+    rejected
+    approved
+    name
+    institutionName
+    institutionContentfulSlug
+  }
+}
+
+query getApplicationV2InstitutionsSuperAdmin {
+  applicationV2InstitutionsSuperAdmin {
+    nationalId
+    name
+    contentfulSlug
   }
 }

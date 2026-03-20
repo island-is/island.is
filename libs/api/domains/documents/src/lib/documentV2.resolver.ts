@@ -1,5 +1,12 @@
 import { Inject, UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -9,9 +16,14 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
-import { Audit, AuditService } from '@island.is/nest/audit'
-
+import type {
+  LogoUrl,
+  OrganizationLogoByNationalIdDataLoader,
+} from '@island.is/cms'
+import { OrganizationLogoByNationalIdLoader } from '@island.is/cms'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { Audit, AuditService } from '@island.is/nest/audit'
+import { Loader } from '@island.is/nest/dataloader'
 import {
   FeatureFlag,
   FeatureFlagGuard,
@@ -306,5 +318,17 @@ export class DocumentResolverV2 {
     @Args('input') input: ReplyInput,
   ): Promise<Reply | null> {
     return this.documentServiceV2.postReply(user, input)
+  }
+}
+
+@Resolver(() => Sender)
+export class SenderResolver {
+  @ResolveField('logoUrl', () => String, { nullable: true })
+  async resolveOrganisationLogoUrl(
+    @Loader(OrganizationLogoByNationalIdLoader)
+    organizationLogoLoader: OrganizationLogoByNationalIdDataLoader,
+    @Parent() sender: Sender,
+  ): Promise<LogoUrl | undefined> {
+    return sender.id ? organizationLogoLoader.load(sender.id) : undefined
   }
 }

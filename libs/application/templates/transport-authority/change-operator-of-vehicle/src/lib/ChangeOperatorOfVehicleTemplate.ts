@@ -9,6 +9,8 @@ import {
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
+  NotificationConfig,
+  NotificationType,
 } from '@island.is/application/types'
 import {
   getValueViaPath,
@@ -37,7 +39,6 @@ import {
   getExtraData,
   getReviewerRole,
   getReviewers,
-  hasReviewerApproved,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -225,8 +226,9 @@ const template: ApplicationTemplate<
             ],
             pendingAction: (application, _role, nationalId) => {
               return getReviewStatePendingAction(
-                hasReviewerApproved(application.answers, nationalId),
+                nationalId,
                 getReviewers(application.answers),
+                true,
               )
             },
           },
@@ -236,6 +238,20 @@ const template: ApplicationTemplate<
             whenToPrune: (application: Application) =>
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
+            pruneMessage: (application) => {
+              const plate = getValueViaPath(
+                application.answers,
+                'pickVehicle.plate',
+                undefined,
+              ) as string | undefined
+              return {
+                notificationTemplateId:
+                  NotificationConfig[
+                    NotificationType.ChangeOperatorOfVehiclePruned
+                  ].templateId,
+                internalBody: plate ?? '',
+              }
+            },
           },
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,

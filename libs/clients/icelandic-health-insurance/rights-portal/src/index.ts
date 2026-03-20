@@ -16,7 +16,7 @@ export {
   OverviewInsuranceApi as OverviewApi,
   PaymentsCopaymentApi,
   PaymentsOverviewApi,
-  MinarsidurAPIModelsPaymentsPaymentOverviewDTO as PaymentOverviewDTO,
+  MinarsidurAPIModelsPaymentsOverviewPaymentOverviewDTO as PaymentOverviewDTO,
   InsurancestatementsApi,
   AccidentreportsApi,
   MinarsidurAPIModelsInsuranceStatementsStudentApplicationDTO as InsuranceStatementsStudentApplicationDTO,

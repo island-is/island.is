@@ -6,6 +6,7 @@ import {
   buildTableRepeaterField,
   coreErrorMessages,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { friggOrganizationsByTypeQuery } from '../../../graphql/sampleQuery'
 
 export const tableRepeaterSubsection = buildSubSection({
@@ -64,6 +65,24 @@ export const tableRepeaterSubsection = buildSubSection({
               },
             ]
           },
+          defaultValue: (_application: Application) => {
+            // Possibility to populate the table with data with default values from the answers or external data
+            // Populated data will be editable and deletable
+            return [
+              {
+                input: 'Gervimaður Doe',
+                select: 'option1',
+                radio: 'option2',
+                checkbox: ['option1', 'option2'],
+                date: '2024-01-01',
+                nationalIdWithName: {
+                  name: 'Test Name 3',
+                  nationalId: '200000-0000',
+                },
+                phone: '6666666',
+              },
+            ]
+          },
           // Possible fields: input, select, radio, checkbox, date, nationalIdWithName
           fields: {
             input: {
@@ -95,6 +114,7 @@ export const tableRepeaterSubsection = buildSubSection({
               component: 'description',
               title: 'Title above checkbox',
               titleVariant: 'h5',
+              displayInTable: false,
             },
             checkbox: {
               component: 'checkbox',

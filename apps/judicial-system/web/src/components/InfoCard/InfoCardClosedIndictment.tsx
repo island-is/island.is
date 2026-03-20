@@ -51,12 +51,12 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
         {
           id: 'defendants-section',
           items: [
-            defendants(
-              workingCase.type,
+            defendants({
+              caseType: workingCase.type,
               displayAppealExpirationInfo,
               displayVerdictViewDate,
               displaySentToPrisonAdminDate,
-            ),
+            }),
           ],
         },
         ...(workingCase.hasCivilClaims
@@ -85,7 +85,9 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                 id: 'additional-data-section',
                 items: [
                   indictmentReviewer,
-                  ...(workingCase.indictmentReviewDecision
+                  ...(workingCase.defendants?.some(
+                    (d) => d.indictmentReviewDecision,
+                  )
                     ? [indictmentReviewDecision]
                     : []),
                   ...(workingCase.indictmentReviewedDate

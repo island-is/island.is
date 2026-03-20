@@ -14,6 +14,7 @@ import { motion } from 'motion/react'
 
 import {
   Box,
+  BoxProps,
   Button,
   Checkbox,
   Icon,
@@ -52,6 +53,7 @@ interface ModalProps {
   invertButtonColors?: boolean
   loading?: boolean
   position?: 'center' | 'top' | 'bottom'
+  footerJustifyContent?: BoxProps['justifyContent']
 }
 
 const Modal: FC<PropsWithChildren<ModalProps>> = ({
@@ -65,6 +67,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
   children,
   invertButtonColors,
   loading,
+  footerJustifyContent = 'spaceBetween',
 }: ModalProps) => {
   const modalVariants = {
     open: {
@@ -99,12 +102,27 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
         role="dialog"
         aria-modal="true"
         data-testid="modal"
+        layout
+        transition={{
+          layout: {
+            duration: 0.3,
+            ease: 'easeInOut',
+          },
+        }}
       >
         <motion.div
           className={styles.modalContainer}
           initial="closed"
           animate="open"
           exit="closed"
+          layout="position"
+          transition={{
+            layout: {
+              duration: 0.3,
+              ease: 'easeInOut',
+              type: 'tween',
+            },
+          }}
           variants={modalVariants}
         >
           {onClose && (
@@ -135,7 +153,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
           <Box
             display="flex"
             alignItems="center"
-            justifyContent="spaceBetween"
+            justifyContent={footerJustifyContent}
             columnGap={2}
             paddingBottom={6}
             paddingTop={2}
@@ -272,6 +290,7 @@ const ModalPortal = ({
   children,
   invertButtonColors,
   loading,
+  footerJustifyContent,
 }: ModalProps) => {
   const modalRoot =
     document.getElementById('modal') ?? document.createElement('div')
@@ -288,6 +307,7 @@ const ModalPortal = ({
       children={children}
       invertButtonColors={invertButtonColors}
       loading={loading}
+      footerJustifyContent={footerJustifyContent}
     />,
     modalRoot,
   )

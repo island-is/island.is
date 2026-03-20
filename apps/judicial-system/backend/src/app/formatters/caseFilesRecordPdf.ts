@@ -56,12 +56,14 @@ export const createCaseFilesRecord = async (
     pageLink: PageLink
   }[] = []
 
+  // Create the PDF document
   const pdfDocument = await PdfDocument(
     formatMessage(caseFilesRecord.title, { policeCaseNumber }),
   )
 
   pdfDocument.setMargins(pageMargin, pageMargin, pageMargin, pageMargin)
 
+  // Add each case file to the document
   for (const caseFile of caseFiles) {
     const { date, name, chapter, buffer } = await caseFile()
     const pageNumber = pdfDocument.getPageCount()
@@ -82,6 +84,7 @@ export const createCaseFilesRecord = async (
         })
     }
 
+    // Store reference for table of contents
     pageReferences.push({
       chapter,
       date,
@@ -91,6 +94,7 @@ export const createCaseFilesRecord = async (
     })
   }
 
+  // Create the cover page
   pdfDocument
     .addPage(0)
     .addText(
@@ -121,6 +125,7 @@ export const createCaseFilesRecord = async (
       },
     )
 
+  // Add defendants
   for (const defendant of theCase.defendants ?? []) {
     pdfDocument.addParagraph(
       formatDefendant(defendant),
@@ -134,6 +139,7 @@ export const createCaseFilesRecord = async (
       theCase.indictmentSubtypes[policeCaseNumber]) ??
     []
 
+  // Add charge description
   pdfDocument
     .addText(formatMessage(caseFilesRecord.accusedOf), textFontSize, {
       bold: true,
@@ -148,6 +154,7 @@ export const createCaseFilesRecord = async (
       defendantIndent,
     )
 
+  // Add crime scene
   if (theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber]) {
     pdfDocument
       .addText(formatMessage(caseFilesRecord.crimeScene), textFontSize, {
@@ -171,6 +178,7 @@ export const createCaseFilesRecord = async (
       )
   }
 
+  // Add table of contents heading
   pdfDocument.addText(
     formatMessage(caseFilesRecord.tableOfContentsHeading),
     subtitleFontSize,
@@ -184,6 +192,7 @@ export const createCaseFilesRecord = async (
     pageLink: PageLink
   }[] = []
 
+  // Add table of contents entries
   for (const chapter of chapters) {
     if (chapter === 0) {
       pdfDocument
@@ -204,12 +213,14 @@ export const createCaseFilesRecord = async (
         })
     }
 
+    // Add chapter heading
     pdfDocument.addText(
       formatMessage(caseFilesRecord.chapterName, { chapter }),
       textFontSize,
       { bold: true, marginTop: chapter > 0 ? 4 : 0 },
     )
 
+    // Add page references for each case file in the chapter
     for (const pageReference of pageReferences.filter(
       (pageReference) => pageReference.chapter === chapter,
     )) {
@@ -229,6 +240,7 @@ export const createCaseFilesRecord = async (
 
       const nameChunks = pageReference.name.match(/.{1,40}(?=\s|$)/g)
 
+      // Add name in chunks of max 40 characters
       for (const chunk of nameChunks ?? []) {
         pdfDocument.addText(chunk.trimStart(), textFontSize, {
           newLine: true,
@@ -241,6 +253,7 @@ export const createCaseFilesRecord = async (
 
   const tableOfContentsPageCount = pdfDocument.getPageCount() - pageCount
 
+  // Add page numbers to table of contents
   for (const lineReference of tableOfContentsLineReferences) {
     pdfDocument
       .setCurrentLine(lineReference.lineLink)
@@ -256,6 +269,7 @@ export const createCaseFilesRecord = async (
       )
   }
 
+  // Add page numbers to all pages
   pdfDocument.addPageNumbers(tableOfContentsPageCount)
 
   return pdfDocument.getContents()

@@ -4,8 +4,8 @@ import { RannisGrantItem } from '../rannisGrants.types'
 
 export interface RannisGrantDto extends GrantBase {
   id: string
-  nameIs?: string
-  nameEn?: string
+  fundId?: string
+  name: string
   dateFrom?: Date
   dateTo?: Date
   url?: string
@@ -14,14 +14,17 @@ export interface RannisGrantDto extends GrantBase {
 
 export const mapRannisGrant = (
   grantItem: RannisGrantItem,
+): RannisGrantDto | undefined =>
+  mapGrant('id' in grantItem ? grantItem.id : grantItem.fundid, grantItem)
+
+const mapGrant = (
+  id: string,
+  grantItem: RannisGrantItem,
 ): RannisGrantDto | undefined => {
-  if (!grantItem.fundid) {
-    return undefined
-  }
   return {
-    id: grantItem.fundid,
-    nameIs: grantItem.fund_name_is,
-    nameEn: grantItem.fund_name_en,
+    id: id,
+    fundId: grantItem.fundid,
+    name: grantItem.fund_name,
     dateFrom: grantItem.datefrom
       ? parseDateSafely(grantItem.datefrom)
       : undefined,

@@ -1,10 +1,11 @@
-import { YES, NO } from '@island.is/application/core'
+import { NO, YES } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
   FormValue,
 } from '@island.is/application/types'
 import {
+  ApplicationFeatureConfigType,
   ApplicationFeatureKey,
   ApplicationType,
   LanguageEnvironmentOptions,
@@ -14,10 +15,11 @@ import {
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getSpecialEducationDepartmentsInMunicipality,
   getOtherGuardian,
   getSelectedSchoolData,
   getSelectedSchoolSubType,
+  getSpecialEducationDepartmentsInMunicipality,
+  mapApplicationType,
 } from './newPrimarySchoolUtils'
 
 export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
@@ -91,18 +93,28 @@ export const shouldShowPage = (
   externalData: ExternalData,
   key: ApplicationFeatureKey,
 ): boolean => {
-  const { selectedSchoolId } = getApplicationAnswers(answers)
+  const { selectedSchoolId, currentSchoolId } = getApplicationAnswers(answers)
+  const { preferredSchool, primaryOrgId } =
+    getApplicationExternalData(externalData)
+  const applicationType = mapApplicationType(answers)
 
-  if (!selectedSchoolId) return false
+  const schoolId =
+    applicationType === ApplicationFeatureConfigType.ENROLLMENT
+      ? preferredSchool?.id
+      : applicationType === ApplicationFeatureConfigType.CONTINUATION
+      ? primaryOrgId || currentSchoolId
+      : selectedSchoolId
 
-  const selectedSchoolSettings = getSelectedSchoolData(
-    externalData,
-    selectedSchoolId,
-  )?.settings
+  if (!schoolId) return false
 
-  if (!selectedSchoolSettings) return false
+  const schoolSettings = getSelectedSchoolData(externalData, schoolId)?.settings
 
-  const applicationConfig = selectedSchoolSettings.applicationConfigs?.[0]
+  if (!schoolSettings) return false
+
+  const applicationConfig = schoolSettings.applicationConfigs?.find(
+    (config) => config.applicationType === applicationType,
+  )
+
   if (!applicationConfig?.applicationFeatures) return false
 
   return applicationConfig.applicationFeatures.some(
@@ -133,17 +145,6 @@ export const needsOtherGuardianApproval = (application: Application) => {
       application.externalData,
       ApplicationFeatureKey.ADDITIONAL_REQUESTORS,
     ) && hasOtherGuardian(application.answers, application.externalData)
-  )
-}
-
-export const canHaveAttachments = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
-  // Check if the attachments page is shown and application type is not CONTINUING_ENROLLMENT
-  return (
-    shouldShowPage(answers, externalData, ApplicationFeatureKey.ATTACHMENTS) &&
-    answers.applicationType !== ApplicationType.CONTINUING_ENROLLMENT
   )
 }
 
@@ -299,13 +300,33 @@ export const shouldShowChildAndAdolescentPsychiatryServicesReceived = (
   )
 }
 
-export const shouldShowReasonForApplicationPage = (answers: FormValue) => {
+export const shouldShowReasonForApplicationPage = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
   const { applyForPreferredSchool, applicationType } =
     getApplicationAnswers(answers)
+  const { preferredSchool } = getApplicationExternalData(externalData)
 
   return (
     applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
     (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
-      applyForPreferredSchool === NO)
+      applyForPreferredSchool === NO &&
+      preferredSchool !== null)
+  )
+}
+
+export const shouldShowNewSchoolPage = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { applyForPreferredSchool, applicationType } =
+    getApplicationAnswers(answers)
+  const { preferredSchool } = getApplicationExternalData(externalData)
+
+  return (
+    applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+    (applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+      (applyForPreferredSchool === NO || preferredSchool === null))
   )
 }

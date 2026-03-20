@@ -16,11 +16,7 @@ export const questions = defineMessages({
     defaultMessage: 'Annað, hvað?',
     description: 'Other, what?',
   },
-  residenceOtherWhatQuestion: {
-    id: 'dp.application:selfEvaluation.questions.residence.otherWhatQuestion',
-    defaultMessage: 'Ef annað húsnæði, hvað?',
-    description: 'Other, what? But question',
-  },
+
   childrenCountTitle: {
     id: 'dp.application:selfEvaluation.questions.childrenCount.title',
     defaultMessage:
@@ -98,16 +94,7 @@ export const questions = defineMessages({
     defaultMessage: 'Hvert er móðurmál þitt / þitt aðaltungumál?',
     description: 'What is your native language / main language?',
   },
-  languageOther: {
-    id: 'dp.application:selfEvaluation.questions.language.other',
-    defaultMessage: 'Annað',
-    description: 'Other',
-  },
-  languageOtherSpecify: {
-    id: 'dp.application:selfEvaluation.questions.language.otherSpecify',
-    defaultMessage: 'Annað, hvað?',
-    description: 'Specify which language',
-  },
+
   employmentStatusTitle: {
     id: 'dp.application:selfEvaluation.questions.employmentStatus.title',
     defaultMessage: 'Hver er staða þín á vinnumarkaði?',
@@ -118,11 +105,7 @@ export const questions = defineMessages({
     defaultMessage: 'Annað, hvað?',
     description: 'Other, what?',
   },
-  employmentStatusOtherWhatQuestion: {
-    id: 'dp.application:selfEvaluation.questions.employmentStatus.otherWhatQuestion',
-    defaultMessage: 'Ef önnur atvinnustaða, hvað?',
-    description: 'Other, what? But question',
-  },
+
   previousEmploymentTitle: {
     id: 'dp.application:selfEvaluation.questions.previousEmployment.title',
     defaultMessage: 'Hefur þú verið í launuðu starfi áður?',

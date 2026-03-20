@@ -1,10 +1,9 @@
 import { toast } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroWrapper } from '@island.is/portals/my-pages/core'
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
-import { ConfirmModal } from '../../components/PatientDataPermit/ConfirmModal'
 import Countries from '../../components/PatientDataPermit/Countries'
 import Dates from '../../components/PatientDataPermit/Dates'
 import Terms from '../../components/PatientDataPermit/Terms'
@@ -12,19 +11,60 @@ import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { PermitInput } from '../../utils/types'
 import { useCreatePatientDataPermitMutation } from './PatientDataPermits.generated'
+import { Markdown } from '@island.is/shared/components'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const DEFAULT_STEP = 1 // Default to step 1 to start with the first step
 
+type EditRouteState = {
+  countries?: { code: string; name: string }[]
+  validFrom?: string | null
+  validTo?: string | null
+}
+
+const isValidDate = (date: Date | null) =>
+  date !== null && !Number.isNaN(date.getTime())
+
+const isEditRouteState = (state: unknown): state is EditRouteState =>
+  typeof state === 'object' &&
+  state !== null &&
+  (!('countries' in state) ||
+    (Array.isArray((state as EditRouteState).countries) &&
+      ((state as EditRouteState).countries ?? []).every(
+        (c) => typeof c.code === 'string' && typeof c.name === 'string',
+      )))
+
+const buildInitialFormState = (state: unknown): PermitInput | undefined => {
+  if (!isEditRouteState(state) || !state.countries?.length) return undefined
+
+  const validFromDate = state.validFrom ? new Date(state.validFrom) : null
+  const validToDate = state.validTo ? new Date(state.validTo) : null
+
+  return {
+    countries: state.countries,
+    dates: {
+      validFrom: isValidDate(validFromDate) ? validFromDate : null,
+      validTo: isValidDate(validToDate) ? validToDate : null,
+    },
+  }
+}
+
 const NewPermit: React.FC = () => {
+  useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+
+  useHealthPlausibleSwap()
+  const location = useLocation()
   const [step, setStep] = useState<number>(DEFAULT_STEP)
-  const [openModal, setOpenModal] = useState<boolean>(false)
-  const [formState, setFormState] = useState<PermitInput>()
+  const [formState, setFormState] = useState<PermitInput | undefined>(() =>
+    buildInitialFormState(location.state),
+  )
 
   const navigate = useNavigate()
 
   const [createPermit, { loading }] = useCreatePatientDataPermitMutation({
     refetchQueries: ['GetPatientDataPermits'],
+    awaitRefetchQueries: true,
   })
 
   const handleSubmit = () => {
@@ -34,13 +74,14 @@ const NewPermit: React.FC = () => {
         formState.dates.validFrom &&
         formState.dates.validTo
       ) {
-        setOpenModal(false)
         createPermit({
           variables: {
             input: {
               validFrom: formState.dates.validFrom?.toISOString(),
               validTo: formState.dates.validTo?.toISOString(),
               countryCodes: formState.countries.map((c) => c.code),
+              // Currently only patient-summary consent type is available.
+              // When more become availablein the near future, consent types will be added and sent here.
               codes: [''],
             },
           },
@@ -51,13 +92,17 @@ const NewPermit: React.FC = () => {
             ) {
               setFormState(undefined)
               toast.success(formatMessage(messages.permitCreated))
-              navigate(HealthPaths.HealthPatientDataPermits, {
+              navigate(HealthPaths.HealthPatientDataPermitsDetail, {
                 replace: true,
               })
-            } else toast.error(formatMessage(messages.permitCreatedError))
+            } else {
+              toast.error(
+                formatMessage(messages.permitCreatedError, { arg: '' }),
+              )
+            }
           })
           .catch(() => {
-            toast.error(formatMessage(messages.permitCreatedError))
+            toast.error(formatMessage(messages.permitCreatedError, { arg: '' }))
           })
       }
     }
@@ -65,8 +110,10 @@ const NewPermit: React.FC = () => {
 
   return (
     <IntroWrapper
-      title={formatMessage(messages.patientDataPermitTitle)}
-      intro={formatMessage(messages.patientDataPermitDescription)}
+      title={formatMessage(messages.addPermit)}
+      introComponent={
+        <Markdown>{formatMessage(messages.permitDetailIntroWithLink)}</Markdown>
+      }
       serviceProviderSlug="landlaeknir"
       serviceProviderTooltip={formatMessage(
         messages.landlaeknirPatientPermitsTooltip,
@@ -88,18 +135,10 @@ const NewPermit: React.FC = () => {
         />
       )}
       {step === 3 && (
-        <Terms goBack={() => setStep(2)} onClick={() => setOpenModal(true)} />
-      )}
-
-      {openModal && (
-        <ConfirmModal
-          onSubmit={handleSubmit}
-          open={openModal}
-          onClose={() => setOpenModal(false)}
+        <Terms
+          goBack={() => setStep(2)}
           loading={loading}
-          countries={formState?.countries || []}
-          validFrom={formState?.dates.validFrom?.toLocaleDateString()}
-          validTo={formState?.dates.validTo?.toLocaleDateString()}
+          onClick={handleSubmit}
         />
       )}
     </IntroWrapper>

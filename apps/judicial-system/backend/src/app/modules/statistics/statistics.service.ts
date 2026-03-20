@@ -127,84 +127,6 @@ export class StatisticsService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  async getIndictmentCaseStatistics(
-    sentToCourt?: DateFilter,
-    institutionId?: string,
-  ): Promise<IndictmentCaseStatistics> {
-    let where: WhereOptions = {
-      state: {
-        [Op.not]: [
-          CaseState.DELETED,
-          CaseState.DRAFT,
-          CaseState.NEW,
-          CaseState.WAITING_FOR_CONFIRMATION,
-        ],
-      },
-      type: [CaseType.INDICTMENT],
-    }
-
-    // fetch only the earliest indictment with the base filter
-    const earliestCase = await this.caseRepositoryService.findOne({
-      where,
-      order: [['created', 'ASC']],
-      attributes: ['created'],
-    })
-
-    // apply dto filters
-    if (institutionId) {
-      where = {
-        ...where,
-        [Op.or]: [
-          { courtId: institutionId },
-          { prosecutorsOfficeId: institutionId },
-        ],
-      }
-    }
-
-    const cases = await this.caseRepositoryService.findAll({
-      where,
-      order: [['created', 'ASC']],
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-          where: {
-            eventType: EventType.INDICTMENT_CONFIRMED,
-          },
-        },
-      ],
-    })
-
-    const filterOnSentToCourt = () => {
-      if (sentToCourt) {
-        if (!cases.length) {
-          return undefined
-        }
-
-        const start = sentToCourt.fromDate ?? cases[0]?.created
-        const end = sentToCourt.toDate ?? new Date()
-
-        return cases.filter(({ eventLogs }) =>
-          eventLogs?.some(
-            ({ created, eventType }) =>
-              eventType === EventType.INDICTMENT_CONFIRMED &&
-              isWithinInterval(new Date(created), {
-                start: new Date(start),
-                end: new Date(end),
-              }),
-          ),
-        )
-      }
-    }
-    const filteredCases = filterOnSentToCourt() ?? cases
-    const indictmentCaseStatistics = this.getIndictmentStatistics(filteredCases)
-    return {
-      ...indictmentCaseStatistics,
-      minDate: earliestCase?.created ?? new Date(),
-    }
-  }
-
   async getSubpoenaStatistics(
     from?: Date,
     to?: Date,
@@ -295,99 +217,6 @@ export class StatisticsService {
     return stats
   }
 
-  async getRequestCasesStatistics(
-    created?: DateFilter,
-    sentToCourt?: DateFilter,
-    institutionId?: string,
-  ): Promise<RequestCaseStatistics> {
-    let where: WhereOptions = {
-      state: {
-        [Op.not]: [
-          CaseState.DELETED,
-          CaseState.DRAFT,
-          CaseState.NEW,
-          CaseState.WAITING_FOR_CONFIRMATION,
-        ],
-      },
-      type: {
-        [Op.not]: [CaseType.INDICTMENT],
-      },
-    }
-
-    // fetch only the earliest case with the base filter
-    const earliestCase = await this.caseRepositoryService.findOne({
-      where,
-      order: [['created', 'ASC']],
-      attributes: ['created'],
-    })
-
-    // apply dto filters
-    if (created?.fromDate || created?.toDate) {
-      const { fromDate, toDate } = created
-      where.created = {}
-      if (fromDate) {
-        where.created[Op.gte] = fromDate
-      }
-      if (toDate) {
-        where.created[Op.lte] = toDate
-      }
-    }
-
-    if (institutionId) {
-      where = {
-        ...where,
-        [Op.or]: [
-          { courtId: institutionId },
-          { prosecutorsOfficeId: institutionId },
-        ],
-      }
-    }
-
-    const cases = await this.caseRepositoryService.findAll({
-      where,
-      order: [['created', 'ASC']],
-      include: [
-        {
-          model: EventLog,
-          required: false,
-          attributes: ['created', 'eventType'],
-          where: {
-            eventType: EventType.CASE_SENT_TO_COURT,
-          },
-        },
-      ],
-    })
-
-    const filterOnSentToCourt = () => {
-      if (sentToCourt) {
-        if (!cases.length) {
-          return undefined
-        }
-
-        const start = sentToCourt.fromDate ?? cases[0]?.created
-        const end = sentToCourt.toDate ?? new Date()
-
-        return cases.filter(({ eventLogs }) =>
-          eventLogs?.some(
-            ({ created, eventType }) =>
-              eventType === EventType.CASE_SENT_TO_COURT &&
-              isWithinInterval(new Date(created), {
-                start: new Date(start),
-                end: new Date(end),
-              }),
-          ),
-        )
-      }
-    }
-    const filteredCases = filterOnSentToCourt() ?? cases
-    const requestCaseStatistics = this.getRequestCaseStatistics(filteredCases)
-
-    return {
-      ...requestCaseStatistics,
-      minDate: earliestCase?.created ?? new Date(),
-    }
-  }
-
   async getCaseStatistics(
     from?: Date,
     to?: Date,
@@ -460,7 +289,7 @@ export class StatisticsService {
     cases: Case[],
   ): Omit<IndictmentCaseStatistics, 'minDate'> {
     const inProgressCount = cases.filter(
-      (caseItem) => caseItem.state !== CaseState.COMPLETED,
+      (caseItem) => !isCompletedCase(caseItem.state),
     ).length
 
     const rulingCount = cases.filter(
@@ -626,8 +455,10 @@ export class StatisticsService {
             },
             {
               model: Verdict,
-              as: 'verdict',
+              as: 'verdicts',
               required: false,
+              order: [['created', 'DESC']],
+              separate: true,
             },
           ],
           separate: true,
@@ -713,6 +544,10 @@ export class StatisticsService {
             {
               key: 'courtOfAppealDecisionDescriptor',
               header: 'Niðurstaða Landsréttar',
+            },
+            {
+              key: 'parentCaseId',
+              header: 'Upprunalegt mál',
             },
           ] as Column[],
           key: `krofur_from_${getDateString(

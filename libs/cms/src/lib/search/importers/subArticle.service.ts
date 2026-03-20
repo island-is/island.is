@@ -29,53 +29,60 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
   }
 
   processSyncData(entries: processSyncDataInput<ISubArticle>) {
-    const entriesToUpdate = entries.reduce(
-      (processedEntries: ISubArticle[], entry: Entry<any>) => {
-        if (this.validateSubArticle(entry)) {
-          // remove nested subArticles from parent article
-          const { subArticles, relatedArticles, ...prunedArticleFields } =
-            entry.fields.parent.fields
+    const entriesToUpdate: ISubArticle[] = []
+    const entriesToDelete: string[] = []
 
-          const processedArticle = {
-            ...entry.fields.parent,
-            fields: {
-              ...prunedArticleFields,
-            },
-          }
+    for (const entry of entries) {
+      if (entry.sys.contentType.sys.id !== 'subArticle') {
+        continue
+      }
 
-          // overwrite the parent as the processed and pruned article
-          const processedEntry = {
-            ...entry,
-            fields: {
-              ...entry.fields,
-              parent: processedArticle,
-            },
-          }
-          // An entry hyperlink does not need the extra content present in
-          // the entry hyperlink associated fields
-          // We remove them from the reference itself on nodeType `entry-hyperlink`
-          if (processedEntry.fields?.content) {
-            removeEntryHyperlinkFields(processedEntry.fields.content)
-          }
-          try {
-            const mappedEntry = mapSubArticle(processedEntry)
-            if (!isCircular(mappedEntry)) {
-              processedEntries.push(processedEntry)
-            }
-          } catch (error) {
-            logger.warn('Failed to map subArticle', {
-              error: error.message,
-              id: entry?.sys?.id,
-            })
-          }
+      if (!this.validateSubArticle(entry)) {
+        entriesToDelete.push(entry.sys.id)
+        continue
+      }
+
+      // remove nested subArticles from parent article
+      const { subArticles, relatedArticles, ...prunedArticleFields } =
+        entry.fields.parent.fields
+
+      const processedArticle = {
+        ...entry.fields.parent,
+        fields: {
+          ...prunedArticleFields,
+        },
+      }
+
+      // overwrite the parent as the processed and pruned article
+      const processedEntry = {
+        ...entry,
+        fields: {
+          ...entry.fields,
+          parent: processedArticle,
+        },
+      }
+      // An entry hyperlink does not need the extra content present in
+      // the entry hyperlink associated fields
+      // We remove them from the reference itself on nodeType `entry-hyperlink`
+      if (processedEntry.fields?.content) {
+        removeEntryHyperlinkFields(processedEntry.fields.content)
+      }
+      try {
+        const mappedEntry = mapSubArticle(processedEntry)
+        if (!isCircular(mappedEntry)) {
+          entriesToUpdate.push(processedEntry as ISubArticle)
         }
-        return processedEntries
-      },
-      [],
-    )
+      } catch (error) {
+        logger.warn('Failed to map subArticle', {
+          error: error.message,
+          id: entry?.sys?.id,
+        })
+      }
+    }
+
     return {
       entriesToUpdate,
-      entriesToDelete: [],
+      entriesToDelete,
     }
   }
 

@@ -1,4 +1,5 @@
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import { type User, UserRole } from '@island.is/judicial-system/types'
 
@@ -21,22 +22,29 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('LimitedAccessCaseController - Get by id', () => {
-  let givenWhenThen: GivenWhenThen
   const openedBeforeDate = randomDate()
   const openedNowDate = randomDate()
   const caseId = uuid()
   const defaultUser = { id: uuid() } as User
 
   let mockCaseRepositoryService: CaseRepositoryService
+  let transaction: Transaction
+  let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { caseRepositoryService, limitedAccessCaseController } =
+    const { sequelize, caseRepositoryService, limitedAccessCaseController } =
       await createTestingCaseModule()
 
     const updatedCase = {
       id: caseId,
       openedByDefender: openedNowDate,
     } as Case
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(openedNowDate)
@@ -96,9 +104,11 @@ describe('LimitedAccessCaseController - Get by id', () => {
 
     it('should update openedByDefender and return case', () => {
       expect(then.result.openedByDefender).toBe(openedNowDate)
-      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(caseId, {
-        openedByDefender: openedNowDate,
-      })
+      expect(mockCaseRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        { openedByDefender: openedNowDate },
+        { transaction },
+      )
     })
   })
 })

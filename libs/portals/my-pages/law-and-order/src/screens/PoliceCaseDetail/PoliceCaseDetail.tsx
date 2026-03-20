@@ -20,6 +20,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useGetPoliceCaseDetailQuery } from './PoliceCaseDetail.generated'
 import { messages as m } from '../../lib/messages'
 import { useParams } from 'react-router-dom'
+import { Markdown } from '@island.is/shared/components'
 
 type UseParams = {
   id: string
@@ -41,7 +42,6 @@ const PoliceCaseDetail = () => {
 
   const policeCase = data?.lawAndOrderPoliceCase ?? null
   const currentCaseProgress = policeCase?.status?.timelineStep ?? -1
-
   return (
     <>
       <IntroWrapper
@@ -72,49 +72,70 @@ const PoliceCaseDetail = () => {
       />
       {error && !loading && <Problem error={error} noBorder={false} />}
 
+      {!error && !loading && !policeCase && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(coreMessages.noData)}
+          message={formatMessage(coreMessages.noDataFoundDetail)}
+          imgSrc="./assets/images/nodata.svg"
+        />
+      )}
       <Stack space={3}>
-        <InfoLineStack label={formatMessage(m.caseInformation)}>
-          <InfoLine
-            loading={loading}
-            label={m.caseNumber}
-            content={policeCase?.number}
-          />
-          <InfoLine
-            loading={loading}
-            label={m.receivedDate}
-            content={formatDate(policeCase?.received)}
-          />
-          <InfoLine
-            loading={loading}
-            label={m.contact}
-            content={policeCase?.contact ?? ''}
-          />
-          <InfoLine
-            loading={loading}
-            label={m.legalAdvisor}
-            content={policeCase?.courtAdvocate ?? ''}
-          />
-          <InfoLine
-            loading={loading}
-            label={m.caseStatus}
-            content={
-              policeCase?.status?.headerDisplayString ? (
-                <Tag variant="blue" outlined disabled>
-                  {policeCase.status.headerDisplayString}
-                </Tag>
-              ) : undefined
-            }
-          />
-          <InfoLine
-            loading={loading}
-            label={coreMessages.type}
-            content={policeCase?.type ?? ''}
-          />
-        </InfoLineStack>
-
+        {!error && (loading || policeCase) && (
+          <InfoLineStack label={formatMessage(m.caseInformation)}>
+            <InfoLine
+              loading={loading}
+              label={m.caseNumber}
+              content={policeCase?.number}
+            />
+            <InfoLine
+              loading={loading}
+              label={m.receivedDate}
+              content={formatDate(policeCase?.received)}
+            />
+            <InfoLine
+              loading={loading}
+              label={m.prosecutionOffice}
+              content={policeCase?.prosecutionOffice ?? ''}
+            />
+            <InfoLine
+              loading={loading}
+              label={m.contact}
+              content={policeCase?.contact ?? ''}
+            />
+            <InfoLine
+              loading={loading}
+              label={m.legalAdvisor}
+              content={policeCase?.courtAdvocate ?? ''}
+            />
+            <InfoLine
+              loading={loading}
+              label={m.caseStatus}
+              content={
+                policeCase?.status?.headerDisplayString ? (
+                  <Tag variant="blue" outlined disabled>
+                    {policeCase.status.headerDisplayString}
+                  </Tag>
+                ) : undefined
+              }
+              button={{
+                type: 'link',
+                to: formatMessage(m.caseStatusLinkUrl),
+                label: m.caseStatusLink,
+              }}
+            />
+            <InfoLine
+              loading={loading}
+              label={coreMessages.type}
+              content={policeCase?.type ?? ''}
+            />
+          </InfoLineStack>
+        )}
         {!error && loading && <CardLoader />}
         {!error &&
           !loading &&
+          policeCase &&
           data?.lawAndOrderPoliceCaseTimelineStructure?.milestones && (
             <>
               <Text variant="eyebrow" color="purple600">
@@ -151,18 +172,12 @@ const PoliceCaseDetail = () => {
                         customSection={section}
                         sectionIndex={step}
                         isComplete={stepIsCompleted}
-                        isLast={
-                          step ===
-                          (data?.lawAndOrderPoliceCaseTimelineStructure
-                            ?.milestones.length ?? 0) -
-                            1
-                        }
                         description={
                           isActiveStep &&
                           policeCase?.status?.descriptionDisplayString ? (
-                            <Text>
+                            <Markdown>
                               {policeCase?.status?.descriptionDisplayString}
-                            </Text>
+                            </Markdown>
                           ) : undefined
                         }
                         date={firstStepDate ?? lastActiveStepDate}

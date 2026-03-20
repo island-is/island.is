@@ -1,7 +1,6 @@
 import React from 'react'
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, LinkV2 } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
-import Link from 'next/link'
 
 import * as styles from './ApplicationSideNavItems.css'
 import cn from 'classnames'
@@ -32,7 +31,7 @@ const ApplicationSideNavItems = ({ roles, applicationFilters }: Props) => {
         return (
           <div key={'NavigationLinks-' + index}>
             {item.group && <p className={styles.group}>{item.group}</p>}
-            <Link
+            <LinkV2
               href={item.link}
               aria-label={item.label}
               className={cn({
@@ -53,7 +52,7 @@ const ApplicationSideNavItems = ({ roles, applicationFilters }: Props) => {
                     .reduce((acc: number, b?: number) => acc + (b || 0), 0)}
                 </Text>
               </Box>
-            </Link>
+            </LinkV2>
           </div>
         )
       })}

@@ -130,7 +130,8 @@ export const OverviewFormField = ({
     field.hideIfEmpty &&
     !filteredItems?.length &&
     !attachments?.length &&
-    !tableData?.rows?.length
+    !tableData?.rows?.length &&
+    !loadedTableData?.rows?.length
   ) {
     return null
   }

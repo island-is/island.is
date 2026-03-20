@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   BadRequestException,
   Body,
@@ -9,6 +11,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -24,6 +27,7 @@ import {
   getVerdictServiceStatusText,
 } from '@island.is/judicial-system/formatters'
 import {
+  addMessagesToQueue,
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
@@ -31,7 +35,9 @@ import {
   CaseIndictmentRulingDecision,
   getDefendantServiceDate,
   getIndictmentAppealDeadline,
+  IndictmentCaseNotificationType,
   indictmentCases,
+  isSuccessfulVerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -103,6 +109,7 @@ export class InternalVerdictController {
     private readonly verdictService: VerdictService,
     private readonly auditTrailService: AuditTrailService,
     private readonly eventService: EventService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -124,7 +131,7 @@ export class InternalVerdictController {
     type: DeliverResponse,
     description: 'Delivers a verdict to the police centralized file service',
   })
-  deliverVerdictToNationalCommissionersOffice(
+  async deliverVerdictToNationalCommissionersOffice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @CurrentCase() theCase: Case,
@@ -135,38 +142,63 @@ export class InternalVerdictController {
     this.logger.debug(
       `Delivering verdict ${verdict.id} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
     )
+
+    // TODO: We should probably filter out defendants without national id when posting events to queue
+    //       This is not an error
     if (defendant.noNationalId) {
       throw new BadRequestException(
         `National id is required for ${defendant.id} when delivering verdict to national commissioners office`,
       )
     }
 
-    // callback function to fetch the updated verdict fields after delivering verdict to police
-    const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
-      results: DeliverResponse,
-    ) => {
-      const currentVerdict = await this.verdictService.findById(verdict.id)
-      return {
-        deliveredToPolice: results.delivered,
-        verdictId: verdict.id,
-        verdictCreated: verdict.created,
-        externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
-        verdictHash: currentVerdict.hash,
-        verdictDeliveredToPolice: new Date(),
+    const transaction = await this.sequelize.transaction()
+
+    try {
+      // callback function to fetch the updated verdict fields after delivering verdict to police
+      const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
+        results: DeliverResponse,
+      ) => {
+        const currentVerdict = await this.verdictService.findById(
+          verdict.id,
+          transaction,
+        )
+
+        return {
+          deliveredToPolice: results.delivered,
+          verdictId: verdict.id,
+          verdictCreated: verdict.created,
+          externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
+          verdictHash: currentVerdict.hash,
+          verdictDeliveredToPolice: new Date(),
+        }
       }
+
+      const response = await this.auditTrailService.audit(
+        deliverDto.user.id,
+        AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+        this.verdictService.deliverVerdictToNationalCommissionersOffice({
+          theCase,
+          defendant,
+          verdict,
+          user: deliverDto.user,
+          transaction,
+        }),
+        caseId,
+        getDeliveredVerdictNationalCommissionersOfficeLogDetails,
+      )
+      await transaction.commit()
+
+      return response
+    } catch (error) {
+      this.logger.error(
+        `Failed to deliver verdict ${verdict.id} to national commissioners office for defendant ${defendantId} of case ${caseId}`,
+        { error },
+      )
+
+      await transaction.rollback()
+
+      throw error
     }
-    return this.auditTrailService.audit(
-      deliverDto.user.id,
-      AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
-      this.verdictService.deliverVerdictToNationalCommissionersOffice(
-        theCase,
-        defendant,
-        verdict,
-        deliverDto.user,
-      ),
-      caseId,
-      getDeliveredVerdictNationalCommissionersOfficeLogDetails,
-    )
   }
 
   @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsGuard)
@@ -180,19 +212,42 @@ export class InternalVerdictController {
     this.logger.info(
       `Updating verdict by external police document id ${policeDocumentId} of ${theCase.id}`,
     )
-    const updatedVerdict = await this.verdictService.updatePoliceDelivery(
-      verdict,
-      update,
+
+    const updatedVerdict = await this.sequelize.transaction(
+      async (transaction) =>
+        this.verdictService.updatePoliceDelivery(verdict, update, transaction),
     )
+
     if (
       updatedVerdict.serviceStatus &&
       updatedVerdict.serviceStatus !== verdict.serviceStatus
     ) {
+      const hasDrivingLicenseSuspension =
+        theCase.defendants?.some(
+          (defendant) =>
+            updatedVerdict.defendantId === defendant.id &&
+            defendant.isDrivingLicenseSuspended,
+        ) ?? false
+
+      if (
+        isSuccessfulVerdictServiceStatus(updatedVerdict.serviceStatus) &&
+        hasDrivingLicenseSuspension
+      ) {
+        addMessagesToQueue({
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId: theCase.id,
+          body: {
+            type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+          },
+        })
+      }
+
       this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
         Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
         Birt: formatDate(updatedVerdict.serviceDate, 'Pp') ?? 'ekki skráð',
       })
     }
+
     return updatedVerdict
   }
 
@@ -227,10 +282,13 @@ export class InternalVerdictController {
       verdict,
     })
 
-    const updatedVerdict = this.verdictService.updateRestricted(verdict, {
-      appealDecision: verdictAppeal.appealDecision,
-    })
-    return updatedVerdict
+    return this.sequelize.transaction(async (transaction) =>
+      this.verdictService.updateRestricted(
+        verdict,
+        { appealDecision: verdictAppeal.appealDecision },
+        transaction,
+      ),
+    )
   }
 
   @UseGuards(ExternalPoliceVerdictExistsGuard)
@@ -241,9 +299,12 @@ export class InternalVerdictController {
     this.logger.debug(
       `Get verdict supplements for police document id ${policeDocumentId}`,
     )
+
+    // Todo: Use CurrentVerdict decorator to avoid querying for the verdict again
     const verdict = await this.verdictService.findByExternalPoliceDocumentId(
       policeDocumentId,
     )
+
     return {
       serviceInformationForDefendant: verdict.serviceInformationForDefendant,
     }
@@ -261,8 +322,11 @@ export class InternalVerdictController {
       `Delivering verdict service certificates pdf to police for all verdicts where appeal decision deadline has passed`,
     )
 
-    const delivered =
-      await this.verdictService.deliverVerdictServiceCertificatesToPolice()
+    const delivered = await this.sequelize.transaction((transaction) =>
+      this.verdictService.deliverVerdictServiceCertificatesToPolice(
+        transaction,
+      ),
+    )
 
     await this.eventService.postDailyVerdictServiceDeliveryEvent(delivered)
 

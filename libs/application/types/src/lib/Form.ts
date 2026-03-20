@@ -170,6 +170,7 @@ export interface ExternalDataProvider extends FormItem {
   checkboxLabel?: StaticText
   subTitle?: StaticText
   description?: StaticText
+  subDescription?: StaticText
   submitField?: SubmitField
 }
 
@@ -211,6 +212,14 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   application: Application<TAnswers>
   showFieldName?: boolean
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   goToScreen?: (id: string) => void
   answerQuestions?: (answers: FormValue) => void
   refetch?: () => void

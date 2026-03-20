@@ -61,6 +61,99 @@ export const loadNationalRegistryXroadMocks = async () => {
   await addXroadMock({
     config: NationalRegistryB2C,
     prefix: 'NATIONAL_REGISTRY_B2C_APPLICATION_PATH',
+    apiPath: '/Einstaklingar/0101303019/forsjaUndir',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      forsjaBornList: [
+        {
+          barnKt: '1111111119',
+          barnNafn: 'Stubbur Maack',
+        },
+      ],
+      forsjaKt: '0101303019',
+      forsjaNafn: 'Gervimaður Afríka',
+    }),
+  })
+  await addXroadMock({
+    config: NationalRegistryB2C,
+    prefix: 'NATIONAL_REGISTRY_B2C_APPLICATION_PATH',
+    apiPath: '/Einstaklingar/0101303019/logheimilistengslItar',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      logheimilisTengsl: '0101303019',
+      logheimiliseinstaklingar: [
+        {
+          kennitala: '0101303019',
+          nafn: 'Gervimaður Afríka',
+          kynKodi: '1',
+          kynTexti: 'Karl',
+          bannmerking: false,
+          faedingardagur: '1930-01-01T00:00:00',
+          logheimili: {
+            heimilisfang: 'Fellsmúli 2',
+            ibudanumer: null,
+            postnumer: '108',
+            stadur: 'Reykjavík',
+            sveitarfelagsnumer: '0000',
+          },
+          adsetur: {
+            heimilisfang: 'Engihjalli 3',
+            ibudanumer: null,
+            postnumer: '200',
+            stadur: 'Kópavogur',
+            sveitarfelagsnumer: '1000',
+          },
+        },
+        {
+          kennitala: '1111111119',
+          nafn: 'Stubbur Maack',
+          kynKodi: '3',
+          kynTexti: 'Drengur',
+          bannmerking: false,
+          faedingardagur: '2011-11-11T00:00:00',
+          logheimili: {
+            heimilisfang: 'Skógarbraut 931A',
+            ibudanumer: null,
+            postnumer: '262',
+            stadur: 'Reykjanesbær',
+            sveitarfelagsnumer: '2000',
+          },
+          adsetur: {
+            heimilisfang: 'Fellsmúli 2',
+            ibudanumer: null,
+            postnumer: '108',
+            stadur: 'Reykjavík',
+            sveitarfelagsnumer: '0000',
+          },
+        },
+        {
+          kennitala: '0101307789',
+          nafn: 'Gervimaður útlönd',
+          kynKodi: '1',
+          kynTexti: 'Karl',
+          bannmerking: false,
+          faedingardagur: '1930-01-01T00:00:00',
+          logheimili: {
+            heimilisfang: 'Engihjalli 3',
+            ibudanumer: null,
+            postnumer: '200',
+            stadur: 'Kópavogur',
+            sveitarfelagsnumer: '1000',
+          },
+          adsetur: {
+            heimilisfang: 'Fellsmúli 2',
+            ibudanumer: null,
+            postnumer: '108',
+            stadur: 'Reykjavík',
+            sveitarfelagsnumer: '0000',
+          },
+        },
+      ],
+    }),
+  })
+  await addXroadMock({
+    config: NationalRegistryB2C,
+    prefix: 'NATIONAL_REGISTRY_B2C_APPLICATION_PATH',
     apiPath: '/Einstaklingar/0101303019/rikisfang',
     prefixType: 'only-base-path',
     response: new Response().withJSONBody({
@@ -311,6 +404,30 @@ export const loadNationalRegistryXroadMocks = async () => {
       faedingardagur: '1930-01-01T00:00:00',
     }),
   })
+  await addXroadMock({
+    config: NationalRegistryB2C,
+    prefix: 'NATIONAL_REGISTRY_B2C_APPLICATION_PATH',
+    apiPath: '/Einstaklingar/0101307789/lite',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      kennitala: '0101307789',
+      nafn: 'Gervimaður útlönd',
+      logheimili: {
+        heimilisfang: 'Engihjalli 3',
+        ibudanumer: null,
+        postnumer: '200',
+        stadur: 'Kópavogur',
+        sveitarfelagsnumer: '1000',
+      },
+      adsetur: {
+        heimilisfang: 'Fellsmúli 2',
+        ibudanumer: null,
+        postnumer: '108',
+        stadur: 'Reykjavík',
+        sveitarfelagsnumer: '0000',
+      },
+    }),
+  })
 
   /* Stubbur Maack */
   await addXroadMock({
@@ -340,6 +457,64 @@ export const loadNationalRegistryXroadMocks = async () => {
         stadur: 'Reykjavík',
         sveitarfelagsnumer: '0000',
       },
+    }),
+  })
+  await addXroadMock({
+    config: NationalRegistryB2C,
+    prefix: 'NATIONAL_REGISTRY_B2C_APPLICATION_PATH',
+    apiPath: '/Einstaklingar/1111111119',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      kennitala: '1111111119',
+      nafn: 'Stubbur Maack',
+      kynKodi: '3',
+      kynTexti: 'Drengur',
+      bannmerking: false,
+      faedingardagur: '2011-11-11T00:00:00',
+      logheimili: {
+        heimilisfang: 'Skógarbraut 931A',
+        ibudanumer: null,
+        postnumer: '262',
+        stadur: 'Reykjanesbær',
+        sveitarfelagsnumer: '2000',
+      },
+      adsetur: {
+        heimilisfang: 'Fellsmúli 2',
+        ibudanumer: null,
+        postnumer: '108',
+        stadur: 'Reykjavík',
+        sveitarfelagsnumer: '0000',
+      },
+    }),
+  })
+  await addXroadMock({
+    config: NationalRegistryB2C,
+    prefix: 'NATIONAL_REGISTRY_B2C_APPLICATION_PATH',
+    apiPath: '/Einstaklingar/1111111119/rikisfang',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      kodi: 'IS',
+      land: 'Ísland',
+    }),
+  })
+  await addXroadMock({
+    config: NationalRegistryB2C,
+    prefix: 'NATIONAL_REGISTRY_B2C_APPLICATION_PATH',
+    apiPath: '/Einstaklingar/1111111119/forsjaYfir',
+    prefixType: 'only-base-path',
+    response: new Response().withJSONBody({
+      forsjaAdilarList: [
+        {
+          forsjaKt: '0101307789',
+          forsjaNafn: 'Gervimaður útlönd',
+        },
+        {
+          forsjaKt: '0101303019',
+          forsjaNafn: 'Gervimaður Afríka',
+        },
+      ],
+      barnKt: '1111111119',
+      barnNafn: 'Stubbur Maack',
     }),
   })
 

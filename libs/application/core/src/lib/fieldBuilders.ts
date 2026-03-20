@@ -38,6 +38,7 @@ import {
   ActionCardListField,
   TableRepeaterField,
   StaticTableField,
+  PaginatedSearchableTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
   SliderField,
@@ -82,6 +83,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   } = data
 
@@ -99,6 +101,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   }
 }
@@ -114,6 +117,7 @@ export const buildCheckboxField = (
     backgroundColor = 'blue',
     spacing,
     clearOnChange,
+    clearOnChangeDefaultValue,
   } = data
   return {
     ...extractCommonFields(data),
@@ -125,6 +129,7 @@ export const buildCheckboxField = (
     required,
     spacing,
     clearOnChange,
+    clearOnChangeDefaultValue,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
@@ -388,6 +393,40 @@ export const buildCustomField = (
   }
 }
 
+export const buildPaginatedSearchableTableField = (
+  data: Omit<PaginatedSearchableTableField, 'type' | 'component' | 'children'>,
+): PaginatedSearchableTableField => {
+  const {
+    rowIdKey,
+    rows,
+    headers,
+    searchLabel,
+    searchPlaceholder,
+    emptyState,
+    searchKeys,
+    savePropertyNames,
+    pageSize,
+    callbackId,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.PAGINATED_SEARCHABLE_TABLE,
+    component: FieldComponents.PAGINATED_SEARCHABLE_TABLE,
+    rowIdKey,
+    rows,
+    headers,
+    searchLabel,
+    searchPlaceholder,
+    emptyState,
+    searchKeys,
+    savePropertyNames,
+    pageSize,
+    callbackId,
+  }
+}
+
 export const buildFileUploadField = (
   data: Omit<FileUploadField, 'type' | 'component' | 'children'>,
 ): FileUploadField => {
@@ -535,6 +574,8 @@ export const buildSubmitField = (data: {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   refetchApplicationAfterSubmit?: boolean | ((event?: string) => boolean)
+  renderLongErrors?: boolean
+  formatLongErrorMessage?: (message: string) => string
   actions: CallToAction[]
   condition?: Condition
 }): SubmitField => {
@@ -547,6 +588,8 @@ export const buildSubmitField = (data: {
     refetchApplicationAfterSubmit,
     marginTop,
     marginBottom,
+    renderLongErrors = false,
+    formatLongErrorMessage,
   } = data
   return {
     children: undefined,
@@ -560,6 +603,8 @@ export const buildSubmitField = (data: {
       typeof refetchApplicationAfterSubmit !== 'undefined'
         ? refetchApplicationAfterSubmit
         : false,
+    renderLongErrors,
+    formatLongErrorMessage,
     marginTop,
     marginBottom,
     type: FieldTypes.SUBMIT,
@@ -698,6 +743,7 @@ export const buildAlertMessageField = (
     links,
     shouldBlockInSetBeforeSubmitCallback,
     allowMultipleSetBeforeSubmitCallbacks,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -778,6 +824,7 @@ export const buildImageField = (
     imagePosition,
     type: FieldTypes.IMAGE,
     component: FieldComponents.IMAGE,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -835,6 +882,7 @@ export const buildHiddenInputWithWatchedValue = (
     watchValue: data.watchValue,
     title: '',
     children: undefined,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -860,6 +908,7 @@ export const buildHiddenInput = (
     children: undefined,
     defaultValue: data.defaultValue,
     dontDefaultToEmptyString: data.dontDefaultToEmptyString,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -1095,7 +1144,9 @@ export const buildSliderField = (
     marginTop,
     marginBottom,
   } = data
+
   return {
+    ...extractCommonFields(data),
     component: FieldComponents.SLIDER,
     id,
     title,

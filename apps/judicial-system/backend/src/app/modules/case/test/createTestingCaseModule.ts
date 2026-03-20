@@ -14,7 +14,7 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import { MessageService } from '@island.is/judicial-system/message'
+import { addMessagesToQueue, Message } from '@island.is/judicial-system/message'
 
 import { AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
@@ -71,7 +71,6 @@ export const createTestingCaseModule = async () => {
     ],
     providers: [
       SharedAuthModule,
-      MessageService,
       EventLogService,
       CourtService,
       PoliceService,
@@ -118,8 +117,10 @@ export const createTestingCaseModule = async () => {
         provide: getModelToken(CaseString),
         useValue: {
           create: jest.fn(),
+          destroy: jest.fn(),
           findOne: jest.fn(),
           update: jest.fn(),
+          upsert: jest.fn(),
         },
       },
       CaseService,
@@ -134,8 +135,6 @@ export const createTestingCaseModule = async () => {
       }
     })
     .compile()
-
-  const messageService = caseModule.get<MessageService>(MessageService)
 
   const eventLogService = caseModule.get<EventLogService>(EventLogService)
 
@@ -199,10 +198,16 @@ export const createTestingCaseModule = async () => {
   const limitedAccessCaseController =
     caseModule.get<LimitedAccessCaseController>(LimitedAccessCaseController)
 
+  const queuedMessages: Message[] = []
+  const mockAddMessageToQueue = addMessagesToQueue as jest.Mock
+  mockAddMessageToQueue.mockImplementation((...msgs: Message[]) => {
+    queuedMessages.push(...msgs)
+  })
+
   caseModule.close()
 
   return {
-    messageService,
+    queuedMessages,
     eventLogService,
     courtService,
     policeService,

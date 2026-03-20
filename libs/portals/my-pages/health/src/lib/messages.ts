@@ -68,6 +68,10 @@ export const messages = defineMessages({
     id: 'sp.health:date-and-time',
     defaultMessage: 'Dagsetning og tími',
   },
+  clockShortArg: {
+    id: 'sp.health:clock-short',
+    defaultMessage: 'kl. {arg}',
+  },
   chooseDoctorLabel: {
     id: 'sp.health:choose-doctor-label',
     defaultMessage: 'Viltu velja heimilislækni?',
@@ -431,7 +435,6 @@ export const messages = defineMessages({
     defaultMessage: 'Inneign',
     id: 'sp.health:credit',
   },
-
   debit: {
     defaultMessage: 'Skuld',
     id: 'sp.health:debit',
@@ -782,9 +785,21 @@ export const messages = defineMessages({
     defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar heimildir.',
     id: 'sp.health:landlaeknir-patient-permits-tooltip',
   },
+  landlaeknirWaitlistTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með stöðu þinni á biðlistum.',
+    id: 'sp.health:landlaeknir-waitlist-tooltip',
+  },
+  landlaeknirReferralTooltip: {
+    defaultMessage: 'Landlæknir hefur umsjón með gögnum um þínar tilvísanir.',
+    id: 'sp.health:landlaeknir-referral-tooltip',
+  },
   lastDispensed: {
     defaultMessage: 'Síðast afgreitt',
     id: 'sp.health:last-dispensed',
+  },
+  lastChanged: {
+    defaultMessage: 'Síðast breytt',
+    id: 'sp.health:last-changed',
   },
   lightTherapy: {
     defaultMessage: 'Ljósböð',
@@ -850,10 +865,20 @@ export const messages = defineMessages({
     defaultMessage: 'Veldu aðila sem má sækja lyfin þín í apóteki',
     id: 'sp.health:choose-person-to-give-permit',
   },
+  medicineDelegationNotForYoungerThan16: {
+    defaultMessage:
+      'Athugið að það er ekki hægt að skrá umboð á einstakling sem er yngri en 16 ára.',
+    id: 'sp.health:medicine-delegation-not-for-younger-than-16',
+  },
   medicineDelegationIntroText: {
     defaultMessage:
-      'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstaka heimild fyrir þig. Hér getur þú skráð þá aðila sem þú veitir heimild til að sækja lyf í apótek fyrir þig.',
+      'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstaka heimild fyrir þig. Hér getur þú séð yfirlit yfir þá aðila sem þú hefur veitt heimild til að sækja lyf í apótek fyrir þig.',
     id: 'sp.health:medicine-delegation-intro-text',
+  },
+  newMedicineDelegationIntroText: {
+    defaultMessage:
+      'Einungis þú getur sótt þín lyf í apótek, nema þú veitir öðrum sérstaka heimild fyrir þig. Hér getur þú skráð nýja heimild til að sækja lyf í apótek fyrir þig. Athugið að það er ekki hægt að skrá umboð á einstakling sem er yngri en 16 ára. ',
+    id: 'sp.health:new-medicine-delegation-intro-text',
   },
   medicineDelegationReadAboutLink: {
     defaultMessage: 'https://island.is/s/landlaeknir/frett',
@@ -867,6 +892,10 @@ export const messages = defineMessages({
     id: 'sp.health:referrals-intro',
     defaultMessage: 'Hér finnur þú tilvísanir ...',
   },
+  referralsDetailIntro: {
+    id: 'sp.health:referrals-detail-intro',
+    defaultMessage: 'Hér finnur þú nánari upplýsingar um tilvísunina.',
+  },
   referralFor: {
     id: 'sp.health:referral-for',
     defaultMessage: 'Tilvísun fyrir',
@@ -875,9 +904,25 @@ export const messages = defineMessages({
     id: 'sp.health:referral-from',
     defaultMessage: 'Útgefandi',
   },
+  referralTo: {
+    id: 'sp.health:referral-to',
+    defaultMessage: 'Viðtakandi',
+  },
+  openReferral: {
+    id: 'sp.health:open-referral',
+    defaultMessage: 'Opin tilvísun',
+  },
+  noReferralsTitle: {
+    id: 'sp.health:no-referrals-title',
+    defaultMessage: 'Engar tilvísanir',
+  },
   noReferrals: {
     id: 'sp.health:no-referrals',
     defaultMessage: 'Engar tilvísanir',
+  },
+  referralValidTo: {
+    id: 'sp.health:referral-valid-to',
+    defaultMessage: 'Gildir til',
   },
   organizationWebsite: {
     id: 'sp.health:referrals-org-website',
@@ -887,13 +932,47 @@ export const messages = defineMessages({
     id: 'sp.health:waitlists',
     defaultMessage: 'Biðlistar',
   },
+  noWaitListsTitle: {
+    id: 'sp.health:no-waitlists-title',
+    defaultMessage: 'Engin skráning á biðlista finnst',
+  },
   noWaitlists: {
     id: 'sp.health:no-waitlists',
     defaultMessage: 'Engin skráning á biðlista finnst',
   },
+  waitlistNotFound: {
+    id: 'sp.health:waitlist-not-found',
+    defaultMessage: 'Biðlisti fannst ekki',
+  },
+  waitlistNotFoundDetail: {
+    id: 'sp.health:waitlist-not-found-detail',
+    defaultMessage: 'Enginn biðlisti finnst með þessu skráningarnúmeri. ',
+  },
   waitlistsIntro: {
     id: 'sp.health:waitlists-intro',
     defaultMessage: 'Hér finnur þú biðlista ...',
+  },
+  waitlistsIntroWithLink: {
+    id: 'sp.health:waitlists-intro-with-link',
+    defaultMessage:
+      'Hér getur þú séð hvar þú ert skráður á biðlista eftir heilbrigðisþjónustu. Núna birtast biðlistar frá <link>nokkrum stofnunum</link> en fleiri munu bætast við síðar.',
+  },
+  waitlistsModalTitle: {
+    id: 'sp.health:waitlists-modal-title',
+    defaultMessage: 'Biðlistar sem birtast hér:',
+  },
+  waitlistsModalBody: {
+    id: 'sp.health:waitlists-modal-body#markdown',
+    defaultMessage:
+      '- Landspítali (allar skurðaðgerðir, barna- og unglingageðdeild)\n- Heilbrigðisstofnun Vesturlands (liðskiptaaðgerðir)\n- Sjúkrahúsið á Akureyri (liðskiptaaðgerðir, endurhæfing)\n- Heilbrigðisstofnun Austurlands (geðheilsuteymi)\n- Klíníkin (liðskiptaaðgerðir)\n- Orkuhúsið (liðskiptaaðgerðir)\n- Reykjalundur (endurhæfing)',
+  },
+  waitlistsDescriptionInfo: {
+    id: 'sp.health:waitlists-description-info',
+    defaultMessage: 'Lesa nánar um biðlista hér',
+  },
+  waitlistsDescriptionLink: {
+    id: 'sp.health:waitlists-description-link',
+    defaultMessage: 'https://island.is/bidlistar-heilbrigdisthjonusta',
   },
   statusLastUpdated: {
     id: 'sp.health:waitlist-last-updated',
@@ -937,7 +1016,6 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðsluþátttaka',
     id: 'sp.health:medicine-payment-participation',
   },
-
   medicinePrescriptionHistory: {
     defaultMessage: 'Lyfjasagan',
     id: 'sp.health:medicine-prescription-history',
@@ -955,7 +1033,6 @@ export const messages = defineMessages({
     defaultMessage: 'Lyfjaávísanir',
     id: 'sp.health:medicine-prescriptions',
   },
-
   monthlyBreakdownOfInvoices: {
     defaultMessage: 'Sundurliðun reikninga í völdum mánuði',
     id: 'sp.health:monthly-breakdown-of-invoices',
@@ -1037,6 +1114,14 @@ export const messages = defineMessages({
   notValidForRenewal: {
     defaultMessage: 'Ekki hægt',
     id: 'sp.health:not-valid-for-renewal',
+  },
+  notAvailable: {
+    defaultMessage: 'Ekki í boði',
+    id: 'sp.health:not-available',
+  },
+  notValidForRenewalForMobile: {
+    defaultMessage: 'Endurnýjun ekki í boði: ',
+    id: 'sp.health:not-valid-for-renewal-mobile',
   },
   notValidForRenewalDetail: {
     defaultMessage:
@@ -1180,6 +1265,28 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðsluyfirlit',
     id: 'sp.health:payment-overview',
   },
+  paymentOverviewInvoices: {
+    defaultMessage: 'Yfirlit reikninga',
+    id: 'sp.health:payment-overview-invoices',
+  },
+  paymentOverviewTotals: {
+    defaultMessage: 'Útlagður kostnaður',
+    id: 'sp.health:payment-overview-totals',
+  },
+  paymentOverviewTotalsIntro: {
+    defaultMessage:
+      'Hér er hægt að taka út upplýsingar um útlagðan kostnað þinn vegna heilbrigðisþjónustu fyrir valið tímabil.',
+    id: 'sp.health:payment-overview-totals-intro',
+  },
+  paymentOverviewTotalsDownload: {
+    defaultMessage: 'Sækja samtölur (PDF)',
+    id: 'sp.health:payment-overview-totals-download',
+  },
+  paymentOverviewTotalsDownloadError: {
+    defaultMessage:
+      'Ekki tókst að sækja samtölur. Vinsamlegast reyndu aftur síðar.',
+    id: 'sp.health:payment-overview-totals-download-error',
+  },
   paymentParticationExplanation: {
     defaultMessage:
       'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði {basePayment} kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
@@ -1220,8 +1327,13 @@ export const messages = defineMessages({
   },
   paymentsIntro: {
     defaultMessage:
-      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum.',
+      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig vegna þjónustu sérgreinalækna, þjálfunar, myndgreininga, rannsókna og sálfræðiþjónustu sem sérstaklega er samið um við Sjúkratryggingar. Skilyrði er að viðkomandi þjónustuveitandi sé með samning við Sjúkratryggingar um sína þjónustu.',
     id: 'sp.health:payments-intro',
+  },
+  paymentsParticipationInfo: {
+    defaultMessage:
+      'Sjúkratryggingar taka þátt í kostnaði við heilbrigðisþjónustu og sjá til þess að einstaklingar greiði ekki meira en ákveðna hámarksfjárhæð í hverjum mánuði fyrir hana. <link>Lesa nánar um greiðsluþátttökukerfið.</link>',
+    id: 'sp.health:payments-participation-info',
   },
   paymentTarget: {
     defaultMessage: 'Greiðslumark',
@@ -1321,6 +1433,14 @@ export const messages = defineMessages({
     defaultMessage: 'Tilvísun',
     id: 'sp.health:single-referral',
   },
+  referralNotFound: {
+    id: 'sp.health:referral-not-found',
+    defaultMessage: 'Tilvísun fannst ekki',
+  },
+  referralNotFoundDetail: {
+    id: 'sp.health:referral-not-found-detail',
+    defaultMessage: 'Engin tilvísun finnst með þessu skráningarnúmeri. ',
+  },
   reason: {
     defaultMessage: 'Ástæða',
     id: 'sp.health:reason',
@@ -1385,6 +1505,10 @@ export const messages = defineMessages({
   seeMore: {
     defaultMessage: 'Sjá nánar',
     id: 'sp.health:see-more',
+  },
+  furtherDetails: {
+    defaultMessage: 'Skoða nánar',
+    id: 'sp.health:further-details',
   },
   speechDescriptionLink: {
     defaultMessage: 'https://island.is/greidsluthatttaka-vegna-talthjalfunar',
@@ -1456,6 +1580,10 @@ export const messages = defineMessages({
   type: {
     defaultMessage: 'Tegund',
     id: 'sp.health:type',
+  },
+  therapyType: {
+    defaultMessage: 'Tegund þjálfunar',
+    id: 'sp.health:therapy-type',
   },
   typeofService: {
     defaultMessage: 'Tegund þjónustu',
@@ -1626,7 +1754,7 @@ export const messages = defineMessages({
     id: 'sp.health:invalid',
   },
   withdrawn: {
-    defaultMessage: 'Afturkölluð',
+    defaultMessage: 'Eydd',
     id: 'sp.health:withdrawn',
   },
   validForRenewal: {
@@ -1794,6 +1922,130 @@ export const messages = defineMessages({
     id: 'sp.health:renew-ehic-url',
     defaultMessage: 'https://island.is/evropska-sjukratryggingakortid',
   },
+  questionnaires: {
+    defaultMessage: 'Spurningalistar',
+    id: 'sp.health:questionnaires',
+  },
+  questionnairesThgf: {
+    defaultMessage: 'Spurningalista',
+    id: 'sp.health:questionnaires-thgf',
+  },
+  questionnairesIntro: {
+    defaultMessage:
+      'Hér getur þú fundið spurningalista sem tengjast heilsu þinni.',
+    id: 'sp.health:questionnaires-intro',
+  },
+  questionnaire: {
+    defaultMessage: 'Spurningalisti',
+    id: 'sp.health:questionnaire',
+  },
+  questionnaireExpiration: {
+    defaultMessage: 'Gildir til',
+    id: 'sp.health:questionnaire-expiration',
+  },
+  questionnaireSender: {
+    defaultMessage: 'Sent af',
+    id: 'sp.health:questionnaire-sender',
+  },
+  expiredQuestionnaire: {
+    defaultMessage: 'Útrunnið',
+    id: 'sp.health:expired-questionnaire',
+  },
+  answeredQuestionnaire: {
+    defaultMessage: 'Svarað',
+    id: 'sp.health:answered-questionnaire',
+  },
+  draftQuestionnaire: {
+    defaultMessage: 'Drög',
+    id: 'sp.health:draft-questionnaire',
+  },
+  continueDraftQuestionnaire: {
+    defaultMessage: 'Halda áfram með drög',
+    id: 'sp.health:continue-draft-questionnaire',
+  },
+  lastUpdated: {
+    defaultMessage: 'Síðast uppfært',
+    id: 'sp.health:draft-last-updated',
+  },
+  answeredAt: {
+    defaultMessage: 'Svar dags: {arg}',
+    id: 'sp.health:answered-at',
+  },
+  answeredQuestionnaireAnswered: {
+    defaultMessage: 'Hér má finna svör þín við spurningalistanum.',
+    id: 'sp.health:answered-questionnaire-answered',
+  },
+  unAnsweredQuestionnaire: {
+    defaultMessage: 'Ósvarað',
+    id: 'sp.health:unanswered-questionnaire',
+  },
+  answer: {
+    defaultMessage: 'Svara',
+    id: 'sp.health:answer',
+  },
+  answerAgain: {
+    defaultMessage: 'Svara aftur',
+    id: 'sp.health:answer-again',
+  },
+  questionnaireNotFound: {
+    defaultMessage: 'Spurningalisti fannst ekki',
+    id: 'sp.health:questionnaire-not-found',
+  },
+  questionnairesNotFound: {
+    defaultMessage: 'Ekkert fannst',
+    id: 'sp.health:questionnaires-not-found',
+  },
+  questionnaireNotFoundWithFilters: {
+    defaultMessage:
+      'Engir spurningalistar fundust með þessum skilyrðum. Hreinsaðu síurnar og reyndu aftur.',
+    id: 'sp.health:questionnaire-not-found-with-filters',
+  },
+  questionnaireNotFoundDetail: {
+    defaultMessage:
+      'Vinsamlegast athugaðu hvort slóðin sé rétt eða hafðu samband við þjónustuaðila.',
+    id: 'sp.health:questionnaire-not-found-detail',
+  },
+  singleQuestionnaire: {
+    defaultMessage: '1 spurningalisti',
+    id: 'sp.health:single-questionnaire',
+  },
+  numberOfQuestionnaires: {
+    defaultMessage: '{number} spurningalistar',
+    id: 'sp.health:number-of-questionnaires',
+  },
+  seeAnswers: {
+    defaultMessage: 'Skoða svör',
+    id: 'sp.health:see-answers',
+  },
+  showExpiredQuestionnaires: {
+    defaultMessage: 'Sýna útrunna',
+    id: 'sp.health:show-expired-questionnaires',
+  },
+  treatment: {
+    defaultMessage: 'Meðferð',
+    id: 'sp.health:treatment',
+  },
+  sentFrom: {
+    defaultMessage: 'Sent af',
+    id: 'sp.health:sent-from',
+  },
+  yourAnswersForHasBeenSent: {
+    defaultMessage: 'Svör þín við {title} hafa verið send',
+    id: 'sp.health:your-answers-for-has-been-sent',
+  },
+  yourAnswersHaveBeenSent: {
+    defaultMessage: 'Svör þín hafa verið send',
+    id: 'sp.health:your-answers-have-been-sent',
+  },
+  questionnaireDraftSaved: {
+    defaultMessage: 'Drög við {title} hafa verið vistuð',
+    id: 'sp.health:questionnaire-draft-saved',
+  },
+  errorSendingAnswers: {
+    defaultMessage:
+      'Ekki tókst að senda svör við {title}. Vinsamlegast reyndu aftur síðar eða hafðu samband við þjónustuaðila.',
+    id: 'sp.health:error-sending-answers',
+  },
   patientData: {
     defaultMessage: 'Sjúkraskrá',
     id: 'sp.health:patient-data',
@@ -1815,6 +2067,14 @@ export const messages = defineMessages({
       'Hér getur þú veitt heimild fyrir því að lykilheilsufarsupplýsingar þínar verða aðgengilegar heilbrigðisstarfsfólki í öðrum löndum innan Evrópska efnahagssvæðisins, í gegnum landstengigátt hjá Embætti landlæknis. ',
     id: 'sp.health:patient-data-permit-description',
   },
+  patientDataPermitsLink: {
+    defaultMessage: 'https://island.is/heilbrigdisthjonusta-yfir-landamaeri',
+    id: 'sp.health:patient-data-permits-link',
+  },
+  patientDataPermitsLinkText: {
+    defaultMessage: 'Lesa um heimildina hér',
+    id: 'sp.health:patient-data-permits-link-text',
+  },
   readAboutPermit: {
     defaultMessage: 'Lesa um heimildina hér',
     id: 'sp.health:read-about-permit',
@@ -1826,6 +2086,21 @@ export const messages = defineMessages({
   chooseDataToShare: {
     defaultMessage: 'Veldu gögn sem þú vilt veita heimild til birtingar',
     id: 'sp.health:choose-data-to-share',
+  },
+  permitApprovalTitle: {
+    id: 'sp.health:permit-approval-title',
+    defaultMessage:
+      'Upplýst samþykki fyrir miðlun sjúkraskrárupplýsinga milli Evrópulanda',
+  },
+  permitApprovalTopText: {
+    id: 'sp.health:permit-approval-top-text',
+    defaultMessage:
+      'Heimildin leyfir birtingu upplýsinga úr sjúkraskrá þinni til heilbrigðisstofnunar í öðru Evrópulandi, í þeim tilgangi að tryggja örugga og samfellda heilbrigðisþjónustu. Lykilheilsufarsupplýsingar fela í sér eftirfarandi upplýsingar:',
+  },
+  permitApprovalBottomText: {
+    id: 'sp.health:permit-approval-bottom-text',
+    defaultMessage:
+      'Upplýsingarnar eru viðkvæmar og verða meðhöndlaðar í samræmi við lög um persónuvernd og trúnað. Lög nr. 55/2009 og EU reglugerð nr. 2025/327. Hægt er að afturkalla samþykki hvenær sem er, nema í bráðatilvikum þar sem þú ert ófær um að veita samþykki.',
   },
   permitApprovalDescription: {
     id: 'sp.health:permit-approval-description',
@@ -1839,6 +2114,10 @@ export const messages = defineMessages({
   forward: {
     defaultMessage: 'Áfram',
     id: 'sp.health:forward',
+  },
+  saveChanges: {
+    defaultMessage: 'Vista breytingar',
+    id: 'sp.health:save-changes',
   },
   goBack: {
     defaultMessage: 'Til baka',
@@ -1874,6 +2153,14 @@ export const messages = defineMessages({
   showExpiredPermits: {
     defaultMessage: 'Sýna óvirkar',
     id: 'sp.health:show-expired-permits',
+  },
+  showMoreHistory: {
+    defaultMessage: 'Sýna fleiri',
+    id: 'sp.health:show-more-history',
+  },
+  showLessHistory: {
+    defaultMessage: 'Sýna færri',
+    id: 'sp.health:show-less-history',
   },
   permit: {
     defaultMessage: 'Heimild',
@@ -1917,6 +2204,15 @@ export const messages = defineMessages({
     defaultMessage:
       '* Sjúkdómsgreiningar\n* Ofnæmi og lífsógnandi sjúkdóma\n* Yfirlit yfir núverandi lyf\n* Ígræði, t.d. hjartagangráður og bjargráður\n* Bólusetningar\n* Nýlegar meðferðir\n* Meðgöngu',
   },
+  keyHealthInformationToBeShared: {
+    id: 'sp.health:key-health-information-to-be-shared',
+    defaultMessage: 'Sjúkraskrárupplýsingar til birtingar',
+  },
+  keyHealthInformationToBeSharedDescription: {
+    id: 'sp.health:key-health-information-to-be-shared-description',
+    defaultMessage:
+      'Heimildin nær utan um lykilheilsufarsupplýsingar sem inniheldur eftirfarandi upplýsingar:',
+  },
   errorTryAgain: {
     id: 'sp.health:error-try-again',
     defaultMessage:
@@ -1946,21 +2242,41 @@ export const messages = defineMessages({
     defaultMessage: 'Embætti landlæknis',
     id: 'sp.health:health-directorate',
   },
+  healthDirectorateUrl: {
+    defaultMessage: 'https://www.landlaeknir.is',
+    id: 'sp.health:health-directorate-url',
+  },
+  landspitali: {
+    defaultMessage: 'Landspítali',
+    id: 'sp.health:landspitali',
+  },
+  landspitaliTooltip: {
+    defaultMessage: 'Landspítali hefur umsjón með gögnum um blóðflokka.',
+    id: 'sp.health:landspitali-tooltip',
+  },
   invalidatePermit: {
-    defaultMessage: 'Afturkalla',
+    defaultMessage: 'Eyða',
     id: 'sp.health:invalidate-permit',
   },
+  patientDataPermitInvalidate: {
+    defaultMessage: 'Óvirkja heimild',
+    id: 'sp.health:patient-data-permit-invalidate',
+  },
   areYouSureAboutInvalidatingPermit: {
-    defaultMessage: 'Ertu viss um að þú viljir afturkalla heimild?',
+    defaultMessage: 'Ertu viss um að þú viljir óvirkja heimild?',
     id: 'sp.health:are-you-sure-about-invalidating-permit',
   },
   youAreAboutToInvalidateThisPermit: {
-    defaultMessage: 'Þú ert að fara afturkalla eftirfarandi heimild:',
+    defaultMessage: 'Þú ert að fara gera eftirfarandi heimild óvirka:',
     id: 'sp.health:you-are-about-to-invalidate-this-permit',
   },
   youAreAboutToDeleteThisPermit: {
     defaultMessage: 'Þú ert að fara eyða eftirfarandi heimild:',
     id: 'sp.health:you-are-about-to-delete-this-permit',
+  },
+  newPermit: {
+    defaultMessage: 'Ný heimild',
+    id: 'sp.health:new-permit',
   },
   addNewPermitTitle: {
     defaultMessage: 'Þú ert að fara bæta við eftirfarandi heimild:',
@@ -1979,7 +2295,7 @@ export const messages = defineMessages({
     id: 'sp.health:confirm',
   },
   permitCreated: {
-    defaultMessage: 'Nýrri heimild hefur verið bætt við',
+    defaultMessage: 'Heimild hefur verið bætt við',
     id: 'sp.health:permit-created',
   },
   permitDeleted: {
@@ -1993,17 +2309,43 @@ export const messages = defineMessages({
   },
   permitCreatedError: {
     defaultMessage:
-      'Ekki tókst að bæta heimild við. Vinsamlegast reyndu aftur síðar.',
+      'Ekki tókst að bæta heimild við. {arg} Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:permit-created-error',
   },
   permitInvalidated: {
-    defaultMessage: 'Heimild hefur verið afturkölluð',
+    defaultMessage: 'Heimild hefur verið óvirkjuð',
     id: 'sp.health:permit-invalidated',
   },
   permitInvalidatedError: {
     defaultMessage:
-      'Ekki tókst að afturkalla heimild. Vinsamlegast reyndu aftur síðar.',
+      'Ekki tókst að óvirkja heimild. Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:permit-invalidated-error',
+  },
+  permitDetailIntro: {
+    defaultMessage:
+      'Heimild þessi gildir til birtingar <link>sjúkraskrárupplýsinga</link> milli Íslands og þeirra landa sem eru valin. Þú getur valið að óvirkja heimildina hvenær sem er eða framlengja útrunna heimild.',
+    id: 'sp.health:permit-detail-intro',
+  },
+  permitDetailIntroWithLink: {
+    id: 'sp.health:permit-detail-intro-with-link#markdown',
+    defaultMessage:
+      'Heimild þessi gildir til birtingar sjúkraskrárupplýsinga milli Íslands og þeirra landa sem eru valin. Þú getur valið að óvirkja heimildina hvenær sem er eða framlengja útrunna heimild.',
+  },
+  permitChangeHistory: {
+    defaultMessage: 'Breytingasaga',
+    id: 'sp.health:permit-change-history',
+  },
+  lastModified: {
+    defaultMessage: 'Breytt',
+    id: 'sp.health:last-modified',
+  },
+  activatePermit: {
+    defaultMessage: 'Virkja heimild',
+    id: 'sp.health:activate-permit',
+  },
+  editPermit: {
+    defaultMessage: 'Breyta heimild',
+    id: 'sp.health:edit-permit',
   },
   countriesError: {
     defaultMessage:
@@ -2022,6 +2364,11 @@ export const messages = defineMessages({
     defaultMessage:
       'Þú ert ekki með neinar virkar heimildir. Hægt er að ýta á takkann "Sýna óvirkar" hér að ofan ef þú vilt skoða óvirkar heimildir.',
     id: 'sp.health:no-active-permits-registered',
+  },
+  noActiveQuestionnairesRegistered: {
+    defaultMessage:
+      'Þú ert ekki með neina virka spurningalista. Hægt er að ýta á takkann "Sýna útrunna" hér að ofan ef þú vilt skoða útrunna spurningalista.',
+    id: 'sp.health:no-active-questionnaires-registered',
   },
   active: {
     defaultMessage: 'Virk',
@@ -2051,9 +2398,17 @@ export const messages = defineMessages({
     defaultMessage: 'Gildir í eftirfarandi löndum',
     id: 'sp.health:valid-for-countries',
   },
+  countries: {
+    defaultMessage: 'Lönd',
+    id: 'sp.health:countries',
+  },
   patientDataShared: {
     defaultMessage: 'Sjúkraskrárupplýsingar til birtingar',
     id: 'sp.health:patient-data-shared',
+  },
+  dataShared: {
+    defaultMessage: 'Upplýsingar til birtingar',
+    id: 'sp.health:data-shared',
   },
   patientDataSharedDescription: {
     defaultMessage:
@@ -2157,19 +2512,23 @@ export const messages = defineMessages({
     id: 'sp.health:prescription-blocked-is-regiment',
   },
   prescriptionBlockedNoMedCard: {
-    defaultMessage: 'Ekkert lyfjakort skráð',
+    defaultMessage:
+      'Endurnýjun ekki í boði vegna þess að lyfið er ekki á lyfjakorti',
     id: 'sp.health:prescription-blocked-no-med-card',
   },
   prescriptionBlockedNoHealthClinic: {
-    defaultMessage: 'Engin heilsugæslustöð skráð',
+    defaultMessage:
+      'Endurnýjun ekki í boði vegna þess að engin heilsugæslustöð er skráð',
     id: 'sp.health:prescription-blocked-no-health-clinic',
   },
   prescriptionBlockedNotFullyDispensed: {
-    defaultMessage: 'Ekki öll lyf sótt',
+    defaultMessage:
+      'Endurnýjun ekki í boði vegna þess að ekki öll lyf hafa verið sótt',
     id: 'sp.health:prescription-blocked-not-fully-dispensed',
   },
   prescriptionBlockedPendingRequest: {
-    defaultMessage: 'Beiðni um endurnýjun í vinnslu',
+    defaultMessage:
+      'Endurnýjun ekki í boði vegna þess að beiðni um endurnýjun er nú þegar í vinnslu',
     id: 'sp.health:prescription-blocked-pending-request',
   },
   prescriptionBlockedRejectedRequest: {
@@ -2181,12 +2540,47 @@ export const messages = defineMessages({
     id: 'sp.health:prescription-blocked-dismissed-request',
   },
   prescriptionBlockedAlreadyRequested: {
-    defaultMessage: 'Endurnýjun þegar í vinnslu',
+    defaultMessage: 'Endurnýjun er nú þegar í vinnslu',
     id: 'sp.health:prescription-blocked-already-requested',
   },
+  prescriptionBlockedMoreRecentExists: {
+    defaultMessage:
+      'Endurnýjun ekki í boði vegna þess að nýrri lyfseðill er til staðar',
+    id: 'sp.health:prescription-blocked-more-recent-exists',
+  },
+  prescriptionBlockedSpecialistOnlyPrescription: {
+    defaultMessage: 'Endurnýjun ekki í boði',
+    id: 'sp.health:prescription-blocked-specialist-only-prescription',
+  },
   prescriptionBlockedOther: {
-    defaultMessage: 'Óþekkt ástæða',
+    defaultMessage: 'Endurnýjun ekki í boði vegna óþekktrar ástæðu',
     id: 'sp.health:prescription-blocked-other',
+  },
+  renewalStatusApproved: {
+    defaultMessage: 'Samþykkt',
+    id: 'sp.health:renewal-status-approved',
+  },
+  renewalStatusDismissed: {
+    defaultMessage: 'Vísað frá',
+    id: 'sp.health:renewal-status-dismissed',
+  },
+  renewalStatusRejected: {
+    defaultMessage: 'Hafnað',
+    id: 'sp.health:renewal-status-rejected',
+  },
+  renewalRequestSent: {
+    defaultMessage:
+      'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
+    id: 'sp.health:renewal-request-sent',
+  },
+  renewalRequestError: {
+    defaultMessage:
+      'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
+    id: 'sp.health:renewal-request-error',
+  },
+  renewalInvalidPrescription: {
+    defaultMessage: 'Vinsamlegast veljið gilt lyfseðilsnúmer.',
+    id: 'sp.health:renewal-invalid-prescription',
   },
   weekdayMondayAcc: {
     defaultMessage: 'Mánudaginn',
@@ -2215,5 +2609,37 @@ export const messages = defineMessages({
   weekdaySundayAcc: {
     defaultMessage: 'Sunnudaginn',
     id: 'sp.health:weekday-sunday-acc',
+  },
+  profession: {
+    defaultMessage: 'Starfsheiti',
+    id: 'sp.health:profession',
+  },
+  department: {
+    defaultMessage: 'Deild',
+    id: 'sp.health:department',
+  },
+  diagnoses: {
+    defaultMessage: 'Sjúkdómsgreining',
+    id: 'sp.health:diagnoses',
+  },
+  information: {
+    defaultMessage: 'Upplýsingar',
+    id: 'sp.health:information',
+  },
+  publicationPlace: {
+    defaultMessage: 'Útgáfustaður',
+    id: 'sp.health:publication-place',
+  },
+  openMap: {
+    defaultMessage: 'Opna kort',
+    id: 'sp.health:see-on-maps',
+  },
+  duration: {
+    defaultMessage: 'Tímalengd',
+    id: 'sp.health:duration',
+  },
+  argWithMinutes: {
+    defaultMessage: '{arg} mínútur',
+    id: 'sp.health:arg-with-minutes',
   },
 })

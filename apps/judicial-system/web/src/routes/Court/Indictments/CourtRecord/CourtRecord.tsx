@@ -2,8 +2,10 @@ import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import router from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
-import { INDICTMENTS_CONCLUSION_ROUTE } from '@island.is/judicial-system/consts'
-import { INDICTMENTS_DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import {
+  INDICTMENTS_CONCLUSION_ROUTE,
+  INDICTMENTS_DEFENDER_ROUTE,
+} from '@island.is/judicial-system/consts'
 import { hasGeneratedCourtRecordPdf } from '@island.is/judicial-system/types'
 import {
   CourtCaseInfo,
@@ -17,9 +19,13 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCourtSessions } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isIndictmentCourtRecordStepValid } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  isGeneratedIndictmentCourtRecordValid,
+  isNoGeneratedIndictmentCourtRecord,
+} from '@island.is/judicial-system-web/src/utils/validate'
 
 import CourtSessionAccordionItem from './CourtSessionAccordionItem'
+import { alertContainer } from './CourtRecord.css'
 
 const CourtRecord: FC = () => {
   const { user } = useContext(UserContext)
@@ -62,21 +68,16 @@ const CourtRecord: FC = () => {
     }
   }, [workingCase.courtSessions?.length])
 
-  const stepIsValid = isIndictmentCourtRecordStepValid(workingCase)
-  const allCourtSessionsConfirmed = workingCase.courtSessions?.every(
-    (c) => c.isConfirmed,
-  )
   const canCreateCourtSession =
-    !workingCase.courtSessions ||
-    workingCase.courtSessions.length === 0 ||
-    (stepIsValid && allCourtSessionsConfirmed)
+    isNoGeneratedIndictmentCourtRecord(workingCase) ||
+    isGeneratedIndictmentCourtRecordValid(workingCase)
 
   return (
     <PageLayout
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isValid={stepIsValid}
+      isValid={true}
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader title="Þingbók - Réttarvörslugátt" />
@@ -124,10 +125,10 @@ const CourtRecord: FC = () => {
             </Box>
           </>
         ) : (
-          <Box width="half" marginBottom={10}>
+          <Box className={alertContainer} marginBottom={10}>
             <AlertMessage
               title="Sjálfvirkni ekki í boði"
-              message="Þetta mál var móttekið af héraðsdómi áður en sjálfvirkni við gerð þingbókar var virkjuð."
+              message="Þetta mál var stofnað af sækjanda áður en sjálfvirkni við gerð þingbókar var virkjuð."
               type="info"
             />
           </Box>
@@ -139,7 +140,6 @@ const CourtRecord: FC = () => {
           previousUrl={`${INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           nextUrl={`${INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
-          nextIsDisabled={!stepIsValid || !allCourtSessionsConfirmed}
           onNextButtonClick={() =>
             handleNavigationTo(INDICTMENTS_CONCLUSION_ROUTE)
           }

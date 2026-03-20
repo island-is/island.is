@@ -16,13 +16,14 @@ import {
   DefaultEvents,
   FormModes,
   InstitutionNationalIds,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
@@ -30,12 +31,12 @@ import { ChildrenApi, SchoolsApi } from '../dataProviders'
 import {
   hasForeignLanguages,
   hasOtherPayer,
-  needsOtherGuardianApproval,
-  needsPayerApproval,
-  shouldShowExpectedEndDate,
   hasSpecialEducationSubType,
   isWelfareContactSelected,
+  needsOtherGuardianApproval,
+  needsPayerApproval,
   shouldShowAlternativeSpecialEducationDepartment,
+  shouldShowExpectedEndDate,
   showCaseManagerFields,
 } from '../utils/conditionUtils'
 import {
@@ -48,6 +49,7 @@ import {
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
+  getApplicationExternalData,
   getApplicationType,
   getOtherGuardian,
   otherGuardianApprovalStatePendingAction,
@@ -57,8 +59,10 @@ import { dataSchema } from './dataSchema'
 import {
   assigneeMessages,
   historyMessages,
-  newPrimarySchoolMessages,
+  overviewMessages,
   pendingActionMessages,
+  prerequisitesMessages,
+  sharedMessages,
   statesMessages,
 } from './messages'
 
@@ -70,7 +74,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   type: ApplicationTypes.NEW_PRIMARY_SCHOOL,
   name: determineNameFromApplicationAnswers,
   codeOwner: CodeOwners.Deloitte,
-  institution: newPrimarySchoolMessages.shared.institution,
+  institution: sharedMessages.institution,
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,
   allowedDelegations: [
@@ -106,6 +110,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               externalDataId: 'preferredSchool',
               throwOnError: true,
             }),
+            defineTemplateApi({
+              action: ApiModuleActions.getIsApplicationBlocked,
+              externalDataId: 'isApplicationBlocked',
+              throwOnError: true,
+            }),
           ],
           roles: [
             {
@@ -117,7 +126,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: newPrimarySchoolMessages.pre.startApplication,
+                  name: prerequisitesMessages.children.startApplication,
                   type: 'primary',
                 },
               ],
@@ -125,7 +134,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               read: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryV3UserApi,
                 UserProfileApi,
                 ChildrenApi,
                 SchoolsApi,
@@ -134,16 +143,53 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
-            actions: 'setApplicationType',
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.DRAFT,
+              actions: 'setApplicationType',
+              cond: (application) => {
+                const { isApplicationBlocked } = getApplicationExternalData(
+                  application?.application?.externalData,
+                )
+
+                if (
+                  isRunningOnEnvironment('local') ||
+                  isRunningOnEnvironment('dev')
+                ) {
+                  return true
+                }
+
+                return !isApplicationBlocked
+              },
+            },
+            {
+              target: States.APPLICATION_BLOCKED,
+            },
+          ],
+        },
+      },
+      [States.APPLICATION_BLOCKED]: {
+        meta: {
+          name: States.APPLICATION_BLOCKED,
+          status: FormModes.DRAFT,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/ApplicationBlocked').then((module) =>
+                  Promise.resolve(module.ApplicationBlocked),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
       [States.DRAFT]: {
         exit: [
           'clearAlternativeSpecialEducationDepartment',
           'clearApplicationIfReasonForApplication',
+          'clearCurrentNursery',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
           'clearSupport',
@@ -172,7 +218,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: newPrimarySchoolMessages.overview.submitButton,
+                  name: overviewMessages.submitButton,
                   type: 'primary',
                 },
               ],
@@ -538,6 +584,16 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           getApplicationType(application.answers, application.externalData),
         )
 
+        return context
+      }),
+      clearCurrentNursery: assign((context) => {
+        const { application } = context
+        const { hasCurrentNursery } = getApplicationAnswers(application.answers)
+
+        if (!(hasCurrentNursery === YES)) {
+          unset(application.answers, 'currentNursery.municipality')
+          unset(application.answers, 'currentNursery.nursery')
+        }
         return context
       }),
       clearAlternativeSpecialEducationDepartment: assign((context) => {

@@ -7,12 +7,11 @@ import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
   ApplicationsControllerDeleteApplicationRequest,
-  ApplicationsControllerFindAllByOrganizationRequest,
   ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerNotifyRequest,
   ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
-  ApplicationsControllerSubmitSectionRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
@@ -21,11 +20,14 @@ import {
   GetApplicationInput,
   GetApplicationsInput,
   SubmitScreenInput,
-  SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
-import { ApplicationResponse } from '../../models/applications.model'
-import { Screen } from '../../models/screen.model'
+import {
+  ApplicationResponse,
+  SubmitApplicationResponse,
+} from '../../models/applications.model'
+import { NotificationResponse } from '../../models/screen.model'
+import { NotificationInput } from '../../dto/notification.input'
 
 @Injectable()
 export class ApplicationsService {
@@ -73,20 +75,6 @@ export class ApplicationsService {
     return response as ApplicationResponse
   }
 
-  async getApplications(
-    auth: User,
-    input: ApplicationsInput,
-  ): Promise<ApplicationResponse> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerFindAllByOrganization(
-        input as ApplicationsControllerFindAllByOrganizationRequest,
-      )
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to get applications'),
-      )
-    return response as ApplicationResponse
-  }
-
   async getAllApplications(
     auth: User,
     input: GetApplicationsInput,
@@ -101,7 +89,7 @@ export class ApplicationsService {
     return response as ApplicationResponse
   }
 
-  async updateDependencies(
+  async updateSettings(
     auth: User,
     input: UpdateApplicationInput,
   ): Promise<void> {
@@ -113,10 +101,15 @@ export class ApplicationsService {
   async submitApplication(
     auth: User,
     input: GetApplicationInput,
-  ): Promise<void> {
-    await this.applicationsApiWithAuth(auth).applicationsControllerSubmit(
-      input as ApplicationsControllerSubmitRequest,
-    )
+  ): Promise<SubmitApplicationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerSubmit(
+        input as ApplicationsControllerSubmitRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to submit application'),
+      )
+    return response as SubmitApplicationResponse
   }
 
   async updateApplication(
@@ -128,21 +121,24 @@ export class ApplicationsService {
     )
   }
 
-  async saveScreen(auth: User, input: SubmitScreenInput): Promise<Screen> {
-    const response = await this.applicationsApiWithAuth(
-      auth,
-    ).applicationsControllerSaveScreen(
+  async saveScreen(auth: User, input: SubmitScreenInput): Promise<void> {
+    await this.applicationsApiWithAuth(auth).applicationsControllerSaveScreen(
       input as ApplicationsControllerSaveScreenRequest,
     )
-    return response as Screen
   }
 
-  async submitSection(auth: User, input: SubmitSectionInput): Promise<void> {
-    await this.applicationsApiWithAuth(
-      auth,
-    ).applicationsControllerSubmitSection(
-      input as ApplicationsControllerSubmitSectionRequest,
-    )
+  async notifyExternalSystem(
+    auth: User,
+    input: NotificationInput,
+  ): Promise<NotificationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerNotify({
+        notificationDto: input,
+      } as ApplicationsControllerNotifyRequest)
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to notify external system'),
+      )
+    return response as NotificationResponse
   }
 
   async deleteApplication(auth: User, input: string): Promise<void> {

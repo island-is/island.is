@@ -2,6 +2,11 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   listPage: defineMessages({
+    effectiveDatePrefix: {
+      id: 'web.bloodbank.bloodDonationRestrictions:listPage.effectiveDatePrefix',
+      defaultMessage: 'Gildir frá: ',
+      description: 'Texti fyrir áfangadag í spjaldi',
+    },
     arrowLinkLabel: {
       id: 'web.bloodbank.bloodDonationRestrictions:listPage.arrowLinkLabel',
       defaultMessage: 'Undantekningar og athugasemdir',

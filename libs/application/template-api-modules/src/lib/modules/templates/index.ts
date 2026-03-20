@@ -1,3 +1,7 @@
+import { MileCarModule } from './transport-authority/mile-car/mile-car.module'
+import { MileCarService } from './transport-authority/mile-car/mile-car.service'
+import { CoursesModule } from './hh/courses/courses.module'
+import { CoursesService } from './hh/courses/courses.service'
 import { RegistrationOfNewPropertyNumbersModule } from './hms/registration-of-new-property-numbers/registration-of-new-property-numbers.module'
 import { RegistrationOfNewPropertyNumbersService } from './hms/registration-of-new-property-numbers/registration-of-new-property-numbers.service'
 import { UnemploymentBenefitsModule } from './unemployment-benefits/unemployment-benefits.module'
@@ -176,6 +180,8 @@ import { RentalAgreementModule } from './hms/rental-agreement/rental-agreement.m
 import { RentalAgreementService } from './hms/rental-agreement/rental-agreement.service'
 import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
 import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
+import { CarRentalDayrateReturnsModule } from './car-rental-dayrate-returns/car-rental-dayrate-returns.module'
+import { CarRentalDayrateReturnsService } from './car-rental-dayrate-returns/car-rental-dayrate-returns.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -257,6 +263,7 @@ export const modules = [
   TrainingLicenseOnAWorkMachineTemplateModule,
   UnemploymentBenefitsModule,
   CarRentalFeeCategoryModule,
+  CarRentalDayrateReturnsModule,
   PracticalExamTemplateModule,
   ExampleFolderStructureAndConventionsModule,
   LegalGazetteTemplateModule,
@@ -267,6 +274,8 @@ export const modules = [
   FireCompensationAppraisalModule,
   ExemptionForTransportationModule,
   RegistrationOfNewPropertyNumbersModule,
+  MileCarModule,
+  CoursesModule,
 ]
 
 export const services = [
@@ -348,6 +357,7 @@ export const services = [
   TrainingLicenseOnAWorkMachineTemplateService,
   UnemploymentBenefitsService,
   CarRentalFeeCategoryService,
+  CarRentalDayrateReturnsService,
   PracticalExamTemplateService,
   ExampleFolderStructureAndConventionsService,
   LegalGazetteTemplateService,
@@ -358,4 +368,6 @@ export const services = [
   FireCompensationAppraisalService,
   ExemptionForTransportationService,
   RegistrationOfNewPropertyNumbersService,
+  MileCarService,
+  CoursesService,
 ]

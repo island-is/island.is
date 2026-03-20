@@ -4,6 +4,7 @@ import { FileResponse } from './types'
 import { getValueViaPath, NO, YES } from '@island.is/application/core'
 import {
   ApplicantInAnswers,
+  CapitalIncomeInAnswers,
   CurrentEmploymentInAnswers,
   CurrentSituationInAnswers,
   EducationInAnswers,
@@ -37,9 +38,6 @@ import {
   GaldurDomainModelsSettingsUnionsUnionDTO,
 } from '@island.is/clients/vmst-unemployment'
 
-export const getStartingLocale = (externalData: ExternalData) => {
-  return getValueViaPath<Locale>(externalData, 'startingLocale.data')
-}
 export const getPersonalInformation = (answers: FormValue) => {
   const applicant = getValueViaPath<ApplicantInAnswers>(answers, 'applicant')
 
@@ -237,7 +235,6 @@ export const getJobCareer = (
     ) || []
   const previousJobCareer =
     employmentHistory?.lastJobs?.map((job) => {
-      const jobId = jobCodes?.find((x) => x.name === job.title)?.id
       const employerSSN =
         job.nationalIdWithName && job.nationalIdWithName !== '-'
           ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
@@ -253,18 +250,16 @@ export const getJobCareer = (
         started: job.startDate,
         quit: job.endDate,
         workRatio: parseInt(job.percentage || ''),
-        jobName: job.title,
-        jobCodeId: jobId || '',
+        jobCodeId: job.jobCodeId || '',
       }
     }) || []
 
   const currentJobCareer =
     employmentHistory?.currentJobs?.map((job, index) => {
       let workHours
-      if (currentJob && currentJob.length > 0) {
+      if (currentJob && currentJob.length > index) {
         workHours = getValueViaPath<string>(currentJob[index], 'workHours', '')
       }
-      const jobId = jobCodes?.find((x) => x.name === job.title)?.id
       const employerSSN =
         job.nationalIdWithName && job.nationalIdWithName !== '-'
           ? rskEmploymentList.find((x) => x.ssn === job.nationalIdWithName)?.ssn
@@ -277,12 +272,10 @@ export const getJobCareer = (
       return {
         employerSSN: employerSSN,
         employer: employerName,
-        started: job.startDate,
         quit: job.endDate,
         workRatio: parseInt(job.percentage || ''),
         workHours: workHours || '',
-        jobName: job.title,
-        jobCodeId: jobId || '',
+        jobCodeId: job.jobCodeId || '',
       }
     }) || []
 
@@ -447,13 +440,16 @@ export const getEmployerSettlement = (answers: FormValue) => {
   )
   return {
     hasUnpaidVacationTime: vacationInformation?.doYouHaveVacationDays === YES,
-    unpaidVacations: vacationInformation?.vacationDays?.map((vacation) => {
-      return {
-        unpaidVacationDays: parseInt(vacation.amount || ''),
-        unpaidVacationStart: vacation.startDate,
-        unpaidVacationEnd: vacation.endDate,
-      }
-    }),
+    unpaidVacations:
+      vacationInformation?.doYouHaveVacationDays === YES
+        ? vacationInformation?.vacationDays?.map((vacation) => {
+            return {
+              unpaidVacationDays: parseInt(vacation.amount || ''),
+              unpaidVacationStart: vacation.startDate,
+              unpaidVacationEnd: vacation.endDate,
+            }
+          })
+        : [],
     //This is definitely in the wrong place but to hard to fix in Galdur at this moment so it remains here
     resignationEnds:
       currentSituation?.status === EmploymentStatus.EMPLOYED &&
@@ -776,7 +772,7 @@ export const getPensionAndOtherPayments = (
               return {
                 incomeTypeId: payment.subType,
                 estimatedIncome: parseInt(payment.paymentAmount || '1'),
-                privatePensionFundId: payment.pensionFund,
+                privatePensionFundId: payment.privatePensionFund,
               }
             }),
           sicknessBenefitPayments: otherBenefits.payments
@@ -786,8 +782,10 @@ export const getPensionAndOtherPayments = (
             )
             .map((payment) => {
               return {
-                incomeTypeId: payment.typeOfPayment,
+                incomeTypeId: payment.subType,
                 unionId: payment.union,
+                periodFrom: payment.dateFrom,
+                periodTo: payment.dateTo,
               }
             }),
         }
@@ -818,7 +816,6 @@ export const getPensionAndOtherPayments = (
                 : job.employer?.nationalId,
             estimatedIncome: job.salary ? parseInt(job.salary) : 0,
             ratio: parseInt(job.percentage || ''),
-            periodFrom: job.startDate,
           }
         })
       : []
@@ -840,10 +837,25 @@ export const getPensionAndOtherPayments = (
         })
       : []
 
+  const capitalIncome = getValueViaPath<CapitalIncomeInAnswers>(
+    answers,
+    'capitalIncome',
+  )
+  const capitalGains =
+    capitalIncome?.otherIncome === YES
+      ? {
+          incomeTypeId: PaymentTypeIds.CAPITAL_GAINS_ID,
+          estimatedIncome: capitalIncome?.capitalIncomeAmount
+            ?.map((x) => parseInt(x?.amount || '0'))
+            .reduce((a, b) => a + b, 0),
+        }
+      : null
+
   return {
     ...otherBenefitsFromAnswers,
-    partTimeJobPayments: partTimeJobPayments,
-    irregularJobPayments: irregularJobPayments,
+    partTimeJobPayments,
+    irregularJobPayments,
+    capitalGains,
   }
 }
 

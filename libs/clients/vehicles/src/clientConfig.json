@@ -2,7 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "SamgÃ¶ngustofa",
-    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-66 : 20250922.2",
+    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-70 : 20260217.1",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -1484,6 +1484,86 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "currentRegno": {
+            "type": "string",
+            "nullable": true
+          },
+          "deregistrationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "massOfTrBr": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "massOfTrUnBr": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "lastInspDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastInspResult": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastInspType": {
+            "type": "string",
+            "nullable": true
+          },
+          "nextMainInspDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "nextMainInspDateIfPass": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "searchOperserno": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "searchMainOper": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "ownerSsn": {
+            "type": "string",
+            "nullable": true
+          },
+          "ownerFullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "nextAvailMileageDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "canRegisterMileage": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "requiresMileageReg": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "euGroupCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "euGroupName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1770,7 +1850,15 @@
             "type": "string",
             "nullable": true
           },
+          "platetypefrontName": {
+            "type": "string",
+            "nullable": true
+          },
           "platetyperear": {
+            "type": "string",
+            "nullable": true
+          },
+          "platetyperearName": {
             "type": "string",
             "nullable": true
           },
@@ -1829,6 +1917,10 @@
             "type": "boolean"
           },
           "canRegisterMileage": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "vehicleHasMilesOdometer": {
             "type": "boolean",
             "nullable": true
           },
@@ -3216,6 +3308,10 @@
           "availableMileageRegistration": {
             "type": "boolean",
             "nullable": true
+          },
+          "vehicleHasMilesOdometer": {
+            "type": "boolean",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3682,6 +3778,14 @@
             "nullable": true
           },
           "vehGroupCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "euGroupCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "euGroupName": {
             "type": "string",
             "nullable": true
           },

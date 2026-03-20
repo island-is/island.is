@@ -9,6 +9,8 @@ import {
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
+  NotificationConfig,
+  NotificationType,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -41,7 +43,6 @@ import {
   getExtraData,
   getReviewerRole,
   getReviewers,
-  hasReviewerApproved,
 } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -222,8 +223,9 @@ const template: ApplicationTemplate<
             ],
             pendingAction: (application, _role, nationalId) => {
               return getReviewStatePendingAction(
-                hasReviewerApproved(application.answers, nationalId),
+                nationalId,
                 getReviewers(application.answers),
+                true,
               )
             },
           },
@@ -233,6 +235,20 @@ const template: ApplicationTemplate<
             whenToPrune: (application: Application) =>
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
+            pruneMessage: (application) => {
+              const plate = getValueViaPath(
+                application.answers,
+                'pickVehicle.plate',
+                undefined,
+              ) as string | undefined
+              return {
+                notificationTemplateId:
+                  NotificationConfig[
+                    NotificationType.ChangeCoOwnerOfVehiclePruned
+                  ].templateId,
+                internalBody: plate ?? '',
+              }
+            },
           },
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,

@@ -16,7 +16,7 @@ import {
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 import { ComplaintsToAlthingiOmbudsmanSchema } from './dataSchema'
-import { NationalRegistryUserApi, UserProfileApi } from '../dataProviders'
+import { NationalRegistryV3UserApi, UserProfileApi } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import { application as applicationMessage } from './messages'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -77,7 +77,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [UserProfileApi, NationalRegistryUserApi],
+              api: [UserProfileApi, NationalRegistryV3UserApi],
             },
           ],
         },
@@ -106,7 +106,7 @@ const ComplaintsToAlthingiOmbudsmanTemplate: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [NationalRegistryV3UserApi, UserProfileApi],
               delete: true,
             },
           ],

@@ -36,7 +36,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.TERMINATE_RENTAL_AGREEMENT,
   name: m.miscMessages.applicationName,
   codeOwner: CodeOwners.NordaApplications,
-  institution: 'Húsnæðis og mannvirkjastofnun',
+  institution: 'HMS',
   featureFlag: Features.TerminateRentalAgreementEnabled,
   translationNamespaces:
     ApplicationConfigurations.TerminateRentalAgreement.translation,

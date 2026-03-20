@@ -279,6 +279,17 @@ export const serviceSetup = (services: {
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
       XROAD_RSK_PROCURING_SCOPE: json([
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
@@ -327,8 +338,20 @@ export const serviceSetup = (services: {
         prod: 'island.is',
       },
       ENVIRONMENT: ref((h) => h.env.type),
+      HH_COURSES_ZENDESK_SUBJECT: {
+        dev: '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+        staging:
+          '[TEST] Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+        prod: 'Skráning á námskeið - Heilsugæsla höfuðborgarsvæðisins',
+      },
     })
     .secrets({
+      HH_ZENDESK_SUBDOMAIN:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_SUBDOMAIN',
+      HH_ZENDESK_EMAIL:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN_EMAIL',
+      HH_ZENDESK_TOKEN:
+        '/k8s/application-system-api/ZENDESK_HEILSUGAESLA_HOFUDBORGARSVAEDISINS_CONTACT_FORM_TOKEN',
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
       DOCUMENT_PROVIDER_BASE_PATH: '/k8s/api/DOCUMENT_PROVIDER_BASE_PATH',
       DOCUMENT_PROVIDER_TOKEN_URL: '/k8s/api/DOCUMENT_PROVIDER_TOKEN_URL',
@@ -458,6 +481,18 @@ export const serviceSetup = (services: {
         '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
       LANDSPITALI_PAYMENT_ORGANISATION_ID:
         '/k8s/api/LANDSPITALI_PAYMENT_ORGANISATION_ID',
+      VERDICTS_SUPREME_COURT_BEARER_TOKEN:
+        '/k8s/api/VERDICTS_SUPREME_COURT_BEARER_TOKEN',
+      FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_BASE_PATH',
+      FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_ID',
+      FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_CLIENT_SECRET',
+      FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_SCOPE',
+      FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER:
+        '/k8s/api/FINANCIAL_MANAGEMENT_AUTHORITY_AUTHENTICATION_SERVER',
     })
     .xroad(
       AdrAndMachine,
@@ -543,7 +578,7 @@ export const serviceSetup = (services: {
       timeoutSeconds: 5,
     })
     .resources({
-      limits: { cpu: '1200m', memory: '2500Mi' },
+      limits: { cpu: '3000m', memory: '2500Mi' },
       requests: { cpu: '900m', memory: '2000Mi' },
     })
     .replicaCount({
@@ -562,5 +597,6 @@ export const serviceSetup = (services: {
       'portals-my-pages',
       'services-payments',
       'payments',
+      'contentful-apps',
     )
 }

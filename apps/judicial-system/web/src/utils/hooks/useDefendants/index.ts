@@ -6,7 +6,6 @@ import { errors } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CreateDefendantInput,
-  Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -123,7 +122,7 @@ const useDefendants = () => {
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
-        } as Defendant
+        }
 
         return { ...prevWorkingCase, defendants: newDefendants }
       })

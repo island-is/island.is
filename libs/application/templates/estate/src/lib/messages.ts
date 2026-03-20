@@ -304,6 +304,11 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
   },
+  registrantTitle: {
+    id: 'es.application:registrantTitle',
+    defaultMessage: 'Skráningaraðili',
+    description: 'Registrant section title',
+  },
   name: {
     id: 'es.application:name',
     defaultMessage: 'Nafn',
@@ -338,6 +343,31 @@ export const m = defineMessages({
     id: 'es.application:applicantAutonomous',
     defaultMessage: 'Er umsækjandi lögráða',
     description: 'Autonomous label',
+  },
+  applicantRelation: {
+    id: 'es.application:applicantRelation',
+    defaultMessage: 'Tengsl',
+    description: 'Applicant relation label',
+  },
+  heir: {
+    id: 'es.application:heir',
+    defaultMessage: 'Erfingi',
+    description: 'Heir option',
+  },
+  representative: {
+    id: 'es.application:representative',
+    defaultMessage: 'Umboðsmaður',
+    description: 'Representative option',
+  },
+  exchangeManager: {
+    id: 'es.application:exchangeManager',
+    defaultMessage: 'Skiptastjóri',
+    description: 'Exchange manager option',
+  },
+  spouse: {
+    id: 'es.application:spouse',
+    defaultMessage: 'Maki',
+    description: 'Spouse option',
   },
 
   // Estate members, assets, vehicles
@@ -412,6 +442,11 @@ export const m = defineMessages({
   doesWillExist: {
     id: 'es.application:doesWillExist',
     defaultMessage: 'Er til erfðaskrá?',
+    description: '',
+  },
+  knowledgeOfOtherWills: {
+    id: 'es.application:knowledgeOfOtherWills',
+    defaultMessage: 'Er vitneskja um aðrar erfðaskrár?',
     description: '',
   },
   doesAgreementExist: {
@@ -1014,6 +1049,28 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Payment
+  forPayment: {
+    id: 'es.application:forPayment',
+    defaultMessage: 'Til greiðslu',
+    description: 'Label for payment amount',
+  },
+  proceedToPayment: {
+    id: 'es.application:proceedToPayment',
+    defaultMessage: 'Halda áfram í greiðslu',
+    description: 'Button label to proceed to payment',
+  },
+  continueButton: {
+    id: 'es.application:continueButton',
+    defaultMessage: 'Halda áfram',
+    description: 'Button label to continue',
+  },
+  paymentTitle: {
+    id: 'es.application:paymentTitle',
+    defaultMessage: 'Greiðsla',
+    description: 'Payment section title',
+  },
+
   // Done
   doneTitle: {
     id: 'es.application:doneTitle',
@@ -1081,6 +1138,27 @@ export const m = defineMessages({
     id: 'es.application:error.errorPhoneNumber',
     defaultMessage: 'Símanúmer virðist ekki vera rétt',
     description: 'Phone number is invalid',
+  },
+  phoneElectronicIdError: {
+    id: 'es.application:error.phoneElectronicIdError',
+    defaultMessage: 'Rafræn skilríki ekki til staðar fyrir kennitölu',
+    description: 'Electronic ID not found for national ID',
+  },
+  electronicIdCheckLoading: {
+    id: 'es.application:electronicIdCheckLoading',
+    defaultMessage: 'Athuga rafræn skilríki...',
+    description: 'Checking electronic ID',
+  },
+  electronicIdCheckSuccess: {
+    id: 'es.application:electronicIdCheckSuccess',
+    defaultMessage: 'Rafræn skilríki staðfest',
+    description: 'Electronic ID confirmed',
+  },
+  electronicIdCheckFailure: {
+    id: 'es.application:electronicIdCheckFailure',
+    defaultMessage:
+      'Rafræn skilríki ekki til staðar. Vinsamlegast hafðu samband við Auðkenni.',
+    description: 'Electronic ID not found. Please contact Auðkenni.',
   },
   errorEmail: {
     id: 'es.application:error.errorEmail',
@@ -1168,19 +1246,13 @@ export const m = defineMessages({
   inheritanceUnder18Error: {
     id: 'es.application:inheritanceUnder18Error',
     defaultMessage:
-      'Eftirfarandi erfingi er undir lögaldri og því er ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
+      'Eftirfarandi erfingi er undir lögaldri án málsvara og því er ekki hægt að halda áfram með umsókn. Vinsamlegast tilgreinið lögráða málsvara eða hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
     description: '',
   },
   inheritanceUnder18ErrorAdvocate: {
     id: 'es.application:inheritanceUnder18ErrorAdvocate',
     defaultMessage:
       'Eftirfarandi málssvari er undir lögaldri og því ekki hægt að halda áfram með umsókn. Vinsamlegast hafið samband við næsta sýslumannsembætti til að fá frekari upplýsingar.',
-    description: '',
-  },
-  inheritanceAgeValidation: {
-    id: 'es.application:inheritanceAgeValidation',
-    defaultMessage:
-      'Ekki er hægt að halda áfram með umsókn þar sem erfingi undir lögaldri er skráður',
     description: '',
   },
   heirAdvocateAgeValidation: {

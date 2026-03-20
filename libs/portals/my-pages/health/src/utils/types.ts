@@ -42,6 +42,7 @@ export interface DelegationState {
   dateFrom?: Date
   dateTo?: Date
   nationalId?: string
+  name?: string
   lookup?: boolean
 }
 export type DrugRowDrug = {

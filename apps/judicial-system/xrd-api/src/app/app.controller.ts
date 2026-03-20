@@ -24,6 +24,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { PoliceFileTypeCode } from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
+import { DeprecatedCreateCaseDto } from './dto/deprecatedCreateCase.dto'
 import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
@@ -44,6 +45,26 @@ export class AppController {
   @UseInterceptors(EventInterceptor)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
+  async deprecatedCreate(
+    @Body() caseToCreate: DeprecatedCreateCaseDto,
+  ): Promise<Case> {
+    this.logger.debug('Creating a case')
+
+    return this.appService
+      .deprecatedCreate(caseToCreate)
+      .then((createdCase) => {
+        this.logger.info(`Case ${createdCase.id} created`)
+
+        return createdCase
+      })
+  }
+
+  @UseInterceptors(EventInterceptor)
+  @Post('case/create')
+  @ApiCreatedResponse({
+    type: Case,
+    description: 'Creates a new case (accused fetched separately)',
+  })
   async create(@Body() caseToCreate: CreateCaseDto): Promise<Case> {
     this.logger.debug('Creating a case')
 
@@ -99,10 +120,6 @@ export class AppController {
     @Body() updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
   ): Promise<PoliceDocumentDelivery> {
     this.logger.info(`Updating police document ${policeDocumentId}`)
-    // TODO: Remove after testing on dev
-    this.logger.info(
-      `Update request ${JSON.stringify(updatePoliceDocumentDelivery)}`,
-    )
 
     return this.appService.updatePoliceDocumentDelivery(
       policeDocumentId,

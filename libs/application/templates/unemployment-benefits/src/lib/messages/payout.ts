@@ -199,6 +199,11 @@ export const payout = {
       defaultMessage: 'Tegund greiðslu',
       description: 'Other benefits type of payment label',
     },
+    subTypeOfPayment: {
+      id: 'vmst.ub.application:payout.otherBenefits.subTypeOfPayment',
+      defaultMessage: 'Undirtegund greiðslu',
+      description: 'Other benefits sub type of payment label',
+    },
     paymentAmount: {
       id: 'vmst.ub.application:payout.otherBenefits.paymentAmount',
       defaultMessage: 'Upphæð á mánuði',

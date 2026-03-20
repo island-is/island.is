@@ -31,6 +31,19 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthBasicOld,
     },
     {
+      name: messages.appointments,
+      searchHide: false,
+      path: HealthPaths.HealthAppointments,
+      searchTags: [s.appointment, s.appointmentBook, s.appointmentDoctor],
+      children: [
+        {
+          name: messages.appointmentDetail,
+          path: HealthPaths.HealthAppointmentDetail,
+          navHide: true,
+        },
+      ],
+    },
+    {
       name: messages.referrals,
       path: HealthPaths.HealthReferrals,
       searchTags: [s.healthReferrals],
@@ -64,6 +77,18 @@ export const healthNavigation: PortalNavigationItem = {
         {
           name: messages.paymentOverview,
           path: HealthPaths.HealthPaymentOverview,
+          children: [
+            {
+              name: messages.paymentOverviewInvoices,
+              path: HealthPaths.HealthPaymentOverviewInvoices,
+              navHide: true,
+            },
+            {
+              name: messages.paymentOverviewTotals,
+              path: HealthPaths.HealthPaymentOverviewTotals,
+              navHide: true,
+            },
+          ],
           navHide: true,
           searchTags: [s.healthPaymentOverview],
         },
@@ -178,7 +203,6 @@ export const healthNavigation: PortalNavigationItem = {
         },
       ],
     },
-
     {
       name: m.vaccinations,
       description: m.vaccinationsIntro,
@@ -209,6 +233,32 @@ export const healthNavigation: PortalNavigationItem = {
       ],
     },
     {
+      name: messages.questionnaires,
+      path: HealthPaths.HealthQuestionnaires,
+      searchTags: [],
+      children: [
+        {
+          name: messages.questionnaire,
+          path: HealthPaths.HealthQuestionnairesDetail,
+          navHide: true,
+          children: [
+            {
+              name: messages.questionnaire,
+              path: HealthPaths.HealthQuestionnairesAnswer,
+              navHide: true,
+              breadcrumbHide: true,
+            },
+            {
+              name: messages.questionnaire,
+              path: HealthPaths.HealthQuestionnairesAnswered,
+              navHide: true,
+              breadcrumbHide: true,
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: messages.patientData,
       path: HealthPaths.HealthPatientData,
       searchTags: [s.healthPatientData],
@@ -218,15 +268,17 @@ export const healthNavigation: PortalNavigationItem = {
           path: HealthPaths.HealthPatientDataPermits,
           children: [
             {
-              name: messages.addPermit,
+              name: messages.patientDataPermit,
               path: HealthPaths.HealthPatientDataPermitsAdd,
               navHide: true,
+              breadcrumbHide: true,
             },
             {
               name: messages.permit,
               path: HealthPaths.HealthPatientDataPermitsDetail,
               navHide: true,
               searchHide: true,
+              breadcrumbHide: true,
             },
           ],
         },

@@ -14,11 +14,13 @@ import {
   hasSpecialEducationSubType,
   needsOtherGuardianApproval,
   needsPayerApproval,
+  shouldShowNewSchoolPage,
   shouldShowPage,
   shouldShowReasonForApplicationPage,
   showPreferredLanguageFields,
 } from './conditionUtils'
 import {
+  ApplicationFeatureConfigType,
   ApplicationFeatureKey,
   ApplicationType,
   FIRST_GRADE_AGE,
@@ -34,6 +36,7 @@ import {
   getApplicationType,
   getReasonOptionsType,
   getSpecialEducationDepartmentsInMunicipality,
+  mapApplicationType,
 } from './newPrimarySchoolUtils'
 
 const buildApplication = (data: {
@@ -181,8 +184,13 @@ describe('showPreferredLanguageFields', () => {
 describe('getApplicationType', () => {
   const currentDate = new Date()
 
-  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade, and child has not enrolled before (no data is found in Frigg)', () => {
+  beforeEach(() => jest.useFakeTimers())
+  afterEach(() => jest.useRealTimers())
+
+  it('should return ENROLLMENT_IN_PRIMARY_SCHOOL for child in first grade, if enrollment is open', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
+
+    jest.setSystemTime(new Date(currentDate.getFullYear(), 1, 1)) // 1 Feb
 
     const answers = {
       childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
@@ -199,8 +207,10 @@ describe('getApplicationType', () => {
     )
   })
 
-  it('should return undefined for child in first grade, if child has enrolled before (data is found in Frigg)', () => {
+  it('should return NEW_PRIMARY_SCHOOL for child in first grade, if enrollment is closed', () => {
     const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE
+
+    jest.setSystemTime(new Date(currentDate.getFullYear(), 10, 1)) // 1 Nov
 
     const answers = {
       childNationalId: kennitala.generatePerson(new Date(yearBorn, 0, 1)),
@@ -213,11 +223,13 @@ describe('getApplicationType', () => {
       },
     } as unknown as ExternalData
 
-    expect(getApplicationType(answers, externalData)).toBe(undefined)
+    expect(getApplicationType(answers, externalData)).toBe(
+      ApplicationType.NEW_PRIMARY_SCHOOL,
+    )
   })
 
   it('should return undefined for child in 2. grade, and data is found in Frigg', () => {
-    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 // 2. grade
 
     const answers = {
       childNationalId: kennitala.generatePerson(new Date(yearBorn, 11, 31)),
@@ -234,7 +246,7 @@ describe('getApplicationType', () => {
   })
 
   it('should return NEW_PRIMARY_SCHOOL for child in 2. grade, if no data is found in Frigg', () => {
-    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 //2. grade
+    const yearBorn = currentDate.getFullYear() - FIRST_GRADE_AGE - 1 // 2. grade
 
     const answers = {
       childNationalId: kennitala.generatePerson(new Date(yearBorn, 11, 31)),
@@ -252,72 +264,298 @@ describe('getApplicationType', () => {
 })
 
 describe('shouldShowPage', () => {
-  it('should return true if the application feature for the selected school includes key', () => {
-    const schoolId = uuid()
-    const answers = {
+  let application: Application
+
+  const schoolId = uuid()
+
+  beforeEach(() => {
+    application = buildApplication({
+      externalData: {
+        schools: {
+          data: [
+            {
+              id: schoolId,
+              settings: {
+                applicationConfigs: [
+                  {
+                    applicationType: ApplicationFeatureConfigType.TRANSFER,
+                    applicationFeatures: [
+                      { key: ApplicationFeatureKey.PAYMENT_INFO },
+                    ],
+                  },
+                  {
+                    applicationType: ApplicationFeatureConfigType.CONTINUATION,
+                    applicationFeatures: [
+                      { key: ApplicationFeatureKey.APPLICANT_INFO },
+                    ],
+                  },
+                  {
+                    applicationType: ApplicationFeatureConfigType.ENROLLMENT,
+                    applicationFeatures: [
+                      { key: ApplicationFeatureKey.EMERGENCY_CONTACTS },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
+          date: new Date(),
+          status: 'success',
+        },
+        preferredSchool: {
+          data: {
+            id: schoolId,
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        childInformation: {
+          data: {
+            primaryOrgId: schoolId,
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+  })
+  it('Should return true if the application config with application type TRANSFER for the selected school includes key', () => {
+    application.answers = {
+      applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
       newSchool: {
         municipality: '3000',
         school: schoolId,
       },
     }
-    const externalData = {
-      schools: {
-        data: [
-          {
-            id: schoolId,
-            settings: {
-              applicationConfigs: [
-                {
-                  applicationFeatures: [
-                    { key: ApplicationFeatureKey.PAYMENT_INFO },
-                  ],
-                },
-              ],
-            },
-          },
-        ],
-        date: new Date(),
-        status: 'success',
-      },
-    } as ExternalData
 
     expect(
-      shouldShowPage(answers, externalData, ApplicationFeatureKey.PAYMENT_INFO),
+      shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.PAYMENT_INFO,
+      ),
     ).toBe(true)
   })
-
-  it('should return false if the application feature for the selected school does not include key', () => {
-    const schoolId = uuid()
-    const answers = {
+  it('Should return false if the application config with application type TRANSFER for the selected school does not include key', () => {
+    application.answers = {
+      applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
       newSchool: {
         municipality: '3000',
         school: schoolId,
       },
     }
-    const externalData = {
-      schools: {
-        data: [
-          {
-            id: schoolId,
-            settings: {
-              applicationConfigs: [
-                {
-                  applicationFeatures: [
-                    { key: ApplicationFeatureKey.APPLICANT_INFO },
-                  ],
-                },
-              ],
-            },
-          },
-        ],
-        date: new Date(),
-        status: 'success',
-      },
-    } as ExternalData
 
     expect(
-      shouldShowPage(answers, externalData, ApplicationFeatureKey.PAYMENT_INFO),
+      shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.APPLICANT_INFO,
+      ),
     ).toBe(false)
+  })
+  it('Should return true if the application config with application type CONTINUATION for the current school includes key', () => {
+    application.answers = {
+      applicationType: ApplicationType.CONTINUING_ENROLLMENT,
+    }
+
+    expect(
+      shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.APPLICANT_INFO,
+      ),
+    ).toBe(true)
+  })
+  it('Should return false if the application config with application type CONTINUATION for the current school does not include key', () => {
+    application.answers = {
+      applicationType: ApplicationType.CONTINUING_ENROLLMENT,
+    }
+
+    expect(
+      shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.PAYMENT_INFO,
+      ),
+    ).toBe(false)
+  })
+  it('Should return true if the application config with application type ENROLLMENT for the preferred school includes key', () => {
+    application.answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: {
+        applyForPreferredSchool: YES,
+      },
+    }
+
+    expect(
+      shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.EMERGENCY_CONTACTS,
+      ),
+    ).toBe(true)
+  })
+  it('Should return false if the application config with application type ENROLLMENT for the preferred school does not include key', () => {
+    application.answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: {
+        applyForPreferredSchool: YES,
+      },
+    }
+
+    expect(
+      shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.PAYMENT_INFO,
+      ),
+    ).toBe(false)
+  })
+  it('Should return true if the application config with application type TRANSFER for the selected school includes key (decline enrollment in the preferred school)', () => {
+    application.answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: {
+        applyForPreferredSchool: NO,
+      },
+      newSchool: {
+        municipality: '3000',
+        school: schoolId,
+      },
+    }
+
+    expect(
+      shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.PAYMENT_INFO,
+      ),
+    ).toBe(true)
+  })
+  it('Should return false if the application config with application type TRANSFER for the selected school does not include key (decline enrollment in the preferred school)', () => {
+    application.answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: {
+        applyForPreferredSchool: NO,
+      },
+      newSchool: {
+        municipality: '3000',
+        school: schoolId,
+      },
+    }
+
+    expect(
+      shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.APPLICANT_INFO,
+      ),
+    ).toBe(false)
+  })
+  it('Should return true if the application config with application type TRANSFER for the selected school includes key (no preferred school found in Frigg)', () => {
+    application.answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      newSchool: {
+        municipality: '3000',
+        school: schoolId,
+      },
+    }
+    application.externalData.preferredSchool = {
+      data: null,
+      date: new Date(),
+      status: 'success',
+    }
+
+    expect(
+      shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.PAYMENT_INFO,
+      ),
+    ).toBe(true)
+  })
+  it('Should return false if the application config with application type TRANSFER for the selected school does not include key (no preferred school found in Frigg)', () => {
+    application.answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      newSchool: {
+        municipality: '3000',
+        school: schoolId,
+      },
+    }
+    application.externalData.preferredSchool = {
+      data: null,
+      date: new Date(),
+      status: 'success',
+    }
+
+    expect(
+      shouldShowPage(
+        application.answers,
+        application.externalData,
+        ApplicationFeatureKey.APPLICANT_INFO,
+      ),
+    ).toBe(false)
+  })
+})
+
+describe('mapApplicationType', () => {
+  it('should return TRANSFER if application type is NEW_PRIMARY_SCHOOL', () => {
+    const schoolId = uuid()
+    const answers = {
+      applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
+      newSchool: {
+        municipality: '3000',
+        school: schoolId,
+      },
+    }
+
+    expect(mapApplicationType(answers)).toBe(
+      ApplicationFeatureConfigType.TRANSFER,
+    )
+  })
+
+  it('should return CONTINUATION if application type is CONTINUING_ENROLLMENT', () => {
+    const schoolId = uuid()
+    const answers = {
+      applicationType: ApplicationType.CONTINUING_ENROLLMENT,
+      newSchool: {
+        municipality: '3000',
+        school: schoolId,
+      },
+    }
+
+    expect(mapApplicationType(answers)).toBe(
+      ApplicationFeatureConfigType.CONTINUATION,
+    )
+  })
+
+  it('should return ENROLLMENT if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is YES', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: {
+        applyForPreferredSchool: YES,
+      },
+    }
+
+    expect(mapApplicationType(answers)).toBe(
+      ApplicationFeatureConfigType.ENROLLMENT,
+    )
+  })
+  it('should return TRANSFER if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is NO', () => {
+    const schoolId = uuid()
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: {
+        applyForPreferredSchool: NO,
+      },
+      newSchool: {
+        municipality: '3000',
+        school: schoolId,
+      },
+    }
+
+    expect(mapApplicationType(answers)).toBe(
+      ApplicationFeatureConfigType.TRANSFER,
+    )
   })
 })
 
@@ -356,6 +594,7 @@ describe('needsPayerApproval', () => {
     const schoolId = uuid()
     const application = buildApplication({
       answers: {
+        applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
         newSchool: {
           municipality: '3000',
           school: schoolId,
@@ -376,6 +615,7 @@ describe('needsPayerApproval', () => {
               settings: {
                 applicationConfigs: [
                   {
+                    applicationType: ApplicationFeatureConfigType.TRANSFER,
                     applicationFeatures: [
                       { key: ApplicationFeatureKey.PAYMENT_INFO },
                     ],
@@ -397,6 +637,7 @@ describe('needsPayerApproval', () => {
     const schoolId = uuid()
     const application1 = buildApplication({
       answers: {
+        applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
         newSchool: {
           municipality: '3000',
           school: schoolId,
@@ -417,6 +658,7 @@ describe('needsPayerApproval', () => {
               settings: {
                 applicationConfigs: [
                   {
+                    applicationType: ApplicationFeatureConfigType.TRANSFER,
                     applicationFeatures: [
                       { key: ApplicationFeatureKey.APPLICANT_INFO },
                     ],
@@ -435,6 +677,7 @@ describe('needsPayerApproval', () => {
 
     const application2 = buildApplication({
       answers: {
+        applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
         newSchool: {
           municipality: '3000',
           school: schoolId,
@@ -451,6 +694,7 @@ describe('needsPayerApproval', () => {
               settings: {
                 applicationConfigs: [
                   {
+                    applicationType: ApplicationFeatureConfigType.TRANSFER,
                     applicationFeatures: [
                       { key: ApplicationFeatureKey.PAYMENT_INFO },
                     ],
@@ -474,6 +718,7 @@ describe('needsOtherGuardianApproval', () => {
     const schoolId = uuid()
     const application = buildApplication({
       answers: {
+        applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
         childNationalId: '1212121212',
         newSchool: {
           municipality: '3000',
@@ -502,6 +747,7 @@ describe('needsOtherGuardianApproval', () => {
               settings: {
                 applicationConfigs: [
                   {
+                    applicationType: ApplicationFeatureConfigType.TRANSFER,
                     applicationFeatures: [
                       { key: ApplicationFeatureKey.ADDITIONAL_REQUESTORS },
                     ],
@@ -523,6 +769,7 @@ describe('needsOtherGuardianApproval', () => {
     const schoolId = uuid()
     const application1 = buildApplication({
       answers: {
+        applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
         childNationalId: '1212121212',
         newSchool: {
           municipality: '3000',
@@ -551,6 +798,7 @@ describe('needsOtherGuardianApproval', () => {
               settings: {
                 applicationConfigs: [
                   {
+                    applicationType: ApplicationFeatureConfigType.TRANSFER,
                     applicationFeatures: [
                       { key: ApplicationFeatureKey.APPLICANT_INFO },
                     ],
@@ -569,6 +817,7 @@ describe('needsOtherGuardianApproval', () => {
 
     const application2 = buildApplication({
       answers: {
+        applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
         childNationalId: '1212121212',
         newSchool: {
           municipality: '3000',
@@ -593,6 +842,7 @@ describe('needsOtherGuardianApproval', () => {
               settings: {
                 applicationConfigs: [
                   {
+                    applicationType: ApplicationFeatureConfigType.TRANSFER,
                     applicationFeatures: [
                       { key: ApplicationFeatureKey.ADDITIONAL_REQUESTORS },
                     ],
@@ -738,7 +988,16 @@ describe('shouldShowReasonForApplicationPage', () => {
     const answers = {
       applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
     }
-    expect(shouldShowReasonForApplicationPage(answers)).toBe(true)
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(true)
   })
 
   it('should return false if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is YES', () => {
@@ -746,7 +1005,18 @@ describe('shouldShowReasonForApplicationPage', () => {
       applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
       school: { applyForPreferredSchool: YES },
     }
-    expect(shouldShowReasonForApplicationPage(answers)).toBe(false)
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(
+      false,
+    )
   })
 
   it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is NO', () => {
@@ -754,14 +1024,132 @@ describe('shouldShowReasonForApplicationPage', () => {
       applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
       school: { applyForPreferredSchool: NO },
     }
-    expect(shouldShowReasonForApplicationPage(answers)).toBe(true)
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(true)
+  })
+
+  it('should return false if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and preferredSchool is null', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+    }
+    const externalData = {
+      preferredSchool: {
+        data: null,
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(
+      false,
+    )
   })
 
   it('should return false if application type is CONTINUING_ENROLLMENT', () => {
     const answers = {
       applicationType: ApplicationType.CONTINUING_ENROLLMENT,
     }
-    expect(shouldShowReasonForApplicationPage(answers)).toBe(false)
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowReasonForApplicationPage(answers, externalData)).toBe(
+      false,
+    )
+  })
+})
+
+describe('shouldShowNewSchoolPage', () => {
+  it('should return true if application type is NEW_PRIMARY_SCHOOL', () => {
+    const answers = {
+      applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
+    }
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(true)
+  })
+
+  it('should return false if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is YES', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: { applyForPreferredSchool: YES },
+    }
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(false)
+  })
+
+  it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and applyForPreferredSchool is NO', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+      school: { applyForPreferredSchool: NO },
+    }
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(true)
+  })
+
+  it('should return true if application type is ENROLLMENT_IN_PRIMARY_SCHOOL and preferredSchool is null', () => {
+    const answers = {
+      applicationType: ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL,
+    }
+    const externalData = {
+      preferredSchool: {
+        data: null,
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(true)
+  })
+
+  it('should return false if application type is CONTINUING_ENROLLMENT', () => {
+    const answers = {
+      applicationType: ApplicationType.CONTINUING_ENROLLMENT,
+    }
+    const externalData = {
+      preferredSchool: {
+        data: {
+          id: uuid(),
+        },
+        date: new Date(),
+        status: 'success',
+      },
+    }
+    expect(shouldShowNewSchoolPage(answers, externalData)).toBe(false)
   })
 })
 

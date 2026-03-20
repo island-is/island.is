@@ -15,6 +15,7 @@ export type ApplicationCardFields = Pick<
   | 'orgContentfulId'
   | 'slug'
   | 'applicationPath'
+  | 'pruneAt'
 >
 
 export interface DefaultCardData {
@@ -33,5 +34,6 @@ export interface DefaultCardData {
 export type ApplicationCardHistoryItem = {
   date?: string
   title: string
+  subjectAndActor?: string
   content?: React.ReactNode
 }

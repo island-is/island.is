@@ -36,8 +36,12 @@ type MutationStatus =
 
 interface Props {
   vehicle: VehicleType
+  onMileageUpdateCallback?: () => void
 }
-export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
+export const VehicleBulkMileageRow = ({
+  vehicle,
+  onMileageUpdateCallback,
+}: Props) => {
   const { formatMessage } = useLocale()
   const [postError, setPostError] = useState<string | null>(null)
   const [localInternalId, setLocalInternalId] = useState<number>()
@@ -154,10 +158,13 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     setTimeout(() => {
       if (postStatus === 'success') {
         registrationsRefetch()
+        if (onMileageUpdateCallback) {
+          onMileageUpdateCallback()
+        }
         reset()
       }
     }, 500)
-  }, [postStatus, registrationsRefetch])
+  }, [onMileageUpdateCallback, postStatus, registrationsRefetch, reset])
 
   useEffect(() => {
     switch (postStatus) {
@@ -259,6 +266,8 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
     }
   }, [mileageData?.vehicleMileageDetails, vehicle.vehicleId, localInternalId])
 
+  const unit = vehicle.hasMilesOdometer ? 'mi' : 'km'
+
   const nestedTable = useMemo(() => {
     if (!data?.vehiclesMileageRegistrationHistory) {
       return [[]]
@@ -271,13 +280,13 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
           formatDate(mileageRegistration.date),
           mileageRegistration.originCode,
           //'-',
-          displayWithUnit(mileageRegistration.mileage, 'km', true),
+          displayWithUnit(mileageRegistration.mileage, unit, true),
         ])
       }
     }
 
     return tableData
-  }, [data?.vehiclesMileageRegistrationHistory])
+  }, [data?.vehiclesMileageRegistrationHistory, unit])
 
   const displayDate = localDate ?? vehicle.lastMileageRegistration?.date
   const displayMileage =
@@ -290,8 +299,12 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
         {
           value: (
             <Box>
-              <Text variant="medium">{vehicle.vehicleType}</Text>
-              <Text variant="small">{vehicle.vehicleId}</Text>
+              <Text translate="no" variant="medium">
+                {vehicle.vehicleType}
+              </Text>
+              <Text translate="no" variant="small">
+                {vehicle.vehicleId}
+              </Text>
             </Box>
           ),
         },
@@ -299,9 +312,10 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
           value: displayDate ? format(displayDate, 'dd.MM.yyyy') : '-',
         },
         {
-          value: displayMileage
-            ? displayWithUnit(displayMileage, 'km', true)
-            : '-',
+          value:
+            displayMileage !== null && displayMileage !== undefined
+              ? displayWithUnit(displayMileage, unit, true)
+              : '-',
         },
         {
           value: (
@@ -311,10 +325,11 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
                 id={vehicle.vehicleId}
                 name={vehicle.vehicleId}
                 backgroundColor="blue"
-                placeholder="km"
+                placeholder={unit}
                 type="number"
-                suffix=" km"
+                suffix={' ' + unit}
                 thousandSeparator
+                decimalScale={0}
                 size="xs"
                 maxLength={12}
                 defaultValue={''}
@@ -382,6 +397,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
             data={data?.vehiclesMileageRegistrationHistory}
             co2={vehicle.co2}
             loading={loading}
+            unit={unit}
           />
         ) : (
           <EmptyTable

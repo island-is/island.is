@@ -28,8 +28,8 @@ type LanguageTogglerProps = {
   buttonColorScheme?: ButtonTypes['colorScheme']
   queryParams?: LayoutProps['languageToggleQueryParams']
   hrefOverride?: {
-    is: string
-    en: string
+    is?: string
+    en?: string
   }
 }
 
@@ -56,8 +56,10 @@ export const LanguageToggler = ({
       return null
     }
 
-    if (hrefOverride?.[otherLanguage]) {
-      return goToOtherLanguagePage(hrefOverride[otherLanguage])
+    if (hrefOverride) {
+      if (hrefOverride[otherLanguage])
+        return goToOtherLanguagePage(hrefOverride[otherLanguage])
+      return setShowDialog(true)
     }
 
     const pathWithoutQueryParams = Router.asPath.split('?')[0]
@@ -192,18 +194,24 @@ export const LanguageToggler = ({
       // @ts-ignore make web strict
       (otherLanguage === 'is' || (activeTranslations?.[otherLanguage] ?? true))
     ) {
+      const pagePath = linkResolver(
+        type as LinkType,
+        slugs.map((s) => s[otherLanguage]),
+        otherLanguage,
+      ).href
+
+      if (pagePath === '/404') {
+        return setShowDialog(true)
+      }
+
       const queryParamsString = new URLSearchParams(
         queryParams?.[otherLanguage],
       ).toString()
 
       return goToOtherLanguagePage(
-        `${
-          linkResolver(
-            type as LinkType,
-            slugs.map((s) => s[otherLanguage]),
-            otherLanguage,
-          ).href
-        }${queryParamsString.length > 0 ? '?' : ''}${queryParamsString}`,
+        `${pagePath}${
+          queryParamsString.length > 0 ? '?' : ''
+        }${queryParamsString}`,
       )
     }
 

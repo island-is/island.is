@@ -114,6 +114,7 @@ export class ApplicationSerializer
           userRole,
           intl.formatMessage,
           nationalId,
+          false,
         )
       : undefined
 
@@ -123,6 +124,9 @@ export class ApplicationSerializer
           intl.formatMessage,
           helper,
           application,
+          userRole,
+          nationalId,
+          false,
         )
       : undefined
 
@@ -151,6 +155,7 @@ export class ApplicationSerializer
         historyButton: actionCardMeta.historyButton
           ? intl.formatMessage(actionCardMeta.historyButton)
           : null,
+        displayPruneAt: actionCardMeta.displayPruneAt,
       },
       name: getApplicationNameTranslationString(
         template,

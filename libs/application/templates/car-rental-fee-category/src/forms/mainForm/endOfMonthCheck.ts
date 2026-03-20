@@ -3,19 +3,19 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
+import { m } from '../../lib/messages'
 
 export const endOfMonthCheck = buildSection({
   id: 'endOfMonthCheck',
   children: [
     buildMultiField({
       id: 'endOfMonthCheckMultiField',
-      title: 'Of nálægt lok mánaðar',
+      title: m.endOfMonth.multiTitle,
       children: [
         buildAlertMessageField({
           id: 'endOfMonthCheckAlertMessage',
           alertType: 'warning',
-          message:
-            'Það er of lítið eftir af mánuðinum til að hægt sé að sækja um. Vinsamlegast reynið aftur eftir mánaðamót.',
+          message: m.endOfMonth.message,
         }),
       ],
     }),

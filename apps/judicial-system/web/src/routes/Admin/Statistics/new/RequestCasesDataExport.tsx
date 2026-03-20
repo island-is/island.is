@@ -2,9 +2,11 @@ import { useMemo, useState } from 'react'
 import startOfYear from 'date-fns/startOfYear'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { DataGroups } from '@island.is/judicial-system/types'
 import { PageHeader } from '@island.is/judicial-system-web/src/components'
-import { DateFilter } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  DataGroups,
+  DateFilter,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useGetPreprocessedDataUrlQuery } from '../preprocessedDataUrl.generated'
 import { Filters } from './shared/StatisticFilter'

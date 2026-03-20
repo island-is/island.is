@@ -38,6 +38,7 @@ export interface DatePickerProps {
   onInputClick?: ReactDatePickerProps['onInputClick']
   handleCloseCalendar?: (date: Date | null) => void
   handleOpenCalendar?: () => void
+  handleClear?: () => void
   required?: boolean
   inputName?: string
   appearInline?: boolean
@@ -72,6 +73,7 @@ export interface DatePickerProps {
     startDate?: Date | null
     endDate?: Date | null
   }
+  fixedHeight?: boolean
 }
 
 export interface DatePickerCustomHeaderProps {

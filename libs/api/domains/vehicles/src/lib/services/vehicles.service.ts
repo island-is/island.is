@@ -81,6 +81,10 @@ export class VehiclesService {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private getPublicVehiclesWithAuth(auth: Auth) {
+    return this.publicVehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   private getMileageWithAuth(auth: Auth) {
     return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
   }
@@ -180,8 +184,16 @@ export class VehiclesService {
     })
   }
 
-  async getPublicVehicleSearch(search: string) {
+  async publicVehicleSearch(search: string) {
     return await this.publicVehiclesApi
+      .publicVehicleSearchGet({
+        search,
+      })
+      .catch(handle404)
+  }
+
+  async publicVehicleSearchWithAuth(auth: User, search: string) {
+    return await this.getPublicVehiclesWithAuth(auth)
       .publicVehicleSearchGet({
         search,
       })
@@ -451,7 +463,7 @@ export class VehiclesService {
           ...input,
           operation: input.operation ?? null,
           readDate: input.readDate ?? undefined,
-          internalId: input.internalId + 1,
+          internalId: input.internalId ? input.internalId + 1 : undefined,
         }
       }
       return null
@@ -536,7 +548,7 @@ export class VehiclesService {
           ...input,
           operation: input.operation ?? null,
           readDate: input.readDate ?? undefined,
-          internalId: input.internalId + 1,
+          internalId: input.internalId ? input.internalId + 1 : undefined,
         }
       }
 

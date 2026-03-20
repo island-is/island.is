@@ -3,14 +3,15 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { isLoggedIn } from '../../utils/auth.utils'
-import { useSession } from 'next-auth/client'
+import { useSession } from 'next-auth/react'
 import { SessionInfo } from './../../entities/common/SessionInfo'
 import { Localization } from '../../entities/common/Localization'
 import LocalizationUtils from '../../utils/localization.utils'
 import { RoleUtils } from './../../utils/role.utils'
 
 const Nav: React.FC<React.PropsWithChildren<unknown>> = () => {
-  const [session, loading] = useSession()
+  const { data: session, status } = useSession()
+  const loading = status === 'loading'
   const router = useRouter()
   const [localization] = useState<Localization>(
     LocalizationUtils.getLocalization(),

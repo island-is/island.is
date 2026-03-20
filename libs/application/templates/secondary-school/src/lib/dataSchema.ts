@@ -110,21 +110,26 @@ const SelectionSchema = z
         nameEn: z.string().optional(),
         registrationEndDate: z.string().optional(),
         isSpecialNeedsProgram: z.boolean().optional(),
+        programApplicationMessageIs: z.string().optional(),
+        programApplicationMessageEn: z.string().optional(),
       })
       .optional(),
+    // Note: is true if more than one program is available (this is only used for zod validation)
+    secondProgramInclude: z.boolean().optional(),
+    // Note: is true if freshman and firstProgram is not special needs program
+    secondProgramRequire: z.boolean().optional(),
     secondProgram: z
       .object({
-        // Note: is true if more than one program is available (this is only used for zod validation)
-        include: z.boolean().optional(),
-        // Note: is true if freshman and firstProgram is not special needs program
-        require: z.boolean().optional(),
         id: z.string().optional().nullable(),
         nameIs: z.string().optional(),
         nameEn: z.string().optional(),
         registrationEndDate: z.string().optional(),
         isSpecialNeedsProgram: z.boolean().optional(),
+        programApplicationMessageIs: z.string().optional(),
+        programApplicationMessageEn: z.string().optional(),
       })
       .optional(),
+    thirdLanguageRequire: z.boolean().optional(),
     thirdLanguage: z
       .object({
         code: z.string().optional().nullable(),
@@ -152,8 +157,8 @@ const SelectionSchema = z
     { path: ['firstProgram', 'id'] },
   )
   .refine(
-    ({ secondProgram }) => {
-      if (!secondProgram?.include || !secondProgram?.require) return true
+    ({ secondProgramInclude, secondProgramRequire, secondProgram }) => {
+      if (!secondProgramInclude || !secondProgramRequire) return true
       return !!secondProgram?.id
     },
     { path: ['secondProgram', 'id'] },
@@ -167,6 +172,13 @@ const SelectionSchema = z
       )
     },
     { path: ['secondProgram', 'id'], params: error.errorProgramDuplicate },
+  )
+  .refine(
+    ({ thirdLanguageRequire, thirdLanguage }) => {
+      if (!thirdLanguageRequire) return true
+      return !!thirdLanguage?.code
+    },
+    { path: ['thirdLanguage', 'code'] },
   )
 
 export const SecondarySchoolSchema = z.object({

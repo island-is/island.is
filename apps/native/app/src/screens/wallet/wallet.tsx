@@ -6,7 +6,6 @@ import {
   Image,
   ListRenderItemInfo,
   RefreshControl,
-  SafeAreaView,
   View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -263,7 +262,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   return (
     <>
-      <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
         <Animated.FlatList
           ref={flatListRef}
           testID={testIDs.SCREEN_HOME}
@@ -368,7 +367,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           keyExtractor={keyExtractor}
           renderItem={renderItem}
         />
-      </SafeAreaView>
+      </View>
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={1} total={5} />
     </>

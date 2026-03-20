@@ -159,7 +159,7 @@ export async function disableObjectKey<T>(
 }
 
 export async function disablePreviousApplications(page: Page) {
-  await mockQGL(page, 'ApplicationApplications', [])
+  await mockQGL(page, 'ApplicationSystemCards', [])
   //syslumennOnEntry.data.estates
   /*
   await mockQGL(

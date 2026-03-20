@@ -11,20 +11,20 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
 import { LatestCollectionApi, OwnerRequirementsApi } from '../dataProviders'
-import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
+import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: NationalRegistryLogo,
+  logo: NationalElectoralCommissionLogo,
   children: [
     buildSection({
       id: 'intro',
@@ -68,7 +68,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: m.userProfileProviderSubtitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
             }),

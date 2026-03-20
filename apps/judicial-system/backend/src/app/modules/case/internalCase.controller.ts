@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   BadRequestException,
   Body,
@@ -9,6 +11,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -29,6 +32,7 @@ import { EventService } from '../event'
 import { Case } from '../repository'
 import { DeliverDto } from './dto/deliver.dto'
 import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
+import { DeprecatedInternalCreateCaseDto } from './dto/deprecatedInternalCreateCase.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
 import { CaseCompletedGuard } from './guards/caseCompleted.guard'
@@ -50,18 +54,41 @@ export class InternalCaseController {
   constructor(
     private readonly internalCaseService: InternalCaseService,
     private readonly eventService: EventService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @UseInterceptors(CaseInterceptor)
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
-  async create(@Body() caseToCreate: InternalCreateCaseDto): Promise<Case> {
+  async deprecatedCreate(
+    @Body() caseToCreate: DeprecatedInternalCreateCaseDto,
+  ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
-    const createdCase = await this.internalCaseService.create(caseToCreate)
+    const createdCase = await this.sequelize.transaction((transaction) =>
+      this.internalCaseService.deprecatedCreate(caseToCreate, transaction),
+    )
 
     this.eventService.postEvent('CREATE_XRD', createdCase as Case)
+
+    return createdCase
+  }
+
+  @UseInterceptors(CaseInterceptor)
+  @Post('case/create')
+  @ApiCreatedResponse({
+    type: Case,
+    description: 'Creates a new case (accused fetched separately)',
+  })
+  async create(@Body() caseToCreate: InternalCreateCaseDto): Promise<Case> {
+    this.logger.debug('Creating a new case (v2)')
+
+    const createdCase = await this.sequelize.transaction((transaction) =>
+      this.internalCaseService.create(caseToCreate, transaction),
+    )
+
+    this.eventService.postEvent('CREATE_XRD', createdCase)
 
     return createdCase
   }
@@ -74,7 +101,9 @@ export class InternalCaseController {
   archive(): Promise<ArchiveResponse> {
     this.logger.debug('Archiving a case')
 
-    return this.internalCaseService.archive()
+    return this.sequelize.transaction((transaction) =>
+      this.internalCaseService.archive(transaction),
+    )
   }
 
   @Post('cases/postHearingArrangements')
@@ -124,9 +153,12 @@ export class InternalCaseController {
       `Getting indictment case ${caseId} by id for a given defendant`,
     )
 
-    return this.internalCaseService.getDefendantIndictmentCase(
-      theCase,
-      defendantNationalId,
+    return this.sequelize.transaction((transaction) =>
+      this.internalCaseService.getDefendantIndictmentCase(
+        theCase,
+        defendantNationalId,
+        transaction,
+      ),
     )
   }
 
@@ -169,9 +201,12 @@ export class InternalCaseController {
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering the indictment for case ${caseId} to court`)
 
-    return this.internalCaseService.deliverIndictmentToCourt(
-      theCase,
-      deliverDto.user,
+    return this.sequelize.transaction(async (transaction) =>
+      this.internalCaseService.deliverIndictmentToCourt(
+        theCase,
+        deliverDto.user,
+        transaction,
+      ),
     )
   }
 
@@ -362,9 +397,50 @@ export class InternalCaseController {
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering the court record for case ${caseId} to court`)
 
-    return this.internalCaseService.deliverCourtRecordToCourt(
-      theCase,
-      deliverDto.user,
+    return this.sequelize.transaction(async (transaction) =>
+      this.internalCaseService.deliverCourtRecordToCourt(
+        theCase,
+        deliverDto.user,
+        transaction,
+      ),
+    )
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
+    CaseCompletedGuard,
+  )
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[
+        MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT
+      ]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a court record working document to court',
+  })
+  deliverCourtRecordWorkingDocumentToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the court record working document for case ${caseId} to court`,
+    )
+
+    return this.sequelize.transaction(async (transaction) =>
+      this.internalCaseService.deliverCourtRecordWorkingDocumentToCourt(
+        theCase,
+        deliverDto.user,
+        transaction,
+      ),
     )
   }
 
@@ -418,9 +494,12 @@ export class InternalCaseController {
       `Delivering the signed court record for case ${caseId} to court`,
     )
 
-    return this.internalCaseService.deliverSignedCourtRecordToCourt(
-      theCase,
-      deliverDto.user,
+    return this.sequelize.transaction(async (transaction) =>
+      this.internalCaseService.deliverSignedCourtRecordToCourt(
+        theCase,
+        deliverDto.user,
+        transaction,
+      ),
     )
   }
 
@@ -584,9 +663,12 @@ export class InternalCaseController {
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering indictment case ${caseId} to police`)
 
-    return this.internalCaseService.deliverIndictmentCaseToPolice(
-      theCase,
-      deliverDto.user,
+    return this.sequelize.transaction(async (transaction) =>
+      this.internalCaseService.deliverIndictmentCaseToPolice(
+        theCase,
+        deliverDto.user,
+        transaction,
+      ),
     )
   }
 
@@ -607,9 +689,12 @@ export class InternalCaseController {
   ): Promise<DeliverResponse> {
     this.logger.debug(`Delivering indictment for case ${caseId} to police`)
 
-    return this.internalCaseService.deliverIndictmentToPolice(
-      theCase,
-      deliverDto.user,
+    return this.sequelize.transaction(async (transaction) =>
+      this.internalCaseService.deliverIndictmentToPolice(
+        theCase,
+        deliverDto.user,
+        transaction,
+      ),
     )
   }
 

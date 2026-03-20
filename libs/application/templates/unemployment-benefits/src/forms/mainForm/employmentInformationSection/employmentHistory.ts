@@ -16,8 +16,6 @@ import { Application, FormValue } from '@island.is/application/types'
 import {
   isIndependent,
   isEmployed,
-  isOccasionallyEmployed,
-  isEmployedPartTime,
   hasDataFromCurrentStatusItem,
   getDefaultFromCurrentStatus,
   hasEmployer,
@@ -26,8 +24,9 @@ import {
   getChosenEmployerName,
 } from '../../../utils'
 import { CurrentEmploymentInAnswers, EmploymentStatus } from '../../../shared'
-import { getJobCodeOptions } from '../../../utils/getJobCodeOptions'
+import { getJobCodeOptions, getJobInfo } from '../../../utils/getJobCodeOptions'
 import { getRskOptions } from '../../../utils/getRskOptions'
+import { Locale } from '@island.is/shared/types'
 
 export const employmentHistorySubSection = buildSubSection({
   id: 'employmentHistorySubSection',
@@ -93,29 +92,9 @@ export const employmentHistorySubSection = buildSubSection({
           condition: isIndependent,
         }),
         /* IS NOT INDEPENDENT */
-        buildDescriptionField({
-          id: 'employmentHistoryNotIndependentDescription',
-          title: employmentMessages.employmentHistory.labels.lastJobLabel,
-          titleVariant: 'h5',
-          condition: (answers) => !isIndependent(answers),
-        }),
         buildFieldsRepeaterField({
           id: 'employmentHistory.currentJobs',
           hideAddButton: true,
-          maxRows: (answers: FormValue) => {
-            const currentSituationRepeater =
-              getValueViaPath<Array<CurrentEmploymentInAnswers>>(
-                answers,
-                'currentSituation.currentSituationRepeater',
-                [],
-              ) ?? []
-
-            const maxRows =
-              isOccasionallyEmployed(answers) || isEmployedPartTime(answers)
-                ? currentSituationRepeater.length
-                : 0
-            return maxRows
-          },
           minRows: (answers: FormValue) => {
             const currentSituationRepeater =
               getValueViaPath<Array<CurrentEmploymentInAnswers>>(
@@ -124,8 +103,16 @@ export const employmentHistorySubSection = buildSubSection({
                 [],
               ) ?? []
 
+            const status =
+              getValueViaPath<EmploymentStatus>(
+                answers,
+                'currentSituation.status',
+                undefined,
+              ) ?? undefined
+
             const minRows =
-              isOccasionallyEmployed(answers) || isEmployedPartTime(answers)
+              currentSituationRepeater.length &&
+              status !== EmploymentStatus.UNEMPLOYED
                 ? currentSituationRepeater.length
                 : 0
             return minRows
@@ -133,7 +120,7 @@ export const employmentHistorySubSection = buildSubSection({
           marginTop: 0,
           marginBottom: 0,
           formTitle:
-            employmentMessages.employmentHistory.labels.lastJobRepeater,
+            employmentMessages.employmentHistory.labels.currentJobRepeater,
           formTitleVariant: 'h5',
           fields: {
             'employer.nationalId': {
@@ -168,24 +155,16 @@ export const employmentHistorySubSection = buildSubSection({
                 return name
               },
             },
-            title: {
-              component: 'select',
+            jobCodeId: {
+              component: 'input',
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
-              required: true,
-              options: (application, _activeField, locale) =>
-                getJobCodeOptions(application, locale),
-              readonly: (application, _activeField, index) => {
-                return hasDataFromCurrentStatusItem(
-                  application.answers,
-                  index,
-                  'title',
-                )
-              },
+              readonly: true,
               defaultValue: (
                 application: Application,
                 _activeField: Record<string, string>,
                 index: number,
+                locale: Locale,
               ) => {
                 const repeaterJobs =
                   getValueViaPath<CurrentEmploymentInAnswers[]>(
@@ -207,8 +186,11 @@ export const employmentHistorySubSection = buildSubSection({
                 ) {
                   return ''
                 }
-
-                return repeaterJobs[index]?.title || ''
+                const jobInfo = getJobInfo(
+                  application.externalData,
+                  repeaterJobs[index]?.jobCodeId,
+                )
+                return locale === 'is' ? jobInfo?.name : jobInfo?.english
               },
             },
             percentage: {
@@ -219,6 +201,8 @@ export const employmentHistorySubSection = buildSubSection({
               type: 'number',
               suffix: '%',
               required: true,
+              max: 100,
+              allowNegative: false,
               condition: (application, _activeField, index) => {
                 return (
                   !hasDataFromCurrentStatus(application.answers, index) ||
@@ -246,42 +230,6 @@ export const employmentHistorySubSection = buildSubSection({
                   application.answers,
                   index,
                   'percentage',
-                )
-              },
-            },
-            startDate: {
-              component: 'date',
-              label:
-                employmentMessages.employmentHistory.labels.lastJobStartDate,
-              width: 'half',
-              required: true,
-              condition: (application, _activeField, index) => {
-                return (
-                  !hasDataFromCurrentStatus(application.answers, index) ||
-                  (isEmployedPartTime(application.answers) &&
-                    hasDataFromCurrentStatusItem(
-                      application.answers,
-                      index,
-                      'startDate',
-                    ))
-                )
-              },
-              readonly: (application, _, index) => {
-                return hasDataFromCurrentStatusItem(
-                  application.answers,
-                  index,
-                  'startDate',
-                )
-              },
-              defaultValue: (
-                application: Application,
-                _activeField: Record<string, string>,
-                index: number,
-              ) => {
-                return getDefaultFromCurrentStatus(
-                  application.answers,
-                  index,
-                  'startDate',
                 )
               },
             },
@@ -330,32 +278,27 @@ export const employmentHistorySubSection = buildSubSection({
           },
         }),
 
+        buildDescriptionField({
+          id: 'employmentHistoryLabel',
+          title:
+            employmentMessages.employmentHistory.labels.lastJobsRepeaterTitle,
+          description: employmentMessages.employmentHistory.labels.lastJobLabel,
+          titleVariant: 'h5',
+        }),
+
         buildFieldsRepeaterField({
           id: 'employmentHistory.lastJobs',
           marginTop: 0,
-          minRows: 0,
-          formTitle: (index, application) => {
-            const repeaterJobs =
-              getValueViaPath<CurrentEmploymentInAnswers[]>(
-                application.answers,
-                'currentSituation.currentSituationRepeater',
-                [],
-              ) ?? []
-            return {
-              ...employmentMessages.employmentHistory.labels.lastJobRepeater,
-              values: {
-                value: repeaterJobs.length + index + 1,
-              },
-            }
-          },
-          formTitleNumbering: 'none',
+          minRows: 1,
+          formTitle:
+            employmentMessages.employmentHistory.labels.lastJobRepeater,
           formTitleVariant: 'h5',
           fields: {
             nationalIdWithName: {
               component: 'select',
               required: true,
               label:
-                employmentMessages.employmentHistory.labels.lastJobRepeater,
+                employmentMessages.employmentHistory.labels.employerSelectLabel,
               options: (application, _, locale, formatMessage) =>
                 getRskOptions(application, formatMessage),
             },
@@ -372,7 +315,7 @@ export const employmentHistorySubSection = buildSubSection({
                 return nationalIdChosen === '-' || activeField === undefined
               },
             },
-            title: {
+            jobCodeId: {
               component: 'select',
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
@@ -388,6 +331,7 @@ export const employmentHistorySubSection = buildSubSection({
               type: 'number',
               suffix: '%',
               max: 100,
+              allowNegative: false,
               required: true,
             },
             startDate: {
@@ -396,6 +340,10 @@ export const employmentHistorySubSection = buildSubSection({
                 employmentMessages.employmentHistory.labels.lastJobStartDate,
               width: 'half',
               required: true,
+              maxDate: (_application, activeField) => {
+                const endDateStr = activeField?.endDate
+                return (endDateStr && new Date(endDateStr)) || undefined
+              },
             },
             endDate: {
               component: 'date',
@@ -403,6 +351,10 @@ export const employmentHistorySubSection = buildSubSection({
               label:
                 employmentMessages.employmentHistory.labels.lastOldJobEndDate,
               width: 'half',
+              minDate: (_application, activeField) => {
+                const startDateStr = activeField?.startDate
+                return (startDateStr && new Date(startDateStr)) || undefined
+              },
               maxDate: new Date(),
             },
           },

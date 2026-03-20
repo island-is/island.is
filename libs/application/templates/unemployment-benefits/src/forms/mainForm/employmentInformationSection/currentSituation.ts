@@ -17,9 +17,9 @@ import {
   isEmployedPartTime,
   isOccasionallyEmployed,
 } from '../../../utils'
-import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
 import { Application } from '@island.is/application/types'
 import { getRskOptions } from '../../../utils/getRskOptions'
+import { getJobCodeOptions } from '../../../utils/getJobCodeOptions'
 
 export const currentSituationSubSection = buildSubSection({
   id: 'currentSituationSubSection',
@@ -104,7 +104,7 @@ export const currentSituationSubSection = buildSubSection({
               component: 'select',
               required: true,
               label:
-                employmentMessages.employmentHistory.labels.lastJobRepeater,
+                employmentMessages.employmentHistory.labels.employerSelectLabel,
               options: (application, _, locale, formatMessage) =>
                 getRskOptions(application, formatMessage),
             },
@@ -127,28 +127,13 @@ export const currentSituationSubSection = buildSubSection({
                 return nationalIdChosen === '-'
               },
             },
-            title: {
+            jobCodeId: {
               component: 'select',
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
               required: true,
-              options: (application, _, locale) => {
-                const jobList =
-                  getValueViaPath<
-                    GaldurDomainModelsSettingsJobCodesJobCodeDTO[]
-                  >(
-                    application.externalData,
-                    'unemploymentApplication.data.supportData.jobCodes',
-                  ) ?? []
-                return jobList.map((job) => ({
-                  value:
-                    (locale === 'is' ? job.name : job.english ?? job.name) ||
-                    '',
-                  label:
-                    (locale === 'is' ? job.name : job.english ?? job.name) ||
-                    '',
-                }))
-              },
+              options: (application, _activeField, locale) =>
+                getJobCodeOptions(application, locale),
             },
             percentage: {
               component: 'input',
@@ -159,17 +144,9 @@ export const currentSituationSubSection = buildSubSection({
               type: 'number',
               suffix: '%',
               required: true,
+              allowNegative: false,
               max: 100,
               condition: (application) => hasEmployer(application.answers),
-            },
-            startDate: {
-              component: 'date',
-              label:
-                employmentMessages.currentSituation.labels.partTimeJobStartDate,
-              width: 'half',
-              required: true,
-              condition: (application) =>
-                isEmployedPartTime(application.answers),
             },
             predictedEndDate: {
               component: 'date',
@@ -232,6 +209,7 @@ export const currentSituationSubSection = buildSubSection({
         buildCustomField({
           id: 'currentSituation.updateEmploymentHistory',
           component: 'UpdateEmploymentHistory',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

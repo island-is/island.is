@@ -1,3 +1,12 @@
+/**
+ * Delegation types supported by the syslumenn VirkUmbod API endpoint.
+ * Used to specify the type of delegation when checking if a delegation exists.
+ */
+export enum SyslumennDelegationType {
+  LegalRepresentative = 'LegalRepresentative',
+  PersonalRepresentative = 'PersonalRepresentative',
+}
+
 export interface SyslumennAuction {
   office: string
   location: string
@@ -281,12 +290,12 @@ interface EstateCommon {
   otherDebts?: Array<EstateAsset & { debtType: DebtTypes }>
   estateMembers: EstateMember[]
   caseNumber: string
-  districtCommissionerHasWill: boolean
-  marriageSettlement: boolean
+  districtCommissionerHasWill?: boolean
+  marriageSettlement?: boolean
   dateOfDeath: Date
   nameOfDeceased: string
   nationalIdOfDeceased: string
-  knowledgeOfOtherWills: 'Yes' | 'No'
+  knowledgeOfOtherWills?: 'Yes' | 'No'
 }
 
 interface EstateCommonWithBankAccounts extends EstateCommon {

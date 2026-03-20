@@ -64,13 +64,7 @@ const Sidemenu = ({
         }
       >
         <Box display="flex" flexDirection="column" className={styles.wrapper}>
-          <Box
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            marginBottom={1}
-            marginTop={2}
-          >
+          <Box display="flex" flexDirection="row" alignItems="center">
             <Box
               borderRadius="full"
               background="blue100"
@@ -88,7 +82,7 @@ const Sidemenu = ({
             {navigation?.children?.map(
               (navRoot, index) =>
                 navRoot.path !== ServicePortalPaths.Root &&
-                !navRoot.navHide && (
+                (!navRoot.navHide || navRoot.customShortcut) && (
                   <SidemenuItem
                     item={navRoot}
                     setSidemenuOpen={setSideMenuOpen}

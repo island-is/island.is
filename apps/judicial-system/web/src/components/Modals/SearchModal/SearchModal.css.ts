@@ -14,9 +14,16 @@ export const resultButton = style({
 })
 
 export const searchModal = style({
-  minWidth: '634px',
+  minWidth: '90vw',
+  maxWidth: '634px',
   overflow: 'hidden',
   margin: `${theme.spacing[3]}px`,
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      minWidth: '634px',
+    },
+  },
 })
 
 export const searchResultsContainer = style({
@@ -26,9 +33,4 @@ export const searchResultsContainer = style({
 export const focus = style({
   borderRadius: theme.border.radius.large,
   background: theme.color.blue100,
-})
-
-export const searchResults = style({
-  display: 'grid',
-  gap: `${theme.spacing[2]}px`,
 })

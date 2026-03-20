@@ -299,6 +299,12 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                 .join(', '),
             }
           : undefined,
+        vacancy.address
+          ? {
+              icon: 'home' as const,
+              text: vacancy.address,
+            }
+          : undefined,
       ].filter(isDefined)
 
       const tags = [
@@ -628,7 +634,10 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                     </Inline>
                   </Box>
                 )}
-                <Box style={{ minHeight: '100vh' }}>
+                <Box
+                  style={{ minHeight: '100vh' }}
+                  className={styles.vacancyCardsWrapper}
+                >
                   <VacancyCardsGrid
                     columns={!isGridView ? 1 : 2}
                     variant="detailed"
@@ -756,7 +765,11 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                 </Inline>
               </Box>
             )}
-            <Box marginTop={2} style={{ minHeight: '100vh' }}>
+            <Box
+              marginTop={2}
+              style={{ minHeight: '100vh' }}
+              className={styles.vacancyCardsWrapper}
+            >
               <VacancyCardsGrid
                 columns={1}
                 variant="detailed"

@@ -48,13 +48,6 @@ export const vacationSubSection = buildSubSection({
             },
           ],
         }),
-        buildAlertMessageField({
-          id: 'explainVacationLabel',
-          title: payoutMessages.vacation.explainVacationLabel,
-          message: payoutMessages.vacation.explainVacationDescription,
-          condition: doYouHaveVacationDays,
-          alertType: 'info',
-        }),
         buildFieldsRepeaterField({
           id: 'vacation.vacationDays',
           minRows: 1,
@@ -91,6 +84,7 @@ export const vacationSubSection = buildSubSection({
         buildCustomField({
           id: 'vacation.validation',
           component: 'VacationValidation',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

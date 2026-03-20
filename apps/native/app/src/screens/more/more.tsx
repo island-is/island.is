@@ -1,11 +1,6 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useIntl } from 'react-intl'
-import {
-  SafeAreaView,
-  ScrollView,
-  TouchableHighlight,
-  View,
-} from 'react-native'
+import { Animated, SafeAreaView, TouchableHighlight, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -13,7 +8,6 @@ import airplaneIcon from '../../assets/icons/airplane.png'
 import assetsIcon from '../../assets/icons/assets.png'
 import familyIcon from '../../assets/icons/family.png'
 import financeIcon from '../../assets/icons/finance.png'
-import healthIcon from '../../assets/icons/health.png'
 import vehicleIcon from '../../assets/icons/vehicle.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { MoreInfoContiner } from '../../components/more-info-container/more-info-container'
@@ -23,7 +17,7 @@ import { navigateTo } from '../../lib/deep-linking'
 import { formatNationalId } from '../../lib/format-national-id'
 import { useMyPagesLinks } from '../../lib/my-pages-links'
 import { useAuthStore } from '../../stores/auth-store'
-import { FamilyMemberCard, MoreCard } from '../../ui'
+import { FamilyMemberCard, MoreCard, TopLine } from '../../ui'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
@@ -72,7 +66,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   const theme = useTheme()
   const authStore = useAuthStore()
   const myPagesLinks = useMyPagesLinks()
-
+  const scrollY = useRef(new Animated.Value(0)).current
   useConnectivityIndicator({
     componentId,
     rightButtons: getRightButtons({ icons: ['settings'] }),
@@ -108,12 +102,18 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   return (
     <>
-      <ScrollView
+      <Animated.ScrollView
         style={{
           flex: 1,
           paddingHorizontal: 16,
           paddingVertical: 16,
         }}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          {
+            useNativeDriver: true,
+          },
+        )}
       >
         <SafeAreaView style={{ marginBottom: theme.spacing[1] }}>
           <TouchableHighlight
@@ -156,9 +156,9 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
         </Row>
         <Row>
           <MoreCard
-            title={intl.formatMessage({ id: 'profile.health' })}
-            icon={healthIcon}
-            onPress={() => navigateTo('/health-overview')}
+            title={intl.formatMessage({ id: 'applications.title' })}
+            icon={require('../../assets/icons/tabbar-applications.png')}
+            onPress={() => navigateTo('/applications')}
           />
           <MoreCard
             title={intl.formatMessage({ id: 'profile.airDiscount' })}
@@ -171,13 +171,15 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
             marginTop: theme.spacing[3],
           }}
         >
-          <MoreInfoContiner
-            externalLinks={externalLinks}
-            componentId={componentId}
-          />
+          <View style={{ paddingBottom: theme.spacing[4] }}>
+            <MoreInfoContiner
+              externalLinks={externalLinks}
+              componentId={componentId}
+            />
+          </View>
         </View>
-      </ScrollView>
-
+      </Animated.ScrollView>
+      <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={4} total={5} />
     </>
   )

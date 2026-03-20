@@ -160,7 +160,7 @@ export type RepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
   required?: MaybeWithApplicationAndActiveField<boolean>
-  condition?: MaybeWithApplicationAndActiveFieldAndIndex<boolean>
+  condition?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<boolean>
   dataTestId?: string
   showPhoneField?: boolean
   phoneRequired?: boolean
@@ -186,6 +186,7 @@ export type RepeaterItem = {
         ) => string | string[] | undefined)
   }
   clearOnChange?: MaybeWithIndex<string[]>
+  clearOnChangeDefaultValue?: string | boolean | number | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((
@@ -216,13 +217,14 @@ export type RepeaterItem = {
       component: 'phone'
       allowedCountryCodes?: string[]
       enableCountrySelector?: boolean
+      format?: string
     }
   | {
       component: 'date'
       label: StaticText
       locale?: Locale
-      maxDate?: MaybeWithApplicationAndActiveField<Date>
-      minDate?: MaybeWithApplicationAndActiveField<Date>
+      maxDate?: MaybeWithApplicationAndActiveField<Date | undefined>
+      minDate?: MaybeWithApplicationAndActiveField<Date | undefined>
       minYear?: number
       maxYear?: number
       excludeDates?: DatePickerProps['excludeDates']
@@ -249,10 +251,6 @@ export type RepeaterItem = {
       searchCompanies?: boolean
     }
   | {
-      component: 'phone'
-      format: string
-    }
-  | {
       component: 'selectAsync'
       label: StaticText
       isMulti?: boolean
@@ -270,7 +268,7 @@ export type RepeaterItem = {
   | {
       component: 'alertMessage'
       title?: MaybeWithApplicationAndActiveField<StaticText>
-      message?: MaybeWithApplicationAndActiveField<StaticText>
+      message?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<StaticText>
       alertType?: AlertType
       marginBottom?: BoxProps['marginBottom']
       marginTop?: BoxProps['marginTop']
@@ -352,6 +350,14 @@ export interface BaseField extends FormItem {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   setOnChange?:
     | { key: string; value: any }[]
     | ((
@@ -403,6 +409,7 @@ export enum FieldTypes {
   VEHICLE_RADIO = 'VEHICLE_RADIO',
   VEHICLE_SELECT = 'VEHICLE_SELECT',
   STATIC_TABLE = 'STATIC_TABLE',
+  PAGINATED_SEARCHABLE_TABLE = 'PAGINATED_SEARCHABLE_TABLE',
   SLIDER = 'SLIDER',
   INFORMATION_CARD = 'INFORMATION_CARD',
   DISPLAY = 'DISPLAY',
@@ -446,6 +453,7 @@ export enum FieldComponents {
   VEHICLE_RADIO = 'VehicleRadioFormField',
   VEHICLE_SELECT = 'VehicleSelectFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  PAGINATED_SEARCHABLE_TABLE = 'PaginatedSearchableTableFormField',
   SLIDER = 'SliderFormField',
   INFORMATION_CARD = 'InformationCardFormField',
   DISPLAY = 'DisplayFormField',
@@ -611,6 +619,8 @@ export interface SubmitField extends BaseField {
   readonly refetchApplicationAfterSubmit?:
     | boolean
     | ((event?: string) => boolean)
+  readonly renderLongErrors?: boolean
+  formatLongErrorMessage?: (message: string) => string
 }
 
 export interface DividerField extends BaseField {
@@ -905,6 +915,7 @@ export interface FindVehicleField extends InputField {
   requiredValidVehicleErrorMessage?: FormText
   isMachine?: boolean
   isEnergyFunds?: boolean
+  isMileCar?: boolean
   energyFundsMessages?: Record<string, FormText>
 }
 
@@ -970,6 +981,38 @@ export interface StaticTableField extends BaseField {
   summary?:
     | { label: StaticText; value: StaticText }[]
     | ((application: Application) => { label: StaticText; value: StaticText }[])
+}
+
+export type PaginatedSearchableTableRow = Record<
+  string,
+  string | number | null | undefined
+>
+
+export type PaginatedSearchableTableHeader = {
+  key: string
+  label: FormText
+  editable?: boolean
+  inputType?: 'text' | 'number'
+  min?: number
+}
+
+export interface PaginatedSearchableTableField extends BaseField {
+  readonly type: FieldTypes.PAGINATED_SEARCHABLE_TABLE
+  component: FieldComponents.PAGINATED_SEARCHABLE_TABLE
+  rowIdKey: string
+  rows:
+    | PaginatedSearchableTableRow[]
+    | ((application: Application) => PaginatedSearchableTableRow[])
+  headers:
+    | PaginatedSearchableTableHeader[]
+    | ((application: Application) => PaginatedSearchableTableHeader[])
+  searchLabel: FormText
+  searchPlaceholder: FormText
+  emptyState: FormText
+  searchKeys?: string[]
+  savePropertyNames?: string[]
+  pageSize?: number
+  callbackId?: string
 }
 
 export interface SliderField extends BaseField {
@@ -1141,6 +1184,7 @@ export type Field =
   | VehicleRadioField
   | VehicleSelectField
   | StaticTableField
+  | PaginatedSearchableTableField
   | SliderField
   | InformationCardField
   | DisplayField

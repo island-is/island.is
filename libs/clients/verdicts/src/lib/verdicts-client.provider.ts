@@ -56,7 +56,7 @@ export const GoProApiProviders = [
 export const SupremeCourtApiConfig = {
   provide: 'SupremeCourtVerdictApiConfig',
   scope: LazyDuringDevScope,
-  useFactory: () => {
+  useFactory: (config: ConfigType<typeof VerdictsClientConfig>) => {
     return new SupremeCourtConfiguration({
       fetchApi: createEnhancedFetch({
         name: 'clients-supreme-court-verdicts',
@@ -65,9 +65,11 @@ export const SupremeCourtApiConfig = {
       }),
       headers: {
         Accept: 'application/json',
+        Authorization: `Bearer ${config.supremeCourtBearerToken}`,
       },
     })
   },
+  inject: [VerdictsClientConfig.KEY],
 }
 
 export const SupremeCourtApiProviders = [

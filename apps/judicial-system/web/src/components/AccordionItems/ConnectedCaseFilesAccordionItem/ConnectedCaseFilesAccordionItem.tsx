@@ -1,11 +1,8 @@
 import { FC } from 'react'
-import { useIntl } from 'react-intl'
 
 import { AccordionItem } from '@island.is/island-ui/core'
 import { IndictmentCaseFilesList } from '@island.is/judicial-system-web/src/components'
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
-
-import { strings } from './ConnectedCaseFilesAccordionItem.strings'
 
 interface Props {
   connectedCaseParentId: string
@@ -18,7 +15,6 @@ const ConnectedCaseFilesAccordionItem: FC<Props> = ({
   connectedCase,
   displayGeneratedPDFs = true,
 }) => {
-  const { formatMessage } = useIntl()
   const { courtCaseNumber, courtSessions, caseFiles } = connectedCase
 
   const hasCaseFiles =
@@ -36,9 +32,7 @@ const ConnectedCaseFilesAccordionItem: FC<Props> = ({
     <AccordionItem
       id="connectedCaseFiles"
       labelVariant="h3"
-      label={formatMessage(strings.heading, {
-        caseNumber: connectedCase.courtCaseNumber,
-      })}
+      label={`Gögn úr máli ${connectedCase.courtCaseNumber}`}
     >
       <IndictmentCaseFilesList
         workingCase={connectedCase}

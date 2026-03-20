@@ -13,6 +13,8 @@ import {
   AM,
   B,
   BE,
+  C,
+  C1,
   C1E,
   CE,
   D,
@@ -66,6 +68,8 @@ export const licensesSubSection = buildSubSection({
                 AM,
                 B,
                 BE,
+                C,
+                C1,
                 C1E,
                 CE,
                 D,
@@ -111,7 +115,7 @@ export const licensesSubSection = buildSubSection({
           title: employmentSearchMessages.licenses.heavyMachineryLicenses,
           required: true,
           isMulti: true,
-          options: (application) => {
+          options: (application, _, locale) => {
             const heavyMachineryLicenses =
               getValueViaPath<
                 Array<GaldurDomainModelsSettingsHeavyMachineryLicensesHeavyMachineryLicensesDTO>
@@ -121,7 +125,10 @@ export const licensesSubSection = buildSubSection({
               ) || []
             return heavyMachineryLicenses.map((right) => ({
               value: right.id || '',
-              label: right.name || '',
+              label:
+                locale === 'is' && right.name
+                  ? right.name
+                  : right.english ?? '',
             }))
           },
           condition: (answers) => {

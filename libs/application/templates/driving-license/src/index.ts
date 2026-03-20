@@ -7,3 +7,4 @@ export const getFields = () => import('./fields/')
 
 export default template
 export { dataSchema }
+export type { DrivingLicenseApplicationFor } from './lib/constants'

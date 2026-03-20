@@ -23,7 +23,6 @@ import {
     OrganDonorApiProvider,
     OrganExceptionsApiProvider,
     VaccinationsApiProvider,
-
     ...exportedApis,
   ],
   exports: [

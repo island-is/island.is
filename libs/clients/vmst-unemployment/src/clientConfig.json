@@ -4274,6 +4274,10 @@
             "type": "string",
             "nullable": true
           },
+          "english": {
+            "type": "string",
+            "nullable": true
+          },
           "selectableInWorkList": {
             "type": "boolean"
           }
@@ -7619,6 +7623,13 @@
               "format": "int32"
             }
           },
+          "genders": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_Genders_GenderDTO"
+            }
+          },
           "maxCanStartDate": {
             "type": "integer",
             "format": "int32"
@@ -7967,6 +7978,17 @@
                 }
               }
             }
+          }
+        ]
+      },
+      "Galdur_Domain_Models_Settings_Genders_GenderDTO": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_SettingsBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false
           }
         ]
       },

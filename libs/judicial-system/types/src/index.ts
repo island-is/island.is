@@ -9,7 +9,9 @@ export {
   VerdictServiceStatus,
   PunishmentType,
   isSuccessfulServiceStatus,
+  isSuccessfulVerdictServiceStatus,
   isFailedServiceStatus,
+  IndictmentCaseReviewDecision,
 } from './lib/defendant'
 
 export {
@@ -128,7 +130,6 @@ export {
   indictmentCases,
   restrictionCases,
   investigationCases,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   isIndictmentCase,
   isRestrictionCase,

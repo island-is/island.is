@@ -11,12 +11,12 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
-import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
+import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
+import { ManOnThePhone } from '@island.is/application/assets/graphics'
 import { CandidateApi, MunicipalCollectionApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -24,7 +24,7 @@ export const Prerequisites: Form = buildForm({
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: NationalRegistryLogo,
+  logo: NationalElectoralCommissionLogo,
   children: [
     buildSection({
       id: 'intro',
@@ -36,7 +36,7 @@ export const Prerequisites: Form = buildForm({
           children: [
             buildImageField({
               id: 'introImage',
-              image: DigitalServices,
+              image: ManOnThePhone,
               imageWidth: 'auto',
               imagePosition: 'center',
               marginTop: 'gutter',
@@ -72,7 +72,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: m.userProfileProviderSubtitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
             }),

@@ -89,6 +89,10 @@ export const attachments = {
         defaultMessage: 'Veldu skjal',
         description: 'Label of the upload button of the file upload input',
       },
+      descriptionMainAsDoc: {
+        id: 'ojoi.application:attachments.fileUpload.descriptionMainAsDoc',
+        defaultMessage: 'Tekið er við skjölum með endingu: .doc og .docx',
+      },
     }),
     radio: {
       title: defineMessages({

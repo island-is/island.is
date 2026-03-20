@@ -254,6 +254,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'The reason for this is the following:\n* The certificate that confirms limited ability for work was issued over 7 years ago.\n\nYou need a new confirmation from a doctor that your capacity is impaired, as well as a rehabilitation plan or confirmation of treatment, confirmation of ill health that prevents rehabilitation or treatment or confirmation of pending rehabilitation or treatment.\n\nFurther information on the conditions for medical and rehabilitation payments can be found on the [TR website](https://island.is/sjukra-og-endurhaefingargreidslur).\n\nIf payments from the Social Insurance Administration have been paused for more than 6 months, due to issues that cause reduced capacity, you need to get a new certificate in order to re-apply for medical and rehabilitation payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
     },
+    baseCertOlderThanSixMonthsDescription: {
+      id: 'marp.application:not.eligible.base.cert.older.than.six.months.description#markdown',
+      defaultMessage:
+        'Þú ert ekki með gilt vottorð af tegundinni grunnvottorð.\n\nEf hlé hefur orðið á greiðslum frá Tryggingastofnun í meira en 6 mánuði, vegna vanda sem orsakar skerta starfsgetu, þá þarf að fá nýtt grunnvottorð til þess að geta sótt aftur um sjúkra- og endurhæfingargreiðslur.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+      description:
+        'You do not have a valid certificate of type basic certificate.\n\nIf there has been a break in payments from the Social Insurance Administration for more than 6 months, due to problems causing reduced work capacity, then you need to get a new basic certificate in order to be able to apply again for medical and rehabilitation payments.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
     baseCertDisabilityDateEmptyDescription: {
       id: 'marp.application:not.eligible.base.cert.disability.date.empty.description#markdown',
       defaultMessage:
@@ -267,6 +274,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
         'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilda staðfestingu eða endurhæfingaráætlun.\n\nTil að geta sótt um sjúkra- og endurhæfingargreiðslur þarft þú, til viðbótar við vottorð, eitt af eftirfarandi skjölum:\n\n* Staðfestingu á viðurkenndri meðferð\n\n* Staðfestingu á að heilsubrestur komi í veg fyrir endurhæfingu eða viðurkennda meðferð\n\n* Staðfestingu á bið eftir viðurkenndri meðferð eða endurhæfingu\n\n* Endurhæfingaráætlun - fyrir þá sem eru byrjaðir í endurhæfingu\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
       description:
         'The reason for this is the following:\n* You do not have a valid confirmation or rehabilitation plan.\n\nTo be eligible for medical and rehabilitation payments you must, as well as having a valid certificate, have been issued one of the following documents:\n\n* Confirmation of treatment\n\n* Confirmation of ill health that prevents rehabilitation or treatment.\n\n* Confirmation of pending resolution.\n\n* Rehabilitation plan - for those who have started rehabilitation\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [endurhaefing@tr.is](mailto:endurhaefing@tr.is)',
+    },
+    latestMedicalDocumentAlreadyUsedDescription: {
+      id: 'marp.application:not.eligible.latest.medical.already.used.description#markdown',
+      defaultMessage:
+        'Þú ert með vottorð sem staðfestir skerta starfsgetu.\nÞú ert einnig með eitt af eftirfarandi skjölum til staðar - en þú hefur nýtt þau í fyrri umsókn um sjúkra- og endurhæfingargreiðslur.\n\nEinungis er hægt að nota eftirfarandi tegund af skjali, einu sinni.\n\nTil að geta sótt um áframhaldandi sjúkra- og endurhæfingargreiðslur þarftu því nýtt skjal til viðbótar við vottorð,\n* Nýja staðfestingu á viðurkenndri meðferð\n* Nýja staðfestingu á að heilsubrestur kemur í veg fyrir endurhæfingu eða viðurkennda meðferð\n* Nýja staðfestingu á bið eftir viðurkenndri meðferð eða endurhæfingu\n* Nýja endurhæfingaaráætlun - fyrir þá sem eru byrjaðir í endurhæfingu',
+      description:
+        'You have a certificate confirming reduced work capacity.\nYou also have one of the following documents available - but you have used them in a previous application for sickness and rehabilitation payments.\n\nThe following type of document can only be used once.\n\nTo apply for continued sickness and rehabilitation payments, you therefore need a new document in addition to a certificate,\n* A new confirmation of recognized treatment\n* A new confirmation that ill health prevents rehabilitation or recognized treatment\n* A new confirmation of waiting for recognized treatment or rehabilitation\n* A new rehabilitation plan - for those who have started rehabilitation',
     },
     errorProcessingClientDescription: {
       id: 'marp.application:not.eligible.error.processing.client.description#markdown',

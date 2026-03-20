@@ -94,7 +94,7 @@ describe('DelegationsController', () => {
           .get(path)
           .set('X-Query-National-Id', testCase.requestUser.nationalId)
           .query({
-            scope: testCase.requestUser.scope,
+            scopes: testCase.scopes.map((s) => s.name).join(','),
             direction: testCase.requestUser.direction,
           })
 
@@ -147,7 +147,7 @@ describe('DelegationsController', () => {
           .get(path)
           .set('X-Query-National-Id', testCase.requestUser.nationalId)
           .query({
-            scope: testCase.requestUser.scope,
+            scopes: testCase.requestUser.scope,
             direction: testCase.requestUser.direction,
           })
 
@@ -178,7 +178,7 @@ describe('DelegationsController', () => {
         .get(path)
         .set('X-Query-National-Id', user.nationalId)
         .query({
-          scope: testCase.requestUser.scope,
+          scopes: testCase.scopes.map((s) => s.name).join(','),
           direction: testCase.requestUser.direction,
         })
 

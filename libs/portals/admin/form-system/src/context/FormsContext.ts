@@ -1,9 +1,4 @@
-import {
-  FormSystemApplication,
-  FormSystemForm,
-  FormSystemOrganizationUrl,
-  FormSystemPermissionType,
-} from '@island.is/api/schema'
+import { FormSystemForm, FormSystemPermissionType } from '@island.is/api/schema'
 import { Option } from '@island.is/island-ui/core'
 import { createContext, Dispatch, SetStateAction } from 'react'
 import { FormsLocationState } from '../lib/utils/interfaces'
@@ -13,8 +8,6 @@ export interface IFormsContext {
   setForms: Dispatch<SetStateAction<FormSystemForm[]>>
   organizations: Option<string>[]
   setOrganizations: Dispatch<SetStateAction<Option<string>[]>>
-  applications: FormSystemApplication[]
-  setApplications: Dispatch<SetStateAction<FormSystemApplication[]>>
   isAdmin: boolean
   organizationId: string
   setOrganizationId: Dispatch<SetStateAction<string>>
@@ -28,13 +21,9 @@ export interface IFormsContext {
   setSelectedListTypes: Dispatch<SetStateAction<string[]>>
   selectedFieldTypes: string[]
   setSelectedFieldTypes: Dispatch<SetStateAction<string[]>>
-  setSubmitUrls: Dispatch<SetStateAction<FormSystemOrganizationUrl[]>>
-  setValidationUrls: Dispatch<SetStateAction<FormSystemOrganizationUrl[]>>
   certificationTypes: FormSystemPermissionType[]
   listTypes: FormSystemPermissionType[]
   fieldTypes: FormSystemPermissionType[]
-  submitUrls: FormSystemOrganizationUrl[]
-  validationUrls: FormSystemOrganizationUrl[]
   handleOrganizationChange?: (selected: { value: string }) => Promise<void>
 }
 
@@ -46,12 +35,6 @@ export const FormsContext = createContext<IFormsContext>({
   organizations: [],
   setOrganizations: function (_value: SetStateAction<Option<string>[]>): void {
     throw new Error('setOrganizations function not implemented')
-  },
-  applications: [],
-  setApplications: function (
-    _value: SetStateAction<FormSystemApplication[]>,
-  ): void {
-    throw new Error('setApplications function not implemented')
   },
   isAdmin: false,
   organizationId: '',
@@ -80,22 +63,10 @@ export const FormsContext = createContext<IFormsContext>({
   setSelectedFieldTypes: function (_value: SetStateAction<string[]>): void {
     throw new Error('setSelectedFieldTypes function not implemented')
   },
-  setSubmitUrls: function (
-    _value: SetStateAction<FormSystemOrganizationUrl[]>,
-  ): void {
-    throw new Error('setSubmitUrls function not implemented')
-  },
-  setValidationUrls: function (
-    _value: SetStateAction<FormSystemOrganizationUrl[]>,
-  ): void {
-    throw new Error('setValidationUrls function not implemented')
-  },
   handleOrganizationChange: async (_selected: { value: string }) => {
     throw new Error('handleOrganizationChange function not implemented')
   },
   certificationTypes: [],
   listTypes: [],
   fieldTypes: [],
-  submitUrls: [],
-  validationUrls: [],
 })

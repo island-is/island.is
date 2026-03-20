@@ -14,6 +14,7 @@ export interface BaseProps {
   link: {
     label: string
     href: string
+    openInNewTab?: boolean
   }
 }
 
@@ -31,6 +32,8 @@ export const InfoCard = ({ size, ...restOfProps }: InfoCardProps) => {
       aria-label={restOfProps.title}
       component={LinkV2}
       href={restOfProps.link.href}
+      target={restOfProps.link.openInNewTab ? '_blank' : undefined}
+      rel={restOfProps.link.openInNewTab ? 'noopener noreferrer' : undefined}
       background={restOfProps.background ?? 'white'}
       borderColor={restOfProps.borderColor ?? 'white'}
       color="blue"

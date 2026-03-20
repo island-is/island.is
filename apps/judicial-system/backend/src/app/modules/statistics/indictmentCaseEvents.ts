@@ -411,7 +411,8 @@ const verdictServedToDefendant = (
   return pipe(
     c.defendants ?? [],
     filterMap((defendant) => {
-      const verdict = defendant.verdict
+      // Only the latest verdict is relevant
+      const verdict = defendant.verdicts?.[0]
       if (!verdict || !verdict.serviceDate || !verdict.serviceStatus) {
         return option.none
       }
@@ -464,11 +465,11 @@ const caseReviewedByPublicProsecutorOffice = (
     (institution) =>
       institution.type === InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
   )
-
-  const date = EventLog.getEventLogDateByEventType(
-    EventType.INDICTMENT_REVIEWED,
-    c.eventLogs,
+  const date = DefendantEventLog.getEventLogDateByEventType(
+    DefendantEventType.INDICTMENT_REVIEWED,
+    c.defendants?.flatMap((defendant) => defendant.eventLogs || []),
   )?.toISOString()
+
   if (!date || !publicProsecutorOffice) {
     return undefined
   }

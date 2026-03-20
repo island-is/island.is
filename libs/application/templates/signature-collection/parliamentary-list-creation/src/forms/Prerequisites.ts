@@ -21,15 +21,15 @@ import {
   IsDelegatedToCompanyApi,
   CandidateApi,
 } from '../dataProviders'
-import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
-import { NationalRegistryLogo } from '@island.is/application/assets/institution-logos'
+import { ManOnThePhone } from '@island.is/application/assets/graphics'
+import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: NationalRegistryLogo,
+  logo: NationalElectoralCommissionLogo,
   children: [
     buildSection({
       id: 'intro',
@@ -41,7 +41,7 @@ export const Prerequisites: Form = buildForm({
           children: [
             buildImageField({
               id: 'doneImage',
-              image: DigitalServices,
+              image: ManOnThePhone,
               imageWidth: 'auto',
               imagePosition: 'center',
               marginTop: 'gutter',

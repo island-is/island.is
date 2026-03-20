@@ -30,6 +30,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { useMatomoTrackSearch } from '@island.is/matomo'
 import {
   Card,
   CardTagsProps,
@@ -421,6 +422,12 @@ const Search: Screen<CategoryProps> = ({
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
 
+  const matomoSearchCategory = [query.type, query.category, query.organization]
+    .flat()
+    .filter(Boolean)
+    .join(',')
+  useMatomoTrackSearch(q, matomoSearchCategory, totalSearchResults)
+
   const searchResultsText =
     totalSearchResults === 1
       ? (n('searchResult', 'leitarniðurstaða') as string).toLowerCase()
@@ -501,7 +508,7 @@ const Search: Screen<CategoryProps> = ({
     labelClear: n('labelClear', 'Hreinsa síu'),
     labelOpen: n('labelOpen', 'Sía niðurstöður'),
     labelClose: n('labelClose', 'Loka síu'),
-    labelTitle: n('labelTitle', 'Sía mannanöfn'),
+    labelTitle: n('filterBy', 'Sía eftir'),
     labelResult: n('labelResult', 'Sjá niðurstöður'),
     inputPlaceholder: n('inputPlaceholder', 'Leita að nafni'),
   }
@@ -723,6 +730,7 @@ const Search: Screen<CategoryProps> = ({
                     }}
                     align="right"
                     variant={isMobile ? 'dialog' : 'popover'}
+                    removeLeftMargin
                   />
                 </Inline>
               </Box>

@@ -8,7 +8,13 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
-import { ApplicationFeatureKey, PayerOption, States } from '../utils/constants'
+import {
+  ApplicationFeatureConfigType,
+  ApplicationFeatureKey,
+  ApplicationType,
+  PayerOption,
+  States,
+} from '../utils/constants'
 import NewPrimarySchoolTemplate from './NewPrimarySchoolTemplate'
 
 const buildApplication = (data: {
@@ -33,6 +39,50 @@ const buildApplication = (data: {
 }
 
 describe('New Primary School Template', () => {
+  it('should transition from pre to draft on submit', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        state: States.PREREQUISITES,
+        externalData: {
+          isApplicationBlocked: {
+            data: { hasActiveApplications: false },
+            date: new Date(),
+            status: 'success',
+          },
+        },
+      }),
+      NewPrimarySchoolTemplate,
+    )
+
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.SUBMIT,
+    })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe(States.DRAFT)
+  })
+
+  // it('should transition from pre to applicationBlocked on submit', () => {
+  //   const helper = new ApplicationTemplateHelper(
+  //     buildApplication({
+  //       state: States.PREREQUISITES,
+  //       externalData: {
+  //         isApplicationBlocked: {
+  //           data: { hasActiveApplications: true },
+  //           date: new Date(),
+  //           status: 'success',
+  //         },
+  //       },
+  //     }),
+  //     NewPrimarySchoolTemplate,
+  //   )
+
+  //   const [hasChanged, newState] = helper.changeState({
+  //     type: DefaultEvents.SUBMIT,
+  //   })
+  //   expect(hasChanged).toBe(true)
+  //   expect(newState).toBe(States.APPLICATION_BLOCKED)
+  // })
+
   it('should transition from draft to submitted on submit', () => {
     const helper = new ApplicationTemplateHelper(
       buildApplication({
@@ -84,6 +134,7 @@ describe('New Primary School Template', () => {
       buildApplication({
         state: States.DRAFT,
         answers: {
+          applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
           newSchool: {
             municipality: '3000',
             school: schoolId,
@@ -104,6 +155,7 @@ describe('New Primary School Template', () => {
                 settings: {
                   applicationConfigs: [
                     {
+                      applicationType: ApplicationFeatureConfigType.TRANSFER,
                       applicationFeatures: [
                         { key: ApplicationFeatureKey.PAYMENT_INFO },
                       ],
@@ -217,6 +269,7 @@ describe('New Primary School Template', () => {
       buildApplication({
         state: States.DRAFT,
         answers: {
+          applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
           childNationalId: '1212121212',
           newSchool: {
             municipality: '3000',
@@ -245,6 +298,7 @@ describe('New Primary School Template', () => {
                 settings: {
                   applicationConfigs: [
                     {
+                      applicationType: ApplicationFeatureConfigType.TRANSFER,
                       applicationFeatures: [
                         { key: ApplicationFeatureKey.ADDITIONAL_REQUESTORS },
                       ],
@@ -274,6 +328,7 @@ describe('New Primary School Template', () => {
       buildApplication({
         state: States.OTHER_GUARDIAN_APPROVAL,
         answers: {
+          applicationType: ApplicationType.NEW_PRIMARY_SCHOOL,
           newSchool: {
             municipality: '3000',
             school: schoolId,
@@ -294,6 +349,7 @@ describe('New Primary School Template', () => {
                 settings: {
                   applicationConfigs: [
                     {
+                      applicationType: ApplicationFeatureConfigType.TRANSFER,
                       applicationFeatures: [
                         { key: ApplicationFeatureKey.PAYMENT_INFO },
                         { key: ApplicationFeatureKey.ADDITIONAL_REQUESTORS },

@@ -1,7 +1,13 @@
 import { buildOverviewField, YES } from '@island.is/application/core'
-import { newPrimarySchoolMessages } from '../lib/messages'
+import {
+  childrenNGuardiansMessages,
+  differentNeedsMessages,
+  overviewMessages,
+  primarySchoolMessages,
+} from '../lib/messages'
 import {
   hasSpecialEducationSubType,
+  isCurrentSchoolRegistered,
   shouldShowPage,
   shouldShowReasonForApplicationPage,
 } from './conditionUtils'
@@ -15,11 +21,11 @@ import {
   getApplicationExternalData,
 } from './newPrimarySchoolUtils'
 import {
+  attachmentItems,
   childItems,
   counsellingRegardingApplicationItems,
   currentNurseryItems,
   currentSchoolItems,
-  attachmentItems,
   guardiansItems,
   healthProtectionItems,
   languagesItems,
@@ -38,10 +44,7 @@ const buildGuardianOverviewFields = (editable?: boolean) =>
   [...Array(MAX_GUARDIANS)].map((_key, index) => {
     return buildOverviewField({
       id: `overview.guardians.${index}`,
-      title: {
-        ...newPrimarySchoolMessages.overview.guardians,
-        values: { index: index + 1 },
-      },
+      title: overviewMessages.guardians,
       backId: editable ? 'guardians' : undefined,
       items: (answers, externalData, userNationalId) =>
         guardiansItems(answers, externalData, userNationalId, index),
@@ -56,22 +59,21 @@ export const overviewFields = (editable?: boolean) => {
   return [
     buildOverviewField({
       id: 'overview.childInfo',
-      title: newPrimarySchoolMessages.overview.child,
+      title: overviewMessages.child,
       backId: editable ? 'childInfo' : undefined,
       loadItems: childItems,
     }),
     ...buildGuardianOverviewFields(editable),
     buildOverviewField({
       id: 'overview.relatives',
-      title:
-        newPrimarySchoolMessages.childrenNGuardians.relativesSubSectionTitle,
+      title: childrenNGuardiansMessages.relatives.subSectionTitle,
       backId: editable ? 'relatives' : undefined,
       loadTableData: relativesTable,
+      hideIfEmpty: true,
     }),
     buildOverviewField({
       id: 'overview.currentSchool',
-      title:
-        newPrimarySchoolMessages.primarySchool.currentSchoolSubSectionTitle,
+      title: primarySchoolMessages.currentSchool.subSectionTitle,
       backId: (_, externalData) => {
         const { primaryOrgId } = getApplicationExternalData(externalData)
 
@@ -80,30 +82,35 @@ export const overviewFields = (editable?: boolean) => {
         return primaryOrgId ? undefined : editable ? 'currentSchool' : undefined
       },
       items: currentSchoolItems,
-      condition: (answers) => {
-        const { applicationType } = getApplicationAnswers(answers)
+      condition: (answers, externalData) => {
+        const { applicationType, hasCurrentSchool } =
+          getApplicationAnswers(answers)
 
         return (
-          applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
-          applicationType === ApplicationType.CONTINUING_ENROLLMENT
+          (applicationType === ApplicationType.NEW_PRIMARY_SCHOOL ||
+            applicationType === ApplicationType.CONTINUING_ENROLLMENT) &&
+          (isCurrentSchoolRegistered(externalData) || hasCurrentSchool === YES)
         )
       },
     }),
     buildOverviewField({
       id: 'overview.currentNursery',
-      title:
-        newPrimarySchoolMessages.primarySchool.currentNurserySubSectionTitle,
+      title: primarySchoolMessages.currentNursery.subSectionTitle,
       backId: editable ? 'currentNursery' : undefined,
       loadItems: currentNurseryItems,
       condition: (answers) => {
-        const { applicationType } = getApplicationAnswers(answers)
+        const { applicationType, hasCurrentNursery } =
+          getApplicationAnswers(answers)
 
-        return applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL
+        return (
+          applicationType === ApplicationType.ENROLLMENT_IN_PRIMARY_SCHOOL &&
+          hasCurrentNursery === YES
+        )
       },
     }),
     buildOverviewField({
       id: 'overview.school',
-      title: newPrimarySchoolMessages.overview.schoolTitle,
+      title: overviewMessages.schoolTitle,
       backId: (answers) => {
         const { applyForPreferredSchool } = getApplicationAnswers(answers)
 
@@ -128,7 +135,7 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'reasonForApplication' : undefined,
       loadItems: reasonForApplicationItems,
       condition: (answers, externalData) =>
-        shouldShowReasonForApplicationPage(answers) &&
+        shouldShowReasonForApplicationPage(answers, externalData) &&
         !hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
@@ -136,12 +143,12 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'counsellingRegardingApplication' : undefined,
       loadItems: counsellingRegardingApplicationItems,
       condition: (answers, externalData) =>
-        shouldShowReasonForApplicationPage(answers) &&
+        shouldShowReasonForApplicationPage(answers, externalData) &&
         hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.siblings',
-      title: newPrimarySchoolMessages.primarySchool.siblingsTitle,
+      title: primarySchoolMessages.siblings.title,
       backId: editable ? 'siblings' : undefined,
       tableData: siblingsTable,
       condition: (answers) => {
@@ -168,18 +175,22 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'support' : undefined,
       items: supportItems,
       condition: (answers, externalData) =>
-        !hasSpecialEducationSubType(answers, externalData),
+        //Business logic override as applicationConfig isn't ready on MMS side
+        //Should be removed when applicationConfig is ready
+        true || !hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.specialEducationSupport',
       backId: editable ? 'specialEducationSupport' : undefined,
       loadItems: specialEducationSupportItems,
       condition: (answers, externalData) =>
-        hasSpecialEducationSubType(answers, externalData),
+        //Business logic override as applicationConfig isn't ready on MMS side
+        //Should be removed when applicationConfig is ready
+        false && hasSpecialEducationSubType(answers, externalData),
     }),
     buildOverviewField({
       id: 'overview.payer',
-      title: newPrimarySchoolMessages.differentNeeds.payerSubSectionTitle,
+      title: differentNeedsMessages.payer.subSectionTitle,
       backId: editable ? 'payer' : undefined,
       items: payerItems,
       condition: (answers, externalData) =>
@@ -191,7 +202,7 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: 'overview.attachments',
-      title: newPrimarySchoolMessages.differentNeeds.attachmentsSubSectionTitle,
+      title: differentNeedsMessages.attachments.subSectionTitle,
       attachments: attachmentItems,
       hideIfEmpty: true,
     }),

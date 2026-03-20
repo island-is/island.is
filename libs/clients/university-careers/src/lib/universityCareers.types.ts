@@ -90,3 +90,10 @@ export type StudentTrackLocale =
   | typeof BifrostFerillLocale
   | typeof HolarFerillLocale
   | typeof HIFerillLocale
+
+export type StudentFileType =
+  | 'transcript'
+  | 'diploma'
+  | 'diploma_supplement'
+  | 'course_descriptions'
+  | 'unknown'

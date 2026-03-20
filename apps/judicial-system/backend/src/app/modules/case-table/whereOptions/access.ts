@@ -9,7 +9,6 @@ import {
   completedIndictmentCaseStates,
   completedRequestCaseStates,
   EventType,
-  IndictmentCaseReviewDecision,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -28,7 +27,9 @@ export const courtOfAppealsRequestCasesAccessWhereOptions = {
   type: [...restrictionCases, ...investigationCases],
   state: completedRequestCaseStates,
   [Op.or]: [
-    { appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED] },
+    {
+      appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED],
+    },
     {
       [Op.and]: [
         { appeal_state: CaseAppealState.WITHDRAWN },
@@ -106,7 +107,6 @@ export const prisonAdminIndictmentsAccessWhereOptions = {
     CaseIndictmentRulingDecision.RULING,
     CaseIndictmentRulingDecision.FINE,
   ],
-  indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
   [Op.and]: [buildIsSentToPrisonExistsCondition(true)],
 }
 

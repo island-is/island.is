@@ -215,7 +215,9 @@ describe('ApplicationTemplate', () => {
 
       // Act & Assert
       expect(sut).toThrow(
-        new Error(`${invalidEvent} is invalid for state ${currentState}`),
+        new Error(
+          `${invalidEvent} is invalid for state ${currentState} for application ${application.typeId} with id ${application.id}`,
+        ),
       )
     })
   })
