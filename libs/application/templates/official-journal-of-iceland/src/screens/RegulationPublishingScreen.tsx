@@ -158,7 +158,7 @@ export const RegulationPublishingScreen = (props: OJOIFieldBaseProps) => {
           />
         )}
       </FormGroup>
-      <FormGroup>
+      <FormGroup title={f(publishing.headings.categoryMessageTitle)}>
         <Box width="half">
           {categoryLoading ? (
             <SkeletonLoader repeat={2} height={OJOI_INPUT_HEIGHT} space={2} />

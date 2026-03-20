@@ -3,7 +3,9 @@ import { LAW_CHAPTERS_QUERY } from '../graphql/queries'
 import type { LawChapter } from '@island.is/regulations'
 
 type LawChaptersResponse = {
-  OJOIAGetLawChapters: LawChapter[] | null
+  OJOIAGetLawChapters: {
+    lawChapters: LawChapter[]
+  } | null
 }
 
 export const useLawChapters = () => {
@@ -11,7 +13,7 @@ export const useLawChapters = () => {
     useQuery<LawChaptersResponse>(LAW_CHAPTERS_QUERY)
 
   return {
-    lawChapters: data?.OJOIAGetLawChapters ?? [],
+    lawChapters: data?.OJOIAGetLawChapters?.lawChapters ?? [],
     loading,
     error,
   }

@@ -110,6 +110,13 @@ export const useRegulationImpacts = ({
     setImpacts([])
   }, [draftId])
 
+  // When there is no draftId, there are no impacts to load
+  useEffect(() => {
+    if (!draftId) {
+      setImpactsLoaded(true)
+    }
+  }, [draftId])
+
   // Load impacts from DB when draftId becomes available
   useEffect(() => {
     if (!draftId || impactsLoaded) return
@@ -163,8 +170,9 @@ export const useRegulationImpacts = ({
    * Add a new impact — writes to DB, then updates local state.
    */
   const addImpact = useCallback(
-    async (impact: RegulationImpactSchema) => {
-      if (!draftId) {
+    async (impact: RegulationImpactSchema, draftIdOverride?: string) => {
+      const effectiveDraftId = draftIdOverride || draftId
+      if (!effectiveDraftId) {
         throw new Error('Cannot add impact: no draftId')
       }
 
@@ -176,7 +184,7 @@ export const useRegulationImpacts = ({
       const result = await createImpactMutation({
         variables: {
           input: {
-            draftId,
+            draftId: effectiveDraftId,
             type: impact.type,
             regulation: impact.name,
             date: impact.date || getDefaultDate(),

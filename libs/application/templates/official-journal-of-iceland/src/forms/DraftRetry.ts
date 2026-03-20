@@ -213,19 +213,6 @@ export const DraftRetry: Form = buildForm({
       ],
     }),
 
-    // ── Regulation flow: preview ──
-    buildSection({
-      id: Routes.REGULATION_PREVIEW,
-      title: regulation.preview.general.section,
-      condition: isRegulation,
-      children: [
-        buildCustomField({
-          id: 'regulationPreview',
-          component: 'RegulationPreviewScreen',
-        }),
-      ],
-    }),
-
     // ── Regulation flow: meta ──
     buildSection({
       id: Routes.REGULATION_META,
@@ -235,6 +222,19 @@ export const DraftRetry: Form = buildForm({
         buildCustomField({
           id: 'regulationMeta',
           component: 'RegulationMetaScreen',
+        }),
+      ],
+    }),
+
+    // ── Regulation flow: preview ──
+    buildSection({
+      id: Routes.REGULATION_PREVIEW,
+      title: regulation.preview.general.section,
+      condition: isRegulation,
+      children: [
+        buildCustomField({
+          id: 'regulationPreview',
+          component: 'RegulationPreviewScreen',
         }),
       ],
     }),

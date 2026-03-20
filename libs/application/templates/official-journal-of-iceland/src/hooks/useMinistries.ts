@@ -3,7 +3,9 @@ import { MINISTRIES_QUERY } from '../graphql/queries'
 import type { MinistryList } from '@island.is/regulations'
 
 type MinistriesResponse = {
-  OJOIAGetMinistries: MinistryList | null
+  OJOIAGetMinistries: {
+    ministries: MinistryList
+  } | null
 }
 
 export const useMinistries = () => {
@@ -11,7 +13,7 @@ export const useMinistries = () => {
     useQuery<MinistriesResponse>(MINISTRIES_QUERY)
 
   return {
-    ministries: data?.OJOIAGetMinistries ?? [],
+    ministries: data?.OJOIAGetMinistries?.ministries ?? [],
     loading,
     error,
   }

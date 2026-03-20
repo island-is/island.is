@@ -3,6 +3,7 @@ import { FormScreen } from '../components/form/FormScreen'
 import { regulation } from '../lib/messages'
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
 import {
+  AlertMessage,
   Box,
   Button,
   Divider,
@@ -12,6 +13,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useLazyQuery, useMutation } from '@apollo/client'
 import { useRegulationImpacts } from '../hooks/useRegulationImpacts'
 import { useRegulationSearch } from '../hooks/useRegulationSearch'
 import { RegulationImpactSchema } from '../lib/dataSchema'
@@ -32,6 +34,13 @@ import {
 } from '../utils/formatAmendingRegulation'
 import { useApplication } from '../hooks/useUpdateApplication'
 import { useRegulationDraft } from '../hooks/useRegulationDraft'
+import {
+  REGULATION_FROM_API_QUERY,
+  GET_DRAFT_REGULATION_QUERY,
+  UPDATE_DRAFT_REGULATION_MUTATION,
+} from '../graphql/queries'
+import type { Regulation, LawChapter } from '@island.is/regulations'
+import { Routes } from '../lib/constants'
 
 export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
@@ -39,7 +48,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   const applicationType = application.answers?.applicationType
   const isAmending = applicationType === 'amending_regulation'
 
-  const { draftId } = useRegulationDraft({
+  const { draftId, ensureDraft } = useRegulationDraft({
     applicationId: application.id,
     answers: application.answers as unknown as Record<string, unknown>,
   })
@@ -60,6 +69,15 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   const { updateApplicationV2 } = useApplication({
     applicationId: application.id,
   })
+
+  // Lazy queries for auto-selecting law chapters from impacted regulations
+  const [fetchRegulation] = useLazyQuery<{
+    OJOIAGetRegulationFromApi: Regulation | null
+  }>(REGULATION_FROM_API_QUERY, { fetchPolicy: 'no-cache' })
+  const [fetchDraft] = useLazyQuery(GET_DRAFT_REGULATION_QUERY, {
+    fetchPolicy: 'network-only',
+  })
+  const [updateDraftMutation] = useMutation(UPDATE_DRAFT_REGULATION_MUTATION)
 
   /**
    * Generate amending regulation body text from all impact diffs,
@@ -131,10 +149,163 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
     setChooseType(undefined)
   }
 
+  /**
+   * After saving an impact for an amending regulation, auto-add the
+   * impacted regulation's law chapters to the draft (merged with existing).
+   */
+  const autoSelectLawChapters = useCallback(
+    async (regulationName: string, resolvedDraftId: string) => {
+      try {
+        const [regResult, draftResult] = await Promise.all([
+          fetchRegulation({
+            variables: { input: { regulation: regulationName } },
+          }),
+          fetchDraft({
+            variables: { input: { draftId: resolvedDraftId } },
+          }),
+        ])
+
+        const regLawChapters =
+          (regResult.data?.OJOIAGetRegulationFromApi as Regulation | null)
+            ?.lawChapters ?? []
+        if (regLawChapters.length === 0) return
+
+        const raw = draftResult.data?.OJOIAGetDraftRegulation
+        const existingChapters = (raw?.lawChapters ?? []) as Array<
+          string | { slug: string; name: string }
+        >
+        const existingSlugs = new Set(
+          existingChapters.map((ch) => (typeof ch === 'string' ? ch : ch.slug)),
+        )
+
+        const newSlugs = regLawChapters
+          .filter((ch: LawChapter) => !existingSlugs.has(ch.slug))
+          .map((ch: LawChapter) => ch.slug)
+
+        if (newSlugs.length === 0) return
+
+        const mergedSlugs = [...Array.from(existingSlugs), ...newSlugs]
+
+        await updateDraftMutation({
+          variables: {
+            input: {
+              draftId: resolvedDraftId,
+              title: raw?.title ?? '',
+              text: raw?.text ?? '',
+              draftingStatus: raw?.draftingStatus ?? 'draft',
+              draftingNotes: raw?.draftingNotes ?? '',
+              lawChapters: mergedSlugs,
+            },
+          },
+        })
+      } catch (error) {
+        console.error('Failed to auto-select law chapters:', error)
+      }
+    },
+    [fetchRegulation, fetchDraft, updateDraftMutation],
+  )
+
+  /**
+   * When an impact regulation is removed, strip its law chapters from
+   * the draft — unless another remaining impact shares the same chapters.
+   */
+  const removeRegulationLawChapters = useCallback(
+    async (
+      regulationName: string,
+      resolvedDraftId: string,
+      remainingImpacts: RegulationImpactSchema[],
+    ) => {
+      try {
+        // Fetch the removed regulation's law chapters + current draft state
+        const [regResult, draftResult] = await Promise.all([
+          fetchRegulation({
+            variables: { input: { regulation: regulationName } },
+          }),
+          fetchDraft({
+            variables: { input: { draftId: resolvedDraftId } },
+          }),
+        ])
+
+        const regLawChapters =
+          (regResult.data?.OJOIAGetRegulationFromApi as Regulation | null)
+            ?.lawChapters ?? []
+        if (regLawChapters.length === 0) return
+
+        const raw = draftResult.data?.OJOIAGetDraftRegulation
+        const existingChapters = (raw?.lawChapters ?? []) as Array<
+          string | { slug: string; name: string }
+        >
+        const existingSlugs = existingChapters.map((ch) =>
+          typeof ch === 'string' ? ch : ch.slug,
+        )
+
+        // Collect law chapters that other remaining impacts still need
+        // by fetching their regulations in parallel
+        const otherRegNames = [
+          ...new Set(
+            remainingImpacts
+              .filter((i) => i.name && i.name !== 'self')
+              .map((i) => i.name),
+          ),
+        ]
+        const otherResults = await Promise.all(
+          otherRegNames.map((name) =>
+            fetchRegulation({
+              variables: { input: { regulation: name } },
+            }),
+          ),
+        )
+        const keepSlugs = new Set<string>(
+          otherResults.flatMap((r) =>
+            (
+              (r.data?.OJOIAGetRegulationFromApi as Regulation | null)
+                ?.lawChapters ?? []
+            ).map((ch: LawChapter) => String(ch.slug)),
+          ),
+        )
+
+        const removeSlugs = new Set<string>(
+          regLawChapters.map((ch: LawChapter) => String(ch.slug)),
+        )
+        const filteredSlugs = existingSlugs.filter(
+          (slug) => !removeSlugs.has(slug) || keepSlugs.has(slug),
+        )
+
+        await updateDraftMutation({
+          variables: {
+            input: {
+              draftId: resolvedDraftId,
+              title: raw?.title ?? '',
+              text: raw?.text ?? '',
+              draftingStatus: raw?.draftingStatus ?? 'draft',
+              draftingNotes: raw?.draftingNotes ?? '',
+              lawChapters: filteredSlugs,
+            },
+          },
+        })
+      } catch (error) {
+        console.error('Failed to remove law chapters:', error)
+      }
+    },
+    [fetchRegulation, fetchDraft, updateDraftMutation],
+  )
+
   const handleSaveNewImpact = async (impact: RegulationImpactSchema) => {
-    await addImpact(impact)
+    const resolvedDraftId = await ensureDraft(applicationType ?? '')
+    await addImpact(impact, resolvedDraftId)
     const allImpacts = [...impacts, impact]
     await generateAdvertText(allImpacts)
+
+    // Auto-add law chapters from the impacted regulation
+    if (
+      isAmending &&
+      impact.name &&
+      impact.name !== 'self' &&
+      resolvedDraftId
+    ) {
+      await autoSelectLawChapters(impact.name, resolvedDraftId)
+    }
+
     setChooseType(undefined)
     setSelRegOption(undefined)
   }
@@ -148,9 +319,30 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   }
 
   const handleDeleteImpact = async (id: string) => {
+    const removedImpact = impacts.find((i) => i.id === id)
     await removeImpact(id)
     const allImpacts = impacts.filter((i) => i.id !== id)
     await generateAdvertText(allImpacts)
+
+    // Remove law chapters that came from this regulation (if no other
+    // impact still references the same regulation)
+    if (
+      isAmending &&
+      removedImpact?.name &&
+      removedImpact.name !== 'self' &&
+      draftId
+    ) {
+      const otherImpactsForSameReg = allImpacts.some(
+        (i) => i.name === removedImpact.name,
+      )
+      if (!otherImpactsForSameReg) {
+        await removeRegulationLawChapters(
+          removedImpact.name,
+          draftId,
+          allImpacts,
+        )
+      }
+    }
   }
 
   // Regulation search hook (replaces Phase 3 mock)
@@ -167,7 +359,10 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
   // Extract mentioned regulations from draft HTML for base regulation flow
   const mentionedOptions = useMemo(() => {
     const title = (application.answers?.advert?.title ?? '') as PlainText
-    const html = (application.answers?.advert?.html ?? '') as HTMLText
+    const base64Html = application.answers?.advert?.html ?? ''
+    const html = base64Html
+      ? (Buffer.from(base64Html, 'base64').toString('utf-8') as HTMLText)
+      : ('' as HTMLText)
     if (!title && !html) return []
     const regNames = findAffectedRegulationsInText(title, html)
     return regNames.map((name) => ({
@@ -183,6 +378,31 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
       intro={f(regulation.impacts.general.intro)}
     >
       <Stack space={[2, 2, 3]}>
+        {/* Info alert for base regulations */}
+        {!isAmending && (
+          <Box marginBottom={3}>
+            <AlertMessage
+              type="info"
+              message={
+                <div>
+                  ATH: Sé ætlunin að breyta annarri reglugerð, þarf að minnast á
+                  þá reglugerð með skýrum hætti í þessari stofnreglugerð.
+                  {'    '}
+                  <Button
+                    onClick={() =>
+                      props.goToScreen?.(Routes.REGULATION_CONTENT)
+                    }
+                    variant="text"
+                    size="small"
+                  >
+                    Endurskoða textann
+                  </Button>
+                </div>
+              }
+            />
+          </Box>
+        )}
+
         {/* Regulation selection */}
         <Box marginBottom={4}>
           {!isAmending ? (
@@ -203,7 +423,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
         {/* Impact type selection */}
         {selRegOption && (
           <Box marginBottom={[4, 4, 8]}>
-            <Box marginBottom={2}>
+            <Box marginBottom={2} paddingBottom={2}>
               <Divider weight="regular" />
             </Box>
             <Text variant="h4" as="h4" marginBottom={[2, 2, 3, 4]}>

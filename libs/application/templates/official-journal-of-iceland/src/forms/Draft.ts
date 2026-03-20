@@ -21,6 +21,11 @@ import {
   typeSelection,
 } from '../lib/messages'
 
+const isMinistry = (answers: Record<string, unknown>) => {
+  const title = getValueViaPath<string>(answers, 'advert.involvedPartyTitle')
+  return !!title && title.toLowerCase().includes('ráðuneyti')
+}
+
 const isAdOrDefault = (answers: Record<string, unknown>) => {
   const applicationType = getValueViaPath<string>(answers, 'applicationType')
   return !applicationType || applicationType === 'ad'
@@ -58,10 +63,11 @@ export const Draft: Form = buildForm({
       children: [],
     }),
 
-    // ── Shared: Type Selection ──
+    // ── Shared: Type Selection (only shown for ministries) ──
     buildSection({
       id: Routes.TYPE_SELECTION,
       title: typeSelection.general.section,
+      condition: isMinistry,
       children: [
         buildCustomField({
           id: 'typeSelection',
@@ -215,19 +221,6 @@ export const Draft: Form = buildForm({
       ],
     }),
 
-    // ── Regulation flow: preview ──
-    buildSection({
-      id: Routes.REGULATION_PREVIEW,
-      title: regulation.preview.general.section,
-      condition: isRegulation,
-      children: [
-        buildCustomField({
-          id: 'regulationPreview',
-          component: 'RegulationPreviewScreen',
-        }),
-      ],
-    }),
-
     // ── Regulation flow: meta ──
     buildSection({
       id: Routes.REGULATION_META,
@@ -237,6 +230,19 @@ export const Draft: Form = buildForm({
         buildCustomField({
           id: 'regulationMeta',
           component: 'RegulationMetaScreen',
+        }),
+      ],
+    }),
+
+    // ── Regulation flow: preview ──
+    buildSection({
+      id: Routes.REGULATION_PREVIEW,
+      title: regulation.preview.general.section,
+      condition: isRegulation,
+      children: [
+        buildCustomField({
+          id: 'regulationPreview',
+          component: 'RegulationPreviewScreen',
         }),
       ],
     }),

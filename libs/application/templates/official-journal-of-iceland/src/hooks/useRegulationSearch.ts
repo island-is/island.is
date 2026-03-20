@@ -3,7 +3,9 @@ import { REGULATION_OPTION_SEARCH_QUERY } from '../graphql/queries'
 import type { RegulationOptionList } from '@island.is/regulations'
 
 type RegulationSearchResponse = {
-  OJOIAGetRegulationsOptionSearch: RegulationOptionList | null
+  OJOIAGetRegulationsOptionSearch: {
+    regulations: RegulationOptionList
+  } | null
 }
 
 type RegulationSearchVariables = {
@@ -46,7 +48,7 @@ export const useRegulationSearch = () => {
   }
 
   const results: RegulationSearchOption[] | undefined =
-    data?.OJOIAGetRegulationsOptionSearch?.map((item) => ({
+    data?.OJOIAGetRegulationsOptionSearch?.regulations?.map((item) => ({
       value: String(item.name),
       label: `${item.name} — ${item.title}`,
       title: String(item.title),

@@ -2,6 +2,7 @@ import { useLocale } from '@island.is/localization'
 import { FormScreen } from '../components/form/FormScreen'
 import { involvedParty } from '../lib/messages'
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
+import { ApplicationTypes } from '../lib/constants'
 import { useInvolvedParties } from '../hooks/useInvolvedParties'
 import { OJOISelectController } from '../components/input/OJOISelectController'
 import { AlertMessage, Box, Stack } from '@island.is/island-ui/core'
@@ -40,16 +41,25 @@ export const InvolvedPartyScreen = ({
         const involvedParty = involvedParties[0]
 
         setValue(InputFields.advert.involvedPartyId, involvedParty.id)
+        setValue(InputFields.advert.involvedPartyTitle, involvedParty.title)
 
         const currentAnswers = structuredClone(application.answers)
 
-        const updatedAnswers = set(
+        set(currentAnswers, InputFields.advert.involvedPartyId, involvedParty.id)
+        set(
           currentAnswers,
-          InputFields.advert.involvedPartyId,
-          involvedParty.id,
+          InputFields.advert.involvedPartyTitle,
+          involvedParty.title,
         )
 
-        updateApplication(updatedAnswers, () => {
+        // Pre-set applicationType for non-ministry parties so the
+        // TypeSelection screen can be skipped entirely.
+        if (!involvedParty.title.toLowerCase().includes('ráðuneyti')) {
+          setValue('applicationType', ApplicationTypes.AD)
+          set(currentAnswers, 'applicationType', ApplicationTypes.AD)
+        }
+
+        updateApplication(currentAnswers, () => {
           submitApplication(DefaultEvents.SUBMIT, () => {
             refetch && refetch()
           })
@@ -106,7 +116,22 @@ export const InvolvedPartyScreen = ({
           applicationId={application.id}
           defaultValue={defaultValue}
           placeholder={involvedParty.inputs.select.placeholder}
-          onChange={() => {
+          onChange={(selectedId) => {
+            // Also persist the party title so downstream screens
+            // can check whether the party is a ministry.
+            const party = involvedParties?.find((p) => p.id === selectedId)
+            if (party) {
+              const answers = structuredClone(application.answers)
+              set(answers, InputFields.advert.involvedPartyTitle, party.title)
+
+              if (!party.title.toLowerCase().includes('ráðuneyti')) {
+                setValue('applicationType', ApplicationTypes.AD)
+                set(answers, 'applicationType', ApplicationTypes.AD)
+              }
+
+              setValue(InputFields.advert.involvedPartyTitle, party.title)
+              updateApplication(answers)
+            }
             setSubmitButtonDisabled && setSubmitButtonDisabled(false)
           }}
         />

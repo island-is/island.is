@@ -166,7 +166,7 @@ export const ReviewOverview = ({
 
       {reg?.impacts && reg.impacts.length > 0 && (
         <>
-          <Box marginTop={3} marginBottom={2}>
+          <Box paddingBottom={3}>
             <Divider />
           </Box>
           <Text variant="h4" as="h4" marginBottom={2}>

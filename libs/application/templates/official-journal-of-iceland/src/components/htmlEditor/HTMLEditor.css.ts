@@ -138,13 +138,14 @@ export const classes: EditorClasses = {
 
   editor: style({
     position: 'relative',
-    minHeight: 100,
+    minHeight: 300,
     maxHeight: 'calc(100vh - 10rem)',
     width: '100%',
     caretColor: theme.color.blue400,
     padding: spacing[3],
     paddingTop: spacing[2],
     overflowY: 'auto',
+    overflowAnchor: 'none',
     ':focus': {
       outline: 'none',
     },

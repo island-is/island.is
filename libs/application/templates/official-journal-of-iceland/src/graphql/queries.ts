@@ -433,7 +433,15 @@ export const REGULATION_OPTION_SEARCH_QUERY = gql`
   query OJOIAGetRegulationsOptionSearch(
     $input: OJOIAGetRegulationsSearchInput!
   ) {
-    OJOIAGetRegulationsOptionSearch(input: $input)
+    OJOIAGetRegulationsOptionSearch(input: $input) {
+      regulations {
+        name
+        title
+        type
+        migrated
+        repealed
+      }
+    }
   }
 `
 
@@ -447,19 +455,57 @@ export const REGULATION_IMPACTS_QUERY = gql`
   query OJOIAGetRegulationImpactsByName(
     $input: OJOIAGetRegulationImpactsInput!
   ) {
-    OJOIAGetRegulationImpactsByName(input: $input)
+    OJOIAGetRegulationImpactsByName(input: $input) {
+      changes {
+        id
+        changingId
+        type
+        name
+        regTitle
+        date
+        title
+        dropped
+        diff
+        text
+        appendixes {
+          title
+          text
+        }
+        comments
+      }
+      cancellations {
+        id
+        changingId
+        type
+        name
+        regTitle
+        date
+        dropped
+      }
+    }
   }
 `
 
 export const LAW_CHAPTERS_QUERY = gql`
   query OJOIAGetLawChapters {
-    OJOIAGetLawChapters
+    OJOIAGetLawChapters {
+      lawChapters {
+        name
+        slug
+      }
+    }
   }
 `
 
 export const MINISTRIES_QUERY = gql`
   query OJOIAGetMinistries {
-    OJOIAGetMinistries
+    OJOIAGetMinistries {
+      ministries {
+        name
+        slug
+        order
+      }
+    }
   }
 `
 
@@ -467,7 +513,9 @@ export const CREATE_DRAFT_REGULATION_MUTATION = gql`
   mutation OJOIACreateDraftRegulation(
     $input: OJOIACreateDraftRegulationInput!
   ) {
-    OJOIACreateDraftRegulation(input: $input)
+    OJOIACreateDraftRegulation(input: $input) {
+      id
+    }
   }
 `
 
@@ -487,7 +535,9 @@ export const UPDATE_DRAFT_REGULATION_MUTATION = gql`
 
 export const CREATE_DRAFT_IMPACT_MUTATION = gql`
   mutation OJOIACreateDraftImpact($input: OJOIACreateDraftImpactInput!) {
-    OJOIACreateDraftImpact(input: $input)
+    OJOIACreateDraftImpact(input: $input) {
+      id
+    }
   }
 `
 

@@ -20,6 +20,7 @@ export const InputFields = {
     channels: 'advert.channels',
     message: 'advert.message',
     involvedPartyId: 'advert.involvedPartyId',
+    involvedPartyTitle: 'advert.involvedPartyTitle',
     additions: 'advert.additions',
   },
   [Routes.SIGNATURE]: {
