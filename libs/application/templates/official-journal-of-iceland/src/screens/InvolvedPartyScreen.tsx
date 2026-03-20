@@ -45,7 +45,11 @@ export const InvolvedPartyScreen = ({
 
         const currentAnswers = structuredClone(application.answers)
 
-        set(currentAnswers, InputFields.advert.involvedPartyId, involvedParty.id)
+        set(
+          currentAnswers,
+          InputFields.advert.involvedPartyId,
+          involvedParty.id,
+        )
         set(
           currentAnswers,
           InputFields.advert.involvedPartyTitle,

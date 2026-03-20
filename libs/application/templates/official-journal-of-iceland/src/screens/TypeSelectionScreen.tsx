@@ -75,7 +75,11 @@ export const TypeSelectionScreen = ({
     const departmentB = departments?.find((d) => d.slug === DEPARTMENT_B)
     if (!departmentB) return answers
 
-    const dept = { id: departmentB.id, title: departmentB.title, slug: departmentB.slug }
+    const dept = {
+      id: departmentB.id,
+      title: departmentB.title,
+      slug: departmentB.slug,
+    }
     set(answers, InputFields.advert.department, dept)
     setValue(InputFields.advert.department, dept)
 
@@ -83,8 +87,7 @@ export const TypeSelectionScreen = ({
       variables: { params: { department: departmentB.id, pageSize: 100 } },
     })
 
-    const mainTypes =
-      data?.officialJournalOfIcelandMainTypes.mainTypes ?? []
+    const mainTypes = data?.officialJournalOfIcelandMainTypes.mainTypes ?? []
     const regulationMainType = mainTypes.find((mt) =>
       mt.slug?.toLowerCase().includes('reglug'),
     )
@@ -109,7 +112,10 @@ export const TypeSelectionScreen = ({
     setSelected(value)
     setValue('applicationType', value)
 
-    let currentAnswers = structuredClone(application.answers) as Record<string, unknown>
+    let currentAnswers = structuredClone(application.answers) as Record<
+      string,
+      unknown
+    >
     set(currentAnswers, 'applicationType', value)
 
     const isRegulation =
