@@ -48,7 +48,7 @@ import { HousingBenefitsModule } from '@island.is/api/domains/housing-benefits'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
 import {
   IcelandicGovernmentInstitutionVacanciesModule,
-  vacancyCacheKeyProvider,
+  VacancyCacheKeyProvider,
 } from '@island.is/api/domains/icelandic-government-institution-vacancies'
 import { GraphqlCacheKeyModule } from '@island.is/nest/graphql'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
@@ -272,7 +272,7 @@ const environment = getConfig
     GraphQLModule.forRootAsync({
       driver: ApolloDriver,
       useClass: GraphqlOptionsFactory,
-      imports: [GraphqlCacheKeyModule.register([vacancyCacheKeyProvider])],
+      imports: [GraphqlCacheKeyModule.register([VacancyCacheKeyProvider])],
     }),
     AuthDomainModule,
     AuditModule.forRoot(environment.audit),

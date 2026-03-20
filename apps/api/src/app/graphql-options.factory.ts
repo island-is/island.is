@@ -49,11 +49,11 @@ export class GraphqlOptionsFactory implements GqlOptionsFactory {
       plugins: [
         // Cache responses in Redis.
         responseCachePlugin({
-          extraCacheKeyData: (requestContext) => {
+          extraCacheKeyData: async (requestContext) => {
             const opName = requestContext.request.operationName ?? ''
             for (const provider of this.cacheKeyProviders) {
               if (provider.operationNames.includes(opName)) {
-                return provider.getCacheKeyData(requestContext)
+                return await provider.getCacheKeyData(requestContext)
               }
             }
             return ''

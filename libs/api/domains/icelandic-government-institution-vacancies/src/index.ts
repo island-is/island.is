@@ -1,2 +1,2 @@
 export * from './lib/icelandic-government-institution-vacancies.module'
-export { vacancyCacheKeyProvider } from './lib/vacancyCacheKeyProvider'
+export { VacancyCacheKeyProvider } from './lib/vacancyCacheKeyProvider'
