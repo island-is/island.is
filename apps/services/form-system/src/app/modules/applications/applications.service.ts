@@ -1441,6 +1441,9 @@ export class ApplicationsService {
     `
     }
 
+    const fromDate = new Date(new Date(startDate).setHours(0, 0, 0, 0))
+    const toDate = new Date(new Date(endDate).setHours(23, 59, 59, 999))
+
     const query = `
     SELECT
       a.form_id AS "formId",
@@ -1460,8 +1463,8 @@ export class ApplicationsService {
 
     const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {
       replacements: {
-        startDate,
-        endDate,
+        startDate: fromDate,
+        endDate: toDate,
         ...(institutionNationalId ? { institutionNationalId } : {}),
       },
       type: QueryTypes.SELECT,

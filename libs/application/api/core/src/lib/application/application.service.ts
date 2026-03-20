@@ -77,6 +77,9 @@ export class ApplicationService {
       return []
     }
 
+    const fromDate = new Date(new Date(startDate).setHours(0, 0, 0, 0))
+    const toDate = new Date(new Date(endDate).setHours(23, 59, 59, 999))
+
     const query = `SELECT
         type_id as typeid,
         COUNT(*) as count,
@@ -93,8 +96,8 @@ export class ApplicationService {
       GROUP BY typeid;`
 
     const replacements: Record<string, unknown> = {
-      startDate,
-      endDate,
+      startDate: fromDate,
+      endDate: toDate,
     }
 
     if (applicationTypeIds?.length) {

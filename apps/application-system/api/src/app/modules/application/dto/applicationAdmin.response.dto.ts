@@ -59,11 +59,6 @@ export class ApplicationListAdminResponseDto extends BaseApplicationResponseDto 
   @ApiPropertyOptional()
   @Expose()
   @IsString()
-  institutionNationalId?: string
-
-  @ApiPropertyOptional()
-  @Expose()
-  @IsString()
   institutionContentfulSlug?: string
 
   constructor(partial: Partial<ApplicationListAdminResponseDto>) {
