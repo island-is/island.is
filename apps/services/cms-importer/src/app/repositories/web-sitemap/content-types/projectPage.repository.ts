@@ -31,6 +31,7 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
       {
         slug: { [LOCALE]: string; [EN_LOCALE]: string }
         title: { [LOCALE]: string; [EN_LOCALE]: string }
+        publishedAt: string | undefined
       }
     >()
 
@@ -47,6 +48,7 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
         projectSubpageMap.set(projectSubpage.sys.id, {
           slug: projectSubpage.fields.slug,
           title: projectSubpage.fields.title,
+          publishedAt: projectSubpage.sys.publishedAt,
         })
     }
 
@@ -94,7 +96,7 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
                   )}/${enSlug}/${subpageEnSlug}`
                 : '',
           },
-          lastmod: subpage.sys.publishedAt ?? null,
+          lastmod: projectSubpage.publishedAt ?? null,
         })
       }
     }
