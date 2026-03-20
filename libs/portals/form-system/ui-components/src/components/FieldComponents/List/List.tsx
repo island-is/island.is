@@ -11,6 +11,7 @@ interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   hasError?: boolean
+  valueIndex?: number
 }
 
 type ListItem = {
@@ -25,7 +26,7 @@ const listTypePlaceholder = {
   idngreinarMeistara: 'Veldu iðngrein',
 }
 
-export const List = ({ item, dispatch }: Props) => {
+export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const { lang, formatMessage } = useLocale()
   const { control, trigger } = useFormContext()
 
@@ -38,7 +39,7 @@ export const List = ({ item, dispatch }: Props) => {
       })) ?? []
 
   const value = () => {
-    const listVal = item?.values?.[0]?.json?.listValue
+    const listVal = getValue(item, 'listValue', valueIndex)
     const hasValue = listVal !== undefined && listVal !== null
     if (hasValue) {
       return {
@@ -53,10 +54,14 @@ export const List = ({ item, dispatch }: Props) => {
 
   useEffect(() => {
     if (selected && dispatch) {
-      if (!getValue(item, 'listValue')) {
+      if (!getValue(item, 'listValue', valueIndex)) {
         dispatch({
           type: 'SET_LIST_VALUE',
-          payload: { id: item.id, value: selected.label?.[lang] ?? '' },
+          payload: {
+            id: item.id,
+            value: selected.label?.[lang] ?? '',
+            valueIndex,
+          },
         })
       }
     }
@@ -68,7 +73,7 @@ export const List = ({ item, dispatch }: Props) => {
       key={item.id}
       name={item.id}
       control={control}
-      defaultValue={getValue(item, 'listValue') ?? ''}
+      defaultValue={getValue(item, 'listValue', valueIndex) ?? ''}
       rules={{
         required: {
           value: item.isRequired ?? false,
@@ -101,7 +106,7 @@ export const List = ({ item, dispatch }: Props) => {
             if (!dispatch) return
             dispatch({
               type: 'SET_LIST_VALUE',
-              payload: { id: item.id, value: e?.value },
+              payload: { id: item.id, value: e?.value, valueIndex },
             })
           }}
           value={value()}

@@ -25,7 +25,9 @@ import {
 import {
   CaseFile,
   CaseOrigin,
+  PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { usePoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/utils/hooks'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 
 import { PoliceCaseFilesData } from '../../components'
@@ -34,7 +36,6 @@ import {
   PoliceDigitalCaseFilesList,
 } from '../../components/PoliceCaseFiles/PoliceDigitalCaseFiles'
 import { useIndictmentPoliceCaseFilesQuery } from './indictmentPoliceCaseFiles.generated'
-import { usePoliceDigitalCaseFilesQuery } from './policeDigitalCaseFiles.generated'
 import UploadFilesToPoliceCase from './UploadFilesToPoliceCase'
 import { strings } from './PoliceCaseFilesRoute.strings'
 
@@ -80,15 +81,11 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
     })
 
     const {
-      data: digitalCaseFiles,
-      loading: digitalCaseFilesLoading,
-      error: digitalCaseFilesError,
-    } = usePoliceDigitalCaseFilesQuery({
-      variables: { input: { caseId } },
-      skip: caseOrigin !== CaseOrigin.LOKE,
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    })
+      digitalCaseFiles,
+      digitalCaseFilesLoading,
+      digitalCaseFilesError,
+      deletePoliceDigitalCaseFile,
+    } = usePoliceDigitalCaseFile(caseId, caseOrigin)
 
     const [policeCaseFilesData, setPoliceCaseFiles] =
       useState<PoliceCaseFilesData>()
@@ -125,7 +122,16 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
           hasError: false,
         })
       }
+    }, [
+      policeData,
+      policeDataError,
+      policeDataLoading,
+      setPoliceCaseFiles,
+      caseOrigin,
+      caseFiles,
+    ])
 
+    useEffect(() => {
       // get digital case files
       if (caseOrigin !== CaseOrigin.LOKE) {
         setPoliceDigitalCaseFileData({
@@ -146,34 +152,34 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
           hasError: false,
         })
       } else {
+        const files = digitalCaseFiles ?? []
         setPoliceDigitalCaseFileData({
-          files: digitalCaseFiles?.policeDigitalCaseFiles ?? [],
+          files,
           isLoading: false,
           hasError: false,
         })
       }
     }, [
-      policeData,
-      policeDataError,
-      policeDataLoading,
-      setPoliceCaseFiles,
       caseOrigin,
       caseFiles,
       digitalCaseFilesError,
       digitalCaseFilesLoading,
-      digitalCaseFiles?.policeDigitalCaseFiles,
+      digitalCaseFiles,
+      policeCaseNumbers,
     ])
 
     return (
       <Box className={grid({ gap: 4 })}>
         {policeCaseNumbers?.map((policeCaseNumber, index) => {
           const currentDigitalCaseFiles =
-            policeDigitalCaseFileData?.files?.filter(
+            digitalCaseFiles?.filter(
               (file) => file.policeCaseNumber === policeCaseNumber,
             ) ?? []
+
           const showDigitalCaseFiles =
             currentDigitalCaseFiles.length > 0 ||
             policeDigitalCaseFileData?.hasError
+
           return (
             <Box key={index}>
               <SectionHeading
@@ -210,11 +216,10 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
               />
               {showDigitalCaseFiles && (
                 <PoliceDigitalCaseFilesList
-                  digitalCaseFiles={
-                    digitalCaseFiles?.policeDigitalCaseFiles?.filter(
-                      (file) => file.policeCaseNumber === policeCaseNumber,
-                    ) ?? []
-                  }
+                  digitalCaseFiles={currentDigitalCaseFiles}
+                  onRemove={(file: PoliceDigitalCaseFile) => {
+                    deletePoliceDigitalCaseFile(file.id)
+                  }}
                   isLoading={!!policeDigitalCaseFileData?.isLoading}
                   errorMessage={
                     policeDigitalCaseFileData?.hasError

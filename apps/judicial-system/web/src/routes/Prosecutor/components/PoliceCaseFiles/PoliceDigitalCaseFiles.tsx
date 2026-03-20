@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react'
 
-import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
+import { Box, Icon, LoadingDots, Text } from '@island.is/island-ui/core'
 import { IconAndText } from '@island.is/judicial-system-web/src/components'
 import { AnimateChildren } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import { PoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -28,10 +28,12 @@ export const PoliceDigitalCaseFilesList = ({
   digitalCaseFiles,
   isLoading,
   errorMessage,
+  onRemove,
 }: {
   digitalCaseFiles: PoliceDigitalCaseFile[]
   isLoading: boolean
   errorMessage?: string
+  onRemove: (file: PoliceDigitalCaseFile) => void
 }) => {
   return (
     <Box
@@ -84,6 +86,15 @@ export const PoliceDigitalCaseFilesList = ({
                   justifyContent="spaceBetween"
                 >
                   <Text key={`${item.id}`}>{item.name}</Text>
+                  {item.isDeletable && (
+                    <button
+                      type="button"
+                      onClick={() => onRemove(item)}
+                      aria-label="Fjarlægja skrá"
+                    >
+                      <Icon color="blue400" icon="close" />
+                    </button>
+                  )}
                 </Box>
               </motion.li>
             ))}
