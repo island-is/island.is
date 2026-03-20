@@ -63,6 +63,8 @@ import { Form } from './models/form.model'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { Dependency } from '../../dataTypes/dependency.model'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { Value } from '../applications/models/value.model'
+import { FileService } from '../file/file.service'
 
 @Injectable()
 export class FormsService {
@@ -86,6 +88,7 @@ export class FormsService {
     private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly fileService: FileService,
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
@@ -546,10 +549,31 @@ export class FormsService {
   }
 
   private async deleteApplications(id: string): Promise<FormResponseDto> {
+    const applications = await this.applicationModel.findAll({
+      where: { formId: id, isTest: true },
+      include: [
+        {
+          model: Value,
+          as: 'values',
+          where: { fieldType: FieldTypesEnum.FILE },
+          required: false,
+        },
+      ],
+    })
+
     try {
-      await this.applicationModel.destroy({
-        where: { formId: id, isTest: true },
-      })
+      for (const application of applications) {
+        for (const value of application.values ?? []) {
+          const parsed =
+            typeof value.json === 'string' ? JSON.parse(value.json) : value.json
+          const s3Keys: string[] = parsed?.s3Key ?? []
+          console.log('deleting s3Keys:', s3Keys)
+          for (const key of s3Keys) {
+            await this.fileService.deleteFile(key, value.id)
+          }
+        }
+        await application.destroy()
+      }
     } catch (error) {
       throw new InternalServerErrorException(
         `Unexpected error deleting applications for form '${id}'.`,

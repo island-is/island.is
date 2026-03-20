@@ -28,11 +28,16 @@ const initializeFiles = (item: FormSystemField): UploadFile[] => {
   if (!s3Keys) {
     return []
   }
-  return s3Keys.map((key) => ({
-    name: key.split('_').pop() as string,
-    status: FileUploadStatus.done,
-    key,
-  }))
+  return s3Keys.map((key) => {
+    const lastPart = key.split('/').pop() ?? key // "uuid_filename.jpg"
+    const filename = lastPart.split('_').slice(1).join('_') // handles underscores in filename
+    return {
+      id: key,
+      name: filename || lastPart,
+      status: FileUploadStatus.done,
+      key,
+    }
+  })
 }
 
 export const FileUpload = ({ item, hasError, dispatch }: Props) => {
@@ -46,6 +51,7 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
   const [deleteFile] = useMutation(DELETE_FILE)
 
   const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
+  console.log('Allowed file types:', types)
 
   const updateFile = useCallback((id: string, updated: Partial<UploadFile>) => {
     setFiles((prev) =>
@@ -56,8 +62,6 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
   const handleUpload = useCallback(
     async (file: UploadFile, id: string) => {
       try {
-        // const sanitizedFilename = file.name.replace(/_/g, '-')
-
         const { data } = await createUploadUrl({
           variables: { filename: file.name },
         })
@@ -86,18 +90,30 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
           },
         })
 
-        const currentKeys = getValue(item, 's3Key') ?? []
-        const newKeys = [...currentKeys, `${item.id}/${presigned.fields.key}`]
-        dispatch &&
-          dispatch({
+        const newKey = `${item.id}/${presigned.fields.key}`
+
+        setFiles((prev) => {
+          const next = prev.map((f) =>
+            f.id === id
+              ? {
+                  ...f,
+                  status: FileUploadStatus.done,
+                  percent: 100,
+                  key: newKey,
+                }
+              : f,
+          )
+
+          const nextKeys = next
+            .map((f) => f.key)
+            .filter((k): k is string => typeof k === 'string' && k.length > 0)
+
+          dispatch?.({
             type: 'SET_FILES',
-            payload: { id: item.id, value: newKeys },
+            payload: { id: item.id, value: nextKeys },
           })
 
-        updateFile(id, {
-          status: FileUploadStatus.done,
-          percent: 100,
-          key: `${item.id}/${presigned.fields.key}`,
+          return next
         })
       } catch (err) {
         updateFile(id, {
@@ -169,13 +185,16 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
           },
         },
       })
-      const newFiles = files.filter((f) => f.id !== file.id)
+      const newFiles = files.filter(
+        (f) => (f.key ?? f.id) !== (file.key ?? file.id),
+      )
       setFiles(newFiles)
-      dispatch &&
-        dispatch({
-          type: 'SET_FILES',
-          payload: { id: item.id, value: newFiles },
-        })
+
+      const newKeys = newFiles.map((f) => f.key).filter(Boolean) as string[]
+      dispatch?.({
+        type: 'SET_FILES',
+        payload: { id: item.id, value: newKeys },
+      })
     },
     [deleteFile, dispatch, files, item.id, item.values],
   )

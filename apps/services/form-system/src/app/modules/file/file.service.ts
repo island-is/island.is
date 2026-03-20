@@ -6,6 +6,7 @@ import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
 import { Value } from '../applications/models/value.model'
 import { FileConfig } from './file.config'
+import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export class FileService {
@@ -17,6 +18,7 @@ export class FileService {
     private readonly fileStorageService: FileStorageService,
     @InjectModel(Value)
     private readonly valueModel: typeof Value,
+    private readonly sequelize: Sequelize,
   ) {}
 
   async fileExists(key: string): Promise<boolean> {
@@ -48,22 +50,34 @@ export class FileService {
             key,
           )
           this.logger.info(`result: ${res}`)
-          const value = await this.valueModel.findByPk(valueId)
 
-          if (!value) {
-            this.logger.warn(`Value with PK: ${valueId} not found`)
-            return
-          }
+          await this.sequelize.transaction(async (transaction) => {
+            const value = await this.valueModel.findByPk(valueId, {
+              transaction,
+              lock: transaction.LOCK.UPDATE, // row-level lock
+            })
 
-          const currentKeys = value.json?.s3Key || []
-          const updatedKeys = [...currentKeys, key]
+            if (!value) {
+              this.logger.warn(`Value with PK: ${valueId} not found`)
+              return
+            }
 
-          value.json = {
-            ...value.json,
-            s3Key: updatedKeys,
-          }
+            const currentKeys = Array.isArray(value.json?.s3Key)
+              ? value.json!.s3Key
+              : []
 
-          await value.save()
+            // avoid duplicates on retries
+            const updatedKeys = currentKeys.includes(key)
+              ? currentKeys
+              : [...currentKeys, key]
+
+            value.json = {
+              ...(value.json ?? {}),
+              s3Key: updatedKeys,
+            }
+
+            await value.save({ transaction })
+          })
 
           this.logger.info(`✅ Updated field ${fieldId} with new S3 key ${key}`)
           return
@@ -89,6 +103,8 @@ export class FileService {
     if (!key || !valueId) {
       throw new Error('Key and valueId must be provided for deletion')
     }
+
+    console.log('Deleting file with key:', key, 'and valueId:', valueId)
 
     const bucket = this.config.bucket
     if (!bucket) {
