@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client'
 import { Dispatch, useCallback, useState } from 'react'
-import { useIntl } from 'react-intl'
 import { v4 as uuid } from 'uuid'
+import { useLocale } from '@island.is/localization'
 
 import { FormSystemField } from '@island.is/api/schema'
 import {
@@ -41,7 +41,7 @@ const initializeFiles = (item: FormSystemField): UploadFile[] => {
 }
 
 export const FileUpload = ({ item, hasError, dispatch }: Props) => {
-  const { formatMessage } = useIntl()
+  const { formatMessage, lang } = useLocale()
   const [files, setFiles] = useState<UploadFile[]>(initializeFiles(item))
   const [error, setError] = useState<string | undefined>(
     hasError ? 'error' : undefined,
@@ -50,8 +50,11 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
   const [uploadFile] = useMutation(STORE_FILE)
   const [deleteFile] = useMutation(DELETE_FILE)
 
-  const types = item?.fieldSettings?.fileTypes?.split(',') ?? []
-  console.log('Allowed file types:', types)
+  const types =
+    item?.fieldSettings?.fileTypes
+      ?.split(',')
+      .map((t) => t.trim())
+      .filter((t) => t.length > 0 && t !== '*') ?? []
 
   const updateFile = useCallback((id: string, updated: Partial<UploadFile>) => {
     setFiles((prev) =>
@@ -127,6 +130,8 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
 
   const onChange = useCallback(
     (selectedFiles: File[]) => {
+      const maxSize = item?.fieldSettings?.fileMaxSize
+
       if (
         files.length + selectedFiles.length >
         (item?.fieldSettings?.maxFiles ?? 1)
@@ -137,6 +142,15 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
           }`,
         )
         return
+      }
+
+      if (typeof maxSize === 'number' && maxSize > 0) {
+        const tooLarge = selectedFiles.find((f) => f.size > maxSize)
+        if (tooLarge) {
+          const maxSizeInMb = Math.round((maxSize / 1_000_000) * 10) / 10
+          setError(formatMessage(m.maxSizeInMb, { maxSizeInMb }))
+          return
+        }
       }
 
       setError(undefined)
@@ -189,6 +203,7 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
         (f) => (f.key ?? f.id) !== (file.key ?? file.id),
       )
       setFiles(newFiles)
+      setError(undefined)
 
       const newKeys = newFiles.map((f) => f.key).filter(Boolean) as string[]
       dispatch?.({
@@ -204,11 +219,16 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
       name={`fileUpload-${item.id}`}
       files={files}
       accept={types}
-      title={formatMessage(m.uploadBoxTitle)}
+      title={item?.name?.[lang] ?? formatMessage(m.uploadBoxTitle)}
       description={formatMessage(m.uploadBoxDescription, {
         fileEndings: types.join(', '),
       })}
       buttonLabel={formatMessage(m.uploadBoxButtonLabel)}
+      disabled={
+        types.length === 0 ||
+        !item.fieldSettings?.fileMaxSize ||
+        !item.fieldSettings?.maxFiles
+      }
       onChange={onChange}
       onRemove={onRemove}
       onRetry={onRetry}
