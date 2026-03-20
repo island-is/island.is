@@ -293,10 +293,11 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
         >
           <Box
             component="button"
+            type="button"
             className={styles.menuBtn}
             onClick={() => setMobileMenuOpen(true)}
-            aria-label={title}
             aria-expanded={mobileMenuOpen}
+            aria-haspopup="dialog"
           >
             <MobileButton
               title={activeItemTitle ?? title}

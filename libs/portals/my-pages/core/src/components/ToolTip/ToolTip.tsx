@@ -40,6 +40,7 @@ const ArrowIcon: FC<React.PropsWithChildren<ArrowIconProps>> = ({
       fill="none"
       viewBox="0 0 16 16"
       style={{ transform }}
+      aria-hidden="true"
     >
       <path
         fill={variant === 'white' ? 'white' : '#F2F7FF'}
@@ -58,6 +59,7 @@ const ArrowIcon: FC<React.PropsWithChildren<ArrowIconProps>> = ({
 interface TooltipProps {
   placement?: Placement
   text: React.ReactNode
+  ariaLabel?: string
   iconSize?: Size
   color?: Colors
   children?: ReactElement
@@ -70,6 +72,7 @@ interface TooltipProps {
 export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   placement = 'bottom',
   text,
+  ariaLabel,
   iconSize = 'small',
   color = 'dark200',
   children,
@@ -87,17 +90,12 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   return (
     <TooltipProvider placement={placement} animated={250}>
       {children ? (
-        <TooltipAnchor
-          aria-label={typeof text === 'string' ? text : undefined}
-          render={(props) =>
-            React.cloneElement(children, {
-              ...props,
-              children: children.props.children,
-            })
-          }
-        />
+        <TooltipAnchor render={children} />
       ) : (
-        <TooltipAnchor render={<AnchorTag className={cn(styles.icon)} />}>
+        <TooltipAnchor
+          aria-label={typeof text === 'string' ? text : ariaLabel}
+          render={<AnchorTag className={cn(styles.icon)} />}
+        >
           <Icon icon="informationCircle" color={color} size={iconSize} />
         </TooltipAnchor>
       )}
