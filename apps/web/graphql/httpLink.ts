@@ -25,13 +25,18 @@ if (process.env.RUNTIME_ENV === 'server') {
   )
 }
 
-const createBypassCacheLink = (options: ClientOptions) =>
+const createServerHeadersLink = (options: ClientOptions) =>
   new ApolloLink((operation, forward) => {
-    if (options.bypassCache) {
+    if (options.bypassCache || options.clientIp) {
       operation.setContext(({ headers = {} }) => ({
         headers: {
           ...headers,
-          'x-bypass-cache': options.bypassCache,
+          ...(options.bypassCache && {
+            'x-bypass-cache': options.bypassCache,
+          }),
+          ...(options.clientIp && {
+            'x-forwarded-for': options.clientIp,
+          }),
         },
       }))
     }
@@ -46,13 +51,13 @@ export function createHttpLink(options: ClientOptions) {
       sha256: (query) => sha256(query).toString(),
       useGETForHashedQueries: true,
     })
-      .concat(createBypassCacheLink(options))
+      .concat(createServerHeadersLink(options))
       .concat(new HttpLink({ uri: `${graphqlUrl}${graphqlEndpoint}`, fetch }))
   } else {
     // Use batched POST requests on the server side to reduce the number of
     // outgoing requests and CPU needed for run-time hashing.
     const { graphqlUrl, graphqlEndpoint } = serverRuntimeConfig
-    return createBypassCacheLink(options).concat(
+    return createServerHeadersLink(options).concat(
       new BatchHttpLink({
         uri: `${graphqlUrl}${graphqlEndpoint}`,
         fetch,

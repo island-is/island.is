@@ -122,6 +122,17 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
 
     const ip = forwardedIp ?? (req as any).ip ?? ''
 
+    this.logger.info('Vacancy feature flag user context', {
+      parsedIpAddress: String(ip),
+      rawForwardedForHeader: forwardedForHeader ?? 'not present',
+      reqIp: (req as any).ip ?? 'not present',
+      ipSource: forwardedIp
+        ? 'x-forwarded-for'
+        : (req as any).ip
+          ? 'req.ip'
+          : 'fallback (empty string)',
+    })
+
     return {
       id: '',
       attributes: { ipAddress: String(ip) },
@@ -138,6 +149,13 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       false,
       user,
     )
+
+    this.logger.info('Vacancy list feature flag evaluation', {
+      featureFlag: Features.useNewVacancyApi,
+      result: useNewApi,
+      userIpAddress: user?.attributes?.ipAddress ?? 'no user context',
+      apiClient: useNewApi ? 'elfur (new)' : 'xroad (old)',
+    })
 
     let errorOccurred = false
     let mappedVacancies
@@ -353,6 +371,14 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       user,
     )
 
+    this.logger.info('Vacancy detail feature flag evaluation', {
+      featureFlag: Features.useNewVacancyApi,
+      result: useNewApi,
+      vacancyId: id,
+      userIpAddress: user?.attributes?.ipAddress ?? 'no user context',
+      apiClient: useNewApi ? 'elfur (new)' : 'xroad (old)',
+    })
+
     let vacancy
 
     if (useNewApi) {
@@ -490,6 +516,15 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
       false,
       featureFlagUser,
     )
+
+    this.logger.info('Vacancy by-id (unprefixed) feature flag evaluation', {
+      featureFlag: Features.useNewVacancyApi,
+      result: useNewApi,
+      vacancyId: input.id,
+      userIpAddress:
+        featureFlagUser?.attributes?.ipAddress ?? 'no user context',
+      apiClient: useNewApi ? 'elfur (new)' : 'xroad (old)',
+    })
 
     if (useNewApi) {
       // New API: first try CMS, then external service
