@@ -16,6 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Action, getValue, uploadToS3 } from '../../../lib'
 import { m } from '../../../lib/messages'
+import { Controller, useFormContext } from 'react-hook-form'
 
 interface Props {
   item: FormSystemField
@@ -42,6 +43,7 @@ const initializeFiles = (item: FormSystemField): UploadFile[] => {
 
 export const FileUpload = ({ item, hasError, dispatch }: Props) => {
   const { formatMessage, lang } = useLocale()
+  const { control, setValue, trigger } = useFormContext()
   const [files, setFiles] = useState<UploadFile[]>(initializeFiles(item))
   const [error, setError] = useState<string | undefined>(
     hasError ? 'error' : undefined,
@@ -115,6 +117,12 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
             type: 'SET_FILES',
             payload: { id: item.id, value: nextKeys },
           })
+
+          setValue(item.id, nextKeys, {
+            shouldDirty: true,
+            shouldValidate: true,
+          })
+          trigger(item.id)
 
           return next
         })
@@ -210,29 +218,49 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
         type: 'SET_FILES',
         payload: { id: item.id, value: newKeys },
       })
+      setValue(item.id, newKeys, { shouldDirty: true, shouldValidate: true })
+      trigger(item.id)
     },
     [deleteFile, dispatch, files, item.id, item.values],
   )
 
+  const title = item.isRequired
+    ? `${item?.name?.[lang] ?? formatMessage(m.uploadBoxTitle)} *`
+    : item?.name?.[lang] ?? formatMessage(m.uploadBoxTitle)
+
   return (
-    <InputFileUpload
-      name={`fileUpload-${item.id}`}
-      files={files}
-      accept={types}
-      title={item?.name?.[lang] ?? formatMessage(m.uploadBoxTitle)}
-      description={formatMessage(m.uploadBoxDescription, {
-        fileEndings: types.join(', '),
-      })}
-      buttonLabel={formatMessage(m.uploadBoxButtonLabel)}
-      disabled={
-        types.length === 0 ||
-        !item.fieldSettings?.fileMaxSize ||
-        !item.fieldSettings?.maxFiles
-      }
-      onChange={onChange}
-      onRemove={onRemove}
-      onRetry={onRetry}
-      errorMessage={error}
+    <Controller
+      key={item.id}
+      name={item.id}
+      control={control}
+      defaultValue={getValue(item, 's3Key') ?? []}
+      rules={{
+        validate: (v) =>
+          !(item.isRequired ?? false) ||
+          (Array.isArray(v) && v.length > 0) ||
+          formatMessage(m.required),
+      }}
+      render={({ field, fieldState }) => (
+        <InputFileUpload
+          name={`fileUpload-${item.id}`}
+          files={files}
+          accept={types}
+          title={title}
+          description={formatMessage(m.uploadBoxDescription, {
+            fileEndings: types.join(', '),
+          })}
+          buttonLabel={formatMessage(m.uploadBoxButtonLabel)}
+          disabled={
+            types.length === 0 ||
+            !item.fieldSettings?.fileMaxSize ||
+            !item.fieldSettings?.maxFiles
+          }
+          onChange={onChange}
+          onRemove={onRemove}
+          onRetry={onRetry}
+          errorMessage={fieldState.error?.message ?? error}
+        />
+      )}
     />
   )
 }
