@@ -109,7 +109,7 @@ export class ApplicationsService {
           status: ApplicationStatus.DRAFT,
           nationalId,
           draftTotalSteps: form.draftTotalSteps,
-          pruneAt: calculatePruneAt(form.daysUntilApplicationPrune),
+          pruneAt: calculatePruneAt(form.draftDaysToLive),
         } as Application,
         { transaction },
       )
@@ -301,7 +301,7 @@ export class ApplicationsService {
       try {
         application.status = applicationDto.status
         application.submittedAt = applicationDto.submittedAt
-        application.pruneAt = calculatePruneAt(form.daysUntilApplicationPrune)
+        application.pruneAt = calculatePruneAt(form.submissionDaysToLive)
         await application.save()
       } catch (error) {
         await applicationEvent.destroy()
@@ -935,6 +935,7 @@ export class ApplicationsService {
         )
 
         const filteredScreenDto = { ...currentScreen, fields: filteredFields }
+
         await Promise.all(
           (filteredScreenDto.fields ?? []).map(async (field) => {
             if (field.isPartOfMultiset) {

@@ -179,16 +179,17 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
               activeLocale === 'is' ? 'Næstu námskeið' : 'Upcoming courses',
             )}
           </Text>
-          {course.instances.length === 0 && (
-            <Text>
-              {n(
-                'courseInstancesNoUpcomingLabel',
-                activeLocale === 'is'
-                  ? 'Engin námskeið í skráningu eins og er.'
-                  : 'No courses currently available for registration.',
-              )}
-            </Text>
-          )}
+          {course.instances.length === 0 &&
+            course.showPlaceholderTextIfNoCourseInstances && (
+              <Text>
+                {n(
+                  'courseInstancesNoUpcomingLabel',
+                  activeLocale === 'is'
+                    ? 'Engin námskeið í skráningu eins og er.'
+                    : 'No courses currently available for registration.',
+                )}
+              </Text>
+            )}
           {course.instances.length > 0 && (
             <Stack space={3}>
               {instanceCards.map((instance) => (
@@ -197,22 +198,7 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                   heading={instance.title}
                   text={instance.description}
                   href={instance.isFullyBooked ? '' : instance.registrationHref}
-                  tags={
-                    instance.isFullyBooked
-                      ? [
-                          {
-                            label: n(
-                              'courseInstanceFullyBookedLabel',
-                              activeLocale === 'is'
-                                ? 'Fullbókað'
-                                : 'Fully booked',
-                            ),
-                            disabled: true,
-                          },
-                        ]
-                      : []
-                  }
-                  colorScheme={instance.isFullyBooked ? 'red' : 'blue'}
+                  colorScheme="blue"
                   stackWidth={theme.breakpoints.sm}
                   autoStack={true}
                   sidePanelConfig={{
@@ -272,17 +258,23 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
                           ]
                         : []),
                     ],
-                    cta: instance.isFullyBooked
-                      ? undefined
-                      : {
-                          href: instance.registrationHref,
-                          label: n(
+                    cta: {
+                      href: instance.registrationHref,
+                      disabled: instance.isFullyBooked,
+                      label: instance.isFullyBooked
+                        ? n(
+                            'courseInstanceFullyBookedButtonLabel',
+                            activeLocale === 'is'
+                              ? 'Fullbókað'
+                              : 'Fully booked',
+                          )
+                        : n(
                             'courseInstanceRegistrationButtonLabel',
                             activeLocale === 'is' ? 'Skráning' : 'Registration',
                           ),
-                          variant: 'primary',
-                          size: 'medium',
-                        },
+                      variant: 'primary',
+                      size: 'medium',
+                    },
                   }}
                 />
               ))}
