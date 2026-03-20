@@ -797,6 +797,10 @@ export const messages = defineMessages({
     defaultMessage: 'Síðast afgreitt',
     id: 'sp.health:last-dispensed',
   },
+  lastChanged: {
+    defaultMessage: 'Síðast breytt',
+    id: 'sp.health:last-changed',
+  },
   lightTherapy: {
     defaultMessage: 'Ljósböð',
     id: 'sp.health:lights-therapy',
@@ -1502,6 +1506,10 @@ export const messages = defineMessages({
     defaultMessage: 'Sjá nánar',
     id: 'sp.health:see-more',
   },
+  furtherDetails: {
+    defaultMessage: 'Skoða nánar',
+    id: 'sp.health:further-details',
+  },
   speechDescriptionLink: {
     defaultMessage: 'https://island.is/greidsluthatttaka-vegna-talthjalfunar',
     id: 'sp.health:speech-description-link',
@@ -1931,6 +1939,14 @@ export const messages = defineMessages({
     defaultMessage: 'Spurningalisti',
     id: 'sp.health:questionnaire',
   },
+  questionnaireExpiration: {
+    defaultMessage: 'Gildir til',
+    id: 'sp.health:questionnaire-expiration',
+  },
+  questionnaireSender: {
+    defaultMessage: 'Sent af',
+    id: 'sp.health:questionnaire-sender',
+  },
   expiredQuestionnaire: {
     defaultMessage: 'Útrunnið',
     id: 'sp.health:expired-questionnaire',
@@ -2051,6 +2067,14 @@ export const messages = defineMessages({
       'Hér getur þú veitt heimild fyrir því að lykilheilsufarsupplýsingar þínar verða aðgengilegar heilbrigðisstarfsfólki í öðrum löndum innan Evrópska efnahagssvæðisins, í gegnum landstengigátt hjá Embætti landlæknis. ',
     id: 'sp.health:patient-data-permit-description',
   },
+  patientDataPermitsLink: {
+    defaultMessage: 'https://island.is/heilbrigdisthjonusta-yfir-landamaeri',
+    id: 'sp.health:patient-data-permits-link',
+  },
+  patientDataPermitsLinkText: {
+    defaultMessage: 'Lesa um heimildina hér',
+    id: 'sp.health:patient-data-permits-link-text',
+  },
   readAboutPermit: {
     defaultMessage: 'Lesa um heimildina hér',
     id: 'sp.health:read-about-permit',
@@ -2062,6 +2086,21 @@ export const messages = defineMessages({
   chooseDataToShare: {
     defaultMessage: 'Veldu gögn sem þú vilt veita heimild til birtingar',
     id: 'sp.health:choose-data-to-share',
+  },
+  permitApprovalTitle: {
+    id: 'sp.health:permit-approval-title',
+    defaultMessage:
+      'Upplýst samþykki fyrir miðlun sjúkraskrárupplýsinga milli Evrópulanda',
+  },
+  permitApprovalTopText: {
+    id: 'sp.health:permit-approval-top-text',
+    defaultMessage:
+      'Heimildin leyfir birtingu upplýsinga úr sjúkraskrá þinni til heilbrigðisstofnunar í öðru Evrópulandi, í þeim tilgangi að tryggja örugga og samfellda heilbrigðisþjónustu. Lykilheilsufarsupplýsingar fela í sér eftirfarandi upplýsingar:',
+  },
+  permitApprovalBottomText: {
+    id: 'sp.health:permit-approval-bottom-text',
+    defaultMessage:
+      'Upplýsingarnar eru viðkvæmar og verða meðhöndlaðar í samræmi við lög um persónuvernd og trúnað. Lög nr. 55/2009 og EU reglugerð nr. 2025/327. Hægt er að afturkalla samþykki hvenær sem er, nema í bráðatilvikum þar sem þú ert ófær um að veita samþykki.',
   },
   permitApprovalDescription: {
     id: 'sp.health:permit-approval-description',
@@ -2075,6 +2114,10 @@ export const messages = defineMessages({
   forward: {
     defaultMessage: 'Áfram',
     id: 'sp.health:forward',
+  },
+  saveChanges: {
+    defaultMessage: 'Vista breytingar',
+    id: 'sp.health:save-changes',
   },
   goBack: {
     defaultMessage: 'Til baka',
@@ -2110,6 +2153,14 @@ export const messages = defineMessages({
   showExpiredPermits: {
     defaultMessage: 'Sýna óvirkar',
     id: 'sp.health:show-expired-permits',
+  },
+  showMoreHistory: {
+    defaultMessage: 'Sýna fleiri',
+    id: 'sp.health:show-more-history',
+  },
+  showLessHistory: {
+    defaultMessage: 'Sýna færri',
+    id: 'sp.health:show-less-history',
   },
   permit: {
     defaultMessage: 'Heimild',
@@ -2153,6 +2204,15 @@ export const messages = defineMessages({
     defaultMessage:
       '* Sjúkdómsgreiningar\n* Ofnæmi og lífsógnandi sjúkdóma\n* Yfirlit yfir núverandi lyf\n* Ígræði, t.d. hjartagangráður og bjargráður\n* Bólusetningar\n* Nýlegar meðferðir\n* Meðgöngu',
   },
+  keyHealthInformationToBeShared: {
+    id: 'sp.health:key-health-information-to-be-shared',
+    defaultMessage: 'Sjúkraskrárupplýsingar til birtingar',
+  },
+  keyHealthInformationToBeSharedDescription: {
+    id: 'sp.health:key-health-information-to-be-shared-description',
+    defaultMessage:
+      'Heimildin nær utan um lykilheilsufarsupplýsingar sem inniheldur eftirfarandi upplýsingar:',
+  },
   errorTryAgain: {
     id: 'sp.health:error-try-again',
     defaultMessage:
@@ -2182,6 +2242,10 @@ export const messages = defineMessages({
     defaultMessage: 'Embætti landlæknis',
     id: 'sp.health:health-directorate',
   },
+  healthDirectorateUrl: {
+    defaultMessage: 'https://www.landlaeknir.is',
+    id: 'sp.health:health-directorate-url',
+  },
   landspitali: {
     defaultMessage: 'Landspítali',
     id: 'sp.health:landspitali',
@@ -2194,12 +2258,16 @@ export const messages = defineMessages({
     defaultMessage: 'Eyða',
     id: 'sp.health:invalidate-permit',
   },
+  patientDataPermitInvalidate: {
+    defaultMessage: 'Óvirkja heimild',
+    id: 'sp.health:patient-data-permit-invalidate',
+  },
   areYouSureAboutInvalidatingPermit: {
-    defaultMessage: 'Ertu viss um að þú viljir eyða heimild?',
+    defaultMessage: 'Ertu viss um að þú viljir óvirkja heimild?',
     id: 'sp.health:are-you-sure-about-invalidating-permit',
   },
   youAreAboutToInvalidateThisPermit: {
-    defaultMessage: 'Þú ert að fara eyða eftirfarandi heimild:',
+    defaultMessage: 'Þú ert að fara gera eftirfarandi heimild óvirka:',
     id: 'sp.health:you-are-about-to-invalidate-this-permit',
   },
   youAreAboutToDeleteThisPermit: {
@@ -2227,7 +2295,7 @@ export const messages = defineMessages({
     id: 'sp.health:confirm',
   },
   permitCreated: {
-    defaultMessage: 'Nýrri heimild hefur verið bætt við',
+    defaultMessage: 'Heimild hefur verið bætt við',
     id: 'sp.health:permit-created',
   },
   permitDeleted: {
@@ -2245,13 +2313,39 @@ export const messages = defineMessages({
     id: 'sp.health:permit-created-error',
   },
   permitInvalidated: {
-    defaultMessage: 'Heimild hefur verið eytt',
+    defaultMessage: 'Heimild hefur verið óvirkjuð',
     id: 'sp.health:permit-invalidated',
   },
   permitInvalidatedError: {
     defaultMessage:
-      'Ekki tókst að eyða heimild. Vinsamlegast reyndu aftur síðar.',
+      'Ekki tókst að óvirkja heimild. Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:permit-invalidated-error',
+  },
+  permitDetailIntro: {
+    defaultMessage:
+      'Heimild þessi gildir til birtingar <link>sjúkraskrárupplýsinga</link> milli Íslands og þeirra landa sem eru valin. Þú getur valið að óvirkja heimildina hvenær sem er eða framlengja útrunna heimild.',
+    id: 'sp.health:permit-detail-intro',
+  },
+  permitDetailIntroWithLink: {
+    id: 'sp.health:permit-detail-intro-with-link#markdown',
+    defaultMessage:
+      'Heimild þessi gildir til birtingar sjúkraskrárupplýsinga milli Íslands og þeirra landa sem eru valin. Þú getur valið að óvirkja heimildina hvenær sem er eða framlengja útrunna heimild.',
+  },
+  permitChangeHistory: {
+    defaultMessage: 'Breytingasaga',
+    id: 'sp.health:permit-change-history',
+  },
+  lastModified: {
+    defaultMessage: 'Breytt',
+    id: 'sp.health:last-modified',
+  },
+  activatePermit: {
+    defaultMessage: 'Virkja heimild',
+    id: 'sp.health:activate-permit',
+  },
+  editPermit: {
+    defaultMessage: 'Breyta heimild',
+    id: 'sp.health:edit-permit',
   },
   countriesError: {
     defaultMessage:
@@ -2304,9 +2398,17 @@ export const messages = defineMessages({
     defaultMessage: 'Gildir í eftirfarandi löndum',
     id: 'sp.health:valid-for-countries',
   },
+  countries: {
+    defaultMessage: 'Lönd',
+    id: 'sp.health:countries',
+  },
   patientDataShared: {
     defaultMessage: 'Sjúkraskrárupplýsingar til birtingar',
     id: 'sp.health:patient-data-shared',
+  },
+  dataShared: {
+    defaultMessage: 'Upplýsingar til birtingar',
+    id: 'sp.health:data-shared',
   },
   patientDataSharedDescription: {
     defaultMessage:
@@ -2453,6 +2555,32 @@ export const messages = defineMessages({
   prescriptionBlockedOther: {
     defaultMessage: 'Endurnýjun ekki í boði vegna óþekktrar ástæðu',
     id: 'sp.health:prescription-blocked-other',
+  },
+  renewalStatusApproved: {
+    defaultMessage: 'Samþykkt',
+    id: 'sp.health:renewal-status-approved',
+  },
+  renewalStatusDismissed: {
+    defaultMessage: 'Vísað frá',
+    id: 'sp.health:renewal-status-dismissed',
+  },
+  renewalStatusRejected: {
+    defaultMessage: 'Hafnað',
+    id: 'sp.health:renewal-status-rejected',
+  },
+  renewalRequestSent: {
+    defaultMessage:
+      'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
+    id: 'sp.health:renewal-request-sent',
+  },
+  renewalRequestError: {
+    defaultMessage:
+      'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
+    id: 'sp.health:renewal-request-error',
+  },
+  renewalInvalidPrescription: {
+    defaultMessage: 'Vinsamlegast veljið gilt lyfseðilsnúmer.',
+    id: 'sp.health:renewal-invalid-prescription',
   },
   weekdayMondayAcc: {
     defaultMessage: 'Mánudaginn',

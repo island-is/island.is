@@ -16,7 +16,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import * as styles from './ConfirmationField.css'
-import { Bus } from '../../assets/Bus'
+import { OnThePhoneOnTheBus } from '@island.is/application/assets/graphics'
 
 type ConfirmationFieldProps = {
   field: {
@@ -206,7 +206,7 @@ export const ConfirmationField: FC<
         marginTop={2}
         marginBottom={4}
       >
-        <Bus />
+        <OnThePhoneOnTheBus />
       </Box>
 
       {renderFooter()}

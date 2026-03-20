@@ -65,10 +65,62 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     const tenthGradeYear = currentYear - TENTH_GRADE_AGE
 
     const children =
-      await this.nationalRegistryV3Service.childrenCustodyInformation({
-        auth,
-        params: undefined,
-      } as TemplateApiModuleActionProps<ChildrenCustodyInformationParameters>)
+      isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')
+        ? // Mock children
+          [
+            {
+              nationalId: '5555555559',
+              givenName: 'Bína',
+              familyName: 'Maack',
+              fullName: 'Bína Maack',
+              genderCode: '4',
+              genderDescription: 'Stúlka',
+              livesWithApplicant: true,
+              livesWithBothParents: true,
+              citizenship: { code: 'IS', name: 'Ísland' },
+              domicileInIceland: true,
+            },
+            {
+              nationalId: '2222222229',
+              givenName: 'Stúfur',
+              familyName: 'Maack',
+              fullName: 'Stúfur Maack',
+              genderCode: '3',
+              genderDescription: 'Drengur',
+              livesWithApplicant: true,
+              livesWithBothParents: true,
+              citizenship: { code: 'IS', name: 'Ísland' },
+              domicileInIceland: true,
+            },
+            {
+              nationalId: '1111111119',
+              givenName: 'Stubbur',
+              familyName: 'Maack',
+              fullName: 'Stubbur Maack',
+              genderCode: '3',
+              genderDescription: 'Drengur',
+              livesWithApplicant: true,
+              livesWithBothParents: true,
+              citizenship: { code: 'IS', name: 'Ísland' },
+              domicileInIceland: true,
+            },
+            {
+              nationalId: '6666666669',
+              givenName: 'Snúður',
+              familyName: 'Maack',
+              fullName: 'Snúður Maack',
+              genderCode: '3',
+              genderDescription: 'Drengur',
+              livesWithApplicant: true,
+              livesWithBothParents: true,
+              citizenship: { code: 'IS', name: 'Ísland' },
+              domicileInIceland: true,
+            },
+          ]
+        : await this.nationalRegistryV3Service.childrenCustodyInformation({
+            auth,
+            params: undefined,
+          } as TemplateApiModuleActionProps<ChildrenCustodyInformationParameters>)
 
     // Check if the child is at primary school age and lives with the applicant
     const filteredChildren = children.filter((child) => {
@@ -307,5 +359,19 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     return `${clientLocationOrigin}/${
       getSlugFromType(application.typeId) as string
     }/${application.id}` as string
+  }
+
+  async getIsApplicationBlocked({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { childNationalId } = getApplicationAnswers(application.answers)
+
+    if (!childNationalId) return undefined
+
+    return await this.friggClientService.getIsApplicationBlocked(
+      auth,
+      childNationalId,
+    )
   }
 }

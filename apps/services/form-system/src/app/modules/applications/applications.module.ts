@@ -23,6 +23,12 @@ import { ApplicationsXRoadController } from './applications.xroad.controller'
 import { ApplicationsXRoadService } from './applications.xroad.service'
 import { IdentityClientModule } from '@island.is/clients/identity'
 
+import {
+  ApplicationAdminSerializer,
+  ApplicationStatisticsSerializer,
+  InstitutionSerializer,
+} from './tools/applicationAdmin.serializer'
+
 @Module({
   imports: [
     SequelizeModule.forFeature([
@@ -53,6 +59,9 @@ import { IdentityClientModule } from '@island.is/clients/identity'
     ZendeskService,
     NotifyService,
     ValidationService,
+    ApplicationAdminSerializer,
+    InstitutionSerializer,
+    ApplicationStatisticsSerializer,
   ],
   exports: [ApplicationsService],
 })

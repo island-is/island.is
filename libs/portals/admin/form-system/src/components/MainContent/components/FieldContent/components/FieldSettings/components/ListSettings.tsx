@@ -109,7 +109,7 @@ export const ListSettings = () => {
               </Box>
             </Column>
           </Row>
-          <Row>
+          {/* <Row>
             <Column>
               <Box onClick={() => onClickRadioHandler(1)}>
                 <RadioButton
@@ -121,7 +121,7 @@ export const ListSettings = () => {
                 />
               </Box>
             </Column>
-          </Row>
+          </Row> */}
         </>
       )}
       {radio[0] && (
@@ -129,7 +129,7 @@ export const ListSettings = () => {
           {formatMessage(m.listBuilder)}
         </Button>
       )}
-      {radio[1] && (
+      {/* {radio[1] && (
         <Column span="5/10">
           <Select
             placeholder={formatMessage(m.chooseListType)}
@@ -150,7 +150,7 @@ export const ListSettings = () => {
             }}
           />
         </Column>
-      )}
+      )} */}
     </Stack>
   )
 }

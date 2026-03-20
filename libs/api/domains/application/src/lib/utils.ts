@@ -62,6 +62,7 @@ export const mapFormSystemCards = (
     orgContentfulId: application.formSystemOrgContentfulId,
     nationalId: undefined, // TODO: add nationalId if possible
     actionCard: application.actionCard,
+    pruneAt: application.pruneAt,
   }
 }
 
@@ -126,6 +127,7 @@ export const mapFormSystemStatisticsAdmin = (
   statistics: ApplicationStatisticsDto,
 ): ApplicationStatistics => {
   return {
+    ...statistics,
     typeid: statistics.formId,
     name: statistics.formName ?? '',
     count: statistics.totalCount,
