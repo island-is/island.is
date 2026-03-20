@@ -45,6 +45,7 @@ export class OrganizationParentSubpageRepository implements SitemapUrlFetcher {
       {
         slug: { [LOCALE]: string; [EN_LOCALE]: string }
         title: { [LOCALE]: string; [EN_LOCALE]: string }
+        publishedAt: string | undefined
       }
     >()
     const organizationPageMap = new Map<
@@ -88,6 +89,7 @@ export class OrganizationParentSubpageRepository implements SitemapUrlFetcher {
         organizationSubpageMap.set(organizationSubpage.sys.id, {
           slug: organizationSubpage.fields.slug,
           title: organizationSubpage.fields.title,
+          publishedAt: organizationSubpage.sys.publishedAt,
         })
       }
     }
@@ -128,7 +130,7 @@ export class OrganizationParentSubpageRepository implements SitemapUrlFetcher {
                   )}/${organizationPageEnSlug}/${enSlug}/${organizationSubpageEnSlug}`
                 : '',
           },
-          lastmod: subpage.sys.publishedAt ?? null,
+          lastmod: organizationSubpage.publishedAt ?? null,
         })
       }
     }

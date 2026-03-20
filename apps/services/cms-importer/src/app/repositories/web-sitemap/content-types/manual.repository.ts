@@ -30,6 +30,7 @@ export class ManualRepository implements SitemapUrlFetcher {
       {
         slug: { [LOCALE]: string; [EN_LOCALE]: string }
         title: { [LOCALE]: string; [EN_LOCALE]: string }
+        publishedAt: string | undefined
       }
     >()
     while (manualChapterIds.length > 0) {
@@ -45,6 +46,7 @@ export class ManualRepository implements SitemapUrlFetcher {
         manualChapterMap.set(manualChapter.sys.id, {
           slug: manualChapter.fields.slug,
           title: manualChapter.fields.title,
+          publishedAt: manualChapter.sys.publishedAt,
         })
     }
 
@@ -84,7 +86,7 @@ export class ManualRepository implements SitemapUrlFetcher {
                 ? `https://island.is/en/manuals/${enSlug}/${chapterEnSlug}`
                 : '',
           },
-          lastmod: chapter.sys.publishedAt ?? null,
+          lastmod: manualChapter.publishedAt ?? null,
         })
       }
     }
