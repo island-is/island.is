@@ -3,6 +3,8 @@ import type { SitemapUrl, SitemapUrlFetcher } from '../../../web-sitemap/utils'
 import { ManagementClientService } from '../../cms/managementClient/managementClient.service'
 import { EN_LOCALE, LOCALE } from '../../../constants'
 
+const FRONTPAGE_NEWS_TAG_ID = '52DSBcobJGSiwZ6o9zkiT0'
+
 @Injectable()
 export class FrontpageNewsRepository implements SitemapUrlFetcher {
   constructor(private readonly managementClient: ManagementClientService) {}
@@ -17,7 +19,7 @@ export class FrontpageNewsRepository implements SitemapUrlFetcher {
       skip: pageIndex * itemsPerPage,
       select: 'sys,fields.slug,fields.title',
       'sys.publishedAt[exists]': true,
-      'fields.genericTags.sys.id[in]': '52DSBcobJGSiwZ6o9zkiT0',
+      'fields.genericTags.sys.id[in]': FRONTPAGE_NEWS_TAG_ID,
     })
     if (!newsResponse.ok) throw newsResponse.error
 

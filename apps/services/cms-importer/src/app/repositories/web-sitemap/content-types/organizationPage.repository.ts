@@ -24,23 +24,48 @@ export class OrganizationPageRepository implements SitemapUrlFetcher {
     })
     if (!organizationPageResponse.ok) throw organizationPageResponse.error
 
-    const urls = organizationPageResponse.data.items.map((item) => ({
-      loc: {
-        [LOCALE]:
-          item.fields.title?.[LOCALE] && item.fields.slug?.[LOCALE]
-            ? `https://island.is/${getOrganizationPageUrlPrefix(LOCALE)}/${
-                item.fields.slug[LOCALE]
-              }`
-            : '',
-        [EN_LOCALE]:
-          item.fields.title?.[EN_LOCALE] && item.fields.slug?.[EN_LOCALE]
-            ? `https://island.is/${getOrganizationPageUrlPrefix(EN_LOCALE)}/${
-                item.fields.slug[EN_LOCALE]
-              }`
-            : '',
-      },
-      lastmod: item.sys.publishedAt ?? null,
-    }))
+    const urls: SitemapUrl[] = []
+
+    for (const item of organizationPageResponse.data.items) {
+      const loc =
+        item.fields.slug?.[LOCALE] && item.fields.title?.[LOCALE]
+          ? `https://island.is/${getOrganizationPageUrlPrefix(LOCALE)}/${
+              item.fields.slug[LOCALE]
+            }`
+          : ''
+      const enLoc =
+        item.fields.slug?.[EN_LOCALE] && item.fields.title?.[EN_LOCALE]
+          ? `https://island.is/${getOrganizationPageUrlPrefix(EN_LOCALE)}/${
+              item.fields.slug[EN_LOCALE]
+            }`
+          : ''
+      if (!loc && !enLoc) continue
+      urls.push({
+        loc: {
+          [LOCALE]: loc,
+          [EN_LOCALE]: enLoc,
+        },
+        lastmod: item.sys.publishedAt ?? null,
+      })
+      urls.push({
+        loc: {
+          [LOCALE]: `${loc}/frett`,
+          [EN_LOCALE]: `${enLoc}/news`,
+        },
+      })
+      urls.push({
+        loc: {
+          [LOCALE]: `${loc}/vidburdir`,
+          [EN_LOCALE]: `${enLoc}/events`,
+        },
+      })
+      urls.push({
+        loc: {
+          [LOCALE]: `${loc}/utgefid-efni`,
+          [EN_LOCALE]: `${enLoc}/published-material`,
+        },
+      })
+    }
 
     return {
       urls,

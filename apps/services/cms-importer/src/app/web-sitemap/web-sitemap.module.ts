@@ -17,6 +17,7 @@ import { ArticleCategoryRepository } from '../repositories/web-sitemap/content-t
 import { LifeEventRepository } from '../repositories/web-sitemap/content-types/lifeEvent.repository'
 import { FrontpageNewsRepository } from '../repositories/web-sitemap/content-types/frontpage-news.repository'
 import { OrganizationNewsRepository } from '../repositories/web-sitemap/content-types/organization-news.repository'
+import { ProjectNewsRepository } from '../repositories/web-sitemap/content-types/project-news.repository'
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { OrganizationNewsRepository } from '../repositories/web-sitemap/content-
     LifeEventRepository,
     FrontpageNewsRepository,
     OrganizationNewsRepository,
+    ProjectNewsRepository,
   ],
 })
 export class WebSitemapModule {}

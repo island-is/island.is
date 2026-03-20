@@ -19,6 +19,7 @@ import { ArticleCategoryRepository } from '../repositories/web-sitemap/content-t
 import { LifeEventRepository } from '../repositories/web-sitemap/content-types/lifeEvent.repository'
 import { FrontpageNewsRepository } from '../repositories/web-sitemap/content-types/frontpage-news.repository'
 import { OrganizationNewsRepository } from '../repositories/web-sitemap/content-types/organization-news.repository'
+import { ProjectNewsRepository } from '../repositories/web-sitemap/content-types/project-news.repository'
 
 @Injectable()
 export class WebSitemapService {
@@ -42,6 +43,7 @@ export class WebSitemapService {
     private readonly lifeEventRepository: LifeEventRepository,
     private readonly frontpageNewsRepository: FrontpageNewsRepository,
     private readonly organizationNewsRepository: OrganizationNewsRepository,
+    private readonly projectNewsRepository: ProjectNewsRepository,
   ) {
     this.fetchers = [
       this.frontpageRepository,
@@ -55,6 +57,7 @@ export class WebSitemapService {
       this.lifeEventRepository,
       this.frontpageNewsRepository,
       this.organizationNewsRepository,
+      this.projectNewsRepository,
     ]
   }
 

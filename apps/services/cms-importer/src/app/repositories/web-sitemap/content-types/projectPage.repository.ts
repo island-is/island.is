@@ -58,20 +58,27 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
       const slug = projectPage.fields.slug?.[LOCALE]
       const enSlug = projectPage.fields.slug?.[EN_LOCALE]
       if (!slug && !enSlug) continue
+      const loc =
+        slug && projectPage.fields.title?.[LOCALE]
+          ? `https://island.is/${getProjectPageUrlPrefix(LOCALE)}/${slug}`
+          : ''
+      const enLoc =
+        enSlug && projectPage.fields.title?.[EN_LOCALE]
+          ? `https://island.is/${getProjectPageUrlPrefix(EN_LOCALE)}/${enSlug}`
+          : ''
+      if (!loc && !enLoc) continue
       urls.push({
         loc: {
-          [LOCALE]:
-            slug && projectPage.fields.title?.[LOCALE]
-              ? `https://island.is/${getProjectPageUrlPrefix(LOCALE)}/${slug}`
-              : '',
-          [EN_LOCALE]:
-            enSlug && projectPage.fields.title?.[EN_LOCALE]
-              ? `https://island.is/${getProjectPageUrlPrefix(
-                  EN_LOCALE,
-                )}/${enSlug}`
-              : '',
+          [LOCALE]: loc,
+          [EN_LOCALE]: enLoc,
         },
         lastmod: projectPage.sys.publishedAt ?? null,
+      })
+      urls.push({
+        loc: {
+          [LOCALE]: `${loc}/frett`,
+          [EN_LOCALE]: `${enLoc}/news`,
+        },
       })
 
       for (const subpage of projectPage.fields.projectSubpages?.[LOCALE] ??
