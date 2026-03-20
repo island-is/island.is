@@ -32,6 +32,7 @@ import {
   workerSetup as cmsImporterSetup,
   energyFundImportSetup as cmsImporterEnergyFundImportSetup,
   fsreBuildingsImportSetup as cmsImporterFsreBuildingsImportSetup,
+  webSitemapImportSetup as cmsImporterWebSitemapImportSetup,
 } from '../../../apps/services/cms-importer/infra/cms-importer-worker'
 
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/skilavottord-web'
@@ -168,6 +169,7 @@ const licenseApi = licenseApiSetup()
 const cmsImporter = cmsImporterSetup()
 const cmsImporterEnergyGrantImport = cmsImporterEnergyFundImportSetup()
 const cmsImporterFsreBuildingsImport = cmsImporterFsreBuildingsImportSetup()
+const cmsImporterWebSitemapImport = cmsImporterWebSitemapImportSetup()
 
 const storybook = storybookSetup({})
 
@@ -217,6 +219,7 @@ export const Services: EnvironmentServices = {
     cmsImporter,
     cmsImporterEnergyGrantImport,
     cmsImporterFsreBuildingsImport,
+    cmsImporterWebSitemapImport,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -265,6 +268,7 @@ export const Services: EnvironmentServices = {
     cmsImporter,
     cmsImporterEnergyGrantImport,
     cmsImporterFsreBuildingsImport,
+    cmsImporterWebSitemapImport,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -312,6 +316,7 @@ export const Services: EnvironmentServices = {
     cmsImporter,
     cmsImporterEnergyGrantImport,
     cmsImporterFsreBuildingsImport,
+    cmsImporterWebSitemapImport,
     licenseApi,
     sessionsService,
     sessionsWorker,

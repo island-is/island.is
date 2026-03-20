@@ -62,6 +62,7 @@ export const mapFormSystemCards = (
     orgContentfulId: application.formSystemOrgContentfulId,
     nationalId: undefined, // TODO: add nationalId if possible
     actionCard: application.actionCard,
+    pruneAt: application.pruneAt,
   }
 }
 

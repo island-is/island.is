@@ -4,10 +4,15 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 import * as firebaseAdmin from 'firebase-admin'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Notification } from './types'
+import {
+  NotificationDelivery,
+  NotificationChannel,
+} from './notification-delivery.model'
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { V2UsersApi } from '@island.is/clients/user-profile'
 import type { FirebaseError } from 'firebase-admin/lib/utils/error'
@@ -18,18 +23,22 @@ export class NotificationDispatchService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(FIREBASE_PROVIDER) private firebase: firebaseAdmin.app.App,
     private userProfileApi: V2UsersApi,
+    @InjectModel(NotificationDelivery)
+    private readonly notificationDeliveryModel: typeof NotificationDelivery,
   ) {}
 
   async sendPushNotification({
     notification,
     nationalId,
     messageId,
-    notificationId,
+    userNotificationId,
+    actorNotificationId,
   }: {
     notification: Notification
     nationalId: string
     messageId: string
-    notificationId?: number | null
+    userNotificationId?: number
+    actorNotificationId?: number
   }): Promise<void> {
     const tokens = await this.getDeviceTokens(nationalId, messageId)
 
@@ -48,8 +57,24 @@ export class NotificationDispatchService {
           notification,
           token,
           messageId,
-          notificationId,
+          userNotificationId,
         )
+
+        if (userNotificationId) {
+          try {
+            await this.notificationDeliveryModel.create({
+              userNotificationId,
+              actorNotificationId,
+              channel: NotificationChannel.Push,
+              sentTo: token,
+            })
+          } catch (dbError) {
+            this.logger.error('Error writing push delivery record to db', {
+              error: dbError,
+              messageId,
+            })
+          }
+        }
       } catch (error) {
         await this.handleSendError(error, nationalId, token, messageId)
       }
@@ -89,7 +114,7 @@ export class NotificationDispatchService {
     notification: Notification,
     token: string,
     messageId: string,
-    notificationId?: number | null,
+    userNotificationId?: number,
   ): Promise<void> {
     const message = {
       token,
@@ -100,7 +125,9 @@ export class NotificationDispatchService {
       data: {
         messageId,
         clickActionUrl: notification.clickActionUrl,
-        ...(notificationId && { notificationId: String(notificationId) }),
+        ...(userNotificationId && {
+          notificationId: String(userNotificationId),
+        }),
       },
     }
 

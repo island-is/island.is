@@ -33,9 +33,10 @@ registerEnumType(PrescribedItemRenewalBlockedReasonEnum, {
 })
 
 export enum PrescribedItemRenewalStatusEnum {
-  NUMBER_0 = 0,
-  NUMBER_1 = 1,
-  NUMBER_2 = 2,
+  Pending = 'pending',
+  Approved = 'approved',
+  Rejected = 'rejected',
+  Dismissed = 'dismissed',
 }
 
 registerEnumType(PrescribedItemRenewalStatusEnum, {

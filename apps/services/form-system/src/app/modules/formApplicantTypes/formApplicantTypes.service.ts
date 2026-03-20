@@ -205,7 +205,8 @@ export class FormApplicantTypesService {
       'shouldValidate',
       'shouldPopulate',
       'isHidden',
-      'multiset',
+      'multiMax',
+      'isMulti',
     ]
     const screenDto: ScreenDto = defaults(
       pick(screen, screenKeys),

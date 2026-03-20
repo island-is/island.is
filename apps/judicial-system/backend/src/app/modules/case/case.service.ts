@@ -73,7 +73,7 @@ import { CourtService } from '../court'
 import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLogService } from '../event-log'
-import { FileService } from '../file'
+import { FileService, PoliceDigitalCaseFileService } from '../file'
 import { IndictmentCountService } from '../indictment-count'
 import {
   Case,
@@ -217,6 +217,7 @@ export class CaseService {
     @Inject(forwardRef(() => VerdictService))
     private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
+    private readonly policeDigitalCaseFileService: PoliceDigitalCaseFileService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
     private readonly signingService: SigningService,
@@ -428,6 +429,15 @@ export class CaseService {
           transaction,
         )
       }
+    }
+
+    // Delete police digital case files connected to removed police case numbers
+    for (const policeCaseNumber of removedPoliceCaseNumbers) {
+      await this.policeDigitalCaseFileService.deleteAllForPoliceCaseNumber(
+        theCase.id,
+        policeCaseNumber,
+        transaction,
+      )
     }
 
     // Add a single indictment count for each added police case numbers

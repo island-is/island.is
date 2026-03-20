@@ -20,6 +20,7 @@ import {
   CaseFileCategory,
   CourtSessionRulingType,
   DefendantEventType,
+  IndictmentCaseNotificationType,
   isVerdictInfoChanged,
   PoliceFileTypeCode,
   type User as TUser,
@@ -54,6 +55,7 @@ type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   | 'serviceInformationForDefendant'
   | 'isDefaultJudgement'
   | 'isAcquittedByPublicProsecutionOffice'
+  | 'defendantHasRequestedAppeal'
   | 'hash'
   | 'hashAlgorithm'
 >
@@ -234,16 +236,41 @@ export class VerdictService {
     verdict: Verdict,
     update: UpdateVerdictDto,
     transaction: Transaction,
-    rulingDate?: Date,
+    theCase: Case,
+    defendantId: string,
   ): Promise<Verdict> {
     const enhancedUpdate = await this.handleServiceRequirementUpdate(
       verdict.id,
       update,
       transaction,
-      rulingDate,
+      theCase.rulingDate,
     )
 
-    return this.updateVerdict(verdict, enhancedUpdate, transaction)
+    const updatedVerdict = await this.updateVerdict(
+      verdict,
+      enhancedUpdate,
+      transaction,
+    )
+
+    // When prosecution office manually records service date (defendant did not
+    // open ruling on island.is), send driving license suspension notification
+    // so the office can register it in the separate system.
+    const defendant = theCase.defendants?.find((d) => d.id === defendantId)
+    const isVerdictServed = !verdict.serviceDate && update.serviceDate
+    const shouldSendDrivingLicenseSuspensionNotification =
+      isVerdictServed && defendant?.isDrivingLicenseSuspended
+
+    if (shouldSendDrivingLicenseSuspensionNotification) {
+      addMessagesToQueue({
+        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+        caseId: theCase.id,
+        body: {
+          type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+        },
+      })
+    }
+
+    return updatedVerdict
   }
 
   async updateRestricted(

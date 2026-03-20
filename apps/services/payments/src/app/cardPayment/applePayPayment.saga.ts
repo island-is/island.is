@@ -81,6 +81,7 @@ export const createApplePayPaymentSaga = (
       try {
         const refund = await retry(() =>
           refundService.refundWithCorrelationId({
+            paymentFlowId: ctx.paymentFlowId,
             paymentTrackingData: ctx.trackingData,
           }),
         )
