@@ -350,7 +350,9 @@ const MobileNavigationDialog = ({
     <ModalBase
       baseId={'mobile-nav'}
       isVisible={isVisible}
-      onVisibilityChange={(isVisible) => { if (!isVisible) onClick() }}
+      onVisibilityChange={(isVisible) => {
+        if (!isVisible) onClick()
+      }}
       preventBodyScroll
       className={styles.mobileNav}
     >
