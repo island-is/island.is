@@ -206,8 +206,8 @@ export class ApplicationService {
           applicationTypeIds?.length
             ? { typeId: { [Op.in]: applicationTypeIds } }
             : {},
-          fromDate ? { modified: { [Op.gte]: fromDate } } : {},
-          toDate ? { modified: { [Op.lte]: toDate } } : {},
+          fromDate ? { created: { [Op.gte]: fromDate } } : {},
+          toDate ? { created: { [Op.lte]: toDate } } : {},
           applicantNationalId
             ? { applicant: { [Op.eq]: applicantNationalId } }
             : {},

@@ -1310,8 +1310,8 @@ export class ApplicationsService {
         [Op.and]: [
           formId ? { formId } : {},
           applicantNationalId ? { nationalId: applicantNationalId } : {},
-          fromDate ? { modified: { [Op.gte]: fromDate } } : {},
-          toDate ? { modified: { [Op.lte]: toDate } } : {},
+          fromDate ? { created: { [Op.gte]: fromDate } } : {},
+          toDate ? { created: { [Op.lte]: toDate } } : {},
         ],
       },
       include: [
