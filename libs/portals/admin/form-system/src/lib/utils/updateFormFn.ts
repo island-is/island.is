@@ -42,7 +42,8 @@ export const updateFormFn = async (
                 ? undefined
                 : newForm.invalidationDate,
             isTranslated: newForm.isTranslated,
-            daysUntilApplicationPrune: newForm.daysUntilApplicationPrune,
+            draftDaysToLive: newForm.draftDaysToLive,
+            submissionDaysToLive: newForm.submissionDaysToLive,
             allowProceedOnValidationFail: newForm.allowProceedOnValidationFail,
             hasPayment: newForm.hasPayment,
             zendeskInternal: newForm.zendeskInternal,

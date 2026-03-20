@@ -58,6 +58,7 @@ export type SitemapTreeNode = SitemapTree &
         description: string
         descriptionEN?: string
         status?: 'draft' | 'published'
+        childNodeOrder?: 'asc-title' | 'desc-title' | 'manual'
       }
     | {
         type: SitemapTreeNodeType.URL
