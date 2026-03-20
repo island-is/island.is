@@ -1,3 +1,5 @@
+import { GraphQLJSONObject } from 'graphql-type-json'
+
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
@@ -17,6 +19,7 @@ import type { User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { PoliceCaseFilesQueryInput } from './dto/policeCaseFiles.input'
 import { PoliceCaseInfoQueryInput } from './dto/policeCaseInfo.input'
+import { PoliceCaseUnitsQueryInput } from './dto/policeCaseUnits.input'
 import { PoliceDefendantsQueryInput } from './dto/policeDefendants.input'
 import { UploadPoliceCaseFileInput } from './dto/uploadPoliceCaseFile.input'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
@@ -67,6 +70,30 @@ export class PoliceResolver {
       user.id,
       AuditedAction.GET_POLICE_DEFENDANTS,
       backendService.getPoliceDefendants(input.caseId),
+      input.caseId,
+    )
+  }
+
+  @Query(() => GraphQLJSONObject, { nullable: true })
+  policeCaseUnits(
+    @Args('input', { type: () => PoliceCaseUnitsQueryInput })
+    input: PoliceCaseUnitsQueryInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<{ results: Array<{ nationalId: string; units: unknown }> }> {
+    this.logger.debug(
+      `Getting case units for case ${
+        input.caseId
+      } from police API (GetRVMalseiningar), ${
+        input.nationalIds?.length ?? 0
+      } defendant(s)`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_POLICE_CASE_UNITS,
+      backendService.getPoliceCaseUnits(input.caseId, input.nationalIds ?? []),
       input.caseId,
     )
   }

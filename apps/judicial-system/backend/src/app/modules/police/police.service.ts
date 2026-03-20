@@ -157,6 +157,27 @@ export class PoliceService {
     postnumer: z.string().nullish(),
     artalNrGreinLidur: z.string().nullish(),
   })
+
+  private readonly getRVMalseiningarItemSchema = z.object({
+    artalNrGreinLidur: z.string().nullish(),
+    lysing: z.string().nullish(),
+    nanar: z.string().nullish(),
+    fin: z.string().nullish(),
+    grof: z.string().nullish(),
+    vettvangur: z.string().nullish(),
+    gotuHeiti: z.string().nullish(),
+    gotuNumer: z.string().nullish(),
+    sveitafelag: z.string().nullish(),
+    postnumer: z.string().nullish(),
+    brotFra: z.string().nullish(),
+    brotTil: z.string().nullish(),
+    upprunalegtMalsnumer: z.string(),
+    licencePlate: z.string().nullish(),
+  })
+  private readonly getRVMalseiningarResponseSchema = z.array(
+    this.getRVMalseiningarItemSchema,
+  )
+
   private responseStructure = z.object({
     malsnumer: z.string(),
     skjol: z.optional(z.array(this.policeCaseFileStructure)),
@@ -585,6 +606,78 @@ export class PoliceService {
     }
   }
 
+  private async fetchCaseUnitsForNationalId(
+    caseId: string,
+    nationalId: string,
+  ): Promise<{ nationalId: string; units: unknown }> {
+    const res = await this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/V4/GetRVMalseiningar/${caseId}/${nationalId}`,
+    )
+
+    if (!res.ok) {
+      const reason = await res.text()
+      throw new NotFoundException({
+        message: `Police case units for case ${caseId} and nationalId do not exist`,
+        detail: reason,
+      })
+    }
+
+    const raw = await res.json()
+    const units = this.getRVMalseiningarResponseSchema.parse(raw)
+    return { nationalId, units }
+  }
+
+  async getCaseUnitsFromPolice(
+    caseId: string,
+    nationalIds: string[],
+    user: User,
+  ): Promise<{ results: Array<{ nationalId: string; units: unknown }> }> {
+    const startTime = nowFactory()
+
+    if (nationalIds.length === 0) {
+      return { results: [] }
+    }
+
+    try {
+      const results = await Promise.all(
+        nationalIds.map((nationalId) =>
+          this.fetchCaseUnitsForNationalId(caseId, nationalId),
+        ),
+      )
+      return { results }
+    } catch (reason) {
+      if (reason instanceof NotFoundException) {
+        throw reason
+      }
+
+      if (reason instanceof ServiceUnavailableException) {
+        throw new NotFoundException({
+          ...reason,
+          message: `Police case units for case ${caseId} do not exist`,
+          detail: reason.message,
+        })
+      }
+
+      this.eventService.postErrorEvent(
+        'Failed to get police case units (GetRVMalseiningar)',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          startTime,
+          endTime: nowFactory(),
+        },
+        reason,
+      )
+
+      throw new BadGatewayException({
+        ...reason,
+        message: `Failed to get police case units for case ${caseId}`,
+        detail: reason.message,
+      })
+    }
+  }
+
   async getSubpoenaStatus(
     policeSubpoenaId: string,
     user?: User,
@@ -671,6 +764,7 @@ export class PoliceService {
           user,
           'getPoliceCaseInfo',
         )
+
       const policeDigitalCaseFilesResponse = await this.getDigitalCaseFiles(
         caseId,
         user,

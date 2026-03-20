@@ -16,6 +16,7 @@ import {
 import {
   useCase,
   useDefendants,
+  usePoliceCaseUnits,
   useSyncDefendantsFromPolice,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -44,6 +45,18 @@ export const DefendantList = () => {
   const showPoliceDefendantsUI = isLokeCaseWithId(
     workingCase.origin,
     workingCase.id,
+  )
+
+  console.log('islokecasewithid:', showPoliceDefendantsUI)
+
+  // Fetch case units for all defendants after sync; response is only logged for now
+  const defendantNationalIds =
+    workingCase.defendants
+      ?.map((d) => d.nationalId)
+      .filter((id): id is string => Boolean(id)) ?? []
+  usePoliceCaseUnits(
+    showPoliceDefendantsUI ? workingCase.id : undefined,
+    defendantNationalIds.length > 0 ? defendantNationalIds : undefined,
   )
 
   useEffect(() => {
