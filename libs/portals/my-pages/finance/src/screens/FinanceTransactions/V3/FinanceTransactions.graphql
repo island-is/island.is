@@ -8,7 +8,7 @@ query GetCustomerChargeType {
 }
 
 query GetCustomerRecordsPaged($input: GetCustomerRecordsPagedInput!) {
-  getCustomerRecordsPaged(input: $input) {
+  financeCustomerRecords(input: $input) {
     data {
       createDate
       createTime
@@ -30,7 +30,7 @@ query GetCustomerRecordsPaged($input: GetCustomerRecordsPagedInput!) {
     }
     pageInfo {
       hasNextPage
-      startCursor
+      endCursor
     }
   }
 }

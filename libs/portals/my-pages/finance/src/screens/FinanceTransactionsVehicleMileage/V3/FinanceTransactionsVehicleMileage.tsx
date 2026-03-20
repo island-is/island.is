@@ -65,8 +65,8 @@ const FinanceTransactions = () => {
   const isInitialLoading = loading && !isFetchingMore
 
   const hasNextPage =
-    data?.getCustomerRecordsPaged?.pageInfo?.hasNextPage ?? false
-  const nextKey = data?.getCustomerRecordsPaged?.pageInfo?.startCursor
+    data?.financeCustomerRecords?.pageInfo?.hasNextPage ?? false
+  const nextKey = data?.financeCustomerRecords?.pageInfo?.endCursor
 
   useEffect(() => {
     if (toDate && fromDate) {
@@ -110,14 +110,14 @@ const FinanceTransactions = () => {
         previousData,
         { fetchMoreResult },
       ): GetCustomerRecordsPagedQuery {
-        if (!fetchMoreResult?.getCustomerRecordsPaged) return previousData
+        if (!fetchMoreResult?.financeCustomerRecords) return previousData
         return {
           ...fetchMoreResult,
-          getCustomerRecordsPaged: {
-            ...fetchMoreResult.getCustomerRecordsPaged,
+          financeCustomerRecords: {
+            ...fetchMoreResult.financeCustomerRecords,
             data: [
-              ...(previousData.getCustomerRecordsPaged?.data ?? []),
-              ...fetchMoreResult.getCustomerRecordsPaged.data,
+              ...(previousData.financeCustomerRecords?.data ?? []),
+              ...fetchMoreResult.financeCustomerRecords.data,
             ],
           },
         }
@@ -126,7 +126,7 @@ const FinanceTransactions = () => {
   }
 
   const filters = useMemo(() => {
-    const records = data?.getCustomerRecordsPaged?.data
+    const records = data?.financeCustomerRecords?.data
     if (records) {
       return Array.from(new Set(records.map((r) => r.chargeItemSubject))).map(
         (s) => ({
@@ -138,7 +138,7 @@ const FinanceTransactions = () => {
   }, [data])
 
   const allRecords = transactionFilter(
-    data?.getCustomerRecordsPaged?.data ?? [],
+    data?.financeCustomerRecords?.data ?? [],
     q,
   )
   const recordsDataArray =

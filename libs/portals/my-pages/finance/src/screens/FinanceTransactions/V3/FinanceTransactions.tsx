@@ -79,8 +79,8 @@ const FinanceTransactions = () => {
   const isInitialLoading = loading && !isFetchingMore
 
   const hasNextPage =
-    data?.getCustomerRecordsPaged?.pageInfo?.hasNextPage ?? false
-  const nextKey = data?.getCustomerRecordsPaged?.pageInfo?.startCursor
+    data?.financeCustomerRecords?.pageInfo?.hasNextPage ?? false
+  const nextKey = data?.financeCustomerRecords?.pageInfo?.endCursor
 
   useEffect(() => {
     if (toDate && fromDate && dropdownSelect) {
@@ -140,14 +140,14 @@ const FinanceTransactions = () => {
         previousData,
         { fetchMoreResult },
       ): GetCustomerRecordsPagedQuery {
-        if (!fetchMoreResult?.getCustomerRecordsPaged) return previousData
+        if (!fetchMoreResult?.financeCustomerRecords) return previousData
         return {
           ...fetchMoreResult,
-          getCustomerRecordsPaged: {
-            ...fetchMoreResult.getCustomerRecordsPaged,
+          financeCustomerRecords: {
+            ...fetchMoreResult.financeCustomerRecords,
             data: [
-              ...(previousData.getCustomerRecordsPaged?.data ?? []),
-              ...fetchMoreResult.getCustomerRecordsPaged.data,
+              ...(previousData.financeCustomerRecords?.data ?? []),
+              ...fetchMoreResult.financeCustomerRecords.data,
             ],
           },
         }
@@ -156,7 +156,7 @@ const FinanceTransactions = () => {
   }
 
   const recordsDataArray = transactionFilter(
-    data?.getCustomerRecordsPaged?.data ?? [],
+    data?.financeCustomerRecords?.data ?? [],
     q,
   )
   const chargeTypeSelect = (chargeTypeData?.chargeType || []).map((item) => ({
@@ -165,10 +165,11 @@ const FinanceTransactions = () => {
   }))
 
   const filterCountNumber =
-    dropdownSelect?.length ||
-    0 +
-      (toDate?.getDate() === new Date().getDate() ? 0 : 1) +
-      (fromDate?.getDate() === backInTheDay?.getDate() ? 0 : 1)
+    (dropdownSelect?.length ?? 0) +
+    +(toDate && toDate.toDateString() !== new Date().toDateString() ? 1 : 0) +
+    +(fromDate && fromDate.toDateString() !== backInTheDay.toDateString()
+      ? 1
+      : 0)
 
   return (
     <DynamicWrapper>

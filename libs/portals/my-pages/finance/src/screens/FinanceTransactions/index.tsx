@@ -12,9 +12,8 @@ const FinanceTransactions = () => {
     featureFlagClient
       .getValue(Features.isServicePortalFinanceTransactionsV3Enabled, false)
       .then(setEnabled)
+      .catch(() => setEnabled(false))
   }, [featureFlagClient])
-
-  console.log('is enabled', enabled)
 
   if (enabled === null) {
     return (

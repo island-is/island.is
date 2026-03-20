@@ -52,10 +52,9 @@ export class CustomerService {
 
     return {
       data: records,
-      totalCount: records.length,
       pageInfo: {
         hasNextPage: response.more,
-        startCursor: response.nextKey || undefined,
+        endCursor: response.nextKey || undefined,
       },
     }
   }

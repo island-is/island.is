@@ -12,6 +12,7 @@ const FinanceVehicleMileage = () => {
     featureFlagClient
       .getValue(Features.isServicePortalFinanceTransactionsV3Enabled, false)
       .then(setEnabled)
+      .catch(() => setEnabled(false))
   }, [featureFlagClient])
 
   if (enabled === null) {

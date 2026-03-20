@@ -24,7 +24,10 @@ import { CustomerService } from '../services/customer.service'
 export class FinanceCustomerResolver {
   constructor(private readonly customerService: CustomerService) {}
 
-  @Query(() => CustomerRecords, { nullable: true })
+  @Query(() => CustomerRecords, {
+    deprecationReason: 'Use CustomerRecordsPaged instead',
+    nullable: true,
+  })
   @Audit()
   async getCustomerRecords(
     @CurrentUser() user: User,
@@ -33,7 +36,10 @@ export class FinanceCustomerResolver {
     return this.customerService.getRecords(user, input)
   }
 
-  @Query(() => CustomerRecordsPagedCollection, { nullable: true })
+  @Query(() => CustomerRecordsPagedCollection, {
+    name: 'financeCustomerRecords',
+    nullable: true,
+  })
   @Audit()
   async getCustomerRecordsPaged(
     @CurrentUser() user: User,
