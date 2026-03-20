@@ -23,11 +23,11 @@ export const m = {
       defaultMessage: 'Næsta skref',
     },
     innritunLink: {
-      id: 'web.secondarySchoolStudies:general.innritun',
+      id: 'web.secondarySchoolStudies:general.innritunLink',
       defaultMessage: 'https://island.is/umsokn-um-framhaldsskola',
     },
     naestaskrefLink: {
-      id: 'web.secondarySchoolStudies:general.naestaskref',
+      id: 'web.secondarySchoolStudies:general.naestaskrefLink',
       defaultMessage: 'https://naestaskref.is/is',
     },
     innritunDescription: {
