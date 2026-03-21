@@ -67,7 +67,6 @@ export class SmsWorkerService {
       if (msg.error) {
         this.logger.error('SMS message-level error from Nova', {
           messageId,
-          to: msg.to,
           status: msg.status,
           errorDetails: msg.errorDetails,
         })
