@@ -34,7 +34,18 @@ export class SocialInsuranceAdministrationPersonalTaxCreditService {
   ): Promise<TrWebApiServicesCommonClientsEnumsPersonalTaxAllowanceAction> {
     return this.personalTaxCreditApiWithAuth(
       user,
-    ).apiProtectedV1PersonalTaxCreditGetTaxAllowanceActionsGet()
+    ).apiProtectedV1PersonalTaxCreditTaxAllowanceActionsGet()
+  }
+
+  async getTaxCardMonthsAndYearsWhenDiscontinuing(
+    user: User,
+  ): Promise<TrWebApiServicesCommonClientsModelsYearWithMonthsDto[] | null> {
+    return this.personalTaxCreditApiWithAuth(user)
+      .apiProtectedV1PersonalTaxCreditTaxCardMonthsAndYearsWhenDiscontinuingGet()
+      .catch((error) => {
+        if (error?.status === 404 || error?.status === 400) return null
+        throw error
+      })
   }
 
   async getTaxCards(

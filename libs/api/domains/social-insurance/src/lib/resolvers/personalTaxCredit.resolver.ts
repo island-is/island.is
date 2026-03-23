@@ -15,17 +15,31 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { SocialInsuranceAdministrationPersonalTaxCreditService } from '@island.is/clients/social-insurance-administration'
-import { TaxAllowanceAction } from '../models/personalTaxCredit/taxAllowanceAction.model'
-import { TaxCards } from '../models/personalTaxCredit/taxCard.model'
+import { PersonalTaxCredit } from '../models/personalTaxCredit/taxCard.model'
 import { YearWithMonths } from '../models/personalTaxCredit/taxCardMonthsAndYears.model'
-import { SpousalTaxCardEligibility } from '../models/personalTaxCredit/spousalTaxCardEligibility.model'
 import {
-  SetTaxCardAllowanceInput,
-  EditTaxCardAllowanceInput,
-  DiscontinueTaxCardAllowanceInput,
-  SetSpouseTaxCardInput,
+  TaxCardAllowanceAction,
+  UpdateTaxCardAllowanceInput,
   SetSpouseTaxCardDueToDeathInput,
 } from '../dtos/personalTaxCredit.input'
+
+const toYearWithMonths = (
+  raw:
+    | Array<{
+        year?: number
+        months?: Array<{ month?: number; selectable?: boolean }> | null
+      }>
+    | null
+    | undefined,
+): YearWithMonths[] | null =>
+  raw?.map((ym) => ({
+    year: ym.year,
+    months: (ym.months ?? [])
+      .filter((m): m is { month: number; selectable?: boolean } =>
+        m.selectable === true && m.month != null,
+      )
+      .map((m) => m.month),
+  })) ?? null
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -37,83 +51,74 @@ export class PersonalTaxCreditResolver {
     private readonly personalTaxCreditService: SocialInsuranceAdministrationPersonalTaxCreditService,
   ) {}
 
-  @Query(() => [TaxAllowanceAction], {
-    name: 'socialInsuranceTaxAllowanceActions',
+  @Query(() => PersonalTaxCredit, {
+    name: 'socialInsurancePersonalTaxCredit',
     nullable: true,
   })
-  async getTaxAllowanceActions(@CurrentUser() user: User) {
-    return this.personalTaxCreditService.getTaxAllowanceActions(user)
-  }
+  async getPersonalTaxCredit(@CurrentUser() user: User): Promise<PersonalTaxCredit> {
+    const [taxCardsResult, registrationMonthsAndYears, spouseEligibility] =
+      await Promise.all([
+        this.personalTaxCreditService.getTaxCards(user),
+        this.personalTaxCreditService.getTaxCardMonthsAndYears(user),
+        this.personalTaxCreditService.getSpouseDeceasedTaxAllowanceValidMonthsAndYears(
+          user,
+        ),
+      ])
 
-  @Query(() => TaxCards, {
-    name: 'socialInsuranceTaxCards',
-    nullable: true,
-  })
-  async getTaxCards(@CurrentUser() user: User) {
-    return this.personalTaxCreditService.getTaxCards(user)
-  }
+    const discontinuingMonthsAndYears =
+      taxCardsResult?.canDiscontinuePersonalAllowance
+        ? await this.personalTaxCreditService.getTaxCardMonthsAndYearsWhenDiscontinuing(
+            user,
+          )
+        : null
 
-  @Query(() => [YearWithMonths], {
-    name: 'socialInsuranceTaxCardMonthsAndYears',
-    nullable: true,
-  })
-  async getTaxCardMonthsAndYears(@CurrentUser() user: User) {
-    return this.personalTaxCreditService.getTaxCardMonthsAndYears(user)
-  }
-
-  @Query(() => SpousalTaxCardEligibility, {
-    name: 'socialInsuranceSpouseDeceasedTaxAllowanceEligibility',
-    nullable: true,
-  })
-  async getSpouseDeceasedTaxAllowanceValidMonthsAndYears(
-    @CurrentUser() user: User,
-  ) {
-    return this.personalTaxCreditService.getSpouseDeceasedTaxAllowanceValidMonthsAndYears(
-      user,
-    )
+    return {
+      taxCards: taxCardsResult?.taxCards,
+      canEdit: taxCardsResult?.canEditPersonalAllowance,
+      canDiscontinue: taxCardsResult?.canDiscontinuePersonalAllowance,
+      registrationMonthsAndYears: toYearWithMonths(registrationMonthsAndYears),
+      discontinuingMonthsAndYears: toYearWithMonths(discontinuingMonthsAndYears),
+      spouseEligibility: spouseEligibility
+        ? {
+            ...spouseEligibility,
+            allowedYearMonths: toYearWithMonths(spouseEligibility.allowedYearMonths),
+          }
+        : null,
+    }
   }
 
   @Mutation(() => Boolean, {
-    name: 'setSocialInsuranceTaxCardAllowance',
+    name: 'updateSocialInsuranceTaxCardAllowance',
   })
-  async setTaxCardAllowance(
-    @Args('input') input: SetTaxCardAllowanceInput,
+  async updateTaxCardAllowance(
+    @Args('input') input: UpdateTaxCardAllowanceInput,
     @CurrentUser() user: User,
   ): Promise<boolean> {
-    await this.personalTaxCreditService.setTaxCardAllowance(user, input)
-    return true
-  }
-
-  @Mutation(() => Boolean, {
-    name: 'editSocialInsuranceTaxCardAllowance',
-  })
-  async editTaxCardAllowance(
-    @Args('input') input: EditTaxCardAllowanceInput,
-    @CurrentUser() user: User,
-  ): Promise<boolean> {
-    await this.personalTaxCreditService.editTaxCardAllowance(user, input)
-    return true
-  }
-
-  @Mutation(() => Boolean, {
-    name: 'discontinueSocialInsuranceTaxCardAllowance',
-  })
-  async discontinueTaxCardAllowance(
-    @Args('input') input: DiscontinueTaxCardAllowanceInput,
-    @CurrentUser() user: User,
-  ): Promise<boolean> {
-    await this.personalTaxCreditService.discontinueTaxCardAllowance(user, input)
+    const { action, year, month, percentage } = input
+    if (action === TaxCardAllowanceAction.REGISTER) {
+      await this.personalTaxCreditService.setTaxCardAllowance(user, {
+        year,
+        month,
+        percentage,
+      })
+    } else if (action === TaxCardAllowanceAction.EDIT) {
+      await this.personalTaxCreditService.editTaxCardAllowance(user, {
+        percentage,
+      })
+    } else if (action === TaxCardAllowanceAction.DISCONTINUE) {
+      await this.personalTaxCreditService.discontinueTaxCardAllowance(user, {
+        year,
+        month,
+      })
+    }
     return true
   }
 
   @Mutation(() => Boolean, {
     name: 'setSocialInsuranceSpouseTaxCard',
   })
-  async setSpouseTaxCard(
-    @Args('input') input: SetSpouseTaxCardInput,
-    @CurrentUser() user: User,
-  ): Promise<boolean> {
-    await this.personalTaxCreditService.setSpouseTaxCard(user, input)
+  async setSpouseTaxCard(@CurrentUser() user: User): Promise<boolean> {
+    await this.personalTaxCreditService.setSpouseTaxCard(user, {})
     return true
   }
 

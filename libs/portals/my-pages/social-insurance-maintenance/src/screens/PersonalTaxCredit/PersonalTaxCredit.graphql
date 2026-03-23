@@ -1,55 +1,40 @@
 query getPersonalTaxCredit {
-  socialInsuranceTaxCards {
+  socialInsurancePersonalTaxCredit {
     taxCards {
       percentage
       validFrom
       validTo
       taxCardType
     }
-    canEditPersonalAllowance
-  }
-  socialInsuranceTaxCardMonthsAndYears {
-    year
-    months {
-      month
-      selectable
-    }
-  }
-  socialInsuranceSpouseDeceasedTaxAllowanceEligibility {
-    canApply
-    reasonNotAllowed
-    allowedYearMonths {
+    canEdit
+    canDiscontinue
+    registrationMonthsAndYears {
       year
-      months {
-        month
-        selectable
+      months
+    }
+    discontinuingMonthsAndYears {
+      year
+      months
+    }
+    spouseEligibility {
+      canApply
+      reasonNotAllowed
+      allowedYearMonths {
+        year
+        months
       }
     }
   }
 }
 
-mutation setSocialInsuranceTaxCardAllowance(
-  $input: SocialInsuranceSetTaxCardAllowanceInput!
+mutation updateSocialInsuranceTaxCardAllowance(
+  $input: SocialInsuranceUpdateTaxCardAllowanceInput!
 ) {
-  setSocialInsuranceTaxCardAllowance(input: $input)
+  updateSocialInsuranceTaxCardAllowance(input: $input)
 }
 
-mutation editSocialInsuranceTaxCardAllowance(
-  $input: SocialInsuranceEditTaxCardAllowanceInput!
-) {
-  editSocialInsuranceTaxCardAllowance(input: $input)
-}
-
-mutation discontinueSocialInsuranceTaxCardAllowance(
-  $input: SocialInsuranceDiscontinueTaxCardAllowanceInput!
-) {
-  discontinueSocialInsuranceTaxCardAllowance(input: $input)
-}
-
-mutation setSocialInsuranceSpouseTaxCard(
-  $input: SocialInsuranceSetSpouseTaxCardInput!
-) {
-  setSocialInsuranceSpouseTaxCard(input: $input)
+mutation setSocialInsuranceSpouseTaxCard {
+  setSocialInsuranceSpouseTaxCard
 }
 
 mutation setSocialInsuranceSpouseTaxCardDueToDeath(

@@ -1,3 +1,4 @@
+import { SocialInsuranceTaxCardAllowanceAction } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -23,9 +24,7 @@ import { useMemo, useState } from 'react'
 import { m } from '../../lib/messages'
 import {
   useGetPersonalTaxCreditQuery,
-  useSetSocialInsuranceTaxCardAllowanceMutation,
-  useEditSocialInsuranceTaxCardAllowanceMutation,
-  useDiscontinueSocialInsuranceTaxCardAllowanceMutation,
+  useUpdateSocialInsuranceTaxCardAllowanceMutation,
   useSetSocialInsuranceSpouseTaxCardMutation,
   useSetSocialInsuranceSpouseTaxCardDueToDeathMutation,
 } from './PersonalTaxCredit.generated'
@@ -62,58 +61,62 @@ const PersonalTaxCredit = () => {
     errorPolicy: 'all',
   })
 
-  const [setAllowance, { loading: settingAllowance }] =
-    useSetSocialInsuranceTaxCardAllowanceMutation()
-  const [editAllowance, { loading: editingAllowance }] =
-    useEditSocialInsuranceTaxCardAllowanceMutation()
-  const [discontinueAllowance, { loading: discontinuingAllowance }] =
-    useDiscontinueSocialInsuranceTaxCardAllowanceMutation()
+  const [updateAllowance, { loading: updatingAllowance }] =
+    useUpdateSocialInsuranceTaxCardAllowanceMutation()
   const [setSpouseTaxCard, { loading: settingSpouseTaxCard }] =
     useSetSocialInsuranceSpouseTaxCardMutation()
   const [setSpouseTaxCardDueToDeath, { loading: settingSpouseDeceased }] =
     useSetSocialInsuranceSpouseTaxCardDueToDeathMutation()
 
-  const taxCards = data?.socialInsuranceTaxCards
-  const isAlreadyRegistered = taxCards?.canEditPersonalAllowance ?? false
-  const spouseEligibility =
-    data?.socialInsuranceSpouseDeceasedTaxAllowanceEligibility
-  const monthsAndYears = data?.socialInsuranceTaxCardMonthsAndYears
+  const page = data?.socialInsurancePersonalTaxCredit
+  const isAlreadyRegistered = page?.canEdit ?? false
+  const canDiscontinue = page?.canDiscontinue ?? false
+  const spouseEligibility = page?.spouseEligibility
+  const monthsAndYears = page?.registrationMonthsAndYears
+  const discontinuingMonthsAndYears = page?.discontinuingMonthsAndYears
 
-  const isSavingMyTaxCredit =
-    settingAllowance || editingAllowance || discontinuingAllowance
+  const isSavingMyTaxCredit = updatingAllowance
   const isSavingSpouse = settingSpouseTaxCard || settingSpouseDeceased
 
-  const yearOptions = useMemo(
-    () =>
-      (monthsAndYears ?? []).map((ym) => ({
-        label: String(ym.year),
-        value: ym.year as number,
-      })),
-    [monthsAndYears],
-  )
-
-  const getMonthOptionsForYear = (year: number | null) => {
-    const yearMonths = (monthsAndYears ?? []).find((ym) => ym.year === year)
-    return (yearMonths?.months ?? [])
-      .filter((mo) => mo.selectable)
-      .map((mo) => ({
-        label: new Intl.DateTimeFormat(lang, { month: 'long' }).format(
-          new Date(2000, (mo.month ?? 1) - 1),
-        ),
-        value: mo.month as number,
-      }))
+  type YearMonthEntry = {
+    year?: number | null
+    months?: (number | null)[] | null
   }
 
+  const toYearOptions = (data: YearMonthEntry[] | null | undefined) =>
+    (data ?? []).map((ym) => ({
+      label: String(ym.year),
+      value: ym.year as number,
+    }))
+
+  const toMonthOptions = (
+    data: YearMonthEntry[] | null | undefined,
+    year: number | null,
+  ) =>
+    (data?.find((ym) => ym.year === year)?.months ?? [])
+      .filter((month): month is number => month != null)
+      .map((month) => ({
+        label: new Intl.DateTimeFormat(lang, { month: 'long' }).format(
+          new Date(2000, month - 1),
+        ),
+        value: month,
+      }))
+
+  const yearOptions = useMemo(
+    () => toYearOptions(monthsAndYears),
+    [monthsAndYears],
+  )
   const registerMonthOptions = useMemo(
-    () => getMonthOptionsForYear(registerYear),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    () => toMonthOptions(monthsAndYears, registerYear),
     [monthsAndYears, registerYear, lang],
   )
-
+  const discontinueYearOptions = useMemo(
+    () => toYearOptions(discontinuingMonthsAndYears),
+    [discontinuingMonthsAndYears],
+  )
   const discontinueMonthOptions = useMemo(
-    () => getMonthOptionsForYear(discontinueYear),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [monthsAndYears, discontinueYear, lang],
+    () => toMonthOptions(discontinuingMonthsAndYears, discontinueYear),
+    [discontinuingMonthsAndYears, discontinueYear, lang],
   )
 
   const spouseYearOptions = useMemo(
@@ -130,47 +133,58 @@ const PersonalTaxCredit = () => {
       (ym) => ym.year === spouseDeceasedYear,
     )
     return (yearMonths?.months ?? [])
-      .filter((mo) => mo.selectable)
-      .map((mo) => ({
+      .filter((month): month is number => month != null)
+      .map((month) => ({
         label: new Intl.DateTimeFormat(lang, { month: 'long' }).format(
-          new Date(2000, (mo.month ?? 1) - 1),
+          new Date(2000, month - 1),
         ),
-        value: mo.month as number,
+        value: month,
       }))
   }, [spouseEligibility, spouseDeceasedYear, lang])
 
   const handleSaveMyTaxCredit = async () => {
+    if (!myAction) return
     try {
-      if (myAction === 'register') {
-        await setAllowance({
-          variables: {
-            input: {
-              year: registerYear ?? undefined,
-              month: registerMonth ?? undefined,
-              percentage: registerPercentage
-                ? Number(registerPercentage)
+      await updateAllowance({
+        variables: {
+          input: {
+            action: {
+              register: SocialInsuranceTaxCardAllowanceAction.REGISTER,
+              edit: SocialInsuranceTaxCardAllowanceAction.EDIT,
+              discontinue: SocialInsuranceTaxCardAllowanceAction.DISCONTINUE,
+            }[myAction],
+            year:
+              myAction === 'register'
+                ? registerYear ?? undefined
+                : myAction === 'discontinue'
+                ? discontinueYear ?? undefined
                 : undefined,
-            },
+            month:
+              myAction === 'register'
+                ? registerMonth ?? undefined
+                : myAction === 'discontinue'
+                ? discontinueMonth ?? undefined
+                : undefined,
+            percentage:
+              myAction === 'register'
+                ? registerPercentage
+                  ? Number(registerPercentage)
+                  : undefined
+                : myAction === 'edit'
+                ? editPercentage
+                  ? Number(editPercentage)
+                  : undefined
+                : undefined,
           },
-        })
-      } else if (myAction === 'edit') {
-        await editAllowance({
-          variables: {
-            input: {
-              percentage: editPercentage ? Number(editPercentage) : undefined,
-            },
-          },
-        })
-      } else if (myAction === 'discontinue') {
-        await discontinueAllowance({
-          variables: {
-            input: {
-              year: discontinueYear ?? undefined,
-              month: discontinueMonth ?? undefined,
-            },
-          },
-        })
-      }
+        },
+      })
+      setMyAction(null)
+      setRegisterYear(null)
+      setRegisterMonth(null)
+      setRegisterPercentage('')
+      setEditPercentage('')
+      setDiscontinueYear(null)
+      setDiscontinueMonth(null)
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
       refetch()
     } catch {
@@ -194,8 +208,13 @@ const PersonalTaxCredit = () => {
         })
       }
       if (grantSpouse) {
-        await setSpouseTaxCard({ variables: { input: {} } })
+        await setSpouseTaxCard()
       }
+      setSpouseDeceased(false)
+      setGrantSpouse(false)
+      setSpouseDeceasedYear(null)
+      setSpouseDeceasedMonth(null)
+      setSpouseDeceasedPercentage('100')
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
       refetch()
     } catch {
@@ -230,7 +249,7 @@ const PersonalTaxCredit = () => {
     <IntroWrapper {...introProps}>
       <Stack space={6}>
         {/* Tax cards table */}
-        {!!taxCards?.taxCards?.length && (
+        {!!page?.taxCards?.length && (
           <Box>
             <T.Table>
               <T.Head>
@@ -258,7 +277,7 @@ const PersonalTaxCredit = () => {
                 </T.Row>
               </T.Head>
               <T.Body>
-                {taxCards.taxCards.map((card, idx) => (
+                {page.taxCards.map((card, idx) => (
                   <T.Row key={idx}>
                     <T.Data>{card.taxCardType ?? '-'}</T.Data>
                     <T.Data>
@@ -289,7 +308,7 @@ const PersonalTaxCredit = () => {
           </Box>
         )}
 
-        {!taxCards?.taxCards?.length && (
+        {!page?.taxCards?.length && (
           <AlertMessage
             type="info"
             message={formatMessage(m.personalTaxCreditNotRegistered)}
@@ -422,7 +441,7 @@ const PersonalTaxCredit = () => {
               id="discontinue-personal-tax-credit"
               label={formatMessage(m.discontinuePersonalTaxCredit)}
               checked={myAction === 'discontinue'}
-              disabled={!isAlreadyRegistered}
+              disabled={!canDiscontinue}
               onChange={(e) =>
                 setMyAction(e.target.checked ? 'discontinue' : null)
               }
@@ -438,10 +457,10 @@ const PersonalTaxCredit = () => {
                         placeholder={formatMessage(m.theYear)}
                         size="xs"
                         backgroundColor="blue"
-                        options={yearOptions}
+                        options={discontinueYearOptions}
                         value={
                           discontinueYear != null
-                            ? yearOptions.find(
+                            ? discontinueYearOptions.find(
                                 (o) => o.value === discontinueYear,
                               )
                             : null
@@ -450,7 +469,7 @@ const PersonalTaxCredit = () => {
                           setDiscontinueYear(opt ? (opt.value as number) : null)
                           setDiscontinueMonth(null)
                         }}
-                        isDisabled={!isAlreadyRegistered}
+                        isDisabled={!canDiscontinue}
                       />
                     </Box>
                     <Box style={{ flex: 1 }}>
@@ -473,9 +492,7 @@ const PersonalTaxCredit = () => {
                             opt ? (opt.value as number) : null,
                           )
                         }
-                        isDisabled={
-                          !isAlreadyRegistered || discontinueYear == null
-                        }
+                        isDisabled={!canDiscontinue || discontinueYear == null}
                       />
                     </Box>
                   </Box>
@@ -491,7 +508,8 @@ const PersonalTaxCredit = () => {
                 !myAction ||
                 isSavingMyTaxCredit ||
                 (myAction === 'register' && isAlreadyRegistered) ||
-                (myAction !== 'register' && !isAlreadyRegistered)
+                (myAction === 'edit' && !isAlreadyRegistered) ||
+                (myAction === 'discontinue' && !canDiscontinue)
               }
               loading={isSavingMyTaxCredit}
               size="small"
