@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
 import {
   Box,
@@ -12,6 +12,7 @@ import { GridItems } from '@island.is/web/components'
 import { LifeEventPage } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
+import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
 
 import CardWithFeaturedItems from '../CardWithFeaturedItems/CardWithFeaturedItems'
@@ -36,6 +37,7 @@ export const LifeEventsSection = ({
   indicator,
 }: LifeEventsSectionProps) => {
   const { linkResolver } = useLinkResolver()
+  const scrollContainerRef = useRef<HTMLElement>(null)
 
   return (
     <>
@@ -65,7 +67,7 @@ export const LifeEventsSection = ({
         paddingBottom={3}
         insideGridContainer
         third
-        indicator={indicator}
+        scrollContainerRef={indicator ? scrollContainerRef : undefined}
       >
         {items
           .slice(0, 6)
@@ -115,6 +117,12 @@ export const LifeEventsSection = ({
           </Box>
         </GridContainer>
       </Hidden>
+      {indicator && (
+        <ScrollIndicator
+          scrollRef={scrollContainerRef}
+          colors={indicator}
+        />
+      )}
     </>
   )
 }
