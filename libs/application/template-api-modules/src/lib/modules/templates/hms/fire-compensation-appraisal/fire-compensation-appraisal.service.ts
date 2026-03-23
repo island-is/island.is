@@ -310,7 +310,6 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
           file,
         )
         // Kick off each upload as soon as the attachment has been downloaded and mapped
-        console.log('Uploading attachment:', file.key)
         this.hmsApplicationSystemService // Don't wait for upload to finish, allow them to run asyncronously on the background
           .apiApplicationUploadPost({
             applicationFilesContentDto: attachment,
@@ -319,8 +318,6 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
             this.logger.info('Successfully uploaded attachment:', res)
           })
           .catch((e) => {
-            console.log('Failed to upload attachment:')
-            console.dir(e, { depth: null, colors: true })
             // Log the error but don't throw it since we allow the uploads to run asyncronously on the background
             this.logger.error(`Failed to upload attachment: ${e}`)
           })
