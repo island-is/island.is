@@ -159,9 +159,6 @@ export enum Features {
   isSmsNotificationEnabled = 'isSmsNotificationEnabled',
   isSendSmsNotificationsEnabled = 'isSendSmsNotificationsEnabled',
 
-  // Admin portal
-  isFormSystemInAdminPortalEnabled = 'isFormSystemInAdminPortalEnabled',
-
   // Service portal sidebar grid layout
   isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',
 }
