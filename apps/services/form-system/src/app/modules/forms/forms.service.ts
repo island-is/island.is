@@ -581,8 +581,18 @@ export class FormsService {
     for (const value of application.values ?? []) {
       if (value.fieldType !== FieldTypesEnum.FILE) continue
 
-      const parsed =
-        typeof value.json === 'string' ? JSON.parse(value.json) : value.json
+      let parsed: unknown = value.json
+      if (typeof value.json === 'string') {
+        try {
+          parsed = JSON.parse(value.json)
+        } catch (error) {
+          this.logger.warn('Skipping file cleanup due to invalid value.json', {
+            valueId: value.id,
+            error,
+          })
+          continue
+        }
+      }
 
       const rawS3Keys = (parsed as { s3Key?: unknown } | undefined)?.s3Key
       const s3Keys: string[] = Array.isArray(rawS3Keys)

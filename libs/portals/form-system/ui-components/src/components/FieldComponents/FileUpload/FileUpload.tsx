@@ -61,6 +61,8 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
   const [uploadFile] = useMutation(STORE_FILE)
   const [deleteFile] = useMutation(DELETE_FILE)
 
+  const applicationId = state?.application.id
+
   const types =
     item?.fieldSettings?.fileTypes
       ?.split(',')
@@ -104,7 +106,6 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
           },
         })
 
-        const applicationId = state?.application.id
         if (!applicationId) {
           throw new Error('Missing applicationId for file key construction')
         }
@@ -156,6 +157,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       formatMessage,
       setValue,
       trigger,
+      applicationId,
     ],
   )
 
