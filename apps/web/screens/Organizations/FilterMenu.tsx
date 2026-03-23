@@ -80,6 +80,7 @@ export const FilterMenu = ({
       onChange={(event) => {
         const category = categories.find((c) => c.id === event.categoryId)
         if (category?.singleOption && onSortChange) {
+          onBeforeUpdate()
           onSortChange(event.selected[0])
           return
         }
@@ -92,6 +93,7 @@ export const FilterMenu = ({
       onClear={(categoryId) => {
         const category = categories.find((c) => c.id === categoryId)
         if (category?.singleOption && onSortClear) {
+          onBeforeUpdate()
           onSortClear()
           return
         }

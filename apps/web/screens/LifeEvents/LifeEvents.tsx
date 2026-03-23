@@ -190,7 +190,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
                     >
                       <LifeEventCard
                         heading={shortTitle ?? title}
-                        imgSrc={tinyThumbnail?.url ?? ''}
+                        imgSrc={tinyThumbnail?.url}
                         dataTestId={'lifeevent-card-with-featured-items'}
                         href={linkResolver(typename as LinkType, [slug]).href}
                         featuredItems={featured ?? []}

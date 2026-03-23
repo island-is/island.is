@@ -228,7 +228,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                 <Text variant="intro" className={styles.description}>
                   {n(
                     'stofnanirDescription',
-                    'Samantekt yfir helstu þjónustu sem fólk þarf á tilteknum tímamótum í lífinu, til að mynda að eignast barn, fara í nám, stofna fyrirtæki og að undirbúa starfslok og efri árin.',
+                    'Listi yfir opinbera aðila og sveitarfélög ásamt tengiliðaupplýsingum og þjónustuyfirlit.',
                   )}
                 </Text>
               </Stack>
@@ -250,7 +250,10 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     name="filter-input"
                     placeholder={filterLabels.inputPlaceholder}
                     value={filter.input}
-                    onChange={(value) => setFilter({ ...filter, input: value })}
+                    onChange={(value) => {
+                      setFilter({ ...filter, input: value })
+                      goToPage(1, false)
+                    }}
                     backgroundColor="white"
                   />
                 </Box>
