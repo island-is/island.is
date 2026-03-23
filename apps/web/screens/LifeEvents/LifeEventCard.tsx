@@ -1,5 +1,5 @@
 import { Box, Button, Link, Text } from '@island.is/island-ui/core'
-import { FeaturedItemTags } from '@island.is/web/components/CardWithFeaturedItems/FeaturedItemTags'
+import { FeaturedItemTags } from '../../components/CardWithFeaturedItems/FeaturedItemTags'
 import { Featured } from '@island.is/web/graphql/schema'
 
 import * as styles from './LifeEventCard.css'
