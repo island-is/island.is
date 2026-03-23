@@ -174,8 +174,7 @@ const Home: Screen<HomeProps> = ({
           headingId="organizations-title"
           items={organizations
             .filter(
-              (org) =>
-                org.showsUpOnTheOrganizationsPage && org.hasALandingPage,
+              (org) => org.showsUpOnTheOrganizationsPage && org.hasALandingPage,
             )
             .map((org) => ({
               title: org.title,
