@@ -13,6 +13,7 @@ import { GridItems } from '@island.is/web/components'
 import { GetArticleCategoriesQuery } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
+import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
 import * as styles from './CategoryItems.css'
 
 interface CategoryItemsProps {
@@ -22,6 +23,7 @@ interface CategoryItemsProps {
   viewCategoryText?: string
   seeMoreText?: string
   seeMoreHref?: string
+  indicator?: ScrollIndicatorColors
 }
 
 export const CategoryItems = ({
@@ -31,6 +33,7 @@ export const CategoryItems = ({
   viewCategoryText = 'Skoða þjónustuflokk',
   seeMoreText,
   seeMoreHref,
+  indicator,
 }: CategoryItemsProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -65,6 +68,7 @@ export const CategoryItems = ({
         paddingTop={4}
         paddingBottom={3}
         insideGridContainer
+        indicator={indicator}
       >
         {items
           .filter(

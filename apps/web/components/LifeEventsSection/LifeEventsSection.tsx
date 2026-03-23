@@ -12,6 +12,8 @@ import { GridItems } from '@island.is/web/components'
 import { LifeEventPage } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
+import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
+
 import CardWithFeaturedItems from '../CardWithFeaturedItems/CardWithFeaturedItems'
 
 interface LifeEventsSectionProps {
@@ -21,6 +23,7 @@ interface LifeEventsSectionProps {
   items: LifeEventPage[]
   cardsButtonTitle?: string
   whiteCards?: boolean
+  indicator?: ScrollIndicatorColors
 }
 
 export const LifeEventsSection = ({
@@ -30,6 +33,7 @@ export const LifeEventsSection = ({
   seeMoreText,
   cardsButtonTitle = '',
   whiteCards,
+  indicator,
 }: LifeEventsSectionProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -61,6 +65,7 @@ export const LifeEventsSection = ({
         paddingBottom={3}
         insideGridContainer
         third
+        indicator={indicator}
       >
         {items
           .slice(0, 6)
