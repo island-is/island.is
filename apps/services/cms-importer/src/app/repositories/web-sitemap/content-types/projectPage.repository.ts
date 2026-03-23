@@ -76,8 +76,8 @@ export class ProjectPageRepository implements SitemapUrlFetcher {
       })
       urls.push({
         loc: {
-          [LOCALE]: `${loc}/frett`,
-          [EN_LOCALE]: `${enLoc}/news`,
+          [LOCALE]: loc ? `${loc}/frett` : '',
+          [EN_LOCALE]: enLoc ? `${enLoc}/news` : '',
         },
       })
 

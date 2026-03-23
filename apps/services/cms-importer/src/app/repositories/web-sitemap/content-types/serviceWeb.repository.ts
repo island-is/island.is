@@ -29,14 +29,16 @@ export class ServiceWebRepository implements SitemapUrlFetcher {
       if (!slug && !enSlug) continue
       urls.push({
         loc: {
-          [LOCALE]: `https://island.is/adstod/${slug}`,
-          [EN_LOCALE]: `https://island.is/en/help/${enSlug}`,
+          [LOCALE]: slug ? `https://island.is/adstod/${slug}` : '',
+          [EN_LOCALE]: enSlug ? `https://island.is/en/help/${enSlug}` : '',
         },
       })
       urls.push({
         loc: {
-          [LOCALE]: `https://island.is/adstod/${slug}/hafa-samband`,
-          [EN_LOCALE]: `https://island.is/en/help/${enSlug}/contact-us`,
+          [LOCALE]: slug ? `https://island.is/adstod/${slug}/hafa-samband` : '',
+          [EN_LOCALE]: enSlug
+            ? `https://island.is/en/help/${enSlug}/contact-us`
+            : '',
         },
       })
     }
