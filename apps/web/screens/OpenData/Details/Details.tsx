@@ -104,7 +104,6 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
 
   const [hasMounted, setHasMounted] = useState(false)
   const [activeSection, setActiveSection] = useState('Yfirlit')
-  const _isMobileScreenWidth = hasMounted && width < theme.breakpoints.md
 
   useEffect(() => {
     setHasMounted(true)

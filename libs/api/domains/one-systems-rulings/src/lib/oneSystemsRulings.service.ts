@@ -31,10 +31,22 @@ export class OneSystemsRulingsService {
   }
 
   async getRulingPdf(id: string): Promise<OneSystemsRulingPdfResponse> {
-    const pdfData = await this.rulingsApi.getRulingPdf({ id })
+    const rawResponse = await this.rulingsApi.getRulingPdfRaw({ id })
+    const response = rawResponse.raw
+    const contentType = response.headers.get('content-type') ?? ''
+
+    let base64: string
+    if (contentType.includes('application/pdf')) {
+      // API returns raw PDF bytes — convert to base64
+      const buffer = await response.arrayBuffer()
+      base64 = Buffer.from(buffer).toString('base64')
+    } else {
+      // API returns base64-encoded string
+      base64 = await response.text()
+    }
 
     return {
-      base64: pdfData,
+      base64,
       contentType: 'application/pdf',
     }
   }
