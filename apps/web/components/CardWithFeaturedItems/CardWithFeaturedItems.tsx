@@ -3,8 +3,8 @@ import React from 'react'
 import { Box, Button, Hidden, Link, Text } from '@island.is/island-ui/core'
 import { Featured } from '@island.is/web/graphql/schema'
 
-import * as styles from './CardWithFeaturedItems.css'
 import { FeaturedItemTags } from './FeaturedItemTags'
+import * as styles from './CardWithFeaturedItems.css'
 
 type CardWithFeaturedItemsProps = {
   heading: string
