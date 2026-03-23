@@ -32,6 +32,11 @@ import { Screen } from '@island.is/web/types'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../../queries'
 import * as styles from './Categories.css'
 
+const EXCLUDED_CATEGORY_SLUGS = [
+  'thjonusta-island-is',
+  'services-on-island-is',
+]
+
 type SortOption = 'a-z' | 'z-a'
 
 interface CategoriesProps {
@@ -47,12 +52,13 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
   const [searchValue, setSearchValue] = useState('')
   const [sort, setSort] = useState<SortOption>('a-z')
 
-  const allItems =
-    (categories as GetArticleCategoriesQuery['getArticleCategories'])?.filter(
-      (item) =>
-        item.slug !== 'thjonusta-island-is' &&
-        item.slug !== 'services-on-island-is',
-    ) ?? []
+  const allItems = useMemo(
+    () =>
+      (categories as GetArticleCategoriesQuery['getArticleCategories'])?.filter(
+        (item) => !EXCLUDED_CATEGORY_SLUGS.includes(item.slug),
+      ) ?? [],
+    [categories],
+  )
 
   const items = useMemo(() => {
     const query = searchValue.toLowerCase()
@@ -174,7 +180,7 @@ const Categories: Screen<CategoriesProps> = ({ categories, namespace }) => {
                     const href = linkResolver(typename as LinkType, [slug]).href
                     return (
                       <GridColumn
-                        key={index}
+                        key={slug}
                         span={['12/12', '6/12', '6/12', '4/12']}
                         paddingBottom={3}
                       >

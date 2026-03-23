@@ -12,11 +12,13 @@ export interface ScrollIndicatorColors {
 interface ScrollIndicatorProps {
   scrollRef: React.RefObject<HTMLElement | null>
   colors: ScrollIndicatorColors
+  ariaLabel?: string
 }
 
 export const ScrollIndicator = ({
   scrollRef,
   colors,
+  ariaLabel,
 }: ScrollIndicatorProps) => {
   const [activePage, setActivePage] = useState(0)
   const [numPages, setNumPages] = useState(0)
@@ -46,7 +48,14 @@ export const ScrollIndicator = ({
 
     calculateState()
 
-    const handleScroll = () => calculateState()
+    let rafId: number | null = null
+    const handleScroll = () => {
+      if (rafId !== null) return
+      rafId = requestAnimationFrame(() => {
+        calculateState()
+        rafId = null
+      })
+    }
 
     container.addEventListener('scroll', handleScroll, { passive: true })
     window.addEventListener('resize', calculateState)
@@ -54,6 +63,9 @@ export const ScrollIndicator = ({
     return () => {
       container.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', calculateState)
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId)
+      }
     }
   }, [scrollRef, calculateState])
 
@@ -74,7 +86,11 @@ export const ScrollIndicator = ({
   if (numPages <= 1) return null
 
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={styles.wrapper}
+      role="navigation"
+      aria-label={ariaLabel ?? 'Page navigation'}
+    >
       <div
         className={styles.pill}
         style={{ backgroundColor: colors.outerColor }}

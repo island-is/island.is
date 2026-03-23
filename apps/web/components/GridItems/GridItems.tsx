@@ -7,8 +7,6 @@ import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './GridItems.css'
 
-export type { ScrollIndicatorColors } from './ScrollIndicator'
-
 type GridItemsProps = {
   marginTop?: BoxProps['marginTop']
   marginBottom?: BoxProps['marginBottom']

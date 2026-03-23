@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 
 import {
   Filter,
@@ -29,7 +29,7 @@ export type FilterLabels = Pick<
   | 'labelTitle'
   | 'labelResult'
   | 'labelClearAll'
-> & { inputPlaceholder?: string }
+>
 
 export type CategoriesProps = {
   id: string
@@ -108,4 +108,3 @@ export const FilterMenu = ({
   </Filter>
 )
 
-export default FilterMenu

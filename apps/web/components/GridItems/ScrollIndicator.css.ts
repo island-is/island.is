@@ -32,6 +32,12 @@ export const dot = style({
   cursor: 'pointer',
   outline: 'none',
   transition: 'width 0.3s ease, background-color 0.3s ease',
+  selectors: {
+    '&:focus-visible': {
+      outline: '2px solid currentColor',
+      outlineOffset: 2,
+    },
+  },
 })
 
 export const dotActive = style({

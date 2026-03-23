@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
@@ -59,11 +59,28 @@ const Home: Screen<HomeProps> = ({
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
 
+  const organizationItems = useMemo(
+    () =>
+      organizations
+        .filter(
+          (org) => org.showsUpOnTheOrganizationsPage && org.hasALandingPage,
+        )
+        .map((org) => ({
+          title: org.title,
+          href: getOrganizationLink(org, locale),
+          logoUrl: org.logo?.url,
+          logoAlt: org.logo?.title,
+          tags: org.tag.map((t) => ({ id: t.id, title: t.title })),
+        })),
+    [organizations, locale],
+  )
+
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
   }
 
   return (
+    // overflow: clip prevents scroll container creation unlike overflow: hidden
     <Box id="main-content" width="full" style={{ overflow: 'clip' }}>
       <Box
         component="section"
@@ -168,17 +185,7 @@ const Home: Screen<HomeProps> = ({
               : 'Organizations on Ísland.is',
           )}
           headingId="organizations-title"
-          items={organizations
-            .filter(
-              (org) => org.showsUpOnTheOrganizationsPage && org.hasALandingPage,
-            )
-            .map((org) => ({
-              title: org.title,
-              href: getOrganizationLink(org, locale),
-              logoUrl: org.logo?.url,
-              logoAlt: org.logo?.title,
-              tags: org.tag.map((t) => ({ id: t.id, title: t.title })),
-            }))}
+          items={organizationItems}
           seeMoreText={n(
             'seeAllOrganizations',
             activeLocale === 'is'
