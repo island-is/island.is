@@ -24,7 +24,7 @@ import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
-  NationalRegistryUserApi,
+  IdentityApi,
   InspectionUserProfileApi,
   MachinesApi,
 } from '../dataProviders'
@@ -103,11 +103,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [
-                NationalRegistryUserApi,
-                InspectionUserProfileApi,
-                MachinesApi,
-              ],
+              api: [IdentityApi, InspectionUserProfileApi, MachinesApi],
             },
           ],
         },

@@ -27,8 +27,12 @@ export const DefaultDisplay = ({ item, lang = 'is' }: Props) => {
   const valueKey = TEXTBOX_COMPONENT_MAP[
     item.fieldType as keyof typeof TEXTBOX_COMPONENT_MAP
   ] as string
-  const value =
-    (item?.values?.[0]?.json as Record<string, unknown>)?.[valueKey] ?? ''
+
+  const values = (item.values ?? []).filter((v): v is NonNullable<typeof v> =>
+    Boolean(v),
+  )
+  const showIndex = values.length > 1
+
   return (
     <Box
       component="form"
@@ -37,11 +41,43 @@ export const DefaultDisplay = ({ item, lang = 'is' }: Props) => {
       justifyContent="spaceBetween"
       height="full"
     >
-      <Stack space={1}>
+      <Stack space={0}>
         <Text as="p" fontWeight="semiBold">
           {item.name?.[lang]}
         </Text>
-        <Text fontWeight="light">{String(value ?? '')}</Text>
+        {values.map((valueDto, index) => {
+          const json = valueDto.json as
+            | Record<string, unknown>
+            | null
+            | undefined
+          const extracted = valueKey ? json?.[valueKey] : json
+
+          const displayValue =
+            extracted == null
+              ? ''
+              : typeof extracted === 'object'
+              ? JSON.stringify(extracted)
+              : String(extracted)
+
+          return (
+            <Box key={`${valueDto.id ?? item.id}-${index}`} marginLeft={2}>
+              {showIndex && (
+                <Text fontWeight="medium">
+                  {`${index + 1}:`}
+                  {'\u00A0\u00A0\u00A0'}
+                  <Text as="span" fontWeight="light" whiteSpace="breakSpaces">
+                    {displayValue}
+                  </Text>
+                </Text>
+              )}
+              {!showIndex && (
+                <Text fontWeight="light" whiteSpace="breakSpaces">
+                  {displayValue}
+                </Text>
+              )}
+            </Box>
+          )
+        })}
       </Stack>
     </Box>
   )
