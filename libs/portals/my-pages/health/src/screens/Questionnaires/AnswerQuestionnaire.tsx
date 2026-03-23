@@ -30,7 +30,7 @@ const AnswerQuestionnaire: FC = () => {
   const { data: organizations } = useOrganizations()
   const [submitQuestionnaire, { loading: submitting }] =
     useSubmitQuestionnaireMutation({
-      refetchQueries: ['GetQuestionnaire'],
+      refetchQueries: ['GetQuestionnaire', 'GetQuestionnaireWithQuestions'],
       awaitRefetchQueries: true,
     })
 
