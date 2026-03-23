@@ -937,58 +937,60 @@ export class ApplicationsService {
         const filteredScreenDto = { ...currentScreen, fields: filteredFields }
 
         await Promise.all(
-          (filteredScreenDto.fields ?? []).map(async (field) => {
-            if (field.isPartOfMultiset) {
-              await this.valueModel.destroy({
-                where: {
-                  fieldId: field.id,
-                  applicationId,
-                },
-                transaction,
-              })
+          (filteredScreenDto.fields ?? [])
+            .filter((field) => field.fieldType !== FieldTypesEnum.FILE)
+            .map(async (field) => {
+              if (field.isPartOfMultiset) {
+                await this.valueModel.destroy({
+                  where: {
+                    fieldId: field.id,
+                    applicationId,
+                  },
+                  transaction,
+                })
 
-              await Promise.all(
-                (field.values ?? []).map((value, index) =>
-                  this.valueModel.create(
-                    {
-                      fieldId: field.id,
-                      fieldType: field.fieldType,
-                      applicationId,
-                      order: index,
-                      json: value.json,
-                    } as Value,
-                    { transaction },
-                  ),
-                ),
-              )
-            } else {
-              await Promise.all(
-                (field.values ?? [])
-                  .filter((v) => v?.json !== undefined)
-                  .map((value) =>
-                    this.valueModel.update(
+                await Promise.all(
+                  (field.values ?? []).map((value, index) =>
+                    this.valueModel.create(
                       {
-                        // Merge existing jsonb with the new payload as jsonb
-                        // COALESCE guards against "json" being NULL
-                        json: this.sequelize.literal(
-                          `COALESCE("json", '{}'::jsonb) || ${this.sequelize.escape(
-                            JSON.stringify(value.json),
-                          )}::jsonb`,
-                        ),
-                      },
-                      {
-                        where: {
-                          id: value.id,
-                          applicationId,
-                          fieldId: field.id,
-                        },
-                        transaction,
-                      },
+                        fieldId: field.id,
+                        fieldType: field.fieldType,
+                        applicationId,
+                        order: index,
+                        json: value.json,
+                      } as Value,
+                      { transaction },
                     ),
                   ),
-              )
-            }
-          }),
+                )
+              } else {
+                await Promise.all(
+                  (field.values ?? [])
+                    .filter((v) => v?.json !== undefined)
+                    .map((value) =>
+                      this.valueModel.update(
+                        {
+                          // Merge existing jsonb with the new payload as jsonb
+                          // COALESCE guards against "json" being NULL
+                          json: this.sequelize.literal(
+                            `COALESCE("json", '{}'::jsonb) || ${this.sequelize.escape(
+                              JSON.stringify(value.json),
+                            )}::jsonb`,
+                          ),
+                        },
+                        {
+                          where: {
+                            id: value.id,
+                            applicationId,
+                            fieldId: field.id,
+                          },
+                          transaction,
+                        },
+                      ),
+                    ),
+                )
+              }
+            }),
         )
       }
     })
