@@ -86,7 +86,14 @@ const Home: Screen<HomeProps> = ({
         )
         .map((org) => ({
           title: org.title,
-          href: getOrganizationLink(org, locale),
+          href: getOrganizationLink(
+            {
+              hasALandingPage: org.hasALandingPage ?? undefined,
+              slug: org.slug,
+              link: org.link ?? undefined,
+            },
+            locale,
+          ),
           logoUrl: org.logo?.url,
           logoAlt: org.logo?.title,
           tags: org.tag.map((t) => ({ id: t.id, title: t.title })),
