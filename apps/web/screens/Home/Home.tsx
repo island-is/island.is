@@ -58,7 +58,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
         aria-labelledby="search-section-title"
         borderBottomWidth="standard"
         borderStyle="solid"
-        borderColor="blue200"
+        borderColor="purple100"
       >
         <SearchSection
           headingId="search-section-title"
@@ -82,7 +82,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
         paddingTop={6}
         paddingBottom={3}
         position="relative"
-        background="white"
+        background="purple100"
         aria-labelledby="life-events-title"
       >
         <LifeEventsSection
@@ -102,6 +102,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
             'LifeEventsCardsButtonTitle',
             activeLocale === 'is' ? 'Skoða lífsviðburð' : 'See life event',
           )}
+          whiteCards
         />
       </Box>
       <Box
