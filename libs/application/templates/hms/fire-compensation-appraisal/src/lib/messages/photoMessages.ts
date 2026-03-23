@@ -23,4 +23,10 @@ export const photoMessages = defineMessages({
     defaultMessage: 'Þú getur ekki hlaðið upp fleiri en 10 myndum.',
     description: 'Photo section max photos',
   },
+  duplicatePhotos: {
+    id: 'fca.application:photo.duplicatePhotos',
+    defaultMessage:
+      'Þú getur ekki hlaðið upp sömu myndinni oftar en einu sinni.',
+    description: 'Photo section duplicate photos',
+  },
 })

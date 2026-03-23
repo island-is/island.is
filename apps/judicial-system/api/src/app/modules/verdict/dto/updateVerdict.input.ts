@@ -47,4 +47,19 @@ export class UpdateVerdictInput {
   @IsOptional()
   @Field(() => [InformationForDefendant], { nullable: true })
   readonly serviceInformationForDefendant?: InformationForDefendant[]
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isDefaultJudgement?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isAcquittedByPublicProsecutionOffice?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly defendantHasRequestedAppeal?: boolean
 }

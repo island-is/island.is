@@ -7,22 +7,15 @@ import { Navigate } from 'react-router-dom'
 
 const Root = lazy(() => import('./screens/Root/Root'))
 
-const Overview = lazy(() => import('./screens/Overview/Overview'))
-const InstitutionOverview = lazy(() =>
-  import('./screens/Overview/InstitutionOverview'),
-)
-
-const Statistics = lazy(() => import('./screens/Statistics/Statistics'))
-
 const allowedScopes: string[] = [
   AdminPortalScope.applicationSystemAdmin,
   AdminPortalScope.applicationSystemInstitution,
 ]
-const getScreen = ({ userInfo }: PortalModuleRoutesProps): React.ReactNode => {
-  if (userInfo.scopes.includes(AdminPortalScope.applicationSystemInstitution)) {
-    return <InstitutionOverview />
-  }
-  return <Overview />
+const getRoot = ({ userInfo }: PortalModuleRoutesProps): React.ReactNode => {
+  const isSuperAdmin = userInfo.scopes.includes(
+    AdminPortalScope.applicationSystemAdmin,
+  )
+  return <Root isSuperAdmin={isSuperAdmin} />
 }
 
 export const applicationSystemAdminModule: PortalModule = {
@@ -34,26 +27,13 @@ export const applicationSystemAdminModule: PortalModule = {
     {
       name: m.overview,
       path: ApplicationSystemPaths.Root,
-      element: <Root />,
+      element: getRoot(props),
       children: [
         {
           name: 'index',
           path: ApplicationSystemPaths.Root,
           index: true,
           element: <Navigate to={ApplicationSystemPaths.Overview} />,
-        },
-        {
-          name: m.overview,
-          path: ApplicationSystemPaths.Overview,
-          element: getScreen(props),
-        },
-        {
-          name: m.statistics,
-          path: ApplicationSystemPaths.Statistics,
-          element: <Statistics />,
-          enabled: props.userInfo.scopes.includes(
-            AdminPortalScope.applicationSystemAdmin,
-          ),
         },
       ],
     },

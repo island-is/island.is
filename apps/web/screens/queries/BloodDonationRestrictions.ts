@@ -37,6 +37,7 @@ export const GET_BLOOD_DONATION_RESTRICTIONS_QUERY = gql`
         description
         hasDetailedText
         keywordsText
+        effectiveDate
       }
     }
   }
@@ -60,6 +61,7 @@ export const GET_BLOOD_DONATION_RESTRICTION_DETAILS_QUERY = gql`
         ...HtmlFields
       }
       keywordsText
+      effectiveDate
     }
   }
   ${htmlFields}

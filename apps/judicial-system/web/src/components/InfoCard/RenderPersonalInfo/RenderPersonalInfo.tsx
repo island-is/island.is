@@ -2,6 +2,7 @@ import { FC, PropsWithChildren } from 'react'
 
 import { Box, LinkV2, Text } from '@island.is/island-ui/core'
 
+import IconButton from '../../IconButton/IconButton'
 import { link } from '../../MarkdownWrapper/MarkdownWrapper.css'
 
 interface RenderItemProps {
@@ -14,18 +15,36 @@ const RenderItem: FC<PropsWithChildren<RenderItemProps>> = (props) => (
   </Box>
 )
 
-const RenderPersonalData = (
-  name?: string | null,
-  email?: string | null,
-  phoneNumber?: string | null,
+const RenderPersonalData = ({
+  name,
+  email,
+  phoneNumber,
   breakSpaces = true,
-) => (
+  onClick,
+}: {
+  name?: string | null
+  email?: string | null
+  phoneNumber?: string | null
+  breakSpaces?: boolean
+  onClick?: () => void
+} = {}) => (
   <Box dataTestId="personalInfo" component="span">
     {name && (
       <RenderItem breakSpaces={breakSpaces}>
-        <Text as="span" whiteSpace="pre">{`${name}${
-          (email || phoneNumber) && !breakSpaces ? `, ` : ''
-        }`}</Text>
+        <Text as="span" whiteSpace="pre">
+          <Box display="flex" alignItems="center" component="span">
+            {`${name}${(email || phoneNumber) && !breakSpaces ? `, ` : ''}`}
+            {onClick && (
+              <span style={{ marginLeft: '4px' }}>
+                <IconButton
+                  icon="pencil"
+                  colorScheme="transparent"
+                  onClick={onClick}
+                />
+              </span>
+            )}
+          </Box>
+        </Text>
       </RenderItem>
     )}
     {email && (

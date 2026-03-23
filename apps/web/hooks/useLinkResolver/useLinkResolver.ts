@@ -151,7 +151,7 @@ export const routesTemplate = {
     is: '/s/[organization]/frett/[slug]',
     en: '/en/o/[organization]/news/[slug]',
   },
-  organizationevent: {
+  event: {
     is: '/s/[organization]/vidburdir/[slug]',
     en: '/en/o/[organization]/events/[slug]',
   },
@@ -338,6 +338,14 @@ export const routesTemplate = {
   undirskriftalistar: {
     is: '/undirskriftalistar',
     en: '/en/petitions',
+  },
+  secondaryschoolstudiesdetailpage: {
+    is: '/framhaldsskolanam/[id]',
+    en: '/en/secondary-school-studies/[id]',
+  },
+  secondaryschoolstudieslandingpage: {
+    is: '/framhaldsskolanam',
+    en: '/en/secondary-school-studies',
   },
 }
 

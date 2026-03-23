@@ -12,10 +12,10 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import {
-  DownloadFileButtons,
+  MobileTable,
   StackWithBottomDivider,
   UserInfoLine,
   amountFormat,
@@ -23,30 +23,37 @@ import {
   m,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { isDefined } from '@island.is/shared/utils'
-import sub from 'date-fns/sub'
 import { useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
 import { CONTENT_GAP, SECTION_GAP } from '../../utils/constants'
 import { exportPaymentOverviewFile } from '../../utils/FileBreakdown'
+import { formatDateToMonthString } from '../../utils/format'
 import * as styles from './Payments.css'
 import {
   useGetPaymentOverviewLazyQuery,
   useGetPaymentOverviewServiceTypesQuery,
 } from './Payments.generated'
+import { PaymentOverviewParticipationInfo } from './PaymentOverviewParticipationInfo'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
+import {
+  getFirstDayOfPreviousYear,
+  getLastDayOfPreviousYear,
+} from '../../utils/dates'
 
 export const PaymentOverview = () => {
   const { formatMessage, formatDateFns, lang } = useLocale()
+  const { width } = useWindowSize()
 
-  const [startDate, setStartDate] = useState<Date>(
-    sub(new Date(), { years: 3 }),
-  )
-  const [endDate, setEndDate] = useState<Date>(new Date())
+  const [startDate, setStartDate] = useState<Date>(getFirstDayOfPreviousYear)
+  const [endDate, setEndDate] = useState<Date>(getLastDayOfPreviousYear)
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
 
   const [overview, setOverview] = useState<RightsPortalPaymentOverview>()
+  const isMobile = width < theme.breakpoints.md
 
   const {
     data: serviceTypes,
@@ -115,7 +122,7 @@ export const PaymentOverview = () => {
   }, [])
 
   return (
-    <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverview}>
+    <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverviewInvoices}>
       {error ? (
         <Problem noBorder={false} error={error} />
       ) : loading ? (
@@ -144,14 +151,8 @@ export const PaymentOverview = () => {
           <Stack space={[CONTENT_GAP, SECTION_GAP]}>
             <Text variant="h5">{formatMessage(messages.invoices)}</Text>
             <GridContainer>
-              <GridRow
-                marginBottom={CONTENT_GAP}
-                direction={['column', 'column', 'column', 'row']}
-              >
-                <GridColumn
-                  span={['6/8', '6/8', '6/8', '4/8']}
-                  paddingBottom={[CONTENT_GAP, CONTENT_GAP, CONTENT_GAP, 0]}
-                >
+              <GridRow rowGap={[2, 2, 2, 2, 'smallGutter']}>
+                <GridColumn span={['1/1', '1/1', '1/2', '1/2', '3/9']}>
                   <DatePicker
                     size="xs"
                     label={formatMessage(m.dateFrom)}
@@ -162,7 +163,10 @@ export const PaymentOverview = () => {
                     locale={lang}
                   />
                 </GridColumn>
-                <GridColumn span={['6/8', '6/8', '6/8', '4/8']}>
+                <GridColumn
+                  span={['1/1', '1/1', '1/2', '1/2', '3/9']}
+                  paddingTop={[2, 2, 0, 0, 0]}
+                >
                   <DatePicker
                     size="xs"
                     label={formatMessage(m.dateTo)}
@@ -173,12 +177,10 @@ export const PaymentOverview = () => {
                     locale={lang}
                   />
                 </GridColumn>
-              </GridRow>
-              {!!options?.length && (
-                <GridRow direction="row" alignItems={['flexStart', 'flexEnd']}>
+                {!!options?.length && (
                   <GridColumn
-                    span={['7/8', '7/8', '5/8']}
-                    paddingBottom={[CONTENT_GAP, CONTENT_GAP, 0]}
+                    span={['1/1', '1/1', '1/1', '1/1', '3/9']}
+                    paddingTop={[2, 2, 0, 0, 0]}
                   >
                     <Select
                       value={
@@ -198,13 +200,37 @@ export const PaymentOverview = () => {
                       }
                     />
                   </GridColumn>
-                  <GridColumn span={['4/8', '4/8', '3/8']}>
-                    <Button fluid size="medium" onClick={() => onFetchBills()}>
-                      {formatMessage(m.get)}
+                )}
+              </GridRow>
+              <GridRow marginTop={3} align="spaceBetween">
+                <GridColumn span={['1/2', '1/2', '1/2', '1/2', '2/9']}>
+                  <Button size="medium" onClick={() => onFetchBills()} fluid>
+                    {formatMessage(m.get)}
+                  </Button>
+                </GridColumn>
+                <GridColumn span={['1/2', '1/2', '1/2', '1/2', '2/9']}>
+                  <Box
+                    width="full"
+                    height="full"
+                    display="flex"
+                    alignItems="stretch"
+                    justifyContent="flexEnd"
+                  >
+                    <Button
+                      variant="utility"
+                      size="medium"
+                      icon="download"
+                      iconType="outline"
+                      onClick={() =>
+                        exportPaymentOverviewFile(overview?.bills ?? [], 'xlsx')
+                      }
+                      fluid
+                    >
+                      {formatMessage(m.getAsExcel)}
                     </Button>
-                  </GridColumn>
-                </GridRow>
-              )}
+                  </Box>
+                </GridColumn>
+              </GridRow>
             </GridContainer>
             <Box>
               {overviewError ? (
@@ -212,7 +238,7 @@ export const PaymentOverview = () => {
               ) : overviewLoading ? (
                 <SkeletonLoader space={2} repeat={3} height={24} />
               ) : overview?.bills?.length ? (
-                <>
+                !isMobile ? (
                   <T.Table>
                     <T.Head>
                       <tr className={styles.tableRowStyle}>
@@ -270,25 +296,51 @@ export const PaymentOverview = () => {
                       })}
                     </T.Body>
                   </T.Table>
-                  <DownloadFileButtons
-                    BoxProps={{
-                      paddingTop: 2,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'flexEnd',
-                    }}
-                    buttons={[
-                      {
-                        text: formatMessage(m.getAsExcel),
-                        onClick: () =>
-                          exportPaymentOverviewFile(
-                            overview?.bills ?? [],
-                            'xlsx',
-                          ),
-                      },
-                    ]}
-                  />
-                </>
+                ) : (
+                  <Box>
+                    <MobileTable
+                      rows={overview.bills.map((item) => ({
+                        title: formatDateToMonthString(
+                          item.serviceType?.name ?? '',
+                          item.date,
+                        ),
+                        data: [
+                          {
+                            title: formatMessage(m.date),
+                            content: item.date
+                              ? formatDateFns(item.date, 'dd.MM.yyyy')
+                              : '',
+                          },
+                          {
+                            title: formatMessage(messages.typeofService),
+                            content: item.serviceType?.name ?? '',
+                          },
+                          {
+                            title: formatMessage(messages.totalPayment),
+                            content: amountFormat(item.totalAmount ?? 0),
+                          },
+                          {
+                            title: formatMessage(messages.insuranceShare),
+                            content: amountFormat(item.insuranceAmount ?? 0),
+                          },
+                        ],
+                        action:
+                          enabledDocumentFlag && item.downloadUrl ? (
+                            <Button
+                              iconType="outline"
+                              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                              onClick={() => onFetchDocument(item.downloadUrl!)}
+                              variant="ghost"
+                              icon="open"
+                              fluid
+                            >
+                              {formatMessage(messages.fetchDocument)}
+                            </Button>
+                          ) : undefined,
+                      }))}
+                    />
+                  </Box>
+                )
               ) : (
                 <Box marginTop={2}>
                   <Problem
@@ -305,6 +357,7 @@ export const PaymentOverview = () => {
           </Stack>
         </Box>
       )}
+      <PaymentOverviewParticipationInfo />
     </PaymentsWrapper>
   )
 }

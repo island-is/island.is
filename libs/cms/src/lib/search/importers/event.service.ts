@@ -17,7 +17,7 @@ import {
 export class EventSyncService implements CmsSyncProvider<IEvent> {
   processSyncData(entries: processSyncDataInput<IEvent>) {
     // only process events that we consider not to be empty
-    return entries.filter(
+    const entriesToUpdate = entries.filter(
       (entry: Entry<any>): entry is IEvent =>
         entry.sys.contentType.sys.id === 'event' &&
         !!entry.fields.title &&
@@ -25,6 +25,10 @@ export class EventSyncService implements CmsSyncProvider<IEvent> {
         !!entry.fields.slug &&
         !!entry.fields.thumbnailImage,
     )
+    return {
+      entriesToUpdate,
+      entriesToDelete: [],
+    }
   }
 
   doMapping(entries: IEvent[]) {

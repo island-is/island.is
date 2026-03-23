@@ -11,6 +11,9 @@ export class ApplicationDto {
   @ApiPropertyOptional()
   id?: string
 
+  @ApiPropertyOptional()
+  nationalId?: string
+
   @ApiPropertyOptional({ type: LanguageType })
   organizationName?: LanguageType
 
@@ -45,6 +48,12 @@ export class ApplicationDto {
   status?: string
 
   @ApiPropertyOptional()
+  draftFinishedSteps?: number
+
+  @ApiPropertyOptional()
+  draftTotalSteps?: number
+
+  @ApiPropertyOptional()
   allowProceedOnValidationFail?: boolean
 
   @ApiPropertyOptional()
@@ -67,4 +76,16 @@ export class ApplicationDto {
 
   @ApiPropertyOptional({ type: CompletedSectionInfo })
   completedSectionInfo?: CompletedSectionInfo
+
+  @ApiPropertyOptional()
+  zendeskInternal?: boolean
+
+  @ApiPropertyOptional()
+  useValidate?: boolean
+
+  @ApiPropertyOptional()
+  usePopulate?: boolean
+
+  @ApiPropertyOptional()
+  submissionServiceUrl?: string
 }

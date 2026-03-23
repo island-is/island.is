@@ -1,11 +1,12 @@
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import { Message, MessageType } from '@island.is/judicial-system/message'
 import { CaseNotificationType, User } from '@island.is/judicial-system/types'
 
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
 
-import { Case, Defendant } from '../../../repository'
+import { Case, DefendantRepositoryService } from '../../../repository'
 import { DeleteDefendantResponse } from '../../models/delete.response'
 
 interface Then {
@@ -20,19 +21,30 @@ describe('DefendantController - Delete', () => {
   const caseId = uuid()
   const defendantId = uuid()
 
-  let mockMessageService: MessageService
-  let mockDefendantModel: typeof Defendant
+  let mockQueuedMessages: Message[]
+  let mockDefendantRepositoryService: DefendantRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, defendantModel, defendantController } =
-      await createTestingDefendantModule()
+    const {
+      queuedMessages,
+      sequelize,
+      defendantRepositoryService,
+      defendantController,
+    } = await createTestingDefendantModule()
 
-    mockMessageService = messageService
-    mockDefendantModel = defendantModel
+    mockQueuedMessages = queuedMessages
+    mockDefendantRepositoryService = defendantRepositoryService
 
-    const mockDestroy = mockDefendantModel.destroy as jest.Mock
-    mockDestroy.mockRejectedValue(new Error('Some error'))
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
+
+    const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
+    mockDelete.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (courtCaseNumber?: string) => {
       const then = {} as Then
@@ -56,31 +68,33 @@ describe('DefendantController - Delete', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockDestroy = mockDefendantModel.destroy as jest.Mock
-      mockDestroy.mockResolvedValue(1)
+      const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
+      mockDelete.mockResolvedValue(undefined)
 
       then = await givenWhenThen()
     })
 
     it('should delete the defendant without queuing', () => {
-      expect(mockDefendantModel.destroy).toHaveBeenCalledWith({
-        where: { id: defendantId, caseId },
-      })
+      expect(mockDefendantRepositoryService.delete).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        { transaction },
+      )
       expect(then.result).toEqual({ deleted: true })
-      expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
+      expect(mockQueuedMessages).toEqual([])
     })
   })
 
   describe('defendant removed after case is delivered to court', () => {
     beforeEach(async () => {
-      const mockDestroy = mockDefendantModel.destroy as jest.Mock
-      mockDestroy.mockResolvedValue(1)
+      const mockDelete = mockDefendantRepositoryService.delete as jest.Mock
+      mockDelete.mockResolvedValue(undefined)
 
       await givenWhenThen(uuid())
     })
 
     it('should queue messages', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockQueuedMessages).toEqual([
         {
           type: MessageType.NOTIFICATION,
           user,

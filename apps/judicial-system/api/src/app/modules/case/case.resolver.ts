@@ -12,7 +12,7 @@ import {
   CurrentGraphQlUser,
   JwtGraphQlAuthUserGuard,
 } from '@island.is/judicial-system/auth'
-import type { User } from '@island.is/judicial-system/types'
+import { type User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CaseQueryInput } from './dto/case.input'
@@ -22,6 +22,7 @@ import { ExtendCaseInput } from './dto/extendCase.input'
 import { RequestSignatureInput } from './dto/requestSignature.input'
 import { SendNotificationInput } from './dto/sendNotification.input'
 import { SignatureConfirmationQueryInput } from './dto/signatureConfirmation.input'
+import { SplitDefendantFromCaseInput } from './dto/splitDefendantFromCase.input'
 import { TransitionCaseInput } from './dto/transitionCase.input'
 import { UpdateCaseInput } from './dto/updateCase.input'
 import { CaseInterceptor } from './interceptors/case.interceptor'
@@ -73,6 +74,25 @@ export class CaseResolver {
       user.id,
       AuditedAction.GET_CONNECTED_CASES,
       backendService.getConnectedCases(input.id),
+      input.id,
+    )
+  }
+
+  @Query(() => [Case], { nullable: true })
+  async candidateMergeCases(
+    @Args('input', { type: () => CaseQueryInput })
+    input: CaseQueryInput,
+    @CurrentGraphQlUser()
+    user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<Case[]> {
+    this.logger.debug('Getting candidate merge cases')
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_CANDIDATE_MERGE_CASES,
+      backendService.getCandidateMergeCases(input.id),
       input.id,
     )
   }
@@ -152,8 +172,11 @@ export class CaseResolver {
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.REQUEST_RULING_SIGNATURE,
-      backendService.requestCourtRecordSignature(input.caseId),
+      AuditedAction.REQUEST_COURT_RECORD_SIGNATURE,
+      backendService.requestCourtRecordSignature(
+        input.caseId,
+        input.method ?? 'mobile',
+      ),
       input.caseId,
     )
   }
@@ -166,14 +189,18 @@ export class CaseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<SignatureConfirmationResponse> {
-    const { caseId, documentToken } = input
+    const { caseId, documentToken, method } = input
 
     this.logger.debug(`Confirming signature of court record for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.CONFIRM_RULING_SIGNATURE,
-      backendService.getCourtRecordSignatureConfirmation(caseId, documentToken),
+      AuditedAction.CONFIRM_COURT_RECORD_SIGNATURE,
+      backendService.getCourtRecordSignatureConfirmation(
+        caseId,
+        documentToken,
+        method ?? 'mobile',
+      ),
       caseId,
     )
   }
@@ -191,7 +218,10 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.REQUEST_RULING_SIGNATURE,
-      backendService.requestRulingSignature(input.caseId),
+      backendService.requestRulingSignature(
+        input.caseId,
+        input.method ?? 'mobile',
+      ),
       input.caseId,
     )
   }
@@ -204,14 +234,18 @@ export class CaseResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<SignatureConfirmationResponse> {
-    const { caseId, documentToken } = input
+    const { caseId, documentToken, method } = input
 
     this.logger.debug(`Confirming signature of ruling for case ${caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CONFIRM_RULING_SIGNATURE,
-      backendService.getRulingSignatureConfirmation(caseId, documentToken),
+      backendService.getRulingSignatureConfirmation(
+        caseId,
+        documentToken,
+        method ?? 'mobile',
+      ),
       caseId,
     )
   }
@@ -251,6 +285,27 @@ export class CaseResolver {
       user.id,
       AuditedAction.EXTEND_CASE,
       backendService.extendCase(input.id),
+      (theCase) => theCase.id,
+    )
+  }
+
+  @Mutation(() => Case, { nullable: true })
+  @UseInterceptors(CaseInterceptor)
+  splitDefendantFromCase(
+    @Args('input', { type: () => SplitDefendantFromCaseInput })
+    input: SplitDefendantFromCaseInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<Case> {
+    const { id, defendantId } = input
+
+    this.logger.debug(`Splitting defendant ${defendantId} from case ${id}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SPLIT_DEFENDANT_FROM_CASE,
+      backendService.splitDefendantFromCase(id, defendantId),
       (theCase) => theCase.id,
     )
   }

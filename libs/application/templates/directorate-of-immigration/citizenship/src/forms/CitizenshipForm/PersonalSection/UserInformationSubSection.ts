@@ -139,6 +139,8 @@ export const UserInformationSubSection = buildSubSection({
             ) as NationalRegistryIndividual | undefined
 
             return individual?.citizenship?.name
+              ? individual?.citizenship?.name
+              : individual?.citizenship?.code
           },
         }),
         buildTextField({

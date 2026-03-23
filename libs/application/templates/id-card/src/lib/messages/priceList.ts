@@ -19,17 +19,6 @@ export const priceList = {
       defaultMessage: 'Afhendingarstaður',
       description: 'Location select dropdown title',
     },
-    locationDescription: {
-      id: 'id.application:priceList.labels.locationDescription',
-      defaultMessage:
-        'Fljótlegast er að sækja vegabréf hjá Þjóðskrá Íslands í Borgartúni 21, 105 Reykjavík. Á öðrum afhendingarstöðum getur afhending tekið allt að 6 til 10 daga. Sjá afgreiðslutíma.',
-      description: 'Location select dropdown description',
-    },
-    locationPlaceholder: {
-      id: 'id.application:priceList.labels.locationPlaceholder',
-      defaultMessage: 'Veldu afhendingarstað',
-      description: 'Location select dropdown placeholder',
-    },
     regularPriceTitle: {
       id: 'id.application:priceList.labels.regularPriceTitle#markdown',
       defaultMessage: 'Almenn afgreiðsla: 18-66 ára - {price}',

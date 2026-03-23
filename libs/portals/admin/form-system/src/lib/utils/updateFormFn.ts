@@ -42,9 +42,14 @@ export const updateFormFn = async (
                 ? undefined
                 : newForm.invalidationDate,
             isTranslated: newForm.isTranslated,
-            applicationDaysToRemove: newForm.applicationDaysToRemove,
+            draftDaysToLive: newForm.draftDaysToLive,
+            submissionDaysToLive: newForm.submissionDaysToLive,
             allowProceedOnValidationFail: newForm.allowProceedOnValidationFail,
             hasPayment: newForm.hasPayment,
+            zendeskInternal: newForm.zendeskInternal,
+            useValidate: newForm.useValidate,
+            usePopulate: newForm.usePopulate,
+            submissionServiceUrl: newForm.submissionServiceUrl,
             hasSummaryScreen: newForm.hasSummaryScreen,
             completedSectionInfo: {
               title: {
@@ -70,7 +75,7 @@ export const updateFormFn = async (
         },
       },
     })
-    return response.data.formSystemUpdateForm as UpdateFormResponse
+    return response.data.updateFormSystemForm as UpdateFormResponse
   } catch (err) {
     console.error('Error updating form:', err.message)
     throw err

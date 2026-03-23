@@ -6,8 +6,6 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { LegalGazetteClientService } from '@island.is/clients/legal-gazette'
 import { legalGazetteDataSchema } from '@island.is/application/templates/legal-gazette'
-import { getValueViaPath } from '@island.is/application/core'
-import { Identity } from '@island.is/clients/identity'
 import { isDateString } from 'class-validator'
 
 const LOGGING_CATEGORY = 'LegalGazetteTemplateService'
@@ -22,13 +20,16 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
     super(ApplicationTypes.LEGAL_GAZETTE)
   }
 
-  async getCategories({ auth }: TemplateApiModuleActionProps) {
+  async getTypes({ auth }: TemplateApiModuleActionProps) {
     try {
-      const { categories } = await this.legalGazetteClient.getCategories(auth)
+      this.logger.debug('Fetching types from Legal Gazette API', {
+        category: LOGGING_CATEGORY,
+      })
+      const { types } = await this.legalGazetteClient.getTypes(auth)
 
-      return categories.map((c) => ({ id: c.id, title: c.title, slug: c.slug }))
+      return types.map((t) => ({ id: t.id, title: t.title, slug: t.slug }))
     } catch (error) {
-      this.logger.error('Failed to get categories', {
+      this.logger.error('Failed to get types', {
         error,
         category: LOGGING_CATEGORY,
       })
@@ -37,12 +38,8 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
     }
   }
 
-  async deleteApplication({ application, auth }: TemplateApiModuleActionProps) {
-    await this.legalGazetteClient.deleteApplication(application.id, auth)
-  }
-
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    const { answers, externalData } = application
+    const { answers } = application
 
     const parsed = legalGazetteDataSchema.safeParse(answers)
 
@@ -57,39 +54,8 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
       }
     }
 
-    const identityInformation = getValueViaPath<Identity>(
-      externalData,
-      'identity.data',
-    )
-
-    if (!identityInformation) {
-      this.logger.error('Identity information not found in external data', {
-        category: LOGGING_CATEGORY,
-      })
-      return {
-        success: false,
-      }
-    }
-
-    const actor = identityInformation.actor
-      ? {
-          name: identityInformation.actor.name,
-          nationalId: identityInformation.actor.nationalId,
-        }
-      : {
-          name: identityInformation.name,
-          nationalId: identityInformation.nationalId,
-        }
-
-    const institution = identityInformation.actor
-      ? {
-          name: identityInformation.name,
-          nationalId: identityInformation.nationalId,
-        }
-      : undefined
-
     const {
-      application: appl,
+      application: fields,
       communication,
       publishing,
       signature,
@@ -103,18 +69,21 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
     })
 
     const submitApplicationDto = {
-      applicationId: application.id,
-      categoryId: appl.categoryId,
-      caption: appl.caption,
-      htmlBase64: appl.html,
-      signature: signature,
-      channels: communication.channels.map((ch) => ({
+      islandIsApplicationId: application.id,
+      typeId: fields.typeId,
+      categoryId: fields.categoryId,
+      caption: fields.caption,
+      htmlBase64: fields.html,
+      signatureDate: signature.date,
+      signatureName: signature.name,
+      signatureLocation: signature.location,
+      signatureOnBehalfOf: signature.onBehalfOf,
+      additionalText: undefined,
+      publishingDates: dates,
+      communicationChannels: communication.channels.map((ch) => ({
         email: ch.email,
         phone: ch.phone ?? '',
       })),
-      actor: actor,
-      institution: institution,
-      publishingDates: dates,
     }
 
     try {

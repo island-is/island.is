@@ -30,7 +30,6 @@ import {
   CaseType,
   CourtDocument,
   CourtSessionType,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
@@ -512,11 +511,6 @@ export class UpdateCaseDto {
   readonly indictmentReviewerId?: string
 
   @IsOptional()
-  @IsEnum(IndictmentCaseReviewDecision)
-  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
-  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
-
-  @IsOptional()
   @IsEnum(IndictmentDecision)
   @ApiPropertyOptional({ enum: IndictmentDecision })
   readonly indictmentDecision?: IndictmentDecision
@@ -554,10 +548,10 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
-  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
+  readonly isRegisteredInPrisonSystem?: boolean
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly isRegisteredInPrisonSystem?: boolean
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  readonly penalties?: string
 }

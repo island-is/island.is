@@ -473,18 +473,21 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
                           color="blue400"
                         />
                       </Box>
-                      <Text variant="medium">{`${n(
-                        'applicationPeriod',
-                        'Umsóknartímabil',
-                      )}: ${format(
-                        new Date(data.applicationStartDate),
-                        'd. MMMM yyyy',
-                        { locale: locale === 'en' ? en : is },
-                      )} - ${format(
-                        new Date(data.applicationEndDate),
-                        'd. MMMM yyyy',
-                        { locale: locale === 'en' ? en : is },
-                      )}`}</Text>
+                      <Text variant="medium">
+                        {`${n('applicationPeriod', 'Umsóknartímabil')}: ${
+                          data.applicationStartDate && data.applicationEndDate
+                            ? `${format(
+                                new Date(data.applicationStartDate),
+                                'd. MMMM yyyy',
+                                { locale: locale === 'en' ? en : is },
+                              )} - ${format(
+                                new Date(data.applicationEndDate),
+                                'd. MMMM yyyy',
+                                { locale: locale === 'en' ? en : is },
+                              )}`
+                            : n('applicationPeriodNotSpecified', 'Ótilgreint')
+                        }`}
+                      </Text>
                     </Box>
                   </GridColumn>
 

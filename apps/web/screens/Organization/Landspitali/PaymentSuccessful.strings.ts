@@ -6,9 +6,14 @@ export const m = defineMessages({
     defaultMessage: 'Greiðsla tókst',
     description: 'Aðaltitill',
   },
-  subTitle: {
-    id: 'web.landspitali.paymentSuccessful:subTitle',
-    defaultMessage: 'Kvittun verður send í tölvupósti',
-    description: 'Undirtitill',
+  subTitleWhenNationalIdProvided: {
+    id: 'web.landspitali.paymentSuccessful:subTitleWhenNationalIdProvided',
+    defaultMessage: 'Kvittun mun berast í stafrænt pósthólf greiðanda',
+    description: 'Undirtitill þegar greiðandi gefur upp kennitölu',
+  },
+  subTitleWhenNationalIdNotProvided: {
+    id: 'web.landspitali.paymentSuccessful:subTitleWhenNationalIdNotProvided',
+    defaultMessage: ' ',
+    description: 'Undirtitill þegar greiðandi gefur ekki upp kennitölu',
   },
 })

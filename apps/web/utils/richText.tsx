@@ -38,6 +38,7 @@ import {
   KilometerFee,
   MasterList,
   MultipleStatistics,
+  NewKilometerFee,
   OneColumnTextSlice,
   OverviewLinksSlice,
   ParentalLeaveCalculator,
@@ -57,6 +58,7 @@ import {
   TeamListSlice,
   TemporaryEventLicencesList,
   TwoColumnTextSlice,
+  VerAnnouncementCalculator,
 } from '@island.is/web/components'
 import {
   AccordionSlice as AccordionSliceSchema,
@@ -95,6 +97,7 @@ import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/co
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import { DirectGrants } from '../components/connected/landspitali/Grants/Grants'
 import { MemorialCard } from '../components/connected/landspitali/MemorialCards/MemorialCards'
+import { LatestVerdicts } from '../components/connected/LatestVerdicts'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
 import { ReligiousOrganizationList } from '../components/connected/syslumenn/CardLists/ReligiousOrganizationList/ReligiousOrganizationList'
 import SyslumennDrivingInstructorList from '../components/connected/syslumenn/DrivingInstructorList/DrivingInstructorList'
@@ -188,6 +191,9 @@ export const webRenderConnectedComponent = (
     case 'KilometerFee':
       connectedComponent = <KilometerFee slice={slice} />
       break
+    case 'NewKilometerFee':
+      connectedComponent = <NewKilometerFee slice={slice} />
+      break
     case 'SpecificHousingBenefitSupportCalculator':
       connectedComponent = <SpecificHousingBenefitSupportCalculator />
       break
@@ -240,6 +246,12 @@ export const webRenderConnectedComponent = (
       break
     case 'Syslumenn/DrivingInstructorList':
       connectedComponent = <SyslumennDrivingInstructorList slice={slice} />
+      break
+    case 'LatestVerdicts':
+      connectedComponent = <LatestVerdicts slice={slice} />
+      break
+    case 'VERAnnouncementCalculator':
+      connectedComponent = <VerAnnouncementCalculator />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
@@ -315,6 +327,7 @@ const defaultRenderComponent = {
       filterTags={slice.filterTags}
       defaultOrder={slice.defaultOrder}
       showSearchInput={slice.showSearchInput ?? true}
+      textSearchOrder={slice.textSearchOrder ?? 'Default'}
     />
   ),
   TeamList: (slice: TeamList) => (

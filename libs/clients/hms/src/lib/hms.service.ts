@@ -205,9 +205,7 @@ export class HmsService {
     let properties: Array<FasteignAsset> = []
 
     try {
-      const api = this.propertiesApi.withMiddleware(
-        new AuthMiddleware(auth, { forwardUserInfo: true }),
-      )
+      const api = this.propertiesApi.withMiddleware(new AuthMiddleware(auth))
 
       properties = await Promise.all(
         input.fasteignNrs?.map((nr) => {

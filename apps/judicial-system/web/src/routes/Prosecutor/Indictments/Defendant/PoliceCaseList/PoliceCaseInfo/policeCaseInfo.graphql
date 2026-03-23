@@ -4,5 +4,6 @@ query PoliceCaseInfo($input: PoliceCaseInfoQueryInput!) {
     place
     licencePlate
     date
+    subtypes
   }
 }

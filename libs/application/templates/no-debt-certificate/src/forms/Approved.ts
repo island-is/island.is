@@ -5,11 +5,11 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import Logo from '../assets/Logo'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 
 export const Approved: Form = buildForm({
   id: 'ApprovedApplicationForm',
-  logo: Logo,
+  logo: DistrictCommissionersLogo,
   mode: FormModes.APPROVED,
   children: [
     buildSection({

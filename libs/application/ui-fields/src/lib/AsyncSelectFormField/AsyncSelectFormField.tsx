@@ -43,6 +43,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     isClearable,
     required = false,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
     updateOnSelect,
   } = field
@@ -118,7 +119,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
         <SelectController
           required={buildFieldRequired(application, required)}
           dataTestId={field.dataTestId}
-          defaultValue={getDefaultValue(field, application)}
+          defaultValue={getDefaultValue(field, application, locale)}
           label={formatTextWithLocale(
             title,
             application,
@@ -154,6 +155,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
           isSearchable={isSearchable}
           isMulti={isMulti}
           clearOnChange={clearOnChange}
+          clearOnChangeDefaultValue={clearOnChangeDefaultValue}
           setOnChange={
             typeof setOnChange === 'function'
               ? async (optionValue) =>

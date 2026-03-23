@@ -8,6 +8,7 @@ const prisonAdminRequestCasesTableGroup = {
       route: 'virk-rannsoknarmal',
       title: 'Virk mál',
       description: 'Virk gæsluvarðhöld og farbönn.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PRISON_ADMIN_REQUEST_CASES_DONE,
@@ -26,12 +27,14 @@ const prisonAdminIndictmentsTableGroup = {
       route: 'sakamal-til-fullnustu',
       title: 'Mál til fullnustu',
       description: 'Ný og móttekin mál.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING,
       route: 'skradir-domar-i-sakamalum',
       title: 'Skráðir dómar',
       description: 'Mál sem hafa verið skráð.',
+      includeCounter: true,
     },
   ],
 }

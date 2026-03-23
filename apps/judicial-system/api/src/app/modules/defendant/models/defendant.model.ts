@@ -4,6 +4,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  IndictmentCaseReviewDecision,
   PunishmentType,
   SubpoenaType,
 } from '@island.is/judicial-system/types'
@@ -16,6 +17,9 @@ registerEnumType(DefendantPlea, { name: 'DefendantPlea' })
 registerEnumType(DefenderChoice, { name: 'DefenderChoice' })
 registerEnumType(SubpoenaType, { name: 'SubpoenaType' })
 registerEnumType(PunishmentType, { name: 'PunishmentType' })
+registerEnumType(IndictmentCaseReviewDecision, {
+  name: 'IndictmentCaseReviewDecision',
+})
 
 @ObjectType()
 export class Defendant {
@@ -64,11 +68,11 @@ export class Defendant {
   @Field(() => DefendantPlea, { nullable: true })
   readonly defendantPlea?: DefendantPlea
 
-  // TODO: move to verdict api model
+  // represents appeal deadline for both verdicts and fines
   @Field(() => String, { nullable: true })
   readonly verdictAppealDeadline?: string
 
-  // TODO: move to verdict api model
+  // represents appeal deadline for both verdicts and fines
   @Field(() => Boolean, { nullable: true })
   readonly isVerdictAppealDeadlineExpired?: boolean
 
@@ -102,6 +106,9 @@ export class Defendant {
   @Field(() => Boolean, { nullable: true })
   readonly isSentToPrisonAdmin?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  readonly isRegisteredInPrisonSystem?: boolean
+
   @Field(() => String, { nullable: true })
   readonly sentToPrisonAdminDate?: string
 
@@ -116,4 +123,13 @@ export class Defendant {
 
   @Field(() => String, { nullable: true })
   readonly alternativeServiceDescription?: string
+
+  @Field(() => IndictmentCaseReviewDecision, { nullable: true })
+  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isDrivingLicenseSuspended?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }

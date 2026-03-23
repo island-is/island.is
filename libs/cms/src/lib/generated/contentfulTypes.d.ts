@@ -493,11 +493,14 @@ export interface IBloodDonationRestrictionFields {
   /** Lykilorð */
   keywords?: string | undefined
 
-  /** Nánar um áhrif á blóðgjöf */
+  /** Undantekningar og athugasemdir */
   detailedText?: Document | undefined
 
   /** Flokkur */
   filterTags?: IGenericTag[] | undefined
+
+  /** Gildir frá */
+  effectiveDate?: string | undefined
 }
 
 export interface IBloodDonationRestriction
@@ -786,6 +789,129 @@ export interface IContactUs extends Entry<IContactUsFields> {
     contentType: {
       sys: {
         id: 'contactUs'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICourseFields {
+  /** Course List Page */
+  courseListPage: ICourseListPage
+
+  /** Organization */
+  organization?: IOrganization | undefined
+
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug?: string | undefined
+
+  /** Card Intro */
+  cardIntro?: Document | undefined
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Categories */
+  categories?: IGenericTag[] | undefined
+
+  /** Instances */
+  instances?: ICourseInstance[] | undefined
+
+  /** Show placeholder text if no course instances */
+  showPlaceholderTextIfNoCourseInstances?: boolean | undefined
+}
+
+export interface ICourse extends Entry<ICourseFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'course'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICourseInstanceFields {
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Displayed Title */
+  displayedTitle?: string | undefined
+
+  /** Description */
+  description?: string | undefined
+
+  /** Start Date */
+  startDate: string
+
+  /** Start Date Time Duration */
+  startDateTimeDuration?: Record<string, any> | undefined
+
+  /** Location */
+  location?: string | undefined
+
+  /** Price */
+  price?: IPrice | undefined
+
+  /** Max Registrations */
+  maxRegistrations?: number | undefined
+
+  /** Charge Item Code */
+  chargeItemCode?: string | undefined
+}
+
+export interface ICourseInstance extends Entry<ICourseInstanceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'courseInstance'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ICourseListPageFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Internal Title */
+  internalTitle?: string | undefined
+
+  /** Title */
+  title?: string | undefined
+
+  /** Content */
+  content?: Document | undefined
+}
+
+export interface ICourseListPage extends Entry<ICourseListPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'courseListPage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1725,6 +1851,9 @@ export interface IGenericListFields {
 
   /** Show Search Input */
   showSearchInput?: boolean | undefined
+
+  /** Text Search Order */
+  textSearchOrder?: 'Default' | 'Score' | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -2419,6 +2548,9 @@ export interface ILifeEventPageFields {
 
   /** See More Text */
   seeMoreText?: string | undefined
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -4317,7 +4449,19 @@ export interface ISliceConnectedComponentFields {
     | 'Starfsrettindi/ProfessionRights'
     | 'VMST/ParentalLeaveCalculator'
     | 'DigitalIceland/BenefitsOfDigitalProcesses'
+    | 'WHODAS/Calculator'
+    | 'Brennuleyfi/BurningPermitList'
+    | 'DigitalIcelandMailingListThumbnailCard'
+    | 'DigitalIcelandStatistics'
+    | 'Trufelog/Lifsskodunarfelog'
+    | 'Landspitali/MemorialCard'
+    | 'Landspitali/DirectGrants'
+    | 'Police/FineAndSpeedMeasurementCalculator'
     | 'Personuvernd/SearchInput'
+    | 'Syslumenn/DrivingInstructorList'
+    | 'FSRE/EmployeeList'
+    | 'NewKilometerFee'
+    | 'LatestVerdicts'
     | undefined
 
   /** Localized JSON */
@@ -5358,6 +5502,34 @@ export interface IVacancy extends Entry<IVacancyFields> {
   }
 }
 
+export interface IWebChatFields {
+  /** Internal Title */
+  internalTitle: string
+
+  /** Display Locations */
+  displayLocations: (IOrganization | IArticle)[]
+
+  /** Web Chat Configuration */
+  webChatConfiguration?: Record<string, any> | undefined
+}
+
+export interface IWebChat extends Entry<IWebChatFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'webChat'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export type CONTENT_TYPE =
   | 'accordionSlice'
   | 'alertBanner'
@@ -5376,6 +5548,9 @@ export type CONTENT_TYPE =
   | 'chartComponent'
   | 'chartNumberBox'
   | 'contactUs'
+  | 'course'
+  | 'courseInstance'
+  | 'courseListPage'
   | 'customPage'
   | 'districts'
   | 'emailSignup'

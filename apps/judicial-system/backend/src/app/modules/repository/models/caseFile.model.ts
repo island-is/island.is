@@ -83,9 +83,9 @@ export class CaseFile extends Model {
   @ApiProperty({ enum: CaseFileState })
   state!: CaseFileState
 
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional({ type: String })
-  key?: string
+  @Column({ type: DataType.STRING, allowNull: false })
+  @ApiProperty({ type: String })
+  key!: string
 
   @Column({ type: DataType.INTEGER, allowNull: false })
   @ApiProperty({ type: Number })
@@ -140,4 +140,8 @@ export class CaseFile extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   fileRepresentative?: string
+
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
+  @ApiProperty({ type: Boolean })
+  isKeyAccessible!: boolean
 }

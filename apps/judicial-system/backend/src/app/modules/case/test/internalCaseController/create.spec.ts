@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { BadRequestException } from '@nestjs/common'
 
@@ -22,14 +22,16 @@ import {
   User,
 } from '../../../repository'
 import { UserService } from '../../../user'
-import { InternalCreateCaseDto } from '../../dto/internalCreateCase.dto'
+import { DeprecatedInternalCreateCaseDto } from '../../dto/deprecatedInternalCreateCase.dto'
 
 interface Then {
   result: Case
   error: Error
 }
 
-type GivenWhenThen = (caseToCreate: InternalCreateCaseDto) => Promise<Then>
+type GivenWhenThen = (
+  caseToCreate: DeprecatedInternalCreateCaseDto,
+) => Promise<Then>
 
 describe('InternalCaseController - Create', () => {
   const prosecutorNationalId = '1234567890'
@@ -85,11 +87,13 @@ describe('InternalCaseController - Create', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
-    givenWhenThen = async (caseToCreate: InternalCreateCaseDto) => {
+    givenWhenThen = async (caseToCreate: DeprecatedInternalCreateCaseDto) => {
       const then = {} as Then
 
       try {
-        then.result = await internalCaseController.create(caseToCreate)
+        then.result = await internalCaseController.deprecatedCreate(
+          caseToCreate,
+        )
       } catch (error) {
         then.error = error as Error
       }
@@ -142,6 +146,7 @@ describe('InternalCaseController - Create', () => {
           prosecutorId: userId,
           courtId,
           prosecutorsOfficeId,
+          policeDefendantNationalId: accusedNationalId,
         },
         { transaction },
       )
@@ -267,6 +272,8 @@ describe('InternalCaseController - Create', () => {
           state: CaseState.DRAFT,
           creatingProsecutorId: userId,
           prosecutorsOfficeId,
+          withCourtSessions: true,
+          policeDefendantNationalId: accusedNationalId,
         },
         {
           transaction,
@@ -307,6 +314,7 @@ describe('InternalCaseController - Create', () => {
           courtId,
           isHeightenedSecurityLevel: true,
           prosecutorsOfficeId,
+          policeDefendantNationalId: accusedNationalId,
         },
         {
           transaction,
@@ -317,7 +325,9 @@ describe('InternalCaseController - Create', () => {
 
   describe('creating user lookup fails', () => {
     const prosecutorNationalId = '1234567890'
-    const caseToCreate = { prosecutorNationalId } as InternalCreateCaseDto
+    const caseToCreate = {
+      prosecutorNationalId,
+    } as DeprecatedInternalCreateCaseDto
     let then: Then
 
     beforeEach(async () => {

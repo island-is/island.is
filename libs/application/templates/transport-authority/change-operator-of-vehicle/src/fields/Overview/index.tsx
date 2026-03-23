@@ -18,9 +18,9 @@ import {
 } from './sections'
 import {
   getApproveAnswers,
-  canReviewerApprove,
   isLastReviewer,
-  canReviewerReApprove,
+  hasReviewerApproved,
+  hasEveryReviewerApproved,
 } from '../../utils'
 import { RejectConfirmationModal } from './RejectConfirmationModal'
 import {
@@ -176,7 +176,7 @@ export const Overview: FC<
             <Button variant="ghost" onClick={onBackButtonClick}>
               {formatMessage(review.buttons.back)}
             </Button>
-            {canReviewerApprove(reviewerNationalId, application.answers) && (
+            {!hasReviewerApproved(application.answers, reviewerNationalId) && (
               <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
                 <Box marginLeft={3}>
                   <Button
@@ -198,7 +198,11 @@ export const Overview: FC<
                 </Box>
               </Box>
             )}
-            {canReviewerReApprove(reviewerNationalId, application.answers) &&
+            {/**
+             * Note: If every reviewer has approved and application in not yet in COMPLETED state
+             * we allow reviewer to "re-approve" to push the application to the next state.
+             */}
+            {hasEveryReviewerApproved(application.answers) &&
               application.state !== States.COMPLETED && (
                 <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
                   <Button

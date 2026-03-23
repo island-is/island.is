@@ -7,14 +7,14 @@ import {
   conclusion,
   review,
 } from '../lib/messages'
-import { Logo } from '../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { Machine } from '../shared'
 import { getSelectedMachine } from '../utils'
 
 export const Rejected: Form = buildForm({
   id: 'RejectedApplicationForm',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.REJECTED,
   children: [
     buildSection({

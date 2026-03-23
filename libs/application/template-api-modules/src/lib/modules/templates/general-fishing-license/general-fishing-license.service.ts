@@ -30,7 +30,6 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const paymentStatus = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
       application.id,
     )
 

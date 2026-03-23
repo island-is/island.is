@@ -120,7 +120,9 @@ const Summary: FC = () => {
               conclusionText={workingCase.appealConclusion}
             />
           </Box>
-          <AppealCaseFilesOverview />
+          <Box marginBottom={6}>
+            <AppealCaseFilesOverview />
+          </Box>
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter

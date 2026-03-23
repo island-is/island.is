@@ -18,6 +18,13 @@ export const propertySearch = {
         'Finndu eignina með heimilisfangi eða fasteignanúmeri. Nánari upplýsingar er að finna í [fasteignaskrá HMS](https://leit.fasteignaskra.is/).',
       description: 'Register property page description',
     },
+    spouseFamilyNotice: {
+      id: 'ra.application:registerProperty.search.spouseFamilyNotice',
+      defaultMessage:
+        'Ef hið leigða er bústaður fjölskyldu leigusala eða notað við atvinnurekstur hjóna, eða ætlað til þess, þá ber að fá undirskrift maka sbr. IX. kafla hjúskaparlaga. Hægt er að skila slíku samþykki maka í tölvupósti til HMS og verður það þá fylgiskjal hins skráða samnings.',
+      description:
+        'Notice message regarding property being used for family purposes',
+    },
     propertySearchPlaceholder: {
       id: 'ra.application:registerProperty.search.propertySearchPlaceholder',
       defaultMessage: 'Leitaðu eftir heimilisfangi eða fasteignanúmeri',
@@ -70,6 +77,13 @@ export const propertySearch = {
         'Heildarfjöldi herbergja leigðra eininga getur ekki verið fleiri en 20',
       description:
         'Error message when number of rooms is larger than max in search results',
+    },
+    numOfRoomsForRoomTypeError: {
+      id: 'ra.application:registerProperty.search.numOfRoomsForRoomTypeError',
+      defaultMessage:
+        'Þegar tegund húsnæðis er herbergi má fjöldi herbergja í hverri einingu ekki vera fleiri en 1',
+      description:
+        'Error message when any unit has more than 1 room for room type rental',
     },
     changedSizeTooLargeError: {
       id: 'ra.application:registerProperty.search.changedSizeTooLargeError',

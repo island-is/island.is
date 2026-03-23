@@ -75,18 +75,30 @@ export const Applicants = ({ applicantField }: Props) => {
     applicantType as ApplicantTypesEnum,
   )
 
+  const hasEmail =
+    getValue(applicantField, 'email') &&
+    getValue(applicantField, 'email') !== ''
+  const hasPhoneNumber =
+    getValue(applicantField, 'phoneNumber') &&
+    getValue(applicantField, 'phoneNumber') !== ''
+
   useQuery(USER_PROFILE, {
     fetchPolicy: 'cache-first',
+    skip: hasEmail && hasPhoneNumber,
     onCompleted: (data) => {
       const { mobilePhoneNumber, email } = data.getUserProfile
-      dispatch({
-        type: 'SET_PHONE_NUMBER',
-        payload: { id: applicantField.id, value: mobilePhoneNumber },
-      })
-      dispatch({
-        type: 'SET_EMAIL',
-        payload: { id: applicantField.id, value: email },
-      })
+      if (mobilePhoneNumber && !hasPhoneNumber) {
+        dispatch({
+          type: 'SET_PHONE_NUMBER',
+          payload: { id: applicantField.id, value: mobilePhoneNumber },
+        })
+      }
+      if (email && !hasEmail) {
+        dispatch({
+          type: 'SET_EMAIL',
+          payload: { id: applicantField.id, value: email },
+        })
+      }
     },
   })
 
@@ -141,25 +153,20 @@ export const Applicants = ({ applicantField }: Props) => {
           </Text>
           <Stack space={2}>
             <NationalIdField
-              disabled
               nationalId={nationalId}
               name={getValue(applicantField, 'name')}
             />
             <Input
               label={formatMessage(m.address)}
               name="address"
-              placeholder={formatMessage(m.address)}
-              backgroundColor="white"
-              disabled
               value={getValue(applicantField, 'address') || ''}
+              readOnly
             />
             <Input
               label={formatMessage(m.postalCode)}
               name="postalCode"
-              placeholder={formatMessage(m.postalCode)}
-              backgroundColor="white"
-              disabled
               value={getValue(applicantField, 'postalCode') || ''}
+              readOnly
             />
           </Stack>
         </Box>

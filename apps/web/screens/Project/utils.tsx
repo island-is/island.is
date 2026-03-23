@@ -70,22 +70,6 @@ export const convertLinkGroupsToNavigationItems = (
     }
   })
 
-export const getActiveNavigationItemTitle = (
-  navigationItems: NavigationItem[],
-  clientUrl: string,
-) => {
-  for (const item of navigationItems) {
-    if (clientUrl === item.href) {
-      return item.title
-    }
-    for (const childItem of item.items ?? []) {
-      if (clientUrl === childItem.href) {
-        return childItem.title
-      }
-    }
-  }
-}
-
 export const assignNavigationActive = (
   items: NavigationItem[],
   clientUrl: string,
@@ -126,22 +110,12 @@ export const getSidebarNavigationComponent = (
       active: baseRouterPath === url,
     })) ?? []
 
-  const activeNavigationItemTitle = getActiveNavigationItemTitle(
-    navigationList,
-    baseRouterPath,
-  )
-  const activeSecondaryNavigationItemTitle = getActiveNavigationItemTitle(
-    secondaryNavigationList,
-    baseRouterPath,
-  )
-
   return (isMenuDialog = false) => (
     <Stack space={2}>
       <Navigation
         isMenuDialog={isMenuDialog}
         baseId="pageNav"
         items={navigationList}
-        activeItemTitle={activeNavigationItemTitle}
         title={navigationTitle}
         mobileNavigationButtonOpenLabel={mobileNavigationButtonOpenLabel}
         mobileNavigationButtonCloseLabel={mobileNavigationButtonCloseLabel}
@@ -162,7 +136,6 @@ export const getSidebarNavigationComponent = (
           isMenuDialog={isMenuDialog}
           title={projectPage.secondarySidebar.name}
           items={secondaryNavigationList}
-          activeItemTitle={activeSecondaryNavigationItemTitle}
           renderLink={(link, item) => {
             return item?.href ? (
               <Link href={item.href} legacyBehavior>

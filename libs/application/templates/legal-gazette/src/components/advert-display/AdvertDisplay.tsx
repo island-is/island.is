@@ -21,6 +21,7 @@ type AdvertDisplayProps = {
   signatureLocation?: string
   signatureDate?: string
   signatureName?: string
+  signatureOnBehalfOf?: string
   disclosure?: React.ReactElement
   modal?: boolean
   withBorder?: boolean
@@ -34,11 +35,11 @@ const Advert = ({
   signatureDate,
   signatureLocation,
   signatureName,
+  signatureOnBehalfOf,
   withBorder = true,
 }: AdvertDisplayProps) => {
   const showHeader = !!(status || publicationDate)
   const showBody = !!(title || html)
-  const showSignature = !!(signatureDate || signatureLocation || signatureName)
 
   const { formatMessage } = useLocale()
 
@@ -79,16 +80,25 @@ const Advert = ({
             )}
           </Stack>
         )}
-        {showSignature && (
-          <Inline align="right" space={2}>
-            <Stack space={1}>
-              <Text variant="medium">{`${signatureLocation}, ${signatureDate}`}</Text>
+        <Inline align="right" space={2}>
+          <Stack space={1}>
+            {Boolean(signatureDate || signatureLocation) && (
+              <Text variant="medium">
+                {`${signatureLocation ? signatureLocation : ''}${
+                  signatureDate ? `, ${signatureDate}` : ''
+                }`}
+              </Text>
+            )}
+            {Boolean(signatureOnBehalfOf) && (
+              <Text variant="medium">{signatureOnBehalfOf}</Text>
+            )}
+            {Boolean(signatureName) && (
               <Text variant="medium" fontWeight="semiBold">
                 {signatureName}
               </Text>
-            </Stack>
-          </Inline>
-        )}
+            )}
+          </Stack>
+        </Inline>
       </Stack>
     </Box>
   )

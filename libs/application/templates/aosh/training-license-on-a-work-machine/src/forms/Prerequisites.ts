@@ -7,7 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { Logo } from '../assets/Logo'
+import { AoshLogo } from '@island.is/application/assets/institution-logos'
 import { externalData } from '../lib/messages'
 import {
   IdentityApi,
@@ -19,7 +19,7 @@ import {
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: '',
-  logo: Logo,
+  logo: AoshLogo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [

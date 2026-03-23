@@ -184,7 +184,7 @@ const Handover: FC<React.PropsWithChildren<unknown>> = () => {
           <Box textAlign="center">
             <Stack space={4}>
               <Text variant="h1">{t.titles.loading}</Text>
-              <LoadingDots large />
+              <LoadingDots size="large" />
             </Stack>
           </Box>
         ) : (

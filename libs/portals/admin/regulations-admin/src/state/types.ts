@@ -16,7 +16,7 @@ import {
 import { Kennitala, RegulationType, MinistryList } from '@island.is/regulations'
 import { Step } from '../types'
 import { MessageDescriptor } from 'react-intl'
-import { WarningList } from '@island.is/regulations-tools/useTextWarnings'
+import { WarningList } from '@dmr.is/regulations-tools/useTextWarnings'
 
 export type StepNav = {
   name: Step

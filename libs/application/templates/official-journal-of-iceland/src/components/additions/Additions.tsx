@@ -7,7 +7,7 @@ import {
   Text,
   Input,
 } from '@island.is/island-ui/core'
-import { HTMLText } from '@island.is/regulations-tools/types'
+import { HTMLText } from '@dmr.is/regulations-tools/types'
 import { MAXIMUM_ADDITIONS_COUNT } from '../../lib/constants'
 import { HTMLEditor } from '../htmlEditor/HTMLEditor'
 import { useApplication } from '../../hooks/useUpdateApplication'

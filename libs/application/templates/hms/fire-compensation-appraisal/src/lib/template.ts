@@ -19,7 +19,6 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { assign } from 'xstate'
 import { NationalRegistryApi, propertiesApi } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { InstitutionNationalIds } from '@island.is/application/types'
@@ -43,7 +42,6 @@ const template: ApplicationTemplate<
   featureFlag: Features.fireCompensationAppraisalEnabled,
   translationNamespaces:
     ApplicationConfigurations.FireCompensationAppraisal.translation,
-
   dataSchema,
   allowedDelegations: [
     {
@@ -175,12 +173,16 @@ const template: ApplicationTemplate<
             formLoader: async () => {
               return PaymentForm
             },
+            write: 'all',
+            delete: true,
           },
           {
             id: Roles.DELEGATE,
             formLoader: async () => {
               return PaymentForm
             },
+            write: 'all',
+            delete: true,
           },
         ],
       }),
@@ -193,6 +195,9 @@ const template: ApplicationTemplate<
           onEntry: [
             defineTemplateApi({
               action: TemplateApiActions.submitApplication,
+            }),
+            defineTemplateApi({
+              action: TemplateApiActions.sendNotificationToAllInvolved,
             }),
           ],
           actionCard: {
@@ -222,26 +227,18 @@ const template: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
-    },
-  },
   mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
+    nationalId: string,
+    application: Application,
   ): ApplicationRole | undefined => {
-    const { applicantActors = [] } = _application
+    const { applicantActors = [] } = application
     if (applicantActors.length > 0) {
       return Roles.DELEGATE
     }
-    return Roles.APPLICANT
+    if (nationalId === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

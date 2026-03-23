@@ -6,7 +6,10 @@ export const CREATE_APPLICATION = gql`
     $input: CreateFormSystemApplicationInput!
   ) {
     createFormSystemApplication(input: $input) {
-      ...Application
+      application {
+        ...Application
+      }
+      isLoginTypeAllowed
     }
   }
   ${ApplicationFragment}

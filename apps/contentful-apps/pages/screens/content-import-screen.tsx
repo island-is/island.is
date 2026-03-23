@@ -8,8 +8,6 @@ import {
   Button,
   Flex,
   FormControl,
-  Note,
-  Paragraph,
   Select,
   Stack,
 } from '@contentful/f36-components'
@@ -298,16 +296,6 @@ const ContentImportScreen = () => {
         (field.contentfulField.data.required && field.selectedId) ||
         !field.contentfulField.data.required,
     )
-
-  if (!sdk.user.spaceMembership.admin) {
-    return (
-      <Flex marginTop="spacingXl" justifyContent="center">
-        <Note title="Access denied" style={{ maxWidth: '800px' }}>
-          <Paragraph>Only admins are allowed to import content</Paragraph>
-        </Note>
-      </Flex>
-    )
-  }
 
   return (
     <Box padding="spacingXl" id="content-import-screen-container">

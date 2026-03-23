@@ -1,6 +1,8 @@
 import { YES } from '@island.is/application/core'
 import { z } from 'zod'
 import * as m from './messages'
+import uniqWith from 'lodash/uniqWith'
+import isEqual from 'lodash/isEqual'
 
 const fileSchema = z.object({ key: z.string(), name: z.string() })
 
@@ -36,19 +38,29 @@ export const dataSchema = z.object({
   applicant: applicantSchema,
   realEstate: realEstateSchema,
   usageUnits: usageUnitsSchema,
-  photos: z.array(fileSchema).superRefine((data, ctx) => {
-    if (data.length < 3) {
-      ctx.addIssue({
-        params: m.photoMessages.alertMessage,
-        code: z.ZodIssueCode.custom,
-      })
-    } else if (data.length > 10) {
-      ctx.addIssue({
-        params: m.photoMessages.maxPhotos,
-        code: z.ZodIssueCode.custom,
-      })
-    }
-  }),
+  photos: z
+    .array(fileSchema)
+    .refine(
+      (items) => {
+        return uniqWith(items, isEqual).length === items.length
+      },
+      {
+        params: m.photoMessages.duplicatePhotos,
+      },
+    )
+    .superRefine((data, ctx) => {
+      if (data.length < 3) {
+        ctx.addIssue({
+          params: m.photoMessages.alertMessage,
+          code: z.ZodIssueCode.custom,
+        })
+      } else if (data.length > 20) {
+        ctx.addIssue({
+          params: m.photoMessages.maxPhotos,
+          code: z.ZodIssueCode.custom,
+        })
+      }
+    }),
   appraisalMethod: appraisalMethodSchema,
   description: descriptionSchema,
 })

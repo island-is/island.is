@@ -1,10 +1,9 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Image, RefreshControl, ScrollView, View } from 'react-native'
+import { Animated, Image, RefreshControl, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
 
-import { EmptyList, StatusCardSkeleton } from '../../ui'
 import illustrationSrc from '../../assets/illustrations/le-jobs-s3.png'
 import {
   Application,
@@ -14,11 +13,10 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
-import { testIDs } from '../../utils/test-ids'
+import { EmptyList, StatusCardSkeleton, TopLine } from '../../ui'
 import { ApplicationsPreview } from './components/applications-preview'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
-const Host = styled.SafeAreaView`
+const Host = styled.View`
   flex: 1;
   margin-top: ${({ theme }) => theme.spacing[2]}px;
 `
@@ -34,10 +32,6 @@ const { useNavigationOptions, getNavigationOptions } =
           visible: false,
         },
       },
-      bottomTab: {
-        iconColor: theme.color.blue400,
-        text: intl.formatMessage({ id: 'applications.bottomTabText' }),
-      },
     }),
     {
       topBar: {
@@ -45,14 +39,6 @@ const { useNavigationOptions, getNavigationOptions } =
           active: true,
           noBorder: true,
         },
-      },
-      bottomTab: {
-        testID: testIDs.TABBAR_TAB_APPLICATION,
-        iconInsets: {
-          bottom: -4,
-        },
-        icon: require('../../assets/icons/tabbar-applications.png'),
-        selectedIcon: require('../../assets/icons/tabbar-applications-selected.png'),
       },
     },
   )
@@ -99,7 +85,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const theme = useTheme()
   const [refetching, setRefetching] = useState(false)
-
+  const scrollY = useRef(new Animated.Value(0)).current
   const applicationsRes = useListApplicationsQuery({
     variables: { locale: useLocale() },
   })
@@ -134,10 +120,16 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   return (
     <Host>
-      <ScrollView
+      <Animated.ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          {
+            useNativeDriver: true,
+          },
+        )}
       >
         {!applications.length && !applicationsRes.loading ? (
           <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
@@ -182,8 +174,8 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           numberOfItems={3}
           slider
         />
-      </ScrollView>
-      <BottomTabsIndicator index={3} total={5} />
+      </Animated.ScrollView>
+      <TopLine scrollY={scrollY} />
     </Host>
   )
 }

@@ -22,7 +22,7 @@ export class ValueInput {
   number?: number
 
   @Field(() => Date, { nullable: true })
-  date?: Date
+  date?: Date | null
 
   @Field(() => String, { nullable: true })
   listValue?: string
@@ -87,8 +87,8 @@ export class ValueInput {
   @Field(() => String, { nullable: true })
   time?: string
 
-  @Field(() => String, { nullable: true })
-  s3Key?: string
+  @Field(() => [String], { nullable: true })
+  s3Key?: string[]
 
   @Field(() => String, { nullable: true })
   s3Url?: string

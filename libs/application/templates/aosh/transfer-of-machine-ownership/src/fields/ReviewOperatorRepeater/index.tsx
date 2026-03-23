@@ -105,6 +105,7 @@ export const ReviewOperatorRepeater: FC<
           nationalIdDefaultValue={nationalId || ''}
           onNameChange={setName}
           nameDefaultValue={name || ''}
+          searchCompanies={true}
         />
         <GridRow>
           <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>

@@ -70,6 +70,8 @@ export const CardWithFeaturedItems = ({
   featuredItems,
   buttonTitle,
 }: CardWithFeaturedItemsProps) => {
+  const limitedFeaturedItems = featuredItems.slice(0, 3)
+
   return (
     <Box
       background="purple100"
@@ -89,8 +91,8 @@ export const CardWithFeaturedItems = ({
           </Text>
         </Box>
         <Box height="full">
-          {featuredItems.length > 0 && (
-            <FeaturedItemsLinks featuredItems={featuredItems} />
+          {limitedFeaturedItems.length > 0 && (
+            <FeaturedItemsLinks featuredItems={limitedFeaturedItems} />
           )}
         </Box>
         <Link href={href ?? ''} skipTab>

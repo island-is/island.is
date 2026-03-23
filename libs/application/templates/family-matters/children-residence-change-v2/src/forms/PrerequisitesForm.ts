@@ -7,18 +7,18 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
+import { DistrictCommissionersLogo } from '@island.is/application/assets/institution-logos'
 import * as m from '../lib/messages'
 import {
-  ChildrenCustodyInformationApi,
-  NationalRegistryUserApi,
+  ChildrenCustodyInformationApiV3,
+  NationalRegistryV3UserApi,
   UserProfileApi,
 } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: m.application.name,
-  logo: Logo,
+  logo: DistrictCommissionersLogo,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -48,12 +48,12 @@ export const PrerequisitesForm: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: ChildrenCustodyInformationApi,
+              provider: ChildrenCustodyInformationApiV3,
               title: m.externalData.children.title,
               subTitle: m.externalData.children.subTitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: m.externalData.applicant.title,
               subTitle: m.externalData.applicant.subTitle,
             }),

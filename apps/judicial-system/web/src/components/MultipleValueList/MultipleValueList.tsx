@@ -23,7 +23,8 @@ interface MultipleValueListProps {
   inputMask?: MaskType
   buttonText: string
   name: string
-  isDisabled: (value?: string) => boolean
+  isButtonDisabled: (value?: string) => boolean
+  isDisabled?: boolean
   isLoading?: boolean
   hasError?: boolean
   errorMessage?: string
@@ -38,6 +39,7 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
   inputMask,
   name,
   buttonText,
+  isButtonDisabled,
   isDisabled,
   isLoading,
   hasError,
@@ -66,7 +68,7 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
   const handleEnter = (
     event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    if (event.key === 'Enter' && !isDisabled(value)) {
+    if (event.key === 'Enter' && !isButtonDisabled(value)) {
       onAddValue(value)
       clearInput()
     }
@@ -95,6 +97,7 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
             onKeyDown={handleEnter}
             hasError={hasError}
             errorMessage={errorMessage}
+            disabled={isDisabled}
           />
         ) : (
           <Input
@@ -109,12 +112,13 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
             onBlur={onBlur}
             hasError={hasError}
             errorMessage={errorMessage}
+            disabled={isDisabled}
           />
         )}
         <Button
           icon="add"
           size="small"
-          disabled={isDisabled(value) || value === ''}
+          disabled={isButtonDisabled(value) || value === ''}
           loading={isLoading}
           onClick={() => {
             onAddValue(value)

@@ -124,7 +124,7 @@ export const Overview: FC<
             <Button variant="ghost" onClick={onBackButtonClick}>
               {formatMessage(review.buttons.back)}
             </Button>
-            {!hasReviewerApproved(reviewerNationalId, application.answers) &&
+            {!hasReviewerApproved(application.answers, reviewerNationalId) &&
               application.state !== States.COMPLETED && (
                 <Box display="flex" justifyContent="flexEnd" flexWrap="wrap">
                   <Box marginLeft={3}>

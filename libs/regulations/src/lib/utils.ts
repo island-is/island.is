@@ -129,4 +129,4 @@ export const useShortState = <S>(
 // ---------------------------------------------------------------------------
 
 export * from './buildRegulationApiPath'
-export * from '@island.is/regulations-tools/utils'
+export * from '@dmr.is/regulations-tools/utils'

@@ -1,18 +1,18 @@
-import { useContext, useState } from 'react'
-import { ControlContext } from '../../../../../../../context/ControlContext'
+import { FormSystemField } from '@island.is/api/schema'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { m } from '@island.is/form-system/ui'
 import {
+  Box,
+  Button,
   GridColumn as Column,
+  RadioButton,
   GridRow as Row,
   Select,
   Stack,
-  Box,
-  Button,
-  RadioButton,
 } from '@island.is/island-ui/core'
-import { FormSystemField } from '@island.is/api/schema'
-import { useIntl } from 'react-intl'
-import { m } from '@island.is/form-system/ui'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
+import { useLocale } from '@island.is/localization'
+import { useContext, useState } from 'react'
+import { ControlContext } from '../../../../../../../context/ControlContext'
 
 const predeterminedLists = [
   {
@@ -40,10 +40,10 @@ const predeterminedLists = [
 export const ListSettings = () => {
   const { control, setInListBuilder, controlDispatch, updateActiveItem } =
     useContext(ControlContext)
-  const { activeItem } = control
+  const { activeItem, isPublished } = control
+  const { dependencies } = control.form
   const currentItem = activeItem.data as FormSystemField
   const [radio, setRadio] = useState([true, false, false])
-
   const radioHandler = (index: number) => {
     setRadio((prev) =>
       prev.map((_, i) => {
@@ -52,7 +52,7 @@ export const ListSettings = () => {
     )
   }
 
-  const { formatMessage } = useIntl()
+  const { formatMessage } = useLocale()
   const listTypes = [
     'sveitarfelog',
     'lond',
@@ -73,6 +73,25 @@ export const ListSettings = () => {
     })
   }
 
+  const hasDependency = (): boolean => {
+    const listItemIds = Array.from(
+      new Set(
+        currentItem.list
+          ?.map((item) => item?.id)
+          .filter((id) => id !== undefined),
+      ),
+    ) as string[]
+    return (
+      dependencies?.some(
+        (dep) =>
+          listItemIds.includes(dep?.parentProp as string) ||
+          dep?.childProps?.some((child) =>
+            listItemIds.includes(child as string),
+          ),
+      ) ?? false
+    )
+  }
+
   return (
     <Stack space={2}>
       {currentItem.fieldType === FieldTypesEnum.DROPDOWN_LIST && (
@@ -82,6 +101,7 @@ export const ListSettings = () => {
               <Box onClick={() => onClickRadioHandler(0)}>
                 <RadioButton
                   label={formatMessage(m.customList)}
+                  disabled={isPublished}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
                   onChange={() => {}}
                   checked={radio[0]}
@@ -89,18 +109,19 @@ export const ListSettings = () => {
               </Box>
             </Column>
           </Row>
-          <Row>
+          {/* <Row>
             <Column>
               <Box onClick={() => onClickRadioHandler(1)}>
                 <RadioButton
                   label={formatMessage(m.predeterminedLists)}
+                  disabled={isPublished}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
                   onChange={() => {}}
                   checked={radio[1]}
                 />
               </Box>
             </Column>
-          </Row>
+          </Row> */}
         </>
       )}
       {radio[0] && (
@@ -108,13 +129,14 @@ export const ListSettings = () => {
           {formatMessage(m.listBuilder)}
         </Button>
       )}
-      {radio[1] && (
+      {/* {radio[1] && (
         <Column span="5/10">
           <Select
             placeholder={formatMessage(m.chooseListType)}
             name="predeterminedLists"
             label={formatMessage(m.predeterminedLists)}
             options={predeterminedLists}
+            isDisabled={isPublished}
             backgroundColor="blue"
             onChange={(option) => {
               const listType = getListType(option?.value as number)
@@ -128,7 +150,7 @@ export const ListSettings = () => {
             }}
           />
         </Column>
-      )}
+      )} */}
     </Stack>
   )
 }

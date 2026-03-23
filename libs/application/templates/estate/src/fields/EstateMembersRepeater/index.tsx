@@ -27,6 +27,7 @@ import {
   heirAgeValidation,
   missingHeirUndividedEstateValidation,
   missingSpouseUndividedEstateValidation,
+  multipleSpousesValidation,
   relationWithApplicant,
   SPOUSE,
 } from '../../lib/constants'
@@ -45,33 +46,28 @@ export const EstateMembersRepeater: FC<
   const values = getValues()
   const selectedEstate = application.answers.selectedEstate
 
-  const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
+  const hasMinorWithoutValidAdvocate = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
       const hasForeignCitizenship = member?.foreignCitizenship?.[0] === 'yes'
       const birthDate = member?.dateOfBirth
       const memberAge =
         hasForeignCitizenship && birthDate
-          ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
-              ?.years
+          ? intervalToDuration({
+              start: new Date(birthDate),
+              end: new Date(),
+            })?.years
           : nationalIdInfo(member.nationalId)?.age
-      return (
+      const isMinor =
         (memberAge ?? 0) < 18 &&
         (member?.nationalId || birthDate) &&
         member.enabled
-      )
-    },
-  )
 
-  const hasEstateMemberUnder18withoutRep = values.estate?.estateMembers?.some(
-    (member: EstateMember) => {
+      if (!isMinor) return false
+
       const advocateAge =
         member.advocate && nationalIdInfo(member.advocate.nationalId)?.age
-      return (
-        hasEstateMemberUnder18 &&
-        member?.advocate?.nationalId &&
-        advocateAge &&
-        advocateAge < 18
-      )
+
+      return !member.advocate?.nationalId || !advocateAge || advocateAge < 18
     },
   )
 
@@ -87,26 +83,19 @@ export const EstateMembersRepeater: FC<
       (member: EstateMember) => member.enabled && member.relation === SPOUSE,
     )
 
+  const hasMultipleSpouses =
+    selectedEstate === EstateTypes.permitForUndividedEstate &&
+    values.estate?.estateMembers?.filter(
+      (member: EstateMember) => member.enabled && member.relation === SPOUSE,
+    ).length > 1
+
   setBeforeSubmitCallback &&
     setBeforeSubmitCallback(async () => {
-      if (
-        hasEstateMemberUnder18withoutRep &&
-        selectedEstate !== EstateTypes.divisionOfEstateByHeirs
-      ) {
+      if (hasMinorWithoutValidAdvocate) {
         setError(heirAgeValidation, {
           type: 'custom',
         })
         return [false, 'invalid advocate age']
-      }
-
-      if (
-        hasEstateMemberUnder18 &&
-        selectedEstate === EstateTypes.divisionOfEstateByHeirs
-      ) {
-        setError(heirAgeValidation, {
-          type: 'custom',
-        })
-        return [false, 'invalid member age']
       }
 
       if (missingHeirsForUndividedEstate) {
@@ -121,6 +110,13 @@ export const EstateMembersRepeater: FC<
           type: 'custom',
         })
         return [false, 'missing spouse for undivided estate']
+      }
+
+      if (hasMultipleSpouses) {
+        setError(multipleSpousesValidation, {
+          type: 'custom',
+        })
+        return [false, 'multiple spouses in heirs list']
       }
 
       return [true, null]
@@ -147,32 +143,33 @@ export const EstateMembersRepeater: FC<
 
   const handleAddMember = () =>
     append({
-      nationalId: undefined,
+      nationalId: '',
       initial: false,
       enabled: true,
-      name: undefined,
+      name: '',
     })
 
   useEffect(() => {
-    if (
-      !hasEstateMemberUnder18 &&
-      selectedEstate !== EstateTypes.divisionOfEstateByHeirs
-    ) {
-      clearErrors(heirAgeValidation)
-    }
-    if (!hasEstateMemberUnder18withoutRep) {
+    if (!hasMinorWithoutValidAdvocate) {
       clearErrors(heirAgeValidation)
     }
     if (!missingHeirsForUndividedEstate) {
       clearErrors(missingHeirUndividedEstateValidation)
     }
+    if (!missingSpouseForUndividedEstate) {
+      clearErrors(missingSpouseUndividedEstateValidation)
+    }
+    if (!hasMultipleSpouses) {
+      clearErrors(multipleSpousesValidation)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fields,
-    hasEstateMemberUnder18withoutRep,
-    hasEstateMemberUnder18,
+    hasMinorWithoutValidAdvocate,
     clearErrors,
     missingHeirsForUndividedEstate,
+    missingSpouseForUndividedEstate,
+    hasMultipleSpouses,
   ])
 
   useEffect(() => {
@@ -455,11 +452,7 @@ export const EstateMembersRepeater: FC<
       {!!errors?.[heirAgeValidation] && (
         <Box marginTop={4}>
           <InputError
-            errorMessage={
-              selectedEstate === EstateTypes.divisionOfEstateByHeirs
-                ? formatMessage(m.inheritanceAgeValidation)
-                : formatMessage(m.heirAdvocateAgeValidation)
-            }
+            errorMessage={formatMessage(m.heirAdvocateAgeValidation)}
           />
         </Box>
       )}
@@ -476,6 +469,13 @@ export const EstateMembersRepeater: FC<
             errorMessage={formatMessage(
               m.missingSpouseUndividedEstateValidation,
             )}
+          />
+        </Box>
+      )}
+      {!!errors?.[multipleSpousesValidation] && (
+        <Box marginTop={4}>
+          <InputError
+            errorMessage={formatMessage(m.multipleSpousesValidation)}
           />
         </Box>
       )}

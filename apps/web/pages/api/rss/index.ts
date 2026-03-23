@@ -193,11 +193,7 @@ export default async function handler(
           } ${item.time.endTime ? '-' : ''} ${item.time.endTime as string}`,
           fullUrl: organization
             ? `${baseUrl}${
-                linkResolver(
-                  'organizationevent',
-                  [organization, item.slug],
-                  locale,
-                ).href
+                linkResolver('event', [organization, item.slug], locale).href
               }`
             : '',
           date: item.firstPublishedAt

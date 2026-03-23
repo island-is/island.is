@@ -574,13 +574,7 @@
         "additionalProperties": false
       },
       "InsertRentalDaysModel": {
-        "required": [
-          "dayRateEntryId",
-          "month",
-          "numberOfDays",
-          "permno",
-          "year"
-        ],
+        "required": ["dayRateEntryId", "numberOfDays", "permno"],
         "type": "object",
         "properties": {
           "permno": {
@@ -588,14 +582,6 @@
             "nullable": true
           },
           "numberOfDays": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "year": {
             "type": "integer",
             "format": "int32"
           },
@@ -649,9 +635,17 @@
         "additionalProperties": false
       },
       "RentalDayRegistrationModel": {
-        "required": ["entries"],
+        "required": ["entries", "month", "year"],
         "type": "object",
         "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
           "entries": {
             "type": "array",
             "items": {

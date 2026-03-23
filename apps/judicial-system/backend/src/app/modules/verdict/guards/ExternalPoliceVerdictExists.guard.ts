@@ -23,6 +23,8 @@ export class ExternalPoliceVerdictExistsGuard implements CanActivate {
     request.verdict = await this.verdictService.findByExternalPoliceDocumentId(
       policeDocumentId,
     )
+    const caseId = request.verdict.caseId
+    request.params.caseId = caseId
 
     return true
   }

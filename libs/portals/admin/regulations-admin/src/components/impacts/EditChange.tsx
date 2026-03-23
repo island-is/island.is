@@ -24,7 +24,7 @@ import {
   Regulation,
   toISODate,
 } from '@island.is/regulations'
-import dirtyClean from '@island.is/regulations-tools/dirtyClean-browser'
+import dirtyClean from '@dmr.is/regulations-tools/dirtyClean-browser'
 import { LayoverModal } from './LayoverModal'
 import { ImpactModalTitle } from './ImpactModalTitle'
 import {
@@ -58,7 +58,7 @@ import {
 } from '../../utils/hooks'
 import { DraftRegulationChange } from '@island.is/regulations/admin'
 import { useLocale } from '@island.is/localization'
-import { cleanTitle } from '@island.is/regulations-tools/cleanTitle'
+import { cleanTitle } from '@dmr.is/regulations-tools/cleanTitle'
 import { errorMsgs as msg } from '../../lib/messages'
 import { getWorkdayMinimumDate } from '../../utils'
 

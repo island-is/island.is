@@ -174,9 +174,24 @@ export const m = defineMessages({
   },
   phoneElectronicIdError: {
     id: 'mac.application:phoneElectronicIdError',
+    defaultMessage: 'Rafræn skilríki ekki til staðar fyrir kennitölu',
+    description: 'Electronic ID not found for national ID',
+  },
+  electronicIdCheckLoading: {
+    id: 'mac.application:electronicIdCheckLoading',
+    defaultMessage: 'Athuga rafræn skilríki...',
+    description: 'Checking electronic ID',
+  },
+  electronicIdCheckSuccess: {
+    id: 'mac.application:electronicIdCheckSuccess',
+    defaultMessage: 'Rafræn skilríki staðfest',
+    description: 'Electronic ID confirmed',
+  },
+  electronicIdCheckFailure: {
+    id: 'mac.application:electronicIdCheckFailure',
     defaultMessage:
-      'Rafræn skilríki ekki til staðar fyrir símanúmer og kennitölu',
-    description: 'phone',
+      'Rafræn skilríki ekki til staðar. Vinsamlegast hafðu samband við Auðkenni.',
+    description: 'Electronic ID not found',
   },
   email: {
     id: 'mac.application:email',
@@ -564,17 +579,17 @@ export const m = defineMessages({
   },
   /* History logs */
   waitingForConfirmationSpouse2Title: {
-    id: 'pa.application:history.waitingForConfirmationSpouse2Title',
+    id: 'mac.application:history.waitingForConfirmationSpouse2Title',
     defaultMessage: 'Samþykki hjónaefnis',
     description: '',
   },
   waitingForConfirmationSpouse2Description: {
-    id: 'pa.application:history.waitingForConfirmationSpouse2Description',
+    id: 'mac.application:history.waitingForConfirmationSpouse2Description',
     defaultMessage: 'Beðið eftir staðfestingu hjónaefnis 2',
     description: '',
   },
   confirmedBySpouse2: {
-    id: 'pa.application:history.confirmedByParentB',
+    id: 'mac.application:history.confirmedByParentB',
     defaultMessage: 'Hjónaefni 2 hefur staðfest umsókn',
     description: '',
   },

@@ -44,6 +44,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    clearOnChangeDefaultValue,
   } = field
   const { formatMessage, lang: locale } = useLocale()
 
@@ -101,7 +102,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           name={id}
           defaultValue={
             ((getValueViaPath(application.answers, id) as string[]) ??
-              getDefaultValue(field, application)) ||
+              getDefaultValue(field, application, locale)) ||
             (required ? '' : undefined)
           }
           options={finalOptions.map(({ label, subLabel, tooltip, ...o }) => ({
@@ -125,6 +126,7 @@ export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
           paddingBottom={0}
           paddingTop={2}
           clearOnChange={clearOnChange}
+          clearOnChangeDefaultValue={clearOnChangeDefaultValue}
         />
       </Box>
     </Box>

@@ -1,5 +1,5 @@
 import CryptoJS from 'crypto-js'
-import { CreateOptions, Transaction } from 'sequelize'
+import { Transaction } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -16,7 +16,7 @@ interface CreateArchive {
 }
 
 interface CreateCaseArchiveOptions {
-  transaction?: Transaction
+  transaction: Transaction
 }
 
 @Injectable()
@@ -32,7 +32,7 @@ export class CaseArchiveRepositoryService {
   async create(
     caseId: string,
     data: CreateArchive,
-    options?: CreateCaseArchiveOptions,
+    options: CreateCaseArchiveOptions,
   ): Promise<CaseArchive> {
     try {
       this.logger.debug(
@@ -46,12 +46,6 @@ export class CaseArchiveRepositoryService {
         this.config.archiveEncryptionKey,
         { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
       ).toString()
-
-      const createOptions: CreateOptions = {}
-
-      if (options?.transaction) {
-        createOptions.transaction = options.transaction
-      }
 
       const result = await this.caseArchiveModel.create(
         {
@@ -67,7 +61,7 @@ export class CaseArchiveRepositoryService {
           //   ),
           // )
         },
-        createOptions,
+        options,
       )
 
       this.logger.debug(

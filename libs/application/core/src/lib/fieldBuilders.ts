@@ -38,6 +38,7 @@ import {
   ActionCardListField,
   TableRepeaterField,
   StaticTableField,
+  PaginatedSearchableTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
   SliderField,
@@ -82,6 +83,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   } = data
 
@@ -99,6 +101,7 @@ const extractCommonFields = (
     marginBottom,
     marginTop,
     clearOnChange,
+    clearOnChangeDefaultValue,
     setOnChange,
   }
 }
@@ -113,6 +116,8 @@ export const buildCheckboxField = (
     required,
     backgroundColor = 'blue',
     spacing,
+    clearOnChange,
+    clearOnChangeDefaultValue,
   } = data
   return {
     ...extractCommonFields(data),
@@ -123,6 +128,8 @@ export const buildCheckboxField = (
     options,
     required,
     spacing,
+    clearOnChange,
+    clearOnChangeDefaultValue,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
@@ -317,10 +324,12 @@ export const buildTextField = (
     rightAlign,
     tooltip,
     onChange,
+    allowNegative,
   } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
+    allowNegative,
     placeholder,
     backgroundColor,
     variant,
@@ -381,6 +390,40 @@ export const buildCustomField = (
     type: FieldTypes.CUSTOM,
     component,
     props: props ?? {},
+  }
+}
+
+export const buildPaginatedSearchableTableField = (
+  data: Omit<PaginatedSearchableTableField, 'type' | 'component' | 'children'>,
+): PaginatedSearchableTableField => {
+  const {
+    rowIdKey,
+    rows,
+    headers,
+    searchLabel,
+    searchPlaceholder,
+    emptyState,
+    searchKeys,
+    savePropertyNames,
+    pageSize,
+    callbackId,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.PAGINATED_SEARCHABLE_TABLE,
+    component: FieldComponents.PAGINATED_SEARCHABLE_TABLE,
+    rowIdKey,
+    rows,
+    headers,
+    searchLabel,
+    searchPlaceholder,
+    emptyState,
+    searchKeys,
+    savePropertyNames,
+    pageSize,
+    callbackId,
   }
 }
 
@@ -531,6 +574,8 @@ export const buildSubmitField = (data: {
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
   refetchApplicationAfterSubmit?: boolean | ((event?: string) => boolean)
+  renderLongErrors?: boolean
+  formatLongErrorMessage?: (message: string) => string
   actions: CallToAction[]
   condition?: Condition
 }): SubmitField => {
@@ -543,6 +588,8 @@ export const buildSubmitField = (data: {
     refetchApplicationAfterSubmit,
     marginTop,
     marginBottom,
+    renderLongErrors = false,
+    formatLongErrorMessage,
   } = data
   return {
     children: undefined,
@@ -556,6 +603,8 @@ export const buildSubmitField = (data: {
       typeof refetchApplicationAfterSubmit !== 'undefined'
         ? refetchApplicationAfterSubmit
         : false,
+    renderLongErrors,
+    formatLongErrorMessage,
     marginTop,
     marginBottom,
     type: FieldTypes.SUBMIT,
@@ -694,6 +743,7 @@ export const buildAlertMessageField = (
     links,
     shouldBlockInSetBeforeSubmitCallback,
     allowMultipleSetBeforeSubmitCallbacks,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -723,13 +773,26 @@ export const buildLinkField = (
 export const buildPaymentChargeOverviewField = (
   data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
 ): PaymentChargeOverviewField => {
-  const { id, forPaymentLabel, totalLabel, getSelectedChargeItems } = data
+  const {
+    id,
+    forPaymentLabel,
+    totalLabel,
+    quantityLabel,
+    quantityUnitLabel,
+    unitPriceLabel,
+    totalPerUnitLabel,
+    getSelectedChargeItems,
+  } = data
   return {
     ...extractCommonFields(data),
     children: undefined,
     id,
     forPaymentLabel,
     totalLabel,
+    quantityLabel,
+    quantityUnitLabel,
+    unitPriceLabel,
+    totalPerUnitLabel,
     getSelectedChargeItems,
     type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
     component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
@@ -761,6 +824,7 @@ export const buildImageField = (
     imagePosition,
     type: FieldTypes.IMAGE,
     component: FieldComponents.IMAGE,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -818,6 +882,7 @@ export const buildHiddenInputWithWatchedValue = (
     watchValue: data.watchValue,
     title: '',
     children: undefined,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -842,6 +907,8 @@ export const buildHiddenInput = (
     title: '',
     children: undefined,
     defaultValue: data.defaultValue,
+    dontDefaultToEmptyString: data.dontDefaultToEmptyString,
+    doesNotRequireAnswer: data.doesNotRequireAnswer ?? true,
   }
 }
 
@@ -869,6 +936,7 @@ export const buildNationalIdWithNameField = (
     emailLabel,
     titleVariant,
     description,
+    readOnly,
   } = data
   return {
     ...extractCommonFields(data),
@@ -895,6 +963,7 @@ export const buildNationalIdWithNameField = (
     component: FieldComponents.NATIONAL_ID_WITH_NAME,
     titleVariant,
     description,
+    readOnly,
   }
 }
 
@@ -1075,7 +1144,9 @@ export const buildSliderField = (
     marginTop,
     marginBottom,
   } = data
+
   return {
+    ...extractCommonFields(data),
     component: FieldComponents.SLIDER,
     id,
     title,
@@ -1282,6 +1353,7 @@ export const buildVehiclePermnoWithInfoField = (
     errorTitle,
     fallbackErrorMessage,
     validationFailedErrorMessage,
+    isTrailer,
   } = data
 
   return {
@@ -1296,5 +1368,6 @@ export const buildVehiclePermnoWithInfoField = (
     errorTitle,
     fallbackErrorMessage,
     validationFailedErrorMessage,
+    isTrailer,
   }
 }

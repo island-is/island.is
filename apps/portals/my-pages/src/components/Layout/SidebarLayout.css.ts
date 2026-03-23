@@ -1,11 +1,14 @@
 import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/portals/my-pages/constants'
+
 const top = SERVICE_PORTAL_HEADER_HEIGHT_LG
 const sidebarWidth = {
   desktop: '318px',
   tablet: '230px',
 }
+
+// ── Existing styles (unchanged) ──────────────────────────────────────────────
 
 export const sidebarWrapper = style({
   top: top + theme.spacing[3],
@@ -26,6 +29,7 @@ export const sticky = style({
 })
 
 export const sidebarWrap = style({
+  minWidth: 0,
   maxWidth: '100%',
   ...themeUtils.responsiveStyle({
     md: {
@@ -34,5 +38,25 @@ export const sidebarWrap = style({
     lg: {
       maxWidth: `calc(100% - ${sidebarWidth.desktop})`,
     },
+  }),
+})
+
+// ── New grid layout styles ────────────────────────────────────────────────────
+
+// Hides the sidebar GridColumn below lg; visible as block on lg+
+export const sidebarColumn = style({
+  display: 'none',
+  ...themeUtils.responsiveStyle({
+    lg: { display: 'block' },
+  }),
+})
+
+// Sticky for grid layout: consolidates top positioning from sidebarWrapper
+export const stickyGrid = style({
+  position: 'sticky',
+  alignSelf: 'flex-start',
+  top: top + theme.spacing[3],
+  ...themeUtils.responsiveStyle({
+    lg: { top: top + theme.spacing[9] },
   }),
 })

@@ -29,11 +29,13 @@ import {
   PageLayout,
   PageTitle,
   ProsecutorCaseInfo,
+  ProsecutorSelection,
   SectionHeading,
   ServiceAnnouncements,
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import {
   CaseState,
   CaseTransition,
@@ -55,12 +57,16 @@ const Overview: FC = () => {
     | 'caseSentForConfirmationModal'
     | 'caseDeniedModal'
     | 'askForCancellationModal'
+    | 'editProsecutor'
   >('noModal')
   const [indictmentConfirmationDecision, setIndictmentConfirmationDecision] =
     useState<'confirm' | 'deny'>()
+  const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false)
+  const [prosecutorsCount, setProsecutorsCount] = useState<number>(0)
+
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const { transitionCase, isTransitioningCase } = useCase()
+  const { transitionCase, updateCase, isTransitioningCase } = useCase()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
@@ -157,6 +163,19 @@ const Overview: FC = () => {
     router.push(getStandardUserDashboardRoute(user))
   }
 
+  const calculateMargin = (count: number) => {
+    if (count === 0) {
+      return 40
+    }
+
+    const cappedCount = Math.min(count, 5)
+    const baseMargin = 50
+    const marginPerProsecutor = 65
+    const margin = baseMargin + (cappedCount - 2) * marginPerProsecutor
+
+    return Math.max(2, margin)
+  }
+
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =
     workingCase.mergedCases && workingCase.mergedCases.length > 0
@@ -177,7 +196,7 @@ const Overview: FC = () => {
               title={formatMessage(strings.indictmentDeniedExplanationTitle)}
               message={workingCase.indictmentDeniedExplanation}
               type="info"
-            ></AlertMessage>
+            />
           </Box>
         )}
         {workingCase.indictmentReturnedExplanation && (
@@ -186,11 +205,13 @@ const Overview: FC = () => {
               title={formatMessage(strings.indictmentReturnedExplanationTitle)}
               message={workingCase.indictmentReturnedExplanation}
               type="warning"
-            ></AlertMessage>
+            />
           </Box>
         )}
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} />
+        </Box>
         {workingCase.state === CaseState.WAITING_FOR_CANCELLATION && (
           <Box marginBottom={2}>
             <AlertMessage
@@ -221,7 +242,12 @@ const Overview: FC = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardActiveIndictment displayVerdictViewDate />
+          <InfoCardActiveIndictment
+            displayVerdictViewDate
+            onProsecutorClick={() => {
+              setModal('editProsecutor')
+            }}
+          />
         </Box>
         {(hasLawsBroken || hasMergeCases) && (
           <Box marginBottom={5}>
@@ -233,7 +259,7 @@ const Overview: FC = () => {
               <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
             )} */}
             {hasMergeCases && (
-              <Accordion>
+              <Accordion dividerOnBottom={false} dividerOnTop={false}>
                 {workingCase.mergedCases?.map((mergedCase) => (
                   <Box key={mergedCase.id}>
                     <ConnectedCaseFilesAccordionItem
@@ -246,19 +272,11 @@ const Overview: FC = () => {
             )}
           </Box>
         )}
-        <Box
-          marginBottom={
-            userCanAddDocuments || userCanSendIndictmentToCourt ? 5 : 10
-          }
-        >
+        <Box marginBottom={5}>
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
         {userCanAddDocuments && (
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-            marginBottom={userCanSendIndictmentToCourt ? 5 : 10}
-          >
+          <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
             <Button
               size="small"
               icon="add"
@@ -273,7 +291,7 @@ const Overview: FC = () => {
           </Box>
         )}
         {userCanSendIndictmentToCourt && (
-          <Box marginBottom={10}>
+          <Box marginBottom={5}>
             <SectionHeading
               title={formatMessage(strings.indictmentConfirmationTitle)}
               required
@@ -302,6 +320,9 @@ const Overview: FC = () => {
             </BlueBox>
           </Box>
         )}
+        <Box component="section" marginBottom={10}>
+          <InputPenalties />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -389,6 +410,43 @@ const Overview: FC = () => {
               onClick: () => setModal('noModal'),
             }}
           />
+        ) : modal === 'editProsecutor' ? (
+          <Modal
+            title="Breyta um ákæranda"
+            text="Nýr ákærandi mun verða skráður sem ákærandi í málinu og fá tilkynningar er það varðar."
+            onClose={() => setModal('noModal')}
+            primaryButton={{
+              text: 'Staðfesta',
+              onClick: async () => {
+                const prosecutorId = workingCase?.prosecutor?.id
+                await updateCase(workingCase.id, {
+                  prosecutorId,
+                })
+                setModal('noModal')
+              },
+            }}
+            secondaryButton={{
+              text: 'Loka glugga',
+              onClick: () => setModal('noModal'),
+            }}
+          >
+            <div
+              style={{
+                marginBottom: menuIsOpen
+                  ? calculateMargin(prosecutorsCount)
+                  : 40,
+              }}
+            >
+              <ProsecutorSelection
+                placeholder="Veldu ákæranda til að taka við málinu"
+                isRequired={false}
+                shouldInitializeSelector={true}
+                onMenuOpen={() => setMenuIsOpen(true)}
+                onMenuClose={() => setMenuIsOpen(false)}
+                onProsecutorsLoaded={(count) => setProsecutorsCount(count)}
+              />
+            </div>
+          </Modal>
         ) : null}
       </AnimatePresence>
     </PageLayout>

@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { m } from './messages'
-import { EstateTypes, YES, NO } from './constants'
+import { EstateTypes, YES, NO, SPOUSE } from './constants'
 import * as kennitala from 'kennitala'
 import {
   customZodError,
@@ -88,6 +88,20 @@ export const estateSchema = z.object({
       }),
   }),
 
+  // Registrant (for "Seta í óskiptu búi")
+  registrant: z
+    .object({
+      name: z.string(),
+      nationalId: z.string(),
+      phone: z.string().refine((v) => isValidPhoneNumber(v), {
+        params: m.errorPhoneNumber,
+      }),
+      email: customZodError(z.string().email(), m.errorEmail),
+      address: z.string(),
+      relation: customZodError(z.string().min(1), m.errorRelation),
+    })
+    .optional(),
+
   selectedEstate: z.enum([
     EstateTypes.officialDivision,
     EstateTypes.estateWithoutAssets,
@@ -125,8 +139,8 @@ export const estateSchema = z.object({
         dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        phone: z.string(),
-        email: z.string(),
+        phone: z.string().optional().default(''),
+        email: z.string().optional().default(''),
         // Málsvari
         advocate: z
           .object({
@@ -139,10 +153,10 @@ export const estateSchema = z.object({
         // Málsvari 2
         advocate2: z
           .object({
-            name: z.string(),
-            nationalId: z.string(),
-            phone: z.string(),
-            email: z.string(),
+            name: z.string().optional().default(''),
+            nationalId: z.string().optional().default(''),
+            phone: z.string().optional().default(''),
+            email: z.string().optional().default(''),
           })
           .optional(),
       })
@@ -198,6 +212,18 @@ export const estateSchema = z.object({
         },
       )
       .array()
+      .refine(
+        (members) => {
+          // Check for multiple spouses - only allowed one spouse in heirs list
+          const spouseCount = members?.filter(
+            (member) => member.enabled && member.relation === SPOUSE,
+          ).length
+          return spouseCount <= 1
+        },
+        {
+          message: 'Only one spouse is allowed in the heirs list',
+        },
+      )
       .optional(),
     assets: asset,
     flyers: asset,
@@ -209,6 +235,7 @@ export const estateSchema = z.object({
         accountNumber: z.string(),
         accruedInterest: z.string(),
         balance: z.string(),
+        foreignBankAccount: z.array(z.enum([YES])).optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
       })
@@ -419,7 +446,6 @@ export const estateSchema = z.object({
       )
       .array()
       .optional(),
-    knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
     addressOfDeceased: z.string().optional(),
     caseNumber: z.string().min(1).optional(),
     dateOfDeath: z.date().optional(),
@@ -429,6 +455,7 @@ export const estateSchema = z.object({
     testament: z
       .object({
         wills: z.enum([YES, NO]),
+        knowledgeOfOtherWills: z.enum([YES, NO]),
         agreement: z.enum([YES, NO]),
         dividedEstate: z.enum([YES, NO]).optional(),
         additionalInfo: z.string().optional(),
@@ -646,6 +673,7 @@ export const estateSchema = z.object({
       nationalId: z.string().optional(),
       phone: z.string().optional(),
       email: z.string().optional(),
+      electronicID: z.string().optional(),
     })
     /* ---- Validating whether the fields are either all filled out or all empty ---- */
     .refine(
@@ -688,12 +716,25 @@ export const estateSchema = z.object({
         path: ['name'],
       },
     )
+    .refine(
+      ({ name, nationalId, phone, email, electronicID }) => {
+        return !!name || !!nationalId || !!phone || !!email
+          ? electronicID !== ''
+          : true
+      },
+      {
+        params: m.phoneElectronicIdError,
+        path: ['phone'],
+      },
+    )
     .optional(),
   estateAttachments: z.object({
     attached: z.object({
       file: z.array(fileSchema),
     }),
   }),
+
+  additionalComments: z.string().max(1800).optional(),
 
   // is: Eignalaust bú
   estateWithoutAssets: z

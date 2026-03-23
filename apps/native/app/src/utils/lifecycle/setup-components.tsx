@@ -1,3 +1,4 @@
+import { DropdownMenuOverlay } from '../../components/dropdown/dropdown-menu-overlay'
 import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
 import { OfflineBanner } from '../../components/offline/offline-banner'
 import { isTestingApp } from '../../config'
@@ -7,6 +8,8 @@ import { ApplicationsScreen } from '../../screens/applications/applications'
 import { ApplicationsCompletedScreen } from '../../screens/applications/applications-completed'
 import { ApplicationsInProgressScreen } from '../../screens/applications/applications-in-progress'
 import { ApplicationsIncompleteScreen } from '../../screens/applications/applications-incomplete'
+import { AppointmentDetailScreen } from '../../screens/appointments/appointment-detail'
+import { AppointmentsScreen } from '../../screens/appointments/appointments'
 import { AssetsDetailScreen } from '../../screens/assets/assets-detail'
 import { AssetsOverviewScreen } from '../../screens/assets/assets-overview'
 import { CognitoAuthScreen } from '../../screens/cognito-auth/cognito-auth'
@@ -17,7 +20,10 @@ import { FamilyDetailScreen } from '../../screens/family/family-details'
 import { FamilyOverviewScreen } from '../../screens/family/family-overview'
 import { FinanceScreen } from '../../screens/finance/finance'
 import { FinanceStatusDetailScreen } from '../../screens/finance/finance-status-detail'
+import { HealthCategoriesScreen } from '../../screens/health/health-categories'
 import { HealthOverviewScreen } from '../../screens/health/health-overview'
+import { QuestionnaireDetailScreen } from '../../screens/health/questionnaires/questionnaire-detail'
+import { QuestionnairesScreen } from '../../screens/health/questionnaires/questionnaires'
 import { HomeScreen } from '../../screens/home/home'
 import { HomeOptionsScreen } from '../../screens/home/home-options'
 import { InboxScreen } from '../../screens/inbox/inbox'
@@ -26,6 +32,11 @@ import { LicenseScanDetailScreen } from '../../screens/license-scanner/license-s
 import { LicenseScannerScreen } from '../../screens/license-scanner/license-scanner'
 import { LoginScreen } from '../../screens/login/login'
 import { TestingLoginScreen } from '../../screens/login/testing-login'
+import { MedicineDelegationDetailScreen } from '../../screens/medicine-delegation/medicine-delegation-detail'
+import { MedicineDelegationFormScreen } from '../../screens/medicine-delegation/medicine-delegation-form'
+import { MedicineHistoryScreen } from '../../screens/medicine/components/medicine-history'
+import { MedicineHistoryDetailScreen } from '../../screens/medicine/components/medicine-history-detail'
+import { PrescriptionsScreen } from '../../screens/medicine/prescriptions'
 import { MoreScreen } from '../../screens/more/more'
 import { PersonalInfoScreen } from '../../screens/more/personal-info'
 import { NotificationsScreen } from '../../screens/notifications/notifications'
@@ -54,12 +65,6 @@ import {
 import { registerComponent } from '../register-component'
 
 export function registerAllComponents() {
-  // dev only
-  if (__DEV__) {
-    // registerComponent(CR.DevtoolsStorybookScreen, StorybookScreen)
-    // registerComponent(CR.DevtoolsCognitoAuthScreen, CognitoAuthScreen)
-  }
-
   // screens
   registerComponent(
     CR.LoginScreen,
@@ -108,6 +113,17 @@ export function registerAllComponents() {
   registerComponent(CR.PasskeyScreen, PasskeyScreen)
   registerComponent(CR.UpdateAppScreen, UpdateAppScreen)
   registerComponent(CR.HealthOverviewScreen, HealthOverviewScreen)
+  registerComponent(CR.HealthCategoriesScreen, HealthCategoriesScreen)
+  registerComponent(CR.QuestionnairesScreen, QuestionnairesScreen)
+  registerComponent(CR.QuestionnaireDetailScreen, QuestionnaireDetailScreen)
+  registerComponent(
+    CR.MedicineDelegationFormScreen,
+    MedicineDelegationFormScreen,
+  )
+  registerComponent(
+    CR.MedicineDelegationDetailScreen,
+    MedicineDelegationDetailScreen,
+  )
   registerComponent(CR.HomeOptionsScreen, HomeOptionsScreen)
   registerComponent(CR.ApplicationsCompletedScreen, ApplicationsCompletedScreen)
   registerComponent(
@@ -119,10 +135,17 @@ export function registerAllComponents() {
     ApplicationsIncompleteScreen,
   )
   registerComponent(CR.VaccinationsScreen, VaccinationsScreen)
+  registerComponent(CR.PrescriptionsScreen, PrescriptionsScreen)
+  registerComponent(CR.MedicineHistoryDetailScreen, MedicineHistoryDetailScreen)
+  registerComponent(CR.MedicineHistoryScreen, MedicineHistoryScreen)
+
   registerComponent(CR.RegisterEmailScreen, RegisterEmailScreen)
+  registerComponent(CR.AppointmentsScreen, AppointmentsScreen)
+  registerComponent(CR.AppointmentDetailScreen, AppointmentDetailScreen)
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)
+  registerComponent(CR.DropdownMenuOverlay, DropdownMenuOverlay)
 
   // Navigation buttons
   registerComponent(BR.LoadingButton, LoadingIcon)

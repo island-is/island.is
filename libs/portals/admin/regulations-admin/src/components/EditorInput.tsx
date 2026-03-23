@@ -6,7 +6,7 @@ import { Box, LoadingDots } from '@island.is/island-ui/core'
 import {
   Editor as RegulationsEditor,
   EditorProps,
-} from '@island.is/regulations-tools/Editor'
+} from '@dmr.is/regulations-tools/Editor'
 import cn from 'classnames'
 import { HTMLText, useDomid } from '@island.is/regulations'
 import { RegulationDraftId } from '@island.is/regulations/admin'

@@ -11,20 +11,20 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
 import { CanSignApi, GetListApi } from '../dataProviders/index'
-import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { ManOnThePhone } from '@island.is/application/assets/graphics'
+import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
 
 export const Prerequisites: Form = buildForm({
   id: 'SignListPrerequisites',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: NationalElectoralCommissionLogo,
   children: [
     buildSection({
       id: 'intro',
@@ -36,7 +36,7 @@ export const Prerequisites: Form = buildForm({
           children: [
             buildImageField({
               id: 'introImage',
-              image: DigitalServices,
+              image: ManOnThePhone,
               imageWidth: 'auto',
               imagePosition: 'center',
               marginTop: 'gutter',
@@ -67,7 +67,7 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryV3UserApi,
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
             }),

@@ -223,6 +223,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.APPROVE,
                 logMessage: statesMessages.otherParentApproveHistoryLogMessage,
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.EDIT,
@@ -233,6 +234,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 logMessage:
                   parentalLeaveFormMessages.draftFlow
                     .draftNotApprovedOtherParentDesc,
+                includeSubjectAndActor: true,
               },
             ],
           },
@@ -388,12 +390,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 onEvent: DefaultEvents.APPROVE,
                 logMessage:
                   statesMessages.employerApprovalApprovePeriodHistoryLogMessage,
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage:
                   parentalLeaveFormMessages.draftFlow
                     .draftNotApprovedEmployerDesc,
+                includeSubjectAndActor: true,
               },
             ],
           },
@@ -1088,12 +1092,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 onEvent: DefaultEvents.APPROVE,
                 logMessage:
                   statesMessages.employerApprovalApproveHistoryLogMessage,
+                includeSubjectAndActor: true,
               },
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage:
                   parentalLeaveFormMessages.draftFlow
                     .draftNotApprovedEmployerDesc,
+                includeSubjectAndActor: true,
               },
             ],
           },

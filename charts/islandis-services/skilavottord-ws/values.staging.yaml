@@ -83,7 +83,7 @@ initContainer:
     DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
 namespace: 'skilavottord'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -105,6 +105,7 @@ secrets:
   FJARSYSLA_REST_PASS: '/k8s/skilavottord/FJARSYSLA_REST_PASS'
   FJARSYSLA_REST_URL: '/k8s/skilavottord-ws/FJARSYSLA_REST_URL'
   FJARSYSLA_REST_USER: '/k8s/skilavottord/FJARSYSLA_REST_USER'
+  NEXTAUTH_SECRET: '/k8s/skilavottord/web/NEXTAUTH_SECRET'
   SAMGONGUSTOFA_REST_AUTH_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_AUTH_URL'
   SAMGONGUSTOFA_REST_DEREG_URL: '/k8s/skilavottord-ws/SAMGONGUSTOFA_REST_DEREG_URL'
   SAMGONGUSTOFA_REST_PASS: '/k8s/skilavottord/SAMGONGUSTOFA_REST_PASS'

@@ -46,7 +46,7 @@
       "executor": "@nx/webpack:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "port": 4201,
+        "port": 4242,
         "buildTarget": "form-system-web:build",
         "hmr": true
       },

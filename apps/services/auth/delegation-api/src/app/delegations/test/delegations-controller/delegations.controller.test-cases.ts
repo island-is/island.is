@@ -261,6 +261,37 @@ export const validTestCases: Record<
       expectedFrom: [person3, person2, child1],
     }),
   },
+  multipleScopes: {
+    message:
+      'Should return delegations that match any of the multiple scopes provided',
+    testCase: new TestCase({
+      requestUser: {
+        nationalId: company1,
+        scope: `${scopes.legalGuardian.name},${scopes.procurationHolder.name}`,
+      },
+      toParents: [
+        {
+          toNationalId: Parent1, // should be included (legal guardian scope)
+        },
+      ],
+      toProcurationHolders: [
+        {
+          toNationalId: person1, // should be included (procuration holder scope)
+        },
+        {
+          toNationalId: person2, // should be included (procuration holder scope)
+        },
+      ],
+      toCustom: [
+        {
+          toNationalId: person3,
+          scopes: [scopes.custom.name], // should NOT be included (not in requested scopes)
+        },
+      ],
+      scopes: [scopes.legalGuardian, scopes.procurationHolder], // multiple scopes
+      expectedTo: [Parent1, person1, person2],
+    }),
+  },
 }
 
 export const invalidTestCases: Record<
@@ -269,7 +300,7 @@ export const invalidTestCases: Record<
 > = {
   nonExistingApiScope: {
     message: 'Should return 400 status for non-existing api scope',
-    errorMessage: 'Invalid scope',
+    errorMessage: 'Invalid scope(s): non-existing-scope',
     testCase: new TestCase({
       requestUser: {
         nationalId: company1,

@@ -1,39 +1,61 @@
-import { FormSystemField } from '@island.is/api/schema'
+import { FormSystemField, FormSystemFieldSettings } from '@island.is/api/schema'
 import { Checkbox as CheckboxField } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
+import { m } from '../../../lib/messages'
+import { useIntl } from 'react-intl'
 
 interface Props {
   item: FormSystemField
+  valueIndex?: number
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
 }
 
-export const Checkbox = ({ item, dispatch, lang = 'is' }: Props) => {
-  const { control } = useFormContext()
+export const Checkbox = ({ item, valueIndex = 0, dispatch }: Props) => {
+  const { control, trigger } = useFormContext()
+  const { formatMessage } = useIntl()
+  const { fieldSettings } = item
+  const { isLarge, hasDescription } = fieldSettings as FormSystemFieldSettings
+  const { lang } = useLocale()
 
   return (
     <Controller
-      key={item.id}
-      name={item.id}
+      key={`${item.id}-${valueIndex}`}
+      name={`${item.id}.${valueIndex}`}
       control={control}
-      defaultValue={getValue(item, 'checkboxValue') ?? false}
-      render={({ field }) => (
+      defaultValue={getValue(item, 'checkboxValue', valueIndex) ?? false}
+      rules={{
+        required: {
+          value: item.isRequired ?? false,
+          message: formatMessage(m.required),
+        },
+      }}
+      render={({ field, fieldState }) => (
         <CheckboxField
           name={field.name}
-          label={item?.name?.[lang] ?? ''}
-          checked={getValue(item, 'checkboxValue') ?? false}
+          label={
+            item.isRequired
+              ? `${item?.name?.[lang] ?? ''} *`
+              : item?.name?.[lang] ?? ''
+          }
+          large={isLarge ?? false}
+          subLabel={hasDescription ? item?.description?.[lang] ?? '' : ''}
+          checked={field.value ?? false}
           onChange={(e) => {
             field.onChange(e.target.checked)
             if (dispatch) {
               dispatch({
                 type: 'SET_CHECKBOX_VALUE',
-                payload: { id: item.id, value: e.target.checked },
+                payload: { id: item.id, value: e.target.checked, valueIndex },
               })
             }
+            trigger(item.id)
           }}
+          hasError={!!fieldState.error}
+          errorMessage={fieldState.error ? fieldState.error.message : undefined}
         />
       )}
     />

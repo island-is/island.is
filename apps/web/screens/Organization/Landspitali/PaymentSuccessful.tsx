@@ -1,5 +1,6 @@
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { parseAsBoolean } from 'next-usequerystate'
 
 import {
   AlertMessage,
@@ -35,6 +36,7 @@ import { m } from './PaymentSuccessful.strings'
 interface PaymentSuccessfulProps {
   organizationPage: Query['getOrganizationPage']
   namespace: Record<string, string>
+  nationalIdProvided: boolean
 }
 
 const Wrapper = ({
@@ -87,6 +89,7 @@ const PaymentSuccessful: CustomScreen<PaymentSuccessfulProps> = ({
   customPageData,
   organizationPage,
   namespace,
+  nationalIdProvided,
 }) => {
   const { activeLocale } = useI18n()
   const { formatMessage } = useIntl()
@@ -109,7 +112,13 @@ const PaymentSuccessful: CustomScreen<PaymentSuccessfulProps> = ({
         <AlertMessage
           type="success"
           title={formatMessage(m.mainTitle)}
-          message={formatMessage(m.subTitle)}
+          message={formatMessage(
+            m[
+              nationalIdProvided
+                ? 'subTitleWhenNationalIdProvided'
+                : 'subTitleWhenNationalIdNotProvided'
+            ],
+          )}
         />
         <Text as="div">{webRichText(customPageData?.content ?? [])}</Text>
       </Stack>
@@ -117,7 +126,7 @@ const PaymentSuccessful: CustomScreen<PaymentSuccessfulProps> = ({
   )
 }
 
-PaymentSuccessful.getProps = async ({ apolloClient, locale }) => {
+PaymentSuccessful.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },
@@ -160,6 +169,8 @@ PaymentSuccessful.getProps = async ({ apolloClient, locale }) => {
     customTopLoginButtonItem: organizationNamespace?.customTopLoginButtonItem,
     locale,
     showSearchInHeader: false,
+    nationalIdProvided:
+      parseAsBoolean.parseServerSide(query.nationalIdProvided) ?? false,
     ...getThemeConfig(
       getOrganizationPage?.theme,
       getOrganizationPage?.organization,

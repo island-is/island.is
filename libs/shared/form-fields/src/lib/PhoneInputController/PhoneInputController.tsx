@@ -35,6 +35,14 @@ interface Props {
   allowedCountryCodes?: string[]
   disableDropdown?: boolean
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
 }
 
 interface ChildParams {
@@ -73,6 +81,7 @@ export const PhoneInputController = forwardRef(
       allowedCountryCodes,
       disableDropdown,
       clearOnChange,
+      clearOnChangeDefaultValue,
     } = props
     const { setValue } = useFormContext()
 
@@ -110,7 +119,11 @@ export const PhoneInputController = forwardRef(
               onInputChange(e)
             }
             if (clearOnChange) {
-              clearInputsOnChange(clearOnChange, setValue)
+              clearInputsOnChange(
+                clearOnChange,
+                setValue,
+                clearOnChangeDefaultValue,
+              )
             }
           }}
           {...props}

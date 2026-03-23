@@ -15,7 +15,6 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { m } from '../lib/messages'
-import { IdentityApi } from '../dataProviders'
 
 export const RequirementsForm: Form = buildForm({
   id: 'RequirementsDraft',
@@ -65,11 +64,6 @@ export const RequirementsForm: Form = buildForm({
               provider: UserProfileApi,
               title: m.dataproviders.userProfile.title,
               subTitle: m.dataproviders.userProfile.description,
-            }),
-            buildDataProviderItem({
-              provider: IdentityApi,
-              title: m.dataproviders.nationalRegistry.title,
-              subTitle: m.dataproviders.nationalRegistry.description,
             }),
           ],
           submitField: buildSubmitField({

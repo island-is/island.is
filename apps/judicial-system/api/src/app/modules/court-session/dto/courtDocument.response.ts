@@ -23,11 +23,17 @@ export class CourtDocumentResponse {
   @Field(() => ID, { nullable: true })
   readonly courtSessionId?: string
 
+  @Field(() => ID, { nullable: true })
+  readonly mergedCourtSessionId?: string
+
   @Field(() => CourtDocumentType)
   readonly documentType!: CourtDocumentType
 
   @Field(() => Int)
   readonly documentOrder!: number
+
+  @Field(() => Int, { nullable: true })
+  readonly mergedDocumentOrder?: number
 
   @Field(() => String)
   readonly name!: string
@@ -37,4 +43,7 @@ export class CourtDocumentResponse {
 
   @Field(() => String, { nullable: true })
   readonly generatedPdfUri?: string
+
+  @Field(() => String, { nullable: true })
+  readonly submittedBy?: string
 }

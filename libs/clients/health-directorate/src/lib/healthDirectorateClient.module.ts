@@ -8,13 +8,13 @@ import {
 import { HealthDirectorateClientService } from './clients/occupational-license/healthDirectorateClient.service'
 import { HealthDirectorateVaccinationsService } from './clients/vaccinations/vaccinations.service'
 import { HealthDirectorateOrganDonationService } from './clients/organ-donation/organDonation.service'
-import { HealthDirectorateHealthService } from './clients/health'
 import {
-  exportedHealthApis,
-  sharedApiConfig,
-} from './clients/health/health.provider'
+  HealthDirectorateHealthModule,
+  HealthDirectorateHealthService,
+} from './clients/health'
 
 @Module({
+  imports: [HealthDirectorateHealthModule],
   providers: [
     HealthDirectorateClientService,
     HealthDirectorateVaccinationsService,
@@ -23,9 +23,7 @@ import {
     OrganDonorApiProvider,
     OrganExceptionsApiProvider,
     VaccinationsApiProvider,
-    ...exportedHealthApis,
     ...exportedApis,
-    sharedApiConfig,
   ],
   exports: [
     HealthDirectorateClientService,

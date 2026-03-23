@@ -12,7 +12,7 @@ export const GET_VERDICTS_QUERY = gql`
         verdictDate
         keywords
         presentings
-        presidentJudge {
+        verdictJudges {
           name
           title
         }
@@ -28,6 +28,7 @@ export const GET_VERDICTS_QUERY = gql`
         laws
         dateFrom
         dateTo
+        caseContact
       }
     }
   }
@@ -45,26 +46,38 @@ export const GET_VERDICT_BY_ID_QUERY = gql`
         verdictDate
         keywords
         presentings
+        resolutionLink
       }
     }
   }
 `
 
-export const GET_VERDICT_CASE_TYPES_QUERY = gql`
-  query GetVerdictCaseTypes {
-    webVerdictCaseTypes {
-      caseTypes {
-        label
+export const GET_VERDICT_CASE_FILTER_OPTIONS_PER_COURT_QUERY = gql`
+  query GetVerdictCaseFilterOptionsPerCourt {
+    webVerdictCaseFilterOptionsPerCourt {
+      courtOfAppeal {
+        options {
+          label
+          typeOfOption
+        }
       }
-    }
-  }
-`
-
-export const GET_VERDICT_CASE_CATEGORIES_QUERY = gql`
-  query GetVerdictCaseCategories {
-    webVerdictCaseCategories {
-      caseCategories {
-        label
+      supremeCourt {
+        options {
+          label
+          typeOfOption
+        }
+      }
+      districtCourt {
+        options {
+          label
+          typeOfOption
+        }
+      }
+      all {
+        options {
+          label
+          typeOfOption
+        }
       }
     }
   }

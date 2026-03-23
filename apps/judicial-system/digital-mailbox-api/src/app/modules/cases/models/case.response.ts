@@ -46,7 +46,10 @@ export class CaseResponse {
     )
     const subpoenaCreatedDate = subpoenaDateLog?.created?.toString() ?? '' //TODO: Change to created from subpoena db entry?
     const subpoenas = defendant.subpoenas ?? []
-    const verdict = defendant.verdict
+    // We want to check for the externalPoliceDocumentId here because otherwise the verdict doesn't exist in the mailbox
+    const verdict = defendant.verdict?.externalPoliceDocumentId
+      ? defendant.verdict
+      : undefined
 
     return {
       caseId: internalCase.id,

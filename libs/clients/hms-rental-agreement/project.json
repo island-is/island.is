@@ -15,6 +15,17 @@
         "jestConfig": "libs/clients/hms-rental-agreement/jest.config.ts"
       }
     },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl http://localhost:8081/r1/IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1/swagger/v1/swagger.json > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/hms-rental-agreement"
+      }
+    },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {

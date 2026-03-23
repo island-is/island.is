@@ -16,12 +16,12 @@ export const InventoryFields: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { id } = field
   const { formatMessage } = useLocale()
   const { setValue, getValues } = useFormContext()
-  const estateData = getEstateDataFromApplication(application)
 
   const infoFieldId = `${id}.info`
   const valueFieldId = `${id}.value`
 
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     const prefill = estateData?.estate?.inventory as any | undefined
 
     if (prefill) {
@@ -37,7 +37,7 @@ export const InventoryFields: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         setValue(valueFieldId, prefill.value)
       }
     }
-  }, [estateData, setValue, getValues, infoFieldId, valueFieldId])
+  }, [application, setValue, getValues, infoFieldId, valueFieldId])
 
   return (
     <Box>

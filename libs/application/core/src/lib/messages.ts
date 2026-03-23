@@ -215,6 +215,16 @@ export const coreMessages = defineMessages({
     description:
       'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
   },
+  oneDayRemaining: {
+    id: 'application.system:application.oneDayRemaining',
+    defaultMessage: '1 dagur eftir',
+    description: '1 day remaining',
+  },
+  daysRemaining: {
+    id: 'application.system:application.daysRemaining',
+    defaultMessage: '{count} dagar eftir',
+    description: '{count} days remaining',
+  },
   notLoggedIn: {
     id: 'application.system:not.logged.id',
     defaultMessage: 'Þú þarft að vera skrá þig inn.',
@@ -342,6 +352,21 @@ export const coreDefaultFieldMessages = defineMessages({
     id: 'application.system:core.default.pdfLinkButtonField.downloadButtonTitle',
     defaultMessage: 'Hlaða niður skjali',
     description: 'Button label to download file',
+  },
+  defaultQuantityTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultQuantityTitle',
+    defaultMessage: 'Fjöldi',
+    description: 'Quantity label for payment overview field',
+  },
+  defaultUnitPriceTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultUnitPriceTitle',
+    defaultMessage: 'Verð',
+    description: 'Unit price label for payment overview field',
+  },
+  defaultTotalPerUnitTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.defaultTotalPerUnitTitle',
+    defaultMessage: 'Samtals verð',
+    description: 'Total per unit label for payment overview field',
   },
 })
 
@@ -729,7 +754,13 @@ export const coreErrorMessages = defineMessages({
   },
   noBankAccountError: {
     id: 'application.system:core.fetch.data.noBankAccountError',
-    defaultMessage: 'Þú ert ekki með skráðan bankareikning',
+    defaultMessage: 'Bankareikningur ekki skráður',
+    description: 'No bank account error',
+  },
+  noBankAccountErrorDescription: {
+    id: 'application.system:core.fetch.data.noBankAccountErrorDescription#markdown',
+    defaultMessage:
+      'Þú ert ekki með skráðan bankareikning hjá Ísland.is. Vinsamlegast skráðu það [hér]({link})',
     description: 'No bank account error',
   },
   invalidBankAccountError: {
@@ -1093,37 +1124,10 @@ export const coreHistoryMessages = defineMessages({
     defaultMessage: 'Umsókn samþykkt',
     description: 'History application accepted',
   },
-  applicationApprovedByReviewer: {
-    id: 'application.system:core.history.applicationApprovedByReviewer',
-    defaultMessage: 'Samþykkt. [{subject}]',
-    description: 'History log approved by reviewer',
-  },
-  applicationApprovedByReviewerWithActor: {
-    id: 'application.system:core.history.applicationApprovedByReviewerWithActor',
-    defaultMessage: 'Samþykkt. [{actor} fyrir hönd {subject}]',
-    description: 'History log approved by actor on behalf of reviewer',
-  },
-  applicationApprovedByReviewerFallback: {
-    id: 'application.system:core.history.applicationApprovedByReviewerFallback',
-    defaultMessage: 'Samþykkt af samþykktaraðila',
-    description:
-      'History log approved by reviewer, fallback string when nationalId info missing',
-  },
-  applicationRejectedByReviewer: {
-    id: 'application.system:core.history.applicationRejectedByReviewer',
-    defaultMessage: 'Hafnað af {subject}',
-    description: 'History log Rejected by reviewer',
-  },
-  applicationRejectedByReviewerWithActor: {
-    id: 'application.system:core.history.applicationRejectedByReviewerWithActor',
-    defaultMessage: 'Hafnað af {actor} fyrir hönd {subject}',
-    description: 'History log Rejected by actor on behalf of reviewer',
-  },
-  applicationRejectedByReviewerFallback: {
-    id: 'application.system:core.history.applicationRejectedByReviewerFallback',
-    defaultMessage: 'Hafnað af samþykktaraðila',
-    description:
-      'History log Rejected by reviewer, fallback string when nationalId info missing',
+  applicationApprovedBy: {
+    id: 'application.system:core.history.applicationApprovedBy',
+    defaultMessage: 'Samþykkt.',
+    description: 'History log approved',
   },
   applicationRejected: {
     id: 'application.system:core.history.applicationRejected',
@@ -1175,6 +1179,16 @@ export const coreHistoryMessages = defineMessages({
     defaultMessage: 'Umsókn móttekin',
     description: 'History application received',
   },
+  byReviewer: {
+    id: 'application.system:core.history.byReviewer',
+    defaultMessage: ' {subject} framkvæmdi',
+    description: 'History log by reviewer',
+  },
+  byReviewerWithActor: {
+    id: 'application.system:core.history.byReviewerWithActor',
+    defaultMessage: '  {actor} framkvæmdi fyrir hönd {subject}',
+    description: 'History log by actor on behalf of reviewer',
+  },
 })
 
 export const corePendingActionMessages = defineMessages({
@@ -1218,6 +1232,16 @@ export const corePendingActionMessages = defineMessages({
     id: 'application.system:core.pendingAction.waitingForReviewDescription',
     defaultMessage: 'Umsóknin þín er í bið eftir yfirferð',
     description: 'Pending action waiting for review description',
+  },
+  waitingForReviewFromSpouseDescription: {
+    id: 'application.system:core.pendingAction.waitingForReviewFromSpouseDescription',
+    defaultMessage: 'Umsóknin þín bíður yfirferðar frá maka umsækjanda.',
+    description: 'Pending action waiting for review from spouse description',
+  },
+  waitingForReviewFromParentBDescription: {
+    id: 'application.system:core.pendingAction.waitingForReviewFromParentBDescription',
+    defaultMessage: 'Umsóknin þín bíður yfirferðar frá forsjáraðila 2.',
+    description: 'Pending action waiting for review from parent B description',
   },
   youNeedToReviewDescription: {
     id: 'application.system:core.pendingAction.youNeedToReviewDescription',

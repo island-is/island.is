@@ -1,4 +1,4 @@
-import { Field, ObjectType, GraphQLISODateTime } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, ID, Int, ObjectType } from '@nestjs/graphql'
 import { Dispensation } from './dispensations.model'
 import {
   PrescribedItemCategoryEnum,
@@ -8,14 +8,20 @@ import {
 
 @ObjectType('HealthDirectoratePrescription')
 export class Prescription {
-  @Field()
+  @Field(() => ID)
   id!: string
+
+  @Field(() => ID)
+  productId!: string
 
   @Field({ nullable: true })
   name?: string
 
   @Field({ nullable: true })
   type?: string
+
+  @Field({ nullable: true })
+  strength?: string
 
   @Field({ nullable: true })
   form?: string
@@ -35,6 +41,9 @@ export class Prescription {
   @Field({ nullable: true })
   medCardDrugId?: string
 
+  @Field(() => Int, { nullable: true })
+  medCardDrugCategory?: number
+
   @Field(() => GraphQLISODateTime)
   issueDate!: Date
 
@@ -52,6 +61,9 @@ export class Prescription {
 
   @Field(() => Boolean)
   isRenewable!: boolean
+
+  @Field({ nullable: true })
+  renewResponseMessage?: string
 
   @Field(() => PrescribedItemRenewalBlockedReasonEnum, { nullable: true })
   renewalBlockedReason?: PrescribedItemRenewalBlockedReasonEnum

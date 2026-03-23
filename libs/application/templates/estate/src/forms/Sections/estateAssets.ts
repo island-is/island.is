@@ -111,7 +111,7 @@ export const estateAssets = buildSection({
             buildCustomField(
               {
                 id: 'estate.guns',
-                component: 'AssetsRepeater',
+                component: 'GunsRepeater',
               },
               {
                 assetName: 'guns',

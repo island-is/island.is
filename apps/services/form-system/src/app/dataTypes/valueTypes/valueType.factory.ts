@@ -94,7 +94,7 @@ export class ValueTypeFactory {
           'municipality',
           'email',
           'phoneNumber',
-          'delegationType',
+          'applicantType',
           'isLoggedInUser',
         ]
         return this.pickSettings(valueType, keys)

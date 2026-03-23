@@ -14,6 +14,7 @@ import { error, userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { ApplicationType } from '../../../shared'
 import {
+  ApplicationPeriod,
   checkIsActor,
   checkIsFreshman,
   getSchoolsData,
@@ -104,24 +105,37 @@ export const personalSubSection = buildSubSection({
         buildDescriptionField({
           id: 'applicationTypeInfo.subtitle',
           condition: (_, externalData) => {
-            const isFreshmanExternalData = getValueViaPath<Student>(
-              externalData,
-              'studentInfo.data',
-            )?.isFreshman
-            return !isFreshmanExternalData
+            const allowFreshmanApplication =
+              getValueViaPath<ApplicationPeriod>(
+                externalData,
+                'applicationPeriodInfo.data',
+              )?.allowFreshmanApplication || false
+
+            const isFreshmanExternalData =
+              getValueViaPath<Student>(externalData, 'studentInfo.data')
+                ?.isFreshman || false
+
+            return allowFreshmanApplication && !isFreshmanExternalData
           },
           title: userInformation.applicationType.subtitle,
           titleVariant: 'h5',
           space: 3,
         }),
+        // Application type -> Show radio and make user select, if we allow freshman application but are unsure whether user is freshman
         buildRadioField({
           id: 'applicationType.value',
           condition: (_, externalData) => {
-            const isFreshmanExternalData = getValueViaPath<Student>(
-              externalData,
-              'studentInfo.data',
-            )?.isFreshman
-            return !isFreshmanExternalData
+            const allowFreshmanApplication =
+              getValueViaPath<ApplicationPeriod>(
+                externalData,
+                'applicationPeriodInfo.data',
+              )?.allowFreshmanApplication || false
+
+            const isFreshmanExternalData =
+              getValueViaPath<Student>(externalData, 'studentInfo.data')
+                ?.isFreshman || false
+
+            return allowFreshmanApplication && !isFreshmanExternalData
           },
           options: [
             {
@@ -136,29 +150,61 @@ export const personalSubSection = buildSubSection({
           ],
           width: 'full',
         }),
+        // Application type -> Hidden input to set the value if radio is not visible
         buildHiddenInput({
           id: 'applicationType.value',
           condition: (_, externalData) => {
-            const isFreshmanExternalData = getValueViaPath<Student>(
-              externalData,
-              'studentInfo.data',
-            )?.isFreshman
+            const allowFreshmanApplication =
+              getValueViaPath<ApplicationPeriod>(
+                externalData,
+                'applicationPeriodInfo.data',
+              )?.allowFreshmanApplication || false
 
-            return !!isFreshmanExternalData
+            const isFreshmanExternalData =
+              getValueViaPath<Student>(externalData, 'studentInfo.data')
+                ?.isFreshman || false
+
+            // Set value if either:
+            // - freshman applications are allowed and student is definetly freshman
+            // - freshman applications are NOT allowed (fallback to GENERAL)
+            return !allowFreshmanApplication || isFreshmanExternalData
           },
-          defaultValue: ApplicationType.FRESHMAN,
+          defaultValue: (application: Application) => {
+            const allowFreshmanApplication =
+              getValueViaPath<ApplicationPeriod>(
+                application.externalData,
+                'applicationPeriodInfo.data',
+              )?.allowFreshmanApplication || false
+
+            return allowFreshmanApplication
+              ? ApplicationType.FRESHMAN
+              : ApplicationType.GENERAL_APPLICATION
+          },
         }),
+
+        // Application type -> Display alert when we are unsure whether user is freshman, but he selected the freshman option
         buildAlertMessageField({
           id: 'applicationTypeValueAlertMessage',
           alertType: 'warning',
           message: userInformation.applicationType.alertMessage,
           condition: (answers, externalData) => {
-            const isFreshmanExternalData = getValueViaPath<Student>(
-              externalData,
-              'studentInfo.data',
-            )?.isFreshman
+            const allowFreshmanApplication =
+              getValueViaPath<ApplicationPeriod>(
+                externalData,
+                'applicationPeriodInfo.data',
+              )?.allowFreshmanApplication || false
+
+            const isFreshmanExternalData =
+              getValueViaPath<Student>(externalData, 'studentInfo.data')
+                ?.isFreshman || false
+
             const isFreshmanAnswers = checkIsFreshman(answers)
-            return !isFreshmanExternalData && isFreshmanAnswers
+
+            return (
+              allowFreshmanApplication &&
+              !isFreshmanExternalData &&
+              isFreshmanAnswers
+            )
           },
         }),
 

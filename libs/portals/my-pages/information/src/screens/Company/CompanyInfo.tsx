@@ -116,7 +116,11 @@ const CompanyInfo = () => {
           <Divider />
           <UserInfoLine
             label={formatMessage(mCompany.taxNr)}
-            content={companyData?.companyInfo?.vat?.[0]?.vatNumber || ''}
+            content={
+              vatDisplay?.[0]?.vatNumber ||
+              companyData?.companyInfo?.vat?.[0]?.vatNumber ||
+              ''
+            }
             loading={loading}
           />
           <Divider />

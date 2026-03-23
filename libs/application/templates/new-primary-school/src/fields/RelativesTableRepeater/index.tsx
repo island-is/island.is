@@ -1,4 +1,5 @@
 import {
+  Application,
   FieldBaseProps,
   FieldComponents,
   FieldTypes,
@@ -11,14 +12,19 @@ import { TableRepeaterFormField } from '@island.is/application/ui-fields'
 import { format as formatKennitala } from 'kennitala'
 import React, { FC } from 'react'
 import { useFriggOptions } from '../../hooks/useFriggOptions'
-import { newPrimarySchoolMessages } from '../../lib/messages'
-import { OptionsType } from '../../utils/constants'
-import { getSelectedOptionLabel } from '../../utils/newPrimarySchoolUtils'
+import { childrenNGuardiansMessages, sharedMessages } from '../../lib/messages'
+import { AgentType, OptionsType } from '../../utils/constants'
+import {
+  getApplicationExternalData,
+  getOtherGuardian,
+  getSelectedOptionLabel,
+} from '../../utils/newPrimarySchoolUtils'
 
 const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   error,
   field,
   application,
+  setBeforeSubmitCallback,
 }) => {
   const { id, title } = field
 
@@ -30,59 +36,74 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     <TableRepeaterFormField
       application={application}
       error={error}
+      setBeforeSubmitCallback={setBeforeSubmitCallback} // Needed to remove deleted rows
       field={{
         type: FieldTypes.TABLE_REPEATER,
         component: FieldComponents.TABLE_REPEATER,
         children: undefined,
         id,
         title,
-        formTitle:
-          newPrimarySchoolMessages.childrenNGuardians
-            .relativesRegistrationTitle,
-        addItemButtonText:
-          newPrimarySchoolMessages.childrenNGuardians.relativesAddRelative,
+        formTitle: childrenNGuardiansMessages.relatives.registrationTitle,
+        addItemButtonText: childrenNGuardiansMessages.relatives.addRelative,
         saveItemButtonText:
-          newPrimarySchoolMessages.childrenNGuardians.relativesRegisterRelative,
+          childrenNGuardiansMessages.relatives.registerRelative,
         removeButtonTooltipText:
-          newPrimarySchoolMessages.childrenNGuardians.relativesDeleteRelative,
+          childrenNGuardiansMessages.relatives.deleteRelative,
         editButtonTooltipText:
-          newPrimarySchoolMessages.childrenNGuardians.relativesEditRelative,
+          childrenNGuardiansMessages.relatives.editRelative,
         marginTop: 0,
         maxRows: 4,
         editField: true,
+        defaultValue: (application: Application) => {
+          const { childInformation } = getApplicationExternalData(
+            application.externalData,
+          )
+
+          return childInformation?.agents
+            ?.filter((agent) => agent.type === AgentType.EmergencyContact)
+            ?.map((agent) => ({
+              nationalIdWithName: {
+                name: agent.name,
+                nationalId: agent.nationalId,
+              },
+              phoneNumber: agent.phone,
+              relation: agent.relationTypeId,
+            }))
+        },
         fields: {
-          fullName: {
-            component: 'input',
-            label: newPrimarySchoolMessages.shared.fullName,
-            width: 'half',
-            type: 'text',
-            dataTestId: 'relative-full-name',
+          nationalIdWithName: {
+            component: 'nationalIdWithName',
+            searchPersons: true,
+            customNameLabel: sharedMessages.fullName,
           },
           phoneNumber: {
             component: 'input',
-            label: newPrimarySchoolMessages.shared.phoneNumber,
+            label: sharedMessages.phoneNumber,
             width: 'half',
             type: 'tel',
             format: '###-####',
             placeholder: '000-0000',
             dataTestId: 'relative-phone-number',
           },
-          nationalId: {
-            component: 'input',
-            label: newPrimarySchoolMessages.shared.nationalId,
-            width: 'half',
-            type: 'text',
-            format: '######-####',
-            placeholder: '000000-0000',
-            dataTestId: 'relative-national-id',
-          },
           relation: {
             component: 'select',
-            label: newPrimarySchoolMessages.shared.relation,
+            label: sharedMessages.relation,
             width: 'half',
-            placeholder: newPrimarySchoolMessages.shared.relationPlaceholder,
+            placeholder: sharedMessages.relationPlaceholder,
             options: relationFriggOptions,
             dataTestId: 'relative-relation',
+          },
+          applicantNationalId: {
+            component: 'hiddenInput',
+            displayInTable: false,
+            defaultValue: (application: Application) => application.applicant,
+          },
+          otherGuardianNationalId: {
+            component: 'hiddenInput',
+            displayInTable: false,
+            defaultValue: (application: Application) =>
+              getOtherGuardian(application.answers, application.externalData)
+                ?.nationalId,
           },
         },
         table: {
@@ -96,10 +117,10 @@ const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 : '',
           },
           header: [
-            newPrimarySchoolMessages.shared.fullName,
-            newPrimarySchoolMessages.shared.phoneNumber,
-            newPrimarySchoolMessages.shared.nationalId,
-            newPrimarySchoolMessages.shared.relation,
+            sharedMessages.fullName,
+            sharedMessages.nationalId,
+            sharedMessages.phoneNumber,
+            sharedMessages.relation,
           ],
         },
       }}

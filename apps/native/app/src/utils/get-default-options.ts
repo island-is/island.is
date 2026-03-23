@@ -1,6 +1,6 @@
 import { Options } from 'react-native-navigation'
 import { preferencesStore } from '../stores/preferences-store'
-import { isAndroid } from './devices'
+import { isAndroid, isIosLiquidGlassEnabled } from './devices'
 import { getThemeWithPreferences } from './get-theme-with-preferences'
 
 export function getDefaultOptions(
@@ -15,6 +15,11 @@ export function getDefaultOptions(
         : {},
       backButton: {
         color: theme.color.blue400,
+        ...(isIosLiquidGlassEnabled
+          ? {
+              showTitle: false,
+            }
+          : {}),
       },
       elevation: 0,
       title: {
@@ -34,6 +39,19 @@ export function getDefaultOptions(
       animateLeftButtons: false,
       borderHeight: 0,
       borderColor: 'transparent',
+      ...(isIosLiquidGlassEnabled
+        ? {
+            background: {
+              color: 'transparent',
+            },
+            scrollEdgeAppearance: {
+              active: true,
+              noBorder: true,
+            },
+            drawBehind: true,
+            translucent: true,
+          }
+        : {}),
     },
     navigationBar: {
       backgroundColor: theme.shade.background,
@@ -71,6 +89,13 @@ export function getDefaultOptions(
       ...(isAndroid
         ? {
             backgroundColor: theme.shade.background,
+          }
+        : {}),
+      ...(isIosLiquidGlassEnabled
+        ? {
+            backgroundColor: 'transparent',
+            drawBehind: true,
+            translucent: true,
           }
         : {}),
     },

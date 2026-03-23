@@ -4,7 +4,7 @@ FROM $DOCKER_IMAGE_REGISTRY/alpine/k8s:1.20.7 as base
 RUN addgroup runners && adduser -D runner -G runners
 RUN mkdir -p /home/runner/.kube && chown runner:runners /home/runner/.kube
 USER runner
-ENV CLUSTER=dev-cluster01
+ENV CLUSTER=dev-cluster02
 
 FROM base as proxy
 USER runner

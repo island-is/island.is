@@ -16,6 +16,10 @@ import { useUpdateIndictmentCountMutation } from './updateIndictmentCount.genera
 export interface UpdateIndictmentCount
   extends Omit<UpdateIndictmentCountInput, 'caseId' | 'indictmentCountId'> {}
 
+export type UpdateIndictmentCountState = UpdateIndictmentCount & {
+  offenses?: Offense[] | null
+}
+
 const useIndictmentCounts = () => {
   const { formatMessage } = useIntl()
 
@@ -83,9 +87,8 @@ const useIndictmentCounts = () => {
   const updateIndictmentCountState = useCallback(
     (
       indictmentCountId: string,
-      update: UpdateIndictmentCount,
+      update: UpdateIndictmentCountState,
       setWorkingCase: Dispatch<SetStateAction<Case>>,
-      updatedOffenses?: Offense[],
     ) => {
       setWorkingCase((prevWorkingCase) => {
         if (!prevWorkingCase.indictmentCounts) {
@@ -102,7 +105,6 @@ const useIndictmentCounts = () => {
         newIndictmentCounts[indictmentCountIndexToUpdate] = {
           ...newIndictmentCounts[indictmentCountIndexToUpdate],
           ...update,
-          ...(updatedOffenses ? { offenses: updatedOffenses } : {}),
         }
 
         return { ...prevWorkingCase, indictmentCounts: newIndictmentCounts }

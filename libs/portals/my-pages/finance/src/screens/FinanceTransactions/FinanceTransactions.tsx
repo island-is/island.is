@@ -93,6 +93,7 @@ const FinanceTransactions = () => {
     setToDate(new Date())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
   const getAllChargeTypes = () => {
     const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
     return allChargeTypeValues ?? []
@@ -117,6 +118,12 @@ const FinanceTransactions = () => {
     value: item.id,
   }))
 
+  const filterCountNumber =
+    dropdownSelect?.length ||
+    0 +
+      (toDate?.getDate() === new Date().getDate() ? 0 : 1) +
+      (fromDate?.getDate() === backInTheDay?.getDate() ? 0 : 1)
+
   return (
     <DynamicWrapper>
       <Box marginBottom={[6, 6, 10]}>
@@ -125,12 +132,15 @@ const FinanceTransactions = () => {
             <Inline space={2}>
               <Filter
                 variant="popover"
+                title={formatMessage(m.filterBy)}
                 align="left"
                 reverse
                 labelClear={formatMessage(m.clearFilter)}
                 labelClearAll={formatMessage(m.clearAllFilters)}
                 labelOpen={formatMessage(m.openFilter)}
                 labelClose={formatMessage(m.closeFilter)}
+                labelResult={formatMessage(m.showResults)}
+                filterCount={filterCountNumber}
                 filterInput={
                   <FilterInput
                     placeholder={formatMessage(m.searchPlaceholder)}
@@ -190,27 +200,36 @@ const FinanceTransactions = () => {
                           flexDirection="column"
                         >
                           <DatePicker
-                            label={formatMessage(m.datepickerFromLabel)}
-                            placeholderText={formatMessage(m.datepickLabel)}
+                            label={formatMessage(m.datepickPeriod)}
+                            placeholderText={formatMessage(
+                              m.datepickPeriodLabel,
+                            )}
                             locale="is"
                             backgroundColor="blue"
                             size="xs"
-                            handleChange={(d) => setFromDate(d)}
+                            handleChange={(d, e) => {
+                              setFromDate(d)
+                              setToDate(e)
+                            }}
                             selected={fromDate}
                             appearInline
+                            range
                           />
-                          <Box marginTop={3}>
-                            <DatePicker
-                              label={formatMessage(m.datepickerToLabel)}
-                              placeholderText={formatMessage(m.datepickLabel)}
-                              locale="is"
-                              backgroundColor="blue"
-                              size="xs"
-                              handleChange={(d) => setToDate(d)}
-                              selected={toDate}
-                              appearInline
-                            />
-                          </Box>
+                          {fromDate !== undefined || toDate !== undefined ? (
+                            <Box textAlign="right" marginTop={1}>
+                              <Button
+                                icon="reload"
+                                size="small"
+                                variant="text"
+                                onClick={() => {
+                                  setFromDate(undefined)
+                                  setToDate(undefined)
+                                }}
+                              >
+                                {formatMessage(m.clearSelected)}
+                              </Button>
+                            </Box>
+                          ) : null}
                         </Box>
                       </AccordionItem>
                     </Accordion>

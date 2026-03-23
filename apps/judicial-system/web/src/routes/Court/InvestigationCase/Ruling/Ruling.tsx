@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -8,8 +8,6 @@ import {
   Box,
   Checkbox,
   Input,
-  Text,
-  Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -28,17 +26,15 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingInput,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
   useCase,
-  useDeb,
+  useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { icRuling as m } from './Ruling.strings'
@@ -51,20 +47,18 @@ const Ruling = () => {
     caseNotFound,
     isCaseUpToDate,
   } = useContext(FormContext)
-  const { setAndSendCaseToServer, updateCase } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
 
-  const [courtCaseFactsEM, setCourtCaseFactsEM] = useState<string>('')
-  const [courtLegalArgumentsEM, setCourtLegalArgumentsEM] = useState<string>('')
-  const [prosecutorDemandsEM, setProsecutorDemandsEM] = useState<string>('')
-  const [introductionEM, setIntroductionEM] = useState<string>('')
-
-  useDeb(workingCase, [
-    'prosecutorDemands',
-    'courtCaseFacts',
-    'courtLegalArguments',
-    'conclusion',
+  const courtCaseFactsInput = useDebouncedInput('courtCaseFacts', ['empty'])
+  const courtLegalArgumentsInput = useDebouncedInput('courtLegalArguments', [
+    'empty',
   ])
+  const prosecutorDemandsInput = useDebouncedInput('prosecutorDemands', [
+    'empty',
+  ])
+  const introductionInput = useDebouncedInput('introduction', ['empty'])
+  const conclusionInput = useDebouncedInput('conclusion', [])
 
   const initialize = useCallback(() => {
     setAndSendCaseToServer(
@@ -129,240 +123,143 @@ const Ruling = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={5}>
-          <Accordion>
-            <PoliceRequestAccordionItem workingCase={workingCase} />
-            <AccordionItem
-              id="caseFileList"
-              label={`Rannsóknargögn (${caseFiles.length})`}
-              labelVariant="h3"
-            >
-              <CaseFileList caseId={workingCase.id} files={caseFiles} />
-            </AccordionItem>
-          </Accordion>
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Checkbox
-            name={formatMessage(m.sections.completedWithoutRuling.label)}
-            label={formatMessage(m.sections.completedWithoutRuling.label)}
-            checked={!isRulingRequired}
-            onChange={({ target }) => {
-              setAndSendCaseToServer(
-                [
-                  {
-                    isCompletedWithoutRuling: target.checked,
-                    conclusion: formatMessage(
-                      m.sections.completedWithoutRuling.conclusion,
-                    ),
-                    force: true,
-                  },
-                ],
-                workingCase,
-                setWorkingCase,
-              )
-            }}
-            tooltip={formatMessage(m.sections.completedWithoutRuling.tooltip)}
-            backgroundColor="blue"
-            large
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.introduction.title)}
-            </Text>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section">
+            <Accordion>
+              <PoliceRequestAccordionItem workingCase={workingCase} />
+              <AccordionItem
+                id="caseFileList"
+                label={`Rannsóknargögn (${caseFiles.length})`}
+                labelVariant="h3"
+              >
+                <CaseFileList caseId={workingCase.id} files={caseFiles} />
+              </AccordionItem>
+            </Accordion>
           </Box>
-          <Input
-            data-testid="introduction"
-            name="introduction"
-            label={formatMessage(m.sections.introduction.label)}
-            value={workingCase.introduction || ''}
-            placeholder={formatMessage(m.sections.introduction.placeholder)}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'introduction',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                introductionEM,
-                setIntroductionEM,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'introduction',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setIntroductionEM,
-              )
-            }
-            errorMessage={introductionEM}
-            hasError={introductionEM !== ''}
-            textarea
-            rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
-            required={isRulingRequired}
-            disabled={!isRulingRequired}
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.prosecutorDemands.title)}
-            </Text>
+          <Box component="section">
+            <Checkbox
+              name={formatMessage(m.sections.completedWithoutRuling.label)}
+              label={formatMessage(m.sections.completedWithoutRuling.label)}
+              checked={!isRulingRequired}
+              onChange={({ target }) => {
+                setAndSendCaseToServer(
+                  [
+                    {
+                      isCompletedWithoutRuling: target.checked,
+                      conclusion: formatMessage(
+                        m.sections.completedWithoutRuling.conclusion,
+                      ),
+                      force: true,
+                    },
+                  ],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }}
+              tooltip={formatMessage(m.sections.completedWithoutRuling.tooltip)}
+              backgroundColor="blue"
+              large
+            />
           </Box>
-          <Input
-            data-testid="prosecutorDemands"
-            name="prosecutorDemands"
-            label={formatMessage(m.sections.prosecutorDemands.label)}
-            value={workingCase.prosecutorDemands || ''}
-            placeholder={formatMessage(
-              m.sections.prosecutorDemands.placeholder,
-            )}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'prosecutorDemands',
-                event.target.value,
-                ['empty'],
-                setWorkingCase,
-                prosecutorDemandsEM,
-                setProsecutorDemandsEM,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'prosecutorDemands',
-                event.target.value,
-                ['empty'],
-                workingCase,
-                updateCase,
-                setProsecutorDemandsEM,
-              )
-            }
-            errorMessage={prosecutorDemandsEM}
-            hasError={prosecutorDemandsEM !== ''}
-            textarea
-            rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
-            required={isRulingRequired}
-            disabled={!isRulingRequired}
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.courtCaseFacts.title)} `}
-              <Tooltip
-                text={formatMessage(m.sections.courtCaseFacts.tooltip)}
-              />
-            </Text>
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(m.sections.introduction.title)}
+            />
+            <Input
+              data-testid="introduction"
+              name="introduction"
+              label={formatMessage(m.sections.introduction.label)}
+              placeholder={formatMessage(m.sections.introduction.placeholder)}
+              value={introductionInput.value || ''}
+              onChange={(evt) => introductionInput.onChange(evt.target.value)}
+              onBlur={(evt) => introductionInput.onBlur(evt.target.value)}
+              errorMessage={introductionInput.errorMessage}
+              hasError={introductionInput.hasError}
+              textarea
+              rows={7}
+              required={isRulingRequired}
+              disabled={!isRulingRequired}
+            />
           </Box>
-          <Box marginBottom={5}>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(m.sections.prosecutorDemands.title)}
+            />
+            <Input
+              data-testid="prosecutorDemands"
+              name="prosecutorDemands"
+              label={formatMessage(m.sections.prosecutorDemands.label)}
+              placeholder={formatMessage(
+                m.sections.prosecutorDemands.placeholder,
+              )}
+              value={prosecutorDemandsInput.value || ''}
+              onChange={(evt) =>
+                prosecutorDemandsInput.onChange(evt.target.value)
+              }
+              onBlur={(evt) => prosecutorDemandsInput.onBlur(evt.target.value)}
+              errorMessage={prosecutorDemandsInput.errorMessage}
+              hasError={prosecutorDemandsInput.hasError}
+              textarea
+              rows={7}
+              required={isRulingRequired}
+              disabled={!isRulingRequired}
+            />
+          </Box>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(m.sections.courtCaseFacts.title)}
+              tooltip={formatMessage(m.sections.courtCaseFacts.tooltip)}
+            />
+
             <Input
               data-testid="courtCaseFacts"
               name="courtCaseFacts"
               label={formatMessage(m.sections.courtCaseFacts.label)}
-              value={workingCase.courtCaseFacts || ''}
               placeholder={formatMessage(m.sections.courtCaseFacts.placeholder)}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtCaseFacts',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  courtCaseFactsEM,
-                  setCourtCaseFactsEM,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtCaseFacts',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtCaseFactsEM,
-                )
-              }
-              errorMessage={courtCaseFactsEM}
-              hasError={courtCaseFactsEM !== ''}
+              value={courtCaseFactsInput.value || ''}
+              onChange={(evt) => courtCaseFactsInput.onChange(evt.target.value)}
+              onBlur={(evt) => courtCaseFactsInput.onBlur(evt.target.value)}
+              errorMessage={courtCaseFactsInput.errorMessage}
+              hasError={courtCaseFactsInput.hasError}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required={isRulingRequired}
               disabled={!isRulingRequired}
             />
           </Box>
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.courtLegalArguments.title)} `}
-              <Tooltip
-                text={formatMessage(m.sections.courtLegalArguments.tooltip)}
-              />
-            </Text>
-          </Box>
-          <Box marginBottom={5}>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(m.sections.courtLegalArguments.title)}
+              tooltip={formatMessage(m.sections.courtLegalArguments.tooltip)}
+            />
             <Input
               data-testid="courtLegalArguments"
               name="courtLegalArguments"
               label={formatMessage(m.sections.courtLegalArguments.label)}
-              value={workingCase.courtLegalArguments || ''}
+              value={courtLegalArgumentsInput.value || ''}
               placeholder={formatMessage(
                 m.sections.courtLegalArguments.placeholder,
               )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtLegalArguments',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  courtLegalArgumentsEM,
-                  setCourtLegalArgumentsEM,
-                )
+              onChange={(evt) =>
+                courtLegalArgumentsInput.onChange(evt.target.value)
               }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtLegalArguments',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtLegalArgumentsEM,
-                )
+              onBlur={(evt) =>
+                courtLegalArgumentsInput.onBlur(evt.target.value)
               }
-              errorMessage={courtLegalArgumentsEM}
-              hasError={courtLegalArgumentsEM !== ''}
+              errorMessage={courtLegalArgumentsInput.errorMessage}
+              hasError={courtLegalArgumentsInput.hasError}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required={isRulingRequired}
               disabled={!isRulingRequired}
             />
           </Box>
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.ruling.title)}
-            </Text>
+          <Box component="section">
+            <SectionHeading title={formatMessage(m.sections.ruling.title)} />
+            <RulingInput disabled={!isRulingRequired} />
           </Box>
-          <RulingInput
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            disabled={!isRulingRequired}
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.decision.title)}
-            </Text>
-          </Box>
-          <Box marginBottom={5}>
+          <Box component="section">
+            <SectionHeading title={formatMessage(m.sections.decision.title)} />
             <Decision
               workingCase={workingCase}
               acceptedLabelText={formatMessage(
@@ -407,49 +304,31 @@ const Ruling = () => {
               }}
             />
           </Box>
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.conclusion.title)}
-            </Text>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(m.sections.conclusion.title)}
+            />
+            <Input
+              name="conclusion"
+              label={formatMessage(m.sections.conclusion.label)}
+              placeholder={formatMessage(m.sections.conclusion.placeholder)}
+              value={conclusionInput.value || ''}
+              onChange={(evt) => conclusionInput.onChange(evt.target.value)}
+              rows={7}
+              textarea
+              disabled={!isRulingRequired}
+            />
           </Box>
-          <Input
-            name="conclusion"
-            label={formatMessage(m.sections.conclusion.label)}
-            placeholder={formatMessage(m.sections.conclusion.placeholder)}
-            value={workingCase.conclusion || ''}
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'conclusion',
-                event.target.value,
-                [],
-                setWorkingCase,
-              )
-            }
-            onBlur={(event) =>
-              validateAndSendToServer(
-                'conclusion',
-                event.target.value,
-                [],
-                workingCase,
-                updateCase,
-              )
-            }
-            rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
-            textarea
-            disabled={!isRulingRequired}
-          />
-        </Box>
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRuling)}
-            pdfType="ruling"
-            disabled={!isRulingRequired}
-          />
-        </Box>
+          <Box>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(core.pdfButtonRuling)}
+              pdfType="ruling"
+              elementId={formatMessage(core.pdfButtonRuling)}
+              disabled={!isRulingRequired}
+            />
+          </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

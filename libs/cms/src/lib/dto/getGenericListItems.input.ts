@@ -14,6 +14,7 @@ export enum GetGenericListItemsInputOrderBy {
   DATE = 'Date',
   TITLE = 'Title',
   PUBLISH_DATE = 'Publish Date',
+  SCORE = 'Score',
 }
 
 registerEnumType(GetGenericListItemsInputOrderBy, {

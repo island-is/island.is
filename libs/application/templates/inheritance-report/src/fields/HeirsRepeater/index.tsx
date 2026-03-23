@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FC, Fragment, useCallback, useEffect, useState } from 'react'
-import { useFieldArray, useFormContext } from 'react-hook-form'
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
@@ -58,10 +58,18 @@ export const HeirsRepeater: FC<
   const { customFields } = props
 
   const { formatMessage } = useLocale()
-  const { getValues, setError, setValue, clearErrors } = useFormContext()
-  const values = getValues()
+  const { getValues, setError, setValue, clearErrors, control } =
+    useFormContext()
   const { fields, append, update, remove, replace } = useFieldArray({
     name: id,
+  })
+
+  // Watch heirs data to avoid calling getValues() on every render
+  const heirsData = useWatch({ control, name: 'heirs.data', defaultValue: [] })
+  const estateMembers = useWatch({
+    control,
+    name: 'estate.estateMembers',
+    defaultValue: [],
   })
 
   const [
@@ -71,10 +79,7 @@ export const HeirsRepeater: FC<
 
   const isPrePaidApplication = answers.applicationFor === PREPAID_INHERITANCE
 
-  const heirsRelations = (values?.heirs?.data ?? []).map((x: EstateMember) => {
-    return x.relation
-  })
-  const hasEstateMemberUnder18 = values.estate?.estateMembers?.some(
+  const hasEstateMemberUnder18 = (estateMembers ?? []).some(
     (member: EstateMember) => {
       const hasForeignCitizenship = member?.foreignCitizenship?.[0] === 'yes'
       const birthDate = member?.dateOfBirth
@@ -91,7 +96,7 @@ export const HeirsRepeater: FC<
     },
   )
 
-  const hasEstateMemberUnder18withoutRep = values.estate?.estateMembers?.some(
+  const hasEstateMemberUnder18withoutRep = (estateMembers ?? []).some(
     (member: EstateMember) => {
       const advocateAge =
         member.advocate && info(member.advocate.nationalId)?.age
@@ -315,6 +320,7 @@ export const HeirsRepeater: FC<
 
       calculateTotal()
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [answers, calculateTotal, getValues, inheritanceTaxFreeLimit, setValue],
   )
 
@@ -326,9 +332,14 @@ export const HeirsRepeater: FC<
     })
   }, [fields, getValues, id, updateValues])
 
+  // Only run initialLoad on mount and when fields length changes from 0
+  // Do NOT include heirsRelations as it causes infinite loop
   useEffect(() => {
-    initialLoad()
-  }, [heirsRelations, initialLoad])
+    if (fields.length > 0) {
+      initialLoad()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields.length])
 
   useEffect(() => {
     if (!hasEstateMemberUnder18) {
@@ -373,6 +384,7 @@ export const HeirsRepeater: FC<
       replace(heirsData)
       setValue('heirs.hasModified', true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -385,14 +397,13 @@ export const HeirsRepeater: FC<
       'executors.spouse.nationalId',
     )
 
-    const match = values.heirs.data.some(
+    const match = (heirsData ?? []).some(
       (field: any) =>
         field.nationalId === executorNationalId ||
         field.nationalId === spouseNationalId,
     )
     setHasHeirWithNationalIdSameAsExecutor(match)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values])
+  }, [answers, heirsData])
 
   return (
     <Box>
@@ -540,7 +551,7 @@ export const HeirsRepeater: FC<
                             disabled={!member.enabled}
                             label={formatMessage(customField.title)}
                             onAfterChange={(val) => {
-                              updateValues(fieldIndex, val, customFieldIndex)
+                              updateValues(fieldIndex, val, mainIndex)
                             }}
                             hasError={
                               error && error[mainIndex]

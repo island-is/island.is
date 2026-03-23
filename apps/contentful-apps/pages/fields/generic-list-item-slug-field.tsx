@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Stack, Text, TextInput } from '@contentful/f36-components'
@@ -48,10 +48,19 @@ const GenericListItemSlugField = () => {
     sdk.window.startAutoResizer()
   }, [sdk.window])
 
+  const initialRender = useRef({
+    title: true,
+    date: true,
+  })
+
   useEffect(() => {
     const unsubscribeFromTitleValueChanges = sdk.entry.fields.title
       .getForLocale(sdk.field.locale)
       .onValueChanged((newTitle) => {
+        if (initialRender.current.title) {
+          initialRender.current.title = false
+          return
+        }
         if (!newTitle || hasEntryBeenPublished) {
           return
         }
@@ -61,6 +70,10 @@ const GenericListItemSlugField = () => {
 
     const unsubscribeFromDateValueChanges =
       sdk.entry.fields.date.onValueChanged((newDate) => {
+        if (initialRender.current.date) {
+          initialRender.current.date = false
+          return
+        }
         const date = newDate
         const title = sdk.entry.fields.title
           .getForLocale(sdk.field.locale)

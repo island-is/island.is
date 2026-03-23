@@ -3,14 +3,14 @@ import {
   buildMultiField,
   buildSection,
 } from '@island.is/application/core'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import { socialInsuranceAdministrationMessage as m } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { Form } from '@island.is/application/types'
 import { overviewFields } from '../../utils/overviewFields'
 
 export const InReviewForm: Form = buildForm({
   id: 'disabilityPensionInReview',
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   children: [
     buildSection({
       id: 'review',

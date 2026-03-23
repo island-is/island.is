@@ -4,17 +4,13 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Button } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'
 import { ErrorValue } from '../../types'
+import { RepeaterTotal } from '../RepeaterTotal'
+import { useRepeaterTotal } from '../../hooks/useRepeaterTotal'
 
 interface OtherAssetFormField {
   id: string
@@ -43,16 +39,22 @@ export const OtherAssetsRepeater: FC<
     name: id,
   })
   const { control, clearErrors, getValues } = useFormContext()
-  const estateData = getEstateDataFromApplication(application)
   const [, updateState] = useState<unknown>()
   const forceUpdate = useCallback(() => updateState({}), [])
 
+  const { total, calculateTotal } = useRepeaterTotal(
+    id,
+    getValues,
+    fields,
+    (field: OtherAssetFormField) => field.value,
+  )
+
   useEffect(() => {
+    const estateData = getEstateDataFromApplication(application)
     if (fields.length === 0 && estateData.estate?.otherAssets) {
       replace(estateData.estate.otherAssets)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [application, fields.length, replace])
 
   // Clear errors when other asset value changes
   const updateOtherAssetValue = (fieldIndex: string) => {
@@ -68,6 +70,7 @@ export const OtherAssetsRepeater: FC<
     }
 
     forceUpdate()
+    calculateTotal()
   }
 
   const handleAddOtherAsset = () =>
@@ -102,7 +105,7 @@ export const OtherAssetsRepeater: FC<
         const fieldError = error && error[index] ? error[index] : null
 
         return (
-          <Box position="relative" key={field.id} marginTop={2}>
+          <Box position="relative" key={field.id} marginTop={4}>
             <Controller
               name={initialField}
               control={control}
@@ -115,44 +118,36 @@ export const OtherAssetsRepeater: FC<
               defaultValue={field.enabled ?? true}
               render={() => <input type="hidden" />}
             />
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              alignItems="center"
-              marginBottom={0}
-            >
-              <Text variant="h4" />
-              <Box display="flex" alignItems="center" columnGap={2}>
-                {field.initial && (
-                  <Button
-                    variant="text"
-                    icon={field.enabled ? 'remove' : 'add'}
-                    size="small"
-                    iconType="outline"
-                    onClick={() => {
-                      const updatedAsset = {
-                        ...field,
-                        enabled: !field.enabled,
-                      }
-                      update(index, updatedAsset)
-                      clearErrors(`${id}[${index}].value`)
-                    }}
-                  >
-                    {field.enabled
-                      ? formatMessage(m.inheritanceDisableMember)
-                      : formatMessage(m.inheritanceEnableMember)}
-                  </Button>
-                )}
-                {!field.initial && (
-                  <Button
-                    variant="ghost"
-                    size="small"
-                    circle
-                    icon="remove"
-                    onClick={handleRemoveOtherAsset.bind(null, index)}
-                  />
-                )}
-              </Box>
+            <Box display="flex" justifyContent="flexEnd">
+              {field.initial && (
+                <Button
+                  variant="text"
+                  icon={field.enabled ? 'remove' : 'add'}
+                  size="small"
+                  iconType="outline"
+                  onClick={() => {
+                    const updatedAsset = {
+                      ...field,
+                      enabled: !field.enabled,
+                    }
+                    update(index, updatedAsset)
+                    clearErrors(`${id}[${index}].value`)
+                  }}
+                >
+                  {field.enabled
+                    ? formatMessage(m.disable)
+                    : formatMessage(m.activate)}
+                </Button>
+              )}
+              {!field.initial && (
+                <Button
+                  variant="ghost"
+                  size="small"
+                  circle
+                  icon="remove"
+                  onClick={handleRemoveOtherAsset.bind(null, index)}
+                />
+              )}
             </Box>
             <GridRow>
               <GridColumn
@@ -206,6 +201,7 @@ export const OtherAssetsRepeater: FC<
           {formatMessage(repeaterButtonText)}
         </Button>
       </Box>
+      <RepeaterTotal id={id} total={total} show={!!fields.length} />
     </Box>
   )
 }

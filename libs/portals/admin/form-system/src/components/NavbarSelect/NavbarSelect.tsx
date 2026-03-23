@@ -20,8 +20,7 @@ const filterSections = (
       (section): section is FormSystemSection =>
         section !== null &&
         section !== undefined &&
-        (section.sectionType === SectionTypes.INPUT ||
-          section.sectionType === SectionTypes.PARTIES),
+        section.sectionType === SectionTypes.INPUT,
     )
     .sort((a, b) => {
       const ao = a.displayOrder ?? Number.MAX_SAFE_INTEGER
@@ -31,7 +30,7 @@ const filterSections = (
 }
 
 export const NavbarSelect = () => {
-  const { control, selectStatus } = useContext(ControlContext)
+  const { control, selectStatus, openComponents } = useContext(ControlContext)
   const { activeItem, form } = control
   const { sections, screens, fields } = form
   let selectable = false
@@ -70,7 +69,8 @@ export const NavbarSelect = () => {
             active={activeItem?.data?.id === screen?.id}
             selectable={selectable}
           />
-          {renderFieldsForScreen(screen)}
+          {openComponents.screens.includes(screen?.id as string) &&
+            renderFieldsForScreen(screen)}
         </Box>
       ))
   }
@@ -84,7 +84,8 @@ export const NavbarSelect = () => {
           active={activeItem?.data?.id === section.id}
           selectable={selectable}
         />
-        {renderScreensForSection(section)}
+        {openComponents.sections.includes(section.id) &&
+          renderScreensForSection(section)}
       </Box>
     ))
   }

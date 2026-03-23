@@ -4,33 +4,33 @@ import {
   PhoneInput,
   GridRow as Row,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Locale } from '@island.is/shared/types'
 import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useIntl } from 'react-intl'
 import { Action, m } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  lang?: 'is' | 'en'
+  valueIndex?: number
 }
 
 const PHONE_REGEX = /^[0-9+\-() ]{7,20}$/
 
-export const PhoneNumber = ({ item, dispatch, lang = 'is' }: Props) => {
-  const { locale, formatMessage } = useIntl()
+export const PhoneNumber = ({ item, dispatch, valueIndex = 0 }: Props) => {
+  const { locale, formatMessage, lang } = useLocale()
   const { control } = useFormContext()
 
   return (
     <Row>
       <Column>
         <Controller
-          key={item.id}
-          name={`${item.id}.phoneNumber`}
+          key={`${item.id}-${valueIndex}`}
+          name={`${item.id}.${valueIndex}`}
           control={control}
-          defaultValue={getValue(item, 'phoneNumber') ?? ''}
+          defaultValue={getValue(item, 'phoneNumber', valueIndex) ?? ''}
           rules={{
             required: {
               value: item.isRequired ?? false,
@@ -41,31 +41,34 @@ export const PhoneNumber = ({ item, dispatch, lang = 'is' }: Props) => {
               message: formatMessage(m.invalidPhoneNumber),
             },
           }}
-          render={({ field, fieldState }) => (
-            <PhoneInput
-              label={item.name?.[lang] ?? ''}
-              placeholder={formatMessage(m.phoneNumber)}
-              name={field.name}
-              locale={locale as Locale}
-              required={item.isRequired ?? false}
-              backgroundColor="blue"
-              value={field.value}
-              onChange={(e) => {
-                field.onChange(e)
-                if (dispatch) {
-                  dispatch({
-                    type: 'SET_PHONE_NUMBER',
-                    payload: {
-                      id: item.id,
-                      value: e.target.value,
-                    },
-                  })
-                }
-              }}
-              onBlur={field.onBlur}
-              errorMessage={fieldState.error?.message}
-            />
-          )}
+          render={({ field, fieldState }) => {
+            return (
+              <PhoneInput
+                label={item.name?.[lang] ?? ''}
+                placeholder={formatMessage(m.phoneNumber)}
+                name={field.name}
+                locale={locale as Locale}
+                required={item.isRequired ?? false}
+                backgroundColor="blue"
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e)
+                  if (dispatch) {
+                    dispatch({
+                      type: 'SET_PHONE_NUMBER',
+                      payload: {
+                        id: item.id,
+                        value: e.target.value,
+                        valueIndex,
+                      },
+                    })
+                  }
+                }}
+                onBlur={field.onBlur}
+                errorMessage={fieldState.error?.message}
+              />
+            )
+          }}
         />
       </Column>
     </Row>

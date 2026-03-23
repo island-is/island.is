@@ -35,13 +35,11 @@ import {
   useRightsPortalTransferHealthCenterMutation,
 } from './HealthCenterRegistration.generated'
 import * as styles from './HealthRegistration.css'
-
-type SelectedHealthCenter = Pick<RightsPortalHealthCenter, 'id' | 'name'>
-
-export type HealthCenterDoctorOption = {
-  label: string
-  value: number
-}
+import {
+  HealthCenterDoctorOption,
+  SelectedHealthCenter,
+} from '../../utils/types'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 export interface Dictionary<T> {
   [index: string]: T
@@ -49,6 +47,7 @@ export interface Dictionary<T> {
 
 const HealthCenterRegistration = () => {
   useNamespaces('sp.health')
+  useHealthPlausibleSwap()
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { data, loading, error } = useGetHealthCenterQuery()

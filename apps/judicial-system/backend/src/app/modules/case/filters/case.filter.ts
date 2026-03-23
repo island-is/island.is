@@ -55,6 +55,7 @@ const canProsecutionUserAccessCase = (
       CaseState.REJECTED,
       CaseState.DISMISSED,
       CaseState.COMPLETED,
+      CaseState.CORRECTING,
     ].includes(theCase.state)
   ) {
     return false
@@ -89,7 +90,10 @@ export const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
   }
 
   // Check case state access
-  if (theCase.state !== CaseState.COMPLETED) {
+  if (
+    theCase.state !== CaseState.COMPLETED &&
+    theCase.state !== CaseState.CORRECTING
+  ) {
     return false
   }
 
@@ -134,6 +138,7 @@ const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
       CaseState.COMPLETED,
+      CaseState.CORRECTING,
     ].includes(theCase.state)
   ) {
     return false
@@ -263,7 +268,10 @@ const canPrisonAdminUserAccessCase = (
 
   if (isIndictmentCase(theCase.type)) {
     // Check case state access
-    if (theCase.state !== CaseState.COMPLETED) {
+    if (
+      theCase.state !== CaseState.COMPLETED &&
+      theCase.state !== CaseState.CORRECTING
+    ) {
       return false
     }
 
@@ -276,16 +284,15 @@ const canPrisonAdminUserAccessCase = (
       return false
     }
 
-    // Check indictment case review decision access
+    // Check indictment case review decision access or if a defendant
+    // has been sent to the prison admin
     if (
-      theCase.indictmentReviewDecision !== IndictmentCaseReviewDecision.ACCEPT
-    ) {
-      return false
-    }
-
-    // Check if a defendant has been sent to the prison admin
-    if (
-      !theCase.defendants?.some((defendant) => defendant.isSentToPrisonAdmin)
+      !theCase.defendants?.some(
+        (defendant) =>
+          defendant.isSentToPrisonAdmin &&
+          defendant.indictmentReviewDecision ===
+            IndictmentCaseReviewDecision.ACCEPT,
+      )
     ) {
       return false
     }
@@ -395,6 +402,7 @@ const canDefenceUserAccessIndictmentCase = (
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
       CaseState.COMPLETED,
+      CaseState.CORRECTING,
     ].includes(theCase.state)
   ) {
     return false

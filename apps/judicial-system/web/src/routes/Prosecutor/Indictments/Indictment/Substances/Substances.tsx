@@ -43,6 +43,7 @@ export const Substances: FC<Props> = ({ offense, onChange }) => {
       ...substances,
       [substanceId]: substanceAmount,
     }
+
     onChange(offense, updatedSubstances)
   }
 
@@ -50,6 +51,7 @@ export const Substances: FC<Props> = ({ offense, onChange }) => {
     if (substances) {
       delete substances[substanceId]
     }
+
     onChange(offense, substances)
   }
 
@@ -74,11 +76,15 @@ export const Substances: FC<Props> = ({ offense, onChange }) => {
           })}
           onChange={(selectedOption) => {
             const substance = (selectedOption as ReactSelectOption).value
+            if (!substance) {
+              return
+            }
 
             const updatedSubstances = {
               ...substances,
               [substance]: '',
             }
+
             onChange(offense, updatedSubstances)
           }}
           value={null}

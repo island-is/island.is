@@ -30,6 +30,7 @@ env:
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
   - 'services-payments'
+  - 'nginx-ingress-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -61,7 +62,7 @@ ingress:
           - '/'
 namespace: 'services-payment-flow-update-handler'
 podDisruptionBudget:
-  maxUnavailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

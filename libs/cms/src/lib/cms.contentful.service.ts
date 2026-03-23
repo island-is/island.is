@@ -3,6 +3,7 @@ import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Injectable } from '@nestjs/common'
 import sortBy from 'lodash/sortBy'
+import type { EntryCollection } from 'contentful'
 import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { ContentSlug, TextFieldLocales } from './models/contentSlug.model'
@@ -52,7 +53,7 @@ import {
 } from './models/openDataSubpage.model'
 import { GetOpenDataSubpageInput } from './dto/getOpenDataSubpage.input'
 import { mapProjectPage, ProjectPage } from './models/projectPage.model'
-import { IProjectPage } from './generated/contentfulTypes'
+import { ICourseListPage, IProjectPage } from './generated/contentfulTypes'
 import { GetSupportQNAsInput } from './dto/getSupportQNAs.input'
 import { mapSupportQNA, SupportQNA } from './models/supportQNA.model'
 import { GetSupportCategoryInput } from './dto/getSupportCategory.input'
@@ -89,8 +90,15 @@ import {
   OrganizationPageStandaloneSitemap,
   OrganizationPageStandaloneSitemapLevel2,
 } from './models/organizationPageStandaloneSitemap.model'
-import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
-import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
+import {
+  SitemapTree,
+  SitemapTreeNode,
+  SitemapTreeNodeType,
+} from '@island.is/shared/types'
+import {
+  getOrganizationPageUrlPrefix,
+  sortAlpha,
+} from '@island.is/shared/utils'
 import { NewsList } from './models/newsList.model'
 import { GetCmsNewsInput } from './dto/getNews.input'
 import {
@@ -102,6 +110,13 @@ import {
   mapBloodDonationRestrictionDetails,
   mapBloodDonationRestrictionListItem,
 } from './models/bloodDonationRestriction.model'
+import { GetCourseByIdInput } from './dto/getCourseById.input'
+import { CourseDetails, mapCourse } from './models/course.model'
+import { GetCourseListPageByIdInput } from './dto/getCourseListPageById.input'
+import { mapCourseListPage } from './models/courseListPage.model'
+import { GetCourseSelectOptionsInput } from './dto/getCourseSelectOptions.input'
+import { GetWebChatInput } from './dto/getWebChat.input'
+import { mapWebChat, WebChat } from './models/webChat.model'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -109,6 +124,8 @@ const errorHandler = (name: string) => {
     throw new ApolloError('Failed to resolve request in ' + name)
   }
 }
+
+type ChildNodeOrder = 'asc-title' | 'desc-title' | 'manual'
 
 const ArticleFields = (
   [
@@ -842,7 +859,7 @@ export class CmsContentfulService {
   async getLifeEventsForOverview(lang: string): Promise<LifeEventPage[]> {
     const params = {
       ['content_type']: 'lifeEventPage',
-      order: 'sys.createdAt',
+      order: '-fields.importance,sys.createdAt',
     }
 
     const result = await this.contentfulRepository
@@ -1230,6 +1247,41 @@ export class CmsContentfulService {
     )
   }
 
+  private getChildNodeOrder(parentNode: SitemapTree | SitemapTreeNode) {
+    if (
+      'type' in parentNode &&
+      parentNode.type === SitemapTreeNodeType.CATEGORY
+    ) {
+      return (parentNode.childNodeOrder ?? 'manual') as ChildNodeOrder
+    }
+
+    return 'manual'
+  }
+
+  private sortLinksByChildNodeOrder<T extends { label: string }>(
+    links: T[],
+    order: ChildNodeOrder,
+  ): T[] {
+    if (order === 'manual') {
+      return links
+    }
+
+    const direction = order === 'asc-title' ? 1 : -1
+
+    return links
+      .map((link, index) => ({ link, index }))
+      .sort((a, b) => {
+        const byLabel = sortAlpha<{ label: string }>('label')(a.link, b.link)
+
+        if (byLabel !== 0) {
+          return byLabel * direction
+        }
+
+        return a.index - b.index
+      })
+      .map(({ link }) => link)
+  }
+
   async getOrganizationPageStandaloneSitemapLevel1(
     input: GetOrganizationPageStandaloneSitemapLevel1Input,
   ): Promise<OrganizationPageStandaloneSitemap | null> {
@@ -1325,6 +1377,10 @@ export class CmsContentfulService {
     result.childLinks = result.childLinks.filter(
       (link) => link.label && link.href,
     )
+    result.childLinks = this.sortLinksByChildNodeOrder(
+      result.childLinks,
+      this.getChildNodeOrder(category),
+    )
 
     return result
   }
@@ -1374,11 +1430,11 @@ export class CmsContentfulService {
       { label: string; href: string; entryId: string }[]
     >()
 
-    const result: OrganizationPageStandaloneSitemapLevel2 = {
-      label: subcategory.label,
-      childCategories: subcategory.childNodes.map((node) => {
-        if (node.type === SitemapTreeNodeType.CATEGORY) {
-          return {
+    const childCategoriesWithOrder = subcategory.childNodes.map((node) => {
+      if (node.type === SitemapTreeNodeType.CATEGORY) {
+        return {
+          order: this.getChildNodeOrder(node),
+          childCategory: {
             label: node.label,
             childLinks: node.childNodes.map((childNode) => {
               if (childNode.type === SitemapTreeNodeType.CATEGORY) {
@@ -1410,31 +1466,37 @@ export class CmsContentfulService {
 
               return entryNode
             }),
-          }
+          },
         }
+      }
 
-        if (node.type === SitemapTreeNodeType.URL) {
-          return {
+      if (node.type === SitemapTreeNodeType.URL) {
+        return {
+          order: 'manual' as ChildNodeOrder,
+          childCategory: {
             label: node.label,
             href: node.url,
             childLinks: [],
-          }
+          },
         }
+      }
 
-        const entryNode = {
-          label: '',
-          href: '',
-          entryId: node.entryId,
-          childLinks: [],
-        }
+      const entryNode = {
+        label: '',
+        href: '',
+        entryId: node.entryId,
+        childLinks: [],
+      }
 
-        const nodeList = entryNodes.get(node.entryId) ?? []
-        nodeList.push(entryNode)
-        entryNodes.set(node.entryId, nodeList)
+      const nodeList = entryNodes.get(node.entryId) ?? []
+      nodeList.push(entryNode)
+      entryNodes.set(node.entryId, nodeList)
 
-        return entryNode
-      }),
-    }
+      return {
+        order: 'manual' as ChildNodeOrder,
+        childCategory: entryNode,
+      }
+    })
 
     const parentSubpageResponse =
       await this.contentfulRepository.getLocalizedEntries<types.IOrganizationParentSubpageFields>(
@@ -1465,17 +1527,31 @@ export class CmsContentfulService {
       }
     }
 
-    // Prune empty values
-    result.childCategories = result.childCategories.filter((childCategory) => {
-      childCategory.childLinks = childCategory.childLinks.filter(
-        (childLink) => {
-          return childLink.href && childLink.label
-        },
-      )
-      return childCategory.label && childCategory.childLinks.length > 0
-    })
+    const childCategories = childCategoriesWithOrder
+      .map(({ childCategory, order }) => {
+        const prunedChildLinks = childCategory.childLinks.filter(
+          (childLink) => childLink.href && childLink.label,
+        )
 
-    return result
+        return {
+          childCategory: {
+            ...childCategory,
+            childLinks: this.sortLinksByChildNodeOrder(prunedChildLinks, order),
+          },
+        }
+      })
+      .filter(({ childCategory }) => {
+        return childCategory.label && childCategory.childLinks.length > 0
+      })
+      .map(({ childCategory }) => childCategory)
+
+    return {
+      label: subcategory.label,
+      childCategories: this.sortLinksByChildNodeOrder(
+        childCategories,
+        this.getChildNodeOrder(subcategory),
+      ),
+    }
   }
 
   async getOrganizationNavigationPages(
@@ -1558,5 +1634,179 @@ export class CmsContentfulService {
       )
 
     return items
+  }
+
+  async getCourseById(
+    input: GetCourseByIdInput,
+  ): Promise<CourseDetails | null> {
+    let id = input.id
+
+    const slugResponse =
+      await this.contentfulRepository.getLocalizedEntries<types.ICourseFields>(
+        input.lang,
+        {
+          content_type: 'course',
+          limit: 1,
+          include: 0,
+          'fields.slug': input.id,
+          select: 'sys',
+        },
+        0,
+      )
+    const potentialId = slugResponse?.items?.[0]?.sys?.id
+    if (potentialId) id = potentialId
+
+    const idParams = {
+      content_type: 'course',
+      limit: 1,
+      include: 4,
+    }
+
+    try {
+      const [isResponse, enResponse] = await Promise.all([
+        this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+          id,
+          'is',
+          { ...idParams, include: input.lang === 'is' ? 4 : 0 },
+        ),
+        this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+          id,
+          'en',
+          { ...idParams, include: input.lang === 'en' ? 4 : 0 },
+        ),
+      ])
+
+      const response = input.lang === 'is' ? isResponse : enResponse
+
+      if (response?.sys?.contentType?.sys?.id !== 'course') {
+        return null
+      }
+
+      const mappedCourse = mapCourse(response as types.ICourse)
+
+      // Filter out instances that are in the past
+      const today = new Date()
+      mappedCourse.instances = mappedCourse.instances.filter(
+        (instance) =>
+          Boolean(instance.startDate) && new Date(instance.startDate) > today,
+      )
+
+      // Sort instances in ascending start date order
+      mappedCourse.instances.sort(
+        (a, b) =>
+          new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+      )
+
+      return {
+        course: mappedCourse,
+        activeLocales: {
+          is: Boolean(isResponse?.fields?.title),
+          en: Boolean(enResponse?.fields?.title),
+        },
+      }
+    } catch (error) {
+      if (error?.sys?.id === 'NotFound') return null
+      throw error
+    }
+  }
+
+  async getCourseListPageById(input: GetCourseListPageByIdInput) {
+    const params = {
+      content_type: 'courseListPage',
+      limit: 1,
+      include: 0,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseListPageFields>(
+        input.id,
+        input.lang,
+        params,
+      )
+
+    if (response?.sys?.contentType?.sys?.id !== 'courseListPage') {
+      return null
+    }
+
+    return mapCourseListPage(response as ICourseListPage)
+  }
+
+  async getCourseSelectOptions(input: GetCourseSelectOptionsInput) {
+    const params = {
+      content_type: 'course',
+      limit: 1000,
+      include: 0,
+      select: 'fields.title,sys',
+      'fields.courseListPage.sys.contentType.sys.id': 'courseListPage',
+      'fields.courseListPage.fields.organization.sys.id': input.organizationId,
+    }
+
+    const response =
+      await this.contentfulRepository.getLocalizedEntries<types.ICourseFields>(
+        input.lang,
+        params,
+        0,
+      )
+
+    const items = response.items.map((item) => ({
+      id: item.sys.id,
+      title: item.fields.title,
+    }))
+
+    items.sort(sortAlpha('title'))
+
+    return { items, total: response.total, input }
+  }
+
+  private findBestWebChatMatch(
+    response: EntryCollection<types.IWebChatFields>,
+  ): types.IWebChat | null {
+    let bestMatch: types.IWebChat | null = null
+
+    for (const item of response.items) {
+      const webChatEntry = item as types.IWebChat
+      for (const location of webChatEntry.fields.displayLocations ?? []) {
+        if (location?.sys?.contentType?.sys?.id !== 'organization')
+          return webChatEntry
+        bestMatch = webChatEntry
+      }
+    }
+
+    return bestMatch
+  }
+
+  async getWebChat(input: GetWebChatInput): Promise<WebChat | null> {
+    const params = {
+      content_type: 'webChat',
+      'fields.displayLocations.sys.id[in]': input.displayLocationIds.join(','),
+      limit: 100,
+    }
+
+    const response = await this.contentfulRepository
+      .getLocalizedEntries<types.IWebChatFields>(input.lang, params, 1)
+      .catch(errorHandler('getWebChat'))
+
+    const bestMatch = this.findBestWebChatMatch(response)
+    if (!bestMatch) return null
+
+    return mapWebChat(bestMatch, input.lang)
+  }
+
+  async getCourseOrganizationKennitala(
+    courseId: string,
+  ): Promise<string | undefined> {
+    const response =
+      await this.contentfulRepository.getLocalizedEntry<types.ICourseFields>(
+        courseId,
+        'is',
+        {
+          content_type: 'course',
+          limit: 1,
+          include: 2,
+        },
+      )
+
+    return response?.fields?.courseListPage?.fields?.organization?.fields
+      ?.kennitala
   }
 }

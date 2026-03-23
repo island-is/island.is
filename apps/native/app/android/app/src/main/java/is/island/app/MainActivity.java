@@ -8,6 +8,13 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate;
 
 import com.reactnativenavigation.NavigationActivity;
 
+import android.os.Bundle;
+import android.view.View;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.graphics.Insets;
+
 public class MainActivity extends NavigationActivity {
 
   /**
@@ -35,4 +42,26 @@ public class MainActivity extends NavigationActivity {
 //         DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
 //         ));
 //   }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    // Enable edge-to-edge for older AndroidX versions using decorFits=false.
+    // We'll handle overlaps via insets below.
+    WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+    super.onCreate(savedInstanceState);
+
+    // Apply bottom padding equal to system navigation bar size (covers 3-button nav).
+    // Reference: Android edge-to-edge guidance
+    // https://developer.android.com/develop/ui/views/layout/edge-to-edge#java
+    final View content = findViewById(android.R.id.content);
+    if (content != null) {
+      ViewCompat.setOnApplyWindowInsetsListener(content, (v, insets) -> {
+        Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+        v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), systemBars.bottom);
+        return insets;
+      });
+      // Request initial insets dispatch so the listener runs immediately
+      ViewCompat.requestApplyInsets(content);
+    }
+  }
 }

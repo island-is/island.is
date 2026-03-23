@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   Body,
   Controller,
@@ -8,6 +10,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -40,14 +43,14 @@ import { DefendantService } from './defendant.service'
 
 @Controller('api/case/:caseId/defendant')
 @ApiTags('defendants')
-@UseGuards(JwtAuthUserGuard, RolesGuard)
+@UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
 export class DefendantController {
   constructor(
     private readonly defendantService: DefendantService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post()
   @ApiCreatedResponse({
@@ -62,10 +65,17 @@ export class DefendantController {
   ): Promise<Defendant> {
     this.logger.debug(`Creating a new defendant for case ${caseId}`)
 
-    return this.defendantService.create(theCase, defendantToCreate, user)
+    return this.sequelize.transaction(async (transaction) =>
+      this.defendantService.create(
+        theCase,
+        defendantToCreate,
+        user,
+        transaction,
+      ),
+    )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
+  @UseGuards(DefendantExistsGuard)
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
@@ -89,15 +99,18 @@ export class DefendantController {
   ): Promise<Defendant> {
     this.logger.debug(`Updating defendant ${defendantId} of case ${caseId}`)
 
-    return this.defendantService.update(
-      theCase,
-      defendant,
-      defendantToUpdate,
-      user,
+    return this.sequelize.transaction(async (transaction) =>
+      this.defendantService.update(
+        theCase,
+        defendant,
+        defendantToUpdate,
+        user,
+        transaction,
+      ),
     )
   }
 
-  @UseGuards(CaseExistsGuard, CaseWriteGuard, DefendantExistsGuard)
+  @UseGuards(DefendantExistsGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Delete(':defendantId')
   @ApiOkResponse({ description: 'Deletes a defendant' })
@@ -109,10 +122,8 @@ export class DefendantController {
   ): Promise<DeleteDefendantResponse> {
     this.logger.debug(`Deleting defendant ${defendantId} of case ${caseId}`)
 
-    const deleted = await this.defendantService.delete(
-      theCase,
-      defendantId,
-      user,
+    const deleted = await this.sequelize.transaction(async (transaction) =>
+      this.defendantService.delete(theCase, defendantId, user, transaction),
     )
 
     return { deleted }

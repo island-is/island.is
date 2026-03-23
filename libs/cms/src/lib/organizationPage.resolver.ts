@@ -12,8 +12,15 @@ import {
   NavigationLinksCategory,
   NavigationLinksCategoryLink,
 } from './models/organizationPage.model'
-import { SitemapTreeNode, SitemapTreeNodeType } from '@island.is/shared/types'
-import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
+import {
+  SitemapTree,
+  SitemapTreeNode,
+  SitemapTreeNodeType,
+} from '@island.is/shared/types'
+import {
+  getOrganizationPageUrlPrefix,
+  sortAlpha,
+} from '@island.is/shared/utils'
 import {
   IOrganizationParentSubpage,
   IOrganizationSubpage,
@@ -29,14 +36,31 @@ type Breadcrumb =
             icelandicSlug?: string
             englishSlug?: string
             childLinks: NavigationLinksCategoryLink[]
+            longLabel?: string
           }
         | { isCategory: false }
       )
+
+type ChildNodeOrder = 'asc-title' | 'desc-title' | 'manual'
 
 @Resolver(() => OrganizationPage)
 @CacheControl(defaultCache)
 export class OrganizationPageResolver {
   constructor(private readonly cmsContentfulService: CmsContentfulService) {}
+
+  private shouldIgnoreNode(node: SitemapTreeNode): boolean {
+    if (
+      node.type !== SitemapTreeNodeType.CATEGORY &&
+      node.type !== SitemapTreeNodeType.URL
+    )
+      return false
+
+    return (
+      node.status !== 'published' &&
+      (process.env.ENVIRONMENT === 'prod' ||
+        process.env.ENVIRONMENT === 'staging')
+    )
+  }
 
   private getNodeSlug(
     node: SitemapTreeNode,
@@ -53,6 +77,96 @@ export class OrganizationPageResolver {
       return lang === 'en' ? node.slugEN : node.slug
     }
     return ''
+  }
+
+  private getChildNodeOrder(parentNode: SitemapTree | SitemapTreeNode) {
+    if (
+      'type' in parentNode &&
+      parentNode.type === SitemapTreeNodeType.CATEGORY
+    ) {
+      return (parentNode.childNodeOrder ?? 'manual') as ChildNodeOrder
+    }
+    return 'manual'
+  }
+
+  private getNodeSortLabel(
+    node: SitemapTreeNode,
+    lang: string,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ) {
+    if (node.type === SitemapTreeNodeType.CATEGORY) {
+      return (lang === 'en' ? node.labelEN : node.label) ?? ''
+    }
+
+    if (node.type === SitemapTreeNodeType.URL) {
+      return (lang === 'en' ? node.labelEN : node.label) ?? ''
+    }
+
+    const entryItem = entryMap.get(node.entryId)
+    if (!entryItem) return ''
+
+    const entryFields = entryItem.entry.fields as {
+      shortTitle?: string
+      title?: string
+    }
+
+    return entryFields.shortTitle ?? entryFields.title ?? ''
+  }
+
+  private getOrderedChildNodes(
+    parentNode: SitemapTree | SitemapTreeNode,
+    lang: string,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ): SitemapTreeNode[] {
+    const childNodes = parentNode.childNodes
+    const childNodeOrder = this.getChildNodeOrder(parentNode)
+
+    if (childNodeOrder === 'manual') return childNodes
+
+    const direction = childNodeOrder === 'asc-title' ? 1 : -1
+
+    return childNodes
+      .map((childNode, index) => ({
+        childNode,
+        index,
+        label: this.getNodeSortLabel(childNode, lang, entryMap),
+      }))
+      .sort((a, b) => {
+        const byLabel = sortAlpha<{ label: string }>('label')(a, b)
+
+        if (byLabel !== 0) {
+          return byLabel * direction
+        }
+
+        return a.index - b.index
+      })
+      .map(({ childNode }) => childNode)
+  }
+
+  private applyChildNodeOrderRecursively(
+    node: SitemapTreeNode,
+    lang: string,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ): SitemapTreeNode {
+    return {
+      ...node,
+      childNodes: this.getOrderedChildNodes(node, lang, entryMap).map((child) =>
+        this.applyChildNodeOrderRecursively(child, lang, entryMap),
+      ),
+    }
+  }
+
+  private applyChildNodeOrderToTree(
+    tree: SitemapTree,
+    lang: string,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ): SitemapTree {
+    return {
+      ...tree,
+      childNodes: this.getOrderedChildNodes(tree, lang, entryMap).map((child) =>
+        this.applyChildNodeOrderRecursively(child, lang, entryMap),
+      ),
+    }
   }
 
   private findNodeWithSlug(
@@ -90,6 +204,20 @@ export class OrganizationPageResolver {
     organizationPage: OrganizationPage,
     entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
   ): Breadcrumb | undefined | null {
+    if (node.type === SitemapTreeNodeType.URL) {
+      const { label, href } = this.getUrlLabelAndHref(
+        node,
+        lang,
+        organizationPage,
+      )
+      if (!label || !href) return null
+      return {
+        label,
+        href,
+        isCategory: false,
+        description: lang === 'en' ? node.descriptionEN : node.description,
+      }
+    }
     if (node.type === SitemapTreeNodeType.ENTRY) {
       const entryItem = entryMap.get(node.entryId)
       if (!entryItem) return null
@@ -102,7 +230,10 @@ export class OrganizationPageResolver {
     }
     if (node.type === SitemapTreeNodeType.CATEGORY) {
       const nodeSlug = lang === 'en' ? node.slugEN : node.slug
-      const nodeLabel = lang === 'en' ? node.labelEN : node.label
+      const nodeLabel =
+        lang === 'en'
+          ? node.shortLabelEN || node.labelEN
+          : node.shortLabel || node.label
       if (!nodeSlug || !nodeLabel) return null
       return {
         label: nodeLabel,
@@ -110,6 +241,7 @@ export class OrganizationPageResolver {
           organizationPage.slug
         }/${nodeSlug}`,
         isCategory: true,
+        longLabel: lang === 'en' ? node.labelEN : node.label,
         description: lang === 'en' ? node.descriptionEN : node.description,
         icelandicSlug: node.slug,
         englishSlug: node.slugEN,
@@ -237,6 +369,53 @@ export class OrganizationPageResolver {
     }
   }
 
+  private getUrlLabelAndHref(
+    node: SitemapTreeNode,
+    lang: string,
+    organizationPage: OrganizationPage,
+  ) {
+    if (node.type !== SitemapTreeNodeType.URL) {
+      return {
+        label: '',
+        href: '',
+      }
+    }
+    const baseUrl = `/${getOrganizationPageUrlPrefix(lang)}/${
+      organizationPage.slug
+    }`
+    const label = lang === 'en' ? node.labelEN : node.label
+
+    switch (node.urlType) {
+      case 'organizationFrontpage':
+        return {
+          label,
+          href: baseUrl,
+        }
+      case 'organizationNewsOverview':
+        return {
+          label,
+          href: `${baseUrl}/${lang === 'en' ? 'news' : 'frett'}`,
+        }
+      case 'organizationPublishedMaterial':
+        return {
+          label,
+          href: `${baseUrl}/${
+            lang === 'en' ? 'published-material' : 'utgefid-efni'
+          }`,
+        }
+      case 'organizationEventOverview':
+        return {
+          label,
+          href: `${baseUrl}/${lang === 'en' ? 'events' : 'vidburdir'}`,
+        }
+      default:
+        return {
+          label,
+          href: lang === 'en' ? node.urlEN : node.url,
+        }
+    }
+  }
+
   private getNodeLabelAndHref(
     node: SitemapTreeNode,
     lang: string,
@@ -245,7 +424,10 @@ export class OrganizationPageResolver {
   ) {
     if (node.type === SitemapTreeNodeType.CATEGORY) {
       const nodeSlug = lang === 'en' ? node.slugEN : node.slug
-      const nodeLabel = lang === 'en' ? node.labelEN : node.label
+      const nodeLabel =
+        lang === 'en'
+          ? node.shortLabelEN || node.labelEN
+          : node.shortLabel || node.label
       if (!nodeSlug || !nodeLabel)
         return {
           label: '',
@@ -259,38 +441,7 @@ export class OrganizationPageResolver {
       }
     }
     if (node.type === SitemapTreeNodeType.URL) {
-      const baseUrl = `/${getOrganizationPageUrlPrefix(lang)}/${
-        organizationPage.slug
-      }`
-      switch (node.urlType) {
-        case 'organizationFrontpage':
-          return {
-            label: lang === 'en' ? node.labelEN : node.label,
-            href: baseUrl,
-          }
-        case 'organizationNewsOverview':
-          return {
-            label: lang === 'en' ? node.labelEN : node.label,
-            href: `${baseUrl}/${lang === 'en' ? 'news' : 'frett'}`,
-          }
-        case 'organizationPublishedMaterial':
-          return {
-            label: lang === 'en' ? node.labelEN : node.label,
-            href: `${baseUrl}/${
-              lang === 'en' ? 'published-material' : 'utgefid-efni'
-            }`,
-          }
-        case 'organizationEventOverview':
-          return {
-            label: lang === 'en' ? node.labelEN : node.label,
-            href: `${baseUrl}/${lang === 'en' ? 'events' : 'vidburdir'}`,
-          }
-        default:
-          return {
-            label: lang === 'en' ? node.labelEN : node.label,
-            href: lang === 'en' ? node.urlEN : node.url,
-          }
-      }
+      return this.getUrlLabelAndHref(node, lang, organizationPage)
     }
     if (node.type === SitemapTreeNodeType.ENTRY) {
       const entryItem = entryMap.get(node.entryId)
@@ -350,11 +501,46 @@ export class OrganizationPageResolver {
     ).filter(Boolean) as TopLink[]
   }
 
+  private pruneNode(node: SitemapTreeNode): SitemapTreeNode {
+    return {
+      ...node,
+      childNodes: node.childNodes
+        .map((child) => {
+          if (this.shouldIgnoreNode(child)) return null
+          return this.pruneNode(child)
+        })
+        .filter(Boolean) as SitemapTreeNode[],
+    }
+  }
+
+  private pruneTree(tree: SitemapTree): SitemapTree {
+    return {
+      ...tree,
+      childNodes: tree.childNodes
+        .map((node) => {
+          if (this.shouldIgnoreNode(node)) return null
+          return this.pruneNode(node)
+        })
+        .filter(Boolean) as SitemapTreeNode[],
+    }
+  }
+
   @ResolveField(() => NavigationLinks, { nullable: true })
   async navigationLinks(
     @Parent() organizationPage: OrganizationPage,
   ): Promise<NavigationLinks> {
     const lang = organizationPage.lang ?? 'is'
+
+    const tree = organizationPage.navigationLinks
+
+    if (!tree)
+      return {
+        topLinks: [],
+        breadcrumbs: [],
+        activeCategory: null,
+      }
+
+    organizationPage.navigationLinks = this.pruneTree(tree)
 
     const entryIdsObject = this.extractNavigationLinkEntryIds(organizationPage)
     const entries =
@@ -377,7 +563,7 @@ export class OrganizationPageResolver {
       const link = generateOrganizationSubpageLink(
         entry as IOrganizationParentSubpage | IOrganizationSubpage,
       )
-      if (Boolean(link?.url) && Boolean(link?.text)) {
+      if (link !== null && Boolean(link.url) && Boolean(link.text)) {
         entryMap.set(entry.sys.id, {
           link: {
             label: link.text,
@@ -387,6 +573,12 @@ export class OrganizationPageResolver {
         })
       }
     }
+
+    organizationPage.navigationLinks = this.applyChildNodeOrderToTree(
+      organizationPage.navigationLinks,
+      lang,
+      entryMap,
+    )
 
     const { breadcrumbs, activeNodeIds } = this.getBreadcrumbs(
       organizationPage,
@@ -406,6 +598,7 @@ export class OrganizationPageResolver {
       const lastBreadcrumb = breadcrumbs[breadcrumbs.length - 1]
       if (lastBreadcrumb.isCategory) {
         activeCategory = lastBreadcrumb
+        activeCategory.label = lastBreadcrumb.longLabel || activeCategory.label
       }
       breadcrumbs.pop()
     }

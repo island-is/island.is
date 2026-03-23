@@ -34,7 +34,7 @@ export class InvoicePaymentService {
   async createCallbackUrl(paymentFlowId: string) {
     return `${
       this.config.callbackBaseUrl
-    }/payments/invoice/callback?token=${this.createCallbackToken(
+    }/v1/payments/invoice/callback?token=${this.createCallbackToken(
       paymentFlowId,
     )}`
   }

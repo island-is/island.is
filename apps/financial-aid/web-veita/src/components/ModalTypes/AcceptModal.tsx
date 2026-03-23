@@ -99,7 +99,7 @@ const AcceptModal = ({
   ) => {
     if (hasDecemberAid) {
       const aidPercentage = aidAmount / 100
-      return aidPercentage * decemberCompensation
+      return Math.round(aidPercentage * decemberCompensation)
     }
     return 0
   }

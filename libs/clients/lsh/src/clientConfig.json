@@ -18,7 +18,10 @@
             "name": "locale",
             "in": "query",
             "description": "The locale for localization (e.g., 'is', 'en', etc.)",
-            "schema": { "type": "string", "example": "is" }
+            "schema": {
+              "type": "string",
+              "example": "is"
+            }
           }
         ],
         "responses": {
@@ -26,7 +29,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/PatientBlood" }
+                "schema": {
+                  "$ref": "#/components/schemas/PatientBlood"
+                }
               }
             }
           },
@@ -34,7 +39,9 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
@@ -42,11 +49,201 @@
             "description": "Forbidden",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
               }
             }
           },
-          "500": { "description": "Internal Server Error" }
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/Questionnaire": {
+      "get": {
+        "tags": ["Questionnaire"],
+        "summary": "Get a list of all questionnaires for patient",
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "The locale for localization (e.g., 'is', 'en', etc.)",
+            "schema": {
+              "type": "string",
+              "example": "is"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Questionnaire"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/Questionnaire/{guid}/body": {
+      "get": {
+        "tags": ["Questionnaire"],
+        "summary": "Get a list of all questionnaires for patient",
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "The locale for localization (e.g., 'is', 'en', etc.)",
+            "schema": {
+              "type": "string",
+              "example": "is"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireBody"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/Questionnaire/{guid}/answers": {
+      "get": {
+        "tags": ["Questionnaire"],
+        "summary": "Get a list of all questionnaires for patient",
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "The locale for localization (e.g., 'is', 'en', etc.)",
+            "schema": {
+              "type": "string",
+              "example": "is"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuestionnaireAnswers"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Questionnaire"],
+        "summary": "Get a list of all questionnaires for patient",
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "description": "The locale for localization (e.g., 'is', 'en', etc.)",
+            "schema": {
+              "type": "string",
+              "example": "is"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionnaireAnswers"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GenericStatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
         }
       }
     }
@@ -71,6 +268,34 @@
         "additionalProperties": false,
         "description": "Further information about topic"
       },
+      "GenericStatusResponse": {
+        "type": "object",
+        "properties": {
+          "Status": {
+            "type": "string",
+            "nullable": true
+          },
+          "Message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Option": {
+        "type": "object",
+        "properties": {
+          "Label": {
+            "type": "string",
+            "nullable": true
+          },
+          "Value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "PatientBlood": {
         "type": "object",
         "properties": {
@@ -90,7 +315,9 @@
             "format": "date-time",
             "nullable": true
           },
-          "BloodInfo": { "$ref": "#/components/schemas/DataInfo" }
+          "BloodInfo": {
+            "$ref": "#/components/schemas/DataInfo"
+          }
         },
         "additionalProperties": false,
         "description": "Information about a person blood type"
@@ -98,11 +325,281 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": { "type": "string", "nullable": true },
-          "title": { "type": "string", "nullable": true },
-          "status": { "type": "integer", "format": "int32", "nullable": true },
-          "detail": { "type": "string", "nullable": true },
-          "instance": { "type": "string", "nullable": true }
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "QuestionType": {
+        "type": "object",
+        "properties": {
+          "Options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Option"
+            },
+            "nullable": true
+          },
+          "Question": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "EntryID": {
+            "type": "string",
+            "nullable": true
+          },
+          "Type": {
+            "type": "string",
+            "nullable": true
+          },
+          "MaxLength": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "Required": {
+            "type": "boolean"
+          },
+          "MinValue": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "MaxValue": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Instructions": {
+            "type": "string",
+            "nullable": true
+          },
+          "Visible": {
+            "type": "string",
+            "nullable": true
+          },
+          "DependsOn": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Dependants": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Formula": {
+            "type": "string",
+            "nullable": true
+          },
+          "PostLabel": {
+            "type": "string",
+            "nullable": true
+          },
+          "Translations": {
+            "type": "string",
+            "nullable": true
+          },
+          "ShowToPatient": {
+            "type": "string",
+            "nullable": true
+          },
+          "Slider": {
+            "type": "string",
+            "nullable": true
+          },
+          "SendForCalculation": {
+            "type": "string",
+            "nullable": true
+          },
+          "HideTime": {
+            "type": "string",
+            "nullable": true
+          },
+          "MonthYear": {
+            "type": "string",
+            "nullable": true
+          },
+          "ShowTime": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Questionnaire": {
+        "required": ["ValidFromDateTime", "ValidToDateTime"],
+        "type": "object",
+        "properties": {
+          "Caption": {
+            "maxLength": 1000,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "maxLength": 4000,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "GUID": {
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "ValidToDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ValidFromDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "AnswerDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Department": {
+            "maxLength": 400,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "QuestionnaireAnswerItem": {
+        "type": "object",
+        "properties": {
+          "EntryID": {
+            "type": "string",
+            "nullable": true
+          },
+          "Values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Type": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "QuestionnaireAnswers": {
+        "type": "object",
+        "properties": {
+          "FormID": {
+            "type": "string",
+            "nullable": true
+          },
+          "GUID": {
+            "type": "string",
+            "nullable": true
+          },
+          "InstanceID": {
+            "type": "string",
+            "nullable": true
+          },
+          "AnswerDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionnaireAnswerItem"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "QuestionnaireBody": {
+        "type": "object",
+        "properties": {
+          "Sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Section"
+            },
+            "nullable": true
+          },
+          "Header": {
+            "type": "string",
+            "nullable": true
+          },
+          "Description": {
+            "type": "string",
+            "nullable": true
+          },
+          "FormID": {
+            "type": "string",
+            "nullable": true
+          },
+          "GUID": {
+            "type": "string",
+            "nullable": true
+          },
+          "AvailableTranslations": {
+            "type": "string",
+            "nullable": true
+          },
+          "Translations": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Section": {
+        "type": "object",
+        "properties": {
+          "Questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuestionType"
+            },
+            "nullable": true
+          },
+          "Caption": {
+            "type": "string",
+            "nullable": true
+          }
         },
         "additionalProperties": false
       }

@@ -20,7 +20,10 @@ export const ApplicationFragment = gql`
       ...Section
     }
     status
+    draftFinishedSteps
+    draftTotalSteps
     allowProceedOnValidationFail
+    submissionServiceUrl
     hasPayment
     hasSummaryScreen
     certificationTypes {

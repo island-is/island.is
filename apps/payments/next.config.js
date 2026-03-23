@@ -14,6 +14,7 @@ const {
   CONFIGCAT_SDK_KEY,
   BASEPATH = '/greida',
   PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET,
+  ALLOW_APPLE_PAY,
 } = process.env
 
 const apiPath = '/api'
@@ -41,11 +42,9 @@ const nextConfig = {
     graphqlEndpoint: `${API_EXTERNAL_BASEPATH}${graphqlPath}`,
     configCatSdkKey: CONFIGCAT_SDK_KEY,
     basepath: BASEPATH,
+    allowApplePay: ALLOW_APPLE_PAY || 'false',
   },
   basePath: `${BASEPATH}`,
-  env: {
-    API_MOCKS: process.env.API_MOCKS || '',
-  },
 }
 
 const plugins = [

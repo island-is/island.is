@@ -44,7 +44,7 @@
           },
           {
             "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/accident-notification/emailGenerators/assets",
+            "input": "libs/application/template-api-modules/src/lib/modules/templates/iceland-health/accident-notification/emailGenerators/assets",
             "output": "./accident-notification-assets"
           },
           {
@@ -54,7 +54,7 @@
           },
           {
             "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission/emailGenerators/assets",
+            "input": "libs/application/template-api-modules/src/lib/modules/templates/transport-authority/driving-license-submission/emailGenerators/assets",
             "output": "./driving-license-assets"
           },
           {

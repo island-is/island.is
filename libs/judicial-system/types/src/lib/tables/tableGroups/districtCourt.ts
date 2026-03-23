@@ -8,6 +8,7 @@ const districtCourtRequestCasesTableGroup = {
       route: 'rannsoknarmal-i-vinnslu',
       title: 'Rannsóknarmál í vinnslu',
       description: 'Drög, ný mál, móttekin mál og mál á dagskrá.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED,
@@ -15,6 +16,7 @@ const districtCourtRequestCasesTableGroup = {
       title: 'Kærur til Landsréttar',
       description:
         'Úrskurðir sem búið er að kæra en á eftir að senda til Landsréttar.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED,
@@ -33,12 +35,14 @@ const districtCourtIndictmentsTableGroup = {
       route: 'sakamal-sem-bida-uthlutunar',
       title: 'Bíða úthlutunar',
       description: 'Ný sakamál sem á eftir að úthluta.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.DISTRICT_COURT_INDICTMENTS_RECEIVED,
       route: 'mottekin-sakamal',
       title: 'Móttekin sakamál',
       description: 'Sakamál sem bíða þess að fyrirkall sé gefið út.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS,
@@ -46,12 +50,14 @@ const districtCourtIndictmentsTableGroup = {
       title: 'Sakamál í vinnslu',
       description:
         'Sakamál sem eru í frestum, á dagskrá eða búið er að dómtaka.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING,
       route: 'sakamal-i-fragangi',
       title: 'Sakamál í frágangi',
       description: 'Sakamál sem á eftir að senda til ríkissaksóknara.',
+      includeCounter: true,
     },
     {
       type: CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED,

@@ -2,6 +2,7 @@ query Verdict($input: VerdictQueryInput!) {
   verdict(input: $input) {
     id
     created
+    modified
     appealDate
     appealDecision
     serviceRequirement
@@ -9,9 +10,11 @@ query Verdict($input: VerdictQueryInput!) {
     serviceDate
     serviceInformationForDefendant
     externalPoliceDocumentId
-    legalPaperRequestDate
     comment
     deliveredToDefenderNationalId
     servedBy
+    isDefaultJudgement
+    isAcquittedByPublicProsecutionOffice
+    defendantHasRequestedAppeal
   }
 }

@@ -9,7 +9,7 @@ export const noContractsMessages = defineMessages({
   description: {
     id: 'tra.application:noContracts.description',
     defaultMessage:
-      'Engir gildir samningar fundust skráðir fyrir þessa kennitölu. Vinsamlegast hafið samband við Húsnæðis og mannvirkjastofnun ef þessi skáning er ekki rétt',
+      'Engir gildir samningar fundust skráðir fyrir þessa kennitölu. Vinsamlegast hafið samband við HMS ef þessi skáning er ekki rétt',
     description: 'No contracts description',
   },
 })

@@ -1,4 +1,4 @@
-import { HTMLText } from '@island.is/regulations-tools/types'
+import { HTMLText } from '@dmr.is/regulations-tools/types'
 
 type Params = {
   advertId?: string

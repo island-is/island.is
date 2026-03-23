@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildDescriptionField,
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
@@ -18,6 +19,11 @@ export const propertySearchSubsection = buildSubSection({
         buildCustomField({
           id: Routes.PROPERTYSEARCH,
           component: 'PropertySearch',
+        }),
+        buildDescriptionField({
+          id: Routes.PROPERTYSEARCH,
+          description: m.propertySearch.search.spouseFamilyNotice,
+          marginTop: 2,
         }),
       ],
     }),

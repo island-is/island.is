@@ -2,7 +2,7 @@ import React from 'react'
 import { Image } from 'react-native'
 import styled from 'styled-components/native'
 import closeIcon from '../../assets/icons/close.png'
-import { useDynamicColor } from '../../utils'
+import { theme, useDynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
 const Host = styled.Pressable`
@@ -30,15 +30,19 @@ interface TagProps {
   title: string
   onClose?(): void
   closable?: boolean
+  onPress?(): void
+  active?: boolean
 }
 
-export function Tag({ title, closable, onClose }: TagProps) {
+export function Tag({ title, closable, onClose, onPress, active }: TagProps) {
   const dynamicColor = useDynamicColor()
   return (
     <Host
-      onPress={onClose}
+      onPress={onClose || onPress}
       style={({ pressed }) => ({
-        backgroundColor: pressed
+        backgroundColor: active
+          ? theme.color.blue400
+          : pressed
           ? dynamicColor({
               light: '#E9F1FF',
               dark: '#0050D1',
@@ -49,7 +53,18 @@ export function Tag({ title, closable, onClose }: TagProps) {
             }),
       })}
     >
-      <Text>{title}</Text>
+      <Text
+        style={{
+          color: active
+            ? theme.color.white
+            : dynamicColor({
+                light: dynamicColor.theme.color.blue400,
+                dark: dynamicColor.theme.color.blue300,
+              }),
+        }}
+      >
+        {title}
+      </Text>
       {closable && (
         <Image
           source={closeIcon}

@@ -79,6 +79,21 @@ const OrganizationParentSubpagePagesField = () => {
                 'Subpage could not be linked since it is already linked to a parent page',
               )
             } else if (entries.length > 0) {
+              const selectedEntry = entries[0]
+              const entry = await cma.entry.get({
+                entryId: selectedEntry.sys.id,
+              })
+              entry.fields.organizationParentSubpage = {
+                [DEFAULT_LOCALE]: {
+                  sys: { id: sdk.entry.getSys().id, linkType: 'Entry' },
+                },
+              }
+              await cma.entry.update(
+                {
+                  entryId: entry.sys.id,
+                },
+                entry,
+              )
               props.onLinkedExisting(entries)
             }
           }}

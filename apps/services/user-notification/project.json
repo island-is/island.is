@@ -124,6 +124,13 @@
         "cwd": "apps/services/user-notification/"
       }
     },
+    "migrate/undo": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:migrate:undo",
+        "cwd": "apps/services/user-notification/"
+      }
+    },
     "migrate/generate": {
       "executor": "nx:run-commands",
       "options": {

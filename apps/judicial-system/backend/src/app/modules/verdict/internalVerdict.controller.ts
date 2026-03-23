@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import {
   BadRequestException,
   Body,
@@ -9,6 +11,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common'
+import { InjectConnection } from '@nestjs/sequelize'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -20,15 +23,21 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import { TokenGuard } from '@island.is/judicial-system/auth'
 import {
+  formatDate,
+  getVerdictServiceStatusText,
+} from '@island.is/judicial-system/formatters'
+import {
+  addMessagesToQueue,
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
   CaseIndictmentRulingDecision,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
+  getDefendantServiceDate,
+  getIndictmentAppealDeadline,
+  IndictmentCaseNotificationType,
   indictmentCases,
-  ServiceRequirement,
+  isSuccessfulVerdictServiceStatus,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -39,8 +48,8 @@ import {
 } from '../case'
 import { CurrentDefendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
+import { EventService } from '../event'
 import { Case, Defendant, Verdict } from '../repository'
-import { VerdictService } from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { PoliceUpdateVerdictDto } from './dto/policeUpdateVerdict.dto'
@@ -48,6 +57,10 @@ import { ExternalPoliceVerdictExistsGuard } from './guards/ExternalPoliceVerdict
 import { CurrentVerdict } from './guards/verdict.decorator'
 import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { DeliverResponse } from './models/deliver.response'
+import {
+  VerdictService,
+  VerdictServiceCertificateDelivery,
+} from './verdict.service'
 
 const validateVerdictAppealUpdate = ({
   caseId,
@@ -65,10 +78,11 @@ const validateVerdictAppealUpdate = ({
       `Cannot register appeal – No ruling date has been set for case ${caseId}`,
     )
   }
-  const isServiceRequired =
-    verdict.serviceRequirement === ServiceRequirement.REQUIRED
-  const isFine = indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-  const baseDate = isServiceRequired ? verdict.serviceDate : rulingDate
+
+  const baseDate = getDefendantServiceDate({
+    verdict,
+    fallbackDate: rulingDate,
+  })
 
   // this can only be thrown if service date is not set
   if (!baseDate) {
@@ -76,13 +90,13 @@ const validateVerdictAppealUpdate = ({
       `Cannot register appeal – Service date not set for case ${caseId}`,
     )
   }
-  const appealDeadline = getIndictmentAppealDeadlineDate(
-    new Date(baseDate),
-    isFine,
-  )
-  if (hasDatePassed(appealDeadline)) {
+  const { deadlineDate, isDeadlineExpired } = getIndictmentAppealDeadline({
+    baseDate: new Date(baseDate),
+    isFine: indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
+  })
+  if (isDeadlineExpired) {
     throw new BadRequestException(
-      `Appeal deadline has passed for case ${caseId}. Deadline was ${appealDeadline.toISOString()}`,
+      `Appeal deadline has passed for case ${caseId}. Deadline was ${deadlineDate.toISOString()}`,
     )
   }
 }
@@ -94,6 +108,8 @@ export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
     private readonly auditTrailService: AuditTrailService,
+    private readonly eventService: EventService,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -115,7 +131,7 @@ export class InternalVerdictController {
     type: DeliverResponse,
     description: 'Delivers a verdict to the police centralized file service',
   })
-  deliverVerdictToNationalCommissionersOffice(
+  async deliverVerdictToNationalCommissionersOffice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @CurrentCase() theCase: Case,
@@ -126,51 +142,113 @@ export class InternalVerdictController {
     this.logger.debug(
       `Delivering verdict ${verdict.id} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
     )
+
+    // TODO: We should probably filter out defendants without national id when posting events to queue
+    //       This is not an error
     if (defendant.noNationalId) {
       throw new BadRequestException(
         `National id is required for ${defendant.id} when delivering verdict to national commissioners office`,
       )
     }
 
-    // callback function to fetch the updated verdict fields after delivering verdict to police
-    const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
-      results: DeliverResponse,
-    ) => {
-      const currentVerdict = await this.verdictService.findById(verdict.id)
-      return {
-        deliveredToPolice: results.delivered,
-        verdictId: verdict.id,
-        verdictCreated: verdict.created,
-        externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
-        verdictHash: currentVerdict.hash,
-        verdictDeliveredToPolice: new Date(),
+    const transaction = await this.sequelize.transaction()
+
+    try {
+      // callback function to fetch the updated verdict fields after delivering verdict to police
+      const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
+        results: DeliverResponse,
+      ) => {
+        const currentVerdict = await this.verdictService.findById(
+          verdict.id,
+          transaction,
+        )
+
+        return {
+          deliveredToPolice: results.delivered,
+          verdictId: verdict.id,
+          verdictCreated: verdict.created,
+          externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
+          verdictHash: currentVerdict.hash,
+          verdictDeliveredToPolice: new Date(),
+        }
       }
+
+      const response = await this.auditTrailService.audit(
+        deliverDto.user.id,
+        AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+        this.verdictService.deliverVerdictToNationalCommissionersOffice({
+          theCase,
+          defendant,
+          verdict,
+          user: deliverDto.user,
+          transaction,
+        }),
+        caseId,
+        getDeliveredVerdictNationalCommissionersOfficeLogDetails,
+      )
+      await transaction.commit()
+
+      return response
+    } catch (error) {
+      this.logger.error(
+        `Failed to deliver verdict ${verdict.id} to national commissioners office for defendant ${defendantId} of case ${caseId}`,
+        { error },
+      )
+
+      await transaction.rollback()
+
+      throw error
     }
-    return this.auditTrailService.audit(
-      deliverDto.user.id,
-      AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
-      this.verdictService.deliverVerdictToNationalCommissionersOffice(
-        theCase,
-        defendant,
-        verdict,
-        deliverDto.user,
-      ),
-      caseId,
-      getDeliveredVerdictNationalCommissionersOfficeLogDetails,
-    )
   }
 
-  @UseGuards(ExternalPoliceVerdictExistsGuard)
+  @UseGuards(ExternalPoliceVerdictExistsGuard, CaseExistsGuard)
   @Patch('verdict/:policeDocumentId')
   async updateVerdict(
     @Param('policeDocumentId') policeDocumentId: string,
     @CurrentVerdict() verdict: Verdict,
+    @CurrentCase() theCase: Case,
     @Body() update: PoliceUpdateVerdictDto,
   ): Promise<Verdict> {
-    this.logger.debug(
-      `Updating verdict by external police document id ${policeDocumentId}`,
+    this.logger.info(
+      `Updating verdict by external police document id ${policeDocumentId} of ${theCase.id}`,
     )
-    return await this.verdictService.updatePoliceDelivery(verdict, update)
+
+    const updatedVerdict = await this.sequelize.transaction(
+      async (transaction) =>
+        this.verdictService.updatePoliceDelivery(verdict, update, transaction),
+    )
+
+    if (
+      updatedVerdict.serviceStatus &&
+      updatedVerdict.serviceStatus !== verdict.serviceStatus
+    ) {
+      const hasDrivingLicenseSuspension =
+        theCase.defendants?.some(
+          (defendant) =>
+            updatedVerdict.defendantId === defendant.id &&
+            defendant.isDrivingLicenseSuspended,
+        ) ?? false
+
+      if (
+        isSuccessfulVerdictServiceStatus(updatedVerdict.serviceStatus) &&
+        hasDrivingLicenseSuspension
+      ) {
+        addMessagesToQueue({
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId: theCase.id,
+          body: {
+            type: IndictmentCaseNotificationType.DRIVING_LICENSE_SUSPENSION,
+          },
+        })
+      }
+
+      this.eventService.postEvent('VERDICT_SERVICE_STATUS', theCase, false, {
+        Staða: getVerdictServiceStatusText(updatedVerdict.serviceStatus),
+        Birt: formatDate(updatedVerdict.serviceDate, 'Pp') ?? 'ekki skráð',
+      })
+    }
+
+    return updatedVerdict
   }
 
   @UseGuards(
@@ -204,10 +282,13 @@ export class InternalVerdictController {
       verdict,
     })
 
-    const updatedVerdict = this.verdictService.updateRestricted(verdict, {
-      appealDecision: verdictAppeal.appealDecision,
-    })
-    return updatedVerdict
+    return this.sequelize.transaction(async (transaction) =>
+      this.verdictService.updateRestricted(
+        verdict,
+        { appealDecision: verdictAppeal.appealDecision },
+        transaction,
+      ),
+    )
   }
 
   @UseGuards(ExternalPoliceVerdictExistsGuard)
@@ -218,11 +299,37 @@ export class InternalVerdictController {
     this.logger.debug(
       `Get verdict supplements for police document id ${policeDocumentId}`,
     )
+
+    // Todo: Use CurrentVerdict decorator to avoid querying for the verdict again
     const verdict = await this.verdictService.findByExternalPoliceDocumentId(
       policeDocumentId,
     )
+
     return {
       serviceInformationForDefendant: verdict.serviceInformationForDefendant,
     }
+  }
+
+  @ApiOkResponse({
+    description:
+      'Delivers a service certificate to the police for all defendants where appeal deadline is expired',
+  })
+  @Post('verdict/deliverVerdictServiceCertificates')
+  async deliverVerdictServiceCertificatesToPolice(): Promise<
+    VerdictServiceCertificateDelivery[]
+  > {
+    this.logger.debug(
+      `Delivering verdict service certificates pdf to police for all verdicts where appeal decision deadline has passed`,
+    )
+
+    const delivered = await this.sequelize.transaction((transaction) =>
+      this.verdictService.deliverVerdictServiceCertificatesToPolice(
+        transaction,
+      ),
+    )
+
+    await this.eventService.postDailyVerdictServiceDeliveryEvent(delivered)
+
+    return delivered
   }
 }

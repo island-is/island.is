@@ -122,7 +122,7 @@ export class ApplicationValidationService {
     })
 
     if (schemaFormValidationError) {
-      this.logger.error('Failed to validate schema', schemaFormValidationError)
+      this.logger.warn('Failed to validate schema', schemaFormValidationError)
       throw new ValidationFailed(schemaFormValidationError)
     }
   }

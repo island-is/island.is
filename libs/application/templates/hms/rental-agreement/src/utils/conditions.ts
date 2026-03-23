@@ -1,9 +1,13 @@
 import { getValueViaPath, YES, YesOrNoEnum } from '@island.is/application/core'
-import { Application, FormValue } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import { ApplicantsInfo, PropertyUnit } from '../shared/types'
 import * as m from '../lib/messages'
 import { getRentalPropertySize } from './utils'
-import { ApplicantsRole } from './enums'
+import { ApplicantsRole, RentalHousingCategoryTypes } from './enums'
 
 export const singularOrPluralLandlordsTitle = (application: Application) => {
   const landlords = getValueViaPath<Array<ApplicantsInfo>>(
@@ -129,4 +133,51 @@ export const shouldShowRepresentativeStaticTable = (answers: FormValue) => {
   )
 
   return applicantRole === ApplicantsRole.REPRESENTATIVE
+}
+
+export const applicantIsIndividual = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const identityType = getValueViaPath<string>(
+    externalData,
+    'identity.data.type',
+  )
+
+  return identityType !== 'company'
+}
+
+export const applicantIsCompany = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const identityType = getValueViaPath<string>(
+    externalData,
+    'identity.data.type',
+  )
+
+  return identityType === 'company'
+}
+
+// HMS API disallows more than 1 room when type is TM_SPECIAL_TYPE_INDIVIDUAL_ROOMS
+export const shouldShowRoomTypeRoomCountError = (answers: FormValue) => {
+  const categoryType = getValueViaPath<string>(
+    answers,
+    'propertyInfo.categoryType',
+  )
+
+  if (categoryType !== RentalHousingCategoryTypes.ROOM) {
+    return false
+  }
+
+  const units = getValueViaPath<PropertyUnit[]>(
+    answers,
+    'registerProperty.searchresults.units',
+  )
+
+  if (!units || units.length === 0) {
+    return false
+  }
+
+  return units.some((unit) => (unit.numOfRooms ?? 0) > 1)
 }

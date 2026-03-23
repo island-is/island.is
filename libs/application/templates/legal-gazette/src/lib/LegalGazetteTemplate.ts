@@ -30,7 +30,6 @@ import {
   getUserInfo,
 } from '../utils/utils'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { IdentityApi } from '../dataProviders'
 
 const LegalGazetteApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -97,7 +96,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
-              api: [UserProfileApi, IdentityApi],
+              api: [UserProfileApi],
               write: 'all',
               read: 'all',
               delete: true,
@@ -148,11 +147,13 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               write: 'all',
             },
           ],
-          onEntry: defineTemplateApi({
-            action: LegalGazetteAPIActions.getCategories,
-            shouldPersistToExternalData: true,
-            externalDataId: 'categories',
-          }),
+          onEntry: [
+            defineTemplateApi({
+              action: LegalGazetteAPIActions.getTypes,
+              shouldPersistToExternalData: true,
+              externalDataId: 'types',
+            }),
+          ],
           onExit: defineTemplateApi({
             action: LegalGazetteAPIActions.submitApplication,
             triggerEvent: DefaultEvents.SUBMIT,

@@ -157,7 +157,7 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
       <GridRow>
         {loading && (
           <Box padding={2}>
-            <LoadingDots large />
+            <LoadingDots size="large" />
           </Box>
         )}
         {techInfoItems?.map((item) => {

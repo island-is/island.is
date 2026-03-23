@@ -1,4 +1,4 @@
-import { Allow } from 'class-validator'
+import { Allow, IsOptional, IsString } from 'class-validator'
 
 import { Field, ID, InputType } from '@nestjs/graphql'
 
@@ -11,4 +11,9 @@ export class SignatureConfirmationQueryInput {
   @Allow()
   @Field(() => String)
   documentToken!: string
+
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  readonly method?: 'audkenni' | 'mobile'
 }

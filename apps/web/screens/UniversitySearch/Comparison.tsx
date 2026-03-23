@@ -216,7 +216,6 @@ const Comparison: Screen<UniversityComparisonProps> = ({
             <T.Row>
               <T.Data borderColor="transparent"></T.Data>
               {selectedComparison.map((i) => {
-                const now = new Date()
                 return (
                   <T.Data borderColor="transparent">
                     <Box
@@ -225,12 +224,11 @@ const Comparison: Screen<UniversityComparisonProps> = ({
                       flexDirection="column"
                       rowGap={1}
                     >
-                      {new Date(i.applicationStartDate) <= now &&
-                        new Date(i.applicationEndDate) >= now && (
-                          <Button size="small" fluid>
-                            {n('apply', 'Sækja um')}
-                          </Button>
-                        )}
+                      {i.applicationPeriodOpen && (
+                        <Button size="small" fluid>
+                          {n('apply', 'Sækja um')}
+                        </Button>
+                      )}
 
                       <LinkV2
                         href={

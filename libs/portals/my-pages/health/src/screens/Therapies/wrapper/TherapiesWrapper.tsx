@@ -11,6 +11,7 @@ import {
 import { Problem } from '@island.is/react-spa/shared'
 import { messages } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
+import { useHealthPlausibleSwap } from '../../../utils/useHealthPlausibleSwap'
 
 type Props = {
   children: React.ReactNode
@@ -26,6 +27,7 @@ export const TherapiesWrapper = ({
   pathname,
 }: Props) => {
   const { formatMessage } = useLocale()
+  useHealthPlausibleSwap()
 
   return (
     <IntroWrapper
@@ -34,9 +36,10 @@ export const TherapiesWrapper = ({
       intro={formatMessage(messages.therapyDescription)}
       serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
       serviceProviderTooltip={formatMessage(messages.healthTooltip)}
+      childrenWidthFull
     >
       <TabNavigation
-        label={formatMessage(messages.therapyTitle)}
+        label={formatMessage(messages.therapyType)}
         pathname={pathname}
         items={
           healthNavigation.children?.find((itm) => itm.name === m.therapies)

@@ -2,7 +2,7 @@ import {
   buildCheckboxField,
   buildMultiField,
   buildSection,
-  buildTitleField,
+  //buildTitleField,
   YES,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
@@ -34,18 +34,19 @@ export const confirmReadSection = buildSection({
             },
           ],
         }),
-        buildTitleField({
-          title: m.realEstateMessages.otherPropertiesTitle,
-        }),
-        buildCheckboxField({
-          id: 'otherPropertiesThanIOwnCheckbox',
-          options: [
-            {
-              label: m.realEstateMessages.applyingForOtherProperty,
-              value: YES,
-            },
-          ],
-        }),
+        // TODO: put this back in when properties can be fetched without national id
+        // buildTitleField({
+        //   title: m.realEstateMessages.otherPropertiesTitle,
+        // }),
+        // buildCheckboxField({
+        //   id: 'otherPropertiesThanIOwnCheckbox',
+        //   options: [
+        //     {
+        //       label: m.realEstateMessages.applyingForOtherProperty,
+        //       value: YES,
+        //     },
+        //   ],
+        // }),
       ],
     }),
   ],

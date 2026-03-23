@@ -6,7 +6,7 @@ import { applicationsNavigation } from '@island.is/portals/my-pages/applications
 import { assetsNavigation } from '@island.is/portals/my-pages/assets'
 import { educationNavigation } from '@island.is/portals/my-pages/education'
 import {
-  companyNavigation,
+  companyInformationNavigation,
   informationNavigation,
 } from '@island.is/portals/my-pages/information'
 import { licenseNavigation } from '@island.is/portals/my-pages/licenses'
@@ -23,6 +23,7 @@ import { ServicePortalPaths } from '@island.is/portals/my-pages/core'
 import { socialInsuranceMaintenanceNavigation } from '@island.is/portals/my-pages/social-insurance-maintenance'
 import { lawAndOrderNavigation } from '@island.is/portals/my-pages/law-and-order'
 import { companySignatureCollectionNavigation } from '@island.is/portals/my-pages/signature-collection'
+import { vehicleMileageNavigation } from '@island.is/portals/my-pages/mileage-registration'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -38,6 +39,7 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
   ...rootNavigationItem,
   children: [
     documentsNavigation,
+    vehicleMileageNavigation,
     applicationsNavigation,
     {
       ...delegationsNavigation,
@@ -48,9 +50,9 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
         restrictionsNavigation,
       ],
     },
-    companyNavigation,
     companySignatureCollectionNavigation,
     informationNavigation,
+    companyInformationNavigation,
     socialInsuranceMaintenanceNavigation,
     assetsNavigation,
     financeNavigation,

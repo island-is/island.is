@@ -33,6 +33,7 @@ export const supervisorSubSection = buildSubSection({
         buildNationalIdWithNameField({
           id: 'supervisor',
           title: 'nationalId',
+          searchCompanies: true,
           condition: (answers) => {
             const isOwner = getValueViaPath(
               answers,

@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import {
   Box,
   Button,
@@ -9,12 +8,13 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  FootNote,
-  IntroHeader,
-  m,
+  ActionCard,
+  IntroWrapper,
   ISLANDIS_SLUG,
   LinkButton,
+  m,
 } from '@island.is/portals/my-pages/core'
+import { useEffect, useState } from 'react'
 
 import {
   useGetUserNotificationsListQuery,
@@ -22,11 +22,12 @@ import {
   useMarkUserNotificationAsReadMutation,
 } from './Notifications.generated'
 
-import { mInformationNotifications } from '../../lib/messages'
-import { ActionCard, CardLoader } from '@island.is/portals/my-pages/core'
+import { CardLoader } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { mInformationNotifications } from '../../lib/messages'
 import { InformationPaths } from '../../lib/paths'
 import { COAT_OF_ARMS, resolveLink } from '../../utils/notificationLinkResolver'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
 const DEFAULT_PAGE_SIZE = 5
 
@@ -34,6 +35,8 @@ const UserNotifications = () => {
   useNamespaces('sp.information-notifications')
   const { formatMessage, lang } = useLocale()
   const [loadingMore, setLoadingMore] = useState(false)
+  const userInfo = useUserInfo()
+  const isCompany = userInfo.profile?.subjectType === 'legalEntity'
 
   const [postMarkAsRead] = useMarkUserNotificationAsReadMutation()
   const [postMarkAllAsRead] = useMarkAllNotificationsAsReadMutation({
@@ -92,14 +95,12 @@ const UserNotifications = () => {
 
   const noData = !data?.userNotifications?.data?.length && !loading && !error
   return (
-    <>
-      <IntroHeader
-        title={m.notifications}
-        intro={mInformationNotifications.description}
-        serviceProviderSlug={ISLANDIS_SLUG}
-        serviceProviderTooltip={formatMessage(m.notificationsProfileTooltip)}
-      />
-
+    <IntroWrapper
+      title={m.notifications}
+      intro={mInformationNotifications.description}
+      serviceProviderSlug={ISLANDIS_SLUG}
+      serviceProviderTooltip={formatMessage(m.notificationsProfileTooltip)}
+    >
       <Box display="flex" marginBottom={3}>
         <Columns space={2}>
           <Column width="content">
@@ -116,14 +117,16 @@ const UserNotifications = () => {
               {formatMessage(mInformationNotifications.markAllRead)}
             </Button>
           </Column>
-          <Column width="content">
-            <LinkButton
-              variant="utility"
-              icon="settings"
-              to={InformationPaths.Settings}
-              text={formatMessage(m.mySettings)}
-            />
-          </Column>
+          {!isCompany ? (
+            <Column width="content">
+              <LinkButton
+                variant="utility"
+                icon="settings"
+                to={InformationPaths.Settings}
+                text={formatMessage(m.mySettings)}
+              />
+            </Column>
+          ) : null}
         </Columns>
       </Box>
 
@@ -145,6 +148,7 @@ const UserNotifications = () => {
 
         {!loading &&
           data?.userNotifications?.data.map((item) => (
+            //TODO: Replace with Island UI Card when it supports images
             <ActionCard
               heading={item.message.title}
               text={item.message.displayBody}
@@ -190,9 +194,8 @@ const UserNotifications = () => {
             </Button>
           </Box>
         ) : undefined}
-        <FootNote serviceProviderSlug={ISLANDIS_SLUG} />
       </Stack>
-    </>
+    </IntroWrapper>
   )
 }
 export default UserNotifications

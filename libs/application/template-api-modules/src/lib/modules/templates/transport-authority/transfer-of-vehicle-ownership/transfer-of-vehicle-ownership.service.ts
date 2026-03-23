@@ -21,10 +21,7 @@ import {
   getRecipientBySsn,
 } from './transfer-of-vehicle-ownership.utils'
 import { mapVehicle } from '../utils'
-import {
-  ChargeFjsV2ClientService,
-  getPaymentIdFromExternalData,
-} from '@island.is/clients/charge-fjs-v2'
+import { getPaymentIdFromExternalData } from '@island.is/clients/charge-fjs-v2'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
 import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
@@ -36,18 +33,19 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { coreErrorMessages } from '@island.is/application/core'
+import { PaymentsApi } from '@island.is/clients/payments'
 
 @Injectable()
 export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleCodetablesClient: VehicleCodetablesClient,
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly mileageReadingApi: MileageReadingApi,
+    private readonly paymentsApi: PaymentsApi,
   ) {
     super(ApplicationTypes.TRANSFER_OF_VEHICLE_OWNERSHIP)
   }
@@ -206,7 +204,6 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
   // Notify everyone that has been added to the application that they need to review
   async initReview({
     application,
-    auth,
   }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
     // 1. Validate payment
 
@@ -222,7 +219,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
     // 1b. Make sure payment is fulfilled (has been paid)
     const payment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+      await this.sharedTemplateAPIService.getPaymentStatus(application.id)
     if (!payment?.fulfilled) {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
@@ -421,12 +418,17 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
     { application, auth }: TemplateApiModuleActionProps,
     rejectType: RejectType,
   ): Promise<void> {
-    // 1. Delete charge so that the seller gets reimburshed
+    // 1. Delete charge so that the seller gets reimbursed
     // Note: not necessary on delete, since that is done in the shared delete function
     if (rejectType !== RejectType.DELETE) {
       const chargeId = getPaymentIdFromExternalData(application)
       if (chargeId) {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
+        await this.paymentsApi.refundControllerRefund({
+          refundPaymentInput: {
+            paymentFlowId: chargeId,
+            reasonForRefund: 'Application rejected',
+          },
+        })
       }
     }
 
@@ -503,7 +505,7 @@ export class TransferOfVehicleOwnershipService extends BaseTemplateApiService {
 
     // 1b. Make sure payment is fulfilled (has been paid)
     const payment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
+      await this.sharedTemplateAPIService.getPaymentStatus(application.id)
     if (!payment?.fulfilled) {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',

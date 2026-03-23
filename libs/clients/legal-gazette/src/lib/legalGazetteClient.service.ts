@@ -1,15 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
   LegalGazetteCommonApplicationApi,
-  SubmitCommonApplicationDto,
+  IslandIsSubmitCommonApplicationDto,
+  GetCategoriesRequest,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
 const LOGGING_CATEGORY = 'legal-gazette-client-service'
-
-const COMMON_APPLICATION_TYPE_ID = 'a58fe2a8-b0a9-47bd-b424-4b9cece0e622'
 
 @Injectable()
 export class LegalGazetteClientService {
@@ -22,11 +21,9 @@ export class LegalGazetteClientService {
     return this.legalGazetteApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getCategories(auth: Auth) {
+  async getCategories(input: GetCategoriesRequest, auth: Auth) {
     try {
-      return this.legalGazetteApiWithAuth(auth).getCategories({
-        type: COMMON_APPLICATION_TYPE_ID,
-      })
+      return this.legalGazetteApiWithAuth(auth).getCategories(input)
     } catch (error) {
       this.logger.error('Failed to get categories', {
         error,
@@ -37,11 +34,13 @@ export class LegalGazetteClientService {
     }
   }
 
-  async deleteApplication(id: string, auth: Auth): Promise<void> {
+  async getTypes(auth: Auth) {
     try {
-      await this.legalGazetteApiWithAuth(auth).deleteApplication({ id: id })
+      return this.legalGazetteApiWithAuth(auth).getTypes({
+        excludeUnassignable: true,
+      })
     } catch (error) {
-      this.logger.error('Failed to delete application', {
+      this.logger.error('Failed to get types', {
         error,
         category: LOGGING_CATEGORY,
       })
@@ -49,13 +48,14 @@ export class LegalGazetteClientService {
       throw error
     }
   }
+
   async submitApplication(
-    body: SubmitCommonApplicationDto,
+    body: IslandIsSubmitCommonApplicationDto,
     auth: Auth,
   ): Promise<void> {
     try {
-      await this.legalGazetteApiWithAuth(auth).submitApplication({
-        submitCommonApplicationDto: body,
+      await this.legalGazetteApiWithAuth(auth).submitIslandIsApplication({
+        islandIsSubmitCommonApplicationDto: body,
       })
     } catch (error) {
       this.logger.error('Failed to submit application', {

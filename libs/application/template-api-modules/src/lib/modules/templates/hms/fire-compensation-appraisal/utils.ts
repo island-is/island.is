@@ -12,14 +12,17 @@ import * as kennitala from 'kennitala'
 // The payment structure is as follows:
 // 1. If the current appraisal is less than 25 million, the payment is 6.000kr
 // 2. If the current appraisal is between 25 million and 500 million, the payment is 0.03% of the current appraisal
-// 3. If the current appraisal is greater than 500 million, the payment is 0.01% of the current appraisal
+// 3. If the current appraisal is greater than 500 million, the payment is 0.01% of the current appraisal above 500 million + 150.000kr
 export const paymentForAppraisal = (currentAppraisal: number) => {
+  const paymentFor500Million = 150000
   if (currentAppraisal < 25000000) {
     return 6000
   }
 
   if (currentAppraisal > 500000000) {
-    return Math.round(currentAppraisal * 0.0001)
+    return (
+      Math.round((currentAppraisal - 500000000) * 0.0001) + paymentFor500Million
+    )
   }
 
   return Math.round(currentAppraisal * 0.0003)
@@ -28,7 +31,7 @@ export const paymentForAppraisal = (currentAppraisal: number) => {
 const GUID = 'c7c13606-9a03-40ec-837b-ec5d7665a8fe' // HMS does nothing with this but it has to have a certain form for the request to go through
 const APPLICATION_TYPE = 'LscVK9yI7EeXf4WDCOBfww' // This is fixed and comes from HMS
 
-const getApplicant = (answers: FormValue) => {
+export const getApplicant = (answers: FormValue) => {
   return {
     address: getValueViaPath<string>(answers, 'applicant.address'),
     city: getValueViaPath<string>(answers, 'applicant.city'),

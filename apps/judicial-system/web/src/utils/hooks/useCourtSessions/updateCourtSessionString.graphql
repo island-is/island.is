@@ -1,0 +1,5 @@
+mutation UpdateCourtSessionString($input: UpdateCourtSessionStringInput!) {
+  updateCourtSessionString(input: $input) {
+    id
+  }
+}

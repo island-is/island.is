@@ -33,7 +33,7 @@ export class IncomePlanResolver {
     nullable: true,
   })
   @FeatureFlag(Features.servicePortalSocialInsuranceIncomePlanPageEnabled)
-  @Scopes(ApiScope.internal)
+  @Scopes(ApiScope.internal, ApiScope.socialInsuranceAdministration)
   @Audit()
   async incomePlan(@CurrentUser() user: User) {
     return this.service.getIncomePlan(user)

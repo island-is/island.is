@@ -24,7 +24,7 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import EmptyState from '../../shared-components/emptyState'
 import StartAreaCollection from './startCollection'
 import { useStartCollectionMutation } from './startCollection/startCollection.generated'
-import sortBy from 'lodash/sortBy'
+import { sortAlpha } from '@island.is/shared/utils'
 import { CollectionStatus } from '@island.is/api/schema'
 
 const AllMunicipalities = ({ isMunicipality }: { isMunicipality: boolean }) => {
@@ -117,82 +117,88 @@ const AllMunicipalities = ({ isMunicipality }: { isMunicipality: boolean }) => {
               <StartAreaCollection areaId={collection.areas[0]?.id} />
             )}
           <Stack space={3}>
-            {sortBy(collection.areas, [
-              (area) => !area.isActive, // active first
-              'name', // then alphabetically
-            ]).map((area) => (
-              <ActionCard
-                key={area.id}
-                heading={area.name}
-                eyebrow={`${formatMessage(m.totalListsPerMunicipality)}: ${
-                  allLists.filter((list) => list.area.id === area.id).length
-                }`}
-                cta={{
-                  label: formatMessage(m.viewMunicipality),
-                  variant: 'text',
-                  disabled: !area.isActive,
-                  onClick: () => {
-                    navigate(
-                      SignatureCollectionPaths.SingleMunicipality.replace(
-                        ':municipality',
-                        area.name,
-                      ),
-                    )
-                  },
-                }}
-                tag={
-                  // This action is only available for the Admins (LKS and ÞÍ)
-                  !isMunicipality && !area.isActive
-                    ? {
-                        label: 'Open collection',
-                        renderTag: () => (
-                          <DialogPrompt
-                            baseId="open_collection_dialog"
-                            title={
-                              formatMessage(m.openMunicipalCollection) +
-                              ' - ' +
-                              area.name
-                            }
-                            description={formatMessage(
-                              m.openMunicipalCollectionDescription,
-                            )}
-                            ariaLabel="open_collection"
-                            disclosureElement={
-                              <Tag outlined variant="blue">
-                                <Box display="flex" alignItems="center">
-                                  <Icon
-                                    icon="lockOpened"
-                                    size="small"
-                                    type="outline"
-                                  />
-                                </Box>
-                              </Tag>
-                            }
-                            onConfirm={() => {
-                              onStartCollection(area.id)
-                            }}
-                            buttonTextConfirm={formatMessage(
-                              m.confirmOpenMunicipalCollectionButton,
-                            )}
-                          />
-                        ),
-                      }
-                    : area.collectionStatus === CollectionStatus.InReview
-                    ? {
-                        label: formatMessage(m.confirmListReviewed),
-                        variant: 'mint',
-                        outlined: true,
-                      }
-                    : area.isActive
-                    ? {
-                        label: formatMessage(m.municipalityCollectionOpen),
-                        variant: 'mint',
-                        outlined: false,
-                      }
-                    : undefined
+            {[...collection.areas]
+              .sort((a, b) => {
+                // Active areas first
+                if (a.isActive !== b.isActive) {
+                  return a.isActive ? -1 : 1
                 }
-              />
-            ))}
+                // Then alphabetically using Icelandic alphabet order
+                return sortAlpha('name')(a, b)
+              })
+              .map((area) => (
+                <ActionCard
+                  key={area.id}
+                  heading={area.name}
+                  eyebrow={`${formatMessage(m.totalListsPerMunicipality)}: ${
+                    allLists.filter((list) => list.area.id === area.id).length
+                  }`}
+                  cta={{
+                    label: formatMessage(m.viewMunicipality),
+                    variant: 'text',
+                    disabled: !area.isActive,
+                    onClick: () => {
+                      navigate(
+                        SignatureCollectionPaths.SingleMunicipality.replace(
+                          ':municipality',
+                          area.name,
+                        ),
+                      )
+                    },
+                  }}
+                  tag={
+                    // This action is only available for the Admins (LKS and ÞÍ)
+                    !isMunicipality && !area.isActive
+                      ? {
+                          label: 'Open collection',
+                          renderTag: () => (
+                            <DialogPrompt
+                              baseId="open_collection_dialog"
+                              title={
+                                formatMessage(m.openMunicipalCollection) +
+                                ' - ' +
+                                area.name
+                              }
+                              description={formatMessage(
+                                m.openMunicipalCollectionDescription,
+                              )}
+                              ariaLabel="open_collection"
+                              disclosureElement={
+                                <Tag outlined variant="blue">
+                                  <Box display="flex" alignItems="center">
+                                    <Icon
+                                      icon="lockOpened"
+                                      size="small"
+                                      type="outline"
+                                    />
+                                  </Box>
+                                </Tag>
+                              }
+                              onConfirm={() => {
+                                onStartCollection(area.id)
+                              }}
+                              buttonTextConfirm={formatMessage(
+                                m.confirmOpenMunicipalCollectionButton,
+                              )}
+                            />
+                          ),
+                        }
+                      : area.collectionStatus === CollectionStatus.InReview
+                      ? {
+                          label: formatMessage(m.confirmListReviewed),
+                          variant: 'mint',
+                          outlined: true,
+                        }
+                      : area.isActive
+                      ? {
+                          label: formatMessage(m.municipalityCollectionOpen),
+                          variant: 'mint',
+                          outlined: false,
+                        }
+                      : undefined
+                  }
+                />
+              ))}
           </Stack>
         </GridColumn>
       </GridRow>

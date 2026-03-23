@@ -113,7 +113,7 @@ export const RelevantParties = () => {
 
   return (
     <Stack space={2}>
-      <Text variant="h4">{formatMessage(m.selectIndividuals)}</Text>
+      <Text variant="h3">{formatMessage(m.selectIndividuals)}</Text>
 
       <PartyType
         groupApplicantTypes={applicantTypeGroups.individual}
@@ -124,7 +124,7 @@ export const RelevantParties = () => {
         handleCheckboxChange={handleCheckboxChange}
       />
 
-      <PartyType
+      {/* <PartyType
         groupApplicantTypes={applicantTypeGroups.individualDelegation}
         label={formatMessage(m.individualOnBehalfPerson)}
         formApplicantFields={applicantFields.filter(
@@ -140,7 +140,7 @@ export const RelevantParties = () => {
           (f) => f.fieldType === 'APPLICANT',
         )}
         handleCheckboxChange={handleCheckboxChange}
-      />
+      /> */}
 
       <PartyType
         groupApplicantTypes={applicantTypeGroups.procuration}

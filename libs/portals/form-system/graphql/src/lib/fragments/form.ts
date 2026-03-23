@@ -24,14 +24,18 @@ export const FormFragment = gql`
     invalidationDate
     created
     modified
+    zendeskInternal
+    useValidate
+    usePopulate
+    submissionServiceUrl
     isTranslated
     hasPayment
     beenPublished
-    applicationDaysToRemove
+    draftDaysToLive
+    submissionDaysToLive
     derivedFrom
     allowProceedOnValidationFail
     hasSummaryScreen
-    isZendeskEnabled
     completedSectionInfo {
       ...CompletedSectionInfo
     }
@@ -55,7 +59,6 @@ export const FormFragment = gql`
       ...Dependency
     }
     status
-    urls
   }
   ${LanguageFields}
   ${FormApplicantFragment}

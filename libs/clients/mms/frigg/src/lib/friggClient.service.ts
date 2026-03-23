@@ -1,11 +1,13 @@
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ActiveApplicationsModel,
   FormSubmitSuccessModel,
   FriggApi,
+  GetOrganizationsByTypeRequest,
   KeyOption,
   OrganizationModel,
-  RegistrationInput,
+  RegistrationApplicationInput,
   UserModel,
 } from '../../gen/fetch'
 
@@ -25,8 +27,16 @@ export class FriggClientService {
     })
   }
 
-  async getOrganizationsByType(user: User): Promise<OrganizationModel[]> {
-    return await this.friggApiWithAuth(user).getOrganizationsByType({})
+  async getOrganizationsByType(
+    user: User,
+    input?: GetOrganizationsByTypeRequest,
+  ): Promise<OrganizationModel[]> {
+    return await this.friggApiWithAuth(user).getOrganizationsByType({
+      type: input?.type,
+      municipalityCode: input?.municipalityCode,
+      gradeLevels: input?.gradeLevels,
+      limit: 1000, // Frigg is restricting to 100 by default
+    })
   }
 
   async getUserById(
@@ -52,16 +62,38 @@ export class FriggClientService {
   async getPreferredSchool(
     user: User,
     childNationalId: string,
-  ): Promise<OrganizationModel> {
-    return await this.friggApiWithAuth(user).getPreferredSchools({
-      nationalId: childNationalId,
-    })
+  ): Promise<OrganizationModel | null> {
+    try {
+      return await this.friggApiWithAuth(user).getPreferredSchools({
+        nationalId: childNationalId,
+      })
+    } catch (error) {
+      // If no preferred school for the selected child found in Frigg
+      if (
+        error?.status === 404 &&
+        error?.body?.message === 'Recommended school not found'
+      ) {
+        return null
+      }
+      throw error
+    }
   }
 
   sendApplication(
     user: User,
-    form: RegistrationInput,
+    form: RegistrationApplicationInput,
   ): Promise<FormSubmitSuccessModel> {
-    return this.friggApiWithAuth(user).submitForm({ registration: form })
+    return this.friggApiWithAuth(user).submitForm({
+      registrationApplicationInput: form,
+    })
+  }
+
+  async getIsApplicationBlocked(
+    user: User,
+    childNationalId: string,
+  ): Promise<ActiveApplicationsModel> {
+    return await this.friggApiWithAuth(user).getApplications({
+      nationalId: childNationalId,
+    })
   }
 }

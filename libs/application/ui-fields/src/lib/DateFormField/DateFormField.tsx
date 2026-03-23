@@ -52,9 +52,10 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    clearOnChangeDefaultValue,
     tempDisabled,
   } = field
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage, lang: locale } = useLocale()
   const allValues = useWatch({ defaultValue: application.answers }) as FormValue
   const updatedApplication = useMemo(
     () => ({ ...application, answers: allValues }),
@@ -141,7 +142,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           description={formatTextWithLocale(
             description,
             application,
-            lang as Locale,
+            locale as Locale,
             formatMessage,
           )}
         />
@@ -152,11 +153,11 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           disabled={isDisabled}
           defaultValue={
             (getValueViaPath(application.answers, id) as string) ??
-            getDefaultValue(field as BaseField, application)
+            getDefaultValue(field as BaseField, application, locale)
           }
           id={id}
           name={id}
-          locale={lang}
+          locale={locale}
           required={buildFieldRequired(application, required)}
           excludeDates={finalExcludeDates}
           minDate={finalMinDate}
@@ -165,7 +166,12 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           maxYear={maxYear}
           backgroundColor={backgroundColor}
           readOnly={buildFieldReadOnly(application, readOnly)}
-          label={formatTextWithLocale(title, application, lang, formatMessage)}
+          label={formatTextWithLocale(
+            title,
+            application,
+            locale,
+            formatMessage,
+          )}
           placeholder={
             placeholder
               ? formatText(placeholder, application, formatMessage)
@@ -174,6 +180,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           error={error}
           onChange={onChange}
           clearOnChange={clearOnChange}
+          clearOnChangeDefaultValue={clearOnChangeDefaultValue}
         />
       </Box>
     </Box>

@@ -19,7 +19,6 @@ import {
   CaseType,
   CourtDocument,
   CourtSessionType,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
@@ -54,9 +53,6 @@ registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
 registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
 registerEnumType(CaseIndictmentRulingDecision, {
   name: 'CaseIndictmentRulingDecision',
-})
-registerEnumType(IndictmentCaseReviewDecision, {
-  name: 'IndictmentCaseReviewDecision',
 })
 registerEnumType(IndictmentDecision, { name: 'IndictmentDecision' })
 registerEnumType(CourtSessionType, { name: 'CourtSessionType' })
@@ -333,6 +329,9 @@ export class Case {
   @Field(() => [IndictmentCount], { nullable: true })
   readonly indictmentCounts?: IndictmentCount[]
 
+  @Field(() => Boolean, { nullable: true })
+  readonly withCourtSessions?: boolean
+
   @Field(() => [CourtSessionResponse], { nullable: true })
   readonly courtSessions?: CourtSessionResponse[]
 
@@ -438,9 +437,6 @@ export class Case {
   @Field(() => User, { nullable: true })
   readonly indictmentReviewer?: User
 
-  @Field(() => IndictmentCaseReviewDecision, { nullable: true })
-  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
-
   @Field(() => String, {
     nullable: true,
     description: 'appeal deadline for public prosecutor',
@@ -501,6 +497,9 @@ export class Case {
   @Field(() => String, { nullable: true })
   readonly requestCompletedDate?: string
 
+  @Field(() => String, { nullable: true })
+  readonly indictmentCompletedDate?: string
+
   @Field(() => [Victim], { nullable: true })
   readonly victims?: Victim[]
 
@@ -508,8 +507,14 @@ export class Case {
   readonly caseRepresentatives?: CaseRepresentative[]
 
   @Field(() => Boolean, { nullable: true })
-  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
-
-  @Field(() => Boolean, { nullable: true })
   readonly isRegisteredInPrisonSystem?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly penalties?: string
+
+  @Field(() => Case, { nullable: true })
+  readonly splitCase?: Case
+
+  @Field(() => [Case], { nullable: true })
+  readonly splitCases?: Case[]
 }

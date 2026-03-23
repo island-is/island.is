@@ -1,7 +1,7 @@
-import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
+import { FormSystemField, FormSystemScreen } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Dispatch, SetStateAction, useContext, useEffect } from 'react'
 import { ControlContext } from '../../../../context/ControlContext'
-import { FormSystemScreen, FormSystemField } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../../../lib/utils/interfaces'
 import { Preview } from '../Preview/Preview'
 import { MultiSet } from './components/MultiSet'
@@ -39,7 +39,7 @@ export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
                 <Box marginBottom={1}>
                   <Text variant="h3">{screen?.name?.is}</Text>
                 </Box>
-                {screen?.multiset !== 0 ? (
+                {screen?.multiMax && screen.multiMax > 0 ? (
                   <MultiSet screen={screen as FormSystemScreen} />
                 ) : (
                   fields
@@ -48,6 +48,7 @@ export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
                       <Preview
                         key={field?.id}
                         data={field as FormSystemField}
+                        screenOrSection={true}
                       />
                     ))
                 )}
@@ -60,13 +61,17 @@ export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
           <div>
             <Text variant="h2">{activeItem?.data?.name?.is}</Text>
           </div>
-          {(activeItem.data as FormSystemScreen).multiset !== 0 ? (
+          {((activeItem.data as FormSystemScreen).multiMax ?? 0) > 0 ? (
             <MultiSet screen={activeItem.data as FormSystemScreen} />
           ) : (
             fields
               ?.filter((field) => field?.screenId === activeItem?.data?.id)
               .map((field) => (
-                <Preview key={field?.id} data={field as FormSystemField} />
+                <Preview
+                  key={field?.id}
+                  data={field as FormSystemField}
+                  screenOrSection={true}
+                />
               ))
           )}
         </div>
@@ -78,7 +83,7 @@ export const PreviewStepOrGroup = ({ setOpenPreview }: Props) => {
             setOpenPreview(false)
           }}
         >
-          exit
+          Loka
         </Button>
       </Box>
     </Box>

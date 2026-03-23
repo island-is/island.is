@@ -1,4 +1,4 @@
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { type ConfigType } from '@island.is/nest/config'
 
@@ -42,6 +42,7 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
     category,
     name,
     key,
+    isKeyAccessible: true,
   } as CaseFile
   const theCase = {
     id: caseId,

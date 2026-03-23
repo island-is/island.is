@@ -3,13 +3,13 @@ import { Form, FormModes } from '@island.is/application/types'
 import { information } from './sections/information'
 import { constituency } from './sections/constituency'
 import { overview } from './sections/overview'
-import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { NationalElectoralCommissionLogo } from '@island.is/application/assets/institution-logos'
 
 export const Draft: Form = buildForm({
   id: 'ParliamentaryListCreationDraft',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  logo: Logo,
+  logo: NationalElectoralCommissionLogo,
   children: [information, constituency, overview],
 })

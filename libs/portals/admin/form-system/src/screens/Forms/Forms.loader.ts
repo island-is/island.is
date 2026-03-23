@@ -1,27 +1,23 @@
 import { WrappedLoaderFn } from '@island.is/portals/core'
 import {
-  FormSystemApplication,
-  FormSystemApplicationResponse,
   FormSystemForm,
   FormSystemFormResponse,
   FormSystemOption,
   FormSystemOrganizationAdmin,
-  FormSystemOrganizationUrl,
   FormSystemPermissionType,
 } from '@island.is/api/schema'
 import {
-  GET_APPLICATIONS,
   GET_FORMS,
   GET_ORGANIZATION_ADMIN,
+  GET_ORGANIZATION_TITLE,
   LoaderResponse,
 } from '@island.is/form-system/graphql'
 import { removeTypename } from '../../lib/utils/removeTypename'
+
 export interface FormsLoaderQueryResponse {
   formSystemForms: FormSystemFormResponse
 }
-export interface ApplicationsLoaderQueryResponse {
-  formSystemApplications?: FormSystemApplicationResponse
-}
+
 export interface AdminLoaderQueryResponse {
   formSystemOrganizationAdmin: FormSystemOrganizationAdmin
 }
@@ -43,25 +39,6 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
     }
     if (!dataForms) {
       throw new Error('No forms were found')
-    }
-    const { data: dataApplications, error: errorApplications } =
-      await client.query<ApplicationsLoaderQueryResponse>({
-        query: GET_APPLICATIONS,
-        variables: {
-          input: {
-            organizationNationalId: userInfo?.profile.nationalId,
-            page: 1,
-            limit: 20,
-            isTest: true,
-          },
-        },
-        fetchPolicy: 'no-cache',
-      })
-    if (errorApplications) {
-      throw errorApplications
-    }
-    if (!dataApplications) {
-      throw new Error('No applications were found')
     }
     const { data, error } = await client.query<AdminLoaderQueryResponse>({
       query: GET_ORGANIZATION_ADMIN,
@@ -85,19 +62,37 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       ?.filter((form) => form !== null)
       .map((form) => removeTypename(form)) as FormSystemForm[]
 
-    const organizations = dataForms.formSystemForms?.organizations?.map(
-      (org) => ({
-        label: org?.label,
-        value: org?.value,
-        isSelected: org?.isSelected,
-      }),
-    ) as FormSystemOption[]
+    // Safe organizations mapping (handles undefined)
+    const organizationsRaw = dataForms.formSystemForms?.organizations ?? []
 
-    const applications = dataApplications.formSystemApplications?.applications
-      ?.filter((application) => application !== null)
-      .map((application) =>
-        removeTypename(application),
-      ) as FormSystemApplication[]
+    const organizations = organizationsRaw
+      .filter((org): org is NonNullable<typeof org> => !!org)
+      .map(
+        (org) =>
+          ({
+            label: org.label,
+            value: org.value,
+            isSelected: org.isSelected,
+          } as FormSystemOption),
+      )
+
+    // Only enrich titles if we have organizations
+    if (organizations.length > 0) {
+      await Promise.all(
+        organizations.map(async (org) => {
+          try {
+            const { data: titleData } = await client.query({
+              query: GET_ORGANIZATION_TITLE,
+              variables: { input: { nationalId: org.value } },
+              fetchPolicy: 'cache-first',
+            })
+            org.label = titleData?.formSystemOrganizationTitle || org.value
+          } catch (e) {
+            // swallow errors; keep original label/value
+          }
+        }),
+      )
+    }
 
     const isAdmin = userInfo?.scopes.includes(
       '@admin.island.is/form-system:admin',
@@ -114,23 +109,11 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
         isCommon: type?.isCommon,
       })) as FormSystemPermissionType[]
 
-    const mapOrganizationUrls = (
-      urls: FormSystemOrganizationUrl[],
-    ): FormSystemOrganizationUrl[] =>
-      urls?.map((url) => ({
-        id: url?.id,
-        url: url?.url,
-        type: url?.type,
-        method: url?.method,
-        isTest: url?.isTest,
-      })) as FormSystemOrganizationUrl[]
-
     return {
       forms: forms,
       organizations: organizations,
       isAdmin,
       organizationNationalId: organizationNationalId,
-      applications,
       organizationId: admin?.organizationId as string,
       selectedCertificationTypes: admin?.selectedCertificationTypes?.map(
         (cert) => cert,
@@ -144,16 +127,6 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       certificationTypes: mapPermissionTypes(admin.certificationTypes || []),
       listTypes: mapPermissionTypes(admin.listTypes || []),
       fieldTypes: mapPermissionTypes(admin.fieldTypes || []),
-      submitUrls: mapOrganizationUrls(
-        (admin.submitUrls || []).filter(
-          (url): url is FormSystemOrganizationUrl => url !== null,
-        ),
-      ),
-      validationUrls: mapOrganizationUrls(
-        (admin.validationUrls || []).filter(
-          (url): url is FormSystemOrganizationUrl => url !== null,
-        ),
-      ),
     }
   }
 }

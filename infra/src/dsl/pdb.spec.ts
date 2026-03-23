@@ -25,8 +25,8 @@ describe('PodDisruptionBudget definitions', () => {
     const sut: ServiceBuilder<'api'> = service('api')
     const serviceDef: Awaited<ReturnType<typeof renderHelmServiceFile>> =
       await renderHelmServiceFile(Staging, [sut], [sut], 'no-mocks')
-    expect(serviceDef.services.api.podDisruptionBudget?.maxUnavailable).toEqual(
-      1,
+    expect(serviceDef.services.api.podDisruptionBudget?.minAvailable).toEqual(
+      '50%',
     )
     expect(
       serviceDef.services.api.podDisruptionBudget?.unhealthyPodEvictionPolicy,

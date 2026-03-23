@@ -198,6 +198,25 @@ export const custodianSubSection = buildSubSection({
             return !checkHasAnyCustodians(application.externalData)
           },
         }),
+        buildDescriptionField({
+          id: 'mainOtherContact.subtitle',
+          title: () => {
+            return {
+              ...userInformation.otherContact.subtitle,
+              values: {
+                index: 1,
+              },
+            }
+          },
+          titleVariant: 'h5',
+          space: 3,
+          condition: (answers) => {
+            return (
+              getValueViaPath<boolean>(answers, 'mainOtherContact.include') ||
+              false
+            )
+          },
+        }),
         buildNationalIdWithNameField({
           id: 'mainOtherContact.person',
           required: false,
@@ -219,7 +238,14 @@ export const custodianSubSection = buildSubSection({
         // Other contacts
         buildFieldsRepeaterField({
           id: 'otherContacts',
-          title: userInformation.otherContact.subtitle,
+          formTitle: (index) => {
+            return {
+              ...userInformation.otherContact.subtitle,
+              values: {
+                index: index + 2,
+              },
+            }
+          },
           titleVariant: 'h5',
           formTitleNumbering: 'none',
           addItemButtonText: userInformation.otherContact.addButtonLabel,

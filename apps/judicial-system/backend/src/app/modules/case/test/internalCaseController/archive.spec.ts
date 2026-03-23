@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { UserRole } from '@island.is/judicial-system/types'
 
@@ -278,6 +278,7 @@ describe('InternalCaseController - Archive', () => {
           [{ model: CaseString, as: 'caseStrings' }, 'created', 'ASC'],
         ],
         where: archiveFilter,
+        transaction,
       })
       expect(mockDefendantService.updateDatabaseDefendant).toHaveBeenCalledWith(
         caseId,

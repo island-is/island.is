@@ -14,6 +14,7 @@ export const configs = [
       ...identityServer,
     },
     apiUrl: 'https://island.is/api',
+    baseUrl: 'https://island.is',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/qDKG1RMTMkeqM0ifHFlxmQ',
   },
   {
@@ -23,6 +24,7 @@ export const configs = [
       ...identityServer,
     },
     apiUrl: 'https://beta.staging01.devland.is/api',
+    baseUrl: 'https://beta.staging01.devland.is',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/7kWZdAnrz0acVfr_paEl5Q',
     datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
   },
@@ -33,6 +35,7 @@ export const configs = [
       ...identityServer,
     },
     apiUrl: 'https://beta.dev01.devland.is/api',
+    baseUrl: 'https://beta.dev01.devland.is',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
   },

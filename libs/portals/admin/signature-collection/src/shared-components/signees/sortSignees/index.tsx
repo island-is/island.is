@@ -3,6 +3,26 @@ import { DropdownMenu } from '@island.is/island-ui/core'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
 import { m } from '../../../lib/messages'
 
+// Icelandic alphabet order for proper sorting
+const icelandicOrder =
+  '0123456789aAáÁbBcCdDðÐeEéÉfFgGhHiIíÍjJkKlLmMnNoOóÓpPqQrRsStTuUúÚvVwWxXyYýÝzZþÞæÆöÖ'
+
+const charOrder = (char: string) => {
+  const ix = icelandicOrder.indexOf(char)
+  return ix === -1 ? char.charCodeAt(0) + icelandicOrder.length : ix
+}
+
+const compareIcelandic = (s1: string, s2: string): number => {
+  for (let i = 0; i < Math.min(s1.length, s2.length); i++) {
+    const iA = charOrder(s1[i])
+    const iB = charOrder(s2[i])
+    if (iA !== iB) {
+      return iA - iB
+    }
+  }
+  return s1.length - s2.length
+}
+
 const SortSignees = ({
   signees,
   setSignees,
@@ -33,10 +53,10 @@ const SortSignees = ({
       icon="swapVertical"
       items={[
         createSortItem(formatMessage(m.sortAlphabeticallyAsc), (a, b) =>
-          a.signee.name.localeCompare(b.signee.name),
+          compareIcelandic(a.signee.name, b.signee.name),
         ),
         createSortItem(formatMessage(m.sortAlphabeticallyDesc), (a, b) =>
-          b.signee.name.localeCompare(a.signee.name),
+          compareIcelandic(b.signee.name, a.signee.name),
         ),
         createSortItem(formatMessage(m.sortDateAsc), (a, b) =>
           a.created.localeCompare(b.created),

@@ -22,10 +22,15 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry } from '../case-list'
-import { CaseTableResponse, SearchCasesResponse } from '../case-table'
+import {
+  CaseTableMembershipResponse,
+  CaseTableResponse,
+  SearchCasesResponse,
+} from '../case-table'
 import {
   CourtDocumentResponse,
   CourtSessionResponse,
+  CourtSessionString,
   DeleteCourtDocumentResponse,
   DeleteCourtSessionResponse,
 } from '../court-session'
@@ -38,6 +43,7 @@ import {
 import {
   CaseFile,
   DeleteFileResponse,
+  PoliceDigitalCaseFile,
   PresignedPost,
   SignedUrl,
   UpdateFilesResponse,
@@ -51,16 +57,7 @@ import {
   PoliceCaseInfo,
   UploadPoliceCaseFileResponse,
 } from '../police'
-import { CaseStatistics } from '../statistics'
-import {
-  CaseDataExportInput,
-  IndictmentCaseStatistics,
-  IndictmentStatisticsInput,
-  RequestCaseStatistics,
-  RequestStatisticsInput,
-  SubpoenaStatistics,
-  SubpoenaStatisticsInput,
-} from '../statistics'
+import { CaseDataExportInput, CaseStatistics } from '../statistics'
 import { Subpoena } from '../subpoena'
 import { DeliverCaseVerdictResponse, Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
@@ -232,6 +229,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`search-cases?${params.toString()}`)
   }
 
+  getCaseTableMembership(caseId: string): Promise<CaseTableMembershipResponse> {
+    return this.get(`case/${caseId}/case-table-membership`)
+  }
+
   getCaseStatistics(
     fromDate?: Date,
     toDate?: Date,
@@ -244,13 +245,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     if (institutionId) params.append('institutionId', institutionId)
 
     return this.get(`cases/statistics?${params.toString()}`)
-  }
-
-  getIndictmentCaseStatistics(
-    query: IndictmentStatisticsInput,
-  ): Promise<IndictmentCaseStatistics> {
-    const searchParams = this.serializeNestedObject(query)
-    return this.get(`cases/indictments/statistics?${searchParams.toString()}`)
   }
 
   private serializeNestedObject<T extends object>(
@@ -280,20 +274,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return params.toString()
   }
 
-  getRequestCaseStatistics(
-    query: RequestStatisticsInput,
-  ): Promise<RequestCaseStatistics> {
-    const searchParams = this.serializeNestedObject(query)
-    return this.get(`cases/requests/statistics?${searchParams}`)
-  }
-
-  getSubpoenaStatistics(
-    query: SubpoenaStatisticsInput,
-  ): Promise<SubpoenaStatistics> {
-    const searchParams = this.serializeNestedObject(query)
-    return this.get(`cases/subpoenas/statistics?${searchParams}`)
-  }
-
   getPreprocessedDataCsvSignedUrl(
     query: CaseDataExportInput,
   ): Promise<SignedUrl> {
@@ -303,6 +283,10 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getConnectedCases(caseId: string): Promise<Case[]> {
     return this.get(`case/${caseId}/connectedCases`)
+  }
+
+  getCandidateMergeCases(caseId: string): Promise<Case[]> {
+    return this.get(`case/${caseId}/candidateMergeCases`)
   }
 
   createCase(createCase: unknown): Promise<Case> {
@@ -327,29 +311,35 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   requestCourtRecordSignature(
     caseId: string,
+    method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<RequestSignatureResponse> {
-    return this.post(`case/${caseId}/courtRecord/signature`)
+    return this.post(`case/${caseId}/courtRecord/signature?method=${method}`)
   }
 
   getCourtRecordSignatureConfirmation(
     caseId: string,
     documentToken: string,
+    method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SignatureConfirmationResponse> {
     return this.get(
-      `case/${caseId}/courtRecord/signature?documentToken=${documentToken}`,
+      `case/${caseId}/courtRecord/signature?documentToken=${documentToken}&method=${method}`,
     )
   }
 
-  requestRulingSignature(caseId: string): Promise<RequestSignatureResponse> {
-    return this.post(`case/${caseId}/ruling/signature`)
+  requestRulingSignature(
+    caseId: string,
+    method: 'audkenni' | 'mobile' = 'mobile',
+  ): Promise<RequestSignatureResponse> {
+    return this.post(`case/${caseId}/ruling/signature?method=${method}`)
   }
 
   getRulingSignatureConfirmation(
     caseId: string,
     documentToken: string,
+    method: 'audkenni' | 'mobile' = 'mobile',
   ): Promise<SignatureConfirmationResponse> {
     return this.get(
-      `case/${caseId}/ruling/signature?documentToken=${documentToken}`,
+      `case/${caseId}/ruling/signature?documentToken=${documentToken}&method=${method}`,
     )
   }
 
@@ -363,6 +353,14 @@ export class BackendService extends DataSource<{ req: Request }> {
   extendCase(caseId: string): Promise<Case> {
     return this.post<unknown, Case>(
       `case/${caseId}/extend`,
+      undefined,
+      caseTransformer,
+    )
+  }
+
+  splitDefendantFromCase(caseId: string, defendantId: string): Promise<Case> {
+    return this.post<unknown, Case>(
+      `case/${caseId}/defendant/${defendantId}/split`,
       undefined,
       caseTransformer,
     )
@@ -433,6 +431,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`case/${caseId}${mergedCaseInjection}/file/${fileId}/url`)
   }
 
+  rejectCaseFile(caseId: string, fileId: string): Promise<CaseFile> {
+    return this.post(`case/${caseId}/file/${fileId}/reject`)
+  }
+
   deleteCaseFile(caseId: string, fileId: string): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/file/${fileId}`)
   }
@@ -456,6 +458,17 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
     return this.get(`case/${caseId}/policeFiles`)
+  }
+
+  getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceDigitalCaseFile[]> {
+    return this.get(`case/${caseId}/policeDigitalCaseFiles`)
+  }
+
+  deletePoliceDigitalCaseFile(
+    caseId: string,
+    fileId: string,
+  ): Promise<DeleteFileResponse> {
+    return this.delete(`case/${caseId}/policeDigitalCaseFile/${fileId}`)
   }
 
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
@@ -513,6 +526,21 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(
       `case/${caseId}/defendant/${defendantId}/subpoena/${subpoenaId}`,
     )
+  }
+
+  createSubpoenas(
+    caseId: string,
+    createSubpoenas: {
+      defendantIds: string[]
+      arraignmentDate: string
+      location?: string
+    },
+  ): Promise<Subpoena[]> {
+    return this.post(`case/${caseId}/subpoenas`, createSubpoenas)
+  }
+
+  createVerdicts(caseId: string, createVerdicts: unknown): Promise<Verdict[]> {
+    return this.post(`case/${caseId}/verdicts`, createVerdicts)
   }
 
   updateVerdict(
@@ -614,6 +642,17 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch(
       `case/${caseId}/courtSession/${courtSessionId}`,
       updateCourtSession,
+    )
+  }
+
+  updateCourtSessionString(
+    caseId: string,
+    courtSessionId: string,
+    updateCourtSessionString: unknown,
+  ): Promise<CourtSessionString> {
+    return this.patch(
+      `case/${caseId}/courtSession/${courtSessionId}/courtSessionString`,
+      updateCourtSessionString,
     )
   }
 

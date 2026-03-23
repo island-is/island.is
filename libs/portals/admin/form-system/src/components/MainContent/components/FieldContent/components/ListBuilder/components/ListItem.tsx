@@ -1,25 +1,26 @@
-import {
-  GridRow as Row,
-  GridColumn as Column,
-  Box,
-  Icon,
-  ToggleSwitchCheckbox,
-  Input,
-} from '@island.is/island-ui/core'
-import { Dispatch, SetStateAction, useContext } from 'react'
-import { ControlContext } from '../../../../../../../context/ControlContext'
+import { useMutation } from '@apollo/client'
 import { useSortable } from '@dnd-kit/sortable'
 import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
-import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
-import { useIntl } from 'react-intl'
-import * as styles from './ListItem.css'
-import { useMutation } from '@apollo/client'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 import {
   DELETE_LIST_ITEM,
   UPDATE_LIST_ITEM,
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
-import { FieldTypesEnum } from '@island.is/form-system/enums'
+import {
+  Box,
+  GridColumn as Column,
+  Icon,
+  Input,
+  GridRow as Row,
+  Text,
+  ToggleSwitchCheckbox,
+} from '@island.is/island-ui/core'
+import { Dispatch, SetStateAction, useContext } from 'react'
+import { useIntl } from 'react-intl'
+import { ControlContext } from '../../../../../../../context/ControlContext'
+import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
+import * as styles from './ListItem.css'
 
 interface Props {
   listItem: FormSystemListItem
@@ -44,7 +45,7 @@ export const ListItem = ({
     setSelectStatus,
     getTranslation,
   } = useContext(ControlContext)
-  const { activeItem } = control
+  const { activeItem, isPublished } = control
   const currentItem = activeItem.data as FormSystemField
   const isRadio = currentItem.fieldType === FieldTypesEnum.RADIO_BUTTONS
 
@@ -56,6 +57,14 @@ export const ListItem = ({
   const { formatMessage } = useIntl()
   const [deleteListItem] = useMutation(DELETE_LIST_ITEM)
   const [updateListItem] = useMutation(UPDATE_LIST_ITEM)
+
+  const currentItemDependency = control.form.dependencies?.find(
+    (dep) => dep?.parentProp === listItem.id,
+  )
+  const hasConnections =
+    currentItemDependency !== undefined &&
+    currentItemDependency?.childProps &&
+    currentItemDependency.childProps.length > 0
 
   if (isDragging) {
     return (
@@ -116,6 +125,7 @@ export const ListItem = ({
           <ToggleSwitchCheckbox
             label={formatMessage(m.connect)}
             checked={connecting}
+            disabled={isPublished}
             onChange={(e) => {
               setSelectStatus(
                 e
@@ -134,6 +144,7 @@ export const ListItem = ({
           <ToggleSwitchCheckbox
             label={formatMessage(m.selected)}
             checked={listItem.isSelected ?? false}
+            disabled={isPublished}
             onChange={(e) => {
               toggleSelected(listItem.id ?? '', e)
               controlDispatch({
@@ -146,10 +157,16 @@ export const ListItem = ({
           />
         </Box>
         <Box display="flex" flexDirection="row" alignItems="center">
+          <Box marginRight={2}>
+            {hasConnections && (
+              <Text variant="eyebrow">{formatMessage(m.hasConnections)}</Text>
+            )}
+          </Box>
           <Box
             marginRight={2}
             style={{ cursor: 'pointer' }}
             onClick={() => {
+              if (isPublished) return
               controlDispatch({
                 type: 'REMOVE_LIST_ITEM',
                 payload: {
@@ -165,11 +182,8 @@ export const ListItem = ({
               })
             }}
           >
-            <Icon icon="trash" color="blue400" />
+            {!isPublished && <Icon icon="trash" color="blue400" />}
           </Box>
-          <div>
-            <Icon icon="menu" />
-          </div>
         </Box>
       </Box>
       <Row>
@@ -180,6 +194,7 @@ export const ListItem = ({
             backgroundColor="blue"
             size="sm"
             value={listItem?.label?.is ?? ''}
+            readOnly={isPublished}
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => e.target.value !== focus && listItemUpdate()}
             onChange={(e) =>
@@ -202,6 +217,7 @@ export const ListItem = ({
             backgroundColor="blue"
             size="sm"
             value={listItem?.label?.en ?? ''}
+            readOnly={isPublished}
             onFocus={async (e) => {
               if (!listItem?.label?.en && listItem?.label?.is !== '') {
                 const translation = await getTranslation(
@@ -244,6 +260,7 @@ export const ListItem = ({
               backgroundColor="blue"
               size="sm"
               value={listItem?.description?.is ?? ''}
+              readOnly={isPublished}
               onFocus={(e) => setFocus(e.target.value)}
               onBlur={(e) => e.target.value !== focus && listItemUpdate()}
               onChange={(e) =>
@@ -266,6 +283,7 @@ export const ListItem = ({
               backgroundColor="blue"
               size="sm"
               value={listItem?.description?.en ?? ''}
+              readOnly={isPublished}
               onFocus={async (e) => {
                 if (
                   !listItem?.description?.en &&

@@ -1,6 +1,7 @@
 import { IdentityModule } from './identity/identity.module'
 import { IdentityService } from './identity/identity.service'
 import { NationalRegistryModule } from './national-registry/national-registry.module'
+import { NationalRegistryV3Module } from './national-registry-v3/national-registry-v3.module'
 import { NationalRegistryService } from './national-registry/national-registry.service'
 import { PaymentApiModule } from './payment/payment.module'
 import { PaymentService } from './payment/payment.service'
@@ -24,11 +25,13 @@ import { InnaService } from './education/inna.service'
 import { InnaModule } from './education/inna.module'
 import { UserNotificationModule } from './user-notification/user-notification.module'
 import { UserNotificationService } from './user-notification/user-notification.service'
+import { NationalRegistryV3Service } from './national-registry-v3/national-registry-v3.service'
 
 export const dynamicModules = [UserProfileModule]
 
 export const modules = [
   NationalRegistryModule,
+  NationalRegistryV3Module,
   PaymentApiModule,
   IdentityModule,
   DrivingLicenseModule,
@@ -44,6 +47,7 @@ export const modules = [
 
 export const services = [
   NationalRegistryService,
+  NationalRegistryV3Service,
   PaymentService,
   UserProfileService,
   IdentityService,

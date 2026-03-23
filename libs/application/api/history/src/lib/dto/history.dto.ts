@@ -15,15 +15,25 @@ export class HistoryResponseDto {
   @IsString()
   log?: string
 
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  subLog?: string
+
   constructor(
     timeStamp: Date,
-    log: StaticText,
+    message: StaticText,
     formatMessage: FormatMessage,
-    values?: Record<string, any>, // eslint-disable-line @typescript-eslint/no-explicit-any
+    subjectAndActorText?: string,
   ) {
     this.date = timeStamp
-    if (log) {
-      this.log = formatMessage(log, values)
+    if (message) {
+      this.log = formatMessage(message)
+      if (subjectAndActorText) {
+        this.subLog = subjectAndActorText
+      } else {
+        this.subLog = undefined
+      }
     } else {
       this.log = undefined
     }

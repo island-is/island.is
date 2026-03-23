@@ -1,6 +1,6 @@
 import { defineTemplateApi } from '@island.is/application/types'
 export {
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   UserProfileApi,
   ExistingApplicationApi,
 } from '@island.is/application/types'

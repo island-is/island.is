@@ -19,7 +19,7 @@ import {
   IdentityApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { Logo } from '../assets'
+import { DebtCollectorLogo } from '@island.is/application/assets/institution-logos'
 import { application, info, section, externalData } from '../lib/messages'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { PaymentPlanExternalData } from '../types'
@@ -32,7 +32,7 @@ const shouldRenderMockDataSubSection = !isRunningOnEnvironment('production')
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
   title: application.name,
-  logo: Logo,
+  logo: DebtCollectorLogo,
   mode: FormModes.NOT_STARTED,
   children: [
     buildSection({

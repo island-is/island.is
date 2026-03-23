@@ -9,7 +9,8 @@ const userSeeds = `[
     "mobile_number": "0000000",
     "email": "aki@dummy.dd",
     "role": "PROSECUTOR",
-    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
+    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85",
+    "can_confirm_indictment": true
   },
   {
     "id": "7ac41587-061b-44b8-8028-fb19f997c8e7",
@@ -119,7 +120,8 @@ const userSeeds = `[
     "mobile_number": "9999999",
     "email": "testsaekjandi@dummy.dd",
     "role": "PROSECUTOR",
-    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85"
+    "institution_id": "53581d7b-0591-45e5-9cbe-c96b2f82da85",
+    "can_confirm_indictment": true
   },
   {
     "id": "12301c51-2bb7-4014-9469-f7ac2cd9c794",
@@ -130,7 +132,30 @@ const userSeeds = `[
     "email": "testdomari@dummy.dd",
     "role": "DISTRICT_COURT_JUDGE",
     "institution_id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf"
-  }
+  },
+	{
+		"id": "5e8309e7-8e01-4762-adad-46e1e5f1e44e",
+		"national_id": "0000007777",
+		"name": "Test Skrifstofa Ríkissaksóknara",
+		"mobile_number": "0000000",
+		"role": "PUBLIC_PROSECUTOR_STAFF",
+		"title": "Skrifstofa Ríkissaksóknara",
+		"email": "testskrifstofariksak@dummy.dd",
+		"active": true,
+		"institution_id": "8f9e2f6d-6a00-4a5e-b39b-95fd110d762e"
+	},
+	{
+		"id": "1599448b-5ec4-4232-8796-7ec6bfbde0a1",
+		"national_id": "0000998888",
+		"name": "Test Ríkissaksóknari",
+		"mobile_number": "0000000",
+		"role": "PROSECUTOR",
+		"title": "Ríkissaksóknari",
+		"email": "testrikissaksoknari@dummy.dd",
+		"active": true,
+		"institution_id": "8f9e2f6d-6a00-4a5e-b39b-95fd110d762e",
+		"can_confirm_indictment": true
+	}
 ]`
 
 module.exports = {

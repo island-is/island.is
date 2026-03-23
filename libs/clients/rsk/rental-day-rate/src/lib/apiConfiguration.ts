@@ -19,6 +19,7 @@ export const RskRentalDayRateConfigurationProvider = {
       fetchApi: createEnhancedFetch({
         name: 'clients-rental-day-rate',
         organizationSlug: 'skatturinn',
+        timeout: 180000, // 3 minutes
       }),
       basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {

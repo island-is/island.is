@@ -1,5 +1,5 @@
 import each from 'jest-each'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 import { NotFoundException } from '@nestjs/common'
 
@@ -71,7 +71,7 @@ describe('FileController - Upload case file to court', () => {
     } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
 
     beforeEach(async () => {
       await givenWhenThen(caseId, fileId, user, theCase, caseFile)
@@ -92,7 +92,7 @@ describe('FileController - Upload case file to court', () => {
     const theCase = { id: caseId, type } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
 
     beforeEach(async () => {
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
@@ -123,6 +123,7 @@ describe('FileController - Upload case file to court', () => {
     const caseFile = {
       id: fileId,
       key,
+      isKeyAccessible: true,
       name: fileName,
       type: fileType,
     } as CaseFile
@@ -180,6 +181,7 @@ describe('FileController - Upload case file to court', () => {
       const caseFile = {
         id: fileId,
         key,
+        isKeyAccessible: true,
         name: fileName,
         type: fileType,
         category: caseFileCategory,
@@ -219,7 +221,7 @@ describe('FileController - Upload case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const content = Buffer.from('Test content')
     const documentId = uuid()
 
@@ -248,7 +250,7 @@ describe('FileController - Upload case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 
@@ -274,7 +276,7 @@ describe('FileController - Upload case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 
@@ -338,7 +340,7 @@ describe('FileController - Upload case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -348,9 +350,9 @@ describe('FileController - Upload case file to court', () => {
       then = await givenWhenThen(caseId, fileId, user, theCase, caseFile)
     })
 
-    it('should remove the key', () => {
+    it('should set isKeyAccessible to false', () => {
       expect(mockFileModel.update).toHaveBeenCalledWith(
-        { key: null },
+        { isKeyAccessible: false },
         { where: { id: fileId } },
       )
     })
@@ -367,7 +369,7 @@ describe('FileController - Upload case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -389,7 +391,7 @@ describe('FileController - Upload case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     let then: Then
 
     beforeEach(async () => {
@@ -413,7 +415,7 @@ describe('FileController - Upload case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 
@@ -440,7 +442,7 @@ describe('FileController - Upload case file to court', () => {
     const theCase = { id: caseId } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
-    const caseFile = { id: fileId, key } as CaseFile
+    const caseFile = { id: fileId, key, isKeyAccessible: true } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
 

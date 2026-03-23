@@ -53,7 +53,7 @@ const OrganizationNewsArticle: Screen<
   // @ts-ignore make web strict
   const n = useNamespace(namespace)
   useContentfulId(organizationPage.id, newsItem?.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('organizationnews')
 
   // We only display breadcrumbs and highlighted nav item if the news item belongs to this organization
   const newsBelongToOrganization =

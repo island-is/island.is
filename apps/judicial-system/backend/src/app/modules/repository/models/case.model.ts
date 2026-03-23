@@ -30,7 +30,6 @@ import {
   CaseType,
   CourtDocument as TCourtDocument,
   CourtSessionType,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
@@ -760,6 +759,13 @@ export class Case extends Model {
   indictmentCounts?: IndictmentCount[]
 
   /**********
+   * Indicates whether the indictment case should have court sessions
+   ***********/
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
+  @ApiPropertyOptional({ type: Boolean })
+  withCourtSessions!: boolean
+
+  /**********
    * The case's court sessions
    **********/
   @HasMany(() => CourtSession, 'caseId')
@@ -1024,17 +1030,6 @@ export class Case extends Model {
   indictmentReviewer?: User
 
   /**********
-   * The review decision in indictment cases
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(IndictmentCaseReviewDecision),
-  })
-  @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
-  indictmentReviewDecision?: IndictmentCaseReviewDecision
-
-  /**********
    * The judge's pending decision in indictment cases - example: POSTPONING
    **********/
   @Column({
@@ -1073,7 +1068,8 @@ export class Case extends Model {
   courtSessionType?: CourtSessionType
 
   /**********
-   * The surrogate key of the case an indictment was merged in to - only used if the has been merged
+   * The surrogate key of the case an indictment was merged into
+   * Only used if the case has been merged
    **********/
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID, allowNull: true })
@@ -1081,22 +1077,24 @@ export class Case extends Model {
   mergeCaseId?: string
 
   /**********
-   * The case this was merged in to - only used if the case was merged
+   * The case this case was merged into
+   * Only used if the case was merged
    **********/
   @BelongsTo(() => Case, 'mergeCaseId')
   @ApiPropertyOptional({ type: () => Case })
   mergeCase?: Case
 
   /**********
-   * The cases that have been merged in to the current case - only used if the case was merged
+   * The cases that have been merged into this case
+   * Only used if other cases have been merged into this case
    **********/
   @HasMany(() => Case, 'mergeCaseId')
   @ApiPropertyOptional({ type: () => Case })
   mergedCases?: Case[]
 
   /**********
-   * The court case number this case was merged in to - only used if the case was merged
-   * with a case that is not in RVG
+   * The court case number this case was merged into
+   * Only used if the case was merged with a case that is not in RVG
    **********/
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -1126,15 +1124,6 @@ export class Case extends Model {
   isCompletedWithoutRuling?: boolean
 
   /**********
-   * NOTE: This is a temporary field to indicate whether a public prosecutors
-   * user has marked a case as registered in the police system. This will be
-   * removed in the future.
-   **********/
-  @Column({ type: DataType.BOOLEAN, allowNull: true })
-  @ApiPropertyOptional({ type: Boolean })
-  publicProsecutorIsRegisteredInPoliceSystem?: boolean
-
-  /**********
    * The case's victims
    **********/
   @HasMany(() => Victim, 'caseId')
@@ -1147,4 +1136,37 @@ export class Case extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiProperty({ type: Boolean })
   isRegisteredInPrisonSystem?: boolean
+
+  /**********
+   * The surrogate key of the case an indictment was split from
+   * Only used if the case was split from another case
+   **********/
+  @ForeignKey(() => Case)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  splitCaseId?: string
+
+  /**********
+   * The case this case was split from
+   * Only used if the case was split from another case
+   **********/
+  @BelongsTo(() => Case, 'splitCaseId')
+  @ApiPropertyOptional({ type: () => Case })
+  splitCase?: Case
+
+  /**********
+   * The cases that have split from this case
+   * Only used if other cases have been split from this case
+   **********/
+  @HasMany(() => Case, 'splitCaseId')
+  @ApiPropertyOptional({ type: () => Case })
+  splitCases?: Case[]
+
+  /**********
+   * The defendant national id provided by the police system
+   * Only used if the case was created from the police system
+   **********/
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  policeDefendantNationalId?: string
 }

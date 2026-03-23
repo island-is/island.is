@@ -15,12 +15,6 @@ import { ApplicationApplicationsInput } from './dto/applicationApplications.inpu
 import { ApplicationPayment } from './application.model'
 import { AttachmentPresignedUrlInput } from './dto/AttachmentPresignedUrl.input'
 import { DeleteApplicationInput } from './dto/deleteApplication.input'
-import {
-  ApplicationApplicationsAdminInput,
-  ApplicationApplicationsAdminStatisticsInput,
-  ApplicationApplicationsInstitutionAdminInput,
-  ApplicationTypesInstitutionAdminInput,
-} from './application-admin/dto/applications-applications-admin-input'
 
 @Injectable()
 export class ApplicationService {
@@ -81,66 +75,10 @@ export class ApplicationService {
     )
   }
 
-  async findAllAdmin(
-    user: User,
-    locale: Locale,
-    input: ApplicationApplicationsAdminInput,
-  ) {
-    return this.applicationApiWithAuth(user).adminControllerFindAllAdmin({
-      nationalId: input.nationalId,
-      locale,
-      typeId: input.typeId?.join(','),
-      status: input.status?.join(','),
-    })
-  }
-
-  async findAllInstitutionAdmin(
-    user: User,
-    locale: Locale,
-    input: ApplicationApplicationsInstitutionAdminInput,
-  ) {
-    return this.applicationApiWithAuth(
-      user,
-    ).adminControllerFindAllInstitutionAdmin({
-      page: input.page,
-      count: input.count,
-      locale,
-      status: input.status?.join(','),
-      applicantNationalId: input.applicantNationalId,
-      from: input.from,
-      to: input.to,
-      typeIdValue: input.typeIdValue,
-      searchStrValue: input.searchStrValue,
-    })
-  }
-
-  async findAllApplicationTypesInstitutionAdmin(
-    user: User,
-    locale: Locale,
-    input: ApplicationTypesInstitutionAdminInput,
-  ) {
-    return this.applicationApiWithAuth(
-      user,
-    ).adminControllerGetApplicationTypesInstitutionAdmin({
-      nationalId: input.nationalId,
-      locale,
-    })
-  }
-
   async create(input: CreateApplicationInput, auth: Auth) {
     return this.applicationApiWithAuth(auth).applicationControllerCreate({
       createApplicationDto: input,
     })
-  }
-
-  async getApplicationCountByTypeIdAndStatus(
-    user: User,
-    locale: Locale,
-    input: ApplicationApplicationsAdminStatisticsInput,
-  ) {
-    return this.applicationApiWithAuth(
-      user,
-    ).adminControllerGetCountByTypeIdAndStatus(input)
   }
 
   async update(input: UpdateApplicationInput, auth: Auth, locale: Locale) {
@@ -191,13 +129,18 @@ export class ApplicationService {
     })
   }
 
-  async submitApplication(input: SubmitApplicationInput, auth: Auth) {
+  async submitApplication(
+    input: SubmitApplicationInput,
+    auth: Auth,
+    locale: Locale,
+  ) {
     const { id, ...updateApplicationStateDto } = input
     return this.applicationApiWithAuth(
       auth,
     ).applicationControllerSubmitApplication({
       id,
       updateApplicationStateDto,
+      locale,
     })
   }
 

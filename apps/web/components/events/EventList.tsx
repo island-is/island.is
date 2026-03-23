@@ -84,10 +84,7 @@ export const EventList = ({
               endDate,
             )
 
-            const link = linkResolver('organizationevent', [
-              parentPageSlug,
-              event.slug,
-            ])
+            const link = linkResolver('event', [parentPageSlug, event.slug])
 
             const detailLines: Array<{
               icon: IconMapIcon
@@ -145,7 +142,7 @@ export const EventList = ({
               eventItem.startDate,
               endDate,
             )
-            const eventHref = linkResolver('organizationevent', [
+            const eventHref = linkResolver('event', [
               parentPageSlug,
               eventItem.slug,
             ]).href
@@ -181,7 +178,7 @@ export const EventList = ({
         <Stack space={[3, 3, 4]}>
           {eventList.map((eventItem) => {
             const endDate = eventItem.time?.endDate
-            const eventHref = linkResolver('organizationevent', [
+            const eventHref = linkResolver('event', [
               parentPageSlug,
               eventItem.slug,
             ]).href

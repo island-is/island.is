@@ -50,3 +50,7 @@ export const yearSelectContainer = style({
 export const noWrap = style({
   flexWrap: 'nowrap',
 })
+
+export const form = style({
+  marginBottom: 'auto',
+})

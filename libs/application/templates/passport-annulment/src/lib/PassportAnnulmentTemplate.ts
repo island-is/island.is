@@ -8,7 +8,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
-  NationalRegistryUserApi,
+  NationalRegistryV3UserApi,
   PassportsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
@@ -69,7 +69,7 @@ const PassportAnnulmentTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [PassportsApi, NationalRegistryUserApi],
+              api: [PassportsApi, NationalRegistryV3UserApi],
             },
           ],
         },

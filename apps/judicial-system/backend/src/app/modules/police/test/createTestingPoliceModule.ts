@@ -1,3 +1,4 @@
+import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -12,6 +13,7 @@ import { AwsS3Service } from '../../aws-s3'
 import { CaseService } from '../../case'
 import { InternalCaseService } from '../../case/internalCase.service'
 import { EventService } from '../../event'
+import { IndictmentSubtype } from '../../repository'
 import { SubpoenaService } from '../../subpoena'
 import { policeModuleConfig } from '../police.config'
 import { PoliceController } from '../police.controller'
@@ -45,6 +47,12 @@ export const createTestingPoliceModule = async () => {
           debug: jest.fn(),
           info: jest.fn(),
           error: jest.fn(),
+        },
+      },
+      {
+        provide: getModelToken(IndictmentSubtype),
+        useValue: {
+          findOne: jest.fn(),
         },
       },
     ],

@@ -38,6 +38,7 @@ export const ConvoyShortTermMultiField = buildMultiField({
       errorTitle: convoy.error.alertTitle,
       fallbackErrorMessage: convoy.error.fallbackErrorMessage,
       validationFailedErrorMessage: convoy.error.validationFailedErrorMessage,
+      isTrailer: false,
     }),
     buildVehiclePermnoWithInfoField({
       id: `convoy.items.${convoyIndex}.trailer`,
@@ -50,6 +51,7 @@ export const ConvoyShortTermMultiField = buildMultiField({
       errorTitle: convoy.error.alertTitle,
       fallbackErrorMessage: convoy.error.fallbackErrorMessage,
       validationFailedErrorMessage: convoy.error.validationFailedErrorMessage,
+      isTrailer: true,
     }),
     buildRadioField({
       id: `convoy.items.${convoyIndex}.dollyType`,

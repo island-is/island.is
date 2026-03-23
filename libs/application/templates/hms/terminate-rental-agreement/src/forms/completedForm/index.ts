@@ -1,8 +1,13 @@
-import { buildForm, getValueViaPath } from '@island.is/application/core'
+import {
+  buildForm,
+  buildImageField,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { FormModes } from '@island.is/application/types'
-import HmsLogo from '../../assets/HmsLogo'
+import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import * as m from '../../lib/messages'
+import { MovingSearching } from '@island.is/application/assets/graphics'
 
 export const completedForm = buildForm({
   id: 'completedForm',
@@ -24,6 +29,17 @@ export const completedForm = buildForm({
             : m.conclusionMessages.alertMessageTermination),
         }
       },
+      multiFieldTitle: m.conclusionMessages.multiFieldTitle,
+      accordion: false,
+      descriptionFieldDescription:
+        m.conclusionMessages.descriptionFieldDescription,
+      image: buildImageField({
+        marginTop: 4,
+        marginBottom: 4,
+        id: 'tree',
+        image: MovingSearching,
+        imagePosition: 'center',
+      }),
     }),
   ],
 })

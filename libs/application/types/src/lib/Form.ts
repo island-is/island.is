@@ -8,6 +8,7 @@ import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { Locale } from '@island.is/shared/types'
+import { FormatMessage } from './external'
 
 export type BeforeSubmitCallback = (
   event?: string,
@@ -60,6 +61,7 @@ export type FormTextWithLocale =
   | ((
       application: Application,
       locale: Locale,
+      formatMessage?: FormatMessage,
     ) => StaticText | null | undefined)
 
 export type FormComponent =
@@ -168,6 +170,7 @@ export interface ExternalDataProvider extends FormItem {
   checkboxLabel?: StaticText
   subTitle?: StaticText
   description?: StaticText
+  subDescription?: StaticText
   submitField?: SubmitField
 }
 
@@ -209,6 +212,14 @@ export interface FieldBaseProps<TAnswers = FormValue> {
   application: Application<TAnswers>
   showFieldName?: boolean
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
   goToScreen?: (id: string) => void
   answerQuestions?: (answers: FormValue) => void
   refetch?: () => void

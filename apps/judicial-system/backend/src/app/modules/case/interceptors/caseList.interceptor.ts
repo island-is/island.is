@@ -31,7 +31,12 @@ export class CaseListInterceptor implements NestInterceptor {
                 : undefined
               : DateLog.arraignmentDate(theCase.dateLogs)?.date,
             policeCaseNumbers: theCase.policeCaseNumbers,
-            defendants: transformDefendants(theCase.defendants),
+            defendants: transformDefendants({
+              defendants: theCase.defendants,
+              indictmentRulingDecision: theCase.indictmentRulingDecision,
+              rulingDate: theCase.rulingDate,
+              isRegisteredInPrisonSystem: theCase.isRegisteredInPrisonSystem,
+            }),
             courtCaseNumber: theCase.courtCaseNumber,
             decision: theCase.decision,
             validToDate: theCase.validToDate,

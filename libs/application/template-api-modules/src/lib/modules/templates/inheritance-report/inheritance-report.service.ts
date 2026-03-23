@@ -18,7 +18,7 @@ import { infer as zinfer } from 'zod'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
 import type { Logger } from '@island.is/logging'
 import { expandAnswers } from './utils/mappers'
-import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
+import { NationalRegistryV3Service } from '../../shared/api/national-registry-v3/national-registry-v3.service'
 import { S3Service } from '@island.is/nest/aws'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
@@ -30,7 +30,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
-    private readonly nationalRegistryService: NationalRegistryXRoadService,
+    private readonly nationalRegistryService: NationalRegistryV3Service,
     private readonly s3Service: S3Service,
   ) {
     super(ApplicationTypes.INHERITANCE_REPORT)
@@ -183,8 +183,8 @@ export class InheritanceReportService extends BaseTemplateApiService {
     return { success: result.success, id: result.caseNumber }
   }
 
-  async maritalStatus({ auth }: TemplateApiModuleActionProps) {
-    const spouse = await this.nationalRegistryService.getSpouse(auth.nationalId)
+  async maritalStatus(props: TemplateApiModuleActionProps) {
+    const spouse = await this.nationalRegistryService.getSpouse(props)
     return { ...spouse, fullName: spouse?.name }
   }
 

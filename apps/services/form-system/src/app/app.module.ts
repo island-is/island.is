@@ -3,21 +3,24 @@ import { LoggingModule } from '@island.is/logging'
 import { AuditModule } from '@island.is/nest/audit'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+import { ConfigModule } from '@island.is/nest/config'
 import { environment } from '../environments'
-import { FormsModule } from './modules/forms/forms.module'
-import { ScreensModule } from './modules/screens/screens.module'
-import { FieldsModule } from './modules/fields/fields.module'
-import { OrganizationsModule } from './modules/organizations/organizations.module'
-import { SectionsModule } from './modules/sections/sections.module'
-import { SequelizeConfigService } from './sequelizeConfig.service'
-import { ListItemsModule } from './modules/listItems/listItems.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
+import { FieldsModule } from './modules/fields/fields.module'
+import { FileModule } from './modules/file/file.module'
 import { FormApplicantTypesModule } from './modules/formApplicantTypes/formApplicantTypes.module'
 import { FormCertificationTypesModule } from './modules/formCertificationTypes/formCertificationTypes.module'
-import { OrganizationUrlsModule } from './modules/organizationUrls/organizationUrls.module'
-import { FormUrlsModule } from './modules/formUrls/formUrls.module'
-import { ServicesModule } from './modules/services/services.module'
+import { FormsModule } from './modules/forms/forms.module'
+import { ListItemsModule } from './modules/listItems/listItems.module'
 import { OrganizationPermissionsModule } from './modules/organizationPermissions/organizationPermissions.module'
+import { OrganizationsModule } from './modules/organizations/organizations.module'
+import { ScreensModule } from './modules/screens/screens.module'
+import { SectionsModule } from './modules/sections/sections.module'
+import { ServicesModule } from './modules/services/services.module'
+import { SequelizeConfigService } from './sequelizeConfig.service'
+import { PruneModule } from './modules/services/prune/prune.module'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 
 @Module({
   imports: [
@@ -36,10 +39,14 @@ import { OrganizationPermissionsModule } from './modules/organizationPermissions
     ApplicationsModule,
     FormApplicantTypesModule,
     FormCertificationTypesModule,
-    FormUrlsModule,
     OrganizationPermissionsModule,
-    OrganizationUrlsModule,
     ServicesModule,
+    FileModule,
+    PruneModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [NationalRegistryV3ClientConfig, CompanyRegistryConfig],
+    }),
   ],
 })
 export class AppModule {}

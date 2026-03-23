@@ -1,0 +1,91 @@
+name: Release branch Rename Monitor
+on:
+  push:
+    branches:
+      - 'release/*' # Triggers when pushing to this branch
+
+concurrency:
+  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+  # We want feature modifications to happen sequentially to completion,
+  # to avoid race conditions and orphaned deployments
+  group: push-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+
+jobs:
+  check-rename:
+    runs-on: arc-shared
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Get full history
+
+      - name: Check if branch was renamed
+        id: check
+        run: |
+          # Extract version from current branch (release/X.X.X)
+          CURRENT_BRANCH="${{ github.ref_name }}"
+          VERSION=$(echo "$CURRENT_BRANCH" | sed 's/release\///')
+          PRE_RELEASE_BRANCH="pre-release/$VERSION"
+
+          # Check if corresponding pre-release branch existed
+          if git show-ref --verify --quiet "refs/remotes/origin/$PRE_RELEASE_BRANCH"; then
+            echo "Branch renamed from $PRE_RELEASE_BRANCH to $CURRENT_BRANCH"
+            echo "Version: $VERSION"
+            echo "renamed=true" >> "$GITHUB_OUTPUT"
+            echo "pre_release_branch=$PRE_RELEASE_BRANCH" >> "$GITHUB_OUTPUT"
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          else
+            echo "No corresponding pre-release branch found"
+          fi
+
+      - name: Check if already processed
+        if: steps.check.outputs.renamed == 'true'
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: .rename-marker
+          key: rename-${{ steps.check.outputs.pre_release_branch }}
+
+      - name: Setup yarn
+        if: steps.check.outputs.renamed == 'true' && steps.cache.outputs.cache-hit != 'true'
+        uses: ./.github/actions/setup-yarn
+
+      - name: Get token
+        if: steps.check.outputs.renamed == 'true' && steps.cache.outputs.cache-hit != 'true'
+        id: get-token
+        shell: bash
+        env:
+          APP_ID: ${{ secrets.HELM_VALUES_APP_ID }}
+          PRIVATE_KEY: ${{ secrets.HELM_VALUES_SSH_KEY }}
+        run: |
+          node scripts/ci/docker/get-github-token.mjs
+
+      - name: Dispatch workflow to helm-values repository
+        if: steps.check.outputs.renamed == 'true' && steps.cache.outputs.cache-hit != 'true'
+        env:
+          HELM_VALUES_TOKEN: ${{ steps.get-token.outputs.token }}
+          VERSION: ${{ steps.check.outputs.version }}
+        run: |
+          repo_owner="island-is"
+          repository="helm-values"
+          echo "Dispatch cleanup workflow for pre-release: $VERSION"
+          # The `feature_name` that is deployed for each pre-release is the version string without dots e.g. instead of 0.0.1 it is 001.
+          VERSION=$(echo $VERSION | tr -d '.')
+          curl -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer $HELM_VALUES_TOKEN" \
+          "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
+          -d "{\"event_type\":\"destroy-feature\", \"client_payload\":{ \"feature_name\":\"$VERSION\", \"delete_value_files\": false }}"
+
+          mkdir .rename-marker/
+          echo "processed" > .rename-marker/done
+
+      - name: Save cache
+        if: steps.check.outputs.renamed == 'true' && steps.cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .rename-marker
+          key: rename-${{ steps.check.outputs.pre_release_branch }}

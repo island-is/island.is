@@ -1,4 +1,3 @@
-import { FormUrlDto } from '@island.is/form-system/shared'
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { FormApplicantInput } from './applicant.input'
 import {
@@ -25,18 +24,6 @@ export class DependencyInput {
   isSelected?: boolean
 }
 
-@InputType('FormSystemDeleteFormInput')
-export class DeleteFormInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-}
-
-@InputType('FormSystemPublishFormInput')
-export class PublishFormInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-}
-
 @InputType('FormSystemCreateFormInput')
 export class CreateFormInput {
   @Field(() => String, { nullable: true })
@@ -53,27 +40,6 @@ export class GetFormInput {
 export class GetFormsInput {
   @Field(() => String, { nullable: true })
   nationalId?: string
-}
-
-@InputType('FormSystemOrganizationUrlInput')
-export class OrganizationUrlInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  url?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isXroad?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => String, { nullable: true })
-  method?: string
 }
 
 @InputType('FormSystemUpdateFormDtoInput')
@@ -94,13 +60,28 @@ export class UpdateFormDtoInput {
   invalidationDate?: Date
 
   @Field(() => Boolean, { nullable: true })
+  zendeskInternal?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  useValidate?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  usePopulate?: boolean
+
+  @Field(() => String, { nullable: true })
+  submissionServiceUrl?: string
+
+  @Field(() => Boolean, { nullable: true })
   hasPayment?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isTranslated?: boolean
 
   @Field(() => Int, { nullable: true })
-  applicationDaysToRemove?: number
+  draftDaysToLive?: number
+
+  @Field(() => Int, { nullable: true })
+  submissionDaysToLive?: number
 
   @Field(() => Boolean, { nullable: true })
   allowProceedOnValidationFail?: boolean
@@ -160,7 +141,10 @@ export class FormInput {
   beenPublished?: boolean
 
   @Field(() => Int, { nullable: true })
-  applicationDaysToRemove?: number
+  draftDaysToLive?: number
+
+  @Field(() => Int, { nullable: true })
+  submissionDaysToLive?: number
 
   @Field(() => Int, { nullable: true })
   derivedFrom?: number
@@ -191,9 +175,6 @@ export class FormInput {
 
   @Field(() => String, { nullable: true })
   status?: string
-
-  @Field(() => [FormUrlDto], { nullable: 'itemsAndList' })
-  urls?: FormUrlDto[]
 }
 
 @InputType('FormSystemFormResponseInput')
@@ -215,7 +196,4 @@ export class FormResponseInput {
 
   @Field(() => [FormInput], { nullable: 'itemsAndList' })
   forms?: FormInput[]
-
-  @Field(() => [OrganizationUrlInput], { nullable: 'itemsAndList' })
-  urls?: OrganizationUrlInput[]
 }

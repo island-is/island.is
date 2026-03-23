@@ -32,18 +32,24 @@ class MockChargeFjsV2ClientService {
     })
   }
 
-  getCatalogByPerformingOrg(performingOrganizationID: string) {
+  getCatalogByPerformingOrg({
+    performingOrgID,
+  }: {
+    performingOrgID: string
+    chargeType?: string
+    chargeItemCode?: string | string[]
+  }) {
     return Promise.resolve<Catalog>({
       item: [
         {
-          performingOrgID: performingOrganizationID,
+          performingOrgID,
           chargeType: '1',
           chargeItemCode: 'asdf',
           chargeItemName: '1',
           priceAmount: 1,
         },
         {
-          performingOrgID: performingOrganizationID,
+          performingOrgID,
           chargeType: '1',
           chargeItemCode: 'asdf2',
           chargeItemName: '2',
@@ -174,7 +180,7 @@ describe('Payment Service', () => {
       undefined,
     )
 
-    const result = await service.getStatus(user, applicationId)
+    const result = await service.getStatus(applicationId)
     expect(result.fulfilled).toBe(false)
   })
 
@@ -195,7 +201,7 @@ describe('Payment Service', () => {
       faker.datatype.uuid(),
       applicationId,
     )
-    const result = await service.getStatus(user, applicationId)
+    const result = await service.getStatus(applicationId)
     expect(result.fulfilled).toBe(true)
   })
 

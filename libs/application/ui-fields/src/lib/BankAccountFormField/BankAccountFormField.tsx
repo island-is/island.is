@@ -30,6 +30,7 @@ export const BankAccountFormField = ({
     titleVariant,
     id,
     clearOnChange,
+    clearOnChangeDefaultValue,
     required,
   } = field
   const bankNumber = formatText(
@@ -47,8 +48,7 @@ export const BankAccountFormField = ({
     application,
     formatMessage,
   )
-
-  const bankInfo = getDefaultValue(field, application)
+  const bankInfo = getDefaultValue(field, application, locale)
 
   // Extract errors for each bank account field part (individual field errors)
   const bankNumberError = getErrorViaPath(errors || {}, `${id}.bankNumber`)
@@ -193,6 +193,7 @@ export const BankAccountFormField = ({
               backgroundColor="blue"
               autoFocus
               clearOnChange={clearOnChange}
+              clearOnChangeDefaultValue={clearOnChangeDefaultValue}
               required={buildFieldRequired(application, required)}
               error={useBankNumberError}
               ref={bankRef}
@@ -210,6 +211,7 @@ export const BankAccountFormField = ({
               format="##"
               backgroundColor="blue"
               clearOnChange={clearOnChange}
+              clearOnChangeDefaultValue={clearOnChangeDefaultValue}
               required={buildFieldRequired(application, required)}
               error={useLedgerError}
               ref={ledgerRef}
@@ -227,6 +229,7 @@ export const BankAccountFormField = ({
               format="######"
               backgroundColor="blue"
               clearOnChange={clearOnChange}
+              clearOnChangeDefaultValue={clearOnChangeDefaultValue}
               required={buildFieldRequired(application, required)}
               error={useAccountNumberError}
               ref={accountRef}

@@ -14,6 +14,7 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
+import { CreateVerdictsInput } from './dto/createVerdicts.input'
 import { DeliverCaseVerdictQueryInput } from './dto/deliverCaseVerdict.input'
 import { UpdateVerdictInput } from './dto/updateVerdict.input'
 import { VerdictQueryInput } from './dto/verdict.input'
@@ -28,6 +29,25 @@ export class VerdictResolver {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
+
+  @Mutation(() => [Verdict], { nullable: true })
+  createVerdicts(
+    @Args('input', { type: () => CreateVerdictsInput })
+    input: CreateVerdictsInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<Verdict[]> {
+    this.logger.debug(`Creating verdicts for defendants in ${input.caseId}`)
+    const { caseId, ...createVerdictInputs } = input
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.CREATE_VERDICTS,
+      backendService.createVerdicts(caseId, createVerdictInputs.verdicts ?? []),
+      caseId,
+    )
+  }
 
   @Mutation(() => Verdict, { nullable: true })
   updateVerdict(

@@ -1,4 +1,4 @@
-import { FC, Fragment, useCallback, useContext, useRef } from 'react'
+import { FC, useCallback, useContext, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -215,7 +215,9 @@ const Processing: FC = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
-        <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
+        <Box marginBottom={5}>
+          <ProsecutorCaseInfo workingCase={workingCase} hideCourt />
+        </Box>
         <Box component="section" marginBottom={5}>
           <SelectCourt />
         </Box>
@@ -290,10 +292,7 @@ const Processing: FC = () => {
           </Box>
         )}
         <Box component="section" marginBottom={5}>
-          <CommentsInput
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
+          <CommentsInput />
         </Box>
         <Box
           component="section"
@@ -348,18 +347,16 @@ const Processing: FC = () => {
                 heading="h2"
               />
               {workingCase.civilClaimants?.map((civilClaimant, index) => (
-                <Fragment key={civilClaimant.id}>
-                  <Box marginBottom={3}>
-                    <BlueBox>
-                      <CivilClaimantFields
-                        caseId={workingCase.id}
-                        civilClaimant={civilClaimant}
-                        civilClaimantIndex={index}
-                        removeCivilClaimantById={removeCivilClaimantById}
-                      />
-                    </BlueBox>
-                  </Box>
-                </Fragment>
+                <Box marginBottom={3} key={civilClaimant.id}>
+                  <BlueBox>
+                    <CivilClaimantFields
+                      caseId={workingCase.id}
+                      civilClaimant={civilClaimant}
+                      civilClaimantIndex={index}
+                      removeCivilClaimantById={removeCivilClaimantById}
+                    />
+                  </BlueBox>
+                </Box>
               ))}
               <Box display="flex" justifyContent="flexEnd" marginBottom={5}>
                 <Button

@@ -46,6 +46,32 @@ export const application = defineMessages({
     defaultMessage: 'Umsókn í samþykktarferli',
     description: 'History log when application is sent for review',
   },
+  historyLogApplicationApproved: {
+    id: 'aosh.tlwm.application:historyLogApplicationApproved',
+    defaultMessage: 'Umsókn staðfest',
+    description: 'History log application approved',
+  },
+  historyLogApplicationApprovedBy: {
+    id: 'aosh.tlwm.application:historyLogApplicationApprovedBy',
+    defaultMessage: 'Staðfest.',
+    description: 'History log approved by',
+  },
+  pendingActionYouNeedToReviewDescription: {
+    id: 'aosh.tlwm.application:pendingActionYouNeedToReviewDescription',
+    defaultMessage: 'Beðið er eftir þinni staðfestingu í þessari umsókn',
+    description: 'Pending action you need to review description',
+  },
+  pendingActionWhoNeedsToReviewDescription: {
+    id: 'aosh.tlwm.application:pendingActionWhoNeedsToReviewDescription',
+    defaultMessage:
+      'Beðið er eftir staðfestingu frá eftirfarandi aðilum: {value}',
+    description: 'Pending action list up who needs to review description',
+  },
+  pendingActionWaitingForReviewDescription: {
+    id: 'aosh.tlwm.application:pendingActionWaitingForReviewDescription',
+    defaultMessage: 'Umsóknin er í bið eftir staðfestingu',
+    description: 'Pending action waiting for review description',
+  },
   connectionError: {
     id: 'aosh.tlwm.application:connectionError',
     defaultMessage: 'Ekki náðist að sækja gögnin',

@@ -1,4 +1,5 @@
-import { uuid } from 'uuidv4'
+import { Transaction } from 'sequelize'
+import { v4 as uuid } from 'uuid'
 
 import {
   CaseIndictmentRulingDecision,
@@ -9,7 +10,12 @@ import {
 
 import { createTestingVerdictModule } from '../createTestingVerdictModule'
 
-import { Case, Defendant, Verdict } from '../../../repository'
+import {
+  Case,
+  Defendant,
+  Verdict,
+  VerdictRepositoryService,
+} from '../../../repository'
 import { InternalUpdateVerdictDto } from '../../dto/internalUpdateVerdict.dto'
 
 interface Then {
@@ -21,17 +27,24 @@ type GivenWhenThen = () => Promise<Then>
 
 describe('InternalVerdictController - Update verdict appeal', () => {
   const caseId = uuid()
+  const defendantId = uuid()
   const defendantNationalId = '0000000000'
   const verdictId = uuid()
 
   const verdict = {
     id: verdictId,
+    caseId,
+    defendantId,
     serviceRequirement: ServiceRequirement.REQUIRED,
     serviceDate: new Date(2025, 2, 2),
     serviceStatus: VerdictServiceStatus.ELECTRONICALLY,
   } as Verdict
 
-  const defendant = { nationalId: defendantNationalId, verdict } as Defendant
+  const defendant = {
+    id: defendantId,
+    nationalId: defendantNationalId,
+    verdicts: [verdict],
+  } as Defendant
 
   const theCase = {
     id: caseId,
@@ -45,15 +58,21 @@ describe('InternalVerdictController - Update verdict appeal', () => {
   } as InternalUpdateVerdictDto
 
   const now = new Date(2025, 2, 10)
-  let mockVerdictModel: typeof Verdict
-
+  let mockVerdictRepositoryService: VerdictRepositoryService
+  let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { internalVerdictController, verdictModel } =
+    const { sequelize, internalVerdictController, verdictRepositoryService } =
       await createTestingVerdictModule()
 
-    mockVerdictModel = verdictModel
+    mockVerdictRepositoryService = verdictRepositoryService
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     givenWhenThen = async (): Promise<Then> => {
       const then = {} as Then
@@ -82,20 +101,20 @@ describe('InternalVerdictController - Update verdict appeal', () => {
     beforeEach(async () => {
       jest.spyOn(Date, 'now').mockImplementation(() => now.getTime())
 
-      const mockFind = mockVerdictModel.findOne as jest.Mock
-      mockFind.mockResolvedValueOnce([1, [verdict]])
-
-      const mockUpdate = mockVerdictModel.update as jest.Mock
-      mockUpdate.mockResolvedValueOnce([1, [updatedVerdict]])
+      const mockUpdate = mockVerdictRepositoryService.update as jest.Mock
+      mockUpdate.mockResolvedValueOnce(updatedVerdict)
 
       then = await givenWhenThen()
     })
 
     it('should update the verdict', () => {
-      expect(mockVerdictModel.update).toHaveBeenCalledWith(dto, {
-        where: { id: verdictId },
-        returning: true,
-      })
+      expect(mockVerdictRepositoryService.update).toHaveBeenCalledWith(
+        caseId,
+        defendantId,
+        verdictId,
+        dto,
+        { transaction },
+      )
       expect(then.result).toBe(updatedVerdict)
     })
   })

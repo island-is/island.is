@@ -32,4 +32,10 @@ export class VerdictsInput {
 
   @Field(() => String, { nullable: true })
   dateTo?: string
+
+  @Field(() => String, { nullable: true })
+  caseContact?: string
+
+  @Field(() => Int, { nullable: true })
+  pageSize?: number // If this number is higher than the default, the default will be used
 }

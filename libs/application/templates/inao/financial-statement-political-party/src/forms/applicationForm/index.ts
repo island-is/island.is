@@ -1,7 +1,7 @@
 import { buildForm } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../../components/Logo'
+import { InaoLogo } from '@island.is/application/assets/institution-logos'
 import { clientInfoSection } from './clientInfoSection'
 import { keyNumbersSection } from './keyNumbersSection'
 import { financialStatementSection } from './financialStatementSection'
@@ -13,7 +13,7 @@ export const FinancialStatementPoliticalPartyForm: Form = buildForm({
   title: m.applicationTitle,
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  logo: Logo,
+  logo: InaoLogo,
   children: [
     clientInfoSection,
     keyNumbersSection,

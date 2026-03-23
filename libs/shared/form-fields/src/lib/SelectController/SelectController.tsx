@@ -5,6 +5,7 @@ import {
   SelectProps,
   Option,
   InputBackgroundColor,
+  Input,
 } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MultiValue, SingleValue } from 'react-select'
@@ -34,6 +35,15 @@ interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   internalKey?: string
   filterConfig?: SelectProps<Value, IsMulti>['filterConfig']
   clearOnChange?: string[]
+  clearOnChangeDefaultValue?:
+    | string
+    | string[]
+    | boolean
+    | boolean[]
+    | number
+    | number[]
+    | undefined
+  readOnly?: boolean
   setOnChange?:
     | { key: string; value: any }[]
     | ((
@@ -63,7 +73,9 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
   internalKey,
   filterConfig,
   clearOnChange,
+  clearOnChangeDefaultValue,
   setOnChange,
+  readOnly,
 }: SelectControllerProps<Value, IsMulti> & TestSupport) => {
   const { clearErrors, setValue, getValues } = useFormContext()
 
@@ -118,72 +130,107 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
     return foundOption
   }
 
+  if (readOnly) {
+    return (
+      <Controller
+        {...(defaultValue !== undefined && { defaultValue })}
+        name={name}
+        rules={rules}
+        render={() => {
+          return (
+            <Input
+              id={id}
+              name={name}
+              disabled={disabled}
+              readOnly={true}
+              label={label}
+              backgroundColor={backgroundColor}
+              data-testid={dataTestId}
+              hasError={error !== undefined}
+              errorMessage={error}
+              required={required}
+              defaultValue={
+                typeof defaultValue === 'string' ? defaultValue : undefined
+              }
+            />
+          )
+        }}
+      />
+    )
+  }
+
   return (
     <Controller
       {...(defaultValue !== undefined && { defaultValue })}
       name={name}
       rules={rules}
-      render={({ field: { onChange, value } }) => (
-        <Select
-          key={internalKey}
-          required={required}
-          backgroundColor={backgroundColor}
-          hasError={error !== undefined}
-          isDisabled={disabled}
-          id={id}
-          errorMessage={error}
-          name={name}
-          options={options}
-          label={label}
-          dataTestId={dataTestId}
-          placeholder={placeholder}
-          value={getValue(value)}
-          isSearchable={isSearchable}
-          filterConfig={filterConfig}
-          isMulti={isMulti}
-          isClearable={isClearable}
-          isLoading={isLoading}
-          size={size}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          onChange={async (newVal) => {
-            clearErrors(id)
+      render={({ field: { onChange, value } }) => {
+        return (
+          <Select
+            key={internalKey}
+            required={required}
+            backgroundColor={backgroundColor}
+            hasError={error !== undefined}
+            isDisabled={disabled}
+            id={id}
+            errorMessage={error}
+            name={name}
+            options={options}
+            label={label}
+            dataTestId={dataTestId}
+            placeholder={placeholder}
+            value={getValue(value)}
+            isSearchable={isSearchable}
+            filterConfig={filterConfig}
+            isMulti={isMulti}
+            isClearable={isClearable}
+            isLoading={isLoading}
+            size={size}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            onChange={async (newVal) => {
+              clearErrors(id)
 
-            if (isMultiValue(newVal)) {
-              onChange(newVal.map((v) => v.value))
-            } else {
-              onChange(newVal?.value)
-            }
+              if (isMultiValue(newVal)) {
+                onChange(newVal.map((v) => v.value))
+              } else {
+                onChange(newVal?.value)
+              }
 
-            if (onSelect && newVal) {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              onSelect(newVal, onChange)
-            }
+              if (onSelect && newVal) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                onSelect(newVal, onChange)
+              }
 
-            if (clearOnChange) {
-              clearInputsOnChange(clearOnChange, setValue)
-            }
+              if (clearOnChange) {
+                clearInputsOnChange(
+                  clearOnChange,
+                  setValue,
+                  clearOnChangeDefaultValue,
+                )
+              }
 
-            if (isClearable && newVal === null) {
-              clearInputsOnChange([id], setValue)
-            }
+              if (isClearable && newVal === null) {
+                clearInputsOnChange([id], setValue)
+              }
 
-            if (setOnChange) {
-              setInputsOnChange(
-                typeof setOnChange === 'function'
-                  ? await setOnChange(
-                      isMultiValue(newVal)
-                        ? newVal?.map((v) => v.value)
-                        : newVal?.value,
-                    )
-                  : setOnChange,
-                setValue,
-              )
-            }
-          }}
-        />
-      )}
+              if (setOnChange) {
+                setInputsOnChange(
+                  typeof setOnChange === 'function'
+                    ? await setOnChange(
+                        isMultiValue(newVal)
+                          ? newVal?.map((v) => v.value)
+                          : newVal?.value,
+                      )
+                    : setOnChange,
+                  setValue,
+                )
+              }
+            }}
+          />
+        )
+      }}
     />
   )
 }

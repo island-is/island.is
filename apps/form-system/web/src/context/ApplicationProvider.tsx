@@ -1,6 +1,4 @@
-import { useMutation } from '@apollo/client'
 import { FormSystemApplication } from '@island.is/api/schema'
-import { UPDATE_APPLICATION_DEPENDENCIES } from '@island.is/form-system/graphql'
 import { Action, ApplicationState } from '@island.is/form-system/ui'
 import { useNamespaces } from '@island.is/localization'
 import {
@@ -50,7 +48,7 @@ export const ApplicationProvider: React.FC<{
     },
     initialReducer,
   )
-  const methods = useForm({ mode: 'onBlur' })
+  const methods = useForm({ mode: 'onBlur', shouldUnregister: true })
   const contextValue = useMemo(() => ({ state, dispatch }), [state])
 
   useEffect(() => {
@@ -58,23 +56,6 @@ export const ApplicationProvider: React.FC<{
       console.log('Application state changed:', state)
     }
   }, [state])
-
-  const [updateDependencies] = useMutation(UPDATE_APPLICATION_DEPENDENCIES)
-
-  useEffect(() => {
-    if (state.application.dependencies) {
-      updateDependencies({
-        variables: {
-          input: {
-            id: state.application.id,
-            updateApplicationDto: {
-              dependencies: state.application.dependencies,
-            },
-          },
-        },
-      })
-    }
-  }, [state.application.dependencies, state.application.id, updateDependencies])
 
   return (
     <ApplicationContext.Provider value={contextValue}>

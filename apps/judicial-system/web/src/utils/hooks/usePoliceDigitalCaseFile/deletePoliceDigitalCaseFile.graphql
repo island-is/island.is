@@ -1,0 +1,7 @@
+mutation DeletePoliceDigitalCaseFile(
+  $input: DeletePoliceDigitalCaseFileInput!
+) {
+  deletePoliceDigitalCaseFile(input: $input) {
+    success
+  }
+}

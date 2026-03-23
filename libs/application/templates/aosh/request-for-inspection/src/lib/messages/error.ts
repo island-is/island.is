@@ -43,4 +43,29 @@ export const error = defineMessages({
     defaultMessage: 'Villa kom upp við að skila inn umsókn',
     description: 'Failed to submit application',
   },
+  nameRequired: {
+    id: 'aosh.rifm.application:error.nameRequired',
+    defaultMessage: 'Nafn er skilyrði',
+    description: 'Name is required error',
+  },
+  emailRequired: {
+    id: 'aosh.rifm.application:error.emailRequired',
+    defaultMessage: 'Netfang er skilyrði',
+    description: 'Email is required error',
+  },
+  phoneNumberRequired: {
+    id: 'aosh.rifm.application:error.phoneNumberRequired',
+    defaultMessage: 'Símanúmer er skilyrði',
+    description: 'Phone number is required error',
+  },
+  invalidEmail: {
+    id: 'aosh.rifm.application:error.invalidEmail',
+    defaultMessage: 'Netfang er ógilt',
+    description: 'Invalid email error',
+  },
+  invalidPhoneNumber: {
+    id: 'aosh.rifm.application:error.invalidPhoneNumber',
+    defaultMessage: 'Símanúmer er ógilt',
+    description: 'Invalid phone number error',
+  },
 })

@@ -49,7 +49,7 @@ export const Image: FC<Props> = ({
           textAlign="center"
           height="full"
         >
-          <LoadingDots large />
+          <LoadingDots size="large" />
         </Box>
       ) : (
         <img

@@ -1,41 +1,16 @@
-import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { OperatorInformation, UserInformation } from '../shared'
+import { getReviewers } from './getReviewers'
 
-// Function to check if an application has pending approval
-export const applicationHasPendingApproval = (
+const applicationHasPendingApproval = (
   answers: FormValue,
   excludeNationalId?: string,
 ): boolean => {
-  // Check if any co-owners have not approved
-  const coOwners = getValueViaPath(
-    answers,
-    'ownerCoOwner',
-    [],
-  ) as UserInformation[]
-  if (
-    coOwners.some(
-      ({ nationalId, approved }) =>
-        (!excludeNationalId || nationalId !== excludeNationalId) && !approved,
-    )
-  ) {
-    return true
-  }
+  const reviewers = getReviewers(answers)
 
-  // Check if any new operators have not approved
-  const newOperators = (
-    getValueViaPath(answers, 'operators', []) as OperatorInformation[]
-  ).filter(({ wasRemoved }) => wasRemoved !== 'true')
-  if (
-    newOperators.some(
-      ({ nationalId, approved }) =>
-        (!excludeNationalId || nationalId !== excludeNationalId) && !approved,
-    )
-  ) {
-    return true
-  }
-
-  return false
+  return reviewers.some(
+    ({ nationalId, hasApproved }) =>
+      nationalId !== excludeNationalId && !hasApproved,
+  )
 }
 
 // Function to check if the current reviewer is the last one who needs to approve

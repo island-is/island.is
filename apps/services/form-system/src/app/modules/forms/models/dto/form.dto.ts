@@ -42,6 +42,18 @@ export class FormDto {
   modified!: Date
 
   @ApiProperty()
+  zendeskInternal!: boolean
+
+  @ApiProperty()
+  useValidate!: boolean
+
+  @ApiProperty()
+  usePopulate!: boolean
+
+  @ApiProperty()
+  submissionServiceUrl!: string
+
+  @ApiProperty()
   hasPayment!: boolean
 
   @ApiProperty()
@@ -51,7 +63,10 @@ export class FormDto {
   isTranslated!: boolean
 
   @ApiProperty()
-  applicationDaysToRemove!: number
+  draftDaysToLive!: number
+
+  @ApiProperty()
+  submissionDaysToLive!: number
 
   @ApiProperty()
   derivedFrom!: string
@@ -65,9 +80,6 @@ export class FormDto {
   @ApiProperty()
   hasSummaryScreen!: boolean
 
-  @ApiPropertyOptional()
-  isZendeskEnabled?: boolean
-
   @ApiProperty({ type: CompletedSectionInfo })
   completedSectionInfo!: CompletedSectionInfo
 
@@ -76,9 +88,6 @@ export class FormDto {
 
   @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
   certificationTypes?: FormCertificationTypeDto[]
-
-  @ApiPropertyOptional({ type: [String] })
-  urls?: string[]
 
   @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]

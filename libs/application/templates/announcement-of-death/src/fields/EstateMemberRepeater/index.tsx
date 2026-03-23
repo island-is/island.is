@@ -34,12 +34,18 @@ import { getValueViaPath, hasYes } from '@island.is/application/core'
 export const EstateMemberRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
 > = ({ application, field, errors }) => {
-  const error = (errors as any)?.estateMembers?.members
+  const error = (errors as Record<string, any>)?.estateMembers?.members
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
     estate: EstateRegistrant
   }
   const { setValue } = useFormContext()
+
+  // Watch the flag that tracks if we've already added the applicant
+  const applicantAddedFlag = useWatch({
+    name: 'estateMembers.applicantAdded',
+    defaultValue: false,
+  })
 
   const relations =
     externalData.relationOptions.map((relation) => ({
@@ -62,7 +68,47 @@ export const EstateMemberRepeater: FC<
       append(getValueViaPath(externalData, 'estate.estateMembers'))
       setValue('estateMembers.encountered', true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    // Add currently logged in user if they don't exist in the array
+    // Only runs if the applicantAddedFlag is false (meaning we haven't tried to add them yet)
+    // and only if the checkbox is checked (addApplicantToEstateMembers contains YES)
+    const shouldAddApplicant = hasYes(
+      application.answers.addApplicantToEstateMembers as string[],
+    )
+
+    if (
+      fields.length > 0 &&
+      application.applicant &&
+      !applicantAddedFlag &&
+      shouldAddApplicant
+    ) {
+      const applicantExists = fields.some(
+        (member: EstateMemberField) =>
+          member.nationalId === application.applicant,
+      )
+
+      if (!applicantExists) {
+        const nationalRegistryData = application.externalData?.nationalRegistry
+          ?.data as { fullName?: string } | undefined
+
+        append({
+          nationalId: application.applicant,
+          initial: false,
+          name: nationalRegistryData?.fullName || '',
+          relation: (application.answers.applicantRelation as string) || '',
+        })
+      }
+    }
+    // Set the flag to true so we never try to add them again
+    // This persists even if they remove themselves from the list
+    if (fields.length > 0 && application.applicant && !applicantAddedFlag) {
+      setValue('estateMembers.applicantAdded', true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fields.length, applicantAddedFlag])
 
   const handleAddMember = () =>
     append({
@@ -112,18 +158,27 @@ export const EstateMemberRepeater: FC<
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((member: EstateMemberField, index) => (
-        <Box key={member.id} hidden={member.initial || member?.dummy}>
-          <Item
-            field={member}
-            fieldName={`${id}.members`}
-            index={index}
-            relationOptions={relations}
-            remove={remove}
-            error={error && error[index] ? error[index] : null}
-          />
-        </Box>
-      ))}
+      {fields.map((member: EstateMemberField, index) => {
+        const hidden = member.initial || member?.dummy
+
+        // ^ Do we need to hide initial and dummy members rather than just not rendering them?
+        // if (member.initial || member?.dummy) {
+        //   return null
+        // }
+
+        return (
+          <Box key={member.id} hidden={hidden}>
+            <Item
+              field={member}
+              fieldName={`${id}.members`}
+              index={index}
+              relationOptions={relations}
+              remove={remove}
+              error={error && error[index] ? error[index] : null}
+            />
+          </Box>
+        )
+      })}
       <Box marginTop={1}>
         <Button
           variant="text"
@@ -152,7 +207,7 @@ const Item = ({
   remove: (index?: number | number[] | undefined) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
-  error: any
+  error: Record<string, any> | null
 }) => {
   const { formatMessage } = useLocale()
   const fieldIndex = `${fieldName}[${index}]`

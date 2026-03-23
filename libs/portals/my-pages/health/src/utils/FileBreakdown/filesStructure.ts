@@ -29,7 +29,7 @@ import {
   RightsPortalPaymentOverviewBill,
 } from '@island.is/api/schema'
 import { totalNumber } from '../format'
-import { RightsPortalCalculatorSelectedDrug } from '../../screens/MedicineCalculator/MedicineCalculator'
+import { RightsPortalCalculatorSelectedDrug } from '../types'
 
 type FileTypes = 'xlsx' | 'csv'
 

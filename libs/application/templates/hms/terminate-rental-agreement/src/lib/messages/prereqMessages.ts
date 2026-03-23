@@ -8,13 +8,13 @@ export const prereqMessages = defineMessages({
   },
   housingBenefitsTitle: {
     id: 'tra.application:prereq.housingBenefitsTitle',
-    defaultMessage: 'Húsnæðis og mannvirkjastofnun',
+    defaultMessage: 'HMS',
     description: 'Housing benefits title',
   },
   housingBenefitsDescription: {
     id: 'tra.application:prereq.housingBenefitsDescription',
     defaultMessage:
-      'Allir gildandi leigusamningar skráðir hjá Húsnæðis og mannvirkjastofnun sem þú ert aðili að',
+      'Allir gildandi leigusamningar skráðir hjá HMS sem þú ert aðili að',
     description: 'Housing benefits description',
   },
   userProfileTitle: {
@@ -48,5 +48,10 @@ export const prereqMessages = defineMessages({
     id: 'tra.application:prereq.subTitle',
     defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt.',
     description: 'External information retrieval subtitle',
+  },
+  companyRegistryTitle: {
+    id: 'tra.application:prereq.companyRegistryTitle',
+    defaultMessage: 'Fyrirtækjaskrá',
+    description: 'Company registry title',
   },
 })

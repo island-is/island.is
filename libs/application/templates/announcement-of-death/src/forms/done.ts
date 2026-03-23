@@ -8,7 +8,7 @@ import {
   buildImageField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import CoatOfArms from '../assets/CoatOfArms'
+import { CoatOfArms } from '@island.is/application/assets/institution-logos'
 import { m } from '../lib/messages'
 import {
   files,
@@ -19,7 +19,7 @@ import {
   theAnnouncer,
   theDeceased,
 } from './overviewSections'
-import AOD from '../assets/AOD'
+import { GhostOnABench } from '@island.is/application/assets/graphics'
 
 export const done: Form = buildForm({
   id: 'done',
@@ -43,7 +43,7 @@ export const done: Form = buildForm({
             }),
             buildImageField({
               id: 'viewOverview',
-              image: AOD,
+              image: GhostOnABench,
               imagePosition: 'center',
               condition: (answers) =>
                 getValueViaPath(answers, 'viewOverview') !== true,

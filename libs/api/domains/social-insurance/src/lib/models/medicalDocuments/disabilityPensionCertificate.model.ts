@@ -1,10 +1,9 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql'
 import { Doctor } from './doctor.model'
 import { DisabilityDiagnosisCollection } from './disabilityDiagnosisCollection.model'
-import { HealthImpact } from './healthImpact.model'
-import { AbilityRating } from './abilityRating.model'
-import { Impairment } from './impairment.model'
-import { EnvironmentalFactor } from './environmentalFactor.model'
+import { ImpairmentRating } from './impairmentRating.model'
+import { MedicationAndSupportsUsed } from './medicationAndSupportsUsed.model'
+import { StabilityOfHealth } from './stabilityOfHealth.model'
 
 @ObjectType('SocialInsuranceMedicalDocumentsDisabilityPensionCertificate')
 export class DisabilityPensionCertificate {
@@ -15,12 +14,6 @@ export class DisabilityPensionCertificate {
   doctor?: Doctor
 
   @Field({ nullable: true, description: 'ISO8601 formatted date' })
-  lastInspectionDate?: string
-
-  @Field({ nullable: true, description: 'ISO8601 formatted date' })
-  certificateDate?: string
-
-  @Field({ nullable: true, description: 'ISO8601 formatted date' })
   dateOfWorkIncapacity?: string
 
   @Field(() => DisabilityDiagnosisCollection, { nullable: true })
@@ -29,33 +22,27 @@ export class DisabilityPensionCertificate {
   @Field({ nullable: true })
   healthHistorySummary?: string
 
-  @Field(() => HealthImpact, { nullable: true })
-  healthImpact?: HealthImpact
+  @Field({ nullable: true })
+  participationLimitationCause?: string
 
-  @Field(() => Int, { nullable: true })
-  participationLimitationCause?: number
-
-  @Field(() => Int, { nullable: true })
-  abilityChangePotential?: number
+  @Field(() => StabilityOfHealth, { nullable: true })
+  stabilityOfHealth?: StabilityOfHealth
 
   @Field({ nullable: true })
-  medicationAndSupports?: string
+  abilityChangePotential?: string
+
+  @Field(() => MedicationAndSupportsUsed, { nullable: true })
+  medicationAndSupportsUsed?: MedicationAndSupportsUsed
+
+  @Field(() => Int, { nullable: true })
+  capacityForWork?: number
 
   @Field({ nullable: true })
-  assessmentToolsUsed?: string
+  previousRehabilitation?: string
 
-  @Field(() => [AbilityRating], { nullable: true })
-  physicalAbilityRatings?: AbilityRating[]
+  @Field(() => [ImpairmentRating], { nullable: true })
+  physicalImpairments?: ImpairmentRating[]
 
-  @Field(() => [AbilityRating], { nullable: true })
-  cognitiveAndMentalAbilityRatings?: AbilityRating[]
-
-  @Field(() => [AbilityRating], { nullable: true })
-  functionalAssessment?: AbilityRating[]
-
-  @Field(() => [Impairment], { nullable: true })
-  impairments?: Impairment[]
-
-  @Field(() => [EnvironmentalFactor], { nullable: true })
-  environmentalFactors?: EnvironmentalFactor[]
+  @Field(() => [ImpairmentRating], { nullable: true })
+  mentalImpairments?: ImpairmentRating[]
 }

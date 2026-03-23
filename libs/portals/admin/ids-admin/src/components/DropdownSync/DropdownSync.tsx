@@ -75,7 +75,7 @@ export const DropdownSync = <Intent,>({
                     padding={2}
                   >
                     {isLoading ? (
-                      <LoadingDots large />
+                      <LoadingDots size="large" />
                     ) : (
                       <button
                         className={styles.syncButton}

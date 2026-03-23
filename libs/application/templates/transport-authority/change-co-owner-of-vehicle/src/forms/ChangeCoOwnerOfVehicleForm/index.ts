@@ -8,11 +8,11 @@ import { conclusion } from '../../lib/messages'
 import { externalDataSection } from './externalDataSection'
 import { informationSection } from './InformationSection'
 import { paymentSection } from './paymentSection'
-import { Logo } from '../../assets/Logo'
+import { TransportAuthorityLogo } from '@island.is/application/assets/institution-logos'
 
 export const ChangeCoOwnerOfVehicleForm: Form = buildForm({
   id: 'ChangeCoOwnerOfVehicleFormDraft',
-  logo: Logo,
+  logo: TransportAuthorityLogo,
   mode: FormModes.DRAFT,
   children: [
     externalDataSection,

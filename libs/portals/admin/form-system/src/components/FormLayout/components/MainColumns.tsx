@@ -6,15 +6,17 @@ import {
 } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import { Box, DialogPrompt } from '@island.is/island-ui/core'
+import cn from 'classnames'
 import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { ControlContext } from '../../../context/ControlContext'
 import { MainContent } from '../../MainContent/MainContent'
 import { DeleteButton } from './DeleteButton'
+import * as styles from './MainColumn.css'
 
 export const MainContentColumn = () => {
   const { control, controlDispatch, inSettings } = useContext(ControlContext)
-  const { activeItem, form } = control
+  const { activeItem, form, isPublished } = control
   const { screens, fields } = form
   const { type } = activeItem
   const { formatMessage } = useIntl()
@@ -78,14 +80,8 @@ export const MainContentColumn = () => {
   }
 
   return (
-    <Box
-      style={{
-        maxWidth: '1200px',
-        width: '100%',
-        marginLeft: 0,
-      }}
-    >
-      {!inSettings && !partiesSection ? (
+    <Box className={cn(styles.mainColumn)} padding={2}>
+      {!isPublished && !inSettings && !partiesSection ? (
         containsGroupOrInput() ? (
           <DialogPrompt
             baseId="remove"
@@ -108,13 +104,9 @@ export const MainContentColumn = () => {
       ) : null}
 
       <Box
-        border="standard"
-        borderRadius="standard"
         width="full"
         style={{
           minHeight: '500px',
-          overflow: 'auto',
-          maxHeight: '70vh',
         }}
       >
         <MainContent />

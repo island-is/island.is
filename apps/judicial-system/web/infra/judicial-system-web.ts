@@ -24,12 +24,12 @@ export const serviceSetup = (services: {
     .readiness({ path: '/readiness', timeoutSeconds: 10 })
     .resources({
       limits: {
-        cpu: '200m',
-        memory: '256Mi',
+        cpu: '400m',
+        memory: '512Mi',
       },
       requests: {
-        cpu: '15m',
-        memory: '128Mi',
+        cpu: '100m',
+        memory: '256Mi',
       },
     })
     .ingress({

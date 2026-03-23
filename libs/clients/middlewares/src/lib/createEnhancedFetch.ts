@@ -12,7 +12,7 @@ import {
 
 import { buildFetch } from './buildFetch'
 import { FetchAPI as NodeFetchAPI } from './nodeFetch'
-import { EnhancedFetchAPI } from './types'
+import { EnhancedFetchAPI, AuthSource } from './types'
 import { AgentOptions, ClientCertificateOptions, withAgent } from './withAgent'
 import { withAuth } from './withAuth'
 import { AutoAuthOptions, withAutoAuth } from './withAutoAuth'
@@ -99,6 +99,11 @@ export interface EnhancedFetchOptions {
    * The client used to send metrics.
    */
   metricsClient?: DogStatsD
+
+  /**
+   * Should the auth be taken from the context or the request. defaults to 'request'.
+   */
+  authSource?: AuthSource
 }
 
 /**
@@ -152,12 +157,13 @@ export const createEnhancedFetch = (
     cache,
     metricsClient = new DogStatsD({ prefix: `${options.name}.` }),
     organizationSlug,
+    authSource = 'request',
   } = options
   const freeSocketTimeout =
     typeof keepAlive === 'number'
       ? keepAlive
       : AGENT_DEFAULT_FREE_SOCKET_TIMEOUT
-  const builder = buildFetch(fetch)
+  const builder = buildFetch(fetch, authSource)
 
   builder.wrap(withAgent, {
     clientCertificate,

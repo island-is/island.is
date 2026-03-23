@@ -7,6 +7,7 @@ import { GetPaymentFlowQuery } from '../graphql/queries.graphql.generated'
 import { PaymentError } from '../utils/error/error'
 import { useCardPayment } from './useCardPayment'
 import { useInvoicePayment } from './useInvoicePayment'
+import { useApplePay } from './useApplePay'
 
 interface UsePaymentOrchestrationProps {
   paymentFlow: GetPaymentFlowQuery['paymentsGetFlow'] | null
@@ -14,11 +15,13 @@ interface UsePaymentOrchestrationProps {
     amount: number
     title: string
   }
+  isApplePayPaymentEnabledForUser: boolean
 }
 
 export const usePaymentOrchestration = ({
   paymentFlow,
   productInformation,
+  isApplePayPaymentEnabledForUser,
 }: UsePaymentOrchestrationProps) => {
   const router = useRouter()
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
@@ -31,13 +34,22 @@ export const usePaymentOrchestration = ({
   const [isThreeDSecureModalActive, setIsThreeDSecureModalActive] =
     useState(false)
 
-  const commonOnPaymentSuccess = useCallback(() => {
-    if (paymentFlow?.redirectToReturnUrlOnSuccess && paymentFlow?.returnUrl) {
-      window.location.assign(paymentFlow.returnUrl)
-    } else {
-      router.reload()
-    }
-  }, [paymentFlow, router])
+  const commonOnPaymentSuccess = useCallback(
+    (paymentMethod: 'card' | 'invoice') => {
+      // For invoice payments, always reload to show the "invoice created" screen
+      if (paymentMethod === 'invoice') {
+        router.reload()
+        return
+      }
+
+      if (paymentFlow?.redirectToReturnUrlOnSuccess && paymentFlow?.returnUrl) {
+        window.location.assign(paymentFlow.returnUrl)
+      } else {
+        router.reload()
+      }
+    },
+    [paymentFlow, router],
+  )
 
   const commonOnPaymentError = useCallback((error: PaymentError) => {
     setPaymentError(error)
@@ -46,7 +58,6 @@ export const usePaymentOrchestration = ({
 
   const cardPayment = useCardPayment({
     paymentFlow,
-    productInformation,
     onPaymentSuccess: commonOnPaymentSuccess,
     onPaymentError: commonOnPaymentError,
     setThreeDSecureModalActive: setIsThreeDSecureModalActive,
@@ -54,6 +65,14 @@ export const usePaymentOrchestration = ({
 
   const invoicePayment = useInvoicePayment({
     paymentFlowId: paymentFlow?.id,
+    onPaymentSuccess: commonOnPaymentSuccess,
+    onPaymentError: commonOnPaymentError,
+  })
+
+  const applePayPayment = useApplePay({
+    isEnabledForUser: isApplePayPaymentEnabledForUser,
+    paymentFlow,
+    productInformation,
     onPaymentSuccess: commonOnPaymentSuccess,
     onPaymentError: commonOnPaymentError,
   })
@@ -123,11 +142,12 @@ export const usePaymentOrchestration = ({
     paymentError,
     setPaymentError, // Expose to allow clearing error from page if needed (e.g. error display component has a dismiss)
     handleFormSubmit,
-
     isThreeDSecureModalActive,
     threeDSecureDataForModal: cardPayment.threeDSecureDataForModal,
     handleVerificationCancelledByModal:
       cardPayment.handleVerificationCancelledByModal,
     verificationStatusLoading: cardPayment.verificationStatusLoading,
+    supportsApplePay: applePayPayment.supportsApplePay ?? false,
+    initiateApplePay: applePayPayment.initiateApplePay,
   }
 }

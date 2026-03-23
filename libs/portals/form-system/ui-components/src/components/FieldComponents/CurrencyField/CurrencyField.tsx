@@ -4,9 +4,9 @@ import {
   Input,
   GridRow as Row,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useIntl } from 'react-intl'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { m } from '../../../lib/messages'
@@ -14,21 +14,22 @@ import { m } from '../../../lib/messages'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  valueIndex?: number
 }
 
-export const CurrencyField = ({ item, dispatch }: Props) => {
-  const label = item?.name?.is
+export const CurrencyField = ({ item, dispatch, valueIndex = 0 }: Props) => {
+  const { formatMessage, lang } = useLocale()
+  const label = item?.name?.[lang]
   const { control } = useFormContext()
-  const { formatMessage } = useIntl()
 
   return (
     <Row marginTop={2}>
       <Column span="10/10">
         <Controller
-          key={item.id}
-          name={item.id}
+          key={`${item.id}-${valueIndex}`}
+          name={`${item.id}.${valueIndex}`}
           control={control}
-          defaultValue={getValue(item, 'iskNumber') ?? ''}
+          defaultValue={getValue(item, 'iskNumber', valueIndex) ?? ''}
           rules={{
             required: {
               value: item?.isRequired ?? false,
@@ -59,6 +60,7 @@ export const CurrencyField = ({ item, dispatch }: Props) => {
                     payload: {
                       value: formattedValue,
                       id: item.id,
+                      valueIndex,
                     },
                   })
                 }

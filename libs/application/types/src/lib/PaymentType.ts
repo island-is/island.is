@@ -7,4 +7,5 @@ export interface PaymentType {
   definition: object
   amount: number
   expires_at: Date
+  request_id?: string
 }

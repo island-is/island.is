@@ -38,13 +38,9 @@ export const PreSignatureInfoSection = buildSection({
             m.misc.email,
           ],
           rows: (application) => {
-            const { landlords, tenants } = applicationAnswers(
-              application.answers,
-            )
+            const { signingParties } = applicationAnswers(application.answers)
 
-            const signees = [...(landlords ?? []), ...(tenants ?? [])]
-
-            return signees.map((person) => [
+            return signingParties.map((person) => [
               person.nationalIdWithName.name ?? '',
               formatNationalId(person.nationalIdWithName.nationalId || '') ??
                 '',

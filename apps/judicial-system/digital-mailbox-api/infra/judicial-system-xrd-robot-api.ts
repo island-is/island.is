@@ -7,6 +7,16 @@ export const serviceSetup = (services: {
     .namespace('judicial-system')
     .serviceAccount('judicial-system-digital-mailbox-api')
     .image('judicial-system-digital-mailbox-api')
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '30m',
+        memory: '256Mi',
+      },
+    })
     .env({
       BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false',

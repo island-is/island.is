@@ -3,6 +3,7 @@ import { CaseTable, pickColumns } from '../caseTableTypes'
 
 const publicProsecutionOfficeIndictmentsNewColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
+  'rulingDate',
   'defendants',
   'rulingType',
   'indictmentAppealDeadline',
@@ -81,4 +82,30 @@ export const publicProsecutionOfficeIndictmentsAppealed: CaseTable = {
   hasMyCasesFilter: false,
   columnKeys: publicProsecutionOfficeIndictmentsAppealedColumnKeys,
   columns: pickColumns(publicProsecutionOfficeIndictmentsAppealedColumnKeys),
+}
+
+const publicProsecutionAcquittedIndictmentsColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'indictmentReviewer',
+  'indictmentReviewDecision',
+]
+
+export const publicProsecutionOfficeAcquittedIndictments: CaseTable = {
+  title: 'Sýknudómar',
+  hasMyCasesFilter: false,
+  columnKeys: publicProsecutionAcquittedIndictmentsColumnKeys,
+  columns: pickColumns(publicProsecutionAcquittedIndictmentsColumnKeys),
+}
+
+const publicProsecutionOfficeIndictmentsRequestedAppealColumnKeys: CaseTableColumnKey[] =
+  ['caseNumber', 'defendants', 'indictmentReviewer', 'indictmentReviewDecision']
+
+export const publicProsecutionOfficeIndictmentsRequestedAppeal: CaseTable = {
+  title: 'Áfrýjunarleyfi',
+  hasMyCasesFilter: false,
+  columnKeys: publicProsecutionOfficeIndictmentsRequestedAppealColumnKeys,
+  columns: pickColumns(
+    publicProsecutionOfficeIndictmentsRequestedAppealColumnKeys,
+  ),
 }

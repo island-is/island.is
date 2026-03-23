@@ -25,10 +25,34 @@
       },
       "outputs": ["{options.outputPath}"]
     },
-    "worker": {
+    "grant-import": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "services-cms-importer:build"
+        "buildTarget": "services-cms-importer:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/cms-importer"
+        },
+        "args": ["--job", "grant-import"]
+      }
+    },
+    "fsre-buildings-import": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-cms-importer:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/cms-importer"
+        },
+        "args": ["--job", "fsre-buildings-import"]
+      }
+    },
+    "energy-fund-import": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-cms-importer:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/cms-importer"
+        },
+        "args": ["--job", "energy-fund-import"]
       }
     },
     "lint": {

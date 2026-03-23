@@ -15,6 +15,9 @@ const {
   APP_VERSION,
   ENVIRONMENT,
   CONFIGCAT_SDK_KEY,
+  MATOMO_SITE_ID,
+  MATOMO_DOMAIN,
+  MATOMO_ENABLED,
 } = process.env
 
 /**
@@ -137,6 +140,29 @@ const nextConfig = {
       },
     ]
   },
+  async headers() {
+    return [
+      {
+        source:
+          '/.well-known/apple-developer-merchantid-domain-association.txt',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/plain',
+          },
+        ],
+      },
+      {
+        source: '/.well-known/apple-developer-merchantid-domain-association',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/plain',
+          },
+        ],
+      },
+    ]
+  },
   webpack: (config, { isServer, dev }) => {
     if (process.env.ANALYZE === 'true' && !isServer) {
       config.plugins.push(
@@ -212,6 +238,9 @@ const nextConfig = {
     appVersion: APP_VERSION,
     environment: ENVIRONMENT,
     configCatSdkKey: CONFIGCAT_SDK_KEY,
+    matomoSiteId: MATOMO_SITE_ID,
+    matomoDomain: MATOMO_DOMAIN,
+    isMatomoEnabled: MATOMO_ENABLED === 'true',
   },
 
   env: {

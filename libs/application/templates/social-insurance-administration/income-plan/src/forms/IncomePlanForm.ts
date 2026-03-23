@@ -10,7 +10,7 @@ import {
   buildSubmitField,
   buildTableRepeaterField,
 } from '@island.is/application/core'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import {
   DIVIDENDS_IN_FOREIGN_BANKS,
   FOREIGN_BASIC_PENSION,
@@ -46,7 +46,7 @@ import { incomePlanFormMessage } from '../lib/messages'
 export const IncomePlanForm: Form = buildForm({
   id: 'IncomePlanDraft',
   title: incomePlanFormMessage.pre.formTitle,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

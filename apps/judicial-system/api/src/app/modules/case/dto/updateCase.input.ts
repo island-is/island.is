@@ -25,7 +25,6 @@ import {
   CaseLegalProvisions,
   CaseType,
   CourtSessionType,
-  IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
@@ -489,11 +488,6 @@ export class UpdateCaseInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => IndictmentCaseReviewDecision, { nullable: true })
-  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
-
-  @Allow()
-  @IsOptional()
   @Field(() => IndictmentDecision, { nullable: true })
   readonly indictmentDecision?: IndictmentDecision
 
@@ -530,10 +524,10 @@ export class UpdateCaseInput {
   @Allow()
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
-  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
+  readonly isRegisteredInPrisonSystem?: boolean
 
   @Allow()
   @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  readonly isRegisteredInPrisonSystem?: boolean
+  @Field(() => String, { nullable: true })
+  readonly penalties?: string
 }

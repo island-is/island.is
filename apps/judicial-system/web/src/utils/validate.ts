@@ -60,7 +60,7 @@ const getRegexByValidation = (validation: Validation) => {
       }
     case 'national-id':
       return {
-        regex: /^\d{6}(-?\d{4})?$/,
+        regex: /^\d{6}-?\d{4}$/,
         errorMessage: 'Dæmi: 000000-0000',
       }
     case 'date-of-birth':
@@ -232,7 +232,8 @@ export const isDefendantStepValidIC = (workingCase: Case): boolean => {
 
 export const isDefendantStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
-    workingCase.policeCaseNumbers &&
+    workingCase.prosecutor &&
+      workingCase.policeCaseNumbers &&
       workingCase.policeCaseNumbers.length > 0 &&
       !workingCase.policeCaseNumbers.some(
         (n) =>
@@ -546,6 +547,7 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
       return (
         defendant.defenderChoice === DefenderChoice.WAIVE ||
         defendant.defenderChoice === DefenderChoice.DELAY ||
+        defendant.defenderChoice === DefenderChoice.DELEGATE ||
         !defendant.defenderChoice ||
         validate([
           [defendant.defenderName, ['empty']],
@@ -582,25 +584,25 @@ export const isCourtSessionValid = (courtSession: CourtSessionResponse) => {
   )
 }
 
-export const isIndictmentCourtRecordStepValid = (
-  courtSessions?: CourtSessionResponse[] | null,
-) => {
-  if (!Array.isArray(courtSessions) || courtSessions.length === 0) {
-    return false
-  }
-
-  return courtSessions.every(isCourtSessionValid)
+export const isGeneratedIndictmentCourtRecordValid = (workingCase: Case) => {
+  return Boolean(
+    workingCase.courtSessions &&
+      workingCase.courtSessions.length > 0 &&
+      workingCase.courtSessions.every((session) => session.isConfirmed),
+  )
 }
+
+export const isNoGeneratedIndictmentCourtRecord = (workingCase: Case) =>
+  Boolean(!workingCase.courtSessions || workingCase.courtSessions.length === 0)
 
 const isIndictmentRulingDecisionValid = (workingCase: Case) => {
   const isCourtRecordValid = () =>
     Boolean(
-      (workingCase.courtSessions &&
-        workingCase.courtSessions.length > 0 &&
-        workingCase.courtSessions.every((session) => session.endDate)) ||
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.COURT_RECORD,
-        ),
+      workingCase.withCourtSessions
+        ? isGeneratedIndictmentCourtRecordValid(workingCase)
+        : workingCase.caseFiles?.some(
+            (file) => file.category === CaseFileCategory.COURT_RECORD,
+          ),
     )
 
   switch (workingCase.indictmentRulingDecision) {
@@ -617,6 +619,15 @@ const isIndictmentRulingDecisionValid = (workingCase: Case) => {
     case CaseIndictmentRulingDecision.FINE:
     case CaseIndictmentRulingDecision.CANCELLATION:
       return isCourtRecordValid()
+    case CaseIndictmentRulingDecision.MERGE:
+      return Boolean(
+        (isNoGeneratedIndictmentCourtRecord(workingCase) ||
+          isCourtRecordValid()) &&
+          (workingCase.mergeCase?.id ||
+            validate([
+              [workingCase.mergeCaseNumber, ['empty', 'S-case-number']],
+            ]).isValid),
+      )
     default:
       return false
   }
@@ -696,3 +707,6 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
     [workingCase.appealCaseNumber, ['empty', 'appeal-case-number-format']],
   ]).isValid
 }
+
+export const isNullOrUndefined = <T>(value?: T) =>
+  value === undefined || value === null

@@ -41,10 +41,25 @@ mutation VerifyPkPass($input: VerifyPkPassInput!) {
 mutation VerifyLicenseBarcode($input: VerifyLicenseBarcodeInput!) {
   verifyLicenseBarcode(input: $input) {
     data {
+      __typename
       ... on LicenseDriverLicenseData {
         nationalId
         name
         picture
+      }
+      ... on LicenseFirearmLicenseData {
+        nationalId
+        name
+        picture
+      }
+      ... on LicenseHuntingLicenseData {
+        nationalId
+        name
+        picture
+      }
+      ... on LicenseGeneralLicenseData {
+        nationalId
+        name
       }
     }
     valid

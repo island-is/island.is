@@ -10,7 +10,6 @@ import {
   ClusterOptions,
   Redis,
 } from 'ioredis'
-import { DEFAULT_CLUSTER_OPTIONS } from 'ioredis/built/cluster/ClusterOptions'
 
 import { logger } from '@island.is/logging'
 import Keyv from 'keyv'
@@ -145,7 +144,9 @@ export const createCache = (options: Options) =>
 export const createRedisApolloCache = (options: Options) => {
   return new KeyvAdapter(
     new Keyv({
-      store: new KeyvRedis(createRedisCluster(options) as any),
+      store: new KeyvRedis(createRedisCluster(options) as any, {
+        useRedisSets: false,
+      }),
     }) as any,
     {
       disableBatchReads: true,

@@ -11,4 +11,5 @@ export interface VehicleDetails {
   validationErrorMessages?: ValidationErrorMessage[]
   requireMileage?: boolean
   mileageReading: string
+  vehicleHasMilesOdometer?: boolean
 }

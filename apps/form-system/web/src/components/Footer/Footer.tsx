@@ -1,8 +1,11 @@
 import { useMutation } from '@apollo/client'
 import {
+  NOTIFY_EXTERNAL_SERVICE,
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
   SUBMIT_SECTION,
+  UPDATE_APPLICATION_SETTINGS,
+  removeTypename,
 } from '@island.is/form-system/graphql'
 import { SectionTypes, m } from '@island.is/form-system/ui'
 import { Box, Button, GridColumn } from '@island.is/island-ui/core'
@@ -10,6 +13,7 @@ import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import * as styles from './Footer.css'
+import { NotificationCommands } from '@island.is/form-system/enums'
 
 interface Props {
   externalDataAgreement: boolean
@@ -24,6 +28,11 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)
+  const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
+  const [notifyExternal, { loading: notifyLoading }] = useMutation(
+    NOTIFY_EXTERNAL_SERVICE,
+  )
+
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,
     {
@@ -59,13 +68,25 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const enableContinueButton =
     state.currentSection.index === 0 ? externalDataAgreement : true
 
+  const hasVisibleApplicantBeforeCurrentScreen = (): boolean => {
+    const screens = currentSection?.data?.screens
+    const currentIndex = state.currentScreen?.index
+    if (!Array.isArray(screens) || currentIndex == null) return false
+    for (let i = Number(currentIndex) - 1; i >= 0; i--) {
+      const screen = screens[i]
+      if (screen && screen.isHidden === false) {
+        return true
+      }
+    }
+    return false
+  }
+
   const showBackButton =
-    !isCompletedSection &&
-    !(
-      currentSectionType === SectionTypes.PARTIES &&
-      Number(state.currentScreen?.index) === 0
-    ) &&
-    currentSectionType !== SectionTypes.PREMISES
+    (currentSectionType !== SectionTypes.COMPLETED &&
+      currentSectionType !== SectionTypes.PREMISES &&
+      currentSectionType !== SectionTypes.PARTIES) ||
+    (currentSectionType === SectionTypes.PARTIES &&
+      hasVisibleApplicantBeforeCurrentScreen())
 
   const handleIncrement = async () => {
     const isValid = await validate()
@@ -77,34 +98,107 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       return
     }
 
+    if (state.currentScreen?.isPopulateError) {
+      return
+    }
+
+    if (
+      !onSubmit &&
+      state.currentScreen?.data?.shouldValidate &&
+      state.application.submissionServiceUrl !== 'zendesk'
+    ) {
+      try {
+        const { data } = await notifyExternal({
+          variables: {
+            input: {
+              applicationId: state.application.id,
+              nationalId: '',
+              slug: state.application.slug,
+              isTest: state.application.isTest,
+              command: NotificationCommands.VALIDATE,
+              screen: state.currentScreen.data,
+            },
+          },
+        })
+
+        const updatedScreen = removeTypename(
+          data?.notifyFormSystemExternalSystem?.screen,
+        )
+
+        if (updatedScreen?.screenError?.hasError) {
+          dispatch({
+            type: 'EXTERNAL_SERVICE_NOTIFICATION',
+            payload: {
+              screen: updatedScreen,
+            },
+          })
+          return
+        }
+      } catch (error) {
+        console.error('Error notifying external service:', error)
+        return
+      }
+    }
+
     if (!onSubmit) {
       dispatch({
         type: 'INCREMENT',
         payload: {
           submitScreen: submitScreen,
           submitSection: submitSection,
+          updateDependencies: updateDependencies,
         },
       })
       return
     }
     try {
-      await submitApplication({
+      const { data } = await submitApplication({
         variables: { input: { id: state.application.id } },
       })
+      if (data?.submitFormSystemApplication?.submissionFailed) {
+        dispatch({
+          type: 'SUBMITTED',
+          payload: {
+            submitted: false,
+            screenError: data?.submitFormSystemApplication?.validationError,
+          },
+        })
+        return
+      }
       dispatch({
         type: 'INCREMENT',
         payload: {
           submitScreen: submitScreen,
           submitSection: submitSection,
+          updateDependencies: updateDependencies,
         },
       })
-      dispatch({ type: 'SUBMITTED', payload: true })
-    } catch {
-      dispatch({ type: 'SUBMITTED', payload: false })
+      dispatch({
+        type: 'SUBMITTED',
+        payload: {
+          submitted: true,
+          screenError: {
+            hasError: false,
+            title: { is: '', en: '' },
+            message: { is: '', en: '' },
+          },
+        },
+      })
+    } catch (error) {
+      console.error('Error submitting application', error)
+      throw new Error('Error submitting application')
     }
   }
 
-  const handleDecrement = () => dispatch({ type: 'DECREMENT' })
+  const handleDecrement = () =>
+    dispatch({
+      type: 'DECREMENT',
+      payload: {
+        submitScreen: submitScreen,
+        submitSection: submitSection,
+        updateDependencies: updateDependencies,
+      },
+    })
 
   return (
     <Box marginTop={7} className={styles.buttonContainer}>
@@ -120,24 +214,27 @@ export const Footer = ({ externalDataAgreement }: Props) => {
           paddingTop={[1, 4]}
         >
           <Box display="inlineFlex" padding={2} paddingRight="none">
-            {/* {isCompletedSection && ( */}
             <Button
               icon="arrowForward"
               onClick={handleIncrement}
-              disabled={!enableContinueButton || submitLoading}
-              loading={submitLoading}
+              disabled={
+                !enableContinueButton ||
+                submitLoading ||
+                notifyLoading ||
+                state.currentScreen?.isPopulateError
+              }
+              loading={submitLoading || notifyLoading}
             >
               {continueButtonText}
             </Button>
-            {/* )} */}
           </Box>
           {showBackButton && (
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button
-                icon="arrowBack"
+                preTextIcon="arrowBack"
                 variant="ghost"
                 onClick={handleDecrement}
-                disabled={submitLoading}
+                disabled={submitLoading || notifyLoading}
               >
                 {formatMessage(m.back)}
               </Button>

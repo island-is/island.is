@@ -10,6 +10,8 @@ export type Locale = 'en-US' | 'is-IS' | 'en-IS' | 'is-US'
 export type ThemeMode = 'dark' | 'light' | 'efficient'
 export type AppearanceMode = ThemeMode | 'automatic'
 
+export const PREFERENCES_KEY = 'preferences_04'
+
 export interface PreferencesStore extends State {
   dev__useLockScreen: boolean
   hasOnboardedPinCode: boolean
@@ -32,6 +34,7 @@ export interface PreferencesStore extends State {
   notificationsAppUpdates: boolean
   notificationsApplicationStatusUpdates: boolean
   dismissed: string[]
+  walletPassDismissedInfoAlerts: Record<string, boolean>
   useBiometrics: boolean
   locale: Locale
   appearanceMode: AppearanceMode
@@ -41,6 +44,7 @@ export interface PreferencesStore extends State {
   setAppearanceMode(appearanceMode: AppearanceMode): void
   setUseBiometrics(useBiometrics: boolean): void
   dismiss(key: string, value?: boolean): void
+  setWalletPassInfoAlertDismissed(key: string): void
   reset(): void
 }
 
@@ -71,6 +75,7 @@ const defaultPreferences = {
   notificationsAppUpdates: true,
   notificationsApplicationStatusUpdates: true,
   dismissed: [] as string[],
+  walletPassDismissedInfoAlerts: {} as Record<string, boolean>,
   appLockTimeout: 5000,
   pinTries: 0,
 }
@@ -100,12 +105,21 @@ export const preferencesStore = create<PreferencesStore>(
           set({ dismissed: [...now.filter((k) => k !== key)] })
         }
       },
+      setWalletPassInfoAlertDismissed(key: string) {
+        const current = { ...get().walletPassDismissedInfoAlerts }
+        if (current[key]) {
+          return
+        }
+
+        current[key] = true
+        set({ walletPassDismissedInfoAlerts: current })
+      },
       reset() {
         set(defaultPreferences as PreferencesStore)
       },
     }),
     {
-      name: 'preferences_04',
+      name: PREFERENCES_KEY,
       getStorage: () => AsyncStorage,
       onRehydrateStorage: () => (state, err) => {
         if (state) {

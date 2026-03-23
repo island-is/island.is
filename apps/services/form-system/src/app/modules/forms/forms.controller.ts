@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Post,
@@ -12,7 +11,6 @@ import {
 import {
   ApiBody,
   ApiCreatedResponse,
-  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -21,7 +19,10 @@ import {
 import { FormsService } from './forms.service'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
-import { UpdateFormResponse } from '@island.is/form-system/shared'
+import {
+  UpdateFormResponse,
+  UpdateFormStatusDto,
+} from '@island.is/form-system/shared'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -74,8 +75,41 @@ export class FormsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<FormResponseDto> {
-    return await this.formsService.findOne(id)
+  async findOne(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<FormResponseDto> {
+    return await this.formsService.findOne(user, id)
+  }
+
+  @ApiOperation({ summary: 'Update form status' })
+  @ApiOkResponse({
+    type: FormResponseDto,
+    description: 'Update form status',
+  })
+  @ApiBody({ type: UpdateFormStatusDto })
+  @ApiParam({ name: 'id', type: String })
+  @Put('updateStatus/:id')
+  async updateStatus(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+    @Body() updateFormStatusDto: UpdateFormStatusDto,
+  ): Promise<FormResponseDto> {
+    return await this.formsService.updateStatus(user, id, updateFormStatusDto)
+  }
+
+  @ApiOperation({ summary: 'Copy form' })
+  @ApiOkResponse({
+    type: FormResponseDto,
+    description: 'Copy form',
+  })
+  @ApiParam({ name: 'id', type: String })
+  @Put('copy/:id')
+  async copy(
+    @CurrentUser() user: User,
+    @Param('id') id: string,
+  ): Promise<FormResponseDto> {
+    return await this.formsService.copy(user, id)
   }
 
   @ApiOperation({ summary: 'Update form' })
@@ -87,40 +121,10 @@ export class FormsController {
   @ApiParam({ name: 'id', type: String })
   @Put(':id')
   async updateForm(
+    @CurrentUser() user: User,
     @Param('id') id: string,
     @Body() updateFormDto: UpdateFormDto,
   ): Promise<UpdateFormResponse> {
-    return await this.formsService.update(id, updateFormDto)
-  }
-
-  @ApiOperation({ summary: 'Change published form' })
-  @ApiOkResponse({
-    type: FormResponseDto,
-    description: 'Change published form',
-  })
-  @ApiParam({ name: 'id', type: String })
-  @Put('changePublished/:id')
-  async changePublishedForm(@Param('id') id: string): Promise<FormResponseDto> {
-    return await this.formsService.changePublished(id)
-  }
-
-  @ApiOperation({ summary: 'Publish form' })
-  @ApiNoContentResponse({
-    description: 'Publish form',
-  })
-  @ApiParam({ name: 'id', type: String })
-  @Put('publish/:id')
-  async publish(@Param('id') id: string): Promise<void> {
-    return await this.formsService.publish(id)
-  }
-
-  @ApiOperation({ summary: 'Delete form' })
-  @ApiNoContentResponse({
-    description: 'Delete form',
-  })
-  @ApiParam({ name: 'id', type: String })
-  @Delete(':id')
-  async delete(@Param('id') id: string): Promise<void> {
-    return await this.formsService.delete(id)
+    return await this.formsService.update(user, id, updateFormDto)
   }
 }

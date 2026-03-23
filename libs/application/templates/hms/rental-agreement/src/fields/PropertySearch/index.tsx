@@ -363,7 +363,7 @@ export const PropertySearch = ({ field, errors }: Props) => {
         >
           {propertySearchLoading ? (
             <div style={{ textAlign: 'center' }}>
-              <LoadingDots large />
+              <LoadingDots size="large" />
             </div>
           ) : (
             propertiesByAddressCode &&

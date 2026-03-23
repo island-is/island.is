@@ -32,13 +32,17 @@ export const AdvertPreview = ({ application }: LGFieldBaseProps) => {
       }
       publicationDate={format(new Date(firstPublicationDate), 'dd.MM.yyyy')}
       title={application.answers.application.caption}
-      signatureDate={format(
-        new Date(application.answers.signature.date),
-        'dd. MMMM yyyy.',
-        {
-          locale: is,
-        },
-      )}
+      signatureDate={
+        application.answers.signature.date
+          ? format(
+              new Date(application.answers.signature.date),
+              'dd. MMMM yyyy.',
+              {
+                locale: is,
+              },
+            )
+          : undefined
+      }
       signatureLocation={application.answers.signature.location}
       signatureName={application.answers.signature.name}
       html={Buffer.from(

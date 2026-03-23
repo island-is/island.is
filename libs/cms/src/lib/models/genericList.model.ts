@@ -14,6 +14,15 @@ registerEnumType(GenericListItemType, {
   name: 'GenericListItemType',
 })
 
+enum TextSearchOrder {
+  Default = 'Default',
+  Score = 'Score',
+}
+
+registerEnumType(TextSearchOrder, {
+  name: 'GenericListTextSearchOrder',
+})
+
 @ObjectType()
 export class GenericList {
   @Field(() => ID)
@@ -36,6 +45,9 @@ export class GenericList {
 
   @Field(() => Boolean, { nullable: true })
   alphabeticallyOrderFilterTags?: boolean
+
+  @CacheField(() => TextSearchOrder, { nullable: true })
+  textSearchOrder?: TextSearchOrder
 }
 
 const mapItemType = (itemType?: IGenericListFields['itemType']) =>
@@ -56,6 +68,18 @@ const mapOrderBy = (orderBy?: IGenericListFields['orderBy']) => {
   return undefined
 }
 
+const mapTextSearchOrder = (
+  textSearchOrder?: IGenericListFields['textSearchOrder'],
+): TextSearchOrder => {
+  if (textSearchOrder === TextSearchOrder.Default) {
+    return TextSearchOrder.Default
+  }
+  if (textSearchOrder === TextSearchOrder.Score) {
+    return TextSearchOrder.Score
+  }
+  return TextSearchOrder.Default
+}
+
 export const mapGenericList = ({
   fields,
   sys,
@@ -68,4 +92,5 @@ export const mapGenericList = ({
   defaultOrder: mapOrderBy(fields.orderBy),
   showSearchInput: fields.showSearchInput ?? true,
   alphabeticallyOrderFilterTags: fields.alphabeticallyOrderFilterTags ?? false,
+  textSearchOrder: mapTextSearchOrder(fields.textSearchOrder),
 })

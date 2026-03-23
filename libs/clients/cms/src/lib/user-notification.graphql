@@ -6,7 +6,10 @@ query GetTemplateByTemplateId($templateId: String!, $locale: String!) {
       externalBody: notificationBody
       internalBody: notificationDataCopy
       clickActionUrl
+      scope
       args
+      smsPayer
+      smsDelivery
     }
   }
 }
@@ -19,7 +22,10 @@ query GetTemplates($locale: String!) {
       externalBody: notificationBody
       internalBody: notificationDataCopy
       clickActionUrl
+      scope
       args
+      smsPayer
+      smsDelivery
     }
   }
 }

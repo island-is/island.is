@@ -11,20 +11,26 @@ export const HistorySection: FC<
   React.PropsWithChildren<{
     theme?: types.FormStepperThemes
     section: string
+    subjectAndActor?: string
     sectionIndex: number
     isComplete?: boolean
     isLast?: boolean
     date?: string
     description?: React.ReactNode
+    customSection?: React.ReactNode
+    forceRightAlignedDate?: boolean
   }>
 > = ({
   theme = types.FormStepperThemes.PURPLE,
   section,
+  subjectAndActor,
   sectionIndex,
   date,
   description,
   isComplete = false,
   isLast = false,
+  customSection,
+  forceRightAlignedDate = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const { height: activeHeight } = useComponentSize(containerRef)
@@ -47,7 +53,7 @@ export const HistorySection: FC<
         width="full"
         marginBottom={isLast ? 0 : [1, 1, 3]}
       >
-        {date && (
+        {date && !forceRightAlignedDate && (
           <Hidden below="xl">
             <Box paddingTop={2} paddingRight={2} className={styles.historyDate}>
               <Text lineHeight="lg" variant="small">
@@ -67,7 +73,7 @@ export const HistorySection: FC<
         </Box>
         <Box paddingTop={2} width="full">
           {date && (
-            <Hidden above="lg">
+            <Hidden above={forceRightAlignedDate ? undefined : 'lg'}>
               <Box paddingRight={2}>
                 <Text lineHeight="lg" variant="small">
                   {date}
@@ -75,9 +81,20 @@ export const HistorySection: FC<
               </Box>
             </Hidden>
           )}
-          <Text lineHeight="lg" fontWeight="light">
-            {section}
-          </Text>
+          {customSection ? (
+            customSection
+          ) : (
+            <Box display="flex" flexDirection="column">
+              <Text lineHeight="lg" fontWeight="light">
+                {section}
+              </Text>
+              {subjectAndActor && (
+                <Text lineHeight="lg" variant="eyebrow" fontWeight="light">
+                  {subjectAndActor}
+                </Text>
+              )}
+            </Box>
+          )}
           {description && <Box paddingTop={2}>{description}</Box>}
         </Box>
       </Box>

@@ -1,5 +1,4 @@
 import { Transaction } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import {
   Inject,
@@ -7,7 +6,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -24,7 +23,6 @@ import { UpdateOffenseDto } from './dto/updateOffense.dto'
 @Injectable()
 export class IndictmentCountService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(IndictmentCount)
     private readonly indictmentCountModel: typeof IndictmentCount,
     @InjectModel(Offense) private readonly offenseModel: typeof Offense,
@@ -75,9 +73,9 @@ export class IndictmentCountService {
     caseId: string,
     indictmentCountId: string,
     update: UpdateIndictmentCountDto,
-    transaction?: Transaction,
+    transaction: Transaction,
   ): Promise<IndictmentCount> {
-    const updateWithTransaction = async (transaction: Transaction) => {
+    const updateIndictmentCount = async () => {
       const policeCaseNumberSubtypes = update.policeCaseNumberSubtypes
       const updatedSubtypes = update.indictmentCountSubtypes
       if (!policeCaseNumberSubtypes || !updatedSubtypes) {
@@ -122,16 +120,8 @@ export class IndictmentCountService {
       })
     }
 
-    const updateWithInternalTransaction = () =>
-      this.sequelize.transaction(async (transaction) =>
-        updateWithTransaction(transaction),
-      )
-
-    const promisedUpdate = transaction
-      ? updateWithTransaction(transaction)
-      : updateWithInternalTransaction()
-
-    const [numberOfAffectedRows] = await promisedUpdate
+    const [numberOfAffectedRows, updatedIndictmentCounts] =
+      await updateIndictmentCount()
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
@@ -144,54 +134,23 @@ export class IndictmentCountService {
       )
     }
 
-    const indictmentCount = await this.indictmentCountModel.findOne({
-      where: { id: indictmentCountId, caseId },
-      include: [
-        {
-          model: Offense,
-          as: 'offenses',
-          required: false,
-          order: [['created', 'ASC']],
-          separate: true,
-        },
-      ],
-      transaction,
-    })
-
-    if (!indictmentCount) {
-      throw new InternalServerErrorException(
-        `Could not find indictment count ${indictmentCountId} of case ${caseId}`,
-      )
-    }
-
-    return indictmentCount
+    return updatedIndictmentCounts[0]
   }
 
   async delete(
     caseId: string,
     indictmentCountId: string,
-    transaction?: Transaction,
+    transaction: Transaction,
   ): Promise<boolean> {
-    const deleteWithTransaction = async (transaction: Transaction) => {
-      await this.offenseModel.destroy({
-        where: { indictmentCountId },
-        transaction,
-      })
+    await this.offenseModel.destroy({
+      where: { indictmentCountId },
+      transaction,
+    })
 
-      return this.indictmentCountModel.destroy({
-        where: { id: indictmentCountId, caseId },
-        transaction,
-      })
-    }
-
-    const deleteWithInternalTransaction = () =>
-      this.sequelize.transaction(async (transaction) => {
-        return deleteWithTransaction(transaction)
-      })
-
-    const numberOfAffectedRows = transaction
-      ? await deleteWithTransaction(transaction)
-      : await deleteWithInternalTransaction()
+    const numberOfAffectedRows = await this.indictmentCountModel.destroy({
+      where: { id: indictmentCountId, caseId },
+      transaction,
+    })
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error

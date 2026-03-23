@@ -1,16 +1,8 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
-import {
-  Box,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Input,
-  Text,
-  Tooltip,
-} from '@island.is/island-ui/core'
+import { Box, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   applyDativeCaseToCourtName,
@@ -35,28 +27,29 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
+  CaseAppealDecision,
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
   formatDateForServer,
   useCase,
-  useDeb,
+  useDebouncedInput,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
 import {
   isCourtRecordStepValidIC,
+  isNullOrUndefined,
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
 import AppealSections from '../../components/AppealSections/AppealSections'
+import { populateEndOfCourtSessionBookingsIntro } from '../../shared/populateEndOfCourtSessionBookingsIntro'
 
 const getSessionBookingsAutofill = (
   formatMessage: IntlShape['formatMessage'],
@@ -95,7 +88,7 @@ const getSessionBookingsAutofill = (
 }
 
 const CourtRecord: FC = () => {
-  const { setAndSendCaseToServer, updateCase } = useCase()
+  const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const {
     workingCase,
@@ -105,17 +98,20 @@ const CourtRecord: FC = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [courtLocationEM, setCourtLocationEM] = useState<string>('')
-  const [sessionBookingsErrorMessage, setSessionBookingsMessage] =
-    useState<string>('')
-
-  useDeb(workingCase, [
-    'courtAttendees',
+  const sessionBookingValidation: Validation[] =
+    workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT
+      ? []
+      : ['empty']
+  const courtAttendeesInput = useDebouncedInput('courtAttendees', [])
+  const courtLocationInput = useDebouncedInput('courtLocation', ['empty'])
+  const sessionBookingsInput = useDebouncedInput(
     'sessionBookings',
-    'accusedAppealAnnouncement',
-    'prosecutorAppealAnnouncement',
+    sessionBookingValidation,
+  )
+  const endOfSessionBookingsInput = useDebouncedInput(
     'endOfSessionBookings',
-  ])
+    [],
+  )
 
   const hasMissingInfoInRulingStep = workingCase.isCompletedWithoutRuling
     ? !workingCase.decision
@@ -123,6 +119,7 @@ const CourtRecord: FC = () => {
 
   const initialize = useCallback(() => {
     const autofillAttendees = []
+    const endOfSessionBookings: string[] = []
 
     if (workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT) {
       autofillAttendees.push(formatMessage(core.sessionArrangementsNonePresent))
@@ -168,6 +165,7 @@ const CourtRecord: FC = () => {
         }
       }
     }
+    populateEndOfCourtSessionBookingsIntro(workingCase, endOfSessionBookings)
 
     setAndSendCaseToServer(
       [
@@ -206,6 +204,10 @@ const CourtRecord: FC = () => {
                 SessionArrangements.NONE_PRESENT
               ? formatMessage(m.sections.sessionBookings.autofillNonePresent)
               : undefined,
+          endOfSessionBookings:
+            endOfSessionBookings.length > 0
+              ? endOfSessionBookings.join('')
+              : undefined,
         },
       ],
       workingCase,
@@ -216,14 +218,57 @@ const CourtRecord: FC = () => {
   useOnceOn(isCaseUpToDate, initialize)
 
   const stepIsValid = isCourtRecordStepValidIC(workingCase)
-  const sessionBookingValidation: Validation[] =
-    workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT
-      ? []
-      : ['empty']
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
   )
+
+  const handleEndOfSessionBookingsUpdate = ({
+    accusedAppealDecision,
+    accusedAppealAnnouncement,
+    prosecutorAppealDecision,
+    prosecutorAppealAnnouncement,
+  }: {
+    accusedAppealDecision?: CaseAppealDecision
+    accusedAppealAnnouncement?: string
+    prosecutorAppealDecision?: CaseAppealDecision
+    prosecutorAppealAnnouncement?: string
+  }) => {
+    const endOfSessionBookings: string[] = []
+    const updatedCase = {
+      ...workingCase,
+      ...(!isNullOrUndefined(accusedAppealDecision)
+        ? { accusedAppealDecision }
+        : {}),
+      ...(!isNullOrUndefined(accusedAppealAnnouncement)
+        ? { accusedAppealAnnouncement }
+        : {}),
+      ...(!isNullOrUndefined(prosecutorAppealDecision)
+        ? { prosecutorAppealDecision }
+        : {}),
+      ...(!isNullOrUndefined(prosecutorAppealAnnouncement)
+        ? { prosecutorAppealAnnouncement }
+        : {}),
+    }
+    populateEndOfCourtSessionBookingsIntro(updatedCase, endOfSessionBookings)
+
+    // override existing end of session booking if there
+    // is a update for a given working case (e.g. appeal decision)
+    // that should trigger an end of session bookings default text update
+    setAndSendCaseToServer(
+      [
+        {
+          endOfSessionBookings:
+            endOfSessionBookings.length > 0
+              ? endOfSessionBookings.join('')
+              : undefined,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }
 
   return (
     <PageLayout
@@ -239,9 +284,9 @@ const CourtRecord: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(m.sections.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={3}>
-          <BlueBox>
-            <Box marginBottom={3}>
+        <div className={grid({ gap: 5, marginBottom: 10 })}>
+          <Box component="section">
+            <BlueBox className={grid({ gap: 2 })}>
               <DateTime
                 name="courtStartDate"
                 datepickerLabel={formatMessage(
@@ -267,43 +312,27 @@ const CourtRecord: FC = () => {
                 blueBox={false}
                 required
               />
-            </Box>
-            <Input
-              data-testid="courtLocation"
-              name="courtLocation"
-              tooltip={formatMessage(m.sections.courtLocation.tooltip)}
-              label={formatMessage(m.sections.courtLocation.label)}
-              value={workingCase.courtLocation || ''}
-              placeholder={formatMessage(m.sections.courtLocation.placeholder)}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'courtLocation',
-                  event.target.value,
-                  ['empty'],
-                  setWorkingCase,
-                  courtLocationEM,
-                  setCourtLocationEM,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'courtLocation',
-                  event.target.value,
-                  ['empty'],
-                  workingCase,
-                  updateCase,
-                  setCourtLocationEM,
-                )
-              }
-              errorMessage={courtLocationEM}
-              hasError={courtLocationEM !== ''}
-              autoComplete="off"
-              required
-            />
-          </BlueBox>
-        </Box>
-        <Box component="section" marginBottom={8}>
-          <Box marginBottom={3}>
+              <Input
+                data-testid="courtLocation"
+                name="courtLocation"
+                tooltip={formatMessage(m.sections.courtLocation.tooltip)}
+                label={formatMessage(m.sections.courtLocation.label)}
+                value={courtLocationInput.value || ''}
+                placeholder={formatMessage(
+                  m.sections.courtLocation.placeholder,
+                )}
+                onChange={(evt) =>
+                  courtLocationInput.onChange(evt.target.value)
+                }
+                onBlur={(evt) => courtLocationInput.onBlur(evt.target.value)}
+                errorMessage={courtLocationInput.errorMessage}
+                hasError={courtLocationInput.hasError}
+                autoComplete="off"
+                required
+              />
+            </BlueBox>
+          </Box>
+          <Box component="section">
             <HideableText
               text={formatMessage(closedCourt.text)}
               isHidden={workingCase.isClosedCourtHidden}
@@ -322,189 +351,128 @@ const CourtRecord: FC = () => {
               tooltip={formatMessage(closedCourt.tooltip)}
             />
           </Box>
-          <Input
-            data-testid="courtAttendees"
-            name="courtAttendees"
-            label="Mættir eru"
-            value={workingCase.courtAttendees || ''}
-            placeholder="Skrifa hér..."
-            onChange={(event) =>
-              removeTabsValidateAndSet(
-                'courtAttendees',
-                event.target.value,
-                [],
-                setWorkingCase,
-              )
-            }
-            onBlur={(event) =>
-              updateCase(workingCase.id, { courtAttendees: event.target.value })
-            }
-            textarea
-            rows={7}
-            autoExpand={{ on: true, maxHeight: 300 }}
-          />
-        </Box>
-        <Box component="section" marginBottom={8}>
-          <CourtDocuments
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
-        </Box>
-        <Box component="section" marginBottom={8}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.sessionBookings.title)} `}
-              <Tooltip
-                text={formatMessage(m.sections.sessionBookings.tooltip)}
-              />
-            </Text>
+          <Box component="section">
+            <Input
+              data-testid="courtAttendees"
+              name="courtAttendees"
+              label="Mættir eru"
+              placeholder="Skrifa hér..."
+              value={courtAttendeesInput.value ?? ''}
+              onChange={(evt) => courtAttendeesInput.onChange(evt.target.value)}
+              textarea
+              rows={7}
+            />
           </Box>
-          <Box marginBottom={3}>
+          <Box component="section">
+            <CourtDocuments
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+            />
+          </Box>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(m.sections.sessionBookings.title)}
+              tooltip={formatMessage(m.sections.sessionBookings.tooltip)}
+            />
             <Input
               data-testid="sessionBookings"
               name="sessionBookings"
               label={formatMessage(m.sections.sessionBookings.label)}
-              value={workingCase.sessionBookings || ''}
+              value={sessionBookingsInput.value ?? ''}
               placeholder={formatMessage(
                 m.sections.sessionBookings.placeholder,
               )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'sessionBookings',
-                  event.target.value,
-                  sessionBookingValidation,
-                  setWorkingCase,
-                  sessionBookingsErrorMessage,
-                  setSessionBookingsMessage,
-                )
+              onChange={(evt) =>
+                sessionBookingsInput.onChange(evt.target.value)
               }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'sessionBookings',
-                  event.target.value,
-                  sessionBookingValidation,
-                  workingCase,
-                  updateCase,
-                  setSessionBookingsMessage,
-                )
-              }
-              errorMessage={sessionBookingsErrorMessage}
-              hasError={sessionBookingsErrorMessage !== ''}
+              onBlur={(evt) => sessionBookingsInput.onBlur(evt.target.value)}
+              errorMessage={sessionBookingsInput.errorMessage}
+              hasError={sessionBookingsInput.hasError}
               textarea
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               required={sessionBookingValidation.length > 0}
             />
           </Box>
-        </Box>
-        {workingCase.conclusion && (
-          <Box component="section" marginBottom={8}>
-            <Box marginBottom={2}>
-              <Text as="h3" variant="h3">
-                {formatMessage(m.sections.conclusion)}
-              </Text>
+          {workingCase.conclusion && (
+            <Box component="section">
+              <SectionHeading title={formatMessage(m.sections.conclusion)} />
+              <BlueBox>
+                <Text>{workingCase.conclusion}</Text>
+              </BlueBox>
             </Box>
-            <BlueBox>
-              <Text>{workingCase.conclusion}</Text>
-            </BlueBox>
+          )}
+          <Box component="section">
+            <AppealSections
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+              onChange={handleEndOfSessionBookingsUpdate}
+            />
           </Box>
-        )}
-        <Box component="section" marginBottom={8}>
-          <AppealSections
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-          />
-        </Box>
-        <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.endOfSessionBookings.title)}
-            </Text>
-          </Box>
-          <Box marginBottom={5}>
+          <Box component="section">
+            <SectionHeading
+              title={formatMessage(m.sections.endOfSessionBookings.title)}
+            />
             <Input
               data-testid="endOfSessionBookings"
               name="endOfSessionBookings"
               label={formatMessage(m.sections.endOfSessionBookings.label)}
-              value={workingCase.endOfSessionBookings || ''}
+              value={endOfSessionBookingsInput.value || ''}
               placeholder={formatMessage(
                 m.sections.endOfSessionBookings.placeholder,
               )}
-              onChange={(event) =>
-                removeTabsValidateAndSet(
-                  'endOfSessionBookings',
-                  event.target.value,
-                  [],
-                  setWorkingCase,
-                )
-              }
-              onBlur={(event) =>
-                validateAndSendToServer(
-                  'endOfSessionBookings',
-                  event.target.value,
-                  [],
-                  workingCase,
-                  updateCase,
-                )
+              onChange={(evt) =>
+                endOfSessionBookingsInput.onChange(evt.target.value)
               }
               rows={16}
-              autoExpand={{ on: true, maxHeight: 600 }}
               textarea
             />
           </Box>
-        </Box>
-        <Box marginBottom={5}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h3">
-              {formatMessage(m.sections.endOfSessionTitle)}
-            </Text>
+          <Box>
+            <SectionHeading
+              title={formatMessage(m.sections.endOfSessionTitle)}
+            />
+            <BlueBox>
+              <DateTime
+                name="courtEndTime"
+                datepickerLabel={formatMessage(
+                  m.sections.courtEndTime.dateLabel,
+                )}
+                timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
+                minDate={
+                  workingCase.courtStartDate
+                    ? new Date(workingCase.courtStartDate)
+                    : undefined
+                }
+                maxDate={new Date()}
+                selectedDate={workingCase.courtEndTime}
+                onChange={(date: Date | undefined, valid: boolean) => {
+                  if (date && valid) {
+                    setAndSendCaseToServer(
+                      [
+                        {
+                          courtEndTime: formatDateForServer(date),
+                          force: true,
+                        },
+                      ],
+                      workingCase,
+                      setWorkingCase,
+                    )
+                  }
+                }}
+                blueBox={false}
+                required
+              />
+            </BlueBox>
           </Box>
-          <BlueBox>
-            <GridContainer>
-              <GridRow>
-                <GridColumn>
-                  <DateTime
-                    name="courtEndTime"
-                    datepickerLabel={formatMessage(
-                      m.sections.courtEndTime.dateLabel,
-                    )}
-                    timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
-                    minDate={
-                      workingCase.courtStartDate
-                        ? new Date(workingCase.courtStartDate)
-                        : undefined
-                    }
-                    maxDate={new Date()}
-                    selectedDate={workingCase.courtEndTime}
-                    onChange={(date: Date | undefined, valid: boolean) => {
-                      if (date && valid) {
-                        setAndSendCaseToServer(
-                          [
-                            {
-                              courtEndTime: formatDateForServer(date),
-                              force: true,
-                            },
-                          ],
-                          workingCase,
-                          setWorkingCase,
-                        )
-                      }
-                    }}
-                    blueBox={false}
-                    required
-                  />
-                </GridColumn>
-              </GridRow>
-            </GridContainer>
-          </BlueBox>
-        </Box>
-        <Box marginBottom={10}>
-          <PdfButton
-            caseId={workingCase.id}
-            title={formatMessage(core.pdfButtonRulingShortVersion)}
-            pdfType="courtRecord"
-          />
-        </Box>
+          <Box>
+            <PdfButton
+              caseId={workingCase.id}
+              title={formatMessage(core.pdfButtonRulingShortVersion)}
+              pdfType="courtRecord"
+              elementId={formatMessage(core.pdfButtonRulingShortVersion)}
+            />
+          </Box>
+        </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

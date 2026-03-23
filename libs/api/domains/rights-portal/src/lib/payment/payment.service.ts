@@ -18,6 +18,9 @@ import { PaymentOverviewServiceType } from './models/paymentOverviewServiceType.
 import { PaymentOverview } from './models/paymentOverview.model'
 import { PaymentOverviewInput } from './dto/paymentOverview.input'
 import { CopaymentPeriodInput } from './dto/copaymentPeriod.input'
+import { PaymentOverviewTotals } from './models/paymentOverviewTotals.model'
+import { PaymentOverviewTotalsServiceType } from './models/paymentOverviewTotalsServiceType.model'
+import { PaymentOverviewTotalsItem } from './models/paymentOverviewTotalsItem.model'
 
 export type PaymentResponse<T> = {
   items: T[]
@@ -153,6 +156,97 @@ export class PaymentService {
 
       return {
         items: [data],
+        errors: [],
+      }
+    } catch (error) {
+      return {
+        items: [],
+        errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
+      }
+    }
+  }
+
+  async getPaymentOverviewTotalsServiceTypes(
+    user: User,
+  ): Promise<PaymentResponse<PaymentOverviewTotalsServiceType>> {
+    try {
+      const data = await this.overviewApi
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getPaymentsOverviewTotalsServiceTypes()
+        .catch(handle404)
+
+      return {
+        items:
+          data
+            ?.filter(
+              (st) =>
+                typeof st.code === 'string' &&
+                st.code.length > 0 &&
+                typeof st.name === 'string' &&
+                st.name.length > 0,
+            )
+            .map((st) => ({
+              code: st.code as string,
+              name: st.name as string,
+            })) ?? [],
+        errors: [],
+      }
+    } catch (error) {
+      return {
+        items: [],
+        errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
+      }
+    }
+  }
+
+  async getPaymentOverviewTotals(
+    user: User,
+    input: PaymentOverviewInput,
+  ): Promise<PaymentResponse<PaymentOverviewTotals>> {
+    try {
+      const api = this.overviewApi.withMiddleware(
+        new AuthMiddleware(user as Auth),
+      )
+      const [totalsData, serviceTypesData] = await Promise.all([
+        api.getPaymentsOverviewTotals(input).catch(handle404),
+        api.getPaymentsOverviewTotalsServiceTypes().catch(() => null),
+      ])
+
+      if (!totalsData) {
+        return {
+          items: [],
+          errors: [],
+        }
+      }
+
+      const nameByCode =
+        serviceTypesData?.reduce<Record<string, string>>((acc, curr) => {
+          if (curr.code != null && curr.name != null) {
+            acc[curr.code] = curr.name
+          }
+          return acc
+        }, {}) ?? {}
+
+      const items =
+        totalsData.items?.map<PaymentOverviewTotalsItem>((item) => ({
+          serviceTypeCode: item.serviceTypeCode ?? undefined,
+          serviceTypeName:
+            (item.serviceTypeCode && nameByCode[item.serviceTypeCode]) ??
+            undefined,
+          fullCost: item.fullCost ?? undefined,
+          copayCost: item.copayCost ?? undefined,
+          patientCost: item.patientCost ?? undefined,
+        })) ?? undefined
+
+      return {
+        items: [
+          {
+            items,
+            totalFullCost: totalsData.totalFullCost ?? undefined,
+            totalPatientCost: totalsData.totalPatientCost ?? undefined,
+            totalCopayCost: totalsData.totalCopayCost ?? undefined,
+          },
+        ],
         errors: [],
       }
     } catch (error) {

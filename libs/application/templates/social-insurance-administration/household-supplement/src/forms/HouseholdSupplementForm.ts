@@ -15,7 +15,7 @@ import {
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { SocialInsuranceAdministrationLogo } from '@island.is/application/assets/institution-logos'
 import {
   fileUploadSharedProps,
   maritalStatuses,
@@ -47,7 +47,7 @@ import { householdSupplementFormMessage } from '../lib/messages'
 export const HouseholdSupplementForm: Form = buildForm({
   id: 'HouseholdSupplementDraft',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
-  logo: Logo,
+  logo: SocialInsuranceAdministrationLogo,
   mode: FormModes.DRAFT,
   children: [
     buildSection({

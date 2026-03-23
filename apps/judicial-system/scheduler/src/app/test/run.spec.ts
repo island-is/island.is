@@ -39,7 +39,7 @@ describe('AppService - Run', () => {
       mockMessageService = messageService
 
       const mockSendMessagesToQueue =
-        mockMessageService.sendMessagesToQueue as jest.Mock
+        mockMessageService.addMessagesToQueue as jest.Mock
       mockSendMessagesToQueue.mockRejectedValue(new Error('Some error'))
 
       const then = {} as Then
@@ -75,7 +75,8 @@ describe('AppService - Run', () => {
       // fetch for archive cases 3x
       // fetch for resetting lawyer-registry 1x
       // fetch for post daily hearing 1x
-      expect(fetch).toHaveBeenCalledTimes(5)
+      // fetch for delivering service certificates to police 1x
+      expect(fetch).toHaveBeenCalledTimes(6)
       expect(fetch).toHaveBeenCalledWith(
         `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
         {
@@ -101,6 +102,18 @@ describe('AppService - Run', () => {
       )
       expect(fetch).toHaveBeenCalledWith(
         `${appModuleConfig().backendUrl}/api/lawyer-registry/reset`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${appModuleConfig().backendAccessToken}`,
+          },
+        },
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        `${
+          appModuleConfig().backendUrl
+        }/api/internal/verdict/deliverVerdictServiceCertificates`,
         {
           method: 'POST',
           headers: {
@@ -192,7 +205,7 @@ describe('AppService - Run', () => {
     })
 
     it('should send waiting for confirmation notification to the message queue', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      expect(mockMessageService.addMessagesToQueue).toHaveBeenCalledWith([
         {
           type: 'NOTIFICATION_DISPATCH',
           body: { type: 'INDICTMENTS_WAITING_FOR_CONFIRMATION' },

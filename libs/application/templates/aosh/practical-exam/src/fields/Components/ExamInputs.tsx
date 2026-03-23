@@ -437,7 +437,7 @@ export const ExamInputs: FC<
           justifyContent={'center'}
           marginY={2}
         >
-          <LoadingDots large />
+          <LoadingDots size="large" />
         </Box>
       )}
       <FileUpload

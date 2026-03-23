@@ -17,7 +17,7 @@ export const ExemptionForTransportationClientConfig = defineConfig<
         'XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH',
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
       ),
-      scope: ['@samgongustofa.is/leyfur-test'],
+      scope: ['@samgongustofa.is/leyfur'],
     }
   },
 })

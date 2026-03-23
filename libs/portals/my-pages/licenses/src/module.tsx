@@ -5,16 +5,13 @@ import { PortalModule } from '@island.is/portals/core'
 import { LicensePaths } from './lib/paths'
 import { defineMessage } from 'react-intl'
 import { translationLoader } from './screens/Translation.loader'
+import { Navigate } from 'react-router-dom'
 
-const LicensesOverview = lazy(() => import('./screens/LicensesOverview'))
+const LicensesOverview = lazy(() =>
+  import('./screens/LicensesOverview/LicensesOverview'),
+)
 const LicenseDetail = lazy(() =>
-  import('./screens/v1/LicenseDetail/LicenseDetail'),
-)
-const LicenseDetailV2 = lazy(() =>
-  import('./screens/v2/LicenseDetail/LicenseDetail'),
-)
-const PassportDetail = lazy(() =>
-  import('./screens/v1/PassportDetail/PassportDetail'),
+  import('./screens/LicenseDetail/LicenseDetail'),
 )
 
 export const licensesModule: PortalModule = {
@@ -33,21 +30,15 @@ export const licensesModule: PortalModule = {
     },
     {
       name: 'Skírteini',
-      path: LicensePaths.LicensesDetailV2,
-      enabled: userInfo.scopes.includes(ApiScope.licenses),
-      element: <LicenseDetailV2 />,
-    },
-    {
-      name: 'Skírteini',
       path: LicensePaths.LicensesDetail,
       enabled: userInfo.scopes.includes(ApiScope.licenses),
       element: <LicenseDetail />,
     },
     {
-      name: m.passport,
-      path: LicensePaths.LicensesPassportDetail,
+      name: 'Skírteini',
+      path: LicensePaths.LicensesDetailOld,
       enabled: userInfo.scopes.includes(ApiScope.licenses),
-      element: <PassportDetail />,
+      element: <Navigate to={LicensePaths.LicensesDetail} replace />,
     },
   ],
 }

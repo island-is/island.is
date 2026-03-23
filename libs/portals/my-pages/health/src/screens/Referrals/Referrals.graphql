@@ -3,6 +3,7 @@ fragment Referral on HealthDirectorateReferral {
   serviceName
   validUntilDate
   stateDisplay
+  status
 }
 
 query GetReferrals($locale: String) {
@@ -22,15 +23,18 @@ query GetReferralsDetail(
       ...Referral
       createdDate
       reason
+      diagnoses
       fromContactInfo {
         name
         profession
         department
+        institute
       }
       toContactInfo {
         name
         profession
         department
+        institute
       }
     }
   }
