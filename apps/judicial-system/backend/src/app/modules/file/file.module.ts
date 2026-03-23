@@ -13,6 +13,7 @@ import {
   RepositoryModule,
   UserModule,
 } from '..'
+import { PoliceDigitalCaseFileService } from './policeDigitalCaseFiles/policeDigitalCaseFile.service'
 import { FileController } from './file.controller'
 import { FileService } from './file.service'
 import { InternalFileController } from './internalFile.controller'

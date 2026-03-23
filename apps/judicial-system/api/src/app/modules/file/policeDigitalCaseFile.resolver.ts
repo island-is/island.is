@@ -44,7 +44,7 @@ export class PoliceDigitalCaseFileResolver {
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.GET_CASE_POLICE_DIGITAL_CASE_FILES,
+      AuditedAction.GET_POLICE_DIGITAL_CASE_FILES,
       backendService.getPoliceDigitalCaseFiles(input.caseId),
       input.caseId,
     )

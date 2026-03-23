@@ -80,9 +80,9 @@ import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { UploadCriminalRecordFileResponse } from './models/uploadCriminalRecordFile.response'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
+import { PoliceDigitalCaseFileService } from './policeDigitalCaseFiles/policeDigitalCaseFile.service'
 import { CriminalRecordService } from './criminalRecord.service'
 import { FileService } from './file.service'
-import { PoliceDigitalCaseFileService } from './policeDigitalCaseFile.service'
 
 @Controller('api/case/:caseId')
 @ApiTags('files')
@@ -431,14 +431,8 @@ export class FileController {
     })
   }
 
-  @UseGuards(CaseReadGuard)
-  @RolesRules(
-    prosecutorRule,
-    prosecutorRepresentativeRule,
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
-  )
+  @UseGuards(CaseWriteGuard)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Get('policeDigitalCaseFiles')
   @ApiOkResponse({
     type: PoliceDigitalCaseFileSyncResult,
@@ -460,34 +454,6 @@ export class FileController {
       theCase.policeCaseNumbers,
       user,
     )
-  }
-
-  @UseGuards(CaseReadGuard)
-  @RolesRules(
-    prosecutorRule,
-    prosecutorRepresentativeRule,
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
-  )
-  @Get('policeDigitalCaseFileTokenUrl')
-  @ApiOkResponse({
-    description: 'Returns a token URL for viewing a police digital case file',
-  })
-  async getPoliceDigitalCaseFileTokenUrl(
-    @CurrentHttpUser() user: User,
-    @CurrentCase() theCase: Case,
-    @Query('rafraennGagnId') rafraennGagnId: string,
-  ): Promise<{ url: string }> {
-    if (!rafraennGagnId) {
-      throw new BadRequestException('rafraennGagnId is required')
-    }
-    const url = await this.policeDigitalCaseFileService.getTokenUrl(
-      theCase.id,
-      user,
-      rafraennGagnId,
-    )
-    return { url }
   }
 
   @UseGuards(CaseWriteGuard)

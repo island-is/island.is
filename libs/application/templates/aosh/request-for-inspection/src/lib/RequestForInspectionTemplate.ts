@@ -24,8 +24,8 @@ import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
-  NationalRegistryUserApi,
-  UserProfileApi,
+  IdentityApi,
+  InspectionUserProfileApi,
   MachinesApi,
 } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -72,6 +72,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Gagnaöflun',
           status: 'draft',
+          progress: 0,
           actionCard: {
             tag: {
               label: applicationMessage.actionCardPrerequisites,
@@ -102,7 +103,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi, MachinesApi],
+              api: [IdentityApi, InspectionUserProfileApi, MachinesApi],
             },
           ],
         },
@@ -114,6 +115,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Beiðni um skoðun að tæki',
           status: 'draft',
+          progress: 0.4,
           actionCard: {
             tag: {
               label: applicationMessage.actionCardDraft,
@@ -127,7 +129,9 @@ const template: ApplicationTemplate<
             ],
           },
           lifecycle: EphemeralStateLifeCycle,
-
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -154,11 +158,9 @@ const template: ApplicationTemplate<
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
+          progress: 1,
           status: 'completed',
           lifecycle: pruneAfterDays(30),
-          onEntry: defineTemplateApi({
-            action: ApiActions.submitApplication,
-          }),
           actionCard: {
             tag: {
               label: applicationMessage.actionCardDone,
@@ -173,8 +175,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Conclusion').then((module) =>
-                  Promise.resolve(module.Conclusion),
+                import('../forms/CompletedForm').then((module) =>
+                  Promise.resolve(module.completedForm),
                 ),
               read: 'all',
             },

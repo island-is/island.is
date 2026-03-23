@@ -75,7 +75,7 @@ export const serviceSetup = (services: {
     })
     .readiness({ path: '/readiness', initialDelaySeconds: 20 })
     .resources({
-      limits: { cpu: '1800m', memory: '1500Mi' },
+      limits: { cpu: '3000m', memory: '1500Mi' },
       requests: { cpu: '1200m', memory: '1024Mi' },
     })
     .replicaCount({

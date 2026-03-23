@@ -56,8 +56,6 @@ module.exports = {
       ),
     )
   },
-
-  allowNull: true,
   down: (queryInterface) => {
     return queryInterface.sequelize.transaction((transaction) =>
       queryInterface.dropTable('police_digital_case_file', { transaction }),

@@ -10,7 +10,7 @@ import {
   Select,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Answered,
   formatDate,
@@ -26,20 +26,23 @@ import {
   useGetAnsweredQuestionnaireQuery,
   useGetQuestionnaireLazyQuery,
 } from './questionnaires.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const AnsweredQuestionnaire: FC = () => {
+  useNamespaces('sp.health')
   const { id, org, submissionId } = useParams<{
     id?: string
     org?: string
     submissionId?: string
   }>()
   const navigate = useNavigate()
+  useHealthPlausibleSwap()
 
   const { formatMessage, lang } = useLocale()
   const [currentSubmission, setCurrentSubmission] =
     useState<QuestionnaireSubmissionDetail>()
 
-  const organization: QuestionnaireQuestionnairesOrganizationEnum | undefined =
+  const organization: QuestionnaireQuestionnairesOrganizationEnum =
     org === 'el'
       ? QuestionnaireQuestionnairesOrganizationEnum.EL
       : org === 'lsh'
@@ -117,7 +120,10 @@ const AnsweredQuestionnaire: FC = () => {
 
   return (
     <IntroWrapper
-      title={data?.getAnsweredQuestionnaire?.data[0]?.title ?? ''}
+      title={
+        data?.getAnsweredQuestionnaire?.data[0]?.title ??
+        formatMessage(messages.questionnaire)
+      }
       intro={formatMessage(messages.answeredQuestionnaireAnswered)}
       loading={loading}
       buttonGroupAlignment="spaceBetween"

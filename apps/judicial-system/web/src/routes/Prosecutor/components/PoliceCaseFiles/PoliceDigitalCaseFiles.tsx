@@ -88,6 +88,7 @@ export const PoliceDigitalCaseFilesList = ({
                   <Text key={`${item.id}`}>{item.name}</Text>
                   {item.isDeletable && (
                     <button
+                      type="button"
                       onClick={() => onRemove(item)}
                       aria-label="Fjarlægja skrá"
                     >
