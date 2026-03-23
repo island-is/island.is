@@ -427,8 +427,6 @@ export class InternalCaseController {
       `Delivering the court record working document for case ${caseId} to court`,
     )
 
-    console.log({ a: deliverDto.user }, '!!!!!!!!!!!')
-
     return this.sequelize.transaction(async (transaction) =>
       this.internalCaseService.deliverCourtRecordWorkingDocumentToCourt(
         theCase,
