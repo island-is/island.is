@@ -1443,6 +1443,9 @@ export class ApplicationsService {
     `
     }
 
+    const fromDate = new Date(new Date(startDate).setHours(0, 0, 0, 0))
+    const toDate = new Date(new Date(endDate).setHours(23, 59, 59, 999))
+
     const query = `
     SELECT
       a.form_id AS "formId",
@@ -1454,7 +1457,7 @@ export class ApplicationsService {
     FROM public.application a
     JOIN public.form f ON f.id = a.form_id
     JOIN public.organization o ON o.id = f.organization_id
-    WHERE a.modified BETWEEN :startDate AND :endDate
+    WHERE a.modified >= :startDate AND a.modified <= :endDate
       AND f.status = '${FormStatus.PUBLISHED}'
     ${institutionFilter}
     GROUP BY a.form_id, ${localeColumn}, o.national_id;
@@ -1462,8 +1465,8 @@ export class ApplicationsService {
 
     const stats = await this.sequelize.query<ApplicationStatisticsDto>(query, {
       replacements: {
-        startDate,
-        endDate,
+        startDate: fromDate,
+        endDate: toDate,
         ...(institutionNationalId ? { institutionNationalId } : {}),
       },
       type: QueryTypes.SELECT,
