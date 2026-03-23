@@ -14,6 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { GridItems } from '@island.is/web/components'
 
+import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
 import * as styles from './OrganizationsSection.css'
 
 type OrganizationTag = {
@@ -35,6 +36,7 @@ interface OrganizationsSectionProps {
   items: OrganizationItem[]
   seeMoreText?: string
   seeMoreHref?: string
+  indicator?: ScrollIndicatorColors
 }
 
 export const OrganizationsSection = ({
@@ -43,6 +45,7 @@ export const OrganizationsSection = ({
   items = [],
   seeMoreText,
   seeMoreHref,
+  indicator,
 }: OrganizationsSectionProps) => {
   return (
     <>
@@ -69,10 +72,11 @@ export const OrganizationsSection = ({
       </GridContainer>
       <GridItems
         mobileItemWidth={270}
-        mobileItemsRows={1}
+        mobileItemsRows={2}
         paddingTop={4}
         paddingBottom={3}
         insideGridContainer
+        indicator={indicator}
       >
         {items.slice(0, 8).map((item, index) => {
           const hasTags = (item.tags?.length ?? 0) > 0

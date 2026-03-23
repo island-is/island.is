@@ -115,6 +115,11 @@ const Home: Screen<HomeProps> = ({
             activeLocale === 'is' ? 'Skoða lífsviðburð' : 'See life event',
           )}
           whiteCards
+          indicator={{
+            outerColor: '#E1D5EC',
+            activeColor: '#6A2EA0',
+            inactiveColor: '#FFFFFF',
+          }}
         />
       </Box>
       <Box
@@ -142,6 +147,11 @@ const Home: Screen<HomeProps> = ({
               : 'See all categories',
           )}
           seeMoreHref="/flokkur"
+          indicator={{
+            outerColor: '#CCDFFF',
+            activeColor: '#0061FF',
+            inactiveColor: '#99C0FF',
+          }}
         />
       </Box>
       <Box
@@ -177,6 +187,11 @@ const Home: Screen<HomeProps> = ({
               : 'See all organizations',
           )}
           seeMoreHref="/s"
+          indicator={{
+            outerColor: '#F2F7FF',
+            activeColor: '#0061FF',
+            inactiveColor: '#99C0FF',
+          }}
         />
       </Box>
       <Box paddingTop={[8, 8, 6]}>
