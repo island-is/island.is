@@ -1,20 +1,31 @@
 import React from 'react'
 
-import { CategoryCard, GridContainer, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  FocusableBox,
+  GridContainer,
+  Link,
+  Text,
+} from '@island.is/island-ui/core'
 import { GridItems } from '@island.is/web/components'
 import { GetArticleCategoriesQuery } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+
+import * as styles from './CategoryItems.css'
 
 interface CategoryItemsProps {
   heading?: string
   headingId?: string
   items: GetArticleCategoriesQuery['getArticleCategories']
+  viewCategoryText?: string
 }
 
 export const CategoryItems = ({
   heading,
   headingId,
   items = [],
+  viewCategoryText = 'Skoða þjónustuflokk',
 }: CategoryItemsProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -40,16 +51,51 @@ export const CategoryItems = ({
               item.slug !== 'thjonusta-island-is' &&
               item.slug !== 'services-on-island-is',
           )
-          .map(({ title, description, slug, __typename: typename }, index) => (
-            <CategoryCard
-              key={index}
-              heading={title}
-              headingAs="h3"
-              headingVariant="h4"
-              text={description ?? ''}
-              href={linkResolver(typename as LinkType, [slug]).href}
-            />
-          ))}
+          .map(({ title, description, slug, __typename: typename }, index) => {
+            const href = linkResolver(typename as LinkType, [slug]).href
+            return (
+              <FocusableBox
+                key={index}
+                href={href}
+                display="flex"
+                flexDirection="column"
+                justifyContent="spaceBetween"
+                paddingY={3}
+                paddingX={3}
+                borderRadius="large"
+                borderColor="blue200"
+                borderWidth="standard"
+                height="full"
+                width="full"
+                background="white"
+                color="blue"
+                className={styles.card}
+              >
+                <Box>
+                  <Text as="h3" variant="h4" color="dark400">
+                    {title}
+                  </Text>
+                  {description && (
+                    <Text paddingTop={1} variant="default">
+                      {description}
+                    </Text>
+                  )}
+                </Box>
+                <Box paddingTop={2} className={styles.cardLink}>
+                  <Link href={href} skipTab>
+                    <Button
+                      variant="text"
+                      as="span"
+                      icon="arrowForward"
+                      size="small"
+                    >
+                      {viewCategoryText}
+                    </Button>
+                  </Link>
+                </Box>
+              </FocusableBox>
+            )
+          })}
       </GridItems>
     </>
   )

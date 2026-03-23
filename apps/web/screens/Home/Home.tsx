@@ -119,6 +119,10 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
           )}
           headingId="categories-title"
           items={categories}
+          viewCategoryText={n(
+            'viewCategoryLink',
+            activeLocale === 'is' ? 'Skoða þjónustuflokk' : 'View category',
+          )}
         />
       </Box>
       <Box paddingTop={[8, 8, 6]}>
