@@ -3,7 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
 import { m } from '../../lib/messages'
-import School from '../../assets/School'
+import { GuitarAndWheelchair } from '@island.is/application/assets/graphics'
 
 interface PropTypes extends FieldBaseProps {
   field: CustomField
@@ -36,7 +36,7 @@ export const Congratulations = ({ application }: PropTypes): JSX.Element => {
           />
         </ContentBlock>
       </Box>
-      <School />
+      <GuitarAndWheelchair />
     </Box>
   )
 }

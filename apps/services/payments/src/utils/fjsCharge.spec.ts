@@ -44,7 +44,7 @@ describe('generateChargeFJSPayload', () => {
     expect(withPayinfo.payInfo).toEqual(payInfo)
   })
 
-  it('should include extraData if passed as input', () => {
+  it('should include extraData if passed as input and default to empty array if not passed', () => {
     const extraData: GenerateChargeFJSPayloadInput['paymentFlow']['extraData'] =
       [
         {
@@ -64,7 +64,7 @@ describe('generateChargeFJSPayload', () => {
       },
     })
 
-    expect(withoutExtraData.extraData).toBeUndefined()
+    expect(withoutExtraData.extraData).toEqual([])
     expect(withExtraData.extraData).toEqual(extraData)
   })
 

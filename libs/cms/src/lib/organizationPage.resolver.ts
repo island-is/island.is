@@ -17,7 +17,10 @@ import {
   SitemapTreeNode,
   SitemapTreeNodeType,
 } from '@island.is/shared/types'
-import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
+import {
+  getOrganizationPageUrlPrefix,
+  sortAlpha,
+} from '@island.is/shared/utils'
 import {
   IOrganizationParentSubpage,
   IOrganizationSubpage,
@@ -37,6 +40,8 @@ type Breadcrumb =
           }
         | { isCategory: false }
       )
+
+type ChildNodeOrder = 'asc-title' | 'desc-title' | 'manual'
 
 @Resolver(() => OrganizationPage)
 @CacheControl(defaultCache)
@@ -72,6 +77,96 @@ export class OrganizationPageResolver {
       return lang === 'en' ? node.slugEN : node.slug
     }
     return ''
+  }
+
+  private getChildNodeOrder(parentNode: SitemapTree | SitemapTreeNode) {
+    if (
+      'type' in parentNode &&
+      parentNode.type === SitemapTreeNodeType.CATEGORY
+    ) {
+      return (parentNode.childNodeOrder ?? 'manual') as ChildNodeOrder
+    }
+    return 'manual'
+  }
+
+  private getNodeSortLabel(
+    node: SitemapTreeNode,
+    lang: string,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ) {
+    if (node.type === SitemapTreeNodeType.CATEGORY) {
+      return (lang === 'en' ? node.labelEN : node.label) ?? ''
+    }
+
+    if (node.type === SitemapTreeNodeType.URL) {
+      return (lang === 'en' ? node.labelEN : node.label) ?? ''
+    }
+
+    const entryItem = entryMap.get(node.entryId)
+    if (!entryItem) return ''
+
+    const entryFields = entryItem.entry.fields as {
+      shortTitle?: string
+      title?: string
+    }
+
+    return entryFields.shortTitle ?? entryFields.title ?? ''
+  }
+
+  private getOrderedChildNodes(
+    parentNode: SitemapTree | SitemapTreeNode,
+    lang: string,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ): SitemapTreeNode[] {
+    const childNodes = parentNode.childNodes
+    const childNodeOrder = this.getChildNodeOrder(parentNode)
+
+    if (childNodeOrder === 'manual') return childNodes
+
+    const direction = childNodeOrder === 'asc-title' ? 1 : -1
+
+    return childNodes
+      .map((childNode, index) => ({
+        childNode,
+        index,
+        label: this.getNodeSortLabel(childNode, lang, entryMap),
+      }))
+      .sort((a, b) => {
+        const byLabel = sortAlpha<{ label: string }>('label')(a, b)
+
+        if (byLabel !== 0) {
+          return byLabel * direction
+        }
+
+        return a.index - b.index
+      })
+      .map(({ childNode }) => childNode)
+  }
+
+  private applyChildNodeOrderRecursively(
+    node: SitemapTreeNode,
+    lang: string,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ): SitemapTreeNode {
+    return {
+      ...node,
+      childNodes: this.getOrderedChildNodes(node, lang, entryMap).map((child) =>
+        this.applyChildNodeOrderRecursively(child, lang, entryMap),
+      ),
+    }
+  }
+
+  private applyChildNodeOrderToTree(
+    tree: SitemapTree,
+    lang: string,
+    entryMap: Map<string, { link: BottomLink; entry: Entry<unknown> }>,
+  ): SitemapTree {
+    return {
+      ...tree,
+      childNodes: this.getOrderedChildNodes(tree, lang, entryMap).map((child) =>
+        this.applyChildNodeOrderRecursively(child, lang, entryMap),
+      ),
+    }
   }
 
   private findNodeWithSlug(
@@ -478,6 +573,12 @@ export class OrganizationPageResolver {
         })
       }
     }
+
+    organizationPage.navigationLinks = this.applyChildNodeOrderToTree(
+      organizationPage.navigationLinks,
+      lang,
+      entryMap,
+    )
 
     const { breadcrumbs, activeNodeIds } = this.getBreadcrumbs(
       organizationPage,

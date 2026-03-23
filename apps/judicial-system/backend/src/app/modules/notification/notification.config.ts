@@ -18,10 +18,6 @@ export const notificationModuleConfig = defineConfig({
         'PRISON_ADMIN_EMAIL',
         'jl+d+prisonAdmin@kolibri.is',
       ),
-      prisonAdminIndictmentEmails: env.required(
-        'PRISON_ADMIN_INDICTMENT_EMAILS',
-        'jl+d+prisonAdminIndictment@kolibri.is',
-      ),
       publicProsecutorCriminalRecordsEmail: env.required(
         'PUBLIC_PROSECUTOR_CRIMINAL_RECORDS_EMAIL',
         'jl+d+publicProsecutorCriminalRecord@kolibri.is',
