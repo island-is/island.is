@@ -72,15 +72,13 @@ export class PaymentService {
     requestId: string,
   ): Promise<void> {
     const payment = await this.findPaymentByApplicationId(applicationId)
-    const definition = JSON.parse(
-      (payment?.definition as unknown as string) ?? '{}',
-    )
+    const definition = (payment?.definition as Record<string, unknown>) ?? {}
     await this.paymentModel.update(
       {
         definition: {
           ...definition,
           paymentUrl: paymentUrl,
-        },
+        } as object,
         requestId: requestId,
       },
       {
@@ -331,7 +329,8 @@ export class PaymentService {
     await paymentModel.reload()
 
     // Update payment with a fixed user4 since services-payments does not need it
-    await this.setUser4(applicationId, paymentModel.id, 'user4')
+    // await this.setUser4(applicationId, paymentModel.id, 'user4')
+    await this.setUser4(applicationId, paymentModel.id, 'mockuser4')
     this.auditPaymentCreation(user, applicationId, paymentModel.id)
 
     return {

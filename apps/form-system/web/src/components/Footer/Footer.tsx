@@ -1,11 +1,18 @@
 import { useMutation } from '@apollo/client'
+import { FormSystemField } from '@island.is/api/schema'
 import {
+  CREATE_PAYMENT,
   SAVE_SCREEN,
   SUBMIT_APPLICATION,
   SUBMIT_SECTION,
   UPDATE_APPLICATION_SETTINGS,
 } from '@island.is/form-system/graphql'
-import { FieldTypesEnum, SectionTypes, m } from '@island.is/form-system/ui'
+import {
+  FieldTypesEnum,
+  SectionTypes,
+  getValue,
+  m,
+} from '@island.is/form-system/ui'
 import { Box, Button, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
@@ -26,6 +33,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)
   const updateDependencies = useMutation(UPDATE_APPLICATION_SETTINGS)
+  const [createPayment, { loading: paymentLoading }] =
+    useMutation(CREATE_PAYMENT)
 
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,
@@ -104,6 +113,71 @@ export const Footer = ({ externalDataAgreement }: Props) => {
 
     if (isCompletedSection) {
       window.open('/minarsidur', '_blank', 'noopener,noreferrer')
+      return
+    }
+
+    if (shouldShowPay) {
+      const chargeItems: {
+        code: string
+        quantity?: number
+        amount?: number
+      }[] = []
+      const paymentQuantityFields: FormSystemField[] = []
+      state.sections?.forEach((section) => {
+        section?.screens?.forEach((screen) => {
+          screen?.fields?.forEach((field) => {
+            if (
+              field?.fieldType === FieldTypesEnum.PAYMENT_QUANTITY &&
+              field?.isHidden === false
+            ) {
+              paymentQuantityFields.push(field)
+            }
+          })
+        })
+      })
+
+      state.sections?.forEach((section) => {
+        section?.screens?.forEach((screen) => {
+          screen?.fields
+            ?.filter(
+              (field) =>
+                field?.fieldType === FieldTypesEnum.PAYMENT &&
+                field?.isHidden === false,
+            )
+            .forEach((field) => {
+              if (field?.fieldSettings?.chargeItemCode) {
+                const code = field.fieldSettings.chargeItemCode
+                let quantity: number | undefined = 1
+                const amount: number | undefined = field.fieldSettings
+                  .priceAmount as number | undefined
+                if (field.fieldSettings.paymentQuantityId) {
+                  const quantityField = paymentQuantityFields.find(
+                    (f) => f.id === field?.fieldSettings?.paymentQuantityId,
+                  )
+                  if (quantityField) {
+                    quantity = getValue(quantityField, 'number')
+                  }
+                }
+                chargeItems.push({ code, quantity, amount })
+              }
+            })
+        })
+      })
+      const { data } = await createPayment({
+        variables: {
+          input: {
+            applicationId: state.application.id,
+            createChargeRequestDto: {
+              performingOrganizationID: '6509142520',
+              chargeItems,
+            },
+          },
+        },
+      })
+      console.log(data)
+      if (data?.createFormSystemPayment?.paymentUrl) {
+        window.location.href = data.createFormSystemPayment.paymentUrl
+      }
       return
     }
 

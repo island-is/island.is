@@ -37,3 +37,11 @@ export class CreateChargeRequestDto {
   @IsString()
   payerNationalId?: string
 }
+
+export class CreateChargeResponseDto {
+  @ApiProperty()
+  id!: string
+
+  @ApiProperty()
+  paymentUrl!: string
+}

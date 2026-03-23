@@ -24,7 +24,11 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
-import { CreateChargeRequestDto, PaymentStatusResponseDto } from './dto'
+import {
+  CreateChargeRequestDto,
+  CreateChargeResponseDto,
+  PaymentStatusResponseDto,
+} from './dto'
 import { PaymentService } from './payment.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -56,11 +60,12 @@ export class PaymentController {
 
   @Scopes(ApplicationScope.write)
   @Post('form/:applicationId/create-payment')
+  @ApiOkResponse({ type: CreateChargeResponseDto })
   async createPayment(
     @Param('applicationId', new ParseUUIDPipe()) applicationId: string,
     @Body() body: CreateChargeRequestDto,
     @CurrentUser() user: User,
-  ) {
+  ): Promise<CreateChargeResponseDto> {
     return this.paymentService.createCharge(
       user,
       body.performingOrganizationID,

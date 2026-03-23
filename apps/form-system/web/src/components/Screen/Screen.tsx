@@ -9,6 +9,7 @@ import { Applicants } from './components/Applicants/Applicants'
 import { Completed } from './components/Completed/Completed'
 import { ExternalData } from './components/ExternalData/ExternalData'
 import { Field } from './components/Field/Field'
+import { Payment } from './components/Payment/Payment'
 import { Summary } from './components/Summary/Summary'
 
 export const Screen = () => {
@@ -73,6 +74,7 @@ export const Screen = () => {
           !currentSection?.data?.isHidden && <Summary state={state} />}
 
         {currentSectionType === SectionTypes.COMPLETED && <Completed />}
+        {currentSectionType === SectionTypes.PAYMENT && <Payment />}
         {currentScreen &&
           currentScreen?.data?.fields
             ?.filter(

@@ -1,5 +1,10 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { FieldTypesEnum, getValue, m } from '@island.is/form-system/ui'
+import {
+  FieldTypesEnum,
+  getValue,
+  m,
+  SectionTypes,
+} from '@island.is/form-system/ui'
 import {
   Box,
   Divider,
@@ -16,6 +21,9 @@ import { useApplicationContext } from '../../../../context/ApplicationProvider'
 export const Payment = () => {
   const { formatMessage } = useLocale()
   const { state } = useApplicationContext()
+  const isPaymentSection =
+    state.sections?.[state.currentSection.index]?.sectionType ===
+    SectionTypes.PAYMENT
   const screens = state.sections
     .flatMap((section) => section.screens ?? [])
     .filter(Boolean)
@@ -105,19 +113,23 @@ export const Payment = () => {
 
   return (
     <GridContainer>
-      <Divider />
+      {!isPaymentSection && <Divider />}
       <Box marginTop={2}>
         <GridRow>
           <GridColumn span="12/12">
             <Box marginTop={2} marginBottom={2}>
-              <Text as="h3" variant="h3" fontWeight="semiBold">
-                {formatMessage(m.payment)}
-              </Text>
+              {!isPaymentSection && (
+                <Text as="h3" variant="h3" fontWeight="semiBold">
+                  {formatMessage(m.payment)}
+                </Text>
+              )}
             </Box>
             <Stack space={1}>
-              <Text variant="h4" fontWeight="semiBold">
-                Til greiðslu
-              </Text>
+              <Box marginBottom={2}>
+                <Text variant="h4" fontWeight="semiBold">
+                  Til greiðslu
+                </Text>
+              </Box>
 
               {paymentFields.map((field, index) => {
                 if (!field) return null

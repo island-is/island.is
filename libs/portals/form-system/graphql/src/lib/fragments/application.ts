@@ -43,6 +43,7 @@ export const ApplicationFragment = gql`
     completedSectionInfo {
       ...CompletedSectionInfo
     }
+    organizationNationalId
   }
   ${ApplicantTypeDtoFragment}
   ${LanguageFields}
