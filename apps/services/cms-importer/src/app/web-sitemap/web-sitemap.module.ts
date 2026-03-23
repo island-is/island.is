@@ -18,6 +18,7 @@ import { LifeEventRepository } from '../repositories/web-sitemap/content-types/l
 import { FrontpageNewsRepository } from '../repositories/web-sitemap/content-types/frontpage-news.repository'
 import { OrganizationNewsRepository } from '../repositories/web-sitemap/content-types/organization-news.repository'
 import { ProjectNewsRepository } from '../repositories/web-sitemap/content-types/project-news.repository'
+import { ServiceWebRepository } from '../repositories/web-sitemap/content-types/serviceWeb.repository'
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { ProjectNewsRepository } from '../repositories/web-sitemap/content-types
     FrontpageNewsRepository,
     OrganizationNewsRepository,
     ProjectNewsRepository,
+    ServiceWebRepository,
   ],
 })
 export class WebSitemapModule {}
