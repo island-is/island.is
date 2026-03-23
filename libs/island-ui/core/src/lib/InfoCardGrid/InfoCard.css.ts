@@ -12,6 +12,10 @@ const gridContainerBase = {
   justifyContent: 'stretch',
 }
 
+export const infoCardHeader = style({
+  height: '48px',
+})
+
 export const gridContainerOneColumn = style({
   ...gridContainerBase,
   gridTemplateColumns: '1fr',
