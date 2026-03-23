@@ -194,7 +194,6 @@ const ExpandableRow: FC<React.PropsWithChildren<Props>> = ({
               >
                 <Text variant="eyebrow" as="span">
                   {formatMessage(m.errorLoadingPermissions)}
-                  TODO !!
                 </Text>
               </Box>
             )}
