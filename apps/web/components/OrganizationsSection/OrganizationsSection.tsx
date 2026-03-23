@@ -3,20 +3,16 @@ import { useRef } from 'react'
 import {
   Box,
   Button,
-  FocusableBox,
   GridContainer,
   Hidden,
-  Hyphen,
-  Inline,
   Link,
-  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { GridItems } from '@island.is/web/components'
 
+import { OrganizationCard } from '../../screens/Organizations/OrganizationCard'
 import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
-import * as styles from './OrganizationsSection.css'
 
 const MAX_HOMEPAGE_ITEMS = 8
 
@@ -83,67 +79,16 @@ export const OrganizationsSection = ({
         insideGridContainer
         scrollContainerRef={indicator ? scrollContainerRef : undefined}
       >
-        {items.slice(0, MAX_HOMEPAGE_ITEMS).map((item) => {
-          const hasTags = (item.tags?.length ?? 0) > 0
-          return (
-            <FocusableBox
-              key={item.href ?? item.title}
-              href={item.href}
-              display="flex"
-              flexDirection="column"
-              paddingY={3}
-              paddingX={3}
-              borderRadius="large"
-              borderColor="blue200"
-              borderWidth="standard"
-              height="full"
-              width="full"
-              background="white"
-              color="blue"
-              className={styles.card}
-            >
-              <Box
-                display="flex"
-                flexDirection="row"
-                alignItems="flexStart"
-                flexGrow={1}
-              >
-                <Box flexGrow={1}>
-                  <Text as="h3" variant="h4" color="dark400">
-                    <Hyphen>{item.title}</Hyphen>
-                  </Text>
-                </Box>
-                {item.logoUrl && (
-                  <Box marginLeft={2} display="flex" flexShrink={0}>
-                    <img
-                      src={item.logoUrl}
-                      alt={item.logoAlt ?? ''}
-                      className={styles.logo}
-                    />
-                  </Box>
-                )}
-              </Box>
-              {hasTags && (
-                <Box paddingTop={2} className={styles.tag}>
-                  <Inline space="smallGutter">
-                    {item.tags?.map((tag) => (
-                      <Tag
-                        key={tag.id}
-                        outlined
-                        variant="blue"
-                        truncate
-                        textLeft
-                        hyphenate
-                      >
-                        {tag.title}
-                      </Tag>
-                    ))}
-                  </Inline>
-                </Box>
-              )}
-            </FocusableBox>
-          )
-        })}
+        {items.slice(0, MAX_HOMEPAGE_ITEMS).map((item) => (
+          <OrganizationCard
+            key={item.href ?? item.title}
+            heading={item.title}
+            href={item.href}
+            src={item.logoUrl}
+            alt={item.logoAlt}
+            tags={item.tags?.map((t) => ({ id: t.id, label: t.title }))}
+          />
+        ))}
       </GridItems>
       {seeMoreText && seeMoreHref && (
         <Hidden above="md">

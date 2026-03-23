@@ -1,10 +1,10 @@
 import React from 'react'
 
-import { Box, Button, Hidden, Link, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Hidden, Link, Text } from '@island.is/island-ui/core'
 import { Featured } from '@island.is/web/graphql/schema'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 
 import * as styles from './CardWithFeaturedItems.css'
+import { FeaturedItemTags } from './FeaturedItemTags'
 
 type CardWithFeaturedItemsProps = {
   heading: string
@@ -15,50 +15,6 @@ type CardWithFeaturedItemsProps = {
   buttonTitle?: string
   featuredItems: Featured[]
   white?: boolean
-}
-
-export const FeaturedItemsLinks = ({
-  featuredItems,
-}: {
-  featuredItems: Featured[]
-}) => {
-  const { linkResolver } = useLinkResolver()
-
-  return (
-    <Hidden below="sm">
-      <Box marginY={2} className={styles.purpleTags}>
-        {featuredItems.map((item: Featured, index: number) => {
-          const cardUrl = linkResolver(item.thing?.type as LinkType, [
-            item.thing?.slug ?? '',
-          ])
-          return (
-            <Box marginBottom={1} key={index}>
-              <Tag
-                key={item.title}
-                {...(cardUrl.href.startsWith('/')
-                  ? {
-                      CustomLink: ({ children, ...props }) => (
-                        <Link
-                          key={item.title}
-                          {...props}
-                          {...cardUrl}
-                          dataTestId="featured-link"
-                        >
-                          {children}
-                        </Link>
-                      ),
-                    }
-                  : { href: cardUrl.href })}
-                variant="purple"
-              >
-                {item.title}
-              </Tag>
-            </Box>
-          )
-        })}
-      </Box>
-    </Hidden>
-  )
 }
 
 export const CardWithFeaturedItems = ({
@@ -93,7 +49,9 @@ export const CardWithFeaturedItems = ({
         </Box>
         <Box height="full">
           {limitedFeaturedItems.length > 0 && (
-            <FeaturedItemsLinks featuredItems={limitedFeaturedItems} />
+            <Hidden below="sm">
+              <FeaturedItemTags featuredItems={limitedFeaturedItems} />
+            </Hidden>
           )}
         </Box>
         <Link href={href ?? ''} skipTab>

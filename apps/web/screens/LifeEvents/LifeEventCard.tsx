@@ -1,41 +1,8 @@
-import { type PropsWithChildren, useMemo } from 'react'
-
-import { Box, Button, Link, Tag, Text } from '@island.is/island-ui/core'
+import { Box, Button, Link, Text } from '@island.is/island-ui/core'
+import { FeaturedItemTags } from '@island.is/web/components/CardWithFeaturedItems/FeaturedItemTags'
 import { Featured } from '@island.is/web/graphql/schema'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks'
 
 import * as styles from './LifeEventCard.css'
-
-const FeaturedTag = ({
-  item,
-  cardUrl,
-}: {
-  item: Featured
-  cardUrl: { href: string; as?: string }
-}) => {
-  const CustomLink = useMemo(
-    () =>
-      function FeaturedLink({ children, ...props }: PropsWithChildren<unknown>) {
-        return (
-          <Link {...props} {...cardUrl} dataTestId="featured-link">
-            {children}
-          </Link>
-        )
-      },
-    [cardUrl.href, cardUrl.as],
-  )
-
-  return (
-    <Tag
-      {...(cardUrl.href.startsWith('/')
-        ? { CustomLink }
-        : { href: cardUrl.href })}
-      variant="purple"
-    >
-      {item.title}
-    </Tag>
-  )
-}
 
 type LifeEventCardProps = {
   heading: string
@@ -56,7 +23,6 @@ export const LifeEventCard = ({
   featuredItems,
   buttonTitle,
 }: LifeEventCardProps) => {
-  const { linkResolver } = useLinkResolver()
   const limitedFeaturedItems = featuredItems.slice(0, 3)
 
   return (
@@ -82,18 +48,7 @@ export const LifeEventCard = ({
           style={{ flex: 1, minWidth: 0 }}
         >
           {limitedFeaturedItems.length > 0 && (
-            <Box marginY={2} className={styles.purpleTags}>
-              {limitedFeaturedItems.map((item: Featured) => {
-                const cardUrl = linkResolver(item.thing?.type as LinkType, [
-                  item.thing?.slug ?? '',
-                ])
-                return (
-                  <Box marginBottom={1} key={item.title}>
-                    <FeaturedTag item={item} cardUrl={cardUrl} />
-                  </Box>
-                )
-              })}
-            </Box>
+            <FeaturedItemTags featuredItems={limitedFeaturedItems} truncate />
           )}
         </Box>
         <Box

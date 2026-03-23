@@ -1,6 +1,7 @@
 import React, { useContext, useMemo } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
 import {
   CategoryItems,
@@ -37,6 +38,24 @@ import { Screen } from '@island.is/web/types'
 
 import { getOrganizationLink } from '../../utils/organization'
 import { watsonConfig } from './config'
+
+const LIFE_EVENTS_INDICATOR = {
+  outerColor: theme.color.purple200,
+  activeColor: theme.color.purple400,
+  inactiveColor: theme.color.white,
+}
+
+const CATEGORIES_INDICATOR = {
+  outerColor: theme.color.blue200,
+  activeColor: theme.color.blue400,
+  inactiveColor: theme.color.blue300,
+}
+
+const ORGANIZATIONS_INDICATOR = {
+  outerColor: theme.color.overlay,
+  activeColor: theme.color.blue400,
+  inactiveColor: theme.color.blue300,
+}
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -132,11 +151,7 @@ const Home: Screen<HomeProps> = ({
             activeLocale === 'is' ? 'Skoða lífsviðburð' : 'See life event',
           )}
           whiteCards
-          indicator={{
-            outerColor: '#E1D5EC',
-            activeColor: '#6A2EA0',
-            inactiveColor: '#FFFFFF',
-          }}
+          indicator={LIFE_EVENTS_INDICATOR}
         />
       </Box>
       <Box
@@ -164,11 +179,7 @@ const Home: Screen<HomeProps> = ({
               : 'See all categories',
           )}
           seeMoreHref="/flokkur"
-          indicator={{
-            outerColor: '#CCDFFF',
-            activeColor: '#0061FF',
-            inactiveColor: '#99C0FF',
-          }}
+          indicator={CATEGORIES_INDICATOR}
         />
       </Box>
       <Box
@@ -193,11 +204,7 @@ const Home: Screen<HomeProps> = ({
               : 'See all organizations',
           )}
           seeMoreHref="/s"
-          indicator={{
-            outerColor: '#F2F7FF',
-            activeColor: '#0061FF',
-            inactiveColor: '#99C0FF',
-          }}
+          indicator={ORGANIZATIONS_INDICATOR}
         />
       </Box>
       <Box paddingTop={[8, 8, 6]}>
