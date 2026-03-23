@@ -15,14 +15,12 @@ import {
 export interface InlineProps extends CollapsibleAlignmentProps {
   space?: ResponsiveSpace
   flexWrap?: 'wrap' | 'nowrap'
-  fluid?: boolean
   justifyContent?: UseBoxStylesProps['justifyContent']
   children: ReactNodeNoStrings
 }
 
 export const Inline = ({
   space = 'none',
-  fluid = false,
   flexWrap = 'wrap',
   justifyContent,
   align,
@@ -50,8 +48,6 @@ export const Inline = ({
       <Box
         className={negativeMarginLeft}
         flexWrap={flexWrap}
-        width={fluid === true ? 'full' : undefined}
-        flexGrow={fluid === true ? 1 : fluid === false ? 0 : undefined}
         {...collapsibleAlignmentProps}
         {...(justifyContent && { justifyContent })}
       >
