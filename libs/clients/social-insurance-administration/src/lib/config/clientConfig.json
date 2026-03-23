@@ -1196,13 +1196,13 @@
         }
       }
     },
-    "/api/v1/ApplicationsUpdates/{applicationId}/Update": {
+    "/api/v1/ApplicationsUpdates/{applicationGuid}/Update": {
       "put": {
         "tags": ["ApplicationsUpdates"],
         "summary": "Notify external app (island.is) of updates to an application's status (e.g. from \"pending\" to \"approved\")",
         "parameters": [
           {
-            "name": "applicationId",
+            "name": "applicationGuid",
             "in": "path",
             "description": "The application GUID (from island.is)",
             "required": true,
@@ -1219,21 +1219,135 @@
           "content": {
             "application/json; x-api-version=1.0": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.ApplicationUpdates.Models.ApplicationsUpdateInput"
+                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.ApplicationsUpdates.Models.ApplicationsUpdateInput"
               }
             },
             "text/json; x-api-version=1.0": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.ApplicationUpdates.Models.ApplicationsUpdateInput"
+                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.ApplicationsUpdates.Models.ApplicationsUpdateInput"
               }
             },
             "application/*+json; x-api-version=1.0": {
               "schema": {
-                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.ApplicationUpdates.Models.ApplicationsUpdateInput"
+                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.ApplicationsUpdates.Models.ApplicationsUpdateInput"
               }
             }
           }
         },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": { "type": "string" }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": { "type": "string" }
+              },
+              "text/json; x-api-version=1.0": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ApplicationsUpdates/{applicationGuid}/Status": {
+      "get": {
+        "tags": ["ApplicationsUpdates"],
+        "summary": "Retrieve the Island.is application status",
+        "parameters": [
+          {
+            "name": "applicationGuid",
+            "in": "path",
+            "description": "The unique GUID for the Island.is application",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "x-api-version",
+            "in": "header",
+            "schema": { "type": "string" }
+          }
+        ],
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -6304,7 +6418,7 @@
     "/api/protected/v1/PersonalTaxCredit/TaxCardMonthsAndYears": {
       "get": {
         "tags": ["PersonalTaxCredit"],
-        "summary": "Get the months and years available for tax allowance usage",
+        "summary": "Get the months and years available for tax allowance usage for the logged-in user on Island.is.",
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -6418,7 +6532,124 @@
         }
       }
     },
-    "/api/protected/v1/PersonalTaxCredit/GetTaxAllowanceActions": {
+    "/api/protected/v1/PersonalTaxCredit/TaxCardMonthsAndYearsWhenDiscontinuing": {
+      "get": {
+        "tags": ["PersonalTaxCredit"],
+        "summary": "Get the months and years available when discontinuing the tax allowance for the logged-in user on Island.is.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.YearWithMonthsDto"
+                  }
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.YearWithMonthsDto"
+                  }
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.YearWithMonthsDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/PersonalTaxCredit/TaxAllowanceActions": {
       "get": {
         "tags": ["PersonalTaxCredit"],
         "summary": "Get the months and years available for tax allowance usage",
@@ -6630,7 +6861,26 @@
               }
             }
           },
-          "201": { "description": "Created" }
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.TaxAllowanceActionsResult"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.TaxAllowanceActionsResult"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.TaxAllowanceActionsResult"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -6738,7 +6988,26 @@
               }
             }
           },
-          "200": { "description": "OK" }
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.TaxAllowanceActionsResult"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.TaxAllowanceActionsResult"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.TaxAllowanceActionsResult"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -6846,7 +7115,26 @@
               }
             }
           },
-          "201": { "description": "Created" }
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.TaxAllowanceActionsResult"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.TaxAllowanceActionsResult"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.TaxAllowanceActionsResult"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -13548,7 +13836,8 @@
             },
             "nullable": true
           },
-          "canEditPersonalAllowance": { "type": "boolean" }
+          "canEditPersonalAllowance": { "type": "boolean" },
+          "canDiscontinuePersonalAllowance": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -13602,6 +13891,14 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Api.Services.Common.Clients.Models.TaxAllowanceActionsResult": {
+        "type": "object",
+        "properties": {
+          "canEditPersonalAllowance": { "type": "boolean" },
+          "canDiscontinuePersonalAllowance": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Api.Services.Common.Clients.Models.TaxCardSummaryDto": {
         "type": "object",
         "properties": {
@@ -13650,15 +13947,6 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Api.Services.Domain.ApplicationUpdates.Models.ApplicationsUpdateInput": {
-        "type": "object",
-        "properties": {
-          "event": { "type": "string", "nullable": true },
-          "answers": { "type": "object", "nullable": true },
-          "message": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
       "TrWeb.Api.Services.Domain.Applications.Models.ApplicationTypeDto": {
         "type": "object",
         "properties": {
@@ -13680,6 +13968,15 @@
           "isEligible": { "type": "boolean" },
           "reason": { "type": "string", "nullable": true },
           "reasonCode": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Domain.ApplicationsUpdates.Models.ApplicationsUpdateInput": {
+        "type": "object",
+        "properties": {
+          "event": { "type": "string", "nullable": true },
+          "answers": { "nullable": true, "type": "object" },
+          "message": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -15551,7 +15848,7 @@
         "properties": {
           "documentType": { "type": "string", "nullable": true },
           "content": { "type": "string", "nullable": true },
-          "contentAsObject": { "type": "object", "nullable": true }
+          "contentAsObject": { "nullable": true, "type": "object" }
         },
         "additionalProperties": false
       },
