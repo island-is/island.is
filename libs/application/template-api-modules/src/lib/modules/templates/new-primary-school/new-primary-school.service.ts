@@ -249,6 +249,8 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
       })
     }
 
+    await this.sendHnippNotificationToGuardians(application)
+
     return response
   }
 
@@ -348,6 +350,30 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
         applicationLink,
       },
     })
+  }
+
+  private async sendHnippNotificationToGuardians(
+    application: ApplicationWithAttachments,
+  ) {
+    const { childInfo, guardians } = getApplicationAnswers(application.answers)
+    const applicationLink = await this.getApplicationLink(application)
+
+    if (!childInfo) throw new Error('Could not find child information')
+
+    await Promise.all(
+      guardians.map((guardian) =>
+        this.notificationsService.sendNotification({
+          type: NotificationType.NewPrimarySchool,
+          messageParties: { recipient: guardian.nationalId },
+          applicationId: application.id,
+          args: {
+            name: childInfo.name,
+            id: formatKennitala(childInfo.nationalId),
+            applicationLink,
+          },
+        }),
+      ),
+    )
   }
 
   private async getApplicationLink(application: ApplicationWithAttachments) {
