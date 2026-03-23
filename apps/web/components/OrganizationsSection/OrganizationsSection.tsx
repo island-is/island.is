@@ -11,8 +11,8 @@ import {
 import { GridItems } from '@island.is/web/components'
 
 import { OrganizationCard } from '../../screens/Organizations/OrganizationCard'
-import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
+import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 
 const MAX_HOMEPAGE_ITEMS = 8
 
@@ -115,10 +115,7 @@ export const OrganizationsSection = ({
         </Hidden>
       )}
       {indicator && (
-        <ScrollIndicator
-          scrollRef={scrollContainerRef}
-          colors={indicator}
-        />
+        <ScrollIndicator scrollRef={scrollContainerRef} colors={indicator} />
       )}
     </>
   )

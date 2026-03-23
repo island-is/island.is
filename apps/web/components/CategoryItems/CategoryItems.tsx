@@ -13,8 +13,8 @@ import { GridItems } from '@island.is/web/components'
 import { GetArticleCategoriesQuery } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
-import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
+import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 import * as styles from './CategoryItems.css'
 
 const EXCLUDED_CATEGORY_SLUGS = [
@@ -150,10 +150,7 @@ export const CategoryItems = ({
         </Hidden>
       )}
       {indicator && (
-        <ScrollIndicator
-          scrollRef={scrollContainerRef}
-          colors={indicator}
-        />
+        <ScrollIndicator scrollRef={scrollContainerRef} colors={indicator} />
       )}
     </>
   )
