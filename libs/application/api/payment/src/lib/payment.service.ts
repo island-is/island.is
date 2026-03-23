@@ -31,6 +31,7 @@ import {
 } from '@island.is/clients/payments'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { FetchError } from '@island.is/clients/middlewares'
+import { GetPaymentFlowStatusDTOPaymentStatusEnum } from 'libs/clients/payments/gen/fetch/models/GetPaymentFlowStatusDTO'
 
 @Injectable()
 export class PaymentService {
@@ -45,6 +46,20 @@ export class PaymentService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly paymentsApi: PaymentsApi,
   ) {}
+
+  private logError(
+    errorString: string,
+    applicationId: string,
+    error: Error | FetchError | undefined,
+  ) {
+    this.logger.error(
+      `${errorString} for application ${applicationId}: ${
+        error instanceof FetchError
+          ? error.problem?.detail
+          : error?.message ?? 'Unknown error'
+      }`,
+    )
+  }
 
   async findPaymentByApplicationId(
     applicationId: string,
@@ -350,33 +365,53 @@ export class PaymentService {
     }
 
     try {
-      await this.paymentsApi.refundControllerRefund({
-        refundPaymentInput: {
-          paymentFlowId: payment.request_id,
-          reasonForRefund,
-        },
-      })
-    } catch (error) {
-      console.log('error', JSON.stringify(error, null, 2))
-      if (error instanceof FetchError) {
-        console.log('error.problem', error.problem)
-        console.log('error.problem.detail', error.problem?.detail)
-        const errorMessage = error.problem?.detail
-        if (
-          errorMessage ===
-            PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded &&
-          (ignoreNotEligibleToBeRefunded ?? false)
-        ) {
-          console.log(
-            'PaymentFlowNotEligibleToBeRefunded error caught, suppressing error and returning',
+      const paymentStatus =
+        await this.paymentsApi.paymentFlowControllerGetPaymentFlowStatus({
+          id: payment.request_id,
+        })
+      if (
+        paymentStatus.paymentStatus ===
+        GetPaymentFlowStatusDTOPaymentStatusEnum.paid
+      ) {
+        try {
+          this.logger.info(
+            `payment already paid, calling refund controller to refund payment for application ${applicationId}`,
           )
-          return
+          await this.paymentsApi.refundControllerRefund({
+            refundPaymentInput: {
+              paymentFlowId: payment.request_id,
+              reasonForRefund,
+            },
+          })
+        } catch (error) {
+          if (
+            error instanceof FetchError &&
+            (ignoreNotEligibleToBeRefunded ?? false) &&
+            error.problem?.detail ===
+              PaymentServiceCode.PaymentFlowNotEligibleToBeRefunded
+          ) {
+            this.logger.warn(
+              `Ignoring not eligible to be refunded error for application ${applicationId}`,
+              error,
+            )
+          }
+          this.logError('Failed to refund payment', applicationId, error)
+        }
+      } else {
+        this.logger.info(
+          `payment not paid, calling delete payment flow controller to delete payment flow for application ${applicationId}`,
+        )
+        try {
+          await this.paymentsApi.paymentFlowControllerDeletePaymentFlow({
+            id: payment.request_id,
+          })
+        } catch (error) {
+          this.logError('Failed to delete payment flow', applicationId, error)
+          throw error
         }
       }
-      this.logger.error(
-        `Failed to refund payment for application ${applicationId}`,
-        error,
-      )
+    } catch (error) {
+      this.logError('Failed to refund payment', applicationId, error)
       throw error
     }
   }
