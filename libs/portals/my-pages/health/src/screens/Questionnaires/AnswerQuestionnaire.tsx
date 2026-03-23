@@ -30,7 +30,7 @@ const AnswerQuestionnaire: FC = () => {
   const { data: organizations } = useOrganizations()
   const [submitQuestionnaire, { loading: submitting }] =
     useSubmitQuestionnaireMutation({
-      refetchQueries: ['GetQuestionnaire', 'GetQuestionnaireWithQuestions'],
+      refetchQueries: ['GetQuestionnaire'],
       awaitRefetchQueries: true,
     })
 
@@ -48,7 +48,7 @@ const AnswerQuestionnaire: FC = () => {
       },
       locale: lang,
     },
-
+    fetchPolicy: 'network-only',
     skip: !id,
   })
 
