@@ -89,7 +89,7 @@ export class ApplicationService {
         COUNT(*) FILTER (WHERE status = 'rejected') AS rejected,
         COUNT(*) FILTER (WHERE status = 'approved') AS approved
       FROM public.application
-      WHERE created >= :startDate AND created <= :endDate
+      WHERE modified >= :startDate AND modified <= :endDate
       ${
         applicationTypeIds?.length ? `AND type_id IN (:applicationTypeIds)` : ''
       }

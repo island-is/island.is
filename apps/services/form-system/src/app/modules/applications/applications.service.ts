@@ -1455,7 +1455,7 @@ export class ApplicationsService {
     FROM public.application a
     JOIN public.form f ON f.id = a.form_id
     JOIN public.organization o ON o.id = f.organization_id
-    WHERE a.created >= :startDate AND a.created <= :endDate
+    WHERE a.modified >= :startDate AND a.modified <= :endDate
       AND f.status = '${FormStatus.PUBLISHED}'
     ${institutionFilter}
     GROUP BY a.form_id, ${localeColumn}, o.national_id;
