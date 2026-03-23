@@ -1,6 +1,6 @@
 import { defineTemplateApi, UserProfileApi } from '@island.is/application/types'
 
-export { NationalRegistryUserApi } from '@island.is/application/types'
+export { IdentityApi } from '@island.is/application/types'
 
 export const MachinesApi = defineTemplateApi({
   action: 'getMachines',

@@ -19,6 +19,13 @@ export type SmsQueueMessage = {
   smsContent: string
 }
 
+/**
+ * Normalize a phone number to E.164 format by stripping hyphens/spaces.
+ * e.g. "+354-1234567" → "+3541234567"
+ */
+const normalizePhoneNumber = (phoneNumber: string): string =>
+  phoneNumber.replace(/[\s-]/g, '')
+
 @Injectable()
 export class SmsWorkerService {
   constructor(
@@ -46,9 +53,34 @@ export class SmsWorkerService {
 
       this.logger.info('SMS worker received message', { messageId })
 
-      await this.smsService.sendSms(mobilePhoneNumber, smsContent)
+      const normalizedNumber = normalizePhoneNumber(mobilePhoneNumber)
 
-      this.logger.info('SMS notification sent', { messageId })
+      const result = await this.smsService.sendSms(normalizedNumber, smsContent)
+
+      const msg = result.messages[0]
+      if (!msg) {
+        this.logger.error('SMS response contained no messages', { messageId })
+        throw new Error(
+          `SMS delivery failed for ${messageId}: no messages in response`,
+        )
+      }
+      if (msg.error) {
+        this.logger.error('SMS message-level error from Nova', {
+          messageId,
+          status: msg.status,
+          errorDetails: msg.errorDetails,
+        })
+        throw new Error(
+          `SMS delivery failed for ${messageId}: ${
+            msg.errorDetails ?? msg.status
+          }`,
+        )
+      }
+
+      this.logger.info('SMS notification sent', {
+        messageId,
+        status: msg?.status,
+      })
 
       if (userNotificationId) {
         try {
@@ -56,7 +88,7 @@ export class SmsWorkerService {
             userNotificationId,
             actorNotificationId,
             channel: NotificationChannel.Sms,
-            sentTo: mobilePhoneNumber,
+            sentTo: normalizedNumber,
           })
         } catch (error) {
           this.logger.error('Error writing SMS delivery record to db', {
