@@ -71,10 +71,10 @@ export const LifeEventsSection = ({
         {items
           .slice(0, 6)
           .filter((x: { slug: string; title: string }) => x.slug && x.title)
-          .map((lifeEvent, index: number) => {
+          .map((lifeEvent) => {
             return (
               <CardWithFeaturedItems
-                key={index}
+                key={lifeEvent.slug}
                 heading={lifeEvent.shortTitle || lifeEvent.title}
                 imgSrc={lifeEvent.tinyThumbnail?.url ?? ''}
                 dataTestId={'lifeevent-card-with-featured-items'}

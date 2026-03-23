@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 
 import {
   Box,
@@ -17,6 +17,8 @@ import { GridItems } from '@island.is/web/components'
 import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
 import * as styles from './OrganizationsSection.css'
+
+const MAX_HOMEPAGE_ITEMS = 8
 
 type OrganizationTag = {
   id: string
@@ -81,11 +83,11 @@ export const OrganizationsSection = ({
         insideGridContainer
         scrollContainerRef={indicator ? scrollContainerRef : undefined}
       >
-        {items.slice(0, 8).map((item, index) => {
+        {items.slice(0, MAX_HOMEPAGE_ITEMS).map((item) => {
           const hasTags = (item.tags?.length ?? 0) > 0
           return (
             <FocusableBox
-              key={index}
+              key={item.href ?? item.title}
               href={item.href}
               display="flex"
               flexDirection="column"
@@ -177,4 +179,3 @@ export const OrganizationsSection = ({
   )
 }
 
-export default OrganizationsSection

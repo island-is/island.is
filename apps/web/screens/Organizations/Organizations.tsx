@@ -118,33 +118,40 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     [tags],
   )
 
-  const categories: CategoriesProps[] = [
-    {
-      id: 'sorting',
-      label: n('orderBy', 'Raða eftir'),
-      selected: [selectedTitleSortOption.value],
-      singleOption: true,
-      filters: titleSortOptions.map((o) => ({
-        value: o.value,
-        label: o.label,
-      })),
-    },
-    {
-      id: 'raduneyti',
-      label: n('ministries', 'Ráðuneyti'),
-      selected: filter.raduneyti,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      filters: tagsItems.map((f) => ({
-        value: f.title,
-        label: f.title,
-      })),
-    },
-  ]
+  const categories: CategoriesProps[] = useMemo(
+    () => [
+      {
+        id: 'sorting',
+        label: n('orderBy', 'Raða eftir'),
+        selected: [selectedTitleSortOption.value],
+        singleOption: true,
+        filters: titleSortOptions.map((o) => ({
+          value: o.value,
+          label: o.label,
+        })),
+      },
+      {
+        id: 'raduneyti',
+        label: n('ministries', 'Ráðuneyti'),
+        selected: filter.raduneyti,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        filters: tagsItems.map((f) => ({
+          value: f.title,
+          label: f.title,
+        })),
+      },
+    ],
+    [selectedTitleSortOption, filter.raduneyti, titleSortOptions, tagsItems, n],
+  )
 
-  const islandIsItems = showOnlyIslandIs
-    ? organizationsItems.filter((x) => x.hasALandingPage)
-    : organizationsItems
+  const islandIsItems = useMemo(
+    () =>
+      showOnlyIslandIs
+        ? organizationsItems.filter((x) => x.hasALandingPage)
+        : organizationsItems,
+    [showOnlyIslandIs, organizationsItems],
+  )
 
   const hasFilters = filter.raduneyti.length || filter.input
   const filteredItems = hasFilters
@@ -179,6 +186,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     'Stofnanir Íslenska Ríkisins',
   )} | Ísland.is`
 
+  const inputPlaceholder = n('filterBySearchQuery', 'Sía eftir leitarorði')
+
   const filterLabels: FilterLabels = {
     labelClearAll: n('filterClearAll', 'Hreinsa allar síur'),
     labelClear: n('filterClear', 'Hreinsa síu'),
@@ -186,7 +195,6 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     labelClose: n('filterClose', 'Loka síu'),
     labelTitle: n('filterOrganization', 'Sía stofnanir'),
     labelResult: n('showResults', 'Sýna niðurstöður'),
-    inputPlaceholder: n('filterBySearchQuery', 'Sía eftir leitarorði'),
   }
 
   return (
@@ -248,7 +256,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                 <Box className={styles.searchContainer}>
                   <FilterInput
                     name="filter-input"
-                    placeholder={filterLabels.inputPlaceholder}
+                    placeholder={inputPlaceholder}
                     value={filter.input}
                     onChange={(value) => {
                       setFilter({ ...filter, input: value })
@@ -304,7 +312,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
             </Box>
 
             <GridRow>
-              {visibleItems.map((organization, index) => {
+              {visibleItems.map((organization) => {
                 const tags =
                   organization?.tag &&
                   organization.tag.map((x) => ({
@@ -314,7 +322,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
 
                 return (
                   <GridColumn
-                    key={index}
+                    key={organization.slug}
                     span={['12/12', '6/12', '6/12', '4/12']}
                     paddingBottom={verticalSpacing}
                   >

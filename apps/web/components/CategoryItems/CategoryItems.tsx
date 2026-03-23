@@ -17,6 +17,11 @@ import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
 import * as styles from './CategoryItems.css'
 
+const EXCLUDED_CATEGORY_SLUGS = [
+  'thjonusta-island-is',
+  'services-on-island-is',
+]
+
 interface CategoryItemsProps {
   heading?: string
   headingId?: string
@@ -73,16 +78,12 @@ export const CategoryItems = ({
         scrollContainerRef={indicator ? scrollContainerRef : undefined}
       >
         {items
-          .filter(
-            (item) =>
-              item.slug !== 'thjonusta-island-is' &&
-              item.slug !== 'services-on-island-is',
-          )
+          .filter((item) => !EXCLUDED_CATEGORY_SLUGS.includes(item.slug))
           .map(({ title, description, slug, __typename: typename }, index) => {
             const href = linkResolver(typename as LinkType, [slug]).href
             return (
               <FocusableBox
-                key={index}
+                key={slug}
                 href={href}
                 display="flex"
                 flexDirection="column"

@@ -176,7 +176,6 @@ import { ServicePortalPage } from './models/servicePortalPage.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
-// TODO: Add filtering support for hasALandingPage
 @Resolver()
 export class CmsResolver {
   constructor(
