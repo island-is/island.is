@@ -286,7 +286,6 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
           onRemove={onRemove}
           onRetry={onRetry}
           errorMessage={fieldState.error?.message ?? error}
-          // errorMessage={error ?? fieldState.error?.message}
         />
       )}
     />
