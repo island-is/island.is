@@ -123,6 +123,13 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
             'viewCategoryLink',
             activeLocale === 'is' ? 'Skoða þjónustuflokk' : 'View category',
           )}
+          seeMoreText={n(
+            'seeAllCategories',
+            activeLocale === 'is'
+              ? 'Skoða alla þjónustuflokka'
+              : 'See all categories',
+          )}
+          seeMoreHref="/flokkur"
         />
       </Box>
       <Box paddingTop={[8, 8, 6]}>
