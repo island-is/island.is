@@ -45,11 +45,6 @@ import { isCourtHearingArrangementsStepValidIC } from '@island.is/judicial-syste
 
 import { icHearingArrangements as m } from './HearingArrangements.strings'
 
-enum ModalButtonLoading {
-  PRIMARY = 'PRIMARY',
-  SECONDARY = 'SECONDARY',
-}
-
 const HearingArrangements = () => {
   const {
     workingCase,
@@ -73,8 +68,6 @@ const HearingArrangements = () => {
 
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [checkedRadio, setCheckedRadio] = useState<SessionArrangements>()
-  const [modalButtonLoading, setModalButtonLoading] =
-    useState<ModalButtonLoading>()
 
   const initialize = useCallback(() => {
     if (!workingCase.arraignmentDate && workingCase.requestedCourtDate) {
@@ -363,8 +356,6 @@ const HearingArrangements = () => {
           primaryButton={{
             text: formatMessage(m.modal.primaryButtonText),
             onClick: async () => {
-              setModalButtonLoading(ModalButtonLoading.PRIMARY)
-
               const notificationSent = await sendNotification(
                 workingCase.id,
                 NotificationType.COURT_DATE,
@@ -374,17 +365,13 @@ const HearingArrangements = () => {
                 router.push(`${navigateTo}/${workingCase.id}`)
               }
             },
-            isLoading:
-              isSendingNotification &&
-              modalButtonLoading === ModalButtonLoading.PRIMARY,
+            isLoading: isSendingNotification,
           }}
           secondaryButton={{
             text: formatMessage(m.modal.secondaryButtonText, {
               courtDateHasChanged,
             }),
             onClick: () => {
-              setModalButtonLoading(ModalButtonLoading.SECONDARY)
-
               sendNotification(
                 workingCase.id,
                 NotificationType.COURT_DATE,
@@ -393,9 +380,6 @@ const HearingArrangements = () => {
 
               router.push(`${navigateTo}/${workingCase.id}`)
             },
-            isLoading:
-              isSendingNotification &&
-              modalButtonLoading === ModalButtonLoading.SECONDARY,
           }}
         />
       )}
