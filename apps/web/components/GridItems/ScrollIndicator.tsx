@@ -14,7 +14,10 @@ interface ScrollIndicatorProps {
   colors: ScrollIndicatorColors
 }
 
-export const ScrollIndicator = ({ scrollRef, colors }: ScrollIndicatorProps) => {
+export const ScrollIndicator = ({
+  scrollRef,
+  colors,
+}: ScrollIndicatorProps) => {
   const [activePage, setActivePage] = useState(0)
   const [numPages, setNumPages] = useState(0)
 
@@ -60,8 +63,7 @@ export const ScrollIndicator = ({ scrollRef, colors }: ScrollIndicatorProps) => 
 
     const { scrollWidth, clientWidth } = container
     const maxScroll = scrollWidth - clientWidth
-    const targetScroll =
-      numPages > 1 ? (index / (numPages - 1)) * maxScroll : 0
+    const targetScroll = numPages > 1 ? (index / (numPages - 1)) * maxScroll : 0
 
     container.scrollTo({
       left: targetScroll,
