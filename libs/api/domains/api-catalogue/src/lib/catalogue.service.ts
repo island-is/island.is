@@ -30,7 +30,15 @@ export class ApiCatalogueService {
 
       if (typeof cursor !== 'undefined' && cursor !== null) {
         const temp = Buffer.from(input.cursor as string, 'base64').toString()
-        searchAfter = temp.split(',')
+
+        try {
+          const parsed = JSON.parse(temp)
+          searchAfter = Array.isArray(parsed)
+            ? parsed.map(String)
+            : temp.split(',')
+        } catch {
+          searchAfter = temp.split(',')
+        }
       }
 
       const { body } = await this.elastic.fetchAll(
@@ -53,7 +61,9 @@ export class ApiCatalogueService {
         res = {
           ...res,
           pageInfo: {
-            nextCursor: Buffer.from(searchAfter.toString()).toString('base64'),
+            nextCursor: Buffer.from(JSON.stringify(searchAfter)).toString(
+              'base64',
+            ),
           },
         }
       }
