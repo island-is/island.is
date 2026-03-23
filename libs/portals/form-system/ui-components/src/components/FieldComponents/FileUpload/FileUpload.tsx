@@ -14,7 +14,7 @@ import {
   InputFileUpload,
   UploadFile,
 } from '@island.is/island-ui/core'
-import { Action, getValue, uploadToS3 } from '../../../lib'
+import { Action, ApplicationState, getValue, uploadToS3 } from '../../../lib'
 import { m } from '../../../lib/messages'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -22,6 +22,7 @@ interface Props {
   item: FormSystemField
   hasError?: boolean
   dispatch?: Dispatch<Action>
+  state?: ApplicationState
 }
 
 const normalizeS3Keys = (raw: unknown): string[] => {
@@ -49,7 +50,7 @@ const initializeFiles = (item: FormSystemField): UploadFile[] => {
   })
 }
 
-export const FileUpload = ({ item, hasError, dispatch }: Props) => {
+export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
   const { formatMessage, lang } = useLocale()
   const { control, setValue, trigger } = useFormContext()
   const [files, setFiles] = useState<UploadFile[]>(initializeFiles(item))
@@ -103,7 +104,12 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
           },
         })
 
-        const newKey = `${item.id}/${presigned.fields.key}`
+        const applicationId = state?.application.id
+        if (!applicationId) {
+          throw new Error('Missing applicationId for file key construction')
+        }
+
+        const newKey = `${applicationId}/${presigned.fields.key}`
 
         setFiles((prev) => {
           const next = prev.map((f) =>
