@@ -5,6 +5,7 @@ import Fuse from 'fuse.js'
 import {
   Box,
   Button,
+  CategoryCard,
   GridContainer,
   Pagination,
   Stack,
@@ -43,7 +44,7 @@ import {
 } from './components'
 import * as styles from './SecondarySchoolStudies.css'
 
-const ITEMS_PER_PAGE = 18
+const ITEMS_PER_PAGE = 12
 
 const getDeterministicWeight = (value: string) => {
   let hash = 0
@@ -381,6 +382,51 @@ const SecondarySchoolStudiesLandingPage: Screen<
                       </button>
                     )}
                   />
+                </Box>
+
+                {/* Tengt efni */}
+                <Box paddingTop={4}>
+                  <Text variant="h3" as="h2" paddingBottom={3}>
+                    {formatMessage(m.general.relatedContent)}
+                  </Text>
+                  <Box
+                    display="flex"
+                    flexDirection={['column', 'column', 'row']}
+                    alignItems="stretch"
+                    columnGap={3}
+                    rowGap={3}
+                  >
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      flexGrow={1}
+                      style={{ flexBasis: '0%' }}
+                    >
+                      <CategoryCard
+                        heading={formatMessage(m.general.innritun)}
+                        text={formatMessage(m.general.innritunDescription)}
+                        href={formatMessage(m.general.innritunLink)}
+                        src="/assets/framhaldsskolar/mms.svg"
+                        alt="MMS logo"
+                        autoStack
+                      />
+                    </Box>
+                    <Box
+                      display="flex"
+                      flexDirection="column"
+                      flexGrow={1}
+                      style={{ flexBasis: '0%' }}
+                    >
+                      <CategoryCard
+                        src="/assets/framhaldsskolar/naestaskref.svg"
+                        alt="næsta skref logo"
+                        heading={formatMessage(m.general.nextStep)}
+                        text={formatMessage(m.general.nextStepDescription)}
+                        href={formatMessage(m.general.naestaskrefLink)}
+                        autoStack
+                      />
+                    </Box>
+                  </Box>
                 </Box>
               </Box>
             </Box>

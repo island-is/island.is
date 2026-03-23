@@ -73,6 +73,7 @@ export interface DatePickerProps {
     startDate?: Date | null
     endDate?: Date | null
   }
+  fixedHeight?: boolean
 }
 
 export interface DatePickerCustomHeaderProps {

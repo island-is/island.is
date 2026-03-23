@@ -21,6 +21,7 @@ import { Premises } from './components/Premises/Premises'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
 import { Urls } from './components/Urls/Urls'
+import { Lifetime } from './components/Lifetime/Lifetime'
 
 export const MainContent = () => {
   const {
@@ -63,6 +64,9 @@ export const MainContent = () => {
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).id === 'Urls' ? (
         <Urls />
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).id === 'Lifetime' ? (
+        <Lifetime />
       ) : (
         <Stack space={2}>
           <Row>

@@ -36,7 +36,7 @@ export const MessageWithLink = ({ item }: Props) => {
           <Text variant="h4">{item?.name?.[lang]}</Text>
         </Box>
         <Box overflow="hidden">
-          <Text>{item?.description?.[lang]}</Text>
+          <Text whiteSpace="breakSpaces">{item?.description?.[lang]}</Text>
         </Box>
       </Box>
       {item.fieldSettings?.hasLink && (
