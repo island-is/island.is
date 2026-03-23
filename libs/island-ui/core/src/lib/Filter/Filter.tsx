@@ -159,7 +159,13 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
     const inputBox = filterInputContent ? (
       <Box
         width={filterInputFluid === true ? 'full' : undefined}
-        flexGrow={filterInputFluid === true ? 1 : filterInputFluid === false ? 0 : undefined}
+        flexGrow={
+          filterInputFluid === true
+            ? 1
+            : filterInputFluid === false
+            ? 0
+            : undefined
+        }
         className={styles.filterInput}
       >
         {filterInputContent}
@@ -178,7 +184,13 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
             alignItems="flexEnd"
             flexWrap={mobileWrap ? 'wrap' : 'nowrap'}
             columnGap={2}
-            flexGrow={filterInputFluid === true ? 1 : filterInputFluid === false ? 0 : undefined}
+            flexGrow={
+              filterInputFluid === true
+                ? 1
+                : filterInputFluid === false
+                ? 0
+                : undefined
+            }
           >
             {reverse && inputBox}
             <Box
@@ -358,7 +370,11 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
 
   if (isMobile) {
     return (
-      <Box display="flex" alignItems="flexEnd" columnGap={removeLeftMargin ? 0 : 2}>
+      <Box
+        display="flex"
+        alignItems="flexEnd"
+        columnGap={removeLeftMargin ? 0 : 2}
+      >
         {filterInputContent}
 
         <FilterDrawerAriakit
