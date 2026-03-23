@@ -87,5 +87,7 @@ export class ApplicationDto {
   usePopulate?: boolean
 
   @ApiPropertyOptional()
+  organizationNationalId?: string
+
   submissionServiceUrl?: string
 }

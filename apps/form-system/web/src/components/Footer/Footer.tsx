@@ -32,6 +32,8 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const [notifyExternal, { loading: notifyLoading }] = useMutation(
     NOTIFY_EXTERNAL_SERVICE,
   )
+  const [createPayment, { loading: paymentLoading }] =
+    useMutation(CREATE_PAYMENT)
 
   const [submitApplication, { loading: submitLoading }] = useMutation(
     SUBMIT_APPLICATION,
@@ -138,6 +140,71 @@ export const Footer = ({ externalDataAgreement }: Props) => {
         console.error('Error notifying external service:', error)
         return
       }
+    }
+
+    if (shouldShowPay) {
+      const chargeItems: {
+        code: string
+        quantity?: number
+        amount?: number
+      }[] = []
+      const paymentQuantityFields: FormSystemField[] = []
+      state.sections?.forEach((section) => {
+        section?.screens?.forEach((screen) => {
+          screen?.fields?.forEach((field) => {
+            if (
+              field?.fieldType === FieldTypesEnum.PAYMENT_QUANTITY &&
+              field?.isHidden === false
+            ) {
+              paymentQuantityFields.push(field)
+            }
+          })
+        })
+      })
+
+      state.sections?.forEach((section) => {
+        section?.screens?.forEach((screen) => {
+          screen?.fields
+            ?.filter(
+              (field) =>
+                field?.fieldType === FieldTypesEnum.PAYMENT &&
+                field?.isHidden === false,
+            )
+            .forEach((field) => {
+              if (field?.fieldSettings?.chargeItemCode) {
+                const code = field.fieldSettings.chargeItemCode
+                let quantity: number | undefined = 1
+                const amount: number | undefined = field.fieldSettings
+                  .priceAmount as number | undefined
+                if (field.fieldSettings.paymentQuantityId) {
+                  const quantityField = paymentQuantityFields.find(
+                    (f) => f.id === field?.fieldSettings?.paymentQuantityId,
+                  )
+                  if (quantityField) {
+                    quantity = getValue(quantityField, 'number')
+                  }
+                }
+                chargeItems.push({ code, quantity, amount })
+              }
+            })
+        })
+      })
+      const { data } = await createPayment({
+        variables: {
+          input: {
+            applicationId: state.application.id,
+            createChargeRequestDto: {
+              performingOrganizationID: '6509142520',
+              chargeItems,
+            },
+          },
+        },
+      })
+      console.log(data)
+      if (data?.createFormSystemPayment?.paymentUrl) {
+        window.location.href = data.createFormSystemPayment.paymentUrl
+      }
+      return
     }
 
     if (!onSubmit) {
