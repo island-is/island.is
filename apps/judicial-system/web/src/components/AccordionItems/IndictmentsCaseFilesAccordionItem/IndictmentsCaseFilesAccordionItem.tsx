@@ -516,7 +516,12 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
   }
 
   const handleDigitalReorder = async (fileId: string) => {
-    if (!fileId) {
+    if (
+      !fileId ||
+      !reorderableDigitalFiles.some(
+        (file, index) => file.orderWithinChapter !== index,
+      )
+    ) {
       return
     }
 
