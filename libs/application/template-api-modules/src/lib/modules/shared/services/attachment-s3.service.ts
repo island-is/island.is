@@ -15,6 +15,11 @@ export interface AttachmentData {
   fileName: string
 }
 
+export interface AnswerFile {
+  key: string
+  name: string
+}
+
 @Injectable()
 export class AttachmentS3Service {
   constructor(
@@ -31,10 +36,10 @@ export class AttachmentS3Service {
     const attachments: AttachmentData[] = []
 
     for (const key of attachmentAnswerKeys) {
-      const answers = getValueViaPath(application.answers, key) as Array<{
-        key: string
-        name: string
-      }>
+      const answers = getValueViaPath(
+        application.answers,
+        key,
+      ) as Array<AnswerFile>
       if (!answers) continue
       const list = await this.toDocumentDataList(answers, key, application)
       attachments.push(...list)
@@ -47,10 +52,10 @@ export class AttachmentS3Service {
     attachmentAnswerKeys: string[],
   ): AsyncGenerator<AttachmentData, void, unknown> {
     for (const answerKey of attachmentAnswerKeys) {
-      const answers = getValueViaPath(application.answers, answerKey) as Array<{
-        key: string
-        name: string
-      }>
+      const answers = getValueViaPath(
+        application.answers,
+        answerKey,
+      ) as Array<AnswerFile>
 
       if (!answers) continue
 

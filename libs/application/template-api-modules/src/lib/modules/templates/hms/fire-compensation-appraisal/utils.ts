@@ -5,7 +5,10 @@ import {
   ApplicationFilesContentDto,
 } from '@island.is/clients/hms-application-system'
 import { Fasteign } from '@island.is/clients/assets'
-import { AttachmentData } from '../../../shared/services/attachment-s3.service'
+import {
+  AnswerFile,
+  AttachmentData,
+} from '../../../shared/services/attachment-s3.service'
 import crypto from 'crypto'
 import * as kennitala from 'kennitala'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -98,10 +101,10 @@ export const mapAnswersToApplicationDto = (
   const selectedRealEstate = realEstates?.find(
     (realEstate) => realEstate.fasteignanumer === selectedRealEstateId,
   )
-  const fileAnswers = getValueViaPath(application.answers, 'photos') as Array<{
-    key: string
-    name: string
-  }>
+  const fileAnswers = getValueViaPath(
+    application.answers,
+    'photos',
+  ) as Array<AnswerFile>
   const parsedFiles = fileAnswers?.map((file) => {
     const parts = file.key.split('.')
     const ending = (parts.length > 1 ? parts.pop() ?? '' : '').toLowerCase()
