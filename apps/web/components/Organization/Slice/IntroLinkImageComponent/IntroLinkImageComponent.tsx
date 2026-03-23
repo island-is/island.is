@@ -73,7 +73,8 @@ export const IntroLinkImageComponent = ({
             }
           >
             <img
-              className={cn(styles.image, {
+              className={cn({
+                [styles.image]: variant === 'default',
                 [styles.smallImage]: variant === 'small',
               })}
               src={`${image.url}?w=774&fm=webp&q=80`}
