@@ -4,7 +4,11 @@ import { theme } from '@island.is/island-ui/theme'
 
 const mobileMediaQuery = `screen and (max-width: ${theme.breakpoints.md - 1}px)`
 
-export { heading, description, listContainer } from '../shared/listingPageStyles.css'
+export {
+  heading,
+  description,
+  listContainer,
+} from '../shared/listingPageStyles.css'
 
 export const filterBar = style({
   display: 'flex',

@@ -17,10 +17,7 @@ import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
 import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 import * as styles from './CategoryItems.css'
 
-const EXCLUDED_CATEGORY_SLUGS = [
-  'thjonusta-island-is',
-  'services-on-island-is',
-]
+const EXCLUDED_CATEGORY_SLUGS = ['thjonusta-island-is', 'services-on-island-is']
 
 interface CategoryItemsProps {
   heading?: string

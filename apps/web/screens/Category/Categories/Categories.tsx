@@ -32,10 +32,7 @@ import { Screen } from '@island.is/web/types'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../../queries'
 import * as styles from './Categories.css'
 
-const EXCLUDED_CATEGORY_SLUGS = [
-  'thjonusta-island-is',
-  'services-on-island-is',
-]
+const EXCLUDED_CATEGORY_SLUGS = ['thjonusta-island-is', 'services-on-island-is']
 
 type SortOption = 'a-z' | 'z-a'
 
