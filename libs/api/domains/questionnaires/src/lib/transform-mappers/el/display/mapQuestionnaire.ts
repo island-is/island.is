@@ -29,7 +29,7 @@ const mapBaseInformation = (
     ? QuestionnairesStatusEnum.draft
     : q.submissions?.length > 0
     ? QuestionnairesStatusEnum.answered
-    : !q.canSubmit
+    : q.expiryDate && new Date(q.expiryDate) < new Date()
     ? QuestionnairesStatusEnum.expired
     : QuestionnairesStatusEnum.notAnswered,
   description: q.message ?? undefined,
@@ -98,6 +98,8 @@ export const mapElQuestionnaireListItem = (
     ? QuestionnairesStatusEnum.draft
     : q.numSubmitted > 0 || q.lastSubmitted
     ? QuestionnairesStatusEnum.answered
+    : q.expiryDate && new Date(q.expiryDate) < new Date()
+    ? QuestionnairesStatusEnum.expired
     : QuestionnairesStatusEnum.notAnswered,
   lastSubmitted: q.lastSubmitted,
 })
