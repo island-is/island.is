@@ -20,6 +20,7 @@ interface LifeEventsSectionProps {
   seeMoreText: string
   items: LifeEventPage[]
   cardsButtonTitle?: string
+  whiteCards?: boolean
 }
 
 export const LifeEventsSection = ({
@@ -28,6 +29,7 @@ export const LifeEventsSection = ({
   items = [],
   seeMoreText,
   cardsButtonTitle = '',
+  whiteCards,
 }: LifeEventsSectionProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -76,6 +78,7 @@ export const LifeEventsSection = ({
                   ]).href
                 }
                 featuredItems={lifeEvent.featured}
+                white={whiteCards}
                 buttonTitle={
                   lifeEvent.seeMoreText && lifeEvent.seeMoreText !== ''
                     ? lifeEvent.seeMoreText
