@@ -6,6 +6,7 @@ import {
   CategoryItems,
   DigitalIcelandLatestNewsSlice,
   LifeEventsSection,
+  OrganizationsSection,
   SearchSection,
   WatsonChatPanel,
 } from '@island.is/web/components'
@@ -16,10 +17,12 @@ import {
   GetArticleCategoriesQuery,
   GetFrontpageQuery,
   GetNewsQuery,
+  GetOrganizationsQuery,
   LifeEventPage,
   QueryGetArticleCategoriesArgs,
   QueryGetFrontpageArgs,
   QueryGetNewsArgs,
+  QueryGetOrganizationsArgs,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
@@ -28,19 +31,28 @@ import {
   GET_CATEGORIES_QUERY,
   GET_FRONTPAGE_QUERY,
   GET_NEWS_QUERY,
+  GET_ORGANIZATIONS_QUERY,
 } from '@island.is/web/screens/queries'
 import { Screen } from '@island.is/web/types'
 
+import { getOrganizationLink } from '../../utils/organization'
 import { watsonConfig } from './config'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
   news: GetNewsQuery['getNews']['items']
+  organizations: GetOrganizationsQuery['getOrganizations']['items']
   page?: GetFrontpageQuery['getFrontpage']
   locale: Locale
 }
 
-const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
+const Home: Screen<HomeProps> = ({
+  categories,
+  news,
+  organizations,
+  page,
+  locale,
+}) => {
   const namespace = JSON.parse(page?.namespace?.fields || '{}')
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
@@ -132,6 +144,41 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
           seeMoreHref="/flokkur"
         />
       </Box>
+      <Box
+        component="section"
+        paddingTop={[5, 5, 8]}
+        paddingBottom={[2, 2, 5]}
+        aria-labelledby="organizations-title"
+      >
+        <OrganizationsSection
+          heading={n(
+            'organizationsTitle',
+            activeLocale === 'is'
+              ? 'Stofnanir á Ísland.is'
+              : 'Organizations on Ísland.is',
+          )}
+          headingId="organizations-title"
+          items={organizations
+            .filter(
+              (org) =>
+                org.showsUpOnTheOrganizationsPage && org.hasALandingPage,
+            )
+            .map((org) => ({
+              title: org.title,
+              href: getOrganizationLink(org, locale),
+              logoUrl: org.logo?.url,
+              logoAlt: org.logo?.title,
+              tags: org.tag.map((t) => ({ id: t.id, title: t.title })),
+            }))}
+          seeMoreText={n(
+            'seeAllOrganizations',
+            activeLocale === 'is'
+              ? 'Skoða allar stofnanir'
+              : 'See all organizations',
+          )}
+          seeMoreHref="/s"
+        />
+      </Box>
       <Box paddingTop={[8, 8, 6]}>
         <DigitalIcelandLatestNewsSlice
           slice={{
@@ -172,6 +219,9 @@ Home.getProps = async ({ apolloClient, locale }) => {
     {
       data: { getFrontpage },
     },
+    {
+      data: { getOrganizations },
+    },
   ] = await Promise.all([
     apolloClient.query<
       GetArticleCategoriesQuery,
@@ -203,6 +253,14 @@ Home.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
+    apolloClient.query<GetOrganizationsQuery, QueryGetOrganizationsArgs>({
+      query: GET_ORGANIZATIONS_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
   ])
 
   return {
@@ -215,6 +273,7 @@ Home.getProps = async ({ apolloClient, locale }) => {
           ) ?? [],
       })) ?? [],
     categories: getArticleCategories,
+    organizations: getOrganizations?.items ?? [],
     page: getFrontpage,
     showSearchInHeader: false,
     locale: locale as Locale,
