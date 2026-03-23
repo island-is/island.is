@@ -15,6 +15,7 @@ export enum CustomPageUniqueIdentifier {
   LandspitaliWebPaymentSuccessful = 'LandspitaliWebPaymentSuccessful',
   SecondarySchoolStudies = 'SecondarySchoolStudies',
   SupremeCourtDeterminations = 'SupremeCourtDeterminations',
+  SupremeCourtAppeals = 'SupremeCourtAppeals',
 }
 
 export interface StatisticSourceValue {
