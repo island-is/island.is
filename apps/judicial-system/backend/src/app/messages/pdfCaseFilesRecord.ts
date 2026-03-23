@@ -59,4 +59,25 @@ export const caseFilesRecord = defineMessages({
       '{chapter, select, 0 {1. Kæra og fylgiskjöl} 1 {2. Rannsóknartilvik} 2 {3. Vitni} 3 {4. Sakborningur} 4 {5. Réttarfarsgögn} 5 {6. Rafræn gögn}}',
     description: 'Notaður sem kaflaheiti í PDF skjalaskrá',
   },
+  idesHeading: {
+    id: 'judicial.system.backend:case_files_record.ides_heading',
+    defaultMessage: '6. Rafræn gögn (IDES)',
+    description:
+      'Notaður sem kaflaheiti fyrir rafræn gögn úr IDES í PDF skjalaskrá',
+  },
+  idesGagnaNr: {
+    id: 'judicial.system.backend:case_files_record.ides_gagna_nr',
+    defaultMessage: 'Gagna nr',
+    description: 'Notaður sem merki fyrir IDES gagna númer í PDF skjalaskrá',
+  },
+  idesUpptakaNr: {
+    id: 'judicial.system.backend:case_files_record.ides_upptaka_nr',
+    defaultMessage: 'Upptaka nr',
+    description: 'Notaður sem merki fyrir IDES upptaka númer í PDF skjalaskrá',
+  },
+  idesDisplayDate: {
+    id: 'judicial.system.backend:case_files_record.ides_display_date',
+    defaultMessage: 'Dagsetning stofnað',
+    description: 'Notaður sem merki fyrir dagsetningu í IDES hluta PDF skjalaskrár',
+  },
 })
