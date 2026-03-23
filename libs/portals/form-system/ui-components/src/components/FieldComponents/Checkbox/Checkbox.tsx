@@ -10,10 +10,11 @@ import { useIntl } from 'react-intl'
 
 interface Props {
   item: FormSystemField
+  valueIndex?: number
   dispatch?: Dispatch<Action>
 }
 
-export const Checkbox = ({ item, dispatch }: Props) => {
+export const Checkbox = ({ item, valueIndex = 0, dispatch }: Props) => {
   const { control, trigger } = useFormContext()
   const { formatMessage } = useIntl()
   const { fieldSettings } = item
@@ -22,10 +23,10 @@ export const Checkbox = ({ item, dispatch }: Props) => {
 
   return (
     <Controller
-      key={item.id}
-      name={item.id}
+      key={`${item.id}-${valueIndex}`}
+      name={`${item.id}.${valueIndex}`}
       control={control}
-      defaultValue={getValue(item, 'checkboxValue') ?? false}
+      defaultValue={getValue(item, 'checkboxValue', valueIndex) ?? false}
       rules={{
         required: {
           value: item.isRequired ?? false,
@@ -48,7 +49,7 @@ export const Checkbox = ({ item, dispatch }: Props) => {
             if (dispatch) {
               dispatch({
                 type: 'SET_CHECKBOX_VALUE',
-                payload: { id: item.id, value: e.target.checked },
+                payload: { id: item.id, value: e.target.checked, valueIndex },
               })
             }
             trigger(item.id)

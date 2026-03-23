@@ -12,7 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import Jobs from '../../assets/Jobs'
+import { HandShake } from '@island.is/application/assets/graphics'
 import kennitala from 'kennitala'
 import { Student } from '../../types'
 import { getValueViaPath } from '@island.is/application/core'
@@ -57,7 +57,7 @@ const SchoolConfirmed: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         </GridColumn>
       </GridRow>
       <Box height="full" marginTop={6} marginBottom={6}>
-        <Jobs />
+        <HandShake />
       </Box>
       <Box marginBottom={10} display="flex" justifyContent="flexEnd">
         <Button

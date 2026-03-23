@@ -20,6 +20,8 @@ import { ConfigService } from '@nestjs/config'
 import { uuid } from 'uuidv4'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { PaymentsApi } from '@island.is/clients/payments'
+import { FetchError } from '@island.is/clients/middlewares'
+import { PaymentServiceCode } from '@island.is/shared/constants'
 
 @Injectable()
 export class PaymentService extends BaseTemplateApiService {

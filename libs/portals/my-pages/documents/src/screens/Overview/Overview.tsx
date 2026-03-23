@@ -264,7 +264,7 @@ export const DocumentsOverview = () => {
                     />
                   </Box>
                 ))}
-                {totalPages ? (
+                {totalPages > 1 ? (
                   <Box paddingBottom={4} marginTop={4}>
                     <Pagination
                       page={page}

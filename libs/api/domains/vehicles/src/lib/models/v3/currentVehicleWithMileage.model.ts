@@ -27,5 +27,8 @@ export class VehicleCurrentWithMileage {
   mileageDetails?: MileageDetails
 
   @Field({ nullable: true })
+  hasMilesOdometer?: boolean
+
+  @Field({ nullable: true })
   co2?: string
 }
