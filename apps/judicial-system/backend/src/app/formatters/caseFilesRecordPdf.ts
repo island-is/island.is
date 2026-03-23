@@ -35,13 +35,11 @@ const addPoliceDigitalCaseFilesPage = (
   const bulletIndent = pageMargin + 16
   const valueIndent = pageMargin + 180
 
-  pdfDocument
-    .addPage()
-    .addText(formatMessage(caseFilesRecord.idesHeading), subtitleFontSize, {
-      bold: true,
-      alignment: Alignment.Center,
-      marginBottom: 8,
-    })
+  pdfDocument.addPage().addText('6. Rafræn gögn (IDES)', subtitleFontSize, {
+    bold: true,
+    alignment: Alignment.Center,
+    marginBottom: 8,
+  })
 
   for (const file of files) {
     pdfDocument.addText(file.name, textFontSize, {
@@ -50,7 +48,7 @@ const addPoliceDigitalCaseFilesPage = (
     })
 
     pdfDocument
-      .addText(`• ${formatMessage(caseFilesRecord.idesGagnaNr)}: `, textFontSize, {
+      .addText(`• Gagna nr: `, textFontSize, {
         bold: true,
         newLine: false,
         position: { x: bulletIndent },
@@ -60,7 +58,7 @@ const addPoliceDigitalCaseFilesPage = (
       })
 
     pdfDocument
-      .addText(`• ${formatMessage(caseFilesRecord.idesUpptakaNr)}: `, textFontSize, {
+      .addText(`• Upptaka nr: `, textFontSize, {
         bold: true,
         newLine: false,
         position: { x: bulletIndent },
@@ -70,14 +68,18 @@ const addPoliceDigitalCaseFilesPage = (
       })
 
     pdfDocument
-      .addText(`• ${formatMessage(caseFilesRecord.idesDisplayDate)}: `, textFontSize, {
+      .addText(`• Dagsetning stofnað: `, textFontSize, {
         bold: true,
         newLine: false,
         position: { x: bulletIndent },
       })
-      .addText(formatDate(file.displayDate?.toISOString()) ?? '', textFontSize, {
-        position: { x: valueIndent },
-      })
+      .addText(
+        formatDate(file.displayDate?.toISOString()) ?? '',
+        textFontSize,
+        {
+          position: { x: valueIndent },
+        },
+      )
   }
 }
 

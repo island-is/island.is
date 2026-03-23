@@ -43,10 +43,6 @@ export interface PdfDocument {
     fontSize: number,
     options?: TextOptions,
   ) => PdfDocument
-  drawHorizontalLine: (options?: {
-    marginTop?: number
-    thickness?: number
-  }) => PdfDocument
   getContents: () => Promise<Buffer>
   getCurrentLineLink: () => LineLink
   getPageCount: () => number
@@ -298,30 +294,6 @@ export const PdfDocument = async (title?: string): Promise<PdfDocument> => {
         pageLink,
         newLine,
       )
-
-      return pdfDocument
-    },
-
-    drawHorizontalLine: (options?: {
-      marginTop?: number
-      thickness?: number
-    }) => {
-      const { marginTop = 0, thickness = 0.5 } = options ?? {}
-      const page = rawDocument.getPage(currentPage)
-
-      currentYPosition += marginTop
-
-      page.drawLine({
-        start: { x: margins.left, y: page.getHeight() - currentYPosition },
-        end: {
-          x: page.getWidth() - margins.right,
-          y: page.getHeight() - currentYPosition,
-        },
-        thickness,
-        color: rgb(0, 0, 0),
-      })
-
-      currentYPosition += thickness + 2
 
       return pdfDocument
     },
