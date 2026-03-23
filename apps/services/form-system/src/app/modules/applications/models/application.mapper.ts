@@ -12,6 +12,7 @@ import { ApplicationStatus, SectionTypes } from '@island.is/form-system/shared'
 import { MyPagesApplicationResponseDto } from './dto/myPagesApplication.response.dto'
 import { Field } from '../../fields/models/field.model'
 import type { Locale } from '@island.is/shared/types'
+import { ApplicationAdminDto } from './dto/admin/applicationAdmin.dto'
 
 @Injectable()
 export class ApplicationMapper {
@@ -75,7 +76,8 @@ export class ApplicationMapper {
               sectionId: screen.sectionId,
               name: screen.name,
               displayOrder: screen.displayOrder,
-              multiset: screen.multiset,
+              multiMax: screen.multiMax,
+              isMulti: screen.isMulti,
               shouldValidate: form.useValidate && screen.shouldValidate,
               shouldPopulate: form.usePopulate && screen.shouldPopulate,
               screenError: {
@@ -249,13 +251,7 @@ export class ApplicationMapper {
           label: app.tagLabel,
           variant: app.tagVariant,
         },
-        deleteButton: false,
-        pendingAction: {
-          displayStatus: 'displayStatus',
-          title: 'title',
-          content: 'content',
-          button: 'button',
-        },
+        deleteButton: true,
         history:
           app.events?.map((event) => {
             return {
@@ -265,7 +261,9 @@ export class ApplicationMapper {
           }) || [],
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
+        displayPruneAt: true,
       },
+      pruneAt: app.pruneAt,
       attachments: {},
       typeId: '',
       answers: { approveExternalData: true },
@@ -308,7 +306,9 @@ export class ApplicationMapper {
           }) || [],
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
+        displayPruneAt: true,
       },
+      pruneAt: app.pruneAt,
       attachments: {},
       typeId: '',
       answers: { approveExternalData: true },
@@ -319,6 +319,29 @@ export class ApplicationMapper {
       formSystemFormSlug: app.formSlug,
       formSystemOrgContentfulId: app.orgContentfulId,
       formSystemOrgSlug: app.orgSlug,
+    } as MyPagesApplicationResponseDto
+  }
+
+  mapApplicationToApplicationAdminDto(
+    application: Application,
+    locale?: Locale,
+  ): ApplicationAdminDto {
+    return {
+      id: application.id,
+      created: application.created,
+      modified: application.modified,
+      formId: application.formId,
+      formName:
+        locale === 'is'
+          ? application.form?.name?.is
+          : application.form?.name?.en,
+      formSlug: application.form?.slug,
+      applicant: application.nationalId,
+      status: application.status,
+      state: application.state,
+      pruneAt: application.pruneAt,
+      pruned: application.pruned,
+      institutionNationalId: application.form?.organization?.nationalId,
     }
   }
 }

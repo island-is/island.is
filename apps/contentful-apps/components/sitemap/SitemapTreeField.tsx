@@ -289,6 +289,7 @@ export const SitemapTreeField = () => {
                   status={status}
                   mode={mode}
                   selectedNodesRef={selectedNodesRef}
+                  isDraggable={mode === 'edit' && status !== 'published'}
                 />
               ))}
               {status !== 'published' && mode === 'edit' && (

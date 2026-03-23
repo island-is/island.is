@@ -44,6 +44,7 @@ export type ZendeskConfiguration = {
   {
     [WebChatType.Zendesk]?: {
       snippetUrl?: string
+      urlTrackingTicketId?: string
       chatBubbleVariant?: 'default' | 'circle'
     }
   }

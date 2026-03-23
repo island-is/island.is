@@ -9,6 +9,7 @@ import {
   Model,
   Table,
   UpdatedAt,
+  BelongsTo,
 } from 'sequelize-typescript'
 import { CompletedSectionInfo } from '../../../dataTypes/completedSectionInfo.model'
 import { Dependency } from '../../../dataTypes/dependency.model'
@@ -16,6 +17,7 @@ import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { Section } from '../../sections/models/section.model'
+import { Application } from '../../applications/models/application.model'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {
@@ -127,7 +129,13 @@ export class Form extends Model<Form> {
     type: DataType.INTEGER,
     defaultValue: 30,
   })
-  daysUntilApplicationPrune!: number
+  draftDaysToLive!: number
+
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 30,
+  })
+  submissionDaysToLive!: number
 
   @Column({
     type: DataType.UUID,
@@ -195,4 +203,10 @@ export class Form extends Model<Form> {
     field: 'organization_id',
   })
   organizationId!: string
+
+  @BelongsTo(() => Organization, 'organizationId')
+  organization?: Organization
+
+  @HasMany(() => Application)
+  applications?: Application[]
 }

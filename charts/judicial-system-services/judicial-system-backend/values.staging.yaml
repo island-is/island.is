@@ -22,7 +22,7 @@ env:
   AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
   AUDIT_TRAIL_REGION: 'eu-west-1'
   AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
-  BLOCKED_API_INTEGRATION: 'COURT,POLICE_CASE'
+  BLOCKED_API_INTEGRATION: 'COURT,POLICE_CASE, POLICE_DIGITAL_CASE_FILES'
   CLIENT_URL: 'https://judicial-system.staging01.devland.is'
   CONTENTFUL_ENVIRONMENT: 'test'
   CONTENTFUL_HOST: 'cdn.contentful.com'
@@ -103,7 +103,7 @@ initContainer:
     DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
 namespace: 'judicial-system'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534

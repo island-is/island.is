@@ -18,7 +18,12 @@ export class UpdateScreenDto {
   @IsOptional()
   @IsNumber()
   @ApiPropertyOptional()
-  multiset?: number
+  multiMax?: number
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  isMulti?: boolean
 
   @IsOptional()
   @IsBoolean()

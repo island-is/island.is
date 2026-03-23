@@ -56,27 +56,6 @@ export class ApplicationsController {
     return await this.applicationsService.findAllByNationalId(locale, user)
   }
 
-  @ApiOperation({ summary: 'Get all applications belonging to organization' })
-  @ApiOkResponse({
-    type: ApplicationResponseDto,
-    description: 'Get all applications belonging to organization',
-  })
-  @ApiParam({ name: 'organizationNationalId', type: String })
-  @Get('organization/:organizationNationalId')
-  async findAllByOrganization(
-    @Param('organizationNationalId') organizationNationalId: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-    @Query('isTest') isTest: boolean,
-  ): Promise<ApplicationResponseDto> {
-    return await this.applicationsService.findAllByOrganization(
-      organizationNationalId,
-      page,
-      limit,
-      isTest,
-    )
-  }
-
   @ApiOperation({ summary: 'Get an application by id' })
   @ApiOkResponse({
     description: 'Get an application by id',
@@ -169,8 +148,10 @@ export class ApplicationsController {
   async update(
     @Param('id') id: string,
     @Body() updateApplicationDto: UpdateApplicationDto,
+    @CurrentUser()
+    user: User,
   ): Promise<void> {
-    await this.applicationsService.update(id, updateApplicationDto)
+    await this.applicationsService.update(id, updateApplicationDto, user)
   }
 
   @ApiOperation({ summary: 'Submit application' })
@@ -180,8 +161,11 @@ export class ApplicationsController {
   })
   @ApiParam({ name: 'id', type: String })
   @Post('submit/:id')
-  async submit(@Param('id') id: string): Promise<SubmitApplicationResponseDto> {
-    return await this.applicationsService.submit(id)
+  async submit(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+  ): Promise<SubmitApplicationResponseDto> {
+    return await this.applicationsService.submit(id, user)
   }
 
   @ApiOperation({ summary: 'Delete an application by id' })

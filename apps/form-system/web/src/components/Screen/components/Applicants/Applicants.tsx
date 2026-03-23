@@ -153,24 +153,20 @@ export const Applicants = ({ applicantField }: Props) => {
           </Text>
           <Stack space={2}>
             <NationalIdField
-              disabled={false}
-              legalEntity
               nationalId={nationalId}
               name={getValue(applicantField, 'name')}
             />
             <Input
               label={formatMessage(m.address)}
               name="address"
-              placeholder={formatMessage(m.address)}
-              backgroundColor="white"
               value={getValue(applicantField, 'address') || ''}
+              readOnly
             />
             <Input
               label={formatMessage(m.postalCode)}
               name="postalCode"
-              placeholder={formatMessage(m.postalCode)}
-              backgroundColor="white"
               value={getValue(applicantField, 'postalCode') || ''}
+              readOnly
             />
           </Stack>
         </Box>

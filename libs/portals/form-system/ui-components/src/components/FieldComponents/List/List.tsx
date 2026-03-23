@@ -4,11 +4,14 @@ import { useLocale } from '@island.is/localization'
 import { Dispatch, useEffect } from 'react'
 import { getValue } from '../../../lib/getValue'
 import { Action } from '../../../lib/reducerTypes'
+import { Controller, useFormContext } from 'react-hook-form'
+import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   hasError?: boolean
+  valueIndex?: number
 }
 
 type ListItem = {
@@ -23,8 +26,10 @@ const listTypePlaceholder = {
   idngreinarMeistara: 'Veldu iðngrein',
 }
 
-export const List = ({ item, dispatch, hasError }: Props) => {
-  const { lang } = useLocale()
+export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
+  const { lang, formatMessage } = useLocale()
+  const { control, trigger } = useFormContext()
+
   const mapToListItems = (items: (FormSystemListItem | null)[]): ListItem[] =>
     items
       ?.filter((item): item is FormSystemListItem => item !== null)
@@ -34,7 +39,7 @@ export const List = ({ item, dispatch, hasError }: Props) => {
       })) ?? []
 
   const value = () => {
-    const listVal = item?.values?.[0]?.json?.listValue
+    const listVal = getValue(item, 'listValue', valueIndex)
     const hasValue = listVal !== undefined && listVal !== null
     if (hasValue) {
       return {
@@ -49,10 +54,14 @@ export const List = ({ item, dispatch, hasError }: Props) => {
 
   useEffect(() => {
     if (selected && dispatch) {
-      if (!getValue(item, 'listValue')) {
+      if (!getValue(item, 'listValue', valueIndex)) {
         dispatch({
           type: 'SET_LIST_VALUE',
-          payload: { id: item.id, value: selected.label?.[lang] ?? '' },
+          payload: {
+            id: item.id,
+            value: selected.label?.[lang] ?? '',
+            valueIndex,
+          },
         })
       }
     }
@@ -60,34 +69,51 @@ export const List = ({ item, dispatch, hasError }: Props) => {
   }, [])
 
   return (
-    <Select
-      name="list"
-      label={item.name?.[lang] ?? ''}
-      options={mapToListItems(item?.list ?? [])}
-      required={item.isRequired ?? false}
-      defaultValue={
-        selected
-          ? {
-              label: selected.label?.[lang] ?? '',
-              value: selected.label?.[lang] ?? '',
-            }
-          : undefined
-      }
-      placeholder={
-        listTypePlaceholder[
-          item.fieldSettings?.listType as keyof typeof listTypePlaceholder
-        ] ?? 'Select an option'
-      }
-      backgroundColor="blue"
-      onChange={(e) => {
-        if (!dispatch) return
-        dispatch({
-          type: 'SET_LIST_VALUE',
-          payload: { id: item.id, value: e?.value },
-        })
+    <Controller
+      key={item.id}
+      name={item.id}
+      control={control}
+      defaultValue={getValue(item, 'listValue', valueIndex) ?? ''}
+      rules={{
+        required: {
+          value: item.isRequired ?? false,
+          message: formatMessage(m.required),
+        },
       }}
-      value={value()}
-      hasError={!!hasError}
+      render={({ field, fieldState }) => (
+        <Select
+          name="list"
+          label={item.name?.[lang] ?? ''}
+          options={mapToListItems(item?.list ?? [])}
+          required={item.isRequired ?? false}
+          defaultValue={
+            selected
+              ? {
+                  label: selected.label?.[lang] ?? '',
+                  value: selected.label?.[lang] ?? '',
+                }
+              : undefined
+          }
+          placeholder={
+            listTypePlaceholder[
+              item.fieldSettings?.listType as keyof typeof listTypePlaceholder
+            ] ?? 'Select an option'
+          }
+          backgroundColor="blue"
+          onChange={(e) => {
+            field.onChange(e)
+            trigger(field.name)
+            if (!dispatch) return
+            dispatch({
+              type: 'SET_LIST_VALUE',
+              payload: { id: item.id, value: e?.value, valueIndex },
+            })
+          }}
+          value={value()}
+          hasError={!!fieldState.error}
+          errorMessage={fieldState.error?.message}
+        />
+      )}
     />
   )
 }

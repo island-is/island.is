@@ -1152,12 +1152,6 @@
       "ProgrammeFilterOptionsDto": {
         "type": "object",
         "properties": {
-          "studyTracks": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/StudyTrackReturnDto" },
-            "description": "List of study tracks to filter by.",
-            "nullable": true
-          },
           "levels": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/LevelDto" },
@@ -1287,6 +1281,10 @@
             "nullable": true
           },
           "programmeApplicationMessage": { "type": "string", "nullable": true },
+          "programmeApplicationMessageEnglish": {
+            "type": "string",
+            "nullable": true
+          },
           "isSpecialNeedsProgramme": { "type": "boolean" },
           "isProcessingLocked": { "type": "boolean" },
           "isDisabled": { "type": "boolean" },
@@ -1329,10 +1327,11 @@
             "description": "Description of the programme.",
             "nullable": true
           },
-          "schools": {
+          "school": { "$ref": "#/components/schemas/SchoolSimpleReturnDto" },
+          "otherSchools": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/SchoolSimpleReturnDto" },
-            "description": "Schools offering this programme.",
+            "description": "Other schools offering programmes with the same Ministry Serial.",
             "nullable": true
           }
         },

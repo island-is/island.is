@@ -4,17 +4,27 @@ import { Action } from '../../../lib'
 import { m } from '../../../lib/messages'
 import { useIntl } from 'react-intl'
 import { getValue } from '../../../lib/getValue'
-import { parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
-import { DatePickerController } from '@island.is/shared/form-fields'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
+import { DatePicker } from '@island.is/island-ui/core'
+import { Controller, useFormContext } from 'react-hook-form'
 
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   lang: 'is' | 'en'
+  valueIndex?: number
 }
+const df = 'yyyy-MM-dd'
 
-export const DatePicker = ({ item, dispatch, lang = 'is' }: Props) => {
+export const DatePickerField = ({
+  item,
+  dispatch,
+  lang = 'is',
+  valueIndex = 0,
+}: Props) => {
   const { formatMessage } = useIntl()
+  const { control, trigger } = useFormContext()
 
   const handleDateChange = (dateString: string) => {
     if (dispatch) {
@@ -24,23 +34,60 @@ export const DatePicker = ({ item, dispatch, lang = 'is' }: Props) => {
         payload: {
           id: item.id,
           value: date,
+          valueIndex,
         },
       })
     }
   }
 
   return (
-    <DatePickerController
-      label={item.name[lang] ?? ''}
-      placeholder={formatMessage(m.chooseDate)}
-      id={item.id}
-      locale={lang}
-      defaultValue={getValue(item, 'date')}
-      backgroundColor="blue"
-      onChange={handleDateChange}
-      maxDate={new Date()}
-      minDate={new Date(1970, 0)}
-      required
+    <Controller
+      key={`${item.id}-${valueIndex}`}
+      name={`${item.id}.${valueIndex}`}
+      control={control}
+      defaultValue={getValue(item, 'date', valueIndex)}
+      rules={{
+        required: {
+          value: item.isRequired ?? false,
+          message: formatMessage(m.required),
+        },
+      }}
+      render={({
+        field: { onChange: onControllerChange, value },
+        fieldState,
+      }) => (
+        <DatePicker
+          label={item.name[lang] ?? ''}
+          placeholderText={formatMessage(m.chooseDate)}
+          id={item.id}
+          locale={lang}
+          backgroundColor="blue"
+          handleChange={(date) => {
+            if (!(date instanceof Date) || isNaN(date.getTime())) {
+              onControllerChange('')
+              handleDateChange('')
+              trigger(item.id)
+              return
+            }
+            const newVal = format(date, df)
+            onControllerChange(newVal)
+            handleDateChange(newVal)
+            trigger(item.id)
+          }}
+          minDate={new Date(1970, 0)}
+          required={item.isRequired ?? false}
+          errorMessage={fieldState.error ? fieldState.error.message : undefined}
+          hasError={!!fieldState.error}
+          selected={value ? parseISO(value) : undefined}
+          handleClear={() => {
+            onControllerChange('')
+            handleDateChange('')
+            trigger(item.id)
+          }}
+          isClearable={!item.isRequired}
+          readOnly={true}
+        />
+      )}
     />
   )
 }
