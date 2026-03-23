@@ -11,7 +11,6 @@ import {
   Param,
   Patch,
   Post,
-  Query,
   Req,
   UnauthorizedException,
   UseGuards,
