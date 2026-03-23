@@ -23,7 +23,9 @@ export const FeaturedItemTags = ({
   return (
     <Box
       marginY={2}
-      className={`${styles.purpleTags}${truncate ? ` ${styles.truncatedTags}` : ''}`}
+      className={`${styles.purpleTags}${
+        truncate ? ` ${styles.truncatedTags}` : ''
+      }`}
     >
       {items.map((item: Featured) => {
         const cardUrl = linkResolver(item.thing?.type as LinkType, [
@@ -48,7 +50,10 @@ const FeaturedTag = ({
 }) => {
   const CustomLink = useMemo(
     () =>
-      function FeaturedLink({ children, ...props }: PropsWithChildren<unknown>) {
+      function FeaturedLink({
+        children,
+        ...props
+      }: PropsWithChildren<unknown>) {
         return (
           <Link {...props} {...cardUrl} dataTestId="featured-link">
             {children}
