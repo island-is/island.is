@@ -35,8 +35,9 @@ const toYearWithMonths = (
   raw?.map((ym) => ({
     year: ym.year,
     months: (ym.months ?? [])
-      .filter((m): m is { month: number; selectable?: boolean } =>
-        m.selectable === true && m.month != null,
+      .filter(
+        (m): m is { month: number; selectable?: boolean } =>
+          m.selectable === true && m.month != null,
       )
       .map((m) => m.month),
   })) ?? null
@@ -55,7 +56,9 @@ export class PersonalTaxCreditResolver {
     name: 'socialInsurancePersonalTaxCredit',
     nullable: true,
   })
-  async getPersonalTaxCredit(@CurrentUser() user: User): Promise<PersonalTaxCredit> {
+  async getPersonalTaxCredit(
+    @CurrentUser() user: User,
+  ): Promise<PersonalTaxCredit> {
     const [taxCardsResult, registrationMonthsAndYears, spouseEligibility] =
       await Promise.all([
         this.personalTaxCreditService.getTaxCards(user),
@@ -77,11 +80,15 @@ export class PersonalTaxCreditResolver {
       canEdit: taxCardsResult?.canEditPersonalAllowance,
       canDiscontinue: taxCardsResult?.canDiscontinuePersonalAllowance,
       registrationMonthsAndYears: toYearWithMonths(registrationMonthsAndYears),
-      discontinuingMonthsAndYears: toYearWithMonths(discontinuingMonthsAndYears),
+      discontinuingMonthsAndYears: toYearWithMonths(
+        discontinuingMonthsAndYears,
+      ),
       spouseEligibility: spouseEligibility
         ? {
             ...spouseEligibility,
-            allowedYearMonths: toYearWithMonths(spouseEligibility.allowedYearMonths),
+            allowedYearMonths: toYearWithMonths(
+              spouseEligibility.allowedYearMonths,
+            ),
           }
         : null,
     }
