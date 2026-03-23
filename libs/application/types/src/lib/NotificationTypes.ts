@@ -17,6 +17,7 @@ export enum NotificationType {
   NewPrimarySchoolAssignPayer = 'NewPrimarySchoolAssignPayerNotification',
   NewPrimarySchoolPayerApproved = 'NewPrimarySchoolPayerApprovedNotification',
   NewPrimarySchoolPayerRejected = 'NewPrimarySchoolPayerRejectedNotification',
+  NewPrimarySchool = 'NewPrimarySchoolNotification',
   TransferOfVehicleOwnershipPruned = 'TransferOfVehicleOwnershipPrunedNotification',
   ChangeCoOwnerOfVehiclePruned = 'ChangeCoOwnerOfVehiclePrunedNotification',
   ChangeOperatorOfVehiclePruned = 'ChangeOperatorOfVehiclePrunedNotification',
@@ -99,6 +100,10 @@ export const NotificationConfig = {
   [NotificationType.NewPrimarySchoolPayerRejected]: {
     templateId: 'HNIPP.AS.NPS.PAYER.REJECTED',
     keys: {} as { applicationLink: string },
+  },
+  [NotificationType.NewPrimarySchool]: {
+    templateId: 'HNIPP.AS.NPS.NOTIFICATION',
+    keys: {} as { name: string; id: string; applicationLink: string },
   },
   [NotificationType.TransferOfVehicleOwnershipPruned]: {
     templateId: 'HNIPP.AS.TA.TVO.PRUNED',

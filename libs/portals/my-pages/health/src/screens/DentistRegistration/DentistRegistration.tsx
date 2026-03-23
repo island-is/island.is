@@ -26,7 +26,7 @@ import {
 } from './DentistRegistration.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
-const DEFAULT_PAGE_SIZE = 12
+const DEFAULT_PAGE_SIZE = 3
 const DEFAULT_PAGE_NUMBER = 1
 
 type SelectedDentist = Pick<RightsPortalDentist, 'id' | 'name'>
@@ -240,10 +240,11 @@ export const DentistRegistration = () => {
             </T.Body>
           </T.Table>
           <Box marginTop={6}>
-            {data?.response?.totalCount && (
+            {data?.response?.totalCount &&
+            data.response.totalCount > DEFAULT_PAGE_SIZE ? (
               <Pagination
                 totalPages={Math.ceil(
-                  data?.response.totalCount / DEFAULT_PAGE_SIZE,
+                  data.response.totalCount / DEFAULT_PAGE_SIZE,
                 )}
                 page={page}
                 renderLink={(page, className, children) => (
@@ -252,7 +253,7 @@ export const DentistRegistration = () => {
                   </button>
                 )}
               />
-            )}
+            ) : undefined}
           </Box>
         </>
       )}
