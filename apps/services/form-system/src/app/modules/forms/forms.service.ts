@@ -424,10 +424,23 @@ export class FormsService {
   ): Promise<FormResponseDto> {
     await this.sequelize.transaction(async (transaction) => {
       try {
-        await this.applicationModel.destroy({
+        const applications = await this.applicationModel.findAll({
           where: { formId: id },
+          include: [
+            {
+              model: Value,
+              as: 'values',
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            },
+          ],
           transaction,
         })
+
+        for (const application of applications) {
+          await this.cleanupApplicationFiles(application)
+          await application.destroy({ transaction })
+        }
 
         form.status = FormStatus.PUBLISHED
         form.beenPublished = true
@@ -476,10 +489,23 @@ export class FormsService {
 
     await this.sequelize.transaction(async (transaction) => {
       try {
-        await this.applicationModel.destroy({
+        const applications = await this.applicationModel.findAll({
           where: { formId: id },
+          include: [
+            {
+              model: Value,
+              as: 'values',
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            },
+          ],
           transaction,
         })
+
+        for (const application of applications) {
+          await this.cleanupApplicationFiles(application)
+          await application.destroy({ transaction })
+        }
 
         const slugToBeArchived = formToBeArchived.slug
         formToBeArchived.status = FormStatus.ARCHIVED
@@ -548,6 +574,32 @@ export class FormsService {
     return new FormResponseDto()
   }
 
+  private async cleanupApplicationFiles(
+    application: Application,
+  ): Promise<void> {
+    for (const value of application.values ?? []) {
+      if (value.fieldType !== FieldTypesEnum.FILE) continue
+
+      const parsed =
+        typeof value.json === 'string' ? JSON.parse(value.json) : value.json
+
+      const rawS3Keys = (parsed as { s3Key?: unknown } | undefined)?.s3Key
+      const s3Keys: string[] = Array.isArray(rawS3Keys)
+        ? rawS3Keys.filter(
+            (k): k is string => typeof k === 'string' && k.length > 0,
+          )
+        : typeof rawS3Keys === 'string' && rawS3Keys.length > 0
+        ? [rawS3Keys]
+        : []
+
+      this.logger.debug(`Deleting s3Keys for value ${value.id}:`, s3Keys)
+
+      for (const key of s3Keys) {
+        await this.fileService.deleteFile(key, value.id)
+      }
+    }
+  }
+
   private async deleteApplications(id: string): Promise<FormResponseDto> {
     const applications = await this.applicationModel.findAll({
       where: { formId: id, isTest: true },
@@ -563,18 +615,7 @@ export class FormsService {
 
     try {
       for (const application of applications) {
-        for (const value of application.values ?? []) {
-          const parsed =
-            typeof value.json === 'string' ? JSON.parse(value.json) : value.json
-
-          const s3Keys: string[] = parsed?.s3Key ?? []
-
-          this.logger.debug(`Deleting s3Keys for value ${value.id}:`, s3Keys)
-
-          for (const key of s3Keys) {
-            await this.fileService.deleteFile(key, value.id)
-          }
-        }
+        await this.cleanupApplicationFiles(application)
         await application.destroy()
       }
     } catch (error) {
