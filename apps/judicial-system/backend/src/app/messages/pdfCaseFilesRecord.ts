@@ -78,6 +78,7 @@ export const caseFilesRecord = defineMessages({
   idesDisplayDate: {
     id: 'judicial.system.backend:case_files_record.ides_display_date',
     defaultMessage: 'Dagsetning stofnað',
-    description: 'Notaður sem merki fyrir dagsetningu í IDES hluta PDF skjalaskrár',
+    description:
+      'Notaður sem merki fyrir dagsetningu í IDES hluta PDF skjalaskrár',
   },
 })

@@ -50,34 +50,50 @@ const addPoliceDigitalCaseFilesPage = (
     })
 
     pdfDocument
-      .addText(`• ${formatMessage(caseFilesRecord.idesGagnaNr)}: `, textFontSize, {
-        bold: true,
-        newLine: false,
-        position: { x: bulletIndent },
-      })
+      .addText(
+        `• ${formatMessage(caseFilesRecord.idesGagnaNr)}: `,
+        textFontSize,
+        {
+          bold: true,
+          newLine: false,
+          position: { x: bulletIndent },
+        },
+      )
       .addText(file.policeDigitalFileId, textFontSize, {
         position: { x: valueIndent },
       })
 
     pdfDocument
-      .addText(`• ${formatMessage(caseFilesRecord.idesUpptakaNr)}: `, textFontSize, {
-        bold: true,
-        newLine: false,
-        position: { x: bulletIndent },
-      })
+      .addText(
+        `• ${formatMessage(caseFilesRecord.idesUpptakaNr)}: `,
+        textFontSize,
+        {
+          bold: true,
+          newLine: false,
+          position: { x: bulletIndent },
+        },
+      )
       .addText(file.policeExternalVendorId, textFontSize, {
         position: { x: valueIndent },
       })
 
     pdfDocument
-      .addText(`• ${formatMessage(caseFilesRecord.idesDisplayDate)}: `, textFontSize, {
-        bold: true,
-        newLine: false,
-        position: { x: bulletIndent },
-      })
-      .addText(formatDate(file.displayDate?.toISOString()) ?? '', textFontSize, {
-        position: { x: valueIndent },
-      })
+      .addText(
+        `• ${formatMessage(caseFilesRecord.idesDisplayDate)}: `,
+        textFontSize,
+        {
+          bold: true,
+          newLine: false,
+          position: { x: bulletIndent },
+        },
+      )
+      .addText(
+        formatDate(file.displayDate?.toISOString()) ?? '',
+        textFontSize,
+        {
+          position: { x: valueIndent },
+        },
+      )
   }
 }
 
