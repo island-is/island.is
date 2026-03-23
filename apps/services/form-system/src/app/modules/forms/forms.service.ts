@@ -22,7 +22,7 @@ import {
   UpdateFormStatusDto,
 } from '@island.is/form-system/shared'
 import { randomUUID } from 'crypto'
-import { Op, UniqueConstraintError } from 'sequelize'
+import { Op, Transaction, UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuidV4 } from 'uuid'
 import {
@@ -438,7 +438,7 @@ export class FormsService {
         })
 
         for (const application of applications) {
-          await this.cleanupApplicationFiles(application)
+          await this.cleanupApplicationFiles(application, transaction)
           await application.destroy({ transaction })
         }
 
@@ -503,7 +503,7 @@ export class FormsService {
         })
 
         for (const application of applications) {
-          await this.cleanupApplicationFiles(application)
+          await this.cleanupApplicationFiles(application, transaction)
           await application.destroy({ transaction })
         }
 
@@ -576,6 +576,7 @@ export class FormsService {
 
   private async cleanupApplicationFiles(
     application: Application,
+    transaction?: Transaction,
   ): Promise<void> {
     for (const value of application.values ?? []) {
       if (value.fieldType !== FieldTypesEnum.FILE) continue
@@ -595,29 +596,32 @@ export class FormsService {
       this.logger.debug(`Deleting s3Keys for value ${value.id}:`, s3Keys)
 
       for (const key of s3Keys) {
-        await this.fileService.deleteFile(key, value.id)
+        await this.fileService.deleteFile(key, value.id, transaction)
       }
     }
   }
 
   private async deleteApplications(id: string): Promise<FormResponseDto> {
-    const applications = await this.applicationModel.findAll({
-      where: { formId: id, isTest: true },
-      include: [
-        {
-          model: Value,
-          as: 'values',
-          where: { fieldType: FieldTypesEnum.FILE },
-          required: false,
-        },
-      ],
-    })
-
     try {
-      for (const application of applications) {
-        await this.cleanupApplicationFiles(application)
-        await application.destroy()
-      }
+      await this.sequelize.transaction(async (transaction) => {
+        const applications = await this.applicationModel.findAll({
+          where: { formId: id, isTest: true },
+          include: [
+            {
+              model: Value,
+              as: 'values',
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            },
+          ],
+          transaction,
+        })
+
+        for (const application of applications) {
+          await this.cleanupApplicationFiles(application, transaction)
+          await application.destroy({ transaction })
+        }
+      })
     } catch (error) {
       throw new InternalServerErrorException(
         `Unexpected error deleting applications for form '${id}'.`,

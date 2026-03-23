@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Value } from '../applications/models/value.model'
 import { FileConfig } from './file.config'
 import { Sequelize } from 'sequelize-typescript'
+import { Transaction } from 'sequelize'
 
 @Injectable()
 export class FileService {
@@ -37,20 +38,12 @@ export class FileService {
     }
 
     let attempts = 0
-    const key = `${fieldId}/${sourceKey}`
 
     while (attempts < 5) {
       const exists = await this.fileExists(sourceKey)
       this.logger.info(`Starting attempt ${attempts + 1}`)
       if (exists) {
         try {
-          const res = await this.fileStorageService.copyObjectFromUploadBucket(
-            sourceKey,
-            targetBucket,
-            key,
-          )
-          this.logger.info(`result: ${res}`)
-
           await this.sequelize.transaction(async (transaction) => {
             const value = await this.valueModel.findByPk(valueId, {
               transaction,
@@ -60,6 +53,17 @@ export class FileService {
             if (!value) {
               throw new Error(`Value with PK: ${valueId} not found`)
             }
+
+            const applicationId = value.applicationId
+            const key = `${applicationId}/${sourceKey}`
+
+            const res =
+              await this.fileStorageService.copyObjectFromUploadBucket(
+                sourceKey,
+                targetBucket,
+                key,
+              )
+            this.logger.info(`result: ${res}`)
 
             const existingKeys = value.json?.s3Key
             const currentKeys = Array.isArray(existingKeys) ? existingKeys : []
@@ -75,9 +79,11 @@ export class FileService {
             }
 
             await value.save({ transaction })
+            this.logger.info(
+              `✅ Updated field ${fieldId} with new S3 key ${key}`,
+            )
           })
 
-          this.logger.info(`✅ Updated field ${fieldId} with new S3 key ${key}`)
           return
         } catch (error) {
           this.logger.error(`❌ Copy failed: ${error}`)
@@ -97,7 +103,11 @@ export class FileService {
     this.logger.info(`Upload job added to queue for key ${sourceKey}`)
   }
 
-  async deleteFile(key: string, valueId: string): Promise<void> {
+  async deleteFile(
+    key: string,
+    valueId: string,
+    transaction?: Transaction,
+  ): Promise<void> {
     if (!key || !valueId) {
       throw new Error('Key and valueId must be provided for deletion')
     }
@@ -116,13 +126,16 @@ export class FileService {
       this.logger.info(`Successfully deleted file ${s3Uri}`)
 
       // Update the Value to remove the S3 key reference
-      const value = await this.valueModel.findByPk(valueId)
+      const value = await this.valueModel.findByPk(valueId, { transaction })
       if (value) {
         value.json = {
           ...value.json,
           s3Key: value.json?.s3Key?.filter((k: string) => k !== key) || [],
         }
-        await value.save()
+
+        if (transaction) await value.save({ transaction })
+        else await value.save()
+
         this.logger.info(`Cleared s3Key for valueId ${valueId} after deletion`)
       } else {
         this.logger.warn(`Value with id ${valueId} not found`)
