@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
 import {
   Box,
@@ -13,6 +13,7 @@ import { GridItems } from '@island.is/web/components'
 import { GetArticleCategoriesQuery } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
+import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
 import * as styles from './CategoryItems.css'
 
@@ -36,6 +37,7 @@ export const CategoryItems = ({
   indicator,
 }: CategoryItemsProps) => {
   const { linkResolver } = useLinkResolver()
+  const scrollContainerRef = useRef<HTMLElement>(null)
 
   return (
     <>
@@ -68,7 +70,7 @@ export const CategoryItems = ({
         paddingTop={4}
         paddingBottom={3}
         insideGridContainer
-        indicator={indicator}
+        scrollContainerRef={indicator ? scrollContainerRef : undefined}
       >
         {items
           .filter(
@@ -145,6 +147,12 @@ export const CategoryItems = ({
             </Box>
           </GridContainer>
         </Hidden>
+      )}
+      {indicator && (
+        <ScrollIndicator
+          scrollRef={scrollContainerRef}
+          colors={indicator}
+        />
       )}
     </>
   )

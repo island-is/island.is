@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
 import {
   Box,
@@ -14,6 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { GridItems } from '@island.is/web/components'
 
+import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
 import * as styles from './OrganizationsSection.css'
 
@@ -47,6 +48,8 @@ export const OrganizationsSection = ({
   seeMoreHref,
   indicator,
 }: OrganizationsSectionProps) => {
+  const scrollContainerRef = useRef<HTMLElement>(null)
+
   return (
     <>
       <GridContainer>
@@ -76,7 +79,7 @@ export const OrganizationsSection = ({
         paddingTop={4}
         paddingBottom={3}
         insideGridContainer
-        indicator={indicator}
+        scrollContainerRef={indicator ? scrollContainerRef : undefined}
       >
         {items.slice(0, 8).map((item, index) => {
           const hasTags = (item.tags?.length ?? 0) > 0
@@ -163,6 +166,12 @@ export const OrganizationsSection = ({
             </Box>
           </GridContainer>
         </Hidden>
+      )}
+      {indicator && (
+        <ScrollIndicator
+          scrollRef={scrollContainerRef}
+          colors={indicator}
+        />
       )}
     </>
   )

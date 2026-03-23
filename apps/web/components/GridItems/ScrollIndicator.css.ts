@@ -3,8 +3,8 @@ import { style } from '@vanilla-extract/css'
 export const wrapper = style({
   display: 'flex',
   justifyContent: 'center',
-  marginTop: -48,
-  paddingBottom: 8,
+  marginTop: 16,
+  marginBottom: 24,
   position: 'sticky',
   bottom: 24,
   zIndex: 1,

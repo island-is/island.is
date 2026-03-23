@@ -1,11 +1,10 @@
-import React, { Children, FC, useEffect, useRef, useState } from 'react'
+import React, { Children, FC, useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import cx from 'classnames'
 
 import { Box, BoxProps, GridContainer } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 
-import { ScrollIndicator, ScrollIndicatorColors } from './ScrollIndicator'
 import * as styles from './GridItems.css'
 
 export type { ScrollIndicatorColors } from './ScrollIndicator'
@@ -21,7 +20,7 @@ type GridItemsProps = {
   half?: boolean
   quarter?: boolean
   third?: boolean
-  indicator?: ScrollIndicatorColors
+  scrollContainerRef?: React.RefObject<HTMLElement | null>
 }
 
 export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
@@ -35,12 +34,11 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
   half = false,
   quarter = false,
   third = false,
-  indicator,
+  scrollContainerRef,
   children,
 }) => {
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState<boolean | null>(null)
-  const scrollRef = useRef<HTMLDivElement>(null)
 
   const items = Children.toArray(children)
 
@@ -68,32 +66,27 @@ export const GridItems: FC<React.PropsWithChildren<GridItemsProps>> = ({
 
   return (
     <Wrapper show={insideGridContainer}>
-      <>
+      <Box
+        marginTop={marginTop}
+        marginBottom={marginBottom}
+        ref={scrollContainerRef as React.RefObject<HTMLDivElement> | undefined}
+        className={cx(styles.container, {
+          [styles.hideScrollbar]: !!scrollContainerRef,
+        })}
+      >
         <Box
-          marginTop={marginTop}
-          marginBottom={marginBottom}
-          ref={scrollRef}
-          className={cx(styles.container, {
-            [styles.hideScrollbar]: !!indicator,
+          paddingTop={paddingTop}
+          paddingBottom={paddingBottom}
+          className={cx(styles.wrapper, {
+            [styles.half]: half,
+            [styles.quarter]: quarter,
+            [styles.third]: third,
           })}
+          {...(style && { style })}
         >
-          <Box
-            paddingTop={paddingTop}
-            paddingBottom={paddingBottom}
-            className={cx(styles.wrapper, {
-              [styles.half]: half,
-              [styles.quarter]: quarter,
-              [styles.third]: third,
-            })}
-            {...(style && { style })}
-          >
-            {children}
-          </Box>
+          {children}
         </Box>
-        {indicator && isMobile && (
-          <ScrollIndicator scrollRef={scrollRef} colors={indicator} />
-        )}
-      </>
+      </Box>
     </Wrapper>
   )
 }
