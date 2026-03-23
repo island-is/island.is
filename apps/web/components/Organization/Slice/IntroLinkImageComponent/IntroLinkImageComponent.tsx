@@ -34,7 +34,7 @@ export const IntroLinkImageComponent = ({
     link,
     linkHref: linkHrefFromCms,
   },
-  variant = 'small',
+  variant = 'default',
   id,
 }: IntroLinkImageComponentProps) => {
   const { linkResolver } = useLinkResolver()
