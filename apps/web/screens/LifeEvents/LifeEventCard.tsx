@@ -8,7 +8,7 @@ import * as styles from './LifeEventCard.css'
 
 type LifeEventCardProps = {
   heading: string
-  imgSrc: string
+  imgSrc?: string
   imgAlt?: string
   href: string | null
   dataTestId?: string
@@ -90,21 +90,36 @@ export const LifeEventCard = ({
           alignItems="center"
           style={{ flex: 1 }}
         >
-          <img src={imgSrc} alt={imgAlt} className={styles.image} />
+          {imgSrc && (
+            <img src={imgSrc} alt={imgAlt} className={styles.image} />
+          )}
         </Box>
       </Box>
-      <Link href={href ?? ''} skipTab>
+      {href ? (
+        <Link href={href} skipTab>
+          <Button
+            variant="text"
+            as="span"
+            icon="arrowForward"
+            size="small"
+            colorScheme="purple"
+            nowrap
+          >
+            {buttonTitle || ''}
+          </Button>
+        </Link>
+      ) : (
         <Button
           variant="text"
           as="span"
-          icon="arrowForward"
           size="small"
           colorScheme="purple"
           nowrap
+          disabled
         >
           {buttonTitle || ''}
         </Button>
-      </Link>
+      )}
     </Box>
   )
 }
