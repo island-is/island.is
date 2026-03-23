@@ -5,6 +5,7 @@ import {
   Button,
   FocusableBox,
   GridContainer,
+  Hidden,
   Link,
   Text,
 } from '@island.is/island-ui/core'
@@ -19,6 +20,8 @@ interface CategoryItemsProps {
   headingId?: string
   items: GetArticleCategoriesQuery['getArticleCategories']
   viewCategoryText?: string
+  seeMoreText?: string
+  seeMoreHref?: string
 }
 
 export const CategoryItems = ({
@@ -26,6 +29,8 @@ export const CategoryItems = ({
   headingId,
   items = [],
   viewCategoryText = 'Skoða þjónustuflokk',
+  seeMoreText,
+  seeMoreHref,
 }: CategoryItemsProps) => {
   const { linkResolver } = useLinkResolver()
 
@@ -33,9 +38,25 @@ export const CategoryItems = ({
     <>
       {heading && (
         <GridContainer>
-          <Text variant="h2" as="h2" id={headingId}>
-            {heading}
-          </Text>
+          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
+            <Text variant="h2" as="h2" id={headingId}>
+              {heading}
+            </Text>
+            {seeMoreText && seeMoreHref && (
+              <Box display={['none', 'none', 'none', 'block']}>
+                <Link href={seeMoreHref} skipTab>
+                  <Button
+                    icon="arrowForward"
+                    iconType="filled"
+                    variant="text"
+                    as="span"
+                  >
+                    {seeMoreText}
+                  </Button>
+                </Link>
+              </Box>
+            )}
+          </Box>
         </GridContainer>
       )}
       <GridItems
@@ -97,6 +118,30 @@ export const CategoryItems = ({
             )
           })}
       </GridItems>
+      {seeMoreText && seeMoreHref && (
+        <Hidden above="md">
+          <GridContainer>
+            <Box
+              display="flex"
+              width="full"
+              justifyContent="center"
+              alignItems="center"
+              paddingY={[3, 3, 3, 0]}
+            >
+              <Link skipTab href={seeMoreHref}>
+                <Button
+                  icon="arrowForward"
+                  iconType="filled"
+                  variant="text"
+                  as="span"
+                >
+                  {seeMoreText}
+                </Button>
+              </Link>
+            </Box>
+          </GridContainer>
+        </Hidden>
+      )}
     </>
   )
 }
