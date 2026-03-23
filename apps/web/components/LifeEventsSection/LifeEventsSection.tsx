@@ -117,10 +117,7 @@ export const LifeEventsSection = ({
         </GridContainer>
       </Hidden>
       {indicator && (
-        <ScrollIndicator
-          scrollRef={scrollContainerRef}
-          colors={indicator}
-        />
+        <ScrollIndicator scrollRef={scrollContainerRef} colors={indicator} />
       )}
     </>
   )

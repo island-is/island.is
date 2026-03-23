@@ -168,10 +168,7 @@ export const OrganizationsSection = ({
         </Hidden>
       )}
       {indicator && (
-        <ScrollIndicator
-          scrollRef={scrollContainerRef}
-          colors={indicator}
-        />
+        <ScrollIndicator scrollRef={scrollContainerRef} colors={indicator} />
       )}
     </>
   )

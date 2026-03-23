@@ -90,9 +90,7 @@ export const LifeEventCard = ({
           alignItems="center"
           style={{ flex: 1 }}
         >
-          {imgSrc && (
-            <img src={imgSrc} alt={imgAlt} className={styles.image} />
-          )}
+          {imgSrc && <img src={imgSrc} alt={imgAlt} className={styles.image} />}
         </Box>
       </Box>
       {href ? (
