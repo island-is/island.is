@@ -28,10 +28,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CreatePaymentFlowInputAvailablePaymentMethodsEnum,
   PaymentsApi,
+  GetPaymentFlowStatusDTOPaymentStatusEnum,
 } from '@island.is/clients/payments'
 import { PaymentServiceCode } from '@island.is/shared/constants'
 import { FetchError } from '@island.is/clients/middlewares'
-import { GetPaymentFlowStatusDTOPaymentStatusEnum } from 'libs/clients/payments/gen/fetch/models/GetPaymentFlowStatusDTO'
 
 @Injectable()
 export class PaymentService {
