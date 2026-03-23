@@ -74,7 +74,10 @@ const PetitionsTable = (data: {
           </T.Body>
         </T.Table>
 
-        {endorsements && !!endorsements.data?.length ? (
+        {endorsements && !endorsements.data?.length && (
+          <Text>{formatMessage(m.noSignatures)}</Text>
+        )}
+        {endorsements && endorsements.totalCount > pageSize && (
           <Pagination
             page={page}
             totalItems={endorsements.totalCount}
@@ -102,8 +105,6 @@ const PetitionsTable = (data: {
               </Box>
             )}
           />
-        ) : (
-          <Text>{formatMessage(m.noSignatures)}</Text>
         )}
       </Stack>
     </Box>

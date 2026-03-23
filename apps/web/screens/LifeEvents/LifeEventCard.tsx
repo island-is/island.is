@@ -1,0 +1,110 @@
+import React from 'react'
+
+import { Box, Button, Link, Tag, Text } from '@island.is/island-ui/core'
+import { Featured } from '@island.is/web/graphql/schema'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks'
+
+import * as styles from './LifeEventCard.css'
+
+type LifeEventCardProps = {
+  heading: string
+  imgSrc: string
+  imgAlt?: string
+  href: string | null
+  dataTestId?: string
+  buttonTitle?: string
+  featuredItems: Featured[]
+}
+
+export const LifeEventCard = ({
+  heading,
+  imgSrc,
+  imgAlt = '',
+  href,
+  dataTestId,
+  featuredItems,
+  buttonTitle,
+}: LifeEventCardProps) => {
+  const { linkResolver } = useLinkResolver()
+  const limitedFeaturedItems = featuredItems.slice(0, 3)
+
+  return (
+    <Box
+      background="white"
+      borderRadius="large"
+      color="purple"
+      data-testid={dataTestId}
+      className={styles.container}
+      display="flex"
+      flexDirection="column"
+      justifyContent="spaceBetween"
+      padding={3}
+    >
+      <Text variant="h3" color="purple600" truncate>
+        {heading}
+      </Text>
+      <Box display="flex" flexDirection="row" style={{ height: 140 }}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="flexEnd"
+          style={{ flex: 1, minWidth: 0 }}
+        >
+          {limitedFeaturedItems.length > 0 && (
+            <Box marginY={2} className={styles.purpleTags}>
+              {limitedFeaturedItems.map((item: Featured, index: number) => {
+                const cardUrl = linkResolver(item.thing?.type as LinkType, [
+                  item.thing?.slug ?? '',
+                ])
+                return (
+                  <Box marginBottom={1} key={index}>
+                    <Tag
+                      key={item.title}
+                      {...(cardUrl.href.startsWith('/')
+                        ? {
+                            CustomLink: ({ children, ...props }) => (
+                              <Link
+                                key={item.title}
+                                {...props}
+                                {...cardUrl}
+                                dataTestId="featured-link"
+                              >
+                                {children}
+                              </Link>
+                            ),
+                          }
+                        : { href: cardUrl.href })}
+                      variant="purple"
+                    >
+                      {item.title}
+                    </Tag>
+                  </Box>
+                )
+              })}
+            </Box>
+          )}
+        </Box>
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          style={{ flex: 1 }}
+        >
+          <img src={imgSrc} alt={imgAlt} className={styles.image} />
+        </Box>
+      </Box>
+      <Link href={href ?? ''} skipTab>
+        <Button
+          variant="text"
+          as="span"
+          icon="arrowForward"
+          size="small"
+          colorScheme="purple"
+          nowrap
+        >
+          {buttonTitle || ''}
+        </Button>
+      </Link>
+    </Box>
+  )
+}

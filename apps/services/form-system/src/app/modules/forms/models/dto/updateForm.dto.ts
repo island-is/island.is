@@ -4,9 +4,12 @@ import {
   IsArray,
   IsBoolean,
   IsDateString,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
+  Max,
+  Min,
   ValidateNested,
 } from 'class-validator'
 import { CompletedSectionInfo } from '../../../../dataTypes/completedSectionInfo.model'
@@ -76,10 +79,19 @@ export class UpdateFormDto {
   @ApiPropertyOptional()
   isTranslated?: boolean
 
-  @IsNumber()
+  @IsInt()
+  @Min(1)
+  @Max(60)
   @IsOptional()
   @ApiPropertyOptional()
-  daysUntilApplicationPrune?: number
+  draftDaysToLive?: number
+
+  @IsInt()
+  @Min(1)
+  @Max(30)
+  @IsOptional()
+  @ApiPropertyOptional()
+  submissionDaysToLive?: number
 
   @IsBoolean()
   @IsOptional()

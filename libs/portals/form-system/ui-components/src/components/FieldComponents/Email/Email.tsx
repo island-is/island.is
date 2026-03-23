@@ -10,22 +10,22 @@ import { m } from '../../../lib/messages'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  valueIndex?: number
 }
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
-export const Email = ({ item, dispatch }: Props) => {
+export const Email = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const { formatMessage, lang } = useLocale()
   const { control } = useFormContext()
-  const safeId = item.id.replace(/[^a-zA-Z0-9_]/g, '_')
-  const fieldName = `emails.${safeId}`
+
   return (
     <Stack space={2}>
       <Controller
-        key={fieldName}
-        name={fieldName}
+        key={`${item.id}-${valueIndex}`}
+        name={`${item.id}.${valueIndex}`}
         control={control}
-        defaultValue={getValue(item, 'email') ?? ''}
+        defaultValue={getValue(item, 'email', valueIndex) ?? ''}
         rules={{
           required: item?.isRequired
             ? { value: true, message: formatMessage(m.required) }
@@ -45,7 +45,7 @@ export const Email = ({ item, dispatch }: Props) => {
               field.onChange(e)
               dispatch?.({
                 type: 'SET_EMAIL',
-                payload: { id: item.id, value: e.target.value },
+                payload: { id: item.id, value: e.target.value, valueIndex },
               })
             }}
             onBlur={field.onBlur}

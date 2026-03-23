@@ -24,6 +24,7 @@ import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
 interface Props {
   field: FormSystemField
+  valueIndex?: number
 }
 
 const FIELD_COMPONENT_MAP = {
@@ -45,12 +46,13 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.NUMBERBOX]: NumberInput,
 } as const
 
-export const Field = ({ field }: Props) => {
+export const Field = ({ field, valueIndex = 0 }: Props) => {
   const { dispatch, state } = useApplicationContext()
   const { control } = useFormContext()
 
   const fieldItems = {
     item: field,
+    valueIndex,
     control,
     dispatch,
     ...(field.fieldType === FieldTypesEnum.ISK_SUMBOX && { state }),

@@ -3,7 +3,7 @@ import {
   QuestionnaireQuestionnairesStatusEnum,
 } from '@island.is/api/schema'
 import { Box, Button, Tag, TagVariant } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   formatDate,
   InfoLine,
@@ -20,6 +20,7 @@ import { useGetQuestionnaireQuery } from './questionnaires.generated'
 import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const QuestionnaireDetail: FC = () => {
+  useNamespaces('sp.health')
   const { id, org } = useParams<{ id?: string; org?: string }>()
 
   useHealthPlausibleSwap()
@@ -35,7 +36,11 @@ const QuestionnaireDetail: FC = () => {
 
   const { data, loading, error } = useGetQuestionnaireQuery({
     variables: {
-      input: { id: id ?? '', organization: organization },
+      input: {
+        id: id ?? '',
+        organization:
+          organization ?? QuestionnaireQuestionnairesOrganizationEnum.EL,
+      },
       locale: lang,
     },
     skip: !id || !organization,
@@ -206,6 +211,22 @@ const QuestionnaireDetail: FC = () => {
                 : formatMessage(messages.unknown)
             }
           />
+          {questionnaire?.sender && (
+            <InfoLine
+              loading={loading}
+              key="questionnaire-sender"
+              label={formatMessage(messages.questionnaireSender)}
+              content={questionnaire.sender}
+            />
+          )}
+          {questionnaire?.expirationDate && (
+            <InfoLine
+              loading={loading}
+              key="questionnaire-expiration"
+              label={formatMessage(messages.questionnaireExpiration)}
+              content={formatDate(questionnaire.expirationDate)}
+            />
+          )}
         </InfoLineStack>
       )}
       {!loading && !data?.questionnairesDetail && !error && (
