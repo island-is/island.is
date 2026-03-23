@@ -1,4 +1,5 @@
 export { CaseFile } from './models/file.model'
+export { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
 export { UpdateFilesResponse } from './models/updateFiles.response'
 export { PresignedPost } from './models/presignedPost.model'
 export { DeleteFileResponse } from './models/deleteFile.response'

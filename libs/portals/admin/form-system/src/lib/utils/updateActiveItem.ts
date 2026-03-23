@@ -55,7 +55,7 @@ export const updateActiveItemFn = async (
         },
       })
     } else if (type === 'Screen') {
-      const { id, name, multiset, shouldValidate, shouldPopulate } =
+      const { id, name, multiMax, isMulti, shouldValidate, shouldPopulate } =
         currentActiveItem
           ? (currentActiveItem.data as FormSystemScreen)
           : (activeItem.data as FormSystemScreen)
@@ -65,7 +65,8 @@ export const updateActiveItemFn = async (
             id,
             updateScreenDto: {
               name,
-              multiset: multiset ? multiset : 0,
+              multiMax: multiMax ? multiMax : 0,
+              isMulti: isMulti ? isMulti : false,
               shouldValidate: shouldValidate ? shouldValidate : false,
               shouldPopulate: shouldPopulate ? shouldPopulate : false,
             },

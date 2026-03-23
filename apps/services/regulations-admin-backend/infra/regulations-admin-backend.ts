@@ -50,10 +50,10 @@ export const serviceSetup = (): ServiceBuilder<'regulations-admin-backend'> =>
           staging: 'regulations-admin-backend-xrd',
           prod: 'regulations-admin-backend-xrd',
         },
-        paths: ['/'],
+        paths: ['/api'],
         public: false,
       },
     })
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces('islandis', 'download-service')
+    .grantNamespaces('islandis', 'download-service', 'nginx-ingress-internal')
