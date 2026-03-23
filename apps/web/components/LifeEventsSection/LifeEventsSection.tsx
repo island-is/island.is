@@ -12,10 +12,9 @@ import { GridItems } from '@island.is/web/components'
 import { LifeEventPage } from '@island.is/web/graphql/schema'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
-import { ScrollIndicator } from '../GridItems/ScrollIndicator'
-import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
-
 import CardWithFeaturedItems from '../CardWithFeaturedItems/CardWithFeaturedItems'
+import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
+import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 
 interface LifeEventsSectionProps {
   heading: string

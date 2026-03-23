@@ -14,8 +14,8 @@ import {
 } from '@island.is/island-ui/core'
 import { GridItems } from '@island.is/web/components'
 
-import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 import type { ScrollIndicatorColors } from '../GridItems/ScrollIndicator'
+import { ScrollIndicator } from '../GridItems/ScrollIndicator'
 import * as styles from './OrganizationsSection.css'
 
 type OrganizationTag = {
