@@ -3,7 +3,6 @@ import { Dialog, DialogDisclosure, useDialogState } from 'reakit/Dialog'
 import { usePopoverState, Popover, PopoverDisclosure } from 'reakit/Popover'
 import { Box } from '../Box/Box'
 import { Button } from '../Button/Button'
-import { Inline } from '../Inline/Inline'
 import { Stack } from '../Stack/Stack'
 import { Text } from '../Text/Text'
 import { usePreventBodyScroll } from './usePreventBodyScroll'
@@ -40,6 +39,9 @@ export interface FilterProps {
 
   /** Filter input component */
   filterInput?: ReactNode
+
+  /** Should Filter input fill up available flex space? */
+  filterInputFluid?: boolean
 
   /** How the filter should be displayed */
   variant?: 'popover' | 'dialog' | 'default'
@@ -94,6 +96,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   align,
   variant = 'default',
   filterInput,
+  filterInputFluid,
   onFilterClear,
   reverse,
   children,
@@ -152,65 +155,79 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
     </Box>
   )
 
-  const popoverContainer = () => (
-    <>
+  const popoverContainer = () => {
+    const inputBox = filterInputContent ? (
       <Box
-        display="flex"
-        width="full"
-        justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
+        width={filterInputFluid === true ? 'full' : undefined}
+        flexGrow={filterInputFluid === true ? 1 : filterInputFluid === false ? 0 : undefined}
+        className={styles.filterInput}
       >
-        <Inline
-          space={2}
-          reverse={reverse}
-          alignY="bottom"
-          flexWrap={mobileWrap ? 'wrap' : 'nowrap'}
+        {filterInputContent}
+      </Box>
+    ) : null
+
+    return (
+      <>
+        <Box
+          display="flex"
+          width="full"
+          justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
         >
           <Box
-            component={PopoverDisclosure}
-            background="white"
-            display="inlineBlock"
-            borderRadius="large"
-            tabIndex={-1}
-            {...popover}
-            className={filterCount ? styles.filterCountButton : undefined}
+            display="flex"
+            alignItems="flexEnd"
+            flexWrap={mobileWrap ? 'wrap' : 'nowrap'}
+            columnGap={2}
+            flexGrow={filterInputFluid === true ? 1 : filterInputFluid === false ? 0 : undefined}
           >
-            {filterCount ? (
-              <Button
-                as="span"
-                variant="utility"
-                icon={!filterCount ? 'filter' : undefined}
-                fluid
-                nowrap
-              >
-                {labelOpen}
-
-                <Box
+            {reverse && inputBox}
+            <Box
+              component={PopoverDisclosure}
+              background="white"
+              display="inlineBlock"
+              borderRadius="large"
+              tabIndex={-1}
+              {...popover}
+              className={filterCount ? styles.filterCountButton : undefined}
+            >
+              {filterCount ? (
+                <Button
                   as="span"
-                  background="blue400"
-                  color="white"
-                  className={styles.filterCount}
+                  variant="utility"
+                  icon={!filterCount ? 'filter' : undefined}
+                  fluid
+                  nowrap
                 >
-                  <Text
-                    variant="eyebrow"
+                  {labelOpen}
+
+                  <Box
+                    as="span"
+                    background="blue400"
                     color="white"
-                    lineHeight={isMobile ? 'xl' : 'lg'}
+                    className={styles.filterCount}
                   >
-                    {filterCountNumber}
-                  </Text>
-                </Box>
-              </Button>
-            ) : (
-              <Button as="span" variant="utility" icon="filter" fluid nowrap>
-                {labelOpen}
-              </Button>
-            )}
+                    <Text
+                      variant="eyebrow"
+                      color="white"
+                      lineHeight={isMobile ? 'xl' : 'lg'}
+                    >
+                      {filterCountNumber}
+                    </Text>
+                  </Box>
+                </Button>
+              ) : (
+                <Button as="span" variant="utility" icon="filter" fluid nowrap>
+                  {labelOpen}
+                </Button>
+              )}
+            </Box>
+            {!reverse && inputBox}
           </Box>
-          {filterInputContent}
-        </Inline>
-      </Box>
-      {popoverContent(true)}
-    </>
-  )
+        </Box>
+        {popoverContent(true)}
+      </>
+    )
+  }
 
   const dialogContent = () => (
     <>
@@ -341,7 +358,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
 
   if (isMobile) {
     return (
-      <Box display="flex" alignItems="flexEnd">
+      <Box display="flex" alignItems="flexEnd" columnGap={removeLeftMargin ? 0 : 2}>
         {filterInputContent}
 
         <FilterDrawerAriakit
@@ -357,7 +374,6 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
               marginTop={'auto'}
               borderRadius="large"
               tabIndex={-1}
-              marginLeft={removeLeftMargin ? 0 : 2}
               className={filterCount ? styles.filterCountButton : undefined}
             >
               {filterCount ? (
