@@ -31,10 +31,6 @@ type GivenWhenThen = (
 describe('InternalNotificationController - Defendant - Send indictment withdrawn from prison admin notification', () => {
   const caseId = uuid()
   const defendantId = uuid()
-  const emails = [
-    'prisonadminindictment@omnitrix.is',
-    'prisonadminindictment2@omnitrix.is',
-  ]
 
   let mockEmailService: EmailService
   let mockNotificationModel: typeof Notification
@@ -43,10 +39,18 @@ describe('InternalNotificationController - Defendant - Send indictment withdrawn
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    process.env.PRISON_ADMIN_INDICTMENT_EMAILS = emails.join(',')
+    const {
+      emailService,
+      internalNotificationController,
+      notificationModel,
+      institutionContactRepositoryService,
+    } = await createTestingNotificationModule()
 
-    const { emailService, internalNotificationController, notificationModel } =
-      await createTestingNotificationModule()
+    const getInstitutionContactMock = jest.mocked(
+      institutionContactRepositoryService.getInstitutionContact,
+    )
+
+    getInstitutionContactMock.mockResolvedValue('extra@omnitrix.is')
 
     defendantNotificationDTO = {
       type: DefendantNotificationType.INDICTMENT_WITHDRAWN_FROM_PRISON_ADMIN,
@@ -104,23 +108,22 @@ describe('InternalNotificationController - Defendant - Send indictment withdrawn
     })
 
     it('should send a notification to prison admin emails', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(emails.length)
-      emails.forEach((email) => {
-        expect(mockEmailService.sendEmail).toBeCalledWith(
-          expect.objectContaining({
-            to: [
-              {
-                name: 'Fangelsismálastofnun',
-                address: email,
-              },
-            ],
-            subject: `Mál S-123-456/2024 afturkallað úr fullnustu`,
-            text: expect.stringContaining(
-              'Ríkissaksóknari hefur afturkallað mál S-123-456/2024 úr fullnustu.',
-            ),
-          }),
-        )
-      })
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: [
+            {
+              name: 'Fangelsismálastofnun',
+              address: 'extra@omnitrix.is',
+            },
+          ],
+          subject: `Mál S-123-456/2024 afturkallað úr fullnustu`,
+          text: expect.stringContaining(
+            'Ríkissaksóknari hefur afturkallað mál S-123-456/2024 úr fullnustu.',
+          ),
+        }),
+      )
     })
 
     it('should record notification', () => {
@@ -128,10 +131,12 @@ describe('InternalNotificationController - Defendant - Send indictment withdrawn
       expect(mockNotificationModel.create).toHaveBeenCalledWith({
         caseId,
         type: defendantNotificationDTO.type,
-        recipients: emails.map((email) => ({
-          address: email,
-          success: true,
-        })),
+        recipients: [
+          {
+            address: 'extra@omnitrix.is',
+            success: true,
+          },
+        ],
       })
     })
   })
