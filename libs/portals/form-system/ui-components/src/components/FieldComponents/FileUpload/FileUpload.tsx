@@ -52,7 +52,7 @@ const initializeFiles = (item: FormSystemField): UploadFile[] => {
 
 export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
   const { formatMessage, lang } = useLocale()
-  const { control, setValue, trigger } = useFormContext()
+  const { control, setValue, trigger, clearErrors } = useFormContext()
   const [files, setFiles] = useState<UploadFile[]>(initializeFiles(item))
   const [error, setError] = useState<string | undefined>(
     hasError ? 'error' : undefined,
@@ -169,6 +169,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
         files.length + selectedFiles.length >
         (item?.fieldSettings?.maxFiles ?? 1)
       ) {
+        clearErrors(item.id)
         setError(
           `${formatMessage(m.maxFileError)} ${
             item.fieldSettings?.maxFiles ?? 1
@@ -180,6 +181,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
       if (typeof maxSize === 'number' && maxSize > 0) {
         const tooLarge = selectedFiles.find((f) => f.size > maxSize)
         if (tooLarge) {
+          clearErrors(item.id)
           const maxSizeInMb = Math.round((maxSize / 1_000_000) * 10) / 10
           setError(formatMessage(m.maxSizeInMb, { maxSizeInMb }))
           return
@@ -283,7 +285,8 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
           onChange={onChange}
           onRemove={onRemove}
           onRetry={onRetry}
-          errorMessage={error ?? fieldState.error?.message}
+          errorMessage={fieldState.error?.message ?? error}
+          // errorMessage={error ?? fieldState.error?.message}
         />
       )}
     />
