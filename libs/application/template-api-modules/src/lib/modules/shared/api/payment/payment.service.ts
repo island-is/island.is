@@ -240,7 +240,7 @@ export class PaymentService extends BaseTemplateApiService {
 
       if (requestId) {
         this.logger.info(
-          `Calling deleteCharge with application id: ${application.id}`,
+          `Calling refundPayment with application id: ${application.id}`,
         )
         await this.paymentModelService.refundPayment(
           application.id,
@@ -248,7 +248,7 @@ export class PaymentService extends BaseTemplateApiService {
           true,
         )
       } else {
-        this.logger.warn('No requestId found, skipping deleteCharge')
+        this.logger.warn('No requestId found, skipping refundPayment')
       }
 
       console.log('deleting payment', requestId)
