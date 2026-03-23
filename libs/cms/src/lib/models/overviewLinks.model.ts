@@ -55,6 +55,9 @@ export class OverviewLinks {
 
   @CacheField(() => LinkData, { nullable: true })
   linkData?: LinkData | null
+
+  @CacheField(() => String, { nullable: true })
+  introLinkImageSize?: string | null
 }
 
 const mapLinkData = (
@@ -93,4 +96,5 @@ export const mapOverviewLinks = ({
   link: fields.link ? mapLink(fields.link) : null,
   hasBorderAbove: fields.hasBorderAbove ?? true,
   linkData: mapLinkData(fields.linkData, sys.locale),
+  introLinkImageSize: fields.introLinkImageSize ?? 'Default',
 })
