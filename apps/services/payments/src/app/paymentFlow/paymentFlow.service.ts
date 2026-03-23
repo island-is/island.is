@@ -277,6 +277,11 @@ export class PaymentFlowService {
     } catch (e) {
       const fjsCode = mapFjsErrorToCode(e, true)
 
+      this.logger.error(`[${paymentFlow.id}] Failed to validate charge`, {
+        error: e,
+        fjsCode,
+      })
+
       throw new BadRequestException(
         fjsCode ?? PaymentServiceCode.UnknownPaymentServiceError,
       )

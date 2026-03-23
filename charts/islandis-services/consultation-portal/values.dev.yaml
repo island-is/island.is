@@ -29,8 +29,9 @@ env:
   NEXTAUTH_URL: 'https://beta.dev01.devland.is/samradsgatt/api/auth'
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
-grantNamespaces: []
-grantNamespacesEnabled: false
+grantNamespaces:
+  - 'nginx-ingress-external'
+grantNamespacesEnabled: true
 healthCheck:
   liveness:
     initialDelaySeconds: 3
@@ -83,6 +84,7 @@ secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN'
   IDENTITY_SERVER_SECRET: '/k8s/consultation-portal/IDENTITY_SERVER_SECRET'
+  NEXTAUTH_SECRET: '/k8s/consultation-portal/NEXTAUTH_SECRET'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false
