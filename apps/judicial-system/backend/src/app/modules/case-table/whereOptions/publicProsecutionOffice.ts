@@ -162,6 +162,7 @@ export const publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions =
                       AND verdict.is_acquitted_by_public_prosecution_office IS NOT TRUE
                       AND verdict.defendant_has_requested_appeal IS NOT TRUE
                       AND verdict.appeal_date IS NULL
+                      AND verdict.service_date + INTERVAL '29 days' < NOW()
                       AND verdict.created = (
                         SELECT MAX(v2.created)
                         FROM verdict v2
