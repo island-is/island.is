@@ -105,7 +105,6 @@
 /libs/application/template-api-modules/src/lib/modules/templates/transport-authority/driving-license-duplicate/              @island-is/juni
 /libs/application/templates/inheritance-report/                                                                              @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                                          @island-is/juni
-/libs/application/templates/signature-collection/assets                                                                      @island-is/juni
 /libs/application/templates/signature-collection/parliamentary-list-creation                                                 @island-is/juni
 /libs/application/templates/signature-collection/parliamentary-list-signing                                                  @island-is/juni
 /libs/application/templates/signature-collection/presidential-list-creation                                                  @island-is/juni
@@ -208,6 +207,7 @@ codemagic.yaml                                                                  
 /libs/clients/smart-solutions-v2/                                                                                            @island-is/hugsmidjan
 /libs/clients/license-client/                                                                                                @island-is/hugsmidjan @island-is/aranja
 /libs/clients/lsh/                                                                                                           @island-is/hugsmidjan
+/libs/clients/lyfjastofnun-pharmacies/                                                                                       @island-is/hugsmidjan
 /libs/clients/intellectual-properties/                                                                                       @island-is/hugsmidjan
 /libs/clients/national-registry/v3/                                                                                          @island-is/hugsmidjan
 /libs/clients/national-registry/v3-applications/                                                                             @island-is/juni
@@ -339,6 +339,7 @@ codemagic.yaml                                                                  
 /libs/clients/syslumenn/                                                                                                     @island-is/stefna @island-is/juni
 /libs/api/domains/watson-assistant-chat/                                                                                     @island-is/stefna
 /libs/api/domains/icelandic-government-institution-vacancies/                                                                @island-is/stefna
+/libs/api/domains/icelandic-medicines-agency/                                                                                @island-is/hugsmidjan
 /libs/clients/aircraft-registry/                                                                                             @island-is/stefna
 /libs/api/domains/aircraft-registry/                                                                                         @island-is/stefna
 /libs/api/domains/housing-benefit-calculator/                                                                                @island-is/stefna
