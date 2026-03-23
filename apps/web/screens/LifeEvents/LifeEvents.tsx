@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import Head from 'next/head'
+import NextLink from 'next/link'
 
 import {
   Box,
@@ -10,6 +11,7 @@ import {
   GridRow,
   Inline,
   RadioButton,
+  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import {
@@ -74,62 +76,56 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
       <Head>
         <title>{n('pageTitle', 'Lífsviðburðir')} | Ísland.is</title>
       </Head>
-      <Box
-        background="white"
-        paddingTop={[2, 2, 2, 8]}
-        paddingBottom={[4, 4, 4, 8]}
-      >
-        <GridContainer>
+      <Box paddingTop={[2, 2, 2, 8]} paddingBottom={[4, 4, 4, 8]}>
+        <GridContainer className={styles.listContainer}>
           <GridRow>
             <GridColumn
-              span={['12/12', '12/12', '11/12', '11/12', '11/12']}
-              offset={['0', '0', '1/12', '1/12', '1/12']}
+              offset={['0', '0', '0', '1/12']}
+              span={['12/12', '12/12', '12/12', '10/12']}
             >
-              <Breadcrumbs
-                items={[
-                  {
-                    title: 'Ísland.is',
-                    href: '/',
-                  },
-                  {
-                    title: 'Lífsviðburðir',
-                  },
-                ]}
-              />
-              <Text
-                variant="h1"
-                as="h1"
-                marginTop={2}
-                marginBottom={2}
-                className={styles.heading}
-              >
-                {n('pageTitle', 'Lífsviðburðir')}
-              </Text>
-            </GridColumn>
-          </GridRow>
-          <GridRow>
-            <GridColumn
-              span={['12/12', '12/12', '9/12', '9/12', '6/12']}
-              offset={['0', '0', '1/12', '1/12']}
-            >
-              <Text variant="intro" as="p" className={styles.description}>
-                {n(
-                  'pageBody',
-                  'Samantekt yfir helstu þjónustu sem fólk þarf á tilteknum tímamótum í lífinu, til að mynda að eignast barn, fara í nám, stofna fyrirtæki og að undirbúa starfslok og efri árin.',
-                )}
-              </Text>
+              <Stack space={2}>
+                <Breadcrumbs
+                  items={[
+                    {
+                      title: 'Ísland.is',
+                      href: '/',
+                    },
+                    {
+                      title: n('pageTitle', 'Lífsviðburðir'),
+                    },
+                  ]}
+                  renderLink={(link) => {
+                    return (
+                      <NextLink
+                        {...linkResolver('homepage')}
+                        passHref
+                        legacyBehavior
+                      >
+                        {link}
+                      </NextLink>
+                    )
+                  }}
+                />
+                <Text variant="h1" as="h1" className={styles.heading}>
+                  {n('pageTitle', 'Lífsviðburðir')}
+                </Text>
+                <Text variant="intro" className={styles.description}>
+                  {n(
+                    'pageBody',
+                    'Samantekt yfir helstu þjónustu sem fólk þarf á tilteknum tímamótum í lífinu, til að mynda að eignast barn, fara í nám, stofna fyrirtæki og að undirbúa starfslok og efri árin.',
+                  )}
+                </Text>
+              </Stack>
             </GridColumn>
           </GridRow>
         </GridContainer>
       </Box>
-      <Box background="purple100">
-        <Box
-          paddingX={[3, 3, 6, 6, 6]}
-          style={{ maxWidth: 1440, margin: '0 auto' }}
-        >
+
+      <Box background="purple100" display="inlineBlock" width="full">
+        <GridContainer className={styles.listContainer}>
           <Box
-            paddingTop={[4, 4, 4, 8]}
-            paddingBottom={3}
+            paddingTop={[4, 4, 8]}
+            paddingBottom={[5, 5, 8]}
             display="flex"
             flexDirection={['column', 'column', 'column', 'row', 'row']}
             justifyContent={[
@@ -141,7 +137,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
             ]}
             alignItems={['stretch', 'stretch', 'stretch', 'center', 'center']}
             flexWrap="wrap"
-            rowGap={2}
+            rowGap={3}
           >
             <Box>
               <FilterInput
@@ -173,9 +169,7 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
               </Inline>
             </Box>
           </Box>
-        </Box>
-        <Box paddingTop={[2, 2, 2, 5]} paddingBottom={8}>
-          <GridContainer>
+          <Box paddingBottom={[3, 3, 6]}>
             <GridRow>
               {filteredLifeEvents?.map(
                 ({
@@ -211,8 +205,8 @@ const LifeEvents: Screen<Props> = ({ lifeEvents, namespace }) => {
                 },
               )}
             </GridRow>
-          </GridContainer>
-        </Box>
+          </Box>
+        </GridContainer>
       </Box>
     </>
   )
