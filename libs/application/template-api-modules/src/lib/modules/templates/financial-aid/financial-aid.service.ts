@@ -256,8 +256,8 @@ export class FinancialAidService extends BaseTemplateApiService {
         {
           name: 'test.pdf',
           key: 'test.pdf',
-          size: 1000,
-          type: FileType.TAXRETURN,
+          size: 0,
+          type: 'TaxReturn',
         },
       ],
       children: children,
@@ -292,6 +292,8 @@ export class FinancialAidService extends BaseTemplateApiService {
           ?.success,
       applicationSystemId: id,
     }
+
+    console.log('newApplication', JSON.stringify(newApplication, null, 2))
 
     return await this.applicationApiWithAuth(auth)
       .withPreMiddleware(async (context) => {
