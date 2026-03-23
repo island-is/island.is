@@ -36,10 +36,10 @@ export class AttachmentS3Service {
     const attachments: AttachmentData[] = []
 
     for (const key of attachmentAnswerKeys) {
-      const answers = getValueViaPath(
+      const answers = getValueViaPath<Array<AnswerFile>>(
         application.answers,
         key,
-      ) as Array<AnswerFile>
+      )
       if (!answers) continue
       const list = await this.toDocumentDataList(answers, key, application)
       attachments.push(...list)
@@ -52,10 +52,10 @@ export class AttachmentS3Service {
     attachmentAnswerKeys: string[],
   ): AsyncGenerator<AttachmentData, void, unknown> {
     for (const answerKey of attachmentAnswerKeys) {
-      const answers = getValueViaPath(
+      const answers = getValueViaPath<Array<AnswerFile>>(
         application.answers,
         answerKey,
-      ) as Array<AnswerFile>
+      )
 
       if (!answers) continue
 
