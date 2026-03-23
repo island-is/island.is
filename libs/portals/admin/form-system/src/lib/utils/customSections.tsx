@@ -14,3 +14,18 @@ export const urlSettingsStep: FormSystemSection = {
   isHidden: false,
   isCompleted: false,
 }
+
+export const lifetimeSettingsStep: FormSystemSection = {
+  id: 'Lifetime',
+  displayOrder: 5,
+  name: {
+    is: 'Líftími umsókna',
+    en: 'Application Lifetime',
+  },
+  waitingText: {
+    is: '',
+    en: '',
+  },
+  isHidden: false,
+  isCompleted: false,
+}

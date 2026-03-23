@@ -129,7 +129,13 @@ export class Form extends Model<Form> {
     type: DataType.INTEGER,
     defaultValue: 30,
   })
-  daysUntilApplicationPrune!: number
+  draftDaysToLive!: number
+
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 30,
+  })
+  submissionDaysToLive!: number
 
   @Column({
     type: DataType.UUID,

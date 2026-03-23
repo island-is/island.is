@@ -65,12 +65,16 @@ export const DefaultDisplay = ({ item, lang = 'is' }: Props) => {
                 <Text fontWeight="medium">
                   {`${index + 1}:`}
                   {'\u00A0\u00A0\u00A0'}
-                  <Text as="span" fontWeight="light">
+                  <Text as="span" fontWeight="light" whiteSpace="breakSpaces">
                     {displayValue}
                   </Text>
                 </Text>
               )}
-              {!showIndex && <Text fontWeight="light">{displayValue}</Text>}
+              {!showIndex && (
+                <Text fontWeight="light" whiteSpace="breakSpaces">
+                  {displayValue}
+                </Text>
+              )}
             </Box>
           )
         })}
