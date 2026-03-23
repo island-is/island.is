@@ -68,7 +68,7 @@ const Home: Screen<HomeProps> = ({
   }
 
   return (
-    <Box id="main-content" width="full" overflow="hidden">
+    <Box id="main-content" width="full" style={{ overflow: 'clip' }}>
       <Box
         component="section"
         aria-labelledby="search-section-title"

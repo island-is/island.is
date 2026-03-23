@@ -5,7 +5,8 @@ export const wrapper = style({
   justifyContent: 'center',
   marginTop: -48,
   paddingBottom: 8,
-  position: 'relative',
+  position: 'sticky',
+  bottom: 24,
   zIndex: 1,
   pointerEvents: 'none',
 })
