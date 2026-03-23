@@ -58,8 +58,7 @@ export class FileService {
             })
 
             if (!value) {
-              this.logger.warn(`Value with PK: ${valueId} not found`)
-              return
+              throw new Error(`Value with PK: ${valueId} not found`)
             }
 
             const existingKeys = value.json?.s3Key
@@ -102,8 +101,6 @@ export class FileService {
     if (!key || !valueId) {
       throw new Error('Key and valueId must be provided for deletion')
     }
-
-    console.log('Deleting file with key:', key, 'and valueId:', valueId)
 
     const bucket = this.config.bucket
     if (!bucket) {

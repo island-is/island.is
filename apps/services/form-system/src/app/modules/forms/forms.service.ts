@@ -566,8 +566,11 @@ export class FormsService {
         for (const value of application.values ?? []) {
           const parsed =
             typeof value.json === 'string' ? JSON.parse(value.json) : value.json
+
           const s3Keys: string[] = parsed?.s3Key ?? []
-          console.log('deleting s3Keys:', s3Keys)
+
+          this.logger.debug(`Deleting s3Keys for value ${value.id}:`, s3Keys)
+
           for (const key of s3Keys) {
             await this.fileService.deleteFile(key, value.id)
           }

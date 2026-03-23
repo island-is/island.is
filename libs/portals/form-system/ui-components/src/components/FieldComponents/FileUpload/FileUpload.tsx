@@ -24,8 +24,16 @@ interface Props {
   dispatch?: Dispatch<Action>
 }
 
+const normalizeS3Keys = (raw: unknown): string[] => {
+  if (Array.isArray(raw)) {
+    return raw.filter((k): k is string => typeof k === 'string' && k.length > 0)
+  }
+  if (typeof raw === 'string' && raw.length > 0) return [raw]
+  return []
+}
+
 const initializeFiles = (item: FormSystemField): UploadFile[] => {
-  const s3Keys = getValue(item, 's3Key') as string[] | undefined
+  const s3Keys = normalizeS3Keys(getValue(item, 's3Key'))
   if (!s3Keys) {
     return []
   }
@@ -242,11 +250,11 @@ export const FileUpload = ({ item, hasError, dispatch }: Props) => {
       key={item.id}
       name={item.id}
       control={control}
-      defaultValue={getValue(item, 's3Key') ?? []}
+      defaultValue={normalizeS3Keys(getValue(item, 's3Key'))}
       rules={{
         validate: (v) =>
           !(item.isRequired ?? false) ||
-          (Array.isArray(v) && v.length > 0) ||
+          normalizeS3Keys(v).length > 0 ||
           formatMessage(m.required),
       }}
       render={({ fieldState }) => (
