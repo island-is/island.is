@@ -1,14 +1,14 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { v4 as uuid } from 'uuid'
 
-import { Box, Button, LoadingDots, toast } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
+import { CaseOrigin } from '@island.is/judicial-system/types'
 import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   Defendant,
   UpdateDefendantInput,
@@ -17,7 +17,6 @@ import {
   useCase,
   useDefendants,
   usePoliceCaseUnits,
-  useSyncDefendantsFromPolice,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { DefendantInfo } from '../../../components'
@@ -39,15 +38,11 @@ export const DefendantList = () => {
     deleteDefendant,
     updateDefendantState,
   } = useDefendants()
-  const { loading, error, refetch } = useSyncDefendantsFromPolice()
-  const [isRetrying, setIsRetrying] = useState(false)
 
   const showPoliceDefendantsUI = isLokeCaseWithId(
     workingCase.origin,
     workingCase.id,
   )
-
-  console.log('islokecasewithid:', showPoliceDefendantsUI)
 
   // Fetch case units for all defendants after sync; response is only logged for now
   const defendantNationalIds =
@@ -58,17 +53,6 @@ export const DefendantList = () => {
     showPoliceDefendantsUI ? workingCase.id : undefined,
     defendantNationalIds.length > 0 ? defendantNationalIds : undefined,
   )
-
-  useEffect(() => {
-    if (error && showPoliceDefendantsUI) {
-      toast.error('Ekki tókst að sækja málsaðila úr LÖKE')
-    }
-  }, [error, showPoliceDefendantsUI])
-
-  const handleRetryFetchDefendants = () => {
-    setIsRetrying(true)
-    refetch().finally(() => setIsRetrying(false))
-  }
 
   const createEmptyDefendant = (defendantId?: string) => {
     setWorkingCase((prevWorkingCase) => ({
@@ -149,17 +133,7 @@ export const DefendantList = () => {
 
   return (
     <Box component="section" marginBottom={5}>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="spaceBetween"
-        marginBottom={2}
-      >
-        <SectionHeading title={formatMessage(strings.defendantsHeading)} />
-        {showPoliceDefendantsUI && (loading || isRetrying) && (
-          <LoadingDots size="small" />
-        )}
-      </Box>
+      <SectionHeading title={formatMessage(strings.defendantsHeading)} />
       <AnimatePresence>
         {workingCase.defendants?.map((defendant, index) => (
           <motion.div
