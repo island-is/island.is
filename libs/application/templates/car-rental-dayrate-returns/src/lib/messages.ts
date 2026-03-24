@@ -112,6 +112,89 @@ export const m = {
     },
   }),
 
+  singleOrMulti: defineMessages({
+    sectionTitle: {
+      id: 'rsk.crdr.application:single.multi.section.title',
+      defaultMessage: 'Fjöldi skráninga',
+      description: 'Single or multi selection section title',
+    },
+    multiTitle: {
+      id: 'rsk.crdr.application:single.multi.multi.title',
+      defaultMessage: 'Magnskráning eða stakir bílar',
+      description: 'Single or multi selection multi field title',
+    },
+    description: {
+      id: 'rsk.crdr.application:single.multi.description',
+      defaultMessage: 'Veldu magnskráningu eða staka skráningu.',
+      description: 'Single or multi selection description',
+    },
+    optionMultiLabel: {
+      id: 'rsk.crdr.application:single.multi.option.multi.label',
+      defaultMessage: 'Magnskráning',
+      description: 'Bulk registration option label',
+    },
+    optionMultiSubLabel: {
+      id: 'rsk.crdr.application:single.multi.option.multi.sub',
+      defaultMessage:
+        'Hér má hlaða upp .xlsx eða .csv skjali til að magnskrá útleigudaga.',
+      description: 'Bulk registration option sublabel',
+    },
+    optionSingleLabel: {
+      id: 'rsk.crdr.application:single.multi.option.single.label',
+      defaultMessage: 'Skrá einstök ökutæki',
+      description: 'Single vehicle registration option label',
+    },
+    optionSingleSubLabel: {
+      id: 'rsk.crdr.application:single.multi.option.single.sub',
+      defaultMessage:
+        'Þú getur skráð útleigudaga beint í gegnum viðmótið.',
+      description: 'Single vehicle registration option sublabel',
+    },
+  }),
+
+  tableView: defineMessages({
+    sectionTitle: {
+      id: 'rsk.crdr.application:table.view.section.title',
+      defaultMessage: 'Skrá útleigudaga',
+      description: 'Table view section title',
+    },
+    multiTitle: {
+      id: 'rsk.crdr.application:table.view.multi.title',
+      defaultMessage: 'Skrá útleigudaga',
+      description: 'Table view multi field title',
+    },
+    searchLabel: {
+      id: 'rsk.crdr.application:table.view.search.label',
+      defaultMessage: 'Leita eftir bílnúmeri',
+      description: 'Vehicle table search input label',
+    },
+    searchPlaceholder: {
+      id: 'rsk.crdr.application:table.view.search.placeholder',
+      defaultMessage: 'Bílnúmer...',
+      description: 'Vehicle table search input placeholder',
+    },
+    tableHeaderPermno: {
+      id: 'rsk.crdr.application:table.view.header.permno',
+      defaultMessage: 'Bílnúmer',
+      description: 'Vehicle table permno column header',
+    },
+    tableHeaderTotalDays: {
+      id: 'rsk.crdr.application:table.view.header.total.days',
+      defaultMessage: 'Fjöldi daga á daggjaldi',
+      description: 'Vehicle table total days on day rate column header',
+    },
+    tableHeaderUsedDays: {
+      id: 'rsk.crdr.application:table.view.header.used.days',
+      defaultMessage: 'Útleigudagar',
+      description: 'Vehicle table used days column header',
+    },
+    emptyState: {
+      id: 'rsk.crdr.application:table.view.empty.state',
+      defaultMessage: 'Ekkert fannst fyrir þessa leit.',
+      description: 'Vehicle table empty state message',
+    },
+  }),
+
   multiUpload: defineMessages({
     sectionTitle: {
       id: 'rsk.crdr.application:multi.upload.section.title',

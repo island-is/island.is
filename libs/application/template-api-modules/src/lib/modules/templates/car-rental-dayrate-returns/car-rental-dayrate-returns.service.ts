@@ -10,10 +10,12 @@ import {
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   buildDayRateEntryMap,
+  CarUsageRecord,
   DayRateRecord,
   getMonthTotalDayRateDays,
   getUploadFileType,
   parseUploadFile,
+  UploadSelection,
 } from '@island.is/application/templates/car-rental-dayrate-returns'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../shared/services'
@@ -114,6 +116,12 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<boolean> {
     try {
+      const uploadSelection =
+        getValueViaPath<UploadSelection>(
+          application.answers,
+          'singleOrMultiSelectionRadio',
+        ) ?? UploadSelection.MULTI
+
       const dayRateRecords =
         getValueViaPath<Array<DayRateRecord>>(
           application.externalData,
@@ -124,67 +132,23 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         dayRateRecords.map((d) => [d.permno, d]),
       )
 
-      const [attachment] = await this.attachmentService.getFiles(application, [
-        'carDayRateUsageFile',
-      ])
-      if (!attachment?.fileContent) {
-        throw new TemplateApiError(
-          { title: 'Missing file', summary: 'No uploaded file found' },
-          400,
-        )
-      }
-
-      const fileType = getUploadFileType(attachment.fileName ?? '')
-      if (!fileType) {
-        throw new TemplateApiError(
-          {
-            title: 'Invalid file type',
-            summary: 'Only .csv or .xlsx are supported',
-          },
-          400,
-        )
-      }
-
-      const bytes = Buffer.from(attachment.fileContent, 'base64')
-      const parsed = await parseUploadFile(
-        bytes,
-        fileType,
-        dayRateRecordsByPermno,
-      )
-
-      if (!parsed.ok) {
-        if (parsed.reason === 'no-data') {
-          throw new TemplateApiError(
-            { title: 'Invalid data', summary: 'Invalid data found' },
-            400,
-          )
-        }
-
-        const errorSummary = parsed.errors
-          .map((e) => {
-            const msg =
-              typeof e.message === 'string'
-                ? e.message
-                : e.message.defaultMessage ?? e.message.id
-            return `${e.carNr}: ${msg}`
-          })
-          .filter((m) => m.length > 0)
-          .join('\n')
-
-        throw new TemplateApiError(
-          {
-            title: 'Invalid data',
-            summary: errorSummary || 'Invalid data found',
-          },
-          400,
-        )
-      }
-
-      const records = parsed.records
-
       const now = new Date()
       const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
       const lastMonthIndex = lastMonthDate.getMonth()
+
+      let records: CarUsageRecord[] = []
+
+      if (uploadSelection === UploadSelection.SINGLE) {
+        records = this.getRecordsFromTableAnswers(
+          application,
+          dayRateRecordsByPermno,
+        )
+      } else {
+        records = await this.getRecordsFromFileUpload(
+          application,
+          dayRateRecordsByPermno,
+        )
+      }
 
       const entries = records.map((record) => {
         const dayRateEntryId = dayRateRecordsByPermno.get(
@@ -265,6 +229,149 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         isSkatturinnError(error) ? error.status ?? 500 : 500,
       )
     }
+  }
+
+  private getRecordsFromTableAnswers(
+    application: TemplateApiModuleActionProps['application'],
+    dayRateRecordsByPermno: Map<string, DayRateRecord>,
+  ): CarUsageRecord[] {
+    const tableRows =
+      getValueViaPath<
+        Array<{
+          permno: string
+          prevPeriodUsage: number
+          dayRateEntryId: number
+        }>
+      >(application.answers, 'vehicleDayRateUsageRows') ?? []
+
+    if (tableRows.length === 0) {
+      throw new TemplateApiError(
+        {
+          title: 'Missing manual entries',
+          summary: 'No vehicle day rate usage entries found',
+        },
+        400,
+      )
+    }
+
+    const invalidRows: string[] = []
+    const records = tableRows
+      .map<CarUsageRecord | null>((row) => {
+        const permno = row.permno?.trim()
+        const usage = Number(row.prevPeriodUsage)
+        const dayRateRecord = permno
+          ? dayRateRecordsByPermno.get(permno)
+          : undefined
+
+        if (
+          !permno ||
+          !dayRateRecord ||
+          Number.isNaN(usage) ||
+          usage < 0
+        ) {
+          invalidRows.push(permno || '-')
+          return null
+        }
+
+        if (usage > dayRateRecord.prevPeriodTotalDays) {
+          invalidRows.push(permno)
+          return null
+        }
+
+        return {
+          vehicleId: permno,
+          prevPeriodTotalDays: dayRateRecord.prevPeriodTotalDays,
+          prevPeriodUsage: usage,
+        }
+      })
+      .filter((row): row is CarUsageRecord => row !== null)
+
+    if (invalidRows.length > 0) {
+      const uniqueInvalidRows = [...new Set(invalidRows)]
+      const errorSummary = uniqueInvalidRows
+        .map((permno) => `${permno}: Invalid or ineligible row`)
+        .join('\n')
+
+      throw new TemplateApiError(
+        {
+          title: 'Invalid data',
+          summary: errorSummary || 'Invalid data found',
+        },
+        400,
+      )
+    }
+
+    if (records.length === 0) {
+      throw new TemplateApiError(
+        { title: 'Invalid data', summary: 'No valid entries found' },
+        400,
+      )
+    }
+
+    return records
+  }
+
+  private async getRecordsFromFileUpload(
+    application: TemplateApiModuleActionProps['application'],
+    dayRateRecordsByPermno: Map<string, DayRateRecord>,
+  ): Promise<CarUsageRecord[]> {
+    const [attachment] = await this.attachmentService.getFiles(application, [
+      'carDayRateUsageFile',
+    ])
+    if (!attachment?.fileContent) {
+      throw new TemplateApiError(
+        { title: 'Missing file', summary: 'No uploaded file found' },
+        400,
+      )
+    }
+
+    const fileType = getUploadFileType(attachment.fileName ?? '')
+    if (!fileType) {
+      throw new TemplateApiError(
+        {
+          title: 'Invalid file type',
+          summary: 'Only .csv or .xlsx are supported',
+        },
+        400,
+      )
+    }
+
+    const bytes = Buffer.from(attachment.fileContent, 'base64')
+    const parsed = await parseUploadFile(
+      bytes,
+      fileType,
+      dayRateRecordsByPermno,
+    )
+
+    if (!parsed.ok) {
+      if (parsed.reason === 'no-data') {
+        throw new TemplateApiError(
+          { title: 'Invalid data', summary: 'Invalid data found' },
+          400,
+        )
+      }
+
+      const errorSummary = parsed.errors
+        .map((e) => {
+          const msg =
+            typeof e.message === 'string'
+              ? e.message
+              : e.message.defaultMessage ?? e.message.id
+          return `${e.carNr}: ${msg}`
+        })
+        .filter((m) => m.length > 0)
+        .join('\n')
+
+      throw new TemplateApiError(
+        {
+          title: 'Invalid data',
+          summary: errorSummary || 'Invalid data found',
+        },
+        400,
+      )
+    }
+
+    return parsed.records
   }
 
   private formatSkatturinnErrorBody(body: unknown): string | undefined {
