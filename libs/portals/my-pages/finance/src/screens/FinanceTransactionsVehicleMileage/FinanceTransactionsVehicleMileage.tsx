@@ -81,7 +81,6 @@ const FinanceTransactions = () => {
     setFromDate(backInTheDay)
     setToDate(new Date())
     setQ('')
-    setDropdownSelect([])
   }
 
   const filters = useMemo(() => {
