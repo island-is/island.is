@@ -36,6 +36,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from './appealCase.model'
 import { CaseFile } from './caseFile.model'
 import { CaseString } from './caseString.model'
 import { CivilClaimant } from './civilClaimant.model'
@@ -1169,4 +1170,11 @@ export class Case extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   policeDefendantNationalId?: string
+
+  /**********
+   * The case's appeal record
+   **********/
+  @HasOne(() => AppealCase, 'caseId')
+  @ApiPropertyOptional({ type: () => AppealCase })
+  appealCase?: AppealCase
 }

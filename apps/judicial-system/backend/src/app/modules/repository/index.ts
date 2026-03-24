@@ -1,3 +1,4 @@
+export { AppealCase } from './models/appealCase.model'
 export { Case } from './models/case.model'
 export { CaseArchive } from './models/caseArchive.model'
 export { CaseFile } from './models/caseFile.model'
@@ -35,4 +36,4 @@ export { PoliceDigitalCaseFileRepositoryService } from './services/policeDigital
 export { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 export { VerdictRepositoryService } from './services/verdictRepository.service'
 
-export { caseInclude, UpdateCase } from './types/caseRepository.types'
+export { caseInclude, UpdateCase, UpdateAppealCase, appealCaseFields } from './types/caseRepository.types'

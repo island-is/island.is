@@ -26,6 +26,7 @@ import {
   StringType,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
@@ -37,7 +38,11 @@ import { IndictmentCount } from '../models/indictmentCount.model'
 import { Subpoena } from '../models/subpoena.model'
 import { Verdict } from '../models/verdict.model'
 import { Victim } from '../models/victim.model'
-import { UpdateCase } from '../types/caseRepository.types'
+import {
+  appealCaseFields,
+  UpdateAppealCase,
+  UpdateCase,
+} from '../types/caseRepository.types'
 
 interface FindByIdOptions {
   transaction?: Transaction
@@ -95,6 +100,10 @@ interface UpdateCaseOptions {
   transaction: Transaction
 }
 
+interface UpsertAppealCaseOptions {
+  transaction: Transaction
+}
+
 @Injectable()
 export class CaseRepositoryService {
   constructor(
@@ -112,6 +121,8 @@ export class CaseRepositoryService {
     @InjectModel(IndictmentCount)
     private readonly indictmentCountModel: typeof IndictmentCount,
     @InjectModel(CaseFile) private readonly caseFileModel: typeof CaseFile,
+    @InjectModel(AppealCase)
+    private readonly appealCaseModel: typeof AppealCase,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -355,6 +366,17 @@ export class CaseRepositoryService {
       const result = await this.caseModel.create(data, options)
 
       this.logger.debug(`Created a new case ${result.id}`)
+
+      const appealData = pick(
+        data,
+        appealCaseFields,
+      ) as Partial<UpdateAppealCase>
+
+      if (Object.keys(appealData).length > 0) {
+        await this.upsertAppealCase(result.id, appealData as UpdateAppealCase, {
+          transaction: options.transaction,
+        })
+      }
 
       return result
     } catch (error) {
@@ -695,12 +717,51 @@ export class CaseRepositoryService {
 
       this.logger.debug(`Updated case ${caseId}`)
 
+      const appealData = pick(
+        data,
+        appealCaseFields,
+      ) as Partial<UpdateAppealCase>
+
+      if (Object.keys(appealData).length > 0) {
+        await this.upsertAppealCase(caseId, appealData as UpdateAppealCase, {
+          transaction: options.transaction,
+        })
+      }
+
       return cases[0]
     } catch (error) {
       this.logger.error(`Error updating case ${caseId} with data:`, {
         data: Object.keys(data),
         error,
       })
+
+      throw error
+    }
+  }
+
+  async upsertAppealCase(
+    caseId: string,
+    data: UpdateAppealCase,
+    options: UpsertAppealCaseOptions,
+  ): Promise<AppealCase> {
+    try {
+      this.logger.debug(`Upserting appeal case for case ${caseId} with data:`, {
+        data: Object.keys(data),
+      })
+
+      const [result] = await this.appealCaseModel.upsert(
+        { ...data, caseId },
+        { transaction: options.transaction, returning: true },
+      )
+
+      this.logger.debug(`Upserted appeal case for case ${caseId}`)
+
+      return result
+    } catch (error) {
+      this.logger.error(
+        `Error upserting appeal case for case ${caseId} with data:`,
+        { data: Object.keys(data), error },
+      )
 
       throw error
     }
