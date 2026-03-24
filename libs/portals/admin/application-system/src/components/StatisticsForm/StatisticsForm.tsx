@@ -8,15 +8,15 @@ type Props = {
   onDateChange: (period: ApplicationFilters['period']) => void
   dateInterval?: ApplicationFilters['period']
   organizations?: Organization[]
-  selectedInstitutionSlug?: string
-  onInstitutionChange?: (slug: string) => void
+  selectedInstitutionNationalId?: string
+  onInstitutionChange?: (nationalId: string) => void
 }
 
 export const StatisticsForm = ({
   onDateChange,
   dateInterval,
   organizations,
-  selectedInstitutionSlug,
+  selectedInstitutionNationalId,
   onInstitutionChange,
 }: Props) => {
   const { formatMessage } = useLocale()
@@ -25,9 +25,10 @@ export const StatisticsForm = ({
     ? [...organizations].sort((a, b) => a.title.localeCompare(b.title))
     : []
 
-  const selectedOption = selectedInstitutionSlug
-    ? sortedOrganizations.find((o) => o.slug === selectedInstitutionSlug) ??
-      null
+  const selectedOption = selectedInstitutionNationalId
+    ? sortedOrganizations.find(
+        (o) => o.nationalId === selectedInstitutionNationalId,
+      ) ?? null
     : null
 
   return (
@@ -42,17 +43,20 @@ export const StatisticsForm = ({
             id="statisticsInstitution"
             label={formatMessage(m.institution)}
             backgroundColor="blue"
-            size="xs"
+            size="sm"
             placeholder={formatMessage(m.institutionDropdownPlaceholder)}
             isDisabled={sortedOrganizations.length === 0}
             value={
               selectedOption
-                ? { value: selectedOption.slug, label: selectedOption.title }
+                ? {
+                    value: selectedOption.nationalId ?? '',
+                    label: selectedOption.title,
+                  }
                 : null
             }
             onChange={(v) => onInstitutionChange?.(v?.value ?? '')}
             options={sortedOrganizations.map((o) => ({
-              value: o.slug,
+              value: o.nationalId ?? '',
               label: o.title,
             }))}
             isClearable
@@ -74,7 +78,7 @@ export const StatisticsForm = ({
             selected={dateInterval?.from}
             placeholderText={formatMessage(m.filterFrom)}
             handleChange={(from) => onDateChange({ from })}
-            size="xs"
+            size="sm"
             locale="is"
           />
         </Box>
@@ -86,7 +90,7 @@ export const StatisticsForm = ({
             selected={dateInterval?.to}
             placeholderText={formatMessage(m.filterTo)}
             handleChange={(to) => onDateChange({ to })}
-            size="xs"
+            size="sm"
             locale="is"
           />
         </Box>
