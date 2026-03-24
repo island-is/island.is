@@ -14,6 +14,7 @@ import {
   addMessagesToQueue,
   MessageType,
 } from '@island.is/judicial-system/message'
+import type { User as TUser } from '@island.is/judicial-system/types'
 
 import {
   Case,
@@ -35,9 +36,13 @@ export class CourtSessionService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private addMessagesForConfirmedCourtRecordToQueue(caseId: string): void {
+  private addMessagesForConfirmedCourtRecordToQueue(
+    caseId: string,
+    user: TUser,
+  ): void {
     addMessagesToQueue({
       type: MessageType.DELIVERY_TO_COURT_COURT_RECORD_WORKING_DOCUMENT,
+      user,
       caseId,
     })
   }
@@ -124,6 +129,7 @@ export class CourtSessionService {
     caseId: string,
     courtSessionId: string,
     update: UpdateCourtSessionDto,
+    user: TUser,
     transaction: Transaction,
   ): Promise<CourtSession> {
     const existingCourtSession =
@@ -141,7 +147,7 @@ export class CourtSessionService {
       !existingCourtSession.isConfirmed &&
       updatedCourtSession.isConfirmed === true
     ) {
-      this.addMessagesForConfirmedCourtRecordToQueue(caseId)
+      this.addMessagesForConfirmedCourtRecordToQueue(caseId, user)
     }
 
     return updatedCourtSession

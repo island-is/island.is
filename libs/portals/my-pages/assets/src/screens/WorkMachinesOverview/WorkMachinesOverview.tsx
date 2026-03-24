@@ -18,7 +18,7 @@ import {
   CardLoader,
   formatDate,
   formSubmit,
-  IntroWrapper,
+  IntroWrapperV2,
   m,
   VINNUEFTIRLITID_SLUG,
 } from '@island.is/portals/my-pages/core'
@@ -87,6 +87,7 @@ const WorkMachinesOverview = () => {
       },
     },
   })
+
   useDebounce(
     () => {
       setActiveSearch(searchTerm)
@@ -131,11 +132,13 @@ const WorkMachinesOverview = () => {
   }, [data?.workMachinesPaginatedCollection?.linkCollection, formatMessage])
 
   return (
-    <IntroWrapper
+    <IntroWrapperV2
       title={formatMessage(messages.workMachinesTitle)}
       intro={formatMessage(messages.workMachinesDescription)}
-      serviceProviderSlug={VINNUEFTIRLITID_SLUG}
-      serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
+      serviceProvider={{
+        slug: VINNUEFTIRLITID_SLUG,
+        tooltip: formatMessage(m.workmachineTooltip),
+      }}
     >
       <Box
         display="flex"
@@ -258,24 +261,25 @@ const WorkMachinesOverview = () => {
           )
         })}
       {!loading &&
-        !error &&
-        !!data?.workMachinesPaginatedCollection?.totalCount && (
-          <Box>
-            <Pagination
-              page={page}
-              totalPages={Math.ceil(
-                data.workMachinesPaginatedCollection.totalCount /
-                  DEFAULT_PAGE_SIZE,
-              )}
-              renderLink={(page, className, children) => (
-                <button className={className} onClick={() => setPage(page)}>
-                  {children}
-                </button>
-              )}
-            />
-          </Box>
-        )}
-    </IntroWrapper>
+      !error &&
+      data?.workMachinesPaginatedCollection?.totalCount &&
+      data.workMachinesPaginatedCollection.totalCount > DEFAULT_PAGE_SIZE ? (
+        <Box>
+          <Pagination
+            page={page}
+            totalPages={Math.ceil(
+              data.workMachinesPaginatedCollection.totalCount /
+                DEFAULT_PAGE_SIZE,
+            )}
+            renderLink={(page, className, children) => (
+              <button className={className} onClick={() => setPage(page)}>
+                {children}
+              </button>
+            )}
+          />
+        </Box>
+      ) : undefined}
+    </IntroWrapperV2>
   )
 }
 

@@ -179,16 +179,17 @@ const CourseDetails: Screen<CourseDetailsProps, CourseDetailsScreenContext> = ({
               activeLocale === 'is' ? 'Næstu námskeið' : 'Upcoming courses',
             )}
           </Text>
-          {course.instances.length === 0 && (
-            <Text>
-              {n(
-                'courseInstancesNoUpcomingLabel',
-                activeLocale === 'is'
-                  ? 'Engin námskeið í skráningu eins og er.'
-                  : 'No courses currently available for registration.',
-              )}
-            </Text>
-          )}
+          {course.instances.length === 0 &&
+            course.showPlaceholderTextIfNoCourseInstances && (
+              <Text>
+                {n(
+                  'courseInstancesNoUpcomingLabel',
+                  activeLocale === 'is'
+                    ? 'Engin námskeið í skráningu eins og er.'
+                    : 'No courses currently available for registration.',
+                )}
+              </Text>
+            )}
           {course.instances.length > 0 && (
             <Stack space={3}>
               {instanceCards.map((instance) => (
