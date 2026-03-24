@@ -5,7 +5,6 @@ import {
   IsBoolean,
   IsDateString,
   IsInt,
-  IsNumber,
   IsOptional,
   IsString,
   Max,
