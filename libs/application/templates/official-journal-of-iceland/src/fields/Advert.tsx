@@ -26,15 +26,22 @@ import { useAdvertTemplateTypes } from '../hooks/useAdvertTemplateTypes'
 import { useAdvertTemplateLazy } from '../hooks/useAdvertTemplate'
 import { useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
+import { useFeatureFlag } from '@island.is/react/feature-flags'
+import { Features } from '@island.is/feature-flags'
 import { uuid } from 'uuidv4'
 import { AdvertPreview } from '../components/advertPreview/AdvertPreview'
 
 export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
+  const { value: regulationsEnabled } = useFeatureFlag(
+    Features.officialJournalOfIcelandRegulations,
+    false,
+  )
   const isAmending =
     application.answers?.applicationType === 'amending_regulation'
   const isAd = isAdApplication(application.answers)
+  const shouldFilterRegTypes = regulationsEnabled && isAd
   const [showDiffWarning, setShowDiffWarning] = useState(isAmending)
   const [isLoadingDepartments, setLoadingDepartments] = useState(false)
   const {
@@ -76,7 +83,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
             },
           })
 
-          if (isAd && mtData) {
+          if (shouldFilterRegTypes && mtData) {
             const fetchedMainTypes =
               mtData.officialJournalOfIcelandMainTypes.mainTypes
             const filtered = fetchedMainTypes.filter(
@@ -140,7 +147,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
   }))
 
   const mainTypeOptions = mainTypes
-    ?.filter((d) => !isAd || !d.slug?.toLowerCase().includes('reglug'))
+    ?.filter((d) => !shouldFilterRegTypes || !d.slug?.toLowerCase().includes('reglug'))
     .map((d) => ({
       label: capitalizeText(d.title),
       value: d,
@@ -148,7 +155,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
 
   const currentTypes =
     currentApplication?.answers?.advert?.mainType?.types
-      ?.filter((d) => !isAd || !d.slug?.toLowerCase().includes('reglug'))
+      ?.filter((d) => !shouldFilterRegTypes || !d.slug?.toLowerCase().includes('reglug'))
       .map((d) => ({
         label: capitalizeText(d.title),
         value: d,

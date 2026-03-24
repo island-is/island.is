@@ -64,7 +64,7 @@ export const TypeSelectionScreen = ({
 
   const { value: regulationsEnabled } = useFeatureFlag(
     Features.officialJournalOfIcelandRegulations,
-    true, // TODO CHANGE TO FALSE BEFORE PROD
+    false,
   )
 
   useEffect(() => {
