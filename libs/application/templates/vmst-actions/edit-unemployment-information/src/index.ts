@@ -1,3 +1,3 @@
-import template from './lib/template'
+import template from './lib/EditUnemploymentInformationTemplate'
 
 export default template

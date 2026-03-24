@@ -17,8 +17,9 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
+import { UnemploymentApi } from '../dataProviders'
 
-const template: ApplicationTemplate<
+const EditUnemploymentInformationTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
@@ -61,8 +62,7 @@ const template: ApplicationTemplate<
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
               write: 'all',
-              read: 'all',
-              api: [UserProfileApi],
+              api: [UserProfileApi, UnemploymentApi],
               delete: true,
             },
           ],
@@ -133,4 +133,4 @@ const template: ApplicationTemplate<
   },
 }
 
-export default template
+export default EditUnemploymentInformationTemplate

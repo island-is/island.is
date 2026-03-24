@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { FormModes, UserProfileApi } from '@island.is/application/types'
+import { UnemploymentApi } from '../../dataProviders'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -24,10 +25,15 @@ export const Prerequisites = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: UserProfileApi,
-              title: 'User profile',
-              subTitle: 'User profile',
+              title: 'User profile TODO',
+              subTitle: 'User profile TODO',
             }),
-            // Add more data providers as needed
+
+            buildDataProviderItem({
+              provider: UnemploymentApi,
+              title: 'current application TODO',
+              subTitle: 'current TODO',
+            }),
           ],
           submitField: buildSubmitField({
             id: 'submit',
