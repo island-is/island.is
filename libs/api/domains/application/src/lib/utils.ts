@@ -136,6 +136,7 @@ export const mapFormSystemStatisticsAdmin = (
     completed: statistics.completedCount,
     rejected: 0,
     approved: 0,
+    institutionNationalId: statistics.institutionNationalId,
   }
 }
 
