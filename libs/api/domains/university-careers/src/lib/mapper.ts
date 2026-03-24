@@ -19,6 +19,10 @@ const mapTypeToEnum = (type: StudentFileType): FileType | null => {
       return FileType.DIPLOMA_SUPPLEMENT
     case 'transcript':
       return FileType.TRANSCRIPT
+    case 'micro_credentials_supplement':
+      return FileType.MICRO_CREDENTIALS_SUPPLEMENT
+    case 'micro_credentials_transcript':
+      return FileType.MICRO_CREDENTIALS_TRANSCRIPT
     default:
       return null
   }
@@ -34,6 +38,10 @@ export const mapEnumToType = (type: FileType): StudentFileType | null => {
       return 'diploma_supplement'
     case FileType.TRANSCRIPT:
       return 'transcript'
+    case FileType.MICRO_CREDENTIALS_SUPPLEMENT:
+      return 'micro_credentials_supplement'
+    case FileType.MICRO_CREDENTIALS_TRANSCRIPT:
+      return 'micro_credentials_transcript'
     default:
       return null
   }

@@ -797,11 +797,17 @@ export interface IContactUs extends Entry<IContactUsFields> {
 }
 
 export interface ICourseFields {
+  /** Course List Page */
+  courseListPage: ICourseListPage
+
   /** Organization */
-  organization: IOrganization
+  organization?: IOrganization | undefined
 
   /** Title */
   title: string
+
+  /** Slug */
+  slug?: string | undefined
 
   /** Card Intro */
   cardIntro?: Document | undefined
@@ -815,8 +821,8 @@ export interface ICourseFields {
   /** Instances */
   instances?: ICourseInstance[] | undefined
 
-  /** Course List Page */
-  courseListPage?: ICourseListPage | undefined
+  /** Show placeholder text if no course instances */
+  showPlaceholderTextIfNoCourseInstances?: boolean | undefined
 }
 
 export interface ICourse extends Entry<ICourseFields> {

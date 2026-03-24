@@ -22,6 +22,24 @@ export const m = {
       id: 'web.secondarySchoolStudies:general.nextStep',
       defaultMessage: 'Næsta skref',
     },
+    innritunLink: {
+      id: 'web.secondarySchoolStudies:general.innritunLink',
+      defaultMessage: 'https://island.is/umsokn-um-framhaldsskola',
+    },
+    naestaskrefLink: {
+      id: 'web.secondarySchoolStudies:general.naestaskrefLink',
+      defaultMessage: 'https://naestaskref.is/is',
+    },
+    innritunDescription: {
+      id: 'web.secondarySchoolStudies:general.innritunDescription',
+      defaultMessage:
+        'Innritun fer fram í gegnum innritunargátt MMS, Miðstöð menntunar- og sjólaþjónustu.',
+    },
+    nextStepDescription: {
+      id: 'web.secondarySchoolStudies:general.nextStepDescription',
+      defaultMessage:
+        'Næsta skref er almennur upplýsingavefur um nám og störf.',
+    },
   }),
   search: defineMessages({
     search: {
@@ -98,6 +116,10 @@ export const m = {
       id: 'web.secondarySchoolStudies:filters.levels',
       defaultMessage: 'Námsstig',
     },
+    haefnisþrep: {
+      id: 'web.secondarySchoolStudies:filters.haefnisþrep',
+      defaultMessage: 'Hæfniþrep',
+    },
   }),
   home: defineMessages({
     title: {
@@ -137,14 +159,6 @@ export const m = {
     email: {
       id: 'web.secondarySchoolStudies:footer.email',
       defaultMessage: 'mrn@mrn.is',
-    },
-    innritun: {
-      id: 'web.secondarySchoolStudies:footer.innritun',
-      defaultMessage: 'https://island.is/umsokn-um-framhaldsskola',
-    },
-    naestaskref: {
-      id: 'web.secondarySchoolStudies:footer.naestaskref',
-      defaultMessage: 'https://naestaskref.is/is',
     },
   }),
   details: defineMessages({

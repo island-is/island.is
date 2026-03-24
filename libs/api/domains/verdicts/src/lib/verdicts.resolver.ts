@@ -15,6 +15,8 @@ import { SupremeCourtDeterminationsInput } from './dto/supremeCourtDetermination
 import { SupremeCourtDeterminationByIdInput } from './dto/supremeCourtDeterminationById.input'
 import { SupremeCourtDeterminationByIdResponse } from './dto/supremeCourtDeterminationById.response'
 import { ScheduleTypesResponse } from './dto/scheduleTypes.response'
+import { SupremeCourtAppealsResponse } from './dto/supremeCourtAppeals.response'
+import { SupremeCourtAppealsInput } from './dto/supremeCourtAppeals.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -96,6 +98,16 @@ export class VerdictsResolver {
     @Args('input') input: SupremeCourtDeterminationByIdInput,
   ): Promise<SupremeCourtDeterminationByIdResponse | null> {
     return this.verdictsService.getSupremeCourtDeterminationById(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => SupremeCourtAppealsResponse, {
+    name: 'webSupremeCourtAppeals',
+  })
+  async supremeCourtAppeals(
+    @Args('input') input: SupremeCourtAppealsInput,
+  ): Promise<SupremeCourtAppealsResponse> {
+    return this.verdictsService.getSupremeCourtAppeals(input)
   }
 
   @CacheControl(defaultCache)

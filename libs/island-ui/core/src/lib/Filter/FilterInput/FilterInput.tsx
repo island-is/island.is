@@ -6,6 +6,7 @@ import { Input } from '../../Input/Input'
 export interface FilterInputProps {
   name: string
   id?: string
+  label?: string
   placeholder?: string
   value: string
   button?: Omit<InputButton, 'name' | 'type'>
@@ -17,6 +18,7 @@ export interface FilterInputProps {
   loading?: boolean
   maxLength?: number
   error?: string
+  size?: 'xs' | 'sm' | 'md'
 }
 
 const icon: InputIcon = { name: 'search', type: 'outline' }
@@ -26,6 +28,7 @@ export const FilterInput: React.FC<
 > = ({
   name,
   id = name,
+  label,
   placeholder = '',
   value = '',
   button,
@@ -35,14 +38,16 @@ export const FilterInput: React.FC<
   loading,
   maxLength,
   error,
+  size = 'xs',
 }) => {
   return (
     <Input
       id={id}
       name={name}
+      label={label}
       placeholder={placeholder}
       backgroundColor={backgroundColor}
-      size="xs"
+      size={size}
       value={value}
       onChange={(event) => onChange(event.target.value)}
       onKeyDown={onKeyDown}

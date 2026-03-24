@@ -24,6 +24,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { messages } from '../../lib/messages'
 import PrescriptionsTable from './components/PrescriptionsTable'
 import { useGetMedicinePrescriptionsQuery } from './Prescriptions.generated'
+import { useHealthPlausibleSwap } from '../../utils/useHealthPlausibleSwap'
 
 const ITEMS_ON_PAGE = 10
 
@@ -39,6 +40,7 @@ type FilterValues = {
 
 const MedicinePrescriptions = () => {
   const { formatMessage, lang } = useLocale()
+  useHealthPlausibleSwap()
   const [page, setPage] = useState(1)
   const [filterValues, setFilterValues] =
     useState<FilterValues>(defaultFilterValues)
