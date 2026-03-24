@@ -12,8 +12,8 @@ import {
   getApplicationAnswers,
   getAvailableMonths,
   getAvailableYears,
-  isEarlyRetirement,
 } from '../../utils/oldAgePensionUtils'
+import { isEarlyRetirement } from '../../utils/conditionUtils'
 
 export const periodSection = buildSection({
   id: 'periodSection',

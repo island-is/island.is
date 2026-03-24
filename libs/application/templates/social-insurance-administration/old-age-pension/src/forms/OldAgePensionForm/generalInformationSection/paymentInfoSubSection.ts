@@ -30,9 +30,8 @@ import {
   getDefaultIban,
   getDefaultSwift,
   getPaymentAlertMessage,
-  hasSpouse,
-  isBankAccountType,
 } from '../../../utils/oldAgePensionUtils'
+import { hasSpouse, isBankAccountType } from '../../../utils/conditionUtils'
 
 export const paymentInfoSubSection = buildSubSection({
   id: 'paymentInfoSubSection',

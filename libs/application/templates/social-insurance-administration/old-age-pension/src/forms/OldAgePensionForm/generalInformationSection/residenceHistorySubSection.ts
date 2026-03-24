@@ -9,7 +9,7 @@ import { oldAgePensionFormMessage } from '../../../lib/messages'
 import {
   isResidenceHistory,
   isResidenceHistoryOrOnlyIcelandic,
-} from '../../../utils/oldAgePensionUtils'
+} from '../../../utils/conditionUtils'
 
 export const residenceHistorySubSection = buildSubSection({
   id: 'residenceHistorySubSection',

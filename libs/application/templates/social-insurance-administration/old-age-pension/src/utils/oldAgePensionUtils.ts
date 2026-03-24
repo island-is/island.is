@@ -1,7 +1,6 @@
 import { getValueViaPath, YesOrNo } from '@island.is/application/core'
 import {
   BankAccountType,
-  IS,
   MONTHS,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -35,10 +34,8 @@ import {
   AttachmentLabel,
   AttachmentTypes,
   earlyRetirementMaxAge,
-  earlyRetirementMinAge,
   Employment,
   oldAgePensionAge,
-  RatioType,
 } from './constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
@@ -48,6 +45,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import isEmpty from 'lodash/isEmpty'
+import { isEarlyRetirement } from './conditionUtils'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const pensionFundQuestion = getValueViaPath<YesOrNo>(
@@ -387,35 +385,6 @@ export const getAgeBetweenTwoDates = (
   return age
 }
 
-export const isEarlyRetirement = (
-  answers: Application['answers'],
-  externalData: Application['externalData'],
-) => {
-  const { applicantNationalId } = getApplicationExternalData(externalData)
-  const { selectedMonth, selectedYear, applicationType } =
-    getApplicationAnswers(answers)
-
-  if (!selectedMonth || !selectedYear) return false
-
-  const dateOfBirth = kennitala.info(applicantNationalId).birthday
-  const dateOfBirth00 = new Date(
-    dateOfBirth.getFullYear(),
-    dateOfBirth.getMonth(),
-  )
-  const selectedDate = new Date(
-    +selectedYear,
-    MONTHS.findIndex((x) => x.value === selectedMonth),
-  )
-
-  const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
-
-  return (
-    age >= earlyRetirementMinAge &&
-    age <= earlyRetirementMaxAge &&
-    applicationType !== ApplicationType.SAILOR_PENSION
-  )
-}
-
 export const getAttachments = (application: Application) => {
   const getAttachmentDetails = (
     attachmentsArr: FileType[] | undefined,
@@ -505,18 +474,6 @@ export const getCombinedResidenceHistory = (
   return [...combinedResidenceHistory].reverse()
 }
 
-export const isMoreThan2Year = (answers: Application['answers']) => {
-  const { selectedMonth, selectedYear } = getApplicationAnswers(answers)
-
-  if (!selectedMonth || !selectedYear) return false
-
-  const today = new Date()
-  const startDate = addYears(today, -2)
-  const selectedDate = new Date(selectedYear + selectedMonth)
-
-  return startDate > selectedDate
-}
-
 const residenceMapper = (
   history: NationalRegistryResidenceHistory,
 ): CombinedResidenceHistory => {
@@ -582,34 +539,6 @@ export const determineNameFromApplicationAnswers = (
     : oldAgePensionFormMessage.shared.applicationTitle
 }
 
-export const isResidenceHistory = (
-  externalData: Application['externalData'],
-) => {
-  const { residenceHistory } = getApplicationExternalData(externalData)
-  // if no residence history returned, don't show the table
-  if (residenceHistory.length === 0) return false
-  return true
-}
-
-export const isResidenceHistoryOrOnlyIcelandic = (
-  externalData: Application['externalData'],
-) => {
-  const { residenceHistory } = getApplicationExternalData(externalData)
-  // if no residence history returned or if residence history is only iceland, show the question
-  if (residenceHistory.length === 0) return true
-  return residenceHistory.every((residence) => residence.country === IS)
-}
-
-export const isRatioType = (
-  answers: Application['answers'],
-  ratioType: RatioType,
-) => {
-  const { rawEmployers } = getApplicationAnswers(answers)
-  const currentEmployer = rawEmployers[rawEmployers.length - 1]
-
-  return currentEmployer?.ratioType === ratioType
-}
-
 export const getPaymentAlertMessage = (application: Application) => {
   const { paymentInfo } = getApplicationAnswers(application.answers)
   const { bankInfo } = getApplicationExternalData(application.externalData)
@@ -628,20 +557,6 @@ export const getDefaultBankAccountType = (application: Application) => {
   const { bankInfo } = getApplicationExternalData(application.externalData)
 
   return typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
-}
-
-export const isBankAccountType = (
-  answers: Application['answers'],
-  externalData: Application['externalData'],
-  bankAccountType: BankAccountType,
-) => {
-  const { paymentInfo } = getApplicationAnswers(answers)
-  const { bankInfo } = getApplicationExternalData(externalData)
-
-  const radio =
-    paymentInfo?.bankAccountType ??
-    typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
-  return radio === bankAccountType
 }
 
 const getBankInfo = (application: Application) =>
@@ -675,9 +590,4 @@ export const getDefaultBankName = (application: Application) => {
 export const getDefaultBankAddress = (application: Application) => {
   const bankInfo = getBankInfo(application)
   return !isEmpty(bankInfo) ? bankInfo.foreignBankAddress : ''
-}
-
-export const hasSpouse = (externalData: Application['externalData']) => {
-  const { hasSpouse: spouseData } = getApplicationExternalData(externalData)
-  return !!spouseData
 }

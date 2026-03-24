@@ -8,10 +8,8 @@ import {
 } from '@island.is/application/core'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { Employment, RatioType } from '../../../utils/constants'
-import {
-  getApplicationAnswers,
-  isRatioType,
-} from '../../../utils/oldAgePensionUtils'
+import { getApplicationAnswers } from '../../../utils/oldAgePensionUtils'
+import { isRatioType } from '../../../utils/conditionUtils'
 
 export const employmentRegistrationSubSection = buildSubSection({
   id: 'employmentRegistrationSubSection',

@@ -5,10 +5,8 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import {
-  getApplicationAnswers,
-  isMoreThan2Year,
-} from '../../../utils/oldAgePensionUtils'
+import { getApplicationAnswers } from '../../../utils/oldAgePensionUtils'
+import { isMoreThan2Year } from '../../../utils/conditionUtils'
 
 export const Period = ({
   application,
