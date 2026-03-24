@@ -147,7 +147,9 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
   }))
 
   const mainTypeOptions = mainTypes
-    ?.filter((d) => !shouldFilterRegTypes || !d.slug?.toLowerCase().includes('reglug'))
+    ?.filter(
+      (d) => !shouldFilterRegTypes || !d.slug?.toLowerCase().includes('reglug'),
+    )
     .map((d) => ({
       label: capitalizeText(d.title),
       value: d,
@@ -155,7 +157,10 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
 
   const currentTypes =
     currentApplication?.answers?.advert?.mainType?.types
-      ?.filter((d) => !shouldFilterRegTypes || !d.slug?.toLowerCase().includes('reglug'))
+      ?.filter(
+        (d) =>
+          !shouldFilterRegTypes || !d.slug?.toLowerCase().includes('reglug'),
+      )
       .map((d) => ({
         label: capitalizeText(d.title),
         value: d,

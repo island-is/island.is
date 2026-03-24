@@ -1,6 +1,10 @@
 import { useLazyQuery } from '@apollo/client'
 import { REGULATION_OPTION_SEARCH_QUERY } from '../graphql/queries'
-import { prettyName, type RegulationOptionList, type RegName } from '@island.is/regulations'
+import {
+  prettyName,
+  type RegulationOptionList,
+  type RegName,
+} from '@island.is/regulations'
 
 type RegulationSearchResponse = {
   OJOIAGetRegulationsOptionSearch: {

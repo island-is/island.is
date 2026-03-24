@@ -121,8 +121,8 @@ export const ImpactList = (props: ImpactListProps) => {
                 name === 'self'
                   ? draftTitle || ''
                   : regTitle
-                    ? `${prettyName(name as RegName)} – ${regTitle}`
-                    : prettyName(name as RegName)
+                  ? `${prettyName(name as RegName)} – ${regTitle}`
+                  : prettyName(name as RegName)
 
               return (
                 <ActionCard
