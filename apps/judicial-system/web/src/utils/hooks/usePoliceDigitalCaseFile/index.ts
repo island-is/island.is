@@ -31,6 +31,15 @@ const usePoliceDigitalCaseFile = (
 
   const openDigitalCaseFileUrl = useCallback(
     async (rafraennGagnId: string) => {
+      const newTab = window.open('', '_blank')
+
+      if (!newTab) {
+        toast.error('Ekki tókst að opna nýjan flipa fyrir rafrænt skjal')
+        return
+      }
+
+      newTab.opener = null
+
       try {
         const result = await getTokenUrlQuery({
           variables: {
@@ -39,11 +48,13 @@ const usePoliceDigitalCaseFile = (
         })
         const url = result.data?.policeDigitalCaseFileTokenUrl
         if (url) {
-          window.open(url, '_blank', 'noopener,noreferrer')
+          newTab.location.assign(url)
         } else {
+          newTab.close()
           toast.error('Tengill á rafrænt skjal fannst ekki')
         }
       } catch {
+        newTab.close()
         toast.error('Upp kom villa við að sækja tengil á rafrænt skjal')
       }
     },
