@@ -480,6 +480,8 @@ export interface UpdateCase
     | 'appealConclusion'
     | 'appealRulingDecision'
     | 'appealRulingModifiedHistory'
+    | 'defendantStatementDate'
+    | 'requestAppealRulingNotToBePublished'
     | 'requestSharedWithDefender'
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
