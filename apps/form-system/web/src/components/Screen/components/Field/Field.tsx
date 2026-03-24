@@ -56,6 +56,7 @@ export const Field = ({ field, valueIndex = 0 }: Props) => {
     control,
     dispatch,
     ...(field.fieldType === FieldTypesEnum.ISK_SUMBOX && { state }),
+    ...(field.fieldType === FieldTypesEnum.FILE && { state }),
   }
 
   const FieldComponent =

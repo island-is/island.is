@@ -72,6 +72,8 @@ export enum Features {
   licensesV2 = 'isLicensesV2Enabled',
   pkPassV2 = 'isPkPassV2Enabled',
 
+  isServicePortalFinanceTransactionsV3Enabled = 'IsServicePortalFinanceTransactionsV3Enabled',
+
   //Is social administration payment plan 2025 enabled?
   isServicePortalPaymentPlan2025Enabled = 'isServicePortalPaymentPlan2025Enabled',
 
@@ -158,9 +160,6 @@ export enum Features {
   // SMS Notifications
   isSmsNotificationEnabled = 'isSmsNotificationEnabled',
   isSendSmsNotificationsEnabled = 'isSendSmsNotificationsEnabled',
-
-  // Admin portal
-  isFormSystemInAdminPortalEnabled = 'isFormSystemInAdminPortalEnabled',
 
   // Service portal sidebar grid layout
   isServicePortalSidebarGridLayoutEnabled = 'isServicePortalSidebarGridLayoutEnabled',

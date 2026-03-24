@@ -10,6 +10,7 @@ import { ListItem } from '../listItems/models/listItem.model'
 import { Field } from '../fields/models/field.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
 import { Application } from '../applications/models/application.model'
+import { FileModule } from '../file/file.module'
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { Application } from '../applications/models/application.model'
       Organization,
       ListItem,
     ]),
+    FileModule,
   ],
   controllers: [FormsController],
   providers: [FormsService],

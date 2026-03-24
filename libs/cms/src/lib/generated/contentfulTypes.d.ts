@@ -3815,6 +3815,9 @@ export interface IOverviewLinksFields {
 
   /** Link Data */
   linkData?: Record<string, any> | undefined
+
+  /** Intro Link Image Size */
+  introLinkImageSize?: 'Default' | 'Small' | undefined
 }
 
 export interface IOverviewLinks extends Entry<IOverviewLinksFields> {

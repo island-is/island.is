@@ -1308,6 +1308,7 @@
       "document-provider-dashboard": [
         "libs/clients/document-provider-dashboard/src/index.ts"
       ],
+      "@island.is/clients/finance-v3": ["libs/clients/finance-v3/src/index.ts"],
       "my-pages": ["libs/api/domains/my-pages/src/index.ts"]
     },
     "resolveJsonModule": true
