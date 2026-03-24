@@ -2396,6 +2396,10 @@
           "isRegiment": {
             "type": "boolean"
           },
+          "isSpecialistOnlyPrescription": {
+            "type": "boolean",
+            "description": "Indicates whether this prescription requires specialist-only care (z-marked)"
+          },
           "amountRemaining": {
             "type": "number"
           },
@@ -2745,8 +2749,8 @@
           },
           "numSubmissionsAllowed": {
             "type": "number",
-            "default": 1,
-            "description": "Number of submissions allowed for the questionnaire"
+            "description": "Number of submissions allowed for the questionnaire, null if unlimited",
+            "nullable": true
           },
           "numSubmitted": {
             "type": "number",
@@ -2766,13 +2770,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "questionnaireId",
-          "sender",
-          "numSubmissionsAllowed",
-          "numSubmitted",
-          "hasDraft"
-        ]
+        "required": ["questionnaireId", "sender", "numSubmitted", "hasDraft"]
       },
       "QuestionType": {
         "type": "string",
@@ -3619,8 +3617,8 @@
           },
           "numSubmissionsAllowed": {
             "type": "number",
-            "default": 1,
-            "description": "Number of submissions allowed for the questionnaire"
+            "description": "Number of submissions allowed for the questionnaire, null if unlimited",
+            "nullable": true
           },
           "numSubmitted": {
             "type": "number",
@@ -3716,7 +3714,6 @@
         "required": [
           "questionnaireId",
           "sender",
-          "numSubmissionsAllowed",
           "numSubmitted",
           "hasDraft",
           "daysBetweenReplies",

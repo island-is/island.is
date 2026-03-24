@@ -20,24 +20,27 @@ import {
   LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
-import { m as messages } from '../../lib/messages'
+import { m as messages } from '../../../lib/messages'
 
+import { NetworkStatus } from '@apollo/client'
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import { useEffect, useMemo, useState } from 'react'
 
 import { Problem } from '@island.is/react-spa/shared'
-import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
-import { exportHreyfingarFile } from '../../utils/filesHreyfingar'
-import { transactionFilter } from '../../utils/simpleFilter'
-import * as styles from '../Finance.css'
+import DropdownExport from '../../../components/DropdownExport/DropdownExport'
+import FinanceTransactionsTable from '../../../components/FinanceTransactionsTable/FinanceTransactionsTable'
+import { exportHreyfingarFile } from '../../../utils/filesHreyfingar'
+import { transactionFilter } from '../../../utils/simpleFilter'
+import * as styles from '../../Finance.css'
 import * as extraStyles from './FinanceTransactionsVehicleMileage.css'
 
-import { useFinanceSwapHook } from '../../utils/financeSwapHook'
-import { CustomerRecords } from '../../lib/types'
-import { useGetCustomerRecordsLazyQuery } from './FinanceTransactionsVehicleMileage.generated'
-import { FinancePaths } from '../../lib/paths'
+import { useFinanceSwapHook } from '../../../utils/financeSwapHook'
+import {
+  GetCustomerRecordsPagedQuery,
+  useGetCustomerRecordsPagedLazyQuery,
+} from './FinanceTransactionsVehicleMileage.generated'
+import { FinancePaths } from '../../../lib/paths'
 
 const VEHICLE_MILEAGE_CHARGE_TYPE = 'BM'
 
@@ -53,8 +56,17 @@ const FinanceTransactions = () => {
   const [q, setQ] = useState<string>('')
   const [dropdownSelect, setDropdownSelect] = useState<string[]>()
 
-  const [loadCustomerRecords, { data, loading, called, error }] =
-    useGetCustomerRecordsLazyQuery()
+  const [
+    loadCustomerRecords,
+    { data, loading, called, error, fetchMore, networkStatus },
+  ] = useGetCustomerRecordsPagedLazyQuery({ notifyOnNetworkStatusChange: true })
+
+  const isFetchingMore = networkStatus === NetworkStatus.fetchMore
+  const isInitialLoading = loading && !isFetchingMore
+
+  const hasNextPage =
+    data?.financeCustomerRecords?.pageInfo?.hasNextPage ?? false
+  const nextKey = data?.financeCustomerRecords?.pageInfo?.endCursor
 
   useEffect(() => {
     if (toDate && fromDate) {
@@ -83,27 +95,56 @@ const FinanceTransactions = () => {
     setQ('')
   }
 
+  const handleLoadMore = () => {
+    if (!nextKey) return
+    fetchMore({
+      variables: {
+        input: {
+          chargeTypeID: [VEHICLE_MILEAGE_CHARGE_TYPE],
+          dayFrom: format(fromDate ?? backInTheDay, 'yyyy-MM-dd'),
+          dayTo: format(toDate ?? new Date(), 'yyyy-MM-dd'),
+          nextKey,
+        },
+      },
+      updateQuery(
+        previousData,
+        { fetchMoreResult },
+      ): GetCustomerRecordsPagedQuery {
+        if (!fetchMoreResult?.financeCustomerRecords) return previousData
+        return {
+          ...fetchMoreResult,
+          financeCustomerRecords: {
+            ...fetchMoreResult.financeCustomerRecords,
+            data: [
+              ...(previousData.financeCustomerRecords?.data ?? []),
+              ...fetchMoreResult.financeCustomerRecords.data,
+            ],
+          },
+        }
+      },
+    })
+  }
+
   const filters = useMemo(() => {
-    const customerRecords = data?.getCustomerRecords
-    if (customerRecords) {
-      return Array.from(
-        new Set(customerRecords.records?.map((r) => r.chargeItemSubject)),
-      ).map((s) => ({
-        label: s,
-        value: s,
-      }))
+    const records = data?.financeCustomerRecords?.data
+    if (records) {
+      return Array.from(new Set(records.map((r) => r.chargeItemSubject))).map(
+        (s) => ({
+          label: s,
+          value: s,
+        }),
+      )
     }
   }, [data])
 
-  const recordsDataArray = useMemo(() => {
-    const recordsData = (data?.getCustomerRecords || {}) as CustomerRecords
-    const array =
-      (recordsData?.records && transactionFilter(recordsData?.records, q)) || []
-
-    return (dropdownSelect?.length ?? 0) > 0
-      ? array.filter((a) => dropdownSelect?.includes(a.chargeItemSubject))
-      : array
-  }, [data?.getCustomerRecords, q, dropdownSelect])
+  const allRecords = transactionFilter(
+    data?.financeCustomerRecords?.data ?? [],
+    q,
+  )
+  const recordsDataArray =
+    (dropdownSelect?.length ?? 0) > 0
+      ? allRecords.filter((a) => dropdownSelect?.includes(a.chargeItemSubject))
+      : allRecords
 
   return (
     <>
@@ -246,7 +287,7 @@ const FinanceTransactions = () => {
 
             <Box marginTop={2}>
               {error && <Problem error={error} noBorder={false} />}
-              {(loading || !called) && !error && (
+              {(isInitialLoading || !called) && !error && (
                 <Box padding={3}>
                   <SkeletonLoader space={1} height={40} repeat={5} />
                 </Box>
@@ -268,6 +309,19 @@ const FinanceTransactions = () => {
                 <FinanceTransactionsTable recordsArray={recordsDataArray} />
               ) : null}
             </Box>
+            {hasNextPage && (
+              <Box display="flex" justifyContent="center" marginTop={3}>
+                <Button
+                  onClick={handleLoadMore}
+                  loading={loading}
+                  disabled={loading}
+                  variant="ghost"
+                  size="default"
+                >
+                  {formatMessage(messages.loadMore)}
+                </Button>
+              </Box>
+            )}
           </Stack>
         </Box>
         <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />

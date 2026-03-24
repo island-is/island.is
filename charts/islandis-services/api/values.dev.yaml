@@ -114,6 +114,7 @@ env:
   XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
   XROAD_FINANCES_TIMEOUT: '20000'
   XROAD_FINANCES_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2'
+  XROAD_FINANCES_V3_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v3'
   XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend'
   XROAD_FIREARM_LICENSE_PATH: 'IS-DEV/GOV/10005/Logreglan-Protected/island-api-v1'
   XROAD_FJS_BANKINFO_PATH: 'IS-DEV/GOV/10021/FJS-Public/TBRBankMgrService_v1'
