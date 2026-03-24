@@ -12,7 +12,7 @@ import {
 import { m } from '../../lib/messages'
 import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
 import { NationalIdField } from './components/nationalIdField'
-import { useLocale } from 'libs/localization/src/lib/useLocale'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   applicant: FormSystemField

@@ -206,7 +206,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
         handleUpload(f, f.id as string)
       })
     },
-    [files, item, formatMessage, handleUpload],
+    [files, item, formatMessage, handleUpload, clearErrors],
   )
 
   const onRetry = useCallback(
