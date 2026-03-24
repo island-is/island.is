@@ -134,8 +134,8 @@ const Home: Screen<HomeProps> = ({
       </Box>
       <Box
         component="section"
-        paddingTop={6}
-        paddingBottom={3}
+        paddingTop={[6, 6, 8]}
+        paddingBottom={[3, 3, 8]}
         position="relative"
         background="purple100"
         aria-labelledby="life-events-title"
@@ -164,7 +164,7 @@ const Home: Screen<HomeProps> = ({
       <Box
         component="section"
         paddingTop={[5, 5, 8]}
-        paddingBottom={[2, 2, 5]}
+        paddingBottom={[2, 2, 8]}
         background="blue100"
         aria-labelledby="categories-title"
       >
@@ -192,7 +192,7 @@ const Home: Screen<HomeProps> = ({
       <Box
         component="section"
         paddingTop={[5, 5, 8]}
-        paddingBottom={[2, 2, 5]}
+        paddingBottom={[2, 2, 8]}
         aria-labelledby="organizations-title"
       >
         <OrganizationsSection
