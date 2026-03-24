@@ -145,6 +145,7 @@ export const Subsidies = ({ farmId }: Props) => {
         error={error}
         emptyMessage={formatMessage(m.noData)}
         renderExpandedRow={renderExpandedRow}
+        getRowId={(row) => row.id}
       />
       {(pageInfo?.hasPreviousPage || pageInfo?.hasNextPage) && (
         <Box display="flex" justifyContent="spaceBetween" marginTop={3}>

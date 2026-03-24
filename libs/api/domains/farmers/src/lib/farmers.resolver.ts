@@ -60,7 +60,13 @@ export class FarmersResolver {
     @Args('input', { type: () => FarmerLandSubsidiesInput })
     input: FarmerLandSubsidiesInput,
   ): Promise<FarmerLandSubsidiesCollection> {
-    return this.farmersService.getSubsidies(user, input.farmId, input.after)
+    return this.farmersService.getSubsidies(
+      user,
+      input.farmId,
+      input.after,
+      input.orderField,
+      input.orderDirection,
+    )
   }
 
   @ResolveField('beneficiaries', () => [LandBeneficiary], { nullable: true })

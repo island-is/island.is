@@ -41,11 +41,10 @@ export const mapToLandBeneficiaryPayment = (
 export const mapToFarmerLandSubsidy = (
   p: Payment,
   farmId: string,
-): FarmerLandSubsidy => ({
-  // TODO: Replace with a stable ID from the API when available — currently a deterministic hash
-  id: `${farmId}-${p.paymentDate?.toISOString() ?? ''}-${p.contractId ?? ''}-${
-    p.paymentCategoryId ?? ''
-  }`,
+): FarmerLandSubsidy | undefined => {
+  if (!p.id) return undefined
+  return {
+    id: p.id.toString(),
   paymentDate: p.paymentDate ?? undefined,
   nationalId: p.nationalId ?? undefined,
   name: p.name ?? undefined,
@@ -58,7 +57,8 @@ export const mapToFarmerLandSubsidy = (
   grossAmount: p.grossAmount ?? undefined,
   netPaid: p.netPaid ?? undefined,
   offset: p.offset ?? undefined,
-})
+  }
+}
 
 export const mapToLandBeneficiary = (
   wrapper: BeneficiaryWrapper,

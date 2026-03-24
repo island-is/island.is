@@ -9,7 +9,6 @@ import {
 
 @ObjectType()
 export class FarmerLandSubsidy {
-  // TODO: Replace with a stable ID from the API when available
   @Field(() => ID)
   id!: string
 
