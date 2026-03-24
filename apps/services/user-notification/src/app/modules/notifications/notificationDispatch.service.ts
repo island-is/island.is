@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import * as firebaseAdmin from 'firebase-admin'
+import { DogStatsD } from '@island.is/infra-metrics'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Notification } from './types'
@@ -19,6 +20,8 @@ import type { FirebaseError } from 'firebase-admin/lib/utils/error'
 
 @Injectable()
 export class NotificationDispatchService {
+  private readonly metrics = new DogStatsD({ prefix: 'user-notification.' })
+
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(FIREBASE_PROVIDER) private firebase: firebaseAdmin.app.App,
@@ -67,6 +70,10 @@ export class NotificationDispatchService {
               actorNotificationId,
               channel: NotificationChannel.Push,
               sentTo: token,
+            })
+            this.metrics.increment('notification.delivery', 1, {
+              channel: 'push',
+              delivery_type: actorNotificationId ? 'delegation' : 'direct',
             })
           } catch (dbError) {
             this.logger.error('Error writing push delivery record to db', {

@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
+import { DogStatsD } from '@island.is/infra-metrics'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
@@ -17,6 +18,7 @@ export type SmsQueueMessage = {
   actorNotificationId?: number
   mobilePhoneNumber: string
   smsContent: string
+  smsPayer?: string
 }
 
 /**
@@ -28,6 +30,8 @@ const normalizePhoneNumber = (phoneNumber: string): string =>
 
 @Injectable()
 export class SmsWorkerService {
+  private readonly metrics = new DogStatsD({ prefix: 'user-notification.' })
+
   constructor(
     private readonly smsService: SmsService,
 
@@ -49,13 +53,20 @@ export class SmsWorkerService {
         actorNotificationId,
         mobilePhoneNumber,
         smsContent,
+        smsPayer,
       } = message
 
       this.logger.info('SMS worker received message', { messageId })
 
       const normalizedNumber = normalizePhoneNumber(mobilePhoneNumber)
 
-      const result = await this.smsService.sendSms(normalizedNumber, smsContent)
+      const result = await this.smsService.sendSms(
+        normalizedNumber,
+        smsContent,
+        {
+          metricTags: smsPayer ? { payer: smsPayer } : undefined,
+        },
+      )
 
       const msg = result.messages[0]
       if (!msg) {
@@ -89,6 +100,10 @@ export class SmsWorkerService {
             actorNotificationId,
             channel: NotificationChannel.Sms,
             sentTo: normalizedNumber,
+          })
+          this.metrics.increment('notification.delivery', 1, {
+            channel: 'sms',
+            delivery_type: actorNotificationId ? 'delegation' : 'direct',
           })
         } catch (error) {
           this.logger.error('Error writing SMS delivery record to db', {

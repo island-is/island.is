@@ -102,15 +102,15 @@ import { MessageProcessorService } from './messageProcessor.service'
     MessageProcessorService,
     {
       provide: FIREBASE_PROVIDER,
-      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) =>
-        process.env.INIT_SCHEMA === 'true'
-          ? {}
-          : firebaseAdmin.initializeApp({
-              credential: firebaseAdmin.credential.cert(
-                JSON.parse(config.firebaseCredentials),
-              ),
-            }),
-      inject: [UserNotificationsConfig.KEY],
+      useFactory: (config: ConfigType<typeof UserNotificationsConfig>) => true,
+      //   process.env.INIT_SCHEMA === 'true'
+      //     ? {}
+      //     : firebaseAdmin.initializeApp({
+      //         credential: firebaseAdmin.credential.cert(
+      //           JSON.parse(config.firebaseCredentials),
+      //         ),
+      //       }),
+      // inject: [UserNotificationsConfig.KEY],
     },
   ],
 })

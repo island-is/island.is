@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { join } from 'path'
 
 import { Body, EmailService, Message } from '@island.is/email-service'
+import { DogStatsD } from '@island.is/infra-metrics'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
@@ -28,6 +29,8 @@ export type EmailQueueMessage = {
 
 @Injectable()
 export class EmailWorkerService {
+  private readonly metrics = new DogStatsD({ prefix: 'user-notification.' })
+
   constructor(
     private readonly emailService: EmailService,
 
@@ -198,6 +201,10 @@ export class EmailWorkerService {
             actorNotificationId,
             channel: NotificationChannel.Email,
             sentTo: recipientEmail,
+          })
+          this.metrics.increment('notification.delivery', 1, {
+            channel: 'email',
+            delivery_type: actorNotificationId ? 'delegation' : 'direct',
           })
         } catch (error) {
           this.logger.error('Error writing email delivery record to db', {
