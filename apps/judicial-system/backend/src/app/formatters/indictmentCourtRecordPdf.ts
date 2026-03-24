@@ -38,9 +38,7 @@ const formatFiledBy = (submitterText: string, submittedBy?: string | null) => {
     return 'Sækjandi lagði fram:'
   }
 
-  return `${submitterText}${submitterText ? ' ' : ''}${
-    submittedBy ?? ''
-  } lagði fram:`
+  return [submitterText, submittedBy, 'lagði fram:'].filter(Boolean).join(' ')
 }
 
 export const getFiledBy = (
