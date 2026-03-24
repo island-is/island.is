@@ -373,6 +373,25 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         }
       }
 
+      const healthDeclaration = answers.healthDeclaration as
+        | Record<string, string>
+        | undefined
+      const healthDeclarationModel = healthDeclaration
+        ? {
+            isDisabled: healthDeclaration.isDisabled === 'yes',
+            hasDiabetes: healthDeclaration.hasDiabetes === 'yes',
+            hasEpilepsy: healthDeclaration.hasEpilepsy === 'yes',
+            isAlcoholic: healthDeclaration.isAlcoholic === 'yes',
+            hasHeartDisease: healthDeclaration.hasHeartDisease === 'yes',
+            hasMentalIllness: healthDeclaration.hasMentalIllness === 'yes',
+            hasOtherDiseases: healthDeclaration.hasOtherDiseases === 'yes',
+            usesMedicalDrugs: healthDeclaration.usesMedicalDrugs === 'yes',
+            usesContactGlasses: healthDeclaration.usesContactGlasses === 'yes',
+            hasReducedPeripheralVision:
+              healthDeclaration.hasReducedPeripheralVision === 'yes',
+          }
+        : undefined
+
       const beResult = await this.drivingLicenseService.applyForBELicense(
         nationalId,
         auth.authorization,
@@ -384,6 +403,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           contentList: contentList?.length ? contentList : undefined,
           photoBiometricsId: imageBiometricsId,
           signatureBiometricsId: signatureBiometricsId,
+          healthDeclarationModel,
         },
       )
       return beResult

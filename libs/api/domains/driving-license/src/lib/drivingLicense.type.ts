@@ -51,6 +51,19 @@ export interface NewBEDrivingLicenseContentItem {
   description?: string | null
 }
 
+export interface NewBEHealthDeclaration {
+  isDisabled?: boolean
+  hasDiabetes?: boolean
+  hasEpilepsy?: boolean
+  isAlcoholic?: boolean
+  hasHeartDisease?: boolean
+  hasMentalIllness?: boolean
+  hasOtherDiseases?: boolean
+  usesMedicalDrugs?: boolean
+  usesContactGlasses?: boolean
+  hasReducedPeripheralVision?: boolean
+}
+
 export interface NewBEDrivingLicenseInput {
   jurisdiction: number
   instructorSSN: string
@@ -59,6 +72,7 @@ export interface NewBEDrivingLicenseInput {
   contentList?: NewBEDrivingLicenseContentItem[] | null
   photoBiometricsId?: string | null
   signatureBiometricsId?: string | null
+  healthDeclarationModel?: NewBEHealthDeclaration
 }
 
 export interface NewDrivingLicenseResult {

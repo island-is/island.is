@@ -554,6 +554,7 @@ export class DrivingLicenseService {
       contentList: input.contentList,
       photoBiometricsId: input.photoBiometricsId,
       signatureBiometricsId: input.signatureBiometricsId,
+      healthDeclarationModel: input.healthDeclarationModel,
     })
 
     return {

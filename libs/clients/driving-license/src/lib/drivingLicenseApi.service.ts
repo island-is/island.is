@@ -540,6 +540,7 @@ export class DrivingLicenseApi {
     contentList?: v5.RLSApplicationContentModel[] | null
     photoBiometricsId?: string | null
     signatureBiometricsId?: string | null
+    healthDeclarationModel?: v5.HealthDeclarationModel
   }): Promise<boolean> {
     const response = await this.applicationV5.apiApplicationsV5ApplyforBePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -554,6 +555,7 @@ export class DrivingLicenseApi {
         contentList: params.contentList,
         photoBiometricsId: params.photoBiometricsId,
         signatureBiometricsId: params.signatureBiometricsId,
+        healthDeclarationModel: params.healthDeclarationModel,
       },
     })
 
