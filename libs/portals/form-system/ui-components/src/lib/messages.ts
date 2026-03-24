@@ -1197,4 +1197,11 @@ export const m = defineMessages({
     defaultMessage: 'Líftími umsókna',
     description: 'Application lifetime',
   },
+  maxSizeInMb: {
+    id: 'form.system:max-size-in-mb',
+    defaultMessage:
+      'Ein eða fleiri skrár eru of stórar. Hámarksstærð er {maxSizeInMb} MB.',
+    description:
+      'One or more files are too large. Max size is {maxSizeInMb} MB.',
+  },
 })

@@ -162,23 +162,25 @@ const Signees = ({
                   })}
               </T.Body>
             </T.Table>
-            <Box marginTop={3}>
-              <Pagination
-                totalItems={signees.length}
-                itemsPerPage={pageSize}
-                page={page}
-                renderLink={(page, className, children) => (
-                  <Box
-                    cursor="pointer"
-                    className={className}
-                    onClick={() => setPage(page)}
-                    component="button"
-                  >
-                    {children}
-                  </Box>
-                )}
-              />
-            </Box>
+            {signees.length > pageSize && (
+              <Box marginTop={3}>
+                <Pagination
+                  totalItems={signees.length}
+                  itemsPerPage={pageSize}
+                  page={page}
+                  renderLink={(page, className, children) => (
+                    <Box
+                      cursor="pointer"
+                      className={className}
+                      onClick={() => setPage(page)}
+                      component="button"
+                    >
+                      {children}
+                    </Box>
+                  )}
+                />
+              </Box>
+            )}
           </Box>
         ) : searchTerm.length > 0 ? (
           <Box display="flex" marginTop={2}>

@@ -126,6 +126,7 @@ const AnsweredQuestionnaire: FC = () => {
       }
       intro={formatMessage(messages.answeredQuestionnaireAnswered)}
       loading={loading}
+      childrenWidthFull
       buttonGroupAlignment="spaceBetween"
       buttonGroup={[
         <Box key="submission-select-container">
@@ -198,7 +199,7 @@ const AnsweredQuestionnaire: FC = () => {
         <Problem type="internal_service_error" noBorder error={error} />
       )}
       {data?.getAnsweredQuestionnaire && !loading && !error && (
-        <Box marginTop={4}>
+        <Box>
           <Answered
             answers={data?.getAnsweredQuestionnaire?.data[0]?.answers?.map(
               (answer) => ({

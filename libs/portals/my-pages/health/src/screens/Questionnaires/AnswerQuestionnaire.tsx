@@ -48,7 +48,7 @@ const AnswerQuestionnaire: FC = () => {
       },
       locale: lang,
     },
-
+    fetchPolicy: 'network-only',
     skip: !id,
   })
 
