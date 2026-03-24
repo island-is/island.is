@@ -17,8 +17,6 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'identity-server'
-allowExternalNetwork: true
-allowInternalNetwork: false
 annotations:
   ad.datadoghq.com/identity-server.check_names: '["openmetrics"]'
   ad.datadoghq.com/identity-server.init_configs: '[{}]'

@@ -17,8 +17,6 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'judicial-system-api'
-allowExternalNetwork: true
-allowInternalNetwork: false
 enabled: true
 env:
   ALLOW_AUTH_BYPASS: 'false'
@@ -38,8 +36,9 @@ env:
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
-grantNamespaces: []
-grantNamespacesEnabled: false
+grantNamespaces:
+  - 'nginx-ingress-external'
+grantNamespacesEnabled: true
 healthCheck:
   liveness:
     initialDelaySeconds: 3

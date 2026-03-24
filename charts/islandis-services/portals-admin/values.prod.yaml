@@ -17,8 +17,6 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'portals-admin'
-allowExternalNetwork: true
-allowInternalNetwork: false
 enabled: true
 env:
   BASEPATH: '/stjornbord'
@@ -28,6 +26,7 @@ env:
   SI_PUBLIC_ENVIRONMENT: 'prod'
   SI_PUBLIC_FORM_SYSTEM_URL: 'https://island.is/form'
 grantNamespaces:
+  - 'nginx-ingress-external'
   - 'identity-server'
 grantNamespacesEnabled: true
 healthCheck:

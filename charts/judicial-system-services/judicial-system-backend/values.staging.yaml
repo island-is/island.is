@@ -17,8 +17,6 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'judicial-system-backend'
-allowExternalNetwork: false
-allowInternalNetwork: false
 enabled: true
 env:
   AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
@@ -58,8 +56,9 @@ env:
   XROAD_POLICE_MEMBER_CODE: '5309672079'
   XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
-grantNamespaces: []
-grantNamespacesEnabled: false
+grantNamespaces:
+  - 'nginx-ingress-external'
+grantNamespacesEnabled: true
 healthCheck:
   liveness:
     initialDelaySeconds: 3

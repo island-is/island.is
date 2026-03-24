@@ -17,8 +17,6 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'air-discount-scheme-api'
-allowExternalNetwork: false
-allowInternalNetwork: false
 enabled: true
 env:
   AUTH_AUDIENCE: 'loftbru.dev01.devland.is'
@@ -30,6 +28,7 @@ env:
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
+  - 'nginx-ingress-external'
   - 'islandis'
 grantNamespacesEnabled: true
 healthCheck:

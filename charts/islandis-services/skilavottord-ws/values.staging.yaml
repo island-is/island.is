@@ -17,8 +17,6 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'skilavottord-ws'
-allowExternalNetwork: false
-allowInternalNetwork: false
 enabled: true
 env:
   DB_HOST: 'postgres-applications.internal'

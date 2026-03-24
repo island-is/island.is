@@ -17,8 +17,6 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'form-system-web'
-allowExternalNetwork: true
-allowInternalNetwork: false
 enabled: true
 env:
   BASEPATH: '/form'
@@ -27,8 +25,9 @@ env:
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
   SERVERSIDE_FEATURES_ON: ''
   SI_PUBLIC_ENVIRONMENT: 'staging'
-grantNamespaces: []
-grantNamespacesEnabled: false
+grantNamespaces:
+  - 'nginx-ingress-external'
+grantNamespacesEnabled: true
 healthCheck:
   liveness:
     initialDelaySeconds: 3

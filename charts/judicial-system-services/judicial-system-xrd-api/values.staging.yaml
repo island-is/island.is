@@ -17,8 +17,6 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'judicial-system-xrd-api'
-allowExternalNetwork: false
-allowInternalNetwork: true
 enabled: true
 env:
   AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
@@ -28,8 +26,9 @@ env:
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
-grantNamespaces: []
-grantNamespacesEnabled: false
+grantNamespaces:
+  - 'nginx-ingress-internal'
+grantNamespacesEnabled: true
 healthCheck:
   liveness:
     initialDelaySeconds: 3

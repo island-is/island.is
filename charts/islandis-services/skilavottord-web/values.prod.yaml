@@ -17,8 +17,6 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 name: 'skilavottord-web'
-allowExternalNetwork: true
-allowInternalNetwork: false
 enabled: true
 env:
   API_URL: 'http://skilavottord-ws'
@@ -27,7 +25,7 @@ env:
   NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
-  - 'application-system'
+  - 'nginx-ingress-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

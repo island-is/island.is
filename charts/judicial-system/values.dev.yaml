@@ -17,8 +17,6 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 judicial-system-api:
-  allowExternalNetwork: true
-  allowInternalNetwork: false
   enabled: true
   env:
     ALLOW_AUTH_BYPASS: 'true'
@@ -38,8 +36,9 @@ judicial-system-api:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -122,8 +121,6 @@ judicial-system-api:
     create: true
     name: 'judicial-system-api'
 judicial-system-backend:
-  allowExternalNetwork: false
-  allowInternalNetwork: false
   enabled: true
   env:
     AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
@@ -163,8 +160,9 @@ judicial-system-backend:
     XROAD_POLICE_MEMBER_CODE: '10005'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -272,8 +270,6 @@ judicial-system-backend:
     create: true
     name: 'judicial-system-backend'
 judicial-system-digital-mailbox-api:
-  allowExternalNetwork: false
-  allowInternalNetwork: true
   enabled: true
   env:
     AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
@@ -284,8 +280,9 @@ judicial-system-digital-mailbox-api:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -356,8 +353,6 @@ judicial-system-digital-mailbox-api:
     create: true
     name: 'judicial-system-digital-mailbox-api'
 judicial-system-message-handler:
-  allowExternalNetwork: false
-  allowInternalNetwork: false
   args:
     - '--no-experimental-fetch'
     - 'main.cjs'
@@ -372,8 +367,9 @@ judicial-system-message-handler:
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
     SQS_REGION: 'eu-west-1'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -423,8 +419,6 @@ judicial-system-message-handler:
     create: true
     name: 'judicial-system-message-handler'
 judicial-system-scheduler:
-  allowExternalNetwork: false
-  allowInternalNetwork: false
   args:
     - '--no-experimental-fetch'
     - 'main.cjs'
@@ -440,8 +434,9 @@ judicial-system-scheduler:
     SQS_QUEUE_NAME: 'sqs-judicial-system'
     SQS_REGION: 'eu-west-1'
     TIME_TO_LIVE_MINUTES: '30'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -492,8 +487,6 @@ judicial-system-scheduler:
     create: true
     name: 'web-judicial-system-scheduler'
 judicial-system-web:
-  allowExternalNetwork: false
-  allowInternalNetwork: false
   enabled: true
   env:
     API_URL: 'https://judicial-system.dev01.devland.is'
@@ -501,8 +494,9 @@ judicial-system-web:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -568,8 +562,6 @@ judicial-system-web:
     allowPrivilegeEscalation: false
     privileged: false
 judicial-system-xrd-api:
-  allowExternalNetwork: false
-  allowInternalNetwork: true
   enabled: true
   env:
     AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
@@ -579,8 +571,9 @@ judicial-system-xrd-api:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
