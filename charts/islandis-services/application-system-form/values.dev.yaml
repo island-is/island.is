@@ -25,6 +25,8 @@ env:
   SERVERSIDE_FEATURES_ON: ''
   SI_PUBLIC_ENVIRONMENT: 'dev'
 grantNamespaces:
+  - 'nginx-ingress-internal'
+  - 'nginx-ingress-external'
   - 'islandis'
 grantNamespacesEnabled: true
 healthCheck:

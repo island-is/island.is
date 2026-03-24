@@ -1090,6 +1090,8 @@ application-system-form:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
   grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1681,6 +1683,7 @@ download-service:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'islandis'
+    - 'nginx-ingress-external'
     - 'services-bff-portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2298,6 +2301,8 @@ payments:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2742,6 +2747,8 @@ service-portal:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
   grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
     - 'islandis'
     - 'user-notification'
     - 'identity-server'
@@ -3273,6 +3280,8 @@ services-form-system-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'islandis'
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3397,6 +3406,8 @@ services-form-system-api-worker:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

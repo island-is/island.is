@@ -1101,6 +1101,8 @@ application-system-form:
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'staging'
   grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1530,6 +1532,7 @@ download-service:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'islandis'
+    - 'nginx-ingress-external'
     - 'services-bff-portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2142,6 +2145,8 @@ payments:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2580,6 +2585,8 @@ service-portal:
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'staging'
   grantNamespaces:
+    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
     - 'islandis'
     - 'user-notification'
     - 'identity-server'
@@ -3101,6 +3108,8 @@ services-form-system-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
     - 'islandis'
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3225,6 +3234,8 @@ services-form-system-api-worker:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

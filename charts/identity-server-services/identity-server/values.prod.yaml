@@ -58,6 +58,7 @@ env:
 files:
   - 'ids-signing.pfx'
 grantNamespaces:
+  - 'nginx-ingress-external'
   - 'user-notification'
   - 'portals-admin'
   - 'datadog'

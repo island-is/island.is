@@ -17,6 +17,8 @@ auth-admin-web:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -143,6 +145,7 @@ identity-server:
   files:
     - 'ids-signing.pfx'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
     - 'datadog'
@@ -279,6 +282,8 @@ services-auth-admin-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -641,6 +646,7 @@ services-auth-ids-api-cleanup:
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
     - 'datadog'
@@ -926,6 +932,8 @@ services-auth-public-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:

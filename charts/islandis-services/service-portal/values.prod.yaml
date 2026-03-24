@@ -25,6 +25,8 @@ env:
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   SI_PUBLIC_ENVIRONMENT: 'prod'
 grantNamespaces:
+  - 'nginx-ingress-internal'
+  - 'nginx-ingress-external'
   - 'islandis'
   - 'user-notification'
   - 'identity-server'

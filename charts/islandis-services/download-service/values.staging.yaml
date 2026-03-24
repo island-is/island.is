@@ -57,6 +57,7 @@ env:
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
 grantNamespaces:
   - 'islandis'
+  - 'nginx-ingress-external'
   - 'services-bff-portals-admin'
 grantNamespacesEnabled: true
 healthCheck:
