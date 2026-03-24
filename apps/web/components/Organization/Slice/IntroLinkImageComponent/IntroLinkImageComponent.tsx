@@ -1,4 +1,5 @@
 import React from 'react'
+import cn from 'classnames'
 
 import type { SliceType } from '@island.is/island-ui/contentful'
 import {
@@ -18,6 +19,7 @@ import * as styles from './IntroLinkImageComponent.css'
 
 interface IntroLinkImageComponentProps {
   item: IntroLinkImage
+  variant?: 'default' | 'small'
   id?: string | null
 }
 
@@ -32,6 +34,7 @@ export const IntroLinkImageComponent = ({
     link,
     linkHref: linkHrefFromCms,
   },
+  variant = 'default',
   id,
 }: IntroLinkImageComponentProps) => {
   const { linkResolver } = useLinkResolver()
@@ -40,25 +43,53 @@ export const IntroLinkImageComponent = ({
     : link?.type && link.slug
     ? linkResolver(link.type as LinkType, [link.slug]).href
     : ''
+
   return (
     <GridRow direction={leftImage ? 'row' : 'rowReverse'} rowGap={1}>
       {image?.url && (
-        <GridColumn span={['8/8', '3/8', '4/8', '3/8']}>
+        <GridColumn
+          span={
+            variant === 'default'
+              ? ['8/8', '3/8', '4/8', '3/8']
+              : ['8/8', '3/8', '4/8', '3/8', '2/8']
+          }
+        >
           <Box
             width="full"
             position="relative"
-            paddingLeft={leftImage ? undefined : [0, 0, 0, 0, 6]}
-            paddingRight={leftImage ? [10, 0, 0, 0, 6] : [10, 0]}
+            paddingLeft={
+              variant === 'default'
+                ? leftImage
+                  ? undefined
+                  : [0, 0, 0, 0, 6]
+                : undefined
+            }
+            paddingRight={
+              variant === 'default'
+                ? leftImage
+                  ? [10, 0, 0, 0, 6]
+                  : [10, 0]
+                : undefined
+            }
           >
             <img
-              className={styles.image}
+              className={cn({
+                [styles.image]: variant === 'default',
+                [styles.smallImage]: variant === 'small',
+              })}
               src={`${image.url}?w=774&fm=webp&q=80`}
               alt={image.description ?? ''}
             />
           </Box>
         </GridColumn>
       )}
-      <GridColumn span={['8/8', '5/8', '4/8', '5/8']}>
+      <GridColumn
+        span={
+          variant === 'default'
+            ? ['8/8', '5/8', '4/8', '5/8']
+            : ['8/8', '5/8', '4/8', '5/8', '6/8']
+        }
+      >
         <Box
           display="flex"
           flexDirection="column"
