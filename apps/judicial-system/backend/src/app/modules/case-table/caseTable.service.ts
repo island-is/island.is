@@ -18,9 +18,10 @@ import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import {
   getActionOnRowClick,
+  getAllIncludes,
   getAttributes,
   getContextMenuActions,
-  getIncludes,
+  getGlobalIncludes,
   isMyCase,
 } from './caseTable.utils'
 import {
@@ -71,10 +72,8 @@ export class CaseTableService {
 
     const results = await Promise.all(
       whereOptionsByType.map(async ({ type, whereOptions }) => {
-        const [include, globalOrder] = getIncludes(
+        const [include, globalOrder] = getGlobalIncludes(
           whereOptions.includes ?? {},
-          [],
-          user,
         )
 
         const cases = await this.caseRepositoryService.findAll({
@@ -110,7 +109,7 @@ export class CaseTableService {
 
     const attributes = getAttributes(caseTableCellKeys, user)
 
-    const [include, globalOrder] = getIncludes(
+    const [include, globalOrder] = getAllIncludes(
       whereOptions.includes ?? {},
       caseTableCellKeys,
       user,
