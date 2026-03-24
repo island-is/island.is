@@ -46,6 +46,20 @@ export const mapStudentFileType = (
     case HIFileType.Transcript:
     case BifrostFileType.Transcript:
       return 'transcript'
+    case HolarFileType.MicroCredentialsSupplement:
+    case LbhiFileType.MicroCredentialsSupplement:
+    case LHIFileType.MicroCredentialsSupplement:
+    case UnakFileType.MicroCredentialsSupplement:
+    case HIFileType.MicroCredentialsSupplement:
+    case BifrostFileType.MicroCredentialsSupplement:
+      return 'micro_credentials_supplement'
+    case HolarFileType.MicroCredentialsTranscript:
+    case LbhiFileType.MicroCredentialsTranscript:
+    case LHIFileType.MicroCredentialsTranscript:
+    case UnakFileType.MicroCredentialsTranscript:
+    case HIFileType.MicroCredentialsTranscript:
+    case BifrostFileType.MicroCredentialsTranscript:
+      return 'micro_credentials_transcript'
     default:
       return 'unknown'
   }

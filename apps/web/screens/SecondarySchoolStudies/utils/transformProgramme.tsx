@@ -53,13 +53,15 @@ export const transformProgrammeToCard = (
 
   const schoolData = getSchoolData(school?.abbreviation)
 
+  const unknownSchool = formatMessage(m.details.unknownSchool)
+
   return {
-    id: `${programme.programmeId}-${school?.id || ''}`,
-    schoolName: school?.name || '',
+    id: `${programme.programmeId}${school?.id ? `-${school.id}` : ''}`,
+    schoolName: school?.name || unknownSchool,
     schoolIcon: (
       <img
         src={`/assets/framhaldsskolar/${schoolData.icon}`}
-        alt={`${school?.name || 'School'} logo`}
+        alt={`${school?.name || unknownSchool} logo`}
       />
     ),
     title: programme.title || '',
