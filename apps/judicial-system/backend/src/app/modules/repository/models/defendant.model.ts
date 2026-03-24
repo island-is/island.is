@@ -215,6 +215,10 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Boolean })
   isSentToPrisonAdmin?: boolean
 
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isRegisteredInPrisonSystem?: boolean
+
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -251,4 +255,8 @@ export class Defendant extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isDrivingLicenseSuspended?: boolean
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  publicProsecutorIsRegisteredInPoliceSystem?: boolean
 }

@@ -19,6 +19,21 @@ export const selectElectionSection = buildSection({
         buildSelectField({
           id: 'election.electionId',
           title: m.election,
+          setOnChange: async (optionValue, application) => {
+            const elections = getValueViaPath<Array<Election>>(
+              application.externalData,
+              'fetchElections.data',
+            )
+            return [
+              {
+                key: 'election.genitiveName',
+                value:
+                  elections?.find(
+                    (election) => election.electionId === optionValue,
+                  )?.genitiveName ?? '',
+              },
+            ]
+          },
           options: (application) => {
             const elections = getValueViaPath<Array<Election>>(
               application.externalData,

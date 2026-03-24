@@ -96,7 +96,7 @@ initContainer:
     DB_PASS: '/k8s/air-discount-scheme-backend/DB_PASSWORD'
 namespace: 'air-discount-scheme'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -122,6 +122,7 @@ secrets:
   NATIONAL_REGISTRY_PASSWORD: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_PASSWORD'
   NATIONAL_REGISTRY_URL: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_URL'
   NATIONAL_REGISTRY_USERNAME: '/k8s/air-discount-scheme/backend/NATIONAL_REGISTRY_USERNAME'
+  NEXTAUTH_SECRET: '/k8s/air-discount-scheme/web/NEXTAUTH_SECRET'
   NORLANDAIR_API_KEY: '/k8s/air-discount-scheme/backend/NORLANDAIR_API_KEY'
 securityContext:
   allowPrivilegeEscalation: false

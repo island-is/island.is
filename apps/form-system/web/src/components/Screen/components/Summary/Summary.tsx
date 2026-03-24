@@ -1,6 +1,11 @@
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_SETTINGS } from '@island.is/form-system/graphql'
-import { ApplicationState, m, SectionTypes } from '@island.is/form-system/ui'
+import {
+  ApplicationState,
+  FieldTypesEnum,
+  m,
+  SectionTypes,
+} from '@island.is/form-system/ui'
 import {
   Box,
   Button,
@@ -73,7 +78,7 @@ export const Summary = ({ state }: Props) => {
               <Divider />
               <GridContainer>
                 <GridRow>
-                  <GridColumn span={['12/12', '1/2']}>
+                  <GridColumn span={['12/12', '10/12']}>
                     <Box marginTop={2}>
                       {section.sectionType === SectionTypes.PARTIES ? (
                         <Text as="h3" variant="h3" fontWeight="semiBold">
@@ -113,14 +118,16 @@ export const Summary = ({ state }: Props) => {
                       {screen?.fields
                         ?.filter(
                           (field): field is NonNullable<typeof field> =>
-                            field != null && !field.isHidden,
+                            field != null &&
+                            !field.isHidden &&
+                            field.fieldType !== FieldTypesEnum.MESSAGE,
                         )
                         .map((field, index) => (
                           <Display field={field} key={index} />
                         ))}
                     </Box>
                   </GridColumn>
-                  <GridColumn span={['12/12', '1/2']}>
+                  <GridColumn span={['12/12', '2/12']}>
                     <Box
                       display={['none', 'flex']}
                       marginTop={4}

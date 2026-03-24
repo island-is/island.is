@@ -62,14 +62,28 @@ export class Screen extends Model<Screen> {
     allowNull: false,
     defaultValue: 0,
   })
-  multiset!: number
+  multiMax!: number
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   })
-  callRuleset!: boolean
+  isMulti!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  shouldValidate!: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  shouldPopulate!: boolean
 
   @HasMany(() => Field)
   fields!: Field[]

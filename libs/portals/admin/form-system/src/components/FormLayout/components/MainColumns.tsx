@@ -17,7 +17,7 @@ import * as styles from './MainColumn.css'
 
 export const MainContentColumn = () => {
   const { control, controlDispatch, inSettings } = useContext(ControlContext)
-  const { activeItem, form } = control
+  const { activeItem, form, isPublished } = control
   const { sections, screens, fields } = form
   const { type } = activeItem
   const { formatMessage } = useIntl()
@@ -89,7 +89,7 @@ export const MainContentColumn = () => {
 
   return (
     <Box className={cn(styles.mainColumn)} padding={2}>
-      {!inSettings && !staticSection && !staticScreen ? (
+      {!isPublished && !inSettings && !staticSection && !staticScreen ? (
         containsGroupOrInput() ? (
           <DialogPrompt
             baseId="remove"

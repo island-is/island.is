@@ -5,6 +5,7 @@ export const en: TranslatedMessages = {
   'button.change': 'Change',
   'button.open': 'Open',
   'button.moreInfoHere': 'More info here',
+  'button.seeMore': 'See more',
 
   // login
   'login.welcomeMessage': 'Log in to the app with electronic ID',
@@ -189,10 +190,6 @@ export const en: TranslatedMessages = {
   'home.vehicleModule.summary':
     'Enter mileage of electric and plug-in hybrid vehicles',
   'home.vehicleModule.button': 'My vehicles',
-  'homeBanner.vehicleMileage.title': 'Register mileage',
-  'homeBanner.vehicleMileage.description':
-    'Register the mileage of your vehicles',
-  'homeBanner.vehicleMileage.cta': 'View vehicles',
   'button.seeAll': 'See all',
 
   // home options
@@ -761,6 +758,17 @@ export const en: TranslatedMessages = {
   'health.overview.dentist': 'Dentist',
   'health.overview.noDentistRegistered': 'No dentist registered',
   'health.overview.prescriptions': 'Prescriptions',
+  'health.overview.medicine': 'Medicine',
+  'health.overview.seeAllCategories': 'See all categories',
+
+  // health: categories
+  'health.categories.screenTitle': 'Health Categories',
+  'health.categories.healthCategories': 'Health Categories',
+  'health.categories.moreOnMyPages': 'More on my pages',
+  'health.categories.referrals': 'Referrals',
+  'health.categories.paymentsAndRights': 'Payments and rights',
+  'health.categories.waitingLists': 'Waiting lists',
+  'health.categories.medicalRecords': 'Medical records',
 
   // health - questionnaires
   'health.questionnaires.screenTitle': 'Questionnaires',
@@ -938,8 +946,10 @@ export const en: TranslatedMessages = {
   'health.prescriptions.description':
     'Here you can find an overview of your prescriptions and medication certificates.',
   'health.prescriptions.drug': 'Medication',
+  'health.prescriptions.strength': 'Strength',
+  'health.prescriptions.indication': 'Used for',
   'health.prescriptions.type': 'Type',
-  'health.prescriptions.indication': 'Medication used for',
+  'health.prescriptions.form': 'Form',
   'health.prescriptions.quantity': 'Prescribed amount',
   'health.prescriptions.dosageInstructions': 'Dosage instructions',
   'health.prescriptions.issueDate': 'Issue date',

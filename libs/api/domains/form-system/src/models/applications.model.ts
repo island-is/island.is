@@ -37,6 +37,9 @@ export class Application {
   @Field(() => String, { nullable: true })
   slug?: string
 
+  @Field(() => String, { nullable: true })
+  submissionServiceUrl?: string
+
   @Field(() => Date, { nullable: true })
   created?: Date
 
@@ -101,8 +104,11 @@ export class ApplicationListDto {
   total?: number
 }
 
-@ObjectType('FormSystemScreenErrorMessage')
-export class ScreenErrorMessage {
+@ObjectType('FormSystemValidationError')
+export class ValidationError {
+  @Field(() => Boolean, { nullable: true })
+  hasError?: boolean
+
   @Field(() => LanguageType, { nullable: true })
   title?: LanguageType
 
@@ -113,10 +119,10 @@ export class ScreenErrorMessage {
 @ObjectType('FormSystemSubmitApplicationResponse')
 export class SubmitApplicationResponse {
   @Field(() => Boolean, { nullable: true })
-  success?: boolean
+  submissionFailed?: boolean
 
-  @Field(() => [ScreenErrorMessage], { nullable: 'itemsAndList' })
-  screenErrorMessages?: ScreenErrorMessage[]
+  @Field(() => ValidationError, { nullable: true })
+  validationError?: ValidationError
 }
 
 @ObjectType('FormSystemSubmitScreenResponseValue')

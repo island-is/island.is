@@ -20,6 +20,7 @@ export const MessageWithLinkSettings = () => {
     updateActiveItem,
     getTranslation,
   } = useContext(ControlContext)
+  const { isPublished } = control
   const currentItem = control.activeItem.data as FormSystemField
   const { fieldSettings } = currentItem
   const { formatMessage } = useIntl()
@@ -30,6 +31,7 @@ export const MessageWithLinkSettings = () => {
           <Checkbox
             label={formatMessage(m.addLink)}
             checked={fieldSettings?.hasLink ?? false}
+            disabled={isPublished}
             onChange={(e) =>
               controlDispatch({
                 type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
@@ -52,6 +54,7 @@ export const MessageWithLinkSettings = () => {
                 name="buttonTitle"
                 backgroundColor="blue"
                 value={fieldSettings?.buttonText?.is ?? ''}
+                readOnly={isPublished}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
@@ -72,6 +75,7 @@ export const MessageWithLinkSettings = () => {
                 name="buttonTitleEn"
                 backgroundColor="blue"
                 value={fieldSettings.buttonText?.en ?? ''}
+                readOnly={isPublished}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
@@ -113,6 +117,7 @@ export const MessageWithLinkSettings = () => {
                 backgroundColor="blue"
                 placeholder="island.is"
                 value={fieldSettings?.url ?? ''}
+                readOnly={isPublished}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'SET_MESSAGE_WITH_LINK_SETTINGS',

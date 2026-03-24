@@ -1,6 +1,9 @@
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { LoggingModule } from '@island.is/logging'
 import { AuditModule } from '@island.is/nest/audit'
+import { ConfigModule } from '@island.is/nest/config'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
@@ -42,6 +45,10 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     FileModule,
     PruneModule,
     PaymentModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [NationalRegistryV3ClientConfig, CompanyRegistryConfig],
+    }),
   ],
 })
 export class AppModule {}

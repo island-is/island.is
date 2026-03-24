@@ -61,7 +61,7 @@ ingress:
           - '/api/graphql'
 namespace: 'air-discount-scheme'
 podDisruptionBudget:
-  minAvailable: 1
+  minAvailable: '50%'
   unhealthyPodEvictionPolicy: 'IfHealthyBudget'
 podSecurityContext:
   fsGroup: 65534
@@ -83,6 +83,7 @@ secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   CONTENTFUL_ACCESS_TOKEN: '/k8s/air-discount-scheme/api/CONTENTFUL_ACCESS_TOKEN'
   DEVELOPERS: '/k8s/air-discount-scheme/api/DEVELOPERS'
+  NEXTAUTH_SECRET: '/k8s/air-discount-scheme/web/NEXTAUTH_SECRET'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

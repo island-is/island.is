@@ -11,6 +11,9 @@ export class ApplicationDto {
   @ApiPropertyOptional()
   id?: string
 
+  @ApiPropertyOptional()
+  nationalId?: string
+
   @ApiPropertyOptional({ type: LanguageType })
   organizationName?: LanguageType
 
@@ -80,6 +83,11 @@ export class ApplicationDto {
   @ApiPropertyOptional()
   organizationNationalId?: string
 
+  useValidate?: boolean
+
+  @ApiPropertyOptional()
+  usePopulate?: boolean
+
+  @ApiPropertyOptional()
   submissionServiceUrl?: string
-  validationServiceUrl?: string
 }

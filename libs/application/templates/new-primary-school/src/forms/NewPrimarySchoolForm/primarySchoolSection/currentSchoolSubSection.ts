@@ -4,10 +4,13 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildMultiField,
+  buildRadioField,
   buildSubSection,
   buildTextField,
   coreErrorMessages,
   coreMessages,
+  NO,
+  YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
@@ -42,18 +45,16 @@ export const currentSchoolSubSection = buildSubSection({
           id: 'currentSchool.description',
           title: primarySchoolMessages.currentSchool.currentSchool,
           titleVariant: 'h4',
-          condition: (_, externalData) => {
-            return isCurrentSchoolRegistered(externalData)
-          },
+          condition: (_, externalData) =>
+            isCurrentSchoolRegistered(externalData),
         }),
         buildTextField({
           id: 'currentSchool.name',
           title: coreMessages.name,
           width: 'half',
           disabled: true,
-          condition: (_, externalData) => {
-            return isCurrentSchoolRegistered(externalData)
-          },
+          condition: (_, externalData) =>
+            isCurrentSchoolRegistered(externalData),
           defaultValue: (application: Application) =>
             getCurrentSchoolName(application.externalData),
         }),
@@ -63,9 +64,8 @@ export const currentSchoolSubSection = buildSubSection({
             title: primarySchoolMessages.currentSchool.grade,
             width: 'half',
             component: 'DynamicDisabledText',
-            condition: (_, externalData) => {
-              return isCurrentSchoolRegistered(externalData)
-            },
+            condition: (_, externalData) =>
+              isCurrentSchoolRegistered(externalData),
           },
           {
             value: (application: Application, lang: Locale) => {
@@ -81,6 +81,25 @@ export const currentSchoolSubSection = buildSubSection({
             },
           },
         ),
+        buildRadioField({
+          id: 'currentSchool.hasCurrentSchool',
+          title: primarySchoolMessages.currentSchool.hasCurrentSchool,
+          width: 'half',
+          required: true,
+          space: 0,
+          options: [
+            {
+              label: sharedMessages.yes,
+              value: YES,
+            },
+            {
+              label: sharedMessages.no,
+              value: NO,
+            },
+          ],
+          condition: (_, externalData) =>
+            !isCurrentSchoolRegistered(externalData),
+        }),
         buildAsyncSelectField({
           id: 'currentSchool.municipality',
           title: sharedMessages.municipality,
@@ -88,6 +107,7 @@ export const currentSchoolSubSection = buildSubSection({
           loadingError: coreErrorMessages.failedDataProvider,
           isClearable: true,
           isSearchable: true,
+          marginTop: 2,
           defaultValue: (application: Application) => {
             const { applicantMunicipalityCode } = getApplicationExternalData(
               application.externalData,
@@ -114,9 +134,13 @@ export const currentSchoolSubSection = buildSubSection({
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
           },
-          condition: (_, externalData) => {
-            const { primaryOrgId } = getApplicationExternalData(externalData)
-            return !primaryOrgId
+          condition: (answers, externalData) => {
+            const { hasCurrentSchool } = getApplicationAnswers(answers)
+
+            return (
+              !isCurrentSchoolRegistered(externalData) &&
+              hasCurrentSchool === YES
+            )
           },
         }),
         buildAsyncSelectField({
@@ -147,9 +171,15 @@ export const currentSchoolSubSection = buildSubSection({
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
           },
-          condition: (_, externalData) => {
-            const { primaryOrgId } = getApplicationExternalData(externalData)
-            return !primaryOrgId
+          condition: (answers, externalData) => {
+            const { hasCurrentSchool, currentSchoolMunicipality } =
+              getApplicationAnswers(answers)
+
+            return (
+              !isCurrentSchoolRegistered(externalData) &&
+              hasCurrentSchool === YES &&
+              !!currentSchoolMunicipality
+            )
           },
         }),
       ],

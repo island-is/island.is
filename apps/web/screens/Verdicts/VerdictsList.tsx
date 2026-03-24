@@ -21,6 +21,7 @@ import {
   Filter,
   GridContainer,
   Hidden,
+  type IconMapIcon,
   Inline,
   Select,
   Stack,
@@ -116,6 +117,21 @@ const mapCourtToTopLevelCourt = (
   if (court === 'Hæstiréttur') return 'supremeCourt'
   if (court === 'landsrettur') return 'courtOfAppeal'
   return 'all'
+}
+
+const shouldResetCaseFiltersOnCourtChange = (
+  previousCourt: string,
+  nextCourt: string,
+  retrialCourtOptionValue: string,
+) => {
+  const topLevel = mapCourtToTopLevelCourt(nextCourt)
+  const previousTopLevel = mapCourtToTopLevelCourt(previousCourt)
+
+  return (
+    (topLevel !== previousTopLevel && topLevel !== 'all') ||
+    nextCourt === retrialCourtOptionValue ||
+    previousCourt === retrialCourtOptionValue
+  )
 }
 
 enum QueryParam {
@@ -1088,13 +1104,12 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                     label={formatMessage(m.listPage.courtSelectLabel)}
                     onChange={(option) => {
                       if (option) {
-                        const topLevel = mapCourtToTopLevelCourt(option.value)
-                        const previousTopLevel = mapCourtToTopLevelCourt(
-                          queryState[QueryParam.COURT],
-                        )
                         if (
-                          topLevel !== previousTopLevel &&
-                          topLevel !== 'all'
+                          shouldResetCaseFiltersOnCourtChange(
+                            queryState[QueryParam.COURT],
+                            option.value,
+                            retrialCourtOptionValue,
+                          )
                         ) {
                           updateQueryState(QueryParam.CASE_CATEGORIES, null)
                           updateQueryState(QueryParam.CASE_TYPES, null)
@@ -1127,13 +1142,12 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                           key={tag.value}
                           active={isActive}
                           onClick={() => {
-                            const topLevel = mapCourtToTopLevelCourt(tag.value)
-                            const previousTopLevel = mapCourtToTopLevelCourt(
-                              queryState[QueryParam.COURT],
-                            )
                             if (
-                              topLevel !== previousTopLevel &&
-                              topLevel !== 'all'
+                              shouldResetCaseFiltersOnCourtChange(
+                                queryState[QueryParam.COURT],
+                                tag.value,
+                                retrialCourtOptionValue,
+                              )
                             ) {
                               updateQueryState(QueryParam.CASE_CATEGORIES, null)
                               updateQueryState(QueryParam.CASE_TYPES, null)
@@ -1421,7 +1435,10 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                 cards={data.visibleVerdicts
                   .filter((verdict) => Boolean(verdict.id))
                   .map((verdict) => {
-                    const detailLines = [
+                    const detailLines: {
+                      icon: IconMapIcon
+                      text: string | React.ReactNode
+                    }[] = [
                       {
                         icon: 'calendar',
                         text: verdict.verdictDate
@@ -1431,12 +1448,24 @@ const VerdictsList: CustomScreen<VerdictsListProps> = (props) => {
                       { icon: 'hammer', text: verdict.court ?? '' },
                     ]
 
-                    if (verdict.presidentJudge?.name) {
+                    if (verdict.verdictJudges?.length) {
                       detailLines.push({
                         icon: 'person',
-                        text: `${verdict.presidentJudge?.name ?? ''} ${
-                          verdict.presidentJudge?.title ?? ''
-                        }`,
+                        text: (
+                          <Stack space={1}>
+                            {verdict.verdictJudges.map((judge, index) => {
+                              const judgeName = judge?.name ?? ''
+                              if (!judgeName) return null
+                              let judgeTitle = judge?.title ?? ''
+                              if (judgeName === judgeTitle) judgeTitle = ''
+                              return (
+                                <Text key={index} variant="small">
+                                  {judgeName} {judgeTitle}
+                                </Text>
+                              )
+                            })}
+                          </Stack>
+                        ),
                       })
                     }
 

@@ -79,6 +79,10 @@ type FieldActions =
         update: (updatedActiveItem?: ActiveItem) => void
       }
     }
+  | {
+      type: 'CHANGE_IS_PART_OF_MULTI'
+      payload: { update: (updatedActiveItem?: ActiveItem) => void }
+    }
 
 type SectionActions =
   | { type: 'ADD_SECTION'; payload: { section: FormSystemSection } }
@@ -146,7 +150,8 @@ type ChangeActions =
       type: 'CHANGE_SLUG'
       payload: { newValue: string }
     }
-  | { type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE'; payload: { value: number } }
+  | { type: 'CHANGE_DRAFT_DAYS_TO_LIVE'; payload: { value: number } }
+  | { type: 'CHANGE_SUBMISSION_DAYS_TO_LIVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
       type: 'CHANGE_ALLOW_PROCEED_ON_VALIDATION_FAIL'
@@ -170,7 +175,28 @@ type ChangeActions =
       }
     }
   | {
-      type: 'TOGGLE_MULTI_SET'
+      type: 'TOGGLE_IS_MULTI'
+      payload: {
+        checked: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'CHANGE_MULTI_MAX'
+      payload: {
+        value: number
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'TOGGLE_SHOULD_VALIDATE'
+      payload: {
+        checked: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
+      type: 'TOGGLE_SHOULD_POPULATE'
       payload: {
         checked: boolean
         update: (updatedActiveItem?: ActiveItem) => void
@@ -191,6 +217,18 @@ type ChangeActions =
     }
   | {
       type: 'CHANGE_ZENDESK_INTERNAL'
+      payload: {
+        value: boolean
+      }
+    }
+  | {
+      type: 'CHANGE_USE_VALIDATE'
+      payload: {
+        value: boolean
+      }
+    }
+  | {
+      type: 'CHANGE_USE_POPULATE'
       payload: {
         value: boolean
       }
@@ -337,6 +375,7 @@ export interface ControlState {
   activeListItem: FormSystemListItem | null
   form: FormSystemForm
   organizationNationalId: string | null
+  isPublished: boolean
 }
 
 export const controlReducer = (
@@ -618,6 +657,28 @@ export const controlReducer = (
       }
     }
 
+    case 'CHANGE_IS_PART_OF_MULTI': {
+      const currentData = activeItem.data as FormSystemField
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          isPartOfMultiset: !currentData?.isPartOfMultiset,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          fields: fields?.map((i) =>
+            i?.id === currentData?.id ? newActive.data : i,
+          ),
+        },
+      }
+    }
+
     // Change
     case 'CHANGE_APPLICANT_NAME': {
       const { lang, newValue, id } = action.payload
@@ -752,12 +813,21 @@ export const controlReducer = (
         },
       }
     }
-    case 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE': {
+    case 'CHANGE_DRAFT_DAYS_TO_LIVE': {
       return {
         ...state,
         form: {
           ...form,
-          daysUntilApplicationPrune: action.payload.value,
+          draftDaysToLive: action.payload.value,
+        },
+      }
+    }
+    case 'CHANGE_SUBMISSION_DAYS_TO_LIVE': {
+      return {
+        ...state,
+        form: {
+          ...form,
+          submissionDaysToLive: action.payload.value,
         },
       }
     }
@@ -825,6 +895,26 @@ export const controlReducer = (
         form: {
           ...form,
           zendeskInternal: action.payload.value,
+        },
+      }
+      return updatedState
+    }
+    case 'CHANGE_USE_VALIDATE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          useValidate: action.payload.value,
+        },
+      }
+      return updatedState
+    }
+    case 'CHANGE_USE_POPULATE': {
+      const updatedState = {
+        ...state,
+        form: {
+          ...form,
+          usePopulate: action.payload.value,
         },
       }
       return updatedState
@@ -981,13 +1071,80 @@ export const controlReducer = (
       }
     }
 
-    case 'TOGGLE_MULTI_SET': {
+    case 'TOGGLE_IS_MULTI': {
+      const currentData = activeItem.data as FormSystemScreen
+
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          isMulti: action.payload.checked,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          screens: screens?.map((g) =>
+            g?.id === currentData?.id ? newActive.data : g,
+          ),
+        },
+      }
+    }
+
+    case 'CHANGE_MULTI_MAX': {
       const currentData = activeItem.data as FormSystemScreen
       const newActive = {
         ...activeItem,
         data: {
           ...currentData,
-          multiset: action.payload.checked ? 1 : 0,
+          multiMax: action.payload.value,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          screens: screens?.map((g) =>
+            g?.id === currentData?.id ? newActive.data : g,
+          ),
+        },
+      }
+    }
+
+    case 'TOGGLE_SHOULD_VALIDATE': {
+      const currentData = activeItem.data as FormSystemScreen
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          shouldValidate: action.payload.checked ? true : false,
+        },
+      }
+      action.payload.update(newActive)
+      return {
+        ...state,
+        activeItem: newActive,
+        form: {
+          ...form,
+          screens: screens?.map((g) =>
+            g?.id === currentData?.id ? newActive.data : g,
+          ),
+        },
+      }
+    }
+
+    case 'TOGGLE_SHOULD_POPULATE': {
+      const currentData = activeItem.data as FormSystemScreen
+      const newActive = {
+        ...activeItem,
+        data: {
+          ...currentData,
+          shouldPopulate: action.payload.checked ? true : false,
         },
       }
       action.payload.update(newActive)

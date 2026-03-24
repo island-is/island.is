@@ -23,10 +23,12 @@ export const mapPoliceCase = (
     status: mapPoliceCaseStatus(
       mapPoliceCaseStatusValue(data.status),
       formatMessage,
+      data.status,
     ),
     contact: data.contact,
     courtAdvocate: data.courtAdvocate,
     department: data.department,
+    prosecutionOffice: data.prosecutionOffice,
     received: data.receivedDate?.toISOString(),
     modified: data.modifiedDate?.toISOString(),
     receivedLocation: data.recievedLocation,

@@ -62,6 +62,7 @@ export const FormProvider: React.FC<{
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,
     organizationNationalId: form?.organizationNationalId ?? '',
+    isPublished: form?.status === 'PUBLISHED',
   }
   const [control, controlDispatch] = useReducer(controlReducer, initialControl)
 

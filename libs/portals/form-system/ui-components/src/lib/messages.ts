@@ -120,10 +120,15 @@ export const m = defineMessages({
     defaultMessage: 'slug',
     description: 'slug',
   },
-  daysUntilExpiration: {
-    id: 'form.system:days-until-expiration',
-    defaultMessage: 'Líftími umsóknar (hámark 30 dagar)',
-    description: 'Days until expiration of application (max 30 days)',
+  lifetimeWhileInDraft: {
+    id: 'form.system:lifetime-while-in-draft',
+    defaultMessage: 'Líftími umsókna í drögum (allt að 60 dagar)',
+    description: 'Application lifetime in drafts (max 60 days)',
+  },
+  lifetimeAfterSubmission: {
+    id: 'form.system:lifetime-after-submission',
+    defaultMessage: 'Líftími umsókna eftir skil (allt að 30 dagar)',
+    description: 'Application lifetime after submission (max 30 days)',
   },
   deadline: {
     id: 'form.system:deadline',
@@ -397,13 +402,8 @@ export const m = defineMessages({
   },
   submitUrls: {
     id: 'form.system:submitUrls',
-    defaultMessage: 'Innsendingarslóðir',
-    description: 'Submission URLs',
-  },
-  validationUrls: {
-    id: 'form.system:validationUrls',
-    defaultMessage: 'Reglukerfi',
-    description: 'Validation URLs',
+    defaultMessage: 'Veldu slóð',
+    description: 'Choose URL',
   },
   permissions: {
     id: 'form.system:permissions',
@@ -460,6 +460,11 @@ export const m = defineMessages({
     id: 'form.system:max-30-days',
     defaultMessage: 'Hámark 30 dagar',
     description: 'Max 30 days',
+  },
+  max60Days: {
+    id: 'form.system:max-60-days',
+    defaultMessage: 'Hámark 60 dagar',
+    description: 'Max 60 days',
   },
   chooseDate: {
     id: 'form.system:choose-date',
@@ -1170,5 +1175,56 @@ export const m = defineMessages({
     id: 'form.system:pay',
     defaultMessage: 'Greiða',
     description: 'Pay',
+  },
+  useValidate: {
+    id: 'form.system:use-validate',
+    defaultMessage: 'Nota þjónustuna til að yfirfara (e. validate) gögnin',
+    description: 'Use the service to validate the data',
+  },
+  usePopulate: {
+    id: 'form.system:use-populate',
+    defaultMessage: 'Nota þjónustuna til að fylla út (e. populate) gögn',
+    description: 'Use the service to populate data',
+  },
+  screenValidate: {
+    id: 'form.system:screen-validate',
+    defaultMessage: 'Senda skjá/umsókn til yfirferðar (e. validation)',
+    description: 'Send the screen for validation',
+  },
+  screenPopulate: {
+    id: 'form.system:screen-populate',
+    defaultMessage:
+      'Senda skjá í sjálfvirka útfyllingu gagna (e. data population)',
+    description: 'Send the screen for automatic data population',
+  },
+  completedMessage: {
+    id: 'form.system:completed-message',
+    defaultMessage: 'Skilaboð á lokasíðu',
+    description: 'Message on completed page',
+  },
+  isPartOfMulti: {
+    id: 'form.system:is-part-of-multi',
+    defaultMessage: 'Hluti af fjölmengi',
+    description: 'Part of multiset',
+  },
+  multiMax: {
+    id: 'form.system:multi-max',
+    defaultMessage: 'Hámarksfjöldi lína í fjölmengi',
+    description: 'Maximum number of lines in multiset',
+  },
+  addMulti: {
+    id: 'form.system:add-multi',
+    defaultMessage: 'Bæta við línu',
+    description: 'Add line',
+  },
+  removeMulti: {
+    id: 'form.system:remove-multi',
+    defaultMessage: 'Fjarlægja',
+    description: 'Remove',
+  },
+  applicationLifetime: {
+    id: 'form.system:application-lifetime',
+    defaultMessage: 'Líftími umsókna',
+    description: 'Application lifetime',
   },
 })

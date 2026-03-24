@@ -480,16 +480,15 @@ const generateCaseNumberSortValue = (
 }
 
 const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
-  attributes: [
-    'policeCaseNumbers',
-    'courtCaseNumber',
-    'appealCaseNumber',
-    'publicProsecutorIsRegisteredInPoliceSystem',
-  ],
+  attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
   includes: {
     court: {
       model: Institution,
       attributes: ['name'],
+    },
+    defendants: {
+      model: Defendant,
+      attributes: ['publicProsecutorIsRegisteredInPoliceSystem'],
     },
   },
   generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
@@ -517,7 +516,10 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
 
     const hasCheckMark =
       isPublicProsecutionOfficeUser(user) &&
-      c.publicProsecutorIsRegisteredInPoliceSystem
+      // It's ok to only check the first defendant here since this
+      // checkmark is only used for public prosecutors office users
+      // and each defendant has their own line in their cases table
+      c.defendants?.[0]?.publicProsecutorIsRegisteredInPoliceSystem
 
     return generateCell(
       {
@@ -539,7 +541,20 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
         'nationalId',
         'name',
         'indictmentReviewDecision',
+        'isSentToPrisonAdmin',
+        'isRegisteredInPrisonSystem',
       ],
+      includes: {
+        verdicts: {
+          model: Verdict,
+          attributes: [
+            'isAcquittedByPublicProsecutionOffice',
+            'defendantHasRequestedAppeal',
+          ],
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+      },
       order: [['created', 'ASC']],
       separate: true,
     },
@@ -889,7 +904,12 @@ const punishmentType: CaseTableCellGenerator<TagValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['id', 'punishmentType'],
+      attributes: [
+        'id',
+        'punishmentType',
+        'isSentToPrisonAdmin',
+        'isRegisteredInPrisonSystem',
+      ],
       order: [['created', 'ASC']],
       separate: true,
     },
@@ -931,6 +951,7 @@ const punishmentType: CaseTableCellGenerator<TagValue> = {
 }
 
 const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
+  attributes: ['isRegisteredInPrisonSystem'],
   includes: {
     defendants: {
       model: Defendant,
@@ -961,6 +982,7 @@ const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
 }
 
 const prisonAdminState: CaseTableCellGenerator<TagValue> = {
+  attributes: ['isRegisteredInPrisonSystem'],
   includes: {
     defendants: {
       model: Defendant,
