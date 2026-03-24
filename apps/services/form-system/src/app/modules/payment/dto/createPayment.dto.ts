@@ -1,12 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsDate, IsNumber, IsObject, IsString } from 'class-validator'
+import {
+  IsBoolean,
+  IsDate,
+  IsNumber,
+  IsObject,
+  IsString,
+} from 'class-validator'
 
 export class CreatePaymentDto {
   @IsString()
   @ApiProperty()
   readonly application_id!: string
 
-  @IsString()
+  @IsBoolean()
   @ApiProperty()
   readonly fulfilled?: boolean
 

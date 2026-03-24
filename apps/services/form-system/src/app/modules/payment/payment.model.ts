@@ -60,7 +60,7 @@ export class Payment extends Model<
   definition!: CreationOptional<object>
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.NUMBER,
     allowNull: false,
   })
   amount!: number

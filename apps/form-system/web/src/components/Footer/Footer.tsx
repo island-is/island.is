@@ -113,6 +113,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       hasVisibleApplicantBeforeCurrentScreen())
 
   const handleIncrement = async () => {
+    if (paymentLoading) return
     const isValid = await validate()
     dispatch({ type: 'SET_VALIDITY', payload: { isValid } })
     if (!isValid) return
@@ -308,11 +309,12 @@ export const Footer = ({ externalDataAgreement }: Props) => {
               onClick={handleIncrement}
               disabled={
                 !enableContinueButton ||
+                paymentLoading ||
                 submitLoading ||
                 notifyLoading ||
                 state.currentScreen?.isPopulateError
               }
-              loading={submitLoading || notifyLoading}
+              loading={submitLoading || notifyLoading || paymentLoading}
             >
               {shouldShowPay ? formatMessage(m.pay) : continueButtonText}
             </Button>
