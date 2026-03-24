@@ -137,7 +137,7 @@ const baseSchema = z.object({
         .transform((v) => (v === '' ? undefined : v)),
     })
     .optional(),
-  incomeDisplayField: z.string().optional(),
+  incomeTextField: z.string().optional(),
   incomeFileUploadField: z.array(fileSchema).optional(),
   payment: z
     .object({

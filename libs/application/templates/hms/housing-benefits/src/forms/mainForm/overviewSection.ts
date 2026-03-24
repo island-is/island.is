@@ -14,6 +14,7 @@ import {
   exemptionSectionOverviewAttachments,
   householdMembersOverviewItems,
   householdMembersOverviewAttachments,
+  incomeSectionOverviewItems,
   incomeSectionOverviewAttachments,
   paymentSectionOverviewItems,
 } from '../../utils/getOverviewItems'
@@ -64,8 +65,12 @@ export const overviewSection = buildSection({
             const files = getValueViaPath<
               Array<{ key: string; name: string }>
             >(answers, 'incomeFileUploadField')
-            return Array.isArray(files) && files.length > 0
+            const hasFiles = Array.isArray(files) && files.length > 0
+            const text = getValueViaPath<string>(answers, 'incomeTextField')
+            const hasText = typeof text === 'string' && text.trim().length > 0
+            return hasFiles || hasText
           },
+          items: incomeSectionOverviewItems,
           attachments: incomeSectionOverviewAttachments,
         }),
         buildOverviewField({

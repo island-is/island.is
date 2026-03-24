@@ -1,9 +1,9 @@
 import {
   buildDescriptionField,
-  buildDisplayField,
   buildMultiField,
   buildSection,
   buildFileUploadField,
+  buildTextField,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 
@@ -16,6 +16,19 @@ export const incomeSection = buildSection({
       title: m.draftMessages.incomeSection.multiFieldTitle,
       description: m.draftMessages.incomeSection.multiFieldDescription,
       children: [
+        buildDescriptionField({
+          id: 'incomeDescription',
+          title: m.draftMessages.incomeSection.textFieldTitle,
+          titleVariant: 'h3',
+        }),
+        buildTextField({
+          id: 'incomeTextField',
+          title: m.draftMessages.incomeSection.textFieldTitle,
+          description: m.draftMessages.incomeSection.textFieldDescription,
+          variant: 'textarea',
+          rows: 4,
+          marginBottom: 4,
+        }),
         buildFileUploadField({
           id: 'incomeFileUploadField',
           title: m.draftMessages.incomeSection.fileUploadTitle,

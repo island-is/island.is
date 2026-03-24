@@ -8,7 +8,10 @@ import {
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { map } from 'rxjs/operators'
 import { Observable } from 'rxjs'
-import { ApplicationTemplateHelper } from '@island.is/application/core'
+import {
+  ApplicationTemplateHelper,
+  formatText,
+} from '@island.is/application/core'
 import {
   ApplicationTypes,
   Application as BaseApplication,
@@ -186,12 +189,22 @@ export class ApplicationAdminSerializer
       applicantActors,
       applicationActors: actors,
       actionCard: {
-        title: actionCardMeta.title
-          ? intl.formatMessage(actionCardMeta.title)
-          : null,
-        description: actionCardMeta.description
-          ? intl.formatMessage(actionCardMeta.description)
-          : null,
+        title:
+          actionCardMeta.title !== undefined
+            ? formatText(
+                actionCardMeta.title,
+                application,
+                intl.formatMessage,
+              )
+            : null,
+        description:
+          actionCardMeta.description !== undefined
+            ? formatText(
+                actionCardMeta.description,
+                application,
+                intl.formatMessage,
+              )
+            : null,
         tag: {
           variant: actionCardMeta.tag.variant || null,
           label: actionCardMeta.tag.label

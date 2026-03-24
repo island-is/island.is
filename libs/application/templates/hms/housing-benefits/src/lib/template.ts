@@ -32,6 +32,7 @@ import {
   getAssigneeNationalIds,
   needsHouseholdMemberApproval,
 } from '../utils/assigneeUtils'
+import { housingBenefitsActionCards } from '../utils/actionCardMeta'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -96,6 +97,7 @@ const template: ApplicationTemplate<
           progress: 0.2,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: housingBenefitsActionCards.noRentalAgreement,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -115,6 +117,7 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: housingBenefitsActionCards.draft,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -152,6 +155,7 @@ const template: ApplicationTemplate<
           progress: 0.6,
           status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: housingBenefitsActionCards.assigneeApproval,
           roles: [
             {
               id: Roles.UNSIGNED_ASSIGNEE,
@@ -203,6 +207,7 @@ const template: ApplicationTemplate<
           progress: 0.6,
           status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: housingBenefitsActionCards.inReview,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -251,6 +256,7 @@ const template: ApplicationTemplate<
           progress: 0.65,
           status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: housingBenefitsActionCards.extraData,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -283,6 +289,7 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.APPROVED,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: housingBenefitsActionCards.approved,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -302,6 +309,7 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.REJECTED,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: housingBenefitsActionCards.rejected,
           roles: [
             {
               id: Roles.APPLICANT,

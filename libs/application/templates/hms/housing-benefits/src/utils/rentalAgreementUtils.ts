@@ -22,15 +22,26 @@ export const getSelectedContract = (
   answers: FormValue,
   externalData: ExternalData,
 ): Contract | undefined => {
-  const selectedContractId = getValueViaPath<string>(
+  const selectedContractId = getValueViaPath<string | number>(
     answers,
     'rentalAgreement.answer',
   )
-  const contracts = getValueViaPath<Contract[]>(
+  if (selectedContractId === undefined || selectedContractId === '') {
+    return undefined
+  }
+  const selectedNormalized = String(selectedContractId).trim()
+
+  const contractsRaw = getValueViaPath<unknown>(
     externalData,
     'getRentalAgreements.data',
   )
-  return contracts?.find((c) => c.contractId?.toString() === selectedContractId)
+  const contracts = Array.isArray(contractsRaw) ? contractsRaw : []
+
+  return (contracts as Contract[]).find((c) => {
+    const id = c.contractId
+    if (id === undefined || id === null) return false
+    return String(id).trim() === selectedNormalized
+  })
 }
 
 /**

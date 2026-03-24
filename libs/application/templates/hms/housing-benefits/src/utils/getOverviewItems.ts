@@ -305,6 +305,25 @@ export const householdMembersOverviewAttachments = (
   return attachments
 }
 
+export const incomeSectionOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  _userNationalId?: string,
+  _locale?: Locale,
+): Array<KeyValueItem> => {
+  const text = getValueViaPath<string>(answers, 'incomeTextField')
+  const trimmed = text?.trim()
+  if (!trimmed) return []
+
+  return [
+    {
+      width: 'full',
+      keyText: m.draftMessages.incomeSection.textFieldTitle,
+      valueText: trimmed,
+    },
+  ]
+}
+
 export const incomeSectionOverviewAttachments = (
   answers: FormValue,
   _externalData: ExternalData,

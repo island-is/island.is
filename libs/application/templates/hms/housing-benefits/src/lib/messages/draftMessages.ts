@@ -254,6 +254,16 @@ export const draftMessages = {
         'Ef aðstæður þínar og tekjur hafa breyst frá meðaltali síðustu 12 mánaða, þá getur þú hér bætt við skjölum sem sýna breytta stöðu. Þetta gætu til dæmis verið launaseðlar, uppsagnabréf eða veikindavottorð.',
       description: 'Income file upload description',
     },
+    textFieldTitle: {
+      id: 'hb.application:draft.incomeSection.textFieldTitle',
+      defaultMessage: 'Breyttar aðstæður og tekjur',
+      description: 'Income text field title',
+    },
+    textFieldDescription: {
+      id: 'hb.application:draft.incomeSection.textFieldDescription',
+      defaultMessage:
+        'Lýsing á þínum aðstæðum og tekjum ef þær eru mikið frábrugðnar frá meðaltali síðustu 12 mánaða.',
+    },
   }),
 
   paymentSection: defineMessages({
