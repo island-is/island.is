@@ -7,15 +7,15 @@ import {
   useGetApplicationV2ApplicationStatisticsInstitutionAdminQuery,
   useGetApplicationV2ApplicationStatisticsSuperAdminQuery,
 } from '../../queries/overview.generated'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import StatisticsTable from '../../components/StatisticsTable/StatisticsTable'
 import startOfMonth from 'date-fns/startOfMonth'
 import { Organization } from '@island.is/shared/types'
 
 interface StatisticsProps {
   isSuperAdmin: boolean
-  organizationListFromContentful: Organization[]
-  isLoadingOrganizationsFromContentful: boolean
+  availableOrganizations: Organization[]
+  isLoadingOrganizations: boolean
 }
 
 const getFormattedDate = (date?: Date): string => {
@@ -30,8 +30,8 @@ const getFormattedDate = (date?: Date): string => {
 
 const Statistics = ({
   isSuperAdmin,
-  organizationListFromContentful,
-  isLoadingOrganizationsFromContentful,
+  availableOrganizations,
+  isLoadingOrganizations,
 }: StatisticsProps) => {
   const { formatMessage } = useLocale()
   const [dateInterval, setDateInterval] = useState<
@@ -41,7 +41,8 @@ const Statistics = ({
     to: new Date(),
   })
   const [error, setError] = useState<string | null>(null)
-  const [selectedInstitutionSlug, setSelectedInstitutionSlug] = useState('')
+  const [selectedInstitutionNationalId, setSelectedInstitutionNationalId] =
+    useState('')
 
   const onDateChange = (period: ApplicationFilters['period']) => {
     const dateChanging = period.from
@@ -50,7 +51,7 @@ const Statistics = ({
       ? { to: period.to }
       : {}
     setDateInterval({ ...dateInterval, ...dateChanging })
-    setSelectedInstitutionSlug('')
+    setSelectedInstitutionNationalId('')
   }
 
   const hasSelectedDates = dateInterval.from && dateInterval.to
@@ -101,36 +102,20 @@ const Statistics = ({
     ? superStatisticsData?.applicationV2ApplicationStatisticsSuperAdmin
     : institutionStatisticsData?.applicationV2ApplicationStatisticsInstitutionAdmin
 
-  const statisticsOrganizationOptions = useMemo<Organization[] | undefined>(
-    () =>
-      isSuperAdmin
-        ? Array.from(
-            new Set(
-              (dataRows ?? [])
-                .map((r) => r.institutionContentfulSlug)
-                .filter(Boolean),
-            ),
-          )
-            .map((slug) =>
-              organizationListFromContentful.find((o) => o.slug === slug),
-            )
-            .filter((o): o is Organization => o != null)
-            .sort((a, b) => a.title.localeCompare(b.title))
-        : undefined,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataRows, organizationListFromContentful, isSuperAdmin],
-  )
+  const statisticsOrganizationOptions = isSuperAdmin
+    ? availableOrganizations
+    : undefined
 
-  const filteredDataRows = selectedInstitutionSlug
+  const filteredDataRows = selectedInstitutionNationalId
     ? (dataRows ?? []).filter(
-        (r) => r.institutionContentfulSlug === selectedInstitutionSlug,
+        (r) => r.institutionNationalId === selectedInstitutionNationalId,
       )
     : dataRows
 
   const isLoading =
     superStatisticsLoading ||
     institutionStatisticsLoading ||
-    isLoadingOrganizationsFromContentful
+    isLoadingOrganizations
 
   return (
     <Box>
@@ -141,8 +126,8 @@ const Statistics = ({
         dateInterval={dateInterval}
         onDateChange={onDateChange}
         organizations={statisticsOrganizationOptions} // undefined for institution admins → no dropdown rendered
-        selectedInstitutionSlug={selectedInstitutionSlug}
-        onInstitutionChange={setSelectedInstitutionSlug}
+        selectedInstitutionNationalId={selectedInstitutionNationalId}
+        onInstitutionChange={setSelectedInstitutionNationalId}
       />
       {isLoading ? (
         <Box marginTop={[3, 3, 6]}>
@@ -157,7 +142,7 @@ const Statistics = ({
         <StatisticsTable
           isSuperAdmin={isSuperAdmin}
           dataRows={filteredDataRows}
-          organizations={organizationListFromContentful}
+          organizations={availableOrganizations}
         />
       )}
       {error && <Box marginTop={[3, 3, 6]}>{error}</Box>}
