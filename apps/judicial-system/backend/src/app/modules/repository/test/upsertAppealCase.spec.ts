@@ -14,10 +14,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (
-  caseId: string,
-  data: UpdateAppealCase,
-) => Promise<Then>
+type GivenWhenThen = (caseId: string, data: UpdateAppealCase) => Promise<Then>
 
 describe('CaseRepositoryService - upsertAppealCase', () => {
   const transaction = {} as Transaction
