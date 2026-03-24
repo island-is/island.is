@@ -27,7 +27,9 @@ const usePoliceDigitalCaseFile = (
     useDeletePoliceDigitalCaseFileMutation()
 
   const [getTokenUrlQuery, { loading: tokenUrlLoading }] =
-    usePoliceDigitalCaseFileTokenUrlLazyQuery()
+    usePoliceDigitalCaseFileTokenUrlLazyQuery({
+      fetchPolicy: 'no-cache',
+    })
 
   const openDigitalCaseFileUrl = useCallback(
     async (policeDigitalFileId: string) => {

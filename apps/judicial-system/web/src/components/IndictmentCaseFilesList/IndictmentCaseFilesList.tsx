@@ -290,6 +290,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const { digitalCaseFiles, openDigitalCaseFileUrl, tokenUrlLoading } =
     usePoliceDigitalCaseFile(workingCase.id, workingCase.origin)
 
+  const showPoliceDigitalCaseFiles =
+    (digitalCaseFiles?.length ?? 0) > 0 && isDistrictCourtUser(user)
+
   return (
     <>
       {displayHeading && (
@@ -440,7 +443,9 @@ const IndictmentCaseFilesList: FC<Props> = ({
             )}
           </>
         )}
-        {(showFiles || hasGeneratedCourtRecord) && (
+        {(showFiles ||
+          hasGeneratedCourtRecord ||
+          showPoliceDigitalCaseFiles) && (
           <>
             <FileSection
               title={formatMessage(strings.civilClaimsTitle)}
@@ -448,7 +453,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               onOpenFile={onOpen}
               shouldRender={permissions.canViewCivilClaims}
             />
-            {isDistrictCourtUser(user) && (digitalCaseFiles?.length ?? 0) > 0 && (
+            {showPoliceDigitalCaseFiles && (
               <Box marginBottom={3}>
                 <SectionHeading
                   title="Rafræn gögn"

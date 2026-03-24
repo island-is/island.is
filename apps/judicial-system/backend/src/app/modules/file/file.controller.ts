@@ -480,6 +480,10 @@ export class FileController {
     @CurrentHttpUser() user: User,
     @Query('policeDigitalFileId') policeDigitalFileId: string,
   ): Promise<{ url: string }> {
+    if (!policeDigitalFileId?.trim()) {
+      throw new BadRequestException('Missing policeDigitalFileId')
+    }
+
     this.logger.debug(
       `Getting token URL for police digital case file ${policeDigitalFileId} in case ${caseId}`,
     )
