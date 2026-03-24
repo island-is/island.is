@@ -4,154 +4,143 @@ import {
   MONTHS,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import {
+import type {
   Attachments,
   BankInfo,
+  CategorizedIncomeTypes,
   FileType,
-  PaymentInfo,
+  IncomePlanConditions,
+  IncomePlanRow,
+  LatestIncomePlan,
+  PaymentInfoV2,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import {
+import type {
   Application,
   NationalRegistryResidenceHistory,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import addYears from 'date-fns/addYears'
 import * as kennitala from 'kennitala'
-import {
+import type {
   CombinedResidenceHistory,
   Employer,
   FileUpload,
   IncompleteEmployer,
   SelfEmployed,
-} from '../types'
+} from './types'
 import {
   ApplicationType,
   AttachmentLabel,
   AttachmentTypes,
   earlyRetirementMaxAge,
-  earlyRetirementMinAge,
   Employment,
   oldAgePensionAge,
 } from './constants'
-import { oldAgePensionFormMessage } from './messages'
+import { oldAgePensionFormMessage } from '../lib/messages'
+import {
+  friendlyFormatIBAN,
+  friendlyFormatSWIFT,
+  typeOfBankInfo,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import isEmpty from 'lodash/isEmpty'
+import { isEarlyRetirement } from './conditionUtils'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  const pensionFundQuestion = getValueViaPath(
+  const pensionFundQuestion = getValueViaPath<YesOrNo>(
     answers,
     'questions.pensionFund',
-  ) as YesOrNo
+  )
 
-  const applicationType = getValueViaPath(
-    answers,
-    'applicationType.option',
-  ) as ApplicationType
+  const applicationType =
+    getValueViaPath<ApplicationType>(answers, 'applicationType.option') ??
+    ApplicationType.OLD_AGE_PENSION
 
-  const selectedYear = getValueViaPath(answers, 'period.year') as string
+  const selectedYear = getValueViaPath<string>(answers, 'period.year') ?? ''
 
-  const selectedMonth = getValueViaPath(answers, 'period.month') as string
+  const selectedMonth = getValueViaPath<string>(answers, 'period.month') ?? ''
 
-  const selectedYearHiddenInput = getValueViaPath(
+  const selectedYearHiddenInput = getValueViaPath<string>(
     answers,
     'period.hiddenInput',
-  ) as string
+  )
 
-  const applicantPhonenumber = getValueViaPath(
-    answers,
-    'applicant.phoneNumber',
-  ) as string
+  const applicantPhonenumber =
+    getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? ''
 
   // If foreign residence is found then this is always true
-  const residenceHistoryQuestion = getValueViaPath(
+  const residenceHistoryQuestion = getValueViaPath<YesOrNo>(
     answers,
     'residenceHistory.question',
-  ) as YesOrNo
+  )
 
-  const onePaymentPerYear = getValueViaPath(
+  const onePaymentPerYear = getValueViaPath<YesOrNo>(
     answers,
     'onePaymentPerYear.question',
-  ) as YesOrNo
+  )
 
-  const comment = getValueViaPath(answers, 'comment') as string
+  const comment = getValueViaPath<string>(answers, 'comment')
 
-  const employmentStatus = getValueViaPath(
+  const employmentStatus = getValueViaPath<Employment>(
     answers,
     'employment.status',
-  ) as Employment
+  )
 
-  const rawEmployers = getValueViaPath(answers, 'employers', []) as Employer[]
+  const rawEmployers = getValueViaPath<Employer[]>(answers, 'employers') ?? []
   const employers = filterValidEmployers(rawEmployers)
 
-  const personalAllowance = getValueViaPath(
+  const personalAllowance = getValueViaPath<YesOrNo>(
     answers,
     'paymentInfo.personalAllowance',
-  ) as YesOrNo
+  )
 
-  const personalAllowanceUsage = getValueViaPath(
-    answers,
-    'paymentInfo.personalAllowanceUsage',
-  ) as string
+  const personalAllowanceUsage =
+    getValueViaPath<string>(answers, 'paymentInfo.personalAllowanceUsage') ?? ''
 
-  const taxLevel = getValueViaPath(
-    answers,
-    'paymentInfo.taxLevel',
-  ) as TaxLevelOptions
+  const taxLevel =
+    getValueViaPath<TaxLevelOptions>(answers, 'paymentInfo.taxLevel') ??
+    TaxLevelOptions.INCOME
 
-  const additionalAttachments = getValueViaPath(
-    answers,
-    'fileUploadAdditionalFiles.additionalDocuments',
-  ) as FileType[]
+  const additionalAttachments =
+    getValueViaPath<FileType[]>(
+      answers,
+      'fileUploadAdditionalFiles.additionalDocuments',
+    ) ?? []
 
-  const additionalAttachmentsRequired = getValueViaPath(
-    answers,
-    'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
-  ) as FileType[]
+  const additionalAttachmentsRequired =
+    getValueViaPath<FileType[]>(
+      answers,
+      'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
+    ) ?? []
 
-  const pensionAttachments = getValueViaPath(
-    answers,
-    'fileUpload.pension',
-  ) as FileType[]
+  const pensionAttachments =
+    getValueViaPath<FileType[]>(answers, 'fileUpload.pension') ?? []
 
-  const fishermenAttachments = getValueViaPath(
-    answers,
-    'fileUpload.fishermen',
-  ) as FileType[]
+  const fishermenAttachments =
+    getValueViaPath<FileType[]>(answers, 'fileUpload.fishermen') ?? []
 
-  const selfEmployedAttachments = getValueViaPath(
-    answers,
-    'employment.selfEmployedAttachment',
-  ) as FileType[]
+  const selfEmployedAttachments =
+    getValueViaPath<FileType[]>(answers, 'employment.selfEmployedAttachment') ??
+    []
 
-  const earlyRetirementAttachments = getValueViaPath(
-    answers,
-    'fileUpload.earlyRetirement',
-  ) as FileType[]
+  const earlyRetirementAttachments =
+    getValueViaPath<FileType[]>(answers, 'fileUpload.earlyRetirement') ?? []
 
-  const tempAnswers = getValueViaPath(
+  const tempAnswers = getValueViaPath<Application['answers']>(
     answers,
     'tempAnswers',
-  ) as Application['answers']
+  )
 
-  const bankAccountType = getValueViaPath(
+  const paymentInfo = getValueViaPath<PaymentInfoV2>(answers, 'paymentInfo')
+
+  const incomePlan =
+    getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
+
+  const noOtherIncomeConfirmation = getValueViaPath<YesOrNo>(
     answers,
-    'paymentInfo.bankAccountType',
-  ) as BankAccountType
-
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
-
-  const iban = getValueViaPath(answers, 'paymentInfo.iban') as string
-
-  const swift = getValueViaPath(answers, 'paymentInfo.swift') as string
-
-  const bankName = getValueViaPath(answers, 'paymentInfo.bankName') as string
-
-  const bankAddress = getValueViaPath(
-    answers,
-    'paymentInfo.bankAddress',
-  ) as string
-
-  const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
-
-  const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
+    'incomePlan.noOtherIncomeConfirmation',
+  )
 
   return {
     pensionFundQuestion,
@@ -160,7 +149,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     selectedMonth,
     selectedYearHiddenInput,
     applicantPhonenumber,
-    bank,
     residenceHistoryQuestion,
     onePaymentPerYear,
     comment,
@@ -177,94 +165,100 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     earlyRetirementAttachments,
     taxLevel,
     tempAnswers,
-    bankAccountType,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
     paymentInfo,
+    incomePlan,
+    noOtherIncomeConfirmation,
   }
 }
 
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
 ) => {
-  const residenceHistory = getValueViaPath(
-    externalData,
-    'nationalRegistryResidenceHistory.data',
-    [],
-  ) as NationalRegistryResidenceHistory[]
+  const residenceHistory =
+    getValueViaPath<NationalRegistryResidenceHistory[]>(
+      externalData,
+      'nationalRegistryResidenceHistory.data',
+    ) ?? []
 
-  const applicantName = getValueViaPath(
-    externalData,
-    'nationalRegistry.data.fullName',
-  ) as string
+  const applicantName =
+    getValueViaPath<string>(externalData, 'nationalRegistry.data.fullName') ??
+    ''
 
-  const applicantNationalId = getValueViaPath(
-    externalData,
-    'nationalRegistry.data.nationalId',
-  ) as string
+  const applicantNationalId =
+    getValueViaPath<string>(externalData, 'nationalRegistry.data.nationalId') ??
+    ''
 
-  const applicantAddress = getValueViaPath(
+  const applicantAddress = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.address.streetAddress',
-  ) as string
+  )
 
-  const applicantPostalCode = getValueViaPath(
-    externalData,
-    'nationalRegistry.data.address.postalCode',
-  ) as string
+  const applicantPostalCode =
+    getValueViaPath<string>(
+      externalData,
+      'nationalRegistry.data.address.postalCode',
+    ) ?? ''
 
-  const applicantLocality = getValueViaPath(
-    externalData,
-    'nationalRegistry.data.address.locality',
-  ) as string
+  const applicantLocality =
+    getValueViaPath<string>(
+      externalData,
+      'nationalRegistry.data.address.locality',
+    ) ?? ''
 
-  const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
+  const applicantMunicipality = `${applicantPostalCode}, ${applicantLocality}`
 
-  const hasSpouse = getValueViaPath(
+  const hasSpouse = getValueViaPath<NationalRegistrySpouse>(
     externalData,
     'nationalRegistrySpouse.data',
-  ) as object
+  )
 
-  const bankInfo = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationApplicant.data.bankAccount',
-  ) as BankInfo
+  const bankInfo =
+    getValueViaPath<BankInfo>(
+      externalData,
+      'socialInsuranceAdministrationApplicant.data.bankAccount',
+    ) ?? ({} as BankInfo)
 
-  const userProfileEmail = getValueViaPath(
-    externalData,
-    'userProfile.data.email',
-  ) as string
+  const userProfileEmail =
+    getValueViaPath<string>(externalData, 'userProfile.data.email') ?? ''
 
-  const userProfilePhoneNumber = getValueViaPath(
+  const userProfilePhoneNumber = getValueViaPath<string>(
     externalData,
     'userProfile.data.mobilePhoneNumber',
-  ) as string
+  )
 
-  const isEligible = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
-  ) as boolean
+  const isEligible =
+    getValueViaPath<boolean>(
+      externalData,
+      'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
+    ) ?? false
 
-  const currencies = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationCurrencies.data',
-  ) as Array<string>
+  const currencies =
+    getValueViaPath<Array<string>>(
+      externalData,
+      'socialInsuranceAdministrationCurrencies.data',
+    ) ?? []
 
-  const hasIncomePlanStatus = getValueViaPath(
+  const latestIncomePlan = getValueViaPath<LatestIncomePlan>(
     externalData,
-    'socialInsuranceAdministrationLatestIncomePlan.data.status',
-  ) as string
+    'socialInsuranceAdministrationLatestIncomePlan.data',
+  )
+
+  const incomePlanConditions = getValueViaPath<IncomePlanConditions>(
+    externalData,
+    'socialInsuranceAdministrationIncomePlanConditions.data',
+  )
+
+  const categorizedIncomeTypes =
+    getValueViaPath<CategorizedIncomeTypes[]>(
+      externalData,
+      'socialInsuranceAdministrationCategorizedIncomeTypes.data',
+    ) ?? []
 
   return {
     residenceHistory,
     applicantName,
-    applicantPostalCode,
     applicantNationalId,
     applicantAddress,
-    applicantLocality,
     applicantMunicipality,
     hasSpouse,
     isEligible,
@@ -272,7 +266,9 @@ export const getApplicationExternalData = (
     currencies,
     userProfileEmail,
     userProfilePhoneNumber,
-    hasIncomePlanStatus,
+    latestIncomePlan,
+    incomePlanConditions,
+    categorizedIncomeTypes,
   }
 }
 
@@ -389,35 +385,6 @@ export const getAgeBetweenTwoDates = (
   return age
 }
 
-export const isEarlyRetirement = (
-  answers: Application['answers'],
-  externalData: Application['externalData'],
-) => {
-  const { applicantNationalId } = getApplicationExternalData(externalData)
-  const { selectedMonth, selectedYear, applicationType } =
-    getApplicationAnswers(answers)
-
-  if (!selectedMonth || !selectedYear) return false
-
-  const dateOfBirth = kennitala.info(applicantNationalId).birthday
-  const dateOfBirth00 = new Date(
-    dateOfBirth.getFullYear(),
-    dateOfBirth.getMonth(),
-  )
-  const selectedDate = new Date(
-    +selectedYear,
-    MONTHS.findIndex((x) => x.value === selectedMonth),
-  )
-
-  const age = getAgeBetweenTwoDates(selectedDate, dateOfBirth00)
-
-  return (
-    age >= earlyRetirementMinAge &&
-    age <= earlyRetirementMaxAge &&
-    applicationType !== ApplicationType.SAILOR_PENSION
-  )
-}
-
 export const getAttachments = (application: Application) => {
   const getAttachmentDetails = (
     attachmentsArr: FileType[] | undefined,
@@ -507,15 +474,6 @@ export const getCombinedResidenceHistory = (
   return [...combinedResidenceHistory].reverse()
 }
 
-export const isMoreThan2Year = (answers: Application['answers']) => {
-  const { selectedMonth, selectedYear } = getApplicationAnswers(answers)
-  const today = new Date()
-  const startDate = addYears(today, -2)
-  const selectedDate = new Date(selectedYear + selectedMonth)
-
-  return startDate > selectedDate
-}
-
 const residenceMapper = (
   history: NationalRegistryResidenceHistory,
 ): CombinedResidenceHistory => {
@@ -579,4 +537,57 @@ export const determineNameFromApplicationAnswers = (
     : applicationType === ApplicationType.SAILOR_PENSION
     ? oldAgePensionFormMessage.pre.fishermenApplicationTitle
     : oldAgePensionFormMessage.shared.applicationTitle
+}
+
+export const getPaymentAlertMessage = (application: Application) => {
+  const { paymentInfo } = getApplicationAnswers(application.answers)
+  const { bankInfo } = getApplicationExternalData(application.externalData)
+
+  const type =
+    paymentInfo?.bankAccountType ??
+    typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
+
+  return type === BankAccountType.ICELANDIC
+    ? socialInsuranceAdministrationMessage.payment.alertMessage
+    : socialInsuranceAdministrationMessage.payment.alertMessageForeign
+}
+
+export const getDefaultBankAccountType = (application: Application) => {
+  const { paymentInfo } = getApplicationAnswers(application.answers)
+  const { bankInfo } = getApplicationExternalData(application.externalData)
+
+  return typeOfBankInfo(bankInfo, paymentInfo?.bankAccountType)
+}
+
+const getBankInfo = (application: Application) =>
+  getApplicationExternalData(application.externalData).bankInfo
+
+export const getDefaultBank = (application: Application) => {
+  const bankInfo = getBankInfo(application)
+  return { ...bankInfo, bankNumber: bankInfo?.bank }
+}
+
+export const getDefaultIban = (application: Application) => {
+  const bankInfo = getBankInfo(application)
+  return !isEmpty(bankInfo) ? friendlyFormatIBAN(bankInfo.iban) : ''
+}
+
+export const getDefaultSwift = (application: Application) => {
+  const bankInfo = getBankInfo(application)
+  return !isEmpty(bankInfo) ? friendlyFormatSWIFT(bankInfo.swift) : ''
+}
+
+export const getDefaultCurrency = (application: Application) => {
+  const bankInfo = getBankInfo(application)
+  return !isEmpty(bankInfo) ? bankInfo.currency : ''
+}
+
+export const getDefaultBankName = (application: Application) => {
+  const bankInfo = getBankInfo(application)
+  return !isEmpty(bankInfo) ? bankInfo.foreignBankName : ''
+}
+
+export const getDefaultBankAddress = (application: Application) => {
+  const bankInfo = getBankInfo(application)
+  return !isEmpty(bankInfo) ? bankInfo.foreignBankAddress : ''
 }
