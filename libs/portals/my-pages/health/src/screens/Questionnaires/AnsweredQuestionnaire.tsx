@@ -158,6 +158,7 @@ const AnsweredQuestionnaire: FC = () => {
                     : null
                 }
                 size="xs"
+                isSearchable={false}
               />
             </Box>
             {isDraft ? (
