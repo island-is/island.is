@@ -43,6 +43,7 @@ const QuestionnaireDetail: FC = () => {
       },
       locale: lang,
     },
+    fetchPolicy: 'network-only',
     skip: !id || !organization,
   })
 
