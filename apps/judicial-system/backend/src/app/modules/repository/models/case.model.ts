@@ -1132,13 +1132,6 @@ export class Case extends Model {
   victims?: Victim[]
 
   /**********
-   * Indicates whether a case is registered in the prison system
-   **********/
-  @Column({ type: DataType.BOOLEAN, allowNull: true })
-  @ApiProperty({ type: Boolean })
-  isRegisteredInPrisonSystem?: boolean
-
-  /**********
    * The surrogate key of the case an indictment was split from
    * Only used if the case was split from another case
    **********/
