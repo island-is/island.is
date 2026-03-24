@@ -23,6 +23,7 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
   const { setFocus, focus, getTranslation, controlDispatch, control } =
     useContext(ControlContext)
   const { isPublished } = control
+  const hasZendeskSettings = control.form.submissionServiceUrl === 'zendesk'
 
   const [updateField] = useMutation(UPDATE_FIELD)
 
@@ -130,6 +131,44 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
         </GridColumn>
       </GridRow>
       <GridRow marginBottom={4} marginTop={1}>
+        {currentApplicant?.fieldSettings?.isEmailRequired !== undefined &&
+          currentApplicant.fieldSettings?.isEmailRequired !== null && (
+            <GridColumn span="4/12">
+              <Checkbox
+                label="Krefjast netfangs"
+                checked={currentApplicant.fieldSettings?.isEmailRequired}
+                disabled={isPublished || hasZendeskSettings}
+                tooltip={
+                  hasZendeskSettings
+                    ? 'Netfang þarf að vera krafist þegar Zendesk er valið sem þjónustuaðili fyrir innsendingar.'
+                    : undefined
+                }
+                onChange={(e) => {
+                  controlDispatch({
+                    type: 'SET_APPLICANT_FIELD_SETTINGS',
+                    payload: {
+                      field: currentApplicant,
+                      property: 'isEmailRequired',
+                      value: e.target.checked,
+                    },
+                  })
+                  updateField({
+                    variables: {
+                      input: {
+                        id: currentApplicant.id,
+                        updateFieldDto: {
+                          fieldSettings: {
+                            ...currentApplicant.fieldSettings,
+                            isEmailRequired: e.target.checked,
+                          },
+                        },
+                      },
+                    },
+                  })
+                }}
+              />
+            </GridColumn>
+          )}
         {currentApplicant?.fieldSettings?.isPhoneRequired !== undefined &&
           currentApplicant.fieldSettings?.isPhoneRequired !== null && (
             <GridColumn span="4/12">
@@ -154,39 +193,6 @@ export const RelevantParty = ({ applicantType, relevantApplicant }: Props) => {
                           fieldSettings: {
                             ...currentApplicant.fieldSettings,
                             isPhoneRequired: e.target.checked,
-                          },
-                        },
-                      },
-                    },
-                  })
-                }}
-              />
-            </GridColumn>
-          )}
-        {currentApplicant?.fieldSettings?.isEmailRequired !== undefined &&
-          currentApplicant.fieldSettings?.isEmailRequired !== null && (
-            <GridColumn span="4/12">
-              <Checkbox
-                label="Krefjast netfangs"
-                checked={currentApplicant.fieldSettings?.isEmailRequired}
-                disabled={isPublished}
-                onChange={(e) => {
-                  controlDispatch({
-                    type: 'SET_APPLICANT_FIELD_SETTINGS',
-                    payload: {
-                      field: currentApplicant,
-                      property: 'isEmailRequired',
-                      value: e.target.checked,
-                    },
-                  })
-                  updateField({
-                    variables: {
-                      input: {
-                        id: currentApplicant.id,
-                        updateFieldDto: {
-                          fieldSettings: {
-                            ...currentApplicant.fieldSettings,
-                            isEmailRequired: e.target.checked,
                           },
                         },
                       },

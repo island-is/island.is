@@ -12,6 +12,9 @@ import {
 import { m } from '@island.is/form-system/ui'
 import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
+import { useMutation } from '@apollo/client'
+import { UPDATE_FIELD } from '@island.is/form-system/graphql'
+import { FormSystemField } from '@island.is/api/schema'
 
 export const SubmissionUrls = () => {
   const { formatMessage } = useIntl()
@@ -25,10 +28,39 @@ export const SubmissionUrls = () => {
     setSubmissionUrlInput,
   } = useContext(ControlContext)
   const { form, isPublished } = control
-
+  const [updateField] = useMutation(UPDATE_FIELD)
   const [showInput, setShowInput] = useState(false)
 
   const sanitizeId = (url: string) => url.replace(/[^a-zA-Z0-9-_]/g, '-')
+
+  const persistZendeskApplicantRequirements = async () => {
+    const applicantFields = (control.form.fields ?? []).filter(
+      (f): f is FormSystemField => !!f && f.fieldType === 'APPLICANT',
+    )
+
+    const toUpdate = applicantFields.filter((f) => {
+      const fs = f.fieldSettings as Record<string, unknown> | null | undefined
+      return fs?.isPhoneRequired != null && fs?.isEmailRequired != null
+    })
+
+    await Promise.allSettled(
+      toUpdate.map((field) =>
+        updateField({
+          variables: {
+            input: {
+              id: field.id,
+              updateFieldDto: {
+                fieldSettings: {
+                  ...(field.fieldSettings ?? {}),
+                  isEmailRequired: true,
+                },
+              },
+            },
+          },
+        }),
+      ),
+    )
+  }
 
   return (
     <Stack space={2}>
@@ -123,12 +155,13 @@ export const SubmissionUrls = () => {
         id="zendesk"
         checked={form.submissionServiceUrl === 'zendesk'}
         disabled={isPublished}
-        onChange={(e) => {
+        onChange={async (e) => {
           controlDispatch({
             type: 'CHANGE_SUBMISSION_URL',
             payload: { value: e.target.id },
           })
           formUpdate({ ...form, submissionServiceUrl: e.target.id })
+          await persistZendeskApplicantRequirements()
         }}
       />
 

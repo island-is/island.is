@@ -818,11 +818,41 @@ export const controlReducer = (
       return updatedState
     }
     case 'CHANGE_SUBMISSION_URL': {
+      const nextUrl = action.payload.value
+
+      // Only force these flags when switching to Zendesk
+      const nextFields =
+        nextUrl === 'zendesk'
+          ? (fields ?? []).map((field) => {
+              if (!field) return field
+              if (field.fieldType !== 'APPLICANT') return field
+
+              const fs = field.fieldSettings as
+                | Record<string, unknown>
+                | null
+                | undefined
+
+              // “has keys then set both to true” => require both to be present (not null/undefined)
+              const hasPhone = fs?.['isPhoneRequired'] != null
+              const hasEmail = fs?.['isEmailRequired'] != null
+              if (!hasPhone || !hasEmail) return field
+
+              return {
+                ...field,
+                fieldSettings: {
+                  ...(field.fieldSettings ?? {}),
+                  isEmailRequired: true,
+                },
+              }
+            })
+          : fields
+
       const updatedState = {
         ...state,
         form: {
           ...form,
-          submissionServiceUrl: action.payload.value,
+          submissionServiceUrl: nextUrl,
+          fields: nextFields,
         },
       }
       return updatedState
