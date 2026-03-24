@@ -10,7 +10,7 @@ import PrimarySchool from '../PrimarySchool/PrimarySchool'
 export const PrimarySchoolOverviewWrapper = () => {
   useNamespaces('sp.education-primary-school')
   const featureFlagClient = useFeatureFlagClient()
-  const [enabled, setEnabled] = useState<boolean | null>(null)
+  const [enabled, setEnabled] = useState<boolean>()
 
   useEffect(() => {
     featureFlagClient
@@ -18,7 +18,7 @@ export const PrimarySchoolOverviewWrapper = () => {
       .then(setEnabled)
   }, [featureFlagClient])
 
-  if (enabled === null)
+  if (enabled === undefined)
     return (
       <IntroWrapperV2
         title={psm.studentListTitle}

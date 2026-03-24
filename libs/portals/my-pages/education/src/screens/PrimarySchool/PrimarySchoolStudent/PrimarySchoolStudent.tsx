@@ -63,7 +63,7 @@ export const PrimarySchoolStudent = () => {
               ),
           }}
         />
-        <ActionCard
+        {/*<ActionCard
           eyebrow={formatMessage(psm.mmsEyebrow)}
           eyebrowColor="purple400"
           heading={formatMessage(psm.hubPermissions)}
@@ -78,7 +78,7 @@ export const PrimarySchoolStudent = () => {
                 }),
               ),
           }}
-        />
+        />*/}
       </Stack>
     </IntroWrapperV2>
   )

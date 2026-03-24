@@ -186,6 +186,10 @@ export const primarySchoolMessages = defineMessages({
     id: 'sp.education-primary-school:grade-level',
     defaultMessage: 'Bekkur',
   },
+  gradeLevelFormatted: {
+    id: 'sp.education-primary-school:grade-level-formatted',
+    defaultMessage: '{grade}. bekkur',
+  },
   examSitting: {
     id: 'sp.education-primary-school:exam-sitting',
     defaultMessage: 'Fyrirlögn',
@@ -227,6 +231,14 @@ export const primarySchoolMessages = defineMessages({
   unanswered: {
     id: 'sp.education-primary-school:unanswered',
     defaultMessage: 'Ósvarað',
+  },
+  headerLinkButtonUrl: {
+    id: 'sp.education-primary-school:header-link-button-url',
+    defaultMessage: 'todo',
+  },
+  headerLinkButtonText: {
+    id: 'sp.education-primary-school:header-button-text',
+    defaultMessage: 'Nánar um réttindi barna',
   },
 })
 

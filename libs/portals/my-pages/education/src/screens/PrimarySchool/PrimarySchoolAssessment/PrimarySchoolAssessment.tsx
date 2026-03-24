@@ -3,12 +3,14 @@ import {
   IntroWrapperV2,
   m,
   MMS_SLUG,
+  formSubmit,
 } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Accordion,
   AccordionItem,
   Box,
+  Button,
   Table,
   Text,
 } from '@island.is/island-ui/core'
@@ -16,6 +18,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { useParams } from 'react-router-dom'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 import { usePrimarySchoolAssessmentDataQuery } from './PrimarySchoolAssessment.generated'
+import { AssessmentTable } from './AssessmentTable'
 
 export const PrimarySchoolAssessment = () => {
   useNamespaces('sp.education-primary-school')
@@ -48,8 +51,8 @@ export const PrimarySchoolAssessment = () => {
           />
         </Box>
       )}
-      {subjects.length > 0 && (
-        <Accordion>
+      {subjects.length > 1 && studentId !== undefined && (
+        <Accordion dividerOnTop={false} dividerOnBottom={false}>
           {subjects.map((subject) => (
             <AccordionItem
               key={subject?.id ?? subject?.name}
@@ -58,76 +61,12 @@ export const PrimarySchoolAssessment = () => {
             >
               {subject?.assessmentTypes &&
               subject.assessmentTypes.length > 0 ? (
-                subject.assessmentTypes.map((assessmentType) => {
-                  const results = assessmentType?.results ?? []
-                  const rows = results.flatMap((r, rIdx) =>
-                    (r?.assignmentResults ?? []).map((ar, arIdx) => ({
-                      key: ar?.id ?? `${rIdx}-${arIdx}`,
-                      schoolYear: r?.schoolYear,
-                      gradeLevel: r?.gradeLevel,
-                      batchNumber: ar?.batchNumber,
-                    })),
-                  )
-                  const hasFyrilögn = rows.some(
-                    (row) => row.batchNumber != null,
-                  )
-
-                  return (
-                    <Box
-                      key={assessmentType?.id ?? assessmentType?.name}
-                      marginBottom={3}
-                    >
-                      <Box marginBottom={2}>
-                        <Text variant="h5">{assessmentType?.name}</Text>
-                      </Box>
-                      {rows.length === 0 ? (
-                        <Box paddingY={2}>
-                          <Problem
-                            type="no_data"
-                            noBorder
-                            title={formatMessage(m.noData)}
-                            message={formatMessage(m.noDataFoundDetail)}
-                          />
-                        </Box>
-                      ) : (
-                        <Table.Table>
-                          <Table.Head>
-                            <Table.Row>
-                              <Table.HeadData>
-                                {formatMessage(psm.schoolYear)}
-                              </Table.HeadData>
-                              <Table.HeadData>
-                                {formatMessage(psm.gradeLevel)}
-                              </Table.HeadData>
-                              {hasFyrilögn && (
-                                <Table.HeadData>
-                                  {formatMessage(psm.examSitting)}
-                                </Table.HeadData>
-                              )}
-                            </Table.Row>
-                          </Table.Head>
-                          <Table.Body>
-                            {rows.map((row) => (
-                              <Table.Row key={row.key}>
-                                <Table.Data>{row.schoolYear ?? ''}</Table.Data>
-                                <Table.Data>
-                                  {row.gradeLevel != null
-                                    ? `${row.gradeLevel}.`
-                                    : ''}
-                                </Table.Data>
-                                {hasFyrilögn && (
-                                  <Table.Data>
-                                    {row.batchNumber ?? ''}
-                                  </Table.Data>
-                                )}
-                              </Table.Row>
-                            ))}
-                          </Table.Body>
-                        </Table.Table>
-                      )}
-                    </Box>
-                  )
-                })
+                subject.assessmentTypes.map((assessmentType) => (
+                  <AssessmentTable
+                    assessment={assessmentType}
+                    studentId={studentId}
+                  />
+                ))
               ) : (
                 <Box paddingY={2}>
                   <Problem
@@ -142,6 +81,14 @@ export const PrimarySchoolAssessment = () => {
           ))}
         </Accordion>
       )}
+      {subjects.length === 1 &&
+        studentId !== undefined &&
+        subjects[0]?.assessmentTypes?.[0] && (
+          <AssessmentTable
+            assessment={subjects[0].assessmentTypes[0]}
+            studentId={studentId}
+          />
+        )}
     </IntroWrapperV2>
   )
 }

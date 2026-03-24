@@ -1,7 +1,18 @@
 import { useState } from 'react'
-import { IntroWrapperV2, m, MMS_SLUG } from '@island.is/portals/my-pages/core'
+import {
+  IntroWrapperV2,
+  LinkButton,
+  m,
+  MMS_SLUG,
+} from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Box, Input } from '@island.is/island-ui/core'
+import {
+  Box,
+  FilterInput,
+  Hidden,
+  Inline,
+  Input,
+} from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
 
@@ -14,16 +25,33 @@ export const PrimarySchoolStudentPermission = () => {
     <IntroWrapperV2
       title={psm.permissionTitle}
       intro={psm.permissionIntro}
+      buttonGroup={{
+        actions: [
+          <LinkButton
+            key={'action-button'}
+            to={formatMessage(psm.headerLinkButtonUrl)}
+            text={formatMessage(psm.headerLinkButtonText)}
+            variant="utility"
+            icon="open"
+          />,
+        ],
+      }}
       serviceProvider={{ slug: MMS_SLUG, tooltip: formatMessage(m.mmsTooltip) }}
     >
-      <Box marginBottom={3}>
-        <Input
-          name="permission-search"
-          placeholder={formatMessage(psm.filterByKeyword)}
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-        />
-      </Box>
+      {/*}
+      <Hidden print>
+        <Inline space={2}>
+          <FilterInput
+            name="permission-search"
+            placeholder={formatMessage(psm.filterByKeyword)}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e)}
+            size="xs"
+            backgroundColor="blue"
+          />
+        </Inline>
+      </Hidden> */}
+
       {/* TODO: replace with real permission data when permissions API is available */}
       <Box marginTop={5}>
         <Problem
