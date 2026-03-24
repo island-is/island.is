@@ -35,8 +35,8 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import InfoCard from '../../components/InfoCard/InfoCard'
-import useInfoCardItems from '../../components/InfoCard/useInfoCardItems'
+import InfoCard from '../../../components/InfoCard/InfoCard'
+import useInfoCardItems from '../../../components/InfoCard/useInfoCardItems'
 import { strings } from './CaseOverview.strings'
 
 type availableModals =
