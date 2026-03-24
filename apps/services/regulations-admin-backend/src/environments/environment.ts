@@ -11,5 +11,6 @@ export default {
       process.env.IDENTITY_SERVER_ISSUER_URL ??
       'https://identity-server.dev01.devland.is',
     audience: ['@admin.island.is', '@island.is'],
+    allowClientNationalId: true,
   },
 }
