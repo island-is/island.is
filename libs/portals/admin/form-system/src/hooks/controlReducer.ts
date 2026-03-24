@@ -258,6 +258,14 @@ type InputSettingsActions =
       }
     }
   | {
+      type: 'SET_APPLICANT_FIELD_SETTINGS'
+      payload: {
+        field: FormSystemField
+        property: 'isPhoneRequired' | 'isEmailRequired'
+        value: boolean
+      }
+    }
+  | {
       type: 'SET_ZENDESK_FIELD_SETTINGS'
       payload: {
         property: 'zendeskIsCustomField' | 'zendeskCustomFieldId'
@@ -1133,6 +1141,23 @@ export const controlReducer = (
           type: 'Field',
           data: newField,
         },
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_APPLICANT_FIELD_SETTINGS': {
+      const { field, property, value } = action.payload
+      const newField = {
+        ...field,
+        fieldSettings: {
+          ...field?.fieldSettings,
+          [property]: value,
+        },
+      }
+      return {
+        ...state,
         form: {
           ...form,
           fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
