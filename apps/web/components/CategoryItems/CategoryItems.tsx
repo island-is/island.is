@@ -107,16 +107,14 @@ export const CategoryItems = ({
                   )}
                 </Box>
                 <Box paddingTop={2} className={styles.cardLink}>
-                  <Link href={href} skipTab>
-                    <Button
-                      variant="text"
-                      as="span"
-                      icon="arrowForward"
-                      size="small"
-                    >
-                      {viewCategoryText}
-                    </Button>
-                  </Link>
+                  <Button
+                    variant="text"
+                    as="span"
+                    icon="arrowForward"
+                    size="small"
+                  >
+                    {viewCategoryText}
+                  </Button>
                 </Box>
               </FocusableBox>
             )
