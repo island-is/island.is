@@ -156,5 +156,3 @@ export const subSectionQualityPhoto = buildSubSection({
     }),
   ],
 })
-
-
