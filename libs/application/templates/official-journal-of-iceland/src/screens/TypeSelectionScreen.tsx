@@ -1,6 +1,6 @@
 import { useLocale } from '@island.is/localization'
 import { FormScreen } from '../components/form/FormScreen'
-import { typeSelection } from '../lib/messages'
+import { typeSelection, error as errorMessages } from '../lib/messages'
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
 import { ApplicationTypes, DEPARTMENT_B } from '../lib/constants'
 import { useFormContext } from 'react-hook-form'
@@ -11,7 +11,13 @@ import { useLazyQuery } from '@apollo/client'
 import { MAIN_TYPES_QUERY } from '../graphql/queries'
 import { cleanTypename } from '../lib/utils'
 import set from 'lodash/set'
-import { Box, RadioButton, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  RadioButton,
+  Stack,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getValueViaPath } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
@@ -109,58 +115,63 @@ export const TypeSelectionScreen = ({
   }
 
   const handleSelect = async (value: string) => {
+    const previousValue = selected
     setSelected(value)
     setValue('applicationType', value)
 
-    let currentAnswers = structuredClone(application.answers) as Record<
-      string,
-      unknown
-    >
-    set(currentAnswers, 'applicationType', value)
+    try {
+      let currentAnswers = structuredClone(application.answers) as Record<
+        string,
+        unknown
+      >
+      set(currentAnswers, 'applicationType', value)
 
-    const isRegulation =
-      value === ApplicationTypes.BASE_REGULATION ||
-      value === ApplicationTypes.AMENDING_REGULATION
+      const isRegulation =
+        value === ApplicationTypes.BASE_REGULATION ||
+        value === ApplicationTypes.AMENDING_REGULATION
 
-    if (isRegulation) {
-      currentAnswers = await autoSelectRegulationType(currentAnswers)
-    }
+      if (isRegulation) {
+        currentAnswers = await autoSelectRegulationType(currentAnswers)
+      }
 
-    await updateApplication(currentAnswers)
+      await updateApplication(currentAnswers)
 
-    // Create the regulation draft in the DB as soon as a regulation type
-    // is selected. By the time the user reaches any regulation screen,
-    // the draftId is already persisted in answers.
-    if (isRegulation && !draftId) {
-      await ensureDraft(value)
+      // Create the regulation draft in the DB as soon as a regulation type
+      // is selected. The createInFlightRef in useRegulationDraft prevents
+      // duplicate creates if handleSelect is called rapidly.
+      if (isRegulation && !draftId) {
+        await ensureDraft(value)
+      }
+    } catch (error) {
+      console.error('Failed to select application type:', error)
+      setSelected(previousValue)
+      setValue('applicationType', previousValue)
+      toast.error(f(errorMessages.dataSubmissionErrorTitle))
     }
   }
 
-  const allOptions = [
-    {
-      value: ApplicationTypes.AD,
-      label: f(typeSelection.options.ad),
-      description: f(typeSelection.options.adDescription),
-    },
-    {
-      value: ApplicationTypes.BASE_REGULATION,
-      label: f(typeSelection.options.baseRegulation),
-      description: f(typeSelection.options.baseRegulationDescription),
-    },
-    {
-      value: ApplicationTypes.AMENDING_REGULATION,
-      label: f(typeSelection.options.amendingRegulation),
-      description: f(typeSelection.options.amendingRegulationDescription),
-    },
-  ]
-
-  const options = useMemo(
-    () =>
-      regulationsEnabled
-        ? allOptions
-        : allOptions.filter((o) => o.value === ApplicationTypes.AD),
-    [regulationsEnabled],
-  )
+  const options = useMemo(() => {
+    const allOptions = [
+      {
+        value: ApplicationTypes.AD,
+        label: f(typeSelection.options.ad),
+        description: f(typeSelection.options.adDescription),
+      },
+      {
+        value: ApplicationTypes.BASE_REGULATION,
+        label: f(typeSelection.options.baseRegulation),
+        description: f(typeSelection.options.baseRegulationDescription),
+      },
+      {
+        value: ApplicationTypes.AMENDING_REGULATION,
+        label: f(typeSelection.options.amendingRegulation),
+        description: f(typeSelection.options.amendingRegulationDescription),
+      },
+    ]
+    return regulationsEnabled
+      ? allOptions
+      : allOptions.filter((o) => o.value === ApplicationTypes.AD)
+  }, [regulationsEnabled, f])
 
   return (
     <FormScreen

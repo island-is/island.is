@@ -55,8 +55,6 @@ export enum Routes {
   REGULATION_SUMMARY = 'regulationSummary',
 }
 
-// this will be replaced with correct values once the api is ready
-
 export enum TypeIds {
   GJALDSKRA = '0',
   AUGLYSING = '1',

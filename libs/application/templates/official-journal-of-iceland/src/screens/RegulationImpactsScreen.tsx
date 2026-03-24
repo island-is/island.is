@@ -391,8 +391,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
               type="info"
               message={
                 <div>
-                  ATH: Sé ætlunin að breyta annarri reglugerð, þarf að minnast á
-                  þá reglugerð með skýrum hætti í þessari stofnreglugerð.
+                  {f(regulation.impacts.alerts.baseRegulationNote)}
                   {'    '}
                   <Button
                     onClick={() =>
@@ -401,7 +400,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
                     variant="text"
                     size="small"
                   >
-                    Endurskoða textann
+                    {f(regulation.impacts.alerts.reviewText)}
                   </Button>
                 </div>
               }
@@ -433,7 +432,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
               <Divider weight="regular" />
             </Box>
             <Text variant="h4" as="h4" marginBottom={[2, 2, 3, 4]}>
-              Hvað viltu gera við reglugerðina?
+              {f(regulation.impacts.alerts.whatToDo)}
             </Text>
             <Inline space={[2, 2, 3, 4]} align="center" alignY="center">
               <Button
@@ -442,16 +441,16 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
                 iconType="outline"
                 onClick={() => setChooseType('change')}
               >
-                Gera textabreytingar
+                {f(regulation.impacts.alerts.makeTextChanges)}
               </Button>
-              <span>eða</span>
+              <span>{f(regulation.impacts.alerts.or)}</span>
               <Button
                 variant="ghost"
                 icon="fileTrayFull"
                 iconType="outline"
                 onClick={() => setChooseType('cancel')}
               >
-                Fella hana brott
+                {f(regulation.impacts.alerts.revokeRegulation)}
               </Button>
             </Inline>
 

@@ -134,6 +134,8 @@ export const useRegulationImpacts = ({
         setImpactsLoaded(true)
       } catch (error) {
         console.error('Failed to load impacts from DB:', error)
+        toast.error('Ekki tókst að sækja breytingar.')
+        setImpactsLoaded(true)
       }
     }
 
@@ -227,26 +229,31 @@ export const useRegulationImpacts = ({
         text: a.text ?? '',
       }))
 
-      await updateImpactMutation({
-        variables: {
-          input: {
-            impactId: existing.impactId,
-            type: existing.type,
-            date: updatedFields.date ?? existing.date,
-            title: updatedFields.title ?? existing.title,
-            text: updatedFields.text ?? existing.text,
-            appendixes: appendixes.length > 0 ? appendixes : undefined,
-            comments: updatedFields.comments ?? existing.comments,
-            diff: updatedFields.diff ?? existing.diff,
+      try {
+        await updateImpactMutation({
+          variables: {
+            input: {
+              impactId: existing.impactId,
+              type: existing.type,
+              date: updatedFields.date ?? existing.date,
+              title: updatedFields.title ?? existing.title,
+              text: updatedFields.text ?? existing.text,
+              appendixes: appendixes.length > 0 ? appendixes : undefined,
+              comments: updatedFields.comments ?? existing.comments,
+              diff: updatedFields.diff ?? existing.diff,
+            },
           },
-        },
-      })
+        })
 
-      setImpacts((prev) =>
-        prev.map((impact) =>
-          impact.id === id ? { ...impact, ...updatedFields } : impact,
-        ),
-      )
+        setImpacts((prev) =>
+          prev.map((impact) =>
+            impact.id === id ? { ...impact, ...updatedFields } : impact,
+          ),
+        )
+      } catch (error) {
+        console.error('Failed to update impact:', error)
+        toast.error('Ekki tókst að uppfæra breytingu.')
+      }
     },
     [impacts, updateImpactMutation],
   )
@@ -258,18 +265,23 @@ export const useRegulationImpacts = ({
     async (id: string) => {
       const existing = impacts.find((i) => i.id === id)
 
-      if (existing?.impactId) {
-        await deleteImpactMutation({
-          variables: {
-            input: {
-              impactId: existing.impactId,
-              type: existing.type,
+      try {
+        if (existing?.impactId) {
+          await deleteImpactMutation({
+            variables: {
+              input: {
+                impactId: existing.impactId,
+                type: existing.type,
+              },
             },
-          },
-        })
-      }
+          })
+        }
 
-      setImpacts((prev) => prev.filter((impact) => impact.id !== id))
+        setImpacts((prev) => prev.filter((impact) => impact.id !== id))
+      } catch (error) {
+        console.error('Failed to remove impact:', error)
+        toast.error('Ekki tókst að eyða breytingu.')
+      }
     },
     [impacts, deleteImpactMutation],
   )

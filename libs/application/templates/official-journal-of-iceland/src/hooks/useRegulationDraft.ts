@@ -17,6 +17,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { useMutation, useLazyQuery } from '@apollo/client'
 import { useFormContext } from 'react-hook-form'
+import { toast } from '@island.is/island-ui/core'
 import { useApplication } from './useUpdateApplication'
 import { InputFields } from '../lib/types'
 import { getValueViaPath } from '@island.is/application/core'
@@ -142,6 +143,7 @@ export const useRegulationDraft = ({
         return undefined
       } catch (error) {
         console.error('Failed to create regulation draft:', error)
+        toast.error('Ekki tókst að búa til drög, reyndu aftur.')
         return undefined
       } finally {
         createInFlightRef.current = false
@@ -251,6 +253,7 @@ export const useRegulationDraft = ({
         return true
       } catch (error) {
         console.error('Failed to save regulation draft:', error)
+        toast.error('Ekki tókst að vista drög, reyndu aftur.')
         return false
       }
     },
@@ -299,6 +302,7 @@ export const useRegulationDraft = ({
         return raw ?? null
       } catch (error) {
         console.error('Failed to load regulation draft:', error)
+        toast.error('Ekki tókst að sækja drög.')
         return null
       }
     },

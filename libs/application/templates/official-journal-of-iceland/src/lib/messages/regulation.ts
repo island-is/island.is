@@ -194,6 +194,39 @@ export const regulation = {
         description: 'Button label for adding a new cancellation impact',
       },
     }),
+    alerts: defineMessages({
+      baseRegulationNote: {
+        id: 'ojoi.application:regulation.impacts.alerts.baseRegulationNote',
+        defaultMessage:
+          'ATH: Sé ætlunin að breyta annarri reglugerð, þarf að minnast á þá reglugerð með skýrum hætti í þessari stofnreglugerð.',
+        description: 'Alert message for base regulation impacts',
+      },
+      reviewText: {
+        id: 'ojoi.application:regulation.impacts.alerts.reviewText',
+        defaultMessage: 'Endurskoða textann',
+        description: 'Link text to review regulation content',
+      },
+      whatToDo: {
+        id: 'ojoi.application:regulation.impacts.alerts.whatToDo',
+        defaultMessage: 'Hvað viltu gera við reglugerðina?',
+        description: 'Heading for impact type selection',
+      },
+      makeTextChanges: {
+        id: 'ojoi.application:regulation.impacts.alerts.makeTextChanges',
+        defaultMessage: 'Gera textabreytingar',
+        description: 'Button label for text amendment',
+      },
+      or: {
+        id: 'ojoi.application:regulation.impacts.alerts.or',
+        defaultMessage: 'eða',
+        description: 'Conjunction between buttons',
+      },
+      revokeRegulation: {
+        id: 'ojoi.application:regulation.impacts.alerts.revokeRegulation',
+        defaultMessage: 'Fella hana brott',
+        description: 'Button label for revoking a regulation',
+      },
+    }),
     labels: defineMessages({
       amendment: {
         id: 'ojoi.application:regulation.impacts.labels.amendment',

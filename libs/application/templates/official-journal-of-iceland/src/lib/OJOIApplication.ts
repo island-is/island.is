@@ -52,6 +52,18 @@ const getApplicationName = (application: Application) => {
     return general.applicationName
   }
 
+  const applicationType = getValueViaPath<string>(
+    application.answers,
+    'applicationType',
+  )
+
+  if (applicationType === 'amending_regulation') {
+    return `${type} (breytingareglugerð) ${title}`
+  }
+  if (applicationType === 'base_regulation') {
+    return `${type} (stofnreglugerð) ${title}`
+  }
+
   return `${type} ${title}`
 }
 
