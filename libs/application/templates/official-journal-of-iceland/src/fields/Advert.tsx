@@ -1,6 +1,7 @@
 import {
   InputFields,
   OJOIFieldBaseProps,
+  isAdApplication,
   isRegulationApplication,
 } from '../lib/types'
 import {
@@ -33,6 +34,7 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const { setValue } = useFormContext()
   const isAmending =
     application.answers?.applicationType === 'amending_regulation'
+  const isAd = isAdApplication(application.answers)
   const [showDiffWarning, setShowDiffWarning] = useState(isAmending)
   const [isLoadingDepartments, setLoadingDepartments] = useState(false)
   const {
@@ -59,10 +61,13 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
       updateApplicationV2({
         path: InputFields.advert.department,
         value: departmentB,
-        onComplete: () => {
-          setLoadingDepartments(false)
-          if (!departmentB) return
-          getLazyMainTypes({
+        onComplete: async () => {
+          if (!departmentB) {
+            setLoadingDepartments(false)
+            return
+          }
+
+          const { data: mtData } = await getLazyMainTypes({
             variables: {
               params: {
                 department: departmentB.id,
@@ -70,6 +75,34 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
               },
             },
           })
+
+          if (isAd && mtData) {
+            const fetchedMainTypes =
+              mtData.officialJournalOfIcelandMainTypes.mainTypes
+            const filtered = fetchedMainTypes.filter(
+              (mt) => !mt.slug?.toLowerCase().includes('reglug'),
+            )
+
+            if (filtered.length === 1) {
+              const mainType = filtered[0]
+              setValue(InputFields.advert.mainType, mainType)
+              updateApplicationV2({
+                path: InputFields.advert.mainType,
+                value: mainType,
+              })
+
+              if (mainType.types.length === 1) {
+                const typeValue = cleanTypename(mainType.types[0])
+                setValue(InputFields.advert.type, typeValue)
+                updateApplicationV2({
+                  path: InputFields.advert.type,
+                  value: typeValue,
+                })
+              }
+            }
+          }
+
+          setLoadingDepartments(false)
         },
         onError: () => {
           setLoadingDepartments(false)
@@ -106,16 +139,20 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
     },
   }))
 
-  const mainTypeOptions = mainTypes?.map((d) => ({
-    label: capitalizeText(d.title),
-    value: d,
-  }))
-
-  const currentTypes =
-    currentApplication?.answers?.advert?.mainType?.types?.map((d) => ({
+  const mainTypeOptions = mainTypes
+    ?.filter((d) => !isAd || !d.slug?.toLowerCase().includes('reglug'))
+    .map((d) => ({
       label: capitalizeText(d.title),
       value: d,
-    })) ?? []
+    }))
+
+  const currentTypes =
+    currentApplication?.answers?.advert?.mainType?.types
+      ?.filter((d) => !isAd || !d.slug?.toLowerCase().includes('reglug'))
+      .map((d) => ({
+        label: capitalizeText(d.title),
+        value: d,
+      })) ?? []
 
   const templateOptions = useMemo(
     () =>

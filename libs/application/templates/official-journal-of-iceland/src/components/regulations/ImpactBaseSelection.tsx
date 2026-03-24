@@ -12,7 +12,6 @@
 import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Option, Select } from '@island.is/island-ui/core'
-import { regulation } from '../../lib/messages'
 
 // ---------------------------------------------------------------------------
 
