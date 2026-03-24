@@ -11,6 +11,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -430,8 +431,14 @@ export class FileController {
     })
   }
 
-  @UseGuards(CaseWriteGuard)
-  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @UseGuards(CaseReadGuard)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Get('policeDigitalCaseFiles')
   @ApiOkResponse({
     type: PoliceDigitalCaseFileSyncResult,
@@ -453,6 +460,33 @@ export class FileController {
       theCase.policeCaseNumbers,
       user,
     )
+  }
+
+  @UseGuards(CaseReadGuard)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Get('policeDigitalCaseFileTokenUrl')
+  @ApiOkResponse({
+    type: String,
+    description: 'Gets a token URL for a police digital case file',
+  })
+  getPoliceDigitalCaseFileTokenUrl(
+    @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
+    @Query('policeDigitalFileId') policeDigitalFileId: string,
+  ): Promise<{ url: string }> {
+    this.logger.debug(
+      `Getting token URL for police digital case file ${policeDigitalFileId} in case ${caseId}`,
+    )
+
+    return this.policeDigitalCaseFileService
+      .getTokenUrl(caseId, user, policeDigitalFileId)
+      .then((url) => ({ url }))
   }
 
   @UseGuards(CaseWriteGuard)

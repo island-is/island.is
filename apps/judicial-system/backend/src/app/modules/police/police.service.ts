@@ -83,7 +83,7 @@ interface CreateDocumentResponse {
   externalPoliceDocumentId: string
 }
 
-const getTokenUrlResponseSchema = z.object({ url: z.string().min(1) })
+const tokenUrlResponseStructure = z.object({ url: z.string().min(1) })
 
 const getChapter = (category?: string): number | undefined => {
   if (!category) {
@@ -457,7 +457,7 @@ export class PoliceService {
   async getTokenUrl(
     rvgCaseId: string,
     userParam: string,
-    rafraennGagnId: string,
+    policeDigitalFileId: string,
     user: User,
     source: string,
   ): Promise<string> {
@@ -471,7 +471,7 @@ export class PoliceService {
     const query = new URLSearchParams({
       rvgCaseId,
       user: userParam,
-      rafraennGagnId,
+      rafraennGagnId: policeDigitalFileId,
     }).toString()
     const url = `${this.xRoadPath}/V4/GetTokenUrl?${query}`
 
@@ -480,12 +480,12 @@ export class PoliceService {
 
       if (res.ok) {
         const json = await res.json()
-        const parsed = getTokenUrlResponseSchema.safeParse(json)
+        const parsed = tokenUrlResponseStructure.safeParse(json)
         if (parsed.success) {
           return parsed.data.url
         }
         throw new NotFoundException({
-          message: `Token URL for digital case file ${rafraennGagnId} not found`,
+          message: `Token URL for digital case file ${policeDigitalFileId} not found`,
           detail: 'Invalid response format',
         })
       }
@@ -493,7 +493,7 @@ export class PoliceService {
       const reason = await res.text()
 
       throw new NotFoundException({
-        message: `Token URL for digital case file ${rafraennGagnId} not found`,
+        message: `Token URL for digital case file ${policeDigitalFileId} not found`,
         detail: reason,
       })
     } catch (reason) {
@@ -504,7 +504,7 @@ export class PoliceService {
       if (reason instanceof ServiceUnavailableException) {
         throw new NotFoundException({
           ...reason,
-          message: `Token URL for digital case file ${rafraennGagnId} not found`,
+          message: `Token URL for digital case file ${policeDigitalFileId} not found`,
           detail: reason.message,
         })
       }
@@ -513,7 +513,7 @@ export class PoliceService {
         'Failed to get token URL for digital case file',
         {
           rvgCaseId,
-          rafraennGagnId,
+          rafraennGagnId: policeDigitalFileId,
           actor: user.name,
           institution: user.institution?.name,
           startTime,
@@ -525,7 +525,7 @@ export class PoliceService {
 
       throw new BadGatewayException({
         ...reason,
-        message: `Failed to get token URL for digital case file ${rafraennGagnId}`,
+        message: `Failed to get token URL for digital case file ${policeDigitalFileId}`,
         detail: reason.message,
       })
     }

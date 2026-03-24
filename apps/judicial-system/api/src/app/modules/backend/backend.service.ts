@@ -466,9 +466,9 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getPoliceDigitalCaseFileTokenUrl(
     caseId: string,
-    rafraennGagnId: string,
+    policeDigitalFileId: string,
   ): Promise<string> {
-    const params = new URLSearchParams({ rafraennGagnId })
+    const params = new URLSearchParams({ policeDigitalFileId })
     return this.get<{ url: string }>(
       `case/${caseId}/policeDigitalCaseFileTokenUrl?${params.toString()}`,
     ).then((res) => res.url)

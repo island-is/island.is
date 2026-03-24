@@ -10,5 +10,5 @@ export class PoliceDigitalCaseFileTokenUrlInput {
 
   @Allow()
   @Field()
-  readonly rafraennGagnId!: string
+  readonly policeDigitalFileId!: string
 }

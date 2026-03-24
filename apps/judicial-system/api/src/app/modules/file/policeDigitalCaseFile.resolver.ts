@@ -59,7 +59,7 @@ export class PoliceDigitalCaseFileResolver {
     { backendService }: { backendService: BackendService },
   ): Promise<string> {
     this.logger.debug(
-      `Getting token URL for police digital case file ${input.rafraennGagnId} in case ${input.caseId}`,
+      `Getting token URL for police digital case file ${input.policeDigitalFileId} in case ${input.caseId}`,
     )
 
     return this.auditTrailService.audit(
@@ -67,7 +67,7 @@ export class PoliceDigitalCaseFileResolver {
       AuditedAction.GET_POLICE_DIGITAL_CASE_FILE_TOKEN_URL,
       backendService.getPoliceDigitalCaseFileTokenUrl(
         input.caseId,
-        input.rafraennGagnId,
+        input.policeDigitalFileId,
       ),
       input.caseId,
     )

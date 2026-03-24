@@ -30,7 +30,7 @@ const usePoliceDigitalCaseFile = (
     usePoliceDigitalCaseFileTokenUrlLazyQuery()
 
   const openDigitalCaseFileUrl = useCallback(
-    async (rafraennGagnId: string) => {
+    async (policeDigitalFileId: string) => {
       const newTab = window.open('', '_blank')
 
       if (!newTab) {
@@ -43,7 +43,7 @@ const usePoliceDigitalCaseFile = (
       try {
         const result = await getTokenUrlQuery({
           variables: {
-            input: { caseId, rafraennGagnId },
+            input: { caseId, policeDigitalFileId },
           },
         })
         const url = result.data?.policeDigitalCaseFileTokenUrl

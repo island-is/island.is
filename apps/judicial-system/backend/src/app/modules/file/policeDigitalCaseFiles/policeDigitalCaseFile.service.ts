@@ -99,12 +99,12 @@ export class PoliceDigitalCaseFileService {
   async getTokenUrl(
     caseId: string,
     user: User,
-    rafraennGagnId: string,
+    policeDigitalFileId: string,
   ): Promise<string> {
     return this.policeService.getTokenUrl(
       caseId,
       user.nationalId,
-      rafraennGagnId,
+      policeDigitalFileId,
       user,
       'getPoliceDigitalCaseFileTokenUrl',
     )
