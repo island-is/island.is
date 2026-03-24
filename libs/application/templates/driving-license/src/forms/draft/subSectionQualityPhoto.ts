@@ -8,6 +8,7 @@ import {
 } from '@island.is/application/core'
 import { Application, ExternalData } from '@island.is/application/types'
 import { m } from '../../lib/messages'
+import { BE } from '../../lib/constants'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
 import { createPhotoComponent } from '../../fields/CreatePhoto'
 
@@ -67,7 +68,11 @@ export const subSectionQualityPhoto = buildSubSection({
             if (qualityPhoto) {
               return 'qualityPhoto'
             }
-            return 'bringNewPhoto'
+            // For BE, no "bring new photo" option — eligibility check
+            // ensures a photo exists, so this shouldn't be reached
+            const isBE =
+              getValueViaPath(application.answers, 'applicationFor') === BE
+            return isBE ? undefined : 'bringNewPhoto'
           },
           options: ({ answers, externalData }) => {
             const photoOptions = []
@@ -107,10 +112,13 @@ export const subSectionQualityPhoto = buildSubSection({
               }
             }
 
-            photoOptions.push({
-              value: 'bringNewPhoto',
-              label: m.qualityPhotoAcknowledgement,
-            })
+            // BE flow: no "bring new photo" option — photo must exist
+            if (getValueViaPath(answers, 'applicationFor') !== BE) {
+              photoOptions.push({
+                value: 'bringNewPhoto',
+                label: m.qualityPhotoAcknowledgement,
+              })
+            }
 
             return photoOptions
           },
@@ -148,3 +156,5 @@ export const subSectionQualityPhoto = buildSubSection({
     }),
   ],
 })
+
+

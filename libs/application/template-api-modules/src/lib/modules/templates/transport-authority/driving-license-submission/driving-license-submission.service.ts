@@ -289,25 +289,41 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       const beEmail = getValueViaPath<string>(answers, 'email')
       const bePhone = getValueViaPath<string>(answers, 'phone')
 
-      // Determine biometric IDs from photo selection
-      const allThjodskraPhotos = getValueViaPath<
-        { biometricId: string; contentSpecification: string }[]
-      >(application.externalData, 'allPhotosFromThjodskra.data.images', [])
+      // Check if the quality photo was confirmed via the new endpoint
+      // If so, the backend already has the photo — no biometric IDs needed
+      const qualityPhotoData = getValueViaPath<{
+        imageTypeId: number | null
+      }>(application.externalData, 'qualityPhotoAndSignature.data')
 
-      const isValidThjodskraPhoto =
-        !!selectedPhoto &&
-        selectedPhoto !== 'qualityPhoto' &&
-        selectedPhoto !== 'fakePhoto' &&
-        selectedPhoto !== 'bringNewPhoto' &&
-        allThjodskraPhotos?.some((p) => p.biometricId === selectedPhoto)
+      const QUALITY_IMAGE_TYPE_IDS = [1, 11]
+      const hasConfirmedQualityPhoto = qualityPhotoData?.imageTypeId
+        ? QUALITY_IMAGE_TYPE_IDS.includes(qualityPhotoData.imageTypeId)
+        : false
 
-      const imageBiometricsId = isValidThjodskraPhoto ? selectedPhoto : null
+      let imageBiometricsId: string | null = null
+      let signatureBiometricsId: string | null = null
 
-      const signatureBiometricsId = imageBiometricsId
-        ? allThjodskraPhotos?.find(
-            (p) => p.contentSpecification === 'SIGNATURE',
-          )?.biometricId ?? null
-        : null
+      if (!hasConfirmedQualityPhoto) {
+        // Fall back to Thjodskra biometric IDs if no confirmed quality photo
+        const allThjodskraPhotos = getValueViaPath<
+          { biometricId: string; contentSpecification: string }[]
+        >(application.externalData, 'allPhotosFromThjodskra.data.images', [])
+
+        const isValidThjodskraPhoto =
+          !!selectedPhoto &&
+          selectedPhoto !== 'qualityPhoto' &&
+          selectedPhoto !== 'fakePhoto' &&
+          selectedPhoto !== 'bringNewPhoto' &&
+          allThjodskraPhotos?.some((p) => p.biometricId === selectedPhoto)
+
+        imageBiometricsId = isValidThjodskraPhoto ? selectedPhoto : null
+
+        signatureBiometricsId = imageBiometricsId
+          ? allThjodskraPhotos?.find(
+              (p) => p.contentSpecification === 'SIGNATURE',
+            )?.biometricId ?? null
+          : null
+      }
 
       // Get health certificate files if uploaded
       let contentList = null
