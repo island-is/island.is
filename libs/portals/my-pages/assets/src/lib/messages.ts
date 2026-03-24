@@ -490,6 +490,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:co2',
     defaultMessage: 'Útblástursgildi',
   },
+  co2Fallback: {
+    id: 'sp.vehicles:co2-fallback',
+    defaultMessage: 'Enginn skráður útblástur',
+  },
   co2Label: {
     id: 'sp.vehicles:co2-label',
     defaultMessage: 'Útblástursgildi',
@@ -991,6 +995,14 @@ export const vehicleMessage = defineMessages({
   odometer: {
     id: 'sp.vehicles:odometer',
     defaultMessage: 'Kílómetrastaða',
+  },
+  odometerBulkColumn: {
+    id: 'sp.vehicles:odometer-bulk-column',
+    defaultMessage: 'Skrá stöðu',
+  },
+  odometerStatus: {
+    id: 'sp.vehicles:odometer-status',
+    defaultMessage: 'Staða',
   },
   lastKnownOdometerStatus: {
     id: 'sp.vehicles:last-known-odometer-status',

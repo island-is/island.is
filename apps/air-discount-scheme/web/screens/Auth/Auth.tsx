@@ -7,10 +7,11 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { signIn, useSession } from 'next-auth/client'
+import { signIn, useSession } from 'next-auth/react'
 
-function Auth() {
-  const [session, loading] = useSession()
+const Auth = () => {
+  const { data: session, status } = useSession()
+  const loading = status === 'loading'
   useEffect(() => {
     if (!session?.user && !loading && typeof window !== 'undefined') {
       signIn('identity-server', {

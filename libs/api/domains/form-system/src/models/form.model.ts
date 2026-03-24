@@ -85,7 +85,10 @@ export class Form {
   isTranslated!: boolean
 
   @Field(() => Int)
-  daysUntilApplicationPrune!: number
+  draftDaysToLive!: number
+
+  @Field(() => Int)
+  submissionDaysToLive!: number
 
   @Field(() => Boolean)
   allowProceedOnValidationFail!: boolean

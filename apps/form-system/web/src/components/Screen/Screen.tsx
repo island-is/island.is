@@ -1,8 +1,15 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { SectionTypes } from '@island.is/form-system/ui'
-import { AlertMessage, Box, GridColumn, Text } from '@island.is/island-ui/core'
+import { m, SectionTypes } from '@island.is/form-system/ui'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Divider,
+  GridColumn,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { Footer } from '../Footer/Footer'
 import { Applicants } from './components/Applicants/Applicants'
@@ -10,20 +17,69 @@ import { Completed } from './components/Completed/Completed'
 import { ExternalData } from './components/ExternalData/ExternalData'
 import { Field } from './components/Field/Field'
 import { Summary } from './components/Summary/Summary'
-import { NotificationCommands } from '@island.is/form-system/enums'
+import {
+  NotificationCommands,
+  FieldTypesEnum,
+} from '@island.is/form-system/enums'
 import { useMutation } from '@apollo/client'
 import {
   NOTIFY_EXTERNAL_SERVICE,
   removeTypename,
 } from '@island.is/form-system/graphql'
 import { LoadingScreen } from '@island.is/react/components'
+import { useIntl } from 'react-intl'
 
 export const Screen = () => {
   const { state, dispatch } = useApplicationContext()
   const { lang } = useLocale()
   const { currentSection, currentScreen } = state
+  const { formatMessage } = useIntl()
   const [notifyExternal] = useMutation(NOTIFY_EXTERNAL_SERVICE)
   const [loading, setLoading] = useState(false)
+  const multiMax = currentScreen?.data?.multiMax ?? 1
+  const isMulti = currentScreen?.data?.isMulti ?? false
+
+  const visibleFields = useMemo(
+    () =>
+      currentScreen?.data?.fields?.filter(
+        (field): field is NonNullable<typeof field> =>
+          field != null && !field.isHidden,
+      ) ?? [],
+    [currentScreen?.data?.fields],
+  )
+
+  const [numberOfItems, setNumberOfItems] = useState(1)
+
+  useEffect(() => {
+    if (isMulti && multiMax > 1) {
+      const maxItems = Math.max(
+        1,
+        ...visibleFields.map((f) => (f.values?.length as number) ?? 1),
+      )
+      setNumberOfItems(maxItems)
+    } else {
+      setNumberOfItems(1)
+    }
+  }, [currentScreen?.data?.id, isMulti, multiMax, visibleFields])
+
+  const shouldMoveCurrencySumBox =
+    numberOfItems > 1 &&
+    isMulti &&
+    multiMax > 1 &&
+    visibleFields.some(
+      (f) =>
+        f.fieldType === FieldTypesEnum.ISK_NUMBERBOX &&
+        f.isPartOfMultiset !== false,
+    )
+
+  const currencySumField = shouldMoveCurrencySumBox
+    ? visibleFields.find((f) => f.fieldType === FieldTypesEnum.ISK_SUMBOX)
+    : undefined
+
+  const fieldsForMultisetLoop =
+    shouldMoveCurrencySumBox && currencySumField
+      ? visibleFields.filter((f) => f.fieldType !== FieldTypesEnum.ISK_SUMBOX)
+      : visibleFields
 
   const screenTitle =
     currentScreen?.data?.name?.[lang] ??
@@ -77,12 +133,35 @@ export const Screen = () => {
     }
   }
 
+  const screenId = currentScreen?.data?.id
+
+  const shouldPopulateScreenRef = useRef(shouldPopulateScreen)
+  shouldPopulateScreenRef.current = shouldPopulateScreen
+
   useEffect(() => {
     const populateScreen = async () => {
-      await shouldPopulateScreen()
+      await shouldPopulateScreenRef.current()
     }
-    populateScreen()
-  }, [currentScreen?.data?.id])
+    void populateScreen()
+  }, [screenId])
+
+  const handleNewItem = () => {
+    setNumberOfItems(numberOfItems + 1)
+    dispatch({
+      type: 'ADD_MULTISET_ITEM',
+      payload: {},
+    })
+  }
+
+  const handleRemoveItem = () => {
+    if (numberOfItems > 1) {
+      setNumberOfItems(numberOfItems - 1)
+      dispatch({
+        type: 'REMOVE_MULTISET_ITEM',
+        payload: {},
+      })
+    }
+  }
 
   if (loading) return <LoadingScreen ariaLabel="loading" />
 
@@ -130,16 +209,69 @@ export const Screen = () => {
           !currentSection?.data?.isHidden && <Summary state={state} />}
 
         {currentSectionType === SectionTypes.COMPLETED && <Completed />}
+
         {currentScreen &&
-          currentScreen?.data?.fields
-            ?.filter(
-              (field): field is NonNullable<typeof field> =>
-                field != null && !field.isHidden,
-            )
-            .map((field, index) => {
-              return <Field field={field} key={index} />
-            })}
+          Array.from({ length: numberOfItems }).map((_, itemIndex) => (
+            <Box key={`multiset-item-${itemIndex}`} marginBottom={4}>
+              {itemIndex > 0 && (
+                <Box marginBottom={2} marginTop={6}>
+                  <Text variant="h2">{itemIndex + 1}.</Text>
+                  <Divider />
+                </Box>
+              )}
+
+              {fieldsForMultisetLoop
+                .filter(
+                  (field) =>
+                    field.isPartOfMultiset !== false || itemIndex === 0,
+                )
+                .map((field) => (
+                  <Field
+                    field={field}
+                    valueIndex={
+                      field.isPartOfMultiset === false ? 0 : itemIndex
+                    }
+                    key={`${field.id ?? 'field'}-${itemIndex}`}
+                  />
+                ))}
+            </Box>
+          ))}
+        {shouldMoveCurrencySumBox && currencySumField && (
+          <Box marginBottom={4}>
+            <Field
+              field={currencySumField}
+              valueIndex={0}
+              key={`${currencySumField.id ?? 'currency-sum'}-sum`}
+            />
+          </Box>
+        )}
+        {isMulti && multiMax > 1 && (
+          <Box display="flex" justifyContent="flexEnd">
+            <Box marginRight={2}>
+              {numberOfItems > 1 && (
+                <Button
+                  variant="ghost"
+                  colorScheme="destructive"
+                  type="button"
+                  onClick={handleRemoveItem}
+                >
+                  {formatMessage(m.removeMulti)}
+                </Button>
+              )}
+            </Box>
+            <Button
+              variant="ghost"
+              type="button"
+              onClick={handleNewItem}
+              icon="add"
+              disabled={numberOfItems >= multiMax}
+            >
+              {formatMessage(m.addMulti)}
+            </Button>
+          </Box>
+        )}
       </GridColumn>
+
       <Footer externalDataAgreement={externalDataAgreement} />
     </Box>
   )

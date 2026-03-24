@@ -14,9 +14,10 @@ import { m } from '../../../lib/messages'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
+  valueIndex?: number
 }
 
-export const CurrencyField = ({ item, dispatch }: Props) => {
+export const CurrencyField = ({ item, dispatch, valueIndex = 0 }: Props) => {
   const { formatMessage, lang } = useLocale()
   const label = item?.name?.[lang]
   const { control } = useFormContext()
@@ -25,10 +26,10 @@ export const CurrencyField = ({ item, dispatch }: Props) => {
     <Row marginTop={2}>
       <Column span="10/10">
         <Controller
-          key={item.id}
-          name={item.id}
+          key={`${item.id}-${valueIndex}`}
+          name={`${item.id}.${valueIndex}`}
           control={control}
-          defaultValue={getValue(item, 'iskNumber') ?? ''}
+          defaultValue={getValue(item, 'iskNumber', valueIndex) ?? ''}
           rules={{
             required: {
               value: item?.isRequired ?? false,
@@ -59,6 +60,7 @@ export const CurrencyField = ({ item, dispatch }: Props) => {
                     payload: {
                       value: formattedValue,
                       id: item.id,
+                      valueIndex,
                     },
                   })
                 }

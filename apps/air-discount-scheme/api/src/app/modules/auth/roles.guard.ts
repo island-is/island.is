@@ -13,18 +13,14 @@ import { getUserFromContext } from './getUserFromContext'
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const rolesRules = this.reflector.get<Role[]>('roles', context.getHandler())
     // Allow if no rules
     if (!rolesRules) {
       return true
     }
-    const user = getUserFromContext(context)
+    const user = await getUserFromContext(context)
     user.role = getRole({ name: user.name, nationalId: user.nationalId })
-    // Deny if no user
-    if (!user) {
-      throw new UnauthorizedException()
-    }
 
     if (!rolesRules.includes(user.role)) {
       throw new UnauthorizedException()
