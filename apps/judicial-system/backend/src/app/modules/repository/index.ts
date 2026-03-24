@@ -36,4 +36,9 @@ export { PoliceDigitalCaseFileRepositoryService } from './services/policeDigital
 export { SubpoenaRepositoryService } from './services/subpoenaRepository.service'
 export { VerdictRepositoryService } from './services/verdictRepository.service'
 
-export { caseInclude, UpdateCase, UpdateAppealCase, appealCaseFields } from './types/caseRepository.types'
+export {
+  caseInclude,
+  UpdateCase,
+  UpdateAppealCase,
+  appealCaseFields,
+} from './types/caseRepository.types'
