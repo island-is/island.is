@@ -20,13 +20,12 @@ import {
 import {
   getApplicant,
   mapAnswersToApplicationDto,
-  mapAnswersToApplicationFilesContentDto,
+  mapAnswersToSingleApplicationFilesContentDto,
   paymentForAppraisal,
 } from './utils'
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
-import uniqBy from 'lodash/uniqBy'
 import { prereqMessages } from '@island.is/application/templates/hms/fire-compensation-appraisal'
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
@@ -278,61 +277,50 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
-      // get content of files from S3
-      const fetchedFiles = await this.attachmentService.getFiles(application, [
-        'photos',
-      ])
-
-      const files = uniqBy(fetchedFiles, 'key')
-
-      const missingFiles = files.filter(
-        (file) => !file.fileContent || file.fileContent.trim().length === 0,
-      )
-
-      if (missingFiles.length > 0) {
-        this.logger.error('Missing file content for attachments', {
-          missingKeys: missingFiles.map((file) => file.key),
-        })
-        throw new TemplateApiError(
-          'Failed to submit application, missing file content',
-          500,
-        )
-      }
-
       // Map the application to the dto interface
-      const applicationDto = mapAnswersToApplicationDto(application, files)
-
+      const applicationDto = mapAnswersToApplicationDto(application)
       // Send the application to HMS
       const res = await this.hmsApplicationSystemService.apiApplicationPost({
         applicationDto,
       })
-
       if (res.status !== 200) {
         throw new TemplateApiError(
           'Failed to submit application, non 200 status',
           500,
         )
       }
-      // Map the photos to the dto interface
-      const applicationFilesContentDtoArray =
-        mapAnswersToApplicationFilesContentDto(application, files)
 
-      // Send the photos to HMS sequentially to avoid overwhelming
-      // the pod with concurrent uploads of large files
-      const photoResults = []
-      for (const applicationFilesContentDto of applicationFilesContentDtoArray) {
-        const result =
-          await this.hmsApplicationSystemService.apiApplicationUploadPost({
-            applicationFilesContentDto,
-          })
-        photoResults.push(result)
-      }
+      // Get the generator
+      const fileGenerator = this.attachmentService.getFilesGenerator(
+        application,
+        ['photos'],
+      )
 
-      if (photoResults.some((result) => result.status !== 200)) {
-        throw new TemplateApiError(
-          'Failed to upload photos, non 200 status',
-          500,
+      const uniqueFileKeys = new Set<string>()
+
+      // Process one file at a time to avoid creating intermetiate arrays
+      for await (const file of fileGenerator) {
+        // Skip if the file has already been processed
+        if (uniqueFileKeys.has(file.key)) {
+          continue
+        }
+        uniqueFileKeys.add(file.key)
+        const attachment = mapAnswersToSingleApplicationFilesContentDto(
+          application,
+          file,
         )
+        // Kick off each upload as soon as the attachment has been downloaded and mapped
+        this.hmsApplicationSystemService // Don't wait for upload to finish, allow them to run asyncronously on the background
+          .apiApplicationUploadPost({
+            applicationFilesContentDto: attachment,
+          })
+          .then((res) => {
+            this.logger.info('Successfully uploaded attachment:', res)
+          })
+          .catch((e) => {
+            // Log the error but don't throw it since we allow the uploads to run asyncronously on the background
+            this.logger.error(`Failed to upload attachment: ${e}`)
+          })
       }
 
       return res
