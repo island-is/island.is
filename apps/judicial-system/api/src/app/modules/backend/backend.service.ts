@@ -465,20 +465,6 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`case/${caseId}/policeDefendants`)
   }
 
-  getPoliceCaseUnits(
-    caseId: string,
-    nationalIds: string[],
-  ): Promise<{ results: Array<{ nationalId: string; units: unknown }> }> {
-    const query =
-      nationalIds.length > 0
-        ? '?' +
-          nationalIds
-            .map((id) => `nationalId=${encodeURIComponent(id)}`)
-            .join('&')
-        : ''
-    return this.get(`case/${caseId}/policeCaseUnits${query}`)
-  }
-
   getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceDigitalCaseFile[]> {
     return this.get(`case/${caseId}/policeDigitalCaseFiles`)
   }

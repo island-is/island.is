@@ -1,3 +1,0 @@
-query PoliceCaseUnits($input: PoliceCaseUnitsQueryInput!) {
-  policeCaseUnits(input: $input)
-}

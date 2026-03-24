@@ -52,7 +52,7 @@ describe('PoliceController - Get police case info', () => {
 
     beforeEach(async () => {
       const mockFetch = fetch as jest.Mock
-      // getPoliceCaseFilesAndPoliceCaseUnits
+      // getPoliceCaseFiles
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -94,30 +94,6 @@ describe('PoliceController - Get police case info', () => {
               malsnumer: '008-2013-000033',
             },
           ],
-          malseinings: [
-            {
-              upprunalegtMalsnumer: '007-2021-000001',
-              brotFra: '2021-02-23T13:17:00',
-              licencePlate: 'ABC-123',
-              gotuHeiti: 'Testgata',
-              gotuNumer: '3',
-              sveitafelag: 'Testbær',
-            },
-            {
-              upprunalegtMalsnumer: '007-2020-000103',
-              brotFra: '2021-02-23T13:17:00',
-              gotuHeiti: 'Teststígur',
-              gotuNumer: null,
-              sveitafelag: 'Testbær',
-              licencePlate: 'CDE-123',
-            },
-            {
-              upprunalegtMalsnumer: '007-2020-000057',
-              brotFra: '2021-02-23T13:17:00',
-              gotuHeiti: 'Teststígur',
-              sveitafelag: null,
-            },
-          ],
         }),
       })
 
@@ -157,6 +133,51 @@ describe('PoliceController - Get police case info', () => {
                 fkMalMalaskraId: 2706242,
               },
             ],
+          },
+        ],
+      })
+
+      // getDefendantsFromPolice
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          {
+            accusedNationalId: '0101302399',
+            accusedName: 'Test Defendant',
+          },
+        ],
+      })
+
+      // getCaseUnitsFromPolice (GetRVMalseiningar)
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          {
+            upprunalegtMalsnumer: '007-2021-000001',
+            brotFra: '2021-02-23T13:17:00',
+            licencePlate: 'ABC-123',
+            gotuHeiti: 'Testgata',
+            gotuNumer: '3',
+            sveitafelag: 'Testbær',
+            artalNrGreinLidur: null,
+          },
+          {
+            upprunalegtMalsnumer: '007-2020-000103',
+            brotFra: '2021-02-23T13:17:00',
+            gotuHeiti: 'Teststígur',
+            gotuNumer: null,
+            sveitafelag: 'Testbær',
+            licencePlate: 'CDE-123',
+            artalNrGreinLidur: null,
+          },
+          {
+            upprunalegtMalsnumer: '007-2020-000057',
+            brotFra: '2021-02-23T13:17:00',
+            gotuHeiti: 'Teststígur',
+            gotuNumer: null,
+            sveitafelag: null,
+            licencePlate: null,
+            artalNrGreinLidur: null,
           },
         ],
       })

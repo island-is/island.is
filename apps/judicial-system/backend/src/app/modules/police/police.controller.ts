@@ -1,12 +1,10 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
   Inject,
   Param,
   Post,
-  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
@@ -89,42 +87,6 @@ export class PoliceController {
     this.logger.debug(`Getting defendants for case ${caseId} from police API`)
 
     return this.policeService.getDefendantsFromPolice(theCase.id, user)
-  }
-
-  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
-  @UseInterceptors(CaseOriginalAncestorInterceptor)
-  @Get('policeCaseUnits')
-  @ApiOkResponse({
-    description:
-      'Gets case units (malseiningar) for a case and each defendant national ID from the dedicated police API',
-  })
-  getPoliceCaseUnits(
-    @Param('caseId') caseId: string,
-    @Query('nationalId') nationalIdParam: string | string[],
-    @CurrentHttpUser() user: User,
-    @CurrentCase() theCase: Case,
-  ): Promise<{ results: Array<{ nationalId: string; units: unknown }> }> {
-    const nationalIds = Array.isArray(nationalIdParam)
-      ? nationalIdParam.map((id) => id?.trim()).filter(Boolean)
-      : nationalIdParam?.trim()
-        ? [nationalIdParam.trim()]
-        : []
-
-    if (nationalIds.length === 0) {
-      throw new BadRequestException(
-        'At least one query parameter "nationalId" is required',
-      )
-    }
-
-    this.logger.debug(
-      `Getting case units for case ${caseId} from police API (GetRVMalseiningar), ${nationalIds.length} defendant(s)`,
-    )
-
-    return this.policeService.getCaseUnitsFromPolice(
-      theCase.id,
-      nationalIds,
-      user,
-    )
   }
 
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)

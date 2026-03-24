@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from 'motion/react'
 import { v4 as uuid } from 'uuid'
 
 import { Box, Button } from '@island.is/island-ui/core'
-import { CaseOrigin } from '@island.is/judicial-system/types'
 import {
   FormContext,
   SectionHeading,
@@ -16,17 +15,11 @@ import {
 import {
   useCase,
   useDefendants,
-  usePoliceCaseUnits,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { DefendantInfo } from '../../../components'
 import { getIndictmentIntroductionAutofill } from '../../Indictment/Indictment'
 import { strings } from './DefendantList.strings'
-
-const isLokeCaseWithId = (
-  origin: typeof CaseOrigin[keyof typeof CaseOrigin] | null | undefined,
-  id: string,
-) => origin === CaseOrigin.LOKE && Boolean(id)
 
 export const DefendantList = () => {
   const { formatMessage } = useIntl()
@@ -38,21 +31,6 @@ export const DefendantList = () => {
     deleteDefendant,
     updateDefendantState,
   } = useDefendants()
-
-  const showPoliceDefendantsUI = isLokeCaseWithId(
-    workingCase.origin,
-    workingCase.id,
-  )
-
-  // Fetch case units for all defendants after sync; response is only logged for now
-  const defendantNationalIds =
-    workingCase.defendants
-      ?.map((d) => d.nationalId)
-      .filter((id): id is string => Boolean(id)) ?? []
-  usePoliceCaseUnits(
-    showPoliceDefendantsUI ? workingCase.id : undefined,
-    defendantNationalIds.length > 0 ? defendantNationalIds : undefined,
-  )
 
   const createEmptyDefendant = (defendantId?: string) => {
     setWorkingCase((prevWorkingCase) => ({
