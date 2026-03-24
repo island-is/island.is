@@ -191,20 +191,6 @@ export class OpenDataClientService {
         queryParams.fq = fqParts.join(' AND ')
       }
 
-      this.logger.info('Fetching from CKAN API', {
-        url: this.config.basePath,
-        params: queryParams,
-      })
-
-      // Debug: Log the full URL being requested
-      this.logger.info('=== CKAN QUERY DEBUG ===')
-      this.logger.info(`Search query (q): ${queryParams.q}`)
-      this.logger.info(`Input searchQuery: ${input.searchQuery}`)
-      this.logger.info(`Input publishers: ${JSON.stringify(input.publishers)}`)
-      this.logger.info(`Input categories: ${JSON.stringify(input.categories)}`)
-      this.logger.info(`Input formats: ${JSON.stringify(input.formats)}`)
-      this.logger.info(`fq query: ${queryParams.fq}`)
-
       const response = await firstValueFrom(
         this.httpService.get(`${this.config.basePath}/package_search`, {
           params: queryParams,
@@ -215,34 +201,6 @@ export class OpenDataClientService {
           httpsAgent: this.httpsAgent,
         }),
       )
-
-      this.logger.info('CKAN API response received', {
-        success: response.data.success,
-        count: response.data.result?.count,
-        fq: queryParams.fq,
-      })
-
-      // Debug: Print organization names from actual datasets
-      this.logger.info('=== CKAN RESPONSE DEBUG ===')
-      this.logger.info(`Success: ${response.data.success}`)
-      this.logger.info(`Count: ${response.data.result?.count}`)
-      this.logger.info(
-        `Results count: ${response.data.result?.results?.length}`,
-      )
-      if (response.data.result?.results?.length > 0) {
-        this.logger.info(
-          `First result org name: ${response.data.result.results[0]?.organization?.name}`,
-        )
-        this.logger.info(
-          `First result org title: ${response.data.result.results[0]?.organization?.title}`,
-        )
-        const orgNames = response.data.result.results.map(
-          (r: CKANPackage) => r.organization?.name,
-        )
-        this.logger.info(
-          `All org names in results: ${JSON.stringify(orgNames)}`,
-        )
-      }
 
       if (response.data.success && response.data.result) {
         const datasets = response.data.result.results.map((pkg: CKANPackage) =>
@@ -279,8 +237,6 @@ export class OpenDataClientService {
 
   async getDataset(id: string): Promise<Dataset | null> {
     try {
-      this.logger.info('Fetching dataset from CKAN API', { id })
-
       const response = await firstValueFrom(
         this.httpService.get(`${this.config.basePath}/package_show`, {
           params: { id },
@@ -454,27 +410,25 @@ export class OpenDataClientService {
       })
 
       // Data time period (Tímabil gagna)
+      const timePeriodCurrentYear = new Date().getFullYear()
+      const timePeriodYears = Array.from({ length: 5 }, (_, i) => {
+        const year = String(timePeriodCurrentYear - i)
+        return { value: year, label: year }
+      })
       filters.push({
         id: 'timePeriod',
         field: 'timePeriod',
         label: 'Tímabil gagna',
-        options: [
-          { value: '2025', label: '2025' },
-          { value: '2024', label: '2024' },
-          { value: '2023', label: '2023' },
-          { value: '2022', label: '2022' },
-          { value: '2021', label: '2021' },
-          { value: 'older', label: 'Eldra' },
-        ],
+        options: [...timePeriodYears, { value: 'older', label: 'Eldra' }],
       })
 
-      // License (Noktunarleyfi)
+      // License (Notkunarleyfi)
       if (licensesResponse.data.success && licensesResponse.data.result) {
         const licenses = licensesResponse.data.result
         filters.push({
           id: 'license',
           field: 'license',
-          label: 'Noktunarleyfi',
+          label: 'Notkunarleyfi',
           options: licenses.map((license: CKANLicense) => ({
             value: license.id || license.name,
             label: license.title || license.name || license.id,
@@ -498,10 +452,6 @@ export class OpenDataClientService {
           })
         }
       }
-
-      this.logger.info('CKAN filters fetched successfully', {
-        filterCount: filters.length,
-      })
 
       return filters
     } catch (error) {

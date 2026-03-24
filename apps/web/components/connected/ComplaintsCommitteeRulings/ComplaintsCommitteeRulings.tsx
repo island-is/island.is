@@ -11,6 +11,7 @@ import {
   Icon,
   LoadingDots,
   Pagination,
+  PdfViewer,
   Select,
   SkeletonLoader,
   Stack,
@@ -59,6 +60,8 @@ const ComplaintsCommitteeRulings = ({
   )
   const [currentPage, setCurrentPage] = useState(1)
   const [downloadingId, setDownloadingId] = useState<string | null>(null)
+  const [pdfBase64, setPdfBase64] = useState<string | null>(null)
+  const [pdfTitle, setPdfTitle] = useState<string>('')
 
   const { data, loading, error } = useQuery<
     GetOneSystemsRulingsQuery,
@@ -80,37 +83,20 @@ const ComplaintsCommitteeRulings = ({
   })
 
   const handleOpenPdf = useCallback(
-    async (id: string) => {
+    async (id: string, title: string) => {
       if (downloadingId) return
-      const popup = window.open('', '_blank')
-      if (!popup) return
 
       setDownloadingId(id)
+      setPdfBase64(null)
       try {
         const { data: pdfData } = await fetchPdf({ variables: { id } })
 
-        if (!pdfData?.oneSystemsRulingPdf?.base64) {
-          popup.close()
-          setDownloadingId(null)
-          return
+        if (pdfData?.oneSystemsRulingPdf?.base64) {
+          setPdfBase64(pdfData.oneSystemsRulingPdf.base64)
+          setPdfTitle(title)
         }
-
-        const base64Data = pdfData.oneSystemsRulingPdf.base64
-
-        // Decode base64 to binary
-        const byteCharacters = atob(base64Data)
-        const byteNumbers = new Uint8Array(byteCharacters.length)
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i)
-        }
-        const blob = new Blob([byteNumbers], { type: 'application/pdf' })
-
-        const url = window.URL.createObjectURL(blob)
-        popup.location.href = url
-        setTimeout(() => window.URL.revokeObjectURL(url), 60_000)
       } catch (e) {
         console.error('Failed to open PDF:', e)
-        popup.close()
       }
       setDownloadingId(null)
     },
@@ -149,7 +135,51 @@ const ComplaintsCommitteeRulings = ({
 
   return (
     <Stack space={5}>
-      <Stack space={3}>
+      {pdfBase64 && (
+        <Box>
+          <Box
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+            marginBottom={2}
+          >
+            <Button
+              variant="text"
+              size="small"
+              preTextIcon="arrowBack"
+              preTextIconType="outline"
+              onClick={() => setPdfBase64(null)}
+            >
+              {formatMessage(m.goBack)}
+            </Button>
+            <a
+              href={`data:application/pdf;base64,${pdfBase64}`}
+              download={`${pdfTitle || 'ruling'}.pdf`}
+              style={{ textDecoration: 'none' }}
+            >
+              <Button
+                variant="text"
+                size="small"
+                icon="download"
+                iconType="outline"
+                as="span"
+              >
+                {formatMessage(m.downloadPdf)}
+              </Button>
+            </a>
+          </Box>
+          {pdfTitle && (
+            <Box marginBottom={2}>
+              <Text variant="h3" as="h3">
+                {pdfTitle}
+              </Text>
+            </Box>
+          )}
+          <PdfViewer file={`data:application/pdf;base64,${pdfBase64}`} />
+        </Box>
+      )}
+
+      {!pdfBase64 && <Stack space={3}>
         <GridRow>
           <GridColumn span={['12/12', '6/12', '4/12', '3/12']}>
             <Select
@@ -190,7 +220,7 @@ const ComplaintsCommitteeRulings = ({
                   borderRadius="large"
                   padding={3}
                   cursor="pointer"
-                  onClick={() => handleOpenPdf(ruling.id)}
+                  onClick={() => handleOpenPdf(ruling.id, ruling.title)}
                 >
                   <Stack space={2}>
                     <Box
@@ -217,10 +247,10 @@ const ComplaintsCommitteeRulings = ({
                             iconType="outline"
                             onClick={(e) => {
                               e.stopPropagation()
-                              handleOpenPdf(ruling.id)
+                              handleOpenPdf(ruling.id, ruling.title)
                             }}
                           >
-                            {formatMessage(m.openPdf)}
+                            {formatMessage(m.viewPdf)}
                           </Button>
                         )}
                       </Box>
@@ -258,7 +288,7 @@ const ComplaintsCommitteeRulings = ({
             )}
           </Stack>
         )}
-      </Stack>
+      </Stack>}
     </Stack>
   )
 }

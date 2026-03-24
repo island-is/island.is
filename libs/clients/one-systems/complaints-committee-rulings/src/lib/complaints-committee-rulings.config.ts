@@ -18,7 +18,6 @@ export const ComplaintsCommitteeRulingsClientConfig = defineConfig<
     ),
     apiKey: env.required(
       'COMPLAINTS_COMMITTEE_RULINGS_API_KEY',
-      'a-string-secret-at-least-256-bits-long',
     ),
   }),
 })

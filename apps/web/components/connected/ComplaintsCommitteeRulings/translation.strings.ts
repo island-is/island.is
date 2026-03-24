@@ -26,10 +26,25 @@ export const m = defineMessages({
     defaultMessage: 'Opna PDF',
     description: 'Open PDF button label',
   },
+  viewPdf: {
+    id: 'web.complaintsCommitteeRulings:viewPdf',
+    defaultMessage: 'Skoða PDF skjal',
+    description: 'View PDF document button label',
+  },
+  downloadPdf: {
+    id: 'web.complaintsCommitteeRulings:downloadPdf',
+    defaultMessage: 'Hlaða niður',
+    description: 'Download PDF button label',
+  },
   errorLoadingRulings: {
     id: 'web.complaintsCommitteeRulings:errorLoadingRulings',
     defaultMessage:
       'Villa kom upp við að sækja úrskurði. Vinsamlegast reyndu aftur síðar.',
     description: 'Error message when rulings fail to load',
+  },
+  goBack: {
+    id: 'web.complaintsCommitteeRulings:goBack',
+    defaultMessage: 'Til baka',
+    description: 'Go back from PDF viewer',
   },
 })

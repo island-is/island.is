@@ -109,27 +109,27 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
     setHasMounted(true)
   }, [])
 
+  const sectionIds = [
+    'yfirlit',
+    'lysigogn',
+    'uppfaerslur',
+    'abyrgdaradili',
+    'adgangur',
+    'svipud',
+    'abendingar',
+  ]
+  const sectionTitles: Record<string, string> = {
+    yfirlit: n('navOverview', 'Yfirlit'),
+    lysigogn: n('navMetadataAndDownload', 'Lýsigögn og niðurhal'),
+    uppfaerslur: n('navUpdatesAndMaintenance', 'Uppfærslur og viðhald'),
+    abyrgdaradili: n('navResponsibleParty', 'Ábyrgðaraðili'),
+    adgangur: n('navAccessAndReuse', 'Aðgangur og endurnýting'),
+    svipud: n('navSimilarDatasets', 'Svipuð gagnasöfn'),
+    abendingar: n('navFeedback', 'Ábendingar'),
+  }
+
   // Track active section based on scroll position and hash changes
   useEffect(() => {
-    const sectionIds = [
-      'yfirlit',
-      'lysigogn',
-      'uppfaerslur',
-      'abyrgdaradili',
-      'adgangur',
-      'svipud',
-      'abendingar',
-    ]
-    const sectionTitles: Record<string, string> = {
-      yfirlit: 'Yfirlit',
-      lysigogn: 'Lýsigögn og niðurhal',
-      uppfaerslur: 'Uppfærslur og viðhald',
-      abyrgdaradili: 'Ábyrgðaraðili',
-      adgangur: 'Aðgangur og endurnýting',
-      svipud: 'Svipuð gagnasöfn',
-      abendingar: 'Ábendingar',
-    }
-
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '')
       if (hash && sectionTitles[hash]) {
@@ -163,7 +163,7 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
       window.removeEventListener('scroll', handleScroll)
       window.removeEventListener('hashchange', handleHashChange)
     }
-  }, [])
+  }, [sectionIds, sectionTitles])
 
   const datasetId = Array.isArray(id) ? id[0] : id
   const { data, loading, error } = useQuery(GET_OPEN_DATA_DATASET, {
@@ -174,39 +174,11 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
 
   const dataset: DatasetDetails | null = data?.openDataDataset || null
 
-  const navigationItems: NavigationItem[] = [
-    { title: 'Yfirlit', href: '#yfirlit', active: activeSection === 'Yfirlit' },
-    {
-      title: 'Lýsigögn og niðurhal',
-      href: '#lysigogn',
-      active: activeSection === 'Lýsigögn og niðurhal',
-    },
-    {
-      title: 'Uppfærslur og viðhald',
-      href: '#uppfaerslur',
-      active: activeSection === 'Uppfærslur og viðhald',
-    },
-    {
-      title: 'Ábyrgðaraðili',
-      href: '#abyrgdaradili',
-      active: activeSection === 'Ábyrgðaraðili',
-    },
-    {
-      title: 'Aðgangur og endurnýting',
-      href: '#adgangur',
-      active: activeSection === 'Aðgangur og endurnýting',
-    },
-    {
-      title: 'Svipuð gagnasöfn',
-      href: '#svipud',
-      active: activeSection === 'Svipuð gagnasöfn',
-    },
-    {
-      title: 'Ábendingar',
-      href: '#abendingar',
-      active: activeSection === 'Ábendingar',
-    },
-  ]
+  const navigationItems: NavigationItem[] = sectionIds.map((sectionId) => ({
+    title: sectionTitles[sectionId],
+    href: `#${sectionId}`,
+    active: activeSection === sectionTitles[sectionId],
+  }))
 
   if (loading && !dataset) {
     return (
@@ -294,7 +266,7 @@ const OpenDataDetailsPage: Screen<OpenDataDetailsProps> = ({ namespace }) => {
                   ) : null}
                   <Box>
                     <Text variant="eyebrow" color="purple600">
-                      {dataset.category || 'Náttúra'}
+                      {dataset.category || n('notDefined', 'Ekki skilgreint')}
                     </Text>
                     <Text variant="h4" as="p" color="blueberry600">
                       {dataset.publisher}

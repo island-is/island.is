@@ -152,7 +152,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
             onFilterClear={onClearAllFilters}
           >
             <FilterMultiChoice
-              labelClear={n('clear', 'Hreinsa val')}
+              labelClear={n('clearSelection', 'Hreinsa val')}
               onChange={({ categoryId, selected }) => {
                 onFilterTypeChange(categoryId, selected)
               }}
