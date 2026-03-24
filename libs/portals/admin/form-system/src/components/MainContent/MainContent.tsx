@@ -136,6 +136,7 @@ export const MainContent = () => {
                 <Column span="12/12">
                   <Checkbox
                     name="multi"
+                    disabled={isPublished}
                     label={formatMessage(m.allowMultiple)}
                     checked={
                       (activeItem.data as FormSystemScreen).isMulti ?? false

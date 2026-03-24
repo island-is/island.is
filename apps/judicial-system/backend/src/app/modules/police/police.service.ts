@@ -575,7 +575,7 @@ export class PoliceService {
     caseFiles?.forEach((filesPerCaseNumber) => {
       filesPerCaseNumber.gogn?.forEach((file) => {
         files.push({
-          id: file.rvMalID.toString(),
+          id: file.id.toString(),
           name: file.externalVendorFileName,
           policeCaseNumber: filesPerCaseNumber.malsnumer,
           policeExternalVendorId: file.externalVendorID,

@@ -9,7 +9,10 @@ import {
   Option,
 } from '@island.is/island-ui/core'
 import { useContext } from 'react'
-import { fileSizes, fileTypes } from '../../../../../../../lib/utils/fileTypes'
+import {
+  fileSizes,
+  FILE_TYPE_MAP,
+} from '../../../../../../../lib/utils/fileTypes'
 import { ControlContext } from '../../../../../../../context/ControlContext'
 import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
@@ -93,12 +96,12 @@ export const FileUploadSettings = () => {
         </Column>
       </Row>
       <Row>
-        {Object.entries(fileTypes).map(([key, value], i) => (
+        {Object.entries(FILE_TYPE_MAP).map(([key, value], i) => (
           <Box padding={2} key={i} style={{ width: '15%' }}>
             {key !== 'default' && (
               <Checkbox
                 label={key}
-                value={value as string}
+                value={key}
                 checked={types?.includes(key)}
                 disabled={isPublished}
                 onChange={(e) =>

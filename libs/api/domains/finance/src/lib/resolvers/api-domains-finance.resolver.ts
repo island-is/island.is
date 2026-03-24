@@ -16,31 +16,27 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { GetFinancialOverviewInput } from './dto/getOverview.input'
-import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
-import { GetFinanceDocumentsListInput } from './dto/getFinanceDocumentsList.input'
-import { GetFinanceDocumentInput } from './dto/getFinanceDocument.input'
-import { GetAnnualStatusDocumentInput } from './dto/getAnnualStatusDocument.input'
-import { CustomerChargeType } from './models/customerChargeType.model'
-import { FinanceDocumentModel } from './models/financeDocument.model'
-import { CustomerTapsControlModel } from './models/customerTapsControl.model'
-import { DocumentsListModel } from './models/documentsList.model'
-import { CustomerRecords } from './models/customerRecords.model'
+import { GetFinancialOverviewInput } from '../dto/getOverview.input'
+import { GetFinanceDocumentsListInput } from '../dto/getFinanceDocumentsList.input'
+import { GetFinanceDocumentInput } from '../dto/getFinanceDocument.input'
+import { GetAnnualStatusDocumentInput } from '../dto/getAnnualStatusDocument.input'
+import { FinanceDocumentModel } from '../models/financeDocument.model'
+import { DocumentsListModel } from '../models/documentsList.model'
 import {
   PaymentScheduleDetailModel,
   PaymentScheduleModel,
-} from './models/paymentSchedule.model'
-import { DebtStatusModel } from './models/debtStatus.model'
-import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.input'
-import { AssessmentYears } from './models/assessmentYears.model'
-import { ChargeTypesByYear } from './models/chargeTypesByYear.model'
-import { FinanceChargeTypeDetails } from './models/chargeTypeDetails.model'
-import { ChargeTypePeriodSubject } from './models/chargeTypePeriodSubject.model'
-import { ChargeItemSubjectsByYear } from './models/chargeItemSubjectsByYear.model'
-import { GetChargeTypesByYearInput } from './dto/getChargeTypesByYear.input'
-import { GetChargeTypesDetailsByYearInput } from './dto/getChargeTypesDetailsByYear.input'
-import { GetChargeItemSubjectsByYearInput } from './dto/getChargeItemSubjectsByYear.input'
-import { GetChargeTypePeriodSubjectInput } from './dto/getChargeTypePeriodSubject.input'
+} from '../models/paymentSchedule.model'
+import { DebtStatusModel } from '../models/debtStatus.model'
+import { GetFinancePaymentScheduleInput } from '../dto/getFinancePaymentSchedule.input'
+import { AssessmentYears } from '../models/assessmentYears.model'
+import { ChargeTypesByYear } from '../models/chargeTypesByYear.model'
+import { FinanceChargeTypeDetails } from '../models/chargeTypeDetails.model'
+import { ChargeTypePeriodSubject } from '../models/chargeTypePeriodSubject.model'
+import { ChargeItemSubjectsByYear } from '../models/chargeItemSubjectsByYear.model'
+import { GetChargeTypesByYearInput } from '../dto/getChargeTypesByYear.input'
+import { GetChargeTypesDetailsByYearInput } from '../dto/getChargeTypesDetailsByYear.input'
+import { GetChargeItemSubjectsByYearInput } from '../dto/getChargeItemSubjectsByYear.input'
+import { GetChargeTypePeriodSubjectInput } from '../dto/getChargeTypePeriodSubject.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeOverview)
@@ -81,27 +77,6 @@ export class FinanceResolver {
       user.nationalId,
       input.orgID,
       input.chargeTypeID,
-      user,
-    )
-  }
-
-  @Query(() => CustomerChargeType, { nullable: true })
-  @Audit()
-  async getCustomerChargeType(@CurrentUser() user: User) {
-    return this.financeService.getCustomerChargeType(user.nationalId, user)
-  }
-
-  @Query(() => CustomerRecords, { nullable: true })
-  @Audit()
-  async getCustomerRecords(
-    @CurrentUser() user: User,
-    @Args('input') input: GetCustomerRecordsInput,
-  ) {
-    return this.financeService.getCustomerRecords(
-      user.nationalId,
-      input.chargeTypeID,
-      input.dayFrom,
-      input.dayTo,
       user,
     )
   }
@@ -175,13 +150,6 @@ export class FinanceResolver {
       input.year,
       user,
     )
-  }
-
-  @Query(() => CustomerTapsControlModel, { nullable: true })
-  @Audit()
-  @Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
-  async getCustomerTapControl(@CurrentUser() user: User) {
-    return this.financeService.getCustomerTapControl(user.nationalId, user)
   }
 
   @Query(() => PaymentScheduleModel, { nullable: true })
