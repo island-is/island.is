@@ -68,7 +68,17 @@ export const ImpactAmendingSelection = ({
     setValue(val)
   }
 
-  const options: SelRegOption[] = searchResults ?? []
+  const hasSearched = searchResults !== undefined && !loading && !isSearching
+  const options: SelRegOption[] =
+    hasSearched && searchResults.length === 0 && value
+      ? [
+          {
+            value: '',
+            label: 'Engin reglugerð fannst',
+            disabled: true,
+          },
+        ]
+      : searchResults ?? []
 
   return (
     <div className={s.amendingSelectionOption}>

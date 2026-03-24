@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client'
 import { REGULATION_OPTION_SEARCH_QUERY } from '../graphql/queries'
-import type { RegulationOptionList } from '@island.is/regulations'
+import { prettyName, type RegulationOptionList, type RegName } from '@island.is/regulations'
 
 type RegulationSearchResponse = {
   OJOIAGetRegulationsOptionSearch: {
@@ -26,6 +26,7 @@ export type RegulationSearchOption = {
   label: string
   /** The regulation title without the name prefix */
   title: string
+  disabled?: boolean
 }
 
 export const useRegulationSearch = () => {
@@ -42,17 +43,28 @@ export const useRegulationSearch = () => {
     }
     executeSearch({
       variables: {
-        input: { q: query },
+        input: { q: query, iA: false, iR: false },
       },
     })
   }
 
   const results: RegulationSearchOption[] | undefined =
-    data?.OJOIAGetRegulationsOptionSearch?.regulations?.map((item) => ({
-      value: String(item.name),
-      label: `${item.name} — ${item.title}`,
-      title: String(item.title),
-    }))
+    data?.OJOIAGetRegulationsOptionSearch?.regulations?.map((item) => {
+      const name = prettyName(item.name as RegName)
+      if (item.repealed) {
+        return {
+          value: String(item.name),
+          label: `${name} – ${item.title} (brottfallin)`,
+          title: String(item.title),
+          disabled: true,
+        }
+      }
+      return {
+        value: String(item.name),
+        label: `${name} — ${item.title}`,
+        title: String(item.title),
+      }
+    })
 
   return {
     search,

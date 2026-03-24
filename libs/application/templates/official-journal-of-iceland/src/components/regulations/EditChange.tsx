@@ -50,7 +50,7 @@ type EditChangeProps = {
   /** Application ID needed for file uploads in the editor */
   applicationId: string
   /** Called when saving the impact */
-  onSave: (impact: RegulationImpactSchema) => void
+  onSave: (impact: RegulationImpactSchema) => void | Promise<void>
   /** Called when closing the modal */
   onClose: () => void
 }
@@ -86,6 +86,7 @@ export const EditChange = (props: EditChangeProps) => {
     change.appendixes || [],
   )
   const [activeComments, setActiveComments] = useState(change.comments || '')
+  const [saving, setSaving] = useState(false)
 
   // Fetch the base regulation so we can pre-populate the form fields
   // when creating a new amendment impact (i.e. change has no existing text)
@@ -156,19 +157,25 @@ export const EditChange = (props: EditChangeProps) => {
     return diff || undefined
   }
 
-  const saveChange = () => {
-    onSave({
-      ...change,
-      title: activeTitle,
-      text: activeText,
-      diff: getDiffHtml(),
-      date: toISODate(activeDate ?? defaultMinDate),
-      appendixes: activeAppendixes.map((apx, i) => ({
-        ...apx,
-        diff: getAppendixDiffHtml(i),
-      })),
-      comments: activeComments,
-    })
+  const saveChange = async () => {
+    if (saving) return
+    setSaving(true)
+    try {
+      await onSave({
+        ...change,
+        title: activeTitle,
+        text: activeText,
+        diff: getDiffHtml(),
+        date: toISODate(activeDate ?? defaultMinDate),
+        appendixes: activeAppendixes.map((apx, i) => ({
+          ...apx,
+          diff: getAppendixDiffHtml(i),
+        })),
+        comments: activeComments,
+      })
+    } finally {
+      setSaving(false)
+    }
   }
 
   const isValidImpact = () => {
@@ -390,7 +397,8 @@ export const EditChange = (props: EditChangeProps) => {
                   onClick={saveChange}
                   size="small"
                   icon="arrowForward"
-                  disabled={readOnly || !isValidImpact()}
+                  disabled={readOnly || !isValidImpact() || saving}
+                  loading={saving}
                 >
                   Vista textabreytingu
                 </Button>

@@ -29,7 +29,7 @@ type EditCancellationProps = {
   /** The cancellation impact being edited (from answers.regulation.impacts[]) */
   cancellation: RegulationImpactSchema
   /** Called when the modal should close. If impact was updated, passes the updated impact. */
-  onSave: (impact: RegulationImpactSchema) => void
+  onSave: (impact: RegulationImpactSchema) => void | Promise<void>
   onClose: () => void
 }
 
@@ -40,16 +40,23 @@ export const EditCancellation = (props: EditCancellationProps) => {
   const [activeDate, setActiveDate] = useState<Date | undefined>(
     cancellation.date ? new Date(cancellation.date) : today,
   )
+  const [saving, setSaving] = useState(false)
 
   const changeCancelDate = (newDate: Date | undefined) => {
     setActiveDate(newDate)
   }
 
-  const saveCancellation = () => {
-    onSave({
-      ...cancellation,
-      date: toISODate(activeDate ?? today),
-    })
+  const saveCancellation = async () => {
+    if (saving) return
+    setSaving(true)
+    try {
+      await onSave({
+        ...cancellation,
+        date: toISODate(activeDate ?? today),
+      })
+    } finally {
+      setSaving(false)
+    }
   }
 
   const isValidImpact = () => {
@@ -108,7 +115,8 @@ export const EditCancellation = (props: EditCancellationProps) => {
                 onClick={saveCancellation}
                 size="small"
                 icon="arrowForward"
-                disabled={!isValidImpact()}
+                disabled={!isValidImpact() || saving}
+                loading={saving}
               >
                 Vista brottfellingu
               </Button>

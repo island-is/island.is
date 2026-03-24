@@ -294,7 +294,9 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
     const resolvedDraftId = await ensureDraft(applicationType ?? '')
     await addImpact(impact, resolvedDraftId)
     const allImpacts = [...impacts, impact]
-    await generateAdvertText(allImpacts)
+    if (isAmending) {
+      await generateAdvertText(allImpacts)
+    }
 
     // Auto-add law chapters from the impacted regulation
     if (
@@ -315,14 +317,18 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
     const allImpacts = impacts.map((i) =>
       i.id === impact.id ? { ...i, ...impact } : i,
     )
-    await generateAdvertText(allImpacts)
+    if (isAmending) {
+      await generateAdvertText(allImpacts)
+    }
   }
 
   const handleDeleteImpact = async (id: string) => {
     const removedImpact = impacts.find((i) => i.id === id)
     await removeImpact(id)
     const allImpacts = impacts.filter((i) => i.id !== id)
-    await generateAdvertText(allImpacts)
+    if (isAmending) {
+      await generateAdvertText(allImpacts)
+    }
 
     // Remove law chapters that came from this regulation (if no other
     // impact still references the same regulation)
@@ -458,7 +464,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
                   regTitle:
                     'title' in selRegOption
                       ? (selRegOption.title as string)
-                      : selRegOption.label,
+                      : '',
                 }}
                 onSave={handleSaveNewImpact}
                 onClose={closeModal}
@@ -474,7 +480,7 @@ export const RegulationImpactsScreen = (props: OJOIFieldBaseProps) => {
                   regTitle:
                     'title' in selRegOption
                       ? (selRegOption.title as string)
-                      : selRegOption.label,
+                      : '',
                 }}
                 draftTitle={application.answers?.advert?.title}
                 draftHtml={application.answers?.advert?.html as string}
