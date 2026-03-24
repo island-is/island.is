@@ -21,6 +21,7 @@ import { FrontpageNewsRepository } from '../repositories/web-sitemap/content-typ
 import { OrganizationNewsRepository } from '../repositories/web-sitemap/content-types/organization-news.repository'
 import { ProjectNewsRepository } from '../repositories/web-sitemap/content-types/project-news.repository'
 import { ServiceWebRepository } from '../repositories/web-sitemap/content-types/service-web.repository'
+import { SupportCategoryRepository } from '../repositories/web-sitemap/content-types/support-category.repository'
 
 @Injectable()
 export class WebSitemapService {
@@ -46,21 +47,23 @@ export class WebSitemapService {
     private readonly organizationNewsRepository: OrganizationNewsRepository,
     private readonly projectNewsRepository: ProjectNewsRepository,
     private readonly serviceWebRepository: ServiceWebRepository,
+    private readonly supportCategoryRepository: SupportCategoryRepository,
   ) {
     this.fetchers = [
-      this.frontpageRepository,
-      this.articleRepository,
-      this.organizationPageRepository,
-      this.organizationSubpageRepository,
-      this.organizationParentSubpageRepository,
-      this.projectPageRepository,
-      this.manualRepository,
-      this.articleCategoryRepository,
-      this.lifeEventRepository,
-      this.frontpageNewsRepository,
-      this.organizationNewsRepository,
-      this.projectNewsRepository,
-      this.serviceWebRepository,
+      // this.frontpageRepository,
+      // this.articleRepository,
+      // this.organizationPageRepository,
+      // this.organizationSubpageRepository,
+      // this.organizationParentSubpageRepository,
+      // this.projectPageRepository,
+      // this.manualRepository,
+      // this.articleCategoryRepository,
+      // this.lifeEventRepository,
+      // this.frontpageNewsRepository,
+      // this.organizationNewsRepository,
+      // this.projectNewsRepository,
+      // this.serviceWebRepository,
+      this.supportCategoryRepository,
     ]
   }
 

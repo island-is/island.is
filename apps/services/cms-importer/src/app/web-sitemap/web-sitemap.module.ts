@@ -19,6 +19,7 @@ import { FrontpageNewsRepository } from '../repositories/web-sitemap/content-typ
 import { OrganizationNewsRepository } from '../repositories/web-sitemap/content-types/organization-news.repository'
 import { ProjectNewsRepository } from '../repositories/web-sitemap/content-types/project-news.repository'
 import { ServiceWebRepository } from '../repositories/web-sitemap/content-types/service-web.repository'
+import { SupportCategoryRepository } from '../repositories/web-sitemap/content-types/support-category.repository'
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { ServiceWebRepository } from '../repositories/web-sitemap/content-types/
     OrganizationNewsRepository,
     ProjectNewsRepository,
     ServiceWebRepository,
+    SupportCategoryRepository,
   ],
 })
 export class WebSitemapModule {}
