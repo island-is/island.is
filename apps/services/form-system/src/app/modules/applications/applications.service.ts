@@ -253,6 +253,17 @@ export class ApplicationsService {
     await application.save()
   }
 
+  async updatePruneAt(id: string, pruneAt: Date): Promise<void> {
+    const application = await this.applicationModel.findByPk(id)
+
+    if (!application) {
+      throw new NotFoundException(`Application with id '${id}' not found`)
+    }
+
+    application.pruneAt = pruneAt
+    await application.save()
+  }
+
   async submit(id: string, user: User): Promise<SubmitApplicationResponseDto> {
     const application = await this.applicationModel.findByPk(id, {
       include: [{ model: Value, as: 'values' }],

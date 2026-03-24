@@ -41,9 +41,10 @@ export class PaymentCallbackController {
     if (application) {
       const oneMonthFromNow = addMonths(new Date(), 1)
 
-      await this.applicationsService.update(applicationId, {
-        pruneAt: oneMonthFromNow,
-      })
+      await this.applicationsService.updatePruneAt(
+        applicationId,
+        oneMonthFromNow,
+      )
     }
   }
 
@@ -101,11 +102,9 @@ export class PaymentCallbackController {
         //Applications payment states are default to be pruned in 24 hours.
         //If the application is paid, we want to hold on to it for longer in case we get locked in an error state.
 
-        await this.applicationsService.update(
+        await this.applicationsService.updatePruneAt(
           callback.paymentFlowMetadata.applicationId,
-          {
-            pruneAt: oneMonthFromNow,
-          },
+          oneMonthFromNow,
         )
       }
     }
