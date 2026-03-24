@@ -36,7 +36,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFile as TCaseFile,
-  PoliceDigitalCaseFile as TPoliceDigitalCaseFile,
+  PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
@@ -56,7 +56,7 @@ import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 interface Props {
   policeCaseNumber: string
   caseFiles: TCaseFile[]
-  policeDigitalCaseFiles: TPoliceDigitalCaseFile[]
+  policeDigitalCaseFiles: PoliceDigitalCaseFile[]
   caseId: string
   shouldStartExpanded: boolean
   subtypes?: IndictmentSubtypeMap
@@ -65,7 +65,7 @@ interface Props {
 }
 
 interface PoliceDigitalCaseFileItemProps {
-  file: TPoliceDigitalCaseFile
+  file: PoliceDigitalCaseFile
   onReorder: (id: string) => void
 }
 
@@ -347,7 +347,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     [],
   )
   const [reorderableDigitalFiles, setReorderableDigitalFiles] = useState<
-    TPoliceDigitalCaseFile[]
+    PoliceDigitalCaseFile[]
   >([])
 
   useEffect(() => {

@@ -4,12 +4,12 @@ import cn from 'classnames'
 
 import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { PoliceDigitalCaseFile as TPoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
+import { PoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import * as styles from './EditableCaseFile.css'
 
 interface Props {
-  file: TPoliceDigitalCaseFile
+  file: PoliceDigitalCaseFile
 }
 
 const DraggablePoliceDigitalCaseFile: FC<Props> = ({ file }) => {

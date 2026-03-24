@@ -5,7 +5,6 @@ import {
   PDFName,
   PDFPage,
   PDFRef,
-  rgb,
   StandardFonts,
   TextAlignment,
 } from 'pdf-lib'

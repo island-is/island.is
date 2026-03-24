@@ -20,7 +20,7 @@ import {
 import {
   CaseFile as TCaseFile,
   CaseFileCategory,
-  PoliceDigitalCaseFile as TPoliceDigitalCaseFile,
+  PoliceDigitalCaseFile,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { usePoliceDigitalCaseFile } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -49,7 +49,7 @@ const CaseFile = () => {
   }, [workingCase.caseFiles, workingCase.policeCaseNumbers])
 
   const policeDigitalCaseFiles = useMemo(() => {
-    return new Map<string, TPoliceDigitalCaseFile[]>(
+    return new Map<string, PoliceDigitalCaseFile[]>(
       workingCase.policeCaseNumbers?.map((policeCaseNumber) => [
         policeCaseNumber,
         digitalCaseFiles?.filter(
