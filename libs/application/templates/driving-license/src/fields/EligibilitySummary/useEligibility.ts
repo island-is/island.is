@@ -74,21 +74,11 @@ export const useEligibility = (
     application.externalData,
     'currentLicense.data',
   )
-  const hasQualityPhoto =
-    getValueViaPath<boolean>(
-      application.externalData,
-      'qualityPhoto.data.hasQualityPhoto',
-    ) ?? false
-
   const thjodskraPhotos =
     getValueViaPath<ThjodskraPhoto[]>(
       application.externalData,
       'allPhotosFromThjodskra.data.images',
     ) ?? []
-
-  const hasAnyPhoto =
-    hasQualityPhoto ||
-    thjodskraPhotos.some((p) => p.contentSpecification === 'FACIAL')
 
   // BE-specific photo check using the new combined endpoint
   const qualityPhotoAndSignature = getValueViaPath<{
