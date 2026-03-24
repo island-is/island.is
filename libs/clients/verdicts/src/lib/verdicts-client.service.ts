@@ -761,6 +761,7 @@ export class VerdictsClientService {
 
     const mapOfAll = new Map<string, { id: string; label: string }>()
 
+    const courtOfAppealSet = new Set<string>()
     const courtOfAppealItems: Array<{ id: string; label: string }> = []
     if (courtOfAppealResponse.status === 'fulfilled')
       for (const scheduleType of courtOfAppealResponse.value.items ?? [])
@@ -770,11 +771,15 @@ export class VerdictsClientService {
           if (!mapOfAll.has(scheduleType.label)) {
             mapOfAll.set(scheduleType.label, item)
           }
-          courtOfAppealItems.push(item)
+          if (!courtOfAppealSet.has(scheduleType.label)) {
+            courtOfAppealSet.add(scheduleType.label)
+            courtOfAppealItems.push(item)
+          }
         }
 
     const supremeCourtItems: Array<{ id: string; label: string }> = []
 
+    const districtCourtSet = new Set<string>()
     const districtCourtItems: Array<{ id: string; label: string }> = []
     if (districtCourtResponse.status === 'fulfilled')
       for (const scheduleType of districtCourtResponse.value.items ?? [])
@@ -784,7 +789,10 @@ export class VerdictsClientService {
           if (!mapOfAll.has(scheduleType.label)) {
             mapOfAll.set(scheduleType.label, item)
           }
-          districtCourtItems.push(item)
+          if (!districtCourtSet.has(scheduleType.label)) {
+            districtCourtSet.add(scheduleType.label)
+            districtCourtItems.push(item)
+          }
         }
 
     courtOfAppealItems.sort(sortAlpha('label'))
