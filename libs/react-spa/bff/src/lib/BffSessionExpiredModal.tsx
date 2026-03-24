@@ -38,7 +38,7 @@ export const BffSessionExpiredModal = ({
 
   const title =
     reason === 'session-changed'
-      ? 'Ný innskráning á öðru stæði'
+      ? 'Ný innskráning á öðru tæki'
       : 'Innskráning útrunnin'
 
   return (
