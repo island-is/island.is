@@ -111,9 +111,7 @@ export const Submitted = (props: OJOIFieldBaseProps) => {
           <Stack space={[2, 2, 3]}>
             <AlertMessage
               type="error"
-              title={formatMessage(
-                submitted.errors.postApplicationErrorTitle,
-              )}
+              title={formatMessage(submitted.errors.postApplicationErrorTitle)}
               message={formatMessage(
                 submitted.errors.postApplicationErrorMessage,
               )}

@@ -11,13 +11,7 @@ import { useLazyQuery } from '@apollo/client'
 import { MAIN_TYPES_QUERY } from '../graphql/queries'
 import { cleanTypename } from '../lib/utils'
 import set from 'lodash/set'
-import {
-  Box,
-  RadioButton,
-  Stack,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, RadioButton, Stack, Text, toast } from '@island.is/island-ui/core'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getValueViaPath } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
