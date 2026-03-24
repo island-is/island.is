@@ -47,4 +47,10 @@ export const serviceSetup = (): ServiceBuilder<'service-portal'> =>
         paths: ['/minarsidur'],
       },
     })
-    .grantNamespaces('islandis', 'user-notification', 'identity-server')
+    .grantNamespaces(
+      'nginx-ingress-internal',
+      'nginx-ingress-external',
+      'islandis',
+      'user-notification',
+      'identity-server',
+    )

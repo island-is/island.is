@@ -99,7 +99,11 @@ export const serviceSetup = (services: {
     })
     .liveness('download/v1/liveness')
     .readiness('download/v1/readiness')
-    .grantNamespaces('islandis', 'services-bff-portals-admin')
+    .grantNamespaces(
+      'islandis',
+      'nginx-ingress-external',
+      'services-bff-portals-admin',
+    )
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '200m', memory: '256Mi' },

@@ -204,5 +204,10 @@ export const serviceSetup = (services: {
         },
       },
     })
-    .grantNamespaces('user-notification', 'portals-admin', 'datadog')
+    .grantNamespaces(
+      'nginx-ingress-external',
+      'user-notification',
+      'portals-admin',
+      'datadog',
+    )
 }

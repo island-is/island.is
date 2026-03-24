@@ -48,4 +48,8 @@ export const serviceSetup = (): ServiceBuilder<'application-system-form'> =>
         paths: ['/umsoknir'],
       },
     })
-    .grantNamespaces('islandis')
+    .grantNamespaces(
+      'nginx-ingress-internal',
+      'nginx-ingress-external',
+      'islandis',
+    )
