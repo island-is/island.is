@@ -490,7 +490,6 @@ export interface UpdateCase
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
     | 'hasCivilClaims'
-    | 'isRegisteredInPrisonSystem'
     | 'isArchived'
   > {
   type?: CaseType
