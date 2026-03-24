@@ -19,6 +19,7 @@ import {
 } from '../lib/utils/dependencyHelper'
 import { ActiveItem } from '../lib/utils/interfaces'
 import { removeTypename } from '../lib/utils/removeTypename'
+import { FILE_TYPE_MAP } from '../lib/utils/fileTypes'
 
 // TODO
 // This is a very long reducer that is handling many responsibilities making it difficult to read and maintain. You can simplify it by splitting it into smaller more focused reducers.
@@ -1054,13 +1055,42 @@ export const controlReducer = (
       const { property, checked, value, update } = action.payload
 
       const updateFileTypesArray = (): string => {
-        const newFileTypes = field.fieldSettings?.fileTypes?.split(',') ?? []
-        if (checked) {
-          return [...newFileTypes, value as string].toString()
-        } else {
-          return newFileTypes.filter((type) => type !== value).toString()
+        const allExt = Object.keys(FILE_TYPE_MAP).filter((k) => k !== '*')
+        const nextValue = String(value ?? '').trim()
+
+        const existingList = (field.fieldSettings?.fileTypes ?? '')
+          .split(',')
+          .map((t) => t.trim())
+          .filter((t) => t.length > 0)
+
+        const hadStar = existingList.includes('*')
+
+        // Toggle "*"
+        if (nextValue === '*') {
+          return checked ? ['*', ...allExt].join(',') : ''
         }
+
+        // Selected set: if "*" was selected, treat all extensions as selected
+        const selected = new Set<string>(
+          hadStar ? allExt : existingList.filter((t) => t !== '*'),
+        )
+
+        if (checked) {
+          selected.add(nextValue)
+        } else {
+          selected.delete(nextValue)
+        }
+
+        // If after the toggle everything is selected, include "*"
+        const nowAllSelected = allExt.every((ext) => selected.has(ext))
+        if (nowAllSelected) {
+          return ['*', ...allExt].join(',')
+        }
+
+        // Partial selection: do NOT include "*"
+        return allExt.filter((ext) => selected.has(ext)).join(',')
       }
+
       const newField = {
         ...field,
         fieldSettings: {

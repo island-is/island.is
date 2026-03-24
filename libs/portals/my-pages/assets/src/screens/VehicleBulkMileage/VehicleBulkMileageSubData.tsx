@@ -148,7 +148,7 @@ export const VehicleBulkMileageSubData = ({
           }}
         />
       ) : undefined}
-      <VehicleCO2 co2={co2 ?? '0'} />
+      <VehicleCO2 co2={co2} />
       <Box marginTop={2}>
         <Inline space={1}>
           <LinkResolver

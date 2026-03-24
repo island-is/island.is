@@ -28,11 +28,11 @@ import { DraftRegulationChangeService } from './draft_regulation_change.service'
 
 import { environment } from '../../../environments'
 import { DraftRegulationChange } from '@island.is/regulations/admin'
-import { AdminPortalScope } from '@island.is/auth/scopes'
+import { AdminPortalScope, ApiScope } from '@island.is/auth/scopes'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulation_change`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(AdminPortalScope.regulationAdmin)
+@Scopes(AdminPortalScope.regulationAdmin, ApiScope.ojoiAdverts)
 @Controller('api')
 @ApiTags('draft_regulation_change')
 @Audit({ namespace })
