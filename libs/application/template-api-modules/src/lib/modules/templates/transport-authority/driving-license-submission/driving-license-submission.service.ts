@@ -209,32 +209,21 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       >(answers, 'healthCertificate')
 
       if (healthCertFiles?.length) {
-        let files
         try {
-          files = await this.attachmentS3Service.getFiles(
+          const files = await this.attachmentS3Service.getFiles(
             application as ApplicationWithAttachments,
             ['healthCertificate'],
           )
+          const firstFile = files.find((f) => f.fileContent)
+          if (firstFile) {
+            healtCertificate = firstFile.fileContent
+          }
         } catch (e) {
           this.log('error', 'Failed to read health certificate files for 65+', {
             e,
           })
           throw new Error(
             'Failed to read health certificate files for 65+ renewal',
-          )
-        }
-
-        const firstFile = files.find((f) => f.fileContent)
-        if (firstFile) {
-          healtCertificate = firstFile.fileContent
-        } else {
-          this.log(
-            'error',
-            'Health certificate uploaded but content is empty for 65+',
-            {},
-          )
-          throw new Error(
-            'Failed to retrieve health certificate content for 65+ renewal',
           )
         }
       }
