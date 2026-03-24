@@ -28,11 +28,13 @@ export const FeaturedItemTags = ({
       }`}
     >
       {items.map((item: Featured) => {
-        const cardUrl = linkResolver(item.thing?.type as LinkType, [
-          item.thing?.slug ?? '',
-        ])
+        const { thing } = item
+        if (!thing?.type || !thing?.slug) {
+          return null
+        }
+        const cardUrl = linkResolver(thing.type as LinkType, [thing.slug])
         return (
-          <Box marginBottom={1} key={item.title}>
+          <Box marginBottom={1} key={thing.slug}>
             <FeaturedTag item={item} cardUrl={cardUrl} />
           </Box>
         )
