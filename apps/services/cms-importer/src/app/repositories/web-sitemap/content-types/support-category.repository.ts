@@ -58,11 +58,13 @@ export class SupportCategoryRepository implements SitemapUrlFetcher {
       urls.push({
         loc: {
           [LOCALE]:
-            organization.slug[LOCALE] && slug
+            organization.slug[LOCALE] && organization.title[LOCALE] && slug
               ? `https://island.is/adstod/${organization.slug[LOCALE]}/${slug}`
               : '',
           [EN_LOCALE]:
-            organization.slug[EN_LOCALE] && enSlug
+            organization.slug[EN_LOCALE] &&
+            organization.title[EN_LOCALE] &&
+            enSlug
               ? `https://island.is/en/help/${organization.slug[EN_LOCALE]}/${enSlug}`
               : '',
         },
