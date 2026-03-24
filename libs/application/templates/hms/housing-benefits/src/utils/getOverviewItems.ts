@@ -305,27 +305,6 @@ export const householdMembersOverviewAttachments = (
   return attachments
 }
 
-export const incomeSectionOverviewItems = (
-  answers: FormValue,
-  _externalData: ExternalData,
-  _userNationalId?: string,
-  _locale?: Locale,
-): Array<KeyValueItem> => {
-  const incomeAmount = getValueViaPath<string>(answers, 'incomeDisplayField')
-  const displayValue = incomeAmount
-    ? `${String(incomeAmount).replace(/\B(?=(\d{3})+(?!\d))/g, '.')} kr.`
-    : '-'
-
-  return [
-    {
-      width: 'full',
-      keyText: m.draftMessages.incomeSection.displayFieldTitle,
-      valueText: displayValue,
-      boldValueText: true,
-    },
-  ]
-}
-
 export const incomeSectionOverviewAttachments = (
   answers: FormValue,
   _externalData: ExternalData,
@@ -435,3 +414,84 @@ export const paymentSectionOverviewItems = (
     },
   ]
 }
+
+const extraDataDocTypeLabels = {
+  exemptionReason: m.extraDataMessages.documentExemptionReason,
+  custodyAgreement: m.extraDataMessages.documentCustodyAgreement,
+  changedCircumstances: m.extraDataMessages.documentChangedCircumstances,
+} as const
+
+type ExtraDataDocKey = keyof typeof extraDataDocTypeLabels
+
+const extraDataOverviewItemsForDocType = (
+  answers: FormValue,
+  docKey: ExtraDataDocKey,
+): Array<KeyValueItem> => {
+  const files = getValueViaPath<Array<{ key: string; name: string }>>(
+    answers,
+    `extraDataAttachments.${docKey}`,
+  )
+  const names =
+    Array.isArray(files) && files.length > 0
+      ? files.map((f) => f.name).join(', ')
+      : '—'
+  return [
+    {
+      width: 'full',
+      keyText: extraDataDocTypeLabels[docKey],
+      valueText: names,
+    },
+  ]
+}
+
+const extraDataOverviewAttachmentsForDocType = (
+  answers: FormValue,
+  docKey: ExtraDataDocKey,
+): Array<AttachmentItem> => {
+  const files = getValueViaPath<Array<{ key: string; name: string }>>(
+    answers,
+    `extraDataAttachments.${docKey}`,
+  )
+  if (!Array.isArray(files)) return []
+  return files.map((file) => ({
+    width: 'full' as const,
+    fileName: file.name,
+    fileType: file.name?.split('.').pop(),
+  }))
+}
+
+export const extraDataExemptionReasonOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  _userNationalId?: string,
+  _locale?: Locale,
+) => extraDataOverviewItemsForDocType(answers, 'exemptionReason')
+
+export const extraDataExemptionReasonOverviewAttachments = (
+  answers: FormValue,
+  _externalData: ExternalData,
+) => extraDataOverviewAttachmentsForDocType(answers, 'exemptionReason')
+
+export const extraDataCustodyAgreementOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  _userNationalId?: string,
+  _locale?: Locale,
+) => extraDataOverviewItemsForDocType(answers, 'custodyAgreement')
+
+export const extraDataCustodyAgreementOverviewAttachments = (
+  answers: FormValue,
+  _externalData: ExternalData,
+) => extraDataOverviewAttachmentsForDocType(answers, 'custodyAgreement')
+
+export const extraDataChangedCircumstancesOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  _userNationalId?: string,
+  _locale?: Locale,
+) => extraDataOverviewItemsForDocType(answers, 'changedCircumstances')
+
+export const extraDataChangedCircumstancesOverviewAttachments = (
+  answers: FormValue,
+  _externalData: ExternalData,
+) => extraDataOverviewAttachmentsForDocType(answers, 'changedCircumstances')

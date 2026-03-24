@@ -3,6 +3,7 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import * as m from '../../lib/messages'
@@ -13,7 +14,6 @@ import {
   exemptionSectionOverviewAttachments,
   householdMembersOverviewItems,
   householdMembersOverviewAttachments,
-  incomeSectionOverviewItems,
   incomeSectionOverviewAttachments,
   paymentSectionOverviewItems,
 } from '../../utils/getOverviewItems'
@@ -60,7 +60,12 @@ export const overviewSection = buildSection({
           id: 'incomeSectionOverview',
           title: m.draftMessages.incomeSection.title,
           backId: 'incomeMultiField',
-          items: incomeSectionOverviewItems,
+          condition: (answers) => {
+            const files = getValueViaPath<
+              Array<{ key: string; name: string }>
+            >(answers, 'incomeFileUploadField')
+            return Array.isArray(files) && files.length > 0
+          },
           attachments: incomeSectionOverviewAttachments,
         }),
         buildOverviewField({

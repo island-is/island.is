@@ -20,6 +20,12 @@ const fileSchema = z.object({ key: z.string(), name: z.string() })
 
 const exemptionReasons = ['studies', 'health', 'housing', 'work'] as const
 
+export const institutionRequestedDocumentTypes = [
+  'exemptionReason',
+  'custodyAgreement',
+  'changedCircumstances',
+] as const
+
 const bankAccountSchema = z.object({
   bankNumber: z.string().optional(),
   ledger: z.string().optional(),
@@ -47,10 +53,12 @@ const applicantSchema = z.object({
     .refine((v) => !v || isValidPhoneNumber(v)),
 })
 
-const householdMemberRowSchema = z.object({
-  nationalIdWithName: nationalIdWithNameSchema,
-  file: z.array(fileSchema).optional(),
-})
+const householdMemberRowSchema = z
+  .object({
+    nationalIdWithName: nationalIdWithNameSchema.optional(),
+    file: z.array(fileSchema).optional(),
+  })
+  .passthrough() // TableRepeater adds isRemoved, isUnsaved, etc.
 
 const baseSchema = z.object({
   confirmRead: confirmReadSchema.optional(),
@@ -62,17 +70,73 @@ const baseSchema = z.object({
       answer: z.string().min(1),
     })
     .optional(),
-  exemptionCheckbox: z.array(z.string()).optional(),
-  exemptionReason: z.enum(exemptionReasons).optional(),
+  exemptionCheckbox: z
+    .union([z.array(z.string()), z.literal('')])
+    .optional()
+    .transform((v) => (v === '' ? undefined : v)),
+  exemptionReason: z
+    .union([z.enum(exemptionReasons), z.literal('')])
+    .optional()
+    .transform((v) => (v === '' ? undefined : v)),
   exemptionDocuments: z
     .object({
-      studies: z.array(fileSchema).optional(),
-      health: z.array(fileSchema).optional(),
-      housing: z.array(fileSchema).optional(),
-      work: z.array(fileSchema).optional(),
+      studies: z
+        .union([z.array(fileSchema), z.literal('')])
+        .optional()
+        .transform((v) => (v === '' ? undefined : v)),
+      health: z
+        .union([z.array(fileSchema), z.literal('')])
+        .optional()
+        .transform((v) => (v === '' ? undefined : v)),
+      housing: z
+        .union([z.array(fileSchema), z.literal('')])
+        .optional()
+        .transform((v) => (v === '' ? undefined : v)),
+      work: z
+        .union([z.array(fileSchema), z.literal('')])
+        .optional()
+        .transform((v) => (v === '' ? undefined : v)),
     })
     .optional(),
-  householdMembersTableRepeater: z.array(householdMemberRowSchema).optional(),
+  householdMembersTableRepeater: z
+    .array(householdMemberRowSchema)
+    .optional()
+    .nullable(),
+  householdMemberApprovals: z.array(z.string()).optional(),
+  assigneeApproval: z
+    .object({
+      confirmRead: z.array(z.string()).optional(),
+    })
+    .optional(),
+  approveOrReject: z
+    .enum(['approve', 'reject', 'requestExtraData'])
+    .optional(),
+  approveOrRejectReason: z.string().optional(),
+  // clearOnChange on approveOrReject sets this to ""; normalize away
+  institutionRequestedDocuments: z
+    .union([
+      z.array(z.enum(institutionRequestedDocumentTypes)),
+      z.literal(''),
+    ])
+    .optional()
+    .transform((v) => (v === '' ? undefined : v)),
+  institutionMessageToApplicant: z.string().optional(),
+  extraDataAttachments: z
+    .object({
+      exemptionReason: z
+        .union([z.array(fileSchema), z.literal('')])
+        .optional()
+        .transform((v) => (v === '' ? undefined : v)),
+      custodyAgreement: z
+        .union([z.array(fileSchema), z.literal('')])
+        .optional()
+        .transform((v) => (v === '' ? undefined : v)),
+      changedCircumstances: z
+        .union([z.array(fileSchema), z.literal('')])
+        .optional()
+        .transform((v) => (v === '' ? undefined : v)),
+    })
+    .optional(),
   incomeDisplayField: z.string().optional(),
   incomeFileUploadField: z.array(fileSchema).optional(),
   payment: z
@@ -125,21 +189,11 @@ const baseSchema = z.object({
 
 export const dataSchema = baseSchema
   .superRefine((data, ctx) => {
-    const hasExemptionData =
-      data.exemptionCheckbox !== undefined ||
-      data.exemptionReason !== undefined ||
-      data.exemptionDocuments !== undefined
+    // Only validate exemption when user has explicitly requested one (checked the box).
+    // Skip validation when exemption section was never shown (address matches) or not completed.
+    const hasRequestedExemption = data.exemptionCheckbox?.includes(YES)
 
-    if (!hasExemptionData) return
-
-    if (!data.exemptionCheckbox?.includes(YES)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ['exemptionCheckbox'],
-        params: m.draftMessages.exemptionSection.validationCheckboxRequired,
-      })
-      return
-    }
+    if (!hasRequestedExemption) return
 
     if (
       !data.exemptionReason ||
@@ -167,35 +221,86 @@ export const dataSchema = baseSchema
     }
   })
   .superRefine((data, ctx) => {
-    // Household members validation - when rental agreement is selected, require at least one member with valid nationalId
-    if (data.rentalAgreement?.answer && data.householdMembersTableRepeater) {
-      const rows = data.householdMembersTableRepeater
-      if (rows.length === 0) {
+    // Household members validation - when rental agreement is selected and user has added rows,
+    // validate each row has valid nationalId. Contract tenants from the rental agreement
+    // are displayed via getStaticTableData and are NOT in householdMembersTableRepeater,
+    // so it is valid for this to be empty when only contract tenants exist.
+    // Skip isRemoved rows (TableRepeater marks these before submit cleanup).
+    const rows = data.rentalAgreement?.answer
+      ? Array.isArray(data.householdMembersTableRepeater)
+        ? data.householdMembersTableRepeater
+        : []
+      : []
+    rows.forEach((row, index) => {
+      if ((row as { isRemoved?: boolean }).isRemoved) return
+      const natId = row.nationalIdWithName?.nationalId?.trim()
+      if (!natId || !kennitala.isValid(natId)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['householdMembersTableRepeater'],
+          path: [
+            'householdMembersTableRepeater',
+            index,
+            'nationalIdWithName',
+            'nationalId',
+          ],
           params:
-            m.draftMessages.householdMembersSection.validationAtLeastOneMember,
+            m.draftMessages.householdMembersSection
+              .validationNationalIdRequired,
         })
       }
-      rows.forEach((row, index) => {
-        const natId = row.nationalIdWithName?.nationalId?.trim()
-        if (!natId || !kennitala.isValid(natId)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: [
-              'householdMembersTableRepeater',
-              index,
-              'nationalIdWithName',
-              'nationalId',
-            ],
-            params:
-              m.draftMessages.householdMembersSection
-                .validationNationalIdRequired,
-          })
-        }
+    })
+  })
+  .superRefine((data, ctx) => {
+    if (data.approveOrReject !== 'reject') return
+    const reason = data.approveOrRejectReason?.trim()
+    if (!reason) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['approveOrRejectReason'],
+        params: m.institutionMessages.validationRejectionReasonRequired,
       })
     }
+  })
+  .superRefine((data, ctx) => {
+    if (data.approveOrReject !== 'requestExtraData') return
+    const docs = data.institutionRequestedDocuments ?? []
+    if (docs.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['institutionRequestedDocuments'],
+        params: m.institutionMessages.validationExtraDataDocumentsRequired,
+      })
+    }
+    const message = data.institutionMessageToApplicant?.trim()
+    if (!message) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['institutionMessageToApplicant'],
+        params: m.institutionMessages.validationExtraDataMessageRequired,
+      })
+    }
+  })
+  .superRefine((data, ctx) => {
+    const requested = data.institutionRequestedDocuments
+    if (!requested?.length) return
+    const att = data.extraDataAttachments
+    if (!att) return
+
+    const requireFiles = (key: (typeof institutionRequestedDocumentTypes)[number]) => {
+      if (!requested.includes(key)) return
+      const files = att[key]
+      if (!Array.isArray(files) || files.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['extraDataAttachments', key],
+          params: m.extraDataMessages.validationFileRequired,
+        })
+      }
+    }
+
+    requireFiles('exemptionReason')
+    requireFiles('custodyAgreement')
+    requireFiles('changedCircumstances')
   })
 
 export type ApplicationAnswers = z.TypeOf<typeof baseSchema>

@@ -1,3 +1,5 @@
+import set from 'lodash/set'
+import { assign } from 'xstate'
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -9,6 +11,7 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -24,6 +27,11 @@ import {
   RentalAgreementsApi,
 } from '../dataProviders'
 import { hasRentalAgreements } from '../utils/rentalAgreementUtils'
+import * as kennitala from 'kennitala'
+import {
+  getAssigneeNationalIds,
+  needsHouseholdMemberApproval,
+} from '../utils/assigneeUtils'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -124,23 +132,182 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.ASSIGNEE_APPROVAL,
+              cond: ({ application }: ApplicationContext) =>
+                needsHouseholdMemberApproval(application),
+            },
+            {
+              target: States.IN_REVIEW,
+            },
+          ],
         },
       },
-      [States.COMPLETED]: {
+      [States.ASSIGNEE_APPROVAL]: {
+        entry: 'assignHouseholdMembers',
+        // exit: 'clearAssignees',
         meta: {
-          name: 'Completed form',
-          progress: 1,
-          status: FormModes.COMPLETED,
+          name: 'Samþykki heimilismanna',
+          progress: 0.6,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.UNSIGNED_ASSIGNEE,
+              formLoader: () =>
+                import('../forms/assigneeApprovalForm').then((module) =>
+                  Promise.resolve(module.AssigneeApproval),
+                ),
+              write: 'all',
+              read: 'all',
+              api: [NationalRegistryApi],
+            },
+            {
+              id: Roles.SIGNED_ASSIGNEE,
+              formLoader: () =>
+                import('../forms/assigneeWaitingForm').then((module) =>
+                  Promise.resolve(module.AssigneeWaitingForm),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/assigneeWaitingForm').then((module) =>
+                  Promise.resolve(module.AssigneeWaitingForm),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: [
+            {
+              target: States.IN_REVIEW,
+              cond: ({ application }: ApplicationContext) => {
+                const signed = (application.answers?.householdMemberApprovals ??
+                  []) as string[]
+                const assignees = application.assignees ?? []
+                return signed.length >= assignees.length
+              },
+            },
+            { target: States.ASSIGNEE_APPROVAL },
+          ],
+        },
+      },
+      [States.IN_REVIEW]: {
+        entry: 'assignToInstitution',
+        meta: {
+          name: 'Í vinnslu',
+          progress: 0.6,
+          status: FormModes.IN_PROGRESS,
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/completedForm').then((module) =>
-                  Promise.resolve(module.completedForm),
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.inReviewForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.SIGNED_ASSIGNEE,
+              formLoader: () =>
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.inReviewForm),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.INSTITUTION,
+              formLoader: () =>
+                import('../forms/inReviewForm/institutionForm').then((module) =>
+                  Promise.resolve(module.institutionForm),
+                ),
+              write: 'all',
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: {
+            target: States.APPROVED,
+          },
+          [DefaultEvents.REJECT]: {
+            target: States.REJECTED,
+          },
+          [DefaultEvents.EDIT]: {
+            target: States.EXTRA_DATA,
+          },
+        },
+      },
+      [States.EXTRA_DATA]: {
+        entry: 'clearAssignees',
+        meta: {
+          name: 'Extra data',
+          progress: 0.65,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/extraDataForm').then((module) =>
+                  Promise.resolve(module.ExtraDataForm),
+                ),
+              actions: [
+                {
+                  event: 'SUBMIT',
+                  name: m.extraDataMessages.submitButton,
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.IN_REVIEW,
+          },
+        },
+      },
+      [States.APPROVED]: {
+        entry: 'clearAssignees',
+        meta: {
+          name: 'Samþykkt',
+          progress: 1,
+          status: FormModes.APPROVED,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/approvedForm/approvedForm').then((module) =>
+                  Promise.resolve(module.approvedForm),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
+      [States.REJECTED]: {
+        entry: 'clearAssignees',
+        meta: {
+          name: 'Hafnað',
+          progress: 1,
+          status: FormModes.REJECTED,
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/rejectedForm/rejectedForm').then((module) =>
+                  Promise.resolve(module.rejectedForm),
                 ),
               read: 'all',
               delete: true,
@@ -150,14 +317,85 @@ const template: ApplicationTemplate<
       },
     },
   },
+  stateMachineOptions: {
+    actions: {
+      assignHouseholdMembers: assign((context) => {
+        const { application } = context
+        const assigneesNationalIds = getAssigneeNationalIds(application)
+        if (assigneesNationalIds.length > 0) {
+          const normalized = assigneesNationalIds
+            .filter((id) => kennitala.isValid(id))
+            .map((id) => kennitala.sanitize(id))
+          set(application, 'assignees', normalized)
+        }
+        return context
+      }),
+      assignToInstitution: assign((context) => {
+        const { application } = context
+        const existing = (application.assignees ?? []).map((id) =>
+          kennitala.isValid(id) ? kennitala.sanitize(id) : id,
+        )
+        const hmsInstitutionNationalId = kennitala.sanitize(
+          InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+        )
+        // Gervimaður Bretland — dev only, so institution UI can be tested locally
+        const devInstitutionTesterNationalId = kennitala.sanitize('0101304929')
+        set(application, 'assignees', [
+          ...new Set([
+            ...existing,
+            hmsInstitutionNationalId,
+            devInstitutionTesterNationalId,
+          ]),
+        ])
+        return context
+      }),
+      clearAssignees: assign((context) => {
+        const { application } = context
+        set(application, 'assignees', [])
+        return context
+      }),
+    },
+  },
   mapUserToRole(
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (nationalId === application.applicant) {
+    const normalizedNationalId = kennitala.isValid(nationalId)
+      ? kennitala.sanitize(nationalId)
+      : nationalId
+    if (
+      normalizedNationalId ===
+        kennitala.sanitize(
+          InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+        ) ||
+      normalizedNationalId === kennitala.sanitize('0101304929') // Gervimaður Bretland, only for testing
+    ) {
+      return Roles.INSTITUTION
+    }
+
+    if (
+      nationalId === application.applicant ||
+      normalizedNationalId ===
+        (kennitala.isValid(application.applicant)
+          ? kennitala.sanitize(application.applicant)
+          : application.applicant)
+    ) {
       return Roles.APPLICANT
     }
-    return undefined
+
+    const assignees = application.assignees ?? []
+    if (!assignees.includes(normalizedNationalId)) {
+      return undefined
+    }
+
+    const signed = (application.answers?.householdMemberApprovals ??
+      []) as string[]
+    const hasSigned = signed.some(
+      (id) =>
+        (kennitala.isValid(id) ? kennitala.sanitize(id) : id) ===
+        normalizedNationalId,
+    )
+    return hasSigned ? Roles.SIGNED_ASSIGNEE : Roles.UNSIGNED_ASSIGNEE
   },
 }
 

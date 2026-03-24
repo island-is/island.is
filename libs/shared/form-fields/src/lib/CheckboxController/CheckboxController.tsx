@@ -70,6 +70,12 @@ export const CheckboxController: FC<
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
+  const checkboxValuesArray = (value: unknown): string[] => {
+    if (Array.isArray(value)) return value
+    if (value === '' || value === null || value === undefined) return []
+    return [String(value)]
+  }
+
   // eslint-disable-next-line func-style
   function handleSelect(option: Option, checkedValues: string[]) {
     const excludeOptionsLookup = options.map((o) => o.excludeOthers && o.value)
@@ -109,7 +115,7 @@ export const CheckboxController: FC<
                   clearErrors(id)
                   const newChoices = handleSelect(
                     option,
-                    Array.isArray(value) ? value : [value],
+                    checkboxValuesArray(value),
                   )
                   onChange(newChoices)
                   setValue(id, newChoices)
@@ -131,7 +137,7 @@ export const CheckboxController: FC<
                   }
                 }}
                 rightContent={option.rightContent}
-                checked={value && value.includes(option.value)}
+                checked={checkboxValuesArray(value).includes(option.value)}
                 name={name}
                 id={`${id}[${index}]`}
                 label={option.label}

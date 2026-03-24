@@ -16,21 +16,6 @@ export const incomeSection = buildSection({
       title: m.draftMessages.incomeSection.multiFieldTitle,
       description: m.draftMessages.incomeSection.multiFieldDescription,
       children: [
-        buildDescriptionField({
-          id: 'incomeDescription',
-          description: m.draftMessages.incomeSection.description,
-        }),
-        buildDisplayField({
-          id: 'incomeDisplayField',
-          label: m.draftMessages.incomeSection.displayFieldTitle,
-          // TODO: fetch this number from skatturinn
-          value: (answers) => {
-            return '450.000'
-          },
-          rightAlign: true,
-          variant: 'currency',
-          marginBottom: 4,
-        }),
         buildFileUploadField({
           id: 'incomeFileUploadField',
           title: m.draftMessages.incomeSection.fileUploadTitle,

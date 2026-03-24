@@ -22,10 +22,6 @@ export const paymentSection = buildSection({
       description: m.draftMessages.paymentSection.multiFieldDescription,
       children: [
         buildRadioField({
-          condition: (answers) => {
-            console.log('answers: ', answers)
-            return true
-          },
           id: 'payment.paymentRadio',
           title: m.draftMessages.paymentSection.paymentRadioTitle,
           titleVariant: 'h3',
