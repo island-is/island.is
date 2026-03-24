@@ -88,7 +88,7 @@ export const canDeleteCase = (
 }
 
 export const canCancelAppeal = (
-  theCase: Pick<Case, 'type' | 'appealState' | 'prosecutorPostponedAppealDate'>,
+  theCase: Pick<Case, 'type' | 'appealCase' | 'prosecutorPostponedAppealDate'>,
   user: TUser,
 ): boolean => {
   if (!isProsecutionUser(user) || !isRequestCase(theCase.type)) {
@@ -96,8 +96,8 @@ export const canCancelAppeal = (
   }
 
   if (
-    (theCase.appealState === CaseAppealState.APPEALED ||
-      theCase.appealState === CaseAppealState.RECEIVED) &&
+    (theCase.appealCase?.appealState === CaseAppealState.APPEALED ||
+      theCase.appealCase?.appealState === CaseAppealState.RECEIVED) &&
     theCase.prosecutorPostponedAppealDate
   ) {
     return true
@@ -109,6 +109,7 @@ export const canCancelAppeal = (
 export const getContextMenuActions = (
   theCase: Pick<
     Case,
+    // Todo - need context menu includes
     'type' | 'state' | 'appealState' | 'prosecutorPostponedAppealDate'
   >,
   user: TUser,

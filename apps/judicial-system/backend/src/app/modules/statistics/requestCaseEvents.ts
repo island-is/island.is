@@ -49,9 +49,9 @@ const commonFields = (c: Case) => {
     requestDecisionDescriptor: c.decision
       ? getDecisionDescriptor(c.decision)
       : '',
-    courtOfAppealDecision: c.appealRulingDecision,
-    courtOfAppealDecisionDescriptor: c.appealRulingDecision
-      ? getAppealRulingDecisionDescriptor(c.appealRulingDecision)
+    courtOfAppealDecision: c.appealCase?.appealRulingDecision,
+    courtOfAppealDecisionDescriptor: c.appealCase?.appealRulingDecision
+      ? getAppealRulingDecisionDescriptor(c.appealCase?.appealRulingDecision)
       : '',
     parentCaseId: c.parentCaseId,
   }
@@ -274,7 +274,7 @@ const requestCompleted = (c: Case): RequestCaseEvent | undefined => {
 const caseReceivedByCourtOfAppeals = (
   c: Case,
 ): RequestCaseEvent | undefined => {
-  const date = c.appealReceivedByCourtDate?.toISOString()
+  const date = c.appealCase?.appealReceivedByCourtDate?.toISOString()
   if (!date) {
     return undefined
   }

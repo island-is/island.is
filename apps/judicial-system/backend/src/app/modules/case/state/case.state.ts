@@ -204,7 +204,7 @@ const requestCaseCompletionSideEffect =
     }
 
     // Handle appealed in court
-    const hasBeenAppealed = update.appealState ?? theCase.appealState
+    const hasBeenAppealed = update.appealState ?? theCase.appealCase?.appealState
     const prosecutorAppealedInCourt =
       (update.prosecutorAppealDecision ?? theCase.prosecutorAppealDecision) ===
       CaseAppealDecision.APPEAL
@@ -448,7 +448,7 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
             // TODO: Decide what to do with ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             // TODO: Decide what to do if correcting appeal
             const currentAppealRulingDecision =
-              newUpdate.appealRulingDecision ?? theCase.appealRulingDecision
+              newUpdate.appealRulingDecision ?? theCase.appealCase?.appealRulingDecision
 
             if (
               currentAppealRulingDecision ===
@@ -458,12 +458,12 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
             ) {
               // The court of appeals has modified the ruling of a restriction case
               newUpdate.validToDate =
-                update.appealValidToDate ?? theCase.appealValidToDate
+                update.appealValidToDate ?? theCase.appealCase?.appealValidToDate
               newUpdate.isCustodyIsolation =
                 update.isAppealCustodyIsolation ??
-                theCase.isAppealCustodyIsolation
+                theCase.appealCase?.isAppealCustodyIsolation
               newUpdate.isolationToDate =
-                update.appealIsolationToDate ?? theCase.appealIsolationToDate
+                update.appealIsolationToDate ?? theCase.appealCase?.appealIsolationToDate
             } else if (
               currentAppealRulingDecision === CaseAppealRulingDecision.REPEAL
             ) {
@@ -506,8 +506,8 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
           // Otherwise the court of appeals never knew of the appeal in
           // the first place so it remains withdrawn without a decision.
           if (
-            !(update.appealRulingDecision ?? theCase.appealRulingDecision) &&
-            (update.appealState ?? theCase.appealState) ===
+            !(update.appealRulingDecision ?? theCase.appealCase?.appealRulingDecision) &&
+            (update.appealState ?? theCase.appealCase?.appealState) ===
               CaseAppealState.RECEIVED
           ) {
             return {
@@ -558,7 +558,7 @@ const transitionRequestCase = (
   actor: Actor,
 ): UpdateCase => {
   const currentState = update.state ?? theCase.state
-  const currentAppealState = update.appealState ?? theCase.appealState
+  const currentAppealState = update.appealState ?? theCase.appealCase?.appealState
 
   if (
     !isRequestCaseTransition(transition) ||

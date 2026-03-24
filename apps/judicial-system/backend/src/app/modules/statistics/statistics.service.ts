@@ -29,6 +29,7 @@ import {
 
 import { AwsS3Service } from '../aws-s3'
 import {
+  AppealCase,
   Case,
   CaseRepositoryService,
   DateLog,
@@ -377,6 +378,11 @@ export class StatisticsService {
           where: { type: CaseNotificationType.APPEAL_COMPLETED },
           order: [['created', 'DESC']],
           separate: true,
+        },
+        {
+          model: AppealCase,
+          as: 'appealCase',
+          required: false,
         },
       ],
     })

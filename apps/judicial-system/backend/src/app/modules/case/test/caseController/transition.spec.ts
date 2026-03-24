@@ -610,7 +610,7 @@ describe('CaseController - Transition', () => {
             type,
             state: caseState,
             caseFiles,
-            appealState: currentAppealState,
+            appealCase: { appealState: currentAppealState },
             origin: CaseOrigin.LOKE,
           } as Case
 
@@ -619,7 +619,7 @@ describe('CaseController - Transition', () => {
             type,
             state: caseState,
             caseFiles,
-            appealState: newAppealState,
+            appealCase: { appealState: newAppealState },
             origin: CaseOrigin.LOKE,
           } as Case
 
