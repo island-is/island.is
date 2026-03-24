@@ -51,6 +51,7 @@ export const tableViewSelectionSection = buildSection({
               editable: true,
               inputType: 'number',
               min: 0,
+              placeholderKey: 'currentMilage',
             },
           ],
           searchLabel: m.tableView.searchLabel,

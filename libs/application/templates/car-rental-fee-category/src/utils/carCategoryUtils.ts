@@ -1,5 +1,5 @@
 import { EntryModel } from '@island.is/clients-rental-day-rate'
-import { isDayRateEntryActive } from './dayRateUtils'
+import { isDayRateEntryActive, is15DaysOrMoreFromDate } from './dayRateUtils'
 import { RateCategory } from './constants'
 import {
   CarCategoryError,
@@ -44,7 +44,11 @@ export const getManualMileageTableRows = (
   vehicles: CurrentVehicleWithMilage[] | undefined,
   rates: EntryModel[] | undefined,
   rateToChangeTo: RateCategory | undefined,
-): Array<{ permno: string; latestMilage: undefined }> => {
+): Array<{
+  permno: string
+  latestMilage: undefined
+  currentMilage: number | null
+}> => {
   if (!vehicles?.length) return []
 
   const currentCarMap = buildCurrentCarMap(vehicles, rates)
@@ -56,11 +60,21 @@ export const getManualMileageTableRows = (
       const currentCar = currentCarMap[vehicle.permno]
       if (!currentCar) return false
 
-      return currentCar.category !== rateToChangeTo
+      if (currentCar.category === rateToChangeTo) return false
+
+      if (rateToChangeTo === RateCategory.KMRATE) {
+        const validFromDate = currentCar.activeDayRate?.validFrom
+        if (validFromDate && !is15DaysOrMoreFromDate(validFromDate)) {
+          return false
+        }
+      }
+
+      return true
     })
     .map((vehicle) => ({
       permno: vehicle.permno as string,
       latestMilage: undefined,
+      currentMilage: vehicle.milage ?? null,
     }))
 }
 

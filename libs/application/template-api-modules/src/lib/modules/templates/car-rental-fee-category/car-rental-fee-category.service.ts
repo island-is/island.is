@@ -3,10 +3,7 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Auth } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
-import {
-  RskRentalDayRateClient,
-  ValidVehicle,
-} from '@island.is/clients-rental-day-rate'
+import { RskRentalDayRateClient } from '@island.is/clients-rental-day-rate'
 import { EntryModel } from '@island.is/clients-rental-day-rate'
 import { getValueViaPath } from '@island.is/application/core'
 import { AttachmentS3Service } from '../../shared/services'
@@ -40,13 +37,18 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
 
   async getCurrentVehicles({
     auth,
-  }: TemplateApiModuleActionProps): Promise<ValidVehicle[]> {
+  }: TemplateApiModuleActionProps): Promise<CurrentVehicleWithMilage[]> {
     try {
-      return await this.rentalsApiWithAuth(
+      const vehicles = await this.rentalsApiWithAuth(
         auth,
       ).apiDayRateEntriesEntityIdEligibleVehiclesGet({
         entityId: auth.nationalId,
       })
+
+      return vehicles.map((v) => ({
+        permno: v.permno,
+        milage: v.mileage,
+      }))
     } catch (error) {
       this.logger.error(
         'Error getting vehicles with milage from Skatturinn',
