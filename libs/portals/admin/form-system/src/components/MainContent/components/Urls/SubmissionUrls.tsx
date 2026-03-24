@@ -43,7 +43,7 @@ export const SubmissionUrls = () => {
       return fs?.isPhoneRequired != null && fs?.isEmailRequired != null
     })
 
-    await Promise.allSettled(
+    const results = await Promise.allSettled(
       toUpdate.map((field) =>
         updateField({
           variables: {
@@ -60,6 +60,14 @@ export const SubmissionUrls = () => {
         }),
       ),
     )
+    const failures = results.filter((r) => r.status === 'rejected')
+    if (failures.length > 0) {
+      throw new Error(
+        `Failed to persist Zendesk applicant requirements: ${JSON.stringify(
+          failures,
+        )}`,
+      )
+    }
   }
 
   return (

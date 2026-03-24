@@ -24,7 +24,6 @@ const individuals: ApplicantTypesEnum[] = [
 ]
 
 export const Applicants = ({ applicantField }: Props) => {
-  console.log('applicantField', applicantField)
   const { dispatch } = useApplicationContext()
   const { applicantType } = applicantField.fieldSettings ?? {}
   const isLegalEntity =

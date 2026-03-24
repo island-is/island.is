@@ -18,7 +18,7 @@ module.exports = {
        ),
        "modified" = CURRENT_TIMESTAMP
        WHERE "field_type" = 'APPLICANT'
-         AND ("field_settings"->>'applicantType') IS DISTINCT FROM 'LEGAL_ENTITY_OF_PROCURATION_HOLDER'`,
+         AND ("field_settings"->>'applicantType') NOT IN ('LEGAL_ENTITY', 'LEGAL_ENTITY_OF_PROCURATION_HOLDER')`,
         { transaction: t },
       )
     })
@@ -31,7 +31,7 @@ module.exports = {
        SET "field_settings" = (COALESCE("field_settings", '{}'::jsonb) - 'isPhoneRequired' - 'isEmailRequired'),
            "modified" = CURRENT_TIMESTAMP
        WHERE "field_type" = 'APPLICANT'
-         AND ("field_settings"->>'applicantType') IS DISTINCT FROM 'LEGAL_ENTITY_OF_PROCURATION_HOLDER'`,
+         AND ("field_settings"->>'applicantType') NOT IN ('LEGAL_ENTITY', 'LEGAL_ENTITY_OF_PROCURATION_HOLDER')`,
         { transaction: t },
       )
     })

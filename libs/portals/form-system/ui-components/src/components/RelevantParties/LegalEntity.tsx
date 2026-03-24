@@ -56,9 +56,9 @@ export const LegalEntity = ({
                   name="address"
                   placeholder={formatMessage(m.address)}
                   readOnly
-                  defaultValue={
+                  value={
                     companyData?.formSystemCompanyByNationalId?.address
-                      ?.streetAddress
+                      ?.streetAddress ?? ''
                   }
                 />
               </GridColumn>
@@ -69,9 +69,9 @@ export const LegalEntity = ({
                     name="postalCode"
                     placeholder={formatMessage(m.postalCode)}
                     readOnly
-                    defaultValue={
+                    value={
                       companyData?.formSystemCompanyByNationalId?.address
-                        ?.postalCode
+                        ?.postalCode ?? ''
                     }
                   />
                 </Box>
