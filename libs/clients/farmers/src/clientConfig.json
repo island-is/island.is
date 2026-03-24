@@ -156,6 +156,18 @@
             "in": "query",
             "name": "limit",
             "description": "Default is 20, will not be used when using the next query parameter"
+          },
+          {
+            "schema": { "type": "string" },
+            "in": "query",
+            "name": "order",
+            "example": "-contract",
+            "examples": {
+              "withoutDirection": { "value": "paymentCategory" },
+              "descOrder": { "value": "-paymentDate" },
+              "ascOrder": { "value": "-contract" }
+            },
+            "description": "Default is -paymentDate, +- as first character is optional direction, + is asc and - is desc"
           }
         ],
         "responses": {
@@ -328,6 +340,7 @@
       "Payment": {
         "type": "object",
         "properties": {
+          "id": { "type": "integer", "description": "Unique payment identifier" },
           "farmId": { "type": "integer", "example": "1234561" },
           "paymentDate": {
             "type": "string",

@@ -54,12 +54,16 @@ export class FarmersClientService {
     user: User,
     farmId: string,
     cursor?: string,
+    order?: string,
   ): Promise<PaginatedPayments | null> => {
     const response = await withAuthContext(user, () =>
       dataOr404Null(
         searchPayments({
           path: { farmId },
-          query: cursor ? { next: cursor } : {},
+          query: {
+            ...(cursor ? { next: cursor } : {}),
+            ...(order ? { order } : {}),
+          },
         }),
       ),
     )

@@ -2,7 +2,7 @@ import { Fragment, useMemo, useState } from 'react'
 import { ApolloError } from '@apollo/client'
 import { Column, Row, useExpanded, useSortBy, useTable } from 'react-table'
 import AnimateHeight from 'react-animate-height'
-import { Box, Button, Table as T, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Table as T, Text } from '@island.is/island-ui/core'
 import { EmptyTable } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import * as styles from './FarmerLandsTable.css'
@@ -14,6 +14,7 @@ interface FarmerLandsTableProps<T extends object> {
   error?: ApolloError
   emptyMessage: string
   renderExpandedRow?: (row: Row<T>) => React.ReactNode
+  getRowId?: (row: T, relativeIndex: number) => string
 }
 
 export const FarmerLandsTable = <T extends object>({
@@ -23,6 +24,7 @@ export const FarmerLandsTable = <T extends object>({
   error,
   emptyMessage,
   renderExpandedRow,
+  getRowId,
 }: FarmerLandsTableProps<T>) => {
   const [collapsingRows, setCollapsingRows] = useState<Set<string>>(new Set())
 
@@ -66,7 +68,7 @@ export const FarmerLandsTable = <T extends object>({
   }, [providedColumns, renderExpandedRow])
 
   const tableInstance = useTable(
-    { columns, data },
+    { columns, data, ...(getRowId ? { getRowId } : {}) },
     useSortBy,
     ...(renderExpandedRow ? [useExpanded] : []),
   )
@@ -102,7 +104,20 @@ export const FarmerLandsTable = <T extends object>({
                   cursor: column.id !== 'expander' ? 'pointer' : 'default',
                 }}
               >
-                {column.render('Header')}
+                <Box display="flex" flexDirection="row" alignItems="center">
+                  {column.render('Header')}
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {(column as any).isSorted && (
+                    <Box marginLeft={1}>
+                      <Icon
+                        color="blue400"
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        icon={(column as any).isSortedDesc ? 'caretDown' : 'caretUp'}
+                        size="small"
+                      />
+                    </Box>
+                  )}
+                </Box>
               </T.HeadData>
             ))}
           </T.Row>

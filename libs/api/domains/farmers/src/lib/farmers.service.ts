@@ -11,6 +11,10 @@ import {
 } from './mapper'
 import { FarmerLand } from './models/farmerLand.model'
 import { FarmerLandSubsidiesCollection } from './models/farmerLandSubsidiesCollection.model'
+import {
+  FarmerSubsidyOrderDirection,
+  FarmerSubsidyOrderField,
+} from './models/farmerLandSubsidiesInput.model'
 import { LandBeneficiary } from './models/landBeneficiary.model'
 import { LandRegistryEntry } from './models/landRegistryEntry.model'
 import { LandsCollection } from './models/farmerLandsCollection.model'
@@ -59,16 +63,23 @@ export class FarmersService {
     user: User,
     farmId: string,
     cursor?: string,
+    orderField?: FarmerSubsidyOrderField,
+    orderDirection?: FarmerSubsidyOrderDirection,
   ): Promise<FarmerLandSubsidiesCollection> {
+    const order = orderField
+      ? `${orderDirection === FarmerSubsidyOrderDirection.Descending ? '-' : '+'}${orderField}`
+      : undefined
+
     const response = await this.farmersClientService.getFarmPayments(
       user,
       farmId,
       cursor,
+      order,
     )
     return {
-      data: (response?.data ?? []).map((p) =>
-        mapToFarmerLandSubsidy(p, farmId),
-      ),
+      data: (response?.data ?? [])
+        .map((p) => mapToFarmerLandSubsidy(p, farmId))
+        .filter(isDefined),
       totalCount: response?.total ?? 0,
       pageInfo: {
         hasNextPage: !!response?.next,
