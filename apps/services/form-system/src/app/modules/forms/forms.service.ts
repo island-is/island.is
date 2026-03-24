@@ -22,7 +22,7 @@ import {
   UpdateFormStatusDto,
 } from '@island.is/form-system/shared'
 import { randomUUID } from 'crypto'
-import { Op, UniqueConstraintError } from 'sequelize'
+import { Op, Transaction, UniqueConstraintError } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { v4 as uuidV4 } from 'uuid'
 import {
@@ -63,6 +63,8 @@ import { Form } from './models/form.model'
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { Dependency } from '../../dataTypes/dependency.model'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { Value } from '../applications/models/value.model'
+import { FileService } from '../file/file.service'
 
 @Injectable()
 export class FormsService {
@@ -86,6 +88,7 @@ export class FormsService {
     private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
+    private readonly fileService: FileService,
   ) {}
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
@@ -137,7 +140,8 @@ export class FormsService {
       'hasPayment',
       'beenPublished',
       'status',
-      'daysUntilApplicationPrune',
+      'draftDaysToLive',
+      'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'hasSummaryScreen',
       'completedSectionInfo',
@@ -420,10 +424,23 @@ export class FormsService {
   ): Promise<FormResponseDto> {
     await this.sequelize.transaction(async (transaction) => {
       try {
-        await this.applicationModel.destroy({
+        const applications = await this.applicationModel.findAll({
           where: { formId: id },
+          include: [
+            {
+              model: Value,
+              as: 'values',
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            },
+          ],
           transaction,
         })
+
+        for (const application of applications) {
+          await this.cleanupApplicationFiles(application, transaction)
+          await application.destroy({ transaction })
+        }
 
         form.status = FormStatus.PUBLISHED
         form.beenPublished = true
@@ -472,10 +489,23 @@ export class FormsService {
 
     await this.sequelize.transaction(async (transaction) => {
       try {
-        await this.applicationModel.destroy({
+        const applications = await this.applicationModel.findAll({
           where: { formId: id },
+          include: [
+            {
+              model: Value,
+              as: 'values',
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            },
+          ],
           transaction,
         })
+
+        for (const application of applications) {
+          await this.cleanupApplicationFiles(application, transaction)
+          await application.destroy({ transaction })
+        }
 
         const slugToBeArchived = formToBeArchived.slug
         formToBeArchived.status = FormStatus.ARCHIVED
@@ -544,10 +574,63 @@ export class FormsService {
     return new FormResponseDto()
   }
 
+  private async cleanupApplicationFiles(
+    application: Application,
+    transaction?: Transaction,
+  ): Promise<void> {
+    for (const value of application.values ?? []) {
+      if (value.fieldType !== FieldTypesEnum.FILE) continue
+
+      let parsed: unknown = value.json
+      if (typeof value.json === 'string') {
+        try {
+          parsed = JSON.parse(value.json)
+        } catch (error) {
+          this.logger.warn('Skipping file cleanup due to invalid value.json', {
+            valueId: value.id,
+            error,
+          })
+          continue
+        }
+      }
+
+      const rawS3Keys = (parsed as { s3Key?: unknown } | undefined)?.s3Key
+      const s3Keys: string[] = Array.isArray(rawS3Keys)
+        ? rawS3Keys.filter(
+            (k): k is string => typeof k === 'string' && k.length > 0,
+          )
+        : typeof rawS3Keys === 'string' && rawS3Keys.length > 0
+        ? [rawS3Keys]
+        : []
+
+      this.logger.debug(`Deleting s3Keys for value ${value.id}:`, s3Keys)
+
+      for (const key of s3Keys) {
+        await this.fileService.deleteFile(key, value.id, transaction)
+      }
+    }
+  }
+
   private async deleteApplications(id: string): Promise<FormResponseDto> {
     try {
-      await this.applicationModel.destroy({
-        where: { formId: id, isTest: true },
+      await this.sequelize.transaction(async (transaction) => {
+        const applications = await this.applicationModel.findAll({
+          where: { formId: id, isTest: true },
+          include: [
+            {
+              model: Value,
+              as: 'values',
+              where: { fieldType: FieldTypesEnum.FILE },
+              required: false,
+            },
+          ],
+          transaction,
+        })
+
+        for (const application of applications) {
+          await this.cleanupApplicationFiles(application, transaction)
+          await application.destroy({ transaction })
+        }
       })
     } catch (error) {
       throw new InternalServerErrorException(
@@ -756,7 +839,8 @@ export class FormsService {
       'hasPayment',
       'beenPublished',
       'status',
-      'daysUntilApplicationPrune',
+      'draftDaysToLive',
+      'submissionDaysToLive',
       'allowProceedOnValidationFail',
       'zendeskInternal',
       'useValidate',
@@ -813,7 +897,8 @@ export class FormsService {
       'modified',
       'displayOrder',
       'isHidden',
-      'multiset',
+      'multiMax',
+      'isMulti',
       'shouldValidate',
       'shouldPopulate',
     ]

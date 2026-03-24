@@ -14,14 +14,24 @@ import { Organization } from '@island.is/shared/types'
 
 interface StatisticsProps {
   isSuperAdmin: boolean
-  organizationListFromContentful: Organization[]
-  isLoadingOrganizationsFromContentful: boolean
+  availableOrganizations: Organization[]
+  isLoadingOrganizations: boolean
+}
+
+const getFormattedDate = (date?: Date): string => {
+  if (!date) {
+    return ''
+  }
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 const Statistics = ({
   isSuperAdmin,
-  organizationListFromContentful,
-  isLoadingOrganizationsFromContentful,
+  availableOrganizations,
+  isLoadingOrganizations,
 }: StatisticsProps) => {
   const { formatMessage } = useLocale()
   const [dateInterval, setDateInterval] = useState<
@@ -31,18 +41,8 @@ const Statistics = ({
     to: new Date(),
   })
   const [error, setError] = useState<string | null>(null)
-
-  const getFormattedDate = (date?: Date) => {
-    if (!date) {
-      return ''
-    }
-
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const day = String(date.getDate()).padStart(2, '0')
-
-    return `${year}-${month}-${day}`
-  }
+  const [selectedInstitutionNationalId, setSelectedInstitutionNationalId] =
+    useState('')
 
   const onDateChange = (period: ApplicationFilters['period']) => {
     const dateChanging = period.from
@@ -51,6 +51,7 @@ const Statistics = ({
       ? { to: period.to }
       : {}
     setDateInterval({ ...dateInterval, ...dateChanging })
+    setSelectedInstitutionNationalId('')
   }
 
   const hasSelectedDates = dateInterval.from && dateInterval.to
@@ -101,17 +102,33 @@ const Statistics = ({
     ? superStatisticsData?.applicationV2ApplicationStatisticsSuperAdmin
     : institutionStatisticsData?.applicationV2ApplicationStatisticsInstitutionAdmin
 
+  const statisticsOrganizationOptions = isSuperAdmin
+    ? availableOrganizations
+    : undefined
+
+  const filteredDataRows = selectedInstitutionNationalId
+    ? (dataRows ?? []).filter(
+        (r) => r.institutionNationalId === selectedInstitutionNationalId,
+      )
+    : dataRows
+
   const isLoading =
     superStatisticsLoading ||
     institutionStatisticsLoading ||
-    isLoadingOrganizationsFromContentful
+    isLoadingOrganizations
 
   return (
     <Box>
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.statistics)}
       </Text>
-      <StatisticsForm dateInterval={dateInterval} onDateChange={onDateChange} />
+      <StatisticsForm
+        dateInterval={dateInterval}
+        onDateChange={onDateChange}
+        organizations={statisticsOrganizationOptions} // undefined for institution admins → no dropdown rendered
+        selectedInstitutionNationalId={selectedInstitutionNationalId}
+        onInstitutionChange={setSelectedInstitutionNationalId}
+      />
       {isLoading ? (
         <Box marginTop={[3, 3, 6]}>
           <SkeletonLoader
@@ -124,8 +141,8 @@ const Statistics = ({
       ) : (
         <StatisticsTable
           isSuperAdmin={isSuperAdmin}
-          dataRows={dataRows}
-          organizations={organizationListFromContentful}
+          dataRows={filteredDataRows}
+          organizations={availableOrganizations}
         />
       )}
       {error && <Box marginTop={[3, 3, 6]}>{error}</Box>}

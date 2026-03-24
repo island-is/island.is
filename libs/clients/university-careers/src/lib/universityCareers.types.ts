@@ -96,4 +96,6 @@ export type StudentFileType =
   | 'diploma'
   | 'diploma_supplement'
   | 'course_descriptions'
+  | 'micro_credentials_supplement'
+  | 'micro_credentials_transcript'
   | 'unknown'

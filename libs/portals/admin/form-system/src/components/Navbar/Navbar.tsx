@@ -26,7 +26,10 @@ import { removeTypename } from '../../lib/utils/removeTypename'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
 import { NavComponent } from '../NavComponent/NavComponent'
 import * as styles from './Navbar.css'
-import { urlSettingsStep } from '../../lib/utils/getUrlSettingsSection'
+import {
+  lifetimeSettingsStep,
+  urlSettingsStep,
+} from '../../lib/utils/customSections'
 
 export const Navbar = () => {
   const {
@@ -142,6 +145,16 @@ export const Navbar = () => {
           activeItem: {
             type: 'Section',
             data: urlSettingsStep,
+          },
+        },
+      })
+    } else if (id === lifetimeSettingsStep.id) {
+      controlDispatch({
+        type: 'SET_ACTIVE_ITEM',
+        payload: {
+          activeItem: {
+            type: 'Section',
+            data: lifetimeSettingsStep,
           },
         },
       })
@@ -271,6 +284,14 @@ export const Navbar = () => {
           type="Section"
           data={urlSettingsStep}
           active={activeItem.data?.id === urlSettingsStep.id}
+          focusComponent={focusComponent}
+        />
+      </div>
+      <div>
+        <NavComponent
+          type="Section"
+          data={lifetimeSettingsStep}
+          active={activeItem.data?.id === lifetimeSettingsStep.id}
           focusComponent={focusComponent}
         />
       </div>

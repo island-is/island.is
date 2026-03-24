@@ -43,6 +43,7 @@ env:
 grantNamespaces:
   - 'islandis'
   - 'download-service'
+  - 'nginx-ingress-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -71,7 +72,7 @@ ingress:
     hosts:
       - host: 'regulations-admin-backend-xrd.internal.island.is'
         paths:
-          - '/'
+          - '/api'
 initContainer:
   containers:
     - args:

@@ -25,3 +25,5 @@ export type BffUser = {
   scopes: string[]
   profile: IdTokenClaims
 }
+
+export type SessionExpiredReason = 'expired' | 'session-changed'
