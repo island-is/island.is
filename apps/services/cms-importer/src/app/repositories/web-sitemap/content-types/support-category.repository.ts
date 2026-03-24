@@ -78,15 +78,5 @@ export class SupportCategoryRepository implements SitemapUrlFetcher {
           ? pageIndex + 1
           : -1,
     }
-
-    //     for (const item of supportCategoryResponse.data.items) {
-    //       const slug = item.fields.slug?.[LOCALE]
-    //       const enSlug = item.fields.slug?.[EN_LOCALE]
-    //       if (!slug && !enSlug) continue
-    //       urls.push({
-    //         loc: {
-    //           [LOCALE]: slug ? `https://island.is/adstod/${slug}` : '',
-    //           [EN_LOCALE]: enSlug ? `https://island.is/en/help/${enSlug}` : '',
-    //         },
   }
 }
