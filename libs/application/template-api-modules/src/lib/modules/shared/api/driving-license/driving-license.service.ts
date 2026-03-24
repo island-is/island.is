@@ -319,6 +319,16 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
+  async qualityPhotoAndSignature({ auth }: TemplateApiModuleActionProps) {
+    try {
+      return await this.drivingLicenseService.getHasQualityPhotoAndSignature({
+        token: auth.authorization,
+      })
+    } catch {
+      return null
+    }
+  }
+
   async jurisdictions(): Promise<Jurisdiction[]> {
     return await this.drivingLicenseService.getListOfJurisdictions()
   }

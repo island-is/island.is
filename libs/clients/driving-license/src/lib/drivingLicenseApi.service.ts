@@ -4,6 +4,7 @@ import {
   CanApplyForCategoryResult,
   DrivingAssessment,
   QualityPhoto,
+  QualityPhotoAndSignature,
 } from '..'
 import * as v4 from '../v4'
 import * as v5 from '../v5'
@@ -668,6 +669,38 @@ export class DrivingLicenseApi {
     })
     return {
       data: image,
+    }
+  }
+
+  async getHasQualityPhotoAndSignature(params: {
+    token: string
+  }): Promise<QualityPhotoAndSignature | null> {
+    try {
+      const res =
+        await this.imageApiV5.apiImagecontrollerV5HasqualityphotoandsignatureGet(
+          {
+            apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+            apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+            jwttoken: params.token.replace('Bearer ', ''),
+          },
+        )
+
+      if (!res || !res.imageId) {
+        return null
+      }
+
+      return {
+        imageId: res.imageId ?? null,
+        imageTypeId: res.imageTypeId ?? null,
+        imageTypeName: res.imageTypeName ?? null,
+        imageDate: res.imageDate ?? null,
+        signatureId: res.signatureId ?? null,
+        signatureTypeId: res.signatureTypeId ?? null,
+        signatureTypeName: res.signatureTypeName ?? null,
+        signatureDate: res.signatureDate ?? null,
+      }
+    } catch {
+      return null
     }
   }
 

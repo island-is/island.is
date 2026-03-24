@@ -111,6 +111,17 @@ export interface DrivingAssessment {
   created: Date | null
 }
 
+export interface QualityPhotoAndSignature {
+  imageId: number | null
+  imageTypeId: number | null
+  imageTypeName: string | null
+  imageDate: Date | null
+  signatureId: number | null
+  signatureTypeId: number | null
+  signatureTypeName: string | null
+  signatureDate: Date | null
+}
+
 export interface QualityPhoto {
   data: string
 }

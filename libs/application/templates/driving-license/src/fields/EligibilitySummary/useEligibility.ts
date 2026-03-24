@@ -90,6 +90,21 @@ export const useEligibility = (
     hasQualityPhoto ||
     thjodskraPhotos.some((p) => p.contentSpecification === 'FACIAL')
 
+  // BE-specific photo check using the new combined endpoint
+  const qualityPhotoAndSignature = getValueViaPath<{
+    imageTypeId: number | null
+    signatureTypeId: number | null
+  }>(application.externalData, 'qualityPhotoAndSignature.data')
+
+  const QUALITY_IMAGE_TYPE_IDS = [1, 11]
+  const hasQualityPhotoForBE = qualityPhotoAndSignature?.imageTypeId
+    ? QUALITY_IMAGE_TYPE_IDS.includes(qualityPhotoAndSignature.imageTypeId)
+    : false
+
+  const hasUsablePhotoForBE =
+    hasQualityPhotoForBE ||
+    thjodskraPhotos.some((p) => p.contentSpecification === 'FACIAL')
+
   const hasExtendedDrivingLicense = (
     currentLicense: DrivingLicense | undefined,
     drivingLicenseIssued: string | undefined,
@@ -140,12 +155,12 @@ export const useEligibility = (
         isEligible: loading
           ? undefined
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
-            hasAnyPhoto,
+            hasUsablePhotoForBE,
         requirements: [
           ...eligibility,
           {
             key: RequirementKey.hasNoPhoto,
-            requirementMet: hasAnyPhoto,
+            requirementMet: hasUsablePhotoForBE,
           },
         ],
       },
