@@ -56,6 +56,7 @@ export const CategoryItems = ({
                     icon="arrowForward"
                     iconType="filled"
                     variant="text"
+                    size="small"
                     as="span"
                   >
                     {seeMoreText}
@@ -135,6 +136,7 @@ export const CategoryItems = ({
                   icon="arrowForward"
                   iconType="filled"
                   variant="text"
+                  size="small"
                   as="span"
                 >
                   {seeMoreText}

@@ -62,6 +62,7 @@ export const OrganizationsSection = ({
                   icon="arrowForward"
                   iconType="filled"
                   variant="text"
+                  size="small"
                   as="span"
                 >
                   {seeMoreText}
@@ -105,6 +106,7 @@ export const OrganizationsSection = ({
                   icon="arrowForward"
                   iconType="filled"
                   variant="text"
+                  size="small"
                   as="span"
                 >
                   {seeMoreText}

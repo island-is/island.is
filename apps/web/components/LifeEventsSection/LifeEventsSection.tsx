@@ -51,6 +51,7 @@ export const LifeEventsSection = ({
                 icon="arrowForward"
                 iconType="filled"
                 variant="text"
+                size="small"
                 as="span"
               >
                 {seeMoreText}
@@ -108,6 +109,7 @@ export const LifeEventsSection = ({
                 icon="arrowForward"
                 iconType="filled"
                 variant="text"
+                size="small"
                 as="span"
               >
                 {seeMoreText}
