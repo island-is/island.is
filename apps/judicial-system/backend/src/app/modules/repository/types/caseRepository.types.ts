@@ -13,6 +13,7 @@ import {
   stringTypes,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
@@ -37,6 +38,7 @@ export const caseInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
   { model: Institution, as: 'sharedWithProsecutorsOffice' },
+  { model: AppealCase, as: 'appealCase', required: false },
   {
     model: User,
     as: 'creatingProsecutor',
@@ -478,6 +480,8 @@ export interface UpdateCase
     | 'appealConclusion'
     | 'appealRulingDecision'
     | 'appealRulingModifiedHistory'
+    | 'defendantStatementDate'
+    | 'requestAppealRulingNotToBePublished'
     | 'requestSharedWithDefender'
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
@@ -515,3 +519,43 @@ export interface UpdateCase
   withCourtSessions?: boolean
   courtRecordHash?: string | null
 }
+
+export const appealCaseFields: (keyof UpdateAppealCase)[] = [
+  'appealState',
+  'appealCaseNumber',
+  'appealReceivedByCourtDate',
+  'prosecutorStatementDate',
+  'defendantStatementDate',
+  'appealAssistantId',
+  'appealJudge1Id',
+  'appealJudge2Id',
+  'appealJudge3Id',
+  'appealRulingDecision',
+  'appealConclusion',
+  'appealRulingModifiedHistory',
+  'requestAppealRulingNotToBePublished',
+  'appealValidToDate',
+  'isAppealCustodyIsolation',
+  'appealIsolationToDate',
+]
+
+export interface UpdateAppealCase
+  extends Pick<
+    AppealCase,
+    | 'appealState'
+    | 'appealCaseNumber'
+    | 'appealReceivedByCourtDate'
+    | 'prosecutorStatementDate'
+    | 'defendantStatementDate'
+    | 'appealAssistantId'
+    | 'appealJudge1Id'
+    | 'appealJudge2Id'
+    | 'appealJudge3Id'
+    | 'appealRulingDecision'
+    | 'appealConclusion'
+    | 'appealRulingModifiedHistory'
+    | 'requestAppealRulingNotToBePublished'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
+  > {}
