@@ -9,10 +9,8 @@ import {
 } from '@island.is/clients-rental-day-rate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  buildDayRateEntryMap,
   CarUsageRecord,
   DayRateRecord,
-  getMonthTotalDayRateDays,
   getUploadFileType,
   parseUploadFile,
   UploadSelection,
@@ -46,9 +44,14 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
     try {
       const now = new Date()
       const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-      const lastMonthIndex = lastMonthDate.getMonth()
+      const targetYear = lastMonthDate.getFullYear()
+      const targetMonthIndex = lastMonthDate.getMonth()
 
-      // Log the request url to the RSK day-rate API to debug
+      const targetFromUtc = new Date(Date.UTC(targetYear, targetMonthIndex, 1))
+      const targetToUtc = new Date(
+        Date.UTC(targetYear, targetMonthIndex + 1, 0),
+      )
+
       const resp = await this.rentalsApiWithAuth(auth)
         .withPreMiddleware(async ({ url, init }) => {
           const headers = init?.headers
@@ -70,29 +73,48 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           }
           this.logger.info('RSK day-rate request', reqData)
         })
-        .apiDayRateEntriesEntityIdGet({
+        .apiDayRateEntriesEntityIdPeriodsPeriodGet({
           entityId: auth.nationalId,
+          period: lastMonthDate,
         })
 
-      const dayRateEntryMap = buildDayRateEntryMap(resp)
+      const entries: Array<DayRateRecord> = resp
+        .map((entry) => {
+          if (!entry.fastnr || !entry.id) return null
 
-      const entries: Array<DayRateRecord> = Object.entries(dayRateEntryMap)
-        .map(([permno, data]) => {
-          const result = getMonthTotalDayRateDays({
-            dayRateEntries: data,
-            targetYear: lastMonthDate.getFullYear(),
-            targetMonthIndex: lastMonthIndex,
+          const alreadySubmitted = entry.rentalDaysEntries?.some((rde) => {
+            if (!rde.timabil) return false
+            const t = new Date(rde.timabil)
+            return (
+              t.getUTCFullYear() === targetYear &&
+              t.getUTCMonth() === targetMonthIndex
+            )
           })
 
-          if (!result) return null
-          const { totalDays, entryId } = result
+          if (alreadySubmitted) return null
 
-          if (totalDays === 0 || !entryId) return null
+          const entryValidFrom = entry.gildirFra
+            ? new Date(entry.gildirFra)
+            : targetFromUtc
+          const entryValidTo = entry.gildirTil
+            ? new Date(entry.gildirTil)
+            : targetToUtc
+
+          const start =
+            entryValidFrom > targetFromUtc ? entryValidFrom : targetFromUtc
+          const end = entryValidTo < targetToUtc ? entryValidTo : targetToUtc
+
+          if (end < start) return null
+
+          const totalDays =
+            Math.floor((end.getTime() - start.getTime()) / 86400000) + 1
+
+          if (totalDays <= 0) return null
 
           return {
-            permno,
+            permno: entry.fastnr,
             prevPeriodTotalDays: totalDays,
-            dayRateEntryId: entryId,
+            dayRateEntryId: entry.id,
           }
         })
         .filter((entry): entry is DayRateRecord => entry !== null)
