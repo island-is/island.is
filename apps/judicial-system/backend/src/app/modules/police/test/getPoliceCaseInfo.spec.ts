@@ -27,6 +27,8 @@ describe('PoliceController - Get police case info', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
+    ;(fetch as jest.Mock).mockReset()
+
     const { policeController } = await createTestingPoliceModule()
 
     givenWhenThen = async (
@@ -47,7 +49,12 @@ describe('PoliceController - Get police case info', () => {
 
   describe('police case info found', () => {
     const theUser = {} as User
-    const theCase = {} as Case
+    const theCase = {
+      defendants: [
+        { nationalId: '0101302399', noNationalId: false },
+        { nationalId: '', noNationalId: false },
+      ],
+    } as Case
     let then: Then
 
     beforeEach(async () => {
@@ -137,17 +144,6 @@ describe('PoliceController - Get police case info', () => {
         ],
       })
 
-      // getDefendantsFromPolice
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: async () => [
-          {
-            accusedNationalId: '0101302399',
-            accusedName: 'Test Defendant',
-          },
-        ],
-      })
-
       // getCaseUnitsFromPolice (GetRVMalseiningar)
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -211,6 +207,92 @@ describe('PoliceController - Get police case info', () => {
         { policeCaseNumber: '008-2013-000033' },
         { policeCaseNumber: '007-2026-000001' },
         { policeCaseNumber: '007-2026-000002' },
+      ])
+    })
+
+    it('should not fetch police defendants when case has national ids', () => {
+      const mockFetch = fetch as jest.Mock
+
+      expect(mockFetch).toHaveBeenCalledTimes(3)
+      expect(
+        mockFetch.mock.calls.some((call) =>
+          (call[0] as string).includes('/GetRVAdilarMals/'),
+        ),
+      ).toBe(false)
+    })
+  })
+
+  describe('police case info found with no usable national ids on case', () => {
+    const theUser = {} as User
+    const theCase = {
+      defendants: [{ nationalId: '', noNationalId: false }],
+    } as Case
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFetch = fetch as jest.Mock
+      // getPoliceCaseFiles
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          malsnumer: '007-2021-000001',
+          skjol: [],
+        }),
+      })
+
+      // getDigitalCaseFiles
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => [],
+      })
+
+      // getDefendantsFromPolice
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          {
+            accusedNationalId: '0101302399',
+            accusedName: 'Test Defendant',
+          },
+        ],
+      })
+
+      // getCaseUnitsFromPolice (GetRVMalseiningar)
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          {
+            upprunalegtMalsnumer: '007-2021-000001',
+            brotFra: '2021-02-23T13:17:00',
+            licencePlate: 'ABC-123',
+            gotuHeiti: 'Testgata',
+            gotuNumer: '3',
+            sveitafelag: 'Testbær',
+            artalNrGreinLidur: null,
+          },
+        ],
+      })
+
+      then = await givenWhenThen(uuid(), theUser, theCase)
+    })
+
+    it('should fetch police defendants as fallback', () => {
+      const mockFetch = fetch as jest.Mock
+
+      expect(mockFetch).toHaveBeenCalledTimes(4)
+      expect(
+        mockFetch.mock.calls.some((call) =>
+          (call[0] as string).includes('/GetRVAdilarMals/'),
+        ),
+      ).toBe(true)
+      expect(then.result).toEqual([
+        {
+          policeCaseNumber: '007-2021-000001',
+          place: 'Testgata 3, Testbær',
+          date: new Date('2021-02-23T13:17:00'),
+          licencePlate: 'ABC-123',
+          subtypes: [],
+        },
       ])
     })
   })

@@ -125,7 +125,17 @@ export class PoliceController {
   ): Promise<PoliceCaseInfo[]> {
     this.logger.debug(`Getting info for police case ${caseId}`)
 
-    return this.policeService.getPoliceCaseInfo(theCase.id, user)
+    const nationalIds =
+      theCase.defendants
+        ?.filter(
+          (
+            defendant,
+          ): defendant is typeof defendant & { nationalId: string } =>
+            !defendant.noNationalId && Boolean(defendant.nationalId),
+        )
+        .map((defendant) => defendant.nationalId) ?? []
+
+    return this.policeService.getPoliceCaseInfo(theCase.id, user, nationalIds)
   }
 
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)

@@ -803,6 +803,7 @@ export class PoliceService {
   async getPoliceCaseInfo(
     caseId: string,
     user: User,
+    nationalIds: string[] = [],
   ): Promise<PoliceCaseInfo[]> {
     try {
       const policeCaseResponse = await this.getPoliceCaseFiles(
@@ -816,10 +817,24 @@ export class PoliceService {
         user,
         'getPoliceCaseInfo',
       )
-      const defendants = await this.getDefendantsFromPolice(caseId, user)
+
+      const caseNationalIds = Array.from(
+        new Set(
+          nationalIds
+            .map((nationalId) => nationalId?.trim())
+            .filter((nationalId): nationalId is string => Boolean(nationalId)),
+        ),
+      )
+      const nationalIdsToUse =
+        caseNationalIds.length > 0
+          ? caseNationalIds
+          : (
+              await this.getDefendantsFromPolice(caseId, user)
+            ).map((defendant) => defendant.nationalId)
+
       const caseUnitsByDefendant = await this.getCaseUnitsFromPolice(
         caseId,
-        defendants.map((defendant) => defendant.nationalId),
+        nationalIdsToUse,
         user,
       )
 
