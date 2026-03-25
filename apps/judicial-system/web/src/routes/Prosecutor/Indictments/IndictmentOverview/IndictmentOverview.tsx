@@ -1,27 +1,16 @@
-import { FC, Fragment, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import {
-  Accordion,
-  AlertMessage,
-  Box,
-  Button,
-  Text,
-} from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { Accordion, AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
-  isDefenceUser,
-  isProsecutionUser,
   isRulingOrDismissalCase,
-  isSuccessfulServiceStatus,
 } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
-  AlternativeServiceAnnouncement,
   BlueBox,
   Conclusion,
   ConnectedCaseFilesAccordionItem,
@@ -39,127 +28,87 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
-  serviceAnnouncementsStrings,
   useIndictmentsLawsBroken,
   UserContext,
-  ZipButton,
 } from '@island.is/judicial-system-web/src/components'
 import InputPenalties from '@island.is/judicial-system-web/src/components/Inputs/InputPenalties'
 import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
-  Defendant,
+  IndictmentCaseReviewDecision,
   IndictmentDecision,
-  ServiceStatus,
-  Subpoena,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { grid } from '@island.is/judicial-system-web/src/utils/styles/recipes.css'
-import {
-  isCaseCivilClaimantSpokesperson,
-  isCaseDefendantDefender,
-  shouldDisplayGeneratedPdfFiles,
-} from '@island.is/judicial-system-web/src/utils/utils'
+import { shouldDisplayGeneratedPdfFiles } from '@island.is/judicial-system-web/src/utils/utils'
 
-import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
+import { ReviewDecision } from '../../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import {
   CONFIRM_PROSECUTOR_DECISION,
   ConfirmationModal,
-} from '../../PublicProsecutor/components/utils'
+} from '../../../PublicProsecutor/components/utils'
 import { strings } from './IndictmentOverview.strings'
 
-interface ServiceAnnouncementProps {
-  defendant: Defendant
-  subpoena: Subpoena
-}
-
-const ServiceAnnouncement: FC<ServiceAnnouncementProps> = (props) => {
-  const { defendant, subpoena } = props
-  const { formatMessage } = useIntl()
-
-  const getTitle = (defendantName?: string | null): string => {
-    const successMessage = formatMessage(
-      serviceAnnouncementsStrings.serviceStatusSuccess,
-    )
-
-    return defendantName
-      ? `${successMessage} - ${defendantName}`
-      : successMessage
-  }
-
-  const getMessage = (
-    servedBy?: string | null,
-    serviceDate?: string | null,
-    serviceStatus?: ServiceStatus | null,
-  ): string => {
-    const processServer =
-      serviceStatus === ServiceStatus.ELECTRONICALLY
-        ? formatMessage(strings.servedToElectronically)
-        : servedBy
-
-    return [processServer, formatDate(serviceDate, 'Pp')]
-      .filter(Boolean)
-      .join(', ')
-  }
-
-  return (
-    <AlertMessage
-      type="success"
-      title={getTitle(defendant.name)}
-      message={getMessage(
-        subpoena.servedBy,
-        subpoena.serviceDate,
-        subpoena.serviceStatus,
-      )}
-    />
-  )
-}
-
 const IndictmentOverview: FC = () => {
+  const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
+
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
   const caseIsClosed = isCompletedCase(workingCase.state)
-
-  const [modalVisible, setModalVisible] = useState<
-    ConfirmationModal | undefined
-  >()
-
   const hasLawsBroken = lawsBroken.size > 0
+  const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
+
   const hasMergeCases =
     workingCase.mergedCases && workingCase.mergedCases.length > 0
 
-  const displayGeneratedPDFs = shouldDisplayGeneratedPdfFiles(workingCase, user)
-
-  const isReviewMissing = workingCase.defendants?.some(
-    (defendant) => !defendant.indictmentReviewDecision,
-  )
-
   const shouldDisplayReviewDecision =
-    isCompletedCase(workingCase.state) &&
-    workingCase.indictmentReviewer?.id === user?.id &&
-    !workingCase.indictmentReviewedDate
-
-  const canAddFiles =
-    !isCompletedCase(workingCase.state) &&
-    isDefenceUser(user) &&
-    (isCaseDefendantDefender(user, workingCase) ||
-      isCaseCivilClaimantSpokesperson(user, workingCase)) &&
-    workingCase.indictmentDecision !==
-      IndictmentDecision.POSTPONING_UNTIL_VERDICT
+    caseIsClosed && workingCase.indictmentReviewer?.id === user?.id
 
   const isFine =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
   const indictmentAppealDeadlineIsInThePast =
     workingCase.indictmentVerdictAppealDeadlineExpired ?? false
+
+  const isReviewMissing = workingCase.defendants?.some(
+    (defendant) => !defendant.indictmentReviewDecision,
+  )
+
+  const [modalVisible, setModalVisible] = useState<
+    ConfirmationModal | undefined
+  >()
+
+  const [originalReviewDecisions, setOriginalReviewDecisions] = useState<
+    Record<string, IndictmentCaseReviewDecision | null | undefined>
+  >({})
+
+  // Store original review decisions when workingCase loads to see if they change
+  useEffect(() => {
+    if (
+      workingCase.defendants?.length &&
+      workingCase.defendants.every((d) => d.id) &&
+      !Object.keys(originalReviewDecisions).length
+    ) {
+      const decisions = workingCase.defendants.reduce((acc, defendant) => {
+        acc[defendant.id] = defendant.indictmentReviewDecision
+        return acc
+      }, {} as Record<string, IndictmentCaseReviewDecision | null | undefined>)
+      setOriginalReviewDecisions(decisions)
+    }
+  }, [workingCase.defendants, originalReviewDecisions])
+
+  const hasReviewDecisionChanged = workingCase.defendants?.some(
+    (defendant) =>
+      defendant.indictmentReviewDecision !==
+      originalReviewDecisions[defendant.id],
+  )
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -216,31 +165,6 @@ const IndictmentOverview: FC = () => {
               </Box>
             ),
         )}
-        {isDefenceUser(user) &&
-          workingCase.defendants?.map((defendant) => (
-            <Fragment key={defendant.id}>
-              {defendant.alternativeServiceDescription && (
-                <AlternativeServiceAnnouncement
-                  alternativeServiceDescription={
-                    defendant.alternativeServiceDescription
-                  }
-                  defendantName={defendant.name}
-                />
-              )}
-              {defendant.subpoenas
-                ?.filter((subpoena) =>
-                  isSuccessfulServiceStatus(subpoena.serviceStatus),
-                )
-                .map((subpoena) => (
-                  <Box key={`${defendant.id}${subpoena.id}`} marginBottom={2}>
-                    <ServiceAnnouncement
-                      defendant={defendant}
-                      subpoena={subpoena}
-                    />
-                  </Box>
-                ))}
-            </Fragment>
-          ))}
         <div className={grid({ gap: 5, marginBottom: 10 })}>
           {caseHasBeenReceivedByCourt &&
             workingCase.court &&
@@ -276,7 +200,7 @@ const IndictmentOverview: FC = () => {
               <InfoCardActiveIndictment displayVerdictViewDate />
             )}
           </Box>
-          {isCompletedCase(workingCase.state) &&
+          {caseIsClosed &&
             isRulingOrDismissalCase(workingCase.indictmentRulingDecision) && (
               <Conclusion
                 title={`${
@@ -319,21 +243,9 @@ const IndictmentOverview: FC = () => {
               displayGeneratedPDFs={displayGeneratedPDFs}
             />
           </Box>
-          {canAddFiles && (
-            <Box display="flex" justifyContent="flexEnd">
-              <Button
-                size="small"
-                icon="add"
-                onClick={() =>
-                  router.push(
-                    `${constants.DEFENDER_ADD_FILES_ROUTE}/${workingCase.id}`,
-                  )
-                }
-              >
-                {formatMessage(strings.addDocumentsButtonText)}
-              </Button>
-            </Box>
-          )}
+          <Box component="section">
+            <InputPenalties />
+          </Box>
           {shouldDisplayReviewDecision && (
             <section>
               <SectionHeading
@@ -374,28 +286,19 @@ const IndictmentOverview: FC = () => {
               )}
             </section>
           )}
-          {isDefenceUser(user) && isCompletedCase(workingCase.state) && (
-            <Box component="section">
-              <ZipButton
-                caseId={workingCase.id}
-                courtCaseNumber={workingCase.courtCaseNumber}
-              />
-            </Box>
-          )}
-          {isProsecutionUser(user) && (
-            <Box component="section">
-              <InputPenalties />
-            </Box>
-          )}
         </div>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={getStandardUserDashboardRoute(user)}
           hideNextButton={!shouldDisplayReviewDecision}
-          nextButtonText={formatMessage(strings.completeReview)}
+          nextIsDisabled={isReviewMissing || !hasReviewDecisionChanged}
+          nextButtonText={
+            workingCase.indictmentReviewedDate
+              ? 'Breyta ákvörðun'
+              : 'Ljúka yfirlestri'
+          }
           onNextButtonClick={() => setModalVisible(CONFIRM_PROSECUTOR_DECISION)}
-          nextIsDisabled={isReviewMissing}
         />
       </FormContentContainer>
     </PageLayout>
