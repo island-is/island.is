@@ -38,7 +38,7 @@ import { mapToLocale, SmsDelivery } from '../utils'
 import { EmailQueueMessage } from './emailWorker.service'
 import { SmsQueueMessage } from './smsWorker.service'
 import { PushQueueMessage } from './pushWorker.service'
-import { DECEASED_STATUS, INACTIVE_COMPANY_STATUSES } from './helpers'
+import { DECEASED_STATUS, INACTIVE_COMPANY_STATUS } from './helpers'
 
 const getOnBehalfOfLabel = (
   onBehalfOf: string,
@@ -752,7 +752,7 @@ export class NotificationsWorkerService {
       const company = await this.companyRegistryService.getCompany(nationalId)
       return (
         company !== null &&
-        (INACTIVE_COMPANY_STATUSES as readonly string[]).includes(company.status)
+        company.status === INACTIVE_COMPANY_STATUS
       )
     } catch (error) {
       this.logger.warn(
