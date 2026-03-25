@@ -21,7 +21,8 @@ export const subSectionHealthDeclaration = buildSubSection({
   title: m.healthDeclarationSectionTitle,
   condition: hasNoDrivingLicenseInOtherCountry,
   children: [
-    // Shared multifield for B-temp and B-full (NOT BE, NOT 65+)
+    // Health declaration for B-temp and B-full — same questions as BE
+    // but without the health certificate file upload that BE requires
     buildMultiField({
       id: 'overview',
       title: m.healthDeclarationMultiFieldTitle,
@@ -154,7 +155,8 @@ export const subSectionHealthDeclaration = buildSubSection({
         }),
       ],
     }),
-    // BE-specific multifield with health declaration + health cert upload
+    // Same health declaration questions for BE, plus health certificate
+    // file upload when any health condition is triggered
     buildMultiField({
       id: 'overviewBE',
       title: m.healthDeclarationMultiFieldTitle,
