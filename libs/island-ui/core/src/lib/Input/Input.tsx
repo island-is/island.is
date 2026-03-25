@@ -252,7 +252,10 @@ const AsideIcons: FC<AsideProps> = (props) => {
     ? { name: 'warning' }
     : icon
 
-  const renderIcon = (item: { name: InputIcon['name']; type?: InputIcon['type'] }) => (
+  const renderIcon = (item: {
+    name: InputIcon['name']
+    type?: InputIcon['type']
+  }) => (
     <Icon
       icon={item.name}
       type={item.type}
@@ -274,7 +277,7 @@ const AsideIcons: FC<AsideProps> = (props) => {
             key={displayedIcon.name}
             onClick={displayedIcon.onClick}
             onMouseDown={(e) => e.nativeEvent.stopPropagation()}
-            aria-label={displayedIcon.ariaLabel}
+            aria-label={displayedIcon.ariaLabel || displayedIcon.name}
             style={{
               background: 'none',
               border: 'none',

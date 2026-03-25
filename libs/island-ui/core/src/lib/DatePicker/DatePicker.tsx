@@ -300,8 +300,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           onDayMouseEnter={
             range
               ? (date: Date) => {
-                  hoverDateRef.current =
-                    startDate && !endDate ? date : null
+                  hoverDateRef.current = startDate && !endDate ? date : null
                 }
               : undefined
           }
@@ -339,9 +338,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               clearLabel={clearLabel}
               size={size}
               onClick={onInputClick}
-              onIconClick={
-                range ? () => setIsOpen((prev) => !prev) : undefined
-              }
+              onIconClick={range ? () => setIsOpen((prev) => !prev) : undefined}
               onClear={() => {
                 setStartDate(null)
                 setEndDate(null)
