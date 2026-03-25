@@ -205,7 +205,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                     (end === null ||
                       (end instanceof Date && !isNaN(end.getTime())))
                   ) {
-                    // Swap: user clicked a date before the current start while picking end
                     if (
                       end === null &&
                       startDate !== null &&
@@ -227,10 +226,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                     setEndDate(end)
 
                     if (end === null) {
-                      // first click in range – keep calendar open
                       setIsOpen(true)
                     } else {
-                      // range complete – close calendar
                       setIsOpen(false)
                     }
 
@@ -313,7 +310,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               ? (date: Date) => {
                   const hover = hoverDateRef.current
                   if (!startDate || endDate !== null || !hover) return null
-                  if (hover >= startDate) return null // forward: native handles it
+                  if (hover >= startDate) return null
                   return date >= hover && date <= startDate
                     ? 'react-datepicker__day--in-selecting-range'
                     : null
