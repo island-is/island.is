@@ -6,7 +6,11 @@ import {
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NotificationsService } from '../../../../notification/notifications.service'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
+import {
+  Fasteign,
+  FasteignirApi,
+  FasteignSimpleWrapper,
+} from '@island.is/clients/assets'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { mockGetProperties } from './mockedFasteign'
@@ -27,6 +31,7 @@ import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
 import { prereqMessages } from '@island.is/application/templates/hms/fire-compensation-appraisal'
+import { FetchError } from '@island.is/clients/middlewares'
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
   constructor(
@@ -59,12 +64,28 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     // If on prod we fetch a list of all the fasteignanúmer for kennitala and then
     // fetch each property individually with the full data.
     else {
+      console.log('getProperties else')
+      let simpleProperties: FasteignSimpleWrapper | undefined
+      const api = this.getRealEstatesWithAuth(auth)
       try {
-        const api = this.getRealEstatesWithAuth(auth)
-        const simpleProperties = await api.fasteignirGetFasteignir({
+        simpleProperties = await api.fasteignirGetFasteignir({
           kennitala: auth.nationalId,
         })
+      } catch (error) {
+        this.logger.warn(
+          `Fetch properties list for applicationId: ${
+            application.id
+          } failed with problem:  ${
+            error instanceof FetchError ? error.problem : error.message
+          }`,
+          error,
+        )
+      }
 
+      console.log('getProperties simpleProperties')
+      console.dir(simpleProperties, { depth: null, colors: true })
+
+      try {
         properties = await Promise.all(
           simpleProperties?.fasteignir?.map((property) => {
             return api.fasteignirGetFasteign({
@@ -75,8 +96,14 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
             })
           }) ?? [],
         )
-      } catch (e) {
-        this.logger.error('Failed to fetch properties:', e.message)
+      } catch (error) {
+        this.logger.warn(
+          `Fetch property details for applicationId: ${
+            application.id
+          } failed with problem:  ${
+            error instanceof FetchError ? error.problem : error.message
+          }`,
+        )
         throw new TemplateApiError(
           {
             title: prereqMessages.getPropertiesErrorTitle,
@@ -103,16 +130,23 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
   async calculateAmount(props: TemplateApiModuleActionProps) {
     const { application } = props
 
+    // console.log('calculateAmount application')
+    // console.dir(application, { depth: null, colors: true })
+
     try {
       const otherPropertiesThanIOwn = getValueViaPath<string[]>(
         application.answers,
         'otherPropertiesThanIOwnCheckbox',
       )?.includes(YES)
 
+      console.log('otherPropertiesThanIOwn', otherPropertiesThanIOwn)
+
       const selectedRealEstateId = otherPropertiesThanIOwn
         ? 'F' +
           getValueViaPath<string>(application.answers, 'selectedPropertyByCode')
         : getValueViaPath<string>(application.answers, 'realEstate')
+
+      console.log('selectedRealEstateId', selectedRealEstateId)
 
       if (!selectedRealEstateId) {
         throw new TemplateApiError('Selected real estate id is not set', 500)
@@ -123,9 +157,13 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         'usageUnits',
       )
 
+      console.log('selectedUsageUnits', selectedUsageUnits)
+
       const properties = otherPropertiesThanIOwn
         ? getValueViaPath<Array<Fasteign>>(application.answers, 'anyProperties')
         : await this.getProperties(props)
+
+      console.log('properties', properties)
 
       if (!properties) {
         throw new TemplateApiError('Properties is undefined', 500)
@@ -135,6 +173,8 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         (property) => property.fasteignanumer === selectedRealEstateId,
       )
 
+      console.log('property', property)
+
       const usageUnitsFireAppraisal =
         property?.notkunareiningar?.notkunareiningar?.map((unit) => {
           if (selectedUsageUnits?.includes(unit.notkunareininganumer ?? '')) {
@@ -143,10 +183,15 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
           return 0
         })
 
+      console.log('usageUnitsFireAppraisal', usageUnitsFireAppraisal)
+
       const selectedUnitsFireAppraisal =
         usageUnitsFireAppraisal?.reduce((acc, curr) => {
           return (acc ?? 0) + (curr ?? 0)
         }, 0) ?? 0
+
+      console.log('selectedUnitsFireAppraisal', selectedUnitsFireAppraisal)
+
       return paymentForAppraisal(selectedUnitsFireAppraisal)
     } catch (e) {
       this.logger.error('Failed to calculate amount:', e.message)
