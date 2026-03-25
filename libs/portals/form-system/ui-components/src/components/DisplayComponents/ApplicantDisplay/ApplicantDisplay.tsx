@@ -2,6 +2,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import { getValues } from '../../../lib/getValue'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 interface Props {
   item: FormSystemField
@@ -59,8 +60,13 @@ export const ApplicantDisplay = ({ item }: Props) => {
       height="full"
     >
       {applicantValues.map((key) => {
-        const value = rawValues[key]
+        let value = rawValues[key]
         if (typeof value === 'undefined' || value === null) return null
+        if (key === 'phoneNumber')
+          value =
+            parsePhoneNumberFromString(
+              value as string,
+            )?.formatInternational() ?? value
         return (
           <Stack key={key} space={0}>
             <Text as="p" fontWeight="semiBold">

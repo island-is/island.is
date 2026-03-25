@@ -7,6 +7,7 @@ import {
   FieldTypesEnum,
   FileUploadDisplay,
   NationalIdDisplay,
+  PhoneNumberDisplay,
 } from '@island.is/form-system/ui'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -21,7 +22,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.ISK_SUMBOX]: DefaultDisplay,
   [FieldTypesEnum.EMAIL]: DefaultDisplay,
   [FieldTypesEnum.NATIONAL_ID]: NationalIdDisplay,
-  [FieldTypesEnum.PHONE_NUMBER]: DefaultDisplay,
+  [FieldTypesEnum.PHONE_NUMBER]: PhoneNumberDisplay,
   [FieldTypesEnum.TEXTBOX]: DefaultDisplay,
   [FieldTypesEnum.NUMBERBOX]: DefaultDisplay,
   [FieldTypesEnum.TIME_INPUT]: DefaultDisplay,
