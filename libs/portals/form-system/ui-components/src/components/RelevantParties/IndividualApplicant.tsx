@@ -140,7 +140,7 @@ export const IndividualApplicant = ({
               defaultValue={getValue(applicant, 'phoneNumber') ?? ''}
               rules={{
                 required: {
-                  value: applicant.isRequired ?? false,
+                  value: true,
                   message: formatMessage(m.required),
                 },
                 pattern: {
@@ -154,20 +154,19 @@ export const IndividualApplicant = ({
                   placeholder={formatMessage(m.phoneNumber)}
                   name={field.name}
                   locale={locale as Locale}
-                  required={applicant.isRequired ?? false}
+                  required={true}
                   backgroundColor="blue"
                   value={field.value}
-                  onChange={(e) => {
-                    field.onChange(e)
-                    if (dispatch) {
-                      dispatch({
-                        type: 'SET_PHONE_NUMBER',
-                        payload: {
-                          id: applicant.id,
-                          value: e.target.value,
-                        },
-                      })
-                    }
+                  onFormatValueChange={(formattedValue: string) => {
+                    // This is the full value PhoneInput constructs (e.g. "+3545812345")
+                    field.onChange(formattedValue)
+                    dispatch?.({
+                      type: 'SET_PHONE_NUMBER',
+                      payload: {
+                        id: applicant.id,
+                        value: formattedValue,
+                      },
+                    })
                   }}
                   onBlur={field.onBlur}
                   errorMessage={fieldState.error?.message}

@@ -10,6 +10,7 @@ import { Dispatch } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Action, m } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 interface Props {
   item: FormSystemField
@@ -51,18 +52,17 @@ export const PhoneNumber = ({ item, dispatch, valueIndex = 0 }: Props) => {
                 required={item.isRequired ?? false}
                 backgroundColor="blue"
                 value={field.value}
-                onChange={(e) => {
-                  field.onChange(e)
-                  if (dispatch) {
-                    dispatch({
-                      type: 'SET_PHONE_NUMBER',
-                      payload: {
-                        id: item.id,
-                        value: e.target.value,
-                        valueIndex,
-                      },
-                    })
-                  }
+                onFormatValueChange={(formattedValue: string) => {
+                  // This is the full value PhoneInput constructs (e.g. "+3545812345")
+                  field.onChange(formattedValue)
+                  dispatch?.({
+                    type: 'SET_PHONE_NUMBER',
+                    payload: {
+                      id: item.id,
+                      value: formattedValue,
+                      valueIndex,
+                    },
+                  })
                 }}
                 onBlur={field.onBlur}
                 errorMessage={fieldState.error?.message}
