@@ -6,6 +6,12 @@ import {
 import { matchPath } from 'react-router-dom'
 import { AuthDelegationType, BffUser } from '@island.is/shared/types'
 
+// Canonical root paths for routes that are restricted for non-minor legal guardians.
+// Kept in sync with HealthPaths.HealthRoot and LawAndOrderPaths.Root from their
+// respective modules (cannot import directly to avoid circular dependencies).
+const HEALTH_ROUTE = '/heilsa'
+const LAW_AND_ORDER_ROUTE = '/log-og-reglur'
+
 export const computeDisabledReason = (
   userInfo: BffUser,
   route: PortalRoute,
@@ -20,7 +26,7 @@ export const computeDisabledReason = (
   if (
     delegationTypes.includes(AuthDelegationType.LegalGuardian) &&
     !delegationTypes.includes(AuthDelegationType.LegalGuardianMinor) &&
-    (route.path.includes('/heilsa') || route.path.includes('/log-og-reglur'))
+    (route.path.includes(HEALTH_ROUTE) || route.path.includes(LAW_AND_ORDER_ROUTE))
   ) {
     return 'notMinor'
   }

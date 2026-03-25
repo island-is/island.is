@@ -26,6 +26,7 @@ export const AccessDenied = ({ route }: { route?: PortalRoute }) => {
 
   const { data } = useGetServicePortalPageQuery({
     variables: { input: { slug, lang } },
+    skip: !isDelegation,
   })
 
   const delegationsMessage = data?.getServicePortalPage?.emptyStateMessage
