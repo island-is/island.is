@@ -128,7 +128,6 @@ export const incomePlanSubSection = buildSubSection({
               placeholder:
                 socialInsuranceAdministrationMessage.incomePlan.selectCurrency,
               isSearchable: true,
-              //defaultValue: ISK,
               updateValueObj: {
                 valueModifier: (_, activeField) =>
                   currencyValueModifier(activeField),
