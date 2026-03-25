@@ -23,7 +23,6 @@ const listTypePlaceholder = {
   lond: 'Veldu land',
   sveitarfelog: 'Veldu sveitarfélag',
   postnumer: 'Veldu póstnúmer',
-  idngreinarMeistara: 'Veldu iðngrein',
 }
 
 export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
@@ -97,7 +96,7 @@ export const List = ({ item, dispatch, valueIndex = 0 }: Props) => {
           placeholder={
             listTypePlaceholder[
               item.fieldSettings?.listType as keyof typeof listTypePlaceholder
-            ] ?? 'Select an option'
+            ] ?? formatMessage(m.select)
           }
           backgroundColor="blue"
           onChange={(e) => {
