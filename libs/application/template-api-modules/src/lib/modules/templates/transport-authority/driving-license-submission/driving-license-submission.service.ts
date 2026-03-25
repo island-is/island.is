@@ -124,6 +124,18 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         jurisdiction: answers.jurisdictionId,
       })
 
+      if (e instanceof Error && e.name === 'FetchError') {
+        const err = e as unknown as FetchError
+        throw new TemplateApiError(
+          {
+            title:
+              err.problem?.title || coreErrorMessages.failedDataProviderSubmit,
+            summary: err.problem?.detail || '',
+          },
+          err.status || 400,
+        )
+      }
+
       throw e
     }
 
