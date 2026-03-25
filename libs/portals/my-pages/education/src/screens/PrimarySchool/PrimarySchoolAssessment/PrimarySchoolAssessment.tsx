@@ -53,9 +53,7 @@ export const PrimarySchoolAssessment = () => {
                 id={assessment.id}
                 label={assessment.name ?? ''}
               >
-                <AssessmentTable
-                  results={assessment.resultHistory ?? []}
-                />
+                <AssessmentTable results={assessment.resultHistory ?? []} />
               </AccordionItem>
             )
           })}
