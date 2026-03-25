@@ -111,7 +111,8 @@ const caseTransformer = <TCase>(data: never): TCase => {
     appealJudge3: theCase.appealCase?.appealJudge3,
     appealRulingDecision: theCase.appealCase?.appealRulingDecision,
     appealConclusion: theCase.appealCase?.appealConclusion,
-    appealRulingModifiedHistory: theCase.appealCase?.appealRulingModifiedHistory,
+    appealRulingModifiedHistory:
+      theCase.appealCase?.appealRulingModifiedHistory,
     requestAppealRulingNotToBePublished:
       theCase.appealCase?.requestAppealRulingNotToBePublished,
     appealValidToDate: theCase.appealCase?.appealValidToDate,
