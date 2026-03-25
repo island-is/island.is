@@ -3,17 +3,9 @@ import {
   IntroWrapperV2,
   m,
   MMS_SLUG,
-  formSubmit,
 } from '@island.is/portals/my-pages/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  Accordion,
-  AccordionItem,
-  Box,
-  Button,
-  Table,
-  Text,
-} from '@island.is/island-ui/core'
+import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { useParams } from 'react-router-dom'
 import { primarySchoolMessages as psm } from '../../../lib/messages'
@@ -30,7 +22,7 @@ export const PrimarySchoolAssessment = () => {
     skip: !studentId,
   })
 
-  const subjects = data?.primarySchoolStudent?.assessmentSubjects ?? []
+  const assessmentHistory = data?.primarySchoolStudent?.assessmentHistory ?? []
 
   return (
     <IntroWrapperV2
@@ -40,7 +32,7 @@ export const PrimarySchoolAssessment = () => {
     >
       {loading && !error && <CardLoader />}
       {error && !loading && <Problem error={error} noBorder={false} />}
-      {!loading && !error && !subjects.length && (
+      {!loading && !error && !assessmentHistory.length && (
         <Box marginTop={8}>
           <Problem
             type="no_data"
@@ -51,44 +43,27 @@ export const PrimarySchoolAssessment = () => {
           />
         </Box>
       )}
-      {subjects.length > 1 && studentId !== undefined && (
+      {!loading && !error && assessmentHistory.length > 1 && (
         <Accordion dividerOnTop={false} dividerOnBottom={false}>
-          {subjects.map((subject) => (
-            <AccordionItem
-              key={subject?.id ?? subject?.name}
-              id={subject?.id ?? subject?.name ?? ''}
-              label={subject?.name ?? subject?.id ?? ''}
-            >
-              {subject?.assessmentTypes &&
-              subject.assessmentTypes.length > 0 ? (
-                subject.assessmentTypes.map((assessmentType) => (
-                  <AssessmentTable
-                    assessment={assessmentType}
-                    studentId={studentId}
-                  />
-                ))
-              ) : (
-                <Box paddingY={2}>
-                  <Problem
-                    type="no_data"
-                    noBorder
-                    title={formatMessage(m.noData)}
-                    message={formatMessage(m.noDataFoundDetail)}
-                  />
-                </Box>
-              )}
-            </AccordionItem>
-          ))}
+          {assessmentHistory.map((assessment) => {
+            if (!assessment.id) return null
+            return (
+              <AccordionItem
+                key={assessment.id}
+                id={assessment.id}
+                label={assessment.name ?? ''}
+              >
+                <AssessmentTable
+                  results={assessment.resultHistory ?? []}
+                />
+              </AccordionItem>
+            )
+          })}
         </Accordion>
       )}
-      {subjects.length === 1 &&
-        studentId !== undefined &&
-        subjects[0]?.assessmentTypes?.[0] && (
-          <AssessmentTable
-            assessment={subjects[0].assessmentTypes[0]}
-            studentId={studentId}
-          />
-        )}
+      {!loading && !error && assessmentHistory.length === 1 && (
+        <AssessmentTable results={assessmentHistory[0]?.resultHistory ?? []} />
+      )}
     </IntroWrapperV2>
   )
 }

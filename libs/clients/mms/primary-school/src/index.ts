@@ -6,6 +6,7 @@ export {
   IslandIsAssessmentSubjectDto,
   IslandIsAssessmentTypeDto,
   IslandIsAssignmentResultDto,
+  IslandIsAssignmentResultSimpleDto,
   IslandIsStudentDto,
   IslandIsStudentResultsDto,
   TestType,

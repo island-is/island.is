@@ -1,39 +1,41 @@
 import type {
-  IslandIsAssignmentResultDto,
-  IslandIsStudentResultsDto,
+  IslandIsAssessmentTypeDto,
+  IslandIsAssignmentResultSimpleDto,
 } from '@island.is/clients/mms/primary-school'
-import type { PrimarySchoolAssignmentResult } from './primarySchoolAssignmentResult.model'
-import type { PrimarySchoolStudentResults } from './primarySchoolStudentResults.model'
+import type { PrimarySchoolAssessment } from './primarySchoolAssessment.model'
+import type { PrimarySchoolAssessmentResult } from './primarySchoolAssessmentResult.model'
 
-const mapAssignmentResult = (
-  ar: IslandIsAssignmentResultDto,
-): PrimarySchoolAssignmentResult | null => {
-  if (!ar.id) return null
+export const mapAssessment = (
+  type: IslandIsAssessmentTypeDto,
+  studentId: string,
+): PrimarySchoolAssessment | null => {
+  if (!type.id) return null
   return {
-    id: ar.id,
-    name: ar.name ?? undefined,
-    batchNumber: ar.batchNumber ?? undefined,
-    startDate: ar.scheduleStart ?? undefined,
-    schedule: ar.scheduleString ?? undefined,
-    score: ar.score ?? undefined,
-    schoolName: ar.schoolName ?? undefined,
-    evaluationDate: ar.evaluationDate ?? undefined,
-    evaluationScore: ar.evaluationScore ?? undefined,
-    evaluationScoreRange: ar.evaluationScoreRangeString ?? undefined,
+    id: type.id,
+    identifier: type.identifier ?? undefined,
+    name: type.name ?? undefined,
+    description: type.description ?? undefined,
+    studentId,
   }
 }
 
-export const mapStudentResults = (
-  r: IslandIsStudentResultsDto,
-): PrimarySchoolStudentResults | null => {
-  if (r.gradeLevel == null) return null
+export const mapResult = (
+  item: IslandIsAssignmentResultSimpleDto,
+  studentId: string,
+  downloadServiceBaseUrl: string,
+): PrimarySchoolAssessmentResult | null => {
+  if (!item.id || item.gradeLevel == null) return null
   return {
-    schoolYear: r.schoolYear ?? undefined,
-    gradeLevel: r.gradeLevel,
-    assignmentResults:
-      r.assignmentResults
-        ?.map(mapAssignmentResult)
-        .filter((ar): ar is PrimarySchoolAssignmentResult => ar !== null) ??
-      undefined,
+    id: item.id,
+    schoolYear: item.schoolYear ?? undefined,
+    grade: {
+      level: item.gradeLevel,
+      name: item.gradeLevelName ?? undefined,
+    },
+    period: {
+      startDate: item.scheduleStart ?? undefined,
+      startDateString: item.scheduleString ?? undefined,
+    },
+    downloadServiceUrl: `${downloadServiceBaseUrl}/download/v1/education/primary-school/${studentId}/result/${item.id}/pdf`,
   }
 }

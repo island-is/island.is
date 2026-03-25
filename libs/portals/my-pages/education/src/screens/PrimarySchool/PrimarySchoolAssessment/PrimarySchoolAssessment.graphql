@@ -1,23 +1,19 @@
 query PrimarySchoolAssessmentData($studentId: String!) {
   primarySchoolStudent(studentId: $studentId) {
-    assessmentSubjects {
+    assessmentHistory {
       id
       name
-      description
-      assessmentTypes {
+      resultHistory {
         id
-        name
-        identifier
-        testType
-        results {
-          schoolYear
-          gradeLevel
-          assignmentResults {
-            id
-            batchNumber
-            schedule
-          }
+        schoolYear
+        grade {
+          level
+          name
         }
+        period {
+          startDateString
+        }
+        downloadServiceUrl
       }
     }
   }

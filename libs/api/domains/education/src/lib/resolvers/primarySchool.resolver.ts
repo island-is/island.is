@@ -1,6 +1,6 @@
 import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -9,16 +9,21 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
-import {
-  PrimarySchoolAssessmentSubject,
-  PrimarySchoolStudent,
-} from '../models/primarySchool'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import type { ConfigType } from '@nestjs/config'
+import { PrimarySchoolStudent } from '../models/primarySchool/primarySchoolStudent.model'
+import { PrimarySchoolAssessment } from '../models/primarySchool/primarySchoolAssessment.model'
+import { mapAssessment } from '../models/primarySchool/primarySchool.mapper'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => PrimarySchoolStudent)
 export class PrimarySchoolResolver {
   constructor(
     private readonly primarySchoolService: PrimarySchoolClientService,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
   ) {}
 
   @Query(() => [PrimarySchoolStudent], { nullable: true })
@@ -42,9 +47,9 @@ export class PrimarySchoolResolver {
     return { ...student, contactType: student.relationType }
   }
 
-  @ResolveField(() => [PrimarySchoolAssessmentSubject], { nullable: true })
+  @ResolveField(() => [PrimarySchoolAssessment], { nullable: true })
   @Scopes(ApiScope.education)
-  async assessmentSubjects(
+  async assessmentHistory(
     @CurrentUser() user: User,
     @Parent() student: PrimarySchoolStudent,
   ) {
@@ -52,15 +57,9 @@ export class PrimarySchoolResolver {
       user,
       student.id,
     )
-    // Filter out subjects without IDs; thread studentId into each assessmentType
-    // so PrimarySchoolAssessmentTypeResolver can read it via @Parent()
     return subjects
-      ?.filter((s) => s.id != null)
-      .map((s) => ({
-        ...s,
-        assessmentTypes: s.assessmentTypes
-          ?.filter((t) => t.id != null)
-          .map((t) => ({ ...t, studentId: student.id })),
-      }))
+      ?.flatMap((s) => s.assessmentTypes ?? [])
+      .map((t) => mapAssessment(t, student.id))
+      .filter((a): a is PrimarySchoolAssessment => a !== null)
   }
 }
