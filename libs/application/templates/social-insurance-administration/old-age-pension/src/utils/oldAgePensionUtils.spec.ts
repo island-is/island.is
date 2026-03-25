@@ -15,9 +15,9 @@ import {
   getAvailableMonths,
   getAgeBetweenTwoDates,
   getApplicationExternalData,
-  isEarlyRetirement,
   filterValidEmployers,
 } from './oldAgePensionUtils'
+import { isEarlyRetirement } from './conditionUtils'
 import { ApplicationType } from './constants'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import * as kennitala from 'kennitala'
