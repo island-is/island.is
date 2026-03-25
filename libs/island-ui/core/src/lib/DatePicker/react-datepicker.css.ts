@@ -1,7 +1,6 @@
 import { style, globalStyle } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
-
 export const root = style({})
 
 globalStyle(
@@ -873,4 +872,3 @@ globalStyle(
     borderRadius: '0.3rem',
   },
 )
-
