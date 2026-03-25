@@ -784,7 +784,7 @@ export class Case extends Model {
    * Indicates whether the prosecutor requests a drivers license suspension
    **********/
   @Column({ type: DataType.BOOLEAN, allowNull: true })
-  @ApiProperty({ type: Boolean })
+  @ApiPropertyOptional({ type: Boolean })
   requestDriversLicenseSuspension?: boolean
 
   /**********
@@ -795,7 +795,7 @@ export class Case extends Model {
     allowNull: true,
     values: Object.values(CaseAppealState),
   })
-  @ApiProperty({ enum: CaseAppealState })
+  @ApiPropertyOptional({ enum: CaseAppealState })
   appealState?: CaseAppealState
 
   /**********
@@ -834,7 +834,7 @@ export class Case extends Model {
     allowNull: true,
     values: Object.values(CaseAppealRulingDecision),
   })
-  @ApiProperty({ enum: CaseAppealRulingDecision })
+  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
   appealRulingDecision?: CaseAppealRulingDecision
 
   /**********
