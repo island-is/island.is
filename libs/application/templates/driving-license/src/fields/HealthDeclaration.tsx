@@ -18,21 +18,39 @@ const HealthDeclaration = ({
   const { formatMessage } = useLocale()
   const props = field.props as { title?: string; label: string }
 
-  const { setValue } = useFormContext()
+  const { setValue, getValues } = useFormContext()
 
-  const checkForGlassesMismatch = (value: string) => {
-    if (field.id === 'healthDeclaration.usesContactGlasses') {
-      const glassesUsedPreviously = application.externalData.glassesCheck.data
-
-      if (
-        (glassesUsedPreviously && value === NO) ||
-        (!glassesUsedPreviously && value === YES)
-      ) {
-        setValue('healthDeclaration.contactGlassesMismatch', true)
-      } else {
-        setValue('healthDeclaration.contactGlassesMismatch', false)
-      }
+  const checkForVisionMismatch = (value: string) => {
+    if (
+      field.id !== 'healthDeclaration.usesContactGlasses' &&
+      field.id !== 'healthDeclaration.hasReducedPeripheralVision'
+    ) {
+      return
     }
+
+    const glassesUsedPreviously = application.externalData.glassesCheck.data
+
+    // Get the current value of the other question
+    const q1Value =
+      field.id === 'healthDeclaration.usesContactGlasses'
+        ? value
+        : (getValues('healthDeclaration.usesContactGlasses') as string)
+    const q2Value =
+      field.id === 'healthDeclaration.hasReducedPeripheralVision'
+        ? value
+        : (getValues('healthDeclaration.hasReducedPeripheralVision') as string)
+
+    // Mismatch if either vision question contradicts license data
+    const q1Mismatch =
+      q1Value &&
+      ((glassesUsedPreviously && q1Value === NO) ||
+        (!glassesUsedPreviously && q1Value === YES))
+    const q2Mismatch =
+      q2Value &&
+      ((glassesUsedPreviously && q2Value === NO) ||
+        (!glassesUsedPreviously && q2Value === YES))
+
+    setValue('healthDeclaration.contactGlassesMismatch', !!(q1Mismatch || q2Mismatch))
   }
 
   return (
@@ -66,9 +84,7 @@ const HealthDeclaration = ({
             },
           ]}
           onSelect={(value) => {
-            if (field.id === 'healthDeclaration.usesContactGlasses') {
-              checkForGlassesMismatch(value)
-            }
+            checkForVisionMismatch(value)
           }}
         />
       </Box>
