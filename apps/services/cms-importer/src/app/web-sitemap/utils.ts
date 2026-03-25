@@ -19,7 +19,7 @@ export type SitemapUrl = {
       }
     | {
         [EN_LOCALE]: string
-        [LOCALE]: string
+        [LOCALE]?: string
       }
   lastmod?: string | null
 }
