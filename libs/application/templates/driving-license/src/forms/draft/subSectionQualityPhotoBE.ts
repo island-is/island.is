@@ -6,6 +6,7 @@ import {
   getValueViaPath,
   YES,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { BE } from '../../lib/constants'
 import { hasNoDrivingLicenseInOtherCountry, isVisible } from '../../lib/utils'
@@ -36,7 +37,7 @@ export const subSectionQualityPhotoBE = buildSubSection({
           id: 'selectLicensePhoto',
           title: '',
           disabled: false,
-          defaultValue: (application) => {
+          defaultValue: (application: Application) => {
             const { answers, externalData } = application
             const useFakeData = getValueViaPath<'yes' | 'no'>(
               answers,
