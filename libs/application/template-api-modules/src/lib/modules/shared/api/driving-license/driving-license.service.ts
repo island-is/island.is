@@ -303,7 +303,32 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  async qualityPhotoAndSignature({ auth }: TemplateApiModuleActionProps) {
+  async qualityPhotoAndSignature({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+      application.answers,
+      'fakeData',
+    )
+    if (fakeData?.useFakeData === YES) {
+      if (fakeData.hasRLSPhoto === YES) {
+        return {
+          imageId: 1,
+          imageTypeId: 1,
+          imageTypeName: 'Quality photo',
+          imageDate: null,
+          pohto: 'fakeRLSPhotoBase64Content',
+          signatureId: 1,
+          signatureTypeId: 12,
+          signatureTypeName: 'Quality signature',
+          signatureDate: null,
+          signature: null,
+        }
+      }
+      return null
+    }
+
     try {
       return await this.drivingLicenseService.getQualityPhotoAndSignature({
         token: auth.authorization,
@@ -313,7 +338,29 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
-  async allPhotosFromThjodskra({ auth }: TemplateApiModuleActionProps) {
+  async allPhotosFromThjodskra({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+      application.answers,
+      'fakeData',
+    )
+    if (fakeData?.useFakeData === YES) {
+      if (fakeData.hasThjodskraPhoto === YES) {
+        return {
+          images: [
+            {
+              biometricId: 'fakeThjodskraBiometricId',
+              content: 'fakeThjodskraPhotoBase64Content',
+              contentSpecification: 'FACIAL',
+            },
+          ],
+        }
+      }
+      return { images: [] }
+    }
+
     try {
       return await this.drivingLicenseService.getAllPhotosFromThjodskra({
         token: auth.authorization,

@@ -117,6 +117,40 @@ export const sectionFakeData = buildSubSection({
             },
           ],
         }),
+        buildRadioField({
+          id: 'fakeData.hasThjodskraPhoto',
+          title: 'BE: Mynd úr Þjóðskrá?',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          defaultValue: YES,
+          options: [
+            {
+              value: YES,
+              label: 'Já — mynd til staðar',
+            },
+            {
+              value: NO,
+              label: 'Nei — engin mynd',
+            },
+          ],
+        }),
+        buildRadioField({
+          id: 'fakeData.hasRLSPhoto',
+          title: 'BE: Gæðamynd úr ökuskírteinaskrá (RLS)?',
+          width: 'half',
+          condition: allowFakeCondition(YES),
+          defaultValue: NO,
+          options: [
+            {
+              value: YES,
+              label: 'Já — gæðamynd til staðar',
+            },
+            {
+              value: NO,
+              label: 'Nei — engin gæðamynd',
+            },
+          ],
+        }),
         buildTextField({
           id: 'fakeData.howManyDaysHaveYouLivedInIceland',
           title: 'Hversu lengi hefur þú búið á Íslandi (í dögum)?',

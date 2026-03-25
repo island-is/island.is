@@ -14,6 +14,8 @@ export interface DrivingLicenseFakeData {
   qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
   remarks?: YesOrNo
+  hasThjodskraPhoto?: YesOrNo
+  hasRLSPhoto?: YesOrNo
 }
 
 export type DrivingLicenseCategory = {

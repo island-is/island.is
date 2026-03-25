@@ -207,4 +207,6 @@ export interface DrivingLicenseFakeData {
   remarks?: YesOrNo
   howManyDaysHaveYouLivedInIceland: string | number
   age: number
+  hasThjodskraPhoto?: YesOrNo
+  hasRLSPhoto?: YesOrNo
 }
