@@ -89,8 +89,7 @@ export const useEligibility = (
   if (usingFakeData) {
     const hasPhoto =
       applicationFor === BE
-        ? fakeData?.hasThjodskraPhoto === YES ||
-          fakeData?.hasRLSPhoto === YES
+        ? fakeData?.hasThjodskraPhoto === YES || fakeData?.hasRLSPhoto === YES
         : fakeData?.qualityPhoto === YES
     return {
       loading: false,
