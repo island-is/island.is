@@ -10,6 +10,7 @@ import addMonths from 'date-fns/addMonths'
 import { Op, Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
+import { DogStatsD } from '@island.is/infra-metrics'
 import { isDefined, isSearchTermValid } from '@island.is/shared/utils'
 import { AttemptFailed, NoContentException } from '@island.is/nest/problem'
 import type { ConfigType } from '@island.is/nest/config'
@@ -48,6 +49,8 @@ export const SKIP_INTERVAL = 1
 
 @Injectable()
 export class UserProfileService {
+  private readonly metrics = new DogStatsD({ prefix: 'user-profile.' })
+
   constructor(
     @InjectModel(UserProfile)
     private readonly userProfileModel: typeof UserProfile,
@@ -196,6 +199,12 @@ export class UserProfileService {
       )
     }
 
+    let previousNotificationSettings: {
+      smsNotifications?: boolean
+      documentNotifications?: boolean
+      emailNotifications?: boolean
+    } = {}
+
     await this.sequelize.transaction(async (transaction) => {
       const commonArgs = [nationalId, { transaction, maxTries: 3 }] as const
 
@@ -266,6 +275,14 @@ export class UserProfileService {
         transaction,
         useMaster: true,
       })
+
+      previousNotificationSettings = {
+        smsNotifications: currentUserProfile?.smsNotifications ?? undefined,
+        documentNotifications:
+          currentUserProfile?.documentNotifications ?? undefined,
+        emailNotifications:
+          currentUserProfile?.emailNotifications ?? undefined,
+      }
 
       // Check if SMS notifications feature is enabled
       const isSmsNotificationEnabled = await this.featureFlagService.getValue(
@@ -403,6 +420,38 @@ export class UserProfileService {
         }
       }
     })
+
+    // Emit metrics for notification setting changes (only when value actually changed)
+    if (
+      isDefined(userProfile.smsNotifications) &&
+      userProfile.smsNotifications !==
+        previousNotificationSettings.smsNotifications
+    ) {
+      this.metrics.increment('notification.setting.changed', 1, {
+        setting: 'sms',
+        value: userProfile.smsNotifications ? 'on' : 'off',
+      })
+    }
+    if (
+      isDefined(userProfile.documentNotifications) &&
+      userProfile.documentNotifications !==
+        previousNotificationSettings.documentNotifications
+    ) {
+      this.metrics.increment('notification.setting.changed', 1, {
+        setting: 'push',
+        value: userProfile.documentNotifications ? 'on' : 'off',
+      })
+    }
+    if (
+      isDefined(userProfile.emailNotifications) &&
+      userProfile.emailNotifications !==
+        previousNotificationSettings.emailNotifications
+    ) {
+      this.metrics.increment('notification.setting.changed', 1, {
+        setting: 'email',
+        value: userProfile.emailNotifications ? 'on' : 'off',
+      })
+    }
 
     return this.findById(nationalId, true, ClientType.FIRST_PARTY)
   }
@@ -910,6 +959,13 @@ export class UserProfileService {
         )
       }
 
+      if (isDefined(emailNotifications)) {
+        this.metrics.increment('notification.setting.changed', 1, {
+          setting: 'delegation_email',
+          value: resolvedEmailNotifications ? 'on' : 'off',
+        })
+      }
+
       // Return the updated profile details
       return {
         fromNationalId,
@@ -1242,6 +1298,13 @@ export class UserProfileService {
         )
       }
 
+      if (isDefined(emailNotifications)) {
+        this.metrics.increment('notification.setting.changed', 1, {
+          setting: 'delegation_email',
+          value: emailNotifications ? 'on' : 'off',
+        })
+      }
+
       return {
         emailsId: emailRecord?.id ?? '',
         email: emailRecord?.email ?? '',
@@ -1319,6 +1382,10 @@ export class UserProfileService {
           { transaction },
         )
       }
+    })
+
+    this.metrics.increment('notification.setting.changed', 1, {
+      setting: 'delegation_email_address',
     })
 
     // Return the updated actor profile details
