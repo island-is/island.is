@@ -36,7 +36,8 @@ export const subSectionQualityPhotoBE = buildSubSection({
           id: 'selectLicensePhoto',
           title: '',
           disabled: false,
-          defaultValue: ({ answers, externalData }) => {
+          defaultValue: (application) => {
+            const { answers, externalData } = application
             const useFakeData = getValueViaPath<'yes' | 'no'>(
               answers,
               'fakeData.useFakeData',
