@@ -4,7 +4,6 @@ import {
   buildSubSection,
   buildDescriptionField,
   getValueViaPath,
-  YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
@@ -36,18 +35,7 @@ export const subSectionQualityPhotoBE = buildSubSection({
           title: '',
           disabled: false,
           defaultValue: (application: Application) => {
-            const { answers, externalData } = application
-            const useFakeData = getValueViaPath<'yes' | 'no'>(
-              answers,
-              'fakeData.useFakeData',
-            )
-            const qualityPhoto = getValueViaPath<'yes' | 'no'>(
-              answers,
-              'fakeData.qualityPhoto',
-            )
-            if (useFakeData === YES && qualityPhoto === YES) {
-              return 'fakePhoto'
-            }
+            const { externalData } = application
 
             const photoAndSig = getValueViaPath<{
               imageTypeId?: number | null
@@ -77,21 +65,7 @@ export const subSectionQualityPhotoBE = buildSubSection({
 
             return undefined
           },
-          options: ({ answers, externalData }) => {
-            const useFakeData = getValueViaPath<'yes' | 'no'>(
-              answers,
-              'fakeData.useFakeData',
-            )
-
-            if (useFakeData === YES) {
-              return [
-                {
-                  value: 'fakePhoto',
-                  label: m.useFakeImage,
-                },
-              ]
-            }
-
+          options: ({ externalData }) => {
             const options: Array<{
               value: string
               label: typeof m.usePassportImage
