@@ -57,7 +57,7 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
           (state) => !state || !accessibleCaseAppealStates.includes(state),
         ),
       )('inaccessible case appeal state %s', (appealState) => {
-        const theCase = { type, state, appealState } as Case
+        const theCase = { type, state, appealCase: { appealState } } as Case
 
         verifyNoAccess(theCase, user)
       })
@@ -68,8 +68,10 @@ describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
           const theCase = {
             type,
             state,
-            appealState,
-            appealReceivedByCourtDate: nowFactory(),
+            appealCase: {
+              appealState,
+              appealReceivedByCourtDate: nowFactory(),
+            },
           } as Case
 
           verifyFullAccess(theCase, user)

@@ -1,5 +1,3 @@
-import { Op } from 'sequelize'
-
 import { CaseAppealState } from '@island.is/judicial-system/types'
 
 import { CaseWhereOptions } from '../caseTable.types'
@@ -9,20 +7,28 @@ import { courtOfAppealsRequestCasesAccessWhereOptions } from './access'
 
 export const courtOfAppealsRequestCasesInProgressWhereOptions =
   (): CaseWhereOptions => ({
-    where: {
-      [Op.and]: [
-        courtOfAppealsRequestCasesAccessWhereOptions,
-        { appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN] },
-      ],
+    includes: {
+      appealCase: {
+        attributes: [],
+        required: true,
+        where: {
+          appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN],
+        },
+      },
     },
+    where: courtOfAppealsRequestCasesAccessWhereOptions,
   })
 
 export const courtOfAppealsRequestCasesCompletedWhereOptions =
   (): CaseWhereOptions => ({
-    where: {
-      [Op.and]: [
-        courtOfAppealsRequestCasesAccessWhereOptions,
-        { appeal_state: CaseAppealState.COMPLETED },
-      ],
+    includes: {
+      appealCase: {
+        attributes: [],
+        required: true,
+        where: {
+          appeal_state: CaseAppealState.COMPLETED,
+        },
+      },
     },
+    where: courtOfAppealsRequestCasesAccessWhereOptions,
   })

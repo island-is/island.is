@@ -27,7 +27,7 @@ const getIsMyCaseAttributes = (user: User): string[] => {
 
 const getAvailableActionsAttributes = (user: User): string[] => {
   if (isProsecutionUser(user)) {
-    return ['type', 'state', 'appealState', 'prosecutorPostponedAppealDate']
+    return ['type', 'state', 'prosecutorPostponedAppealDate']
   }
 
   if (isDistrictCourtUser(user)) {
@@ -51,9 +51,9 @@ export const getAttributes = (
     ])
 }
 
-const getIsMyCaseIncludes = (user: User): CaseIncludes => {
-  if (isDistrictCourtUser(user)) {
-    return { judge: { attributes: ['id'] }, registrar: { attributes: ['id'] } }
+const getAvailableActionsIncludes = (user: User): CaseIncludes => {
+  if (isProsecutionUser(user)) {
+    return { appealCase: { attributes: ['appealState'] } }
   }
 
   return {}
@@ -110,35 +110,10 @@ const setInclude = <K extends keyof CaseIncludes>(
   }
 }
 
-export const getIncludes = (
-  globalIncludes: CaseIncludes,
-  caseTableCellKeys: CaseTableColumnKey[],
-  user: User,
+const getIncludeAndOrder = (
+  allIncludes: CaseIncludes,
 ): [Includeable[], Order] => {
-  const allIncludes: CaseIncludes = {}
   const globalOrder: Order = []
-
-  for (const m of Object.keys(globalIncludes) as Array<keyof CaseIncludes>) {
-    setInclude(allIncludes, globalIncludes, m)
-  }
-
-  const isMyCaseIncludes = getIsMyCaseIncludes(user)
-
-  for (const m of Object.keys(isMyCaseIncludes) as Array<keyof CaseIncludes>) {
-    setInclude(allIncludes, isMyCaseIncludes, m)
-  }
-
-  for (const k of caseTableCellKeys) {
-    if (!caseTableCellGenerators[k].includes) {
-      continue
-    }
-
-    for (const m of Object.keys(caseTableCellGenerators[k].includes) as Array<
-      keyof CaseIncludes
-    >) {
-      setInclude(allIncludes, caseTableCellGenerators[k].includes, m)
-    }
-  }
 
   const include = Object.entries(allIncludes).map(([k, v]) => {
     const modelDef = modelMap[k as keyof typeof modelMap]
@@ -196,10 +171,56 @@ export const getIncludes = (
   return [include, globalOrder]
 }
 
+export const getGlobalIncludes = (
+  globalIncludes: CaseIncludes,
+): [Includeable[], Order] => {
+  const allIncludes: CaseIncludes = {}
+
+  for (const m of Object.keys(globalIncludes) as Array<keyof CaseIncludes>) {
+    setInclude(allIncludes, globalIncludes, m)
+  }
+
+  return getIncludeAndOrder(allIncludes)
+}
+
+export const getAllIncludes = (
+  globalIncludes: CaseIncludes,
+  caseTableCellKeys: CaseTableColumnKey[],
+  user: User,
+): [Includeable[], Order] => {
+  const allIncludes: CaseIncludes = {}
+
+  for (const m of Object.keys(globalIncludes) as Array<keyof CaseIncludes>) {
+    setInclude(allIncludes, globalIncludes, m)
+  }
+
+  const availableActionsIncludes = getAvailableActionsIncludes(user)
+
+  for (const m of Object.keys(availableActionsIncludes) as Array<
+    keyof CaseIncludes
+  >) {
+    setInclude(allIncludes, availableActionsIncludes, m)
+  }
+
+  for (const k of caseTableCellKeys) {
+    if (!caseTableCellGenerators[k].includes) {
+      continue
+    }
+
+    for (const m of Object.keys(caseTableCellGenerators[k].includes) as Array<
+      keyof CaseIncludes
+    >) {
+      setInclude(allIncludes, caseTableCellGenerators[k].includes, m)
+    }
+  }
+
+  return getIncludeAndOrder(allIncludes)
+}
+
 export const isMyCase = (
   theCase: Pick<
     Case,
-    'creatingProsecutorId' | 'prosecutorId' | 'judge' | 'registrar'
+    'creatingProsecutorId' | 'prosecutorId' | 'judgeId' | 'registrarId'
   >,
   user: User,
 ): boolean => {
@@ -211,7 +232,7 @@ export const isMyCase = (
   }
 
   if (isDistrictCourtUser(user)) {
-    return theCase.judge?.id === user.id || theCase.registrar?.id === user.id
+    return theCase.judgeId === user.id || theCase.registrarId === user.id
   }
 
   return false
@@ -272,7 +293,7 @@ export const canDeleteCase = (
 }
 
 export const canCancelAppeal = (
-  theCase: Pick<Case, 'type' | 'appealState' | 'prosecutorPostponedAppealDate'>,
+  theCase: Pick<Case, 'type' | 'appealCase' | 'prosecutorPostponedAppealDate'>,
   user: User,
 ): boolean => {
   if (!isProsecutionUser(user) || !isRequestCase(theCase.type)) {
@@ -280,8 +301,8 @@ export const canCancelAppeal = (
   }
 
   if (
-    (theCase.appealState === CaseAppealState.APPEALED ||
-      theCase.appealState === CaseAppealState.RECEIVED) &&
+    (theCase.appealCase?.appealState === CaseAppealState.APPEALED ||
+      theCase.appealCase?.appealState === CaseAppealState.RECEIVED) &&
     theCase.prosecutorPostponedAppealDate
   ) {
     return true
@@ -293,7 +314,7 @@ export const canCancelAppeal = (
 export const getContextMenuActions = (
   theCase: Pick<
     Case,
-    'type' | 'state' | 'appealState' | 'prosecutorPostponedAppealDate'
+    'type' | 'state' | 'appealCase' | 'prosecutorPostponedAppealDate'
   >,
   user: User,
 ): ContextMenuCaseActionType[] => {
