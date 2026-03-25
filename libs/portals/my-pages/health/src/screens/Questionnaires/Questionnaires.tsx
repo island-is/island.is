@@ -62,6 +62,7 @@ const Questionnaires: FC = () => {
     variables: {
       locale: lang,
     },
+    fetchPolicy: 'network-only',
   })
 
   const dataLength = data?.questionnairesList?.questionnaires?.length ?? 0

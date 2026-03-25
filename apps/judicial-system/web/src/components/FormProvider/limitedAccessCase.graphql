@@ -472,6 +472,5 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     caseSentToCourtDate
     indictmentReviewedDate
     indictmentSentToPublicProsecutorDate
-    isRegisteredInPrisonSystem
   }
 }
