@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { DogStatsD } from '@island.is/infra-metrics'
 import type { Logger } from '@island.is/logging'
+
+import { METRICS_PREFIX } from '../utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
 import { SmsService } from '@island.is/nova-sms'
@@ -30,7 +32,7 @@ const normalizePhoneNumber = (phoneNumber: string): string =>
 
 @Injectable()
 export class SmsWorkerService {
-  private readonly metrics = new DogStatsD({ prefix: 'user-notification.' })
+  private readonly metrics = new DogStatsD({ prefix: METRICS_PREFIX })
 
   constructor(
     private readonly smsService: SmsService,

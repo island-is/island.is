@@ -8,6 +8,8 @@ import { InjectModel } from '@nestjs/sequelize'
 import * as firebaseAdmin from 'firebase-admin'
 import { DogStatsD } from '@island.is/infra-metrics'
 import type { Logger } from '@island.is/logging'
+
+import { METRICS_PREFIX } from './utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Notification } from './types'
 import {
@@ -20,7 +22,7 @@ import type { FirebaseError } from 'firebase-admin/lib/utils/error'
 
 @Injectable()
 export class NotificationDispatchService {
-  private readonly metrics = new DogStatsD({ prefix: 'user-notification.' })
+  private readonly metrics = new DogStatsD({ prefix: METRICS_PREFIX })
 
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,

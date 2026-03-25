@@ -2,6 +2,8 @@ import { isCompany } from 'kennitala'
 
 import { DogStatsD } from '@island.is/infra-metrics'
 import { InjectQueue, QueueService } from '@island.is/message-queue'
+
+import { METRICS_PREFIX } from './utils'
 import {
   Body,
   Controller,
@@ -36,7 +38,7 @@ import { AdminPortalScope, notificationScopes } from '@island.is/auth/scopes'
 @Controller('notifications')
 @ApiTags('notifications')
 export class NotificationsController {
-  private readonly metrics = new DogStatsD({ prefix: 'user-notification.' })
+  private readonly metrics = new DogStatsD({ prefix: METRICS_PREFIX })
 
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
