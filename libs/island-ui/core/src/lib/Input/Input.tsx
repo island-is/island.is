@@ -248,8 +248,15 @@ export const Input = forwardRef(
 )
 
 const AsideIcons: FC<AsideProps> = (props) => {
-  const { icon, buttons = [], size, loading, hasError, hasLabel, disabled } =
-    props
+  const {
+    icon,
+    buttons = [],
+    size,
+    loading,
+    hasError,
+    hasLabel,
+    disabled,
+  } = props
   const displayedIcon: InputIcon | undefined = hasError
     ? { name: 'warning' }
     : icon
