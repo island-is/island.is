@@ -12,7 +12,7 @@ import {
   type User,
 } from '@island.is/judicial-system/types'
 
-import { CaseRepositoryService, Defendant } from '../repository'
+import { AppealCase, CaseRepositoryService, Defendant } from '../repository'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
@@ -151,7 +151,7 @@ export class CaseTableService {
       COALESCE(
         (SELECT n FROM unnest("Case"."police_case_numbers") AS n WHERE n ILIKE ${safeQuery} LIMIT 1),
         CASE WHEN "Case"."court_case_number" ILIKE ${safeQuery} THEN "Case"."court_case_number" END,
-        CASE WHEN "Case"."appeal_case_number" ILIKE ${safeQuery} THEN "Case"."appeal_case_number" END,
+        (SELECT ac."appeal_case_number" FROM "appeal_case" ac WHERE ac."case_id" = "Case"."id" AND ac."appeal_case_number" ILIKE ${safeQuery}),
         (SELECT d."national_id" FROM "defendant" d WHERE d."case_id" = "Case"."id" AND d."national_id" ILIKE ${safeQuery} ORDER BY d."created" ASC LIMIT 1),
         (SELECT d."name" FROM "defendant" d WHERE d."case_id" = "Case"."id" AND d."name" ILIKE ${safeQuery} ORDER BY d."created" ASC LIMIT 1),
         (SELECT n FROM unnest("Case"."police_case_numbers") AS n LIMIT 1),
@@ -163,7 +163,7 @@ export class CaseTableService {
       CASE
         WHEN (SELECT n FROM unnest("Case"."police_case_numbers") AS n WHERE n ILIKE ${safeQuery} LIMIT 1) IS NOT NULL THEN 'policeCaseNumbers'
         WHEN "Case"."court_case_number" ILIKE ${safeQuery} THEN 'courtCaseNumber'
-        WHEN "Case"."appeal_case_number" ILIKE ${safeQuery} THEN 'appealCaseNumber'
+        WHEN (SELECT ac."appeal_case_number" FROM "appeal_case" ac WHERE ac."case_id" = "Case"."id" AND ac."appeal_case_number" ILIKE ${safeQuery}) IS NOT NULL THEN 'appealCaseNumber'
         WHEN (SELECT d."national_id" FROM "defendant" d WHERE d."case_id" = "Case"."id" AND d."national_id" ILIKE ${safeQuery} ORDER BY d."created" ASC LIMIT 1) IS NOT NULL THEN 'defendantNationalId'
         WHEN (SELECT d."name" FROM "defendant" d WHERE d."case_id" = "Case"."id" AND d."name" ILIKE ${safeQuery} ORDER BY d."created" ASC LIMIT 1) IS NOT NULL THEN 'defendantName'
         ELSE 'policeCaseNumbers'
@@ -184,7 +184,6 @@ export class CaseTableService {
         'decision',
         'policeCaseNumbers',
         'courtCaseNumber',
-        'appealCaseNumber',
         [literal(matchedValueExpr), 'matchedValue'],
         [literal(matchedFieldExpr), 'matchedField'],
         [literal(caseTypeExpr), 'caseType'],
@@ -196,6 +195,12 @@ export class CaseTableService {
           as: 'defendants',
           separate: true,
           order: [['created', 'ASC']],
+        },
+        {
+          model: AppealCase,
+          as: 'appealCase',
+          required: false,
+          attributes: ['appealCaseNumber'],
         },
       ],
       where: {
@@ -210,7 +215,9 @@ export class CaseTableService {
                 )
               `),
               { court_case_number: { [Op.iLike]: `%${query}%` } },
-              { appeal_case_number: { [Op.iLike]: `%${query}%` } },
+              {
+                '$appealCase.appeal_case_number$': { [Op.iLike]: `%${query}%` },
+              },
               literal(`
                 EXISTS (
                   SELECT 1 FROM "defendant" d
