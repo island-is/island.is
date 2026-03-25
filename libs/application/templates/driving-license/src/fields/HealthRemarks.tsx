@@ -5,7 +5,6 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
-import { codesRequiringHealthCertificate } from '../lib/constants'
 import { DrivingLicense, Remark } from '../lib/types'
 
 const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
@@ -21,12 +20,9 @@ const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { setValue } = useFormContext()
 
   useEffect(() => {
-    setValue(
-      'hasHealthRemarks',
-      remarks.some((r) => codesRequiringHealthCertificate.includes(r.code))
-        ? YES
-        : NO,
-    )
+    // If this component renders, remarks exist on the license —
+    // always require health certificate in that case
+    setValue('hasHealthRemarks', remarks.length > 0 ? YES : NO)
   }, [remarks, setValue])
 
   return (
