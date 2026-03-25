@@ -1273,7 +1273,7 @@ cms-importer-web-sitemap:
     requests:
       cpu: '100m'
       memory: '128Mi'
-  schedule: '*/1 * * * *'
+  schedule: '0 * * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_MANAGEMENT_ACCESS_TOKEN: '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN'
