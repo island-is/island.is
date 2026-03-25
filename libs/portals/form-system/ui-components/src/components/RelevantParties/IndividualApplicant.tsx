@@ -34,30 +34,51 @@ export const IndividualApplicant = ({
 }: Props) => {
   const { locale, formatMessage } = useIntl()
   const { lang } = useLocale()
-  const { control, setValue } = useFormContext()
+  const { control, setValue, unregister } = useFormContext()
 
   const emailFromState = getValue(applicant, 'email') ?? ''
   const phoneNumberFromState = getValue(applicant, 'phoneNumber') ?? ''
 
-  useEffect(() => {
-    if (emailFromState) {
-      setValue(`${applicant.id}.email`, emailFromState, {
-        shouldDirty: false,
-        shouldTouch: false,
-        shouldValidate: true,
-      })
-    }
-  }, [emailFromState, applicant.id, setValue])
+  const isEmailRequired = !!applicant.fieldSettings?.isEmailRequired
+  const isPhoneRequired = !!applicant.fieldSettings?.isPhoneRequired
 
   useEffect(() => {
-    if (phoneNumberFromState) {
-      setValue(`${applicant.id}.phoneNumber`, phoneNumberFromState, {
-        shouldDirty: false,
-        shouldTouch: false,
-        shouldValidate: true,
-      })
+    const key = `${applicant.id}.email`
+
+    if (isEmailRequired) {
+      if (emailFromState) {
+        setValue(key, emailFromState, {
+          shouldDirty: false,
+          shouldTouch: false,
+          shouldValidate: true,
+        })
+      }
+    } else {
+      unregister(key)
     }
-  }, [phoneNumberFromState, applicant.id, setValue])
+  }, [isEmailRequired, emailFromState, applicant.id, setValue, unregister])
+
+  useEffect(() => {
+    const key = `${applicant.id}.phoneNumber`
+
+    if (isPhoneRequired) {
+      if (phoneNumberFromState) {
+        setValue(key, phoneNumberFromState, {
+          shouldDirty: false,
+          shouldTouch: false,
+          shouldValidate: true,
+        })
+      }
+    } else {
+      unregister(key)
+    }
+  }, [
+    isPhoneRequired,
+    phoneNumberFromState,
+    applicant.id,
+    setValue,
+    unregister,
+  ])
 
   return (
     <Box marginTop={4}>

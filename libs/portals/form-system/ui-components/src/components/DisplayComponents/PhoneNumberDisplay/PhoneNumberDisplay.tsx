@@ -1,8 +1,6 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Box, Text, Stack } from '@island.is/island-ui/core'
-import { raw } from 'express'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { parse } from 'path'
 
 interface Props {
   item: FormSystemField
@@ -15,8 +13,8 @@ export const PhoneNumberDisplay = ({ item, lang = 'is' }: Props) => {
   )
   const showIndex = values.length > 1
 
-  const formatPhoneNumber = (raw: string) => {
-    if (raw == null) return ''
+  const formatPhoneNumber = (raw?: string) => {
+    if (!raw) return ''
 
     const parsed = parsePhoneNumberFromString(raw)
     if (!parsed) {
@@ -44,7 +42,9 @@ export const PhoneNumberDisplay = ({ item, lang = 'is' }: Props) => {
             | Record<string, unknown>
             | null
             | undefined
-          const rawPhoneNumber = json?.phoneNumber
+
+          const rawPhoneNumber =
+            typeof json?.phoneNumber === 'string' ? json.phoneNumber : ''
 
           return (
             <Box key={`${valueDto.id ?? item.id}-${index}`} marginLeft={2}>
@@ -53,13 +53,13 @@ export const PhoneNumberDisplay = ({ item, lang = 'is' }: Props) => {
                   {`${index + 1}:`}
                   {'\u00A0\u00A0\u00A0'}
                   <Text as="span" fontWeight="light" whiteSpace="breakSpaces">
-                    {formatPhoneNumber(String(rawPhoneNumber))}
+                    {formatPhoneNumber(rawPhoneNumber)}
                   </Text>
                 </Text>
               )}
               {!showIndex && (
                 <Text fontWeight="light" whiteSpace="breakSpaces">
-                  {formatPhoneNumber(String(rawPhoneNumber))}
+                  {formatPhoneNumber(rawPhoneNumber)}
                 </Text>
               )}
             </Box>
