@@ -8,7 +8,7 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { m } from '../../lib/messages'
-import { BE } from '../../lib/constants'
+import { BE, QUALITY_IMAGE_TYPE_IDS } from '../../lib/constants'
 import { hasNoDrivingLicenseInOtherCountry, isVisible } from '../../lib/utils'
 import { createPhotoComponent } from '../../fields/CreatePhoto'
 
@@ -17,8 +17,6 @@ interface ThjodskraImage {
   content: string
   contentSpecification: string
 }
-
-const QUALITY_IMAGE_TYPE_IDS = [1, 11]
 
 export const subSectionQualityPhotoBE = buildSubSection({
   id: 'photoStepBE',

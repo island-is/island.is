@@ -13,12 +13,11 @@ import {
   codesExtendedLicenseCategories,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
+  QUALITY_IMAGE_TYPE_IDS,
   remarksCannotRenew65,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
 import { DrivingLicense } from '../../lib/types'
-
-const QUALITY_IMAGE_TYPE_IDS = [1, 11]
 
 const QUERY = gql`
   query EligibilityQuery($input: ApplicationEligibilityInput!) {

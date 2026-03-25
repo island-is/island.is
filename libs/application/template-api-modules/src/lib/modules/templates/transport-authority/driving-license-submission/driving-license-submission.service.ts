@@ -292,6 +292,14 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           (p) => p.biometricId === selectedPhoto,
         )
 
+        if (!isValidThjodskra) {
+          this.log(
+            'error',
+            'Selected photo biometricId does not match any Thjodskra photo',
+            { selectedPhoto },
+          )
+        }
+
         photoBiometricsId = isValidThjodskra ? selectedPhoto : null
         signatureBiometricsId = isValidThjodskra
           ? allThjodskraPhotos.find(
@@ -332,12 +340,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           contentList = files
             .filter((f) => f.fileContent)
             .map((f) => {
-              const ext =
-                f.fileName
-                  .split('.')
-                  .pop()
-                  ?.toLowerCase()
-                  .replace('jpg', 'jpeg') ?? ''
+              const rawExt =
+                f.fileName.split('.').pop()?.toLowerCase() ?? ''
+              const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
               return {
                 fileName: f.fileName,
                 fileExtension: ext,

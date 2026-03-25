@@ -152,6 +152,10 @@ export const CHARGE_ITEM_CODES: Record<string, string> = {
   [DELIVERY_FEE]: 'AY145',
 }
 
+// RLS image type IDs that indicate a quality-certified photo for BE license
+// 1 = standard quality photo, 11 = quality scanned photo
+export const QUALITY_IMAGE_TYPE_IDS = [1, 11]
+
 export const otherLicenseCategories = ['C', 'C1', 'CE', 'D', 'D1', 'DE']
 export const codesRequiringHealthCertificate = ['400', '01.06']
 export const codesExtendedLicenseCategories = [

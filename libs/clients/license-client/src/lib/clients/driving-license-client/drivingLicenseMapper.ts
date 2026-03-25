@@ -34,8 +34,8 @@ const mapCategoryToRight = (
   category: Partial<CategoryDto>,
   remarks?: Array<RemarkCode> | null,
 ) => {
-  let right = `Réttindaflokkur ${category.nr}, ${
-    category.categoryName
+  let right = `Réttindaflokkur ${category.nr ?? ''}, ${
+    category.categoryName ?? ''
   }\n  - Gildir til ${
     category.dateTo ? format(category.dateTo, 'dd-MM-yyyy') : ''
   }\n`
