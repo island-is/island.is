@@ -10,7 +10,7 @@ import { createNationalId } from '@island.is/testing/fixtures'
 
 import { UserNotificationsConfig } from '../../../../config'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
-import { DECEASED_STATUS, INACTIVE_COMPANY_STATUSES } from './helpers'
+import { DECEASED_STATUS, INACTIVE_COMPANY_STATUS } from './helpers'
 
 import type { User } from '@island.is/auth-nest-tools'
 import type { ConfigType } from '@island.is/nest/config'
@@ -139,7 +139,7 @@ export const inactiveCompanyUser: MockUserProfileDto = {
   smsNotifications: true,
 }
 
-export const inactiveCompanyStatus = INACTIVE_COMPANY_STATUSES[0]
+export const inactiveCompanyStatus = INACTIVE_COMPANY_STATUS
 
 export const companyUser: MockUserProfileDto = {
   name: 'companyUser',
