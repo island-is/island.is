@@ -125,8 +125,7 @@ export default function AuthLayout() {
         name="(modals)/notifications"
         options={{
           ...modalScreenOptions,
-          ...tabScreenOptions,
-          headerTitle: intl.formatMessage({ id: 'notifications.screenTitle' }),
+          headerShown: false,
         }}
       />
       <Stack.Screen

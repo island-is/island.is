@@ -139,9 +139,10 @@ export default function NotificationsScreen() {
 
       navigateToUniversalLink({
         link: notification.message?.link?.url,
+        fromScreen: '/notifications'
       })
     },
-    [markUserNotificationAsRead],
+    [markUserNotificationAsRead, router],
   )
 
   const handleEndReached = async () => {
