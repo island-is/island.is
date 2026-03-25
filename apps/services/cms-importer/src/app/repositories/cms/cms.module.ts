@@ -19,6 +19,6 @@ import { CmsRepository } from './cms.repository'
       inject: [ManagementClientConfig.KEY],
     },
   ],
-  exports: [CmsRepository],
+  exports: [CmsRepository, ManagementClientService],
 })
 export class CmsRepositoryModule {}
