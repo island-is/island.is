@@ -743,28 +743,25 @@ const Filters = ({
                           label={label}
                           value={label}
                           onChange={(checked) => {
-                            updateQueryState(
-                              queryParamKey,
-                              (previousState) => {
-                                let updatedValues = [
-                                  ...(previousState[queryParamKey] ?? []),
-                                ]
-                                if (checked) {
-                                  updatedValues.push(label)
-                                } else {
-                                  updatedValues = updatedValues.filter(
-                                    (value) => value !== label,
-                                  )
-                                }
-                                return {
-                                  ...previousState,
-                                  [queryParamKey]:
-                                    updatedValues.length === 0
-                                      ? null
-                                      : updatedValues,
-                                }
-                              },
-                            )
+                            updateQueryState(queryParamKey, (previousState) => {
+                              let updatedValues = [
+                                ...(previousState[queryParamKey] ?? []),
+                              ]
+                              if (checked) {
+                                updatedValues.push(label)
+                              } else {
+                                updatedValues = updatedValues.filter(
+                                  (value) => value !== label,
+                                )
+                              }
+                              return {
+                                ...previousState,
+                                [queryParamKey]:
+                                  updatedValues.length === 0
+                                    ? null
+                                    : updatedValues,
+                              }
+                            })
                           }}
                         />
                       )
