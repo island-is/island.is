@@ -1,5 +1,5 @@
 import { FormSystemField } from '@island.is/api/schema'
-import { Box, Text, Stack } from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 
 const TEXTBOX_COMPONENT_MAP = {
   BANK_ACCOUNT: 'bankAccount',
@@ -16,6 +16,7 @@ const TEXTBOX_COMPONENT_MAP = {
   DROPDOWN_LIST: 'listValue',
   RADIO_BUTTONS: 'listValue',
   APPLICANT: '',
+  PAYMENT_QUANTITY: 'number',
 } as const
 
 interface Props {

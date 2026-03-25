@@ -5,9 +5,13 @@ import {
   ApplicantTypesEnum,
   getValue,
   IndividualApplicant,
-  LegalEntity,
+  m,
+  NationalIdField,
 } from '@island.is/form-system/ui'
+import { Box, Input, Stack, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useEffect } from 'react'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 
@@ -23,13 +27,53 @@ const individuals: ApplicantTypesEnum[] = [
   ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
 ]
 
+// This needs to be reworked!!!!
+const getNationalId = (
+  userNationalId: string,
+  actor: string | undefined,
+  applicantType: ApplicantTypesEnum,
+) => {
+  if (applicantType === ApplicantTypesEnum.INDIVIDUAL) {
+    return actor ? actor : userNationalId
+  }
+  if (applicantType === ApplicantTypesEnum.LEGAL_ENTITY) {
+    return userNationalId
+  }
+  if (
+    applicantType ===
+    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL
+  ) {
+    return actor ?? ''
+  }
+  if (
+    applicantType ===
+    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY
+  ) {
+    return actor ?? ''
+  }
+  if (applicantType === ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION) {
+    return actor ?? ''
+  }
+  if (applicantType === ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER) {
+    return userNationalId
+  }
+
+  return actor ?? userNationalId
+}
+
 export const Applicants = ({ applicantField }: Props) => {
   const { dispatch } = useApplicationContext()
+  const { formatMessage, lang } = useLocale()
+  const userInfo = useUserInfo()
   const { applicantType } = applicantField.fieldSettings ?? {}
   const isLegalEntity =
     applicantType === ApplicantTypesEnum.LEGAL_ENTITY ||
     applicantType === ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER
-  const nationalId = applicantField.values?.[0]?.json?.nationalId ?? ''
+  const nationalId = getNationalId(
+    userInfo?.profile?.nationalId,
+    userInfo?.profile?.actor?.nationalId,
+    applicantType as ApplicantTypesEnum,
+  )
 
   const hasEmail =
     getValue(applicantField, 'email') &&
@@ -103,7 +147,29 @@ export const Applicants = ({ applicantField }: Props) => {
         />
       )}
       {isLegalEntity && (
-        <LegalEntity applicant={applicantField} nationalId={nationalId} />
+        <Box marginTop={4}>
+          <Text variant="h2" as="h2" marginBottom={3}>
+            {applicantField?.name?.[lang]}
+          </Text>
+          <Stack space={2}>
+            <NationalIdField
+              nationalId={nationalId}
+              name={getValue(applicantField, 'name')}
+            />
+            <Input
+              label={formatMessage(m.address)}
+              name="address"
+              value={getValue(applicantField, 'address') || ''}
+              readOnly
+            />
+            <Input
+              label={formatMessage(m.postalCode)}
+              name="postalCode"
+              value={getValue(applicantField, 'postalCode') || ''}
+              readOnly
+            />
+          </Stack>
+        </Box>
       )}
     </>
   )

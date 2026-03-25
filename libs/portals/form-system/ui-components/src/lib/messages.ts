@@ -556,11 +556,6 @@ export const m = defineMessages({
     defaultMessage: 'Krafist',
     description: 'Required',
   },
-  select: {
-    id: 'form.system:select',
-    defaultMessage: 'Veldu',
-    description: 'Select an option',
-  },
   email: {
     id: 'form.system:email',
     defaultMessage: 'Netfang',
@@ -1150,6 +1145,36 @@ export const m = defineMessages({
     id: 'form.system:zendesk-private',
     defaultMessage: 'Umsóknirnar skulu vera merktar internal/private í Zendesk',
     description: 'Applications should be marked as internal/private in Zendesk',
+  },
+  minAmount: {
+    id: 'form.system:min-amount',
+    defaultMessage: 'Magn má ekki vera lægra en {minAmount}',
+    description: 'Minimum amount must not be lower than {minAmount}',
+  },
+  maxAmount: {
+    id: 'form.system:max-amount',
+    defaultMessage: 'Magn má ekki vera hærra en {maxAmount}',
+    description: 'Maximum amount must not be higher than {maxAmount}',
+  },
+  total: {
+    id: 'form.system:total',
+    defaultMessage: 'Samtals',
+    description: 'Total',
+  },
+  price: {
+    id: 'form.system:price',
+    defaultMessage: 'Verð',
+    description: 'Price',
+  },
+  quantity: {
+    id: 'form.system:quantity',
+    defaultMessage: 'Fjöldi',
+    description: 'Quantity',
+  },
+  pay: {
+    id: 'form.system:pay',
+    defaultMessage: 'Greiða',
+    description: 'Pay',
   },
   useValidate: {
     id: 'form.system:use-validate',

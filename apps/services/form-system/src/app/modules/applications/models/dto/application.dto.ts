@@ -81,6 +81,8 @@ export class ApplicationDto {
   zendeskInternal?: boolean
 
   @ApiPropertyOptional()
+  organizationNationalId?: string
+
   useValidate?: boolean
 
   @ApiPropertyOptional()

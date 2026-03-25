@@ -1,3 +1,3 @@
-export { IndividualApplicant } from './IndividualApplicant'
+export { IndividualApplicant } from './individualApplicant'
 export { Agent } from './agent'
-export { LegalEntity } from './LegalEntity'
+export { LegalEntity } from './legalEntity'
