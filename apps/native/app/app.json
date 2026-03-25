@@ -102,6 +102,7 @@
       "expo-web-browser",
       "expo-core-spotlight",
       "react-native-vision-camera",
+      "@react-native-community/datetimepicker",
       "@react-native-firebase/app",
       "@react-native-firebase/messaging",
       "@react-native-firebase/perf",
