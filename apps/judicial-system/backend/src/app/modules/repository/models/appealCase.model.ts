@@ -164,7 +164,7 @@ export class AppealCase extends Model {
     allowNull: true,
     values: Object.values(CaseAppealRulingDecision),
   })
-  @ApiProperty({ enum: CaseAppealRulingDecision })
+  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
   appealRulingDecision?: CaseAppealRulingDecision
 
   /**********
