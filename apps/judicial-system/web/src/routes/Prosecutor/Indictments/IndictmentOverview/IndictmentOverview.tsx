@@ -262,7 +262,7 @@ const IndictmentOverview: FC = () => {
               />
               {workingCase.defendants && (
                 <div className={grid({ gap: 3 })}>
-                  {workingCase.defendants.map((defendant) => (
+                  {workingCase.defendants?.map((defendant) => (
                     <BlueBox key={`${defendant.id}_review_decision`}>
                       <SectionHeading
                         title={defendant.name ?? ''}

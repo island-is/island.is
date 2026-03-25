@@ -22,11 +22,13 @@ export const apiScope = factory<AuthApiScope>({
   displayName: () => title(),
   description: () => faker.lorem.paragraph(),
   name: () => `@${faker.internet.domainName()}/${faker.lorem.slug()}`,
+  allowsWrite: () => faker.datatype.boolean(),
 })
 
 export const delegationScope = factory<AuthDelegationScope>({
   id: () => faker.datatype.uuid(),
   apiScope: () => apiScope(),
+  domain: () => domain(),
   displayName: ({ apiScope }) => apiScope!.displayName,
   name: ({ apiScope }) => apiScope!.name,
 })

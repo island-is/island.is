@@ -1,8 +1,17 @@
 import faker from 'faker'
 import shuffle from 'lodash/shuffle'
 import request from 'supertest'
+import { getModelToken } from '@nestjs/sequelize'
 
-import { ScopeTreeDTO } from '@island.is/auth-api-lib'
+import {
+  ApiScopeCategory,
+  ApiScopeTag,
+  DelegationDirection,
+  ScopeCategoryDTO,
+  ScopeTagDTO,
+  ScopeTreeDTO,
+} from '@island.is/auth-api-lib'
+import { CmsContentfulService } from '@island.is/cms'
 import { AuthScope } from '@island.is/auth/scopes'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -172,6 +181,223 @@ describe('ScopesController', () => {
     })
   })
 
+  describe('GET /v1/scopes/categories', () => {
+    const categoryId = 'cat-cms-id-1'
+    const categoryId2 = 'cat-cms-id-2'
+    const mockCategories = [
+      {
+        id: categoryId,
+        title: 'Finance',
+        slug: 'finance',
+        description: 'Financial services',
+      },
+      {
+        id: categoryId2,
+        title: 'Health',
+        slug: 'health',
+        description: 'Health services',
+      },
+    ]
+    const mockCmsContentfulService = {
+      getArticleCategories: jest.fn().mockResolvedValue(mockCategories),
+      getDelegationScopeTags: jest.fn().mockResolvedValue([]),
+    }
+
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    let factory: FixtureFactory
+
+    beforeAll(async () => {
+      app = await setupWithAuth({
+        user: createCurrentUser({ scope: [AuthScope.consents] }),
+        override: (builder) =>
+          builder
+            .overrideProvider(CmsContentfulService)
+            .useValue(mockCmsContentfulService),
+      })
+      server = request(app.getHttpServer())
+      factory = new FixtureFactory(app)
+
+      // Create scope linked to category
+      const scope1 = await factory.createApiScope({
+        name: 'cat-scope-1',
+        allowExplicitDelegationGrant: true,
+      })
+      const scope2 = await factory.createApiScope({
+        name: 'cat-scope-2',
+        allowExplicitDelegationGrant: true,
+      })
+
+      const apiScopeCategoryModel = app.get(getModelToken(ApiScopeCategory))
+      await apiScopeCategoryModel.bulkCreate([
+        { scopeName: scope1.name, categoryId },
+        { scopeName: scope2.name, categoryId },
+        { scopeName: scope2.name, categoryId: categoryId2 },
+      ])
+    })
+
+    afterAll(() => app.cleanUp())
+
+    it('returns categories with their associated scopes', async () => {
+      // Act
+      const res = await server.get('/v1/scopes/categories')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toHaveLength(2)
+      const financeCategory = res.body.find(
+        (c: ScopeCategoryDTO) => c.id === categoryId,
+      )
+      expect(financeCategory).toMatchObject({
+        id: categoryId,
+        title: 'Finance',
+        slug: 'finance',
+      })
+      expect(financeCategory.scopes).toHaveLength(2)
+      expect(
+        financeCategory.scopes.map((s: { name: string }) => s.name),
+      ).toContain('cat-scope-1')
+      expect(
+        financeCategory.scopes.map((s: { name: string }) => s.name),
+      ).toContain('cat-scope-2')
+    })
+
+    it('filters scopes by OUTGOING direction', async () => {
+      // Act
+      const res = await server.get(
+        `/v1/scopes/categories?direction=${DelegationDirection.OUTGOING}`,
+      )
+
+      // Assert
+      expect(res.status).toEqual(200)
+      // Scopes with allowExplicitDelegationGrant=true should appear
+      const financeCategory = res.body.find(
+        (c: ScopeCategoryDTO) => c.id === categoryId,
+      )
+      expect(financeCategory).toBeDefined()
+      expect(financeCategory.scopes.length).toBeGreaterThan(0)
+    })
+
+    it('only returns categories that have at least one scope', async () => {
+      // The CMS returns 2 categories but only those with DB-linked scopes are returned
+      const res = await server.get('/v1/scopes/categories')
+      expect(res.status).toEqual(200)
+      expect(res.body.every((c: ScopeCategoryDTO) => c.scopes.length > 0)).toBe(
+        true,
+      )
+    })
+
+    it('returns categories sorted alphabetically by title', async () => {
+      const res = await server.get('/v1/scopes/categories')
+      expect(res.status).toEqual(200)
+      const titles = res.body.map((c: ScopeCategoryDTO) => c.title)
+      expect(titles).toEqual([...titles].sort())
+    })
+  })
+
+  describe('GET /v1/scopes/tags', () => {
+    const tagId = 'tag-cms-id-1'
+    const tagId2 = 'tag-cms-id-2'
+    const mockTags = [
+      {
+        id: tagId,
+        title: 'Assets',
+        slug: 'assets',
+        description: 'Asset management',
+      },
+      {
+        id: tagId2,
+        title: 'Benefits',
+        slug: 'benefits',
+        description: 'Social benefits',
+      },
+    ]
+    const mockCmsContentfulService = {
+      getArticleCategories: jest.fn().mockResolvedValue([]),
+      getDelegationScopeTags: jest.fn().mockResolvedValue(mockTags),
+    }
+
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    let factory: FixtureFactory
+
+    beforeAll(async () => {
+      app = await setupWithAuth({
+        user: createCurrentUser({ scope: [AuthScope.consents] }),
+        override: (builder) =>
+          builder
+            .overrideProvider(CmsContentfulService)
+            .useValue(mockCmsContentfulService),
+      })
+      server = request(app.getHttpServer())
+      factory = new FixtureFactory(app)
+
+      const scope1 = await factory.createApiScope({
+        name: 'tag-scope-1',
+        allowExplicitDelegationGrant: true,
+      })
+      const scope2 = await factory.createApiScope({
+        name: 'tag-scope-2',
+        allowExplicitDelegationGrant: true,
+      })
+
+      const apiScopeTagModel = app.get(getModelToken(ApiScopeTag))
+      await apiScopeTagModel.bulkCreate([
+        { scopeName: scope1.name, tagId },
+        { scopeName: scope2.name, tagId },
+        { scopeName: scope2.name, tagId: tagId2 },
+      ])
+    })
+
+    afterAll(() => app.cleanUp())
+
+    it('returns tags with their associated scopes', async () => {
+      // Act
+      const res = await server.get('/v1/scopes/tags')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toHaveLength(2)
+      const assetsTag = res.body.find((t: ScopeTagDTO) => t.id === tagId)
+      expect(assetsTag).toMatchObject({
+        id: tagId,
+        title: 'Assets',
+        slug: 'assets',
+      })
+      expect(assetsTag.scopes).toHaveLength(2)
+      expect(assetsTag.scopes.map((s: { name: string }) => s.name)).toContain(
+        'tag-scope-1',
+      )
+      expect(assetsTag.scopes.map((s: { name: string }) => s.name)).toContain(
+        'tag-scope-2',
+      )
+    })
+
+    it('filters scopes by OUTGOING direction', async () => {
+      const res = await server.get(
+        `/v1/scopes/tags?direction=${DelegationDirection.OUTGOING}`,
+      )
+
+      expect(res.status).toEqual(200)
+      const assetsTag = res.body.find((t: ScopeTagDTO) => t.id === tagId)
+      expect(assetsTag).toBeDefined()
+      expect(assetsTag.scopes.length).toBeGreaterThan(0)
+    })
+
+    it('only returns tags that have at least one scope', async () => {
+      const res = await server.get('/v1/scopes/tags')
+      expect(res.status).toEqual(200)
+      expect(res.body.every((t: ScopeTagDTO) => t.scopes.length > 0)).toBe(true)
+    })
+
+    it('returns tags sorted alphabetically by title', async () => {
+      const res = await server.get('/v1/scopes/tags')
+      expect(res.status).toEqual(200)
+      const titles = res.body.map((t: ScopeTagDTO) => t.title)
+      expect(titles).toEqual([...titles].sort())
+    })
+  })
+
   describe('withoutAuth and permissions', () => {
     async function formatUrl(app: TestApp, endpoint: string) {
       if (!endpoint.includes(':domain')) {
@@ -185,6 +411,8 @@ describe('ScopesController', () => {
     it.each`
       method   | endpoint
       ${'GET'} | ${'/v1/scopes/scope-tree'}
+      ${'GET'} | ${'/v1/scopes/categories'}
+      ${'GET'} | ${'/v1/scopes/tags'}
     `(
       '$method $endpoint should return 401 when user is not authenticated',
       async ({ method, endpoint }: TestEndpointOptions) => {
@@ -212,6 +440,8 @@ describe('ScopesController', () => {
     it.each`
       method   | endpoint
       ${'GET'} | ${'/v1/scopes/scope-tree'}
+      ${'GET'} | ${'/v1/scopes/categories'}
+      ${'GET'} | ${'/v1/scopes/tags'}
     `(
       '$method $endpoint should return 403 Forbidden when user does not have the correct scope',
       async ({ method, endpoint }: TestEndpointOptions) => {
