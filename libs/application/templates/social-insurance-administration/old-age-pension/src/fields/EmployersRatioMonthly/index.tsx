@@ -6,7 +6,7 @@ import { useLocale } from '@island.is/localization'
 import { RepeaterProps, FieldBaseProps } from '@island.is/application/types'
 
 import { oldAgePensionFormMessage } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
+import { getApplicationAnswers } from '../../utils/oldAgePensionUtils'
 import { MONTHS } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { InputController } from '@island.is/shared/form-fields'
 import { getErrorViaPath } from '@island.is/application/core'
