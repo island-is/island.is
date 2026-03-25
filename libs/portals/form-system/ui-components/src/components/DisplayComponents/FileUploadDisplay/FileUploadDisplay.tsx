@@ -1,12 +1,14 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Box, Text, Icon } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   item: FormSystemField
-  lang?: 'is' | 'en'
 }
 
-export const FileUploadDisplay = ({ item, lang = 'is' }: Props) => {
+export const FileUploadDisplay = ({ item }: Props) => {
+  const { lang } = useLocale()
+
   const s3Keys = (item.values?.[0]?.json?.s3Key ?? []).filter(
     (k): k is string => typeof k === 'string',
   )

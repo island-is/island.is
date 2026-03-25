@@ -230,14 +230,17 @@ export const Screen = () => {
                   const valueIndex =
                     field.isPartOfMultiset === false ? 0 : itemIndex
 
+                  const isRepeatingField = field.isPartOfMultiset === true
+
                   const showRowGutter =
+                    isRepeatingField &&
                     numberOfItems > 1 &&
                     (itemIndex !== 0 ||
                       anchorFieldIndex === -1 ||
                       fieldIndex >= anchorFieldIndex)
 
                   let gutterLabel: string | null = null
-                  if (numberOfItems > 1) {
+                  if (isRepeatingField && numberOfItems > 1) {
                     if (itemIndex === 0) {
                       if (anchorFieldIndex === -1) {
                         if (fieldIndex === 0) gutterLabel = '1.'
