@@ -230,7 +230,7 @@ export const Screen = () => {
                   const valueIndex =
                     field.isPartOfMultiset === false ? 0 : itemIndex
 
-                  const isRepeatingField = field.isPartOfMultiset === true
+                  const isRepeatingField = field.isPartOfMultiset !== false
 
                   const showRowGutter =
                     isRepeatingField &&
