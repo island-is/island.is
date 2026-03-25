@@ -27,7 +27,7 @@ export const createPhotoComponent = (photoContent?: string) => {
     return (
       <img
         src={imageSrc}
-        alt="Identification photograph"
+        alt=""
         width={150}
         height={150}
         onError={(e) => {
