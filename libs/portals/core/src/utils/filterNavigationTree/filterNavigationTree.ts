@@ -26,7 +26,8 @@ export const computeDisabledReason = (
   if (
     delegationTypes.includes(AuthDelegationType.LegalGuardian) &&
     !delegationTypes.includes(AuthDelegationType.LegalGuardianMinor) &&
-    (route.path.includes(HEALTH_ROUTE) || route.path.includes(LAW_AND_ORDER_ROUTE))
+    (route.path.includes(HEALTH_ROUTE) ||
+      route.path.includes(LAW_AND_ORDER_ROUTE))
   ) {
     return 'notMinor'
   }
