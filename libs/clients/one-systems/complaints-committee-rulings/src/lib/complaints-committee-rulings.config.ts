@@ -17,7 +17,7 @@ export const ComplaintsCommitteeRulingsClientConfig = defineConfig<
       'https://onedemo.onecrm.is',
     ),
     apiKey: env.required(
-      'COMPLAINTS_COMMITTEE_RULINGS_API_KEY',
+      'COMPLAINTS_COMMITTEE_RULINGS_API_KEY', ''
     ),
   }),
 })
