@@ -191,6 +191,7 @@ import { SignatureCollectionModule } from '@island.is/api/domains/signature-coll
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { RskRentalDayRateClientConfig } from '@island.is/clients-rental-day-rate'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
+import { FinanceClientV3Config } from '@island.is/clients/finance-v3'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { PCardClientConfig } from '@island.is/clients/p-card'
 import { DistrictCommissionersLicensesClientConfig } from '@island.is/clients/district-commissioners-licenses'
@@ -438,6 +439,7 @@ const environment = getConfig
         HousingBenefitsConfig,
         FinanceClientConfig,
         FinanceClientV2Config,
+        FinanceClientV3Config,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         IdsClientConfig,

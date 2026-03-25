@@ -85,7 +85,7 @@ const Home: Screen<HomeProps> = ({
   const { activeLocale } = useI18n()
 
   useContentfulId(organization?.id)
-  useLocalLinkTypeResolver()
+  useLocalLinkTypeResolver('serviceweborganization')
 
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
 

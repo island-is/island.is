@@ -1,5 +1,9 @@
 import { createApplication } from '@island.is/application/testing'
-import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationClientService,
+  SocialInsuranceAdministrationMedicalAndRehabilitationService,
+  SocialInsuranceAdministrationOldAgePensionService,
+} from '@island.is/clients/social-insurance-administration'
 import { Test, TestingModule } from '@nestjs/testing'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -49,6 +53,24 @@ describe('SocialInsuranceAdministrationService', () => {
               }),
           })),
         },
+        {
+          provide: SocialInsuranceAdministrationOldAgePensionService,
+          useClass: jest.fn(() => ({
+            sendOldAgePensionApplication: () =>
+              Promise.resolve({
+                applicationLineId: '0',
+              }),
+          })),
+        },
+        {
+          provide: SocialInsuranceAdministrationMedicalAndRehabilitationService,
+          useClass: jest.fn(() => ({
+            sendMedicalAndRehabilitationPaymentsApplication: () =>
+              Promise.resolve({
+                applicationLineId: '0',
+              }),
+          })),
+        },
       ],
     }).compile()
 
@@ -76,7 +98,7 @@ describe('SocialInsuranceAdministrationService', () => {
       },
       answers: {
         paymentInfo: {
-          bank: '222200123456',
+          bank: { ledger: '00', bankNumber: '2222', accountNumber: '123456' },
           iban: '',
           swift: '',
           taxLevel: '2',
@@ -102,7 +124,7 @@ describe('SocialInsuranceAdministrationService', () => {
       currentUserLocale: 'is',
     })
 
-    expect(result).toMatchObject({ applicationLineId: '123' })
+    expect(result).toMatchObject({ applicationLineId: '0' })
   })
 
   it('should send household supplement application', async () => {
