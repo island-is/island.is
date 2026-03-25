@@ -112,11 +112,13 @@ export const useEligibility = (
   if (application.answers.applicationFor === BE) {
     const qualityPhotoAndSignature = getValueViaPath<{
       imageTypeId?: number | null
+      pohto?: string | null
     }>(application.externalData, 'qualityPhotoAndSignature.data')
 
-    const qualityPhotoConfirmed = QUALITY_IMAGE_TYPE_IDS.includes(
-      qualityPhotoAndSignature?.imageTypeId ?? 0,
-    )
+    const qualityPhotoConfirmed =
+      QUALITY_IMAGE_TYPE_IDS.includes(
+        qualityPhotoAndSignature?.imageTypeId ?? 0,
+      ) && !!qualityPhotoAndSignature?.pohto
 
     const thjodskraPhotos =
       getValueViaPath<{ images?: Array<{ contentSpecification?: string }> }>(

@@ -274,7 +274,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         'drivingInstructor',
       )
       const beEmail = getValueViaPath<string>(answers, 'email')
-      const bePhone = getValueViaPath<string>(answers, 'phone')
+      const bePhone = formatPhoneNumber(
+        getValueViaPath<string>(answers, 'phone') ?? '',
+      )
       const selectedPhoto = getValueViaPath<string>(
         answers,
         'selectLicensePhoto',
@@ -368,6 +370,17 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           })
           throw e
         }
+
+        if (!contentList || contentList.length === 0) {
+          throw new TemplateApiError(
+            {
+              title: coreErrorMessages.failedDataProviderSubmit,
+              summary:
+                'Health certificate is required but no valid files were found',
+            },
+            400,
+          )
+        }
       }
 
       // Health declaration model — always sent for BE
@@ -389,9 +402,11 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         nationalId,
         auth.authorization,
         {
-          jurisdiction: jurisdictionId,
+          jurisdiction: jurisdictionId
+            ? jurisdictionId
+            : setJurisdictionToKopavogur,
           instructorSSN: instructorSSN ?? '',
-          primaryPhoneNumber: bePhone ?? '',
+          primaryPhoneNumber: bePhone,
           studentEmail: beEmail ?? '',
           contentList,
           photoBiometricsId,
