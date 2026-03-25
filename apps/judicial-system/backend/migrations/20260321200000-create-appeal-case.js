@@ -31,7 +31,7 @@ module.exports = {
             },
             appeal_state: {
               type: '"enum_case_appeal_state"',
-              allowNull: true,
+              allowNull: false,
             },
             appeal_case_number: {
               type: Sequelize.STRING,
