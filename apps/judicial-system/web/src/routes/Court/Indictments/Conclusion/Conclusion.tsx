@@ -47,6 +47,7 @@ import {
   Defendant,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   formatDateForServer,
   UpdateCase,
@@ -801,8 +802,7 @@ const Conclusion: FC = () => {
           {selectedAction === IndictmentDecision.COMPLETING &&
             (selectedDecision === CaseIndictmentRulingDecision.FINE ||
               selectedDecision === CaseIndictmentRulingDecision.RULING) &&
-            workingCase.defendants &&
-            workingCase.defendants?.length > 0 && (
+            isNonEmptyArray(workingCase.defendants) && (
               <Box component="section" className={grid({ gap: 3 })}>
                 {workingCase.defendants.map((defendant) => (
                   <BlueBox key={defendant.id} className={grid({ gap: 2 })}>
@@ -856,6 +856,36 @@ const Conclusion: FC = () => {
                 ))}
               </Box>
             )}
+          {selectedAction === IndictmentDecision.COMPLETING_FOR_SOME &&
+            isNonEmptyArray(workingCase.defendants) &&
+            workingCase.defendants.map((defendant) => (
+              <BlueBox
+                key={`completing-for-some-${defendant.id}`}
+                className={grid({ gap: 2 })}
+              >
+                <SectionHeading
+                  title={defendant.name || ''}
+                  variant="h4"
+                  marginBottom={0}
+                />
+                <Select
+                  id={`completing-for-some-${defendant.id}`}
+                  label="Lyktir"
+                  placeholder="Veldu lyktir ef á við"
+                  options={[
+                    {
+                      label: 'Frávísun',
+                      value: CaseIndictmentRulingDecision.DISMISSAL,
+                    },
+                    {
+                      label: 'Niðurfelling máls',
+                      value: CaseIndictmentRulingDecision.CANCELLATION,
+                    },
+                  ]}
+                  size="sm"
+                />
+              </BlueBox>
+            ))}
           {selectedAction && workingCase.withCourtSessions && (
             <Box component="section">
               <PdfButton
