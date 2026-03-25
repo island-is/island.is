@@ -62,11 +62,11 @@ export class AppealCase extends Model {
    **********/
   @Column({
     type: DataType.ENUM,
-    allowNull: true,
+    allowNull: false,
     values: Object.values(CaseAppealState),
   })
   @ApiProperty({ enum: CaseAppealState })
-  appealState?: CaseAppealState
+  appealState!: CaseAppealState
 
   /**********
    * The appeal case number assigned in the court of appeals
