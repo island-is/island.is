@@ -102,10 +102,10 @@ export default function HealthCategoriesScreen() {
     return (
       [
         {
-          id: 'prescriptions',
+          id: 'prescriptionsAndCertificates',
           titleId: 'health.drugCertificates.title',
           icon: medicineIcon,
-          route: '/health/medicine/prescriptions',
+          route: '/health/medicine/legacy',
           enabled: !isMedicineEnabled,
         },
         {

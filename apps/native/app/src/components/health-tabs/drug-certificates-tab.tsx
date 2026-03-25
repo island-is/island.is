@@ -2,13 +2,15 @@ import { StackScreen } from '@/components/stack-screen'
 import React, { useMemo } from 'react'
 import { FlatList, RefreshControl, View } from 'react-native'
 
-import { useGetDrugCertificatesQuery } from '@/graphql/types/schema'
-import { Problem } from '@/ui'
-import { NetworkStatus } from '@apollo/client'
 import { CertificateCard } from '@/components/certificate-card'
-import { EmptyComponent, Skeletons } from './shared'
+import { useGetDrugCertificatesQuery } from '@/graphql/types/schema'
+import { NetworkStatus } from '@apollo/client'
+import { EmptyComponent } from './shared'
+import { Typography } from '../../ui'
+import { useIntl } from 'react-intl'
 
 export function DrugCertificatesTab({ initial }: { initial?: boolean }) {
+  const intl = useIntl()
   const certificatesRes = useGetDrugCertificatesQuery({
     initialFetchPolicy: initial ? 'network-only' : undefined,
   })
@@ -23,6 +25,16 @@ export function DrugCertificatesTab({ initial }: { initial?: boolean }) {
       data={data}
       renderItem={({ item }) => <CertificateCard certificate={item} />}
       contentContainerStyle={{ flexGrow: 1, paddingTop: 16 }}
+      contentInsetAdjustmentBehavior="automatic"
+      ListHeaderComponent={
+        <View style={{ marginBottom: 16 }}>
+          <Typography variant="body">
+            {intl.formatMessage({
+              id: 'health.prescriptionsAndCertificates.description',
+            })}
+          </Typography>
+        </View>
+      }
       refreshControl={
         <RefreshControl
           refreshing={certificatesRes.networkStatus === NetworkStatus.refetch}

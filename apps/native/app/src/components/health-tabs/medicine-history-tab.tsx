@@ -24,6 +24,7 @@ export function MedicineHistoryTab({ initial }: { initial?: boolean }) {
       data={data}
       renderItem={({ item }) => <MedicineHistoryCard medicine={item} />}
       contentContainerStyle={{ flexGrow: 1, paddingTop: 16 }}
+      contentInsetAdjustmentBehavior="automatic"
       refreshControl={
         <RefreshControl
           refreshing={

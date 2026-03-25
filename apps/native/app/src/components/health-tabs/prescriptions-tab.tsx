@@ -28,6 +28,7 @@ export function PrescriptionsTab({ initial }: { initial?: boolean }) {
       data={data}
       renderItem={({ item }) => <PrescriptionCard prescription={item} />}
       contentContainerStyle={{ flexGrow: 1, paddingTop: 16 }}
+      contentInsetAdjustmentBehavior="automatic"
       refreshControl={
         <RefreshControl
           refreshing={prescriptionsRes.networkStatus === NetworkStatus.refetch}

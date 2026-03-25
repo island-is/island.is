@@ -59,10 +59,18 @@ export default function HealthLayout() {
           }),
         }}
       />
+      {/* New health screen */}
       <Stack.Screen
         name="medicine/index"
         options={{
           title: intl.formatMessage({ id: 'health.prescriptionsAndCertificates.screenTitle' }),
+        }}
+      />
+      {/* Legacy health screen from the old app */}
+      <Stack.Screen
+        name="medicine/legacy"
+        options={{
+          title: intl.formatMessage({ id: 'health.drugCertificates.title' }),
         }}
       />
       <Stack.Screen

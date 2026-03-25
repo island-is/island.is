@@ -115,6 +115,7 @@ export function MedicineDelegationTab({ initial }: { initial?: boolean }) {
   return (
     <ScrollView
       style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16 }}
+      contentInsetAdjustmentBehavior="automatic"
       refreshControl={
         <RefreshControl
           refreshing={

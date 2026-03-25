@@ -228,10 +228,10 @@ export default function HealthOverviewScreen() {
   const healthCardRows = useMemo(() => {
     const allHealthCards: HealthCard[] = [
       {
-        id: 'prescriptions',
-        titleId: 'health.prescriptions.title',
+        id: 'prescriptionsAndCertificates',
+        titleId: 'health.drugCertificates.title',
         icon: medicineIcon,
-        route: '/health/medicine/prescriptions',
+        route: '/health/medicine/legacy',
         enabled: !isMedicineEnabled,
       },
       {
