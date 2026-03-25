@@ -467,6 +467,7 @@ export const en: TranslatedMessages = {
   'vehicleDetail.capacityWeight': 'Road train weight',
   'vehicleDetail.odometer': 'Odometer',
   'vehicleDetail.noInfo': 'No information received',
+  'vehicleDetail.moreOptions': 'More options',
 
   // vehicle mileage
   'vehicle.mileage.errorTitle': 'Error',

@@ -341,6 +341,7 @@ export const is = {
   'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
   'vehicleDetail.odometer': 'Kílómetrastaða',
   'vehicleDetail.noInfo': 'Engar upplýsingar bárust',
+  'vehicleDetail.moreOptions': 'Fleiri valmöguleikar',
 
   // vehicle mileage
   'vehicle.mileage.errorTitle': 'Villa',

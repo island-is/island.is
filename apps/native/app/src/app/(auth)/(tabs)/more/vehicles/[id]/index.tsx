@@ -111,7 +111,7 @@ export default function VehicleDetailScreen() {
                 type: 'custom',
                 element: (
                   <ContextMenu
-                    title="Fleiri valmöguleikar"
+                    title={intl.formatMessage({ id: 'vehicleDetail.moreOptions' })}
                     trigger="tap"
                     android={{ visible: showContext }}
                     actions={

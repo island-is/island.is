@@ -88,6 +88,7 @@ export default function ApplicationsScreen() {
               <StatusCardSkeleton />
             </View>
           ))}
+
         <ApplicationsPreview
           headingTitleId="applications.incomplete"
           headingTitleNavigationLink="/more/applications/incomplete"
