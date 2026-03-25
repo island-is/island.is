@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView } from 'react-native'
+import { ScrollView, TextInput } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import styled from 'styled-components/native'
 
@@ -72,14 +72,23 @@ const EmailIconWrapper = styled(Pressable)`
 `
 
 export default function DocumentReplyScreen() {
-  const { id: documentId, senderName, subject } = useLocalSearchParams<{
+  const {
+    id: documentId,
+    senderName,
+    subject,
+  } = useLocalSearchParams<{
     id: string
     senderName: string
     subject: string
   }>()
   const intl = useIntl()
   const { userInfo } = useAuthStore()
-  const { data: userProfileData, loading, error, networkStatus } = useGetProfileQuery()
+  const {
+    data: userProfileData,
+    loading,
+    error,
+    networkStatus,
+  } = useGetProfileQuery()
   const userProfile = userProfileData?.getUserProfile
 
   const [message, setMessage] = useState('')
@@ -127,11 +136,12 @@ export default function DocumentReplyScreen() {
 
   return (
     <>
-      <StackScreen networkStatus={networkStatus} options={{ headerShown: false }} />
-      <NavigationBarSheet
-        onClosePress={() => router.back()}
-        style={{ marginHorizontal: 16 }}
-        showLoading={sendMessageLoading}
+      <StackScreen
+        networkStatus={networkStatus}
+        closeable
+        options={{
+          title: subject,
+        }}
       />
       <Host>
         {loading ? (
@@ -144,15 +154,6 @@ export default function DocumentReplyScreen() {
             keyboardShouldPersistTaps="handled"
           >
             <Wrapper>
-              <HeaderTitle>
-                <Typography
-                  variant="heading5"
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
-                  {subject}
-                </Typography>
-              </HeaderTitle>
               <Row>
                 <Typography
                   variant="body3"
@@ -194,20 +195,21 @@ export default function DocumentReplyScreen() {
                   />
                 </EmailIconWrapper>
               </Row>
-              <Row hasBottomBorder={false} paddingVertical={2}>
-                <TextAreaWrapper>
-                  <TextArea
-                    label={intl.formatMessage({ id: 'documentReply.message' })}
-                    multiline
-                    value={message}
-                    placeholder={intl.formatMessage({
-                      id: 'documentReply.messagePlaceholder',
-                    })}
-                    textAlignVertical="top"
-                    scrollEnabled
-                    onChangeText={setMessage}
-                  />
-                </TextAreaWrapper>
+              <Row
+                hasBottomBorder={false}
+                paddingVertical={2}
+                style={{ flexDirection: 'column' }}
+              >
+                <TextField
+                  label={intl.formatMessage({ id: 'documentReply.message' })}
+                  value={message}
+                  onChangeText={(msg) => setMessage(msg)}
+                  placeholder={intl.formatMessage({
+                    id: 'documentReply.messagePlaceholder',
+                  })}
+                  autoFocus
+                  multiline
+                />
               </Row>
             </Wrapper>
             <Footer>

@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router'
-import { tabScreenOptions } from '../../../../constants/screen-options'
+import { modalScreenOptions, tabScreenOptions } from '../../../../constants/screen-options'
 import { useIntl } from 'react-intl'
 
 export const unstable_settings = {
@@ -46,13 +46,14 @@ export default function InboxLayout() {
         name="[id]/communications"
         options={{
           headerShown: false,
+          ...modalScreenOptions,
         }}
       />
       <Stack.Screen
         name="[id]/reply"
         options={{
-          presentation: 'formSheet',
           headerShown: false,
+          ...modalScreenOptions,
         }}
       />
     </Stack>

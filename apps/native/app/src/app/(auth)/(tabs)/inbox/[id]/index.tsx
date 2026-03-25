@@ -1,16 +1,32 @@
 import { PdfView } from '@kishannareshpal/expo-pdf'
-import { Stack, useLocalSearchParams } from 'expo-router'
+import { router, Stack, useLocalSearchParams } from 'expo-router'
+import { useEffect } from 'react'
 import { useIntl } from 'react-intl'
-import { Image, TouchableNativeFeedback } from 'react-native'
+import {
+  Alert as RNAlert,
+  Image,
+  SafeAreaView,
+  TouchableNativeFeedback,
+} from 'react-native'
 import WebView from 'react-native-webview'
 import styled from 'styled-components/native'
 
+import { ButtonDrawer } from '@/components/button-drawer'
+import { useFeatureFlag } from '@/components/providers/feature-flag-provider'
 import { DocumentV2 } from '@/graphql/types/schema'
 import { useBrowser } from '@/hooks/use-browser'
 import { useDocument } from '@/hooks/use-document'
 import { toggleAction } from '@/lib/post-mail-action'
 import { useOrganizationsStore } from '@/stores/organizations-store'
-import { Alert, Header, Loader, Problem, blue400, dynamicColor } from '@/ui'
+import {
+  Alert,
+  Button,
+  Header,
+  Loader,
+  Problem,
+  blue400,
+  dynamicColor,
+} from '@/ui'
 import { getButtonsForActions } from '../../../../../utils/get-buttons-for-actions'
 import { shareFile } from '../../../../../utils/share-file'
 
@@ -37,13 +53,59 @@ const ContentArea = styled.View`
 `
 
 export default function DocumentScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>()
+  const { id, isUrgent: isUrgentParam } = useLocalSearchParams<{
+    id: string
+    isUrgent?: string
+  }>()
   const intl = useIntl()
   const { openBrowser } = useBrowser()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
+  const isFeature2WayMailboxEnabled = useFeatureFlag(
+    'is2WayMailboxEnabled',
+    false,
+  )
 
-  const { document, contentType, pdfUri, loading, error, ready, htmlSource } =
-    useDocument(id)
+  // Parse isUrgent from route params (string → boolean | undefined)
+  const isUrgent =
+    isUrgentParam === 'true' ? true : isUrgentParam === 'false' ? false : undefined
+
+  const {
+    document,
+    contentType,
+    pdfUri,
+    loading,
+    error,
+    ready,
+    htmlSource,
+    confirmation,
+    hasConfirmation,
+    showConfirmedAlert,
+    confirmAction,
+    refetchDocumentContent,
+  } = useDocument(id, isUrgent)
+
+  // Show confirmation alert when an urgent document requires user acknowledgement
+  useEffect(() => {
+    if (!confirmation) return
+
+    RNAlert.alert(confirmation.title ?? '', confirmation.data ?? '', [
+      {
+        text: intl.formatMessage({ id: 'inbox.markAllAsReadPromptCancel' }),
+        style: 'cancel',
+        onPress: async () => {
+          await confirmAction(false)
+          router.back()
+        },
+      },
+      {
+        text: intl.formatMessage({ id: 'inbox.openDocument' }),
+        onPress: async () => {
+          await confirmAction(true)
+          await refetchDocumentContent()
+        },
+      },
+    ])
+  }, [confirmation, confirmAction, refetchDocumentContent, intl])
 
   const onShare = () =>
     shareFile({
@@ -64,8 +126,36 @@ export default function DocumentScreen() {
       toggleAction(document.bookmarked ? 'unbookmark' : 'bookmark', document.id)
   }
 
-  const hasAlert = !!document.alert?.title || !!document.alert?.data
-  const hasActions = !!document.actions?.length
+  const hasAlert =
+    showConfirmedAlert ||
+    ((!!document.alert?.title || !!document.alert?.data) && !hasConfirmation)
+  const hasActions = !!document.actions?.length && !hasConfirmation
+  const showAdditionalInfo = hasAlert || hasActions
+
+  const isReplyable = document.replyable ?? false
+  const hasComments = (document?.ticket?.comments?.length ?? 0) > 0
+
+  const onReplyOrCommunicationsPress = () => {
+    if (hasComments) {
+      router.push({
+        pathname: '/(auth)/(tabs)/inbox/[id]/communications',
+        params: {
+          id,
+          ticketId: document.ticket?.id ?? '',
+          subject: document.subject ?? '',
+        },
+      })
+    } else {
+      router.push({
+        pathname: '/(auth)/(tabs)/inbox/[id]/reply',
+        params: {
+          id,
+          senderName: document.sender?.name ?? '',
+          subject: document.subject ?? '',
+        },
+      })
+    }
+  }
 
   return (
     <>
@@ -125,9 +215,10 @@ export default function DocumentScreen() {
           message={document.subject}
           isLoading={loading && !document.subject}
           logo={getOrganizationLogoUrl(document.sender?.name ?? '', 75)}
+          label={isUrgent ? intl.formatMessage({ id: 'inbox.urgent' }) : ''}
         />
       </Host>
-      {(hasAlert || hasActions) && (
+      {showAdditionalInfo && (
         <ActionsWrapper>
           {hasAlert && (
             <Alert
@@ -163,6 +254,29 @@ export default function DocumentScreen() {
           <WebView source={{ uri: document.content.value }} />
         ) : null}
       </ContentArea>
+      {isFeature2WayMailboxEnabled && isReplyable && !loading && (
+        <ButtonDrawer>
+          <SafeAreaView>
+            <Button
+              title={intl.formatMessage({
+                id: hasComments
+                  ? 'documentDetail.buttonCommunications'
+                  : 'documentDetail.buttonReply',
+              })}
+              isTransparent
+              isOutlined
+              iconPosition="start"
+              icon={
+                hasComments
+                  ? require('@/assets/icons/chatbubbles.png')
+                  : require('@/assets/icons/reply.png')
+              }
+              onPress={onReplyOrCommunicationsPress}
+              style={{ marginBottom: 8 }}
+            />
+          </SafeAreaView>
+        </ButtonDrawer>
+      )}
     </>
   )
 }

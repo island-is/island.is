@@ -1,11 +1,12 @@
 import { useApolloClient, useFragment_experimental } from '@apollo/client'
 import * as FileSystem from 'expo-file-system'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTheme } from 'styled-components/native'
 
 import {
   DocumentV2,
   ListDocumentFragmentDoc,
+  useDocumentConfirmActionsLazyQuery,
   useGetDocumentQuery,
 } from '@/graphql/types/schema'
 import { useLocale } from '@/hooks/use-locale'
@@ -14,11 +15,17 @@ const BR_REGEX = /<br\s*\/>/gi
 
 export type ContentType = 'pdf' | 'html' | 'url' | null
 
-export function useDocument(id: string) {
+export function useDocument(id: string, isUrgent?: boolean) {
   const client = useApolloClient()
   const locale = useLocale()
   const [pdfUri, setPdfUri] = useState<string | null>(null)
   const [pdfError, setPdfError] = useState(false)
+  const [showConfirmedAlert, setShowConfirmedAlert] = useState(false)
+  const refetchingRef = useRef(false)
+
+  // Whether to include document content on first fetch.
+  // If isUrgent is true, we need confirmation first. If undefined, we don't know yet.
+  const shouldIncludeDocument = isUrgent === false
 
   // Cached fragment from inbox list (instant, partial data for header)
   const cached = useFragment_experimental<DocumentV2>({
@@ -27,10 +34,25 @@ export function useDocument(id: string) {
     returnPartialData: true,
   })
 
+  const [logConfirmedAction] = useDocumentConfirmActionsLazyQuery({
+    fetchPolicy: 'no-cache',
+  })
+
   // Full document query
   const query = useGetDocumentQuery({
-    variables: { input: { id, includeDocument: true }, locale },
+    variables: { input: { id, includeDocument: shouldIncludeDocument }, locale },
     fetchPolicy: 'no-cache',
+    onCompleted: (data) => {
+      const confirmation = data.documentV2?.confirmation
+      if (confirmation && !refetchingRef.current) {
+        // Document has a confirmation prompt — the screen will handle showing it
+        return
+      }
+      if (!confirmation && !refetchingRef.current && !shouldIncludeDocument) {
+        // Already confirmed previously, refetch with content
+        refetchDocumentContent()
+      }
+    },
   })
 
   // Merge cache + query, preferring cache for user-toggled fields
@@ -45,6 +67,50 @@ export function useDocument(id: string) {
       opened: fromCache.opened ?? fromQuery.opened,
     }
   }, [cached?.data, query.data])
+
+  const markDocumentAsRead = useCallback(() => {
+    if (document.opened) return
+    client.cache.modify({
+      id: client.cache.identify({ __typename: 'DocumentV2', id }),
+      fields: { opened: () => true },
+    })
+    client.cache.modify({
+      fields: {
+        documentsV2: (existing) => ({
+          ...existing,
+          unreadCount: Math.max(0, (existing.unreadCount ?? 1) - 1),
+        }),
+      },
+    })
+  }, [client, id, document.opened])
+
+  /** Log the user's confirmation choice and optionally refetch with content */
+  const confirmAction = useCallback(
+    async (confirmed: boolean) => {
+      // Suffix '_app' since backend doesn't distinguish app vs web
+      await logConfirmedAction({
+        variables: { input: { id: `${id}_app`, confirmed } },
+      })
+    },
+    [logConfirmedAction, id],
+  )
+
+  /** Refetch document with content included (after confirmation) */
+  const refetchDocumentContent = useCallback(async () => {
+    refetchingRef.current = true
+    try {
+      const result = await query.refetch({
+        input: { id, includeDocument: true },
+        locale,
+      })
+      if (result.data?.documentV2?.alert) {
+        setShowConfirmedAlert(true)
+      }
+    } finally {
+      markDocumentAsRead()
+      refetchingRef.current = false
+    }
+  }, [query, id, locale, markDocumentAsRead])
 
   // Content type
   const contentType = useMemo<ContentType>(() => {
@@ -75,26 +141,17 @@ export function useDocument(id: string) {
     }
   }, [contentType, document.content?.value, id])
 
-  // Mark as read (once, on first load)
+  // Mark as read (once, on first load — only when content was included)
   useEffect(() => {
-    if (!document.id || document.opened) return
-    client.cache.modify({
-      id: client.cache.identify({ __typename: 'DocumentV2', id: document.id }),
-      fields: { opened: () => true },
-    })
-    client.cache.modify({
-      fields: {
-        documentsV2: (existing) => ({
-          ...existing,
-          unreadCount: Math.max(0, (existing.unreadCount ?? 1) - 1),
-        }),
-      },
-    })
+    if (!document.id || !shouldIncludeDocument) return
+    markDocumentAsRead()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [document.id])
 
   const loading = query.loading
   const error = !!query.error || pdfError
+  const confirmation = document.confirmation ?? null
+  const hasConfirmation = !!confirmation
 
   // Content is ready to render
   const ready =
@@ -102,7 +159,21 @@ export function useDocument(id: string) {
       ? !!pdfUri
       : contentType != null && !!document.content?.value
 
-  return { document, contentType, pdfUri, loading, error, ready, htmlSource }
+  return {
+    document,
+    contentType,
+    pdfUri,
+    loading,
+    error,
+    ready,
+    htmlSource,
+    confirmation,
+    hasConfirmation,
+    showConfirmedAlert,
+    confirmAction,
+    refetchDocumentContent,
+    refetch: query.refetch,
+  }
 }
 
 export function useHtmlSource(value: string | undefined | null) {
