@@ -55,6 +55,7 @@ import { Institution } from '../institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
+  PoliceDefendant,
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { CaseDataExportInput, CaseStatistics } from '../statistics'
@@ -458,6 +459,10 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getPoliceCaseFiles(caseId: string): Promise<PoliceCaseFile[]> {
     return this.get(`case/${caseId}/policeFiles`)
+  }
+
+  getPoliceDefendants(caseId: string): Promise<PoliceDefendant[]> {
+    return this.get(`case/${caseId}/policeDefendants`)
   }
 
   getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceDigitalCaseFile[]> {
