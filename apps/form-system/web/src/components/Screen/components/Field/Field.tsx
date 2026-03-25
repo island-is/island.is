@@ -11,12 +11,13 @@ import {
   List,
   MessageWithLink,
   NationalId,
+  NumberInput,
+  PaymentQuantity,
   PhoneNumber,
   PropertyNumber,
   Radio,
   TextInput,
   TimeInput,
-  NumberInput,
 } from '@island.is/form-system/ui'
 import { Box } from '@island.is/island-ui/core'
 import { useFormContext } from 'react-hook-form'
@@ -43,6 +44,7 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.DROPDOWN_LIST]: List,
   [FieldTypesEnum.DATE_PICKER]: DatePicker,
   [FieldTypesEnum.MESSAGE]: MessageWithLink,
+  [FieldTypesEnum.PAYMENT_QUANTITY]: PaymentQuantity,
   [FieldTypesEnum.NUMBERBOX]: NumberInput,
 } as const
 

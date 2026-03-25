@@ -182,7 +182,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
         const tooLarge = selectedFiles.find((f) => f.size > maxSize)
         if (tooLarge) {
           clearErrors(item.id)
-          const maxSizeInMb = Math.round((maxSize / (1024 * 1024)) * 10) / 10
+          const maxSizeInMb = Math.round((maxSize / 1_000_000) * 10) / 10
           setError(formatMessage(m.maxSizeInMb, { maxSizeInMb }))
           return
         }
@@ -206,7 +206,7 @@ export const FileUpload = ({ item, hasError, dispatch, state }: Props) => {
         handleUpload(f, f.id as string)
       })
     },
-    [files, item, formatMessage, handleUpload, clearErrors],
+    [files, item, formatMessage, handleUpload],
   )
 
   const onRetry = useCallback(
