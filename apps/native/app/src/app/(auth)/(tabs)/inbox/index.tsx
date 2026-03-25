@@ -610,36 +610,36 @@ export default function InboxScreen() {
       />
       {selectState && selectedItems.length ? (
         <Stack.Toolbar placement="bottom">
-          <Stack.Toolbar.View separateBackground>
-            <Action
-              icon={require('@/assets/icons/star.png')}
-              label={intl.formatMessage({
-                id: 'inbox.bulkSelectActionStar',
-                defaultMessage: 'Stjörnumerkja',
-              })}
-              onPress={onStarPress}
-            />
-          </Stack.Toolbar.View>
-          <Stack.Toolbar.View separateBackground>
-            <Action
-              icon={require('@/assets/icons/tray.png')}
-              label={intl.formatMessage({
-                id: 'inbox.bulkSelectActionArchive',
-                defaultMessage: 'Geymsla',
-              })}
-              onPress={onArchivePress}
-            />
-          </Stack.Toolbar.View>
-          <Stack.Toolbar.View separateBackground>
-            <Action
-              icon={require('@/assets/icons/inbox-read.png')}
-              label={intl.formatMessage({
-                id: 'inbox.bulkSelectActionRead',
-                defaultMessage: 'Merkja lesið',
-              })}
-              onPress={onMarkAsReadPress}
-            />
-          </Stack.Toolbar.View>
+          <Stack.Toolbar.Button
+            icon="star"
+            tintColor={blue400}
+            onPress={onStarPress}
+          >
+            {intl.formatMessage({
+              id: 'inbox.bulkSelectActionStar',
+              defaultMessage: 'Stjörnumerkja',
+            })}
+          </Stack.Toolbar.Button>
+          <Stack.Toolbar.Button
+            icon="tray"
+            tintColor={blue400}
+            onPress={onArchivePress}
+          >
+            {intl.formatMessage({
+              id: 'inbox.bulkSelectActionArchive',
+              defaultMessage: 'Geymsla',
+            })}
+          </Stack.Toolbar.Button>
+          <Stack.Toolbar.Button
+            tintColor={blue400}
+            icon="envelope.open"
+            onPress={onMarkAllAsReadPress}
+          >
+            {intl.formatMessage({
+              id: 'inbox.bulkSelectActionRead',
+              defaultMessage: 'Merkja lesið',
+            })}
+          </Stack.Toolbar.Button>
         </Stack.Toolbar>
       ) : null}
       <Animated.FlatList
@@ -651,6 +651,7 @@ export default function InboxScreen() {
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         contentInsetAdjustmentBehavior="automatic"
+        keyboardShouldPersistTaps="handled"
         ListHeaderComponent={
           <>
             <ListHeaderWrapper>

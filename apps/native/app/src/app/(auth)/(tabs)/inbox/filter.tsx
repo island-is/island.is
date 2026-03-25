@@ -1,6 +1,12 @@
 import { useCallback, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import {
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import { router, Stack } from 'expo-router'
 import styled from 'styled-components'
 
@@ -13,7 +19,11 @@ import {
   theme,
 } from '@/ui'
 import { FilteringCheckbox } from '../../../../components/filtering-checkbox'
-import { inboxFilterStore, useInboxFilterStore } from '@/stores/inbox-filter-store'
+import {
+  inboxFilterStore,
+  useInboxFilterStore,
+} from '@/stores/inbox-filter-store'
+import { StackScreen } from '../../../../components/stack-screen'
 
 const ButtonContainer = styled(View)`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
@@ -34,9 +44,7 @@ export default function FilterScreen() {
   const [opened, setOpened] = useState(store.opened)
   const [bookmarked, setBookmarked] = useState(store.bookmarked)
   const [archived, setArchived] = useState(store.archived)
-  const [selectedSenders, setSelectedSenders] = useState(
-    store.senderNationalId,
-  )
+  const [selectedSenders, setSelectedSenders] = useState(store.senderNationalId)
   const [selectedCategories, setSelectedCategories] = useState(
     store.categoryIds,
   )
@@ -86,17 +94,16 @@ export default function FilterScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, marginTop: theme.spacing[3] }}>
-      <Stack.Screen
+      <StackScreen
         options={{
-          headerRight: isSelected
-            ? () => (
-                <TouchableOpacity onPress={clearAllFilters}>
-                  <Text style={{ color: blue400, fontSize: 16 }}>
-                    {intl.formatMessage({ id: 'inbox.filterClearButton' })}
-                  </Text>
-                </TouchableOpacity>
-              )
-            : undefined,
+          headerRightItems: [
+            {
+              type: 'button',
+              label: intl.formatMessage({ id: 'inbox.filterClearButton' }),
+              onPress: clearAllFilters,
+              disabled: !isSelected,
+            },
+          ],
         }}
       />
       <ScrollView style={{ flex: 1, marginBottom: theme.spacing[3] }}>
