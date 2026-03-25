@@ -35,6 +35,7 @@ export const PrimarySchoolStudent = () => {
           eyebrow={formatMessage(psm.mmsEyebrow)}
           eyebrowColor="purple400"
           heading={formatMessage(psm.hubOverview)}
+          headingVariant="h4"
           text={formatMessage(psm.hubOverviewDescription)}
           cta={{
             label: formatMessage(psm.seeDetails),
@@ -51,6 +52,7 @@ export const PrimarySchoolStudent = () => {
           eyebrow={formatMessage(psm.mmsEyebrow)}
           eyebrowColor="purple400"
           heading={formatMessage(psm.hubAssessment)}
+          headingVariant="h4"
           text={formatMessage(psm.hubAssessmentDescription)}
           cta={{
             label: formatMessage(psm.seeDetails),

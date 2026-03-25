@@ -62,6 +62,7 @@ export const PrimarySchool = () => {
           <ActionCard
             key={student.id}
             heading={student.name ?? ''}
+            headingVariant="h4"
             text={
               student.nationalId
                 ? `${formatMessage(m.natreg)}: ${formatNationalId(
