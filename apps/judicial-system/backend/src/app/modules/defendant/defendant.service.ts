@@ -1,6 +1,6 @@
 import { literal, Op, Transaction } from 'sequelize'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -359,6 +359,22 @@ export class DefendantService {
     user: User,
     transaction: Transaction,
   ): Promise<Defendant> {
+    if (
+      'defenderNationalId' in update &&
+      update.defenderNationalId === null &&
+      !(
+        'defenderName' in update &&
+        update.defenderName === null &&
+        'defenderEmail' in update &&
+        update.defenderEmail === null &&
+        'defenderPhoneNumber' in update &&
+        update.defenderPhoneNumber === null
+      )
+    ) {
+      throw new BadRequestException(
+        'DefenderNationalId can only be set to null when defenderName, defenderEmail, and defenderPhoneNumber are also set to null.',
+      )
+    }
     if (isIndictmentCase(theCase.type)) {
       return this.updateIndictmentCaseDefendant(
         theCase,
