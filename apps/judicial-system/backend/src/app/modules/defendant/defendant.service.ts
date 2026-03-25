@@ -44,7 +44,15 @@ export class DefendantService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private validateDefenderInfoRemoval(update: UpdateDefendantDto): void {
+  private validateDefenderInfoRemoval(
+    update: Pick<
+      UpdateDefendantDto | InternalUpdateDefendantDto,
+      | 'defenderNationalId'
+      | 'defenderName'
+      | 'defenderEmail'
+      | 'defenderPhoneNumber'
+    >,
+  ): void {
     if (
       'defenderNationalId' in update &&
       update.defenderNationalId === null &&
