@@ -39,6 +39,9 @@ const Defendant = () => {
   const handleNavigationTo = useCallback(
     async (destination: string) => {
       if (workingCase.id) {
+        if (!workingCase.defendants || workingCase.defendants.length === 0) {
+          return
+        }
         router.push(`${destination}/${workingCase.id}`)
 
         return
