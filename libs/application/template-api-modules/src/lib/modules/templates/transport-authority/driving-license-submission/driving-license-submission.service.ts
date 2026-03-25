@@ -340,8 +340,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           contentList = files
             .filter((f) => f.fileContent)
             .map((f) => {
-              const rawExt =
-                f.fileName.split('.').pop()?.toLowerCase() ?? ''
+              const rawExt = f.fileName.split('.').pop()?.toLowerCase() ?? ''
               const ext = rawExt === 'jpg' ? 'jpeg' : rawExt
               return {
                 fileName: f.fileName,
