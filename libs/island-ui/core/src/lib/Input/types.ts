@@ -70,6 +70,8 @@ export type InputButton = {
 export type InputIcon = {
   name: IconType
   type?: Type
+  onClick?: () => void
+  ariaLabel?: string
 }
 
 export interface InputProps extends InputComponentProps {

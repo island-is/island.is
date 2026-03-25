@@ -1,4 +1,6 @@
 import { style, globalStyle } from '@vanilla-extract/css'
+import { theme } from '@island.is/island-ui/theme'
+
 
 export const root = style({})
 
@@ -862,3 +864,13 @@ globalStyle(`${root} .react-datepicker__aria-live`, {
   width: '1px',
   whiteSpace: 'nowrap',
 })
+
+globalStyle(
+  `${root} .react-datepicker__day:focus-visible, ${root} .react-datepicker__month-text:focus-visible, ${root} .react-datepicker__quarter-text:focus-visible, ${root} .react-datepicker__year-text:focus-visible`,
+  {
+    outline: 'none',
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+    borderRadius: '0.3rem',
+  },
+)
+
