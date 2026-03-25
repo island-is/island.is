@@ -23,6 +23,7 @@ const TabText = styled(Typography)<{ isSelected: boolean }>`
   color: ${({ isSelected, theme }) =>
     isSelected ? theme.color.blue400 : theme.color.dark400};
   font-weight: ${({ isSelected }) => (isSelected ? '600' : '400')};
+  text-align: center;
 `
 
 const Tab = styled.Pressable<{ isSelected: boolean }>`
@@ -31,6 +32,8 @@ const Tab = styled.Pressable<{ isSelected: boolean }>`
   align-items: center;
   border-radius: 6px;
   flex: 1;
+  padding-left: 4px;
+  padding-right: 4px
 `
 
 const ActiveBackground = styled(Animated.View)<{ buttonWidth: number }>`

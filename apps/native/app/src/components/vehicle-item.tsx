@@ -46,14 +46,17 @@ export const VehicleItem = React.memo(
     const isMileageRequired = item.requiresMileageRegistration
 
     return (
-      <View style={{ paddingHorizontal: theme.spacing[2], ...style }} testID={testIDs.VEHICLE_ITEM}>
+      <View
+        style={{ paddingHorizontal: theme.spacing[2], ...style }}
+        testID={testIDs.VEHICLE_ITEM}
+      >
         <Cell
           underlayColor={
             theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
           }
           onPress={() => {
             if (!item.permno) {
-              return;
+              return
             }
             router.navigate({
               pathname: '/more/vehicles/[id]',
