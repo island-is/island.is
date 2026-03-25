@@ -230,9 +230,6 @@ export const Screen = () => {
                   const valueIndex =
                     field.isPartOfMultiset === false ? 0 : itemIndex
 
-                  const hasAnchor = anchorFieldIndex !== -1
-                  const isFirstGroup = itemIndex === 0
-
                   const showRowGutter =
                     numberOfItems > 1 &&
                     (itemIndex !== 0 ||
