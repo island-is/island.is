@@ -380,7 +380,6 @@ const HearingArrangements = () => {
 
               router.push(`${navigateTo}/${workingCase.id}`)
             },
-            isLoading: isSendingNotification,
           }}
         />
       )}
