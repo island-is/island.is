@@ -4,7 +4,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  Divider,
   GridColumn,
   Text,
 } from '@island.is/island-ui/core'
@@ -212,28 +211,54 @@ export const Screen = () => {
 
         {currentScreen &&
           Array.from({ length: numberOfItems }).map((_, itemIndex) => (
-            <Box key={`multiset-item-${itemIndex}`} marginBottom={4}>
-              {itemIndex > 0 && (
-                <Box marginBottom={2} marginTop={6}>
-                  <Text variant="h2">{itemIndex + 1}.</Text>
-                  <Divider />
+            <Box
+              key={`multiset-item-${itemIndex}`}
+              marginBottom={3}
+              display="flex"
+              alignItems="flexStart"
+            >
+              {numberOfItems > 1 && (
+                <Box
+                  marginRight={2}
+                  flexShrink={0}
+                  marginTop={4}
+                  style={{ width: '2ch' }}
+                  display="flex"
+                  justifyContent="flexEnd"
+                >
+                  <Text variant="h4">{itemIndex + 1}.</Text>
                 </Box>
               )}
 
-              {fieldsForMultisetLoop
-                .filter(
-                  (field) =>
-                    field.isPartOfMultiset !== false || itemIndex === 0,
-                )
-                .map((field) => (
-                  <Field
-                    field={field}
-                    valueIndex={
-                      field.isPartOfMultiset === false ? 0 : itemIndex
-                    }
-                    key={`${field.id ?? 'field'}-${itemIndex}`}
-                  />
-                ))}
+              <Box flexGrow={1}>
+                {fieldsForMultisetLoop
+                  .filter(
+                    (field) =>
+                      field.isPartOfMultiset !== false || itemIndex === 0,
+                  )
+                  .map((field) => {
+                    const key = `${field.id ?? 'field'}-${itemIndex}`
+
+                    return numberOfItems > 1 ? (
+                      <Box key={key} marginLeft={2}>
+                        <Field
+                          field={field}
+                          valueIndex={
+                            field.isPartOfMultiset === false ? 0 : itemIndex
+                          }
+                        />
+                      </Box>
+                    ) : (
+                      <Field
+                        key={key}
+                        field={field}
+                        valueIndex={
+                          field.isPartOfMultiset === false ? 0 : itemIndex
+                        }
+                      />
+                    )
+                  })}
+              </Box>
             </Box>
           ))}
         {shouldMoveCurrencySumBox && currencySumField && (
