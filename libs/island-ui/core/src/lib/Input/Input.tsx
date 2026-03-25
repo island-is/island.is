@@ -235,6 +235,7 @@ export const Input = forwardRef(
               loading={!!loading}
               hasError={hasError}
               hasLabel={hasLabel}
+              disabled={!!disabled}
             />
           )}
         </Box>
@@ -247,7 +248,8 @@ export const Input = forwardRef(
 )
 
 const AsideIcons: FC<AsideProps> = (props) => {
-  const { icon, buttons = [], size, loading, hasError, hasLabel } = props
+  const { icon, buttons = [], size, loading, hasError, hasLabel, disabled } =
+    props
   const displayedIcon: InputIcon | undefined = hasError
     ? { name: 'warning' }
     : icon
@@ -278,6 +280,7 @@ const AsideIcons: FC<AsideProps> = (props) => {
             onClick={displayedIcon.onClick}
             onMouseDown={(e) => e.nativeEvent.stopPropagation()}
             aria-label={displayedIcon.ariaLabel || displayedIcon.name}
+            disabled={disabled}
             style={{
               background: 'none',
               border: 'none',

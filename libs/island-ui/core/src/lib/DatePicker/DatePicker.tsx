@@ -197,6 +197,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           onCalendarClose={() => {
             setDatePickerState('closed')
             setIsOpen(false)
+            hoverDateRef.current = null
             handleCloseCalendar && handleCloseCalendar(startDate)
           }}
           // We handle closing manually in range mode
@@ -228,6 +229,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                     ) {
                       setStartDate(start)
                       setEndDate(startDate)
+                      hoverDateRef.current = null
                       setIsOpen(false)
                       // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       ;(datePickerRef.current as any)?.setState({
@@ -243,6 +245,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                     if (end === null) {
                       setIsOpen(true)
                     } else {
+                      hoverDateRef.current = null
                       setIsOpen(false)
                     }
 
@@ -296,7 +299,9 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               if (!v || v.trim() === '') return
               const parts = v.split(' - ')
               if (parts.length !== 2) return
-              const fmt = currentLanguage.format
+              const fmt = showTimeInput
+                ? currentLanguage.formatWithTime
+                : currentLanguage.format
               const parsedStart = parse(parts[0].trim(), fmt, new Date())
               const parsedEnd = parse(parts[1].trim(), fmt, new Date())
               if (!isValid(parsedStart) || !isValid(parsedEnd)) return
