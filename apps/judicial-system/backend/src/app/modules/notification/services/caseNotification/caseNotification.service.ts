@@ -2191,7 +2191,11 @@ export class CaseNotificationService extends BaseNotificationService {
     ]
 
     recipientRoles.forEach((recipient) => {
-      if (theCase.appealCase?.appealCaseNumber && recipient && theCase.appealCase?.appealJudge1?.name) {
+      if (
+        theCase.appealCase?.appealCaseNumber &&
+        recipient &&
+        theCase.appealCase?.appealJudge1?.name
+      ) {
         const { subject, body } =
           formatCourtOfAppealJudgeAssignedEmailNotification(
             this.formatMessage,
@@ -2847,7 +2851,8 @@ export class CaseNotificationService extends BaseNotificationService {
 
     let recipients: Recipient[] = []
     if (
-      theCase.appealCase?.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+      theCase.appealCase?.appealRulingDecision ===
+      CaseAppealRulingDecision.DISCONTINUED
     ) {
       recipients = await this.sendAppealDiscontinuedNotifications(theCase)
     } else {

@@ -1219,7 +1219,9 @@ export class CaseService {
     }
 
     // This only applies to restriction cases
-    if (updatedCase.appealCase?.appealState !== theCase.appealCase?.appealState) {
+    if (
+      updatedCase.appealCase?.appealState !== theCase.appealCase?.appealState
+    ) {
       if (updatedCase.appealCase?.appealState === CaseAppealState.APPEALED) {
         this.addMessagesForAppealedCaseToQueue(updatedCase, user)
       } else if (
@@ -1227,9 +1229,13 @@ export class CaseService {
         updatedCase.appealCase?.appealState === CaseAppealState.RECEIVED
       ) {
         this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
-      } else if (updatedCase.appealCase?.appealState === CaseAppealState.COMPLETED) {
+      } else if (
+        updatedCase.appealCase?.appealState === CaseAppealState.COMPLETED
+      ) {
         this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
-      } else if (updatedCase.appealCase?.appealState === CaseAppealState.WITHDRAWN) {
+      } else if (
+        updatedCase.appealCase?.appealState === CaseAppealState.WITHDRAWN
+      ) {
         this.addMessagesForAppealWithdrawnToQueue(updatedCase, user)
       }
     }
@@ -1332,15 +1338,22 @@ export class CaseService {
 
     // This only applies to restriction cases
     if (updatedCase.appealCase?.appealCaseNumber) {
-      if (updatedCase.appealCase?.appealCaseNumber !== theCase.appealCase?.appealCaseNumber) {
+      if (
+        updatedCase.appealCase?.appealCaseNumber !==
+        theCase.appealCase?.appealCaseNumber
+      ) {
         // New appeal case number
         this.addMessagesForNewAppealCaseNumberToQueue(updatedCase, user)
       } else if (
         this.allAppealRolesAssigned(updatedCase) &&
-        (updatedCase.appealCase?.appealAssistantId !== theCase.appealCase?.appealAssistantId ||
-          updatedCase.appealCase?.appealJudge1Id !== theCase.appealCase?.appealJudge1Id ||
-          updatedCase.appealCase?.appealJudge2Id !== theCase.appealCase?.appealJudge2Id ||
-          updatedCase.appealCase?.appealJudge3Id !== theCase.appealCase?.appealJudge3Id)
+        (updatedCase.appealCase?.appealAssistantId !==
+          theCase.appealCase?.appealAssistantId ||
+          updatedCase.appealCase?.appealJudge1Id !==
+            theCase.appealCase?.appealJudge1Id ||
+          updatedCase.appealCase?.appealJudge2Id !==
+            theCase.appealCase?.appealJudge2Id ||
+          updatedCase.appealCase?.appealJudge3Id !==
+            theCase.appealCase?.appealJudge3Id)
       ) {
         // New appeal court
         this.addMessagesForAssignedAppealRolesToQueue(updatedCase, user)

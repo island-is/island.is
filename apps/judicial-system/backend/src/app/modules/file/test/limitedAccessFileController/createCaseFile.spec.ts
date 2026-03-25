@@ -75,7 +75,11 @@ describe('limitedAccessFileController - Create case file', () => {
     'case file created for %s case',
     (type) => {
       const caseId = uuid()
-      const theCase = { id: caseId, type, appealCase: { appealCaseNumber: uuid() } } as Case
+      const theCase = {
+        id: caseId,
+        type,
+        appealCase: { appealCaseNumber: uuid() },
+      } as Case
       const uuId = uuid()
       const createCaseFile: CreateFileDto = {
         type: 'text/plain',
