@@ -34,7 +34,7 @@ export function setupEventHandlers() {
         expiresAt: Number(params.expires_in) + Date.now() / 1000,
         tokenType: params.token_type,
       })
-      WebBrowser.dismissBrowser().catch(() => void 0);
+      WebBrowser.dismissBrowser()?.catch(() => void 0);
       return;
     }
 

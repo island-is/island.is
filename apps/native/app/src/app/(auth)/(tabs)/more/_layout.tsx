@@ -1,18 +1,28 @@
-import { Stack, useRouter } from 'expo-router'
-import { Button, Icon } from '../../../../ui'
-import { Platform, TouchableOpacity } from 'react-native'
-import { useTheme } from 'styled-components'
+import { Stack } from 'expo-router'
+import { useIntl } from 'react-intl'
 import {
   modalScreenOptions,
   tabScreenOptions,
 } from '../../../../constants/screen-options'
-import { useIntl } from 'react-intl'
-import { navbarOfflineItem } from '../../../../components/navbar/navbar-items'
-import { StackScreen } from '../../../../components/stack-screen'
+
+export const unstable_settings = {
+  initalRouteName: 'index',
+  "vehicles/[id]/index": {
+    initialRouteName: "vehicles",
+  },
+  "family/[type]/[nationalId]": {
+    initialRouteName: "family",
+  },
+  "assets/[id]/index": {
+    initialRouteName: "assets",
+  },
+  "finance/status/[orgId]/[chargeTypeId]": {
+    initialRouteName: "finance",
+  }
+};
 
 export default function MoreLayout() {
   const intl = useIntl()
-  const router = useRouter()
   return (
     <Stack
       initialRouteName="index"

@@ -2,6 +2,19 @@ import { Stack } from 'expo-router'
 import { tabScreenOptions } from '../../../../constants/screen-options'
 import { useIntl } from 'react-intl'
 
+export const unstable_settings = {
+  initialRouteName: 'index',
+  '[id]/index': {
+    initialRouteName: 'document',
+  },
+  '[id]/communications': {
+    initialRouteName: 'communications',
+  },
+  '[id]/reply': {
+    initialRouteName: 'reply',
+  },
+}
+
 export default function InboxLayout() {
   const intl = useIntl()
   return (

@@ -1,19 +1,23 @@
 import { NativeTabs } from 'expo-router/unstable-native-tabs'
 import React, { useEffect, useState } from 'react'
 
-import { Redirect, usePathname } from 'expo-router'
+import { Redirect, useNavigation, usePathname } from 'expo-router'
 import { usePreferencesStore } from '@/stores/preferences-store'
 import { isOnboarded } from '@/utils/onboarding'
 import { blue100, blue400 } from '../../../ui'
 import { Image, Platform, StyleSheet, View } from 'react-native'
 import { useTheme } from 'styled-components'
 import { useIntl } from 'react-intl'
-import { useUiStore } from '../../../stores/ui-store'
+import { uiStore, useUiStore } from '../../../stores/ui-store'
+
+export const unstable_settings = {
+  initialRouteName: 'index',
+}
 
 export default function TabLayout() {
   const intl = useIntl()
   const theme = useTheme()
-  const tabsHidden = useUiStore((s) => s.tabsHidden);
+  const tabsHidden = useUiStore((s) => s.tabsHidden)
   const hasOnboardedPinCode = usePreferencesStore((s) => s.hasOnboardedPinCode)
   const hasOnboardedBiometrics = usePreferencesStore(
     (s) => s.hasOnboardedBiometrics,
@@ -49,6 +53,9 @@ export default function TabLayout() {
         }}
         iconColor={blue400}
         hidden={tabsHidden && Platform.OS === 'ios'}
+        screenListeners={{
+          tabPress: (e) => uiStore.setState({ focusedTab: e.target }),
+        }}
       >
         <NativeTabs.Trigger name="inbox">
           <NativeTabs.Trigger.Label>

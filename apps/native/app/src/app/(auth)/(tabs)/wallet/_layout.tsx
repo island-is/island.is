@@ -2,6 +2,10 @@ import { Stack } from 'expo-router'
 import { Platform } from 'react-native'
 import { useTheme } from 'styled-components'
 
+export const unstable_settings = {
+  initialRouteName: 'index',
+}
+
 export default function WalletLayout() {
   const theme = useTheme()
   return (

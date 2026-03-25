@@ -11,6 +11,7 @@ export interface UIStore {
   theme?: DefaultTheme
   selectedTab: number
   unselectedTab: number
+  focusedTab: string
   modalsOpen: number
   tabsHidden: boolean
   inboxQuery: string
@@ -25,6 +26,7 @@ export const uiStore = create<UIStore>((set) => ({
   theme: undefined,
   selectedTab: 2,
   unselectedTab: 2,
+  focusedTab: 'index',
   modalsOpen: 0,
   tabsHidden: false,
   inboxQuery: '',
