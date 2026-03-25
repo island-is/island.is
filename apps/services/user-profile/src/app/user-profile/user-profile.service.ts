@@ -280,8 +280,7 @@ export class UserProfileService {
         smsNotifications: currentUserProfile?.smsNotifications ?? undefined,
         documentNotifications:
           currentUserProfile?.documentNotifications ?? undefined,
-        emailNotifications:
-          currentUserProfile?.emailNotifications ?? undefined,
+        emailNotifications: currentUserProfile?.emailNotifications ?? undefined,
       }
 
       // Check if SMS notifications feature is enabled
