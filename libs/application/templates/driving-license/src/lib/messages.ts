@@ -880,16 +880,14 @@ export const m = defineMessages({
   },
   healthRemarksTitle: {
     id: 'dl.application:healthRemarksTitle',
-    defaultMessage: 'Athugið',
-    description:
-      'Alert message title for health remarks on temporary driving license',
+    defaultMessage: 'Athugið!',
+    description: 'Alert message title for health remarks on driving license',
   },
   healthRemarksDescription: {
     id: 'dl.application:healthRemarksDescription',
     defaultMessage:
-      'Á bráðabirgðaskírteini eru tákntölur, því þarft þú að skila læknisvottorði til sýslumanns miðað við þá heilbrigðisyfirlýsingu sem fyllt var út í þeirri umsókn. Tákntölurnar eru eftirfarandi: ',
-    description:
-      'Alert message for health remarks on temporary driving license',
+      'Ef tákntala vegna heilsufars er skráð á núverandi ökuskírteini, skal ávallt skila læknisvottorði jafnvel þótt öllum heilbrigðisspurningum sé svarað neitandi í þessari umsókn. Tákntölur eru m.a. notaðar fyrir gleraugu/sjónleiðréttingu, sérútbúin ökutæki o.fl.',
+    description: 'Alert message for health remarks on driving license',
   },
   phoneNumberTitle: {
     id: 'dl.application:phoneNumberTitle',
