@@ -6,7 +6,7 @@ import {
 import { matchPath } from 'react-router-dom'
 import { AuthDelegationType, BffUser } from '@island.is/shared/types'
 
-const computeDisabledReason = (
+export const computeDisabledReason = (
   userInfo: BffUser,
   route: PortalRoute,
 ): PortalRouteDisabledReason => {
@@ -19,7 +19,8 @@ const computeDisabledReason = (
 
   if (
     delegationTypes.includes(AuthDelegationType.LegalGuardian) &&
-    !delegationTypes.includes(AuthDelegationType.LegalGuardianMinor)
+    !delegationTypes.includes(AuthDelegationType.LegalGuardianMinor) &&
+    (route.path.includes('/heilsa') || route.path.includes('/log-og-reglur'))
   ) {
     return 'notMinor'
   }

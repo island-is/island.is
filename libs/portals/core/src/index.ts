@@ -38,3 +38,6 @@ export * from './components/PortalProvider'
 export * from './components/IntroHeader'
 export * from './components/PortalRouter'
 export * from './components/PortalPageLoader'
+
+// queries
+export * from './queries/ServicePortalPage.generated'
