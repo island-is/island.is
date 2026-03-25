@@ -81,7 +81,7 @@ describe('CaseRepositoryService - upsertAppealCase', () => {
     it('should call upsert with correct arguments', () => {
       expect(mockAppealCaseModel.upsert).toHaveBeenCalledWith(
         { ...data, caseId },
-        { transaction, returning: true },
+        { transaction, returning: true, conflictFields: ['case_id'] },
       )
     })
 
