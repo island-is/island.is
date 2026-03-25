@@ -178,9 +178,10 @@ export class OpenDataClientService {
       }
 
       if (input.timePeriod && input.timePeriod.length > 0) {
+        const oldestExplicitYear = new Date().getFullYear() - 4
         const timeParts = input.timePeriod.map((tp) => {
           if (tp === 'older') {
-            return `metadata_modified:[* TO 2021-01-01T00:00:00Z]`
+            return `metadata_modified:[* TO ${oldestExplicitYear - 1}-12-31T23:59:59Z]`
           }
           return `metadata_modified:[${tp}-01-01T00:00:00Z TO ${tp}-12-31T23:59:59Z]`
         })

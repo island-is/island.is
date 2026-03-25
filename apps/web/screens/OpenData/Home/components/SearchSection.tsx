@@ -54,6 +54,21 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
   n,
   titleRef,
 }) => {
+  const labelByValue = React.useMemo(() => {
+    const map: Record<string, Record<string, string>> = {}
+    for (const filter of filterOptions) {
+      map[filter.field] = {}
+      for (const option of filter.options || []) {
+        if (typeof option === 'string') {
+          map[filter.field][option] = option
+        } else {
+          map[filter.field][option.value] = option.label
+        }
+      }
+    }
+    return map
+  }, [filterOptions])
+
   return (
     <>
       <Text
@@ -67,6 +82,7 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
         {n('searchTitle', 'Leitaðu að gögnum')}
       </Text>
       <Input
+        aria-label={n('searchLabel', 'Leita í gögnum')}
         placeholder={n('searchPlaceholder', 'Leitarorð')}
         id="searchOpenData"
         name="filterInput"
@@ -86,44 +102,47 @@ export const SearchSection: React.FC<SearchSectionProps> = ({
           flexWrap="wrap"
         >
           {Object.keys(filters).map((key) =>
-            (filters[key] || []).map((tag) => (
-              <Tag key={`${key}-${tag}`}>
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  style={{ gap: '0.5rem' }}
-                >
-                  <span>{tag}</span>
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onRemoveTag(key, tag)
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
+            (filters[key] || []).map((tag) => {
+              const tagLabel = labelByValue[key]?.[tag] ?? tag
+              return (
+                <Tag key={`${key}-${tag}`}>
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    style={{ gap: '0.5rem' }}
+                  >
+                    <span>{tagLabel}</span>
+                    <span
+                      onClick={(e) => {
                         e.stopPropagation()
                         onRemoveTag(key, tag)
-                      }
-                    }}
-                    role="button"
-                    tabIndex={0}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                    aria-label={`${n('remove', 'Remove')} ${tag}`}
-                  >
-                    ×
-                  </span>
-                </Box>
-              </Tag>
-            )),
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          onRemoveTag(key, tag)
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        padding: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
+                      aria-label={`${n('remove', 'Remove')} ${tagLabel}`}
+                    >
+                      ×
+                    </span>
+                  </Box>
+                </Tag>
+              )
+            }),
           )}
         </Box>
         <Box style={{ flexShrink: 0 }}>
