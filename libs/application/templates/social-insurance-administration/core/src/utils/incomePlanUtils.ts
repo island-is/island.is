@@ -40,15 +40,17 @@ export const incomeTypeValueModifier = (
   return selectedOption ?? null
 }
 
+// Sets currency to ISK for non-foreign income types.
+// For foreign income types, preserves the existing currency when editing,
+// or clears it to null so the user must select one.
 export const currencyValueModifier = (activeField?: Record<string, string>) => {
-  const foreignIncomeTypes = [
-    FOREIGN_BASIC_PENSION,
-    FOREIGN_PENSION,
-    FOREIGN_INCOME,
-    INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
-    DIVIDENDS_IN_FOREIGN_BANKS,
-  ]
-  return foreignIncomeTypes.includes(activeField?.incomeType ?? '') ? null : ISK
+  if (isForeignCurrency(activeField)) {
+    return activeField?.currency && activeField.currency !== ISK
+      ? activeField.currency
+      : null
+  }
+
+  return ISK
 }
 
 export const incomePerYearValueModifier = (
