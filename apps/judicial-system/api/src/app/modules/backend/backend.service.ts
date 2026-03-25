@@ -55,6 +55,7 @@ import { Institution } from '../institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
+  PoliceDefendant,
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { CaseDataExportInput, CaseStatistics } from '../statistics'
@@ -460,6 +461,10 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`case/${caseId}/policeFiles`)
   }
 
+  getPoliceDefendants(caseId: string): Promise<PoliceDefendant[]> {
+    return this.get(`case/${caseId}/policeDefendants`)
+  }
+
   getPoliceDigitalCaseFiles(caseId: string): Promise<PoliceDigitalCaseFile[]> {
     return this.get(`case/${caseId}/policeDigitalCaseFiles`)
   }
@@ -469,6 +474,15 @@ export class BackendService extends DataSource<{ req: Request }> {
     fileId: string,
   ): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/policeDigitalCaseFile/${fileId}`)
+  }
+
+  updatePoliceDigitalCaseFiles(
+    caseId: string,
+    updates: unknown[],
+  ): Promise<void> {
+    return this.patch(`case/${caseId}/policeDigitalCaseFiles`, {
+      files: updates,
+    })
   }
 
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
