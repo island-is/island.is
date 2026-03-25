@@ -18,6 +18,7 @@ import {
   isForeignCurrency,
   isMonthlyIncome,
   isMonthlyOrYearlyIncome,
+  currencyValueModifier,
 } from '@island.is/application/templates/social-insurance-administration-core/utils/incomePlanUtils'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
@@ -127,6 +128,12 @@ export const incomePlanSubSection = buildSubSection({
               placeholder:
                 socialInsuranceAdministrationMessage.incomePlan.selectCurrency,
               isSearchable: true,
+              //defaultValue: ISK,
+              updateValueObj: {
+                valueModifier: (_, activeField) =>
+                  currencyValueModifier(activeField),
+                watchValues: 'incomeType',
+              },
               options: (application, activeField) => {
                 const { currencies } = getApplicationExternalData(
                   application.externalData,

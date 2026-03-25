@@ -48,7 +48,14 @@ export const currencyValueModifier = (activeField?: Record<string, string>) => {
     INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
     DIVIDENDS_IN_FOREIGN_BANKS,
   ]
-  return foreignIncomeTypes.includes(activeField?.incomeType ?? '') ? null : ISK
+
+  if (foreignIncomeTypes.includes(activeField?.incomeType ?? '')) {
+    return activeField?.currency && activeField.currency !== ISK
+      ? activeField.currency
+      : null
+  }
+
+  return ISK
 }
 
 export const incomePerYearValueModifier = (
