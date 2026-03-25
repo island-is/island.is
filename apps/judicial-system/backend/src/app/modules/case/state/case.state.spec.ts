@@ -117,6 +117,13 @@ describe('Transition Case', () => {
 
   describe.each(indictmentCases)('ask for confirmation %s', (type) => {
     const allowedFromStates = [CaseState.DRAFT, CaseState.SUBMITTED]
+    const caseWithDefendants = (fromState: CaseState) =>
+      ({
+        id: uuid(),
+        state: fromState,
+        type,
+        defendants: [{ id: uuid(), name: 'Test Defendant' }],
+      } as Case)
 
     describe.each(allowedFromStates)(
       'state %s - should ask for confirmation',
@@ -124,7 +131,7 @@ describe('Transition Case', () => {
         // Act
         const res = transitionCase(
           CaseTransition.ASK_FOR_CONFIRMATION,
-          { id: uuid(), state: fromState, type } as Case,
+          caseWithDefendants(fromState),
           { id: uuid() } as User,
         )
 
@@ -132,6 +139,25 @@ describe('Transition Case', () => {
         expect(res).toMatchObject({ state: CaseState.WAITING_FOR_CONFIRMATION })
       },
     )
+
+    it('should throw when 0 defendants (LÖKE/create flow guard)', () => {
+      const act = () =>
+        transitionCase(
+          CaseTransition.ASK_FOR_CONFIRMATION,
+          {
+            id: uuid(),
+            state: CaseState.DRAFT,
+            type,
+            defendants: [],
+          } as unknown as Case,
+          { id: uuid() } as User,
+        )
+
+      expect(act).toThrow(ForbiddenException)
+      expect(act).toThrow(
+        'Cannot submit indictment to court without at least one defendant',
+      )
+    })
 
     describe.each(
       Object.values(CaseState).filter(
@@ -249,10 +275,15 @@ describe('Transition Case', () => {
     describe.each(allowedFromStates)(
       'state %s - should submit',
       (fromState) => {
-        // Act
+        // Act (case must have at least one defendant to submit indictment)
         const res = transitionCase(
           CaseTransition.SUBMIT,
-          { id: uuid(), state: fromState, type } as Case,
+          {
+            id: uuid(),
+            state: fromState,
+            type,
+            defendants: [{ id: uuid() }],
+          } as Case,
           { id: uuid() } as User,
         )
 
@@ -260,6 +291,25 @@ describe('Transition Case', () => {
         expect(res).toMatchObject({ state: CaseState.SUBMITTED })
       },
     )
+
+    it('should throw when 0 defendants (submit guard)', () => {
+      const act = () =>
+        transitionCase(
+          CaseTransition.SUBMIT,
+          {
+            id: uuid(),
+            state: CaseState.WAITING_FOR_CONFIRMATION,
+            type,
+            defendants: [],
+          } as unknown as Case,
+          { id: uuid() } as User,
+        )
+
+      expect(act).toThrow(ForbiddenException)
+      expect(act).toThrow(
+        'Cannot submit indictment to court without at least one defendant',
+      )
+    })
 
     describe.each(
       Object.values(CaseState).filter(
