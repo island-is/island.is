@@ -884,7 +884,7 @@ export const m = defineMessages({
     description: 'Alert message title for health remarks on driving license',
   },
   healthRemarksDescription: {
-    id: 'dl.application:healthRemarksDescription',
+    id: 'dl.application:healthRemarksDescriptionV2',
     defaultMessage:
       'Ef tákntala vegna heilsufars er skráð á núverandi ökuskírteini, skal ávallt skila læknisvottorði jafnvel þótt öllum heilbrigðisspurningum sé svarað neitandi í þessari umsókn. Tákntölur eru m.a. notaðar fyrir gleraugu/sjónleiðréttingu, sérútbúin ökutæki o.fl.',
     description: 'Alert message for health remarks on driving license',
