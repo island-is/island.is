@@ -14,6 +14,12 @@ export class DelegationScope {
   @Field(() => Date, { nullable: true })
   validTo?: Date
 
+  @Field(() => Date, { nullable: true })
+  validFrom?: Date
+
+  @Field(() => String, { nullable: true })
+  delegationId?: string
+
   // Internal attributes, used in field resolvers.
   scopeName!: string
   domainName?: string

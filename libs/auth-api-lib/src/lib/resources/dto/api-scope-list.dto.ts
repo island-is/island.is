@@ -9,6 +9,8 @@ export class ApiScopeListDTO {
     this.displayName = model.displayName
     this.description = model.description
     this.domainName = model.domainName
+    this.allowsWrite =
+      model instanceof ApiScope ? model.allowsWrite ?? false : false
     this.group =
       model instanceof ApiScope && model.group
         ? new ApiScopeListDTO(model.group)
@@ -38,6 +40,12 @@ export class ApiScopeListDTO {
     example: '@island.is',
   })
   domainName: string
+
+  @ApiProperty({
+    description: 'Whether this scope allows write access.',
+    example: false,
+  })
+  allowsWrite: boolean
 
   @ApiPropertyOptional({
     description:

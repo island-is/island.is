@@ -556,6 +556,11 @@ export const m = defineMessages({
     defaultMessage: 'Krafist',
     description: 'Required',
   },
+  select: {
+    id: 'form.system:select',
+    defaultMessage: 'Veldu',
+    description: 'Select an option',
+  },
   email: {
     id: 'form.system:email',
     defaultMessage: 'Netfang',
