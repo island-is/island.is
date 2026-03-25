@@ -169,8 +169,7 @@ export const subSectionHealthDeclaration = buildSubSection({
         buildCustomField({
           id: 'remarksBE',
           component: 'HealthRemarks',
-          condition: (_answers, externalData) =>
-            hasHealthRemarks(externalData),
+          condition: (_answers, externalData) => hasHealthRemarks(externalData),
         }),
         buildCustomField(
           {
