@@ -135,23 +135,44 @@ export function findRoute(url: string): Href | null {
   return null
 }
 
+function replacePathname(href: Href, pathname: string): Href {
+  if (typeof href === 'string') {
+    return pathname as Href
+  }
+  return {
+    ...href,
+    pathname,
+  } as Href
+}
+
+function adjustedAppRoute(dest: Href, source: Href | undefined): Href {
+  const pathname = typeof dest === 'string' ? dest : dest.pathname
+  const isFromNotifications = source?.toString().includes('/notifications')
+  if (isFromNotifications) {
+    if (pathname.startsWith('/inbox/')) {
+      return replacePathname(dest, pathname.replace('/inbox/', '/notifications/document/'))
+    }
+  }
+  return dest
+}
+
 /**
  * Navigate to a universal link. If our mapping returns a valid native screen,
  * navigate there directly. Otherwise, open in the in-app browser.
  */
 export async function navigateToUniversalLink({
   link,
+  fromScreen,
 }: {
   link?: NotificationMessage['link']['url']
+  fromScreen?: Href
 }) {
   if (!link) return
 
   const appRoute = findRoute(link)
 
   if (appRoute) {
-    return router.navigate(appRoute, {
-      withAnchor: true,
-    })
+    return router.navigate(adjustedAppRoute(appRoute, fromScreen))
   }
 
   // No matching native route — open in browser
