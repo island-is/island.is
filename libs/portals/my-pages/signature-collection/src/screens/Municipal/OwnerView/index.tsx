@@ -49,7 +49,7 @@ const OwnerView = ({
                 heading={list.candidate.name ?? ''}
                 progressMeter={{
                   currentProgress: list.numberOfSignatures || 0,
-                  maxProgress: list.area?.max,
+                  maxProgress: list.area?.max || 0,
                   withLabel: true,
                 }}
                 eyebrow={`${formatMessage(m.endTime)} ${format(

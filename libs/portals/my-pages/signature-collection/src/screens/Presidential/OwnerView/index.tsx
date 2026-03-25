@@ -91,7 +91,7 @@ const OwnerView = ({
                 }
                 progressMeter={{
                   currentProgress: Number(list.numberOfSignatures),
-                  maxProgress: list.area.max,
+                  maxProgress: list.area?.max || 0,
                   withLabel: true,
                 }}
               />
