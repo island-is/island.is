@@ -179,116 +179,125 @@ const ComplaintsCommitteeRulings = ({
         </Box>
       )}
 
-      {!pdfBase64 && <Stack space={3}>
-        <GridRow>
-          <GridColumn span={['12/12', '6/12', '4/12', '3/12']}>
-            <Select
-              name="year"
-              label={formatMessage(m.yearLabel)}
-              placeholder={formatMessage(m.yearPlaceholder)}
-              options={years}
-              value={years.find((y) => y.value === selectedYear) ?? null}
-              onChange={handleYearChange}
-              size="sm"
+      {!pdfBase64 && (
+        <Stack space={3}>
+          <GridRow>
+            <GridColumn span={['12/12', '6/12', '4/12', '3/12']}>
+              <Select
+                name="year"
+                label={formatMessage(m.yearLabel)}
+                placeholder={formatMessage(m.yearPlaceholder)}
+                options={years}
+                value={years.find((y) => y.value === selectedYear) ?? null}
+                onChange={handleYearChange}
+                size="sm"
+              />
+            </GridColumn>
+          </GridRow>
+
+          {loading && (
+            <SkeletonLoader
+              height={165}
+              width="100%"
+              borderRadius="large"
+              repeat={3}
+              space={3}
             />
-          </GridColumn>
-        </GridRow>
+          )}
 
-        {loading && (
-          <SkeletonLoader
-            height={165}
-            width="100%"
-            borderRadius="large"
-            repeat={3}
-            space={3}
-          />
-        )}
+          {!loading && items.length === 0 && (
+            <Text>{formatMessage(m.noRulingsFound)}</Text>
+          )}
 
-        {!loading && items.length === 0 && (
-          <Text>{formatMessage(m.noRulingsFound)}</Text>
-        )}
-
-        {!loading && items.length > 0 && (
-          <Stack space={5}>
-            <Stack space={3}>
-              {items.map((ruling, index) => (
-                <Box
-                  key={`${ruling.id}-${index}`}
-                  background="white"
-                  borderColor="blue200"
-                  borderWidth="standard"
-                  borderRadius="large"
-                  padding={3}
-                  cursor="pointer"
-                  onClick={() => handleOpenPdf(ruling.id, ruling.title)}
-                >
-                  <Stack space={2}>
-                    <Box
-                      display="flex"
-                      justifyContent="spaceBetween"
-                      alignItems="flexStart"
-                    >
-                      <Box>
-                        <Text variant="h4" as="h3" color="blue400">
-                          {ruling.title}
-                        </Text>
-                        {ruling.description && (
-                          <Text marginTop={1}>{ruling.description}</Text>
-                        )}
-                      </Box>
-                      <Box marginLeft={2} flexShrink={0}>
-                        {downloadingId === ruling.id ? (
-                          <LoadingDots />
-                        ) : (
-                          <Button
-                            variant="text"
-                            size="small"
-                            icon="open"
-                            iconType="outline"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              handleOpenPdf(ruling.id, ruling.title)
-                            }}
-                          >
-                            {formatMessage(m.viewPdf)}
-                          </Button>
-                        )}
-                      </Box>
-                    </Box>
-                    {ruling.publishedDate && (
-                      <Box display="flex" alignItems="center">
-                        <Box marginRight={1}>
-                          <Icon icon="calendar" size="small" color="dark300" />
+          {!loading && items.length > 0 && (
+            <Stack space={5}>
+              <Stack space={3}>
+                {items.map((ruling, index) => (
+                  <Box
+                    key={`${ruling.id}-${index}`}
+                    background="white"
+                    borderColor="blue200"
+                    borderWidth="standard"
+                    borderRadius="large"
+                    padding={3}
+                    cursor="pointer"
+                    onClick={() => handleOpenPdf(ruling.id, ruling.title)}
+                  >
+                    <Stack space={2}>
+                      <Box
+                        display="flex"
+                        justifyContent="spaceBetween"
+                        alignItems="flexStart"
+                      >
+                        <Box>
+                          <Text variant="h4" as="h3" color="blue400">
+                            {ruling.title}
+                          </Text>
+                          {ruling.description && (
+                            <Text marginTop={1}>{ruling.description}</Text>
+                          )}
                         </Box>
-                        <Text variant="small" color="dark300">
-                          {format(new Date(ruling.publishedDate), DATE_FORMAT)}
-                        </Text>
+                        <Box marginLeft={2} flexShrink={0}>
+                          {downloadingId === ruling.id ? (
+                            <LoadingDots />
+                          ) : (
+                            <Button
+                              variant="text"
+                              size="small"
+                              icon="open"
+                              iconType="outline"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleOpenPdf(ruling.id, ruling.title)
+                              }}
+                            >
+                              {formatMessage(m.viewPdf)}
+                            </Button>
+                          )}
+                        </Box>
                       </Box>
-                    )}
-                  </Stack>
-                </Box>
-              ))}
-            </Stack>
+                      {ruling.publishedDate && (
+                        <Box display="flex" alignItems="center">
+                          <Box marginRight={1}>
+                            <Icon
+                              icon="calendar"
+                              size="small"
+                              color="dark300"
+                            />
+                          </Box>
+                          <Text variant="small" color="dark300">
+                            {format(
+                              new Date(ruling.publishedDate),
+                              DATE_FORMAT,
+                            )}
+                          </Text>
+                        </Box>
+                      )}
+                    </Stack>
+                  </Box>
+                ))}
+              </Stack>
 
-            {totalPages > 1 && (
-              <Box display="flex" justifyContent="center">
-                <Pagination
-                  page={currentPage}
-                  totalPages={totalPages}
-                  renderLink={(page, className, children) => (
-                    <button
-                      className={className}
-                      onClick={() => handlePageChange(page)}
-                    >
-                      {children}
-                    </button>
-                  )}
-                />
-              </Box>
-            )}
-          </Stack>
-        )}
-      </Stack>}
+              {totalPages > 1 && (
+                <Box display="flex" justifyContent="center">
+                  <Pagination
+                    page={currentPage}
+                    totalPages={totalPages}
+                    renderLink={(page, className, children) => (
+                      <button
+                        className={className}
+                        onClick={() => handlePageChange(page)}
+                      >
+                        {children}
+                      </button>
+                    )}
+                  />
+                </Box>
+              )}
+            </Stack>
+          )}
+        </Stack>
+      )}
     </Stack>
   )
 }
