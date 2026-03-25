@@ -448,6 +448,48 @@ const Conclusion: FC = () => {
       !hasJudgementRuling,
   )
 
+  const radioButtons = [
+    {
+      id: 'conclusion-postponing',
+      value: IndictmentDecision.POSTPONING,
+      label: formatMessage(strings.postponing),
+    },
+    {
+      id: 'conclusion-scheduling',
+      value: IndictmentDecision.SCHEDULING,
+      label: formatMessage(strings.scheduling),
+    },
+    {
+      id: 'conclusion-postponing-until-verdict',
+      value: IndictmentDecision.POSTPONING_UNTIL_VERDICT,
+      label: formatMessage(strings.postponingUntilVerdict),
+    },
+    {
+      id: 'conclusion-completing',
+      value: IndictmentDecision.COMPLETING,
+      label: formatMessage(strings.completing),
+    },
+    {
+      id: 'conclusion-redistributing',
+      value: IndictmentDecision.REDISTRIBUTING,
+      label: formatMessage(strings.redistributing),
+    },
+    ...(workingCase.defendants && workingCase.defendants.length > 1
+      ? [
+          {
+            id: 'conclusion-splitting',
+            value: IndictmentDecision.SPLITTING,
+            label: 'Kljúfa mál',
+          },
+          {
+            id: 'conclusion-completing-for-some',
+            value: IndictmentDecision.COMPLETING_FOR_SOME,
+            label: 'Skrá lyktir á einstaka aðila án þess að ljúka máli',
+          },
+        ]
+      : []),
+  ]
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -467,82 +509,18 @@ const Conclusion: FC = () => {
               required
             />
             <BlueBox className={grid({ gap: 2 })}>
-              <RadioButton
-                id="conclusion-postponing"
-                name="conclusion-decision"
-                checked={selectedAction === IndictmentDecision.POSTPONING}
-                disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() =>
-                  setSelectedAction(IndictmentDecision.POSTPONING)
-                }
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.postponing)}
-              />
-              <RadioButton
-                id="conclusion-scheduling"
-                name="conclusion-decision"
-                checked={selectedAction === IndictmentDecision.SCHEDULING}
-                disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() =>
-                  setSelectedAction(IndictmentDecision.SCHEDULING)
-                }
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.scheduling)}
-              />
-              <RadioButton
-                id="conclusion-postponing-until-verdict"
-                name="conclusion-decision"
-                checked={
-                  selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
-                }
-                disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() =>
-                  setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
-                }
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.postponingUntilVerdict)}
-              />
-              <RadioButton
-                id="conclusion-completing"
-                name="conclusion-decision"
-                checked={selectedAction === IndictmentDecision.COMPLETING}
-                disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() =>
-                  setSelectedAction(IndictmentDecision.COMPLETING)
-                }
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.completing)}
-              />
-              <RadioButton
-                id="conclusion-redistributing"
-                name="conclusion-redistribute"
-                checked={selectedAction === IndictmentDecision.REDISTRIBUTING}
-                disabled={workingCase.state === CaseState.CORRECTING}
-                onChange={() =>
-                  setSelectedAction(IndictmentDecision.REDISTRIBUTING)
-                }
-                large
-                backgroundColor="white"
-                label={formatMessage(strings.redistributing)}
-              />
-              {workingCase.defendants && workingCase.defendants.length > 1 && (
+              {radioButtons.map(({ id, value, label }) => (
                 <RadioButton
-                  id="conclusion-splitting"
-                  name="conclusion-splitting"
-                  checked={selectedAction === IndictmentDecision.SPLITTING}
+                  id={id}
+                  name={id}
+                  checked={selectedAction === value}
                   disabled={workingCase.state === CaseState.CORRECTING}
-                  onChange={() =>
-                    setSelectedAction(IndictmentDecision.SPLITTING)
-                  }
-                  large
+                  onChange={() => setSelectedAction(value)}
+                  label={label}
                   backgroundColor="white"
-                  label="Kljúfa mál"
+                  large
                 />
-              )}
+              ))}
             </BlueBox>
           </Box>
           {selectedAction === IndictmentDecision.POSTPONING && (

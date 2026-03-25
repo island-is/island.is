@@ -331,6 +331,7 @@ export enum IndictmentDecision {
   REDISTRIBUTING = 'REDISTRIBUTING',
   SCHEDULING = 'SCHEDULING',
   SPLITTING = 'SPLITTING',
+  COMPLETING_FOR_SOME = 'COMPLETING_FOR_SOME',
 }
 
 export enum CaseAppealRulingDecision {
