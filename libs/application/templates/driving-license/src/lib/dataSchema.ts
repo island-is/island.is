@@ -39,11 +39,11 @@ export const dataSchema = z.object({
     isDisabled: z.enum([YES, NO]),
     hasOtherDiseases: z.enum([YES, NO]),
   }),
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  healthDeclarationValidForBELicense: z
-    .array(z.string())
-    .refine((v) => v === undefined || v.length === 0),
   contactGlassesMismatch: z.boolean(),
+  selectLicensePhoto: z.string().optional(),
+  healthCertificate: z
+    .array(z.object({ name: z.string(), key: z.string() }))
+    .optional(),
   willBringQualityPhoto: z.union([
     z.array(z.enum([YES, NO])).nonempty(),
     z.enum([YES, NO]),

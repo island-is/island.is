@@ -7,6 +7,7 @@ import {
 } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../../shared'
+import { AttachmentS3Service } from '../../../shared/services'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import {
   coreErrorMessages,
@@ -15,6 +16,7 @@ import {
 } from '@island.is/application/core'
 import {
   ApplicationTypes,
+  ApplicationWithAttachments,
   FormValue,
   InstitutionNationalIds,
 } from '@island.is/application/types'
@@ -39,12 +41,28 @@ const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
 }
 
+const getContentType = (fileName: string): string => {
+  const ext = fileName.split('.').pop()?.toLowerCase() ?? ''
+  switch (ext) {
+    case 'pdf':
+      return 'application/pdf'
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg'
+    case 'png':
+      return 'image/png'
+    default:
+      return 'application/octet-stream'
+  }
+}
+
 @Injectable()
 export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly attachmentS3Service: AttachmentS3Service,
   ) {
     super(ApplicationTypes.DRIVING_LICENSE)
   }
@@ -98,7 +116,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     let result
     try {
-      result = await this.createLicense(nationalId, answers, auth)
+      result = await this.createLicense(nationalId, answers, auth, application)
     } catch (e) {
       this.log('error', 'Creating license failed', {
         e,
@@ -139,6 +157,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     nationalId: string,
     answers: FormValue,
     auth: User,
+    application: ApplicationWithAttachments,
   ): Promise<NewDrivingLicenseResult> {
     // If using fake data, skip calling RLS and pretend submission succeeded
     const useFakeData = getValueViaPath<'yes' | 'no'>(
@@ -242,16 +261,122 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         answers,
         'drivingInstructor',
       )
-      const email = getValueViaPath<string>(answers, 'email')
-      const phone = getValueViaPath<string>(answers, 'phone')
+      const beEmail = getValueViaPath<string>(answers, 'email')
+      const bePhone = getValueViaPath<string>(answers, 'phone')
+      const selectedPhoto = getValueViaPath<string>(
+        answers,
+        'selectLicensePhoto',
+      )
+
+      // Determine photo biometric IDs based on user selection
+      let photoBiometricsId: string | null = null
+      let signatureBiometricsId: string | null = null
+
+      if (selectedPhoto === 'qualityPhoto') {
+        // User selected the RLS quality photo — backend already has it
+        photoBiometricsId = null
+        signatureBiometricsId = null
+      } else if (selectedPhoto) {
+        // User selected a Thjodskra photo — validate and send biometric IDs
+        const allThjodskraPhotos =
+          (
+            application.externalData?.allPhotosFromThjodskra?.data as {
+              images?: Array<{
+                biometricId: string
+                contentSpecification: string
+              }>
+            }
+          )?.images ?? []
+
+        const isValidThjodskra = allThjodskraPhotos.some(
+          (p) => p.biometricId === selectedPhoto,
+        )
+
+        photoBiometricsId = isValidThjodskra ? selectedPhoto : null
+        signatureBiometricsId = isValidThjodskra
+          ? allThjodskraPhotos.find(
+              (p) => p.contentSpecification === 'SIGNATURE',
+            )?.biometricId ?? null
+          : null
+      }
+
+      // Health certificate handling
+      const healthDeclaration = answers.healthDeclaration as Record<
+        string,
+        string
+      >
+      const beNeedsHealthCert =
+        calculateNeedsHealthCert(healthDeclaration) ||
+        remarks ||
+        getValueViaPath<boolean>(
+          application.externalData,
+          'glassesCheck.data',
+        ) === true
+
+      let contentList:
+        | Array<{
+            fileName: string
+            fileExtension: string
+            contentType: string
+            content: string
+            description: string
+          }>
+        | undefined
+
+      if (beNeedsHealthCert) {
+        try {
+          const files = await this.attachmentS3Service.getFiles(application, [
+            'healthCertificate',
+          ])
+
+          contentList = files
+            .filter((f) => f.fileContent)
+            .map((f) => {
+              const ext =
+                f.fileName.split('.').pop()?.toLowerCase().replace('jpg', 'jpeg') ?? ''
+              return {
+                fileName: f.fileName,
+                fileExtension: ext,
+                contentType: getContentType(f.fileName),
+                content: f.fileContent,
+                description: 'Laeknisvottord',
+              }
+            })
+        } catch (e) {
+          this.log('error', 'Failed to read health certificate files from S3', {
+            e,
+          })
+          throw e
+        }
+      }
+
+      // Health declaration model — always sent for BE
+      const healthDeclarationModel = {
+        isDisabled: healthDeclaration?.isDisabled === 'yes',
+        hasDiabetes: healthDeclaration?.hasDiabetes === 'yes',
+        hasEpilepsy: healthDeclaration?.hasEpilepsy === 'yes',
+        isAlcoholic: healthDeclaration?.isAlcoholic === 'yes',
+        hasHeartDisease: healthDeclaration?.hasHeartDisease === 'yes',
+        hasMentalIllness: healthDeclaration?.hasMentalIllness === 'yes',
+        hasOtherDiseases: healthDeclaration?.hasOtherDiseases === 'yes',
+        usesMedicalDrugs: healthDeclaration?.usesMedicalDrugs === 'yes',
+        usesContactGlasses: healthDeclaration?.usesContactGlasses === 'yes',
+        hasReducedPeripheralVision:
+          healthDeclaration?.hasReducedPeripheralVision === 'yes',
+      }
+
       return this.drivingLicenseService.applyForBELicense(
         nationalId,
         auth.authorization,
         {
           jurisdiction: jurisdictionId,
           instructorSSN: instructorSSN ?? '',
-          primaryPhoneNumber: phone ?? '',
-          studentEmail: email ?? '',
+          primaryPhoneNumber: bePhone ?? '',
+          studentEmail: beEmail ?? '',
+          contentList,
+          photoBiometricsId,
+          signatureBiometricsId,
+          healthDeclarationModel,
         },
       )
     }

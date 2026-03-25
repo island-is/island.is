@@ -303,6 +303,16 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
   }
 
+  async qualityPhotoAndSignature({ auth }: TemplateApiModuleActionProps) {
+    try {
+      return await this.drivingLicenseService.getQualityPhotoAndSignature({
+        token: auth.authorization,
+      })
+    } catch {
+      return null
+    }
+  }
+
   async allPhotosFromThjodskra({ auth }: TemplateApiModuleActionProps) {
     try {
       return await this.drivingLicenseService.getAllPhotosFromThjodskra({

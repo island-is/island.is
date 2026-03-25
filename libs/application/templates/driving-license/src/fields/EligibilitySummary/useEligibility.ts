@@ -11,14 +11,14 @@ import {
   B_FULL_RENEWAL_65,
   BE,
   codesExtendedLicenseCategories,
-  codesRequiringHealthCertificate,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
-  otherLicenseCategories,
   remarksCannotRenew65,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
 import { DrivingLicense } from '../../lib/types'
+
+const QUALITY_IMAGE_TYPE_IDS = [1, 11]
 
 const QUERY = gql`
   query EligibilityQuery($input: ApplicationEligibilityInput!) {
@@ -67,34 +67,10 @@ export const useEligibility = (
     },
   })
 
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
-  const hasGlasses = getValueViaPath<boolean>(
-    application.externalData,
-    'glassesCheck.data',
-  )
   const currentLicense = getValueViaPath<DrivingLicense>(
     application.externalData,
     'currentLicense.data',
   )
-  const hasQualityPhoto =
-    getValueViaPath<boolean>(
-      application.externalData,
-      'qualityPhoto.data.hasQualityPhoto',
-    ) ?? false
-
-  const hasOtherCategoryOrHealthRemarks = (
-    currentLicense: DrivingLicense | undefined,
-  ) => {
-    return (
-      (currentLicense?.categories.some((license) =>
-        otherLicenseCategories.includes(license.nr),
-      ) ??
-        false) ||
-      currentLicense?.remarks?.some((remark) =>
-        codesRequiringHealthCertificate.includes(remark.code),
-      )
-    )
-  }
 
   const hasExtendedDrivingLicense = (
     currentLicense: DrivingLicense | undefined,
@@ -108,20 +84,17 @@ export const useEligibility = (
 
     if (!relevantCategories?.length) return false
 
-    // Check if any category was issued on a different date than the 'B' license
-    // (indicating an extended license)
     return relevantCategories.some((x) => x.issued !== drivingLicenseIssued)
   }
 
   if (usingFakeData) {
+    const hasPhoto = fakeData?.qualityPhoto === YES
     return {
       loading: false,
       eligibility: fakeEligibility(
         applicationFor,
         parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
-
-        //TODO: Remove when RLS/SGS supports health certificate in BE license
-        hasGlasses,
+        hasPhoto,
       ),
     }
   }
@@ -137,27 +110,39 @@ export const useEligibility = (
   const eligibility: ApplicationEligibilityRequirement[] =
     data.drivingLicenseApplicationEligibility?.requirements ?? []
 
-  //TODO: Remove when RLS/SGS supports health certificate in BE license
   if (application.answers.applicationFor === BE) {
+    const qualityPhotoAndSignature = getValueViaPath<{
+      imageTypeId?: number | null
+    }>(application.externalData, 'qualityPhotoAndSignature.data')
+
+    const qualityPhotoConfirmed = QUALITY_IMAGE_TYPE_IDS.includes(
+      qualityPhotoAndSignature?.imageTypeId ?? 0,
+    )
+
+    const thjodskraPhotos =
+      getValueViaPath<{ images?: Array<{ contentSpecification?: string }> }>(
+        application.externalData,
+        'allPhotosFromThjodskra.data',
+      )?.images ?? []
+
+    const hasThjodskraFacial = thjodskraPhotos.some(
+      (p) => p.contentSpecification === 'FACIAL',
+    )
+
+    const hasUsablePhotoForBE = qualityPhotoConfirmed || hasThjodskraFacial
+
     return {
       loading: loading,
       eligibility: {
         isEligible: loading
           ? undefined
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
-            !hasGlasses &&
-            hasQualityPhoto &&
-            !hasOtherCategoryOrHealthRemarks(currentLicense),
+            hasUsablePhotoForBE,
         requirements: [
           ...eligibility,
           {
-            key: RequirementKey.beRequiresHealthCertificate,
-            requirementMet:
-              !hasGlasses && !hasOtherCategoryOrHealthRemarks(currentLicense),
-          },
-          {
             key: RequirementKey.hasNoPhoto,
-            requirementMet: hasQualityPhoto,
+            requirementMet: hasUsablePhotoForBE,
           },
         ],
       },

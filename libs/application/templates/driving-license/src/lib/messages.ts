@@ -1180,4 +1180,64 @@ export const requirementsMessages = defineMessages({
     defaultMessage: 'Ekki hægt að sækja um endurnýjun á 65+ ökuskírteini.',
     description: 'requirement unmet 65 plus renewal',
   },
+  photoSelectionTitle: {
+    id: 'dl.application:photoSelection.title',
+    defaultMessage: 'Mynd í ökuskírteini',
+    description: 'Photo selection section title',
+  },
+  photoSelectionDescription: {
+    id: 'dl.application:photoSelection.description',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um þær myndir sem hægt er að nota í ökuskírteinið.',
+    description: 'Photo selection section description',
+  },
+  usePassportImage: {
+    id: 'dl.application:photoSelection.usePassportImage#markdown',
+    defaultMessage:
+      'Ég staðfesti að nota núverandi mynd úr vegabréfa- og skilríkjaskrá í ökuskírteinið',
+    description: 'Use photo from national registry',
+  },
+  useDriversLicenseImage: {
+    id: 'dl.application:photoSelection.useDriversLicenseImage#markdown',
+    defaultMessage:
+      'Ég staðfesti að nota núverandi mynd úr ökuskírteinaskrá í ökuskírteinið',
+    description: 'Use photo from driving license registry',
+  },
+  useFakeImage: {
+    id: 'dl.application:photoSelection.useFakeImage',
+    defaultMessage: 'Ég staðfesti að nota fakeData mynd',
+    description: 'Use fake photo for testing',
+  },
+  healthCertificateTitle: {
+    id: 'dl.application:healthCertificate.title',
+    defaultMessage: 'Læknisvottorð',
+    description: 'Health certificate title',
+  },
+  healthCertificateDescription: {
+    id: 'dl.application:healthCertificate.description',
+    defaultMessage:
+      'Þú þarft að hlaða inn læknisvottorði vegna heilbrigðisyfirlýsingar.',
+    description: 'Health certificate upload description',
+  },
+  healthCertificateUploadHeader: {
+    id: 'dl.application:healthCertificate.uploadHeader',
+    defaultMessage: 'Dragðu læknisvottorð hingað til að hlaða upp',
+    description: 'Health certificate upload header',
+  },
+  healthCertificateUploadDescription: {
+    id: 'dl.application:healthCertificate.uploadDescription',
+    defaultMessage:
+      'Tekið er við skjölum með endingunum: .pdf, .jpg, .jpeg, .png',
+    description: 'Health certificate upload format description',
+  },
+  healthCertificateUploadButtonLabel: {
+    id: 'dl.application:healthCertificate.uploadButtonLabel',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
+    description: 'Health certificate upload button label',
+  },
+  overviewHealthCertificateUploaded: {
+    id: 'dl.application:overview.healthCertificateUploaded',
+    defaultMessage: 'Læknisvottorð hlaðið upp',
+    description: 'Uploaded health certificate',
+  },
 })
