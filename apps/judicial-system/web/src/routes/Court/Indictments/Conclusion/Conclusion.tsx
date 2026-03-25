@@ -47,6 +47,7 @@ import {
   Defendant,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
   formatDateForServer,
@@ -108,6 +109,17 @@ const courtSessionOptions = [
   },
 ]
 
+const completingForSomeOptions: ReactSelectOption[] = [
+  {
+    label: 'Frávísun',
+    value: CaseIndictmentRulingDecision.DISMISSAL,
+  },
+  {
+    label: 'Niðurfelling máls',
+    value: CaseIndictmentRulingDecision.CANCELLATION,
+  },
+]
+
 const Conclusion: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
@@ -150,6 +162,8 @@ const Conclusion: FC = () => {
   const [selectedDefendant, setSelectedDefendant] = useState<Defendant | null>(
     null,
   )
+  const [completingForSomeSelections, setCompletingForSomeSelections] =
+    useState<Record<string, CaseIndictmentRulingDecision | undefined>>({})
   const [splitCaseId, setSplitCaseId] = useState<string>()
   const [splitCaseCourtCaseNumber, setSplitCaseCourtCaseNumber] =
     useState<string>()
@@ -448,6 +462,10 @@ const Conclusion: FC = () => {
       selectedDecision === CaseIndictmentRulingDecision.RULING &&
       !hasJudgementRuling,
   )
+
+  const completingForSomeSelectedCount = Object.values(
+    completingForSomeSelections,
+  ).filter(Boolean).length
 
   const radioButtons = [
     {
@@ -872,17 +890,28 @@ const Conclusion: FC = () => {
                   id={`completing-for-some-${defendant.id}`}
                   label="Lyktir"
                   placeholder="Veldu lyktir ef á við"
-                  options={[
-                    {
-                      label: 'Frávísun',
-                      value: CaseIndictmentRulingDecision.DISMISSAL,
-                    },
-                    {
-                      label: 'Niðurfelling máls',
-                      value: CaseIndictmentRulingDecision.CANCELLATION,
-                    },
-                  ]}
+                  options={completingForSomeOptions}
+                  value={completingForSomeOptions.find(
+                    (option) =>
+                      option.value ===
+                      completingForSomeSelections[defendant.id],
+                  )}
+                  onChange={(selectedOption) => {
+                    setCompletingForSomeSelections((prevSelections) => ({
+                      ...prevSelections,
+                      [defendant.id]: selectedOption?.value as
+                        | CaseIndictmentRulingDecision
+                        | undefined,
+                    }))
+                  }}
+                  isDisabled={
+                    workingCase.state === CaseState.CORRECTING ||
+                    (!completingForSomeSelections[defendant.id] &&
+                      completingForSomeSelectedCount >=
+                        (workingCase.defendants?.length ?? 0) - 1)
+                  }
                   size="sm"
+                  isClearable
                 />
               </BlueBox>
             ))}
