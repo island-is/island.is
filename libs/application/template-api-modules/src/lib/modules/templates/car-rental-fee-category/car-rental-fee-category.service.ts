@@ -338,9 +338,25 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
   }
 
   private formatSkatturinnErrorBody(body: unknown): string | undefined {
-    if (!body || typeof body !== 'object') return undefined
+    if (!body) return undefined
 
-    const messages = Object.entries(body as Record<string, unknown>)
+    let parsed: Record<string, unknown>
+
+    if (typeof body === 'object') {
+      parsed = body as Record<string, unknown>
+    } else if (typeof body === 'string') {
+      try {
+        const json = JSON.parse(body)
+        if (!json || typeof json !== 'object') return undefined
+        parsed = json as Record<string, unknown>
+      } catch {
+        return undefined
+      }
+    } else {
+      return undefined
+    }
+
+    const messages = Object.entries(parsed)
       .flatMap(([field, value]) => {
         if (Array.isArray(value)) {
           return value

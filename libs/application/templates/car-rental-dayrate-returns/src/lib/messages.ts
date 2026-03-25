@@ -146,8 +146,7 @@ export const m = {
     },
     optionSingleSubLabel: {
       id: 'rsk.crdr.application:single.multi.option.single.sub',
-      defaultMessage:
-        'Þú getur skráð útleigudaga beint í gegnum viðmótið.',
+      defaultMessage: 'Þú getur skráð útleigudaga beint í gegnum viðmótið.',
       description: 'Single vehicle registration option sublabel',
     },
   }),

@@ -174,33 +174,12 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
         }
       })
 
-      await this.rentalDaysApiWithAuth(auth)
-        .withPreMiddleware(async ({ url, init }) => {
-          const headers = init?.headers
-            ? Object.fromEntries(new Headers(init.headers).entries())
-            : undefined
-
-          const reqData = {
-            url,
-            method: init?.method,
-            headers: headers
-              ? {
-                  ...headers,
-                  authorization: headers.authorization
-                    ? '[REDACTED]'
-                    : undefined,
-                  cookie: headers.cookie ? '[REDACTED]' : undefined,
-                }
-              : undefined,
-          }
-          this.logger.info('Skatturinn request', reqData)
-        })
-        .apiRentalDaysEntityIdPost({
-          entityId: auth.nationalId,
-          rentalDayRegistrationModel: {
-            entries,
-          },
-        })
+      await this.rentalDaysApiWithAuth(auth).apiRentalDaysEntityIdPost({
+        entityId: auth.nationalId,
+        rentalDayRegistrationModel: {
+          entries,
+        },
+      })
 
       return true
     } catch (error) {
@@ -263,12 +242,7 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
           ? dayRateRecordsByPermno.get(permno)
           : undefined
 
-        if (
-          !permno ||
-          !dayRateRecord ||
-          Number.isNaN(usage) ||
-          usage < 0
-        ) {
+        if (!permno || !dayRateRecord || Number.isNaN(usage) || usage < 0) {
           invalidRows.push(permno || '-')
           return null
         }
@@ -375,9 +349,25 @@ export class CarRentalDayrateReturnsService extends BaseTemplateApiService {
   }
 
   private formatSkatturinnErrorBody(body: unknown): string | undefined {
-    if (!body || typeof body !== 'object') return undefined
+    if (!body) return undefined
 
-    const messages = Object.entries(body as Record<string, unknown>)
+    let parsed: Record<string, unknown>
+
+    if (typeof body === 'object') {
+      parsed = body as Record<string, unknown>
+    } else if (typeof body === 'string') {
+      try {
+        const json = JSON.parse(body)
+        if (!json || typeof json !== 'object') return undefined
+        parsed = json as Record<string, unknown>
+      } catch {
+        return undefined
+      }
+    } else {
+      return undefined
+    }
+
+    const messages = Object.entries(parsed)
       .flatMap(([field, value]) => {
         if (Array.isArray(value)) {
           return value
