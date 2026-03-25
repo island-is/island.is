@@ -252,7 +252,7 @@ const AsideIcons: FC<AsideProps> = (props) => {
     ? { name: 'warning' }
     : icon
 
-  const renderIcon = (item: InputIcon) => (
+  const renderIcon = (item: { name: InputIcon['name']; type?: InputIcon['type'] }) => (
     <Icon
       icon={item.name}
       type={item.type}
@@ -267,13 +267,26 @@ const AsideIcons: FC<AsideProps> = (props) => {
       {loading ? (
         <Box className={styles.spinner} flexShrink={0} borderRadius="full" />
       ) : displayedIcon ? (
-        <div
-          className={styles.iconWrapper({ size })}
-          key={displayedIcon.name}
-          aria-hidden
-        >
-          {renderIcon(displayedIcon)}
-        </div>
+        displayedIcon.onClick ? (
+          <button
+            type="button"
+            key={displayedIcon.name}
+            onClick={displayedIcon.onClick}
+            aria-label={displayedIcon.ariaLabel}
+            className={styles.iconWrapper({ size })}
+            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+          >
+            {renderIcon(displayedIcon)}
+          </button>
+        ) : (
+          <div
+            className={styles.iconWrapper({ size })}
+            key={displayedIcon.name}
+            aria-hidden
+          >
+            {renderIcon(displayedIcon)}
+          </div>
+        )
       ) : null}
 
       {buttons.map((item) => {

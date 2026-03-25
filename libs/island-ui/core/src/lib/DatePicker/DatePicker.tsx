@@ -7,8 +7,10 @@ import {
 } from '@island.is/shared/constants'
 import cn from 'classnames'
 import getYear from 'date-fns/getYear'
+import isValid from 'date-fns/isValid'
 import en from 'date-fns/locale/en-US'
 import is from 'date-fns/locale/is'
+import parse from 'date-fns/parse'
 import range from 'lodash/range'
 import * as React from 'react'
 import { forwardRef, useEffect, useRef, useState } from 'react'
@@ -24,7 +26,7 @@ import { Text } from '../Text/Text'
 import { theme } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
 import { Input } from '../Input/Input'
-import { InputProps } from '../Input/types'
+import { InputIcon, InputProps } from '../Input/types'
 import { Select } from '../Select/Select'
 import CustomCalendarContainer from './CustomCalendarContainer'
 import * as styles from './DatePicker.css'
@@ -103,6 +105,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   const [isOpen, setIsOpen] = useState(false)
 
   const currentLanguage = languageConfig[locale]
+
   const errorId = `${id}-error`
   const ariaError = hasError
     ? {
@@ -168,7 +171,9 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           popperPlacement="bottom-start"
           open={isOpen}
           onInputClick={() => {
-            setIsOpen(true)
+            if (!range) {
+              setIsOpen(true)
+            }
             onInputClick && onInputClick()
           }}
           onCalendarOpen={() => {
@@ -202,6 +207,20 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                     (end === null ||
                       (end instanceof Date && !isNaN(end.getTime())))
                   ) {
+                    // Swap: user is picking end date but clicked before start
+                    if (
+                      end === null &&
+                      startDate !== null &&
+                      endDate === null &&
+                      start < startDate
+                    ) {
+                      setStartDate(start)
+                      setEndDate(startDate)
+                      setIsOpen(false)
+                      handleChange && handleChange(start, startDate)
+                      return
+                    }
+
                     setStartDate(start)
                     setEndDate(end)
 
@@ -236,10 +255,31 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           onChangeRaw={(e: React.SyntheticEvent<HTMLInputElement>) => {
             if (!range) return
             const v = (e.target as HTMLInputElement).value
-            // If the input is cleared via keyboard, reset both dates
             if (!v || v.trim() === '') {
               setStartDate(null)
               setEndDate(null)
+              return
+            }
+
+            const sep = ' - '
+            const idx = v.indexOf(sep)
+            if (idx === -1) return
+
+            const fmt = showTimeInput
+              ? currentLanguage.formatWithTime
+              : currentLanguage.format
+
+            const parsedStart = parse(v.slice(0, idx), fmt, new Date())
+            const parsedEnd = parse(v.slice(idx + sep.length), fmt, new Date())
+
+            if (isValid(parsedStart) && isValid(parsedEnd)) {
+              const [s, en] =
+                parsedEnd >= parsedStart
+                  ? [parsedStart, parsedEnd]
+                  : [parsedEnd, parsedStart]
+              setStartDate(s)
+              setEndDate(en)
+              // handleChange is intentionally NOT called here — user confirms with Enter
             }
           }}
           onKeyDown={(e) => {
@@ -249,8 +289,36 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               return
             }
 
-            if (e.key === 'Enter' || e.key === 'ArrowDown') setIsOpen(true)
-            if (e.key === 'Escape') setIsOpen(false)
+            if (e.key === 'Escape') {
+              setIsOpen(false)
+              return
+            }
+            if (e.key === 'ArrowDown') {
+              setIsOpen(true)
+              return
+            }
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              const v = (e.target as HTMLInputElement).value
+              if (v && v.trim()) {
+                const sep = ' - '
+                const idx = v.indexOf(sep)
+                if (idx !== -1) {
+                  const fmt = showTimeInput
+                    ? currentLanguage.formatWithTime
+                    : currentLanguage.format
+                  const ps = parse(v.slice(0, idx), fmt, new Date())
+                  const pe = parse(v.slice(idx + sep.length), fmt, new Date())
+                  if (isValid(ps) && isValid(pe)) {
+                    const [s, en] = pe < ps ? [pe, ps] : [ps, pe]
+                    setStartDate(s)
+                    setEndDate(en)
+                    handleChange && handleChange(s, en)
+                    setIsOpen(false)
+                  }
+                }
+              }
+            }
           }}
           startDate={startDate}
           endDate={range ? endDate : undefined}
@@ -274,6 +342,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               clearLabel={clearLabel}
               size={size}
               onClick={onInputClick}
+              onIconClick={range ? () => setIsOpen((prev) => !prev) : undefined}
               onClear={() => {
                 setStartDate(null)
                 setEndDate(null)
@@ -335,6 +404,7 @@ const CustomInput = forwardRef<
     clearLabel?: string
     onClear?: () => void
     onInputClick?: ReactDatePickerProps['onInputClick']
+    onIconClick?: () => void
   }
 >(
   (
@@ -344,16 +414,25 @@ const CustomInput = forwardRef<
       onInputClick,
       fixedFocusState,
       icon,
+      onIconClick,
+      onClick,
       ...props
     },
     ref,
   ) => (
     <Input
       {...props}
-      icon={icon}
+      icon={
+        onIconClick
+          ? { ...(icon as InputIcon), onClick: onIconClick, ariaLabel: 'Open calendar' }
+          : icon
+      }
       ref={ref}
       fixedFocusState={fixedFocusState}
       placeholder={placeholderText}
+      // Block ReactDatePicker's internal onClick in range mode so text-area
+      // clicks don't open the calendar — only the icon button does.
+      onClick={onIconClick ? undefined : onClick}
       buttons={
         props.isClearable
           ? [
