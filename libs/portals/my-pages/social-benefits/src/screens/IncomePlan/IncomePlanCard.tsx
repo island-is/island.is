@@ -33,7 +33,7 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
           cta
             ? {
                 label: formatMessage(m.viewIncomePlan),
-                url: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
+                url: SocialInsuranceMaintenancePaths.SocialInsuranceIncomePlanDetail,
                 variant: 'text',
               }
             : { label: '' }
