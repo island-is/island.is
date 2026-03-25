@@ -15,14 +15,13 @@ import {
   ScopesGuard,
   User,
 } from '@island.is/auth-nest-tools'
-import { AuthScope } from '@island.is/auth/scopes'
+import { AuthScope, delegationScopes } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
 const namespace = '@island.is/auth/delegation-api/scopes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(AuthScope.consents)
 @ApiSecurity('ias')
 @ApiTags('scopes')
 @Controller({
@@ -33,6 +32,7 @@ const namespace = '@island.is/auth/delegation-api/scopes'
 export class ScopesController {
   constructor(private readonly scopeService: ScopeService) {}
 
+  @Scopes(AuthScope.consents)
   @Get('scope-tree')
   @Documentation({
     description: 'Returns a sorted scope tree for the requested scopes.',
@@ -64,6 +64,7 @@ export class ScopesController {
     return this.scopeService.findScopeTree(requestedScopes, language)
   }
 
+  @Scopes(...delegationScopes)
   @Get('categories')
   @Documentation({
     description:
@@ -102,6 +103,7 @@ export class ScopesController {
     )
   }
 
+  @Scopes(...delegationScopes)
   @Get('tags')
   @Documentation({
     description:
