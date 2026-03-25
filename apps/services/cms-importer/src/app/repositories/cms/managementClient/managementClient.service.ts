@@ -23,7 +23,7 @@ export class ManagementClientService {
   ): Promise<
     ContentfulFetchResponse<Collection<Entry, EntryProps<KeyValueMap>>>
   > => {
-    const queryWithLimit = { ...query, limit: 1000 }
+    const queryWithLimit = { limit: 1000, ...query }
 
     return this.client
       .getSpace(SPACE_ID)

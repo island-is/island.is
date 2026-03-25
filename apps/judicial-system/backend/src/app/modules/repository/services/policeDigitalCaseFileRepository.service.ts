@@ -78,6 +78,35 @@ export class PoliceDigitalCaseFileRepositoryService {
     }
   }
 
+  async update(
+    caseId: string,
+    id: string,
+    data: Partial<PoliceDigitalCaseFile>,
+    options?: { transaction?: Transaction },
+  ): Promise<PoliceDigitalCaseFile> {
+    try {
+      this.logger.debug(
+        `Updating police digital case file ${id} for case ${caseId}`,
+      )
+
+      const [, [result]] = await this.model.update(data, {
+        where: { caseId, id },
+        returning: true,
+        ...options,
+      })
+
+      this.logger.debug(
+        `Updated police digital case file ${id} for case ${caseId}`,
+      )
+
+      return result
+    } catch (error) {
+      this.logger.error('Error updating police digital case file', { error })
+
+      throw error
+    }
+  }
+
   async delete(
     caseId: string,
     id: string,

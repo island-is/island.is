@@ -476,6 +476,15 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/policeDigitalCaseFile/${fileId}`)
   }
 
+  updatePoliceDigitalCaseFiles(
+    caseId: string,
+    updates: unknown[],
+  ): Promise<void> {
+    return this.patch(`case/${caseId}/policeDigitalCaseFiles`, {
+      files: updates,
+    })
+  }
+
   getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
     return this.get(`case/${caseId}/policeCaseInfo`)
   }

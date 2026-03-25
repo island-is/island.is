@@ -9,7 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { Footer } from '../Footer/Footer'
 import { Applicants } from './components/Applicants/Applicants'
@@ -39,11 +39,14 @@ export const Screen = () => {
   const multiMax = currentScreen?.data?.multiMax ?? 1
   const isMulti = currentScreen?.data?.isMulti ?? false
 
-  const visibleFields =
-    currentScreen?.data?.fields?.filter(
-      (field): field is NonNullable<typeof field> =>
-        field != null && !field.isHidden,
-    ) ?? []
+  const visibleFields = useMemo(
+    () =>
+      currentScreen?.data?.fields?.filter(
+        (field): field is NonNullable<typeof field> =>
+          field != null && !field.isHidden,
+      ) ?? [],
+    [currentScreen?.data?.fields],
+  )
 
   const [numberOfItems, setNumberOfItems] = useState(1)
 
@@ -57,7 +60,7 @@ export const Screen = () => {
     } else {
       setNumberOfItems(1)
     }
-  }, [currentScreen?.data?.id, currentScreen?.data?.fields, isMulti, multiMax])
+  }, [currentScreen?.data?.id, isMulti, multiMax, visibleFields])
 
   const shouldMoveCurrencySumBox =
     numberOfItems > 1 &&
@@ -130,12 +133,17 @@ export const Screen = () => {
     }
   }
 
+  const screenId = currentScreen?.data?.id
+
+  const shouldPopulateScreenRef = useRef(shouldPopulateScreen)
+  shouldPopulateScreenRef.current = shouldPopulateScreen
+
   useEffect(() => {
     const populateScreen = async () => {
-      await shouldPopulateScreen()
+      await shouldPopulateScreenRef.current()
     }
-    populateScreen()
-  }, [currentScreen?.data?.id])
+    void populateScreen()
+  }, [screenId])
 
   const handleNewItem = () => {
     setNumberOfItems(numberOfItems + 1)

@@ -122,7 +122,6 @@ export const attributes: (keyof Case)[] = [
   'indictmentReviewerId',
   'hasCivilClaims',
   'isCompletedWithoutRuling',
-  'isRegisteredInPrisonSystem',
   'rulingModifiedHistory',
   'withCourtSessions',
 ]
@@ -135,7 +134,6 @@ export interface LimitedAccessUpdateCase
     | 'defendantStatementDate'
     | 'openedByDefender'
     | 'appealRulingDecision'
-    | 'isRegisteredInPrisonSystem'
   > {}
 
 export const include: Includeable[] = [

@@ -1,5 +1,3 @@
-import { ModelStatic } from 'sequelize-typescript'
-
 import {
   capitalize,
   districtCourtAbbreviation,
@@ -19,7 +17,6 @@ import {
   CaseTableColumnKey,
   CaseType,
   courtSessionTypeNames,
-  DateType,
   DefendantEventType,
   EventType,
   getDefendantServiceDate,
@@ -40,17 +37,7 @@ import {
   VerdictInfo,
 } from '@island.is/judicial-system/types'
 
-import {
-  Case,
-  DateLog,
-  Defendant,
-  DefendantEventLog,
-  EventLog,
-  Institution,
-  Subpoena,
-  User,
-  Verdict,
-} from '../repository'
+import { Case, DateLog, DefendantEventLog, EventLog } from '../repository'
 import {
   CaseTableCellValue,
   StringGroupValue,
@@ -58,44 +45,7 @@ import {
   TagPairValue,
   TagValue,
 } from './dto/caseTable.response'
-
-// gets the element type if T is an array.
-type ElementType<T> = T extends (infer U)[] ? U : T
-
-// gets the non-null, non-undefined version of ElementType<T>.
-type DefinedObject<T> = NonNullable<ElementType<T>>
-
-// extracts keys from T where the corresponding value, after non-nullable, is an object.
-type ObjectKeys<T> = Extract<
-  {
-    [K in keyof T]: DefinedObject<T[K]> extends object ? K : never
-  }[keyof T],
-  string
->
-type CaseIncludes = {
-  [K in ObjectKeys<Case>]: {
-    model: ModelStatic<DefinedObject<Case[K]>>
-    attributes?: (keyof DefinedObject<Case[K]>)[]
-    where?: {
-      [K2 in keyof DefinedObject<Case[K]>]?: unknown
-    }
-    order?: [[keyof DefinedObject<Case[K]>, 'ASC' | 'DESC']]
-    separate?: boolean
-    includes?: Partial<{
-      [K2 in ObjectKeys<DefinedObject<Case[K]>>]: {
-        model: ModelStatic<DefinedObject<DefinedObject<Case[K]>[K2]>>
-        attributes?: (keyof DefinedObject<DefinedObject<Case[K]>[K2]>)[]
-        where?: {
-          [K3 in keyof DefinedObject<DefinedObject<Case[K]>[K2]>]?: unknown
-        }
-        order?: [
-          [keyof DefinedObject<DefinedObject<Case[K]>[K2]>, 'ASC' | 'DESC'],
-        ]
-        separate?: boolean
-      }
-    }>
-  }
-}
+import { CaseIncludes } from './caseTable.types'
 
 interface CaseTableCell<T> {
   value?: T
@@ -103,7 +53,7 @@ interface CaseTableCell<T> {
 }
 interface CaseTableCellGenerator<T> {
   attributes?: (keyof Case)[]
-  includes?: Partial<CaseIncludes>
+  includes?: CaseIncludes
   generate: (caseModel: Case, user: TUser) => CaseTableCell<T>
 }
 
@@ -482,14 +432,8 @@ const generateCaseNumberSortValue = (
 const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
   attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
   includes: {
-    court: {
-      model: Institution,
-      attributes: ['name'],
-    },
-    defendants: {
-      model: Defendant,
-      attributes: ['publicProsecutorIsRegisteredInPoliceSystem'],
-    },
+    court: { attributes: ['name'] },
+    defendants: { attributes: ['publicProsecutorIsRegisteredInPoliceSystem'] },
   },
   generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
     const court = !isDistrictCourtUser(user)
@@ -534,29 +478,9 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
 const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
-      model: Defendant,
-      attributes: [
-        'id',
-        'noNationalId',
-        'nationalId',
-        'name',
-        'indictmentReviewDecision',
-        'isSentToPrisonAdmin',
-        'isRegisteredInPrisonSystem',
-      ],
-      includes: {
-        verdicts: {
-          model: Verdict,
-          attributes: [
-            'isAcquittedByPublicProsecutionOffice',
-            'defendantHasRequestedAppeal',
-          ],
-          order: [['created', 'DESC']],
-          separate: true,
-        },
-      },
-      order: [['created', 'ASC']],
-      separate: true,
+      // TODO: find a better place for id - it is not used in this cell generator
+      // and there is no guarantee that this column will be included in all tables
+      attributes: ['id', 'noNationalId', 'nationalId', 'name'],
     },
   },
   generate: (c: Case): CaseTableCell<StringGroupValue> => {
@@ -615,23 +539,8 @@ const appealState: CaseTableCellGenerator<TagValue> = {
 const appealCaseState = appealState
 
 const requestCaseState: CaseTableCellGenerator<TagValue> = {
-  includes: {
-    dateLogs: {
-      model: DateLog,
-      attributes: ['date', 'dateType'],
-      order: [['created', 'DESC']],
-      separate: true,
-    },
-  },
-  attributes: [
-    'state',
-    'validToDate',
-    'type',
-    'appealState',
-    'appealRulingDecision',
-    'appealCaseNumber',
-    'appealReceivedByCourtDate',
-  ],
+  attributes: ['state', 'validToDate', 'type'],
+  includes: { dateLogs: { attributes: ['date', 'dateType'] } },
   generate: (c: Case, user: TUser): CaseTableCell<TagValue> =>
     generateRequestCaseStateTag(c, user),
 }
@@ -640,43 +549,20 @@ const indictmentCaseState: CaseTableCellGenerator<TagValue | TagPairValue> = {
   attributes: ['state', 'indictmentDecision', 'indictmentRulingDecision'],
   includes: {
     defendants: {
-      model: Defendant,
-      attributes: ['id', 'isAlternativeService'],
-      order: [['created', 'ASC']],
+      attributes: ['isAlternativeService'],
       includes: {
-        subpoenas: {
-          model: Subpoena,
-          attributes: ['serviceStatus'],
-          order: [['created', 'DESC']],
-          separate: true,
-        },
-        verdicts: {
-          model: Verdict,
-          attributes: ['isDefaultJudgement'],
-          order: [['created', 'DESC']],
-          separate: true,
-        },
+        subpoenas: { attributes: ['serviceStatus'] },
+        verdicts: { attributes: ['isDefaultJudgement'] },
       },
-      separate: true,
     },
-    dateLogs: {
-      model: DateLog,
-      attributes: ['date'],
-      order: [['created', 'DESC']],
-      separate: true,
-    },
+    dateLogs: { attributes: ['date', 'dateType'] },
   },
   generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagPairValue> =>
     generateIndictmentCaseStateTag(c, user),
 }
 
 const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
-  includes: {
-    appealJudge1: {
-      model: User,
-      attributes: ['name'],
-    },
-  },
+  includes: { appealJudge1: { attributes: ['name'] } },
   generate: (c: Case): CaseTableCell<StringValue> => {
     const initials = getInitials(c.appealJudge1?.name)
 
@@ -694,12 +580,7 @@ const created: CaseTableCellGenerator<StringValue> = {
 }
 
 const prosecutor: CaseTableCellGenerator<StringValue> = {
-  includes: {
-    prosecutor: {
-      model: User,
-      attributes: ['name'],
-    },
-  },
+  includes: { prosecutor: { attributes: ['name'] } },
   generate: (c: Case): CaseTableCell<StringValue> => {
     const prosecutor = c.prosecutor
     if (!prosecutor) {
@@ -743,19 +624,7 @@ const validFromTo: CaseTableCellGenerator<StringValue> = {
 }
 
 const caseSentToCourtDate: CaseTableCellGenerator<StringValue> = {
-  includes: {
-    eventLogs: {
-      model: EventLog,
-      attributes: ['created', 'eventType'],
-      where: {
-        eventType: [
-          EventType.CASE_SENT_TO_COURT,
-          EventType.INDICTMENT_CONFIRMED,
-        ],
-      },
-      separate: true,
-    },
-  },
+  includes: { eventLogs: { attributes: ['created', 'eventType'] } },
   generate: (c: Case): CaseTableCell<StringValue> => {
     const caseSentToCourtDate = EventLog.getEventLogDateByEventType(
       [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
@@ -773,15 +642,7 @@ const rulingDate: CaseTableCellGenerator<StringValue> = {
 
 const arraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
   attributes: ['requestedCourtDate'],
-  includes: {
-    dateLogs: {
-      model: DateLog,
-      attributes: ['date', 'dateType'],
-      order: [['created', 'DESC']],
-      where: { dateType: DateType.ARRAIGNMENT_DATE },
-      separate: true,
-    },
-  },
+  includes: { dateLogs: { attributes: ['date', 'dateType'] } },
   generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
     let courtDate = getRequestCaseArraignmentDate(c)
     let prefix = ''
@@ -818,14 +679,7 @@ const arraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
 
 const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
   attributes: ['courtSessionType', 'indictmentDecision'],
-  includes: {
-    dateLogs: {
-      model: DateLog,
-      attributes: ['date', 'dateType'],
-      order: [['created', 'DESC']],
-      separate: true,
-    },
-  },
+  includes: { dateLogs: { attributes: ['date', 'dateType'] } },
   generate: (c: Case): CaseTableCell<StringGroupValue> => {
     if (c.indictmentDecision === IndictmentDecision.POSTPONING) {
       return generateCell({ strList: ['Frestað'] }, '999999999999')
@@ -865,20 +719,18 @@ const rulingType: CaseTableCellGenerator<TagValue> = {
   attributes: ['indictmentRulingDecision'],
   includes: {
     defendants: {
-      model: Defendant,
-      order: [['created', 'ASC']],
+      attributes: [],
       includes: {
         verdicts: {
-          model: Verdict,
-          attributes: ['isDefaultJudgement'],
-          order: [['created', 'DESC']],
-          separate: true,
+          attributes: [
+            'isDefaultJudgement',
+            'isAcquittedByPublicProsecutionOffice',
+          ],
         },
       },
-      separate: true,
     },
   },
-  generate: (c: Case): CaseTableCell<TagValue> => {
+  generate: (c: Case, user: TUser): CaseTableCell<TagValue> => {
     switch (c.indictmentRulingDecision) {
       case CaseIndictmentRulingDecision.FINE:
         return generateCell(
@@ -886,6 +738,16 @@ const rulingType: CaseTableCellGenerator<TagValue> = {
           'Viðurlagaákvörðun',
         )
       case CaseIndictmentRulingDecision.RULING: {
+        if (
+          isPublicProsecutionOfficeUser(user) &&
+          c.defendants?.[0]?.verdicts?.[0]?.isAcquittedByPublicProsecutionOffice
+        ) {
+          return generateCell(
+            { color: 'mint', text: 'Sýknudómur' },
+            'Sýknudómur',
+          )
+        }
+
         const defaultJudgementTag = generateDefaultJudgementTag(c)
 
         if (!defaultJudgementTag) {
@@ -901,19 +763,7 @@ const rulingType: CaseTableCellGenerator<TagValue> = {
 }
 
 const punishmentType: CaseTableCellGenerator<TagValue> = {
-  includes: {
-    defendants: {
-      model: Defendant,
-      attributes: [
-        'id',
-        'punishmentType',
-        'isSentToPrisonAdmin',
-        'isRegisteredInPrisonSystem',
-      ],
-      order: [['created', 'ASC']],
-      separate: true,
-    },
-  },
+  includes: { defendants: { attributes: ['punishmentType'] } },
   generate: (c: Case): CaseTableCell<TagValue> => {
     if (
       !c.defendants ||
@@ -951,20 +801,10 @@ const punishmentType: CaseTableCellGenerator<TagValue> = {
 }
 
 const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
-  attributes: ['isRegisteredInPrisonSystem'],
   includes: {
     defendants: {
-      model: Defendant,
-      order: [['created', 'ASC']],
-      includes: {
-        eventLogs: {
-          model: DefendantEventLog,
-          attributes: ['created', 'eventType'],
-          where: { eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN },
-          separate: true,
-        },
-      },
-      separate: true,
+      attributes: [],
+      includes: { eventLogs: { attributes: ['created', 'eventType'] } },
     },
   },
   generate: (c: Case): CaseTableCell<StringValue> => {
@@ -982,20 +822,10 @@ const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
 }
 
 const prisonAdminState: CaseTableCellGenerator<TagValue> = {
-  attributes: ['isRegisteredInPrisonSystem'],
   includes: {
     defendants: {
-      model: Defendant,
-      order: [['created', 'ASC']],
-      includes: {
-        eventLogs: {
-          model: DefendantEventLog,
-          attributes: ['created', 'eventType'],
-          where: { eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN },
-          separate: true,
-        },
-      },
-      separate: true,
+      attributes: [],
+      includes: { eventLogs: { attributes: ['created', 'eventType'] } },
     },
   },
   generate: (c: Case): CaseTableCell<TagValue> => {
@@ -1036,16 +866,9 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
   attributes: ['rulingDate', 'indictmentRulingDecision'],
   includes: {
     defendants: {
-      model: Defendant,
-      order: [['created', 'ASC']],
-      separate: true,
+      attributes: [],
       includes: {
-        verdicts: {
-          model: Verdict,
-          attributes: ['serviceRequirement', 'serviceDate'],
-          order: [['created', 'DESC']],
-          separate: true,
-        },
+        verdicts: { attributes: ['serviceRequirement', 'serviceDate'] },
       },
     },
   },
@@ -1082,10 +905,8 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
 
 const indictmentReviewer: CaseTableCellGenerator<StringValue> = {
   includes: {
-    indictmentReviewer: {
-      model: User,
-      attributes: ['name'],
-    },
+    defendants: { attributes: [] },
+    indictmentReviewer: { attributes: ['name'] },
   },
   generate: (c: Case): CaseTableCell<StringValue> => {
     const indictmentReviewerName = c.indictmentReviewer?.name.trim()
@@ -1101,17 +922,8 @@ const indictmentReviewer: CaseTableCellGenerator<StringValue> = {
 const sentToPrisonAdminDate: CaseTableCellGenerator<StringValue> = {
   includes: {
     defendants: {
-      model: Defendant,
-      order: [['created', 'ASC']],
-      includes: {
-        eventLogs: {
-          model: DefendantEventLog,
-          attributes: ['created', 'eventType'],
-          where: { eventType: DefendantEventType.SENT_TO_PRISON_ADMIN },
-          separate: true,
-        },
-      },
-      separate: true,
+      attributes: [],
+      includes: { eventLogs: { attributes: ['created', 'eventType'] } },
     },
   },
   generate: (c: Case): CaseTableCell<StringValue> => {
@@ -1142,17 +954,8 @@ const indictmentRulingDecision: CaseTableCellGenerator<
   attributes: ['state', 'indictmentRulingDecision'],
   includes: {
     defendants: {
-      model: Defendant,
-      order: [['created', 'ASC']],
-      includes: {
-        verdicts: {
-          model: Verdict,
-          attributes: ['isDefaultJudgement'],
-          order: [['created', 'DESC']],
-          separate: true,
-        },
-      },
-      separate: true,
+      attributes: [],
+      includes: { verdicts: { attributes: ['isDefaultJudgement'] } },
     },
   },
   generate: (c: Case, user: TUser): CaseTableCell<TagValue | TagPairValue> =>
@@ -1160,33 +963,31 @@ const indictmentRulingDecision: CaseTableCellGenerator<
 }
 
 const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
+  attributes: ['indictmentRulingDecision'],
   includes: {
     defendants: {
-      model: Defendant,
       attributes: ['indictmentReviewDecision'],
-      order: [['created', 'ASC']],
-      separate: true,
-      includes: {
-        verdicts: {
-          model: Verdict,
-          attributes: ['appealDate'],
-          order: [['created', 'DESC']],
-          separate: true,
-        },
-      },
+      includes: { verdicts: { attributes: ['appealDate'] } },
     },
   },
   generate: (c: Case): CaseTableCell<TagPairValue> => {
+    const hasIndictmentReviewDecision = c.defendants?.some(
+      (d) => d.indictmentReviewDecision,
+    )
+
     const firstTag = {
       color: 'darkerBlue',
-      text: c.defendants?.some(
-        (d) =>
-          d.indictmentReviewDecision === IndictmentCaseReviewDecision.APPEAL,
-      )
-        ? c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-          ? 'Kæra'
-          : 'Áfrýja'
-        : 'Una',
+      text: hasIndictmentReviewDecision
+        ? c.defendants?.some(
+            (d) =>
+              d.indictmentReviewDecision ===
+              IndictmentCaseReviewDecision.APPEAL,
+          )
+          ? c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+            ? 'Kæra'
+            : 'Áfrýja'
+          : 'Una'
+        : 'Í yfirlestri',
     }
 
     const defendantAppealed = c.defendants?.some(
