@@ -50,7 +50,10 @@ const HealthDeclaration = ({
       ((glassesUsedPreviously && q2Value === NO) ||
         (!glassesUsedPreviously && q2Value === YES))
 
-    setValue('healthDeclaration.contactGlassesMismatch', !!(q1Mismatch || q2Mismatch))
+    setValue(
+      'healthDeclaration.contactGlassesMismatch',
+      !!(q1Mismatch || q2Mismatch),
+    )
   }
 
   return (
