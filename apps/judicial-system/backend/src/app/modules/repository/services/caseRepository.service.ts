@@ -749,9 +749,18 @@ export class CaseRepositoryService {
         data: Object.keys(data),
       })
 
+      const existing = await this.appealCaseModel.findOne({
+        where: { caseId },
+        transaction: options.transaction,
+      })
+
       const [result] = await this.appealCaseModel.upsert(
-        { ...data, caseId },
-        { transaction: options.transaction, returning: true },
+        { ...existing?.toJSON(), ...data, caseId },
+        {
+          transaction: options.transaction,
+          returning: true,
+          conflictFields: ['case_id'],
+        },
       )
 
       this.logger.debug(`Upserted appeal case for case ${caseId}`)
