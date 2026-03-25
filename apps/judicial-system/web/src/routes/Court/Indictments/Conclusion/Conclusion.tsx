@@ -419,11 +419,14 @@ const Conclusion: FC = () => {
       case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
       case IndictmentDecision.REDISTRIBUTING:
         return true
+      case IndictmentDecision.COMPLETING_FOR_SOME:
+        return (
+          Object.values(completingForSomeSelections).filter(Boolean).length > 0
+        )
       default:
         return false
     }
   }
-
   const hasJudgementRuling = Boolean(
     workingCase.courtSessions?.some(
       (courtSession) =>
@@ -875,46 +878,79 @@ const Conclusion: FC = () => {
               </Box>
             )}
           {selectedAction === IndictmentDecision.COMPLETING_FOR_SOME &&
-            isNonEmptyArray(workingCase.defendants) &&
-            workingCase.defendants.map((defendant) => (
-              <BlueBox
-                key={`completing-for-some-${defendant.id}`}
-                className={grid({ gap: 2 })}
-              >
-                <SectionHeading
-                  title={defendant.name || ''}
-                  variant="h4"
-                  marginBottom={0}
-                />
-                <Select
-                  id={`completing-for-some-${defendant.id}`}
-                  label="Lyktir"
-                  placeholder="Veldu lyktir ef á við"
-                  options={completingForSomeOptions}
-                  value={completingForSomeOptions.find(
-                    (option) =>
-                      option.value ===
-                      completingForSomeSelections[defendant.id],
-                  )}
-                  onChange={(selectedOption) => {
-                    setCompletingForSomeSelections((prevSelections) => ({
-                      ...prevSelections,
-                      [defendant.id]: selectedOption?.value as
-                        | CaseIndictmentRulingDecision
-                        | undefined,
-                    }))
-                  }}
-                  isDisabled={
-                    workingCase.state === CaseState.CORRECTING ||
-                    (!completingForSomeSelections[defendant.id] &&
-                      completingForSomeSelectedCount >=
-                        (workingCase.defendants?.length ?? 0) - 1)
-                  }
-                  size="sm"
-                  isClearable
-                />
-              </BlueBox>
-            ))}
+            isNonEmptyArray(workingCase.defendants) && (
+              <>
+                {workingCase.defendants.map((defendant) => (
+                  <BlueBox
+                    key={`completing-for-some-${defendant.id}`}
+                    className={grid({ gap: 2 })}
+                  >
+                    <SectionHeading
+                      title={defendant.name || ''}
+                      variant="h4"
+                      marginBottom={0}
+                    />
+                    <Select
+                      id={`completing-for-some-${defendant.id}`}
+                      label="Lyktir"
+                      placeholder="Veldu lyktir ef á við"
+                      options={completingForSomeOptions}
+                      value={completingForSomeOptions.find(
+                        (option) =>
+                          option.value ===
+                          completingForSomeSelections[defendant.id],
+                      )}
+                      onChange={(selectedOption) => {
+                        setCompletingForSomeSelections((prevSelections) => ({
+                          ...prevSelections,
+                          [defendant.id]: selectedOption?.value as
+                            | CaseIndictmentRulingDecision
+                            | undefined,
+                        }))
+                      }}
+                      isDisabled={
+                        workingCase.state === CaseState.CORRECTING ||
+                        (!completingForSomeSelections[defendant.id] &&
+                          completingForSomeSelectedCount >=
+                            (workingCase.defendants?.length ?? 0) - 1)
+                      }
+                      size="sm"
+                      isClearable
+                    />
+                  </BlueBox>
+                ))}
+                {Object.values(completingForSomeSelections).some(
+                  (value) => value === CaseIndictmentRulingDecision.DISMISSAL,
+                ) && (
+                  <Box component="section">
+                    <SectionHeading title="Úrskurður" required />
+                    <InputFileUpload
+                      name="ruling"
+                      files={uploadFiles.filter(
+                        (file) => file.category === CaseFileCategory.RULING,
+                      )}
+                      accept="application/pdf"
+                      title={formatMessage(strings.inputFieldLabel)}
+                      description={formatMessage(core.uploadBoxDescription, {
+                        fileEndings: '.pdf',
+                      })}
+                      buttonLabel={formatMessage(strings.uploadButtonText)}
+                      onChange={(files) => {
+                        handleUpload(
+                          addUploadFiles(files, {
+                            category: CaseFileCategory.RULING,
+                          }),
+                          updateUploadFile,
+                        )
+                      }}
+                      onRemove={(file) => handleRemove(file, removeUploadFile)}
+                      onRetry={(file) => handleRetry(file, updateUploadFile)}
+                      onOpenFile={(file) => onOpenFile(file)}
+                    />
+                  </Box>
+                )}
+              </>
+            )}
           {selectedAction && workingCase.withCourtSessions && (
             <Box component="section">
               <PdfButton
