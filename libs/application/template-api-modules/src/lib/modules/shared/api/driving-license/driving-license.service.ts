@@ -318,7 +318,8 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
           imageTypeId: 1,
           imageTypeName: 'Quality photo',
           imageDate: null,
-          pohto: 'fakeRLSPhotoBase64Content',
+          pohto:
+            'iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAABuUlEQVR4nO3OQQkAMAzAwIqcyMqciDxCIXACbmZfbvMHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8gdhPvkQiXuNETQ5AAAAAElFTkSuQmCC',
           signatureId: 1,
           signatureTypeId: 12,
           signatureTypeName: 'Quality signature',
@@ -352,7 +353,8 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
           images: [
             {
               biometricId: 'fakeThjodskraBiometricId',
-              content: 'fakeThjodskraPhotoBase64Content',
+              content:
+                'iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAABuUlEQVR4nO3OQQkAMAzAwFqdfxGdiDxCIXACbuZtbvMHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8gdhPlNL4IkwXcFkAAAAAElFTkSuQmCC',
               contentSpecification: 'FACIAL',
             },
           ],
