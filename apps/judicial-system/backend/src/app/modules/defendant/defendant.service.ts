@@ -375,6 +375,7 @@ export class DefendantService {
         'DefenderNationalId can only be set to null when defenderName, defenderEmail, and defenderPhoneNumber are also set to null.',
       )
     }
+
     if (isIndictmentCase(theCase.type)) {
       return this.updateIndictmentCaseDefendant(
         theCase,
