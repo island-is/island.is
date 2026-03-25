@@ -10,6 +10,7 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { PoliceService } from '../../police/police.service'
 import { PoliceDigitalCaseFileRepositoryService } from '../../repository'
+import { UpdatePoliceDigitalCaseFileDto } from '../dto/updatePoliceDigitalCaseFiles.dto'
 import { PoliceDigitalCaseFileSyncResult } from '../models/policeDigitalCaseFileSyncResult.model'
 import { getFilesToCreate } from './getFilesToCreate'
 
@@ -107,6 +108,27 @@ export class PoliceDigitalCaseFileService {
       policeDigitalFileId,
       user,
       'getPoliceDigitalCaseFileTokenUrl',
+    )
+  }
+
+  async updatePoliceDigitalCaseFileOrders(
+    caseId: string,
+    updates: UpdatePoliceDigitalCaseFileDto[],
+    transaction: Transaction,
+  ): Promise<void> {
+    this.logger.debug(
+      `Updating police digital case file orders for case ${caseId}`,
+    )
+
+    await Promise.all(
+      updates.map((update) =>
+        this.policeDigitalCaseFileRepositoryService.update(
+          caseId,
+          update.id,
+          { orderWithinChapter: update.orderWithinChapter },
+          { transaction },
+        ),
+      ),
     )
   }
 

@@ -43,6 +43,7 @@ const QuestionnaireDetail: FC = () => {
       },
       locale: lang,
     },
+    fetchPolicy: 'network-only',
     skip: !id || !organization,
   })
 
@@ -66,12 +67,14 @@ const QuestionnaireDetail: FC = () => {
     )
   }
 
-  const answeredLink = HealthPaths.HealthQuestionnairesAnswered.replace(
-    ':org',
-    organization?.toLocaleLowerCase() ?? '',
-  )
-    .replace(':id', id)
-    .replace(':submissionId', latestSubmissionId ?? '')
+  const answeredLink = latestSubmissionId
+    ? HealthPaths.HealthQuestionnairesAnswered.replace(
+        ':org',
+        organization?.toLocaleLowerCase() ?? '',
+      )
+        .replace(':id', id)
+        .replace(':submissionId', latestSubmissionId)
+    : undefined
 
   const answerLink = HealthPaths.HealthQuestionnairesAnswer.replace(
     ':org',
@@ -126,6 +129,20 @@ const QuestionnaireDetail: FC = () => {
       buttonGroup={[
         link ? (
           <>
+            {!isDraft && canSubmitAgain && (
+              <Box className={styles.button} key={'answer-again-link-box'}>
+                <Button
+                  key={'answer-again-link'}
+                  fluid
+                  variant="utility"
+                  colorScheme={'primary'}
+                  size="small"
+                  onClick={() => navigate(answerLink)}
+                >
+                  {formatMessage(messages.answerAgain)}
+                </Button>
+              </Box>
+            )}
             <Box className={styles.button} key={'answer-link-box'}>
               <Button
                 key={'answer-link'}
@@ -142,23 +159,9 @@ const QuestionnaireDetail: FC = () => {
                   : formatMessage(messages.answer)}
               </Button>
             </Box>
-            {!isDraft && canSubmitAgain && (
-              <Box className={styles.button} key={'answer-again-link-box'}>
-                <Button
-                  key={'answer-again-link'}
-                  fluid
-                  variant="utility"
-                  colorScheme={'primary'}
-                  size="small"
-                  onClick={() => navigate(answerLink)}
-                >
-                  {formatMessage(messages.answerAgain)}
-                </Button>
-              </Box>
-            )}
           </>
         ) : null,
-        isDraft && answeredLink !== link ? (
+        isDraft && answeredLink ? (
           <Box className={styles.button} key={'answer-link-box'}>
             <Button
               fluid

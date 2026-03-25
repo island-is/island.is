@@ -18,8 +18,10 @@ import { BackendService } from '../backend'
 import { DeletePoliceDigitalCaseFileInput } from './dto/deletePoliceDigitalCaseFile.input'
 import { PoliceDigitalCaseFilesQueryInput } from './dto/policeDigitalCaseFiles.input'
 import { PoliceDigitalCaseFileTokenUrlInput } from './dto/policeDigitalCaseFileTokenUrl.input'
+import { UpdatePoliceDigitalCaseFilesInput } from './dto/updatePoliceDigitalCaseFiles.input'
 import { DeleteFileResponse } from './models/deleteFile.response'
 import { PoliceDigitalCaseFile } from './models/policeDigitalCaseFile.model'
+import { UpdatePoliceDigitalCaseFilesResponse } from './models/updatePoliceDigitalCaseFiles.response'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver()
@@ -69,7 +71,32 @@ export class PoliceDigitalCaseFileResolver {
         input.caseId,
         input.policeDigitalFileId,
       ),
-      input.caseId,
+      input.policeDigitalFileId,
+    )
+  }
+
+  @Mutation(() => UpdatePoliceDigitalCaseFilesResponse)
+  updatePoliceDigitalCaseFiles(
+    @Args('input', { type: () => UpdatePoliceDigitalCaseFilesInput })
+    input: UpdatePoliceDigitalCaseFilesInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<UpdatePoliceDigitalCaseFilesResponse> {
+    const { caseId, files } = input
+
+    this.logger.debug(
+      `Updating police digital case file orders for case ${caseId}`,
+    )
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.UPDATE_POLICE_DIGITAL_CASE_FILES,
+      backendService
+        .updatePoliceDigitalCaseFiles(caseId, files)
+        .then(() => backendService.getPoliceDigitalCaseFiles(caseId))
+        .then((policeDigitalCaseFiles) => ({ policeDigitalCaseFiles })),
+      caseId,
     )
   }
 

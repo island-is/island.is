@@ -5,8 +5,10 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBank,
+  formatBankAccount,
   getBankIsk,
   shouldNotUpdateBankAccount,
+  shouldNotUpdateBankAccountV2,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   CategorizedIncomeTypes,
@@ -64,38 +66,38 @@ import {
   TrWebContractsExternalDigitalIcelandDocumentsDocument as Attachment,
   IncomeTypes,
   MedicalAndRehabilitationPaymentsDTO,
+  OldAgePensionDTO,
   Employer as TrWebEmployer,
 } from '@island.is/clients/social-insurance-administration'
 import parse from 'date-fns/parse'
+import { incomePlanHasOnlyZeroIncome } from '@island.is/application/templates/social-insurance-administration-core/utils/incomePlanUtils'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
   uploads: Attachment[],
-): ApplicationDTO => {
+): OldAgePensionDTO => {
   const {
     applicationType,
     selectedYear,
     selectedMonth,
     applicantPhonenumber,
-    bank,
-    bankAccountType,
     onePaymentPerYear,
     comment,
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
     paymentInfo,
     employmentStatus,
     employers,
+    incomePlan,
+    noOtherIncomeConfirmation,
   } = getOAPApplicationAnswers(application.answers)
-  const { bankInfo, userProfileEmail } = getOAPApplicationExternalData(
-    application.externalData,
-  )
+  const {
+    bankInfo,
+    userProfileEmail,
+    incomePlanConditions,
+    categorizedIncomeTypes,
+  } = getOAPApplicationExternalData(application.externalData)
 
   // If foreign residence is found then this is always true
   const residenceHistoryQuestion = getValueViaPath(
@@ -104,34 +106,48 @@ export const transformApplicationToOldAgePensionDTO = (
     YES,
   ) as YesOrNo
 
-  const oldAgePensionDTO: ApplicationDTO = {
+  const oldAgePensionDTO: OldAgePensionDTO = {
     period: {
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
     },
     comment: comment,
     applicationId: application.id,
-    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
-      ...((bankAccountType === undefined ||
-        bankAccountType === BankAccountType.ICELANDIC) && {
-        domesticBankInfo: {
-          bank: formatBank(bank),
-        },
-      }),
-      ...(bankAccountType === BankAccountType.FOREIGN && {
-        foreignBankInfo: {
-          iban: iban.replace(/[\s]+/g, ''),
-          swift: swift.replace(/[\s]+/g, ''),
-          foreignBankName: bankName,
-          foreignBankAddress: bankAddress,
-          foreignCurrency: currency,
-        },
-      }),
+    ...(!shouldNotUpdateBankAccountV2(bankInfo, paymentInfo) && {
+      ...(paymentInfo &&
+        (paymentInfo.bankAccountType === undefined ||
+          paymentInfo.bankAccountType === BankAccountType.ICELANDIC) &&
+        paymentInfo.bank && {
+          domesticBankInfo: {
+            bank: formatBankAccount(paymentInfo.bank),
+          },
+        }),
+      ...(paymentInfo &&
+        paymentInfo.bankAccountType === BankAccountType.FOREIGN &&
+        paymentInfo.iban &&
+        paymentInfo.swift &&
+        paymentInfo.bankName &&
+        paymentInfo.bankAddress &&
+        paymentInfo.currency && {
+          foreignBankInfo: {
+            iban: paymentInfo.iban.replace(/[\s]+/g, ''),
+            swift: paymentInfo.swift.replace(/[\s]+/g, ''),
+            foreignBankName: paymentInfo.bankName,
+            foreignBankAddress: paymentInfo.bankAddress,
+            foreignCurrency: paymentInfo.currency,
+          },
+        }),
     }),
+    incomePlan: {
+      incomeYear:
+        incomePlanConditions?.incomePlanYear ?? new Date().getFullYear(),
+      distributeIncomeByMonth: shouldDistributeIncomeByMonth(incomePlan),
+      incomeTypes: getIncomeTypes(incomePlan, categorizedIncomeTypes),
+    },
     taxInfo: {
-      personalAllowance: YES === personalAllowance,
+      personalAllowance: personalAllowance === YES,
       personalAllowanceUsage:
-        YES === personalAllowance ? +personalAllowanceUsage : 0,
+        personalAllowance === YES ? Number.parseInt(personalAllowanceUsage) : 0,
       taxLevel: +taxLevel,
     },
     applicantInfo: {
@@ -148,6 +164,9 @@ export const transformApplicationToOldAgePensionDTO = (
       }),
     }),
     uploads,
+    ...(incomePlanHasOnlyZeroIncome(incomePlan) && {
+      awarenessOfIncomeDeclaration: noOtherIncomeConfirmation === YES,
+    }),
   }
 
   return oldAgePensionDTO
@@ -836,7 +855,9 @@ export const getMonthNumber = (monthName: string): number => {
   return monthNumber.getMonth() + 1
 }
 
-export const getApplicationType = (application: Application): string => {
+export const getOAPApplicationType = (
+  application: Application,
+): ApplicationType.OLD_AGE_PENSION | ApplicationType.HALF_OLD_AGE_PENSION => {
   const { applicationType } = getOAPApplicationAnswers(application.answers)
 
   if (applicationType === ApplicationType.HALF_OLD_AGE_PENSION) {

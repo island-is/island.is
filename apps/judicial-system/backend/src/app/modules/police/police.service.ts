@@ -47,6 +47,7 @@ import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
+import { PoliceDefendant } from './models/policeDefendant.model'
 import { PoliceSystemDigitalCaseFile } from './models/PoliceSystemDigitalCaseFile.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
@@ -204,6 +205,16 @@ export class PoliceService {
       )
       .nullish(),
   })
+
+  private defendantSchema = z.object({
+    accusedNationalId: z.string(),
+    accusedName: z.string().nullish(),
+    accusedAddress: z.string().nullish(),
+    accusedGender: z.string().nullish(),
+    accusedDOB: z.string().nullish(),
+    citizenship: z.string().nullish(),
+  })
+  private defendantsResponseSchema = z.array(this.defendantSchema)
 
   constructor(
     @InjectModel(IndictmentSubtype)
@@ -587,6 +598,70 @@ export class PoliceService {
     })
 
     return files
+  }
+
+  async getDefendantsFromPolice(
+    caseId: string,
+    user: User,
+  ): Promise<PoliceDefendant[]> {
+    const startTime = nowFactory()
+    try {
+      const res = await this.fetchPoliceDocumentApi(
+        `${this.xRoadPath}/V4/GetRVAdilarMals/${caseId}`,
+      )
+
+      if (!res.ok) {
+        const reason = await res.text()
+        throw new NotFoundException({
+          message: `Police defendants for case ${caseId} do not exist`,
+          detail: reason,
+        })
+      }
+
+      const response: z.infer<typeof this.defendantsResponseSchema> =
+        await res.json()
+
+      this.defendantsResponseSchema.parse(response)
+
+      return response.map((defendant) => ({
+        nationalId: defendant.accusedNationalId,
+        name: defendant.accusedName ?? undefined,
+        gender: defendant.accusedGender ?? undefined,
+        address: defendant.accusedAddress ?? undefined,
+        dateOfBirth: defendant.accusedDOB ?? undefined,
+        citizenship: defendant.citizenship ?? undefined,
+      }))
+    } catch (reason) {
+      if (reason instanceof NotFoundException) {
+        throw reason
+      }
+
+      if (reason instanceof ServiceUnavailableException) {
+        throw new NotFoundException({
+          ...reason,
+          message: `Police defendants for case ${caseId} do not exist`,
+          detail: reason.message,
+        })
+      }
+
+      this.eventService.postErrorEvent(
+        'Failed to get police defendants',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          startTime,
+          endTime: nowFactory(),
+        },
+        reason,
+      )
+
+      throw new BadGatewayException({
+        ...reason,
+        message: `Failed to get police defendants for case ${caseId}`,
+        detail: reason.message,
+      })
+    }
   }
 
   async getSubpoenaStatus(

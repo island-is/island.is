@@ -2013,6 +2013,10 @@ export const messages = defineMessages({
     defaultMessage: '{number} spurningalistar',
     id: 'sp.health:number-of-questionnaires',
   },
+  answers: {
+    defaultMessage: 'Svör',
+    id: 'sp.health:answers',
+  },
   seeAnswers: {
     defaultMessage: 'Skoða svör',
     id: 'sp.health:see-answers',
