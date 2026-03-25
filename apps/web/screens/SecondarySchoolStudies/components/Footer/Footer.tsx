@@ -1,21 +1,10 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  Box,
-  Button,
-  GridContainer,
-  Icon,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridContainer, Icon, Text } from '@island.is/island-ui/core'
 
 import { m } from '../../messages/messages'
 import * as styles from './Footer.css'
-
-const ButtonLink = Button as React.ComponentType<
-  React.ComponentProps<typeof Button> &
-    React.AnchorHTMLAttributes<HTMLAnchorElement>
->
 
 export const Footer = () => {
   const { formatMessage } = useIntl()
@@ -70,36 +59,6 @@ export const Footer = () => {
                   </Box>
                 </Box>
               </Box>
-            </Box>
-
-            {/* Buttons */}
-            <Box className={styles.buttonsSection}>
-              <ButtonLink
-                variant="ghost"
-                size="small"
-                colorScheme="negative"
-                icon="open"
-                iconType="outline"
-                as="a"
-                href="https://island.is/umsokn-um-framhaldsskola"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {formatMessage(m.general.innritun)}
-              </ButtonLink>
-              <ButtonLink
-                variant="ghost"
-                size="small"
-                colorScheme="negative"
-                icon="open"
-                iconType="outline"
-                as="a"
-                href="https://naestaskref.is/is"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {formatMessage(m.general.nextStep)}
-              </ButtonLink>
             </Box>
           </Box>
         </Box>

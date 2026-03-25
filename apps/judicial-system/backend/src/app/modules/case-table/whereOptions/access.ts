@@ -17,7 +17,7 @@ import {
 
 import {
   buildEventLogExistsCondition,
-  buildIsSentToPrisonExistsCondition,
+  buildIsSentToPrisonAdminExistsCondition,
 } from './conditions'
 
 // Court of appeals access
@@ -107,7 +107,7 @@ export const prisonAdminIndictmentsAccessWhereOptions = {
     CaseIndictmentRulingDecision.RULING,
     CaseIndictmentRulingDecision.FINE,
   ],
-  [Op.and]: [buildIsSentToPrisonExistsCondition(true)],
+  [Op.and]: [buildIsSentToPrisonAdminExistsCondition(true)],
 }
 
 export const prisonAdminCasesAccessWhereOptions = () => ({

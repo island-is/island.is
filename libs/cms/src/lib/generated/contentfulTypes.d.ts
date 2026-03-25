@@ -797,8 +797,11 @@ export interface IContactUs extends Entry<IContactUsFields> {
 }
 
 export interface ICourseFields {
+  /** Course List Page */
+  courseListPage: ICourseListPage
+
   /** Organization */
-  organization: IOrganization
+  organization?: IOrganization | undefined
 
   /** Title */
   title: string
@@ -818,8 +821,8 @@ export interface ICourseFields {
   /** Instances */
   instances?: ICourseInstance[] | undefined
 
-  /** Course List Page */
-  courseListPage?: ICourseListPage | undefined
+  /** Show placeholder text if no course instances */
+  showPlaceholderTextIfNoCourseInstances?: boolean | undefined
 }
 
 export interface ICourse extends Entry<ICourseFields> {
@@ -3812,6 +3815,9 @@ export interface IOverviewLinksFields {
 
   /** Link Data */
   linkData?: Record<string, any> | undefined
+
+  /** Intro Link Image Size */
+  introLinkImageSize?: 'Default' | 'Small' | undefined
 }
 
 export interface IOverviewLinks extends Entry<IOverviewLinksFields> {

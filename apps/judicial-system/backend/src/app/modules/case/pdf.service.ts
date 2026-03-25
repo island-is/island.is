@@ -47,6 +47,7 @@ import {
   CaseRepositoryService,
   Defendant,
   EventLog,
+  PoliceDigitalCaseFileRepositoryService,
   Subpoena,
   Verdict,
 } from '../repository'
@@ -59,6 +60,7 @@ export class PdfService {
   constructor(
     private readonly awsS3Service: AwsS3Service,
     private readonly intlService: IntlService,
+    private readonly policeDigitalCaseFileRepositoryService: PoliceDigitalCaseFileRepositoryService,
     @Inject(forwardRef(() => SubpoenaService))
     private readonly subpoenaService: SubpoenaService,
     private readonly caseRepositoryService: CaseRepositoryService,
@@ -129,10 +131,16 @@ export class PdfService {
         }
       })
 
+    const policeDigitalCaseFiles =
+      await this.policeDigitalCaseFileRepositoryService.findAll({
+        where: { caseId: theCase.id, policeCaseNumber },
+      })
+
     const generatedPdf = await createCaseFilesRecord(
       theCase,
       policeCaseNumber,
       caseFiles ?? [],
+      policeDigitalCaseFiles,
       this.formatMessage,
     )
 

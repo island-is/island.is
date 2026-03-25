@@ -14,6 +14,8 @@ export const PROGRAMS_BY_SCHOOLS_ID_QUERY = gql`
       nameEn
       registrationEndDate
       isSpecialNeedsProgram
+      programApplicationMessageIs
+      programApplicationMessageEn
     }
   }
 `

@@ -212,49 +212,6 @@ export const BaseSettings = () => {
       <Box marginTop={5} />
       <Row>
         <Column span="5/10">
-          <Input
-            label={formatMessage(m.daysUntilExpiration)}
-            placeholder={formatMessage(m.max30Days)}
-            name="applicationsDaysToRemove"
-            value={
-              form.daysUntilApplicationPrune === 0
-                ? ''
-                : form.daysUntilApplicationPrune ?? ''
-            }
-            backgroundColor="blue"
-            readOnly={isPublished}
-            type="number"
-            max={30}
-            min={1}
-            onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => {
-              if (e.target.value !== focus) {
-                if (e.target.value === '' || Number(e.target.value) < 1) {
-                  e.target.value = '1'
-                  controlDispatch({
-                    type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
-                    payload: { value: 1 },
-                  })
-                  formUpdate({ ...form, daysUntilApplicationPrune: 1 })
-                } else {
-                  formUpdate()
-                }
-              }
-            }}
-            onChange={(e) => {
-              const value = Number(e.target.value)
-              if (value <= 30) {
-                controlDispatch({
-                  type: 'CHANGE_DAYS_UNTIL_APPLICATION_PRUNE',
-                  payload: { value: parseInt(e.target.value) },
-                })
-              }
-            }}
-          />
-        </Column>
-      </Row>
-      <Row>
-        <Column span="5/10">
           <DatePicker
             label={formatMessage(m.deadline)}
             placeholderText={formatMessage(m.chooseDate)}
