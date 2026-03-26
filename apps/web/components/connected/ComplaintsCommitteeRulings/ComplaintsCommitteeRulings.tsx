@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { useLazyQuery, useQuery } from '@apollo/client'
 
 import {
+  AlertBanner,
   Box,
   Button,
   GridColumn,
@@ -62,6 +63,7 @@ const ComplaintsCommitteeRulings = ({
   const [downloadingId, setDownloadingId] = useState<string | null>(null)
   const [pdfBase64, setPdfBase64] = useState<string | null>(null)
   const [pdfTitle, setPdfTitle] = useState<string>('')
+  const [pdfError, setPdfError] = useState<boolean>(false)
 
   const { data, loading, error } = useQuery<
     GetOneSystemsRulingsQuery,
@@ -88,6 +90,7 @@ const ComplaintsCommitteeRulings = ({
 
       setDownloadingId(id)
       setPdfBase64(null)
+      setPdfError(false)
       try {
         const { data: pdfData } = await fetchPdf({ variables: { id } })
 
@@ -96,7 +99,7 @@ const ComplaintsCommitteeRulings = ({
           setPdfTitle(title)
         }
       } catch (e) {
-        console.error('Failed to open PDF:', e)
+        setPdfError(true)
       }
       setDownloadingId(null)
     },
@@ -179,6 +182,14 @@ const ComplaintsCommitteeRulings = ({
         </Box>
       )}
 
+      {pdfError && (
+        <AlertBanner
+          variant="error"
+          title={formatMessage(m.errorLoadingPdf)}
+          onDismiss={() => setPdfError(false)}
+        />
+      )}
+
       {!pdfBase64 && (
         <Stack space={3}>
           <GridRow>
@@ -191,17 +202,6 @@ const ComplaintsCommitteeRulings = ({
                 value={years.find((y) => y.value === selectedYear) ?? null}
                 onChange={handleYearChange}
                 size="sm"
-              />
-            </GridColumn>
-          </GridRow>
-
-          {loading && (
-            <SkeletonLoader
-              height={165}
-              width="100%"
-              borderRadius="large"
-              repeat={3}
-              space={3}
             />
           )}
 

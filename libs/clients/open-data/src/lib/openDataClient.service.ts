@@ -51,11 +51,14 @@ export class OpenDataClientService {
         name: res.name || res.description || res.url || 'Unnamed resource',
         format: res.format || 'Unknown',
         url: res.url || '',
-        size: res.size
-          ? typeof res.size === 'string'
-            ? parseInt(res.size, 10) || undefined
-            : res.size
-          : undefined,
+        size:
+          res.size === null || res.size === undefined
+            ? undefined
+            : typeof res.size === 'string'
+              ? Number.isNaN(Number.parseInt(res.size, 10))
+                ? undefined
+                : Number.parseInt(res.size, 10)
+              : res.size,
         lastModified:
           res.last_modified || res.created || ckanPackage.metadata_modified,
         license:

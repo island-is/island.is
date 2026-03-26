@@ -38,7 +38,7 @@ interface SearchSectionProps {
   onClearFilterType: (filterKey: string) => void
   totalCount: number
   n: TranslationFn
-  titleRef: React.RefObject<HTMLDivElement>
+  titleRef: React.RefObject<HTMLHeadingElement>
 }
 
 export const SearchSection: React.FC<SearchSectionProps> = ({

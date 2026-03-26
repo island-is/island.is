@@ -39,7 +39,7 @@ export const OrganizationLogo: React.FC<OrganizationLogoProps> = ({
       style={{ width: dimensions, height: dimensions }}
     >
       <Text variant="small" color="blue400">
-        {name?.charAt(0) || 'Ó'}
+        {name?.charAt(0) || '-'}
       </Text>
     </Box>
   )

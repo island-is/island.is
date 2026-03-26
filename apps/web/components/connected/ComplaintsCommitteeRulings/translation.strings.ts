@@ -47,4 +47,10 @@ export const m = defineMessages({
     defaultMessage: 'Til baka',
     description: 'Go back from PDF viewer',
   },
+  errorLoadingPdf: {
+    id: 'web.complaintsCommitteeRulings:errorLoadingPdf',
+    defaultMessage:
+      'Ekki tókst að opna PDF skjal. Vinsamlegast reyndu aftur síðar.',
+    description: 'Error message when PDF fails to load',
+  },
 })
