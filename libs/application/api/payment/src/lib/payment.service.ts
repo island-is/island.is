@@ -396,10 +396,11 @@ export class PaymentService {
             )
           }
           this.logError('Failed to refund payment', applicationId, error)
+          throw error
         }
-      } else {
+
         this.logger.info(
-          `payment not paid, calling delete payment flow controller to delete payment flow for application ${applicationId}`,
+          `calling delete payment flow controller to delete payment flow for application ${applicationId}`,
         )
         try {
           await this.paymentsApi.paymentFlowControllerDeletePaymentFlow({

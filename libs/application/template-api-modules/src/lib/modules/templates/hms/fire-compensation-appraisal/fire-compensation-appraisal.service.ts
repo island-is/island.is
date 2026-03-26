@@ -295,6 +295,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         )
       }
 
+      /*
       // Get the generator
       const fileGenerator = this.attachmentService.getFilesGenerator(
         application,
@@ -327,31 +328,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
             this.logger.error(`Failed to upload attachment: ${e}`)
           })
       }
-
-      // Map the photos to the dto interface
-      // const applicationFilesContentDtoArray =
-      //   mapAnswersToApplicationFilesContentDto(application, files)
-
-      // // Send the photos in to HMS
-      // const photoResults = await Promise.all(
-      //   applicationFilesContentDtoArray.map(
-      //     async (applicationFilesContentDto) => {
-      //       return await this.hmsApplicationSystemService.apiApplicationUploadPost(
-      //         {
-      //           applicationFilesContentDto,
-      //         },
-      //       )
-      //     },
-      //   ),
-      // )
-
-      // if (photoResults.some((result) => result.status !== 200)) {
-      //   throw new TemplateApiError(
-      //     'Failed to upload photos, non 200 status',
-      //     500,
-      //   )
-      // }
-
+      */
       // return res
     } catch (e) {
       this.logger.error('Failed to submit application:', e.message)
