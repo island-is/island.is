@@ -39,13 +39,35 @@ const languageConfig = {
     formatWithTime: dateFormatWithTime.is,
     timeFormat: timeFormat.is,
     locale: is,
+    parseFallbacks: [
+      'd.M.yyyy',
+      'dd/MM/yyyy',
+      'd/M/yyyy',
+      'dd-MM-yyyy',
+      'd-M-yyyy',
+    ],
   },
   en: {
     format: dateFormat.en,
     formatWithTime: dateFormatWithTime.en,
     timeFormat: timeFormat.en,
     locale: en,
+    parseFallbacks: [
+      'd/M/yyyy',
+      'dd.MM.yyyy',
+      'd.M.yyyy',
+      'dd-MM-yyyy',
+      'd-M-yyyy',
+    ],
   },
+}
+
+const tryParseDate = (str: string, primary: string, fallbacks: string[]): Date | null => {
+  for (const fmt of [primary, ...fallbacks]) {
+    const d = parse(str.trim(), fmt, new Date())
+    if (isValid(d)) return d
+  }
+  return null
 }
 
 export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
@@ -106,6 +128,9 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   )
   const [isOpen, setIsOpen] = useState(false)
   const hoverDateRef = React.useRef<Date | null>(null)
+  // Set during onChangeRaw (any keystroke) to block onChange from reacting to
+  // intermediate parses while typing. Reset async so it's false for calendar clicks.
+  const isTypingInInputRef = useRef(false)
   const [shouldAlignEnd, setShouldAlignEnd] = useState(false)
 
   const currentLanguage = languageConfig[locale]
@@ -207,6 +232,8 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           onChange={
             range
               ? (date: any) => {
+                  if (isTypingInInputRef.current) return
+
                   const [start, end] = date
 
                   if (start === null && end === null) {
@@ -242,15 +269,12 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                     setStartDate(start)
                     setEndDate(end)
 
-                    if (end === null) {
-                      setIsOpen(true)
-                    } else {
+                    if (end !== null) {
                       hoverDateRef.current = null
                       setIsOpen(false)
-                    }
-
-                    if (end !== null && handleChange) {
-                      handleChange(start, end)
+                      if (handleChange) {
+                        handleChange(start, end)
+                      }
                     }
                   }
                 }
@@ -271,8 +295,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           }
           onChangeRaw={(e: React.SyntheticEvent<HTMLInputElement>) => {
             if (!range) return
+            isTypingInInputRef.current = true
+            setTimeout(() => {
+              isTypingInInputRef.current = false
+            }, 0)
             const v = (e.target as HTMLInputElement).value
-            // If the input is cleared via keyboard, reset both dates
             if (!v || v.trim() === '') {
               setStartDate(null)
               setEndDate(null)
@@ -297,14 +324,15 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               e.preventDefault()
               const v = (e.target as HTMLInputElement).value
               if (!v || v.trim() === '') return
-              const parts = v.split(' - ')
+              const parts = v.split(/\s+-\s+/)
               if (parts.length !== 2) return
               const fmt = showTimeInput
                 ? currentLanguage.formatWithTime
                 : currentLanguage.format
-              const parsedStart = parse(parts[0].trim(), fmt, new Date())
-              const parsedEnd = parse(parts[1].trim(), fmt, new Date())
-              if (!isValid(parsedStart) || !isValid(parsedEnd)) return
+              const fallbacks = showTimeInput ? [] : currentLanguage.parseFallbacks
+              const parsedStart = tryParseDate(parts[0], fmt, fallbacks)
+              const parsedEnd = tryParseDate(parts[1], fmt, fallbacks)
+              if (!parsedStart || !parsedEnd) return
               const [s, end2] =
                 parsedEnd < parsedStart
                   ? [parsedEnd, parsedStart]
