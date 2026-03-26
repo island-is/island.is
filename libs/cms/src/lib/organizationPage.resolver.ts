@@ -206,8 +206,6 @@ export class OrganizationPageResolver {
               node,
               rank,
             }
-
-            // Can't do better than this.
             if (rank === 2) return
           }
         }
