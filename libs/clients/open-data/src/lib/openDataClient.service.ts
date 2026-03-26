@@ -55,10 +55,10 @@ export class OpenDataClientService {
           res.size === null || res.size === undefined
             ? undefined
             : typeof res.size === 'string'
-              ? Number.isNaN(Number.parseInt(res.size, 10))
-                ? undefined
-                : Number.parseInt(res.size, 10)
-              : res.size,
+            ? Number.isNaN(Number.parseInt(res.size, 10))
+              ? undefined
+              : Number.parseInt(res.size, 10)
+            : res.size,
         lastModified:
           res.last_modified || res.created || ckanPackage.metadata_modified,
         license:
