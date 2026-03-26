@@ -157,7 +157,7 @@ describe('View Case File Guard', () => {
                   institution: { type: InstitutionType.COURT_OF_APPEALS },
                 },
               },
-              case: { state, appealState },
+              case: { state, appealCase: { appealState } },
             }))
 
             then = givenWhenThen()
@@ -185,7 +185,7 @@ describe('View Case File Guard', () => {
                 institution: { type: InstitutionType.COURT_OF_APPEALS },
               },
             },
-            case: { state, appealState },
+            case: { state, appealCase: { appealState } },
           }))
 
           then = givenWhenThen()
@@ -216,7 +216,7 @@ describe('View Case File Guard', () => {
                   institution: { type: InstitutionType.COURT_OF_APPEALS },
                 },
               },
-              case: { state, appealState },
+              case: { state, appealCase: { appealState } },
             }))
 
             then = givenWhenThen()

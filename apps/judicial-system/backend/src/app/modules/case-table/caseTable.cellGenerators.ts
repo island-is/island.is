@@ -109,7 +109,7 @@ const generateAppealStateTag = (
   user: TUser,
 ): CaseTableCell<TagValue> => {
   const getCompletedColor = (): string => {
-    switch (c.appealRulingDecision) {
+    switch (c.appealCase?.appealRulingDecision) {
       case CaseAppealRulingDecision.ACCEPTING:
         return 'mint'
       case CaseAppealRulingDecision.CHANGED:
@@ -123,7 +123,7 @@ const generateAppealStateTag = (
   }
 
   const getCompletedOrder = (): string => {
-    switch (c.appealRulingDecision) {
+    switch (c.appealCase?.appealRulingDecision) {
       case CaseAppealRulingDecision.ACCEPTING:
         return 'E'
       case CaseAppealRulingDecision.REPEAL:
@@ -143,20 +143,21 @@ const generateAppealStateTag = (
     }
   }
 
-  switch (c.appealState) {
+  switch (c.appealCase?.appealState) {
     case CaseAppealState.WITHDRAWN:
       return generateCell({ color: 'red', text: 'Afturkallað' }, 'L')
     case CaseAppealState.APPEALED:
       return generateCell({ color: 'red', text: 'Kært' }, 'A')
     case CaseAppealState.RECEIVED:
       if (isCourtOfAppealsUser(user)) {
-        if (!c.appealCaseNumber) {
+        if (!c.appealCase?.appealCaseNumber) {
           return generateCell({ color: 'purple', text: 'Nýtt' }, 'B')
         }
 
         if (
-          c.appealReceivedByCourtDate &&
-          Date.now() >= c.appealReceivedByCourtDate.getTime() + getDays(1)
+          c.appealCase?.appealReceivedByCourtDate &&
+          Date.now() >=
+            c.appealCase?.appealReceivedByCourtDate.getTime() + getDays(1)
         ) {
           return generateCell({ color: 'mint', text: 'Frestir liðnir' }, 'D')
         }
@@ -167,7 +168,7 @@ const generateAppealStateTag = (
       return generateCell(
         {
           color: getCompletedColor(),
-          text: getAppealResultTextByValue(c.appealRulingDecision),
+          text: getAppealResultTextByValue(c.appealCase?.appealRulingDecision),
         },
         getCompletedOrder(),
       )
@@ -430,16 +431,17 @@ const generateCaseNumberSortValue = (
 }
 
 const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
-  attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
+  attributes: ['policeCaseNumbers', 'courtCaseNumber'],
   includes: {
     court: { attributes: ['name'] },
     defendants: { attributes: ['publicProsecutorIsRegisteredInPoliceSystem'] },
+    appealCase: { attributes: ['appealCaseNumber'] },
   },
   generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
     const court = !isDistrictCourtUser(user)
       ? districtCourtAbbreviation(c.court?.name)
       : ''
-    const appealCaseNumber = c.appealCaseNumber ?? ''
+    const appealCaseNumber = c.appealCase?.appealCaseNumber ?? ''
     const courtCaseNumber =
       court && c.courtCaseNumber
         ? `${court}: ${c.courtCaseNumber}`
@@ -525,12 +527,16 @@ export const caseType: CaseTableCellGenerator<StringGroupValue> = {
 }
 
 const appealState: CaseTableCellGenerator<TagValue> = {
-  attributes: [
-    'appealState',
-    'appealRulingDecision',
-    'appealCaseNumber',
-    'appealReceivedByCourtDate',
-  ],
+  includes: {
+    appealCase: {
+      attributes: [
+        'appealState',
+        'appealRulingDecision',
+        'appealCaseNumber',
+        'appealReceivedByCourtDate',
+      ],
+    },
+  },
   generate: (c: Case, user: TUser): CaseTableCell<TagValue> =>
     generateAppealStateTag(c, user),
 }
@@ -562,9 +568,14 @@ const indictmentCaseState: CaseTableCellGenerator<TagValue | TagPairValue> = {
 }
 
 const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
-  includes: { appealJudge1: { attributes: ['name'] } },
+  includes: {
+    appealCase: {
+      attributes: [],
+      includes: { appealJudge1: { attributes: ['name'] } },
+    },
+  },
   generate: (c: Case): CaseTableCell<StringValue> => {
-    const initials = getInitials(c.appealJudge1?.name)
+    const initials = getInitials(c.appealCase?.appealJudge1?.name)
 
     if (!initials) {
       return generateCell()

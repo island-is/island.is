@@ -46,13 +46,19 @@ export const districtCourtRequestCasesInProgressWhereOptions = (
 export const districtCourtRequestCasesAppealedWhereOptions = (
   user: User,
 ): CaseWhereOptions => ({
+  includes: {
+    appealCase: {
+      attributes: [],
+      required: true,
+      where: {
+        appeal_state: CaseAppealState.APPEALED,
+      },
+    },
+  },
   where: {
     [Op.and]: [
       districtCourtRequestCasesAccessWhereOptions(user),
-      {
-        state: completedRequestCaseStates,
-        appeal_state: CaseAppealState.APPEALED,
-      },
+      { state: completedRequestCaseStates },
     ],
   },
 })

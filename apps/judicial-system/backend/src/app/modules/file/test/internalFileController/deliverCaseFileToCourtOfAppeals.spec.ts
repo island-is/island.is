@@ -47,7 +47,7 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
   const theCase = {
     id: caseId,
     type: CaseType.CUSTODY,
-    appealCaseNumber,
+    appealCase: { appealCaseNumber },
     caseFiles: [caseFile],
   } as Case
 
