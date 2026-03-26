@@ -2035,30 +2035,27 @@ export class CaseService {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
     }
 
-    // We remove defendantEventLogDecisions from the update object to avoid
-    // accidentally trying to write it to the Case model, but we need to keep
-    // it here to be able to create the necessary event logs after updating the case
-    const defendantEventLogDecisions = update.defendantEventLogDecisions
+    // Keep transient defendant event log decisions out of the case persistence
+    // payload without mutating the original update object.
+    const { defendantEventLogDecisions, ...caseUpdate }: UpdateCase = update
 
-    delete update.defendantEventLogDecisions
+    await this.handleDateLogUpdates(theCase, caseUpdate, transaction)
+    await this.handleCaseStringUpdates(theCase, caseUpdate, transaction)
 
-    await this.handleDateLogUpdates(theCase, update, transaction)
-    await this.handleCaseStringUpdates(theCase, update, transaction)
-
-    if (Object.keys(update).length > 0) {
-      await this.caseRepositoryService.update(theCase.id, update, {
+    if (Object.keys(caseUpdate).length > 0) {
+      await this.caseRepositoryService.update(theCase.id, caseUpdate, {
         transaction,
       })
     }
 
     // Update police case numbers of case files if necessary
-    await this.handlePoliceCaseNumbersUpdate(theCase, update, transaction)
+    await this.handlePoliceCaseNumbersUpdate(theCase, caseUpdate, transaction)
 
     // Reset case file states if court case number is changed
     if (
       theCase.courtCaseNumber &&
-      update.courtCaseNumber &&
-      update.courtCaseNumber !== theCase.courtCaseNumber
+      caseUpdate.courtCaseNumber &&
+      caseUpdate.courtCaseNumber !== theCase.courtCaseNumber
     ) {
       await this.fileService.resetCaseFileStates(theCase.id, transaction)
     }
@@ -2087,25 +2084,25 @@ export class CaseService {
     // we have to clean up idle verdicts
     const hasNewDecision =
       theCase.indictmentDecision === IndictmentDecision.COMPLETING &&
-      !!update.indictmentDecision &&
+      !!caseUpdate.indictmentDecision &&
       [
         IndictmentDecision.POSTPONING,
         IndictmentDecision.POSTPONING_UNTIL_VERDICT,
         IndictmentDecision.REDISTRIBUTING,
         IndictmentDecision.SCHEDULING,
-      ].includes(update.indictmentDecision)
+      ].includes(caseUpdate.indictmentDecision)
 
     const hasNewRulingDecision =
       theCase.indictmentRulingDecision ===
         CaseIndictmentRulingDecision.RULING &&
-      !!update.indictmentRulingDecision &&
+      !!caseUpdate.indictmentRulingDecision &&
       [
         CaseIndictmentRulingDecision.CANCELLATION,
         CaseIndictmentRulingDecision.FINE,
         CaseIndictmentRulingDecision.DISMISSAL,
         CaseIndictmentRulingDecision.MERGE,
         CaseIndictmentRulingDecision.WITHDRAWAL,
-      ].includes(update.indictmentRulingDecision)
+      ].includes(caseUpdate.indictmentRulingDecision)
 
     if (theCase.defendants && (hasNewDecision || hasNewRulingDecision)) {
       await Promise.all(
@@ -2174,7 +2171,7 @@ export class CaseService {
     await this.handleDefendantEventLogUpdatesForIndictments(
       theCase,
       {
-        ...update,
+        ...caseUpdate,
         defendantEventLogDecisions,
       },
       user,
