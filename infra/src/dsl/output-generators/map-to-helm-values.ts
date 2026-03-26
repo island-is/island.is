@@ -9,6 +9,7 @@ import {
 } from '../types/input-types'
 import {
   ContainerRunHelm,
+  GatewayName,
   OutputFormat,
   OutputPersistentVolumeClaim,
   SerializeErrors,
@@ -56,7 +57,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   ]
   const result: HelmService = {
     enabled: true,
-    grantNamespaces: grantNamespaces,
+    grantNamespaces: migrateGrantNamespaces(grantNamespaces),
     grantNamespacesEnabled: grantNamespacesEnabled,
     namespace: namespace,
     image: {
@@ -247,6 +248,18 @@ const serializeService: SerializeMethod<HelmService> = async (
         return {
           ...acc,
           [`${ingressName}-alb`]: ingress,
+        }
+      },
+      {},
+    )
+
+    // httpRoute (Envoy Gateway - parallel to ingress during migration)
+    result.httpRoute = Object.entries(serviceDef.ingress).reduce(
+      (acc, [ingressName, ingressConf]) => {
+        const route = serializeHTTPRoute(ingressConf, env1)
+        return {
+          ...acc,
+          [`${ingressName}-gw`]: route,
         }
       },
       {},
@@ -467,6 +480,49 @@ const hostFullName = (host: string, env: EnvironmentConfig) => {
 }
 const internalHostFullName = (host: string, env: EnvironmentConfig) =>
   host.indexOf('.') < 0 ? `${host}.internal.${env.domain}` : host
+
+const GATEWAY_NAMESPACE = 'envoy-gateway-system'
+
+/**
+ * Replace nginx-ingress-* grant namespaces with envoy-gateway-system.
+ * Keeps all other grants intact. Deduplicates.
+ */
+function migrateGrantNamespaces(namespaces: string[]): string[] {
+  const migrated = namespaces.map((ns) =>
+    ns.startsWith('nginx-ingress-') ? GATEWAY_NAMESPACE : ns,
+  )
+  return Array.from(new Set(migrated))
+}
+
+function serializeHTTPRoute(
+  ingressConf: IngressForEnv,
+  env: EnvironmentConfig,
+): NonNullable<HelmService['httpRoute']>[string] {
+  const isPublic = ingressConf.public ?? true
+
+  let gatewayName: GatewayName
+  if (!isPublic) {
+    gatewayName = 'gateway-internal'
+  } else {
+    gatewayName = 'gateway-external'
+  }
+
+  const hostnames = (
+    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
+  ).map((host) =>
+    isPublic ? hostFullName(host, env) : internalHostFullName(host, env),
+  )
+
+  return {
+    parentRefs: [{ name: gatewayName, namespace: GATEWAY_NAMESPACE }],
+    hostnames,
+    rules: [
+      {
+        matches: ingressConf.paths.map((path) => ({ pathPrefix: path })),
+      },
+    ],
+  }
+}
 
 const serviceMockDef = (options: {
   runtime: ReferenceResolver
