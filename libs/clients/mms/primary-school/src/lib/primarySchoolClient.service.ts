@@ -11,7 +11,7 @@ import {
   IslandIsStudentResultsDto,
   type IslandIsAssessmentSubjectDto,
   type IslandIsAssessmentTypeDto,
-  type IslandIsAssignmentResultSimpleDto,
+  type IslandIsSimpleAssignmentResultDto,
   type IslandIsStudentDto,
 } from '../../gen/fetch'
 
@@ -45,7 +45,7 @@ export class PrimarySchoolClientService {
     user: User,
     studentId: string,
     assessmentTypeId: string,
-  ): Promise<IslandIsAssignmentResultSimpleDto[]> {
+  ): Promise<IslandIsSimpleAssignmentResultDto[]> {
     const response = await withAuthContext(user, () =>
       dataOr404Null(
         getV1IslandisassignmentresultsByStudentIdAssessmentTypeByAssessmentTypeIdSimple(

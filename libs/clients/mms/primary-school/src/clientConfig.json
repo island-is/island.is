@@ -184,7 +184,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/IslandIsAssignmentResultSimpleDto"
+                    "$ref": "#/components/schemas/IslandIsSimpleAssignmentResultDto"
                   }
                 }
               }
@@ -360,43 +360,6 @@
         },
         "additionalProperties": false
       },
-      "IslandIsAssignmentResultSimpleDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique identifier for the assignment result",
-            "format": "uuid"
-          },
-          "schoolYear": {
-            "type": "string",
-            "description": "School year of the assignment result, e.g., \"2023-2024\"",
-            "nullable": true
-          },
-          "gradeLevel": {
-            "type": "integer",
-            "description": "Grade level of the assignment",
-            "format": "int32"
-          },
-          "gradeLevelName": {
-            "type": "string",
-            "description": "Human-readable grade level name, e.g., \"8. bekkur\"",
-            "nullable": true
-          },
-          "scheduleStart": {
-            "type": "string",
-            "description": "Start date of the scheduled assessment",
-            "format": "date-time",
-            "nullable": true
-          },
-          "scheduleString": {
-            "type": "string",
-            "description": "Abbreviated schedule label, e.g., \"sep.\", \"jan.\", \"maí\"",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "IslandIsAssignmentResultDto": {
         "type": "object",
         "properties": {
@@ -452,6 +415,43 @@
           "schoolName": {
             "type": "string",
             "description": "School name associated with the assignment result",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "IslandIsSimpleAssignmentResultDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the assignment result",
+            "format": "uuid"
+          },
+          "schoolYear": {
+            "type": "string",
+            "description": "School year of the assignment result, e.g., \"2023-2024\"",
+            "nullable": true
+          },
+          "gradeLevel": {
+            "type": "integer",
+            "description": "Grade level of the assignment",
+            "format": "int32"
+          },
+          "gradeLevelName": {
+            "type": "string",
+            "description": "Grade level of the assignment",
+            "nullable": true
+          },
+          "scheduleStart": {
+            "type": "string",
+            "description": "Gets or sets the start date and time of the scheduled task.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "scheduleString": {
+            "type": "string",
+            "description": "Gets or sets the schedule string that defines the timing of the scheduled task.",
             "nullable": true
           }
         },

@@ -6,7 +6,11 @@ export class PrimarySchoolAssessment {
   @Field(() => ID)
   id!: string
 
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+    description:
+      'Short code used to identify the assessment type in the upstream MMS system (e.g. "LF1", "ST2"). Distinct from the UUID id.',
+  })
   identifier?: string
 
   @Field({ nullable: true })

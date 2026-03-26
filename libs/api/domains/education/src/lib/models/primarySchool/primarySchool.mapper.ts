@@ -1,6 +1,6 @@
 import type {
   IslandIsAssessmentTypeDto,
-  IslandIsAssignmentResultSimpleDto,
+  IslandIsSimpleAssignmentResultDto,
 } from '@island.is/clients/mms/primary-school'
 import type { PrimarySchoolAssessment } from './primarySchoolAssessment.model'
 import type { PrimarySchoolAssessmentResult } from './primarySchoolAssessmentResult.model'
@@ -20,7 +20,7 @@ export const mapAssessment = (
 }
 
 export const mapResult = (
-  item: IslandIsAssignmentResultSimpleDto,
+  item: IslandIsSimpleAssignmentResultDto,
   studentId: string,
   downloadServiceBaseUrl: string,
 ): PrimarySchoolAssessmentResult | null => {

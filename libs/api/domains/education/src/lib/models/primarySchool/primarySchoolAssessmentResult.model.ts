@@ -16,6 +16,10 @@ export class PrimarySchoolAssessmentResult {
   @Field(() => PrimarySchoolAssessmentPeriod, { nullable: true })
   period?: PrimarySchoolAssessmentPeriod
 
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+    description:
+      'Pre-built URL for downloading the PDF result from the Download Service. Ready to use directly as a link or form action.',
+  })
   downloadServiceUrl?: string
 }

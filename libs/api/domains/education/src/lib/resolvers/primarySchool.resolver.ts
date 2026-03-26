@@ -1,6 +1,6 @@
 import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { Inject, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
@@ -9,8 +9,6 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { PrimarySchoolClientService } from '@island.is/clients/mms/primary-school'
-import { DownloadServiceConfig } from '@island.is/nest/config'
-import type { ConfigType } from '@nestjs/config'
 import { PrimarySchoolStudent } from '../models/primarySchool/primarySchoolStudent.model'
 import { PrimarySchoolAssessment } from '../models/primarySchool/primarySchoolAssessment.model'
 import { mapAssessment } from '../models/primarySchool/primarySchool.mapper'
@@ -20,10 +18,6 @@ import { mapAssessment } from '../models/primarySchool/primarySchool.mapper'
 export class PrimarySchoolResolver {
   constructor(
     private readonly primarySchoolService: PrimarySchoolClientService,
-    @Inject(DownloadServiceConfig.KEY)
-    private readonly downloadServiceConfig: ConfigType<
-      typeof DownloadServiceConfig
-    >,
   ) {}
 
   @Query(() => [PrimarySchoolStudent], { nullable: true })
