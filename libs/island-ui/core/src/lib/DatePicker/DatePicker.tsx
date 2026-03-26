@@ -62,7 +62,11 @@ const languageConfig = {
   },
 }
 
-const tryParseDate = (str: string, primary: string, fallbacks: string[]): Date | null => {
+const tryParseDate = (
+  str: string,
+  primary: string,
+  fallbacks: string[],
+): Date | null => {
   for (const fmt of [primary, ...fallbacks]) {
     const d = parse(str.trim(), fmt, new Date())
     if (isValid(d)) return d
@@ -329,7 +333,9 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               const fmt = showTimeInput
                 ? currentLanguage.formatWithTime
                 : currentLanguage.format
-              const fallbacks = showTimeInput ? [] : currentLanguage.parseFallbacks
+              const fallbacks = showTimeInput
+                ? []
+                : currentLanguage.parseFallbacks
               const parsedStart = tryParseDate(parts[0], fmt, fallbacks)
               const parsedEnd = tryParseDate(parts[1], fmt, fallbacks)
               if (!parsedStart || !parsedEnd) return
