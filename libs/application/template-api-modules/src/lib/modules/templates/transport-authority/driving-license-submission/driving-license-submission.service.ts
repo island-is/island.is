@@ -79,7 +79,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       applicationFor === 'B-full'
         ? 'AY110'
         : applicationFor === 'BE'
-        ? 'AY115'
+        ? 'AY148'
         : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(

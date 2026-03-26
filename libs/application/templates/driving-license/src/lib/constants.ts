@@ -148,7 +148,7 @@ export const CHARGE_ITEM_CODES: Record<string, string> = {
   [B_TEMP]: 'AY114',
   [B_FULL]: 'AY110',
   [B_FULL_RENEWAL_65]: 'AY113',
-  [BE]: 'AY115',
+  [BE]: 'AY148',
   [DELIVERY_FEE]: 'AY145',
 }
 
