@@ -16,8 +16,7 @@ export const socialBenefitsModule: PortalModule = {
     {
       name: m.maintenance,
       path: SocialBenefitsPaths.SocialBenefitsRoot,
-      enabled: true, // TODO What should this be given that there will be multiple scopes under this page ?
-      key: 'SocialBenefits',
+      enabled: true,
       element: (
         <Navigate
           to={SocialInsuranceMaintenancePaths.SocialInsurancePaymentPlan}
