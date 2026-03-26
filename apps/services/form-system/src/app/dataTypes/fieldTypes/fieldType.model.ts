@@ -89,7 +89,7 @@ export const FieldTypes: FieldType[] = [
       is: 'Notandi slær inn heimagistingarnúmer sitt',
       en: 'User enters their homestay number',
     },
-    isCommon: true,
+    isCommon: false,
   },
   {
     id: FieldTypesEnum.HOMESTAY_OVERVIEW,
@@ -98,7 +98,7 @@ export const FieldTypes: FieldType[] = [
       is: 'Notandi fyllir út nýtingaryfirlit fyrir almanaksár',
       en: 'Users fills out their homestay overview for the calendar year',
     },
-    isCommon: true,
+    isCommon: false,
   },
   {
     id: FieldTypesEnum.PROPERTY_NUMBER,

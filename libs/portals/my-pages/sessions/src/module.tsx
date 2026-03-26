@@ -21,6 +21,7 @@ export const sessionsModule: PortalModule = {
         name: m.sessions,
         path: SessionsPaths.Sessions,
         enabled: userInfo.scopes.some((scope) => allowedScopes.includes(scope)),
+        notAvailableForActors: true,
         element: <Sessions />,
       },
     ]

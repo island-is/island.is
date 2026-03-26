@@ -36,6 +36,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from './appealCase.model'
 import { CaseFile } from './caseFile.model'
 import { CaseString } from './caseString.model'
 import { CivilClaimant } from './civilClaimant.model'
@@ -783,7 +784,7 @@ export class Case extends Model {
    * Indicates whether the prosecutor requests a drivers license suspension
    **********/
   @Column({ type: DataType.BOOLEAN, allowNull: true })
-  @ApiProperty({ type: Boolean })
+  @ApiPropertyOptional({ type: Boolean })
   requestDriversLicenseSuspension?: boolean
 
   /**********
@@ -794,7 +795,7 @@ export class Case extends Model {
     allowNull: true,
     values: Object.values(CaseAppealState),
   })
-  @ApiProperty({ enum: CaseAppealState })
+  @ApiPropertyOptional({ enum: CaseAppealState })
   appealState?: CaseAppealState
 
   /**********
@@ -833,7 +834,7 @@ export class Case extends Model {
     allowNull: true,
     values: Object.values(CaseAppealRulingDecision),
   })
-  @ApiProperty({ enum: CaseAppealRulingDecision })
+  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
   appealRulingDecision?: CaseAppealRulingDecision
 
   /**********
@@ -1162,4 +1163,11 @@ export class Case extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   policeDefendantNationalId?: string
+
+  /**********
+   * The case's appeal record
+   **********/
+  @HasOne(() => AppealCase, 'caseId')
+  @ApiPropertyOptional({ type: () => AppealCase })
+  appealCase?: AppealCase
 }

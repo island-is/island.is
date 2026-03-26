@@ -71,8 +71,6 @@ describe('InternalNotificationController - Send appeal completed notifications',
             type: CaseType.CUSTODY,
             state: CaseState.ACCEPTED,
             decision: CaseDecision.ACCEPTING,
-            appealRulingDecision:
-              appealRulingDecision ?? CaseAppealRulingDecision.ACCEPTING,
             prosecutor: { name: prosecutor.name, email: prosecutor.email },
             judge: { name: judge.name, email: judge.email },
             court: { name: 'Héraðsdómur Reykjavíkur' },
@@ -80,8 +78,12 @@ describe('InternalNotificationController - Send appeal completed notifications',
             defenderName: defender.name,
             defenderEmail: defender.email,
             courtCaseNumber,
-            appealCaseNumber,
             courtId: courtId,
+            appealCase: {
+              appealCaseNumber,
+              appealRulingDecision:
+                appealRulingDecision ?? CaseAppealRulingDecision.ACCEPTING,
+            },
           } as Case,
           {
             user: { id: userId } as User,

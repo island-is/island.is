@@ -1,4 +1,5 @@
 import { Box, Button, GridColumn, Tabs } from '@island.is/island-ui/core'
+
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader, usePortalMeta } from '@island.is/portals/core'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -19,6 +20,7 @@ const AccessControl = () => {
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
   const navigate = useNavigate()
+
   const location = useLocation()
   const { basePath } = usePortalMeta()
   const DELEGATIONS_INCOMING_PATH = `${basePath}${DelegationPaths.DelegationsIncoming}`
@@ -31,18 +33,19 @@ const AccessControl = () => {
         : DelegationPaths.Delegations
 
     // Make sure not to add to history stack the same route twice in a row
-    if (url !== location.pathname) {
+    const absoluteUrl = `${basePath}${url}`
+    if (absoluteUrl !== location.pathname) {
       navigate(url)
     }
   }
 
-  // Only show outgoing delegation when user is logged in on behalf of someone else, i.e. some delegation.
+  // Don't show incoming delegations when user is logged in on behalf of someone else, i.e. some delegation.
   const onlyOutgoingDelegations = isDefined(userInfo?.profile?.actor)
 
   return (
     <>
       <IntroHeader
-        title={formatMessage(m.accessControl)}
+        title={formatMessage(m.digitalDelegations)}
         intro={
           onlyOutgoingDelegations
             ? formatMessage({
@@ -77,6 +80,7 @@ const AccessControl = () => {
           </Box>
         </GridColumn>
       </IntroHeader>
+
       <Box marginTop={[4, 4, 6]}>
         {onlyOutgoingDelegations ? (
           <DelegationsOutgoing />
