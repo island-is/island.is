@@ -12,9 +12,9 @@ import {
 import { FarmerLand } from './models/farmerLand.model'
 import { FarmerLandSubsidiesCollection } from './models/farmerLandSubsidiesCollection.model'
 import {
-  FarmerSubsidyOrderDirection,
-  FarmerSubsidyOrderField,
-} from './models/farmerLandSubsidiesInput.model'
+  FarmerLandSubsidyOrderDirection,
+  FarmerLandSubsidyOrderField,
+} from './models/enums'
 import { LandBeneficiary } from './models/landBeneficiary.model'
 import { LandRegistryEntry } from './models/landRegistryEntry.model'
 import { LandsCollection } from './models/farmerLandsCollection.model'
@@ -33,10 +33,7 @@ export class FarmersService {
   }
 
   async getLand(user: User, id: string): Promise<FarmerLand | null> {
-    // TODO: Inefficient — fetches the full collection to find a single farm.
-    // The client provider should expose a single-farm endpoint instead.
-    const data = await this.farmersClientService.getFarmsCollection(user)
-    const farm = data.find((f) => f.farmId?.toString() === id)
+    const farm = await this.farmersClientService.getFarm(user, id)
     return farm ? mapToFarmerLand(farm) ?? null : null
   }
 
@@ -63,11 +60,11 @@ export class FarmersService {
     user: User,
     farmId: string,
     cursor?: string,
-    orderField?: FarmerSubsidyOrderField,
-    orderDirection?: FarmerSubsidyOrderDirection,
+    orderField?: FarmerLandSubsidyOrderField,
+    orderDirection?: FarmerLandSubsidyOrderDirection,
   ): Promise<FarmerLandSubsidiesCollection> {
     const order = orderField
-      ? `${orderDirection === FarmerSubsidyOrderDirection.Descending ? '-' : '+'}${orderField}`
+      ? `${orderDirection === FarmerLandSubsidyOrderDirection.Descending ? '-' : '+'}${orderField}`
       : undefined
 
     const response = await this.farmersClientService.getFarmPayments(

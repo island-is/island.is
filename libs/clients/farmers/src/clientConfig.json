@@ -34,6 +34,37 @@
         }
       }
     },
+    "/v1/island/farms/{farmId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "required": true,
+          "name": "farmId",
+          "description": "Búsnúmer",
+          "schema": { "type": "string" }
+        }
+      ],
+      "get": {
+        "operationId": "getFarm",
+        "description": "get a single farm by id",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Farm" }
+              }
+            },
+            "description": "ok"
+          },
+          "400": { "$ref": "#/components/responses/InputError" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "500": { "$ref": "#/components/responses/InternalError" }
+        }
+      }
+    },
     "/v1/island/farms/{farmId}/beneficiaries": {
       "parameters": [
         {

@@ -1724,6 +1724,10 @@ export const m = defineMessages({
     id: 'service.portal:workmachine-tooltip',
     defaultMessage: 'Vinnueftirlitið hefur umsjón með gögnum um vinnuvélar.',
   },
+  farmerLandTooltip: {
+    id: 'service.portal:farmer-land-tooltip',
+    defaultMessage: 'Atvinnuvegaráðuneytið hefur umsjón með gögnum um jarðabók.',
+  },
   financeTooltip: {
     id: 'service.portal:finance-tooltip',
     defaultMessage: 'Fjársýslan hefur umsjón með gögnum um fjármál.',
