@@ -202,6 +202,17 @@ const ComplaintsCommitteeRulings = ({
                 value={years.find((y) => y.value === selectedYear) ?? null}
                 onChange={handleYearChange}
                 size="sm"
+              />
+            </GridColumn>
+          </GridRow>
+
+          {loading && (
+            <SkeletonLoader
+              height={165}
+              width="100%"
+              borderRadius="large"
+              repeat={3}
+              space={3}
             />
           )}
 
