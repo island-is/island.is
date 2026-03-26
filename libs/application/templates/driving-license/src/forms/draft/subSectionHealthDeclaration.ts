@@ -5,6 +5,7 @@ import {
   buildAlertMessageField,
   buildDescriptionField,
   buildFileUploadField,
+  buildHiddenInput,
   YES,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -172,6 +173,9 @@ export const subSectionHealthDeclaration = buildSubSection({
           id: 'remarksBE',
           component: 'HealthRemarks',
           condition: (_answers, externalData) => hasHealthRemarks(externalData),
+        }),
+        buildHiddenInput({
+          id: 'hasHealthRemarks',
         }),
         buildCustomField(
           {
