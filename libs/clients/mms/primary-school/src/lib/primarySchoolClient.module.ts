@@ -29,6 +29,7 @@ export class PrimarySchoolClientModule {
         name: 'clients-mms-primary-school',
         organizationSlug: 'midstod-menntunar-og-skolathjonustu',
         authSource: 'context',
+        timeout: 45 * 1000 /* 45 sek, */,
         autoAuth: idsClientConfig.isConfigured
           ? {
               mode: 'tokenExchange',
