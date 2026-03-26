@@ -55,12 +55,12 @@ export class ViewCaseFileGuard implements CanActivate {
     if (
       isCourtOfAppealsUser(user) &&
       isCompletedCase(theCase.state) &&
-      theCase.appealState &&
+      theCase.appealCase?.appealState &&
       [
         CaseAppealState.RECEIVED,
         CaseAppealState.COMPLETED,
         CaseAppealState.WITHDRAWN,
-      ].includes(theCase.appealState)
+      ].includes(theCase.appealCase?.appealState)
     ) {
       return true
     }

@@ -279,8 +279,8 @@ export class CaseController {
       }
 
       if (update.appealRulingModifiedHistory) {
-        const history = theCase.appealRulingModifiedHistory
-          ? `${theCase.appealRulingModifiedHistory}\n\n`
+        const history = theCase.appealCase?.appealRulingModifiedHistory
+          ? `${theCase.appealCase.appealRulingModifiedHistory}\n\n`
           : ''
         const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
         update.appealRulingModifiedHistory = `${history}${today} - ${
