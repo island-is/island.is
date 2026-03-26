@@ -193,10 +193,6 @@ export class OrganizationPageResolver {
         return 2
       }
 
-      if (node.type === SitemapTreeNodeType.ENTRY) {
-        return 1
-      }
-
       return 0
     }
 
