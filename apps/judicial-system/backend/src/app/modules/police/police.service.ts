@@ -883,7 +883,7 @@ export class PoliceService {
     documentDates: { code: string; value: Date }[]
     fileTypeCode: string
     caseSupplements: { code: string; value: string }[]
-  }): Promise<CreateDocumentResponse | undefined> {
+  }): Promise<CreateDocumentResponse> {
     const { name: actor } = user
 
     const createDocumentPath = `${this.xRoadPath}/CreateDocument`
@@ -914,6 +914,8 @@ export class PoliceService {
         )
         return { externalPoliceDocumentId: policeResponse.id }
       }
+
+      throw await res.text()
     } catch (error) {
       this.logger.error(
         `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
