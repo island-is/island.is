@@ -1126,6 +1126,13 @@ export const m = defineMessages({
     defaultMessage: 'Læknisvottorð hlaðið upp',
     description: 'Uploaded health certificate',
   },
+  healthCertificateRequired: {
+    id: 'dl.application:validation.healthCertificateRequired',
+    defaultMessage:
+      'Þú þarft að hlaða upp læknisvottorði til að halda áfram.',
+    description:
+      'Validation error when health certificate upload is required but missing',
+  },
 })
 
 export const requirementsMessages = defineMessages({
