@@ -88,6 +88,16 @@ export const transformDefendants = ({
         DefendantEventType.OPENED_BY_PRISON_ADMIN,
         defendant.eventLogs,
       ),
+      indictmentCancelledOrDismissed: Boolean(
+        DefendantEventLog.getEventLogDateByEventType(
+          DefendantEventType.INDICTMENT_CANCELLED,
+          defendant.eventLogs,
+        ) ||
+          DefendantEventLog.getEventLogDateByEventType(
+            DefendantEventType.INDICTMENT_DISMISSED,
+            defendant.eventLogs,
+          ),
+      ),
     }
   })
 }
