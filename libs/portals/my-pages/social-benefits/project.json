@@ -3,10 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/my-pages/social-benefits/src",
   "projectType": "library",
-  "tags": [
-    "lib:portals-mypages",
-    "scope:portals-mypages"
-  ],
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
