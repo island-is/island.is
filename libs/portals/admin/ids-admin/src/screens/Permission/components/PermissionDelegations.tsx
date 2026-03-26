@@ -148,7 +148,12 @@ export const PermissionDelegations = ({
       return categoriesTagsDirty
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [showCategoriesAndTags, categoriesTagsDirty, selectedCategories, selectedTags],
+    [
+      showCategoriesAndTags,
+      categoriesTagsDirty,
+      selectedCategories,
+      selectedTags,
+    ],
   )
 
   const loadingCategoriesAndTags = categoriesLoading || tagsLoading
