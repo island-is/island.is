@@ -292,7 +292,7 @@ const AsideIcons: FC<AsideProps> = (props) => {
               background: 'none',
               border: 'none',
               padding: 0,
-              cursor: 'pointer',
+              cursor: disabled ? 'not-allowed' : 'pointer',
             }}
           >
             {renderIcon(displayedIcon)}
