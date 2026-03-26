@@ -80,6 +80,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         ? 'AY110'
         : applicationFor === 'BE'
         ? 'AY148'
+        : applicationFor === 'B-full-renewal-65'
+        ? 'AY113'
         : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(
@@ -287,11 +289,26 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       let signatureBiometricsId: string | null = null
 
       if (selectedPhoto === 'qualityPhoto') {
-        // User selected the RLS quality photo — backend already has it
+        // User selected the RLS quality photo — verify it actually exists
+        const qualityPhotoData = application.externalData
+          ?.qualityPhotoAndSignature?.data as {
+          pohto?: string | null
+          imageTypeId?: number | null
+        } | null
+
+        if (!qualityPhotoData?.pohto) {
+          this.log(
+            'error',
+            'User selected qualityPhoto but no quality photo exists in externalData',
+            {},
+          )
+        }
+
+        // Backend already has the quality photo — no biometric IDs needed
         photoBiometricsId = null
         signatureBiometricsId = null
       } else if (selectedPhoto) {
-        // User selected a Thjodskra photo — validate and send biometric IDs
+        // User selected a Thjodskra photo — validate against FACIAL entries only
         const allThjodskraPhotos =
           (
             application.externalData?.allPhotosFromThjodskra?.data as {
@@ -302,20 +319,24 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
             }
           )?.images ?? []
 
-        const isValidThjodskra = allThjodskraPhotos.some(
+        const facialPhotos = allThjodskraPhotos.filter(
+          (p) => p.contentSpecification === 'FACIAL',
+        )
+
+        const isValidFacial = facialPhotos.some(
           (p) => p.biometricId === selectedPhoto,
         )
 
-        if (!isValidThjodskra) {
+        if (!isValidFacial) {
           this.log(
             'error',
-            'Selected photo biometricId does not match any Thjodskra photo',
+            'Selected photo biometricId does not match any FACIAL Thjodskra photo',
             { selectedPhoto },
           )
         }
 
-        photoBiometricsId = isValidThjodskra ? selectedPhoto : null
-        signatureBiometricsId = isValidThjodskra
+        photoBiometricsId = isValidFacial ? selectedPhoto : null
+        signatureBiometricsId = isValidFacial
           ? allThjodskraPhotos.find(
               (p) => p.contentSpecification === 'SIGNATURE',
             )?.biometricId ?? null
