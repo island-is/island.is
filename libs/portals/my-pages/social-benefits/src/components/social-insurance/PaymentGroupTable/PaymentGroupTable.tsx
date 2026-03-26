@@ -6,7 +6,7 @@ import {
   amountFormat,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import { useGetPaymentPlanQuery } from '../PaymentGroupTable/PaymentGroupTable.generated'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useRef } from 'react'

@@ -3,23 +3,10 @@ import { m } from './lib/messages'
 import {
   SocialBenefitsPaths,
   SocialInsuranceMaintenancePaths,
-  SocialInsuranceMaintenanceLegacyPaths,
 } from './lib/paths'
-import { ApiScope } from '@island.is/auth/scopes'
-import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
-
-const SocialInsuranceMaintenancePaymentPlan = lazy(() =>
-  import('./screens/PaymentPlan/PaymentPlan'),
-)
-
-const SocialInsuranceMaintenanceIncomePlan = lazy(() =>
-  import('./screens/IncomePlan/IncomePlan'),
-)
-
-const SocialInsuranceMaintenanceIncomePlanDetail = lazy(() =>
-  import('./screens/IncomePlanDetail/IncomePlanDetail'),
-)
+import { socialInsuranceRoutes } from './lib/routes/socialInsuranceRoutes'
+import { socialInsuranceLegacyRedirects } from './lib/routes/socialInsuranceLegacyRedirects'
 
 export const socialBenefitsModule: PortalModule = {
   name: 'Framfærsla',
@@ -29,8 +16,8 @@ export const socialBenefitsModule: PortalModule = {
     {
       name: m.maintenance,
       path: SocialBenefitsPaths.SocialBenefitsRoot,
-      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
-      key: 'SocialInsurance',
+      enabled: true, // TODO What should this be given that there will be multiple scopes under this page ?
+      key: 'SocialBenefits',
       element: (
         <Navigate
           to={SocialInsuranceMaintenancePaths.SocialInsurancePaymentPlan}
@@ -38,77 +25,7 @@ export const socialBenefitsModule: PortalModule = {
         />
       ),
     },
-    // Section redirect: /framfaersla/almannatryggingar → /framfaersla/almannatryggingar/greidsluaetlun
-    {
-      name: m.maintenance,
-      path: SocialInsuranceMaintenancePaths.SocialInsuranceRoot,
-      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
-      key: 'SocialInsurance',
-      element: (
-        <Navigate
-          to={SocialInsuranceMaintenancePaths.SocialInsurancePaymentPlan}
-          replace
-        />
-      ),
-    },
-    // New paths — actual screens
-    {
-      name: m.paymentPlan,
-      path: SocialInsuranceMaintenancePaths.SocialInsurancePaymentPlan,
-      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
-      key: 'SocialInsurance',
-      element: <SocialInsuranceMaintenancePaymentPlan />,
-    },
-    {
-      name: m.incomePlan,
-      path: SocialInsuranceMaintenancePaths.SocialInsuranceIncomePlan,
-      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
-      key: 'SocialInsuranceIncomePlan',
-      element: <SocialInsuranceMaintenanceIncomePlan />,
-    },
-    {
-      name: m.incomePlanDetail,
-      path: SocialInsuranceMaintenancePaths.SocialInsuranceIncomePlanDetail,
-      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
-      key: 'SocialInsuranceIncomePlan',
-      element: <SocialInsuranceMaintenanceIncomePlanDetail />,
-    },
-    // Legacy redirects — keep old URLs working
-    {
-      name: m.paymentPlan,
-      path: SocialInsuranceMaintenanceLegacyPaths.SocialInsuranceMaintenancePaymentPlan,
-      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
-      key: 'SocialInsurance',
-      element: (
-        <Navigate
-          to={SocialInsuranceMaintenancePaths.SocialInsurancePaymentPlan}
-          replace
-        />
-      ),
-    },
-    {
-      name: m.incomePlan,
-      path: SocialInsuranceMaintenanceLegacyPaths.SocialInsuranceMaintenanceIncomePlan,
-      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
-      key: 'SocialInsuranceIncomePlan',
-      element: (
-        <Navigate
-          to={SocialInsuranceMaintenancePaths.SocialInsuranceIncomePlan}
-          replace
-        />
-      ),
-    },
-    {
-      name: m.incomePlanDetail,
-      path: SocialInsuranceMaintenanceLegacyPaths.SocialInsuranceMaintenanceIncomePlanDetail,
-      enabled: userInfo.scopes.includes(ApiScope.socialInsuranceAdministration),
-      key: 'SocialInsuranceIncomePlan',
-      element: (
-        <Navigate
-          to={SocialInsuranceMaintenancePaths.SocialInsuranceIncomePlanDetail}
-          replace
-        />
-      ),
-    },
+    ...socialInsuranceRoutes(userInfo),
+    ...socialInsuranceLegacyRedirects(userInfo),
   ],
 }

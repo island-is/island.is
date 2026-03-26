@@ -4,9 +4,9 @@ import {
   formatDate,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import { Status } from './types'
-import { SocialInsuranceMaintenancePaths } from '../../lib/paths'
+import { SocialInsuranceMaintenancePaths } from '../../../lib/paths'
 
 interface Props {
   status: Status

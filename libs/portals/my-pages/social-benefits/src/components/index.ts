@@ -1,1 +1,1 @@
-export { PaymentGroupTable } from './PaymentGroupTable/PaymentGroupTable'
+export { PaymentGroupTable } from './social-insurance/PaymentGroupTable/PaymentGroupTable'
