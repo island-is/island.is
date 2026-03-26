@@ -225,6 +225,13 @@ const Conclusion: FC = () => {
             }
           }
           break
+        case IndictmentDecision.COMPLETING_FOR_SOME:
+          update.defendantEventLogDecisions = Object.entries(
+            completingForSomeSelections,
+          ).flatMap(([defendantId, rulingDecision]) =>
+            rulingDecision ? [{ defendantId, rulingDecision }] : [],
+          )
+          break
         case IndictmentDecision.REDISTRIBUTING:
           update.judgeId = null
           break
@@ -295,6 +302,7 @@ const Conclusion: FC = () => {
     [
       courtDate.date,
       courtDate.location,
+      completingForSomeSelections,
       createVerdicts,
       mergeCaseNumber,
       postponementReason,
