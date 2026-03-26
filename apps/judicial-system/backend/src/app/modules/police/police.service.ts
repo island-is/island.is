@@ -607,7 +607,7 @@ export class PoliceService {
     }
   }
 
-  private async fetchCaseUnitsForNationalId(
+  private async getCaseUnitsForNationalId(
     caseId: string,
     nationalId: string,
   ): Promise<{ nationalId: string; caseUnits: CaseUnit[] }> {
@@ -623,8 +623,9 @@ export class PoliceService {
       })
     }
 
-    const raw = await res.json()
-    const parsedCaseUnits = this.getRVMalseiningarResponseSchema.parse(raw)
+    const responseJson = await res.json()
+    const parsedCaseUnits =
+      this.getRVMalseiningarResponseSchema.parse(responseJson)
     const caseUnits = await Promise.all(
       parsedCaseUnits.map(async (unit) => {
         const subtype = await this.getSubtypeByArticle(unit.artalNrGreinLidur)
@@ -643,7 +644,7 @@ export class PoliceService {
     return { nationalId, caseUnits }
   }
 
-  async getCaseUnitsFromPolice(
+  private async getCaseUnits(
     caseId: string,
     nationalIds: string[],
     user: User,
@@ -654,21 +655,15 @@ export class PoliceService {
       return []
     }
 
+    // Don't fail the whole request if one nationalId fails to fetch case units
     const settled = await Promise.allSettled(
       nationalIds.map((nationalId) =>
-        this.fetchCaseUnitsForNationalId(caseId, nationalId),
+        this.getCaseUnitsForNationalId(caseId, nationalId),
       ),
     )
 
     const results = settled
-      .filter(
-        (
-          result,
-        ): result is PromiseFulfilledResult<{
-          nationalId: string
-          caseUnits: CaseUnit[]
-        }> => result.status === 'fulfilled',
-      )
+      .filter((result) => result.status === 'fulfilled')
       .map((result) => result.value)
 
     if (results.length > 0) {
@@ -683,46 +678,43 @@ export class PoliceService {
       return results
     }
 
+    // Only reached if all nationalIds are rejected
     const firstFailure = settled.find(
-      (result): result is PromiseRejectedResult => result.status === 'rejected',
+      (result) => result.status === 'rejected',
     )?.reason
 
-    try {
+    if (firstFailure instanceof NotFoundException) {
       throw firstFailure
-    } catch (reason) {
-      if (reason instanceof NotFoundException) {
-        throw reason
-      }
+    }
 
-      if (reason instanceof ServiceUnavailableException) {
-        throw new NotFoundException({
-          message: `Police case units for case ${caseId} do not exist`,
-          detail: reason.message,
-        })
-      }
-
-      const detail =
-        reason instanceof Error
-          ? reason.message
-          : 'Unknown error while fetching case units'
-
-      this.eventService.postErrorEvent(
-        'Failed to get police case units (GetRVMalseiningar)',
-        {
-          caseId,
-          actor: user.name,
-          institution: user.institution?.name,
-          startTime,
-          endTime: nowFactory(),
-        },
-        reason,
-      )
-
-      throw new BadGatewayException({
-        message: `Failed to get police case units for case ${caseId}`,
-        detail,
+    if (firstFailure instanceof ServiceUnavailableException) {
+      throw new NotFoundException({
+        message: `Police case units for case ${caseId} do not exist`,
+        detail: firstFailure.message,
       })
     }
+
+    const detail =
+      firstFailure instanceof Error
+        ? firstFailure.message
+        : 'Unknown error while fetching case units'
+
+    this.eventService.postErrorEvent(
+      'Failed to get police case units (GetRVMalseiningar)',
+      {
+        caseId,
+        actor: user.name,
+        institution: user.institution?.name,
+        startTime,
+        endTime: nowFactory(),
+      },
+      firstFailure,
+    )
+
+    throw new BadGatewayException({
+      message: `Failed to get police case units for case ${caseId}`,
+      detail,
+    })
   }
 
   async getSubpoenaStatus(
@@ -822,17 +814,17 @@ export class PoliceService {
         new Set(
           nationalIds
             .map((nationalId) => nationalId?.trim())
-            .filter((nationalId): nationalId is string => Boolean(nationalId)),
+            .filter((nationalId) => Boolean(nationalId)),
         ),
       )
       const nationalIdsToUse =
         caseNationalIds.length > 0
           ? caseNationalIds
-          : (
-              await this.getDefendantsFromPolice(caseId, user)
-            ).map((defendant) => defendant.nationalId)
+          : (await this.getDefendantsFromPolice(caseId, user)).map(
+              (defendant) => defendant.nationalId,
+            )
 
-      const caseUnitsByDefendant = await this.getCaseUnitsFromPolice(
+      const caseUnitsByDefendant = await this.getCaseUnits(
         caseId,
         nationalIdsToUse,
         user,

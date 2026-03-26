@@ -115,7 +115,7 @@ describe('CaseController - Get indictment pdf', () => {
       const caseWithNoDefendants = {
         ...theCase,
         defendants: [],
-      } as Case
+      } as unknown as Case
 
       const then = await givenWhenThen(caseWithNoDefendants)
 
