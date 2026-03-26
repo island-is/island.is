@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize'
 
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -359,6 +360,15 @@ export class PdfService {
       theCase,
       transaction,
     )
+
+    if (
+      !fullOriginalCase.defendants ||
+      fullOriginalCase.defendants.length === 0
+    ) {
+      throw new BadRequestException(
+        'Cannot generate indictment PDF without at least one defendant',
+      )
+    }
 
     // In case of splits, we use the reconstructed full parent case for generation
     const generatedPdf = await createIndictment(
