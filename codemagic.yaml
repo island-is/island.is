@@ -78,7 +78,7 @@ definitions:
         echo "sdk.dir=$ANDROID_SDK_ROOT" > android/local.properties
     - &provisioning_profiles
       name: Set up provisioning profiles settings on Xcode project
-      script: xcode-project use-profiles
+      script: xcode-project use-profiles --project ios/IslandApp.xcodeproj
     - &increment_build_number
       name: Increment build number
       script: |
