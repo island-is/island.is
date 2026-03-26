@@ -880,7 +880,7 @@ export const m = defineMessages({
   },
   healthRemarksTitle: {
     id: 'dl.application:healthRemarksTitle',
-    defaultMessage: 'Athugið!',
+    defaultMessage: 'Athugið',
     description: 'Alert message title for health remarks on driving license',
   },
   healthRemarksDescription: {

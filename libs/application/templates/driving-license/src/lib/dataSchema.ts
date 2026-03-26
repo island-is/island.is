@@ -10,6 +10,7 @@ import {
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Pickup } from './types'
 import { NO, YES } from '@island.is/application/core'
+import { m } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -43,6 +44,9 @@ export const dataSchema = z.object({
   selectLicensePhoto: z.string().optional(),
   healthCertificate: z
     .array(z.object({ name: z.string(), key: z.string() }))
+    .refine((files) => files.length > 0, {
+      params: m.healthCertificateRequired,
+    })
     .optional(),
   willBringQualityPhoto: z.union([
     z.array(z.enum([YES, NO])).nonempty(),

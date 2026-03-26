@@ -6,6 +6,7 @@ import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
 import { DrivingLicense, Remark } from '../lib/types'
+import { DrivingLicenseFakeData } from '../lib/constants'
 
 const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
@@ -17,13 +18,25 @@ const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       'currentLicense.data',
     )?.remarks || []
 
+  const fakeData = getValueViaPath<DrivingLicenseFakeData>(
+    application.answers,
+    'fakeData',
+  )
+  const fakeRemarksOff =
+    fakeData?.useFakeData === YES && fakeData?.remarks === NO
+
   const { setValue } = useFormContext()
 
   useEffect(() => {
-    // If this component renders, remarks exist on the license —
-    // always require health certificate in that case
-    setValue('hasHealthRemarks', remarks.length > 0 ? YES : NO)
-  }, [remarks, setValue])
+    setValue(
+      'hasHealthRemarks',
+      !fakeRemarksOff && remarks.length > 0 ? YES : NO,
+    )
+  }, [remarks, fakeRemarksOff, setValue])
+
+  if (fakeRemarksOff) {
+    return null
+  }
 
   return (
     <Box marginBottom={3}>

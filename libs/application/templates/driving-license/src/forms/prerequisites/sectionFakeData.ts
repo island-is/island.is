@@ -4,11 +4,9 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
-  getValueViaPath,
   NO,
   YES,
 } from '@island.is/application/core'
-import { DrivingLicenseFakeData } from '../../lib/constants'
 import { allowFakeCondition } from '../../lib/utils'
 
 export const sectionFakeData = buildSubSection({
@@ -96,16 +94,7 @@ export const sectionFakeData = buildSubSection({
           id: 'fakeData.remarks',
           title: 'Heilbrigðis tákntala',
           width: 'half',
-          condition: (answers) => {
-            const fakeData = getValueViaPath<DrivingLicenseFakeData>(
-              answers,
-              'fakeData',
-            )
-            return (
-              fakeData?.currentLicense === 'temp' &&
-              fakeData.useFakeData === YES
-            )
-          },
+          condition: allowFakeCondition(YES),
           options: [
             {
               value: NO,
