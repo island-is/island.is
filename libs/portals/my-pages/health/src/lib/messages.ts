@@ -1395,6 +1395,10 @@ export const messages = defineMessages({
     defaultMessage: 'Ávísað magn',
     id: 'sp.health:prescribed-amount',
   },
+  primaryCareClinic: {
+    defaultMessage: 'Heilsugæslustöð',
+    id: 'sp.health:primary-care-clinic',
+  },
   process: {
     defaultMessage: 'Afgreiðslur',
     id: 'sp.health:process',
