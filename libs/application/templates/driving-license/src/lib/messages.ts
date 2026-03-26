@@ -1222,11 +1222,10 @@ export const requirementsMessages = defineMessages({
   },
   //TODO: Remove when RLS/SGS supports health certificate in BE license
   beLicenseQualityPhotoDescription: {
-    id: 'dl.application:requirementunmet.beLicenseQualityPhotoDescription',
+    id: 'dl.application:requirementunmet.beLicenseQualityPhotoDescriptionV2',
     defaultMessage:
-      'Ef ekki er til gæðavottuð mynd, þarf umsækjandi að mæta í sitt sýslumanns embætti með nýja mynd og leggja inn umsókn á staðnum',
-    description:
-      'requirement unmet api returned false for an unspecified reason',
+      'Ef hvorki er hægt að nota mynd sem uppfyllir skilyrði úr skilríkjaskrá né ökutækjaskrá, verður þú að koma með passamynd á ljósmyndapappír (4,5 cm x 3,5 cm) til næsta sýslumannsembættis og skila inn umsókn á staðnum. Ef fyrra ökuskírteini var gefið út fyrir júlí 2013 þarf að uppfæra myndina.',
+    description: 'BE quality photo requirement description',
   },
   noExtendedDrivingLicenseTitle: {
     id: 'dl.application:requirementunmet.noExtendedDrivingLicenseTitle',
