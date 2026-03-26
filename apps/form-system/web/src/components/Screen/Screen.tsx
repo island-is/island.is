@@ -1,4 +1,13 @@
+import { useMutation } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
+import {
+  FieldTypesEnum,
+  NotificationCommands,
+} from '@island.is/form-system/enums'
+import {
+  NOTIFY_EXTERNAL_SERVICE,
+  removeTypename,
+} from '@island.is/form-system/graphql'
 import { m, SectionTypes } from '@island.is/form-system/ui'
 import {
   AlertMessage,
@@ -8,25 +17,17 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { LoadingScreen } from '@island.is/react/components'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { Footer } from '../Footer/Footer'
 import { Applicants } from './components/Applicants/Applicants'
 import { Completed } from './components/Completed/Completed'
 import { ExternalData } from './components/ExternalData/ExternalData'
 import { Field } from './components/Field/Field'
+import { Payment } from './components/Payment/Payment'
 import { Summary } from './components/Summary/Summary'
-import {
-  NotificationCommands,
-  FieldTypesEnum,
-} from '@island.is/form-system/enums'
-import { useMutation } from '@apollo/client'
-import {
-  NOTIFY_EXTERNAL_SERVICE,
-  removeTypename,
-} from '@island.is/form-system/graphql'
-import { LoadingScreen } from '@island.is/react/components'
-import { useIntl } from 'react-intl'
 
 export const Screen = () => {
   const { state, dispatch } = useApplicationContext()
@@ -216,7 +217,7 @@ export const Screen = () => {
           !currentSection?.data?.isHidden && <Summary state={state} />}
 
         {currentSectionType === SectionTypes.COMPLETED && <Completed />}
-
+        {currentSectionType === SectionTypes.PAYMENT && <Payment />}
         {currentScreen &&
           Array.from({ length: numberOfItems }).map((_, itemIndex) => (
             <Box key={`multiset-item-${itemIndex}`} marginBottom={3}>

@@ -10,11 +10,7 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { ApplicantTypes } from '../../dataTypes/applicantTypes/applicantType.model'
-import {
-  ApplicantTypesEnum,
-  FieldTypesEnum,
-  SectionTypes,
-} from '@island.is/form-system/shared'
+import { FieldTypesEnum, SectionTypes } from '@island.is/form-system/shared'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Field } from '../fields/models/field.model'
 import { Screen } from '../screens/models/screen.model'
@@ -92,20 +88,13 @@ export class FormApplicantTypesService {
         { transaction },
       )
 
-      const fieldSettings: FieldSettings = {
-        applicantType: applicantType.id,
-        ...(applicantType.id !== ApplicantTypesEnum.LEGAL_ENTITY &&
-        applicantType.id !==
-          ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER
-          ? { isPhoneRequired: true, isEmailRequired: true }
-          : {}),
-      }
-
       const newField = await this.fieldModel.create(
         {
           screenId: newScreen.id,
           fieldType: FieldTypesEnum.APPLICANT,
-          fieldSettings: fieldSettings,
+          fieldSettings: {
+            applicantType: applicantType.id,
+          } as FieldSettings,
         } as Field,
         { transaction },
       )

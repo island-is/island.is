@@ -1,21 +1,25 @@
+import { useMutation } from '@apollo/client'
+import { UPDATE_APPLICATION_SETTINGS } from '@island.is/form-system/graphql'
+import {
+  ApplicationState,
+  FieldTypesEnum,
+  m,
+  SectionTypes,
+} from '@island.is/form-system/ui'
 import {
   Box,
-  Text,
   Button,
-  GridRow,
+  Divider,
   GridColumn,
   GridContainer,
+  GridRow,
+  Text,
 } from '@island.is/island-ui/core'
-import { FieldTypesEnum, m } from '@island.is/form-system/ui'
-import { ApplicationState } from '@island.is/form-system/ui'
-import { useApplicationContext } from '../../../../context/ApplicationProvider'
-import { useIntl } from 'react-intl'
 import { useLocale } from '@island.is/localization'
-import { Divider } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
+import { useApplicationContext } from '../../../../context/ApplicationProvider'
 import { Display } from '../Display/Display'
-import { SectionTypes } from '@island.is/form-system/ui'
-import { UPDATE_APPLICATION_SETTINGS } from '@island.is/form-system/graphql'
-import { useMutation } from '@apollo/client'
+import { Payment } from '../Payment/Payment'
 
 interface Props {
   state?: ApplicationState
@@ -25,6 +29,17 @@ export const Summary = ({ state }: Props) => {
   const { formatMessage } = useIntl()
   const { lang } = useLocale()
   const { dispatch } = useApplicationContext()
+  const hasPayment = state?.application.hasPayment
+  const paymentFields = state?.sections
+    ?.find((s) => s.sectionType === SectionTypes.PAYMENT)
+    ?.screens?.[0]?.fields?.filter((f) => !f?.isHidden)
+    .filter(
+      (field): field is NonNullable<typeof field> =>
+        field != null && !field.isHidden,
+    )
+
+  const displayPayment =
+    hasPayment && paymentFields != null && paymentFields.length > 0
 
   const updateCompleted = useMutation(UPDATE_APPLICATION_SETTINGS)
 
@@ -207,6 +222,7 @@ export const Summary = ({ state }: Props) => {
             )
           }),
       )}
+      {displayPayment && <Payment />}
     </Box>
   )
 }

@@ -75,12 +75,16 @@ export const fieldReducer = (
         address: address,
         postalCode: postalCode,
       }
-
       return setMultipleFieldValues(state, id, value)
     }
     case 'SET_FILES': {
       const { value, id } = action.payload
       return setFieldValue(state, 's3Key', id, value)
+    }
+    case 'SET_PAYMENT_QUANTITY': {
+      const { value, id } = action.payload
+      console.log('Setting payment quantity:', value, 'for field ID:', id)
+      return setFieldValue(state, 'number', id, value)
     }
     default:
       return state
