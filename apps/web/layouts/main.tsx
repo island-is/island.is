@@ -4,7 +4,6 @@ import getConfig from 'next/config'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
-// TODO: Remove this once we have a proper solution for the language toggle
 import {
   AlertBanner,
   AlertBannerVariants,
