@@ -10,6 +10,5 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/libs/portals/my-pages/social-benefits'
+  coverageDirectory: '<rootDir>/coverage/libs/portals/my-pages/social-benefits',
 }
