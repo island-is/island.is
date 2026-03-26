@@ -47,6 +47,7 @@ import {
   CourtDocumentType,
   DateType,
   dateTypes,
+  DefendantEventType,
   defendantEventTypes,
   EventType,
   eventTypes,
@@ -86,6 +87,7 @@ import {
   DateLog,
   Defendant,
   DefendantEventLog,
+  DefendantEventLogRepositoryService,
   EventLog,
   Institution,
   Subpoena,
@@ -229,6 +231,7 @@ export class CaseService {
     private readonly courtDocumentRepositoryService: CourtDocumentRepositoryService,
     private readonly courtSessionRepositoryService: CourtSessionRepositoryService,
     private readonly caseRepositoryService: CaseRepositoryService,
+    private readonly defendantEventLogRepositoryService: DefendantEventLogRepositoryService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -1909,6 +1912,47 @@ export class CaseService {
     }
   }
 
+  private async handleDefendantEventLogUpdatesForIndictments(
+    theCase: Case,
+    update: UpdateCase,
+    user: TUser,
+    transaction: Transaction,
+  ) {
+    if (update.indictmentDecision !== IndictmentDecision.COMPLETING_FOR_SOME) {
+      return
+    }
+
+    const decisions = update.defendantEventLogDecisions
+
+    if (!decisions || decisions.length === 0) {
+      return
+    }
+
+    const caseDefendantIds = new Set(
+      (theCase.defendants ?? []).map((d) => d.id),
+    )
+
+    await Promise.all(
+      decisions.map(({ defendantId, rulingDecision }) => {
+        if (!caseDefendantIds.has(defendantId)) {
+          throw new BadRequestException(
+            `Defendant ${defendantId} does not belong to case ${theCase.id}`,
+          )
+        }
+
+        return this.defendantEventLogRepositoryService.createWithUser(
+          rulingDecision === CaseIndictmentRulingDecision.DISMISSAL
+            ? DefendantEventType.INDICTMENT_DISMISSED
+            : DefendantEventType.INDICTMENT_CANCELLED,
+          theCase.id,
+          defendantId,
+          user,
+          transaction,
+        )
+      }),
+    )
+  }
+
   private async handleEventLogUpdates(
     theCase: Case,
     updatedCase: Case,
@@ -1990,6 +2034,13 @@ export class CaseService {
     if (requiresCourtTransition) {
       update = transitionCase(CaseTransition.MOVE, theCase, user, update)
     }
+
+    // We remove defendantEventLogDecisions from the update object to avoid
+    // accidentally trying to write it to the Case model, but we need to keep
+    // it here to be able to create the necessary event logs after updating the case
+    const defendantEventLogDecisions = update.defendantEventLogDecisions
+
+    delete update.defendantEventLogDecisions
 
     await this.handleDateLogUpdates(theCase, update, transaction)
     await this.handleCaseStringUpdates(theCase, update, transaction)
@@ -2120,7 +2171,15 @@ export class CaseService {
     const updatedCase = await this.findById(theCase.id, true, transaction)
 
     await this.handleEventLogUpdates(theCase, updatedCase, user, transaction)
-
+    await this.handleDefendantEventLogUpdatesForIndictments(
+      theCase,
+      {
+        ...update,
+        defendantEventLogDecisions,
+      },
+      user,
+      transaction,
+    )
     this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
     if (isReceivingCase) {
