@@ -44,4 +44,25 @@ export const ListTypes: ListType[] = [
     },
     isCommon: true,
   },
+  {
+    id: ListTypesEnum.MASTERS_TRADES,
+    name: { is: 'Iðngreinar meistara', en: 'Masters trades' },
+    description: {
+      is: 'Listi af iðngreinum meistara',
+      en: 'List of masters trades',
+    },
+    isCommon: false,
+  },
+  {
+    id: ListTypesEnum.REGISTRATION_CATEGORIES_OF_ACTIVITIES,
+    name: {
+      is: 'Skráningarflokkar starfsemi',
+      en: 'Registration categories of activities',
+    },
+    description: {
+      is: 'Skráningarflokkar starfsemi',
+      en: 'Registration categories of activities',
+    },
+    isCommon: false,
+  },
 ]

@@ -24,6 +24,8 @@ import { OrganizationPermissionsResolver } from './organizationPermissions/organ
 import { OrganizationPermissionsService } from './organizationPermissions/organizationPermissions.service'
 import { OrganizationsResolver } from './organizations/organizations.resolver'
 import { OrganizationsService } from './organizations/organizations.service'
+import { PaymentsResolver } from './payments/payments.resolver'
+import { PaymentsService } from './payments/payments.service'
 import { ScreensResolver } from './screens/screens.resolver'
 import { ScreensService } from './screens/screens.service'
 import { SectionsResolver } from './sections/sections.resolver'
@@ -60,6 +62,8 @@ import { TranslationsService } from './translations/translations.service'
     CompanyRegistryResolver,
     FilesService,
     FilesResolver,
+    PaymentsService,
+    PaymentsResolver,
   ],
   exports: [],
   imports: [

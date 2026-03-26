@@ -1,4 +1,13 @@
+import { useMutation } from '@apollo/client'
 import { FormSystemField } from '@island.is/api/schema'
+import {
+  FieldTypesEnum,
+  NotificationCommands,
+} from '@island.is/form-system/enums'
+import {
+  NOTIFY_EXTERNAL_SERVICE,
+  removeTypename,
+} from '@island.is/form-system/graphql'
 import { m, SectionTypes } from '@island.is/form-system/ui'
 import {
   AlertMessage,
@@ -8,25 +17,17 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { LoadingScreen } from '@island.is/react/components'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { Footer } from '../Footer/Footer'
 import { Applicants } from './components/Applicants/Applicants'
 import { Completed } from './components/Completed/Completed'
 import { ExternalData } from './components/ExternalData/ExternalData'
 import { Field } from './components/Field/Field'
+import { Payment } from './components/Payment/Payment'
 import { Summary } from './components/Summary/Summary'
-import {
-  NotificationCommands,
-  FieldTypesEnum,
-} from '@island.is/form-system/enums'
-import { useMutation } from '@apollo/client'
-import {
-  NOTIFY_EXTERNAL_SERVICE,
-  removeTypename,
-} from '@island.is/form-system/graphql'
-import { LoadingScreen } from '@island.is/react/components'
-import { useIntl } from 'react-intl'
 
 export const Screen = () => {
   const { state, dispatch } = useApplicationContext()
@@ -169,56 +170,11 @@ export const Screen = () => {
 
   if (loading) return <LoadingScreen ariaLabel="loading" />
 
-  return (
-    <Box
-      component="form"
-      display="flex"
-      flexDirection="column"
-      justifyContent="spaceBetween"
-      height="full"
-    >
-      <GridColumn
-        span={['12/12', '12/12', '10/12', '7/9']}
-        offset={['0', '0', '1/12', '1/9']}
-      >
-        {state.screenError && state.screenError.hasError && (
-          <Box marginBottom={[4, 4, 5]}>
-            <AlertMessage
-              type="error"
-              title={state.screenError.title?.[lang]}
-              message={
-                <Text variant="small" whiteSpace="breakSpaces">
-                  {state.screenError.message?.[lang]}
-                </Text>
-              }
-            />
-          </Box>
-        )}
-
-        <Text variant="h2" as="h2" marginBottom={1}>
-          {currentSectionType !== SectionTypes.PREMISES &&
-            currentSectionType !== SectionTypes.PARTIES &&
-            screenTitle}
-        </Text>
-
-        {currentSectionType === SectionTypes.PREMISES && (
-          <ExternalData setExternalDataAgreement={setExternalDataAgreement} />
-        )}
-
-        {currentSectionType === SectionTypes.PARTIES && (
-          <Applicants
-            applicantField={currentScreen?.data?.fields?.[0] as FormSystemField}
-          />
-        )}
-
-        {currentSectionType === SectionTypes.SUMMARY &&
-          !!state.application.hasSummaryScreen &&
-          !currentSection?.data?.isHidden && <Summary state={state} />}
-
-        {currentSectionType === SectionTypes.COMPLETED && <Completed />}
-
-        {currentScreen &&
-          Array.from({ length: numberOfItems }).map((_, itemIndex) => (
+  const MultiSet = () => {
+    if (currentScreen) {
+      return (
+        <Box>
+          {Array.from({ length: numberOfItems }).map((_, itemIndex) => (
             <Box key={`multiset-item-${itemIndex}`} marginBottom={3}>
               {fieldsForMultisetLoop
                 .filter(
@@ -277,7 +233,61 @@ export const Screen = () => {
                 })}
             </Box>
           ))}
+        </Box>
+      )
+    }
+    return null
+  }
 
+  return (
+    <Box
+      component="form"
+      display="flex"
+      flexDirection="column"
+      justifyContent="spaceBetween"
+      height="full"
+    >
+      <GridColumn
+        span={['12/12', '12/12', '10/12', '7/9']}
+        offset={['0', '0', '1/12', '1/9']}
+      >
+        {state.screenError && state.screenError.hasError && (
+          <Box marginBottom={[4, 4, 5]}>
+            <AlertMessage
+              type="error"
+              title={state.screenError.title?.[lang]}
+              message={
+                <Text variant="small" whiteSpace="breakSpaces">
+                  {state.screenError.message?.[lang]}
+                </Text>
+              }
+            />
+          </Box>
+        )}
+
+        <Text variant="h2" as="h2" marginBottom={1}>
+          {currentSectionType !== SectionTypes.PREMISES &&
+            currentSectionType !== SectionTypes.PARTIES &&
+            screenTitle}
+        </Text>
+
+        {currentSectionType === SectionTypes.PREMISES && (
+          <ExternalData setExternalDataAgreement={setExternalDataAgreement} />
+        )}
+
+        {currentSectionType === SectionTypes.PARTIES && (
+          <Applicants
+            applicantField={currentScreen?.data?.fields?.[0] as FormSystemField}
+          />
+        )}
+
+        {currentSectionType === SectionTypes.SUMMARY &&
+          !!state.application.hasSummaryScreen &&
+          !currentSection?.data?.isHidden && <Summary state={state} />}
+
+        {currentSectionType === SectionTypes.COMPLETED && <Completed />}
+        {currentSectionType === SectionTypes.PAYMENT && <Payment />}
+        <MultiSet />
         {shouldMoveCurrencySumBox && currencySumField && (
           <Box marginBottom={4}>
             <Field
