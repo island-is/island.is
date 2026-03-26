@@ -1,17 +1,15 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Box, Text, Stack } from '@island.is/island-ui/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   item: FormSystemField
-  lang?: 'is' | 'en'
+  valueIndex: number
 }
 
-export const PhoneNumberDisplay = ({ item, lang = 'is' }: Props) => {
-  const values = (item.values ?? []).filter((v): v is NonNullable<typeof v> =>
-    Boolean(v),
-  )
-  const showIndex = values.length > 1
+export const PhoneNumberDisplay = ({ item, valueIndex }: Props) => {
+  const { lang } = useLocale()
 
   const formatPhoneNumber = (raw?: string) => {
     if (!raw) return ''
@@ -24,6 +22,9 @@ export const PhoneNumberDisplay = ({ item, lang = 'is' }: Props) => {
     return parsed.formatInternational()
   }
 
+  const raw = item.values?.[valueIndex]?.json?.phoneNumber
+  const value = formatPhoneNumber(typeof raw === 'string' ? raw : '')
+
   return (
     <Box
       component="form"
@@ -32,40 +33,15 @@ export const PhoneNumberDisplay = ({ item, lang = 'is' }: Props) => {
       justifyContent="spaceBetween"
       height="full"
     >
-      <Stack space={0}>
-        <Text as="p" fontWeight="semiBold">
-          {item.name?.[lang]}
+      <Text as="p" fontWeight="semiBold">
+        {item.name?.[lang]}
+      </Text>
+
+      <Box marginLeft={2}>
+        <Text fontWeight="light" whiteSpace="breakSpaces">
+          {value}
         </Text>
-
-        {values.map((valueDto, index) => {
-          const json = valueDto.json as
-            | Record<string, unknown>
-            | null
-            | undefined
-
-          const rawPhoneNumber =
-            typeof json?.phoneNumber === 'string' ? json.phoneNumber : ''
-
-          return (
-            <Box key={`${valueDto.id ?? item.id}-${index}`} marginLeft={2}>
-              {showIndex && (
-                <Text fontWeight="medium">
-                  {`${index + 1}:`}
-                  {'\u00A0\u00A0\u00A0'}
-                  <Text as="span" fontWeight="light" whiteSpace="breakSpaces">
-                    {formatPhoneNumber(rawPhoneNumber)}
-                  </Text>
-                </Text>
-              )}
-              {!showIndex && (
-                <Text fontWeight="light" whiteSpace="breakSpaces">
-                  {formatPhoneNumber(rawPhoneNumber)}
-                </Text>
-              )}
-            </Box>
-          )
-        })}
-      </Stack>
+      </Box>
     </Box>
   )
 }
