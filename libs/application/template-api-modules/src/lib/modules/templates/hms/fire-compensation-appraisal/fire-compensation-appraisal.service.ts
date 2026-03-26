@@ -99,6 +99,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
           } failed with problem:  ${
             error instanceof FetchError ? error.problem : error.message
           }`,
+          error,
         )
         throw new TemplateApiError(
           {
