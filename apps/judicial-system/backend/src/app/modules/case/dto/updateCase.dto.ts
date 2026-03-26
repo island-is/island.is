@@ -564,6 +564,9 @@ export class UpdateCaseDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateCaseDefendantEventLogDecisionDto)
-  @ApiPropertyOptional({ type: UpdateCaseDefendantEventLogDecisionDto, isArray: true })
+  @ApiPropertyOptional({
+    type: UpdateCaseDefendantEventLogDecisionDto,
+    isArray: true,
+  })
   readonly defendantEventLogDecisions?: UpdateCaseDefendantEventLogDecisionDto[]
 }
