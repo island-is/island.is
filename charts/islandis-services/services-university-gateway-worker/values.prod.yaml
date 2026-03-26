@@ -50,7 +50,7 @@ env:
   XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1'
 grantNamespaces:
   - 'islandis'
-  - 'nginx-ingress-internal'
+  - 'envoy-gateway-system'
   - 'application-system'
 grantNamespacesEnabled: true
 healthCheck:

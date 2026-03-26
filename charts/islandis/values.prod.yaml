@@ -17,7 +17,7 @@ air-discount-scheme-api:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -37,6 +37,16 @@ air-discount-scheme-api:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'loftbru.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -124,6 +134,17 @@ air-discount-scheme-backend:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'loftbru.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api/swagger'
+            - pathPrefix: '/api/public'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -208,7 +229,7 @@ air-discount-scheme-web:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -228,6 +249,16 @@ air-discount-scheme-web:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'loftbru.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -443,7 +474,7 @@ api:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
@@ -471,6 +502,17 @@ api:
       replicas:
         max: 50
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
@@ -773,7 +815,7 @@ application-system-api:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'services-payments'
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -793,6 +835,18 @@ application-system-api:
       replicas:
         max: 60
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'application-payment-callback-xrd.internal.island.is'
+        - 'application-callback-xrd.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/application-payment'
+            - pathPrefix: '/applications'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   ingress:
@@ -964,7 +1018,7 @@ application-system-api-worker:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'services-payments'
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1040,8 +1094,7 @@ application-system-form:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
   grantNamespaces:
-    - 'nginx-ingress-internal'
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1061,6 +1114,17 @@ application-system-form:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/umsoknir'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
   ingress:
@@ -1350,7 +1414,7 @@ consultation-portal:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1369,6 +1433,17 @@ consultation-portal:
       replicas:
         max: 30
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/samradsgatt'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/consultation-portal'
   ingress:
@@ -1425,7 +1500,7 @@ contentful-apps:
     PUBLIC_API_URL: 'https://island.is'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1444,6 +1519,16 @@ contentful-apps:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'contentful-apps.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-apps'
   ingress:
@@ -1490,7 +1575,7 @@ contentful-entry-tagger-service:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1509,6 +1594,16 @@ contentful-entry-tagger-service:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'contentful-entry-tagger-service.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-contentful-entry-tagger'
   ingress:
@@ -1591,7 +1686,7 @@ download-service:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'islandis'
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
     - 'services-bff-portals-admin'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1611,6 +1706,16 @@ download-service:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'api.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/download'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
   ingress:
@@ -1788,7 +1893,7 @@ form-system-web:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1807,6 +1912,17 @@ form-system-web:
       replicas:
         max: 4
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/form'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/form-system-web'
   ingress:
@@ -1970,7 +2086,7 @@ island-ui-storybook:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1989,6 +2105,16 @@ island-ui-storybook:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'ui.devland.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
   ingress:
@@ -2044,7 +2170,7 @@ license-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2063,6 +2189,16 @@ license-api:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'license-api-xrd.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
   ingress:
@@ -2167,8 +2303,7 @@ payments:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-internal'
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2188,6 +2323,17 @@ payments:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/greida'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/payments'
   ingress:
@@ -2246,7 +2392,7 @@ portals-admin:
     SI_PUBLIC_ENVIRONMENT: 'prod'
     SI_PUBLIC_FORM_SYSTEM_URL: 'https://island.is/form'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2266,6 +2412,17 @@ portals-admin:
       replicas:
         max: 30
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/stjornbord'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
   ingress:
@@ -2339,7 +2496,7 @@ regulations-admin-backend:
   grantNamespaces:
     - 'islandis'
     - 'download-service'
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2358,6 +2515,16 @@ regulations-admin-backend:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'regulations-admin-backend-xrd.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/regulations-admin-backend'
   ingress:
@@ -2444,7 +2611,7 @@ search-indexer-service:
     NODE_OPTIONS: '--max-old-space-size=3686 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2463,6 +2630,16 @@ search-indexer-service:
       replicas:
         max: 1
         min: 1
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'search-indexer-service.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
   ingress:
@@ -2571,8 +2748,7 @@ service-portal:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
   grantNamespaces:
-    - 'nginx-ingress-internal'
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
     - 'islandis'
     - 'user-notification'
     - 'identity-server'
@@ -2594,6 +2770,17 @@ service-portal:
       replicas:
         max: 30
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/minarsidur'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
   ingress:
@@ -2669,7 +2856,7 @@ service-portal-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'islandis'
     - 'user-notification'
     - 'identity-server'
@@ -2692,6 +2879,16 @@ service-portal-api:
       replicas:
         max: 30
         min: 2
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'service-portal-api.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   ingress:
@@ -2789,7 +2986,7 @@ services-bff-portals-admin:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2809,6 +3006,17 @@ services-bff-portals-admin:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/stjornbord/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
   ingress:
@@ -2878,7 +3086,7 @@ services-bff-portals-my-pages:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
     - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2898,6 +3106,17 @@ services-bff-portals-my-pages:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/bff'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
   ingress:
@@ -3061,8 +3280,7 @@ services-form-system-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'islandis'
-    - 'nginx-ingress-external'
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3081,6 +3299,16 @@ services-form-system-api:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'services-form-system-api.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system-api'
   ingress:
@@ -3177,8 +3405,7 @@ services-form-system-api-worker:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
-    - 'nginx-ingress-external'
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3243,7 +3470,7 @@ services-payment-flow-update-handler:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'services-payments'
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3262,6 +3489,16 @@ services-payment-flow-update-handler:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'services-payment-flow-update-handler.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payment-flow-update-handler'
   ingress:
@@ -3329,7 +3566,7 @@ services-payments:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'application-system'
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -3349,6 +3586,25 @@ services-payments:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'services-payments.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
+    primary-gw:
+      hostnames:
+        - 'services-payments-xrd.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-payments'
   ingress:
@@ -3469,7 +3725,7 @@ services-payments-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'application-system'
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -3544,7 +3800,7 @@ services-sessions:
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'islandis'
     - 'identity-server'
   grantNamespacesEnabled: true
@@ -3565,6 +3821,16 @@ services-sessions:
       replicas:
         max: 10
         min: 1
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'sessions-api.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
   ingress:
@@ -3622,7 +3888,7 @@ services-sessions-cleanup:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'islandis'
     - 'identity-server'
   grantNamespacesEnabled: true
@@ -3689,7 +3955,7 @@ services-sessions-worker:
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'islandis'
     - 'identity-server'
   grantNamespacesEnabled: true
@@ -3797,7 +4063,7 @@ services-university-gateway:
     XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1'
   grantNamespaces:
     - 'islandis'
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -3817,6 +4083,16 @@ services-university-gateway:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'services-university-gateway.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/api'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   ingress:
@@ -3928,7 +4204,7 @@ services-university-gateway-worker:
     XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1'
   grantNamespaces:
     - 'islandis'
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -3990,7 +4266,7 @@ skilavottord-web:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4009,6 +4285,17 @@ skilavottord-web:
       replicas:
         max: 10
         min: 2
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/app/skilavottord/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
   ingress:
@@ -4090,6 +4377,17 @@ skilavottord-ws:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/app/skilavottord/api/graphql'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
   ingress:
@@ -4214,7 +4512,7 @@ user-notification:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
@@ -4236,6 +4534,25 @@ user-notification:
       replicas:
         max: 10
         min: 3
+  httpRoute:
+    internal-gw:
+      hostnames:
+        - 'user-notification.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
+    primary-gw:
+      hostnames:
+        - 'user-notification-xrd.internal.island.is'
+      parentRefs:
+        - name: 'gateway-internal'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
   ingress:
@@ -4343,7 +4660,7 @@ user-notification-birthday-worker:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
@@ -4422,7 +4739,7 @@ user-notification-cleanup-worker:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
@@ -4549,7 +4866,7 @@ user-notification-worker:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'nginx-ingress-internal'
+    - 'envoy-gateway-system'
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
@@ -4650,7 +4967,7 @@ web:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     TRACKING_DOMAIN: 'island.is'
   grantNamespaces:
-    - 'nginx-ingress-external'
+    - 'envoy-gateway-system'
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
@@ -4673,6 +4990,17 @@ web:
       replicas:
         max: 50
         min: 3
+  httpRoute:
+    primary-gw:
+      hostnames:
+        - 'island.is'
+        - 'www.island.is'
+      parentRefs:
+        - name: 'gateway-external'
+          namespace: 'envoy-gateway-system'
+      rules:
+        - matches:
+            - pathPrefix: '/'
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:

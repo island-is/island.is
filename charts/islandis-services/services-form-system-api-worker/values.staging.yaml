@@ -41,8 +41,7 @@ env:
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
   - 'islandis'
-  - 'nginx-ingress-external'
-  - 'nginx-ingress-internal'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

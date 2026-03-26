@@ -25,8 +25,7 @@ env:
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   SI_PUBLIC_ENVIRONMENT: 'prod'
 grantNamespaces:
-  - 'nginx-ingress-internal'
-  - 'nginx-ingress-external'
+  - 'envoy-gateway-system'
   - 'islandis'
   - 'user-notification'
   - 'identity-server'
@@ -48,6 +47,17 @@ hpa:
     replicas:
       max: 30
       min: 2
+httpRoute:
+  primary-gw:
+    hostnames:
+      - 'island.is'
+      - 'www.island.is'
+    parentRefs:
+      - name: 'gateway-external'
+        namespace: 'envoy-gateway-system'
+    rules:
+      - matches:
+          - pathPrefix: '/minarsidur'
 image:
   repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
 ingress:
