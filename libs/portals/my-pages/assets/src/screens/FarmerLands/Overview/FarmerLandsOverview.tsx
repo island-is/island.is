@@ -37,7 +37,10 @@ export const FarmerLandsOverview = () => {
     <IntroWrapperV2
       title={fm.title}
       intro={fm.description}
-      serviceProvider={{ slug: ATVINNUVEGARADUNEYTID_SLUG }}
+      serviceProvider={{
+        slug: ATVINNUVEGARADUNEYTID_SLUG,
+        tooltip: formatMessage(cm.farmerLandTooltip),
+      }}
     >
       <Box marginBottom={3}>
         <GridRow>

@@ -6,6 +6,7 @@ import {
   BeneficiaryWrapper,
   Farm,
   PaginatedPayments,
+  getFarm,
   listAssets,
   listBeneficiaries,
   listFarms,
@@ -27,6 +28,17 @@ export class FarmersClientService {
     }
 
     return response.data
+  }
+
+  /**
+   * Get a single farm by id
+   */
+  public getFarm = async (user: User, farmId: string): Promise<Farm | null> => {
+    const response = await withAuthContext(user, () =>
+      dataOr404Null(getFarm({ path: { farmId } })),
+    )
+
+    return response ?? null
   }
 
   /**

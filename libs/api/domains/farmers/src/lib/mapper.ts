@@ -45,18 +45,18 @@ export const mapToFarmerLandSubsidy = (
   if (!p.id) return undefined
   return {
     id: p.id.toString(),
-  paymentDate: p.paymentDate ?? undefined,
-  nationalId: p.nationalId ?? undefined,
-  name: p.name ?? undefined,
-  contractId: p.contractId ?? undefined,
-  contract: p.contract ?? undefined,
-  paymentCategoryId: p.paymentCategoryId ?? undefined,
-  paymentCategory: p.paymentCategory ?? undefined,
-  unitPrice: p.unitPrice ?? undefined,
-  units: p.units ?? undefined,
-  grossAmount: p.grossAmount ?? undefined,
-  netPaid: p.netPaid ?? undefined,
-  offset: p.offset ?? undefined,
+    paymentDate: p.paymentDate ?? undefined,
+    nationalId: p.nationalId ?? undefined,
+    name: p.name ?? undefined,
+    contractId: p.contractId ?? undefined,
+    contract: p.contract ?? undefined,
+    paymentCategoryId: p.paymentCategoryId ?? undefined,
+    paymentCategory: p.paymentCategory ?? undefined,
+    unitPrice: p.unitPrice ?? undefined,
+    units: p.units ?? undefined,
+    grossAmount: p.grossAmount ?? undefined,
+    netPaid: p.netPaid ?? undefined,
+    offset: p.offset ?? undefined,
   }
 }
 

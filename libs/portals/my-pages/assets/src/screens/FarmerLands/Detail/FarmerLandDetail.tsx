@@ -57,7 +57,10 @@ export const FarmerLandDetail = () => {
     <IntroWrapperV2
       title={land?.name ?? formatMessage(fm.title)}
       intro={fm.description}
-      serviceProvider={{ slug: ATVINNUVEGARADUNEYTID_SLUG }}
+      serviceProvider={{
+        slug: ATVINNUVEGARADUNEYTID_SLUG,
+        tooltip: formatMessage(cm.farmerLandTooltip),
+      }}
     >
       {loading && <CardLoader />}
       {error && <Problem error={error} noBorder={false} />}

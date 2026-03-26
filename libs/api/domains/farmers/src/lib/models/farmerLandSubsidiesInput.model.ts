@@ -1,22 +1,9 @@
 import { Field, ID, InputType } from '@nestjs/graphql'
 import { IsEnum, IsOptional } from 'class-validator'
-import { registerEnumType } from '@nestjs/graphql'
-
-export enum FarmerSubsidyOrderField {
-  Contract = 'contract',
-  PaymentCategory = 'paymentCategory',
-  PaymentDate = 'paymentDate',
-}
-
-export enum FarmerSubsidyOrderDirection {
-  Ascending = 'Ascending',
-  Descending = 'Descending',
-}
-
-registerEnumType(FarmerSubsidyOrderField, { name: 'FarmerSubsidyOrderField' })
-registerEnumType(FarmerSubsidyOrderDirection, {
-  name: 'FarmerSubsidyOrderDirection',
-})
+import {
+  FarmerLandSubsidyOrderDirection,
+  FarmerLandSubsidyOrderField,
+} from './enums'
 
 @InputType()
 export class FarmerLandSubsidiesInput {
@@ -26,13 +13,17 @@ export class FarmerLandSubsidiesInput {
   @Field({ nullable: true })
   after?: string
 
-  @Field(() => FarmerSubsidyOrderField, { nullable: true })
+  @Field(() => FarmerLandSubsidyOrderField, { nullable: true })
   @IsOptional()
-  @IsEnum(FarmerSubsidyOrderField)
-  orderField?: FarmerSubsidyOrderField
+  @IsEnum(FarmerLandSubsidyOrderField)
+  orderField?: FarmerLandSubsidyOrderField
 
-  @Field(() => FarmerSubsidyOrderDirection, { nullable: true })
+  @Field(() => FarmerLandSubsidyOrderDirection, {
+    nullable: true,
+    description:
+      'Sort direction. Only has effect when orderField is also provided. Defaults to ascending.',
+  })
   @IsOptional()
-  @IsEnum(FarmerSubsidyOrderDirection)
-  orderDirection?: FarmerSubsidyOrderDirection
+  @IsEnum(FarmerLandSubsidyOrderDirection)
+  orderDirection?: FarmerLandSubsidyOrderDirection
 }
