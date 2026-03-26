@@ -17,6 +17,7 @@ import {
   publishing,
   summary,
   involvedParty,
+  typeSelection,
 } from '../lib/messages'
 export const Requirements: Form = buildForm({
   id: 'OfficialJournalOfIcelandApplication',
@@ -68,6 +69,11 @@ export const Requirements: Form = buildForm({
           children: [],
         }),
       ],
+    }),
+    buildSection({
+      id: Routes.TYPE_SELECTION,
+      title: typeSelection.general.section,
+      children: [],
     }),
     buildSection({
       id: Routes.ADVERT,

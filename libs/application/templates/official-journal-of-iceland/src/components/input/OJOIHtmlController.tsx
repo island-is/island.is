@@ -38,19 +38,15 @@ export const OJOIHtmlController = ({
 
   const fileUploader = useFileUploader()
 
-  const handleChange = (value: HTMLText) => {
-    // convert incoming html to base64
-    const base64 = Buffer.from(value).toString('base64')
-
+  const getUpdatedAnswers = () => {
+    const base64 = Buffer.from(valueRef.current()).toString('base64')
     const currentAnswers = structuredClone(application.answers)
-    const newAnswers = set(currentAnswers, name, base64)
-
-    onChange && onChange(base64 as HTMLText)
-    return newAnswers
+    return set(currentAnswers, name, base64)
   }
 
-  const onChangeHandler = () => {
-    return handleChange(valueRef.current())
+  const syncFormValue = () => {
+    const base64 = Buffer.from(valueRef.current()).toString('base64')
+    onChange && onChange(base64 as HTMLText)
   }
 
   return (
@@ -65,13 +61,18 @@ export const OJOIHtmlController = ({
         fileUploader={fileUploader()}
         valueRef={valueRef}
         onChange={() => {
-          // add little bit of delay for valueRef to update
+          // Debounce-save to backend but don't call setValue on every
+          // keystroke – that triggers form re-renders which shift scroll.
           setTimeout(
-            () => debouncedOnUpdateApplicationHandler(onChangeHandler()),
+            () => debouncedOnUpdateApplicationHandler(getUpdatedAnswers()),
             100,
           )
         }}
-        onBlur={() => debouncedOnUpdateApplicationHandler(onChangeHandler())}
+        onBlur={() => {
+          // Sync form value on blur so validation sees latest content.
+          syncFormValue()
+          debouncedOnUpdateApplicationHandler(getUpdatedAnswers())
+        }}
       />
     </Box>
   )
