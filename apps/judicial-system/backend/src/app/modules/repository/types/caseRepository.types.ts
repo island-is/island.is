@@ -92,26 +92,6 @@ export const caseInclude: Includeable[] = [
   },
   {
     model: User,
-    as: 'appealAssistant',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge1',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge2',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge3',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
     as: 'indictmentReviewer',
     include: [{ model: Institution, as: 'institution' }],
   },
@@ -495,23 +475,7 @@ export interface UpdateCase
     | 'indictmentIntroduction'
     | 'requestDriversLicenseSuspension'
     | 'creatingProsecutorId'
-    | 'appealState'
-    | 'prosecutorStatementDate'
-    | 'appealReceivedByCourtDate'
-    | 'appealCaseNumber'
-    | 'appealAssistantId'
-    | 'appealJudge1Id'
-    | 'appealJudge2Id'
-    | 'appealJudge3Id'
-    | 'appealConclusion'
-    | 'appealRulingDecision'
-    | 'appealRulingModifiedHistory'
-    | 'defendantStatementDate'
-    | 'requestAppealRulingNotToBePublished'
     | 'requestSharedWithDefender'
-    | 'appealValidToDate'
-    | 'isAppealCustodyIsolation'
-    | 'appealIsolationToDate'
     | 'indictmentRulingDecision'
     | 'indictmentReviewerId'
     | 'indictmentDecision'
@@ -521,7 +485,28 @@ export interface UpdateCase
     | 'isCompletedWithoutRuling'
     | 'hasCivilClaims'
     | 'isArchived'
-  > {
+  >,
+    Partial<
+      Pick<
+        AppealCase,
+        | 'appealState'
+        | 'prosecutorStatementDate'
+        | 'defendantStatementDate'
+        | 'appealReceivedByCourtDate'
+        | 'appealCaseNumber'
+        | 'appealAssistantId'
+        | 'appealJudge1Id'
+        | 'appealJudge2Id'
+        | 'appealJudge3Id'
+        | 'appealConclusion'
+        | 'appealRulingDecision'
+        | 'appealRulingModifiedHistory'
+        | 'requestAppealRulingNotToBePublished'
+        | 'appealValidToDate'
+        | 'isAppealCustodyIsolation'
+        | 'appealIsolationToDate'
+      >
+    > {
   type?: CaseType
   state?: CaseState
   policeCaseNumbers?: string[]
