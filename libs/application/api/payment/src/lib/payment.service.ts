@@ -394,9 +394,10 @@ export class PaymentService {
               `Ignoring not eligible to be refunded error for application ${applicationId}`,
               error,
             )
+          } else {
+            this.logError('Failed to refund payment', applicationId, error)
+            throw error
           }
-          this.logError('Failed to refund payment', applicationId, error)
-          throw error
         }
 
         this.logger.info(
