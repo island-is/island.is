@@ -88,9 +88,10 @@ const createTestClientData = async (app: TestApp, user: User) => {
     slidingRefreshTokenLifetime: client.slidingRefreshTokenLifetime,
     accessTokenLifetime: client.accessTokenLifetime,
     allowOfflineAccess: client.allowOfflineAccess,
-    customClaims: client.claims?.map(
-      (claim) => ({ type: claim.type, value: claim.value } ?? []),
-    ),
+    customClaims: client.claims?.map((claim) => ({
+      type: claim.type,
+      value: claim.value,
+    })),
     displayName: [
       {
         locale: 'is',
@@ -766,6 +767,46 @@ describe('MeClientsController with auth', () => {
   })
 
   describe('update client', () => {
+    it('should only allow single client claim key by using upsert', async () => {
+      // Arrange
+      const app = await setupApp({
+        AppModule,
+        SequelizeConfigService,
+        user: superUser,
+        dbType: 'postgres',
+      })
+      const server = request(app.getHttpServer())
+      await createTestClientData(app, superUser)
+      const updatedClient: AdminPatchClientDto = {
+        customClaims: [
+          {
+            type: 'claim1',
+            value: 'value1',
+          },
+          {
+            type: 'claim1',
+            value: 'value2',
+          },
+        ],
+      }
+
+      // Act
+      const res = await server
+        .patch(
+          `/v2/me/tenants/${tenantId}/clients/${encodeURIComponent(clientId)}`,
+        )
+        .send(updatedClient)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body.customClaims).toEqual([
+        {
+          type: 'claim1',
+          value: 'value2',
+        },
+      ])
+    })
+
     describe.each`
       userRole    | currentUser
       ${'normal'} | ${user}

@@ -362,6 +362,10 @@ export const m = defineMessages({
     id: 'sp.finance-housing-benefits:only-show-payments',
     defaultMessage: 'Sýna aðeins bætur',
   },
+  loadMore: {
+    id: 'sp.finance:load-more',
+    defaultMessage: 'Sækja fleiri',
+  },
 })
 
 export const hb = {

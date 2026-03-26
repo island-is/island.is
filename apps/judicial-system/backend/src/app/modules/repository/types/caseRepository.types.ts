@@ -13,6 +13,7 @@ import {
   stringTypes,
 } from '@island.is/judicial-system/types'
 
+import { AppealCase } from '../models/appealCase.model'
 import { Case } from '../models/case.model'
 import { CaseFile } from '../models/caseFile.model'
 import { CaseString } from '../models/caseString.model'
@@ -37,6 +38,34 @@ export const caseInclude: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
   { model: Institution, as: 'court' },
   { model: Institution, as: 'sharedWithProsecutorsOffice' },
+  { model: AppealCase, as: 'appealCase', required: false },
+  {
+    model: AppealCase,
+    as: 'appealCase',
+    required: false,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+    ],
+  },
   {
     model: User,
     as: 'creatingProsecutor',
@@ -478,6 +507,8 @@ export interface UpdateCase
     | 'appealConclusion'
     | 'appealRulingDecision'
     | 'appealRulingModifiedHistory'
+    | 'defendantStatementDate'
+    | 'requestAppealRulingNotToBePublished'
     | 'requestSharedWithDefender'
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
@@ -490,7 +521,6 @@ export interface UpdateCase
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
     | 'hasCivilClaims'
-    | 'isRegisteredInPrisonSystem'
     | 'isArchived'
   > {
   type?: CaseType
@@ -516,3 +546,43 @@ export interface UpdateCase
   withCourtSessions?: boolean
   courtRecordHash?: string | null
 }
+
+export const appealCaseFields: (keyof UpdateAppealCase)[] = [
+  'appealState',
+  'appealCaseNumber',
+  'appealReceivedByCourtDate',
+  'prosecutorStatementDate',
+  'defendantStatementDate',
+  'appealAssistantId',
+  'appealJudge1Id',
+  'appealJudge2Id',
+  'appealJudge3Id',
+  'appealRulingDecision',
+  'appealConclusion',
+  'appealRulingModifiedHistory',
+  'requestAppealRulingNotToBePublished',
+  'appealValidToDate',
+  'isAppealCustodyIsolation',
+  'appealIsolationToDate',
+]
+
+export interface UpdateAppealCase
+  extends Pick<
+    AppealCase,
+    | 'appealState'
+    | 'appealCaseNumber'
+    | 'appealReceivedByCourtDate'
+    | 'prosecutorStatementDate'
+    | 'defendantStatementDate'
+    | 'appealAssistantId'
+    | 'appealJudge1Id'
+    | 'appealJudge2Id'
+    | 'appealJudge3Id'
+    | 'appealRulingDecision'
+    | 'appealConclusion'
+    | 'appealRulingModifiedHistory'
+    | 'requestAppealRulingNotToBePublished'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
+  > {}

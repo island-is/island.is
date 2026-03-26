@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { ConfigModule } from '@island.is/nest/config'
 
+import { AppealCase } from './models/appealCase.model'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { CaseFile } from './models/caseFile.model'
@@ -35,6 +36,7 @@ import { repositoryModuleConfig } from './repository.config'
 @Module({
   imports: [
     SequelizeModule.forFeature([
+      AppealCase,
       Case,
       CaseArchive,
       CaseFile,

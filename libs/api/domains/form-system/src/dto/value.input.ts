@@ -90,9 +90,6 @@ export class ValueInput {
   @Field(() => [String], { nullable: true })
   s3Key?: string[]
 
-  @Field(() => String, { nullable: true })
-  s3Url?: string
-
   @Field(() => Boolean, { nullable: true })
   isLoggedInUser?: boolean
 

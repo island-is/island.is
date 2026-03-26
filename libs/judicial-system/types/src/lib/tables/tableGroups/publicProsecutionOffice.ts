@@ -44,7 +44,7 @@ const publicProsecutionOfficeIndictmentsTableGroup = {
       includeCounter: true,
     },
     {
-      type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_ACQUITTED_INDICTMENTS,
+      type: CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_ACQUITTED,
       route: 'syknudomar',
       title: 'Sýknudómar',
       description: 'Yfirlesnir sýknudómar.',
