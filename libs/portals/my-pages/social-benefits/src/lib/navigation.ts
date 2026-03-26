@@ -11,7 +11,7 @@ export const socialBenefitsNavigation: PortalNavigationItem = {
   },
   children: [
     {
-      name: m.almannatryggingar,
+      name: m.socialSecurity,
       path: SocialInsuranceMaintenancePaths.SocialInsuranceRoot,
       children: [
         {

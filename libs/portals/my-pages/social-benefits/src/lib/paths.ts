@@ -10,7 +10,7 @@ export enum SocialInsuranceMaintenancePaths {
   SocialInsuranceIncomePlanDetail = '/framfaersla/almannatryggingar/tekjuaaetlun/nuverandi',
 }
 
-/** @deprecated Use SocialInsurancePaths instead — these legacy paths are kept for redirects */
+/** @deprecated Use SocialInsuranceMaintenancePaths instead — these legacy paths are kept for redirects */
 export enum SocialInsuranceMaintenanceLegacyPaths {
   SocialInsuranceMaintenancePaymentPlan = '/framfaersla/greidsluaetlun',
   SocialInsuranceMaintenancePaymentsReasoning = '/framfaersla/forsendur-greidslna',

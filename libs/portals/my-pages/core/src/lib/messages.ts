@@ -1819,8 +1819,8 @@ export const m = defineMessages({
     id: 'service.portal:social-insurance-maintenance',
     defaultMessage: 'Framfærsla',
   },
-  almannatryggingar: {
-    id: 'service.portal:almannatryggingar',
+  socialSecurity: {
+    id: 'service.portal:socialSecurity',
     defaultMessage: 'Almannatryggingar',
   },
   socialInsuranceMaintenanceIntro: {
