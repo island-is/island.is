@@ -39,6 +39,7 @@ import { nowFactory, uuidFactory } from '../../factories'
 import { CivilClaimantService, DefendantService } from '../defendant'
 import { FileService, getDefenceUserCaseFileCategories } from '../file'
 import {
+  AppealCase,
   Case,
   CaseFile,
   CaseRepositoryService,
@@ -183,6 +184,33 @@ export const include: Includeable[] = [
     model: User,
     as: 'indictmentReviewer',
     include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: AppealCase,
+    as: 'appealCase',
+    required: false,
+    include: [
+      {
+        model: User,
+        as: 'appealAssistant',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge1',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge2',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+      {
+        model: User,
+        as: 'appealJudge3',
+        include: [{ model: Institution, as: 'institution' }],
+      },
+    ],
   },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
@@ -585,8 +613,8 @@ export class LimitedAccessCaseService {
     const updatedCase = await this.findById(theCase.id, { transaction })
 
     if (
-      updatedCase.defendantStatementDate?.getTime() !==
-      theCase.defendantStatementDate?.getTime()
+      updatedCase.appealCase?.defendantStatementDate?.getTime() !==
+      theCase.appealCase?.defendantStatementDate?.getTime()
     ) {
       addMessagesToQueue({
         type: MessageType.NOTIFICATION,
