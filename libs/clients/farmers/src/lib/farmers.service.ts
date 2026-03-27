@@ -6,7 +6,7 @@ import {
   BeneficiaryWrapper,
   Farm,
   PaginatedPayments,
-  getFarm,
+  viewFarms,
   listAssets,
   listBeneficiaries,
   listFarms,
@@ -35,7 +35,7 @@ export class FarmersClientService {
    */
   public getFarm = async (user: User, farmId: string): Promise<Farm | null> => {
     const response = await withAuthContext(user, () =>
-      dataOr404Null(getFarm({ path: { farmId } })),
+      dataOr404Null(viewFarms({ path: { farmId } })),
     )
 
     return response ?? null
