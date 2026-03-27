@@ -1,5 +1,6 @@
 import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { AnimatePresence } from 'motion/react'
 import router from 'next/router'
 
 import {
@@ -10,13 +11,16 @@ import {
   InputFileUpload,
   RadioButton,
   Select,
+  Text,
 } from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
+  INDICTMENTS_CONCLUSION_ROUTE,
   INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INDICTMENTS_COURT_RECORD_ROUTE,
   INDICTMENTS_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   courtSessionTypeNames,
   hasGeneratedCourtRecordPdf,
@@ -26,6 +30,7 @@ import {
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
+  DateTime,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -124,8 +129,13 @@ const Conclusion: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+    refreshCase,
+  } = useContext(FormContext)
   const {
     isUpdatingCase,
     setAndSendCaseToServer,
@@ -167,8 +177,12 @@ const Conclusion: FC = () => {
   const [splitCaseId, setSplitCaseId] = useState<string>()
   const [splitCaseCourtCaseNumber, setSplitCaseCourtCaseNumber] =
     useState<string>()
+  const [conclusionDate, setConclusionDate] = useState<Date>()
   const [modalVisible, setModalVisible] = useState<
-    'SPLIT' | 'CREATE_COURT_CASE_NUMBER'
+    | 'SPLIT'
+    | 'CREATE_COURT_CASE_NUMBER'
+    | 'COMPLETING_FOR_SOME'
+    | 'CONFIRM_COMPLETION_FOR_SOME'
   >()
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
@@ -193,11 +207,6 @@ const Conclusion: FC = () => {
         indictmentRulingDecision: null,
         mergeCaseId: null,
         force: true,
-      }
-
-      if (selectedAction === IndictmentDecision.SPLITTING) {
-        setModalVisible('SPLIT')
-        return
       }
 
       switch (selectedAction) {
@@ -293,6 +302,12 @@ const Conclusion: FC = () => {
         }
       }
 
+      if (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME) {
+        setModalVisible(undefined)
+        refreshCase()
+        return
+      }
+
       router.push(
         selectedAction === IndictmentDecision.REDISTRIBUTING
           ? destination
@@ -300,19 +315,20 @@ const Conclusion: FC = () => {
       )
     },
     [
+      selectedAction,
+      setAndSendCaseToServer,
+      workingCase,
+      setWorkingCase,
+      postponementReason,
+      selectedCourtSessionType,
       courtDate.date,
       courtDate.location,
-      completingForSomeSelections,
-      createVerdicts,
-      mergeCaseNumber,
-      postponementReason,
-      selectedAction,
-      selectedCourtSessionType,
       selectedDecision,
-      setAndSendCaseToServer,
-      setWorkingCase,
+      completingForSomeSelections,
+      mergeCaseNumber,
+      createVerdicts,
       updateDefendant,
-      workingCase,
+      refreshCase,
     ],
   )
 
@@ -360,6 +376,12 @@ const Conclusion: FC = () => {
       setMergeCaseNumber(workingCase.mergeCaseNumber)
     }
   }, [workingCase.mergeCaseNumber])
+
+  useEffect(() => {
+    if (modalVisible === undefined) {
+      setConclusionDate(undefined)
+    }
+  }, [modalVisible])
 
   const handleMergeCaseNumberBlur = (value: string) => {
     const validation = validate([[value, ['S-case-number']]])
@@ -981,7 +1003,19 @@ const Conclusion: FC = () => {
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={`${INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          onNextButtonClick={() =>
+          onNextButtonClick={() => {
+            if (
+              selectedAction === IndictmentDecision.COMPLETING_FOR_SOME ||
+              selectedAction === IndictmentDecision.SPLITTING
+            ) {
+              setModalVisible(
+                selectedAction === IndictmentDecision.COMPLETING_FOR_SOME
+                  ? 'COMPLETING_FOR_SOME'
+                  : 'SPLIT',
+              )
+              return
+            }
+
             handleNavigationTo(
               selectedAction === IndictmentDecision.COMPLETING
                 ? INDICTMENTS_SUMMARY_ROUTE
@@ -989,7 +1023,7 @@ const Conclusion: FC = () => {
                 ? getStandardUserDashboardRoute(user)
                 : INDICTMENTS_COURT_OVERVIEW_ROUTE,
             )
-          }
+          }}
           nextButtonText={
             selectedAction === IndictmentDecision.COMPLETING
               ? undefined
@@ -1070,6 +1104,101 @@ const Conclusion: FC = () => {
           />
         </Modal>
       )}
+      <AnimatePresence>
+        {modalVisible === 'COMPLETING_FOR_SOME' && (
+          <Modal
+            title="Skrá lyktir á aðila án þess að ljúka máli"
+            text="Lyktir verða skráðar á valda aðila."
+            primaryButton={{
+              text: 'Halda áfram',
+              onClick: () => setModalVisible('CONFIRM_COMPLETION_FOR_SOME'),
+              isDisabled: !conclusionDate,
+            }}
+            secondaryButton={{
+              text: 'Hætta við',
+              onClick: () => setModalVisible(undefined),
+            }}
+            onClose={() => setModalVisible(undefined)}
+          >
+            <Box className={grid({ gap: 3, marginBottom: 3 })}>
+              {workingCase.defendants
+                ?.filter(
+                  (defendant) =>
+                    completingForSomeSelections[defendant.id] !== undefined,
+                )
+                .map((defendant) => (
+                  <Text variant="h4" as="h4">
+                    {`${defendant.name}: `}
+                    <Text as="span">
+                      {
+                        completingForSomeOptions.find(
+                          (option) =>
+                            option.value ===
+                            completingForSomeSelections[defendant.id],
+                        )?.label
+                      }
+                    </Text>
+                  </Text>
+                ))}
+              <DateTime
+                name="conclusion-date"
+                datepickerLabel="Dagsetning lyktar"
+                datepickerPlaceholder="Veldu dagsetningu og tíma"
+                onChange={(date: Date | undefined, valid: boolean) => {
+                  valid && setConclusionDate(date)
+                }}
+                dateOnly
+                required
+              />
+            </Box>
+          </Modal>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {modalVisible === 'CONFIRM_COMPLETION_FOR_SOME' && (
+          <Modal
+            title="Viltu staðfesta lyktir?"
+            primaryButton={{
+              text: 'Staðfesta',
+              onClick: () => handleNavigationTo(INDICTMENTS_CONCLUSION_ROUTE),
+              icon: 'checkmark',
+            }}
+            secondaryButton={{
+              text: 'Hætta við',
+              onClick: () => setModalVisible(undefined),
+            }}
+            onClose={() => setModalVisible(undefined)}
+          >
+            <Box className={grid({ marginBottom: 3 })}>
+              {workingCase.defendants
+                ?.filter(
+                  (defendant) =>
+                    completingForSomeSelections[defendant.id] !== undefined,
+                )
+                .map((defendant) => (
+                  <Text variant="h4" as="h4">
+                    {`${defendant.name}: `}
+                    <Text as="span">
+                      {
+                        completingForSomeOptions.find(
+                          (option) =>
+                            option.value ===
+                            completingForSomeSelections[defendant.id],
+                        )?.label
+                      }
+                    </Text>
+                  </Text>
+                ))}
+              <Text variant="h4" as="h4">
+                {`Dagsetning lykta: `}
+                <Text as="span">
+                  {conclusionDate ? formatDate(conclusionDate, 'P') : ''}
+                </Text>
+              </Text>
+            </Box>
+          </Modal>
+        )}
+      </AnimatePresence>
     </PageLayout>
   )
 }
