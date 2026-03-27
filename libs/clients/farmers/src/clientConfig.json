@@ -40,13 +40,13 @@
           "in": "path",
           "required": true,
           "name": "farmId",
-          "description": "Búsnúmer",
+          "description": "B\u00fasn\u00famer",
           "schema": { "type": "string" }
         }
       ],
       "get": {
-        "operationId": "getFarm",
-        "description": "get a single farm by id",
+        "operationId": "ViewFarms",
+        "description": "View one farm",
         "parameters": [],
         "responses": {
           "200": {
