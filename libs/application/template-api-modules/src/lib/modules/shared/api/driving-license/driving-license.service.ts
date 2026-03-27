@@ -271,14 +271,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       return await this.drivingLicenseService.getAllPhotosFromThjodskra({
         token: auth.authorization,
       })
-    } catch (error) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.failedDataProvider,
-          summary: coreErrorMessages.errorDataProvider,
-        },
-        400,
-      )
+    } catch {
+      // Return empty rather than throwing — this provider runs for all
+      // flows but is only used by BE. Throwing here would block
+      // B-temp/B-full/65+ applications if the Thjodskra API is down.
+      return { images: [] }
     }
   }
 
