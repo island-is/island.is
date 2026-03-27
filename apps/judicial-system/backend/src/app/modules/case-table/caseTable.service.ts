@@ -1,114 +1,33 @@
-import { Includeable, literal, Op } from 'sequelize'
+import { literal, Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { Injectable } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/sequelize'
 
 import {
-  CaseTableColumnKey,
   caseTables,
   CaseTableType,
   CaseType,
   getCaseTableGroups,
-  isDistrictCourtUser,
-  isProsecutionUser,
-  type User as TUser,
+  type User,
 } from '@island.is/judicial-system/types'
 
-import { CaseRepositoryService, Defendant, User } from '../repository'
+import { AppealCase, CaseRepositoryService, Defendant } from '../repository'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
-import { caseTableDisplayCases } from './caseTable.displayCases'
 import {
   getActionOnRowClick,
+  getAllIncludes,
+  getAttributes,
   getContextMenuActions,
+  getGlobalIncludes,
   isMyCase,
 } from './caseTable.utils'
 import {
   caseTableWhereOptions,
   userAccessWhereOptions,
 } from './caseTable.whereOptions'
-
-const getIsMyCaseAttributes = (user: TUser): string[] => {
-  if (isProsecutionUser(user)) {
-    return ['creatingProsecutorId', 'prosecutorId']
-  }
-
-  return []
-}
-
-const getAvailableActionsAttributes = (user: TUser): string[] => {
-  if (isProsecutionUser(user)) {
-    return ['type', 'state', 'appealState', 'prosecutorPostponedAppealDate']
-  }
-
-  if (isDistrictCourtUser(user)) {
-    return ['type', 'state']
-  }
-
-  return []
-}
-
-const getAttributes = (
-  caseTableCellKeys: CaseTableColumnKey[],
-  user: TUser,
-) => {
-  return getIsMyCaseAttributes(user)
-    .concat(getAvailableActionsAttributes(user))
-    .concat([
-      'id',
-      ...caseTableCellKeys
-        .map((k) => caseTableCellGenerators[k].attributes ?? [])
-        .flat(),
-    ])
-}
-
-const getIsMyCaseIncludes = (user: TUser): Includeable[] => {
-  if (isDistrictCourtUser(user)) {
-    return [
-      {
-        model: User,
-        attributes: ['id'],
-        as: 'judge',
-      },
-      {
-        model: User,
-        attributes: ['id'],
-        as: 'registrar',
-      },
-    ]
-  }
-
-  return []
-}
-
-const getIncludes = (caseTableCellKeys: CaseTableColumnKey[], user: TUser) => {
-  return getIsMyCaseIncludes(user).concat(
-    caseTableCellKeys
-      .filter((k) => caseTableCellGenerators[k].includes)
-      .map(
-        (k) =>
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          Object.entries(caseTableCellGenerators[k].includes!).map(
-            ([k, v]) => ({
-              ...v,
-              includes: undefined,
-              as: k,
-              ...(v.includes
-                ? {
-                    include: Object.entries(v.includes).map(([k, v]) => ({
-                      ...v,
-                      as: k,
-                    })),
-                  }
-                : undefined),
-            }),
-          ) as Includeable,
-      )
-      .flat(),
-  )
-}
 
 @Injectable()
 export class CaseTableService {
@@ -123,7 +42,7 @@ export class CaseTableService {
    */
   async getCaseTableMembership(
     caseId: string,
-    user: TUser,
+    user: User,
   ): Promise<CaseTableType[]> {
     const map = await this.getCaseTableTypesForCases([caseId], user)
     return map.get(caseId) ?? []
@@ -135,7 +54,7 @@ export class CaseTableService {
    */
   async getCaseTableTypesForCases(
     caseIds: string[],
-    user: TUser,
+    user: User,
   ): Promise<Map<string, CaseTableType[]>> {
     if (caseIds.length === 0) {
       return new Map()
@@ -148,17 +67,24 @@ export class CaseTableService {
 
     const whereOptionsByType = tableTypes.map((type) => ({
       type,
-      where: caseTableWhereOptions[type](user),
+      whereOptions: caseTableWhereOptions[type](user),
     }))
 
     const results = await Promise.all(
-      whereOptionsByType.map(async ({ type, where }) => {
+      whereOptionsByType.map(async ({ type, whereOptions }) => {
+        const [include, globalOrder] = getGlobalIncludes(
+          whereOptions.includes ?? {},
+        )
+
         const cases = await this.caseRepositoryService.findAll({
           attributes: ['id'],
+          include,
           where: {
-            [Op.and]: [{ id: { [Op.in]: caseIds } }, where],
+            [Op.and]: [{ id: { [Op.in]: caseIds } }, whereOptions.where],
           },
+          order: globalOrder,
         })
+
         return { type, ids: cases.map((c) => c.id) }
       }),
     )
@@ -170,26 +96,35 @@ export class CaseTableService {
         results.filter((r) => r.ids.includes(caseId)).map((r) => r.type),
       )
     }
+
     return map
   }
 
   async getCaseTableRows(
     type: CaseTableType,
-    user: TUser,
+    user: User,
   ): Promise<CaseTableResponse> {
     const caseTableCellKeys = caseTables[type].columnKeys
+    const whereOptions = caseTableWhereOptions[type](user)
 
     const attributes = getAttributes(caseTableCellKeys, user)
 
-    const include = getIncludes(caseTableCellKeys, user)
+    const [include, globalOrder] = getAllIncludes(
+      whereOptions.includes ?? {},
+      caseTableCellKeys,
+      user,
+    )
 
     const cases = await this.caseRepositoryService.findAll({
       attributes,
       include,
-      where: caseTableWhereOptions[type](user),
+      where: whereOptions.where,
+      order: globalOrder,
     })
 
-    const displayCases = caseTableDisplayCases[type](cases)
+    const displayCases = whereOptions.displayCases
+      ? whereOptions.displayCases(cases)
+      : cases
 
     return {
       rowCount: displayCases.length,
@@ -206,7 +141,7 @@ export class CaseTableService {
     }
   }
 
-  async searchCases(query: string, user: TUser): Promise<SearchCasesResponse> {
+  async searchCases(query: string, user: User): Promise<SearchCasesResponse> {
     const safeQuery = this.sequelize.escape(`%${query}%`)
     const safeNormalizedQuery = this.sequelize.escape(
       query.toLowerCase().trim(),
@@ -216,7 +151,7 @@ export class CaseTableService {
       COALESCE(
         (SELECT n FROM unnest("Case"."police_case_numbers") AS n WHERE n ILIKE ${safeQuery} LIMIT 1),
         CASE WHEN "Case"."court_case_number" ILIKE ${safeQuery} THEN "Case"."court_case_number" END,
-        CASE WHEN "Case"."appeal_case_number" ILIKE ${safeQuery} THEN "Case"."appeal_case_number" END,
+        (SELECT ac."appeal_case_number" FROM "appeal_case" ac WHERE ac."case_id" = "Case"."id" AND ac."appeal_case_number" ILIKE ${safeQuery}),
         (SELECT d."national_id" FROM "defendant" d WHERE d."case_id" = "Case"."id" AND d."national_id" ILIKE ${safeQuery} ORDER BY d."created" ASC LIMIT 1),
         (SELECT d."name" FROM "defendant" d WHERE d."case_id" = "Case"."id" AND d."name" ILIKE ${safeQuery} ORDER BY d."created" ASC LIMIT 1),
         (SELECT n FROM unnest("Case"."police_case_numbers") AS n LIMIT 1),
@@ -228,7 +163,7 @@ export class CaseTableService {
       CASE
         WHEN (SELECT n FROM unnest("Case"."police_case_numbers") AS n WHERE n ILIKE ${safeQuery} LIMIT 1) IS NOT NULL THEN 'policeCaseNumbers'
         WHEN "Case"."court_case_number" ILIKE ${safeQuery} THEN 'courtCaseNumber'
-        WHEN "Case"."appeal_case_number" ILIKE ${safeQuery} THEN 'appealCaseNumber'
+        WHEN (SELECT ac."appeal_case_number" FROM "appeal_case" ac WHERE ac."case_id" = "Case"."id" AND ac."appeal_case_number" ILIKE ${safeQuery}) IS NOT NULL THEN 'appealCaseNumber'
         WHEN (SELECT d."national_id" FROM "defendant" d WHERE d."case_id" = "Case"."id" AND d."national_id" ILIKE ${safeQuery} ORDER BY d."created" ASC LIMIT 1) IS NOT NULL THEN 'defendantNationalId'
         WHEN (SELECT d."name" FROM "defendant" d WHERE d."case_id" = "Case"."id" AND d."name" ILIKE ${safeQuery} ORDER BY d."created" ASC LIMIT 1) IS NOT NULL THEN 'defendantName'
         ELSE 'policeCaseNumbers'
@@ -249,7 +184,6 @@ export class CaseTableService {
         'decision',
         'policeCaseNumbers',
         'courtCaseNumber',
-        'appealCaseNumber',
         [literal(matchedValueExpr), 'matchedValue'],
         [literal(matchedFieldExpr), 'matchedField'],
         [literal(caseTypeExpr), 'caseType'],
@@ -261,6 +195,12 @@ export class CaseTableService {
           as: 'defendants',
           separate: true,
           order: [['created', 'ASC']],
+        },
+        {
+          model: AppealCase,
+          as: 'appealCase',
+          required: false,
+          attributes: ['appealCaseNumber'],
         },
       ],
       where: {
@@ -275,7 +215,9 @@ export class CaseTableService {
                 )
               `),
               { court_case_number: { [Op.iLike]: `%${query}%` } },
-              { appeal_case_number: { [Op.iLike]: `%${query}%` } },
+              {
+                '$appealCase.appeal_case_number$': { [Op.iLike]: `%${query}%` },
+              },
               literal(`
                 EXISTS (
                   SELECT 1 FROM "defendant" d
@@ -335,7 +277,7 @@ export class CaseTableService {
             matchedValue: caseMatchedValue,
             policeCaseNumbers: c.policeCaseNumbers,
             courtCaseNumber: c.courtCaseNumber ?? null,
-            appealCaseNumber: c.appealCaseNumber ?? null,
+            appealCaseNumber: c.appealCase?.appealCaseNumber ?? null,
             defendantNationalId: null,
             defendantName: null,
             caseTableTypes,
@@ -364,7 +306,7 @@ export class CaseTableService {
           matchedValue,
           policeCaseNumbers: c.policeCaseNumbers,
           courtCaseNumber: c.courtCaseNumber ?? null,
-          appealCaseNumber: c.appealCaseNumber ?? null,
+          appealCaseNumber: c.appealCase?.appealCaseNumber ?? null,
           defendantNationalId: d.nationalId ?? null,
           defendantName: d.name ?? null,
           caseTableTypes,

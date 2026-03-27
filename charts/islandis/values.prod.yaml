@@ -269,7 +269,6 @@ air-discount-scheme-web:
 api:
   args:
     - '--tls-min-v1.0'
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
@@ -513,6 +512,8 @@ api:
     APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET'
     CHART_STATISTIC_CACHE_TTL: '/k8s/api/CHART_STATISTIC_CACHE_TTL'
     CHART_STATISTIC_SOURCE_DATA_PATHS: '/k8s/api/CHART_STATISTIC_SOURCE_DATA_PATHS'
+    COMPLAINTS_COMMITTEE_RULINGS_API_BASE_PATH: '/k8s/api/COMPLAINTS_COMMITTEE_RULINGS_API_BASE_PATH'
+    COMPLAINTS_COMMITTEE_RULINGS_API_KEY: '/k8s/api/COMPLAINTS_COMMITTEE_RULINGS_API_KEY'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
     DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY'
@@ -691,6 +692,7 @@ application-system-api:
     RECYCLING_FUND_GQL_BASE_PATH: 'http://skilavottord-ws.skilavottord.svc.cluster.local/app/skilavottord/api/graphql'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
+    REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
     SERVICE_USER_PROFILE_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
@@ -888,6 +890,10 @@ application-system-api:
     NOVA_PASSWORD: '/k8s/NOVA_PASSWORD_V1'
     NOVA_URL: '/k8s/NOVA_URL_V1'
     NOVA_USERNAME: '/k8s/NOVA_USERNAME_V1'
+    REGULATIONS_API_URL: '/k8s/api/REGULATIONS_API_URL'
+    REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
+    REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
+    REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
@@ -1668,7 +1674,6 @@ download-service:
 endorsement-system-api:
   args:
     - '--tls-min-v1.0'
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
@@ -4171,7 +4176,6 @@ skilavottord-ws:
     name: 'skilavottord-ws'
 user-notification:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'
@@ -4299,7 +4303,6 @@ user-notification:
     name: 'user-notification'
 user-notification-birthday-worker:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
     - '--job=worker'
     - '--isBirthdayWorker'
@@ -4411,7 +4414,6 @@ user-notification-birthday-worker:
     name: 'user-notification-birthday-worker'
 user-notification-cleanup-worker:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
     - '--job=cleanup'
   command:
@@ -4506,7 +4508,6 @@ user-notification-cleanup-worker:
     name: 'user-notification-cleanup-worker'
 user-notification-worker:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
     - '--job=worker'
   command:
@@ -4726,7 +4727,6 @@ web:
     name: 'web'
 xroad-collector:
   args:
-    - '--no-experimental-fetch'
     - 'main.cjs'
   command:
     - 'node'

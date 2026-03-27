@@ -189,6 +189,12 @@
       "@island.is/api/domains/official-journal-of-iceland-application": [
         "libs/api/domains/official-journal-of-iceland-application/src/index.ts"
       ],
+      "@island.is/api/domains/one-systems-rulings": [
+        "libs/api/domains/one-systems-rulings/src/index.ts"
+      ],
+      "@island.is/api/domains/open-data": [
+        "libs/api/domains/open-data/src/index.ts"
+      ],
       "@island.is/api/domains/passport": [
         "libs/api/domains/passport/src/index.ts"
       ],
@@ -527,6 +533,9 @@
       "@island.is/application/templates/official-journal-of-iceland": [
         "libs/application/templates/official-journal-of-iceland/src/index.ts"
       ],
+      "@island.is/application/templates/official-journal-of-iceland/hooks": [
+        "libs/application/templates/official-journal-of-iceland/src/hooks/useTypes.ts"
+      ],
       "@island.is/application/templates/operating-license": [
         "libs/application/templates/operating-license/src/index.ts"
       ],
@@ -860,6 +869,10 @@
       "@island.is/clients/official-journal-of-iceland/application": [
         "libs/clients/official-journal-of-iceland/application/src/index.ts"
       ],
+      "@island.is/clients/one-systems-complaints-committee-rulings": [
+        "libs/clients/one-systems/complaints-committee-rulings/src/index.ts"
+      ],
+      "@island.is/clients/open-data": ["libs/clients/open-data/src/index.ts"],
       "@island.is/clients/p-card": ["libs/clients/p-card/src/index.ts"],
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment-schedule": [

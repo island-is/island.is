@@ -55,6 +55,16 @@
         "args": ["--job", "energy-fund-import"]
       }
     },
+    "web-sitemap": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-cms-importer:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/cms-importer"
+        },
+        "args": ["--job", "web-sitemap"]
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },

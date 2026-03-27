@@ -107,6 +107,7 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
           navHide: true,
           active: true,
           enabled: undefined,
+          disabledReason: undefined,
           children: undefined,
         },
       ],
@@ -127,6 +128,7 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
           ...navigation.children![0],
           active: true,
           enabled: undefined,
+          disabledReason: undefined,
         },
       ],
     },
@@ -147,12 +149,14 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
           active: true,
           navHide: false,
           enabled: undefined,
+          disabledReason: undefined,
           children: [
             {
               ...navigation.children![0].children![0],
               active: true,
               navHide: false,
               enabled: undefined,
+              disabledReason: undefined,
               children: undefined,
             },
           ],
@@ -187,6 +191,7 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
           active: false,
           activeIfExact: true,
           enabled: undefined,
+          disabledReason: undefined,
         },
       ],
     },
@@ -215,12 +220,14 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
           active: false,
           activeIfExact: true,
           enabled: undefined,
+          disabledReason: undefined,
           children: [
             {
               ...navigation.children![0].children![0],
               navHide: false,
               active: true,
               enabled: undefined,
+              disabledReason: undefined,
               children: undefined,
             },
           ],
@@ -252,6 +259,7 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
           path: undefined,
           active: true,
           enabled: undefined,
+          disabledReason: undefined,
           navHide: false,
           children: [
             {
@@ -259,6 +267,7 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
               navHide: false,
               active: true,
               enabled: undefined,
+              disabledReason: undefined,
               children: undefined,
             },
           ],
@@ -305,6 +314,7 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
           ...navigation.children![0],
           active: true,
           enabled: undefined,
+          disabledReason: undefined,
           navHide: false,
           children: [
             {
@@ -312,6 +322,7 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
               navHide: false,
               active: true,
               enabled: undefined,
+              disabledReason: undefined,
               children: [
                 {
                   name: 'grandchild',
@@ -319,6 +330,7 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
                   navHide: false,
                   active: true,
                   enabled: undefined,
+                  disabledReason: undefined,
                   children: undefined,
                 },
               ],
@@ -349,6 +361,7 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
         {
           ...navigation.children![0],
           enabled: true,
+          disabledReason: undefined,
           active: true,
         },
       ],
@@ -401,6 +414,7 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
           active: false,
           children: undefined,
           enabled: undefined,
+          disabledReason: undefined,
           navHide: true,
         },
       ],
@@ -441,6 +455,7 @@ export const filterNavigationTreeTestCases: FilterNavigationTreeTestCase = {
           active: false,
           children: undefined,
           enabled: undefined,
+          disabledReason: undefined,
           navHide: false,
         },
       ],

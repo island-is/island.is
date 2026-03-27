@@ -4,9 +4,10 @@ import {
   Eligible,
   IncomePlanConditions,
   IncomePlanRow,
+  LatestIncomePlan,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application, ExternalData } from '@island.is/application/types'
-import { LatestIncomePlan, WithholdingTax } from '../types'
+import { WithholdingTax } from '../types'
 import { INCOME_PLANS_CLOSED, NO_ACTIVE_APPLICATIONS } from './constants'
 import { incomePlanFormMessage } from './messages'
 
