@@ -112,7 +112,9 @@ export const FarmerLandsTable = <T extends object>({
                       <Icon
                         color="blue400"
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        icon={(column as any).isSortedDesc ? 'caretDown' : 'caretUp'}
+                        icon={
+                          (column as any).isSortedDesc ? 'caretDown' : 'caretUp'
+                        }
                         size="small"
                       />
                     </Box>

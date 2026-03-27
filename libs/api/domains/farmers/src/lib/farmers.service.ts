@@ -64,7 +64,11 @@ export class FarmersService {
     orderDirection?: FarmerLandSubsidyOrderDirection,
   ): Promise<FarmerLandSubsidiesCollection> {
     const order = orderField
-      ? `${orderDirection === FarmerLandSubsidyOrderDirection.Descending ? '-' : '+'}${orderField}`
+      ? `${
+          orderDirection === FarmerLandSubsidyOrderDirection.Descending
+            ? '-'
+            : '+'
+        }${orderField}`
       : undefined
 
     const response = await this.farmersClientService.getFarmPayments(
