@@ -652,6 +652,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:co2',
     defaultMessage: 'Útblástursgildi',
   },
+  co2Fallback: {
+    id: 'sp.vehicles:co2-fallback',
+    defaultMessage: 'Enginn skráður útblástur',
+  },
   co2Label: {
     id: 'sp.vehicles:co2-label',
     defaultMessage: 'Útblástursgildi',

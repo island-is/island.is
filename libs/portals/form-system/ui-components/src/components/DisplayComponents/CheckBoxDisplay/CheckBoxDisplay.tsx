@@ -1,9 +1,10 @@
 import { FormSystemField } from '@island.is/api/schema'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   item: FormSystemField
-  lang?: 'is' | 'en'
+  valueIndex: number
 }
 
 const ANSWER_MAP = {
@@ -24,14 +25,11 @@ const normalizeCheckboxValue = (rawValue: unknown): 'true' | 'false' => {
   return 'false'
 }
 
-export const CheckBoxDisplay = ({ item, lang = 'is' }: Props) => {
-  const nonNullValues = (item.values ?? []).filter(
-    (v): v is NonNullable<typeof v> => Boolean(v),
-  )
+export const CheckBoxDisplay = ({ item, valueIndex }: Props) => {
+  const { lang } = useLocale()
 
-  // Preserve previous behavior: if there are no values, still display "false"
-  const valuesToRender = nonNullValues.length > 0 ? nonNullValues : [undefined]
-  const showIndex = valuesToRender.length > 1
+  const raw = item.values?.[valueIndex]
+  const value = normalizeCheckboxValue(raw?.json?.checkboxValue)
 
   return (
     <Box
@@ -41,37 +39,13 @@ export const CheckBoxDisplay = ({ item, lang = 'is' }: Props) => {
       justifyContent="spaceBetween"
       height="full"
     >
-      <Stack space={0}>
-        <Text as="p" fontWeight="semiBold">
-          {item.name?.[lang]}
-        </Text>
+      <Text as="p" fontWeight="semiBold">
+        {item.name?.[lang]}
+      </Text>
 
-        {valuesToRender.map((valueDto, index) => {
-          const rawValue =
-            valueDto?.json?.checkboxValue ??
-            (valueDto?.json as Record<string, unknown> | null | undefined)
-              ?.checkboxValue
-
-          const value = normalizeCheckboxValue(rawValue)
-
-          return (
-            <Box key={`${valueDto?.id ?? item.id}-${index}`} marginLeft={2}>
-              {showIndex && (
-                <Text fontWeight="medium">
-                  {`${index + 1}:`}
-                  {'\u00A0\u00A0\u00A0'}
-                  <Text as="span" fontWeight="light">
-                    {ANSWER_MAP[lang][value] ?? ''}
-                  </Text>
-                </Text>
-              )}
-              {!showIndex && (
-                <Text fontWeight="light">{ANSWER_MAP[lang][value] ?? ''}</Text>
-              )}
-            </Box>
-          )
-        })}
-      </Stack>
+      <Box marginLeft={2}>
+        <Text fontWeight="light">{ANSWER_MAP[lang][value] ?? ''}</Text>
+      </Box>
     </Box>
   )
 }

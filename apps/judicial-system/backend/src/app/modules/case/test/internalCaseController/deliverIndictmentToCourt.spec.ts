@@ -42,6 +42,7 @@ describe('InternalCaseController - Deliver indictment to court', () => {
     courtId,
     courtCaseNumber,
     indictmentHash: uuid(),
+    defendants: [{ id: uuid(), name: 'Test Defendant' }],
   } as Case
   const pdf = Buffer.from('test indictment')
 
@@ -168,6 +169,23 @@ describe('InternalCaseController - Deliver indictment to court', () => {
 
     it('should return a failure response', async () => {
       expect(then.result.delivered).toEqual(false)
+    })
+  })
+
+  describe('when case has 0 defendants', () => {
+    it('should return delivered false and not call createIndictment', async () => {
+      ;(createIndictment as jest.Mock).mockClear()
+
+      const caseWithNoDefendants = {
+        ...theCase,
+        defendants: [],
+      } as Case
+
+      const then = await givenWhenThen(caseId, caseWithNoDefendants)
+
+      // deliverIndictmentToCourt catches errors and returns { delivered: false }
+      expect(then.result).toEqual({ delivered: false })
+      expect(createIndictment).not.toHaveBeenCalled()
     })
   })
 })

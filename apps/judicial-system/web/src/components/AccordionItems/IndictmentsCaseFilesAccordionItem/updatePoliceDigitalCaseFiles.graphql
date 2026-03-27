@@ -1,0 +1,10 @@
+mutation UpdatePoliceDigitalCaseFiles(
+  $input: UpdatePoliceDigitalCaseFilesInput!
+) {
+  updatePoliceDigitalCaseFiles(input: $input) {
+    policeDigitalCaseFiles {
+      id
+      orderWithinChapter
+    }
+  }
+}

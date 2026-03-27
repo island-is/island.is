@@ -1,25 +1,32 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { v4 as uuid } from 'uuid'
 
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, LoadingDots, toast } from '@island.is/island-ui/core'
 import {
   FormContext,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseOrigin,
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useDefendants,
+  useSyncDefendantsFromPolice,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { DefendantInfo } from '../../../components'
 import { getIndictmentIntroductionAutofill } from '../../Indictment/Indictment'
 import { strings } from './DefendantList.strings'
+
+const isLokeCaseWithId = (
+  origin: typeof CaseOrigin[keyof typeof CaseOrigin] | null | undefined,
+  id: string,
+) => origin === CaseOrigin.LOKE && Boolean(id)
 
 export const DefendantList = () => {
   const { formatMessage } = useIntl()
@@ -31,6 +38,18 @@ export const DefendantList = () => {
     deleteDefendant,
     updateDefendantState,
   } = useDefendants()
+  const { loading, error } = useSyncDefendantsFromPolice()
+
+  const showPoliceDefendantsUI = isLokeCaseWithId(
+    workingCase.origin,
+    workingCase.id,
+  )
+
+  useEffect(() => {
+    if (error && showPoliceDefendantsUI) {
+      toast.error('Ekki tókst að sækja málsaðila úr LÖKE')
+    }
+  }, [error, showPoliceDefendantsUI])
 
   const createEmptyDefendant = (defendantId?: string) => {
     setWorkingCase((prevWorkingCase) => ({
@@ -111,7 +130,15 @@ export const DefendantList = () => {
 
   return (
     <Box component="section" marginBottom={5}>
-      <SectionHeading title={formatMessage(strings.defendantsHeading)} />
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="spaceBetween"
+        marginBottom={2}
+      >
+        <SectionHeading title={formatMessage(strings.defendantsHeading)} />
+        {showPoliceDefendantsUI && loading && <LoadingDots size="small" />}
+      </Box>
       <AnimatePresence>
         {workingCase.defendants?.map((defendant, index) => (
           <motion.div

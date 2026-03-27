@@ -42,8 +42,8 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: 'user-1',
         prosecutorId: 'other',
-        judge: null,
-        registrar: null,
+        judgeId: null,
+        registrarId: null,
       } as unknown as Case
       expect(isMyCase(theCase, user)).toBe(true)
     })
@@ -53,8 +53,8 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: 'other',
         prosecutorId: 'user-1',
-        judge: null,
-        registrar: null,
+        judgeId: null,
+        registrarId: null,
       } as unknown as Case
       expect(isMyCase(theCase, user)).toBe(true)
     })
@@ -64,8 +64,8 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: 'other',
         prosecutorId: 'other2',
-        judge: null,
-        registrar: null,
+        judgeId: null,
+        registrarId: null,
       } as unknown as Case
       expect(isMyCase(theCase, user)).toBe(false)
     })
@@ -75,8 +75,8 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: null,
         prosecutorId: null,
-        judge: { id: 'judge-1' },
-        registrar: null,
+        judgeId: 'judge-1',
+        registrarId: null,
       } as unknown as Case
       expect(isMyCase(theCase, user)).toBe(true)
     })
@@ -86,8 +86,8 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: null,
         prosecutorId: null,
-        judge: null,
-        registrar: { id: 'reg-1' },
+        judgeId: null,
+        registrarId: 'reg-1',
       } as unknown as Case
       expect(isMyCase(theCase, user)).toBe(true)
     })
@@ -97,8 +97,8 @@ describe('caseTable.utils', () => {
       const theCase = {
         creatingProsecutorId: null,
         prosecutorId: null,
-        judge: { id: 'other' },
-        registrar: { id: 'other2' },
+        judgeId: 'other',
+        registrarId: 'other2',
       } as unknown as Case
       expect(isMyCase(theCase, user)).toBe(false)
     })
@@ -216,9 +216,9 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealState: CaseAppealState.APPEALED,
+            appealCase: { appealState: CaseAppealState.APPEALED },
             prosecutorPostponedAppealDate: new Date('2024-01-01'),
-          },
+          } as unknown as Case,
           user,
         ),
       ).toBe(false)
@@ -230,9 +230,9 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.INDICTMENT,
-            appealState: CaseAppealState.APPEALED,
+            appealCase: { appealState: CaseAppealState.APPEALED },
             prosecutorPostponedAppealDate: new Date('2024-01-01'),
-          },
+          } as unknown as Case,
           user,
         ),
       ).toBe(false)
@@ -244,9 +244,9 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealState: CaseAppealState.APPEALED,
+            appealCase: { appealState: CaseAppealState.APPEALED },
             prosecutorPostponedAppealDate: new Date('2024-01-01'),
-          },
+          } as unknown as Case,
           user,
         ),
       ).toBe(true)
@@ -258,9 +258,9 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealState: CaseAppealState.RECEIVED,
+            appealCase: { appealState: CaseAppealState.RECEIVED },
             prosecutorPostponedAppealDate: new Date('2024-01-01'),
-          },
+          } as unknown as Case,
           user,
         ),
       ).toBe(true)
@@ -272,9 +272,9 @@ describe('caseTable.utils', () => {
         canCancelAppeal(
           {
             type: CaseType.CUSTODY,
-            appealState: CaseAppealState.APPEALED,
+            appealCase: { appealState: CaseAppealState.APPEALED },
             prosecutorPostponedAppealDate: undefined,
-          },
+          } as unknown as Case,
           user,
         ),
       ).toBe(false)
@@ -307,7 +307,7 @@ describe('caseTable.utils', () => {
       const theCase = {
         type: CaseType.CUSTODY,
         state: CaseState.ACCEPTED,
-        appealState: CaseAppealState.APPEALED,
+        appealCase: { appealState: CaseAppealState.APPEALED },
         prosecutorPostponedAppealDate: new Date('2024-01-01'),
       } as unknown as Case
       expect(getContextMenuActions(theCase, user)).toContain(

@@ -21,6 +21,7 @@ export const consentModule: PortalModule = {
         name: m.consent,
         path: ConsentPaths.Consent,
         enabled: userInfo.scopes.includes(ApiScope.internal),
+        notAvailableForActors: true,
         element: <Consent />,
       },
     ]
