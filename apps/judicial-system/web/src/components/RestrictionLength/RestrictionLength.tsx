@@ -64,7 +64,9 @@ const RestrictionLength: FC<Props> = (props) => {
             ),
           })}
           selectedDate={
-            isCOAUser ? workingCase.appealCase?.appealValidToDate : workingCase.validToDate
+            isCOAUser
+              ? workingCase.appealCase?.appealValidToDate
+              : workingCase.validToDate
           }
           minDate={new Date()}
           onChange={(date: Date | undefined, valid: boolean) => {
@@ -93,7 +95,9 @@ const RestrictionLength: FC<Props> = (props) => {
                   label={formatMessage(strings.isolation)}
                   checked={
                     isCOAUser
-                      ? Boolean(workingCase.appealCase?.isAppealCustodyIsolation)
+                      ? Boolean(
+                          workingCase.appealCase?.isAppealCustodyIsolation,
+                        )
                       : Boolean(workingCase.isCustodyIsolation)
                   }
                   onChange={handleIsolationChange}
@@ -106,7 +110,8 @@ const RestrictionLength: FC<Props> = (props) => {
                 datepickerLabel={formatMessage(strings.isolationDateLable)}
                 disabled={
                   (isCOAUser &&
-                    workingCase.appealCase?.isAppealCustodyIsolation === false) ||
+                    workingCase.appealCase?.isAppealCustodyIsolation ===
+                      false) ||
                   (!isCOAUser && workingCase.isCustodyIsolation === false)
                 }
                 selectedDate={
@@ -130,7 +135,8 @@ const RestrictionLength: FC<Props> = (props) => {
                 }
                 blueBox={false}
                 backgroundColor={
-                  (isCOAUser && workingCase.appealCase?.isAppealCustodyIsolation) ||
+                  (isCOAUser &&
+                    workingCase.appealCase?.isAppealCustodyIsolation) ||
                   workingCase.isCustodyIsolation
                     ? 'white'
                     : 'blue'

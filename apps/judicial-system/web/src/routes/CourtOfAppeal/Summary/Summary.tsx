@@ -62,7 +62,8 @@ const Summary: FC = () => {
         : true
 
     if (caseTransitioned) {
-      workingCase.appealCase?.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
+      workingCase.appealCase?.appealRulingDecision ===
+      CaseAppealRulingDecision.DISCONTINUED
         ? setVisibleModal('AppealDiscontinued')
         : setVisibleModal('AppealCompleted')
     }

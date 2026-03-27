@@ -140,7 +140,12 @@ describe('InfoCard', () => {
                   {
                     id: 'itm_id',
                     title: 'Titill',
-                    values: [<DefendantInfo defendant={{ id: 'def_id' }} workingCaseId="case_id" />],
+                    values: [
+                      <DefendantInfo
+                        defendant={{ id: 'def_id' }}
+                        workingCaseId="case_id"
+                      />,
+                    ],
                   },
                 ],
               },

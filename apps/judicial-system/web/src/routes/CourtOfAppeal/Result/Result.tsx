@@ -91,7 +91,9 @@ const CourtOfAppealResult = () => {
                 title={formatMessage(strings.rulingModifiedTitle)}
                 message={
                   <MarkdownWrapper
-                    markdown={workingCase.appealCase?.appealRulingModifiedHistory}
+                    markdown={
+                      workingCase.appealCase?.appealRulingModifiedHistory
+                    }
                     textProps={{ variant: 'small' }}
                   />
                 }

@@ -68,7 +68,8 @@ const CaseTitleInfoAndTags: FC = () => {
               </Text>
             </Box>
             {((user?.institution?.type === InstitutionType.DISTRICT_COURT &&
-              workingCase.appealCase?.appealState === CaseAppealState.COMPLETED) ||
+              workingCase.appealCase?.appealState ===
+                CaseAppealState.COMPLETED) ||
               user?.institution?.type === InstitutionType.COURT_OF_APPEALS) &&
               workingCase.appealCase?.appealReceivedByCourtDate && (
                 <Box marginTop={1}>

@@ -1444,7 +1444,8 @@ const useSections = (
                 isCompletedCase(workingCase.state) &&
                 !workingCase.prosecutorPostponedAppealDate &&
                 !workingCase.accusedPostponedAppealDate &&
-                workingCase.appealCase?.appealState !== CaseAppealState.COMPLETED,
+                workingCase.appealCase?.appealState !==
+                  CaseAppealState.COMPLETED,
               children: [],
             },
           ]

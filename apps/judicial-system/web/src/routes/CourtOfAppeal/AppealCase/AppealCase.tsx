@@ -105,7 +105,10 @@ const AppealCase: FC = () => {
         NotificationType.APPEAL_JUDGES_ASSIGNED,
         workingCase.notifications,
       ).hasSent ||
-      isReopenedCOACase(workingCase.appealCase?.appealState, workingCase.notifications)
+      isReopenedCOACase(
+        workingCase.appealCase?.appealState,
+        workingCase.notifications,
+      )
     ) {
       router.push(`${destination}/${id}`)
     } else {

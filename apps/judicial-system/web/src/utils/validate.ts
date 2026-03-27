@@ -686,7 +686,10 @@ export const isCourtOfAppealCaseStepValid = (workingCase: Case): boolean => {
         workingCase.appealCase?.appealJudge3 &&
         workingCase.appealCase?.appealAssistant)) &&
       validate([
-        [workingCase.appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+        [
+          workingCase.appealCase?.appealCaseNumber,
+          ['empty', 'appeal-case-number-format'],
+        ],
       ]).isValid,
   )
 }
@@ -698,7 +701,8 @@ export const isCourtOfAppealRulingStepFieldsValid = (
     workingCase.appealCase?.appealRulingDecision &&
       (workingCase.appealCase?.appealRulingDecision ===
         CaseAppealRulingDecision.DISCONTINUED ||
-        validate([[workingCase.appealCase?.appealConclusion, ['empty']]]).isValid),
+        validate([[workingCase.appealCase?.appealConclusion, ['empty']]])
+          .isValid),
   )
 }
 
@@ -717,7 +721,10 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
   workingCase: Case,
 ): boolean => {
   return validate([
-    [workingCase.appealCase?.appealCaseNumber, ['empty', 'appeal-case-number-format']],
+    [
+      workingCase.appealCase?.appealCaseNumber,
+      ['empty', 'appeal-case-number-format'],
+    ],
   ]).isValid
 }
 

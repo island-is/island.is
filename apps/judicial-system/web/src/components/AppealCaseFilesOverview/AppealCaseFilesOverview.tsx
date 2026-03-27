@@ -78,10 +78,12 @@ const AppealCaseFilesOverview = () => {
                 CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
                 CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
               ].includes(caseFile.category) ||
-              ((workingCase.appealCase?.appealState === CaseAppealState.COMPLETED ||
+              ((workingCase.appealCase?.appealState ===
+                CaseAppealState.COMPLETED ||
                 isCourtOfAppealsUser(user)) &&
                 caseFile.category === CaseFileCategory.APPEAL_RULING) ||
-              (((workingCase.appealCase?.appealState === CaseAppealState.COMPLETED &&
+              (((workingCase.appealCase?.appealState ===
+                CaseAppealState.COMPLETED &&
                 isDefenceUser(user)) ||
                 isCourtOfAppealsUser(user)) &&
                 caseFile.category === CaseFileCategory.APPEAL_COURT_RECORD))
@@ -215,7 +217,10 @@ const AppealCaseFilesOverview = () => {
                       : `${constants.APPEAL_FILES_ROUTE}/${workingCase.id}`,
                   )
                 }}
-                disabled={workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN}
+                disabled={
+                  workingCase.appealCase?.appealState ===
+                  CaseAppealState.WITHDRAWN
+                }
               >
                 {formatMessage(strings.addFiles)}
               </Button>

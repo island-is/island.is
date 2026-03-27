@@ -442,7 +442,9 @@ export const SignedVerdictOverview: FC = () => {
                   title={formatMessage(strings.rulingModifiedTitle)}
                   message={
                     <MarkdownWrapper
-                      markdown={workingCase.appealCase?.appealRulingModifiedHistory}
+                      markdown={
+                        workingCase.appealCase?.appealRulingModifiedHistory
+                      }
                       textProps={{ variant: 'small' }}
                     />
                   }
@@ -550,7 +552,8 @@ export const SignedVerdictOverview: FC = () => {
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
-            {workingCase.appealCase?.appealState === CaseAppealState.COMPLETED &&
+            {workingCase.appealCase?.appealState ===
+              CaseAppealState.COMPLETED &&
               workingCase.appealCase?.appealConclusion && (
                 <Conclusion
                   title={formatMessage(conclusion.appealTitle)}

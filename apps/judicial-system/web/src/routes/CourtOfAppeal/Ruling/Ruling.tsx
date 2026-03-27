@@ -205,7 +205,10 @@ const CourtOfAppealRuling = () => {
                   name="case-decision"
                   id={option.id}
                   label={formatMessage(option.message)}
-                  checked={workingCase.appealCase?.appealRulingDecision === option.decision}
+                  checked={
+                    workingCase.appealCase?.appealRulingDecision ===
+                    option.decision
+                  }
                   onChange={() => handleRulingDecisionChange(option.decision)}
                   backgroundColor="white"
                   large

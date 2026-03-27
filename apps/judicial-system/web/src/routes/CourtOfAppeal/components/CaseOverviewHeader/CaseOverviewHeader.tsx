@@ -109,12 +109,13 @@ const CaseOverviewHeader: FC<Props> = (props) => {
         </Button>
       </Box>
       <Box className={grid({ gap: 2 })}>
-        {!workingCase.appealCase?.appealRulingDecision && wasAppealedAfterDeadline && (
-          <AlertMessage
-            message={formatMessage(strings.appealSentAfterDeadline)}
-            type="warning"
-          />
-        )}
+        {!workingCase.appealCase?.appealRulingDecision &&
+          wasAppealedAfterDeadline && (
+            <AlertMessage
+              message={formatMessage(strings.appealSentAfterDeadline)}
+              type="warning"
+            />
+          )}
         <AppealResultAccessed />
         {alerts?.map((alert) => (
           <AlertMessage
