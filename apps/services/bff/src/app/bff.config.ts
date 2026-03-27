@@ -119,7 +119,7 @@ export const BffConfig = defineConfig({
           // Download service local endpoint
           'http://localhost:3377/download/v1/*',
           //REMOVE THIS, CODERABBIT FLAG THIS
-          'https://featprimary-school-assessments-api.dev01.devland.is/download/v1/*',
+          'https://featprimary-school-assessments-api.dev01.devland.is/download/v1/',
         ],
       ),
       /**
