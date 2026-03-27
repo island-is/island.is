@@ -7,6 +7,7 @@ export { DataValue } from './components/DataValue/DataValue'
 export { ReviewGroup } from './components/ReviewGroup/ReviewGroup'
 export { Label } from './components/Label/Label'
 export { ApplicationCard } from './components/ApplicationCard/ApplicationCard'
+export { defaultCardDataByStatus } from './components/ApplicationCard/utils/defaultData'
 export {
   formatBankInfo,
   formatPhoneNumber,

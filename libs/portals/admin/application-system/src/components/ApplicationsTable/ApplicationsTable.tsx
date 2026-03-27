@@ -5,6 +5,7 @@ import {
   Pagination,
   Table as T,
   Tag,
+  TagVariant,
   Text,
   toast,
   Tooltip,
@@ -12,11 +13,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
 import { m } from '../../lib/messages'
-import {
-  getLogoFromContentfulSlug,
-  getSlugFromType,
-  statusMapper,
-} from '../../shared/utils'
+import { getLogoFromContentfulSlug, getSlugFromType } from '../../shared/utils'
+import { defaultCardDataByStatus } from '@island.is/application/ui-components'
 import { AdminApplication } from '../../types/adminApplication'
 import { ApplicationDetails } from '../ApplicationDetails/ApplicationDetails'
 import { Organization } from '@island.is/shared/types'
@@ -134,7 +132,17 @@ export const ApplicationsTable = ({
           {applications
             .slice(pagedDocuments.from, pagedDocuments.to)
             .map((application, index) => {
-              const tag = statusMapper[application.status]
+              const defaultCardData =
+                defaultCardDataByStatus[application.status]
+
+              const tag = {
+                label: application.actionCard?.tag?.label
+                  ? application.actionCard.tag.label
+                  : formatMessage(defaultCardData.tag.label),
+                variant:
+                  (application.actionCard?.tag?.variant as TagVariant) ||
+                  defaultCardData.tag.variant,
+              }
               const logo = getLogoFromContentfulSlug(
                 organizations,
                 application.institutionContentfulSlug,
@@ -195,7 +203,7 @@ export const ApplicationsTable = ({
                       )}
                       <T.Data>
                         <Tag disabled variant={tag.variant} truncate>
-                          {formatMessage(tag.label)}
+                          {tag.label}
                         </Tag>
                       </T.Data>
                       <T.Data>
