@@ -166,6 +166,7 @@ export class ApplicationSerializer
         ? intl.formatMessage(template.institution)
         : null,
       progress: helper.getApplicationProgress(),
+      stateName: helper.getApplicationStateInformation()?.name ?? '',
     })
     return instanceToPlain(dto)
   }

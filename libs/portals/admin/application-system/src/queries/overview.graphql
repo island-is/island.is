@@ -9,6 +9,7 @@ query getApplicationV2ApplicationsSuperAdmin(
       formSlug
       applicant
       state
+      stateName
       created
       modified
       assignees
@@ -64,6 +65,7 @@ query getApplicationV2ApplicationsInstitutionAdmin(
       formSlug
       applicant
       state
+      stateName
       created
       modified
       assignees

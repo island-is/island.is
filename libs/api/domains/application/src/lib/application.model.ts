@@ -223,6 +223,9 @@ export class ApplicationAdmin {
   @Field(() => String)
   state!: string
 
+  @Field(() => String, { nullable: true })
+  stateName?: string
+
   @Field(() => ActionCardMetaData, { nullable: true })
   actionCard?: ActionCardMetaData
 

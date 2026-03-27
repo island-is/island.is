@@ -85,6 +85,11 @@ export const ApplicationDetails = ({
               {application.applicant}
             </ValueLine>
           </GridColumn>
+          <GridColumn span={['2/2', '2/2', '1/2']}>
+            <ValueLine title={formatMessage(m.state)}>
+              {application.stateName ?? application.state}
+            </ValueLine>
+          </GridColumn>
           {!!application.applicantActors?.length && (
             <GridColumn span={['2/2', '2/2', '2/2']}>
               <Divider />

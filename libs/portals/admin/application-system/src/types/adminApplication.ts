@@ -8,6 +8,7 @@ export interface AdminApplication {
   formSlug?: string
   applicant: string
   state: string
+  stateName?: string
   created: string
   modified: string
   name?: string

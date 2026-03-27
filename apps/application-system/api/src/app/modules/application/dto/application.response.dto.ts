@@ -194,6 +194,11 @@ export class BaseApplicationResponseDto {
   @IsNumber()
   progress?: number
 
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  stateName?: string
+
   @ApiProperty({ enum: ApplicationStatus })
   @Expose()
   @IsEnum(ApplicationStatus)

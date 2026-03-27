@@ -209,6 +209,7 @@ export class ApplicationAdminSerializer
         application,
         intl.formatMessage,
       ),
+      stateName: helper.getApplicationStateInformation()?.name ?? '',
       institution: template.institution
         ? intl.formatMessage(template.institution)
         : null,

@@ -99,6 +99,10 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:institutionDropdownPlaceholder',
     defaultMessage: 'Veldu stofnun',
   },
+  state: {
+    id: 'admin-portal.application-system:state',
+    defaultMessage: 'Staða á umsókn',
+  },
   status: {
     id: 'admin-portal.application-system:status',
     defaultMessage: 'Staða',
