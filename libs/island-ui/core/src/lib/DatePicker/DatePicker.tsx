@@ -120,8 +120,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   )
   const [isOpen, setIsOpen] = useState(false)
   const hoverDateRef = React.useRef<Date | null>(null)
-  // Set during onChangeRaw (any keystroke) to block onChange from reacting to
-  // intermediate parses while typing. Reset async so it's false for calendar clicks.
+  // Blocks onChange during typing; reset async so calendar clicks are unaffected.
   const isTypingInInputRef = useRef(false)
   const [shouldAlignEnd, setShouldAlignEnd] = useState(false)
 
@@ -225,9 +224,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             range
               ? (date: any) => {
                   if (isTypingInInputRef.current) {
-                    // During typing, block intermediate parses — but allow through
-                    // when react-datepicker has fully parsed both dates (e.g. on
-                    // blur/tab after the user finishes typing a complete range).
+                    // Block intermediate parses, but allow a fully-typed range through.
                     const arr = Array.isArray(date) ? date : []
                     const bothValid =
                       arr[0] instanceof Date &&
@@ -279,10 +276,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                         handleChange(start, end)
                       }
                     } else {
-                      // Keep calendar open and commit startDate so the next
-                      // calendar click sees it. Normally blocked by isTypingInInputRef,
-                      // but may run during typing when bothValid is true in Dates.tsx
-                      // and typing completion produces a valid end date.
                       setIsOpen(true)
                     }
                   }
@@ -290,23 +283,19 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               : (date: any) => {
                   if (date === null) {
                     setStartDate(null)
-                    // also close when cleared via calendar UI (if ever)
                     setIsOpen(false)
                     return
                   }
                   if (date instanceof Date && !isNaN(date.getTime())) {
                     setStartDate(date)
                     handleChange && handleChange(date)
-                    // close after single-date selection
                     setIsOpen(false)
                   }
                 }
           }
           onChangeRaw={(e: React.SyntheticEvent<HTMLInputElement>) => {
             if (!range) return
-            // react-datepicker also calls onChangeRaw from handleSelect (on calendar day
-            // clicks) — before calling onChange. Only block onChange for actual keyboard
-            // input; skip when the event target is not the text input itself.
+            // handleSelect also calls onChangeRaw before onChange — skip for calendar clicks.
             if (!(e.target instanceof HTMLInputElement)) return
             isTypingInInputRef.current = true
             setTimeout(() => {
@@ -437,7 +426,6 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
 
                 if (startDay && endDay) {
                   handleChange && handleChange(startDay, endDay)
-                  // if range completed via custom container (quick ranges etc.)
                   setIsOpen(false)
                 }
               }}
