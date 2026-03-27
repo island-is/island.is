@@ -362,7 +362,9 @@ export const PermissionDelegations = ({
                                       ).map((t) => t.value)
                                       setCategoriesTagsDirty(
                                         !isEqual(
-                                          selectedCategories.map((c) => c.value),
+                                          selectedCategories.map(
+                                            (c) => c.value,
+                                          ),
                                           selectedPermission.categoryIds ?? [],
                                         ) ||
                                           !isEqual(
