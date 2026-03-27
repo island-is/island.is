@@ -177,7 +177,10 @@ export const validatePeriod = (
       return buildError('startDate', errorMessages.periodsStartDate)
     }
 
-    if (startDateValue < minimumStartDate) {
+    // Only enforce minimumStartDate for future periods.
+    // Periods already started should not be retroactively invalidated
+    // when the actual date of birth shifts after the expected date.
+    if (startDateValue < minimumStartDate && startDateValue >= today) {
       return buildError('startDate', errorMessages.periodsStartDate)
     }
 
