@@ -56,7 +56,9 @@ const useInfoCardItems = () => {
     displaySentToPrisonAdminDate?: boolean
     displayOpenCaseReference?: boolean
   }): Item => {
-    const defendants = workingCase.defendants
+    const defendants = workingCase.defendants?.filter(
+      (defendant) => defendant.indictmentCancelledOrDismissedState === null,
+    )
     const isMultipleDefendants = defendants && defendants.length > 1
 
     return {

@@ -60,6 +60,25 @@ export const transformDefendants = ({
     const appealDeadline = appealDeadlineResult?.deadlineDate
     const isAppealDeadlineExpired =
       appealDeadlineResult?.isDeadlineExpired ?? false
+    const indictmentCancelledOrDismissedEventLog =
+      DefendantEventLog.getEventLogByEventType(
+        [
+          DefendantEventType.INDICTMENT_CANCELLED,
+          DefendantEventType.INDICTMENT_DISMISSED,
+        ],
+        defendant.eventLogs,
+      )
+    const indictmentCancelledOrDismissedState =
+      indictmentCancelledOrDismissedEventLog
+        ? {
+            type:
+              indictmentCancelledOrDismissedEventLog.eventType ===
+              DefendantEventType.INDICTMENT_CANCELLED
+                ? CaseIndictmentRulingDecision.CANCELLATION
+                : CaseIndictmentRulingDecision.DISMISSAL,
+            time: indictmentCancelledOrDismissedEventLog.created,
+          }
+        : undefined
 
     return {
       ...defendant.toJSON(),
@@ -88,16 +107,7 @@ export const transformDefendants = ({
         DefendantEventType.OPENED_BY_PRISON_ADMIN,
         defendant.eventLogs,
       ),
-      indictmentCancelledOrDismissed: Boolean(
-        DefendantEventLog.getEventLogDateByEventType(
-          DefendantEventType.INDICTMENT_CANCELLED,
-          defendant.eventLogs,
-        ) ||
-          DefendantEventLog.getEventLogDateByEventType(
-            DefendantEventType.INDICTMENT_DISMISSED,
-            defendant.eventLogs,
-          ),
-      ),
+      indictmentCancelledOrDismissedState,
     }
   })
 }
