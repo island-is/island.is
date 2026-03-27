@@ -120,8 +120,7 @@ export const DatePickerInput = ({
               value: pickedDate ?? selectedDate ?? new Date(),
               maximumDate: maxDate,
               minimumDate: minDate,
-              design: 'material',
-
+              design: 'default',
               onChange: (event, date) => {
                 if (event.type === 'set' && date) {
                   onSelectDate?.(date)

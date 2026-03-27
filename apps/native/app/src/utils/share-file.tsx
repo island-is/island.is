@@ -2,7 +2,7 @@ import * as Share from 'expo-sharing'
 import * as FileSystem from 'expo-file-system'
 
 import { isAndroid } from '@/utils/devices'
-import { suppressLockScreen } from '@/stores/auth-store'
+import { clearLockScreenSuppression, suppressLockScreen } from '@/stores/auth-store'
 import { DocumentV2 } from '@/graphql/types/schema'
 
 interface ShareFileProps {
@@ -28,22 +28,17 @@ export const shareFile = async ({
     suppressLockScreen()
   }
 
-  if (isHtml) {
-    const utf8Prefix = '<meta charset="UTF-8">'
-    const formattedHtml = utf8Prefix + content
-    try {
+  try {
+    if (isHtml) {
+      const utf8Prefix = '<meta charset="UTF-8">'
+      const formattedHtml = utf8Prefix + content
       const encodedSubject = encodeURIComponent(document.subject)
       const cacheDir = new FileSystem.Directory(FileSystem.Paths.cache)
       const htmlFile = new FileSystem.File(cacheDir, `${encodedSubject}.html`)
       htmlFile.write(formattedHtml)
       htmlUrl = htmlFile.uri
-    } catch (error) {
-      console.error('Failed to write html file', error)
-      return
     }
-  }
 
-  try {
     const url = pdfUrl
       ? pdfUrl
       : isHtml
@@ -57,6 +52,7 @@ export const shareFile = async ({
     });
   } catch (error) {
     console.error('Failed to share document', error)
-    return
+  } finally {
+    clearLockScreenSuppression()
   }
 }

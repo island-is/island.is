@@ -19,7 +19,7 @@ import illustrationSrc from '@/assets/illustrations/digital-services-m1-dots.png
 import { preferencesStore } from '@/stores/preferences-store'
 import { useRegisterPasskey } from '@/lib/passkeys/useRegisterPasskey'
 import { useAuthenticatePasskey } from '@/lib/passkeys/useAuthenticatePasskey'
-import { authStore, suppressLockScreen } from '@/stores/auth-store'
+import { clearLockScreenSuppression, suppressLockScreen } from '@/stores/auth-store'
 import { useBrowser } from '@/hooks/use-browser'
 import { addPasskeyAsLoginHint } from '@/lib/passkeys/helpers'
 import { testIDs } from '@/utils/test-ids'
@@ -177,22 +177,21 @@ export default function PasskeyScreen() {
 
                 if (!registered) {
                   setIsLoading(false)
+                  clearLockScreenSuppression()
                 }
 
                 if (registered && !url) {
                   setIsLoading(false)
+                  clearLockScreenSuppression()
                   router.back()
                 }
 
                 if (registered && url) {
-                  authStore.setState(() => ({
-                    noLockScreenUntilNextAppStateActive: true,
-                  }))
-
                   const authenticationResponse = await authenticatePasskey()
 
                   if (authenticationResponse) {
                     setIsLoading(false)
+                    clearLockScreenSuppression()
                     router.back()
                     const urlWithLoginHint = addPasskeyAsLoginHint(
                       url,
@@ -203,9 +202,11 @@ export default function PasskeyScreen() {
                     }
                   }
                   setIsLoading(false)
+                  clearLockScreenSuppression()
                 }
               } catch (error) {
                 setIsLoading(false)
+                clearLockScreenSuppression()
                 if (
                   error instanceof Error &&
                   error.message.startsWith('Register')

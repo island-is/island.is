@@ -34,7 +34,7 @@ import {
 } from '@/graphql/types/schema'
 import { isIos } from '@/utils/devices'
 import { isJWT } from '@/utils/token'
-import { authStore, suppressLockScreen } from '@/stores/auth-store'
+import { authStore, clearLockScreenSuppression, suppressLockScreen } from '@/stores/auth-store'
 import { setScanResult } from '../../../../../stores/scan-result-store'
 import { StackScreen } from '../../../../../components/stack-screen'
 import { showPrompt } from '../../../../../lib/show-picker'
@@ -174,6 +174,7 @@ export default function LicenseScannerScreen() {
     void requestPermission()
     if (!isIos) {
       suppressLockScreen()
+      return () => clearLockScreenSuppression()
     }
   }, [])
 

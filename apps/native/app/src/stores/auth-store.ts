@@ -52,7 +52,7 @@ interface AuthStore {
   userInfo: UserInfo | undefined
   lockScreenActivatedAt?: number
   lockScreenComponentId: string | undefined
-  noLockScreenUntilNextAppStateActive: boolean
+  lockScreenSuppressedUntil: number | undefined
   isCogitoAuth: boolean
   cognitoDismissCount: number
   cognitoAuthUrl?: string
@@ -71,8 +71,8 @@ const getAppAuthConfig = () => {
   const android = isAndroid ? '.auth' : ''
   const clientId =
     config.isTestingApp && config.id === 'prod'
-      // Use this custom client ID for testing on prod.
-      ? '@island.is/island.dev-appid'
+      ? // Use this custom client ID for testing on prod.
+        '@island.is/island.dev-appid'
       : config.idsClientId
 
   return {
@@ -142,7 +142,7 @@ export const authStore = create<AuthStore>((set, get) => ({
   userInfo: undefined,
   lockScreenActivatedAt: undefined,
   lockScreenComponentId: undefined,
-  noLockScreenUntilNextAppStateActive: false,
+  lockScreenSuppressedUntil: undefined,
   isCogitoAuth: false,
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
@@ -313,13 +313,25 @@ export const useAuthStore = <U = AuthStore>(
   selector?: (state: AuthStore) => U,
 ) => useStore(authStore, selector!)
 
+const LOCK_SCREEN_SUPPRESS_MAX_MS = 15 * 60 * 1000 // 60 min safety cap
+
 /**
- * Temporarily suppress the app lock screen until the app returns to foreground.
- * Use before triggering native modals (passkeys, permissions, share sheet, etc.)
- * that cause the app to briefly go to background/inactive.
+ * Suppress the app lock screen until explicitly cleared or the safety cap expires.
+ * Call `clearLockScreenSuppression()` when the flow ends.
  */
 export function suppressLockScreen() {
-  authStore.setState({ noLockScreenUntilNextAppStateActive: true })
+  authStore.setState({
+    lockScreenSuppressedUntil: Date.now() + LOCK_SCREEN_SUPPRESS_MAX_MS,
+  })
+}
+
+export function isLockScreenSuppressed() {
+  const until = authStore.getState().lockScreenSuppressedUntil
+  return until != null && Date.now() < until
+}
+
+export function clearLockScreenSuppression() {
+  authStore.setState({ lockScreenSuppressedUntil: undefined })
 }
 
 export async function readAuthorizeResult(): Promise<void> {
