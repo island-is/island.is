@@ -527,7 +527,7 @@ export const coreErrorMessages = defineMessages({
   },
   paymentSubmitRefundExitButtonCaption: {
     id: 'application.system:core.payment.exitCaption',
-    defaultMessage: 'Hætta við greiðslu og fara úr umsókn',
+    defaultMessage: 'Hætta við greiðslu og fara aftur í umsókn',
     description: 'Caption for the refund payment and exit button',
   },
   paymentStatusError: {

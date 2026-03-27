@@ -31,7 +31,6 @@ import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { AttachmentS3Service } from '../../../shared/services'
 import { prereqMessages } from '@island.is/application/templates/hms/fire-compensation-appraisal'
-import { SharedTemplateApiService } from '../../../shared'
 import { FetchError } from '@island.is/clients/middlewares'
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
@@ -41,7 +40,6 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     private hmsApplicationSystemService: ApplicationApi,
     private readonly attachmentService: AttachmentS3Service,
     private readonly notificationsService: NotificationsService,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.FIRE_COMPENSATION_APPRAISAL)
   }
@@ -298,7 +296,9 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       }
     } catch (e) {
       this.logger.error(
-        'Failed to send notification to all involved:',
+        `Failed to send notification to all involved: ${
+          e instanceof TemplateApiError ? e.problem : e.message
+        }`,
         e.message,
       )
       // Dont throw error since this happens when the application has already been sent
@@ -310,20 +310,16 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       // Map the application to the dto interface
       const applicationDto = mapAnswersToApplicationDto(application)
       // Send the application to HMS
-      // const res = await this.hmsApplicationSystemService.apiApplicationPost({
-      //   applicationDto,
-      // })
-
-      // if (res.status !== 200) {
-      // eslint-disable-next-line no-constant-condition
-      if (true) {
+      const res = await this.hmsApplicationSystemService.apiApplicationPost({
+        applicationDto,
+      })
+      if (res.status !== 200) {
         throw new TemplateApiError(
           'Failed to submit application, non 200 status',
           500,
         )
       }
 
-      /*
       // Get the generator
       const fileGenerator = this.attachmentService.getFilesGenerator(
         application,
@@ -353,25 +349,23 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
           })
           .catch((e) => {
             // Log the error but don't throw it since we allow the uploads to run asyncronously on the background
-            this.logger.error(`Failed to upload attachment: ${e}`)
+            this.logger.error(
+              `Failed to upload attachment: ${
+                e instanceof TemplateApiError ? e.problem : e.message
+              }`,
+            )
           })
       }
-      */
-      // return res
+
+      return res
     } catch (e) {
-      this.logger.error('Failed to submit application:', e.message)
-      if (e instanceof TemplateApiError) {
-        const error = e as TemplateApiError
-        this.logger.error(
-          'Failed to submit application:',
-          JSON.stringify(error, null, 2),
-        )
-        throw error
-      }
-      throw new TemplateApiError(
-        `Failed to submit application: ${e.message}`,
-        500,
+      this.logger.error(
+        `Failed to submit application: ${
+          e instanceof TemplateApiError ? e.problem : e.message
+        }`,
+        e,
       )
+      throw new TemplateApiError(e, 500)
     }
   }
 }

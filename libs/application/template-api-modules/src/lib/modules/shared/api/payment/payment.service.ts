@@ -20,8 +20,6 @@ import { ConfigService } from '@nestjs/config'
 import { uuid } from 'uuidv4'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { PaymentsApi } from '@island.is/clients/payments'
-import { FetchError } from '@island.is/clients/middlewares'
-import { PaymentServiceCode } from '@island.is/shared/constants'
 
 @Injectable()
 export class PaymentService extends BaseTemplateApiService {
@@ -251,8 +249,6 @@ export class PaymentService extends BaseTemplateApiService {
         this.logger.warn('No requestId found, skipping refundPayment')
       }
 
-      console.log('deleting payment', requestId)
-      console.log('application id', application.id)
       await this.paymentModelService.delete(application.id, auth)
     } catch (error) {
       this.logger.error('Error deleting payment', {

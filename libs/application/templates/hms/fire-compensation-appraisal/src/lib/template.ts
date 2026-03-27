@@ -165,7 +165,6 @@ const template: ApplicationTemplate<
         },
       },
       [States.PAYMENT]: buildPaymentState({
-        // Do I really need to trigger this as well?
         organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
         chargeItems: getChargeItems,
         roles: [
