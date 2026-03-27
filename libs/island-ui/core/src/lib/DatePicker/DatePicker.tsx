@@ -280,8 +280,9 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                       }
                     } else {
                       // Keep calendar open and commit startDate so the next
-                      // calendar click sees it. Typing is blocked above by
-                      // isTypingInInputRef so this never fires during keyboard input.
+                      // calendar click sees it. Normally blocked by isTypingInInputRef,
+                      // but may run during typing when bothValid is true in Dates.tsx
+                      // and typing completion produces a valid end date.
                       setIsOpen(true)
                     }
                   }
