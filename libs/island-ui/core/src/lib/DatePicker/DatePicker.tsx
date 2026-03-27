@@ -224,7 +224,18 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           onChange={
             range
               ? (date: any) => {
-                  if (isTypingInInputRef.current) return
+                  if (isTypingInInputRef.current) {
+                    // During typing, block intermediate parses — but allow through
+                    // when react-datepicker has fully parsed both dates (e.g. on
+                    // blur/tab after the user finishes typing a complete range).
+                    const arr = Array.isArray(date) ? date : []
+                    const bothValid =
+                      arr[0] instanceof Date &&
+                      !isNaN(arr[0].getTime()) &&
+                      arr[1] instanceof Date &&
+                      !isNaN(arr[1].getTime())
+                    if (!bothValid) return
+                  }
 
                   const [start, end] = date
 
