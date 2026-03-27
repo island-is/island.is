@@ -220,6 +220,26 @@ export const m = defineMessages({
     defaultMessage:
       'Skatthlutfall í staðgreiðslu samanstendur annarsvegar af tekjuskatti og hinsvegar meðaútsvari(14,95%). Skatthlutfallið er\n\n• 31,49% af tekjum 0-472.005 kr. (þar af 16,55% tekjuskattur)\n• 37,99% af tekjum 472.006 - 1.325.127 kr. (þar af 23,05% tekjuskattur)\n• 46,29% af tekjum yfir 1.325.127 kr. (þar af 31,35% tekjuskattur)\n\nPersónuafsláttur er 68.691 kr. á mánuði á árinu 2025.',
   },
+  taxCardTypePersonalTaxAllowance: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-personal-tax-allowance',
+    defaultMessage: 'Skattkort',
+  },
+  taxCardTypeSpouseTaxAllowance: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-spouse-tax-allowance',
+    defaultMessage: 'Skattkort maka',
+  },
+  taxCardTypeRegardingTheEstate: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-regarding-the-estate',
+    defaultMessage: 'V/ dánarbús',
+  },
+  taxCardTypeTaxExemption: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-tax-exemption',
+    defaultMessage: 'Skattundanþága',
+  },
+  taxCardTypeUnknown: {
+    id: 'sp.social-insurance-maintenance:tax-card-type-unknown',
+    defaultMessage: 'Óþekkt tegund skattkorts',
+  },
   personalTaxCreditSaveSuccess: {
     id: 'sp.social-insurance-maintenance:personal-tax-credit-save-success',
     defaultMessage: 'Persónuafsláttur hefur verið vistaður',

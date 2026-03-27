@@ -11,6 +11,14 @@ type PersonalTaxCreditTableProps = {
   taxCards: TaxCards
 }
 
+const taxCardTypeMessageMap: Record<string, typeof m[keyof typeof m]> = {
+  PERSONAL_TAX_ALLOWANCE: m.taxCardTypePersonalTaxAllowance,
+  SPOUSE_TAX_ALLOWANCE: m.taxCardTypeSpouseTaxAllowance,
+  REGARDING_THE_ESTATE: m.taxCardTypeRegardingTheEstate,
+  TAX_EXEMPTION: m.taxCardTypeTaxExemption,
+  UNKNOWN_TAX_CARD: m.taxCardTypeUnknown,
+}
+
 export const PersonalTaxCreditTable = ({
   taxCards,
 }: PersonalTaxCreditTableProps) => {
@@ -46,7 +54,11 @@ export const PersonalTaxCreditTable = ({
         <T.Body>
           {taxCards.map((card) => (
             <T.Row key={`${card.taxCardType}-${card.validFrom}`}>
-              <T.Data>{card.taxCardType ?? '-'}</T.Data>
+              <T.Data>
+                {card.taxCardType && taxCardTypeMessageMap[card.taxCardType]
+                  ? formatMessage(taxCardTypeMessageMap[card.taxCardType])
+                  : '-'}
+              </T.Data>
               <T.Data>
                 {card.validFrom
                   ? formatDate(card.validFrom, {
