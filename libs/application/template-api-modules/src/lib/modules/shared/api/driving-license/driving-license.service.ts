@@ -1,15 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  coreErrorMessages,
-  getValueViaPath,
-  YES,
-} from '@island.is/application/core'
+import { coreErrorMessages } from '@island.is/application/core'
 
 import {
   StudentAssessment,
-  DrivingLicenseFakeData,
   DrivingLicense,
   HasQualitySignature,
 } from './types'
@@ -25,7 +20,15 @@ import {
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { CurrentLicenseParameters } from '@island.is/application/types'
-import { getTodayDateWithMonthDiff } from './utils'
+import {
+  getFakeData,
+  buildFakeCurrentLicense,
+  buildFakeQualityPhoto,
+  buildFakeQualitySignature,
+  buildFakeQualityPhotoAndSignature,
+  buildFakeAllPhotosFromThjodskra,
+  buildFakeDrivingAssessment,
+} from './drivingLicenseFakeData'
 
 @Injectable()
 export class DrivingLicenseProviderService extends BaseTemplateApiService {
@@ -142,49 +145,9 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<CurrentLicenseParameters>): Promise<DrivingLicense> {
     let drivingLicense
 
-    const fakeData = getValueViaPath<DrivingLicenseFakeData>(
-      application.answers,
-      'fakeData',
-    )
-    if (fakeData?.useFakeData === YES) {
-      const currentLicense = (() => {
-        switch (fakeData.currentLicense) {
-          case 'temp':
-            return 'B'
-          case 'B':
-          case 'C':
-          case 'C1':
-          case 'D':
-          case 'D1':
-            return fakeData.currentLicense
-          default:
-            return null
-        }
-      })()
-      drivingLicense = {
-        currentLicense,
-        categories: [
-          {
-            id: Math.floor(Math.random() * 100000000),
-            nr: currentLicense,
-            name: currentLicense || '', // for useLegacyVersion
-            issued: getTodayDateWithMonthDiff(-12),
-            expires: getTodayDateWithMonthDiff(14 * 12), // license is valid for 15 years total
-            comments: '',
-          },
-        ],
-        remarks:
-          fakeData.remarks === YES
-            ? [
-                {
-                  code: '',
-                  description:
-                    'Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.',
-                },
-              ]
-            : undefined,
-        id: Math.floor(Math.random() * 100000000),
-      }
+    const fakeData = getFakeData(application.answers)
+    if (fakeData) {
+      drivingLicense = buildFakeCurrentLicense(fakeData)
     } else {
       if (params?.useLegacyVersion) {
         drivingLicense =
@@ -244,19 +207,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     hasQualityPhoto: boolean
     qualityPhoto: string | null
   }> {
-    // If running locally or on dev allow for fake data
-    const useFakeData = getValueViaPath<'yes' | 'no'>(
-      application.answers,
-      'fakeData.useFakeData',
-    )
-
-    if (useFakeData === 'yes') {
-      const hasQualityPhoto = getValueViaPath<'yes' | 'no'>(
-        application.answers,
-        'fakeData.qualityPhoto',
-      )
-      return { hasQualityPhoto: hasQualityPhoto === 'yes', qualityPhoto: null }
+    const fakeData = getFakeData(application.answers)
+    if (fakeData) {
+      return buildFakeQualityPhoto(fakeData)
     }
+
     const hasQualityPhoto = await this.drivingLicenseService.getHasQualityPhoto(
       { token: auth.authorization },
     )
@@ -275,25 +230,11 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps): Promise<HasQualitySignature | null> {
-    // If running locally or on dev allow for fake data
-    const useFakeData = getValueViaPath<'yes' | 'no'>(
-      application.answers,
-      'fakeData.useFakeData',
-    )
-
-    if (useFakeData === 'yes') {
-      const hasQualitySignature = getValueViaPath<'yes' | 'no'>(
-        application.answers,
-        'fakeData.qualitySignature',
-      )
-      if (hasQualitySignature === 'yes') {
-        return {
-          hasQualitySignature: true,
-        }
-      } else {
-        return null
-      }
+    const fakeData = getFakeData(application.answers)
+    if (fakeData) {
+      return buildFakeQualitySignature(fakeData)
     }
+
     const hasQualitySignature =
       await this.drivingLicenseService.getHasQualitySignature({
         token: auth.authorization,
@@ -307,27 +248,9 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const fakeData = getValueViaPath<DrivingLicenseFakeData>(
-      application.answers,
-      'fakeData',
-    )
-    if (fakeData?.useFakeData === YES) {
-      if (fakeData.hasRLSPhoto === YES) {
-        return {
-          imageId: 1,
-          imageTypeId: 1,
-          imageTypeName: 'Quality photo',
-          imageDate: null,
-          pohto:
-            'iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAABuUlEQVR4nO3OQQkAMAzAwIqcyMqciDxCIXACbmZfbvMHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8gdhPvkQiXuNETQ5AAAAAElFTkSuQmCC',
-          signatureId: 1,
-          signatureTypeId: 12,
-          signatureTypeName: 'Quality signature',
-          signatureDate: null,
-          signature: null,
-        }
-      }
-      return null
+    const fakeData = getFakeData(application.answers)
+    if (fakeData) {
+      return buildFakeQualityPhotoAndSignature(fakeData)
     }
 
     try {
@@ -343,24 +266,9 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps) {
-    const fakeData = getValueViaPath<DrivingLicenseFakeData>(
-      application.answers,
-      'fakeData',
-    )
-    if (fakeData?.useFakeData === YES) {
-      if (fakeData.hasThjodskraPhoto === YES) {
-        return {
-          images: [
-            {
-              biometricId: 'fakeThjodskraBiometricId',
-              content:
-                'iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAIAAACzY+a1AAABuUlEQVR4nO3OQQkAMAzAwFqdfxGdiDxCIXACbuZtbvMHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8geB/EEgfxDIHwTyB4H8QSB/EMgfBPIHgfxBIH8QyB8E8gdhPlNL4IkwXcFkAAAAAElFTkSuQmCC',
-              contentSpecification: 'FACIAL',
-            },
-          ],
-        }
-      }
-      return { images: [] }
+    const fakeData = getFakeData(application.answers)
+    if (fakeData) {
+      return buildFakeAllPhotosFromThjodskra(fakeData)
     }
 
     try {
@@ -415,16 +323,9 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     auth,
     application,
   }: TemplateApiModuleActionProps): Promise<StudentAssessment | null> {
-    const fakeData = application.answers.fakeData as
-      | DrivingLicenseFakeData
-      | undefined
-
-    if (fakeData?.useFakeData === YES) {
-      return {
-        teacherNationalId: '123456-7890',
-        teacherName: 'Bílar Kennar Ekilsson',
-        studentNationalId: '123456-7890',
-      }
+    const fakeData = getFakeData(application.answers)
+    if (fakeData) {
+      return buildFakeDrivingAssessment()
     }
 
     return await this.getDrivingAssessment(auth.authorization)
