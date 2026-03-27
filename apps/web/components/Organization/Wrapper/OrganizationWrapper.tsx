@@ -95,7 +95,6 @@ import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
-import { watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -800,18 +799,7 @@ const OrganizationChat = ({ organizationId }: { organizationId: string }) => {
 
   if (loading) return null
 
-  return (
-    <WebChat
-      webChat={data?.getWebChat}
-      renderFallback={() => {
-        if (organizationId in watsonConfig[activeLocale])
-          return (
-            <WatsonChatPanel {...watsonConfig[activeLocale][organizationId]} />
-          )
-        return null
-      }}
-    />
-  )
+  return <WebChat webChat={data?.getWebChat} />
 }
 
 const SecondaryMenu = ({
