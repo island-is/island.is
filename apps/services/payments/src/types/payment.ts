@@ -17,7 +17,7 @@ export enum PaymentFlowEventType {
   UPDATE = 'update',
   SUCCESS = 'success',
   ERROR = 'error',
-  DELETED = 'deleted',
+  DELETE = 'delete',
 }
 
 export enum RefundType {
