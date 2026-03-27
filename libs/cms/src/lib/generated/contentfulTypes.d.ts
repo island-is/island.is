@@ -205,6 +205,39 @@ export interface IAnchorPageList extends Entry<IAnchorPageListFields> {
   }
 }
 
+export interface IAnnualReportFields {
+  /** Title */
+  title: string
+
+  /** Intro */
+  intro?: Document | undefined
+
+  /** Page Identifier */
+  pageIdentifier: string
+
+  /** Organization Page */
+  organizationPage: IOrganizationPage
+}
+
+/** Annual report for a specific year, with dropdown to change the year, containing all related chapters and sections. */
+
+export interface IAnnualReport extends Entry<IAnnualReportFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'annualReport'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IAppUriFields {
   /** URI */
   uri: string
@@ -5653,6 +5686,7 @@ export type CONTENT_TYPE =
   | 'alertBanner'
   | 'anchorPage'
   | 'anchorPageList'
+  | 'annualReport'
   | 'appUri'
   | 'article'
   | 'articleCategory'
