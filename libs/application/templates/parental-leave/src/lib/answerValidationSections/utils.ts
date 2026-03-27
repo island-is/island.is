@@ -177,10 +177,16 @@ export const validatePeriod = (
       return buildError('startDate', errorMessages.periodsStartDate)
     }
 
-    // Only enforce minimumStartDate for future periods.
-    // Periods already started should not be retroactively invalidated
-    // when the actual date of birth shifts after the expected date.
-    if (startDateValue < minimumStartDate && startDateValue >= today) {
+    // Only skip the minimumStartDate check for past periods when the
+    // child is already born. This prevents retroactive invalidation when
+    // the actual date of birth shifts after the expected date.
+    // If the child is not yet born, always enforce the minimum regardless
+    // of whether the start date is in the past or future.
+    const isBornAlready = dob <= today
+    if (
+      startDateValue < minimumStartDate &&
+      (!isBornAlready || today <= startDateValue)
+    ) {
       return buildError('startDate', errorMessages.periodsStartDate)
     }
 
