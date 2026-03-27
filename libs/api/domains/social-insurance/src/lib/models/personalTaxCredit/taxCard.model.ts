@@ -11,16 +11,16 @@ export class TaxCardSummary {
   validFrom?: Date
 
   @Field(() => Date, { nullable: true })
-  validTo?: Date | null
+  validTo?: Date
 
   @Field(() => String, { nullable: true })
-  taxCardType?: string | null
+  taxCardType?: string
 }
 
 @ObjectType('SocialInsurancePersonalTaxCredit')
 export class PersonalTaxCredit {
   @Field(() => [TaxCardSummary], { nullable: true })
-  taxCards?: TaxCardSummary[] | null
+  taxCards?: TaxCardSummary[]
 
   @Field(() => Boolean, { nullable: true })
   canEdit?: boolean
@@ -29,11 +29,11 @@ export class PersonalTaxCredit {
   canDiscontinue?: boolean
 
   @Field(() => [YearWithMonths], { nullable: true })
-  registrationMonthsAndYears?: YearWithMonths[] | null
+  registrationMonthsAndYears?: YearWithMonths[]
 
   @Field(() => [YearWithMonths], { nullable: true })
-  discontinuingMonthsAndYears?: YearWithMonths[] | null
+  discontinuingMonthsAndYears?: YearWithMonths[]
 
   @Field(() => SpousalTaxCardEligibility, { nullable: true })
-  spouseEligibility?: SpousalTaxCardEligibility | null
+  spouseEligibility?: SpousalTaxCardEligibility
 }

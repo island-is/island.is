@@ -6,6 +6,11 @@ import {
   SocialInsuranceAdministrationIncomePlanService,
   SocialInsuranceAdministrationPaymentPlanService,
   SocialInsuranceAdministrationPensionCalculatorService,
+  SocialInsuranceAdministrationPersonalTaxCreditService,
+  TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
+  TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
+  TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
+  TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageDueToDeathInput,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -22,6 +27,7 @@ import { IncomePlan } from './models/income/incomePlan.model'
 import { IncomePlanEligbility } from './models/income/incomePlanEligibility.model'
 import { PaymentGroup } from './models/payments/paymentGroup.model'
 import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
+import { PersonalTaxCredit } from './models/personalTaxCredit/taxCard.model'
 import { PaymentPlan } from './models/payments/paymentPlan.model'
 import { Payments } from './models/payments/payments.model'
 import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
@@ -30,6 +36,7 @@ import {
   getPensionCalculationHighlightedItems,
   groupPensionCalculationItems,
   mapPensionCalculationInput,
+  toYearWithMonths,
 } from './utils'
 import { Locale } from '@island.is/shared/types'
 import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionCertificate'
@@ -46,6 +53,7 @@ export class SocialInsuranceService {
     private readonly pensionCalculatorService: SocialInsuranceAdministrationPensionCalculatorService,
     private readonly incomePlanService: SocialInsuranceAdministrationIncomePlanService,
     private readonly paymentService: SocialInsuranceAdministrationPaymentPlanService,
+    private readonly personalTaxCreditClient: SocialInsuranceAdministrationPersonalTaxCreditService,
   ) {}
 
   async getPayments(user: User): Promise<Payments | undefined> {
@@ -241,5 +249,81 @@ export class SocialInsuranceService {
       code: data.value,
       name: data.label,
     }))
+  }
+
+  async getPersonalTaxCredit(user: User): Promise<PersonalTaxCredit | null> {
+    const [taxCardsResult, spouseEligibility] = await Promise.all([
+      this.personalTaxCreditClient.getTaxCards(user),
+      this.personalTaxCreditClient.getSpouseDeceasedTaxAllowanceValidMonthsAndYears(
+        user,
+      ),
+    ])
+
+    const registrationMonthsAndYears = taxCardsResult?.canEditPersonalAllowance
+      ? undefined
+      : await this.personalTaxCreditClient.getTaxCardMonthsAndYears(user)
+
+    const discontinuingMonthsAndYears =
+      taxCardsResult?.canDiscontinuePersonalAllowance
+        ? await this.personalTaxCreditClient.getTaxCardMonthsAndYearsWhenDiscontinuing(
+            user,
+          )
+        : undefined
+
+    return {
+      taxCards: taxCardsResult?.taxCards?.map((tc) => ({
+        ...tc,
+        validFrom: tc.validFrom ?? undefined,
+        validTo: tc.validTo ?? undefined,
+        taxCardType: tc.taxCardType ?? undefined,
+        percentage: tc.percentage ?? undefined,
+      })),
+      canEdit: taxCardsResult?.canEditPersonalAllowance,
+      canDiscontinue: taxCardsResult?.canDiscontinuePersonalAllowance,
+      registrationMonthsAndYears: toYearWithMonths(registrationMonthsAndYears),
+      discontinuingMonthsAndYears: toYearWithMonths(
+        discontinuingMonthsAndYears,
+      ),
+      spouseEligibility: spouseEligibility
+        ? {
+            ...spouseEligibility,
+            allowedYearMonths: toYearWithMonths(
+              spouseEligibility.allowedYearMonths,
+            ),
+          }
+        : undefined,
+    }
+  }
+
+  async setTaxCardAllowance(
+    user: User,
+    input: TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.setTaxCardAllowance(user, input)
+  }
+
+  async editTaxCardAllowance(
+    user: User,
+    input: TrWebApiServicesCommonClientsModelsEditPersonalTaxAllowanceInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.editTaxCardAllowance(user, input)
+  }
+
+  async discontinueTaxCardAllowance(
+    user: User,
+    input: TrWebApiServicesCommonClientsModelsDiscontinuePersonalTaxUsageInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.discontinueTaxCardAllowance(user, input)
+  }
+
+  async setSpouseTaxCard(user: User): Promise<void> {
+    return this.personalTaxCreditClient.setSpouseTaxCard(user, {})
+  }
+
+  async setSpouseTaxCardDueToDeath(
+    user: User,
+    input: TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageDueToDeathInput,
+  ): Promise<void> {
+    return this.personalTaxCreditClient.setSpouseTaxCardDueToDeath(user, input)
   }
 }

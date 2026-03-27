@@ -6,5 +6,5 @@ export class YearWithMonths {
   year?: number
 
   @Field(() => [Int], { nullable: true })
-  months?: number[] | null
+  months?: number[]
 }
