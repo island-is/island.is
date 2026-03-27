@@ -3,11 +3,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { coreErrorMessages } from '@island.is/application/core'
 
-import {
-  StudentAssessment,
-  DrivingLicense,
-  HasQualitySignature,
-} from './types'
+import { StudentAssessment, DrivingLicense, HasQualitySignature } from './types'
 import {
   DrivingLicenseBookService,
   Organization as DrivingLicenseBookSchool,
