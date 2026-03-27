@@ -42,6 +42,20 @@ import {
 import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
 import { OJOIApplicationAdvertTemplateResponse } from '../models/applicationAdvertTemplate.response'
 import { isDefined } from '@island.is/shared/utils'
+import { RegulationsService } from '@island.is/clients/regulations'
+import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
+import { RegulationViewTypes } from '@island.is/regulations/web'
+import { ensureRegName, nameToSlug } from '@island.is/regulations'
+import type { Year, ISODate } from '@island.is/regulations'
+import { OJOIAGetRegulationsSearchInput } from '../models/getRegulationsSearch.input'
+import { OJOIAGetRegulationFromApiInput } from '../models/getRegulationFromApi.input'
+import {
+  OJOIARegulationOptionSearchResponse,
+  OJOIADraftImpactsResponse,
+  OJOIALawChaptersResponse,
+  OJOIAMinistriesResponse,
+  OJOIACreateDraftResponse,
+} from '../models/regulation.response'
 import { convertDateToDaysAgo } from './utils'
 
 const LOG_CATEGORY = 'official-journal-of-iceland-application'
@@ -52,6 +66,8 @@ export class OfficialJournalOfIcelandApplicationService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private readonly ojoiApplicationService: OfficialJournalOfIcelandApplicationClientService,
+    private readonly regulationsService: RegulationsService,
+    private readonly regulationsAdminClientService: RegulationsAdminClientService,
   ) {}
 
   async getComments(
@@ -389,6 +405,317 @@ export class OfficialJournalOfIcelandApplicationService {
       })
 
       throw error
+    }
+  }
+
+  // ---- Regulation-related methods ----
+
+  async getRegulationsOptionSearch(
+    input: OJOIAGetRegulationsSearchInput,
+  ): Promise<OJOIARegulationOptionSearchResponse | null> {
+    const results = await this.regulationsService.getRegulationsOptionSearch(
+      input.q,
+      input.rn,
+      input.year as Year | undefined,
+      input.yearTo as Year | undefined,
+      input.ch,
+      input.iA,
+      input.iR,
+      input.page,
+    )
+
+    if (!results) {
+      return null
+    }
+
+    return { regulations: results }
+  }
+
+  async getRegulationFromApi(input: OJOIAGetRegulationFromApiInput) {
+    const name = ensureRegName(input.regulation)
+    if (!name) {
+      return null
+    }
+
+    return this.regulationsService.getRegulationOnDate(
+      input.date ? RegulationViewTypes.d : RegulationViewTypes.current,
+      nameToSlug(name),
+      input.date as ISODate | undefined,
+    )
+  }
+
+  async getRegulationImpactsByName(
+    regulation: string,
+    user: User,
+  ): Promise<OJOIADraftImpactsResponse | null> {
+    const name = ensureRegName(regulation)
+    if (!name) {
+      return null
+    }
+
+    const impacts = await this.regulationsAdminClientService.getImpactsByName(
+      nameToSlug(name),
+      user,
+    )
+
+    if (!impacts) {
+      return null
+    }
+
+    return {
+      changes: impacts.filter((i) => i.type === 'amend'),
+      cancellations: impacts.filter((i) => i.type === 'repeal'),
+    }
+  }
+
+  async getLawChapters(): Promise<OJOIALawChaptersResponse | null> {
+    const result = await this.regulationsService.getRegulationsLawChapters(
+      false,
+    )
+
+    if (!result) {
+      return null
+    }
+
+    return { lawChapters: result }
+  }
+
+  async getMinistries(): Promise<OJOIAMinistriesResponse | null> {
+    const result = await this.regulationsService.getRegulationsMinistries()
+
+    if (!result) {
+      return null
+    }
+
+    return { ministries: result }
+  }
+
+  async createDraftRegulation(
+    type: string,
+    user: User,
+  ): Promise<OJOIACreateDraftResponse | null> {
+    const draft = await this.regulationsAdminClientService.create(user, {
+      type: type || 'base',
+    })
+
+    if (!draft) {
+      this.logger.error('Failed to create regulation draft', {
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    const draftId =
+      typeof draft === 'object' && 'id' in draft
+        ? (draft as { id: string }).id
+        : String(draft)
+
+    return { id: draftId }
+  }
+
+  async getDraftRegulation(draftId: string, user: User) {
+    try {
+      return await this.regulationsAdminClientService.getDraftRegulation(
+        draftId,
+        user,
+      )
+    } catch (error) {
+      this.logger.error('Failed to get regulation draft', {
+        category: LOG_CATEGORY,
+        draftId,
+        error,
+      })
+      return null
+    }
+  }
+
+  async updateDraftRegulation(
+    draftId: string,
+    body: {
+      title?: string
+      text?: string
+      appendixes?: Array<{ title: string; text: string }>
+      draftingNotes?: string
+      idealPublishDate?: string
+      effectiveDate?: string
+      ministry?: string
+      signatureDate?: string
+      signatureText?: string
+      lawChapters?: string[]
+      fastTrack?: boolean
+      type?: string
+      signedDocumentUrl?: string
+    },
+    user: User,
+  ) {
+    try {
+      await this.regulationsAdminClientService.updateById(
+        draftId,
+        {
+          draftingStatus: 'draft',
+          title: body.title ?? '',
+          text: body.text ?? '',
+          draftingNotes: body.draftingNotes ?? '',
+          appendixes: body.appendixes,
+          idealPublishDate: body.idealPublishDate,
+          effectiveDate: body.effectiveDate,
+          ministry: body.ministry,
+          signatureDate: body.signatureDate,
+          signatureText: body.signatureText,
+          lawChapters: body.lawChapters,
+          fastTrack: body.fastTrack,
+          type: body.type,
+          signedDocumentUrl: body.signedDocumentUrl,
+        },
+        user,
+      )
+      return true
+    } catch (error) {
+      this.logger.error('Failed to update regulation draft', {
+        category: LOG_CATEGORY,
+        draftId,
+        error,
+      })
+      return false
+    }
+  }
+
+  async createDraftImpact(
+    input: {
+      draftId: string
+      type: 'amend' | 'repeal'
+      regulation: string
+      date: string
+      title?: string
+      text?: string
+      appendixes?: Array<{ title: string; text: string }>
+      comments?: string
+      diff?: string
+    },
+    user: User,
+  ): Promise<OJOIACreateDraftResponse | null> {
+    try {
+      if (input.type === 'amend') {
+        const result =
+          await this.regulationsAdminClientService.createDraftRegulationChange(
+            {
+              changingId: input.draftId,
+              regulation: input.regulation,
+              date: input.date,
+              title: input.title ?? '',
+              text: input.text ?? '',
+              appendixes: input.appendixes,
+              comments: input.comments,
+              diff: input.diff,
+            },
+            user,
+          )
+        const id =
+          result && typeof result === 'object' && 'id' in result
+            ? (result as { id: string }).id
+            : undefined
+        return id ? { id } : null
+      } else {
+        const result =
+          await this.regulationsAdminClientService.createDraftRegulationCancel(
+            {
+              changingId: input.draftId,
+              regulation: input.regulation,
+              date: input.date,
+            },
+            user,
+          )
+        const id =
+          result && typeof result === 'object' && 'id' in result
+            ? (result as { id: string }).id
+            : undefined
+        return id ? { id } : null
+      }
+    } catch (error) {
+      this.logger.error('Failed to create draft impact', {
+        category: LOG_CATEGORY,
+        draftId: input.draftId,
+        type: input.type,
+        error,
+      })
+      return null
+    }
+  }
+
+  async updateDraftImpact(
+    input: {
+      impactId: string
+      type: 'amend' | 'repeal'
+      date?: string
+      title?: string
+      text?: string
+      appendixes?: Array<{ title: string; text: string }>
+      comments?: string
+      diff?: string
+    },
+    user: User,
+  ): Promise<boolean> {
+    try {
+      if (input.type === 'amend') {
+        await this.regulationsAdminClientService.updateDraftRegulationChange(
+          {
+            date: input.date,
+            title: input.title,
+            text: input.text,
+            appendixes: input.appendixes,
+            comments: input.comments,
+            diff: input.diff,
+          },
+          input.impactId,
+          user,
+        )
+      } else {
+        await this.regulationsAdminClientService.updateDraftRegulationCancel(
+          {
+            id: input.impactId,
+            date: input.date,
+          },
+          user,
+        )
+      }
+      return true
+    } catch (error) {
+      this.logger.error('Failed to update draft impact', {
+        category: LOG_CATEGORY,
+        impactId: input.impactId,
+        type: input.type,
+        error,
+      })
+      return false
+    }
+  }
+
+  async deleteDraftImpact(
+    impactId: string,
+    type: 'amend' | 'repeal',
+    user: User,
+  ): Promise<boolean> {
+    try {
+      if (type === 'amend') {
+        await this.regulationsAdminClientService.deleteDraftRegulationChange(
+          impactId,
+          user,
+        )
+      } else {
+        await this.regulationsAdminClientService.deleteDraftRegulationCancel(
+          { id: impactId },
+          user,
+        )
+      }
+      return true
+    } catch (error) {
+      this.logger.error('Failed to delete draft impact', {
+        category: LOG_CATEGORY,
+        impactId,
+        type,
+        error,
+      })
+      return false
     }
   }
 }

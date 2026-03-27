@@ -45,20 +45,34 @@ export const prosecutionRequestCasesActiveWhereOptions = (
 export const prosecutionRequestCasesAppealedWhereOptions = (
   user: User,
 ): CaseWhereOptions => ({
+  includes: {
+    appealCase: {
+      attributes: [],
+      required: true,
+      where: {
+        appeal_state: [CaseAppealState.APPEALED, CaseAppealState.RECEIVED],
+      },
+    },
+  },
   where: {
     ...prosecutionRequestCasesAccessWhereOptions(user),
     state: completedRequestCaseStates,
-    appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.APPEALED],
   },
 })
 
 export const prosecutionRequestCasesCompletedWhereOptions = (
   user: User,
 ): CaseWhereOptions => ({
+  includes: {
+    appealCase: {
+      attributes: [],
+      required: false,
+    },
+  },
   where: {
     ...prosecutionRequestCasesAccessWhereOptions(user),
     state: completedRequestCaseStates,
-    appeal_state: {
+    '$appealCase.appeal_state$': {
       [Op.or]: [
         null,
         CaseAppealState.RECEIVED,

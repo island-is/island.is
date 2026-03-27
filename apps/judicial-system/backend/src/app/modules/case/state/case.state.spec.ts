@@ -53,7 +53,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -74,7 +74,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -101,7 +101,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -191,7 +191,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -255,7 +255,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -345,7 +345,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -366,7 +366,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -393,7 +393,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -457,7 +457,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -523,7 +523,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -544,7 +544,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -571,7 +571,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -635,7 +635,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -703,7 +703,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -754,7 +754,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -781,7 +781,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -832,7 +832,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -859,7 +859,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -910,7 +910,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -937,7 +937,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -1011,7 +1011,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -1032,7 +1032,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -1059,7 +1059,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -1176,7 +1176,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -1203,7 +1203,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -1255,7 +1255,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               {
@@ -1282,7 +1282,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 {
@@ -1315,7 +1315,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 {
@@ -1376,7 +1376,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -1401,7 +1401,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -1427,7 +1427,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -1479,7 +1479,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -1502,7 +1502,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -1528,7 +1528,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -1583,7 +1583,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -1608,7 +1608,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -1634,7 +1634,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,
@@ -1686,7 +1686,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -1709,7 +1709,7 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 state: fromState,
-                appealState: fromAppealState,
+                appealCase: { appealState: fromAppealState },
                 type,
               } as Case,
               { id: uuid() } as User,
@@ -1735,7 +1735,7 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   state: fromState,
-                  appealState: fromAppealState,
+                  appealCase: { appealState: fromAppealState },
                   type,
                 } as Case,
                 { id: uuid() } as User,

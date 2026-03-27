@@ -169,19 +169,19 @@ const canAppealsCourtUserAccessCase = (theCase: Case): boolean => {
 
   // Check appeal state access
   if (
-    !theCase.appealState ||
+    !theCase.appealCase?.appealState ||
     ![
       CaseAppealState.RECEIVED,
       CaseAppealState.COMPLETED,
       CaseAppealState.WITHDRAWN,
-    ].includes(theCase.appealState)
+    ].includes(theCase.appealCase.appealState)
   ) {
     return false
   }
 
   if (
-    theCase.appealState === CaseAppealState.WITHDRAWN &&
-    !theCase.appealReceivedByCourtDate
+    theCase.appealCase?.appealState === CaseAppealState.WITHDRAWN &&
+    !theCase.appealCase?.appealReceivedByCourtDate
   ) {
     return false
   }
