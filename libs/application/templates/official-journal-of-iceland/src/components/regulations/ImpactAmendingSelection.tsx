@@ -77,8 +77,7 @@ export const ImpactAmendingSelection = ({
       ? [
           {
             value: '',
-            label:
-              f(regulation.impacts.labels.baseNotFound) + ' ' + value,
+            label: f(regulation.impacts.labels.baseNotFound) + ' ' + value,
             disabled: true,
           },
         ]
