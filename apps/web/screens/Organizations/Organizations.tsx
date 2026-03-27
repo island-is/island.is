@@ -6,12 +6,13 @@ import {
   Box,
   Breadcrumbs,
   ColorSchemeContext,
+  FilterInput,
   GridColumn,
   GridContainer,
   GridRow,
   Pagination,
+  RadioButton,
   ResponsiveSpace,
-  Select,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -90,8 +91,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
 
   const titleSortOptions = useMemo<TitleSortOption[]>(
     () => [
-      { label: n('sortByTitleAscending', 'Heiti (a-ö)'), value: 'asc' },
-      { label: n('sortByTitleDescending', 'Heiti (ö-a)'), value: 'desc' },
+      { label: n('sortByTitleAscending', 'Heiti (A - Ö)'), value: 'asc' },
+      { label: n('sortByTitleDescending', 'Heiti (Ö - A)'), value: 'desc' },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
@@ -99,6 +100,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
 
   const [selectedTitleSortOption, setSelectedTitleSortOption] =
     useState<TitleSortOption>(titleSortOptions[0])
+
+  const [showOnlyIslandIs, setShowOnlyIslandIs] = useState<boolean>(true)
 
   const organizationsItems = useMemo(() => {
     const items = [...organizations.items]
@@ -115,23 +118,44 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     [tags],
   )
 
-  const categories: CategoriesProps[] = [
-    {
-      id: 'raduneyti',
-      label: n('ministries', 'Ráðuneyti'),
-      selected: filter.raduneyti,
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      filters: tagsItems.map((f) => ({
-        value: f.title,
-        label: f.title,
-      })),
-    },
-  ]
+  const categories: CategoriesProps[] = useMemo(
+    () => [
+      {
+        id: 'sorting',
+        label: n('orderBy', 'Raða eftir'),
+        selected: [selectedTitleSortOption.value],
+        singleOption: true,
+        filters: titleSortOptions.map((o) => ({
+          value: o.value,
+          label: o.label,
+        })),
+      },
+      {
+        id: 'raduneyti',
+        label: n('ministries', 'Ráðuneyti'),
+        selected: filter.raduneyti,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        filters: tagsItems.map((f) => ({
+          value: f.title,
+          label: f.title,
+        })),
+      },
+    ],
+    [selectedTitleSortOption, filter.raduneyti, titleSortOptions, tagsItems, n],
+  )
+
+  const islandIsItems = useMemo(
+    () =>
+      showOnlyIslandIs
+        ? organizationsItems.filter((x) => x.hasALandingPage)
+        : organizationsItems,
+    [showOnlyIslandIs, organizationsItems],
+  )
 
   const hasFilters = filter.raduneyti.length || filter.input
   const filteredItems = hasFilters
-    ? organizationsItems.filter(
+    ? islandIsItems.filter(
         (x) =>
           (filter.input &&
             x.title
@@ -142,7 +166,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
             x.tag.find((t) => t.title === title),
           ),
       )
-    : organizationsItems
+    : islandIsItems
 
   const count = filteredItems.length
   const totalPages = Math.ceil(count / CARDS_PER_PAGE)
@@ -162,21 +186,22 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     'Stofnanir Íslenska Ríkisins',
   )} | Ísland.is`
 
+  const inputPlaceholder = n('filterBySearchQuery', 'Sía eftir leitarorði')
+
   const filterLabels: FilterLabels = {
     labelClearAll: n('filterClearAll', 'Hreinsa allar síur'),
     labelClear: n('filterClear', 'Hreinsa síu'),
-    labelOpen: n('filterOpen', 'Sía niðurstöður'),
+    labelOpen: n('filterOpen', 'Sía'),
     labelClose: n('filterClose', 'Loka síu'),
     labelTitle: n('filterOrganization', 'Sía stofnanir'),
     labelResult: n('showResults', 'Sýna niðurstöður'),
-    inputPlaceholder: n('filterBySearchQuery', 'Sía eftir leitarorði'),
   }
 
   return (
     <>
       <HeadWithSocialSharing title={metaTitle} />
-      <Box paddingTop={[2, 2, 2, 10]} paddingBottom={[4, 4, 4, 10]}>
-        <GridContainer>
+      <Box paddingTop={[2, 2, 2, 8]} paddingBottom={[4, 4, 4, 8]}>
+        <GridContainer className={styles.listContainer}>
           <GridRow>
             <GridColumn
               offset={['0', '0', '0', '1/12']}
@@ -205,8 +230,14 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     )
                   }}
                 />
-                <Text variant="h1" as="h1">
+                <Text variant="h1" as="h1" className={styles.heading}>
                   {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
+                </Text>
+                <Text variant="intro" className={styles.description}>
+                  {n(
+                    'stofnanirDescription',
+                    'Listi yfir opinbera aðila og sveitarfélög ásamt tengiliðaupplýsingum og þjónustuyfirlit.',
+                  )}
                 </Text>
               </Stack>
             </GridColumn>
@@ -216,36 +247,72 @@ const OrganizationPage: Screen<OrganizationProps> = ({
 
       <Box background="blue100" display="inlineBlock" width="full">
         <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-          <GridContainer id="organizations-list">
-            <Box marginY={[3, 3, 6]}>
-              <FilterMenu
-                {...filterLabels}
-                categories={categories}
-                filter={filter}
-                setFilter={setFilter}
-                resultCount={filteredItems.length}
-                onBeforeUpdate={() => goToPage(1, false)}
-                align="right"
-                variant={isMobile ? 'dialog' : 'popover'}
-              />
-              <Box className={styles.orderByContainer}>
-                <Select
-                  label={n('orderBy', 'Raða eftir')}
-                  name="sort-option-select"
-                  size="xs"
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  onChange={(option) => {
-                    setSelectedTitleSortOption(option as TitleSortOption)
-                  }}
-                  value={selectedTitleSortOption}
-                  options={titleSortOptions}
-                />
+          <GridContainer
+            id="organizations-list"
+            className={styles.listContainer}
+          >
+            <Box paddingTop={[4, 4, 8]} paddingBottom={[5, 5, 8]}>
+              <Box className={styles.filterBar}>
+                <Box className={styles.searchContainer}>
+                  <FilterInput
+                    name="filter-input"
+                    placeholder={inputPlaceholder}
+                    value={filter.input}
+                    onChange={(value) => {
+                      setFilter({ ...filter, input: value })
+                      goToPage(1, false)
+                    }}
+                    backgroundColor="white"
+                  />
+                </Box>
+                <Box className={styles.radioGroup}>
+                  <RadioButton
+                    name="organization-filter-type"
+                    id="organization-filter-island-is"
+                    label={n('websitesOnIslandIs', 'Vefir á Ísland.is')}
+                    checked={showOnlyIslandIs}
+                    onChange={() => {
+                      setShowOnlyIslandIs(true)
+                      goToPage(1, false)
+                    }}
+                  />
+                  <RadioButton
+                    name="organization-filter-type"
+                    id="organization-filter-all"
+                    label={n('allPublicEntities', 'Allir opinberir aðilar')}
+                    checked={!showOnlyIslandIs}
+                    onChange={() => {
+                      setShowOnlyIslandIs(false)
+                      goToPage(1, false)
+                    }}
+                  />
+                </Box>
+                <Box className={styles.filterButton}>
+                  <FilterMenu
+                    {...filterLabels}
+                    categories={categories}
+                    filter={filter}
+                    setFilter={setFilter}
+                    resultCount={filteredItems.length}
+                    onBeforeUpdate={() => goToPage(1, false)}
+                    onSortChange={(value) => {
+                      const option = titleSortOptions.find(
+                        (o) => o.value === value,
+                      )
+                      if (option) setSelectedTitleSortOption(option)
+                    }}
+                    onSortClear={() =>
+                      setSelectedTitleSortOption(titleSortOptions[0])
+                    }
+                    align="right"
+                    variant={isMobile ? 'dialog' : 'popover'}
+                  />
+                </Box>
               </Box>
             </Box>
 
             <GridRow>
-              {visibleItems.map((organization, index) => {
+              {visibleItems.map((organization) => {
                 const tags =
                   organization?.tag &&
                   organization.tag.map((x) => ({
@@ -255,7 +322,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
 
                 return (
                   <GridColumn
-                    key={index}
+                    key={organization.slug}
                     span={['12/12', '6/12', '6/12', '4/12']}
                     paddingBottom={verticalSpacing}
                   >

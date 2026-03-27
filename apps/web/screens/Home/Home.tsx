@@ -1,11 +1,13 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { Locale } from '@island.is/shared/types'
 import {
   CategoryItems,
   DigitalIcelandLatestNewsSlice,
   LifeEventsSection,
+  OrganizationsSection,
   SearchSection,
   WatsonChatPanel,
 } from '@island.is/web/components'
@@ -16,10 +18,12 @@ import {
   GetArticleCategoriesQuery,
   GetFrontpageQuery,
   GetNewsQuery,
+  GetOrganizationsQuery,
   LifeEventPage,
   QueryGetArticleCategoriesArgs,
   QueryGetFrontpageArgs,
   QueryGetNewsArgs,
+  QueryGetOrganizationsArgs,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
@@ -28,37 +32,88 @@ import {
   GET_CATEGORIES_QUERY,
   GET_FRONTPAGE_QUERY,
   GET_NEWS_QUERY,
+  GET_ORGANIZATIONS_QUERY,
 } from '@island.is/web/screens/queries'
 import { Screen } from '@island.is/web/types'
 
+import { getOrganizationLink } from '../../utils/organization'
 import { watsonConfig } from './config'
+
+const LIFE_EVENTS_INDICATOR = {
+  outerColor: theme.color.purple200,
+  activeColor: theme.color.purple400,
+  inactiveColor: theme.color.white,
+}
+
+const CATEGORIES_INDICATOR = {
+  outerColor: theme.color.blue200,
+  activeColor: theme.color.blue400,
+  inactiveColor: theme.color.blue300,
+}
+
+const ORGANIZATIONS_INDICATOR = {
+  outerColor: theme.color.overlay,
+  activeColor: theme.color.blue400,
+  inactiveColor: theme.color.blue300,
+}
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
   news: GetNewsQuery['getNews']['items']
+  organizations: GetOrganizationsQuery['getOrganizations']['items']
   page?: GetFrontpageQuery['getFrontpage']
   locale: Locale
 }
 
-const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
+const Home: Screen<HomeProps> = ({
+  categories,
+  news,
+  organizations,
+  page,
+  locale,
+}) => {
   const namespace = JSON.parse(page?.namespace?.fields || '{}')
   const { activeLocale } = useI18n()
   const { globalNamespace } = useContext(GlobalContext)
   const n = useNamespace(namespace)
   const gn = useNamespace(globalNamespace)
 
+  const organizationItems = useMemo(
+    () =>
+      organizations
+        .filter(
+          (org) => org.showsUpOnTheOrganizationsPage && org.hasALandingPage,
+        )
+        .map((org) => ({
+          title: org.title,
+          href: getOrganizationLink(
+            {
+              hasALandingPage: org.hasALandingPage ?? undefined,
+              slug: org.slug,
+              link: org.link ?? undefined,
+            },
+            locale,
+          ),
+          logoUrl: org.logo?.url,
+          logoAlt: org.logo?.title,
+          tags: org.tag.map((t) => ({ id: t.id, title: t.title })),
+        })),
+    [organizations, locale],
+  )
+
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
   }
 
   return (
-    <Box id="main-content" width="full" overflow="hidden">
+    // overflow: clip prevents scroll container creation unlike overflow: hidden
+    <Box id="main-content" width="full" style={{ overflow: 'clip' }}>
       <Box
         component="section"
         aria-labelledby="search-section-title"
         borderBottomWidth="standard"
         borderStyle="solid"
-        borderColor="blue200"
+        borderColor="purple100"
       >
         <SearchSection
           headingId="search-section-title"
@@ -79,10 +134,10 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
       </Box>
       <Box
         component="section"
-        paddingTop={6}
-        paddingBottom={3}
+        paddingTop={[6, 6, 8]}
+        paddingBottom={[3, 3, 8]}
         position="relative"
-        background="white"
+        background="purple100"
         aria-labelledby="life-events-title"
       >
         <LifeEventsSection
@@ -102,12 +157,14 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
             'LifeEventsCardsButtonTitle',
             activeLocale === 'is' ? 'Skoða lífsviðburð' : 'See life event',
           )}
+          whiteCards
+          indicator={LIFE_EVENTS_INDICATOR}
         />
       </Box>
       <Box
         component="section"
         paddingTop={[5, 5, 8]}
-        paddingBottom={[2, 2, 5]}
+        paddingBottom={[2, 2, 8]}
         background="blue100"
         aria-labelledby="categories-title"
       >
@@ -118,6 +175,43 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
           )}
           headingId="categories-title"
           items={categories}
+          viewCategoryText={n(
+            'viewCategoryLink',
+            activeLocale === 'is' ? 'Skoða þjónustuflokk' : 'View category',
+          )}
+          seeMoreText={n(
+            'seeAllCategories',
+            activeLocale === 'is'
+              ? 'Skoða alla þjónustuflokka'
+              : 'See all categories',
+          )}
+          seeMoreHref="/flokkur"
+          indicator={CATEGORIES_INDICATOR}
+        />
+      </Box>
+      <Box
+        component="section"
+        paddingTop={[5, 5, 8]}
+        paddingBottom={[2, 2, 8]}
+        aria-labelledby="organizations-title"
+      >
+        <OrganizationsSection
+          heading={n(
+            'organizationsTitle',
+            activeLocale === 'is'
+              ? 'Stofnanir á Ísland.is'
+              : 'Organizations on Ísland.is',
+          )}
+          headingId="organizations-title"
+          items={organizationItems}
+          seeMoreText={n(
+            'seeAllOrganizations',
+            activeLocale === 'is'
+              ? 'Skoða allar stofnanir'
+              : 'See all organizations',
+          )}
+          seeMoreHref="/s"
+          indicator={ORGANIZATIONS_INDICATOR}
         />
       </Box>
       <Box paddingTop={[8, 8, 6]}>
@@ -160,6 +254,9 @@ Home.getProps = async ({ apolloClient, locale }) => {
     {
       data: { getFrontpage },
     },
+    {
+      data: { getOrganizations },
+    },
   ] = await Promise.all([
     apolloClient.query<
       GetArticleCategoriesQuery,
@@ -191,6 +288,14 @@ Home.getProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
+    apolloClient.query<GetOrganizationsQuery, QueryGetOrganizationsArgs>({
+      query: GET_ORGANIZATIONS_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
   ])
 
   return {
@@ -203,6 +308,7 @@ Home.getProps = async ({ apolloClient, locale }) => {
           ) ?? [],
       })) ?? [],
     categories: getArticleCategories,
+    organizations: getOrganizations?.items ?? [],
     page: getFrontpage,
     showSearchInHeader: false,
     locale: locale as Locale,
