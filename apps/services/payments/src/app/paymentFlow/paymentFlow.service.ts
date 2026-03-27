@@ -1071,7 +1071,7 @@ export class PaymentFlowService {
     if (paymentFlowDetails.onUpdateUrl) {
       await this.logPaymentFlowUpdate({
         paymentFlowId: id,
-        type: 'deleted',
+        type: 'delete',
         occurredAt: new Date(),
         paymentMethod: 'system' as PaymentMethod,
         reason: 'deleted_admin', // TODO: connect with systemId when we have machine clients?
