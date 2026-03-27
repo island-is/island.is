@@ -23,6 +23,7 @@ export const useNavigation = (
             routes,
             dynamicRouteArray: dynamicRouteArray ?? [],
             currentLocationPath: pathname,
+            userInfo,
           }),
         ),
       }

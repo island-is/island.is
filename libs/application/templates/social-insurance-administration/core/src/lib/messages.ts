@@ -484,9 +484,21 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       description:
         '\n* On the next page you will find your proposed income plan. There you can edit amounts and add income categories.\n* You must submit your total pre-tax income in your income plan.\n* For couples, their total income must be recorded in the income plan, as their income is considered shared.\n* If a spouse is receiving disability, his or her benefits will also be recalculated if there is a change in income.\n* Income may be recorded in the month in which it is earned. The income is then calculated only for that month. Attention, it is necessary to select the option of requesting a monthly distribution of income in the income plan.\n* Salary / pension payments must be recorded in the currency in which they are paid.\n* It is the responsibility of the applicant that the income plan is correct and that the necessary information for determining the correct payments is available.',
     },
+    descriptionInstructions: {
+      id: 'sia.application:income.plan.description.instructions#markdown',
+      defaultMessage:
+        'Leiðbeiningar um skráningu tekjuáætlunar\n* Á næstu síðu er að finna tillögu að tekjuáætlun. Þar getur þú breytt upphæðum og bætt við tekjum.\n* Skrá skal heildartekjur fyrir skatt í tekjuáætlun.\n* Fjármagnstekjur eru sameignlegar hjá hjónum/sambúðarfólki og skal skrá heildar fjármagnstekjur hjóna/sambúðarfólks í tekjuáætlun.\n* Ef maki er á lífeyri verða greiðslur hans einnig endurreiknaðar ef fjármagnstekjum er breytt.\n* Heimilt er að skrá atvinnutekjur á þá mánuði sem þeirra er aflað. Reiknast þá þær atvinnutekjur eingöngu í þeim mánuði. Vakin er athygli á að það þarf að haka sérstaklega við þann kost að óska eftir mánaðarskiptingu atvinnutekna í tekjuáætlun.\n* Laun / lífeyrisgreiðslur skal skrá í þeim gjaldmiðli sem þau eru greidd.\n* Það er á ábyrgð umsækjanda að tekjuáætlun sé rétt og að nauðsynlegar upplýsingar liggi fyrir til að hægt sé að ákvarða réttar greiðslur.',
+      description:
+        'Instructions on filling out your income plan\n* On the next page you will find your proposed income plan. There you can edit amounts and add income categories.\n* You must submit your total pre-tax income in your income plan.\n* For couples, their total income must be recorded in the income plan, as their income is considered shared.\n* If a spouse is receiving disability, his or her benefits will also be recalculated if there is a change in income.\n* Income may be recorded in the month in which it is earned. The income is then calculated only for that month. Attention, it is necessary to select the option of requesting a monthly distribution of income in the income plan.\n* Salary / pension payments must be recorded in the currency in which they are paid.\n* It is the responsibility of the applicant that the income plan is correct and that the necessary information for determining the correct payments is available.',
+    },
   }),
 
   incomePlan: defineMessages({
+    incomePlanInstructionsSubSectionTitle: {
+      id: 'sia.application:income.plan.instructions.sub.section.title',
+      defaultMessage: 'Tekjuáætlun - Leiðbeiningar',
+      description: 'Income Plan - Instructions',
+    },
     subSectionTitle: {
       id: 'sia.application:income.plan.sub.section.title',
       defaultMessage: 'Tekjuáætlun',
@@ -595,6 +607,20 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       id: 'sia.application:income.plan.select.currency',
       defaultMessage: 'Veldu gjaldmiðil',
       description: 'Select currency',
+    },
+    alertMessage: {
+      id: 'sia.application:income.plan.alert.message',
+      defaultMessage:
+        'Þú hefur ekki sett inn neina upphæð í tekjuáætlun. Ertu viss um að tekjuáætlunin sem þú sért að senda inn sé rétt? Röng tekjuáætlun getur leitt til kröfu sem þú þarft að greiða.',
+      description:
+        'You have not entered any amount in the income plan. Are you sure the income plan you are submitting is correct? An incorrect income plan may result in a claim that you will have to pay.',
+    },
+    noOtherIncomeConfirmation: {
+      id: 'sia.application:income.plan.no.other.income.confirmation',
+      defaultMessage:
+        'Ertu viss um að þú sért ekki með neinar tekjur frá öðrum en Tryggingastofnun á árinu?',
+      description:
+        'Are you sure you do not have any income from sources other than the Social Insurance Administration during the year?',
     },
   }),
 

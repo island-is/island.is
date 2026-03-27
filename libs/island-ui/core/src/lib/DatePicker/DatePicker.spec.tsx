@@ -141,9 +141,10 @@ describe('DatePicker', () => {
       expect(input?.value).toContain('01/10/2020')
       expect(input?.value).toContain('15/10/2020')
 
-      // Open calendar and verify range highlighting
-      if (input) {
-        fireEvent.click(input)
+      // Open calendar via the icon button (range mode requires the icon button to open)
+      const openButton = container.querySelector('[aria-label="Open calendar"]')
+      if (openButton) {
+        fireEvent.click(openButton)
       }
 
       // Check for range-specific CSS classes
@@ -170,9 +171,10 @@ describe('DatePicker', () => {
           handleChange={handleChange}
         />,
       )
-      const input = container.querySelector('input')
-      if (input) {
-        fireEvent.click(input)
+      // In range mode, the icon button opens the calendar
+      const openButton = container.querySelector('[aria-label="Open calendar"]')
+      if (openButton) {
+        fireEvent.click(openButton)
       }
       // Click first date to start range
       fireEvent.click(getAllByText(container, '1')[0])
@@ -213,10 +215,10 @@ describe('DatePicker', () => {
         />,
       )
 
-      // Open calendar
-      const input = container.querySelector('input')
-      if (input) {
-        fireEvent.click(input)
+      // Open calendar via the icon button (range mode requires the icon button to open)
+      const openButton = container.querySelector('[aria-label="Open calendar"]')
+      if (openButton) {
+        fireEvent.click(openButton)
       }
 
       // Click on predefined range

@@ -1,0 +1,26 @@
+{
+  "name": "clients-one-systems-complaints-committee-rulings",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/one-systems/complaints-committee-rulings/src",
+  "projectType": "library",
+  "tags": ["scope:client", "lib:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/clients/one-systems/complaints-committee-rulings/jest.config.ts"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/one-systems/complaints-committee-rulings/gen/fetch -i libs/clients/one-systems/complaints-committee-rulings/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}

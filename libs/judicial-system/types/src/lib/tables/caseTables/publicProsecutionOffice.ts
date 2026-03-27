@@ -91,7 +91,7 @@ const publicProsecutionAcquittedIndictmentsColumnKeys: CaseTableColumnKey[] = [
   'indictmentReviewDecision',
 ]
 
-export const publicProsecutionOfficeAcquittedIndictments: CaseTable = {
+export const publicProsecutionOfficeIndictmentsAcquitted: CaseTable = {
   title: 'Sýknudómar',
   hasMyCasesFilter: false,
   columnKeys: publicProsecutionAcquittedIndictmentsColumnKeys,

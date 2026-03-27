@@ -51,6 +51,7 @@ const AnsweredQuestionnaire: FC = () => {
 
   const { data, loading, error, refetch } = useGetAnsweredQuestionnaireQuery({
     skip: !id || !org,
+    fetchPolicy: 'network-only',
     variables: {
       input: {
         id: id ?? '',
@@ -62,7 +63,7 @@ const AnsweredQuestionnaire: FC = () => {
   })
 
   const [getQuestionnaire, { data: questionnaireData }] =
-    useGetQuestionnaireLazyQuery()
+    useGetQuestionnaireLazyQuery({ fetchPolicy: 'network-only' })
 
   useEffect(() => {
     // Set current submission from answered questionnaire data
@@ -158,6 +159,7 @@ const AnsweredQuestionnaire: FC = () => {
                     : null
                 }
                 size="xs"
+                isSearchable={false}
               />
             </Box>
             {isDraft ? (
