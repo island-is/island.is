@@ -888,45 +888,50 @@ const Conclusion: FC = () => {
           {selectedAction === IndictmentDecision.COMPLETING_FOR_SOME &&
             isNonEmptyArray(workingCase.defendants) && (
               <>
-                {workingCase.defendants.map((defendant) => (
-                  <BlueBox
-                    key={`completing-for-some-${defendant.id}`}
-                    className={grid({ gap: 2 })}
-                  >
-                    <SectionHeading
-                      title={defendant.name || ''}
-                      variant="h4"
-                      marginBottom={0}
-                    />
-                    <Select
-                      id={`completing-for-some-${defendant.id}`}
-                      label="Lyktir"
-                      placeholder="Veldu lyktir ef á við"
-                      options={completingForSomeOptions}
-                      value={completingForSomeOptions.find(
-                        (option) =>
-                          option.value ===
-                          completingForSomeSelections[defendant.id],
-                      )}
-                      onChange={(selectedOption) => {
-                        setCompletingForSomeSelections((prevSelections) => ({
-                          ...prevSelections,
-                          [defendant.id]: selectedOption?.value as
-                            | CaseIndictmentRulingDecision
-                            | undefined,
-                        }))
-                      }}
-                      isDisabled={
-                        workingCase.state === CaseState.CORRECTING ||
-                        (!completingForSomeSelections[defendant.id] &&
-                          completingForSomeSelectedCount >=
-                            (workingCase.defendants?.length ?? 0) - 1)
-                      }
-                      size="sm"
-                      isClearable
-                    />
-                  </BlueBox>
-                ))}
+                {workingCase.defendants
+                  .filter(
+                    (defendant) =>
+                      defendant.indictmentCancelledOrDismissedState === null,
+                  )
+                  .map((defendant) => (
+                    <BlueBox
+                      key={`completing-for-some-${defendant.id}`}
+                      className={grid({ gap: 2 })}
+                    >
+                      <SectionHeading
+                        title={defendant.name || ''}
+                        variant="h4"
+                        marginBottom={0}
+                      />
+                      <Select
+                        id={`completing-for-some-${defendant.id}`}
+                        label="Lyktir"
+                        placeholder="Veldu lyktir ef á við"
+                        options={completingForSomeOptions}
+                        value={completingForSomeOptions.find(
+                          (option) =>
+                            option.value ===
+                            completingForSomeSelections[defendant.id],
+                        )}
+                        onChange={(selectedOption) => {
+                          setCompletingForSomeSelections((prevSelections) => ({
+                            ...prevSelections,
+                            [defendant.id]: selectedOption?.value as
+                              | CaseIndictmentRulingDecision
+                              | undefined,
+                          }))
+                        }}
+                        isDisabled={
+                          workingCase.state === CaseState.CORRECTING ||
+                          (!completingForSomeSelections[defendant.id] &&
+                            completingForSomeSelectedCount >=
+                              (workingCase.defendants?.length ?? 0) - 1)
+                        }
+                        size="sm"
+                        isClearable
+                      />
+                    </BlueBox>
+                  ))}
                 {Object.values(completingForSomeSelections).some(
                   (value) => value === CaseIndictmentRulingDecision.DISMISSAL,
                 ) && (
