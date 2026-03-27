@@ -120,6 +120,8 @@ export const PermissionDelegations = ({
   const [selectedTags, setSelectedTags] = useEnvironmentState<
     MultiValue<Option>
   >([])
+  const [categoriesTagsDirty, setCategoriesTagsDirty] =
+    useEnvironmentState(false)
 
   useEffect(() => {
     if (
@@ -141,31 +143,17 @@ export const PermissionDelegations = ({
   }, [showCategoriesAndTags, tags, categories])
 
   const customValidation = useCallback(
-    (newFormData: FormData, prevFormData: FormData) => {
+    (_newFormData: FormData, _prevFormData: FormData) => {
       if (!showCategoriesAndTags) return false
-      const parse = (v: FormDataEntryValue | null): string[] => {
-        if (v == null || typeof v !== 'string') return []
-        try {
-          const a = JSON.parse(v)
-          return Array.isArray(a) && a.every((x) => typeof x === 'string')
-            ? a
-            : []
-        } catch {
-          return []
-        }
-      }
-      return (
-        !isEqual(
-          parse(newFormData.get('categoryIds')),
-          parse(prevFormData.get('categoryIds')),
-        ) ||
-        !isEqual(
-          parse(newFormData.get('tagIds')),
-          parse(prevFormData.get('tagIds')),
-        )
-      )
+      return categoriesTagsDirty
     },
-    [showCategoriesAndTags],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      showCategoriesAndTags,
+      categoriesTagsDirty,
+      selectedCategories,
+      selectedTags,
+    ],
   )
 
   const loadingCategoriesAndTags = categoriesLoading || tagsLoading
@@ -311,16 +299,29 @@ export const PermissionDelegations = ({
                                   <Select
                                     value={selectedCategories}
                                     options={categories}
-                                    onChange={(value) =>
+                                    onChange={(value) => {
+                                      const newIds = (
+                                        value as MultiValue<Option>
+                                      ).map((c) => c.value)
+                                      setCategoriesTagsDirty(
+                                        !isEqual(
+                                          newIds,
+                                          selectedPermission.categoryIds ?? [],
+                                        ) ||
+                                          !isEqual(
+                                            selectedTags.map((t) => t.value),
+                                            selectedPermission.tagIds ?? [],
+                                          ),
+                                      )
                                       setSelectedCategories(
                                         value as MultiValue<Option>,
                                       )
-                                    }
+                                    }}
                                     placeholder={formatMessage(
                                       m.selectCategoriesPlaceholder,
                                     )}
                                     isMulti
-                                    size="xs"
+                                    size="sm"
                                   />
                                 </Stack>
                               )}
@@ -355,16 +356,31 @@ export const PermissionDelegations = ({
                                   <Select
                                     value={selectedTags}
                                     options={tags}
-                                    onChange={(value) =>
+                                    onChange={(value) => {
+                                      const newIds = (
+                                        value as MultiValue<Option>
+                                      ).map((t) => t.value)
+                                      setCategoriesTagsDirty(
+                                        !isEqual(
+                                          selectedCategories.map(
+                                            (c) => c.value,
+                                          ),
+                                          selectedPermission.categoryIds ?? [],
+                                        ) ||
+                                          !isEqual(
+                                            newIds,
+                                            selectedPermission.tagIds ?? [],
+                                          ),
+                                      )
                                       setSelectedTags(
                                         value as MultiValue<Option>,
                                       )
-                                    }
+                                    }}
                                     placeholder={formatMessage(
                                       m.selectTagsPlaceholder,
                                     )}
                                     isMulti
-                                    size="xs"
+                                    size="sm"
                                   />
                                 </Stack>
                               )}
