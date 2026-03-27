@@ -13,6 +13,7 @@ import {
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
+import { NetworkStatus } from '@apollo/client'
 import { useState } from 'react'
 import { m } from '../../lib/messages'
 import {
@@ -45,9 +46,12 @@ const PersonalTaxCredit = () => {
   )
   const [spouse, setSpouse] = useState<SpouseState>(INITIAL_SPOUSE)
 
-  const { data, loading, error, refetch } = useGetPersonalTaxCreditQuery({
+  const { data, networkStatus, error, refetch } = useGetPersonalTaxCreditQuery({
     errorPolicy: 'all',
+    notifyOnNetworkStatusChange: true,
   })
+  const loading = networkStatus === NetworkStatus.loading
+  const refetching = networkStatus === NetworkStatus.refetch
 
   const [updateAllowance, { loading: updatingAllowance }] =
     useUpdateSocialInsuranceTaxCardAllowanceMutation()
@@ -95,9 +99,9 @@ const PersonalTaxCredit = () => {
           },
         })
       }
+      await refetch()
       setMyTaxCredit(INITIAL_MY_TAX_CREDIT)
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
-      await refetch()
     } catch (e) {
       console.error(e)
       toast.error(formatMessage(m.personalTaxCreditSaveError))
@@ -122,9 +126,9 @@ const PersonalTaxCredit = () => {
       if (spouse.grant) {
         await setSpouseTaxCard()
       }
+      await refetch()
       setSpouse(INITIAL_SPOUSE)
       toast.success(formatMessage(m.personalTaxCreditSaveSuccess))
-      await refetch()
     } catch (e) {
       console.error(e)
       toast.error(formatMessage(m.personalTaxCreditSaveError))
@@ -179,7 +183,7 @@ const PersonalTaxCredit = () => {
             discontinuingMonthsAndYears={page?.discontinuingMonthsAndYears}
             isAlreadyRegistered={page?.canEdit ?? false}
             canDiscontinue={page?.canDiscontinue ?? false}
-            saving={updatingAllowance}
+            saving={updatingAllowance || refetching}
             onSave={handleSaveMyTaxCredit}
           />
         </Box>
@@ -192,7 +196,7 @@ const PersonalTaxCredit = () => {
             state={spouse}
             setState={setSpouse}
             spouseEligibility={page?.spouseEligibility}
-            saving={settingSpouseTaxCard || settingSpouseDeceased}
+            saving={settingSpouseTaxCard || settingSpouseDeceased || refetching}
             onSave={handleSaveSpouse}
           />
         </Box>

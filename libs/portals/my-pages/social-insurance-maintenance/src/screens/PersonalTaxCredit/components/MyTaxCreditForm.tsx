@@ -99,7 +99,7 @@ export const MyTaxCreditForm: FC<Props> = ({
           id="register-personal-tax-credit"
           label={formatMessage(m.registerPersonalTaxCredit)}
           checked={state.action === REGISTER}
-          disabled={isAlreadyRegistered}
+          disabled={isAlreadyRegistered || !monthsAndYears?.length}
           onChange={(e) =>
             setState(
               e.target.checked
@@ -216,7 +216,7 @@ export const MyTaxCreditForm: FC<Props> = ({
           id="discontinue-personal-tax-credit"
           label={formatMessage(m.discontinuePersonalTaxCredit)}
           checked={state.action === DISCONTINUE}
-          disabled={!canDiscontinue}
+          disabled={!canDiscontinue || !discontinuingMonthsAndYears?.length}
           onChange={(e) =>
             setState(
               e.target.checked
