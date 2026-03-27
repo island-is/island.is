@@ -8,8 +8,8 @@ import {
   amountFormat,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
-import { m } from '../../lib/messages'
-import { PaymentGroupTable } from '../../components'
+import { m } from '../../../lib/messages'
+import { PaymentGroupTable } from '../../../components'
 import { useGetPreviousPaymentsQuery } from './PaymentPlan.generated'
 
 // Greiðsluáætlun
