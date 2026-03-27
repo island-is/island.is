@@ -14,7 +14,7 @@ import {
   amountFormat,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import { useGetIncomePlanDetailQuery } from './IncomePlanDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 

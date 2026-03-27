@@ -1259,8 +1259,8 @@
       "@island.is/portals/my-pages/signature-collection": [
         "libs/portals/my-pages/signature-collection/src/index.ts"
       ],
-      "@island.is/portals/my-pages/social-insurance-maintenance": [
-        "libs/portals/my-pages/social-insurance-maintenance/src/index.ts"
+      "@island.is/portals/my-pages/social-benefits": [
+        "libs/portals/my-pages/social-benefits/src/index.ts"
       ],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
