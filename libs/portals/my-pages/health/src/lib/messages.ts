@@ -1396,7 +1396,7 @@ export const messages = defineMessages({
     id: 'sp.health:prescribed-amount',
   },
   primaryCareClinic: {
-    defaultMessage: 'Heilsugæslustöð',
+    defaultMessage: 'Heilsugæsla',
     id: 'sp.health:primary-care-clinic',
   },
   process: {
