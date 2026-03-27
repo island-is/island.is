@@ -59,7 +59,7 @@ const AppealCaseFilesOverview = () => {
                 CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
                 CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE,
               ].includes(caseFile.category)) ||
-              (workingCase.prosecutorStatementDate &&
+              (workingCase.appealCase?.prosecutorStatementDate &&
                 [
                   CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
                   CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
@@ -69,7 +69,7 @@ const AppealCaseFilesOverview = () => {
                   CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
                   CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
                 ].includes(caseFile.category)) ||
-              (workingCase.defendantStatementDate &&
+              (workingCase.appealCase?.defendantStatementDate &&
                 [
                   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
                   CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
@@ -78,10 +78,10 @@ const AppealCaseFilesOverview = () => {
                 CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
                 CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
               ].includes(caseFile.category) ||
-              ((workingCase.appealState === CaseAppealState.COMPLETED ||
+              ((workingCase.appealCase?.appealState === CaseAppealState.COMPLETED ||
                 isCourtOfAppealsUser(user)) &&
                 caseFile.category === CaseFileCategory.APPEAL_RULING) ||
-              (((workingCase.appealState === CaseAppealState.COMPLETED &&
+              (((workingCase.appealCase?.appealState === CaseAppealState.COMPLETED &&
                 isDefenceUser(user)) ||
                 isCourtOfAppealsUser(user)) &&
                 caseFile.category === CaseFileCategory.APPEAL_COURT_RECORD))
@@ -92,11 +92,11 @@ const AppealCaseFilesOverview = () => {
   }, [
     user,
     workingCase.accusedPostponedAppealDate,
-    workingCase.appealState,
+    workingCase.appealCase?.appealState,
     workingCase.caseFiles,
-    workingCase.defendantStatementDate,
+    workingCase.appealCase?.defendantStatementDate,
     workingCase.prosecutorPostponedAppealDate,
-    workingCase.prosecutorStatementDate,
+    workingCase.appealCase?.prosecutorStatementDate,
   ])
 
   return (
@@ -203,8 +203,8 @@ const AppealCaseFilesOverview = () => {
           })}
         </Box>
         {(isProsecutionUser(user) || isDefenceUser(user)) &&
-          workingCase.appealState &&
-          workingCase.appealState !== CaseAppealState.COMPLETED && (
+          workingCase.appealCase?.appealState &&
+          workingCase.appealCase?.appealState !== CaseAppealState.COMPLETED && (
             <Box display="flex" justifyContent="flexEnd">
               <Button
                 icon="add"
@@ -215,7 +215,7 @@ const AppealCaseFilesOverview = () => {
                       : `${constants.APPEAL_FILES_ROUTE}/${workingCase.id}`,
                   )
                 }}
-                disabled={workingCase.appealState === CaseAppealState.WITHDRAWN}
+                disabled={workingCase.appealCase?.appealState === CaseAppealState.WITHDRAWN}
               >
                 {formatMessage(strings.addFiles)}
               </Button>

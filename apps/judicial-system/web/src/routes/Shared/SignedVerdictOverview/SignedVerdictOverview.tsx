@@ -387,7 +387,7 @@ export const SignedVerdictOverview: FC = () => {
     (workingCase.hasBeenAppealed &&
       (isProsecutionUser(user) || isDistrictCourtUser(user))) ||
     (isProsecutionUser(user) && workingCase.canProsecutorAppeal) ||
-    workingCase.appealState === CaseAppealState.COMPLETED
+    workingCase.appealCase?.appealState === CaseAppealState.COMPLETED
 
   return (
     <>
@@ -435,14 +435,14 @@ export const SignedVerdictOverview: FC = () => {
                   }
                 />
               )}
-            {workingCase.appealRulingModifiedHistory && (
+            {workingCase.appealCase?.appealRulingModifiedHistory && (
               <Box marginBottom={5} marginTop={5}>
                 <AlertMessage
                   type="info"
                   title={formatMessage(strings.rulingModifiedTitle)}
                   message={
                     <MarkdownWrapper
-                      markdown={workingCase.appealRulingModifiedHistory}
+                      markdown={workingCase.appealCase?.appealRulingModifiedHistory}
                       textProps={{ variant: 'small' }}
                     />
                   }
@@ -507,16 +507,16 @@ export const SignedVerdictOverview: FC = () => {
                   ],
                   columns: 2,
                 },
-                ...(workingCase.appealCaseNumber
+                ...(workingCase.appealCase?.appealCaseNumber
                   ? [
                       {
                         id: 'court-of-appeal-section',
                         items: [
                           appealCaseNumber,
                           ...(appealAssistant ? [appealAssistant] : []),
-                          ...(workingCase.appealJudge1 &&
-                          workingCase.appealJudge2 &&
-                          workingCase.appealJudge3
+                          ...(workingCase.appealCase?.appealJudge1 &&
+                          workingCase.appealCase?.appealJudge2 &&
+                          workingCase.appealCase?.appealJudge3
                             ? [appealJudges]
                             : []),
                         ],
@@ -550,11 +550,11 @@ export const SignedVerdictOverview: FC = () => {
               conclusionText={workingCase.conclusion}
               judgeName={workingCase.judge?.name}
             />
-            {workingCase.appealState === CaseAppealState.COMPLETED &&
-              workingCase.appealConclusion && (
+            {workingCase.appealCase?.appealState === CaseAppealState.COMPLETED &&
+              workingCase.appealCase?.appealConclusion && (
                 <Conclusion
                   title={formatMessage(conclusion.appealTitle)}
-                  conclusionText={workingCase.appealConclusion}
+                  conclusionText={workingCase.appealCase?.appealConclusion}
                 />
               )}
             <AppealCaseFilesOverview />

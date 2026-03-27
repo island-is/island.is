@@ -68,9 +68,9 @@ const CaseTitleInfoAndTags: FC = () => {
               </Text>
             </Box>
             {((user?.institution?.type === InstitutionType.DISTRICT_COURT &&
-              workingCase.appealState === CaseAppealState.COMPLETED) ||
+              workingCase.appealCase?.appealState === CaseAppealState.COMPLETED) ||
               user?.institution?.type === InstitutionType.COURT_OF_APPEALS) &&
-              workingCase.appealReceivedByCourtDate && (
+              workingCase.appealCase?.appealReceivedByCourtDate && (
                 <Box marginTop={1}>
                   <Text as="h5" variant="h5">
                     {formatMessage(
@@ -79,7 +79,7 @@ const CaseTitleInfoAndTags: FC = () => {
                         : strings.appealReceivedAt,
                       {
                         appealReceived: formatDate(
-                          workingCase.appealReceivedByCourtDate,
+                          workingCase.appealCase?.appealReceivedByCourtDate,
                           'PPPp',
                         ),
                       },

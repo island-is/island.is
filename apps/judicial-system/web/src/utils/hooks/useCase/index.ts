@@ -217,7 +217,7 @@ const useCase = () => {
             LimitedAccessTransitionCaseMutation
 
           const state = res?.[resultType]?.state
-          const appealState = res?.[resultType]?.appealState
+          const appealState = res?.[resultType]?.appealCase?.appealState
 
           if (!state && !appealState) {
             return false

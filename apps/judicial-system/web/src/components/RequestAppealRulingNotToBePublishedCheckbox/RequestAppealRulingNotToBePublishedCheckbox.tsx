@@ -26,9 +26,9 @@ const RequestAppealRulingNotToBePublishedCheckbox: FC = () => {
           user &&
           user.role !== undefined &&
           user.role !== null &&
-          workingCase.requestAppealRulingNotToBePublished?.includes(user.role)
+          workingCase.appealCase?.requestAppealRulingNotToBePublished?.includes(user.role)
         }
-        disabled={workingCase.appealState === CaseAppealState.COMPLETED}
+        disabled={workingCase.appealCase?.appealState === CaseAppealState.COMPLETED}
         onChange={() => {
           if (!user || user.role === undefined || user.role === null) return
 

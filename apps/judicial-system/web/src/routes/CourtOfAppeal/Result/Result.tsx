@@ -74,7 +74,7 @@ const CourtOfAppealResult = () => {
           <div className={grid({ gap: 5, marginBottom: 10 })}>
             <CaseOverviewHeader
               alerts={
-                workingCase.requestAppealRulingNotToBePublished
+                workingCase.appealCase?.requestAppealRulingNotToBePublished
                   ? [
                       {
                         message: formatMessage(
@@ -85,13 +85,13 @@ const CourtOfAppealResult = () => {
                   : undefined
               }
             />
-            {workingCase.appealRulingModifiedHistory && (
+            {workingCase.appealCase?.appealRulingModifiedHistory && (
               <AlertMessage
                 type="info"
                 title={formatMessage(strings.rulingModifiedTitle)}
                 message={
                   <MarkdownWrapper
-                    markdown={workingCase.appealRulingModifiedHistory}
+                    markdown={workingCase.appealCase?.appealRulingModifiedHistory}
                     textProps={{ variant: 'small' }}
                   />
                 }
@@ -148,7 +148,7 @@ const CourtOfAppealResult = () => {
             />
             <Conclusion
               title={formatMessage(conclusion.appealTitle)}
-              conclusionText={workingCase.appealConclusion}
+              conclusionText={workingCase.appealCase?.appealConclusion}
             />
             <CaseFilesOverview />
           </div>

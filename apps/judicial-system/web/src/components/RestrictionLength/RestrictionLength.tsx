@@ -64,7 +64,7 @@ const RestrictionLength: FC<Props> = (props) => {
             ),
           })}
           selectedDate={
-            isCOAUser ? workingCase.appealValidToDate : workingCase.validToDate
+            isCOAUser ? workingCase.appealCase?.appealValidToDate : workingCase.validToDate
           }
           minDate={new Date()}
           onChange={(date: Date | undefined, valid: boolean) => {
@@ -93,7 +93,7 @@ const RestrictionLength: FC<Props> = (props) => {
                   label={formatMessage(strings.isolation)}
                   checked={
                     isCOAUser
-                      ? Boolean(workingCase.isAppealCustodyIsolation)
+                      ? Boolean(workingCase.appealCase?.isAppealCustodyIsolation)
                       : Boolean(workingCase.isCustodyIsolation)
                   }
                   onChange={handleIsolationChange}
@@ -106,20 +106,20 @@ const RestrictionLength: FC<Props> = (props) => {
                 datepickerLabel={formatMessage(strings.isolationDateLable)}
                 disabled={
                   (isCOAUser &&
-                    workingCase.isAppealCustodyIsolation === false) ||
+                    workingCase.appealCase?.isAppealCustodyIsolation === false) ||
                   (!isCOAUser && workingCase.isCustodyIsolation === false)
                 }
                 selectedDate={
                   isCOAUser
-                    ? workingCase.appealIsolationToDate
+                    ? workingCase.appealCase?.appealIsolationToDate
                     : workingCase.isolationToDate
                 }
                 // Isolation can never be set in the past.
                 minDate={new Date()}
                 maxDate={
                   isCOAUser
-                    ? workingCase.appealValidToDate
-                      ? new Date(workingCase.appealValidToDate)
+                    ? workingCase.appealCase?.appealValidToDate
+                      ? new Date(workingCase.appealCase?.appealValidToDate)
                       : undefined
                     : workingCase.validToDate
                     ? new Date(workingCase.validToDate)
@@ -130,7 +130,7 @@ const RestrictionLength: FC<Props> = (props) => {
                 }
                 blueBox={false}
                 backgroundColor={
-                  (isCOAUser && workingCase.isAppealCustodyIsolation) ||
+                  (isCOAUser && workingCase.appealCase?.isAppealCustodyIsolation) ||
                   workingCase.isCustodyIsolation
                     ? 'white'
                     : 'blue'

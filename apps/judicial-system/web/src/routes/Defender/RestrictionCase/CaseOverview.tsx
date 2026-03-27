@@ -125,14 +125,14 @@ export const CaseOverview = () => {
                 />
               </Box>
             )}
-          {workingCase.appealRulingModifiedHistory && (
+          {workingCase.appealCase?.appealRulingModifiedHistory && (
             <Box marginBottom={5}>
               <AlertMessage
                 type="info"
                 title={formatMessage(strings.rulingModifiedTitle)}
                 message={
                   <MarkdownWrapper
-                    markdown={workingCase.appealRulingModifiedHistory}
+                    markdown={workingCase.appealCase?.appealRulingModifiedHistory}
                     textProps={{ variant: 'small' }}
                   />
                 }
@@ -181,16 +181,16 @@ export const CaseOverview = () => {
                   ],
                   columns: 2,
                 },
-                ...(workingCase.appealCaseNumber
+                ...(workingCase.appealCase?.appealCaseNumber
                   ? [
                       {
                         id: 'court-of-appeal-section',
                         items: [
                           appealCaseNumber,
                           ...(appealAssistant ? [appealAssistant] : []),
-                          ...(workingCase.appealJudge1 &&
-                          workingCase.appealJudge2 &&
-                          workingCase.appealJudge3
+                          ...(workingCase.appealCase?.appealJudge1 &&
+                          workingCase.appealCase?.appealJudge2 &&
+                          workingCase.appealCase?.appealJudge3
                             ? [appealJudges]
                             : []),
                         ],
@@ -210,11 +210,11 @@ export const CaseOverview = () => {
               />
             </Box>
           )}
-          {workingCase.appealConclusion && (
+          {workingCase.appealCase?.appealConclusion && (
             <Box marginBottom={6}>
               <Conclusion
                 title={formatMessage(conclusion.appealTitle)}
-                conclusionText={workingCase.appealConclusion}
+                conclusionText={workingCase.appealCase?.appealConclusion}
               />
             </Box>
           )}
