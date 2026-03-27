@@ -19,6 +19,7 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
   const {
     defendants,
+    cancelledAndDismissedDefendants,
     indictmentCreated,
     prosecutor,
     policeCaseNumbers,
@@ -87,6 +88,18 @@ const InfoCardActiveIndictment: React.FC<Props> = (props) => {
         ...(workingCase.splitCase
           ? [{ id: 'split-case-section', items: [splitCase], columns: 2 }]
           : []),
+        {
+          id: 'cancelled-and-dismissed-defendants-section',
+          items:
+            workingCase.defendants
+              ?.filter(
+                (defendant) =>
+                  defendant.indictmentCancelledOrDismissedState !== null,
+              )
+              .map((defendant) => cancelledAndDismissedDefendants(defendant)) ||
+            [],
+          columns: 2,
+        },
       ]}
     />
   )

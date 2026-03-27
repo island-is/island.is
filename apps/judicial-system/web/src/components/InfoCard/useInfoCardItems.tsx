@@ -8,6 +8,7 @@ import {
   capitalize,
   formatCaseType,
   formatDate,
+  getHumanReadableCaseIndictmentRulingDecision,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import { isRequestCase } from '@island.is/judicial-system/types'
@@ -17,6 +18,7 @@ import {
   Case,
   CaseIndictmentRulingDecision,
   CaseType,
+  Defendant,
   IndictmentCaseReviewDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -120,6 +122,30 @@ const useInfoCardItems = () => {
             </div>,
           ]
         : [],
+    }
+  }
+
+  const cancelledAndDismissedDefendants = (defendant: Defendant): Item => {
+    return {
+      id: 'cancelled-and-dismissed-defendant-item',
+      title: (
+        <Text variant="h4" as="h4">
+          {getHumanReadableCaseIndictmentRulingDecision(
+            defendant.indictmentCancelledOrDismissedState?.type,
+          )}
+        </Text>
+      ),
+      values: [
+        <div key="cancelled-and-dismissed-defendants-grid">
+          <Text>{defendant.name}</Text>
+          <Text>
+            {formatDate(
+              defendant.indictmentCancelledOrDismissedState?.time,
+              'P',
+            )}
+          </Text>
+        </div>,
+      ],
     }
   }
 
@@ -478,6 +504,7 @@ const useInfoCardItems = () => {
   return {
     showItem,
     defendants,
+    cancelledAndDismissedDefendants,
     indictmentCreated,
     prosecutor,
     prosecutorsOffice,
