@@ -679,25 +679,37 @@ export class PoliceService {
     }
 
     // Only reached if all nationalIds are rejected
-    const firstFailure = settled.find(
-      (result) => result.status === 'rejected',
-    )?.reason
+    const rejectedReasons = settled
+      .filter((result) => result.status === 'rejected')
+      .map((result) => result.reason)
+    const hasNotFound = rejectedReasons.some(
+      (reason) => reason instanceof NotFoundException,
+    )
+    const hasServiceUnavailable = rejectedReasons.some(
+      (reason) => reason instanceof ServiceUnavailableException,
+    )
+    const uniqueMessages = Array.from(
+      new Set(
+        rejectedReasons
+          .map((reason) => {
+            if (reason instanceof Error) {
+              return reason.message
+            }
 
-    if (firstFailure instanceof NotFoundException) {
-      throw firstFailure
-    }
+            if (typeof reason === 'string') {
+              return reason
+            }
 
-    if (firstFailure instanceof ServiceUnavailableException) {
-      throw new NotFoundException({
-        message: `Police case units for case ${caseId} do not exist`,
-        detail: firstFailure.message,
-      })
-    }
-
+            return undefined
+          })
+          .filter((message): message is string => Boolean(message)),
+      ),
+    )
     const detail =
-      firstFailure instanceof Error
-        ? firstFailure.message
+      uniqueMessages.length > 0
+        ? uniqueMessages.join(' | ')
         : 'Unknown error while fetching case units'
+    const aggregatedError = new Error(detail)
 
     this.eventService.postErrorEvent(
       'Failed to get police case units (GetRVMalseiningar)',
@@ -707,9 +719,34 @@ export class PoliceService {
         institution: user.institution?.name,
         startTime,
         endTime: nowFactory(),
+        failedNationalIds: `${nationalIds.length}`,
+        failureMessages: uniqueMessages.join(' | '),
+        failureReasons: rejectedReasons
+          .map((reason) =>
+            reason instanceof Error
+              ? reason.stack ?? reason.message
+              : typeof reason === 'string'
+              ? reason
+              : JSON.stringify(reason),
+          )
+          .join(' | '),
       },
-      firstFailure,
+      aggregatedError,
     )
+
+    if (hasNotFound) {
+      throw new NotFoundException({
+        message: `Police case units for case ${caseId} do not exist`,
+        detail,
+      })
+    }
+
+    if (hasServiceUnavailable) {
+      throw new NotFoundException({
+        message: `Police case units for case ${caseId} do not exist`,
+        detail,
+      })
+    }
 
     throw new BadGatewayException({
       message: `Failed to get police case units for case ${caseId}`,
