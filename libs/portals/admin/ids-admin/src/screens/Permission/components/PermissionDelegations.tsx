@@ -295,7 +295,19 @@ export const PermissionDelegations = ({
                                     value={selectedCategories}
                                     options={categories}
                                     onChange={(value) => {
-                                      setCategoriesTagsDirty(true)
+                                      const newIds = (
+                                        value as MultiValue<Option>
+                                      ).map((c) => c.value)
+                                      setCategoriesTagsDirty(
+                                        !isEqual(
+                                          newIds,
+                                          selectedPermission.categoryIds ?? [],
+                                        ) ||
+                                          !isEqual(
+                                            selectedTags.map((t) => t.value),
+                                            selectedPermission.tagIds ?? [],
+                                          ),
+                                      )
                                       setSelectedCategories(
                                         value as MultiValue<Option>,
                                       )
@@ -340,7 +352,19 @@ export const PermissionDelegations = ({
                                     value={selectedTags}
                                     options={tags}
                                     onChange={(value) => {
-                                      setCategoriesTagsDirty(true)
+                                      const newIds = (
+                                        value as MultiValue<Option>
+                                      ).map((t) => t.value)
+                                      setCategoriesTagsDirty(
+                                        !isEqual(
+                                          selectedCategories.map((c) => c.value),
+                                          selectedPermission.categoryIds ?? [],
+                                        ) ||
+                                          !isEqual(
+                                            newIds,
+                                            selectedPermission.tagIds ?? [],
+                                          ),
+                                      )
                                       setSelectedTags(
                                         value as MultiValue<Option>,
                                       )
