@@ -1726,7 +1726,8 @@ export const m = defineMessages({
   },
   farmerLandTooltip: {
     id: 'service.portal:farmer-land-tooltip',
-    defaultMessage: 'Atvinnuvegaráðuneytið hefur umsjón með gögnum um jarðabók.',
+    defaultMessage:
+      'Atvinnuvegaráðuneytið hefur umsjón með gögnum um jarðabók.',
   },
   financeTooltip: {
     id: 'service.portal:finance-tooltip',

@@ -371,7 +371,10 @@
       "Payment": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer", "description": "Unique payment identifier" },
+          "id": {
+            "type": "integer",
+            "description": "Unique payment identifier"
+          },
           "farmId": { "type": "integer", "example": "1234561" },
           "paymentDate": {
             "type": "string",
