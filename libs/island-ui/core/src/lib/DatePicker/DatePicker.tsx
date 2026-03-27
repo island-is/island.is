@@ -39,26 +39,14 @@ const languageConfig = {
     formatWithTime: dateFormatWithTime.is,
     timeFormat: timeFormat.is,
     locale: is,
-    parseFallbacks: [
-      'd.M.yyyy',
-      'dd/MM/yyyy',
-      'd/M/yyyy',
-      'dd-MM-yyyy',
-      'd-M-yyyy',
-    ],
+    parseFallbacks: ['d.M.yyyy', 'dd/MM/yyyy', 'd/M/yyyy'],
   },
   en: {
     format: dateFormat.en,
     formatWithTime: dateFormatWithTime.en,
     timeFormat: timeFormat.en,
     locale: en,
-    parseFallbacks: [
-      'd/M/yyyy',
-      'dd.MM.yyyy',
-      'd.M.yyyy',
-      'dd-MM-yyyy',
-      'd-M-yyyy',
-    ],
+    parseFallbacks: ['d/M/yyyy', 'dd.MM.yyyy', 'd.M.yyyy'],
   },
 }
 
@@ -279,6 +267,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
                       if (handleChange) {
                         handleChange(start, end)
                       }
+                    } else {
+                      // Keep calendar open and commit startDate so the next
+                      // calendar click sees it. Typing is blocked above by
+                      // isTypingInInputRef so this never fires during keyboard input.
+                      setIsOpen(true)
                     }
                   }
                 }
@@ -299,6 +292,10 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           }
           onChangeRaw={(e: React.SyntheticEvent<HTMLInputElement>) => {
             if (!range) return
+            // react-datepicker also calls onChangeRaw from handleSelect (on calendar day
+            // clicks) — before calling onChange. Only block onChange for actual keyboard
+            // input; skip when the event target is not the text input itself.
+            if (!(e.target instanceof HTMLInputElement)) return
             isTypingInInputRef.current = true
             setTimeout(() => {
               isTypingInInputRef.current = false
@@ -328,7 +325,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               e.preventDefault()
               const v = (e.target as HTMLInputElement).value
               if (!v || v.trim() === '') return
-              const parts = v.split(/\s+-\s+/)
+              const parts = v.split(/\s*-\s*/)
               if (parts.length !== 2) return
               const fmt = showTimeInput
                 ? currentLanguage.formatWithTime
