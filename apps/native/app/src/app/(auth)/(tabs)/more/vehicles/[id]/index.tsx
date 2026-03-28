@@ -2,6 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useIntl } from 'react-intl'
 import {
   Image,
+  Platform,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -118,7 +119,7 @@ export default function VehicleDetailScreen() {
                       dropdownItems.map((item) => ({
                         id: item.link,
                         title: item.title,
-                        image: 'arrow.up.forward',
+                        image: Platform.select({ android: 'ic_external_link', ios: 'arrow.up.forward' }),
                       })) || []
                     }
                     onPressAction={(id, title) => {
