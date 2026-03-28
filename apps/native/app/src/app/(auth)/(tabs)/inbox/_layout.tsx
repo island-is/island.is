@@ -47,6 +47,7 @@ export default function InboxLayout() {
         options={{
           headerShown: false,
           ...modalScreenOptions,
+          title: intl.formatMessage({ id: 'documentDetail.buttonCommunications' }),
         }}
       />
       <Stack.Screen

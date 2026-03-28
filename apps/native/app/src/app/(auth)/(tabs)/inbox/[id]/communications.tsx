@@ -9,15 +9,13 @@ import {
   RefreshControl,
   SafeAreaView,
   TouchableOpacity,
+  View,
 } from 'react-native'
 import { router, useLocalSearchParams } from 'expo-router'
 import styled, { useTheme } from 'styled-components/native'
 
 import { StackScreen } from '@/components/stack-screen'
-import {
-  DocumentComment,
-  useGetDocumentQuery,
-} from '@/graphql/types/schema'
+import { DocumentComment, useGetDocumentQuery } from '@/graphql/types/schema'
 import { useDateTimeFormatter } from '@/hooks/use-date-time-formatter'
 import { useLocale } from '@/hooks/use-locale'
 import { Alert, Button, ListItemSkeleton, TopLine, Typography } from '@/ui'
@@ -54,7 +52,11 @@ const AlertsContainer = styled.View`
 `
 
 export default function DocumentCommunicationsScreen() {
-  const { id: documentId, ticketId, replyEmail } = useLocalSearchParams<{
+  const {
+    id: documentId,
+    ticketId,
+    replyEmail,
+  } = useLocalSearchParams<{
     id: string
     ticketId?: string
     replyEmail?: string
@@ -118,18 +120,6 @@ export default function DocumentCommunicationsScreen() {
     [],
   )
 
-  const handleContentSizeChange = () => {
-    if (shouldScroll) {
-      setShouldScroll(false)
-      setTimeout(() => {
-        flatListRef.current?.scrollToOffset({
-          offset: Number.MAX_SAFE_INTEGER,
-          animated: true,
-        })
-      }, TOGGLE_ANIMATION_DURATION + 100)
-    }
-  }
-
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<FlatListItem>) => {
       if (item.__typename === 'Skeleton') {
@@ -153,59 +143,79 @@ export default function DocumentCommunicationsScreen() {
     [comments.length],
   )
 
-  const data = useMemo(
-    () => (isSkeleton ? createSkeletonArr(8) : comments),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isSkeleton, docRes.data],
-  ) as FlatListItem[]
+  const data = [
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+    ...comments,
+  ]
+
+  // const data = useMemo(
+  //   () => (isSkeleton ? createSkeletonArr(8) : comments),
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   [isSkeleton, docRes.data],
+  // ) as FlatListItem[]
 
   const ticketIdValue = `#${document?.ticket?.id ?? ticketId ?? ''}`
 
   return (
     <>
-      <StackScreen networkStatus={docRes.networkStatus} />
-      <CaseNumberWrapper>
-        <Typography variant="eyebrow" color={theme.color.purple400}>
-          {intl.formatMessage({ id: 'documentCommunications.caseNumber' })}
-        </Typography>
-        <Typography variant="body3">{ticketIdValue}</Typography>
-        <TouchableOpacity
-          onPress={() => Clipboard.setStringAsync(ticketIdValue)}
-          style={{ marginLeft: 4 }}
-        >
-          <Image
-            source={copyIcon}
-            style={{ width: 24, height: 24 }}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-      </CaseNumberWrapper>
-
-      <ListWrapper>
-        <TopLine scrollY={scrollY} />
+      <StackScreen
+        networkStatus={docRes.networkStatus}
+        options={{
+          headerTitle: () => (
+            <CaseNumberWrapper style={{ backgroundColor: 'white' }}>
+              <Typography variant="eyebrow" color={theme.color.purple400}>
+                {intl.formatMessage({
+                  id: 'documentCommunications.caseNumber',
+                })}
+              </Typography>
+              <Typography variant="body3">{ticketIdValue}</Typography>
+              <TouchableOpacity
+                onPress={() => Clipboard.setStringAsync(ticketIdValue)}
+                style={{ marginLeft: 4 }}
+              >
+                <Image
+                  source={copyIcon}
+                  style={{ width: 24, height: 24 }}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            </CaseNumberWrapper>
+          ),
+        }}
+      />
+      <View style={{ flexDirection: 'column', flex: 1 }}>
         <Animated.FlatList
-          ref={flatListRef}
           keyExtractor={keyExtractor}
           initialNumToRender={50}
-          contentContainerStyle={{
-            paddingBottom: actionsHeight,
-          }}
           data={data}
           renderItem={renderItem}
           style={{ flex: 1 }}
-          scrollEventThrottle={16}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            {
-              useNativeDriver: true,
-            },
-          )}
-          onContentSizeChange={handleContentSizeChange}
           refreshControl={
             <RefreshControl refreshing={refetching} onRefresh={handleRefresh} />
           }
+          contentContainerStyle={{flexGrow: 1}}
+          contentInsetAdjustmentBehavior="automatic"
+          automaticallyAdjustContentInsets
+          ListFooterComponent={
+            <SafeAreaView style={{ height: 160 }} />
+          }
         />
-
         {(closedForMoreReplies || (replyEmail && replyable)) && (
           <AlertsContainer
             onLayout={(event: LayoutChangeEvent) => {
@@ -239,24 +249,23 @@ export default function DocumentCommunicationsScreen() {
             </SafeAreaView>
           </AlertsContainer>
         )}
-      </ListWrapper>
-
-      {replyable && !closedForMoreReplies && (
-        <ButtonDrawer>
-          <SafeAreaView>
-            <Button
-              title={intl.formatMessage({
-                id: 'documentDetail.buttonReply',
-              })}
-              isTransparent
-              isOutlined
-              iconPosition="start"
-              icon={require('@/assets/icons/reply.png')}
-              onPress={onReplyPress}
-            />
-          </SafeAreaView>
-        </ButtonDrawer>
-      )}
+        {replyable && !closedForMoreReplies && (
+          <ButtonDrawer>
+            <SafeAreaView>
+              <Button
+                title={intl.formatMessage({
+                  id: 'documentDetail.buttonReply',
+                })}
+                isTransparent
+                isOutlined
+                iconPosition="start"
+                icon={require('@/assets/icons/reply.png')}
+                onPress={onReplyPress}
+              />
+            </SafeAreaView>
+          </ButtonDrawer>
+        )}
+      </View>
     </>
   )
 }
