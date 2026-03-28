@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from 'react'
-import { Animated, Easing, Modal, SafeAreaView } from 'react-native'
+import { Animated, Easing } from 'react-native'
 import styled from 'styled-components/native'
 import { Alert, DARK_YELLOW_200, dynamicColor } from '../../ui'
 import { getIntl } from '@/components/providers/locale-provider'
 import { useOfflineActions, useOfflineStore } from '../../stores/offline-store'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const TranslateYValue = 200
 
@@ -29,7 +30,7 @@ export const OfflineBanner = () => {
   const intl = getIntl()
   const { toggleBanner,  } = useOfflineActions()
   const popAnim = useRef(new Animated.Value(-TranslateYValue)).current
-  const bannerVisible = useOfflineStore(({ bannerVisible }) => bannerVisible)
+  const bannerVisible = true;  // useOfflineStore(({ bannerVisible }) => bannerVisible)
 
   const popIn = () => {
     Animated.timing(popAnim, {
@@ -66,7 +67,7 @@ export const OfflineBanner = () => {
           transform: [{ translateY: popAnim }],
         }}
       >
-        <Overlay>
+        <Overlay edges={['top']}>
           <Alert
             type="warning"
             title={intl.formatMessage({ id: 'offline.title' })}
