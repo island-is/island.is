@@ -1,6 +1,6 @@
 import { PdfView } from '@kishannareshpal/expo-pdf'
-import { router, Stack, useLocalSearchParams } from 'expo-router'
-import { useEffect } from 'react'
+import { router, Stack, useFocusEffect, useLocalSearchParams } from 'expo-router'
+import { useCallback, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Alert as RNAlert,
@@ -83,6 +83,14 @@ export default function DocumentScreen() {
     confirmAction,
     refetchDocumentContent,
   } = useDocument(id, isUrgent)
+
+  // Force PdfView to remount when screen regains focus (Android recycles the native surface)
+  const [pdfKey, setPdfKey] = useState(0)
+  useFocusEffect(
+    useCallback(() => {
+      setPdfKey((k) => k + 1)
+    }, []),
+  )
 
   // Show confirmation alert when an urgent document requires user acknowledgement
   useEffect(() => {
@@ -247,7 +255,7 @@ export default function DocumentScreen() {
             text={intl.formatMessage({ id: 'documentDetail.loadingText' })}
           />
         ) : contentType === 'pdf' && pdfUri ? (
-          <PdfView uri={pdfUri} style={{ flex: 1 }} />
+          <PdfView key={pdfKey} uri={pdfUri} style={{ flex: 1 }} />
         ) : contentType === 'html' && htmlSource ? (
           <WebView source={htmlSource} scalesPageToFit />
         ) : contentType === 'url' && document.content?.value ? (
