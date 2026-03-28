@@ -30,7 +30,7 @@ export const OfflineBanner = () => {
   const intl = getIntl()
   const { toggleBanner,  } = useOfflineActions()
   const popAnim = useRef(new Animated.Value(-TranslateYValue)).current
-  const bannerVisible = true;  // useOfflineStore(({ bannerVisible }) => bannerVisible)
+  const bannerVisible = useOfflineStore(({ bannerVisible }) => bannerVisible)
 
   const popIn = () => {
     Animated.timing(popAnim, {

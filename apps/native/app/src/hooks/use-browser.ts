@@ -10,12 +10,15 @@ import {
 } from '../lib/passkeys/helpers'
 import * as WebBrowser from 'expo-web-browser'
 
-const openAndSuppressBrowser = async (url: string) => {
+export const openAndSuppressBrowser = async (url: string) => {
   suppressLockScreen()
   try {
+    await WebBrowser.dismissBrowser().catch((e) => void 0)
     await WebBrowser.openBrowserAsync(url, {
       presentationStyle: WebBrowser.WebBrowserPresentationStyle.CURRENT_CONTEXT,
     })
+  } catch (error) {
+    console.error('Error opening browser:', error)
   } finally {
     clearLockScreenSuppression()
   }
@@ -25,14 +28,15 @@ export const useBrowser = () => {
   const { authenticatePasskey } = useAuthenticatePasskey()
   const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
 
-  const openBrowser = async (url: string, componentId?: string) => {
+  const openBrowser = async (url: string, options?: any) => {
     const passkeysSupported: boolean = Passkey.isSupported()
 
     const { hasOnboardedPasskeys, hasCreatedPasskey } =
       preferencesStore.getState()
+    const urlSupportsPasskey = doesUrlSupportPasskey(url)
 
     // If url includes minarsidur or umsoknir we need authentication so we check for passkeys
-    if (passkeysSupported && isPasskeyEnabled && doesUrlSupportPasskey(url)) {
+    if (passkeysSupported && isPasskeyEnabled && urlSupportsPasskey) {
       if (hasCreatedPasskey) {
         // Open passkey flow to authenticate
         suppressLockScreen()
@@ -55,7 +59,7 @@ export const useBrowser = () => {
         await openAndSuppressBrowser(url)
       } else if (!hasOnboardedPasskeys) {
         // Open passkey onboarding screen
-        router.navigate({ pathname: '/passkey', params: { url, parentComponentId: componentId } })
+        router.navigate({ pathname: '/passkey', params: { url } })
       }
     } else {
       await openAndSuppressBrowser(url)

@@ -10,7 +10,7 @@ import {
   useWindowDimensions,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
-import { router, useLocalSearchParams } from 'expo-router'
+import { router, useLocalSearchParams, useNavigation } from 'expo-router'
 
 import { Button, Typography, NavigationBarSheet, LinkText } from '@/ui'
 import logo from '@/assets/logo/logo-64w.png'
@@ -19,7 +19,10 @@ import illustrationSrc from '@/assets/illustrations/digital-services-m1-dots.png
 import { preferencesStore } from '@/stores/preferences-store'
 import { useRegisterPasskey } from '@/lib/passkeys/useRegisterPasskey'
 import { useAuthenticatePasskey } from '@/lib/passkeys/useAuthenticatePasskey'
-import { clearLockScreenSuppression, suppressLockScreen } from '@/stores/auth-store'
+import {
+  clearLockScreenSuppression,
+  suppressLockScreen,
+} from '@/stores/auth-store'
 import { useBrowser } from '@/hooks/use-browser'
 import { addPasskeyAsLoginHint } from '@/lib/passkeys/helpers'
 import { testIDs } from '@/utils/test-ids'
@@ -87,12 +90,18 @@ export default function PasskeyScreen() {
   const [isLoading, setIsLoading] = useState(false)
   const { registerPasskey } = useRegisterPasskey()
   const { authenticatePasskey } = useAuthenticatePasskey()
-  const { openBrowser } = useBrowser();
+  const { openBrowser } = useBrowser()
 
   useEffect(() => {
     preferencesStore.setState({
       hasOnboardedPasskeys: true,
     })
+    return () => {
+      if (url) {
+        // We need to be sure the Passkey modal has been dismissed on iOS.
+        setTimeout(() => openBrowser(url), 1000);
+      }
+    }
   }, [])
 
   return (
@@ -221,9 +230,6 @@ export default function PasskeyScreen() {
                 }
 
                 router.back()
-                if (url) {
-                  openBrowser(url)
-                }
               }
             }}
             style={{ marginBottom: theme.spacing[1] }}
@@ -235,10 +241,7 @@ export default function PasskeyScreen() {
               defaultMessage: 'Sleppa',
             })}
             onPress={() => {
-              router.back()
-              if (url) {
-                openBrowser(url)
-              }
+              router.back();
             }}
           />
         </ButtonWrapper>
