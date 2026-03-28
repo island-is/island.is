@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   SafeAreaView,
@@ -91,6 +91,11 @@ export default function FilterScreen() {
     dateFrom,
     dateTo,
   ])
+
+  // Memoized date limits for date pickers
+  const maxFromDate = useMemo(() => dateTo || new Date(), [dateTo])
+  const minToDate = useMemo(() => dateFrom || new Date(0), [dateFrom])
+  const maxToDate = useMemo(() => new Date(), [])
 
   return (
     <SafeAreaView style={{ flex: 1, marginTop: theme.spacing[3] }}>
@@ -192,7 +197,7 @@ export default function FilterScreen() {
                 })}
                 onSelectDate={setDateFrom}
                 selectedDate={dateFrom}
-                maximumDate={dateTo}
+                maximumDate={maxFromDate}
               />
               <DatePickerInput
                 label={intl.formatMessage({
@@ -201,8 +206,8 @@ export default function FilterScreen() {
                 placeholder={intl.formatMessage({
                   id: 'inbox.filterDatePlaceholder',
                 })}
-                maximumDate={new Date()}
-                minimumDate={dateFrom}
+                maximumDate={maxToDate}
+                minimumDate={minToDate}
                 onSelectDate={setDateTo}
                 selectedDate={dateTo}
               />
