@@ -138,6 +138,7 @@ export default function LicenseScannerScreen() {
     }
 
     scanningRef.current = ScanningStatus.LOADING
+    setActive(false)
 
     void impactAsync(ImpactFeedbackStyle.Heavy)
     void verifyLicenseBarcode({
@@ -146,20 +147,25 @@ export default function LicenseScannerScreen() {
           data: value,
         },
       },
-    }).then(({ data }) => {
-      if (data) {
-        scanningRef.current = ScanningStatus.FINISHED
-
-        setInvalid(false)
-        setActive(false)
-
-        setScanResult(data.verifyLicenseBarcode)
-        router.push({
-          pathname: '/(auth)/(tabs)/wallet/scanner/[id]',
-          params: { id: 'result' },
-        })
-      }
     })
+      .then(({ data }) => {
+        if (data) {
+          scanningRef.current = ScanningStatus.FINISHED
+          setInvalid(false)
+          setScanResult(data.verifyLicenseBarcode)
+          router.push({
+            pathname: '/(auth)/(tabs)/wallet/scanner/[id]',
+            params: { id: 'result' },
+          })
+        } else {
+          scanningRef.current = ScanningStatus.INITIAL
+          setActive(true)
+        }
+      })
+      .catch(() => {
+        scanningRef.current = ScanningStatus.INITIAL
+        setActive(true)
+      })
   }
 
   const codeScanner = useCodeScanner({
@@ -180,8 +186,12 @@ export default function LicenseScannerScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      setActive(true)
+      const timeout = setTimeout(() => {
+        scanningRef.current = ScanningStatus.INITIAL
+        setActive(true)
+      }, 500)
       return () => {
+        clearTimeout(timeout)
         setActive(false)
         reset()
         scanningRef.current = ScanningStatus.INITIAL
