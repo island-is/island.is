@@ -93,9 +93,16 @@ export default function FilterScreen() {
   ])
 
   // Memoized date limits for date pickers
-  const maxFromDate = useMemo(() => dateTo || new Date(), [dateTo])
-  const minToDate = useMemo(() => dateFrom || new Date(0), [dateFrom])
-  const maxToDate = useMemo(() => new Date(), [])
+  // Only constrain "from" picker when "to" is explicitly set (avoid stale new Date())
+  const maxFromDate = useMemo(() => {
+    const today = new Date()
+    return dateTo ? (dateTo < today ? dateTo : today) : today
+  }, [dateTo])
+  const minToDate = useMemo(() => dateFrom || undefined, [dateFrom])
+  const maxToDate = useMemo(() => {
+    const today = new Date()
+    return dateFrom ? (dateFrom > today ? dateFrom : today) : today
+  }, [minToDate])
 
   return (
     <SafeAreaView style={{ flex: 1, marginTop: theme.spacing[3] }}>
