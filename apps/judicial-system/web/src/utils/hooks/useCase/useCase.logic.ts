@@ -22,10 +22,7 @@ type ChildKeys = Pick<
 
 type AppealChildKeys = Pick<
   UpdateCaseInput,
-  | 'appealAssistantId'
-  | 'appealJudge1Id'
-  | 'appealJudge2Id'
-  | 'appealJudge3Id'
+  'appealAssistantId' | 'appealJudge1Id' | 'appealJudge2Id' | 'appealJudge3Id'
 >
 
 type AppealCaseKeys = Pick<
