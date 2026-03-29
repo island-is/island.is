@@ -388,6 +388,7 @@ query Case($input: CaseQueryInput!) {
     appealedDate
     appealDeadline
     appealCase {
+      id
       appealState
       appealCaseNumber
       appealReceivedByCourtDate
