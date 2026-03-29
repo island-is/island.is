@@ -95,7 +95,6 @@ import { UniversityStudiesHeader } from './Themes/UniversityStudiesTheme'
 import UniversityStudiesFooter from './Themes/UniversityStudiesTheme/UniversityStudiesFooter'
 import { UtlendingastofnunFooter } from './Themes/UtlendingastofnunTheme'
 import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
-import { watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
 interface NavigationData {
@@ -800,18 +799,7 @@ const OrganizationChat = ({ organizationId }: { organizationId: string }) => {
 
   if (loading) return null
 
-  return (
-    <WebChat
-      webChat={data?.getWebChat}
-      renderFallback={() => {
-        if (organizationId in watsonConfig[activeLocale])
-          return (
-            <WatsonChatPanel {...watsonConfig[activeLocale][organizationId]} />
-          )
-        return null
-      }}
-    />
-  )
+  return <WebChat webChat={data?.getWebChat} />
 }
 
 const SecondaryMenu = ({
@@ -984,7 +972,7 @@ export const OrganizationWrapper: React.FC<
     }))
 
     const pathname = new URL(router.asPath, 'https://island.is').pathname
-
+    const activeTopLinks: { href: string; active: boolean }[] = []
     const navigationData: NavigationData = {
       title: navigationDataProp.title,
       items: (organizationPage.navigationLinks?.topLinks ?? []).map(
@@ -999,16 +987,29 @@ export const OrganizationWrapper: React.FC<
               active: isActive,
             }
           })
-          return {
+          const isActive =
+            topLink.isActive || pathname === topLink.href || isAnyChildActive
+          const item = {
             title: topLink.label,
             href: topLink.href,
-            active:
-              topLink.isActive || pathname === topLink.href || isAnyChildActive,
+            active: isActive,
             items: midLinks,
           }
+          if (isActive) activeTopLinks.push(item)
+          return item
         },
       ),
     }
+
+    const lastBreadcrumb = breadcrumbItems[breadcrumbItems.length - 1]
+
+    if (lastBreadcrumb?.href)
+      for (let i = 0; i < activeTopLinks.length; i += 1)
+        if (lastBreadcrumb?.href === activeTopLinks[i].href) {
+          for (let j = 0; j < activeTopLinks.length; j += 1)
+            if (j !== i) activeTopLinks[j].active = false
+          break
+        }
 
     return {
       breadcrumbItems,

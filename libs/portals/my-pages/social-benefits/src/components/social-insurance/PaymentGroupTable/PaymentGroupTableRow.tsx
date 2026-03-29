@@ -1,7 +1,7 @@
 import { Table as T, Box, Button, Text } from '@island.is/island-ui/core'
 
 import * as styles from './PaymentGroupTable.css'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import { useState } from 'react'
 import AnimateHeight from 'react-animate-height'
 import { MONTHS, amountFormat } from '@island.is/portals/my-pages/core'
