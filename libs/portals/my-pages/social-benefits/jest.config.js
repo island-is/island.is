@@ -1,5 +1,5 @@
 module.exports = {
-  displayName: 'portals-my-pages-social-insurance-maintenance',
+  displayName: 'portals-my-pages-social-benefits',
   preset: './jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
@@ -10,6 +10,5 @@ module.exports = {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory:
-    '<rootDir>/coverage/libs/portals/my-pages/social-insurance-maintenance',
+  coverageDirectory: '<rootDir>/coverage/libs/portals/my-pages/social-benefits',
 }

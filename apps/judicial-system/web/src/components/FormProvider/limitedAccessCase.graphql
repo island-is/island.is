@@ -201,6 +201,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     appealedDate
     appealDeadline
     appealCase {
+      id
       appealState
       appealCaseNumber
       appealReceivedByCourtDate

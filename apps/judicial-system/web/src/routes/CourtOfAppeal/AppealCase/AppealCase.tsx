@@ -18,7 +18,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  type AppealCase,
+  type AppealCase as TAppealCase,
   NotificationType,
   User,
   UserRole,
@@ -139,7 +139,7 @@ const AppealCase: FC = () => {
         appealCase: {
           ...prevWorkingCase.appealCase,
           ...coaJudge,
-        } as AppealCase,
+        } as TAppealCase,
       }))
     }
   }
@@ -159,7 +159,7 @@ const AppealCase: FC = () => {
         appealCase: {
           ...prevWorkingCase.appealCase,
           appealAssistant: updatedCase?.appealCase?.appealAssistant,
-        } as AppealCase,
+        } as TAppealCase,
       }))
     }
   }
