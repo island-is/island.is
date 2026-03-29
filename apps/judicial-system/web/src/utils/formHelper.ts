@@ -2,11 +2,61 @@ import { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  AppealCase,
+  Case,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { replaceTabs } from './formatters'
 import { UpdateCase } from './hooks'
 import * as validations from './validate'
+
+const appealCaseFields: Set<string> = new Set([
+  'appealCaseNumber',
+  'appealConclusion',
+  'appealIsolationToDate',
+  'appealRulingDecision',
+  'appealRulingModifiedHistory',
+  'appealValidToDate',
+  'defendantStatementDate',
+  'isAppealCustodyIsolation',
+  'prosecutorStatementDate',
+  'requestAppealRulingNotToBePublished',
+])
+
+const isAppealCaseField = (field: string): field is keyof AppealCase =>
+  appealCaseFields.has(field)
+
+// Applies update fields to Case, nesting appeal fields under appealCase
+export const applyUpdateToCase = (
+  prevWorkingCase: Case,
+  updates: Partial<UpdateCase>,
+): Case => {
+  const caseUpdates: Record<string, unknown> = {}
+  let appealCaseUpdates: Record<string, unknown> | undefined
+
+  for (const [key, value] of Object.entries(updates)) {
+    if (isAppealCaseField(key)) {
+      if (!appealCaseUpdates) {
+        appealCaseUpdates = {}
+      }
+      appealCaseUpdates[key] = value
+    } else {
+      caseUpdates[key] = value
+    }
+  }
+
+  return {
+    ...prevWorkingCase,
+    ...caseUpdates,
+    ...(appealCaseUpdates && {
+      appealCase: {
+        ...prevWorkingCase.appealCase,
+        ...appealCaseUpdates,
+      } as AppealCase,
+    }),
+  }
+}
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
@@ -67,10 +117,9 @@ export const validateAndSet = (
 ) => {
   removeErrorMessageIfValid(validations, value, errorMessage, setErrorMessage)
 
-  setWorkingCase((prevWorkingCase) => ({
-    ...prevWorkingCase,
-    [field]: value,
-  }))
+  setWorkingCase((prevWorkingCase) =>
+    applyUpdateToCase(prevWorkingCase, { [field]: value }),
+  )
 }
 
 export const validateAndSendToServer = (
@@ -110,9 +159,11 @@ export const setCheckboxAndSendToServer = (
   setWorkingCase: (value: SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
-  const checks = theCase[field as keyof Case]
-    ? [...(theCase[field as keyof Case] as [])]
-    : ([] as string[])
+  const currentValue = isAppealCaseField(field)
+    ? theCase.appealCase?.[field]
+    : theCase[field as keyof Case]
+
+  const checks = currentValue ? [...(currentValue as [])] : ([] as string[])
 
   if (!checks.includes(value)) {
     checks.push(value)
@@ -120,10 +171,9 @@ export const setCheckboxAndSendToServer = (
     checks.splice(checks.indexOf(value), 1)
   }
 
-  setWorkingCase((prevWorkingCase) => ({
-    ...prevWorkingCase,
-    [field]: checks,
-  }))
+  setWorkingCase((prevWorkingCase) =>
+    applyUpdateToCase(prevWorkingCase, { [field]: checks }),
+  )
 
   if (theCase.id !== '') {
     updateCase(theCase.id, { [field]: checks })
