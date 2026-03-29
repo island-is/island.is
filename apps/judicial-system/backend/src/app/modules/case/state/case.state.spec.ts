@@ -1233,8 +1233,7 @@ describe('Transition Case', () => {
               state: fromState,
               appealCase: { appealState: fromAppealState },
               type,
-              indictmentRulingDecision:
-                CaseIndictmentRulingDecision.DISMISSAL,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             } as Case,
             {
               id: uuid(),
@@ -1262,8 +1261,7 @@ describe('Transition Case', () => {
               state: fromState,
               appealCase: { appealState: fromAppealState },
               type,
-              indictmentRulingDecision:
-                CaseIndictmentRulingDecision.DISMISSAL,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             } as Case,
             {
               id: uuid(),
@@ -1299,9 +1297,7 @@ describe('Transition Case', () => {
 
         // Act and assert
         expect(act).toThrow(ForbiddenException)
-        expect(act).toThrow(
-          'Only dismissed indictment cases can be appealed',
-        )
+        expect(act).toThrow('Only dismissed indictment cases can be appealed')
       })
 
       it('should not appeal as neutral actor', () => {
@@ -1313,8 +1309,7 @@ describe('Transition Case', () => {
               id: uuid(),
               state: fromState,
               type,
-              indictmentRulingDecision:
-                CaseIndictmentRulingDecision.DISMISSAL,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             } as Case,
             {
               id: uuid(),
@@ -1513,8 +1508,7 @@ describe('Transition Case', () => {
               state: fromState,
               appealCase: { appealState: fromAppealState },
               type,
-              indictmentRulingDecision:
-                CaseIndictmentRulingDecision.DISMISSAL,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             } as Case,
             { id: uuid() } as User,
           )
@@ -1540,8 +1534,7 @@ describe('Transition Case', () => {
               state: fromState,
               appealCase: { appealState: fromAppealState },
               type,
-              indictmentRulingDecision:
-                CaseIndictmentRulingDecision.DISMISSAL,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             } as Case,
             { id: uuid() } as User,
           )
@@ -1685,8 +1678,7 @@ describe('Transition Case', () => {
               state: fromState,
               appealCase: { appealState: fromAppealState },
               type,
-              indictmentRulingDecision:
-                CaseIndictmentRulingDecision.DISMISSAL,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             } as Case,
             { id: uuid() } as User,
           )
@@ -1711,8 +1703,7 @@ describe('Transition Case', () => {
               state: fromState,
               appealCase: { appealState: fromAppealState },
               type,
-              indictmentRulingDecision:
-                CaseIndictmentRulingDecision.DISMISSAL,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             } as Case,
             { id: uuid() } as User,
           )
@@ -1854,8 +1845,7 @@ describe('Transition Case', () => {
               state: fromState,
               appealCase: { appealState: fromAppealState },
               type,
-              indictmentRulingDecision:
-                CaseIndictmentRulingDecision.DISMISSAL,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             } as Case,
             { id: uuid() } as User,
           )
@@ -1881,8 +1871,7 @@ describe('Transition Case', () => {
               state: fromState,
               appealCase: { appealState: fromAppealState },
               type,
-              indictmentRulingDecision:
-                CaseIndictmentRulingDecision.DISMISSAL,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             } as Case,
             { id: uuid() } as User,
           )
@@ -2026,8 +2015,7 @@ describe('Transition Case', () => {
               state: fromState,
               appealCase: { appealState: fromAppealState },
               type,
-              indictmentRulingDecision:
-                CaseIndictmentRulingDecision.DISMISSAL,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             } as Case,
             { id: uuid() } as User,
           )
@@ -2051,8 +2039,7 @@ describe('Transition Case', () => {
               state: fromState,
               appealCase: { appealState: fromAppealState },
               type,
-              indictmentRulingDecision:
-                CaseIndictmentRulingDecision.DISMISSAL,
+              indictmentRulingDecision: CaseIndictmentRulingDecision.DISMISSAL,
             } as Case,
             { id: uuid() } as User,
           )
