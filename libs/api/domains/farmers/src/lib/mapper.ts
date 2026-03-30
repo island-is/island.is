@@ -7,9 +7,7 @@ import {
 } from '@island.is/clients/farmers'
 import { FarmerLand } from './models/farmerLand.model'
 import { FarmerLandSubsidy } from './models/farmerLandSubsidy.model'
-import {
-  FarmerLandSubsidyFilterOptions,
-} from './models/farmerLandSubsidyFilterOptions.model'
+import { FarmerLandSubsidyFilterOptions } from './models/farmerLandSubsidyFilterOptions.model'
 import { LandBeneficiary } from './models/landBeneficiary.model'
 import { LandBeneficiaryPayment } from './models/landBeneficiaryPayment.model'
 import { LandRegistryEntry } from './models/landRegistryEntry.model'
@@ -76,7 +74,12 @@ export const mapToFilterOptions = (
     ),
     paymentCategories: (filterOptions.paymentCategories ?? []).flatMap((pc) =>
       pc.paymentCategoryId != null && pc.paymentCategoryName
-        ? [{ paymentCategoryId: pc.paymentCategoryId, paymentCategoryName: pc.paymentCategoryName }]
+        ? [
+            {
+              paymentCategoryId: pc.paymentCategoryId,
+              paymentCategoryName: pc.paymentCategoryName,
+            },
+          ]
         : [],
     ),
   }

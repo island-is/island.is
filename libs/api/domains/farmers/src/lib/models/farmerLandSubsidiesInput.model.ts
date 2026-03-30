@@ -29,20 +29,30 @@ export class FarmerLandSubsidiesInput {
 
   @Field(() => Int, {
     nullable: true,
-    description: 'Filter by payment category ID. Options available in filterOptions.',
+    description:
+      'Filter by payment category ID. Options available in filterOptions.',
   })
   @IsOptional()
   paymentCategoryId?: number
 
-  @Field({ nullable: true, description: 'Filter by contract ID. Options available in filterOptions.' })
+  @Field({
+    nullable: true,
+    description: 'Filter by contract ID. Options available in filterOptions.',
+  })
   @IsOptional()
   contractId?: string
 
-  @Field({ nullable: true, description: 'Filter payments from this date (inclusive).' })
+  @Field({
+    nullable: true,
+    description: 'Filter payments from this date (inclusive).',
+  })
   @IsOptional()
   dateFrom?: Date
 
-  @Field({ nullable: true, description: 'Filter payments to this date (inclusive).' })
+  @Field({
+    nullable: true,
+    description: 'Filter payments to this date (inclusive).',
+  })
   @IsOptional()
   dateTo?: Date
 }
