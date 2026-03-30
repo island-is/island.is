@@ -50,10 +50,10 @@ export const subSectionQualityPhotoBE = buildSubSection({
             }
 
             const thjodskraPhotos =
-              getValueViaPath<{ images?: ThjodskraImage[] }>(
+              getValueViaPath<ThjodskraImage[]>(
                 externalData,
-                'allPhotosFromThjodskra.data',
-              )?.images ?? []
+                'allPhotosFromThjodskra.data.images',
+              ) ?? []
 
             const facialPhotos = thjodskraPhotos.filter(
               (p) => p.contentSpecification === 'FACIAL',
@@ -74,10 +74,10 @@ export const subSectionQualityPhotoBE = buildSubSection({
 
             // Thjodskra facial photos
             const thjodskraPhotos =
-              getValueViaPath<{ images?: ThjodskraImage[] }>(
+              getValueViaPath<ThjodskraImage[]>(
                 externalData,
-                'allPhotosFromThjodskra.data',
-              )?.images ?? []
+                'allPhotosFromThjodskra.data.images',
+              ) ?? []
 
             const facialPhotos = thjodskraPhotos.filter(
               (p) => p.contentSpecification === 'FACIAL',
@@ -115,7 +115,6 @@ export const subSectionQualityPhotoBE = buildSubSection({
         }),
         buildDescriptionField({
           id: 'photoDescription',
-          description: '',
         }),
       ],
     }),

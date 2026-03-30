@@ -35,7 +35,6 @@ import {
   B_FULL_RENEWAL_65,
 } from './constants'
 import { dataSchema } from './dataSchema'
-import { answerValidators } from './answerValidators'
 import {
   getApplicationFeatureFlags,
   DrivingLicenseFeatureFlags,
@@ -78,7 +77,6 @@ const DrivingLicenseTemplate: ApplicationTemplate<
   codeOwner: CodeOwners.Juni,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
-  answerValidators,
   translationNamespaces: configuration.translation,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

@@ -310,14 +310,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       } else if (selectedPhoto) {
         // User selected a Thjodskra photo — validate against FACIAL entries only
         const allThjodskraPhotos =
-          (
-            application.externalData?.allPhotosFromThjodskra?.data as {
-              images?: Array<{
-                biometricId: string
-                contentSpecification: string
-              }>
-            }
-          )?.images ?? []
+          getValueViaPath<
+            Array<{ biometricId: string; contentSpecification: string }>
+          >(
+            application.externalData,
+            'allPhotosFromThjodskra.data.images',
+          ) ?? []
 
         const facialPhotos = allThjodskraPhotos.filter(
           (p) => p.contentSpecification === 'FACIAL',
@@ -344,10 +342,11 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       }
 
       // Health certificate handling
-      const healthDeclaration = answers.healthDeclaration as Record<
-        string,
-        string
-      >
+      const healthDeclaration =
+        getValueViaPath<Record<string, string>>(
+          answers,
+          'healthDeclaration',
+        ) ?? {}
       const beNeedsHealthCert =
         calculateNeedsHealthCert(healthDeclaration) ||
         remarks ||

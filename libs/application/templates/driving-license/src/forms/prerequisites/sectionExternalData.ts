@@ -78,11 +78,9 @@ export const sectionExternalData = buildSubSection({
         }),
         buildDataProviderItem({
           provider: AllPhotosFromThjodskraApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: QualityPhotoAndSignatureApi,
-          title: '',
         }),
         buildDataProviderItem({
           provider: ExistingApplicationApi,
