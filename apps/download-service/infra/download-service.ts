@@ -1,4 +1,3 @@
-import { PrimarySchoolClientConfig } from '@island.is/clients/mms/primary-school'
 import { ServiceBuilder, ref, service } from '../../../infra/src/dsl/dsl'
 import {
   Base,
