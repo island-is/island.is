@@ -22,6 +22,7 @@ import {
   DocumentsApi,
   IncomePlanApi,
   PaymentPlanApi,
+  PaymentTypesOverviewApi,
   PensionCalculatorApi,
   DeathBenefitsApi,
   MedicalDocumentsApi,
@@ -126,6 +127,11 @@ const apiCollection: Array<{
   {
     api: PersonalTaxCreditWriteApi,
     scopes: ['@tr.is/personuafslattur:write'],
+    autoAuth: true,
+  },
+  {
+    api: PaymentTypesOverviewApi,
+    scopes: ['@tr.is/greidslutegundir:read'],
     autoAuth: true,
   },
 ]

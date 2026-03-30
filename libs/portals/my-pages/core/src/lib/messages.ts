@@ -1857,6 +1857,15 @@ export const m = defineMessages({
     id: 'service.portal:personal-tax-credit-description',
     defaultMessage: 'Persónuafsláttur er 68.691 kr. á mánuði á árinu 2025.',
   },
+  paymentTypesOverview: {
+    id: 'service.portal:payment-types-overview',
+    defaultMessage: 'Greiðslutegundir',
+  },
+  paymentTypesOverviewDescription: {
+    id: 'service.portal:payment-types-overview-description',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um tegundir greiðslna sem hafa borist þér frá TR.',
+  },
   paymentsReasoning: {
     id: 'service.portal:payments-reasoning',
     defaultMessage: 'Forsenda greiðslna',

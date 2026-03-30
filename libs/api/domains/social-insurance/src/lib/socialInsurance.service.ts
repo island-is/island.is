@@ -5,6 +5,7 @@ import {
   SocialInsuranceAdministrationGeneralService,
   SocialInsuranceAdministrationIncomePlanService,
   SocialInsuranceAdministrationPaymentPlanService,
+  SocialInsuranceAdministrationPaymentTypesOverviewService,
   SocialInsuranceAdministrationPensionCalculatorService,
   SocialInsuranceAdministrationPersonalTaxCreditService,
   TrWebApiServicesCommonClientsModelsSetPersonalTaxAllowanceInput,
@@ -42,6 +43,11 @@ import { Locale } from '@island.is/shared/types'
 import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionCertificate'
 import { DisabilityPensionCertificate } from './models/medicalDocuments/disabilityPensionCertificate.model'
 import { parseIncomePlanStatus } from './mappers/parseIncomePlanStatus'
+import {
+  mapBenefitChildInformation,
+  mapPaymentTypeOverview,
+} from './mappers/mapPaymentTypesOverview'
+import { PaymentTypesOverviewResult } from './models/paymentTypes/paymentTypesOverviewResult.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -54,6 +60,7 @@ export class SocialInsuranceService {
     private readonly incomePlanService: SocialInsuranceAdministrationIncomePlanService,
     private readonly paymentService: SocialInsuranceAdministrationPaymentPlanService,
     private readonly personalTaxCreditClient: SocialInsuranceAdministrationPersonalTaxCreditService,
+    private readonly paymentTypesOverviewClient: SocialInsuranceAdministrationPaymentTypesOverviewService,
   ) {}
 
   async getPayments(user: User): Promise<Payments | undefined> {
@@ -325,5 +332,27 @@ export class SocialInsuranceService {
     input: TrWebApiServicesCommonClientsModelsSpouseTaxCardUsageDueToDeathInput,
   ): Promise<void> {
     return this.personalTaxCreditClient.setSpouseTaxCardDueToDeath(user, input)
+  }
+
+  async getPaymentTypesOverview(
+    user: User,
+  ): Promise<PaymentTypesOverviewResult | null> {
+    try {
+      const [paymentTypes, benefitChildren] = await Promise.all([
+        this.paymentTypesOverviewClient.getPaymentTypesOverview(user),
+        this.paymentTypesOverviewClient.getBenefitChildrenInformation(user),
+      ])
+      if (!paymentTypes && !benefitChildren) return null
+      return {
+        paymentTypes: paymentTypes?.map(mapPaymentTypeOverview),
+        benefitChildren: benefitChildren?.map(mapBenefitChildInformation),
+      }
+    } catch (error) {
+      this.logger.warn('Payment types overview fetch failed', {
+        category: LOG_CATEGORY,
+        error,
+      })
+      throw error
+    }
   }
 }

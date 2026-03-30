@@ -27,6 +27,7 @@ export const servicePortalScopes = [
   ApiScope.financeSalary,
   ApiScope.financeSchedule,
   ApiScope.financeLoans,
+  ApiScope.socialInsuranceAdministration,
   ApiScope.internal,
   ApiScope.internalProcuring,
   ApiScope.meDetails,

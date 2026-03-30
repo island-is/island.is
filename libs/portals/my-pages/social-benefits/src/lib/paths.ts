@@ -9,6 +9,7 @@ export enum SocialInsuranceMaintenancePaths {
   SocialInsuranceIncomePlan = '/framfaersla/almannatryggingar/tekjuaaetlun',
   SocialInsuranceIncomePlanDetail = '/framfaersla/almannatryggingar/tekjuaaetlun/nuverandi',
   SocialInsurancePersonalTaxCredit = '/framfaersla/almannatryggingar/personuafslattur',
+  SocialInsurancePaymentTypesOverview = '/framfaersla/almannatryggingar/greidslutegundir',
 }
 
 /** @deprecated Use SocialInsuranceMaintenancePaths instead — these legacy paths are kept for redirects */

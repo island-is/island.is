@@ -29,3 +29,4 @@ export { SocialInsuranceAdministrationDisabilityPensionService } from './lib/ser
 export { SocialInsuranceAdministrationMedicalAndRehabilitationService } from './lib/services/applicationServices/medicalAndRehabilitation.service'
 export { SocialInsuranceAdministrationPersonalTaxCreditService } from './lib/services/personalTaxCredit.service'
 export { SocialInsuranceAdministrationOldAgePensionService } from './lib/services/applicationServices/oldAgePension.service'
+export { SocialInsuranceAdministrationPaymentTypesOverviewService } from './lib/services/paymentTypesOverview.service'

@@ -16,6 +16,7 @@ import { SocialInsuranceAdministrationPensionCalculatorService } from './service
 import { SocialInsuranceAdministrationDeathBenefitsService } from './services/deathBenefits.service'
 import { SocialInsuranceAdministrationMedicalDocumentsService } from './services/medicalDocuments.service'
 import { SocialInsuranceAdministrationPersonalTaxCreditService } from './services/personalTaxCredit.service'
+import { SocialInsuranceAdministrationPaymentTypesOverviewService } from './services/paymentTypesOverview.service'
 import { SocialInsuranceAdministrationOldAgePensionService } from './services/applicationServices/oldAgePension.service'
 
 @Module({
@@ -38,6 +39,7 @@ import { SocialInsuranceAdministrationOldAgePensionService } from './services/ap
     SocialInsuranceAdministrationDisabilityPensionService,
     SocialInsuranceAdministrationMedicalAndRehabilitationService,
     SocialInsuranceAdministrationPersonalTaxCreditService,
+    SocialInsuranceAdministrationPaymentTypesOverviewService,
     SocialInsuranceAdministrationOldAgePensionService,
   ],
   exports: [
@@ -56,6 +58,7 @@ import { SocialInsuranceAdministrationOldAgePensionService } from './services/ap
     SocialInsuranceAdministrationMedicalAndRehabilitationService,
     SocialInsuranceAdministrationDisabilityPensionService,
     SocialInsuranceAdministrationPersonalTaxCreditService,
+    SocialInsuranceAdministrationPaymentTypesOverviewService,
     SocialInsuranceAdministrationOldAgePensionService,
   ],
 })

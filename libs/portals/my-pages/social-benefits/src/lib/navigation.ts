@@ -49,6 +49,11 @@ export const socialBenefitsNavigation: PortalNavigationItem = {
           description: m.personalTaxCreditDescription,
           path: SocialInsuranceMaintenancePaths.SocialInsurancePersonalTaxCredit,
         },
+        {
+          name: m.paymentTypesOverview,
+          description: m.paymentTypesOverviewDescription,
+          path: SocialInsuranceMaintenancePaths.SocialInsurancePaymentTypesOverview,
+        },
       ],
     },
   ],

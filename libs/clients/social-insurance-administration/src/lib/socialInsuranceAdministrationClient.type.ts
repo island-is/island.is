@@ -5,6 +5,7 @@ import {
   GeneralApi,
   IncomePlanApi,
   PaymentPlanApi,
+  PaymentTypesOverviewApi,
   PensionCalculatorApi,
   DeathBenefitsApi,
   TestApi,
@@ -30,6 +31,7 @@ export type Scope =
   | '@tr.is/bankaupplysingar:read'
   | '@tr.is/personuafslattur:read'
   | '@tr.is/personuafslattur:write'
+  | '@tr.is/greidslutegundir:read'
 
 export type Api =
   | typeof ApplicationApi
@@ -48,6 +50,7 @@ export type Api =
   | typeof BankInformationWriteApi
   | typeof PersonalTaxCreditApi
   | typeof PersonalTaxCreditWriteApi
+  | typeof PaymentTypesOverviewApi
 
 export class ApplicationWriteApi extends ApplicationApi {}
 export class BankInformationWriteApi extends BankInformationApi {}
