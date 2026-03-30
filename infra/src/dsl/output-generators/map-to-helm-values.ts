@@ -523,7 +523,14 @@ function serializeHTTPRoute(
   )
 
   return {
-    parentRefs: [{ name: gatewayName, namespace: isPublic ? GATEWAY_EXTERNAL_NAMESPACE : GATEWAY_INTERNAL_NAMESPACE }],
+    parentRefs: [
+      {
+        name: gatewayName,
+        namespace: isPublic
+          ? GATEWAY_EXTERNAL_NAMESPACE
+          : GATEWAY_INTERNAL_NAMESPACE,
+      },
+    ],
     hostnames,
     rules: [
       {
