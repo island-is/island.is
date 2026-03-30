@@ -347,6 +347,7 @@ services-auth-delegation-api:
     CODE_OWNER: 'aranja'
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.fbbkpo.euw1.cache.amazonaws.com:6379"]'
     COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
+    CONTENTFUL_HOST: 'preview.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
@@ -430,6 +431,7 @@ services-auth-delegation-api:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/identity-server/CONTENTFUL_ACCESS_TOKEN'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_B2C_CLIENT_SECRET: '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET'

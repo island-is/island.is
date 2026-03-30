@@ -1,6 +1,7 @@
 import { WhereOptions } from 'sequelize'
 
 import {
+  AppealCase,
   Case,
   DateLog,
   Defendant,
@@ -52,7 +53,6 @@ type ModelDef<M extends ModelCtor<unknown>> = {
 }
 
 export const modelMap: {
-  appealJudge1: ModelDef<typeof User>
   dateLogs: ModelDef<typeof DateLog>
   defendants: ModelDef<typeof Defendant>
   court: ModelDef<typeof Institution>
@@ -61,8 +61,8 @@ export const modelMap: {
   judge: ModelDef<typeof User>
   prosecutor: ModelDef<typeof User>
   registrar: ModelDef<typeof User>
+  appealCase: ModelDef<typeof AppealCase>
 } = {
-  appealJudge1: { model: User, separate: false },
   dateLogs: { model: DateLog, separate: true, order: [['created', 'DESC']] },
   defendants: {
     model: Defendant,
@@ -75,13 +75,16 @@ export const modelMap: {
   judge: { model: User, separate: false },
   prosecutor: { model: User, separate: false },
   registrar: { model: User, separate: false },
+  appealCase: { model: AppealCase, separate: false },
 }
 
 export const subModelMap: {
+  appealJudge1: ModelDef<typeof User>
   eventLogs: ModelDef<typeof DefendantEventLog>
   subpoenas: ModelDef<typeof Subpoena>
   verdicts: ModelDef<typeof Verdict>
 } = {
+  appealJudge1: { model: User, separate: false },
   eventLogs: { model: DefendantEventLog, separate: true },
   subpoenas: { model: Subpoena, separate: false, order: [['created', 'DESC']] },
   verdicts: { model: Verdict, separate: false, order: [['created', 'DESC']] },
