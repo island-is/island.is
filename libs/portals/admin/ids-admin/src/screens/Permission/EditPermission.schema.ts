@@ -149,8 +149,8 @@ const delegationsSchema = z
         originUrl && targetLinkUri
           ? `${originUrl}?login_hint={{subjectId}}&target_link_uri=${targetLinkUri}`
           : originUrl || targetLinkUri
-            ? undefined
-            : ''
+          ? undefined
+          : ''
 
       return {
         ...rest,

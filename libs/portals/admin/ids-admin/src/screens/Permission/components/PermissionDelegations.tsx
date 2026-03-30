@@ -78,8 +78,7 @@ export const PermissionDelegations = ({
   )
 
   const parsedUrl = parseThirdPartyLoginUrl(
-    (selectedPermission as { thirdPartyLoginUrl?: string })
-      .thirdPartyLoginUrl,
+    (selectedPermission as { thirdPartyLoginUrl?: string }).thirdPartyLoginUrl,
   )
 
   const [inputValues, setInputValues] = useEnvironmentState<{
