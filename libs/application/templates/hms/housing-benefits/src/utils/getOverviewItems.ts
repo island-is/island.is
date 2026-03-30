@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import {
   Application,
   AttachmentItem,
@@ -18,6 +18,19 @@ import {
   getSelectedContract,
   getSelectedLandlordForPayment,
 } from './rentalAgreementUtils'
+
+const formatBankAccount = (
+  bankAccount:
+    | { bankNumber?: string; ledger?: string; accountNumber?: string }
+    | undefined,
+): string => {
+  if (!bankAccount) return ''
+  const combined =
+    (bankAccount.bankNumber ?? '') +
+    (bankAccount.ledger ?? '') +
+    (bankAccount.accountNumber ?? '')
+  return combined.length === 12 ? formatBankInfo(combined) : combined
+}
 
 export const personalInformationOverviewItems = (
   answers: FormValue,
@@ -63,6 +76,17 @@ export const personalInformationOverviewItems = (
       keyText: m.draftMessages.overviewSection.phoneNumber,
       valueText: formatPhoneNumberWithIcelandicCountryCode(
         getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
+      ),
+    },
+    {
+      width: 'full',
+      keyText: m.draftMessages.overviewSection.bankAccount,
+      valueText: formatBankAccount(
+        getValueViaPath<{
+          bankNumber?: string
+          ledger?: string
+          accountNumber?: string
+        }>(answers, 'applicant.bankAccount'),
       ),
     },
   ]
@@ -311,48 +335,85 @@ export const incomeSectionOverviewItems = (
   _userNationalId?: string,
   _locale?: Locale,
 ): Array<KeyValueItem> => {
-  const text = getValueViaPath<string>(answers, 'incomeTextField')
-  const trimmed = text?.trim()
-  if (!trimmed) return []
+  if (getValueViaPath<string>(answers, 'incomeHasOtherIncome') !== YES) {
+    return []
+  }
 
-  return [
-    {
+  const items: KeyValueItem[] = []
+
+  const contractorText = getValueViaPath<string>(
+    answers,
+    'incomeContractorDescription',
+  )?.trim()
+  if (contractorText) {
+    items.push({
       width: 'full',
-      keyText: m.draftMessages.incomeSection.textFieldTitle,
-      valueText: trimmed,
-    },
-  ]
+      keyText: m.draftMessages.incomeSection.contractorDescriptionTitle,
+      valueText: contractorText,
+    })
+  }
+
+  const foreignText = getValueViaPath<string>(
+    answers,
+    'incomeForeignDescription',
+  )?.trim()
+  if (foreignText) {
+    items.push({
+      width: 'full',
+      keyText: m.draftMessages.incomeSection.foreignDescriptionTitle,
+      valueText: foreignText,
+    })
+  }
+
+  const otherText = getValueViaPath<string>(
+    answers,
+    'incomeOtherDescription',
+  )?.trim()
+  if (otherText) {
+    items.push({
+      width: 'full',
+      keyText: m.draftMessages.incomeSection.otherDescriptionTitle,
+      valueText: otherText,
+    })
+  }
+
+  return items
+}
+
+const appendIncomeFiles = (
+  answers: FormValue,
+  path: string,
+  label: string,
+  out: AttachmentItem[],
+) => {
+  const files = getValueViaPath<Array<{ key: string; name: string }>>(
+    answers,
+    path,
+  )
+  if (!Array.isArray(files)) return
+  files.forEach((file) => {
+    out.push({
+      width: 'full',
+      fileName: `${label}: ${file.name}`,
+      fileType: file.name?.split('.').pop(),
+    })
+  })
 }
 
 export const incomeSectionOverviewAttachments = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<AttachmentItem> => {
-  const files = getValueViaPath<Array<{ key: string; name: string }>>(
-    answers,
-    'incomeFileUploadField',
-  )
+  if (getValueViaPath<string>(answers, 'incomeHasOtherIncome') !== YES) {
+    return []
+  }
 
-  if (!Array.isArray(files) || files.length === 0) return []
+  const attachments: AttachmentItem[] = []
+  appendIncomeFiles(answers, 'incomeContractorFiles', 'Verktakagreiðslur', attachments)
+  appendIncomeFiles(answers, 'incomeForeignFiles', 'Erlendar greiðslur', attachments)
+  appendIncomeFiles(answers, 'incomeOtherFiles', 'Aðrar greiðslur', attachments)
 
-  return files.map((file) => ({
-    width: 'full' as const,
-    fileName: file.name,
-    fileType: file.name?.split('.').pop(),
-  }))
-}
-
-const formatBankAccount = (
-  bankAccount:
-    | { bankNumber?: string; ledger?: string; accountNumber?: string }
-    | undefined,
-): string => {
-  if (!bankAccount) return ''
-  const combined =
-    (bankAccount.bankNumber ?? '') +
-    (bankAccount.ledger ?? '') +
-    (bankAccount.accountNumber ?? '')
-  return combined.length === 12 ? formatBankInfo(combined) : combined
+  return attachments
 }
 
 export const paymentSectionOverviewItems = (
@@ -364,17 +425,11 @@ export const paymentSectionOverviewItems = (
   const paymentRadio = getValueViaPath<string>(answers, 'payment.paymentRadio')
   const isLandlord = paymentRadio === 'landlord'
 
-  const bankAccount = isLandlord
-    ? getValueViaPath<{
-        bankNumber?: string
-        ledger?: string
-        accountNumber?: string
-      }>(answers, 'payment.landlordBankAccount')
-    : getValueViaPath<{
-        bankNumber?: string
-        ledger?: string
-        accountNumber?: string
-      }>(answers, 'payment.bankAccount')
+  const landlordBankAccount = getValueViaPath<{
+    bankNumber?: string
+    ledger?: string
+    accountNumber?: string
+  }>(answers, 'payment.landlordBankAccount')
 
   if (isLandlord) {
     const landlord = getSelectedLandlordForPayment(answers, externalData)
@@ -395,7 +450,7 @@ export const paymentSectionOverviewItems = (
         {
           width: 'half',
           keyText: m.draftMessages.paymentSection.landlordBankAccountTitle,
-          valueText: formatBankAccount(bankAccount),
+          valueText: formatBankAccount(landlordBankAccount),
         },
       ]
     }
@@ -408,7 +463,7 @@ export const paymentSectionOverviewItems = (
       {
         width: 'half',
         keyText: m.draftMessages.paymentSection.landlordBankAccountTitle,
-        valueText: formatBankAccount(bankAccount),
+        valueText: formatBankAccount(landlordBankAccount),
       },
     ]
   }
@@ -416,20 +471,8 @@ export const paymentSectionOverviewItems = (
   return [
     {
       width: 'full',
-      keyText: m.draftMessages.overviewSection.name,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
-    },
-    {
-      width: 'half',
-      keyText: m.draftMessages.overviewSection.nationalId,
-      valueText: formatKennitala(
-        getValueViaPath<string>(answers, 'applicant.nationalId') ?? '',
-      ),
-    },
-    {
-      width: 'half',
-      keyText: m.draftMessages.paymentSection.bankAccountTitle,
-      valueText: formatBankAccount(bankAccount),
+      keyText: m.draftMessages.overviewSection.paymentRecipient,
+      valueText: m.draftMessages.paymentSection.optionMe,
     },
   ]
 }

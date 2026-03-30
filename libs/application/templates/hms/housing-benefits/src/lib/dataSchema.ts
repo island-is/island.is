@@ -1,4 +1,4 @@
-import { EMAIL_REGEX, YES } from '@island.is/application/core'
+import { EMAIL_REGEX, NO, YES } from '@island.is/application/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
@@ -51,6 +51,7 @@ const applicantSchema = z.object({
     .string()
     .optional()
     .refine((v) => !v || isValidPhoneNumber(v)),
+  bankAccount: bankAccountSchema.optional(),
 })
 
 const householdMemberRowSchema = z
@@ -60,7 +61,19 @@ const householdMemberRowSchema = z
   })
   .passthrough() // TableRepeater adds isRemoved, isUnsaved, etc.
 
+const devMockTaxVariants = ['withSampleData', 'emptySuccess'] as const
+
 const baseSchema = z.object({
+  /** @deprecated Nota devMockSettings — geymt fyrir eldri prófunarumskóknir */
+  mockData: z.array(z.string()).optional(),
+  devMockSettings: z
+    .object({
+      useMock: z.union([z.literal(YES), z.literal('no')]).optional(),
+      mockRentalAgreements: z.array(z.literal(YES)).optional(),
+      mockTaxReturn: z.array(z.literal(YES)).optional(),
+      mockTaxReturnVariant: z.enum(devMockTaxVariants).optional(),
+    })
+    .optional(),
   confirmRead: confirmReadSchema.optional(),
   confirmMunicipality: z.array(z.literal(YES)).length(1).optional(),
   approveExternalData: z.boolean().optional(),
@@ -103,6 +116,13 @@ const baseSchema = z.object({
     .optional()
     .nullable(),
   householdMemberApprovals: z.array(z.string()).optional(),
+  /** National IDs of assignees who finished the assignee-prerequisite step (same state). */
+  assigneePrerequisitesCompleted: z.array(z.string()).optional(),
+  assigneePrereq: z
+    .object({
+      confirmRead: z.array(z.string()).optional(),
+    })
+    .optional(),
   assigneeApproval: z
     .object({
       confirmRead: z.array(z.string()).optional(),
@@ -137,12 +157,19 @@ const baseSchema = z.object({
         .transform((v) => (v === '' ? undefined : v)),
     })
     .optional(),
-  incomeTextField: z.string().optional(),
-  incomeFileUploadField: z.array(fileSchema).optional(),
+  incomeHasOtherIncome: z.union([z.literal(YES), z.literal(NO)]).optional(),
+  incomeContractorCheckbox: z.array(z.literal(YES)).optional(),
+  incomeForeignCheckbox: z.array(z.literal(YES)).optional(),
+  incomeOtherCheckbox: z.array(z.literal(YES)).optional(),
+  incomeContractorDescription: z.string().optional(),
+  incomeContractorFiles: z.array(fileSchema).optional(),
+  incomeForeignDescription: z.string().optional(),
+  incomeForeignFiles: z.array(fileSchema).optional(),
+  incomeOtherDescription: z.string().optional(),
+  incomeOtherFiles: z.array(fileSchema).optional(),
   payment: z
     .object({
       paymentRadio: z.enum(['me', 'landlord']).optional(),
-      bankAccount: bankAccountSchema.nullish(),
       landlordSelection: z.string().nullish(),
       // clearOnChange sets these to "" when switching to "me"; must accept string
       landlordBankAccount: z
@@ -150,44 +177,60 @@ const baseSchema = z.object({
         .optional(),
     })
     .superRefine((payment, ctx) => {
-      const paymentRadio = payment.paymentRadio
-      if (paymentRadio !== 'me' && paymentRadio !== 'landlord') return
+      if (payment.paymentRadio !== 'landlord') return
 
-      if (paymentRadio === 'me') {
-        const bankAccount = payment.bankAccount
-        const bankNumber = bankAccount?.bankNumber?.trim() ?? ''
-        const ledger = bankAccount?.ledger?.trim() ?? ''
-        const accountNumber = bankAccount?.accountNumber?.trim() ?? ''
-        if (!bankNumber || !ledger || !accountNumber) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['bankAccount'],
-            params:
-              m.draftMessages.paymentSection.validationBankAccountRequired,
-          })
-        }
-      } else {
-        const landlordBankAccount = payment.landlordBankAccount as
-          | { bankNumber?: string; ledger?: string; accountNumber?: string }
-          | undefined
-        const bankNumber = landlordBankAccount?.bankNumber?.trim() ?? ''
-        const ledger = landlordBankAccount?.ledger?.trim() ?? ''
-        const accountNumber = landlordBankAccount?.accountNumber?.trim() ?? ''
-        if (!bankNumber || !ledger || !accountNumber) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['landlordBankAccount'],
-            params:
-              m.draftMessages.paymentSection
-                .validationLandlordBankAccountRequired,
-          })
-        }
+      const landlordBankAccount = payment.landlordBankAccount as
+        | { bankNumber?: string; ledger?: string; accountNumber?: string }
+        | undefined
+      const bankNumber = landlordBankAccount?.bankNumber?.trim() ?? ''
+      const ledger = landlordBankAccount?.ledger?.trim() ?? ''
+      const accountNumber = landlordBankAccount?.accountNumber?.trim() ?? ''
+      if (!bankNumber || !ledger || !accountNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['landlordBankAccount'],
+          params:
+            m.draftMessages.paymentSection
+              .validationLandlordBankAccountRequired,
+        })
       }
     })
     .optional(),
 })
 
 export const dataSchema = baseSchema
+  .superRefine((data, ctx) => {
+    if (!data.applicant) return
+    const acc = data.applicant.bankAccount
+    const bankNumber = acc?.bankNumber?.trim() ?? ''
+    const ledger = acc?.ledger?.trim() ?? ''
+    const accountNumber = acc?.accountNumber?.trim() ?? ''
+    const anyPart = !!(bankNumber || ledger || accountNumber)
+    const complete = !!(bankNumber && ledger && accountNumber)
+    if (!complete) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['applicant', 'bankAccount'],
+        params: anyPart
+          ? m.draftMessages.personalInformation.validationBankAccountIncomplete
+          : m.draftMessages.personalInformation.validationBankAccountRequired,
+      })
+    }
+  })
+  .superRefine((data, ctx) => {
+    const settings = data.devMockSettings
+    const taxMockOn =
+      settings?.useMock === YES &&
+      Array.isArray(settings.mockTaxReturn) &&
+      settings.mockTaxReturn.includes(YES)
+    if (taxMockOn && !settings?.mockTaxReturnVariant) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['devMockSettings', 'mockTaxReturnVariant'],
+        params: m.prereqMessages.devMockTaxVariantRequired,
+      })
+    }
+  })
   .superRefine((data, ctx) => {
     // Only validate exemption when user has explicitly requested one (checked the box).
     // Skip validation when exemption section was never shown (address matches) or not completed.
@@ -301,6 +344,51 @@ export const dataSchema = baseSchema
     requireFiles('exemptionReason')
     requireFiles('custodyAgreement')
     requireFiles('changedCircumstances')
+  })
+  .superRefine((data, ctx) => {
+    if (data.incomeHasOtherIncome !== YES) return
+
+    const categories = [
+      {
+        checked: !!data.incomeContractorCheckbox?.includes(YES),
+        text: data.incomeContractorDescription?.trim() ?? '',
+        files: data.incomeContractorFiles,
+        descPath: ['incomeContractorDescription'] as const,
+        filesPath: ['incomeContractorFiles'] as const,
+      },
+      {
+        checked: !!data.incomeForeignCheckbox?.includes(YES),
+        text: data.incomeForeignDescription?.trim() ?? '',
+        files: data.incomeForeignFiles,
+        descPath: ['incomeForeignDescription'] as const,
+        filesPath: ['incomeForeignFiles'] as const,
+      },
+      {
+        checked: !!data.incomeOtherCheckbox?.includes(YES),
+        text: data.incomeOtherDescription?.trim() ?? '',
+        files: data.incomeOtherFiles,
+        descPath: ['incomeOtherDescription'] as const,
+        filesPath: ['incomeOtherFiles'] as const,
+      },
+    ]
+
+    for (const c of categories) {
+      if (!c.checked) continue
+      if (!c.text) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [...c.descPath],
+          params: m.draftMessages.incomeSection.validationCategoryDescriptionRequired,
+        })
+      }
+      if (!Array.isArray(c.files) || c.files.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [...c.filesPath],
+          params: m.draftMessages.incomeSection.validationCategoryFilesRequired,
+        })
+      }
+    }
   })
 
 export type ApplicationAnswers = z.TypeOf<typeof baseSchema>

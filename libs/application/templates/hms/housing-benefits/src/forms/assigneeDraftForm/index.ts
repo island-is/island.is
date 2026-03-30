@@ -2,22 +2,23 @@ import {
   buildForm,
   buildSection,
   buildMultiField,
-  buildExternalDataProvider,
-  buildDataProviderItem,
   buildDescriptionField,
   buildCheckboxField,
   buildHiddenInput,
   buildSubmitField,
   YES,
 } from '@island.is/application/core'
-import { Application, DefaultEvents, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  FormModes,
+} from '@island.is/application/types'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { getValueViaPath } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
-import { NationalRegistryApi } from '../../dataProviders'
 import * as m from '../../lib/messages'
 
-export const AssigneeApproval = buildForm({
+export const AssigneeDraftForm = buildForm({
   id: 'AssigneeApproval',
   mode: FormModes.IN_PROGRESS,
   renderLastScreenButton: true,
@@ -27,19 +28,6 @@ export const AssigneeApproval = buildForm({
       id: 'assigneeApprovalSection',
       title: m.assigneeApproval.title,
       children: [
-        buildExternalDataProvider({
-          id: 'assigneeApprovalExternalData',
-          title: m.assigneeApproval.title,
-          subTitle: m.assigneeApproval.externalDataSubTitle,
-          checkboxLabel: m.assigneeApproval.checkboxLabel,
-          dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryApi,
-              title: m.assigneeApproval.nationalRegistryTitle,
-              subTitle: m.assigneeApproval.nationalRegistrySubTitle,
-            }),
-          ],
-        }),
         buildMultiField({
           id: 'assigneeApprovalMultiField',
           title: m.assigneeApproval.title,

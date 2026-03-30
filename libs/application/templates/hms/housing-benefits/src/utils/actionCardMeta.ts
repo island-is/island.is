@@ -1,11 +1,17 @@
 import {
   Application,
   ApplicationRole,
+  DefaultEvents,
   PendingAction,
 } from '@island.is/application/types'
 import { Roles } from './constants'
 import { getApplicationCardRentalSummary } from './applicationCardSummary'
+import { getAssigneeApproverDisplayName } from './assigneeUtils'
 import { actionCardMessages as ac } from '../lib/messages/actionCardMessages'
+import {
+  coreHistoryMessages,
+  getValueViaPath,
+} from '@island.is/application/core'
 
 const rentalMessageValues = (application: Application) => {
   const s = getApplicationCardRentalSummary(application)
@@ -15,7 +21,7 @@ const rentalMessageValues = (application: Application) => {
   }
 }
 
-const draftCardTitle = (application: Application) => {
+const draftCardDescription = (application: Application) => {
   const { applicantName, rentalAddress } =
     getApplicationCardRentalSummary(application)
   const address = rentalAddress.trim()
@@ -23,54 +29,70 @@ const draftCardTitle = (application: Application) => {
 
   if (address && name) {
     return {
-      ...ac.cardTitleDraftWithAddressAndApplicant,
+      ...ac.cardDescriptionDraftFull,
       values: { address, applicantName: name },
     }
   }
   if (!address && name) {
     return {
-      ...ac.cardTitleDraftWithApplicantOnly,
+      ...ac.cardDescriptionDraftNameOnly,
       values: { applicantName: name },
     }
   }
   if (address && !name) {
     return {
-      ...ac.cardTitleDraftWithAddressOnly,
+      ...ac.cardDescriptionDraftAddressOnly,
       values: { address },
     }
   }
 
-  return ac.cardTitleDraft
+  return ''
 }
 
 export const housingBenefitsActionCards = {
-  noRentalAgreement: {
-    title: ac.cardTitleNoRental,
-    pendingAction: {
-      displayStatus: 'warning' as const,
-      title: ac.pendingTitleNoRental,
-      content: ac.pendingContentNoRental,
-    },
-  },
   draft: {
-    title: draftCardTitle,
-    pendingAction: (application: Application): PendingAction => ({
-      displayStatus: 'info',
+    title: ac.applicationTitle,
+    description: draftCardDescription,
+    pendingAction: {
+      displayStatus: 'info' as const,
       title: ac.pendingTitleDraft,
-      content: {
-        ...ac.pendingContentDraft,
-        values: rentalMessageValues(application),
+      content: ac.pendingContentDraft,
+    },
+    historyLogs: [
+      {
+        onEvent: DefaultEvents.SUBMIT,
+        logMessage: (application: Application) => {
+          const applicantName = getValueViaPath<string>(
+            application.externalData,
+            'nationalRegistry.data.fullName',
+          )
+          return {
+            ...ac.historyDraftSubmitted,
+            values: { applicantName },
+          }
+        },
       },
-    }),
+    ],
   },
   assigneeApproval: {
-    title: ac.cardTitleAssignee,
+    title: ac.applicationTitle,
+    description: draftCardDescription,
     pendingAction: (
       application: Application,
       role: ApplicationRole,
     ): PendingAction => {
       const values = rentalMessageValues(application)
-      if (role === Roles.UNSIGNED_ASSIGNEE) {
+      if (role === Roles.UNSIGNED_PREREQ_ASSIGNEE) {
+        return {
+          displayStatus: 'info',
+          title: ac.pendingTitleAssigneePrereq,
+          content: {
+            ...ac.pendingContentAssigneePrereq,
+            values,
+          },
+        }
+      }
+      if (role === Roles.UNSIGNED_DRAFT_ASSIGNEE) {
         return {
           displayStatus: 'warning',
           title: ac.pendingTitleAssigneeUnsigned,
@@ -99,9 +121,40 @@ export const housingBenefitsActionCards = {
         },
       }
     },
+    historyLogs: [
+      {
+        onEvent: DefaultEvents.APPROVE,
+        logMessage: (application: Application, subjectNationalId?: string) => {
+          const name = getAssigneeApproverDisplayName(
+            application,
+            subjectNationalId,
+          )
+          if (name) {
+            return {
+              ...ac.historyAssigneeApprovedWithName,
+              values: { name },
+            }
+          }
+          return ac.historyAssigneeApprovedGeneric
+        },
+      },
+    ],
+  },
+  applicantSubmit: {
+    title: ac.applicationTitle,
+    description: ac.applicantSubmitDescription,
+    pendingAction: (application: Application): PendingAction => ({
+      displayStatus: 'info',
+      title: ac.pendingTitleApplicantSubmit,
+      content: {
+        ...ac.pendingContentApplicantSubmit,
+        values: rentalMessageValues(application),
+      },
+    }),
   },
   inReview: {
-    title: ac.cardTitleInReview,
+    title: ac.applicationTitle,
+    description: ac.inReviewDescription,
     pendingAction: (
       application: Application,
       role: ApplicationRole,
@@ -126,6 +179,12 @@ export const housingBenefitsActionCards = {
         },
       }
     },
+    historyLogs: [
+      {
+        onEvent: DefaultEvents.APPROVE,
+        logMessage: coreHistoryMessages.applicationApproved,
+      },
+    ],
   },
   extraData: {
     title: ac.cardTitleExtraData,
@@ -139,7 +198,7 @@ export const housingBenefitsActionCards = {
     }),
   },
   approved: {
-    title: ac.cardTitleApproved,
+    title: ac.applicationTitle,
     pendingAction: (application: Application): PendingAction => ({
       displayStatus: 'success',
       title: ac.pendingTitleApproved,
@@ -150,7 +209,7 @@ export const housingBenefitsActionCards = {
     }),
   },
   rejected: {
-    title: ac.cardTitleRejected,
+    title: ac.applicationTitle,
     pendingAction: (application: Application): PendingAction => ({
       displayStatus: 'error',
       title: ac.pendingTitleRejected,

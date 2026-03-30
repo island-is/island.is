@@ -59,6 +59,24 @@ export const isApplicantOnlyHouseholdMemberOver18 = (
 ): boolean => !needsHouseholdMemberApproval(application)
 
 /**
+ * Whether this assignee has finished the in-state prerequisite step (external data + confirm).
+ */
+export const hasAssigneeCompletedPrereq = (
+  application: Application,
+  nationalId: string,
+): boolean => {
+  const normalized = kennitala.isValid(nationalId)
+    ? kennitala.sanitize(nationalId)
+    : nationalId
+  const completed = (application.answers?.assigneePrerequisitesCompleted ??
+    []) as string[]
+  return completed.some(
+    (id) =>
+      (kennitala.isValid(id) ? kennitala.sanitize(id) : id) === normalized,
+  )
+}
+
+/**
  * Check if this is the last assignee to sign (all have approved).
  */
 export const isLastAssigneeToSign = (
@@ -115,4 +133,37 @@ export const getUnsignedApprovalNames = (
   return assigneeMembers
     .filter((m) => !signed.includes(m.nationalId))
     .map((m) => m.name || m.nationalId)
+}
+
+const normalizeKt = (id: string): string =>
+  kennitala.isValid(id) ? kennitala.sanitize(id) : id
+
+/**
+ * Display name for the person who triggered an assignee APPROVE (history subject national id).
+ */
+export const getAssigneeApproverDisplayName = (
+  application: Application,
+  subjectNationalId?: string | null,
+): string => {
+  if (!subjectNationalId?.trim()) {
+    return ''
+  }
+  const normalizedSubject = normalizeKt(subjectNationalId.trim())
+
+  const applicantKt = application.applicant
+  const applicantNorm = applicantKt ? normalizeKt(applicantKt) : ''
+  if (applicantNorm && normalizedSubject === applicantNorm) {
+    return (
+      getValueViaPath<string>(application.answers, 'applicant.name')?.trim() ??
+      getValueViaPath<string>(
+        application.externalData,
+        'nationalRegistry.data.fullName',
+      )?.trim() ??
+      ''
+    )
+  }
+
+  const members = getHouseholdMembersOver18ExcludingApplicant(application)
+  const member = members.find((m) => normalizeKt(m.nationalId) === normalizedSubject)
+  return member?.name?.trim() ?? ''
 }

@@ -1,43 +1,31 @@
 import { defineMessages } from 'react-intl'
 
 export const actionCardMessages = defineMessages({
+  applicationTitle: {
+    id: 'hb.application:actionCard.applicationTitle',
+    defaultMessage: 'Umsókn um húsnæðisbætur',
+    description: 'Application card heading',
+  },
   cardTitleNoRental: {
     id: 'hb.application:actionCard.cardTitleNoRental',
     defaultMessage: 'Enginn leigusamningur',
     description: 'Application card heading when no rental agreement',
   },
-  cardTitleDraft: {
-    id: 'hb.application:actionCard.cardTitleDraft',
-    defaultMessage: 'Húsnæðisbætur — drög',
+  cardDescriptionDraftFull: {
+    id: 'hb.application:actionCard.cardDescriptionDraftFull',
+    defaultMessage: '{applicantName} · {address}',
     description:
-      'Application card heading in draft when address and applicant name are unavailable',
+      'Draft card description when both applicant name and rental address are known',
   },
-  cardTitleDraftWithAddressAndApplicant: {
-    id: 'hb.application:actionCard.cardTitleDraftWithAddressAndApplicant',
-    defaultMessage: 'Húsnæðisbætur – {address} – {applicantName}',
-    description: 'Draft application card heading with rental address and applicant',
+  cardDescriptionDraftNameOnly: {
+    id: 'hb.application:actionCard.cardDescriptionDraftNameOnly',
+    defaultMessage: '{applicantName}',
+    description: 'Draft card description when only applicant name is known',
   },
-  cardTitleDraftWithApplicantOnly: {
-    id: 'hb.application:actionCard.cardTitleDraftWithApplicantOnly',
-    defaultMessage: 'Húsnæðisbætur – {applicantName}',
-    description:
-      'Draft application card heading when no rental is selected (no address)',
-  },
-  cardTitleDraftWithAddressOnly: {
-    id: 'hb.application:actionCard.cardTitleDraftWithAddressOnly',
-    defaultMessage: 'Húsnæðisbætur – {address}',
-    description:
-      'Draft application card heading when address exists but applicant name is missing',
-  },
-  cardTitleAssignee: {
-    id: 'hb.application:actionCard.cardTitleAssignee',
-    defaultMessage: 'Samþykki heimilismanna',
-    description: 'Application card heading during assignee approval',
-  },
-  cardTitleInReview: {
-    id: 'hb.application:actionCard.cardTitleInReview',
-    defaultMessage: 'Í vinnslu hjá stofnun',
-    description: 'Application card heading while in institution review',
+  cardDescriptionDraftAddressOnly: {
+    id: 'hb.application:actionCard.cardDescriptionDraftAddressOnly',
+    defaultMessage: '{address}',
+    description: 'Draft card description when only rental address is known',
   },
   cardTitleExtraData: {
     id: 'hb.application:actionCard.cardTitleExtraData',
@@ -65,6 +53,23 @@ export const actionCardMessages = defineMessages({
       'Til að sækja um húsnæðisbætur þarf að vera virkur leigusamningur sem uppfyllir skilyrði stofnunarinnar.',
     description: 'Pending action description when no rental',
   },
+  historyDraftSubmitted: {
+    id: 'hb.application:actionCard.historyDraftSubmitted',
+    defaultMessage: 'Umsókn útfyllt af {applicantName}',
+    description: 'History log when draft is submitted',
+  },
+  historyAssigneeApprovedWithName: {
+    id: 'hb.application:actionCard.historyAssigneeApprovedWithName',
+    defaultMessage: '{name} samþykkti gagnaöflun',
+    description:
+      'History log when a household assignee approves; {name} is the signatory',
+  },
+  historyAssigneeApprovedGeneric: {
+    id: 'hb.application:actionCard.historyAssigneeApprovedGeneric',
+    defaultMessage: 'Heimilismaður samþykkti umsóknina',
+    description:
+      'History log when assignee approves but the signatory name is unknown',
+  },
   pendingTitleDraft: {
     id: 'hb.application:actionCard.pendingTitleDraft',
     defaultMessage: 'Vantar að ljúka umsókn',
@@ -73,8 +78,9 @@ export const actionCardMessages = defineMessages({
   pendingContentDraft: {
     id: 'hb.application:actionCard.pendingContentDraft',
     defaultMessage:
-      '{applicantName} · {rentalAddress}',
-    description: 'Applicant and rental address on draft card',
+      'Þú getur haldið áfram að fylla út umsóknina þegar þú opnar hana.',
+    description:
+      'Draft pending alert body (name and address are shown in the card description)',
   },
   pendingTitleAssigneeApplicant: {
     id: 'hb.application:actionCard.pendingTitleAssigneeApplicant',
@@ -84,19 +90,30 @@ export const actionCardMessages = defineMessages({
   pendingContentAssigneeApplicant: {
     id: 'hb.application:actionCard.pendingContentAssigneeApplicant',
     defaultMessage:
-      'Ein eða fleiri heimilismenn þurfa að samþykkja umsóknina áður en hún fer í vinnslu. {applicantName} · {rentalAddress}',
+      'Einn eða fleiri heimilismenn þurfa að samþykkja umsóknina áður en hún fer í vinnslu.',
     description: 'Assignee flow — applicant pending content',
+  },
+  pendingTitleAssigneePrereq: {
+    id: 'hb.application:actionCard.pendingTitleAssigneePrereq',
+    defaultMessage: 'Forkröfur heimilismanns',
+    description: 'Assignee flow — prerequisite step not finished',
+  },
+  pendingContentAssigneePrereq: {
+    id: 'hb.application:actionCard.pendingContentAssigneePrereq',
+    defaultMessage:
+      'Sem heimilismaður þarftu fyrst að staðfesta auðkenni þitt og ljúka forkröfum áður en þú getur samþykkt umsóknina.',
+    description: 'Assignee flow — prerequisite step card text',
   },
   pendingTitleAssigneeUnsigned: {
     id: 'hb.application:actionCard.pendingTitleAssigneeUnsigned',
     defaultMessage: 'Þú þarft að samþykkja umsókn',
-    description: 'Assignee flow — unsigned assignee title',
+    description: 'Assignee flow — draft/sign step title',
   },
   pendingContentAssigneeUnsigned: {
     id: 'hb.application:actionCard.pendingContentAssigneeUnsigned',
     defaultMessage:
-      'Sem heimilismaður þarftu að yfirfara og samþykkja umsókn um húsnæðisbætur. {applicantName} · {rentalAddress}',
-    description: 'Assignee flow — unsigned assignee content',
+      'Sem heimilismaður þarftu að yfirfara og samþykkja umsókn um húsnæðisbætur.',
+    description: 'Assignee flow — draft/sign step content',
   },
   pendingTitleAssigneeSigned: {
     id: 'hb.application:actionCard.pendingTitleAssigneeSigned',
@@ -105,9 +122,28 @@ export const actionCardMessages = defineMessages({
   },
   pendingContentAssigneeSigned: {
     id: 'hb.application:actionCard.pendingContentAssigneeSigned',
-    defaultMessage:
-      'Þú hefur samþykkt. Önnur samþykki eru enn í bið. {applicantName} · {rentalAddress}',
+    defaultMessage: 'Þú hefur samþykkt. Önnur samþykki eru enn í bið',
     description: 'Assignee flow — signed assignee content',
+  },
+  applicantSubmitDescription: {
+    id: 'hb.application:actionCard.applicantSubmitDescription',
+    defaultMessage:
+      'Heimilismenn hafa samþykkt umsóknina. Staðfestu og sendu hana til HMS.',
+    description:
+      'Card description when application awaits final applicant submit after assignee approvals',
+  },
+  pendingTitleApplicantSubmit: {
+    id: 'hb.application:actionCard.pendingTitleApplicantSubmit',
+    defaultMessage: 'Staðfestu sendingu umsóknar',
+    description:
+      'Pending action title — applicant must confirm final submit to HMS',
+  },
+  pendingContentApplicantSubmit: {
+    id: 'hb.application:actionCard.pendingContentApplicantSubmit',
+    defaultMessage:
+      'Opnaðu umsóknina, farðu yfir yfirlitið og sendu umsóknina til meðferðar hjá HMS. {applicantName} · {rentalAddress}',
+    description:
+      'Pending action body — instruct applicant to review overview and submit; placeholders from rental summary',
   },
   pendingTitleInReviewApplicant: {
     id: 'hb.application:actionCard.pendingTitleInReviewApplicant',
@@ -116,8 +152,7 @@ export const actionCardMessages = defineMessages({
   },
   pendingContentInReviewApplicant: {
     id: 'hb.application:actionCard.pendingContentInReviewApplicant',
-    defaultMessage:
-      'Umsóknin er nú til meðferðar hjá stofnun. {applicantName} · {rentalAddress}',
+    defaultMessage: 'Umsókn í vinnslu hjá HMS.',
     description: 'In review — applicant content',
   },
   pendingTitleInReviewInstitution: {
@@ -127,8 +162,7 @@ export const actionCardMessages = defineMessages({
   },
   pendingContentInReviewInstitution: {
     id: 'hb.application:actionCard.pendingContentInReviewInstitution',
-    defaultMessage:
-      'Umsókn um húsnæðisbætur bíður afgreiðslu. {applicantName} · {rentalAddress}',
+    defaultMessage: 'Umsókn um húsnæðisbætur bíður afgreiðslu.',
     description: 'In review — institution content',
   },
   pendingTitleExtraData: {
@@ -163,5 +197,11 @@ export const actionCardMessages = defineMessages({
     defaultMessage:
       'Umsóknin þín um húsnæðisbætur var hafnað. Þú getur skoðað nánari upplýsingar í umsókninni. {applicantName} · {rentalAddress}',
     description: 'Rejected state content',
+  },
+  inReviewDescription: {
+    id: 'hb.application:actionCard.inReviewDescription',
+    defaultMessage:
+      'Umsóknin er komin inn til HMS til vinnslu og verður tekin fyrir sem fyrst',
+    description: 'In review state description',
   },
 })

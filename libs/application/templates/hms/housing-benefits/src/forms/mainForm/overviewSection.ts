@@ -4,8 +4,9 @@ import {
   buildSection,
   buildSubmitField,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
+import { DefaultEvents, ExternalData } from '@island.is/application/types'
 import * as m from '../../lib/messages'
 import {
   personalInformationOverviewItems,
@@ -62,13 +63,16 @@ export const overviewSection = buildSection({
           title: m.draftMessages.incomeSection.title,
           backId: 'incomeMultiField',
           condition: (answers) => {
-            const files = getValueViaPath<
-              Array<{ key: string; name: string }>
-            >(answers, 'incomeFileUploadField')
-            const hasFiles = Array.isArray(files) && files.length > 0
-            const text = getValueViaPath<string>(answers, 'incomeTextField')
-            const hasText = typeof text === 'string' && text.trim().length > 0
-            return hasFiles || hasText
+            if (getValueViaPath<string>(answers, 'incomeHasOtherIncome') !== YES) {
+              return false
+            }
+            const emptyExternal = {} as ExternalData
+            const items = incomeSectionOverviewItems(answers, emptyExternal)
+            const attachments = incomeSectionOverviewAttachments(
+              answers,
+              emptyExternal,
+            )
+            return items.length > 0 || attachments.length > 0
           },
           items: incomeSectionOverviewItems,
           attachments: incomeSectionOverviewAttachments,

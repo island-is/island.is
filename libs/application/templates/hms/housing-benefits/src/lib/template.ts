@@ -24,12 +24,14 @@ import * as m from './messages'
 import {
   HouseholdMembersApi,
   NationalRegistryApi,
+  PersonalTaxReturnApi,
   RentalAgreementsApi,
 } from '../dataProviders'
 import { hasRentalAgreements } from '../utils/rentalAgreementUtils'
 import * as kennitala from 'kennitala'
 import {
   getAssigneeNationalIds,
+  hasAssigneeCompletedPrereq,
   needsHouseholdMemberApproval,
 } from '../utils/assigneeUtils'
 import { housingBenefitsActionCards } from '../utils/actionCardMeta'
@@ -52,7 +54,7 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Forkröfur',
           progress: 0,
-          status: FormModes.DRAFT,
+          status: FormModes.NOT_STARTED,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -70,6 +72,7 @@ const template: ApplicationTemplate<
                 UserProfileApi,
                 NationalRegistryApi,
                 RentalAgreementsApi,
+                PersonalTaxReturnApi,
                 HouseholdMembersApi,
               ],
               delete: true,
@@ -96,8 +99,7 @@ const template: ApplicationTemplate<
           name: 'Enginn leigusamningur',
           progress: 0.2,
           status: FormModes.DRAFT,
-          lifecycle: DefaultStateLifeCycle,
-          actionCard: housingBenefitsActionCards.noRentalAgreement,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -149,7 +151,6 @@ const template: ApplicationTemplate<
       },
       [States.ASSIGNEE_APPROVAL]: {
         entry: 'assignHouseholdMembers',
-        // exit: 'clearAssignees',
         meta: {
           name: 'Samþykki heimilismanna',
           progress: 0.6,
@@ -158,14 +159,23 @@ const template: ApplicationTemplate<
           actionCard: housingBenefitsActionCards.assigneeApproval,
           roles: [
             {
-              id: Roles.UNSIGNED_ASSIGNEE,
+              id: Roles.UNSIGNED_PREREQ_ASSIGNEE,
               formLoader: () =>
-                import('../forms/assigneeApprovalForm').then((module) =>
-                  Promise.resolve(module.AssigneeApproval),
+                import('../forms/assigneePrereqForm').then((module) =>
+                  Promise.resolve(module.AssigneePrereqForm),
                 ),
               write: 'all',
               read: 'all',
-              api: [NationalRegistryApi],
+              api: [NationalRegistryApi, PersonalTaxReturnApi],
+            },
+            {
+              id: Roles.UNSIGNED_DRAFT_ASSIGNEE,
+              formLoader: () =>
+                import('../forms/assigneeDraftForm').then((module) =>
+                  Promise.resolve(module.AssigneeDraftForm),
+                ),
+              write: 'all',
+              read: 'all',
             },
             {
               id: Roles.SIGNED_ASSIGNEE,
@@ -186,6 +196,9 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.ASSIGNEE_APPROVAL,
+          },
           [DefaultEvents.APPROVE]: [
             {
               target: States.IN_REVIEW,
@@ -198,6 +211,16 @@ const template: ApplicationTemplate<
             },
             { target: States.ASSIGNEE_APPROVAL },
           ],
+        },
+      },
+      [States.APPLICANT_SUBMIT]: {
+        meta: {
+          name: 'Staðfesta',
+          progress: 0.8,
+          status: FormModes.IN_PROGRESS,
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: housingBenefitsActionCards.applicantSubmit,
+          roles: [
         },
       },
       [States.IN_REVIEW]: {
@@ -403,7 +426,13 @@ const template: ApplicationTemplate<
         (kennitala.isValid(id) ? kennitala.sanitize(id) : id) ===
         normalizedNationalId,
     )
-    return hasSigned ? Roles.SIGNED_ASSIGNEE : Roles.UNSIGNED_ASSIGNEE
+    if (hasSigned) {
+      return Roles.SIGNED_ASSIGNEE
+    }
+    if (hasAssigneeCompletedPrereq(application, normalizedNationalId)) {
+      return Roles.UNSIGNED_DRAFT_ASSIGNEE
+    }
+    return Roles.UNSIGNED_PREREQ_ASSIGNEE
   },
 }
 

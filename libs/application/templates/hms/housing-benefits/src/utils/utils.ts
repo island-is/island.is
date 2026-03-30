@@ -45,9 +45,6 @@ export const shouldShowLandlordSelection = (
     externalData,
   } as Application).length > 1
 
-export const isMeSelected = (answers: FormValue) =>
-  getValueViaPath<string>(answers, 'payment.paymentRadio') === 'me'
-
 export const isExemptionRequested = (answers: FormValue) => {
   const exemptionCheckbox = getValueViaPath<string[]>(
     answers,
@@ -59,3 +56,15 @@ export const isExemptionRequested = (answers: FormValue) => {
 export const isExemptionReason = (answers: FormValue, reason: string) =>
   isExemptionRequested(answers) &&
   getValueViaPath<string>(answers, 'exemptionReason') === reason
+
+/** RSK direct-tax provider returned success with no salary rows (e.g. no employment on record). */
+export const isPersonalTaxReturnSuccessWithEmptyPayments = (
+  _answers: FormValue,
+  externalData?: ExternalData,
+): boolean => {
+  const result = externalData?.getPersonalTaxReturn
+  if (!result || result.status !== 'success') return false
+  const data = result.data as { directTaxPayments?: unknown[] } | undefined
+  const payments = data?.directTaxPayments
+  return Array.isArray(payments) && payments.length === 0
+}

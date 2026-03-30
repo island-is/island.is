@@ -8,7 +8,6 @@ import * as m from '../../lib/messages'
 import { getLandlordOptionsForSelectedContract } from '../../utils/rentalAgreementUtils'
 import {
   isLandlordSelected,
-  isMeSelected,
   shouldShowLandlordSelection,
 } from '../../utils/utils'
 
@@ -40,12 +39,6 @@ export const paymentSection = buildSection({
             },
           ],
           marginBottom: 4,
-        }),
-        buildBankAccountField({
-          id: 'payment.bankAccount',
-          title: m.draftMessages.paymentSection.bankAccountTitle,
-          condition: isMeSelected,
-          required: true,
         }),
         buildRadioField({
           id: 'payment.landlordSelection',

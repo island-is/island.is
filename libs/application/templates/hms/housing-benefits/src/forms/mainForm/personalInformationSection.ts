@@ -5,5 +5,11 @@ import * as m from '../../lib/messages'
 export const personalInformationSection = buildSection({
   id: 'personalInformationSection',
   title: m.draftMessages.personalInformation.title,
-  children: [applicantInformationMultiField()],
+  children: [
+    applicantInformationMultiField({
+      includeBankAccount: true,
+      bankAccountRequired: true,
+      phoneRequired: true,
+    }),
+  ],
 })

@@ -6,7 +6,11 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { DefaultEvents, UserProfileApi } from '@island.is/application/types'
-import { NationalRegistryApi, RentalAgreementsApi } from '../../dataProviders'
+import {
+  NationalRegistryApi,
+  PersonalTaxReturnApi,
+  RentalAgreementsApi,
+} from '../../dataProviders'
 import * as m from '../../lib/messages'
 
 export const externalDataSection = buildSection({
@@ -41,6 +45,7 @@ export const externalDataSection = buildSection({
         //   subTitle: 'Upplýsingar einstaklinga með sama lögheimili',
         // }),
         buildDataProviderItem({
+          provider: PersonalTaxReturnApi,
           title: m.prereqMessages.taxTitle,
           subTitle: m.prereqMessages.taxSubtitle,
         }),

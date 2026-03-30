@@ -18,3 +18,8 @@ export const HouseholdMembersApi = defineTemplateApi({
   action: 'getHouseholdMembers',
   order: 3,
 })
+
+export const PersonalTaxReturnApi = defineTemplateApi({
+  action: 'getPersonalTaxReturn',
+  order: 4,
+})

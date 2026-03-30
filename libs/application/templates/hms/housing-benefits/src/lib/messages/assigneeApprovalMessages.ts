@@ -43,4 +43,26 @@ export const assigneeApproval = defineMessages({
     defaultMessage: 'Staðfesta',
     description: 'Approve button',
   },
+  prereqSectionTitle: {
+    id: 'hb.application:assigneeApproval.prereqSectionTitle',
+    defaultMessage: 'Forkröfur heimilismanns',
+    description: 'Assignee prerequisite step title',
+  },
+  prereqDescription: {
+    id: 'hb.application:assigneeApproval.prereqDescription#markdown',
+    defaultMessage:
+      'Til að halda áfram þarftu fyrst að staðfesta auðkenni þitt með gögnum úr Þjóðskrá og sækja skattframtal frá Skattinum.',
+    description: 'Assignee prerequisite description',
+  },
+  prereqConfirmRead: {
+    id: 'hb.application:assigneeApproval.prereqConfirmRead',
+    defaultMessage:
+      'Ég hef kynnt mér upplýsingarnar og vil halda áfram við samþykki umsóknarinnar.',
+    description: 'Checkbox after assignee external data',
+  },
+  prereqContinueButton: {
+    id: 'hb.application:assigneeApproval.prereqContinueButton',
+    defaultMessage: 'Halda áfram',
+    description: 'Submit after assignee prerequisites (stays in same state)',
+  },
 })

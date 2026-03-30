@@ -14,6 +14,7 @@ export enum States {
   NO_RENTAL_AGREEMENT = 'noRentalAgreement',
   DRAFT = 'draft',
   ASSIGNEE_APPROVAL = 'assigneeApproval',
+  APPLICANT_SUBMIT = 'applicantSubmit',
   EXTRA_DATA = 'extraData',
   IN_REVIEW = 'inReview',
   APPROVED = 'approved',
@@ -23,7 +24,8 @@ export enum States {
 
 export enum Roles {
   APPLICANT = 'applicant',
-  UNSIGNED_ASSIGNEE = 'unsignedAssignee',
+  UNSIGNED_PREREQ_ASSIGNEE = 'unsignedPrereqAssignee',
+  UNSIGNED_DRAFT_ASSIGNEE = 'unsignedDraftAssignee',
   SIGNED_ASSIGNEE = 'signedAssignee',
   INSTITUTION = 'institution',
 }

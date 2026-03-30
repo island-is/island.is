@@ -112,4 +112,44 @@ export const prereqMessages = defineMessages({
     defaultMessage: 'Gagnaöflun fyrir umsókn um húsnæðisbætur',
     description: 'External data title',
   },
+  devMockSectionTitle: {
+    id: 'hb.application:prereq.devMockSectionTitle',
+    defaultMessage: 'Prófun (gervigögn)',
+    description: 'Dev-only mock data section title',
+  },
+  devMockUseMockTitle: {
+    id: 'hb.application:prereq.devMockUseMockTitle',
+    defaultMessage: 'Viltu geta notað gervigögn?',
+    description: 'Whether to enable mock options for development',
+  },
+  devMockRentalLabel: {
+    id: 'hb.application:prereq.devMockRentalLabel',
+    defaultMessage: 'Sýna gervileigusamninga',
+    description: 'Checkbox: mock rental agreements',
+  },
+  devMockTaxLabel: {
+    id: 'hb.application:prereq.devMockTaxLabel',
+    defaultMessage: 'Sýna gervistaðgreiðslugögn',
+    description: 'Checkbox: mock tax/direct payments',
+  },
+  devMockTaxVariantTitle: {
+    id: 'hb.application:prereq.devMockTaxVariantTitle',
+    defaultMessage: 'Hvernig eiga skattgögn að líta út?',
+    description: 'Radio title for tax mock variant',
+  },
+  devMockTaxVariantSample: {
+    id: 'hb.application:prereq.devMockTaxVariantSample',
+    defaultMessage: 'Með sýnishorni af mánaðaruppgjörum',
+    description: 'Tax mock: return sample rows',
+  },
+  devMockTaxVariantEmpty: {
+    id: 'hb.application:prereq.devMockTaxVariantEmpty',
+    defaultMessage: 'Tóm svör',
+    description: 'Tax mock: success with empty list',
+  },
+  devMockTaxVariantRequired: {
+    id: 'hb.application:prereq.devMockTaxVariantRequired',
+    defaultMessage: 'Veldu hvernig skattgögn eiga að líta út.',
+    description: 'Validation when tax mock is on but variant missing',
+  },
 })

@@ -7,24 +7,21 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { TemplateApiModuleActionProps } from '../../../..'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { getValueViaPath } from '@island.is/application/core'
 import { Contract, HomeApi } from '@island.is/clients/hms-rental-agreement'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { ContractStatus } from './types'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { mockGetRentalAgreements } from '../terminate-rental-agreement/mockedRentalAgreements'
 import { filterContractsForHousingBenefits } from './utils'
+import {
+  getEmptyMockPersonalTaxReturn,
+  getMockPersonalTaxReturn,
+  getPersonalTaxMockMode,
+  useMockRentalAgreements,
+} from './utils/mock'
 import { NationalRegistryV3Service } from '../../../shared/api/national-registry-v3/national-registry-v3.service'
-
-const useMockRentalAgreements = (application: {
-  answers?: Record<string, unknown>
-}): boolean => {
-  const mockData = getValueViaPath<string[]>(
-    application?.answers ?? {},
-    'mockData',
-  )
-  return Array.isArray(mockData) && mockData.includes('yes')
-}
+import { PersonalTaxReturnApi } from '@island.is/clients/rsk/personal-tax-return'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class HousingBenefitsService extends BaseTemplateApiService {
@@ -34,6 +31,7 @@ export class HousingBenefitsService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
     private readonly nationalRegistryV3Service: NationalRegistryV3Service,
+    private readonly personalTaxReturnApi: PersonalTaxReturnApi,
   ) {
     super(ApplicationTypes.HOUSING_BENEFITS)
   }
@@ -89,6 +87,63 @@ export class HousingBenefitsService extends BaseTemplateApiService {
         throw e
       }
       this.logger.error('Failed to fetch rental agreements:', e.message)
+      throw new TemplateApiError(e, 500)
+    }
+  }
+
+  async getPersonalTaxReturn({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const lastYear = new Date().getFullYear() - 1
+    const from = { year: lastYear, month: 1 }
+    const to = { year: lastYear, month: 12 }
+
+    const taxMockMode = getPersonalTaxMockMode(application)
+    if (taxMockMode === 'sample') {
+      this.logger.debug('Using mock direct tax payments (sample data)')
+      return getMockPersonalTaxReturn(lastYear)
+    }
+    if (taxMockMode === 'empty') {
+      this.logger.debug('Using mock direct tax payments (empty success)')
+      return getEmptyMockPersonalTaxReturn(lastYear)
+    }
+
+    try {
+      const result = await this.personalTaxReturnApi.directTaxPayments(
+        auth.nationalId,
+        from,
+        to,
+      )
+
+      if (!result.success) {
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.failedDataProvider,
+            summary: coreErrorMessages.errorDataProvider,
+          },
+          502,
+        )
+      }
+
+      const salaryBreakdown = result.salaryBreakdown ?? []
+
+      return {
+        year: lastYear,
+        directTaxPayments: salaryBreakdown.map((row) => ({
+          totalSalary: row.salaryTotal,
+          payerNationalId: row.payerNationalId.toString(),
+          personalAllowance: row.personalAllowance,
+          withheldAtSource: row.salaryWithheldAtSource,
+          month: row.period,
+          year: row.year,
+        })),
+      }
+    } catch (e) {
+      if (e instanceof TemplateApiError) {
+        throw e
+      }
+      this.logger.error('Failed to fetch direct tax payments:', e)
       throw new TemplateApiError(e, 500)
     }
   }

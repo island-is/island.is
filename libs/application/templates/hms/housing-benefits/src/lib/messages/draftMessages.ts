@@ -7,6 +7,21 @@ export const draftMessages = {
       defaultMessage: 'Persónuupplýsingar',
       description: 'Personal information title',
     },
+    bankAccountTitle: {
+      id: 'hb.application:draft.personalInformation.bankAccountTitle',
+      defaultMessage: 'Bankareikningur umsækjanda',
+      description: 'Applicant bank account field title',
+    },
+    validationBankAccountIncomplete: {
+      id: 'hb.application:draft.personalInformation.validationBankAccountIncomplete',
+      defaultMessage: 'Vinsamlegast fylltu út alla reiti bankareiknings',
+      description: 'All bank account fields required when any part is filled',
+    },
+    validationBankAccountRequired: {
+      id: 'hb.application:draft.personalInformation.validationBankAccountRequired',
+      defaultMessage: 'Bankareikningur er nauðsynlegur',
+      description: 'Applicant bank account required',
+    },
   }),
   rentalAgreement: defineMessages({
     title: {
@@ -232,6 +247,115 @@ export const draftMessages = {
         'Við ákvörðun bóta eru allar tekjur heimilismanna teknar saman til að ákvarða upphæð til útgreiðslu. Heimilismenn þurfa að samþykkja að upplýsingar um þá séu sóttar til þess að HMS geti ákvarðað rétta upphæð til útgreiðslu.',
       description: 'Income multi field description',
     },
+    hasOtherIncomeQuestion: {
+      id: 'hb.application:draft.incomeSection.hasOtherIncomeQuestion',
+      defaultMessage:
+        'Hefur þú fengið aðrar tekjur en koma fram í staðgreiðslu til Skattsins?',
+      description: 'Radio: does the applicant have other income',
+    },
+    optionYes: {
+      id: 'hb.application:draft.incomeSection.optionYes',
+      defaultMessage: 'Já',
+      description: 'Yes option',
+    },
+    optionNo: {
+      id: 'hb.application:draft.incomeSection.optionNo',
+      defaultMessage: 'Nei',
+      description: 'No option',
+    },
+    otherIncomeTypesTitle: {
+      id: 'hb.application:draft.incomeSection.otherIncomeTypesTitle',
+      defaultMessage: 'Tegund annarra tekna',
+      description: 'Title above income-type checkboxes',
+    },
+    checkboxContractor: {
+      id: 'hb.application:draft.incomeSection.checkboxContractor',
+      defaultMessage: 'Verktakagreiðslur',
+      description: 'Contractor payments checkbox',
+    },
+    checkboxForeign: {
+      id: 'hb.application:draft.incomeSection.checkboxForeign',
+      defaultMessage: 'Erlendar greiðslur',
+      description: 'Foreign payments checkbox',
+    },
+    checkboxOther: {
+      id: 'hb.application:draft.incomeSection.checkboxOther',
+      defaultMessage: 'Aðrar greiðslur',
+      description: 'Other payments checkbox',
+    },
+    contractorDescriptionTitle: {
+      id: 'hb.application:draft.incomeSection.contractorDescriptionTitle',
+      defaultMessage: 'Verktakagreiðslur',
+      description: 'Text area title for contractor income',
+    },
+    contractorDescriptionDescription: {
+      id: 'hb.application:draft.incomeSection.contractorDescriptionDescription',
+      defaultMessage: 'Lýstu tekjunum og aðstæðum.',
+      description: 'Text area description for contractor income',
+    },
+    contractorFilesTitle: {
+      id: 'hb.application:draft.incomeSection.contractorFilesTitle',
+      defaultMessage: 'Verktakagreiðslur – viðhengi',
+      description: 'File upload title for contractor income',
+    },
+    contractorFilesDescription: {
+      id: 'hb.application:draft.incomeSection.contractorFilesDescription',
+      defaultMessage:
+        'Hlaðið upp skjölum sem styðja við upplýsingarnar (t.d. PDF eða Word).',
+      description: 'File upload description for contractor income',
+    },
+    foreignDescriptionTitle: {
+      id: 'hb.application:draft.incomeSection.foreignDescriptionTitle',
+      defaultMessage: 'Erlendar greiðslur',
+      description: 'Text area title for foreign income',
+    },
+    foreignDescriptionDescription: {
+      id: 'hb.application:draft.incomeSection.foreignDescriptionDescription',
+      defaultMessage: 'Lýstu tekjunum og aðstæðum.',
+      description: 'Text area description for foreign income',
+    },
+    foreignFilesTitle: {
+      id: 'hb.application:draft.incomeSection.foreignFilesTitle',
+      defaultMessage: 'Erlendar greiðslur – viðhengi',
+      description: 'File upload title for foreign income',
+    },
+    foreignFilesDescription: {
+      id: 'hb.application:draft.incomeSection.foreignFilesDescription',
+      defaultMessage:
+        'Hlaðið upp skjölum sem styðja við upplýsingarnar (t.d. PDF eða Word).',
+      description: 'File upload description for foreign income',
+    },
+    otherDescriptionTitle: {
+      id: 'hb.application:draft.incomeSection.otherDescriptionTitle',
+      defaultMessage: 'Aðrar greiðslur',
+      description: 'Text area title for other income',
+    },
+    otherDescriptionDescription: {
+      id: 'hb.application:draft.incomeSection.otherDescriptionDescription',
+      defaultMessage: 'Lýstu tekjunum og aðstæðum.',
+      description: 'Text area description for other income',
+    },
+    otherFilesTitle: {
+      id: 'hb.application:draft.incomeSection.otherFilesTitle',
+      defaultMessage: 'Aðrar greiðslur – viðhengi',
+      description: 'File upload title for other income',
+    },
+    otherFilesDescription: {
+      id: 'hb.application:draft.incomeSection.otherFilesDescription',
+      defaultMessage:
+        'Hlaðið upp skjölum sem styðja við upplýsingarnar (t.d. PDF eða Word).',
+      description: 'File upload description for other income',
+    },
+    validationCategoryDescriptionRequired: {
+      id: 'hb.application:draft.incomeSection.validationCategoryDescriptionRequired',
+      defaultMessage: 'Skýring er nauðsynleg þegar þessi tegund tekna er valin',
+      description: 'Validation: description required when income type checked',
+    },
+    validationCategoryFilesRequired: {
+      id: 'hb.application:draft.incomeSection.validationCategoryFilesRequired',
+      defaultMessage: 'Að minnsta kosti eitt viðhengi er nauðsynlegt',
+      description: 'Validation: files required when income type checked',
+    },
     description: {
       id: 'hb.application:draft.incomeSection.description',
       defaultMessage:
@@ -393,6 +517,11 @@ export const draftMessages = {
       id: 'hb.application:draft.overviewSection.phoneNumber',
       defaultMessage: 'Símanúmer',
       description: 'Phone number',
+    },
+    bankAccount: {
+      id: 'hb.application:draft.overviewSection.bankAccount',
+      defaultMessage: 'Bankareikningur',
+      description: 'Bank account (overview, applicant)',
     },
     contractId: {
       id: 'hb.application:draft.overviewSection.contractId',
