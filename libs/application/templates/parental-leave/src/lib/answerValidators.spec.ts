@@ -24,7 +24,6 @@ const DEFAULT_DOB_DATE = new Date(DEFAULT_DOB)
 const FUTURE_DOB = formatDate(addMonths(new Date(), 3))
 const FUTURE_DOB_DATE = new Date(FUTURE_DOB)
 
-
 const createBaseApplication = (): Application => ({
   answers: {
     someAnswer: 'someValue',
