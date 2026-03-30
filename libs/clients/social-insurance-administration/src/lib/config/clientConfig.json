@@ -5930,6 +5930,256 @@
         }
       }
     },
+    "/api/protected/v1/PaymentTypesOverview/PaymentTypesOverview": {
+      "get": {
+        "tags": ["PaymentTypesOverview"],
+        "summary": "Retrieves an overview of available payment types for the specified national ID.",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "query",
+            "description": "The national identification number used to look up payment types. Cannot be null or empty.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewReturn"
+                  }
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewReturn"
+                  }
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewReturn"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/PaymentTypesOverview/BenefitChildrenInformation": {
+      "get": {
+        "tags": ["PaymentTypesOverview"],
+        "summary": "Retrieves information about children related to payments for the specified national ID.",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "query",
+            "description": "The national identification number used to look up payment types. Cannot be null or empty.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain; x-api-version=1.0": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetBenefitChildrenInformationReturn"
+                  }
+                }
+              },
+              "application/json; x-api-version=1.0": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetBenefitChildrenInformationReturn"
+                  }
+                }
+              },
+              "text/json; x-api-version=1.0": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Clients.Models.GetBenefitChildrenInformationReturn"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/PensionCalculator": {
       "post": {
         "tags": ["PensionCalculator"],
@@ -13826,6 +14076,27 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Api.Services.Common.Clients.Models.GetBenefitChildrenInformationReturn": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Common.Clients.Models.GetPaymentTypesOverviewReturn": {
+        "type": "object",
+        "properties": {
+          "paymentType": { "type": "string", "nullable": true },
+          "dateFrom": { "type": "string", "format": "date-time" },
+          "dateTo": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Api.Services.Common.Clients.Models.GetTaxCardsReturn": {
         "type": "object",
         "properties": {
@@ -16247,6 +16518,7 @@
     { "name": "MedicalDocuments" },
     { "name": "Monitoring" },
     { "name": "PaymentPlan" },
+    { "name": "PaymentTypesOverview" },
     { "name": "PensionCalculator" },
     { "name": "PensionFund" },
     { "name": "PersonalTaxCredit" },
