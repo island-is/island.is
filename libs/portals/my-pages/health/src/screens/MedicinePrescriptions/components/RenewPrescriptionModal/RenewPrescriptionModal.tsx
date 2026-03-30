@@ -10,7 +10,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/portals/my-pages/core'
-import { Problem } from '@island.is/react-spa/shared'
 import cn from 'classnames'
 import React, { useState, useEffect } from 'react'
 import { messages } from '../../../../lib/messages'
@@ -35,7 +34,6 @@ const RenewPrescriptionModal: React.FC<Props> = ({
   setActivePrescription,
 }) => {
   const { formatMessage } = useLocale()
-  const [error, setError] = useState<string>()
   const columnWidth = '7/12'
   const titleWidth = '5/12'
   const modulusCalculations = (index: number) => {
@@ -47,10 +45,9 @@ const RenewPrescriptionModal: React.FC<Props> = ({
     setModalVisible(isVisible)
   }, [isVisible])
 
-  const [postRenewal, { data: renewalData, error: renewalError, loading }] =
-    usePostPrescriptionRenewalMutation({
-      refetchQueries: ['GetMedicinePrescriptions'],
-    })
+  const [postRenewal, { loading }] = usePostPrescriptionRenewalMutation({
+    refetchQueries: ['GetMedicinePrescriptions'],
+  })
 
   const data = [
     {
@@ -83,7 +80,7 @@ const RenewPrescriptionModal: React.FC<Props> = ({
 
   const submitForm = async () => {
     if (activePrescription.id == null) {
-      setError(formatMessage(messages.renewalInvalidPrescription))
+      toast.error(formatMessage(messages.renewalInvalidPrescription))
       return
     }
 
@@ -96,13 +93,11 @@ const RenewPrescriptionModal: React.FC<Props> = ({
         },
       })
       if (data) {
-        setError('')
         closeModal()
         toast.success(formatMessage(messages.renewalRequestSent))
       }
     } catch (error) {
       const errorMessage = formatMessage(messages.renewalRequestError)
-      setError(errorMessage)
       toast.error(errorMessage)
     }
   }
@@ -113,7 +108,9 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       isVisible={modalVisible}
       initialVisibility={false}
       onVisibilityChange={(visibility) => {
-        setModalVisible(visibility)
+        if (!visibility) {
+          closeModal()
+        }
       }}
       toggleClose={toggleClose}
       removeOnClose
@@ -192,17 +189,9 @@ const RenewPrescriptionModal: React.FC<Props> = ({
                   </Button>
                 </Box>
               </GridColumn>
-              {error && (
-                <GridColumn>
-                  <Box>
-                    <Text>{error}</Text>
-                  </Box>
-                </GridColumn>
-              )}
             </GridRow>
           </GridContainer>
         </Box>
-        {renewalError && !loading && <Problem />}
       </Box>
     </ModalBase>
   )

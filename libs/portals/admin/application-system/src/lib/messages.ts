@@ -224,6 +224,14 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:searchStrPlaceholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
+  datePlaceholder: {
+    id: 'admin-portal.application-system:datePlaceholder',
+    defaultMessage: 'Veldu dagsetningu',
+  },
+  searchStr: {
+    id: 'admin-portal.application-system:searchStr',
+    defaultMessage: 'Leitarorð',
+  },
   filterFrom: {
     id: 'admin-portal.application-system:filterFrom',
     defaultMessage: 'Frá',

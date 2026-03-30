@@ -8,7 +8,6 @@ import {
   ServiceWebDynamicFooter,
   ServiceWebHeader,
   ServiceWebSearchSection,
-  WatsonChatPanel,
 } from '@island.is/web/components'
 import {
   GetWebChatQuery,
@@ -21,7 +20,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { GET_WEB_CHAT } from '@island.is/web/screens/queries/WebChat'
 
 import WebChat from '../../WebChat/WebChat'
-import config, { watsonConfig } from '../config'
+import config from '../config'
 import { BackgroundVariations, Options, TextModes } from '../types'
 import * as styles from './Wrapper.css'
 
@@ -168,24 +167,7 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
           namespace={namespace}
         />
       </ServiceWebContext.Provider>
-      {!loading && (
-        <WebChat
-          webChat={webChatData?.getWebChat}
-          renderFallback={() => {
-            if (
-              organization?.id &&
-              watsonConfig[activeLocale]?.[organization.id]
-            ) {
-              return (
-                <WatsonChatPanel
-                  {...watsonConfig[activeLocale][organization.id]}
-                />
-              )
-            }
-            return null
-          }}
-        />
-      )}
+      {!loading && <WebChat webChat={webChatData?.getWebChat} />}
     </>
   )
 }
