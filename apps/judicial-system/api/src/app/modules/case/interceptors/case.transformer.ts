@@ -216,9 +216,7 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
   })
 }
 
-export const getIndictmentDismissalAppealInfo = (
-  theCase: Case,
-): AppealInfo => {
+export const getIndictmentDismissalAppealInfo = (theCase: Case): AppealInfo => {
   const appealInfo: AppealInfo = {}
 
   if (
