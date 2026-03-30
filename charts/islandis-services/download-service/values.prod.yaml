@@ -49,6 +49,7 @@ env:
   XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS/EDU/4210984099/LHI-Protected/brautskraning-v1'
   XROAD_MMS_GRADE_SERVICE_ID: 'IS/GOV/6601241280/MMS-Protected/grade-api-v1'
   XROAD_MMS_LICENSE_SERVICE_ID: 'IS/GOV/6601241280/MMS-Protected/license-api-v1'
+  XROAD_MMS_PRIMARY_SCHOOL_SERVICE_ID: 'IS/GOV/6601241280/MMS-Protected/data-gateway-backend-internal'
   XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   XROAD_UNIVERSITY_OF_AKUREYRI_PATH: 'IS/EDU/5206871229/UNAK-Protected/brautskraning-v1'

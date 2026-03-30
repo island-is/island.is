@@ -1,3 +1,4 @@
+import { PrimarySchoolClientConfig } from '@island.is/clients/mms/primary-school'
 import { ServiceBuilder, ref, service } from '../../../infra/src/dsl/dsl'
 import {
   Base,
@@ -7,6 +8,7 @@ import {
   Education,
   Finance,
   HealthInsurance,
+  MmsPrimarySchool,
   RentalService,
   UniversityCareers,
   Vehicles,
@@ -76,6 +78,7 @@ export const serviceSetup = (services: {
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
       RentalService,
+      MmsPrimarySchool,
     )
     .ingress({
       primary: {
