@@ -534,7 +534,15 @@ function serializeHTTPRoute(
     hostnames,
     rules: [
       {
-        matches: ingressConf.paths.map((path) => ({ pathPrefix: path })),
+        matches: ingressConf.paths.map((path) => {
+          // Normalize nginx regex paths to Gateway API PathPrefix
+          // e.g. /api(/|$)(.*) → /api
+          const normalized = path.replace(/\(\/\|\$\)\(\.\*\)$/, '')
+          if (ingressConf.pathTypeOverride === 'Exact') {
+            return { pathExact: normalized }
+          }
+          return { pathPrefix: normalized }
+        }),
       },
     ],
   }
