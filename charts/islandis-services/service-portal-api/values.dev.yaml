@@ -45,11 +45,12 @@ env:
   XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
 grantNamespaces:
-  - 'envoy-gateway-system'
+  - 'nginx-ingress-internal'
   - 'islandis'
   - 'user-notification'
   - 'identity-server'
   - 'application-system'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

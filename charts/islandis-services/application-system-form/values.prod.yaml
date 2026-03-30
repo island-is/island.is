@@ -25,8 +25,10 @@ env:
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   SI_PUBLIC_ENVIRONMENT: 'prod'
 grantNamespaces:
-  - 'envoy-gateway-system'
+  - 'nginx-ingress-internal'
+  - 'nginx-ingress-external'
   - 'islandis'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

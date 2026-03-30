@@ -58,10 +58,11 @@ env:
 files:
   - 'ids-signing.pfx'
 grantNamespaces:
-  - 'envoy-gateway-system'
+  - 'nginx-ingress-external'
   - 'user-notification'
   - 'portals-admin'
   - 'datadog'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

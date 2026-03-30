@@ -25,10 +25,12 @@ env:
   SERVERSIDE_FEATURES_ON: ''
   SI_PUBLIC_ENVIRONMENT: 'staging'
 grantNamespaces:
-  - 'envoy-gateway-system'
+  - 'nginx-ingress-internal'
+  - 'nginx-ingress-external'
   - 'islandis'
   - 'user-notification'
   - 'identity-server'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

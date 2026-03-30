@@ -31,9 +31,10 @@ env:
   REDIS_USE_SSL: 'true'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
-  - 'envoy-gateway-system'
+  - 'nginx-ingress-internal'
   - 'islandis'
   - 'identity-server'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

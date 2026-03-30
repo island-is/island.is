@@ -17,8 +17,9 @@ air-discount-scheme-api:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
     - 'islandis'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -229,8 +230,9 @@ air-discount-scheme-web:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
     - 'islandis'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -474,7 +476,7 @@ api:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
@@ -484,6 +486,7 @@ api:
     - 'services-payments'
     - 'payments'
     - 'contentful-apps'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -817,8 +820,9 @@ application-system-api:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'services-payments'
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1020,8 +1024,9 @@ application-system-api-worker:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'services-payments'
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1096,8 +1101,10 @@ application-system-form:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
     - 'islandis'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1416,6 +1423,7 @@ consultation-portal:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1502,6 +1510,7 @@ contentful-apps:
     PUBLIC_API_URL: 'https://island.is'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1577,6 +1586,7 @@ contentful-entry-tagger-service:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -1688,8 +1698,9 @@ download-service:
     XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   grantNamespaces:
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
     - 'services-bff-portals-admin'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1895,6 +1906,7 @@ form-system-web:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2088,6 +2100,7 @@ island-ui-storybook:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2172,6 +2185,7 @@ license-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
+    - 'nginx-ingress-internal'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2305,8 +2319,10 @@ payments:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
     - 'islandis'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2394,8 +2410,9 @@ portals-admin:
     SI_PUBLIC_ENVIRONMENT: 'prod'
     SI_PUBLIC_FORM_SYSTEM_URL: 'https://island.is/form'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
     - 'identity-server'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2498,6 +2515,7 @@ regulations-admin-backend:
   grantNamespaces:
     - 'islandis'
     - 'download-service'
+    - 'nginx-ingress-internal'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2613,6 +2631,7 @@ search-indexer-service:
     NODE_OPTIONS: '--max-old-space-size=3686 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -2750,10 +2769,12 @@ service-portal:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SI_PUBLIC_ENVIRONMENT: 'prod'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
     - 'islandis'
     - 'user-notification'
     - 'identity-server'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2858,11 +2879,12 @@ service-portal-api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
     - 'user-notification'
     - 'identity-server'
     - 'application-system'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2988,8 +3010,9 @@ services-bff-portals-admin:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
     - 'identity-server'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3088,8 +3111,9 @@ services-bff-portals-my-pages:
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
     - 'identity-server'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3282,6 +3306,8 @@ services-form-system-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'islandis'
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -3407,6 +3433,8 @@ services-form-system-api-worker:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'islandis'
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -3472,6 +3500,7 @@ services-payment-flow-update-handler:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'services-payments'
+    - 'nginx-ingress-internal'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -3568,8 +3597,9 @@ services-payments:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'application-system'
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3727,8 +3757,9 @@ services-payments-worker:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'application-system'
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3802,9 +3833,10 @@ services-sessions:
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3890,9 +3922,10 @@ services-sessions-cleanup:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3957,9 +3990,10 @@ services-sessions-worker:
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4065,8 +4099,9 @@ services-university-gateway:
     XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1'
   grantNamespaces:
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'application-system'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4206,8 +4241,9 @@ services-university-gateway-worker:
     XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1'
   grantNamespaces:
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'application-system'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4268,6 +4304,7 @@ skilavottord-web:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -4514,10 +4551,11 @@ user-notification:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4662,10 +4700,11 @@ user-notification-birthday-worker:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4741,10 +4780,11 @@ user-notification-cleanup-worker:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4868,10 +4908,11 @@ user-notification-worker:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4969,11 +5010,12 @@ web:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     TRACKING_DOMAIN: 'island.is'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
     - 'api-catalogue'
     - 'application-system'
     - 'consultation-portal'
     - 'search-indexer'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

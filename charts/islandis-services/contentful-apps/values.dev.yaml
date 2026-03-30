@@ -25,6 +25,7 @@ env:
   PUBLIC_API_URL: 'https://beta.dev01.devland.is'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
+  - 'nginx-ingress-external'
   - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:

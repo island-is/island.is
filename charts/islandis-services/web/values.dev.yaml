@@ -33,11 +33,12 @@ env:
   SERVERSIDE_FEATURES_ON: ''
   TRACKING_DOMAIN: 'beta.dev01.devland.is'
 grantNamespaces:
-  - 'envoy-gateway-system'
+  - 'nginx-ingress-external'
   - 'api-catalogue'
   - 'application-system'
   - 'consultation-portal'
   - 'search-indexer'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

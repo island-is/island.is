@@ -193,7 +193,7 @@ env:
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
   ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
 grantNamespaces:
-  - 'envoy-gateway-system'
+  - 'nginx-ingress-external'
   - 'api-catalogue'
   - 'application-system'
   - 'consultation-portal'
@@ -203,6 +203,7 @@ grantNamespaces:
   - 'services-payments'
   - 'payments'
   - 'contentful-apps'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

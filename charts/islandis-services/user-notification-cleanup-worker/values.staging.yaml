@@ -33,10 +33,11 @@ env:
   NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
-  - 'envoy-gateway-system'
+  - 'nginx-ingress-internal'
   - 'islandis'
   - 'identity-server-delegation'
   - 'application-system'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

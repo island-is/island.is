@@ -17,8 +17,10 @@ auth-admin-web:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -146,10 +148,11 @@ identity-server:
   files:
     - 'ids-signing.pfx'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
     - 'datadog'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -284,8 +287,10 @@ services-auth-admin-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -405,11 +410,12 @@ services-auth-delegation-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-internal'
     - 'islandis'
     - 'service-portal'
     - 'user-notification-worker'
     - 'user-notification-birthday-worker'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -533,9 +539,10 @@ services-auth-ids-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
     - 'user-notification'
     - 'datadog'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -649,10 +656,11 @@ services-auth-ids-api-cleanup:
     NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
     - 'user-notification'
     - 'portals-admin'
     - 'datadog'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -736,6 +744,7 @@ services-auth-personal-representative:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
+    - 'nginx-ingress-internal'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -824,6 +833,7 @@ services-auth-personal-representative-public:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
+    - 'nginx-ingress-internal'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -935,8 +945,10 @@ services-auth-public-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
-    - 'envoy-gateway-system'
+    - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
     - 'islandis'
+    - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

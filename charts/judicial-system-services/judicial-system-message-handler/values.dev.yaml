@@ -32,6 +32,7 @@ env:
   SQS_QUEUE_NAME: 'sqs-judicial-system'
   SQS_REGION: 'eu-west-1'
 grantNamespaces:
+  - 'nginx-ingress-external'
   - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:

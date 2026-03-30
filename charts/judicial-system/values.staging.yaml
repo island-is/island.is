@@ -37,6 +37,7 @@ judicial-system-api:
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -161,6 +162,7 @@ judicial-system-backend:
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -281,6 +283,7 @@ judicial-system-digital-mailbox-api:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
+    - 'nginx-ingress-internal'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -368,6 +371,7 @@ judicial-system-message-handler:
     SQS_QUEUE_NAME: 'sqs-judicial-system'
     SQS_REGION: 'eu-west-1'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -435,6 +439,7 @@ judicial-system-scheduler:
     SQS_REGION: 'eu-west-1'
     TIME_TO_LIVE_MINUTES: '30'
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -495,6 +500,7 @@ judicial-system-web:
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
+    - 'nginx-ingress-external'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:
@@ -572,6 +578,7 @@ judicial-system-xrd-api:
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
+    - 'nginx-ingress-internal'
     - 'envoy-gateway-system'
   grantNamespacesEnabled: true
   healthCheck:

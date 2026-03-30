@@ -33,6 +33,7 @@ env:
   SQS_REGION: 'eu-west-1'
   TIME_TO_LIVE_MINUTES: '30'
 grantNamespaces:
+  - 'nginx-ingress-external'
   - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:

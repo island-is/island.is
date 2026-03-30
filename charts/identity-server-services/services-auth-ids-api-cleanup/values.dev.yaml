@@ -33,10 +33,11 @@ env:
   NODE_OPTIONS: '--max-old-space-size=921 --enable-source-maps -r dd-trace/init'
   SERVERSIDE_FEATURES_ON: ''
 grantNamespaces:
-  - 'envoy-gateway-system'
+  - 'nginx-ingress-external'
   - 'user-notification'
   - 'portals-admin'
   - 'datadog'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

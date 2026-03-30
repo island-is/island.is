@@ -26,8 +26,9 @@ env:
   SI_PUBLIC_ENVIRONMENT: 'dev'
   SI_PUBLIC_FORM_SYSTEM_URL: 'https://beta.dev01.devland.is/form'
 grantNamespaces:
-  - 'envoy-gateway-system'
+  - 'nginx-ingress-external'
   - 'identity-server'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

@@ -57,8 +57,9 @@ env:
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token'
 grantNamespaces:
   - 'islandis'
-  - 'envoy-gateway-system'
+  - 'nginx-ingress-external'
   - 'services-bff-portals-admin'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

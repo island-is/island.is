@@ -25,6 +25,7 @@ env:
   PUBLIC_API_URL: 'https://island.is'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
+  - 'nginx-ingress-external'
   - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:

@@ -26,6 +26,7 @@ env:
   SERVERSIDE_FEATURES_ON: ''
   SI_PUBLIC_ENVIRONMENT: 'dev'
 grantNamespaces:
+  - 'nginx-ingress-external'
   - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:

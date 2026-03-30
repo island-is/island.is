@@ -52,8 +52,10 @@ env:
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
 grantNamespaces:
-  - 'envoy-gateway-system'
+  - 'nginx-ingress-external'
+  - 'nginx-ingress-internal'
   - 'islandis'
+  - 'envoy-gateway-system'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
