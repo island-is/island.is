@@ -43,6 +43,7 @@ interface ModelAttributes {
   alsoForDelegatedUser: boolean
   isAccessControlled?: boolean
   allowsWrite: boolean
+  thirdPartyLoginUrl: string
   userClaims?: ApiScopeUserClaim[]
   order: number
   required: boolean
@@ -67,6 +68,7 @@ type CreationAttributes = Optional<
   | 'automaticDelegationGrant'
   | 'alsoForDelegatedUser'
   | 'allowsWrite'
+  | 'thirdPartyLoginUrl'
   | 'order'
   | 'required'
   | 'emphasize'
@@ -230,6 +232,16 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   @ApiProperty()
   requiresConfirmation!: boolean
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+    field: 'third_party_login_url',
+    comment: 'URL to redirect to for third party delegation login',
+  })
+  @ApiProperty()
+  thirdPartyLoginUrl!: string
+
   @HasMany(() => ApiScopeUserClaim)
   @ApiPropertyOptional({ nullable: true })
   userClaims?: ApiScopeUserClaim[]
@@ -319,6 +331,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
       isAccessControlled: this.isAccessControlled ?? undefined,
       allowsWrite: this.allowsWrite,
       requiresConfirmation: this.requiresConfirmation,
+      thirdPartyLoginUrl: this.thirdPartyLoginUrl,
       supportedDelegationTypes:
         this.supportedDelegationTypes?.map(
           ({ delegationType }) => delegationType,

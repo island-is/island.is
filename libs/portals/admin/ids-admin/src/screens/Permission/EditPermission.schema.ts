@@ -118,6 +118,8 @@ const delegationsSchema = z
     tagIds: z.string().optional().transform(safeParseStringArray),
     originalCategoryIds: z.string().optional().transform(safeParseStringArray),
     originalTagIds: z.string().optional().transform(safeParseStringArray),
+    originUrl: z.string().optional(),
+    targetLinkUri: z.string().optional(),
   })
   .merge(defaultEnvironmentSchema)
   .transform(
@@ -126,6 +128,8 @@ const delegationsSchema = z
       tagIds = [],
       originalCategoryIds = [],
       originalTagIds = [],
+      originUrl,
+      targetLinkUri,
       ...rest
     }) => {
       const addedCategoryIds = categoryIds.filter(
@@ -140,6 +144,14 @@ const delegationsSchema = z
       const removedTagIds = originalTagIds.filter(
         (id: string) => !tagIds.includes(id),
       )
+
+      const thirdPartyLoginUrl =
+        originUrl && targetLinkUri
+          ? `${originUrl}?login_hint={{subjectId}}&target_link_uri=${targetLinkUri}`
+          : originUrl || targetLinkUri
+            ? undefined
+            : ''
+
       return {
         ...rest,
         addedCategoryIds:
@@ -148,6 +160,7 @@ const delegationsSchema = z
           removedCategoryIds.length > 0 ? removedCategoryIds : undefined,
         addedTagIds: addedTagIds.length > 0 ? addedTagIds : undefined,
         removedTagIds: removedTagIds.length > 0 ? removedTagIds : undefined,
+        ...(thirdPartyLoginUrl !== undefined && { thirdPartyLoginUrl }),
       }
     },
   )

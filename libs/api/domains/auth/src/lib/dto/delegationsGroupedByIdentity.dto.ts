@@ -12,6 +12,9 @@ export class DelegationsGroupedByIdentity {
   @Field(() => String, { nullable: true })
   type?: string
 
+  @Field(() => String, { nullable: true })
+  subjectId?: string | null
+
   @Field(() => Int)
   totalScopeCount!: number
 

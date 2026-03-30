@@ -176,6 +176,15 @@ export class AdminPatchScopeDto {
       'Whether this scope requires step-up authentication (tvöfalt samþykki) for sensitive information access',
   })
   requiresConfirmation?: boolean
+
+  @IsString()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example:
+      'https://example.com/bff/login?login_hint={{subjectId}}&target_link_uri=https://example.com/minarsidur',
+    description: 'URL to redirect to for third party delegation login',
+  })
+  thirdPartyLoginUrl?: string
 }
 
 /**

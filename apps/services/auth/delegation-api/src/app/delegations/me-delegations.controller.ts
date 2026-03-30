@@ -18,6 +18,7 @@ import {
   DelegationDirection,
   DelegationDTO,
   DelegationsIncomingService,
+  DelegationsIndexService,
   DelegationsOutgoingService,
   DelegationsService,
   DelegationValidity,
@@ -60,6 +61,7 @@ export class MeDelegationsController {
     private readonly delegationsService: DelegationsService,
     private readonly delegationsOutgoingService: DelegationsOutgoingService,
     private readonly delegationsIncomingService: DelegationsIncomingService,
+    private readonly delegationsIndexService: DelegationsIndexService,
     private readonly auditService: AuditService,
   ) {}
 
@@ -116,6 +118,8 @@ export class MeDelegationsController {
     @Query('validity') validity: DelegationValidity = DelegationValidity.ALL,
     @Headers('X-Query-OtherUser') otherUser: string,
   ): Promise<DelegationDTO[]> {
+    let delegations: DelegationDTO[]
+
     switch (direction) {
       case DelegationDirection.INCOMING: {
         if (user.actor) {
@@ -124,19 +128,21 @@ export class MeDelegationsController {
           )
         }
 
-        return this.delegationsIncomingService.findAllValid(
+        delegations = await this.delegationsIncomingService.findAllValid(
           user,
           domainName,
           otherUser,
         )
+        break
       }
       case DelegationDirection.OUTGOING: {
-        return this.delegationsOutgoingService.findAll(
+        delegations = await this.delegationsOutgoingService.findAll(
           user,
           validity,
           domainName,
           otherUser,
         )
+        break
       }
       default: {
         throw new BadRequestException(
@@ -144,6 +150,8 @@ export class MeDelegationsController {
         )
       }
     }
+
+    return this.delegationsIndexService.getSubjectIdsForDelegations(delegations)
   }
 
   @Get(':delegationId')

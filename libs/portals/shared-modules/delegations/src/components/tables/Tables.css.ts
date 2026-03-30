@@ -49,3 +49,31 @@ export const buttonContainer = style({
   display: 'flex',
   marginBottom: theme.spacing[1],
 })
+
+export const link = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: theme.spacing[1],
+  color: theme.color.blue400,
+  boxShadow: `inset 0 -1px 0 0 ${theme.color.blue400}`,
+  ':hover': {
+    color: theme.color.blueberry400,
+    boxShadow: `inset 0 -1px 0 0 ${theme.color.blueberry400}`,
+  },
+})
+
+export const linkMobile = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: theme.spacing[1],
+  color: theme.color.blue400,
+  border: `1px solid ${theme.color.blue400}`,
+  borderRadius: 8,
+  padding: '10px 16px',
+  ':hover': {
+    color: theme.color.blueberry400,
+    borderColor: theme.color.blueberry400,
+    borderWidth: 2,
+  },
+})

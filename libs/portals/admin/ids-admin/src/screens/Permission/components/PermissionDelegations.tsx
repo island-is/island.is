@@ -7,7 +7,9 @@ import { useLocale } from '@island.is/localization'
 import {
   Box,
   Checkbox,
+  Divider,
   Hidden,
+  Input,
   Select,
   Stack,
   Text,
@@ -34,6 +36,19 @@ import {
 } from './PermissionCategoriesAndTags.generated'
 
 const FIELD_PREFIX = 'field-'
+const THIRD_PARTY_URL_SEPARATOR = '?login_hint={{subjectId}}&target_link_uri='
+
+const parseThirdPartyLoginUrl = (
+  url?: string,
+): { originUrl: string; targetLinkUri: string } => {
+  if (!url) return { originUrl: '', targetLinkUri: '' }
+  const idx = url.indexOf(THIRD_PARTY_URL_SEPARATOR)
+  if (idx === -1) return { originUrl: '', targetLinkUri: '' }
+  return {
+    originUrl: url.substring(0, idx),
+    targetLinkUri: url.substring(idx + THIRD_PARTY_URL_SEPARATOR.length),
+  }
+}
 
 type Option = { label: string; value: string; description: string }
 type Category = GetScopeCategoriesQuery['authAdminScopeCategories'][number]
@@ -62,18 +77,27 @@ export const PermissionDelegations = ({
     getDelegationProviderTranslations('apiScopeDelegation', formatMessage),
   )
 
+  const parsedUrl = parseThirdPartyLoginUrl(
+    (selectedPermission as { thirdPartyLoginUrl?: string })
+      .thirdPartyLoginUrl,
+  )
+
   const [inputValues, setInputValues] = useEnvironmentState<{
     isAccessControlled: boolean
     grantToAuthenticatedUser: boolean
     supportedDelegationTypes: string[]
     addedDelegationTypes: string[]
     removedDelegationTypes: string[]
+    originUrl: string
+    targetLinkUri: string
   }>({
     isAccessControlled,
     grantToAuthenticatedUser,
     supportedDelegationTypes,
     addedDelegationTypes: [],
     removedDelegationTypes: [],
+    originUrl: parsedUrl.originUrl,
+    targetLinkUri: parsedUrl.targetLinkUri,
   })
 
   const showCategoriesAndTags =
@@ -369,6 +393,48 @@ export const PermissionDelegations = ({
                                 </Stack>
                               )}
                             </Box>
+                            <Divider />
+                            <Stack space={3}>
+                              <Text paddingBottom={1}>
+                                {formatMessage(m.thirdPartyLoginUrl)}
+                              </Text>
+                              <Text variant="small" as="p">
+                                {formatMessage(m.thirdPartyLoginUrlDescription)}
+                              </Text>
+                              <Input
+                                name="originUrl"
+                                value={inputValues.originUrl}
+                                label={formatMessage(m.originUrl)}
+                                size="xs"
+                                onChange={(e) =>
+                                  setInputValues((prev) => ({
+                                    ...prev,
+                                    originUrl: e.target.value,
+                                  }))
+                                }
+                              />
+                              <Input
+                                name="targetLinkUri"
+                                value={inputValues.targetLinkUri}
+                                label={formatMessage(m.targetLinkUri)}
+                                size="xs"
+                                onChange={(e) =>
+                                  setInputValues((prev) => ({
+                                    ...prev,
+                                    targetLinkUri: e.target.value,
+                                  }))
+                                }
+                              />
+                              <Text variant="small" as="p">{`Preview: ${
+                                inputValues.originUrl.length > 0
+                                  ? inputValues.originUrl
+                                  : formatMessage(m.originUrl)
+                              }?login_hint={{subjectId}}&target_link_uri=${
+                                inputValues.targetLinkUri.length > 0
+                                  ? inputValues.targetLinkUri
+                                  : formatMessage(m.targetLinkUri)
+                              }`}</Text>
+                            </Stack>
                           </Stack>
                         ) : undefined
                       }
