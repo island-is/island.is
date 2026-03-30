@@ -22,6 +22,8 @@ import {
   type ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   type ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   type ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,
+  SocialInsuranceAdministrationMedicalAndRehabilitationService,
+  SocialInsuranceAdministrationOldAgePensionService,
 } from '@island.is/clients/social-insurance-administration'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -34,7 +36,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { sharedModuleConfig } from '../../shared'
 import {
-  getApplicationType,
+  getOAPApplicationType,
   transformApplicationToAdditionalSupportForTheElderlyDTO,
   transformApplicationToDeathBenefitsDTO,
   transformApplicationToDisabilityPensionDTO,
@@ -57,6 +59,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
+    private siaOldAgePensionServiceV2: SocialInsuranceAdministrationOldAgePensionService,
+    private siaMedicalRehabServiceV2: SocialInsuranceAdministrationMedicalAndRehabilitationService,
     @Inject(sharedModuleConfig.KEY)
     private config: ConfigType<typeof sharedModuleConfig>,
     private readonly s3Service: S3Service,
@@ -414,13 +418,14 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         attachments,
       )
 
-      const applicationType = getApplicationType(application).toLowerCase()
+      const applicationType = getOAPApplicationType(application)
 
-      const response = await this.siaClientService.sendApplication(
-        auth,
-        oldAgePensionDTO,
-        applicationType,
-      )
+      const response =
+        await this.siaOldAgePensionServiceV2.sendOldAgePensionApplication(
+          auth,
+          oldAgePensionDTO,
+          applicationType,
+        )
 
       return response
     }
@@ -504,10 +509,9 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         transformApplicationToMedicalAndRehabilitationPaymentsDTO(application)
 
       const response =
-        await this.siaClientService.sendMedicalAndRehabilitationPaymentsApplication(
+        await this.siaMedicalRehabServiceV2.sendMedicalAndRehabilitationPaymentsApplication(
           auth,
           marpDTO,
-          application.typeId.toLowerCase(),
         )
 
       return response

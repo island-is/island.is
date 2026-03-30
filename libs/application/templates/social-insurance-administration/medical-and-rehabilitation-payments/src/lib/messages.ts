@@ -299,13 +299,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
   }),
 
   generalInformation: defineMessages({
-    // Income Plan - Instructions
-    incomePlanInstructionsSubSectionTitle: {
-      id: 'marp.application:general.information.income.plan.instructions.sub.section.title',
-      defaultMessage: 'Tekjuáætlun - Leiðbeiningar',
-      description: 'Income Plan - Instructions',
-    },
-
     // Benefits from another country
     benefitsFromAnotherCountrySubSectionTitle: {
       id: 'marp.application:general.information.benefits.from.another.country.sub.section.title',

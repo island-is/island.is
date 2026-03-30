@@ -268,6 +268,7 @@ export class ZendeskService {
 
           for (const field of screen.fields ?? []) {
             if (field.isHidden) continue
+            if (field.fieldType === FieldTypesEnum.MESSAGE) continue
 
             const requiredMark = field.isRequired ? '*' : ''
             parts.push(
@@ -286,6 +287,26 @@ export class ZendeskService {
                 rawJson && typeof rawJson === 'object'
                   ? (rawJson as Record<string, unknown>)
                   : {}
+
+              if (field.fieldType === FieldTypesEnum.FILE) {
+                const keys = this.normalizeS3Keys(
+                  (json as Record<string, unknown>)['s3Key'],
+                )
+                const lines = keys.map(
+                  (k) => `• ${this.displayNameFromS3Key(k)}`,
+                )
+
+                const prefixHtml = isMulti ? `<strong>${itemNo}.</strong> ` : ''
+                const valHtml = lines.length
+                  ? this.escapeHtml(lines.join('\n')).replace(
+                      /\r\n|\n|\r/g,
+                      '<br />',
+                    )
+                  : ''
+
+                parts.push(p0(`${prefixHtml}${valHtml}`, indent(30)))
+                continue
+              }
 
               const entries = Object.entries(json)
               const isMultiAttribute = entries.length > 1
@@ -314,6 +335,10 @@ export class ZendeskService {
                 }
 
                 const val = this.formatValue(raw, field.fieldType)
+                const valHtml = this.escapeHtml(val).replace(
+                  /\r\n|\n|\r/g,
+                  '<br />',
+                )
 
                 if (isMultiAttribute) {
                   const attribute = getLanguageTypeForValueTypeAttribute(key)
@@ -327,17 +352,13 @@ export class ZendeskService {
                         attrIndent,
                       )};margin-right:4px`,
                     ),
-                    `<p style="display:inline-block;margin:0">${this.escapeHtml(
-                      val,
-                    )}</p><br />`,
+                    `<p style="display:inline-block;margin:0">${valHtml}</p><br />`,
                   )
                 } else {
                   const prefixHtml = isMulti
                     ? `<strong>${itemNo}.</strong> `
                     : ''
-                  parts.push(
-                    p0(`${prefixHtml}${this.escapeHtml(val)}`, indent(30)),
-                  )
+                  parts.push(p0(`${prefixHtml}${valHtml}`, indent(30)))
                 }
               }
             }
@@ -347,6 +368,35 @@ export class ZendeskService {
     }
 
     return parts.join('')
+  }
+
+  private normalizeS3Keys(raw: unknown): string[] {
+    if (Array.isArray(raw)) {
+      return raw.filter(
+        (k): k is string => typeof k === 'string' && k.length > 0,
+      )
+    }
+    if (typeof raw === 'string' && raw.length > 0) return [raw]
+    return []
+  }
+
+  private displayNameFromS3Key(key: string): string {
+    // 1) turn s3 key into human filename
+    const lastPart = key.split('/').pop() ?? key
+    const underscoreIndex = lastPart.indexOf('_')
+    const fileName =
+      underscoreIndex >= 0 ? lastPart.slice(underscoreIndex + 1) : lastPart
+
+    // 2) truncate middle if long
+    const maxLength = 40
+    if (fileName.length <= maxLength) return fileName
+
+    const ellipsis = '...'
+    const keepLength = maxLength - ellipsis.length
+    const start = Math.ceil(keepLength / 2)
+    const end = fileName.length - Math.floor(keepLength / 2)
+
+    return `${fileName.slice(0, start)}${ellipsis}${fileName.slice(end)}`
   }
 
   private getCustomFields(applicationDto: ApplicationDto): CustomField[] {

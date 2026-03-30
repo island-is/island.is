@@ -84,6 +84,11 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/s/opingogn',
+        destination: '/opingogn',
+        permanent: true,
+      },
+      {
         source: '/en/o/university-studies',
         destination: '/university-studies',
         permanent: true,

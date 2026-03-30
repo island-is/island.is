@@ -393,7 +393,7 @@ export class FileService {
     )
 
     if (
-      theCase.appealCaseNumber &&
+      theCase.appealCase?.appealCaseNumber &&
       file.category &&
       [
         CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
@@ -703,7 +703,7 @@ export class FileService {
         user,
         theCase.id,
         file.id,
-        theCase.appealCaseNumber,
+        theCase.appealCase?.appealCaseNumber,
         file.category,
         file.name,
         url,

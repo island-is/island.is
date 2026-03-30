@@ -252,12 +252,6 @@ export class ApplicationMapper {
           variant: app.tagVariant,
         },
         deleteButton: true,
-        pendingAction: {
-          displayStatus: 'displayStatus',
-          title: 'title',
-          content: 'content',
-          button: 'button',
-        },
         history:
           app.events?.map((event) => {
             return {
@@ -267,7 +261,9 @@ export class ApplicationMapper {
           }) || [],
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
+        displayPruneAt: true,
       },
+      pruneAt: app.pruneAt,
       attachments: {},
       typeId: '',
       answers: { approveExternalData: true },
@@ -310,7 +306,9 @@ export class ApplicationMapper {
           }) || [],
         draftFinishedSteps: app.draftFinishedSteps ?? 0,
         draftTotalSteps: app.draftTotalSteps ?? 0,
+        displayPruneAt: true,
       },
+      pruneAt: app.pruneAt,
       attachments: {},
       typeId: '',
       answers: { approveExternalData: true },
@@ -321,7 +319,7 @@ export class ApplicationMapper {
       formSystemFormSlug: app.formSlug,
       formSystemOrgContentfulId: app.orgContentfulId,
       formSystemOrgSlug: app.orgSlug,
-    }
+    } as MyPagesApplicationResponseDto
   }
 
   mapApplicationToApplicationAdminDto(

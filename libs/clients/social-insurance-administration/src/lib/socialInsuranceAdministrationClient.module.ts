@@ -16,6 +16,7 @@ import { SocialInsuranceAdministrationPensionCalculatorService } from './service
 import { SocialInsuranceAdministrationDeathBenefitsService } from './services/deathBenefits.service'
 import { SocialInsuranceAdministrationMedicalDocumentsService } from './services/medicalDocuments.service'
 import { SocialInsuranceAdministrationPersonalTaxCreditService } from './services/personalTaxCredit.service'
+import { SocialInsuranceAdministrationOldAgePensionService } from './services/applicationServices/oldAgePension.service'
 
 @Module({
   imports: [FeatureFlagModule],
@@ -37,6 +38,7 @@ import { SocialInsuranceAdministrationPersonalTaxCreditService } from './service
     SocialInsuranceAdministrationDisabilityPensionService,
     SocialInsuranceAdministrationMedicalAndRehabilitationService,
     SocialInsuranceAdministrationPersonalTaxCreditService,
+    SocialInsuranceAdministrationOldAgePensionService,
   ],
   exports: [
     SocialInsuranceAdministrationClientService,
@@ -54,6 +56,7 @@ import { SocialInsuranceAdministrationPersonalTaxCreditService } from './service
     SocialInsuranceAdministrationMedicalAndRehabilitationService,
     SocialInsuranceAdministrationDisabilityPensionService,
     SocialInsuranceAdministrationPersonalTaxCreditService,
+    SocialInsuranceAdministrationOldAgePensionService,
   ],
 })
 export class SocialInsuranceAdministrationClientModule {}
