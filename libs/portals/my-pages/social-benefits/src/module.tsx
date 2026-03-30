@@ -7,6 +7,7 @@ import {
 import { Navigate } from 'react-router-dom'
 import { socialInsuranceRoutes } from './lib/routes/socialInsuranceRoutes'
 import { socialInsuranceLegacyRedirects } from './lib/routes/socialInsuranceLegacyRedirects'
+import { unemploymentBenefitsRoutes } from './lib/routes/unemploymentBenefitRoutes'
 
 export const socialBenefitsModule: PortalModule = {
   name: 'Framfærsla',
@@ -26,5 +27,6 @@ export const socialBenefitsModule: PortalModule = {
     },
     ...socialInsuranceRoutes(userInfo),
     ...socialInsuranceLegacyRedirects(userInfo),
+    ...unemploymentBenefitsRoutes(userInfo),
   ],
 }

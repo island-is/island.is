@@ -17,3 +17,8 @@ export enum SocialInsuranceMaintenanceLegacyPaths {
   SocialInsuranceMaintenanceIncomePlan = '/framfaersla/tekjuaaetlun',
   SocialInsuranceMaintenanceIncomePlanDetail = '/framfaersla/tekjuaaetlun/nuverandi',
 }
+
+export enum UnemploymentBenefitsPaths {
+  Root = '/framfaersla/atvinnuleysisbaetur',
+  Status = '/framfaersla/atvinnuleysisbaetur/minstada',
+}

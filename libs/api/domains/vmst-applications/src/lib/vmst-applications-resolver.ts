@@ -5,7 +5,10 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { VMSTApplicationsService } from './vmst-applications-service'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
-import { ValidationUnemploymentApplication } from './models'
+import {
+  ValidationUnemploymentApplication,
+  UnemploymentApplicationOverview,
+} from './models'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
 
 @UseGuards(IdsUserGuard)
@@ -59,5 +62,13 @@ export class VMSTApplicationsResolver {
     input: VmstApplicationsVacationValidationInput,
   ) {
     return this.vmstApplicationsService.validateVacationDays(auth, input)
+  }
+
+  @Query(() => UnemploymentApplicationOverview, {
+    name: 'vmstApplicationsUnemploymentApplicationOverview',
+  })
+  @Audit()
+  async getApplicationOverview(@CurrentUser() auth: User) {
+    return this.vmstApplicationsService.getApplicationOverview(auth)
   }
 }

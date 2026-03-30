@@ -1,0 +1,14 @@
+query getUnemploymentApplicationOverview {
+  vmstApplicationsUnemploymentApplicationOverview {
+    applicantId
+    unemploymentApplicationId
+    applicationStatusId
+    applicationStatusName
+    dataRequested
+    rows {
+      key
+      label
+      value
+    }
+  }
+}

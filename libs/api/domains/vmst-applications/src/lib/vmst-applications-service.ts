@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import {
   VmstUnemploymentClientService,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
+  GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse,
 } from '@island.is/clients/vmst-unemployment'
 import { VmstApplicationsBankInformationInput } from './dto/bankInformationInput.input'
 import { VmstApplicationsVacationValidationInput } from './dto/vacationValidation.input'
@@ -85,5 +86,11 @@ export class VMSTApplicationsService {
     return this.vmstUnemploymentService.validateVacationInfoUnemploymentApplication(
       payload,
     )
+  }
+
+  async getApplicationOverview(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse> {
+    return this.vmstUnemploymentService.getApplicationOverview(auth)
   }
 }

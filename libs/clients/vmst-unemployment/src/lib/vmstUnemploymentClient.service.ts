@@ -14,6 +14,7 @@ import {
   UnemploymentApplicationValidatePaymentPageRequest,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationValidationResponseDTO,
   UnemploymentApplicationValidatePaymentPage2Request,
+  GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -187,6 +188,20 @@ export class VmstUnemploymentClientService {
 
     return await api.unemploymentApplicationValidatePaymentPage2(
       requestParameter,
+    )
+  }
+
+  async getApplicationOverview(
+    auth: User,
+  ): Promise<GaldurXRoadAPIModelsUnemploymentApplicationOverviewResponse> {
+    const api = await this.createApiClient(
+      UnemploymentApplicationApi,
+      'clients-vmst-unemployment',
+      'Unemployment API auth failed',
+    )
+
+    return await api.unemploymentApplicationGetLatestUnemploymentApplicationOverview(
+      { ssn: auth.nationalId },
     )
   }
 
