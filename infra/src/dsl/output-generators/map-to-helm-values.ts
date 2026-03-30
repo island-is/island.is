@@ -488,10 +488,11 @@ const GATEWAY_NAMESPACE = 'envoy-gateway-system'
  * Keeps all other grants intact. Deduplicates.
  */
 function migrateGrantNamespaces(namespaces: string[]): string[] {
-  const migrated = namespaces.map((ns) =>
-    ns.startsWith('nginx-ingress-') ? GATEWAY_NAMESPACE : ns,
-  )
-  return Array.from(new Set(migrated))
+  const hasNginx = namespaces.some((ns) => ns.startsWith('nginx-ingress-'))
+  if (hasNginx) {
+    return Array.from(new Set([...namespaces, GATEWAY_NAMESPACE]))
+  }
+  return namespaces
 }
 
 function serializeHTTPRoute(
