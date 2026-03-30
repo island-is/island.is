@@ -11,7 +11,9 @@
  */
 import { useState, useEffect } from 'react'
 import { AsyncSearch, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { useDebounce } from 'react-use'
+import { regulation } from '../../lib/messages'
 import * as s from './Impacts.css'
 
 // ---------------------------------------------------------------------------
@@ -41,6 +43,7 @@ export const ImpactAmendingSelection = ({
   searchResults,
   loading,
 }: ImpactAmendingSelectionProps) => {
+  const { formatMessage: f } = useLocale()
   const [value, setValue] = useState<string | undefined>()
   const [isSearching, setIsSearching] = useState(false)
 
@@ -74,7 +77,7 @@ export const ImpactAmendingSelection = ({
       ? [
           {
             value: '',
-            label: 'Engin reglugerð fannst',
+            label: f(regulation.impacts.labels.baseNotFound) + ' ' + value,
             disabled: true,
           },
         ]
