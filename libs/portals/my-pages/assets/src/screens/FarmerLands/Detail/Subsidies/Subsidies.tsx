@@ -1,6 +1,12 @@
 import { useMemo, useState } from 'react'
 import { Column, Row } from 'react-table'
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Filter,
+  FilterMultiChoice,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m, formatNationalId } from '@island.is/portals/my-pages/core'
 import FarmerLandsTable from '../../../../components/FarmerLandsTable/FarmerLandsTable'
@@ -55,13 +61,53 @@ const DetailRow = ({ children }: { children: React.ReactNode }) => (
 export const Subsidies = ({ farmId }: Props) => {
   const { formatMessage } = useLocale()
   const [cursor, setCursor] = useState<string | undefined>(undefined)
+  const [contractId, setContractId] = useState<string | undefined>(undefined)
+  const [paymentCategoryId, setPaymentCategoryId] = useState<
+    number | undefined
+  >(undefined)
 
   const { data, loading, error } = useFarmerLandSubsidiesQuery({
-    variables: { input: { farmId, after: cursor } },
+    variables: {
+      input: {
+        farmId,
+        after: cursor,
+        contractId,
+        paymentCategoryId,
+      },
+    },
   })
 
   const pageInfo = data?.farmerLandSubsidies?.pageInfo
   const subsidies = useMemo(() => data?.farmerLandSubsidies?.data ?? [], [data])
+  const filterOptions = data?.farmerLandSubsidies?.filterOptions
+
+  const contractItems = useMemo(
+    () =>
+      (filterOptions?.contracts ?? []).map((c) => ({
+        value: c.contractId,
+        label: c.contractName,
+      })),
+    [filterOptions?.contracts],
+  )
+
+  const categoryItems = useMemo(
+    () =>
+      (filterOptions?.paymentCategories ?? []).map((pc) => ({
+        value: String(pc.paymentCategoryId),
+        label: pc.paymentCategoryName,
+      })),
+    [filterOptions?.paymentCategories],
+  )
+
+  const filterCount = [contractId, paymentCategoryId].filter(
+    (v) => v != null,
+  ).length
+
+  const clearFilters = () => {
+    setContractId(undefined)
+    setPaymentCategoryId(undefined)
+    setCursor(undefined)
+  }
 
   const columns = useMemo<Column<FarmerLandSubsidy>[]>(
     () => [
@@ -136,6 +182,57 @@ export const Subsidies = ({ farmId }: Props) => {
 
   return (
     <Box marginTop={4}>
+      <Box marginBottom={3}>
+        <Filter
+          variant="popover"
+          align="left"
+          reverse
+          labelOpen={formatMessage(m.openFilter)}
+          labelClose={formatMessage(m.closeFilter)}
+          labelClear={formatMessage(m.clearFilter)}
+          labelClearAll={formatMessage(m.clearAllFilters)}
+          filterCount={filterCount}
+          onFilterClear={clearFilters}
+        >
+          <FilterMultiChoice
+            labelClear={formatMessage(m.clearSelected)}
+            singleExpand
+            onChange={({ categoryId, selected }) => {
+              if (categoryId === 'contract')
+                setContractId(selected[0] ?? undefined)
+              if (categoryId === 'category')
+                setPaymentCategoryId(
+                  selected[0] ? Number(selected[0]) : undefined,
+                )
+              setCursor(undefined)
+            }}
+            onClear={(categoryId) => {
+              if (categoryId === 'contract') setContractId(undefined)
+              if (categoryId === 'category') setPaymentCategoryId(undefined)
+              setCursor(undefined)
+            }}
+            categories={[
+              {
+                id: 'contract',
+                label: formatMessage(fm.subsidyContract),
+                selected: contractId ? [contractId] : [],
+                filters: contractItems,
+                singleOption: true,
+                searchPlaceholder: formatMessage(m.searchPlaceholder),
+              },
+              {
+                id: 'category',
+                label: formatMessage(fm.subsidyCategory),
+                selected:
+                  paymentCategoryId != null ? [String(paymentCategoryId)] : [],
+                filters: categoryItems,
+                singleOption: true,
+                searchPlaceholder: formatMessage(m.searchPlaceholder),
+              },
+            ]}
+          />
+        </Filter>
+      </Box>
       <FarmerLandsTable
         columns={columns}
         data={subsidies}

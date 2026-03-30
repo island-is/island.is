@@ -3,9 +3,13 @@ import {
   BeneficiaryWrapper,
   Farm,
   Payment,
+  PaginatedPayments,
 } from '@island.is/clients/farmers'
 import { FarmerLand } from './models/farmerLand.model'
 import { FarmerLandSubsidy } from './models/farmerLandSubsidy.model'
+import {
+  FarmerLandSubsidyFilterOptions,
+} from './models/farmerLandSubsidyFilterOptions.model'
 import { LandBeneficiary } from './models/landBeneficiary.model'
 import { LandBeneficiaryPayment } from './models/landBeneficiaryPayment.model'
 import { LandRegistryEntry } from './models/landRegistryEntry.model'
@@ -57,6 +61,24 @@ export const mapToFarmerLandSubsidy = (
     grossAmount: p.grossAmount ?? undefined,
     netPaid: p.netPaid ?? undefined,
     offset: p.offset ?? undefined,
+  }
+}
+
+export const mapToFilterOptions = (
+  filterOptions: PaginatedPayments['filterOptions'],
+): FarmerLandSubsidyFilterOptions | undefined => {
+  if (!filterOptions) return undefined
+  return {
+    contracts: (filterOptions.contracts ?? []).flatMap((c) =>
+      c.contractId && c.contractName
+        ? [{ contractId: c.contractId, contractName: c.contractName }]
+        : [],
+    ),
+    paymentCategories: (filterOptions.paymentCategories ?? []).flatMap((pc) =>
+      pc.paymentCategoryId != null && pc.paymentCategoryName
+        ? [{ paymentCategoryId: pc.paymentCategoryId, paymentCategoryName: pc.paymentCategoryName }]
+        : [],
+    ),
   }
 }
 

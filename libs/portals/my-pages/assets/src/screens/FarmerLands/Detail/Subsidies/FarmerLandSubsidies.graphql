@@ -20,5 +20,15 @@ query FarmerLandSubsidies($input: FarmerLandSubsidiesInput!) {
       startCursor
       endCursor
     }
+    filterOptions {
+      contracts {
+        contractId
+        contractName
+      }
+      paymentCategories {
+        paymentCategoryId
+        paymentCategoryName
+      }
+    }
   }
 }

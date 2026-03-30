@@ -66,6 +66,10 @@ export class FarmersResolver {
       input.after,
       input.orderField,
       input.orderDirection,
+      input.paymentCategoryId,
+      input.contractId,
+      input.dateFrom,
+      input.dateTo,
     )
   }
 

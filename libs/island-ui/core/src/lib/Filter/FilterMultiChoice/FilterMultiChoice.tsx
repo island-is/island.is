@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useContext, ChangeEvent } from 'react'
+import React, { FC, ReactNode, useContext, ChangeEvent, useState } from 'react'
 import { Accordion } from '../../Accordion/Accordion'
 import {
   AccordionCard,
@@ -11,6 +11,7 @@ import { RadioButton } from '../../RadioButton/RadioButton'
 import { Inline } from '../../Inline/Inline'
 import { Stack } from '../../Stack/Stack'
 import { FilterContext } from '../Filter'
+import { FilterInput } from '../FilterInput/FilterInput'
 
 type FilterCategory = {
   /** Id for the category. */
@@ -27,6 +28,8 @@ type FilterCategory = {
   inline?: boolean
   /** Allow only one option at a time */
   singleOption?: boolean
+  /** When provided, renders a search input above the list that filters options by label */
+  searchPlaceholder?: string
 }
 
 type FilterItem = {
@@ -64,6 +67,9 @@ export const FilterMultiChoice: FC<
   onClear,
 }: FilterMultiChoiceProps) => {
   const { variant } = useContext(FilterContext)
+  const [searchQueries, setSearchQueries] = useState<Record<string, string>>(
+    {},
+  )
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement>,
@@ -84,28 +90,54 @@ export const FilterMultiChoice: FC<
     })
   }
 
-  const renderCategoryFilters = (category: FilterCategory) =>
-    category.filters.map((filter, index) =>
-      category.singleOption ? (
-        <RadioButton
-          key={`${category.id}-${filter.value}-${index}`}
-          name={`${category.id}-${filter.value}-${index}`}
-          label={filter.label}
-          value={filter.value}
-          checked={category.selected.includes(filter.value)}
-          onChange={(event) => handleChange(event, category, true)}
-        />
-      ) : (
-        <Checkbox
-          key={`${category.id}-${filter.value}-${index}`}
-          name={`${category.id}-${filter.value}-${index}`}
-          label={filter.label}
-          value={filter.value}
-          checked={category.selected.includes(filter.value)}
-          onChange={(event) => handleChange(event, category)}
-        />
-      ),
+  const renderCategoryFilters = (category: FilterCategory) => {
+    const query = searchQueries[category.id] ?? ''
+    const visibleFilters = category.searchPlaceholder
+      ? category.filters.filter((f) =>
+          typeof f.label === 'string'
+            ? f.label.toLowerCase().includes(query.toLowerCase())
+            : true,
+        )
+      : category.filters
+
+    return (
+      <>
+        {category.searchPlaceholder && (
+          <Box marginBottom={2}>
+            <FilterInput
+              name={`${category.id}-search`}
+              placeholder={category.searchPlaceholder}
+              value={query}
+              onChange={(value) =>
+                setSearchQueries((prev) => ({ ...prev, [category.id]: value }))
+              }
+            />
+          </Box>
+        )}
+        {visibleFilters.map((filter, index) =>
+          category.singleOption ? (
+            <RadioButton
+              key={`${category.id}-${filter.value}-${index}`}
+              name={`${category.id}-${filter.value}-${index}`}
+              label={filter.label}
+              value={filter.value}
+              checked={category.selected.includes(filter.value)}
+              onChange={(event) => handleChange(event, category, true)}
+            />
+          ) : (
+            <Checkbox
+              key={`${category.id}-${filter.value}-${index}`}
+              name={`${category.id}-${filter.value}-${index}`}
+              label={filter.label}
+              value={filter.value}
+              checked={category.selected.includes(filter.value)}
+              onChange={(event) => handleChange(event, category)}
+            />
+          ),
+        )}
+      </>
     )
+  }
 
   return variant === 'dialog' ? (
     <Stack space={2}>
