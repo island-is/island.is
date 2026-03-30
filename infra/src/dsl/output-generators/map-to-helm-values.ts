@@ -481,18 +481,26 @@ const hostFullName = (host: string, env: EnvironmentConfig) => {
 const internalHostFullName = (host: string, env: EnvironmentConfig) =>
   host.indexOf('.') < 0 ? `${host}.internal.${env.domain}` : host
 
-const GATEWAY_NAMESPACE = 'envoy-gateway-system'
+const GATEWAY_EXTERNAL_NAMESPACE = 'envoy-gateway-external'
+const GATEWAY_INTERNAL_NAMESPACE = 'envoy-gateway-internal'
 
 /**
- * Replace nginx-ingress-* grant namespaces with envoy-gateway-system.
- * Keeps all other grants intact. Deduplicates.
+ * Add envoy-gateway-external/internal grant namespaces alongside nginx ones.
+ * Maps nginx-ingress-external* → envoy-gateway-external,
+ *      nginx-ingress-internal* → envoy-gateway-internal.
+ * Keeps all existing grants intact for side-by-side migration.
  */
 function migrateGrantNamespaces(namespaces: string[]): string[] {
-  const hasNginx = namespaces.some((ns) => ns.startsWith('nginx-ingress-'))
-  if (hasNginx) {
-    return Array.from(new Set([...namespaces, GATEWAY_NAMESPACE]))
+  const extra: string[] = []
+  for (const ns of namespaces) {
+    if (ns.startsWith('nginx-ingress-external')) {
+      extra.push(GATEWAY_EXTERNAL_NAMESPACE)
+    } else if (ns.startsWith('nginx-ingress-internal')) {
+      extra.push(GATEWAY_INTERNAL_NAMESPACE)
+    }
   }
-  return namespaces
+  if (extra.length === 0) return namespaces
+  return Array.from(new Set([...namespaces, ...extra]))
 }
 
 function serializeHTTPRoute(
@@ -515,7 +523,7 @@ function serializeHTTPRoute(
   )
 
   return {
-    parentRefs: [{ name: gatewayName, namespace: GATEWAY_NAMESPACE }],
+    parentRefs: [{ name: gatewayName, namespace: isPublic ? GATEWAY_EXTERNAL_NAMESPACE : GATEWAY_INTERNAL_NAMESPACE }],
     hostnames,
     rules: [
       {
