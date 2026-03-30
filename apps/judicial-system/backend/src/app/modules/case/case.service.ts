@@ -1918,10 +1918,6 @@ export class CaseService {
     user: TUser,
     transaction: Transaction,
   ) {
-    if (update.indictmentDecision !== IndictmentDecision.COMPLETING_FOR_SOME) {
-      return
-    }
-
     const decisions = update.defendantEventLogDecisions
 
     if (!decisions || decisions.length === 0) {

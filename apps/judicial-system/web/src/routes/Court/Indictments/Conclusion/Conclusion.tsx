@@ -129,13 +129,8 @@ const Conclusion: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
 
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-    refreshCase,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const {
     isUpdatingCase,
     setAndSendCaseToServer,
@@ -184,6 +179,10 @@ const Conclusion: FC = () => {
     | 'COMPLETING_FOR_SOME'
     | 'CONFIRM_COMPLETION_FOR_SOME'
   >()
+
+  const activeDefendants = workingCase.defendants?.filter(
+    (defendant) => defendant.indictmentCancelledOrDismissedState === null,
+  )
 
   const hasGeneratedCourtRecord = hasGeneratedCourtRecordPdf(
     workingCase.state,
@@ -234,13 +233,28 @@ const Conclusion: FC = () => {
             }
           }
           break
-        case IndictmentDecision.COMPLETING_FOR_SOME:
+        case IndictmentDecision.COMPLETING_FOR_SOME: {
+          const remainingDefendants =
+            workingCase.defendants?.filter(
+              (d) =>
+                d.indictmentCancelledOrDismissedState === null &&
+                !completingForSomeSelections[d.id],
+            ) ?? []
+
+          const isLastDefendantRemaining = remainingDefendants.length === 1
+
+          if (isLastDefendantRemaining) {
+            update.indictmentDecision = null
+          }
+
           update.defendantEventLogDecisions = Object.entries(
             completingForSomeSelections,
           ).flatMap(([defendantId, rulingDecision]) =>
             rulingDecision ? [{ defendantId, rulingDecision }] : [],
           )
+
           break
+        }
         case IndictmentDecision.REDISTRIBUTING:
           update.judgeId = null
           break
@@ -302,12 +316,6 @@ const Conclusion: FC = () => {
         }
       }
 
-      if (selectedAction === IndictmentDecision.COMPLETING_FOR_SOME) {
-        setModalVisible(undefined)
-        refreshCase()
-        return
-      }
-
       router.push(
         selectedAction === IndictmentDecision.REDISTRIBUTING
           ? destination
@@ -328,7 +336,6 @@ const Conclusion: FC = () => {
       mergeCaseNumber,
       createVerdicts,
       updateDefendant,
-      refreshCase,
     ],
   )
 
@@ -526,7 +533,7 @@ const Conclusion: FC = () => {
       value: IndictmentDecision.REDISTRIBUTING,
       label: formatMessage(strings.redistributing),
     },
-    ...(workingCase.defendants && workingCase.defendants.length > 1
+    ...(activeDefendants && activeDefendants.length > 1
       ? [
           {
             id: 'conclusion-splitting',
@@ -1160,8 +1167,10 @@ const Conclusion: FC = () => {
             title="Viltu staðfesta lyktir?"
             primaryButton={{
               text: 'Staðfesta',
-              onClick: () => handleNavigationTo(INDICTMENTS_CONCLUSION_ROUTE),
+              onClick: () =>
+                handleNavigationTo(INDICTMENTS_COURT_OVERVIEW_ROUTE),
               icon: 'checkmark',
+              isLoading: isUpdatingCase,
             }}
             secondaryButton={{
               text: 'Hætta við',
