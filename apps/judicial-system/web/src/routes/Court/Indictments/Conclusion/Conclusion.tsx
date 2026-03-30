@@ -15,12 +15,10 @@ import {
 } from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
-  INDICTMENTS_CONCLUSION_ROUTE,
   INDICTMENTS_COURT_OVERVIEW_ROUTE,
   INDICTMENTS_COURT_RECORD_ROUTE,
   INDICTMENTS_SUMMARY_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   courtSessionTypeNames,
   hasGeneratedCourtRecordPdf,
@@ -30,7 +28,6 @@ import {
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
-  DateTime,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -70,7 +67,9 @@ import {
   isNoGeneratedIndictmentCourtRecord,
   validate,
 } from '@island.is/judicial-system-web/src/utils/validate'
+import { isValidDate } from '@island.is/shared/utils'
 
+import InputDate from '../../../../components/Inputs/InputDate'
 import { CourtCaseNumberInput } from '../../components'
 import SelectCandidateMergeCase from './SelectCandidateMergeCase'
 import { strings } from './Conclusion.strings'
@@ -172,7 +171,7 @@ const Conclusion: FC = () => {
   const [splitCaseId, setSplitCaseId] = useState<string>()
   const [splitCaseCourtCaseNumber, setSplitCaseCourtCaseNumber] =
     useState<string>()
-  const [conclusionDate, setConclusionDate] = useState<Date>()
+  const [conclusionDate, setConclusionDate] = useState<string>()
   const [modalVisible, setModalVisible] = useState<
     | 'SPLIT'
     | 'CREATE_COURT_CASE_NUMBER'
@@ -1119,7 +1118,10 @@ const Conclusion: FC = () => {
             primaryButton={{
               text: 'Halda áfram',
               onClick: () => setModalVisible('CONFIRM_COMPLETION_FOR_SOME'),
-              isDisabled: !conclusionDate,
+              isDisabled: !(
+                conclusionDate &&
+                validate([[conclusionDate, ['date-of-birth']]]).isValid
+              ),
             }}
             secondaryButton={{
               text: 'Hætta við',
@@ -1147,15 +1149,9 @@ const Conclusion: FC = () => {
                     </Text>
                   </Text>
                 ))}
-              <DateTime
-                name="conclusion-date"
-                datepickerLabel="Dagsetning lyktar"
-                datepickerPlaceholder="Veldu dagsetningu og tíma"
-                onChange={(date: Date | undefined, valid: boolean) => {
-                  valid && setConclusionDate(date)
-                }}
-                dateOnly
-                required
+              <InputDate
+                onChange={(date) => setConclusionDate(date)}
+                onBlur={(date) => setConclusionDate(date)}
               />
             </Box>
           </Modal>
@@ -1200,9 +1196,7 @@ const Conclusion: FC = () => {
                 ))}
               <Text variant="h4" as="h4">
                 {`Dagsetning lykta: `}
-                <Text as="span">
-                  {conclusionDate ? formatDate(conclusionDate, 'P') : ''}
-                </Text>
+                <Text as="span">{conclusionDate ?? ''}</Text>
               </Text>
             </Box>
           </Modal>
