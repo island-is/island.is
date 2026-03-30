@@ -236,7 +236,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
   ) => {
     const category = filterCategories.find((cat) => cat.id === categoryId)
     const filter = category?.filters.find((f) => f.value === value)
-    return filter?.label || value
+    return filter?.tagLabel ?? filter?.label ?? value
   }
 
   return (
@@ -355,7 +355,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
                   </Box>
                 </Box>
                 <Box
-                  style={{ minHeight: '100vh' }}
+                  style={{ minHeight: '84vh' }}
                   className={styles.studyCardsWrapper}
                 >
                   <StudyCardsGrid
@@ -448,9 +448,6 @@ SecondarySchoolStudiesLandingPage.getProps = async ({
   apolloClient,
   locale,
 }) => {
-  if (isRunningOnEnvironment('production'))
-    throw new CustomNextError(404, 'Feature not live')
-
   const [programmesResponse, filterOptionsResponse] = await Promise.all([
     apolloClient.query<SecondarySchoolAllProgrammesQuery>({
       query: GET_SECONDARY_SCHOOL_ALL_PROGRAMMES_QUERY,
