@@ -20,9 +20,15 @@ export type DiscontinueData = {
 }
 
 export type MyTaxCreditState =
-  | { action: SocialInsuranceTaxCardAllowanceAction.REGISTER; data: RegisterData }
+  | {
+      action: SocialInsuranceTaxCardAllowanceAction.REGISTER
+      data: RegisterData
+    }
   | { action: SocialInsuranceTaxCardAllowanceAction.EDIT; data: EditData }
-  | { action: SocialInsuranceTaxCardAllowanceAction.DISCONTINUE; data: DiscontinueData }
+  | {
+      action: SocialInsuranceTaxCardAllowanceAction.DISCONTINUE
+      data: DiscontinueData
+    }
   | { action: null }
 
 export type SpouseState = {

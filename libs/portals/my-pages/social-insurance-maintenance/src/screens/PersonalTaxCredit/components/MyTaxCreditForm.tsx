@@ -14,14 +14,19 @@ interface Props {
   state: MyTaxCreditState
   setState: Dispatch<SetStateAction<MyTaxCreditState>>
   monthsAndYears: SocialInsuranceYearWithMonths[] | null | undefined
-  discontinuingMonthsAndYears: SocialInsuranceYearWithMonths[] | null | undefined
+  discontinuingMonthsAndYears:
+    | SocialInsuranceYearWithMonths[]
+    | null
+    | undefined
   isAlreadyRegistered: boolean
   canDiscontinue: boolean
   saving: boolean
   onSave: () => void
 }
 
-const toYearOptions = (data: SocialInsuranceYearWithMonths[] | null | undefined) =>
+const toYearOptions = (
+  data: SocialInsuranceYearWithMonths[] | null | undefined,
+) =>
   (data ?? [])
     .filter((ym): ym is typeof ym & { year: number } => ym.year != null)
     .map((ym) => ({ label: String(ym.year), value: ym.year }))
@@ -103,7 +108,10 @@ export const MyTaxCreditForm: FC<Props> = ({
           onChange={(e) =>
             setState(
               e.target.checked
-                ? { action: REGISTER, data: { year: null, month: null, percentage: '' } }
+                ? {
+                    action: REGISTER,
+                    data: { year: null, month: null, percentage: '' },
+                  }
                 : { action: null },
             )
           }
