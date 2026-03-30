@@ -218,7 +218,7 @@ export const m = defineMessages({
   taxBracketInfo: {
     id: 'sp.social-insurance-maintenance:tax-bracket-info',
     defaultMessage:
-      'Skatthlutfall í staðgreiðslu samanstendur annarsvegar af tekjuskatti og hinsvegar meðaútsvari(14,95%). Skatthlutfallið er\n\n• 31,49% af tekjum 0-472.005 kr. (þar af 16,55% tekjuskattur)\n• 37,99% af tekjum 472.006 - 1.325.127 kr. (þar af 23,05% tekjuskattur)\n• 46,29% af tekjum yfir 1.325.127 kr. (þar af 31,35% tekjuskattur)\n\nPersónuafsláttur er 68.691 kr. á mánuði á árinu 2025.',
+      'Skatthlutfall í staðgreiðslu samanstendur annars vegar af tekjuskatti og hins vegar meðalútsvari (14,94%). Skatthlutfallið er\n\n• 31,49% af tekjum 0 - 498.122 kr. (þar af 16,55% tekjuskattur)\n• 37,99% af tekjum 498.123 - 1.398.450 (þar af 23,05% tekjuskattur)\n• 46,29% af tekjum yfir 1.398.450 (þar af 31,35% tekjuskattur)\n\nPersónuafsláttur er 72.492 kr. á mánuði á árinu 2026.',
   },
   taxCardTypePersonalTaxAllowance: {
     id: 'sp.social-insurance-maintenance:tax-card-type-personal-tax-allowance',
@@ -275,5 +275,38 @@ export const m = defineMessages({
   percentage: {
     id: 'sp.social-insurance-maintenance:percentage',
     defaultMessage: 'Prósenta',
+  },
+  paymentTypesOverview: {
+    id: 'sp.social-insurance-maintenance:payment-types-overview',
+    defaultMessage: 'Greiðslutegundir',
+  },
+  paymentTypesOverviewDescription: {
+    id: 'sp.social-insurance-maintenance:payment-types-overview-description',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um tegundir greiðslna sem hafa borist þér frá TR.',
+  },
+  paymentTypesSectionTitle: {
+    id: 'sp.social-insurance-maintenance:payment-types-section-title',
+    defaultMessage: 'Greiðslur til þín og gildistími þeirra',
+  },
+  benefitChildrenSectionTitle: {
+    id: 'sp.social-insurance-maintenance:benefit-children-section-title',
+    defaultMessage: 'TR greiðir til þín vegna eftirfarandi barna',
+  },
+  paymentTypeName: {
+    id: 'sp.social-insurance-maintenance:payment-type-name',
+    defaultMessage: 'Heiti',
+  },
+  name: {
+    id: 'sp.social-insurance-maintenance:name',
+    defaultMessage: 'Nafn',
+  },
+  nationalId: {
+    id: 'sp.social-insurance-maintenance:national-id',
+    defaultMessage: 'Kennitala',
+  },
+  calculateMyRights: {
+    id: 'sp.social-insurance-maintenance:calculate-my-rights',
+    defaultMessage: 'Reikna mín réttindi',
   },
 })
