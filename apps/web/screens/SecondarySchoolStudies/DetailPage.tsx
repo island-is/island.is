@@ -129,9 +129,6 @@ SecondarySchoolStudiesDetailsPage.getProps = async ({
   locale,
   query,
 }) => {
-  if (isRunningOnEnvironment('production'))
-    throw new CustomNextError(404, 'Feature not live')
-
   if (!query?.id) {
     throw new CustomNextError(404, 'Programme not found')
   }
