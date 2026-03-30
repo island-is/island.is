@@ -312,10 +312,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         const allThjodskraPhotos =
           getValueViaPath<
             Array<{ biometricId: string; contentSpecification: string }>
-          >(
-            application.externalData,
-            'allPhotosFromThjodskra.data.images',
-          ) ?? []
+          >(application.externalData, 'allPhotosFromThjodskra.data.images') ??
+          []
 
         const facialPhotos = allThjodskraPhotos.filter(
           (p) => p.contentSpecification === 'FACIAL',
@@ -343,10 +341,8 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
       // Health certificate handling
       const healthDeclaration =
-        getValueViaPath<Record<string, string>>(
-          answers,
-          'healthDeclaration',
-        ) ?? {}
+        getValueViaPath<Record<string, string>>(answers, 'healthDeclaration') ??
+        {}
       const beNeedsHealthCert =
         calculateNeedsHealthCert(healthDeclaration) ||
         remarks ||
