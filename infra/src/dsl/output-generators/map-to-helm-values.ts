@@ -522,6 +522,10 @@ function serializeHTTPRoute(
     isPublic ? hostFullName(host, env) : internalHostFullName(host, env),
   )
 
+  // Detect nginx rewrite-target annotation → Gateway API ReplacePrefixMatch
+  const rewriteTarget = ingressConf.extraAnnotations?.['nginx.ingress.kubernetes.io/rewrite-target']
+  const rewritePrefix = rewriteTarget === '/$2' ? '/' : undefined
+
   return {
     parentRefs: [
       {
@@ -543,6 +547,7 @@ function serializeHTTPRoute(
           }
           return { pathPrefix: normalized }
         }),
+        ...(rewritePrefix ? { rewritePrefix } : {}),
       },
     ],
   }

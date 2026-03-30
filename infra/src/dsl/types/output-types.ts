@@ -110,7 +110,8 @@ export interface HelmService {
       parentRefs: { name: GatewayName; namespace: string }[]
       hostnames: string[]
       rules: {
-        matches: { pathPrefix: string }[]
+        matches: { pathPrefix?: string; pathExact?: string }[]
+        rewritePrefix?: string
       }[]
     }
   }
