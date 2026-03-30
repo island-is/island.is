@@ -6,6 +6,7 @@ import {
   mapToFarmerLand,
   mapToFarmerLandCollection,
   mapToFarmerLandSubsidy,
+  mapToFilterOptions,
   mapToLandBeneficiary,
   mapToLandRegistryEntry,
 } from './mapper'
@@ -62,6 +63,10 @@ export class FarmersService {
     cursor?: string,
     orderField?: FarmerLandSubsidyOrderField,
     orderDirection?: FarmerLandSubsidyOrderDirection,
+    paymentCategoryId?: number,
+    contractId?: string,
+    dateFrom?: Date,
+    dateTo?: Date,
   ): Promise<FarmerLandSubsidiesCollection> {
     const order = orderField
       ? `${
@@ -76,6 +81,10 @@ export class FarmersService {
       farmId,
       cursor,
       order,
+      paymentCategoryId,
+      contractId,
+      dateFrom,
+      dateTo,
     )
     return {
       data: (response?.data ?? [])
@@ -88,6 +97,7 @@ export class FarmersService {
         startCursor: response?.previous ?? undefined,
         endCursor: response?.next ?? undefined,
       },
+      filterOptions: mapToFilterOptions(response?.filterOptions),
     }
   }
 }

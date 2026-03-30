@@ -67,6 +67,10 @@ export class FarmersClientService {
     farmId: string,
     cursor?: string,
     order?: string,
+    paymentCategoryId?: number,
+    contractId?: string,
+    dateFrom?: Date,
+    dateTo?: Date,
   ): Promise<PaginatedPayments | null> => {
     const response = await withAuthContext(user, () =>
       dataOr404Null(
@@ -75,6 +79,10 @@ export class FarmersClientService {
           query: {
             ...(cursor ? { next: cursor } : {}),
             ...(order ? { order } : {}),
+            ...(paymentCategoryId != null ? { paymentCategoryId } : {}),
+            ...(contractId ? { contractId } : {}),
+            ...(dateFrom ? { 'paymentDate.from': dateFrom } : {}),
+            ...(dateTo ? { 'paymentDate.to': dateTo } : {}),
           },
         }),
       ),
