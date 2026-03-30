@@ -9,6 +9,7 @@ import {
 } from '../types/input-types'
 import {
   ContainerRunHelm,
+  GatewayName,
   OutputFormat,
   OutputPersistentVolumeClaim,
   SerializeErrors,
@@ -253,6 +254,20 @@ const serializeService: SerializeMethod<HelmService> = async (
     )
   }
 
+  // httpRoute (Gateway API - parallel to ingress during migration)
+  if (Object.keys(serviceDef.ingress).length > 0) {
+    result.httpRoute = Object.entries(serviceDef.ingress).reduce(
+      (acc, [ingressName, ingressConf]) => {
+        const route = serializeHTTPRoute(serviceDef, ingressConf, env1)
+        return {
+          ...acc,
+          [`${ingressName}-gw`]: route,
+        }
+      },
+      {},
+    )
+  }
+
   if (serviceDef.postgres) {
     const { env, secrets, errors } = serializePostgres(
       serviceDef,
@@ -383,6 +398,48 @@ function serializeIngress(
       ...pathTypeOverride,
       paths: ingressConf.paths,
     })),
+  }
+}
+
+const GATEWAY_NAMESPACE = 'gateway-system'
+
+function serializeHTTPRoute(
+  _serviceDef: ServiceDefinitionForEnv,
+  ingressConf: IngressForEnv,
+  env: EnvironmentConfig,
+): NonNullable<HelmService['httpRoute']>[string] {
+  const isPublic = ingressConf.public ?? true
+
+  const authOptOut =
+    ingressConf.extraAnnotations?.[
+      'nginx.ingress.kubernetes.io/enable-global-auth'
+    ] === 'false'
+
+  const isProd = env.type === 'prod'
+
+  let gatewayName: GatewayName
+  if (!isPublic) {
+    gatewayName = 'gateway-internal'
+  } else if (isProd || authOptOut) {
+    gatewayName = 'gateway-external'
+  } else {
+    gatewayName = 'gateway-auth-routing'
+  }
+
+  const hostnames = (
+    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
+  ).map((host) =>
+    isPublic ? hostFullName(host, env) : internalHostFullName(host, env),
+  )
+
+  return {
+    parentRefs: [{ name: gatewayName, namespace: GATEWAY_NAMESPACE }],
+    hostnames,
+    rules: [
+      {
+        matches: ingressConf.paths.map((path) => ({ pathPrefix: path })),
+      },
+    ],
   }
 }
 
