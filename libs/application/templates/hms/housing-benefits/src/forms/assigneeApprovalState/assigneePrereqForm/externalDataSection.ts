@@ -2,10 +2,13 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildSection,
+  buildSubmitField,
+  coreMessages,
 } from '@island.is/application/core'
-import * as m from '../../lib/messages'
-import { PersonalTaxReturnApi } from '../../dataProviders'
-import { NationalRegistryApi } from '../../dataProviders'
+import * as m from '../../../lib/messages'
+import { PersonalTaxReturnApi } from '../../../dataProviders'
+import { NationalRegistryApi } from '../../../dataProviders'
+import { DefaultEvents } from '@island.is/application/types'
 
 export const externalDataSection = buildSection({
   id: 'assigneePrereqExternalData',
@@ -28,6 +31,18 @@ export const externalDataSection = buildSection({
           subTitle: m.prereqMessages.taxSubtitle,
         }),
       ],
+      submitField: buildSubmitField({
+        id: 'submit',
+        placement: 'footer',
+        refetchApplicationAfterSubmit: true,
+        actions: [
+          {
+            event: DefaultEvents.SUBMIT,
+            name: coreMessages.buttonNext,
+            type: 'primary',
+          },
+        ],
+      }),
     }),
   ],
 })

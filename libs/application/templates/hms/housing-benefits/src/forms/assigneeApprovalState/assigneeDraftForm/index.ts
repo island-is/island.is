@@ -16,7 +16,7 @@ import {
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
 import { getValueViaPath } from '@island.is/application/core'
 import * as kennitala from 'kennitala'
-import * as m from '../../lib/messages'
+import * as m from '../../../lib/messages'
 
 export const AssigneeDraftForm = buildForm({
   id: 'AssigneeApproval',

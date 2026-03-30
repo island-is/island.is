@@ -7,22 +7,22 @@ import {
 } from '@island.is/application/core'
 import { Application, FormModes } from '@island.is/application/types'
 import { HmsLogo } from '@island.is/application/assets/institution-logos'
-import { assigneeWaiting as assigneeWaitingMessages } from '../../lib/messages/assigneeWaitingMessages'
 import { MovingSearching } from '@island.is/application/assets/graphics'
 import {
   getSignedApprovalNames,
   getUnsignedApprovalNames,
-} from '../../utils/assigneeUtils'
+} from '../../../utils/assigneeUtils'
+import * as m from '../../../lib/messages'
 
 const getApprovedDescription = (application: Application) => ({
-  ...assigneeWaitingMessages.approvedList,
+  ...m.assigneeWaiting.approvedList,
   values: {
     names: getSignedApprovalNames(application).join(' \n\n * ') || '—',
   },
 })
 
 const getPendingDescription = (application: Application) => ({
-  ...assigneeWaitingMessages.pendingList,
+  ...m.assigneeWaiting.pendingList,
   values: {
     names: getUnsignedApprovalNames(application).join(' \n\n * ') || '—',
   },
@@ -35,11 +35,11 @@ export const AssigneeWaitingForm = buildForm({
   children: [
     buildSection({
       id: 'assigneeWaitingSection',
-      tabTitle: assigneeWaitingMessages.title,
+      tabTitle: m.assigneeWaiting.title,
       children: [
         buildMultiField({
           id: 'assigneeWaitingMultiField',
-          title: assigneeWaitingMessages.title,
+          title: m.assigneeWaiting.title,
           children: [
             buildDescriptionField({
               id: 'assigneeWaitingApproved',

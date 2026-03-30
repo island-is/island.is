@@ -38,12 +38,6 @@ export const externalDataSection = buildSection({
           title: m.prereqMessages.hmsTitle,
           subTitle: m.prereqMessages.hmsSubtitle,
         }),
-        // Add in when I have test data
-        // buildDataProviderItem({
-        //   provider: HouseholdMembersApi,
-        //   title: 'Þjóðskrá Íslands',
-        //   subTitle: 'Upplýsingar einstaklinga með sama lögheimili',
-        // }),
         buildDataProviderItem({
           provider: PersonalTaxReturnApi,
           title: m.prereqMessages.taxTitle,

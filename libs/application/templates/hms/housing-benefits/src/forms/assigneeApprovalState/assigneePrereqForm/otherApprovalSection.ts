@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
-import * as m from '../../lib/messages'
+import * as m from '../../../lib/messages'
 
 export const otherApprovalSection = buildSection({
   id: 'assigneePrereqSection',

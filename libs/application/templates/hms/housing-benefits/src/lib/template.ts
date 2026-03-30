@@ -161,9 +161,9 @@ const template: ApplicationTemplate<
             {
               id: Roles.UNSIGNED_PREREQ_ASSIGNEE,
               formLoader: () =>
-                import('../forms/assigneePrereqForm').then((module) =>
-                  Promise.resolve(module.AssigneePrereqForm),
-                ),
+                import(
+                  '../forms/assigneeApprovalState/assigneePrereqForm'
+                ).then((module) => Promise.resolve(module.AssigneePrereqForm)),
               write: 'all',
               read: 'all',
               api: [NationalRegistryApi, PersonalTaxReturnApi],
@@ -171,8 +171,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.UNSIGNED_DRAFT_ASSIGNEE,
               formLoader: () =>
-                import('../forms/assigneeDraftForm').then((module) =>
-                  Promise.resolve(module.AssigneeDraftForm),
+                import('../forms/assigneeApprovalState/assigneeDraftForm').then(
+                  (module) => Promise.resolve(module.AssigneeDraftForm),
                 ),
               write: 'all',
               read: 'all',
@@ -180,17 +180,17 @@ const template: ApplicationTemplate<
             {
               id: Roles.SIGNED_ASSIGNEE,
               formLoader: () =>
-                import('../forms/assigneeWaitingForm').then((module) =>
-                  Promise.resolve(module.AssigneeWaitingForm),
-                ),
+                import(
+                  '../forms/assigneeApprovalState/assigneeWaitingForm'
+                ).then((module) => Promise.resolve(module.AssigneeWaitingForm)),
               read: 'all',
             },
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/assigneeWaitingForm').then((module) =>
-                  Promise.resolve(module.AssigneeWaitingForm),
-                ),
+                import(
+                  '../forms/assigneeApprovalState/assigneeWaitingForm'
+                ).then((module) => Promise.resolve(module.AssigneeWaitingForm)),
               read: 'all',
             },
           ],
@@ -201,7 +201,7 @@ const template: ApplicationTemplate<
           },
           [DefaultEvents.APPROVE]: [
             {
-              target: States.IN_REVIEW,
+              target: States.APPLICANT_SUBMIT,
               cond: ({ application }: ApplicationContext) => {
                 const signed = (application.answers?.householdMemberApprovals ??
                   []) as string[]
@@ -221,6 +221,31 @@ const template: ApplicationTemplate<
           lifecycle: DefaultStateLifeCycle,
           actionCard: housingBenefitsActionCards.applicantSubmit,
           roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import(
+                  '../forms/applicantSubmitState/applicantSubmitForm'
+                ).then((module) => Promise.resolve(module.ApplicantSubmitForm)),
+              read: 'all',
+              write: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.SIGNED_ASSIGNEE,
+              formLoader: () =>
+                import('../forms/applicantSubmitState/assigneeForm').then(
+                  (module) =>
+                    Promise.resolve(module.ApplicantSubmitFormAssigneeVersion),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.IN_REVIEW,
+          },
         },
       },
       [States.IN_REVIEW]: {
