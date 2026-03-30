@@ -49,7 +49,8 @@ grantNamespaces:
   - 'islandis'
   - 'nginx-ingress-external'
   - 'nginx-ingress-internal'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-external'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -74,7 +75,7 @@ httpRoute:
       - 'services-form-system-api.internal.island.is'
     parentRefs:
       - name: 'gateway-internal'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-internal'
     rules:
       - matches:
           - pathPrefix: '/api'

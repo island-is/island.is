@@ -40,7 +40,7 @@ grantNamespaces:
   - 'nginx-ingress-internal'
   - 'islandis'
   - 'identity-server'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

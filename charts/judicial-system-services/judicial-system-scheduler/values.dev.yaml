@@ -34,7 +34,7 @@ env:
   TIME_TO_LIVE_MINUTES: '30'
 grantNamespaces:
   - 'nginx-ingress-external'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

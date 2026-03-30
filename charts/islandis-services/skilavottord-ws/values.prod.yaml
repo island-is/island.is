@@ -54,7 +54,7 @@ httpRoute:
       - 'www.island.is'
     parentRefs:
       - name: 'gateway-external'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-external'
     rules:
       - matches:
           - pathPrefix: '/app/skilavottord/api/graphql'

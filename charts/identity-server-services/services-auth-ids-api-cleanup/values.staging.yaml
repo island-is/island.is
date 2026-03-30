@@ -37,7 +37,7 @@ grantNamespaces:
   - 'user-notification'
   - 'portals-admin'
   - 'datadog'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

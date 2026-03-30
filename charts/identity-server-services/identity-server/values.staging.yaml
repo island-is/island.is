@@ -62,7 +62,7 @@ grantNamespaces:
   - 'user-notification'
   - 'portals-admin'
   - 'datadog'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -88,7 +88,7 @@ httpRoute:
       - 'identity-server.staging01.devland.is'
     parentRefs:
       - name: 'gateway-external'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-external'
     rules:
       - matches:
           - pathPrefix: '/'

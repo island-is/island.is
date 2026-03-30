@@ -163,7 +163,7 @@ grantNamespaces:
   - 'services-payments'
   - 'nginx-ingress-internal'
   - 'islandis'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -189,7 +189,7 @@ httpRoute:
       - 'application-callback-xrd.internal.staging01.devland.is'
     parentRefs:
       - name: 'gateway-internal'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-internal'
     rules:
       - matches:
           - pathPrefix: '/application-payment'

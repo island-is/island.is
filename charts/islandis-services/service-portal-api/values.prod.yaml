@@ -50,7 +50,7 @@ grantNamespaces:
   - 'user-notification'
   - 'identity-server'
   - 'application-system'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -75,7 +75,7 @@ httpRoute:
       - 'service-portal-api.internal.island.is'
     parentRefs:
       - name: 'gateway-internal'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-internal'
     rules:
       - matches:
           - pathPrefix: '/'

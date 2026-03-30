@@ -29,7 +29,7 @@ env:
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
 grantNamespaces:
   - 'nginx-ingress-internal'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -54,7 +54,7 @@ httpRoute:
       - 'personal-representative-public-xrd.internal.innskra.island.is'
     parentRefs:
       - name: 'gateway-internal'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-internal'
     rules:
       - matches:
           - pathPrefix: '/'

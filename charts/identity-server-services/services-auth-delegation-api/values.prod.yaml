@@ -57,7 +57,7 @@ grantNamespaces:
   - 'service-portal'
   - 'user-notification-worker'
   - 'user-notification-birthday-worker'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -82,7 +82,7 @@ httpRoute:
       - 'auth-delegation-api.internal.innskra.island.is'
     parentRefs:
       - name: 'gateway-internal'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-internal'
     rules:
       - matches:
           - pathPrefix: '/'

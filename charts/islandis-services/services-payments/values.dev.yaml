@@ -45,7 +45,7 @@ grantNamespaces:
   - 'application-system'
   - 'nginx-ingress-internal'
   - 'islandis'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -70,7 +70,7 @@ httpRoute:
       - 'services-payments.internal.dev01.devland.is'
     parentRefs:
       - name: 'gateway-internal'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-internal'
     rules:
       - matches:
           - pathPrefix: '/'
@@ -79,7 +79,7 @@ httpRoute:
       - 'services-payments-xrd.internal.dev01.devland.is'
     parentRefs:
       - name: 'gateway-internal'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-internal'
     rules:
       - matches:
           - pathPrefix: '/'

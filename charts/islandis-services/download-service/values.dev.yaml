@@ -59,7 +59,7 @@ grantNamespaces:
   - 'islandis'
   - 'nginx-ingress-external'
   - 'services-bff-portals-admin'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -84,7 +84,7 @@ httpRoute:
       - 'api.dev01.devland.is'
     parentRefs:
       - name: 'gateway-external'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-external'
     rules:
       - matches:
           - pathPrefix: '/download'

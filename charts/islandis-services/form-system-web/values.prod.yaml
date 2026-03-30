@@ -27,7 +27,7 @@ env:
   SI_PUBLIC_ENVIRONMENT: 'prod'
 grantNamespaces:
   - 'nginx-ingress-external'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -53,7 +53,7 @@ httpRoute:
       - 'www.island.is'
     parentRefs:
       - name: 'gateway-external'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-external'
     rules:
       - matches:
           - pathPrefix: '/form'

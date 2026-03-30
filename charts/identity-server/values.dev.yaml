@@ -20,7 +20,8 @@ auth-admin-web:
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -45,7 +46,7 @@ auth-admin-web:
         - 'identity-server.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/admin'
@@ -152,7 +153,7 @@ identity-server:
     - 'user-notification'
     - 'portals-admin'
     - 'datadog'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -178,7 +179,7 @@ identity-server:
         - 'identity-server.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -290,7 +291,8 @@ services-auth-admin-api:
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -315,7 +317,7 @@ services-auth-admin-api:
         - 'identity-server.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/backend'
@@ -415,7 +417,7 @@ services-auth-delegation-api:
     - 'service-portal'
     - 'user-notification-worker'
     - 'user-notification-birthday-worker'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -440,7 +442,7 @@ services-auth-delegation-api:
         - 'auth-delegation-api.internal.identity-server.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -542,7 +544,7 @@ services-auth-ids-api:
     - 'nginx-ingress-external'
     - 'user-notification'
     - 'datadog'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -660,7 +662,7 @@ services-auth-ids-api-cleanup:
     - 'user-notification'
     - 'portals-admin'
     - 'datadog'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -745,7 +747,7 @@ services-auth-personal-representative:
     ZENDESK_CONTACT_FORM_SUBDOMAIN: 'digitaliceland'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -770,7 +772,7 @@ services-auth-personal-representative:
         - 'personal-representative-xrd.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -834,7 +836,7 @@ services-auth-personal-representative-public:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -859,7 +861,7 @@ services-auth-personal-representative-public:
         - 'personal-representative-public-xrd.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -948,7 +950,8 @@ services-auth-public-api:
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -973,7 +976,7 @@ services-auth-public-api:
         - 'identity-server.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/api(/|$)(.*)'

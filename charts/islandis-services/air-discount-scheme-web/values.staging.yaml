@@ -29,7 +29,7 @@ env:
 grantNamespaces:
   - 'nginx-ingress-external'
   - 'islandis'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -55,7 +55,7 @@ httpRoute:
       - 'loftbru-cf.staging01.devland.is'
     parentRefs:
       - name: 'gateway-external'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-external'
     rules:
       - matches:
           - pathPrefix: '/'

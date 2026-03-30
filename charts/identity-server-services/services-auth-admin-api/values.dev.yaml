@@ -55,7 +55,8 @@ grantNamespaces:
   - 'nginx-ingress-external'
   - 'nginx-ingress-internal'
   - 'islandis'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-external'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -80,7 +81,7 @@ httpRoute:
       - 'identity-server.dev01.devland.is'
     parentRefs:
       - name: 'gateway-external'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-external'
     rules:
       - matches:
           - pathPrefix: '/backend'

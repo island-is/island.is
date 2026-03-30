@@ -65,7 +65,7 @@ grantNamespaces:
   - 'nginx-ingress-external'
   - 'user-notification'
   - 'datadog'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:

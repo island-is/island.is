@@ -19,7 +19,7 @@ air-discount-scheme-api:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -45,7 +45,7 @@ air-discount-scheme-api:
         - 'loftbru-cf.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/api/graphql'
@@ -146,7 +146,7 @@ air-discount-scheme-backend:
         - 'loftbru-cf.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/api/swagger'
@@ -242,7 +242,7 @@ air-discount-scheme-web:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -268,7 +268,7 @@ air-discount-scheme-web:
         - 'loftbru-cf.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -502,7 +502,7 @@ api:
     - 'services-payments'
     - 'payments'
     - 'contentful-apps'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -528,7 +528,7 @@ api:
         - 'api-catalogue.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/api'
@@ -838,7 +838,7 @@ application-system-api:
     - 'services-payments'
     - 'nginx-ingress-internal'
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -864,7 +864,7 @@ application-system-api:
         - 'application-callback-xrd.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/application-payment'
@@ -1042,7 +1042,7 @@ application-system-api-worker:
     - 'services-payments'
     - 'nginx-ingress-internal'
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1120,7 +1120,8 @@ application-system-form:
     - 'nginx-ingress-internal'
     - 'nginx-ingress-external'
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1145,7 +1146,7 @@ application-system-form:
         - 'beta.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/umsoknir'
@@ -1436,7 +1437,7 @@ consultation-portal:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1461,7 +1462,7 @@ consultation-portal:
         - 'beta.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/samradsgatt'
@@ -1519,7 +1520,7 @@ contentful-apps:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1544,7 +1545,7 @@ contentful-apps:
         - 'contentful-apps.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -1595,7 +1596,7 @@ contentful-entry-tagger-service:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1620,7 +1621,7 @@ contentful-entry-tagger-service:
         - 'contentful-entry-tagger-service.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -1708,7 +1709,7 @@ download-service:
     - 'islandis'
     - 'nginx-ingress-external'
     - 'services-bff-portals-admin'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1733,7 +1734,7 @@ download-service:
         - 'api.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/download'
@@ -1916,7 +1917,7 @@ form-system-web:
     SI_PUBLIC_ENVIRONMENT: 'dev'
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1941,7 +1942,7 @@ form-system-web:
         - 'beta.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/form'
@@ -2026,7 +2027,7 @@ github-actions-cache:
         - 'cache.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -2187,7 +2188,7 @@ island-ui-storybook:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2212,7 +2213,7 @@ island-ui-storybook:
         - 'ui.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -2272,7 +2273,7 @@ license-api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2297,7 +2298,7 @@ license-api:
         - 'license-api-xrd.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -2409,7 +2410,8 @@ payments:
     - 'nginx-ingress-internal'
     - 'nginx-ingress-external'
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2434,7 +2436,7 @@ payments:
         - 'beta.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/greida'
@@ -2496,7 +2498,7 @@ portals-admin:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'identity-server'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2521,7 +2523,7 @@ portals-admin:
         - 'beta.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/stjornbord'
@@ -2596,7 +2598,7 @@ regulations-admin-backend:
     - 'islandis'
     - 'download-service'
     - 'nginx-ingress-internal'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2621,7 +2623,7 @@ regulations-admin-backend:
         - 'regulations-admin-backend-xrd.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/api'
@@ -2712,7 +2714,7 @@ search-indexer-service:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2737,7 +2739,7 @@ search-indexer-service:
         - 'search-indexer-service.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -2855,7 +2857,8 @@ service-portal:
     - 'islandis'
     - 'user-notification'
     - 'identity-server'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2880,7 +2883,7 @@ service-portal:
         - 'beta.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/minarsidur'
@@ -2961,7 +2964,7 @@ service-portal-api:
     - 'user-notification'
     - 'identity-server'
     - 'application-system'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2986,7 +2989,7 @@ service-portal-api:
         - 'service-portal-api.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -3089,7 +3092,7 @@ services-bff-portals-admin:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'identity-server'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3114,7 +3117,7 @@ services-bff-portals-admin:
         - 'beta.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/stjornbord/bff'
@@ -3187,7 +3190,7 @@ services-bff-portals-my-pages:
   grantNamespaces:
     - 'nginx-ingress-external'
     - 'identity-server'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3212,7 +3215,7 @@ services-bff-portals-my-pages:
         - 'beta.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/bff'
@@ -3379,7 +3382,8 @@ services-form-system-api:
     - 'islandis'
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3404,7 +3408,7 @@ services-form-system-api:
         - 'services-form-system-api.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/api'
@@ -3506,7 +3510,8 @@ services-form-system-api-worker:
     - 'islandis'
     - 'nginx-ingress-external'
     - 'nginx-ingress-internal'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3572,7 +3577,7 @@ services-payment-flow-update-handler:
   grantNamespaces:
     - 'services-payments'
     - 'nginx-ingress-internal'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3597,7 +3602,7 @@ services-payment-flow-update-handler:
         - 'services-payment-flow-update-handler.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -3670,7 +3675,7 @@ services-payments:
     - 'application-system'
     - 'nginx-ingress-internal'
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3695,7 +3700,7 @@ services-payments:
         - 'services-payments.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -3704,7 +3709,7 @@ services-payments:
         - 'services-payments-xrd.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -3830,7 +3835,7 @@ services-payments-worker:
     - 'application-system'
     - 'nginx-ingress-internal'
     - 'islandis'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3907,7 +3912,7 @@ services-sessions:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -3932,7 +3937,7 @@ services-sessions:
         - 'sessions-api.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -3996,7 +4001,7 @@ services-sessions-cleanup:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4064,7 +4069,7 @@ services-sessions-worker:
     - 'nginx-ingress-internal'
     - 'islandis'
     - 'identity-server'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4172,7 +4177,7 @@ services-university-gateway:
     - 'islandis'
     - 'nginx-ingress-internal'
     - 'application-system'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4197,7 +4202,7 @@ services-university-gateway:
         - 'services-university-gateway.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/api'
@@ -4314,7 +4319,7 @@ services-university-gateway-worker:
     - 'islandis'
     - 'nginx-ingress-internal'
     - 'application-system'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4376,7 +4381,7 @@ skilavottord-web:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4401,7 +4406,7 @@ skilavottord-web:
         - 'beta.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/app/skilavottord/'
@@ -4489,7 +4494,7 @@ skilavottord-ws:
         - 'beta.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/app/skilavottord/api/graphql'
@@ -4618,7 +4623,7 @@ user-notification:
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4643,7 +4648,7 @@ user-notification:
         - 'user-notification.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -4652,7 +4657,7 @@ user-notification:
         - 'user-notification-xrd.internal.dev01.devland.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -4767,7 +4772,7 @@ user-notification-birthday-worker:
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4847,7 +4852,7 @@ user-notification-cleanup-worker:
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -4975,7 +4980,7 @@ user-notification-worker:
     - 'islandis'
     - 'identity-server-delegation'
     - 'application-system'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -5078,7 +5083,7 @@ web:
     - 'application-system'
     - 'consultation-portal'
     - 'search-indexer'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -5103,7 +5108,7 @@ web:
         - 'beta.dev01.devland.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/'

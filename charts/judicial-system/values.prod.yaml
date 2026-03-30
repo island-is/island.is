@@ -38,7 +38,7 @@ judicial-system-api:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -63,7 +63,7 @@ judicial-system-api:
         - 'rettarvorslugatt.island.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/api/graphql'
@@ -163,7 +163,7 @@ judicial-system-backend:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -284,7 +284,7 @@ judicial-system-digital-mailbox-api:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -309,7 +309,7 @@ judicial-system-digital-mailbox-api:
         - 'judicial-system-digital-mailbox-api-xrd.internal.island.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -372,7 +372,7 @@ judicial-system-message-handler:
     SQS_REGION: 'eu-west-1'
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -440,7 +440,7 @@ judicial-system-scheduler:
     TIME_TO_LIVE_MINUTES: '30'
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -501,7 +501,7 @@ judicial-system-web:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -526,7 +526,7 @@ judicial-system-web:
         - 'rettarvorslugatt.island.is'
       parentRefs:
         - name: 'gateway-external'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-external'
       rules:
         - matches:
             - pathPrefix: '/'
@@ -579,7 +579,7 @@ judicial-system-xrd-api:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'envoy-gateway-system'
+    - 'envoy-gateway-internal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -604,7 +604,7 @@ judicial-system-xrd-api:
         - 'judicial-system-xrd-api.internal.island.is'
       parentRefs:
         - name: 'gateway-internal'
-          namespace: 'envoy-gateway-system'
+          namespace: 'envoy-gateway-internal'
       rules:
         - matches:
             - pathPrefix: '/'

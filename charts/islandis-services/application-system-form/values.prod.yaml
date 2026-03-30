@@ -28,7 +28,8 @@ grantNamespaces:
   - 'nginx-ingress-internal'
   - 'nginx-ingress-external'
   - 'islandis'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-internal'
+  - 'envoy-gateway-external'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
@@ -54,7 +55,7 @@ httpRoute:
       - 'www.island.is'
     parentRefs:
       - name: 'gateway-external'
-        namespace: 'envoy-gateway-system'
+        namespace: 'envoy-gateway-external'
     rules:
       - matches:
           - pathPrefix: '/umsoknir'

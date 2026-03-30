@@ -49,7 +49,7 @@ grantNamespaces:
   - 'application-system'
   - 'nginx-ingress-internal'
   - 'islandis'
-  - 'envoy-gateway-system'
+  - 'envoy-gateway-internal'
 grantNamespacesEnabled: true
 healthCheck:
   liveness:
