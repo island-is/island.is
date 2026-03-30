@@ -99,7 +99,10 @@ const groupWarningsBySection = (
   return Object.values(groups)
 }
 
-export const ReviewWarnings = ({ answers, goToScreen }: ReviewWarningsProps) => {
+export const ReviewWarnings = ({
+  answers,
+  goToScreen,
+}: ReviewWarningsProps) => {
   const warnings = useMemo(() => collectRegulationWarnings(answers), [answers])
 
   if (!warnings.length) {

@@ -55,7 +55,10 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
           <SkeletonLoader height={80} borderRadius="large" />
         ) : (
           <>
-            <ReviewWarnings answers={enrichedAnswers} goToScreen={props.goToScreen} />
+            <ReviewWarnings
+              answers={enrichedAnswers}
+              goToScreen={props.goToScreen}
+            />
             <ReviewOverview
               answers={enrichedAnswers}
               hasWarnings={warnings.length > 0}
