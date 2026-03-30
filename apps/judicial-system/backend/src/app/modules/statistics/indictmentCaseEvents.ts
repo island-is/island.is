@@ -34,6 +34,7 @@ export interface IndictmentCaseEvent {
   caseType: CaseType
   caseTypeDescriptor: string
   origin: CaseOrigin
+  prosecutorId?: string
   caseSubtype?: string
   subtypeDescriptor?: string
   // for subpoena events
@@ -69,6 +70,7 @@ const commonFields = (c: Case) => {
     caseType: c.type,
     caseTypeDescriptor: getCaseTypeTranslation(c.type),
     origin: c.origin,
+    prosecutorId: c.prosecutorId,
   }
 }
 
@@ -553,6 +555,7 @@ const caseReceivedByPrisonAdmin = (
     }),
   )
 }
+
 
 export const indictmentCaseEventFunctions = [
   createCase,
