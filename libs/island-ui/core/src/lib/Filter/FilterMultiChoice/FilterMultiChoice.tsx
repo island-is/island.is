@@ -67,9 +67,7 @@ export const FilterMultiChoice: FC<
   onClear,
 }: FilterMultiChoiceProps) => {
   const { variant } = useContext(FilterContext)
-  const [searchQueries, setSearchQueries] = useState<Record<string, string>>(
-    {},
-  )
+  const [searchQueries, setSearchQueries] = useState<Record<string, string>>({})
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement>,
