@@ -14,7 +14,9 @@ interface Props {
 
 const formatISK = (value?: number | null): string => {
   if (value == null) return ''
-  return new Intl.NumberFormat('is-IS').format(value)
+
+  const formattedValue = new Intl.NumberFormat('is-IS').format(value)
+  return `${formattedValue} kr.`
 }
 
 const DetailCell = ({
@@ -119,11 +121,7 @@ export const Subsidies = ({ farmId }: Props) => {
         <DetailCell label gap>
           {formatMessage(fm.subsidyUnitPrice)}
         </DetailCell>
-        <DetailCell>
-          {row.original.unitPrice != null
-            ? `${formatISK(row.original.unitPrice)} kr.`
-            : ''}
-        </DetailCell>
+        <DetailCell>{formatISK(row.original.unitPrice)}</DetailCell>
       </DetailRow>
       <DetailRow>
         <DetailCell label white>
