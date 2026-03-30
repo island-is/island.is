@@ -591,22 +591,41 @@ describe('when constructing a new period', () => {
     })
 
     it('should allow start date after minimum regardless of birth status', () => {
-      const minimumDate = addMonths(
+      // Not yet born
+      const futureMinimumDate = addMonths(
         FUTURE_DOB_DATE,
         -minimumPeriodStartBeforeExpectedDateOfBirth,
       )
 
-      const result = answerValidators[VALIDATE_LATEST_PERIOD](
-        [
-          {
-            firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
-            startDate: formatDate(addDays(minimumDate, 1)),
-          },
-        ],
-        futureApplication,
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [
+            {
+              firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+              startDate: formatDate(addDays(futureMinimumDate, 1)),
+            },
+          ],
+          futureApplication,
+        ),
+      ).toStrictEqual(undefined)
+
+      // Already born
+      const pastMinimumDate = addMonths(
+        DEFAULT_DOB_DATE,
+        -minimumPeriodStartBeforeExpectedDateOfBirth,
       )
 
-      expect(result).toStrictEqual(undefined)
+      expect(
+        answerValidators[VALIDATE_LATEST_PERIOD](
+          [
+            {
+              firstPeriodStart: StartDateOptions.SPECIFIC_DATE,
+              startDate: formatDate(addDays(pastMinimumDate, 1)),
+            },
+          ],
+          application,
+        ),
+      ).toStrictEqual(undefined)
     })
   })
 
