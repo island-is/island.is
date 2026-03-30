@@ -4,7 +4,9 @@ import { m } from '../../../../lib/messages'
 import type { GetPersonalTaxCreditQuery } from '../PersonalTaxCredit.generated'
 
 type TaxCards = NonNullable<
-  NonNullable<GetPersonalTaxCreditQuery['socialInsurancePersonalTaxCredit']>['taxCards']
+  NonNullable<
+    GetPersonalTaxCreditQuery['socialInsurancePersonalTaxCredit']
+  >['taxCards']
 >
 
 type PersonalTaxCreditTableProps = {
@@ -77,7 +79,9 @@ export const PersonalTaxCreditTable = ({
                     })
                   : '-'}
               </T.Data>
-              <T.Data>{card.percentage != null ? `${card.percentage}%` : '-'}</T.Data>
+              <T.Data>
+                {card.percentage != null ? `${card.percentage}%` : '-'}
+              </T.Data>
             </T.Row>
           ))}
         </T.Body>
