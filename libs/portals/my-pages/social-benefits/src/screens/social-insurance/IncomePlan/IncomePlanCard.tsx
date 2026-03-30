@@ -4,9 +4,9 @@ import {
   formatDate,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import { Status } from './types'
-import { SocialInsuranceMaintenancePaths } from '../../lib/paths'
+import { SocialInsuranceMaintenancePaths } from '../../../lib/paths'
 
 interface Props {
   status: Status
@@ -33,7 +33,7 @@ export const IncomePlanCard = ({ status, registrationDate }: Props) => {
           cta
             ? {
                 label: formatMessage(m.viewIncomePlan),
-                url: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
+                url: SocialInsuranceMaintenancePaths.SocialInsuranceIncomePlanDetail,
                 variant: 'text',
               }
             : { label: '' }
