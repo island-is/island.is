@@ -216,8 +216,59 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
   })
 }
 
+export const getIndictmentDismissalAppealInfo = (
+  theCase: Case,
+): AppealInfo => {
+  const appealInfo: AppealInfo = {}
+
+  if (
+    theCase.indictmentRulingDecision !==
+      CaseIndictmentRulingDecision.DISMISSAL ||
+    !theCase.rulingDate
+  ) {
+    return appealInfo
+  }
+
+  const appealState = theCase.appealCase?.appealState
+  const appealReceivedByCourtDate =
+    theCase.appealCase?.appealReceivedByCourtDate
+
+  const hasBeenAppealed = Boolean(appealState)
+  appealInfo.hasBeenAppealed = hasBeenAppealed
+
+  if (hasBeenAppealed) {
+    appealInfo.appealedByRole = theCase.prosecutorPostponedAppealDate
+      ? UserRole.PROSECUTOR
+      : theCase.accusedPostponedAppealDate
+      ? UserRole.DEFENDER
+      : undefined
+
+    appealInfo.appealedDate =
+      appealInfo.appealedByRole === UserRole.PROSECUTOR
+        ? theCase.prosecutorPostponedAppealDate ?? undefined
+        : theCase.accusedPostponedAppealDate ?? undefined
+  }
+
+  appealInfo.canBeAppealed = !hasBeenAppealed
+  appealInfo.canProsecutorAppeal = appealInfo.canBeAppealed
+  appealInfo.canDefenderAppeal = appealInfo.canBeAppealed
+
+  const theRulingDate = new Date(theCase.rulingDate)
+  appealInfo.appealDeadline = getAppealDeadlineDate(theRulingDate).toISOString()
+
+  if (appealReceivedByCourtDate) {
+    appealInfo.statementDeadline = getStatementDeadline(
+      new Date(appealReceivedByCourtDate),
+    )
+  }
+
+  return appealInfo
+}
+
 const transformIndictmentCase = (theCase: Case): Case => {
   const { rulingDate, defendants, indictmentRulingDecision } = theCase
+
+  const dismissalAppealInfo = getIndictmentDismissalAppealInfo(theCase)
 
   return {
     ...theCase,
@@ -226,6 +277,21 @@ const transformIndictmentCase = (theCase: Case): Case => {
       rulingDate,
       defendants,
     }),
+    ...dismissalAppealInfo,
+    isAppealDeadlineExpired: dismissalAppealInfo.appealDeadline
+      ? Date.now() >= new Date(dismissalAppealInfo.appealDeadline).getTime()
+      : false,
+    isStatementDeadlineExpired: theCase.appealCase?.appealReceivedByCourtDate
+      ? Date.now() >=
+        new Date(theCase.appealCase.appealReceivedByCourtDate).getTime() +
+          getDays(1)
+      : false,
+    accusedPostponedAppealDate: dismissalAppealInfo.hasBeenAppealed
+      ? theCase.accusedPostponedAppealDate
+      : undefined,
+    prosecutorPostponedAppealDate: dismissalAppealInfo.hasBeenAppealed
+      ? theCase.prosecutorPostponedAppealDate
+      : undefined,
   }
 }
 
