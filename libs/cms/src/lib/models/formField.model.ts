@@ -29,6 +29,7 @@ export class FormField {
     | 'nationalId (kennitala)'
     | 'information'
     | 'numeric'
+    | 'date'
 
   @Field()
   required!: boolean

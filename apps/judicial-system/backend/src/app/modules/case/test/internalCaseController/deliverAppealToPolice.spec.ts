@@ -73,7 +73,7 @@ describe('InternalCaseController - Deliver appeal to police', () => {
       origin: CaseOrigin.LOKE,
       type: caseType,
       state: caseState,
-      appealState: CaseAppealState.COMPLETED,
+      appealCase: { appealState: CaseAppealState.COMPLETED },
       policeCaseNumbers: [policeCaseNumber],
       courtCaseNumber,
       defendants: [{ nationalId: uuid() }],
