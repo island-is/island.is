@@ -10,8 +10,12 @@ export class FarmerLandSubsidiesInput {
   @Field(() => ID)
   farmId!: string
 
-  @Field({ nullable: true })
-  after?: string
+  @Field({
+    nullable: true,
+    description:
+      'Pagination cursor. Accepts both the next and previous cursor tokens returned by the API — pass endCursor to go forward, startCursor to go backward.',
+  })
+  cursor?: string
 
   @Field(() => FarmerLandSubsidyOrderField, { nullable: true })
   @IsOptional()
