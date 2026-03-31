@@ -1,5 +1,6 @@
 import {
   ApiProtectedV1PensionCalculatorPostRequest,
+  TrWebApiServicesCommonClientsModelsYearWithMonthsDto,
   TrWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorOutput,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -14,6 +15,7 @@ import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInYears from 'date-fns/differenceInYears'
 import { CustomPage } from '@island.is/cms'
 import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
+import { YearWithMonths } from './models/personalTaxCredit/taxCardMonthsAndYears.model'
 
 const basePensionTypeMapping: Record<BasePensionType, number> = {
   [BasePensionType.Retirement]: 1, // Ellilífeyrir
@@ -208,4 +210,23 @@ export const getPensionCalculationHighlightedItems = (
   }
 
   return highlightedItems
+}
+
+export const toYearWithMonths = (
+  raw:
+    | TrWebApiServicesCommonClientsModelsYearWithMonthsDto[]
+    | null
+    | undefined,
+): YearWithMonths[] | undefined => {
+  return raw == null
+    ? undefined
+    : raw.map((ym) => ({
+        year: ym.year,
+        months: (ym.months ?? [])
+          .filter(
+            (m): m is { month: number; selectable?: boolean } =>
+              m.selectable === true && m.month != null,
+          )
+          .map((m) => m.month),
+      }))
 }
