@@ -43,18 +43,18 @@ export const RegulationSummaryScreen = (props: OJOIFieldBaseProps) => {
 
   const isLoading = (draftId && !draftLoaded) || !impactsLoaded
   const warnings = collectRegulationWarnings(enrichedAnswers)
+  const hasWarnings = isLoading || warnings.length > 0
 
   useEffect(() => {
-    if (isLoading || warnings.length > 0) {
-      setSubmitButtonDisabled && setSubmitButtonDisabled(true)
-    } else {
-      setSubmitButtonDisabled && setSubmitButtonDisabled(false)
-    }
+    setSubmitButtonDisabled && setSubmitButtonDisabled(hasWarnings)
+  }, [hasWarnings, setSubmitButtonDisabled])
 
+  useEffect(() => {
     return () => {
       setSubmitButtonDisabled && setSubmitButtonDisabled(false)
     }
-  }, [isLoading, warnings, setSubmitButtonDisabled])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <FormScreen
