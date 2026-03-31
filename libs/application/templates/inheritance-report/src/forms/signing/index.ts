@@ -11,4 +11,3 @@ export const signingForm: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [signatoryStatusSection],
 })
-

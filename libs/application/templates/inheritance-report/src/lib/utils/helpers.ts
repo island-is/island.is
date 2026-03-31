@@ -1,8 +1,5 @@
 import { EMAIL_REGEX, YES, getValueViaPath } from '@island.is/application/core'
-import {
-  Application,
-  FormValue,
-} from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { DebtTypes as ClientDebtType } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'

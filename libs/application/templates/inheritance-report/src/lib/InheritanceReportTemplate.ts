@@ -45,8 +45,8 @@ const configuration =
   ApplicationConfigurations[ApplicationTypes.INHERITANCE_REPORT]
 
 const isReviewEnabled = (context: ApplicationContext) => {
-  const externalData =
-    context.application.externalData as InheritanceReportExternalData
+  const externalData = context.application
+    .externalData as InheritanceReportExternalData
   return externalData?.checkReviewFlag?.data?.reviewEnabled === true
 }
 
@@ -55,10 +55,9 @@ const areAllPartiesApproved = (context: ApplicationContext) => {
 }
 
 const haveAllSignatoriesSigned = (context: ApplicationContext) => {
-  const externalData =
-    context.application.externalData as InheritanceReportExternalData
-  const signatories =
-    externalData?.getSignatories?.data?.signatories || []
+  const externalData = context.application
+    .externalData as InheritanceReportExternalData
+  const signatories = externalData?.getSignatories?.data?.signatories || []
   return signatories.length > 0 && signatories.every((s) => s.signed)
 }
 

@@ -180,8 +180,9 @@ export class InheritanceReportService extends BaseTemplateApiService {
    */
   async submitToSyslumenn({ application }: TemplateApiModuleActionProps) {
     // Idempotency: if already submitted, skip re-submission
-    const existingResult = application.externalData?.submitToSyslumenn
-      ?.data as { success?: boolean; id?: string } | undefined
+    const existingResult = application.externalData?.submitToSyslumenn?.data as
+      | { success?: boolean; id?: string }
+      | undefined
     if (existingResult?.success && existingResult?.id) {
       return existingResult
     }
@@ -288,8 +289,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
     const syslumennData = getSyslumennData(
       application.externalData as Record<string, unknown>,
     )
-    const inheritanceReportInfos =
-      syslumennData?.inheritanceReportInfos ?? []
+    const inheritanceReportInfos = syslumennData?.inheritanceReportInfos ?? []
 
     const selectedEstate = inheritanceReportInfos.find(
       (estate) => estate.caseNumber === estateInfoSelection,
@@ -323,10 +323,9 @@ export class InheritanceReportService extends BaseTemplateApiService {
     }
 
     try {
-      this.logger.info(
-        '[inheritance-report]: Calling getSignatories API',
-        { estateType },
-      )
+      this.logger.info('[inheritance-report]: Calling getSignatories API', {
+        estateType,
+      })
       const signatories =
         await this.syslumennService.getInheritanceReportSignatories(
           deceasedNationalId,

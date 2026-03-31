@@ -288,5 +288,3 @@ describe('InheritanceReportService', () => {
     })
   })
 })
-
-

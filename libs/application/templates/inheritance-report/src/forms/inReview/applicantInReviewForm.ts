@@ -93,4 +93,3 @@ export const applicantInReviewForm: Form = buildForm({
     }),
   ],
 })
-

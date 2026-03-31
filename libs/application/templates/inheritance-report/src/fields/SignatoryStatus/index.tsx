@@ -29,9 +29,10 @@ interface SignatoriesExternalData {
   }
 }
 
-export const SignatoryStatus: FC<
-  React.PropsWithChildren<FieldBaseProps>
-> = ({ application, setSubmitButtonDisabled }) => {
+export const SignatoryStatus: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  setSubmitButtonDisabled,
+}) => {
   const { formatMessage, lang: locale } = useLocale()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -123,9 +124,7 @@ export const SignatoryStatus: FC<
           {signatories.map((signatory, index) => (
             <T.Row key={index}>
               <T.Data>{signatory.name || ''}</T.Data>
-              <T.Data>
-                {formatNationalId(signatory.nationalId || '')}
-              </T.Data>
+              <T.Data>{formatNationalId(signatory.nationalId || '')}</T.Data>
               <T.Data>
                 {signatory.signed
                   ? formatMessage(m.inReviewStatusSigned)

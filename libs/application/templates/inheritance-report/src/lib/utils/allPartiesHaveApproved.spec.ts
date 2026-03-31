@@ -178,4 +178,3 @@ describe('allPartiesHaveApproved', () => {
     expect(allPartiesHaveApproved(answers)).toBe(true)
   })
 })
-
