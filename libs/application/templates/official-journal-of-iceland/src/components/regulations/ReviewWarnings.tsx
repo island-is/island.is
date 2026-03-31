@@ -6,14 +6,21 @@
  * Key adaptations:
  * - Works with application answers, not DraftingState
  * - Uses collectRegulationWarnings utility instead of isDraftErrorFree
- * - No step navigation (application system handles navigation)
+ * - Groups warnings by section and shows navigation links
  */
-import { Box, Text, AlertMessage } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import {
+  Box,
+  Text,
+  AlertMessage,
+  Stack,
+  BulletList,
+  Bullet,
+  Button,
+} from '@island.is/island-ui/core'
 import { useMemo } from 'react'
 import {
-  RegulationWarning,
   collectRegulationWarnings,
+  RegulationWarning,
 } from '../../utils/regulationValidations'
 
 // ---------------------------------------------------------------------------
@@ -61,31 +68,82 @@ export type ReviewWarningsProps = {
     }
     applicationType?: string
   }
+  goToScreen?: (screenId: string) => void
 }
 
-export const ReviewWarnings = ({ answers }: ReviewWarningsProps) => {
-  const { formatMessage: f } = useLocale()
+type WarningGroup = {
+  section: string
+  route: string
+  sectionLabel: string
+  warnings: RegulationWarning[]
+}
 
+const groupWarningsBySection = (
+  warnings: RegulationWarning[],
+): WarningGroup[] => {
+  const groups: Record<string, WarningGroup> = {}
+
+  for (const warning of warnings) {
+    const key = warning.section ?? 'other'
+    if (!groups[key]) {
+      groups[key] = {
+        section: key,
+        route: warning.route ?? '',
+        sectionLabel: warning.sectionLabel ?? key,
+        warnings: [],
+      }
+    }
+    groups[key].warnings.push(warning)
+  }
+
+  return Object.values(groups)
+}
+
+export const ReviewWarnings = ({
+  answers,
+  goToScreen,
+}: ReviewWarningsProps) => {
   const warnings = useMemo(() => collectRegulationWarnings(answers), [answers])
 
   if (!warnings.length) {
     return null
   }
 
+  const groups = groupWarningsBySection(warnings)
+
   return (
     <Box marginBottom={4}>
       <Text variant="h3" as="h3" marginBottom={3}>
-        Eftirfarandi atriði þarf að laga:
+        Fylla þarf út eftirfarandi reiti
       </Text>
-      {warnings.map((warning, i) => (
-        <Box marginBottom={2} key={i}>
+      <Stack space={2}>
+        {groups.map((group) => (
           <AlertMessage
-            type="error"
-            title={warning.field}
-            message={warning.message}
+            key={group.section}
+            type="warning"
+            title={group.sectionLabel}
+            message={
+              <Stack space={2}>
+                <BulletList color="black">
+                  {group.warnings.map((warning, i) => (
+                    <Bullet key={i}>{warning.message}</Bullet>
+                  ))}
+                </BulletList>
+                {goToScreen && group.route && (
+                  <Button
+                    onClick={() => goToScreen(group.route)}
+                    size="small"
+                    variant="text"
+                    preTextIcon="arrowBack"
+                  >
+                    {`Opna kafla ${group.sectionLabel}`}
+                  </Button>
+                )}
+              </Stack>
+            }
           />
-        </Box>
-      ))}
+        ))}
+      </Stack>
     </Box>
   )
 }
