@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { ApolloError } from '@apollo/client'
 import { Column, Row, useExpanded, useSortBy, useTable } from 'react-table'
 import AnimateHeight from 'react-animate-height'
@@ -15,6 +15,8 @@ interface FarmerLandsTableProps<T extends object> {
   emptyMessage: string
   renderExpandedRow?: (row: Row<T>) => React.ReactNode
   getRowId?: (row: T, relativeIndex: number) => string
+  manualSort?: boolean
+  onSortChange?: (sortBy: Array<{ id: string; desc: boolean }>) => void
 }
 
 export const FarmerLandsTable = <T extends object>({
@@ -25,6 +27,8 @@ export const FarmerLandsTable = <T extends object>({
   emptyMessage,
   renderExpandedRow,
   getRowId,
+  manualSort,
+  onSortChange,
 }: FarmerLandsTableProps<T>) => {
   const [collapsingRows, setCollapsingRows] = useState<Set<string>>(new Set())
 
@@ -68,13 +72,29 @@ export const FarmerLandsTable = <T extends object>({
   }, [providedColumns, renderExpandedRow])
 
   const tableInstance = useTable(
-    { columns, data, ...(getRowId ? { getRowId } : {}) },
+    {
+      columns,
+      data,
+      ...(getRowId ? { getRowId } : {}),
+      ...(manualSort ? { manualSortBy: true } : {}),
+    },
     useSortBy,
     ...(renderExpandedRow ? [useExpanded] : []),
   )
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     tableInstance
+
+  useEffect(() => {
+    if (!onSortChange) return
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sortBy = (tableInstance.state as any).sortBy as Array<{
+      id: string
+      desc: boolean
+    }>
+    onSortChange(sortBy)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [(tableInstance.state as any).sortBy, onSortChange])
 
   if (error) {
     return <Problem error={error} noBorder={false} />

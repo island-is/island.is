@@ -1,17 +1,16 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Column, Row } from 'react-table'
-import {
-  Box,
-  Button,
-  Filter,
-  FilterMultiChoice,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m, formatNationalId } from '@island.is/portals/my-pages/core'
 import FarmerLandsTable from '../../../../components/FarmerLandsTable/FarmerLandsTable'
+import { SubsidiesFilter } from './SubsidiesFilter'
 import { farmerLandsMessages as fm } from '../../../../lib/messages'
-import { FarmerLandSubsidy } from '@island.is/api/schema'
+import {
+  FarmerLandSubsidy,
+  FarmerLandSubsidyOrderDirection,
+  FarmerLandSubsidyOrderField,
+} from '@island.is/api/schema'
 import { useFarmerLandSubsidiesQuery } from './FarmerLandSubsidies.generated'
 
 interface Props {
@@ -65,14 +64,26 @@ export const Subsidies = ({ farmId }: Props) => {
   const [paymentCategoryId, setPaymentCategoryId] = useState<
     number | undefined
   >(undefined)
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined)
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined)
+  const [orderField, setOrderField] = useState<
+    FarmerLandSubsidyOrderField | undefined
+  >(undefined)
+  const [orderDirection, setOrderDirection] = useState<
+    FarmerLandSubsidyOrderDirection | undefined
+  >(undefined)
 
   const { data, loading, error } = useFarmerLandSubsidiesQuery({
     variables: {
       input: {
         farmId,
-        after: cursor,
+        cursor,
         contractId,
         paymentCategoryId,
+        dateFrom,
+        dateTo,
+        orderField,
+        orderDirection,
       },
     },
   })
@@ -99,46 +110,63 @@ export const Subsidies = ({ farmId }: Props) => {
     [filterOptions?.paymentCategories],
   )
 
-  const filterCount = [contractId, paymentCategoryId].filter(
+  const handleSortChange = useCallback(
+    (sortBy: Array<{ id: string; desc: boolean }>) => {
+      const fieldMap: Partial<Record<string, FarmerLandSubsidyOrderField>> = {
+        paymentDate: FarmerLandSubsidyOrderField.PaymentDate,
+        contract: FarmerLandSubsidyOrderField.Contract,
+      }
+      if (sortBy.length === 0) {
+        setOrderField(undefined)
+        setOrderDirection(undefined)
+      } else {
+        const field = fieldMap[sortBy[0].id]
+        if (field) {
+          setOrderField(field)
+          setOrderDirection(
+            sortBy[0].desc
+              ? FarmerLandSubsidyOrderDirection.Descending
+              : FarmerLandSubsidyOrderDirection.Ascending,
+          )
+        }
+      }
+      setCursor(undefined)
+    },
+    [],
+  )
+
+  const filterCount = [contractId, paymentCategoryId, dateFrom ?? dateTo].filter(
     (v) => v != null,
   ).length
-
-  const clearFilters = () => {
-    setContractId(undefined)
-    setPaymentCategoryId(undefined)
-    setCursor(undefined)
-  }
 
   const columns = useMemo<Column<FarmerLandSubsidy>[]>(
     () => [
       {
         Header: formatMessage(fm.subsidyDate),
         accessor: 'paymentDate',
-        sortType: 'basic',
         Cell: ({ value }) =>
           value ? new Date(value).toLocaleDateString('is-IS') : '',
       },
       {
         Header: formatMessage(fm.subsidyContract),
         accessor: 'contract',
-        sortType: 'basic',
       },
       {
         Header: formatMessage(fm.subsidyGrossAmount),
         accessor: 'grossAmount',
-        sortType: 'alphanumeric',
+        disableSortBy: true,
         Cell: ({ value }) => formatISK(value),
       },
       {
         Header: formatMessage(fm.subsidyOffset),
         accessor: 'offset',
-        sortType: 'alphanumeric',
+        disableSortBy: true,
         Cell: ({ value }) => formatISK(value ?? 0),
       },
       {
         Header: formatMessage(fm.subsidyNetPaid),
         accessor: 'netPaid',
-        sortType: 'alphanumeric',
+        disableSortBy: true,
         Cell: ({ value }) => formatISK(value),
       },
     ],
@@ -183,55 +211,37 @@ export const Subsidies = ({ farmId }: Props) => {
   return (
     <Box marginTop={4}>
       <Box marginBottom={3}>
-        <Filter
-          variant="popover"
-          align="left"
-          reverse
-          labelOpen={formatMessage(m.openFilter)}
-          labelClose={formatMessage(m.closeFilter)}
-          labelClear={formatMessage(m.clearFilter)}
-          labelClearAll={formatMessage(m.clearAllFilters)}
+        <SubsidiesFilter
+          contractId={contractId}
+          paymentCategoryId={paymentCategoryId}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
           filterCount={filterCount}
-          onFilterClear={clearFilters}
-        >
-          <FilterMultiChoice
-            labelClear={formatMessage(m.clearSelected)}
-            singleExpand
-            onChange={({ categoryId, selected }) => {
-              if (categoryId === 'contract')
-                setContractId(selected[0] ?? undefined)
-              if (categoryId === 'category')
-                setPaymentCategoryId(
-                  selected[0] ? Number(selected[0]) : undefined,
-                )
-              setCursor(undefined)
-            }}
-            onClear={(categoryId) => {
-              if (categoryId === 'contract') setContractId(undefined)
-              if (categoryId === 'category') setPaymentCategoryId(undefined)
-              setCursor(undefined)
-            }}
-            categories={[
-              {
-                id: 'contract',
-                label: formatMessage(fm.subsidyContract),
-                selected: contractId ? [contractId] : [],
-                filters: contractItems,
-                singleOption: true,
-                searchPlaceholder: formatMessage(m.searchPlaceholder),
-              },
-              {
-                id: 'category',
-                label: formatMessage(fm.subsidyCategory),
-                selected:
-                  paymentCategoryId != null ? [String(paymentCategoryId)] : [],
-                filters: categoryItems,
-                singleOption: true,
-                searchPlaceholder: formatMessage(m.searchPlaceholder),
-              },
-            ]}
-          />
-        </Filter>
+          contractItems={contractItems}
+          categoryItems={categoryItems}
+          onContractChange={(value) => {
+            setContractId(value)
+            setCursor(undefined)
+          }}
+          onCategoryChange={(value) => {
+            setPaymentCategoryId(value)
+            setCursor(undefined)
+          }}
+          onDateChange={(start, end) => {
+            setDateFrom(start)
+            setDateTo(end)
+            setCursor(undefined)
+          }}
+          onClear={() => {
+            setContractId(undefined)
+            setPaymentCategoryId(undefined)
+            setDateFrom(undefined)
+            setDateTo(undefined)
+            setCursor(undefined)
+            setOrderField(undefined)
+            setOrderDirection(undefined)
+          }}
+        />
       </Box>
       <FarmerLandsTable
         columns={columns}
@@ -241,6 +251,8 @@ export const Subsidies = ({ farmId }: Props) => {
         emptyMessage={formatMessage(m.noData)}
         renderExpandedRow={renderExpandedRow}
         getRowId={(row) => row.id}
+        manualSort
+        onSortChange={handleSortChange}
       />
       {(pageInfo?.hasPreviousPage || pageInfo?.hasNextPage) && (
         <Box display="flex" justifyContent="spaceBetween" marginTop={3}>
