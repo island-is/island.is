@@ -89,7 +89,7 @@ const SecondarySchoolStudiesLandingPage: Screen<
   const [totalPages, setTotalPages] = useState<number>(0)
   const titleRef = useRef<HTMLDivElement>(null)
   const [inputValue, setInputValue] = useState(searchTerm)
-  console.log(filterOptions)
+
   // Initialize original results on mount
   useEffect(() => {
     const sortedResultsWithSchools = programmes
