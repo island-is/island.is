@@ -134,9 +134,6 @@ const transformRequestCase = (theCase: Case): Case => {
     isAppealDeadlineExpired: appealInfo.appealDeadline
       ? Date.now() >= new Date(appealInfo.appealDeadline).getTime()
       : false,
-    isAppealGracePeriodExpired: theCase.rulingDate
-      ? Date.now() >= new Date(theCase.rulingDate).getTime() + getDays(31)
-      : false,
     isStatementDeadlineExpired: theCase.appealCase?.appealReceivedByCourtDate
       ? Date.now() >=
         new Date(theCase.appealCase.appealReceivedByCourtDate).getTime() +
